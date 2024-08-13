@@ -1,109 +1,259 @@
-Return-Path: <linux-kernel+bounces-284540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B777E950224
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:12:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47849501F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E23DAB225E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:10:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C2D1F22906
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD221802AB;
-	Tue, 13 Aug 2024 10:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B5219ADA4;
+	Tue, 13 Aug 2024 10:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="NiF98jKQ"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D9E433B9
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gB7aL9K8"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9EE19AD6C
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543843; cv=none; b=n/Mda9d4BSrhAzq4JiGc5xJT4YD0Ly+kt2bOFesfIcXfNItIdqRdIodLJS9np1a8LFGTeLBifqNj83SF58BDCiCM/BJ6a54N48iAyN5f/iEoSEDOagrSJZH3AbM7DWNhxhi0XBgLxcAZ/wmThoyZQqolEo4ob8VVxCeK+hPcW7s=
+	t=1723543401; cv=none; b=nfHb0z10xhfbLrvZcgivtbi5N1MiIaGco4ccgWBTLKW4EWvLK3HR5rGcQKQzIcPP+WAkt7F0YBKpTfbbhLXp3k/mLIXWdo67WiqpoGV2SoH+ZS1PLqU1TaNTyp1VMWYKMIeNy9cX4tcMZqdIt9hEESJDw3BaWSNFgbFje5BEcUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543843; c=relaxed/simple;
-	bh=Fm8/euYCfWWqgzcvP+2t87/Xho9IV+3e5yXpJvIVYtk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=LpHgcC1PxlbOxi9Mck17/SfGOXiXmH2UH8mpoVNtmDsZPGUa4Bi6jO2A2NJ3TAIfvt93/9Ys6RuzVKe0rxbs/TghTBlJnr5zhXO2Y6/Wrrc1Vrvi0aGsCk/7EB5wBWCQ0lh4TjuVjGS8zJsgfC/cJGh7HAb78tnUd8CL/kLUd8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=NiF98jKQ; arc=none smtp.client-ip=220.197.31.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=ceKwBoKd8RVMvMUYur
-	+j2OhO2faLi4b/XH1H8WSU8E0=; b=NiF98jKQMaecPZhVLOEYG/Dy32TH9s8OLi
-	cf+I0LzwwumfUiUHYsx2psycghMKhGppxqAWxYYwe4Vu4JbNLcC3v7JdcBLmq1PW
-	rYXLgEh9MzIFzYHKowXxs+po1qZSXWtYBLhjIykbpOBBEk7L1dcO6TEySsoum56/
-	wRSV5rpVQ=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [118.242.3.34])
-	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wDnT3XaLLtmUKKJAQ--.43172S2;
-	Tue, 13 Aug 2024 17:52:28 +0800 (CST)
-From: yangge1116@126.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
+	s=arc-20240116; t=1723543401; c=relaxed/simple;
+	bh=ZaRZPIKMb9tT1bgJXnZN+jAzi+AtsUj/jTsR+EdbRoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gv2oe8XuKp0IiSQyh3cmG0MH8Mq9AooWkL4AcsLRCnY4LWoMNLA8d9kgyr3fc7VrrVhxyeCfICyROVgjTMbJcKFoDK9BzkOGih49InR2orERsRzeXBH3lFQZO94QGMNOh/vMAtWHpZzB4hRU7X9l4D4dzKwFv/bnt0rgLNBGwzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gB7aL9K8; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7b594936e9bso3618033a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723543399; x=1724148199; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NoxN63bBPaM/wCd8ZvlEoxvS8xfn7jCuCDDPzEXx9AA=;
+        b=gB7aL9K8rxT92KTPA0kUHFxVnq8g92F1/0AKw6e+zNZQ1SNqtgs+5iCbJPK89PagJa
+         YQF478bmuSxDbkLlx5Qq1QqS0aH740VuEc7k8iTU5Yrjj61C/lmA74GZIHLWGEM+7FuR
+         AA1zaADBs8Ye7lXJUM/vy2HwYIvJ9E2jt4A3Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723543399; x=1724148199;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NoxN63bBPaM/wCd8ZvlEoxvS8xfn7jCuCDDPzEXx9AA=;
+        b=qu0DwLxToDmfChSEtpUKzMSapotao7E3g1/6EPpml+UnhpB/5cHYA/gBn6ovw/GdKc
+         G2EWRwhK89OBHN9Ru9ODzZLdOjegmir3P8qUkq0tlPvzQxAuC8qfp8rYQNFMznyCiDu7
+         f1py4dXfuiCyllIig6/Hs0VKlc7Poyorws1ivJpnqFxeEaBqBq7ioc1vf0t/ri48Y2Ju
+         Rr8Ohlk0P8fLC2sUOoAKZV5kAWs8bEQpyH/W+DVwG77spGX849b1G9UzmJgfwmj8LT5K
+         4ONGhv8qZzVyV8/cU6pytlPWRoK5Xr7tpWwEkqhTtBdmH3OAHoHbycGt6xrZocf5qhm2
+         usBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXifcconW6SJpQ9PoNlSWIB9qMYGn6gy8+2Y1Qz9YabYIxHARHpwcQE5291oXQ5XcyE/IB9MPJUxREBvB/9CslzROruccxQJBqefhdg
+X-Gm-Message-State: AOJu0YyMlmGDyD7TVQmcDER97L3CidedC9uB32wWpNMgkGO5+P6JxBe2
+	b/BGXagztnZkJRBVt3looM9pL7QEjt7wd75Y5N5xCspplwpJDBbePVf1TEWg
+X-Google-Smtp-Source: AGHT+IFosWR7zkd7jgDT2HviKT6vEjybZ5RhsLylZWQSu4p1a07i1ADAXGsNcDrKZxIxqrj/LlkKPw==
+X-Received: by 2002:a05:6a20:96c8:b0:1c8:d7b7:dcbd with SMTP id adf61e73a8af0-1c8d7b7dcf2mr2811688637.1.1723543399534;
+        Tue, 13 Aug 2024 03:03:19 -0700 (PDT)
+Received: from localhost (0.223.81.34.bc.googleusercontent.com. [34.81.223.0])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7c697a549d8sm944650a12.67.2024.08.13.03.03.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 03:03:18 -0700 (PDT)
+From: Takaya Saeki <takayas@chromium.org>
+To: Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Junichi Uekawa <uekawa@chromium.org>,
 	linux-kernel@vger.kernel.org,
-	21cnbao@gmail.com,
-	david@redhat.com,
-	baolin.wang@linux.alibaba.com,
-	yuzhao@google.com,
-	liuzixing@hygon.cn,
-	yangge <yangge1116@126.com>
-Subject: [PATCH V3] mm/swap: take folio refcount after testing the LRU flag
-Date: Tue, 13 Aug 2024 17:52:23 +0800
-Message-Id: <1723542743-32179-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wDnT3XaLLtmUKKJAQ--.43172S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Xw4UArWfWw4rWw47uw4DJwb_yoW8Jry8pa
-	18GwnIgrZ3Gw1jva47Zw13AryYkayI9F4UAayfCwnruF15JwnFkF1fKw4UZay5CryxWF48
-	uFy5tF1kZ3ZFvFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR58n5UUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOhM5G2VEyJ36hAADsC
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takaya Saeki <takayas@chromium.org>
+Subject: [PATCH v3] filemap: add trace events for get_pages, map_pages, and fault
+Date: Tue, 13 Aug 2024 10:03:12 +0000
+Message-ID: <20240813100312.3930505-1-takayas@chromium.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: yangge <yangge1116@126.com>
+To allow precise tracking of page caches accessed, add new tracepoints
+that trigger when a process actually accesses them.
 
-Whoever passes a folio to __folio_batch_add_and_move() must hold
-a reference, otherwise something else would already be messed up.
-If the folio is referenced, it will not be freed elsewhere, so we
-can safely clear the folio's lru flag. As discussed with David
-in [1], we should take the reference after testing the LRU flag,
-not before.
+The ureadahead program used by ChromeOS traces the disk access of
+programs as they start up at boot up. It uses mincore(2) or the
+'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
+this information in a "pack" file and on subsequent boots, it will read
+the pack file and call readahead(2) on the information so that disk
+storage can be loaded into RAM before the applications actually need it.
 
-Link: https://lore.kernel.org/lkml/d41865b4-d6fa-49ba-890a-921eefad27dd@redhat.com/ [1]
-Signed-off-by: yangge <yangge1116@126.com>
-Acked-by: David Hildenbrand <david@redhat.com>
+A problem we see is that due to the kernel's readahead algorithm that
+can aggressively pull in more data than needed (to try and accomplish
+the same goal) and this data is also recorded. The end result is that
+the pack file contains a lot of pages on disk that are never actually
+used. Calling readahead(2) on these unused pages can slow down the
+system boot up times.
+
+To solve this, add 3 new trace events, get_pages, map_pages, and fault.
+These will be used to trace the pages are not only pulled in from disk,
+but are actually used by the application. Only those pages will be
+stored in the pack file, and this helps out the performance of boot up.
+
+With the combination of these 3 new trace events and
+mm_filemap_add_to_page_cache, we observed a reduction in the pack file
+by 7.3% - 20% on ChromeOS varying by device.
+
+Signed-off-by: Takaya Saeki <takayas@chromium.org>
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- mm/swap.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Changelog between v3 and v2
+- Use a range notation in the printf format 
 
-V3:
-   Remove sanity check suggested by Yu
-V2:
-   Add sanity check suggested by David
+Changelog between v2 and v1
+- Fix a file offset type usage by casting pgoff_t to loff_t
+- Fix format string of dev and inode
 
-diff --git a/mm/swap.c b/mm/swap.c
-index 67a2467..6b83898 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -226,12 +226,10 @@ static void __folio_batch_add_and_move(struct folio_batch __percpu *fbatch,
- {
- 	unsigned long flags;
+ include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
+ mm/filemap.c                   |  4 ++
+ 2 files changed, 88 insertions(+)
+
+V2:https://lore.kernel.org/all/20240620161903.3176859-1-takayas@chromium.org/
+V1:https://lore.kernel.org/all/20240618093656.1944210-1-takayas@chromium.org/
+
+diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
+index 46c89c1e460c..f48fe637bfd2 100644
+--- a/include/trace/events/filemap.h
++++ b/include/trace/events/filemap.h
+@@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
+ 	TP_ARGS(folio)
+ 	);
  
--	folio_get(folio);
--
--	if (on_lru && !folio_test_clear_lru(folio)) {
--		folio_put(folio);
-+	if (on_lru && !folio_test_clear_lru(folio))
- 		return;
--	}
++DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
 +
-+	folio_get(folio);
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++
++	TP_ARGS(mapping, index, last_index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++		__field(unsigned long, last_index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++		__entry->last_index = last_index;
++	),
++
++	TP_printk(
++		"dev=%d:%d ino=%lx ofs=%lld-%lld",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		((loff_t)__entry->index) << PAGE_SHIFT,
++		((((loff_t)__entry->last_index + 1) << PAGE_SHIFT) - 1)
++	)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++TRACE_EVENT(mm_filemap_fault,
++	TP_PROTO(struct address_space *mapping, pgoff_t index),
++
++	TP_ARGS(mapping, index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++	),
++
++	TP_printk(
++		"dev=%d:%d ino=%lx ofs=%lld",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		((loff_t)__entry->index) << PAGE_SHIFT
++	)
++);
++
+ TRACE_EVENT(filemap_set_wb_err,
+ 		TP_PROTO(struct address_space *mapping, errseq_t eseq),
  
- 	if (disable_irq)
- 		local_lock_irqsave(&cpu_fbatches.lock_irq, flags);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d62150418b91..925eef5e16f0 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 			goto err;
+ 	}
+ 
++	trace_mm_filemap_get_pages(mapping, index, last_index);
+ 	return 0;
+ err:
+ 	if (err < 0)
+@@ -3287,6 +3288,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	if (unlikely(index >= max_idx))
+ 		return VM_FAULT_SIGBUS;
+ 
++	trace_mm_filemap_fault(mapping, index);
++
+ 	/*
+ 	 * Do we have something in the page cache already?
+ 	 */
+@@ -3653,6 +3656,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+ 	add_mm_counter(vma->vm_mm, folio_type, rss);
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
++	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
+ out:
+ 	rcu_read_unlock();
+ 
 -- 
-2.7.4
+2.46.0.76.ge559c4bf1a-goog
 
 
