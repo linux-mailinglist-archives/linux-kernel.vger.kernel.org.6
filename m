@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-285115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 437EA95098B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:55:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B4F95098F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E215E1F230D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:55:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A711C20C15
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DA11A08A1;
-	Tue, 13 Aug 2024 15:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86AE1A08A3;
+	Tue, 13 Aug 2024 15:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5MhdNux"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdDaa/og"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A3C2AF0D;
-	Tue, 13 Aug 2024 15:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E019D1A073C;
+	Tue, 13 Aug 2024 15:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564524; cv=none; b=Rqpy2mtveM28VFC6KxN1TKG2NmGH/YAd2bxcrZBYNLBCd6Ew0y3WYIBMZNoJugE779e8DtRJYGvW7QZVdRHuJOUPXILdpijF1gntXTSlSQ2LZFeUxtSRlJJImORztPF7PTOeG9xc7I24R6bFB7gf0kLJU4lwIWYs1dKqwbrhSSo=
+	t=1723564535; cv=none; b=FEDzJLoLl5J4UaTWQ6lo4XJI0+ig5QZMZhmbEPlWbCV+frhla7s3FiJHY99nOFazJcVxvyszMy3ESDMNa0NCimQwhcubeKp/ZeEQZyU4fqraMVt1zUCxRvS52N5ODcSV37QWCjcaWBKlZhaV+5558hes0e/+iipYJnBmZANPmlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564524; c=relaxed/simple;
-	bh=KLRQ9XCMyV4+IoLC63KlpiQQx6VJgzr/PuSqrkEfaa4=;
+	s=arc-20240116; t=1723564535; c=relaxed/simple;
+	bh=2qbznLVAWa/HOCkibpwEKuFx9BRG0jfLiyGPm/O5D0U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PB7zl3d9RcNDp17HRE+CKxNfyOqLD2AhoNUO/Z3Gtx/ZfN1lo47qWjPE0UGLe33m/fF1iDzz91Dz8IW3Ed4xEP5rHsyrpsQ4HEH6YA6dzT8kaKb8NCe1+MObg558TTx+3qRTBHRBscLsuYszaXwh1kkKzVfHFl6x9PDCIz6VgyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5MhdNux; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb4c584029so4378390a91.3;
-        Tue, 13 Aug 2024 08:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723564522; x=1724169322; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JNEc4eFJdLCTJFxQk4jRqMY314XfkiZ1DqdWjlphD8k=;
-        b=l5MhdNuxjtpo7H/lPAqTAopquIHQl84xd0K+90nNb+PY9UkNGlyYRjLs5SxdMR9Qik
-         mOaF/4U3i/UehLD3L328hAg0nPidd+bQW1kj1v1kQH7IqLa/3TalNPKQ+U2sXlMUcRN6
-         iq7Jox0BOSvNaUYocG1z/DWP7JtguCA6PDpHytX8gSss9p4PmVzfnVQEe/Bh9kkKdyaM
-         l/BNQJNzaWon3D0niWgs7lMgMhkEAtsTwn6QsLj8XSI+FaxODRiG22jVPk796GY+PKWT
-         5pCimFsI1NhjCebFgE1ror20pZhJrczDeAQsbmgR/5+K7wr4xhdejwKnQv93LEUGn5Y/
-         JSng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723564522; x=1724169322;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JNEc4eFJdLCTJFxQk4jRqMY314XfkiZ1DqdWjlphD8k=;
-        b=UqvQ9ex70FrLahWIyHHOdQunLG4/WouzFZMmwE/aOa+cYDwpRn13RtQhzG7kWG5U0/
-         kVwdBYEjX6u6+40iRagsOvL5nAdwGZ68dNIbkkrv5PiaGGZgqJ4v5/nRCvUl9hHWQxI3
-         aFEGMQR5+mJhCjf6zc0KINNXzcu6gQ2vwlPg2i8VzfZpP/ADaBlLxj30vjqax25Dq3kG
-         RWOz7vPNbG41G7vYEztSXMlqWnIFopggcfZEOaV2PeJBcl85nPTBPPzUGQEYvK1LrtbB
-         UVWMEt9ns4DJsimSi42WeDkpLJ+nf1+zqwESaLGuvkHmXOnfMwiRaf0cfZHnja77XcMF
-         T1Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTo1i2Jy1RSgJF0EINIPhEZDDQN3LOFP8N3pSfFjDI9v6HvLJBLWjLiEw/2LTmYL94aaDAzWMAlAa0LaluIrvbC8ZbB+QQ4T44y57tvJXr74pTfoPVmpYSLPfaQpy3/HjlOxKrg90NGNQ=
-X-Gm-Message-State: AOJu0YxDHkINzO+lOCxJ+9SZq1dsroy8zFuyYLWMYKdU0Om4PQw3j8Wz
-	v0tRenaZCWILQPqF0cTnt7RI2ZtqvZhJ7KEX3T7FMl9TJwxe7GjO
-X-Google-Smtp-Source: AGHT+IHsNoLdrX0R4zp4o2c8WmRrDV2F3h2rC+DtkfhJfrI5TN9h3V521gKbzOJvd+yeGYEpdFTIyw==
-X-Received: by 2002:a17:90b:3b46:b0:2cd:2f63:a447 with SMTP id 98e67ed59e1d1-2d39267dcdbmr4411975a91.36.1723564521500;
-        Tue, 13 Aug 2024 08:55:21 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1fd02102dsm7465294a91.51.2024.08.13.08.55.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:55:20 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 13 Aug 2024 08:55:19 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Denis Pauk <pauk.denis@gmail.com>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, attila@fulop.one
-Subject: Re: [PATCH] hwmon: (nct6775) add G15CF to ASUS WMI monitoring list
-Message-ID: <3c1c6785-b994-486d-a255-8c8bd8080eb1@roeck-us.net>
-References: <20240812152652.1303-1-pauk.denis@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DrysTMLe8/lW4Ac9VRJvwngkcSIWbSRXJGhNcYxhEy9FCfbpQhDsehFYZW9P19vR8u/vCZWaDb7HQJ6WUf4mU2LtpUmB4R8laEoloNWTQL2ST8KIm+sSd2ev+NNZSZLf9f/TpYmSZXRIGiQxMrDllAsS5F5JHlv0Cok5LgPjG48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdDaa/og; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B120C4AF09;
+	Tue, 13 Aug 2024 15:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723564534;
+	bh=2qbznLVAWa/HOCkibpwEKuFx9BRG0jfLiyGPm/O5D0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TdDaa/og08j0LYWxMjIfmT62Kse6nlmDNAqFUWXRmeAOd4L8HUcdtoNGpFIKZ2ovK
+	 Wo8eroMPA7ljNcvycCtAJoCPSOW0sL4ez8CU0njPbAl5s4w3e1pL1xt0z/5bkAsd3W
+	 AyI8VSs3BZHOYosptDMzpeCBZYGxHn2H8y8LbYAnhcsMLr91GM20TL0ixceE9tPfzb
+	 Vx1zlFj6nEUair4k8rdOYdoG4DTk8CIJwZHafLxB8o8P/RrW8+9bZFSBxfXNpqDFNr
+	 VwMB5tfnO4Fx23eAhjULiqlqOWHy4r2C5DEKNZSBu0vrreLkayROtBxCfuvWvflTI4
+	 xxXxYgEv0gapw==
+Date: Tue, 13 Aug 2024 16:55:27 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v9 00/13] riscv: Add support for xtheadvector
+Message-ID: <20240813-strode-revival-07b8556a8bfe@spud>
+References: <20240806-xtheadvector-v9-0-62a56d2da5d0@rivosinc.com>
+ <20240809-slapping-graph-461287bac506@spud>
+ <ZrqsqsCtKwfG4Q5B@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wVALGEdsN5/GZu0E"
+Content-Disposition: inline
+In-Reply-To: <ZrqsqsCtKwfG4Q5B@ghost>
+
+
+--wVALGEdsN5/GZu0E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812152652.1303-1-pauk.denis@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 06:26:38PM +0300, Denis Pauk wrote:
-> Boards G15CF has got a nct6775 chip, but by default there's no use of it
-> because of resource conflict with WMI method.
-> 
-> This commit adds such board to the WMI monitoring list.
+On Mon, Aug 12, 2024 at 05:45:30PM -0700, Charlie Jenkins wrote:
+> On Fri, Aug 09, 2024 at 11:31:15PM +0100, Conor Dooley wrote:
+> > On Tue, Aug 06, 2024 at 05:31:36PM -0700, Charlie Jenkins wrote:
+> > > xtheadvector is a custom extension that is based upon riscv vector
+> > > version 0.7.1 [1]. All of the vector routines have been modified to
+> > > support this alternative vector version based upon whether xtheadvect=
+or
+> > > was determined to be supported at boot.
+> > >=20
+> > > vlenb is not supported on the existing xtheadvector hardware, so a
+> > > devicetree property thead,vlenb is added to provide the vlenb to Linu=
+x.
+> > >=20
+> > > There is a new hwprobe key RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 that =
+is
+> > > used to request which thead vendor extensions are supported on the
+> > > current platform. This allows future vendors to allocate hwprobe keys
+> > > for their vendor.
+> > >=20
+> > > Support for xtheadvector is also added to the vector kselftests.
+> >=20
+> > So uh, since noone seems to have brought it up, in the light of the iss=
+ues
+> > with thead's vector implementation, (https://ghostwriteattack.com/) do =
+we
+> > want to enable it at all?
+>=20
+> I can make it clear in the kconfig that xtheadvector is succeptible to
+> this attack and that it should be enabled with caution. I think we
+> should let people that understand the risk to enable it.
 
-Please read the documentation for proper patch descriptions.
-Specifically,
+I think the clearest way might be "depends on BROKEN"?
 
-> Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-> instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-> to do frotz", as if you are giving orders to the codebase to change
-> its behaviour.
+--wVALGEdsN5/GZu0E
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'll fix that up, but please keep it in mind for future patches.
+-----BEGIN PGP SIGNATURE-----
 
-Applied,
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZruB7wAKCRB4tDGHoIJi
+0tDJAQCrAAwyJAAGcGaB0lSjHQowc1+M+60A33xWLVpFubDEggD+PdA/5VviAMYd
+FtjIx2BGIAbBB5DLVfsxw4duVA3eAQc=
+=/cR1
+-----END PGP SIGNATURE-----
 
-Thanks,
-Guenter
-
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=204807
-> Signed-off-by: Denis Pauk <pauk.denis@gmail.com>
-> Tested-by: Attila <attila@fulop.one>
-> ---
->  drivers/hwmon/nct6775-platform.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hwmon/nct6775-platform.c b/drivers/hwmon/nct6775-platform.c
-> index 9aa4dcf4a6f3..096f1daa8f2b 100644
-> --- a/drivers/hwmon/nct6775-platform.c
-> +++ b/drivers/hwmon/nct6775-platform.c
-> @@ -1269,6 +1269,7 @@ static const char * const asus_msi_boards[] = {
->  	"EX-B760M-V5 D4",
->  	"EX-H510M-V3",
->  	"EX-H610M-V3 D4",
-> +	"G15CF",
->  	"PRIME A620M-A",
->  	"PRIME B560-PLUS",
->  	"PRIME B560-PLUS AC-HES",
+--wVALGEdsN5/GZu0E--
 
