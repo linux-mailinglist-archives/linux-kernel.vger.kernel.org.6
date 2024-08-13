@@ -1,162 +1,145 @@
-Return-Path: <linux-kernel+bounces-285570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3678950FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:40:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9776950FD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2710C1C219E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:40:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38EEBB2181B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9BF1AB506;
-	Tue, 13 Aug 2024 22:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2710F1AB52D;
+	Tue, 13 Aug 2024 22:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZG6A2Cxz"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IhvF5fYu"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075F916BE34
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B8A1AAE2C
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723588841; cv=none; b=eOAUlSkeZP2qkeEwPev9Zvka82x1FgUgQrLYAGO4EDJLjiDnmVUCcXmdJrw/Gx8RVMC2oUOu4Uxl7ErfxP8mgZbmofFH2AUJCnranKUkeApUnWnVihVmyyIJyzqITGouLh1AddvbZE8k3pZdNP39Za5x5xkfvOtCUukkWUF5O+c=
+	t=1723588942; cv=none; b=Ozr5x4x+Tq14zI0xzHGZcQuT6bmC/rnq/Y1kBt5bR4agzhr+inbBnbrSjbQ6y/A864E9Ti7OD8yE0LKGWEuwTjmPEXq2jQ9C6RTu9K+5R/mvfHFDRIe+62tDbT1pO+ztFhfLRfUGQHwIgJzjaevMK+d3AlLeO7rivy8D4K2N2K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723588841; c=relaxed/simple;
-	bh=HFtufnLXcUm/aLnJLNF7pXmlfu91vt7rw8Zgg/bJBzI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f6YUTaM5TTh6WJrhrpGJll14bcNa02TrQUSV9OKsQ0mVwT35VTblIH/Mwy1U/KldqsJCV+8wKUpc+4Fueh66/5UreY+XWhNQK5qg5/Kx/7GTUUOy2ZF3XIL97nmPDF76XGhRTFvuZDhtaieEupNUZopIbobM8R5JuRm4YOECiZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZG6A2Cxz; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723588836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ROfZ7+FlItYIEY2a1H0ZOdv21L9gnBvePHx9MzL+ryA=;
-	b=ZG6A2CxzyNqBWcnrUSisSO1zgP1W5vYO1OHHeRg0tYTRmKK70oBvGAA2oHJlw7k2P3b4uT
-	nS9fgk0Yw2Ik8XAxY1DdctABZ5PCP7qxbhL75C8qMbp/H+srNwAtCDpDf84eRHZtOP5S4f
-	T7nPHar1FHd6KTBRSe72lMMbe7wul+Y=
-From: andrey.konovalov@linux.dev
-To: Marco Elver <elver@google.com>,
-	Matthew Maurer <mmaurer@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	kasan-dev@googlegroups.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kasan: simplify and clarify Makefile
-Date: Wed, 14 Aug 2024 00:40:27 +0200
-Message-Id: <20240813224027.84503-1-andrey.konovalov@linux.dev>
+	s=arc-20240116; t=1723588942; c=relaxed/simple;
+	bh=/38aI+YAN2Wq+jg1IZPZHLPCfbDsyq9J8zvtu8VEKZc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NpBrXaB8K/f+LoO9T0TK8HL4pOTqQbk+GhPBM+vl7oEUeAVVCXJkXMhoQ/bEoeSbNy6ivwDfXoPJiuh3NxSVZpVhoFxDGR6/qHXpA9YbCMt5OL8VRWYtcUa1ywC49WsxdheFcgQ1Blnia9ApDO5cl7B6yj5go3Hr7zu7JErAPmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IhvF5fYu; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-664916e5b40so5139297b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723588940; x=1724193740; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nNyQdek71tWkWFoFbYjEqvCxbsnsam31z3z18l0u0tw=;
+        b=IhvF5fYuHrK2tDaGUA3dUOBJAAh2mvu0SAoI1MYqjLkYlDOWytZ2hTsvYNk8Z7WaM2
+         dL5WE5v5QNrJkpJyyDywBLgSzcUwTxdf4bbKR+iRh+zOp3O7EDPTEBlp6QMwsJZ3p5xJ
+         x9f4BEBiw4HW8+RevqJ0Bs3trDqfOWaAo4nsU5R5PA28L/hhm0UL+71t/jPtHHxgVdpZ
+         Quhc+KvYRhN+iWPizLCDMWZHy0Xp50NeWmCxqQNWyl9i5Jre4sOIGLlm3b9gnhYnJi9e
+         4w61iYVCF8C69mLA9BK/Vk7ngFapAc+W6GR7+RklmkMa80ILlC1GlJ94XZs15+BXFOk+
+         tKIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723588940; x=1724193740;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nNyQdek71tWkWFoFbYjEqvCxbsnsam31z3z18l0u0tw=;
+        b=Rl82vRIhiypIzeKhv/H7+8/dsLKJG8VoHf6CEP1npaFtZB1PqVs/lZdVv3JIOoeZw7
+         H7APXRP+bArvFLZeDsm8h1kjRWPKSF+laIS5z1XBlq7ScKVhnr8U0SwuvPl75kkDbbBo
+         FWJXn20gVcmLEhq2rOrkcrNDSwli6xryS+ZofsHC8Bn4UKWFhdF5jmWR8QWD9eEcq73O
+         dZ8Z5+Low/MwOyELYp/avwhXuAIwvl3XU5X1pyE8CnRmg13DNMiduksUGW8qhj1iFtjX
+         vAA2xJ1uxOXJ8ek5UT8OU/2lDQbgjRVrzu0c5AmD4R9G19ykfSh78+rKBDjKbwvIfAe5
+         kiIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMOLeHNTXSHcSEwFrJSiFPrt7rKXFSwAggghjvr7u9TYsLpJiA4guB/uXwbo5qY8LssBOJmWKpY4bfAJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxytKjsxaN3nyhC5vBP+zk+Z6SVnNvvXShWHJvY7hvqDB0vQlNF
+	gAXBLliE5SxJgtHzVM95Uv6moy7iowhrIKSk1m1NcuVRvStlI+Rk2uos8kuRBCYao680KHTn5Tm
+	Vgg==
+X-Google-Smtp-Source: AGHT+IFogisWsaivYv9CNJQlglDwle03mtYwK4ZCba6a77yHOJqB85TEgvNiv/CtmfMxOg5eUSyAfr02VmQ=
+X-Received: from amitsd-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:827])
+ (user=amitsd job=sendgmr) by 2002:a81:77c1:0:b0:648:2f1d:1329 with SMTP id
+ 00721157ae682-6ac707e5fc2mr626617b3.1.1723588939990; Tue, 13 Aug 2024
+ 15:42:19 -0700 (PDT)
+Date: Tue, 13 Aug 2024 15:42:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240813224216.132619-1-amitsd@google.com>
+Subject: [PATCH v1] usb: roles: add lockdep class key to struct usb_role_switch
+From: Amit Sunil Dhamne <amitsd@google.com>
+To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
+Cc: badhri@google.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kyletso@google.com, rdbabiera@google.com, 
+	Amit Sunil Dhamne <amitsd@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Andrey Konovalov <andreyknvl@gmail.com>
+There can be multiple role switch devices running on a platform. Given
+that lockdep is not capable of differentiating between locks of
+different instances, false positive warnings for circular locking are
+reported. To prevent this, register unique lockdep key for each of the
+individual instances.
 
-When KASAN support was being added to the Linux kernel, GCC did not yet
-support all of the KASAN-related compiler options. Thus, the KASAN
-Makefile had to probe the compiler for supported options.
-
-Nowadays, the Linux kernel GCC version requirement is 5.1+, and thus we
-don't need the probing of the -fasan-shadow-offset parameter: it exists in
-all 5.1+ GCCs.
-
-Simplify the KASAN Makefile to drop CFLAGS_KASAN_MINIMAL.
-
-Also add a few more comments and unify the indentation.
-
-Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
 ---
- scripts/Makefile.kasan | 43 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 22 deletions(-)
+ drivers/usb/roles/class.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-index 390658a2d5b74..04b108f311d24 100644
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -22,30 +22,29 @@ endif
- ifdef CONFIG_KASAN_GENERIC
- 
- ifdef CONFIG_KASAN_INLINE
-+	# When the number of memory accesses in a function is less than this
-+	# call threshold number, the compiler will use inline instrumentation.
-+	# 10000 is chosen offhand as a sufficiently large number to make all
-+	# kernel functions to be instrumented inline.
- 	call_threshold := 10000
- else
- 	call_threshold := 0
- endif
- 
--CFLAGS_KASAN_MINIMAL := -fsanitize=kernel-address
--
--# -fasan-shadow-offset fails without -fsanitize
--CFLAGS_KASAN_SHADOW := $(call cc-option, -fsanitize=kernel-address \
--			-fasan-shadow-offset=$(KASAN_SHADOW_OFFSET), \
--			$(call cc-option, -fsanitize=kernel-address \
--			-mllvm -asan-mapping-offset=$(KASAN_SHADOW_OFFSET)))
--
--ifeq ($(strip $(CFLAGS_KASAN_SHADOW)),)
--	CFLAGS_KASAN := $(CFLAGS_KASAN_MINIMAL)
--else
--	# Now add all the compiler specific options that are valid standalone
--	CFLAGS_KASAN := $(CFLAGS_KASAN_SHADOW) \
--	 $(call cc-param,asan-globals=1) \
--	 $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
--	 $(call cc-param,asan-instrument-allocas=1)
--endif
--
--CFLAGS_KASAN += $(call cc-param,asan-stack=$(stack_enable))
-+# First, enable -fsanitize=kernel-address together with providing the shadow
-+# mapping offset, as for GCC, -fasan-shadow-offset fails without -fsanitize
-+# (GCC accepts the shadow mapping offset via -fasan-shadow-offset instead of
-+# a normal --param). Instead of ifdef-checking the compiler, rely on cc-option.
-+CFLAGS_KASAN := $(call cc-option, -fsanitize=kernel-address \
-+		-fasan-shadow-offset=$(KASAN_SHADOW_OFFSET), \
-+		$(call cc-option, -fsanitize=kernel-address \
-+		-mllvm -asan-mapping-offset=$(KASAN_SHADOW_OFFSET)))
+diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+index d7aa913ceb8a..807a8f18ec20 100644
+--- a/drivers/usb/roles/class.c
++++ b/drivers/usb/roles/class.c
+@@ -11,6 +11,7 @@
+ #include <linux/usb/role.h>
+ #include <linux/property.h>
+ #include <linux/device.h>
++#include <linux/lockdep.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+@@ -33,6 +34,10 @@ struct usb_role_switch {
+ 	usb_role_switch_set_t set;
+ 	usb_role_switch_get_t get;
+ 	bool allow_userspace_control;
 +
-+# Now, add other parameters enabled in a similar way with GCC and Clang.
-+CFLAGS_KASAN += $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
-+		$(call cc-param,asan-stack=$(stack_enable)) \
-+		$(call cc-param,asan-instrument-allocas=1) \
-+		$(call cc-param,asan-globals=1)
++#ifdef CONFIG_LOCKDEP
++	struct lock_class_key key;
++#endif
+ };
  
- # Instrument memcpy/memset/memmove calls by using instrumented __asan_mem*()
- # instead. With compilers that don't support this option, compiler-inserted
-@@ -57,9 +56,9 @@ endif # CONFIG_KASAN_GENERIC
- ifdef CONFIG_KASAN_SW_TAGS
+ #define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
+@@ -396,6 +401,11 @@ usb_role_switch_register(struct device *parent,
  
- ifdef CONFIG_KASAN_INLINE
--    instrumentation_flags := $(call cc-param,hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET))
-+	instrumentation_flags := $(call cc-param,hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET))
- else
--    instrumentation_flags := $(call cc-param,hwasan-instrument-with-calls=1)
-+	instrumentation_flags := $(call cc-param,hwasan-instrument-with-calls=1)
- endif
+ 	sw->registered = true;
  
- CFLAGS_KASAN := -fsanitize=kernel-hwaddress \
-@@ -70,7 +69,7 @@ CFLAGS_KASAN := -fsanitize=kernel-hwaddress \
++#ifdef CONFIG_LOCKDEP
++	lockdep_register_key(&sw->key);
++	lockdep_set_class(&sw->lock, &sw->key);
++#endif
++
+ 	/* TODO: Symlinks for the host port and the device controller. */
  
- # Instrument memcpy/memset/memmove calls by using instrumented __hwasan_mem*().
- ifeq ($(call clang-min-version, 150000)$(call gcc-min-version, 130000),y)
--CFLAGS_KASAN += $(call cc-param,hwasan-kernel-mem-intrinsic-prefix=1)
-+	CFLAGS_KASAN += $(call cc-param,hwasan-kernel-mem-intrinsic-prefix=1)
- endif
- 
- endif # CONFIG_KASAN_SW_TAGS
+ 	return sw;
+@@ -412,6 +422,11 @@ void usb_role_switch_unregister(struct usb_role_switch *sw)
+ {
+ 	if (IS_ERR_OR_NULL(sw))
+ 		return;
++
++#ifdef CONFIG_LOCKDEP
++	lockdep_unregister_key(&sw->key);
++#endif
++
+ 	sw->registered = false;
+ 	if (dev_fwnode(&sw->dev))
+ 		component_del(&sw->dev, &connector_ops);
+
+base-commit: 38343be0bf9a7d7ef0d160da5f2db887a0e29b62
 -- 
-2.25.1
+2.46.0.76.ge559c4bf1a-goog
 
 
