@@ -1,162 +1,212 @@
-Return-Path: <linux-kernel+bounces-285276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44076950B94
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57205950B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A788B2222E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:42:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A78FAB21A91
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B70C1A2C36;
-	Tue, 13 Aug 2024 17:42:29 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668651A2C24;
+	Tue, 13 Aug 2024 17:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CLXep0O3"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A01A08C6
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0738418C3D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723570948; cv=none; b=Nb4m5oxvIWjXx8byNGYS0YXGTrrI3M7KS3sFUJRcsLWWOqu7/EgTkjJ21rtIo6WO0Xv0TJlet9uM8tRv4Et9/Ys/UNyrwwh5BSKZOOxMKaShJzdsAldX6dx8v6nG9AwBKEad7f7sjfvlDo35UxM/SIFISApk8VnkmQv+6i68geY=
+	t=1723571073; cv=none; b=sBwwB51rd3JCbfKJ9IJ4v/UUqjhiajEABy5O+mzqkOBAQ1aC0j/IEdLl6KSNTzQSTZ+DUf/zSZqt3OsJDQhV2qOR+3dnhokqOCr0UYYCmXS5W0UxFmiTnMbnjKnMKbdGjKOEFSj27to97nU+Alts2pKSI2OtBO3WVQPNLZQFKYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723570948; c=relaxed/simple;
-	bh=2d3VYw/1eOMTBjp7dH5IiNqY/jPTBNsR8t75kEEa7a4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cibDrOKkbSs0ZoL+yf/hq1LLu+OVbNrEgKxCHPJfUgIUZe47G0V1rUECqjATu5xHrLPfuSlKjYv7kZkhotT0tFE6It8TNPUWDpeYRRAyzvFA131R2LjaVfhIlxq+ucmSbDFgOhR+XKF33NRGv4l4U+NDrM+LmQ4v8YRUnxK/y9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f8c780fe7so704910539f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:42:26 -0700 (PDT)
+	s=arc-20240116; t=1723571073; c=relaxed/simple;
+	bh=pquwoTEVoqTwpDQUQ97BwgO1OmGvJXqKbpJUTk23478=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e3S6lCOb21th6IzZwhuXn/3kr61lRanYjwlWlf6XQzHGF/G6YhF7+hgOP/oIOoqqKE/mrW5cwxI1T1VMVM5nmmYZLrHy8noTZ7Rak0tHb6R7PT4tRlLElkIs7yVffkFknfhDy3WbDnBj6USkowxeRBccOkoj4r0G5sVJ83ftKcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CLXep0O3; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-492a01bce97so2030182137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723571071; x=1724175871; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v5qCJWinHPwix2emDITqwEdfIFGgfIhzXmjEyYRNeqw=;
+        b=CLXep0O3+GDOOTaafQYzZpXEvoiUl39IYUOLXhsnnhp1G2hjnrvKClw5tEAfNS7+MS
+         4DvHwIr9lx//HxzED0HfSmYVIQs+ThjXWSWPeKkGq7bh0ssqwlTDkNK2d7X+Ac/ri0Ja
+         K4C2uS3/TRNv4yodnh/D6XfOy1Oup1HyLm9ar1MbahbxCdZuIlXmVaLj2yl6ug4B50gV
+         OkpKo+Q1Tcno5YZDZByzmWj7rZuuOL+5v1mDGBrHMrSQBKQuG5YLwgVvr78o/2dYEYHs
+         WjFfuPpbNwF/9Nix4khKn8XV6BKcpXqdHXQhbGy3xlfzgU7T8OyVk33A2zjhyv8jgSwQ
+         W3Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723570946; x=1724175746;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ngDN4+t5W8gLgpUeHVUEQJgpMaZ70F1wn8Uciag940=;
-        b=CPF8RXEtmJ/yswJT3cO0ET2W6vdlAnk/PQ/CPuYr61c96QldSUrkvZBMZA45S+L7T0
-         GgrQ8RX6r0WK4yy8p/6LWcIEUdiH5bUHeYnAMoKPrxtXOxR4cf0DfvibTFkwqClVmerp
-         l2WTf+vGVAZxCJ3tSaiReG2Iy+VWC86Fjk/PuobJaL5o4irhP1xNJ8CgGbOZaRpjCQf5
-         SiCU36Zi00l6q/y2HuiZYGkkK5YVYD1/1WasGsbU1umffxtEuAChMOdjoZsbvhEnhcVr
-         UuR5cAJEHcbN/lzOP+YzJJa4SNRyIzf8n9bkg46VH7HsWISUp6G7n+mYS+kK7NLrwcd0
-         bgJw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6Xq1BMkdaglw0umILC0lc4UNNny3p0AgqbgrgKpPuRCN3dsuKC9tTH/7R3TSai3QGEdUofZtmJnLwLwS6sJFmrHNj2FzGMYgjEhGr
-X-Gm-Message-State: AOJu0YydB6577deuugmF+Ksrdw2KHvYdrkNpXMGyqqUWKNMx8GjlyEse
-	NZPcguAPo+G052gc8zr6jZ+sRzzZlRaI1/d4NfVQdb6y9ljj7fnuBkxv7gVfekZ29J82BJDPDGd
-	u8HwwzxYstTM8jWMpNqDq4m+zWzAKPQbpKMjg1pAahRw+Gm/aWJPB5s0=
-X-Google-Smtp-Source: AGHT+IHVguG5xXxvhqwOBEihCFi7Yu1nqF/zF7J/rU/bN58IdxkAm0gjS95Q4OqkFr87+2m8AyyFaxmYqbY6T3Cw2GeppG0WdhSv
+        d=1e100.net; s=20230601; t=1723571071; x=1724175871;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v5qCJWinHPwix2emDITqwEdfIFGgfIhzXmjEyYRNeqw=;
+        b=CiFsgQweNIpYn2BYvboHSOQQ2wFGMAZofMS12yWHYJmv2tZ+rDmOxXo/c6832iyWLv
+         bpdOAubdSEMOaleDGiPZ8xR8P/sC5TBJpgH24E2dF+ip4zNRTDSote56qHajOvF1jSSf
+         lEe9X7fpRyZJvxFrXdRU6kOKck7zHIQ64EoR227kXdThDrd1BDw1OOTnOH8kbSFlhPTg
+         TKqeq1MX2rvOcs0aC49dO370H3E5UmhNXNA5eB/i0aaX5dNTSIZznCjOqd2XwJBhFS4e
+         Wfl+qA9ZQXIzJS/hn8WoH6333Kw05VeIcLDlzkbzF3Bd5H6C/Jks84MgMXpFVHfO0lb3
+         75Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA3y9WhqaUvbb49uNRCvb/m7sBLX2fXfo2FzsoJ4iirlqM1dbcrsvC44z1LPGX2FpnNYiHwGDPGqZm8MbUgq+pkOHZayv7Ik8X2aQT
+X-Gm-Message-State: AOJu0Yz0i/lbCM1HM/L0zKQvAXmOfo7auqP76L2vnUTA1XLzroDLy+DB
+	wa/50q7FZQV7TGYdpRqRQQFVmJ+fDnvpQqA7fyZ3RC0dMVNRZCg+uGtVMNV8XJMSKjlVF/pWXGl
+	MQ3cuCPlmURwreAtP4j3+5cG7Cvofsm3TmI2G
+X-Google-Smtp-Source: AGHT+IFO+uGUU98DqHRAX6nV1kqLGhOV24S8OffXAIkCtdUG1oMVYNt/OYhdrmrpePlnjVGOsEczG5rFBBOpcfVBhKg=
+X-Received: by 2002:a05:6102:e0e:b0:492:9ef9:9d1b with SMTP id
+ ada2fe7eead31-497599d9241mr403418137.22.1723571070651; Tue, 13 Aug 2024
+ 10:44:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d05:b0:824:d6b8:8844 with SMTP id
- ca18e2360f4ac-824dadff815mr966239f.3.1723570945558; Tue, 13 Aug 2024 10:42:25
- -0700 (PDT)
-Date: Tue, 13 Aug 2024 10:42:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f4a1b7061f9421de@google.com>
-Subject: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (2)
-From: syzbot <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
-To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
-	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
+ <1998d479-eb1a-4bc8-a11e-59f8dd71aadb@amd.com> <CAOUHufYA-ZAHni1_aDQjjwB5UC9EFYPL_YqVN52DoL3J7SFziQ@mail.gmail.com>
+ <7a06a14e-44d5-450a-bd56-1c348c2951b6@amd.com> <CAOUHufa7OBtNHKMhfu8wOOE4f0w3b0_2KzzV7-hrc9rVL8e=iw@mail.gmail.com>
+ <0702c85c-abca-4a33-b91b-dadf68670364@gmail.com>
+In-Reply-To: <0702c85c-abca-4a33-b91b-dadf68670364@gmail.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Tue, 13 Aug 2024 11:43:52 -0600
+Message-ID: <CAOUHufYj1oHVy1OnqVMqsYbtMTqyCo-19ZH-UOiz46KDrp8m3w@mail.gmail.com>
+Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Bharata B Rao <bharata@amd.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	nikunj@amd.com, "Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, willy@infradead.org, 
+	vbabka@suse.cz, kinseyho@google.com, Mel Gorman <mgorman@suse.de>, leitao@debian.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Aug 13, 2024 at 5:04=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 09/07/2024 06:58, Yu Zhao wrote:
+> > On Mon, Jul 8, 2024 at 10:31=E2=80=AFPM Bharata B Rao <bharata@amd.com>=
+ wrote:
+> >>
+> >> On 08-Jul-24 9:47 PM, Yu Zhao wrote:
+> >>> On Mon, Jul 8, 2024 at 8:34=E2=80=AFAM Bharata B Rao <bharata@amd.com=
+> wrote:
+> >>>>
+> >>>> Hi Yu Zhao,
+> >>>>
+> >>>> Thanks for your patches. See below...
+> >>>>
+> >>>> On 07-Jul-24 4:12 AM, Yu Zhao wrote:
+> >>>>> Hi Bharata,
+> >>>>>
+> >>>>> On Wed, Jul 3, 2024 at 9:11=E2=80=AFAM Bharata B Rao <bharata@amd.c=
+om> wrote:
+> >>>>>>
+> >>>> <snip>
+> >>>>>>
+> >>>>>> Some experiments tried
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>> 1) When MGLRU was enabled many soft lockups were observed, no hard
+> >>>>>> lockups were seen for 48 hours run. Below is once such soft lockup=
+.
+> >>>>>
+> >>>>> This is not really an MGLRU issue -- can you please try one of the
+> >>>>> attached patches? It (truncate.patch) should help with or without
+> >>>>> MGLRU.
+> >>>>
+> >>>> With truncate.patch and default LRU scheme, a few hard lockups are s=
+een.
+> >>>
+> >>> Thanks.
+> >>>
+> >>> In your original report, you said:
+> >>>
+> >>>    Most of the times the two contended locks are lruvec and
+> >>>    inode->i_lock spinlocks.
+> >>>    ...
+> >>>    Often times, the perf output at the time of the problem shows
+> >>>    heavy contention on lruvec spin lock. Similar contention is
+> >>>    also observed with inode i_lock (in clear_shadow_entry path)
+> >>>
+> >>> Based on this new report, does it mean the i_lock is not as contended=
+,
+> >>> for the same path (truncation) you tested? If so, I'll post
+> >>> truncate.patch and add reported-by and tested-by you, unless you have
+> >>> objections.
+> >>
+> >> truncate.patch has been tested on two systems with default LRU scheme
+> >> and the lockup due to inode->i_lock hasn't been seen yet after 24 hour=
+s run.
+> >
+> > Thanks.
+> >
+> >>>
+> >>> The two paths below were contended on the LRU lock, but they already
+> >>> batch their operations. So I don't know what else we can do surgicall=
+y
+> >>> to improve them.
+> >>
+> >> What has been seen with this workload is that the lruvec spinlock is
+> >> held for a long time from shrink_[active/inactive]_list path. In this
+> >> path, there is a case in isolate_lru_folios() where scanning of LRU
+> >> lists can become unbounded. To isolate a page from ZONE_DMA, sometimes
+> >> scanning/skipping of more than 150 million folios were seen. There is
+> >> already a comment in there which explains why nr_skipped shouldn't be
+> >> counted, but is there any possibility of re-looking at this condition?
+> >
+> > For this specific case, probably this can help:
+> >
+> > @@ -1659,8 +1659,15 @@ static unsigned long
+> > isolate_lru_folios(unsigned long nr_to_scan,
+> >                 if (folio_zonenum(folio) > sc->reclaim_idx ||
+> >                                 skip_cma(folio, sc)) {
+> >                         nr_skipped[folio_zonenum(folio)] +=3D nr_pages;
+> > -                       move_to =3D &folios_skipped;
+> > -                       goto move;
+> > +                       list_move(&folio->lru, &folios_skipped);
+> > +                       if (spin_is_contended(&lruvec->lru_lock)) {
+> > +                               if (!list_empty(dst))
+> > +                                       break;
+> > +                               spin_unlock_irq(&lruvec->lru_lock);
+> > +                               cond_resched();
+> > +                               spin_lock_irq(&lruvec->lru_lock);
+> > +                       }
+> > +                       continue;
 
-syzbot found the following issue on:
+Nitpick:
 
-HEAD commit:    ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of git://git.kernel...
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=13da25d3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
-dashboard link: https://syzkaller.appspot.com/bug?extid=e0bd4e4815a910c0daa8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+if () {
+  ...
+  if (!spin_is_contended(&lruvec->lru_lock))
+    continue;
 
-Unfortunately, I don't have any reproducer for this issue yet.
+  if (!list_empty(dst))
+    break;
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9227adf96f75/disk-ee9a43b7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c65c46b78c57/vmlinux-ee9a43b7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/467d374f18b9/bzImage-ee9a43b7.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com
-
-RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 8054 at net/ieee802154/core.c:258 cfg802154_switch_netns+0x37f/0x390 net/ieee802154/core.c:258
-Modules linked in:
-CPU: 1 UID: 0 PID: 8054 Comm: syz.0.839 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:cfg802154_switch_netns+0x37f/0x390 net/ieee802154/core.c:258
-Code: a3 2b f6 90 0f 0b 90 43 80 3c 3e 00 75 8d eb 93 e8 c6 a3 2b f6 e9 8b fe ff ff e8 bc a3 2b f6 e9 81 fe ff ff e8 b2 a3 2b f6 90 <0f> 0b 90 e9 73 fe ff ff 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90
-RSP: 0018:ffffc9000337f408 EFLAGS: 00010293
-RAX: ffffffff8b67d3ce RBX: 00000000fffffff4 RCX: ffff8880215f3c00
-RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
-RBP: ffff88802324e198 R08: ffffffff8b67d23d R09: 1ffff11004649c3a
-R10: dffffc0000000000 R11: ffffed1004649c3b R12: 0000000000000000
-R13: 0000000000000000 R14: ffff88802324e078 R15: dffffc0000000000
-FS:  00007f2c789956c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff818548d58 CR3: 000000007f648000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
- ___sys_sendmsg net/socket.c:2651 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2c77b779f9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2c78995038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f2c77d05f80 RCX: 00007f2c77b779f9
-RDX: 0000000000000000 RSI: 0000000020000200 RDI: 000000000000000e
-RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
- </TASK>
+  spin_unlock_irq(&lruvec->lru_lock);
+  cond_resched();
+  spin_lock_irq(&lruvec->lru_lock);
+}
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Hi Yu,
+>
+> We are seeing lockups and high memory pressure in Meta production due to =
+this lock contention as well. My colleague highlighted it in https://lore.k=
+ernel.org/all/ZrssOrcJIDy8hacI@gmail.com/ and was pointed to this fix.
+>
+> We removed skip_cma check as a temporary measure, but this is a proper fi=
+x. I might have missed it but didn't see this as a patch on the mailing lis=
+t. Just wanted to check if you were planning to send it as a patch? Happy t=
+o send it on your behalf as well.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Please. Thank you.
 
