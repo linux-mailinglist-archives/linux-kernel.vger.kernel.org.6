@@ -1,284 +1,183 @@
-Return-Path: <linux-kernel+bounces-284054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A83794FC76
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A17D94FC70
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12902283474
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:54:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978761C223B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47060225A8;
-	Tue, 13 Aug 2024 03:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7953E1CD1F;
+	Tue, 13 Aug 2024 03:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="F/sw05CG"
-Received: from mail-m127174.xmail.ntesmail.com (mail-m127174.xmail.ntesmail.com [115.236.127.174])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YBpfGkiJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6144619470;
-	Tue, 13 Aug 2024 03:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A1618EAB
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723521236; cv=none; b=jffLW6ZZTDka/a1o4e48jj5zH9QjrOxxCATPj1xupjbSj1/P0j5uN5F/wj49GZ55AcTUWdKJGrbqxP/2d92lDnoShlphpLF2Kn0HNI1rK5LN2uprDFtIY7An3kO8FbvjNJOT8mNihGgVqnaLbtcgHgBST+KgW+8ONnDdcUNwu3E=
+	t=1723521231; cv=none; b=ON5NrZ+D0nqzvNUqZG9qwE/1e6QhZjLfSApjxTDbrcEOKHzsFYfWz4HoD7BgbLb9dW1zr5tFSHfGcYJJHBBn5bSxtPFlqrvfQcBeSAC3XEXkCmCaPkH9ufXb89aB7qy8MAnfXJOu1HHX5hB0t3zAuEaueFPLAOR9OPVTLL9uceA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723521236; c=relaxed/simple;
-	bh=Ytc72JkFDjs88ZEnCsYhEG87oAU/LtotvAWBMk/c2Zc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=L2xFGaKoTY54DXtLXgpUn7xAoJS4psp+LR7uvYKWC8jHHTBj63X9/ID+n7yZE6iiUfVnumo8q7T0G54ZiWOGgseBQzAqdJSeOBUmLnUFS8jfYcv/kGbSA+MUdhf33y3VJb8GSq+MQQlauSgclifPGoWQGTWv1Qgeyt1BWSzxEC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=F/sw05CG; arc=none smtp.client-ip=115.236.127.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=F/sw05CGbBqjYyN8QXb/N+3CtICJH/2jd7Tqjn6RlzzC2k+MLGbkGOK6HEEXKCgu6c/k698lDznTE3oGQFVwjUwMbcNp0IKFMZq9gfbyPTdm36Qwxrk+IJnc1IdbhSR0V7W0rIlKhwTpDv5Lu0uTHQgDGR8Tm6H8NIEyLPbME5Q=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=lSpIWy5SrkQpqtUiLjei0gYEY0FrtYcWevfcfIyZkOw=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.45] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 138B54603C4;
-	Tue, 13 Aug 2024 11:52:29 +0800 (CST)
-Message-ID: <b91b18fa-7af0-46c0-a3f7-550676b7a222@rock-chips.com>
-Date: Tue, 13 Aug 2024 11:52:28 +0800
+	s=arc-20240116; t=1723521231; c=relaxed/simple;
+	bh=1/YYj/FIhKGs1dZdd4D2WEQIg8dqO3w+5kVK4bkLaSI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G++a7lUTm/NctDkQLT6eIjU9BitW40i0ofoSx2r892gRAyVHwAQD9mpcBPgxFNGKuoeIUd93b6Gec6Qj0ro449I928BWPhmyRYDYcyD/sKOQtEpplUWiU1HRUbmMyxPTLFKOXMfn3cBcaUIpXMZSFdpmRHhFoDCHkzjaiQz/TGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YBpfGkiJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723521229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8QOhbN+G2UI84CLxR8GtKPdibAYSavfIJXJ0B5CLThc=;
+	b=YBpfGkiJMLB+ionLWuI/41i/3DL3jl6MPkosoTGuv7HuUv1H05SLHiEBJPVokFFsTS4ePf
+	T0/aWBoE6KcQxxFyNVbCKAjAvv1ccfTOc8T22cNyKwhtp+STxKDic9InpUub0toXJDPChI
+	N5IGaqAOLwwZwTwq47Ec18ahlqkSZjc=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-524-9Ij-yEBbNFGUsVjXXIEN1A-1; Mon, 12 Aug 2024 23:53:46 -0400
+X-MC-Unique: 9Ij-yEBbNFGUsVjXXIEN1A-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c96e73c886so4875560a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:53:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723521225; x=1724126025;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8QOhbN+G2UI84CLxR8GtKPdibAYSavfIJXJ0B5CLThc=;
+        b=lrIURImxIInIX2Myn6LZrOVl143N4C0wKAhWt6SejaUXT7xSxWFlagxrLb6QfTr+AC
+         cIalYbLCMuzOPiDc9iyKqA7NICuyOOhZeZIGXppDKtOyCsKQILiKiASS1wlKZfBcCOi9
+         vfNR8zM4NN+trOPbaUULE8RBSOvGnEueD5gecRHeon1G52UcNRg0N2S9oTprxndLUR/F
+         1MNXM55WdptC+h0ubLH+U0BDN0wIw4/7W4iMevQNcwvRgWtorYnj7I97KB2rgtn1Y+xg
+         vILDSQXtZLPmSZ9AFNZtT/O8GQo7AidRBtwLaa2qxaq2RjHDRepeXqgOVq9HMJV+AoSN
+         uJiw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1pSEewjczoMrc/V4lmZGP+9WfCq6XnmVwweTOOgmXkAtcsiB3jbzvfH8DEg25nhQTY0Snzo1tP349TnmCo31hlI8ra9EX0GMkQkdE
+X-Gm-Message-State: AOJu0Yx0tGWr9WbWZaj4xxYbKA6WgHOV7ppm0hIWRhZhS5Wot+PrwAES
+	AxYqNlpizEAkSLaEdgZGreOV+Aosjca7wG2lw6bxUotkA8RhWEDPYuCth/sEQcWDiIwMCQbYrBy
+	NCC4k58czlopZgw08U3D1g+cZw3cVU67QYlwdI+12GY4zHt5Eq2f/A6CT1rMAISbDH6ZLouIXVe
+	WQyHl4aBINmTaQgyn4TGL3tdqJabuOSPHWAfp0
+X-Received: by 2002:a17:90b:230b:b0:2c9:69cc:3a6a with SMTP id 98e67ed59e1d1-2d3924d6069mr2555088a91.3.1723521225438;
+        Mon, 12 Aug 2024 20:53:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFJc3jsUUMplnLTRxbhe3p0rkwFDORq22WEdzxWm12Cd7QkQG/w4r8SCFfuIABlC3bvzqsUOBo/unBIpoolXI=
+X-Received: by 2002:a17:90b:230b:b0:2c9:69cc:3a6a with SMTP id
+ 98e67ed59e1d1-2d3924d6069mr2555073a91.3.1723521224879; Mon, 12 Aug 2024
+ 20:53:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
- Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
-To: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
-References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
- <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
- <20240809062813.GC2826@thinkpad>
- <421d48b7-4aa7-4202-8b5f-9c60916f6ef6@rock-chips.com>
- <20240810092817.GA147655@thinkpad>
- <3b2617f5-acb1-45c6-993c-33249fd19888@rock-chips.com>
- <20240812041051.GA2861@thinkpad>
- <49659932-5caf-433b-a140-664b61617c43@rock-chips.com>
- <20240812165504.GB6003@thinkpad>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20240812165504.GB6003@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRgYTlZPTUxMTR9JTB1DTkhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9149ddad1403aekunm138b54603c4
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mhg6FTo*TjI*KUsXQxlNMTc1
-	CUsaCjlVSlVKTElITklKSk5LTE9MVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpLT09PNwY+
+References: <CAF=yD-JVs3h1PUqHaJAOFGXQQz-c36v_tP4vOiHpfeRhKh-UpA@mail.gmail.com>
+ <9C79659E-2CB1-4959-B35C-9D397DF6F399@soulik.info> <66b62df442a85_3bec1229461@willemb.c.googlers.com.notmuch>
+ <CACGkMEsw-B5b-Kkx=wfW=obMuj-Si3GPyr_efSeCoZj+FozWmA@mail.gmail.com> <66ba421ee77f4_48f70294e@willemb.c.googlers.com.notmuch>
+In-Reply-To: <66ba421ee77f4_48f70294e@willemb.c.googlers.com.notmuch>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 13 Aug 2024 11:53:32 +0800
+Message-ID: <CACGkMEt0QF0vnyCM5H8LDywG+gnrq_sf7O8+uYr=_Ko8ncUh3g@mail.gmail.com>
+Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue index
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: ayaka <ayaka@soulik.info>, netdev@vger.kernel.org, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mani,
+On Tue, Aug 13, 2024 at 1:11=E2=80=AFAM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> Jason Wang wrote:
+> > On Fri, Aug 9, 2024 at 10:55=E2=80=AFPM Willem de Bruijn
+> > <willemdebruijn.kernel@gmail.com> wrote:
+> > >
+> > > ayaka wrote:
+> > > >
+> > > > Sent from my iPad
+> > >
+> > > Try to avoid ^^^
+> > >
+> >
+> > [...]
+> >
+> > > > 2. Does such a hash operation happen to every packet passing throug=
+h?
+> > >
+> > > For packets with a local socket, the computation is cached in the
+> > > socket.
+> > >
+> > > For these tunnel packets, see tun_automq_select_queue. Specifically,
+> > > the call to __skb_get_hash_symmetric.
+> > >
+> > > I'm actually not entirely sure why tun has this, rather than defer
+> > > to netdev_pick_tx, which call skb_tx_hash.
+> >
+> > Not sure I get the question, but it needs to use a consistent hash to
+> > match the flows stored before.
+>
+> This is a bit tangential to Randy's original thread, but I would like
+> to understand this part a bit better, if you don't mind.
 
-在 2024/8/13 0:55, Manivannan Sadhasivam 写道:
-> On Mon, Aug 12, 2024 at 02:24:31PM +0800, Shawn Lin wrote:
->> 在 2024/8/12 12:10, Manivannan Sadhasivam 写道:
->>> On Mon, Aug 12, 2024 at 09:28:26AM +0800, Shawn Lin wrote:
->>>> JHi Mani,
->>>>
->>>> 在 2024/8/10 17:28, Manivannan Sadhasivam 写道:
->>>>> On Fri, Aug 09, 2024 at 04:16:41PM +0800, Shawn Lin wrote:
->>>>>
->>>>> [...]
->>>>>
->>>>>>>> +static int ufs_rockchip_hce_enable_notify(struct ufs_hba *hba,
->>>>>>>> +					 enum ufs_notify_change_status status)
->>>>>>>> +{
->>>>>>>> +	int err = 0;
->>>>>>>> +
->>>>>>>> +	if (status == PRE_CHANGE) {
->>>>>>>> +		int retry_outer = 3;
->>>>>>>> +		int retry_inner;
->>>>>>>> +start:
->>>>>>>> +		if (ufshcd_is_hba_active(hba))
->>>>>>>> +			/* change controller state to "reset state" */
->>>>>>>> +			ufshcd_hba_stop(hba);
->>>>>>>> +
->>>>>>>> +		/* UniPro link is disabled at this point */
->>>>>>>> +		ufshcd_set_link_off(hba);
->>>>>>>> +
->>>>>>>> +		/* start controller initialization sequence */
->>>>>>>> +		ufshcd_writel(hba, CONTROLLER_ENABLE, REG_CONTROLLER_ENABLE);
->>>>>>>> +
->>>>>>>> +		usleep_range(100, 200);
->>>>>>>> +
->>>>>>>> +		/* wait for the host controller to complete initialization */
->>>>>>>> +		retry_inner = 50;
->>>>>>>> +		while (!ufshcd_is_hba_active(hba)) {
->>>>>>>> +			if (retry_inner) {
->>>>>>>> +				retry_inner--;
->>>>>>>> +			} else {
->>>>>>>> +				dev_err(hba->dev,
->>>>>>>> +					"Controller enable failed\n");
->>>>>>>> +				if (retry_outer) {
->>>>>>>> +					retry_outer--;
->>>>>>>> +					goto start;
->>>>>>>> +				}
->>>>>>>> +				return -EIO;
->>>>>>>> +			}
->>>>>>>> +			usleep_range(1000, 1100);
->>>>>>>> +		}
->>>>>>>
->>>>>>> You just duplicated ufshcd_hba_execute_hce() here. Why? This doesn't make sense.
->>>>>>
->>>>>> Since we set UFSHCI_QUIRK_BROKEN_HCE, and we also need to do someting
->>>>>> which is very similar to ufshcd_hba_execute_hce(), before calling
->>>>>> ufshcd_dme_reset(). Similar but not totally the same. I'll try to see if
->>>>>> we can export ufshcd_hba_execute_hce() to make full use of it.
->>>>>>
->>>>>
->>>>> But you are starting the controller using REG_CONTROLLER_ENABLE. Isn't that
->>>>> supposed to be broken if you set UFSHCI_QUIRK_BROKEN_HCE? Or I am
->>>>> misunderstanding the quirk?
->>>>>
->>>>
->>>> Our controller doesn't work with exiting code, whether setting
->>>> UFSHCI_QUIRK_BROKEN_HCE or not.
->>>>
->>>
->>> Okay. Then this means you do not need this quirk at all.
->>>
->>>>
->>>> For UFSHCI_QUIRK_BROKEN_HCE case, it calls ufshcd_dme_reset（）first,
->>>> but we need to set REG_CONTROLLER_ENABLE first.
->>>>
->>>> For !UFSHCI_QUIRK_BROKEN_HCE case, namly ufshcd_hba_execute_hce, it
->>>> sets REG_CONTROLLER_ENABLE  first but never send DMA_RESET and calls
->>>> ufshcd_dme_enable.
->>>>
->>>
->>> I don't see where ufshcd_dme_enable() is getting called for
->>> !UFSHCI_QUIRK_BROKEN_HCE case.
->>>
->>>> So the closet code path is to go through UFSHCI_QUIRK_BROKEN_HCE case,
->>>> and set REG_CONTROLLER_ENABLE by adding hce_enable_notify hook.
->>>>
->>>
->>> No, that is abusing the quirk. But I'm confused about why your controller wants
->>> resetting the unipro stack _after_ enabling the controller? Why can't it be
->>> reset before?
->>>
->>
->> It can't be. The DME_RESET to reset the unipro stack will be failed
->> without enabling REG_CONTROLLER_ENABLE. And the controller does want us
->> to reset the unipro stack before other coming UICs.
->>
->> So I considered it's a kind of broken HCE case as well. Should I add a
->> new quirk or add a new hba_enable hook in ufs_hba_variant_ops? Or just
->> use UFSHCI_QUIRK_BROKEN_HCE ?
->>
-> 
-> IMO, you should add a new quirk and use it directly in ufshcd_hba_execute_hce().
-> But you need to pick the quirk name as per the actual quirky behavior of the
-> controller.
-> 
+Comments are more than welcomed. The code is written more than 10
+years, it should have something that can be improved.
 
-Thanks, Main. I'll add a new quirk for
-ufshcd_hba_execute_hce() as per the actual quirky behavour.
+>
+> Tun automq calls __skb_get_hash_symmetric instead of the
+> non-symmetrical skb_get_hash of netdev_pick_tx. That makes sense.
+>
+> Also, netdev_pick_tx tries other things first, like XPS.
 
->>>>>>>
->>>>>>>> +	} else { /* POST_CHANGE */
->>>>>>>> +		err = ufshcd_vops_phy_initialization(hba);
->>>>>>>> +	}
->>>>>>>> +
->>>>>>>> +	return err;
->>>>>>>> +}
->>>>>>>> +
->>>
->>> [...]
->>>
->>>>>>>> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
->>>>>>>> +	SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_suspend, ufs_rockchip_resume)
->>>>>>>> +	SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
->>>>>>>
->>>>>>> Why can't you use ufshcd PM ops as like other vendor drivers?
->>>>>>
->>>>>> It doesn't work from the test. We have many use case to power down the
->>>>>> controller and device, so there is no flow to recovery the link. Only
->>>>>> when the first accessing to UFS fails, the ufshcd error handle recovery the
->>>>>> link. This is not what we expect.
->>>>>>
->>>>>
->>>>> What tests? The existing UFS controller drivers are used in production devices
->>>>> and they never had a usecase to invent their own PM callbacks. So if your
->>>>> controller is special, then you need to justify it more elaborately. If
->>>>> something is missing in ufshcd callbacks, then we can add them.
->>>>>
->>>>
->>>> All the register got lost each time as we power down both controller & PHY
->>>> and devices in suspend.
->>>
->>> Which suspend? runtime or system suspend? I believe system suspend.
->>
->> Both.
->>
-> 
-> With {rpm/spm}_lvl = 3, you should not power down the controller.
-> 
->>>
->>>> So we have to restore the necessary
->>>> registers and link. I didn't see where the code recovery the controller
->>>> settings in ufshcd_resume, except ufshcd_err_handler（）triggers that.
->>>> Am I missing any thing?
->>>
->>> Can you explain what is causing the powerdown of the controller and PHY?
->>> Because, ufshcd_suspend() just turns off the clocks and regulators (if
->>> UFSHCD_CAP_AGGR_POWER_COLLAPSE is set) and spm_lvl 3 set by this driver only
->>> puts the device in sleep mode and link in hibern8 state.
->>>
->>
->> For runtime PM case, it's the power-domain driver will power down the
->> controller and PHY if UFS stack is not active any more（autosuspend）.
->>
->> For system PM case, it's the SoC's firmware to cutting of all the power
->> for controller/PHY and device.
->>
-> 
-> Both cases are not matching the expectations of {rpm/spm}_lvl. So the platform
-> (power domain or the firmware) should be fixed. What if the user sets the
-> {rpm/spm}_lvl to 1? Will the platform power down the controller even then? If
-> so, then I'd say that the platform is broken and should be fixed.
+Right, using XPS may conflict with the user expected behaviour (e.g
+the automatic steering has been documented in the virtio spec, though
+it's best effort somehow).
 
-Ok, it seems I need to set {rpm/spm}_lvl = 6 if I want platform to power
-down the controller for ultra power-saving. But I still need to add my
-own system PM callback in that case to recovery the link first. Do I
-misunderstand it?
+>
+> Why does automq have to be stateful, keeping a table. Rather than
+> always computing symmetrical_hash % reciprocal_scale(txq, numqueues)
+> directly, as is does when the flow is not found?
+>
+> Just curious, thanks.
 
-And for the user who sets the rpm/spm level via
-ufs_sysfs_pm_lvl_store(), I think there is no way to block it currently,
-except that we need to fix the power-domain driver and Firmware to
-respect the level and choose correct policy.
+You are right, I think we can avoid the hash calculation and depend on
+the fallback in netdev_pick_tx().
 
+Have put this in my backlog.
 
-So in summary for what the next step I should to:
-(1) Set {rpm/spm}_lvl = 6 in host driver to reflect the expectation
-(2) Add own PM callbacks to recovery the link to meet the expectation
-(3) Fix the broken behaviour of PD or Firmware to respect the actual
-desired pm level if user changes the pm level.
+Thanks
 
+>
+> > >
+> > > > 3. Is rxhash based on the flow tracking record in the tun driver?
+> > > > Those CPU overhead may demolish the benefit of the multiple queues =
+and filters in the kernel solution.
+> > >
+> > > Keyword is "may". Avoid premature optimization in favor of data.
+> > >
+> > > > Also the flow tracking has a limited to 4096 or 1024, for a IPv4 /2=
+4 subnet, if everyone opened 16 websites, are we run out of memory before s=
+ome entries expired?
+> > > >
+> > > > I want to  seek there is a modern way to implement VPN in Linux aft=
+er so many features has been introduced to Linux. So far, I don=E2=80=99t f=
+ind a proper way to make any advantage here than other platforms.
+> >
+> > I think I need to understand how we could define "modern" here.
+> >
+> > Btw, I vaguely remember there are some new vpn projects that try to
+> > use vhost-net to accelerate.
+> >
+> > E.g https://gitlab.com/openconnect/openconnect
+> >
+> > Thanks
+> >
+>
+>
 
-Does that sound feasible to you?
-
-
-Thanks.
-
-> 
-> - Mani
-> 
 
