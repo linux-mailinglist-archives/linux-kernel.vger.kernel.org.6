@@ -1,168 +1,84 @@
-Return-Path: <linux-kernel+bounces-283984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5ECF94FB82
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 666DD94FB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D42C2828EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FF5282A79
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C06617999;
-	Tue, 13 Aug 2024 01:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19494111AA;
+	Tue, 13 Aug 2024 01:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdO6MD7k"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C384E12E48;
-	Tue, 13 Aug 2024 01:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Kpyd8M2X"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F8412E48;
+	Tue, 13 Aug 2024 01:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723514187; cv=none; b=a/L54NEqzJOyoj3bBd3Wvg6v2y8H4UhZsC0zs2ga4m/WnFCpRcGCpHbvSRf+ItzAzvhi2V7bM1ScYCMeYbXriBJJ82PfKCzQu9YOsXhqqt/0qmguN/BhtRluXU7hMDnpZJ+skNpoQm7qkl/3tHw8/vot2rgHExif2bEjY/11IP4=
+	t=1723514328; cv=none; b=BSOywG8wCfRzm3nkZwoYjIgy4/xE23OnMyc+Qj0KdedyviH1BUpf6BJxu8xNQGFeEUprdL+tyv2rfT7L7T0re96pJTgOHSGi5BQhsUSGq8HAHmPfxvWwumMgSsnYPTx+fkO4s3fksHjOcvrpXe+U2ADf43xIULmPgQA+hUPlEQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723514187; c=relaxed/simple;
-	bh=A1BZFBBLYKZGwF1UkEhTm3eGr7foQgEE57xJWjji4FQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tuc0vOn7iGME8n/Ov6kZIiUC5r0fKRRAO8vUGsImGlfsY3pG+OIe1wmxJibT8cAIhPRJ0exf5K+k8EMwhWsqYj6z3u8jYvXgEZMEgPZBo/oD5s93vNaWEJzWGdjderjkTfFBoP7M9fW4LYE0lUyau5rPOiNFKLbIMCGlZ/MWS04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdO6MD7k; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so34347105e9.2;
-        Mon, 12 Aug 2024 18:56:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723514183; x=1724118983; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GSibsKkWXPTZsPGOBJp3Fcm/0om9Gy4boGmfKowM9D4=;
-        b=GdO6MD7kd8vNcfAiiXNd6PbbK0pzlzNycsQl7AFtLPBwUAo+kDgDTEz7+OcBI8+wvl
-         BHUO8wnDv5Czk2c+Ccm5xjS+vJiNCbvTxrlyinG+j69sSLhEF7eyYczcKMxty1AbpNtQ
-         vETrRT6vRd+lcvGFZvqlPM7xUfe4Z7BQLEXrKDGibdLWi9NBEyu6qDTSmO8qV9snh/2P
-         WHDWqQRhJUu1flx61KYIjTRKCtG1uNrkNWYj0pQrGg/rFv/O05JlVhHIytP/7qtw+Kpr
-         NNLOZkja+eU7nPvqPHszR7BbVWsLqPfqY/+faS77e/zRjMleEypl5rAlBf/86Vg36i4Q
-         LHFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723514183; x=1724118983;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GSibsKkWXPTZsPGOBJp3Fcm/0om9Gy4boGmfKowM9D4=;
-        b=pAQ/IH96KlljCXX1jiv1unIoaLETuiGgURpzgBOjFcDZ6kgeDH+HVXChDyslrjbfcU
-         9gaCE6ACil+5voBPsQiYzdoHL/e6KGVoqTU6yidrQPCNv4A2ahdJZmHaznqRiiZ32l9o
-         ECX/8lQ+3XuzhVsylwjjnZfiR2oVb4ZxzqmAJkyWRzGfEn0KWMgqdTyM+FdaGhxk1Izt
-         LLPVv/patMwqjYN/oAP1/i3m/P++dI4HEsaVAsC87RHT22fACkXSqOEZFgXN3nTnlYqz
-         6vQONvLLxWzkA1uD+BK2cdQ8LLbLjQmiircb/m6jzlIiqAX+06RIkawmeLZexSWVO938
-         LNLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsrK7Z45ongMkYy84YAWTKOqkpqHiP8kHnoRJdaCU0rm3W1m6rIskCPbE3aD036nVYCqqd1LWtaPIVSJqeydLf7QyVGrdcchCcojHdgBERwxmvEgxcuiYoikRuZW4G8T3uCdtSVSD3HXzekviMXcV1pLPXLgJJVoCBOapkQ1Pj+q5vVDytiBuQdHhZ5s8TNyk2Rv+YSyV83Z476aLLc1XEwlFGIfLQ1ErFMYKb9e3MaPoXrw0rckAVGyi/iJ4/4E/Xy39beLGqxZYHsuKnKkuAXoJT+SDwhkVHN/PoxcvQLw4Kkwk6LlvyDJC+D0MyVSpQX6Fm7c78t3aqmOKMDOSFUj1QPioEoedjgdHKgmk6nujLD41V5dp96BrCA/RzQNpYCacB2CiU+pLPnX8pmvNIJGoaY9GIvDJmkc7+4DDzuUyGGR7wWp+VTtbirSWhDV9Lfd/Wv16MIGWX3fgvCcodYz3OMulikpuQKdew7li8Eg69ppSCjCtqQblDkuukGCAwlWQHeQ==
-X-Gm-Message-State: AOJu0YxU9zwCsA6ASu3EM+MiOrQb1b4y0t4kiGUlPRzGs5R9vUfON3D1
-	7UwzrFVydIydVKOpWrItBq3026aPU9OVqBMYdHCEfFN2ElC+z2Rd
-X-Google-Smtp-Source: AGHT+IG2cxhEUGEjchcaIrhqVTsKQUiFNfY0aoBbKWG/+9xydhrcFsfo82Q+iGvABQKDqUAFqalXDg==
-X-Received: by 2002:a05:600c:4fc5:b0:426:5dca:50a with SMTP id 5b1f17b1804b1-429d481da7bmr14330075e9.21.1723514182757;
-        Mon, 12 Aug 2024 18:56:22 -0700 (PDT)
-Received: from [192.168.42.116] ([85.255.232.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7618b9sm209629205e9.30.2024.08.12.18.56.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 18:56:22 -0700 (PDT)
-Message-ID: <23be8495-53d1-469a-bd9d-4dc2295be71f@gmail.com>
-Date: Tue, 13 Aug 2024 02:56:50 +0100
+	s=arc-20240116; t=1723514328; c=relaxed/simple;
+	bh=36vVZraJBv9gkEdNzrEeazN0O9x6UDRACR9GQX75zv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPgPJLMupTLLZVRieJWJTLahqmG4VzPEolMZyswqEq0SYVvoZO2LjbhLk0n+x7iioIQunE1Q/EYiq01mBgMmFNTSjR6/ALcI3T5QwlB3d7UVOoT7bptmXUglRYpd5WNhuX9AEsLrr8u6VAZAfxXdwi9//lmoHGa3TVtKsT7S7vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Kpyd8M2X; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=Ew3Ua+pMM1tFjdaKMlL3jL5qyg1tUq79MqPYQMcNt68=;
+	b=Kpyd8M2X+5wkxs2Nwahmt+3E/gx3M5Kovz3WbkFVFiq3E8CUFimxtgaAQxWzMA
+	6NPWUt+Da/2oelPnn53o1XQj90QeSlAFTDx7g6UnrbxDP2TZKA+1COqS+d1ZXIug
+	IFDVt4yIA1zRWXvev2zsskFTXcn+FWkcWK3TQVDWV913Y=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXnpCtvbpmtmReAg--.37761S3;
+	Tue, 13 Aug 2024 09:58:06 +0800 (CST)
+Date: Tue, 13 Aug 2024 09:58:04 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	linux@ew.tq-group.com, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/14] arm64: dts: freescale: imx93-tqma9352-mba93xxla:
+ fix typo
+Message-ID: <Zrq9rHkWFjhNxyK3@dragon>
+References: <20240724125901.1391698-1-alexander.stein@ew.tq-group.com>
+ <20240724125901.1391698-6-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem memory
- provider
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>,
- David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>,
- Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20240805212536.2172174-1-almasrymina@google.com>
- <20240805212536.2172174-8-almasrymina@google.com>
- <20240806135924.5bb65ec7@kernel.org>
- <CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
- <20240808192410.37a49724@kernel.org>
- <CAHS8izMH4UhD+UDYqMjt9d=gu-wpGPQBLyewzVrCWRyoVtQcgA@mail.gmail.com>
- <fc6a8f0a-cdb4-4705-a08f-7033ef15213e@gmail.com>
- <20240809205236.77c959b0@kernel.org>
- <CAHS8izOXwZS-8sfvn3DuT1XWhjc--7-ZLjr8rMn1XHr5F+ckbA@mail.gmail.com>
- <48f3a61f-9e04-4755-b50c-8fae6e6112eb@gmail.com>
- <20240812105732.5d2845e4@kernel.org>
- <7e2ffe62-032a-4c5e-953b-b7117ab076be@gmail.com>
- <71260e3c-dee4-4bf0-b257-cdabd8cff3f1@gmail.com>
- <20240812171548.509ca539@kernel.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240812171548.509ca539@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724125901.1391698-6-alexander.stein@ew.tq-group.com>
+X-CM-TRANSID:Ms8vCgDXnpCtvbpmtmReAg--.37761S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4IJmUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgU6ZWa6XkbfswAAsg
 
-On 8/13/24 01:15, Jakub Kicinski wrote:
-> On Mon, 12 Aug 2024 20:04:41 +0100 Pavel Begunkov wrote:
->>>> Also don't see the upside of the explicit "non-capable" flag,
->>>> but I haven't thought of that. Is there any use?
->>
->> Or maybe I don't get what you're asking, I explained
->> why to have that "PP_IGNORE_PROVIDERS" on top of the flag
->> saying that it's supported.
->>
->> Which "non-capable" flag you have in mind? A page pool create
->> flag or one facing upper layers like devmem tcp?
+On Wed, Jul 24, 2024 at 02:58:52PM +0200, Alexander Stein wrote:
+> From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 > 
-> Let me rephrase - what's the point of having both PP_PROVIDERS_SUPPORTED
-> and PP_IGNORE_PROVIDERS at the page pool level? PP_CAP_NET(MEM|IOV),
-> and it's either there or it's not.
+> Fix typo in assignment of SD-Card cd-gpios.
+> 
+> Fixes: c982ecfa7992 ("arm64: dts: freescale: add initial
+> device tree for MBa93xxLA SBC board")
+> 
+> Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-The second flag solves a problem with initializing page pools
-with headers, but let's forget about it for now, it's rather a
-small nuance, would probably reappear when someone would try to
-use pp_params->queue for purposes different from memory providers.
+Applied, thanks!
 
-> If you're thinking about advertising the support all the way to the
-> user, I'm not sure if page pool is the right place to do so. It's more
-> of a queue property.
-
-Nope. Only the first "SUPPORTED" flag serves that purpose in a way
-by failing setup like netlink devmem dmabuf binding and returning
-the error back to user.
-
-> BTW, Mina, the core should probably also check that XDP isn't installed
-> before / while the netmem is bound to a queue.
-
--- 
-Pavel Begunkov
 
