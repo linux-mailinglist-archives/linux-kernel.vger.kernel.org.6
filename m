@@ -1,133 +1,200 @@
-Return-Path: <linux-kernel+bounces-284571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7340F950299
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:40:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880F695029F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A39391C2111A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C7B1F218C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C734A194C73;
-	Tue, 13 Aug 2024 10:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2859A193094;
+	Tue, 13 Aug 2024 10:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VQQ2ANrk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwzEhyq3"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968CE19047C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5842170A18;
+	Tue, 13 Aug 2024 10:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723545602; cv=none; b=rQ7J029FIYLA5x5dyyelpNSKNI0OJdMmZl22bg0n6P4VcM7V0B19AiVghZkqbhASCvQSr3IX115QN41puQ3aSnPotdypLbG1yZaNKq16L0c5mFTQOpbf3+nIMCqhqDXPYbUGOssvs9hrI+5vDvL9E1AhNPgGWJooOJ+KpjtHXhA=
+	t=1723545659; cv=none; b=Oa3MYDfxiEITmw9+HBIkf7GdPxx1tik1hcVw+gJhznX6Qld51xcfbu3DWevsusjfw0u4TEYBNHdiQ/IhY8+2Ka6czCso6FVq27VkbNRRaPoeGatTS0U1Y0pE7BELAPjiawMy4HJfIhGJrYg8L9/A2QfbdgrsrlX5Q8S5feYegFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723545602; c=relaxed/simple;
-	bh=jfJKAWVAz6OsyLNuTbI1cBCCxMzXL5Do7Wl7jtJHiQ4=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=k+HWYHh+ygSlQZYrD1hfp/3vDGdPhI9I3qHx0L1zE/FUo3qyaLR2oNgpKqShkFH+p7MmBrLdGZ0w8AovubIso4pfTQALahC4uAJdslTxMJsbPHDoew8Grb2gFYt+VGArKXiWIWN6UXTHhG+f0L4HQLJuz5SjdKHJxLWsKqiMmWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VQQ2ANrk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723545599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=cNo7/EXhsVJoHbfZhyj091rKwJVs7Vr83lU9O5NUCCg=;
-	b=VQQ2ANrkQbXMIh9PZz1ZE8E1geCYovw5FTPk4NhQ1XGrV8R1T5Dx+AGk/r/C3qdr5vRIlm
-	w6k9Q+huTSV2lOxaKHsI6GIdXeh7hxCvc/Hrz3fcyfhfEeL5XYqAEnWmvCy1mpSV4PjqHh
-	FsPWFb47f2woWt9f8EFCKIp+pEI2o+0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-VlOUm3wEPNS7ycglrdxu6w-1; Tue,
- 13 Aug 2024 06:39:55 -0400
-X-MC-Unique: VlOUm3wEPNS7ycglrdxu6w-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D3C5318E68D2;
-	Tue, 13 Aug 2024 10:39:53 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB46B1956052;
-	Tue, 13 Aug 2024 10:39:53 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id ABFC130C1C18; Tue, 13 Aug 2024 10:39:52 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id AB37D3FB48;
-	Tue, 13 Aug 2024 12:39:52 +0200 (CEST)
-Date: Tue, 13 Aug 2024 12:39:52 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-    Khazhismel Kumykov <khazhy@google.com>, 
-    Zdenek Kabelac <zdenek.kabelac@gmail.com>
-Subject: [PATCH v4 2/2] dm resume: don't return EINVAL when signalled
-Message-ID: <d018fc37-e266-8e57-70ee-51b7a4dbd5ab@redhat.com>
+	s=arc-20240116; t=1723545659; c=relaxed/simple;
+	bh=Fp90d7EQn1pt4MJXrpVgCCudh+WngdMzXIDpdOX9gT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vamlg7HatsNwQIYg9EaUx1NkSAelWFd/S2DEBOpelJAgbXv42c1Lc8KPqa92QeHBBEU0czsrJlY0MFuOScF3krJPIdlNJS1KeG1WdoR3ZfaI8y27VyPu3CriT7QqSCX6liF/j+ZcBXcDQaHJ0RQ9+lprGAJcVTUzdINWogy7NY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwzEhyq3; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3685a5e7d3cso3270582f8f.1;
+        Tue, 13 Aug 2024 03:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723545656; x=1724150456; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=21uElUyce8JR249X6uJAS7PnRRTOtflHbVAbFYHYmwk=;
+        b=TwzEhyq3uNsz0VoIJ4zuOjl04AAYZaCNu7jtGkp0ICfgX/ODbnIZCIBdz/oTEqJsaq
+         YnMX0SVI8LUCGgU44R3RXbfA0wM209zIN98o7jhwldr5NnigZHkVWR55yR8eBv8C08BV
+         mTbSXof4hoYDs7YxHVu7EW4XiMExd5TnEyPkUfn254/YjuCXT9jlM0toDtqYYxq8IH/l
+         vqhykQ30VzEwkw8Pk3oUdKlhIh6GfzxLT2B2BVgaXc9vKiUITkB+VFmxh9hO6mfxxHPq
+         y1q/Lt1HethHcn+pgDEWcNBHFkXePPodQJtCh9DV79W7lznG+Jqg9PGvHPYKX1Sx9TRV
+         PSPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723545656; x=1724150456;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=21uElUyce8JR249X6uJAS7PnRRTOtflHbVAbFYHYmwk=;
+        b=alNc7PFKf5aSeclnD1L9pPGhBlnJ6RriJZUXh1oqDrFMhzx1LuiRWgDq826gtreKWx
+         xYuuWiniwaJ9B52aHmJSSLAH25Tgu/T4DMWOYvsslDVFSHqCnQm1Dhwl36Uu7IASvcwD
+         lhO3uJDWBQ5SvoBz3aKugUXBxCzOxtVhGjb2LwdHOM/9tnPRJnJD6/itb0FpPKucJz4G
+         PtpGDcCyssxNMkzcYeZDU+CB8OflRqWYBvtR5lL1Tsy+QVD96e6GJm46k+GY0BM/JXWv
+         KinsNutDRRYXO3dPgvaseu1AbDdgfIIl/25geCcWeZw0FtgSYL15UaH4L89PJiAYrJem
+         6B1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXdZEFBggLTCkshzn8+ecwRQDR9kfit8ns+2FHy+5EpKSTb2acaN2p/fQuRHSD3cp5RmvK25uVx4BSciS7JfmvZPkO+nciH1pqUfb0nhQq1dh4eAKxFc0bcQ9rjj18MZwsGyUf9qNC
+X-Gm-Message-State: AOJu0YwZaQ/N6iZQ0774f7sfi4S0YOSasr2zbNNenQaaq3n6mYh6mZgu
+	rTTwKRiQKVqSjEb4IeRobyn5F3zFMjDB7o4O9uOx98HcgUtUo/Yx
+X-Google-Smtp-Source: AGHT+IEOCDk/eufgFxeF7PpSktbwtQYgJNiXJF2+V70NlTfR0jqK/v79u3BSknWzkzE+26GFwngCkw==
+X-Received: by 2002:a05:6000:186c:b0:36b:a3c7:b9fd with SMTP id ffacd0b85a97d-3716cd3a62fmr2856837f8f.56.1723545655652;
+        Tue, 13 Aug 2024 03:40:55 -0700 (PDT)
+Received: from fedora ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c36bcc5sm9843187f8f.24.2024.08.13.03.40.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 03:40:55 -0700 (PDT)
+Date: Tue, 13 Aug 2024 12:40:53 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Marius Vlad <marius.vlad@collabora.com>,
+	Jim Shargo <jshargo@google.com>, daniel@ffwll.ch,
+	brpol@chromium.org, corbet@lwn.net, dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com, hirono@chromium.org, jshargo@chromium.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mairacanal@riseup.net, mduggan@chromium.org, melissa.srw@gmail.com,
+	mripard@kernel.org, rodrigosiqueiramelo@gmail.com,
+	tzimmermann@suse.de, maarten.lankhorst@linux.intel.com
+Subject: Re: [RFC] Adds support for ConfigFS to VKMS!
+Message-ID: <Zrs4NY5FkMEomaog@fedora>
+References: <ZrZZFQW5RiG12ApN@louis-chauvet-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrZZFQW5RiG12ApN@louis-chauvet-laptop>
 
-From: Khazhismel Kumykov <khazhy@google.com>
+Hi Louis,
 
-If the dm_resume method is called on a device that is not suspended, the
-method will suspend the device briefly, before resuming it (so that the
-table will be swapped).
+On Fri, Aug 09, 2024 at 07:59:49PM +0200, Louis Chauvet wrote:
+> Hi everyone,
+> 
+> I'm excited to share some good news! I've recently completed the addition 
+> of a ConfigFS interface to VKMS, which allows to configure VKMS from 
+> user-space, at runtime. You should be able to:
+> - Create new devices
+> - Create planes/crtc/encoders
+> - Configure rotation, color range, color encoding
+> - Link planes, crtc and encoders.
 
-However, there was a bug that the return value of dm_suspended_md was not
-checked. dm_suspended_md may return an error when it is interrupted by a
-signal. In this case, do_resume would call dm_swap_table, which would
-return -EINVAL.
+Nice! Thanks for the hard work.
 
-This commit fixes the logic, so that error returned by dm_suspend is
-checked and the resume operation is undone.
+During the last 2 or 3 weeks I worked on ConfigFS support as well and
+I have an RFC series ready to be sent to the mailing list.
+My version is a bit simpler than yours because it doesn't implement extra
+features (color formats, etc) and it can be applied on drm-misc-next.
+I'll send the RFC as soon as I finish typing this email :)
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-Cc: stable@vger.kernel.org
+I don't have any preference about which ConfigFS series we end up
+using as long as we get the feature implemented.
+Instead, I think that having 2 different implementations is a great
+opportunity for better reviews because we have a good idea about how
+the implementation might look like and it'll make easier to find bugs.
 
----
- drivers/md/dm-ioctl.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+> The entire series can be found on my GitHub repository:
+> https://github.com/Fomys/linux/tree/b4/new-configfs
+> 
+> This series is big, consisting of over 40 commits. Although it's not 
+> completely cleaned up, all commits compile successfully and (almost) pass 
+> checkpatch.
+> 
+> I plan to split this series into several smaller ones:
+> 
+>  - Adding support for additional color formats
+> 	4a4f75873cca..d74006d7f9c4
+>  - Reintroducing the writeback algorithm
+> 	9e74d259e1be..f839dcf6a7d8
+>  - Clarifying documentation
+> 	b3bfd0ba2283..93945f0fbfc7
+>  - Properly splitting headers
+> 	c70018038572..67258bd8a180
+>  - Switching to drmm_ helpers
+> 	844e701e1d6d..f3050d125f64
+>  - Using a proper platform device driver
+> 	4658f99dfe3e..a3258e4d7550
+>  - Introducing a vkms_config structure
+> 	95ad6da46638..5b2d080b4626
+>  - Adding ConfigFS support
+> 	866ad75102ae..f900ad18ab8c
+> 
+> What's currently missing:
+> 
+>  - A deep cleanup to ensure checkpatch compliance and proper
+>    functionality for every commit
+>  - Updating documentation
+>  - Reviews 
+> 
+> The primary area where I need assistance is reviews and testers. I'm aware 
+> that Maìra is very busy and can't review quickly, but any other 
+> individuals who can test and/or review this series would be greatly 
+> appreciated.
+> 
+> My next step is to add connector support, but as I will use this work and 
+> my previous series [1], I would like to see it merged first.
+> 
+> If any of the original authors would like to be credited for 
+> their contributions, please let me know. I rewrote most of the code, but 
+> the general idea was originally from them.
+> 
+> José, I am sorry, I think I missed your mail where you told me you already 
+> reviewed some commits: 
+> 
+> > I reviewed the first 9 patches and added a few comments on your
+> > GitHub fork.
+> 
+> I am not able to find any comments, can you send me the link to the page 
+> with them? I would like to read/apply them before submitting the first 
+> part of the series.
 
-Index: linux-2.6/drivers/md/dm-ioctl.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-ioctl.c	2024-05-15 16:55:57.000000000 +0200
-+++ linux-2.6/drivers/md/dm-ioctl.c	2024-08-06 12:31:11.000000000 +0200
-@@ -1181,8 +1181,26 @@ static int do_resume(struct dm_ioctl *pa
- 			suspend_flags &= ~DM_SUSPEND_LOCKFS_FLAG;
- 		if (param->flags & DM_NOFLUSH_FLAG)
- 			suspend_flags |= DM_SUSPEND_NOFLUSH_FLAG;
--		if (!dm_suspended_md(md))
--			dm_suspend(md, suspend_flags);
-+		if (!dm_suspended_md(md)) {
-+			r = dm_suspend(md, suspend_flags);
-+			if (r) {
-+				down_write(&_hash_lock);
-+				hc = dm_get_mdptr(md);
-+				if (hc && !hc->new_map) {
-+					hc->new_map = new_map;
-+					new_map = NULL;
-+				} else {
-+					r = -ENXIO;
-+				}
-+				up_write(&_hash_lock);
-+				if (new_map) {
-+					dm_sync_table(md);
-+					dm_table_destroy(new_map);
-+				}
-+				dm_put(md);
-+				return r;
-+			}
-+		}
- 
- 		old_size = dm_get_size(md);
- 		old_map = dm_swap_table(md, new_map);
+My comments were in the GitHub commits, but I think they were lost after
+rebasing/force pushing.
 
+Hopefully, I saved a copy of your patches with my suggestions applied and
+commit messages where missing:
+https://github.com/JoseExposito/linux/commits/patch-vkms-header-refactor/
+
+I think you should be able to extract the diff easily.
+
+It might be a better idea to share the patches in the mailing list for
+broader discussion and to avoid loosing review comments.
+
+Thanks a lot for your work Louis!
+José Expósito
+
+> Thanks for your time,
+> Louis Chauvet
+> 
+> [1]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/
+> 
+> -- 
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
