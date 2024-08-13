@@ -1,106 +1,128 @@
-Return-Path: <linux-kernel+bounces-284406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5572950090
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE80A9500A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A168D28228A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:58:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D79B1C22FF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483CD17A584;
-	Tue, 13 Aug 2024 08:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E351D17BB2A;
+	Tue, 13 Aug 2024 08:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a5H6mRCy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f5nA37Ur"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3328B16DEA9
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E915B7;
+	Tue, 13 Aug 2024 08:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539523; cv=none; b=L4B0ox68aY0+QIreGC+bhdexOoJKnaS6uSkr0HU01z1jMYxgVKGo5fLSo+VZ9g2XYJRxtEIWMB6OmOkGktbcNB1Upps3jkst+9UET1yfGI7tI3sjMAVRWRObpLb//VjQ+MG1iP6z0vnxGe40eQBod9Z2/H/tdm+zeYycdelaxRQ=
+	t=1723539590; cv=none; b=j1fYz8Qk+iKnbsOSZUNOklolmBT9NHC+FjLRfVHfAZWFyFTPt9fUr0tt20UFTxViinyMmDIMcmOAPYW87oqooWYPAo4mP5iF0SRI3lwSbK+A3P/AXaO8dnmldh+K4lkkNrawBiLcvociqgPq5hjnoQycobO25CxEp9WZOt0O3qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539523; c=relaxed/simple;
-	bh=xhW5B081ZHwaTydzE8ITH5iE0gMJFJtC0dKffU7RnQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efWkp9Z5bztCtooVRYvTA/WEAKM4nmQI8Q67i9HB03qOK3q2G4MLYVu+y7juSWJHNZpDq6PXGaxZ7MN/ZuW47/a9n8QIosvET3T0S+Q6AuLiG+TCOML49d1GzuHoZPMgR3yJNg9ysH/xwQ/JhEHW4cjHTzQfuv0jwdqFLZokNls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a5H6mRCy; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723539522; x=1755075522;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xhW5B081ZHwaTydzE8ITH5iE0gMJFJtC0dKffU7RnQU=;
-  b=a5H6mRCy/7QUv40GuLfQbSf17NBYxV3osm4bEr2I9YJ/iC6rRKeDzsZd
-   LemnDGdDJBRCNnturp3z48So0G0QwITbhd91ns+eMvVIBVLRLLepL8Evj
-   C3RoTxjh5/odNKJVOhhOqAGUHwAQwrJL/6Nc9156mqHOL1IBuqbQj5nRp
-   3BhaGL+Pcx04Umw6Hm8AcFyvyQZfynlYQHr6GAtQopbyxxQihPevE/2Tz
-   Y52Vnj9p1XWlihn/S1q59nkvFbrXom/EmvRbHJ1hEqfGVBVn0DGea17Jq
-   wIXw5E6xlTb5usKxBIiOTnp43NuKz/BFRMsX8b0X0cow76TU6hstKBehI
-   g==;
-X-CSE-ConnectionGUID: 0/KXoREdR9Ks/8yJsuRrdw==
-X-CSE-MsgGUID: nMP/N3doSQyAbf8bUhLSxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21831413"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21831413"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:58:41 -0700
-X-CSE-ConnectionGUID: Q2uoRRdZQFOkD8xr8YMFRg==
-X-CSE-MsgGUID: UnNbS80ZQGG6T0inChlm4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="63291175"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:58:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdnMS-0000000EfRD-1Uu2;
-	Tue, 13 Aug 2024 11:58:36 +0300
-Date: Tue, 13 Aug 2024 11:58:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v1 1/2] irqdomain: Unify checks for bus_token
-Message-ID: <ZrsgPHPVp7HelXkH@smile.fi.intel.com>
-References: <20240812193101.1266625-1-andriy.shevchenko@linux.intel.com>
- <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
- <87o75wrff7.ffs@tglx>
+	s=arc-20240116; t=1723539590; c=relaxed/simple;
+	bh=JdP+ROVMh/KRzmmlnV0TwLHRyhPOyOX63BSvHWTPQaI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N7cVOE7GJC0PHEYW5505QTaBxKNSNOZo9Z5Pa/8LinqBkgSGy4IS0UwCVR1XU1Sd1aM7Gbu0q0CYUeoBHKnGnhyLBBXrxEFPFOvDoZfJps0TJfSD8jGtBvg7T7cqzu1GDOr4c01n1bG82UnyZiDULvAEh/Jcy+v1Z7yBmlFYeRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f5nA37Ur; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D3wSbI001097;
+	Tue, 13 Aug 2024 08:59:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Ld6Y5Moq8AyX9mmvL9mUQl
+	4XzuJgmry59u66zwjmbok=; b=f5nA37Urjq3nXNEV4dsVK0SfCJgmQkgmDfJofo
+	NGsLSWyLWt7cFF0wRA+qRTlQDTV9iO9lSL1N8MEb3KQEJUZHRzzzXVmzSLHQJcY+
+	dwhkULAM5/9XtNlIM0HM+9kjKbpBBaeSPA3qFf+VJ7FZOYUWEqNSoc3YGrtRBXM3
+	yQrp306yE8zQRm3EX+Q8y5lF0C5HvRcnGEO5yENyNfrlnyZ1kF2QKuJ7VL64ligo
+	WPfjOzyuybLH+W1p3VblA+0sxdfClynif+s209o2G7XhzRUsRtmn+2iZ71+ZzhF4
+	fJeDbg/+IUns8ZO+yS55yGYkRndv0ebW6UCOfnOVzje6qPLw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x3et6rjx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 08:59:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47D8xgTw011173
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 08:59:42 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 13 Aug 2024 01:59:38 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: qcom: Fix SM_CAMCC_8150 dependencies
+Date: Tue, 13 Aug 2024 14:28:46 +0530
+Message-ID: <20240813085846.941855-1-quic_skakitap@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o75wrff7.ffs@tglx>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YuLh0-TfGia6Dtd3lgzZNLDC6jWVKgF2
+X-Proofpoint-ORIG-GUID: YuLh0-TfGia6Dtd3lgzZNLDC6jWVKgF2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_01,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 mlxlogscore=684
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408130063
 
-On Tue, Aug 13, 2024 at 10:32:44AM +0200, Thomas Gleixner wrote:
-> On Mon, Aug 12 2024 at 22:29, Andy Shevchenko wrote:
-> > The code uses if (bus_token) and if (bus_token == DOMAIN_BUS_ANY).
-> > Since bus_token is enum, the later is more robust against changes.
-> > Unify all checks to follow the latter variant.
-> >
-> > Fixes: 0b21add71bd9 ("irqdomain: Handle domain bus token in irq_domain_create()")
-> > Fixes: 1bf2c9282927 ("irqdomain: Cleanup domain name allocation")
-> 
-> I'm fine with the change per se, but what does this fix? It's correct
-> code, no?
+SM_CAMCC_8150 depends on SM_GCC_8150, which inturn depends on ARM64.
+Hence add the dependency to avoid below kernel-bot warning.
 
-Technically yes, it's correct code as long as nobody touches the mentioned enum.
-It fixes the style and makes it robust against the changes.
+WARNING: unmet direct dependencies detected for SM_GCC_8150
+Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
+Selected by [y]:
+- SM_CAMCC_8150 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
 
+Fixes: ea73b7aceff6 ("clk: qcom: Add camera clock controller driver for SM8150")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202408020234.jg9wrvhd-lkp@intel.com/
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+ drivers/clk/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index cf6ad908327f..416002d97062 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -828,6 +828,7 @@ config SM_CAMCC_7150
+ 
+ config SM_CAMCC_8150
+ 	tristate "SM8150 Camera Clock Controller"
++	depends on ARM64 || COMPILE_TEST
+ 	select SM_GCC_8150
+ 	help
+ 	  Support for the camera clock controller on Qualcomm Technologies, Inc
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
 
