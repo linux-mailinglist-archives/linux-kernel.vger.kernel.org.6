@@ -1,152 +1,154 @@
-Return-Path: <linux-kernel+bounces-284907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE74595069B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:36:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F119506A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE2E288F73
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BFF289279
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE3A19B5BC;
-	Tue, 13 Aug 2024 13:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B323C19CCE7;
+	Tue, 13 Aug 2024 13:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XLlAF8HK"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AREknOXI"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F25199E82;
-	Tue, 13 Aug 2024 13:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37E7192B91;
+	Tue, 13 Aug 2024 13:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556163; cv=none; b=K2N1rHLjNujCjgGt1wZRPKGclmDkvS0omSJFZMGahLhVgJYKN5Nrp7PKdYh64a4nuAPrDfPROKUXK56eGQKd3mb8FrCiKLRt/Xv9nw1lo/WTnKHw/H0fXQlQmAvjMN1Kmy0WdWZysMCMYx7YjisBAXi5yD26zR78lc4UG1nhoYE=
+	t=1723556194; cv=none; b=An3IoRLwbUbXoe4lagNm5cAm8XSkVMzibbnQ/kukffTxJbg6dYp5hM5byRb9kllzul2qqKB3bQvgBG3klZ8UPDeSXpochlJSmIf6jryNE6xOUc3Y5HSa3wk0eFSm5jHsxWkhQ+Hqd0tNpoF5wrI/svauyHAcZAhMUmHXuoNl9oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556163; c=relaxed/simple;
-	bh=Gkg0BwLnMk3aPALRTPUQuNCSk3s0d/bldCGAaKSAMOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NzH40i3UAAZMn3PRATLXQzB7mLaFLEK0VddujYIteVX80X+QaYkncGLGj1JqNfkj9QliqQT1bWDQxQMV7F4NHXAhjiWa14ll/LQQXwbpHZT6qPwyhfTgNcHeOoA1Z3n2KsUG0qbd+tK435FESZij/J9ODqFBmbvkQNSjbpHW97M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XLlAF8HK; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D3wN7K015926;
-	Tue, 13 Aug 2024 13:35:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=3
-	lJ7ufApJ3WrBKr2+j4OA0WfYzY72XZhoVhPSoAYrm8=; b=XLlAF8HKz5jfRPG14
-	yQq5GzUUTDuua0V6C5yKyyFH556RsBne2j2ZL0UXq7qsjXtxnQUwrAz4msgqO1IK
-	UFRg++dNQFV4QM+ilcIoD9CQZCqP5TMMmnW6gKrVnAPdpiUi5Glqpth3lWAiaKmB
-	jXWjzidFNmGXKP5TC1amx7xyI57Kzm8sV2/uhTtuNtMq1mXhlVzd8VZtWNWb2JHI
-	Vm2EkNErZutWtJiD1DD+cSAgdCzYgmgiwwzxMNEFQ65zCtf4FsWQnLr2WJz1XFDQ
-	BhTd/VKdMaBRtw/uYiGwk4ggqaelr4fcauKyqyRzqrAZOE2fKrgu192RImna6Giy
-	bhqGA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40xr5de7qr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 13:35:56 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47DBukL4016309;
-	Tue, 13 Aug 2024 13:35:54 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40xkhpksqy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 13:35:54 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47DDZn3B55443766
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 13:35:51 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EF93A20043;
-	Tue, 13 Aug 2024 13:35:48 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A309720040;
-	Tue, 13 Aug 2024 13:35:48 +0000 (GMT)
-Received: from [9.171.22.151] (unknown [9.171.22.151])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 13 Aug 2024 13:35:48 +0000 (GMT)
-Message-ID: <221ba279-e48b-4002-9530-c6186e3e8042@linux.ibm.com>
-Date: Tue, 13 Aug 2024 15:35:48 +0200
+	s=arc-20240116; t=1723556194; c=relaxed/simple;
+	bh=ZC1L3DnEJk0xzbYjGg2olwSFbPIfCLHc4621R0rNsEc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cA4zw93C+gfEvWptrZtDFlfsJrzNL3JVjlPI6Jc4NRVkm2N7VbZf9Z0I3ABW0gTK/Qv3NpsIXGZZzdYXiQitZoTQG/DG+6GT/EFspVJvKF/oBZex7kQ1j9ixym1GloGnNJYoXsgX9Gwj1WPogQBKVuQQemxpkKOsldKCiWRE0WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AREknOXI; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-710d1de6e79so3756377b3a.0;
+        Tue, 13 Aug 2024 06:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723556192; x=1724160992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k8OLzgk9926PiG0rcAPGIGaOxY+06EBsAJHlth9iX5g=;
+        b=AREknOXI8eJ3z4P9Pm/nCrFqHgcA90m3+XV1XqDjdzKaxhBS4JtmT5qeU3SeABkp2X
+         WGevDcCJLOsN1ua6Uk1195WgZ7TPFv1rHuOJucnxNYCgcX1mH8kHhbcNZPi7S3W5tCJb
+         5MOLZoIx8Cgcodqp4SoopFNEDTWuMP5JNa9jueVsHId6mYyyQktKKaMysz3Io2LiNV/3
+         BRirS+8j7FOAJBIb5VORsbkU8Cp3Wis3N/dX38LIdFFjZ862R0APw0cE/29WFLesqmgp
+         4O+LNwZe0smkVEanacqSobyJgDqSt7k5UOp6p4Bt/acDBpv5WTva2bEOw9v2VWxN8X7K
+         X1iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723556192; x=1724160992;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k8OLzgk9926PiG0rcAPGIGaOxY+06EBsAJHlth9iX5g=;
+        b=Q8I8/IIsgmp6GUZHfzTyTYX9YQZXYHK0yygaxp/PR8gBhC4SJH5XLRHrmaYglB+536
+         /HdW2KrJfaOcM3+iaOZk5B2Kfe+FVBTieue5qMr5xBaSVeVI6eiHHC8IVuzdIIgSiq6N
+         yr05dbQXNCWm3PAd+9Q0OIb1B5gb728LnmDOLIhKXVW1ReAnZLST+KDcsZW0DqfnUy/6
+         lKwaQj44Jq+UZmwR4Du789ETUj9QKi+HqtHxtL1irpcRdhlfcy6TKFKlr3RtBzOB4Cru
+         SsrQUqM3QvIhtIOsWqF0Fv7M7X04jbk3eWRMIWUxk7C9rxN6A0wF3Fq/jXBqT/Tpa+FG
+         07CA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsD9s4rzqP4FmSjnES1q+R3CI0XumVXs7Dw224qWpWgogeUSP6HjcxGppYzaVhaqGfCQ16/RsvoxpFreCZWrivsSwXMU96vzEBVi3ujrYX8SM8cVbj8o/GCr7fgQKIwfrYVFaOMsV8E0djBK+NRZdJ73wP3+jgVBkW9oFhbxKv2t4MOocD
+X-Gm-Message-State: AOJu0YzKayTuIOiF5an4wzyHBmoAqVj7oiT80WuI2OOm5qMUBnRf634f
+	WhgKax3QjxL1fMs6NRf0DaaEA81TjuD2Z1dFFaUCPrUiAHfc9gmE
+X-Google-Smtp-Source: AGHT+IH5cm2Umz1iVrJsKCq0tYC8Jsihi76XmfBb43fTN4pZeGsryEdERaYWKM5fVJZAbFF/AdKYQg==
+X-Received: by 2002:a05:6a20:cf90:b0:1c0:e9dd:1197 with SMTP id adf61e73a8af0-1c8d74af032mr3869300637.22.1723556191688;
+        Tue, 13 Aug 2024 06:36:31 -0700 (PDT)
+Received: from ux-UP-WHL01.. ([240e:47e:2ef8:4fc3:dde8:ca2c:7f06:eeca])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201d3e23a56sm2529545ad.48.2024.08.13.06.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 06:36:31 -0700 (PDT)
+From: Charles Wang <charles.goodix@gmail.com>
+To: dmitry.torokhov@gmail.com,
+	dianders@chromium.org,
+	dan.carpenter@linaro.org,
+	conor@kernel.org,
+	robh@kernel.org
+Cc: krzk+dt@kernel.org,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	hbarnor@chromium.org,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Charles Wang <charles.goodix@gmail.com>
+Subject: [PATCH v6 0/2] HID: add initial support for Goodix HID-over-SPI touchscreen
+Date: Tue, 13 Aug 2024 21:36:10 +0800
+Message-ID: <20240813133612.49095-1-charles.goodix@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] s390/iucv: Fix vargs handling in iucv_alloc_device()
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        linux-s390@vger.kernel.org
-References: <cover.thread-d8267b.your-ad-here.call-01723545029-ext-2515@work.hours>
- <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
- <2024081331-bonnet-fiftieth-9a14@gregkh>
- <your-ad-here.call-01723549827-ext-8444@work.hours>
- <2024081319-patriarch-brutishly-653f@gregkh>
-From: Alexandra Winter <wintera@linux.ibm.com>
-In-Reply-To: <2024081319-patriarch-brutishly-653f@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jGnAHsZNFOB64koH2_Q4V5dsY3Bu2YNu
-X-Proofpoint-GUID: jGnAHsZNFOB64koH2_Q4V5dsY3Bu2YNu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_05,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxlogscore=999 adultscore=0 spamscore=0 impostorscore=0 clxscore=1011
- lowpriorityscore=0 malwarescore=0 priorityscore=1501 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130098
+Content-Transfer-Encoding: 8bit
 
+This patch introduces a new driver to support the Goodix GT7986U
+touch controller. This device is not compatible with Microsoft's
+HID-over-SPI protocol and therefore needs to implement its own
+flavor. The data reported is packaged according to the HID
+protocol but uses SPI for communication to improve speed. This
+enables the device to transmit not only coordinate data but also
+corresponding raw data that can be accessed by user-space programs
+through the hidraw interface. The raw data can be utilized for
+functions like palm rejection, thereby improving the touch experience.
 
+Key features:
+- Device connection confirmation and initialization
+- IRQ-based event reporting to the input subsystem
+- Support for HIDRAW operations (GET_REPORT and SET_REPORT)
 
-On 13.08.24 14:43, Greg Kroah-Hartman wrote:
->>> I don't understand, why can't dev_set_name() be called here?
->>>
-[...]
-> 
-> But step back, why is this needed at all anyway?  No other subsystem or
-> driver needs/wants this, what makes this api so special?  Why not figure
-> out your name beforehand?
-> 
-> thanks,
+Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+---
+Changes in v6:
+- Remove spi_shutdown() method.
+- Use devm_kmalloc to alloc event_buf.
 
+Changes in v5:
+- Add additional descriptive information to the dt-binding file.
+- Fixed build warnings reported by kernel test robot.
 
-Vasily, the following update to Heiko's patch does not touch lib/kobject.c
-According to a quick test it still solves the original issue and does compile
-with W=1 and iucv as a module.
+Changes in v4:
+- Allocate memory based on the report information.
+- Added a new function goodix_get_event_report() to retrieve report data,
+  reducing memory copy operations and avoiding the use of reg_rw_lock.
+- Add low power control operations.
+- Implemented power management operations.
+- Introduced GOODIX_HID_STARTED to record the current device operating state.
+- Add OF match table.
 
-diff --git a/net/iucv/iucv.c b/net/iucv/iucv.c
-index 64102a31b569..6a819ba4ccab 100644
---- a/net/iucv/iucv.c
-+++ b/net/iucv/iucv.c
-@@ -86,13 +86,17 @@ struct device *iucv_alloc_device(const struct attribute_group **attrs,
- {
-        struct device *dev;
-        va_list vargs;
-+       char buf[20];
-        int rc;
+Changes in v3:
+- Renamed the driver file to hid-goodix-spi.c.
+- Mentioned in the commit message that this implementation is not compatible with
+  Microsoft's HID-over-SPI protocol.
+- Modified the driver to fetch the GOODIX_HID_REPORT_ADDR from device properties.
+- Add a lock to prevent concurrent hid feature request operations.
+- Optimized the SPI read/write functions by reducing the number of malloc calls.
 
-        dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-        if (!dev)
-                goto out_error;
-        va_start(vargs, fmt);
--       rc = kobject_set_name_vargs(&dev->kobj, fmt, vargs);
-+       rc = vsnprintf(buf, 20, fmt, vargs);
-+       if (!rc)
-+               rc = dev_set_name(dev, buf);
-        va_end(vargs);
-        if (rc)
-                goto out_error;
+Changes in v2:
+- Fixed build warnings reported by kernel test robot
 
+---
+Charles Wang (2):
+  HID: hid-goodix: Add Goodix HID-over-SPI driver
+  dt-bindings: input: Goodix SPI HID Touchscreen
 
+ .../bindings/input/goodix,gt7986u.yaml        |  71 ++
+ drivers/hid/Kconfig                           |   6 +
+ drivers/hid/Makefile                          |   1 +
+ drivers/hid/hid-goodix-spi.c                  | 810 ++++++++++++++++++
+ 4 files changed, 888 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+ create mode 100644 drivers/hid/hid-goodix-spi.c
 
-Maybe Greg has somethign like this in mind?
+-- 
+2.43.0
+
 
