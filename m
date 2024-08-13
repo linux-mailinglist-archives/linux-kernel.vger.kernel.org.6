@@ -1,341 +1,86 @@
-Return-Path: <linux-kernel+bounces-284512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285D29501CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:57:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8549501CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01B71F214D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:57:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C3FB1C21E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CD2188CC0;
-	Tue, 13 Aug 2024 09:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92A1189533;
+	Tue, 13 Aug 2024 09:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwMpQygN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ol6gISiO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF97043165;
-	Tue, 13 Aug 2024 09:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21799433C0;
+	Tue, 13 Aug 2024 09:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543063; cv=none; b=DTsh2MJw8GCUP9pjApPVGVTYDRBDL9KmPnPSPN7LNJLVhHJzz7EayCNUwKgV5pkcYnpYIJZQ+ccJGInr4xCLMvlcc0Wb6g2b5CrB3TEdp4iBqVleYPO8dyQuBjtp2KKf1HzpUjNzkBeJ3CmO3C8XHT3zuSH0J6MNCjzQZUjr9MA=
+	t=1723543090; cv=none; b=l0+lSNVNt1PmrKmjUSoVUsGYRSK550Z5SOrc/i33HLoWD9RICxHHXzatgY+kZ+aLorJbt2dcgEjAhL9YaTCyHj41/dWx0LMWRBNZGFSWDdou5GVEcA9M0MHfmOXH2+RgW1LlLe4XNxJrJAVqXq/sVjNuiorwqjs1ba7tbTYEug4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543063; c=relaxed/simple;
-	bh=/xqp+GdTXWeXVBORyz2Kpe5lyE0VK8oFbfgOCjQoTfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qznTiiqRpWFjMChcqBMJ+Gq6v4GUxq/gdUEM6DFtAL4ktJvx2D1EJ/hRioPcqm68+gXE6a2vGR094dt9116GMBj/XcTOcab4f06ZE+co9hWm0SlEs0t4mhU5FN2K2c9OPcP+1LsKJ6fKg+o6CP4TR4JOOBCfczSTLxOyFkcAzsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwMpQygN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10A5C4AF0B;
-	Tue, 13 Aug 2024 09:57:39 +0000 (UTC)
+	s=arc-20240116; t=1723543090; c=relaxed/simple;
+	bh=oCWdJoqR68mNq02OIr39vLyhkB1ZwkCRALBQGE6D6ls=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=J1YqPIazD0agMX0Kq3L37Nn3WqCbwV8gc2IVgr9KNiExyq2u0JrPLPGGdw4w/VIOxDVbUqVF9Rgi8T9AYPxJeJ9/3KkuHIIdwp+tUxDxSUab9OQkpwj6h3V6FmtrZKf3xJgbCozjjBt0YALRHDQduX2udFiJ71SmaDUmyQefhEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ol6gISiO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A182BC4AF10;
+	Tue, 13 Aug 2024 09:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723543062;
-	bh=/xqp+GdTXWeXVBORyz2Kpe5lyE0VK8oFbfgOCjQoTfc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dwMpQygNH9E9qdaN57h3KouFXSSS+NEEMk3nqcxeWedi8RjUfSQbM7T7mGnATM/4R
-	 jnDAjXuhgSbif2EYKQn1OAhVAdGsDFJt0K2S1niCDspuNvOsHwoK9qgYPK6wpYKwVY
-	 pXzhghbQlFDaLhlHdC3EO1YWkwNn3XlmPt9oMVdq9dKEycZGFzpKyVNR44+Hy5BRcV
-	 bDab5GQVrJ6WMn/xPniyjlBOaKNiEWGnd3srFhDJ1hrXsGO7bdDvXkdUxC/73sxBFG
-	 0s6eP0NY3VVv5hyqIYcDrQtZnPoPimVeykIGYyHKovpZm4i6aTO+tFRAevb7+2sHIf
-	 BAfhgTdpnhQfg==
-Message-ID: <bd9a5fb6-9f28-456f-9a0e-45b42d30398f@kernel.org>
-Date: Tue, 13 Aug 2024 11:57:37 +0200
+	s=k20201202; t=1723543089;
+	bh=oCWdJoqR68mNq02OIr39vLyhkB1ZwkCRALBQGE6D6ls=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=Ol6gISiOQMyXu18cHDM3cbxgLftP26dlyx060LgZ1BrEdSCgY4eiaFI/WREAT7uPY
+	 2uGsjtvThB8rYg63LNcdXdpWi0YcDSFRq8VlROdri/JEt65DmoCshx7HX/NpMWCtVe
+	 V38j36Zdddy3O7VwTBVJTzxADQD+Fw4pQB4Uai8nTpkx6ihbiM5bFTtoGcdN0y+O0m
+	 jCGwb+SUmT+W+MgzKTrBDpYuZzfBMKGTgv/NdHHVBStzp0WYRLdVMuxjWZI4WwO7F6
+	 CgiBE5coOIabDZsHObQWJK9gRZ8Ue+DrZ9+LL36o9/hWQBC7mc4vg9BFj3gRF1lC7G
+	 3eCi7dUlRZUtw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-binding: board: convert fsl-board.txt to yaml
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240812200200.3828047-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240812200200.3828047-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] wifi: mwl8k: Use static_assert() to check struct
+ sizes
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <ZrVCg51Q9M2fTPaF@cute>
+References: <ZrVCg51Q9M2fTPaF@cute>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-hardening@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172354308655.731215.15975309925744151452.kvalo@kernel.org>
+Date: Tue, 13 Aug 2024 09:58:08 +0000 (UTC)
 
-On 12/08/2024 22:01, Frank Li wrote:
-> Convert binding doc fsl-board.txt to yaml format. split to 3 part
-> fsl,bcsr.yaml, fsl,fpga-qixis.yaml, fsl,fpga-qixis-i2c.yaml
+"Gustavo A. R. Silva" <gustavoars@kernel.org> wrote:
+
+> Commit 5c4250092fad ("wifi: mwl8k: Avoid -Wflex-array-member-not-at-end
+> warnings") introduced tagged `struct mwl8k_cmd_pkt_hdr`. We want to
+> ensure that when new members need to be added to the flexible structure,
+> they are always included within this tagged struct.
 > 
-> Additional change for fsl,fpga-qixis.yaml
-> - Add childnode mdio-mux-emi*
-> - Add compatible string fsl,ls1043aqds-fpga, fsl,ls1043ardb-fpga,
-> fsl,ls1046aqds-fpga, fsl,ls1046ardb-fpga, fsl,ls208xaqds-fpga,
-> fsl,ls1043ardb-cpld, fsl,ls1046ardb-cpld, fsl,ls1088aqds-fpga,
-> fsl,ls1088ardb-fpga, fsl,ls2080aqds-fpga, fsl,ls2080ardb-fpga.
-> - Change address to 32bit in example.
+> We use `static_assert()` to ensure that the memory layout for both
+> the flexible structure and the tagged struct is the same after any
+> changes.
 > 
-> Additional change for fsl,fpga-qixis-i2c.yaml
-> - Add mux-controller
-> - Add compatible string fsl,ls1028aqds-fpga, fsl,lx2160aqds-fpga
-> 
-> Fix below warning:
-> 
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dtb: /soc/i2c@2000000/fpga@66: failed to match any schema with compatible: ['fsl,ls1028aqds-fpga', 'fsl,fpga-qixis-i2c', 'simple-mfd']
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Patch applied to wireless-next.git, thanks.
 
-It is not "dt-binding" but dt-bindings.
+748e21d94a34 wifi: mwl8k: Use static_assert() to check struct sizes
 
-> ---
->  .../devicetree/bindings/board/fsl,bcsr.yaml   | 38 +++++++++
->  .../bindings/board/fsl,fpga-qixis-i2c.yaml    | 50 ++++++++++++
->  .../bindings/board/fsl,fpga-qixis.yaml        | 81 +++++++++++++++++++
->  .../devicetree/bindings/board/fsl-board.txt   | 81 -------------------
->  4 files changed, 169 insertions(+), 81 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/board/fsl,bcsr.yaml
->  create mode 100644 Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
->  create mode 100644 Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
->  delete mode 100644 Documentation/devicetree/bindings/board/fsl-board.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/board/fsl,bcsr.yaml b/Documentation/devicetree/bindings/board/fsl,bcsr.yaml
-> new file mode 100644
-> index 0000000000000..73e33483d20c9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/board/fsl,bcsr.yaml
-> @@ -0,0 +1,38 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/board/fsl,bcsr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Board Control and Status
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +description:
-> +  Freescale Reference Board Bindings.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/ZrVCg51Q9M2fTPaF@cute/
 
-Drop
-
-> +
-> +  This document describes device tree bindings for various devices that
-> +  exist on some Freescale reference boards.
-
-Drop
-
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - fsl,mpc8360mds-bcsr
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    board@f8000000 {
-> +        compatible = "fsl,mpc8360mds-bcsr";
-> +        reg = <0xf8000000 0x8000>;
-> +    };
-> +
-> diff --git a/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml b/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
-> new file mode 100644
-> index 0000000000000..cab221a1fd466
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/board/fsl,fpga-qixis-i2c.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale on-board FPGA connected on I2C bus
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - fsl,bsc9132qds-fpga
-> +              - fsl,ls1028aqds-fpga
-> +              - fsl,lx2160aqds-fpga
-> +          - const: fsl,fpga-qixis-i2c
-> +          - const: simple-mfd
-> +        minItems: 2
-
-Why flexible? All are fixed - three compatibles.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  mux-controller:
-> +    $ref: /schemas/mux/reg-mux.yaml
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        board-control@66 {
-> +            compatible = "fsl,bsc9132qds-fpga", "fsl,fpga-qixis-i2c";
-> +            reg = <0x66>;
-
-Make it complete.
-
-> +        };
-> +    };
-> +
-> diff --git a/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml b/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
-> new file mode 100644
-> index 0000000000000..455620daa1fee
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/board/fsl,fpga-qixis.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale on-board FPGA/CPLD
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - const: fsl,p1022ds-fpga
-> +          - const: fsl,fpga-ngpixis
-> +      - items:
-> +          - enum:
-> +              - fsl,ls1088aqds-fpga
-> +              - fsl,ls1088ardb-fpga
-> +              - fsl,ls2080aqds-fpga
-> +              - fsl,ls2080ardb-fpga
-> +          - const: fsl,fpga-qixis
-> +      - items:
-> +          - enum:
-> +              - fsl,ls1043aqds-fpga
-> +              - fsl,ls1043ardb-fpga
-> +              - fsl,ls1046aqds-fpga
-> +              - fsl,ls1046ardb-fpga
-> +              - fsl,ls208xaqds-fpga
-> +          - const: fsl,fpga-qixis
-> +          - const: simple-mfd
-> +      - enum:
-> +          - fsl,ls1043ardb-cpld
-> +          - fsl,ls1046ardb-cpld
-> +          - fsl,t1040rdb-cpld
-> +          - fsl,t1042rdb-cpld
-> +          - fsl,t1042rdb_pi-cpld
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  ranges:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  '^mdio-mux-emi[0-9]@[a-f0-9]+$':
-
-Either suffix or unit address, not both. This does not match some of
-your DTS, at least after quick look. Probably DTS needs to be fixed.
-
-
-> +    $ref: /schemas/net/mdio-mux-mmioreg.yaml
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-
-Best regards,
-Krzysztof
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
 
