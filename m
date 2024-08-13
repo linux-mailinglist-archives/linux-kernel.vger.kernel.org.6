@@ -1,133 +1,132 @@
-Return-Path: <linux-kernel+bounces-284638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CFF95035D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:12:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9F895035B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2981C228FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:12:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB3E0B27C71
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDBD1990DB;
-	Tue, 13 Aug 2024 11:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C76D1990A2;
+	Tue, 13 Aug 2024 11:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="co4dXDH9"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDko4rdU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC88D1990D3
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D9260EC4;
+	Tue, 13 Aug 2024 11:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723547529; cv=none; b=rdGjQh8XueCSWjQ6ehKPeTZ5Mw3Z1N8Ft+dy4idmI3/mu13E9vM/jTvNMuK0eI4VEJxW6kOiIG2IeYfluQcEloCYRLhFUZlsMzR7gRnWVhSjZOgR9x4wF5VA35j09ewLPIB2RR7H0AF+qr9hSRV68AqTq8ABvShfX0x/iDn2Z44=
+	t=1723547524; cv=none; b=ZkHDUOo59+OBLxE+XtTiQdj7t6XCo42aqKQCN1BgREcqMaN2PATFZl6XRzUVgZSSMH4c4ibM2oQj5BK2DBsyOQGiSXKKK3axE7feXaTekpvUTqUpQTr5ERVkXDiX6zgVAistGTqY3D93+bc77xbjZHk/ssX8KBhHYp4M1LLlRZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723547529; c=relaxed/simple;
-	bh=sb+XtHUDQtmCMGrfwTt5ykYomI6fe6U6GobYI4zQheA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L46YN8C9wvYht5Gihz0ewUNA1DSrb3qd/W+pgqLJuQEMl9abnx7xr6bRxvxl70nRTQsP7TTWO9fpPkH2W7U2RWeor9T1TIY0yr4XkowruG+tXGXGdJMmUs5Lc6PpiyiA7Y1Pk+29DJzt2pEXFnHMVTaM8G4kq5Ew0SlJOGlmWvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=co4dXDH9; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7163489149eso3741396a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1723547527; x=1724152327; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bXWH3cj6qeEDUbAOW6N1y6hA61YbTTG0cc3E6ZuOHeQ=;
-        b=co4dXDH9T5dwUz2ji9Rc0hE9ZkVkuuyb/eCVrcPgFz7NynGIfnbPxaPHzanPxoMjH0
-         WTTjOHDytBYI0ZYVVbyaP3DFvrLbT1x/ldr+4Ia5ZujoQIsIfsEo4Ok5Z0tLaDYsARh+
-         4/wLnRcnGAP454IvSleShVnDzOhYKsv7DBqArJ9DXppMwwU9xH6qHMzC10LAR6AckSHl
-         YY6csT1T2QatrEcEi7agw8XV9BJDE1Se6t+GIE7xKOZICGpbRfuZPmRprnXrTSjYBDHU
-         h1eyRZ0HwNcJXnsm6ZvbpPZ/B+56wd8ulQvKkSOOk2RqPJNc66BPf6NUt6SdMYKfyYYk
-         5HRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723547527; x=1724152327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bXWH3cj6qeEDUbAOW6N1y6hA61YbTTG0cc3E6ZuOHeQ=;
-        b=uVU62cDKnZDuJ/Q/CFJ9fj1h6pZVdkr5tmjoIvixHmz23Y4lVRjrHOuckAykc+DBaz
-         pWZTuzKgPxP7FDRI8ivGUaC8/t5I/2jBcJiSIk5uRJB1L+O3KwjWhZLSmLjnblbkwrtf
-         1fTHmkyz3wXtqC9mBVkxn0dEtbOtd4TMUI7a1+FY0/7RucnJ7Jxf6jBU2QEqytfZhckW
-         VaGBrGA8ET9VFWy1TlCsgykmwWk3PlXFT/bwK6oEeeBQuXY8pJO/4O+tlPbUpiXqOzFo
-         GItUqGeRqW+nQFb89qfm5qLjnokfX/FAI3/lsndrIg3Jn4sA/60AZAklo3VJ5B+ID7B8
-         hLHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWr9qFWrOyCrB1JRKhR/5wc2iNHzn0+AjbIQOL2ndENYQ81K0qv9NtCt/dGgG34sYGumTfK4eVvvDV7tI5BoFYL5tYTdPDDUL76ZgCE
-X-Gm-Message-State: AOJu0YzB7BaRtpC9io9BlZA2zPnhkSi+/NR00+wooxslfjS575UBm71r
-	Ii5GS3WuarCvUS22nkv6h5KnKqAoBgnWcemXEHKusEJ1uI5T9c0l3zF1tifWa2GOY1QnEYyQU+f
-	6XuWAvsza/MzqesGDOqfJKzsY6Uc1Mn5bfHG7Rg==
-X-Google-Smtp-Source: AGHT+IGuSeHG7m5K/jmSW20RDVS0llLgYzyxC9ou/X+cYTWu/3utdqzZoNS752omYejEHO3eijXxIXiNFbcWZM3Y5l8=
-X-Received: by 2002:a17:90a:5c84:b0:2cf:eaec:d756 with SMTP id
- 98e67ed59e1d1-2d3925048e2mr3647563a91.12.1723547526952; Tue, 13 Aug 2024
- 04:12:06 -0700 (PDT)
+	s=arc-20240116; t=1723547524; c=relaxed/simple;
+	bh=q/BYpNAcIZekIKxSVC4OgrS7MA7S3fwGwMg28nu8F4A=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Dfp7EWxwEezYKZzmDQvXFETkOFioCBp4pQs3dsrfGJLybX1dQryflWP6/O5xyAY19tEFOyyVpVIFM8OJcJdM+4rgXmwupbGUqVrChcKSp4IYxRXKTT9o0yQrmsmbjQg33QdtxHgbjTh6Pkxcsto+qucBRyJqLZ+ojrsdYIR2Nb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDko4rdU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C481AC4AF09;
+	Tue, 13 Aug 2024 11:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723547524;
+	bh=q/BYpNAcIZekIKxSVC4OgrS7MA7S3fwGwMg28nu8F4A=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=QDko4rdUaDGuHL4tlZDBJugI2IbtfZdSZwzEQ6QB3t3JeOLwodxdvDXSQejy8SpdI
+	 9p2pDNG6YvcN/bK7Q1vIb3CFlmlYEy9YIrFDkbTt7+3dVzu14VybO3B/x6ySLvUNqm
+	 mN2D2tupIeUcR9zefHYKm/O/H4yJjlr7UyokgZwoeJX4RFM70vah2vef3Hy6JJ0HrB
+	 VyP9+dV8HPthpbUToD3xRKxUl6kKltj+DkS4lL0IjKysI1KW0gVG4zQP0AMVXxMdmX
+	 9ngKLjnzepNgfTt1TCuQ1hgU9/M2MJRKiWoKs+Vijwwtax7a2FfP+Ll7gJG/oMnDGY
+	 ZYzbJYpjdr/SA==
+Date: Tue, 13 Aug 2024 05:12:02 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812160132.135168257@linuxfoundation.org>
-In-Reply-To: <20240812160132.135168257@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Tue, 13 Aug 2024 20:11:56 +0900
-Message-ID: <CAKL4bV6-OVxsOQPQYHetJZ7C7=oxBK5eHnOG-+HhTgDu608zPg@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/189] 6.6.46-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Utsav Agarwal <utsav.agarwal@analog.com>
+Cc: devicetree@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Oliver Gaskell <oliver.gaskell@analog.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-kernel@vger.kernel.org, 
+ Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Arturs Artamonovs <arturs.artamonovs@analog.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-input@vger.kernel.org, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+In-Reply-To: <20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com>
+References: <20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com>
+ <20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com>
+Message-Id: <172354752239.384988.5705833300903132689.robh@kernel.org>
+Subject: Re: [PATCH v10 3/3] dt-bindings: input: pure gpio support for
+ adp5588
 
-Hi Greg
 
-On Tue, Aug 13, 2024 at 1:14=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.46 release.
-> There are 189 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 14 Aug 2024 16:00:26 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.46-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+On Tue, 13 Aug 2024 10:51:33 +0100, Utsav Agarwal wrote:
+> Adding software support for enabling the pure gpio capability of the
+> device - which allows all I/O to be used as GPIO. Previously, I/O
+> configuration was limited by software to partial GPIO support only.
+> 
+> When working in a pure gpio mode, the device does not require the
+> certain properties and hence, the following are now made optional:
+> 	- interrupts
+> 	- keypad,num-rows
+> 	- keypad,num-columns
+> 	- linux,keymap
+> 
+> However, note that the above are required to be specified when
+> configuring the device as a keypad, for which dependencies have been added
+> such that specifying either one requires the remaining as well.
+> 
+> Also, note that interrupts are made optional, but required when the device
+> has either been configured in keypad mode or as an interrupt controller.
+> This has been done since they may not necessarily be used when leveraging
+> the device purely for GPIO.
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> ---
+>  .../devicetree/bindings/input/adi,adp5588.yaml     | 40 ++++++++++++++++++----
+>  1 file changed, 34 insertions(+), 6 deletions(-)
+> 
 
-6.6.46-rc1 tested.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: [error] syntax error: could not find expected ':' (syntax)
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/adi,adp5588.yaml: ignoring, error parsing file
+./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could not find expected ':'
+make[2]: *** Deleting file 'Documentation/devicetree/bindings/input/adi,adp5588.example.dts'
+Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could not find expected ':'
+make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/input/adi,adp5588.example.dts] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
 
-[    0.000000] Linux version 6.6.46-rc1rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240805, GNU ld (GNU
-Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Tue Aug 13 18:50:55 JST 2024
+doc reference errors (make refcheckdocs):
 
-Thanks
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com
 
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
