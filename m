@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-285263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207FE950B5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:26:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C726C950B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE362B2301D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E8DE28209C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471EC1A2C12;
-	Tue, 13 Aug 2024 17:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8906A1A2C12;
+	Tue, 13 Aug 2024 17:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjZByQBE"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VTuhrTWL"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB6B170A18
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2531A08D1
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723569962; cv=none; b=PJ8nztI8vEi0+vQ/9TxViB6P6hXHwMgiAn3NsFQp92UkCjtzzYvuo8TCHYBl3a7JfytBehj+HCUJRdKrXUkx24rIsWv8bzsoTR7yAppWJs6rZJDsgd7wzwbrS3cEgg8m/dvs+cx0W5XSpwrj2vH5Hrhx6oVA8H3gsRDBsDopO8k=
+	t=1723569993; cv=none; b=SbmWyJ4cwfyi0yLd1zlD0art2oNyFuX2ZLyf2sSlO4A2padHdsYamzxAo2OmUHf6R5MJrh3vCQeniHWKhmEZhE+DLA6tapxFVfRbFsCaUTWXDkm0hc1K2rmBFdeiH/JK83Dx6opvz5yn3xZu2alwhHfq2A6hlFsu6JTEedm81xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723569962; c=relaxed/simple;
-	bh=Od8Vv679wkIb+OJjG6reaAuxQT6UfeebfzvssUo8H4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JUYJl+5XqicR5L9K4CH75rxrdEUNEomy8Rfc38vP1KsYLQNa6IkU5Ud1xM/1FKzEd6uy9tWwjIV/PYNYRaeshU213ptKz2bHKEASLBpG53hYg8Ovi/0Q/+DBgyn4tZ2KCrlXjdSXJBP7lWUH1q/1jKh9jrxTQBiJbAcIiDM3swk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjZByQBE; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a6135eso151903a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:25:59 -0700 (PDT)
+	s=arc-20240116; t=1723569993; c=relaxed/simple;
+	bh=g5luCYPRUnOaUTfxUADhYc+LBS38OEZ8tTN4hBNkyGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M/EWu0KNyOxhaPnb+tjSJ5VObmSegbKUpXKI8E15hL6XvzSSwaGg/LtNr0lWoGelWCBabDQv2nk5Z4bnBe+eCJnitHvZKE3tcTUptLlCRJidrCFEE5Su4nEjZYq2KLWWZCO07Q+YO08ETzcG1kNca3r4svqneewjUhQlpqmJqes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VTuhrTWL; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3db1e4219f8so3248206b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723569958; x=1724174758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1723569989; x=1724174789; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IBL96drYSuoCdxGZV7Oeu8x351yRAla81LihXM7ATxg=;
-        b=PjZByQBER6wZoMONpYEDURjqiBQI01KY8Zj0NqRfcgC9wFqn8iBdPz/Ab/nWmbahix
-         PHvPRK+TyTISVc6QPhwYeh4WuxYgLr47LVdyJgclx9ayttK6kOGnqQpuj+Q0E6Gaj90p
-         nwVNMEhVGlTV5w1iMh1ShgxVvtK3M2gmFWA4DKAkGLkml6vCoi5lI/jG3hYUlI/CABKC
-         xG6RXyVY3n7lEbVnh3HYzuelxfRtI8X4IrSkYJDvUHMkQXHpKHj5FY7fPqNy7q8KbEhU
-         4CkLgyLQW7IuUsE8FUiap6f3nxdNBpGmwg6oFHMjb5nXvPrnlbceZ0XPqIaGzNSxB6Ym
-         zmaw==
+        bh=cL1n98BYjvpNXBfsENT7L2FFIE+k6G4EwDvpPJWlOW4=;
+        b=VTuhrTWL4E650nsOLQ0zA3gPpMl9ERZxKgDzD78KJvE4BCycWu85EQx7XViNID2CSR
+         vQ8L6svdZcJEt8rKcHuhDQdo2njnt/7GLMMpQHe1voKHv079DDHB6SWCVmmpl4grEPPJ
+         ejlyBWzvqnPPUWXBizkdWdGtVlnScAj1N9vDU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723569958; x=1724174758;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723569989; x=1724174789;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IBL96drYSuoCdxGZV7Oeu8x351yRAla81LihXM7ATxg=;
-        b=QXDyz+YLS3RD5jTSaqU1SaBJtLkdeLCT4P5C50Y53NWCsoQV6i8MXN9Rz88nT/ia6Y
-         QjLhOtQqIk7I895DEWsJA1IOv/xgRn3xCK750H/6t90HJA4q/Ywo5Dz8emIA/Ui9O+U8
-         8QbAcnD0CMlL9Hbn+MW67bilVYgSwdzKT1B0PaG65nqa78IynHQ0n+u229U/nWinzRHH
-         E82/aQA1MGzOTcEkP+va2ZbTaMGfsSujTxIUrjwUGZeMEZVK1KBDpoQXb0gjLaiVlLHy
-         wtevyJDQCVhqO2u6BpSb5SgJiMzDPub7vd+ac4bcqBT1joQ4SJl3PF7NwU336NH1aDdq
-         rO9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVniUJhTQATb4G97xpdoKCxGELLBLWPAOyteakpalg1+aZjOc8R+B/iCe9LlkADYOzVnVs48GKC9xi/grxWweYn/+n2HBz40XSxxue+
-X-Gm-Message-State: AOJu0YwVow7xToV7l3WiH1NbEX0RD+L68ef/dT+4Z+R2sPFepufxoL1R
-	aUwqxR43qAAeJRU01O/2P7uK8IHItBWShgXvzfrA2wFo8AdSuBjJ
-X-Google-Smtp-Source: AGHT+IE4QVfh8ydmK+TpVVe6ygWjOUjOSzuDmszscqXIoFmJ1plu1mVf8Z/I++P76Wku5ywDOfQJfA==
-X-Received: by 2002:a05:6402:2497:b0:5af:b1d8:f3d5 with SMTP id 4fb4d7f45d1cf-5bea1696b2fmr315160a12.12.1723569957956;
-        Tue, 13 Aug 2024 10:25:57 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f33cfsm3048343a12.5.2024.08.13.10.25.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 10:25:57 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 2/2] mm/kmemleak: Use IS_ERR_PCPU() for pointer in the percpu address space
-Date: Tue, 13 Aug 2024 19:25:11 +0200
-Message-ID: <20240813172543.38411-2-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240813172543.38411-1-ubizjak@gmail.com>
-References: <20240813172543.38411-1-ubizjak@gmail.com>
+        bh=cL1n98BYjvpNXBfsENT7L2FFIE+k6G4EwDvpPJWlOW4=;
+        b=Y93Id2Wyr/FZ39FGotUetPYL+z8DSzqZxemwmBEgP0xgtVLkZ4s+UvlW9nvMEacRE9
+         Bnkx+YUbu2wNwxMvZc5cSHCWUyJDyEGkm6y1tK7pG3gR7OzDnry9LlcnDFOUzAhNJ/WC
+         znma43DX2S+qv5z0OIuFoE8zWgF8rQEssJ5rxT/mnaBBw7/S213Cqv42B+KDcSo4Lx/Y
+         9G1NsyhGI6uITAG4hgP5p5oeTgzvY2k7XI/pAWLnFrZv4/J6UsgENSqeAPqAT7F9adlk
+         r/OTfhBPTxIygg6Pdb71EY9rteqTMxLs8oqVpLYl/0wW5DcV/dMA8NlKRVVLVlxFzEsv
+         TocQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiKK1p4HcehLRRxd1UIwv7CBSn53QqFTnnIFcq4GVjutaSF3LpQgUgaC0GX1+i40Mk10+VSIydJfzwZdqz4nxkL749V5lDyX86T93g
+X-Gm-Message-State: AOJu0Yz0+RA6cdqBZhGnn4hjEVhGn1WhFchVwcW3Wv/31jfOG5e93lNf
+	k17lLdn2RLhs4tKf6KmElvHPrc3t9bKc0egWnkt/CBzaztsbWtU+t5v8nlQTLwa20m8wAG87pVE
+	=
+X-Google-Smtp-Source: AGHT+IFCzRt82TD2rIETpVTEkK+/sLOQk84/PJV8rT50fEzBNLRRCy0mGNMmoISt9beAa8aaFTU0MQ==
+X-Received: by 2002:a05:6808:1591:b0:3d9:e090:5e1e with SMTP id 5614622812f47-3dd298d6b03mr169146b6e.7.1723569989063;
+        Tue, 13 Aug 2024 10:26:29 -0700 (PDT)
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com. [209.85.161.49])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dd0606aa83sm1743002b6e.6.2024.08.13.10.26.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 10:26:28 -0700 (PDT)
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5cdf7edddc5so3076462eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:26:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnCNrv+blobTrcRbtb4Jdbzldz0XcXvo4eAY6U2zAVcgiKlYNsYKM5t1Vk7/qwYS1pGEejjtt1OB8sBrSxfiZ6dlkBBeun30nTKCAj
+X-Received: by 2002:a05:6358:989d:b0:1b1:a8fb:4600 with SMTP id
+ e5c5f4694b2df-1b1aac4890bmr14711955d.19.1723569987284; Tue, 13 Aug 2024
+ 10:26:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240813133612.49095-1-charles.goodix@gmail.com> <20240813133612.49095-2-charles.goodix@gmail.com>
+In-Reply-To: <20240813133612.49095-2-charles.goodix@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 13 Aug 2024 10:26:15 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=W7rqE+sSbspo6b0un=FbBcxgS24sKLUZ+NTkOdveJObg@mail.gmail.com>
+Message-ID: <CAD=FV=W7rqE+sSbspo6b0un=FbBcxgS24sKLUZ+NTkOdveJObg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
+To: Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com
+Cc: dan.carpenter@linaro.org, conor@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org, 
+	hbarnor@chromium.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use IS_ERR_PCPU() instead of IS_ERR() for pointers in the percpu address
-space. The patch also fixes following sparse warnings:
+Hi,
 
-kmemleak.c:1063:39: warning: cast removes address space '__percpu' of expression
-kmemleak.c:1138:37: warning: cast removes address space '__percpu' of expression
+On Tue, Aug 13, 2024 at 6:37=E2=80=AFAM Charles Wang <charles.goodix@gmail.=
+com> wrote:
+>
+> This patch introduces a new driver to support the Goodix GT7986U
+> touch controller. This device is not compatible with Microsoft's
+> HID-over-SPI protocol and therefore needs to implement its own
+> flavor. The data reported is packaged according to the HID
+> protocol but uses SPI for communication to improve speed. This
+> enables the device to transmit not only coordinate data but also
+> corresponding raw data that can be accessed by user-space programs
+> through the hidraw interface. The raw data can be utilized for
+> functions like palm rejection, thereby improving the touch experience.
+>
+> Key features:
+> - Device connection confirmation and initialization
+> - IRQ-based event reporting to the input subsystem
+> - Support for HIDRAW operations (GET_REPORT and SET_REPORT)
+>
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  drivers/hid/Kconfig          |   6 +
+>  drivers/hid/Makefile         |   1 +
+>  drivers/hid/hid-goodix-spi.c | 810 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 817 insertions(+)
+>  create mode 100644 drivers/hid/hid-goodix-spi.c
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- mm/kmemleak.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+As a point of reference, in v5 Dmitry gave you his "Reviewed-by" tag
+[1] despite having some nits. It's usually expected that you could fix
+the nits and carry the Reviewed-by tag on the next version unless you
+did something other than what was requested in review feedback.
 
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 764b08100570..fa468809d043 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -1059,8 +1059,8 @@ void __ref kmemleak_alloc_percpu(const void __percpu *ptr, size_t size,
- 	 * Percpu allocations are only scanned and not reported as leaks
- 	 * (min_count is set to 0).
- 	 */
--	if (kmemleak_enabled && ptr && !IS_ERR(ptr))
--		create_object_percpu((unsigned long)ptr, size, 0, gfp);
-+	if (kmemleak_enabled && ptr && !IS_ERR_PCPU(ptr))
-+		create_object_percpu((__force unsigned long)ptr, size, 0, gfp);
- }
- EXPORT_SYMBOL_GPL(kmemleak_alloc_percpu);
- 
-@@ -1134,8 +1134,8 @@ void __ref kmemleak_free_percpu(const void __percpu *ptr)
- {
- 	pr_debug("%s(0x%px)\n", __func__, ptr);
- 
--	if (kmemleak_free_enabled && ptr && !IS_ERR(ptr))
--		delete_object_full((unsigned long)ptr, OBJECT_PERCPU);
-+	if (kmemleak_free_enabled && ptr && !IS_ERR_PCPU(ptr))
-+		delete_object_full((__force unsigned long)ptr, OBJECT_PERCPU);
- }
- EXPORT_SYMBOL_GPL(kmemleak_free_percpu);
- 
--- 
-2.42.0
-
+[1] https://lore.kernel.org/all/ZoW4_hctu_cSiKA5@google.com/
 
