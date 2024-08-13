@@ -1,100 +1,84 @@
-Return-Path: <linux-kernel+bounces-284067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31BC94FC92
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F8594FC96
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63F581F22DE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D971F22AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00EE1CD02;
-	Tue, 13 Aug 2024 04:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="d7tPA2ao"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884A1CD29;
+	Tue, 13 Aug 2024 04:17:12 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4337D1B815;
-	Tue, 13 Aug 2024 04:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB686370;
+	Tue, 13 Aug 2024 04:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723522421; cv=none; b=VeEEOWy+P8yE8bHBHv+fH9qBSeu9JIrosyxw4SsikLv/NG9L4MqAVGeXVW1xD6RjIuCstFmrQ0FFfwoJdK80jq4KKIUFqYU5QPx5EqrdYbsXcxWPfDfuNVqjMfAwi1cLZOFSBA2Fj0+hT9EvHLNcm7I4yx320A5RdQdSyD4UK9A=
+	t=1723522631; cv=none; b=pFLs+EvwWwAU2YrfdOHGZXgWVa56q7xX2vyhpmvKvp3CZcMwGblOVsB/W1o9LhODNxOm9VaNE2elvOhDf1pP+sjuXkoxI+dCpCK5sgHKly0nFEiGhMGGj3J7eBE/uVdCT8+b70OQV2xR6zDQTQxXVxk4PNnbzHi1w8Yl6ZAM5qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723522421; c=relaxed/simple;
-	bh=LYIvitUcELWVGkRg3HU1QSfzzWLY1Z1lMk+SgxZaWv4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSEJshfmIfaKrK0rUJ5wIxYHQB9M+W+BecQltFMqHaSTdH6Ryqgcz6zUt5qQQ9//uAjhYq3PWPwpe+9fcF9hVLhkrJ908vhL3z9GQJ1cgPKVgXctwA2RLdNxKxkD/jcRjZs2as70HjGxrNqpCnXwnBdC8ThwPjldY26PLYNUKWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=d7tPA2ao; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CN03IS028173;
-	Mon, 12 Aug 2024 21:13:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=SEp3qwk4GT0xlQatDRuLHX4RJ
-	Hy/o8pdyqFPySWqAS4=; b=d7tPA2ao/7cLfAGdMrLQweuu0v3Y4xuVCcHniImw4
-	VY5q4IR9Nl9F9f4bBPG5f5eDhRxk8LTwWe7FevuqYo9/cmLJHLVzyJQnubX2X41N
-	i6r09TCNozL/4GQmCfpmz46cPZwkAuvXd+4FS4EtORaPGI6D+l9X3131Wanbl3X3
-	MZtN8jf3gszCf9NTNcGhobsFZibQJhieaDZnDBq+TXzKnjIQicswh5dgQYvQVIcT
-	vvAFlZFtOdhPBJtOHDMdN/SpoAyXr/r0JdbyouHPK0Jhd1le45N3x4tUtCyYrViu
-	moAJOaZM4kPNA+CFJ0yyj9S714uro+fxsqWcAa2WBDyCg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40yup38vta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 21:13:00 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 12 Aug 2024 21:12:59 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 12 Aug 2024 21:12:59 -0700
-Received: from maili.marvell.com (unknown [10.28.36.165])
-	by maili.marvell.com (Postfix) with SMTP id EF7D43F704B;
-	Mon, 12 Aug 2024 21:12:54 -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:42:53 +0530
-From: Ratheesh Kannoth <rkannoth@marvell.com>
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, <daiweili@gmail.com>,
-        <sasha.neftin@intel.com>, <richardcochran@gmail.com>,
-        <kurt@linutronix.de>, <anthony.l.nguyen@intel.com>,
-        <netdev@vger.kernel.org>,
-        Przemek Kitszel
-	<przemyslaw.kitszel@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH iwl-net v1] igb: Fix not clearing TimeSync interrupts for
- 82580
-Message-ID: <20240813041253.GA3072284@maili.marvell.com>
-References: <20240810002302.2054816-1-vinicius.gomes@intel.com>
+	s=arc-20240116; t=1723522631; c=relaxed/simple;
+	bh=Kwi/wowfy65XAoQY0vzEd/1FDyseFntnuZIeBQPtpvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gvdwOY0Ep0HmwxaCpyyM4V45d2RcIRFeMiNko/93tsPUGs+IQ1WqOQu9Gh0U64+YJJj9FuRSFTnNzqrf/TcmM4djpMhSPqw6wSWHZzKWgTprN+lRvOelyEWnfm7ZQGPBlqpSEfDMQWGfRu9q5WfNZryKpfptfsMmJusCVWegncs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sdipO-004FRm-0C;
+	Tue, 13 Aug 2024 12:16:56 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 13 Aug 2024 12:16:55 +0800
+Date: Tue, 13 Aug 2024 12:16:55 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Bhoomika K <bhoomikak@vayavyalabs.com>,
+	Pavitrakumar M <pavitrakumarm@vayavyalabs.com>,
+	Linux Crypto List <linux-crypto@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+Message-ID: <ZrreN8P-WO-DsM5B@gondor.apana.org.au>
+References: <20240812104235.6eefb365@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240810002302.2054816-1-vinicius.gomes@intel.com>
-X-Proofpoint-ORIG-GUID: 8SkyDvNSPllJkWS5yqlAv2-2pAbWRIVY
-X-Proofpoint-GUID: 8SkyDvNSPllJkWS5yqlAv2-2pAbWRIVY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
+In-Reply-To: <20240812104235.6eefb365@canb.auug.org.au>
 
-On 2024-08-10 at 05:53:02, Vinicius Costa Gomes (vinicius.gomes@intel.com) wrote:
-> @@ -6960,31 +6960,48 @@ static void igb_extts(struct igb_adapter *adapter, int tsintr_tt)
->  static void igb_tsync_interrupt(struct igb_adapter *adapter)
->  {
->  	struct e1000_hw *hw = &adapter->hw;
-> -	u32 tsicr = rd32(E1000_TSICR);
-> +	u32 ack = 0, tsicr = rd32(E1000_TSICR);
-nit: reverse xmas tree.
+On Mon, Aug 12, 2024 at 10:42:35AM +1000, Stephen Rothwell wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 12 Aug 2024 10:36:30 +1000
+> Subject: [PATCH] fixup for "crypto: spacc - Add SPAcc Skcipher support"
+> 
+> interacting with commit
+> 
+>   1a251f52cfdc ("minmax: make generic MIN() and MAX() macros available everywhere")
+> 
+> from Linus' tree.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/crypto/dwc-spacc/spacc_manager.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+
+Thanks Stephen.  I've applied your patch but I kept the macro but
+added an ifndef MIN around it.  This way it should work either with
+or without Linus's patch.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
