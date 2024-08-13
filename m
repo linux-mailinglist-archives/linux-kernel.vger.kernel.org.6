@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-284859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB44950611
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A0E950614
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6268E1C20FEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:10:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B5971C22C07
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0461819D083;
-	Tue, 13 Aug 2024 13:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69C619CD0F;
+	Tue, 13 Aug 2024 13:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U2lqZ3iS"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tIzO3voR"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C5319CD0F
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750F819D088
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554610; cv=none; b=ljWhDGXxv9iJdlBv0NNbJQGiG1lCzjnEFOtw1aPu8T4D2zf+wkZPFK2YJ0FudiK1ov4IKrBBc5/80PI2HBbnWdCP2Pg+Pmf1TJnlrMUVK5A/4fbP170p8QF02hupNg2aT3QCRdNzBiRrvkxCmpxewfMLLDY/Q5Izxa4vvqFRCq0=
+	t=1723554613; cv=none; b=Xwa/cz+U6LEIuDX+1jEwZ2tgDUeYyEAkJZ+ymqQxL2lj5b5xBz5InusqlER+V9wPQx0LfUXRaKxZNN+Ct/W5Sli3eYVPukfaKUZFuTSqJ+2HfQl3Y5aM8goW0deG0cUXWGIwXh+o0ARCz3t4Y7IeHSNxHwDF2WyBlE8EcozP05g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554610; c=relaxed/simple;
-	bh=5ke0dMugQJGUNzUanoO5HspavxzPQnzSJYizcfymtG0=;
+	s=arc-20240116; t=1723554613; c=relaxed/simple;
+	bh=wSmKVeR5KDA8zEAvS740eQFFBkxeMJlrEwsk0nEhwQs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rqaPmgJEcuJg75UTZWOu6+7CJ118JCSWLXSQ5DgQ5r05bxlDcUYFUNJS5DRwTrZ9tP4hgRHj+vVK7X8HwdRWTozC+JCW9dpfS1DdAgQaDjeJyh/kHlwCpkARTPblAl+QX3cBM0SMIc+bj+OGmvCp7o67/o15G3xoSMWioqCSqic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U2lqZ3iS; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:To:Cc; b=VmPhojcQ41ONmlswIs6QpXwbLG2Q6uGJ4sa5Yuv5i8P6aEMdE5jBsvCAxpS2uVW2gtiT5nheqdZonVm+qVigiHiUJZUW2LEATAMdQ6ujhIqUzi6xcpTKomRVF9Qnx0wqwpwPpJht+cl2hRvxZOzbOyr8wW6nr6xFgPH9XG4cucQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tIzO3voR; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428ec6c190eso42193475e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:10:08 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso3651717f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:10:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723554607; x=1724159407; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723554610; x=1724159410; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m2fVMcPJnrUO0N/1FseA0j+EEzz4Wl9hBU15LCUQqrw=;
-        b=U2lqZ3iSYtjgZzBFr3/gVOKD9OjXU9yg6ZITyNDD9RayRdnafgXHejP5hrOYUZE/OE
-         vm0i2QDb+tnzq3ZQiKwX5EBzjNC9zD2Zdv0Vqj7gvaa+uTA1hFwjnZNkpm1DUqZjRHfR
-         2c4i+wypaSgAdt6KI90DQJB4e1JAaRPwoePJixhvuUuhKJz5srcQEbWA3oJXct4efKVe
-         qRQQo5QIuqi1oTIflRJPXFK3hUvHj32DR+Wv1L62OwjASks/QLXYSLn2u9PrEWiXBm/S
-         49xfh9PIi23SY4qmC56Y76xdNNqw4KEhgdQx3DG3XLzwD42QMCQ9nBw79yLYCKVXs879
-         9hNg==
+        bh=zOfeSktxxxx+AVaDkIgX6QSMwS92sXS03dIKp1uUHmM=;
+        b=tIzO3voRDZd5LGF+bMb0Y+StJAkLJOl3ufji7VCZvKo11EoNqhC6YgTabn5W2HAw3+
+         IafD0AOZz1xbkvaPun5slYYlcMtGFLHiK2lI9ym8p3LFitPD+EYN4DymmOUFXnWOIVAt
+         9rFBTu4pN7gamGdAUY1m5SFgMEiYdL38X7dh5M/qEtMS8FujmOtg9h/tHaA4yx+//2Kf
+         IA6OEz8CzTWfZMeyPKyi+G+ZEApW9/1xa82ZKGExpXkOFnUdKXvAlAVZkUUcAY5UV6/A
+         cfKG5ZrdsnZS4t3ws/2Waw7vwvoRnuB94tuGb0h04DVFQelqfMw8Vb4W0CuupN+HLd8m
+         AkvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723554607; x=1724159407;
+        d=1e100.net; s=20230601; t=1723554610; x=1724159410;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m2fVMcPJnrUO0N/1FseA0j+EEzz4Wl9hBU15LCUQqrw=;
-        b=ulerAQa9jCXjTpDNIqe+N6F/1Cgh1RjWJgXNiNAHQ4aDMDI3l1pGQzoN1ZefxOY8db
-         SS74qZupB7NvjHtFvdnWPpDKhxYGzNpvrsBEt5ZixRmPMAFmoWAXx17oZOQCtUSS6XfM
-         g+v+ly+DISM69jOPOa0ytRc2e0KXyOHzOWcfnU1lnpAxrmufp+Xd5Hy1OvvTnlEABDTM
-         KvhIoAU2YPolxgq16u1RETR/2fkv2/rXDAEmbfGNEY6K+lUcPQkbBnupOJuAESR2W8/o
-         2fMOYIxg0ViN89RDwxjnSWFwa1wzgwy4YNGAN9npSv3kIhUDFJKvmAVSlcQp0cX3NYXD
-         KaOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGyHcqgdrPM2bAkejWbcFN/VkuA1xNFEYgQMuKJk03+koXiuMMrLDEnIgNh46Ggjpwx8wg+JDArFsEgWEqmVM4ki0F7TnCW13goajr
-X-Gm-Message-State: AOJu0YwKYdJ1A8+7uOc++eASSXcjYf/sOb6SIpRlX37ayaUCyWjRElry
-	WuuJMOCzC0nmGN9DeN1L8GelxD5592D6poItQoNO2RJrOpEJvmCLY9p+qG0NoqI=
-X-Google-Smtp-Source: AGHT+IHnqwXc38Pnpsch22i4e5wNnLg8t3Sw8H/kb30baBblrfe0Ww0kSwLWvg9YlxY932elDZZEiQ==
-X-Received: by 2002:a05:600c:4e87:b0:426:5216:3247 with SMTP id 5b1f17b1804b1-429d47f43c5mr23464765e9.6.1723554606909;
-        Tue, 13 Aug 2024 06:10:06 -0700 (PDT)
+        bh=zOfeSktxxxx+AVaDkIgX6QSMwS92sXS03dIKp1uUHmM=;
+        b=mITlTAXykCDN1clcmIyvj8EOpuvKTfn/tg0vuArknBszLkMul6XlkOcOs4aYnAMhF+
+         rfF9w5rOhwlMIyID5K7fpMHXy5aT0s36IeX3ofy29jJNffN3q7yGojha2MbqtvFjwW98
+         Go8HXG6RiKx7pb2FPm7XVBgLuIrCm71JdwQoRY243bQO2N2D8PF+Xk+cEyGLFZP3S5XX
+         eOw770i3s4X+0IeZ97/m0bbLunVURJxerebaUN2SRreU9DAsqNDdFy/nGzwLQ6lzVzFf
+         +Hg8MeWVFNMxQZ+y/Z7SuXH3N8ptCVZzNsnCao8h9SLr2Y5hTy9ovrKlepQAF70BBf+Z
+         aGlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrHbsDwL2lzczlbapycWNFhK18gONr884O8nvvgSdp4hECGBx5Wms/biB+l3cpdO4WwaFKgDnu+GYfZ14fH5jSGR8YEZ0nHBB6TuW4
+X-Gm-Message-State: AOJu0YyYfZZwt0QyarKN2MbEly3E+3bnq59c/SkJMSIPrxIVyyEXAHsp
+	MXKD5aoWVwMM579BUJ+sXbdLGbg/md7WWcaPoaWHerhPzl3CYEw97UO0oKHRgWA=
+X-Google-Smtp-Source: AGHT+IHyNEIn/w+Q3aUBV+ipIP0PES4tddwlwX5duA/1fo0cQCC6TltvLeRJDiS0zTmiMEeDz3hbag==
+X-Received: by 2002:a5d:4ecd:0:b0:368:5b0c:7d34 with SMTP id ffacd0b85a97d-3716ccf1e7amr2493850f8f.22.1723554609762;
+        Tue, 13 Aug 2024 06:10:09 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c938280sm10305003f8f.36.2024.08.13.06.10.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c938280sm10305003f8f.36.2024.08.13.06.10.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:10:03 -0700 (PDT)
+        Tue, 13 Aug 2024 06:10:08 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 13 Aug 2024 15:09:48 +0200
-Subject: [PATCH 2/6] soc: qcom: aoss: simplify with scoped for each OF
- child loop
+Date: Tue, 13 Aug 2024 15:09:49 +0200
+Subject: [PATCH 3/6] soc: qcom: ice: use scoped device node handling to
+ simplify error paths
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-b4-cleanup-h-of-node-put-other-v1-2-cfb67323a95c@linaro.org>
+Message-Id: <20240813-b4-cleanup-h-of-node-put-other-v1-3-cfb67323a95c@linaro.org>
 References: <20240813-b4-cleanup-h-of-node-put-other-v1-0-cfb67323a95c@linaro.org>
 In-Reply-To: <20240813-b4-cleanup-h-of-node-put-other-v1-0-cfb67323a95c@linaro.org>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
@@ -89,63 +89,91 @@ Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1215;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2089;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=5ke0dMugQJGUNzUanoO5HspavxzPQnzSJYizcfymtG0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmu1sgzubjFvDtLJ+b01jNRFC9A7/wMsKAxjAK7
- lgCKP4SyxuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZrtbIAAKCRDBN2bmhouD
- 196BD/9zpchJcYbVKVBPCCQYSew98k1x7YKbjCYqEkr2Rl0ry5Q0WsDrLcz+OdPNUNcukEBF57j
- CXFMVHwF/8HziV4YUQ+g/pJ9U+XQc8ZK9yVd2j0rCdKtFoGDJaH5jt1tt5u3XA4enR93eAScbBp
- z5WdEHG801tqydGLxgY06YsKKBo6TyNl6M58T8DmY9j7zNUnfPDB4tuGClf9vBycT/Jj/O/aDDn
- 4QbR/52niOyRHJJKNAtssir5m7I01na6FAKy0FVCubov8ranFGxpB+/eajBWSPKCy+TJOcip70k
- hQncmCZ9UA8CWvAfa7Ge7tHs+apnqGQYhF5dIcyXOC+EXRFuxZSs2aP7RScesHW7NT8kC/d6YPn
- UWiIShbfEkndLogb4uVBxCHY+lGq1TuD99bQBA1263enla+ziujq2XHmClw9Jwh0e/ehzJx1lvz
- O7NJaGTbSgIpaaVcS772jGuCgtxdjipcFWZnGxeuLqX4cWUfLtB+kDlroZf/+gN89t/1BK9OKln
- aicspz5G8uvst1BkIlyPg6YrTCv9ays26lhb7+QPmKuiMERxXiVu+6NnCTN7Sh/xjB9Y5CZ5fig
- jo1h802DvOHu9aslkYrUjJBkngQvLMPXfU8SCQqMwdfkByy46tYvfiN0YL5C02pRc0+Ww98lSNJ
- QfesZwWWNe6o9nw==
+ bh=wSmKVeR5KDA8zEAvS740eQFFBkxeMJlrEwsk0nEhwQs=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmu1sh5LeIoKQcZBpw8Q0T7w56JOH+NskEVH9ts
+ H6E4FxaqEOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZrtbIQAKCRDBN2bmhouD
+ 1+kuD/9Z/MncfojAYUJXJABsySNZGoAFTsvI5oTL/7lPqEhOofrokAIH8o9kLEi5k/uJ+XHxaeD
+ HavJlDNe+CbSNA5hAFM9FDUqqK6X5JeYzasWTGirc6EwmKdPm285CAd2bXU5xOzsyWVYExOl3Y+
+ nwf/ombpgpleqhr6pcLkryzJ3yo4qQDokdW8Rdq03PWVRDPwyyrRKfBaOs5evJWJBITJMkE5JAe
+ okxPARs5T0b9/lB61sg6aamuwLZ7f1o/MTUjf7ErpLEQQPQ3wnEr5B17HvMMhU97azGI7lVQ4DU
+ 63f2I1gQyoiuQKOBisboJdn8Xx/9OGnpWxMwV3Ud28WlErdlklA9Iag0PG082BUr3kTl4y8qZBl
+ 3gEfXyA87EsahI8JkQ8NrTdxtHfQq4+d+8QBNm5vb8gb3n584yqeqWwtSRdoTSHFfONvXWKv4ef
+ RgpkDi6VWMqi2Bf6Y3F2FSxKvAyeFRwSFXwwwHuBDZUSvJzaOOeuryL6JyFA+LT26GsThf1UlHc
+ B4voocpWUdw3QQ5DK4EnL2bdUlgq2X4m6rJbb6O2MzTuH2p3CrgSpNQfGgrQhk7PtYwD51T3Nzi
+ fYmX6sCsEXg7kJErv6O4RS8B/zcsv382ZGl5XFV1KDD2ASKX5t+f1WT5sgJywP3EHQ4iX94pp9W
+ fGM/J+iufuJEQcw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+Obtain the device node reference with scoped/cleanup.h to reduce error
+handling and make the code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/soc/qcom/qcom_aoss.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/soc/qcom/ice.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
-index ca2f6b7629ce..60af26667bce 100644
---- a/drivers/soc/qcom/qcom_aoss.c
-+++ b/drivers/soc/qcom/qcom_aoss.c
-@@ -394,7 +394,7 @@ static int qmp_cooling_device_add(struct qmp *qmp,
+diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
+index fbab7fe5c652..50be7a9274a1 100644
+--- a/drivers/soc/qcom/ice.c
++++ b/drivers/soc/qcom/ice.c
+@@ -8,6 +8,7 @@
+  */
  
- static int qmp_cooling_devices_register(struct qmp *qmp)
+ #include <linux/bitfield.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/iopoll.h>
+@@ -265,7 +266,6 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
  {
--	struct device_node *np, *child;
-+	struct device_node *np;
- 	int count = 0;
- 	int ret;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct qcom_ice *ice;
+-	struct device_node *node;
+ 	struct resource *res;
+ 	void __iomem *base;
  
-@@ -407,15 +407,13 @@ static int qmp_cooling_devices_register(struct qmp *qmp)
- 	if (!qmp->cooling_devs)
- 		return -ENOMEM;
+@@ -292,15 +292,15 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
+ 	 * (legacy DT binding), then it must at least provide a phandle
+ 	 * to the ICE devicetree node, otherwise ICE is not supported.
+ 	 */
+-	node = of_parse_phandle(dev->of_node, "qcom,ice", 0);
++	struct device_node *node __free(device_node) = of_parse_phandle(dev->of_node,
++									"qcom,ice", 0);
+ 	if (!node)
+ 		return NULL;
  
--	for_each_available_child_of_node(np, child) {
-+	for_each_available_child_of_node_scoped(np, child) {
- 		if (!of_property_present(child, "#cooling-cells"))
- 			continue;
- 		ret = qmp_cooling_device_add(qmp, &qmp->cooling_devs[count++],
- 					     child);
--		if (ret) {
--			of_node_put(child);
-+		if (ret)
- 			goto unroll;
--		}
+ 	pdev = of_find_device_by_node(node);
+ 	if (!pdev) {
+ 		dev_err(dev, "Cannot find device node %s\n", node->name);
+-		ice = ERR_PTR(-EPROBE_DEFER);
+-		goto out;
++		return ERR_PTR(-EPROBE_DEFER);
  	}
  
- 	if (!count)
+ 	ice = platform_get_drvdata(pdev);
+@@ -308,8 +308,7 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
+ 		dev_err(dev, "Cannot get ice instance from %s\n",
+ 			dev_name(&pdev->dev));
+ 		platform_device_put(pdev);
+-		ice = ERR_PTR(-EPROBE_DEFER);
+-		goto out;
++		return ERR_PTR(-EPROBE_DEFER);
+ 	}
+ 
+ 	ice->link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
+@@ -321,9 +320,6 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
+ 		ice = ERR_PTR(-EINVAL);
+ 	}
+ 
+-out:
+-	of_node_put(node);
+-
+ 	return ice;
+ }
+ EXPORT_SYMBOL_GPL(of_qcom_ice_get);
 
 -- 
 2.43.0
