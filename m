@@ -1,209 +1,98 @@
-Return-Path: <linux-kernel+bounces-285445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9F5950D92
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:06:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CB8950D93
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6841C21836
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:06:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769A1B284CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685F11A4F29;
-	Tue, 13 Aug 2024 20:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CAD1A4F39;
+	Tue, 13 Aug 2024 20:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PSCYpLlD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="am7s8RDE"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE944C61;
-	Tue, 13 Aug 2024 20:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579572; cv=none; b=nNj8mEluJNL6ccCxFoN3Xtd/Q1Be73lLyo1PydeTVFJV4Yi6UYszWABjyYqpUQWbz0mfLuV3xqCo6gawks9Fc8yQsaXaWm/clXG94MK4+NNp+wuNe9E0ZXMyd/cQW7iD42GU96WIGMrYmCwlQa5UM+tqKK0Q3dmp/Y0KpW24cAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579572; c=relaxed/simple;
-	bh=54vHcE4NSp0HZdHFv1znwaX2jlb0ZcZWWvDg02d3Tv0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hPIRq5xfNiLZp/OwX0Z9A/LBEUIsS5sRipPXDPf8zbHlyTUgv/O96mCGF4P+89EazUSEJ311eIH0y5G/ybbwihIpwQMwaoFG+Y4qVuRFGosfBG2RmzOT3iayBG32DmZb/k1V2FM/Obaq0e27uDxYsjltY67SA0oRpXqyuunXkDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PSCYpLlD; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723579570; x=1755115570;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=54vHcE4NSp0HZdHFv1znwaX2jlb0ZcZWWvDg02d3Tv0=;
-  b=PSCYpLlD0e9Wr5b2Q7nos5aFeaVzRBXEV6PSAT3fA0isLmxUps8AXnKI
-   QvxOhrJMi1xqns3JFy9y7J7iX8K6bKluez9XKNmCZqQSSLV5ZjITQRSGo
-   FKNWTffumXD3Oa6tTMClp8/1MXLz+uxt4nB45fN5ZR5v4CwE318VH88MH
-   quox1x8s6seG5zjg4NksEKalyk955c2efi+ScfWUWi6shX1YKgT81D1nB
-   yWICv4IQO9wSB1GP57LsM5e+3e++RNuCU3JKKcHlxFTkPRGnrLTVHbBmo
-   lAhgTC3wMwl9jGwJFZ82LUqH13D89Qd84W3HwhZzZAnVZI0MvZPQUcY9o
-   A==;
-X-CSE-ConnectionGUID: XV4LlxTZTBm1r6eI0ciJtg==
-X-CSE-MsgGUID: 1kVffGZTSmClFgdsOQ4KPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="25530595"
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="25530595"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 13:06:09 -0700
-X-CSE-ConnectionGUID: Z7uGyN09QjWg1oF8aIlKfw==
-X-CSE-MsgGUID: ZqNnll1oRsiTr0h+r/Gk4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="89593604"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 13:06:08 -0700
-Received: from [10.212.113.57] (kliang2-mobl1.ccr.corp.intel.com [10.212.113.57])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 0CE3120CFED6;
-	Tue, 13 Aug 2024 13:06:06 -0700 (PDT)
-Message-ID: <aedabebd-dad1-4b2b-93d7-e2d9884bdaf7@linux.intel.com>
-Date: Tue, 13 Aug 2024 16:06:05 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA271A00F2
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723579573; cv=pass; b=P06mS9J2q9FveTYEfhsx5NicPWI/UAuZZxILAWpnBHe2ac5GAj044XfTUFVTYH7225Qv8u2/ZCujqBeTU+VE21lygJuWcoz4X7ur07norbWS1MuLZIqTll9nNvsq6ifyUWD1TajObll/WdExbjXB9jZCGJZ968C33xHLgjSFFxQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723579573; c=relaxed/simple;
+	bh=1aNhFWk7kUadevvEHfpVPlJcGU717W4X8c3cStB0VFM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=hUOWH/lleqfbng6XsZD3REiBNrdDU6QyrkHXZOlRDUXVZYxAbvsLk0XTdyV+ZAyBmNeVIW+ztNi2RDxrfVkCtyy6RnpPlGZ9xHlvC060h9z5KTrrUaThvnQnAtMpN0IW/v/FtncwrZ1y1POz2nF5AjDtmACQ32tNS7irZ4sRHtg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=am7s8RDE; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: vignesh.raman@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723579567; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ONA+Dn/+VKgTnBa2REUHtNDBSRiJp/n5ZA2OUyvELanaiSdXYjUsm7WJPbnm5n2xNbr/ev9BaETrvr5xd5w8mL6WTi4kIS7+jNdRXMOLaHKBA1Fv0nu0C8GxXiQ0U4tqNnbVfeM12Io6ILYKjJaIteLYzfXgEUIJfNe+rV0HBe0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723579567; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4kgDpvw/qRDvAuTJMC6kdFG5fzn7p6L34o5jQat7XV0=; 
+	b=mQbA50wIo226KWk/ovdaZ/IT122d5pDo8EnrcJ3eSGwaKsaFZltxD1EMXilZWDOzp7rtERBDTV18q9Kdmlf2mDZNsOJuLAFiNEFWvROwIHqzXsKbuE4gweqql/mSekrT2QyeGzgJRlu9k2dXl1FnbtrvnizuksI0g6TJ5XyPhJI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
+	dmarc=pass header.from=<helen.koike@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723579567;
+	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=4kgDpvw/qRDvAuTJMC6kdFG5fzn7p6L34o5jQat7XV0=;
+	b=am7s8RDE0ij43aAYMZsBpF6mFSYV/BJBBSxFR535LMdeGLI86cKT2NwomYru0Ve7
+	V5B59hPlzvhaEQqbvCxhhA5YuKb9/h+AJyh3MBVCOFxWbcm8j0y80qA1CdoAg7Wn30s
+	zEyulYl9TySqFrP+kBht0665Uvx2BrYMoQ8QNG44=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1723579566707428.10798840074915; Tue, 13 Aug 2024 13:06:06 -0700 (PDT)
+Date: Tue, 13 Aug 2024 17:06:06 -0300
+From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
+To: "Daniel Stone" <daniel@fooishbar.org>
+Cc: "Vignesh Raman" <vignesh.raman@collabora.com>,
+	"dri-devel" <dri-devel@lists.freedesktop.org>,
+	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
+	"daniel" <daniel@ffwll.ch>, "robdclark" <robdclark@gmail.com>,
+	"guilherme.gallo" <guilherme.gallo@collabora.com>,
+	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
+	"deborah.brouwer" <deborah.brouwer@collabora.com>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <1914d590a61.110918b2f913118.3115650497780570443@collabora.com>
+In-Reply-To: <CAPj87rNO4ckvgggn=FE4odpAsGDb95XZ7py0GrguJqB0Y0TN8g@mail.gmail.com>
+References: <20240807082020.429434-1-vignesh.raman@collabora.com> <CAPj87rNO4ckvgggn=FE4odpAsGDb95XZ7py0GrguJqB0Y0TN8g@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/ci: uprev mesa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/9] perf report: Fix --total-cycles --stdio output
- error
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: namhyung@kernel.org, irogers@google.com, peterz@infradead.org,
- mingo@kernel.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, adrian.hunter@intel.com,
- ak@linux.intel.com, eranian@google.com
-References: <20240813160208.2493643-1-kan.liang@linux.intel.com>
- <20240813160208.2493643-2-kan.liang@linux.intel.com> <ZrupfUSZwem-hCZm@x1>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <ZrupfUSZwem-hCZm@x1>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
 
 
-On 2024-08-13 2:44 p.m., Arnaldo Carvalho de Melo wrote:
-> On Tue, Aug 13, 2024 at 09:02:00AM -0700, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> The --total-cycles may output wrong information with the --stdio.
-> 
-> Hey, I tried --total-cycles with --group but that didn't work, do you
-> think that would make sense?
 
-The current implementation doesn't handle the symbol_conf.event_group
-for the tui mode.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/builtin-report.c#n543
 
-I will send a separate patch to fix it and make it consistent.
+---- On Wed, 07 Aug 2024 09:33:10 -0300 Daniel Stone  wrote ---
 
-Thanks,
-Kan
+ > On Wed, 7 Aug 2024 at 09:21, Vignesh Raman vignesh.raman@collabora.com> wrote: 
+ > > Uprev mesa to adapt to the latest changes in mesa ci. 
+ > > Project 'anholt/deqp-runner' was moved to 'mesa/deqp-runner'. 
+ > > So update the link. 
+ >  
+ > Reviewed-by: Daniel Stone daniels@collabora.com> 
+ > 
 
-> 
-> Anyway, all applied, now testing and reviewing the changes,
-> 
-> thanks!
-> 
-> - Arnaldo
->  
->> For example,
->>   perf record -e "{cycles,instructions}",cache-misses -b sleep 1
->>   perf report --total-cycles --stdio
->>
->> The total cycles output of {cycles,instructions} and cache-misses are
->> almost the same.
->>
->>  # Samples: 938  of events 'anon group { cycles, instructions }'
->>  # Event count (approx.): 938
->>  #
->>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
->>  # ...............  ..............  ...........  ..........
->>   ..................................................>
->>  #
->>            11.19%            2.6K        0.10%          21
->>                           [perf_iterate_ctx+48 -> >
->>             5.79%            1.4K        0.45%          97
->>             [__intel_pmu_enable_all.constprop.0+80 -> __intel_>
->>             5.11%            1.2K        0.33%          71
->>                              [native_write_msr+0 ->>
->>
->>  # Samples: 293  of event 'cache-misses'
->>  # Event count (approx.): 293
->>  #
->>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
->>                                                   [>
->>  # ...............  ..............  ...........  ..........
->>    ..................................................>
->>  #
->>            11.19%            2.6K        0.13%          21
->>                           [perf_iterate_ctx+48 -> >
->>             5.79%            1.4K        0.59%          97
->> [__intel_pmu_enable_all.constprop.0+80 -> __intel_>
->>             5.11%            1.2K        0.43%          71
->>                              [native_write_msr+0 ->>
->>
->> With the symbol_conf.event_group, the perf report should only report the
->> block information of the leader event in a group.
->> However, the current implementation retrieves the next event's block
->> information, rather than the next group leader's block information.
->>
->> Make sure the index is updated even if the event is skipped.
->>
->> With the patch,
->>
->>  # Samples: 293  of event 'cache-misses'
->>  # Event count (approx.): 293
->>  #
->>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles
->>                                                   [>
->>  # ...............  ..............  ...........  ..........
->>    ..................................................>
->>  #
->>            37.98%            9.0K        4.05%         299
->>    [perf_event_addr_filters_exec+0 -> perf_event_a>
->>            11.19%            2.6K        0.28%          21
->>                           [perf_iterate_ctx+48 -> >
->>             5.79%            1.4K        1.32%          97
->> [__intel_pmu_enable_all.constprop.0+80 -> __intel_>
->>
->> Fixes: 6f7164fa231a ("perf report: Sort by sampled cycles percent per block for stdio")
->> Acked-by: Namhyung Kim <namhyung@kernel.org>
->> Reviewed-by: Andi Kleen <ak@linux.intel.com>
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>  tools/perf/builtin-report.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
->> index dfb47fa85e5c..04b9a5c1bc7e 100644
->> --- a/tools/perf/builtin-report.c
->> +++ b/tools/perf/builtin-report.c
->> @@ -565,6 +565,7 @@ static int evlist__tty_browse_hists(struct evlist *evlist, struct report *rep, c
->>  		struct hists *hists = evsel__hists(pos);
->>  		const char *evname = evsel__name(pos);
->>  
->> +		i++;
->>  		if (symbol_conf.event_group && !evsel__is_group_leader(pos))
->>  			continue;
->>  
->> @@ -574,7 +575,7 @@ static int evlist__tty_browse_hists(struct evlist *evlist, struct report *rep, c
->>  		hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
->>  
->>  		if (rep->total_cycles_mode) {
->> -			report__browse_block_hists(&rep->block_reports[i++].hist,
->> +			report__browse_block_hists(&rep->block_reports[i - 1].hist,
->>  						   rep->min_percent, pos, NULL);
->>  			continue;
->>  		}
->> -- 
->> 2.38.1
-> 
+Applied to drm-misc-next
+
+Thanks
 
