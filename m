@@ -1,104 +1,186 @@
-Return-Path: <linux-kernel+bounces-284563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE706950282
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:32:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD4F950283
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AF36283190
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0578028377B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A83018A95E;
-	Tue, 13 Aug 2024 10:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rqiJwKO/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929A208AD;
-	Tue, 13 Aug 2024 10:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB01B18DF62;
+	Tue, 13 Aug 2024 10:33:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12571208AD
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723545138; cv=none; b=frK9SrQY5txlpZoQO0brDSNPt6m2XMKYcC7AUetrooz/RJnI/bSAwSB2NfFRaqn0J+92pSL9h6L01HVqxDUIq2oiLLjdOnf0q7gl6GOPaHWiW/0rg3C9kozVO3YikXwgOERl8xuXbY4vge+O3v3x5cUwzFaskbp9vIrGAWZf2Z0=
+	t=1723545235; cv=none; b=WdtCIc6dkHzPJO0NA00XC2cEyO3ObjjbbluTJ9nEpwdKoRs5Hc9LUqQt0Lh0/c50Eb9T5xJUtobr8iN5VI7Esnpq8Q65FuF5klGi45aVP2OhOsr2AlAls83yCoH6pUVE9JdNIzTeK+kkBoqkECey+0yhe81IHCpiFnkKgz2HMpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723545138; c=relaxed/simple;
-	bh=Cbw4bmDrxPKsakV5v51GE0p9nhQRBT0XmB9HnhS7H/8=;
+	s=arc-20240116; t=1723545235; c=relaxed/simple;
+	bh=ghhay0nSTOR2VeeoKC6zV8Bsw0OP6qhUaCYCYxF+1Vk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QP9Dsch28GPK9Y19tUP0vvypqne8VeFsYGVqgWijEM9gRyIbZSoqgeVhZobCHScVv8zJaDCZ8MyuQHxkdmfUJWerdqPuUz3VgUDk5Fdg0dF0VvStfs0xn01c8oa9YD+EwiOTPC9LWvrdm4NhAEcns23VBKBN+xfTY2mqYVPZXLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rqiJwKO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F14BC4AF09;
-	Tue, 13 Aug 2024 10:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723545137;
-	bh=Cbw4bmDrxPKsakV5v51GE0p9nhQRBT0XmB9HnhS7H/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rqiJwKO/GPFmhg0NYu0fJImqoWwX658Vm37O5r/iZDYei7eto9DW+Sls7QyyU18CR
-	 bNLHhqOJ9xiUGCvyjx1t58e8Az8Hed6xo01AzjBfLxFuxT0fJa0KzYYOQl6MwNR7sl
-	 km72lVSSGfHfw17ZJR/yJA7JYb5LJa/Hm4FFXCkI=
-Date: Tue, 13 Aug 2024 12:32:14 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jari Ruusu <jariruusu@protonmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.10 00/59] 5.10.223-rc1 review
-Message-ID: <2024081303-quotable-legroom-1850@gregkh>
-References: <veJcp8NcM5qwkB_p0qsjQCFvZR5U4SqezKKMnUgM-khGFC4sCcvkodk-beWQ2a4qd3IxUYaLdGp9_GBwf3FLvkoU8f1MXjSk3gCsQOKnXZw=@protonmail.com>
- <2024072633-easel-erasure-18fa@gregkh>
- <vp205FIjWV7QqFTJ2-8mUjk6Y8nw6_9naNa31Puw1AvHK8EinlyR9vPiJdEtUgk0Aqz9xuMd62uJLq0F1ANI5OGyjiYOs3vxd0aFXtnGnJ4=@protonmail.com>
- <2024072635-dose-ferment-53c8@gregkh>
- <93RnVgeI76u-tf0ZRdROl_JVVqqx-rtQnV4mOqGR_Rb5OmiWCMXC6MSYfnkTPp_615nKq8H-5nfzNt4I9MXPjUPzXBLp625jtGUJSGPsGBo=@protonmail.com>
- <2024072627-pasture-denim-0390@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=INt5IoiY9kPg4swwVeu3QVCxIrx+8jyzkK71UgrQBOBr/LnKnYg2wU0exJDIuhyBAprXVw+XKUWADn97sEc5KvUDE8Y84zWE13W2zRhJlb4ITjG6IUE6dpx2rPGlAq1WOLlRzRfFGKZPCgsEtFqlMyIckYft22PMf8BB29rxnSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3410312FC;
+	Tue, 13 Aug 2024 03:34:18 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0F073F587;
+	Tue, 13 Aug 2024 03:33:50 -0700 (PDT)
+Date: Tue, 13 Aug 2024 11:33:47 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Shanker Donthineni <sdonthineni@nvidia.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v3: Allow unused SGIs for drivers/modules
+Message-ID: <Zrs2i9Iyrlqc-a4K@bogus>
+References: <20240813033925.925947-1-sdonthineni@nvidia.com>
+ <86zfpgztmt.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024072627-pasture-denim-0390@gregkh>
+In-Reply-To: <86zfpgztmt.wl-maz@kernel.org>
 
-On Fri, Jul 26, 2024 at 12:23:02PM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Jul 26, 2024 at 09:53:18AM +0000, Jari Ruusu wrote:
-> > On Friday, July 26th, 2024 at 11:52, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > > Also the "Fixes:" tag is not in the correct format, please fix that up
-> > > at the very least.
+On Tue, Aug 13, 2024 at 09:58:34AM +0100, Marc Zyngier wrote:
+> On Tue, 13 Aug 2024 04:39:25 +0100,
+> Shanker Donthineni <sdonthineni@nvidia.com> wrote:
 > > 
-> > Some older systems still compile kernels with old gcc version.
-> > These warnings and errors show up when compiling with gcc 4.9.2
-> > 
-> >  error: "__GCC4_has_attribute___uninitialized__" is not defined [-Werror=undef]
-> > 
-> > Following patch fixes this. Upstream won't need this because  
-> > newer kernels are not compilable with gcc 4.9.
-> > 
-> > Subject: gcc-4.9 warning/error fix for 5.10.223-rc1
-> > Fixes: fd7eea27a3ae ("Compiler Attributes: Add __uninitialized macro")
-> > Signed-off-by: Jari Ruusu <jariruusu@protonmail.com>
-> > 
-> > --- ./include/linux/compiler_attributes.h.OLD
-> > +++ ./include/linux/compiler_attributes.h
-> > @@ -37,6 +37,7 @@
-> >  # define __GCC4_has_attribute___nonstring__           0
-> >  # define __GCC4_has_attribute___no_sanitize_address__ (__GNUC_MINOR__ >= 8)
-> >  # define __GCC4_has_attribute___no_sanitize_undefined__ (__GNUC_MINOR__ >= 9)
-> > +# define __GCC4_has_attribute___uninitialized__       0
-> >  # define __GCC4_has_attribute___fallthrough__         0
-> >  # define __GCC4_has_attribute___warning__             1
-> >  #endif
-> > 
-> > --
-> > Jari Ruusu  4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD  ACDF F073 3C80 8132 F189
-> > 
+> > The commit 897e9e60c016 ("firmware: arm_ffa: Initial support for scheduler
+> > receiver interrupt") adds support for SGI interrupts in the FFA driver.
+> > However, the validation for SGIs in the GICv3 is too strict, causing the
+> > driver probe to fail.
 > 
-> Better, thanks!  I'll touch this up by hand and apply it to the relevant
-> branches (not just this one needs it), for the next round of stable
-> releases.
+> It probably is a good thing that I wasn't on Cc for this patch,
+> because I would have immediately NAK'd it. Sudeep, please consider
+> this a retrospective NAK!
+>
 
-Now queued up.
+Sure, I am happy to work on any suggestions to replace it with better/cleaner
+solution.
 
-greg k-h
+> > 
+> > This patch relaxes the SGI validation check, allowing callers to use SGIs
+> > if the requested SGI number is greater than or equal to MAX_IPI, which
+> > fixes the TFA driver probe failure.
+> > 
+> > This issue is observed on NVIDIA server platform with FFA-v1.1.
+> >  [    7.918099] PTP clock support registered
+> >  [    7.922110] EDAC MC: Ver: 3.0.0
+> >  [    7.945063] ARM FF-A: Driver version 1.1
+> >  [    7.949068] ARM FF-A: Firmware version 1.1 found
+> >  [    7.977832] GICv3: [Firmware Bug]: Illegal GSI8 translation request
+> >  [    7.984237] ARM FF-A: Failed to create IRQ mapping!
+> >  [    7.989220] ARM FF-A: Notification setup failed -61, not enabled
+> >  [    8.000198] ARM FF-A: Failed to register driver sched callback -95
+> >  [    8.011322] scmi_core: SCMI protocol bus registered
+> > 
+> > Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
+> > ---
+> >  arch/arm64/include/asm/arch_gicv3.h | 17 +++++++++++++++++
+> >  arch/arm64/kernel/smp.c             | 17 -----------------
+> >  drivers/irqchip/irq-gic-v3.c        |  2 +-
+> >  3 files changed, 18 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
+> > index 9e96f024b2f19..ecf81df2915c7 100644
+> > --- a/arch/arm64/include/asm/arch_gicv3.h
+> > +++ b/arch/arm64/include/asm/arch_gicv3.h
+> > @@ -188,5 +188,22 @@ static inline bool gic_has_relaxed_pmr_sync(void)
+> >  	return cpus_have_cap(ARM64_HAS_GIC_PRIO_RELAXED_SYNC);
+> >  }
+> >  
+> > +enum ipi_msg_type {
+> > +	IPI_RESCHEDULE,
+> > +	IPI_CALL_FUNC,
+> > +	IPI_CPU_STOP,
+> > +	IPI_CPU_CRASH_STOP,
+> > +	IPI_TIMER,
+> > +	IPI_IRQ_WORK,
+> > +	NR_IPI,
+> > +	/*
+> > +	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
+> > +	 * with trace_ipi_*
+> > +	 */
+> > +	IPI_CPU_BACKTRACE = NR_IPI,
+> > +	IPI_KGDB_ROUNDUP,
+> > +	MAX_IPI
+> > +};
+> > +
+> >  #endif /* __ASSEMBLY__ */
+> >  #endif /* __ASM_ARCH_GICV3_H */
+> > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> > index 5e18fbcee9a20..373cd815d9a43 100644
+> > --- a/arch/arm64/kernel/smp.c
+> > +++ b/arch/arm64/kernel/smp.c
+> > @@ -64,23 +64,6 @@ struct secondary_data secondary_data;
+> >  /* Number of CPUs which aren't online, but looping in kernel text. */
+> >  static int cpus_stuck_in_kernel;
+> >  
+> > -enum ipi_msg_type {
+> > -	IPI_RESCHEDULE,
+> > -	IPI_CALL_FUNC,
+> > -	IPI_CPU_STOP,
+> > -	IPI_CPU_CRASH_STOP,
+> > -	IPI_TIMER,
+> > -	IPI_IRQ_WORK,
+> > -	NR_IPI,
+> > -	/*
+> > -	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
+> > -	 * with trace_ipi_*
+> > -	 */
+> > -	IPI_CPU_BACKTRACE = NR_IPI,
+> > -	IPI_KGDB_ROUNDUP,
+> > -	MAX_IPI
+> > -};
+> > -
+> >  static int ipi_irq_base __ro_after_init;
+> >  static int nr_ipi __ro_after_init = NR_IPI;
+> >  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> > index c19083bfb9432..0d2038d8cd311 100644
+> > --- a/drivers/irqchip/irq-gic-v3.c
+> > +++ b/drivers/irqchip/irq-gic-v3.c
+> > @@ -1655,7 +1655,7 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+> >  		if(fwspec->param_count != 2)
+> >  			return -EINVAL;
+> >
+> > -		if (fwspec->param[0] < 16) {
+> > +		if (fwspec->param[0] < MAX_IPI) {
+> >  			pr_err(FW_BUG "Illegal GSI%d translation request\n",
+> >  			       fwspec->param[0]);
+> >  			return -EINVAL;
+>
+> No. This is the wrong approach, and leads to inconsistent behaviour if
+> we ever change this MAX_IPI value. It also breaks 32 bit builds, and
+> makes things completely inconsistent between ACPI and DT.
+>
+> I don't know how the FFA code was tested, because I cannot see how it
+> can work.
+>
+> *IF* we are going to allow random SGIs being requested by random
+> drivers, we need to be able to do it properly. Not as a side hack like
+> this.
+
+I am open for any ideas as FF-A spec authors/architects decided to allow
+secure world to donate one of its SGI to the normal world for FF-A
+notifications.
+
+--
+Regards,
+Sudeep
 
