@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-284408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CB295009D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:59:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AA19500A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE931F22394
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746A81C2301C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2A1149C76;
-	Tue, 13 Aug 2024 08:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD621448DC;
+	Tue, 13 Aug 2024 09:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anmdqc1e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/uIIxY9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A916C15B7;
-	Tue, 13 Aug 2024 08:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135766AAD;
+	Tue, 13 Aug 2024 09:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539584; cv=none; b=JeFVf2o80Lke27ncx4IaEpLd7i/l2FRgz3TdG3fvOqER0WfkFwHEb/kYLqQZs4zwFfFvdTClWtIslLwD4pLlCPx5pjfXbjWVvc99RB2XSSLbdqEB0o3n+t+5XCkAHposFxR7JDSqJAHy+yapvKq73Che6bN3UiMe9qT1hiojL6o=
+	t=1723539615; cv=none; b=hEMgqJOgLqAUnbn4IpMfPorIYruLDGxpkpLcTTvU0VFsiHDsLt5kJk5nW3ZjY24c0Kokbats5v6UOUHLFy9hW8P61zFta+uV6KDmzGbpWibAzMsX7R8ZhXg+lyTFild2vE0swonHO8BxhBP+QaqDG7drR4TEWekyG65vPJZo0lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539584; c=relaxed/simple;
-	bh=tVBMhedCO2sc/9bY0ftMk/sZeGW4URJeebXRqeB/fDg=;
+	s=arc-20240116; t=1723539615; c=relaxed/simple;
+	bh=WtOn/xU9mledZcK0rvLVkxRSh12wpuRWrPSfwkBcd6Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zgo1H5bVYllkQW4uPVYAFSpudolPS9MMD+QaFsylaqC1hKLrSgBpu+3KqoVR5hUAQeGrc22okxcAUbwMUGWwt+3sgijlVkedrzMCxnfuRROI3OHf1jL+wbtVcLEHaL4dpr1hLuCduNZnkkjqcEAGjJx7AoSzG8rOJ4PsT2cko4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anmdqc1e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0957C4AF0B;
-	Tue, 13 Aug 2024 08:59:39 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=u0N7gLTu0HaQJU7M6SiLw/6oE1T3ucvlMh5xkwr6Gv1TwA0HuEAsaoaG7CdgdVkNb57fchSp0IWgD1IEnFcSRVvG2U3bAARXUyqHyftXlYPnaMgbuKaYRCk0naRkcqomlrHItTw4BAIOAPUjpGbaAiqPUZpWStkHQfYaVmlgyjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/uIIxY9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A5DDC4AF09;
+	Tue, 13 Aug 2024 09:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723539584;
-	bh=tVBMhedCO2sc/9bY0ftMk/sZeGW4URJeebXRqeB/fDg=;
+	s=k20201202; t=1723539614;
+	bh=WtOn/xU9mledZcK0rvLVkxRSh12wpuRWrPSfwkBcd6Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=anmdqc1eNYPfbApz/Dy8/waRuJla7OwivaTIf84wSJspkOpiGzKFO8w5ihYpCIgEL
-	 UouX3jig0ha8fJn+8hEPEkWCX0eD+zi3e5lTR0GHRP8UsTYvVb7Awjv/SDIPiNSwi4
-	 oht0dHAiJ1hapPqiwsZsEEjfcP8nt2pJxgRd7lbVID/+XFMY+HbN/A/Qy4jZCvIZe7
-	 y7lFP3dzzVnGzD641DksD4yVtGsx4uvDARFVFn0V5+4sn7YtLMn64yjIeoLEHLlq1L
-	 JcjIYgaayyTzbNxhlw5dt3oKP6E8atgrf/6CwLgEmxe3pCNhOQrowMjEVuQ0rEbAv3
-	 tg464qv+ZrjOw==
-Message-ID: <35c2d531-0a51-434e-b961-1d4b6d189965@kernel.org>
-Date: Tue, 13 Aug 2024 10:59:37 +0200
+	b=b/uIIxY988diB4jOt1PwI6qChq3lVDscpQxXC9G1KC2U8YdfToriqTLTG+VLn6rcs
+	 VfxoYBmfyfOxw6kt4n2pj369tUwQyaVAaHGtxQiPfmFFNbtg5zLQBx5CsTSR8jKcax
+	 W8c7bAiSmep9gHMQZ+DYDyddDN8palruq2DDxFIqCJvKbn5IPLm4U6zY/4yfELX8JB
+	 CXy7PkQDyp2RAw/XuP2mQk3jYuGYuKrunD5/04nUt7ND9cbzvxoLBAQEO+zvLGNYb5
+	 N0JxUdY1cTgtvMf0sF1OEY0dk9p3cVJ4qTGo04rZtZkOsnuDDZaHy3LMVts/nIEvKL
+	 nmtloWOpxMj0g==
+Message-ID: <65362962-a83f-411d-8a23-f0a54cf91e29@kernel.org>
+Date: Tue, 13 Aug 2024 11:00:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] arm64: dts: tqma8xx: use GPL-2.0-only as done by
- included imx8qxp/imx8dxp
+Subject: Re: [PATCH 7/7] arm64: dts: tqma8xx: change copyright entry to
+ current TQ Copyright style
 To: Max Merchel <Max.Merchel@ew.tq-group.com>, Shawn Guo
  <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -60,9 +60,9 @@ To: Max Merchel <Max.Merchel@ew.tq-group.com>, Shawn Guo
 Cc: linux@ew.tq-group.com, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
 References: <20240813072019.72735-1-Max.Merchel@ew.tq-group.com>
- <20240813072019.72735-7-Max.Merchel@ew.tq-group.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20240813072019.72735-8-Max.Merchel@ew.tq-group.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -106,17 +106,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240813072019.72735-7-Max.Merchel@ew.tq-group.com>
+In-Reply-To: <20240813072019.72735-8-Max.Merchel@ew.tq-group.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/08/2024 09:20, Max Merchel wrote:
-> The included device trees imx8dxp.dtsi and imx8qxp.dtsi are licensed under
-> "GPL-2.0-only".
-> Therefore, the licenses of the tqma8xx device tree are changed to the
-> same license.
+> Unification of TQ-Systems copyright entries
+> 
+> Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts | 2 +-
+>  arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp.dtsi       | 2 +-
+>  arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi         | 2 +-
+>  arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp-mba8xx.dts | 2 +-
+>  arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp.dtsi       | 2 +-
+>  arch/arm64/boot/dts/freescale/mba8xx.dtsi                 | 2 +-
+>  arch/arm64/boot/dts/freescale/tqma8xx.dtsi                | 2 +-
+>  7 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts b/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts
+> index d74b5338befe..256050c5c442 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
+> + * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
 
-I don't see much value nor explanation here.
+NAK, that's just a churn. There is no value in this.
 
 Best regards,
 Krzysztof
