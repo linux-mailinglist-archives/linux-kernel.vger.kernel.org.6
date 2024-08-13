@@ -1,89 +1,178 @@
-Return-Path: <linux-kernel+bounces-284542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12601950221
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2934A950223
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08D21F20D46
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:11:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B211F21476
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98281898EB;
-	Tue, 13 Aug 2024 10:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B6E18953E;
+	Tue, 13 Aug 2024 10:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpxl6OBB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSpGmmYJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BB919470;
-	Tue, 13 Aug 2024 10:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8B817C21C;
+	Tue, 13 Aug 2024 10:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543910; cv=none; b=V4FCJXosBJVXSaWPS20Uuahwjee9af6tPS7n6QA1coL0484O9FLoS4qs6qvs5fn/C5DWQJyLPziL1K0HV/QQqJbSZHrxM6a39oKpj0Hgbzs4TdUq5F56DQ+lItbMCs6y/pxJHQYy22RaiMKHcH5TYJN1LF4G6jwQJuM+MZCCKl4=
+	t=1723543934; cv=none; b=p039aSyzfgEXJ8qCPeUz/5TYjAT5GS/0tLcmHtelKKABT8MF+5vsk1N54XLp4P2cPMyyvSeZDM7GwSPaYl53h8XiekHA/DbCCo9U4M+YZxBjjSuZP7x/eeuLXfgpooJuDxjuGj43etL1wxWLg6CekXlQfSDBNcdk6f04jtOka0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543910; c=relaxed/simple;
-	bh=xrmke/+b/gAxykS4+WeRwGdZZ4PMCdrJIMmEVeoTptc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=eZZxFp2jw8f7hlUv5aV1L2V/2NOr0aaVaCR+rhmG/wVh5v62Kr4CWcuUkMwozZyq52sDq6V+1ZiXq8JSAybsKDYJR+oe7IEG9O1lYJHaPYbucfkjJ5eLAa9PGD6SIlhSiq95SG7gnhMeHqcB0JeUhZ1+mZCQ+Udru23UWtEpdwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpxl6OBB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7F81C4AF0B;
-	Tue, 13 Aug 2024 10:11:49 +0000 (UTC)
+	s=arc-20240116; t=1723543934; c=relaxed/simple;
+	bh=YMNNW9k4e3EqFXo3XwG4zoOa/XJLXLrP2YgZr9lkA5Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=BkISCrjVHQuPIUVjPBGR2mkg7T2iOoeD8xr++3djKOgBAfF1j3kK86t2dQUxSWOwWFTsBjVTcscOev2jeeR8bZ1AA992piBFeP/LcWwqHci8tovLu8W2a48+Mt5XSLz3NPTI9I51OYv0QOZiM3Ff2elrGbZh0q0JO5FkqqUhn6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSpGmmYJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE52AC4AF0B;
+	Tue, 13 Aug 2024 10:12:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723543909;
-	bh=xrmke/+b/gAxykS4+WeRwGdZZ4PMCdrJIMmEVeoTptc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cpxl6OBBW77UCCY4B+O96lYk+JpiJZ2Btlmoz/de4kBd4FxN23VDvlajOeNULkjvG
-	 TSWUc/fybcg+bd4WesQlKgDiWgeN8aY7gZ3P/LuM8eOwYsaolDSSXLYEGtGJ5IOqSu
-	 C6j++Vntujxn526bLXMEsoVhctw3dgnPvG+sV3Nyb9aOC5nuIBnGNwsslxDPHTodYm
-	 94SOaF04IXZAY/tvzc9XOF3o8fHpZNkZASlObIadhLcyjuGpIoZJbyiP3OxiQD+uan
-	 vM941FgTE7UWRYOcWdCBTusWYCHuyZqidHWdnOo2oIQde3go1QkEFc64/1KtpG4OJp
-	 1M0a1vdXQAZ4A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB4A53823327;
-	Tue, 13 Aug 2024 10:11:49 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723543934;
+	bh=YMNNW9k4e3EqFXo3XwG4zoOa/XJLXLrP2YgZr9lkA5Q=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=rSpGmmYJvn+u+U2+ahyh1CTwkK4/uy5YOAD6TVopPR+NVLSMm+wtEHiYJSw4/FAmg
+	 44iU2mAr82FlMa/TXpvWkd9UxByKTO49nYjqLCqacfvinxgDqYuNh/ixdXxbrP0JOz
+	 6PWZKJK+EKeVTwxX8ov/UnJAyYMxZPVFvVXP2UlfzliHmbf7PC9cT6nrzij9eN6kKg
+	 SZAiKLLTOC1s9axzNt5okGZ5TLA3EIVf5x7fdX7QWYB7YNG/9J3LdOoaISuhh3G25z
+	 X3NWbI4NitDeWN6JqpxJdMQQb407mLQZheHwvehdlY5XJQF5kiT9o4scVc0yDh8fGN
+	 J6rd67shhqMjw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: hinic: use ethtool_sprintf/puts
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172354390843.1583477.16089493956028109034.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Aug 2024 10:11:48 +0000
-References: <20240809044957.4534-1-rosenp@gmail.com>
-In-Reply-To: <20240809044957.4534-1-rosenp@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, cai.huoqing@linux.dev, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 13 Aug 2024 13:12:10 +0300
+Message-Id: <D3EPBYVJ9NZ2.2OI3EQVYKRRZI@kernel.org>
+To: "Jan Stancek" <jstancek@redhat.com>, <dhowells@redhat.com>,
+ <dwmw2@infradead.org>, <zxu@redhat.com>, <keyrings@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] sign-file,extract-cert: avoid using deprecated
+ ERR_get_error_line()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <cover.1720728319.git.jstancek@redhat.com>
+ <6b7f84efe01b89a8a6cd35108a721224c22de8e1.1720728319.git.jstancek@redhat.com>
+In-Reply-To: <6b7f84efe01b89a8a6cd35108a721224c22de8e1.1720728319.git.jstancek@redhat.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu,  8 Aug 2024 21:49:51 -0700 you wrote:
-> Simpler and avoids manual pointer addition.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+On Fri Jul 12, 2024 at 10:11 AM EEST, Jan Stancek wrote:
+> ERR_get_error_line() is deprecated since OpenSSL 3.0.
+>
+> Use ERR_peek_error_line() instead, and combine display_openssl_errors()
+> and drain_openssl_errors() to a single function where parameter decides
+> if it should consume errors silently.
+>
+> Signed-off-by: Jan Stancek <jstancek@redhat.com>
 > ---
->  .../net/ethernet/huawei/hinic/hinic_ethtool.c | 33 ++++++-------------
->  1 file changed, 10 insertions(+), 23 deletions(-)
+>  certs/extract-cert.c |  4 ++--
+>  scripts/sign-file.c  |  6 +++---
+>  scripts/ssl-common.h | 23 ++++++++---------------
+>  3 files changed, 13 insertions(+), 20 deletions(-)
+>
+> diff --git a/certs/extract-cert.c b/certs/extract-cert.c
+> index 8e7ba9974a1f..61bbe0085671 100644
+> --- a/certs/extract-cert.c
+> +++ b/certs/extract-cert.c
+> @@ -99,11 +99,11 @@ int main(int argc, char **argv)
+>  		parms.cert =3D NULL;
+> =20
+>  		ENGINE_load_builtin_engines();
+> -		drain_openssl_errors();
+> +		drain_openssl_errors(__LINE__, 1);
+>  		e =3D ENGINE_by_id("pkcs11");
+>  		ERR(!e, "Load PKCS#11 ENGINE");
+>  		if (ENGINE_init(e))
+> -			drain_openssl_errors();
+> +			drain_openssl_errors(__LINE__, 1);
+>  		else
+>  			ERR(1, "ENGINE_init");
+>  		if (key_pass)
+> diff --git a/scripts/sign-file.c b/scripts/sign-file.c
+> index 39ba58db5d4e..bb3fdf1a617c 100644
+> --- a/scripts/sign-file.c
+> +++ b/scripts/sign-file.c
+> @@ -114,11 +114,11 @@ static EVP_PKEY *read_private_key(const char *priva=
+te_key_name)
+>  		ENGINE *e;
+> =20
+>  		ENGINE_load_builtin_engines();
+> -		drain_openssl_errors();
+> +		drain_openssl_errors(__LINE__, 1);
+>  		e =3D ENGINE_by_id("pkcs11");
+>  		ERR(!e, "Load PKCS#11 ENGINE");
+>  		if (ENGINE_init(e))
+> -			drain_openssl_errors();
+> +			drain_openssl_errors(__LINE__, 1);
+>  		else
+>  			ERR(1, "ENGINE_init");
+>  		if (key_pass)
+> @@ -273,7 +273,7 @@ int main(int argc, char **argv)
+> =20
+>  		/* Digest the module data. */
+>  		OpenSSL_add_all_digests();
+> -		display_openssl_errors(__LINE__);
+> +		drain_openssl_errors(__LINE__, 0);
+>  		digest_algo =3D EVP_get_digestbyname(hash_algo);
+>  		ERR(!digest_algo, "EVP_get_digestbyname");
+> =20
+> diff --git a/scripts/ssl-common.h b/scripts/ssl-common.h
+> index e6711c75ed91..2db0e181143c 100644
+> --- a/scripts/ssl-common.h
+> +++ b/scripts/ssl-common.h
+> @@ -3,7 +3,7 @@
+>   * SSL helper functions shared by sign-file and extract-cert.
+>   */
+> =20
+> -static void display_openssl_errors(int l)
+> +static void drain_openssl_errors(int l, int silent)
+>  {
+>  	const char *file;
+>  	char buf[120];
+> @@ -11,28 +11,21 @@ static void display_openssl_errors(int l)
+> =20
+>  	if (ERR_peek_error() =3D=3D 0)
+>  		return;
+> -	fprintf(stderr, "At main.c:%d:\n", l);
+> +	if (!silent)
+> +		fprintf(stderr, "At main.c:%d:\n", l);
+> =20
+> -	while ((e =3D ERR_get_error_line(&file, &line))) {
+> +	while ((e =3D ERR_peek_error_line(&file, &line))) {
+>  		ERR_error_string(e, buf);
+> -		fprintf(stderr, "- SSL %s: %s:%d\n", buf, file, line);
+> +		if (!silent)
+> +			fprintf(stderr, "- SSL %s: %s:%d\n", buf, file, line);
+> +		ERR_get_error();
+>  	}
+>  }
+> =20
+> -static void drain_openssl_errors(void)
+> -{
+> -	const char *file;
+> -	int line;
+> -
+> -	if (ERR_peek_error() =3D=3D 0)
+> -		return;
+> -	while (ERR_get_error_line(&file, &line)) {}
+> -}
+> -
+>  #define ERR(cond, fmt, ...)				\
+>  	do {						\
+>  		bool __cond =3D (cond);			\
+> -		display_openssl_errors(__LINE__);	\
+> +		drain_openssl_errors(__LINE__, 0);	\
+>  		if (__cond) {				\
+>  			errx(1, fmt, ## __VA_ARGS__);	\
+>  		}					\
 
-Here is the summary with links:
-  - [net-next] net: hinic: use ethtool_sprintf/puts
-    https://git.kernel.org/netdev/net-next/c/dd1bf9f9df15
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-
+BR, Jarkko
 
