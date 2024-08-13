@@ -1,274 +1,205 @@
-Return-Path: <linux-kernel+bounces-283963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2DE794FB28
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5EA94FB2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E171F22BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C9701C21721
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A870BAD2C;
-	Tue, 13 Aug 2024 01:37:23 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E765BA4B;
+	Tue, 13 Aug 2024 01:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="H2kQalSE";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TaHG98oC"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20013D69;
-	Tue, 13 Aug 2024 01:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723513043; cv=none; b=Z7+2znpq9jMU1UcF5eFEhT3TSu+wiNmKuqqo+AC1mt0nb1DjJ2nmjcbCotDwfZqdQm0AElMVUJeXtrm5ADSRlcY5mYlVVmGYp3YyQSfhfft9bmSJG4tvLcbohowlxuW4CX0rpkj3Xp43UG1S/JUVKC0tiyPo16k0EkxKCqnUOg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723513043; c=relaxed/simple;
-	bh=tHxjQLAxh4y4lgFoKRP7kEe/QE2/palrwoRsFPsT54s=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EtgceOoEo1X+UxmzyDpx8C770KesTWfOkm1eKNQpr5d4/VRLiQJENyGKQiO4Oj8nVF+H2p9BCUEYExP3Xpq/i+9++2tw/fnKzOU8ygIzwcIq49OKpemhreEwggrHfVpKGDPdrCUNqUJ5+KJubwpWYeGx0XwhnlLoDCiN692UEbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjYs350JTz4f3jMW;
-	Tue, 13 Aug 2024 09:36:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5BF261A0568;
-	Tue, 13 Aug 2024 09:37:09 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4XAuLpmnWMmBg--.63758S3;
-	Tue, 13 Aug 2024 09:37:06 +0800 (CST)
-Subject: Re: [BUG] cgroupv2/blk: inconsistent I/O behavior in Cgroup v2 with
- set device wbps and wiops
-To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, cgroups@vger.kernel.org, josef@toxicpanda.com,
- tj@kernel.org, fujita.tomonori@lab.ntt.co.jp, boqun.feng@gmail.com,
- a.hindborg@samsung.com, paolo.valente@unimore.it, axboe@kernel.dk,
- vbabka@kernel.org, david@redhat.com, 21cnbao@gmail.com,
- baolin.wang@linux.alibaba.com, libang.li@antgroup.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240812150049.8252-1-ioworker0@gmail.com>
- <zjbn575huc6pk7jpv2ipoayfk4bvfu5z5imb5muk5drksa7p3q@xcr5imtt4zro>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <9ede36af-fca4-ed41-6b7e-cef157c640bb@huaweicloud.com>
-Date: Tue, 13 Aug 2024 09:37:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6F3AD21;
+	Tue, 13 Aug 2024 01:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723513101; cv=fail; b=u3ycVfj9KG68PHwGS2pkgVH007hnwvMiG6p+Kb9UV0gH+N5AhUTj9IGo4s+QeCUMhGlR1djbY3uc2/jI39BQNHstPNFLfxHac1clkHe6vastJIbvt8+x+FlgzPihrEKa3dCbHZt5vlU0fbEvRVsnLK6pmtbHsdCbtmxrds3KN3E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723513101; c=relaxed/simple;
+	bh=88ecyQkwnjiFAxbjsgZAmKd8T6Ahstfe9hN5CQq6GBc=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=rX+8VNEiSV6Qi+tZP94bUmmyirdDX66SRasoEKi/BZmrUeOnrimIN+MltLTA5vTdsWnaIsqxL9ryjZDf/al4Y6eR3t4ogRwl+HEAoNedVMUiJfCi/5Ly6IYPB/3IkzF/gVIryyE4jR90O4Pr3Yk5jNsQXeM6WN3DrJmqTc6cHEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=H2kQalSE; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TaHG98oC; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CL7JXd011553;
+	Tue, 13 Aug 2024 01:38:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
+	:cc:subject:from:in-reply-to:message-id:references:date
+	:content-type:mime-version; s=corp-2023-11-20; bh=SxvoPq6PZ+kImq
+	mTLA3Tq9qXNbsIy4Lb7JGD7tr9Ycw=; b=H2kQalSE/k8Rk3ew5r992Vs6kmk00T
+	36n4a5ClklTuzw+ks2ljksjyfSZfECQOB6nXl6VzZ2fxf7OAHkaa1VqObfsKSfz4
+	sl+x6vX2NSJ3ofawoU9ZaswQ8aDPgIPL+wAOvi9JPQ3On9/KzWluI9BQdgZSixtm
+	cJvUkcmm4vfYASwoPYtnBsBxnIxbLwjJwKL7O/SvBbjL1k+nauy6G2VXf+7nfGLb
+	/iwHTzZ+9voJd6SVADVaMR8hnQPGwR8J/lZU2m5fWCuLQFIXEb0MynINfVX6QTSI
+	dc5pXNQU1vjCrrd8zAT2l2AvN12uSL1HY7vtfeUANz6/lBvNMxilwSMA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wyttcx0v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 Aug 2024 01:38:16 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CMYJfc017649;
+	Tue, 13 Aug 2024 01:38:15 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2046.outbound.protection.outlook.com [104.47.51.46])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn8s3th-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 Aug 2024 01:38:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qSP3yhoqMLvJmhVCPT/QdyV8sNeTPRscrWqgzlgEEd47KtVro6bDqNqsKLYzJZ9YZurIK/SStw5IFjlOIucpnd1BWH4HutPHgxU8NVMCQnOV/UyJpaowetomWbZpWzy0Yainll7IZ5C7WywrsLrx5+zjBfnKUG9TahZ+DfrMNyL3ig+iSGOGi5HdjQyDkI5XRbsqm/BkRLYcJbN8owj3pUY5fl/YVzXpbjhQxgw9wj8J8dxV9NDoh7+mIpJW8yGXTq+KLkK2bt+I1ibm288Ko/NAAiHSp2iHXKfg/L0Gzw/aPEaScU1FGXQc+5q3r/3sic7RZsqdctPbgIK0kfs/MQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SxvoPq6PZ+kImqmTLA3Tq9qXNbsIy4Lb7JGD7tr9Ycw=;
+ b=XblE8ps8YPvg6na663Ur/R6Mesd0B5rPQB0Ojg1hM0vPnwHy8mdk0roAfhZLgSkePfVHRy30hMoVDB8mKwl4kzloHm+5NphTE4d98tmhZK0A0nu/V4L/7F0Luuin2pfP529msbv6zHKRWxzvHvHM5c7Tp+HKvZymzd+uj95V88ahbEkCGnitSk7+YVD/wtQirmZIRBcTr7svk9H4hqRKUJGVodVIzaVVipRpVkeN16lUthiTva8XlCc0xah/YKVHjPe7fnSkH2Wt/nTEXemWRQUCxHqNBWYuy7gh6e4c9cCCPp5+A+iTDTlLZtkZ+Zf+YLobSeRCTjoUPGzcXsluew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SxvoPq6PZ+kImqmTLA3Tq9qXNbsIy4Lb7JGD7tr9Ycw=;
+ b=TaHG98oCpckZ59Boj7k8X7v7ILtSxracmFeZx38/G/cTh6MPFhIQVKLgQBcJ6t41GfH9EB0kEe3eZIckmSzxI2c93/Qjrp5E050uNvj/gbV4XCnq0E4dJiddh7DQpsXFPdD08d4FtrTEC671gcGEH0Qxb2b8HSJ6GEPtRs3GfdU=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by SA2PR10MB4459.namprd10.prod.outlook.com (2603:10b6:806:11f::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13; Tue, 13 Aug
+ 2024 01:38:13 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7875.015; Tue, 13 Aug 2024
+ 01:38:13 +0000
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: Karan Tilak Kumar <kartilak@cisco.com>,
+        Sesidhar Baddela
+ <sebaddel@cisco.com>,
+        "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+ <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: snic: Avoid creating two slab caches with the
+ same name
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240807095709.2200728-1-pedro.falcato@gmail.com> (Pedro
+	Falcato's message of "Wed, 7 Aug 2024 10:57:09 +0100")
+Organization: Oracle Corporation
+Message-ID: <yq1bk1xxkw9.fsf@ca-mkp.ca.oracle.com>
+References: <20240807095709.2200728-1-pedro.falcato@gmail.com>
+Date: Mon, 12 Aug 2024 21:38:10 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR04CA0033.namprd04.prod.outlook.com
+ (2603:10b6:208:d4::46) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <zjbn575huc6pk7jpv2ipoayfk4bvfu5z5imb5muk5drksa7p3q@xcr5imtt4zro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4XAuLpmnWMmBg--.63758S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xw17Gry5Cw47WF47Jr4fXwb_yoW7CF4rpr
-	WIyFW7Gr95Grn8Ga40k3y0gr10vr13Ja1Sgr98J3Wa9a1rJ3Z8XFW8Jr4kK3s2qwn8GF4S
-	qr4kAasFyF4akFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|SA2PR10MB4459:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0927cb93-d514-46b6-4a3f-08dcbb3898a4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3GasAu1seboJLxG9RJELcrsQlj3e7TwUR6ppWbKBXT6wgrFfu+fdF+ks3FJq?=
+ =?us-ascii?Q?jLOcGZ6hwPI+fmpAM7+sEbtVdgCWemTr1p3RroNxO9ADLb6VaLsb0qsVVlST?=
+ =?us-ascii?Q?aP9HaOyx8fZBkgf1O1EJATpMKBqxZ6dBOJzAY745Pg0gRGm/YZLZb+QK70l7?=
+ =?us-ascii?Q?YCYU2oYAMR9l/0l9N6v01RGSUnNncVHxcpKzcSWrivgzQTutuh1NqIPcaQ/E?=
+ =?us-ascii?Q?/GpJNV20pOBuhejdwv+I0IEN2capd6GhCjg2DRtDBwGodsZNpBz5T8f2y4L9?=
+ =?us-ascii?Q?RmmC7fs3nGw1quSGbSogrnb9WFyaYli5Ysg2E/5jXbiIAwCfrgUBt7L+m3hu?=
+ =?us-ascii?Q?d0lCdNRaEFwOlBcIfn1YoBDlsBxFmZOJiPaVM6Hcjwlx3p2kbLKBRmikPVg4?=
+ =?us-ascii?Q?BCVaP/FSahGPfQYLbfr968VJjWt+lrWoknfvo9D6NL1467TOJUVQC7H8Eh/I?=
+ =?us-ascii?Q?zHJqGopSHK54uF/ZXrvyQpzTwFiW5+gX8gvTgDvJ0EWMT1vZ6TJ/4mWpdQRH?=
+ =?us-ascii?Q?mI91IsVkVZuXddJ3omsCVD2Up2R1yfSfFv3TvT7UbV1WEHoYl2iUgErEwyzS?=
+ =?us-ascii?Q?XD3R+IUmtZEyM8qd7v5osfPTRlXkzaTuYlLF7CUM+Z6qkWjwpDLASNMsi2cq?=
+ =?us-ascii?Q?N4VgEni2XlU7TUah0Rp9Irs7Hxw8HiEpPh1xDxhhlWs7iGz0qrY5VHH47gNE?=
+ =?us-ascii?Q?Wkm5h0gY4D+A/ZSI85VrdTG7G59rnPtajVNqrX+ZsjWnwFsE9/mO1y+xG4/+?=
+ =?us-ascii?Q?itHgG5rW8YmeCxr+SkXpRQebQWtktcDaFUcsYhvRAvG6sw1rG5fb5ip/T+KN?=
+ =?us-ascii?Q?DTxVqt4DEeoPbYQ7sthY5Qy4qgObd96pa/NFjalkR+7cfhPJ9sMoeLgZjNlr?=
+ =?us-ascii?Q?zSMTtdO4jL4Cy93u1Cy15nGvlK8A0lbq/P+7y6k7RDKfqe3X+a06xx/7m56U?=
+ =?us-ascii?Q?5DlUS6fSsHKB/z66kJjggGpM2rNfy5E5JQt9elexa5Ff0vuKoLLABvAX8fRx?=
+ =?us-ascii?Q?A7+2lFKW8SAuxWgRE62YwxwKNaRoZCITp1BrHEjgAKX0UEKawCUQ+INHTWKs?=
+ =?us-ascii?Q?8eYF4eYEDdBMYEjGfusYwNOaleUCduyCGRnYBEDo2/dD43kaHPcbZABOOvub?=
+ =?us-ascii?Q?rB9I/qPx92jGd7Fe2u9Yn8JuV4vQmZl5L+mX7hzAqCWxphZaKq6tUwy554Jq?=
+ =?us-ascii?Q?ZloZxb4jufTpVARsLban6OYJdOA6mTUfj5QJs0HnLCysnW8D56VyOsKCAyGp?=
+ =?us-ascii?Q?6lckQDmkvEicehr58Upb2tA/qK/yKd+RzqKwZ0KXS3HDQFvo3JADsMnsBEOE?=
+ =?us-ascii?Q?jhWbr4/UQI6dd6F5n3a2jkpwwxl7CwTBXLn1ga0oMZbmbw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xugjkewpU2RAelGFryNclHUfxDWmjN00YfIz+LKA/rveJ9t089mRd2JcrHy3?=
+ =?us-ascii?Q?6EQjytYKEYo3TU4ZF208fgJKoRCb+2d9OtyJmmiMx4nykXvfKSjedsRToBOe?=
+ =?us-ascii?Q?Whw6SJ+A3TdoLdYk43cn8fhWtEdRbXsFf+KEfjYu3TwCrVRWdpMRJnMz/PWp?=
+ =?us-ascii?Q?u10+mBGPWQlPzVmD4df/ZbpF5kM/Ca50qn8Zy+XgpPq7CVBBr5cXwUjffhHO?=
+ =?us-ascii?Q?tIiai+kbe4Qj9zLT++4sHNGazVBIFp+6rJlFNtRMmSCtDZ5Dmf0CVCxZJT8P?=
+ =?us-ascii?Q?tVcxRG61RjQDw2L7obIJwnx7D4TJBFKGbO6HRsJnosOpZdAgpGmfadkuXFDF?=
+ =?us-ascii?Q?1dPkK1tUscl3PYMQcLCKQ9zJDV7JcjiFHPWFTqPATSoC4ZxbuohP0ceMcEz+?=
+ =?us-ascii?Q?K6cdtuMtRoENSVD7gzQIr4KWwcjX9gsaumXfEnNDU4qvOtDPBCiraNFj4rw0?=
+ =?us-ascii?Q?u/Swfh4ThyegFJz6NzKXWQrA+/13eatlUg613uflWRjuLeTrS4ITME3c4olv?=
+ =?us-ascii?Q?yPyyFeWnWgzOqsTS2vdn1GXy0HhqsL000KUR03kOjtf1xAOyu+qKcbwD1kPT?=
+ =?us-ascii?Q?DZlZsviYTnTkDEtMPGyOwBInE5Nh4XZRxiskg6ZC6eWtbzZWatTEyyCWW8nF?=
+ =?us-ascii?Q?rqg8EBj4t51rKcpCWq5XH0GMuj9iFWDUj3yl8ZrKwksJw1I3uzBrJlhfdHtu?=
+ =?us-ascii?Q?AE6jz3SOwRa2r9Qynmipaty4gFaz6CCLYdVFRiDrnUk65k4aoUlcqoC6jyob?=
+ =?us-ascii?Q?y8N22/bdZ9ICJJmslIkbrsDFZUkwuITxf3XTDUFo5L5GHwLgLQaqa5Ys5qod?=
+ =?us-ascii?Q?rcJCjGwKpEEDnEt2LlSKhwl/K4BzKqK0Vxlct32WKdEWmiurHNYrOSgQbZMJ?=
+ =?us-ascii?Q?RS1xdR3lGBZ5CW4z4nt4nNDCvDoRyoAIeEkQfsSBeFxZ+wSuem+XpKhQReK+?=
+ =?us-ascii?Q?Qqc3xiNRG3e5nJybS+DAE9w99KNiGsF/26nCZ4boj0lf7d0eq8bmY/LYdTex?=
+ =?us-ascii?Q?Y2BeSrbANQ5+q1I8R5bEzeRX2PRnZE5qm7QBjdr3JS1M10YUbuSYb+huzAdz?=
+ =?us-ascii?Q?GWalpJvZWlRbqzT0QZcMYQkdgH85+Eq8Qn4+BflUf7+U1q9YJCsZcDctZL60?=
+ =?us-ascii?Q?d+xUx+kc50gDAUTctVpWNjBAoh9U/6S1gCprHOgnWvcBtK/9sJKZIQbk/Tuz?=
+ =?us-ascii?Q?gS9vg58iK8CGBaOlvTnLB9TO+gbmb6Gj8UCgnGzdaiPFVOuYIvN1ktIm84jp?=
+ =?us-ascii?Q?HC++Jx79ZlqhJZHEI31UFkWNHlOF2Kbxpx8cfqQkZryJCr/TfoQ/whUcTuqJ?=
+ =?us-ascii?Q?X+RszeuR0eJ+hrLdIoaxjbBWSpdB2XZ/AYCt9vngGB37GQ8mO47nLVwU6NCC?=
+ =?us-ascii?Q?qRcFzxEBG/qiCc5uz4pMAvFyRPvRYw5U9Y1nqaq140QQZCx+jGKbp5PH1CL7?=
+ =?us-ascii?Q?pxYECiV/w+MgGVnmJKPYN8wpPek9o40+RcIYXn0aZ2enIQcWXttFD6aSuFZO?=
+ =?us-ascii?Q?hTdJXK7ZnPz//kRxRk6k+75+I+SkLMQeShPsSLiUekXIpOw9J2C0cqlGK6KX?=
+ =?us-ascii?Q?cHH1FJvf5cEAZBjUO9CU5Ezobt8uN00Ip+Ls1JSkGX1i0zfqdYWQkQ+jZVno?=
+ =?us-ascii?Q?Jg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	vJQAX3puZHd9uoL8gZLlfQ5P5+0RLCItiI5S+Upogcfv4EaYo8CPV1uSBvT+VIF2+d6Ww5h7YAAmynmm8tpFmComXtfEQuv/SAtYSE9rYLeO1Fn8tJNZge4fHeN65RpoumUvec3TIFiRz3wk9+bNj3+NDTgwNEUVyiaiNkWOH8QFy0e4ZDLvLq8xcZlVn/BXh/hVhbJrJooAqd5iY+F9MKMy0VUDoHpaUN+p+gOlM1Me6aMGcwKJn/fZjfZZaFPFXZ4eAnI9lPR0HtiAhkaSexW4sePkBRONznisFDkRwJV/AUqj2P9SWg3kZMYuB1Fq08EqNX5LalHR4Nxl725DeDCvF4plaKTXt70EiRxTp2y7otacMULCwzQ5ug80n4iIB1wWCLu3K6lvF67pjMFJzw3qgZRn9vxMTm4SvhHAhuATCcCkTL2+3JAN5xVPCrHgQZkOqvldEzpFhk4A8XaChl82HJ8lRn1zAXOFrACLNMo4YnOLq2tPsMnMmlcM3KG0jdadlAdSrln3/w1pmaFKCVCJnIRe9PlZkKkfs9fuch+6lZbQOeQBvmQdiznL+dlN1ziaJIzsmXUZIhy5ebv/slZrA9xgUaDvsFe0uPM4CSw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0927cb93-d514-46b6-4a3f-08dcbb3898a4
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 01:38:13.4116
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2tld3hQc3mZIR5/Tvsj5/qNlleyKjEFUqRUdiOVRRETKAm+FGYVb6XQD8keOrbFKVMWkpSvckRYiwEs9zWF7D1qYlsa46N/K47/vLL2DqQA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4459
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 spamscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxlogscore=665
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408130009
+X-Proofpoint-ORIG-GUID: gvIvbsE_T5bib0WYNAqzQNazdE68KU_S
+X-Proofpoint-GUID: gvIvbsE_T5bib0WYNAqzQNazdE68KU_S
 
-Hi,
 
-在 2024/08/12 23:43, Michal Koutný 写道:
-> +Cc Kuai
-> 
-> On Mon, Aug 12, 2024 at 11:00:30PM GMT, Lance Yang <ioworker0@gmail.com> wrote:
->> Hi all,
->>
->> I've run into a problem with Cgroup v2 where it doesn't seem to correctly limit
->> I/O operations when I set both wbps and wiops for a device. However, if I only
->> set wbps, then everything works as expected.
->>
->> To reproduce the problem, we can follow these command-based steps:
->>
->> 1. **System Information:**
->>     - Kernel Version and OS Release:
->>       ```
->>       $ uname -r
->>       6.10.0-rc5+
->>
->>       $ cat /etc/os-release
->>       PRETTY_NAME="Ubuntu 24.04 LTS"
->>       NAME="Ubuntu"
->>       VERSION_ID="24.04"
->>       VERSION="24.04 LTS (Noble Numbat)"
->>       VERSION_CODENAME=noble
->>       ID=ubuntu
->>       ID_LIKE=debian
->>       HOME_URL="https://www.ubuntu.com/"
->>       SUPPORT_URL="https://help.ubuntu.com/"
->>       BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
->>       PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
->>       UBUNTU_CODENAME=noble
->>       LOGO=ubuntu-logo
->>       ```
->>
->> 2. **Device Information and Settings:**
->>     - List Block Devices and Scheduler:
->>       ```
->>       $ lsblk
->>       NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
->>       sda     8:0    0   4.4T  0 disk
->>       └─sda1  8:1    0   4.4T  0 part /data
->>       ...
->>
->>       $ cat /sys/block/sda/queue/scheduler
->>       none [mq-deadline] kyber bfq
->>
->>       $ cat /sys/block/sda/queue/rotational
->>       1
->>       ```
->>
->> 3. **Reproducing the problem:**
->>     - Navigate to the cgroup v2 filesystem and configure I/O settings:
->>       ```
->>       $ cd /sys/fs/cgroup/
->>       $ stat -fc %T /sys/fs/cgroup
->>       cgroup2fs
->>       $ mkdir test
->>       $ echo "8:0 wbps=10485760 wiops=100000" > io.max
->>       ```
->>       In this setup:
->>       wbps=10485760 sets the write bytes per second limit to 10 MB/s.
->>       wiops=100000 sets the write I/O operations per second limit to 100,000.
->>
->>     - Add process to the cgroup and verify:
->>       ```
->>       $ echo $$ > cgroup.procs
->>       $ cat cgroup.procs
->>       3826771
->>       3828513
->>       $ ps -ef|grep 3826771
->>       root     3826771 3826768  0 22:04 pts/1    00:00:00 -bash
->>       root     3828761 3826771  0 22:06 pts/1    00:00:00 ps -ef
->>       root     3828762 3826771  0 22:06 pts/1    00:00:00 grep --color=auto 3826771
->>       ```
->>
->>     - Observe I/O performance using `dd` commands and `iostat`:
->>       ```
->>       $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
->>       $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
+Pedro,
 
-You're testing buffer IO here, and I don't see that write back cgroup is
-enabled. Is this test intentional? Why not test direct IO?
->>       ```
->>       ```
->>       $ iostat -d 1 -h -y -p sda
->>       
->> 	   tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>       7.00         0.0k         1.3M         0.0k       0.0k       1.3M       0.0k sda
->>       7.00         0.0k         1.3M         0.0k       0.0k       1.3M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>       5.00         0.0k         1.2M         0.0k       0.0k       1.2M       0.0k sda
->>       5.00         0.0k         1.2M         0.0k       0.0k       1.2M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>      21.00         0.0k         1.4M         0.0k       0.0k       1.4M       0.0k sda
->>      21.00         0.0k         1.4M         0.0k       0.0k       1.4M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>       5.00         0.0k         1.2M         0.0k       0.0k       1.2M       0.0k sda
->>       5.00         0.0k         1.2M         0.0k       0.0k       1.2M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>       5.00         0.0k         1.2M         0.0k       0.0k       1.2M       0.0k sda
->>       5.00         0.0k         1.2M         0.0k       0.0k       1.2M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>    1848.00         0.0k       448.1M         0.0k       0.0k     448.1M       0.0k sda
->>    1848.00         0.0k       448.1M         0.0k       0.0k     448.1M       0.0k sda1
+> In the spirit of [1], fix the copy-paste typo and use unique names for
+> both caches.
 
-Looks like all dirty buffer got flushed to disk at the last second while
-the file is closed, this is expected.
->>       ```
->> Initially, the write speed is slow (<2MB/s) then suddenly bursts to several
->> hundreds of MB/s.
-> 
-> What it would be on average?
-> IOW how long would the whole operation in throttled cgroup take?
-> 
->>
->>     - Testing with wiops set to max:
->>       ```
->>       echo "8:0 wbps=10485760 wiops=max" > io.max
->>       $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
->>       $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
->>       ```
->>       ```
->>       $ iostat -d 1 -h -y -p sda
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>      48.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda
->>      48.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>      40.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda
->>      40.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>      41.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda
->>      41.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>      46.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda
->>      46.00         0.0k        10.0M         0.0k       0.0k      10.0M       0.0k sda1
->>
->>
->>        tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd Device
->>      55.00         0.0k        10.2M         0.0k       0.0k      10.2M       0.0k sda
->>      55.00         0.0k        10.2M         0.0k       0.0k      10.2M       0.0k sda1
+Applied to 6.12/scsi-staging, thanks!
 
-And I don't this wiops=max is the reason, what need to explain is that
-why dirty buffer got flushed to disk synchronously before the dd finish
-and close the file?
-
->>       ```
->> The iostat output shows the write operations as stabilizing at around 10 MB/s,
->> which aligns with the defined limit of 10 MB/s. After setting wiops to max, the
->> I/O limits appear to work as expected.
-
-Can you give the direct IO a test? And also enable write back cgroup for
-buffer IO.
-
-Thanks,
-Kuai
-
->>
->>
->> Thanks,
->> Lance
-> 
-> Thanks for the report Lance. Is this something you started seeing after
-> a kernel update or switch to cgroup v2? (Or you simply noticed with this
-> setup only?)
-> 
-> 
-> Michal
-> 
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
