@@ -1,136 +1,234 @@
-Return-Path: <linux-kernel+bounces-285175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36AA950A26
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8410E950A28
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BAC284080
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85251C22A94
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2A41A2C10;
-	Tue, 13 Aug 2024 16:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76F61A08AF;
+	Tue, 13 Aug 2024 16:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKfvfuCY"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nWreRup1"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE201A2573;
-	Tue, 13 Aug 2024 16:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4624E1CA9E
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723566551; cv=none; b=AZd/vat//BsYi3FjUklLyvsqedWSbHbANYzlOSY2lBeJbUi7pRwD6VuHyqeRpvMTUQWLPsu9uzhWpy72sSFsm1Yzojz7q8HQXbLp3pP4CcIw3EyBBbiNGGLUWxR1SWevmF4NzxgdKBKPrFZno/Z2Vo1EPUKuI2PTjEhRgqllu1E=
+	t=1723566638; cv=none; b=J+7emBRBChkL76uwioYoJPNejeKr0cKvaLqqpqC+527AvzmWobm7tmgQU/RC+RL8woB/N3hSVmGqeXbAErXzpUbCIj162cCyWrUmUP7gtkQZ9XIkta5dNZ4c0fDp+37r9Yy3IqsoixK7s26xeUGkt2zlbCXvclSAvS/zWHu+s8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723566551; c=relaxed/simple;
-	bh=wTHMksnShasaMu0YkQx+byCye7Bb9rVvVk7DsdGChvI=;
+	s=arc-20240116; t=1723566638; c=relaxed/simple;
+	bh=+kXd5lQBlmgt4ODhbDWegMf9ii18tWOxfLuvIC/UtU0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CGgj/m/HsfshW5j5iFI4V4AHDX7fAQJ0uKHRjgVbNfO0LtYh8JaN4bHToXaAmuooXxkqm9f8GgPh1HIAiUSaLe+XXxVtv5CxLeuJM4TvrWRfkDBB/SBtu+1gXyO8B7qeEscbhYphvdzPR/mz3IbGlWd0Ep2bCV3ZkfTlEuLLuII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKfvfuCY; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428fb103724so160225e9.1;
-        Tue, 13 Aug 2024 09:29:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=hzyOB2bClSwXJAyuJNPj+sAqVirkIBUbmabPrqg/+ZWRWIIaOKeNOb0Lmt8vWWcX63gkNxUbvNNeyALxiawGIFx5bdgPtjOlzxKg4bzmO3ROGb0EaFE7oR+VCk9ArJceGUD66/50cHo6KuVa3CmMbtAG34ZLdvGNVfgmiOSUCO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nWreRup1; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4f8dbdbba98so18711e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:30:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723566548; x=1724171348; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723566634; x=1724171434; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dHZnlrhN2AES2SquLcRLOECxi9CzRlchk7IVnfUTEhs=;
-        b=GKfvfuCY4JJ1mcQIhA97CdpG+wWNWkIDz6loxlZxpPIpzMWGCak33/7iiqXozjSYEL
-         p/39GslQWsbw61CuyHrDhhgVhw9PL+7tPxHj+KHuziNnPn9FHjgph3ZtmyT5lyVAEbtc
-         291gkB9X69/nD5YksFFyh9XpmLBxXc9px0UgNzA/nnn660jh8/XGGpwO12UCxYPd25rd
-         yxVlwOlyA2jD79IwVL6KoNQsXhPTWYgYZXQXR/L/OM3Q8OC/47U+coRPtx2YqvQUtS6B
-         1liCWSuPFLAXgrXHPusqa20P1xDCDVToph5NZR/bwK963D8Xob+ODlwXFsqNZhLCfU6k
-         xgRw==
+        bh=IcOkVGVomQgpIlgkRw2uEX+wAov9nzcGjYicRdhvNpA=;
+        b=nWreRup1FTbnKIJwOFhXnY9pqtM8JI9C91eBdU6pFYsE++Q665NLwzmKl/UkcHMpmv
+         ARmr04tVM3uMfu2hS2mLPzEzh2xEW6nE9n9NveHm0tPa7vOAt/Li33jLJmhkhU67G3YN
+         nUs+g9ORoVV3PWm281zKnXZvuGCUHIJzm2zKKIFkcueyhaU3mz8qW4JsrwtMpv1hKK8N
+         ckaaqkhCDhXzvn0SP76LtR/RCBFuco4zasZzaANrIqovl5eWPySA/Nxt4SlpmksNGQxW
+         oe+HcndO0mxD+LF4wZykvPYxBzCRdjU4WrmSQxKforA8PapcTWYmIQqgT1PUqvCvV6QZ
+         nCDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723566548; x=1724171348;
+        d=1e100.net; s=20230601; t=1723566634; x=1724171434;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dHZnlrhN2AES2SquLcRLOECxi9CzRlchk7IVnfUTEhs=;
-        b=OgAk/20j6+fO//Ap31LnnmDxfkhcxu2547H427wA1Izm4OcktSqbDirEpLh5Xw+oOp
-         TUUVATSD5il8DkXS+SKZApMp7M2Wf2lNCz+qtrQMcr1wMGnGunsUe4QtBAnIGTociRv1
-         zdU/6GXeInh3Qi77FJVcsmBySAnfRShd6JDRPaJdYmpM7uSzwYVYBHRkxBCM/aLRsSF1
-         pd0+j0ETrodc3jqLJEloR+PxXUivz6GOUTdz/2qKzSI+9/2rAXaSSKUIl+Lb+V+xhqCy
-         R6aZpX7VviUVm2nCKD2BDgPHWTBupS1h/Lpm5Nu7W4BH13io6mBS7WdxSy/IMW76Sf1Z
-         nzog==
-X-Forwarded-Encrypted: i=1; AJvYcCVgivwUTXKIeYZmTn6eyV5GExVhkWeNalM0iDn20DUoLRP/RA8TAr5NbZGTjB9We1xAYnklpsqf2vUutmflENGolLQldFO0zX8xCv0F3ybfrjyyjN/jbQLQ9wzHSOFoUrj6GjcLjpsZS9gnfPkv2goFPi2idY7YmETnP+H9VqtXqLjM
-X-Gm-Message-State: AOJu0YyfvS785RvpKxpWBzdn7b9kMSqEJEYDg4XhXrF1u3vl2yRLJvpD
-	ODv8FVh3ib2iDQkDIYyL+9Pyu9wcorXnUv2nl3kUas52rDl98R9GazivoVADMk7UXZMsp8Y8Co7
-	/5ObXMBeeR9pDnPCawCg7VI8/2R0=
-X-Google-Smtp-Source: AGHT+IEH6RWi44HaYQZCtjAKZvTHcH6VPvbJHSFdtTUFD5tvlEOWaGUQvp5fgB7LeQzj0zd7GSq7omX92zNzaIeDwsc=
-X-Received: by 2002:a05:600c:470f:b0:426:5e32:4857 with SMTP id
- 5b1f17b1804b1-429dcfe4b40mr2984495e9.0.1723566548086; Tue, 13 Aug 2024
- 09:29:08 -0700 (PDT)
+        bh=IcOkVGVomQgpIlgkRw2uEX+wAov9nzcGjYicRdhvNpA=;
+        b=VH0jt7cS5POKQzXjN3K264eCq68tu1Tkab/zd8jKrdyNp6rY4pkWP7i1jWbzoq7oCF
+         nFYqLd7/XRG6+uoscAmao3WmKBWmoHx0Xm74K3bjrbP/6X4YKsP1g31d4LFpuRaae0XI
+         39OISf85R66HnT5oZejdSLsrPDunT2Lqgp/zh9fY/T5ZrPMIx5jHPHI/sJVDSgK8dHRi
+         ZZP/0GDb2zljnbjfFBgXOn4aW9uh6i676ZZS0lNkaQIpH89M8ZY9uRA9lXOGqlk86wwz
+         JueByATubz0KvsCC2HhTlbFLCw9d95UPihuRh5Uif/RcLf+O/flz6qlWa+RRVjFJcdBG
+         UdFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB9y7EFpwimiOd0Iksm7Z0FX3fY3Vp8sXPtf7py49YH1KmNZNxW/JlSsLfOsYWRWmh6jkM8nWpFXm3Dg0J7w68PoWaLd+hXW0MPPhA
+X-Gm-Message-State: AOJu0YzPubc3XeCyQUAAGLZEoDAVLmT4bWb+5u46LAwdxScb0/wlnw7p
+	OoP1PVz4Hf6g8Z0X+qBMxP8YVamtykzkDqDv4jp2yoHQKI5RYbJhooh/4w2dMd6xwMumrm4kZhF
+	3Tjo4M7CNdQksJuuPlaJpbQS/JV5fWxtC4j1XSg==
+X-Google-Smtp-Source: AGHT+IFU2kpn0vuuQICPaDAMggyIuddBpewr8z4/Dc9irwuRYKKCgZ66IiMoSL/+f+SHq/Zuf1+9i3z0clFf39M+P+I=
+X-Received: by 2002:a05:6122:2002:b0:4f5:19b2:5435 with SMTP id
+ 71dfb90a1353d-4fac17fb19emr2537940e0c.2.1723566634139; Tue, 13 Aug 2024
+ 09:30:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813151752.95161-2-thorsten.blum@toblux.com>
-In-Reply-To: <20240813151752.95161-2-thorsten.blum@toblux.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 13 Aug 2024 09:28:56 -0700
-Message-ID: <CAADnVQKEgG5bXvLMLYupAZO6xahWHU7mc06KFfseNoYUvoJbRQ@mail.gmail.com>
-Subject: Re: [PATCH] bpf: Annotate struct bpf_cand_cache with __counted_by()
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-hardening@vger.kernel.org
+References: <20240813061957.925312455@linuxfoundation.org>
+In-Reply-To: <20240813061957.925312455@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 13 Aug 2024 22:00:22 +0530
+Message-ID: <CA+G9fYtev5H05e9-BpRPaifWekO_xBNXVz0Ev9ps-hFXcVN8ZQ@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/149] 6.1.105-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 8:19=E2=80=AFAM Thorsten Blum <thorsten.blum@toblux=
-.com> wrote:
+On Tue, 13 Aug 2024 at 11:58, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Add the __counted_by compiler attribute to the flexible array member
-> cands to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
+> This is the start of the stable review cycle for the 6.1.105 release.
+> There are 149 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Increment cnt before adding a new struct to the cands array.
+> Responses should be made by Thu, 15 Aug 2024 06:19:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.1.105-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-why? What happens otherwise?
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  kernel/bpf/btf.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 520f49f422fe..42bc70a56fcd 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -7240,7 +7240,7 @@ struct bpf_cand_cache {
->         struct {
->                 const struct btf *btf;
->                 u32 id;
-> -       } cands[];
-> +       } cands[] __counted_by(cnt);
->  };
->
->  static DEFINE_MUTEX(cand_cache_mutex);
-> @@ -8784,9 +8784,9 @@ bpf_core_add_cands(struct bpf_cand_cache *cands, co=
-nst struct btf *targ_btf,
->                 memcpy(new_cands, cands, sizeof_cands(cands->cnt));
->                 bpf_free_cands(cands);
->                 cands =3D new_cands;
-> -               cands->cands[cands->cnt].btf =3D targ_btf;
-> -               cands->cands[cands->cnt].id =3D i;
->                 cands->cnt++;
-> +               cands->cands[cands->cnt - 1].btf =3D targ_btf;
-> +               cands->cands[cands->cnt - 1].id =3D i;
->         }
->         return cands;
->  }
-> --
-> 2.46.0
->
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.1.105-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 9bd7537a3dd0286970c1962438e04c42993f76a9
+* git describe: v6.1.104-150-g9bd7537a3dd0
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
+04-150-g9bd7537a3dd0
+
+## Test Regressions (compared to v6.1.103-87-g54b8e3a13b43)
+
+## Metric Regressions (compared to v6.1.103-87-g54b8e3a13b43)
+
+## Test Fixes (compared to v6.1.103-87-g54b8e3a13b43)
+
+## Metric Fixes (compared to v6.1.103-87-g54b8e3a13b43)
+
+## Test result summary
+total: 315861, pass: 270713, fail: 3868, skip: 40792, xfail: 488
+
+## Build Summary
+* arc: 10 total, 10 passed, 0 failed
+* arm: 270 total, 270 passed, 0 failed
+* arm64: 82 total, 82 passed, 0 failed
+* i386: 56 total, 56 passed, 0 failed
+* mips: 52 total, 50 passed, 2 failed
+* parisc: 8 total, 8 passed, 0 failed
+* powerpc: 72 total, 70 passed, 2 failed
+* riscv: 22 total, 22 passed, 0 failed
+* s390: 28 total, 28 passed, 0 failed
+* sh: 20 total, 20 passed, 0 failed
+* sparc: 14 total, 14 passed, 0 failed
+* x86_64: 65 total, 65 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
