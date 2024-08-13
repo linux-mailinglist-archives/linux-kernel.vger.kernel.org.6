@@ -1,91 +1,109 @@
-Return-Path: <linux-kernel+bounces-284231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4345694FEAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:23:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D032394FEB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34BE285083
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:23:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB231F2461C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5813189BB4;
-	Tue, 13 Aug 2024 07:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489E5558BB;
+	Tue, 13 Aug 2024 07:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="x+G1aCv0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ssLhi4jI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2E661FDA;
-	Tue, 13 Aug 2024 07:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A6F77102;
+	Tue, 13 Aug 2024 07:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723533692; cv=none; b=t2cH8/MUsg3cE2Pie4EGrmCLU6+as9ta1DEyn7r1CjTe27VfV+SsU0IBw+bmbnd3y2/6/d5dM1Jao1l5ifbAJuB+Jmbr7mKfizMQcIP/3c5EvSoIIOImTsIqsXQDhO8TGu2xinAuWu1brD6IW0GRMShq4MoO50JSv17T5gQxL6c=
+	t=1723533749; cv=none; b=rDsTzepPbKLQLX8SPgdJlVrIgo4UHGGcN1BYE4lgFmZ7MJJzDeG08sH9Yvn/id9Xn8dO7hZilv4h6wyKzgjcF8eeH8VGM6BhervNuq0y6EgtI+mbkgDJhnLHlM2lFYWi4TYUQ/Zm9wExVjEx23X3f8M3dI94qEIrdzaIozyyGdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723533692; c=relaxed/simple;
-	bh=cWBNJPe8NO2mYCdEyRfOZ58MOL3BKWORB1hAY3Znjto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efBIyBxR9Pa+hBKAiQJmNsAfhekWh38szcxBuwOQiI2DU2FETuYJy1tnJSNlP8Pl2v9Za+90A98izHMHYj/M4qVuez+hv9o4eF5EEwm1R9dXtegCNJFYzWiLOTRhm/Yxdw/qvtrtFqXljzGzVuH12onMkL77AlygUcK8Q+FVuxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=x+G1aCv0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O41PghY9V6lKoOv9CZfMpzgNhd6Z29o3tiejHWQkJio=; b=x+G1aCv0MXeWBqV1MARqgN8Yzt
-	hY24pD/Llm5/14s88MSSL4SKxZXB5eTFWhuk3tM8C03cGbtU7bN8tSy5v8ilF6uLoeR2C4EpNSJmg
-	r4p6dvEle/6uoHhph8vF0OwO7TRtQDugDl1D2hleRzTfodaE6uf14ryxO9sbC5sbj9fGw6Ahlh6O/
-	lsoqXfRJMCddh4LaWx0gCKfNXooNR9iktip9DVSl0ZC3YJ6G9iMAsbF8p3ZvivWC7n5BpDNlzmSDM
-	hs4nXxr+OlzrpHQyCfOFbLn1CEl3HM/30lgGrAmfJyWZQeR0e+wNhHlkBxXGRwGv9BXftjvyy1yKB
-	Dr3sO8XQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdlqT-00000002h54-2Q3M;
-	Tue, 13 Aug 2024 07:21:29 +0000
-Date: Tue, 13 Aug 2024 00:21:29 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: Re: [PATCH RFC -next 00/26] md/md-bitmap: introduce bitmap_operations
-Message-ID: <ZrsJeabpeFdXVfIb@infradead.org>
-References: <20240810020854.797814-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1723533749; c=relaxed/simple;
+	bh=65n7sQOXnHbixyzOt3UwlzWwiIz9VctCqm8ZyJMHicI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aZY4tmnxaeoqO11xBZazFfPsDb3cobQiGh5nPbGuAcEqNbWCoWTKUIprzdT2cYoXYtFyKeychQz9gErG0ySGiAZjYNVbFD2nVuMgBCAckaDKyzXrL7zS/YYJq2JShqju08peIPvWjvNjwbgeiV4Y7nSDzpNHdb+8gMVK7S4aEoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ssLhi4jI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723533742;
+	bh=ewekOOaHzIbDs/eFE+pez0BjMVr5jCRSpYioX75FkkI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ssLhi4jIBRf+fE3l4tNUyHphAibl4qSJxECDYYxF5PtiustkQmufmr4OF7CxRcEAm
+	 5C+Chj61UjkoNk/97Ca1Y7E9oXLM02UQDW+a1LgjG93HbNDUYXNMhArqBRfmUPJ/Dq
+	 QMHyiG+eOumZrVBOAcwAWyZqWFuHPigOSAPcBahKNVKWd4Us8IfodDg00DO18DZnfR
+	 naZ+uTGu9HBVGKSqI5zmUMgsTmCJ9C6pQIOGnglQ887AoqCLzzXR/LU//lTmEBulEM
+	 eexImqFDCe8kM4nd3woADIAPsZzrr5G2+3P74nm0KqIgNODCPUPguHrzIFpbBFhtJb
+	 Ds55HxpEHP9EA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WjjWf11KMz4xCg;
+	Tue, 13 Aug 2024 17:22:22 +1000 (AEST)
+Date: Tue, 13 Aug 2024 17:22:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Bhoomika K
+ <bhoomikak@vayavyalabs.com>, Pavitrakumar M
+ <pavitrakumarm@vayavyalabs.com>, Linux Crypto List
+ <linux-crypto@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+Message-ID: <20240813172221.21aebe0a@canb.auug.org.au>
+In-Reply-To: <ZrreN8P-WO-DsM5B@gondor.apana.org.au>
+References: <20240812104235.6eefb365@canb.auug.org.au>
+	<ZrreN8P-WO-DsM5B@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240810020854.797814-1-yukuai1@huaweicloud.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; boundary="Sig_/xbGJEteCAS5dLRGDKaaNxem";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sat, Aug 10, 2024 at 10:08:28AM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> The background is that currently bitmap is using a global spin_lock,
-> cauing lock contention and huge IO performance degration for all raid
-> levels.
-> 
-> However, it's impossible to implement a new lock free bitmap with
-> current situation that md-bitmap exposes the internal implementation
-> with lots of exported apis. Hence bitmap_operations is invented, to
-> describe bitmap core implementation, and a new bitmap can be introduced
-> with a new bitmap_operations, we only need to switch to the new one
-> during initialization.
-> 
-> And with this we can build bitmap as kernel module, but that's not
-> our concern for now.
-> 
-> Noted I just compile this patchset, not tested yet.
+--Sig_/xbGJEteCAS5dLRGDKaaNxem
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Refactoring the bitmap code to be modular seems like a good idea.
+Hi Herbert,
 
-But I'd just turn this into plain function calls and maybe a hidden
-data structure if you feel really fancy.  No need to introduce expensive
-indirect calls and a separate module.
+On Tue, 13 Aug 2024 12:16:55 +0800 Herbert Xu <herbert@gondor.apana.org.au>=
+ wrote:
+>
 
+> Thanks Stephen.  I've applied your patch but I kept the macro but
+> added an ifndef MIN around it.  This way it should work either with
+> or without Linus's patch.
+
+Good idea.  Thanks, one less thing for me to carry.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xbGJEteCAS5dLRGDKaaNxem
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma7Ca0ACgkQAVBC80lX
+0GycIQf/YBhOBBqxjg+XCjRX4kLLZBoVXFXaQh3rWBwZl3Iwrx/P/dA7mBPrYWrw
+L28bpG0vUQf0jSIPQtS39SGybteosMm7Fm7IdAWO4HFtie1ik0tbvIjwsw4WcY0k
+6EnYmsPOlIwXJ/cv/ckjrOGsIRNjuima/5YilV3KrRSrrti5sEaJcf+8FAmU9CAT
+CcKygXshAR/RgPNm5EMNGpeav35McDBwwEBvsc87uwjP6mESCSdJzez4cn1oZXBO
+K7c0GHHQsp434Lhpbyao1q1jqaI1kkMF3tM7+Bo7vbwwNHt4Hn1iaH+rsAlSBmLE
+0UZp97yarJn1iZJ22Zjkd5efW8571g==
+=CnqU
+-----END PGP SIGNATURE-----
+
+--Sig_/xbGJEteCAS5dLRGDKaaNxem--
 
