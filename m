@@ -1,130 +1,82 @@
-Return-Path: <linux-kernel+bounces-284014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D44894FBEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A1394FBF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A0B1F21F31
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D491F21CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E45D1EA8D;
-	Tue, 13 Aug 2024 02:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4DA1CD0C;
+	Tue, 13 Aug 2024 02:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GLQCe8b2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB621CD02;
-	Tue, 13 Aug 2024 02:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="hI4xmBB9"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223321CD02;
+	Tue, 13 Aug 2024 02:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723517318; cv=none; b=Mv0k8yjLPkgg7NDDzmh2p6GvENJXzvEWM1AaGNfPJ3ROFmRHvMfaqBhYJv8zxQHxUEBqahg9vDPknAXp9HesXw89KwrkZX0udv7MsY6kwJrLPd3lBhoYvkJfzBXysQ7NPsPvkletIcto3IUEL5lZ2eMGZmDkdPdrXU75AlBB2Tc=
+	t=1723517359; cv=none; b=tDm+tfGO31lmSuQrP3STNemqpFgFFTfIfCarpNLr+j9B2pRjDoKjdYX7xVJ5JA9xxpb8aQr6lyZG4xOSuXnu5qeBfH4NQr5tupahnDZ/XC4Pqm32+F0qABFpQ1CyGOjHfpAS4v3WcqcuPES2GzgZ5cTSta3mTOkHBFREMI6sOsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723517318; c=relaxed/simple;
-	bh=nHxYCSIhrrZHy2Zz8cWH/zCNEeRT9D6bZs1i0/yArL8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=AYvsg/YZImt3JQPQVRZ8wXXfcADbRTmkc9+SZZf5k1wOBzyWIFQLanPtyHaQDjVmHXso9auXiHHYY4uz8L0LF7BDmvJRvodk30DagxOXbtgZqoKQCgZEdoR/r/M9WdsDUohWpijnr2Jkg/cY8zrjcMdmjdyeoJuSIgJW0So+P58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GLQCe8b2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSZT6003134;
-	Tue, 13 Aug 2024 02:48:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/LoA8K6eThkbYmpBAn3js0QXBHor5nfevM1YMu9kW/k=; b=GLQCe8b2n8naWOsl
-	6MbXbx3Z+MYC9AAdskdMI9sX4SuOTuHXAJziYmvyCVjNI6JO67C7Fz7UViIS/wD+
-	kqsSfguMRO5JaMYHVbmRaFz8gp1MnXkT7Vq9n6+O+Tu6DFq3V2hCVSZbvgrnldx9
-	0iERpsXgdGb4cyqSi9ObvhOFzoNWgA2ykvsTNqbw2rIL3bE3pUo1ff8G5xThz2k6
-	Rvhl7OK137wLU1QWwN5eXpsaIjli1JRz6+lD4bSLHWW57RAb9sFduJcgVyUCuyLz
-	2j5lSZctCEQQZ3v4jWQq+a1o5w1Bsatpczp41beI6S+fKqR2LZX1p2As1Dyr3DpN
-	AqZzbA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x17se4fs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 02:48:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47D2mTQI013535
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 02:48:29 GMT
-Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 12 Aug 2024 19:48:24 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-Date: Tue, 13 Aug 2024 10:47:55 +0800
-Subject: [PATCH v4 3/3] arm64: defconfig: Enable interconnect for SM4450
+	s=arc-20240116; t=1723517359; c=relaxed/simple;
+	bh=sXp6YddTODBVzlnCvVgBh98L85fjzrGiv+X1+cmMRBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PksGDvX/m4rennqPFJdNc0tZAdN2iZ0eOdDi2Zqxm3QHedRwalp6OgRr4gdjjCb3yZc3i3BNXZbtqR/ELXnSxPpmfYJPjVSgGWc8OiZmIkF+a8nrQpc0485UAS8nNzU2ZRCkvNzsoAp92mB2p0dAdeK4YkHd0zKRD1qtsI9C2Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=hI4xmBB9; arc=none smtp.client-ip=220.197.32.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=KFNCvveRopBL4M4RjwAKxrwlHBT+Ho9SPPnEkeplJbU=;
+	b=hI4xmBB9wBLbBbTvLkysHzKLD4r+pDYjcFIrixHwLInFKTTuaUMUXe2mQLR1KC
+	nJF3/jIphw4Tthj+EdrIWkOxYqKMGvVnTcOprK59MfWFMu9cVZ45rdwZC9Ki+uEx
+	eapjt/CuzaKRjyBDTTCRTlgsd5Q2f/1ksQPf+shaY92L4=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDXHy2MybpmpkVSAg--.46498S3;
+	Tue, 13 Aug 2024 10:48:46 +0800 (CST)
+Date: Tue, 13 Aug 2024 10:48:44 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	shengjiu.wang@gmail.com
+Subject: Re: [PATCH v2 0/4] arm64: dts: imx93-11x11-evk: Add several sound
+ cards
+Message-ID: <ZrrJjPmix3Dp+wEK@dragon>
+References: <1722217199-10640-1-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240813-sm4450_interconnect-v4-3-41a426f0fc49@quicinc.com>
-References: <20240813-sm4450_interconnect-v4-0-41a426f0fc49@quicinc.com>
-In-Reply-To: <20240813-sm4450_interconnect-v4-0-41a426f0fc49@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Tengfei Fan <quic_tengfan@quicinc.com>
-X-Mailer: b4 0.15-dev-a66ce
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723517295; l=880;
- i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
- bh=nHxYCSIhrrZHy2Zz8cWH/zCNEeRT9D6bZs1i0/yArL8=;
- b=FHGJfuC89f0Nht4TUhw14E71XB2Zl9X17kAP4gAse4quWgKUdERPptXpatDbnawdAITIVrK7w
- 6JPLBJ3tEIVC5CRERgVGdXz+pwpztVZR33Fc9jE45UBGsac+Jbk+QR7
-X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
- pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MH9EdAgP-PwZQz-hbl5JUqhAQJE2thxl
-X-Proofpoint-ORIG-GUID: MH9EdAgP-PwZQz-hbl5JUqhAQJE2thxl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxscore=0 phishscore=0 malwarescore=0 adultscore=0 suspectscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- mlxlogscore=672 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130018
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1722217199-10640-1-git-send-email-shengjiu.wang@nxp.com>
+X-CM-TRANSID:Mc8vCgDXHy2MybpmpkVSAg--.46498S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU-rb1UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiER46ZWa6xSATFAAAsu
 
-Add the SM4450 interconnect driver as built-in. On SM4450 platform,
-support for features such as UFS and USB will be gradually implemented.
-These features rely on interconnect, so the internnect functionality
-need to be enabled.
+On Mon, Jul 29, 2024 at 09:39:55AM +0800, Shengjiu Wang wrote:
+> Add bt-sco, PDM microphone, XCVR sound card support.
+> 
+> changes in v2:
+> - move #sound-dai-cells to i.mx93.dtsi
+> - fix some coding style issue
+> - fix CHECK_DTBS issue
+> 
+> Shengjiu Wang (4):
+>   arm64: dts: imx93: Add #sound-dai-cells property
+>   arm64: dts: imx93-11x11-evk: add bt-sco sound card support
+>   arm64: dts: imx93-11x11-evk: Add PDM microphone sound card support
+>   arm64: dts: imx93-11x11-evk: Add audio XCVR sound card
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 01dd286ba7ef..593b89e66166 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1624,6 +1624,7 @@ CONFIG_INTERCONNECT_QCOM_SC8180X=y
- CONFIG_INTERCONNECT_QCOM_SC8280XP=y
- CONFIG_INTERCONNECT_QCOM_SDM845=y
- CONFIG_INTERCONNECT_QCOM_SDX75=y
-+CONFIG_INTERCONNECT_QCOM_SM4450=y
- CONFIG_INTERCONNECT_QCOM_SM6115=y
- CONFIG_INTERCONNECT_QCOM_SM8150=y
- CONFIG_INTERCONNECT_QCOM_SM8250=y
-
--- 
-2.25.1
+Applied all, thanks!
 
 
