@@ -1,75 +1,39 @@
-Return-Path: <linux-kernel+bounces-285163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1E6950A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:20:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFA8950A06
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFFCB1F23DE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD56F1C22532
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633ED1A0B0E;
-	Tue, 13 Aug 2024 16:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PEICgMS1"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE5361FCF
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24EA1A0B0D;
+	Tue, 13 Aug 2024 16:20:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE3A61FCF;
+	Tue, 13 Aug 2024 16:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723566017; cv=none; b=FAS1dtwbN8upvgNphGPqH2SHfBpE0wdoCakfX+qXSgysiLXWaq55/MvQVbqFg7+UWBf2r3CMz2SrYmc67PgXfKcDBelr3F9R/oHRflaluDiejjkvVWcKPz1Jr5/9YsZPH9F0cPn6xoHV6nJEatBXjPgES0NtQpCm5iz1jBrgf7g=
+	t=1723566034; cv=none; b=o7kVVteOmXVfV6aF0O9WknzbY/8fotOQOxN8OEpBmwK30bHUPILY2/O8BPvFVVPC59ti8TRYd7Wl2SEMnqvUkSaklRFsUn1joAKjgDkQhEV9vwqTvR44Vnz8GoXlPQ1YA9exveJ/RB6ZGOZwzUOAIsEgfY+3mU8wfOHWAClldf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723566017; c=relaxed/simple;
-	bh=C8tZVbJDMojby4sbsZfbNeLsdVrZBpsCltpwAdATmZk=;
+	s=arc-20240116; t=1723566034; c=relaxed/simple;
+	bh=rUjKakylGmaur9CYp1scGQ8kw8n7K7iDDZ1hQtQBJQo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e4Kkc7lmw633NN+/hQhSBG4MkljHU5bUrq65SM/Z4231am72x6yL3V7wIOSvKLX+i51t3hQzcQncJfHmAKfeeblwclfrbrp+t0OFFcJbA7fdGPzqHJkdsYX5zvFve0aornMqs1+B/ugH76h83pUcMK3iMedgZuxTmX4XyuMsmdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PEICgMS1; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428f5c0833bso265055e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:20:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723566014; x=1724170814; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=BgSm6S2qU2VrM+S+5DH8+MdeO025H1mZEQLkO3/EmQs=;
-        b=PEICgMS1KE6F3oIg1jB3xTb+vw1re71yLT38CHi7j7mrGDvwVtQeDjbL91iEZ9XwrM
-         BSqNp/PsqLevm7K4AtAcD5/npxpf5e54KjgO3BuaJGRup7A6C2t8KhIcl90TzIWtn7ul
-         YM3WDqfFkC8KrS5OHs0VyQBVuYy2HdPoaho3pPo/1aPt5SrzRHGCU8P+QS9Y3w4hPaKG
-         djYRHd7JuupnLhrmrnk7zPnB4VBEUIZ2CGaaCuW+LHlFn+ioW8jaH2noq8daNiowmRlP
-         wFmdpfJ4s/ALrn4S4jze2xKypQQzfL+TP8UV8AbgBrCinsSSEoPeemQCMp3WlGL2THU/
-         RwVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723566014; x=1724170814;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BgSm6S2qU2VrM+S+5DH8+MdeO025H1mZEQLkO3/EmQs=;
-        b=T+eO4HUjr29cugyudKZibypu6Kz/BW3tUA2Nra3Z1iqG41uR7eQecNDtCr3OfvzZfy
-         1lc7hKQboFOE/DnpWC2OY5uqNG8JbY3vN5CTUW6EtpqUYcF8OA/jrEj39dqomS4KNF2F
-         yUjywvM3rDqXKNJB7kgxDcMP0WeJruHaNK8VqrKiEvvv+I/YjspKfnC9a1c5AY9FmeRl
-         PTiKPTpfM3arV4O9GTjgMsIAIdORqtCeWFIotkFJwP9/BZkSCXehXmrihp3WtK+HVmfF
-         2CgoSTaBZfFQK8m7bO4hxecefXVGOO4/a61tmwXX0svrlUh07A0DtuyKDXo0MMyv58Db
-         psNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlsIGU5PCztsOgHMPDBWW5WdK+0r9wkDLb0Hsy6l5wuiuELjSb97HDbN8zANAKYSOKSIeAudjcOb9FEblWi0q93Lbi3YVWcsGY4prj
-X-Gm-Message-State: AOJu0Ywrqtm21XKK3zw82wuWfW/M8kpvmHoSWMiV983hurQCvLkYpB8u
-	gZDxs6nCPbaNXuzoYYAHK8fSiUzDuLQsuOEDfz2d6En51WtAjdkXcxjOn9XIVWIGLogkWDnSDPa
-	P
-X-Google-Smtp-Source: AGHT+IFcsdOXQom88JsbkdTXdvZ8u7603bJwZjY3MGQBwPAl/4YCiHadCzSzBovYSIxkgpZVvf8C1Q==
-X-Received: by 2002:a05:6000:1a89:b0:366:ea4a:17ec with SMTP id ffacd0b85a97d-3716e3ead5emr2881417f8f.2.1723566014065;
-        Tue, 13 Aug 2024 09:20:14 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4d1db515sm10862703f8f.64.2024.08.13.09.20.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 09:20:10 -0700 (PDT)
-Message-ID: <f9f97553-a50a-44c0-b817-3a44f730cfeb@linaro.org>
-Date: Tue, 13 Aug 2024 18:20:09 +0200
+	 In-Reply-To:Content-Type; b=HN7bCbuprxVb1AIdqWvWosi9yP4+5NfxK+an8srRpFLXQVNchX9yhstQDt9I55Fg4wCrUvqhe8O7OZN31SYjAX5TmIaktmpYgY4/uey1GZrIYzqicM5e+9qMDczgEfGyMIHiOkeKRkN7IeuY1SmiqUeSS/Luf1/UAePJ9Jy/5ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6304F12FC;
+	Tue, 13 Aug 2024 09:20:57 -0700 (PDT)
+Received: from [10.57.84.20] (unknown [10.57.84.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 178B53F6A8;
+	Tue, 13 Aug 2024 09:20:26 -0700 (PDT)
+Message-ID: <a225f9e0-5335-4c58-8e94-960c2557f9c0@arm.com>
+Date: Tue, 13 Aug 2024 17:20:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,102 +41,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: hwmon: Add maxim max31790
-To: Chanh Nguyen <chanh@os.amperecomputing.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>
-Cc: Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240813084152.25002-1-chanh@os.amperecomputing.com>
- <20240813084152.25002-2-chanh@os.amperecomputing.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+To: Qais Yousef <qyousef@layalina.io>
+Cc: MANISH PANDEY <quic_mapa@quicinc.com>, axboe@kernel.dk, mingo@kernel.org,
+ peterz@infradead.org, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ linux-block@vger.kernel.org, sudeep.holla@arm.com,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
+ Christoph Hellwig <hch@infradead.org>, kailash@google.com, tkjos@google.com,
+ dhavale@google.com, bvanassche@google.com, quic_nitirawa@quicinc.com,
+ quic_cang@quicinc.com, quic_rampraka@quicinc.com, quic_narepall@quicinc.com,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <3feb5226-7872-432b-9781-29903979d34a@arm.com>
+ <20240805020748.d2tvt7c757hi24na@airbuntu>
+ <e5f0349e-6c72-4847-bf0c-4afb57404907@arm.com>
+ <20240809002321.3k5g2isqmiuflrmd@airbuntu>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240813084152.25002-2-chanh@os.amperecomputing.com>
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240809002321.3k5g2isqmiuflrmd@airbuntu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2024 10:41, Chanh Nguyen wrote:
-> Add device tree bindings and an example for max31790 device.
+On 8/9/24 01:23, Qais Yousef wrote:
+> On 08/05/24 11:18, Christian Loehle wrote:
 > 
-> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+>>> My understanding of rq_affinity=1 is to match the perf of requester. Given that
+>>> the characteristic of HMP system is that power has an equal importance to perf
+>>> (I think this now has become true for all systems by the way), saying that the
+>>> match in one direction is better than the other is sort of forcing a policy of
+>>> perf first which I don't think is a good thing to enforce. We don't have enough
+>>> info to decide at this level. And our users care about both.
+>>
+>> I would argue rq_affinity=1 matches the perf, so that flag should already bias
+>> perf in favor of power slightly?
+> 
+> Not on this type of systems. If perf was the only thing important, just use
+> equally big cpus. Balancing perf and power is important on those systems, and
+> I don't think we have enough info to decide which decision is best when
+> capacities are not the same. Matching the perf level the requesting on makes
+> sense when irq_affinity=1.
 
+Well you could still want a
+"IO performance always beats power considerations" and still go HMP because
+sometimes for non-IO you prefer power, but I agree that we don't have enough
+information about what the user wants from the system/kernel.
 
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      fan-controller@21 {
-> +        compatible = "maxim,max31790";
-> +        reg = <0x21>;
-> +        clocks = <&sys_clk>;
-> +        resets = <&reset 0>;
+> 
+>> Although the actual effect on power probably isn't that significant, given
+>> that the (e.g. big) CPU has submitted the IO, is woken up soon, so you could
+>> almost ignore a potential idle wakeup and the actual CPU time spent in the block
+>> completion is pretty short of course.
+>>
+>>> If no matching is required, it makes sense to set rq_affinity to 0. When
+>>> matching is enabled, we need to rely on per-task iowait boost to help the
+>>> requester to run at a bigger CPU, and naturally the completion will follow when
+>>> rq_affinity=1. If the requester doesn't need the big perf, but the irq
+>>> triggered on a bigger core, I struggle to understand why it is good for
+>>> completion to run on bigger core without the requester also being on a similar
+>>> bigger core to truly maximize perf.
+>>
+>> So first of all, per-task iowait boosting has nothing to do with it IMO.
+> 
+> It has. If the perf is not good because the requester is running on little
+> core, the requester need to move up to ensure the overall IO perf is better.
 
-This node is incomplete. I asked to make the example complete, not by
-adding two incomplete examples or other ways... The binding description
-says this device controls fan. If so, where is the fan here?
+See below but also
+"the requester need to move up to ensure the overall IO perf is better" is
+just not true, with asynchronous IO submission done right, the submission
+runtime isn't critical to the IO throughput, therefore it should run the
+most power-efficient way.
+This can be observed e.g. with any io_uring fio workload with significant
+iodepth (and possibly multi-threading).
+Completion may be a different story, depending on the device stack, if we're
+dealing with !MCQ then the completion path (irq + block layer completion)
+is absolutely critical.
+For any mmc / ufs<4.0 system the performance difference between
+fio --name=little --filename=/dev/sda --runtime=10 --rw=randread --bs=4k --ioengine=io_uring --numjobs=4 --iodepth=32 --group_reporting --cpus_allowed=$LITTLE_CPUS
+and
+fio --name=big --filename=/dev/sda --runtime=10 --rw=randread --bs=4k --ioengine=io_uring --numjobs=4 --iodepth=32 --group_reporting --cpus_allowed=$BIG_CPUS
+is (usually) only because of the completion path and setting irq affinity of
+/dev/sda to $BIG_CPUS will make the difference disappear (rq_affinity=0 and
+implying LLC is the same).
+Running the submission on little CPUs will usually be the most power-efficient
+way then.
 
-IOW, keep only one, complete example.
+> 
+>> Plenty of IO workloads build up utilization perfectly fine.
+> 
+> These ones have no problems, no? They should migrate to big core and the
+> completion will follow them when they move.
 
-Rest looks good. With this addressed (and optionally with maintainer
-change, which Conor asked):
+So if I understood Manish correctly the only reason they want the completion
+to run on a bigger CPU than the submission is because the submission is already
+saturating the CPU, therefore utilization of submission is no issue whatsoever.
+They don't want to run (submission) on big though because of power
+considerations.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+> 
+>> I wouldn't consider the setup: requester little perf, irq+completion big perf
+>> invalid necessarily, it does decrease IO latency for the application.
+> 
+> I didn't say invalid. But it is not something we can guess automatically when
+> irq_affinity=1. We don't have enough info to judge. The only info we have the
+> requester that originated the request is running at different perf level
+> (whther higher or lower), so we follow it.
+>
+Anyway, Manish's problem should be solved by rq_affinity=0 in that case (with
+irq affinities set to big CPU then the completion will be run on the irq CPU)
+and "rq_affinity=1 <=> equal capacity CPU" is the correct interpretation, is that
+more or less agreed upon now?
 
 
