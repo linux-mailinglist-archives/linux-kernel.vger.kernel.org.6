@@ -1,165 +1,156 @@
-Return-Path: <linux-kernel+bounces-285542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E217A950F48
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A71950F5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D11E1C21DE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7AC41F23987
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831771AAE3A;
-	Tue, 13 Aug 2024 21:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40611E498;
+	Tue, 13 Aug 2024 21:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qDCHQfgg"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pbNzjfki"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871721A38D4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE7319DF49
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723585819; cv=none; b=t2XxNxGOHtDGeGu+IA4Tm2Gu6c4/t9e1YjlhYCtLs+VrD0klUPmbJHzHO7SRZ3kXaeWSLNVJjWDcghizbgDxotWiRiTeE6ND173Ba9n78BaMwiehfQm2YlYs3QZOKT+Ej79k7ItUlpSrmb/mJqbqnc28Tbj50xD5Z0ylautCfHU=
+	t=1723586066; cv=none; b=I8aN2r68rgqJBcOVyq20tT+96UozQYVFN0KVONnLJ8CbNGlUq2e6Xlx3XjtACK/INccU1fxb/xcacwWTc6sPbDe/Fy5zVZqsgKijUaOazuoqCkEIw8jTo4LXJEz7b1I8X+f7pKVzgDPtiZCudqCXrzhm/QvZH5ii3mjDb2xY27s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723585819; c=relaxed/simple;
-	bh=Eo9cLrGrsiOf2rVTelEn1LJUk+568Belby8uwLONfTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ruT9gD4DLq09bRLBXF9xNU1MzmgNRkUuKKquKGw68MzcgidqsjczNJOIhhpxiCnE4LWKnPTGnLrpsc7A8IcK2+1h51QqFUxO6bwZuwRFbh1BiNBr64ajk7AkkVYn9P0Ew4l1Ft/3lCY+N/bHHy9BEfI6Lyj5Xcp8RnS4U7WYInE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qDCHQfgg; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1d5f6c56fso342546685a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:50:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723585816; x=1724190616; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jSiV3SuCMfW9JOqoJiKPvJCeDk2FrtYrANArULa+fHk=;
-        b=qDCHQfggQN0m+1jTpWldncrsrqtQSbm6J6Zmr89F0qP0X8Y1LmLjI9R8Na9+dObc1T
-         ViRYlqzN/4LBbhn/65HlRXE6e5EIL0FuxSggJiz7I83HpDajcpQHWY7LNBCreQtcJ4I2
-         8Qt5X+HOBqnrwONXnKLp0vKb/mLIAFJvs9XwlaLwHuXDRZIa4UyyzIOQ8m3UeaCmxZn4
-         Af0NBGW8815K5NQlqovRYc++yj07ncKanp6QBo6DP1D/38O0Q0+JIA/+Bg7xjHyCub/x
-         C+jV+qM4wQUFZNVzS9u0muqRdj0l5Pmft5k/qOyCAwOv+Mq3VYc2C7nCZlp8c66Qxy0y
-         F/8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723585816; x=1724190616;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jSiV3SuCMfW9JOqoJiKPvJCeDk2FrtYrANArULa+fHk=;
-        b=aFmmEtlMJIlRaqXe0UNHGRxIwgXdreesa5aTIB4IqVMVjz0HbEClxHtjBnAZMK2gxY
-         c7baKF8INrhDVJPNWvutbnz7cGYyGjNnRboOvVVZFH8FB7X9aZW4/qbMW9rgA/f807tQ
-         5gORi9gc4Yc3im3Sixa8lM6ogS6J2ot82SMzudgoXz6kHN0jIvktEoQxHoCp+uPVjy30
-         ayKFWDvJWS0be/zygwngrv3YrD7PX9nrM7H84pcJ6efLqmj2o3T2+8lnozPtmpAGZZMo
-         SjSKk5vUzSWQj/GH9crl9J5RG8hpS86f/Js1ERwudxMrp/G8mXIJnSB+3ZuMdqDGg+lu
-         3XRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVR3gLE//sm6vhdBYIXxfziaFEjmviRLnCk/ddTBuZXxEPPbZwgGU3Qkp5L+DtGxeZE8mgw8bGow8Q/Kyj6Xrd0X2/1ai8FwpKY/EE+
-X-Gm-Message-State: AOJu0YyOt/Qrtvah0aoYJIcviSAkQs+6/bZ8zs69+NvsXzEtuecVUW5h
-	4/a44V88J6mj3xCTIN5Z419+4Yt/0IAroXO6ZG3WlFZAVI6AZqcHRmHNuwrYMHHJbKd5BHi04bC
-	SbOQVCzu7hGDRKCeuY5VkO47DxQ0dcjsLhH8k
-X-Google-Smtp-Source: AGHT+IFnca/v+gpcDnq29UQq1DNCBSiG4yc+o/Pu/quDkhEYG0KrLjRvhqxXKXq8PgOJtiIYZagJkPd7d1zBGI0sgpk=
-X-Received: by 2002:a05:620a:45a2:b0:7a3:5e6e:e8e3 with SMTP id
- af79cd13be357-7a4ee3ac4b8mr85925285a.53.1723585816231; Tue, 13 Aug 2024
- 14:50:16 -0700 (PDT)
+	s=arc-20240116; t=1723586066; c=relaxed/simple;
+	bh=ngbmzPaIxKWf5UwKfK8Me4kccHyDmy9FxE9+63UWwfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RjQXJQWG42uWiS4q8KGSk8mJ6EC+xWD4PZjJmcuGacYpMOFQepQyLPSkLKg/qH4rNZ5VQwkyDdtcaz13Eh/YzEjyZC7OULiVUK0jWZJ7jgTnvgKq+YN5RRhC//p/j5zHWz9snuWwRzjmC1u6EsDFiE9kPwFrlwvxD+d2l5+I8b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pbNzjfki; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723586061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=I6Arg1vJbf0/Wx+BzG60P4s5RDSrDJtVAVWTc5jBHE0=;
+	b=pbNzjfkiX/19NxQ6KDx2SG+dW7TlKPYFR5xrphkUmQy2A+Z6oRnQOzZWJk7rk8CR9r2zvk
+	hlVl5uyC6cig0TY2SKYpKxTzNKfMutajuI6eqn7cUD4yvrqVbLXjRtPqeZNlnr1K262ovx
+	dHjmBQ+QeJG/PD3mHUZDLjcUfDbO6rY=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Yu Zhao <yuzhao@google.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>,
+	cgroups@vger.kernel.org
+Subject: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
+Date: Tue, 13 Aug 2024 14:53:58 -0700
+Message-ID: <20240813215358.2259750-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812145633.52911-1-jdamato@fastly.com> <20240812145633.52911-4-jdamato@fastly.com>
- <CANLc=av2PUaXQ5KVPQGppOdD5neHUtUgioqOO4fA=+Qb594Z4w@mail.gmail.com> <ZrvTzX8CfyM40c8I@LQ3V64L9R2.home>
-In-Reply-To: <ZrvTzX8CfyM40c8I@LQ3V64L9R2.home>
-From: Shailend Chand <shailend@google.com>
-Date: Tue, 13 Aug 2024 14:50:05 -0700
-Message-ID: <CANLc=auVkEWwhEHVwK9UkdjJJ5z9FTRS6wK=zb9pCgoAm4CWdw@mail.gmail.com>
-Subject: Re: [RFC net-next 3/6] gve: Use napi_affinity_no_change
-To: Joe Damato <jdamato@fastly.com>, Shailend Chand <shailend@google.com>, netdev@vger.kernel.org, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Willem de Bruijn <willemb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Ziwei Xiao <ziweixiao@google.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 13, 2024 at 2:44=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
-te:
->
-> On Tue, Aug 13, 2024 at 11:55:31AM -0700, Shailend Chand wrote:
-> > On Mon, Aug 12, 2024 at 7:57=E2=80=AFAM Joe Damato <jdamato@fastly.com>=
- wrote:
-> > >
-> > > Use napi_affinity_no_change instead of gve's internal implementation,
-> > > simplifying and centralizing the logic.
-> > >
-> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > > ---
-> > >  drivers/net/ethernet/google/gve/gve_main.c | 14 +-------------
-> > >  1 file changed, 1 insertion(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net=
-/ethernet/google/gve/gve_main.c
-> > > index 661566db68c8..ad5e85b8c6a5 100644
-> > > --- a/drivers/net/ethernet/google/gve/gve_main.c
-> > > +++ b/drivers/net/ethernet/google/gve/gve_main.c
-> > > @@ -298,18 +298,6 @@ static irqreturn_t gve_intr_dqo(int irq, void *a=
-rg)
-> > >         return IRQ_HANDLED;
-> > >  }
-> > >
-> > > -static int gve_is_napi_on_home_cpu(struct gve_priv *priv, u32 irq)
-> > > -{
-> > > -       int cpu_curr =3D smp_processor_id();
-> > > -       const struct cpumask *aff_mask;
-> > > -
-> > > -       aff_mask =3D irq_get_effective_affinity_mask(irq);
-> > > -       if (unlikely(!aff_mask))
-> > > -               return 1;
-> > > -
-> > > -       return cpumask_test_cpu(cpu_curr, aff_mask);
-> > > -}
-> > > -
-> > >  int gve_napi_poll(struct napi_struct *napi, int budget)
-> > >  {
-> > >         struct gve_notify_block *block;
-> > > @@ -383,7 +371,7 @@ int gve_napi_poll_dqo(struct napi_struct *napi, i=
-nt budget)
-> > >                 /* Reschedule by returning budget only if already on =
-the correct
-> > >                  * cpu.
-> > >                  */
-> > > -               if (likely(gve_is_napi_on_home_cpu(priv, block->irq))=
-)
-> > > +               if (likely(napi_affinity_no_change(block->irq)))
-> >
-> > Nice to centralize this code! Evolving this to cache the affinity mask
-> > like the other drivers would probably also require a means to update
-> > the cache when the affinity changes.
->
-> Thanks for taking a look.
->
-> The gve driver already calls irq_get_effective_affinity_mask in the
-> hot path, so I'm planning on submitting a rfcv2 which will do this:
->
-> -               if (likely(gve_is_napi_on_home_cpu(priv, block->irq)))
-> +               const struct cpumask *aff_mask =3D
-> +                       irq_get_effective_affinity_mask(block->irq);
-> +
-> +               if (likely(napi_affinity_no_change(aff_mask)))
->                         return budget;
->
-> with a change like that there'd be no behavioral change to gve since
-> it didn't cache before and still won't be caching after this change.
->
-> I think a change can be made to gve in a separate patch set to
-> support caching the affinity mask and does not need to be included
-> with this change.
->
-> What do you think?
+The Meta prod is seeing large amount of stalls in memcg stats flush
+from the memcg reclaim code path. At the moment, this specific callsite
+is doing a synchronous memcg stats flush. The rstat flush is an
+expensive and time consuming operation, so concurrent relaimers will
+busywait on the lock potentially for a long time. Actually this issue is
+not unique to Meta and has been observed by Cloudflare [1] as well. For
+the Cloudflare case, the stalls were due to contention between kswapd
+threads running on their 8 numa node machines which does not make sense
+as rstat flush is global and flush from one kswapd thread should be
+sufficient for all. Simply replace the synchronous flush with the
+ratelimited one.
 
-Sounds good!
+One may raise a concern on potentially using 2 sec stale (at worst)
+stats for heuristics like desirable inactive:active ratio and preferring
+inactive file pages over anon pages but these specific heuristics do not
+require very precise stats and also are ignored under severe memory
+pressure.
+
+More specifically for this code path, the stats are needed for two
+specific heuristics:
+
+1. Deactivate LRUs
+2. Cache trim mode
+
+The deactivate LRUs heuristic is to maintain a desirable inactive:active
+ratio of the LRUs. The specific stats needed are WORKINGSET_ACTIVATE*
+and the hierarchical LRU size. The WORKINGSET_ACTIVATE* is needed to
+check if there is a refault since last snapshot and the LRU size are
+needed for the desirable ratio between inactive and active LRUs. See the
+table below on how the desirable ratio is calculated.
+
+/* total     target    max
+ * memory    ratio     inactive
+ * -------------------------------------
+ *   10MB       1         5MB
+ *  100MB       1        50MB
+ *    1GB       3       250MB
+ *   10GB      10       0.9GB
+ *  100GB      31         3GB
+ *    1TB     101        10GB
+ *   10TB     320        32GB
+ */
+
+The desirable ratio only changes at the boundary of 1 GiB, 10 GiB,
+100 GiB, 1 TiB and 10 TiB. There is no need for the precise and accurate
+LRU size information to calculate this ratio. In addition, if
+deactivation is skipped for some LRU, the kernel will force deactive on
+the severe memory pressure situation.
+
+For the cache trim mode, inactive file LRU size is read and the kernel
+scales it down based on the reclaim iteration (file >> sc->priority) and
+only checks if it is zero or not. Again precise information is not
+needed.
+
+This patch has been running on Meta fleet for several months and we have
+not observed any issues. Please note that MGLRU is not impacted by this
+issue at all as it avoids rstat flushing completely.
+
+Link: https://lore.kernel.org/all/6ee2518b-81dd-4082-bdf5-322883895ffc@kernel.org [1]
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+---
+Changes since v1:
+- Updated the commit message.
+
+ mm/vmscan.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 008b62abf104..82318464cd5e 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2282,10 +2282,11 @@ static void prepare_scan_control(pg_data_t *pgdat, struct scan_control *sc)
+ 	target_lruvec = mem_cgroup_lruvec(sc->target_mem_cgroup, pgdat);
+ 
+ 	/*
+-	 * Flush the memory cgroup stats, so that we read accurate per-memcg
+-	 * lruvec stats for heuristics.
++	 * Flush the memory cgroup stats in rate-limited way as we don't need
++	 * most accurate stats here. We may switch to regular stats flushing
++	 * in the future once it is cheap enough.
+ 	 */
+-	mem_cgroup_flush_stats(sc->target_mem_cgroup);
++	mem_cgroup_flush_stats_ratelimited(sc->target_mem_cgroup);
+ 
+ 	/*
+ 	 * Determine the scan balance between anon and file LRUs.
+-- 
+2.43.5
+
 
