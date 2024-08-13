@@ -1,141 +1,197 @@
-Return-Path: <linux-kernel+bounces-284404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4451B95008E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330E895008F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA356B23770
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B350A1F22FC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7825149C76;
-	Tue, 13 Aug 2024 08:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70BB13C9CB;
+	Tue, 13 Aug 2024 08:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQdU78xX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I48YQts0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF10D13A244;
-	Tue, 13 Aug 2024 08:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184CF13A244
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539507; cv=none; b=ozoozQYkTDJYDux+rp0B7W0q3wKppYdBydfCKmDtZXSVcGBOEcfzlIAgUtl6gzjwNvDzzgykvltAJSWKjtQ28GE6XcoDw/AxFOgzQtQ2ZFBo7+wst53TKm7SEeMlvpoF8iygbmmyKv6Z6XSMZFcqCifSDpIoNaVKtKCIYP/knfg=
+	t=1723539517; cv=none; b=EZTg2v9AaOB5oeh/y28JJZJ7RQQzIqExWGL008dP0tibft5X6HVYoQeO6ooYqLho+WuebOkvLREocjCvQ5Cq90W+EWiUPlLScpVJuDKlMFOkPDdaAP9Vd5Yi7LcHvRGh/SCkjMbHSbSoVGm3GESGAfuD0ilc50zgIgAXI76xZJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539507; c=relaxed/simple;
-	bh=p/mECUjCfzx4TLpzVePtHWEbhuWAio19RVPoC3aDwrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VKDoFY4gSHnaE534e5HW0GJZLp6O56JiL5ZBIyf7fw7+Uzj1TpGrRX+ivETs6NvOrDaWvpe1gF9mWcislgJpApqcukA2vqjVCVVbJwPz4OQViyvByQ9BOsUUQR3tOyII2jwtBijohRwK6h8FSGmJ8dS4aWEbUji6GXTAjxAgf7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQdU78xX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D54CC4AF09;
-	Tue, 13 Aug 2024 08:58:21 +0000 (UTC)
+	s=arc-20240116; t=1723539517; c=relaxed/simple;
+	bh=7NQeNfFpaCXWMDNowtEOSAtlyV+7MKBfKJDqRukDraQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V39FcfsGzHVe8biCTIbO19NdlxQiIhO2QQE/eyi+vfIkPjTVxDioGVpDsIUt5Rbics0hwoLnl+JYMezPU9IWRzhowqDX9DiifRz+8Wr0IZT01gG3IHH6DkprWbCyVnvax9CwxPwO/ocgvKKXYxU1mrNZqp/aJrGwQjXVe5+A24Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I48YQts0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2049C4AF0B;
+	Tue, 13 Aug 2024 08:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723539506;
-	bh=p/mECUjCfzx4TLpzVePtHWEbhuWAio19RVPoC3aDwrY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QQdU78xXY2TGOoWYX3n2+uUIIAOHvc8N1Ac2keBilsP3lQoxFvR7g2ds1vichEYjU
-	 duzNbl4RZzUQ1dZKSqgLCfBC1sEEfytLa3SuhD3RO7EPXkxiCwfckEvn9ambJp7DJX
-	 s7FcOJUxX/C0dLeJ7+Jwxs/9VWOsxVBYDEq4JqlUcyY1kP/x0hrTbz4vev9EOSYGMc
-	 Cf1+FpK814zavGXUS8cdNdfwuKHDJAM/8eYMSM/0wXYeIFtgMZNIIqCcXEo72NnfX6
-	 rzL4epCpXdjkasKXX7uAI4M4slwK+b0drVHW1jyMR7E0dlzLV6avWKowu0SVs8xLdQ
-	 fIdghgTIOZWMg==
-Message-ID: <039f3640-12e7-4bc7-8322-92155e33277c@kernel.org>
-Date: Tue, 13 Aug 2024 10:58:20 +0200
+	s=k20201202; t=1723539516;
+	bh=7NQeNfFpaCXWMDNowtEOSAtlyV+7MKBfKJDqRukDraQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I48YQts0xZw9IRiHpoO1JAdZe2hAgqmfcMiGtJtgHPcpTa/sRWZv6nUwGLOuaf86H
+	 9hax3I+y6A4t1s6q95k6LReGpuH9xsOcSC4WOQ++5TZOVt/1Kry087t9Be/L7GzmVw
+	 XncCqH901VOAEo7K0i1tw5WuXzw5vF85kT17X13sIISj22D0R9nOAuQgoagwfvP7Ur
+	 yBy5rl282JieOLj854QDNXgl/QSeiErKyF+SfaJZQXijreW1d2FiGqGMchqX/9kVZQ
+	 LWfQbyufLv7QU2pq/6wkZiYd5+VMxKrnZX9Yb3u/CYCw47nM77opG5qdX8iRiJbajp
+	 UWw5RIzIxt/PQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sdnMQ-003HCh-P8;
+	Tue, 13 Aug 2024 09:58:34 +0100
+Date: Tue, 13 Aug 2024 09:58:34 +0100
+Message-ID: <86zfpgztmt.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Shanker Donthineni <sdonthineni@nvidia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] irqchip/gic-v3: Allow unused SGIs for drivers/modules
+In-Reply-To: <20240813033925.925947-1-sdonthineni@nvidia.com>
+References: <20240813033925.925947-1-sdonthineni@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] arm64: dts: tqma8mpql: change copyright entry to
- current TQ Copyright style
-To: Max Merchel <Max.Merchel@ew.tq-group.com>, Shawn Guo
- <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: linux@ew.tq-group.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20240813072019.72735-1-Max.Merchel@ew.tq-group.com>
- <20240813072019.72735-6-Max.Merchel@ew.tq-group.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240813072019.72735-6-Max.Merchel@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sdonthineni@nvidia.com, tglx@linutronix.de, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 13/08/2024 09:20, Max Merchel wrote:
-> Replace developer-specific, personal email addresses by mailing list addresses
-> while retaining the author.
+On Tue, 13 Aug 2024 04:39:25 +0100,
+Shanker Donthineni <sdonthineni@nvidia.com> wrote:
 > 
-> Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
+> The commit 897e9e60c016 ("firmware: arm_ffa: Initial support for scheduler
+> receiver interrupt") adds support for SGI interrupts in the FFA driver.
+> However, the validation for SGIs in the GICv3 is too strict, causing the
+> driver probe to fail.
+
+It probably is a good thing that I wasn't on Cc for this patch,
+because I would have immediately NAK'd it. Sudeep, please consider
+this a retrospective NAK!
+
+> 
+> This patch relaxes the SGI validation check, allowing callers to use SGIs
+> if the requested SGI number is greater than or equal to MAX_IPI, which
+> fixes the TFA driver probe failure.
+> 
+> This issue is observed on NVIDIA server platform with FFA-v1.1.
+>  [    7.918099] PTP clock support registered
+>  [    7.922110] EDAC MC: Ver: 3.0.0
+>  [    7.945063] ARM FF-A: Driver version 1.1
+>  [    7.949068] ARM FF-A: Firmware version 1.1 found
+>  [    7.977832] GICv3: [Firmware Bug]: Illegal GSI8 translation request
+>  [    7.984237] ARM FF-A: Failed to create IRQ mapping!
+>  [    7.989220] ARM FF-A: Notification setup failed -61, not enabled
+>  [    8.000198] ARM FF-A: Failed to register driver sched callback -95
+>  [    8.011322] scmi_core: SCMI protocol bus registered
+> 
+> Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
 > ---
->  .../boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts    | 3 +--
->  arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts  | 5 +++--
->  arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi          | 5 +++--
->  3 files changed, 7 insertions(+), 6 deletions(-)
+>  arch/arm64/include/asm/arch_gicv3.h | 17 +++++++++++++++++
+>  arch/arm64/kernel/smp.c             | 17 -----------------
+>  drivers/irqchip/irq-gic-v3.c        |  2 +-
+>  3 files changed, 18 insertions(+), 18 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-> index d7fd9d36f824..d06755ccfdce 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-> @@ -2,8 +2,7 @@
->  /*
->   * Copyright (c) 2023-2024 TQ-Systems GmbH <linux@ew.tq-group.com>,
->   * D-82229 Seefeld, Germany.
-> - * Author: Martin Schmiedel
-> - * Author: Alexander Stein
-> + * Author: Martin Schmiedel, Alexander Stein
+> diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
+> index 9e96f024b2f19..ecf81df2915c7 100644
+> --- a/arch/arm64/include/asm/arch_gicv3.h
+> +++ b/arch/arm64/include/asm/arch_gicv3.h
+> @@ -188,5 +188,22 @@ static inline bool gic_has_relaxed_pmr_sync(void)
+>  	return cpus_have_cap(ARM64_HAS_GIC_PRIO_RELAXED_SYNC);
+>  }
+>  
+> +enum ipi_msg_type {
+> +	IPI_RESCHEDULE,
+> +	IPI_CALL_FUNC,
+> +	IPI_CPU_STOP,
+> +	IPI_CPU_CRASH_STOP,
+> +	IPI_TIMER,
+> +	IPI_IRQ_WORK,
+> +	NR_IPI,
+> +	/*
+> +	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
+> +	 * with trace_ipi_*
+> +	 */
+> +	IPI_CPU_BACKTRACE = NR_IPI,
+> +	IPI_KGDB_ROUNDUP,
+> +	MAX_IPI
+> +};
+> +
+>  #endif /* __ASSEMBLY__ */
+>  #endif /* __ASM_ARCH_GICV3_H */
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index 5e18fbcee9a20..373cd815d9a43 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -64,23 +64,6 @@ struct secondary_data secondary_data;
+>  /* Number of CPUs which aren't online, but looping in kernel text. */
+>  static int cpus_stuck_in_kernel;
+>  
+> -enum ipi_msg_type {
+> -	IPI_RESCHEDULE,
+> -	IPI_CALL_FUNC,
+> -	IPI_CPU_STOP,
+> -	IPI_CPU_CRASH_STOP,
+> -	IPI_TIMER,
+> -	IPI_IRQ_WORK,
+> -	NR_IPI,
+> -	/*
+> -	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
+> -	 * with trace_ipi_*
+> -	 */
+> -	IPI_CPU_BACKTRACE = NR_IPI,
+> -	IPI_KGDB_ROUNDUP,
+> -	MAX_IPI
+> -};
+> -
+>  static int ipi_irq_base __ro_after_init;
+>  static int nr_ipi __ro_after_init = NR_IPI;
+>  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index c19083bfb9432..0d2038d8cd311 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -1655,7 +1655,7 @@ static int gic_irq_domain_translate(struct irq_domain *d,
+>  		if(fwspec->param_count != 2)
+>  			return -EINVAL;
+>  
+> -		if (fwspec->param[0] < 16) {
+> +		if (fwspec->param[0] < MAX_IPI) {
+>  			pr_err(FW_BUG "Illegal GSI%d translation request\n",
+>  			       fwspec->param[0]);
+>  			return -EINVAL;
 
-NAK
+No. This is the wrong approach, and leads to inconsistent behaviour if
+we ever change this MAX_IPI value. It also breaks 32 bit builds, and
+makes things completely inconsistent between ACPI and DT.
 
-Best regards,
-Krzysztof
+I don't know how the FFA code was tested, because I cannot see how it
+can work.
 
+*IF* we are going to allow random SGIs being requested by random
+drivers, we need to be able to do it properly. Not as a side hack like
+this.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
