@@ -1,161 +1,192 @@
-Return-Path: <linux-kernel+bounces-284994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27C49507D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6005D9507D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CFC2B26387
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB5951F20F7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0392B19E7DC;
-	Tue, 13 Aug 2024 14:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2E319E808;
+	Tue, 13 Aug 2024 14:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="e1enpu1o"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTtlUPAL"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC9019D07D;
-	Tue, 13 Aug 2024 14:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768FA19E7CF;
+	Tue, 13 Aug 2024 14:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559780; cv=none; b=FVmGKH4Br1bIGj+7MMD9ud2LFq8Fgd+STPZ2TwJH5YFG7reUm72X1txzLK4prMTnGE7QO9TKDxuhGe8H5AoeP00zRAoSEgMuqDD8pJfWnWM8LPUmj2+lUbY+LVEl3a77xsTXWUoZnV2INJhcQEwi2ILlbF6pAlMUT9WmmJVry+0=
+	t=1723559802; cv=none; b=WJqPBIZcP+p+ysIAL8P9AD11qPjboL0I6KSpjSYoD7nN31k2BKMips9FFnE6d69a3VlryGE3MUuhIbb17mbDpt06qC8pebCPqkKNgwuVxBZ++c1hzyrGua5afu2M5bjhPggHo3TEkDX5De0hzWmrqSGKhGsNvG3yUYtvVWfoIEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559780; c=relaxed/simple;
-	bh=UR+vgnqraCUFJ4mNSvXJ5nb3LwOpi2i4CyaOmUox8SU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tHjcs7fBWoRXqDDmoJDwt1SLOKK3IwPICCpHoBtzNyGeIdVLNg3oRZFretVhLLUZgFSXVYL6VLdv+vCUv67wXO1OAEZNlGbHIPuuaNW4AG4sYL0uBPuPZEPW2qU2wyeDYOQLcmMLETV8iSADTCgA56fSnSjI8RO6rZVFlPk1UTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=e1enpu1o; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D4ZZ0G003452;
-	Tue, 13 Aug 2024 14:36:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=yUCESVzeByC87R2nyHyrYk3bTW1
-	CB4yhtBY2U8tn4eU=; b=e1enpu1ovasKPxHfdciwA6rRUXSFIy8s+rVyIWDDkIg
-	fa00UXCAxfVkkqxnOMxPlYDKl1jFISbktkrPtd7chp+Ge3M4XSzH/Qu3CWYwzTKb
-	l8JOAZfht/FeUu/SlFPKoo1FNvLB4D6SdUxMG+VftTDa2el8P1X0i6BvIetDFH+s
-	imfglHrVEut3kosTUDNuuoQnXxJUKhvoAFIIZxsQX4mB0qwB1PfuQchuRg4J/J/D
-	kC4EXSkaTGxHa7k1MhmcD3TKpTBElkLTo8XHX7EN5PMhpxJRTdFZY7tzuepaoX9C
-	UkAKaadVeXy9hEzmYEdizmL+QGnCXQOoEQjxjWTNPxw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wyuxrbjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 14:36:12 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47DD0kFs015282;
-	Tue, 13 Aug 2024 14:36:11 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40xm1mkwf4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 14:36:11 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47DEa52Z29622670
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 14:36:07 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5BD3820067;
-	Tue, 13 Aug 2024 14:36:05 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F366D20065;
-	Tue, 13 Aug 2024 14:36:04 +0000 (GMT)
-Received: from localhost (unknown [9.179.17.215])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 13 Aug 2024 14:36:04 +0000 (GMT)
-Date: Tue, 13 Aug 2024 16:36:01 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Alexandra Winter <wintera@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH 2/2] s390/iucv: Fix vargs handling in iucv_alloc_device()
-Message-ID: <your-ad-here.call-01723559761-ext-3660@work.hours>
-References: <cover.thread-d8267b.your-ad-here.call-01723545029-ext-2515@work.hours>
- <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
- <2024081331-bonnet-fiftieth-9a14@gregkh>
- <your-ad-here.call-01723549827-ext-8444@work.hours>
- <2024081319-patriarch-brutishly-653f@gregkh>
- <221ba279-e48b-4002-9530-c6186e3e8042@linux.ibm.com>
+	s=arc-20240116; t=1723559802; c=relaxed/simple;
+	bh=bhgyqFJhLj3szMeIbBFy4xq0s2+nZawpLVHX5YAzDE4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=trtW5gaD/N/BaygGsa7u6igCn0mcYtdHRXkIuV6QS4DfXVqzov/XVep9Zfh3LLxCeN84iKiXZCikPoWjoYtwWodEreH+I3IEQUes0XfkG7NN29rOEfIEf15McqetbxraOPdbaJAMbzmwJSi/o+yhYbQFMlRatP/+AbQ6JugRtKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTtlUPAL; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bb8e62575eso2157848a12.3;
+        Tue, 13 Aug 2024 07:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723559799; x=1724164599; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=06XWappbYAI/s6oOKIug1LztC/DU+0CIJj5hM25fR7Q=;
+        b=CTtlUPALjLa+ub+BfdmkTHPEQCiOxvj0geT6TNNQdZtGAADMRargzlZ6/etgPiGbMK
+         H5vLknwz/IiUekfwgrR8x/Y74iRnrnKlysk8qGzv7ONbyIpyUFlNnLelO4KQ2n6N0HQC
+         mKRfkQWG44QdATkP3Pmk9l7nt5nt2EW8dBvobDQ7xQl/WyN1STuz+3hiTYtjLCWh8RfP
+         /iuTsV/KwoxQW7l4xcEGexWScvc5n+AG7wnr0WXs+41lDnE9fGDDcllH3sFvTlQi6r5P
+         2EIpVJGIxNH3P5DkXA0pXmSuGVZI434Yhn0WNnYeqdcgrVrM4ggDB6Ns1QdubdXM7W6k
+         6Z1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723559799; x=1724164599;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=06XWappbYAI/s6oOKIug1LztC/DU+0CIJj5hM25fR7Q=;
+        b=FcF52PrGZCx57VqgaY1WgGvnYabdInUBcCyYhV8cJA3yDrN1xB7lx6o8kDBIww7Zgb
+         vNc6qo+ZEMGXNlesE4ZSzmSyswpd5xFnGz7O8KH3Sm40CFVsj6aTUpRvEAcEuQ6kKbDx
+         LRtsBmgyAuZCwWIrRCrTzvZj3X77ugxeEiF0ifGtEriIw5EcxvztV6xfy1f6WuQbNiQa
+         wZ+WqP1eh9TEht3ska3OOXM1ohCDX06LyEpG9b2SQcIohseTzTClElEPPW4tkyuVTmJM
+         y76bu66MGW2k+6M32FM9RFTTfUt2+JCtO12vPkzPSuMq+kTpafIC+lbDRzgx9UwmR55x
+         oEUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhZS8xhAflhpGVTt3fIl9iRjQGcBC+WTwU5J0uPjgWQlPqF2qyVUzJqitoTPaqWdbhjQtGTcuf15HnpArdNw5fTyar+SoVly91q/XE6vcJXTzMqNOmZuHDdy9mv9spX+iTLyqwI37LYJmuCg==
+X-Gm-Message-State: AOJu0Yw7+06SL/4MRGnPzaFHNTn+AKbOt+flFSf/Z64QLB+Mjpjw+LMM
+	b0+Lgv9dZ+HzEdBcgqzYFKo9yh5Tdz74qhXdxBV+P6Se8MFqDCg3
+X-Google-Smtp-Source: AGHT+IF+l2cFGHe1AZOvVdEPtIY0oSo9CvNvMg/JQZDX+0XemrxLVRZet+vtAmMqmKwrG7IVMLBwBA==
+X-Received: by 2002:a05:6402:2813:b0:58b:1a5e:c0e7 with SMTP id 4fb4d7f45d1cf-5bd44c79641mr2768807a12.35.1723559798252;
+        Tue, 13 Aug 2024 07:36:38 -0700 (PDT)
+Received: from f.. (cst-prg-84-71.cust.vodafone.cz. [46.135.84.71])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5be9a0946easm478484a12.55.2024.08.13.07.36.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 07:36:37 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	jlayton@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: drop one lock trip in evict()
+Date: Tue, 13 Aug 2024 16:36:26 +0200
+Message-ID: <20240813143626.1573445-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <221ba279-e48b-4002-9530-c6186e3e8042@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: zjRTfB75LOqWA0_0tibPCQAjWqJT-7NR
-X-Proofpoint-ORIG-GUID: zjRTfB75LOqWA0_0tibPCQAjWqJT-7NR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_06,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 spamscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=992 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130105
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 03:35:48PM +0200, Alexandra Winter wrote:
-> 
-> 
-> On 13.08.24 14:43, Greg Kroah-Hartman wrote:
-> >>> I don't understand, why can't dev_set_name() be called here?
-> >>>
-> [...]
-> > 
-> > But step back, why is this needed at all anyway?  No other subsystem or
-> > driver needs/wants this, what makes this api so special?  Why not figure
-> > out your name beforehand?
-> > 
-> > thanks,
-> 
-> 
-> Vasily, the following update to Heiko's patch does not touch lib/kobject.c
-> According to a quick test it still solves the original issue and does compile
-> with W=1 and iucv as a module.
-> 
-> diff --git a/net/iucv/iucv.c b/net/iucv/iucv.c
-> index 64102a31b569..6a819ba4ccab 100644
-> --- a/net/iucv/iucv.c
-> +++ b/net/iucv/iucv.c
-> @@ -86,13 +86,17 @@ struct device *iucv_alloc_device(const struct attribute_group **attrs,
->  {
->         struct device *dev;
->         va_list vargs;
-> +       char buf[20];
->         int rc;
-> 
->         dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->         if (!dev)
->                 goto out_error;
->         va_start(vargs, fmt);
-> -       rc = kobject_set_name_vargs(&dev->kobj, fmt, vargs);
-> +       rc = vsnprintf(buf, 20, fmt, vargs);
-> +       if (!rc)
-> +               rc = dev_set_name(dev, buf);
->         va_end(vargs);
->         if (rc)
->                 goto out_error;
-> 
-> Maybe Greg has somethign like this in mind?
+Most commonly neither I_LRU_ISOLATING nor I_SYNC are set, but the stock
+kernel takes a back-to-back relock trip to check for them.
 
-Thanks Alexandra,
+It probably can be avoided altogether, but for now massage things back
+to just one lock acquire.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+there are smp_mb's in the area I'm going to look at removing at some
+point(tm), in the meantime I think this is an easy cleanup
+
+has a side effect of whacking a inode_wait_for_writeback which was only
+there to deal with not holding the lock
+
+ fs/fs-writeback.c | 17 +++--------------
+ fs/inode.c        |  5 +++--
+ 2 files changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 4451ecff37c4..1a5006329f6f 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1510,13 +1510,12 @@ static int write_inode(struct inode *inode, struct writeback_control *wbc)
+  * Wait for writeback on an inode to complete. Called with i_lock held.
+  * Caller must make sure inode cannot go away when we drop i_lock.
+  */
+-static void __inode_wait_for_writeback(struct inode *inode)
+-	__releases(inode->i_lock)
+-	__acquires(inode->i_lock)
++void inode_wait_for_writeback(struct inode *inode)
+ {
+ 	DEFINE_WAIT_BIT(wq, &inode->i_state, __I_SYNC);
+ 	wait_queue_head_t *wqh;
  
-but I'm still leaning towards forwarding vargs and avoid splitting the name
-formatting logic, if Greg agrees that the use case justifies adding a
-new helper. Let's see what Greg prefers.
++	lockdep_assert_held(&inode->i_lock);
+ 	wqh = bit_waitqueue(&inode->i_state, __I_SYNC);
+ 	while (inode->i_state & I_SYNC) {
+ 		spin_unlock(&inode->i_lock);
+@@ -1526,16 +1525,6 @@ static void __inode_wait_for_writeback(struct inode *inode)
+ 	}
+ }
  
-int dev_set_name_vargs(struct device *dev, const char *fmt, va_list vargs)
-{
-        return kobject_set_name_vargs(&dev->kobj, fmt, vargs);
-}
-EXPORT_SYMBOL_GPL(dev_set_name_vargs)
+-/*
+- * Wait for writeback on an inode to complete. Caller must have inode pinned.
+- */
+-void inode_wait_for_writeback(struct inode *inode)
+-{
+-	spin_lock(&inode->i_lock);
+-	__inode_wait_for_writeback(inode);
+-	spin_unlock(&inode->i_lock);
+-}
+-
+ /*
+  * Sleep until I_SYNC is cleared. This function must be called with i_lock
+  * held and drops it. It is aimed for callers not holding any inode reference
+@@ -1757,7 +1746,7 @@ static int writeback_single_inode(struct inode *inode,
+ 		 */
+ 		if (wbc->sync_mode != WB_SYNC_ALL)
+ 			goto out;
+-		__inode_wait_for_writeback(inode);
++		inode_wait_for_writeback(inode);
+ 	}
+ 	WARN_ON(inode->i_state & I_SYNC);
+ 	/*
+diff --git a/fs/inode.c b/fs/inode.c
+index 73183a499b1c..d48d29d39cd2 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -582,7 +582,7 @@ static void inode_unpin_lru_isolating(struct inode *inode)
+ 
+ static void inode_wait_for_lru_isolating(struct inode *inode)
+ {
+-	spin_lock(&inode->i_lock);
++	lockdep_assert_held(&inode->i_lock);
+ 	if (inode->i_state & I_LRU_ISOLATING) {
+ 		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
+ 		wait_queue_head_t *wqh;
+@@ -593,7 +593,6 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
+ 		spin_lock(&inode->i_lock);
+ 		WARN_ON(inode->i_state & I_LRU_ISOLATING);
+ 	}
+-	spin_unlock(&inode->i_lock);
+ }
+ 
+ /**
+@@ -765,6 +764,7 @@ static void evict(struct inode *inode)
+ 
+ 	inode_sb_list_del(inode);
+ 
++	spin_lock(&inode->i_lock);
+ 	inode_wait_for_lru_isolating(inode);
+ 
+ 	/*
+@@ -774,6 +774,7 @@ static void evict(struct inode *inode)
+ 	 * the inode.  We just have to wait for running writeback to finish.
+ 	 */
+ 	inode_wait_for_writeback(inode);
++	spin_unlock(&inode->i_lock);
+ 
+ 	if (op->evict_inode) {
+ 		op->evict_inode(inode);
+-- 
+2.43.0
+
 
