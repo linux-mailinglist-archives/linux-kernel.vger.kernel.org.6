@@ -1,126 +1,193 @@
-Return-Path: <linux-kernel+bounces-284493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5632950195
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:51:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FFE79501B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F572B28013
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ACC2285C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EAF184554;
-	Tue, 13 Aug 2024 09:51:41 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FD019AD8C;
+	Tue, 13 Aug 2024 09:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxzYeR/n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC44210E7;
-	Tue, 13 Aug 2024 09:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51928189533;
+	Tue, 13 Aug 2024 09:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542700; cv=none; b=AxPLPGW3Fbwjh/1hY6dYHdYjOAVIkZYEsvqi11txQAg48pTRBb1tTLWH2H9ZVWoKX5nLyH6kcIuiXp+Jxg7a0WURMSGX1T+Gz98c4+9B7byLHTCRIL6Z8a0Kymrn+t1Ku5Q3r0lIkdDbYbYEelo1kp0L7D/8opwIlyrV/maRH8Y=
+	t=1723542764; cv=none; b=CNrzKlOVH2GB4Y0Kv9i75HO7BnXMTiPlZxvtwqh9/1jbSD3FFAA8WhDnqmHqsIR6acWuE3I5KwInDLBUyia/bg5nFvQ84J072tRna21B/R0hE+Fr0iUar9BggMuqvwJxjDph5ee7Nt+e/sUvogV9MDPBuEzlNnWDbvlHbKz9pFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542700; c=relaxed/simple;
-	bh=y7i4xYrA1KjsFT1X7da5xZ5+50BNyhyi/XIePc62P8k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mbkayabLyHqM3RuCApSGk3Ck/l8XCakOq9RR0JXmqywRKxqj4Ix5CiILZmoLkWWlxfTt77Cmkt52Aw1II0ANjTe2zoWyCrZcquI7eRCB5G4x0n2vG1Ucd5bTps3P7k2O6qBg2kYhk2h9EswOHDPsamNUVDG6pobPBWCS5UV5Cys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowADHrTiaLLtmTDTuBQ--.46534S2;
-	Tue, 13 Aug 2024 17:51:30 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	christophe.jaillet@wanadoo.fr,
-	giometti@enneenne.com,
-	linux-kernel@vger.kernel.org,
-	linux@treblig.org,
-	make24@iscas.ac.cn,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com
-Subject: Re: [PATCH] pps: add an error check in parport_attach
-Date: Tue, 13 Aug 2024 17:51:22 +0800
-Message-Id: <20240813095122.4005722-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2024081336-escapable-anemia-87cb@gregkh>
-References: <2024081336-escapable-anemia-87cb@gregkh>
+	s=arc-20240116; t=1723542764; c=relaxed/simple;
+	bh=r3ixwT4ejaY1WXYoTRnXA9O5iIKHCzNV0dZx1F6sTuk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Lucask4nK4vKnBO1T1cYzmvGNrZlRkoGzNoHd1/qRQsPAhtWPsnXS74lSyea3kQIqs7fIr53Jbov9rkehrou+akL8BTECTPiIBVgaiuQ6RPZhGJxg8RBVaTdoczsHCzjBo+rOEfxur803KnMDCM9VtDkSkzm448grRwR0NGkt1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxzYeR/n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E0FACC4AF09;
+	Tue, 13 Aug 2024 09:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723542764;
+	bh=r3ixwT4ejaY1WXYoTRnXA9O5iIKHCzNV0dZx1F6sTuk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=pxzYeR/ngM/D2uS7FiVCP0gz0rjQjHzjVhXz+unDlgtrwfWVoLh0VPOjX2/aDZN3b
+	 h8nHa3IMevseRFq8aDzR63Ko0r1ziBHXecLzjV6W9Tw5xAlh/KscBJrYdPa3dkkwoO
+	 H3ThqwnmYztnA+m5ryNtREm+4rNPEmelvFdFOVQ6z599DJC9EjVo9Ad24ha59GWFqS
+	 bEVdqPJ435/3qMFsfv/UqosuPSg8zieOmdKLix32V2CYeH4nALXTsPrN07Ex3TYUFk
+	 XsWvMeNQQBFipTfrmM3DGPBm706teBQsI8v3mNt1dZsx42uzORMTdt6x4/p+loTk7H
+	 i2LIFDcqoesIA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2484C52D7B;
+	Tue, 13 Aug 2024 09:52:43 +0000 (UTC)
+From: Utsav Agarwal via B4 Relay <devnull+utsav.agarwal.analog.com@kernel.org>
+Subject: [PATCH v10 0/3] adp5588-keys: Support for dedicated gpio operation
+Date: Tue, 13 Aug 2024 10:51:30 +0100
+Message-Id: <20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:zQCowADHrTiaLLtmTDTuBQ--.46534S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy5KryUJr4fAr1rtF1UJrb_yoW8XFy8pF
-	WkCa4FvFWDXF9Fkwsava1UuF1rZ3W8KF1UCF4UJ343Z3Z8ur1FkFy7KryF9FyxZr1qya45
-	ta1jg3Z0vFW3ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUAxhLUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKIsu2YC/43Q3UrEMBAF4FdZcm0lSWfy45XvIbIkmbQb0Kaka
+ 1GWvrvp3rhSi3t5Dsx3YC5siiXFiT0dLqzEOU0pDzUI/nBg4eSGPjaJasEkl8A1F42jEdGYYz+
+ mfJw+xjGXc6OQvPQkhbMdq6djiV36vLovrzWf0nTO5es6M8Pa/gPO0PAGwHvHATBa/uwG95b7x
+ 5Df2SrOeKu0Owquiu1CdMSp/UNRtwrsKKoqwStEAaQF+I2i71F0VWIL0evoHbqtYu5RTFUkN6F
+ DgiBJbRT7oxiudhS7/oWUEMYrUtj+UpZl+QYz3/k+GAIAAA==
+To: Utsav Agarwal <utsav.agarwal@analog.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Arturs Artamonovs <arturs.artamonovs@analog.com>, 
+ Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
+ Oliver Gaskell <oliver.gaskell@analog.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723542691; l=4164;
+ i=utsav.agarwal@analog.com; s=20240701; h=from:subject:message-id;
+ bh=r3ixwT4ejaY1WXYoTRnXA9O5iIKHCzNV0dZx1F6sTuk=;
+ b=IQz9G0SArziByu8tFlo26DBKrKLiIn7itrN727zn/+SoM6P7dQbnddP7DvhqsSzTFWNM8tkNa
+ dnopI+gT0pTDAd0c+5NpMZIAXOrO2Bme0Ds/Fu2Ou8/j1DdqQWBBOC/
+X-Developer-Key: i=utsav.agarwal@analog.com; a=ed25519;
+ pk=mIG5Dmd3TO5rcICwTsixl2MoUcf/i2u+jYqifd7+fmI=
+X-Endpoint-Received: by B4 Relay for utsav.agarwal@analog.com/20240701 with
+ auth_id=178
+X-Original-From: Utsav Agarwal <utsav.agarwal@analog.com>
+Reply-To: utsav.agarwal@analog.com
 
-Greg KH<gregkh@linuxfoundation.org> wrote:=0D
-> On Tue, Aug 13, 2024 at 11:08:00AM +0800, Ma Ke wrote:=0D
-> > In parport_attach, the return value of ida_alloc is unchecked, witch le=
-ads=0D
-> > to the use of an invalid index value.=0D
-> > =0D
-> > To address this issue, index should be checked. When the index value is=
-=0D
-> > abnormal, the device should be freed.=0D
-> > =0D
-> > Found by code review, compile tested only.=0D
-> > =0D
-> > Cc: stable@vger.kernel.org=0D
-> > Fixes: 55dbc5b5174d ("pps: remove usage of the deprecated ida_simple_xx=
-() API")=0D
-> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>=0D
-> > ---=0D
-> >  drivers/pps/clients/pps_parport.c | 10 ++++++++--=0D
-> >  1 file changed, 8 insertions(+), 2 deletions(-)=0D
-> > =0D
-> > diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pp=
-s_parport.c=0D
-> > index 63d03a0df5cc..9ab7f6961e42 100644=0D
-> > --- a/drivers/pps/clients/pps_parport.c=0D
-> > +++ b/drivers/pps/clients/pps_parport.c=0D
-> > @@ -149,6 +149,11 @@ static void parport_attach(struct parport *port)=0D
-> >  	}=0D
-> >  =0D
-> >  	index =3D ida_alloc(&pps_client_index, GFP_KERNEL);=0D
-> > +	if (index < 0) {=0D
-> > +		pr_err("failed to get index\n");=0D
-> =0D
-> No need to be noisy, right?=0D
-> =0D
-> thanks,=0D
-> =0D
-> greg k-h=0D
-=0D
-Firstly, I would like to express my gratitude for your valuable suggestions=
-=0D
-on the patch I submitted. Based on your feedback, I understand that it is =
-=0D
-unnecessary to output error messages in this function. If this =0D
-interpretation is correct, I will make the necessary modifications and =0D
-resubmit the patch v2. Thank you for your response.=0D
-=0D
-Best regards,=0D
-=0D
-Ma Ke=
+Current state of the driver for the ADP5588/87 only allows partial
+I/O to be used as GPIO. This support was previously present as a
+separate gpio driver, which was dropped with the commit
+5ddc896088b0 ("gpio: gpio-adp5588: drop the driver") since the
+functionality was deemed to have been merged with adp5588-keys.
+
+This series of patches re-enables this support by allowing the driver to 
+relax the requirement for registering a keymap and enable pure GPIO 
+operation. 
+
+Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+---
+Changelog
+==========
+
+Changes in v10:
+	- Corrected changelog ordering
+	- Changed dtbinding commit to clarify all changes are made in
+	  software. The commit message now also expands on what
+	  the desired pure gpio mode is
+	- Added acquired tags to commits
+	- dt-binding:
+		Removed multiple blank lines before the dependecies block
+	  	Removed excess headers included in dtbinding example
+	  	Removed constraint being repeated in free form text
+	  	Merged outlying dependency into a single block
+- Link to v9: https://lore.kernel.org/r/20240806-adp5588_gpio_support-v9-0-4d6118b6d653@analog.com
+
+Changes in v9:
+	- Added dt-binding dependency for interrupt-controller. Now if
+	  interrupt-controller is specified, interrupts must be
+	  provided.
+- Link to v8: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v8-0-208cf5d4c2d6@analog.com
+
+Changes in v8:
+	- Fixed indentation in document example (removed extra spaces)
+- Link to v7: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v7-0-e34eb7eba5ab@analog.com
+
+Changes in v7:
+	- Fixed commit subject for transported patch 
+	- Driver now does not setup gpio_irq_chip if 
+	  interrupt has not been provided
+	- Fixed indentation for dtbinding example
+- Link to v6: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v6-0-cb65514d714b@analog.com
+
+Changes in v6:
+	- Restored functionality to register interrupts in GPIO
+	  mode(i.e, these are optional but not exclusive to keypad mode
+	  since even in pure gpio mode, they can be used as inputs via 
+	  gpio-keys)
+	- Updated dt-bindings such that each keypad property depends on
+	  the others. Interrupts, although optional are now required by 
+	  keypad mode but are not limited to it.
+- Link to v5: https://lore.kernel.org/r/20240703-adp5588_gpio_support-v5-0-49fcead0d390@analog.com
+
+V5:
+	- Removed extra property "gpio-only", now pure gpio mode is
+	  detected via the adbsence of keypad specific properties.
+	- Added dependencies for keypad properties to preserve
+	  the original requirements in case a pure gpio mode is not
+	  being used.
+	- Added additional description for why the "interrupts" property
+	  was made optional
+	- Rebased current work based on https://lore.kernel.org/linux-input/ZoLt_qBCQS-tG8Ar@google.com/
+- Link to v4: https://lore.kernel.org/r/20240701-adp5588_gpio_support-v4-0-44bba0445e90@analog.com
+
+V4:
+	- Added dt-bindings patch
+
+V3:
+	-  Moved device_property_present() for reading "gpio-only" into 
+	adp558_fw_parse()
+	-  Added print statements in case of error
+
+V2: 
+	-  Changed gpio_only from a local variable to a member of struct
+	adp5588_kpad
+	-  Removed condition from adp5588_probe() to skip adp5588_fw_parse() if 
+	gpio-only specified. adp558_fw_parse() now handles and returns
+	0 if gpio-only has been specified.
+	-  Added a check in adp5588_fw_parse() to make sure keypad 
+	properties(keypad,num-columns and keypad,num-rows) were not defined when 
+	gpio-only specified
+
+---
+
+---
+Dmitry Torokhov (1):
+      Input: adp5588-keys - use guard notation when acquiring mutexes
+
+Utsav Agarwal (2):
+      Input: adp5588-keys - add support for pure gpio
+      dt-bindings: input: pure gpio support for adp5588
+
+ .../devicetree/bindings/input/adi,adp5588.yaml     | 40 ++++++++--
+ drivers/input/keyboard/adp5588-keys.c              | 86 +++++++++++++---------
+ 2 files changed, 84 insertions(+), 42 deletions(-)
+---
+base-commit: 1c52cf5e79d30ac996f34b64284f2c317004d641
+change-id: 20240701-adp5588_gpio_support-65db2bd21a9f
+
+Best regards,
+-- 
+Utsav Agarwal <utsav.agarwal@analog.com>
+
 
 
