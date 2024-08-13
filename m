@@ -1,156 +1,140 @@
-Return-Path: <linux-kernel+bounces-285440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C99950D84
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:04:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD21A950D87
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C930F1C218BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6F662862FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FD71A4F34;
-	Tue, 13 Aug 2024 20:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F84E1A4F0A;
+	Tue, 13 Aug 2024 20:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VljHwBeh"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGcqusiR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA7E1A3BAC;
-	Tue, 13 Aug 2024 20:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B0A2E416;
+	Tue, 13 Aug 2024 20:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579445; cv=none; b=gt1HoHdM1nbBuHHXlrwcTF4lhASzRvdm8cuJ1vjTXmqV02rSCuoePW8fQRI4RszdLW9UjzL9yCjcTojX+naJF0fy+5hXc2m4cO7LLxsPwm0xvgVJyQgZu2hwPQ/FCikFB+LSW3pJSeHcvkjRko5F4/fCDxW/nLAf7Jw35tNH8gQ=
+	t=1723579449; cv=none; b=SqqxhL7XW1X4kd8sUxBvTdbXvvHhwoQHIdBUKoJM1ptkQE2DJ1ruIqvYwv2Lu71CWs/ApauP6ViE3zOxCSb7/40EnRF+FR/zNJMu6ZkbVDGaT+gE+u1bxliRaIdPWrR4m/hD+lm8pAE2lnroxkb2SU3dDbYSbGN6mtKgAWDAkH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579445; c=relaxed/simple;
-	bh=+Npvfp8NSzv6+BWy9xk5foyIWDSG9LTmA1VnFOsrxew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gvHJSv/+LdbVREDcr7FXHDPjUKb6DxZ4KdiN5ICDw/SxeHyboOmk2dV3tbykk1Edrlq0ndS0LTOF3+rd1LCU+pWuvZmxjRAmB2cFEAj2pdm4EpaAO9idg2mRUwWYe6QFPB/goaTDdS12ow5R23bHMyrPU8Khjj3fDGS4R4EYwL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VljHwBeh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DCGalM005644;
-	Tue, 13 Aug 2024 20:03:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Al0COlWtxPvz9k7iEu0xiRFveGatmDKFzjD4MOn3VBc=; b=VljHwBeh+p8Wh4VN
-	BxhCgnSt6Tjb4LI9LsQZejNJtZySOPDBJ8hY6S1pTwnoMewwlDba/DyQ4CO03ihp
-	91FTqe6kx47JA1w0GyR+9Bt8Cr/c9+kYMojC584BLXfGUtCHbxasP64H2Fgdgio6
-	LbA+ZRcSoDML+gFzD1p2zpec7j/7rrFq5Uuy/LhRcfGpEr4QTK6KXH4ChMDPny2J
-	H4lcEQ9+6JdO5aeEw8zt0bzsV0jFc05iDRPUQvfX7WmPs4GPgEzhh9RsHtxzVycy
-	xTI8BpUQHJYPgv+zglym/GpO6AOQEnAnE0MxTSrWc9xDCviMeP5QBtxHwAgYOE06
-	J3unGw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18y12dd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 20:03:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DK3vWG009675
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 20:03:57 GMT
-Received: from [10.71.108.157] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
- 2024 13:03:57 -0700
-Message-ID: <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
-Date: Tue, 13 Aug 2024 13:03:56 -0700
+	s=arc-20240116; t=1723579449; c=relaxed/simple;
+	bh=UFOl4J9OOLeA/avOTNcqCYZZ/CpgemOJRd4RI2dE8NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czM2q5qzycUtLQnt9apym5pNGwLSifteI75ALia+n0gW/YCnASUwivdGisXeYk9RBcf+7L/+b4FCk0Z8G+7vM3loXA4Bym06xwFcB9vLt4gXLdA+2CBxfx0lJhVw9tozXawBpN3L9zs71sGL/wPhZIXmC5XZpPJvC7A9pUYGhkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGcqusiR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BEC0C32782;
+	Tue, 13 Aug 2024 20:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723579449;
+	bh=UFOl4J9OOLeA/avOTNcqCYZZ/CpgemOJRd4RI2dE8NE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XGcqusiRlC9deLr9QYPYiRhUvn4t2H3EU5OEktIDyF1qvFlcxrdD4vg+aoYIu76S/
+	 WoBa1P6pMfqFoGhFbli9mxU63c/X2+p36akcstBb6nxeWI7r7sLDS+LzNV8FTQ24Z3
+	 /6Yfge4f6Qd16eDjFHKPgzicqpetK8dh07WG4iAts8JSjiFtlZfWdI3eb420063oJJ
+	 ZLjwylNw7SGP0cLllOjHDGGgEipimoFI/CYIYl1zkMfgsXeA8Pvf/iPLw1YG8FJ6m4
+	 EAy6xNsGPcOVRfPaJPy58zCzt5RcBd9CeBc0HFYUGoligaYaP2NWAXcX/kvbSIdbak
+	 +vzKfGqjh/+bA==
+Date: Tue, 13 Aug 2024 14:04:07 -0600
+From: Rob Herring <robh@kernel.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Saravana Kannan <saravanak@google.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v4 2/7] nvme: assign of_node to nvme device
+Message-ID: <20240813200407.GA1634759-robh@kernel.org>
+References: <20240809172106.25892-1-ansuelsmth@gmail.com>
+ <20240809172106.25892-3-ansuelsmth@gmail.com>
+ <20240812111205.GC14300@lst.de>
+ <66b9fbb4.df0a0220.3bee6e.1e99@mx.google.com>
+ <20240812133128.GA24058@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
- strings for eud
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Souradeep Chowdhury
-	<quic_schowdhu@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Elson Serrao <quic_eserrao@quicinc.com>
-CC: <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-2-quic_molvera@quicinc.com>
- <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4hqBSQeGN_q9JJfpmTe-YaTcStwpTx-e
-X-Proofpoint-ORIG-GUID: 4hqBSQeGN_q9JJfpmTe-YaTcStwpTx-e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_10,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=957
- suspectscore=0 phishscore=0 malwarescore=0 mlxscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1011 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130144
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812133128.GA24058@lst.de>
 
+On Mon, Aug 12, 2024 at 03:31:28PM +0200, Christoph Hellwig wrote:
+> On Mon, Aug 12, 2024 at 02:10:28PM +0200, Christian Marangi wrote:
+> > The chosen name was arbritrary just to follow eMMC ones. Can totally
+> > change if problematic.
 
+The purpose of those eMMC nodes was to describe various non-standard 
+stuff you get when discoverable devices get soldered on a board. Power 
+rails, reset GPIOs, etc. It was not to put partition info there, but I 
+suppose having the node opens it to such abuse.
 
-On 8/8/2024 4:00 AM, Krzysztof Kozlowski wrote:
-> On 07/08/2024 20:32, Melody Olvera wrote:
->> The EUD can more accurately be divided into two types; a secure type
->> which requires that certain registers be updated via scm call and a
->> nonsecure type which must access registers nonsecurely. Thus, change
->> the compatible strings to reflect secure and nonsecure eud usage.
->>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 6 +++---
->>   1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->> index f2c5ec7e6437..476f92768610 100644
->> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->> @@ -17,8 +17,8 @@ properties:
->>     compatible:
->>       items:
->>         - enum:
->> -          - qcom,sc7280-eud
->> -      - const: qcom,eud
->> +          - qcom,secure-eud
->> +          - qcom,eud
-> Commit msg did not explain me why DT bindings rules are avoided here and
-> you drop existing SoC specific compatible.
->
-> This really does not look like having any sense at all, I cannot come up
-> with logic behind dropping existing users. You could deprecate it, but
-> then why exactly this device should have exception from generic bindings
-> rule?
+> 
+> NVMe namespaces are dynamic and can be created and deleted at will
+> at runtime.  I just don't see how they would even fit into OF
+> concepts.
+> 
+> There is a huge impedance mismatch here, to the point where I completely
+> fail to understand what you are trying to do.
+> 
+> > But support of OF for PCIe is already a thing for a long time. (it all
+> > works by setting the compatible of the PCIe ID card) and used in wifi
+> > card at assign MAC address, calibration data, disable frequency.
+> 
+> Please point to a document describing how, but more importantly why
+> this is done.  I've worked with and maintained Linux PCI(e) drivers for
+> about 20 years and never seen it.  And the concept simply doesn't make
+> sense in terms of a dynamically probed bus.
 
-Understood. I won't drop this compatible string. Is alright to add the 
-additional compatible as is?
+With OpenFirmware systems, the firmware will probe PCI and populate 
+nodes with what it discovered and with how it configured things. IBM 
+PSeries uses DT for PCI hotplug as well, AIUI.
 
-Thanks,
-Melody
->
-> Best regards,
-> Krzysztof
->
+For Flattened DT, PCI devices are typically only present if there are 
+extra non-discoverable things (again, happens when devices are soldered 
+down and not in standard slots). Another example is a NIC where they 
+cheaped out and didn't put an EEPROM to store the MAC address, so you 
+store it in the DT. Now we're starting to see non-discoverable things 
+sitting behind PCI devices, so we need the PCI device in DT to describe 
+those downstream devices.
 
+> > Not having this well organized and consistent schema in DT will result
+> > in additional condition in the drivers...
+> 
+> NVMe Controllers are PCI functions (or virtual entities over the network).
+> Defining them in a static DT scheme does not make sense.  NVMe Namespaces
+> which are what contains the block data are dynamically discoverred and
+> can be created and deleted at runtime, so refering to them in DT is even
+> more broken.  I really don't see how any of this could remotely work.
+> 
+> > If these 2 patch are problematic I can totally drop from the series but
+> > it was really to add consistency in NVMe and eMMC. The real important
+> > part is eMMC that is becoming the de-facto replacement for NAND/NOR on
+> > high tier devices (mostly wifi6/7 consumer router)
+> 
+> If you aren't dealing with raw(ish) NAND don't use mtd.  MTD is designed
+> to deal with the nitty gritty details of NOR and NAND flash.  If you
+> already have an FTL running in the device there is absolutely no reason
+> to use it.
+
+Yes, agreed.
+
+Rob
 
