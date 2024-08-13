@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-285408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BE9950D0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:20:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417F3950D12
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E211C23788
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:20:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C31EB214EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7D01A4F13;
-	Tue, 13 Aug 2024 19:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB4D1A4F12;
+	Tue, 13 Aug 2024 19:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/BtrOOE"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjT1yhEW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFFB19D089;
-	Tue, 13 Aug 2024 19:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C681A254F;
+	Tue, 13 Aug 2024 19:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576799; cv=none; b=RA8pIJrWQRQSoVZHztBqb5fEx50/41Ksc5mD3uLuku6Z6jAPa66HHIllMpwPpnt88Gl8goOgwlx+aiCnPTVPbGzV1Pyagw2YH1NL2zbcq1ROKYjBDP0J+atQ+wNvH7F39t80e8vzsWN2u1UyI6U+G6rBAT+57d9v9UlQvE5PoLQ=
+	t=1723576931; cv=none; b=V6B4Z8NxfnloqLGuZnNMPmkRM3xdPhtEc6IRi0LIwQqWlGLQkxfa+ZRrB70uK3RxomYL4Ob4+SVRtEIyLj7FM7x70S6aLmL9Bk1sdHVH33vHzhWpFCb2NqAilwj0jDheWZ4khytyKDcC/ynk61OtiKdfubfPnzA/XYPgQJy4fT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576799; c=relaxed/simple;
-	bh=91jbPqvG8mg9PHjdwVI/XMIHAZ7qHDpuV5SCZA4vFdQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=HoufYp2ClJIUXNsK/7k3aiX7o3O/sYpBNGV4vIkKPSN1JK/rHxlqH7WmZsxnpB6jEVydRfgja3jHraXFcJVcIx27c+tDZ1qBEGw70cTg7qrrNAbkql4ubrn6JEXkMFbg0HwlBuNLvn31LJgcjTGrhzuTFVG7olnVC9Rhm1rtBr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/BtrOOE; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b7a3b75133so40133476d6.2;
-        Tue, 13 Aug 2024 12:19:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723576797; x=1724181597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bXP2A7Yp0aLXfQfJVM0Q1xT0ky4rj4OjQsff/aI+tMU=;
-        b=e/BtrOOEtc4XDVaCwz+Fxy8Y4t6mK2rC3pVNzkPDb1+FaOwm7NwzWAYS3ZeGTficcd
-         WTyl6xtf6JB9v9aFxSyozhBSMm/2Axa/NW/TNR9KFV86GqJZ0xccOkbnjsRRRPOPL8eX
-         21Tbh6hYR1LLMTmvaibNmVjCftkLfCb9cr9/4fWmk2/6G1ytEcuBnrYZbkCfFghRE4jg
-         Q6vnJol103eIA0YhOm6pqpqvhU1rl5oxCwjRjcj+ImWAoXfbIjydkpfSuNtOGvTZDQ4Q
-         DFG2NMQims2qNAPLKJ2HEwLz8Iu1aZDGv0Gc+qj15vjDCj2EpLmQv9oQQLQ0EYv4/zHD
-         xp4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723576797; x=1724181597;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bXP2A7Yp0aLXfQfJVM0Q1xT0ky4rj4OjQsff/aI+tMU=;
-        b=W3N2kuvHXMggA+Ad9G6Qo75vOPe6iPYe/BaphvKr1HboFBGm8fbj6fc/uaCYKRDWCR
-         u91HxPqMBE1MzvvYKRGOpqdSsHyuEnni7taNggnf86msTNff2G6YvHXCGVQDy+R5Ffsc
-         YyME/31k7X9e5WFaVG++5/4xrbsczMf5MTsq9GWhxZJszeJyMjQssFwHpEeaVX6ilfl3
-         HL7XF2l1Nkqe+vUNeNOyHHjR2P5BfJRBnDF67EzCSKM3snnkJE5i46m6uyOWphx9HX00
-         OSF/0h+z5KTXXypMAMCV+1IGi//0eCFjUqHnzSSlm8haLsXdv6R/mFalfQ3PNSmRsMCT
-         UbQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlyPixmjrkXHYHriv2PI2a7iHzsKEuqaKSFbLXB1amamcivq8XyL0n9WFNlj66dxn2k7yxvJu+c2Jai/UT8YVojHZdQaIOJBC89l8i
-X-Gm-Message-State: AOJu0YwpgWzPLFn/c/kAiMZY57lDTGbsCYW0pnTgIjbEmuJbUHaK9nru
-	Hla3JpZRVeRNoK/2pcS1Hp8t0zCOZqg0PGFLzOofvgIgGi3c6EkU
-X-Google-Smtp-Source: AGHT+IE//BtTdgGtcjY8KsbsPDOzbBdfE4Wbq7FrqHt1qDrQehdsHgj5k0ppLZ6VyszfHnaXk9S6sA==
-X-Received: by 2002:a05:6214:3a08:b0:6bb:3f92:13d with SMTP id 6a1803df08f44-6bf5d24a89amr4791716d6.24.1723576796290;
-        Tue, 13 Aug 2024 12:19:56 -0700 (PDT)
-Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82c7d684sm36691996d6.33.2024.08.13.12.19.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:19:55 -0700 (PDT)
-Date: Tue, 13 Aug 2024 15:19:55 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Manoj Vishwanathan <manojvishy@google.com>, 
- Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- intel-wired-lan@lists.osuosl.org
-Cc: netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- google-lan-reviews@googlegroups.com, 
- Willem de Bruijn <willemb@google.com>, 
- Manoj Vishwanathan <manojvishy@google.com>
-Message-ID: <66bbb1db36a9c_8a56a29485@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240813182747.1770032-6-manojvishy@google.com>
-References: <20240813182747.1770032-1-manojvishy@google.com>
- <20240813182747.1770032-6-manojvishy@google.com>
-Subject: Re: [PATCH v1 5/5] idpf: warn on possible ctlq overflow
+	s=arc-20240116; t=1723576931; c=relaxed/simple;
+	bh=lY0lhb7BmsOpLYdU0VWU9WKDBRrqBJFGFjFhgXBLCKE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WFgCYpeJhyngSugGY5FnE95lcmVFncxVZRs2P1CRpcO6SBp2maoTnw5xmDQjVgaagkAHwzMJVmjfS2d7frOp0kKB930bsy1uXox6r4on2qkNLvkRgaGkTJhIEFZzI9TnuyVwdoSXSIAND04U2qiiRF1XCmnC8zaj7xI2ZCYaA5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjT1yhEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13576C32782;
+	Tue, 13 Aug 2024 19:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723576930;
+	bh=lY0lhb7BmsOpLYdU0VWU9WKDBRrqBJFGFjFhgXBLCKE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=LjT1yhEWOHKC3GgbzCgJn8mQU4nqby5KyyHdpWeBpk9IjPPKsw9Q3yhsuqYSjcbXV
+	 g9kMh7aK2FQ5DgC+6adeOLvQhE6DK6ZT7mA0qxYEg+EM5/HCAIi/cQD9Yi/eoB6Tbj
+	 DcwcOIgTUypMsKq5HbU7rzXVrdeJlFAsH79d64xO/PNO41eQBirTyQDrN0N0TvGQGY
+	 xRxSC9ILb53lCQmfY8zdQjZ3zNqXea4uFk+FtwVTMuXIhx5Nynl2jxSlMmbyF2IFq/
+	 awD8N40SLh2BSAJuni2j2L9B0hdDDfa/Y7sAFQcaZ6VrHyK1KggEWftHE+Tl3pu+FE
+	 LgYX7zr1pSMbw==
+From: Mark Brown <broonie@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>
+Cc: imx@lists.linux.dev
+In-Reply-To: <20240813154444.3886690-1-Frank.Li@nxp.com>
+References: <20240813154444.3886690-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/1] spi: dt-bindings: convert spi-sc18is602.txt to
+ yaml format
+Message-Id: <172357692761.130711.16237572865002261472.b4-ty@kernel.org>
+Date: Tue, 13 Aug 2024 20:22:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-Manoj Vishwanathan wrote:
-> From: Willem de Bruijn <willemb@google.com>
+On Tue, 13 Aug 2024 11:44:43 -0400, Frank Li wrote:
+> Convert binding doc spi-sc18is602.txt (I2C to SPI bridge) to yaml.
 > 
-> The virtchannel control queue is lossy to avoid deadlock. Ensure that
-> no losses occur in practice. Detect a full queue, when overflows may
-> have happened.
+> Additional change:
+> - ref spi-controller.yaml
 > 
-> In practice, virtchnl is synchronous currenty and messages generally
-> take a single slot. Using up anywhere near the full ring is not
-> expected.
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/fsl-lx2160a-bluebox3.dtb:
+> /soc/i2c@2000000/i2c-mux@77/i2c@7/i2c-mux@75/i2c@0/spi@28: failed to match any schema with compatible: ['nxp,sc18is602b']
 > 
-> Tested: Running several traffic tests and no logs seen in the dmesg
-> 
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
+> [...]
 
-This was an internal patch. Not really intended for upstream as is.
+Applied to
 
-> Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
-> ---
->  drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> index 07239afb285e..1852836d81e4 100644
-> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
-> @@ -218,6 +218,15 @@ static int idpf_mb_clean(struct idpf_adapter *adapter)
->  	if (err)
->  		goto err_kfree;
->  
-> +	/* Warn if messages may have been dropped */
-> +	if (num_q_msg == IDPF_DFLT_MBX_Q_LEN) {
-> +		static atomic_t mbx_full = ATOMIC_INIT(0);
-> +		int cnt;
-> +
-> +		cnt = atomic_inc_return(&mbx_full);
-> +		net_warn_ratelimited("%s: ctlq full (%d)\n", __func__, cnt);
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-A single static variable across all devices.
+Thanks!
 
-If this indeed should never happen, a WARN_ON_ONCE will suffice.
+[1/1] spi: dt-bindings: convert spi-sc18is602.txt to yaml format
+      commit: 1c4d834e4e81637995b079fdb64fad4c32af15c8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
