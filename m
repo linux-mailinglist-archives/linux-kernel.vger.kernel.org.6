@@ -1,242 +1,234 @@
-Return-Path: <linux-kernel+bounces-285637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A839510BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:46:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C067C9510C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930181F243BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:46:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77688284E3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2F81AD3EF;
-	Tue, 13 Aug 2024 23:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376591AC450;
+	Tue, 13 Aug 2024 23:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2ZTeVl1n"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dpOPruNb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B46383BF;
-	Tue, 13 Aug 2024 23:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6157C383BF
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 23:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723592767; cv=none; b=peIppLUwa+SBw2VgzcX+UFn99Pm3lsAn+BFHWSbVbVF7yiY4DxVSpyvjgqxe+CyCcFpOq+IKKCOaJBILnKFMJnotIgsciaUlnE2+B3f+nzqIIaieRVwNYl+eDx2jqp/cu4sZJ1YO4I7OrtbNkk1qKkPVAYXjeNIpxMWhMHk/1dU=
+	t=1723592819; cv=none; b=GMls/z5u/RKcpBTx+PLkhD6SdsYKIf01wSix784YylSd6fn2gyBDdG1LaqEgk3wrgauFka+F99RLi+PEBdd6K2f5kXeDPD4VYL8or8cBNdsTSBve+KFlI0X43KWAHqH3/QE9e8mvGkJSXfyGagzr1NpjZR5qtjqlWycrfut3tWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723592767; c=relaxed/simple;
-	bh=SHgY4ZvnWkFc93CY6rQuMpZOg5xNuwIcczixIIZwUis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fm+W3Zp3rf4zpSzHKIfhMgzJVRWacDVw80CpGl6UU7GIqDoLN/86h4iX8UelNXxoUP+zSyAdf1VzLJo1TBDJdy6xVnN3ihBSpEXTh+rOywB0gU2Yu2jjH7nV67QaekH5FLTA5jn8rw2jDeWr/ZFhf5XX5AKlI3bvK48wt3PaEi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2ZTeVl1n; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=btvoCIHjpMVaBKfPYLfJYOWHcXgBOeBZSXsRuU6oyxo=; b=2ZTeVl1nNyBkwimbRyXw0IBhgm
-	wG48wQMzJjVYoWaclTlRSp8ooSuX1D+uuSx81NOkFpLcPG7S6uMxIxRNDfAvMQ1aGwYVNb8r4HXUo
-	pjYocvWZEVvsL20WKpLG1rwmCDpNO5+A9Ex0tmOiCKZBfTUWoep88gurhldDm+kgWq4AkExJ+nUZU
-	Q2V1HgsM4pf5r3HG2RjH3dVMlZPkB9QsymsFQkDHbJhHz0EgHxUwe7wRWQKGi4m65Ovkzq0MbpRKY
-	X9bhe2L0n+dljceBTRMSzdbl0NSpfhKhV+B1fImnZDz7JEbDDNmiR+xfzjJH3/k3WAMyIAfYtqNhG
-	DZ0XLwQw==;
-Received: from [50.53.9.16] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1se1Cy-00000005DRu-0WM0;
-	Tue, 13 Aug 2024 23:45:46 +0000
-Message-ID: <227f9190-e065-462e-9a25-0ebd5e3dc955@infradead.org>
-Date: Tue, 13 Aug 2024 16:45:42 -0700
+	s=arc-20240116; t=1723592819; c=relaxed/simple;
+	bh=7vQK0vHaFwPYyhQesUTF0TSjKnO3CW6G6D1Wl0z1RTg=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=t697uMWMxEoP4vaEttl+Xdz6/Knd4Kgg0Yo4xJuEB4+nZvZImGkQvHRLYI7rLeIRFAJFT6LdDs2UuBbhJHiagcz8qWdhZ8MDtcg3A9eBDG8IFzRBHAwe5N6lPeSGnRycYdCLr6oYWPnfBx/21uqXC8m4ytCx/yxGTVbcZ6iXgN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dpOPruNb; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723592817; x=1755128817;
+  h=date:from:to:cc:subject:message-id;
+  bh=7vQK0vHaFwPYyhQesUTF0TSjKnO3CW6G6D1Wl0z1RTg=;
+  b=dpOPruNbkLhQuLd9ew57KXz5HQ4DrBPPSaTTVGVrGmYEfQWfbrERaPg6
+   8H+eZPPy13z5k3AsN3LOnAjsZFQ3LXMm/c3202yHpX7sSBZh0eqVq4Dnk
+   2wHE4sMtJZw+7co4RlIAKU2SNH0tqnBH0RbnKt0GUxH0z5HDSHReLkT1q
+   zTj6mrD5lOOkcHHjq+KJj8HbLcc9QbvS1hDrMv7EaGsVGKLrDnWnoL3bQ
+   2vVbtrdQML1V9r0yODjpsWeXJX4BOstFhgG5EoF8MxBWm/GaMgHHtmsyH
+   kfA69KFBKHrNs45T3fKMRdwHSyqirZysZ3mgEGYI1KNwL41Y8I3c2wYWF
+   w==;
+X-CSE-ConnectionGUID: PzQYX2+GTSi3ouo+7WjXsQ==
+X-CSE-MsgGUID: 598s7NrhRPOgSgcm6EnMSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21653657"
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="21653657"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 16:46:57 -0700
+X-CSE-ConnectionGUID: InGGE+kKTXS35fP5AH0QBA==
+X-CSE-MsgGUID: Sw/HSetqSXKzyhvBhHE4xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="63493765"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 13 Aug 2024 16:46:55 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1se1E5-0000mU-1h;
+	Tue, 13 Aug 2024 23:46:53 +0000
+Date: Wed, 14 Aug 2024 07:46:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 1d00f3427bfdb9f5b7a817b1f4f44c5b02da3edd
+Message-ID: <202408140736.5CCLjEyz-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] Docs/admin-guide/mm/workingset_report: document
- sysfs and memcg interfaces
-To: Yuanchu Xie <yuanchu@google.com>, David Hildenbrand <david@redhat.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
- Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>,
- Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>,
- Gregory Price <gregory.price@memverge.com>, Huang Ying
- <ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>,
- Lance Yang <ioworker0@gmail.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>,
- David Rientjes <rientjes@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Johannes Weiner
- <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Shuah Khan <shuah@kernel.org>,
- Yosry Ahmed <yosryahmed@google.com>, Matthew Wilcox <willy@infradead.org>,
- Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>,
- Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Abel Wu <wuyun.abel@bytedance.com>,
- "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20240813165619.748102-1-yuanchu@google.com>
- <20240813165619.748102-8-yuanchu@google.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240813165619.748102-8-yuanchu@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 1d00f3427bfdb9f5b7a817b1f4f44c5b02da3edd  Merge branch into tip/master: 'x86/timers'
 
-On 8/13/24 9:56 AM, Yuanchu Xie wrote:
-> Add workingset reporting documentation for better discoverability of
-> its sysfs and memcg interfaces. Also document the required kernel
-> config to enable workingset reporting.
-> 
-> Change-Id: Ib9dfc9004473baa6ef26ca7277d220b6199517de
-> Signed-off-by: Yuanchu Xie <yuanchu@google.com>
-> ---
->  Documentation/admin-guide/mm/index.rst        |   1 +
->  .../admin-guide/mm/workingset_report.rst      | 105 ++++++++++++++++++
->  2 files changed, 106 insertions(+)
->  create mode 100644 Documentation/admin-guide/mm/workingset_report.rst
-> 
+elapsed time: 1173m
 
-> diff --git a/Documentation/admin-guide/mm/workingset_report.rst b/Documentation/admin-guide/mm/workingset_report.rst
-> new file mode 100644
-> index 000000000000..ddcc0c33a8df
-> --- /dev/null
-> +++ b/Documentation/admin-guide/mm/workingset_report.rst
-> @@ -0,0 +1,105 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=================
-> +Workingset Report
-> +=================
-> +Workingset report provides a view of memory coldness in user-defined
-> +time intervals, i.e. X bytes are Y milliseconds cold. It breaks down
+configs tested: 142
+configs skipped: 3
 
-                   e.g., X bytes are Y milliseconds cold.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> +the user pages in the system per-NUMA node, per-memcg, for both
-> +anonymous and file pages into histograms that look like:
-> +::
-> +
-> +    1000 anon=137368 file=24530
-> +    20000 anon=34342 file=0
-> +    30000 anon=353232 file=333608
-> +    40000 anon=407198 file=206052
-> +    9223372036854775807 anon=4925624 file=892892
-> +
-> +The workingset reports can be used to drive proactive reclaim, by
-> +identifying the number of cold bytes in a memcg, then writing to
-> +``memory.reclaim``.
-> +
-> +Quick start
-> +===========
-> +Build the kernel with the following configurations. The report relies
-> +on Multi-gen LRU for page coldness.
-> +
-> +* ``CONFIG_LRU_GEN=y``
-> +* ``CONFIG_LRU_GEN_ENABLED=y``
-> +* ``CONFIG_WORKINGSET_REPORT=y``
-> +
-> +Optionally, the aging kernel daemon can be enabled with the following
-> +configuration.
-> +* ``CONFIG_WORKINGSET_REPORT_AGING=y``
-> +
-> +Sysfs interfaces
-> +================
-> +``/sys/devices/system/node/nodeX/workingset_report/page_age`` provides
-> +a per-node page age histogram, showing an aggregate of the node's lruvecs.
-> +Reading this file causes a hierarchical aging of all lruvecs, scanning
-> +pages and creates a new Multi-gen LRU generation in each lruvec.
-> +For example:
-> +::
-> +
-> +    1000 anon=0 file=0
-> +    2000 anon=0 file=0
-> +    100000 anon=5533696 file=5566464
-> +    18446744073709551615 anon=0 file=0
-> +
-> +``/sys/devices/system/node/nodeX/workingset_report/page_age_intervals``
-> +is a comma separated list of time in milliseconds that configures what
-
-        comma-separated
-
-> +the page age histogram uses for aggregation. For the above histogram,
-> +the intervals are:
-> +::
-
-I guess just change the "are:" to "are::" and change the line that only
-contains "::" to a blank line.  Otherwise there is a warning:
-
-Documentation/admin-guide/mm/workingset_report.rst:54: ERROR: Unexpected indentation.
-
-
-> +    1000,2000,100000
-> +
-> +``/sys/devices/system/node/nodeX/workingset_report/refresh_interval``
-> +defines the amount of time the report is valid for in milliseconds.
-> +When a report is still valid, reading the ``page_age`` file shows
-> +the existing valid report, instead of generating a new one.
-> +
-> +``/sys/devices/system/node/nodeX/workingset_report/report_threshold``
-> +specifies how often the userspace agent can be notified for node
-> +memory pressure, in milliseconds. When a node reaches its low
-> +watermarks and wakes up kswapd, programs waiting on ``page_age`` are
-> +woken up so they can read the histogram and make policy decisions.
-> +
-> +Memcg interface
-> +===============
-> +While ``page_age_interval`` is defined per-node in sysfs, ``page_age``,
-> +``refresh_interval`` and ``report_threshold`` are available per-memcg.
-> +
-> +``/sys/fs/cgroup/.../memory.workingset.page_age``
-> +The memcg equivalent of the sysfs workingset page age histogram
-> +breaks down the workingset of this memcg and its children into
-> +page age intervals. Each node is prefixed with a node header and
-> +a newline. Non-proactive direct reclaim on this memcg can also
-> +wake up userspace agents that are waiting on this file.
-> +e.g.
-
-   E.g.
-
-> +::
-> +
-> +    N0
-> +    1000 anon=0 file=0
-> +    2000 anon=0 file=0
-> +    3000 anon=0 file=0
-> +    4000 anon=0 file=0
-> +    5000 anon=0 file=0
-> +    18446744073709551615 anon=0 file=0
-> +
-> +``/sys/fs/cgroup/.../memory.workingset.refresh_interval``
-> +The memcg equivalent of the sysfs refresh interval. A per-node
-> +number of how much time a page age histogram is valid for, in
-> +milliseconds.
-> +e.g.
-
-   E.g.
-
-> +::
-> +
-> +    echo N0=2000 > memory.workingset.refresh_interval
-> +
-> +``/sys/fs/cgroup/.../memory.workingset.report_threshold``
-> +The memcg equivalent of the sysfs report threshold. A per-node
-> +number of how often userspace agent waiting on the page age
-> +histogram can be woken up, in milliseconds.
-> +e.g.
-
-   E.g.
-
-> +::
-> +
-> +    echo N0=1000 > memory.workingset.report_threshold
+tested configs:
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                   randconfig-001-20240813   gcc-13.2.0
+arc                   randconfig-002-20240813   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-20
+arm                              allyesconfig   gcc-14.1.0
+arm                   randconfig-001-20240813   gcc-14.1.0
+arm                   randconfig-002-20240813   gcc-14.1.0
+arm                   randconfig-003-20240813   gcc-14.1.0
+arm                   randconfig-004-20240813   gcc-14.1.0
+arm64                            allmodconfig   clang-20
+arm64                             allnoconfig   gcc-14.1.0
+arm64                 randconfig-001-20240813   gcc-14.1.0
+arm64                 randconfig-002-20240813   gcc-14.1.0
+arm64                 randconfig-003-20240813   clang-20
+arm64                 randconfig-004-20240813   gcc-14.1.0
+csky                              allnoconfig   gcc-14.1.0
+csky                  randconfig-001-20240813   gcc-14.1.0
+csky                  randconfig-002-20240813   gcc-14.1.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   clang-20
+hexagon                          allyesconfig   clang-20
+hexagon               randconfig-001-20240813   clang-20
+hexagon               randconfig-002-20240813   clang-20
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240813   gcc-12
+i386         buildonly-randconfig-002-20240813   gcc-12
+i386         buildonly-randconfig-003-20240813   gcc-12
+i386         buildonly-randconfig-004-20240813   gcc-11
+i386         buildonly-randconfig-005-20240813   clang-18
+i386         buildonly-randconfig-006-20240813   gcc-12
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240813   gcc-12
+i386                  randconfig-002-20240813   clang-18
+i386                  randconfig-003-20240813   gcc-12
+i386                  randconfig-004-20240813   gcc-12
+i386                  randconfig-005-20240813   clang-18
+i386                  randconfig-006-20240813   clang-18
+i386                  randconfig-011-20240813   gcc-12
+i386                  randconfig-012-20240813   gcc-12
+i386                  randconfig-013-20240813   clang-18
+i386                  randconfig-014-20240813   clang-18
+i386                  randconfig-015-20240813   clang-18
+i386                  randconfig-016-20240813   clang-18
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-14.1.0
+loongarch             randconfig-001-20240813   gcc-14.1.0
+loongarch             randconfig-002-20240813   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-14.1.0
+nios2                 randconfig-001-20240813   gcc-14.1.0
+nios2                 randconfig-002-20240813   gcc-14.1.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                randconfig-001-20240813   gcc-14.1.0
+parisc                randconfig-002-20240813   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   clang-20
+powerpc               randconfig-002-20240813   gcc-14.1.0
+powerpc               randconfig-003-20240813   gcc-14.1.0
+powerpc64             randconfig-001-20240813   gcc-14.1.0
+powerpc64             randconfig-002-20240813   gcc-14.1.0
+powerpc64             randconfig-003-20240813   gcc-14.1.0
+riscv                            allmodconfig   clang-20
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   clang-20
+riscv                               defconfig   clang-20
+riscv                 randconfig-001-20240813   gcc-14.1.0
+riscv                 randconfig-002-20240813   gcc-14.1.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   clang-20
+s390                  randconfig-001-20240813   clang-20
+s390                  randconfig-002-20240813   gcc-14.1.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                    randconfig-001-20240813   gcc-14.1.0
+sh                    randconfig-002-20240813   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+sparc64               randconfig-001-20240813   gcc-14.1.0
+sparc64               randconfig-002-20240813   gcc-14.1.0
+um                               allmodconfig   clang-20
+um                                allnoconfig   clang-17
+um                               allyesconfig   gcc-12
+um                                  defconfig   clang-20
+um                             i386_defconfig   gcc-12
+um                    randconfig-001-20240813   gcc-12
+um                    randconfig-002-20240813   clang-14
+um                           x86_64_defconfig   clang-15
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240813   clang-18
+x86_64       buildonly-randconfig-002-20240813   gcc-11
+x86_64       buildonly-randconfig-003-20240813   clang-18
+x86_64       buildonly-randconfig-004-20240813   gcc-12
+x86_64       buildonly-randconfig-005-20240813   gcc-12
+x86_64       buildonly-randconfig-006-20240813   gcc-12
+x86_64                              defconfig   gcc-11
+x86_64                randconfig-001-20240813   gcc-12
+x86_64                randconfig-002-20240813   clang-18
+x86_64                randconfig-003-20240813   gcc-12
+x86_64                randconfig-004-20240813   gcc-12
+x86_64                randconfig-005-20240813   gcc-12
+x86_64                randconfig-006-20240813   clang-18
+x86_64                randconfig-011-20240813   gcc-12
+x86_64                randconfig-012-20240813   gcc-12
+x86_64                randconfig-013-20240813   gcc-12
+x86_64                randconfig-014-20240813   gcc-11
+x86_64                randconfig-015-20240813   gcc-11
+x86_64                randconfig-016-20240813   gcc-12
+x86_64                randconfig-071-20240813   clang-18
+x86_64                randconfig-072-20240813   clang-18
+x86_64                randconfig-073-20240813   gcc-11
+x86_64                randconfig-074-20240813   gcc-12
+x86_64                randconfig-075-20240813   gcc-12
+x86_64                randconfig-076-20240813   clang-18
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-14.1.0
+xtensa                randconfig-001-20240813   gcc-14.1.0
+xtensa                randconfig-002-20240813   gcc-14.1.0
 
 -- 
-~Randy
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
