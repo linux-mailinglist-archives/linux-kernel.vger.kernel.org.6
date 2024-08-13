@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-284776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11224950500
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:32:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09BB950505
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3ACA280FA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF6A284C1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B230C19CD13;
-	Tue, 13 Aug 2024 12:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3848E19D083;
+	Tue, 13 Aug 2024 12:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SokGhc/P"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gPowbZqF"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5138419B3CE
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3F819B5BE
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552292; cv=none; b=GG2JvCiOfTcx/WH0dYC7TnC3aPYgDvDfLugCYsaj8y+M6LJuU4oYdqaZl+ax+Cg7r5Sb6rEStYG+ZW10Xjp1XzA7cXQs+6+08R60vzFniAtLgVpKADKyu/J0GT498+4A2cPWrj8ye5+tg770He590rkiFgg3ZefnvkhB2/ZZLag=
+	t=1723552294; cv=none; b=kMBvzpD9bu7RuMolrtNJ7DuiR+esTXKT82Maju2/vqW3sEk7pIawdwhkERKgJiZtxAjOXbVD/jSB1p1eaS+n/ke9DlcPwFkxqVDCc4nk7r0LqYIgsEHhdGK4CxDnu9PaHriYvituxELwV0Xqsm+JganMtkPo+tOjUUkGOsGggfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723552292; c=relaxed/simple;
-	bh=ApVSPxuYMUN4H8lzD4Upg+Z+gSvcQcwbvpLfoIq2hbE=;
+	s=arc-20240116; t=1723552294; c=relaxed/simple;
+	bh=pg9ToY3eZZPX52hwA+vpBAJrwr/I05JuqPkuqgNqkes=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t4E4BQnGUjw1K2/nrC2YivtGntJRnj1YPjugNuWrfsci4cuGyCYWL068+0yNkbbCp2UoFCvE/d+yGpVuJtkjJjTgrgxaKnLMYm+4A+4tM2PiDhoSIcoLBy1rcp/anFgHSPoRDoLZPVT6p7BVUU88F1MSyH9Gk9yPWTKc1VPsVBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SokGhc/P; arc=none smtp.client-ip=209.85.222.170
+	 In-Reply-To:To:Cc; b=NuqZbWQQPjQ5fD+N7gMGox41VNEHhxZAbMwgHwJErWNlIi1IGYt5MbTKK54oOZD7A+QYzoc5anBQgPjdwEs9tlG41QkOuTPlkcbQd3vBJytk0gePEiiueaNO7MP/KCKgjvDtUa/U81pYLR+CgvEw1SJqeF4ilAjL4kfus1QJUIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gPowbZqF; arc=none smtp.client-ip=209.85.217.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1d436c95fso326696985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:31:31 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-49291b02e20so1850059137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723552290; x=1724157090; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1723552291; x=1724157091; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cM75UgAWxu+REaaiYKxkbph00GT0OvjjuSsc322MsKo=;
-        b=SokGhc/PmhWT/xmp4ulSQiLWsZttx4NqY4ECHZNAmK8LDrAEstEq46JWcEXzcc/oTV
-         geaenCuvHw7M69kPnFtLvg6yz0OGiczUWcwHssVWVSvN9upLjQvnG0cMeKAwD9Mi9sAU
-         PzYv8TzTMmE/gG6kGhq6eNshFFk3pg/f9FEFI=
+        bh=PD7uAa+iA+SJ/l3ATpDCq2SdEEBJK/PvJJHcjFH/M0o=;
+        b=gPowbZqFUylKRiyV2nH7DSRqKYL6BFDUh9T9YVYglwSFuunFrAh2C36kZCUa++p75D
+         eYVUXrkFu71DRvN3fouKLwqLBgjcqUU+4UB4JYBKZvNFglVUsKVTe+9NgoXHgxbD7wQt
+         oAf+VmN/E9BKBIHqn+W96ZFaOmFuhhNynRDvo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723552290; x=1724157090;
+        d=1e100.net; s=20230601; t=1723552291; x=1724157091;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cM75UgAWxu+REaaiYKxkbph00GT0OvjjuSsc322MsKo=;
-        b=wz1HPp+gdh/F9S6DIO0Y4/37TmZ/EyKUWa42SZ5w+tnrfK9g775WoVDpORTQtUs61J
-         vw0ju1+YLw1vWHponMWb4goet2MCWnlt6Eo2ccIp5PKaSXNETCdTD7cf7PyK+kOdbHR2
-         FXeCzEQWQPM40rZZhJ+4t5h/Th9ujTVvFFZNjDm/zdtlFHcg0UQ1xHOQ3zOAOppvBZ7I
-         +dWCQYYLZtplayT311cy6tOYS49RajWdba8jNg/cayt/22JUtSWZkePXA2inuFvHX63r
-         glyQFLthFv6HP0Hyhdl07QIZgya7uouKIpWagiTlj1Z9nM14Ht8tdwuDSL3YW2OeBuOn
-         YJjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwLda3a2vp5AZW2twplKVDVY9XosUKekphWgPb1h4vFye8y6Oimzvj52hRfWDm+FotFVA83b5bsDZwr5OIdXQrjpEVV4yFhEBi6PfW
-X-Gm-Message-State: AOJu0Yz9OPOg6TZHBX3Oe5cHvr3m3UsSoA0iARYlYUJqTrEAbQMSTOiL
-	L6uhepqZ8n2+ufXTzwKLZSiNZvg7R4ateAU9ozQ6QlGPdb1D7bqIh2DwXFIwQw==
-X-Google-Smtp-Source: AGHT+IGqUsckyjgQSDiOTZ2qQ5fmPaXoSD45meFlBIHRhS+FYbD9MyabumWybzKK7Lio3WuJ2DBAQA==
-X-Received: by 2002:a05:620a:371d:b0:79f:1783:4ba5 with SMTP id af79cd13be357-7a4e15102f8mr337731385a.12.1723552290179;
-        Tue, 13 Aug 2024 05:31:30 -0700 (PDT)
+        bh=PD7uAa+iA+SJ/l3ATpDCq2SdEEBJK/PvJJHcjFH/M0o=;
+        b=PsJIlI7IqSbyhEaHVErnU+YDSGGFfsNBGTHlo7EJrfLjoVNfnZ1uz7mebIa9h0rw5C
+         lTdHWWpqmM99LMGrpumGInLY6z8pNgUJN3ZSO5FaAJzhHJNnRajka2WQAPPWQoiGkoG+
+         VnKbUmg1XNTdVzIRm9bvF3GNJIG5uau7ctRbTkKWiEka0bK3WL7H5VLFklE0SoOsHBev
+         VWh2gB7EDFM3YdJgVDMEd03lXtTXayZH0ehahj2BcKSGV1j9F5SUTNWXTKAbge6mJLcr
+         QHIMax1rLGROJ95uMEfiE6Z1fC1GWc97yYFQaV6HX1hHu/NldTrBTq14BmMs5xX9zxWR
+         dHeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHxWZBznQTOXKdBn1+tOFUucSZ92wvJSwnAfwLugM60S3ynaYB/8QI1HU37LigFu2eyvAajrdRikk4YnOOnaoBdHOScjCn0ZAQJgPe
+X-Gm-Message-State: AOJu0YwJ9IP8Fp3PEnyORqVnGV40n4VZjv0MsMTW3rffYaisOF/gt55+
+	QbsQO1OEkJKcCqiz0d5ywPbZqEEqVnXzYOZzb4CPoupO0m9n4EXmpeCSCruNoQ==
+X-Google-Smtp-Source: AGHT+IFVb/FCO4zojDS37rQuslFijZLZCXUsY63IfMRU3vxtSFRIIMGWvVO1eWkt+coPhL2FV4eZdw==
+X-Received: by 2002:a05:6102:370d:b0:494:10af:2bc8 with SMTP id ada2fe7eead31-49743ae9e3bmr3816743137.24.1723552291444;
+        Tue, 13 Aug 2024 05:31:31 -0700 (PDT)
 Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d66093sm337126685a.12.2024.08.13.05.31.29
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d66093sm337126685a.12.2024.08.13.05.31.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 05:31:29 -0700 (PDT)
+        Tue, 13 Aug 2024 05:31:30 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 13 Aug 2024 12:31:24 +0000
-Subject: [PATCH v6 04/10] media: venus: Refactor struct
- hfi_uncompressed_format_supported
+Date: Tue, 13 Aug 2024 12:31:25 +0000
+Subject: [PATCH v6 05/10] media: venus: Refactor
+ hfi_session_empty_buffer_uncompressed_plane0_pkt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +75,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-cocci-flexarray-v6-4-de903fd8d988@chromium.org>
+Message-Id: <20240813-cocci-flexarray-v6-5-de903fd8d988@chromium.org>
 References: <20240813-cocci-flexarray-v6-0-de903fd8d988@chromium.org>
 In-Reply-To: <20240813-cocci-flexarray-v6-0-de903fd8d988@chromium.org>
 To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
@@ -87,49 +87,31 @@ Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-plane_info is not a typical array, the data is not contiguous:
-pinfo = (void *)pinfo + sizeof(*constr) * num_planes +
-	2 * sizeof(u32);
+The single element array data[1] is never used. Replace it with a
+padding field of the same size.
 
-Replace the single element array with a single element field.
+This fixes the following cocci error:
+drivers/media/platform/qcom/venus/hfi_cmds.h:163:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
 
-This fixes the following cocci warning:
-drivers/media/platform/qcom/venus/hfi_helper.h:1009:36-46: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/platform/qcom/venus/hfi_helper.h | 2 +-
- drivers/media/platform/qcom/venus/hfi_parser.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index 5e91f3f6984d..3edefa4edeb9 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -1011,7 +1011,7 @@ struct hfi_uncompressed_plane_info {
- struct hfi_uncompressed_format_supported {
- 	u32 buffer_type;
- 	u32 format_entries;
--	struct hfi_uncompressed_plane_info plane_info[1];
-+	struct hfi_uncompressed_plane_info plane_info;
+diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
+index b158fcd00dd6..01f5463e0fa2 100644
+--- a/drivers/media/platform/qcom/venus/hfi_cmds.h
++++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
+@@ -168,7 +168,7 @@ struct hfi_session_empty_buffer_uncompressed_plane0_pkt {
+ 	u32 input_tag;
+ 	u32 packet_buffer;
+ 	u32 extradata_buffer;
+-	u32 data[1];
++	u32 data;
  };
  
- struct hfi_uncompressed_plane_actual {
-diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-index c43839539d4d..3df241dc3a11 100644
---- a/drivers/media/platform/qcom/venus/hfi_parser.c
-+++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-@@ -157,7 +157,7 @@ static void
- parse_raw_formats(struct venus_core *core, u32 codecs, u32 domain, void *data)
- {
- 	struct hfi_uncompressed_format_supported *fmt = data;
--	struct hfi_uncompressed_plane_info *pinfo = fmt->plane_info;
-+	struct hfi_uncompressed_plane_info *pinfo = &fmt->plane_info;
- 	struct hfi_uncompressed_plane_constraints *constr;
- 	struct raw_formats rawfmts[MAX_FMT_ENTRIES] = {};
- 	u32 entries = fmt->format_entries;
+ struct hfi_session_empty_buffer_uncompressed_plane1_pkt {
 
 -- 
 2.46.0.76.ge559c4bf1a-goog
