@@ -1,121 +1,100 @@
-Return-Path: <linux-kernel+bounces-284066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F1E94FC8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:08:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31BC94FC92
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E73282B39
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63F581F22DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517ED1CD16;
-	Tue, 13 Aug 2024 04:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00EE1CD02;
+	Tue, 13 Aug 2024 04:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pttmDIC3"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="d7tPA2ao"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A98A1BF3A
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4337D1B815;
+	Tue, 13 Aug 2024 04:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723522123; cv=none; b=Mw7NoGC5f7L50CjvJVZ3cpaPyHWzki89v26TE2An2UbLjso6Wje4mZBKFEYSJfWck2tmiT8NalXhcpqdU9kIz4yL4ee70ag/VLAOymxaOzbip1t+HEAuUof/MlFG1+4XUi7MyNLGdZBxcNjWk/LZDyMlRvxn6ooRX7W4Lt2uHHA=
+	t=1723522421; cv=none; b=VeEEOWy+P8yE8bHBHv+fH9qBSeu9JIrosyxw4SsikLv/NG9L4MqAVGeXVW1xD6RjIuCstFmrQ0FFfwoJdK80jq4KKIUFqYU5QPx5EqrdYbsXcxWPfDfuNVqjMfAwi1cLZOFSBA2Fj0+hT9EvHLNcm7I4yx320A5RdQdSyD4UK9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723522123; c=relaxed/simple;
-	bh=fntJhyjcOy7oflqhtRO9KzJcdMa1SeI7MODbm3MN5k8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eE+AZ0v+qCiQ/QQE5VC9xynM1TFuKhvt8kcz5rourEOFZYCC8UUTcswt4fdatYsye6reNUJ5YYx69Bpz/JPTg8yl74lgO6sXKYh2VlmgjT7LHpVyGAe7h0glHOP0gtAc4iwHhAKa1xDa8BnnxIQFozxYZAi0aMjqrnfkQ9L3obE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pttmDIC3; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-721d20a0807so5143513a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:08:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723522121; x=1724126921; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SHWstkZJouFpjxURopjUp/N24tS1IjVlq4SVfgNsTjg=;
-        b=pttmDIC3mo2QvDY0rB/HLf9xG8H5+2h+oxtP6JF3ueCkClU6ipnmFiGJeRgp0Fr/fP
-         O08xiI9cALKHYN41+5BpUkYRtc5zfqGUTZddwWnzg0lOvdwqShPDQNPwyI7aOZSiWMct
-         kfcVxEqDk2C83YJ3kr3jAuibwGaYdzi++0YfhuZcGV9kX23UwoHdpYoyQCdbvWs3rFQ3
-         xESPpvKpmZUe7rSgLiOh/ttK9TwXkCZnhfgCgPFfvHkB3+YrBLl6Q8YxUMdDxG5308mG
-         OZkTouYL3WQibvAiG7WvLAtXtYSBGbfiYk/BCRUhIh81e1qha42K/zV62q+MFdYf9XUC
-         AlnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723522121; x=1724126921;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SHWstkZJouFpjxURopjUp/N24tS1IjVlq4SVfgNsTjg=;
-        b=vGJaLa9EhRedg8/Fpxrla/SI0paGaGJ1vZ7ZRLzXk5l3UmaqMSDlXtm9CWlnEZgrcE
-         zH5tGYi0eWOcjZCAwC4Peu/5ZoK9fMgEv9hsKDohlq7f/qZNJKoTYcvrrsTZYCX6yoZZ
-         3NTu+j0Qu7kmt/lGRdMfXi9ImsKxaDQPyiBGmoDUb2VmOZ0y4P8vmGorF3Yt8CiPEo55
-         Ub+PfTLt/lh5W+45fBu41HN/RBgeENOvob2Fzr55mwVlPrn/4OPkqoHt6+cSnKv98tvS
-         6gVJpQuEfRI9FlV0ToQ8QB5E5ZqrgBPclySwRmqJDEVMVDRp+q4oLIP54D3TWullcTg6
-         2sag==
-X-Forwarded-Encrypted: i=1; AJvYcCXO306Ljdi6BBDKLrLoQ4Oi75aXcs457PrZutapJzHz+FXZacJK+LYh4x5VVBDoma4Ly7Am+uQFBE4iPLcStCeDxq47uppzdu17pROu
-X-Gm-Message-State: AOJu0YyA4cdska1884EUF/Xr9vl01uS3VGKHWZlQ3BW2Kh4W8EFQNfQw
-	ZOTvvs8brpEIEpn9rHgPtjS4Y2k2/lE3xu0IF+FtOdHGEMehUQHa2HIachcBBIKIDg7mhEHpijs
-	Jrw==
-X-Google-Smtp-Source: AGHT+IFy3tS0mDbLSJ3VFDM24v3F0/Bto9CsIFpJ5YeCwKlmxhaKPoZAnTM6U8EqvRJ7bCMM985q93CMz9Q=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:db46:0:b0:6e3:e0bc:a332 with SMTP id
- 41be03b00d2f7-7c69507d656mr4242a12.2.1723522121034; Mon, 12 Aug 2024 21:08:41
- -0700 (PDT)
-Date: Mon, 12 Aug 2024 21:08:39 -0700
-In-Reply-To: <20240612115040.2423290-3-dan.carpenter@linaro.org>
+	s=arc-20240116; t=1723522421; c=relaxed/simple;
+	bh=LYIvitUcELWVGkRg3HU1QSfzzWLY1Z1lMk+SgxZaWv4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSEJshfmIfaKrK0rUJ5wIxYHQB9M+W+BecQltFMqHaSTdH6Ryqgcz6zUt5qQQ9//uAjhYq3PWPwpe+9fcF9hVLhkrJ908vhL3z9GQJ1cgPKVgXctwA2RLdNxKxkD/jcRjZs2as70HjGxrNqpCnXwnBdC8ThwPjldY26PLYNUKWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=d7tPA2ao; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CN03IS028173;
+	Mon, 12 Aug 2024 21:13:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=SEp3qwk4GT0xlQatDRuLHX4RJ
+	Hy/o8pdyqFPySWqAS4=; b=d7tPA2ao/7cLfAGdMrLQweuu0v3Y4xuVCcHniImw4
+	VY5q4IR9Nl9F9f4bBPG5f5eDhRxk8LTwWe7FevuqYo9/cmLJHLVzyJQnubX2X41N
+	i6r09TCNozL/4GQmCfpmz46cPZwkAuvXd+4FS4EtORaPGI6D+l9X3131Wanbl3X3
+	MZtN8jf3gszCf9NTNcGhobsFZibQJhieaDZnDBq+TXzKnjIQicswh5dgQYvQVIcT
+	vvAFlZFtOdhPBJtOHDMdN/SpoAyXr/r0JdbyouHPK0Jhd1le45N3x4tUtCyYrViu
+	moAJOaZM4kPNA+CFJ0yyj9S714uro+fxsqWcAa2WBDyCg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40yup38vta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 21:13:00 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 12 Aug 2024 21:12:59 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 12 Aug 2024 21:12:59 -0700
+Received: from maili.marvell.com (unknown [10.28.36.165])
+	by maili.marvell.com (Postfix) with SMTP id EF7D43F704B;
+	Mon, 12 Aug 2024 21:12:54 -0700 (PDT)
+Date: Tue, 13 Aug 2024 09:42:53 +0530
+From: Ratheesh Kannoth <rkannoth@marvell.com>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+CC: <intel-wired-lan@lists.osuosl.org>, <daiweili@gmail.com>,
+        <sasha.neftin@intel.com>, <richardcochran@gmail.com>,
+        <kurt@linutronix.de>, <anthony.l.nguyen@intel.com>,
+        <netdev@vger.kernel.org>,
+        Przemek Kitszel
+	<przemyslaw.kitszel@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH iwl-net v1] igb: Fix not clearing TimeSync interrupts for
+ 82580
+Message-ID: <20240813041253.GA3072284@maili.marvell.com>
+References: <20240810002302.2054816-1-vinicius.gomes@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240612115040.2423290-2-dan.carpenter@linaro.org> <20240612115040.2423290-3-dan.carpenter@linaro.org>
-Message-ID: <ZrrcR-kJ8hP6afWb@google.com>
-Subject: Re: [PATCH 1/2] KVM: SVM: Fix uninitialized variable bug
-From: Sean Christopherson <seanjc@google.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: error27@gmail.com, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240810002302.2054816-1-vinicius.gomes@intel.com>
+X-Proofpoint-ORIG-GUID: 8SkyDvNSPllJkWS5yqlAv2-2pAbWRIVY
+X-Proofpoint-GUID: 8SkyDvNSPllJkWS5yqlAv2-2pAbWRIVY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
 
-On Wed, Jun 12, 2024, Dan Carpenter wrote:
-> If snp_lookup_rmpentry() fails then "assigned" is printed in the error
-> message but it was never initialized.  Initialize it to false.
-> 
-> Fixes: dee5a47cc7a4 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> The compiler is generally already zeroing stack variables so this doesn't cost
-> anything.
-> 
->  arch/x86/kvm/svm/sev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 43a450fb01fd..70d8d213d401 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -2199,7 +2199,7 @@ static int sev_gmem_post_populate(struct kvm *kvm, gfn_t gfn_start, kvm_pfn_t pf
->  
->  	for (gfn = gfn_start, i = 0; gfn < gfn_start + npages; gfn++, i++) {
->  		struct sev_data_snp_launch_update fw_args = {0};
-> -		bool assigned;
-> +		bool assigned = false;
-
-I would rather delete all the printks, or if people really like the printks, at
-least provide some helpers to dedup the code.  E.g. sev_gmem_prepare() has more
-or less the exact same behavior, but doesn't have the same flaw.
-
->  		int level;
->  
->  		if (!kvm_mem_is_private(kvm, gfn)) {
-> -- 
-> 2.43.0
-> 
+On 2024-08-10 at 05:53:02, Vinicius Costa Gomes (vinicius.gomes@intel.com) wrote:
+> @@ -6960,31 +6960,48 @@ static void igb_extts(struct igb_adapter *adapter, int tsintr_tt)
+>  static void igb_tsync_interrupt(struct igb_adapter *adapter)
+>  {
+>  	struct e1000_hw *hw = &adapter->hw;
+> -	u32 tsicr = rd32(E1000_TSICR);
+> +	u32 ack = 0, tsicr = rd32(E1000_TSICR);
+nit: reverse xmas tree.
 
