@@ -1,231 +1,247 @@
-Return-Path: <linux-kernel+bounces-284764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49369504DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:26:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BFE9504E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18631C21C47
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1638C283825
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF41C1993A3;
-	Tue, 13 Aug 2024 12:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC02C1993AC;
+	Tue, 13 Aug 2024 12:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="V+uzBlTq"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YeCcWTm1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6761991D8
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75669199392;
+	Tue, 13 Aug 2024 12:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551959; cv=none; b=YjEPKeKRsSay9SaRC9rUgo8xxLXgNpBkhQRuIjNGLkLACRDnGdHn85YgtdXPVhBqDxNUUhpQS15m0w3h8DDg2hLjpEeysgJhJ0snqAhgibQSDm2lKw0kcW23eF9nTe+rFAqDAOybnGkYAQfQz4MsdJdHk8DY8jcDBSS3fduygYU=
+	t=1723551987; cv=none; b=u/SPdZ79eWzsVY4aCQb4dC6GIjQWZoyfDyNmbBASkJhLyAAREe5xf/KsDCnvJaH/sGU4M1BI9CGMrBTbC9He8xLjDJNUwE6EGKdVuXX2VWGWZ9ZyxbsyhP27ieeDx50Q7RGVvEChwODCiNwWvJhpgRG+jghd6k2bccNkJeWh4Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551959; c=relaxed/simple;
-	bh=GuqX40LREmVg4Nqh1G6UJFWuG2NzNdEBbMzn5xStQCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RgjF78lEFbmiZYc31Lf51iGDk45/Ph8KBAAAhmOe/o3s/JhyaTl2c0J7HPxQkUPX6X17vfKLuGzQUZHs79e1Zy+e/vFG3drozX4VmynIWV6kkDCR3J+ERbKHYINJaWhzbzaFNnUUduTH+6952F9avivg1rDz39wFUHUlG6kYi8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=V+uzBlTq; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-39b3754468eso19105585ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:25:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1723551955; x=1724156755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HlpsPbvSqY1Guepb/+C8Hj4r/YthyFNML6v64qjLHgQ=;
-        b=V+uzBlTqZdSnZ8s7/W1XBqCU3742paqPvYP232W9vaJGK01UwZY29sFYEunnOJQgn3
-         a+8Ph1+Jkygq4y5ngWPVuhE9L2d18PoDm9AgeDPZU2De47utUArxynJWh3KIW8B2V5Cq
-         YxdqNr7edpCmCDaZqAd/jiRHqn3r4xjzZkEypJlq3PSXKwwFd2b8uyfJvFAjidYGSBh4
-         K5PvkVlOznGIV1AjoLp6Jv1FFFUR880+R6ePzI0UCzVNo/rsJYA0pb2Cw5XgBQXm0Pm7
-         Bk2K+YXFPPrliBLn7j9yCF/3H2Ii2FaJsXagok9/q9KE0INZ9VasuX78JVOORsNrdyRf
-         yD2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723551955; x=1724156755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HlpsPbvSqY1Guepb/+C8Hj4r/YthyFNML6v64qjLHgQ=;
-        b=elFsJm3zQkbcwWz4EY+J5KHvXx2SThBCKaM37XZIF3vD9pTLdKcnbectruxkBE110O
-         Tbb8vOCvGYoMEh5oX6UOowUCHMZXQivxqVmQNmwAmHiKQkrPToXBVz+rVRNgXM+fv6za
-         j/uBgpEPSlyDIHoriEPwMGIUH0rYj1h90sdTbkZTwCAKur560Ow0E0hd6s0DqenXbpBk
-         mg1q9nGFVbJKhF+WuR5UMF6N1OhHFsPrXbBiDBzPxKr3qzb2oiZL2YniL7uwiK6+R9AF
-         IWT+gpBPaH6PybYMc8I/HyT2wivg2vT3WDY4nI4cSJbuzXscCILb9f+pZGQoDzX73+g9
-         kYrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUE8s9xqR/LL7VGuduHf8fNa3h1COeAHl6obw9e+UOOzDEBNd/AwpsayDP2IaOXJxcite1i1dp9OBmNgDra0bUTpDyAce1l1twi82Ys
-X-Gm-Message-State: AOJu0YzdO/XPBhoK/mEk1Co7UkBcQwNk++OmhY9+dFlwIAJ+oJguo8cp
-	SltmxFI1+hBDOwoRzLyjuCKpPRDEOsJq7E1Ewx8Ql0mQUXFrQ8IfGR8Q7Er4i4IOmQPxFx6Lb1b
-	QlmLh9+Nb2RiKSL8j7bX3LbP9DS24iB2QffBM47Cxb/duhzA86QY=
-X-Google-Smtp-Source: AGHT+IGfc1hlnSw9m1j0prPgIWYWO3SpEZp9zrnyAvAWqBu+fTcn7+WZsmM/0bL31M4eersVd96dOZoC9Kz1EGd0ycA=
-X-Received: by 2002:a05:6e02:1fce:b0:375:c473:4a78 with SMTP id
- e9e14a558f8ab-39c478f783emr40305315ab.23.1723551955377; Tue, 13 Aug 2024
- 05:25:55 -0700 (PDT)
+	s=arc-20240116; t=1723551987; c=relaxed/simple;
+	bh=YXHc5SzykAx8a1KtG2hCaleuHDVdHXz2VYjDHlSrEN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1AF+Q8h9r5klZ5OtMmWTRbQZlTHOJbP3AtKmfEehCnk7l64q2og7HG4AVmM9OpRrPgNoYm11ucWjSIO+RcP+ErU/eo/C83e7wzVN+Qa5Ja4a8ubeV2tjqRgU0mt/vKw+56MIKW0KtQ9sRGjYz7QnBGmKHQdIiBkdxuU1cnzMF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YeCcWTm1; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723551985; x=1755087985;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YXHc5SzykAx8a1KtG2hCaleuHDVdHXz2VYjDHlSrEN8=;
+  b=YeCcWTm1N4TU4cbmI3NrlB37ywFLGLJrYaYhxWIY4EBOGJ/fv0aZpf4s
+   iQ4tS3a1Gyy85aX6JyXKTj7fQ7lNrP8ZzahCbvVlj/Z3OepaInDSFZ5P+
+   KJeR2wnLwjn+V6W7aw8cs6vTIthsCLuSqnXtTL7rF3bSbzWuP8y7bvi57
+   jF89bV1s89n0h1lnTaIvVcOLvfeQZwIErM4JIT7WKAwK+Dg32VkbY2o8r
+   53yAxYV19g/4RswNwNHsTEbTuIBdDo2sRfw90TTfRiSgUP5pQima9Y9e5
+   wKqMuxKjHUZoC96rXaE5xBc2vE+aB6SBGSlTVPB7UadoYtn33LfogIXA+
+   w==;
+X-CSE-ConnectionGUID: 1jIjnAjDSJuqxY9d1rp8tA==
+X-CSE-MsgGUID: 7elgkRCqRzC7YY3OZJXhXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="12983818"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="12983818"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 05:26:25 -0700
+X-CSE-ConnectionGUID: Wcax+Og4QXq7o3AHRGi8JQ==
+X-CSE-MsgGUID: 14gOFjAMSM+bvmBEuUUe4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="58594331"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 13 Aug 2024 05:26:22 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdqbT-0000P0-1L;
+	Tue, 13 Aug 2024 12:26:19 +0000
+Date: Tue, 13 Aug 2024 20:26:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, akpm@linux-foundation.org,
+	urezki@gmail.com, hch@infradead.org, linux-mm@kvack.org,
+	lee@kernel.org, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de, christian.gmeiner@gmail.com,
+	Mary Strodl <mstrodl@csh.rit.edu>
+Subject: Re: [PATCH v3 1/2] x86: Add basic support for the Congatec CGEB BIOS
+ interface
+Message-ID: <202408132055.GF2IYZIB-lkp@intel.com>
+References: <20240808183527.3950120-2-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813081324.3205944-1-nick.hu@sifive.com>
-In-Reply-To: <20240813081324.3205944-1-nick.hu@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 13 Aug 2024 17:55:44 +0530
-Message-ID: <CAAhSdy0W5mSVp79dF63BJkDCE_tMxrxWOxqwaTHghztX6dEm2w@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: riscv-sbi: Allow cpuidle pd used by other devices
-To: Nick Hu <nick.hu@sifive.com>
-Cc: rafael@kernel.org, daniel.lezcano@linaro.org, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	greentime.hu@sifive.com, zong.li@sifive.com, 
-	Anup Patel <apatel@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808183527.3950120-2-mstrodl@csh.rit.edu>
 
-On Tue, Aug 13, 2024 at 1:43=E2=80=AFPM Nick Hu <nick.hu@sifive.com> wrote:
->
-> To prevent the probe of consumer devices being deferred, create the
-> platform devices for each pd node under '/cpus/power-domains' and move th=
-e
-> driver initailization to the arch_initcall.
+Hi Mary,
 
-To prevent the probe deferral of consumer devices, you can simply use
-fwnode_dev_initialized() instead of creating a dummy platform device.
+kernel test robot noticed the following build warnings:
 
-> The consumer devices that inside the cpu/cluster power domain may registe=
-r
-> the genpd notifier where their power domains are point to the pd nodes
-> under '/cpus/power-domains'. If the cpuidle.off=3D=3D1, the genpd notifie=
-r
-> will fail due to sbi_cpuidle_pd_allow_domain_state is not set. We also
-> need the sbi_cpuidle_cpuhp_up/down to invoke the callbacks. Therefore,
-> add a cpuidle_disabled() check before registering the cpuidle driver to
-> address the issue.
+[auto build test WARNING on lee-mfd/for-mfd-next]
+[also build test WARNING on lee-mfd/for-mfd-fixes andi-shyti/i2c/i2c-host akpm-mm/mm-everything linus/master v6.11-rc3 next-20240813]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I think dealing with cpuidle.off=3D=3D1 case should be a separate patch.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mary-Strodl/x86-Add-basic-support-for-the-Congatec-CGEB-BIOS-interface/20240809-075405
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+patch link:    https://lore.kernel.org/r/20240808183527.3950120-2-mstrodl%40csh.rit.edu
+patch subject: [PATCH v3 1/2] x86: Add basic support for the Congatec CGEB BIOS interface
+config: i386-randconfig-r111-20240813 (https://download.01.org/0day-ci/archive/20240813/202408132055.GF2IYZIB-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408132055.GF2IYZIB-lkp@intel.com/reproduce)
 
->
-> Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> Link: https://lore.kernel.org/lkml/20240226065113.1690534-1-nick.hu@sifiv=
-e.com/
-> Suggested-by: Anup Patel <apatel@ventanamicro.com>
-> ---
->  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++++++++++++++---
->  1 file changed, 21 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidl=
-e-riscv-sbi.c
-> index a6e123dfe394..d6b01fc64f94 100644
-> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> @@ -16,6 +16,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_platform.h>
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
-> @@ -25,6 +26,7 @@
->  #include <asm/smp.h>
->  #include <asm/suspend.h>
->
-> +#include "cpuidle.h"
->  #include "dt_idle_states.h"
->  #include "dt_idle_genpd.h"
->
-> @@ -336,6 +338,9 @@ static int sbi_cpuidle_init_cpu(struct device *dev, i=
-nt cpu)
->                 return ret;
->         }
->
-> +       if (cpuidle_disabled())
-> +               return 0;
-> +
->         ret =3D cpuidle_register(drv, NULL);
->         if (ret)
->                 goto deinit;
-> @@ -380,20 +385,26 @@ static int sbi_cpuidle_pd_power_off(struct generic_=
-pm_domain *pd)
->  struct sbi_pd_provider {
->         struct list_head link;
->         struct device_node *node;
-> +       struct platform_device *pdev;
->  };
->
->  static LIST_HEAD(sbi_pd_providers);
->
->  static int sbi_pd_init(struct device_node *np)
->  {
-> +       struct platform_device *pdev;
->         struct generic_pm_domain *pd;
->         struct sbi_pd_provider *pd_provider;
->         struct dev_power_governor *pd_gov;
->         int ret =3D -ENOMEM;
->
-> +       pdev =3D of_platform_device_create(np, np->name, NULL);
-> +       if (!pdev)
-> +               goto out;
-> +
->         pd =3D dt_idle_pd_alloc(np, sbi_dt_parse_state_node);
->         if (!pd)
-> -               goto out;
-> +               goto free_pdev;
->
->         pd_provider =3D kzalloc(sizeof(*pd_provider), GFP_KERNEL);
->         if (!pd_provider)
-> @@ -419,6 +430,7 @@ static int sbi_pd_init(struct device_node *np)
->                 goto remove_pd;
->
->         pd_provider->node =3D of_node_get(np);
-> +       pd_provider->pdev =3D pdev;
->         list_add(&pd_provider->link, &sbi_pd_providers);
->
->         pr_debug("init PM domain %s\n", pd->name);
-> @@ -430,6 +442,8 @@ static int sbi_pd_init(struct device_node *np)
->         kfree(pd_provider);
->  free_pd:
->         dt_idle_pd_free(pd);
-> +free_pdev:
-> +       of_platform_device_destroy(&pdev->dev, NULL);
->  out:
->         pr_err("failed to init PM domain ret=3D%d %pOF\n", ret, np);
->         return ret;
-> @@ -447,6 +461,7 @@ static void sbi_pd_remove(void)
->                 if (!IS_ERR(genpd))
->                         kfree(genpd);
->
-> +               of_platform_device_destroy(&pd_provider->pdev->dev, NULL)=
-;
->                 of_node_put(pd_provider->node);
->                 list_del(&pd_provider->link);
->                 kfree(pd_provider);
-> @@ -548,7 +563,10 @@ static int sbi_cpuidle_probe(struct platform_device =
-*pdev)
->         /* Setup CPU hotplut notifiers */
->         sbi_idle_init_cpuhp();
->
-> -       pr_info("idle driver registered for all CPUs\n");
-> +       if (cpuidle_disabled())
-> +               pr_info("cpuidle is disabled\n");
-> +       else
-> +               pr_info("idle driver registered for all CPUs\n");
->
->         return 0;
->
-> @@ -592,4 +610,4 @@ static int __init sbi_cpuidle_init(void)
->
->         return 0;
->  }
-> -device_initcall(sbi_cpuidle_init);
-> +arch_initcall(sbi_cpuidle_init);
-> --
-> 2.34.1
->
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408132055.GF2IYZIB-lkp@intel.com/
 
-Regards,
-Anup
+sparse warnings: (new ones prefixed by >>)
+>> drivers/mfd/congatec-cgeb.c:906:17: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/mfd/congatec-cgeb.c:931:27: sparse: sparse: cast removes address space '__iomem' of expression
+
+vim +/__iomem +906 drivers/mfd/congatec-cgeb.c
+
+   888	
+   889	static struct cgeb_board_data *cgeb_open(resource_size_t base, u32 len)
+   890	{
+   891		u32 dw;
+   892		struct cgeb_boardinfo pbi;
+   893		struct cgeb_low_desc *low_desc;
+   894		struct cgeb_high_desc *high_desc = NULL;
+   895		u32 high_desc_phys;
+   896		u32 high_desc_len;
+   897		void *pcur, *high_desc_virt;
+   898		int ret;
+   899	
+   900		struct cgeb_board_data *board;
+   901	
+   902		board = kzalloc(sizeof(*board), GFP_KERNEL);
+   903		if (!board)
+   904			return NULL;
+   905	
+ > 906		pcur = (void *) ioremap_cache(base, len);
+   907		if (!pcur)
+   908			goto err_kfree;
+   909	
+   910		/* look for the CGEB descriptor */
+   911		low_desc = cgeb_find_magic(pcur, len, CGEB_LD_MAGIC);
+   912		if (!low_desc)
+   913			goto err_kfree;
+   914	
+   915		pr_debug("CGEB: Found CGEB_LD_MAGIC\n");
+   916	
+   917		if (low_desc->size < sizeof(struct cgeb_low_desc) - sizeof(long))
+   918			goto err_kfree;
+   919	
+   920		if (low_desc->size >= sizeof(struct cgeb_low_desc)
+   921				&& low_desc->hi_desc_phys_addr)
+   922			high_desc_phys = low_desc->hi_desc_phys_addr;
+   923		else
+   924			high_desc_phys = 0xfff00000;
+   925	
+   926		high_desc_len = (unsigned int) -(int)high_desc_phys;
+   927	
+   928		pr_debug("CGEB: Looking for CGEB hi desc between phys 0x%x and 0x%x\n",
+   929			high_desc_phys, -1);
+   930	
+   931		high_desc_virt = (void *) ioremap_cache(high_desc_phys, high_desc_len);
+   932		if (!high_desc_virt)
+   933			goto err_kfree;
+   934	
+   935		pr_debug("CGEB: Looking for CGEB hi desc between virt 0x%p and 0x%p\n",
+   936			high_desc_virt, high_desc_virt + high_desc_len - 1);
+   937	
+   938		high_desc = cgeb_find_magic(high_desc_virt, high_desc_len,
+   939						CGEB_HD_MAGIC);
+   940		if (!high_desc)
+   941			goto err_iounmap;
+   942	
+   943		pr_debug("CGEB: Found CGEB_HD_MAGIC\n");
+   944	
+   945		if (high_desc->size < sizeof(struct cgeb_high_desc))
+   946			goto err_iounmap;
+   947	
+   948		pr_debug("CGEB: data_size %u, code_size %u, entry_rel %u\n",
+   949			high_desc->data_size, high_desc->code_size, high_desc->entry_rel);
+   950	
+   951		ret = cgeb_upload_code(high_desc, board);
+   952		if (ret) {
+   953			pr_err("CGEB: Couldn't upload code to helper: %d\n", ret);
+   954			goto err_munmap;
+   955		}
+   956	
+   957		board->ds = get_data_segment();
+   958	
+   959		ret = cgeb_call_simple(board, CgebGetCgebVersion, 0, NULL, 0, &dw);
+   960		if (ret)
+   961			goto err_munmap;
+   962	
+   963		if (CGEB_GET_VERSION_MAJOR(dw) != CGEB_VERSION_MAJOR)
+   964			goto err_munmap;
+   965	
+   966		pr_debug("CGEB: BIOS interface revision: %d.%d\n",
+   967				dw >> 16, dw & 0xffff);
+   968	
+   969		if (high_desc->data_size)
+   970			dw = high_desc->data_size;
+   971		else
+   972			ret = cgeb_call_simple(board, CgebGetDataSize, 0, NULL, 0, &dw);
+   973	
+   974		if (!ret && dw) {
+   975			board->data = cgeb_user_alloc(high_desc->data_size);
+   976			if (!board->data)
+   977				goto err_munmap;
+   978		}
+   979	
+   980		ret = cgeb_call_simple(board, CgebOpen, 0, NULL, 0, NULL);
+   981		if (ret)
+   982			goto err_free_data;
+   983	
+   984		pr_debug("CGEB: Mapping memory\n");
+   985		ret = cgeb_map_memory(board);
+   986		if (ret)
+   987			goto err_free_map;
+   988		pr_debug("CGEB: Memory is mapped, getting board info\n");
+   989	
+   990		ret = cgeb_call_simple(board, CgebBoardGetInfo, 0, &pbi,
+   991				       sizeof(pbi), NULL);
+   992		if (ret)
+   993			goto err_free_map;
+   994	
+   995		pr_info("CGEB: Board name: %c%c%c%c\n",
+   996				pbi.board[0], pbi.board[1],
+   997				pbi.board[2], pbi.board[3]);
+   998	
+   999		iounmap((void __iomem *) high_desc_virt);
+  1000	
+  1001		return board;
+  1002	
+  1003	err_free_map:
+  1004		cgeb_unmap_memory(board);
+  1005	err_free_data:
+  1006		cgeb_user_free(board->data);
+  1007	err_munmap:
+  1008		cgeb_munmap(board->code, board->code_size);
+  1009	err_iounmap:
+  1010		iounmap((void __iomem *) high_desc_virt);
+  1011	err_kfree:
+  1012		kfree(board);
+  1013		return NULL;
+  1014	}
+  1015	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
