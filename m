@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-285583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660B7950FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9C2950FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2352B1F25978
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:53:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5BA1C22608
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BED1AB524;
-	Tue, 13 Aug 2024 22:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820561AB51F;
+	Tue, 13 Aug 2024 22:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pM341nC8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hDmF89uv"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3ED1AB512
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7913D1AB512
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723589549; cv=none; b=u3qW0K87NoeMl2z1x+vqVn3cla7xxFaK6wKuIfOY9ISuODP1FEl644xmJegRY4mqy8IkwmL/VKJukdY2CbP6MVmoVCr/7OFD+GfXiChvHKpOGWpZYagHJNtNUv180kDC3lRc+TKQgBwqYge+cWCrsSk51G/v00dhI8tMQbrYOuM=
+	t=1723589592; cv=none; b=Iqcg0Uitq5sKq6qhBvf3Iz3acNEtatRJA/NFC28wKeFmUrPOf/LRaAfSGuk/sj3T8ECcCPgSMgrYz9SjGtoRrIiZvx+iQ+L8uYpKZ91vPMNCIWdLu4hpt5Li0msSst3cewuW9Ek9lhAG6b/EMQGgUJ/aYbZKbiQkGcBooYuAkfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723589549; c=relaxed/simple;
-	bh=taGYQNtBhkBLngecX3rD0z1lOHvXGOPIG4tljyveswA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SX+OsDal6hOlX9wLtWJB7DrksXDgfemzCPJIdPBaQo6HfYicv4uPcF5B3NglfmmJ4idEtXcsqALJUWxm/UtyjybbMgNvrOFrDBCMEi3Y2kg3tRaaH0pLBv8okRpjr86Aq0SsSZNftU/o1U242nXy6OM3/iI+PK0D8Ek47cLbnNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pM341nC8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACF2C4AF0C;
-	Tue, 13 Aug 2024 22:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723589548;
-	bh=taGYQNtBhkBLngecX3rD0z1lOHvXGOPIG4tljyveswA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pM341nC8YVpHBt9jcYyq/lQ9kMmRvfSnJyukeluBc1PzhJ6jHSjgwHyFam3jLsFtJ
-	 4raLd4dAlLq5ZVTGSI6z4Ocput8BmlH524Br9UzKH+FFIWQ2UD1t0guGzsWH1G177j
-	 JqkK0X1ZK1ntfCYLNsByHqW97/YgF589IDTWsMhrK539XIT2C+5raJb8C99bc+tRa7
-	 vFSROiZ3Yw3y47lCQwyqOM8593uYLizA8NpiO0q/2koc10z1j0+mQtVKYtv2yEV3bp
-	 Ogiecxf3fpE4CrOk8jSXF8PzA8km5dI06vZQOMkicB+zBEUFbWdi6m1qS3fi59twH+
-	 AUM3Jl8oU8dug==
-Date: Wed, 14 Aug 2024 00:52:22 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eric Blake
- <eblake@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
- <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
- <peter.maydell@linaro.org>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v6 04/10] qapi/ghes-cper: add an interface to do generic
- CPER error injection
-Message-ID: <20240814005222.74f45f78@foz.lan>
-In-Reply-To: <20240812135744.644deaa9@imammedo.users.ipa.redhat.com>
-References: <cover.1723119423.git.mchehab+huawei@kernel.org>
-	<87799362699e4349ce4a44f3d25698d5764735c6.1723119423.git.mchehab+huawei@kernel.org>
-	<20240812135744.644deaa9@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1723589592; c=relaxed/simple;
+	bh=EqpGSRVeMFK8CiM/UlhWvX7ZYW+u82V9UBcXE9CPwpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AG46jiE0jMiNWn3WBx6fDnk//ZtqlG8Jbdv5YpN8PiMfPZl2HPgAlf6rplVOw1Q0QuLBW0mOSpNVgi4BQNzgzosht2H9voEpWk1b6uKZgDoh4+ij3uJ5PzYkmeyVi8ChzUKX/kv0/XZAJjsSYThVfwODgKJDjpSEdf2R48GCrL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hDmF89uv; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UpEJmEdQDgPAbGGAVVVZyk7pw6V5fIcc6+BwgVE2MQw=; b=hDmF89uv28pLtHmwLeqtQUua4c
+	i9s/VRfbYMYmAoHxWpl0qLVs8xB7xPr8CbdgowfRaQhJIkLRn0QHM4FwubXa0qVJCfcuTs4p7Yttt
+	CGJEj6SYRWQFEUM3N6kgPZ7IFq+A7UcT8sdpffRuDbkK31Qrj827FETwCmZvGP7EkdMzr3lZWn+3V
+	90Jf9bewEO2j2JsmNt8xqmLZSSM1cNau/52CZ5qPY+lSjNprxSDrKbGJa19EezAIFGNL+zNbkgPkA
+	RzSl4pQ4+6+vuWryaMIxrTNuOxngJZBbHxDqFsiDC4f8LcW5VseJxKDHg/+RfJl8buR9MabCTGg64
+	ZhT3ay0A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1se0O3-00000007s3G-35Gi;
+	Tue, 13 Aug 2024 22:53:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4928C30074E; Wed, 14 Aug 2024 00:53:07 +0200 (CEST)
+Date: Wed, 14 Aug 2024 00:53:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
+Message-ID: <20240813225307.GC10328@noisy.programming.kicks-ass.net>
+References: <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+ <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
+ <20240724085221.GO26750@noisy.programming.kicks-ass.net>
+ <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
+ <20240806211002.GA37996@noisy.programming.kicks-ass.net>
+ <ZrKW2wZTT3myBI0d@slm.duckdns.org>
+ <20240806215535.GA36996@noisy.programming.kicks-ass.net>
+ <ZrKfK1BCOARiWRr0@slm.duckdns.org>
+ <20240810204542.GA11646@noisy.programming.kicks-ass.net>
+ <Zruwioj86jQz8Oq6@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zruwioj86jQz8Oq6@slm.duckdns.org>
 
-Em Mon, 12 Aug 2024 13:57:44 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> n Platform Error Record - CPER - as defined at the UEFI
-> > +# specification.  See
-> > +# https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#record-header
-> > +# for more details.
-> > +#
-> > +# @notification-type: pre-assigned GUID string indicating the record
-> > +#   association with an error event notification type, as defined
-> > +#   at https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#record-header
-> > +#
-> > +# @raw-data: Contains a base64 encoded string with the payload of
-> > +#   the CPER.
-> > +#
-> > +# Since: 9.2
-> > +##
-> > +{ 'struct': 'CommonPlatformErrorRecord',
-> > +  'data': {
-> > +      'notification-type': 'str',  
+On Tue, Aug 13, 2024 at 09:14:18AM -1000, Tejun Heo wrote:
+> Hello, Peter.
 > 
-> like was mentioned at v5 review,
-> you only need this for setting cper notification type if you are (re)using
+> On Sat, Aug 10, 2024 at 10:45:42PM +0200, Peter Zijlstra wrote:
+> ...
+> > > It is tricky because the kernel part can't make assumptions about whether
+> > > two tasks are even on the same timeline. In the usual scheduling path, this
+> > > isn't a problem as the decision is made by the BPF scheduler from balance()
+> > > - if it wants to keep running the current task, it doesn't dispatch a new
+> > > one. Otherwise, it dispatches the next task.
+> > 
+> > But I have a question.. don't you clear scx.slice when a task needs to
+> > be preempted? That is, why isn't that condition sufficient to determine
+> > if curr has precedence over the first queued? If curr and it is still
+> > queued and its slice is non-zero, take curr.
 > 
->   acpi_ghes_generic_error_status() && acpi_ghes_generic_error_data()
-> 
-> however while doing this in (6/10), you are also limiting what
-> could be encoded in headers to some hardcoded values.
-> 
-> Given QEMU doesn't need to know anything about notification type,
-> modulo putting it data block header, it would be beneficial
-> to drop 'notification type' from QAPI interface, and include
-> error status block and error data headers in raw-data.
-> 
-> This way it should be possible to change headers within python script
-> without affecting QEMU and QAPI interface. On top of that
-> ghes_record_cper_errors() could be simplified by dropping (in 6/10)
->    acpi_ghes_generic_error_status() && acpi_ghes_generic_error_data()
-> and just copying raw-data as is directly into error buffer (assuming
-> script put needed headers cper data).
-> 
-> From fusing pov it's also beneficial to try generate junk error status
-> block headers, for which python script looks like ideal place to put
-> it in.
+> scx.slice is used a bit different from other sched classes mostly because
+> there are two layers - the SCX core and the BPF scheduler itself. The BPF
+> scheduler uses scx.slice to tell the SCX core to "don't bother asking about
+> it until the current slice has been exhausted" - ie. it's a way to offload
+> things like tick handling and preemption by higher priority sched classes to
+> SCX core. When scx.slice expires, the BPF scheduler's dispatch() is called
+> which can then decide whether to replenish the slice of the current task or
+> something else should run and so on.
 
-Got it. Will change it to just:
-
-{ 'command': 'ghes-cper',
-  'data': {
-    'cper': 'str'
-  },
-  'features': [ 'unstable' ]
-}
-
-where cper contains an base64-encoded string with the entire raw data
-including generic error status end generic error data.
-
-I'm moving the current defaults to the python script. Let's merge
-this with the defaults there. The script can later be modified to
-allow changing such defaults.
-
-Thanks,
-Mauro
+Right, but can't we flip that on its head and state that when scx.slice
+is non-zero, we should pick current and not bother asking for what's
+next?
 
