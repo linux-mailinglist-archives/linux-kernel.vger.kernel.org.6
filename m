@@ -1,218 +1,124 @@
-Return-Path: <linux-kernel+bounces-284838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E729505AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:56:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90C29505B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197F91F25845
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:56:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE311C20C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F50219B3EE;
-	Tue, 13 Aug 2024 12:56:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAE319ADA8;
-	Tue, 13 Aug 2024 12:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3E619D07B;
+	Tue, 13 Aug 2024 12:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeuruCEO"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE35B19B3D8;
+	Tue, 13 Aug 2024 12:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723553777; cv=none; b=ccEqyDWurR1BgcHQm8V4NwW90CQfqX/W9XxwYb3cgRcLRGPNMbEtUcO73p1Lco8YH/xY0dAbj66aKudGvlj6hQNWEQi9Bvtkrq8gXSBYsj0fwYDssewfYUsU0+z3+8lfkXDlvMet57SZ7YOQ0P9JVo/cP1E8zbNhF3iQkRfwk80=
+	t=1723553801; cv=none; b=Wz/+nkleBXRyAABdxoBQDUje+PJiWdlE/hX9z/sm3UXjxxX6gN3BBHQzdCe46IxQxXH92GKuIImsFvrH2KKBJP8YS5VFJ4HM2DpGORg05GZ1JwVL0BR+50EBpNfHbFIUNmSZ8dGr/4phimwtMA2uDxhyiNh+kDT90la8c+d3lAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723553777; c=relaxed/simple;
-	bh=wFtTI19K2p9zqVAIUz0fc1eIvdJ9DNFocqaSowv19pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X9oGhijQ7QyJWex6Mbt+j1ntJmypX0v7dqx1M4IIkv3d66t06y8B7bm3vetcYxNbQL/rzWap5HHDtOciNGJfX/bUSJNb1eLv+OKbpafrxdXVuzGbM/jPHPJIAuozUn+ve/+7A25VtIPTs8T5Q+sSMSPkzhSu7jGD+rWRAW1yaq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A028312FC;
-	Tue, 13 Aug 2024 05:56:40 -0700 (PDT)
-Received: from [10.57.84.20] (unknown [10.57.84.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B3FA3F73B;
-	Tue, 13 Aug 2024 05:56:13 -0700 (PDT)
-Message-ID: <93d9ffb2-482d-49e0-8c67-b795256d961a@arm.com>
-Date: Tue, 13 Aug 2024 13:56:11 +0100
+	s=arc-20240116; t=1723553801; c=relaxed/simple;
+	bh=whbRnYju75UWipX2ZGr+GH/9h9Pj/Z1GL6BBF28Y3jA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VMHkwAfc/LRGGAr65HFTmebrcizzxJ1lkXUdaYFLUk0oBH87kUdCd1axMmop/U8U/E8zJdKTBqoOcuT/RAjmtKUuXVemJlUE5k9Fn2jf5lxbFUEOjtgOR5ugCpvf8tx1Uaxuy9dtwW1GQRPMElPmT4x5Vy3Ehxy071oROeSVjG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SeuruCEO; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367990aaef3so3095370f8f.0;
+        Tue, 13 Aug 2024 05:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723553798; x=1724158598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N0tUAb7xzL2y2cfaINDDXHjm40ddk5vPxuhg5vBeQr8=;
+        b=SeuruCEONfA3aceGqvP8mGldFdh35xtCL9zyE852L/Vlwfl6oZy+v1w5Myezl1n9Sr
+         kTY4szp7Xmhv+d67M1VSKTmDadf3MaoNs2fl6E4skQfmqlmAMmzGZPs+/pI+p1b+RnRs
+         OshF7iEBYc2B0nQR8KnOYuhcTFDccZ3URETgkfDygTRd0iqxMeW6N9FRc4EQuTNZwnBk
+         3ZueRK92Ffb+KvsSb+DZXDet5bgWNMwKZ6Xsca37N72nV276V9vexGdK1VMDT66xRnwT
+         2S5l93o5kw1SU0yUKV7gKCc38T05FWjvTmVLKw6ZDLd3fEfzNjWuwlwPVcMZCXuMGETj
+         4Iow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723553798; x=1724158598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N0tUAb7xzL2y2cfaINDDXHjm40ddk5vPxuhg5vBeQr8=;
+        b=Sfcvqj//od0Td6Wx54mTxF7WlG+vgvT0pCxgRcQ3xe8X5wQOGjAMS4QMB0ivEr33iz
+         Y9tAzs78LQ1hqQkDnKJYX1HLqjH4HBiOJ63D0WH/I4Sr/B8esgeqWmfF8M2uXYj+sN+Y
+         Unumfc51M9GOuaCXdBlDL7F2tgNktSl0wQWFDJ0kFAXT1qO/8lSPqYH7sr/Ei4Wfj0ou
+         lENu2XsKIWNuexj5a18mbv6mNuhl/nanxHObCu1fEIeNR0jD2c0isNHb2npJ06Eq5esf
+         xWkwQ5rBPP0XJLourNjaD+tDLOVF86V9AHcqeU7aIJoCR30DO/LnlYsz+I6JD0G11KzC
+         b7IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOIJFWjfl3waFsq51yBRj2GybUZ+n3XpNHoXjN1o4QEzqBCr6umEnF9++wpn6aAAIMm99G3VFXWvi6kGpZhGo3KIyAApGqBHcFqiGP
+X-Gm-Message-State: AOJu0YxNiHLAc2p2OJS+h0hahhKNsmlL+tZ1HQdGxUVIxxV80zuqMOJg
+	+EEEbjQ/IjkxWOhxKX6YDNIv/BikANn39hrMYKeC1c/XikHgdqF0z1UEl8voXku/pspztEZYyMu
+	w3idSRZjFsMqzqC3C6/I444ZGnII=
+X-Google-Smtp-Source: AGHT+IFo1+br8YX61HWh8cYSwERwzh+iP0J5n6X1I0605mKTFVkgDpdxxygsikzkjEZKdPfOlxzi7VeiAH5fyo8sLys=
+X-Received: by 2002:a5d:4882:0:b0:368:31c7:19d9 with SMTP id
+ ffacd0b85a97d-3716cceba21mr2151749f8f.12.1723553797884; Tue, 13 Aug 2024
+ 05:56:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] cpuidle/menu: Address performance drop from favoring
- physical over polling cpuidle state
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>, rafael@kernel.org,
- daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: gautam@linux.ibm.com
-References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240809073120.250974-1-aboorvad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240804002912.3293177-2-crwulff@gmail.com> <2024081335-wrist-earpiece-a738@gregkh>
+In-Reply-To: <2024081335-wrist-earpiece-a738@gregkh>
+From: Chris Wulff <crwulff@gmail.com>
+Date: Tue, 13 Aug 2024 08:56:26 -0400
+Message-ID: <CAB0kiB+ONUpx9Ozg9x836BEdCtSSm-J+jpy2BKoDgVF1CP9O9Q@mail.gmail.com>
+Subject: Re: [PATCH v3] usb: gadget: f_uac1: Change volume name and remove alt names
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+	Jeff Johnson <quic_jjohnson@quicinc.com>, Perr Zhang <perr@usb7.net>, 
+	Pavel Hofman <pavel.hofman@ivitera.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/9/24 08:31, Aboorva Devarajan wrote:
-> This patch aims to discuss a potential performance degradation that can occur
-> in certain workloads when the menu governor prioritizes selecting a physical
-> idle state over a polling state for short idle durations. 
-> 
-> Note: This patch is intended to showcase a performance degradation, applying
-> this patch could lead to increased power consumption due to the trade-off between
-> performance and power efficiency, potentially causing a higher preference for
-> performance at the expense of power usage.
-> 
+On Tue, Aug 13, 2024 at 4:34=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sat, Aug 03, 2024 at 08:29:13PM -0400, crwulff@gmail.com wrote:
+> > From: Chris Wulff <crwulff@gmail.com>
+> >
+> > This changes the UAPI to align with disussion of alt settings work.
+> >
+> > fu_name is renamed to fu_vol_name, and alt settings mode names
+> > are removed for now in favor of future work where they will be
+> > settable in subdirectories for each alt mode.
+> >
+> > discussion thread for api changes for alt mode settings:
+> > https://lore.kernel.org/linux-usb/35be4668-58d3-894a-72cf-de1afaacae45@=
+ivitera.com/T/
+>
+> What is now going to break due to this change?  What userspace tools use
+> the old names that need to be changed?
+>
+> Are you _SURE_ that you can rename external files like this and
+> everything will keep on working?
 
-Not really a menu expert, but at this point I don't know who dares call
-themselves one.
-The elephant in the room would be: Does teo work better for you?
+Nothing is using them, since they were just introduced. I wanted to get
+the API changed before they make it to mainline and somebody starts
+using them.
 
-> ==================================================
-> System details in which the degradation is observed:
-> 
-> $ uname -r
-> 6.10.0+
-> 
-> $ lscpu
-> Architecture:             ppc64le
->   Byte Order:             Little Endian
-> CPU(s):                   160
->   On-line CPU(s) list:    0-159
-> Model name:               POWER10 (architected), altivec supported
->   Model:                  2.0 (pvr 0080 0200)
->   Thread(s) per core:     8
->   Core(s) per socket:     3
->   Socket(s):              6
->   Physical sockets:       4
->   Physical chips:         2
->   Physical cores/chip:    6
-> Virtualization features:
->   Hypervisor vendor:      pHyp
->   Virtualization type:    para
-> Caches (sum of all):
->   L1d:                    1.3 MiB (40 instances)
->   L1i:                    1.9 MiB (40 instances)
->   L2:                     40 MiB (40 instances)
->   L3:                     160 MiB (40 instances)
-> NUMA:
->   NUMA node(s):           6
->   NUMA node0 CPU(s):      0-31
->   NUMA node1 CPU(s):      32-71
->   NUMA node2 CPU(s):      72-79
->   NUMA node3 CPU(s):      80-87
->   NUMA node4 CPU(s):      88-119
->   NUMA node5 CPU(s):      120-159
-> 
-> 
-> $ cpupower idle-info
-> CPUidle driver: pseries_idle
-> CPUidle governor: menu
-> analyzing CPU 0:
-> 
-> Number of idle states: 2
-> Available idle states: snooze CEDE
-> snooze:
-> Flags/Description: snooze
-> Latency: 0
-> Residency: 0
-> Usage: 6229
-> Duration: 402142
-> CEDE:
-> Flags/Description: CEDE
-> Latency: 12
-> Residency: 120
-> Usage: 191411
-> Duration: 36329999037
-> 
-> ==================================================
-> 
-> The menu governor contains a condition that selects physical idle states over,
-> such as the CEDE state over polling state, by checking if their exit latency meets
-> the latency requirements. This can lead to performance drops in workloads with
-> frequent short idle periods.
-> 
-> The specific condition which causes degradation is as below (menu governor):
-> 
-> ```
-> if (s->target_residency_ns > predicted_ns) {
->     ...
->     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
->         s->exit_latency_ns <= latency_req &&
->         s->target_residency_ns <= data->next_timer_ns) {
->         predicted_ns = s->target_residency_ns;
->         idx = i;
->         break;
->     }
->     ...
-> }
-> ```
-> 
-> This condition can cause the menu governor to choose the CEDE state on Power
-> Systems (residency: 120 us, exit latency: 12 us) over a polling state, even
-> when the predicted idle duration is much shorter than the target residency
-> of the physical state. This misprediction leads to performance degradation
-> in certain workloads.
-> 
+You just applied the patch that introduced them into usb-next on 7/31/2024,
+just after v6.11-rc1 so they haven't yet made it to the mainline kernel.
 
-So clearly the condition
-s->target_residency_ns <= data->next_timer_ns)
-is supposed to prevent this, but data->next_timer_ns isn't accurate,
-have you got any idea what it's set to in your workload usually?
-Seems like your workload is timer-based, so the idle duration should be
-predicted accurately.
+This is the patch that introduces them:
 
+https://lore.kernel.org/all/CO1PR17MB541911B0C80D21E4B575E48CE1112@CO1PR17M=
+B5419.namprd17.prod.outlook.com/
 
-> ==================================================
-> Test Results
-> ==================================================
-> 
-> This issue can be clearly observed with the below test.
-> 
-> A test with multiple wakee threads and a single waker thread was run to
-> demonstrate this issue. The waker thread periodically wakes up the wakee
-> threads after a specific sleep duration, creating a repeating of sleep -> wake
-> pattern. The test was run for a stipulated period, and cpuidle statistics are
-> collected.
-> 
-> ./cpuidle-test -a 0 -b 10 -b 20 -b 30 -b 40 -b 50 -b 60 -b 70 -r 20 -t 60
-> 
-> ==================================================
-> Results (Baseline Kernel):
-> ==================================================
-> Wakee 0[PID 8295] affined to CPUs: 10,
-> Wakee 2[PID 8297] affined to CPUs: 30,
-> Wakee 3[PID 8298] affined to CPUs: 40,
-> Wakee 1[PID 8296] affined to CPUs: 20,
-> Wakee 4[PID 8299] affined to CPUs: 50,
-> Wakee 5[PID 8300] affined to CPUs: 60,
-> Wakee 6[PID 8301] affined to CPUs: 70,
-> Waker[PID 8302] affined to CPUs: 0,
-> 
-> |-----------------------------------|-------------------------|-----------------------------|
-> | Metric                            | snooze                  | CEDE                        |
-> |-----------------------------------|-------------------------|-----------------------------|
-> | Usage                             | 47815                   | 2030160                     |
-> | Above                             | 0                       | 2030043                     |
-> | Below                             | 0                       | 0                           |
-> | Time Spent (us)                   | 976317 (1.63%)          | 51046474 (85.08%)           |
-> | Overall average sleep duration    | 28.721 us               |                             |
-> | Overall average wakeup latency    | 6.858 us                |                             |
-> |-----------------------------------|-------------------------|-----------------------------|
-> 
-> In this test, without the patch, the CPU often enters the CEDE state for
-> sleep durations of around 20-30 microseconds, even though the CEDE state's
-> residency time is 120 microseconds. This happens because the menu governor
-> prioritizes the physical idle state (CEDE) if its exit latency is within
-> the latency limits. It also uses next_timer_ns for comparison, which can
-> be farther off than the actual idle duration as it is more predictable,
-> instead of using predicted idle duration as a comparision point with the
-> target residency.
-
-Ideally that shouldn't be the case though (next_timer_ns be farther off the
-actual idle duration).
-
-> [snip]
-
+>
+> thanks,
+>
+> greg k-h
 
