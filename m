@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-285509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78686950E55
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:07:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D4F0950E56
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE5A1F239B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 748141C2361A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB981A7071;
-	Tue, 13 Aug 2024 21:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589C91A76C6;
+	Tue, 13 Aug 2024 21:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ih9gvZS0"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="XsZZGtBk"
+Received: from sender3-op-o18.zoho.com (sender3-op-o18.zoho.com [136.143.184.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03131A7067
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3316E1A706A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723583202; cv=pass; b=SV5g5dVXIuTCLMrOfR9VV47770rip9jiPHmLY06ZbPYDQQIisvwy9d3O44IwO/UlvNBE4ezua8lrx79AjFRIynlj23oFdCQy9SDOiiIxc/CfqXsxbyJEK+0tg8CfoucdLiopdipLRn0mhKS8bxJ5MsRxdYPeflhvUD/MCxTdB8w=
+	t=1723583204; cv=pass; b=saeaAYw1KRzRV/Feq2upXnMbfjC8WXkLD1Gps4yVf1DJkY/7Os0jjYv8W1pUEhxweUWDdPcV8yAflFwyMA39OEdzOZs3O7aMNn6Gc6WfIf25H+7laxZi8nKv9fhbYJ9G9oZVS3kMOeZQ7l5cAvlAO+u329BdrhCoO5FJP1dCEGU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723583202; c=relaxed/simple;
-	bh=DY55RFZqJXWmOOjke7ZNey8T35aIJyQCDUKVgyEywV0=;
+	s=arc-20240116; t=1723583204; c=relaxed/simple;
+	bh=qWm9n3PWuVmoE8n2Sr5A4kKFFF3A9ezgPCzJ9GxbUkY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AvAG4gen2DQ13U8tQi8BvlJzgGIjFh8j58nMcNP1OIaW1wR4Bz0jBY1yV6R/RUwoQ6m7ECcAhCM0xTT7JWDdivYxvfEE7qBjeHAbLbz7tLv3800pKGKMxXMwtET97xW6Jt7BRJO6HQ1s0mJV6PLELzDAPYmnfZRVDCElkfix/OY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ih9gvZS0; arc=pass smtp.client-ip=136.143.188.12
+	 MIME-Version; b=qKu5iyvRfHaNcMOsxi/WJB+1HZHvYu6y/kAPSeC/RsAQSLb7US65iJwrzimMq8/wC8gS5S0DWvBeuqdQCA/CJeruEBkgyWgkm9oIjkeyp8EeMVCYOKLqfvHOeHPBkWw1xywSe1+ha6webCVw7aBSXwivTDsNAb8s3GjgPJ5huxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=XsZZGtBk; arc=pass smtp.client-ip=136.143.184.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Delivered-To: boris.brezillon@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723583195; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1723583197; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=Xc1MhJLswEzgKsrc62zKJplUxUdD6OKd1TyFL5XSAspuuIM/BorStZPz6KCfdwkds0ilk5WBR+kv8bxOXb+MgkQBU1ofe+dhlPcPv7t6s5hbrbG/0wVC+7xCvYS2udGl1H0m080782C5MsBFuz+FGNUgS/PDdaHcNLoJ4lA4z9A=
+	b=Uyv7JoKnVTonV0l0r6qUk1rA/ISqtejv45gbXePpgjG2fM3ds232gQ7ghq3nGs6bThk8icp7EkA4Id+DJyhCjItrztSLrcii/pHd+1NYhxf/+Gy+MXtTZ9Ju2UyPNvpjO39vW/SV1RD6gylc11WAHsGWVow195cZT/C4RsEAiRg=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723583195; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Hxzm49gmsbSKbs0TbF5K6vGCIKx5EAMcbDENEu5LKHU=; 
-	b=bbushN8WSMdXKFmLUvi8j276Whus7CspOLb3xOde21XBrPSRDcqhlcxOEVdYtTnns4vmn9xN3ylrniSDSuAep9qi6nW/HA0lgHAa3sorI3tI4xjb+AowKwgSr//GZamTteimS8pJYGNC7LimdArr5z7fPW2URWBar4pCVL2Kiw0=
+	t=1723583197; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=X7hMMm58w0Lxs4euGai67p0IMEstJ81Np3QDMu1KXrY=; 
+	b=KtS1a0RqVWHdrmkrNMSNopO7chSBxJPNuNKJ9/Po5/H3fb0EbMftqhLBRYRhrNENmmx4OmV/06COzoOMjszYMWe/Lb8k/OiA3jclChJwnj9JyvhnMNh2vFT3EAfP9kWodaDVB57/UzSVuJb5I2A46Z+cBD6KNpRbYH/fyUB9a9A=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
 	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723583195;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723583197;
 	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Hxzm49gmsbSKbs0TbF5K6vGCIKx5EAMcbDENEu5LKHU=;
-	b=ih9gvZS0YccgfJKTr9yzi4CawuUul4SkyFyAJhQAbxZmASuL0fOQrrEbJJDkSSIc
-	GtnqD2mf+QqKR7bNX4SMgGKzY9i+a3oTGSdjWExmAUOQIS5wU1V9mzJjGxskJS8Z68T
-	NcbuIzJam3DxdHqUCqzgwRPSg2P5wJ5UApGkB6CU=
-Received: by mx.zohomail.com with SMTPS id 172358319360042.98901637150698;
-	Tue, 13 Aug 2024 14:06:33 -0700 (PDT)
+	bh=X7hMMm58w0Lxs4euGai67p0IMEstJ81Np3QDMu1KXrY=;
+	b=XsZZGtBkaSY1+nwNu4JEU+SDIrOZDK0nJMW6l0Uu35orrncQr9Qab8FrItQRxlZJ
+	BMTXd0c91nq1CNVsP203S86myYqOCR2w2q+2LbYeE81tHaDqj8bEEkfZm0dW0WLi+cr
+	yNHdHcpkAQMs8s4ie6flS0mhX1RacUpmYGZOFAfU=
+Received: by mx.zohomail.com with SMTPS id 1723583196586939.8017438652769;
+	Tue, 13 Aug 2024 14:06:36 -0700 (PDT)
 From: Daniel Almeida <daniel.almeida@collabora.com>
 To: liviu.dudau@arm.com,
 	steven.price@arm.com,
@@ -60,9 +60,9 @@ To: liviu.dudau@arm.com,
 	faith.ekstrand@collabora.com
 Cc: Daniel Almeida <daniel.almeida@collabora.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] drm: panthor: add devcoredump support
-Date: Tue, 13 Aug 2024 18:05:45 -0300
-Message-ID: <20240813210555.607641-4-daniel.almeida@collabora.com>
+Subject: [PATCH v2 3/5] drm: panthor: add debugfs support in panthor_sched
+Date: Tue, 13 Aug 2024 18:05:46 -0300
+Message-ID: <20240813210555.607641-5-daniel.almeida@collabora.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240813210555.607641-1-daniel.almeida@collabora.com>
 References: <20240710225011.275153-1-daniel.almeida@collabora.com>
@@ -76,759 +76,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-Dump the GPU state using devcoredump. This is useful for debugging
-purposes.
+In preparation for future patches, add support for debugfs in
+panthor_sched.c.
+
+Follow-up patches will make use of debugfs files to control aspects of
+the dumping process.
 
 Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 ---
- drivers/gpu/drm/panthor/Kconfig         |   1 +
- drivers/gpu/drm/panthor/Makefile        |   1 +
- drivers/gpu/drm/panthor/panthor_dump.c  | 376 ++++++++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_dump.h  |  21 ++
- drivers/gpu/drm/panthor/panthor_mmu.c   |  22 ++
- drivers/gpu/drm/panthor/panthor_mmu.h   |   6 +
- drivers/gpu/drm/panthor/panthor_sched.c |  51 +++-
- drivers/gpu/drm/panthor/panthor_sched.h |  10 +
- include/uapi/drm/panthor_drm.h          | 124 ++++++++
- 9 files changed, 611 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/panthor/panthor_dump.c
- create mode 100644 drivers/gpu/drm/panthor/panthor_dump.h
+ drivers/gpu/drm/panthor/panthor_drv.c   | 1 +
+ drivers/gpu/drm/panthor/panthor_sched.c | 9 +++++++++
+ drivers/gpu/drm/panthor/panthor_sched.h | 7 +++++++
+ 3 files changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/drm/panthor/Kconfig b/drivers/gpu/drm/panthor/Kconfig
-index 55b40ad07f3b..eeb80d8e8064 100644
---- a/drivers/gpu/drm/panthor/Kconfig
-+++ b/drivers/gpu/drm/panthor/Kconfig
-@@ -14,6 +14,7 @@ config DRM_PANTHOR
- 	select IOMMU_IO_PGTABLE_LPAE
- 	select IOMMU_SUPPORT
- 	select PM_DEVFREQ
-+	select WANT_DEVCOREDUMP
- 	help
- 	  DRM driver for ARM Mali CSF-based GPUs.
- 
-diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
-index 15294719b09c..19be24ddf577 100644
---- a/drivers/gpu/drm/panthor/Makefile
-+++ b/drivers/gpu/drm/panthor/Makefile
-@@ -4,6 +4,7 @@ panthor-y := \
- 	panthor_devfreq.o \
- 	panthor_device.o \
- 	panthor_drv.o \
-+	panthor_dump.o \
- 	panthor_fw.o \
- 	panthor_gem.o \
- 	panthor_gpu.o \
-diff --git a/drivers/gpu/drm/panthor/panthor_dump.c b/drivers/gpu/drm/panthor/panthor_dump.c
-new file mode 100644
-index 000000000000..7ec0e21dc7e9
---- /dev/null
-+++ b/drivers/gpu/drm/panthor/panthor_dump.c
-@@ -0,0 +1,376 @@
-+// SPDX-License-Identifier: GPL-2.0 or MIT
-+/* SPDX-FileCopyrightText: Copyright Collabora 2024 */
-+
-+#include <drm/drm_gem.h>
-+#include <linux/iosys-map.h>
-+#include <linux/devcoredump.h>
-+#include <linux/err.h>
-+#include <linux/vmalloc.h>
-+#include <linux/types.h>
-+#include <uapi/drm/panthor_drm.h>
-+
-+#include "panthor_device.h"
-+#include "panthor_dump.h"
-+#include "panthor_mmu.h"
-+#include "panthor_sched.h"
-+
-+/* A magic value used when starting a new section in the dump */
-+#define PANT_DUMP_MAGIC 0x544e4150 /* PANT */
-+#define PANT_DUMP_MAJOR 1
-+#define PANT_DUMP_MINOR 0
-+
-+/* keep track of where we are in the underlying buffer */
-+struct dump_allocator {
-+	u8 *start;
-+	u8 *curr;
-+	size_t pos;
-+	size_t capacity;
-+};
-+
-+struct vm_dump_count {
-+	u64 size;
-+	u32 vas;
-+};
-+
-+struct queue_count {
-+	u32 queues;
-+};
-+
-+struct dump_group_args {
-+	struct panthor_device *ptdev;
-+	struct dump_allocator *alloc;
-+	struct panthor_group *group;
-+};
-+
-+struct dump_va_args {
-+	struct panthor_device *ptdev;
-+	struct dump_allocator *alloc;
-+};
-+
-+static void *alloc_bytes(struct dump_allocator *alloc, size_t size)
-+{
-+	void *ret;
-+
-+	if (alloc->pos + size > alloc->capacity)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = alloc->curr;
-+	alloc->curr += size;
-+	alloc->pos += size;
-+	return ret;
-+}
-+
-+static struct drm_panthor_dump_header *
-+alloc_header(struct dump_allocator *alloc, u32 type, size_t size)
-+{
-+	struct drm_panthor_dump_header *hdr;
-+	int header_size = sizeof(*hdr);
-+
-+	hdr = alloc_bytes(alloc, header_size);
-+	if (IS_ERR(hdr))
-+		return hdr;
-+
-+	hdr->magic = PANT_DUMP_MAGIC;
-+	hdr->header_type = type;
-+	hdr->header_size = header_size;
-+	hdr->data_size = size;
-+	return hdr;
-+}
-+
-+static int dump_bo(struct panthor_device *ptdev, u8 *dst,
-+		   struct drm_gem_object *obj, int offset, int size)
-+{
-+	struct iosys_map map = {};
-+	int ret;
-+
-+	ret = drm_gem_vmap_unlocked(obj, &map);
-+	if (ret)
-+		return ret;
-+
-+	drm_dbg(&ptdev->base, "dumping bo %p, offset %d, size %d\n", obj,
-+		offset, size);
-+
-+	memcpy(dst, map.vaddr + offset, size);
-+	drm_gem_vunmap_unlocked(obj, &map);
-+	return ret;
-+}
-+
-+static int dump_va(struct dump_va_args *dump_va_args,
-+		   const struct drm_gpuva *va, int type)
-+{
-+	struct drm_gem_object *obj = va->gem.obj;
-+	const int hdr_size =
-+		sizeof(struct drm_panthor_dump_gpuva) + va->va.range;
-+	struct drm_panthor_dump_gpuva *dump_va;
-+	struct drm_panthor_dump_header *dump_hdr;
-+	u8 *bo_data;
-+
-+	dump_hdr = alloc_header(dump_va_args->alloc, type, hdr_size);
-+	if (IS_ERR(dump_hdr))
-+		return PTR_ERR(dump_hdr);
-+
-+	dump_va = alloc_bytes(dump_va_args->alloc, sizeof(*dump_va));
-+	if (IS_ERR(dump_va))
-+		return PTR_ERR(dump_va);
-+
-+	bo_data = alloc_bytes(dump_va_args->alloc, va->va.range);
-+	if (IS_ERR(bo_data))
-+		return PTR_ERR(bo_data);
-+
-+	dump_va->addr = va->va.addr;
-+	dump_va->range = va->va.range;
-+
-+	return dump_bo(dump_va_args->ptdev, bo_data, obj, va->gem.offset,
-+		       va->va.range);
-+}
-+
-+static int dump_va_cb(void *priv, const struct drm_gpuva *va)
-+{
-+	struct dump_va_args *dump_va_args = priv;
-+	int ret;
-+
-+	ret = dump_va(dump_va_args, va, DRM_PANTHOR_DUMP_HEADER_TYPE_VM);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int count_va_cb(void *priv, const struct drm_gpuva *va)
-+{
-+	struct vm_dump_count *count = priv;
-+
-+	count->vas++;
-+	count->size += va->va.range;
-+	return 0;
-+}
-+
-+static void count_queues(struct queue_count *count,
-+			 struct drm_panthor_dump_group_info *info)
-+{
-+	count->queues += info->queue_count;
-+}
-+
-+static int compute_dump_size(struct vm_dump_count *va_count,
-+			     struct queue_count *group_and_q_cnt)
-+{
-+	int size = 0;
-+	int i;
-+
-+	size += sizeof(struct drm_panthor_dump_header);
-+	size += sizeof(struct drm_panthor_dump_version);
-+
-+	size += sizeof(struct drm_panthor_dump_header);
-+	size += sizeof(struct drm_panthor_gpu_info);
-+
-+	size += sizeof(struct drm_panthor_dump_header);
-+	size += sizeof(struct drm_panthor_csif_info);
-+
-+	size += sizeof(struct drm_panthor_dump_header);
-+	size += sizeof(struct drm_panthor_fw_info);
-+
-+	for (i = 0; i < va_count->vas; i++) {
-+		size += sizeof(struct drm_panthor_dump_header);
-+		size += sizeof(struct drm_panthor_dump_gpuva);
-+	}
-+
-+	size += va_count->size;
-+
-+	size += sizeof(struct drm_panthor_dump_header);
-+	size += sizeof(struct drm_panthor_dump_group_info);
-+
-+	for (i = 0; i < group_and_q_cnt->queues; i++) {
-+		size += sizeof(struct drm_panthor_dump_header);
-+		size += sizeof(struct drm_panthor_dump_queue_info);
-+	}
-+
-+	return size;
-+}
-+
-+static int dump_queue_info(struct dump_group_args *dump_group_args,
-+			   struct drm_panthor_dump_queue_info *info)
-+{
-+	struct drm_panthor_dump_header *hdr;
-+	struct drm_panthor_dump_queue_info *queue_info;
-+
-+	drm_dbg(&dump_group_args->ptdev->base,
-+		"dumping queue info for cs_id %d, gpuva: %llx, insert: %llx, extract: %llx\n",
-+		info->cs_id, info->ringbuf_gpuva, info->ringbuf_insert,
-+		info->ringbuf_extract);
-+
-+	hdr = alloc_header(dump_group_args->alloc,
-+			   DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO,
-+			   sizeof(*info));
-+	if (IS_ERR(hdr))
-+		return PTR_ERR(hdr);
-+
-+	queue_info = alloc_bytes(dump_group_args->alloc, sizeof(*queue_info));
-+	if (IS_ERR(queue_info))
-+		return PTR_ERR(queue_info);
-+
-+	*queue_info = *info;
-+	return 0;
-+}
-+
-+static int dump_group_info(struct dump_group_args *dump_group_args,
-+			   struct drm_panthor_dump_group_info *info)
-+{
-+	struct drm_panthor_dump_header *hdr;
-+	struct drm_panthor_dump_group_info *group_info;
-+	int ret = 0;
-+
-+	drm_dbg(&dump_group_args->ptdev->base,
-+		"dumping group info for num_queues: %d, faulty bitmask: %d\n",
-+		info->queue_count, info->faulty_bitmask);
-+
-+	hdr = alloc_header(dump_group_args->alloc,
-+			   DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO,
-+			   sizeof(*info));
-+	if (IS_ERR(hdr))
-+		return PTR_ERR(hdr);
-+
-+	group_info = alloc_bytes(dump_group_args->alloc, sizeof(*group_info));
-+	if (IS_ERR(group_info))
-+		return PTR_ERR(group_info);
-+
-+	*group_info = *info;
-+
-+	for (int i = 0; i < info->queue_count; i++) {
-+		struct drm_panthor_dump_queue_info qinfo;
-+
-+		ret = panthor_sched_get_queueinfo(dump_group_args->group, i,
-+						  &qinfo);
-+		if (ret)
-+			break;
-+		ret = dump_queue_info(dump_group_args, &qinfo);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
-+int panthor_core_dump(struct panthor_core_dump_args *args)
-+{
-+	u8 *mem;
-+	int dump_size;
-+	int ret = 0;
-+	struct dump_allocator alloc = {};
-+	struct vm_dump_count va_count = {};
-+	struct drm_panthor_dump_header *hdr;
-+	struct drm_panthor_dump_version *version;
-+	struct drm_panthor_gpu_info *gpu_info;
-+	struct drm_panthor_csif_info *csif_info;
-+	struct drm_panthor_fw_info *fw_info;
-+	struct queue_count group_and_q_cnt = {};
-+	struct dump_va_args dump_va_args = {};
-+	struct drm_panthor_dump_group_info group_info;
-+	struct dump_group_args dump_group_args;
-+
-+	panthor_vm_foreach_va(args->group_vm, count_va_cb, &va_count);
-+
-+	panthor_sched_get_groupinfo(args->group, &group_info);
-+
-+	count_queues(&group_and_q_cnt, &group_info);
-+
-+	dump_size = compute_dump_size(&va_count, &group_and_q_cnt);
-+
-+	mem = vzalloc(dump_size);
-+	if (!mem)
-+		return ret;
-+
-+	alloc = (struct dump_allocator){
-+		.start = mem,
-+		.curr = mem,
-+		.pos = 0,
-+		.capacity = dump_size,
-+	};
-+
-+	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION,
-+			   sizeof(struct drm_panthor_dump_version));
-+	if (IS_ERR(hdr)) {
-+		ret = PTR_ERR(hdr);
-+		goto free_valloc;
-+	}
-+
-+	version = alloc_bytes(&alloc, sizeof(*version));
-+	if (IS_ERR(version)) {
-+		ret = PTR_ERR(version);
-+		goto free_valloc;
-+	}
-+
-+	*version = (struct drm_panthor_dump_version){
-+		.major = PANT_DUMP_MAJOR,
-+		.minor = PANT_DUMP_MINOR,
-+	};
-+
-+	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO,
-+			   sizeof(args->ptdev->gpu_info));
-+	if (IS_ERR(hdr)) {
-+		ret = PTR_ERR(hdr);
-+		goto free_valloc;
-+	}
-+
-+	gpu_info = alloc_bytes(&alloc, sizeof(*gpu_info));
-+	if (IS_ERR(gpu_info)) {
-+		ret = PTR_ERR(gpu_info);
-+		goto free_valloc;
-+	}
-+
-+	*gpu_info = args->ptdev->gpu_info;
-+
-+	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO,
-+			   sizeof(args->ptdev->csif_info));
-+	if (IS_ERR(hdr)) {
-+		ret = PTR_ERR(hdr);
-+		goto free_valloc;
-+	}
-+
-+	csif_info = alloc_bytes(&alloc, sizeof(*csif_info));
-+	if (IS_ERR(csif_info)) {
-+		ret = PTR_ERR(csif_info);
-+		goto free_valloc;
-+	}
-+
-+	*csif_info = args->ptdev->csif_info;
-+
-+	hdr = alloc_header(&alloc, DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO,
-+			   sizeof(args->ptdev->fw_info));
-+	if (IS_ERR(hdr)) {
-+		ret = PTR_ERR(hdr);
-+		goto free_valloc;
-+	}
-+
-+	fw_info = alloc_bytes(&alloc, sizeof(*fw_info));
-+	if (IS_ERR(fw_info)) {
-+		ret = PTR_ERR(fw_info);
-+		goto free_valloc;
-+	}
-+
-+	*fw_info = args->ptdev->fw_info;
-+
-+	dump_va_args.ptdev = args->ptdev;
-+	dump_va_args.alloc = &alloc;
-+	ret = panthor_vm_foreach_va(args->group_vm, dump_va_cb, &dump_va_args);
-+	if (ret)
-+		goto free_valloc;
-+
-+	dump_group_args =
-+		(struct dump_group_args){ args->ptdev, &alloc, args->group };
-+	panthor_sched_get_groupinfo(args->group, &group_info);
-+	dump_group_info(&dump_group_args, &group_info);
-+
-+	if (alloc.pos < dump_size)
-+		drm_warn(&args->ptdev->base,
-+			 "dump size mismatch: expected %d, got %zu\n",
-+			 dump_size, alloc.pos);
-+
-+	dev_coredumpv(args->ptdev->base.dev, alloc.start, alloc.pos,
-+		      GFP_KERNEL);
-+
-+	return ret;
-+
-+free_valloc:
-+	vfree(mem);
-+	return ret;
-+}
-diff --git a/drivers/gpu/drm/panthor/panthor_dump.h b/drivers/gpu/drm/panthor/panthor_dump.h
-new file mode 100644
-index 000000000000..2a02943a2dbd
---- /dev/null
-+++ b/drivers/gpu/drm/panthor/panthor_dump.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 or MIT */
-+/* SPDX-FileCopyrightText: Copyright Collabora 2024 */
-+
-+#ifndef __PANTHOR_DUMP_H__
-+#define __PANTHOR_DUMP_H__
-+
-+#include <drm/drm_gpuvm.h>
-+#include <drm/panthor_drm.h>
-+
-+#include "panthor_device.h"
-+#include "panthor_gem.h"
-+
-+struct panthor_core_dump_args {
-+	struct panthor_device *ptdev;
-+	struct panthor_vm *group_vm;
-+	struct panthor_group *group;
-+};
-+
-+int panthor_core_dump(struct panthor_core_dump_args *args);
-+
-+#endif /* __PANTHOR_DUMP_H__ */
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 412e95fcfb92..61d61157ace0 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -2632,6 +2632,28 @@ int panthor_vm_prepare_mapped_bos_resvs(struct drm_exec *exec, struct panthor_vm
- 	return drm_gpuvm_prepare_objects(&vm->base, exec, slot_count);
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index fb30e119d9bf..bb759baa98bd 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -1374,6 +1374,7 @@ static const struct file_operations panthor_drm_driver_fops = {
+ static void panthor_debugfs_init(struct drm_minor *minor)
+ {
+ 	panthor_mmu_debugfs_init(minor);
++	panthor_sched_debugfs_init(minor);
  }
+ #endif
  
-+/**
-+ * panthor_vm_foreachva() - Execute a callback for each VA in a VM
-+ *
-+ */
-+int panthor_vm_foreach_va(struct panthor_vm *vm,
-+			  int (*cb)(void *priv, const struct drm_gpuva *va),
-+			  void *priv)
-+{
-+	struct drm_gpuva *va;
-+	int ret = 0;
-+
-+	mutex_lock(&vm->op_lock);
-+	drm_gpuvm_for_each_va(va, &vm->base) {
-+		ret = cb(priv, va);
-+		if (ret)
-+			break;
-+	}
-+	mutex_unlock(&vm->op_lock);
-+
-+	return ret;
-+}
-+
- /**
-  * panthor_mmu_unplug() - Unplug the MMU logic
-  * @ptdev: Device.
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
-index 6788771071e3..05a5d68b23ae 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.h
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.h
-@@ -8,6 +8,7 @@
- #include <linux/dma-resv.h>
- 
- struct drm_exec;
-+struct drm_gpuva;
- struct drm_sched_job;
- struct panthor_gem_object;
- struct panthor_heap_pool;
-@@ -52,6 +53,11 @@ void panthor_vm_add_job_fence_to_bos_resvs(struct panthor_vm *vm,
- 					   struct drm_sched_job *job);
- 
- struct dma_resv *panthor_vm_resv(struct panthor_vm *vm);
-+
-+int panthor_vm_foreach_va(struct panthor_vm *vm,
-+			  int (*cb)(void *priv, const struct drm_gpuva *va),
-+			  void *priv);
-+
- struct drm_gem_object *panthor_vm_root_gem(struct panthor_vm *vm);
- 
- void panthor_vm_pool_destroy(struct panthor_file *pfile);
 diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index e0ecc8bcfaae..59c30b311ee9 100644
+index 59c30b311ee9..afd644c7d9f1 100644
 --- a/drivers/gpu/drm/panthor/panthor_sched.c
 +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -24,6 +24,7 @@
- 
- #include "panthor_devfreq.h"
- #include "panthor_device.h"
-+#include "panthor_dump.h"
- #include "panthor_fw.h"
- #include "panthor_gem.h"
- #include "panthor_gpu.h"
-@@ -2805,6 +2806,45 @@ static void group_sync_upd_work(struct work_struct *work)
- 	group_put(group);
+@@ -3602,3 +3602,12 @@ int panthor_sched_init(struct panthor_device *ptdev)
+ 	ptdev->scheduler = sched;
+ 	return 0;
  }
- 
-+/**
-+ * panthor_sched_get_groupinfo() - Build a group info structure for the group
-+ *
-+ * @group: the group to build a group info structure for
-+ * @info: the group info structure to fill
-+ */
-+void panthor_sched_get_groupinfo(struct panthor_group *group,
-+				 struct drm_panthor_dump_group_info *info)
++
++#ifdef CONFIG_DEBUG_FS
++void panthor_sched_debugfs_init(struct drm_minor *minor)
 +{
-+	info->queue_count = group->queue_count;
-+	info->faulty_bitmask = group->fatal_queues;
++	struct panthor_device *ptdev =
++		container_of(minor->dev, struct panthor_device, base);
++	struct panthor_scheduler *sched = ptdev->scheduler;
 +}
-+
-+/** panthor_sched_get_queueinfo() - Build a queue info structure for a queue
-+ * given its group and its cs_id
-+ *
-+ * @group: the group the queue belongs to
-+ * @cs_id: the command stream ID of the queue
-+ * @info: the queue info structure to fill
-+ */
-+int panthor_sched_get_queueinfo(struct panthor_group *group, u32 cs_id,
-+				struct drm_panthor_dump_queue_info *info)
-+{
-+	struct panthor_queue *queue;
-+
-+	if (cs_id >= group->queue_count)
-+		return -EINVAL;
-+
-+	queue = group->queues[cs_id];
-+
-+	info->cs_id = cs_id;
-+	info->ringbuf_insert = queue->iface.input->insert;
-+	info->ringbuf_extract = queue->iface.output->extract;
-+	info->ringbuf_gpuva = panthor_kernel_bo_gpuva(queue->ringbuf);
-+	info->ringbuf_size = panthor_kernel_bo_size(queue->ringbuf);
-+
-+	return 0;
-+}
-+
- static struct dma_fence *
- queue_run_job(struct drm_sched_job *sched_job)
- {
-@@ -2946,7 +2986,7 @@ queue_timedout_job(struct drm_sched_job *sched_job)
- 	struct panthor_device *ptdev = group->ptdev;
- 	struct panthor_scheduler *sched = ptdev->scheduler;
- 	struct panthor_queue *queue = group->queues[job->queue_idx];
--
-+	struct panthor_core_dump_args core_dump_args;
- 	drm_warn(&ptdev->base, "job timeout\n");
- 
- 	drm_WARN_ON(&ptdev->base, atomic_read(&sched->reset.in_progress));
-@@ -2955,6 +2995,15 @@ queue_timedout_job(struct drm_sched_job *sched_job)
- 
- 	mutex_lock(&sched->lock);
- 	group->timedout = true;
-+
-+	core_dump_args = (struct panthor_core_dump_args) {
-+		.ptdev = ptdev,
-+		.group_vm = job->group->vm,
-+		.group = job->group,
-+	};
-+
-+	panthor_core_dump(&core_dump_args);
-+
- 	if (group->csg_id >= 0) {
- 		sched_queue_delayed_work(ptdev->scheduler, tick, 0);
- 	} else {
++#endif /* CONFIG_DEBUG_FS */
 diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
-index 3a30d2328b30..9a5b53498dcc 100644
+index 9a5b53498dcc..88871f38c1ab 100644
 --- a/drivers/gpu/drm/panthor/panthor_sched.h
 +++ b/drivers/gpu/drm/panthor/panthor_sched.h
-@@ -17,6 +17,9 @@ struct panthor_device;
- struct panthor_file;
- struct panthor_group_pool;
- struct panthor_job;
-+struct panthor_group;
-+struct drm_panthor_dump_group_info;
-+struct drm_panthor_dump_queue_info;
+@@ -8,6 +8,7 @@ struct drm_exec;
+ struct dma_fence;
+ struct drm_file;
+ struct drm_gem_object;
++struct drm_minor;
+ struct drm_sched_job;
+ struct drm_panthor_group_create;
+ struct drm_panthor_queue_create;
+@@ -57,4 +58,10 @@ void panthor_sched_resume(struct panthor_device *ptdev);
+ void panthor_sched_report_mmu_fault(struct panthor_device *ptdev);
+ void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events);
  
- int panthor_group_create(struct panthor_file *pfile,
- 			 const struct drm_panthor_group_create *group_args,
-@@ -41,6 +44,13 @@ int panthor_sched_init(struct panthor_device *ptdev);
- void panthor_sched_unplug(struct panthor_device *ptdev);
- void panthor_sched_pre_reset(struct panthor_device *ptdev);
- void panthor_sched_post_reset(struct panthor_device *ptdev, bool reset_failed);
++#ifdef CONFIG_DEBUG_FS
++void panthor_sched_debugfs_init(struct drm_minor *minor);
++#else
++static inline void panthor_sched_debugfs_init(struct drm_minor *minor) {}
++#endif /* CONFIG_DEBUG_FS */
 +
-+void panthor_sched_get_groupinfo(struct panthor_group *group,
-+				 struct drm_panthor_dump_group_info *info);
-+
-+int panthor_sched_get_queueinfo(struct panthor_group *group, u32 cs_id,
-+				struct drm_panthor_dump_queue_info *info);
-+
- void panthor_sched_suspend(struct panthor_device *ptdev);
- void panthor_sched_resume(struct panthor_device *ptdev);
- 
-diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-index e235cf452460..82ec0f20c49e 100644
---- a/include/uapi/drm/panthor_drm.h
-+++ b/include/uapi/drm/panthor_drm.h
-@@ -969,6 +969,130 @@ struct drm_panthor_tiler_heap_destroy {
- 	__u32 pad;
- };
- 
-+/**
-+ * enum drm_panthor_dump_header_type - Identifies the type of data that follows
-+ * in a panthor core dump.
-+ */
-+enum drm_panthor_dump_header_type {
-+	DRM_PANTHOR_DUMP_HEADER_TYPE_VERSION = 0,
-+	/**
-+	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO: Gpu information.
-+	 */
-+	DRM_PANTHOR_DUMP_HEADER_TYPE_GPU_INFO = 1,
-+	/**
-+	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO: Command stream interface information.
-+	 */
-+	DRM_PANTHOR_DUMP_HEADER_TYPE_CSIF_INFO = 2,
-+	/**
-+	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO: Information about the firmware.
-+	 */
-+	DRM_PANTHOR_DUMP_HEADER_TYPE_FW_INFO = 3,
-+	/**
-+	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_VM: A dump of the VM for the context.
-+	 */
-+	DRM_PANTHOR_DUMP_HEADER_TYPE_VM = 4,
-+	/**
-+	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO: Describes a group. A dump can
-+	 * contain either the faulty group, or all groups for the DRM FD.
-+	 */
-+	DRM_PANTHOR_DUMP_HEADER_TYPE_GROUP_INFO = 5,
-+	/**
-+	 * @DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO: Describes a faulty queue. This
-+	 * will immediately follow a group info.
-+	 */
-+	DRM_PANTHOR_DUMP_HEADER_TYPE_QUEUE_INFO = 6,
-+};
-+
-+/**
-+ * struct drm_panthor_dump_header - A header that describes a section of a panthor core dump.
-+ */
-+struct drm_panthor_dump_header {
-+	/** @magic: Always set to PANT (0x544e4150). */
-+	__u32 magic;
-+
-+	/** @header_type: Identifies the type of data in the following section of the
-+	 * core dump file
-+	 */
-+	enum drm_panthor_dump_header_type header_type;
-+
-+	/** @header_size: The size of the header.
-+	 *
-+	 * This is for backward-compatibility purposes in case this structure is
-+	 * augmented in the future. It allows userspace to skip over the header and
-+	 * access the actual data it describes.
-+	 */
-+	__u32 header_size;
-+
-+	/** @data_size: The size of the following section */
-+	__u32 data_size;
-+};
-+
-+/**
-+ * struct drm_panthor_dump_version - Version information for a Panthor GPU dump.
-+ *
-+ * This structure is used to hold version information when performing a dump of
-+ * the state of a Panthor GPU.
-+ */
-+struct drm_panthor_dump_version {
-+	/** @major: Versioning information for backwards compatibility */
-+	__u32 major;
-+	/** @minor: Versioning information for backwards compatibility */
-+	__u32 minor;
-+};
-+
-+/**
-+ * struct drm_panthor_dump_group_info - Group information for a Panthor GPU
-+ * dump.
-+ *
-+ * This structure is used to hold information about a group when performing a
-+ * dump of the state of a Panthor GPU.
-+ */
-+struct drm_panthor_dump_group_info {
-+	/** @queue_count: The number of queues in the group. */
-+	__u32 queue_count;
-+	/** @faulty_queues: A bitmask denoting the faulty queues */
-+	__u32 faulty_bitmask;
-+};
-+
-+#define DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_FAULTY	(1 << 0)
-+
-+/**
-+ * struct drm_panthor_dump_queue_info - Queue information for a Panthor GPU
-+ * dump.
-+ *
-+ * This structure is used to hold information about a queue when performing a
-+ * dump of the state of a Panthor GPU.
-+ */
-+struct drm_panthor_dump_queue_info {
-+	/** See DRM_PANTHOR_DUMP_QUEUE_INFO_FLAGS_XXX */
-+	u32 flags;
-+	/** @cs_id: The ID of the command stream. */
-+	__s32 cs_id;
-+	/** @faulty: Whether this queue has faulted */
-+	/** @ringbuf_gpuva: The GPU virtual address of the ring buffer. */
-+	__u64 ringbuf_gpuva;
-+	/** @ringbuf_insert: The insert point (i.e.: offset) in the ring buffer. This
-+	 * is where a instruction would be inserted next by the CPU.
-+	 */
-+	__u64 ringbuf_insert;
-+	/** @ringbuf_extract: The extract point (i.e.: offset) in the ring buffer.
-+	 * This is where the GPU would read the next instruction.
-+	 */
-+	__u64 ringbuf_extract;
-+	/** @ringbuf_size: The size of the ring buffer */
-+	__u64 ringbuf_size;
-+};
-+
-+/**
-+ * struct drm_panthor_dump_gpuva - Describes a GPU VA range in the dump.
-+ */
-+struct drm_panthor_dump_gpuva {
-+	/** @addr: The start address for the mapping */
-+	__u64 addr;
-+	/** @range: The range covered by the VA mapping */
-+	__u64 range;
-+};
-+
- #if defined(__cplusplus)
- }
  #endif
 -- 
 2.45.2
