@@ -1,198 +1,270 @@
-Return-Path: <linux-kernel+bounces-284271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D594FF31
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:56:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F2394FF2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB9B1C22420
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379011F24D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E81713959D;
-	Tue, 13 Aug 2024 07:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC0E7A15B;
+	Tue, 13 Aug 2024 07:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cNKHli/K"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l5iF+mAk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14288485;
-	Tue, 13 Aug 2024 07:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BE5D531;
+	Tue, 13 Aug 2024 07:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723535804; cv=none; b=sPrICbXEMfXCc7CuFP9Ak75SfUblKmalJCh20twcZ9kGY0/NKdHg24CxZWqOtV3GlSICeX+aMqt5uFmmx5r1ULkakhRenMuXN0+2NH0KS7jmT4JRW2i7a3d2XmUxl4IB9kT7U0U0pxV1AGz5ovGC/su5mSismgk+Dd3guROciM0=
+	t=1723535803; cv=none; b=EErRoJPvsevaozI4s1houDbUB/ml+wqdpKDHt57veb3S0GmQwGBXrWgZpIIiG6NYyOnKeceZFDq2uMfzd66e9pYnoFk0mypvxbe540wRBgdNl6Thxs+iGjE9mf48JnPB2KN75pNrsPq2FR6G3/CMR5x0l5fPs6frtm06RcTMgWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723535804; c=relaxed/simple;
-	bh=CuolsEvLRiLP6iFRnAtWEnHXHVPNiug2hq17U4nw3Fk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=o0CRs+8K5rxZL42xmq0eTc1ILNRSB2BF1nhutl/9A7FwQyjosz6PwN/itkI8WnBsfQA3QaTTHE+MTjlf/qKZavLISKq4zf4fWQm7DlkJFMPqoX+s1SipB3ntvlm2PxLpDLfb7Z8fsDu31WlAiMTBdN7FGhv1Ngoq8bmm/2tN10I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cNKHli/K; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D2evNm012717;
-	Tue, 13 Aug 2024 07:56:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0PlMolErtoFP8CfRHuM+/XHS0z4d1Y7nlgBTHug4gbI=; b=cNKHli/KYWCImpyt
-	vY4dZQXURKN7nHls3G8wKyPkG37b3cWKmXGp2G/yPtGZ9bNX9lpiFR0Yl/jnWoZ9
-	9jlkw0D1ZONU6xq0yYmaVbN2Rp8vtw/i436nAr0yXmj94zfR1M98nPm0pEZ1qTSX
-	yWkTgduRmFFY8Ir9EmXN7QfFJGV/4ohrXvs1JMp5KLiacC7hJhUS3VQpwnRXZzgJ
-	3ytqARpL+r2di9d92TWpSx9FgbsiYg7uScEk0XN0QCPL7S5DSurNas3F6yZuS7DK
-	Ug+P6GZXVxhZB18qOgfu4FOjxTQolt/xdO5m9ExDOLq03VhQBJ9t64tRXYL+8EhH
-	y45qmA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40yxwv0kuh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 07:56:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47D7uSMd013544
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 07:56:28 GMT
-Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
- 2024 00:56:26 -0700
-Message-ID: <dee2f394-c9c5-4099-8e05-ce0c8756887b@quicinc.com>
-Date: Tue, 13 Aug 2024 15:56:23 +0800
+	s=arc-20240116; t=1723535803; c=relaxed/simple;
+	bh=KYijDMxWTruxUOHeIXuSweAvO2AIcNRXv9pQTHmdND4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hcF6ZOsPWfHmrJohvnI0ZotVyo5PmzILwrFGZmeRyGF2qyvyujezyIDhPofIrWJShTFyTuMgCbpbBQDLa6ZSkUsgzhqmIIjPUIydcyU5uFlsj1d+RFV9t4JAULUhTq7PZokyBfek5iiJSp81uVzF/ah0Ie7k6II0pOu19sJ4Cts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l5iF+mAk; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723535800; x=1755071800;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=KYijDMxWTruxUOHeIXuSweAvO2AIcNRXv9pQTHmdND4=;
+  b=l5iF+mAkHJ8O6704NkawDsDOkhCf/ZgC6w57SwuCdrkLFwAKnktObs4/
+   wCU0zW7MG/1ltHEk1aKcw8FyXziaPyDnC8Kk5DGZJEtxqwj4Hd2vMzCz+
+   hZSkRjo5ujyzskQ2Piw216/49F4Oozool//mJmEeUQG6gwxgy55cwv58a
+   Vg+AP/H5Z0gHH+IyWk4MJRKe+5NwePSYjVOTa6xstAg4/FsEYiir4fovK
+   bfK5B8zlHmVa5tmDjkEgqwjb7qSETl2GqAxS2wvz1oE+QghFarnKRk9g6
+   zOYGjnIkfTqvvlhWcSEGZO0Q1P592v2JFuSFuzvb1c1RfHftdB76OXI46
+   g==;
+X-CSE-ConnectionGUID: rr+6QuegRUmbXfP3dIm97w==
+X-CSE-MsgGUID: uyrk4iu1TXCR4loK6taZ4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="25546395"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="25546395"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:56:39 -0700
+X-CSE-ConnectionGUID: lG7mVi4oRlqiqUXf6sr6fg==
+X-CSE-MsgGUID: kpoadPFQSNGgFJblkarbew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="63438975"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.234])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:56:33 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Alex Deucher
+ <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Harry
+ Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo
+ Siqueira <Rodrigo.Siqueira@amd.com>, Mario Limonciello
+ <mario.limonciello@amd.com>, Matt Hartley <matt.hartley@gmail.com>, Kieran
+ Levin <ktl@framework.net>, Hans de Goede <hdegoede@redhat.com>, Xinhui Pan
+ <Xinhui.Pan@amd.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
+ linux-doc@vger.kernel.org, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>
+Subject: Re: [PATCH v4 1/3] drm: Add panel backlight quirks
+In-Reply-To: <20240812-amdgpu-min-backlight-quirk-v4-1-56a63ff897b7@weissschuh.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net>
+ <20240812-amdgpu-min-backlight-quirk-v4-1-56a63ff897b7@weissschuh.net>
+Date: Tue, 13 Aug 2024 10:56:30 +0300
+Message-ID: <878qx026vl.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/arm-smmu-qcom: remove runtime pm enabling for
- TBU driver
-To: Pranjal Shrivastava <praan@google.com>
-CC: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
-References: <1722335443-30080-1-git-send-email-quic_zhenhuah@quicinc.com>
- <ZroNUGkKuC1L7Qfr@google.com>
- <cca690c3-916e-43b6-b2a5-eca4f2eb838e@quicinc.com>
- <ZrsJLqTnq6tG2xp4@google.com>
-Content-Language: en-US
-From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-In-Reply-To: <ZrsJLqTnq6tG2xp4@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: N1_QYba_QmHkO8ZYoQALFYM_LNDAWse3
-X-Proofpoint-ORIG-GUID: N1_QYba_QmHkO8ZYoQALFYM_LNDAWse3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 malwarescore=0 clxscore=1015
- spamscore=0 adultscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408130056
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, 12 Aug 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
+> Panels using a PWM-controlled backlight source without an do not have a
+> standard way to communicate their valid PWM ranges.
+> On x86 the ranges are read from ACPI through driver-specific tables.
+> The built-in ranges are not necessarily correct, or may grow stale if an
+> older device can be retrofitted with newer panels.
+>
+> Add a quirk infrastructure with which the minimum valid backlight value
+> can be maintained as part of the kernel.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>  Documentation/gpu/drm-kms-helpers.rst        |  3 ++
+>  drivers/gpu/drm/Kconfig                      |  4 ++
+>  drivers/gpu/drm/Makefile                     |  1 +
+>  drivers/gpu/drm/drm_panel_backlight_quirks.c | 69 ++++++++++++++++++++++=
+++++++
+>  include/drm/drm_utils.h                      |  3 ++
+>  5 files changed, 80 insertions(+)
+>
+> diff --git a/Documentation/gpu/drm-kms-helpers.rst b/Documentation/gpu/dr=
+m-kms-helpers.rst
+> index 8435e8621cc0..a26989500129 100644
+> --- a/Documentation/gpu/drm-kms-helpers.rst
+> +++ b/Documentation/gpu/drm-kms-helpers.rst
+> @@ -230,6 +230,9 @@ Panel Helper Reference
+>  .. kernel-doc:: drivers/gpu/drm/drm_panel_orientation_quirks.c
+>     :export:
+>=20=20
+> +.. kernel-doc:: drivers/gpu/drm/drm_panel_backlight_quirks.c
+> +   :export:
+> +
+>  Panel Self Refresh Helper Reference
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20=20
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index 6b2c6b91f962..9ebb8cdb535e 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -454,6 +454,10 @@ config DRM_HYPERV
+>  config DRM_EXPORT_FOR_TESTS
+>  	bool
+>=20=20
+> +# Separate option as not all DRM drivers use it
+> +config DRM_PANEL_BACKLIGHT_QUIRKS
+> +	tristate
+> +
+>  config DRM_LIB_RANDOM
+>  	bool
+>  	default n
+> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> index 68cc9258ffc4..adf85999aee2 100644
+> --- a/drivers/gpu/drm/Makefile
+> +++ b/drivers/gpu/drm/Makefile
+> @@ -92,6 +92,7 @@ drm-$(CONFIG_DRM_PANIC) +=3D drm_panic.o
+>  obj-$(CONFIG_DRM)	+=3D drm.o
+>=20=20
+>  obj-$(CONFIG_DRM_PANEL_ORIENTATION_QUIRKS) +=3D drm_panel_orientation_qu=
+irks.o
+> +obj-$(CONFIG_DRM_PANEL_BACKLIGHT_QUIRKS) +=3D drm_panel_backlight_quirks=
+.o
+>=20=20
+>  #
+>  # Memory-management helpers
+> diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/d=
+rm/drm_panel_backlight_quirks.c
+> new file mode 100644
+> index 000000000000..a88e77db97c5
+> --- /dev/null
+> +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
+> @@ -0,0 +1,69 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/array_size.h>
+> +#include <linux/dmi.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <drm/drm_utils.h>
+> +
+> +struct drm_panel_min_backlight_quirk {
+> +	struct {
+> +		enum dmi_field field;
+> +		const char * const value;
+> +	} dmi_match;
+> +	struct drm_edid_ident ident;
+> +	u8 min_brightness;
+> +};
+> +
+> +static const struct drm_panel_min_backlight_quirk drm_panel_min_backligh=
+t_quirks[] =3D {
+> +};
+> +
+> +static bool drm_panel_min_backlight_quirk_matches(const struct drm_panel=
+_min_backlight_quirk *quirk,
+> +						  const struct drm_edid *edid)
+> +{
+> +	if (!dmi_match(quirk->dmi_match.field, quirk->dmi_match.value))
+> +		return false;
+> +
+> +	if (!drm_edid_match(edid, &quirk->ident))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +/**
+> + * drm_get_panel_min_brightness_quirk - Get minimum supported brightness=
+ level for a panel.
+> + * @edid: EDID of the panel to check
+> + *
+> + * This function checks for platform specific (e.g. DMI based) quirks
+> + * providing info on the minimum backlight brightness for systems where =
+this
+> + * cannot be probed correctly from the hard-/firm-ware.
+> + *
+> + * Returns:
+> + * A negative error value or
+> + * an override value in the range [0, 255] representing 0-100% to be sca=
+led to
+> + * the drivers target range.
+> + */
+> +int drm_get_panel_min_brightness_quirk(const struct drm_edid *edid)
+> +{
+> +	const struct drm_panel_min_backlight_quirk *quirk;
+> +	size_t i;
+> +
+> +	if (!IS_ENABLED(CONFIG_DMI))
+> +		return -ENODATA;
+> +
+> +	if (!edid)
+> +		return -EINVAL;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(drm_panel_min_backlight_quirks); i++) {
+> +		quirk =3D &drm_panel_min_backlight_quirks[i];
+> +
+> +		if (drm_panel_min_backlight_quirk_matches(quirk, edid))
+> +			return quirk->min_brightness;
+> +	}
+> +
+> +	return -ENODATA;
+> +}
+> +EXPORT_SYMBOL(drm_get_panel_min_brightness_quirk);
+> +
+> +MODULE_DESCRIPTION("Quirks for panel backlight overrides");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/drm/drm_utils.h b/include/drm/drm_utils.h
+> index 70775748d243..267711028dd4 100644
+> --- a/include/drm/drm_utils.h
+> +++ b/include/drm/drm_utils.h
+> @@ -11,9 +11,12 @@
+>  #define __DRM_UTILS_H__
+>=20=20
+>  #include <linux/types.h>
+> +#include <drm/drm_edid.h>
 
+Please prefer forward declarations over includes where possible.
 
-On 2024/8/13 15:20, Pranjal Shrivastava wrote:
-> On Tue, Aug 13, 2024 at 10:37:33AM +0800, Zhenhua Huang wrote:
->>
->>
->> On 2024/8/12 21:25, Pranjal Shrivastava wrote:
->>> On Tue, Jul 30, 2024 at 06:30:43PM +0800, Zhenhua Huang wrote:
->>>> TBU driver has no runtime pm support now, adding pm_runtime_enable()
->>>> seems to be useless. Remove it.
->>>>
->>>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
->>>> ---
->>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 6 ------
->>>>    1 file changed, 6 deletions(-)
->>>>
->>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> index 36c6b36ad4ff..aff2fe1fda13 100644
->>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>>> @@ -566,7 +566,6 @@ static struct acpi_platform_list qcom_acpi_platlist[] = {
->>>>    static int qcom_smmu_tbu_probe(struct platform_device *pdev)
->>>>    {
->>>> -	struct device *dev = &pdev->dev;
->>>>    	int ret;
->>>>    	if (IS_ENABLED(CONFIG_ARM_SMMU_QCOM_DEBUG)) {
->>>> @@ -575,11 +574,6 @@ static int qcom_smmu_tbu_probe(struct platform_device *pdev)
->>>>    			return ret;
->>>>    	}
->>>> -	if (dev->pm_domain) {
->>>> -		pm_runtime_set_active(dev);
->>>> -		pm_runtime_enable(dev);
->>>
->>> I assumed that this was required to avoid the TBU from being powered
->>> down? If so, then I think we shall move it under the
->>
->> Hi Pranjal,
->>
->> In my sense, this was giving the TBU ability to power down when
->> necessary(through pm callbacks)? While I haven't seen any RPM impl for TBU
->> device.. hence having the doubt..
->>
->> Thanks,
->> Zhenhua
-> 
-> Apologies for being unclear. I just meant to ask if there was a reason
-> to add pm_runtime_set_active & enable in the tbu probe previously? And I
+Here,
 
-It's also my doubt and hope Georgi can help clarify :)
-Actually I assume this part of codes was copied from arm-smmu driver
-https://elixir.bootlin.com/linux/v6.11-rc3/source/drivers/iommu/arm/arm-smmu/arm-smmu.c#L2264 
-.. but for TBU, seems no user ?
+struct drm_edid;
 
-> *assumed* that it was to set the device state as RPM_ACTIVE to avoid it
-> being RPM_SUSPENDED after enabling pm_runtime
+is sufficient.
 
-Yeah, it's normal sequence from doc: 
-https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/power/runtime_pm.rst#L574
+BR,
+Jani.
 
-> 
-> I agree that there are no pm_runtime_suspend/resume calls within the TBU
-> driver. I'm just trying to understand why was pm_runtime enabled here
-> earlier (since it's not implemented) in order to ensure that removing it
-> doesn't cause further troubles?
+>=20=20
+>  int drm_get_panel_orientation_quirk(int width, int height);
+>=20=20
+> +int drm_get_panel_min_brightness_quirk(const struct drm_edid *edid);
+> +
+>  signed long drm_timeout_abs_to_jiffies(int64_t timeout_nsec);
+>=20=20
+>  #endif
 
-See above my assumption, need Georgi to comment but.
-
-> 
-> I see Georgi added it as a part of
-> https://lore.kernel.org/all/20240704010759.507798-1-quic_c_gdjako@quicinc.com/
-> 
-> But I'm unsure why was it required to fix that bug?
-
-I'm just thinking it is dead code and want to see if my understanding is 
-correct.
-
-Thanks,
-Zhenhua
-
-> 
->>
->>> previous if condition, i.e. CONFIG_ARM_SMMU_QCOM_DEBUG?
->>>
->>> If not, we can remove it give that the TBU would be powered ON as needed
->>>
->>>> -	}
->>>> -
->>>>    	return 0;
->>>>    }
->>>> -- 
->>>> 2.7.4
->>>>
->>>>
->>>
->>> Thanks,
->>> Pranjal
-> 
-> Thanks,
-> Pranjal
+--=20
+Jani Nikula, Intel
 
