@@ -1,167 +1,102 @@
-Return-Path: <linux-kernel+bounces-285179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337B3950A35
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:33:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B79D950A3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E44A028340D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:33:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 471472835AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198641A255D;
-	Tue, 13 Aug 2024 16:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB321A2C32;
+	Tue, 13 Aug 2024 16:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ehJ/7GO8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwBxoiBs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B7419B3E3;
-	Tue, 13 Aug 2024 16:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255851A2C18;
+	Tue, 13 Aug 2024 16:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723566770; cv=none; b=U5DR4C9Fr767M398QK25l3U3EX/UV9k3BkydlLhmkymLIExR0LWWWz8FRJzZooHzLmzSkgK0etLVmOZI8ve5dJiC4+xLH4xCMzt5c+4jHK6EoBXLmE8vDu9jJmB6ReXvSoJe398uxIQOYvvdK2Pxt4c6zxFSmYVAm/sla89O41w=
+	t=1723566774; cv=none; b=eu6Plh38gbqzxdL6rd11rTUuMB+FNJsgfp1Db6Dx1kx48V6X5BbPsw+ZlYCYEQzb95HdAAxHK1xiAnJceNCOcy32GrE87ZvsjMyIl3fx+UMdTiYpfJvvkCwlapXYRcfqCytHDsHKzAprTr6LeYDDgElouavUxhC4ogKTk6p3Rmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723566770; c=relaxed/simple;
-	bh=q4Sx4tcrBOiF4T8DKZh+Bg5CmcxE+JsjM4CdKyOwO9M=;
+	s=arc-20240116; t=1723566774; c=relaxed/simple;
+	bh=Kbdfzn/ZdPj0XIrrD6C/Hpkw88aQjKyO1BNvwwISy6Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKxPXscfmeYSd3FUpesyJJfm0uz+Trhv9gnBRvS+dPprK9pav2ApZLMCiNLzoSo5IOkpT890k38mDRCnD0VaTO09J3isiNKS6nETKe/bQ/0dWp3jBuGjFVXEm2ChmUP0lnm3yybTo5Y0UncQrQQUnjwsIhjOxKGuZQ0y5qLC7uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ehJ/7GO8; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723566768; x=1755102768;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q4Sx4tcrBOiF4T8DKZh+Bg5CmcxE+JsjM4CdKyOwO9M=;
-  b=ehJ/7GO8jGP/jGJcw+uGNShQnccHsH+5FbDadX3yoH1NUohpswqS7OVd
-   k/ABGkL4zVnKj1CVw9BBydBmmdWltUdjN+MtRzAfq9SYUlX+ySDDDY2uy
-   rLIk9uE7x6trnPRZwaV9nihIJ4BH0JgQA2ZYpFtdlA47SEs7eVBExqfuf
-   Ic8C86z+GZSOAaudJMqaiR5vqk+l8ssf0m0VSfhBek4nlEKVACJ3MkEI6
-   ysyzjtaOxOT+SJd/VLIcHEAUILyFpLd3ydUjHRPQhGsa91chTC4YREep8
-   8CneQQzQQ8spXOt9gO/hg5hWezr9CpR00lkLXfoWGNyMTNqSEKu9TbzF8
-   A==;
-X-CSE-ConnectionGUID: kccdjhrlShWbapLEDentYA==
-X-CSE-MsgGUID: RKyB6fnXS+GcHClRW9beew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="47144448"
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="47144448"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 09:32:47 -0700
-X-CSE-ConnectionGUID: Y6etry+xSha+Kk7s/65NoA==
-X-CSE-MsgGUID: 8v1UOn16S2G+vLKiuadRjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="96247309"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 09:32:45 -0700
-Date: Tue, 13 Aug 2024 09:32:45 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
-	kai.huang@intel.com, isaku.yamahata@gmail.com,
-	tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>,
-	Yuan Yao <yuan.yao@intel.com>, isaku.yamahata@linux.intel.com
-Subject: Re: [PATCH 05/25] KVM: TDX: Add helper functions to print TDX
- SEAMCALL error
-Message-ID: <ZruKrWWDtB+E3kwr@ls.amr.corp.intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-6-rick.p.edgecombe@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRywQKfs6SZN8irSQ2Fe33nEXWN8JHUohREZJ3f90kfLtnwzF0mEk7cjyCO1db5MgK2HHuoBOTfbNS3SCTvsLHO7m88/UR/qWwbEOCNOvmDzVLHB+WW4LGfJKqmMVwpMtIykSsfm/S1zXUS+jrubxbNWqDSSarcgfVRVfGGYjnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwBxoiBs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4634EC4AF11;
+	Tue, 13 Aug 2024 16:32:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723566773;
+	bh=Kbdfzn/ZdPj0XIrrD6C/Hpkw88aQjKyO1BNvwwISy6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lwBxoiBsBuh7e5l3TSpyvue+rKJnz9Dh3AWCsJcyadupJ9IrzqJ8Y+0g1RxUddk4i
+	 9MEluCXzd61wHutZbUeQ+9k/mGy6DOsW7StjapsMU9MW+9qp+o/JS/8LyUBR57Ppqk
+	 5xtC8iES35WghvelhEKjoKDQamc+zZjYRVYIWbS/s0A+ibCYTibn/ntBXri7Otztm5
+	 digZiTtpfMWRZkkWMCTULLIsp8DUp+V0YL3YqFiFtgMpsbsZZh/t0fM1d2SBvlgSy/
+	 xCB5ihCiy8SmeHlhDg3F8ieMeAb0zbjzhlkcCA+V6eyWodqB+rLjFJHgOFp6gg+SkY
+	 kVOY/x4jY+fFg==
+Date: Tue, 13 Aug 2024 10:32:51 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: shawnguo@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	conor+dt@kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+	l.stach@pengutronix.de, krzk+dt@kernel.org
+Subject: Re: [PATCH v5 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
+ "atu" for i.MX8M PCIe Endpoint
+Message-ID: <172356674865.1170023.6976932909595509588.robh@kernel.org>
+References: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
+ <1723534943-28499-2-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812224820.34826-6-rick.p.edgecombe@intel.com>
+In-Reply-To: <1723534943-28499-2-git-send-email-hongxing.zhu@nxp.com>
 
-On Mon, Aug 12, 2024 at 03:48:00PM -0700,
-Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
+On Tue, 13 Aug 2024 15:42:20 +0800, Richard Zhu wrote:
+> Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
 > 
-> Add helper functions to print out errors from the TDX module in a uniform
-> manner.
+> For i.MX8M PCIe EP, the dbi2 and atu addresses are pre-defined in the
+> driver. This method is not good.
 > 
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> Reviewed-by: Yuan Yao <yuan.yao@intel.com>
+> In commit b7d67c6130ee ("PCI: imx6: Add iMX95 Endpoint (EP) support"),
+> Frank suggests to fetch the dbi2 and atu from DT directly. This commit is
+> preparation to do that for i.MX8M PCIe EP.
+> 
+> These changes wouldn't break driver function. When "dbi2" and "atu"
+> properties are present, i.MX PCIe driver would fetch the according base
+> addresses from DT directly. If only two reg properties are provided, i.MX
+> PCIe driver would fall back to the old method.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> uAPI breakout v1:
-> - Update for the wrapper functions for SEAMCALLs. (Sean)
-> - Reorder header file include to adjust argument change of the C wrapper.
-> - Fix bisectability issues in headers (Kai)
-> - Updates from seamcall overhaul (Kai)
-> 
-> v19:
-> - dropped unnecessary include <asm/tdx.h>
-> 
-> v18:
-> - Added Reviewed-by Binbin.
-> ---
->  arch/x86/kvm/vmx/tdx_ops.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx/tdx_ops.h b/arch/x86/kvm/vmx/tdx_ops.h
-> index a9b9ad15f6a8..3f64c871a3f2 100644
-> --- a/arch/x86/kvm/vmx/tdx_ops.h
-> +++ b/arch/x86/kvm/vmx/tdx_ops.h
-> @@ -16,6 +16,21 @@
->  
->  #include "x86.h"
->  
-> +#define pr_tdx_error(__fn, __err)	\
-> +	pr_err_ratelimited("SEAMCALL %s failed: 0x%llx\n", #__fn, __err)
-> +
-> +#define pr_tdx_error_N(__fn, __err, __fmt, ...)		\
-> +	pr_err_ratelimited("SEAMCALL %s failed: 0x%llx, " __fmt, #__fn, __err,  __VA_ARGS__)
-
-Stringify in the inner macro results in expansion of __fn.  It means value
-itself, not symbolic string.  Stringify should be in the outer macro.
-"SEAMCALL 7 failed" vs "SEAMCALL TDH_MEM_RANGE_BLOCK failed"
-
-#define __pr_tdx_error_N(__fn_str, __err, __fmt, ...)           \
-        pr_err_ratelimited("SEAMCALL " __fn_str " failed: 0x%llx, " __fmt,  __err,  __VA_ARGS__)
-
-#define pr_tdx_error_N(__fn, __err, __fmt, ...)         \
-        __pr_tdx_error_N(#__fn, __err, __fmt, __VA_ARGS__)
-
-#define pr_tdx_error_1(__fn, __err, __rcx)              \
-        __pr_tdx_error_N(#__fn, __err, "rcx 0x%llx\n", __rcx)
-
-#define pr_tdx_error_2(__fn, __err, __rcx, __rdx)       \
-        __pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx\n", __rcx, __rdx)
-
-#define pr_tdx_error_3(__fn, __err, __rcx, __rdx, __r8) \
-        __pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx, r8 0x%llx\n", __rcx, __rdx, __r8)
-
-
-> +
-> +#define pr_tdx_error_1(__fn, __err, __rcx)		\
-> +	pr_tdx_error_N(__fn, __err, "rcx 0x%llx\n", __rcx)
-> +
-> +#define pr_tdx_error_2(__fn, __err, __rcx, __rdx)	\
-> +	pr_tdx_error_N(__fn, __err, "rcx 0x%llx, rdx 0x%llx\n", __rcx, __rdx)
-> +
-> +#define pr_tdx_error_3(__fn, __err, __rcx, __rdx, __r8)	\
-> +	pr_tdx_error_N(__fn, __err, "rcx 0x%llx, rdx 0x%llx, r8 0x%llx\n", __rcx, __rdx, __r8)
-> +
->  static inline u64 tdh_mng_addcx(struct kvm_tdx *kvm_tdx, hpa_t addr)
->  {
->  	struct tdx_module_args in = {
-> -- 
-> 2.34.1
-> 
+>  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml  | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
 
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
+
+If a tag was not added on purpose, please state why and what changed.
+
+Missing tags:
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+
+
 
