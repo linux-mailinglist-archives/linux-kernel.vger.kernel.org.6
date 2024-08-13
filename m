@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-285334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBFB950C30
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:27:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071F1950C33
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B61E283705
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:27:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DC99B21B82
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D37535894;
-	Tue, 13 Aug 2024 18:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94B51A38F9;
+	Tue, 13 Aug 2024 18:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH+A0fmG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1IlkAmc0"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83791A2C27;
-	Tue, 13 Aug 2024 18:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A705035894
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723573663; cv=none; b=K7ptPLY9E3vNwWNzAPFDxl0DwXIgkIpYmLdZTwynt/2kEyN0z2g5T+o6sYfFvfYaHfWgiuBVBW1PQq2bvfb7/jl4UvriUccvAe3WeBSQHOdZYoBWUciYPZao1EvNeDO5c0XUbkcLyt1/SDtPl52hCvAKMKUjx+0d2br7X4cYcCc=
+	t=1723573678; cv=none; b=I6jAmN6Q1fLvkm14JhSjRCKQGGyjK06idEy9jQAV3nwF3/R9QTDN1YYox0kZLJe9Rqy0q343QKJJjWW56QJqaCASFyfEHJgniFHGgw/RAPBqX22gdtXyW2OIbHChfLk6Q93uZ3R1ANoZDvO6aVcrHC+GfXEVv93hYCnRZDKKJZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723573663; c=relaxed/simple;
-	bh=fYKETN0ue5J6jFSSC2xMfeoJPHJbnH37wBF/DAF1Lxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rg2QAZHTS/GjMLPlV4YGa9Rdn5E2v+ql/jkXr8T6hjLckoLklGQvgtD6dmjoHn3aaXkFYYeij7gBHnIi957b6Yo3YTAociKo3rtfmm+nemw/mW/Zbu8nL72BCGSANTNZt3jbUjWVqcXctyyD1lw2fuOR0pOAB4swTvMZkFgSC+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH+A0fmG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE55C32782;
-	Tue, 13 Aug 2024 18:27:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723573663;
-	bh=fYKETN0ue5J6jFSSC2xMfeoJPHJbnH37wBF/DAF1Lxk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HH+A0fmGo6FLh34/bP9e9Z32XNQGGSxvI+H/KKZYHujw8pWxGzoIknR2ZzQe7aZp4
-	 po7LNuV8wcoRsSbwcMUyQmI0jm43W8rRaZEJPKnHqYWBdHrbVEtwuU0OurIcCHNiEu
-	 yVclUB4Q88iBPAI0eJauWXlNiQYB5hiesGLzwYx3pH9ItbFJ7xAIEwh9eb+Kigfdxu
-	 ncigJgHUBGxGJvM44ey3Kgz6umYF8qVu17K+jShNT4x9rS48LF4++WVV12/RKzcbrL
-	 yoqLQQUPDFDmZ97rmLazc2MpHI1C2QmsWfh7phQ+6cNHjg+A7AzHG6Hqoz8JF3nlYR
-	 Vfttpl1GMngoA==
-Date: Tue, 13 Aug 2024 15:27:39 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: "Wang, Weilin" <weilin.wang@intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	"Hunter, Adrian" <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Taylor, Perry" <perry.taylor@intel.com>,
-	"Alt, Samantha" <samantha.alt@intel.com>,
-	"Biggers, Caleb" <caleb.biggers@intel.com>
-Subject: Re: [RFC PATCH v18 8/8] perf test: Add test for Intel TPEBS counting
- mode
-Message-ID: <Zrulm_giiqaFP1li@x1>
-References: <20240720062102.444578-1-weilin.wang@intel.com>
- <20240720062102.444578-9-weilin.wang@intel.com>
- <Zrq11fq_F9vImsQh@x1>
- <Zrq2IoAgopw1NbbA@x1>
- <CO6PR11MB5635B87159218287A4E8108CEE862@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAP-5=fX9pLRig7qJ+6Wk1g9ysDUDDKXMbo4s1GYvz28iAPs1iA@mail.gmail.com>
+	s=arc-20240116; t=1723573678; c=relaxed/simple;
+	bh=11Vo1GRIel5+sWXjEZX4YTqPJYZTmDP5+/gfPmKbZgg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gS/7TTswYf/yYhaaG2/ayGUxgKn2ajPvZP0gW04A3UF9lJub6yFexQE9UfwtX2ne8uXIdLM1c8M/ZF3rkpAJwCyWfdwA8OoZWTPES+VMEBj3Mw90wNj0uIkXjIDXi6Cqgox8xN5BTFCNHal7ZlAPVl/kG38Dz6PkLf0+JrZjksk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1IlkAmc0; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-66a2aee82a0so113492027b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:27:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723573675; x=1724178475; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Xx3vUn4Ffi9+cFtQJZC9o9842wkaz5PPRNr6UKhxqa4=;
+        b=1IlkAmc0Y+yU63uOAR8SSCsZ8jPRACi6OYtHVkZ4Ge3iPcKSxCW4zcxre3CQXe8e2I
+         QtgGmkcA+JnPzblbdj6k5KMp9t/IvtfTPxYBnR/k3dxcSWOjYiz12vecOxPdr3rz79Jn
+         BUdu5SRUddAx/2goBu/TjJjXHBL7tJDFWsPDYXuSj6NrUA8uDf+bGSYWjQHjGTx9e//3
+         uij3i+lHqmRkBmTT76CMYfGw51iVzNbz6JkZ2zt5mVKt7Hhkk7KBnG78sunOLRXQKm4E
+         0rJeJ2zeVZ2szGCdXz7YgWBF5n2oLeagI7a6jSHeFv+EsaHxM/zQSYtamCzmICG+7jha
+         xKhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723573675; x=1724178475;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Xx3vUn4Ffi9+cFtQJZC9o9842wkaz5PPRNr6UKhxqa4=;
+        b=vvHix7B1/9jbD4xkKVxxlBCkfeyI1PEqU1DzUs8IoKz79ZgoN6r14NB/XhRQcoafFp
+         7WhRtKH+lDXtajvgdBIs0prAA7O7IdXK6R/4IPxRPFOqmbewXiOFMMNET8qs1W7nyF1E
+         EAMd4NEWbORgexSiBqTKoVaLFkG3A/KWYULVybGDQLBYGD5YWDHsMlq+DYQlieeqtjhL
+         /smkP+xrJ/sxW6kd5QAblLfFlQozB/gldFM58rXIwvA0+GoKYjBoowx1r8PfPDj8W8Ej
+         q605WDT2UKFVivG8fETp5qr7EtPTKdZbk/OWwTBmdCEYH7O2JMdSgX3HzqIwft41YnW1
+         b7QA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqTVjYKiKwrXhLfVZy5ml9hxiO82ioSG5xxCUmrsC+btVEm3BXk4UnW91di6yVFLiVtjSda7KYFv9GcLFokN6p6pGdA1id+5JSt7ZB
+X-Gm-Message-State: AOJu0Yy+cCGU507m+LYmbwwaVzMv3792q5EC0wWbiTDocOlyIUMlFIdo
+	N4S+l0RLxf2Ug77wdF8wc1wQKtp5rqeAghnS7XVbm6wbTKxwRMyb9VIr195f1lE+GsysXjuUCRy
+	t9dlWwKsn9l57D7tXCg==
+X-Google-Smtp-Source: AGHT+IEx3+U3ZkvA7CMIoEjRZ4BxjgN2Bf0euNJuMc/TelI5R1HUUjVY1E3oCM0wKQAMuhyiSiaKXwm0TBtkioIO
+X-Received: from manojvishy.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:413f])
+ (user=manojvishy job=sendgmr) by 2002:a05:690c:3183:b0:6aa:4e07:ad70 with
+ SMTP id 00721157ae682-6ac9736421emr4847b3.2.1723573675642; Tue, 13 Aug 2024
+ 11:27:55 -0700 (PDT)
+Date: Tue, 13 Aug 2024 18:27:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fX9pLRig7qJ+6Wk1g9ysDUDDKXMbo4s1GYvz28iAPs1iA@mail.gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240813182747.1770032-1-manojvishy@google.com>
+Subject: [PATCH v1 0/5] IDPF Virtchnl fixes
+From: Manoj Vishwanathan <manojvishy@google.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, intel-wired-lan@lists.osuosl.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	google-lan-reviews@googlegroups.com, 
+	Manoj Vishwanathan <manojvishy@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 13, 2024 at 10:48:21AM -0700, Ian Rogers wrote:
-> On Tue, Aug 13, 2024 at 10:18 AM Wang, Weilin <weilin.wang@intel.com> wrote:
-> > I just checkout the code and tested it. The failure is caused by a seg fault on a
-> > perf_tool struct that is not initialized correctly. I think this is related to the patches
-> > on struct perf_tool in this branch that applied right before the tpebs patches.
+This patch series is to enhance IDPF virtchnl error reporting and some
+minor fixes to the locking sequence in virtchnl message handling
+we encountered while testing.
+Also includes a minor clean up with regards to warning we encountered
+in controlq section of IDPF.
 
-> > I was able to fix the seg fault by adding the perf_tool__fill_defaults() back. Since
-> > Ian updated the code to replace this function, I think I need some advice on how
-> > to use the new code to initialize perf_tool correctly here. Should I call the
-> > perf_tool__init()?
- 
-> Yep. If you've added or refactored a tool struct the intent now is
-> that you call perf_tool__init then override the functions you want to
-> override. I don't mind to rebase those changes over your changes,
-> Arnaldo if you want to drop those changes.
+The issue we had here was a virtchnl processing delay leading to the
+"xn->salt" mismatch, transaction timeout and connection not recovering.
+This was due to default CPU bounded kworker workqueue for virtchnl message
+processing being starved by aggressive userspace load causing the
+virtchnl processing to be delayed and causing a transaction timeout.
+The reason the virtchnl process kworker was stalled as it
+was bound to CPU0 by default and there was immense IRQ traffic to CPU0.
+All of the above with an aggressive user space process on the same core
+lead to the change from Marco Leogrande to convert the idpf workqueues
+to unbound.
 
-So I'm adding the patch below, which should be enough, right?
 
-Now:
+Manoj Vishwanathan (3):
+  idpf: address an rtnl lock splat in tx timeout recovery path
+  idpf: Acquire the lock before accessing the xn->salt
+  idpf: more info during virtchnl transaction time out
 
-root@x1:~# perf test tpebs
-123: test Intel TPEBS counting mode                                  : Ok
-root@x1:~# set -o vi
-root@x1:~# perf test tpebs
-123: test Intel TPEBS counting mode                                  : Ok
-root@x1:~# perf test -v tpebs
-123: test Intel TPEBS counting mode                                  : Ok
-root@x1:~# perf test -vvv tpebs
-123: test Intel TPEBS counting mode:
---- start ---
-test child forked, pid 16603
-Testing without --record-tpebs
-Testing with --record-tpebs
----- end(0) ----
-123: test Intel TPEBS counting mode                                  : Ok
-root@x1:~#
+Marco Leogrande (1):
+  idpf: convert workqueues to unbound
 
-diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
-index 3729caeba645a3e8..50a3c3e0716065f8 100644
---- a/tools/perf/util/intel-tpebs.c
-+++ b/tools/perf/util/intel-tpebs.c
-@@ -164,11 +164,12 @@ static void *__sample_reader(void *arg)
- 		.path = PERF_DATA,
- 		.file.fd = child->out,
- 	};
--	struct perf_tool tool = {
--		.sample = process_sample_event,
--		.feature = process_feature_event,
--		.attr = perf_event__process_attr,
--	};
-+	struct perf_tool tool;
-+
-+	perf_tool__init(&tool, /*ordered_events=*/false);
-+	tool.sample = process_sample_event;
-+	tool.feature = process_feature_event;
-+	tool.attr = perf_event__process_attr;
- 
- 	session = perf_session__new(&data, &tool);
- 	if (IS_ERR(session))
+Willem de Bruijn (1):
+  idpf: warn on possible ctlq overflow
 
-Thanks for root causing, my mistake,
+ drivers/net/ethernet/intel/idpf/idpf_main.c   | 15 ++++++++-----
+ drivers/net/ethernet/intel/idpf/idpf_txrx.c   | 14 ++++++++++++-
+ .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 21 ++++++++++++++-----
+ 3 files changed, 39 insertions(+), 11 deletions(-)
 
-- Arnaldo
+-- 
+2.46.0.76.ge559c4bf1a-goog
+
 
