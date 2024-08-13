@@ -1,156 +1,313 @@
-Return-Path: <linux-kernel+bounces-284112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F13E94FD04
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:05:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B8C94FD1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA41228327E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:05:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53EF5B2270D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7D72233A;
-	Tue, 13 Aug 2024 05:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7F8249F9;
+	Tue, 13 Aug 2024 05:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CjQAvitc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IycqIcAQ"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAB11C68C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAC623741;
+	Tue, 13 Aug 2024 05:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723525505; cv=none; b=qoGx+SyFurFBSgmRfeifJn9No3Ojnq4rnjxzW5om6oS82HcfItQwc3I5Gyxh/PzxODat6XcDEGoJawEVTXPHLOxgZTgZRHSXQ4/J4sO3Rh1hp1FfiaOp0tNX8YBT6SPgoX4Gfg393kkHMf8L2aR3xSeuBAqQx9ONjEe4FgMNPoE=
+	t=1723525924; cv=none; b=BerdiVMQVHqHLYlU1NyFU38q6H9mBiMmEgk6XyzVubPja9ruTH8PhuNjGQI0WdwUJa2V8yRVYE6jLMOCmAly846hpZ661TGAs7xvfWxB4AxgRr4zOYjjPinCOUiBOzFq9EAHi4Ut2B1ab6bjLnYnnp3U0Im/nRFzIgFK03mMi+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723525505; c=relaxed/simple;
-	bh=OnYm6m35GzXOt2Z3PXU6hjfbV+l7avnaAvdmuWFn8HA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gai8aqWVruY4WLeCmY+J5Szy9w7DSYtsZi7lJdBEH5hOYu7+G55S517JYXxO/zalwEKyviCcJ1oxMpr2eoy9s+6UUzJ+x5eli7rnNcdh6/RMMvOtpN4yMWR0DH9O142NRsh1+7N5NWwet37VkyqzkPTV+3hM6vp9tf0PRqrd+iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CjQAvitc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723525502;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mQ6Iuf9HQSPpywwg6TUGGWKJbgP49L0YclpTyCUxyXs=;
-	b=CjQAvitcH00iBix8UqFKo3MOxCqd6UKdLGIL+peK+DQnZRxSOwh0uEwUD6ZXoHnOBydrVc
-	DQhwSZbbltrwITlMVO3DLwioTPq0d/uoX3Q4AEck+WWmd/I7hmL7IZWwBZ/rL04VX9PQEd
-	YnQkM+TpwPcLais42bhByaH+dSLOmoE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-126-p12-A8AMMAaezDID4m6mJA-1; Tue,
- 13 Aug 2024 01:04:59 -0400
-X-MC-Unique: p12-A8AMMAaezDID4m6mJA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2263318EB22C;
-	Tue, 13 Aug 2024 05:04:57 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.25])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09279196BE80;
-	Tue, 13 Aug 2024 05:04:54 +0000 (UTC)
-Date: Tue, 13 Aug 2024 13:04:50 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Sourabh Jain <sourabhjain@linux.ibm.com>
-Cc: Petr Tesarik <petr@tesarici.cz>, Hari Bathini <hbathini@linux.ibm.com>,
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v2] Document/kexec: Generalize crash hotplug description
-Message-ID: <Zrrpcn7cnCigNfWd@MiWiFi-R3L-srv>
-References: <20240812041651.703156-1-sourabhjain@linux.ibm.com>
+	s=arc-20240116; t=1723525924; c=relaxed/simple;
+	bh=HNZ4GYQXMWOoLmkS3WzlJc5HrZQW/hblLbhux2481/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YVeBPMEVXu6cXEYKto35Nk5l7p673oGNvBqQKnuf3z2DlNTHG6qRAb+0rFi+BmK3WVZHNLXaDaElJoj/G5R8RnBQlGFSSIQBP1b/KR6i8fYrycNmT/Le0MBwshmkJgvO1zEtY13zh7oE22EXz9BRUzejXQy5pH7lmT0VZoab2yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IycqIcAQ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7bcd0so6254101a12.3;
+        Mon, 12 Aug 2024 22:12:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723525921; x=1724130721; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xhT2Y2oF/uJ6fCpK+SpF85ANnuI7c6Ysyk5Jyojf0og=;
+        b=IycqIcAQboXiO/yq/CXFqUpT22Sf2QrIYkgPGgdHOBabkcsmQFiFXmZxY2HjGZjcqy
+         LLxCzFtlF6Vke0DLDp5tILZbeK/F+UldxjQpDuJt76DE9dMzyOzx20Kv+zipf/dbec2p
+         wBzm3zyTkyKk1gMQeK7B9uTAGWur5cq+VEr5Q9JtO4HDTZOV+a4kW+AxLuh/otcOcjHe
+         F64HtOLMSnsjURlioaMeGr/8PdTNudW00Fc3+3n5h+OQG/6vlhTmjBSUga6XfqPsPoXp
+         qVb246D8ZlvInNtdJHvcOrrabQGI/IWcwASpuzxiyLhmcAJq0N1tPmSdxvyWf89vvqyL
+         r+Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723525921; x=1724130721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xhT2Y2oF/uJ6fCpK+SpF85ANnuI7c6Ysyk5Jyojf0og=;
+        b=Sh+nXna6S1DXunR/740CdjD1tOIJ4GCGPZgsdsX98jP86PM1n3UnQQd41ajKMtY1Yr
+         kk9KFUVb6sH+zquhE+dZWAjLXRoj/pOfTw97ZMfIOgcL9ZObPOdUEzP8H2qbVs05T9ha
+         3s8+mrCb2b9cHQRUVdLrKZJ7hq8zAOW7lbf1dabINBkgzNgIkXFotwQ0/AscnQbfBHf2
+         3h6cxiAouGswIl2BUY+7UMeC4olPID3OXbddw0AjPQRaLMLkE3LohuuVePsq1NCbrTMn
+         Y01rI57ZCJxjjZfyfhna5fB3dx2aMgjZWttD2GdvTyb4qCMT3flt3SBLTZYklvEz+lXF
+         FHTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFD+IcT1VLo+MEBRos2+aj21WS4VzGHYfhlQz3vOI2Zj6ThAyewnbMFUuEFwAAhErUqF+QuWD4AzFJcCRRovCsAFncAjMfAaot+JhJ6IkWmduTYiunX8Vj7rBX6rc3sO6IeHGpmp0c1w8+DEIKFA0YkTs1RT8MCj1SsDmhXO48mtMR
+X-Gm-Message-State: AOJu0YwV3zaT5znuhUaB3uuOGwJRQQeH0ydS/F1+Tk/ZNuJ95DEg+ejr
+	hFDjVwi3GCdhehoyKU9fiHTMDQ6WwjEjDX878+Wkhaxix0LOUZzZrPj+P7fFW8VMzlv6+8+MJym
+	QEaQOmemPCIHB2oNrVLNw9cZFDDuvQFe9ddI=
+X-Google-Smtp-Source: AGHT+IHY9qm5hOo0rihOZU0LIYFyLAAviDBaIbzofcC8Ywjoc5SlO7vwoHvwiGbR5dMn7tBFWDnGueFQeDifIUQjjIY=
+X-Received: by 2002:a05:6402:3511:b0:5a0:e62c:61bd with SMTP id
+ 4fb4d7f45d1cf-5bd44c698b1mr1424586a12.29.1723525920619; Mon, 12 Aug 2024
+ 22:12:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812041651.703156-1-sourabhjain@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240812150049.8252-1-ioworker0@gmail.com> <zjbn575huc6pk7jpv2ipoayfk4bvfu5z5imb5muk5drksa7p3q@xcr5imtt4zro>
+In-Reply-To: <zjbn575huc6pk7jpv2ipoayfk4bvfu5z5imb5muk5drksa7p3q@xcr5imtt4zro>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Tue, 13 Aug 2024 13:11:24 +0800
+Message-ID: <CAK1f24=QwFrh3CfpV8kBrBsGVcyyLtfaNpy6ju8JJZctXqF+Xg@mail.gmail.com>
+Subject: Re: [BUG] cgroupv2/blk: inconsistent I/O behavior in Cgroup v2 with
+ set device wbps and wiops
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, cgroups@vger.kernel.org, josef@toxicpanda.com, 
+	tj@kernel.org, fujita.tomonori@lab.ntt.co.jp, boqun.feng@gmail.com, 
+	a.hindborg@samsung.com, paolo.valente@unimore.it, axboe@kernel.dk, 
+	vbabka@kernel.org, david@redhat.com, 21cnbao@gmail.com, 
+	baolin.wang@linux.alibaba.com, libang.li@antgroup.com, 
+	Yu Kuai <yukuai3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/12/24 at 09:46am, Sourabh Jain wrote:
-......
-> ---
-> 
-> Changelog:
-> 
-> Since v1: https://lore.kernel.org/all/20240805050829.297171-1-sourabhjain@linux.ibm.com/
->   - Update crash_hotplug sysfs document as suggested by Petr T
->   - Update an error message in crash_handle_hotplug_event and
->     crash_check_hotplug_support function.
-> 
-> ---
-......
-> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-> index 63cf89393c6e..c1048893f4b6 100644
-> --- a/kernel/crash_core.c
-> +++ b/kernel/crash_core.c
-> @@ -505,7 +505,7 @@ int crash_check_hotplug_support(void)
->  	crash_hotplug_lock();
->  	/* Obtain lock while reading crash information */
->  	if (!kexec_trylock()) {
-> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-> +		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+Hi Michal,
 
-Wondering why this need be updated.
+Thanks a lot for jumping in!
 
->  		crash_hotplug_unlock();
->  		return 0;
->  	}
-> @@ -520,18 +520,25 @@ int crash_check_hotplug_support(void)
->  }
->  
->  /*
-> - * To accurately reflect hot un/plug changes of cpu and memory resources
-> - * (including onling and offlining of those resources), the elfcorehdr
-> - * (which is passed to the crash kernel via the elfcorehdr= parameter)
-> - * must be updated with the new list of CPUs and memories.
-> + * To accurately reflect hot un/plug changes of CPU and Memory resources
-> + * (including onling and offlining of those resources), the relevant
-> + * kexec segments must be updated with latest CPU and Memory resources.
->   *
-> - * In order to make changes to elfcorehdr, two conditions are needed:
-> - * First, the segment containing the elfcorehdr must be large enough
-> - * to permit a growing number of resources; the elfcorehdr memory size
-> - * is based on NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES.
-> - * Second, purgatory must explicitly exclude the elfcorehdr from the
-> - * list of segments it checks (since the elfcorehdr changes and thus
-> - * would require an update to purgatory itself to update the digest).
-> + * Architectures must ensure two things for all segments that need
-> + * updating during hotplug events:
-> + *
-> + * 1. Segments must be large enough to accommodate a growing number of
-> + *    resources.
-> + * 2. Exclude the segments from SHA verification.
-> + *
-> + * For example, on most architectures, the elfcorehdr (which is passed
-> + * to the crash kernel via the elfcorehdr= parameter) must include the
-> + * new list of CPUs and memory. To make changes to the elfcorehdr, it
-> + * should be large enough to permit a growing number of CPU and Memory
-> + * resources. One can estimate the elfcorehdr memory size based on
-> + * NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES. The elfcorehdr is
-> + * excluded from SHA verification by default if the architecture
-> + * supports crash hotplug.
->   */
->  static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu, void *arg)
->  {
-> @@ -540,7 +547,7 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
->  	crash_hotplug_lock();
->  	/* Obtain lock while changing crash information */
->  	if (!kexec_trylock()) {
-> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
-> +		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
->  		crash_hotplug_unlock();
->  		return;
->  	}
-> -- 
-> 2.45.2
-> 
+On Mon, Aug 12, 2024 at 11:43=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.c=
+om> wrote:
+>
+> +Cc Kuai
+>
+> On Mon, Aug 12, 2024 at 11:00:30PM GMT, Lance Yang <ioworker0@gmail.com> =
+wrote:
+> > Hi all,
+> >
+> > I've run into a problem with Cgroup v2 where it doesn't seem to correct=
+ly limit
+> > I/O operations when I set both wbps and wiops for a device. However, if=
+ I only
+> > set wbps, then everything works as expected.
+> >
+> > To reproduce the problem, we can follow these command-based steps:
+> >
+> > 1. **System Information:**
+> >    - Kernel Version and OS Release:
+> >      ```
+> >      $ uname -r
+> >      6.10.0-rc5+
+> >
+> >      $ cat /etc/os-release
+> >      PRETTY_NAME=3D"Ubuntu 24.04 LTS"
+> >      NAME=3D"Ubuntu"
+> >      VERSION_ID=3D"24.04"
+> >      VERSION=3D"24.04 LTS (Noble Numbat)"
+> >      VERSION_CODENAME=3Dnoble
+> >      ID=3Dubuntu
+> >      ID_LIKE=3Ddebian
+> >      HOME_URL=3D"https://www.ubuntu.com/"
+> >      SUPPORT_URL=3D"https://help.ubuntu.com/"
+> >      BUG_REPORT_URL=3D"https://bugs.launchpad.net/ubuntu/"
+> >      PRIVACY_POLICY_URL=3D"https://www.ubuntu.com/legal/terms-and-polic=
+ies/privacy-policy"
+> >      UBUNTU_CODENAME=3Dnoble
+> >      LOGO=3Dubuntu-logo
+> >      ```
+> >
+> > 2. **Device Information and Settings:**
+> >    - List Block Devices and Scheduler:
+> >      ```
+> >      $ lsblk
+> >      NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+> >      sda     8:0    0   4.4T  0 disk
+> >      =E2=94=94=E2=94=80sda1  8:1    0   4.4T  0 part /data
+> >      ...
+> >
+> >      $ cat /sys/block/sda/queue/scheduler
+> >      none [mq-deadline] kyber bfq
+> >
+> >      $ cat /sys/block/sda/queue/rotational
+> >      1
+> >      ```
+> >
+> > 3. **Reproducing the problem:**
+> >    - Navigate to the cgroup v2 filesystem and configure I/O settings:
+> >      ```
+> >      $ cd /sys/fs/cgroup/
+> >      $ stat -fc %T /sys/fs/cgroup
+> >      cgroup2fs
+> >      $ mkdir test
+> >      $ echo "8:0 wbps=3D10485760 wiops=3D100000" > io.max
+> >      ```
+> >      In this setup:
+> >      wbps=3D10485760 sets the write bytes per second limit to 10 MB/s.
+> >      wiops=3D100000 sets the write I/O operations per second limit to 1=
+00,000.
+> >
+> >    - Add process to the cgroup and verify:
+> >      ```
+> >      $ echo $$ > cgroup.procs
+> >      $ cat cgroup.procs
+> >      3826771
+> >      3828513
+> >      $ ps -ef|grep 3826771
+> >      root     3826771 3826768  0 22:04 pts/1    00:00:00 -bash
+> >      root     3828761 3826771  0 22:06 pts/1    00:00:00 ps -ef
+> >      root     3828762 3826771  0 22:06 pts/1    00:00:00 grep --color=
+=3Dauto 3826771
+> >      ```
+> >
+> >    - Observe I/O performance using `dd` commands and `iostat`:
+> >      ```
+> >      $ dd if=3D/dev/zero of=3D/data/file1 bs=3D512M count=3D1 &
+> >      $ dd if=3D/dev/zero of=3D/data/file1 bs=3D512M count=3D1 &
+> >      ```
+> >      ```
+> >      $ iostat -d 1 -h -y -p sda
+> >
+> >          tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wr=
+tn    kB_dscd Device
+> >      7.00         0.0k         1.3M         0.0k       0.0k       1.3M =
+      0.0k sda
+> >      7.00         0.0k         1.3M         0.0k       0.0k       1.3M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >      5.00         0.0k         1.2M         0.0k       0.0k       1.2M =
+      0.0k sda
+> >      5.00         0.0k         1.2M         0.0k       0.0k       1.2M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >     21.00         0.0k         1.4M         0.0k       0.0k       1.4M =
+      0.0k sda
+> >     21.00         0.0k         1.4M         0.0k       0.0k       1.4M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >      5.00         0.0k         1.2M         0.0k       0.0k       1.2M =
+      0.0k sda
+> >      5.00         0.0k         1.2M         0.0k       0.0k       1.2M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >      5.00         0.0k         1.2M         0.0k       0.0k       1.2M =
+      0.0k sda
+> >      5.00         0.0k         1.2M         0.0k       0.0k       1.2M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >   1848.00         0.0k       448.1M         0.0k       0.0k     448.1M =
+      0.0k sda
+> >   1848.00         0.0k       448.1M         0.0k       0.0k     448.1M =
+      0.0k sda1
+> >      ```
+> > Initially, the write speed is slow (<2MB/s) then suddenly bursts to sev=
+eral
+> > hundreds of MB/s.
+>
+> What it would be on average?
+> IOW how long would the whole operation in throttled cgroup take?
+>
+> >
+> >    - Testing with wiops set to max:
+> >      ```
+> >      echo "8:0 wbps=3D10485760 wiops=3Dmax" > io.max
+> >      $ dd if=3D/dev/zero of=3D/data/file1 bs=3D512M count=3D1 &
+> >      $ dd if=3D/dev/zero of=3D/data/file1 bs=3D512M count=3D1 &
+> >      ```
+> >      ```
+> >      $ iostat -d 1 -h -y -p sda
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >     48.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda
+> >     48.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >     40.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda
+> >     40.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >     41.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda
+> >     41.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >     46.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda
+> >     46.00         0.0k        10.0M         0.0k       0.0k      10.0M =
+      0.0k sda1
+> >
+> >
+> >       tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn =
+   kB_dscd Device
+> >     55.00         0.0k        10.2M         0.0k       0.0k      10.2M =
+      0.0k sda
+> >     55.00         0.0k        10.2M         0.0k       0.0k      10.2M =
+      0.0k sda1
+> >      ```
+> > The iostat output shows the write operations as stabilizing at around 1=
+0 MB/s,
+> > which aligns with the defined limit of 10 MB/s. After setting wiops to =
+max, the
+> > I/O limits appear to work as expected.
+> >
+> >
+> > Thanks,
+> > Lance
+>
+> Thanks for the report Lance. Is this something you started seeing after
+> a kernel update or switch to cgroup v2? (Or you simply noticed with this
+> setup only?)
 
+I just switched to cgroup v2 to begin testing, as we intend to have
+containers run
+in cgroup v2. Testing on both the 5.14.0 and mainline versions ;)
+
+Thanks again for your time!
+Lance
+
+>
+>
+> Michal
 
