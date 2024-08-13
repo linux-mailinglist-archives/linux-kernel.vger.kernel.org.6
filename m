@@ -1,177 +1,131 @@
-Return-Path: <linux-kernel+bounces-284635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61259950355
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:11:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058E5950358
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 942441C2210C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:11:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9453AB25EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1B9198E71;
-	Tue, 13 Aug 2024 11:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779AE1991AB;
+	Tue, 13 Aug 2024 11:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="D1PwmyK4"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZBzg76gx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CC560EC4;
-	Tue, 13 Aug 2024 11:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C3560EC4;
+	Tue, 13 Aug 2024 11:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723547493; cv=none; b=POfDvRE5C67T8vAwYE405Ugwt+ARYeWFakOqgzuzIPyBd+0K2xgMQB7uScKYQuPupyDqe6rlYcqywIloObCEzjSMkfgMCE1DKkrQ6vJD/48r1BTBprBixKvAQe/hcjylT9eePtrIcy8m4uiWF2NsO7DCo8PVCobWZeOFwnBBtQ0=
+	t=1723547499; cv=none; b=HIFpxzagwo+Qx6ptDMvIOTPcZUEsX325mGclCmYjo0uE2UZ3+Yx+X3LMn9rOVph8KALkv7lGvqP7tP9j3/IsMsaHtrGSvgrYMyAMgxFJJeyCp2qv+tx1qJkJ+njwQqKL6ONvUIXDyA6scMXEwMyF4E35ruqxTJ+XqDvqFEZMh/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723547493; c=relaxed/simple;
-	bh=7gkIW6rHAJWw9DpF49uh+XSuxqYO3AKEiidveWjhkbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmbmHqpswKTzk0X23wz3HrsW2iEQhil2KpwO4VIMGB5v4qEHeh78epT/5jPi7mkMqk+6xQ68n+v9LKCipF54wDC583mLexnr7aHrxIncAS1ubNdKKEC3JsbB2IfPAu05t/+xrcgTNh8zjj2aJD/bRyotppacL+BJo7LWpgNGj/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=D1PwmyK4; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723547482; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=i6gj0Em+nl5LJC0kbGdv/6kK5TQfE9f5EDGnM/l48K0=;
-	b=D1PwmyK4Ys1lZszEBXExWhUr5Lw6ZIJwnuvX+EKrzzhHo5b86BGUmT84zd7AninjRfo+kforhB6qOSNHME2FA1a0SOUVZYx8NvT5feg7gVNfdvSRzdPE030rdQcD3xkwkdrsEtV+JsJ6n5+HhvGYLJ+LESYClDc3XQuuTfJS+T8=
-Received: from 30.221.149.156(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCovVTY_1723547480)
-          by smtp.aliyun-inc.com;
-          Tue, 13 Aug 2024 19:11:21 +0800
-Message-ID: <a34b3973-1121-4c55-ad99-f74a755644d3@linux.alibaba.com>
-Date: Tue, 13 Aug 2024 19:11:20 +0800
+	s=arc-20240116; t=1723547499; c=relaxed/simple;
+	bh=9CYbKupifRahOwQ5D4eldN4XFRGyx70KQdl2CNH2QuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5GKIgJbGuQNMkPIaDWwkKN83qapAgb2na/NYeGZWkjnkw6DUX4TF1VdXT8h/uy6pOzGEDaavPf7j0H7MMotuZkQOSIFc2g6/mboCPHi7ppZq2BlPb+ve7dnxDHt0DWe25gs3SiqPj84KtmMG3GL54Oc8OUBIIdB5ivKzpbJ1/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZBzg76gx; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723547498; x=1755083498;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9CYbKupifRahOwQ5D4eldN4XFRGyx70KQdl2CNH2QuA=;
+  b=ZBzg76gxjyXf9DRtaIbX1d9IRK+YIgUUmKj/vcNYj9wKLdvXqk64l6s4
+   T7oD0S3OdaEWtT/TcsZgJ1JJpGbW7Q6Fkh76Vkiuus8tubXqvux3ILKD6
+   h8oLdSyiKDUF2DKGCSys0NAFDzNSaYSOjuqVTMf1AhqJezNdti6JVvQ5M
+   +7my1PTFoTU0L7Hni5e1oNoiB3YchkFeMiCT5XD2HFPpnqyqB/XRLMg6l
+   nLwrbQfKbJF/jYdpn6Aedg708ZJWx39MO53VhoHHo658MVbryxokXmTjg
+   Q3WOhstEY3WiLmwPoGnxQeLcxMzstCcfOKXfc5fg+BSbQ8VYVQUHdMyZg
+   w==;
+X-CSE-ConnectionGUID: qtZUNTs2T2mAkWKdIfJn8Q==
+X-CSE-MsgGUID: 47O6I4ynTm+qfd3WAeSA7g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21571766"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="21571766"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:11:37 -0700
+X-CSE-ConnectionGUID: ov+rmDnlQzOWIO73weRrvg==
+X-CSE-MsgGUID: KwVgZ/FVRbe2ddxlyiPVaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="96167459"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:11:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdpR4-0000000Ehfz-1Xvv;
+	Tue, 13 Aug 2024 14:11:30 +0300
+Date: Tue, 13 Aug 2024 14:11:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] of: dynamic: Add of_changeset_update_prop_string
+Message-ID: <Zrs_YijPxKBFQF0_@smile.fi.intel.com>
+References: <20240808095931.2649657-1-wenst@chromium.org>
+ <20240808095931.2649657-2-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in
- txopt_get
-To: Jeongjun Park <aha310510@gmail.com>, wenjia@linux.ibm.com,
- jaka@linux.ibm.com, gbayer@linux.ibm.com, tonylu@linux.alibaba.com,
- guwen@linux.alibaba.com
-Cc: davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com,
- pabeni@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-References: <20240813100722.181250-1-aha310510@gmail.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20240813100722.181250-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808095931.2649657-2-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Aug 08, 2024 at 05:59:24PM +0800, Chen-Yu Tsai wrote:
+> Add a helper function to add string property updates to an OF changeset.
+> This is similar to of_changeset_add_prop_string(), but instead of adding
+> the property (and failing if it exists), it will update the property.
+> 
+> This shall be used later in the DT hardware prober.
 
+...
 
-On 8/13/24 6:07 PM, Jeongjun Park wrote:
-> Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
-> copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
->
-> In addition, since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
-> point to the same address, when smc_create_clcsk() stores the newly
-> created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
-> into clcsock. This causes NULL pointer dereference and various other
-> memory corruptions.
->
-> To solve this, we need to add a smc6_sock structure for ipv6_pinfo_offset
-> initialization and modify the smc_sock structure.
->
-> Reported-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-> Tested-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->   net/smc/smc.h      | 19 ++++++++++---------
->   net/smc/smc_inet.c | 24 +++++++++++++++---------
->   2 files changed, 25 insertions(+), 18 deletions(-)
->
-> diff --git a/net/smc/smc.h b/net/smc/smc.h
-> index 34b781e463c4..f4d9338b5ed5 100644
-> --- a/net/smc/smc.h
-> +++ b/net/smc/smc.h
-> @@ -284,15 +284,6 @@ struct smc_connection {
->   
->   struct smc_sock {				/* smc sock container */
->   	struct sock		sk;
-> -	struct socket		*clcsock;	/* internal tcp socket */
-> -	void			(*clcsk_state_change)(struct sock *sk);
-> -						/* original stat_change fct. */
-> -	void			(*clcsk_data_ready)(struct sock *sk);
-> -						/* original data_ready fct. */
-> -	void			(*clcsk_write_space)(struct sock *sk);
-> -						/* original write_space fct. */
-> -	void			(*clcsk_error_report)(struct sock *sk);
-> -						/* original error_report fct. */
->   	struct smc_connection	conn;		/* smc connection */
->   	struct smc_sock		*listen_smc;	/* listen parent */
->   	struct work_struct	connect_work;	/* handle non-blocking connect*/
-> @@ -325,6 +316,16 @@ struct smc_sock {				/* smc sock container */
->   						/* protects clcsock of a listen
->   						 * socket
->   						 * */
-> +	struct socket		*clcsock;	/* internal tcp socket */
-> +	void			(*clcsk_state_change)(struct sock *sk);
-> +						/* original stat_change fct. */
-> +	void			(*clcsk_data_ready)(struct sock *sk);
-> +						/* original data_ready fct. */
-> +	void			(*clcsk_write_space)(struct sock *sk);
-> +						/* original write_space fct. */
-> +	void			(*clcsk_error_report)(struct sock *sk);
-> +						/* original error_report fct. */
+> +int of_changeset_update_prop_string(struct of_changeset *ocs,
+> +				    struct device_node *np,
+> +				    const char *prop_name, const char *str)
+> +{
+> +	struct property prop;
 > +
->   };
+> +	prop.name = (char *)prop_name;
+> +	prop.length = strlen(str) + 1;
+> +	prop.value = (void *)str;
 
-Please don't send patches so frequently 🙁.
+Is it the existing style in the file? Otherwise I often see style like this
 
-And it seems like you haven't made any changes? Those modifies still 
-there? Perhaps before you issue the patch,
-you should carefully check what you have written.
+	struct property prop = {
+		.name = (char *)prop_name;
+		.length = strlen(str) + 1;
+		.value = (void *)str;
+	};
 
+in the kernel (IRQ domain, platform core, ...).
 
-BTW:  Please don't send any new versions of this for at least 24 hours, 
-You need to give yourself and the reviewer
-some time.
+> +	return of_changeset_update_prop_helper(ocs, np, &prop);
+> +}
 
->   
->   #define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
-> diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
-> index bece346dd8e9..25f34fd65e8d 100644
-> --- a/net/smc/smc_inet.c
-> +++ b/net/smc/smc_inet.c
-> @@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
->   };
->   
->   #if IS_ENABLED(CONFIG_IPV6)
-> +struct smc6_sock {
-> +	struct smc_sock smc;
-> +	struct ipv6_pinfo np;
-> +};
-> +
->   static struct proto smc_inet6_prot = {
-> -	.name		= "INET6_SMC",
-> -	.owner		= THIS_MODULE,
-> -	.init		= smc_inet_init_sock,
-> -	.hash		= smc_hash_sk,
-> -	.unhash		= smc_unhash_sk,
-> -	.release_cb	= smc_release_cb,
-> -	.obj_size	= sizeof(struct smc_sock),
-> -	.h.smc_hash	= &smc_v6_hashinfo,
-> -	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
-> +	.name				= "INET6_SMC",
-> +	.owner				= THIS_MODULE,
-> +	.init				= smc_inet_init_sock,
-> +	.hash				= smc_hash_sk,
-> +	.unhash				= smc_unhash_sk,
-> +	.release_cb			= smc_release_cb,
-> +	.obj_size			= sizeof(struct smc6_sock),
-> +	.h.smc_hash			= &smc_v6_hashinfo,
-> +	.slab_flags			= SLAB_TYPESAFE_BY_RCU,
-> +	.ipv6_pinfo_offset		= offsetof(struct smc6_sock, np),
->   };
->   
->   static const struct proto_ops smc_inet6_stream_ops = {
-> --
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
