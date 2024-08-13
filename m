@@ -1,141 +1,202 @@
-Return-Path: <linux-kernel+bounces-285291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14984950BC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:54:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08EE6950BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFEA1F26DB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFDE6281714
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB001A38E9;
-	Tue, 13 Aug 2024 17:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dmb1BZne"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE0B55892;
-	Tue, 13 Aug 2024 17:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DA21A38D0;
+	Tue, 13 Aug 2024 17:56:24 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0A022F11
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571677; cv=none; b=t5YcTDVWcsFuVTP5JdrAwZYTRDPM5nkOXYRN19XWTGnzKIn3sgUYEtWGSCbQ/f75aMyEwhdKeQ5PeoMzORMGKbXHpFNt1mbl8aAnAsPbYJomo9HO9Y5tB4lu7dcCypJjVaX+FQnYKfUGbzFqcuxOyT24j/k6ZAIfPXPsB2Q+SxQ=
+	t=1723571783; cv=none; b=C2d7o5GrSve8bdeaDAZFqWCLFFdwMEhHbFUBzRP2XaLMut9/qyqGdySnuCpe8MVFeL0C16zcfj2ieDdWm1PmS719VtrxNv+PKhmuoOTn3A5CvWh2wwrLKbS4S0COZwk85cOeDn1X0ex/GxwJuyjPxEwhj1H0NGFhPEYINrXaMz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723571677; c=relaxed/simple;
-	bh=OZ8AP9XkMsyzC1rp7t6xBJ1ljv/JLSQ6tTrIq+3/6jM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rYtOWGB+hytqUr7YOCQDLTbSJ71qZ6f8FQhPSgquk71DTg3wYHTJ3/qmdmehxi0azb+ZiWqlHwyJ+gHVjiUgR5NH8QBiuqhYqHl5AOmSEBYed0FFnP3gwfo7GPfedtgofahwIR+MOT84/s/73SnbWyhLKgMWLUtyRoV85k9Ca1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dmb1BZne; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.106.151] (unknown [131.107.174.23])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3B9FE20B7165;
-	Tue, 13 Aug 2024 10:54:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3B9FE20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1723571670;
-	bh=nytHXNFUCvkjmExa31/IXH9nsS7Ke1ecqy5aOeZ0RVQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dmb1BZneqM72oPSe5DHw6ecIL62wYqVSoAd4vHn1OI6tbReWkMBOsAQwHOD1uJj15
-	 ici03yt3QfhtBQViHqWGIFo0+ZmMtlFPo/guJBTjh1+RFYmPmkUTt5X40IoxKyuN0+
-	 Imj1rgCamzVJDKZ83X9QPeow5gpEbDFPehT/Kkys=
-Message-ID: <e1dd4dcf-8e2e-4e7b-9d40-533efd123103@linux.microsoft.com>
-Date: Tue, 13 Aug 2024 10:54:29 -0700
+	s=arc-20240116; t=1723571783; c=relaxed/simple;
+	bh=tCPCJ/TpJCda4BgwZL+Ym/aFi3VCjhUXEV2ViGdNsxQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=i1UL3B0fEeC0L4n86l8oZrMP95w9YstvcliB7MCAiCHjEcuIlC6NN4dMrMCmsdd507HrMxY0njVjVuSgzYCUHLuNS1/vTzpntnh0OxsUfgQPOZmm1j5LabOirUUmDszex3Y5crZcekm+N6ZwSnCK2+TwHeTQWuW8chGyYT3bjAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8edd7370so731277339f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:56:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723571781; x=1724176581;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mhLZCqzwDFLBPIoFDag5GyusiC/lZjZlVdw7TtMKxkg=;
+        b=hQkIR0qQ+c30/TdVcn0EKbLZ9S1iWLmnaH/21OU+wxY0kAAeHtjVr5Etkv8XgmWIlg
+         XQGKJW1UJ3w6IowHCOXV8w3K4kNwJT5wJUe4KzjzhKLDezn7FTG7PN4S7d6QgxIX+lee
+         vZqQguMpvKJoHXXxxjdwA6Q+DQd+rjM7RU3oj/3y1jT0vz/UlOUSyDBv0+rHrpICgq6x
+         wOZQiO62G67FFbsAN8LWu2F3dmZFfzAx2UZMHRClnnl9wDUHqqVRRE726yM2O64aILHC
+         6qYQFdpWIQoDc9idkh8L7wYriCkZehCC4zC6Ht/vJa/9gklt4GpcHUG280mHCb7V6Ire
+         zh6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtdwvuOBoB8hI0ePgZudjK9tcAaVc++5rMbBaCpiI2PyWWBKfgFrLcOKG9HTVtEha3VQqsNiuKysoCa9Mtz+ihHbZGQPNNhvypOuq0
+X-Gm-Message-State: AOJu0Yx6v3YcB7vQAk2vsmAHLWS2mTaothTMy8rQbCny3yHtvPNOTk9Z
+	uYK/UI4yj3QUV5fz7hfdTPoBYcVSWOzE1a/fUwZv2SZAI1NgphdjmKchDJqfZrpxQn0jlxdmDpR
+	6O6WV6oBwNH47I6vCThTujB32GMNWqUqdP+9+emx7Gk/TzllojLIxRDk=
+X-Google-Smtp-Source: AGHT+IEViqgu+EBcH9mSvm3xuwiktyHxtfQ/wtAqkbCOOcV+hmpjwai+VPqJNaRo2ss2yIU48A5sijwVPyR9LjUBZtuyvyZKJAjP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/20] ipe: add policy parser
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, tytso@mit.edu,
- ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, eparis@redhat.com, paul@paul-moore.com,
- linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- audit@vger.kernel.org, linux-kernel@vger.kernel.org,
- Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-3-git-send-email-wufan@linux.microsoft.com>
- <20240810155000.GA35219@mail.hallyn.com>
-Content-Language: en-US
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <20240810155000.GA35219@mail.hallyn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:6209:b0:803:85e8:c40b with SMTP id
+ ca18e2360f4ac-824dadde687mr341039f.3.1723571781437; Tue, 13 Aug 2024 10:56:21
+ -0700 (PDT)
+Date: Tue, 13 Aug 2024 10:56:21 -0700
+In-Reply-To: <AS4PR10MB5766C0B97CCA5D2A1D2F8CD0F5862@AS4PR10MB5766.EURPRD10.PROD.OUTLOOK.COM>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c722e7061f945377@google.com>
+Subject: Re: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (2)
+From: syzbot <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
+To: r.vuijk@sownet.nl
+Cc: r.vuijk@sownet.nl, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+> #syz unsubscribe
+>
+> ________________________________
+> From: syzbot <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
+> Sent: Tuesday, August 13, 2024 7:42:25 PM
+> To: alex.aring@gmail.com <alex.aring@gmail.com>; davem@davemloft.net <dav=
+em@davemloft.net>; edumazet@google.com <edumazet@google.com>; kuba@kernel.o=
+rg <kuba@kernel.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kerne=
+l.org>; linux-wpan@vger.kernel.org <linux-wpan@vger.kernel.org>; miquel.ray=
+nal@bootlin.com <miquel.raynal@bootlin.com>; netdev@vger.kernel.org <netdev=
+@vger.kernel.org>; pabeni@redhat.com <pabeni@redhat.com>; stefan@datenfreih=
+afen.org <stefan@datenfreihafen.org>; syzkaller-bugs@googlegroups.com <syzk=
+aller-bugs@googlegroups.com>
+> Subject: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (2)
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of git://git.kernel=
+...
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D13da25d398000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3De8a2eef9745ad=
+e09
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3De0bd4e4815a910c=
+0daa8
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/9227adf96f75/dis=
+k-ee9a43b7.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c65c46b78c57/vmlinu=
+x-ee9a43b7.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/467d374f18b9/b=
+zImage-ee9a43b7.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com
+>
+> RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
+>  </TASK>
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 8054 at net/ieee802154/core.c:258 cfg802154_switch_n=
+etns+0x37f/0x390 net/ieee802154/core.c:258
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 8054 Comm: syz.0.839 Not tainted 6.11.0-rc2-syzkaller-=
+00111-gee9a43b7cfe2 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 06/27/2024
+> RIP: 0010:cfg802154_switch_netns+0x37f/0x390 net/ieee802154/core.c:258
+> Code: a3 2b f6 90 0f 0b 90 43 80 3c 3e 00 75 8d eb 93 e8 c6 a3 2b f6 e9 8=
+b fe ff ff e8 bc a3 2b f6 e9 81 fe ff ff e8 b2 a3 2b f6 90 <0f> 0b 90 e9 73=
+ fe ff ff 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+> RSP: 0018:ffffc9000337f408 EFLAGS: 00010293
+> RAX: ffffffff8b67d3ce RBX: 00000000fffffff4 RCX: ffff8880215f3c00
+> RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
+> RBP: ffff88802324e198 R08: ffffffff8b67d23d R09: 1ffff11004649c3a
+> R10: dffffc0000000000 R11: ffffed1004649c3b R12: 0000000000000000
+> R13: 0000000000000000 R14: ffff88802324e078 R15: dffffc0000000000
+> FS:  00007f2c789956c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ff818548d58 CR3: 000000007f648000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
+>  genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+>  genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+>  genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+>  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+>  genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>  netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
+>  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:730 [inline]
+>  __sock_sendmsg+0x221/0x270 net/socket.c:745
+>  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+>  ___sys_sendmsg net/socket.c:2651 [inline]
+>  __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f2c77b779f9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f2c78995038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007f2c77d05f80 RCX: 00007f2c77b779f9
+> RDX: 0000000000000000 RSI: 0000000020000200 RDI: 000000000000000e
+> RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
+>  </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
 
+Command #1:
+unknown command "unsubscribe"
 
-On 8/10/2024 8:50 AM, Serge E. Hallyn wrote:
-> On Fri, Aug 02, 2024 at 11:08:16PM -0700, Fan Wu wrote:
->> From: Deven Bowers <deven.desai@linux.microsoft.com>
->>
->> IPE's interpretation of the what the user trusts is accomplished through
-> 
-> nit: "of what the user trusts" (drop the extra 'the')
-> 
->> its policy. IPE's design is to not provide support for a single trust
->> provider, but to support multiple providers to enable the end-user to
->> choose the best one to seek their needs.
->>
->> This requires the policy to be rather flexible and modular so that
->> integrity providers, like fs-verity, dm-verity, or some other system,
->> can plug into the policy with minimal code changes.
->>
->> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
->> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
-> 
-> This all looks fine.  Just one comment below.
-> 
-Thank you for reviewing this!
-
-> 
->> +/**
->> + * parse_rule() - parse a policy rule line.
->> + * @line: Supplies rule line to be parsed.
->> + * @p: Supplies the partial parsed policy.
->> + *
->> + * Return:
->> + * * 0		- Success
->> + * * %-ENOMEM	- Out of memory (OOM)
->> + * * %-EBADMSG	- Policy syntax error
->> + */
->> +static int parse_rule(char *line, struct ipe_parsed_policy *p)
->> +{
->> +	enum ipe_action_type action = IPE_ACTION_INVALID;
->> +	enum ipe_op_type op = IPE_OP_INVALID;
->> +	bool is_default_rule = false;
->> +	struct ipe_rule *r = NULL;
->> +	bool first_token = true;
->> +	bool op_parsed = false;
->> +	int rc = 0;
->> +	char *t;
->> +
->> +	r = kzalloc(sizeof(*r), GFP_KERNEL);
->> +	if (!r)
->> +		return -ENOMEM;
->> +
->> +	INIT_LIST_HEAD(&r->next);
->> +	INIT_LIST_HEAD(&r->props);
->> +
->> +	while (t = strsep(&line, IPE_POLICY_DELIM), line) {
-> 
-> If line is passed in as NULL, t will be NULL on the first test.  Then
-> you'll break out and call parse_action(NULL), which calls
-> match_token(NULL, ...), which I do not think is safe.
-> 
-> I realize the current caller won't pass in NULL, but it seems worth
-> checking for here in case some future caller is added by someone
-> who's unaware.
-> 
-> Or, maybe add 'line must not be null' to the function description.
-> 
-
-Yes, I agree that adding a NULL check would be better. I will include it 
-in the next version.
-
--Fan
 
