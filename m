@@ -1,113 +1,137 @@
-Return-Path: <linux-kernel+bounces-284021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8B894FC0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:57:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB16694FC10
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4896E283319
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813C41F22ADB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D37218E1E;
-	Tue, 13 Aug 2024 02:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiZGm5wz"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1271B947;
+	Tue, 13 Aug 2024 03:01:48 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3576D17BA6;
-	Tue, 13 Aug 2024 02:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D33E4C8C;
+	Tue, 13 Aug 2024 03:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723517839; cv=none; b=C3ZUEMUbXKS4X2XTTAAhXkv8wUoMlJdwvGzaBwzmJnPlbm1De5oa49k2ompVsF4dIbzBCY/TkAl11LvXLyc3B9s1QIUAhYx7E9rYkWlCYxfx+cHr80MMucktADiQHlPZL8Zc8FEfFFpCWAHdbxZbYhnlgkcj+8dCmaPRFosDqws=
+	t=1723518107; cv=none; b=NlZEGatp3g1W+5i78qyn0R5vwrKFeFwWdxf5HW9x7bKp0cvRkEoqV5EJgrok9hetDXJJJ45L/3+ZeTT6Mi9k7eBAExU29qGhZF+GLuoFrE9jXN7NiZxN/H2/9bo/vwTJiHVCCmW+rjmPD+1cn6a5KW7cWlg052gzUTHHhogYH0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723517839; c=relaxed/simple;
-	bh=NbuWSsfWO7OXBBd8+8YHEHbJ6H15j0Rc9ZOUpmvs5dY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=FNgGxi+gvqsx6SvflBPeU9z/dquB3ILB3An+DJM+xIa5Twxdu7/bvBgw1CkN8mTPM1wyS2TsylEYkfs3hKsfX130v+YtU5KO9K5u/yyye3VlwmHVDteZbqG4aaPOrnLfQjRlc/NXcc0umS8Jl1brrWsLBxRS8tfIz6gNW3bdbbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiZGm5wz; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efd855adbso6302409e87.2;
-        Mon, 12 Aug 2024 19:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723517836; x=1724122636; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=f6wH2+oLPen397N26sm4V5YXSI4rXx3+DYcxWeal5y4=;
-        b=iiZGm5wz5wve8wbfX479csL6i2sc9Ai6cWcnPfvEcDx4/3gwJlqmAMxXj12h5Atf+J
-         kr0bAXflf9tbnsbxJrJALg1XtimwXqCpsrYAmrhn5DGJYrwYL95rIh3ogx30/o5J0Ja6
-         wE1WiF0yMmQdnzr0U/e/0M489VUAb47OC/IyuWPo0mScANZI3yDQ99Bb5LiU5i8om4LD
-         P7UExXhTs3wqFDig82/J6vFcgVJHd/1xwDkzckqrHc4A/IHfHKaXFIBD4ljhdJIQOVDD
-         sSdbd8D6aUjsDOIO92PnEOSqKMyu+r0s9V9uSzgOuAh+hODTCgREaC5MuMtZilLkCuh9
-         1Ytg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723517836; x=1724122636;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f6wH2+oLPen397N26sm4V5YXSI4rXx3+DYcxWeal5y4=;
-        b=iLZn7hAyZlaXgyzN4HnZDgAC0FnBKrUchJFUhDf/tpJgpbQFmL/JtV5uzkxg8eAuFH
-         yYe2zelGT2yQMSMCMG+EPeWcGVoHz/YnEtBLjVRbCExP0TSQplcgfVmBrGto450uB9g6
-         FUC8fMRIalNufn97l9bvchUoAvD6Ck/jK2/ZXNQNj9J0F99LX9Jgq6x3wet2WK8jAk4C
-         /LLoutjStwGCQKBOAiaDlXNZC7aTI+9cRUTCNFDUfUESXAO+6xvHU46CZ1+yLyIf3qBG
-         DIYISbkf1OS/aj46/Pc0zgRmUMwbk4dzlHTMlTpD25IYmwn7vNB/QGYSMapzLXbe04dS
-         +Z9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXltiLax0icUZB3STTlEu9VRd6Hp26qL/klOyfw4yn4JQrc88UZZq3qRx3Fbr19OpVnCOPqduW1UdKSBkqq/K7Y4w99oY+SWY6NBQfE
-X-Gm-Message-State: AOJu0YwiZY2HoGuex6Qcm8wF3oHnmkNzGGEDQjYdZmIz072QW0bXh6b7
-	RFHY7T5RkPwvHC7G8V95yDmpJYpEFZxkUP+GcWf1Bu2Bp5JsJN+XGTedJg9+aNWUj/yZkDcaiSJ
-	rZ/Islr26b0pEY+BtSSXB3zAKARNz2ZLj
-X-Google-Smtp-Source: AGHT+IEPJVgxazoRtoq7E3354DYuPh4VoSBhQZ2Mw0kIncBcJ87Envj5B3ny1E10j7mV3H3KBYhJI/O+/HjXu7/GXsw=
-X-Received: by 2002:a05:6512:4024:b0:52c:e312:2082 with SMTP id
- 2adb3069b0e04-5321369454cmr1098872e87.54.1723517835745; Mon, 12 Aug 2024
- 19:57:15 -0700 (PDT)
+	s=arc-20240116; t=1723518107; c=relaxed/simple;
+	bh=jm2reYs+G6A80eJrvZtYWfDcDiV6BG2XZDJ5QsPyTOE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=nOAwJZxBsrSOW1KyX3JMGGPZhKQouETOW20o8S2a+mH/KK0NhnGom2f9zQIEXf39DJUobeiL0ovtjkYK4SheeRk+Q66Y/Q+59Dg0P7krvOL+4Z3jJFsiToIvcascjYuinH+QAbMLCTSE7hWoxIACC3Q4AEbBoyytk280NUcmx20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjbkY6BpHz4f3jMD;
+	Tue, 13 Aug 2024 11:01:25 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 885E91A0568;
+	Tue, 13 Aug 2024 11:01:39 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBXzIKQzLpm2RAsBg--.33905S3;
+	Tue, 13 Aug 2024 11:01:37 +0800 (CST)
+Subject: Re: [PATCH v2 5/6] iomap: don't mark blocks uptodate after partial
+ zeroing
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+ david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-6-yi.zhang@huaweicloud.com>
+ <20240812164912.GF6043@frogsfrogsfrogs>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <d3774e9f-ac6d-7ac3-257f-b8f37cc52544@huaweicloud.com>
+Date: Tue, 13 Aug 2024 11:01:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 12 Aug 2024 21:57:04 -0500
-Message-ID: <CAH2r5mse_XmxXZy8Xhav9S3K2pBvUTPFqf+jhJtOoCn3hM0stQ@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20240812164912.GF6043@frogsfrogsfrogs>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBXzIKQzLpm2RAsBg--.33905S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ury5uFy5Jw1kAF43uw4Durg_yoW8Cr18pF
+	Z8KFWqkr1kKFZru3W8AF13Zr10y39Igr4fCr47Wwn8uF45tr42gr9Fga1a9F1Fvry7Cr4F
+	vr4vgFy8uF15ZrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Please pull the following changes since commit
-8400291e289ee6b2bf9779ff1c83a291501f017b:
+On 2024/8/13 0:49, Darrick J. Wong wrote:
+> On Mon, Aug 12, 2024 at 08:11:58PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> In __iomap_write_begin(), if we unaligned buffered write data to a hole
+>> of a regular file, we only zero out the place where aligned to block
+>> size that we don't want to write, but mark the whole range uptodate if
+>> block size < folio size. This is wrong since the not zeroed part will
+>> contains stale data and can be accessed by a concurrent buffered read
+>> easily (on the filesystem may not hold inode->i_rwsem) once we mark the
+>> range uptodate. Fix this by drop iomap_set_range_uptodate() in the
+>> zeroing out branch.
+>>
+>> Fixes: 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O without buffer heads")
+>> Reported-by: Matthew Wilcox <willy@infradead.org>
+>> Closes: https://lore.kernel.org/all/ZqsN5ouQTEc1KAzV@casper.infradead.org/
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/iomap/buffered-io.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+>> index ac762de9a27f..96600405dbb5 100644
+>> --- a/fs/iomap/buffered-io.c
+>> +++ b/fs/iomap/buffered-io.c
+>> @@ -744,8 +744,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>>  					poff, plen, srcmap);
+>>  			if (status)
+>>  				return status;
+>> +			iomap_set_range_uptodate(folio, poff, plen);
+>>  		}
+>> -		iomap_set_range_uptodate(folio, poff, plen);
+> 
+> Don't we need to iomap_set_range_uptodate for the bytes that we zeroed
+> with folio_zero_segments?
+> 
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+We must do partial block zeroing here, hence we don't need to set update
+bit.
 
-are available in the Git repository at:
-
-  git://git.samba.org/ksmbd.git tags/6.11-rc3-ksmbd-fixes
-
-for you to fetch changes up to f6bd41280a44dcc2e0a25ed72617d25f586974a7:
-
-  ksmbd: override fsids for smb2_query_info() (2024-08-08 22:54:09 -0500)
-
-----------------------------------------------------------------
-2 smb3 server fixes for access denied problem on share path checks
-
-----------------------------------------------------------------
-Namjae Jeon (2):
-      ksmbd: override fsids for share path check
-      ksmbd: override fsids for smb2_query_info()
-
- fs/smb/server/mgmt/share_config.c | 15 ++++++++++++---
- fs/smb/server/mgmt/share_config.h |  4 +++-
- fs/smb/server/mgmt/tree_connect.c |  9 +++++----
- fs/smb/server/mgmt/tree_connect.h |  4 ++--
- fs/smb/server/smb2pdu.c           |  9 ++++++++-
- fs/smb/server/smb_common.c        |  9 +++++++--
- fs/smb/server/smb_common.h        |  2 ++
- 7 files changed, 39 insertions(+), 13 deletions(-)
-
--- 
 Thanks,
+Yi.
 
-Steve
+> --D
+> 
+>>  	} while ((block_start += plen) < block_end);
+>>  
+>>  	return 0;
+>> -- 
+>> 2.39.2
+>>
+>>
+
 
