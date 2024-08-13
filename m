@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-285493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFF2950E24
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:49:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D319950E29
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA6C1C2317C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C5B1F21432
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35691A7065;
-	Tue, 13 Aug 2024 20:49:31 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0667E1A705C;
+	Tue, 13 Aug 2024 20:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="ssVTiNy7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MPSusTpi"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95C71A38EC
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0263B192;
+	Tue, 13 Aug 2024 20:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723582171; cv=none; b=nPdtqwgUks384bBlKni+V/BbjgPN44oeN2ZS/8txCuMuD9PYHQIOBefD9s4OEJFcUGkQpqmrkKrhkNOaq9jdXMrz15pkYhafS9oVxHRJrdZ3ykGDCPo1QP3pQaFuI7WhWBy5sbmDLxD0bSVudqWC6fHa7fPyzyk1BP6iV56tdVk=
+	t=1723582293; cv=none; b=CnG3l8UV1taCpPH52TnoV8lhLrvuMIlIM+uAxEBuLATs2lfNfIHZZKBsL/nsDelcQKdQYNztcSTih+TEjTmv9f/dJbU4buQvs/zEpec7lbYXgzt7UawNSOP6j2iNT6mqdNucG2rKJe/PUpRkOW3DsD5MWmPfvfiP6LFEMjfraHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723582171; c=relaxed/simple;
-	bh=EiT4Sh/TlUEfS98np+ZSarcrRWXKNgiurPtOYNWpY8o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oDX0W358bJPDsZyTdx4GCfKi/iKaz5D7QwiuvTlQVXtvAw1vObGqAF/JiHKk4K/R5M6zkMu0zSoK59lhZ6noKIuy2fXuTFCgSe1LuBR1MmZK+vzx5NJ+xWCY1NnAWVIMzqBKwVnoHhNW5D4AHOZbqyodWjKGz4JPbZMxg/JB4X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d10b6da2dso7360445ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723582169; x=1724186969;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c5Kkke9tL3v4lVVfPkmFG8izoAwG1RpBwsTReLWE04I=;
-        b=QGT7DXgLuI59KzSVvCytMxf+U6601ypLL+skdgyFvxMlBcZFZQ5cVw7CBv7iHMnxGo
-         LNW16hZ2mEJWN8uB1NNozsYDOb2yGdp4lnhzBUoEIRkyK13G2sZAwa3BBUTDF3aYCbPx
-         /DXcblQDZdP/hFIufp55PmcokGVoWHhxoa1Pzpha/dLYzfnvnaSx2zFuU212WYrmaxNm
-         D7hizf1dbBLWSPEKb/cB6QQEnF9OsiToE+Cgg/DAGFCD3dEjGZ9RYKMqMoXC1AUyHNyH
-         Y3Zg9Pu0Hm/O1RM45raDE2jcI2DMZ8Toxm0kY0t1Vh1mJLWXedIE9NtRtUcbvu1z7YJQ
-         lyUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKp/9gT7xohroCcQ0TIjuqxTO2NDJ5vmmPZ4WvbHpJvDnL8nn1Jquc2+lRaINmK6KgrllKHPb8bqjr8zP7wKcZpWYlWAheG9KqnB5R
-X-Gm-Message-State: AOJu0Yz3nMVv4n9j3CV/gJAEcHmpeNcB+DQQTis5M75lyrapSzV2wihu
-	QDGkq+Sb+JsEMn7WrH2Vvzw5vAoiNJBDPymGkyG86MQ2tnaDejF45bBtXjjsSjLLiYs/VImx8ct
-	FydwXPo7pYM22qKdT5V5ed0rC0gTWous9gKG6BtC7qTolubFk/DcMOFM=
-X-Google-Smtp-Source: AGHT+IHxnlYeDkxLzfdRvriRh4COdW9nBQXt9nEoPN/DpZLTo0V4Qzu1bzwzXUiRALbjaRfvOPOYfvwMrEdFz5GhjZY2J4mGlAdS
+	s=arc-20240116; t=1723582293; c=relaxed/simple;
+	bh=NJTt26QOaIzjNnEioBR2M6hmrFI0nPiiBJdNnuP5EOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kPbGd0JS5yN6QUjLv1QYJuX9XdFg43YKKGGzXg4ypiNwOqAmCYJmopmO4LDCg+1gH3OUmaL2pPwTKoQZ57gSA6pFAiI6DQsZIFPDch4t2oBJuPpSWbxOLvXbi0x2s72/rOP0l3OiYQU818x1RkIqtk+inFnVbs8teqfnzput/1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=ssVTiNy7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MPSusTpi; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 7BA011383A46;
+	Tue, 13 Aug 2024 16:51:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Tue, 13 Aug 2024 16:51:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1723582290;
+	 x=1723668690; bh=bUzud+CzxUUzqep0SKVIqN5uPddQlB5I7JlliJFz8wM=; b=
+	ssVTiNy7VGIPpoB7gOPKkDEHbI7DHcIzClhQxzCeCs6CsJ2JhNd6l3p1zpc5PMIl
+	uz07+HuWWCkkkNxoBDusnH+IxnUTwZeTmbOC8e8nlD36wv0uqzMiFFd8X588BsbK
+	l7NR5DsYQRYyUUDsYytxusoYe2J4twLCZI9UlmNdJMBIhoEoxbXrwC1tghGORQhh
+	2rgw6hpPTVHQWMH2ZLA3AXZPdFX4IAVo74sS3mK8UNQJAY/y6HLJ9SP7lay7SZwe
+	UcNMRsaVD8gdG/qbcNCDDIkicBQNsYgO6unSGdmJWEZF2HytkWlFemHFuuQgBBpE
+	ozB3jv2hSpaqaUyaCWq2jw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723582290; x=
+	1723668690; bh=bUzud+CzxUUzqep0SKVIqN5uPddQlB5I7JlliJFz8wM=; b=M
+	PSusTpiTRsGD+ZpDnrs6FmbhF+EUwIHTGOSMMJGdjJdjb4Dgqkqsn5uoDjJ1eR60
+	QeH26oMsUWR/g1u1LHAohWWUSdSsDgTHHKjYrZmhuwNWigEwxXy9uLObP9gpjASQ
+	8WGLGMhh6JfYEY/2V1RMoyjFgHN+IS6LgBYOcKtaclMmJyvY1lSG6/jU56puOys8
+	8RghUEmA+XLWc8+vpyg2RqB8WzDR/J1n89dXx7kFrze3GWpxkYtSNBZIX9q13+Tc
+	Zlj4AyrWWiT9hY16EGbOmtqD4d7Nl33Kg4e5owH1t08eVH0CDHOkM+UBvrjeLlYQ
+	rRv2KyA74xk3IqlPRuc8w==
+X-ME-Sender: <xms:Use7ZqTH5cFp11ee2CJ_WBUv5NjjouNbTOYLK0Ri2oaNOwYtPqQfjw>
+    <xme:Use7Zvx0WYtkuRyknl6ck-khgMYcGLzuZJo8ZEgD7GKeVrr0V2mNAzfqLvsGNwtmT
+    KVwi9trlzpOP6kp>
+X-ME-Received: <xmr:Use7Zn2P4Qv7Ms-MVdTusgW56aZO_8whnQsVNZ8svCqsFyxPrVsMsBrW5HcM6p4QXToPJJf61uHXBdtr4jb4WyNxfNzS1qYSS1mLCw8KG3-sVNIEUu7vV32xcQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgudehfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusg
+    gvrhhtsehfrghsthhmrghilhdrfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddu
+    gfdtgfegleefvdehfeeiveejieefveeiteeggffggfeulefgjeenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghr
+    thesfhgrshhtmhgrihhlrdhfmhdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtoheprggrphhtvghlsehnvhhiughirgdrtghomhdprhgtphhtthho
+    pehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsug
+    gvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Use7ZmDSE6hsx5-_0pdnI0Tr-imKNHs8pMv23mn8_H7xIUO84Dr_eg>
+    <xmx:Use7ZjiXNszMx7aCIDhKuJ7wud80rm6nxZDbep4XhPyvGh_iw9pd4Q>
+    <xmx:Use7ZipPoXdMhdr8ypUaxS9lmJJRGQ_ZlBfjlYN-gWCzDYMoL3cp4w>
+    <xmx:Use7ZmgCJLanHosH8CEkj3fyiAiQmupzqRgPFNHANbL6p8RpdX6fyA>
+    <xmx:Use7Zjd2HB73PW_aFbKi2rDGD6Y7o1I87Y9hV7Ju9aVTau5dvY-4YUnR>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 13 Aug 2024 16:51:29 -0400 (EDT)
+Message-ID: <f5f61ebb-cb44-47e0-8cae-0c64d1afc7ff@fastmail.fm>
+Date: Tue, 13 Aug 2024 22:51:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca7:b0:39a:ea89:22e8 with SMTP id
- e9e14a558f8ab-39d1245851dmr454095ab.2.1723582168930; Tue, 13 Aug 2024
- 13:49:28 -0700 (PDT)
-Date: Tue, 13 Aug 2024 13:49:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ebae95061f96be85@google.com>
-Subject: [syzbot] [f2fs?] WARNING: lock held when returning to user space in f2fs_commit_atomic_write
-From: syzbot <syzbot+78ff2855f26377625419@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    9e6869691724 Add linux-next specific files for 20240812
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=177ea68d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
-dashboard link: https://syzkaller.appspot.com/bug?extid=78ff2855f26377625419
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13deecd5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c1fdd9980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f1b086192f50/disk-9e686969.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b457920fb52e/vmlinux-9e686969.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e63ba9cce98a/bzImage-9e686969.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a0c7f05fa485/mount_0.gz
-
-The issue was bisected to:
-
-commit 7566a155c666dd23b413a002a50cd9ae7b95f053
-Author: Chao Yu <chao@kernel.org>
-Date:   Tue Jun 25 03:13:49 2024 +0000
-
-    f2fs: atomic: fix to not allow GC to pollute atomic_file
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1255068d980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1155068d980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1655068d980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
-Fixes: 7566a155c666 ("f2fs: atomic: fix to not allow GC to pollute atomic_file")
-
-F2FS-fs (loop0): Found nat_bits in checkpoint
-F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-F2FS-fs (loop0): Mounted with checkpoint version = 48b305e4
-syz-executor306: attempt to access beyond end of device
-loop0: rw=2049, sector=45096, nr_sectors = 64 limit=40427
-================================================
-WARNING: lock held when returning to user space!
-6.11.0-rc3-next-20240812-syzkaller #0 Not tainted
-------------------------------------------------
-syz-executor306/5229 is leaving the kernel with locks still held!
-1 lock held by syz-executor306/5229:
- #0: ffff8880473a18b0 (&fi->i_gc_rwsem[WRITE]){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
- #0: ffff8880473a18b0 (&fi->i_gc_rwsem[WRITE]){+.+.}-{3:3}, at: f2fs_commit_atomic_write+0x105/0x1510 fs/f2fs/segment.c:388
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/fuse: use correct name fuse_conn_list in docstring
+To: Aurelien Aptel <aaptel@nvidia.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240517161028.7046-1-aaptel@nvidia.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, fr, ru
+In-Reply-To: <20240517161028.7046-1-aaptel@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On 5/17/24 18:10, Aurelien Aptel wrote:
+> fuse_mount_list doesn't exist, use fuse_conn_list.
+> 
+> Signed-off-by: Aurelien Aptel <aaptel@nvidia.com>
+> ---
+>  fs/fuse/fuse_i.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index b24084b60864..bd2ae3748d37 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -869,7 +869,7 @@ struct fuse_conn {
+>  	/** Negotiated minor version */
+>  	unsigned minor;
+>  
+> -	/** Entry on the fuse_mount_list */
+> +	/** Entry on the fuse_conn_list */
+>  	struct list_head entry;
+>  
+>  	/** Device ID from the root super block */
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+LGTM
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
