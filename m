@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-285110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A419C950978
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:53:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B614950980
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584F1282EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:53:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7CB11F217A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2961A072D;
-	Tue, 13 Aug 2024 15:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233B61A08A9;
+	Tue, 13 Aug 2024 15:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoslguCC"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkIJurtD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1984D8DA;
-	Tue, 13 Aug 2024 15:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD792AF0D;
+	Tue, 13 Aug 2024 15:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564391; cv=none; b=dmHLs+0+cygWeew4D0DzNRgdGvfhdCIKYkDDMyaaghv55qpGP9Ue50fOXihYt5YMLpr0F2V2HWsQEFpcqYcF4BIgSuaACzuNSllJI9G/VARWFDJYTU39nQYJqGkUvH8ib3ty2XZ99N8Oh7s6OoQhWhKeL4ixAt1o1rwpxarkieo=
+	t=1723564428; cv=none; b=CJlJLC3gQUkjqCpvxb4cgztbEORj1Tq+Smw/iV0wzh5KLFus8bmqjUEbYfSUu2pNwmo1g0xut5Y5+mJeoLrWBJ9x/+tqXGLjFsfspOpqFlVzRem2aOksyblao9UlHey6pUbbeyIOkPqLW8w8Mls3xAl3kiyJe9l5MAcWxnpzHG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564391; c=relaxed/simple;
-	bh=XZXQn0D9qp6oUZpRwEYVBpQ/F9RMTzsJtw4ybppWYSw=;
+	s=arc-20240116; t=1723564428; c=relaxed/simple;
+	bh=DdTCI3gkopnMJUu1J01m1xt6VNeTSSWjSzHqifhjVXo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDQMV+1JAEQ0WNFCGJaOYZTlXxoy6mQiyAGBBqqDt/46pvs3fTJvDfXRpN+9rFC6hKgDK6na+l7oe9vUHbPjb8JRTQVWMWOF08hag4ion5JxAtVjuxSy2EsZ/4LEeta7niA5r408lOI+5k+QSktH+V82GMui+NhCtlrx9XFjk5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoslguCC; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ff4568676eso54446805ad.0;
-        Tue, 13 Aug 2024 08:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723564389; x=1724169189; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6pdnkA+t5ian2aHHJUDq7NHgKzc+xyESZiLjyrnpwzY=;
-        b=MoslguCCioFS4MQyS6qItX1zAaVu7b03JZA1jfkcqu4eitQLDUb+1C8CQ9aSKpKMPt
-         9kZ8+Vb3bRcSw3I+rN3P0841ry9dEWLTWc2pFxdQBUd8ZScamfs9Gq/kBasfMekxEj7s
-         p8yHLTcSTQ7/5ruxpOWRyzG+sh9Pm2jTZhkgyChynI6KU752Ko0u0jnJVQArO3thnr3B
-         VaFUFC+Biswkpa2LBl1iEZma40s28awVzTIlub1sLP4frYdNt8VVyASIgS+188ybLuFC
-         OmRRLUXya74nQEsPbt3WOALHbduRuq+Ol1yNIlZN69VJha+yuE7aVAyIBJKavnQxvcXT
-         L5LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723564389; x=1724169189;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6pdnkA+t5ian2aHHJUDq7NHgKzc+xyESZiLjyrnpwzY=;
-        b=ZaFu1+Ary/2Daj3RK5fWZKDBNlKP+yk/MivWIrYy0TTVBYhDiBJCrpW5+U8C23kdHL
-         kYZR6gSeDUqt7jjz0R4zgMbH7ZbNSsdCxw1IBB3rvEi6L+FxvzxeFErRFWdsRSM99cw3
-         Ca6g8I2tdje+N7ynRIQeG8GPq8JYSEnOx+ET77vFFezVNT6Vy8j/1eTEpd89t1Ve30RO
-         knH+3fEN13FUhe/VWvaNZS//AZTG4eGmNK658fxZuaiRLm8UP/vckHULSxr4zlq4/+lj
-         mFHZtbbG0XSbJEy/5ObW6kHwP/dgSGGl1kKN/qRxwp1uYV37hXvPiOzQqMhczdRbkjrv
-         FKjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5DmGGuLYnShD/Y72uNVZbPWqV7FaZPOFg/+OLQMhwdiBTWznj1m2xGMd54Dq3DdT2foekyShvJaeqQPot/5nQoSscI0QovwKxcPwSSdpuwYs5lMR3L1XsDRAinOAGCR2wIiaQv93DAUA=
-X-Gm-Message-State: AOJu0YyfSAHeJ+cn55HetrGmfCeLmz3JLOkAhrMpUnza+J47ImPd1vWr
-	Pj0uz8QMTUcQ++aqcmpaJQrRqAEYqc0cn8rBLJ8732N9RJ6oWjsEhkqAIg==
-X-Google-Smtp-Source: AGHT+IEtCQFeSKon38N3qam/q9EKML/imFjl8GYLR3a8KJlvFvNMztaiAox20Q+RYCRpWgI/JkELxQ==
-X-Received: by 2002:a17:903:2449:b0:200:668f:bfd5 with SMTP id d9443c01a7336-201ca13d746mr49853555ad.21.1723564389002;
-        Tue, 13 Aug 2024 08:53:09 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1bce12sm15219885ad.227.2024.08.13.08.53.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:53:08 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 13 Aug 2024 08:53:07 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] hwmon: chipcap2: drop cc2_disable() in the probe and
- return dev_err_probe()
-Message-ID: <95a73570-0ea9-4396-866e-ffb6fc8a2ba0@roeck-us.net>
-References: <20240813-chipcap2-probe-improvements-v2-1-e9a2932a8a00@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4RmR8KTFhosIKqlH1f41NtUclIsPFBFxgbrBip7bkA2RimeKIzlO/BjAp3FjtH+ppoD/VwRjBSU9dB0p/5LNQrWv13KbqwxzUPcdekeo293RsOR8qT5d3R/MjrL2Cg2pGy386H9eRC7G/KXKR2Aj84+HsMV8ODeboYyzxD6Vdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkIJurtD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2441C4AF09;
+	Tue, 13 Aug 2024 15:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723564427;
+	bh=DdTCI3gkopnMJUu1J01m1xt6VNeTSSWjSzHqifhjVXo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kkIJurtD18H8ADp/clvcDCVMJmXDcroXtvJvPgVYPusA/52lVkXskC0l888qsG59O
+	 wGJLHhc200Zytyv63+BgoWib32CAyBL/A4rD2DJ4VpAQUCD3VgggFnU1KnlrAIaim9
+	 Th02T7qjB5JTURtX8rbUvfB3zVfwvlu4gzQOJhATfeay36OvPRhkMq+hwZ3T8uWmuI
+	 GPZtI9f68IfBlQAgk1Z/E5TgOwYKk42yk7v1lMDS7Fznc1DG+YY7KvxftetbrxknTp
+	 OW8718iNFeBaEJfHkHIHUvdS25zmxWpxOnVvMfUJTdm16UXChtnlRdfKpiIdcagnbq
+	 F84FlnIVxA6pg==
+Date: Tue, 13 Aug 2024 16:53:43 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>,
+	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Chao Zeng <chao.zeng@siemens.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add EVERLIGHT
+Message-ID: <20240813-rectify-rift-f823808e039f@spud>
+References: <cover.1723527641.git.jan.kiszka@siemens.com>
+ <1c79a109a7e91927a9380d2aee91fae32848d7f7.1723527641.git.jan.kiszka@siemens.com>
+ <20240813-moaning-scrabble-48599c03b459@spud>
+ <3a12b661-bcc7-4563-af91-08f521afffc1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DDxbQwtUaeWQU0Dz"
+Content-Disposition: inline
+In-Reply-To: <3a12b661-bcc7-4563-af91-08f521afffc1@kernel.org>
+
+
+--DDxbQwtUaeWQU0Dz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813-chipcap2-probe-improvements-v2-1-e9a2932a8a00@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 12:59:53AM +0200, Javier Carrasco wrote:
-> There is no need to actively disable a regulator that has not been
-> enabled by the driver, which makes the call to cc2_disable() in the
-> probe function meaningless, because the probe function never enables
-> the device's dedicated regulator.
-> 
-> Once the call to cc2_disable() is dropped, the error paths can directly
-> return dev_err_probe() in all cases.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+On Tue, Aug 13, 2024 at 05:46:28PM +0200, Krzysztof Kozlowski wrote:
+> On 13/08/2024 17:41, Conor Dooley wrote:
+> > On Tue, Aug 13, 2024 at 07:40:40AM +0200, Jan Kiszka wrote:
+> >> From: Baocheng Su <baocheng.su@siemens.com>
+> >>
+> >> Add vendor prefix for EVERLIGHT Electronics Co., Ltd.
+> >>
+> >> Signed-off-by: Baocheng Su <baocheng.su@siemens.com>
+> >=20
+> > This is missing your signoff Jan. With it,
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> The next one as well...
 
-Applied.
+I had a longer reply for the other one ;)
 
-Thanks,
-Guenter
+--DDxbQwtUaeWQU0Dz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZruBhwAKCRB4tDGHoIJi
+0uJlAP4m07kV7aFJXCRWd9S+qaGpwTtRrJq5cFPTAmlkD+vONwD/Sw4i3LhAMfGE
+LDadGzWYNCDPHc74f0yeFnq3blVA4Qs=
+=T9k1
+-----END PGP SIGNATURE-----
+
+--DDxbQwtUaeWQU0Dz--
 
