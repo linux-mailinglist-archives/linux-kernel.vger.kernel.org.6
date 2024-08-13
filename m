@@ -1,191 +1,130 @@
-Return-Path: <linux-kernel+bounces-284537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDE4950215
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:09:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70D895021A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BADB1C21954
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31A12851C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD3B192B91;
-	Tue, 13 Aug 2024 10:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78C4189BB7;
+	Tue, 13 Aug 2024 10:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjecUxnj"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qsAGM+/0"
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917CF1607B9;
-	Tue, 13 Aug 2024 10:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAF213BADF
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543653; cv=none; b=ehseLTND3p31jKRgmia0jbpkfJ00A2e0Yk20an5D4rH12M+FhBJ0p75AuVIyxTjCgqylbr+O9fetQ49BU9jsSGMX9pH+9hvlEHDgQQrNquvem2U2KVX1M9zxhSJXyPphS+nfHH5ZfAU950pgKoyieE6iLdZC1CONzokMyuqQZRg=
+	t=1723543772; cv=none; b=TB+I+L5w7A5JOw8SqKsjP0eN1U6FGOxwdep/osirCNeyk9fW1bnm15Ykh4XmRhnT7/24ZAY1LdBJfx/uHG9zkryyg+fLiwBVKZkJ1r3a5KtgJUUHattzEJXsK28cW205zIVtpuNFfo9+ezs6y58Bgt+YdoD5Nx84m2RpTJwsj7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543653; c=relaxed/simple;
-	bh=1eu+OAMQ6xZiu0tesWEH67lOPbE8XFXCuJ4t02Bf6HQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TeeS/+98adYaGCL6w3KlMaNRNMaGTtZnQuFdA7QQdi9SbBrSQfonB1+7nIhWpY32N7y6HXOoJY5g+2zlwuWAaPNEl4wVs7zO1BfbDuaEp1yyjvh/7qMDIoj4+UmeF4h7Pxt1gDAh0TCCyxUg49nJWDM20EiyjGMWMKjy64TaclE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjecUxnj; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-81fd520fee5so213608439f.2;
-        Tue, 13 Aug 2024 03:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723543650; x=1724148450; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNaC4gcNrucQanmjIjqSI/sdAQVUCMeBxqt8+FHM7JQ=;
-        b=cjecUxnjNZt+Pz1xrlUXGm6L73KVAI6Ar6pHzmnESCaPNBUybbrNUOPensCSVkjqVJ
-         TIXeRR1qJBvmrU9zlaX3mFzk2UqyTUhbvqiZUHcl+pls583aS+ImYN/mSOpfvxZqPGk0
-         s5B6eS+aVIyj3bYh0jNjijXVEIZsd3ikqoKlCEw8nNKP1trGB5h1temyEbGPavBG0PcJ
-         VkxzRqzAtB4ZmqqabnGJ762sfUrAHFjwihc5hOP+hQWlxP2TAecjgxS6W+IeAwGAhX+u
-         z7PjdROQGBAl/2OzEPj8yOGdtmnjDz4nwaOV+qHuIcdgKWTCavlCZ+LV0fPL5G7WrnLS
-         M68g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723543650; x=1724148450;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HNaC4gcNrucQanmjIjqSI/sdAQVUCMeBxqt8+FHM7JQ=;
-        b=mq0hvoufX3QlsMwlqzyHV8AvYd1fVmIYVNhvW2jOJXOe5kL7oqxoGXnOrHeJqt/Mum
-         ZJcEsj9SSWlwJAJdihrznAmZ80nIFVMdVU677+nm9NkFJ8SqZdrNDkK+3E2LEb/HinA2
-         +yqNFpOS0Vlcs7oEVxoU6EFZxemBXtcf9fG+V3E2pjx4tRrP2yVSi6spzv9oUDjNh5X1
-         E61Tkttk5j5nki84GN6T8DOacN4IXPV3Ykk80c3KUvzhedGoxeu3fPNReSdLlpXoq4Mi
-         0yItPCA9fq4qLeiYGf7XnfsUBKyNjVYsjJwRxIQfFKGoUqxNrm1eBR2Z6if3Q9i5MCd7
-         HikQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWesVSeuOYVlXJ4fZnspDCLEvH26j8fyLJmbpn4aXcLlPQraash1Gx7i+JbqGZV+96Zdxn3VYpmzkJZVA==@vger.kernel.org, AJvYcCWj+l7K1jyZMphQuK62C5gH1mcJlOdyUFE9NDg/ohRH2JEk3P4dRK2qVnZ7zgmU877v6vgdDyMoqAoevEk=@vger.kernel.org, AJvYcCXnoUQGyA8C2qW4FlSq8ew1YyRbyr4AEU9C2/ixU3j0VYbTHG9+c1scOc5RF+CBYoJyi3CdXjwB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQC/gjuMGjgRB46Vdra2qOGF+PEgP9qag5rhVQeKjlMvNboLWL
-	t/LaT9H5N77FDBtNltxd7UBNCAds9SQZVDAXURK/1GXpSMfXHEFX
-X-Google-Smtp-Source: AGHT+IFuRf8XiyHGr8EVtAVRsl76P28vTT/K2BFEBcnSp+Mbwf1NCN054HtXjv3fNwJmP/8N/BbElw==
-X-Received: by 2002:a05:6e02:1fc3:b0:39b:324a:d381 with SMTP id e9e14a558f8ab-39c477d0a88mr34253135ab.2.1723543650455;
-        Tue, 13 Aug 2024 03:07:30 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58a866csm5357505b3a.48.2024.08.13.03.07.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 03:07:30 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	gbayer@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com
-Cc: davem@davemloft.net,
-	dust.li@linux.alibaba.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net,v3] net/smc: prevent NULL pointer dereference in txopt_get
-Date: Tue, 13 Aug 2024 19:07:22 +0900
-Message-Id: <20240813100722.181250-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723543772; c=relaxed/simple;
+	bh=JtIGOIfEY2J5+HBYsOLJeZbv7srucT4gvTbpsHqH1js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrdNDNx2A9TDNlg2vsV+hcCzIeWSnohigOiyos4HxACzHA2f5d+6K4lcYBpMISftJTSH5VgwVu6QqHoBIqA5Lpd1AxIu0DT8OF71lwykthQj/U8KcgYpmcebNSEBJbxGexHsv1KVB4BksSwkyxpuNzvrbK6iuHoYYRyTCvPWE2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qsAGM+/0; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WjnDP3HxZzHlD;
+	Tue, 13 Aug 2024 12:09:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723543765;
+	bh=BvkxhLSfP0GLpl/b5SaDUQzyCrdpCwqRP9YOE3sw4cU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qsAGM+/0bA96YKHhFPmDzMqqJdgNJHZB4TyLk1rnFwJNOAEpwAAi4fNU5HddTwIMW
+	 SDzuGAwoD/NPuRzOzgO2KcBCCBQZ6SJFTJYdynTsWi2PdRYTFgiZqpcogwCrSAE74O
+	 6i2zNmfoyAF12QwGuM9cLfrfVqnaniWVILgpJ7Kc=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WjnDN6HWTzDXr;
+	Tue, 13 Aug 2024 12:09:24 +0200 (CEST)
+Date: Tue, 13 Aug 2024 12:09:19 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook
+ inconsistencies
+Message-ID: <20240813.iidaejohj5Oo@digikod.net>
+References: <20240812174421.1636724-1-mic@digikod.net>
+ <o6ptrfa7gjdukphqtp6dakq3ykndrjusuhi4fyvpc5ne6amcig@lqbdb2dg7yzv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <o6ptrfa7gjdukphqtp6dakq3ykndrjusuhi4fyvpc5ne6amcig@lqbdb2dg7yzv>
+X-Infomaniak-Routing: alpha
 
-Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
-copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
+On Mon, Aug 12, 2024 at 11:45:29PM +0200, Mateusz Guzik wrote:
+> On Mon, Aug 12, 2024 at 07:44:17PM +0200, Mickaël Salaün wrote:
+> 
+> No opinion about the core idea, I'll note though that this conflicts
+> with a patch to move f_owner out of the struct:
+> https://lore.kernel.org/linux-fsdevel/20240809-koriander-biobauer-6237cbc106f3@brauner/
 
-In addition, since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
-point to the same address, when smc_create_clcsk() stores the newly
-created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
-into clcsock. This causes NULL pointer dereference and various other
-memory corruptions.
+Thanks for the heads-up.
 
-To solve this, we need to add a smc6_sock structure for ipv6_pinfo_offset
-initialization and modify the smc_sock structure.
+> 
+> Presumably nothing which can't get sorted out with some shoveling.
+> 
+> I do have actionable remark concerning creds though: both get_cred and
+> put_cred are slow. Sorting that out is on my todo list.
+> 
+> In the meantime adding more calls can be avoided:
 
-Reported-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-Tested-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- net/smc/smc.h      | 19 ++++++++++---------
- net/smc/smc_inet.c | 24 +++++++++++++++---------
- 2 files changed, 25 insertions(+), 18 deletions(-)
+OK, I'll add that in the next version.
 
-diff --git a/net/smc/smc.h b/net/smc/smc.h
-index 34b781e463c4..f4d9338b5ed5 100644
---- a/net/smc/smc.h
-+++ b/net/smc/smc.h
-@@ -284,15 +284,6 @@ struct smc_connection {
- 
- struct smc_sock {				/* smc sock container */
- 	struct sock		sk;
--	struct socket		*clcsock;	/* internal tcp socket */
--	void			(*clcsk_state_change)(struct sock *sk);
--						/* original stat_change fct. */
--	void			(*clcsk_data_ready)(struct sock *sk);
--						/* original data_ready fct. */
--	void			(*clcsk_write_space)(struct sock *sk);
--						/* original write_space fct. */
--	void			(*clcsk_error_report)(struct sock *sk);
--						/* original error_report fct. */
- 	struct smc_connection	conn;		/* smc connection */
- 	struct smc_sock		*listen_smc;	/* listen parent */
- 	struct work_struct	connect_work;	/* handle non-blocking connect*/
-@@ -325,6 +316,16 @@ struct smc_sock {				/* smc sock container */
- 						/* protects clcsock of a listen
- 						 * socket
- 						 * */
-+	struct socket		*clcsock;	/* internal tcp socket */
-+	void			(*clcsk_state_change)(struct sock *sk);
-+						/* original stat_change fct. */
-+	void			(*clcsk_data_ready)(struct sock *sk);
-+						/* original data_ready fct. */
-+	void			(*clcsk_write_space)(struct sock *sk);
-+						/* original write_space fct. */
-+	void			(*clcsk_error_report)(struct sock *sk);
-+						/* original error_report fct. */
-+
- };
- 
- #define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
-diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
-index bece346dd8e9..25f34fd65e8d 100644
---- a/net/smc/smc_inet.c
-+++ b/net/smc/smc_inet.c
-@@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
- };
- 
- #if IS_ENABLED(CONFIG_IPV6)
-+struct smc6_sock {
-+	struct smc_sock smc;
-+	struct ipv6_pinfo np;
-+};
-+
- static struct proto smc_inet6_prot = {
--	.name		= "INET6_SMC",
--	.owner		= THIS_MODULE,
--	.init		= smc_inet_init_sock,
--	.hash		= smc_hash_sk,
--	.unhash		= smc_unhash_sk,
--	.release_cb	= smc_release_cb,
--	.obj_size	= sizeof(struct smc_sock),
--	.h.smc_hash	= &smc_v6_hashinfo,
--	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
-+	.name				= "INET6_SMC",
-+	.owner				= THIS_MODULE,
-+	.init				= smc_inet_init_sock,
-+	.hash				= smc_hash_sk,
-+	.unhash				= smc_unhash_sk,
-+	.release_cb			= smc_release_cb,
-+	.obj_size			= sizeof(struct smc6_sock),
-+	.h.smc_hash			= &smc_v6_hashinfo,
-+	.slab_flags			= SLAB_TYPESAFE_BY_RCU,
-+	.ipv6_pinfo_offset		= offsetof(struct smc6_sock, np),
- };
- 
- static const struct proto_ops smc_inet6_stream_ops = {
---
+> 
+> > diff --git a/fs/file_table.c b/fs/file_table.c
+> > index 4f03beed4737..d28b76aef4f3 100644
+> > --- a/fs/file_table.c
+> > +++ b/fs/file_table.c
+> > @@ -66,6 +66,7 @@ static inline void file_free(struct file *f)
+> >  	if (likely(!(f->f_mode & FMODE_NOACCOUNT)))
+> >  		percpu_counter_dec(&nr_files);
+> >  	put_cred(f->f_cred);
+> > +	put_cred(f->f_owner.cred);
+> 
+> 	if (likely(f->f_cred == f->f_owner.cred)) {
+> 		put_cred_many(f->f_cred, 2);
+> 	} else {
+> 		put_cred(f->f_cred);
+> 		put_cred(f->f_owner.cred);
+> 	}
+> 
+> >  	if (unlikely(f->f_mode & FMODE_BACKING)) {
+> >  		path_put(backing_file_user_path(f));
+> >  		kfree(backing_file(f));
+> > @@ -149,9 +150,11 @@ static int init_file(struct file *f, int flags, const struct cred *cred)
+> >  	int error;
+> >  
+> >  	f->f_cred = get_cred(cred);
+> > +	f->f_owner.cred = get_cred(cred);
+> 
+> 	f->f_cred = f->f_owner.cred = get_cred_many(cred, 2);
+> 
+> >  	error = security_file_alloc(f);
+> >  	if (unlikely(error)) {
+> >  		put_cred(f->f_cred);
+> > +		put_cred(f->f_owner.cred);
+> 
+> 		put_cred_many(cred, 2);
+> 
+> >  		return error;
+> >  	}
+> 
 
