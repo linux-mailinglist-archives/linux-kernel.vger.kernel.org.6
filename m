@@ -1,173 +1,175 @@
-Return-Path: <linux-kernel+bounces-284919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4A29506DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:45:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC649506E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 061A91C229CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389941F21AD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD9819CCED;
-	Tue, 13 Aug 2024 13:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Qi30wFMT"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E260C29CEB
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B9E19D075;
+	Tue, 13 Aug 2024 13:48:44 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1254A19CD05;
+	Tue, 13 Aug 2024 13:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556729; cv=none; b=JC3BBvqhewuBgvYEMQGf0+hVisKQJ2sClp4Wif/9ebQLY2BI8zdAhQgk4JMZK3XPhftM9HcNRTY6pUc7ecbSznrpahwJPNW5HkO65pyTNpO08nzEowYbZP83J+febLAr//wUJtMuP3wbUmgbLSudl2RRoR148uhso+Zznxr7yUc=
+	t=1723556924; cv=none; b=XMkFxuzPZvOR1heYIZqwrwi7mfkbdjZp+GyTELopkPwUs/pfvixaaa0/7LIbB1aKCNvoF+oWFILGxrSEr/N1klyxYV3HRiipXOrqKuIgywlDRyFqYPOataExVLT4Eh8ZRg0MEOie6iOEoBEP6rPnzH8FFztTn/yoyMqleNv5JxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556729; c=relaxed/simple;
-	bh=ujxibdwvLK30VH3vS/JhhY7h5SBArKVRCrWFyndrJNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QHsecinzbpSWVzvBpfEQxijaJYbpSEPsLxsMqq3GWBJWhDVcFUk6I05NVJwuveSzKkk5X9h54H6eVXxpbbXfSjp4W5EkZU7JODl5fd0JLexzcvRvOolY2dr4L+rTJ4VtsQaUVp5GOIgorRAnqDvD6KBaZqAYA1s5tNqscYkZLCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Qi30wFMT; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso6428225a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723556724; x=1724161524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LKJwF414fsJ5dNSWPktLWSIbIfwG1iFkWQp8KafyxHA=;
-        b=Qi30wFMTxPN/c516Q5zg81hr8ayFpDBW06nzhPORlkAJvPAUWcppe+oCKTKwstkNuW
-         Ha6kDwoalcCl3byz2HZ2EcCJ1GG3sVL6CN0bxYgJCPzFlgtTWoMIw+vd9KJq8Lra6EdM
-         n0D2qYCCVuFgcN8IpPe+yqqnl8Srg++VplnlqAuwA2yJFbbM+0/MSukJOl1gpnVoh/ry
-         1allz86JR2xvVg3VOxeXzK29JMk9oscp4be3zEo3xhr7VhtpIOs+AZyCxuS4Q36Zpkkf
-         mMtd0ACKQCiZEp3ix4FiBQn8wluvP7JEQo09mqgIsh+vbIp9s6R0q2PZI9jtGUC23Q+y
-         Pg2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723556724; x=1724161524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LKJwF414fsJ5dNSWPktLWSIbIfwG1iFkWQp8KafyxHA=;
-        b=B/RCoowH3PVeotGsu/GNQ7JVKYyk+z0Pgc4cZeqArsoc2t4BWjw5mZwgj1e+wQkXZz
-         5H+IW8e7Ljaje87W6iW04UdTLcN/UNz+U6HgTpdtQWLKIZi3ZxeeubJnKkXlOD5wqgRw
-         +yd9q6G1qhDU/drR9352PMKz4lPMq5bJAAEtHsHbeKG5ipdD3q83Sa3oXfD314uSQjug
-         d9CNmbZ59IzHIsf+k9+dtELiYMeSQ8+rDUJv6i7MrRtkK9fib8wcjjEwGluIexk/8LqP
-         EYeXTRrtNd1UHRlYx3Xnohs2UswsYfIWexjlTiC0aNxevkoUEAQE3w4JqNljXZIoN3Bk
-         VkQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcoXePXQMqG5GiImq+UFqaVli+id8TPCLw0S4bEFCA9V6hmoNk3xpnkXUySpBP/xQe2VbmSSFwXNo/uSRceMbji0nPy8ur3ir1bWE8
-X-Gm-Message-State: AOJu0Yz3c3QYYXhV6KYln8HMZzRtWFHMTmeHREdDT5mJ8e40aSBtVLlU
-	iz37As3/FbITyRkPMjaya35/d4acfeccHnGw8FVLe3Yo3JlZb6JytF6Mhtuphyo=
-X-Google-Smtp-Source: AGHT+IEzJRf7MFyDsVxjW673BylqHIB96B4aipixnP3nuiONRJdGY8k0OmutBEO+xwFhvigjx9Godw==
-X-Received: by 2002:a17:907:6d23:b0:a7d:a00a:a9fe with SMTP id a640c23a62f3a-a80ed1bfe32mr268358366b.17.1723556724010;
-        Tue, 13 Aug 2024 06:45:24 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414e46csm72026366b.180.2024.08.13.06.45.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:45:23 -0700 (PDT)
-Date: Tue, 13 Aug 2024 15:45:22 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: takakura@valinux.co.jp
-Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
-	senozhatsky@chromium.org, akpm@linux-foundation.org, bhe@redhat.com,
-	lukas@wunner.de, wangkefeng.wang@huawei.com, ubizjak@gmail.com,
-	feng.tang@intel.com, j.granados@samsung.com,
-	stephen.s.brennan@oracle.com, linux-kernel@vger.kernel.org,
-	nishimura@valinux.co.jp, taka@valinux.co.jp
-Subject: Re: [PATCH v3 2/2] Handle flushing of CPU backtraces during panic
-Message-ID: <ZrtjXChY_0wnFXsS@pathway.suse.cz>
-References: <20240812072137.339644-1-takakura@valinux.co.jp>
- <20240812072931.339735-1-takakura@valinux.co.jp>
+	s=arc-20240116; t=1723556924; c=relaxed/simple;
+	bh=8L+5hdMZi624aswdRULhySVYITXomchoDsxT+/7/Xk4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UsZl2DywZL+B2dU///cFVl5xoAfjeVzXJBqMHmokoeT2V2jZn5ncNS9lheWtZG5ARwPa3AKYmckBTk4PDErZLaxDcpC4j3hSRJ1d0YkwDN3MXHU2r4lPHx4lgfQYqmderND2IHtBMoyt7tTAIRimhOVzeRxulF3Y8bC5yMq+L64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: c6C2O5LqQtiPkbP36ydycw==
+X-CSE-MsgGUID: 8cMa+XtKT22D9+IagzsBtA==
+X-IronPort-AV: E=Sophos;i="6.09,286,1716220800"; 
+   d="scan'208";a="119246640"
+From: ZhangHui <zhanghui31@xiaomi.com>
+To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.co>, <bvanassche@acm.org>,
+	<peter.wang@mediatek.com>, <manivannan.sadhasivam@linaro.org>,
+	<huangjianan@xiaomi.com>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, zhanghui <zhanghui31@xiaomi.com>
+Subject: [PATCH] ufs: core: fix bus timeout in ufshcd_wl_resume flow
+Date: Tue, 13 Aug 2024 21:47:29 +0800
+Message-ID: <20240813134729.284583-1-zhanghui31@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812072931.339735-1-takakura@valinux.co.jp>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bj-mbx11.mioffice.cn (10.237.8.131) To YZ-MBX07.mioffice.cn
+ (10.237.88.127)
 
-On Mon 2024-08-12 16:29:31, takakura@valinux.co.jp wrote:
-> From: Ryo Takakura <takakura@valinux.co.jp>
-> 
-> After panic, non-panicked CPU's has been unable to flush ringbuffer
-> while they can still write into it. This can affect CPU backtrace
-> triggered in panic only able to write into ringbuffer incapable of
-> flushing them.
+From: zhanghui <zhanghui31@xiaomi.com>
 
-I still think about this. The motivation is basically the same
-as in the commit 5d5e4522a7f404d1a96fd ("printk: restore flushing
-of NMI buffers on remote CPUs after NMI backtraces").
+If the SSU CMD completion flow in UFS resume and the CMD timeout flow occur
+simultaneously, the timestamp attribute command will be sent to the device
+during the UFS resume flow, while the UFS controller performs a reset in
+the timeout error handling flow.
 
-It would make sense to replace printk_trigger_flush() with
-console_try_flush(). And the function should queue the irq
-work when it can't be flushed directly, see below.
+In this scenario, a bus timeout will occur because the UFS resume flow
+will attempt to access the UFS host controller registers while the UFS
+controller is in a reset state or power cycle.
 
-> Fix the issue by letting the panicked CPU handle the flushing of
-> ringbuffer right after non-panicked CPUs finished writing their
-> backtraces.
-> 
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -260,6 +260,7 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
->  		panic_triggering_all_cpu_backtrace = true;
->  		trigger_all_cpu_backtrace();
->  		panic_triggering_all_cpu_backtrace = false;
-> +		console_try_flush();
->  	}
->  
->  	/*
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3284,6 +3284,20 @@ void console_flush_on_panic(enum con_flush_mode mode)
->  	console_flush_all(false, &next_seq, &handover);
->  }
->  
-> +/**
-> + * console_try_flush - try to flush consoles when safe
-> + *
-> + * Context: Any, except for NMI.
+Call trace:
+  arm64_serror_panic+0x6c/0x94
+  do_serror+0xbc/0xc8
+  el1h_64_error_handler+0x34/0x48
+  el1h_64_error+0x68/0x6c
+  _raw_spin_unlock+0x18/0x44
+  ufshcd_send_command+0x1c0/0x380
+  ufshcd_exec_dev_cmd+0x21c/0x29c
+  ufshcd_set_timestamp_attr+0x78/0xdc
+  __ufshcd_wl_resume+0x228/0x48c
+  ufshcd_wl_resume+0x5c/0x1b4
+  scsi_bus_resume+0x58/0xa0
+  dpm_run_callback+0x6c/0x23c
+  __device_resume+0x298/0x46c
+  async_resume+0x24/0x3c
+  async_run_entry_fn+0x44/0x150
+  process_scheduled_works+0x254/0x4f4
+  worker_thread+0x244/0x334
+  kthread+0x124/0x1f0
+  ret_from_fork+0x10/0x20
 
-It is safe even in NMI. is_printk_legacy_deferred() would return true
-in this case.
+This patch fixes the issue by adding a check of the UFS controller
+register states before sending the device command.
 
-> + */
-> +void console_try_flush(void)
-> +{
-> +	if (is_printk_legacy_deferred())
-> +		return;
-> +
-> +	if (console_trylock())
-> +		console_unlock();
-> +}
+Signed-off-by: zhanghui <zhanghui31@xiaomi.com>
+---
+ drivers/ufs/core/ufshcd.c | 14 ++++++++++++++
+ include/ufs/ufshcd.h      | 13 +++++++++++++
+ 2 files changed, 27 insertions(+)
 
-I would do something like:
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 5e3c67e96956..e5e3e0277d43 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3291,6 +3291,8 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
+ 	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
+ 	int err;
+ 
++	if (hba->ufshcd_reg_state == UFSHCD_REG_RESET)
++		return -EBUSY;
+ 	/* Protects use of hba->reserved_slot. */
+ 	lockdep_assert_held(&hba->dev_cmd.lock);
+ 
+@@ -4857,6 +4859,7 @@ static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
+ int ufshcd_hba_enable(struct ufs_hba *hba)
+ {
+ 	int ret;
++	unsigned long flags;
+ 
+ 	if (hba->quirks & UFSHCI_QUIRK_BROKEN_HCE) {
+ 		ufshcd_set_link_off(hba);
+@@ -4881,6 +4884,13 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
+ 		ret = ufshcd_hba_execute_hce(hba);
+ 	}
+ 
++	spin_lock_irqsave(hba->host->host_lock, flags);
++	if (ret)
++		hba->ufshcd_reg_state = UFSHCD_REG_RESET;
++	else
++		hba->ufshcd_reg_state = UFSHCD_REG_OPERATIONAL;
++	spin_unlock_irqrestore(hba->host->host_lock, flags);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(ufshcd_hba_enable);
+@@ -7693,7 +7703,11 @@ static int ufshcd_abort(struct scsi_cmnd *cmd)
+ static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
+ {
+ 	int err;
++	unsigned long flags;
+ 
++	spin_lock_irqsave(hba->host->host_lock, flags);
++	hba->ufshcd_reg_state = UFSHCD_REG_RESET;
++	spin_unlock_irqrestore(hba->host->host_lock, flags);
+ 	/*
+ 	 * Stop the host controller and complete the requests
+ 	 * cleared by h/w
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index cac0cdb9a916..e5af4c2114ce 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -523,6 +523,18 @@ enum ufshcd_state {
+ 	UFSHCD_STATE_ERROR,
+ };
+ 
++/**
++ * enum ufshcd_state - UFS host controller state
++ * @UFSHCD_REG_OPERATIONAL: UFS host controller is enabled, the host controller
++ * register can be accessed.
++ * @UFSHCD_REG_RESET: UFS host controller registers will be reset, can't access
++ * any ufs host controller register.
++ */
++enum ufshcd_reg_state {
++	UFSHCD_REG_OPERATIONAL,
++	UFSHCD_REG_RESET,
++};
++
+ enum ufshcd_quirks {
+ 	/* Interrupt aggregation support is broken */
+ 	UFSHCD_QUIRK_BROKEN_INTR_AGGR			= 1 << 0,
+@@ -1020,6 +1032,7 @@ struct ufs_hba {
+ 	struct completion *uic_async_done;
+ 
+ 	enum ufshcd_state ufshcd_state;
++	enum ufshcd_reg_state ufshcd_reg_state;
+ 	u32 eh_flags;
+ 	u32 intr_mask;
+ 	u16 ee_ctrl_mask;
+-- 
+2.43.0
 
-/**
- * console_try_or_trigger_flush - try to flush consoles directly when
- *	safe or the trigger deferred flush.
- *
- * Context: Any
- */
-void console_try_or_trigger_flush(void)
-{
-	if (!is_printk_legacy_deferred() && console_trylock())
-		console_unlock();
-	else
-		defer_console_output();
-}
-
-and use it instead of printk_trigger_flush() in
-nmi_trigger_cpumask_backtrace().
-
-
-Well, I would postpone this patch after we finalize the patchset
-adding con->write_atomic() callback. This patch depends on it anyway
-via is_printk_legacy_deferred(). The patchset might also add
-other wrappers for flushing consoles and we have to choose some
-reasonable names. Or John could integrate this patch into the patchset.
-
-Best Regards,
-Petr
 
