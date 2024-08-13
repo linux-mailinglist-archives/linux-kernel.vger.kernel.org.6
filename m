@@ -1,147 +1,173 @@
-Return-Path: <linux-kernel+bounces-284722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C067395046E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:07:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16112950478
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B472882C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2771C21DC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34ACB199246;
-	Tue, 13 Aug 2024 12:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37421199259;
+	Tue, 13 Aug 2024 12:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O68Hqbk9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdekcDFO"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039552262B;
-	Tue, 13 Aug 2024 12:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D12198E71;
+	Tue, 13 Aug 2024 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723550823; cv=none; b=dosWMhYhV16HYbIB+dnsioVwGQGpiBc5rQq+z1W5SkQeen7VWyCuJLDzd5L74esG3z7/WSnIEfnzjb4yI3HeoGnvjsr82jx2UnvmGT493ZOUNI9BcjwdXfhbJ4ziEl2i8OpWLi1WEQvOal4s0Il9ss22rQQk4DzxeJe9Nq8rQDw=
+	t=1723550960; cv=none; b=H22w5dX3GlT1BBSBuend7dSaqB8K2TIKtUHXXxTSJ2etnEkNw5EvblT75Pg/6dWHoRVBlqCcuYh6Wz+mJxa69al8P+gbD4nK0dCne9UOvYgOGl4erf7Q2Wy5U9+zrzCzc6wex3nKbv1hee84usXOQ0UadNK6FR3mv/HxlRzonGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723550823; c=relaxed/simple;
-	bh=HFXqsgfkGh2i63MLKdDhs7xSwlr9jFR8Gx45hNBwkXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JX2Zap4a791sEGpABZrnN5xzntzqHeQgD2Kbu9IV+aEonY3UWdAFVow2yQ6TOATb0I678rzhfqGnHYcTf8XoGmswWlL6t6Phi6Tn2CS+xqZSqrsUngAyyLslLNDsbDSvDC4Y4XiwxxcVN/0E/gabSL2MZLfpOuVAixW/PLhZscQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O68Hqbk9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D5LCVZ005635;
-	Tue, 13 Aug 2024 12:06:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CYyOx8obdom0b/vBXVrrjfaT8/6mGblM1Ij0bv6hbto=; b=O68Hqbk9SozddwHJ
-	rC/5lEfiebZKRjP6HZBZBMW7jQloSqnD8yA5xuEzqpMG0GE14QBtP10cwWgsRzSM
-	nC4tMrT6nKo4yM6jG7blceswhnJOLTd1NFoQuXkEPHpyVqD457x7Ws5TMck7ZhBr
-	QAAzOhxuqJZ2Z1Qv/YL01EK+4/bjTfiquEZOjIDkilbqJdBgXazLcm/iAWsCw/zA
-	i9Dt6bffvZxc089KHBcJsnm1QrPhsuN+z0RM92z3o1x/xIkGp0wMiCx1UL7aB2oy
-	ajG3VP3ffQvqV55rrwurDg7thn1djsgEXx3+nJ28otQIpL78jLNAAnTFPfUf4rWA
-	fl1txA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18xyjbw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 12:06:46 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DC6jtp027343
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 12:06:45 GMT
-Received: from [10.133.1.196] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
- 2024 05:06:42 -0700
-Message-ID: <3cb1da06-88e3-4dd2-b56c-e0ab725ef6b2@quicinc.com>
-Date: Tue, 13 Aug 2024 15:06:23 +0300
+	s=arc-20240116; t=1723550960; c=relaxed/simple;
+	bh=dVKFCnEHQj907r8w6DUNC/hFfSLgWVedEBIn+MI3g3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GNpTMwpwyjHUXTieavYdP50eYFL4CFOeV0LXbc/RbFzAEij7srNfEO2wNagVv7jbv30jMa6gijYRAZsZBR/0RcuQSCbvvhYFFvwEgNU/T0kz0jhQqw25FsiYe9QHIz+pyr3Q8hhOR1IRLwP2WkQgumaYep5S1Da4G1MPdEaOsT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdekcDFO; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280ef642fbso6104615e9.1;
+        Tue, 13 Aug 2024 05:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723550957; x=1724155757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=95nZPeNDVusw7hJQ2/3QSrV1/eH9G+qFzPCkFd7zD+U=;
+        b=GdekcDFOvFjTMJfuamLhI2C++oQ1buBAGQIyUI2vPm0R+VN7vVT58R4M2tMUfNhEiL
+         rowam3tjuyrk6HGisuGCrcMDsdGfBJiNwZMv40wrKcM/I4X6/yjioB8LP781d73OBtws
+         9hsSITgEfWOxvd7ayBFvOpGebHe6cKigkhKZTO5GUh1EtzF851KkrSPrOEO0VFXZj+Dq
+         ZcMhJ/IeMMj6FknETiomkSPZNsuVj6J1Qh/9BbIBK5cPrDSjnTVcoiN/vVMB1t/6De9b
+         TGM96t2GIqLUVAMrMDJHI03Be3my5bfWxQMfKzhnD257lp6qMqkGC1pxa3PDprGP8X5v
+         JspA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723550957; x=1724155757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=95nZPeNDVusw7hJQ2/3QSrV1/eH9G+qFzPCkFd7zD+U=;
+        b=XAtJhcc0w+0ER79GJcJa91fOc42A7McGlGE5JK370HFzFNvoVap6bRXvgXxO0Q7be1
+         OkUoFSa68Q1T/HFIMJ62CKVsildFnGxpaezir3vsUYeHW10C5RiVBTyOHI8RLiQ7qV+d
+         ujUon+FCh8aKxDjCGKXVa7l4rJr+27qZGvij4sYKae7hLxYUSX9bJYICe3LG4mXcuw4N
+         ZD0nVGDPfCV+gTZetq34eLyAkzerV1UBQ505nf9tvunwJUUqhyrSU8poJukogpOqGQ5q
+         ZcCrHi1o+snlM3wTdACPSRrbKsxEYZ7B21BcdDTDrpV3oBELD1++7JzZNE4TG2ZEkpxm
+         Y6KA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKOT5aXEca+Dsvw7czgkfHzOu6rrCi+fogWIxo3cHhkXq4/uAJbcv1TYBwQIgZCVsXrcunccCPZRc6bfgQRukOJyM0gVZSJQQieTV9SzecZheycviKWFjiaKduVIGgOShs9rTsjkVvsi9rmA6hea07GwhVHnYo0aiHhqLCGLf+iSHKNyACRW0q56TcfbZvM4NVrfMbamHOgZK/QeU3whHpnx1CBkE=
+X-Gm-Message-State: AOJu0YynGo2qLoubOfzxPqAyDdYYwJgPp9Wmg+cb/0qiL/rjRfkcd2vM
+	w42PQAqYpu48zWOC2hbnfRJOQ+ePe1X8rALjomVEEZLUiKara1Q23n9cxg==
+X-Google-Smtp-Source: AGHT+IEeFZAjMrRFLpsu92UAlKILN8B22ultw43i95rDRVfs5PROELoxXFmSuEpUHo+HUo+RNgW2qw==
+X-Received: by 2002:a5d:6d8d:0:b0:366:eb60:bcf2 with SMTP id ffacd0b85a97d-3716fbf30d6mr906591f8f.4.1723550956592;
+        Tue, 13 Aug 2024 05:09:16 -0700 (PDT)
+Received: from ivan-HLYL-WXX9.. ([2a01:4b00:d20e:7300:6db6:f2bf:8865:5d31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51eb52sm10204590f8f.74.2024.08.13.05.09.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 05:09:16 -0700 (PDT)
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+To: perex@perex.cz,
+	tiwai@suse.com,
+	corbet@lwn.net,
+	broonie@kernel.org,
+	shuah@kernel.org
+Cc: Ivan Orlov <ivan.orlov0322@gmail.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr,
+	aholzinger@gmx.de
+Subject: [PATCH v5 0/4] Introduce userspace-driven ALSA timers
+Date: Tue, 13 Aug 2024 13:06:57 +0100
+Message-Id: <20240813120701.171743-1-ivan.orlov0322@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/arm-smmu-qcom: remove runtime pm enabling for
- TBU driver
-To: Zhenhua Huang <quic_zhenhuah@quicinc.com>,
-        Pranjal Shrivastava
-	<praan@google.com>
-CC: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <dmitry.baryshkov@linaro.org>, Georgi Djakov <djakov@kernel.org>
-References: <1722335443-30080-1-git-send-email-quic_zhenhuah@quicinc.com>
- <ZroNUGkKuC1L7Qfr@google.com>
- <cca690c3-916e-43b6-b2a5-eca4f2eb838e@quicinc.com>
- <ZrsJLqTnq6tG2xp4@google.com>
- <dee2f394-c9c5-4099-8e05-ce0c8756887b@quicinc.com>
-Content-Language: en-US
-From: Georgi Djakov <quic_c_gdjako@quicinc.com>
-In-Reply-To: <dee2f394-c9c5-4099-8e05-ce0c8756887b@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 33E62etIps3z33ArWAoTcMfQb0k2iyOH
-X-Proofpoint-ORIG-GUID: 33E62etIps3z33ArWAoTcMfQb0k2iyOH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_04,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=710
- suspectscore=0 phishscore=0 malwarescore=0 mlxscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1011 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130088
+Content-Transfer-Encoding: 8bit
 
-Hi Zhenhua,
+There are multiple possible timer sources which could be useful for
+the sound stream synchronization: hrtimers, hardware clocks (e.g. PTP),
+timer wheels (jiffies). Currently, using one of them to synchronize
+the audio stream of snd-aloop module would require writing a
+kernel-space driver which exports an ALSA timer through the
+snd_timer interface.
 
-On 8/13/2024 10:56 AM, Zhenhua Huang wrote:
-> 
-> On 2024/8/13 15:20, Pranjal Shrivastava wrote:
->> On Tue, Aug 13, 2024 at 10:37:33AM +0800, Zhenhua Huang wrote:
->>>
->>> On 2024/8/12 21:25, Pranjal Shrivastava wrote:
->>>> On Tue, Jul 30, 2024 at 06:30:43PM +0800, Zhenhua Huang wrote:
->>>>> TBU driver has no runtime pm support now, adding pm_runtime_enable()
->>>>> seems to be useless. Remove it.
->>>>>
->>>>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
-[..]
->> I agree that there are no pm_runtime_suspend/resume calls within the TBU
->> driver. I'm just trying to understand why was pm_runtime enabled here
->> earlier (since it's not implemented) in order to ensure that removing it
->> doesn't cause further troubles?
-> 
-> See above my assumption, need Georgi to comment but.
+However, it is not really convenient for application developers, who may
+want to define their custom timer sources for audio synchronization.
 
-Thank you for looking at the code! Your assumptions are mostly correct,
-but if you try this patch on a real sdm845 device you will notice some
-issues. So it's actually needed to re-configure the power-domains, three
-of which (MMNOC GDSCs) are requiring this because of a HW bug. I should
-have put a comment in the code to avoid confusion, but it took me some
-time to confirm it.
+For instance, we could have a network application which receives frames
+and sends them to snd-aloop pcm device, and another application
+listening on the other end of snd-aloop. It makes sense to transfer a
+new period of data only when certain amount of frames is received
+through the network, but definitely not when a certain amount of jiffies
+on a local system elapses. Since all of the devices are purely virtual
+it won't introduce any glitches and will help the application developers
+to avoid using sample-rate conversion.
 
-I have sent a patch to handle this more cleanly:
-https://lore.kernel.org/lkml/20240813120015.3242787-1-quic_c_gdjako@quicinc.com
+This patch series introduces userspace-driven ALSA timers: virtual
+timers which are created and controlled from userspace. The timer can
+be created from the userspace using the new ioctl SNDRV_TIMER_IOCTL_CREATE.
+After creating a timer, it becomes available for use system-wide, so it
+can be passed to snd-aloop as a timer source (timer_source parameter
+would be "-1.SNDRV_TIMER_GLOBAL_UDRIVEN.{timer_id}"). When the userspace
+app decides to trigger a timer, it calls another ioctl
+SNDRV_TIMER_IOCTL_TRIGGER on the file descriptor of a timer. It
+initiates a transfer of a new period of data.
 
-So we should not remove the runtime pm calls until some version of the
-above patch gets merged.
+Userspace-driven timers are associated with file descriptors. If the
+application wishes to destroy the timer, it can simply release the file
+descriptor of a virtual timer.
 
-Thanks,
-Georgi
+I believe introducing new ioctl calls is quite inconvenient (as we have
+a limited amount of them), but other possible ways of app <-> kernel
+communication (like virtual FS) seem completely inappropriate for this
+task (but I'd love to discuss alternative solutions).
 
->> I see Georgi added it as a part of
->> https://lore.kernel.org/all/20240704010759.507798-1-quic_c_gdjako@quicinc.com/
->>
->> But I'm unsure why was it required to fix that bug?
-> 
-> I'm just thinking it is dead code and want to see if my understanding is correct.
+This patch series also updates the snd-aloop module so the global timers
+can be used as a timer_source for it (it allows using userspace-driven
+timers as timer source).
 
+V1 -> V2:
+- Fix some problems found by Christophe Jaillet
+<christophe.jaillet@wanadoo.fr>
+V2 -> V3:
+- Add improvements suggested by Takashi Iwai <tiwai@suse.de>
+V3 -> V4:
+- Address comments from Jaroslav Kysela <perex@perex.cz> and Mark Brown
+<broonie@kernel.org>
+V4 -> V5:
+- Add missing error processing noticed by Takashi Iwai <tiwai@suse.de>
+- Return timer file descriptor as part of the snd_timer_uinfo structure.
+This is a more standard way of using ioctl interface, where the return
+value of the ioctl is either 0 or an error code.
+
+Please, find the patch-specific changelog in the following patches.
+
+Ivan Orlov (4):
+  ALSA: aloop: Allow using global timers
+  Docs/sound: Add documentation for userspace-driven ALSA timers
+  ALSA: timer: Introduce virtual userspace-driven timers
+  selftests: ALSA: Cover userspace-driven timers with test
+
+ Documentation/sound/index.rst               |   1 +
+ Documentation/sound/utimers.rst             | 126 +++++++++++
+ include/uapi/sound/asound.h                 |  17 +-
+ sound/core/Kconfig                          |  10 +
+ sound/core/timer.c                          | 225 ++++++++++++++++++++
+ sound/drivers/aloop.c                       |   2 +
+ tools/testing/selftests/alsa/Makefile       |   4 +-
+ tools/testing/selftests/alsa/global-timer.c |  87 ++++++++
+ tools/testing/selftests/alsa/utimer-test.c  | 164 ++++++++++++++
+ 9 files changed, 633 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/sound/utimers.rst
+ create mode 100644 tools/testing/selftests/alsa/global-timer.c
+ create mode 100644 tools/testing/selftests/alsa/utimer-test.c
+
+-- 
+2.34.1
 
 
