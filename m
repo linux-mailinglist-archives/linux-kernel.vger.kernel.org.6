@@ -1,193 +1,119 @@
-Return-Path: <linux-kernel+bounces-285395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40938950CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:12:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6A7950CEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27AB286ADF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:12:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A781F25535
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCA31A704E;
-	Tue, 13 Aug 2024 19:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410631A4F11;
+	Tue, 13 Aug 2024 19:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KeIE104k"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B729vSPr"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03431A4F3D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8E1A705B
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576295; cv=none; b=FDw8QseIgq1xz+Lp2OXCRGk++vo2517Co+4K7PV9prUUNlI70EbPDeTEZBaJL8GiszA74kyHTGIBJEvWj2mtmIspPdAinMSArwLmgH1f0Uk9TJWLnPC5LEO9ehg79JrCZs0WWz46WpDNcwT7i6h9ap6GKxXyKz9sW4R73v3LbuA=
+	t=1723576299; cv=none; b=Z9YopphTvlr5fKH+tzde32gOH6qjp20zRmw7Hoy4AzQuTYIoxsXC6wYKubnHNQjmxUuxVOtw4c1XmQv79HI5vLyOQg58y5Ad4tPTbRmhr5CowxBBP/WvbZ1p829NnphTZhdU3TOaqxJSvfI6PexyeSculbBXe4mzlf/ygsOMlMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576295; c=relaxed/simple;
-	bh=VlEWS+I2qBUoAZu3MZiZFqikaq4uXZWuP6/ITJZxiQk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F3KK+PY68IOqJNAJBdE+/Fa3LiFCdt2ofVl03uU0fzCmTZp23GjhxUXNreav7gdhvmiXAGgMuyizESRFuOtQfi/DJj+BfeKG9xyL+WRBXkaILFsPfJQzMe7bSF7TVq0EFP/aiLXo7ugekrDrPADfHTLdu3xLH8JDkdg5PWNxpqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KeIE104k; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5320d8155b4so3207740e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:11:33 -0700 (PDT)
+	s=arc-20240116; t=1723576299; c=relaxed/simple;
+	bh=0akCB2lUXwXXL4c4nPCxosaE3I857/U47hgI91ToH8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ze/77pwc6PlFn8zYsYLMYEbIJUD7Sly0kaJwNCvxWWfZXQr4xFOIvgHc55HzjrpN2zzlmjpwZUyFhEHxsyzVYvIymxXC00N64Gt+xPtfCS4gBOfflAw3/XZ8QvYMVtLfUOrvxOS5ATRQicfSsHagoGqRprR9sAIR5u4qCoIVRz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B729vSPr; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-200aa53d6d2so15985ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:11:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723576292; x=1724181092; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1723576297; x=1724181097; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ns4EUZZ3nTL5odSKliuQhTwD1CbjvkOmQ7rToMzAA/s=;
-        b=KeIE104k0MD+98/9MRSadoHuI4TX3AeyclfFDTXqkdImmNnlHfZAVSL8JMOn91GubK
-         RDm2c/ByPZmHd8prc5zKYHWHJvYQLblC8iCufDP72C5PROmKAtKjPuhPXFQdaZgzDTdv
-         Y1abW3L0VmzYeRkSC1IMwSgqacYTRBDo92PIUFw77Q8cShAFck3iueeL+h1gaguzLlLh
-         mrUBEtlsNKi8XpR1XkNX2Y6qsi/cLN5MYoN72lKXrgCY1uD+AIVn5CZQQgYzG8OahJc4
-         ql02f+3HFnL8UFYWNfF7xv8+3Att5y71chOZNxmPJ1vWmqCM5tI4CnIh7lR2UARm37jQ
-         qbeg==
+        bh=0akCB2lUXwXXL4c4nPCxosaE3I857/U47hgI91ToH8w=;
+        b=B729vSPrcNEGQKlsKDz6guarSKr345ecj6c36vuXCOJpMRNeIm5yyy6dnYwAmStzAw
+         JTju1PSEx2fGmj+e9HHOJ8x1xj6Hkxt/WktJ5cNPZ4zy9+itvTiF0BLZB79I7hnG70XE
+         STa7LCS/ddZD0UPZ7SD8S7atBtMdqpC3VdDTzS9L5libqZmgm9a7g2Kw5kOZgzZpHrSX
+         TdlDhT172CdZ30wccrS7Ak1Bq5xt8UwJwJXEHgancPaMFL98Pot83SBaIAdeH032mTUd
+         Gw8+b5KOh24PXehk9ZAtbKMfVYuGXAFhS2f4Lbm9+Q/sFKM9ShTR8N7Wwgn3WOIfnJOQ
+         yTFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723576292; x=1724181092;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723576297; x=1724181097;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ns4EUZZ3nTL5odSKliuQhTwD1CbjvkOmQ7rToMzAA/s=;
-        b=CVTVZPOlDCjbO98kxHyY8fx6xLmCuOmgIA5IT2kESMLIpEypgA3Y+8Ir9Q0U8lq+io
-         fzRpW6lIES7L7NaKVgQXyCiefnOoeswVjGjwzoC7ZcRGHuT86c6y1aRIj7YemAuy7A3a
-         SMvLe8WVUhNQrbqI4S2O/PkiGf6XPGC+Eweo7osHyhWKgRNT2xpUs7Muj0FVhCRU0Ty4
-         GEEvmiHQr4n3t0e6p3is62ohFxgrZJ9bJTVCJ9C/et400bpVLir+CMxzPlIs8lR+gVxT
-         zt0IUkQjNsRc3xIgTwZ1uFmntZGRQNHr0EHm/f+vQ1Gm/hq17ACFO04NXziNBTfFfzTy
-         MLoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8M9BkD3hRUsBIz0BY2LXE8Gc+lbndJQn5XphkBQvCT6NqRjMdQAuYcCRrMQ0QtwXX5Bn3Zpov19F6HeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWybaezZuDl5XdYNsxYBcUzTZh08mGQSPfVYSvnQJ1W9YeiR0m
-	0+3WyZXzrijIrWsfBxsNv9beMYuw6T5g5YLI4RZFZcfSARHgNHCQGAbGncR4yhdWyV9TMDcGcx5
-	VR2A=
-X-Google-Smtp-Source: AGHT+IEaG5qL+48HD+ToLdhBsaWWHAg9Y7cW8RYNV07QZZNy1UgbvfAPhuohNo07mQICyOp3KP0bYw==
-X-Received: by 2002:a05:6512:2347:b0:52c:e030:144e with SMTP id 2adb3069b0e04-532edbbc97fmr224018e87.47.1723576291477;
-        Tue, 13 Aug 2024 12:11:31 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3979:ff54:1b42:968a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7734595sm147511405e9.36.2024.08.13.12.11.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:11:29 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: [PATCH 2/2] PCI/pwrctl: put the bus rescan on a different thread
-Date: Tue, 13 Aug 2024 21:11:18 +0200
-Message-ID: <20240813191119.155103-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240813191119.155103-1-brgl@bgdev.pl>
-References: <20240813191119.155103-1-brgl@bgdev.pl>
+        bh=0akCB2lUXwXXL4c4nPCxosaE3I857/U47hgI91ToH8w=;
+        b=eOCnUViD4M+p0MT2cl/XTSfYE9Gnr8TUlk0nLJXiXd+iZIU1Ki9VDOBEJnExkDKR/K
+         tA+vRFnBwDnnMwg9BiHnEivVeR0m0fcTx4+xk48fTeAxNyYgmloQ9XanFLCKmBoz+VAQ
+         VxqLBhyVErRI41ROucB6lLOqF8MsHiKCGABwu24vlyCd3ri4vxlOWCUuVCRYFgluvh83
+         XcPPeBaZET2y1HDW2m/5pEvMjbF6QLJ8/2ORylyLfTVG5xcbWlOSgr6se2AeSrOmkgij
+         AHH5sFrYFvt55j99I2Mvi/DRQfm1O3lUGHcagMDbdIW/7F5/NMgro3bqhAbcdyv4KIph
+         dSzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU++oFsADJLxI8/QicodypxSQdH291ZJQYpyP1AO7r+X1j8g71PoDQLgzYlVgCsc/s334brHNOk9X1Or9V5caxIWjDViMPqIFPPFYz+
+X-Gm-Message-State: AOJu0Yzy6EdGOEsHbrMk3VgV8vO4GKEKjNMd8ul9har2I34zM5Xfo5D/
+	dZw9qfp4rvUKDuQwm/305eVQDUV29aVTVRRIj7KRaicxLf8BEYMbJmlKS2shWRgN4GL4FbPECmo
+	5gzOQrMH/+M+llvKZMOuc2t7vM9dekGubWhpE
+X-Google-Smtp-Source: AGHT+IHdvTrBByfKnXhhh6zwnJjdbwU4J5mMe1EDQZ4dHX8vp3horZ6QsjNBJr6Goj6FpxG/8/69jGclyK5ceJGotzY=
+X-Received: by 2002:a17:902:a515:b0:1fd:d807:b29d with SMTP id
+ d9443c01a7336-201d747b187mr219165ad.28.1723576297094; Tue, 13 Aug 2024
+ 12:11:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240813040613.882075-1-irogers@google.com> <ZrtzTTHim_vGX1ma@x1>
+ <CAP-5=fUA8T9B2RvXg-Hpj_fHXmwB18ah6Krm3qm5ULH-M04Lqw@mail.gmail.com> <ZruhsN4i6xtc59nJ@x1>
+In-Reply-To: <ZruhsN4i6xtc59nJ@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 13 Aug 2024 12:11:21 -0700
+Message-ID: <CAP-5=fXVrhanvW6vrUJsubuWUC4jBM5v_NOFp40cqTsqdHHNaw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf disasm: Fix memory leak for locked operations
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Aug 13, 2024 at 11:11=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Tue, Aug 13, 2024 at 09:04:57AM -0700, Ian Rogers wrote:
+> > On Tue, Aug 13, 2024 at 7:53=E2=80=AFAM Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > > On Mon, Aug 12, 2024 at 09:06:12PM -0700, Ian Rogers wrote:
+> > > > lock__parse calls disasm_line__parse passing
+> > > > &ops->locked.ins.name. Ensure ops->locked.ins.name is freed in
+> > > > lock__delete.
+> > > >
+> > > > Found with lock/leak sanitizer.
+> >
+> > Ooops, I meant address/leak sanitizer.
+> >
+> > > Applied both patches to perf-tools-next.
+> >
+> > Thanks, could you fix the commit message.
+>
+> Sure,
 
-If we trigger the bus rescan from sysfs, we'll try to lock the PCI
-rescan mutex recursively and deadlock - the platform device will be
-populated and probed on the same thread that handles the sysfs write.
+Also, it'd be good if maybe Namhyung could take a look. I did things
+this way as it made sense to me, but we have nested things going on
+and potentially the free would be more natural in ins_ops__delete.
 
-Add a workqueue to the pwrctl code on which we schedule the rescan for
-controlled PCI devices. While at it: add a new interface for
-initializing the pwrctl context where we'd now assign the parent device
-address and initialize the workqueue.
-
-Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-Reported-by: Konrad Dybcio <konradybcio@kernel.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pci/pwrctl/core.c              | 26 +++++++++++++++++++++++---
- drivers/pci/pwrctl/pci-pwrctl-pwrseq.c |  2 +-
- include/linux/pci-pwrctl.h             |  3 +++
- 3 files changed, 27 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pci/pwrctl/core.c b/drivers/pci/pwrctl/core.c
-index feca26ad2f6a..01d913b60316 100644
---- a/drivers/pci/pwrctl/core.c
-+++ b/drivers/pci/pwrctl/core.c
-@@ -48,6 +48,28 @@ static int pci_pwrctl_notify(struct notifier_block *nb, unsigned long action,
- 	return NOTIFY_DONE;
- }
- 
-+static void rescan_work_func(struct work_struct *work)
-+{
-+	struct pci_pwrctl *pwrctl = container_of(work, struct pci_pwrctl, work);
-+
-+	pci_lock_rescan_remove();
-+	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
-+	pci_unlock_rescan_remove();
-+}
-+
-+/**
-+ * pci_pwrctl_init() - Initialize the PCI power control context struct
-+ *
-+ * @pwrctl: PCI power control data
-+ * @dev: Parent device
-+ */
-+void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev)
-+{
-+	pwrctl->dev = dev;
-+	INIT_WORK(&pwrctl->work, rescan_work_func);
-+}
-+EXPORT_SYMBOL_GPL(pci_pwrctl_init);
-+
- /**
-  * pci_pwrctl_device_set_ready() - Notify the pwrctl subsystem that the PCI
-  * device is powered-up and ready to be detected.
-@@ -74,9 +96,7 @@ int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl)
- 	if (ret)
- 		return ret;
- 
--	pci_lock_rescan_remove();
--	pci_rescan_bus(to_pci_dev(pwrctl->dev->parent)->bus);
--	pci_unlock_rescan_remove();
-+	schedule_work(&pwrctl->work);
- 
- 	return 0;
- }
-diff --git a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-index c7a113a76c0c..f07758c9edad 100644
---- a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-+++ b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
-@@ -50,7 +50,7 @@ static int pci_pwrctl_pwrseq_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	data->ctx.dev = dev;
-+	pci_pwrctl_init(&data->ctx, dev);
- 
- 	ret = devm_pci_pwrctl_device_set_ready(dev, &data->ctx);
- 	if (ret)
-diff --git a/include/linux/pci-pwrctl.h b/include/linux/pci-pwrctl.h
-index 45e9cfe740e4..0d23dddf59ec 100644
---- a/include/linux/pci-pwrctl.h
-+++ b/include/linux/pci-pwrctl.h
-@@ -7,6 +7,7 @@
- #define __PCI_PWRCTL_H__
- 
- #include <linux/notifier.h>
-+#include <linux/workqueue.h>
- 
- struct device;
- struct device_link;
-@@ -41,8 +42,10 @@ struct pci_pwrctl {
- 	/* Private: don't use. */
- 	struct notifier_block nb;
- 	struct device_link *link;
-+	struct work_struct work;
- };
- 
-+void pci_pwrctl_init(struct pci_pwrctl *pwrctl, struct device *dev);
- int pci_pwrctl_device_set_ready(struct pci_pwrctl *pwrctl);
- void pci_pwrctl_device_unset_ready(struct pci_pwrctl *pwrctl);
- int devm_pci_pwrctl_device_set_ready(struct device *dev,
--- 
-2.43.0
-
+Thanks,
+Ian
 
