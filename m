@@ -1,170 +1,112 @@
-Return-Path: <linux-kernel+bounces-284191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A3394FE26
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:59:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B852E94FE2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D2C284AD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:59:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83401C22AFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD999433CB;
-	Tue, 13 Aug 2024 06:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8C24436A;
+	Tue, 13 Aug 2024 06:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G1fiGImM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vhslKYMn";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G1fiGImM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vhslKYMn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HV/6Pj6X"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CCF41C69
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E630F41C69;
+	Tue, 13 Aug 2024 06:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723532341; cv=none; b=mGa7WuoKRFvPGDbSoCLnC/KfM5qnUaem61kLBqLxB/ilB9RjwyjdauHdtCFC2I5Z3hBAaDpoQC8PRAdCSyhWci79Mx+pcbhlvQTY9xDmiwL4gIpWzLJ4G3JmukzUTJCN4/WYdxZtewucn/bnmwIVodqoRo5zxr/CKDWjX7XtvQ0=
+	t=1723532397; cv=none; b=SK/jRjXMh2wVOCmE13A40Xb39iucH5WG5UBky0UmgvXh9pL+OqFun3PK/+tNloDETDirZCmffqus78XG7XDkVC1b66Urc8BzCkWwU28rbkRxwWCKPIaJ3Zwlp8mP3t/8I07FFWTgf41o46LegGIBto12KRja/5IE+vP926EQE48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723532341; c=relaxed/simple;
-	bh=ERnCb7GNxRzZmUj1NsQxVVH1zhVfW4u5qmEkAr0fYZg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pfo8fPONrZa/vlOMJxlVnRoNYUNu1rDr0R2Crr+v4J4V50OpAAHf+J8RTiiwqAqYnal6a/lR3KB+rFBakjNq/geeMl5px2tijKUvNTUcWBGWiRiVUIQ9/e6TAnyglVWMg1IKGCnNLRF5PpQehaqQoYw9X+BaLmZ4w79sbgaMsb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G1fiGImM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vhslKYMn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G1fiGImM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vhslKYMn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1723532397; c=relaxed/simple;
+	bh=VZr9+g3TonfhfL9O2H3JrlZBYqBBMFGNsrt75xLa3n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z9ro/AjE+StgiubYBNVghm1kscHkWftigVswdVCzMCVr2PQBi7qCUyK6gwdqOa8X0T39Hqwm4AkMH57BD7yW5t6Uo5a0Du5I2WyF43KmnFtMNAvFX7Vg7C5hhoAB7lRzbIyVeKufk/obb3c2LQjTLGZyr+0LygihMQn8f6mMAJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HV/6Pj6X; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723532390;
+	bh=KE/bfftZEhpL+r9jdzcURqXZdm0w4ewKA1C93p1/Tu0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HV/6Pj6Xqx87KuIiZklkCf5ORCrtvqO9iCreOvWWhVJt5se1CAvLfQZqLklbidS0v
+	 4iaCsBDZJSuvmCf6lKzO1gXVmRCcH9Tcu6OhbsYMJjfILUaDgXxOJtli7YumfY7PSB
+	 BlexM0zPMa4PTXTSl3MHScBD3HI4fja91tyPt4iADXVBQM8zZLvW6JNEe7FfgRbJ4n
+	 ZciAwkmt91k6c0R9M3zrN28AEeTRai6mHhDJuHvU/4fbO9wfn8fWGzOdbCCwvw9gtL
+	 gIZs0RjjqHU/7cIz1HeMeiQM/24MjNX2RHoUr6P/bZA2Zo+/eHb1jgyWKhxIBUkEVI
+	 GjSZEWBRlbLEQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C8C3622725;
-	Tue, 13 Aug 2024 06:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723532331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
-	b=G1fiGImM9scQXcwgIoi1bPsCRVwMqIVqnpo1pMAnELagGHvcjR7TRt0Xw79pCPQOW9y+n0
-	P9f7JqKUVLo7gJr+etHqCCZVXTr8m3nIFgxAXBh+Xu1MX4fIv48j/wK+/QwJwRNcWSrb5Q
-	qRci2IFugbkFcDn0dyY3sWmYVUdofEo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723532331;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
-	b=vhslKYMnWH/XoTFRVabBsX/dDSZ5L4xZsGXLafNfzJ/GvAdCUxZPn3o7mmBNWxmDFOWD9d
-	4+tnFC7MiNyY1YBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=G1fiGImM;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vhslKYMn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723532331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
-	b=G1fiGImM9scQXcwgIoi1bPsCRVwMqIVqnpo1pMAnELagGHvcjR7TRt0Xw79pCPQOW9y+n0
-	P9f7JqKUVLo7gJr+etHqCCZVXTr8m3nIFgxAXBh+Xu1MX4fIv48j/wK+/QwJwRNcWSrb5Q
-	qRci2IFugbkFcDn0dyY3sWmYVUdofEo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723532331;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
-	b=vhslKYMnWH/XoTFRVabBsX/dDSZ5L4xZsGXLafNfzJ/GvAdCUxZPn3o7mmBNWxmDFOWD9d
-	4+tnFC7MiNyY1YBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60F7313983;
-	Tue, 13 Aug 2024 06:58:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3KjtFCsEu2YaGgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 13 Aug 2024 06:58:51 +0000
-Date: Tue, 13 Aug 2024 08:59:31 +0200
-Message-ID: <87bk1wdi24.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<13564923607@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<cameron.berkenpas@gmail.com>,
-	<baojun.xu@ti.com>,
-	<soyer@irl.hu>,
-	<Baojun.Xu@fpt.com>,
-	<robinchen@ti.com>
-Subject: Re: [PATCH v2] ALSA: ASoC/tas2781: fix wrong calibrated data order
-In-Reply-To: <20240813043749.108-1-shenghao-ding@ti.com>
-References: <20240813043749.108-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wjj1d06Dmz4xD0;
+	Tue, 13 Aug 2024 16:59:48 +1000 (AEST)
+Date: Tue, 13 Aug 2024 16:59:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Peter Rosin <peda@axentia.se>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Christian Brauner
+ <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, Leo Li
+ <leoyang.li@nxp.com>, Richard Weinberger <richard@nod.at>, Thierry Reding
+ <thierry.reding@gmail.com>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: linux-next: trees being removed
+Message-ID: <20240813165946.1a55bbf3@canb.auug.org.au>
+In-Reply-To: <47cf6a9d-82b5-65b2-0937-d7ee667f5d26@axentia.se>
+References: <20240813085147.786004fb@canb.auug.org.au>
+	<47cf6a9d-82b5-65b2-0937-d7ee667f5d26@axentia.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/BitRUMN9eqAv345BS0NStcx";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/BitRUMN9eqAv345BS0NStcx
 Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: C8C3622725
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,139.com,alsa-project.org,vger.kernel.org,intel.com,ti.com,irl.hu,fpt.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 13 Aug 2024 06:37:48 +0200,
-Shenghao Ding wrote:
-> 
-> From: Baojun Xu <baojun.xu@ti.com>
-> 
-> Wrong calibration data order cause sound too low in some device.
-> Fix wrong calibrated data order, add calibration data converssion
-> by get_unaligned_be32() after reading from UEFI.
-> 
-> Fixes: 5be27f1e3ec9 ("ALSA: hda/tas2781: Add tas2781 HDA driver")
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+Hi Peter,
 
-Applied to for-linus branch now.
-I corrected the subject prefix, as this is clearly no ASoC change.
+On Tue, 13 Aug 2024 07:13:08 +0200 Peter Rosin <peda@axentia.se> wrote:
+>
+> > mux			2023-05-21 14:05:48 -0700
+> >   https://gitlab.com/peda-linux/mux.git#for-next
+>=20
+> Could you please keep the mux tree for a while? I have been very busy
+> lately and not much is going on, but I would still like to be able to
+> get things into -next. I guess I could just ask to include it again
+> when I need it, but...
 
+No worries, I will keep it in.  You might consider fast forwarding your
+for-next branch to v6.10 or v6.11-rc1 (or something else recent), then
+I won't forget this email and ask you again in a few months.  :-)
 
-thanks,
+--=20
+Cheers,
+Stephen Rothwell
 
-Takashi
+--Sig_/BitRUMN9eqAv345BS0NStcx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma7BGIACgkQAVBC80lX
+0Gy/YQgAlPgP5kCYemlK+sYh3FkqwNlurx0FHOcHDrdvJAEQcrqYxjtPvqlEaCgD
+h2XTYiiRiv728wkPnbZbV2mLqO5uXk2mmZu642utAKS5EDcOwmcw0+/swHiU/qTX
+6WCL6H9h45KFnMeFCcGxTqMHgaZfZPzra81DXOPRacT+5UzQlEBe5r9VlZiivZHm
+gsOC44B2iZBt136RyF7saIXDGqqaqf40qSrnqhpUjNI2firaZuqdXNsyrjA6Sdbz
+MQNwKxzO/f1XAtlLeXksxISXaVPzws+fZT9X+3o8H+SeWe6Is9VsWjZfUfBkSWxp
+cfOdrAp/G8l15l4nS3ORJSOecbmwVQ==
+=XJgJ
+-----END PGP SIGNATURE-----
+
+--Sig_/BitRUMN9eqAv345BS0NStcx--
 
