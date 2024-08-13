@@ -1,126 +1,169 @@
-Return-Path: <linux-kernel+bounces-284415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851BC9500B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:03:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2532F9500BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E71ECB23903
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:03:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F031F216EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8760A16DEA9;
-	Tue, 13 Aug 2024 09:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB58184547;
+	Tue, 13 Aug 2024 09:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfY25fdm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uY3Czher"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C5C13C9CB;
-	Tue, 13 Aug 2024 09:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D45C17C7CA
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539804; cv=none; b=uJYjQS6YP4vfBWpM3iiNF3F4TSq/kKDELMup3fUcOdAIeQGZxGJRH8lxIXQNOuhzXlooJFVL8+WWnZLRE0IZtotZZFfVIgNhcHfrJ+OX6Ou+LX7QzcdROwRu5l3inFgGffO4Sbybwakxxk1MFxjPgSW2TrRv06+40J1AA/QoRhU=
+	t=1723539829; cv=none; b=dbqJAYP0OsLxWug2vUqnAIeV7BlZZfAwGh0aHZ2HulodVLapRvfpi97k8DipSSoYXvM/IbYIJ88nehqzE3+RPE+6GvItMpuheuPXsS7/Ga6AL+/NaT8t8jPdsWveFIqZ2nqWr0DrKmqTzvlafhnagmm7T7SgsbVkjv0AG5JSZpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539804; c=relaxed/simple;
-	bh=BYdWKLdgi7LIgusJW/w4VMelFdmdQDbkY0PPZfOHm10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GbdrpxnMMjz4p6ZwglQYAUew0Qx/NtVR7rt2diUO7KuDKktvp9eLXbbHkJrIseaM3yf/TJ7uyWWlMYVI2Gj6SFIS3t5bAN0aLdWX1ZgwsoHIG4pbRlrWFkLGoTLOMSbSE6HJfOYJZiarHVeMh9tH2WErSlUaxM7ydVCT8hbE/wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfY25fdm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59AEAC4AF09;
-	Tue, 13 Aug 2024 09:03:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723539804;
-	bh=BYdWKLdgi7LIgusJW/w4VMelFdmdQDbkY0PPZfOHm10=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WfY25fdm06rzdqQuylo1BQFYKfPqZIL4ThF0xJv6ki84f46DOxmwf0pk6PXj82Qg5
-	 Va2PJGQr2ph3jRQE7o37rxkCjvWa6VtPJ/YKJkcYZi2YjlyYPLGYlTJ2NpVQvFHwPv
-	 +U0ksaRhP7sLeDIREbSbLDfjWxhUoVj2RRPrWTR/yTaFq6DDp49tq2CXeTF63gMwoz
-	 XTLTEksUOpnwsz7uYjhMvwz5sYrPQRCM3I9bnpuQRAVAsgAFKEOPmyGBgVink77hzp
-	 1dUOJau8Sw4KcIHpxFtF4eNEcQDA/IeTfGDzwgK2LPDHfFW45w935Z3E2KUjTQ1cuN
-	 0hxgNfrWY95hQ==
-Message-ID: <f3a1c24a-b493-4693-a6eb-d350f4f186bc@kernel.org>
-Date: Tue, 13 Aug 2024 11:03:17 +0200
+	s=arc-20240116; t=1723539829; c=relaxed/simple;
+	bh=OFLmnkChNt3TrBDQB3OchS9v9nydUBdhsCvm9Qr0paQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b+lBjRz1/C43KinN3uCIUcMXcDfrSusInjw0Hl1YLvJNOs+RHpjRopospw851vWamuRU8eo28I5RG2fUjxC+yalN4IqnDo/+E5s4JLK02ng39VDWNjf9ILRZG5ni6IFmynsOHa7Lx9a56tepWg0R4lKlcXXM0X/ZFWrjCjs6ckA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uY3Czher; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4928fb6fdceso1735053137.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:03:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723539825; x=1724144625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MqfnVnhHsKTNIdZ3g99elQ8N0kSquMZj93pvaOSIp0U=;
+        b=uY3CzherVSUXaUL2L45nDDjUe851uSDwoUak+sWbM5SLZgqZu0RzWakWib6600bcM3
+         nkpN48NnEKFdKHNu45FDUJ+iB/gabNPMokNHB4mnqALGdAwZ3ybYGg6whRFoVc9NBxZW
+         U1SkhkP4aChDRMPRkgx8vXA+ZlnLtATO+602voSTI274QqM7RicCA6o3qPCI+mW0gOB9
+         y+K0HPR/eBxpYqeHyFh6JP/dbTfsAN//pojGBDgYuWYY8y4FA/tPQh+K1e2yh39e3RSp
+         NiRMGNuOEyiuVZmbB7CHeVf5LcFuLYiHjUtvhEDA4gf4pNEQxoUNr8DV9kVgMMw88MOS
+         ZbOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723539825; x=1724144625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MqfnVnhHsKTNIdZ3g99elQ8N0kSquMZj93pvaOSIp0U=;
+        b=xLCzNLh8OoF6B8XOr/AYU0G0xS3PoWm/C/UYM5sTSkztnani+cTrI7s/X3fu0eLvhX
+         xjm9FZpMi6zXHI4BEjOHKicwf21ZobZdMUwb212J3t3TLQqZkBPmKgF3tMgGgeLvhrqU
+         HEsAcsdhhtn4bMECD8HjiXgTDmWvdhKZgJGpAdZhw02F6P62PSFysXNb0TpsccHE7PqD
+         9PoTrYU77Pl1sWJbuWB4LJ9C89MzhXLKF5VsqYLaExw+YE7fgJ/IkgRPpwntPaRQpFlm
+         lqrvdlKDg6Ia7R95/pldItNK93uimTM6b2RA332lNiP4B0XYEqvkgvNFNSDT4lv4B9FW
+         Du/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMQwMIaa5flkMvQrbJGBlEAmwGm9txjTvZN+7kgc90Ragkp2xiLVtiXQ3UcbsV7LcTMS501NfDF3qfW66yCYXsebMQkNQUqqXvmX08
+X-Gm-Message-State: AOJu0YwOskd5AOGc+stFVjXhqwbnRUqqPFUbDvfEAqUWLDzx7WyBVhCh
+	CSiLj7d7esUKLueU5HqG2V6vJAW/pn2wQNz0XVQgsUVE7bV9eqaqbW7EeETw5YNTjr5lb84K1Au
+	dSGOx5C+PHuEmwz/A2X7Qf3/Xrd4HDx7sikAq
+X-Google-Smtp-Source: AGHT+IEDjVBWF1MtU621r7c9KTxxkpXecwmSkiD37eYz3ttGuDqjz8Aa65UHLyu0qffTTOccInI+PGwQjjCKHuK8rFw=
+X-Received: by 2002:a05:6102:3e94:b0:48f:a858:2b52 with SMTP id
+ ada2fe7eead31-49743b56abemr3993740137.29.1723539824928; Tue, 13 Aug 2024
+ 02:03:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/10] ARM: dts: tqma6: use GPL-2.0-only as used by
- included imx6 device trees
-To: Max Merchel <Max.Merchel@ew.tq-group.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240813071637.72528-1-Max.Merchel@ew.tq-group.com>
- <20240813071637.72528-4-Max.Merchel@ew.tq-group.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240813071637.72528-4-Max.Merchel@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240805212536.2172174-1-almasrymina@google.com>
+ <20240805212536.2172174-8-almasrymina@google.com> <20240806135924.5bb65ec7@kernel.org>
+ <CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
+ <20240808192410.37a49724@kernel.org> <CAHS8izMH4UhD+UDYqMjt9d=gu-wpGPQBLyewzVrCWRyoVtQcgA@mail.gmail.com>
+ <fc6a8f0a-cdb4-4705-a08f-7033ef15213e@gmail.com> <20240809205236.77c959b0@kernel.org>
+ <CAHS8izOXwZS-8sfvn3DuT1XWhjc--7-ZLjr8rMn1XHr5F+ckbA@mail.gmail.com>
+ <48f3a61f-9e04-4755-b50c-8fae6e6112eb@gmail.com> <20240812105732.5d2845e4@kernel.org>
+ <7e2ffe62-032a-4c5e-953b-b7117ab076be@gmail.com> <71260e3c-dee4-4bf0-b257-cdabd8cff3f1@gmail.com>
+ <20240812171548.509ca539@kernel.org> <CAHS8izPyGwe_i4eNemW+A+MgMVHqJ0fdp=+-ju2ynqgc0mb_Ow@mail.gmail.com>
+In-Reply-To: <CAHS8izPyGwe_i4eNemW+A+MgMVHqJ0fdp=+-ju2ynqgc0mb_Ow@mail.gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 13 Aug 2024 05:03:33 -0400
+Message-ID: <CAHS8izM=d9pe0V3BWAY_gguNGymdc4DSFAz0DWyCMoGX6QVhDw@mail.gmail.com>
+Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem memory provider
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Donald Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Kaiyuan Zhang <kaiyuanz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/08/2024 09:16, Max Merchel wrote:
-> The included device trees imx6dl.dtsi and imx6q.dtsi are licensed under
-> "GPL-2.0-only".
-> Therefore, the licenses of the tqma6 device tree are changed to the
-> same license.
-> 
-> Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
+On Tue, Aug 13, 2024 at 4:39=E2=80=AFAM Mina Almasry <almasrymina@google.co=
+m> wrote:
+>
+> On Mon, Aug 12, 2024 at 8:15=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> =
+wrote:
+> > BTW, Mina, the core should probably also check that XDP isn't installed
+> > before / while the netmem is bound to a queue.
+>
+> Sorry if noob question, but what is the proper check for this? I tried
+> adding this to net_devmem_bind_dmabuf_to_queue():
+>
+> if (xdp_rxq_info_is_reg(&rxq->xdp_rxq))
+>                  return -EEXIST;
+>
+> But quickly found out that in  netif_alloc_rx_queues() we initialize
+> all the rxq->xdp_rxq to state REGISTERED regardless whether xdp is
+> installed or not, so this check actually fails.
+>
+> Worthy of note is that GVE holds an instance of xdp_rxq_info in
+> gve_rx_ring, and seems to use that for its xdp information, not the
+> one that hangs off of netdev_rx_queue in core.
+>
 
-You need to Cc all contributors.
+To elaborate further, in order to disable binding dmabuf and XDP on
+the same rx queue for GVE, AFAIT the check would need to be inside of
+GVE. Inside of GVE I'd check if gve_priv->xdp_prog is installed, and
+check if the gve_rx_ring->xdp_info is registered. If so, then the rx
+queue is XDP enabled, and should not be bound to dmabuf. I think that
+would work.
 
-Best regards,
-Krzysztof
+At the moment I can't think of a check inside of core that would be
+compatible with GVE, but above you clearly are specifically asking for
+a check in core. Any pointers to what you have in mind would be
+appreciated here, but I'll try to take a deeper look.
 
+> Additionally, my understanding of XDP is limited, but why do we want
+> to disable it? My understanding is that XDP is a kernel bypass that
+> hands the data directly to userspace. In theory at least there should
+> be no issue binding dmabuf to a queue, then getting the data in the
+> queue via an XDP program instead of via TCP sockets or io uring. Is
+> there some fundamental reason why dmabuf and XDP are incompatible?
+>
+> --
+> Thanks,
+> Mina
+
+
+
+--=20
+Thanks,
+Mina
 
