@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-285386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB69B950CD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:07:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80BE950CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F9E41F2497E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:07:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04E51B22909
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA431A7059;
-	Tue, 13 Aug 2024 19:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AF91A7064;
+	Tue, 13 Aug 2024 19:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Aex+Uuzm"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fFi6IjYo"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA2D1A4F02
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04B11A4F2A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576010; cv=none; b=UKDIkWSPKwQZr2MNTRlOMnkKY5Bua8QX0NnbOIKCFEzZIOOYKaRUsSrTt9FGJypyI9gGo2IIkt9QNk6UatkinHtDefXcsQzJM6Q9/JdvdE1MXWE6TndbZIv8xB3/UxWjTtynlWiMqQN37YyX65p4i5nxqKPboZX6nnRMrYYeRhk=
+	t=1723576011; cv=none; b=Yrrfgf94/Und1KGJzE068gmoncq0DoRRyLOho2VHq6uTtzfpM+QqxPd5ynMQIF3uS6j4bSCNi6XRB5AJwZ3stuWjnSosW9W0SW8kMVnhDF46DzW8EvJ0ZAKtGmHfth7/nR9ydqeThraK8fxx1rjZXN+K5WK6sWQsHjuh4hY60zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576010; c=relaxed/simple;
-	bh=gtgHTM1UFxXrz9L4YtJBp3T3xUlW0gwlZPb2v+0ZPoM=;
+	s=arc-20240116; t=1723576011; c=relaxed/simple;
+	bh=Lc4YaS6ZY5fTHZKs+E55pOevRiwlUIWNmJcRejo55PM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DD3lquksXckpEMQfMRbelrulQqLMsk17GKYxSCNOvCFSKwQRZEBOu6WFhvnb38CTHxHpdAlhmQZ6UuHEpgqiLhHZeesJY0HY34HLNL7d5wvcjSEHpkBuo0rVa4voC5O8/myB+DE3f1ISNWPVpBweC43jdXZKskbyMcS1o6RrLiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Aex+Uuzm; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version; b=M4Nvs+glILIaB1WYUJAfDdN4wP/Xa96X44oiKChRE+wlvitHavbPFDinMNeOVTrRobPrvd/H5ml24maCIqIHmzLnKHbTp7xiJubXLJjZ/IIzTWfUP9chMLK3JfnGrW6EDuZdiK9fGviH7iI4SW5qlmu/ngQLcMMiNXj48JpMpFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fFi6IjYo; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so40585675e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:06:48 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3685a564bafso2672247f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723576007; x=1724180807; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723576008; x=1724180808; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qyC5WYmPikp2EDuYrl/4Ll75exF20mPZuNB2+scoNMA=;
-        b=Aex+UuzmwVOCCZ3LN9hJHk0Etb8mPZmFmniGGSffe2tT88m/J0DN0Rh3vV/vDBeiff
-         4Zha7qM/S0zCFwTD6omfPezKpUKu5sQaGD4o7pHsrw2CsLFFeJsT5PjkmtWighryj1fS
-         EHt0vvDblHyjCur9+UglJ5ymbjp8CdhbsWJ3bWxR6aIpEHLlMWtRHtuuF6173QqMAgl/
-         N36NBt4t3Qox6DIkUqX9ridAO/t2qWUWZHZkvibkGpmLAxR+UTk2B2J/PwVdL64yXBH0
-         gLRd16WBXOzVBjklK2toXj+u4Fysq/qyPRuPsD/swm+/JjQ43oh8xvnAQGictmzHXEht
-         Hkmg==
+        bh=Vg9KmrQlFy2FwEIPZsQiUDiuIEJaRg2BBZMpmfdhcvs=;
+        b=fFi6IjYojvLm6daKEL73g1Az7HWxUKlZJV0wK5sZAgTcvaKuVmlQv10EOugtEJIV1p
+         9I65i4j15jQpF1d5qa18nk8Ac8WWUWiJq/AwGGG4W6rt8UXmfnJCRFtCDoj9q7riSAk5
+         06U/Yw95FX3fyWx+hTMrWCWL2i3+K2I2qksef2xAeCYrSeMjS7DaRVjUkbe44s4GLlJB
+         uUO+Ax16Ma4H86LD+JeIjLgxYfxtKXDGKoLU1h2nHlAfKOmFFutfQyQgr/djDmsjXxJ6
+         xwXO8yQIJnQ9A/M3dYKDPWtH8BSBUJ8zcaNXVtAcfZeC+O9dBGk5AWSp9TtEphhDJYQa
+         bfyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723576007; x=1724180807;
+        d=1e100.net; s=20230601; t=1723576008; x=1724180808;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qyC5WYmPikp2EDuYrl/4Ll75exF20mPZuNB2+scoNMA=;
-        b=bF9yZmkoZJsvJ4EJyWI7vNnBoyMP5w+L5tn7lTLDwYuP7j36anqFE9LQAd7Jp3eNAC
-         jAHsl6DLHlaCG96Rk9mx+I7exJ2yjyBbDFEbzYcENULM7yQki10slMd0lUhCn0+WTRzG
-         Ek55NZ3JV5R+wqE9N63O9302eaKv1ZeOuF2+3jnKWxQGbnANDNpine/lxnZT8RKswtnY
-         WzSZ79LXrFNVH0hz9J03mCDhE+fuJsL5MCIwHXDOQBB0UawXUNuKcq+UNcot18v+69x6
-         qLvWQHrmOq56IwoBlL8RlY9eWPB7cbaKpnnaZA5w4dvx/t56dnIsIW00sd+Tl8Djf7fD
-         6BGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDMUV4/31re99lxnwEpIAMKEhqK2JtW464Sis6LsEfptLMpI7ot7A1X/u7JI+KJ8I9PpnYdV9Z2gm4s7Ki5DPL2lrfEnbdukEihW3m
-X-Gm-Message-State: AOJu0Yw1cJRegtwH3mQDefp4czNZE2WlLtcnhf2YErknXuALg6Iw+UtW
-	3CJ7e1wcZZ2DnakLTvdQGn4r/Zqib6Eck229Su9sSEpraM2PIZOHHTI3QeNZn3k=
-X-Google-Smtp-Source: AGHT+IGzXg3WdIQJuxglC6GveKMWthtuWY220LgDgDf+hmPjQ/gE3oB1s6MU25/YGuAQ8xF6PgHT2w==
-X-Received: by 2002:a05:6000:b44:b0:368:334d:aad4 with SMTP id ffacd0b85a97d-371777696d6mr352147f8f.4.1723576006613;
-        Tue, 13 Aug 2024 12:06:46 -0700 (PDT)
+        bh=Vg9KmrQlFy2FwEIPZsQiUDiuIEJaRg2BBZMpmfdhcvs=;
+        b=oXbHngr4/l0O/ZRysw3k7xRO9cnaCp/OudOnxucOMm4Cg7Os5cDRLuOt0wkTusU+Qa
+         WK5icb/ddTMoG73L01cZKm2EpeRkK/BlI2K4qjN4LuEvq+dFiHDpLbsA4J+umAMHWYKr
+         BWYDJSYel15dXyEamxIVvL2z86/jzsDD7F/igF6ZrQqKDXOHmyay5u5YbTxx0L0Rgf5U
+         YkuG49n2IJq85NJwrrY5ZMGHGuNdgUa5MzCHXrjHF+THhtQ+MvMjrWGIwYmiodtLeevJ
+         SZJBNo4pKIsuXgoxZIz7qwA6IOEXEhQCItAqvMZaVMCQQk7w3zzi2GhYeP/vxY5S2nWp
+         RTkg==
+X-Forwarded-Encrypted: i=1; AJvYcCViqnaBlLxgjiEjW/Ovh9qW6Doe5O1jYxG3qNKD8/RvACdq6kq1eMuX5x49X6TgiUaLdbQ/02M/Pwop6qU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlvE6uB9bC72BODr6fU3V5O5+wjXna6TWBY5xvTpCaApZNkazu
+	jNcsrMU9yPM7gmWiHomMgxtzOYptW/DwzwyRpfAJknABrrQwMGbON9zwmrOEKg0=
+X-Google-Smtp-Source: AGHT+IFVxOD+jBYuGHCHJ0W19t2ydGTgZjTUOL9/824YAHqF/+a1/eSq/vEvxY8cDZ1WRlxhpRUglw==
+X-Received: by 2002:a5d:420c:0:b0:368:669c:3bd3 with SMTP id ffacd0b85a97d-371778096f0mr342475f8f.48.1723576007879;
+        Tue, 13 Aug 2024 12:06:47 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3979:ff54:1b42:968a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c93708asm11119358f8f.29.2024.08.13.12.06.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c93708asm11119358f8f.29.2024.08.13.12.06.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:06:45 -0700 (PDT)
+        Tue, 13 Aug 2024 12:06:47 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
@@ -76,9 +76,9 @@ Cc: linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 2/3] arm64: dts: qcom: sc8280xp-crd: enable bluetooth
-Date: Tue, 13 Aug 2024 21:06:37 +0200
-Message-ID: <20240813190639.154983-3-brgl@bgdev.pl>
+Subject: [PATCH 3/3] arm64: dts: qcom: sc8280xp-x13s: model the PMU of the on-board wcn6855
+Date: Tue, 13 Aug 2024 21:06:38 +0200
+Message-ID: <20240813190639.154983-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240813190639.154983-1-brgl@bgdev.pl>
 References: <20240813190639.154983-1-brgl@bgdev.pl>
@@ -92,48 +92,113 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add the bluetooth node for sc8280xp-crd and make it consume the outputs
-from the PMU as per the new DT bindings contract.
+Add a node for the PMU of the WCN6855 and rework the inputs of the wifi
+and bluetooth nodes to consume the PMU's outputs.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sc8280xp-crd.dts | 59 ++++++++++++++++++++++-
- 1 file changed, 58 insertions(+), 1 deletion(-)
+ .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    | 98 ++++++++++++++++---
+ 1 file changed, 86 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
-index 57efeefbc89e..7bd7cd310bf0 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
-@@ -20,6 +20,7 @@ aliases {
- 		i2c4 = &i2c4;
- 		i2c21 = &i2c21;
- 		serial0 = &uart17;
-+		serial1 = &uart2;
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+index a7c5a3f5926c..9a68f3f4e18e 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
++++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+@@ -400,6 +400,67 @@ usb1_sbu_mux: endpoint {
+ 			};
+ 		};
  	};
- 
- 	backlight: backlight {
-@@ -275,7 +276,7 @@ usb1_sbu_mux: endpoint {
- 	wcn6855-pmu {
- 		compatible = "qcom,wcn6855-pmu";
- 
--		pinctrl-0 = <&wlan_en>;
-+		pinctrl-0 = <&bt_en>, <&wlan_en>;
- 		pinctrl-names = "default";
- 
- 		wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
-@@ -748,6 +749,27 @@ &sdc2 {
- 	status = "okay";
++
++	wcn6855-pmu {
++		compatible = "qcom,wcn6855-pmu";
++
++		pinctrl-0 = <&wlan_en>;
++		pinctrl-names = "default";
++
++		wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
++		bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
++
++		vddio-supply = <&vreg_s10b>;
++		vddaon-supply = <&vreg_s12b>;
++		vddpmu-supply = <&vreg_s12b>;
++		vddrfa0p95-supply = <&vreg_s12b>;
++		vddrfa1p3-supply = <&vreg_s11b>;
++		vddrfa1p9-supply = <&vreg_s1c>;
++		vddpcie1p3-supply = <&vreg_s11b>;
++		vddpcie1p9-supply = <&vreg_s1c>;
++
++		regulators {
++			vreg_pmu_rfa_cmn_0p8: ldo0 {
++				regulator-name = "vreg_pmu_rfa_cmn_0p8";
++			};
++
++			vreg_pmu_aon_0p8: ldo1 {
++				regulator-name = "vreg_pmu_aon_0p8";
++			};
++
++			vreg_pmu_wlcx_0p8: ldo2 {
++				regulator-name = "vreg_pmu_wlcx_0p8";
++			};
++
++			vreg_pmu_wlmx_0p8: ldo3 {
++				regulator-name = "vreg_pmu_wlmx_0p8";
++			};
++
++			vreg_pmu_btcmx_0p8: ldo4 {
++				regulator-name = "vreg_pmu_btcmx_0p8";
++			};
++
++			vreg_pmu_pcie_1p8: ldo5 {
++				regulator-name = "vreg_pmu_pcie_1p8";
++			};
++
++			vreg_pmu_pcie_0p9: ldo6 {
++				regulator-name = "vreg_pmu_pcie_0p9";
++			};
++
++			vreg_pmu_rfa_0p8: ldo7 {
++				regulator-name = "vreg_pmu_rfa_0p8";
++			};
++
++			vreg_pmu_rfa_1p2: ldo8 {
++				regulator-name = "vreg_pmu_rfa_1p2";
++			};
++
++			vreg_pmu_rfa_1p7: ldo9 {
++				regulator-name = "vreg_pmu_rfa_1p7";
++			};
++		};
++	};
  };
  
-+&uart2 {
-+	pinctrl-0 = <&uart2_default>;
-+	pinctrl-names = "default";
+ &apps_rsc {
+@@ -876,6 +937,16 @@ wifi@0 {
+ 		compatible = "pci17cb,1103";
+ 		reg = <0x10000 0x0 0x0 0x0 0x0>;
+ 
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
++		vddaon-supply = <&vreg_pmu_aon_0p8>;
++		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
++		vddwlmx-supply = <&vreg_pmu_wlmx_0p8>;
++		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
++		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
 +
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn6855-bt";
-+
+ 		qcom,ath11k-calibration-variant = "LE_X13S";
+ 	};
+ };
+@@ -1207,20 +1278,16 @@ &uart2 {
+ 	bluetooth {
+ 		compatible = "qcom,wcn6855-bt";
+ 
+-		vddio-supply = <&vreg_s10b>;
+-		vddbtcxmx-supply = <&vreg_s12b>;
+-		vddrfacmn-supply = <&vreg_s12b>;
+-		vddrfa0p8-supply = <&vreg_s12b>;
+-		vddrfa1p2-supply = <&vreg_s11b>;
+-		vddrfa1p7-supply = <&vreg_s1c>;
 +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
 +		vddaon-supply = <&vreg_pmu_aon_0p8>;
 +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
@@ -142,62 +207,29 @@ index 57efeefbc89e..7bd7cd310bf0 100644
 +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
 +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
 +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p7>;
-+	};
-+};
-+
-+
- &uart17 {
- 	compatible = "qcom,geni-debug-uart";
  
-@@ -893,6 +915,13 @@ hastings_reg_en: hastings-reg-en-state {
- &tlmm {
- 	gpio-reserved-ranges = <74 6>, <83 4>, <125 2>, <128 2>, <154 7>;
+ 		max-speed = <3200000>;
+-
+-		enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
+-		swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
+-
+-		pinctrl-0 = <&bt_default>;
+-		pinctrl-names = "default";
+ 	};
+ };
  
-+	bt_en: bt-en-state {
-+		pins = "gpio133";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+
- 	edp_reg_en: edp-reg-en-state {
- 		pins = "gpio25";
- 		function = "gpio";
-@@ -1093,6 +1122,34 @@ reset-n-pins {
+@@ -1694,4 +1761,11 @@ reset-pins {
+ 			bias-disable;
  		};
  	};
- 
-+	uart2_default: uart2-default-state {
-+		cts-pins {
-+			pins = "gpio121";
-+			function = "qup2";
-+			bias-bus-hold;
-+		};
 +
-+		rts-pins {
-+			pins = "gpio122";
-+			function = "qup2";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+
-+		rx-pins {
-+			pins = "gpio124";
-+			function = "qup2";
-+			bias-pull-up;
-+		};
-+
-+		tx-pins {
-+			pins = "gpio123";
-+			function = "qup2";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
++	wlan_en: wlan-en-state {
++		pins = "gpio134";
++		function = "gpio";
++		drive-strength = <8>;
++		bias-pull-down;
 +	};
-+
- 	usb0_sbu_default: usb0-sbu-state {
- 		oe-n-pins {
- 			pins = "gpio101";
+ };
 -- 
 2.43.0
 
