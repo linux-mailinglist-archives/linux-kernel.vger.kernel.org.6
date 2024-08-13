@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-285014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E685E95082A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:50:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3622F95082D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C1E1F24DB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:50:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66AA31C236A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B549519EED8;
-	Tue, 13 Aug 2024 14:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C2C19EEBF;
+	Tue, 13 Aug 2024 14:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e8pd0/50"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBcQnO68"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F2019E81F
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E841D68F
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723560595; cv=none; b=Sx92oWbQc7M1EBNVSwug9ivms0TSrQ9gNWia5QJDacAhyp+Xyj0NOW8wsv1j5XwJ3nfx7YNUNVkLiPvdpqAaloeBRACPhUitxvwC8l8008U17XY3al5ElTdbldIwYCUM6RZvyViDITpkopLhTN1By6X6iWqj7wetY1KPCLqrxrU=
+	t=1723560619; cv=none; b=ir7FJNXQjQdAFcwCA6/nZQHqwCeeVjr23xJWTG7PAoCqboy9nUZuvtqz47Ygo2WtDfJyZExeDFz8LpjcK6J7PKDhRj2ql/ZQK82TxW+f5wk3lB129KOBZjgR13lpMJyCMJa8xRwY3C3brCP1lRfmpjdbDT59Atb7WQpvaoyw6qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723560595; c=relaxed/simple;
-	bh=+Le9C120Tk219uYuvFcT1GluAfSF7BzOjYHEuRFLqvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=clshhnreXt/lEqNg9ampHYfbCNwq2UhMNIuCQQsy5HYrK+H3r7Tg3DSiFHwi6p0Y0YFU3q8nKPIqXRwcQuMINNb7dlpwd6oZPPE6YthdL3P/iZ6IpE+XnVDL3LB0b4cEfJZbYXjx6DZSavMlFp5OeCIbWjIHqzo3rZ9hb4PeBmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e8pd0/50; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-690404fd27eso52931047b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 07:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723560592; x=1724165392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMAmvfMfLGxG04VOncSiEgH42uCMXnhNVQeyFe+gN58=;
-        b=e8pd0/5091BKRhrN5oVtz3hBOgy9Hrz3wb5qS5pd3a+biTxTZuNKAhLzdAxjaYCEUw
-         EJskcsZZSxjCptTM//8OqXYAaA9hTecIwCeRucfAjgj2lmXL0bB+ooSBJLSE/nmlo0lo
-         7EIlJ0J+1vwt5JdYXMs4LHgTIfa2KKEYbUJ6pXWgmjmGOSylhYmqNmXSHcjQ2Zp8ZT/R
-         95/w4W7okPvAG/CrRzU5qbZ01infs+2cVW+gn2aRIyHpdpNSUvATgimrysMkFKsdmLim
-         wnbrjoY1ODgWnlyVvLb14h4S1HknDwoO+N2pR32hOJIaR53nzzznlO86MDoVFKb5yj0q
-         bbOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723560592; x=1724165392;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMAmvfMfLGxG04VOncSiEgH42uCMXnhNVQeyFe+gN58=;
-        b=xDfDG2Aadrxa7IEP417wj+06DuNDd89g4aC7ejG5Ho7VZz+5+cIBbJwOZ2LJ8PQBuG
-         fpCkyEz/JK+c2nCUUhCuXRyexdeYYCwTY8tPfIB/eNHdBc02+QTk93oxA/RiV6FVCT/y
-         cYsPFHJfc9ffp4igjNIJLEv4yBLI/AZlT49rpTIOn//eF5yhg5s7XE+Hcz/yRtz0vz+s
-         oHtI0GzeO6CwWz1b3LdVUDzLqfT9XvZW7ZESEP/YFmZUC7xeB91BfC198GjjJyeL36Wu
-         xgiCySz4PRdk2ybQSZZws6H7Vw68xKwP0DcrE19CQQxiWmVsgUa4ZPzgkMN+ZBiUdbZq
-         RVjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEk7ZEzdY+gF2Cxvmda1dPUX5ycJVYCIQXk/ezGLS5Ud5dm+JZ2CDStb6GEEeDHnN7RK8iGOgq/9FMaHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJFFiv/rAQ3HrQB92N5pDqh3E0ErcvpuGaDCrMLRb/9FGmgcgq
-	pDmTJuqCIY6CoKbCSvV2o8Trighvi8YBStKRsfrEP7lJ+8FVxUKk0o0roVqiVViSYh1JEdK3zfM
-	1QndSMGDAp6YOF3NYrByeew7+KShgKDVKWGu9
-X-Google-Smtp-Source: AGHT+IGmEzAwIAwEGRhqLpZdPYAARLGHX4pBz6ekvJpqu2lSPX/60rvAtPYhRmXeAktfNJ1DwLGeQLbuisy90b+WpIM=
-X-Received: by 2002:a05:690c:60c5:b0:62c:e6c0:e887 with SMTP id
- 00721157ae682-6a97151cc29mr57357187b3.9.1723560592146; Tue, 13 Aug 2024
- 07:49:52 -0700 (PDT)
+	s=arc-20240116; t=1723560619; c=relaxed/simple;
+	bh=SRr9RR1XGVl/Gq4f+pVqu724Zkszcled1QcXL1G5piw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8D1O4qfCLFVJvam304ppfwUxG4SVGeEnKM033nBfDLClKBW3ppy2oLeNbvUUvXVv45SajXg3Osd9vjpjGxTJtmxI2y9AqfgJ1wg6IwMDwtee/rJAOfcslD5If5ngixx3bP2gcajT/QcUOsOupjFIqLAOZ/XM54H5ECfWMm0mNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBcQnO68; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723560616;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gux5ta0vcNtAHtv9zFHe9kquCitSuFpqmPRD5zXDWjs=;
+	b=CBcQnO680Fbuyx5iud6AgyJzoRjsgIz4Avq5v9SoPAwQ9g6+ALsJCV1qgDkcrVetHNrz29
+	Imszie4B+KNyHyPpIQQupkSAOtJRPtpWdTuqBISZ7G+ypvlSOTEqeohp05IKmVilOBAGV0
+	oV/yrk9WlJPoqwjMPpaPSybS2K9LHkk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-515-d_7FO1tcOZ2MNji2seuJag-1; Tue,
+ 13 Aug 2024 10:50:13 -0400
+X-MC-Unique: d_7FO1tcOZ2MNji2seuJag-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EDB6118EA953;
+	Tue, 13 Aug 2024 14:50:10 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.159])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 91C2D1955F6B;
+	Tue, 13 Aug 2024 14:50:07 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 13 Aug 2024 16:50:07 +0200 (CEST)
+Date: Tue, 13 Aug 2024 16:50:03 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, peterz@infradead.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org
+Subject: Re: [PATCH v2] uprobes: make trace_uprobe->nhit counter a per-CPU one
+Message-ID: <20240813145002.GB31977@redhat.com>
+References: <20240809192357.4061484-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813042917.506057-1-andrii@kernel.org> <20240813042917.506057-13-andrii@kernel.org>
- <jdsuyu4ny4bzpzncyhuc54vqmnxb6wsshvnvd6eat4cknoxvqd@g4mrvwiokb2d>
-In-Reply-To: <jdsuyu4ny4bzpzncyhuc54vqmnxb6wsshvnvd6eat4cknoxvqd@g4mrvwiokb2d>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 13 Aug 2024 07:49:39 -0700
-Message-ID: <CAJuCfpFrP-UpMih2j=Nxx=QSQm2k3QtJScLKniM9aXjbo5jCDw@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 12/13] mm: add SLAB_TYPESAFE_BY_RCU to files_cache
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809192357.4061484-1-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Aug 12, 2024 at 11:07=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
+On 08/09, Andrii Nakryiko wrote:
 >
-> On Mon, Aug 12, 2024 at 09:29:16PM -0700, Andrii Nakryiko wrote:
-> > Add RCU protection for file struct's backing memory by adding
-> > SLAB_TYPESAFE_BY_RCU flag to files_cachep. This will allow to locklessl=
-y
-> > access struct file's fields under RCU lock protection without having to
-> > take much more expensive and contended locks.
-> >
-> > This is going to be used for lockless uprobe look up in the next patch.
-> >
-> > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  kernel/fork.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 76ebafb956a6..91ecc32a491c 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -3157,8 +3157,8 @@ void __init proc_caches_init(void)
-> >                       NULL);
-> >       files_cachep =3D kmem_cache_create("files_cache",
-> >                       sizeof(struct files_struct), 0,
-> > -                     SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
-> > -                     NULL);
-> > +                     SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_TYPESAFE_BY_RC=
-U|
-> > +                     SLAB_ACCOUNT, NULL);
-> >       fs_cachep =3D kmem_cache_create("fs_cache",
-> >                       sizeof(struct fs_struct), 0,
-> >                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+> @@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
+>  {
+>  	struct dyn_event *ev = v;
+>  	struct trace_uprobe *tu;
+> +	unsigned long nhits;
+> +	int cpu;
 >
-> Did you mean to add it to the cache backing 'struct file' allocations?
+>  	if (!is_trace_uprobe(ev))
+>  		return 0;
 >
-> That cache is created in fs/file_table.c and already has the flag:
->         filp_cachep =3D kmem_cache_create("filp", sizeof(struct file), 0,
->                                 SLAB_TYPESAFE_BY_RCU | SLAB_HWCACHE_ALIGN=
- |
->                                 SLAB_PANIC | SLAB_ACCOUNT, NULL);
+>  	tu = to_trace_uprobe(ev);
+> +
+> +	nhits = 0;
+> +	for_each_possible_cpu(cpu) {
+> +		nhits += READ_ONCE(*per_cpu_ptr(tu->nhits, cpu));
 
-Oh, I completely missed the SLAB_TYPESAFE_BY_RCU for this cache, and
-here I was telling Andrii that it's RCU unsafe to access
-vma->vm_file... Mea culpa.
+why not
 
->
-> The cache you are modifying in this patch contains the fd array et al
-> and is of no consequence to "uprobes: add speculative lockless VMA to
-> inode resolution".
->
-> iow this patch needs to be dropped
+		nhits += per_cpu(*tu->nhits, cpu);
 
-I believe you are correct.
+?
+
+See for example per_cpu_sum() or nr_processes(), per_cpu() should work just fine...
+
+Other than that
+
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+
 
