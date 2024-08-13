@@ -1,102 +1,144 @@
-Return-Path: <linux-kernel+bounces-284440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F19A9500FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:12:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74169500FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E07221F243D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A28285375
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A03617CA1F;
-	Tue, 13 Aug 2024 09:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+1GXUI2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9957818787F;
+	Tue, 13 Aug 2024 09:10:59 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D72170A23;
-	Tue, 13 Aug 2024 09:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02F0186E30
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540230; cv=none; b=cqP8VO17WVHxMwn77NGQMufzDFLdxRTHZvqwkcdix5+zt8AxXyxeQmDG6LFaeLtn/18Mv4wxpSyh3r7Aq3S+/EIyPib8P/ecY262Wb4+eZtJwKn4U31e57dSXkmoYGdyusWuW5A8NjqsKdJ4/zmkxCujLtSYUfWYOWWfwtJxkKg=
+	t=1723540259; cv=none; b=shYXej054d4uiR7Srh7ioiCp0N8CDpLg1mhQUtqXdq73i4j1ivsqbz9AqwudmXOZ27fu5G4glCNJi9DFFdNRN3qRHBlI5z/KIHOhBNYA1AwlpM7/BIymn5hlk0G3kwYLPwm3GGkqDQ2KJF68y3eeZ4V+qP9yKw7X9fBnbAMWvtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723540230; c=relaxed/simple;
-	bh=Y1SIgINTrTHIVInj/merXo1kDYJYD/K0XNoQLf67BEg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cijM3QnsEXcZjnQpydlDVSTL3a9qaHXr/J/NMObdDUoizOOZY6hGxXewckjcgs3VR9JRyPgzOOEcUOuG9v7uuN5cVmCV8MZ1FRvdPqs8AykfKJFw/bNZoy8nxvEw7E9Dnr7vkdn82FLf7xwSLS4Gc3Bc8ngLFs6coJZANxggR0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+1GXUI2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB74C4AF0B;
-	Tue, 13 Aug 2024 09:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723540230;
-	bh=Y1SIgINTrTHIVInj/merXo1kDYJYD/K0XNoQLf67BEg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=W+1GXUI2o56jBAeIaIEJBhF0h6qJpoHY+5t+IndijnMbbpy3IlowtV3rlgJB/oUar
-	 +Pa8WMeVNbuxeBmo1pm+7tGqXjmWcVp8COERtQNqGA2wC2+Dl35MDg9H+9kLdXUSLb
-	 hqpRkfPbfbLarP0jbNwUBTYrsjF3m+6HHffAbeE3/zzTt1GHiM4vvXYLPOGsXDpJ1M
-	 tXPokgWJOFv/pocbnSp7oklXu/gcRLr9yFy/xfla5KR2lwdtBGPjkCr2BGGIRSbJpF
-	 hbaMRmU4A3OhGIjePUnYtPS8Bke8tu1eAa+nqsR3xqBYVolNPmJFHepAldZF9gTkF3
-	 OaUBRIAKkzz0Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710223823327;
-	Tue, 13 Aug 2024 09:10:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723540259; c=relaxed/simple;
+	bh=uq+T3EINNxRTXSs8/aHYthjMxmBKRzZAf7Kll6Pufg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQ/bQCncgHNs11bHQuo3DoIwc5rpASztRQSwQRl8+cHYsH3NyCw5OuQnRzorEmYAZ4qOyV/U6uTYa61CcnDFsY0OFELTHqX9Ms2K8FbwL+dPVmhS+nVzCvCNLGok4kDGGNRVGc1Ig+nFQcqYAgdUoJIdGpC5e8rqgDaZSxdKGRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sdnYK-0002Q5-1M; Tue, 13 Aug 2024 11:10:52 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sdnYJ-0005pK-KQ; Tue, 13 Aug 2024 11:10:51 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sdnYJ-000cGA-1b;
+	Tue, 13 Aug 2024 11:10:51 +0200
+Date: Tue, 13 Aug 2024 11:10:51 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Avichal Rakesh <arakesh@google.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/10] usb: gadget: uvc: remove pump worker and
+ enqueue all buffers per frame in qbuf
+Message-ID: <ZrsjG0b3XFeSRefH@pengutronix.de>
+References: <20240403-uvc_request_length_by_interval-v3-0-4da7033dd488@pengutronix.de>
+ <20240403-uvc_request_length_by_interval-v3-3-4da7033dd488@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 0/5] net: netconsole: Fix netconsole unsafe
- locking
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172354022928.1567029.9865389373252064352.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Aug 2024 09:10:29 +0000
-References: <20240808122518.498166-1-leitao@debian.org>
-In-Reply-To: <20240808122518.498166-1-leitao@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, thepacketgeek@gmail.com, riel@surriel.com,
- horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- paulmck@kernel.org, davej@codemonkey.org.uk
-
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu,  8 Aug 2024 05:25:06 -0700 you wrote:
-> Problem:
-> =======
-> 
-> The current locking mechanism in netconsole is unsafe and suboptimal due
-> to the following issues:
-> 
-> 1) Lock Release and Reacquisition Mid-Loop:
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v2,1/5] net: netpoll: extract core of netpoll_cleanup
-    https://git.kernel.org/netdev/net-next/c/1ef33652d22c
-  - [net-next,v2,2/5] net: netconsole: Correct mismatched return types
-    https://git.kernel.org/netdev/net-next/c/e0a2b7e4a0f9
-  - [net-next,v2,3/5] net: netconsole: Standardize variable naming
-    https://git.kernel.org/netdev/net-next/c/5c4a39e8a608
-  - [net-next,v2,4/5] net: netconsole: Unify Function Return Paths
-    https://git.kernel.org/netdev/net-next/c/f2ab4c1a9288
-  - [net-next,v2,5/5] net: netconsole: Defer netpoll cleanup to avoid lock release during list traversal
-    https://git.kernel.org/netdev/net-next/c/97714695ef90
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8j8oXWU2QAY203fW"
+Content-Disposition: inline
+In-Reply-To: <20240403-uvc_request_length_by_interval-v3-3-4da7033dd488@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--8j8oXWU2QAY203fW
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Greg,
+
+On Sat, Jul 27, 2024 at 12:02:38AM +0200, Michael Grzeschik wrote:
+>Since we now have at least the amount of requests to fill every frame
+>into the isoc queue that is requested with the REQBUFS ioctl, we can
+>directly encode all incoming frames into the available requests.
+>
+>Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+>
+>---
+>v1 -> v3: new patch
+>---
+> drivers/usb/gadget/function/f_uvc.c     |  4 ---
+> drivers/usb/gadget/function/uvc.h       |  5 +---
+> drivers/usb/gadget/function/uvc_queue.c |  3 +++
+> drivers/usb/gadget/function/uvc_v4l2.c  |  3 ---
+> drivers/usb/gadget/function/uvc_video.c | 46 +++++-----------------------=
+-----
+> drivers/usb/gadget/function/uvc_video.h |  1 +
+> 6 files changed, 12 insertions(+), 50 deletions(-)
+>
+
+This patch is introducing a bug that I have queued in the next series.
+
+I just saw that you picked this series. Could you please drop it and
+pick v4 instead? I will just send it out now.
+
+https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v4-0-ca22=
+f334226e@pengutronix.de
+
+Besid the mentioned fix, the series is identical.
+
+Regards,
+Michael
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--8j8oXWU2QAY203fW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAma7IxgACgkQC+njFXoe
+LGTXGg//RXAC8POR52MgotKY/b2f79a4B9XRIJCOFtcK5H+xRJ/ZUEzNyagprS5B
+b8GptQ4iu+fXOK3p/V9oJ+ywiOsJK4Qq/3JGtgntEr+WCsK/Yat7/xa1WrB4PstD
+gGri0S0DARZgu+J/w4WLR5NO8wcqr/2b8KXe6U+jjJ7NRqeP67mV+RTFbCkKdZ/G
+ylnf/sWWJ/ZoKXKsKGb53bKufClgiBU8qxes8mfZueauvmUpsEzTYf2sNXFW1iSO
+9kmC5RzI1XrzG5bmw88Btp1U2tyYZqnaKq+X99bs+th7Qa2cy1IvzBQ9SgPrLAbB
+mJIPpDHcIJHyDtljmnO7Cl+8PdUmXReV561PtEpcI7v5UlQisP4EAHoXp69pDRQZ
+xjznDO7ej0M5NBRIzsZ1d/fNmDj0ODTIUy7Q3o9H97Fw4+1ZtAyENrU3lPL4F5PJ
+poAfSodkR0tjq4hjKlPzuJU/m+5MgB27g+UtbOSt0LGxSygLKvCM4Ee2u7re43yZ
+C2lwC6SYH5e2BFWFcu38SHZZAqOvks6I5zpep9Z5FXwopzH19oX5iqYryM5bXJue
+qrEx6tw5hl5C3C1issTTOLBi0Zgccv8/bxt6k587XXxz00wPpYvkRF5ZRZINI9r5
+DmR44iWywWSdeGyFFfaTQpj9XA2et8XAo5YY8qnlIZFLNHa9OT0=
+=X5Qu
+-----END PGP SIGNATURE-----
+
+--8j8oXWU2QAY203fW--
 
