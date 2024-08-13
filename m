@@ -1,173 +1,159 @@
-Return-Path: <linux-kernel+bounces-284972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C77950780
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:27:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792539507A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FC2F1F259BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5881F21C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B900519D891;
-	Tue, 13 Aug 2024 14:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BEE19D8B7;
+	Tue, 13 Aug 2024 14:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTdoy3Wj"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="V8tP2ChE"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D84B19D07B;
-	Tue, 13 Aug 2024 14:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D91516DEA9;
+	Tue, 13 Aug 2024 14:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559241; cv=none; b=oGvxgeH1uVcUtO+9Aoa0b5GyEp2NiCJSckRdBgRSb2nfGbFbg3P8N/NJEjjgzTMECeg3Eqkqmyy8PpE+QutCnkC+UDmvY3aBCgGsIkdXKpe7ZzmX8c6nyjVKeMzbvwE6JAg3UigjVYEO2hTa80HS9Q2NdA+uvksywgkpU+KYoW0=
+	t=1723559452; cv=none; b=tX32xZ2jBaA9Aj4ldPFLJE4obr09al50S57yFkg1ZtuPLrYr8NwO8rTc+DF01Q+BUg624kOxiVInYpk+HyZnGBtmE/DrKCuq3U+Bw6UlWC46ZqT5ONkgEvhwdQOFr6hdEeUYrdP3UGEcMBXVh/uz6K0OtMEQjIy44jMf9GvQxX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559241; c=relaxed/simple;
-	bh=7o1ebO6uvNnNS0M2BIyB8SB8taid1I1qAAMAb2zKqbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cc5qfHO2Fh8rNJPNWZwtHWYoMR0QzUEwz+tRLgkZj9XprCo2nsdUIW4fnOURx+Lox2vI8QTQiPNmkkOxrOiei6ag23a+wELxRGituPzByEfFqBSMvQc8WnYA1d99uHzv7McdvOs5v/DllPFxN0caGYVe61jJgfnDh/RwYVpl1So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTdoy3Wj; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso7356739a12.1;
-        Tue, 13 Aug 2024 07:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723559237; x=1724164037; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0GZ9q735651QGDZf7rgdlCrHxFSRCY3h/YKc3A79Cc0=;
-        b=VTdoy3WjCzQiiS5Ec7e9NVoKcUQq36ZGjs11b11P3msZmfgc45fYJXth5aYQ/kc3uv
-         HPnw/aM34r77ZM+0jUajQOb7UyU4UfT/eiKRd0D9CILV+CEC9YsIFB4W5fzFH8mzRZfY
-         YOLLtarvrjmFi/9PuwxqVU1f9CCbUsNMiCWx2wyRw9LtEBGxS45/Pu8HO6H1kwPnJ8YS
-         PL8hGjhwAaGETH9NuzO4j4mz+pvlPjpl6nZbkTybzvbOKBPWhvJae5Ee4tbm/KILAv5/
-         xRK3q09kE8zd/riXtJ0X8Ueca9WcjsOaHbooTMAxAjStsOaITISU4sfuhdCOFciHN6/9
-         ds2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723559237; x=1724164037;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0GZ9q735651QGDZf7rgdlCrHxFSRCY3h/YKc3A79Cc0=;
-        b=g64BEn9uM2HHqzmSUf1MkD2xQ5E43E8SP3m7WqcfFiXjWIcGLllQY48rGWRjpYP1kC
-         qHAhwNk7C7IqDp7SxZkbGgBbA/ssmdLeCbepAQckm7DWITxNaI2519C7t8XBam2TV0Nr
-         zRgNzB1KkU1Hczid/cawSu4Nyzx7V+jpbVKdWjC4IbwQ+UMYyl1QUb+aRWPfrH0kgZiy
-         wJCQ90yvvq/ZZfTdqimPuA0LYB9r0eDIYg4PHm+VfsS/owf0TtVjFZtWjI//SUlJlZSl
-         7PzqrGtjVvC1r7LK3qKHowAKXGHll1TWgbc3ujib76OW8NLZzu9gcpPL1cJRDQSVd/8m
-         APYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd2ef4iqyHIzEIdNQcpyFWwXKNBHo03LNPd2FnVyeRSIGiTpfeRijwOaMhocn10ksARhzRJy+n0exTOatWB4bR2MM4tn2cZ7w2sfNLuzpOGwQKIT8fWgD2atVT4Ai0tBqTakk1H3jGWwkd0ryOLSklSr9wEpUSXOuaCKsc58RX95DyW5CE2ea+XznRRvbZ2PXDvGhf5NoqSPB+7OzFA1SXatzxAUof0VuPTh4yEcPDJsdJYkZxMDo5tX48mftxVnC+ROwoIifU
-X-Gm-Message-State: AOJu0YxwAR0WppjZBmFoQozxWqdDdtpcECDVp5j9oKUjAQHpmRfEsGJl
-	kTfHVUmUhBvCHfMzv4pa5+bB19cdYXbZo6iP+zTGDHBgKme5jEJC
-X-Google-Smtp-Source: AGHT+IH6Tmd1OzGRfql2ZCp766sYz9QoQGSXIi39HApJlkOewrKUyajyK555rObaG/0QcWQbujM/0w==
-X-Received: by 2002:a05:6402:848:b0:5a7:448b:4434 with SMTP id 4fb4d7f45d1cf-5bd44c2d6f3mr2725779a12.9.1723559236558;
-        Tue, 13 Aug 2024 07:27:16 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd196a666fsm2954540a12.46.2024.08.13.07.27.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 07:27:15 -0700 (PDT)
-Message-ID: <36b0ee66-3af3-40c1-86b6-b52cd826298e@gmail.com>
-Date: Tue, 13 Aug 2024 16:27:12 +0200
+	s=arc-20240116; t=1723559452; c=relaxed/simple;
+	bh=G8ANgsojX6Q8Ryh6XWoRWtQeiZsBVAQMaxxk0GWN3t4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ItFCoCob7V2+QC+4MKCBME2hXhfNbgQDe4G4ZBiLQvuB1v30xXZwg/q55IWIbU4tjHfcgg9djmVM3fdbPfzRpdpVQtwM1ytbi/YE13NXSHYWz7DblAfrDoP+0mDe8MgQ81tMSwfRAJvuCe1x0eBX458094W4T1ThCoUWgHOLTG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=V8tP2ChE; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id c89ba3403cdacc95; Tue, 13 Aug 2024 16:30:48 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 2A4286A89D1;
+	Tue, 13 Aug 2024 16:30:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1723559448;
+	bh=G8ANgsojX6Q8Ryh6XWoRWtQeiZsBVAQMaxxk0GWN3t4=;
+	h=From:Subject:Date;
+	b=V8tP2ChEZCgc41eR/bROtc5eWuTzJzz5UQsX4H1Pdu3AYVnI0v+3rNU0HNo4K7OUN
+	 xcIoZixtVzJvvW+BEguN7tui6GBZj1XVBRdES+UWPRcHPhCe7tl+dQWzs8V9ngJE/S
+	 8MGxAUfWNWIkG90GruDZn5juxVRq39iPPFVEDYp1DmlU7DYJ9RLdmhj1cTVpyaih85
+	 qOwssWTA8xoUwV6qC5osYHmflMm3QnJK/TLh5gdjWn9NYUaPHOrk1xGJoJNEiIlTTA
+	 AgO9s+jUWyN5pS2dqCmrrjyxmPOkYc76xRUxnhh9CuGTHysYyZsEqfexvSSnFgdKlM
+	 FnO8ebTKZAXCg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Peter =?ISO-8859-1?Q?K=E4stle?= <peter@piie.net>
+Subject: [PATCH v1 3/4] thermal: gov_bang_bang: Add .manage() callback
+Date: Tue, 13 Aug 2024 16:27:33 +0200
+Message-ID: <8419356.T7Z3S40VBb@rjwysocki.net>
+In-Reply-To: <1903691.tdWV9SEqCh@rjwysocki.net>
+References: <1903691.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: platform: Add Surface System
- Aggregator Module
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
- <20240810-topic-sam-v2-2-8a8eb368a4f0@quicinc.com>
- <1a6ebc27-95ca-4f56-9971-b2a8d03f270a@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <1a6ebc27-95ca-4f56-9971-b2a8d03f270a@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgjeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhl
+ uhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehpvghtvghrsehpihhivgdrnhgvth
+X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
 
-On 11.08.2024 4:28 PM, Krzysztof Kozlowski wrote:
-> On 10/08/2024 03:28, Konrad Dybcio wrote:
->> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
->>
->> Add bindings for the Surface System Aggregator Module (SAM/SSAM), the
->> Microsoft Surface-standard Embedded Controller, used on both x86- and
->> Qualcomm-based devices.
->>
->> It provides a plethora of functions, depending on what's wired up to
->> it. That includes but is not limited to: fan control, keyboard/touchpad
->> support, thermal sensors, power control, special buttons, tablet mode.
->>
->> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
->> ---
->>  .../bindings/platform/microsoft,surface-sam.yaml   | 50 ++++++++++++++++++++++
->>  1 file changed, 50 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml b/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml
->> new file mode 100644
->> index 000000000000..f613738aa31d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml
->> @@ -0,0 +1,50 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/platform/microsoft,surface-sam.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Surface System Aggregator Module (SAM, SSAM)
->> +
->> +maintainers:
->> +  - Konrad Dybcio <konradybcio@kernel.org>
->> +
->> +description: |
-> 
-> No need for |
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Apparently it's necessary because I have a :
-> 
->> +  Surface devices use a standardized embedded controller to let the
->> +  operating system interface with various hardware functions. The
->> +  specific functionalities are modeled as subdevices and matched on
->> +  five levels: domain, category, target, instance and function.
+After recent changes, the Bang-bang governor may not adjust the
+initial configuration of cooling devices to the actual situation.
 
-                 ^ here
+Namely, if a cooling device bound to a certain trip point starts in
+the "on" state and the thermal zone temperature is below the threshold
+of that trip point, the trip point may never be crossed on the way up
+in which case the state of the cooling device will never be adjusted
+because the thermal core will never invoke the governor's
+.trip_crossed() callback.  [Note that there is no issue if the zone
+temperature is at the trip threshold or above it to start with because
+.trip_crossed() will be invoked then to indicate the start of thermal
+mitigation for the given trip.]
 
-Should I e.g. s/:/-/, or keep the |?
+To address this, add a .manage() callback to the Bang-bang governor
+and use it to ensure that all of the thermal instances managed by the
+governor have been initialized properly and the states of all of the
+cooling devices involved have been adjusted to the current zone
+temperature as appropriate.
 
->> +
->> +properties:
->> +  compatible:
->> +    const: microsoft,surface-sam
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  current-speed:
->> +    description: The baudrate in bits per second of the device as it comes
->> +      online, current active speed.
->> +    $ref: /schemas/types.yaml#/definitions/uint32
-> 
-> This should be just "current-speed: true", because the type will be
-> brought by serial schema. We should however have some schema with
-> peripheral properties for serial devices. I'll come with something.
+Fixes: 530c932bdf75 ("thermal: gov_bang_bang: Use .trip_crossed() instead of .throttle()")
+Link: https://lore.kernel.org/linux-pm/1bfbbae5-42b0-4c7d-9544-e98855715294@piie.net/
+Cc: 6.10+ <stable@vger.kernel.org> # 6.10+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/gov_bang_bang.c |   30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-I suppose I should just include:
+Index: linux-pm/drivers/thermal/gov_bang_bang.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_bang_bang.c
++++ linux-pm/drivers/thermal/gov_bang_bang.c
+@@ -26,6 +26,7 @@ static void bang_bang_set_instance_targe
+ 	 * when the trip is crossed on the way down.
+ 	 */
+ 	instance->target = target;
++	instance->initialized = true;
+ 
+ 	dev_dbg(&instance->cdev->device, "target=%ld\n", instance->target);
+ 
+@@ -80,8 +81,37 @@ static void bang_bang_control(struct the
+ 	}
+ }
+ 
++static void bang_bang_manage(struct thermal_zone_device *tz)
++{
++	const struct thermal_trip_desc *td;
++	struct thermal_instance *instance;
++
++	for_each_trip_desc(tz, td) {
++		const struct thermal_trip *trip = &td->trip;
++
++		if (tz->temperature >= td->threshold ||
++		    trip->temperature == THERMAL_TEMP_INVALID ||
++		    trip->type == THERMAL_TRIP_CRITICAL ||
++		    trip->type == THERMAL_TRIP_HOT)
++			continue;
++
++		/*
++		 * If the initial cooling device state is "on", but the zone
++		 * temperature is not above the trip point, the core will not
++		 * call bang_bang_control() until the zone temperature reaches
++		 * the trip point temperature which may be never.  In those
++		 * cases, set the initial state of the cooling device to 0.
++		 */
++		list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
++			if (!instance->initialized && instance->trip == trip)
++				bang_bang_set_instance_target(instance, 0);
++		}
++	}
++}
++
+ static struct thermal_governor thermal_gov_bang_bang = {
+ 	.name		= "bang_bang",
+ 	.trip_crossed	= bang_bang_control,
++	.manage		= bang_bang_manage,
+ };
+ THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
 
-https://lore.kernel.org/linux-serial/20240811-dt-bindings-serial-peripheral-props-v1-0-1dba258b7492@linaro.org/
 
-Konrad
+
 
