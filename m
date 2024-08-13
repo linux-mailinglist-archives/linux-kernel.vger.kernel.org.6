@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-284140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9A894FD79
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:56:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E8C94FD81
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348171C228B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:56:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F219B22F27
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22E1364CD;
-	Tue, 13 Aug 2024 05:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6228438DC0;
+	Tue, 13 Aug 2024 06:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cKQWVppL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzChrwou"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302DD2D611;
-	Tue, 13 Aug 2024 05:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303151BF53;
+	Tue, 13 Aug 2024 06:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723528580; cv=none; b=U5T1Kdl41kyCDXiN9gWVIAOTFEIXwrFuyzJ0SZi7HU2npH+r+v90Vt0w8f4xPYUW8uMP+6b7W0T9s//hJeATvXcdZRszSrC/xAt1JH0gF+7P3LZ5MsIQ6w8CnNTdJiCutrs1wwkF0bcV/lCV6D0G9mShI0PsBr5BN90RihysLuM=
+	t=1723528857; cv=none; b=K9uhbt01/5ef203Hu5h0b/J7V5C8YrUT72/jnWDo+1U1LzpU86XsVFPQiH+EDi1WxJDdJDMEALVtSRZzdgEsCvMV/rgjqIcdtnHtNdDpgG2bQj8I9jTjf/27AavhAq7D8Fev+4GMIMlHCkhxtcLzdNQBoJG4Bx8R0w2AvQr6MQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723528580; c=relaxed/simple;
-	bh=L8js0GkOH9qaEyl63mKLOnW7hHybHSnFOP8/VzQrDzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AxIlzToakpazeQPke9r0Zhm33rhwkAhCMuNtIA38Sm3AG9SyVo2xY/4DCpHK1dX34oN/uec0KQADDOMiiKPd7LGadM9bYWsTT+B832JgGrstvvfWxQ9T2KLHVVfW4d0GLLdxkcy8nfYOE9AGHNMcGwuvTVyS11292sBvNiwcIfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cKQWVppL; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723528578; x=1755064578;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L8js0GkOH9qaEyl63mKLOnW7hHybHSnFOP8/VzQrDzg=;
-  b=cKQWVppL79663MLMDK1hotKxGM8DbDODQkvS0l6YXWRcdNJFYgqBAyK5
-   eZpH1c6I61+H4JCgTH2wvEqal0aKejVFh2kD8UbWrgAucbi0S/ubzdmeR
-   DvFqPCglqGC4ErBikzH1yZ4N7xg1qmHj7S3pdI/GLiUA4WZFAqL7VZ8BJ
-   Xbx1xIsZ8jYagBWOukE2YKCnnUGqLL297BdHHUJA3xZGtGU3ppRR+a0fZ
-   W/YWJNZlfHySwY28RZSPfW1uWM8U1P6ZLfvml7na6g8MZxYnHo6PVRIzK
-   omR21Q2ZkbAmJ7dLG7bdTMEvb4iaB3VD6f/unDTlf7xc6SmcgkySs047i
-   w==;
-X-CSE-ConnectionGUID: LfQhTnjzSM2l0gdC5HtpRQ==
-X-CSE-MsgGUID: RP+k1Bw8RAatyIVr0o6k5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21540747"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21540747"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 22:56:17 -0700
-X-CSE-ConnectionGUID: 3VrNHXeNTBO886FwcF2HdA==
-X-CSE-MsgGUID: gwKWcW7yRdCYjhtdSKGetw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="58232208"
-Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
-  by fmviesa007.fm.intel.com with ESMTP; 12 Aug 2024 22:56:15 -0700
-Date: Tue, 13 Aug 2024 13:56:14 +0800
-From: Yuan Yao <yuan.yao@linux.intel.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-	seanjc@google.com, isaku.yamahata@intel.com,
-	rick.p.edgecombe@intel.com, michael.roth@amd.com
-Subject: Re: [PATCH v2 1/2] KVM: x86: Check hypercall's exit to userspace
- generically
-Message-ID: <20240813055614.ndlrtint75ancbno@yy-desk-7060>
-References: <20240813051256.2246612-1-binbin.wu@linux.intel.com>
- <20240813051256.2246612-2-binbin.wu@linux.intel.com>
+	s=arc-20240116; t=1723528857; c=relaxed/simple;
+	bh=eoz8SypQVeUi7S44huxs+5Uqa8k0/GfMVkclaeuBME4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tcFszQyvhBVW4VEqgq+vvxSntrb1hsdnOqENxHrlNbkpAIkABHZwQlfxD56MLbLNq+ZH3fGSIOo9BSkySZlei1yNS4ym+4Pk67zM5v4neLCgZnzx8XjNM/Fmvqz++sLO7jquVJctEZIjmxzfaHw6u7+Do78yRn3rPIzfg5YgwkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UzChrwou; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4f6b8b7d85bso1749792e0c.1;
+        Mon, 12 Aug 2024 23:00:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723528855; x=1724133655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y2QcXZLiSHSC9Xh+N1wM5xwm7PSlXvs0f4mmP999nFg=;
+        b=UzChrwou2imwo7J563uCrqggrfOkuGjgaZDR0IkNmMIU0b9SehFRdybjJj7ynEdTRK
+         KZjp7BxjJiVAKnimZf7mbA/4yEzEekHz9q+sAE8P1Sy4EsEHo2j4NaFzCS1H+jX7kIDR
+         c+8fB/rcg32ExDeNhrvpaLcZhrEf0A+wXLMhFUhL+b68CGTKENUqLSYGaptgf5ZR48RS
+         J/zuqQEipExAtuSjVaz/LYNVhOER2RWkIIq7B8/DVLhClL9ofb50r8CgLKvZWvG1YuWp
+         /BiU4kG2oOAKiwPrsJNx4+ZOe2QO0A6396veg5NjgLu7TrKukLhTdrM14hVIEKn3hPsr
+         m2Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723528855; x=1724133655;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y2QcXZLiSHSC9Xh+N1wM5xwm7PSlXvs0f4mmP999nFg=;
+        b=nRfFpY6WvQ4pUsqFQ9DTgCE5ld3Bzv+TYiiP49j5a22dg26ZJ7OJZjIg8BnezcZYlF
+         ScHFE7y8dEo6fWQ+PZ2rYWXlxfnCvUZ1I1Fxc30M/DFvVbgSrz6BCawWkQP+lQ3f2VGV
+         Vt8VHz0yv/Pkc8up/HLhwKkUI0L4q49S4QNh9SQ41B7K00JapyFSY8BazrRInmNpbROq
+         mi2F4pJagk1FIHwPJAg5kzti+QaxYuGYp1ZUYbAaJcQJNLkby0YDY73qIgzvLGTUx+wH
+         lq/68n4zNrect8lmDDFvGS3SdZxwumNtGW7m1h6X65wepAyVFJlM9wzqdQqC6kCeLeWC
+         xQCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAcV/eaU2gaV3maArvZ/l+jNs6v2VfSRRLnhh3hOGHyyFQ7zOtudeyvoi/ILG/2pNTCeyyG3DWePSTNp9+gM38jzPzl90QUrLTwikRUDHeqpFQmdzYP4wPxav7ELCd+tlM4JVmHmTen6HacSoKWqRjj5qsC9d/iBtaFs5HgbaS6lwTzaYW
+X-Gm-Message-State: AOJu0Yw0s1vcVsk2gOfbcSLKbOsF7P/6v4pdaKnVK73262ocrhn84s/O
+	uCAILVQBZT/hmI7wzBNqIEhn23JWs+FBUZ7IOTIIcvlQZj+hZmki
+X-Google-Smtp-Source: AGHT+IEj+VoLjm5/vLvrxYFGVDuef8pX7BrNKsLxM7K2tmngP8ETL3B04OJJnLrqKd81Zf/cwm0ISw==
+X-Received: by 2002:a05:6122:312a:b0:4ed:185:258c with SMTP id 71dfb90a1353d-4fabeec0d21mr3337865e0c.2.1723528854832;
+        Mon, 12 Aug 2024 23:00:54 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4f91f1192fasm867098e0c.0.2024.08.12.23.00.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 23:00:54 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	kuniyu@amazon.com,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: javier.carrasco.cruz@gmail.com,
+	David Hunter <david.hunter.linux@gmail.com>
+Subject: [PATCH] Kselftest: msg_oob.c: Fix warning for Incorrect Specifier
+Date: Tue, 13 Aug 2024 01:59:57 -0400
+Message-ID: <20240813060036.754213-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813051256.2246612-2-binbin.wu@linux.intel.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 01:12:55PM +0800, Binbin Wu wrote:
-> Check whether a KVM hypercall needs to exit to userspace or not based on
-> hypercall_exit_enabled field of struct kvm_arch.
->
-> Userspace can request a hypercall to exit to userspace for handling by
-> enable KVM_CAP_EXIT_HYPERCALL and the enabled hypercall will be set in
-> hypercall_exit_enabled.  Make the check code generic based on it.
->
-> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-> ---
->  arch/x86/kvm/x86.c | 4 ++--
->  arch/x86/kvm/x86.h | 7 +++++++
->  2 files changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index af6c8cf6a37a..6e16c9751af7 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -10226,8 +10226,8 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->  	cpl = kvm_x86_call(get_cpl)(vcpu);
->
->  	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
-> -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
-> -		/* MAP_GPA tosses the request to the user space. */
-> +	if (!ret && is_kvm_hc_exit_enabled(vcpu->kvm, nr))
-> +		/* The hypercall is requested to exit to userspace. */
->  		return 0;
->
->  	if (!op_64_bit)
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index 50596f6f8320..0cbec76b42e6 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -547,4 +547,11 @@ int kvm_sev_es_string_io(struct kvm_vcpu *vcpu, unsigned int size,
->  			 unsigned int port, void *data,  unsigned int count,
->  			 int in);
->
-> +static inline bool is_kvm_hc_exit_enabled(struct kvm *kvm, unsigned long hc_nr)
-> +{
-> +	if(WARN_ON_ONCE(hc_nr >= sizeof(kvm->arch.hypercall_exit_enabled) * 8))
+Change specifier to %p to correctly substitute type 'const void *'. A
+specifer involved with a macro is causing a misleading warning to occur:
 
-How about:
+In file included from msg_oob.c:14:
+msg_oob.c: In function ‘__recvpair’:
+../../kselftest_harness.h:106:40: warning: format ‘%s’ expects 
+	argument of type ‘char *’, but argument 6 has type 
+	‘const void *’ [-Wformat=]
+  106 |                 fprintf(TH_LOG_STREAM, "# %s:%d:%s:" fmt "\n", \
+      |                                        ^~~~~~~~~~~~~
+../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
+  101 |                 __TH_LOG(fmt, ##__VA_ARGS__); \
+      |                 ^~~~~~~~
+msg_oob.c:235:17: note: in expansion of macro ‘TH_LOG’
+  235 |                 TH_LOG("Expected:%s", expected_errno ? 
+			strerror(expected_errno) : expected_buf);
+      |                 ^~~~~~
 
-if (!(BIT(hc_nr) & KVM_EXIT_HYPERCALL_VALID_MASK))
+A second set of these three warnings occur later for the incorrect
+specifier at msg_oob.c:256. By tracing the various macros involved, the
+correct specifier (in msg_oob.c) can be spotted and changed.
 
-KVM_EXIT_HYPERCALL_VALID_MASK is used to guard kvm->arch.hypercall_exit_enabled
-on KVM_CAP_EXIT_HYPERCALL, "hc_nr > maximum supported hc" AND "hc_nr <=
-bit_count(kvm->arch.hypercall_exit_enabled)" should be treated as invalid yet to
-me.
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+---
+ tools/testing/selftests/net/af_unix/msg_oob.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +		return false;
-> +
-> +	return kvm->arch.hypercall_exit_enabled & (1 << hc_nr);
+diff --git a/tools/testing/selftests/net/af_unix/msg_oob.c b/tools/testing/selftests/net/af_unix/msg_oob.c
+index 16d0c172eaeb..87090ebda2a7 100644
+--- a/tools/testing/selftests/net/af_unix/msg_oob.c
++++ b/tools/testing/selftests/net/af_unix/msg_oob.c
+@@ -232,7 +232,7 @@ static void __recvpair(struct __test_metadata *_metadata,
+ 
+ 	if (ret[0] != expected_len || recv_errno[0] != expected_errno) {
+ 		TH_LOG("AF_UNIX :%s", ret[0] < 0 ? strerror(recv_errno[0]) : recv_buf[0]);
+-		TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
++		TH_LOG("Expected:%p", expected_errno ? strerror(expected_errno) : expected_buf);
+ 
+ 		ASSERT_EQ(ret[0], expected_len);
+ 		ASSERT_EQ(recv_errno[0], expected_errno);
+@@ -256,7 +256,7 @@ static void __recvpair(struct __test_metadata *_metadata,
+ 		cmp = strncmp(expected_buf, recv_buf[0], expected_len);
+ 		if (cmp) {
+ 			TH_LOG("AF_UNIX :%s", ret[0] < 0 ? strerror(recv_errno[0]) : recv_buf[0]);
+-			TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
++			TH_LOG("Expected:%p", expected_errno ? strerror(expected_errno) : expected_buf);
+ 
+ 			ASSERT_EQ(cmp, 0);
+ 		}
+-- 
+2.43.0
 
-BIT(xx) instead of "1 << hc_nr" for better readability.
-
-> +}
->  #endif
-> --
-> 2.43.2
->
->
 
