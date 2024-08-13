@@ -1,99 +1,55 @@
-Return-Path: <linux-kernel+bounces-284890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97C5950674
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CD1195065E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED215B28E5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:27:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 167D7B2677B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FC319D063;
-	Tue, 13 Aug 2024 13:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VacMwHr5"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491B519B3EC;
+	Tue, 13 Aug 2024 13:24:01 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C22B19B5BB
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068B21D556;
+	Tue, 13 Aug 2024 13:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555549; cv=none; b=E8bh5bsA1KvgyLhiJ/quo73YiyY/Xdun0od+uhKchrgbsOh2cOpXzFhif+iYZS0O2BlEhq6yhroO+MvVCtTVLmTLHP9oALF8a5onY51vyYo0ivfvE2TJkc5H3qU4C/rHkMaTWu+5amMxU/CqWSBill8KwiAO8XNiiDJ/xt4wA9A=
+	t=1723555440; cv=none; b=DXYU2WZu09y+o6rerRDW6ZmnzsL6JSOyzs9rZfXrB8tzRizNrUXSZZAk8+De3E3F+Rs3phYNAqOwuHE6TGwbVmflLennA4f8Plne7dc+lj0CwAObg0/4ZWbX0kw2rvW/NWXDUX2PAJscRADcbFmkT26mI8oNSODPi2Lc+KfVE+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555549; c=relaxed/simple;
-	bh=iGoL+HLhqexTWkJ+dZ/JHwY3v5/+1jHfueA9y1XMENI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fRB9glKaO+Vw8j1PGkSRP82YVYbWnE4xsXCfev16L4Ej1BsMaVZf3uYAhmY8sTqzf/CQXwlBzC3K3m6DTa2FNQ/dnrJiE7ztA7bFQpViSb2+dITtX6CD73iXjchL3t9ok3XFxSuSvSclpY6PseoRkvQDqQDUaFK8ZJDLmJncWM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VacMwHr5; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so4846782e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723555546; x=1724160346; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vqh5EYvMFCPE5arJzUrVuYN8olqKoGJkP7ilX3wyAGI=;
-        b=VacMwHr5yxVPr+U0smjT2svEZ0i/m5fxq0A+O4pdyImIjbn8dpW2gEGKYpoGQCq3uL
-         3WuOoYVm8yYckSGZmpqcR+1BfIm/M3M5qHNN9USHOZfkT/vDF/kRe+w6qzu9mcCp07XG
-         Xr59FoESDgWF8Th/eOTFtOzs7mVxA7y9g6FvdswgaY4LoqRiIbEtxt8viO48cI77tc89
-         /iqIftiJfLGof4G6uFJKcYPzaRsliYjPAWYREwr7UxP9onv4Az7oL+qRx0T3mH0EhgdY
-         O/N5bTtC6np+CppNWvBApLGBpsLKHlxJdBzqbx29gO3qZRl6Qn/BGiq0mkbOHb3LBGan
-         eSQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723555546; x=1724160346;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vqh5EYvMFCPE5arJzUrVuYN8olqKoGJkP7ilX3wyAGI=;
-        b=UJ6dUezSGXlhMfr9BtEH/oaDOE+u0ujyZfITmPBi9aNDUFRz4GoPssj24boBIsegUv
-         kjHtQa5JNpsjCBKwW0btOp+JqQISjiqV30NauUVJfMmLwVFFdqeU+aZc8MHdr55CfKvK
-         DnimqYTn4fASjmsYWFhKitXK9EtvqzyGze10CxSKeYroVxtwdT9tAsvvWr07fxJn75Es
-         CZ2Lnwz0B4lvApuBvBkxq1LL9Fvjp4sF4OzfUXuB+mysVm7+Tn7j/HNv4oxpj/RK9y+I
-         oUaWJjssxdrnzjmfxmjF8L2/b0Qj2f7iJvS7/zWUGSqLkvHq007/onEAfjUuddCKab1s
-         ZeTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUczDHSo3pWVr5egy79WV/CUIeGCNObz114Ry1sJ95gxnAXZ+k/STB6VcUvEmo2XmeU9H0mN8LNFJ+kA7YerR7CkWEewpLa5azBVeFk
-X-Gm-Message-State: AOJu0YyE2lo6NbaffjrlGxjq52KJcDTXuLQGT1BKMXRlKsGtBn/sLwIo
-	RygnBRuNTCHjcS8EhNWGB7xvEy+GkaO25cZsygN4F/v7YmyMMn780TAaST0ZAkI=
-X-Google-Smtp-Source: AGHT+IHMLVGDigrqektOOEcKtHUBUrZ0H1yBfl4W0aPOysz0l5q5wIN+XwIpSkq9sMLm2xPQfj7tKA==
-X-Received: by 2002:a05:6512:2348:b0:52c:e0e1:9ae3 with SMTP id 2adb3069b0e04-53213694527mr2503106e87.57.1723555546132;
-        Tue, 13 Aug 2024 06:25:46 -0700 (PDT)
-Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm223186625e9.12.2024.08.13.06.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:25:45 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: irogers@google.com,
-	linux-perf-users@vger.kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Ze Gao <zegao2021@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 7/7] perf test: Add a test for default perf stat command
-Date: Tue, 13 Aug 2024 14:23:15 +0100
-Message-Id: <20240813132323.98728-8-james.clark@linaro.org>
+	s=arc-20240116; t=1723555440; c=relaxed/simple;
+	bh=NGdg1BLP0GPAMP86ABodjR+cWgdJjUmHIa3XeU8bCbk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y5J+CPja6AS6KPzzXOTzTLZki3CL6n5PGDJCJJBHR0aivAn025xuDt04zeqWHvPcFIJpraDZcwISGS+58lVQ2lFWL/2jDe+m7raPwvbtUxHF0eeo+P4hj8awN/spZGGyBwnmegJugvyPzEwnUrfHDgE0NFk865nNQet6xEetXfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ThinkPad-T480s.. (unknown [121.237.44.107])
+	by APP-03 (Coremail) with SMTP id rQCowACHKRlVXrtm7WsLBg--.54503S2;
+	Tue, 13 Aug 2024 21:23:34 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH v2 0/2] riscv: Add perf support to collect KVM guest statistics from host side
+Date: Tue, 13 Aug 2024 21:23:33 +0800
+Message-Id: <cover.1723518282.git.zhouquan@iscas.ac.cn>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240813132323.98728-1-james.clark@linaro.org>
-References: <20240813132323.98728-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,52 +57,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACHKRlVXrtm7WsLBg--.54503S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw17AFy7Gr4UGF1rCr1xKrg_yoWrKF1Dpr
+	43Cr43tF4rAryIqw1Ivr1Y9ryUJ397XrnxGrnxJw4rAr4jvaykXwn2gr1xZ3y0qrykKryr
+	Xw1vqFy2kas0yFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW5Gw
+	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
+	6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64
+	vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0x
+	vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUkkuxUUUUU=
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBwwIBma7QjdI8QAAsU
 
-Test that one cycles event is opened for each core PMU when "perf stat"
-is run without arguments.
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-Signed-off-by: James Clark <james.clark@linaro.org>
+Add basic guest support to RISC-V perf, enabling it to distinguish
+whether PMU interrupts occur in the host or the guest, and then
+collect some basic guest information from the host side
+(guest os callchain is not supported for now).
+
+Based on the x86/arm implementation, tested with kvm-riscv.
+test env:
+- host: qemu-9.0.0
+- guest: qemu-9.0.0 --enable-kvm (only start one guest and run top)
+
+-----------------------------------------
+1) perf kvm top
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules top
+
+PerfTop:      41 irqs/sec  kernel:97.6% us: 0.0% guest kernel: 0.0% guest us: 0.0% exact:  0.0% [250Hz cycles:P],  (all, 4 CPUs)
+-------------------------------------------------------------------------------
+
+    64.57%  [kernel]        [k] default_idle_call
+     3.12%  [kernel]        [k] _raw_spin_unlock_irqrestore
+     3.03%  [guest.kernel]  [g] mem_serial_out
+     2.61%  [kernel]        [k] handle_softirqs
+     2.32%  [kernel]        [k] do_trap_ecall_u
+     1.71%  [kernel]        [k] _raw_spin_unlock_irq
+     1.26%  [guest.kernel]  [g] do_raw_spin_lock
+     1.25%  [kernel]        [k] finish_task_switch.isra.0
+     1.16%  [kernel]        [k] do_idle
+     0.77%  libc.so.6       [.] ioctl
+     0.76%  [kernel]        [k] queue_work_on
+     0.69%  [kernel]        [k] __local_bh_enable_ip
+     0.67%  [guest.kernel]  [g] __noinstr_text_start
+     0.64%  [guest.kernel]  [g] mem_serial_in
+     0.41%  libc.so.6       [.] pthread_sigmask
+     0.39%  [kernel]        [k] mem_cgroup_uncharge_skmem
+     0.39%  [kernel]        [k] __might_resched
+     0.39%  [guest.kernel]  [g] _nohz_idle_balance.isra.0
+     0.37%  [kernel]        [k] sched_balance_update_blocked_averages
+     0.34%  [kernel]        [k] sched_balance_rq
+
+2) perf kvm record
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules record -a sleep 60
+
+[ perf record: Woken up 3 times to write data ]
+[ perf record: Captured and wrote 1.292 MB perf.data.kvm (17990 samples) ]
+
+3) perf kvm report (the data shown here is not complete)
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules report -i perf.data.kvm
+
+# Total Lost Samples: 0
+#
+# Samples: 17K of event 'cycles:P'
+# Event count (approx.): 269968947184
+#
+# Overhead  Command          Shared Object            Symbol                                        
+# ........  ...............  .......................  ..............................................
+#
+    61.86%  swapper          [kernel.kallsyms]        [k] default_idle_call
+     2.93%  :6463            [guest.kernel.kallsyms]  [g] do_raw_spin_lock
+     2.82%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_out
+     2.11%  sshd             [kernel.kallsyms]        [k] _raw_spin_unlock_irqrestore
+     1.78%  :6462            [guest.kernel.kallsyms]  [g] do_raw_spin_lock
+     1.37%  swapper          [kernel.kallsyms]        [k] handle_softirqs
+     1.36%  swapper          [kernel.kallsyms]        [k] do_idle
+     1.21%  sshd             [kernel.kallsyms]        [k] do_trap_ecall_u
+     1.21%  sshd             [kernel.kallsyms]        [k] _raw_spin_unlock_irq
+     1.11%  qemu-system-ris  [kernel.kallsyms]        [k] do_trap_ecall_u
+     0.93%  qemu-system-ris  libc.so.6                [.] ioctl
+     0.89%  sshd             [kernel.kallsyms]        [k] __local_bh_enable_ip
+     0.77%  qemu-system-ris  [kernel.kallsyms]        [k] _raw_spin_unlock_irqrestore
+     0.68%  qemu-system-ris  [kernel.kallsyms]        [k] queue_work_on
+     0.65%  sshd             [kernel.kallsyms]        [k] handle_softirqs
+     0.44%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_in
+     0.42%  sshd             libc.so.6                [.] pthread_sigmask
+     0.34%  :6462            [guest.kernel.kallsyms]  [g] serial8250_tx_chars
+     0.30%  swapper          [kernel.kallsyms]        [k] finish_task_switch.isra.0
+     0.29%  swapper          [kernel.kallsyms]        [k] sched_balance_rq
+     0.29%  sshd             [kernel.kallsyms]        [k] __might_resched
+     0.26%  swapper          [kernel.kallsyms]        [k] tick_nohz_idle_exit
+     0.26%  swapper          [kernel.kallsyms]        [k] sched_balance_update_blocked_averages
+     0.26%  swapper          [kernel.kallsyms]        [k] _nohz_idle_balance.isra.0
+     0.24%  qemu-system-ris  [kernel.kallsyms]        [k] finish_task_switch.isra.0
+     0.23%  :6462            [guest.kernel.kallsyms]  [g] __noinstr_text_start
+     
 ---
- tools/perf/tests/shell/stat.sh | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Change since v1:
+- Rebased on v6.11-rc3
+- Fix incorrect misc type (Andrew)
 
-diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-index 525d0c44fdc6..7118cfc37f48 100755
---- a/tools/perf/tests/shell/stat.sh
-+++ b/tools/perf/tests/shell/stat.sh
-@@ -148,6 +148,26 @@ test_cputype() {
-   echo "cputype test [Success]"
- }
- 
-+test_hybrid() {
-+  # Test the default stat command on hybrid devices opens one cycles event for
-+  # each CPU type.
-+  echo "hybrid test"
-+
-+  # Count the number of core PMUs
-+  pmus=$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l)
-+
-+  # Run default Perf stat
-+  cycles_events=$(perf stat -- true 2>&1 | grep "cycles" | wc -l)
-+
-+  if [ "$pmus" -ne "$cycles_events" ]
-+  then
-+    echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
-+    err=1
-+    return
-+  fi
-+  echo "hybrid test [Success]"
-+}
-+
- test_default_stat
- test_stat_record_report
- test_stat_record_script
-@@ -155,4 +175,5 @@ test_stat_repeat_weak_groups
- test_topdown_groups
- test_topdown_weak_groups
- test_cputype
-+test_hybrid
- exit $err
+---
+v1 link:
+https://lore.kernel.org/all/cover.1721271251.git.zhouquan@iscas.ac.cn/
+
+Quan Zhou (2):
+  riscv: perf: add guest vs host distinction
+  riscv: KVM: add basic support for host vs guest profiling
+
+ arch/riscv/include/asm/kvm_host.h   |  5 ++++
+ arch/riscv/include/asm/perf_event.h |  7 ++++++
+ arch/riscv/kernel/perf_callchain.c  | 38 +++++++++++++++++++++++++++++
+ arch/riscv/kvm/Kconfig              |  1 +
+ arch/riscv/kvm/main.c               | 12 +++++++--
+ arch/riscv/kvm/vcpu.c               |  7 ++++++
+ 6 files changed, 68 insertions(+), 2 deletions(-)
+
+
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
 -- 
 2.34.1
 
