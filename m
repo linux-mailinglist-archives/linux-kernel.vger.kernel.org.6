@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-284159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAFA94FDBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDBC94FDC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9DF21F23DD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 057CD1F2186D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DEF3BBF1;
-	Tue, 13 Aug 2024 06:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279933B791;
+	Tue, 13 Aug 2024 06:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpp8QfbE"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Tkphu/HT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A09A3218B;
-	Tue, 13 Aug 2024 06:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316E5433C0;
+	Tue, 13 Aug 2024 06:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723529890; cv=none; b=S8ivkWZCnto4QVfnSfdWL+CV7xngqbobexNdw/xILruNoGeajsMSj4gaDvSytyD450yZNHVlRCGDD11qrc9Hg1q0hplhb4ibWBxvFMK7wDTpW4zQ7U+4c3rE+GCAoDqYvNT3GyZm0dG/Nv9Uu0QRjNMx6f6BH7A5CP0FzzTqWxo=
+	t=1723529945; cv=none; b=Yc9R6GBW502gADYwfg+45KjhzUGbUXn4iWHwF5p7Ty1zNScRbInGf7sGTpsW/ZEUbdJ0i7e6x3NlNn7o+B09TO6YALmJ1wWUFtzAB8oFkg03vXMReEiaHkt4ZGsmzhVng95DaaNH4PTzj2aozWvLWmsSV6fS7nFoucJ837zeCeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723529890; c=relaxed/simple;
-	bh=/Ei6GoN2hxx7Ohgs4IlFABwqjL70ijI6xfsf2Q/iUHc=;
+	s=arc-20240116; t=1723529945; c=relaxed/simple;
+	bh=WCl+wZrzT0x1i51/8Vy2Qn3S0hUdMU1X8mN8JKqg/rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pt2sHIrpjIWBDlUBr26F/rkovVshtSrulssjunvNutn6KKVG4m+R090NjAOflm8ashQe/7JAepwn2D2MQtgLB2cShPng863HXHLZbAcu0I4KaPpVYf1UfgIQIV+yjCxIWDjZV/+qoX7O1mEUIyBqRmdPXKtvLSq3tNhaS1sEZJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpp8QfbE; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7aac70e30dso568704666b.1;
-        Mon, 12 Aug 2024 23:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723529887; x=1724134687; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=16pKIYRPYzAZ2cVZGoDKE+g4e+Tu4+gU68ARoHo8H9E=;
-        b=dpp8QfbE/rcdScINSvN4mH2meYoq5Hi2KZ7iW2ejFUz18kesvv1dGXcZlCZFG8XeHy
-         fDxTtQ0ReAZE3mce3iOf9YBVPvjDYWEo/W5FBJT38zpDvROGLd2UAIZHPr7T2jGPq7fv
-         +1mx2NTrdTq8l/GySOTz0e7iVNtG92OqYet0TmWURBFeubOV1S8oxBY9PMxEUpnJSc/V
-         hHWcBS3L3zUZywQIEM3NM+lGoqqctYEknSAnZu/I8MVLTSw/Y+jxn5tI4CjB/vzyZlSD
-         Ac5k5g/n4OxNxNxo5hGBSfJOBNuN5F7QyBPumactwzPPgOIIlRZkNFbJOTVfRHnZYKEN
-         GjmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723529887; x=1724134687;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=16pKIYRPYzAZ2cVZGoDKE+g4e+Tu4+gU68ARoHo8H9E=;
-        b=BuLwvI4TpX7fi16MdbHeo1XU2Ug8foi5SlZsHWIxQZM5dooz3FCvYyf6avDrFVPVvq
-         s85G05mL2nOxkivBkAavLTaoddO4qrRwM8fdhrboCE0sF7eV0HkXsixMzafhw/9BbUD/
-         v9H6CSYHhOYrvMaVpphAt//f00mNyNFa8aCEFGJULUd3vis8VRdq4hsB42eFNitoAgwU
-         7etPrGBCaAwtjW4J2bPNLw8ByioVxz9hZjGeIacEPgTdcxcj53EEgsq4tTIQZDMCsWIQ
-         2RftzEX1DsjDK14AiAfzVD4lrt43fXBEGdj1qRjsh7pb/CFB/VFe2fm7+APaXwmtG3BD
-         mjmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcA1AWhoMw5COms2fL9gAOpTuQbzVWYdHB14TbJMoeelH+EXH0JULvPvUE9D3JPYmBgEBL0DbzvjubL87RkyDzs+tamdkTPg8eX4AsEhbR6LOK3ZqvptsNeIJOzZif/0WQ
-X-Gm-Message-State: AOJu0YzzPVostkixM8dUB5k2v2GiGXAbM/9m6ntdMo+JP1mqGY43O6GK
-	2cxhK3MdMpfhvimESSJhsXIaNHb+eaR7bSrrL6Oz4k87Bu9MxWpd
-X-Google-Smtp-Source: AGHT+IFgZG9it8OjdYZb1L8HgN1g3Lf1MfTdxpAh434F1nFJT65wNOswN2hy9m/9TLGYCshL1AT9Rg==
-X-Received: by 2002:a17:907:7d8c:b0:a7a:91e0:5f1b with SMTP id a640c23a62f3a-a80ed2dc9c4mr166308266b.68.1723529886757;
-        Mon, 12 Aug 2024 23:18:06 -0700 (PDT)
-Received: from f (cst-prg-84-71.cust.vodafone.cz. [46.135.84.71])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f4183aa5sm40432566b.211.2024.08.12.23.18.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 23:18:06 -0700 (PDT)
-Date: Tue, 13 Aug 2024 08:17:57 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, 
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
-	surenb@google.com, akpm@linux-foundation.org, linux-mm@kvack.org
-Subject: Re: [PATCH RFC v3 13/13] uprobes: add speculative lockless VMA to
- inode resolution
-Message-ID: <7byqni7pmnufzjj73eqee2hvpk47tzgwot32gez3lb2u5lucs2@5m7dvjrvtmv2>
-References: <20240813042917.506057-1-andrii@kernel.org>
- <20240813042917.506057-14-andrii@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTt0Tf+NEuvxeVbfY9Iti5tMXRj9CfMWemjGt4hQuJ+KZVCRS7q2nmtAxcdgGpIaLl5XI0KmxcLPlh9KHm2lXuz2+Kzu4pKLKJpI4HmwHRu0RefnLWSAcqzoGqj0UTCzPgLnR/ue5hbnHDx1VQoidurSSP3lsIqVDvuBymOhpWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Tkphu/HT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F87C4AF11;
+	Tue, 13 Aug 2024 06:19:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723529944;
+	bh=WCl+wZrzT0x1i51/8Vy2Qn3S0hUdMU1X8mN8JKqg/rw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tkphu/HTnTorP81r90waqwL4nRNolOVkD12/CjEHMxkOw8CFIzIDyoD6HCmchP0zE
+	 1lPjZrrJninBx6JyxMwLWbj2vOQvFRYqn0qlTm0umXgF1YYDHz10AIPfCHBJk4g2XK
+	 DsAlzLccnDBRgf/QM93SlrZNuJcwNBcPXDODfFJ8=
+Date: Tue, 13 Aug 2024 08:19:01 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/150] 6.1.105-rc1 review
+Message-ID: <2024081352-harsh-prior-004e@gregkh>
+References: <20240812160125.139701076@linuxfoundation.org>
+ <f514502a-0e89-4fcb-95c4-986a3cba2342@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813042917.506057-14-andrii@kernel.org>
+In-Reply-To: <f514502a-0e89-4fcb-95c4-986a3cba2342@roeck-us.net>
 
-On Mon, Aug 12, 2024 at 09:29:17PM -0700, Andrii Nakryiko wrote:
-> Now that files_cachep is SLAB_TYPESAFE_BY_RCU, we can safely access
-> vma->vm_file->f_inode lockless only under rcu_read_lock() protection,
-> attempting uprobe look up speculatively.
+On Mon, Aug 12, 2024 at 02:42:58PM -0700, Guenter Roeck wrote:
+> On 8/12/24 09:01, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.1.105 release.
+> > There are 150 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 14 Aug 2024 16:00:26 +0000.
+> > Anything received after that time might be too late.
+> > 
 > 
-> We rely on newly added mmap_lock_speculation_{start,end}() helpers to
-> validate that mm_struct stays intact for entire duration of this
-> speculation. If not, we fall back to mmap_lock-protected lookup.
+> Building parisc64:C3700:smp:net=pcnet:initrd ... failed
+> ------------
+> Error log:
+> In file included from /home/groeck/src/linux-stable/include/linux/fs.h:45,
+>                  from /home/groeck/src/linux-stable/include/linux/huge_mm.h:8,
+>                  from /home/groeck/src/linux-stable/include/linux/mm.h:745,
+>                  from /home/groeck/src/linux-stable/include/linux/pid_namespace.h:7,
+>                  from /home/groeck/src/linux-stable/include/linux/ptrace.h:10,
+>                  from /home/groeck/src/linux-stable/arch/parisc/kernel/asm-offsets.c:20:
+> /home/groeck/src/linux-stable/include/linux/slab.h:228: warning: "ARCH_KMALLOC_MINALIGN" redefined
+>   228 | #define ARCH_KMALLOC_MINALIGN ARCH_DMA_MINALIGN
 > 
-> This allows to avoid contention on mmap_lock in absolutely majority of
-> cases, nicely improving uprobe/uretprobe scalability.
+> In file included from /home/groeck/src/linux-stable/arch/parisc/include/asm/atomic.h:23,
+>                  from /home/groeck/src/linux-stable/include/linux/atomic.h:7,
+>                  from /home/groeck/src/linux-stable/include/linux/rcupdate.h:25,
+>                  from /home/groeck/src/linux-stable/include/linux/rculist.h:11,
+>                  from /home/groeck/src/linux-stable/include/linux/pid.h:5,
+>                  from /home/groeck/src/linux-stable/include/linux/sched.h:14,
+>                  from /home/groeck/src/linux-stable/arch/parisc/kernel/asm-offsets.c:18:
+> /home/groeck/src/linux-stable/arch/parisc/include/asm/cache.h:28: note: this is the location of the previous definition
+>    28 | #define ARCH_KMALLOC_MINALIGN   16      /* ldcw requires 16-byte alignment */
 > 
 
-Here I have to admit to being mostly ignorant about the mm, so bear with
-me. :>
+Thanks, I'll go drop the offending commit now.
 
-I note the result of find_active_uprobe_speculative is immediately stale
-in face of modifications.
-
-The thing I'm after is that the mmap_lock_speculation business adds
-overhead on archs where a release fence is not a de facto nop and I
-don't believe the commit message justifies it. Definitely a bummer to
-add merely it for uprobes. If there are bigger plans concerning it
-that's a different story of course.
-
-With this in mind I have to ask if instead you could perhaps get away
-with the already present per-vma sequence counter?
+greg k-h
 
