@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-285435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA94950D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:02:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387B7950D79
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105661F2305F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF081C21A1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1711A4F0A;
-	Tue, 13 Aug 2024 20:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1D81A3BC8;
+	Tue, 13 Aug 2024 20:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEbU9YwA"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SniH4Aby"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB23D54279
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E6554279
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579312; cv=none; b=AhTCIuRidTmrGPluGECZ8c4KnhrxmkLQxIKcUdwSU4AMr1y+oNtZ0Keci01Y/Qg8rUPzx5H4DrlYUmHRnvjCBIbJ4smf1aaZYyujUysJzXLwyg7GjWheU/Jo4aX6hzd2SOf/jHmNH+BhMjHk4mdeIYl8/KK10s+htRtG0PiUIQQ=
+	t=1723579332; cv=none; b=UDGrcCGdXERcqMXKIV9ghf8DEK6Ql0C9xmmo9YG9K3MAFjrX5WmFFmNhY6HP26JjC6hqtSFOkSUC+UjXnWxh+8gfebx2O/uWQ+/81KNd8okQAV9AfXROz8X2yhZn1Zw1HOiEE2TLDVB+LtJhiOxiaTx+goAzpGD6saYC6wmuw3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579312; c=relaxed/simple;
-	bh=S4mnivLfaC6CBnZ9vA9MBqgg+x+E3rHUM2iJioJ/fN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q+Or18WjVYOqmu37xV28Tztu29Nx3sLkiYfYMk6IdY3bdGY404xjW2uyItGBA/gSxUAxS9+BOOc9c8li6pDrc9PBy6tv/Ipe0Xt6NFnV6DRhgNk+nBSQH86HifaaaJ+oc55Vfr5Op0orTuASUomGCACwEufWPy0+Z/bgrwfxH1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEbU9YwA; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52fd0904243so592850e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:01:50 -0700 (PDT)
+	s=arc-20240116; t=1723579332; c=relaxed/simple;
+	bh=PKTqGo+hY1iTdH/E5gkiO28NnWS37lLCc0cy0Hj8ciU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lX0pxDT/m+nY6OqSWsYckH1SVhwQ16MSppr8s4bb/s/3d/eyfCKkswIMb2O7Fh9Y9kkAhz0ZsjK8I4ih1NCOhywy4/vj6Jn+r5ug4HzAaaOCUqRVRdSQ8u9E2xdEUfmb56HGFJcbEBIM6onCA9SH+gzNuNp4/7GJe+8cZrLApuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SniH4Aby; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso7844489a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723579309; x=1724184109; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=05yxfIPzb+vpmSjZ9OYifCLd7i3CDlpKM0BKHiz5UCQ=;
-        b=hEbU9YwAuUKEftUXuV5Hih/D4iujHrKgJD7aCOnvUZVpV+M1VNa1uI/kLLCb+8eqcs
-         RGfSExHXxDzFpu+wrLtZqJpDN5TAyF5nTJ73wRAeX8ioBL3b2c1DeozK2pbdtHs9oV/Y
-         HcO7zUp+POE/9/xJQznPmMSVoQ1XTsSQDzF+71B2lFUu+/b2tjdVRUBSiwpz8IA8QWxo
-         nckSm2rpk3DMxCsW9hrzZWghB2RYdVlfvdb+ZAEF8sPPkX8XlyI+ktMxtsfGejxaObNq
-         z+yjn5u5JfOjYgLxD9d9xEOLr54mUJpTFwKLmDkVqcrOcSiHDgiewsBJr3xh2PVfh9M5
-         tgFA==
+        d=linux-foundation.org; s=google; t=1723579328; x=1724184128; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmAbvdEngFPVAVMDhCM7a1Akua0vJAWV4vuO7e04JNc=;
+        b=SniH4Abyr0GeJhJDQNf+XbrcZvtu73AdRDnycxUeQqq4qgAamewzDw1O6tz8D+Y1+z
+         EMChY2ZSZo9sZOgeau82tJsa07N37whyBz+xklvJ4lmDvZ69IcofVrDE43M+HPlAWd10
+         /Xn5KUdiHCRlEeHEbBshH2DN9iRUrRCW9If8Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723579309; x=1724184109;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=05yxfIPzb+vpmSjZ9OYifCLd7i3CDlpKM0BKHiz5UCQ=;
-        b=XIKG2XyhrARUiAXsTBY7fEQYr5KPTec4Y0xnjCut3EL2FyQ+6Z8ETM7bPEERU2kl2K
-         LKl9+SDxrQ8dNnC5fWVKC6SNHtakdmOM8UARVY9xhoSMYKHaIal4ExKljQITkKUd70wL
-         OrrEhZL/rjwArzeOxzK7xzeWXHjeofxqFmJHZ7r2HWHhbaWkskEihMA2qYi/Y0/5X5NN
-         EaXA36CuMot51qv5pSkiuojRt41Ok8NPvYfo9AXmSjQNONPZqIk9hpC5u5y20Q7F+cLy
-         /FlfNnYHB8wmZyS9ZiaUrI7HVxpm17sobDjBXqNDDUjqp0ZSkyahbZ+uyu0RA8AicP1b
-         SNZw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1EILlYa1RxlJcMI7+qzs2B0N741lX/5qhFA4wF0hKQBIBtXY55C62rE2f2yxPrUqXpaNDstLXcJsBPJSydCUwE6nuAsjljfTE/Wby
-X-Gm-Message-State: AOJu0YyjVnuVtngbx+6VHGZcy2H34qZv3cjKnCkOkyLc3p1FHXz2EKuc
-	3cnyA3O0Jsf9G5njFIa7u4k55B18meb09itla0SyivJgr8qS2X4u2o/Zu7z81Xw=
-X-Google-Smtp-Source: AGHT+IEy2HUeh4eHrPS74gTyv0LL8fkr5nwO3fJw8lDbNGJBQEugQTA2bj4xmGTeJyDShLmEXgiiAw==
-X-Received: by 2002:a05:6512:3c84:b0:52c:ce28:82bf with SMTP id 2adb3069b0e04-532edbb2d5amr162410e87.5.1723579308586;
-        Tue, 13 Aug 2024 13:01:48 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200f4220asm1053557e87.261.2024.08.13.13.01.47
+        d=1e100.net; s=20230601; t=1723579328; x=1724184128;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rmAbvdEngFPVAVMDhCM7a1Akua0vJAWV4vuO7e04JNc=;
+        b=dHufhxR5i1HTlupSYIk87KtoK4BDb2qO3lCPlHPDhJouNeGySGk08tUvpnXaPFEKha
+         gL7Ldb3W6JoNVjyH21IRyJtlN1BIjVFfrOtSbIVN/C0opSJolQJ51NtKE/nk3j57uTC8
+         D+n9OQYRZUL+CPDOTpOTtFiUlzhglMv+wzXTNS/OqgFXZpO2v6qNqg+DXXKkrDM103ui
+         uRQHcXsc2FitffYi3swUhk63VwsYRodluitt4pgUcOIn3UmfE9CCptTLjggU6+032ozQ
+         4aLtAFJzXdbOafKpwmPFVGMAskC+6Fw1QhVRflegy5DYNhTA44n9muJTp0BRQuqO1ylB
+         e1fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVp8H+SPGcJZOqWpvi/AU2cYfejm8qEHu2e/LuHmp3lgnak0v09lp/GFlOBxTSfS2t9gxvJI/XnVUuntxhtReNrI/G90JPKQlA9CGy0
+X-Gm-Message-State: AOJu0YwbmZ5rhpHQfC4vf6nvMM6c9QuEMGznyHVwlwQhkv91N6t/eT+F
+	pbt13scyWzlkuhNIJYt/fype4Of31eQVQ5iu/5q6I6tpL69XBkwfwx0C9vwaovTV4A7vyb1/98E
+	KB6I=
+X-Google-Smtp-Source: AGHT+IFX1ypNDgvus3DTZ9V50FI1u35xLI72x8XHbJq7GTKfkPQys+/iUqUsrsvh4B1EcRfHhioE1Q==
+X-Received: by 2002:a05:6402:1d53:b0:5be:9cfe:6d with SMTP id 4fb4d7f45d1cf-5bea1cb3e38mr361926a12.37.1723579327849;
+        Tue, 13 Aug 2024 13:02:07 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5dfea0sm3196269a12.75.2024.08.13.13.02.06
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 13:01:48 -0700 (PDT)
-Message-ID: <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
-Date: Tue, 13 Aug 2024 23:01:47 +0300
+        Tue, 13 Aug 2024 13:02:06 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so7718212a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:02:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUH/Ii0pkQGaZ7aWlfo2XDWA5vkD5MlveKpF5cBwokau6kv7U2+RygL8DbHNcfQXgrj25+1TrSqyZRQVxrlXn0pgCOU+993Z8AgM+x3
+X-Received: by 2002:a05:6402:278e:b0:5a3:5218:5d82 with SMTP id
+ 4fb4d7f45d1cf-5bea1c7b117mr401494a12.18.1723579326438; Tue, 13 Aug 2024
+ 13:02:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
- comparison
-Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, kernel test robot <lkp@intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240813094035.974317-1-quic_skakitap@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org>
+ <183ee6fa-1d42-4a01-8446-4f20942680d2@redhat.com> <CAHk-=whgwpzsn9XvZt3zRgP87r4mSScD04P_g5JeiR1irN3vRA@mail.gmail.com>
+ <5d54a189-3c2b-440a-9626-4e00e95a7f77@redhat.com>
+In-Reply-To: <5d54a189-3c2b-440a-9626-4e00e95a7f77@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 13 Aug 2024 13:01:50 -0700
+X-Gmail-Original-Message-ID: <CAHk-=why9gTVRPHwbyz-24QSmKW1zXrF_pbS-UtDyQddyzEu9A@mail.gmail.com>
+Message-ID: <CAHk-=why9gTVRPHwbyz-24QSmKW1zXrF_pbS-UtDyQddyzEu9A@mail.gmail.com>
+Subject: Re: [PATCH RFC] Avoid memory barrier in read_seqcount() through load acquire
+To: Waiman Long <longman@redhat.com>
+Cc: cl@gentwo.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
-> In zonda_pll_adjust_l_val() replace the divide operator with comparison
-> operator since comparisons are faster than divisions.
-> 
-> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
+On Tue, 13 Aug 2024 at 12:58, Waiman Long <longman@redhat.com> wrote:
+>
+> Sorry for the confusion. What you said above is actually the reason that
+> I ask this question. In the same way, smp_rmb()/wmb() is available for
+> all arches. I am actually asking if it should be a flag that indicates
+> the arch's preference to use acquire/release over rmb/wmb.
 
-Apparently the change is not a fix, therefore I believe the Fixes tag
-shall be removed.
+I think that if an arch says it has native acquire/release, we should
+basically assume that it's the better model.
 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 2f620ccb41cb..fd8a82bb3690 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
->   	remainder = do_div(quotient, prate);
->   	*l = quotient;
+I mean, we could certainly use "PREFERS" instead of "HAS", but is
+there any real reason to do that?
 
-Since it's not a fix, but a simplification, you may wish to remove
-an unnecessary 'quotient' local variable:
+Do we suddenly expect that people would make a CPU that has native
+acquire/release, and it would somehow then prefer a full read barrier?
 
-remainder = do_div(rate, prate);
-
->   
-> -	if ((remainder * 2) / prate)
-> +	if ((remainder * 2) >= prate)
->   		*l = *l + 1;
-
-*l = rate + (u32)(remainder * 2 >= prate);
-
-I hope the assignment above is quite clear...
-
->   }
->   
-
-With the review comments above implemented, feel free to add to v2
-
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-
---
-Best wishes,
-Vladimir
+             Linus
 
