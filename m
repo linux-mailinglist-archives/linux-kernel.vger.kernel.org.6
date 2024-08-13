@@ -1,78 +1,131 @@
-Return-Path: <linux-kernel+bounces-284148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8875F94FD91
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:06:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED6F94FD95
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECFC1F2390E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:06:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF07AB21163
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7691F383BF;
-	Tue, 13 Aug 2024 06:06:19 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2CD3A28B;
+	Tue, 13 Aug 2024 06:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBnUvDV7"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CEF364A4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA21364A4;
+	Tue, 13 Aug 2024 06:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723529179; cv=none; b=YPmoL9tOsJA0sc+oeM1LBH1wbhXfduHngrgR9xWPAqTnUJKhoOUS1HSwR3rcScS6iPaQdSQVib5iaw030QU8YiwThqCE2NU0Yg72CjEN2LV9LYcPYWEg8Dupe5b0aekQHZoyMsWvMySZ45226AX5amxauyhxvMuNJxumj9Q27Ug=
+	t=1723529262; cv=none; b=nbZUFinBrmPJHGTWyORZBEi47tcM73WVn4b+uS39b9qQtrsSTx6GRgtBQETxplTb0LxveLv0b+BsYuoGxKzVxz24WKCEB88uHpF+YbWjP9dJn8umAD55ksKoSyFWtiGFXo/QmA3g0EOMmQB0z7wFQ6GapPgxVBNNrcioRwHD1WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723529179; c=relaxed/simple;
-	bh=etD6T0ZunzHX1hraq49sK2iAV+AHL79C0uiUZ/z0k/A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UTiawZdaL4TgQbA8YcGIyQmgFoifiMjQiKKHzD+n30+2HlVBIeSmDuxCPJHToMO5sGLDQ5b5DENFgmbu+vKCwC76K6uCP5c5JngAlzyGXF3dpTOKwhDkXPEfdFim9stdmqfprPEmWWcm2YJJ1xnjk8zhzO6VlAOF4AppOf+V8f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b3dc8cdcbso76557395ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:06:17 -0700 (PDT)
+	s=arc-20240116; t=1723529262; c=relaxed/simple;
+	bh=TJoSsv5ABYblOjpvDjHqYsTixnzTW1adFMkqtMzggNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTOl1+8tNCkmXiapnNuEawD2iveL7tXuHqbPVr12++GlhLlJ6gf4CAWF4jSPberZpfRCWvy16VBe2CTgbmQwHq6dSAyBgy1joclhYu//TGTKi44EU/U2YQtxWhqlTtowx74tH/pUrAgTxhtkYhzkL7xpEW755IiB860gQtiZuQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBnUvDV7; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a80eab3945eso113604866b.1;
+        Mon, 12 Aug 2024 23:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723529259; x=1724134059; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6W3pizzixO+op8gso/0Y0Z2ApdaicAeVY96VNeWzoo=;
+        b=cBnUvDV7zTmita6Xc8eRkCikwsM8bB+dTucCDBQjaL8X8xcCis8CiSzarlYSsMd4T/
+         mLZhSnEed4cF0W14k47PAYNXaCM4UFnhbu8saKBkZivfgNlc+BeYBqWyRQbJyGtZ6Jwl
+         OlFyUYfsbr2Z5KgBv9kq2X7wQMd67ASTCGLORJvzohIgVD7Szxz3ZkqN6277A3XrlrgE
+         8s4y+33ymslYtrP4TizhOgKIstb0OETtoX0dws+jhxw/hW5T4jZFw3xxA2zyTwu7fdCt
+         6c5zvUVlGpXfiYHzW2CcmMcfRVjWbLV58IrrAWaWASelVO8Ro7yiZZxhMz7+OUMaqGCP
+         6WIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723529177; x=1724133977;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=etD6T0ZunzHX1hraq49sK2iAV+AHL79C0uiUZ/z0k/A=;
-        b=Mmrw1jc+n9XvxL1AoyJesx3eQ8u94oft5+OuJXAnYFo4EbrkzCRc92NALnsAw6+739
-         ebSGxlmb3t5lag2rEYjjK0vyeAupOXYsTaCIIiyKShq0/viBrfBO1NAD0h9FFEi8h/Cx
-         phyM0v3j+iXJ5KiJfwJS8SIeo3cdjAyD7ujs6UKId1pEHHmj+GWsLjOertqDc50aCf46
-         fGyJ4QF1o8DsUL7ApE/Xpaws1YiK43TMn9qlKbtU4g4/q7jciRrWiuE4cLD8nGWzoHUC
-         NW7Bqfx4QF1Rgu7HgBJUCkMoTZt6oQ0AQj1N++BklCfusQtdvo0x/kDTTleKK15EdVho
-         lA7Q==
-X-Gm-Message-State: AOJu0YzG8u+WxRJ/GAcUy577GhBcedMkSbClUfncXRW7JXNsuRjzP1cQ
-	+TqaYPGLnoCmlZ2BvzbuUuThl+7CLX7XlH5ryZOfipotpB1ZPA3tWMBOSBEBtHuDuVT8k9GrxZc
-	m4UoIkNrPr+lOlVXBy2A777J0kB4pY5m/HyEUElSYqQ3DALA/RTfbZC8=
-X-Google-Smtp-Source: AGHT+IGFzWhYbDYLnV4YBN1jgbJ7nvp1mVEIZC7MFQkSJ89PTYsa2TOswHMjynyagBex6sMDGZ7HbHE7i/ztDEv554BaBiEsQJ7q
+        d=1e100.net; s=20230601; t=1723529259; x=1724134059;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O6W3pizzixO+op8gso/0Y0Z2ApdaicAeVY96VNeWzoo=;
+        b=df5mpGgtozftndp2FcCLXS0YM6e6wb/IH2Vv82XK5ODXzBC0j403YZwihCGqq27HX6
+         SGDuFom+Ar8jwNKXV5lp7beShK1h3e9B+pIOCRArriFYvbabByTBNAKhyUpcoADAd7a0
+         bZvrm5/WaAJIJlIHmxBtLwvrkgJAO5pGQmsyAawVLq9xKIIN/ethHewYCrjwhzPAjPem
+         T0g4X0UrDa7YehvFYwLEKqN9fDTaa6XEvdNCr4aEVwlQG/RFPzO9CypyhBWZNH+KdNe6
+         Kj0XWGJvXp9D9CFnys59xpFYcifYkgDT7A2nXGY6eu5d0jP7NhKdipBCpaeGYSk7qpU4
+         Su9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVo8fMIPmtb7Q/EFqyC/Ic26yR1lgyzvQ5GqoyKVLi4RvAj8MSNNA9gDKpx41czTiujF70AYbhdbEZm5lntIepdt0ovfSzwnNrOlbgL2+slxoLvVr2SlL5/UbDg0nJkT4PV
+X-Gm-Message-State: AOJu0Yx8YeHCijixw9Ne0b+D0g3jVdGSIoONVSARZpNFqrWSwUUD8HmS
+	5SQlqXs5MOGHm5MzEG8dscKCQUzqlt93OFFKkKSPNpgjtEMyQ2SI
+X-Google-Smtp-Source: AGHT+IHTWcWRM+Y+tscS4yq8v9ySddW6y+BenvpTNTo7KMVI9XXYGRGZ7LJZc3rJYGFBHxCbukOLZg==
+X-Received: by 2002:a17:907:7fa1:b0:a6f:4fc8:266b with SMTP id a640c23a62f3a-a80ed1b598emr188899766b.3.1723529258931;
+        Mon, 12 Aug 2024 23:07:38 -0700 (PDT)
+Received: from f (cst-prg-84-71.cust.vodafone.cz. [46.135.84.71])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414e4b6sm39584766b.151.2024.08.12.23.07.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 23:07:38 -0700 (PDT)
+Date: Tue, 13 Aug 2024 08:07:27 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, 
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
+	surenb@google.com, akpm@linux-foundation.org, linux-mm@kvack.org
+Subject: Re: [PATCH RFC v3 12/13] mm: add SLAB_TYPESAFE_BY_RCU to files_cache
+Message-ID: <jdsuyu4ny4bzpzncyhuc54vqmnxb6wsshvnvd6eat4cknoxvqd@g4mrvwiokb2d>
+References: <20240813042917.506057-1-andrii@kernel.org>
+ <20240813042917.506057-13-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ca:b0:39a:e909:29f6 with SMTP id
- e9e14a558f8ab-39c476a3da8mr1704045ab.0.1723529176774; Mon, 12 Aug 2024
- 23:06:16 -0700 (PDT)
-Date: Mon, 12 Aug 2024 23:06:16 -0700
-In-Reply-To: <0000000000004475f6061f548a43@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000578c25061f8a6877@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [usb?] possible deadlock in
- __flush_workqueue (2)
-From: syzbot <syzbot+e528c9aad0fb5383ec83@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240813042917.506057-13-andrii@kernel.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, Aug 12, 2024 at 09:29:16PM -0700, Andrii Nakryiko wrote:
+> Add RCU protection for file struct's backing memory by adding
+> SLAB_TYPESAFE_BY_RCU flag to files_cachep. This will allow to locklessly
+> access struct file's fields under RCU lock protection without having to
+> take much more expensive and contended locks.
+> 
+> This is going to be used for lockless uprobe look up in the next patch.
+> 
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/fork.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 76ebafb956a6..91ecc32a491c 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -3157,8 +3157,8 @@ void __init proc_caches_init(void)
+>  			NULL);
+>  	files_cachep = kmem_cache_create("files_cache",
+>  			sizeof(struct files_struct), 0,
+> -			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+> -			NULL);
+> +			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_TYPESAFE_BY_RCU|
+> +			SLAB_ACCOUNT, NULL);
+>  	fs_cachep = kmem_cache_create("fs_cache",
+>  			sizeof(struct fs_struct), 0,
+>  			SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
 
-***
+Did you mean to add it to the cache backing 'struct file' allocations?
 
-Subject: Re: [syzbot] [usb?] possible deadlock in __flush_workqueue (2)
-Author: eli.billauer@gmail.com
+That cache is created in fs/file_table.c and already has the flag:
+        filp_cachep = kmem_cache_create("filp", sizeof(struct file), 0,
+                                SLAB_TYPESAFE_BY_RCU | SLAB_HWCACHE_ALIGN |
+                                SLAB_PANIC | SLAB_ACCOUNT, NULL);
 
-#syz dup: [syzbot] [bluetooth?] possible deadlock in touch_wq_lockdep_map
+The cache you are modifying in this patch contains the fd array et al
+and is of no consequence to "uprobes: add speculative lockless VMA to
+inode resolution".
 
+iow this patch needs to be dropped
 
