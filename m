@@ -1,60 +1,91 @@
-Return-Path: <linux-kernel+bounces-285397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB7B950CF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:12:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC07C950CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74036287157
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:12:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2011C237CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1ED1A4F23;
-	Tue, 13 Aug 2024 19:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0751A3BDA;
+	Tue, 13 Aug 2024 19:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVgCS5WS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bycpHs3A"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EF31BF53;
-	Tue, 13 Aug 2024 19:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FDF1BF53
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576325; cv=none; b=CgB08lo2a7n7Yf0CZAlP0L9pNOPLsLOm1OHpEs4KECA6QFRqMMlGNfSvCigb9k9uX1IsdHb38xsugxVQZbAtFjXM14H6tzHq7fBbZoyhK4RrR1nw/+IaoIiZXXwzIBcLTQltd0jFAz9pkFwXX7WhK6RpmYJ8T1zx4g9cgEOmcfI=
+	t=1723576462; cv=none; b=DcH8Of2Ay/Znf5v4Q88VYE3/Ca38JzgF33bS1n6QNDdNNlV8ulkR98ZdDWc+0g9TwABQRe5rZvXFBBgwFs5AnZA2hPI7zn1Tm2kQY3+LsADTvqjAvCqV4jJcJOGGo2/Rw/aTcPnpOjfnwJEeQUYlTtR2mOZ+eTwaKwrP3uC3tWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576325; c=relaxed/simple;
-	bh=XnRaNWmfuA37T6kFbZH5AEOTlDGtmJaVQzGZavvbDy4=;
+	s=arc-20240116; t=1723576462; c=relaxed/simple;
+	bh=Z4hPRLCyJ1fuVYVx1YTdeynkvH3nZxkn8qeVvlftpho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BaaFHnOHYmb9YbrhjYOzlz80eZIDqJUk8ChDg8jQ84g3zFtGnC9lqdjv0vlieJZcxOIUcRGz9rKJclkmH3QqoyYZ/4hmLobomob5Q2tdnxw1CGQdqaxr8kSGzeNTnSqB4oKCtyXnCfE623HwjHPa4RJMFGWp290+VftjZ8clCvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVgCS5WS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5909DC32782;
-	Tue, 13 Aug 2024 19:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723576324;
-	bh=XnRaNWmfuA37T6kFbZH5AEOTlDGtmJaVQzGZavvbDy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oVgCS5WSz629yWKGvbfERWpRApwaykfbBNLKiFHzl81EVFDuqmU97dBGVoq2r4lRN
-	 /K/zTPfAUusChm2KT2tccVNA9UJZl2DS+8fAueSInsifkfNQ517/BZaZnkXac5ZjWL
-	 2Lm5dGPZUMdsvmkMEIDRxxr1Kcu+e/ui0orf0ZTZuCHb6JEhrs/NGQspA+OAYa6JFJ
-	 2gWfJertSb3cw+NAheJF2iZszUyOn8yNIUja9jqdksnW5YjNrvxCHZEm5NAFAFM6vS
-	 r54hrqal8OovlYrHLS/CBsscSzeA0j4WCyUQT3nN/hQ+PmbEClx773yfg2R7F5Vggv
-	 m5Kgz14zKEt+w==
-Date: Tue, 13 Aug 2024 13:12:02 -0600
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>,
-	Li Yang <leoyang.li@nxp.com>, Mark Brown <broonie@kernel.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 23/36] dt-bindings: soc: fsl: cpm_qe: Add QUICC Engine
- (QE) QMC controller
-Message-ID: <20240813191202.GA1495576-robh@kernel.org>
-References: <20240808071132.149251-1-herve.codina@bootlin.com>
- <20240808071132.149251-24-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvLQjK1fBdlK9a3BG60oP0/XzXUn33rxpwzUqPLwcRQnpY4Nga8RC2wX6DehU85kP63dVROBru8faqfb6CpOekNQ+SDuzOMabYtQY04padxO9V90RPtKUUKbxwmzNzc0cachZWI5y493u0/Yoy+9TQy6xtkjAX9HHQdw+AU9/8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bycpHs3A; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc566ac769so52138635ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723576460; x=1724181260; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kk1dkwlW2hC9K1+JmluU1TFqxsdzK0jmaUfE0EFr25c=;
+        b=bycpHs3AF+6HPc/vmq3NVpMx7CJ2BlLl5G0fgItksCkQvdfzPdpy1jc/0Cz57CcuJC
+         FJWqH+IjCDnrjCPN1FHAeGk263cc906so7/RWzINbnCZLA/HuVtJkjesbrxyrzx9VfMf
+         XBwbDxnbhjdqiQKJUjXgn6y5XXyGQqWcUVjFCzBvYCh80nlfDPqaF+xg7+Sp5sPxR2nU
+         7Ux/NV7cvmvTnmkAL0EfK53EF1ez0wz70YcNksQrdz7YfIYGrleO5jcvfKMyThhftdJa
+         b4zzQCIRb0Yh7qGvX6EJ7U3wXrSHX99Q1k5p0Xj5ePTyTkLvftnVSPAiUWlXuAzOGOUC
+         fUyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723576460; x=1724181260;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kk1dkwlW2hC9K1+JmluU1TFqxsdzK0jmaUfE0EFr25c=;
+        b=mOQTZD/SdM3kDkuiQPj0fMDVDlL3fJL9iTHtFkHXPal5XN48kiqXLBaLF1btnz5iA9
+         xAiZOLhfwiGZ9jEXYVsrHwm7lc1dxIbTLkQw5q7ZAtLvBsW3MNAAHRTTkZw3tSfDt8/O
+         TrvvK+Oq/u4qRmgJ969BimogNOzMaer6syshuQw9u38Na8CwnhwE2FFkUBLM+zUQbZat
+         EhTZgIQS38onVJRO6nwp8HzI7OyS3E/SD29of91WUNA+OjhpwOiYew25AYE+gj/9UzPa
+         ogMD3PkI4LhHbpi2Cj8wxdDrXjlyQCgQBr5JtDAieohJ8c/TorCma9feZirFH3Ga6VuI
+         oLSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWA4+eya9vr06NdvOcoZrckHgqb9yf+R/8NtjT5G/7Ums7kPuFbiYcW48ZI7t9tUfKTwGryaMt7o/nI2ztwp4/3toTx7Qfjh9x2pgKn
+X-Gm-Message-State: AOJu0Yz6soCkJH784fKtoISJ9lVsZipLrsI2WoC9bRQHRWZv6R16pOXD
+	EQzT8eWm5YoA9yxlxp5UsSJLUwentFzSAfuBbMp78L30rEsLdk23
+X-Google-Smtp-Source: AGHT+IFzrTEx/oFhW/dv85qL35d8I06sSC2BVqI1ByoN11J4CV0eVl6kh6yBsyPr184O4XjGWk9E5A==
+X-Received: by 2002:a17:902:c40c:b0:1fc:86cc:4267 with SMTP id d9443c01a7336-201d644d7b2mr5286465ad.36.1723576459861;
+        Tue, 13 Aug 2024 12:14:19 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1cfe71sm16888035ad.285.2024.08.13.12.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 12:14:19 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 13 Aug 2024 09:14:18 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
+Message-ID: <Zruwioj86jQz8Oq6@slm.duckdns.org>
+References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
+ <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+ <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
+ <20240724085221.GO26750@noisy.programming.kicks-ass.net>
+ <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
+ <20240806211002.GA37996@noisy.programming.kicks-ass.net>
+ <ZrKW2wZTT3myBI0d@slm.duckdns.org>
+ <20240806215535.GA36996@noisy.programming.kicks-ass.net>
+ <ZrKfK1BCOARiWRr0@slm.duckdns.org>
+ <20240810204542.GA11646@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,255 +94,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808071132.149251-24-herve.codina@bootlin.com>
+In-Reply-To: <20240810204542.GA11646@noisy.programming.kicks-ass.net>
 
-On Thu, Aug 08, 2024 at 09:11:16AM +0200, Herve Codina wrote:
-> Add support for the QMC (QUICC Multichannel Controller) available in
-> some PowerQUICC SoC that uses a QUICC Engine (QE) block such as MPC8321.
+Hello, Peter.
+
+On Sat, Aug 10, 2024 at 10:45:42PM +0200, Peter Zijlstra wrote:
+...
+> > It is tricky because the kernel part can't make assumptions about whether
+> > two tasks are even on the same timeline. In the usual scheduling path, this
+> > isn't a problem as the decision is made by the BPF scheduler from balance()
+> > - if it wants to keep running the current task, it doesn't dispatch a new
+> > one. Otherwise, it dispatches the next task.
 > 
-> This QE QMC is similar to the CPM QMC except that it uses UCCs (Unified
-> Communication Controllers) instead of SCCs (Serial Communication
-> Controllers). Also, compared against the CPM QMC, this QE QMC does not
-> use a fixed area for the UCC/SCC parameters area but it uses a dynamic
-> area allocated and provided to the hardware at runtime.
-> Last point, the QE QMC can use a firmware to have the QMC working in
-> 'soft-qmc' mode.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  .../soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml        | 197 ++++++++++++++++++
->  1 file changed, 197 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml
-> new file mode 100644
-> index 000000000000..71ae64cb8a4f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml
-> @@ -0,0 +1,197 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,qe-ucc-qmc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: PowerQUICC QE QUICC Multichannel Controller (QMC)
-> +
-> +maintainers:
-> +  - Herve Codina <herve.codina@bootlin.com>
-> +
-> +description:
-> +  The QMC (QUICC Multichannel Controller) emulates up to 64 channels within one
-> +  serial controller using the same TDM physical interface routed from TSA.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - fsl,mpc8321-ucc-qmc
-> +      - const: fsl,qe-ucc-qmc
-> +
-> +  reg:
-> +    items:
-> +      - description: UCC (Unified communication controller) register base
-> +      - description: Dual port ram base
-> +
-> +  reg-names:
-> +    items:
-> +      - const: ucc_regs
+> But I have a question.. don't you clear scx.slice when a task needs to
+> be preempted? That is, why isn't that condition sufficient to determine
+> if curr has precedence over the first queued? If curr and it is still
+> queued and its slice is non-zero, take curr.
 
-_regs is redundant.
+scx.slice is used a bit different from other sched classes mostly because
+there are two layers - the SCX core and the BPF scheduler itself. The BPF
+scheduler uses scx.slice to tell the SCX core to "don't bother asking about
+it until the current slice has been exhausted" - ie. it's a way to offload
+things like tick handling and preemption by higher priority sched classes to
+SCX core. When scx.slice expires, the BPF scheduler's dispatch() is called
+which can then decide whether to replenish the slice of the current task or
+something else should run and so on.
 
-> +      - const: dpram
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: UCC interrupt line in the QE interrupt controller
-> +
-> +  fsl,tsa-serial:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to TSA node
-> +          - enum: [1, 2, 3, 4, 5]
-> +            description: |
-> +              TSA serial interface (dt-bindings/soc/qe-fsl,tsa.h defines these
-> +              values)
-> +               - 1: UCC1
-> +               - 2: UCC2
-> +               - 3: UCC3
-> +               - 4: UCC4
-> +               - 5: UCC5
-> +    description:
-> +      Should be a phandle/number pair. The phandle to TSA node and the TSA
-> +      serial interface to use.
-> +
-> +  fsl,soft-qmc:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      Soft QMC firmware name to load. If this property is omitted, no firmware
-> +      are used.
+Thanks.
 
-"firmware-name" doesn't work here?
-
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  '^channel@([0-9]|[1-5][0-9]|6[0-3])$':
-
-Unit-addresses are typically hex.
-
-> +    description:
-> +      A channel managed by this controller
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - enum:
-> +              - fsl,mpc8321-ucc-qmc-hdlc
-> +          - const: fsl,qe-ucc-qmc-hdlc
-> +          - const: fsl,qmc-hdlc
-> +
-> +      reg:
-> +        minimum: 0
-> +        maximum: 63
-> +        description:
-> +          The channel number
-> +
-> +      fsl,operational-mode:
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        enum: [transparent, hdlc]
-> +        default: transparent
-> +        description: |
-> +          The channel operational mode
-> +            - hdlc: The channel handles HDLC frames
-> +            - transparent: The channel handles raw data without any processing
-> +
-> +      fsl,reverse-data:
-> +        $ref: /schemas/types.yaml#/definitions/flag
-> +        description:
-> +          The bit order as seen on the channels is reversed,
-> +          transmitting/receiving the MSB of each octet first.
-> +          This flag is used only in 'transparent' mode.
-> +
-> +      fsl,tx-ts-mask:
-> +        $ref: /schemas/types.yaml#/definitions/uint64
-> +        description:
-> +          Channel assigned Tx time-slots within the Tx time-slots routed by the
-> +          TSA to this cell.
-> +
-> +      fsl,rx-ts-mask:
-> +        $ref: /schemas/types.yaml#/definitions/uint64
-> +        description:
-> +          Channel assigned Rx time-slots within the Rx time-slots routed by the
-> +          TSA to this cell.
-> +
-> +      fsl,framer:
-> +        $ref: /schemas/types.yaml#/definitions/phandle
-> +        description:
-> +          phandle to the framer node. The framer is in charge of an E1/T1 line
-> +          interface connected to the TDM bus. It can be used to get the E1/T1 line
-> +          status such as link up/down.
-> +
-> +    allOf:
-> +      - if:
-> +          properties:
-> +            compatible:
-> +              not:
-> +                contains:
-> +                  const: fsl,qmc-hdlc
-
-"fsl,qmc-hdlc" is always present in compatible. This is only true if 
-compatible is not present. If that's what you wanted, just do:
-
-if:
-  not:
-    required: [compatible]
-
-
-> +        then:
-> +          properties:
-> +            fsl,framer: false
-
-Err, actually, you can do 1 better with just:
-
-dependencies:
-  fsl,framer: [compatible]
-
-
-> +
-> +    required:
-> +      - reg
-> +      - fsl,tx-ts-mask
-> +      - fsl,rx-ts-mask
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - fsl,tsa-serial
-> +  - '#address-cells'
-> +  - '#size-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/soc/qe-fsl,tsa.h>
-> +
-> +    qmc@a60 {
-> +        compatible = "fsl,mpc8321-ucc-qmc", "fsl,qe-ucc-qmc";
-> +        reg = <0x3200 0x200>,
-> +              <0x10000 0x1000>;
-> +        reg-names = "ucc_regs", "dpram";
-> +        interrupts = <35>;
-> +        interrupt-parent = <&qeic>;
-> +        fsl,soft-qmc = "fsl_qe_ucode_qmc_8321_11.bin";
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        fsl,tsa-serial = <&tsa FSL_QE_TSA_UCC4>;
-> +
-> +        channel@16 {
-> +            /* Ch16 : First 4 even TS from all routed from TSA */
-> +            reg = <16>;
-> +            fsl,operational-mode = "transparent";
-> +            fsl,reverse-data;
-> +            fsl,tx-ts-mask = <0x00000000 0x000000aa>;
-> +            fsl,rx-ts-mask = <0x00000000 0x000000aa>;
-> +        };
-> +
-> +        channel@17 {
-> +            /* Ch17 : First 4 odd TS from all routed from TSA */
-> +            reg = <17>;
-> +            fsl,operational-mode = "transparent";
-> +            fsl,reverse-data;
-> +            fsl,tx-ts-mask = <0x00000000 0x00000055>;
-> +            fsl,rx-ts-mask = <0x00000000 0x00000055>;
-> +        };
-> +
-> +        channel@19 {
-> +            /* Ch19 : 8 TS (TS 8..15) from all routed from TSA */
-> +            compatible = "fsl,mpc8321-ucc-qmc-hdlc",
-> +                         "fsl,qe-ucc-qmc-hdlc",
-> +                         "fsl,qmc-hdlc";
-> +            reg = <19>;
-> +            fsl,operational-mode = "hdlc";
-> +            fsl,tx-ts-mask = <0x00000000 0x0000ff00>;
-> +            fsl,rx-ts-mask = <0x00000000 0x0000ff00>;
-> +            fsl,framer = <&framer>;
-> +        };
-> +    };
-> -- 
-> 2.45.0
-> 
+-- 
+tejun
 
