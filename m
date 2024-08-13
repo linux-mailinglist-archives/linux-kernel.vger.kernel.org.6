@@ -1,183 +1,205 @@
-Return-Path: <linux-kernel+bounces-285041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E21795088C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:09:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D8495088E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5B36281448
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76101F21089
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2DD19FA6B;
-	Tue, 13 Aug 2024 15:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/uxd/Dg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A161E4A4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7E619F49A;
+	Tue, 13 Aug 2024 15:09:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78C11DFD1;
+	Tue, 13 Aug 2024 15:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723561756; cv=none; b=k7tV0hqIb9S4x4yOwZkzPmcliClq7VfqgfR3hRmdpY9vCJ5s3VRdzZeo5Ys7ewQ/SrKUwoZNmzRMbnpjb6No6HitGJJdoJn0cUGBOnq0A6H4GLVwndi90u9hpPAw3nZZf5Stea5BLJ3Hm23W3WxYtHBp8DxERONS+8FbhAxs3VA=
+	t=1723561798; cv=none; b=AdsFd0n7zxE2MTrBI8hCFIYv2gdkLZGapczRt0L/AlbyAbiwXBGk8hE1P6Bd7JuSfa2to8LGqmoBPXdEfL2iFQwDzPGgGssBdehpoVHKsHVwtcai872X7TqcQOzkfZNkWR+PgQFSXjqEXVquRKVY0oziysDmK4aoq4tVFo87Qq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723561756; c=relaxed/simple;
-	bh=/GcEWWpZq8y+N37/E08NFUqXKYdVeGt36Z/qjZUVTW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XNBquiq+HbopLy5m78rq6qO1nDEY/JTJQBZQc2N3qnfdt0a6rV2u29Y1l6JayY/9DLLI8dXwiUri3bhxH598KmmAWU6ri+iMvly+7K8K8FtX/oV7ESRPsWmNFysI5vwjIUtcdfLkoi/FQDetZP0C2rUQXhkJwfACli5+cmGG1Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/uxd/Dg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723561754;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tYfScfbGIJQnIlB+eAa395d/aizhLRfIRY/+GrJId/U=;
-	b=J/uxd/DgDdULni9UNLml25TBjQShrD/rJstOfFkQvQT09MdJM80z1P/HQtg7WMPJ/xLgmL
-	Ev4EME22fTfY/XA49aaiGNmn+/l+2d5fiBdRBuOp79jPcbecKkNxJ/PdYpIcikx62mrBCk
-	pPCeLLtMVD+ffkR/laqyCGFHgtEPiIM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-1kPgdP6mPtSjf0zrcJTGTw-1; Tue, 13 Aug 2024 11:09:12 -0400
-X-MC-Unique: 1kPgdP6mPtSjf0zrcJTGTw-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3687eca5980so2744779f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:09:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723561752; x=1724166552;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tYfScfbGIJQnIlB+eAa395d/aizhLRfIRY/+GrJId/U=;
-        b=VpPDDxQC3I/5nXrYV/BNlbxJnQSWhaNuQYPXM9Dx/aH0e1Hm7PR1nlIVjwu8P8nQLC
-         ZT0sVAQIB93ipj/CSFzQMvlpMu6eGvKSUAEtRPIjWcPgGNymjVGtKp/coRMIm7m1kl80
-         0snwOyZBSGuW23urcvvbDhjb9gtuXEsPGWjndkU+SSmsFAGefdOtyojntym1pUV0Juji
-         oHUeeKucd9eLjB1mGyHT7AuVjp7On4hfZ/LjrUDnSagcDzxJlj2WCBq+kJ/8OR3Dv69v
-         K/nulcl4FyQ2Zycdf0+e+VJi5gZa5BJYv87j6zrESV2eilvz0gzyAzkOVo2tiHgFMKi0
-         qGvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3JwWbkfM0sauFS/SZxp5ZJ7tLSIxLsaq+n4Yfe4CpsAk2m6cZv9g1SgdT0ukekuRS+ncz6gvSaedXdGez1OnXJmbZSXUYLsQbbWwW
-X-Gm-Message-State: AOJu0Ywq0Kvd96WxODKQaWakYMdCmYS5WWhG1scNsD424riR/0PXOqFd
-	LsJy6ZdEoVcPps60hrqMNE/qAoD2h6oSq6w5H1Thlvvb1yVpBGmOv0jTtfqJY85uk9yNDuNACTe
-	I+xHZRwjjN0WcUtEuhHjQ4VnUL4ifHb5d0qAbknFLydzgaY3vyDltOERg7zjjYQ==
-X-Received: by 2002:a5d:648f:0:b0:366:e9f3:c242 with SMTP id ffacd0b85a97d-3716ccf080emr2779661f8f.12.1723561751704;
-        Tue, 13 Aug 2024 08:09:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmTz7CthlDbY7apOcB7y5Lbw2eI043yEX1VOouAoqnffjtEsqQdJRlQOGjfFnoZTDEUp7oCA==
-X-Received: by 2002:a5d:648f:0:b0:366:e9f3:c242 with SMTP id ffacd0b85a97d-3716ccf080emr2779633f8f.12.1723561751189;
-        Tue, 13 Aug 2024 08:09:11 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c937bb9sm10678075f8f.34.2024.08.13.08.09.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 08:09:10 -0700 (PDT)
-Message-ID: <be75dbc3-3137-44a2-af45-5454728c98a2@redhat.com>
-Date: Tue, 13 Aug 2024 17:09:09 +0200
+	s=arc-20240116; t=1723561798; c=relaxed/simple;
+	bh=Xy89c9beurqEocWkqdevX9y6ZyXDDymPncsQcks3jpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVmFlUjSBkgfLx2HU9/5Do8fYiISEGV4qe2JLGZ3Oluvm1tXv8JfpKNdHrDUwNe3jPaZo8Fdf035j+2fpdg0paypp92xST/7eVgExfCAvMym/RRv+GFgpGtkRQrX34rCckgNDk93tjuOUnZ5bOw92Tr262l7MjBuM525QKk33QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 145941596;
+	Tue, 13 Aug 2024 08:10:22 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A63743F6A8;
+	Tue, 13 Aug 2024 08:09:54 -0700 (PDT)
+Date: Tue, 13 Aug 2024 16:09:51 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	"saravanak@google.com" <saravanak@google.com>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>
+Subject: Re: [PATCH V2] firmware: arm_scmi: bus: bypass set fwnode for scmi
+ cpufreq
+Message-ID: <Zrt3P1FH13edqjoC@pluto>
+References: <20240729070325.2065286-1-peng.fan@oss.nxp.com>
+ <20240813085703.zz6ltcxmrrbdgt77@lcpd911>
+ <PAXPR04MB84597171A959F40CD9A77C7B88862@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <Zrth0Ypog2TXBlxf@pluto>
+ <PAXPR04MB8459B2CF515DC89DE98A1B7C88862@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] alloc_tag: mark pages reserved during CMA
- activation as not tagged
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com,
- souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, stable@vger.kernel.org
-References: <20240813150758.855881-1-surenb@google.com>
- <20240813150758.855881-2-surenb@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240813150758.855881-2-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8459B2CF515DC89DE98A1B7C88862@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On 13.08.24 17:07, Suren Baghdasaryan wrote:
-> During CMA activation, pages in CMA area are prepared and then freed
-> without being allocated. This triggers warnings when memory allocation
-> debug config (CONFIG_MEM_ALLOC_PROFILING_DEBUG) is enabled. Fix this
-> by marking these pages not tagged before freeing them.
+On Tue, Aug 13, 2024 at 01:52:30PM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH V2] firmware: arm_scmi: bus: bypass set fwnode
+> > for scmi cpufreq
+> > 
+> > On Tue, Aug 13, 2024 at 10:25:31AM +0000, Peng Fan wrote:
+> > > > Subject: Re: [PATCH V2] firmware: arm_scmi: bus: bypass set
+> > fwnode
+> > > > for scmi cpufreq
+> > > >
+> > > > On Jul 29, 2024 at 15:03:25 +0800, Peng Fan (OSS) wrote:
+> > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > >
+> > > > > Two drivers scmi_cpufreq.c and scmi_perf_domain.c both use
+> > > > > SCMI_PROTCOL_PERF protocol, but with different name, so two
+> > scmi
+> > > > > devices will be created. But the fwnode->dev could only point to
+> > > > > one
+> > > > device.
+> > > > >
+> > > > > If scmi cpufreq device created earlier, the fwnode->dev will point
+> > > > > to the scmi cpufreq device. Then the fw_devlink will link
+> > > > > performance domain user device(consumer) to the scmi cpufreq
+> > device(supplier).
+> > > > > But actually the performance domain user device, such as GPU,
+> > > > should
+> > > > > use the scmi perf device as supplier. Also if 'cpufreq.off=1' in
+> > > > > bootargs, the GPU driver will defer probe always, because of the
+> > > > > scmi cpufreq
+> > > >
+> > > > The commit message itself seems very specific to some platform to
+> > me.
+> > > > What about platforms that don't atall have a GPU? Why would
+> > they
+> > > > care about this?
+> > >
+> > > It is a generic issue if a platform has performance domain to serve
+> > > scmi cpufreq and device performance level.
+> > >
+> > > >
+> > > > > device not ready.
+> > > > >
+> > > > > Because for cpufreq, no need use fw_devlink. So bypass setting
+> > > > fwnode
+> > > > > for scmi cpufreq device.
+> > > > >
+> > > > > Fixes: 96da4a99ce50 ("firmware: arm_scmi: Set fwnode for the
+> > > > > scmi_device")
+> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > ---
+> > > > >
+> > > > > V2:
+> > > > >  Use A!=B to replace !(A == B)
+> > > > >  Add fixes tag
+> > > > >  This might be a workaround, but since this is a fix, it is simple
+> > > > > for backporting.
+> > > >
+> > > > More than a workaround, it feels like a HACK to me.
+> > > >
+> > > > >
+> > > > > V1:
+> > > > >
+> > > > >
+> > > > >
+> > > > >  drivers/firmware/arm_scmi/bus.c | 3 ++-
+> > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/drivers/firmware/arm_scmi/bus.c
+> > > > > b/drivers/firmware/arm_scmi/bus.c index
+> > > > 96b2e5f9a8ef..be91a82e0cda
+> > > > > 100644
+> > > > > --- a/drivers/firmware/arm_scmi/bus.c
+> > > > > +++ b/drivers/firmware/arm_scmi/bus.c
+> > > > > @@ -395,7 +395,8 @@ __scmi_device_create(struct
+> > device_node
+> > > > *np, struct device *parent,
+> > > > >  	scmi_dev->id = id;
+> > > > >  	scmi_dev->protocol_id = protocol;
+> > > > >  	scmi_dev->dev.parent = parent;
+> > > > > -	device_set_node(&scmi_dev->dev, of_fwnode_handle(np));
+> > > > > +	if ((protocol != SCMI_PROTOCOL_PERF) || strcmp(name,
+> > > > "cpufreq"))
+> > > > > +		device_set_node(&scmi_dev->dev,
+> > > > of_fwnode_handle(np));
+> > > >
+> > > > I kind of disagree with the idea here to be specific about the
+> > > > PROTOCOL_PERF or cpufreq. This is a generic arm scmi bus driver
+> > right?
+> > > > Why bring in specific code into a bus driver? We will never fix the
+> > > > actual root cause of the issue this way.
+> > >
+> > > The root cause is fwnode devlink only supports one fwnode, one
+> > device.
+> > > 1:1 match. But current arm scmi driver use one fwnode for two
+> > devices.
+> > >
+> > > If your platform has scmi cpufreq and scmi device performance
+> > domain,
+> > > you might see that some devices are consumer of scmi cpufreq, but
+> > > actually they should be consumer of scmi device performance
+> > domain.
+> > >
+> > > I not have a good idea that this is fw devlink design that only allows
+> > > 1 fwnode has 1 device or not. If yes, that arm scmi should be fixed.
+> > > If not, fw devlink should be updated.
+> > >
+> > > The current patch is the simplest method for stable tree fixes as I
+> > > could work out.
+> > 
+> > So this is the same root cause at the end of the issues you had with
+> > IMX pinctrl coexistence...i.e. the SCMI stack creates scmi devices that
+> > embeds the protocol node, BUT since you can have multiple
+> > device/drivers doing different things on different resources within the
+> > same protocol you can end with 2 devices having the same embedded
+> > device_node, since we dont really have anything else to use as
+> > device_node, I rigth ?
 > 
-> Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages as empty")
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Cc: stable@vger.kernel.org # v6.10
-> ---
-> Changes since v2 [1]:
-> - Add and use clear_page_tag_ref helper, per David Hildenbrand
+> I think, yes. And you remind me that with PINCTRL_SCMI and
+> CONFIG_PINCTRL_IMX_SCMI both enabled, the scmi pinctrl node
+> will only take one to set the fwnode device pointer depends on
+> the order to run __scmi_device_create.
 > 
-> https://lore.kernel.org/all/20240812192428.151825-1-surenb@google.com/
-> 
->   mm/mm_init.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index 907c46b0773f..13c4060bb01a 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -2245,6 +2245,8 @@ void __init init_cma_reserved_pageblock(struct page *page)
->   
->   	set_pageblock_migratetype(page, MIGRATE_CMA);
->   	set_page_refcounted(page);
-> +	/* pages were reserved and not allocated */
-> +	clear_page_tag_ref(page);
->   	__free_pages(page, pageblock_order);
->   
->   	adjust_managed_page_count(page, pageblock_nr_pages);
+> So not only perf, pinctrl also has issue here, fwnode devlink will
+> not work properly for pinctrl/perf.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+...mmm ... the standard generic Pinctrl driver and the IMX Pintrcl are
+mutually exclusive in the code (@probe time) itself as far as I can remember
+about what you did, so why devlink should have that issue there ?
+Have you seen any issue in this regards while having loaded pinctrl_scmi
+and pinctrl_imx_scmi ?
 
--- 
-Cheers,
+I want to have a better look next days about this devlink issue that you
+reported...it still not clear to me...from device_link_add() docs, it
+seems indeed that it will return the old existing link if a link exist
+already between that same supplier/consumer devices pair....but from the
+code (at first sight) it seems that the check is made agains the devices
+not their embeded device_nodes, but here (and in pinctrl/imx case) you will
+have 2 distinct consumer devices (with same device_node)...I may have
+missed something in your exaplanation....
 
-David / dhildenb
-
+Thanks,
+Cristian
 
