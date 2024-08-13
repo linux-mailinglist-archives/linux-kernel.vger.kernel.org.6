@@ -1,154 +1,245 @@
-Return-Path: <linux-kernel+bounces-285329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50E1950C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92886950C27
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C6E2857DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABAD2857C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB66E1A38CB;
-	Tue, 13 Aug 2024 18:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265ED1A38D7;
+	Tue, 13 Aug 2024 18:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZuFw1aNR"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Il/l47X3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3BF1A0723;
-	Tue, 13 Aug 2024 18:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EB91A2560
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723573328; cv=none; b=d4ya6jX/2L9kkVgKClQ76HZqyO06yUO4aYMePFTC42bTReUOGMKnpATDC3331i9cbJ0eT8qyPuwhUDC5Z33uenk2IHXirxIam9YCybAv/26rjdcGecoCH7AB11IJJKOkIYpljNRt2PK7gbmAzNUyh3kal6F48nVgZDgtR9jtcic=
+	t=1723573478; cv=none; b=huSoqa0djJrRCJrRPUjP8M9MVCEGZn1VFFa92OpQzwC7k7nQkd63oZEuvyvtJnvsiHFbou3gpcDsH1PX/u+Fl1KnvkPNfzSDG7CIiXtrByjEvHUR3ImOK+WtMHUMzA/lm0HqkLTXXs0jYVgmbz3HWy7xNo2nN1PPPKTyRaXGxSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723573328; c=relaxed/simple;
-	bh=MOCnER6PI0sYPRv9Rixu7QIQnbO03XlabEWCRBTi7L0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LfUs0LH6HfayIdGuNeo63ExIFqP/rYAAE1Il0Fbc7ztlvwjWgcpg1ebSGXFKmQhACIkHE4JGCfTQaOeGaTL/t2v7d++1rb8MGvEfQfOdhHroZMx6OV9XUANJt5VldgwHk/uDldEHLXOPDDbYH3YYJc7ayRt0CNdS8aTjYYUX++k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZuFw1aNR; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DHkFA4029726;
-	Tue, 13 Aug 2024 18:21:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=ynvaQAlLfbiE/EAv0dieMj7N1vx
-	8awFbOuoSK+6h4AY=; b=ZuFw1aNRCeYU0h6/8/hY6GV2Z66eexDOyQHbvM5EX3z
-	/Wg9cdkVKEaEhWRnww8abFAnODpkmHK1VcbndUk9VTnT4xXLIK8lP96TxZfnVohw
-	nR0UjBp0wpi4krzKhV+EURrmD4otZK0FlDqB+j5Q3RDsttIzD7NrRKzR/AzXoT71
-	JrWb+2hlLkrTl3Hltd5iN2meROCM0XQmDEmSy9HQLxv6VxZiWJQWjYGzwez+7l67
-	cVKG5I6hmuImOeXh9Zv7LTg+G2LTbVO/8Vc/4mMb7e3LLWOfLdScArjxqGxoTNkt
-	6Ub9Fndvk3QQtYljTbrZEvRRrhheHlNHjFCM3iQ9HPw==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 410c6605dj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 18:21:54 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47DH6PUa020882;
-	Tue, 13 Aug 2024 18:21:53 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xn834jkh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 18:21:53 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47DILlvF45154794
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 18:21:49 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B0E8820043;
-	Tue, 13 Aug 2024 18:21:47 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3D9052004D;
-	Tue, 13 Aug 2024 18:21:47 +0000 (GMT)
-Received: from localhost (unknown [9.179.17.215])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 13 Aug 2024 18:21:47 +0000 (GMT)
-Date: Tue, 13 Aug 2024 20:21:43 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexandra Winter <wintera@linux.ibm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH 2/2] s390/iucv: Fix vargs handling in iucv_alloc_device()
-Message-ID: <your-ad-here.call-01723573303-ext-4217@work.hours>
-References: <cover.thread-d8267b.your-ad-here.call-01723545029-ext-2515@work.hours>
- <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
- <2024081331-bonnet-fiftieth-9a14@gregkh>
- <your-ad-here.call-01723549827-ext-8444@work.hours>
- <2024081319-patriarch-brutishly-653f@gregkh>
- <221ba279-e48b-4002-9530-c6186e3e8042@linux.ibm.com>
- <2024081332-unblock-absinthe-1c26@gregkh>
+	s=arc-20240116; t=1723573478; c=relaxed/simple;
+	bh=Wf89HB0JuBuXM/v6zgDf4chaaOhtvYYLu8c84Gc4k5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F7bON2Yxw2U5l+mhMx4QQaeuruIOXbv2XKIS7/HM/PqHXvLd8nILBXlQa8O2esTct2s1YH+2sydxRIK7mpBnqixIVz/18Y3BfwuqBSS55HJJBsZx3rFP5uDMr/ua8bftE+yid69bncOprTLi89IcqN2IkNTTkL3kJ0WFDgJBMHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Il/l47X3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723573475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZjeRpoHvIJg5MafdM5/VBNm6LQMFYWDnbQpg1j0Ad4c=;
+	b=Il/l47X3xu0mM3gJc7z5lDefoC4QL8xh8knW44aTg5lL2vgbBJ1R72kU+0MKsgfBrrP5RH
+	WpNrmKdFoLcVg2z8ksLEs0OF5WogAj/SX4foJg+3L5s8cimZR31efJuljxAjXv3yyTDDqY
+	Q0+9spn+R3JuONW1LaU4U/rNajPien8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-Gu2X6rZNPP6Xwvztoi3viw-1; Tue,
+ 13 Aug 2024 14:24:16 -0400
+X-MC-Unique: Gu2X6rZNPP6Xwvztoi3viw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25BCC1925388;
+	Tue, 13 Aug 2024 18:24:10 +0000 (UTC)
+Received: from [10.2.16.208] (unknown [10.2.16.208])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C4FA619560A3;
+	Tue, 13 Aug 2024 18:24:00 +0000 (UTC)
+Message-ID: <6ca76824-331f-407f-afa6-bf75cdca6d96@redhat.com>
+Date: Tue, 13 Aug 2024 14:23:57 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2024081332-unblock-absinthe-1c26@gregkh>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: XN7vFtli5f-GYtpnXQx21SA5m_mLntt7
-X-Proofpoint-ORIG-GUID: XN7vFtli5f-GYtpnXQx21SA5m_mLntt7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_08,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- impostorscore=0 phishscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 clxscore=1015 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408130130
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/7] Docs/admin-guide/mm/workingset_report: document
+ sysfs and memcg interfaces
+To: Yuanchu Xie <yuanchu@google.com>, David Hildenbrand <david@redhat.com>,
+ "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+ Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>,
+ Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>,
+ Gregory Price <gregory.price@memverge.com>, Huang Ying
+ <ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Lance Yang <ioworker0@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>,
+ David Rientjes <rientjes@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Shuah Khan <shuah@kernel.org>,
+ Yosry Ahmed <yosryahmed@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>,
+ Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Abel Wu <wuyun.abel@bytedance.com>,
+ "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240813165619.748102-1-yuanchu@google.com>
+ <20240813165619.748102-8-yuanchu@google.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240813165619.748102-8-yuanchu@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, Aug 13, 2024 at 05:29:52PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Aug 13, 2024 at 03:35:48PM +0200, Alexandra Winter wrote:
-> > 
-> > 
-> > On 13.08.24 14:43, Greg Kroah-Hartman wrote:
-> > >>> I don't understand, why can't dev_set_name() be called here?
-> > >>>
-> > [...]
-> > > 
-> > > But step back, why is this needed at all anyway?  No other subsystem or
-> > > driver needs/wants this, what makes this api so special?  Why not figure
-> > > out your name beforehand?
-> > > 
-> > > thanks,
-> > 
-> > 
-> > Vasily, the following update to Heiko's patch does not touch lib/kobject.c
-> > According to a quick test it still solves the original issue and does compile
-> > with W=1 and iucv as a module.
-> > 
-> > diff --git a/net/iucv/iucv.c b/net/iucv/iucv.c
-> > index 64102a31b569..6a819ba4ccab 100644
-> > --- a/net/iucv/iucv.c
-> > +++ b/net/iucv/iucv.c
-> > @@ -86,13 +86,17 @@ struct device *iucv_alloc_device(const struct attribute_group **attrs,
-> >  {
-> >         struct device *dev;
-> >         va_list vargs;
-> > +       char buf[20];
-> >         int rc;
-> > 
-> >         dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> >         if (!dev)
-> >                 goto out_error;
-> >         va_start(vargs, fmt);
-> > -       rc = kobject_set_name_vargs(&dev->kobj, fmt, vargs);
-> > +       rc = vsnprintf(buf, 20, fmt, vargs);
-> > +       if (!rc)
-> > +               rc = dev_set_name(dev, buf);
-> 
-> This looks best, let's not create a core function that no one has ever
-> needed yet just for one user :)
 
-Okay, fair enough. Thank you, Greg!
+On 8/13/24 12:56, Yuanchu Xie wrote:
+> Add workingset reporting documentation for better discoverability of
+> its sysfs and memcg interfaces. Also document the required kernel
+> config to enable workingset reporting.
+>
+> Change-Id: Ib9dfc9004473baa6ef26ca7277d220b6199517de
+> Signed-off-by: Yuanchu Xie <yuanchu@google.com>
+> ---
+>   Documentation/admin-guide/mm/index.rst        |   1 +
+>   .../admin-guide/mm/workingset_report.rst      | 105 ++++++++++++++++++
 
-I'll drop these two patches. Alexandra, I assume you will send out your
-alternative fix separately. Thank you!
+The new memory cgroup control files need to be documented in 
+Documentation/admin-guide/cgroup-v2.rst as well.
+
+Cheers,
+Longman
+
+>   2 files changed, 106 insertions(+)
+>   create mode 100644 Documentation/admin-guide/mm/workingset_report.rst
+>
+> diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
+> index 8b35795b664b..61a2a347fc91 100644
+> --- a/Documentation/admin-guide/mm/index.rst
+> +++ b/Documentation/admin-guide/mm/index.rst
+> @@ -41,4 +41,5 @@ the Linux memory management.
+>      swap_numa
+>      transhuge
+>      userfaultfd
+> +   workingset_report
+>      zswap
+> diff --git a/Documentation/admin-guide/mm/workingset_report.rst b/Documentation/admin-guide/mm/workingset_report.rst
+> new file mode 100644
+> index 000000000000..ddcc0c33a8df
+> --- /dev/null
+> +++ b/Documentation/admin-guide/mm/workingset_report.rst
+> @@ -0,0 +1,105 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=================
+> +Workingset Report
+> +=================
+> +Workingset report provides a view of memory coldness in user-defined
+> +time intervals, i.e. X bytes are Y milliseconds cold. It breaks down
+> +the user pages in the system per-NUMA node, per-memcg, for both
+> +anonymous and file pages into histograms that look like:
+> +::
+> +
+> +    1000 anon=137368 file=24530
+> +    20000 anon=34342 file=0
+> +    30000 anon=353232 file=333608
+> +    40000 anon=407198 file=206052
+> +    9223372036854775807 anon=4925624 file=892892
+> +
+> +The workingset reports can be used to drive proactive reclaim, by
+> +identifying the number of cold bytes in a memcg, then writing to
+> +``memory.reclaim``.
+> +
+> +Quick start
+> +===========
+> +Build the kernel with the following configurations. The report relies
+> +on Multi-gen LRU for page coldness.
+> +
+> +* ``CONFIG_LRU_GEN=y``
+> +* ``CONFIG_LRU_GEN_ENABLED=y``
+> +* ``CONFIG_WORKINGSET_REPORT=y``
+> +
+> +Optionally, the aging kernel daemon can be enabled with the following
+> +configuration.
+> +* ``CONFIG_WORKINGSET_REPORT_AGING=y``
+> +
+> +Sysfs interfaces
+> +================
+> +``/sys/devices/system/node/nodeX/workingset_report/page_age`` provides
+> +a per-node page age histogram, showing an aggregate of the node's lruvecs.
+> +Reading this file causes a hierarchical aging of all lruvecs, scanning
+> +pages and creates a new Multi-gen LRU generation in each lruvec.
+> +For example:
+> +::
+> +
+> +    1000 anon=0 file=0
+> +    2000 anon=0 file=0
+> +    100000 anon=5533696 file=5566464
+> +    18446744073709551615 anon=0 file=0
+> +
+> +``/sys/devices/system/node/nodeX/workingset_report/page_age_intervals``
+> +is a comma separated list of time in milliseconds that configures what
+> +the page age histogram uses for aggregation. For the above histogram,
+> +the intervals are:
+> +::
+> +    1000,2000,100000
+> +
+> +``/sys/devices/system/node/nodeX/workingset_report/refresh_interval``
+> +defines the amount of time the report is valid for in milliseconds.
+> +When a report is still valid, reading the ``page_age`` file shows
+> +the existing valid report, instead of generating a new one.
+> +
+> +``/sys/devices/system/node/nodeX/workingset_report/report_threshold``
+> +specifies how often the userspace agent can be notified for node
+> +memory pressure, in milliseconds. When a node reaches its low
+> +watermarks and wakes up kswapd, programs waiting on ``page_age`` are
+> +woken up so they can read the histogram and make policy decisions.
+> +
+> +Memcg interface
+> +===============
+> +While ``page_age_interval`` is defined per-node in sysfs, ``page_age``,
+> +``refresh_interval`` and ``report_threshold`` are available per-memcg.
+> +
+> +``/sys/fs/cgroup/.../memory.workingset.page_age``
+> +The memcg equivalent of the sysfs workingset page age histogram
+> +breaks down the workingset of this memcg and its children into
+> +page age intervals. Each node is prefixed with a node header and
+> +a newline. Non-proactive direct reclaim on this memcg can also
+> +wake up userspace agents that are waiting on this file.
+> +e.g.
+> +::
+> +
+> +    N0
+> +    1000 anon=0 file=0
+> +    2000 anon=0 file=0
+> +    3000 anon=0 file=0
+> +    4000 anon=0 file=0
+> +    5000 anon=0 file=0
+> +    18446744073709551615 anon=0 file=0
+> +
+> +``/sys/fs/cgroup/.../memory.workingset.refresh_interval``
+> +The memcg equivalent of the sysfs refresh interval. A per-node
+> +number of how much time a page age histogram is valid for, in
+> +milliseconds.
+> +e.g.
+> +::
+> +
+> +    echo N0=2000 > memory.workingset.refresh_interval
+> +
+> +``/sys/fs/cgroup/.../memory.workingset.report_threshold``
+> +The memcg equivalent of the sysfs report threshold. A per-node
+> +number of how often userspace agent waiting on the page age
+> +histogram can be woken up, in milliseconds.
+> +e.g.
+> +::
+> +
+> +    echo N0=1000 > memory.workingset.report_threshold
+
 
