@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-284509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266B39501C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:56:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA269501C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62151F21C45
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:56:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759081F2162E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73D2187552;
-	Tue, 13 Aug 2024 09:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01313186E52;
+	Tue, 13 Aug 2024 09:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="B/hRVgWX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0SqktetI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LIfkUaHS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E2B17BB2F;
-	Tue, 13 Aug 2024 09:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C8143165;
+	Tue, 13 Aug 2024 09:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542973; cv=none; b=Aux3ZoNWh9+0FYhzU92WimiEoOi+0UmNZJXQm78NJ4XquuB5uzgfm7ShRwWvy1mZS88b7dzffYhe/EyuGaQ9TGiA3MT7SFIxURGRF7BEx/lBdClwH0YaQg/vKEeCRrJPkqu+X1EItwaILdt9UHVVz2AYoKCzqBA+y0HK6BgT9pk=
+	t=1723543031; cv=none; b=XawfTsJxrxRTHkM0D/2j4NHp7RyLYF97WLnFdbtxI12U1nYiUfO26Zu9wWRhnDrGb6ldQwmAxc2PcJUAhsXfprmehUMyigT3NdxWzajmjjgt684aI3d5+hdhW+oLE1CP1dA48XzZwm+qjllD6NOkLw6o2Ykz8/mvP+f2usE8cSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542973; c=relaxed/simple;
-	bh=GZVVnh9fJ4ACP4uxEbbZ5XuxKuMTj9SuB195yWSIMvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F19MMBgNf5W+nih1MxrUz8/Ty92EsIG0Bot4T5dlB+DlHHvWJjIxxc78+kRv2m1JZ31c3hVPf0UsqM59u5RY2i9Rql1kx+bEG5A4DflwqQlPCZfzahNnSDIuXKBctiCq43rJeLzwSGFK+3vVMfnpFLGORvNzGYd0LG465c2nFQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=B/hRVgWX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16066C4AF0B;
-	Tue, 13 Aug 2024 09:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723542972;
-	bh=GZVVnh9fJ4ACP4uxEbbZ5XuxKuMTj9SuB195yWSIMvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B/hRVgWXyd/EdEYanJ+7yWbPoBtWFSYZrFv1KdxZA3nPZ27if2ZLDOPoLN1vpEXjZ
-	 Q1TlRH/jbxkEd4ZCK4bcjwhFCcas7WaMuokGCZAyZu5KbTBRYN0u87JLeS8U0wtrsU
-	 9K+pwam2Tz89priMvIl9S3gUwjuHJQj6UlHDu9hg=
-Date: Tue, 13 Aug 2024 11:56:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Avichal Rakesh <arakesh@google.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] usb: gadget: uvc: effectively fill the udc isoc
- pipeline with available video buffers
-Message-ID: <2024081354-pep-dreadful-c242@gregkh>
-References: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
+	s=arc-20240116; t=1723543031; c=relaxed/simple;
+	bh=+7QKdj7GtpZPwsF7z7r5k3lT2lK4IuF6zx7meV1VJ+4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TiKoZZYqEuePd9NIMITsKTgTa+FMzG26HwQOGcc/ds470lA/KI09YbdY6MJ8RsC8uUBPQiNp+euxI/aIgBYJ4Kuh3ugMlvOs7rCinLSfXWdWNaXbF3czEyzOHCCx4WLXpbNBs6DsBmtEfTGP2ps9k6sIahctndeiSwEf3KZTAJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0SqktetI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LIfkUaHS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723543028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIBBnQCpaeIOfb2Kjjeff7Yy4ccdBuwpa2HPTwQ0yXo=;
+	b=0SqktetIFWfU+vCDesHszRdtp/29RPqOt+oIKERhaUFoRReqrsE4aApGmVfvS3ok3Y6r+7
+	CB00eyyiwZvahdQ/TakBduBpteBtG9DtxSd9JNE2BUUYZQyK5tWXe1qGPJvI1n/1PuhtVz
+	fomLKhso5QnTUJhFR7lkNkCW2+MSgiJUWTRrbhGqc98HIny+sg7x7vinbN1xawT35vuNyw
+	GfTpXqSVKSmBMco32R7nHmZvzHlW04i5kmEzXaj3m7sZFJWPk9b4wEfnBuvI0XdlaODmQd
+	j7mj0ojzV05SN9R2QigQFVUn8V0FoJb3Rl/Ey1zuD1GbJKf8svxtWbIsvolM+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723543028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MIBBnQCpaeIOfb2Kjjeff7Yy4ccdBuwpa2HPTwQ0yXo=;
+	b=LIfkUaHSKrD8oSMoulcbB7i8CVM+UBofbyAwJhI96NWK6O4E6wpK0vIHksBlL75/zANGaY
+	ifDbTYLV1dzvkcAg==
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH] tinyconfig: remove unnecessary 'is not set' for choice
+ blocks
+In-Reply-To: <20240812100148.2083203-1-masahiroy@kernel.org>
+References: <20240812100148.2083203-1-masahiroy@kernel.org>
+Date: Tue, 13 Aug 2024 11:57:07 +0200
+Message-ID: <87bk1wrbik.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
+Content-Type: text/plain
 
-On Tue, Aug 13, 2024 at 11:09:24AM +0200, Michael Grzeschik wrote:
-> This patch series is improving the size calculation and allocation of
-> the uvc requests. Using the selected frame duration of the stream it is
-> possible to calculate the number of requests based on the interval
-> length.
-> 
-> It also precalculates the request length based on the actual per frame
-> size for compressed formats.
-> 
-> For this calculations to work it was needed to rework the request
-> queueing by moving the encoding to one extra thread (in this case we
-> chose the qbuf) context.
-> 
-> Next it was needed to move the actual request enqueueing to one extra
-> thread which is kept busy to fill the isoc queue in the udc.
-> 
-> As a final step the series is increasing the minimum amount of
-> v4l2 buffers to 4 and allocates at least the amount of usb_requests
-> to store them in the usb gadgte isoc pipeline.
-> 
-> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> ---
-> Changes in v4:
-> - fixed exit path in uvc_enqueue_buffer on loop break
-> - Link to v3: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v3-0-4da7033dd488@pengutronix.de
+On Mon, Aug 12 2024 at 19:01, Masahiro Yamada wrote:
 
-I just took v3 in my tree, should I drop them?
+> This reverts the following commits:
+>
+>  - 236dec051078 ("kconfig: tinyconfig: provide whole choice blocks to
+>    avoid warnings")
+>  - b0f269728ccd ("x86/config: Fix warning for 'make ARCH=x86_64
+>    tinyconfig'")
+>
+> Since commit f79dc03fe68c ("kconfig: refactor choice value calculation"),
+> it is no longer necessary to disable the remaining options in choice
+> blocks.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-thanks,
-
-greg k-h
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
