@@ -1,217 +1,72 @@
-Return-Path: <linux-kernel+bounces-283940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDF694FACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:40:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A6D94FACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E60681C21BBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:40:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD8A1B2124F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C865D4C74;
-	Tue, 13 Aug 2024 00:40:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7504C6D;
+	Tue, 13 Aug 2024 00:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oUFu2zE9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1B6Otpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7E019A;
-	Tue, 13 Aug 2024 00:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB1723A8;
+	Tue, 13 Aug 2024 00:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723509647; cv=none; b=F89nhGXEgl2hYh8gYIrvYjEWVG7qfzwdDv3uHwVyQ8RPSCiklulI0unmFYU4exHwKXD7U8VrMxfxk7x27QxgHx9lwTZ82m+07ZRUll5hqVHto0efwngCS1R1FuZtO+xFmp/jVeCvTpJUxoGwTvmhXA+B/zeepcVP0zYTDOyBVjE=
+	t=1723509706; cv=none; b=eCl5ExRSC7cr1E5owL49dT80h9wTAQvk5MHzqgKE/Ml1HqEIHqjX9e4UmyVnOGJAoxNSwGnAZOEmoyZVpynfUcXnT75kL8YyQ3KCLTKH9qbZJZ0a4GYq6IBj1hW52ZV/KyDd8Qbf/fvrE9fnh2o+PlxI3QX6W+HKXRZwB6QeGZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723509647; c=relaxed/simple;
-	bh=ID59+p7FrTqh802vHkr/f1tQxCRkDvEKZTEO87DYGc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ErF0uDdP34AzOpQJEOhtVUnYnSRceaXfwwheX8QMvZyDOPy0kKm5teLniioP/UxTRmdn30gn73/sAytvHTUhQKpiYC45ogQTQ3pbN4SkgWBmzFXXP5qeM4EEdFDNEHxO5GZL8gPpZAGyc0CojA7nYclWY7yQUgN2yhgFLwmTJGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oUFu2zE9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723509640;
-	bh=MNTBvRnLDTANZYC59P8V3WswAMgZiL1fxaExBZ/3+KM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oUFu2zE9E3bjYVsKUpHYcHISyQQWWB7u+aDLBS/cFubbNv4EdmgsO3pHOQo5BVWzR
-	 N4z6tZ0Tw5Mw2mLyhwmoE7AsUW6hc0vZ9tgr1p5lgD/wIXtABdiOAEwEDmb/WPtLxb
-	 hmgOU4lSSJkKDOZD2y7XHcUbtDNHBXH9ZetOl69502nhU1bLwAO7JpKmLAXvnY9W3U
-	 VDW9HTgT18oD/tVUVJqyyPJM/jMyvGcr3myIeUKwqOO1SwnmT5MzTf9hPHywHNQazZ
-	 +B9baTjO1qAvRuicHlz1oOeybjcbk3/0CfVGvaFTMz7q5PrVYZJdyAqBO7/IAC6NwH
-	 cBg+6cAQOTqxQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WjXc83Kvyz4x6l;
-	Tue, 13 Aug 2024 10:40:39 +1000 (AEST)
-Date: Tue, 13 Aug 2024 10:40:39 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Pawel Dembicki <paweldembicki@gmail.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20240813104039.429b9fe6@canb.auug.org.au>
+	s=arc-20240116; t=1723509706; c=relaxed/simple;
+	bh=UfIukSUM7bhMLn23Zb+oA3f6KHmGCIoN6Tv+keOqMKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bWmHdQz21EWdHGzCxWXq+yXA3Vvh6sSC7JAWSrRfOQa1ftBj92OQVAx4S4V4qtsy7QHhbx/XOm/wTa+nsNEr1pvQdJQF9jWv875k6UUREb87EtGmeL28prCBtdnZQJ8RTW9a4U7xwFXbb09vsVHQkwvHQOUJONHJqVv9cdjUhF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1B6Otpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8956BC4AF0D;
+	Tue, 13 Aug 2024 00:41:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723509706;
+	bh=UfIukSUM7bhMLn23Zb+oA3f6KHmGCIoN6Tv+keOqMKk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L1B6OtpfUwM4iYvO2qL2HuydUZ14CbNU7U5W4wxg6IPb8DYAsSPoIBZ0Z/6V6Z5Rm
+	 EZw7p7smtC5VxVeHvQH2DdNZT04I6x+purSNUKm5Nf1Pikzbw+7JjdiHdkqKXE0Ym6
+	 bEPsm6Vk/wzKYOI9txolEi9TizcIdOiIm5kv4F+y7/mwFq3wML4dlIKsB33QzCEMks
+	 AarPvPYgX9+/yoFn7vCw0tN7Jfcm3Q/1KotcqOV2uiRTnSrv9wNN0i6LmWrmVqTITo
+	 By4h7bysF7NFmCTXGPxAktWUTpmHlRP7BLiFRdvX5NPN0t4JML3/m2sBfDP9sH+Dfa
+	 +6IvszBrGncuw==
+Date: Mon, 12 Aug 2024 17:41:44 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Wen Gu <guwen@linux.alibaba.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, alibuda@linux.alibaba.com,
+ tonylu@linux.alibaba.com, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] net/smc: introduce statistics for
+ allocated ringbufs of link group
+Message-ID: <20240812174144.1a6c2c7a@kernel.org>
+In-Reply-To: <20240807075939.57882-2-guwen@linux.alibaba.com>
+References: <20240807075939.57882-1-guwen@linux.alibaba.com>
+	<20240807075939.57882-2-guwen@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.fViWcYhURCAioRd.e/gZZp";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/.fViWcYhURCAioRd.e/gZZp
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Wed,  7 Aug 2024 15:59:38 +0800 Wen Gu wrote:
+> +	if (nla_put_u64_64bit(skb, SMC_NLA_LGR_R_SNDBUF_ALLOC,
+> +			      lgr->alloc_sndbufs, SMC_NLA_LGR_R_PAD))
 
-Today's linux-next merge of the net-next tree got a conflict in:
-
-  drivers/net/dsa/vitesse-vsc73xx-core.c
-
-between commits:
-
-  5b9eebc2c7a5 ("net: dsa: vsc73xx: pass value in phy_write operation")
-  fa63c6434b6f ("net: dsa: vsc73xx: check busy flag in MDIO operations")
-
-from the net tree and commit:
-
-  2524d6c28bdc ("net: dsa: vsc73xx: use defined values in phy operations")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/dsa/vitesse-vsc73xx-core.c
-index e3f95d2cc2c1,a82b550a9e40..000000000000
---- a/drivers/net/dsa/vitesse-vsc73xx-core.c
-+++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
-@@@ -225,12 -226,28 +226,30 @@@
-  #define VSC73XX_VLANACCESS_VLAN_TBL_CMD_CLEAR_TABLE	3
- =20
-  /* MII block 3 registers */
-- #define VSC73XX_MII_STAT	0x0
-- #define VSC73XX_MII_CMD		0x1
-- #define VSC73XX_MII_DATA	0x2
-+ #define VSC73XX_MII_STAT		0x0
-+ #define VSC73XX_MII_CMD			0x1
-+ #define VSC73XX_MII_DATA		0x2
-+ #define VSC73XX_MII_MPRES		0x3
-+=20
-+ #define VSC73XX_MII_STAT_BUSY		BIT(3)
-+ #define VSC73XX_MII_STAT_READ		BIT(2)
-+ #define VSC73XX_MII_STAT_WRITE		BIT(1)
-+=20
-+ #define VSC73XX_MII_CMD_SCAN		BIT(27)
-+ #define VSC73XX_MII_CMD_OPERATION	BIT(26)
-+ #define VSC73XX_MII_CMD_PHY_ADDR	GENMASK(25, 21)
-+ #define VSC73XX_MII_CMD_PHY_REG		GENMASK(20, 16)
-+ #define VSC73XX_MII_CMD_WRITE_DATA	GENMASK(15, 0)
-+=20
-+ #define VSC73XX_MII_DATA_FAILURE	BIT(16)
-+ #define VSC73XX_MII_DATA_READ_DATA	GENMASK(15, 0)
-+=20
-+ #define VSC73XX_MII_MPRES_NOPREAMBLE	BIT(6)
-+ #define VSC73XX_MII_MPRES_PRESCALEVAL	GENMASK(5, 0)
-+ #define VSC73XX_MII_PRESCALEVAL_MIN	3 /* min allowed mdio clock prescaler=
- */
- =20
- +#define VSC73XX_MII_STAT_BUSY	BIT(3)
- +
-  /* Arbiter block 5 registers */
-  #define VSC73XX_ARBEMPTY		0x0c
-  #define VSC73XX_ARBDISC			0x0e
-@@@ -557,24 -557,20 +576,28 @@@ static int vsc73xx_phy_read(struct dsa_
-  	u32 val;
-  	int ret;
- =20
- +	ret =3D vsc73xx_mdio_busy_check(vsc);
- +	if (ret)
- +		return ret;
- +
-  	/* Setting bit 26 means "read" */
-- 	cmd =3D BIT(26) | (phy << 21) | (regnum << 16);
-- 	ret =3D vsc73xx_write(vsc, VSC73XX_BLOCK_MII, 0, 1, cmd);
-+ 	cmd =3D VSC73XX_MII_CMD_OPERATION |
-+ 	      FIELD_PREP(VSC73XX_MII_CMD_PHY_ADDR, phy) |
-+ 	      FIELD_PREP(VSC73XX_MII_CMD_PHY_REG, regnum);
-+ 	ret =3D vsc73xx_write(vsc, VSC73XX_BLOCK_MII, VSC73XX_BLOCK_MII_INTERNAL,
-+ 			    VSC73XX_MII_CMD, cmd);
-  	if (ret)
-  		return ret;
- -	msleep(2);
- +
- +	ret =3D vsc73xx_mdio_busy_check(vsc);
- +	if (ret)
- +		return ret;
- +
-- 	ret =3D vsc73xx_read(vsc, VSC73XX_BLOCK_MII, 0, 2, &val);
-+ 	ret =3D vsc73xx_read(vsc, VSC73XX_BLOCK_MII, VSC73XX_BLOCK_MII_INTERNAL,
-+ 			   VSC73XX_MII_DATA, &val);
-  	if (ret)
-  		return ret;
-- 	if (val & BIT(16)) {
-+ 	if (val & VSC73XX_MII_DATA_FAILURE) {
-  		dev_err(vsc->dev, "reading reg %02x from phy%d failed\n",
-  			regnum, phy);
-  		return -EIO;
-@@@ -594,12 -590,21 +617,14 @@@ static int vsc73xx_phy_write(struct dsa
-  	u32 cmd;
-  	int ret;
- =20
- -	/* It was found through tedious experiments that this router
- -	 * chip really hates to have it's PHYs reset. They
- -	 * never recover if that happens: autonegotiation stops
- -	 * working after a reset. Just filter out this command.
- -	 * (Resetting the whole chip is OK.)
- -	 */
- -	if (regnum =3D=3D 0 && (val & BIT(15))) {
- -		dev_info(vsc->dev, "reset PHY - disallowed\n");
- -		return 0;
- -	}
- +	ret =3D vsc73xx_mdio_busy_check(vsc);
- +	if (ret)
- +		return ret;
- =20
-- 	cmd =3D (phy << 21) | (regnum << 16) | val;
-- 	ret =3D vsc73xx_write(vsc, VSC73XX_BLOCK_MII, 0, 1, cmd);
-+ 	cmd =3D FIELD_PREP(VSC73XX_MII_CMD_PHY_ADDR, phy) |
- -	      FIELD_PREP(VSC73XX_MII_CMD_PHY_REG, regnum);
-++	      FIELD_PREP(VSC73XX_MII_CMD_PHY_REG, regnum) | val;
-+ 	ret =3D vsc73xx_write(vsc, VSC73XX_BLOCK_MII, VSC73XX_BLOCK_MII_INTERNAL,
-+ 			    VSC73XX_MII_CMD, cmd);
-  	if (ret)
-  		return ret;
- =20
-
---Sig_/.fViWcYhURCAioRd.e/gZZp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma6q4cACgkQAVBC80lX
-0Gyrewf+L9cStc/22eb7gRW4RG4uejBGHxurDmXIYIOHvo2891oEx7VKt9xpOEaK
-x9KWSNIhJ7oXoqe5eJR2o9Fk+lXjVVhS/AUkjzyQZRDTAJUBci4TiFUBAaz1bOwY
-O6EXY2F8hu/zkdzwRzvRbvT14CDjsQwVDlQxKK4eZDtHnfcjGAXgy4p9aPFBmg99
-WjgboLAerId0LNie6uAHgATyZX3+ufFVlN47eumcPh7tJbNYmmMaUfPQuo4Yj1gj
-y6Jrum8gRN1uhZragoPDNrnkqN1CRt1iTRoXopoipFITYOyw+sNuBuh1jFyLheSM
-IICiYsoDWeNr6R1QJGbMWpC1mW7ffw==
-=S+QR
------END PGP SIGNATURE-----
-
---Sig_/.fViWcYhURCAioRd.e/gZZp--
+nla_put_uint()
+-- 
+pw-bot: cr
 
