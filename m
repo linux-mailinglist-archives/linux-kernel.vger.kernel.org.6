@@ -1,80 +1,118 @@
-Return-Path: <linux-kernel+bounces-284648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7956950386
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:23:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7B9950383
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A371C2215C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:23:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05C37B25B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF26D1990BB;
-	Tue, 13 Aug 2024 11:23:17 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C5B198E71;
+	Tue, 13 Aug 2024 11:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p9X78Ok6"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3257C198A20;
-	Tue, 13 Aug 2024 11:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D37190470;
+	Tue, 13 Aug 2024 11:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723548197; cv=none; b=CcbhBKQPLiCZ8PgTGOkhLxjDA7hOilBLgtxAtgWsDOLvAV7HUnCyqAOzZn+1r7/Z3dF8ja9GoVKFdeNaw7zVSJ5jA4Qnh9kP52huypTRgeiTZ44SMDLmJ8K9yD/u9Ct/+1JuLZeKmSvAmyy06C0H3iZWX8nxfQ3KSFnNIpDJxN0=
+	t=1723548168; cv=none; b=ffGOKbtSu1P4XZO1tB+EuYvGVNWCtvTG9Ji3JOq6evru+King2ld9tTsqnAkfdTmt9rww1oAqp8TyKLnTvYEL67YFH5SX4iwAvlJ3CiU5rxS4tvQRG7jxObSxp44vjI2LxnVJxHbZlH7t+9vzTUfpr/TQ0WUjr5OzXZfkLYAwxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723548197; c=relaxed/simple;
-	bh=KOZpQSqsgVYcuJwLsAp0gbER+6u0o7K/YNYiOEXrObY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EC7VCKDPsVidVjEEtVLvp7KUnF2XdpGD6nCsldME1H/Vr7LBeESl01n+RlJHK3hAmovsixoHS/o84XjEaV+Qf2eaII+MrI4L60FchjygAFP+mWvjib0K2o0NMISbIfbkr6T2PNIRMOXQbtskypT5ZPfNrGYesazOgJ57dWCbtLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [10.20.155.173] (guest-wlan-ext.mpip-mainz.mpg.de [194.95.63.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 0770B61E5FE05;
-	Tue, 13 Aug 2024 13:22:35 +0200 (CEST)
-Message-ID: <04c0b62d-03d7-460a-a4e1-ed8b9b094abe@molgen.mpg.de>
-Date: Tue, 13 Aug 2024 13:22:33 +0200
+	s=arc-20240116; t=1723548168; c=relaxed/simple;
+	bh=08sVmN2q74fZvVb/UoRo9r+Qqcv2rG9U5RdMSvF0Ae8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUIIMrcROm2OTxGOQbvnbTG855Ny8yrrU0+n+A26aJodArFuk+kquRJ2LQ9483yV6nZJfSVMxsoa+ZepeOvS7POO1wfWFwc1gj19ybJPNxZ56NDE8hkc+4n931zSpxyl/G1o4nSuOxG3nVYlK5dOHtzIs7oWA5GQPTffoRH+Mno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=p9X78Ok6; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47DBMdWB106590;
+	Tue, 13 Aug 2024 06:22:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723548159;
+	bh=z7WrAWCeMeiiIcLJiiaaGuDSFqe408Str4upbBJRSDU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=p9X78Ok6kfJ/8HZkIjmdW1OmAycQPmojGKKb61ZoUAO58FqWQDgeYz19YgyhX/Q1w
+	 JY1KTkaXqyX+mxX6vtg1PDwt1kNGgHJYHF7XlzBmi+lCAt2BZW+Q63jsMirPT7moAd
+	 wFWfWPZ4TSLnGl/UXd09t5Bou+nb/dbqBuvZGDms=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47DBMdSE013980
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 13 Aug 2024 06:22:39 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
+ Aug 2024 06:22:39 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 13 Aug 2024 06:22:38 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47DBMc2Z117488;
+	Tue, 13 Aug 2024 06:22:38 -0500
+Date: Tue, 13 Aug 2024 16:52:37 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <arm-scmi@vger.kernel.org>, <sudeep.holla@arm.com>
+Subject: Re: [PATCH] firmware: arm_scmi: Update various protocols versions
+Message-ID: <20240813112237.drwgvhor3eisaj6t@lcpd911>
+References: <20240812174027.3931160-1-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] ACPI: align slab for improved memory performance
-To: Colin King <colin.king@intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>
-References: <20240808222138.51-1-colin.king@intel.com>
- <aaf516f8-eb36-4693-a002-a972d6f77b92@molgen.mpg.de>
- <CY8PR11MB77474CEA74FB6A572D9856D28D862@CY8PR11MB7747.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <CY8PR11MB77474CEA74FB6A572D9856D28D862@CY8PR11MB7747.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240812174027.3931160-1-cristian.marussi@arm.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Dear Colin,
+On Aug 12, 2024 at 18:40:27 +0100, Cristian Marussi wrote:
+> A few protocol versions had been increased with SCMI v3.2.
+> Update accordingly the supported version define in the kernel stack, since
+> all the mandatory Base commands are indeed already supported.
+> 
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> ---
+>  drivers/firmware/arm_scmi/base.c    | 2 +-
+
+I assume this patch supersedes [1] ?
+
+[1] https://lore.kernel.org/arm-scmi/ZrZMLZq_-b9EFRgn@pluto/T/#t
+
+>  drivers/firmware/arm_scmi/power.c   | 2 +-
+>  drivers/firmware/arm_scmi/reset.c   | 2 +-
+>  drivers/firmware/arm_scmi/sensors.c | 2 +-
+>  drivers/firmware/arm_scmi/system.c  | 2 +-
+>  drivers/firmware/arm_scmi/voltage.c | 2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/firmware/arm_scmi/base.c b/drivers/firmware/arm_scmi/base.c
+> index 97254de35ab0..9939b1d84b7a 100644
+> --- a/drivers/firmware/arm_scmi/base.c
+> +++ b/drivers/firmware/arm_scmi/base.c
+> @@ -14,7 +14,7 @@
+>  #include "notify.h"
+>  
+>  /* Updated only after ALL the mandatory features for that version are merged */
+> -#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20000
+> +#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20001
+
+Just curious, in upstream master TF-A I see 0x20000 still? [1]
+
+[1] https://github.com/ARM-software/arm-trusted-firmware/blob/master/drivers/scmi-msg/base.h#L12
 
 
-Am 13.08.24 um 12:17 schrieb King, Colin:
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
-> Thanks for the testing. How many iterations of the test did you do?
-
-Two times.
-
-> I ran mine 100 times with each config to get a reliable set of
-> measurements.
-
-What system did you test with? Were the times with the alignment always 
-lower?
-
-
-Kind regards,
-
-Paul
+-- 
+Best regards,
+Dhruva
 
