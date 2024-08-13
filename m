@@ -1,226 +1,143 @@
-Return-Path: <linux-kernel+bounces-284318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0356294FFD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:27:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA6D94FFD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273BC1C224EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A25284378
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F4313B284;
-	Tue, 13 Aug 2024 08:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2061487F9;
+	Tue, 13 Aug 2024 08:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WvhpT+iP"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ThALaafD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D092277102
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F1113C691;
+	Tue, 13 Aug 2024 08:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723537647; cv=none; b=umM1Ah893B/dQjmu9RpweUx6lB7VtfNbUG2g/5PK9Lra3qoE7C5Qq7qf0Q4gMqRrt93f+rrkA3vDHJeTxq8y9OOPwdnV8CPlsWjRBvExvue7xNeOkxM6YncpuzZRVyTKDBcr4UfKI6AMsL9J9K1fN91XXXWqW8xslizaKh/JkU8=
+	t=1723537652; cv=none; b=EFQVKcLD6FgDQzpbHgzTFWvdLZ7yaA0vbt7VyWyifqPnywMVEdLNp643g/wiZmjuoak89hi0ZUgv9Lgd7A9BA70IwgKOKWa4Df8YFEjDqn3+UvP3UgZnEGwJ9V9S11PbZJn91bFfYyShQ5bF5V2iVrZI7Xk6AWfKpP9glZO6L4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723537647; c=relaxed/simple;
-	bh=Di5W029mQbwAIiOztUJhZxig5qR3pk54Irui8gJHXqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rypeUkAL167NTHhTxOFYyUVxGtLOtX2paVkS99TptNmu8Ddp04kNWICsHghR0qNNHrUvDiAd4G8LJHoEwRp0kubLsWSSuqntv2nEHCzFGs2NSO0HLByZep3t/59nDKOsKxAt7l45Hcc38eEwsj4qtkTVturaPtXt8tYTcUoU9XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WvhpT+iP; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-72703dd2b86so279466a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723537645; x=1724142445; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yflrWJtJq/7VvAJgVaJf6jxLhnH8NAOkAempPFuuC+o=;
-        b=WvhpT+iPp7t3daiyNSig58zuXPcttc0J3EbP+Dnu/1+Ul7+iHudxH+jHnAJeN824Mj
-         ItHeOLxJJos4wDrH96tVSqlGy9qiSzAIPH59bcQHtm6+DbQMf1QQIc7oThw03mAzNSIk
-         ygLs7bfEODBCoh4ae5ioTkJNOzaXyKwKgTT2E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723537645; x=1724142445;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yflrWJtJq/7VvAJgVaJf6jxLhnH8NAOkAempPFuuC+o=;
-        b=WHnZuuUaKESlca4rbTclQF7ncwxkcvAaehsoiQdpYtjtTMwif+P3/v0sVbAB4ruxiA
-         CBVnmLTC4ivRJZ8j/1l5C4Ry8iSI2vLbLRb5m1iceyy0l73cioT9DzeLelIJ0RbVKrJL
-         FhEoxeapZgcILPW2+HKlJfEXRAs/F9M3r/7wlCBuGJwswg5JpVB2SWK00B4CwhH/T57t
-         o3CYWZ0Ygo4Rq6ZpEUr3SJ33FFXY36n4No2Y1Z4VpOqRLr1QMSMXUzyBjGj9Wsurp8IA
-         NUky8d/4tmXp/gI27/RTL99/zvLIAAdw/j6saA7RZSFX8JpzKeG55fBO5VyxdfOJsrQm
-         sYVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCL3QOXU9uXbZVa3og4X93IUWnG92pS3822Dzi7on5jDKK9ZNiLJNpgkfu79EtXHHgLz5MTyLaM4df1AobRPQjzT245QpmnzZ5Cg0C
-X-Gm-Message-State: AOJu0YzrdDPe0ewqbn8oGf6TNhD+JMY/wsXcNh7sKZF52QwAd34YUR+W
-	GEyYPHTtSS/fF/5WFmcq8/+Tz452CzbKnXHzSWSY2jrrC1xTgym7uY5Fd3i84Jw=
-X-Google-Smtp-Source: AGHT+IG8ruoJJQXw5+ByShx5nsIIutx9uHj9SUINml/BPBKH1rSk9H24C+Sbql+iK+jSJiQAFJnLvQ==
-X-Received: by 2002:a05:6a20:4326:b0:1c4:d11d:4916 with SMTP id adf61e73a8af0-1c8ddff83b9mr1160558637.7.1723537645062;
-        Tue, 13 Aug 2024 01:27:25 -0700 (PDT)
-Received: from [192.168.104.75] ([223.118.51.112])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d396a5b5a0sm449164a91.0.2024.08.13.01.27.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 01:27:24 -0700 (PDT)
-Message-ID: <f23c3b11-5fd3-4c9e-8920-bdc43f4e5113@linuxfoundation.org>
-Date: Tue, 13 Aug 2024 02:27:19 -0600
+	s=arc-20240116; t=1723537652; c=relaxed/simple;
+	bh=RyDHZHG1qM+4Ggl8UqXwMYT3dj0QzqQytYDcJf5gWcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kmMiE4Pa2WSbQdODbn0IO6T91kxfqArDxt03CiKX7fiNZXzKoXZQN0s4TqX6VNyUt8CadURowJ4lDrMdQNCeYTGSFKIob2B3FOuR4oAWV9LYil92bsV3D8/xOg61b5YSnjhY/hkuw3tKijYxjDBjILk+lihjavEISOk6ACo4ubQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ThALaafD; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723537651; x=1755073651;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RyDHZHG1qM+4Ggl8UqXwMYT3dj0QzqQytYDcJf5gWcw=;
+  b=ThALaafDcl8GrsVeS+hDRlwjf4jGNcYY4SslO1PAg7EGKAXvAuthWZYx
+   tBknVdUdZh2U+6V+u9Bv0bAee0gNmTEGIQJRKojgkRUBzK0RUE2BugYA8
+   PJYx3l0a5G+GYcMwYmCGkS0r0RYZQ6Chgj2X6oIkxFAZW3uN76cTuhR2V
+   vLedWm675LeHznEI3+VE/W/artkw9Gcd2/xM1kMzBJbLvyLQ8AW8hOMTl
+   vPOXwuC2zOUr0G/D0szqiQLbiCxetMZDV4QUxRzcNK3/ZjAI7Sqn2DB0G
+   qvNjnt3Kr0SbHXpKPpdddsAJ2RoEdDkBHGGAjieIT7Xa7NQPG1JN5M9jG
+   w==;
+X-CSE-ConnectionGUID: 0Dam2R8CQuq0oCSBo3GbSA==
+X-CSE-MsgGUID: PQLNKZHxSl2pmChePJU4vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="44206968"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="44206968"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:27:30 -0700
+X-CSE-ConnectionGUID: V9r30wDxRkWwvgSwb20/Qw==
+X-CSE-MsgGUID: PUr0OWqzQleZMmjieiro2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="63432409"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:27:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdmsE-0000000Eeuo-1cOg;
+	Tue, 13 Aug 2024 11:27:22 +0300
+Date: Tue, 13 Aug 2024 11:27:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, badal.nilawar@intel.com,
+	riana.tauro@intel.com, ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com
+Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
+Message-ID: <ZrsY6tMts81T-uFa@smile.fi.intel.com>
+References: <20240812081538.1457396-1-raag.jadav@intel.com>
+ <ZroK4oSAte9qdnA8@smile.fi.intel.com>
+ <Zrry71BfJ31q3iOi@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: resctrl: ignore builds for unsupported
- architectures
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>
-Cc: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
- Fenghua Yu <fenghua.yu@intel.com>, Shaopeng Tan
- <tan.shaopeng@jp.fujitsu.com>, kernel@collabora.com,
- LKML <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
- =?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240809071059.265914-1-usama.anjum@collabora.com>
- <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
- <080c4692-c53c-417f-9975-0b4ced0b044c@collabora.com>
- <f7593344-203a-8e73-d53e-574ca511d003@linux.intel.com>
- <4072bf51-1d37-4595-a2fa-b72f83c8298b@linuxfoundation.org>
- <6dd1b5ce-2ce2-4d61-beff-a100da213528@intel.com>
- <da87fe73-c39d-8b60-753d-7735c9abf569@linux.intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <da87fe73-c39d-8b60-753d-7735c9abf569@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zrry71BfJ31q3iOi@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 8/13/24 01:39, Ilpo Järvinen wrote:
-> On Mon, 12 Aug 2024, Reinette Chatre wrote:
->> On 8/12/24 3:49 PM, Shuah Khan wrote:
->>> On 8/9/24 02:45, Ilpo Järvinen wrote:
->>>> Adding Maciej.
->>>>
->>>> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
->>>>> On 8/9/24 12:23 PM, Ilpo Järvinen wrote:
->>>>>> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
->>>>>>
->>>>>>> This test doesn't have support for other architectures. Altough
->>>>>>> resctrl
->>>>>>> is supported on x86 and ARM, but arch_supports_noncont_cat() shows
->>>>>>> that
->>>>>>> only x86 for AMD and Intel are supported by the test.
->>>>>>
->>>>>> One does not follow from the other. arch_supports_noncont_cat() is
->>>>>> only
->>>>>> small part of the tests so saying "This test" based on a small subset
->>>>>> of
->>>>>> all tests is bogus. Also, I don't see any reason why ARCH_ARM could
->>>>>> not be
->>>>>> added and arch_supports_noncont_cat() adapted accordingly.
->>>>> I'm not familiar with resctrl and the architectural part of it. Feel
->>>>> free to fix it and ignore this patch.
->>>>>
->>>>> If more things are missing than just adjusting
->>>>> arch_supports_noncont_cat(), the test should be turned off until proper
->>>>> support is added to the test.
->>>>>
->>>>>>> We get build
->>>>>>> errors when built for ARM and ARM64.
->>>>>>
->>>>>> As this seems the real reason, please quote any errors when you use
->>>>>> them
->>>>>> as justification so it can be reviewed if the reasoning is sound or
->>>>>> not.
->>>>>
->>>>>     CC       resctrl_tests
->>>>> In file included from resctrl.h:24,
->>>>>                    from cat_test.c:11:
->>>>> In function 'arch_supports_noncont_cat',
->>>>>       inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
->>>>> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->>>>>      74 |         __asm__ __volatile__ ("cpuid\n\t"
->>>>>          \
->>>>>         |         ^~~~~~~
->>>>> cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
->>>>>     301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
->>>>>         |                 ^~~~~~~~~~~~~
->>>>> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->>>>>      74 |         __asm__ __volatile__ ("cpuid\n\t"
->>>>>          \
->>>>>         |         ^~~~~~~
->>>>> cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
->>>>>     303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
->>>>>         |                 ^~~~~~~~~~~~~
->>>>
->>>> Okay, so it's specific to lack of CPUID. This seems a kselftest common
->>>> level problem to me, since __cpuid_count() is provided in kselftest.h.
->>>>
->>>> Shuah (or others), what is the intended mechanism for selftests to know if
->>>> it can be used or not since as is, it's always defined?
->>> _cpuid_count() gets defined in ksefltest.h if it can't find it.
->>>
->>> As the comment says both gcc and cland probide __cpuid_count()
->>>
->>>     gcc cpuid.h provides __cpuid_count() since v4.4.
->>>     Clang/LLVM cpuid.h provides  __cpuid_count() since v3.4.0.
->>>
->>>>
->>>> I see some Makefiles use compile testing a trivial program to decide
->>>> whether
->>>> they build some x86_64 tests or not. Is that what should be done here too,
->>>> test if __cpuid_count() compiles or not (and then build some #ifdeffery
->>>> based on the result of that compile testing)?
->>>>
->>>
->>> These build errors need to be fixed instead of restricting the build> In
->>> some cases when the test can't be supported on an architecture then it is
->>> okay
->>> to suppress build. This is not a general solution to suppress build warnings
->>
->> While there is an effort to support Arm in resctrl [1], this is not currently
->> the case and the resctrl selftests as a consequence only support x86 with
->> built-in assumptions that a test runs on either AMD or Intel. After the kernel
->> gains support
->> for Arm more changes will be needed for the resctrl tests to support another
->> architecture
->> so I do think the most appropriate change to address this build failure is to
->> restrict
->> resctrl tests to x86.
-> 
-> While ARM lacks resctrl support at the moment (the patch BTW claims
-> otherwise), this problem is general-level problem in selftests. When
-> somebody includes kselftest.h, the header provided __cpuid_count() which
-> seems to not be compilable on ARMs (even if the test itself would never
-> call it on other than when running on Intel). Some #ifdeffery is necessary
-> either in kselftest.h or in the test code.
-> 
->>> I would recommend against adding suppress build code when it can be fixed.
->>
->> I expect after resctrl fs obtains support for Arm the resctrl selftests can be
->> updated to support it with more fine grained architectural checks than a
->> global
->> enable/disable needed at this time.
-> 
-> That won't help to a build failure. The build would fail on ARM even if
-> there's some resctrl specific test for arch done by the test itself.
+On Tue, Aug 13, 2024 at 08:45:19AM +0300, Raag Jadav wrote:
+> On Mon, Aug 12, 2024 at 04:15:14PM +0300, Andy Shevchenko wrote:
+> > On Mon, Aug 12, 2024 at 01:45:38PM +0530, Raag Jadav wrote:
 
-I see.
-   
-> 
->>> Let's investigate this problem to fix it properly. I don't see any arm and
->>> arm64
->>> maintainers and developers on this thread. It would be good to investigate
->>> to
->>> see if this can be fixed.
-> 
-> Yes, I was hoping there would be a general level solution which would
-> provide e.g. HAS_CPUID_COUNT or an empty stub for __cpuid_count() or
-> something along those lines.
-Can we try to make this change?
+...
 
-thanks,
--- Shuah
+> > > +static int
+> > > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+> > > +{
+> > > +	struct i915_hwmon *hwmon = ddat->hwmon;
+> > > +	struct hwm_fan_info *fi = &ddat->fi;
+> > > +	u64 rotations, time_now, time;
+> > > +	intel_wakeref_t wakeref;
+> > > +	u32 reg_val, pulses;
+> > > +	int ret = 0;
+> > > +
+> > > +	if (attr != hwmon_fan_input)
+> > > +		return -EOPNOTSUPP;
+> > > +
+> > > +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
+> > > +	mutex_lock(&hwmon->hwmon_lock);
+> > > +
+> > > +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
+> > > +	time_now = get_jiffies_64();
+> > 
+> > > +	/* Handle HW register overflow */
+> > > +	if (reg_val >= fi->reg_val_prev)
+> > > +		pulses = reg_val - fi->reg_val_prev;
+> > > +	else
+> > > +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
+> > 
+> > Isn't it the abs_diff() reimplementation?
+> 
+> Not exactly. This is specific to 32 bit register overflow, so we count
+> from max value.
+
+I see. But since you have the both variables of u32, why:
+1) UINT_MAX?
+2) Not simply using
+
+	pulses = reg_val - fi->reg_val_prev;
+
+which will wrap over correctly?
+
+Note, in your case (in comparison to the wrap over variant) the off-by-one is
+present. Is it on purpose?
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
