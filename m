@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-284307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C4C94FFAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:23:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C269A94FFAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811F3285D73
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01D551C22EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3BE170A27;
-	Tue, 13 Aug 2024 08:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DFA17C21C;
+	Tue, 13 Aug 2024 08:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4IxLIX6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UVGAzPRx"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EE1170A0C;
-	Tue, 13 Aug 2024 08:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681E417B4EC;
+	Tue, 13 Aug 2024 08:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723537284; cv=none; b=FQiIE1rLJy0Ulk4N+6Jd0mBxUzfb0rPrnowKZmRBEG7fyBHUc5A4mOgVa8QB5Xm0NLEBTR/p5YIlUPRmtfOVgxWR1i+DHg13JnDsJ+A8M2ps7qPMH0zYPgG8/dTRhIQiYSrmBUwkFVdkHzH9bbvy93sE0zR1JevyU7AHiYDkNqY=
+	t=1723537292; cv=none; b=aHtXNbDxmvyQOZ16t/fgt//oDllxWAFBWz6750zj5LLAl0LI/aLV7CMcgqyel1BquW3X9ssADFD+DtTG1SekHnbqj4iiyI7lBmaKJhSWguk+aZrFQQFWDTB2oW3vRwXSXveDpjqA1VISQonB6+ndVx4E9PPibUNmiryYJqJEu0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723537284; c=relaxed/simple;
-	bh=L7hqzthwmI7OmC2MLx1ogsTcW6REgXrYtGxgGoOhF6I=;
+	s=arc-20240116; t=1723537292; c=relaxed/simple;
+	bh=hfP+klCJIbRMUzY5y+T4cr2E0QYjMW7xsiUC1CPXZNU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GR0RoM5Mj0KBXsDZTEhit6087Z3xTuIOSOfqPGRufuwK76HCpWXD1usRir4Qgav0iuJSxM/360gopj31JsFVNyLSSz9tTOC+2y6atNrj2qxOfKBZ5rLWvHDa17H32+MaH/JE7L1cTTGDNrYPj8ZPtpaOxKc6TT9B1i9N8/h7mVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4IxLIX6; arc=none smtp.client-ip=192.198.163.19
+	 MIME-Version:Content-Type; b=n+Pz9RXbrVNYBOyK4Ctn4rqwCWWJgo/bmD+vSh6+dwWb8F1itswMgCaWvfObMtsPPBzmXePHg+bj2g5hEvB5h4TSZtyxp/fdO0Eu52jHUTX94XOkNW4/r8A7N1xem+9v0+fYpu4pEWFPWKA+F1RqJADZIHxRNfYOAOGZXK4cJ/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UVGAzPRx; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723537283; x=1755073283;
+  t=1723537290; x=1755073290;
   h=from:to:cc:in-reply-to:references:subject:message-id:
    date:mime-version:content-transfer-encoding;
-  bh=L7hqzthwmI7OmC2MLx1ogsTcW6REgXrYtGxgGoOhF6I=;
-  b=f4IxLIX62I0lWUoHjyoteqfFrgs9Va3kOniE7ftEuARlJaLcc0Siwj+B
-   fUDoIM8ysTFerfrecjS3TOTomRn9yS/h3VbSnc+alDntL5zMGgecbU9+4
-   a/HMH93WcYLkyWb06GlvyiKUx8Dci19M9K/ogv6cG9UnWwU+6NZL2bUol
-   0KshvYmb907sGlL8f1w+PoTiU/uqE9WWcqH2WAAw5b0Cde/hkvqcLfRMF
-   G+UGXNG1YRUQtP5W3QEnY0s1SA4tbSq3+vE9UC13VEKPdKTOOeQMJ2VDV
-   Ekko1m9uP/HIXSRqxxbl8RJcCvtvAQk8X4A2y70SstsOI00ybV8Z+0scM
+  bh=hfP+klCJIbRMUzY5y+T4cr2E0QYjMW7xsiUC1CPXZNU=;
+  b=UVGAzPRx5K0f2G5I/xdn6pxGY9+E/SmijWadXBwra5A+HPoNWpkDb1AA
+   JglCDdouh7D6uIDnX/SR64vLiAzhaDRF2v4Pu5edCFeSPOkDM3BbUH33i
+   FMeUCj+R7BKZFun1j3Jhqd6eGvhEOxUP4Y/0xNUPp2k2pjEn4WbQbHPTm
+   sMgFgv3igMPgxJNKtjiJeII/m6/WC6RHxfeQ/seTYpJC1QxQ0Uf6Yd8g4
+   n63U9Xut30rWYLG5Z18harcOmYlC871rqGjJaMMWvcO2+fSr4jv8UOcmX
+   s5GOJaMbyeOZDpoqXOa6AWrh7ITKvCsaBSmhgHCDncosXvDuWQT4lh40H
    w==;
-X-CSE-ConnectionGUID: nxPeYkJKRJG6X08Xw/bgpA==
-X-CSE-MsgGUID: Ispb+u/oQaKxNtS9zyachA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21327792"
+X-CSE-ConnectionGUID: lvGPh9inR+mkBIipT8BxBQ==
+X-CSE-MsgGUID: tBidvHmvRpSjAA8l/cNPVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21327823"
 X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21327792"
+   d="scan'208";a="21327823"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:21:22 -0700
-X-CSE-ConnectionGUID: ms+czj99QzuHH3izpo6LNg==
-X-CSE-MsgGUID: CEBqrMPfSw+Rj9VoOApOzA==
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:21:30 -0700
+X-CSE-ConnectionGUID: N76Oda6bQlmZjX9ZCeutRw==
+X-CSE-MsgGUID: VAEWTBguTFGF3tEm513tfg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="81817241"
+   d="scan'208";a="81817263"
 Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.153])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:21:22 -0700
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:21:29 -0700
 From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: platform-driver-x86@vger.kernel.org, "Luke D. Jones" <luke@ljones.dev>
-Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com, 
- corentin.chary@gmail.com
-In-Reply-To: <20240805234603.38736-1-luke@ljones.dev>
-References: <20240805234603.38736-1-luke@ljones.dev>
-Subject: Re: [PATCH v2] platform/x86: asus-wmi: Add quirk for ROG Ally X
-Message-Id: <172353727690.2056.11852281867225547096.b4-ty@linux.intel.com>
-Date: Tue, 13 Aug 2024 11:21:16 +0300
+To: Hans de Goede <hdegoede@redhat.com>, 
+ Maximilian Luz <luzmaximilian@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240811131948.261806-1-luzmaximilian@gmail.com>
+References: <20240811131948.261806-1-luzmaximilian@gmail.com>
+Subject: Re: [PATCH 0/5] platform/surface: aggregator_registry: Add Support
+ for various devices
+Message-Id: <172353728282.2056.13578794179710168032.b4-ty@linux.intel.com>
+Date: Tue, 13 Aug 2024 11:21:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,14 +77,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
-On Tue, 06 Aug 2024 11:46:03 +1200, Luke D. Jones wrote:
+On Sun, 11 Aug 2024 15:19:43 +0200, Maximilian Luz wrote:
 
-> The new ROG Ally X functions the same as the previus model so we can use
-> the same method to ensure the MCU USB devices wake and reconnect
-> correctly.
+> This series is basically a collection of SAM device enablement patches,
+> for which I only now found the time to clean them up end send them in.
+> It adds Surface SAM support (enabling battery status, keyboard,
+> touchpad, and more) for the following devices:
 > 
-> Given that two devices marks the start of a trend, this patch also adds
-> a quirk table to make future additions easier if the MCU is the same.
+>  - Surface Pro 10
+>  - Surface Laptop Go 3
+>  - Surface Laptop Studio 2
+>  - Surface Laptop 6
 > 
 > [...]
 
@@ -94,8 +98,16 @@ platform-drivers-x86/review-ilpo branch only once I've pushed my
 local branch there, which might take a while.
 
 The list of commits applied:
-[1/1] platform/x86: asus-wmi: Add quirk for ROG Ally X
-      commit: d2dfed310aae0739dc87b68c660357e6a4f29819
+[1/5] platform/surface: aggregator_registry: Add Support for Surface Pro 10
+      commit: 9c8e022567bbec53bee8ae75c44b3d6cd2080d42
+[2/5] platform/surface: aggregator_registry: Add support for Surface Laptop Go 3
+      commit: ed235163c3f02329d5e37ed4485bbc39ed2568d4
+[3/5] platform/surface: aggregator_registry: Add support for Surface Laptop Studio 2
+      commit: 28d04b4a2cc20981c95787f9c449e6fc51d904f9
+[4/5] platform/surface: aggregator_registry: Add fan and thermal sensor support for Surface Laptop 5
+      commit: 002adda09bc1c983c75c82a7e12285c7423aec31
+[5/5] platform/surface: aggregator_registry: Add support for Surface Laptop 6
+      commit: 99ae7b9ba047ad029a0a23b2bd51608ce79c8e97
 
 --
  i.
