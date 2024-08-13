@@ -1,181 +1,125 @@
-Return-Path: <linux-kernel+bounces-284867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B827295062F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E110A950635
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3FE287BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:14:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F1B2883F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A98019ADB9;
-	Tue, 13 Aug 2024 13:14:08 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA2119B3EC;
+	Tue, 13 Aug 2024 13:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ItxTVPde"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CBA19B3DD;
-	Tue, 13 Aug 2024 13:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC81E4B0;
+	Tue, 13 Aug 2024 13:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554847; cv=none; b=kyv/3MMGedZwDisaKNovOfjk9rDC9PdnN7Nrp4n8r9MxtoS5G4YdcjlUdQ5HLsju/PI5FiVmfLwdyogxxEn5rygpAIGmeW06Yqqmvo4ZGenwkYWV8GdQeaQUD8Or2V6w+z5v9+XKGKH8mkjFicH3Zyu1pIgdLUqnt/tmfYYSCsU=
+	t=1723554954; cv=none; b=o/6pEmR1ild1WpflhHn9/KjD39x2kQL2n/hyqTwSz12G60VItULnXZ54KPGsJbZbZ7/V1VdFKSFAHYIG+x8sl8TQ6oOuyvku9nAMgNyp6XsFo0Ohu4EhjdRXdnft70aH1T4aI7gajbMxz5dbr9AUMSASzuViyOk4WNOOywEqDO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554847; c=relaxed/simple;
-	bh=SlRisIpCNCpm6zvwnFEUNWuu0OeVFENHsXjtjgFQ/f8=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FsvTMO8oESGjywp3up1XK8ILNGAGOKNG+eMIsKF5WnQa7AYF3PVsV4UAQZ5ryUZbd7r/spmTaPZyw3BT4Hvay00aGgnOeEcelDNYtj1L8bClPtv5L9WqC1dKnz4rgxklJAB6TKvHDwfFzTOOjY4mOQXxLVU1754kayxp3rCaIJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WjsCn5fB9z2CmYC;
-	Tue, 13 Aug 2024 21:09:09 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9B2FB140337;
-	Tue, 13 Aug 2024 21:14:00 +0800 (CST)
-Received: from [10.67.110.237] (10.67.110.237) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 13 Aug 2024 21:13:59 +0800
-Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
-To: Thomas Gleixner <tglx@linutronix.de>, <peterz@infradead.org>,
-	<mingo@redhat.com>
-CC: <acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240729223328.327835-1-lihuafei1@huawei.com>
- <875xsl5pwv.ffs@tglx>
-From: Li Huafei <lihuafei1@huawei.com>
-Message-ID: <fb87cc82-94b7-31aa-0374-a1d7fa49470e@huawei.com>
-Date: Tue, 13 Aug 2024 21:13:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+	s=arc-20240116; t=1723554954; c=relaxed/simple;
+	bh=Mdycd1eS9y93fMkr5/9R8CQIoS4nOXiruKbQugDTSdM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=dwR4m9HmwS4Ah404KNrVMJLG1DlUBzCYEskXzbMx2Bn1CMLYTNxy2qPwMyADWpuQ31Spr+V5Wq5EYaJ8a6x+w8XJZUlje2L63ueLa7CroRxgdZ9LZbFiKqB2ri4wMOkDuXHF3ecgQXEt6YdVubnbusJ3r8QQudfHKXh9yATIBbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ItxTVPde; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DD9RZd003196;
+	Tue, 13 Aug 2024 13:15:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=FGFfEt5ED8G3
+	qTcKyq7rXJTVRVuqCzYS+3UZI8QrzHw=; b=ItxTVPdeapMf++rFFwkNlJWHDgwQ
+	nWlogqQMc9Xkv4lpxE+K75ePcWxp9h/vbQF3cqPoSU+GPS21iDdZtAL8n4o+HJT8
+	uSDHoSx1R0JeGbdMi33mXb3er3aJnaU979sIPR+UszPNrJqY0oOPiBIgq2T1V9as
+	kwlO90G+37SORIKY5WrgARyuTwwQPv83alKk2KvX/SuPehupT7vtWrNa+RelhYx5
+	USTaYFo37zy7fIUmibJQrX+60Ae8JEmk0YSBkGmAD/ta+TS6sZOaHhzRc66iP5bk
+	efsrUSWHGt0C7qHq/y71wL2rNvMy/8qT+ZdvN5lPnkx6MD+9NOX1MhRIjw==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x167ysyn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 13:15:45 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47DDFf5O001335;
+	Tue, 13 Aug 2024 13:15:41 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 40xkmgxsyf-1;
+	Tue, 13 Aug 2024 13:15:41 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47DDFf6w001330;
+	Tue, 13 Aug 2024 13:15:41 GMT
+Received: from hu-sgudaval-hyd.qualcomm.com (hu-msarkar-hyd.qualcomm.com [10.213.111.194])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 47DDFfJJ001329;
+	Tue, 13 Aug 2024 13:15:41 +0000
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3891782)
+	id 95482974; Tue, 13 Aug 2024 18:45:40 +0530 (+0530)
+From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+To: manivannan.sadhasivam@linaro.org, fancer.lancer@gmail.com,
+        vkoul@kernel.org
+Cc: quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com,
+        quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com,
+        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
+        Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+        Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Fix unmasking interrupt bit and remove watermark interrupt enablement
+Date: Tue, 13 Aug 2024 18:45:36 +0530
+Message-Id: <1723554938-23852-1-git-send-email-quic_msarkar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PkLbcdi0WS_q6OctLvVBXbpxjF5c--MH
+X-Proofpoint-ORIG-GUID: PkLbcdi0WS_q6OctLvVBXbpxjF5c--MH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_04,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ suspectscore=0 mlxlogscore=660 impostorscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 priorityscore=1501 phishscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408130096
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <875xsl5pwv.ffs@tglx>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf500004.china.huawei.com (7.202.181.242)
 
+This patch series reset STOP_INT_MASK and ABORT_INT_MASK bit and unmask
+these interrupt for HDMA.
 
-Hi Thomas, sorry for the late reply.
+and also remove enablement of local watermark interrupt enable(LWIE)
+and remote watermarek interrupt enable(RWIE) bit to avoid unnecessary
+watermark interrupt event.
 
-On 2024/8/1 3:20, Thomas Gleixner wrote:
-> On Tue, Jul 30 2024 at 06:33, Li Huafei wrote:
->> On my Haswell machine, running the ltp test cve-2015-3290 concurrently
->> reports the following warnings:
->>
->>   perfevents: irq loop stuck!
->>   WARNING: CPU: 31 PID: 32438 at arch/x86/events/intel/core.c:3174 intel_pmu_handle_irq+0x285/0x370
->>   CPU: 31 UID: 0 PID: 32438 Comm: cve-2015-3290 Kdump: loaded Tainted: G S      W          6.11.0-rc1+ #3
->>   ...
->>   Call Trace:
->>    <NMI>
->>    ? __warn+0xa4/0x220
->>    ? intel_pmu_handle_irq+0x285/0x370
->>    ? __report_bug+0x123/0x130
->>    ? intel_pmu_handle_irq+0x285/0x370
->>    ? __report_bug+0x123/0x130
->>    ? intel_pmu_handle_irq+0x285/0x370
->>    ? report_bug+0x3e/0xa0
->>    ? handle_bug+0x3c/0x70
->>    ? exc_invalid_op+0x18/0x50
->>    ? asm_exc_invalid_op+0x1a/0x20
->>    ? irq_work_claim+0x1e/0x40
->>    ? intel_pmu_handle_irq+0x285/0x370
->>    perf_event_nmi_handler+0x3d/0x60
->>    nmi_handle+0x104/0x330
->>    ? ___ratelimit+0xe4/0x1b0
->>    default_do_nmi+0x40/0x100
->>    exc_nmi+0x104/0x180
->>    end_repeat_nmi+0xf/0x53
->>    ...
->>    ? intel_pmu_lbr_enable_all+0x2a/0x90
->>    ? __intel_pmu_enable_all.constprop.0+0x16d/0x1b0
->>    ? __intel_pmu_enable_all.constprop.0+0x16d/0x1b0
->>    perf_ctx_enable+0x8e/0xc0
->>    __perf_install_in_context+0x146/0x3e0
->>    ? __pfx___perf_install_in_context+0x10/0x10
->>    remote_function+0x7c/0xa0
->>    ? __pfx_remote_function+0x10/0x10
->>    generic_exec_single+0xf8/0x150
->>    smp_call_function_single+0x1dc/0x230
->>    ? __pfx_remote_function+0x10/0x10
->>    ? __pfx_smp_call_function_single+0x10/0x10
->>    ? __pfx_remote_function+0x10/0x10
->>    ? lock_is_held_type+0x9e/0x120
->>    ? exclusive_event_installable+0x4f/0x140
->>    perf_install_in_context+0x197/0x330
->>    ? __pfx_perf_install_in_context+0x10/0x10
->>    ? __pfx___perf_install_in_context+0x10/0x10
->>    __do_sys_perf_event_open+0xb80/0x1100
->>    ? __pfx___do_sys_perf_event_open+0x10/0x10
->>    ? __pfx___lock_release+0x10/0x10
->>    ? lockdep_hardirqs_on_prepare+0x135/0x200
->>    ? ktime_get_coarse_real_ts64+0xee/0x100
->>    ? ktime_get_coarse_real_ts64+0x92/0x100
->>    do_syscall_64+0x70/0x180
->>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>    ...
-> 
-> Please trim the backtrace to something useful:
-> 
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces
-> 
+Testing
+-------
 
-Okay, thanks for the tip!
+Tested on Qualcomm SA8775P Platform.
 
->> My machine has 32 physical cores, each with two logical cores. During
->> testing, it executes the CVE-2015-3290 test case 100 times concurrently.
->>
->> This warning was already present in [1] and a patch was given there to
->> limit period to 128 on Haswell, but that patch was not merged into the
->> mainline.  In [2] the period on Nehalem was limited to 32. I tested 16
->> and 32 period on my machine and found that the problem could be
->> reproduced with a limit of 16, but the problem did not reproduce when
->> set to 32. It looks like we can limit the cycles to 32 on Haswell as
->> well.
-> 
-> It looks like? Either it works or not.
-> 
+V2 -> V3:
+- convert 'STOP, ABORT' to 'stop, abort' as suggested by Serge
+- Added Reviewed-by tag
 
-It worked for my test scenario. I say "looks like" because I'm not sure
-how it circumvents the problem, and if the limit of 32 no longer works
-if I increase the number of test cases executed in parallel. Any
-suggestions?
+V1 -> V2:
+- Modified commit message and added Fixes, CC tag as suggested by Mani
+- reanme done to STOP
+- rename DW_HDMA_V0_LIE -> DW_HDMA_V0_LWIE and DW_HDMA_V0_RIE -> DW_HDMA_V0_RWIE
 
->>  
->> +static void hsw_limit_period(struct perf_event *event, s64 *left)
->> +{
->> +	*left = max(*left, 32LL);
->> +}
-> 
-> And why do we need a copy of nhm_limit_period() ?
-> 
+Mrinmay Sarkar (2):
+  dmaengine: dw-edma: Fix unmasking STOP and ABORT interrupts for HDMA
+  dmaengine: dw-edma: Do not enable watermark interrupts for HDMA
 
-Do you mean why the period is limited to 32 like nhm_limit_period()? I
-referred to nhm_limit_period() and found that the problem cannot be
-reproduced when the limit is 32, while it can be reproduced when the
-limit is 16. Therefore, similar to nhm, the limit period is 32. As
-mentioned earlier, I am not sure how it works and need expert advice.
+ drivers/dma/dw-edma/dw-hdma-v0-core.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
 
-Thanks,
-Huafei
+-- 
+2.7.4
 
-> Thanks,
-> 
->         tglx
-> 
-> .
-> 
 
