@@ -1,204 +1,123 @@
-Return-Path: <linux-kernel+bounces-284612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC6E95030F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:57:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352DF950318
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FB41F2380B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:57:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E1D1C22491
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C64319AD85;
-	Tue, 13 Aug 2024 10:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACB619B5B5;
+	Tue, 13 Aug 2024 10:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBmX1UEk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="DEVs+VR7"
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7E419AD94;
-	Tue, 13 Aug 2024 10:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FA319A2AE;
+	Tue, 13 Aug 2024 10:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546500; cv=none; b=dJdfPewTvO4+J8osPtV+UhESgCoaX+u/zem9UikvnLDYGZoqasqoLzM3KhWbRuXwE/puiMInZX1/DYqNfNlptGZ/6UVPTQmeZNrFiqHpMxi0UcHfcr5yeVN36/Pkf8t+uL5grn9lA2Ehrw80bIznI+O9uZaxqjNsEtGP1wAchuE=
+	t=1723546609; cv=none; b=AT3Gd9PciyjFMB/L7BCp07Vo1DPZFL10dpn9rcjAu4t72eV3NuftyfW+oS8Crc/CQCmsoWHL3Rte/FbwKP3qzZRyHFueqB5o7/HPUJga4GpvjbhNnuuBKhNd2dQU2UNPdeLSFWIdpLF5jcW3whASn890f0Ge0cmAVREGnFSNunI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546500; c=relaxed/simple;
-	bh=IgePQwkuTUYdG2arpdESjJXbiRl+BVM8HulpiBO0gCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCOt9ozJDNQatGwIwPqZvwuu/788CMM9FJbhnAEuUCz0FmftDTedIb7S5sk3RSbJcA27amu7kguAhbedO6B7KBXIi31/ibeWf7/Mv0Zgld6EquhPTZN7l3GV+EzZKhFSta7gNnWUm+o6OKYOLjdtI2a3Rb1YxPlOX9d7PeuyE+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBmX1UEk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F466C4AF11;
-	Tue, 13 Aug 2024 10:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723546499;
-	bh=IgePQwkuTUYdG2arpdESjJXbiRl+BVM8HulpiBO0gCo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iBmX1UEkPVnuBWajZkt5bBejMS+d+H1qx7md0Min02BBZQKThGD18PjvnjVnbPuP6
-	 D/BJF4HuzrRxtsSCwNcGNZeaiZvyq2AmH06Z1MfkH3UNE2udlD+Z0K8bXmw87KP4hV
-	 wbFG3tbV5qBfND0Hxyb+1bqFzsuxLLo2NsqlsWd6l9EyUR2tnMTfDfeKqnsUTsd0W9
-	 h1YenruMrWJLu7k0cYtNvLn4EScLd8AoO8RjQ4qaKSqU9ytEbG8BLbYI3WruSmjcKJ
-	 JYauAoVTcOZkIX7aYp1yzLqK0vsOwnDPcGcmpaR0fhRTk+WZMlxBwNquzeO0jk8Roa
-	 ETSwuFjBaT93w==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2611dcc3941so502851fac.3;
-        Tue, 13 Aug 2024 03:54:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfwrZal2vuoCySL3buVaS866xoxnG174DxweE6iePyGROjE22n0d9q21IYZBZnXEHDcIFsQ1YiZK6BI6VueMQernsolKlwxYorPH/R
-X-Gm-Message-State: AOJu0Ywo/9Gi5zc897RYW1q4bRE5K+u0RTQi6u4WmMC3MCl50U8RLPzT
-	QCqPA6j4cf9gUpx/EXHB0BdQmCiHuRczCqgdZKibocW76tu3yuPsaF2sQ1uo5tAOVTEvU+eGXzF
-	4TvKUURzWAIALnTAcXzDUt7gltgM=
-X-Google-Smtp-Source: AGHT+IGM9SaPME+aAxWFgSxATRGLzPEepbhd0gutOtgToNENQvg4PwJ9NF7LJRNsNyVA7mNPD7bigd2pctKRk+OvMHE=
-X-Received: by 2002:a05:6871:70b:b0:260:ccfd:1efe with SMTP id
- 586e51a60fabf-26fd1ad5aa0mr1232086fac.6.1723546498358; Tue, 13 Aug 2024
- 03:54:58 -0700 (PDT)
+	s=arc-20240116; t=1723546609; c=relaxed/simple;
+	bh=bHCjmMI6O9YGP1vUBVvoqCp53yxzYEyBqJwhJxoO/gc=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SJ3dtSfyQTpWH5iA8Wd9gEmLKDnA5gSAiAXtiPourVmTDAre+ijTdOllknkOdnumTI0DIl694oO8ZutHC8jsIWYKtzc9AlWb5Wiypt3VXMQ1x3oxlbrlIEtgE3WSGW5Zokdg4zJc95qowU8Lvv7N1YWY4vwsNCd5SABQ+nCR7Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=DEVs+VR7; arc=none smtp.client-ip=45.145.95.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+	t=1723546600; bh=bHCjmMI6O9YGP1vUBVvoqCp53yxzYEyBqJwhJxoO/gc=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=DEVs+VR7n39oTVLwnz3/2l6GzacQMYmwNc1DLFF8mQAwCYJDEwZevhMXoQspbFqtg
+	 LR5ffiyeXizo884AFf0hvnia2TJ0M2n79EKaJTeTWJwsYGv9b54VqNTm/vrtjBVzKp
+	 adgI3cQvLy/AGVWjQeuujcByMNZUJm0x2GeMyVTb5bSKg8szT8uSV/YpZLJdaYVx91
+	 kO84m90k2NTN/Qb6u7aIEdJOcKbgF2rvR9k8zi2ulbGeJCccjMRc8MPxxcbG5+xQ85
+	 eG2VzNn2Ia0Hpd/UgL3l0u6ve/NUGthp7mXn47FFM0qSWDlv39URTIR9Z9j+4/OUW7
+	 B1XQDWakBSHOw==
+To: syzbot <syzbot+e9b1ff41aa6a7ebf9640@syzkaller.appspotmail.com>,
+ kvalo@kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Felix Fietkau <nbd@nbd.name>
+Subject: Re: [syzbot] [wireless?] INFO: task hung in
+ ath9k_hif_usb_firmware_cb (3)
+In-Reply-To: <000000000000877f44061f892ace@google.com>
+References: <000000000000877f44061f892ace@google.com>
+Date: Tue, 13 Aug 2024 12:56:40 +0200
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <87ikw4wv13.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <114901234.nniJfEyVGO@rjwysocki.net> <2819322.BEx9A2HvPv@rjwysocki.net>
- <dd7ffe0d8a14bce8975ff66d84f013a249427a15.camel@intel.com>
-In-Reply-To: <dd7ffe0d8a14bce8975ff66d84f013a249427a15.camel@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 13 Aug 2024 12:54:47 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gyc73QpMHPiYdm0nKMJtrGg25-C=8Ytamt91rSS=0ONQ@mail.gmail.com>
-Message-ID: <CAJZ5v0gyc73QpMHPiYdm0nKMJtrGg25-C=8Ytamt91rSS=0ONQ@mail.gmail.com>
-Subject: Re: [PATCH v2 04/17] thermal: core: Clean up cdev binding/unbinding functions
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, 
-	"lukasz.luba@arm.com" <lukasz.luba@arm.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Aug 13, 2024 at 9:39=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
-ote:
+syzbot <syzbot+e9b1ff41aa6a7ebf9640@syzkaller.appspotmail.com> writes:
+
+> Hello,
 >
-> On Mon, 2024-08-12 at 15:56 +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Add a new label to thermal_bind_cdev_to_trip() and use it to
-> > eliminate
-> > two redundant !result check from that function, rename a label in
-> > thermal_unbind_cdev_from_trip() to reflect its actual purpose and
-> > adjust some white space in these functions.
-> >
-> > No intentional functional impact.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > v1 -> v2: No changes.
-> >
-> > ---
-> >  drivers/thermal/thermal_core.c |   32 ++++++++++++++++++------------
-> > --
-> >  1 file changed, 18 insertions(+), 14 deletions(-)
-> >
-> > Index: linux-pm/drivers/thermal/thermal_core.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_core.c
-> > +++ linux-pm/drivers/thermal/thermal_core.c
-> > @@ -806,6 +806,7 @@ int thermal_bind_cdev_to_trip(struct the
-> >         dev =3D kzalloc(sizeof(*dev), GFP_KERNEL);
-> >         if (!dev)
-> >                 return -ENOMEM;
-> > +
-> >         dev->tz =3D tz;
-> >         dev->cdev =3D cdev;
-> >         dev->trip =3D trip;
-> > @@ -821,8 +822,7 @@ int thermal_bind_cdev_to_trip(struct the
-> >
-> >         dev->id =3D result;
-> >         sprintf(dev->name, "cdev%d", dev->id);
-> > -       result =3D
-> > -           sysfs_create_link(&tz->device.kobj, &cdev->device.kobj,
-> > dev->name);
-> > +       result =3D sysfs_create_link(&tz->device.kobj, &cdev-
-> > >device.kobj, dev->name);
-> >         if (result)
-> >                 goto release_ida;
-> >
-> > @@ -849,24 +849,26 @@ int thermal_bind_cdev_to_trip(struct the
-> >
-> >         mutex_lock(&tz->lock);
-> >         mutex_lock(&cdev->lock);
-> > -       list_for_each_entry(pos, &tz->thermal_instances, tz_node)
-> > +
-> > +       list_for_each_entry(pos, &tz->thermal_instances, tz_node) {
-> >                 if (pos->trip =3D=3D trip && pos->cdev =3D=3D cdev) {
-> >                         result =3D -EEXIST;
-> > -                       break;
-> > +                       goto remove_weight_file;
+> syzbot found the following issue on:
 >
-> Need to unlock tz->lock and cdev->lock before quitting?
-
-Yes, of course.
-
-Nice catch, thank you!
-
-I'll drop this patch as it's not worth salvaging IMO.
-
-> >                 }
-> > -       if (!result) {
-> > -               list_add_tail(&dev->tz_node, &tz->thermal_instances);
-> > -               list_add_tail(&dev->cdev_node, &cdev-
-> > >thermal_instances);
-> > -               atomic_set(&tz->need_update, 1);
-> > -
-> > -               thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
-> >         }
-> > +
-> > +       list_add_tail(&dev->tz_node, &tz->thermal_instances);
-> > +       list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
-> > +       atomic_set(&tz->need_update, 1);
-> > +
-> > +       thermal_governor_update_tz(tz, THERMAL_TZ_BIND_CDEV);
-> > +
-> >         mutex_unlock(&cdev->lock);
-> >         mutex_unlock(&tz->lock);
-> >
-> > -       if (!result)
-> > -               return 0;
-> > +       return 0;
-> >
-> > +remove_weight_file:
-> >         device_remove_file(&tz->device, &dev->weight_attr);
-> >  remove_trip_file:
-> >         device_remove_file(&tz->device, &dev->attr);
-> > @@ -914,6 +916,7 @@ int thermal_unbind_cdev_from_trip(struct
-> >
-> >         mutex_lock(&tz->lock);
-> >         mutex_lock(&cdev->lock);
-> > +
-> >         list_for_each_entry_safe(pos, next, &tz->thermal_instances,
-> > tz_node) {
-> >                 if (pos->trip =3D=3D trip && pos->cdev =3D=3D cdev) {
-> >                         list_del(&pos->tz_node);
-> > @@ -923,15 +926,16 @@ int thermal_unbind_cdev_from_trip(struct
-> >
-> >                         mutex_unlock(&cdev->lock);
-> >                         mutex_unlock(&tz->lock);
-> > -                       goto unbind;
-> > +                       goto free;
-> >                 }
-> >         }
-> > +
-> >         mutex_unlock(&cdev->lock);
-> >         mutex_unlock(&tz->lock);
-> >
-> >         return -ENODEV;
-> >
-> > -unbind:
-> > +free:
-> >         device_remove_file(&tz->device, &pos->weight_attr);
-> >         device_remove_file(&tz->device, &pos->attr);
-> >         sysfs_remove_link(&tz->device.kobj, pos->name);
-> >
-> >
-> >
+> HEAD commit:    eb5e56d14912 Merge tag 'platform-drivers-x86-v6.11-2' of g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=137edff9980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e9b1ff41aa6a7ebf9640
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 >
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/a6552acb8476/disk-eb5e56d1.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/5c0963cd33df/vmlinux-eb5e56d1.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/7ba7283f6380/bzImage-eb5e56d1.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e9b1ff41aa6a7ebf9640@syzkaller.appspotmail.com
+>
+> INFO: task kworker/0:7:5284 blocked for more than 143 seconds.
+>       Not tainted 6.11.0-rc2-syzkaller-00011-geb5e56d14912 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/0:7     state:D stack:13232 pid:5284  tgid:5284  ppid:2      flags:0x00004000
+> Workqueue: events request_firmware_work_func
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5188 [inline]
+>  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
+>  __schedule_loop kernel/sched/core.c:6606 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6621
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
+>  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+>  device_lock include/linux/device.h:1009 [inline]
+>  ath9k_hif_usb_firmware_fail drivers/net/wireless/ath/ath9k/hif_usb.c:1163 [inline]
+>  ath9k_hif_usb_firmware_cb+0x34a/0x4b0
+> drivers/net/wireless/ath/ath9k/hif_usb.c:1296
+
+Ugh. Okay, so ath9k_hif_usb_firmware_cb can recursively call another
+firmware request, and if that fails (because it runs out of firmware
+names to try), it will do a device_release_driver() from within the
+firmware callback. Which takes a lock, and seems to deadlock.
+
+It does seem odd to try to do an asynchronous driver release from within
+a callback like this, so I'm not surprised that it deadlocks, really.
+The question is whether this has ever worked - does anyone know?
+
+Also, ath9k_htc_probe_device() has wait_for_target logic that depends on
+speaking to the firmware; and it seems to tear everything down if that
+fails. So my immediate thought is that we could just get rid of the
+device_release_driver() from the firmware callback entirely, and just
+rely on that timeout to tear things down. However, I am not well-versed
+enough in the USB probe and device setup logic, so I am not sure if
+there is any reason that wouldn't be enough. Anyone with a better grip
+on these things care to chime in? :)
+
+-Toke
 
