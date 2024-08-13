@@ -1,176 +1,163 @@
-Return-Path: <linux-kernel+bounces-284863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503EE95061A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D46A995061F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74BCA1C21D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0471E1C22CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BBA19DF69;
-	Tue, 13 Aug 2024 13:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61ED19ADAA;
+	Tue, 13 Aug 2024 13:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xoLyesT0"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YdDshMQ7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jgOPz3i3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YdDshMQ7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jgOPz3i3"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7162B19DF49
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179DD18A94E;
+	Tue, 13 Aug 2024 13:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554621; cv=none; b=O3qaHUhMK6ZvQQfjnOJDxOheewaRjccB8vbCTMp1ws1AejS57C8+K06hQwtLrQ72a1u+kGlG0Jl8jpF+3Xrrt5gSRHBeI+Qlu5y68odQawAFLEwbXJBa+fScdl9ZCp/Pz7kbPfDo39Eq9s6waWh5wn+e67iZA3fhBSKzUUTXsNs=
+	t=1723554708; cv=none; b=SzMbdR8o/4wFtAQFujCKZswKiQleiBWUgvkR8MFOCPqsYaoA2XooFeKGzuky9nhQLOtDz0GBjfvFjXSk9Q7lmuq2HoTBsmQZxxXq3nB/8+gswDQI296kPkw4UvVkauKob/+528o8jvW1SKau6vusFHmtPrpC/PtnsokMXZqH1E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554621; c=relaxed/simple;
-	bh=2cwE07vpiCyGBrhyTLV34EZJb7Hk/Mu8zBy8VUuQNto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Bi1E2aDyFdUR3/r83FYQmtrIHgFNNkRXACZi1CiOmLo6HNxoQHGF8HsjkoQuINf12CfBIIJaCKHTnV3sP4xiztJOV5F/+KQkyTFWNa0nAbol9CQZv/Db+RLJGwholG3zWP0dJOguWmzheY/yanYzYwoavKdveP9XS4A4d06AI4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xoLyesT0; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3684eb5be64so3052554f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723554618; x=1724159418; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mP8c2gbWyRGgea+bz+7uGbaKYyoVwEycZmklOCGi8GE=;
-        b=xoLyesT0Sz/+NSSubmN9u+b5ybKkEz1lKXc0JYxDijE3uqMmzxAus2VZ9icMNGMXxZ
-         fPoTC4uFFfE3+BpO+HxrX934QKHsjFtEy/PNFXevcPspqUH1bn9h0MlBqdf3/wL9hRgc
-         RALbS/bYNM3KqN3DM/TVGsRmFd0EwAay0B0Q5Ft3PZWeSW9BjZmg9kt0ZLX7grfu1pdG
-         /g6RPkPKYl5HcaEWPtqvhcNtqB7MRKICBDwoheyAkdTJ70H39PK7WBVq+7ZNgeK/73HS
-         rWk9Mhelz8adRd8jqERSNBsct76vjFDqTppgIl40reR6htDoGAdMp9byQtIdsrSxo4Gy
-         JFpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723554618; x=1724159418;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mP8c2gbWyRGgea+bz+7uGbaKYyoVwEycZmklOCGi8GE=;
-        b=mHxXhcGX0H7ixOOypBRLnsXpcKaNnuNgGnsxnO5b+2M3ri+sydJMPWjJbCR0egFrnj
-         VzCX4GzGs9GOe1DNiV7NHYb79TnChol7w4ipqh/h8qI1pAzgLQmdB9hPRmbzLWVtY2EN
-         qAkZtzjJwwuiFyGTKWRV/GCLY1yX8rTwLO4NwMwZXKlsGVznojT+0PFCAOZsFY0H6u+D
-         cnBNh24xJDLCTzlw2Mt7CyFVP7upvPkf005jdnag3Zq+MZjNfv5VGUdALRi6wn5+D8+P
-         i0qCeikJnLCKPFJbn/eZirNmm2Gm5+WFaZUSU22qeqlNjaa+FAQi7H35PiXJeS+byc/d
-         7p3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUrRFY0XaMbqYqbh7BJDFAV4Hc4+8oZJmTuCsSIGL5w7hoEzRMYzVw6mo5DEIbUKiQzffrN/NoEs9VUMj1QjOgiR4SUCKvUpoo07zLa
-X-Gm-Message-State: AOJu0YzsGnVjKPU3DHDovhPdCszc5hQfkYp18f6j7FoQ5Xz7wTWNFSDo
-	UPjc/AQy1LoJNjV4f+KaW/J9mUEk+wmDaBu2MApONwSYS6yeTO+rr4ACE19Trpc=
-X-Google-Smtp-Source: AGHT+IEDchtCCXZEFTjTv7KCKp+KTGrJNg4Wo5BxMZL+yOQsb/AR6j4g5GGlBRSIedjp6ch6nbqYkQ==
-X-Received: by 2002:a5d:4481:0:b0:367:96b5:784e with SMTP id ffacd0b85a97d-3716cd28208mr1973169f8f.50.1723554617874;
-        Tue, 13 Aug 2024 06:10:17 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c938280sm10305003f8f.36.2024.08.13.06.10.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:10:15 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 13 Aug 2024 15:09:52 +0200
-Subject: [PATCH 6/6] soc: qcom: smp2p: use scoped device node handling to
- simplify error paths
+	s=arc-20240116; t=1723554708; c=relaxed/simple;
+	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQD1ZWly2giJMtz4hNfb8TauzoIzJdVGiHJryYzd6Sg8tVblfvWmfttp2nk3oNpJPXD8QK57j200rtsuC1QDROQlgNrKA2hTDofOn1QQUCGRNuDaA8YHZsBcDflsePjwzzgI98z78TCpsrVyi1SaQ6QKSvYBCo1JcEOVakiwEm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YdDshMQ7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jgOPz3i3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YdDshMQ7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jgOPz3i3; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 25794203AD;
+	Tue, 13 Aug 2024 13:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723554705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
+	b=YdDshMQ7mxAV0JmLSj07L+9KBwxzqqdROUsHk7zW52djSfjt2r1H+mR0AfJZRzuk2w8yfX
+	vv5bj/v6JTTBnlWHHXZ4Ss3AtQLlYksZuydh38qcf0wxRJg74gpxtK2rIsgwb85A4c7jeU
+	Nns7Nr84GgwQXduUdiV1cIG9Nwke9Kk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723554705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
+	b=jgOPz3i3I+pHId0uPcovGl1gP+PcrknurukRnQ9/MIRbTNL2FznL1bIx+X+VU/S0YIXfBU
+	3Bi2rUnnKahamfCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YdDshMQ7;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=jgOPz3i3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723554705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
+	b=YdDshMQ7mxAV0JmLSj07L+9KBwxzqqdROUsHk7zW52djSfjt2r1H+mR0AfJZRzuk2w8yfX
+	vv5bj/v6JTTBnlWHHXZ4Ss3AtQLlYksZuydh38qcf0wxRJg74gpxtK2rIsgwb85A4c7jeU
+	Nns7Nr84GgwQXduUdiV1cIG9Nwke9Kk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723554705;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
+	b=jgOPz3i3I+pHId0uPcovGl1gP+PcrknurukRnQ9/MIRbTNL2FznL1bIx+X+VU/S0YIXfBU
+	3Bi2rUnnKahamfCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F16EB13983;
+	Tue, 13 Aug 2024 13:11:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7myfOpBbu2buDwAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 13 Aug 2024 13:11:44 +0000
+Date: Tue, 13 Aug 2024 15:11:44 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
+	Christoph Hellwig <hch@lst.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	John Garry <john.g.garry@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Kashyap Desai <kashyap.desai@broadcom.com>, 
+	Sumit Saxena <sumit.saxena@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, 
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>, Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>, 
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, Nilesh Javali <njavali@marvell.com>, 
+	GR-QLogic-Storage-Upstream@marvell.com, Jonathan Corbet <corbet@lwn.net>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
+	Sridhar Balaraman <sbalaraman@parallelwireless.com>, "brookxu.cn" <brookxu.cn@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-scsi@vger.kernel.org, virtualization@lists.linux.dev, megaraidlinux.pdl@broadcom.com, 
+	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
+ is enabled
+Message-ID: <6449daa0-b8e1-4c5d-86ad-19dada7c849e@flourine.local>
+References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
+ <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
+ <ZrtX4pzqwVUEgIPS@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-b4-cleanup-h-of-node-put-other-v1-6-cfb67323a95c@linaro.org>
-References: <20240813-b4-cleanup-h-of-node-put-other-v1-0-cfb67323a95c@linaro.org>
-In-Reply-To: <20240813-b4-cleanup-h-of-node-put-other-v1-0-cfb67323a95c@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1946;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=2cwE07vpiCyGBrhyTLV34EZJb7Hk/Mu8zBy8VUuQNto=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmu1sjJN14aYmlpr8rTr9yYtjfVVS+zWUS2l146
- f7fNMYMCtCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZrtbIwAKCRDBN2bmhouD
- 1xmRD/9h/P0Het6Jm2rGA3UM3LAszAgU3PyV5T6E96tiL7xRF6IrhT+P6GS1+HrZeLHZt/7/3v2
- xvbX4iYvn7yHnGp//K4u+6YB3isGbI0dSbliRFs8bqdp8MndfYQoMw77n9rZJbSBqLDI8NLKshS
- wUDaHY5WFF894y/XXeTDM/PRA5cD6BlzevUcWPmr8gDtvUH8+LgocW+2P2UwnCwmX2DgwN3ZeQM
- WqLLEiUQTen+QI37hpUg6TvRYCRMLFkr/VMs3/kbHRYir/fBuolFVZFawgeX6gP7BLNVmUQxEst
- ZfqX7RPXVbf3zxG6ZNz74mbX9zbRSw0QoJczdjKiHMGOipCWmR778oHi8igpEKH4eTsQdRJhFnY
- zK15u0Qs8HFOm8ALMDmYrhsUOQyfuwdBcpI23XBimnNl/yZPViJZREmTEZkfe390bmIpc7mTTgo
- nzFuLKquUdYF3T6nDfVXN8btg3tXea42nBTjwWdVR5l8wXJSJWZiMZf/tkl53OxOE0jRJtLehRo
- 8lVeIsD4Fcs0OwUKubSHxP8JxytWepvza4Ay3hdomgSPOilOyZfspn4RQikAl02pnm393jTf9M5
- MSeWXlH4VsVFvDiWocSaYUlIMxbToTvHCjMFE1B70QBhw6ry724w2jy33jv+7Mb55dEb/lL0s29
- 2YG/JDwEhwT04cA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrtX4pzqwVUEgIPS@fedora>
+X-Rspamd-Queue-Id: 25794203AD
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[34];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.dk,kernel.org,grimberg.me,linutronix.de,lst.de,oracle.com,redhat.com,broadcom.com,marvell.com,lwn.net,suse.de,parallelwireless.com,gmail.com,vger.kernel.org,lists.infradead.org,lists.linux.dev,microchip.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLbomrtoisjzkgzhj6iko5ju7u)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,flourine.local:mid,suse.de:dkim]
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Obtain the device node reference with scoped/cleanup.h to reduce error
-handling and make the code a bit simpler.
+On Tue, Aug 13, 2024 at 08:56:02PM GMT, Ming Lei wrote:
+> With patch 14 and the above change, managed irq's affinity becomes not
+> matched with blk-mq mapping any more.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/soc/qcom/smp2p.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index 4aa61b0f11ad..cefcbd61c628 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -539,7 +539,6 @@ static int smp2p_parse_ipc(struct qcom_smp2p *smp2p)
- static int qcom_smp2p_probe(struct platform_device *pdev)
- {
- 	struct smp2p_entry *entry;
--	struct device_node *node;
- 	struct qcom_smp2p *smp2p;
- 	const char *key;
- 	int irq;
-@@ -593,11 +592,10 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto release_mbox;
- 
--	for_each_available_child_of_node(pdev->dev.of_node, node) {
-+	for_each_available_child_of_node_scoped(pdev->dev.of_node, node) {
- 		entry = devm_kzalloc(&pdev->dev, sizeof(*entry), GFP_KERNEL);
- 		if (!entry) {
- 			ret = -ENOMEM;
--			of_node_put(node);
- 			goto unwind_interfaces;
- 		}
- 
-@@ -605,25 +603,19 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
- 		spin_lock_init(&entry->lock);
- 
- 		ret = of_property_read_string(node, "qcom,entry-name", &entry->name);
--		if (ret < 0) {
--			of_node_put(node);
-+		if (ret < 0)
- 			goto unwind_interfaces;
--		}
- 
- 		if (of_property_read_bool(node, "interrupt-controller")) {
- 			ret = qcom_smp2p_inbound_entry(smp2p, entry, node);
--			if (ret < 0) {
--				of_node_put(node);
-+			if (ret < 0)
- 				goto unwind_interfaces;
--			}
- 
- 			list_add(&entry->node, &smp2p->inbound);
- 		} else  {
- 			ret = qcom_smp2p_outbound_entry(smp2p, entry, node);
--			if (ret < 0) {
--				of_node_put(node);
-+			if (ret < 0)
- 				goto unwind_interfaces;
--			}
- 
- 			list_add(&entry->node, &smp2p->outbound);
- 		}
-
--- 
-2.43.0
-
+Ah, got it. The problem here is that I need to update also the irq
+affinity mask for the hctx when offlining a CPU.
 
