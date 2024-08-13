@@ -1,150 +1,219 @@
-Return-Path: <linux-kernel+bounces-284046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D523994FC5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B6294FC61
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F79B1F220A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C32628351A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FC71BC49;
-	Tue, 13 Aug 2024 03:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8E71BF53;
+	Tue, 13 Aug 2024 03:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nE8jvefF"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="d5DoK9Lu"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2056.outbound.protection.outlook.com [40.107.21.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E671B948;
-	Tue, 13 Aug 2024 03:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723520503; cv=none; b=WpyaUYj1kD3uIJ8DkHSUP9ITFeYfhzUHkwBIm4b5GGbPpwlgaCSGu9p3fq2NyO+Q0jipeqWOFHF/RH4z4j6pFg5klNFAHU9maKjhHVbUFZoHNfweEQwLMgrPhvC4zN2L3l0DbW4GSHEpSQGXjFgXQ+LIWPHT6GHuAQ2HGDEbOmQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723520503; c=relaxed/simple;
-	bh=q6HAOL4mRIzCYmRvTt3tiEI4ewsKYdQjER4H6kU/+uw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o5pgXW1rXpANQHV5kcYUYuOwrUwiJoxvl8Vui0u8oKX6rTxfKkU4yYCR9QQxFj9VwF9HKQzBip47aFK09XlFqNj5aI5Zm6eO5RTjYjnn1SZ6xJ3VJa8wM+ToSB6F150ItRTUxmWIcflRKK7ljj36H9+K2vWKyNEy7BWW+TB+o8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nE8jvefF; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D1IOIw007050;
-	Tue, 13 Aug 2024 03:41:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=wuA4OOGCw/LRUjquaq3jyi/i5d
-	2AjgeKB54bI8qNFNM=; b=nE8jvefFbqmVG0VPaPKAco0mJ9Snl5iE9OC7WcKAqO
-	2cIwxlOUrCW7O83u3MuDeT1OJEv2rdCRj65oem9Nxdku9f0jQ5PKfkhYvLA+p2vn
-	6oo9b7fJjilhE0yFGxOw2LINGKhIPJNcC2siQf1nogAEGw8UqB6mbUM2T795WWxp
-	WICQrcDd0x2dIHWDlgHvGWt2E02uF4r1ARUN3HOUFl0LRDQrD5YYx8+JcDgEymeC
-	gWizzCSW5w801tXMPzjoBLVsk1MnbtnMjv6Pct127geF7obKTGvo8YNRIs9WiHxb
-	oLy2zbvHqAQ/+BSPdxIBnxYKFvab8OueAqsGou417Eng==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wwm7pkhw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 03:41:33 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47CNLaAT016237;
-	Tue, 13 Aug 2024 03:41:32 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40xkhphm6x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 03:41:32 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47D3fSON46858594
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 03:41:30 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8BBF920040;
-	Tue, 13 Aug 2024 03:41:28 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 96EF920043;
-	Tue, 13 Aug 2024 03:41:26 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.209.27])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 13 Aug 2024 03:41:26 +0000 (GMT)
-From: Akanksha J N <akanksha@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org, mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
-        rostedt@goodmis.org, akanksha@linux.ibm.com
-Subject: [PATCH v2] selftests/ftrace: Skip test for optimized probes on PowerPC if Secure Boot is enabled
-Date: Tue, 13 Aug 2024 09:10:56 +0530
-Message-ID: <20240813034056.74717-1-akanksha@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613BC8BF3;
+	Tue, 13 Aug 2024 03:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723520666; cv=fail; b=WnyzfDE8xeh2kuOSKiVjpclDOOgd7ZL4eieAhceVxUvBcpWswOAXTuQ2G8Uay7XYlCHmNB6j8JfU68YKBNTwjyOuvlUGAItf0LqNCoFUO14W3Ia588Zjx2rOqAxf8p+aKQhcwRhdgqOkAHBCoySYCiwkSkuF5zYPgh4+2Fpu/0Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723520666; c=relaxed/simple;
+	bh=1Vu+cz7rsp56kWtoPmpsY2vOjcnQ+2Zt6gtlyFFgyCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gArmYAh3ryYxL5EV7gn3AVc+HaZZL7ws99nQ8MgxU7RUoOTAph3sQZwiWedj8oaxrPJpHBv5PJpHyGY2o23q8KPhfMFuzcz0imMyQGJlTywelASML0PrNQwTHnaa13QeUONDQPKZXA05OlarFSLc57TnsqIo1Nkky0WKTn3iyM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=d5DoK9Lu; arc=fail smtp.client-ip=40.107.21.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TcWP9A3QSJcziOWgZZ/sE+VNCYDypBZzQH+8Dp5W/Sry2KZaOGSNvIVVZBlbQ3yJ+lo/5Vbc3UEt51Tu8RkyOHhtK/GZ47erKWqp74rKTl3p13Glwy2da5EkuQRjNyxKoU37ALCgETj7wYf2skofONLUQ69HWQtcqBSwXUwGT693ZTE+ggTrZf+wmcGKbgqR7mTftLdPsgAbiauZZGwR2dT49vLhVI/2b+lpXCsW5d1gkH95YCuRCUVD6VriRuQvTsLlEyRQxWPuGm9xkAhhj2pSYFHzwjIAbq2T5cj68o3Uf0HK9/NgYJSdFlcfFfDs2dAsirG9scolLX0EY0mkjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tp5uo7HjrZ/Env0mHbVUXY6VDaCBYxzn/ambT07TKs0=;
+ b=ePdb9ISx3OQtMcXOYv5we9ywvlPSlWjUSfcG0IXI3Ik5phVMYzDZB3MO4LK2gHqmGfu4lYTmc8JDJxw12QWch0S3K+VtupY8M507/9fpjEOoUtlDFSWqce8jHF2IJvZFKXaHs/0y3ks6HAo92qBmxE3g7+orMxIOBp+7hscqpYvKwlB6ZoiEQ63dJZ4MP/8AfcVE40VQxe7EL8WMlmTW6VPvTwKAnmTti3czTKNhxlrhU9yv6kYGynP9T+XgCD52ylAivSC47yRfStuZhaytmjjOxejQA6ztLKScLFtlGMkUS+XZ3jEtdZtdAVqlX8hnyIKF99wPgQB0+OyDXlhxOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tp5uo7HjrZ/Env0mHbVUXY6VDaCBYxzn/ambT07TKs0=;
+ b=d5DoK9Luj+ksCgPcvVAU9i5tWeGEuKddAMxSv2pKxTDIexQ3waTSro00mr5vor9k3S4/cpTUdluiyDnnXTFum248W8nJCOwcDjJ/iX9RsmMsu1+6eReK1Zx9PSWnyTCG6lsSJx/HCLQvpFjLcS9YcM1YVo4GLiMSej0blVOExHm1AjETCM8rosXOVLMZs5DqkNxMVOXl2bhhPTaugiWnnj7t2/zeGlUZF840punLdgkvomOL9M3aG1Q+mAbr6vstD1G6gPTXSPi4gO2YW8KTx6uXeD3u1n7Lh+nhEH1IN6HGIT9zDQ8ihAfmPQw5RS9XxvJxWFHScPfF1VD24tkkig==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB10318.eurprd04.prod.outlook.com (2603:10a6:800:21c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Tue, 13 Aug
+ 2024 03:44:21 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7849.019; Tue, 13 Aug 2024
+ 03:44:21 +0000
+Date: Mon, 12 Aug 2024 23:44:11 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	"open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: display: panel-simple-lvds-dual-ports:
+ use unevaluatedProperties
+Message-ID: <ZrrWi0HuAIDe7C0x@lizhi-Precision-Tower-5810>
+References: <20240812193626.3826250-1-Frank.Li@nxp.com>
+ <143d7bcb-c3ee-4f9f-833c-6680a25681b2@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <143d7bcb-c3ee-4f9f-833c-6680a25681b2@nxp.com>
+X-ClientProxiedBy: SJ0PR13CA0195.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c3::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: BzKMvMwRMCQiFVZe88XLAjvNzytP1O3u
-X-Proofpoint-ORIG-GUID: BzKMvMwRMCQiFVZe88XLAjvNzytP1O3u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 clxscore=1011 adultscore=0
- lowpriorityscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130022
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10318:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4ca922d-d6c5-4805-3d5b-08dcbb4a3749
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2I5eKY1iookgXN/1gsa8qn1jK87K+LH4kMXW9KVFXTkllmy2JsECDLP5wbvg?=
+ =?us-ascii?Q?2yFDfnYm4QvgNIHtMbbL4fv6oT2XQP7Of5Qwi36LgKIhGiUNroeYmGro/uac?=
+ =?us-ascii?Q?+9Se93ERp4bQIo+CyA8ODNUX048p9MSpbnjIk21sLJK6fUVkWlyLnivpvYPW?=
+ =?us-ascii?Q?VWj/LgilHEjYHk1qHq9t2/+c7tzayy8pjh2R01133nsJU8fjlNnncliHqmBi?=
+ =?us-ascii?Q?2J0hfw3l7qFChjnFkXde1F5lTpakigYz68SCJ53qU3IOB/1dSMHfqlE9VfeX?=
+ =?us-ascii?Q?ooUw7/07/Agf0qfZ1w+DuzTZn7gQkikkC59wrKrqRcf5tBBW1zsGCN+2a/hZ?=
+ =?us-ascii?Q?xJu6HhOdgwBzxz0JWDvcBb2ZXVD7/CXyHvG3j4jopuwEyx5MAHBEndtQekev?=
+ =?us-ascii?Q?4yE19VvVKY+qhoaygY8fBp1DEWJsC4gQGvJ2HodS8FLmux+8o0vFKvdGVq1r?=
+ =?us-ascii?Q?rxcXBqEnr5zP4uOsn1CZ6r8ez5VBVmiA0sph3kHy+3hbHCd71/871KxfKq/b?=
+ =?us-ascii?Q?+TGsaTv4XGTFncAaRqj3iMxru7/F9CGmjLBymKNT++nugLhv3SsuCLAirLuw?=
+ =?us-ascii?Q?4W3AVXzDIoHGJoDk+z6xuW9IlmYLkx1nyMXDBUHbZ8HEfRtyAsksCoXq9wIn?=
+ =?us-ascii?Q?3sIakmu60CejxdL3MFAnYdXm655xtrNSDcKnWcHUDcayWCLZZzWAg2iypM1V?=
+ =?us-ascii?Q?YV3M47AKXBpDZvuY03NCLTwwRvfs2F2S15VIUdoU/tvBWkkNX4FiDoPHiHyk?=
+ =?us-ascii?Q?frYE0S1CUjmYWaagL03WsTJ3+IqrjfJip3Cdl0EGlYG7edAHtUxI726sfUqw?=
+ =?us-ascii?Q?J5jvLIVKnihVYOLD6hTVfRVFCpJxYWUmzyKe54xXZ5cRHJd9YNegTAk2hSr2?=
+ =?us-ascii?Q?+NICRcE2hDSO7eXw3cBvDDrw97YAKTeREiOcGfh81goyDfO2bvz71MGkxikY?=
+ =?us-ascii?Q?5LoNtgLy5pB/48A13NiUHbqXmaklOfxmxMmFN5Gog4rj7aB4EEsdcocFh+pm?=
+ =?us-ascii?Q?9R78rdjYVbxpYoVYw0ICEQ8D/B1uatn7LliNukMRew5cu5MXYrdc8LkLuMp/?=
+ =?us-ascii?Q?FCP8Ugv2Iktb68vN6zRC+j8K62a2KTCTuGbiwlAmm9d71o6IPh1ehAXJBFJ7?=
+ =?us-ascii?Q?uvm4Xf7UFNrbNqiC42Zjh1LTTSz2L+d2JhThGrjYr1kPCebXKc/RDwObUqn5?=
+ =?us-ascii?Q?ySYv65vQTtsZOn/iY6EwHHLWfi7G893bYWjS5n9CtKVRxT366Ovut22ejOfJ?=
+ =?us-ascii?Q?YL2//IMnLlzSK+wzGHBMgj3w7HnQ5PuTSP7fvyavtGCIplSID/Qr+KlnPHUH?=
+ =?us-ascii?Q?DCOCSvIB0AOZZoFrtAfY+4zN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xwlpd0RMkzoPFctM1hJ/wJIRkRo8xvc0Jfh9H/kkaXMWuikBMJ8LhoTuNTBV?=
+ =?us-ascii?Q?zRMNQIA1wO86OgIdf4ax9iHj7PAtifyDFTjMem1zBUoU8QjioFl8++VcnIIY?=
+ =?us-ascii?Q?atNvJQhfLP/diTL4OftMuljAUdchoiUIsO2QWNAbKH3yj76X7XmQXmM2h1Ig?=
+ =?us-ascii?Q?99KLOoyInwtmHbMRVK6G/CBLfYI8cfH7SgVX4L08052o3VDTX49Hs3QAmIw2?=
+ =?us-ascii?Q?5FqRXZTJhN78veOeQ7A+xrOW5rpqjCaP2sMGp9AV4q124+xo2qmIaAgXpXFY?=
+ =?us-ascii?Q?eRfDv7N2FIOMXlxcuQ5jv308jZ1ScKcxJiCc0Z830Z8SEUNqknwvBWozE5C+?=
+ =?us-ascii?Q?eOxt+aDl2vxDuoEsbjB9wXMVnaAQUutaNWl2kBSM6yR/ufBK9pnnoTtbVWE/?=
+ =?us-ascii?Q?q+o4AEjlRA9oR/nSiWg1apymrHAfOGPMN0nTQZb0Am8tlUGbdRncfKkc8lpC?=
+ =?us-ascii?Q?ZqC1kKfGojxta8z+tV3A5SVlb9W6cCjvd9v24bBPzkUM2nlLIpki+2nOjmEt?=
+ =?us-ascii?Q?/2ODbYvHGm5DO7Qxc969E5QrNe45P/1QUIgdu2JLrZBfO0ksEZ9Jk0wMh5pv?=
+ =?us-ascii?Q?D/sn/Fa2PcjQoVTpPgkY8bCxKZuXLRVA6wYJDQOHVovPkWjxfIj7Lp7lpZgh?=
+ =?us-ascii?Q?+2bJcnF/kccs1PPbrEJ/+mlyN/VIn+zJfNeZUVShpbg2VDpHkH5a5o87RFB6?=
+ =?us-ascii?Q?MxO9Fq5zFOocouvMuWPpsWdU2pv+QgtUBkjb8EPjrWT5BJfG/SDefINJqAHi?=
+ =?us-ascii?Q?+dOe0skYyURZM2Bl0wvKb8icIpttPIljKnfaCCGmBfqtgt4zGFTzK0orEFF9?=
+ =?us-ascii?Q?p9NF3g4Lp1IDZ0ebJKYWsRx/1SMPcruNpqC0+hONbSYbLT6RcUWSYb6KcsCi?=
+ =?us-ascii?Q?h5IAD9QNjdZ3ZVPVNPlxublroBbLo5bRG0N6tl3PjmQo0c4xk2FkaR9LkffE?=
+ =?us-ascii?Q?9m41OBRs6ErDHmPy2Du8NjMy848QZNmXageiF4XTUyXMARojJ4CiiMcsnEuk?=
+ =?us-ascii?Q?8orWjg597uNZ79+LZB+gOZL6KOBKKlrbmxUpB4/HQB+k0fmVbvu5RNDD/7Vd?=
+ =?us-ascii?Q?d2STAIiGYibB3g+NLKdeuQgRq1zFd3M0oKR9SKGQM+9jiu9yFG9c2PyPfmCy?=
+ =?us-ascii?Q?FP8Gf2TVL8mQvbWPujFiVg/FJrsY/W8sEqqWkNxKjFUwb+nMG4NBOu90BMbe?=
+ =?us-ascii?Q?bjIKUIeHNOeVSGzZQaelc6t5WFonO9lnjHAyQ1WlsA2kkLgEUf1FsLJiCxLn?=
+ =?us-ascii?Q?od3LHhKDipCZK4RBXluQo4Fh+x8LinT9gtrNeXKNkGPGpJ7OGBDnfsXJpBFx?=
+ =?us-ascii?Q?gs6Sc7BBuk/zDhr2wUZpVbP/T9GEKO3SQlEPtBPKT8xrWBKdEwdGD7pHfexN?=
+ =?us-ascii?Q?5oTDiCik6/R1ZAL58mbEGvGgnv+ffUYgl4uFQvMbxCQKev6eTnFtqF/DgMiZ?=
+ =?us-ascii?Q?ekOUgtIVPAZSBfBoXbQ22TAp0obJlno7e9rUNCwcSpIzzmTPjH/DKrQe3cFO?=
+ =?us-ascii?Q?C/4hoFfWrk99Fjht4gFzXsCtRpqLiuaSFVDBEndjp/HFJjpc0MSK316OKx1A?=
+ =?us-ascii?Q?Y8/a1ZVeCV+bFbH55mI=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4ca922d-d6c5-4805-3d5b-08dcbb4a3749
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 03:44:21.0843
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: M1Tf8zRKOC3STxkkL2PjFO+WoEk6V3BMGbRfm0J9xuvk8jiQIQ6UvyGhjs1tKNz06BTnEbAceWFnw7ruJbyz5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10318
 
-Currently while accessing debugfs with Secure Boot enabled on PowerPC,
-it is causing the kprobe_opt_types.tc test to fail. Below is the snippet
-of the error:
+On Tue, Aug 13, 2024 at 10:32:04AM +0800, Liu Ying wrote:
+> On 08/13/2024, Frank Li wrote:
+> > Replace additionalProperties with unevaluatedProperties because it ref to
+> > panel-common.yaml.
+>
+> This would allow all properties in panel-common.yaml, which is not expected.
+> Isn't adding 'panel-timing: true' next to 'enable-gpios: true' enough?
 
-+++ grep kernel_clone /sys/kernel/debug/kprobes/list
-grep: /sys/kernel/debug/kprobes/list: Operation not permitted
-++ PROBE=
-+ '[' 2 -ne 0 ']'
-+ kill -s 37 7595
-++ SIG_RESULT=1
-+ eval_result 1
-+ case $1 in
-+ prlog '	[\033[31mFAIL\033[0m]'
-+ newline='\n'
-+ '[' '	[\033[31mFAIL\033[0m]' = -n ']'
-+ printf '	[\033[31mFAIL\033[0m]\n'
-	[FAIL]
+Strange, you ref to panel-common.yaml, suppose it will use all common
+preperties.
 
-This is happening when secure boot is enabled, as it enables lockdown
-by default. With lockdown, access to certain debug features and
-filesystems like debugfs may be restricted or completely disabled.
+Krzysztof Kozlowski:
 
-To fix this, modify the test to check for Secure Boot status using
-lsprop /proc/device-tree/ibm,secure-boot. And, skip execution of the
-test on PowerPC if Secure Boot is enabled (00000002).
+Can I just add panel-timing:true for this case?
 
-With this patch, test skips as unsupported:
-=== Ftrace unit tests ===
-[1] Register/unregister optimized probe	[UNSUPPORTED]
+Frank
 
-Signed-off-by: Akanksha J N <akanksha@linux.ibm.com>
----
- .../selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc       | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc
-index 9f5d99328086..925e74d6acc7 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_opt_types.tc
-@@ -10,6 +10,11 @@ x86_64)
- arm*)
- ;;
- ppc*)
-+  lsprop_output=$(lsprop /proc/device-tree/ibm,secure-boot)
-+  if echo "$lsprop_output" | grep -q "00000002"; then
-+    echo "Secure Boot is enabled on PowerPC."
-+    exit_unsupported
-+  fi
- ;;
- *)
-   echo "Please implement other architecture here"
--- 
-2.45.2
-
+>
+> >
+> > Remove properties (backlight, enable-gpios and power-supply), which defined
+> > in panel-common.yaml.
+> >
+> > Fix below warning:
+> > arch/arm64/boot/dts/freescale/imx8mp-evk-mx8-dlvds-lcd1.dtb: panel-lvds: 'panel-timing' does not match any of the regexes: 'pinctrl-[0-9]+'
+> >         from schema $id: http://devicetree.org/schemas/display/panel/panel-simple-lvds-dual-ports.yaml#
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  .../display/panel/panel-simple-lvds-dual-ports.yaml         | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+> > index e78160d1aa24c..10ed4b57232b9 100644
+> > --- a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+> > +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+> > @@ -84,11 +84,7 @@ properties:
+> >        - port@0
+> >        - port@1
+> >
+> > -  backlight: true
+> > -  enable-gpios: true
+> > -  power-supply: true
+> > -
+> > -additionalProperties: false
+> > +unevaluatedProperties: false
+> >
+> >  required:
+> >    - compatible
+>
+> --
+> Regards,
+> Liu Ying
+>
 
