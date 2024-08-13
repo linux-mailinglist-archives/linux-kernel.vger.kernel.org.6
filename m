@@ -1,198 +1,144 @@
-Return-Path: <linux-kernel+bounces-284327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C8894FFE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:32:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AAE94FFE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78590B24BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:32:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474D01C22522
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483DB78C6C;
-	Tue, 13 Aug 2024 08:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB4B13B2B2;
+	Tue, 13 Aug 2024 08:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="j4w2y/nP"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2080.outbound.protection.outlook.com [40.107.244.80])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="QKib4JFS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="f7U1MbxW"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E931313C67A;
-	Tue, 13 Aug 2024 08:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723537930; cv=fail; b=KBp46ZrzdKGyKEpUlDoXHj6u8zP1mQeH6EVnSI2SpTjvRVyl0+14XZLE/MkelBFS95EWqJ9YHmx172W+38TFtsYr0g8pLt89Q2otBLvldZcBZuzP5qxDhhnqOqWCMTXGwGnXwYMDPBFAxiGAE7ACRyqZeZ/4rhw2k9RGJ+34v7c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723537930; c=relaxed/simple;
-	bh=OVzTNhXC+YRYq2PTLE57YV85aIyqePAdfDkWsAXUKGU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eXgtSSGPrnmHvGfa/CqX3WCoSlnQ4//O+kJ0qrjkryKqSrqj3KeOMuBRcO6hxuJaSUaGStzfuaSYZtzvnq0KrjBTeei09DIvYPLYQJOvdVm3l5qRUUrWsJsB8WbcwHE2eYQJj3j/fG8vDc6QbtrLaRP+q/+lxTsYONZyUn/2pmw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=j4w2y/nP; arc=fail smtp.client-ip=40.107.244.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WFI/jeI+Qk/Gsx4BkqwLiVtuBx2oMZDDRnJPekKzZzzG7MZfWJxqB2mZGhwal26r2CUKvxtuBgJGrXo1CtP7vIT+5E2RhrJgggb2LzTQof7d/DsoiMNOh+erh6q7MHfIHS8s4kRonse3tYuqa4wrn7XxUG6DoYLVOWEooFuTaVNRjM/MIBAEdtQZgwP8LxEGwGG5ggGQgS8064NYzW13NGK8AizV7J5TnGAYvqrl5qoRu/WRxNkfLJ01OPpcOBnqK+3OlVxLJSsYYQEGHX0Fy3+3r7jHYO/j6rnwIeW6XxRkoQbOCbGmTmF3MBQNw52406DYAefZ3AUwT5jMJ3sg5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OVzTNhXC+YRYq2PTLE57YV85aIyqePAdfDkWsAXUKGU=;
- b=B7BZ/up96UMyVEKHNJBr979nR2YWwCnDvZ1tKFds6XfGhtWzREX2eHo/OBYFPZJK/VJBKG7DpRbn5iLkxmNxNN5koZN0Om4BMRGQvIeCB6/6En4bcCpb8j9Peid+g1+ypEgmUBhAQ6RchrFv9+pG/K1S936mBVMaLZhyB5MG88+Ctc/dJuYv9x0pPln6hgtkEbWOVLnTnQFX2i1bEikwJzxTizQgPgcuW2kpzJ/7WlN9IS7rwdVOhDCEaAXWQjwSdi9lRqUp2nUCKl+a+UwJaiAM5pWk8pH4i+7Nb57LQPBlfGUpu9nvsp/NDBgHDuGuRIPBcGDp5fb+p+buMVUMAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OVzTNhXC+YRYq2PTLE57YV85aIyqePAdfDkWsAXUKGU=;
- b=j4w2y/nPMkHo43zVzoe4ofZ9kEzZFfJY/nC2O4xVC3Q7pRBgn8WvM50TuTRNxQGBksbcd3Eihy+U/V5GFShdw068tldstME3MTUCdD+H63D5/7g/RPT07bWr88xyGzyx/K7yTXYyCmIeCmoBPEHmParEhB/D2kDcZ+i7vQdxSUA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23)
- by MN0PR12MB6126.namprd12.prod.outlook.com (2603:10b6:208:3c6::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Tue, 13 Aug
- 2024 08:32:06 +0000
-Received: from DM6PR12MB4123.namprd12.prod.outlook.com
- ([fe80::512d:6caa:552a:7ebf]) by DM6PR12MB4123.namprd12.prod.outlook.com
- ([fe80::512d:6caa:552a:7ebf%4]) with mapi id 15.20.7849.021; Tue, 13 Aug 2024
- 08:32:06 +0000
-Message-ID: <f9847cc2-7109-444c-a609-d02c82c99880@amd.com>
-Date: Tue, 13 Aug 2024 14:01:54 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: SOF: amd: move iram-dram fence register
- programming sequence
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, linux-sound@vger.kernel.org,
- alsa-devel@alsa-project.org, sound-open-firmware@alsa-project.org,
- Mark Brown <broonie@kernel.org>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Basavaraj Hiregoudar <Basavaraj.Hiregoudar@amd.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Jaroslav Kysela <perex@perex.cz>,
- Kai Vehmanen <kai.vehmanen@linux.intel.com>,
- Sunil-kumar Dommati <Sunil-kumar.Dommati@amd.com>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Takashi Iwai <tiwai@suse.com>,
- Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-References: <20240812110514.2683056-1-Vijendar.Mukunda@amd.com>
- <f76c7f8e-f4e7-4ac6-87e1-1ba9b2b19a82@web.de>
-From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-In-Reply-To: <f76c7f8e-f4e7-4ac6-87e1-1ba9b2b19a82@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN2PR01CA0216.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:ea::14) To DM6PR12MB4123.namprd12.prod.outlook.com
- (2603:10b6:5:21f::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC5A6BFC0;
+	Tue, 13 Aug 2024 08:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723537926; cv=none; b=KjKhz/z7x+2mLgA54N2QfK1/jbkQK/bpaElD2oB4dy+BITXOdwEr3tZNdnpYG/xo2qxvpzrfuuqjg7wLOQK2p+zisu/NxT6D+/UdzjDxg6BN6wS8V0QT78TNYznQcFPFMLQEpaRp8SkZL5M9010L530gRfn3Z0yu+okV4NjPFOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723537926; c=relaxed/simple;
+	bh=lEgV73oQFb4wSPPKQYw/Kz/gUusFzSP+RDDMV2j5zvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I7dxeW/ZWGWmfKKgicTorFPk8PhPqLisuZSOTRTE409hWDGPnWiE5FZA19V6tS8vXrs0AJmea/WOYHNNSvXRWaIHkDMwm/0sswSjKl/ARBouVCd5bCGIwQdg2eSV6OEP7p7FvxebuVoVR4Jq58K11ZQ7E6bUJ9rGEzs43rI/pxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=QKib4JFS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=f7U1MbxW reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723537925; x=1755073925;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SoUo98Y/KDhV7rpJ07j6/bY/KoM1M5CslouXTk6xr6s=;
+  b=QKib4JFSsqOQycq/lSUAC8oJ+iCMGAp57B6hD1QfOeyHqJZ+5Ge6sty2
+   gRs0xTbcVZm07nhsAeyrdusizDej2FRZF5mKiYXMo3798yikIzklrmi3g
+   Yrg1F4P50kXiuSU4Ovk024kqEUfNUuItRt02li6658+XVCkTYGHfBRMne
+   Ez4EHW8Ma7vVv/jiEwPV7lOEtp1LoQozqmAOn5N2hCProIqMYsWksflky
+   mtZA6SPOlkIYzpeWCahnR+TceXW65nzOo8X2dYeyj6rl7YL55woB/fREG
+   mQ/R2EdWytRNBUY6fRHGvgnFyrJhGQCMEaPie+2czJh0nXHpZf9/WkkX1
+   A==;
+X-CSE-ConnectionGUID: vGd+0kVFQiKGuuo/XImVXw==
+X-CSE-MsgGUID: gZ+q8cY4Rpq48ZcAUaia6w==
+X-IronPort-AV: E=Sophos;i="6.09,285,1716242400"; 
+   d="scan'208";a="38378889"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 13 Aug 2024 10:32:02 +0200
+X-CheckPoint: {66BB1A02-34-2C7A84BB-EFCBC4CF}
+X-MAIL-CPID: 862DDC47C70EC59211A7B638BF404C29_2
+X-Control-Analysis: str=0001.0A782F1E.66BB1A03.001B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 292F316A381;
+	Tue, 13 Aug 2024 10:31:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723537918;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=SoUo98Y/KDhV7rpJ07j6/bY/KoM1M5CslouXTk6xr6s=;
+	b=f7U1MbxWI7PKKpMLHpKITmuKiPBqwLodORc8x3brT7LuBOYYQnvSi0xjlvDHUUzJLf+Bk4
+	BBVogR8wbrNSInsGu9BK6mfmditXIc7KJ0JRSxmK0Elle8oxIgD4a3WxXotY0uN1T63yma
+	0VMwwblvBFtkqKQDqItD7jD6cbEztKJEMFzkZByPTIKaEXRqK43kwm8QuXZfrC9834gcUz
+	xoU6jcU+U/XJvdqpDk5fOjKJMDKliE3ar3fgLQusHUMRiO1R3kg0M/tSFZ50RynmIMKjpG
+	8gdzyMuZ0apgv+2QOQp0CwFQ3p+r1DQDmPpKe4M0eXNOvymQ4i+0H306F4aOQA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Gregor Herburger <gregor.herburger@ew.tq-group.com>, Frank Li <Frank.Li@nxp.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 07/17] arm64: dts: fsl-ls1012a-frdm: move clock-sc16is7xx under root node
+Date: Tue, 13 Aug 2024 10:32:00 +0200
+Message-ID: <3581541.iIbC2pHGDl@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240813-imx_warning-v1-7-3494426aea09@nxp.com>
+References: <20240813-imx_warning-v1-0-3494426aea09@nxp.com> <20240813-imx_warning-v1-7-3494426aea09@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4123:EE_|MN0PR12MB6126:EE_
-X-MS-Office365-Filtering-Correlation-Id: 411a82d1-3b50-4e9d-b06c-08dcbb726a01
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S0gyOUkvWEI5NVAzNGRwcTgyOWNsRmtRaTdSSC9qL1JBNkNDc0ZyaWhxVkJ6?=
- =?utf-8?B?dWNmc3BLQ3F3ZlFyeHQ0R0ZWaUg3NDY5T1U0VktRQWZzVGdzY0Vxb09tMVJI?=
- =?utf-8?B?OWdtbzNoYUdKWDlRMmRaNXBQZjNDMGdSdEZHNW1xQ3gxckVYN1p1TXdYWkdn?=
- =?utf-8?B?aGUzV3BMZFpxYWhBNUJjNGNic0k0T2xDZGdGcDRDalNzK3RMekt5LzFRODFi?=
- =?utf-8?B?NVlON1dST3E4RUpleDNIUitEMHRzQmF2M0d2a1Ezd2gyT1M5eXZxZ051Mlls?=
- =?utf-8?B?MktNQ2Qwdm1PYXM1SjdSNFdPM2VmZFRmbDJodDFQclRDblgzR0tIaHN2WDVI?=
- =?utf-8?B?eld0L1NJQTRqalZDcmMyS3lsK0ZpdFRZRVpxcThVWks3RDFSOEJydWtleXFL?=
- =?utf-8?B?TE8wMVZ5OW9SbVoyR0ZqVkhsN0NOK3VNaHNxdXdQOGp6cWxYYWN6MC8raFQ3?=
- =?utf-8?B?S3F1U2VVVk9TTHBqb25BMDhaQitKMERBb0FiTXNpVHBiSytQTjdOZW9IbS9y?=
- =?utf-8?B?S3R1Tk5JUFpEUkpqanZnWXJsZ0tSOGlOMGdDQm5vR0tlcTFnbkxYdThjN0Rn?=
- =?utf-8?B?b1lXVnVaWWc0THBEUzI1d0JwWWNtUWtLclRDaFdxM0V6WXhReStjWERTTEk1?=
- =?utf-8?B?NzlJcVNvSUtqcjRpZ1owSUtxd2VFVm12UmRyeGVnKy9nSzZ1RkJFUmF6bjAz?=
- =?utf-8?B?QlJLWGxXY0Y5WnNpc2x2eGhVK0VVUElacW9EQU50MG10VXdYVjdLMFA1dFdP?=
- =?utf-8?B?VUloYlFHNnQ1SWM2VGtmTUNoeHcyNmE5RHVYRGRTV0dyV2Y4RGdqR01ScEdt?=
- =?utf-8?B?aDVKbWg3L21ZMk1VNEQxK0liKzVvTkRNS2duUnc5bHhoTW90SUdtNGNtbUJC?=
- =?utf-8?B?TWpaYjZIMXZiNFFQdW9TUXNLajhyc3RoZ2t3ckRxWG93Z3NYNE1sSm9PNm1w?=
- =?utf-8?B?QkJpdnlUVmNXWWQ5azN0N2NQSjNkTEV6Y05jdmpZcWxRT0VVczRFcGZlU1Jx?=
- =?utf-8?B?dHZlT1I5Vi9UenlyeGlQSW9ubThzanB3S1VmOWtBeUkyUGJxenBVOGRUYmsz?=
- =?utf-8?B?eThUbjBySG51dzVoUE9uMEdaSXRpMStlRmFxc0hPZGZaTUpvdmo0cVpua25I?=
- =?utf-8?B?VHplQ1VFeVVjTGdhbXpybHFpa3ZxL21JZWlQZTRtZ3VCRlQzQkliSFp0R3RS?=
- =?utf-8?B?OTBCMlprWENXa2xKaFdETGF1ZlhvNENnanVkczFMZU5ZR1dTcWxsNzlOSUpL?=
- =?utf-8?B?OUYvSFVUN2ZJL2lmQ29Qd1J2Vm1BcWgwVWJvR2Q4eitnaklhZlFPVWFjZ3FB?=
- =?utf-8?B?bmZXODI5ZFFyeWl4UE1VMy9FZHNyZFpyblcybjFURWxEclA4ZzRuVWhzdjdE?=
- =?utf-8?B?Z0tTcWRlOUNsNUdFMDNBQXRuL3FNTlhRSGN3TlUyd0VUNGowWWtXTThYTER6?=
- =?utf-8?B?bTRydlBmTFFJUjZ5OWJmS3FoQkx4TkVJOUc1UFdJc25oZisxRXlBOGpvRVdS?=
- =?utf-8?B?eXdSelJYZkV0eWJuUHVnOEFGQy9Baml1VnpSUXhIV1FWR1ZCc1dvVVZwRS9i?=
- =?utf-8?B?TlEzd0IrZXNxTG1XK3hKdlgzelQwQnpPSktjb0JUMndvZ2xBOEUxT2U5ZHE2?=
- =?utf-8?B?Y2RxYnBXaUhDUkhUZ1pIa1FjUjFjbDNSNUdNYTdMdnVCcEpsYXFaWWFYR2Zp?=
- =?utf-8?B?SEJqamN5SFJ5N1M2NlBxS2RNRnVVSGdqUnpIMHJWakFoRUluZmtrYWRMcWNv?=
- =?utf-8?Q?dp+CGgE+b2P4iXDujo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4123.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZkR3eWY1eURCdHhjU0MxL0R5K3NNQ1RMM3lWK3NaSU9sRVY4eDZUWjh4LzRO?=
- =?utf-8?B?cGZ5TEEzTE14TUtTRGRxWXRBQ0U4WlF3WHhrT3VXd0lDRWpLc0w4bVVWV0wv?=
- =?utf-8?B?WGh2RFJYZExvZlp6cVF5ZFl0VGVzMjRIdjBVREl5MEQ3bTdraHQxOS9EY1ZL?=
- =?utf-8?B?cDVPRjRBZVgxc1FhWTR5SCtFemsxUUp5dlV4VTYvQXhxb0p2Vkx4RlJwRWQy?=
- =?utf-8?B?c2o2eVh3QzMrS2w4aC9zWkhaY0hlWCt6bVJmZ1NITGlJdkFiUGk3VDlCcnBC?=
- =?utf-8?B?MG5CWFRjRFEwM1U4eURpSHRsNXVzQWloY21EQ1IrL2ZsdXYxdmsyV1Job0dT?=
- =?utf-8?B?RFl0NnJYM0tSSGRTN2Q5d1Q2NXZjT1k4UXhVK3VtaU9KU2pmM09HY2VWSGFR?=
- =?utf-8?B?MVBtRjVDKy8wazhqbnpYaVg5bUUrb215TWVaalIyOWhwQ1RhNEdYWUtoWEtl?=
- =?utf-8?B?c21Fc2VFZVdPVldSWGk5YmhYVGhOV1cvbkxjL0tqWStnVUlwTElsdVl5ai9M?=
- =?utf-8?B?b0JpSnVqSFFGcGRaTUpFQnF5MzdUZGJ2U0dCbHhabmV3ZXRucUFqODNBYUY0?=
- =?utf-8?B?cUszVStvRXVTaXZRZ2xtZHJsWTFsVnp0UDdScDdkUmZLZ3czUnZNVFI2cXpZ?=
- =?utf-8?B?OThCYWVlT3dCb2VIN0l2NTZQTHBRbnhDay9OR2hNZjc1bWRlMmlRYzZHcGNk?=
- =?utf-8?B?emRDTnRndmhGY3lPTEg3L1VzcHVjUFdtTStuZVJOMTVVKzZYYm41bkgveGJn?=
- =?utf-8?B?ZGxRdXM0TmVINDBuWCtqYnRQWVhsN1RtZ0l3Y2hicU5zTnR1OUI1Y3QrT2Ez?=
- =?utf-8?B?L2txMTZpS3dZR0pwODQ5QkVENS93bGo2VVdvZ2NMbkVPSEZwamxpN21jM3VO?=
- =?utf-8?B?RjU4Y0tRWmhEd3FzTzkxeW5PN2FrWEViY0RRVTd2cU4ra1lyeDRsM1V5ck1O?=
- =?utf-8?B?Tk81NkQvK2J4dHFpTFhVWmNBWmJjVXJHVDQrVGdKQmF1U2ltczlFakMvS0hw?=
- =?utf-8?B?cXlPNFBrd1JzcG9zcGt6ckRUb05TRmpKNk5sZXZGdHYzSGhnNXNyNm9xeXZ2?=
- =?utf-8?B?M1hQUWhEY01BbWZnMXJOV2Q1eWRhWUpYNzcyMVE4dndSeEg4cHM4dDdjY0lI?=
- =?utf-8?B?N3FvaTk5em1Kc1NLYTdNWWVyalNBY2lEM1l3SlVIeW9lVHg5WVhLcHM4TzBx?=
- =?utf-8?B?Mnh2eWVZOFZTMmpQbFdZUllieWVUMFRWZDNML1pWN1duS1FNcTM4N3ZsL0hi?=
- =?utf-8?B?dEpYd28wc0U2SDNHenE0a2NKU0ZwWHpSS1VEV0VwQkEzWEhPNGxQbUZnMDNQ?=
- =?utf-8?B?eUhWZVVsaSsrN2h3VkF0R1hPdm8vQkM1MktXTndnQlRGd0l5Si9mOEdIMm5r?=
- =?utf-8?B?Qlc0cG5xaG5xMFZFRFcvNUU5VGpoOVhDa3M5RksvdHU2c1YrN05QdG1mUVpw?=
- =?utf-8?B?YU5HQW1UeUpYMUV6NDMwbGlJdEYxbHBxZFdEUjVvV0FDb2RHUStCbkNzclk4?=
- =?utf-8?B?T0FwY2M1N2JNemxxcWRQNm9qTjhlSmYxWE5vaXhvQlFqYmlGNkk1a3hLdVVq?=
- =?utf-8?B?MkEwQUk4VHk5WTVwdjdwTlpjVFVyeWgxWlJSV0tvZzl4UkNvSlA0NHVmM2Z0?=
- =?utf-8?B?UStZcVhYV055YURTTjUveWRwakpvTmFKTUUyQXRMa25EWkQ2Vko1MXVNQ1FC?=
- =?utf-8?B?aTZ6YUdyeHQ2RFdXTThOR3pBRDc1ZFB1OTBqTEI5TWQ2MFlXL29OQmpDa2Zj?=
- =?utf-8?B?VlVIb0kyTUdZa0ZLNGM2RE5WdlIzRUNMWjR4Z2xWWnVNM0tuTFhKYUNZblZx?=
- =?utf-8?B?alNtNlNmZmxhSXRUUlcxQmlPZTM0aXNPS1pUUE1kNkxPMi84VkpNZmgwdm5B?=
- =?utf-8?B?dXRrUUtnMDBBT0JUUmNkV0R5SmRlcXJJMzAydkNzMU1OV3hmeWNoYjhOT0R0?=
- =?utf-8?B?dExIMnNlUzdWWWhwNTFFVXhWekx6QnJlMjBrcExseGhnOWFoNXJWeThlTXRx?=
- =?utf-8?B?K3BwTDhEVURwcTM2bSs2RnR0bkoyS2c0Z21CNW9KQnhjWDJCaUxURW1CVHJY?=
- =?utf-8?B?ZEtpU1BOUTc4L1V4NmVQd3VZVUkzd25na1k2K0RFbWMrdmJMd2ovbE90aTFq?=
- =?utf-8?Q?CSCoe9JCDdBXI7rhHzlgW+ArT?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 411a82d1-3b50-4e9d-b06c-08dcbb726a01
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4123.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 08:32:06.2520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ce3fL6QsKrjjjiWzbkJPjOPszI+zXVgYMzCSOwJhLa2eftJKelovNBcvvmXmuzLw8fbH6R5JhPi6LV/NA6mqVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6126
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 13/08/24 13:45, Markus Elfring wrote:
-> …
->> before triggering SHA dma. This ensures that IRAM size will programmed
->> correctly before initiaing SHA dma.
-> Please improve such a change description with an imperative wording.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.11-rc2#n94
->
-> Please avoid typos accordingly.
-Will rephrase the commit message.
->
-> Regards,
-> Markus
+Am Dienstag, 13. August 2024, 06:35:02 CEST schrieb Frank Li:
+> Move fixed clock "clock-sc16is7x" from dspi to root node to fix below
+> warning:
+> arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dtb:
+>     serial@0: Unevaluated properties are not allowed ('clock-sc16is7xx' w=
+as unexpected)
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+
+Acked-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts b/arch/ar=
+m64/boot/dts/freescale/fsl-ls1012a-frdm.dts
+> index 2517528f684fe..75081ce3e9a6f 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
+> @@ -20,6 +20,12 @@ sys_mclk: clock-mclk {
+>  		clock-frequency =3D <25000000>;
+>  	};
+> =20
+> +	sc16is7xx_clk: clock-sc16is7xx {
+> +		compatible =3D "fixed-clock";
+> +		#clock-cells =3D <0>;
+> +		clock-frequency =3D <24000000>;
+> +	};
+> +
+>  	reg_1p8v: regulator-1p8v {
+>  		compatible =3D "regulator-fixed";
+>  		regulator-name =3D "1P8V";
+> @@ -69,12 +75,6 @@ serial@0 {
+>  		clocks =3D <&sc16is7xx_clk>;
+>  		interrupt-parent =3D <&gpio1>;
+>  		interrupts =3D <13 IRQ_TYPE_EDGE_FALLING>;
+> -
+> -		sc16is7xx_clk: clock-sc16is7xx {
+> -			compatible =3D "fixed-clock";
+> -			#clock-cells =3D <0>;
+> -			clock-frequency =3D <24000000>;
+> -		};
+>  	};
+>  };
+> =20
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
