@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-284432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7E29500EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:10:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1DD9500E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:09:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBCD9B23955
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA141F21868
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8221F186E30;
-	Tue, 13 Aug 2024 09:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09FD17D8A6;
+	Tue, 13 Aug 2024 09:09:41 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188C917B427
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D31417B43F
 	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540181; cv=none; b=ZDMyb4/9xjGQJjQWhb5gpTgjMRo4/KCyo0Q11SnBMvlslQC0Dkgo871lwsRFgI/bx+srzSKZU958W4RsJ+e5IcPYeupKo98Dbl4Bf1esxSZWFyb+ZZz36IQMQ6iV2kg2t+vIUSYk2Ud86reVv1VcWrcHNITtIzZ0cLi6+AxdPKs=
+	t=1723540181; cv=none; b=txMnmYog+XKJ7/cBUxKeWXHwiTpn9eM5/4TaZ2XtEFtKeeBMURUSe184wrIb9JibyRmPNBWrVyinEOSt97LZ57BsCPkT5ZYqTR/++g1lAFwoqiql1V/gQXhInjUFSh9KEy8sRji0PVI6PAntOqlepy0qoxrC5czZpK1gPmhcYsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723540181; c=relaxed/simple;
-	bh=tOZZtUbdjZ9wahn0ThvKA3Yg/KRlMGeB9xgFv0kzY3E=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=X0dKCBykR+JDvXPU1ixFSt0Rhwvc24zzWJSeyoXZl93DtwJSFJwy4U7PZY3FI5SuPn3rDrw1d0keirBarBNzLIV2qKSCWlQ733UlplOJrf3hUirT6ZDaLKsFB43nigN4mnjseke4Jl86/euYUSrWjIf/ModeYjvIWETlKlfB8bs=
+	bh=V2Yg1K6uq3EvyDknOFm++29HuHf8ClJtAHIq6pWIOJk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=SalbLi9dikcCXCGKQO4o5+GDgwL/1P+XbW19yAjel4gb279MVPwFBSZ5Y+NOzZ52u/sC9aJgNztQbYi4LVqOBvppEJpRQz8WsN1ojWzi8b0cjc7ECq+chnHbAq0ipzSgup7jR+co/KsfHINLgeKKdYUsG3Rfd8CqfwrnMtFX6t0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -31,22 +32,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sdnX4-0002CH-SE; Tue, 13 Aug 2024 11:09:34 +0200
+	id 1sdnX4-0002CI-SF; Tue, 13 Aug 2024 11:09:34 +0200
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sdnX4-0005oe-55; Tue, 13 Aug 2024 11:09:34 +0200
+	id 1sdnX4-0005of-6f; Tue, 13 Aug 2024 11:09:34 +0200
 Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
 	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sdnX4-00G1eS-0F;
+	id 1sdnX4-00G1eS-0G;
 	Tue, 13 Aug 2024 11:09:34 +0200
 From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Subject: [PATCH v4 00/10] usb: gadget: uvc: effectively fill the udc isoc
- pipeline with available video buffers
-Date: Tue, 13 Aug 2024 11:09:24 +0200
-Message-Id: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
+Date: Tue, 13 Aug 2024 11:09:25 +0200
+Subject: [PATCH v4 01/10] usb: gadget: uvc: always set interrupt on zero
+ length requests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,11 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMQiu2YC/5XOQW7DIBAF0KtErEOFGWrsrnqPKrKwGWIkC7uAU
- SLLd88423aRLP/X6P3ZWMLoMbGv08YiFp/8HCio84kNowlX5N5SZlJIJZQAvpahi/i7YsrdhOG
- ax66/dz5kjMVM3Gh09rPRtq2BEdKbhLyPJgwjMWGdJiqXiM7fnqs/F8qjT3mO9+cTpTral/dKx
- QVvFdSD0lUtAb4XOlpznIO/fVhkh1/ke6Yks5J1K5w2Ep3714T3TCBTWaMFgLWqaf6Y+74/AKw
- Z42WOAQAA
+Message-Id: <20240403-uvc_request_length_by_interval-v4-1-ca22f334226e@pengutronix.de>
+References: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
+In-Reply-To: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
  Daniel Scally <dan.scally@ideasonboard.com>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -67,21 +65,21 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Michael Grzeschik <m.grzeschik@pengutronix.de>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2895;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=992;
  i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=tOZZtUbdjZ9wahn0ThvKA3Yg/KRlMGeB9xgFv0kzY3E=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmuyLGt2SIgd0Fztaj+W5aoviwk16bEplonOJeB
- 2DkMUderYyJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZrsixgAKCRC/aVhE+XH0
- q8UfEAC4w2FsenyUMKAkozlJPywepfP2U0saM8sqX3JNSgCwRPFDoLmHMN8Dh/C266+e2ZtIeZf
- ubf0xBTrX0cnH1AFLwFw9bzsBKxWaylWgtfeTxwd1ovJEJlO7LLNhL6dxcAcqhFo3lA2exNX/Xg
- 7471j4GdHfu6HEuXmLHgmV3/Jqb/JVnvTnVuZPJYvmp+mRadLwdXcsnpTu3AClyukoABJfR40Nz
- 4Np2NxCJPEEKAtah2nANT/pzCp5SvrMoC+9l0YSjei4BCxvm1eek2TNaNtgr31/P7hSYkHKjHtx
- lZvHRq8m8YrZJlqUKKoT2etvJP87uiI7czNmrY/lUEiplYsvJ39/pzgItuHzJElw0YxCRqDT66/
- xAUxin1jrPIm/du3WufNMqEVhW7xf4X+0p5HF/NO0zXoErZ4O24O9H405mzwCUUQmqdFdYfGC80
- Czsx89iHNiWdQKn66ycmSxSr0DlA1GNy1GPyWpzQsNxv8W2S43SVWeUFw4kbdOVVfCr1meJLkJX
- 2FQs1H7j+rSYxdMfJ6ErR0l8HPJuVzqHgZXs/VJNSs8cOLlGJy9SK5UZ07iyxOQ+tWbIZvkOEbx
- reXAHWz89DCikiHJelPlYmQyz3HRRwqtisBmQc8RMHobLCSe6WnbH8065T+m29PJDheTIQopeYp
- P8Cs9yWBWsJUSIw==
+ bh=V2Yg1K6uq3EvyDknOFm++29HuHf8ClJtAHIq6pWIOJk=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmuyLKSSExtNbuUUMoqae99KcjxOhVaaLhCebWv
+ t+FBaNFbiyJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZrsiygAKCRC/aVhE+XH0
+ qx/XD/9YiB/CgVkhOBRfztk6YsPjovjZRSCipVTgxN2AYls+g+SuaJBYLtP1uR2vnTW4TQEXzBw
+ blEFgzkhe3ui8RKd7l6gYFEq1tX8/nMFpsXED2DYYZw/la6S0aBrmWg+w/HngVasDt07yAJ3JVR
+ QHo62S2qHqlKNwhUkxNHzsRBqJkf6j7FZcjkjc8gPfpc/Q7Gqu9XuTUGS4JKhF6ECbVlk1n0EPa
+ DejCc6BjcXwzovAHIVlZAny2pLe/r3WQBy/vLkP1gDL2PrNhUz/4Agv6U5GxOdKsWu4kj8/wSI2
+ 8qXtQrWVMeZZJhgCbZarw+iOmW0ZzEv3ePfSy4rcHkHo1f39zy3arjx56Hk9ekakDKgDUpe2lXL
+ +JYeoUgJLI1Asf7YX1e5g8dwyphYsjmWzpXzconqtobusUFk74uk0G2kua0euGkOg6eVqJfWaM7
+ hqb1reEB6cgZBNLS7pBADFtEM7r9jlUGLPYdb2S35iqTfoq9A5+nSEyWwZ4Gq4iaVJb1Aite9St
+ Hba5dhxWylRUusKReg02KuzJyt6IRpH5JNQY/xXcSkKNxopUxcuGhgaQ3mNzOFMZV1goOip2H2A
+ 9Jz1eHeArdjC90mRJV+tpCx/ENPe+PLBWjmhP0cETpMAGaRY84ephRNaSnV7PvMN+n+uJcN2FVZ
+ 1OziOdTDRGG4pWw==
 X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
  fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -89,66 +87,34 @@ X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This patch series is improving the size calculation and allocation of
-the uvc requests. Using the selected frame duration of the stream it is
-possible to calculate the number of requests based on the interval
-length.
-
-It also precalculates the request length based on the actual per frame
-size for compressed formats.
-
-For this calculations to work it was needed to rework the request
-queueing by moving the encoding to one extra thread (in this case we
-chose the qbuf) context.
-
-Next it was needed to move the actual request enqueueing to one extra
-thread which is kept busy to fill the isoc queue in the udc.
-
-As a final step the series is increasing the minimum amount of
-v4l2 buffers to 4 and allocates at least the amount of usb_requests
-to store them in the usb gadgte isoc pipeline.
+Since the uvc gadget is depending on the completion handler to
+properly enqueue new data, we have to ensure that the requeue mechanism
+is always working. To be safe we always create an interrupt
+on zero length requests.
 
 Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
----
-Changes in v4:
-- fixed exit path in uvc_enqueue_buffer on loop break
-- Link to v3: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v3-0-4da7033dd488@pengutronix.de
-
-Changes in v3:
-- Added more patches necessary to properly rework the request queueing
-- Link to v2: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v2-0-12690f7a2eff@pengutronix.de
-
-Changes in v2:
-- added header size into calculation of request size
-- Link to v1: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v1-0-9436c4716233@pengutronix.de
 
 ---
-Michael Grzeschik (10):
-      usb: gadget: uvc: always set interrupt on zero length requests
-      usb: gadget: uvc: only enqueue zero length requests in potential underrun
-      usb: gadget: uvc: remove pump worker and enqueue all buffers per frame in qbuf
-      usb: gadget: uvc: rework to enqueue in pump worker from encoded queue
-      usb: gadget: uvc: remove uvc_video_ep_queue_initial_requests
-      usb: gadget: uvc: set req_size once when the vb2 queue is calculated
-      usb: gadget: uvc: add g_parm and s_parm for frame interval
-      usb: gadget: uvc: set req_size and n_requests based on the frame interval
-      usb: gadget: uvc: set req_length based on payload by nreqs instead of req_size
-      usb: gadget: uvc: add min g_ctrl vidioc and set min buffs to 4
-
- drivers/usb/gadget/function/f_uvc.c     |   3 +-
- drivers/usb/gadget/function/uvc.h       |  14 +-
- drivers/usb/gadget/function/uvc_queue.c |  52 +++++--
- drivers/usb/gadget/function/uvc_queue.h |   1 +
- drivers/usb/gadget/function/uvc_v4l2.c  |  67 ++++++++-
- drivers/usb/gadget/function/uvc_video.c | 243 +++++++++++++-------------------
- drivers/usb/gadget/function/uvc_video.h |   1 +
- 7 files changed, 221 insertions(+), 160 deletions(-)
+v3 -> v4: -
+v1 -> v3: new patch
 ---
-base-commit: 38343be0bf9a7d7ef0d160da5f2db887a0e29b62
-change-id: 20240403-uvc_request_length_by_interval-a7efd587d963
+ drivers/usb/gadget/function/uvc_video.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
+diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
+index d41f5f31dadd5..03bff39cd4902 100644
+--- a/drivers/usb/gadget/function/uvc_video.c
++++ b/drivers/usb/gadget/function/uvc_video.c
+@@ -303,6 +303,7 @@ static int uvcg_video_usb_req_queue(struct uvc_video *video,
+ 		 *   between latency and interrupt load.
+ 		 */
+ 		if (list_empty(&video->req_free) || ureq->last_buf ||
++				!req->length ||
+ 			!(video->req_int_count %
+ 			DIV_ROUND_UP(video->uvc_num_requests, 4))) {
+ 			video->req_int_count = 0;
+
 -- 
-Michael Grzeschik <m.grzeschik@pengutronix.de>
+2.39.2
 
 
