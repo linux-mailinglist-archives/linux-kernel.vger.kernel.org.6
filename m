@@ -1,219 +1,182 @@
-Return-Path: <linux-kernel+bounces-285165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF81950A07
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:21:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2550A950A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3242A1C2040D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:21:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80D2CB2582E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD501A0AF7;
-	Tue, 13 Aug 2024 16:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29E21A0B0D;
+	Tue, 13 Aug 2024 16:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mh1M55+i";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tqRyrMnt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qaGNkQR8"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D25561FCF
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F581A08DC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723566081; cv=none; b=jb/7nHCSTRRd6zfAoeN/lvQbd5t/8e3Kh28eQqNBiObJyNth5FHATKioOlvuMaAOqr4dnmdMfoIdgmpfQ6RFxAdylYVBu4463RY4ZWE7I69IL0YatW+NNGu1GOGOTg7Ekxvn/pIMqYphcY6Tvg5fOqmfFDP9YJjzZC7AMS9gqng=
+	t=1723566101; cv=none; b=iRzg3/ECaTimUKuQk39Kl1vu6nE7ENOvQ6U9DQyTqD719yRTRqDIIivXhAnaM0Kp/VuT22YRY41PVpWR7HyldI0VtUtPK1GCAQmLlEMu2C1Mtix11/yU/iJ4i58e6xfurl9SjJJ4Ev3sLfY9gA11USNauqNYHAp4QnZhCSYOa44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723566081; c=relaxed/simple;
-	bh=ec2Y88GKcqBElDXZQ6VXSShsweGwMpQ7ZAAIeymdwO4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F3vTy2n3AQGgRKixuzg4rvxZ9y9M/+S07Cy8mmPdq0IJ2r79oG4JJ4ajtv0iiDKBs3IT8VMh1AFATUeGp8idn7Gw1iFQnSyLhhZ+NrEl6RWtHMgUU6C9B75hGUaE1TO57kJT3wiIhpVAYQm4vOAa4wZ6/b07jOmb3/fIRzcJZ7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mh1M55+i; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tqRyrMnt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723566077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HAKPHQsZux3wxh3xmm9uAGYbZH+n0Hgy3pKz2mw64e8=;
-	b=Mh1M55+iPTITmaz0wpIGxowXK8eNbjXOy/FeL6nSbilYCTBL79iHv5fitogHZ19EycP1Nh
-	Wb97+9vDO/bBHwqLd4izptTTXnx47hAfsXHp+Df4OgC9MoO22kqnYI43mkcg4MnUJOREkm
-	A9Nm5/3XNYja5HXx+lVxvZ7o6dmBsZSRABvwxz1MjU1niaU9hzil8ETw6QVpTFg+xTdFMH
-	5uFGiJGhYAxDdw36suwo8RIMC+flOl9SSbHfgBH/zCdc1DGxSHFS6TrYdYhWpCnGTu4RNX
-	4VTrPmk22P358fkhIByixsnUVcDbAUbZ9RZ+SpBccOsP5iih30GyHkPy1IbLGQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723566077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HAKPHQsZux3wxh3xmm9uAGYbZH+n0Hgy3pKz2mw64e8=;
-	b=tqRyrMntA5wH1A86GziXKM1W3AY6SIzu+8ps+KhvIFX/xVcRaaZ8DD4xtE3ji+32KDJSeE
-	i0yQCzJL9ESY1PAA==
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Florian Rommel <mail@florommel.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Jason Wessel
- <jason.wessel@windriver.com>, Douglas Anderson <dianders@chromium.org>,
- Lorena Kretzschmar <qy15sije@cip.cs.fau.de>, Stefan Saecherl
- <stefan.saecherl@fau.de>, Peter Zijlstra <peterz@infradead.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Randy Dunlap
- <rdunlap@infradead.org>, Masami Hiramatsu <mhiramat@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Geert Uytterhoeven
- <geert+renesas@glider.be>, kgdb-bugreport@lists.sourceforge.net,
- x86@kernel.org, linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v2 2/2] x86/kgdb: fix hang on failed breakpoint removal
-In-Reply-To: <20240813113147.GA6016@aspen.lan>
-References: <20240812174338.363838-1-mail@florommel.de>
- <20240812174338.363838-3-mail@florommel.de> <871q2tsbaq.ffs@tglx>
- <20240813113147.GA6016@aspen.lan>
-Date: Tue, 13 Aug 2024 18:21:16 +0200
-Message-ID: <87wmkkpf5v.ffs@tglx>
+	s=arc-20240116; t=1723566101; c=relaxed/simple;
+	bh=sUriLCwYNvXVr15cYyQ/1Qh0mIx8qLbZAMNS2KzTe4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1HcCa8WpfL7Ww2Y1Nqfs67pJirOe4Ev2gevo9JdtZJVFsJbxlyilj/Yiyu8hq4UrtlDCMvntgKgT4dtp2+Biw5LVqWBOayzsqskVr3TGNybG3rW8q89BfL7yZrxsle/sf1pHRYhAgBrCET6rnIwYllhglFmGwx+19rNNoKjdd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qaGNkQR8; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-429c4a4c6a8so29856945e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:21:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723566098; x=1724170898; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=VgfBYxGiGh6y5pI52oZra6uY30VKualFdRhfSNu8SZU=;
+        b=qaGNkQR8f5vxfsXIYXYI4ApCCj2B4ZoMDoxh/wh7FKFDoI4qTYgGpiiAgWCQSxFt5q
+         G5nuYoCd0FINA3C3MKqdGUwqP7PIlGbi7adEJPDEF3Xg0OYHAkbw1oFLgtcj9gHOIqla
+         MdNwPoP4C7zJij/TJi9vziW3rfuoyOLwHf66AV/Dwk4eFvcxs3HC0YNZikSwwKNhiNcP
+         z48fBRBKY1S9IEijDUkNi1mMiJWHyz+4jojbRWi7gHedgvz13skQvcBCbRB2usVWYX3D
+         IPEulTX8Jlc9g1Z9uoE9JRxi+7M2wZAJIegGlv1R/L/Aqf/Gr6k6CgLwWwIFdcIMRHFd
+         aM4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723566098; x=1724170898;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VgfBYxGiGh6y5pI52oZra6uY30VKualFdRhfSNu8SZU=;
+        b=XBRK7/xsbYt/ysn8AcYIvyEIDjS4gBgUCp1IgZS6Dz8DjLgZEaEGg6SsabPKqlc0CX
+         qe+qloejsLP9nKlj78IKiovvGSpR/TrMB0nxfqJbWgowxW1nNwl2YncRf2n45JW7AdA7
+         aSGWGDxDXHAoRlWGaD+wfCEt2b8wlEOSOv1JYxOqGrAS3AE8TFrHT+WeC5MijgYOOBbm
+         lPwwqKyFOocjlrVMtdlDevlxjhIfGlD7Ft5sOa1xl0kN//f0jMB7qtuo8t5DeQZFqD2V
+         FzWtJQm1BHRZy2W1gRLkRa1H09d1wbcwhRyAdkLXf5S/QE4gVmLuYDUjFgAsYVipc6qF
+         MIeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz/DSplP5krcy5J7VEcEcobDSqrstek6Xgi/d275Y0veNIs/QzfEu+PohUt9CTtWnRwOfrtzoOGKPRRv8w3vT0BSxMa+oBP9SPrVKX
+X-Gm-Message-State: AOJu0Yw7n7XH77LcjQDR/U33EqOnWUWp0GPE2R4cO7rrVDcg1K9F+5Da
+	xBRgLYkRZ8eZbj2eW0ZabHa+wKS65fVF6Z9BB5vWXtq9NX0iR2A1/rzFbZupLWqf+sP0PZqCVaY
+	1
+X-Google-Smtp-Source: AGHT+IFWrFbw9oo2MSFYuiiamzVVOspnNkuxXoK8L2AFiAv9RMDrxjdgT7zw4E5PpuJsr/CBTtorJw==
+X-Received: by 2002:a05:600c:a44:b0:426:6d1a:d497 with SMTP id 5b1f17b1804b1-429dd2384c7mr340285e9.12.1723566097507;
+        Tue, 13 Aug 2024 09:21:37 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c77372dbsm143532695e9.38.2024.08.13.09.21.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 09:21:31 -0700 (PDT)
+Message-ID: <cff4a562-2ed7-4dbc-9e2f-68ff1a601ef3@linaro.org>
+Date: Tue, 13 Aug 2024 18:21:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] dt-bindings: hwmon: Add maxim max31790
+To: Conor Dooley <conor@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: Chanh Nguyen <chanh@os.amperecomputing.com>,
+ Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Justin Ledford
+ <justinledford@google.com>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>,
+ Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>
+References: <20240813084152.25002-1-chanh@os.amperecomputing.com>
+ <20240813084152.25002-2-chanh@os.amperecomputing.com>
+ <20240813-sister-hamburger-586eff8b45fc@spud>
+ <10680d13-442d-4f12-a77c-2bd05f11dc10@roeck-us.net>
+ <20240813-extruding-unfunded-0e14a5c161e1@spud>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240813-extruding-unfunded-0e14a5c161e1@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Daniel!
+On 13/08/2024 18:16, Conor Dooley wrote:
+>>>> +examples:
+>>>> +  - |
+>>>> +    i2c {
+>>>> +      #address-cells = <1>;
+>>>> +      #size-cells = <0>;
+>>>> +
+>>>> +      fan-controller@21 {
+>>>> +        compatible = "maxim,max31790";
+>>>> +        reg = <0x21>;
+>>>> +        clocks = <&sys_clk>;
+>>>> +        resets = <&reset 0>;
+>>>> +      };
+>>>> +    };
+>>>
+>>> What does this example demonstrate? The one below seems useful, this one
+>>> I don't quite understand - what's the point of a fan controller with no
+>>> fans connected to it? What am I missing?
+>>>
+>>
+>> Just guessing, but maybe this is supposed to reflect a system which only monitors fan
+>> speeds but does not implement fan control.
+> 
+> Even without any control, I would expect to see fan-# child nodes, just
+> no pwms property in them. Without the child nodes, how does software
+> determine which fan is being monitored by which channel?
 
-On Tue, Aug 13 2024 at 12:31, Daniel Thompson wrote:
-> On Mon, Aug 12, 2024 at 11:04:13PM +0200, Thomas Gleixner wrote:
->> Btw, kgdb_skipexception() is a gross nisnomer because it rewinds the
->> instruction pointer to the exception address and does not skip anything,
->> but that's an orthogonal issue though it could be cleaned up along the
->> way...
->
-> kgdb_skipexception() is not a directive from debug core to architecture.
-> It is a question to the archictecture: should the debug core skip normal
-> debug exception handling and resume immediately?.
+Yeah, to me this example is confusing. If device's purpose is to also
+monitor, then hardware description in "description:" field should be a
+bit extended.
 
-Ah. This code is so exceptionally intuitive ....
+Best regards,
+Krzysztof
 
-> It allows an architecture to direct the debug core to ignore a spurious
-> trap that, according to the comments, can occur on some
-> (micro)architectures when we have already restored the original
-> not-a-breakpoint instruction.
-
-Potentially due to the lack of sync_core() after the copy.
-
-And of course the removal can fail as Florian discussed.
-
-> Florian's patch changes things so that we will also skip debug exception
-> handling if we can successfully poke to the text section. I don't think
-> it is sufficient on its own since the text_mutex could be owned by the
-> core that is stuck trapping on the int3 that we can't remove.
-
-I was asking exactly that:
-
->  What guarantees the release of text mutex?
-
-:)
-
->> Aside of that the same problem exists on PowerPC.  So you can move the
->> attempt to remove the breakpoint into the generic code, no?
->
-> Getting the debug core to track breakpoints that are stuck on would be a
-> good improvement.
->
-> We would be able to use that logic to retry the removal of stuck
-> breakpoint once other SMP cores are running again. That would be great
-> for architectures like arm64 that use spin-with-irqsave locking in their
-> noinstr text_poke() machinery.
->
-> However it won't solve the problem for x86 since it uses mutex locking.
->
-> A partial solution might be to get kgdb_arch_remove_breakpoint() to
-> disregard the text_mutex completely if kdb_continue_catastrophic is set
-> (and adding stuck breakpoints to the reasons to inhibit a continue).
-
-The interrupted owner of text_mutex might be in the middle of modifying
-the poking_mm page tables or in the worst case modifying the code which
-kgdb wants to play with.
-
-Dragons are guaranteed.
-
-> This is a partial solution in the sense that it is not safe: we will
-> simply tell the kernel dev driving the debugger that they are
-> responsible for the safety of the continue and then disable the safety
-> rails.
->
-> I haven't yet come up with a full fix that doesn't require
-> text_poke_kgdb() to not require text_mutex to be free. I did note that
-> comment in __text_poke() that says calling get_locked_pte() "is not
-> really needed, but this allows to avoid open-coding" but I got a bit lost
-> trying to figure out other locks and nesting concerns.
-
-So there are no other locks involved. The PTE lock is not strictly
-required because the access to poking_mm is fully serialized.
-
-You'd need to add a separate kgdb_poking_mm and kgdb_poking_addr. Now
-make __text_poke() take a @mm and @pokeaddr argument and let it operate
-on them. But that solves only part of the problem:
-
-   1) A concurrent modification of the same code will result in
-      undefined behaviour. Not sure whether that's actually an issue,
-      but I would not bet on it.
-
-   2) switch_mm() and the related code are not reentrancy safe either
-
-   3) TLB flushing. That can't use tlb_flush_mm_range() simply because
-      that's not reentrant.
-
-Which makes me wonder about #2. As this stuff can run in NMI context,
-then even if text_mutex is uncontended, then tlb_flush_mm_range() might
-be what had been interrupted, so reentrancy would be fatal. 
-
-That's all a horrorshow as you can't play with CR0.WP either at least
-not when CR4.CET is set.
-
-So if you can force disable CET when KGDB is enabled, then you might get
-away with:
-
-     bp->code = *p;
-     clear_cr0_wp();
-     *p = int3;
-     set_cr0_wp();
-
-Though the hardening people might not be really happy about this.
-
-But let's take a step back. Installing a breakpoint is done by the
-debugger. The debugger knows the original code, right?
-
-So why cant the debugger provide a trampoline:
-
-   ORIG_OP		// with fixed up displacements
-   JMP NEXT_INSN
-
-Now you stick that into a trampoline page slot and then patch the INT3
-in. Now on removal can be a two stage approach:
-
-    bp->state = INACTIVE;
-    kick_breakpoint_gc();
-
-breakpoint_gc() removes the breakpoint and invalidates the trampoline
-from a safe context and up to that point kgdb_skipexception() can do:
-
-bool kgdb_skip_exception(int exception, struct pt_regs *regs)
-{
-	  struct kgdb_bkpt *bp;
-
-	  if (exception != 3)
-		  return false;
-
-	  bp = kgdb_get_inactive_breakpoint(--regs->ip, BP_BREAKPOINT);
-	  if (bp)
-                    regs->ip = bp->trampoline;
-          return true;
-}
-
-Hmm?
-
-Thanks,
-
-        tglx
 
