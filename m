@@ -1,314 +1,325 @@
-Return-Path: <linux-kernel+bounces-284805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DCE950555
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:43:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481DD950526
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 963F31C2437D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:43:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC50EB29444
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ED219FA89;
-	Tue, 13 Aug 2024 12:39:33 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669DB1993A7;
+	Tue, 13 Aug 2024 12:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wMWeaEa6"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F5F199E9B;
-	Tue, 13 Aug 2024 12:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADD1607B9
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552772; cv=none; b=CgkVuZfNOCwhg4YBwsNwq8NdtqJAqhsDlz3tgJAdoXBC6HnzIHKgrTSMjdrWrdEPj5voL6WQqDDfWZqvVocwnHeY15x/WvRIXHIuTWcYvOrD1+6FTJ0VTwuxP03BCh7XEEXR4YiA6dAh0RTwRwqecXD2HcWVccRykqVo7mn4AV0=
+	t=1723552521; cv=none; b=mWJb67VYzOnnwOg1fn9SQwFnGBeMHcQeEOIZDmiCgVIMt719bz24C2iOoTXUJUqqZ5SmPiHQVJVoIQs26iaUwtkQgjcABolTnxlpoXVIHIuS5o8Q9O2XyqraOQQK8XDnHxQKdisRArusCEK23skc9goUO2mEx9oFS9OYp4FQBQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723552772; c=relaxed/simple;
-	bh=myNAaYvncLUJOSa4A+wCCsT7D2xZ2t6PEeXjJg2Opmo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y4M6y6ZQIwiMRlWzEW0OUH1j8EorxUXQs34S+2PQXQ6OHb4TDDvBBEEMp2b6WC6EPLgHba+LLETKbgItoVANWUJa2RhtusuLkQWqf50GRubeflj/+Q2tgupLZDzfh4WfwRhlc0qF3SjMIv26a60UrPuPA6FAMzsKeD+1YznVwHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjrYF06kdz4f3k6W;
-	Tue, 13 Aug 2024 20:39:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4D3081A07B6;
-	Tue, 13 Aug 2024 20:39:22 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBnj4XkU7tmejNSBg--.17625S16;
-	Tue, 13 Aug 2024 20:39:22 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v3 12/12] ext4: drop all delonly descriptions
-Date: Tue, 13 Aug 2024 20:34:52 +0800
-Message-Id: <20240813123452.2824659-13-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
-References: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1723552521; c=relaxed/simple;
+	bh=wmRroHD5OUg6Qf3agbFJLQGvx/qPAQPCOGwk3gK11LQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tA7VfnDqtSLkQOFfTz9QJ+OaPh43NQQKndy+9FjOHFa1pPgM1bZXMmk0j3ASi2+ML3pRaqgxnxnvDiYeSo+k3jqdTev7PX7waakKc7xDVry2SsojL0N55RNnfXgFmtiFWbRhyJtZ+5qqH7KecYk4ljdP1H37xD9BZ+4LaQNd7w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wMWeaEa6; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-368f92df172so2738415f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723552518; x=1724157318; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4XBmrpzh2TYDockOD1rtD5XC0eW7zgp6RoYkY7KL+LA=;
+        b=wMWeaEa69pxs+2IALh0dIEP6tWG5RxqEm6qwlAhaDNb53iulQBAuiMJyqbmC5voIpV
+         DXdY1ngFK8cLg9qhYdb4ehwjwGCi35My3WRmzhS9ZsNNPk2vT2T9hG7zlhbXNi5W9LBu
+         1GK5gdyATIbgy+JhIazmEa+EIMrFJ9VUIYKf211w/s8ipauFSUkZTbjK5W1bqb0NIIQU
+         YB3NkWTRyOafSkqfsJvnSq2mXbw69BURWy4P9AijWi85vPCxBsevq0nPhrBOwTlAl7Rz
+         qLTbQ1mPBeKncmliyKWMvMx2Q2MYNCq9bSEES1Ql0GPNoUkbDQfEBRBcCFcQxvGVACC8
+         e6Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723552518; x=1724157318;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4XBmrpzh2TYDockOD1rtD5XC0eW7zgp6RoYkY7KL+LA=;
+        b=oT+d+jerUJ85EK2QU0pOCUz0wbNbGayryW1jCFBWdHAksDDr3y0TE5izfFyA6TdkDT
+         QAQOX/SOPH2t5DRN+QGb9JByDEGoaWligPmwb7HDH3zdAECCjaT61KdxNqQyffwiQzYM
+         Dz3b2x0R8q9KLniKn2DPtENZUOLaIWXyWa3RiIT/WBJ78GllFrdanV30IkxaH7ibuTYT
+         Q562o2BQRgsndBV6ZyTrG2aGXGxFG5rYyogL/c5XvFTRiQD9XsoyEruig09Urpc7r/yz
+         tJzdhHG5GqywULXgGdBKD1NB0ZzXZudbc0Bz355q/twi10FlO8FOSUVfzI5lWvJV/oHe
+         jT/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWzNmElwYzsCOhfXgYqhQiIO0fXPhUPTk5O9GEWKJSOr3l2aTlfXXX+ZZ8TbCPyr5+p91ah6hdYIek2HLI5BkDzgb2Dd0TSmkQ+k+OS
+X-Gm-Message-State: AOJu0YyzF3w8KM9pl/6X94x6lDRPdWHsPUhN9/Z/gASd8SsLAi8/NodI
+	69y9LqlM2iXehRs7SjBh3TWsdj4WJHwebBNUAN5jfvPscOl8t5bllQeAn6/0Bvc=
+X-Google-Smtp-Source: AGHT+IGo9esmOx/2Y4zteN5Z+67pxwJRzYVdBv5A9mVSlWCUku9O9x2DwsN2IM6SYDDbLve9RXqLiA==
+X-Received: by 2002:adf:9b97:0:b0:362:4ce:2171 with SMTP id ffacd0b85a97d-3716cd25d65mr2050267f8f.52.1723552517534;
+        Tue, 13 Aug 2024 05:35:17 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfeef22sm10160372f8f.52.2024.08.13.05.35.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 05:35:17 -0700 (PDT)
+Message-ID: <69de592e-a3df-4fb3-ad0c-c8a44ae3efeb@linaro.org>
+Date: Tue, 13 Aug 2024 13:35:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnj4XkU7tmejNSBg--.17625S16
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFyDKFW3GrWrXr1kCFW8tFb_yoW3Ar4xpF
-	WYg3W5ta1DX3y09r4Svw48Zr1Sq34ktFWUt34fJa4Fyrn5tryFkFn2yry0vFy8GrWxA3Wj
-	qF1j9ryUua12gFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0JUQFxUUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/13] media: qcom: camss: Add sm8550 support
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240812144131.369378-1-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On 12/08/2024 15:41, Depeng Shao wrote:
+> v4:
+> - Update dt-bindings based on comments - Krzysztof, bod, Vladimir
+> - Move common code into csid core and vfe core driver - bod
+> - Remove *_relaxed in the csid and vfe drivers - Krzysztof
+> - Reorganize patches in logical junks, make sure that new added
+> structures have users in current patch - Krzysztof
+> - Remove notify function  and add new functions in camss for buf done
+> and reg update - bod
+> - Remove custom code to get csid base - bod
+> - Remove ISR function in vfe780 driver since it is never fired - bod
+> - Move csid_top_base to camss structure since we only have one csid
+> top block, and just need to get base once for csid top
+> - Add Vladimir's RB
+> - Remove prerequisite-patch-id in the cover letter since the changes
+> have been merged
+> - Add dtsi patch link for reference - Krzysztof
+> https://lore.kernel.org/all/20240807123333.2056518-1-quic_depengs@quicinc.com/
+> - Link to v3: https://lore.kernel.org/all/20240709160656.31146-1-quic_depengs@quicinc.com/
+> 
+> v3:
+> - Rebased the change based on below change which will be merged firstly.
+> "Move camss version related defs in to resources"
+> Link: https://lore.kernel.org/all/20240522154659.510-1-quic_grosikop@quicinc.com/
+> - Rebased the change based on Bryan's csiphy optimization change and add
+> these changes into this series, so that the new csiphy-3ph driver don't
+> need to add duplicate code. This has got Bryan's permission to add his
+> patches into this series.
+> - Refactor some changes based on the comments to move the random code to
+> patches where they are used.
+> - Remove the vfe780 irq function since it isn't doing the actual work.
+> - Add dt-binding for sm8550 camss driver.
+> Link to V2: https://lore.kernel.org/all/20240320141136.26827-1-quic_depengs@quicinc.com/
+> 
+> v2:
+> - Update some commit messages
+> Link to V1: https://lore.kernel.org/all/20240320134227.16587-1-quic_depengs@quicinc.com/
+> 
+> v1:
+> SM8550 is a Qualcomm flagship SoC. This series adds support to
+> bring up the CSIPHY, CSID, VFE/RDI interfaces in SM8550.
+> 
+> SM8550 provides
+> 
+> - 3 x VFE, 3 RDI per VFE
+> - 2 x VFE Lite, 4 RDI per VFE
+> - 3 x CSID
+> - 2 x CSID Lite
+> - 8 x CSI PHY
+> 
+> ---
 
-When counting reserved clusters, delayed type is always equal to delonly
-type now, hence drop all delonly descriptions in parameters and
-comments.
+@Depeng.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Can you please fix the following checkpatch splats.
+
+scripts/checkpatch.pl --strict *.patch
+
+total: 0 errors, 0 warnings, 0 checks, 20 lines checked
+
+0001-media-qcom-camss-csiphy-3ph-Fix-trivial-indentation-.patch has no 
+obvious style problems and is ready for submission.
+total: 0 errors, 0 warnings, 0 checks, 589 lines checked
+
+0002-media-qcom-camss-csiphy-3ph-Remove-redundant-PHY-ini.patch has no 
+obvious style problems and is ready for submission.
+total: 0 errors, 0 warnings, 0 checks, 40 lines checked
+
+0003-media-qcom-camss-csiphy-3ph-Rename-struct.patch has no obvious 
+style problems and is ready for submission.
+total: 0 errors, 0 warnings, 0 checks, 49 lines checked
+
+0004-media-qcom-camss-csiphy-Add-an-init-callback-to-CSI-.patch has no 
+obvious style problems and is ready for submission.
+total: 0 errors, 0 warnings, 0 checks, 82 lines checked
+
+0005-media-qcom-camss-csiphy-3ph-Move-CSIPHY-variables-to.patch has no 
+obvious style problems and is ready for submission.
+CHECK: Macro argument 'offset' may be better as '(offset)' to avoid 
+precedence issues
+#33: FILE: drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c:45:
++#define CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(offset, n)	(offset + 0x4 * (n))
+
+CHECK: Macro argument 'offset' may be better as '(offset)' to avoid 
+precedence issues
+#38: FILE: drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c:49:
++#define CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(offset, n)	((offset + 0xb0) + 
+0x4 * (n))
+
+total: 0 errors, 0 warnings, 2 checks, 157 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0006-media-qcom-camss-csiphy-3ph-Use-an-offset-variable-t.patch has 
+style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+#19:
+new file mode 100644
+
+total: 0 errors, 1 warnings, 0 checks, 517 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0007-dt-bindings-media-camss-Add-qcom-sm8550-camss-bindin.patch has 
+style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+CHECK: Alignment should match open parenthesis
+#255: FILE: drivers/media/platform/qcom/camss/camss-csid.c:616:
++	dev_info(csid->camss->dev, "CSID:%d HW Version = %u.%u.%u\n",
++		csid->id, hw_gen, hw_rev, hw_step);
+
+total: 0 errors, 0 warnings, 1 checks, 289 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0008-media-qcom-camss-csid-Move-common-code-into-csid-cor.patch has 
+style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+CHECK: braces {} should be used on all arms of this statement
+#677: FILE: drivers/media/platform/qcom/camss/camss-vfe.c:470:
++	if (output->buf[index]) {
+[...]
++	} else
+[...]
+
+CHECK: Unbalanced braces around else statement
+#682: FILE: drivers/media/platform/qcom/camss/camss-vfe.c:475:
++	} else
+
+CHECK: Alignment should match open parenthesis
+#775: FILE: drivers/media/platform/qcom/camss/camss-vfe.c:568:
++	if (output->state == VFE_OUTPUT_ON &&
++		output->gen2.active_num < 2) {
+
+total: 0 errors, 0 warnings, 3 checks, 885 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0009-media-qcom-camss-vfe-Move-common-code-into-vfe-core.patch has style 
+problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+total: 0 errors, 0 warnings, 0 checks, 67 lines checked
+
+0010-media-qcom-camss-Add-sm8550-compatible.patch has no obvious style 
+problems and is ready for submission.
+0010-media-qcom-camss-Add-sm8550-compatible.patch:6: drvier ==> driver
+total: 0 errors, 0 warnings, 0 checks, 253 lines checked
+
+0011-media-qcom-camss-csiphy-3ph-Add-Gen2-v2.1.2-two-phas.patch has no 
+obvious style problems and is ready for submission.
+WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+#42:
+new file mode 100644
+
+CHECK: Please use a blank line after function/struct/union/enum declarations
+#146: FILE: drivers/media/platform/qcom/camss/camss-csid-gen3.c:100:
++}
++#define REG_UPDATE_RDI			reg_update_rdi
+
+CHECK: Alignment should match open parenthesis
+#337: FILE: drivers/media/platform/qcom/camss/camss-csid-gen3.c:291:
++			writel(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
++						csid->base + CSID_BUF_DONE_IRQ_CLEAR);
+
+CHECK: Alignment should match open parenthesis
+#340: FILE: drivers/media/platform/qcom/camss/camss-csid-gen3.c:294:
++			writel(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
++						csid->base + CSID_BUF_DONE_IRQ_MASK);
+
+CHECK: Please don't use multiple blank lines
+#412: FILE: drivers/media/platform/qcom/camss/camss-csid-gen3.h:21:
++
++
+
+CHECK: Unnecessary parentheses around camss->vfe[hw_id]
+#643: FILE: drivers/media/platform/qcom/camss/camss.c:1854:
++		vfe = &(camss->vfe[hw_id]);
+
+total: 0 errors, 1 warnings, 5 checks, 607 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0012-media-qcom-camss-Add-CSID-Gen3-support-for-sm8550.patch has style 
+problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+#37:
+new file mode 100644
+
+CHECK: Alignment should match open parenthesis
+#219: FILE: drivers/media/platform/qcom/camss/camss-vfe.c:684:
++		time = wait_for_completion_timeout(&vfe->reset_complete,
++			msecs_to_jiffies(VFE_RESET_TIMEOUT_MS));
+
+CHECK: Unnecessary parentheses around camss->csid[hw_id]
+#415: FILE: drivers/media/platform/qcom/camss/camss.c:1973:
++		csid = &(camss->csid[hw_id]);
+
+total: 0 errors, 1 warnings, 2 checks, 388 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0013-media-qcom-camss-Add-support-for-VFE-hardware-versio.patch has 
+style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+
 ---
- fs/ext4/extents_status.c | 66 +++++++++++++++++++---------------------
- 1 file changed, 32 insertions(+), 34 deletions(-)
-
-diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
-index 68c47ecc01a5..c786691dabd3 100644
---- a/fs/ext4/extents_status.c
-+++ b/fs/ext4/extents_status.c
-@@ -1067,7 +1067,7 @@ int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
- }
- 
- struct rsvd_count {
--	int ndelonly;
-+	int ndelayed;
- 	bool first_do_lblk_found;
- 	ext4_lblk_t first_do_lblk;
- 	ext4_lblk_t last_do_lblk;
-@@ -1093,10 +1093,10 @@ static void init_rsvd(struct inode *inode, ext4_lblk_t lblk,
- 	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
- 	struct rb_node *node;
- 
--	rc->ndelonly = 0;
-+	rc->ndelayed = 0;
- 
- 	/*
--	 * for bigalloc, note the first delonly block in the range has not
-+	 * for bigalloc, note the first delayed block in the range has not
- 	 * been found, record the extent containing the block to the left of
- 	 * the region to be removed, if any, and note that there's no partial
- 	 * cluster to track
-@@ -1116,9 +1116,8 @@ static void init_rsvd(struct inode *inode, ext4_lblk_t lblk,
- }
- 
- /*
-- * count_rsvd - count the clusters containing delayed and not unwritten
-- *		(delonly) blocks in a range within an extent and add to
-- *	        the running tally in rsvd_count
-+ * count_rsvd - count the clusters containing delayed blocks in a range
-+ *	        within an extent and add to the running tally in rsvd_count
-  *
-  * @inode - file containing extent
-  * @lblk - first block in range
-@@ -1141,7 +1140,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
- 	WARN_ON(len <= 0);
- 
- 	if (sbi->s_cluster_ratio == 1) {
--		rc->ndelonly += (int) len;
-+		rc->ndelayed += (int) len;
- 		return;
- 	}
- 
-@@ -1151,7 +1150,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
- 	end = lblk + (ext4_lblk_t) len - 1;
- 	end = (end > ext4_es_end(es)) ? ext4_es_end(es) : end;
- 
--	/* record the first block of the first delonly extent seen */
-+	/* record the first block of the first delayed extent seen */
- 	if (!rc->first_do_lblk_found) {
- 		rc->first_do_lblk = i;
- 		rc->first_do_lblk_found = true;
-@@ -1165,7 +1164,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
- 	 * doesn't start with it, count it and stop tracking
- 	 */
- 	if (rc->partial && (rc->lclu != EXT4_B2C(sbi, i))) {
--		rc->ndelonly++;
-+		rc->ndelayed++;
- 		rc->partial = false;
- 	}
- 
-@@ -1175,7 +1174,7 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
- 	 */
- 	if (EXT4_LBLK_COFF(sbi, i) != 0) {
- 		if (end >= EXT4_LBLK_CFILL(sbi, i)) {
--			rc->ndelonly++;
-+			rc->ndelayed++;
- 			rc->partial = false;
- 			i = EXT4_LBLK_CFILL(sbi, i) + 1;
- 		}
-@@ -1183,11 +1182,11 @@ static void count_rsvd(struct inode *inode, ext4_lblk_t lblk, long len,
- 
- 	/*
- 	 * if the current cluster starts on a cluster boundary, count the
--	 * number of whole delonly clusters in the extent
-+	 * number of whole delayed clusters in the extent
- 	 */
- 	if ((i + sbi->s_cluster_ratio - 1) <= end) {
- 		nclu = (end - i + 1) >> sbi->s_cluster_bits;
--		rc->ndelonly += nclu;
-+		rc->ndelayed += nclu;
- 		i += nclu << sbi->s_cluster_bits;
- 	}
- 
-@@ -1247,10 +1246,9 @@ static struct pending_reservation *__pr_tree_search(struct rb_root *root,
-  * @rc - pointer to reserved count data
-  *
-  * The number of reservations to be released is equal to the number of
-- * clusters containing delayed and not unwritten (delonly) blocks within
-- * the range, minus the number of clusters still containing delonly blocks
-- * at the ends of the range, and minus the number of pending reservations
-- * within the range.
-+ * clusters containing delayed blocks within the range, minus the number of
-+ * clusters still containing delayed blocks at the ends of the range, and
-+ * minus the number of pending reservations within the range.
-  */
- static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
- 			     struct extent_status *right_es,
-@@ -1261,33 +1259,33 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
- 	struct ext4_pending_tree *tree = &EXT4_I(inode)->i_pending_tree;
- 	struct rb_node *node;
- 	ext4_lblk_t first_lclu, last_lclu;
--	bool left_delonly, right_delonly, count_pending;
-+	bool left_delayed, right_delayed, count_pending;
- 	struct extent_status *es;
- 
- 	if (sbi->s_cluster_ratio > 1) {
- 		/* count any remaining partial cluster */
- 		if (rc->partial)
--			rc->ndelonly++;
-+			rc->ndelayed++;
- 
--		if (rc->ndelonly == 0)
-+		if (rc->ndelayed == 0)
- 			return 0;
- 
- 		first_lclu = EXT4_B2C(sbi, rc->first_do_lblk);
- 		last_lclu = EXT4_B2C(sbi, rc->last_do_lblk);
- 
- 		/*
--		 * decrease the delonly count by the number of clusters at the
--		 * ends of the range that still contain delonly blocks -
-+		 * decrease the delayed count by the number of clusters at the
-+		 * ends of the range that still contain delayed blocks -
- 		 * these clusters still need to be reserved
- 		 */
--		left_delonly = right_delonly = false;
-+		left_delayed = right_delayed = false;
- 
- 		es = rc->left_es;
- 		while (es && ext4_es_end(es) >=
- 		       EXT4_LBLK_CMASK(sbi, rc->first_do_lblk)) {
- 			if (ext4_es_is_delayed(es)) {
--				rc->ndelonly--;
--				left_delonly = true;
-+				rc->ndelayed--;
-+				left_delayed = true;
- 				break;
- 			}
- 			node = rb_prev(&es->rb_node);
-@@ -1295,7 +1293,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
- 				break;
- 			es = rb_entry(node, struct extent_status, rb_node);
- 		}
--		if (right_es && (!left_delonly || first_lclu != last_lclu)) {
-+		if (right_es && (!left_delayed || first_lclu != last_lclu)) {
- 			if (end < ext4_es_end(right_es)) {
- 				es = right_es;
- 			} else {
-@@ -1306,8 +1304,8 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
- 			while (es && es->es_lblk <=
- 			       EXT4_LBLK_CFILL(sbi, rc->last_do_lblk)) {
- 				if (ext4_es_is_delayed(es)) {
--					rc->ndelonly--;
--					right_delonly = true;
-+					rc->ndelayed--;
-+					right_delayed = true;
- 					break;
- 				}
- 				node = rb_next(&es->rb_node);
-@@ -1321,21 +1319,21 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
- 		/*
- 		 * Determine the block range that should be searched for
- 		 * pending reservations, if any.  Clusters on the ends of the
--		 * original removed range containing delonly blocks are
-+		 * original removed range containing delayed blocks are
- 		 * excluded.  They've already been accounted for and it's not
- 		 * possible to determine if an associated pending reservation
- 		 * should be released with the information available in the
- 		 * extents status tree.
- 		 */
- 		if (first_lclu == last_lclu) {
--			if (left_delonly | right_delonly)
-+			if (left_delayed | right_delayed)
- 				count_pending = false;
- 			else
- 				count_pending = true;
- 		} else {
--			if (left_delonly)
-+			if (left_delayed)
- 				first_lclu++;
--			if (right_delonly)
-+			if (right_delayed)
- 				last_lclu--;
- 			if (first_lclu <= last_lclu)
- 				count_pending = true;
-@@ -1346,13 +1344,13 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
- 		/*
- 		 * a pending reservation found between first_lclu and last_lclu
- 		 * represents an allocated cluster that contained at least one
--		 * delonly block, so the delonly total must be reduced by one
-+		 * delayed block, so the delayed total must be reduced by one
- 		 * for each pending reservation found and released
- 		 */
- 		if (count_pending) {
- 			pr = __pr_tree_search(&tree->root, first_lclu);
- 			while (pr && pr->lclu <= last_lclu) {
--				rc->ndelonly--;
-+				rc->ndelayed--;
- 				node = rb_next(&pr->rb_node);
- 				rb_erase(&pr->rb_node, &tree->root);
- 				__free_pending(pr);
-@@ -1363,7 +1361,7 @@ static unsigned int get_rsvd(struct inode *inode, ext4_lblk_t end,
- 			}
- 		}
- 	}
--	return rc->ndelonly;
-+	return rc->ndelayed;
- }
- 
- 
--- 
-2.39.2
-
+bod
 
