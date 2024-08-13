@@ -1,179 +1,135 @@
-Return-Path: <linux-kernel+bounces-284898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3C4950687
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D8A95068A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9FB1C227D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3DD1C228F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827B19B59F;
-	Tue, 13 Aug 2024 13:32:53 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7503819B5AA;
+	Tue, 13 Aug 2024 13:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RHIxozYJ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A041E517;
-	Tue, 13 Aug 2024 13:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168C319AD56
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555973; cv=none; b=Zst2lApAfUj8Fk2kaEbpkjerhf8+zE+Mac+ShX0lHMLk5zf1d2Ibwqo2Z42g4TFxeu6hiEkMAacgr6eJhYmooVuN1sISbw5VPr9woexcOzsJiElERhX4O3VW5zRSp9ZERUYBPxP0nq2+vUcSPTCd6YSP7dyCikVVvwRchxMuTfk=
+	t=1723556021; cv=none; b=BvplvnzA7Jg2kg7FmqyNJ1IP28+aTJwcmkN/FoS5vCmQlVHdrfywH+/5YT2KI27mUmgxeKmgl+9Uhs7A71n3Cvck91T9wXOrM53lQsW203kjNU9FoB+KRo9KfP8XwfsaQw4DUsOf3JxDBCbQV34Jm0p2oG4Qbo+Qlfub2G035U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555973; c=relaxed/simple;
-	bh=q0f3s8C+w6gFHW9rQgBtdyv9AkulcqMJnxrASxFgx2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CmxHjHtH6WKVHbdQ3a/p8HQOhEPCiPadfiR9XeQQ+/wKDqlpSlM7SzaGsY/8GWH3oeTrFWhpcVWiHAVhgC1tOfjdcEb3PBUsMw1zudTwGwePLoyZ3+kVfnG9pH6FIGUhNBF/rlN5Zx2QLsD+J16SgLva3JnxAg614FdGMGYORIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5af326eddb2so10337630a12.1;
-        Tue, 13 Aug 2024 06:32:51 -0700 (PDT)
+	s=arc-20240116; t=1723556021; c=relaxed/simple;
+	bh=NUzJM/GvLcGzCn8m+3i1wJUpp8MPTSk9e//+pExkHzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dOuUrJYn+fyn2egpzzZI21fV8DW92/ptE78bacPS2UxT5u/riwkuG62fLFKvRl5gxj3NlWZzo13FSuoOdkMLbgiNJd98kWS8ObADKS3bGhS8ePHl3tF59yh8ESCerd1Z7pAsUMW15f6tdy8F2zMddo244RgSCYKUtrNs0vsNTaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RHIxozYJ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428119da952so38917015e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:33:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723556018; x=1724160818; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=blnF+SdPapTZEU9MsVd32ouo1/9eYNSeUZmt+Hr0sT8=;
+        b=RHIxozYJAdL3QxGQLuYwNERI4bYyqEqoHRVUs43c5ReN2iVjdEYu16gNTJgR2M3IQF
+         2WeKQQVXFJJ0srGOLe3W7HzgeaI5c78k175SOQYXYO7BuUZR5JxTy+AMxHjwHwL0wTaJ
+         thLqveYhFhmDCunDr6XCqaQJV5GzqeSuQvCrNlYQT1JdCI+3tivZOsA6QmGF+zV5sqvs
+         CB19m0euL4+8ruaKRyINyUoajt0Qx8U33JOYIM7RQB2KZqI923mhkw2PJxI6VvJ1iBrA
+         jlT2m6/TVMCVbdUfXLkrDe9VGxYC04L23laPSC8JrmvxfbrxSQdS9FzCkhgZAP2oHuRD
+         eLKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723555970; x=1724160770;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1723556018; x=1724160818;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=epsK62fLlKIcu9yHQhnXJ//JRyvJEjXogoukWxR8MKY=;
-        b=X2fmqLfq5uXYidvKn2T3rL6yLCEuus7LUdryZFLtgl3x5UJo1i6jIVQwXuRwgh3H9N
-         wLCLDWdb/NJRSIzmVNiQpmEtUYs9WAlpWJSNr2xrrL1U6dpHioiKL40lPAA3420jVP2N
-         WCMZADaGISWPh0f6kw6SalS5udCFgfnayBOXT1khpP7dOzna25iP7QLOPIVGvVKOOOkm
-         XfxI4o/fhksM7OSB/mj1RWw8E+Hr8hRI1v/Nuf6RR9UuNqNqAU0KQMD6HELn/RWuAnPd
-         dJ+oPppO8isd601SUU/gHvQjozpUjA7j5GO1E4MPruUyLAns7IO4kd8m3PfcHIuJ/UIE
-         V55g==
-X-Forwarded-Encrypted: i=1; AJvYcCV35a85r6y41VwAmLz+fG60r8w6RClv1lpCdnKN9I61toe8QOSIGBosNhjUYDPOHfbsxYOAZ1pJQ8KT0OPGLUqWzu9hZT+iO/YSHmI6vANMfr0rnlDyxQiTNpSPNGvXXPL/JxHwEaCdGeoQKkYWCI7cfl9Svq31+fRZIWG0CXsoxw24YqI=
-X-Gm-Message-State: AOJu0Yya5y+wjiQuUnFtNZpVfAaB5UHJOG5faHXVwvqjeJBCr+xZ2cH3
-	p3NCmadDE2iWrwNY+lmnK4I+K1/a+o5kPVAq7lcLuFUMlvcEQ0tm
-X-Google-Smtp-Source: AGHT+IHdcgoO700Tt+PAinCiGtz7kDD7cKzFzIvM1FE3Iov0eh7VTjP13G/OMHk/oyb1MtWQgfOsoA==
-X-Received: by 2002:a17:907:c1e:b0:a77:d9b5:ad4b with SMTP id a640c23a62f3a-a80f0aa1b3bmr297311466b.9.1723555969294;
-        Tue, 13 Aug 2024 06:32:49 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411bbfcsm70139666b.135.2024.08.13.06.32.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:32:48 -0700 (PDT)
-Date: Tue, 13 Aug 2024 06:32:46 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	dmitry.osipenko@collabora.com
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] Do not mark ACPI devices as irq safe
-Message-ID: <ZrtgfkzuCbNju3i9@gmail.com>
-References: <20240808121447.239278-1-leitao@debian.org>
- <ff4haeeknghdr5pgpp3va7opnrx5ivlpaw5ppboqrq75733iul@zy4c7mu3foma>
- <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
+        bh=blnF+SdPapTZEU9MsVd32ouo1/9eYNSeUZmt+Hr0sT8=;
+        b=J5Wpgh687PA+/Askq53lkSk4E2NlEK4gwsi1OcBoZLT9J01G58DrOWXSQDTBzMeG46
+         Q1jfMZYDDNRFD14kqquSOk6+4aT/zpLjNzGh+jBwWsyeDVLEYnQn8I7X+5Sp0SlKxdL2
+         AmUsbSiy4lqnz2vfRwc9y4rIYAmuCfJ99bJU8bMx466PyjRHP1ynJfCXpIJhF0HlIkbh
+         zeeKd9zJImjFwoNkVWvf+gIb8DAdysyEygZD4ErHaOpW6WM/fkwtkcslcR7iODtCdcjU
+         m2zNujUc95s00royxbs8Grs3lbQNtddSbuOKFYK+8EVZSuwKqfpU5hFNi9z4PJnnK4nz
+         InZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNZLeFy8OpLhIYbA9aKLqk7k6P0ryrEWMDfcuZmvheQogtwRNGeuWs5Cwty+tuZO5Zs+NxNssimP5wie9lNLc6l1REObRYhAPmoUMB
+X-Gm-Message-State: AOJu0YyqOK7I1gi1ba7/KXFv10lyIEPMOuJNnr9nDB11kCpa1Ecc4Ii3
+	FCyrAmoI6G4bJf+MhqY4JDZP9aYTZkVvQY23nHMeYRHtafYhcxSoBS48O3njpTs=
+X-Google-Smtp-Source: AGHT+IF0uGrRR7ZTGnQGQ51jKZOJySZ2yoFMxi1e5EZJfGqN/H8HsMXe/0fLFQwn0tC6OvUNOaOt3A==
+X-Received: by 2002:a05:600c:1c27:b0:428:1965:450d with SMTP id 5b1f17b1804b1-429d4837e17mr28119195e9.17.1723556018249;
+        Tue, 13 Aug 2024 06:33:38 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c777017sm225862565e9.35.2024.08.13.06.33.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 06:33:37 -0700 (PDT)
+Message-ID: <eeefc653-922c-4ca8-b038-82bb6c4bfb6e@linaro.org>
+Date: Tue, 13 Aug 2024 14:33:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] perf evlist: Use hybrid default attrs whenever
+ extended type is supported
+To: irogers@google.com, linux-perf-users@vger.kernel.org
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Yang Jihong <yangjihong1@huawei.com>, Ze Gao <zegao2021@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240813132323.98728-1-james.clark@linaro.org>
+ <20240813132323.98728-6-james.clark@linaro.org>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240813132323.98728-6-james.clark@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Andy,
 
-On Fri, Aug 09, 2024 at 02:03:27PM +0300, Andy Shevchenko wrote:
-> On Fri, Aug 9, 2024 at 2:57 AM Andi Shyti <andi.shyti@kernel.org> wrote:
-> > On Thu, Aug 08, 2024 at 05:14:46AM GMT, Breno Leitao wrote:
 
-> > > The problem arises because during __pm_runtime_resume(), the spinlock
-> > > &dev->power.lock is acquired before rpm_resume() is called. Later,
-> > > rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
-> > > mutexes, triggering the error.
-> > >
-> > > To address this issue, devices on ACPI are now marked as not IRQ-safe,
-> > > considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+On 13/08/2024 2:23 pm, James Clark wrote:
+> For x86, a hybrid version of ___evlist__add_default_attrs() was added to
+> support default perf stat events. This can actually be used whenever
+> perf_pmus__supports_extended_type() is true, which now makes default
+> perf stat arguments work properly on Arm big.LITTLE:
 > 
-> This is a step in the right direction
-
-Thanks
-
-> but somewhere in the replies
-> here I would like to hear about roadmap to get rid of the
-> pm_runtime_irq_safe() in all Tegra related code.
-
-Agree, that seems the right way to go, but this is a question to
-maintainers, Laxman and Dmitry.
-
-By the way, looking at lore, I found that the last email from Laxman is
-from 2022. And Dmitry seems to be using a different email!? Let me copy
-the Dmitry's other email (dmitry.osipenko@collabora.com) here.
-
-> > > +     if (!IS_VI(i2c_dev) && !ACPI_HANDLE(i2c_dev->dev))
-> >
-> > looks good to me, can I have an ack from Andy here?
+>    $ perf stat
+>    ...
+>          3347093940    armv8_cortex_a53/cycles/    #  0.563 GHz  (98.99%)
+>          3295523067    armv8_cortex_a57/cycles/    #  0.554 GHz  (67.07%)
+>    ...
 > 
-> I prefer to see something like
-> is_acpi_node() / is_acpi_device_node() / is_acpi_data_node() /
-> has_acpi_companion()
-> instead depending on the actual ACPI representation of the device.
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>   tools/perf/arch/x86/util/evlist.c | 65 -------------------------------
+>   tools/perf/util/evlist.c          | 65 +++++++++++++++++++++++++++----
+>   tools/perf/util/evlist.h          |  6 +--
+>   3 files changed, 59 insertions(+), 77 deletions(-)
 > 
-> Otherwise no objections.
-> Please, Cc me (andy@kernel.org) for the next version.
 
-Thanks for the feedback, I agree that leveraging the functions about
-should be better. What about something as:
+[...]
 
-Author: Breno Leitao <leitao@debian.org>
-Date:   Thu Jun 6 06:27:07 2024 -0700
+> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+> index 1417f9a23083..e0c31399beb6 100644
+> --- a/tools/perf/util/evlist.c
+> +++ b/tools/perf/util/evlist.c
+> @@ -5,6 +5,7 @@
+>    * Parts came from builtin-{top,stat,record}.c, see those files for further
+>    * copyright notes.
+>    */
+> +#include "pmus.h"
 
-    Do not mark ACPI devices as irq safe
-    
-    On ACPI machines, the tegra i2c module encounters an issue due to a
-    mutex being called inside a spinlock. This leads to the following bug:
-    
-            BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
-            in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
-            preempt_count: 0, expected: 0
-            RCU nest depth: 0, expected: 0
-            irq event stamp: 0
-    
-            Call trace:
-            __might_sleep
-            __mutex_lock_common
-            mutex_lock_nested
-            acpi_subsys_runtime_resume
-            rpm_resume
-            tegra_i2c_xfer
-    
-    The problem arises because during __pm_runtime_resume(), the spinlock
-    &dev->power.lock is acquired before rpm_resume() is called. Later,
-    rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
-    mutexes, triggering the error.
-    
-    To address this issue, devices on ACPI are now marked as not IRQ-safe,
-    considering the dependency of acpi_subsys_runtime_resume() on mutexes.
-    
-    Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
-    Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
-    Signed-off-by: Breno Leitao <leitao@debian.org>
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 85b31edc558d..1df5b4204142 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1802,9 +1802,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	 * domain.
- 	 *
- 	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
--	 * be used for atomic transfers.
-+	 * be used for atomic transfers. ACPI device is not IRQ safe also.
- 	 */
--	if (!IS_VI(i2c_dev))
-+	if (!IS_VI(i2c_dev) && !has_acpi_companion(i2c_dev->dev))
- 		pm_runtime_irq_safe(i2c_dev->dev);
- 
- 	pm_runtime_enable(i2c_dev->dev);
-
+Oops, this include was auto added and isn't required.
 
