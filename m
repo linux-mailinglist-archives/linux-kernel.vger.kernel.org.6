@@ -1,182 +1,92 @@
-Return-Path: <linux-kernel+bounces-285452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3E2950DA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:09:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A45950D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2EC1C21AF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:09:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84380B246B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1394F1A705F;
-	Tue, 13 Aug 2024 20:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B8B1A7049;
+	Tue, 13 Aug 2024 20:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFvXBXfQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+a9BFGu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4180E1A4F29;
-	Tue, 13 Aug 2024 20:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C991A4F30;
+	Tue, 13 Aug 2024 20:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579722; cv=none; b=YndhplyLaY0VNmiLnKFNhahibSNNzkQNGpspz3dbugYP/n+YxE9+cexOYJJotUlEP9XiN+hv5zs9CzcHiIGfxd6i+2qDRUKYc700z7WF5YK+/wVBZuTbZ03MRxdioRJZwemU5E5NkzbkVqIK9cqKxtQSLnQwr/wHbuFTBh9uYrg=
+	t=1723579656; cv=none; b=QlBL4nwr8W624RcHXEQQ0NRfvTwavys5fgaH00lpP9QrwAhoMQrke13mD/vbyaQzqAMErJT+tvvOuB+LuxLhJPjzk57oI5ZAvOzsDxFVqjL87YbV3VZTe0NSNYeC2/6mPt7POMg3RcRzoIf0iv0iR8MU0/7vsgTrLmZJEBcnltY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579722; c=relaxed/simple;
-	bh=Sw38NxgEBd0FI0cz03ax43Gc8YUQhNKE+vphoIaIiO8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PrpKDtDGLkblYHBpToLvBO+JEhvcSqrf8bVyhamSahwhLSr9gR6UTQdAS/T4js/5OvxIDb5KQCxCSMc4e2Djv7V7OCsDKy9iQTlyFAPuhHnSANFyFx/aLEcA3k0CEr7UTENpHrxKt3zt3EaoIuiX4WlHrPizdEQW4RuLpRBOMAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFvXBXfQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CC08BC4AF0E;
-	Tue, 13 Aug 2024 20:08:41 +0000 (UTC)
+	s=arc-20240116; t=1723579656; c=relaxed/simple;
+	bh=pcU0DlQ+ID/ze4Ee6AQQElRUnHpjqLCr6VqHuIdU5FI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYaytyvTYYbHJUJlfo6hR7LPMrmBpiJf6zEOj8w4Lm2VKFWt9B0taE+YrtSiOVgPwgclA+U0UDwc0kdM5u7wJZmRvuoo+dOS3boGzIbt6Sgz7utT+vk/1GgdcH73pKWm+TMnKK+GLbyw/qED/uvDdGusCM3qFXOBdM44Oxt/SqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+a9BFGu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95ACDC4AF10;
+	Tue, 13 Aug 2024 20:07:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723579721;
-	bh=Sw38NxgEBd0FI0cz03ax43Gc8YUQhNKE+vphoIaIiO8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=nFvXBXfQwlLQaudarE2/L07pwg+cjjEJGtRbm/kL01/H9wUIy2hnJ1yEVDeQo3RC5
-	 VgroC3c5DFg8hvDzyKTTfRr/zL96Hiydayd3Y1Nk0lbJJZeiKy2jZ+o/8rB2PVeRYb
-	 EqXJ4FQDB4Zp7Zfh5uI99kmZwhtzzNOHDv+VtFfMm1HUik/472q24TGA44osNYRlE5
-	 4h8BekfFj4lwexjBHzAmOLbWFLwJxtEIGrqm5VF6HSxafEJi+v46/V8Wtle5YPBNJ8
-	 cg27qH3dDPYoKzSu1heHiAWLCQ8IuYkfvuFZs85si+BagB+JnW2+dRXiKQhC8O5ghR
-	 9BRlbk0daXIlg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCEBAC52D7C;
-	Tue, 13 Aug 2024 20:08:41 +0000 (UTC)
-From: Utsav Agarwal via B4 Relay <devnull+utsav.agarwal.analog.com@kernel.org>
-Date: Tue, 13 Aug 2024 21:07:19 +0100
-Subject: [PATCH v11 3/3] dt-bindings: input: pure gpio support for adp5588
+	s=k20201202; t=1723579655;
+	bh=pcU0DlQ+ID/ze4Ee6AQQElRUnHpjqLCr6VqHuIdU5FI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z+a9BFGu5rXoC2VXF6YVaCHXPLBvjQuCO8q/YvNGn+2s8sNyKgBQOKR/h+Ir4j/no
+	 olrDkMK2uBr05dFbfSDhtvK0drNBkgcfwHf0f4I4yBTsilX/69neoR+L9aMLsl97ot
+	 v2XrSh2CgqXEZlReERf1DOAfXBEFIiSX49Run3f1H/eIYLw5Fp3Q8RcdUyKdNAEu9N
+	 Q1kzD3q88FLCEQb5JTURDmmAikCCifDm+nDix/zedHtEqRj6rmIzIEeApdN5iT2uf7
+	 0B/2krLSkbGHqqWiM1VXpoV6E/5RJRBy9TpuHYIfHQ40KAr4ZG5gfWjAt7dzQPBQlg
+	 1hhTdmNsn2RCA==
+Date: Tue, 13 Aug 2024 14:07:34 -0600
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Saravana Kannan <saravanak@google.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions
+ node in mmc-card node
+Message-ID: <20240813200734.GA1659224-robh@kernel.org>
+References: <20240809172106.25892-1-ansuelsmth@gmail.com>
+ <20240809172106.25892-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-adp5588_gpio_support-v11-3-9ea490d6c41d@analog.com>
-References: <20240813-adp5588_gpio_support-v11-0-9ea490d6c41d@analog.com>
-In-Reply-To: <20240813-adp5588_gpio_support-v11-0-9ea490d6c41d@analog.com>
-To: Utsav Agarwal <utsav.agarwal@analog.com>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Arturs Artamonovs <arturs.artamonovs@analog.com>, 
- Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
- Oliver Gaskell <oliver.gaskell@analog.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723579648; l=2847;
- i=utsav.agarwal@analog.com; s=20240701; h=from:subject:message-id;
- bh=6COPIRO0bw4RfEE2lJUqSvRth5I5w5rGF5z/Z1lH4ik=;
- b=avdzCcIhKEgUqv4cRAAAVhMdtEs83/HdjZP15P01DzfYjUY6Jg9faU3gJq5D4ArjXKb+unyob
- OT2PUfUCgFpDqk4s7bEjK0CLmhZz4CvmBon06a1naoY3/wFD4cKXZrZ
-X-Developer-Key: i=utsav.agarwal@analog.com; a=ed25519;
- pk=mIG5Dmd3TO5rcICwTsixl2MoUcf/i2u+jYqifd7+fmI=
-X-Endpoint-Received: by B4 Relay for utsav.agarwal@analog.com/20240701 with
- auth_id=178
-X-Original-From: Utsav Agarwal <utsav.agarwal@analog.com>
-Reply-To: utsav.agarwal@analog.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809172106.25892-4-ansuelsmth@gmail.com>
 
-From: Utsav Agarwal <utsav.agarwal@analog.com>
+On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote:
+> Add property for defining partitions node in mmc-card node to define
+> partitions in DT by the use of the block2mtd module to use block
+> devices as MTD.
 
-Adding software support for enabling the pure gpio capability of the
-device - which allows all I/O to be used as GPIO. Previously, I/O
-configuration was limited by software to partial GPIO support only.
+You justified patch 1 saying eMMC already supported this, but then here 
+you add support.
 
-When working in a pure gpio mode, the device does not require the
-certain properties and hence, the following are now made optional:
-	- interrupts
-	- keypad,num-rows
-	- keypad,num-columns
-	- linux,keymap
+Both are a NAK for me as both already have a way to describe partitions 
+with GPT.
 
-However, note that the above are required to be specified when
-configuring the device as a keypad, for which dependencies have been added
-such that specifying either one requires the remaining as well.
-
-Also, note that interrupts are made optional, but required when the device
-has either been configured in keypad mode or as an interrupt controller.
-This has been done since they may not necessarily be used when leveraging
-the device purely for GPIO.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
----
- .../devicetree/bindings/input/adi,adp5588.yaml     | 38 +++++++++++++++++++---
- 1 file changed, 33 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-index 26ea66834ae2..336bc352579a 100644
---- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-+++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-@@ -49,7 +49,10 @@ properties:
-   interrupt-controller:
-     description:
-       This property applies if either keypad,num-rows lower than 8 or
--      keypad,num-columns lower than 10.
-+      keypad,num-columns lower than 10. This property is optional if
-+      keypad,num-rows or keypad,num-columns are not specified as the
-+      device is then configured to be used purely for gpio during which
-+      interrupts may or may not be utilized.
- 
-   '#interrupt-cells':
-     const: 2
-@@ -65,13 +68,23 @@ properties:
-     minItems: 1
-     maxItems: 2
- 
-+dependencies:
-+  keypad,num-rows:
-+    - linux,keymap
-+    - keypad,num-columns
-+  keypad,num-columns:
-+    - linux,keymap
-+    - keypad,num-rows
-+  linux,keymap:
-+    - keypad,num-rows
-+    - keypad,num-columns
-+    - interrupts
-+  interrupt-controller:
-+    - interrupts
-+
- required:
-   - compatible
-   - reg
--  - interrupts
--  - keypad,num-rows
--  - keypad,num-columns
--  - linux,keymap
- 
- unevaluatedProperties: false
- 
-@@ -108,4 +121,19 @@ examples:
-             >;
-         };
-     };
-+
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        gpio@34 {
-+            compatible = "adi,adp5588";
-+            reg = <0x34>;
-+
-+            #gpio-cells = <2>;
-+            gpio-controller;
-+        };
-+    };
-+
- ...
-
--- 
-2.34.1
-
-
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../devicetree/bindings/mmc/mmc-card.yaml     | 40 +++++++++++++++++++
+>  1 file changed, 40 insertions(+)
 
