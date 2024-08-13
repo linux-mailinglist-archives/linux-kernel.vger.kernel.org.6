@@ -1,135 +1,102 @@
-Return-Path: <linux-kernel+bounces-284604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DD19502FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5B19502BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E801C224BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5944F28338E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5AD19E80F;
-	Tue, 13 Aug 2024 10:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B6019A28C;
+	Tue, 13 Aug 2024 10:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJ/40GFM"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OreNwnuH"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB7C19DF9F
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A667117085A;
+	Tue, 13 Aug 2024 10:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546322; cv=none; b=O6UoPKJL0UqcjDluy3SqT4fQmL0HtLnaURWlIAzRuwKGHRTBw1NASQC2BGCYQWwmjWV9nhgbR2ql3jVJHpygtk1kezwY8JnI5guuOmhg0TrZ+9Su/HMeFkeihv1dqo3m/dDPOLzNwluha1lsG4jkyLWMAZnt0OK7HONvYvB9vQs=
+	t=1723545914; cv=none; b=nfvFvpVeagICn50IXPhjFQUj9mVWjin9Q8r8McvmZpymUOqbFjqXNnq9XjQDdo5Rva0oLErbRXUuHabTS2yqOJVEiT2JewwUHr3NIdhviiaAMm1lcMpAwZUoC6zTAg7NowBnU8abPg5f+2QlOCoCyJRSpr1nVxE1bajZMHWWfLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546322; c=relaxed/simple;
-	bh=20en9IvoseToki1ZM++avUf+aFbymKoGL2rG6HuSeIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HE8OxPhApeL1jBxURaLcK2LWKUUVW7aJiPg8MSCrMxyql21AXGk3P9RzetBvyRy2UMwaArfoYxXUc1Kt78KotbxTT7QflQizfiTDczO/ed1W10ztOCMM63G391fKQzSae1utkJ4Ec9hiJ5+PhZBE1DAwNBQdlKVZ8l+54dVX75Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJ/40GFM; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e0d18666so39544415e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723546319; x=1724151119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZftJBc7W5kwvvNABWDGPxvru4sevjwR+IU4HN2kbDT8=;
-        b=JJ/40GFM/Y1zapAcSO3apH907Ke13qOQzT72G8h4Wu/EJNvFpiC4l5yOIcOfUISBA2
-         5xBCgtROuHkFc6jWrXcqDfU3hM6Z4y3y63foUI8ULKnB6A+goYN5UCWHz63gwRdwsAFb
-         4SuHIL1dlGicoC5b2XNJNaCEoy7vxvKvuQpqaxxawM+FJWUE+qOd9Vkk9PYNZRgiz8vI
-         ibbGIQi4cVOGBn7T5VbdAASoFSjdx85AfBW4EMvsKChjLBVoaGVGv0ubQM2XuvulKOe8
-         b6dXraD8vQ1T/FyBoHF0W9iEMgS4Yl+dlhJGoZn/HhWSmRd7thxOE3M4enk7z6l/FE5J
-         R3Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723546319; x=1724151119;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZftJBc7W5kwvvNABWDGPxvru4sevjwR+IU4HN2kbDT8=;
-        b=rhUHqxB//1Bw7ULcJ1IUIW9oS5MTzJfBWLWvvpr1RRRmGU9e+s00e8Ic8blny6tJ6D
-         IrQehwFN2pDCEe3Vf0LQWI20cd0Zmd2qBsRj2zmlK2HB21chkWz3irjzViPrqrxj7Ijh
-         9X4PX2uV7CIGTwz+/pj6CoAPC43xu+hi42sLNQq/FhH4biKiH1R8CY1QUK06bXNrJelS
-         /hXcoaqLKPjnEfNW1M33wdLR8xL8bfsOcrc3iKsEPmAt8muheghKJeinidpxyuv+cgrs
-         y0gewXbDabbdojOAnC79oZR2ei1pt3au1h30OpU8YH3z8s+WEiLm98p2x4vbjZ3l8b5I
-         N8Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCV854a62kQpD9WdbGveSj0/YOjiaitR9XhbrjffhSaTHoji4RMqFqT2v7TBe80OCTLWag6mqGprqXRb54X121SKBZzN2rmTeyaqr774
-X-Gm-Message-State: AOJu0YyBkGiSeFBTEzmV/AsQqM6chkQgO33vmxxDGYSKj1rSM4RhsY2s
-	7hRB14CFARc4+0BWbl4l8YIQXWrhkmofZFX/yFbBOVx4siC6qveH
-X-Google-Smtp-Source: AGHT+IGmYYsdBOSQGdHs8roYpDqyGK4MJTVsNTujjltjUQNx3CKHicYkYjxIfPWC0fDyWxdLgRP2XA==
-X-Received: by 2002:a05:600c:4453:b0:428:f1b4:3473 with SMTP id 5b1f17b1804b1-429d486e85fmr22635355e9.26.1723546319268;
-        Tue, 13 Aug 2024 03:51:59 -0700 (PDT)
-Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm17290785e9.1.2024.08.13.03.51.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 03:51:58 -0700 (PDT)
-From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To: rodrigosiqueiramelo@gmail.com
-Cc: melissa.srw@gmail.com,
-	mairacanal@riseup.net,
-	hamohammed.sa@gmail.com,
-	daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	louis.chauvet@bootlin.com,
-	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [RFC PATCH 17/17] drm/vkms: Remove completed task from the TODO list
-Date: Tue, 13 Aug 2024 12:44:28 +0200
-Message-ID: <20240813105134.17439-18-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240813105134.17439-1-jose.exposito89@gmail.com>
-References: <20240813105134.17439-1-jose.exposito89@gmail.com>
+	s=arc-20240116; t=1723545914; c=relaxed/simple;
+	bh=qM4dwAZs4TGXDAayWODF4A+WCfHxHEZswWYh1lS7q8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T/d+QTOLxJ230R5S7LO9Npn0aAhOlKaTDtWNA/0wpFDP+JZUntjuzPT+n7TJax8iHWnByF7IMWDDjBWqPDpeGgVENYquxl/VVWHvZHxytAGVgqUkUnwm6xVNqOiNrF6RcZEvWaPEnt4HufcKuiwL1rB33GJdHRlyUrD17UfJ3Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OreNwnuH; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B13D62EC;
+	Tue, 13 Aug 2024 12:44:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1723545853;
+	bh=qM4dwAZs4TGXDAayWODF4A+WCfHxHEZswWYh1lS7q8g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OreNwnuHZzVjK/xyY4Fexauaf4oFjibkadWBTc/kMpuxHVVrNExYCdK2sUnAcN6wZ
+	 xG3hPvmk0f5dor6WV8rjFTeUzW5PCgYqex7TL0DDuAgIbmyxaEta8ZHx+pfQJtZhYA
+	 AaAUL8uVQIcij6eo7fbIZhZWdFwNVVXRooxTuwbs=
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: linux-kernel@vger.kernel.org
+Cc: Daniel Scally <dan.scally@ideasonboard.com>,
+	Michael Grzeschik <mgr@pengutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Avichal Rakesh <arakesh@google.com>,
+	linux-usb@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Mark UVC gadget driver as orphan
+Date: Tue, 13 Aug 2024 13:44:47 +0300
+Message-ID: <20240813104447.25821-1-laurent.pinchart@ideasonboard.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Remove the configfs related TODO items from the "Runtime Configuration"
-section.
+I haven't had time to maintain the UVC gadget driver for a long while.
+Dan Scally confirmed he is also in a similar -ENOTIME situation with no
+short term hope of fixing that. Being listed as maintainers doesn't help
+progress, so mark the driver as orphan to reflect the current state.
 
-Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- Documentation/gpu/vkms.rst | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+Dan, could you please ack this patch ?
 
-diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index ee71d1a569dd..a8c187f6c0af 100644
---- a/Documentation/gpu/vkms.rst
-+++ b/Documentation/gpu/vkms.rst
-@@ -229,19 +229,12 @@ Runtime Configuration
- We want to be able to reconfigure vkms instance without having to reload the
- module. Use/Test-cases:
+Michael, feel free to take over if you want. You have been active on the
+code base recently, so that makes you the best candidate, even if I
+disagree with most of your technical decisions. I'm a bit sad to leave a
+driver I cared about without trust in its future, hopefully the future
+will prove I was wrong.
+---
+ MAINTAINERS | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8766f3e5e87e..e6df197f1a58 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23819,10 +23819,8 @@ F:	drivers/media/usb/uvc/
+ F:	include/uapi/linux/uvcvideo.h
  
--- Hotplug/hotremove connectors on the fly (to be able to test DP MST handling
--  of compositors).
--
--- Configure planes/crtcs/connectors (we'd need some code to have more than 1 of
--  them first).
-+- Hotremove connectors on the fly (to be able to test DP MST handling of
-+  compositors).
- 
- - Change output configuration: Plug/unplug screens, change EDID, allow changing
-   the refresh rate.
- 
--The currently proposed solution is to expose vkms configuration through
--configfs. All existing module options should be supported through configfs
--too.
--
- Writeback support
- -----------------
- 
+ USB WEBCAM GADGET
+-M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+-M:	Daniel Scally <dan.scally@ideasonboard.com>
+ L:	linux-usb@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ F:	drivers/usb/gadget/function/*uvc*
+ F:	drivers/usb/gadget/legacy/webcam.c
+ F:	include/uapi/linux/usb/g_uvc.h
+
 -- 
-2.46.0
+Regards,
+
+Laurent Pinchart
 
 
