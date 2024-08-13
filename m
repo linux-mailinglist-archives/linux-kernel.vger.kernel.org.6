@@ -1,86 +1,98 @@
-Return-Path: <linux-kernel+bounces-284510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA269501C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:57:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9AA9501C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759081F2162E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:57:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73BC41F226C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01313186E52;
-	Tue, 13 Aug 2024 09:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F14A189F2C;
+	Tue, 13 Aug 2024 09:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0SqktetI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LIfkUaHS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OVrXI/+E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C8143165;
-	Tue, 13 Aug 2024 09:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69D343165;
+	Tue, 13 Aug 2024 09:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543031; cv=none; b=XawfTsJxrxRTHkM0D/2j4NHp7RyLYF97WLnFdbtxI12U1nYiUfO26Zu9wWRhnDrGb6ldQwmAxc2PcJUAhsXfprmehUMyigT3NdxWzajmjjgt684aI3d5+hdhW+oLE1CP1dA48XzZwm+qjllD6NOkLw6o2Ykz8/mvP+f2usE8cSU=
+	t=1723543038; cv=none; b=NxPZEngqavnyMP9OdMgB6WV0a7bLvH/U2Z2eW2zAcj6C/WBM9BD0syn1ZjKEHf36xzDJnsYGeDzqTYH+vukygHSAs+eVLjkiVaKXYwH3bCO3xLK/Hl17sAq86b73HA5zDA2tPr9WvPamFNCuRMQ7joJUbWm3qWRmeAfOcbtf2DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543031; c=relaxed/simple;
-	bh=+7QKdj7GtpZPwsF7z7r5k3lT2lK4IuF6zx7meV1VJ+4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TiKoZZYqEuePd9NIMITsKTgTa+FMzG26HwQOGcc/ds470lA/KI09YbdY6MJ8RsC8uUBPQiNp+euxI/aIgBYJ4Kuh3ugMlvOs7rCinLSfXWdWNaXbF3czEyzOHCCx4WLXpbNBs6DsBmtEfTGP2ps9k6sIahctndeiSwEf3KZTAJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0SqktetI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LIfkUaHS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723543028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MIBBnQCpaeIOfb2Kjjeff7Yy4ccdBuwpa2HPTwQ0yXo=;
-	b=0SqktetIFWfU+vCDesHszRdtp/29RPqOt+oIKERhaUFoRReqrsE4aApGmVfvS3ok3Y6r+7
-	CB00eyyiwZvahdQ/TakBduBpteBtG9DtxSd9JNE2BUUYZQyK5tWXe1qGPJvI1n/1PuhtVz
-	fomLKhso5QnTUJhFR7lkNkCW2+MSgiJUWTRrbhGqc98HIny+sg7x7vinbN1xawT35vuNyw
-	GfTpXqSVKSmBMco32R7nHmZvzHlW04i5kmEzXaj3m7sZFJWPk9b4wEfnBuvI0XdlaODmQd
-	j7mj0ojzV05SN9R2QigQFVUn8V0FoJb3Rl/Ey1zuD1GbJKf8svxtWbIsvolM+w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723543028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MIBBnQCpaeIOfb2Kjjeff7Yy4ccdBuwpa2HPTwQ0yXo=;
-	b=LIfkUaHSKrD8oSMoulcbB7i8CVM+UBofbyAwJhI96NWK6O4E6wpK0vIHksBlL75/zANGaY
-	ifDbTYLV1dzvkcAg==
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH] tinyconfig: remove unnecessary 'is not set' for choice
- blocks
-In-Reply-To: <20240812100148.2083203-1-masahiroy@kernel.org>
-References: <20240812100148.2083203-1-masahiroy@kernel.org>
-Date: Tue, 13 Aug 2024 11:57:07 +0200
-Message-ID: <87bk1wrbik.ffs@tglx>
+	s=arc-20240116; t=1723543038; c=relaxed/simple;
+	bh=ZNnGkI0dGL0wSwGojEl+IOMHCQh5GYTMnNTRrFyWYgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RucKvOmMmVa1l3cJzH9RKeJrjiEQXhu9FaQPA99l4/tFgQU3JCJ0IZRlguF7jL1ZXWJwoWJrKyHAVCy2GzyfXvjjyRSQbPsHoOjnYspTizGj+5mxjoYnU3LxKKylX0CTdUTiXEFK52MbMwqgMmQJu/HpwOJR3AZSGNwuV45FU5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OVrXI/+E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89931C4AF09;
+	Tue, 13 Aug 2024 09:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723543038;
+	bh=ZNnGkI0dGL0wSwGojEl+IOMHCQh5GYTMnNTRrFyWYgc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OVrXI/+E5X7qnh5hjA1pLVnFhqAnq+Td7ISZbwYxD87apof8YTewNMVs3Tbny5gZD
+	 hCO38pZYN4HPQruS2mioTLiUMsEkR4TV6dGUiN4Gb7Rq9bAgjb283FF85PHyOEDvPC
+	 THCEPndPQtiUAYm9R+OPcGOx7ig7CMOXxePXBOEI=
+Date: Tue, 13 Aug 2024 11:57:15 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Simon Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v5 1/8] misc: Add support for LAN966x PCI device
+Message-ID: <2024081356-mutable-everyday-6f9d@gregkh>
+References: <20240808154658.247873-1-herve.codina@bootlin.com>
+ <20240808154658.247873-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808154658.247873-2-herve.codina@bootlin.com>
 
-On Mon, Aug 12 2024 at 19:01, Masahiro Yamada wrote:
+On Thu, Aug 08, 2024 at 05:46:50PM +0200, Herve Codina wrote:
+> Add a PCI driver that handles the LAN966x PCI device using a device-tree
+> overlay. This overlay is applied to the PCI device DT node and allows to
+> describe components that are present in the device.
+> 
+> The memory from the device-tree is remapped to the BAR memory thanks to
+> "ranges" properties computed at runtime by the PCI core during the PCI
+> enumeration.
+> 
+> The PCI device itself acts as an interrupt controller and is used as the
+> parent of the internal LAN966x interrupt controller to route the
+> interrupts to the assigned PCI INTx interrupt.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-> This reverts the following commits:
->
->  - 236dec051078 ("kconfig: tinyconfig: provide whole choice blocks to
->    avoid warnings")
->  - b0f269728ccd ("x86/config: Fix warning for 'make ARCH=x86_64
->    tinyconfig'")
->
-> Since commit f79dc03fe68c ("kconfig: refactor choice value calculation"),
-> it is no longer necessary to disable the remaining options in choice
-> blocks.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+misc device is fine, even if it's not really one :)
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
