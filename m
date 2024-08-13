@@ -1,132 +1,188 @@
-Return-Path: <linux-kernel+bounces-285085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE33950914
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:27:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E20950918
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAED2282A42
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:27:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25B9B220F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EC41A01D9;
-	Tue, 13 Aug 2024 15:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD511A01B3;
+	Tue, 13 Aug 2024 15:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a2w2yaZH"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8enr/xb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918D719E831
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD1F19E831;
+	Tue, 13 Aug 2024 15:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562865; cv=none; b=qSjDUTe1qWg0Lu/RZyxD5eO3qMsmezv0ZmLDbAesTGyM6vUf7//PAm4YHh3iiYUkdChLvnqwCFboOIEkGg9mirpRR+VmxoyF3biU12p8zWVRKhFFiZ8kPDQABHjmt6SRaBN4CjSZ4rBEXD7qNDbagxF9yhPGlVcAWGd9uxiawTg=
+	t=1723562881; cv=none; b=jzoqadqo+foAvgKcP31FWJI6TG/7baqIN1jTh9CHgqrVSao1t6km8fUDWQGDMaygsh2NFhUl0+OkG9H9SSkoatVaG28lXYIJb5GZlljjJXhCYA+1ju9pJx/OfOvUgTTsGNfQ1P9RB8WlBrMPUf2/tSWoLVT4/i00eTVXzsAcIoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562865; c=relaxed/simple;
-	bh=9iTZYX0IOdViDbeJkPHjoGuAtLhEKo08YiRbSxrLWqI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KBuhyWjJDhrCbSrS5zkeneAKLcuhTKYDqe0gBznw84IcnlPm6C407AVQ+p/RT3qG6ocC4ngT+1HvbZUtJwmU616xKAfhgatAwXXlXvJX8yHVNbDjHJyweC1LodkJufqFEPiFoAqZ3pBCyT1SDK6NqnD6seaY/C7TpezRjtNP52E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a2w2yaZH; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-64b70c4a269so114658767b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:27:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723562862; x=1724167662; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YgS/CxIk8degf9Ujhn4Jhee8VQkdqlo8w99w+08tpPY=;
-        b=a2w2yaZHMmLpQP8kQxh1tQm4t02IZjobXzjA2xjIeMLYKyAxYcBE+XL/WC4k9hiTR3
-         56jwEhnRKsdicoFO9LxjdulJPDOKk4TE2V8B45YhN/NQdkH5tJgPC36PrCX+GqzPRnx0
-         6Axp1Og8bl1CGZ9VNAt8qYWjIdDuQL44MY6nWIDEsva3cqxamYuw6l8sV5bcj6DGDVpI
-         oPzxixDDij4OlHepWfX+RT1F6H03Ooqgd824lmcMVaTeP3OBw0ZfK09bIhmI2suvuuxV
-         9P1mxcsH8xumbm0r2uFycNc9owKUvDg9ti58wLBzX5MDqfYABFuebQxYBHTgG9Lrf3+T
-         1Uog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723562862; x=1724167662;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YgS/CxIk8degf9Ujhn4Jhee8VQkdqlo8w99w+08tpPY=;
-        b=lhKt5wrTrznQJGsRTD7HEv/gIB+vLaH/aLAIR2vQt+OC2njNO68VEA9xTX7Shj4kTd
-         xiVvfqXkvrk0LSiKaf98MA5k2JOhjWzExK9hVibdrkQih5LWwAjoxIRojsLRnR8NfTlf
-         6P2Y+GqiP2wHyui/BH8+GKiySnXZsP4zXJhR9SVXtdZUiQmMRMZAFwgosgB5dk5yCats
-         4wQkxWc08Ch+XPxxmFg4Of1B0WwOyU17O14+n+bKNu3kcXj1Wbev44Ea9zyK282HgbNd
-         kwmbzra69JQwAgS/2DdEaH3KeIqUV98M7E5xNe37kev3P/LS7Gp4fgnpWXNvYa8J9iKT
-         kBRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDvN/7oiHd1uzzv+sAJSpV59iF/dpXtsKQM1kx4qwPeFIce4YlB7zC8zecA3x27fW5iZg5lapBurHZaws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL2Lu0SgdMVPmGEC/Jgtm0p4KUX9uC6KN2jn886WN9P5XD8MRp
-	20VmnPOIwsbs9/PpxV0GJwNnGJboWO9jHCyNnHtP/rglcvhRmnCIZ9xUYkU5JaTRYQp5xeN+nyN
-	oUg==
-X-Google-Smtp-Source: AGHT+IGN0g/iWJrWmwNOf6QYh3EnGuzEizz0+U/tevvxu9l/FVCnp8wtI05EYtrERSQOTEdtYRcJIz2Rvno=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a0d:fc03:0:b0:64b:5dc3:e4fe with SMTP id
- 00721157ae682-6a97151ca3cmr1036657b3.1.1723562862655; Tue, 13 Aug 2024
- 08:27:42 -0700 (PDT)
-Date: Tue, 13 Aug 2024 08:27:41 -0700
-In-Reply-To: <5b32da03-addf-4f34-bcf4-76fbe420b8f5@amd.com>
+	s=arc-20240116; t=1723562881; c=relaxed/simple;
+	bh=lSaC+RGCNUD3mMS/A24X19ve7lg70vhrG0nTFJ/Kvh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TierUZiTZdhKE3PTmB689gT+ydZxK2oBoZ678AH0YaGupgoek8oXL0yVySP1BnXAJYgWTSsiPdRpO3jyBGgxAZ7D5t7CFXMiWTNh0gXQGU5c1ibVChKGeN7uJGE8EKRAq2MgjQDVdBFpoMx2AqLdcTLA5+4/pMK8CFSGaBUh7Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8enr/xb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02178C4AF09;
+	Tue, 13 Aug 2024 15:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723562880;
+	bh=lSaC+RGCNUD3mMS/A24X19ve7lg70vhrG0nTFJ/Kvh8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u8enr/xbdSosS9TaP1PddYNKhtRrxJEB4uSbk1paDNP0a06nIorLqOENMzklWeP2u
+	 IRjLdRmAB/2SQ9bm8XNuV+N9lDmO2smxmBjRjtVY534AZm6t5FlZVE6VC6uD8tUkIg
+	 IlIoKM6jTWrbWdt/reNDlzkilPPHt3AwlYlN0uyPHW4h9vfbHy65WQLFsXPPNq16W3
+	 IHHvHTealwqZ2cWYI0qD70kdqiP7wn2f8iJLuJ14tDRdtUazinLTteEHFFa+BCIJbC
+	 WTGNYubVE0kpJCT0bv+uSy2K24+phKcC8S2Gym7Svfa0yDMON1EO39AcdYbC/SGGAE
+	 uipzkxUcD6SZw==
+Date: Tue, 13 Aug 2024 16:27:55 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Agarwal, Utsav" <Utsav.Agarwal@analog.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	"Gaskell, Oliver" <Oliver.Gaskell@analog.com>,
+	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Bimpikas, Vasileios" <Vasileios.Bimpikas@analog.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	"Artamonovs, Arturs" <Arturs.Artamonovs@analog.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v10 3/3] dt-bindings: input: pure gpio support for adp5588
+Message-ID: <20240813-talon-uproar-f27c6f194d59@spud>
+References: <20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com>
+ <20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com>
+ <172354752239.384988.5705833300903132689.robh@kernel.org>
+ <SJ0PR03MB634347015AE14A06A3837E199B862@SJ0PR03MB6343.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com>
- <20240710220540.188239-3-pratikrajesh.sampat@amd.com> <ZrY4e39Q2_WxhrkI@google.com>
- <5b32da03-addf-4f34-bcf4-76fbe420b8f5@amd.com>
-Message-ID: <Zrt7bRGQJ1C9XZGy@google.com>
-Subject: Re: [RFC 2/5] selftests: KVM: Decouple SEV ioctls from asserts
-From: Sean Christopherson <seanjc@google.com>
-To: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
-Cc: kvm@vger.kernel.org, shuah@kernel.org, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, pbonzini@redhat.com, pgonda@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UaxSKSzzvZNZC0gh"
+Content-Disposition: inline
+In-Reply-To: <SJ0PR03MB634347015AE14A06A3837E199B862@SJ0PR03MB6343.namprd03.prod.outlook.com>
 
-On Tue, Aug 13, 2024, Pratik R. Sampat wrote:
-> On 8/9/2024 10:40 AM, Sean Christopherson wrote:
-> > On Wed, Jul 10, 2024, Pratik R. Sampat wrote:
-> >> @@ -98,7 +100,7 @@ static inline void sev_register_encrypted_memory(struct kvm_vm *vm,
-> >>  	vm_ioctl(vm, KVM_MEMORY_ENCRYPT_REG_REGION, &range);
-> >>  }
-> >>  
-> >> -static inline void snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
-> >> +static inline int snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
-> >>  					   uint64_t size, uint8_t type)
-> >>  {
-> >>  	struct kvm_sev_snp_launch_update update_data = {
-> >> @@ -108,10 +110,10 @@ static inline void snp_launch_update_data(struct kvm_vm *vm, vm_paddr_t gpa,
-> >>  		.type = type,
-> >>  	};
-> >>  
-> >> -	vm_sev_ioctl(vm, KVM_SEV_SNP_LAUNCH_UPDATE, &update_data);
-> >> +	return __vm_sev_ioctl(vm, KVM_SEV_SNP_LAUNCH_UPDATE, &update_data);
-> > 
-> > Don't introduce APIs and then immediately rewrite all of the users.  If you want
-> > to rework similar APIs, do the rework, then add the new APIs.  Doing things in
-> > this order adds a pile of pointless churn.
-> > 
-> > But that's a moot point, because it's far easier to just add __snp_launch_update_data().
-> > And if you look through other APIs in kvm_util.h, you'll see that the strong
-> > preference is to let vm_ioctl(), or in this case vm_sev_ioctl(), do the heavy
-> > lifting.  Yeah, it requires copy+pasting marshalling parameters into the struct,
-> > but that's relatively uninteresting code, _and_ piggybacking the "good" version
-> > means you can't do things like pass in a garbage virtual address (because the
-> > "good" version always guarantees a good virtual address).
-> 
-> I am a little confused by this.
-> 
-> Are you suggesting that I leave the original functions intact with using
-> vm_sev_ioctl() and have an additional variant such as
-> __snp_launch_update_data() which calls into __vm_sev_ioctl() to decouple
-> the ioctl from the assert for negative asserts?
 
-Yes, this one.
+--UaxSKSzzvZNZC0gh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Or, do you suggest that I alter vm_sev_ioctl() to handle both positive
-> and negative asserts?
-> 
-> Thanks!
-> -Pratik
-> 
+On Tue, Aug 13, 2024 at 11:50:41AM +0000, Agarwal, Utsav wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Rob Herring (Arm) <robh@kernel.org>
+> > Sent: Tuesday, August 13, 2024 12:12 PM
+> > To: Agarwal, Utsav <Utsav.Agarwal@analog.com>
+> > Cc: devicetree@vger.kernel.org; Hennerich, Michael
+> > <Michael.Hennerich@analog.com>; Gaskell, Oliver
+> > <Oliver.Gaskell@analog.com>; Conor Dooley <conor+dt@kernel.org>; Sa, Nu=
+no
+> > <Nuno.Sa@analog.com>; linux-kernel@vger.kernel.org; Bimpikas, Vasileios
+> > <Vasileios.Bimpikas@analog.com>; Conor Dooley
+> > <conor.dooley@microchip.com>; Artamonovs, Arturs
+> > <Arturs.Artamonovs@analog.com>; Krzysztof Kozlowski <krzk+dt@kernel.org=
+>;
+> > linux-input@vger.kernel.org; Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > Subject: Re: [PATCH v10 3/3] dt-bindings: input: pure gpio support for =
+adp5588
+> >=20
+> > [External]
+> >=20
+> >=20
+> > On Tue, 13 Aug 2024 10:51:33 +0100, Utsav Agarwal wrote:
+> > > Adding software support for enabling the pure gpio capability of the
+> > > device - which allows all I/O to be used as GPIO. Previously, I/O
+> > > configuration was limited by software to partial GPIO support only.
+> > >
+> > > When working in a pure gpio mode, the device does not require the
+> > > certain properties and hence, the following are now made optional:
+> > > 	- interrupts
+> > > 	- keypad,num-rows
+> > > 	- keypad,num-columns
+> > > 	- linux,keymap
+> > >
+> > > However, note that the above are required to be specified when
+> > > configuring the device as a keypad, for which dependencies have been =
+added
+> > > such that specifying either one requires the remaining as well.
+> > >
+> > > Also, note that interrupts are made optional, but required when the d=
+evice
+> > > has either been configured in keypad mode or as an interrupt controll=
+er.
+> > > This has been done since they may not necessarily be used when levera=
+ging
+> > > the device purely for GPIO.
+> > >
+> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > > Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> > > ---
+> > >  .../devicetree/bindings/input/adi,adp5588.yaml     | 40 ++++++++++++=
+++++++-
+> > ---
+> > >  1 file changed, 34 insertions(+), 6 deletions(-)
+> > >
+> >=20
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> >=20
+> > yamllint warnings/errors:
+> > ./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: [erro=
+r]
+> > syntax error: could not find expected ':' (syntax)
+> >=20
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-
+> > ci/linux/Documentation/devicetree/bindings/input/adi,adp5588.yaml: igno=
+ring,
+> > error parsing file
+> > ./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could=
+ not
+> > find expected ':'
+> > make[2]: *** Deleting file
+> > 'Documentation/devicetree/bindings/input/adi,adp5588.example.dts'
+> > Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could n=
+ot
+> > find expected ':'
+> > make[2]: *** [Documentation/devicetree/bindings/Makefile:26:
+> > Documentation/devicetree/bindings/input/adi,adp5588.example.dts] Error 1
+> > make[2]: *** Waiting for unfinished jobs....
+> > make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432:
+> > dt_binding_check] Error 2
+> > make: *** [Makefile:224: __sub-make] Error 2
+> >=20
+>=20
+> Apologies, it seems like I accidently deleted the characters towards the =
+end=20
+> of the yaml file when making changes...
+
+If you make any changes, particularly to an already reviewed binding,
+please be sure to run the tests again before sending.
+
+Thanks,
+Conor.
+
+--UaxSKSzzvZNZC0gh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrt7ewAKCRB4tDGHoIJi
+0p8/AQDjN3yyk7fx+hDY5Wx3AXRyeMU9MulyUrmVqHY9obTKEAEAvpWCf+REWN74
+6JVkj0utXBG+pqf8RMBacwhLLnwZ2Aw=
+=KW6c
+-----END PGP SIGNATURE-----
+
+--UaxSKSzzvZNZC0gh--
 
