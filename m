@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-284954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA17950750
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:14:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01BC950751
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8895A1F224B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DC42827CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D45B19DF5B;
-	Tue, 13 Aug 2024 14:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E82419DF7C;
+	Tue, 13 Aug 2024 14:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJR5h6nf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jojLb2S8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BEA19DF46
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF9619DF69
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723558431; cv=none; b=EH99SfZTnvXXqn04uqyvc/osdmtRl9pOj3/sphHjX8H2QTXdVQlSeMUcu2AKC5ORpCwsWCArJp2VovC4gHu/vW+w1wLyGdanJy2fFStCRhT8HroNzwnbIOtnuV3Our+2TXhoiSg89PrlqIRK//TwGx+r/20aWhKfu3epc5nwyFQ=
+	t=1723558432; cv=none; b=j3lB5aoMzBGCx3LC1l0hFMSYvd85QuvCiVS7Sz2/e/Q+ld1Mx3To+KaOMzuZBLHvEqhdNjAr35Qj6BQ83NNG3+Rr4CYLcIsdVZXBU9mtTpsQ6BwEVx0ZEq7eUqiInb410Q3e3VGuGB6/K0jIuHqOs8Ep/EbCiZ+ETYwwWHJKY+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723558431; c=relaxed/simple;
-	bh=ceJAsQVNvPZUvEVH90Lwtfbz3Ha3JuH6fkV/BpfNMgQ=;
+	s=arc-20240116; t=1723558432; c=relaxed/simple;
+	bh=CAOJ8mgA8jKzzI9hA7HpfYwAeUu6fh4NOYcV9F2ZHaw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e6ArCOAEI47xrmujvP9GSgpMwXdilVFgaYS9b6AJLKBnwmvNlDzdunwLqeA1smrC/dSJO7P1viVTYKH/FkS4cxEDsXgvCa9vT7cddXi7+cFAuj1waEJTzPjGCbmoVV+FE6LWMzN48ILDQA/Pwq1lWUR4eOtu/3XHseK1hKlI158=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJR5h6nf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC9CC4AF11;
-	Tue, 13 Aug 2024 14:13:48 +0000 (UTC)
+	 MIME-Version; b=i2w+Q1jXN4LJNFljNRLi/wuwJTfRqkJ2JImADkkG3fcfPATSYJSf97Zo8pZU6D25hyUUpPgrgxga1FnHDK9hVQF/yKDa+dVi6ygBaiLDtKrpG3gaAaVYp9LPsoVWeMC0TJ9k5gKLrl9jmgp7oqBK58s7iXuLy4lCxjfoSwkRe1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jojLb2S8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6733C4AF0F;
+	Tue, 13 Aug 2024 14:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723558430;
-	bh=ceJAsQVNvPZUvEVH90Lwtfbz3Ha3JuH6fkV/BpfNMgQ=;
+	s=k20201202; t=1723558432;
+	bh=CAOJ8mgA8jKzzI9hA7HpfYwAeUu6fh4NOYcV9F2ZHaw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nJR5h6nfLGvDN1tZY8B6tCGJErI5wYrupexx86bDUR8ZZHF8uZMGcphc6Zx+caNhZ
-	 DrbS/FicXfh88Q20S4VUlUtCar05NhDlieMIS29787iWRjGwOYby6pamMfP0wkw0HZ
-	 pQp4ZSo4Fen2MQNQKjKJrr6rDdx4wjoLpCWmsrX9dTV+wQQBOtQ6xLo6FrY2Awb3k4
-	 hNcABuWiQCJxOO53ORBjVtZ56ffg/X6a2XYmKuOUrpBydDcY9iHgRRVSB257K3gO6f
-	 R3JV1+fOfwZz9f77Gw9b7J3Y5nIyp9u4cGHMyLobvT9YrItmYnqwz/r4dHHvmyasDO
-	 piGcoJYEvKSXA==
+	b=jojLb2S8+RXDU3B+0dvEVenn7/GAwWb3Mu2ll6AbX3FJ+WXV0Ul8RFaFDRhqt2lAm
+	 Eyn1k3U1YVnoXMZrjxCmGRHdRlS8xIL5/BzSicOS/CkUwMXRc0S/VE2G/BpZ4F4w/k
+	 dBB6FWr3cf2GXDCdV/wExXZZQhhShlqJh70kMYz8XE+ATbLNZNfz/YGNohcpM5DVXB
+	 blgqcGLhod9jvLlJzDlQepVfEGQQyWpgXp5sMPm9U2YBZj20IR4lMoJDEpg3R7WFEN
+	 40HSY1IO/t4BvQ4i4T6uszN5J9GMXG6twUuW2mJkP/4D/61yQC1rHg3kSwhk+6iEgC
+	 OrEn7tvVBaDVg==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
 	Chao Yu <chao@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 4/9] f2fs: convert f2fs_write_inline_data() to use folio
-Date: Tue, 13 Aug 2024 22:13:26 +0800
-Message-Id: <20240813141331.417067-4-chao@kernel.org>
+Subject: [PATCH 5/9] f2fs: convert f2fs_write_single_data_page() to use folio
+Date: Tue, 13 Aug 2024 22:13:27 +0800
+Message-Id: <20240813141331.417067-5-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
 References: <20240813141331.417067-1-chao@kernel.org>
@@ -68,83 +68,157 @@ prepare for removal of 'index' field in structure page [1].
 Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c   |  2 +-
- fs/f2fs/f2fs.h   |  2 +-
- fs/f2fs/inline.c | 10 +++++-----
- fs/f2fs/node.c   |  2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ fs/f2fs/compress.c |  3 ++-
+ fs/f2fs/data.c     | 29 +++++++++++++++--------------
+ fs/f2fs/f2fs.h     |  2 +-
+ 3 files changed, 18 insertions(+), 16 deletions(-)
 
+diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+index eb5cd1457ffc..82c31641e696 100644
+--- a/fs/f2fs/compress.c
++++ b/fs/f2fs/compress.c
+@@ -1523,7 +1523,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+ 		if (!clear_page_dirty_for_io(cc->rpages[i]))
+ 			goto continue_unlock;
+ 
+-		ret = f2fs_write_single_data_page(cc->rpages[i], &submitted,
++		ret = f2fs_write_single_data_page(page_folio(cc->rpages[i]),
++						&submitted,
+ 						NULL, NULL, wbc, io_type,
+ 						compr_blocks, false);
+ 		if (ret) {
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0df5a0c66ede..6d2a37db0c9e 100644
+index 6d2a37db0c9e..0779e222f709 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2866,7 +2866,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- 
- 	err = -EAGAIN;
- 	if (f2fs_has_inline_data(inode)) {
--		err = f2fs_write_inline_data(inode, page);
-+		err = f2fs_write_inline_data(inode, folio);
- 		if (!err)
- 			goto out;
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a4b90215a51f..7c7760aa1a7c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4185,7 +4185,7 @@ int f2fs_read_inline_data(struct inode *inode, struct folio *folio);
- int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page);
- int f2fs_convert_inline_inode(struct inode *inode);
- int f2fs_try_convert_inline_dir(struct inode *dir, struct dentry *dentry);
--int f2fs_write_inline_data(struct inode *inode, struct page *page);
-+int f2fs_write_inline_data(struct inode *inode, struct folio *folio);
- int f2fs_recover_inline_data(struct inode *inode, struct page *npage);
- struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
- 					const struct f2fs_filename *fname,
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 98d122164cd1..005babf1bed1 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -260,7 +260,7 @@ int f2fs_convert_inline_inode(struct inode *inode)
+@@ -2764,7 +2764,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
  	return err;
  }
  
--int f2fs_write_inline_data(struct inode *inode, struct page *page)
-+int f2fs_write_inline_data(struct inode *inode, struct folio *folio)
+-int f2fs_write_single_data_page(struct page *page, int *submitted,
++int f2fs_write_single_data_page(struct folio *folio, int *submitted,
+ 				struct bio **bio,
+ 				sector_t *last_block,
+ 				struct writeback_control *wbc,
+@@ -2772,12 +2772,13 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 				int compr_blocks,
+ 				bool allow_balance)
  {
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
++	struct page *page = folio_page(folio, 0);
  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct page *ipage;
-@@ -274,14 +274,14 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 		return -EAGAIN;
+ 	loff_t i_size = i_size_read(inode);
+ 	const pgoff_t end_index = ((unsigned long long)i_size)
+ 							>> PAGE_SHIFT;
+-	loff_t psize = (loff_t)(page->index + 1) << PAGE_SHIFT;
++	loff_t psize = (loff_t)(folio->index + 1) << PAGE_SHIFT;
+ 	unsigned offset = 0;
+ 	bool need_balance_fs = false;
+ 	bool quota_inode = IS_NOQUOTA(inode);
+@@ -2801,11 +2802,11 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 		.last_block = last_block,
+ 	};
+ 
+-	trace_f2fs_writepage(page_folio(page), DATA);
++	trace_f2fs_writepage(folio, DATA);
+ 
+ 	/* we should bypass data pages to proceed the kworker jobs */
+ 	if (unlikely(f2fs_cp_error(sbi))) {
+-		mapping_set_error(page->mapping, -EIO);
++		mapping_set_error(folio->mapping, -EIO);
+ 		/*
+ 		 * don't drop any dirty dentry pages for keeping lastest
+ 		 * directory structure.
+@@ -2823,7 +2824,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
+ 		goto redirty_out;
+ 
+-	if (page->index < end_index ||
++	if (folio->index < end_index ||
+ 			f2fs_verity_in_progress(inode) ||
+ 			compr_blocks)
+ 		goto write;
+@@ -2833,10 +2834,10 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	 * this page does not have to be written to disk.
+ 	 */
+ 	offset = i_size & (PAGE_SIZE - 1);
+-	if ((page->index >= end_index + 1) || !offset)
++	if ((folio->index >= end_index + 1) || !offset)
+ 		goto out;
+ 
+-	zero_user_segment(page, offset, PAGE_SIZE);
++	folio_zero_segment(folio, offset, folio_size(folio));
+ write:
+ 	/* Dentry/quota blocks are controlled by checkpoint */
+ 	if (S_ISDIR(inode->i_mode) || quota_inode) {
+@@ -2896,7 +2897,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ out:
+ 	inode_dec_dirty_pages(inode);
+ 	if (err) {
+-		ClearPageUptodate(page);
++		folio_clear_uptodate(folio);
+ 		clear_page_private_gcing(page);
  	}
  
--	f2fs_bug_on(F2FS_I_SB(inode), page->index);
-+	f2fs_bug_on(F2FS_I_SB(inode), folio->index);
+@@ -2906,7 +2907,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 		f2fs_remove_dirty_inode(inode);
+ 		submitted = NULL;
+ 	}
+-	unlock_page(page);
++	folio_unlock(folio);
+ 	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode) &&
+ 			!F2FS_I(inode)->wb_task && allow_balance)
+ 		f2fs_balance_fs(sbi, need_balance_fs);
+@@ -2924,7 +2925,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	return 0;
  
- 	f2fs_wait_on_page_writeback(ipage, NODE, true, true);
--	memcpy_from_page(inline_data_addr(inode, ipage),
--			 page, 0, MAX_INLINE_DATA(inode));
-+	memcpy_from_folio(inline_data_addr(inode, ipage),
-+			 folio, 0, MAX_INLINE_DATA(inode));
- 	set_page_dirty(ipage);
+ redirty_out:
+-	redirty_page_for_writepage(wbc, page);
++	folio_redirty_for_writepage(wbc, folio);
+ 	/*
+ 	 * pageout() in MM translates EAGAIN, so calls handle_write_error()
+ 	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
+@@ -2933,7 +2934,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ 	 */
+ 	if (!err || wbc->for_reclaim)
+ 		return AOP_WRITEPAGE_ACTIVATE;
+-	unlock_page(page);
++	folio_unlock(folio);
+ 	return err;
+ }
  
--	f2fs_clear_page_cache_dirty_tag(page_folio(page));
-+	f2fs_clear_page_cache_dirty_tag(folio);
+@@ -2955,7 +2956,7 @@ static int f2fs_write_data_page(struct page *page,
+ out:
+ #endif
  
- 	set_inode_flag(inode, FI_APPEND_WRITE);
- 	set_inode_flag(inode, FI_DATA_EXIST);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 20518c12f5b7..2b764c86aacc 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1535,7 +1535,7 @@ static void flush_inline_data(struct f2fs_sb_info *sbi, nid_t ino)
- 	if (!clear_page_dirty_for_io(page))
- 		goto page_out;
+-	return f2fs_write_single_data_page(page, NULL, NULL, NULL,
++	return f2fs_write_single_data_page(page_folio(page), NULL, NULL, NULL,
+ 						wbc, FS_DATA_IO, 0, true);
+ }
  
--	ret = f2fs_write_inline_data(inode, page);
-+	ret = f2fs_write_inline_data(inode, page_folio(page));
- 	inode_dec_dirty_pages(inode);
- 	f2fs_remove_dirty_inode(inode);
- 	if (ret)
+@@ -3165,7 +3166,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 				continue;
+ 			}
+ #endif
+-			ret = f2fs_write_single_data_page(&folio->page,
++			ret = f2fs_write_single_data_page(folio,
+ 					&submitted, &bio, &last_block,
+ 					wbc, io_type, 0, true);
+ 			if (ret == AOP_WRITEPAGE_ACTIVATE)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 7c7760aa1a7c..5800ac90a5f7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3881,7 +3881,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ int f2fs_encrypt_one_page(struct f2fs_io_info *fio);
+ bool f2fs_should_update_inplace(struct inode *inode, struct f2fs_io_info *fio);
+ bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio);
+-int f2fs_write_single_data_page(struct page *page, int *submitted,
++int f2fs_write_single_data_page(struct folio *folio, int *submitted,
+ 				struct bio **bio, sector_t *last_block,
+ 				struct writeback_control *wbc,
+ 				enum iostat_type io_type,
 -- 
 2.40.1
 
