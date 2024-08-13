@@ -1,101 +1,145 @@
-Return-Path: <linux-kernel+bounces-285464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BD4950DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:25:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9CC950DD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0FF1C22640
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4825B1F23792
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D8C1A7049;
-	Tue, 13 Aug 2024 20:25:01 +0000 (UTC)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967991A704A;
+	Tue, 13 Aug 2024 20:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qqBnqiAt"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FB8187F;
-	Tue, 13 Aug 2024 20:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345371A4F2C
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723580700; cv=none; b=rON8gHJgZ/zmlivCfgYucYq8Fmi9OOlNTjD18bx1KXAVEX+5MvpY+h+KL7QS2E5XcQTGh01breKc0af4H6cXwU4VnMRygz+YdbNwjY5+pZGedUTvpsiPyL2RJEXsTRlq0gsgZxBqpgQ0+k0qOkDAq6w/KomMv4tmSjL+eElD8K8=
+	t=1723580744; cv=none; b=hOk61QkkYUmYYWsKgKZy6NMXteMa+jxKgTIbJZMEfDW6PtnVF0Sr7Uboh9DzwdMwMvSGurtKgijZUink61wYfaFFiZ5qpAoKBFRJAzyE+vHEuGaPLA2yBPV75jmnAhhrrl7vgrrTCKafktmvkpWmnKSRGbIVGVa1mxsfr36WbMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723580700; c=relaxed/simple;
-	bh=wIlDKCsXJeboUMZrJ2Sm5A0TPgoxDqbV7n7P7xIrOt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPnM902kR7A/oQ8A8kLp6xJmo8M8W+9oI52by+pBv53ptWbFBV9uJL8+eurpkJDmJgKC6s/7u2nKOqc7W4IdWQ967iDp7WWywtaT0yuohiInBkbMBPp2EDk7l9ov5Asz0svzIsGZ9WV+hGLgzUQ1m9YXNgIkpiNTWpn5y+CAo7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc491f9b55so42692315ad.3;
-        Tue, 13 Aug 2024 13:24:59 -0700 (PDT)
+	s=arc-20240116; t=1723580744; c=relaxed/simple;
+	bh=uPZbHC8CGUlf/x8Q+x+KQ3vLMFUd1MWESPzfxfGXEFE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=c6GHvrgW7f4ex/W4Aab6u623be5p7kkh4qgGbV1ta4IdpFtJrEESUUAms7PZXaN4JCgAPZ8oIoULnF0M9uG9ir+1dFtd53gfuvDW32LztFOPqbkdSfcb/kryaiFgWM4jcfJ3udvTRLCiz9MTFWxDg7rdsLtqykv2ImWL04mzpO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qqBnqiAt; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42807cb6afdso2645e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723580741; x=1724185541; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=urxtbyntgkmhTeVfk229QCNiMtt2bXGPf/Tk0xUU9iw=;
+        b=qqBnqiAtIAJkAYpVHURHzmSyogekDHRQpVZb5w/MJB3oFY/X62YsH55mDNy0TJ5SC3
+         tmftz4CE13KxmaNVKMp3Izh5Pvb+1NBVR3DD0ebAtt19Doboax2hpP7GL+FtrLV11gJt
+         rGm6l1rlIQgCeSyDJM77zUPfPkNanUY6mfoaH4ef1ew+G7+cYtt+i0pRdYxvVJeZmBZp
+         OQuhmnjccZUl9z4438RvBKeYsMJuycIT8CsP4QrK17B3VF7iElhkOVvkcFRkusN4xcJU
+         YXMuaQiegbqLib8yJi7TjLOLH0Da9ArmReVs1thY2+S6lM+r/dDVSuuuoJHlZSDV1r1S
+         +3vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723580699; x=1724185499;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=quenUURw5ynby1W81kTijG5HkfqC+NVKxViDT2ifuPM=;
-        b=jiaiee+SftN2qhu1/g9pwB7LCaQo4Cl24WmxOz6hb+lhsVH+tzK0/6jOR11/Qi9pGx
-         9MC53OtNvvZge/9V5vvJnb9TIyUspCLTT1aBbfkrx22YuN9PG3snabQQrhkBcR5WbzAB
-         YlCvVNBjm0T7aAdtDRXFq1b2elBpTYqfdzjDjxdRNaYXFRGgtP0KBu9963KB04Vn6dAG
-         ntJ4+uUjjja5zEd+rcrt5MA9ssjm0P2juCClVtXIYs93jTlkzRDMUrOqicDWZ8VUHyii
-         Io0IH1x8zPzmdwzOGHZdVWGXTqZUa5bmnd+UiZJjuAhFtobCwAyhvaFXWy5yoY9lH5xm
-         msOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfGta0Vnn/QCFRAN1VC7j28tzsDvZMbfzqCu3JSgVNgpbeRNHJvsD0KKQJOHJ3C2vxYjhZeWJDVCiYMHVCfm5OYBkPITWd1Iw4h1Sfa1jzQlMfs8vGEr9g4qfOXVMeAh1wLLDJWAvpJcc7T16PDjbhTBUdGDUbTZvcSYsy3oGPGMOOU3KyJA==
-X-Gm-Message-State: AOJu0Yz+7zY48+bfbWX49dkjq86Sp0DRM4zMlnB8Y16Cc5KRchiI1QTC
-	Rp02td8C1FKqCGgX9qIJbTK+TN1sUimKZxq9j1HU7XlHd4eK3HLP
-X-Google-Smtp-Source: AGHT+IHjC5oISJgD63ifwG0y1Rsh5mWlxcPUysXZovkhKV60+/TBUDV6LteGjCltHKwtSHuxIFnv6w==
-X-Received: by 2002:a17:903:2305:b0:1fb:6d12:2c1c with SMTP id d9443c01a7336-201d63b3e4dmr10758675ad.19.1723580698764;
-        Tue, 13 Aug 2024 13:24:58 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201d7c01f75sm967545ad.200.2024.08.13.13.24.57
+        d=1e100.net; s=20230601; t=1723580741; x=1724185541;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=urxtbyntgkmhTeVfk229QCNiMtt2bXGPf/Tk0xUU9iw=;
+        b=Z/C8Bc9eGmW5lIijF69Qr3bNW/zOO4Se/qe/hwJvULd7IE18+qoBLFKo8X2l/yPYyQ
+         K66ZHolmF1M8Nz/3pnnEiwEYYCsfARdu6W08IEEEKNUNXw4Rso/i7oBHEmc7/nZdUPW3
+         XcChkTXdoBqs0ba4HFTY9v7brnPZ0X/7vVKzkcYFhpxwUmGtThLUYydR1g76B8+fnvLH
+         BsQxZJkz33KEu+zv9n/wYeyd2Hn//+mTWluJojb6dEJm5VJrB0NVAPbdmQNEojykeKCT
+         20zUHs7rODDzScu9NPzbdNNUSW+o3QqcedTILeOt4fB9NEnsWeJaZc311RtIO1co1ffu
+         xe5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWlxp7DNYVpV7O3vcEZ3csxEddb4U9AeNXMox4VLTVa8OVcKcY3K3PjX3Ysoxpa/4yaiYd6lxaFa1ZD1zaVhNy3evzTXpoURPRfSvdA
+X-Gm-Message-State: AOJu0YzwUlfg/Jfthsae6bUY4u81R1rkzvbBUvJrAsvdeBaSG0lz9cSL
+	jVLdtcxeJPN6gwLczODScr+4EQekh6feajnn7k5uuDi1pqPSYS409kkbOOprVg==
+X-Google-Smtp-Source: AGHT+IFoEot39/qLHaxa6y/Sw82Et10+AuC9CeTanjVjdFZOOpZp9e5OHYQltsAxMxQ/WGS4zPKfGA==
+X-Received: by 2002:a05:600c:500b:b0:426:8ee5:3e9c with SMTP id 5b1f17b1804b1-429ddc8a1ebmr110625e9.6.1723580740634;
+        Tue, 13 Aug 2024 13:25:40 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:a608:a4cb:f4c2:6573])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429dea45445sm943535e9.6.2024.08.13.13.25.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 13:24:58 -0700 (PDT)
-Date: Wed, 14 Aug 2024 05:24:56 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: qcom: Use OPP only if the platform supports it
-Message-ID: <20240813202456.GB1922056@rocinante>
-References: <20240722131128.32470-1-manivannan.sadhasivam@linaro.org>
+        Tue, 13 Aug 2024 13:25:40 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Subject: [PATCH v2 0/2] userfaultfd: fix races around pmd_trans_huge()
+ check
+Date: Tue, 13 Aug 2024 22:25:20 +0200
+Message-Id: <20240813-uffd-thp-flip-fix-v2-0-5efa61078a41@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722131128.32470-1-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADDBu2YC/32NQQrCMBBFr1Jm7UgmVLSuvId0YZNJMlCbktSil
+ Nzd2AO4+fA+/Pc3yJyEM1ybDRKvkiVOFfShARMek2cUWxm00q26kMaXcxaXMKMbpYa8USvXkSM
+ 60dBB3c2Ja707733lIHmJ6bNfrPRr/9lWQoWtM2SHszHWqpuP0Y98NPEJfSnlC91gx0CzAAAA
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Pavel Emelianov <xemul@virtuozzo.com>, 
+ Andrea Arcangeli <aarcange@redhat.com>, Hugh Dickins <hughd@google.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ David Hildenbrand <david@redhat.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
+ Jann Horn <jannh@google.com>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723580736; l=2085;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=uPZbHC8CGUlf/x8Q+x+KQ3vLMFUd1MWESPzfxfGXEFE=;
+ b=T2zzW+NCfodiI+EDaSAYC8DlWgR0OKZs3VhkAe8fiH7o38AHgADYuunZE4nL6DePHkDrsi+Nq
+ V7e6FCKZvtHDSpQhBGqViYvRbDaHTR1ErIRFdP5Ddtww9JAY/XVgJpQ
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-Hello,
+The pmd_trans_huge() code in mfill_atomic() is wrong in three different
+ways depending on kernel version:
 
-> With commit 5b6272e0efd5 ("PCI: qcom: Add OPP support to scale
-> performance"), OPP was used to control the interconnect and power domains
-> if the platform supported OPP. Also to maintain the backward compatibility
-> with platforms not supporting OPP but just ICC, the above mentioned commit
-> assumed that if ICC was not available on the platform, it would resort to
-> OPP.
-> 
-> Unfortunately, some old platforms don't support either ICC or OPP. So on
-> those platforms, resorting to OPP in the absence of ICC throws below errors
-> from OPP core during suspend and resume:
-> 
-> qcom-pcie 1c08000.pcie: dev_pm_opp_set_opp: device opp doesn't exist
-> qcom-pcie 1c08000.pcie: _find_key: OPP table not found (-19)
-> 
-> Also, it doesn't make sense to invoke the OPP APIs when OPP is not
-> supported by the platform at all. So let's use a flag to identify whether
-> OPP is supported by the platform or not and use it to control invoking the
-> OPP APIs.
+1. The pmd_trans_huge() check is racy and can lead to a BUG_ON() (if you hit
+   the right two race windows) - I've tested this in a kernel build with
+   some extra mdelay() calls. See the commit message for a description
+   of the race scenario.
+   On older kernels (before 6.5), I think the same bug can even
+   theoretically lead to accessing transhuge page contents as a page table
+   if you hit the right 5 narrow race windows (I haven't tested this case).
+2. As pointed out by Qi Zheng, pmd_trans_huge() is not sufficient for
+   detecting PMDs that don't point to page tables.
+   On older kernels (before 6.5), you'd just have to win a single fairly
+   wide race to hit this.
+   I've tested this on 6.1 stable by racing migration (with a mdelay()
+   patched into try_to_migrate()) against UFFDIO_ZEROPAGE - on my x86
+   VM, that causes a kernel oops in ptlock_ptr().
+3. On newer kernels (>=6.5), for shmem mappings, khugepaged is allowed
+   to yank page tables out from under us (though I haven't tested that),
+   so I think the BUG_ON() checks in mfill_atomic() are just wrong.
 
-Applied to controller/qcom, thank you!
+I decided to write two separate fixes for these (one fix for bugs 1+2,
+one fix for bug 3), so that the first fix can be backported to kernels
+affected by bugs 1+2.
 
-[1/1] PCI: qcom: Use OPP only if the platform supports it
-      https://git.kernel.org/pci/pci/c/d0fa8ca89100
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Changes in v2:
+- in patch 1/2:
+  - change title
+  - get rid of redundant early pmd_trans_huge() check
+  - also check for swap PMDs and devmap PMDs (Qi Zheng)
+- Link to v1: https://lore.kernel.org/r/20240812-uffd-thp-flip-fix-v1-0-4fc1db7ccdd0@google.com
 
-	Krzysztof
+---
+Jann Horn (2):
+      userfaultfd: Fix checks for huge PMDs
+      userfaultfd: Don't BUG_ON() if khugepaged yanks our page table
+
+ mm/userfaultfd.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
+---
+base-commit: d4560686726f7a357922f300fc81f5964be8df04
+change-id: 20240812-uffd-thp-flip-fix-20f91f1151b9
+-- 
+Jann Horn <jannh@google.com>
+
 
