@@ -1,188 +1,246 @@
-Return-Path: <linux-kernel+bounces-285403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9F6950D00
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB30950D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416021F255B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:15:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ADF11F21116
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE151A01A1;
-	Tue, 13 Aug 2024 19:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AB31A4F03;
+	Tue, 13 Aug 2024 19:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="R0rK46Ma"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kWRPSg6g"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957101A2C15
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576547; cv=none; b=uYwaH5RljaQDTzDPzf8lU/llzEoU9ioLop6oA1W0bwAqqynXMchja9oIPCADKBsQjkWtzjZBUUiPC2Szi3Bln1v9wGcLHTu8nR7LPBDDTtXfQNZsboeiI+rxFg63y65hDGZHXT/nmR7FOWA9XC5LA+F9zbKKWLuJH5V4wWwifGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576547; c=relaxed/simple;
-	bh=toz2rrC0HiyT+Eb8eF0RQri9CoHa+oL7p0JRb3stXx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XqsEcuono8Mg055LbMwdYQ8sps/aoVCPNAC4sqbMP7zAefsyXq8j7V/Q7IX+qh9DMFmsH4yt+Yo/Q8ojdpwDsM2c0lzLf5dhMpI6NGZjxq0oExbiE5slGBTThxQs90dCLgbL3VJDTsObyZ1ZnLBvEhFjuP/qmFRuXm0Zlbs6N0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=R0rK46Ma; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d2ae44790so4214311b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:15:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723576545; x=1724181345; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=upO19SozBGW3wqb+VTuxXAbPoh43oKi0VkEemu0qAIE=;
-        b=R0rK46Ma+R1P5JMI/lSLP7ue9SwZQ4yYNjK3oHHdISnWADJrkZxvzDIPvoPP4J5Xl2
-         gApT3oos5doN0XIM8iUyQf7VbKlybcl02UCDoa3WohnO+GCHsnkTRNyOP5idWDtQO5CL
-         wjZ0RD0bBznPwMY1O4HVX9lmJC0+6u4IjwFIzXlhi6YDOGunmTEQtTRFPzz4nsPNDNth
-         DMpYBIQjph8rurXBmoZNo0r/Uh8P00rA75GwMQPTHr8eB4RhWlU2VI2ddLnWdt39/ops
-         74Pv4lsWnnyATTZspr6ht/Mr6IQLNPZ8EoIzWDzjJeuSk460Yinbe46YGlMlM1dFZA3T
-         6IBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723576545; x=1724181345;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=upO19SozBGW3wqb+VTuxXAbPoh43oKi0VkEemu0qAIE=;
-        b=LEFftePO+hJ2qJ7QEBuPLbryu/fR79KeqqXaF11GYEpvAMzBwrdwU721j8GXKBtF07
-         uucWpQK4vLi0vKoOGenUbb7dVxNOr7ccjTw+ZEMQLLy5hqTnUlTjYkK7EB5ADwUxhZ5B
-         JB/DXncUIIq8y8g4NOQRFOt+36oT1+ZgYpWYOqFQgEJu5se2WI870e7WUAMTwzBgur1e
-         kIFoIlfpWTQBB5U+AJmeFjnc++5f2ywqzFxP38mBkREGXKsnJZuHb5zOmC/Girc3aFSm
-         cHz5XFGMuxCug5kEPp78sO8TUUa3Du7t9i4v45kYdXIpzBqyM4vzqniKyziegd+Vy6ZF
-         pmYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6L/ENqQO7cO3s9X0XOq2xqrGJp5BCOBsnR257wZhZXM+Ujmh8Qn7UWkSHd+RagiEDdkag9kT9vO0SJ0gDezT3Ug5cJJO0h43Oiv1t
-X-Gm-Message-State: AOJu0YwPMLlTeeFneLu9h8qLIBbIrTQvmxpc25ERZsbshrOYM/givpUk
-	AZrp7wUgtCKDo9Zjw9DkMJbsjoWwTPoIxi2SXz4dIE0plcjp9Spt1NPbRNM6Jmk=
-X-Google-Smtp-Source: AGHT+IHkE8ev8c9ixTOpOS8k+f7v59VeVKfF+Zqcm+gC19sVxa1p6KC0GWQGsDmZo9DB9KuLB8MPgg==
-X-Received: by 2002:a05:6a00:2383:b0:70e:9408:fc34 with SMTP id d2e1a72fcca58-712671037a2mr688748b3a.7.1723576544561;
-        Tue, 13 Aug 2024 12:15:44 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5873864sm6051385b3a.35.2024.08.13.12.15.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:15:44 -0700 (PDT)
-Date: Tue, 13 Aug 2024 12:15:41 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: "Wu, Fei" <fei2.wu@intel.com>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, guoren@kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
-Subject: Re: riscv syscall performance regression
-Message-ID: <Zruw3dUAYb3zcxaV@ghost>
-References: <738d3b74-1e10-4eb5-8c0d-1db33feb740a@intel.com>
- <28cf8a77-e9af-45e4-b178-fd7a478f9b4c@ghiti.fr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25CA19CD00
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723576713; cv=fail; b=mQPBSM7ayRva1HgnV7ouKRCWdFTdbmMf9XNSc9amCdC6H8g7M0a9Qk0z8z/Ci7SHZPxyE2RX/mmz+fkGAs73bxrPf2xlUpTqCRHw+8QYWtUyXxZiwzTTdg2CR9yoaUV6zGn2/Yr3+AiG7AejVwtrCS6xKnNZ4Gc0CUCY09ztva8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723576713; c=relaxed/simple;
+	bh=Rql/HNnTf52eOm53fQtjvif2uu57gvdSu2o6ifhSzL4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DM7zPp7tRd3Nja+Y+qByRG4rOWa8CKVF1xep4dyfCa+1FIzVhfJgBNrkYKzc9yTCU2jCgaQxkyy/gMx6bhGMGFt/+tuSblWrcbAPIVQStcTOAVdwG2T7eaxNkYTsmnF3lEPILndwabn6e6EE4IZN3m/b/6TSUpaXrOmSjtwLZ5M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kWRPSg6g; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723576712; x=1755112712;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=Rql/HNnTf52eOm53fQtjvif2uu57gvdSu2o6ifhSzL4=;
+  b=kWRPSg6g7tjjMMZtH5mGqqEpuYnxIDDfnX4tTFrIWwGrY+7JZ55FtMKJ
+   9ej1vWWwBNX7stx+wO0tIouWU/XCEXAQ/m95XTLLZDGzzpTOEOm/u/jUo
+   GKGMIL7lZdE3VXQEZ6iiQDT2naZ3beOHT96KgFXTDLGnz7cfilJ22PBER
+   fXd4r87WNRu20rddSBQ8GjrAEgh6bGartW1Ry/T5IYoN6IP7oUBM/pT72
+   BSqwWTnEEmdp8ZlDeqPrjQz+4g4Iq7CBqeG7464JH4w9WCtfPUDZLmzdD
+   E/1rzJnJri8CXI97yAyAOZi7N5Uij+KU01a6PTtxnmdJgyoC1yxX/CyJW
+   w==;
+X-CSE-ConnectionGUID: fSlp0e3eRnyLBxiqxdiyhQ==
+X-CSE-MsgGUID: ywTLJTqLRxOtUwZCHHI9JA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="25630534"
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="25630534"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 12:17:51 -0700
+X-CSE-ConnectionGUID: OjTb70EfTJuYQAzSd21B0g==
+X-CSE-MsgGUID: 7X+uwW7yStmi7xGGiB+tfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="58651047"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Aug 2024 12:17:51 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 13 Aug 2024 12:17:50 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 13 Aug 2024 12:17:50 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 13 Aug 2024 12:17:50 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sSMR9Sh/CuGHb7iAXVaxeu0YI16PRJqbM6NXNNYqFa3YehASCT4aoSW4pNoaGJ/i/U2ixwBSMB/bXgPwbFW5lZDMHAiEg8caIQLJZqNHCSGC92exJO4GBjP1xAK7CM4CCez4NJYAxeuCIWGCcH64IohAtaA74tdAnnCNkAVpI9pFOFyEWGGOmEpEsL7goQjQREgtG/k0app/uy5ITega2SO1q1+ZA8VO0fXhRTii8GCReqTxq0rMOaGuI/PbtfTIaiITCcKOct4EIHeds8CuHADS2ncujsF/WByVbuy5bN3Ti01JHhWpTnfRDL6IeEtUFxQ8mCaw2L1wDdU7XSbuEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yML5q8p8sGD0r9/kBBY7y5PgbDF6T0zr/i7n0LupJz8=;
+ b=VeJQm94z/TU1hl/3DwTb9ZsD7g3AcvGMZAQ/tIQAdeCoAIOmvjlmc+ZeQMDLGsvebODVYyWABqCaVeKIPSPOasJpigshGDGypW5wnne3CiSmsAYtexleeXFfkeIOyZdEDEZcOujr1f6DiDF+NwAecYsoFGD5EQW+pXynISnmQUNJC5OjXSm9GHRuAAVBx3lP+/uN2/MdP9bmTTfw9w8AubXwCFlD5aq8vcQY8cIqvu35OEfWAiek079qN81rJU27lJgdnP3rDwsRnbduwl4avV1AjtINxeB+v589Hs4QKKm5HaoR1fX6Z/l8520Y4Bda23Qx0xuwBuV3SRBiDCPkoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by CY5PR11MB6437.namprd11.prod.outlook.com (2603:10b6:930:36::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31; Tue, 13 Aug
+ 2024 19:17:47 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%6]) with mapi id 15.20.7828.031; Tue, 13 Aug 2024
+ 19:17:47 +0000
+Date: Tue, 13 Aug 2024 19:16:43 +0000
+From: Matthew Brost <matthew.brost@intel.com>
+To: "Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
+CC: <intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <tj@kernel.org>, <jiangshanlai@gmail.com>,
+	<christian.koenig@amd.com>, <ltuikov89@gmail.com>, <daniel@ffwll.ch>
+Subject: Re: [PATCH v3 4/5] drm/sched: Use drm sched lockdep map for submit_wq
+Message-ID: <ZruxG8YaHqV1CAgS@DUT025-TGLU.fm.intel.com>
+References: <20240809222827.3211998-1-matthew.brost@intel.com>
+ <20240809222827.3211998-5-matthew.brost@intel.com>
+ <8b9928cc-dce9-4cfd-b1a9-0112266d60df@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8b9928cc-dce9-4cfd-b1a9-0112266d60df@intel.com>
+X-ClientProxiedBy: BYAPR01CA0034.prod.exchangelabs.com (2603:10b6:a02:80::47)
+ To PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <28cf8a77-e9af-45e4-b178-fd7a478f9b4c@ghiti.fr>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|CY5PR11MB6437:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8cc4b9f6-7648-4de6-ef5b-08dcbbcc9dd4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?x2OqjhVLfQisebX8NzkZh8w+UxI3i1pHui3BsRpElFoLQdlCRbsrNVxGTC?=
+ =?iso-8859-1?Q?4GX6XmNLUBAl/lPcofi4fBgFLcjZ6Nc27f3uFcJUyzrA9xDFPm16SMxHUz?=
+ =?iso-8859-1?Q?Tvv2i9OjKPfBiN5P+nsj+u33nnGWdP63cXnURG7e17gln1tSNoC24/MHst?=
+ =?iso-8859-1?Q?9ipyGeeMuWet4Dz2Pb40c8xki5mAUqxOAtznO5xvmV1v+P1pHblE+JgC86?=
+ =?iso-8859-1?Q?i72I7QMaunbACUK7KsYu01qevcH94wPdvu8GMWxc98CQexDSn7YBALRZ5c?=
+ =?iso-8859-1?Q?857j8xdJbsdjF9duMu2ImmL33N0d220C5+csWhdZFsF8bShL207bb6sTZG?=
+ =?iso-8859-1?Q?5UxMVhDpb1KoDYy/DRIaFFbuqgyyTmSa+CSMpZvzUttNmNNHOqT58/GtDG?=
+ =?iso-8859-1?Q?BBJP/+XvBKHnLPXXVJ/oJOim3SPsXY8uzzIgkESKYeiMTGKNd3YtygLkvb?=
+ =?iso-8859-1?Q?bVv7f9UDbCsgEBR1oUXjACYxrZcBtgJTlEL/3ey7URRmmi3c1iTjxrdduX?=
+ =?iso-8859-1?Q?MlwG609Kp3cALOEi5mCwcohQ4mEuL8z+WF/R/xemTFDSxj1yShA1w5gsP0?=
+ =?iso-8859-1?Q?B3vwPH9Y2LPcg8sPaAA3nlo3XPFDcVy8tu9VL1MPQYEfUhak+2hIEQx4yV?=
+ =?iso-8859-1?Q?qKFk2HWesTREBcZz6cBIbjZhBMY+EOlCeU3A1sC4T4X9oUSOIKxr/RBz48?=
+ =?iso-8859-1?Q?6Kaqs86CZxF8egyJn/lz+W4LBmHIHfweMy3baXk1PiGCCL96DcEH+vm6dV?=
+ =?iso-8859-1?Q?gExrHqLV8zkYq1cwR/aogfRPlCYyzYaGsMtP2POT02C59gX8dvBoFucbkP?=
+ =?iso-8859-1?Q?r0uc0URkOKhV2+/N5gSUS4S+utd6gsyV7AIgwz2of3L4u/D0NBSGV6X5ak?=
+ =?iso-8859-1?Q?TiM4bHt/O7cEnllIiFVP2P75JZDvl4WQcaFj5xqkaoDwCHYC20fbAmSqFv?=
+ =?iso-8859-1?Q?rZoL4Uy05cSNN2Q48IoVYt4ZsvMRyzexd7IcClVZX9ca2SJebp2TlMUf/K?=
+ =?iso-8859-1?Q?6POHbQQRKEwPFMjn0xiGdK3775/7HaaRqURL5G83HyMdKrMeQHyJNVAyM3?=
+ =?iso-8859-1?Q?wGVelhjy/rOk24NsJzSx6/7xMz4aqlCJB2OAuC9HtZOXrJkEaAb0iyr+21?=
+ =?iso-8859-1?Q?2/vqaTEJGLrTx48qGiq7dkOXtMIZ8bTWvilmcwQtp1r5voVZxxrnt00Kds?=
+ =?iso-8859-1?Q?mXNRMPtNfjKSARJTDdd2U+b2myMlN8+7cOJ/rSt8299svJylhK4EsjKdG8?=
+ =?iso-8859-1?Q?Fi4f6/TSVBHfaauIQkrnJvbx5wRGLY2fN5CgUwFkb8iszNP+rQRWZ12Ypx?=
+ =?iso-8859-1?Q?FS3pzpCyxYX1K6rMfYLYqj+eZ2IdN4XKdUauTC6HDnGED83SCMswK7tsbA?=
+ =?iso-8859-1?Q?eEJ2MzP5PC1Fs0PuZ74E4ZuzgJSLAdnA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?vn0fH/R/uArYEQKDTu2GscNNNBvrPYwiKMXmCL1h9cogZR65iDXxzwPMAH?=
+ =?iso-8859-1?Q?i1Buzetyqn0A3rKVosulEw9IePTnl0nkBjnABnft8EHPgU86wGz3OKFFaj?=
+ =?iso-8859-1?Q?ZCPOYljxv945GbPTOnf0s5KEZUHsjqHBt0aU2kBbgZ/efxXGoHEIPXFH7a?=
+ =?iso-8859-1?Q?sZfkRTVj2xZFLyXYuEYBVxxOapNYotWXsGhZnrL6ckmDKB9mrFIstgBIv6?=
+ =?iso-8859-1?Q?ldPGcx3V/7b9ygm3tYEBSK90HkX1CXhJnAv+txwTGWzt+/9kz5EGeBxEIN?=
+ =?iso-8859-1?Q?8mRoV0clPkB73gMnNpXr4TXpoiAteZgqEhesxa6tJv3TYT7wtbJeBNvrGS?=
+ =?iso-8859-1?Q?ugEMg5v7P8u1cg+mR1BUj/hIiOVTSYhna3GmIoext0jbBJV3ssTIyBpzdt?=
+ =?iso-8859-1?Q?rKV7mW/V/MVUxZVbDccnCVpv0Q6Ht0yXgAMmYt80gMokUaY6boka+3brFa?=
+ =?iso-8859-1?Q?BYCro+mcJwGsqAWAqc6Q9iOP5BR0LgAfH5bILANREmo89D034xznESkPQJ?=
+ =?iso-8859-1?Q?/SL09PhDB3mx2mv47yUVCTrvfMby5SGy39IyC9Th10aRWeZyWwiVm7M9Dx?=
+ =?iso-8859-1?Q?+va9SMmDVfr1E3T2U+YnLTpn8PRfJbjeU8NkpCVzKt10emVkCZTd6ZDWtf?=
+ =?iso-8859-1?Q?1TAjOX9gUA2VHapxI7DwfY1hEjObaQWa6OReAbZcYtdbHrtXyHPsVvdarE?=
+ =?iso-8859-1?Q?H5ErgMB63aN4BLyKQ5ClNbHJJk9lqee4lDB2eaO+PFj1FgsB92zyMCWZHL?=
+ =?iso-8859-1?Q?Q2OgxwN3sru3GOxKQQbHkGOWLl6AvK8QiXzwodWZ4QrPZRv/PRa8snw7sw?=
+ =?iso-8859-1?Q?z3giGmskbVmwIqFxQ2CM7/hFtZ/LhSBzuQVEgsY95t4ZLn8CbceoEF6Vfl?=
+ =?iso-8859-1?Q?2r860TCwpvsQTOvOHAXPPpXxBrjY5YU8z/shNTDxjAsJPgL0pmNsj6UGk9?=
+ =?iso-8859-1?Q?9spa2JXpqXdvcj8tSA9a/VqJJdBrPPYa9XeZog+pz8RRvAgbLWwdG0Ndku?=
+ =?iso-8859-1?Q?EJp/qvKECHx6Nm9gbq5eN0avIDCUulVOf6+YEXjFdXjg/iZpDUOQJIIwEV?=
+ =?iso-8859-1?Q?KiUH1dvSxB+w1Og91H7P7gYZBsrLve2iZhbPLd7VdL8Db7c/QLuxOVnAqT?=
+ =?iso-8859-1?Q?EpTQhtlLbpSDQorYv+RYX/U0g0qw+0PXH60j/utXDRlC+z4jf0j1+qIwBv?=
+ =?iso-8859-1?Q?Pp/pu5Is2BDrPWhhiPlgRRtmwEh3qy4GCn12oRKrm4sEfDureCktjobe6D?=
+ =?iso-8859-1?Q?2xAyrqMy3/uS2RwxJr9kLzoBB0LFGt7Qbe3VeD678tjJRTynvVgAeQ5z2U?=
+ =?iso-8859-1?Q?vgti4ogAQqBEOkDYzoTiZo4QuaFosTC3nFzENbjl/2OvPtAfxosVVSyaZw?=
+ =?iso-8859-1?Q?zBwCnZTXkLByuu0P9YXhaXV+2NghzeJuXZFizQ+8CHTv7y7VwZKk0iBR11?=
+ =?iso-8859-1?Q?ojIR6Qav6tBdDGg4yhBKIZkNeHSKURFIzW277QEAjM5/gOUiiQ8GFvtVWx?=
+ =?iso-8859-1?Q?ejTW7QludtIR6g/uO21X6K8UDVD2eS14ioT0Vp0hvbm2WKmm82z8IipCfE?=
+ =?iso-8859-1?Q?+/vMn8q3EsnOahMgpL5cnsQJTZEoaoNXvbgZISZBzaUuX+IjnG+ZpmgfNY?=
+ =?iso-8859-1?Q?vePcfjn6Zh8xjGKUABVg7WEOIS3BIugfuBEnn7OYCnp8yCL34njSH9dg?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cc4b9f6-7648-4de6-ef5b-08dcbbcc9dd4
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 19:17:47.6520
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J7HvcAegX3cDV6C3sdgXmp58C1cQ+tDunH8ZVFghX9o55k2pWZVJs1n0fO8xP3+/Ev0AcxgS8aqqZgH2lyojog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6437
+X-OriginatorOrg: intel.com
 
-On Tue, Aug 13, 2024 at 02:51:09PM +0200, Alexandre Ghiti wrote:
-> Hi Fei,
+On Mon, Aug 12, 2024 at 11:05:31AM +0530, Ghimiray, Himal Prasad wrote:
 > 
-> On 23/02/2024 06:28, Wu, Fei wrote:
-> > Hi All,
+> 
+> On 10-08-2024 03:58, Matthew Brost wrote:
+> > Avoid leaking a lockdep map on each drm sched creation and destruction
+> > by using a single lockdep map for all drm sched allocated submit_wq.
 > > 
-> > I am doing some performance regression testing on a sophgo machine, the
-> > unixbench syscall benchmark drops 14% from 6.1 to 6.6. This change
-> > should be due to commit f0bddf50 riscv: entry: Convert to generic entry.
-> > I know it's a tradeoff, just checking if it's been discussed already and
-> > any improvement can be done.
+> > v2:
+> >   - Use alloc_ordered_workqueue_lockdep_map (Tejun)
 > > 
-> > The unixbench benchmark I used is:
-> > 	$ ./syscall 10 getpid
+> > Cc: Luben Tuikov <ltuikov89@gmail.com>
+> > Cc: Christian König <christian.koenig@amd.com>
+> > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+> > ---
+> >   drivers/gpu/drm/scheduler/sched_main.c | 11 +++++++++++
+> >   1 file changed, 11 insertions(+)
 > > 
-> > The dynamic instruction count per syscall is increased from ~200 to
-> > ~250, this should be the key factor so I switch to test it on system
-> > QEMU to avoid porting different versions on sophgo, and use plugin
-> > libinsn.so to count the instructions. There are a few background noises
-> > during test but the impact should be limited. This is dyninst count per
-> > syscall I got:
-> > 
-> > * commit d0db02c6 (right before the change): ~200
-> > * commit f0bddf50 (the change): ~250
-> > * commit ffd2cb6b (latest upstream): ~250
-> > 
-> > Any comment?
-> > 
-> > Thanks,
-> > Fei.
-> > 
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> > index ab53ab486fe6..cf79d348cb32 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > @@ -87,6 +87,12 @@
+> >   #define CREATE_TRACE_POINTS
+> >   #include "gpu_scheduler_trace.h"
+> > +#ifdef CONFIG_LOCKDEP
+> > +static struct lockdep_map drm_sched_lockdep_map = {
+> > +	.name = "drm_sched_lockdep_map"
+> > +};
 > 
 > 
-> So I finally took some time to look into this. Indeed the conversion to the
-> generic entry introduced the overhead you observe.
+> will it be better to use STATIC_LOCKDEP_MAP_INIT ? Initializing key here
+> instead of while registering the class ?
 > 
-> The numbers I get are similar:
-> 
-> * commit d0db02c6 (right before the change): 185
-> 
-> *  6.11-rc3: 245
-> 
-> I dived a bit deeper and noticed that we could regain ~40 instructions by
-> inlining syscall_exit_to_user_mode() and do_trap_ecall_u():
-> 
-> - we used to intercept the syscall trap but now it's dealt with in the
-> exception vector, not sure if we can inline do_trap_ecall_u()
-> - I quickly tried to inline syscall_exit_to_user_mode() but it pulls quite a
-> few functions and I failed to do so.
-> 
-> Note that a recent effort already inlined most of the common entry functions
-> already
-> https://lore.kernel.org/all/20231218074520.1998026-1-svens@linux.ibm.com/
-> 
-> The remaining instructions are caused by:
-> 
-> * the vector extension handling. It won't improve the above numbers because
-> the test does not use the vector extension, but we could improve
-> __riscv_v_vstate_discard() as mentioned in commit 9657e9b7d253 ("riscv:
-> Discard vector state on syscalls")
-> * the random kernel stack offset
-> 
-> I'll add some performance regressions in my CI in the near future :)
-> 
-> Thanks,
-> 
-> Alex
 
-I have written patches to do this inlining but haven't sent it out yet.
-I don't know a good way of showing performance improvement so I have
-been hesistant to send it. It is generic so showing the improvement on
-x86 is probably the best. I have also written some patches for cleaning
-up some of the other syscall handling but again haven't been able to
-show performance numbers. I was going to use a thead board but was
-unable to get it to boot on an up-to-date kernel as I posted about here
-[1]. The patches here [2] should also show improvements.
+Most existing design patterns in the kernel define static lockdep class
+this way so I think this is fine. But honestly don't really have an
+opinion here.
 
-I can try to get some numbers and send out the patches.
-
-Link: https://lore.kernel.org/linux-arm-kernel/ZoydV7vad5JWIcZb@ghost/
-[1]
-Link:
-https://patchwork.kernel.org/project/linux-riscv/cover/20240720171232.1753-1-jszhang@kernel.org/
-[2]
-
-- Charlie
+Matt
 
 > 
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > +#endif
+> > +
+> >   #define to_drm_sched_job(sched_job)		\
+> >   		container_of((sched_job), struct drm_sched_job, queue_node)
+> > @@ -1272,7 +1278,12 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
+> >   		sched->submit_wq = submit_wq;
+> >   		sched->own_submit_wq = false;
+> >   	} else {
+> > +#ifdef CONFIG_LOCKDEP
+> > +		sched->submit_wq = alloc_ordered_workqueue_lockdep_map(name, 0,
+> > +								       &drm_sched_lockdep_map);
+> > +#else
+> >   		sched->submit_wq = alloc_ordered_workqueue(name, 0);
+> > +#endif
+> >   		if (!sched->submit_wq)
+> >   			return -ENOMEM;
 
