@@ -1,142 +1,155 @@
-Return-Path: <linux-kernel+bounces-284338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEBC950010
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AE0950011
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318501C2251C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D081F2378F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94045170A23;
-	Tue, 13 Aug 2024 08:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B70143889;
+	Tue, 13 Aug 2024 08:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Z0Y+eyTN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="tPnoRsbz"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="gSKoHX1y"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF8A170A0E;
-	Tue, 13 Aug 2024 08:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CDB1BDDC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723538410; cv=none; b=hR2PjoEDSG8RfTy/58QvOqBZHokdAU81GwDLK/c0GmqGS4exIOxNnjpVxTSnQKgd5/EPZx8QsTRPElfVQvLE+HQEsXMoQNXspWnfslQB95oclLZrkn16fRnvtWPZs4hV/cRuQHSx0+9DGAp+cSqlwMEynmtZuQjRTHaTBd6wKhk=
+	t=1723538430; cv=none; b=aWOCep6cuJ+r34V+dkNJ46X198yXoPK7nLBcjkUcpw2S8tW0Yjk62cZ7LPZOO1kqXgnubXtmExqooqWU+yGMwBUxdNDTVfeBaqD/W0Qbuwsk4jDogtFJEBGYIyJ7a8PBTlsnlM62yHVjTQPkzVU5chyhDGq7h7pnVuVK9uuLU9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723538410; c=relaxed/simple;
-	bh=inEEz4filmbo8qqOPd4E0V8HGmq9VX2EYngrDIfWBXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KCNGFKhpvfuEArdR/jRcFGZkZtNQe3gWUZA5hhhKu1DMo4jnDNS+sYYkESc3mzPnJUU9Q3qr6u9M8i7DG7+S29qeXbzMWIwK76QIoI+WKmLaxNGoPvJC0X6JS6pJbVfB0pB/JX8xAUzISzX08lR1TNhsXoQB9d2YkH/5AuR6/pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Z0Y+eyTN; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=tPnoRsbz reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723538409; x=1755074409;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=lWEnrYT/2zokPYs6W1DQexseb+uW1P/nNlbcer9G350=;
-  b=Z0Y+eyTNMzLWvk4X1fgfEL+QrB60synKGZ57oK550x8qE2TmFAlYjQ09
-   MLk3owP03fXmQ1EMGImlgrYFmENcP5BrHAEWXYZbYLz95zVxYEQh0lxjR
-   dNasqGHdS/1nhFKGhCQIM9Ty2beOdIocayhd7gkwbrsnxeCYCDOYr5cDu
-   Cc1iJP+QmFbiwpFn6J05t6+sc1ItGeQSs8dI2clbny6q408Tgpvvb+f8E
-   Mpe7oTl9kJfXGuZNmmpQlGsUuAfQeWOhx80JyCzhjHr4jDSoADgzdrx0s
-   yRDMwrJiMxXV89a0BJEE4ZNPhxV5TYOYVQb7dYxzh/BYxkNSVsd42lze3
-   g==;
-X-CSE-ConnectionGUID: 9CA1SSZ6Ri6prkb6IjLvEw==
-X-CSE-MsgGUID: gI2OKmTiSMmFMuUPLWmyGg==
-X-IronPort-AV: E=Sophos;i="6.09,285,1716242400"; 
-   d="scan'208";a="38379221"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 13 Aug 2024 10:40:06 +0200
-X-CheckPoint: {66BB1BE6-19-751552D8-F91D2344}
-X-MAIL-CPID: 11420822777CC4675A7EDCCC6C392185_4
-X-Control-Analysis: str=0001.0A782F29.66BB1BE6.0182,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ABA6E164B7F;
-	Tue, 13 Aug 2024 10:40:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723538402;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=lWEnrYT/2zokPYs6W1DQexseb+uW1P/nNlbcer9G350=;
-	b=tPnoRsbz1yjwAD8SQ6xexda0bhZqZOyO7HzvwHPzYNJNbXFVE3tmzkgLT9/azVosf6xKnl
-	Gle8tCXj9oi8HH59z6HUX1/DjU2CnUH/I/Yw4pV4XnO4pa0OmKXSerVrTAfv9UPxxwez1R
-	Y3QLkdEgdNAOqc4Px0Eye/o9gn0UnpDo58lTz1ofZnB3sW5t7bKi2sf+tWMoKmoNeJUuLY
-	Dx1zq7CVa5oB3Vwh6LXluky9woKWkY8HgUS2TB162nSdWg5NwI78cKWCc7PkWccCv4AAq8
-	2s+w5SJaOsC14DRKuWUQK6DBVctqokXitbg4469gpZ909Z6IJHG7TOg3ze2Ovw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Gregor Herburger <gregor.herburger@ew.tq-group.com>, Frank Li <Frank.Li@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 15/17] arm64: dts: imx93-tqma9352-mba93xxla: rename hub to usb
-Date: Tue, 13 Aug 2024 10:40:04 +0200
-Message-ID: <1802961.VLH7GnMWUR@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240813-imx_warning-v1-15-3494426aea09@nxp.com>
-References: <20240813-imx_warning-v1-0-3494426aea09@nxp.com> <20240813-imx_warning-v1-15-3494426aea09@nxp.com>
+	s=arc-20240116; t=1723538430; c=relaxed/simple;
+	bh=akXev+YNA9uQ7zhGiunl63A4R/Odt5Pc9ddezLJTHyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tOMv87qz8v1f2XfBl7o+zK6hnYO2lsJzEVzUZ+a3kmCrmdPOYeBft8jSu3VlE3A9UhmVseV9hI2J3f95eLR2u+yGEggyk/NQIa03iYEFoXUmC+V6VynwaseF7KifmtrJw9wmCdNvXmvg/L11Hr+kxv2QtESAWLzu1ubQHBJdYtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=gSKoHX1y; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (unknown [193.86.92.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id AA57D1DD8F4;
+	Tue, 13 Aug 2024 10:40:17 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1723538417; bh=+CB3AGdZxpN1qDzpfCmR2fXPuhWenCYU98WPyCmPcbE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gSKoHX1ynpXgGo54H/X1Op9pUo2k4TFLAcNL2THOGJ88fcL0FRZ6VY12qmRaM6BXW
+	 10omo4GDISaZakiQcFXihpyemDW3E3Ht3YCHwCyIK+D8q+hqhUMyE1wwLZOVKxwYDd
+	 0QyROvxzJLWewl6aob6mx9bMqOuqZcNG7M4BU09s8mzIqfu0vDEN9Gr9GqnTSeFp2d
+	 AKgQk7frb92oqwICB00izD/6IMNT55WkatoppaiNT6LFjhOr3DprcAKd6+qL/+KFxe
+	 NnHKIPj1hfwchX4wKh27babIEzyJ66CmNzTCrQ8DNR2I8jSHXNxwLmK1jTyw4jqwcj
+	 nnLBdotkEtigA==
+Date: Tue, 13 Aug 2024 10:40:06 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Baoquan He <bhe@redhat.com>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ vgoyal@redhat.com, dyoung@redhat.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, chenjiahao16@huawei.com,
+ akpm@linux-foundation.org, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH -next] crash: Fix riscv64 crash memory reserve dead loop
+Message-ID: <20240813104006.520bf42d@mordecai.tesarici.cz>
+In-Reply-To: <ZrJ60vopeGDXFZyK@arm.com>
+References: <20240802090105.3871929-1-ruanjinjie@huawei.com>
+	<ZqywtegyIS/YXOVv@MiWiFi-R3L-srv>
+	<ZrJ1JkyDVpRRB_9e@arm.com>
+	<ZrJ60vopeGDXFZyK@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am Dienstag, 13. August 2024, 06:35:10 CEST schrieb Frank Li:
-> Rename hub to usb to fix below warning:
-> arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dtb: hub@1: $noden=
-ame:0: 'hub@1' does not match '^usb(@.*)?'
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Hi Catalin,
 
-Thanks.
+On Tue, 6 Aug 2024 20:34:42 +0100
+Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> On Tue, Aug 06, 2024 at 08:10:30PM +0100, Catalin Marinas wrote:
+> > On Fri, Aug 02, 2024 at 06:11:01PM +0800, Baoquan He wrote:  
+> > > On 08/02/24 at 05:01pm, Jinjie Ruan wrote:  
+> > > > On RISCV64 Qemu machine with 512MB memory, cmdline "crashkernel=500M,high"
+> > > > will cause system stall as below:
+> > > > 
+> > > > 	 Zone ranges:
+> > > > 	   DMA32    [mem 0x0000000080000000-0x000000009fffffff]
+> > > > 	   Normal   empty
+> > > > 	 Movable zone start for each node
+> > > > 	 Early memory node ranges
+> > > > 	   node   0: [mem 0x0000000080000000-0x000000008005ffff]
+> > > > 	   node   0: [mem 0x0000000080060000-0x000000009fffffff]
+> > > > 	 Initmem setup node 0 [mem 0x0000000080000000-0x000000009fffffff]
+> > > > 	(stall here)
+> > > > 
+> > > > commit 5d99cadf1568 ("crash: fix x86_32 crash memory reserve dead loop
+> > > > bug") fix this on 32-bit architecture. However, the problem is not
+> > > > completely solved. If `CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX` on 64-bit
+> > > > architecture, for example, when system memory is equal to
+> > > > CRASH_ADDR_LOW_MAX on RISCV64, the following infinite loop will also occur:  
+> > > 
+> > > Interesting, I didn't expect risc-v defining them like these.
+> > > 
+> > > #define CRASH_ADDR_LOW_MAX              dma32_phys_limit
+> > > #define CRASH_ADDR_HIGH_MAX             memblock_end_of_DRAM()  
+> > 
+> > arm64 defines the high limit as PHYS_MASK+1, it doesn't need to be
+> > dynamic and x86 does something similar (SZ_64T). Not sure why the
+> > generic code and riscv define it like this.
+> >   
+> > > > 	-> reserve_crashkernel_generic() and high is true
+> > > > 	   -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
+> > > > 	      -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly  
+> > > > 	         (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
+> > > > 
+> > > > Before refactor in commit 9c08a2a139fe ("x86: kdump: use generic interface
+> > > > to simplify crashkernel reservation code"), x86 do not try to reserve crash
+> > > > memory at low if it fails to alloc above high 4G. However before refator in
+> > > > commit fdc268232dbba ("arm64: kdump: use generic interface to simplify
+> > > > crashkernel reservation"), arm64 try to reserve crash memory at low if it
+> > > > fails above high 4G. For 64-bit systems, this attempt is less beneficial
+> > > > than the opposite, remove it to fix this bug and align with native x86
+> > > > implementation.  
+> > > 
+> > > And I don't like the idea crashkernel=,high failure will fallback to
+> > > attempt in low area, so this looks good to me.  
+> > 
+> > Well, I kind of liked this behaviour. One can specify ,high as a
+> > preference rather than forcing a range. The arm64 land has different
+> > platforms with some constrained memory layouts. Such fallback works well
+> > as a default command line option shipped with distros without having to
+> > guess the SoC memory layout.  
+> 
+> I haven't tried but it's possible that this patch also breaks those
+> arm64 platforms with all RAM above 4GB when CRASH_ADDR_LOW_MAX is
+> memblock_end_of_DRAM(). Here all memory would be low and in the absence
+> of no fallback, it fails to allocate.
 
-> ---
->  arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts | 2 +-
->  arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts b=
-/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
-> index 852dd3d2eac74..325d8097bf7fc 100644
-> --- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
-> @@ -533,7 +533,7 @@ &usbotg2 {
->  	samsung,picophy-dc-vol-level-adjust =3D <7>;
->  	status =3D "okay";
-> =20
-> -	hub_2_0: hub@1 {
-> +	hub_2_0: usb@1 {
->  		compatible =3D "usb424,2517";
->  		reg =3D <1>;
->  		reset-gpios =3D <&expander1 2 GPIO_ACTIVE_LOW>;
-> diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts b=
-/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-> index da8f19a646a98..b1fcbc12bd882 100644
-> --- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-> @@ -486,7 +486,7 @@ &usbotg2 {
->  	samsung,picophy-dc-vol-level-adjust =3D <7>;
->  	status =3D "okay";
-> =20
-> -	hub_2_0: hub@1 {
-> +	hub_2_0: usb@1 {
->  		compatible =3D "usb424,2517";
->  		reg =3D <1>;
->  		reset-gpios =3D <&expander1 2 GPIO_ACTIVE_LOW>;
->=20
->=20
+I'm afraid you've just opened a Pandora box... ;-)
 
+Another (unrelated) patch series made us aware of a platforms where RAM
+starts at 32G, but IIUC the host bridge maps 32G-33G to bus addresses
+0-1G, and there is a device on that bus which can produce only 30-bit
+addresses.
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Now, what was the idea behind allocating some crash memory "low"?
+Right, it should allow the crash kernel to access devices with
+addressing constraints. So, on the above-mentioned platform, allocating
+"low" would in fact mean allocating between 32G and 33G (in host address
+domain).
 
+Should we rethink the whole concept of high/low?
 
+Petr T
 
