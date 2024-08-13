@@ -1,213 +1,104 @@
-Return-Path: <linux-kernel+bounces-284820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB2F95057D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:47:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59FF950581
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 451AB28459F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7154D1F24630
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534FF199EB1;
-	Tue, 13 Aug 2024 12:47:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3472419ADBE;
+	Tue, 13 Aug 2024 12:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxPI8Gxm"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MHYRVUyJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD33119923D;
-	Tue, 13 Aug 2024 12:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1973A1993A7
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723553257; cv=none; b=TQF7NDybbuK+LhDs2YUt+OBZQQ7y+QeFXC+aOzph7T5+LsVDfoTH2fJTYZgU+ZQmDe5t1YsNdvBe+cO4InzpdcGpP8MFksspQyZTNNx+gHhkhBP8mBRMlROVJuzAmrOFqSuC/nEiCgyUAM9qsvOn2msQbZIxsjPxENsdoRXRB80=
+	t=1723553278; cv=none; b=cuknQ23FBX/4s6w0Y+z1MupqusxGxbTXbYtRlh8XA5yrA0TX/1uYKZHyfM8RXiA4M1/H+r4CB/SaIBXVGOjxZuu4fx8ty/wIcmylo8sS3fRsJbTRqRd/V/MDQO8eIYKkClFiQnMAyFGgV7ytaB3+1D/824I4JMkUqzrwqssctwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723553257; c=relaxed/simple;
-	bh=GL60/f0x8nLlf4rRbjhMMEOGzUva4JtyUO5LqYKHngA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Agb9PspO7GZb6GazpDsEc4di3Uuv3foz+P/OwAG8sN7y4mbf2W5uTjHsa8gffZkgnziXwg/uPj6rEFbUPvGjtzkqz/+kbJ/76uQhHJ4qSIH8ZmntRa4585KzrX3nlZHIVJx37xXPUglEigbNuzMkTKSgWs6MjfFAP3SSRBanG+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxPI8Gxm; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso3633957f8f.1;
-        Tue, 13 Aug 2024 05:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723553254; x=1724158054; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cR/LJ57uXe124SDBRg+5DschuuIRzlJDV50Pw4SHJsc=;
-        b=RxPI8GxmOGshCyjucGrEJ1VJiPHReNYo5YTUiKVxNNcwGBM3f24pW2Vo7nzJOApftI
-         nAQllgdKzzN9I45IjQyiNLeR3S3Q1faiYt/JNTQZzbbZs2C5drJuCtUYLD6vLo9a1uQl
-         hVoZr+8S2gOvcOQl+YjIRl81jCsz3UhlkXwdxgnNGnE9VVWOsONLKuD4z1dkExQd5sw/
-         JWZt+ZpCaqT4b7grL6F6AG6mOoo2C+5T5HZupQBNHiUbLuBl0jGBlPmsUYvfXwutqw4E
-         m9LdpEJ3w2cg7Lu9jdBkg7SWNoV7ypIvsD4J0zF5MBPpT6jyPhL4OnbGdtVHgEuvJiiP
-         oSUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723553254; x=1724158054;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cR/LJ57uXe124SDBRg+5DschuuIRzlJDV50Pw4SHJsc=;
-        b=N8V0Sccl+CB2racyHehMc37eKE4a8DNn8ZwINtfF1l60i7sqaPbHvW/FPg1oys7eQW
-         rdYpwlG3R3dk4hq9urE3Y7UTVsY7Hkyz1kScm8HzMtR5tWayw7cOfrMf+EE87dRWE2xy
-         SCqm8wEU2Jpdy49nnxdDATkfxWauhJwO2a6a+vZr3rWmjKPozAyKBdqYMqPSuw315pDn
-         /ZjASTA7vpuYTYopYCR9Fy4xYgltLxLC+Wdgpc2QNqZ4NABRoiyZVRaeVMDTJqAm6jJI
-         pQrCFyGcGB2K0ht4MMDIWSvSOnxjcGplcVQCGZj4VofF9C83glvT0sLO7rdaFa/ArOT8
-         n/WA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDOwnWTkgDIDTeZ8CLCFNFOSYm9b3AUVMj/5cGv+AzCG7QPdfeRBI/KeknX+/HgpgyXSqzG/3Vll8nmSMJVT7zjprwUUEW4d3hlUEW
-X-Gm-Message-State: AOJu0YzKml98uxgXPy7b1yFRsOnE7Q6mo507RLXQD+q4IEluD7HgQ1oU
-	sQW5jOUV+RC8hbVWLh79miKm2ythtPUB50hYcI22rwfscqSp0/QMV6jvWQQrumiidSaUqF2nxcr
-	uCpoJYau1UIRWl1lN6JZIeCezgYE=
-X-Google-Smtp-Source: AGHT+IFNbc7860j78hScCdMHJgd97CHbmn5gFg3mms/D4ru1Fw1gV72PWQglosq3cxQIkm2FW3carFdWjl2YVC/gtHg=
-X-Received: by 2002:adf:e7cf:0:b0:368:3f5b:2ae4 with SMTP id
- ffacd0b85a97d-3716cd01f67mr2117986f8f.36.1723553253599; Tue, 13 Aug 2024
- 05:47:33 -0700 (PDT)
+	s=arc-20240116; t=1723553278; c=relaxed/simple;
+	bh=0KWhrcU0YHbJiksdyGvlsjytVHRYOXJJLdmQ+/bgpig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6vOY+uxdcDKV/GoAsW1KlxNu4o+CJGzbAAcmZTDU8nbB7zsTp6jckX8o8uwJNeH8qWO1m8pnZc5adRo1EJ01DZ+BdP1FcMkLcSNQGsA/9Qzl7LnNJ/NU64/UKvPQKK4kSq7wkUl99nDHc2CbjOFk0x/k0iQQEEMUxlKa5PKyzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MHYRVUyJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723553275;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1XjhAxPmiM++L3njaRU1wOJhxoxtQOjrtQvzpozAwi8=;
+	b=MHYRVUyJ89eYJPqyZGkJ48sWs63ZtWJ+y/kMlIP7CxH5MZiQTlXMiblwvK3vuF2/224OZL
+	9LO6LMXEvw0gXC8QRuaLA/T/0HrzH0E9V3lESluQGyCjW6JwnZaaQ97i4I4LhC5XekQJl8
+	S5BqY6c2YNrO6rse0yAbcqQUezuBVu0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-9cj9z-qYMRa2lP7hsRm5jg-1; Tue,
+ 13 Aug 2024 08:47:51 -0400
+X-MC-Unique: 9cj9z-qYMRa2lP7hsRm5jg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 329EF1953957;
+	Tue, 13 Aug 2024 12:47:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.159])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CB21F1955F66;
+	Tue, 13 Aug 2024 12:47:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 13 Aug 2024 14:47:45 +0200 (CEST)
+Date: Tue, 13 Aug 2024 14:47:37 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, andrii@kernel.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] uprobes: Remove redundant spinlock in
+ uprobe_deny_signal()
+Message-ID: <20240813124737.GA31977@redhat.com>
+References: <20240809061004.2112369-1-liaochang1@huawei.com>
+ <20240809061004.2112369-2-liaochang1@huawei.com>
+ <20240812120738.GC11656@redhat.com>
+ <2971107e-75e7-8438-c858-b95202d7b5ea@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240810141834.640887-2-crwulff@gmail.com> <2024081345-emerald-subarctic-cb5f@gregkh>
-In-Reply-To: <2024081345-emerald-subarctic-cb5f@gregkh>
-From: Chris Wulff <crwulff@gmail.com>
-Date: Tue, 13 Aug 2024 08:47:21 -0400
-Message-ID: <CAB0kiBLTmybSJH-KDMaYc=DQBatQBf=UeZkE1PGGGuEEgTkObg@mail.gmail.com>
-Subject: Re: [PATCH v3] USB: gadget: f_hid: Add GET_REPORT via userspace IOCTL
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, Konstantin Aladyshev <aladyshev22@gmail.com>, 
-	David Sands <david.sands@biamp.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-kernel@vger.kernel.org, 
-	Chris Wulff <Chris.Wulff@biamp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2971107e-75e7-8438-c858-b95202d7b5ea@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Aug 13, 2024 at 4:38=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On 08/13, Liao, Chang wrote:
 >
-> On Sat, Aug 10, 2024 at 10:18:35AM -0400, crwulff@gmail.com wrote:
-> > From: Chris Wulff <Chris.Wulff@biamp.com>
-> >
-> > While supporting GET_REPORT is a mandatory request per the HID
-> > specification the current implementation of the GET_REPORT request resp=
-onds
-> > to the USB Host with an empty reply of the request length. However, som=
-e
-> > USB Hosts will request the contents of feature reports via the GET_REPO=
-RT
-> > request. In addition, some proprietary HID 'protocols' will expect
-> > different data, for the same report ID, to be to become available in th=
-e
-> > feature report by sending a preceding SET_REPORT to the USB Device that
-> > defines what data is to be presented when that feature report is
-> > subsequently retrieved via GET_REPORT (with a very fast < 5ms turn arou=
-nd
-> > between the SET_REPORT and the GET_REPORT).
-> >
-> > There are two other patch sets already submitted for adding GET_REPORT
-> > support. The first [1] allows for pre-priming a list of reports via IOC=
-TLs
-> > which then allows the USB Host to perform the request, with no further
-> > userspace interaction possible during the GET_REPORT request. And anoth=
-er
-> > [2] which allows for a single report to be setup by userspace via IOCTL=
-,
-> > which will be fetched and returned by the kernel for subsequent GET_REP=
-ORT
-> > requests by the USB Host, also with no further userspace interaction
-> > possible.
-> >
-> > This patch, while loosely based on both the patch sets, differs by allo=
-wing
-> > the option for userspace to respond to each GET_REPORT request by setti=
-ng
-> > up a poll to notify userspace that a new GET_REPORT request has arrived=
-. To
-> > support this, two extra IOCTLs are supplied. The first of which is used=
- to
-> > retrieve the report ID of the GET_REPORT request (in the case of having
-> > non-zero report IDs in the HID descriptor). The second IOCTL allows for
-> > storing report responses in a list for responding to requests.
-> >
-> > The report responses are stored in a list (it will be either added if i=
-t
-> > does not exist or updated if it exists already). A flag (userspace_req)=
- can
-> > be set to whether subsequent requests notify userspace or not.
-> >
-> > Basic operation when a GET_REPORT request arrives from USB Host:
-> >
-> > - If the report ID exists in the list and it is set for immediate retur=
-n
-> >   (i.e. userspace_req =3D=3D false) then response is sent immediately,
-> > userspace is not notified
-> >
-> > - The report ID does not exist, or exists but is set to notify userspac=
-e
-> >   (i.e. userspace_req =3D=3D true) then notify userspace via poll:
-> >
-> >       - If userspace responds, and either adds or update the response i=
-n
-> >         the list and respond to the host with the contents
-> >
-> >       - If userspace does not respond within the fixed timeout (2500ms)
-> >         but the report has been set prevously, then send 'old' report
-> >         contents
-> >
-> >       - If userspace does not respond within the fixed timeout (2500ms)
-> >         and the report does not exist in the list then send an empty
-> >         report
-> >
-> > Note that userspace could 'prime' the report list at any other time.
-> >
-> > While this patch allows for flexibility in how the system responds to
-> > requests, and therefore the HID 'protocols' that could be supported, a
-> > drawback is the time it takes to service the requests and therefore the
-> > maximum throughput that would be achievable. The USB HID Specification
-> > v1.11 itself states that GET_REPORT is not intended for periodic data
-> > polling, so this limitation is not severe.
-> >
-> > Testing on an iMX8M Nano Ultra Lite with a heavy multi-core CPU loading
-> > showed that userspace can typically respond to the GET_REPORT request
-> > within 1200ms - which is well within the 5000ms most operating systems =
-seem
-> > to allow, and within the 2500ms set by this patch.
-> >
-> > [1] https://lore.kernel.org/all/20220805070507.123151-2-sunil@amarulaso=
-lutions.com/
-> > [2] https://lore.kernel.org/all/20220726005824.2817646-1-vi@endrift.com=
-/
-> >
-> > Signed-off-by: David Sands <david.sands@biamp.com>
-> > Signed-off-by: Chris Wulff <chris.wulff@biamp.com>
-> > ---
-> > v3: rebased to usb-next, checkpatch cleanup (formatting, lore.kernel.or=
-g links)
-> > v2: https://lore.kernel.org/all/CO1PR17MB541952864266039BAA7BBBD3E10F2@=
-CO1PR17MB5419.namprd17.prod.outlook.com/
-> > v1: https://lore.kernel.org/all/20230215231529.2513236-1-david.sands@bi=
-amp.com/
-> > ---
-> >  drivers/usb/gadget/function/f_hid.c | 272 +++++++++++++++++++++++++++-
-> >  include/uapi/linux/usb/g_hid.h      |  40 ++++
-> >  include/uapi/linux/usb/gadgetfs.h   |   2 +-
-> >  3 files changed, 306 insertions(+), 8 deletions(-)
-> >  create mode 100644 include/uapi/linux/usb/g_hid.h
 >
-> Breaks the build:
->
-> drivers/usb/gadget/function/f_hid.c:567:6: error: no previous prototype f=
-or =E2=80=98get_report_workqueue_handler=E2=80=99 [-Werror=3Dmissing-protot=
-ypes]
->   567 | void get_report_workqueue_handler(struct work_struct *work)
->       |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
->
+> Oleg, your explaination is more accurate. So I will reword the commit log and
+> quote some of your note like this:
 
-I must not have warnings-as-errors enabled. I didn't notice the warning
-when I last built it. I will clean that up and make a new patch.
+Oh, please don't. I just tried to explain the history of this spin_lock(siglock).
 
-  -- Chris Wulff
+>   Since we already have the lockless user of clear_thread_flag(TIF_SIGPENDING).
+>   And for uprobe singlestep case, it doesn't break the rule of "the state of
+>   TIF_SIGPENDING of every thread is stable with sighand->siglock held".
+
+It obviously does break the rule above. Please keep your changelog as is.
+
+Oleg.
+
 
