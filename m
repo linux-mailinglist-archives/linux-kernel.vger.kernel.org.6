@@ -1,177 +1,112 @@
-Return-Path: <linux-kernel+bounces-284244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449FD94FED3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2B594FED7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6A31F24283
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:33:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296101F2435A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283E569DFF;
-	Tue, 13 Aug 2024 07:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CBAA29;
+	Tue, 13 Aug 2024 07:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n02JOwwm"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tebG8Yjf"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCA7A29
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 07:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E725A61FDA;
+	Tue, 13 Aug 2024 07:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723534378; cv=none; b=qF5yRZLrfIfKvph1FNapDgWNoEPq7du9aDSuhCwb+bywyi9hl4BbY8NJtBkX94Cd0F/lvx8BC1b/4gDQiZOtH9GhqzA055ZExsDuZ/WbRpRfE8G+n2Lh/cMep8E2mROFqP18DItJH6twkw2sKq3w2rvUewDjF15uII6wXVW0NQE=
+	t=1723534471; cv=none; b=MGrBco3VX6JS+/XkivLLKL4NRJlJzx2rg0Ne95h7JcGaorTnd3zM1yvQ7D/e0L4ZRyr7euLaWsDFDRjRyLzxYh92GYmkCbNQg4+F9lCBiEafzgDthPDWKRwdEKS1yYoD/M2031K4UuRpBnuuVNmZDmtEbw2lTRCUs9ZAGKec4fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723534378; c=relaxed/simple;
-	bh=fqvA7nIxDr4aIjRmjKnJ3E71KI2IEHpRg9QqIEY1qHE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=kRi+6ogNar7ZQKZylRJ1lkYaWpGmACzdNEy5z5JWw6GQYnvzPcOjPfaIinObFTQOGIlDZzKAFxXM86Hvezy/9+u4438Bvs2fVxqmQ7HFTWzjX6aH5UFdmbKGScWguUNbxLsjUyCvHUzFYw+ErNMfi7esgB1Ms6vHdE1fkNXJbiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n02JOwwm; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240813073247epoutp012bb421b7d4c47c6cd607ac839d655746~rOWAwWq9m2708827088epoutp01z
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 07:32:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240813073247epoutp012bb421b7d4c47c6cd607ac839d655746~rOWAwWq9m2708827088epoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723534367;
-	bh=zG6ilKTn8eNmcV9EFzJK5daAN5h+HI6Gemb8abNBuJk=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=n02JOwwmyaTY93Qq4+reruPpXRnDlSWMOvq638x33EcOj4dRZycrbNw91+/24Ojld
-	 J4VkgoHoucNvR2FsXCoD7T0rvQicMYvOnNovT6phmOmeOOMoUEgaUD9kNr7/kdxioE
-	 Csb8ijO1nU4hetpQzCD6e/Dw3nGCdFyyVLcKqe+Q=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240813073247epcas1p1a5986fdba4af931962a07b631f37ce71~rOWAeSXVh2396423964epcas1p1M;
-	Tue, 13 Aug 2024 07:32:47 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.38.242]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wjjlf6cx2z4x9Q7; Tue, 13 Aug
-	2024 07:32:46 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A6.C5.08992.E1C0BB66; Tue, 13 Aug 2024 16:32:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240813073246epcas1p4085b32d2b008b77119b811dc328b964e~rOV-i0cGo0063700637epcas1p4c;
-	Tue, 13 Aug 2024 07:32:46 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240813073246epsmtrp2b542b92e37c497f1ac776c80eff6a660~rOV-hnS5V0250902509epsmtrp2Y;
-	Tue, 13 Aug 2024 07:32:46 +0000 (GMT)
-X-AuditID: b6c32a33-70bff70000002320-aa-66bb0c1ec355
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3F.82.08964.E1C0BB66; Tue, 13 Aug 2024 16:32:46 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.253.99.41]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240813073246epsmtip2a802335dba448035f5e87d2e088c0d4d~rOV-R5H9l1326513265epsmtip2W;
-	Tue, 13 Aug 2024 07:32:46 +0000 (GMT)
-From: Yeongjin Gil <youngjin.gil@samsung.com>
-To: jaegeuk@kernel.org, chao@kernel.org, daehojeong@google.com
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	Yeongjin Gil <youngjin.gil@samsung.com>, Sungjong Seo
-	<sj1557.seo@samsung.com>, Sunmin Jeong <s_min.jeong@samsung.com>
-Subject: [PATCH] f2fs: Create COW inode from parent dentry for atomic write
-Date: Tue, 13 Aug 2024 16:32:44 +0900
-Message-Id: <20240813073244.9052-1-youngjin.gil@samsung.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1723534471; c=relaxed/simple;
+	bh=mU38cC/LNwgzPmTxkcy7GpXw8inn9Lq9sOxBxqRIzGg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hEWB++bh0c0OPnSKD/KPWF+vFIvtnT9S+KJBayD9dMSsHtCaV2qqeDErRj8NHicDolEwIRIeJo+gR/y0i0kiw48+1e2istyIASF3OJToYgVX4UW1bDAyshNx9fyIBH+hlfsWF82xW9luIRNi19Pp5an7+qj+jN0gUeElKz99PeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tebG8Yjf; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1723534431; x=1724139231; i=markus.elfring@web.de;
+	bh=mU38cC/LNwgzPmTxkcy7GpXw8inn9Lq9sOxBxqRIzGg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=tebG8Yjftsbl3IF0TEFclqSqrb2UEraeT45CmxN6iRDtIan/tesDmlY0ypVX9H8O
+	 e/VXPtLo0gGUvvklh3xJJ5nH4BemydyVfA7D2mA+30CpjczQPOxDS4x4I2nSe5U5E
+	 BUh2SoKMsv+tWbvhGRTM0ixwCHh8r9aX82JMY7EOwCBJa13vt8IILY3FrfeAvuRgB
+	 Io7AxlucJ27nT35u6xAKnT7J9XMxZoMRtG9H1/3p3LUXTx5orH4b6Z05I27CEuWoV
+	 2KSGC2OCoVpjIRikArEvQM2kO/7ZdbzqpXCqUa30LEH8fdNw/QEdSdVQppA5Lok5O
+	 rbBRADEk4ckAd0jTKw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MYu1C-1siIGd2PTM-00XyiM; Tue, 13
+ Aug 2024 09:33:51 +0200
+Message-ID: <fb45abbe-6cd7-430f-a828-bcf8667a87f7@web.de>
+Date: Tue, 13 Aug 2024 09:33:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNJsWRmVeSWpSXmKPExsWy7bCmnq4cz+40g+mn9S1OTz3LZDG1fS+j
-	xZP1s5gtLi1yt7i8aw6bxYLW3ywWW/4dYbWYsf8puwOHx4JNpR6bVnWyeexe8JnJo2/LKkaP
-	z5vkAlijGhhtEouSMzLLUhVS85LzUzLz0m2VQkPcdC2UFDLyi0tslaINDY30DA3M9YyMjPRM
-	jWKtjEyVFPISc1NtlSp0oXqVFIqSC4BqcyuLgQbkpOpBxfWKU/NSHLLyS0HO1ytOzC0uzUvX
-	S87PVVIoS8wpBRqhpJ/wjTFjX/81xoIJfBXvDu1jaWA8w93FyMkhIWAisWDZMpYuRi4OIYEd
-	jBI9K5rYIZxPjBLrJvxkgnC+MUqcuL6TCaZlzrUGqMReRoldb1YxwrU0rHzCCFLFJqArMfXl
-	U1YQW0TATuLWzUWsIEXMAkcYJX7v2g5WJCzgLbFt+ydmEJtFQFXi96XrYHFeARuJPzfOs0Gs
-	k5e42bWfGSIuKHFy5hMWEJsZKN68dTYzyFAJgWvsEp9XLmeEaHCRePPoIFSzsMSr41vYIWwp
-	ic/v9rJBNKxilHjT+okJwtnOKDH9cQ9Uh71Ec2szkM0BtEJTYv0ufYhtfBLvvvawQpQISpy+
-	1s0MUiIhwCvR0SYEEVaTuDLpF1SJjETfg1lQez0kPu8/BzZdSCBW4mTnBPYJjPKzkPwzC8k/
-	sxAWL2BkXsUollpQnJuemmxYYIgct5sYwelUy3gH4+X5//QOMTJxMB5ilOBgVhLhDTTZlSbE
-	m5JYWZValB9fVJqTWnyIMRkYwhOZpUST84EJPa8k3tDMzNLC0sjE0NjM0JCwsImlgYmZkYmF
-	saWxmZI475krZalCAumJJanZqakFqUUwW5g4OKUamDKca1m+vr5uOGH2zES+4O/rdpu2vw2/
-	55nzzDRMVc9vDe8S7Uz2t4sORVr095+6t0r7w26NPo+lD/KbuNeqnera335VPL/C8cgqJY98
-	t78vvwfVvGgInf+3Y+YGidafCq2mNesWTnp+/wHjxI2L47LP3pSyMv3RmJF4qW/Cga02U2wD
-	Lp7MKMlL6fz1s3hWbSRz8jxTqbmNZwNvcbkEpLllb5n9d/FLLu9LGuL/MvZbXYqbdG0e0+qt
-	oTGBORPDvz2ZuK3q3TrZWwezVvzgKHm5Yxq7euSTf9837l5x+drV+THPO8y3Ra5jdeYW0jP5
-	6jLLs+zTBq91W061LN8nJjHtkKXsr8sqs1YuOB8r9ChGiaU4I9FQi7moOBEAnAwO3V4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsWy7bCSvK4cz+40g+mXeCxOTz3LZDG1fS+j
-	xZP1s5gtLi1yt7i8aw6bxYLW3ywWW/4dYbWYsf8puwOHx4JNpR6bVnWyeexe8JnJo2/LKkaP
-	z5vkAlijuGxSUnMyy1KL9O0SuDL29V9jLJjAV/Hu0D6WBsYz3F2MnBwSAiYSc641MHUxcnEI
-	CexmlOhtusYKkZCR+DPxPVsXIweQLSxx+HAxRM0HRolVrYvZQGrYBHQlpr58ClYvIuAk8f9G
-	OztIEbPACUaJr4u/MoEkhAW8JbZt/8QMYrMIqEr8vnSdEcTmFbCR+HPjPBvEMnmJm137mSHi
-	ghInZz5hAbGZgeLNW2czT2Dkm4UkNQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k
-	/NxNjOBg1dLcwbh91Qe9Q4xMHIyHGCU4mJVEeANNdqUJ8aYkVlalFuXHF5XmpBYfYpTmYFES
-	5xV/0ZsiJJCeWJKanZpakFoEk2Xi4JRqYDLVr+0/Ze7kySJs5TFPXWl3R9X5zUY7n8VfSj69
-	rEpIIPrUynV2JQxvuk46yb87HmH53t7PPptnUdjDD63hPl4mP1pFORcdSRSvdI3N6+/WuiG1
-	VXih//OWb8JqWVkxRpN5Nv3Xmso292/4hS3ThOtMbPZd3aufXHPT6M2etBeZR64n2f/p/a7v
-	IaT5ZVnCTsfqWPbH+dtm8DfFflF7ym87Jzt57zI/E8f+ZieTd0EPFqT9D+LasG2Dqn7XR7NT
-	QkfdzyecCNrP0rNoQtrlXJnYGys5pun0PNm5Sz92ltDlhE0rTBZNZ2oOyV77/26IbZqvyJLp
-	L6osbsyZ/vrim1ihhD1J0ZOVp0Q7S7hOUGIpzkg01GIuKk4EAMP3DqvFAgAA
-X-CMS-MailID: 20240813073246epcas1p4085b32d2b008b77119b811dc328b964e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-ArchiveUser: EV
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240813073246epcas1p4085b32d2b008b77119b811dc328b964e
-References: <CGME20240813073246epcas1p4085b32d2b008b77119b811dc328b964e@epcas1p4.samsung.com>
+User-Agent: Mozilla Thunderbird
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, linux-sound@vger.kernel.org,
+ alsa-devel@alsa-project.org, sound-open-firmware@alsa-project.org,
+ Mark Brown <broonie@kernel.org>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Basavaraj Hiregoudar <Basavaraj.Hiregoudar@amd.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Jaroslav Kysela <perex@perex.cz>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sunil-kumar Dommati <Sunil-kumar.Dommati@amd.com>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+ Takashi Iwai <tiwai@suse.com>,
+ Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+References: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
+Subject: Re: [PATCH 1/8] ASoC: SOF: amd: Fix for incorrect acp error satus
+ register offset
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240807051341.1616925-1-Vijendar.Mukunda@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QXjrDwQD05SSALKfEGxtJqBs/HinYxwdtF6/Ipy0yvvNpHL8MU/
+ OdEarN41T+2waA1pWjJgs9oRbQ2lBt1rHH848rr2nxOjCjGJTVyTJuxcHqDew/UhbVt83Xz
+ yDRxO0giqTxP4HfRQD58gp4tL/KPfFulVqNlztpjOUTdF+nvrMl4j3FNocmySH/lM6NIS8S
+ ck/1thdaJ0wzkrVzLP3Ow==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wfBjWxf42kE=;dwBdLLCOghN1zXaw0AYkTP79JET
+ 6I89tFsZazzv/E32KxErl2JLPCbVJYu5CQoMwx9pEahjypZapg+eWdDJJAN5Rr0YoQod84uSL
+ uBMD58o6gdKtlE5SuZC9M+5OQMdgfYpXOdhw1XbJAdheXBs39hCUUL/E45sSfXC31jvmSFf0Y
+ wVXLMCYgcndSea0oC7DU00qedHMTXg99wQSSlkZHIU9TkOZ3AbS0s8AZRYKA0DFQoTbFGUNgT
+ SbM+S5kMdpAo0xRnfRADCaxxGwQ4LTuiWO8aqdSTf0sFxB8BICx35kSCAVwn6EU/PQ2jDbmgy
+ zxgu5wziQpXfB19ZlWCE3gmC0T6tt4Y7+2Lc7UzLTnSYbUwW0mvMMLsTI7KHl1V5Xhnd9ZF4b
+ UboqLulsMuumlgxOIGRTPXAfk65KzSAdvz70/210TaE/8BfQ9TIk8D9XqPOtkZkLNnLvnmy7N
+ H8Mi5nK8s9FsD5qeDmzD2Q6r0Ye8er99FgXBuWclqAH4F6x8i9kAtaXMASk2CmfUZP+mg0G1/
+ +fcHTBhQecy8y27LehxwnKFPG8BNgx1gh7sYtWMu2jRHadaH6hZwdT32teM0WmiCDIjcKAMAF
+ YeNFvgLFnItBTMQUPo3uZsuB1NFKWVpmH//BPc6N+x5mbxq7Xfzp5mAS6gO1mGsOQmgvHWAbG
+ TfEsDMId42VGX4NhT7Y0mCG/EZYSVE4zOa++ECnx/sediocyJCcuM6ne9gmnvS3VkIeDZWtld
+ Ai/rGwWtR33KJYUKBYeA0WqZuO2JcD9KsrtRTTW1UuqDqMTOCbb0lE87Nb96jLmc8+TzdgjBC
+ D2I7MlKhFCe/SAZ+xlvyFfUg==
 
-The i_pino in f2fs_inode_info has the previous parent's i_ino when inode
-was renamed, which may cause f2fs_ioc_start_atomic_write to fail.
-If file_wrong_pino is true and i_nlink is 1, then to find a valid pino,
-we should refer to the dentry from inode.
+> Adding 'dsp_intr_base' to ACP error status register offset in irq handle=
+r
+=E2=80=A6
 
-To resolve this issue, let's get parent inode using parent dentry
-directly.
+Please avoid typos in the summary phrase.
 
-Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
-Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
-Signed-off-by: Yeongjin Gil <youngjin.gil@samsung.com>
----
- fs/f2fs/file.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index fba8b5f216f9..1eae123f0315 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2127,7 +2127,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 	struct mnt_idmap *idmap = file_mnt_idmap(filp);
- 	struct f2fs_inode_info *fi = F2FS_I(inode);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	struct inode *pinode;
- 	loff_t isize;
- 	int ret;
- 
-@@ -2178,15 +2177,10 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
- 	/* Check if the inode already has a COW inode */
- 	if (fi->cow_inode == NULL) {
- 		/* Create a COW inode for atomic write */
--		pinode = f2fs_iget(inode->i_sb, fi->i_pino);
--		if (IS_ERR(pinode)) {
--			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
--			ret = PTR_ERR(pinode);
--			goto out;
--		}
-+		struct dentry *dentry = file_dentry(filp);
-+		struct inode *dir = d_inode(dentry->d_parent);
- 
--		ret = f2fs_get_tmpfile(idmap, pinode, &fi->cow_inode);
--		iput(pinode);
-+		ret = f2fs_get_tmpfile(idmap, dir, &fi->cow_inode);
- 		if (ret) {
- 			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- 			goto out;
--- 
-2.40.1
-
+Regards,
+Markus
 
