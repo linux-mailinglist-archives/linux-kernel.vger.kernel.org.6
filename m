@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-284135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB33394FD64
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:45:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC5594FD67
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FA22830FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CBB01C21030
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06492D611;
-	Tue, 13 Aug 2024 05:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8442E644;
+	Tue, 13 Aug 2024 05:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IBBBzPNm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YSHXZ/aq"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BF71C69D;
-	Tue, 13 Aug 2024 05:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970522C19E
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723527930; cv=none; b=QytTfzKBkje/BurFaNsIU1UmIIsJZl96VwZR5kacYOFUL2y57DOmoia7IekzyVsD1xSmLItRcJon4h1bQ4kDtEpR+CLRcBHyF7Odv3Ps+Be0Jq3GqL3C8ctx6zIOrAdoeeCtNl3rxlT4jeTu/lV/cTeSkLP7LPPmfOxWWEPDqdI=
+	t=1723527943; cv=none; b=J+mCjI5Ejd+BcfbWT2umljKebmuRv4+dE8HhDIv1z5+iGCxU/wjgy0a6cxwFeH5fmg3l27UyMYrHUbRl31ehP4Jb73KYNjHroLU8cbE4XUSip/J++qYTP+WW7ht3xQ9j8Rbe1BDxs9sUbjNsggMLSGDYWetNSG3Tyl1lGuxQSzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723527930; c=relaxed/simple;
-	bh=YwpuBVSFNyDvfJmlX29Z5q0LHVN5p+qw1by/SJOWLDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHkGnZl+pMZBvDonPWhx3ydB4rCeBJ2AzhlL9vGvGxNyXqSGXSJ5zgBUhfuKBxOUS95Xo0EzasPQ4zlT4nRx2E9cAaRRCOj8VYdICDIsrF2mUmCFbQuMSa2uMBpZKkdyaLXobTT9jvPhpANs7PntXWHC5d2GyDGk+XizCO5bCqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IBBBzPNm; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723527928; x=1755063928;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YwpuBVSFNyDvfJmlX29Z5q0LHVN5p+qw1by/SJOWLDk=;
-  b=IBBBzPNmfKJfeSmquIWfuEhWAp9gNHVBpGccp2ZbodAyR05Z7wSXgLt+
-   9j8QwioHk6/TDOPIy6+k8SgO8nnXtHk1rP1AkHM3wG8gLK+gQWXW2iwwN
-   sBsXCIyLpSukoHI5u6Qjb46xiA1QYfk4h22XGRj5fx2K6jmBdmXO1fGv0
-   pAdNjrXmYbf9zysnDG9juPUFTOl3VYCWsGxkhRJmDUaxGblwR+bmpxYdX
-   fa+kd9OG64w/PBdkAWUx6ZIGjUrHPQYPJ7+Vk54VAgNZfyZq2UHQrA8fh
-   Gw5WuglU9zgrtmAiXqf66dTM3LIDizS5eLXC3sP9bJ/DalKqK54ocwDVI
-   Q==;
-X-CSE-ConnectionGUID: 8Lc98bAUR1S4xQWMhwNK2A==
-X-CSE-MsgGUID: 0KQF8qQjS9yJxOCI6BOVlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21538930"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21538930"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 22:45:27 -0700
-X-CSE-ConnectionGUID: c9dFyZmbSLqazA9E/vH8Og==
-X-CSE-MsgGUID: oXlUV/1dR6SazqjesTO58g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="81776598"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 22:45:22 -0700
-Date: Tue, 13 Aug 2024 08:45:19 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com
-Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
-Message-ID: <Zrry71BfJ31q3iOi@black.fi.intel.com>
-References: <20240812081538.1457396-1-raag.jadav@intel.com>
- <ZroK4oSAte9qdnA8@smile.fi.intel.com>
+	s=arc-20240116; t=1723527943; c=relaxed/simple;
+	bh=cdoNnInjoIDLOcYyF3TpIBPak0pH9QVzrl2rJ1+P1j4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KxGNX2bk0hWwHDlXXuTScoZOrAEbp8yedgTpBj9gLE8yL50xIfF8B8hR9j8TyxGdNe6fLDu0BYcRow9S6Sb3oUrPgNJP0Ap6B7Khgg4Uvy+htXmnWktCnzb8zAd57LgdhmVr8vRpU4nvhON5iOxiMPLy6CHVR1qUEQS3s4ljjJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YSHXZ/aq; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f524fa193aso3478745e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723527940; x=1724132740; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WT/CbsEouBetlgF7QeJxWQVQU9e4IrXwmq96Le/w1ag=;
+        b=YSHXZ/aqwQbZ5SxkyRVfpGIbaXEBnIp07Xpap03j0yaqwkO90vG9NYqTtp/Ibbqv2t
+         kRZChUwhaH8rpFAavT7/47Q8j9omduWDzaXI3t6Oj2vqliZhMgwkpC8lv9QjUXqz8E4J
+         EEJ26Y0HxjVae4Wndx2RQHO8r2pzezYQIhHGO+K0a1qKBbopl+UnW2HWxD/rad9QlWns
+         fCGl0DJEA50aaCTaMN9WwTNbrkItwiPgLOVv3teF7uHGo1rQWk6u72OpHRaqkQlRS+L8
+         CTcVpAwXr4LjNnKp1duMhta4aW67wi2vwpVbiKLQBtaFCog07QsiWn1VqVgB0xKcsQFo
+         4G0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723527940; x=1724132740;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WT/CbsEouBetlgF7QeJxWQVQU9e4IrXwmq96Le/w1ag=;
+        b=wfJqtPVJ85N8KXaBvSf8hz6XHz1BEDSA3Se8WT9gXwcsXUAheYPVR8QfMIySWCEH0r
+         ota8XTxb1wPAU8nDKc2qT0fXLtyAzcVItsDO38zV3liiSOZqHNH7xc9IS2mSbvI6oM9B
+         VXLgAnifnwUBaKmZd1XXqMOCIpPF8/PQAyPcY7IKJPQt7lB/StZNR5bS0xM7Uf+3gQu1
+         cgeV7F93iHNPZ/kUG5/jwT8TDsRP2jvOup6T+eSJqjcT+ZTlBr9NHFwky5zQ2VBHgSNr
+         CXFPVRnnuvrgZpzXUanwLhTF0P/uZv5iO6glXQxMYqDUMl4Krj7npsYi36wWOIKrWoEM
+         mVYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnzuMo7UbSFegGihPkmB+5O+tqJYcZ4nyGkmEIe3BPGUdZ8hHvz/nEIMM6S25n74GFNudDSEsWr7O8jcVnBViEPG35G8VmCdRNKgv/
+X-Gm-Message-State: AOJu0YwLglWdMV03qR0AcDQssVP/1+TZJa2FtHRQDIzr0E9vMnNCkEP3
+	T/c9ULNmN1BIcZx94RRcdp0XlUAE8TK/mX+uOV3vsQl45ktQ7b29gkGG3OtLvvHj3wAW7mcaf/z
+	JDh99byOFfN1LXGi9AFQqwXqqfJo1v1NfhRkAkQ==
+X-Google-Smtp-Source: AGHT+IENesLG4K4Ju9cg8WUlmWLdmGq9gf869Rf3CwWmTmy3QIsoXCSMZMN0dJOClRuFlKsU5XQeLs3bBYpB5bHdlnw=
+X-Received: by 2002:a05:6122:3b1a:b0:4ef:54dd:c806 with SMTP id
+ 71dfb90a1353d-4fac1a87d45mr1092536e0c.7.1723527940317; Mon, 12 Aug 2024
+ 22:45:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZroK4oSAte9qdnA8@smile.fi.intel.com>
+References: <20240812160125.139701076@linuxfoundation.org> <f514502a-0e89-4fcb-95c4-986a3cba2342@roeck-us.net>
+In-Reply-To: <f514502a-0e89-4fcb-95c4-986a3cba2342@roeck-us.net>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 13 Aug 2024 11:15:28 +0530
+Message-ID: <CA+G9fYt5DQbDEEtC8Oq+ja+vbTRxQVcabsoxfz35nSQDS27KRw@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/150] 6.1.105-rc1 review
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 12, 2024 at 04:15:14PM +0300, Andy Shevchenko wrote:
-> On Mon, Aug 12, 2024 at 01:45:38PM +0530, Raag Jadav wrote:
-> > Add hwmon support for fan1_input attribute, which will expose fan speed
-> > in RPM. With this in place we can monitor fan speed using lm-sensors tool.
-> > 
-> > $ sensors
-> > i915-pci-0300
-> > Adapter: PCI adapter
-> > in0:         653.00 mV
-> > fan1:        3833 RPM
-> > power1:           N/A  (max =  43.00 W)
-> > energy1:      32.02 kJ
-> 
-> ...
-> 
-> > +static int
-> > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
-> > +{
-> > +	struct i915_hwmon *hwmon = ddat->hwmon;
-> > +	struct hwm_fan_info *fi = &ddat->fi;
-> > +	u64 rotations, time_now, time;
-> > +	intel_wakeref_t wakeref;
-> > +	u32 reg_val, pulses;
-> > +	int ret = 0;
-> > +
-> > +	if (attr != hwmon_fan_input)
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
-> > +	mutex_lock(&hwmon->hwmon_lock);
-> > +
-> > +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
-> > +	time_now = get_jiffies_64();
-> 
-> > +	/* Handle HW register overflow */
-> > +	if (reg_val >= fi->reg_val_prev)
-> > +		pulses = reg_val - fi->reg_val_prev;
-> > +	else
-> > +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
-> 
-> Isn't it the abs_diff() reimplementation?
+On Tue, 13 Aug 2024 at 03:13, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 8/12/24 09:01, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.1.105 release.
+> > There are 150 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed, 14 Aug 2024 16:00:26 +0000.
+> > Anything received after that time might be too late.
+> >
+>
+> Building parisc64:C3700:smp:net=pcnet:initrd ... failed
 
-Not exactly. This is specific to 32 bit register overflow, so we count
-from max value.
+As Guenter reported,
+Parisc builds failed.
 
-Raag
+* parisc, build
+  - gcc-11-allnoconfig
+  - gcc-11-defconfig
+  - gcc-11-tinyconfig
+
+> ------------
+> Error log:
+> In file included from /home/groeck/src/linux-stable/include/linux/fs.h:45,
+>                   from /home/groeck/src/linux-stable/include/linux/huge_mm.h:8,
+>                   from /home/groeck/src/linux-stable/include/linux/mm.h:745,
+>                   from /home/groeck/src/linux-stable/include/linux/pid_namespace.h:7,
+>                   from /home/groeck/src/linux-stable/include/linux/ptrace.h:10,
+>                   from /home/groeck/src/linux-stable/arch/parisc/kernel/asm-offsets.c:20:
+> /home/groeck/src/linux-stable/include/linux/slab.h:228: warning: "ARCH_KMALLOC_MINALIGN" redefined
+>    228 | #define ARCH_KMALLOC_MINALIGN ARCH_DMA_MINALIGN
+>
+> In file included from /home/groeck/src/linux-stable/arch/parisc/include/asm/atomic.h:23,
+>                   from /home/groeck/src/linux-stable/include/linux/atomic.h:7,
+>                   from /home/groeck/src/linux-stable/include/linux/rcupdate.h:25,
+>                   from /home/groeck/src/linux-stable/include/linux/rculist.h:11,
+>                   from /home/groeck/src/linux-stable/include/linux/pid.h:5,
+>                   from /home/groeck/src/linux-stable/include/linux/sched.h:14,
+>                   from /home/groeck/src/linux-stable/arch/parisc/kernel/asm-offsets.c:18:
+> /home/groeck/src/linux-stable/arch/parisc/include/asm/cache.h:28: note: this is the location of the previous definition
+>     28 | #define ARCH_KMALLOC_MINALIGN   16      /* ldcw requires 16-byte alignment */
+>
+
+Thanks for the report.
+
+> Guenter
+>
 
