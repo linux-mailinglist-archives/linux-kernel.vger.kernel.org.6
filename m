@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-284006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9C794FBD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:32:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F2394FBD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE351C2234C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:32:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6A951C22314
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4BF14A96;
-	Tue, 13 Aug 2024 02:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2812214A96;
+	Tue, 13 Aug 2024 02:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tzm6IBH/"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FmMpVOk/"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D671CAA4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEE110A2A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723516331; cv=none; b=lMxT9od2Hk6YFq1dzlbsdbwuNl9XYXHUvPbDmzGAzI/HHQspSQDGRjehrlGFBljKoxCWaYe3mbDfQlXWQABepGxMXx6VDp7EK/DTQyaHA75N0iuCfmXUcEylWoDRi7oNeuxRC/YMD1R/vNCiK2vrQhVv96leqDBXxWQviKh/mZc=
+	t=1723516370; cv=none; b=apQ2QWamBW/gHvPbVfcwJCD64OHpl0xrdZSh2Ot16VKJa0oP8OQxEPkvjxn8Sa6aWlxslarK9pW1tE7hlPAd8ogrGywHGE2JlqEhnhnqAeWR4LXRGzR4LhCS3yuglpkdvXI0QU7ZVVoQCxjjY/01CuTJNyPZ9sah1152y7tu+jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723516331; c=relaxed/simple;
-	bh=tW3pLjfFNNjGIdVGU10xKMxIktHWsWbuFlD5w2eRw+w=;
+	s=arc-20240116; t=1723516370; c=relaxed/simple;
+	bh=2fGhES2XDVikE0e3z7hR0aiJ7aDoQxNr65BpcdKpwzg=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SKRWXXSVyqaXOeUo8y9om+b65mrcgNiRMB62kNKElSsKS+DDHK2NX8rdiCrqLxYk5WE/amn5HgTHsHlTqBVjW+ZpOECa38K06s4gE3hNcxJ44L1dkJW9ace4WdFoN/D0JShZxnBN9o0/ToxbR5/OzUF7m2kFr5nBlSeANF6X2Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tzm6IBH/; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version:Content-Type; b=d++se0vEXU99loOBdRbzV60vPfmmyN5v9RFWOxYi8EByC5J1bU8Vf3GQ4B8BkdiGOy9pz/OliznBcDGfzbNGz/+/Sr/iUqGgD/MvsyglNzza9xwqbrG0WbFwQtmZpx6IXgxAo/Ez4xqAIi3hi3bh50KEYg4doTdP+c3PBFzh9HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FmMpVOk/; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fed726aefcso27225ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:32:10 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fed726aefcso27315ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723516330; x=1724121130; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723516368; x=1724121168; darn=vger.kernel.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t9sY5RmT4/nr5MM6zTPnlljtK1dnK1Uy+5vyxxFPmqY=;
-        b=Tzm6IBH/dzpmwDZNy+q0KWATQMpt0ketgLqW6aVuIHaR14gFt+bBHwbpZM70WR+YKg
-         B0ypu+XJixHI8/4PucNRgEa57QVEhh9jstBLZC4EVQjF8LMmKfXf+Nrwt26gXOLkJp1+
-         WyfmxmjLGy5N2bVzcPxrnLN0dfKR4ZrLvzvx230LWkp5DZ2NZlcZ7QH3uM46BiCdwOV8
-         /SWnDAxSZJ3/H750QKZYVE2vlDMgpDRRbeSdG91TTtnlArxjxyjSaLNzlfbGrHomMuEF
-         N3kt1wybINEVsL7iM82Jv8Sh/jo75li/ZOpG4wNzEel49gxCc5xs8s+JJM3UA9jOyZla
-         TqmQ==
+        bh=3aVTU6GrN/ua3kcnjeVYWRKEpbsWVFsVzNGy0iKcBv8=;
+        b=FmMpVOk/i7v76JQ1GCgP6QxfcNQJEDgJqEIqIE1g4oUXkofyCkD5NR7YI2d+RBFwfO
+         hUE6OTStVuINafEv2slpwdAYcKSa3hDqtZIWMkqGb8kBOr3IEJMVpDk/4Wd/Rd2jS5Ai
+         5BYipWulk1aFVByXtQMM2VU2DI/FoyhdQ0kM6U0INZIhiqO7v8pvo7f8l/MWCFiO3BEF
+         KPq2YRwVbyO16rB25zA151l2mR58Dq2ZU5H2NGIJkef2a9epv2sbpo4+Rh/Ee0K1wKJR
+         GhQo4AKOJ1LocXT6+4KhCniMSVCkExGfO0J2O67e8GHZY0vvJh+v58S5LfugVEimrPaI
+         dG2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723516330; x=1724121130;
+        d=1e100.net; s=20230601; t=1723516368; x=1724121168;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t9sY5RmT4/nr5MM6zTPnlljtK1dnK1Uy+5vyxxFPmqY=;
-        b=CxpJMvX9b2EyXlvdIpmtSXl5/6Y88R6PodIPLGRPCfboDImesMtXteIJceGGwkOAwI
-         S8qEJT301G4It9+h3JoVjMVTpsa6zCT+FPprCOas/v9giVaF9azYlVIA8rCCTWDZOiU0
-         uQYyQQCKjJA5pmrj4WZqI9QNsNxQGCB0v4Cg0ydmuUpeu9kmvZbN7jZO5WOnb9Zr/Epo
-         Kmo14a/roeUXbJQEmDl0B/GAEGoiJLQwqGkBdx9HRiFTx+uLlMTJBIkRF1tXa79//GDl
-         n+y+jEdzAVjT/aG/JvPyqwg2EBIC6CuOS193a8D4lG7O/mc5Kvo6UAhQc0hjNBaFxBam
-         8h8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVMcxSdWZYlWxc2MUp8jdIOa6bYqpKTd7b/w37T3VmqrumXgARpofE0bFrsH+dWjcZwRGED7Orj3ud8RsPB0UylY9QVpsn7t6YR7YM5
-X-Gm-Message-State: AOJu0YxN9qNs4WbpBoVmw2/8sVmFufSp4IZcS9t56R87pg7IvzZNyMVN
-	uXarbQfiUtjI7sX3ZDvsMGRzA0yxBKL8DYOl2BwjpZiNH9640OzvD6d2HjXOBg==
-X-Google-Smtp-Source: AGHT+IHRRIw0TKIKJPd7TTATQI7KUNnCwQkdTzS2vPZCS2AuBREI+ud00sZeDMvyyHCnnEpMYPYKgg==
-X-Received: by 2002:a17:902:e80f:b0:1ff:44be:b9ea with SMTP id d9443c01a7336-201ccb3bd9cmr809345ad.8.1723516329366;
-        Mon, 12 Aug 2024 19:32:09 -0700 (PDT)
+        bh=3aVTU6GrN/ua3kcnjeVYWRKEpbsWVFsVzNGy0iKcBv8=;
+        b=uzMjMkd7JII8sjy5jF2Xy2nkUMtaR5DtFFmYHR3Mtm/ZSW0AZwnnhDg5NGzwWv4cKG
+         gjtKd6T8UoB/kW9KoeyTeAq7Y+r49vW4JQzi6GYp0n+AEjMpIUETZ7mSS+XQwlewDxAh
+         j0UU8JXwvmNne/qUgRz3XnwtHI4g8zLvo5ZotGS3ihO/n7SmxIe/YdHbhPur/HsQz+B4
+         WFslRTaruAjyPdUUWscFhr1A98gX55XBO5m8QslnV9K+d95+6QSFvysP3S/6hin0Unad
+         vlVNbEaywLwId+aHuNZ01ADkmJoQRxWkSphQdu1gGEotUnf/cy+b+Sk/+DTXk3Y0b1no
+         1D/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUg4a7l1lMfQ2022IyVurfXQ0CXDv90hb/DwFXWQlx3cyRf1KhXEWNrBHPTzhN1EQcmhvPeEfHdALVbtozNa/bYsu3h/AqjQnAete1+
+X-Gm-Message-State: AOJu0YznOSZsty6GMpFwVay52G+XIttQzuxGHz452bL1e2mU5iRcynqy
+	PlRBb+Ox+/oV7Tvm/OLsjf1Gd6ZjwljC8oeipLovhSXpmt3i2y5YX61i1EkSeJk7xyl5gNcc38k
+	hbw==
+X-Google-Smtp-Source: AGHT+IGbmsOcZ9336++yzzgfTCvS2AAZwxSEOLSWnK40IMew7mh4Ep9JrZkA4ZX4ttxi6rRe03pKcQ==
+X-Received: by 2002:a17:902:ce90:b0:1f9:dc74:6c2b with SMTP id d9443c01a7336-201cdc7ad81mr468925ad.29.1723516368068;
+        Mon, 12 Aug 2024 19:32:48 -0700 (PDT)
 Received: from [2620:0:1008:15:da50:c231:9581:2fe4] ([2620:0:1008:15:da50:c231:9581:2fe4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1e285bsm3303115ad.303.2024.08.12.19.32.08
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14ca2fsm3360915ad.93.2024.08.12.19.32.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 19:32:08 -0700 (PDT)
-Date: Mon, 12 Aug 2024 19:32:08 -0700 (PDT)
+        Mon, 12 Aug 2024 19:32:47 -0700 (PDT)
+Date: Mon, 12 Aug 2024 19:32:46 -0700 (PDT)
 From: David Rientjes <rientjes@google.com>
 To: Danilo Krummrich <dakr@kernel.org>
 cc: akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org, 
     iamjoonsoo.kim@lge.com, vbabka@suse.cz, roman.gushchin@linux.dev, 
     42.hyeyoo@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/2] mm: krealloc: consider spare memory for
- __GFP_ZERO
-In-Reply-To: <20240812223707.32049-1-dakr@kernel.org>
-Message-ID: <1f5ae113-3782-7351-ebec-c7f2e3cdb14a@google.com>
-References: <20240812223707.32049-1-dakr@kernel.org>
+Subject: Re: [PATCH v2 2/2] mm: krealloc: clarify valid usage of __GFP_ZERO
+In-Reply-To: <20240812223707.32049-2-dakr@kernel.org>
+Message-ID: <c456ebdf-b75e-1f84-c097-f294b954c572@google.com>
+References: <20240812223707.32049-1-dakr@kernel.org> <20240812223707.32049-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,29 +85,12 @@ Content-Type: text/plain; charset=US-ASCII
 
 On Tue, 13 Aug 2024, Danilo Krummrich wrote:
 
-> As long as krealloc() is called with __GFP_ZERO consistently, starting
-> with the initial memory allocation, __GFP_ZERO should be fully honored.
+> Properly document that if __GFP_ZERO logic is requested, callers must
+> ensure that, starting with the initial memory allocation, every
+> subsequent call to this API for the same memory allocation is flagged
+> with __GFP_ZERO. Otherwise, it is possible that __GFP_ZERO is not fully
+> honored by this API.
 > 
-> However, if for an existing allocation krealloc() is called with a
-> decreased size, it is not ensured that the spare portion the allocation
-> is zeroed. Thus, if krealloc() is subsequently called with a larger size
-> again, __GFP_ZERO can't be fully honored, since we don't know the
-> previous size, but only the bucket size.
-> 
-> Example:
-> 
-> 	buf = kzalloc(64, GFP_KERNEL);
-> 	memset(buf, 0xff, 64);
-> 
-> 	buf = krealloc(buf, 48, GFP_KERNEL | __GFP_ZERO);
-> 
-> 	/* After this call the last 16 bytes are still 0xff. */
-> 	buf = krealloc(buf, 64, GFP_KERNEL | __GFP_ZERO);
-> 
-> Fix this, by explicitly setting spare memory to zero, when shrinking an
-> allocation with __GFP_ZERO flag set or init_on_alloc enabled.
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
 Acked-by: David Rientjes <rientjes@google.com>
