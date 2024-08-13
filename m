@@ -1,150 +1,206 @@
-Return-Path: <linux-kernel+bounces-284696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E5295042E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:51:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4C1950432
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCFD81C211F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:51:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8133D1C21782
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077FD199256;
-	Tue, 13 Aug 2024 11:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56617199EAC;
+	Tue, 13 Aug 2024 11:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YW1I3BSi"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PZnTb09T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED9B19923D;
-	Tue, 13 Aug 2024 11:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846831990D6;
+	Tue, 13 Aug 2024 11:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549845; cv=none; b=EXYtg9x1iJP4WOWiO+M5EdeL3mTgpKrRezD2+ZDfIANTJasSPfa01GymSFDr8lkGAVHkdLKCBuF1SjicoNCWdx+hEHRdQ5yaCuVUlvlfZ5e9+usFSmGOYnb5Fapwl2ilUHOby3LvWMLw75crZ9ljKiXsRLQ/0ddmBwcLp/+xV3A=
+	t=1723549874; cv=none; b=F2m7ATcafBMSmkNwMf326/EsuHValjc8hbjvRKWt5TleAeZUsOqXcBHkMLmrZ4Y8Gfb18qzNOXTv6RF5uVDWRFXBnSxZFUolGECNEXVnN13SdKr83/ARRwmi1+umzGn4aiCO/3Ybr4utQ+cr0Kh91M4fFdW+5tHWVhnoDrP2pGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549845; c=relaxed/simple;
-	bh=momqMPg58eXRuraxzLRA5+Vm9sT9ngqIOc9ZLV6IMQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GaXz/YN3nYKJ7zcHnfeb29EM4rB0Cwosa5UbFd49yYoSO6UhC/a8WJx2IKhsMtvphq35+Hl6773gdYbO3mBk/Fgp5EAdTTZnCOq6ilgbvz9w2KyDktwAZ3MScWu2xxMq2YtSlxeRaGgbTr6qPcZnRSEYu94c7/S4IVyTpjtyaR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YW1I3BSi; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D6Q7VH002444;
-	Tue, 13 Aug 2024 11:50:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:content-transfer-encoding:mime-version; s=pp1; bh=N
-	7TwkXSoYtsHI6ke9wVuBzCSrBwOGWPut1J0RcJCaA0=; b=YW1I3BSibDiUF3IyS
-	KhhE1HsKhpQKteQI1egfqknCzyNBjy39TP7kkPmrJWTXmIJWdzb+WevR8oRVGIyb
-	f9OnIomMqb2ULgd6AG3SuQt7/SWQrOIuxIUY542XT0AA6W4KjbJRFURawnQdo6rm
-	DqgN78vWJ6dQqQII7IH6bcXVr+tEq1PeO1S3Al2y2h1dIhqp4xx2hnZjX92GhsQV
-	Dw1i86b8r8+YNpXFY9GA/XNWgSLlLu46RRz6BKvsPcuXc7AzTbn0C2DFbc7Olemu
-	jLrMhadaK925+jJlGUVaXj/otl8wV3MAi8xjBwibs3ffBANdKRSNIlR1gyrVdoTY
-	ntlwg==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wwmpqr4t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 11:50:35 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47DA0G9S020901;
-	Tue, 13 Aug 2024 11:50:35 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xn832yfv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 11:50:35 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47DBoTMp52691220
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 11:50:31 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9376720043;
-	Tue, 13 Aug 2024 11:50:29 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 375E42004B;
-	Tue, 13 Aug 2024 11:50:29 +0000 (GMT)
-Received: from localhost (unknown [9.179.17.215])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 13 Aug 2024 11:50:29 +0000 (GMT)
-Date: Tue, 13 Aug 2024 13:50:27 +0200
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 2/2] s390/iucv: Fix vargs handling in iucv_alloc_device()
-Message-ID: <your-ad-here.call-01723549827-ext-8444@work.hours>
-References: <cover.thread-d8267b.your-ad-here.call-01723545029-ext-2515@work.hours>
- <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
- <2024081331-bonnet-fiftieth-9a14@gregkh>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2024081331-bonnet-fiftieth-9a14@gregkh>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: PE4u4Rl_NwdOX-Jb7eFQ4UuuSWBXnxAa
-X-Proofpoint-GUID: PE4u4Rl_NwdOX-Jb7eFQ4UuuSWBXnxAa
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1723549874; c=relaxed/simple;
+	bh=dSSqx1y/BmkNR6Oj/AKVGhrdEKwya+e1UfiUUQgAkNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fybNf7Mzm8vuDqR/SZTS0MhSl0M1PtVVWznakKnVyVikgTLwkCLVBrooY6CKVS9/ceP3zHGZna/3M6H7KeP7UTZRFXEKEhfq7hLXISW4pwXWCom+mt3gdXt0MJ/81QkHcScA8qdFUSDA26TIWXI33p16fRXV030MAtFCUvkL2ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PZnTb09T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01926C4AF0B;
+	Tue, 13 Aug 2024 11:51:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723549874;
+	bh=dSSqx1y/BmkNR6Oj/AKVGhrdEKwya+e1UfiUUQgAkNM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PZnTb09TGZetZtsxQqkaYfwPiXWaf+BYt/e00aLoyeTVMH32n4ARb51DyYSysfXDE
+	 3iFHkkoObn9DYUrF/L0OSIw2t91Egzh6pPDtHWoU01rCp3KmxF7PM4OG6Y0GjE7KSo
+	 tPOR+t4JHs/RhhdPRlWvV34vAoGV3n/nFUfdfguciEzVfkc7DjVTZMSN+wLBlNlmG5
+	 TAeXQvDQEOSzeYOGbUZL+iyC8ubnI2djGNEfPJMLgVJ9OOM7s1fiRsAECWsb2A1Dkd
+	 vz1y3bBK+38ZFJSNQMytwoXWYLQOtaULKqs6R/LO1GNEVr4om4RJJJXTyIwceaegfM
+	 fwVUr+6cWBgNQ==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso9823601e87.3;
+        Tue, 13 Aug 2024 04:51:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtbMy9LZT2qtjIg3MLQfNpbDS7MBiENu9K9eELYu973lMNVF+MqqAyJcHwzKwmIqdNPyTDccwTrWQu/U/TXMS988urJ77L6S3g3+JRN/Rt0OAsP4ctYv6MJlLt5yCPGJCdftCHpmbDo7Y=
+X-Gm-Message-State: AOJu0YyMEIYK72/YtVxqg4kDd3DOLQ5Qv8OsTtzNoi8iaVEw5b/4NdrS
+	0eGYbqkYwi8zfFSobPG2PzKSmG7R2BwN7dSoVN1qYL0H9JJfJZoZ05Qccd0TZ267413XoeqG8Y9
+	msaFWEMeWVmfxz+hceyUkMdXta8Q=
+X-Google-Smtp-Source: AGHT+IH/RYqKYqg7Ekl9GF/FH88BeAzf7ErB6NrAqoPeE7uJba3lT1uMsdfQeapm5vDVT2qvaMukn5p8fqYsJvQ+lY0=
+X-Received: by 2002:a05:6512:3b06:b0:530:b773:b4ce with SMTP id
+ 2adb3069b0e04-5321365c8e3mr2439420e87.33.1723549872098; Tue, 13 Aug 2024
+ 04:51:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_03,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- impostorscore=0 suspectscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 mlxscore=0 clxscore=1015 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408130083
+References: <20240813113641.26579-1-jth@kernel.org>
+In-Reply-To: <20240813113641.26579-1-jth@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Tue, 13 Aug 2024 12:50:35 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H6pCGcT=xGX4h5Rcb2Ky1wzK=7s1iqA4XevsYE7KNc2EQ@mail.gmail.com>
+Message-ID: <CAL3q7H6pCGcT=xGX4h5Rcb2Ky1wzK=7s1iqA4XevsYE7KNc2EQ@mail.gmail.com>
+Subject: Re: [PATCH v3] btrfs: reduce chunk_map lookups in btrfs_map_block
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 12:52:19PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Aug 13, 2024 at 12:42:37PM +0200, Vasily Gorbik wrote:
-> > From: Heiko Carstens <hca@linux.ibm.com>
-> > 
-> > iucv_alloc_device() gets a format string and a varying number of
-> > arguments. This is incorrectly forwarded by calling dev_set_name() with
-> > the format string and a va_list, while dev_set_name() expects also a
-> > varying number of arguments.
-> > 
-> > Fix this and call kobject_set_name_vargs() instead which expects a
-> > va_list parameter.
-> 
-> I don't understand, why can't dev_set_name() be called here?
-> 
-> Calling "raw" kobject functions is almost never the correct thing to be
-> doing, ESPECIALLY as you have a struct device here.
+On Tue, Aug 13, 2024 at 12:37=E2=80=AFPM Johannes Thumshirn <jth@kernel.org=
+> wrote:
+>
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> Currently we're calling btrfs_num_copies() before btrfs_get_chunk_map() i=
+n
+> btrfs_map_block(). But btrfs_num_copies() itself does a chunk map lookup
+> to be able to calculate the number of copies.
+>
+> So split out the code getting the number of copies from btrfs_num_copies(=
+)
+> into a helper called btrfs_chunk_map_num_copies() and directly call it
+> from btrfs_map_block() and btrfs_num_copies().
+>
+> This saves us one rbtree lookup per btrfs_map_block() invocation.
+>
+> Reviewed-by: Qu Wenruo <wqu@suse.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-struct device *iucv_alloc_device(const struct attribute_group **attrs,
-                                 void *priv, const char *fmt, ...);
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-va_start(vargs, fmt); initializes vargs to point to the first argument after fmt.
+Looks good, thanks.
 
-__printf(2, 0) int kobject_set_name_vargs(struct kobject *kobj, const char *fmt, va_list vargs);
-
-__printf(2, 3) int dev_set_name(struct device *dev, const char *name, ...);
-
-dev_set_name is expecting to receive individual variable arguments
-directly (...), not a va_list.
-
-The (...) in dev_set_name is meant to be expanded into individual
-arguments, but when you pass a va_list to it, this expansion doesn't
-happen. Instead, the va_list is just treated as a pointer or a single
-argument, leading to undefined or incorrect behavior.
-
-So, would it be okay to reuse kobject_set_name_vargs() here, or would you propose
-introducing another helper just for this case? e.g.
-
-int dev_set_name_vargs(struct device *dev, const char *fmt, va_list vargs)
-{
-჻·······return kobject_set_name_vargs(&dev->kobj, fmt, vargs);
-}
-EXPORT_SYMBOL_GPL(dev_set_name_vargs)
-
-The bz link should be:
-Link: https://bugzilla.suse.com/show_bug.cgi?id=1228425
+> ---
+> Changes in v2:
+> - Added Reviewed-bys
+> - Reflowed comments
+> - Moved non RAID56 cases to the end without an if
+> Link to v1:
+> https://lore.kernel.org/all/20240812165931.9106-1-jth@kernel.org/
+>
+> Changes in v3:
+> - constified btrfs_chunk_map_num_copies() parameter
+> - fixed accidentially changed comment
+> Link to v2:
+> https://lore.kernel.org/all/bc73d318c7f24196cdc7305b6a6ce516fb4fc81d.1723=
+546054.git.jth@kernel.org/
+>
+>  fs/btrfs/volumes.c | 49 +++++++++++++++++++++++++---------------------
+>  1 file changed, 27 insertions(+), 22 deletions(-)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index e07452207426..4b9b647a7e29 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -5781,11 +5781,31 @@ void btrfs_mapping_tree_free(struct btrfs_fs_info=
+ *fs_info)
+>         write_unlock(&fs_info->mapping_tree_lock);
+>  }
+>
+> +static int btrfs_chunk_map_num_copies(const struct btrfs_chunk_map *map)
+> +{
+> +       enum btrfs_raid_types index =3D btrfs_bg_flags_to_raid_index(map-=
+>type);
+> +
+> +       if (map->type & BTRFS_BLOCK_GROUP_RAID5)
+> +               return 2;
+> +
+> +       /*
+> +        * There could be two corrupted data stripes, we need to loop
+> +        * retry in order to rebuild the correct data.
+> +        *
+> +        * Fail a stripe at a time on every retry except the stripe
+> +        * under reconstruction.
+> +        */
+> +       if (map->type & BTRFS_BLOCK_GROUP_RAID6)
+> +               return map->num_stripes;
+> +
+> +       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
+> +       return btrfs_raid_array[index].ncopies;
+> +}
+> +
+>  int btrfs_num_copies(struct btrfs_fs_info *fs_info, u64 logical, u64 len=
+)
+>  {
+>         struct btrfs_chunk_map *map;
+> -       enum btrfs_raid_types index;
+> -       int ret =3D 1;
+> +       int ret;
+>
+>         map =3D btrfs_get_chunk_map(fs_info, logical, len);
+>         if (IS_ERR(map))
+> @@ -5797,22 +5817,7 @@ int btrfs_num_copies(struct btrfs_fs_info *fs_info=
+, u64 logical, u64 len)
+>                  */
+>                 return 1;
+>
+> -       index =3D btrfs_bg_flags_to_raid_index(map->type);
+> -
+> -       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
+> -       if (!(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK))
+> -               ret =3D btrfs_raid_array[index].ncopies;
+> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
+> -               ret =3D 2;
+> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
+> -               /*
+> -                * There could be two corrupted data stripes, we need
+> -                * to loop retry in order to rebuild the correct data.
+> -                *
+> -                * Fail a stripe at a time on every retry except the
+> -                * stripe under reconstruction.
+> -                */
+> -               ret =3D map->num_stripes;
+> +       ret =3D btrfs_chunk_map_num_copies(map);
+>         btrfs_free_chunk_map(map);
+>         return ret;
+>  }
+> @@ -6462,14 +6467,14 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
+, enum btrfs_map_op op,
+>         io_geom.stripe_index =3D 0;
+>         io_geom.op =3D op;
+>
+> -       num_copies =3D btrfs_num_copies(fs_info, logical, fs_info->sector=
+size);
+> -       if (io_geom.mirror_num > num_copies)
+> -               return -EINVAL;
+> -
+>         map =3D btrfs_get_chunk_map(fs_info, logical, *length);
+>         if (IS_ERR(map))
+>                 return PTR_ERR(map);
+>
+> +       num_copies =3D btrfs_chunk_map_num_copies(map);
+> +       if (io_geom.mirror_num > num_copies)
+> +               return -EINVAL;
+> +
+>         map_offset =3D logical - map->start;
+>         io_geom.raid56_full_stripe_start =3D (u64)-1;
+>         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
+> --
+> 2.43.0
+>
+>
 
