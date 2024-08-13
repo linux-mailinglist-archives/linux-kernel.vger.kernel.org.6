@@ -1,102 +1,77 @@
-Return-Path: <linux-kernel+bounces-285190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E412950A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:39:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71775950A43
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0C80B21DFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:38:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5B5CB21203
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551891A4F27;
-	Tue, 13 Aug 2024 16:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCDB1A2552;
+	Tue, 13 Aug 2024 16:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Z9+9X0d3";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wl8l/jWG"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JNOn0Ag1"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2089.outbound.protection.outlook.com [40.107.21.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3891A4F02;
-	Tue, 13 Aug 2024 16:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60D370;
+	Tue, 13 Aug 2024 16:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.89
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567036; cv=fail; b=kurXv9GEfzXq8DXBSTMigIFJkSMse23ynKyVJu3iEuDuOJCSmsUWKQF8HHepFrlaJMrzkd7GIQJ5ueEDViozhh5pQ3PgZ4zWb8drIHD4GUuOz9mntJJl0rTn2OCxQOwoJ6qwS5nPRTEe75hGLE2eXmDeCpOKMBFQrMQnjpYzTWA=
+	t=1723567019; cv=fail; b=WNYqhuygWaOsTS1afoiivW1rjDuIRRQ5xOC2FX7INiqj7SJwDOBLOwE7ZbtwgSrjbjVM1p4bDQXqOG7MJzcHTpkswRZRtKal2us3S//3JKktHAnSsl0orJv+UthUz5IgFtxadHsdNxmvuLiQRMpeYIshme2kajRyFS8Mv/twdHs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567036; c=relaxed/simple;
-	bh=deJFZJmQeTeQtt5bIB7R/BwktTAKm9MF1pqj4PFteDA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jAwvVgYu7V5WFG9K97SEG1CuyfXH1m66HmIlZl2FXtAW9KVhoe47uObXYA2BzuxY5tCVvJ3BLW8mhBqCFXirPLRAwa5WWV00MhZkEWDSzU57oQPbdqb968dpXau3cGlKnAmDdb33i15W1i30CToLUbvGSPnxWNbGHHtjdvddWVM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Z9+9X0d3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wl8l/jWG; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DGBTwA009743;
-	Tue, 13 Aug 2024 16:37:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:content-transfer-encoding:content-type:mime-version; s=
-	corp-2023-11-20; bh=HZ2MJ034kz/+yCHz77EDP8UVitUjCKn41Y0vvkTtB2s=; b=
-	Z9+9X0d3CsMyw5A9sxHVtLPQfBOELSeIk7DZmOZcm4ZU1KGT7dQFRddyXWTSu8ss
-	9tw85W61r/bisIUziyP9koh8tYc1HTjKjtEetKduDMVjB4pz8A+TWP2C3w6PzcR9
-	fpw6JJ43h3Fm+JkNOZSWUPUYoeHxCHNSJSP2UASMdsvLrLHt1pjcRDoNHisYTA96
-	/urzz4t7rYAfn1E5Jnux2Y3WSfQ87nnnaYRrCP0EORE+HJ647UibMbnpylHmJMq0
-	0l0I7VRWQUUfqFbX+zcx+vg3gqxNtIteIamiFHX+TzpH2HncnggrJMWFH4kFQVOA
-	1vjvRP5VgvXaLmrVg5P6HQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wy02xg0j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 16:37:05 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47DGBTrc010640;
-	Tue, 13 Aug 2024 16:37:04 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2175.outbound.protection.outlook.com [104.47.55.175])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn8s053-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 16:37:04 +0000
+	s=arc-20240116; t=1723567019; c=relaxed/simple;
+	bh=ItP/kOBoLDt3jhSk3tQOQgENZKvAgHqlGAAH89Wzoo8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=LdmV68kT3E1SXsZmpd+liJ00iVELWfJ3DK8ZvZtyT8p45oGGc2aUwOut539owbpGTosOG2nWUNCwI85F0Xud8+SM72Ym0X3Zw+q5W7A3yHNsI2C+Hkpu+s6k7B6eCghslEBS+Alo8L4dqrWJU7kJeqmvxV5RjIuXo2keyWLxr4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JNOn0Ag1; arc=fail smtp.client-ip=40.107.21.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YHQgFHGH4rpLlQwNyDPCXiJne9WtfhKtQ9eK2t59k5o7VaxqbaO7pqYQ3jOkbfkj0YC1leK0Wt0Q5mZc3hRiLEXih4RZ+X2xlHmJLMw3GKM2V1YaGTmr61cFBzyuubbB1Bc3lullRlnxSOU3MUHlnXzoqzBVqnNKb/EyvfV6lAwBTS4H719Hkchr9a7mXjyyBEEtwpJSMtnoe+80lIYL3D/eYBAJH83xOOiFet+m53UHBlnefE6+BcWYghAgdEr/DoVtez1vwaNK4ld1gScXExFqxY6sjOS9mHuKzTYZoMMFdnoUMqE02z+lEEBJ8cj5/kCbeaaEXrGM3rQLl3+MHw==
+ b=CS0EJxUIjfqb65qnrvZ6IEZCmcmipocZDTTx8KohoYpE4BTsN06+fEPu+TLyRefOGGyelZhNQJ3K9zMk/FKHZLEZrYYQKDP2mVj/nQoQcqkkV2rtA0ByM0jpbJ7e6n9vHtQDydWmtUNH4iSVUjxGWjEKtrR6x5ORVDOXL5TyG/Z5JcKs0qKzR5j2rbWtvQ6o63v0HXxEp8U7OOGDXTFq3zqf5o6aL3mLmwN1i8ZBXh94zXNiRomture9ATnJ29oM1F/nMN14Kc0a21LKZbULeXGw1e5jerTqaYEby0mQbC4sH0tIQoCVa+nG9o6PW7rwlh8d7ejjl/unX3dt/cdlPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HZ2MJ034kz/+yCHz77EDP8UVitUjCKn41Y0vvkTtB2s=;
- b=DJiqLFK/esoQuTwZaY/xd6sad8Tm6986OgkiH6rR8+po8cOicC2uYTzrwuh9kT+wUFQgCqPqCUboag3w72p6b3ufQvEbHwilDx2zvJLel4nHL9XSUExwqSqNEwWIRVa9CO3lUBZx4WyiG+j13bNyRjTkAdNKoMsfxmnngFI7Yvl6yRKkeu70+H7Mulo+sxwnumF/JBQ/owypXBPge0qv/nwfzRxTCgcjLinap/jtJ7gjIRcbXdjt4Ivv2+nERq4Nu0SL9w6wvNFuqr8TNLKVRooqQaAC59Wetwq+pSZg2UTK1ERkTIZIQ9IzP5r1fZYJgV5O5FxjX57VacBJ60UeDg==
+ bh=PsdLvbCR9LGIZ/1rDstKY8po6TQBXspJHb1zqdDzGWs=;
+ b=vt3lHrMIyPvsLdgzE1ur8nFL0zZFnUkfvMgR4f799HnuwPDb7TR+T6/eIMQqiXAEYrFSEGeQ0M/astRisWvCN0BIkBnPndB078XmjbrOfSh954mIyIa7faYp6pG+lB/JAAolgJbMEUr2W6HYWLrJYrgI9/Jtgd1dqthV3kQekdWtsbD0kiwQD15XrmAxBnJCo4SGDamZhcCEgshp5RJxHbgTuWhdb3jlkLUy67H26gZJLuEU4nd7vHfMlBbMHfh/5+j4JyURy9n6Lq/4ZEPV/5kmy4sLz3TFNYkGzY+qsG1BS7L1n5qrBuwppYouebNR1dSDQvRpFKix3BZiLJICUg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZ2MJ034kz/+yCHz77EDP8UVitUjCKn41Y0vvkTtB2s=;
- b=wl8l/jWGU0BUvssMZSRgisk3BPbpSF8OgUYLKg+qt+FO+mU/hpOjWJmmLfFXNo0LuVTiAIAd83l32QHRb/NXXKi3gPb8QPYOF3dPWGi5N+LEnKGWD4bz/f8y8qvFU/Jl/QZA/jRyE4svUBhKu3j4yQe2mnHFt7ZLiXD3haUB9b8=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH7PR10MB5747.namprd10.prod.outlook.com (2603:10b6:510:127::14) with
+ bh=PsdLvbCR9LGIZ/1rDstKY8po6TQBXspJHb1zqdDzGWs=;
+ b=JNOn0Ag1CXMbYqNnBLye9ncIoXPv0Lp6RvPUpLLnAJ0BM6tWbNTAn2De8xIELwunmDU5EvYgRxeZGYnw11fjfzO0kRmBjpjDw8jzrNRqtyIqV114wjJ84mubHPpKbNC/3fQCy1x8wPuJfTCQSWnQL/lDQM+4AiqmutjiltnQyNvi3DkXQu9I463JKxcayRrV2lvYeyfeFxde4rbda0gcwxzgdtrJPZc5LQ4u0qjJTbaDWzHKtheyPdGm0YDqkg3QYpdri4FP8+ms2zl7FqRFXiwXCeQCr+8UnlnnpqMMmuq7T3eANrMnXyOLMWONTHmczsO1cU7jFsRYxDOD4z9jwg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB8990.eurprd04.prod.outlook.com (2603:10a6:102:20d::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13; Tue, 13 Aug
- 2024 16:36:57 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%7]) with mapi id 15.20.7875.015; Tue, 13 Aug 2024
- 16:36:57 +0000
-From: John Garry <john.g.garry@oracle.com>
-To: chandan.babu@oracle.com, djwong@kernel.org, dchinner@redhat.com,
-        hch@lst.de
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-        martin.petersen@oracle.com, John Garry <john.g.garry@oracle.com>
-Subject: [PATCH v4 05/14] xfs: introduce forced allocation alignment
-Date: Tue, 13 Aug 2024 16:36:29 +0000
-Message-Id: <20240813163638.3751939-6-john.g.garry@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20240813163638.3751939-1-john.g.garry@oracle.com>
-References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Tue, 13 Aug
+ 2024 16:36:54 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7849.019; Tue, 13 Aug 2024
+ 16:36:54 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] dt-bindings: board: convert fsl-board.txt to yaml
+Date: Tue, 13 Aug 2024 12:36:29 -0400
+Message-Id: <20240813163638.3889778-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0193.namprd05.prod.outlook.com
- (2603:10b6:a03:330::18) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+X-ClientProxiedBy: SJ0PR05CA0143.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,217 +79,424 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB5747:EE_
-X-MS-Office365-Filtering-Correlation-Id: 285dfb27-b2e2-4dd6-ed12-08dcbbb625a9
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8990:EE_
+X-MS-Office365-Filtering-Correlation-Id: c47c3dcb-c885-4440-2002-08dcbbb623b0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YLNSP6T2A5KHw8CosCBxFDOBA3MX1co9tfl0/5mgPq6JTEIxQ6fkmLv8DzPf?=
- =?us-ascii?Q?66nX1Nx5EN/e3q5VmknCDnTQBXncxThQJYCsZpJyySpZfxLpT0fRovQT7ZSk?=
- =?us-ascii?Q?MfjRKhVOXoxzwD5n9MnrW2sWwcJdiVFBLaQw9eWynQlUATcIdvkz1eT+UUx6?=
- =?us-ascii?Q?nMOD9cQLwiarDqLznRWQoEwAv5gJEUu0CSsqj3cMfLR45aU1uR5Ofx5izMTF?=
- =?us-ascii?Q?Bi04LRLBwlzkI+vonw9Kyrk/852MAlf82qIpPDNOHwVSr2ruqEruPq8YkNMS?=
- =?us-ascii?Q?n5q5uMF5icPTIE9S/1oRnf1ODkL4e/qk+zX8+zs8G+ungB1/ZzG7cGON9dze?=
- =?us-ascii?Q?dPM97jmKQWDlgeSWB8QDGOFwpQoP4m4Q/39wY/1aeNR3Eavw53c6aO8yv/0+?=
- =?us-ascii?Q?PwSySvwWZfEs5PpT3q7vEHNAADQa4VOjNHBqkCjKDQk8QiFPdm1yWj7g5bep?=
- =?us-ascii?Q?YSr83suTD5UAJbyYeglQp5JWFRXL6GF4ZCKlwc9sgV4YEgkSmrlqTCUB0WEY?=
- =?us-ascii?Q?XcHCz2n6TfNVCxSB+PwEtRKF4LRupQH+mnVuXF73EhpBOsHy35zIOchZNTat?=
- =?us-ascii?Q?rDMQAmd1gV1Rp90xeiOEKxIwAAZ/jBbF+fiwJhvJzvhIX4UWbPio9gX4zG3N?=
- =?us-ascii?Q?Mpe45JIihnd1UAf0isx4AIBfaglRPZGMxBzrFpFmu8t3eUzq1erECzQHGhMJ?=
- =?us-ascii?Q?fLgHYTf0jWd7vFOHSshs9DDKCn8DQvpW0Tft6mjhjbCFqxvqXkrhuqNb7fOH?=
- =?us-ascii?Q?AzrdVSuaYgLV2Hss/fuvW0vJqkQjzCOnnA66pytii2AVetG+r6tjoFAAazs+?=
- =?us-ascii?Q?WC7gn1c4IjB349BRZxVw2e2wiU+QzmthaHYYyUHT8GBGNS1Los1u/WH1I+de?=
- =?us-ascii?Q?BmKwerGkXt8xrFnwvke3zIzD6ZTbJO8bM8mxrmrPOTpu5D0iW17tzbsrEI1C?=
- =?us-ascii?Q?7brocL2R2S3QqNI+L4AiCNvUDan6xCGoXFliER06noIn7APGfx2QDAVJzZ9M?=
- =?us-ascii?Q?0J1a/7FI7uvsceSt1kQNcgeqAI+WHGIMRJWPop8ugM0wNL1FR45hg4IxhESc?=
- =?us-ascii?Q?V93eqYznaq3JzCsbgi1rWXw/H99WBdHCz1cdd0WYlIEilqNAZAsd8A7tOuce?=
- =?us-ascii?Q?3gOkS15ZG4Hd9kKa+l8LGD6O9oV4kqex4OIX+a5JStEr0mBVLtRR2FQM1Fe+?=
- =?us-ascii?Q?YGJhuLygJFKBnYE9aBlrqW+k9qdupCiU001K194D9EhZW+9N7Xv6AEhWo+sC?=
- =?us-ascii?Q?uup1xdn0CAIambphWl/SW2HjPIBCDRBs7BLtGEFslD6sfouAbLS9yoQld5y+?=
- =?us-ascii?Q?U4Rl59v4EsfDuYY8IbN5DXi8ob1zsGrN/PXV8AEvd5idXg=3D=3D?=
+	=?us-ascii?Q?gJ3V7C7YMnWESZm0I8wdnDHHZWQ/ZFtQLoDHMMIBJvdhNCUNQvwxOM4LYRNp?=
+ =?us-ascii?Q?zAroErIQNKf0Qm3rYFLK+kR0ECHQKG0MTUqqMujV2hwcQQx8rfWFzl+tEjql?=
+ =?us-ascii?Q?B2IgAk+IuYRsCe2dDhHzK1mcSXzGaELwaVV4rBcWXi3AzJESholSADsKa+M9?=
+ =?us-ascii?Q?lBh7Zx2P2sp2UeO6IkCyTBNwcrx9weuo777b8Y7F5pPX31mBJvv4w/Dhtnw2?=
+ =?us-ascii?Q?EXLEALLaayErxOpd6rgEG61MGzAPbyaUqmBFOHNdsaFAmBHDNclhWn6DFGyw?=
+ =?us-ascii?Q?T7CnVdtPX3cVjHzReeOhDdqmq5alS2tO6DHADImlhl94Sf6Cx8dxE/OCmTo0?=
+ =?us-ascii?Q?NEYewE5J4S4jXQ6ls2ew2ZeUjbVRKLSb+RyrYj8h/gwTTLO3KDC+HD7d1FSR?=
+ =?us-ascii?Q?UAeD52aaagPpWxsx7e4aXyfCkodNz7u6bWuSkYpMxkOsNSoIMCLiQbDvOGnR?=
+ =?us-ascii?Q?UYcSO91wf8hJYj8dsFXzibu5BmHEPWrtZfPhGIqlu1KQMwzQazTI+yjRzWm1?=
+ =?us-ascii?Q?mINXDtT9IdfcdS0rPbEoZRb8gNjqa2UEj9J2743gUr3ZCaR20LCdmMmKDbtD?=
+ =?us-ascii?Q?exjFDZm+okLeeYdgahHK3yUpM9NWwbl5VVjdE1YTKN37x8h4Se1Po3rPWmcS?=
+ =?us-ascii?Q?P5nAc82TNABtSPTm6icoPjvvZQG3eTSlfOamgmPIElgRVY2n9VUWJULldOuu?=
+ =?us-ascii?Q?p5qWqjtH4dcPYgEV6mkbfZtX1LIiP4v0a4y2NGM6kTscy/c0YSfxPW223CWx?=
+ =?us-ascii?Q?rRaeMo9qWkKqpjbJszEab1qOjberxgCoALz0NubAdqQXsTC+AnmCMQJHisnn?=
+ =?us-ascii?Q?+eyjYYjL8fgWDyXnL2WxCiysuDm5ejbZ1jqmAoVnodQvmCqPL6i83Io1b4bV?=
+ =?us-ascii?Q?4gK3Bv+YAM8LyodMdCn3T2Fl60NHH5AB/A1CAkHe+nmII95GQ2AHTnmd70wA?=
+ =?us-ascii?Q?NPvLZEitxK24ddkerVN2bF+NCQPEsU5hpU0h8wb9PSdEAMdwQQ07Sg33SmWy?=
+ =?us-ascii?Q?T98MqR8QhGnhvRhr6foZTZ+2XsGdhMEvuyR9Wzn7RzrboDwj2jV6FuYt8Me2?=
+ =?us-ascii?Q?hVu/21pVAOVxOtNs6HYMGY6mcn+n94MQYXyZceX+j4rZSCis447DHTIhkcXe?=
+ =?us-ascii?Q?vN57UoQZb2+OZWdt6XjTAlicCN6ykvnOhz1o+vARn5EACpoE7ElCmwEQlkFN?=
+ =?us-ascii?Q?OCsT+QhAaWvOumF85zd51yu09j1AJcTb+TGL/msQ+jjNqeQkjH0PF3xoA7da?=
+ =?us-ascii?Q?0ijzfdSUdELUJvPcDVooSs52O69DoG7eoPV/g+plZXWvUW5zuksn6oTkzXEW?=
+ =?us-ascii?Q?Q/qbUV0V+uilrObduiSGzjAGQ95QBElLOiYCdWrsPlAfCXUCuTpAcSi90VZo?=
+ =?us-ascii?Q?cdXHQuw=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RJIaXLh3tRaJjftoZaMOc4EeGudtckyxCSVym9CcquTC58Q7bzDveOc6FUL8?=
- =?us-ascii?Q?bu409r2USwzqbu8HdbCgAZvDHFyxc6AvU3dmkHJQwf3CQXogTIFpt8mwfQe8?=
- =?us-ascii?Q?RMZ2tcS8bycJAfcfvaBqB2OrJgYcJwffBT511U1tkEI2gHosQUs0fo/hKW7z?=
- =?us-ascii?Q?13Bn7/m3PRDoKipsmHaH1JG6/ybcjLP8dAFvzMYsglVgrjxnaLA7tf9Ayk33?=
- =?us-ascii?Q?x2NgMQZ7k/CuxYf4mXm30iuqwuHOolnWs0Xnlx584QkvgIFgw3i7/RxN++JY?=
- =?us-ascii?Q?N/6HNUFocLzVhV1oEutUy/sT+G1FN70atsQJR2PPGB3gAJgIS/b7udivb4fE?=
- =?us-ascii?Q?gxEJ61WZQbaa7Mns8249xtn3eWRdWpg+5KprtZsqIU2W36HLybmbQQo/1/2Z?=
- =?us-ascii?Q?au/mSgPCyvkpJa5Fd8yiSztGrne2xzyPLkpYHdOYTHQrU6fV1ZqMXjPpXXFv?=
- =?us-ascii?Q?ONbCV10D6L7dkXFU08bjSjza2iyLGYjG1OgG51QA926Z5mJNGyiHPKsIntWh?=
- =?us-ascii?Q?GmvjO6ROZYN/QAW2vU1Q8qcrlLUUAdrImx19Lcc8KQkBwQuoIpeIVIzmqWRk?=
- =?us-ascii?Q?QTHExmyH+4pjovwD3muYSlBH00/h2EPffqEuqv5G66M0ScQljbLLBA/ic+Xc?=
- =?us-ascii?Q?12gETZTH3b8xHv6QHMaX9GqNsIP7sYGG8QT1OKgUetMTBwHv8DGa/3qgzgYw?=
- =?us-ascii?Q?ipuBbsDIYZsSSoHR2HLIn+dkDt+QbPRTYoZUU0Ln3cPizQMC3GImWyIu6VFh?=
- =?us-ascii?Q?hPo+1ej9KgcKwXJK9PfBYKpjVolVrZN+D0cl26hoHWS9PfutT73dFkLNXpbC?=
- =?us-ascii?Q?imQUOqvj0VUkYHVJeiMbLeoFm7r4HXu66b5HwKm0xJv8xbvd+YEeF6/rrxyr?=
- =?us-ascii?Q?b6gABSV6O0vyoC1um11Rmu+UziiaUG7ZlagwY0MeaGJklLbM0ZSosG8sQR5Z?=
- =?us-ascii?Q?/iggozGpqepelJfV0v5Gk2JZA0gv8qFQJAlfZWmmzsmtyqrx318hWyt6mXs0?=
- =?us-ascii?Q?3Id2sApbHw1+Dc+k7tE2X4wroXbETst4gTTLR4T7+b/GcMNAwv6jL3Sv7CKZ?=
- =?us-ascii?Q?G6vE0dXIcBvwoNI185ikjzG9mh2KTgYt0YK9wEM0n5bbYRGavsRwwiT8ypI4?=
- =?us-ascii?Q?Qap9a2rBk3sckseMjZ5TWGrInRHT5FzVzASiNxrb7CxC46RPFUaeuOTQ4pGa?=
- =?us-ascii?Q?awin+JLPjpKE9Ae+sPxX5IAjluWVU/VylLPZFHv5BZk7IZJqDkvutbjuLoIQ?=
- =?us-ascii?Q?5ocoEvVAD5XO0wxp5WXm3e4ewiF0Qz02mSHRgndlbWfskSoQmRqptIQD/182?=
- =?us-ascii?Q?3p+6PmGq9eiKGCA2HrwIGqm4tSTgi2dczlvfDgOUX8Jy9Hrs9MjgQ2gvu1Gm?=
- =?us-ascii?Q?y8QFH/KeSxH/3Dggh91gfn7R3Xfg9aOYRO/SFFmQP5iyE4Kz/V/y1C8B3qXQ?=
- =?us-ascii?Q?L9OqYJBJtv5ctnt8XkMSw0iFDo77V8866ys5uNNWqEdOVEj/+33dYGovL3Vl?=
- =?us-ascii?Q?jYN91kX568cD0kjD+QF/1DfJzHitKFNNTz8/fomnTiHIRPuQVuJVun9dZCv0?=
- =?us-ascii?Q?F2NxHBHetxZAZFCbGTjQkv8cuGhLbmWcJ9s/noSB/+WaUSZU8J1iw93VFHHz?=
- =?us-ascii?Q?3w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	nQ4qvxgpr2z+mBcJtGejNb90sbmsVhqfTGrr6QcLc9hhHlicNga3mIGBQkxk1bH8kuW8EX3C1HnCMdDHLYjHwNUah4vf7P1HDdzOdyLutMeZjatf4lsuvCzpJBDf5MGlwB19WVwy4coLe+u/z4gs+P/wM3DOhyTn+qxNSgy5Ay9EmHmRtjizDtbJgArEhR/HTpcrfhKiYHILPmbohDiRQqwiUj59TngVZgWxxA0BfwWDWtNuS6CM5S1Is2bBrIgSOLlIeURTv4DUjfwpvqGk3SYxhRwzthRnZVp2xSVZL9mt0iqStGJLcIyk2vFCWxaevN0IKcaLzs83MyXFP+gsSu532pQFf7oPOveZ1919zE1T7N6nb7/bRcIibyOhEnBjIpXkmxJZ1UI0ngP+HcTI/lS5roKgpp5Nssq1IJfz7o3XnuQvOmIdjnevE0ac1v0rqhm0QuevEEJ0Zh9k6RMr/xyx8N/Tht3/O6aBqdyC0dWzCte1lYdTEopxpvhTZNjJekNcoDI5+YBk6MWsOohC7alwsdgMwa+4WLCyGArapJ34dBLHPe3aeRHv+CbT0bWQRv95IrAin+1QqwcoKJUS1hTx/hbaQVWg1PUHtjahy+4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 285dfb27-b2e2-4dd6-ed12-08dcbbb625a9
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+	=?us-ascii?Q?Dvm3eJEDGpWXJeZHmbrf8qfl0ShXQV2WAlk2Nxcv5ceCqvhaxxYSkdwDX2HF?=
+ =?us-ascii?Q?q7utudmHhvPoGSLpv8tZSQJM0fJkRVk4UVcJ2tPSw+sxkLdXtfoKZU71Vk3z?=
+ =?us-ascii?Q?Fb+Sz1aKLWMaUq9dNrtlIMquMLwlGHwlE4wRRvI1XUCcHgmqqTlI0LamVK25?=
+ =?us-ascii?Q?wyRd3CAVMEFYVRTVkGrR06wByifYUlT8UWktj/yxmWCEGzYFnNcCAc/ybb9r?=
+ =?us-ascii?Q?95EfoDO6MfW523I7Kq78xsPXgeqFWHgvNy+irhmC4QSr1XvZ0kJasYWT9sh3?=
+ =?us-ascii?Q?HXAHZrB7FmIwBv2QaesTeYQwPVfserWn0MPBZ/MD2rhDFd/e88U/fcjIPDN0?=
+ =?us-ascii?Q?KwDdR4IG8i3P9FGXdQ0vHPeujhja3I+jHrMLAqq47UYiTR1n1KLQdKXKs36u?=
+ =?us-ascii?Q?49MwoOy8hGZMGpQIr4E/E92cd3zUyMK2bwpPLL0PSFzYVwwFuaEIrjO+d/j6?=
+ =?us-ascii?Q?qcCa0QyWCzNzFWV+APS2wY3z/sqXupGlqc3eENUKRRsXbXrXFhkFL44dn9Tk?=
+ =?us-ascii?Q?ctxY50wSHpBODtB5kpaSCMW2A9XFz+F2TKoWHu+s7u67obD3d0zkbt5b+hYn?=
+ =?us-ascii?Q?c3VhfEGR1JtpBBdPht7Drw21DOStFoeEBeFEpt8v0sH3L5xV2vWFAaHf8E4r?=
+ =?us-ascii?Q?VMbbOp0mUzb4YD6zb9Hhu2nrzGmWFpaJCIibBUAs0ojFGTJVvAqRXXXKHrDb?=
+ =?us-ascii?Q?cyF3YTZazciLAJg2CjwYJn0rBUfq2xmkFz2q9l0YYOVEShVjmrHe6Vd9oPsX?=
+ =?us-ascii?Q?QzD3N6kLXw3F9mj9ZAufN9X18V/ZHLxO3dSbl2hagGbssDOzy7p4qGQ3kDrQ?=
+ =?us-ascii?Q?Tx/aO5UaV4SvJL5tP6HYgFiGlnWG8CXfgvKXeNHb6Dkt3CatTRF98NdYdTw9?=
+ =?us-ascii?Q?dI3MzGhe4mUU7nEaxOoZ4Y2maZnoAvUAhQ12M50mG2sToRFA7An+DUBovu7S?=
+ =?us-ascii?Q?QkyNjCXNNq5OqvxIo2naF65VCDtPLhrjzF0nEAv9DgrIu+P2JIwigck8SEJV?=
+ =?us-ascii?Q?hF4MYqDIs6OAPe69gExrfEoYmPekMjzAaEDulbWAwpf+qEQtToLONdtNRrHs?=
+ =?us-ascii?Q?jL8ZHSphLD6jp5KfzwXF2aV8U6QzZEXQRzsBj4QLqgjhpzhPaZ6/ceAtD40r?=
+ =?us-ascii?Q?5YSOXLcIb+lbLlATJXOtUQnQisuITAxGwgyHyqZhF1SmlI1KwXMEqD+mZQyL?=
+ =?us-ascii?Q?71f4+4EfB+VNb3R3MwYCss63DKOO6WUNjDqS1lxo4XOv3VjywVZoEZ61RSP0?=
+ =?us-ascii?Q?ezoZJODpK710huaQmT4wMzyZ3bv9hS1NVzlpM3yXT0xYdDsFs9DF1wrrJRZH?=
+ =?us-ascii?Q?QEoqMD5RIJmvqDcBHooe3JArP+sr810rMu1TGO6MySIleEct3k2byZI5JBWm?=
+ =?us-ascii?Q?pNB5hyJhzh/vzwAHMe07FA6mrf30m+WwEzyUUhsXH65B64g6T8EMcPNHyGqJ?=
+ =?us-ascii?Q?G1lRbXDLeeWHx9TxusYUjcdXIJI8vameFIyLVOjFadq/AraboLY6KfxgKCLW?=
+ =?us-ascii?Q?IJjrCRmAoomUAmJHjOh66V2DDwJVl8oIBsjt91b/UOcJT9GycflT+smzlEc4?=
+ =?us-ascii?Q?wZMPFlsEyOhim7QJQx4=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c47c3dcb-c885-4440-2002-08dcbbb623b0
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 16:36:57.1434
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 16:36:54.0018
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PkQxW+AdkWzN7MfGmFqe7cnARjj0Dp54xqmgUde5dnMUuN+CrHSmJamzSOJh0g97kGf03l9sLbnPN9n/xd80sg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5747
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_07,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 bulkscore=0
- adultscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408130120
-X-Proofpoint-GUID: TYohKN7o0sRyVUHEiMbW8-aH6slHKEQh
-X-Proofpoint-ORIG-GUID: TYohKN7o0sRyVUHEiMbW8-aH6slHKEQh
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z28s9HZDbFzNKrDy+1+7HqZDefU2rYxm3xthHLx7A1GLvOkKUv5V31wrDCJNJ1LSixHh8EeD/SZyCa0Qfoop1Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8990
 
-From: Dave Chinner <dchinner@redhat.com>
+Convert binding doc fsl-board.txt to yaml format. split to 3 part
+fsl,bcsr.yaml, fsl,fpga-qixis.yaml, fsl,fpga-qixis-i2c.yaml
 
-When forced allocation alignment is specified, the extent will
-be aligned to the extent size hint size rather than stripe
-alignment. If aligned allocation cannot be done, then the allocation
-is failed rather than attempting non-aligned fallbacks.
+Additional change for fsl,fpga-qixis.yaml
+- Add childnode mdio-mux-emi*
+- Add compatible string fsl,ls1043aqds-fpga, fsl,ls1043ardb-fpga,
+fsl,ls1046aqds-fpga, fsl,ls1046ardb-fpga, fsl,ls208xaqds-fpga,
+fsl,ls1043ardb-cpld, fsl,ls1046ardb-cpld, fsl,ls1088aqds-fpga,
+fsl,ls1088ardb-fpga, fsl,ls2080aqds-fpga, fsl,ls2080ardb-fpga.
+- Change address to 32bit in example.
 
-Note: none of the per-inode force align configuration is present
-yet, so this just triggers off an "always false" wrapper function
-for the moment.
+Additional change for fsl,fpga-qixis-i2c.yaml
+- Add mux-controller
+- Add compatible string fsl,ls1028aqds-fpga, fsl,lx2160aqds-fpga
 
-[jpg: Set XFS_ALLOC_FORCEALIGN in xfs_bmap_alloc_userdata(), rather than
-      xfs_bmap_compute_alignments()]
+Fix below warning:
 
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Signed-off-by: John Garry <john.g.garry@oracle.com>
+arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dtb: /soc/i2c@2000000/fpga@66: failed to match any schema with compatible: ['fsl,ls1028aqds-fpga', 'fsl,fpga-qixis-i2c', 'simple-mfd']
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- fs/xfs/libxfs/xfs_alloc.h |  1 +
- fs/xfs/libxfs/xfs_bmap.c  | 28 +++++++++++++++++++++++-----
- fs/xfs/xfs_inode.h        |  5 +++++
- 3 files changed, 29 insertions(+), 5 deletions(-)
+Change from v1 to v2
+- drop description in fsl,bcsr.yaml
+- bsc9132qds is too old, their dts have not simple-mfd.
+- split qixis-i2c compatible to two group, one with simple-mfd and the
+other one without simple-mfd.
+- Add new full example for ls1028
+- Remove [0-9], keep @ for mdio-mux-emi. Dts need be update to avoid
+warning
+- fix typo dt-binding in subject
+---
+ .../devicetree/bindings/board/fsl,bcsr.yaml   | 32 ++++++++
+ .../bindings/board/fsl,fpga-qixis-i2c.yaml    | 70 ++++++++++++++++
+ .../bindings/board/fsl,fpga-qixis.yaml        | 81 +++++++++++++++++++
+ .../devicetree/bindings/board/fsl-board.txt   | 81 -------------------
+ .../boot/dts/freescale/fsl-ls1043a-qds.dts    |  2 +-
+ 5 files changed, 184 insertions(+), 82 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/board/fsl,bcsr.yaml
+ create mode 100644 Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
+ create mode 100644 Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
+ delete mode 100644 Documentation/devicetree/bindings/board/fsl-board.txt
 
-diff --git a/fs/xfs/libxfs/xfs_alloc.h b/fs/xfs/libxfs/xfs_alloc.h
-index 473822a5d4e9..17b062e8b925 100644
---- a/fs/xfs/libxfs/xfs_alloc.h
-+++ b/fs/xfs/libxfs/xfs_alloc.h
-@@ -66,6 +66,7 @@ typedef struct xfs_alloc_arg {
- #define XFS_ALLOC_USERDATA		(1 << 0)/* allocation is for user data*/
- #define XFS_ALLOC_INITIAL_USER_DATA	(1 << 1)/* special case start of file */
- #define XFS_ALLOC_NOBUSY		(1 << 2)/* Busy extents not allowed */
-+#define XFS_ALLOC_FORCEALIGN		(1 << 3)/* forced extent alignment */
- 
- /* freespace limit calculations */
- unsigned int xfs_alloc_set_aside(struct xfs_mount *mp);
-diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-index 42a75d257b35..602a5a50bcca 100644
---- a/fs/xfs/libxfs/xfs_bmap.c
-+++ b/fs/xfs/libxfs/xfs_bmap.c
-@@ -3401,9 +3401,10 @@ xfs_bmap_alloc_account(
-  * Calculate the extent start alignment and the extent length adjustments that
-  * constrain this allocation.
-  *
-- * Extent start alignment is currently determined by stripe configuration and is
-- * carried in args->alignment, whilst extent length adjustment is determined by
-- * extent size hints and is carried by args->prod and args->mod.
-+ * Extent start alignment is currently determined by forced inode alignment or
-+ * stripe configuration and is carried in args->alignment, whilst extent length
-+ * adjustment is determined by extent size hints and is carried by args->prod
-+ * and args->mod.
-  *
-  * Low level allocation code is free to either ignore or override these values
-  * as required.
-@@ -3416,8 +3417,13 @@ xfs_bmap_compute_alignments(
- 	struct xfs_mount	*mp = args->mp;
- 	xfs_extlen_t		align = 0; /* minimum allocation alignment */
- 
--	/* stripe alignment for allocation is determined by mount parameters */
--	if (mp->m_swidth && xfs_has_swalloc(mp))
-+	/*
-+	 * Forced inode alignment takes preference over stripe alignment.
-+	 * Stripe alignment for allocation is determined by mount parameters.
-+	 */
-+	if (xfs_inode_has_forcealign(ap->ip))
-+		args->alignment = xfs_get_extsz_hint(ap->ip);
-+	else if (mp->m_swidth && xfs_has_swalloc(mp))
- 		args->alignment = mp->m_swidth;
- 	else if (mp->m_dalign)
- 		args->alignment = mp->m_dalign;
-@@ -3607,6 +3613,11 @@ xfs_bmap_btalloc_low_space(
- {
- 	int			error;
- 
-+	if (args->alignment > 1 && (args->datatype & XFS_ALLOC_FORCEALIGN)) {
-+		args->fsbno = NULLFSBLOCK;
-+		return 0;
-+	}
+diff --git a/Documentation/devicetree/bindings/board/fsl,bcsr.yaml b/Documentation/devicetree/bindings/board/fsl,bcsr.yaml
+new file mode 100644
+index 0000000000000..df3dd8399671f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/board/fsl,bcsr.yaml
+@@ -0,0 +1,32 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/board/fsl,bcsr.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	args->alignment = 1;
- 	if (args->minlen > ap->minlen) {
- 		args->minlen = ap->minlen;
-@@ -3658,6 +3669,8 @@ xfs_bmap_btalloc_filestreams(
- 
- 	/* Attempt non-aligned allocation if we haven't already. */
- 	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
-+		if (args->datatype & XFS_ALLOC_FORCEALIGN)
-+			return error;
- 		args->alignment = 1;
- 		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
- 	}
-@@ -3716,6 +3729,8 @@ xfs_bmap_btalloc_best_length(
- 
- 	/* Attempt non-aligned allocation if we haven't already. */
- 	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
-+		if (args->datatype & XFS_ALLOC_FORCEALIGN)
-+			return error;
- 		args->alignment = 1;
- 		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
- 	}
-@@ -4151,6 +4166,9 @@ xfs_bmap_alloc_userdata(
- 		if (bma->offset == 0)
- 			bma->datatype |= XFS_ALLOC_INITIAL_USER_DATA;
- 
-+		if (xfs_inode_has_forcealign(bma->ip))
-+			bma->datatype |= XFS_ALLOC_FORCEALIGN;
++title: Board Control and Status
 +
- 		if (mp->m_dalign && bma->length >= mp->m_dalign) {
- 			error = xfs_bmap_isaeof(bma, whichfork);
- 			if (error)
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 51defdebef30..bf0f4f8b9e64 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -310,6 +310,11 @@ static inline bool xfs_inode_has_large_extent_counts(struct xfs_inode *ip)
- 	return ip->i_diflags2 & XFS_DIFLAG2_NREXT64;
- }
- 
-+static inline bool xfs_inode_has_forcealign(struct xfs_inode *ip)
-+{
-+	return false;
-+}
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
 +
- /*
-  * Decide if this file is a realtime file whose data allocation unit is larger
-  * than a single filesystem block.
++properties:
++  compatible:
++    enum:
++      - fsl,mpc8360mds-bcsr
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    board@f8000000 {
++        compatible = "fsl,mpc8360mds-bcsr";
++        reg = <0xf8000000 0x8000>;
++    };
++
+diff --git a/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml b/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
+new file mode 100644
+index 0000000000000..28b37772fb656
+--- /dev/null
++++ b/Documentation/devicetree/bindings/board/fsl,fpga-qixis-i2c.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/board/fsl,fpga-qixis-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale on-board FPGA connected on I2C bus
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - fsl,bsc9132qds-fpga
++          - const: fsl,fpga-qixis-i2c
++      - items:
++          - enum:
++              - fsl,ls1028aqds-fpga
++              - fsl,lx2160aqds-fpga
++          - const: fsl,fpga-qixis-i2c
++          - const: simple-mfd
++
++  interrupts:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++  mux-controller:
++    $ref: /schemas/mux/reg-mux.yaml
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        board-control@66 {
++            compatible = "fsl,bsc9132qds-fpga", "fsl,fpga-qixis-i2c";
++            reg = <0x66>;
++        };
++    };
++
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        board-control@66 {
++            compatible = "fsl,ls1028aqds-fpga", "fsl,fpga-qixis-i2c",
++                         "simple-mfd";
++            reg = <0x66>;
++
++            mux-controller {
++                compatible = "reg-mux";
++                #mux-control-cells = <1>;
++                mux-reg-masks = <0x54 0xf0>; /* 0: reg 0x54, bits 7:4 */
++            };
++        };
++    };
++
+diff --git a/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml b/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
+new file mode 100644
+index 0000000000000..4d4eb45ce64cd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/board/fsl,fpga-qixis.yaml
+@@ -0,0 +1,81 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/board/fsl,fpga-qixis.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale on-board FPGA/CPLD
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: fsl,p1022ds-fpga
++          - const: fsl,fpga-ngpixis
++      - items:
++          - enum:
++              - fsl,ls1088aqds-fpga
++              - fsl,ls1088ardb-fpga
++              - fsl,ls2080aqds-fpga
++              - fsl,ls2080ardb-fpga
++          - const: fsl,fpga-qixis
++      - items:
++          - enum:
++              - fsl,ls1043aqds-fpga
++              - fsl,ls1043ardb-fpga
++              - fsl,ls1046aqds-fpga
++              - fsl,ls1046ardb-fpga
++              - fsl,ls208xaqds-fpga
++          - const: fsl,fpga-qixis
++          - const: simple-mfd
++      - enum:
++          - fsl,ls1043ardb-cpld
++          - fsl,ls1046ardb-cpld
++          - fsl,t1040rdb-cpld
++          - fsl,t1042rdb-cpld
++          - fsl,t1042rdb_pi-cpld
++
++  interrupts:
++    maxItems: 1
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++  ranges:
++    maxItems: 1
++
++patternProperties:
++  '^mdio-mux-emi@[a-f0-9]+$':
++    $ref: /schemas/net/mdio-mux-mmioreg.yaml
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    board-control@3 {
++        compatible = "fsl,p1022ds-fpga", "fsl,fpga-ngpixis";
++        reg = <3 0x30>;
++        interrupt-parent = <&mpic>;
++        interrupts = <8 IRQ_TYPE_LEVEL_LOW 0 0>;
++    };
++
++  - |
++    board-control@3 {
++        compatible = "fsl,ls2080ardb-fpga", "fsl,fpga-qixis";
++        reg = <0x3 0x10000>;
++    };
++
+diff --git a/Documentation/devicetree/bindings/board/fsl-board.txt b/Documentation/devicetree/bindings/board/fsl-board.txt
+deleted file mode 100644
+index 9cde570159219..0000000000000
+--- a/Documentation/devicetree/bindings/board/fsl-board.txt
++++ /dev/null
+@@ -1,81 +0,0 @@
+-Freescale Reference Board Bindings
+-
+-This document describes device tree bindings for various devices that
+-exist on some Freescale reference boards.
+-
+-* Board Control and Status (BCSR)
+-
+-Required properties:
+-
+- - compatible : Should be "fsl,<board>-bcsr"
+- - reg : Offset and length of the register set for the device
+-
+-Example:
+-
+-	bcsr@f8000000 {
+-		compatible = "fsl,mpc8360mds-bcsr";
+-		reg = <f8000000 8000>;
+-	};
+-
+-* Freescale on-board FPGA
+-
+-This is the memory-mapped registers for on board FPGA.
+-
+-Required properties:
+-- compatible: should be a board-specific string followed by a string
+-  indicating the type of FPGA.  Example:
+-	"fsl,<board>-fpga", "fsl,fpga-pixis", or
+-	"fsl,<board>-fpga", "fsl,fpga-qixis"
+-- reg: should contain the address and the length of the FPGA register set.
+-
+-Optional properties:
+-- interrupts: should specify event (wakeup) IRQ.
+-
+-Example (P1022DS):
+-
+-	 board-control@3,0 {
+-		 compatible = "fsl,p1022ds-fpga", "fsl,fpga-ngpixis";
+-		 reg = <3 0 0x30>;
+-		 interrupt-parent = <&mpic>;
+-		 interrupts = <8 8 0 0>;
+-	 };
+-
+-Example (LS2080A-RDB):
+-
+-        cpld@3,0 {
+-                compatible = "fsl,ls2080ardb-fpga", "fsl,fpga-qixis";
+-                reg = <0x3 0 0x10000>;
+-        };
+-
+-* Freescale on-board FPGA connected on I2C bus
+-
+-Some Freescale boards like BSC9132QDS have on board FPGA connected on
+-the i2c bus.
+-
+-Required properties:
+-- compatible: Should be a board-specific string followed by a string
+-  indicating the type of FPGA.  Example:
+-	"fsl,<board>-fpga", "fsl,fpga-qixis-i2c"
+-- reg: Should contain the address of the FPGA
+-
+-Example:
+-	fpga: fpga@66 {
+-		compatible = "fsl,bsc9132qds-fpga", "fsl,fpga-qixis-i2c";
+-		reg = <0x66>;
+-	};
+-
+-* Freescale on-board CPLD
+-
+-Some Freescale boards like T1040RDB have an on board CPLD connected.
+-
+-Required properties:
+-- compatible: Should be a board-specific string like "fsl,<board>-cpld"
+-  Example:
+-	"fsl,t1040rdb-cpld", "fsl,t1042rdb-cpld", "fsl,t1042rdb_pi-cpld"
+-- reg: should describe CPLD registers
+-
+-Example:
+-	cpld@3,0 {
+-		compatible = "fsl,t1040rdb-cpld";
+-		reg = <3 0 0x300>;
+-	};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
+index 11b1356e95d5b..697c5b3beea9d 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dts
+@@ -211,7 +211,7 @@ ethernet@f0000 { /* DTSEC9/10GEC1 */
+ };
+ 
+ &fpga {
+-	mdio-mux-emi1@54 {
++	mdio-mux-emi@54 {
+ 		compatible = "mdio-mux-mmioreg", "mdio-mux";
+ 		mdio-parent-bus = <&mdio0>;
+ 		#address-cells = <1>;
 -- 
-2.31.1
+2.34.1
 
 
