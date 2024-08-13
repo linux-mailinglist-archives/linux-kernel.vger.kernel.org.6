@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-285316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1251950BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:11:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AC3950C01
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CBDC2844F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:11:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5CA9B22602
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFF11A38D9;
-	Tue, 13 Aug 2024 18:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4141A38E0;
+	Tue, 13 Aug 2024 18:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBIB4WY8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ez2XRh9g"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF9437E;
-	Tue, 13 Aug 2024 18:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4988D19E7E3;
+	Tue, 13 Aug 2024 18:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723572662; cv=none; b=AKksLoZpGGsuRIUEVbt4xA96pLX9asieQKdlITXjEcIvPskyccum3acWOQjG7c9MJCZMGyr4j9zf8MDGI09KI5NTFfL8MlJjTtQf3z9BM7Rb6o84GEh2/t1bBfEYXyOqmJpk2gw8Moy576W4eqLRDTC1M1EfyMzb2wvui/oZyI4=
+	t=1723572806; cv=none; b=sXRyZCDiwBZNOiXVyKeAbnRDisKC28WM6lZVnSGQsMDnPu1TbosQVtsKny5d9GNf9IADzyQjEmzy9TXxnT2WL6Y1GsepG0+VOHCBWqWnV5ZLj9TbQSUn9I0zGoOVN+mCie8GiVbf+jUm625ZQsc3AfRlXNi5AWj9eq7SNqS5x00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723572662; c=relaxed/simple;
-	bh=NESDk1hBrlDDjEoFAGg7Zo88DWS8q93HbtxAe268zkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8YwCIOzGmCzhqu8TBH3BYJLEYTMAtZhgVlqYwvoL9Z98ppJJQzvTFoP2yr2ENliDENHO14yXpRHJsG6QbibBpBdhMI2RcAq9GN7b/ZzFX6OLf76gmYeP3ug/L5qAC9CTHL+6ImQ/HpvZya7CRzjCRP7DnFKO2w348T7c8YeAqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBIB4WY8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5F9DC32782;
-	Tue, 13 Aug 2024 18:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723572661;
-	bh=NESDk1hBrlDDjEoFAGg7Zo88DWS8q93HbtxAe268zkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OBIB4WY8l9mm9MD14+GmXXtCw4+38Zb/jNtFHaT8yUptAzaMZrtvU8gNxOnwnkQQJ
-	 cSP3SreptKwUyQvr+Z2IT6aC7OXQlYPRZSan2PrVL2Fo3kEKnhq1SoNEWjfKEoVnN5
-	 X8qUtoQg1n3PURyQb4oOET0n5HekkGC7kjyAXgMImxsVRLqqXdDhTFT9NRrXlSR3+z
-	 R2jc2cHctqkNUo9/LmY+SbktaP8Sif+xAdvSbSYrg7vddQyy+JyHN0x7YGKtYY+JQI
-	 PV+L6CHw0Bqwab2rdqaSrC6O1jHBdwDIbhkHVW6hxiWvvzs3Ey0YBIJDcm9wrC0nQK
-	 EyxDu8IQ1GyWg==
-Date: Tue, 13 Aug 2024 15:10:56 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf disasm: Fix memory leak for locked operations
-Message-ID: <ZruhsN4i6xtc59nJ@x1>
-References: <20240813040613.882075-1-irogers@google.com>
- <ZrtzTTHim_vGX1ma@x1>
- <CAP-5=fUA8T9B2RvXg-Hpj_fHXmwB18ah6Krm3qm5ULH-M04Lqw@mail.gmail.com>
+	s=arc-20240116; t=1723572806; c=relaxed/simple;
+	bh=O3dtulhhM/axpHe4p5tksCGx3TlnoxRnwsGM1/zuj8g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LWK65GvXYFEeRiGyjwE4uWC8i12KrpUP1sNLvvULyvqh9LsqrXg9QJKOcRc8B5oRcJUJfuA99w0XdkfgOLrDp3fNQ8Oodlmk2Pgs59eUhfcEBAjFdYIejoAxlrnW1+OETxHC8bv34c5KJuLFZ7dSTw4zCRkA94+yTF6BLM7k4r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ez2XRh9g; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723572804; x=1755108804;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=O3dtulhhM/axpHe4p5tksCGx3TlnoxRnwsGM1/zuj8g=;
+  b=ez2XRh9gnkpe/mh9hEqX0ipoaq6W3286T1rVIdW7J0rx3tfQAKlIzySA
+   P7K+AowOPyeg21B2J7sb/lrSdHIAGaBSQnN5VrJlePCYNehxOIAp1zs7u
+   CdJ1Yyhfj68m68jVCMmEb7YIcrRY1+g0aiaxmzqO2Natwv3KNDbSdQ4pX
+   I6YqpZmtxQo8UXiOiwMM0uRyvAQILhPs9KgzoXgW4VfzD/zy7WXjErXcY
+   3U6PYOn7DEZMl5r0M2YpjWKD/qr3lOdzxBnCUHXfXYGHtXVMkLSusTrWy
+   lnvD4VcY/+GTSvMb0Ojidf/4q4DV8hGoAIhPMS093gTujPHhjp7MCjHia
+   w==;
+X-CSE-ConnectionGUID: EsYhHSPxTQafGavfWkHnvA==
+X-CSE-MsgGUID: cRLdwuB9TMKfqr89dWjcWw==
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="31118404"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Aug 2024 11:13:17 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 13 Aug 2024 11:12:55 -0700
+Received: from HYD-DK-UNGSW08.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 13 Aug 2024 11:12:51 -0700
+From: Divya Koppera <divya.koppera@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <arun.ramadoss@microchip.com>,
+	<UNGLinuxDriver@microchip.com>
+Subject: [PATCH net-next v2 0/2] Adds support for lan887x phy
+Date: Tue, 13 Aug 2024 23:45:13 +0530
+Message-ID: <20240813181515.863208-1-divya.koppera@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUA8T9B2RvXg-Hpj_fHXmwB18ah6Krm3qm5ULH-M04Lqw@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, Aug 13, 2024 at 09:04:57AM -0700, Ian Rogers wrote:
-> On Tue, Aug 13, 2024 at 7:53 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Mon, Aug 12, 2024 at 09:06:12PM -0700, Ian Rogers wrote:
-> > > lock__parse calls disasm_line__parse passing
-> > > &ops->locked.ins.name. Ensure ops->locked.ins.name is freed in
-> > > lock__delete.
-> > >
-> > > Found with lock/leak sanitizer.
-> 
-> Ooops, I meant address/leak sanitizer.
-> 
-> > Applied both patches to perf-tools-next.
-> 
-> Thanks, could you fix the commit message.
+Adds support for lan887x phy and accept autoneg configuration in
+phy driver only when feature is enabled in supported list.
 
-Sure,
+v1 -> v2
+Addresed below review comments
+- Added phy library support to check supported list when autoneg is
+  enabled
+- Removed autoneg enabled check in lan887x phy.
+- Removed of_mdio macro for LED initialization.
+- Removed clearing pause frames support from supported list.
 
-- Arnaldo
+Divya Koppera (2):
+  net: phy: Add phy library support to check supported list when autoneg
+is enabled
+  net: phy: microchip_t1: Adds support for lan887x phy
+
+ drivers/net/phy/microchip_t1.c | 577 ++++++++++++++++++++++++++++++++-
+ drivers/net/phy/phy.c          |   5 +-
+ 2 files changed, 580 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
