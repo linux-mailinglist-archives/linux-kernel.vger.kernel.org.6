@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-285373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D196950CB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:59:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AA1950CB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F88C1F248E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 746D02816CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456AC1A4F03;
-	Tue, 13 Aug 2024 18:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7852041A8E;
+	Tue, 13 Aug 2024 18:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGJaTSIY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mbf0Bgex"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8298D1A38EC;
-	Tue, 13 Aug 2024 18:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BA61A38EC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723575542; cv=none; b=s0BhcZNCD+ttebszvgvO9TmgBPZQpOyFje5q4OsuwOzcbxNnkkd53572N3vcX9M95cyqHyrcIRk7XLnGeUn7UzAJCi3fVJJLzlPG9y7FvtFKlVS7aZvUmr5dw5nFHnaJQrzGhgWqGtgJXsKGGyxXorbDsYwDpMr6qO/PN9PfRDs=
+	t=1723575556; cv=none; b=HwVvrQET+hRC252DpGQyoZJ9muB5/GJYcfas/6MG3/e7+hiA7eRAYaWxhIW965Dc75HkErL1N5nZgWUbiP0c413LBVgRCFzOOrEmXZxHGST+HlMKkCFkw7KA13UjeUVAXGZ8vFFteNV5JSJ3O0yJy9lhdmO8uDi5XB7oLsdLGKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723575542; c=relaxed/simple;
-	bh=u0e+IY76TSMq9RkpjNUT05BeEFxGmPaO4BRne1/LBms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XI1aCkvZ6QHY+cIuKHpcVf6//w8lLV4SVVX1SSDOhEjejIzz0rEfZnY8jbxv2hWBBwV7XTAgOQbpcx91mLiAGEPIZC4L4V4UC/fIYjex44y1aIUC9cFpQjwTsz448z/dV3ybnZ+V3qnbgRYL10lYgxl+Xe8hBzdtRh4ZGCYaTM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGJaTSIY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCBDCC32782;
-	Tue, 13 Aug 2024 18:59:01 +0000 (UTC)
+	s=arc-20240116; t=1723575556; c=relaxed/simple;
+	bh=WO40j49FkGu+Q8lTsHl/pcFtXmA+HQMmF+nDSE40RQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NHRJiezF3S542DmJjFqPtU6hncL0asMS6DuQQn+jhDvKRTCKIcZzUp5JPqBtoRuWxxMVx8HQkpb5teT06HvUMgiIhCU6SsqxO8gtxoGbEvx8nzX3kjQAN0XGjeviISabX4+DmbD8sH/04yNfkahYeCHg4PnxzlZSuugXl2GmIFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mbf0Bgex; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F37C32782;
+	Tue, 13 Aug 2024 18:59:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723575542;
-	bh=u0e+IY76TSMq9RkpjNUT05BeEFxGmPaO4BRne1/LBms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CGJaTSIYK3/PK/xB4rOOIpeDARz63w5H5K87yyH5UNbs2vkk5Q0/sQBz1xuU0N+V7
-	 vBqZeoo0ttM8nkPJTAN82C82akx7F3R+TlxittIFGKNX15aiRuZvmF2l77ANqPOHeq
-	 5aXloILxW/9hcW4pUU2rHfN8D4wxDoPiCy7b1PjNlP7jXhnvQqA1xJ5o1OAbj0lhPZ
-	 +tc4nIHlQig5xQrX+zWg4g3zByIjXFkMpc6cSItUE2J9OeQqFKXWnO7CXEaQoqXyba
-	 4OQKE+KoZWqoRu9SRZZYueTk8WuUk5cqJ8GUMThTGG0fbDhqTi/n8DlNfb3KL++lrL
-	 zpp+DQuzfcFmQ==
-Date: Tue, 13 Aug 2024 11:59:00 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jose Fernandez <jose.fernandez@linux.dev>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Christian Heusel <christian@heusel.eu>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <20240813185900.GA140556@thelio-3990X>
-References: <20240813011619.13857-1-jose.fernandez@linux.dev>
+	s=k20201202; t=1723575556;
+	bh=WO40j49FkGu+Q8lTsHl/pcFtXmA+HQMmF+nDSE40RQk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Mbf0Bgex0kjUzIdIRt26tVfsngq7XSfxksXF7oPIKuIoucAo3QrY1RZhxbrMkATsE
+	 HGxj4AtZyiv9bqJ/CG+caeC8WZ9BtPBT8PzS3P77EVlR3hgwtcOSm5lBvdmdVYM3dj
+	 BXMkHP3wXC5QYvkopT0JhXtKKEuRYbyEqqSmg95z7edaG7HNGJsJOR+DnKMDscbGI2
+	 92J6OP4ghGUoH58MoBCEU1oX6aGn4J0omchSqdZ47Bti23cOVjQSgou9G/rYkNV9OU
+	 kk/Fgt7TJSTmI7Dwkk1MCyKbeb2jM6Vcg2nW1hyqK1alv4Ae5kRaswmmHWB5lKbbH5
+	 5Q6t3XsMuBviQ==
+Date: Tue, 13 Aug 2024 20:59:11 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+ <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v5 6/7] acpi/ghes: add support for generic error
+ injection via QAPI
+Message-ID: <20240813205911.1719db56@foz.lan>
+In-Reply-To: <20240812113900.25078ccc@imammedo.users.ipa.redhat.com>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
+	<20240806163113.3bdc260a@imammedo.users.ipa.redhat.com>
+	<20240807152547.000058fd@Huawei.com>
+	<20240808101107.105a124f@imammedo.users.ipa.redhat.com>
+	<20240808201903.077093ca@foz.lan>
+	<20240812113900.25078ccc@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813011619.13857-1-jose.fernandez@linux.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 07:16:19PM -0600, Jose Fernandez wrote:
-> Introduce the PACMAN_EXTRAPACKAGES variable in PKGBUILD to allow users
-> to specify which additional packages are built by the pacman-pkg target.
-> 
-> Previously, the api-headers package was always included, and the headers
-> package was included only if CONFIG_MODULES=y. With this change, both
-> headers and api-headers packages are included by default. Users can now
-> control this behavior by setting PACMAN_EXTRAPACKAGES to a
-> space-separated list of desired extra packages or leaving it empty to
-> exclude all.
-> 
-> For example, to build only the base package without extras:
-> 
-> make pacman-pkg PACMAN_EXTRAPACKAGES=""
-> 
-> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+Em Mon, 12 Aug 2024 11:39:00 +0200
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
+> > We may also store cper_offset there via bios_linker_loader_add_pointer()
+> > and/or use bios_linker_loader_write_pointer(), but I can't see how the
+> > data stored there can be retrieved, nor any advantage of using it instead
+> > of the current code, as, in the end, we'll have 3 addresses that will be
+> > used:
+> > 
+> > 	- an address where a pointer to CPER record will be stored;
+> > 	- an address where the ack will be stored;
+> > 	- an address where the actual CPER record will be stored.
+> > 
+> > And those are calculated on a single function and are all stored at the
+> > ACPI table files.
+> >
+> > What am I missing?  
+> 
+> That's basically (2) approach and it works to some degree,
+> unfortunately it's fragile when we start talking about migration
+> and changing layout in the future.
+> 
+> Lets take as example increasing size of 1) 'Generic Error Status Block',
+> we are considering. Old QEMU will, tell firmware to allocate 1K buffer
+> for it and calculated offsets to [1] (that you've stored/calculated) will
+> include this assumption.
+> Then in newer we QEMU increase size of [1] and all hardcoded offsets will
+> account for new size, but if we migrate guest from old QEMU to this newer
+> one all HEST tables layout within guest will match old QEMU assumptions,
+> and as result newer QEMU with larger block size will write CPERs at wrong
+> address considering we are still running guest from old QEMU.
+> That's just one example.
+> 
+> To make it work there a number of ways, but the ultimate goal is to pick
+> one that's the least fragile and won't snowball in maintenance nightmare
+> as number of GHES sources increases over time.
+> 
+> This series tries to solve problem of mapping GHES source to
+> a corresponding 'Generic Error Status Block' and related registers.
+> However we are missing access to this mapping since it only
+> exists in guest patched HEST (i.e in guest RAM only).
+> 
+> The robust way to make it work would be for QEMU to get a pointer
+> to whole HEST table and then enumerate GHES sources and related
+> error/ack registers directly from guest RAM (sidestepping layout
+> change issues this way).
+> 
+> what I'm proposing is to use bios_linker_loader_write_pointer()
+> (only once) so that firmware could tell QEMU address of HEST table,
+> in which one can find a GHES source and always correct error/ack
+> pointers (regardless of table[s] layout changes).
 
-> ---
-> v1->v2:
-> - Build all extra packages by default
-> - Remove unnecessary lines
-> v2->v3:
-> - Move the default PACMAN_EXTRAPACKAGES value to PKGBUILD
-> - Remove all changes done to Makefile.package
-> - Conditionally run the install-extmod-build script if CONFIG_MODULES=y
-> - Add explicit `mkdir -p "${builddir}"` prior to copying System.map and .config
-> 
-> This patch gives users control over which extra packages are built, addressing
-> concerns about build time from adding a new debug package [1]. It allows
-> selective inclusion of extra packages before introducing an optional debug
-> package.
-> 
-> [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
-> 
->  scripts/package/PKGBUILD | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index 663ce300dd06..fbd7eb10a52c 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -3,10 +3,13 @@
->  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
->  
->  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
-> -pkgname=("${pkgbase}" "${pkgbase}-api-headers")
-> -if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-> -	pkgname+=("${pkgbase}-headers")
-> -fi
-> +pkgname=("${pkgbase}")
-> +
-> +_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
-> +for pkg in $_extrapackages; do
-> +	pkgname+=("${pkgbase}-${pkg}")
-> +done
-> +
->  pkgver="${KERNELRELEASE//-/_}"
->  # The PKGBUILD is evaluated multiple times.
->  # Running scripts/build-version from here would introduce inconsistencies.
-> @@ -77,10 +80,13 @@ _package-headers() {
->  	cd "${objtree}"
->  	local builddir="${pkgdir}/usr/${MODLIB}/build"
->  
-> -	echo "Installing build files..."
-> -	"${srctree}/scripts/package/install-extmod-build" "${builddir}"
-> +	if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-> +		echo "Installing build files..."
-> +		"${srctree}/scripts/package/install-extmod-build" "${builddir}"
-> +	fi
->  
->  	echo "Installing System.map and config..."
-> +	mkdir -p "${builddir}"
->  	cp System.map "${builddir}/System.map"
->  	cp .config "${builddir}/.config"
->  
-> 
-> base-commit: 7809144639f6c92bcb11bd3284b7806a42cc67fe
-> -- 
-> 2.46.0
-> 
+Ok, got it. Such change was not easy, but I finally figured out how
+to make it actually work.
+
+I'll address tomorrow your comment on patch 5/10 about using raw data also 
+for the other parts of CPER (generic error status and generic error data).
+
+If you want to do a sneak peak, I'm keeping the latest development
+version here:
+
+	https://gitlab.com/mchehab_kernel/qemu/-/commits/qemu_submission?ref_type=heads
+
+In particular, the patch changing from /etc/hardware_errors offset to
+a HEST offset is at:
+
+	https://gitlab.com/mchehab_kernel/qemu/-/commit/9197d22de09df97ce3d6725cb21bd2114c2eb43c
+
+It contains several cleanups to make the logic clearer and more robust.
+
+Thanks,
+Mauro
 
