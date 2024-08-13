@@ -1,182 +1,115 @@
-Return-Path: <linux-kernel+bounces-285166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2550A950A0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FB0950A0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80D2CB2582E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8046228292C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29E21A0B0D;
-	Tue, 13 Aug 2024 16:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A62F1A0B0D;
+	Tue, 13 Aug 2024 16:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qaGNkQR8"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="dDAbphc9"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F581A08DC
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9651A08DC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723566101; cv=none; b=iRzg3/ECaTimUKuQk39Kl1vu6nE7ENOvQ6U9DQyTqD719yRTRqDIIivXhAnaM0Kp/VuT22YRY41PVpWR7HyldI0VtUtPK1GCAQmLlEMu2C1Mtix11/yU/iJ4i58e6xfurl9SjJJ4Ev3sLfY9gA11USNauqNYHAp4QnZhCSYOa44=
+	t=1723566182; cv=none; b=M9Bs2pj+wdqr6CCA2El21lJteBB7Z83tInafrO7epvwPG2jIdarBI/Mc0ehPegivgBENrTmr+9VY/u7bQZ/+53wGy9y8gKekVYTQVFYv1YUx4g59UV3tNzJ/+k3Gxmac0SFbZvdNsDGqdsYj1KugGRcRWkNIynplJkfHAnII73Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723566101; c=relaxed/simple;
-	bh=sUriLCwYNvXVr15cYyQ/1Qh0mIx8qLbZAMNS2KzTe4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q1HcCa8WpfL7Ww2Y1Nqfs67pJirOe4Ev2gevo9JdtZJVFsJbxlyilj/Yiyu8hq4UrtlDCMvntgKgT4dtp2+Biw5LVqWBOayzsqskVr3TGNybG3rW8q89BfL7yZrxsle/sf1pHRYhAgBrCET6rnIwYllhglFmGwx+19rNNoKjdd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qaGNkQR8; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-429c4a4c6a8so29856945e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:21:39 -0700 (PDT)
+	s=arc-20240116; t=1723566182; c=relaxed/simple;
+	bh=yQk+RTC6Dxt1y5RGBBeRO7rR22gywMkNtyR//bDgGF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lZ8TflAQIn0OZNLA6Xg7GXkgpAT5RHX4QE+tzkbo/xObnP+XWjuCnm7A/DS8xJWqW6RJVpVTDjolmKRKdyDm8NVM+Nf0UTmIMOl5DZVk6FgxryvUnk7S8DbJP+MsKFJcYo4VvVGPZzdIl0iq9C168HZIThzVS961OJ3o+OJYbks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=dDAbphc9; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5bb85e90ad5so4877795a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723566098; x=1724170898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgfBYxGiGh6y5pI52oZra6uY30VKualFdRhfSNu8SZU=;
-        b=qaGNkQR8f5vxfsXIYXYI4ApCCj2B4ZoMDoxh/wh7FKFDoI4qTYgGpiiAgWCQSxFt5q
-         G5nuYoCd0FINA3C3MKqdGUwqP7PIlGbi7adEJPDEF3Xg0OYHAkbw1oFLgtcj9gHOIqla
-         MdNwPoP4C7zJij/TJi9vziW3rfuoyOLwHf66AV/Dwk4eFvcxs3HC0YNZikSwwKNhiNcP
-         z48fBRBKY1S9IEijDUkNi1mMiJWHyz+4jojbRWi7gHedgvz13skQvcBCbRB2usVWYX3D
-         IPEulTX8Jlc9g1Z9uoE9JRxi+7M2wZAJIegGlv1R/L/Aqf/Gr6k6CgLwWwIFdcIMRHFd
-         aM4A==
+        d=gateworks.com; s=google; t=1723566178; x=1724170978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lxyojJA3xVBWvdttvq0RoDn5RQuKbHWOiyGGcSP2iqo=;
+        b=dDAbphc992NVD3c2gYlBJh4jia+qmXLDcBZvlL0+asvGAkELJ5hBFb6eAsN+3K3sC0
+         S2SA2ocDd8bQ/1o0bkhZa4/9ucIlZIfW2p9teZjkTwZUqhfM8tlYiqJxM8cJBtv9EO4c
+         oEKF0tgdgQ7+QFCTZbqmBgFKcZ8L79onU/q3RNCzPSJMVEz0YgfqTQR4VrT9rPyE1FM2
+         j2hxyuwczzonIv+L5bYNFYqzdl4X43UyCNM76vGvsmOYnB/BLJbGkYb2FdKq89OBV2dL
+         KxeX5VCdq6vczvky98qXsyP2Y15SggNCwn8J97LtkLra7XvyBakpVSF9IghfkPQ/tVDh
+         AIBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723566098; x=1724170898;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VgfBYxGiGh6y5pI52oZra6uY30VKualFdRhfSNu8SZU=;
-        b=XBRK7/xsbYt/ysn8AcYIvyEIDjS4gBgUCp1IgZS6Dz8DjLgZEaEGg6SsabPKqlc0CX
-         qe+qloejsLP9nKlj78IKiovvGSpR/TrMB0nxfqJbWgowxW1nNwl2YncRf2n45JW7AdA7
-         aSGWGDxDXHAoRlWGaD+wfCEt2b8wlEOSOv1JYxOqGrAS3AE8TFrHT+WeC5MijgYOOBbm
-         lPwwqKyFOocjlrVMtdlDevlxjhIfGlD7Ft5sOa1xl0kN//f0jMB7qtuo8t5DeQZFqD2V
-         FzWtJQm1BHRZy2W1gRLkRa1H09d1wbcwhRyAdkLXf5S/QE4gVmLuYDUjFgAsYVipc6qF
-         MIeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWz/DSplP5krcy5J7VEcEcobDSqrstek6Xgi/d275Y0veNIs/QzfEu+PohUt9CTtWnRwOfrtzoOGKPRRv8w3vT0BSxMa+oBP9SPrVKX
-X-Gm-Message-State: AOJu0Yw7n7XH77LcjQDR/U33EqOnWUWp0GPE2R4cO7rrVDcg1K9F+5Da
-	xBRgLYkRZ8eZbj2eW0ZabHa+wKS65fVF6Z9BB5vWXtq9NX0iR2A1/rzFbZupLWqf+sP0PZqCVaY
-	1
-X-Google-Smtp-Source: AGHT+IFWrFbw9oo2MSFYuiiamzVVOspnNkuxXoK8L2AFiAv9RMDrxjdgT7zw4E5PpuJsr/CBTtorJw==
-X-Received: by 2002:a05:600c:a44:b0:426:6d1a:d497 with SMTP id 5b1f17b1804b1-429dd2384c7mr340285e9.12.1723566097507;
-        Tue, 13 Aug 2024 09:21:37 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c77372dbsm143532695e9.38.2024.08.13.09.21.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 09:21:31 -0700 (PDT)
-Message-ID: <cff4a562-2ed7-4dbc-9e2f-68ff1a601ef3@linaro.org>
-Date: Tue, 13 Aug 2024 18:21:29 +0200
+        d=1e100.net; s=20230601; t=1723566178; x=1724170978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lxyojJA3xVBWvdttvq0RoDn5RQuKbHWOiyGGcSP2iqo=;
+        b=ZBLkkpaDbCCupNJtBTXT4ydjhWC9GNOoJjcyt15E/FKUV1nSrEkj65fD3pZtmV/63X
+         8+8wvrDp9jqiZog5rGPALoRtklZAcZyrZ8VZitFmMVmQuRSfLRk8wdAvesUFpIPSOBeB
+         5vnRA16RWdiiyDYYMGQtICS+GnwfGNdaAKca/vSv6/lfyP92P3Ocjeoi8Uyx4iF5lS5p
+         GItiDHoYkAZ8kh66piIpGzmF8/rt+wB6x1SQc5kwfbYxPcEEkRX/RJwBEjB+TmXTbqNN
+         9WpJdTzg0rLP9X2osNILkn463o0kJtCOQIsOuipqBpg1CRK6p7aCRW/Y7QfTDkMG+X9s
+         5Myg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1WrswvWxvDp9cermxUVjq+b9QQXIrfdLILBGr+7TwGhzjby61QX7a0cw6p9GgaHby4Q12ut4MX1d72ojYR56Wv1UastsqAvXiSVRJ
+X-Gm-Message-State: AOJu0YxO6dKVi4Iltoaty2VJzUTD9g8SrqsGbtG7f4E/pnMt4XjWzyrs
+	VTOuXtNF9Whzb/eGP97dIiJJRV5uBkeG7ji8LMNIonOCXqDc/SRzh/t7ws/pFck87b9iVqpmwco
+	SCQQMdRsZMo0j7Nxlx2b+Fcl9NO3ebgv0fdfpSQ==
+X-Google-Smtp-Source: AGHT+IGKDWGdNxQGJZweiajid/dw+zVC/Oau+vnI5Q4PQPRCzknA/C8QO3ydNGB8zLXwAPoaa6wStVIUJ/W5OifBOtQ=
+X-Received: by 2002:a17:906:c143:b0:a77:dbf0:d22 with SMTP id
+ a640c23a62f3a-a80ed2d6494mr294578266b.65.1723566177512; Tue, 13 Aug 2024
+ 09:22:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: hwmon: Add maxim max31790
-To: Conor Dooley <conor@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Cc: Chanh Nguyen <chanh@os.amperecomputing.com>,
- Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>,
- Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240813084152.25002-1-chanh@os.amperecomputing.com>
- <20240813084152.25002-2-chanh@os.amperecomputing.com>
- <20240813-sister-hamburger-586eff8b45fc@spud>
- <10680d13-442d-4f12-a77c-2bd05f11dc10@roeck-us.net>
- <20240813-extruding-unfunded-0e14a5c161e1@spud>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240813-extruding-unfunded-0e14a5c161e1@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240522215043.3747651-1-tharvey@gateworks.com> <CAL_JsqKtc_65tDMFWT0WroNPmW2R0Dd-4Jw101PnyJcPb=7tJA@mail.gmail.com>
+In-Reply-To: <CAL_JsqKtc_65tDMFWT0WroNPmW2R0Dd-4Jw101PnyJcPb=7tJA@mail.gmail.com>
+From: Tim Harvey <tharvey@gateworks.com>
+Date: Tue, 13 Aug 2024 09:22:44 -0700
+Message-ID: <CAJ+vNU0LBEET=y40BT4OE0zWsu6DxT-SYOrx7qD-h=HH2zENzA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/08/2024 18:16, Conor Dooley wrote:
->>>> +examples:
->>>> +  - |
->>>> +    i2c {
->>>> +      #address-cells = <1>;
->>>> +      #size-cells = <0>;
->>>> +
->>>> +      fan-controller@21 {
->>>> +        compatible = "maxim,max31790";
->>>> +        reg = <0x21>;
->>>> +        clocks = <&sys_clk>;
->>>> +        resets = <&reset 0>;
->>>> +      };
->>>> +    };
->>>
->>> What does this example demonstrate? The one below seems useful, this one
->>> I don't quite understand - what's the point of a fan controller with no
->>> fans connected to it? What am I missing?
->>>
->>
->> Just guessing, but maybe this is supposed to reflect a system which only monitors fan
->> speeds but does not implement fan control.
-> 
-> Even without any control, I would expect to see fan-# child nodes, just
-> no pwms property in them. Without the child nodes, how does software
-> determine which fan is being monitored by which channel?
+On Fri, May 31, 2024 at 7:13=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Wed, May 22, 2024 at 4:50=E2=80=AFPM Tim Harvey <tharvey@gateworks.com=
+> wrote:
+> >
+> > The GW7905 was renamed to GW7500 before production release.
+>
+> Maybe some summary of the discussion and how this changed from one-off
+> to wider availability.
+>
+> >
+> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Yeah, to me this example is confusing. If device's purpose is to also
-monitor, then hardware description in "description:" field should be a
-bit extended.
+Hi Rob,
+
+What is the status of this patch? I'm not clear what tree the
+Documentation/devicetree/bindings go through.
 
 Best regards,
-Krzysztof
 
+Tim
 
