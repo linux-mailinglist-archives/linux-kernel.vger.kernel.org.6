@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-284743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 707B69504A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:14:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250999504A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07331F217B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6254287FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B0C199EA3;
-	Tue, 13 Aug 2024 12:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77D8199E8D;
+	Tue, 13 Aug 2024 12:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FJkGtUgx"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NnIzU98n"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5072199230
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B04B199259
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551234; cv=none; b=K11UBoqXPj5AXoVXCti8ltDS5wYeyJdqqB041geReVVpqtiHHukHP84heSsXP/OHhuqBJtc/NyIP7C6p8UGBMW5R/6xDaSvbZNqS0gMqkFH1PrTCNoqlkjN1XJXXj1PzRH/LrFbJxKHdzb9ce7ENTBmfjnrzpa8psKTTW5KrkEs=
+	t=1723551234; cv=none; b=VDNv/PzNGlSKO9gcDQhak4yItyVSGzl+ytjiSLWzxQ3PdHvnvCbF5BSw+jDw423WOXylOneae4HFVRj4oBNLCwkYEWx9/Xo3I0HTaOI9Z6C6ttgPOXYR9x+zhNvgCsJtFT52ULlJyeDNlM2QK8K5GJp9RkzhWuywvHTXpTAi1zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723551234; c=relaxed/simple;
-	bh=g+rNwochslFeeyi6Ofw/XN2e0QyEqWoJrguFWPehPrQ=;
+	bh=m5XHSgRo8F8WjUA+xwLRz6jjxaEE3qje9U5hDygSCPc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dR1KeD2pfPDGp9Yc9UqU44eMhBTSyXtvXrewwfckkdNqacY0Xv/y3AnQ+HxjvkuGfMOsUcjHbSwmLc2/MqwqBT6tPCtrTSQQf6pHWqSKsG8m21C5eheTxjTeS7C0drXILpXOoWJXknZWB/w62VpL3AqRfTvbxH0JptG1/oALJGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FJkGtUgx; arc=none smtp.client-ip=209.85.222.171
+	 In-Reply-To:To:Cc; b=qvdIpFfLUZ72lHrH4yjf0i2z8FM4FvF69bfORQoC9zsaRfCb5sSRHfLKVgqWd7a6xxEWaPJFRV231inW9CF9yevLQ0QA9q9vjjRNkT/85te7LOdvVCDAGiCGOT3TV7ktuuQPe0CeQ2QgMzP7E3ZTpIw+LpO352/7+IsMMqILByE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NnIzU98n; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a1e2ac1ee5so353054085a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:13:51 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d024f775so359898585a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:13:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google; t=1723551231; x=1724156031; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Q2YaJNxhLs5F8lLYTx7H4r6rahb3C2THbGnEdQxh/xA=;
-        b=FJkGtUgx8jqlftw8QTjDYEKtLyHy8f9YTd5QchYiWhdyy/JfMkuBkTjwL1crIZUAS5
-         HtLarB/W4OKIThoR8D8o9Zae/kav761oIEJM7b/yirEuR9tQhWbkz592Q9bKQLdmgQ1u
-         4oHAqvrrbX1veu3+e4o5vwveSlEKHnWD4pPsQ=
+        bh=1NN4I3pMa1z6u3JhFybH/YMr+WwEfsG16l3i3ACZ6OI=;
+        b=NnIzU98n9usdqMARhJaHFWnNolZkXw26IDzbHeoG5B7YyN0PWOcS9L5BpW4Pp/7auz
+         52cS2XhOE9rF10zd0rpeT443ZXJi9T8UcHr2GejupbfT5CDmiafZLAUM+T9uIGKPNhH8
+         sTlMcitR5WIFfnZl7RvWKbuTHXB4zG1exPgtw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723551231; x=1724156031;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q2YaJNxhLs5F8lLYTx7H4r6rahb3C2THbGnEdQxh/xA=;
-        b=i7QSPAo6SDlHQIBnfo1nSrAryUgDKv/sXBZa8NHEzuOXec9eVduStc13GAo8JRXCbl
-         nrTEQCWICS548mbAmoEH7at0DiXbMr8Y5WqgB1IuDc7BWicZdvWgq4y6jpAC0a6HEYOh
-         0keKpzXxhnvsBpcNRXrzPL+3JK1R2xqdRuYv9zOkUw1ygOss3+/jxuB0vmh9Eafw9jJ+
-         mxkLJKasyPfVV6dKK9W02lT9oEE3Dm7Z5lP0jk/jhHDVUQqOxVhKLqG5Um4W/dlsVa8o
-         Iy7trvc+EZV4lnzf5NBHEolZTBekXB1BiUOl0NOQvENAfALn7i0zTuewAEtx7+RlBqwr
-         NhqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfimELzlkraRSecycdanBoqhlkfNLFl3srokVK4uD/QulcjSpgTAYalqfb18Weuoy5dnnDhVgoxF3HcGmElYKnaQdH8pr5MsIP7O6c
-X-Gm-Message-State: AOJu0Yx3CuX1kGr6zOyRTSH5Tk3d1Vk67if9Ng0zWQdqRhkVDOudfzP5
-	0Vu2YzfiwD6LWlqhTvHwht/jecdsyaPvrvda4mGA/70UZ2VpYLPqGLk3lJCWjw==
-X-Google-Smtp-Source: AGHT+IEbPwywblqg1PHmJ6WOVqLAFdQNUuhFh7OmJ87lW/f5GlJN4YVEnCjKh12Gxxs2z0IijZihGw==
-X-Received: by 2002:a05:620a:4109:b0:7a1:e2e0:b3c9 with SMTP id af79cd13be357-7a4e151ba74mr391481985a.24.1723551230715;
-        Tue, 13 Aug 2024 05:13:50 -0700 (PDT)
+        bh=1NN4I3pMa1z6u3JhFybH/YMr+WwEfsG16l3i3ACZ6OI=;
+        b=TfH5BMELFDIdl3aYKHJpnafcGdC5/bcTkeC6UYwWSMwPVP0xXLiuh1FRijMOJ52EGG
+         01HNYWNGZrzoz+SrjpzfZh6ufOHXgOCfm5RvLsz+WGwHvoXdd8xWGr64+2fc9kXGKK5k
+         TzrW2FFoV/tHq/Oz0wB75VOWdNkZbXfMGTGvRlNxQkbRyi4wdRVFg3dRFpvolfkAe7pH
+         O/eER38CcCw/heivTiyF/N0/jt4D2iOTo2dzZ1AqK7FPn9misC9WCwzq2LI98KBTsQKO
+         6zeicv4mj5e45K6Os1L0sK9C7MV8n3Ia/7GHycxx4R1RfxiZUHcwjYOygt9lYbWUV5QG
+         NQpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVYpxGRw4/8+ZPZy0N8Eyj+O2z4yo3U740/OYirOJCB53gbtnqkvWNZZY+C/nhjqNh/sTWezgNidcJAZLI0RIjlwjjXeMk/x/XX5W7
+X-Gm-Message-State: AOJu0YxUWi7Q82mjfBH7l32F5pXOK8OyPp14IOrd3jYamYKgSyFNydIk
+	5tNBCcBnRVho+/EONQJJym7L587iU24/KbAlEpgz4xwn4iP/g6y0mTZARx1pVw==
+X-Google-Smtp-Source: AGHT+IEbzzCLxiIWDetpY/N6kglqi3rroSN+bG6y6yQxlctkjM/b9mCaiLCXSWS8MVpF1YKtj23MkQ==
+X-Received: by 2002:a05:620a:4451:b0:79d:76e5:be76 with SMTP id af79cd13be357-7a4e15afa64mr377756785a.41.1723551231504;
+        Tue, 13 Aug 2024 05:13:51 -0700 (PDT)
 Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
         by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d71ca8sm331765485a.50.2024.08.13.05.13.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 05:13:50 -0700 (PDT)
+        Tue, 13 Aug 2024 05:13:51 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 13 Aug 2024 12:13:48 +0000
-Subject: [PATCH 1/6] media: ar0521: Refactor ar0521_power_off()
+Date: Tue, 13 Aug 2024 12:13:49 +0000
+Subject: [PATCH 2/6] media: i2c: ov5645: Refactor ov5645_set_power_off()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-smatch-clock-v1-1-664c84295b1c@chromium.org>
+Message-Id: <20240813-smatch-clock-v1-2-664c84295b1c@chromium.org>
 References: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
 In-Reply-To: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -92,57 +92,58 @@ Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-Factor out all the power off logic, except the clk_disable_unprepare(),
-to a new function __ar0521_power_off().
+Factor out all the power off logic, except clk_disable_unprepare(), to a
+new function __ov5645_set_power_off().
 
-This allows ar0521_power_on() to explicitly clean-out the clock during
-the error-path.
+This allows ov5645_set_power_on() to excplicitly clean-out the clock
+during the error-path.
 
 The following smatch warning is fixed:
-drivers/media/i2c/ar0521.c:912 ar0521_power_on() warn: 'sensor->extclk' from clk_prepare_enable() not released on lines: 912.
+drivers/media/i2c/ov5645.c:690 ov5645_set_power_on() warn: 'ov5645->xclk' from clk_prepare_enable() not released on lines: 690.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/i2c/ar0521.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/media/i2c/ov5645.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/i2c/ar0521.c b/drivers/media/i2c/ar0521.c
-index 09331cf95c62..2c528db31ba6 100644
---- a/drivers/media/i2c/ar0521.c
-+++ b/drivers/media/i2c/ar0521.c
-@@ -835,7 +835,7 @@ static const struct initial_reg {
- 	     be(0x0707)), /* 3F44: couple k factor 2 */
- };
- 
--static int ar0521_power_off(struct device *dev)
-+static void __ar0521_power_off(struct device *dev)
- {
- 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct ar0521_dev *sensor = to_ar0521_dev(sd);
-@@ -850,6 +850,16 @@ static int ar0521_power_off(struct device *dev)
- 		if (sensor->supplies[i])
- 			regulator_disable(sensor->supplies[i]);
- 	}
-+}
-+
-+static int ar0521_power_off(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct ar0521_dev *sensor = to_ar0521_dev(sd);
-+
-+	clk_disable_unprepare(sensor->extclk);
-+	__ar0521_power_off(dev);
-+
+diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+index 6c2d221f6973..0c32bd2940ec 100644
+--- a/drivers/media/i2c/ov5645.c
++++ b/drivers/media/i2c/ov5645.c
+@@ -635,7 +635,7 @@ static int ov5645_set_register_array(struct ov5645 *ov5645,
  	return 0;
  }
  
-@@ -908,7 +918,8 @@ static int ar0521_power_on(struct device *dev)
+-static int ov5645_set_power_off(struct device *dev)
++static void __ov5645_set_power_off(struct device *dev)
+ {
+ 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
+ 	struct ov5645 *ov5645 = to_ov5645(sd);
+@@ -643,8 +643,16 @@ static int ov5645_set_power_off(struct device *dev)
+ 	ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x58);
+ 	gpiod_set_value_cansleep(ov5645->rst_gpio, 1);
+ 	gpiod_set_value_cansleep(ov5645->enable_gpio, 0);
+-	clk_disable_unprepare(ov5645->xclk);
+ 	regulator_bulk_disable(OV5645_NUM_SUPPLIES, ov5645->supplies);
++}
++
++static int ov5645_set_power_off(struct device *dev)
++{
++	struct v4l2_subdev *sd = dev_get_drvdata(dev);
++	struct ov5645 *ov5645 = to_ov5645(sd);
++
++	__ov5645_set_power_off(dev);
++	clk_disable_unprepare(ov5645->xclk);
  
  	return 0;
- off:
--	ar0521_power_off(dev);
-+	clk_disable_unprepare(sensor->extclk);
-+	__ar0521_power_off(dev);
+ }
+@@ -686,7 +694,8 @@ static int ov5645_set_power_on(struct device *dev)
+ 	return 0;
+ 
+ exit:
+-	ov5645_set_power_off(dev);
++	__ov5645_set_power_off(dev);
++	clk_disable_unprepare(ov5645->xclk);
  	return ret;
  }
  
