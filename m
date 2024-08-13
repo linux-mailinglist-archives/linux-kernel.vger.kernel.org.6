@@ -1,140 +1,82 @@
-Return-Path: <linux-kernel+bounces-284055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948C894FC77
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C10B94FC79
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15DDD1F223EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D441C223B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D5E22EEF;
-	Tue, 13 Aug 2024 03:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTEze8lI"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA6F2033A;
-	Tue, 13 Aug 2024 03:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9081CAA6;
+	Tue, 13 Aug 2024 03:57:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80E91BF53
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723521237; cv=none; b=qLI98CtoRRya18Mvn65FVKE6avM2Vg9xy7JEjzd1K6e/TkEKuUlzgizpbpmE8xqQqlYIO/ZwjsUDcozC/9GSPvW8Gweqj+FFhVslD2fYUwCvumyP5bzYmAwujy5aeP0zXdlr621aAPJN0zM66SPEeD4vGG9eESDoY06s4Nn8HNY=
+	t=1723521435; cv=none; b=G/usNhhWMdKA8iiBQ7tqlpILQmyD6Ej0VFIC/jgnk6UVGJZzKeIyKGGQ4Sb4yknvj42Dw9puhaPAbw+cKbcHYbVUZAq4a7o3xDqJTsN7MY1vhZst7Vhsr4WCKc7iNglKC8msVZuXrYE2A/t8jl9kHlXDH9itdw5TS7e577KbbRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723521237; c=relaxed/simple;
-	bh=bzzkOdYjZnt3NwRR0zM1nV4+wHGZRcHbO0WP+1KwHyk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=d7iI7jSoc3KoXhIhr8TCiwiKeN90yFA2jllrH/UnsETBcB1gB6VumgtKGNATJbDwk9b6uS6Q1X5cXnhocgxPQx2/WLFJo9kSTXjY/hrPZ4HuRm93xXTMuzpYpuZU1bRyYNmi0iuf9mIUO6wuSROdb3wDNEyx8BmraYYxA/24LUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTEze8lI; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5d5c2ac3410so2957249eaf.2;
-        Mon, 12 Aug 2024 20:53:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723521234; x=1724126034; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tN/ZRWVHEHWYN/MyGgywTnPix3p+IROxtn8nqbPNIJA=;
-        b=BTEze8lIMGUE4vI7bEJSSERAiU4o6IHNC1i5RakUDRbrYz2e8RiMXb+NmBXwwyjZO9
-         FXsgmF4s6qEbD4XfiNIlapGGtHHXC6v6p2dqTNFPJxQ2JhHpEjBKhGpN/u6qPxGpWTYm
-         9frvY1AUc2j7K1d5SM8/TPnOkP5H2YSThAPrY8Y0h3LIi2Y85H/mSMLPAcaZOgBf9F2O
-         J04DkWpq7dVIOvFTnFgP4yLQkApEENnCujuhxGlstg4x/W5FJCgU86L1/9hK3Iw8T5m3
-         CeOE4xH3kMT7eTikwcdDHrJzLNidec6fjnxgZOSLajVEAPXJTHzGDSmkgvp1LN33XaUg
-         QnwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723521234; x=1724126034;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tN/ZRWVHEHWYN/MyGgywTnPix3p+IROxtn8nqbPNIJA=;
-        b=aW/dZ+IYlWNy12yrOn9f8kz4tjjpjaYzwk7TylDy4XSh7B1wMaFhP2xyNlinVqe9My
-         g8pgH3xZ/w1U8TwqzDP/TdmmC4OPeo5uP3JgqJR8Bkj+KVCqvm2zsFYuW7oh5f+4ym4w
-         7jpTu4rOk6u+T9n9Mpa0x9NFESUxM+RXqUGJh+/u00qwpQoiCyzwQeowsWQZZBsXC7p5
-         bNTVhnrjuci82P39OmL20VJsE69LxfHP5Oz6k27Bh6XNvp+qhZpSLInEPgPZIihi/GJJ
-         jvPq5/Y4Y1Kn1yDPZ2hBUmI2Dfk7FZRRLWodarm3fSiQK8h6W94QrOm8sQC2OBcmsDOC
-         SQ4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVEEQsKfGnG0zItsfeSQL0s5eSmu7QcuewKnmoG0O56pas3tiI+Jm/ZknNj/ggdzVn3RK95n0uKmHIgOglPeA/Gb2K/tOl0DQ0mC9hN
-X-Gm-Message-State: AOJu0YxHT9URsKYI9yx0DR3aMFXuHubBoLasrFhhkfEsQf3W5A95Z20e
-	KBjo9Yzc9AixA8USi9CRNlaRUUHaUiEAn4N2g916y2KEmxnnjdGurQ1rweuqYsY=
-X-Google-Smtp-Source: AGHT+IHhjztVdxVkUJdKWhVnrviol8gwdnN4sAKkYX4+T/qtEtR8vOGPch0tye0D++yzk5zCX6/UWg==
-X-Received: by 2002:a05:6359:4ca4:b0:1ac:f144:2b16 with SMTP id e5c5f4694b2df-1b19d2f57e9mr319419355d.26.1723521234390;
-        Mon, 12 Aug 2024 20:53:54 -0700 (PDT)
-Received: from smtpclient.apple ([198.11.176.14])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c697a6c5c9sm456591a12.78.2024.08.12.20.53.52
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2024 20:53:54 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1723521435; c=relaxed/simple;
+	bh=m9yr3vMYcKNI0QHQ+34ZEEOrBVkZH5WYJR4T/gXM0UQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=stWIyoDE3ZMGUqpyhGjqU/8lRTKLySs1tq3FI8vbHUIvMf7BECid1qGtmhlv9EwEVL0DFe5sYt1O3qnUx8RilyTs+DI3H4PVIL7O0WCo87Vl8Ju44oF9zPniC1WVGszqMmvOyZVEbo+3kQuvQ6cQPsfvJK8kARNv/chZWk/7bEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2753FEC;
+	Mon, 12 Aug 2024 20:57:37 -0700 (PDT)
+Received: from [10.163.57.95] (unknown [10.163.57.95])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CE583F73B;
+	Mon, 12 Aug 2024 20:57:09 -0700 (PDT)
+Message-ID: <0f4b602d-90d3-4035-a0e1-0fb061868764@arm.com>
+Date: Tue, 13 Aug 2024 09:27:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH v2 1/1] livepatch: Add using attribute to klp_func for
- using function show
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
-Date: Tue, 13 Aug 2024 11:53:37 +0800
-Cc: live-patching@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] arm64/sve: Remove unused declaration
+ read_smcr_features()
+To: Yue Haibing <yuehaibing@huawei.com>, catalin.marinas@arm.com,
+ will@kernel.org, broonie@kernel.org, mark.rutland@arm.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240810093944.2587809-1-yuehaibing@huawei.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240810093944.2587809-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <8743E498-1B7D-4E05-9B9D-4A243089BDD3@gmail.com>
-References: <20240805064656.40017-1-zhangyongde.zyd@alibaba-inc.com>
- <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>,
- Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
 
 
-> On Aug 5, 2024, at 14:46, zhangyongde.zyd <zhangwarden@gmail.com> wrote:
+On 8/10/24 15:09, Yue Haibing wrote:
+> Commit 391208485c3a ("arm64/sve: Remove SMCR pseudo register from cpufeature code")
+> removed the implementation but leave declaration.
 > 
-> From: Wardenjohn <zhangwarden@gmail.com>
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> ---
+>  arch/arm64/include/asm/fpsimd.h | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> One system may contains more than one livepatch module. We can see
-> which patch is enabled. If some patches applied to one system
-> modifing the same function, livepatch will use the function enabled
-> on top of the function stack. However, we can not excatly know
-> which function of which patch is now enabling.
-> 
-> This patch introduce one sysfs attribute of "using" to klp_func.
-> For example, if there are serval patches  make changes to function
-> "meminfo_proc_show", the attribute "enabled" of all the patch is 1.
-> With this attribute, we can easily know the version enabling belongs
-> to which patch.
-> 
-> The "using" is set as three state. 0 is disabled, it means that this
-> version of function is not used. 1 is running, it means that this
-> version of function is now running. -1 is unknown, it means that
-> this version of function is under transition, some task is still
-> chaning their running version of this function.
-> 
-> cat /sys/kernel/livepatch/<patch1>/<object1>/<function1,sympos>/using -> 0
-> means that the function1 of patch1 is disabled.
-> 
-> cat /sys/kernel/livepatch/<patchN>/<object1>/<function1,sympos>/using -> 1
-> means that the function1 of patchN is enabled.
-> 
-> cat /sys/kernel/livepatch/<patchN>/<object1>/<function1,sympos>/using -> -1
-> means that the function1 of patchN is under transition and unknown.
-> 
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
-> 
+> diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
+> index bc69ac368d73..f2a84efc3618 100644
+> --- a/arch/arm64/include/asm/fpsimd.h
+> +++ b/arch/arm64/include/asm/fpsimd.h
+> @@ -155,8 +155,6 @@ extern void cpu_enable_sme2(const struct arm64_cpu_capabilities *__unused);
+>  extern void cpu_enable_fa64(const struct arm64_cpu_capabilities *__unused);
+>  extern void cpu_enable_fpmr(const struct arm64_cpu_capabilities *__unused);
+>  
+> -extern u64 read_smcr_features(void);
+> -
+>  /*
+>   * Helpers to translate bit indices in sve_vq_map to VQ values (and
+>   * vice versa).  This allows find_next_bit() to be used to find the
 
-Hi maintainers. How about your suggestions to patch V2?
-
-According to your suggestion, I made some new changes to the V1 patch.
-
-I am waiting for your suggestions. 
-
-Thanks.
-Wardenjohn.
-
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
