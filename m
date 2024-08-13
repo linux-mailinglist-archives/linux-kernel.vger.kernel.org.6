@@ -1,246 +1,203 @@
-Return-Path: <linux-kernel+bounces-284498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8D795019F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:53:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2B39501B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C392844D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:53:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D210C1C21F23
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1941C194AD7;
-	Tue, 13 Aug 2024 09:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B49C189904;
+	Tue, 13 Aug 2024 09:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VI1p9FV2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WOX88y6a"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015E6189F2A
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA6E13BADF;
+	Tue, 13 Aug 2024 09:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542732; cv=none; b=Dn+8MMDNL0Zww+Z55bdhrQSi9MKhwAZmTeBeLlbGcFBTeC0BRtzxxfJN+KwxXAe/ZnoGKllOoWYjYvvPbGLjAhI1l9b/RImz79NYZYSmkRtFtwth0DNzYcc71aEN2AFtslLP++Mi1o9MJ4wIfL941eBMhWZkC7NWh1l5u8O1hxk=
+	t=1723542822; cv=none; b=pWNGNNrcWu20Fe/xRyQXZij4isU2xG7NOaGOE7gvRfSb6KvDqNctj/Bqwgb8jAqsS6VgYGoBNzTfcRp/hbmMIDcLQ4JPCxX/r4P5AmBE7XGG73l1zBx4rByATIRpxnFT4ZGixjdNqJsUqMdXPxCD/KGJsZlkHNiZaWvhAfib7j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542732; c=relaxed/simple;
-	bh=mliOT5sF/c6G1ykt7Gg/Ps9h7dqFg8KEdYmAxnjEAUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kzGO7D8MbiAu8mwANrXxQ/s/I3hEEXiGnvweQHC8ZBUziRld4AhmLo3LGRmdzK41ljigPWSKzoQhW4ZmDzp0dLityfyIKzpwiw0AXg/Bxhrm9SybdiGqWiO3EMRVJHJl5crYHh3GIRjMvphoUQorAVGDg3uk+hLFb0r/LEzETig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VI1p9FV2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E83BAC4AF0B;
-	Tue, 13 Aug 2024 09:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723542731;
-	bh=mliOT5sF/c6G1ykt7Gg/Ps9h7dqFg8KEdYmAxnjEAUc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VI1p9FV2r5Tk28XdZ1eYLjP3i+8xYJ5M4xN91ntF1WztILdIkCSOum+1aV7/BBbHr
-	 x/0xkAWYmMrj3N70U2apPifiGOV3FeXCaVlI4WT/8ghcOASpFxFLMgpXfUCp3NF6YO
-	 2XMxuP8jCPBYi5QMr2bAJWUV8U3Nc+62Nzgruu6au7Af25AFLeGD7SbNBkTx6ZfTLA
-	 /Fi77CKxRZ30fjfrEAj4tAqK96HItvvkORB8H5TwvRWGsoEfSkN9lcdTHvoYQz+D0g
-	 rtehWXadNgbyhU9PWn12k4L9o2Cj0P/NPUdHybqadsh6qyQL6FrL8Zz1nJ3PbWeLdh
-	 SSfegY0jc8sSw==
-Message-ID: <c628b268-1690-430d-9d55-af62b81754fa@kernel.org>
-Date: Tue, 13 Aug 2024 17:52:08 +0800
+	s=arc-20240116; t=1723542822; c=relaxed/simple;
+	bh=rIa5jRwpylk0EMqGKYR8X5flL4X7ACahtZ8KgByVmoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WEO7zMjH2H3FgTEh3sI7oyU+C6HQWyKdCzZxIeRrGi9Tgr6GpyBDFnKJK8lDsh3jscVH7dvDZJfKycyDGEB+T9MqF5n3lXATXFwYnFpTbWZb85yUywcH+taDbkDcdzVg408hUhAxYV8y1VOT//N3i/b3VhGwp7tpeedc1EaGJKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WOX88y6a; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D4bCjA003151;
+	Tue, 13 Aug 2024 09:53:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gWH0Feu6jKBdpXoGLqXF0SgT6nH7BExsqXP2hvhKh/Y=; b=WOX88y6aLTqGVN98
+	PfjSJ6bFKBON9dVW1rzgBtsPbhhFTZ64aXSNAxY3JJ2V7oTWh90hs3NZ0nDGjgjJ
+	3CnR568bCAvYRSmE4vs3YiwQNNC6fBME8ZfuW8KMDjUZHjtcmvOh25QU6FNqpRoX
+	rSKXuvMJQgzK6upHEZYrt1O0W+YgxQwg0ta5j+9y3IJDdcvkNcEvyWxSoHRJPvd/
+	IBhcWkR+sVRpXMRBu/d43bwQqV4heG0hr5Y8f5n3OSKO1pOo9MIyXSrgikFF35U8
+	8EDUwYgOZ4tvdQATJBeY0oM9grSOMX+6WPXpw6goLLLbbipe5HrwL97dHFv71i9w
+	pqR+Fg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x17sf41u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 09:53:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47D9raLE030080
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 09:53:36 GMT
+Received: from [10.218.35.239] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 02:53:35 -0700
+Message-ID: <a89b5098-f9d6-4758-52b4-29d24244a09b@quicinc.com>
+Date: Tue, 13 Aug 2024 15:23:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: KASAN: slab-use-after-free Read in __destroy_extent_node
-To: Ubisectech Sirius <bugreport@valiantsec.com>
-Cc: jaegeuk <jaegeuk@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-References: <b9664c53-fab0-42ba-9dc0-e7cb9601bbb0.bugreport@valiantsec.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] usb: dwc3: Fix latency of DSTS while receiving wakeup
+ event
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <b9664c53-fab0-42ba-9dc0-e7cb9601bbb0.bugreport@valiantsec.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240730124742.561408-1-quic_prashk@quicinc.com>
+ <20240806235142.cem5f635wmds4bt4@synopsys.com>
+ <ec99fcdc-9404-8cd9-6a30-95e4f5c1edcd@quicinc.com>
+ <20240808000604.quk6rheiqt6ghjhv@synopsys.com>
+From: Prashanth K <quic_prashk@quicinc.com>
+In-Reply-To: <20240808000604.quk6rheiqt6ghjhv@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: i1n7NIYdppHzqbXviOY2Nhfbzqg6anu_
+X-Proofpoint-ORIG-GUID: i1n7NIYdppHzqbXviOY2Nhfbzqg6anu_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_02,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxscore=0 phishscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408130070
 
-On 2024/8/5 9:33, Ubisectech Sirius wrote:
-> Hello.
-> We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec. Recently, our team has discovered a issue in Linux kernel 6.8. Attached to the email were a PoC file of the issue.
 
-Hi, syzbot has reported this issue, and it has been fixed by below commit.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d7409b05a64f212735f0d33f5f1602051a886eab
+On 08-08-24 05:36 am, Thinh Nguyen wrote:
 
-Thanks,
 
+>> And turns out, retries 1500 to 15000 (worst case), which can range from 3ms
+>> to 30ms. By this time, control can reach startXfer, where it tries to
+>> perform remote-wakeup even if host just resumed the gadget.
 > 
-> Stack dump:
+> Polling for 20K time is a bit much, and this will vary depending on
+> different setup. This is something that I want to fix in the wakeup()
+> ops and keep everything async.
 > 
-> R13: 000000000000006e R14: 00007f03a5b34078 R15: 00007f03a6781000
->   </TASK>
-> F2FS-fs (loop3): sanity_check_extent_cache: inode (ino=8) extent info [5634, 0, 3] is incorrect, run fsck to fix
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-> BUG: KASAN: slab-use-after-free in __destroy_extent_node+0xb8/0x260 fs/f2fs/extent_cache.c:1061
-> Read of size 4 at addr ffff8880516c3070 by task syz.3.23/9717
-> 
-> CPU: 1 PID: 9717 Comm: syz.3.23 Not tainted 6.10.0-rc6-g1dfe225e9af5 #48
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:88 [inline]
->   dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:114
->   print_address_description mm/kasan/report.c:377 [inline]
->   print_report+0xc0/0x5e0 mm/kasan/report.c:488
->   kasan_report+0xbd/0xf0 mm/kasan/report.c:601
->   check_region_inline mm/kasan/generic.c:183 [inline]
->   kasan_check_range+0xf4/0x1a0 mm/kasan/generic.c:189
->   instrument_atomic_read include/linux/instrumented.h:68 [inline]
->   atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
->   __destroy_extent_node+0xb8/0x260 fs/f2fs/extent_cache.c:1061
->   __destroy_extent_tree+0x14a/0x6f0 fs/f2fs/extent_cache.c:1126
->   f2fs_destroy_extent_tree+0x17/0x30 fs/f2fs/extent_cache.c:1143
->   f2fs_evict_inode+0x3ff/0x1da0 fs/f2fs/inode.c:837
->   evict+0x2ed/0x6c0 fs/inode.c:667
->   iput_final fs/inode.c:1741 [inline]
->   iput.part.0+0x559/0x760 fs/inode.c:1767
->   iput+0x5c/0x80 fs/inode.c:1757
->   f2fs_iget+0xfe6/0x5a40 fs/f2fs/inode.c:627
->   f2fs_nfs_get_inode fs/f2fs/super.c:3265 [inline]
->   f2fs_nfs_get_inode+0x86/0x130 fs/f2fs/super.c:3251
->   generic_fh_to_dentry+0xdf/0x110 fs/libfs.c:1456
->   exportfs_decode_fh_raw+0x12b/0x7a0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x90 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x2bc/0x590 fs/fhandle.c:226
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcb/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f03a59958cd
-> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f03a67a0fa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000130
-> RAX: ffffffffffffffda RBX: 00007f03a5b34078 RCX: 00007f03a59958cd
-> RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000004
-> RBP: 00007f03a5a2d6e6 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000006e R14: 00007f03a5b34078 R15: 00007f03a6781000
->   </TASK>
-> 
-> Allocated by task 9642:
->   kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   unpoison_slab_object mm/kasan/common.c:312 [inline]
->   __kasan_slab_alloc+0x87/0x90 mm/kasan/common.c:338
->   kasan_slab_alloc include/linux/kasan.h:201 [inline]
->   slab_post_alloc_hook mm/slub.c:3940 [inline]
->   slab_alloc_node mm/slub.c:4002 [inline]
->   kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4009
->   f2fs_kmem_cache_alloc_nofail fs/f2fs/f2fs.h:2815 [inline]
->   f2fs_kmem_cache_alloc fs/f2fs/f2fs.h:2825 [inline]
->   __grab_extent_tree+0x27c/0x5b0 fs/f2fs/extent_cache.c:334
->   f2fs_init_read_extent_tree+0x1e2/0x710 fs/f2fs/extent_cache.c:405
->   do_read_inode fs/f2fs/inode.c:512 [inline]
->   f2fs_iget+0x1e1e/0x5a40 fs/f2fs/inode.c:566
->   f2fs_nfs_get_inode fs/f2fs/super.c:3265 [inline]
->   f2fs_nfs_get_inode+0x86/0x130 fs/f2fs/super.c:3251
->   generic_fh_to_dentry+0xdf/0x110 fs/libfs.c:1456
->   exportfs_decode_fh_raw+0x12b/0x7a0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x90 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x2bc/0x590 fs/fhandle.c:226
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcb/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Freed by task 9642:
->   kasan_save_stack+0x24/0x50 mm/kasan/common.c:47
->   kasan_save_track+0x14/0x30 mm/kasan/common.c:68
->   kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
->   poison_slab_object mm/kasan/common.c:240 [inline]
->   poison_slab_object+0xf9/0x180 mm/kasan/common.c:211
->   __kasan_slab_free+0x33/0x50 mm/kasan/common.c:256
->   kasan_slab_free include/linux/kasan.h:184 [inline]
->   slab_free_hook mm/slub.c:2196 [inline]
->   slab_free mm/slub.c:4438 [inline]
->   kmem_cache_free+0x12a/0x3a0 mm/slub.c:4513
->   __destroy_extent_tree+0x1f8/0x6f0 fs/f2fs/extent_cache.c:1132
->   f2fs_destroy_extent_tree+0x17/0x30 fs/f2fs/extent_cache.c:1143
->   f2fs_evict_inode+0x3ff/0x1da0 fs/f2fs/inode.c:837
->   evict+0x2ed/0x6c0 fs/inode.c:667
->   iput_final fs/inode.c:1741 [inline]
->   iput.part.0+0x559/0x760 fs/inode.c:1767
->   iput+0x5c/0x80 fs/inode.c:1757
->   f2fs_iget+0xfe6/0x5a40 fs/f2fs/inode.c:627
->   f2fs_nfs_get_inode fs/f2fs/super.c:3265 [inline]
->   f2fs_nfs_get_inode+0x86/0x130 fs/f2fs/super.c:3251
->   generic_fh_to_dentry+0xdf/0x110 fs/libfs.c:1456
->   exportfs_decode_fh_raw+0x12b/0x7a0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x90 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x2bc/0x590 fs/fhandle.c:226
->   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->   do_syscall_64+0xcb/0x250 arch/x86/entry/common.c:83
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> The buggy address belongs to the object at ffff8880516c3000
->   which belongs to the cache f2fs_extent_tree of size 144
-> The buggy address is located 112 bytes inside of
->   freed 144-byte region [ffff8880516c3000, ffff8880516c3090)
-> 
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x516c3
-> flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-> page_type: 0xffffefff(slab)
-> raw: 04fff00000000000 ffff888042d6c640 dead000000000122 0000000000000000
-> raw: 0000000000000000 0000000080130013 00000001ffffefff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Reclaimable, gfp_mask 0x152c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 9642, tgid 9641 (syz.3.23), ts 151346879967, free_ts 0
->   set_page_owner include/linux/page_owner.h:32 [inline]
->   post_alloc_hook+0x2e7/0x350 mm/page_alloc.c:1473
->   prep_new_page mm/page_alloc.c:1481 [inline]
->   get_page_from_freelist+0xbf4/0x2850 mm/page_alloc.c:3425
->   __alloc_pages_noprof+0x214/0x21e0 mm/page_alloc.c:4683
->   __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
->   alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
->   alloc_slab_page+0x5d/0x120 mm/slub.c:2265
->   allocate_slab mm/slub.c:2428 [inline]
->   new_slab+0x83/0x260 mm/slub.c:2481
->   ___slab_alloc+0xbb7/0x1850 mm/slub.c:3667
->   __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3757
->   __slab_alloc_node mm/slub.c:3810 [inline]
->   slab_alloc_node mm/slub.c:3990 [inline]
->   kmem_cache_alloc_noprof+0x2a8/0x2f0 mm/slub.c:4009
->   f2fs_kmem_cache_alloc_nofail fs/f2fs/f2fs.h:2815 [inline]
->   f2fs_kmem_cache_alloc fs/f2fs/f2fs.h:2825 [inline]
->   __grab_extent_tree+0x27c/0x5b0 fs/f2fs/extent_cache.c:334
->   f2fs_init_read_extent_tree+0x1e2/0x710 fs/f2fs/extent_cache.c:405
->   do_read_inode fs/f2fs/inode.c:512 [inline]
->   f2fs_iget+0x1e1e/0x5a40 fs/f2fs/inode.c:566
->   f2fs_nfs_get_inode fs/f2fs/super.c:3265 [inline]
->   f2fs_nfs_get_inode+0x86/0x130 fs/f2fs/super.c:3251
->   generic_fh_to_dentry+0xdf/0x110 fs/libfs.c:1456
->   exportfs_decode_fh_raw+0x12b/0x7a0 fs/exportfs/expfs.c:444
->   exportfs_decode_fh+0x3c/0x90 fs/exportfs/expfs.c:584
->   do_handle_to_path fs/fhandle.c:155 [inline]
->   handle_to_path fs/fhandle.c:210 [inline]
->   do_handle_open+0x2bc/0x590 fs/fhandle.c:226
-> page_owner free stack trace missing
-> 
-> Memory state around the buggy address:
->   ffff8880516c2f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8880516c2f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->> ffff8880516c3000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                                               ^
->   ffff8880516c3080: fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8880516c3100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
-> 
-> 
-> Thank you for taking the time to read this email and we look forward to working with you further.
-> 
-> 
-> 
-> 
+This was done as part of experiment, just to determine the latency in 
+DSTS. And it was around 3-30ms. Saw rhis same behaviour when polling 
+DSTS in __dwc3_gadget_wakeup(sync)
 
+>>
+>> For SS case, this retries count was consistently 1, it was passing in first
+>> try itself. But unfortunately doesn't behave the same way in HS.
+>>
+>>> GUSB2PHYCFG.suspendusb2 turns on the signal required to complete a
+>>> command within 50us. This happens within the timeout required for an
+>>> endpoint command. As a result, there's no need to perform remote wakeup.
+>>>
+>>> For usb3 speed, if it's in U3, the gadget is in suspend anyway. There
+>>> will be no ep_queue to trigger the Start Transfer command.
+>>>
+>>> You can just remove the whole Start Transfer check for remote wakeup
+>>> completely.
+>>>
+>> Sorry, i didnt understand your suggestion. The startxfer check is needed as
+>> per databook, but we also need to handle the latency seen in DSTS when
+>> operating in HS.
+>>
+> 
+> usb_ep_queue should not trigger remote wakeup; it should be done by
+> wakeup() ops. The programming guide just noted that the Start Transfer
+> command should not be issued while in L1/L2/U3. It suggested to wake up
+> the host to bring it out of L1/L2/U3 state so the command can go
+> through.
+> 
+> My suggestion is to remove the L1/L2/U3 check in
+> dwc3_send_gadget_ep_cmd(), and it will still work fine with reasons
+> noted previously. So, just do this:
+> 
+> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> index 0ea2ca0f0d28..6ef6c4ef2a7b 100644
+> --- a/drivers/usb/dwc3/gadget.c
+> +++ b/drivers/usb/dwc3/gadget.c
+> @@ -411,30 +411,6 @@ int dwc3_send_gadget_ep_cmd(struct dwc3_ep *dep, unsigned int cmd,
+>                          dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(0), reg);
+>          }
+> 
+> -       if (DWC3_DEPCMD_CMD(cmd) == DWC3_DEPCMD_STARTTRANSFER) {
+> -               int link_state;
+> -
+> -               /*
+> -                * Initiate remote wakeup if the link state is in U3 when
+> -                * operating in SS/SSP or L1/L2 when operating in HS/FS. If the
+> -                * link state is in U1/U2, no remote wakeup is needed. The Start
+> -                * Transfer command will initiate the link recovery.
+> -                */
+> -               link_state = dwc3_gadget_get_link_state(dwc);
+> -               switch (link_state) {
+> -               case DWC3_LINK_STATE_U2:
+> -                       if (dwc->gadget->speed >= USB_SPEED_SUPER)
+> -                               break;
+> -
+> -                       fallthrough;
+> -               case DWC3_LINK_STATE_U3:
+> -                       ret = __dwc3_gadget_wakeup(dwc, false);
+> -                       dev_WARN_ONCE(dwc->dev, ret, "wakeup failed --> %d\n",
+> -                                       ret);
+> -                       break;
+> -               }
+> -       }
+> -
+>          /*
+>           * For some commands such as Update Transfer command, DEPCMDPARn
+>           * registers are reserved. Since the driver often sends Update Transfer
+> 
+> When we receive the wakeup event, then the device is no longer in
+> L1/L2/U3. The Start Tranfer command should go through. >
+Ok will do this, I hope there won't be any corner cases where the link 
+is down when start_xfer happens. I was not really sure about the 
+history, thats why tried to incorporate my fix into the above IF check.
+
+> We do have an issue where if the function driver issues remote wakeup,
+> the link may not transition before ep_queue() because wakeup() can be
+> async. In that case, you probably want to keep the usb_requests in the
+> pending_list until the link_state transitions out of low power.
+> 
+> The other thing that I noted previously is that I want to fix is the
+> wakeup() ops. Currently it can be async or synchronous. We should keep
+> it consistent and make it async throughout.
+> 
+Sounds like a good idea, we can move the req to pending list, then issue 
+async wakeup, and queue it back once linksts_change interrupt indicates 
+L0/U0. Special care is needed in dwc3_gadget_func_wakeup() when making 
+it async.
+
+Regards,
+Prashanth K
 
