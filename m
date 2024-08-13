@@ -1,100 +1,145 @@
-Return-Path: <linux-kernel+bounces-284788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FB5950521
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:35:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3879595052E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0537F285388
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B9D28410E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DB19D075;
-	Tue, 13 Aug 2024 12:34:29 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F61819A282;
+	Tue, 13 Aug 2024 12:39:22 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA7219D06D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF45A21345;
+	Tue, 13 Aug 2024 12:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552468; cv=none; b=fBsRL9xMPCxJLB3m5ikE1i5PkjjfD1+uGyJetDnDol7XlZ0VbfnVtsGRtuLuZ92JFP7Vr1/VNzDbIkzQExGmNd43bJZPUCcrYDMQOggqts4OFkSJLAueeA+Nm4xhaXv9NqLkVnZQCuMvx8QAMk8EHQ8K2Ak4z5G0PvcbMLEJ1E4=
+	t=1723552762; cv=none; b=edYsdoTMNuAsgwNJHrRWVruT9XKFFfMAwBcUDnME3wjy6EFZDdfiQI5UCLGVdGRZMJeZbL+NuuFZLET2JvAgG2tvsdA1uwW/rp5+TGcv3m+sQiF868OM3WGrljinf8KjYB3N1wbeLjEj1LnlPU8exW5CYw0UZ/4p3rfLnJjGP8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723552468; c=relaxed/simple;
-	bh=MWYYWzrLBsyhsepfViZZe+n7+XEy4XisBYxo3KCbwNg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ppY4VGLO+DrHteswpGgMeE5n6mcgNfnYnnT2A3BdxNse5ABxKsf6OM7TkjZ0ehAbY6puMBMydoIjupG6NCOCIHOCTHVjLvS3nB5fXtUcnEBrm9fBMaRLUTmV5lVKajvWyZ8WVGv4SpWbdDe3PzUiixvwVU+svABRmy/wBACi39w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82237159a6bso644378239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:34:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723552466; x=1724157266;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3+Ln620VT8KH54iQCrLjkomNkv6MG80t0C+1+yo30Yg=;
-        b=LxiNhA3yMrSn7vL7M58Jv1n5roD6ZeNvL6EDLwoKEfdVxgfKkV9Sa2MueDzooF3FXd
-         Eb+Pxm/0rHr6Ob9//Kd1W5aD+cNEZUnC/VJnizeUm9EbjVcbo6mc4cz4wuwW+XdfZLos
-         O7fOpmNIi3iS+4iF1fV3AtA5EjJ1Wo1JmoRmRW/+f5TABPbpSzpD6CN7uduF/gj25Pzw
-         IxljW/iA8RXZweB4yqXj8m1ITqeXO9MYjhR8zgoZpn+oiNarhuCI1sOs9vmI+nlA5pz5
-         /+EQjTpDaSj8nHqkuyMmlBGSt83NFvpqXPKXj+Sc0RjUgPzJD+1s5CwzVwjgj3QpoQ1A
-         CwCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwWdtNN3tEIv6P0GPTERYEfb2frR4SXmCMzQhGcq87+aZOPb/bwdN4lbzZYhP55PCH/0AbWo0HizmSgHDXYdp4OuR6l7Jf0Y9kXOnT
-X-Gm-Message-State: AOJu0YwheqieFm6R6tt/9qNqwJAdUDHRTqOS0EsUvcMKruUXfBj+UEiK
-	xiOui470c2dd37SJRZCkW7AzbQwwXMXts9+MgcLYJt32vS6TOt/XRnnodEHJAMQibXtBS0sMm0W
-	77hitbkGn5BPl7XgKArpE1h+vFvDlhczfDyp+tLaLibdK4fEnUHJ9pJo=
-X-Google-Smtp-Source: AGHT+IG3UXOsj7iMlJPd1YaGKTgrI5WP18qFBGO56hVK54vUBxVZD+3+WCWnv+apxl+45UkIn8nKCfEWOmoKOaIfDmC4Py0tCjDB
+	s=arc-20240116; t=1723552762; c=relaxed/simple;
+	bh=pX4eEmQ9nihbCYgNo9Yn9kct/omhHF8zzhNPMDcVk/s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ne+fteXeIY1RSEQjg2rJbwAKWQ8i4kRTyIOX/iPi3xNdxDt87veMvFDJPDm8x1seEEL3/0bZ59DuLQEnsGLNMT5iIRylj8thmB3+NqrZJ8NBRUmXpS2x4kW37Zzo+5BP/+G7ztjopMsa1ZnAtXxyfvNCJGQG3NNAr8icr2VZ3xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjrY26lQ8z4f3jHT;
+	Tue, 13 Aug 2024 20:39:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9FEAC1A1735;
+	Tue, 13 Aug 2024 20:39:16 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBnj4XkU7tmejNSBg--.17625S4;
+	Tue, 13 Aug 2024 20:39:14 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v3 00/12] ext4: simplify the counting and management of delalloc reserved blocks
+Date: Tue, 13 Aug 2024 20:34:40 +0800
+Message-Id: <20240813123452.2824659-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218b:b0:396:256a:2e01 with SMTP id
- e9e14a558f8ab-39c48c1647dmr1582815ab.1.1723552466282; Tue, 13 Aug 2024
- 05:34:26 -0700 (PDT)
-Date: Tue, 13 Aug 2024 05:34:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000813aa7061f8fd478@google.com>
-Subject: [syzbot] Monthly serial report (Aug 2024)
-From: syzbot <syzbot+list6032cdf2de475380d173@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBnj4XkU7tmejNSBg--.17625S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxCFy5Jw15Kw4ktF4DJr18Krg_yoW5GFWrpr
+	WfC3W3Jr10gw17Wa93Aw1UGw1fWa1xAr4UGrWxKr18uFWrAFyxZFnrKFyrZFyrtrWxJF1Y
+	qFyUKw18uas8C37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello serial maintainers/developers,
+From: Zhang Yi <yi.zhang@huawei.com>
 
-This is a 31-day syzbot report for the serial subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/serial
+Changes since v2:
+ - In patch 3, update the chang log as Jan suggested.
+ - In patch 5 and 6, when moving reserved blocks count updating to
+   ext4_es_insert_extent(), chang the condition for determining quota
+   claim by passing allocation information instead of counting used
+   reserved blocks as Jan suggested.
+ - Add patch 9, drop an unused helper ext4_es_store_status().
+ - Add patch 10, make extent status type exclusive, add assertion and
+   commtents as Jan suggested.
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 16 issues are still open and 42 have been fixed so far.
+Changes since v1:
+ - Just rebase to v6.11-rc1.
 
-Some of the still happening issues:
+This patch series is the part 3 prepartory changes of the buffered IO
+iomap conversion, it simplify the counting and updating logic of
+delalloc reserved blocks. I picked them out from my buffered IO iomap
+conversion RFC series v4[1], and did some minor improvements of commit
+messages. This series is based on 6.11-rc3, after it we could save a lot
+of code.
 
-Ref Crashes Repro Title
-<1> 288     Yes   KMSAN: uninit-value in n_tty_receive_buf_standard
-                  https://syzkaller.appspot.com/bug?extid=559c7fe4b8bac56d38c2
-<2> 141     Yes   INFO: task can't die in show_free_areas
-                  https://syzkaller.appspot.com/bug?extid=8f41dccfb6c03cc36fd6
-<3> 4       No    KMSAN: uninit-value in gsmld_receive_buf
-                  https://syzkaller.appspot.com/bug?extid=2f64914d6a3a8ce91bdd
-<4> 2       No    KMSAN: uninit-value in n_tty_lookahead_flow_ctrl (2)
-                  https://syzkaller.appspot.com/bug?extid=290abdcd4f509377a0eb
+Patch 1-3 simplify the delalloc extent management logic by changes to
+always set EXT4_GET_BLOCKS_DELALLOC_RESERVE flag when allocating
+preallocated blocks, and don't add EXTENT_STATUS_DELAYED flag to an
+unwritten extent, which means ext4_es_is_delayed() is equal to
+ext4_es_is_delonly().
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Patch 4-6 simplify the reserved blocks updating logic by moves the
+reserved blocks updating from ext4_{ind|ext}_map_blocks() to
+ext4_es_insert_extent().
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Patch 7-12 make extent status type exclusive and drop the unused code
+(e.g. ext4_es_is_delonly()), update comments and do some cleanup.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+[1] https://lore.kernel.org/linux-ext4/20240410142948.2817554-1-yi.zhang@huaweicloud.com/
 
-You may send multiple commands in a single email message.
+Thanks,
+Yi.
+
+Zhang Yi (12):
+  ext4: factor out ext4_map_create_blocks() to allocate new blocks
+  ext4: optimize the EXT4_GET_BLOCKS_DELALLOC_RESERVE flag set
+  ext4: don't set EXTENT_STATUS_DELAYED on allocated blocks
+  ext4: let __revise_pending() return newly inserted pendings
+  ext4: passing block allocation information to ext4_es_insert_extent()
+  ext4: update delalloc data reserve spcae in ext4_es_insert_extent()
+  ext4: drop ext4_es_delayed_clu()
+  ext4: use ext4_map_query_blocks() in ext4_map_blocks()
+  ext4: drop unused ext4_es_store_status()
+  ext4: make extent status types exclusive
+  ext4: drop ext4_es_is_delonly()
+  ext4: drop all delonly descriptions
+
+ fs/ext4/extents.c        |  42 +------
+ fs/ext4/extents_status.c | 240 ++++++++++++++-------------------------
+ fs/ext4/extents_status.h |  28 ++---
+ fs/ext4/indirect.c       |   7 --
+ fs/ext4/inode.c          | 201 ++++++++++++++------------------
+ 5 files changed, 189 insertions(+), 329 deletions(-)
+
+-- 
+2.39.2
+
 
