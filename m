@@ -1,97 +1,169 @@
-Return-Path: <linux-kernel+bounces-285501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8CB950E40
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:00:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C60950E44
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46732B21B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:00:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61391C20BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E901A7067;
-	Tue, 13 Aug 2024 21:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0319D1A3BDF;
+	Tue, 13 Aug 2024 21:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KoggFrXt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O7ACY/E4"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C423D1A3BAE
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2DA1E86A;
+	Tue, 13 Aug 2024 21:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723582808; cv=none; b=BYKO0IVKyRTClVzxOFAgQ7rEy3dwDxAnTKq5QtE6Z8/CFEofeHbQgN1NgerE6YWo+7KvVstQwxJktWDkvAA5uqQPKBk66skgnfKdXDQoi1CLNbDb/OLeSnOEIgZDPFbh3cVa8edCMfpvquHu6BmS28FTEGbFiPe1q9mZ/ywHGx0=
+	t=1723582948; cv=none; b=SgHPEnQclSbGRXD+wNl7OrtGJIqIwHX4gzaoCzBT1dEpocDXjDLzzn4pT4XICDIwpYGHxIMCgRSmWPLyAtC0ziYpAR1VI5ttUkbcepPhYuodPct+IudL+El5HgxoCzpVGLy7zk3uwEmfKlY/bmk/4wpSbo0HzIifneBrRfJqNWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723582808; c=relaxed/simple;
-	bh=kU+znfqeVEksTYIiIxtnRUbHcy/Atds8PysiNQcnEAU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=r6UZ+4N4XKQ0WsqGvmFuMbZ5QrtQ/agUi7I9SjobQloekSPlhhotSBSOSQu8MymeDyfeqHG4UAxSjEs82Pya5M0iiCpZ5G+0qKkr2c32ITP+jrHsdS/ByVUaJu4zuWBrIBrBnATLGx7tTh6hgI/uN6tlLz+yK6iJhMZgwcjqasA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KoggFrXt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F53FC32782;
-	Tue, 13 Aug 2024 21:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1723582808;
-	bh=kU+znfqeVEksTYIiIxtnRUbHcy/Atds8PysiNQcnEAU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KoggFrXtE+A9z2S7PNXRBnDwGytcKreECanzlrSvmX2VSnJ1UAHx8MALjzBO8dY6t
-	 c2wPZiuBM1q2adOP5QODYUkPyavxze2tzX6+ZBwN8eJTng9X/BtTk6DrOtF5+gqZr8
-	 BWdgfjIYBqXzagN//hC+0OzTK1V9nRLQYL9bJwcc=
-Date: Tue, 13 Aug 2024 14:00:07 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable v2] mm/hugetlb_vmemmap: batch HVO work when
- demoting
-Message-Id: <20240813140007.2459882ce674b45ecf1403f7@linux-foundation.org>
-In-Reply-To: <20240812224823.3914837-1-yuzhao@google.com>
-References: <20240812224823.3914837-1-yuzhao@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723582948; c=relaxed/simple;
+	bh=3UZ9S2Y70HljE2j3ZOj5LBkVKN9Mw4UJ4WbwkYnUraA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOqbd2vhffb5WWkjnZZGRUdG/SMyKgKgMxSK+kceScvSlj30SRmbCk+LUssuwj1MAtVx4ooD1f9w6e+mThRd9WMiAZN0bYb740pw8ULH+qxSPDbnf6b3BdH1sPMb69Palm/z3lEWJ6uTN/tl+aVoJIVThxSogb17oeZZ0miFzqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O7ACY/E4; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2IOmSrY70uwk1HcUoylW9y1turDpgUbCA7KHSlUuurs=; b=O7ACY/E4I/53NE4vlQtKuUot2Q
+	y2/CPLUI2Kry3BYvzL4Ru2Y1smRabroqTxun/G2poPbybtSj5br/bc0FopCBjHHNqVC9+AFIoHHH3
+	tjwSYXCiRhYWGFseuVeEAaq6LNbV9NsZrKesEugIo6bw5vVxbgb2EJB7AyLgGZF4PSdDPSPrCZmvp
+	TXUDr8FU7eRW5/E3hD0BK+UtFDidxKZRqRVNip+Qtn7a3ZXOvYquBps2A5DQeJMPXIsAD3OYU67Zx
+	VATxBpxHx+CUmGaZDKH8dCb5Ol9OJJuU+MG3VhN9DyEQ60Ye7DW1ylaudBH+IfkkN5nDXlHRdfi7P
+	+SWwtAeg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdyeh-00000007rGr-3Qlz;
+	Tue, 13 Aug 2024 21:02:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 80DE530074E; Tue, 13 Aug 2024 23:02:09 +0200 (CEST)
+Date: Tue, 13 Aug 2024 23:02:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, pengfei.xu@intel.com,
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	x86@kernel.org, lkft-triage@lists.linaro.org,
+	dan.carpenter@linaro.org, anders.roxell@linaro.org, arnd@arndb.de,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Subject: Re: [tip: perf/core] perf: Fix event_function_call() locking
+Message-ID: <20240813210209.GA35275@noisy.programming.kicks-ass.net>
+References: <Zrq4PRAVxjlnvFnb@xpf.sh.intel.com>
+ <20240813151959.99058-1-naresh.kamboju@linaro.org>
+ <Zrul5kzUc-5BfWcT@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zrul5kzUc-5BfWcT@google.com>
 
-On Mon, 12 Aug 2024 16:48:23 -0600 Yu Zhao <yuzhao@google.com> wrote:
+On Tue, Aug 13, 2024 at 11:28:54AM -0700, Namhyung Kim wrote:
 
-> Batch the HVO work, including de-HVO of the source and HVO of the
-> destination hugeTLB folios, to speed up demotion.
-> 
-> After commit bd225530a4c7 ("mm/hugetlb_vmemmap: fix race with
-> speculative PFN walkers"), each request of HVO or de-HVO, batched or
-> not, invokes synchronize_rcu() once. For example, when not batched,
-> demoting one 1GB hugeTLB folio to 512 2MB hugeTLB folios invokes
-> synchronize_rcu() 513 times (1 de-HVO plus 512 HVO requests), whereas
-> when batched, only twice (1 de-HVO plus 1 HVO request). And the
-> performance difference between the two cases is significant, e.g.,
->   echo 2048kB >/sys/kernel/mm/hugepages/hugepages-1048576kB/demote_size
->   time echo 100 >/sys/kernel/mm/hugepages/hugepages-1048576kB/demote
-> 
-> Before this patch:
->   real     8m58.158s
->   user     0m0.009s
->   sys      0m5.900s
-> 
-> After this patch:
->   real     0m0.900s
->   user     0m0.000s
->   sys      0m0.851s
+Duh, yeah.
 
-That's a large change.  I assume the now-fixed regression was of
-similar magnitude?
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 9893ba5e98aa..85204c2376fa 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -298,13 +298,14 @@ static int event_function(void *info)
+>  static void event_function_call(struct perf_event *event, event_f func, void *data)
+>  {
+>  	struct perf_event_context *ctx = event->ctx;
+> -	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+> +	struct perf_cpu_context *cpuctx;
+>  	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
+>  	struct event_function_struct efs = {
+>  		.event = event,
+>  		.func = func,
+>  		.data = data,
+>  	};
+> +	unsigned long flags;
+>  
+>  	if (!event->parent) {
+>  		/*
+> @@ -327,22 +328,27 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
+>  	if (!task_function_call(task, event_function, &efs))
+>  		return;
+>  
+> +	local_irq_save(flags);
 
-> Note that this patch changes the behavior of the `demote` interface
-> when de-HVO fails. Before, the interface aborts immediately upon
-> failure; now, it tries to finish an entire batch, meaning it can make
-> extra progress if the rest of the batch contains folios that do not
-> need to de-HVO.
-> 
-> Fixes: bd225530a4c7 ("mm/hugetlb_vmemmap: fix race with speculative PFN walkers")
+This can just be local_irq_disable() though, seeing how the fingered
+commit replaced raw_spin_lock_irq().
 
-Do we think we should add this to 6.10.x?  I do.
+I'll queue the below...
+
+---
+Subject: perf: Really fix event_function_call() locking
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue Aug 13 22:55:11 CEST 2024
+
+Commit 558abc7e3f89 ("perf: Fix event_function_call() locking") lost
+IRQ disabling by mistake.
+
+Fixes: 558abc7e3f89 ("perf: Fix event_function_call() locking")
+Reported-by: Pengfei Xu <pengfei.xu@intel.com>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ kernel/events/core.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -298,8 +298,8 @@ static int event_function(void *info)
+ static void event_function_call(struct perf_event *event, event_f func, void *data)
+ {
+ 	struct perf_event_context *ctx = event->ctx;
+-	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+ 	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
++	struct perf_cpu_context *cpuctx;
+ 	struct event_function_struct efs = {
+ 		.event = event,
+ 		.func = func,
+@@ -327,22 +327,25 @@ static void event_function_call(struct p
+ 	if (!task_function_call(task, event_function, &efs))
+ 		return;
+ 
++	local_irq_disable();
++	cpuctx = this_cpu_ptr(&perf_cpu_context);
+ 	perf_ctx_lock(cpuctx, ctx);
+ 	/*
+ 	 * Reload the task pointer, it might have been changed by
+ 	 * a concurrent perf_event_context_sched_out().
+ 	 */
+ 	task = ctx->task;
+-	if (task == TASK_TOMBSTONE) {
+-		perf_ctx_unlock(cpuctx, ctx);
+-		return;
+-	}
++	if (task == TASK_TOMBSTONE)
++		goto unlock;
+ 	if (ctx->is_active) {
+ 		perf_ctx_unlock(cpuctx, ctx);
++		local_irq_enable();
+ 		goto again;
+ 	}
+ 	func(event, NULL, ctx, data);
++unlock:
+ 	perf_ctx_unlock(cpuctx, ctx);
++	local_irq_enable();
+ }
+ 
+ /*
 
