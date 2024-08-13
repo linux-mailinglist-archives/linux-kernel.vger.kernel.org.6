@@ -1,163 +1,192 @@
-Return-Path: <linux-kernel+bounces-284847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522939505D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:04:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3C809505D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18689B2B04A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:00:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA38282E23
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFAF199E84;
-	Tue, 13 Aug 2024 13:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A1F19ADA6;
+	Tue, 13 Aug 2024 13:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GCuyQ07K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eP/3ivR+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GCuyQ07K";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eP/3ivR+"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l4pR/OhI"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFD81E498;
-	Tue, 13 Aug 2024 13:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463074206D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554037; cv=none; b=PUdeR6RLm1A/3vB+5SdvxDL7tIk4D25CtrnZEYVh7JT2fU7jShTkNC0oBjuFuaobO9gaO+M7yh5F7hNGpbHjcJHcru3heabiLkI91MYuwRZBeZzZme4pflvzIgrRZmmJ5jGvCp5C6XTl7b1lf55nBrFzDtZjvNzBP4AkRhdTu1M=
+	t=1723554116; cv=none; b=DoobjBxcp6/N3//bOjnJImatUbNf8FDEuDDcClowd37jGOHzXR2xvk4nBOsm2uKhlDkx5acaaIL0Q3pra+ly4t+LD2TB9H1IWBNBZSZNSXZ44HZisOZvh6caTm1xkv1mPj0MoFa99ZO1ty/eqNZGojNGrw45POko1WSizAndh/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554037; c=relaxed/simple;
-	bh=Gc1BnjO0Wwo/2nh/UA+H+KfqU7zrEJ8jtdMe05JLOLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxMgH5X/nouvrGQqeieXb2Axw40ix525fyrfyFWMME2nX9h8e7FyHtYRS97xBncX1PrpyVlDqRZjjCwZRTI7k7Q0Omj+YEfj5VM1ooVhjmapZzhVUjdIKd9aQNPdDV1goufdkjq8/KlpVAdQutVL8Kup8nQMbM8tMdNdAi62qXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GCuyQ07K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eP/3ivR+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GCuyQ07K; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eP/3ivR+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 941E5227DC;
-	Tue, 13 Aug 2024 13:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723554033;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6YkXeoMGTz6M/0wDSQnaVaGxaaJPy/Eq5C66ovHhFZI=;
-	b=GCuyQ07K0pyBOSXvqnMU0+YbPATXJyVal5YGyO8v0q01Ywxvzn1iGEG1GmH/3IMAxdZhRs
-	kocDUCwvfIqY9XSKIXYjD5so24N32vtHmAgV+3TyMkPaDs+Lci9JMiTiA6AGssQ6AiRCRb
-	Y2yFbU3XYSg4qli5JH0oukwQ+ZVmU84=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723554033;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6YkXeoMGTz6M/0wDSQnaVaGxaaJPy/Eq5C66ovHhFZI=;
-	b=eP/3ivR+/jvbM1ehvYxZQ41CHMk621sGpDkhEaBDBbgjuTbd7W6Vh4H/v2aB2QDimb0Zp7
-	c2amhO78zP6j6aAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723554033;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6YkXeoMGTz6M/0wDSQnaVaGxaaJPy/Eq5C66ovHhFZI=;
-	b=GCuyQ07K0pyBOSXvqnMU0+YbPATXJyVal5YGyO8v0q01Ywxvzn1iGEG1GmH/3IMAxdZhRs
-	kocDUCwvfIqY9XSKIXYjD5so24N32vtHmAgV+3TyMkPaDs+Lci9JMiTiA6AGssQ6AiRCRb
-	Y2yFbU3XYSg4qli5JH0oukwQ+ZVmU84=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723554033;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6YkXeoMGTz6M/0wDSQnaVaGxaaJPy/Eq5C66ovHhFZI=;
-	b=eP/3ivR+/jvbM1ehvYxZQ41CHMk621sGpDkhEaBDBbgjuTbd7W6Vh4H/v2aB2QDimb0Zp7
-	c2amhO78zP6j6aAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7A59313983;
-	Tue, 13 Aug 2024 13:00:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id b66VHfFYu2ZoDAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 13 Aug 2024 13:00:33 +0000
-Date: Tue, 13 Aug 2024 15:00:24 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: dsterba@suse.cz, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] btrfs: update target inode's ctime on unlink
-Message-ID: <20240813130024.GP25962@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240812-btrfs-unlink-v1-1-ee5c2ef538eb@kernel.org>
- <20240812164220.GK25962@twin.jikos.cz>
- <c0a0266cbb46694318e5eeb5248216779cb68442.camel@kernel.org>
+	s=arc-20240116; t=1723554116; c=relaxed/simple;
+	bh=OW9ZXqxEkr9RUH5IYYordISjGdWv1zhb8JCl6eodq94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BwUMb8rzAKU8/MagYkXrapMqIuXT4Jag2IQEr9jUxQXT3nbUR4eAEDf/SdEfczhG6ZXE9ui1jKkroIAY9Ji7jt0VfmyNZVGA8pTUgsC9zroKbhN/SXounpaJk1MRc07YkAm4FVlwDn9CBNrbcoE9GTNQEorgurTikox/OFzVBHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l4pR/OhI; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a843bef98so79322566b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723554113; x=1724158913; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zZ3qkhG6IpTE9k1+4JdfEiuc6iwsZmU2tud2hbQlnTM=;
+        b=l4pR/OhIHnwk6fDl4BcrY+KrVRyVAubIrh/Y/i6RzHb4DxJRwbYJf3MvXhcPgZ7xQ6
+         auVl3r6XtHWFF86hOy1H/d/UPTxAkD16rmuNoXEGy35BCnGtNOZ2/QRMkY1jBVvDkXKG
+         ptPqbHXDNmLAs9/l2qdwu5PpLiWeH0JH1fWIs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723554113; x=1724158913;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zZ3qkhG6IpTE9k1+4JdfEiuc6iwsZmU2tud2hbQlnTM=;
+        b=TTB245cGMnCVx2axKjgSK20DaUezcF8phsGBxoBdCTPdxroy1gA1VHm1rw4XuODsvJ
+         8C8mkWNB5DErKWqkFyfnOGNTYmQkPOv3sQMJs4diyuuqVleVfXbrmg6bazq8V2lpWi6y
+         bA9b/S8IBRg9iylVfo6h6QlxzqmJEjtNdBjko4yG++xXOiD+1ROzQo5cr6QHZAlLmzTO
+         SxDppGa4p4lhPp8/Mf/1b3BpQV4jw1p7Y/3SIgXNS+zy1rEJ5/PcpYKyxetpDBT3Gmfl
+         2iQD9u9QKZO030LJAlcpnEUg2aXelJxdq4pjIJEiwIiKK1hojxbHserlSxmrqUZckT/G
+         jnrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvRAJ5qYwqEZieObdRZ9Yj5OuqFsQ+QrPlRCxjAX66VEnmUVMFURXvESWM/1nlTBdThA2+xgjrQOsKS1ndaXGTiAbNCDHyttlYUDBy
+X-Gm-Message-State: AOJu0YwWyJThkoBiFaX6oZs89g4Q0lBikslnEBHpV3tEWFIIO93sFvUN
+	eY9S4hWjBggZ6BEOL2ciJ8hwgKkUJeiDezNi3VrymkoCaDsXhqmOaLb/Ut3fxEwfNki48eC27VB
+	9ZQ==
+X-Google-Smtp-Source: AGHT+IHeQe0fmCJgri1XqpVrZ1Fnm/qv6tGZ1VRtTdUpl48Ya2ISncGhdQ58XQr1F6hajNAno18fAw==
+X-Received: by 2002:a17:907:efd5:b0:a7a:929f:c0cf with SMTP id a640c23a62f3a-a80ed1efeedmr267495166b.21.1723554112746;
+        Tue, 13 Aug 2024 06:01:52 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3f475ccsm70229566b.14.2024.08.13.06.01.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 06:01:52 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso6414410a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:01:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUH7lJ6RlUyrcdbQ1Ordq7LJh4U/BjRlOBG2f7CmoxDtn4RWvYC0sUmRXDByon9NW2NS7bpbG+2OqfuB5yrUFiB+pP/OG6GWq0WZkgc
+X-Received: by 2002:a17:907:d2d9:b0:a7a:ae85:f245 with SMTP id
+ a640c23a62f3a-a80ed258d19mr244135166b.38.1723554111718; Tue, 13 Aug 2024
+ 06:01:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c0a0266cbb46694318e5eeb5248216779cb68442.camel@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,twin.jikos.cz:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
+ <20240813-smatch-clock-v1-1-664c84295b1c@chromium.org> <ce0ed949-5e57-4193-8190-9e4aa9cb62be@stanley.mountain>
+In-Reply-To: <ce0ed949-5e57-4193-8190-9e4aa9cb62be@stanley.mountain>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 13 Aug 2024 15:01:37 +0200
+X-Gmail-Original-Message-ID: <CANiDSCu6BUdJt1sjmbOq2s4KU1JUN9D+HfnvSG6OqMhD-dKekw@mail.gmail.com>
+Message-ID: <CANiDSCu6BUdJt1sjmbOq2s4KU1JUN9D+HfnvSG6OqMhD-dKekw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] media: ar0521: Refactor ar0521_power_off()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 12, 2024 at 12:51:21PM -0400, Jeff Layton wrote:
-> On Mon, 2024-08-12 at 18:42 +0200, David Sterba wrote:
-> > On Mon, Aug 12, 2024 at 12:30:52PM -0400, Jeff Layton wrote:
-> > > Unlink changes the link count on the target inode. POSIX mandates that
-> > > the ctime must also change when this occurs.
-> > 
-> > Right, thanks. According to https://pubs.opengroup.org/onlinepubs/9699919799/functions/unlink.html:
-> > 
-> > Upon successful completion, unlink() shall mark for update the last data
-> > modification and last file status change timestamps of the parent
-> > directory. Also, if the file's link count is not 0, the last file status
-> > change timestamp of the file shall be marked for update.
-> > 
-> 
-> Weird way to phrase to that. IMO, we still want to stamp the inode's
-> ctime even if the link count goes to 0. That's what Linux generally
-> does, anyway. Oh well..
->  
-> > 
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > 
-> > Reviewed-by: David Sterba <dsterba@suse.com>
-> 
-> 
-> FWIW, this should probably go in via the btrfs tree. 
+Hi Dan
 
-Yes, we'll take it.
+On Tue, 13 Aug 2024 at 14:54, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> On Tue, Aug 13, 2024 at 12:13:48PM +0000, Ricardo Ribalda wrote:
+> > Factor out all the power off logic, except the clk_disable_unprepare(),
+> > to a new function __ar0521_power_off().
+> >
+> > This allows ar0521_power_on() to explicitly clean-out the clock during
+> > the error-path.
+> >
+> > The following smatch warning is fixed:
+> > drivers/media/i2c/ar0521.c:912 ar0521_power_on() warn: 'sensor->extclk' from clk_prepare_enable() not released on lines: 912.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+>
+> It's better to just ignore false positives...  The problem here is that
+> Smatch can't track that to_ar0521_dev(dev_get_drvdata(dev))->sensor is the same
+> as sensor.  What I could do is say that "this frees *something* unknown" so
+> let's silence the warning."
+>
+> The problem is that check_unwind.c is not very granular.  It just marks things
+> as allocated and freed.  I could make it more granular so the free and the
+> alloc have to match.  Or we could match based on the type.  This frees a
+> "struct ar0521_dev" so mark all those as freed in the caller.
+>
+> >  drivers/media/i2c/ar0521.c | 15 +++++++++++++--
+> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/ar0521.c b/drivers/media/i2c/ar0521.c
+> > index 09331cf95c62..2c528db31ba6 100644
+> > --- a/drivers/media/i2c/ar0521.c
+> > +++ b/drivers/media/i2c/ar0521.c
+> > @@ -835,7 +835,7 @@ static const struct initial_reg {
+> >            be(0x0707)), /* 3F44: couple k factor 2 */
+> >  };
+> >
+> > -static int ar0521_power_off(struct device *dev)
+> > +static void __ar0521_power_off(struct device *dev)
+> >  {
+> >       struct v4l2_subdev *sd = dev_get_drvdata(dev);
+> >       struct ar0521_dev *sensor = to_ar0521_dev(sd);
+> > @@ -850,6 +850,16 @@ static int ar0521_power_off(struct device *dev)
+> >               if (sensor->supplies[i])
+> >                       regulator_disable(sensor->supplies[i]);
+> >       }
+> > +}
+> > +
+> > +static int ar0521_power_off(struct device *dev)
+> > +{
+> > +     struct v4l2_subdev *sd = dev_get_drvdata(dev);
+> > +     struct ar0521_dev *sensor = to_ar0521_dev(sd);
+> > +
+> > +     clk_disable_unprepare(sensor->extclk);
+> > +     __ar0521_power_off(dev);
+>
+> You had intended to remove the clk_disable_unprepare() from __ar0521_power_off()
+> but forgot so these are double unprepares.
+
+Ups, thanks for catching it :)
+
+Will send as v2, unless you fix it in smatch first ;P
+
+Regards!
+
+>
+> regards,
+> dan carpenter
+>
+> > +
+> >       return 0;
+> >  }
+> >
+> > @@ -908,7 +918,8 @@ static int ar0521_power_on(struct device *dev)
+> >
+> >       return 0;
+> >  off:
+> > -     ar0521_power_off(dev);
+> > +     clk_disable_unprepare(sensor->extclk);
+> > +     __ar0521_power_off(dev);
+> >       return ret;
+> >  }
+> >
+> >
+> > --
+> > 2.46.0.76.ge559c4bf1a-goog
+> >
+
+
+
+-- 
+Ricardo Ribalda
 
