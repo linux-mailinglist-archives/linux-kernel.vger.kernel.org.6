@@ -1,168 +1,143 @@
-Return-Path: <linux-kernel+bounces-284476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A683950165
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:41:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22FC950161
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 388A3B22655
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:41:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6FCB1C23911
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31508BF3;
-	Tue, 13 Aug 2024 09:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2DD17E919;
+	Tue, 13 Aug 2024 09:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JqVRHKIM"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aes8Por/"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B091D17C235;
-	Tue, 13 Aug 2024 09:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562FB17C7C2
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542097; cv=none; b=KV25aeWQVenSDni+H6RB0BwZSVMg6HnxICgR5CSPqalSkgj7dS0yr+qK81o2KqGWDegngjM/BFz7noowWviDKfJ0dTzK6uox+GMGOYxBsivSA+jT+P0kbtBFbCOZ3f/2/XkWt/rgPYT0F5buaBJ9xaviTA6P90VtZUo4YqcUZ+c=
+	t=1723542091; cv=none; b=hpNcukhBQBDhoF8/F6lvQsCSsbhw2b22WAnK14lfR/W/Hf7GAqMuaAnnRStHEXoeueddIBH5DArkRriJYrUWB2Sk1q4/sUtsFFVAvc7wYbWqrsGgXEp12KuKMYYnI0iQPZDkoRWKyZEq7TIurkcJxlWWiKrZ8/0vdwMirDKUiog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542097; c=relaxed/simple;
-	bh=RMcpIOQ0ymYnoKkcNFMupgiGlXhWnCIh0k47zr/oHzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpwMQNdS1D7l4gcUui56+1NVl3o5R7wGTeCLd5rIwieHToqu2Ex+TCr+V+nUz/YBuWrD+5uyp2lq6juT2gFHHaVERgDiHZ5v1NGSeRHujbSkcv5/pLJ7hhGUgGuR5HsaKaZ1G+Vn1gj+TSluEoO8kM6Sdzaz2KmurRSUse/txkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JqVRHKIM; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 35FBEE4;
-	Tue, 13 Aug 2024 11:40:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1723542037;
-	bh=RMcpIOQ0ymYnoKkcNFMupgiGlXhWnCIh0k47zr/oHzA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JqVRHKIMdfEBO8t1x/twlV46Ap/qBgRaZWeEMhY6FcL0i21E2vdNvMxLlKxu7L86E
-	 HimxcLH9/au4q9Nkw/2mKJyesw0zdLA22juy4mH3tasaxI9QsSNEJaJ/TtdrS0AdV9
-	 2Z2S7wPYUuF49BQ9yKHc9WSDoGNT82zcSd2w+j5U=
-Date: Tue, 13 Aug 2024 12:41:10 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: Daniel Scally <dan.scally@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Avichal Rakesh <arakesh@google.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 06/10] usb: gadget: uvc: set req_size once when the
- vb2 queue is calculated
-Message-ID: <20240813094110.GE19716@pendragon.ideasonboard.com>
-References: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
- <20240403-uvc_request_length_by_interval-v4-6-ca22f334226e@pengutronix.de>
+	s=arc-20240116; t=1723542091; c=relaxed/simple;
+	bh=GowZfBUArZDrThXkpk1uy4u6pTSdlwhoXMcs/PPonto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IA4x+cP2DAXj2nhBE/CpytRYAYqd5BTDUCBlIIUjm3uw+kYAE8ZJSZWd1mPz49pwHeyZzH9AHrlLJTDhhyiEB/xejkKl/TdXi7no53McASCemgGqAAv1smW+a8GYki+RMJw2KkiqamPZD/dr4j4BgKtkjO5xClN7KaAWcayUsQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aes8Por/; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so4559828e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:41:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723542087; x=1724146887; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eItjPGBQyvpJiWnOn46lnVpGsIhUMx1VDP+7wHZATso=;
+        b=Aes8Por/VM2IqllsAZT5nQL76L2qzu0cNGSuqZtlJOYjI8fbvnMv1JMZRcq7Ompib3
+         Lb1q0SY8O6UkUIStf7ukbRjXrMXWItkyeMQzfuiLKSL35LtmVSJw8Q3zPTf+yN5c5kOY
+         2IpsyO7BN76aF1MwCw0L6c1u+fE9aC2pmmJ+fNd6IL2KITOAV75+hkDAcGIGKJKKXopA
+         X1u2gCGaJCSKzwMGfVmam4C/UqWThwIMsk47yfQ5qozs6vjs3xSoYBc2KYDq08/XEtpY
+         v9ubtKtYvseEYapkIDDocn0uTxZoWGB7ooUczVuZjxnYTsCBjSBoo2hzz1aB41q7xs21
+         ltaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723542087; x=1724146887;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eItjPGBQyvpJiWnOn46lnVpGsIhUMx1VDP+7wHZATso=;
+        b=DZVUv36ZZLAzaCOkMGvR3Mcyx4Oo5jsDbzenveqv1J9J/o9RwVtwOHme2RmJGebo2X
+         mXqKSWrGSAX5RGLUHBOTQl/vkM79tjo8QCfYf6XgY/Zu0EQXRmQm0NptecZWYCpxh/zd
+         09oaWBtyDKBzL4drR3jhxLJredGHJluOw0zOTL0MjsPbjSinzQ9ZZb6Tiy0LI/Y/vjqW
+         GnnuLeCldAZRE+9qxrgKAghaiEq6CFr2ZdKnKEYlz/3k23hYnOW0QaQigBz6awVceZ4f
+         TAel18cd+gHCjwvP/197aqWEupyLxcaQXVBjNb0PZ9HQ4p5TMl7bxLfSQ6hKslEd0N0D
+         Mizg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4k5XPTQ15FyiMh25xcSR6XqkLIvI3pC74KxfB9FIwUfkodcN+BPrVruO9+K5gxelAbSs+pyabT4ackAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjY3KMSeJbU7fCuyKyRsdcOLGm++RcyZjwL2IUzN9L4MYfGCY9
+	IbJ/yhX/d9nnFVTcSPbNijZ471xKwS7TbqYmIg4SNNedX1bJji9q
+X-Google-Smtp-Source: AGHT+IEmVGyzW4I6MImE67T9Pw4r0FlDQHXbCStVpUhgRs/dbKdieg8qONNaAYIQ0vAUOwy+lNnZvA==
+X-Received: by 2002:a05:6512:1088:b0:530:e1ee:d95 with SMTP id 2adb3069b0e04-5321364847emr2009121e87.1.1723542086719;
+        Tue, 13 Aug 2024 02:41:26 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200eb3c33sm967879e87.19.2024.08.13.02.41.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 02:41:26 -0700 (PDT)
+Message-ID: <0c68db10-5d3a-4fdb-ae7a-6465d17c0712@gmail.com>
+Date: Tue, 13 Aug 2024 12:41:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240403-uvc_request_length_by_interval-v4-6-ca22f334226e@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] irqdomain: Unify checks for bus_token
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: Herve Codina <herve.codina@bootlin.com>, Mark Brown <broonie@kernel.org>
+References: <20240812193101.1266625-1-andriy.shevchenko@linux.intel.com>
+ <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 13, 2024 at 11:09:30AM +0200, Michael Grzeschik wrote:
-> The uvc gadget driver is calculating the req_size on every
-> video_enable/alloc_request and is based on the fixed configfs parameters
-> maxpacket, maxburst and mult.
-> 
-> As those parameters can not be changed once the gadget is started and
-> the same calculation is done already early on the
-> vb2_streamon/queue_setup path its save to remove one extra calculation
-> and reuse the calculation from uvc_queue_setup for the allocation step.
+On 8/12/24 22:29, Andy Shevchenko wrote:
+> The code uses if (bus_token) and if (bus_token == DOMAIN_BUS_ANY).
+> Since bus_token is enum, the later is more robust against changes.
+> Unify all checks to follow the latter variant.
 
-Avoiding double calculations is good, but then don't compute the value
-in uvc_queue_setup(). That will also be called multiple times, and its
-timing will be controlled by userspace. Move it to a better location.
+I don't really have a strong opinion on this but for me the
+if (bus_token) reads better. Te bus_token is either set (and set to 
+something else but zero), or not. This logic is nicely reflected by the 
+check 'if (bus_token)'. Still, I suppose the 'DOMAIN_BUS_ANY' is for a 
+reason, and some people indeed claim that consistency matters ;)
 
-> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> 
+> Fixes: 0b21add71bd9 ("irqdomain: Handle domain bus token in irq_domain_create()")
+> Fixes: 1bf2c9282927 ("irqdomain: Cleanup domain name allocation")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
-> v3 -> v4: -
-> v2 -> v3: -
-> v1 -> v2: -
-> ---
->  drivers/usb/gadget/function/uvc_queue.c |  2 ++
->  drivers/usb/gadget/function/uvc_video.c | 15 ++-------------
->  2 files changed, 4 insertions(+), 13 deletions(-)
+>   kernel/irq/irqdomain.c | 22 ++++++++++++++--------
+>   1 file changed, 14 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadget/function/uvc_queue.c
-> index 7995dd3fef184..2414d78b031f4 100644
-> --- a/drivers/usb/gadget/function/uvc_queue.c
-> +++ b/drivers/usb/gadget/function/uvc_queue.c
-> @@ -63,6 +63,8 @@ static int uvc_queue_setup(struct vb2_queue *vq,
->  	 */
->  	nreq = DIV_ROUND_UP(DIV_ROUND_UP(sizes[0], 2), req_size);
->  	nreq = clamp(nreq, 4U, 64U);
-> +
-> +	video->req_size = req_size;
->  	video->uvc_num_requests = nreq;
->  
->  	return 0;
-> diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
-> index 259920ae36843..a6786beef91ad 100644
-> --- a/drivers/usb/gadget/function/uvc_video.c
-> +++ b/drivers/usb/gadget/function/uvc_video.c
-> @@ -480,7 +480,6 @@ uvc_video_free_requests(struct uvc_video *video)
->  	INIT_LIST_HEAD(&video->ureqs);
->  	INIT_LIST_HEAD(&video->req_free);
->  	INIT_LIST_HEAD(&video->req_ready);
-> -	video->req_size = 0;
->  	return 0;
->  }
->  
-> @@ -488,16 +487,9 @@ static int
->  uvc_video_alloc_requests(struct uvc_video *video)
->  {
->  	struct uvc_request *ureq;
-> -	unsigned int req_size;
->  	unsigned int i;
->  	int ret = -ENOMEM;
->  
-> -	BUG_ON(video->req_size);
-> -
-> -	req_size = video->ep->maxpacket
-> -		 * max_t(unsigned int, video->ep->maxburst, 1)
-> -		 * (video->ep->mult);
-> -
->  	for (i = 0; i < video->uvc_num_requests; i++) {
->  		ureq = kzalloc(sizeof(struct uvc_request), GFP_KERNEL);
->  		if (ureq == NULL)
-> @@ -507,7 +499,7 @@ uvc_video_alloc_requests(struct uvc_video *video)
->  
->  		list_add_tail(&ureq->list, &video->ureqs);
->  
-> -		ureq->req_buffer = kmalloc(req_size, GFP_KERNEL);
-> +		ureq->req_buffer = kmalloc(video->req_size, GFP_KERNEL);
->  		if (ureq->req_buffer == NULL)
->  			goto error;
->  
-> @@ -525,12 +517,10 @@ uvc_video_alloc_requests(struct uvc_video *video)
->  		list_add_tail(&ureq->req->list, &video->req_free);
->  		/* req_size/PAGE_SIZE + 1 for overruns and + 1 for header */
->  		sg_alloc_table(&ureq->sgt,
-> -			       DIV_ROUND_UP(req_size - UVCG_REQUEST_HEADER_LEN,
-> +			       DIV_ROUND_UP(video->req_size - UVCG_REQUEST_HEADER_LEN,
->  					    PAGE_SIZE) + 2, GFP_KERNEL);
->  	}
->  
-> -	video->req_size = req_size;
-> -
->  	return 0;
->  
->  error:
-> @@ -663,7 +653,6 @@ uvcg_video_disable(struct uvc_video *video)
->  	INIT_LIST_HEAD(&video->ureqs);
->  	INIT_LIST_HEAD(&video->req_free);
->  	INIT_LIST_HEAD(&video->req_ready);
-> -	video->req_size = 0;
->  	spin_unlock_irqrestore(&video->req_lock, flags);
->  
->  	/*
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index 01001eb615ec..18d253e10e87 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -130,8 +130,10 @@ EXPORT_SYMBOL_GPL(irq_domain_free_fwnode);
+>   
+>   static int alloc_name(struct irq_domain *domain, char *base, enum irq_domain_bus_token bus_token)
+>   {
+> -	domain->name = bus_token ? kasprintf(GFP_KERNEL, "%s-%d", base, bus_token) :
+> -				   kasprintf(GFP_KERNEL, "%s", base);
+> +	if (bus_token == DOMAIN_BUS_ANY)
+> +		domain->name = kasprintf(GFP_KERNEL, "%s", base);
+> +	else
+> +		domain->name = kasprintf(GFP_KERNEL, "%s-%d", base, bus_token);
+
+You could do:
+	domain->name = bus_token == DOMAIN_BUS_ANY ? kasprintf(...
+to squeeze this a bit more compact (and to maintain the previous style) 
+- but my personal preference is to not have a ternary. Well, again 
+nothing I would have a really strong opinion.
+
+Anyways, the logic looks solid to me so, FWIW:
+
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Yours,
+	-- Matti
 
 -- 
-Regards,
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
-Laurent Pinchart
+~~ When things go utterly wrong vim users can always type :help! ~~
+
 
