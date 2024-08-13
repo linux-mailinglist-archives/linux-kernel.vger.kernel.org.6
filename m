@@ -1,211 +1,118 @@
-Return-Path: <linux-kernel+bounces-285151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 437499509E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:10:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5B59509E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32861F22988
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183F91C22684
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468901A0AF1;
-	Tue, 13 Aug 2024 16:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C2D1A0AE6;
+	Tue, 13 Aug 2024 16:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArPwd28v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NexbOm3/"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A57C1A0709;
-	Tue, 13 Aug 2024 16:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3D41A0709;
+	Tue, 13 Aug 2024 16:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723565397; cv=none; b=NhomI+vwml7EFGMIkIeWUhirIN6vtIlGUx89KG6oUu+cjwpwHmrneXE3RpTAnqKaas+rwgXPYwsC4FisBxmW/1MzEk6o7kDtYbcUOxR7Ln6y89FfZpYptMZjLNZXklvwTaL+YTqczY3p5CzWnFwEYomLRHAV9IuVYVp72abnw2M=
+	t=1723565455; cv=none; b=CpNjcaT4ZywP0aeZ0hNwMMlKCmUpB9HSeoyS02xamhjwgnk47uCZIfG0HndF2M4wgCGpujenw8MW5Lw8QsQQNBjgx872a/ZiFTobccfEXDuyNvglTwgtGUp0AzLplPNQBb9/QiX87YClYC3XDoHDKH+/b90op+LpQl8rLBGDWxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723565397; c=relaxed/simple;
-	bh=etiP4ivdDC0Q6QNfnYXdJZaBIBDYlEpcghlgNInR8kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZbfLDV/N5mSm4/xmOH8XSE75K/eMk0DI5Zc6BCinS6/IpNAp0mvZSSomc5xP980ROKT9Un0l97dtuak3oHJehlmvqWAbVRPGyRZi1qQVvePkG7wetb0AZT5REn/fJePlnU/W923ZW26YkFc45S9AjG/ZSveTtXnFU8q9ukXcRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArPwd28v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA82C4AF09;
-	Tue, 13 Aug 2024 16:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723565397;
-	bh=etiP4ivdDC0Q6QNfnYXdJZaBIBDYlEpcghlgNInR8kg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ArPwd28vZ33Q5aiHtxp1kd590z7VgE7e1NCh9npjKMl9tZ1Sic+kVWUUSeiQaig2g
-	 n4L2Cw1+ZCch63NzRfnjL6f9QUM4o/KcRdbkBx2Rrzx9wELLZfGVyPjE/sFkE1sKMu
-	 VeLWu7d6zGdSCJmoTB7dBMK/E9OHyP0mz27gX9QmXogfztedYzIe0aderXKDJiZeD8
-	 yUKftRlZMQZS2TW5tnRFlQNyU0pR1iaNHD/+N8AwykkH69JUdgPowql0d8TtyOeff1
-	 jGfgGI6cf4obtEHPzag4FXaz3hytrpSxijNQqc+8c0Wi/Iu5q1MY3Ir36hX/GoXXu8
-	 ZdX0gfhNkhmXg==
-Date: Tue, 13 Aug 2024 17:09:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:WATCHDOG DEVICE DRIVERS" <linux-watchdog@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: watchdog: convert ziirave-wdt.txt to
- yaml
-Message-ID: <20240813-trodden-paprika-b2c95d1d265d@spud>
-References: <20240812162810.3812802-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1723565455; c=relaxed/simple;
+	bh=v7ndlf8rGJH2AMQnD6DjRDLEm+mmv6/JnXt+FpXGG30=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z1rI/7UWU/DOkMcml4QIc4GtoQModaBPqpD95CPiZ73m9bZGtQxyDiz4Zp9vUaAccU7F+urbZhJZ3rsMBi/+fpoJw/YT8aEe8ZZNhCIwBXxAeWrRpXOGSvnXBXUCrR8YdsqRdx7g1AwezoNE/W0hCAFGKaiT752Qc4aEcI72gfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NexbOm3/; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db2315d7ceso3345948b6e.1;
+        Tue, 13 Aug 2024 09:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723565453; x=1724170253; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F1ItDKknhypftn5aMxxhUDKlZ20vPD5JiPeIzkuMvB0=;
+        b=NexbOm3/nR9BNJPalId7hL7ZFIpKS1jcSYCeJfC3Vx+IIV+jJFGi7h8wQu1RtNK9v1
+         c9TVD9fYRvE1xQALZiritZ4z8NS5n6uQHpoBkm/y9ArfKjasvv+6ISyyDuaQewP3Yv/P
+         43o64fgDWySmVh07ORGpRKv8gd+WRTA/4IixcwsZulD9a3TUU66ELLy3Yxp+CGv7CaJC
+         5IZoECrV6F/LcugFC2BAFNN9y+TWO3SJqvidESNLSEYmHOMoTL7cpRP8HwKjVBAxtEDr
+         S6XAV9X/vT8hZXY9cqzWw7A2pKD8XRBtQZXd5siX+IgahoGxafJLYtmBVAnmj8TdWmOx
+         BvfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723565453; x=1724170253;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F1ItDKknhypftn5aMxxhUDKlZ20vPD5JiPeIzkuMvB0=;
+        b=U1YYIxMj/gGaE86XCSpj+AjPNT4S0fa6EHInFI9VSxkF8Ff/dUDFXDWwtQDkBZjTNy
+         afRcFp2moWdzGcYmA8S4hMnvf8J1+qXjgSBCXo/ZlieyY/3Pe4axkcMn6IhQKkz/l3tK
+         iJ/m6mWx/PPi5wa6SXkh5v1lUnxNfQSKDipI+fxLCCJBD4v6x5YFX2hY6za/UzTQtJ3Y
+         1wkMuRdgDhWJeBA3XnKJclm2kne4tls3KeBjpCOHBZ8if4qYntz6WRcqr9V81TGh7Qx3
+         ibmVK7iml2GCWR5Wvpq12qEHin2kblg3hfR5o2i1PTgnz5CjzA6Gi7iBqZ3trVj20Quk
+         MRdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUl2SYpyB7rd7BAp9zREa5Z61iLAGPMKacnFj+5TB0qeyYwmB8FLksC1pFj24MAhpAG5TH3zu3rsafDaxMwHDqmJI8MLumUXoYO3zQl
+X-Gm-Message-State: AOJu0YxaSCYqtbDNWMPv4H3tbFDf643dCwLjHtvxITGEYw+PG5Pqq/kU
+	MYHlVJshgaw3ZykiEOw2fMR1GM8+Pkaqw+13DMgP9lKlX9SsX72BKcLyjGky
+X-Google-Smtp-Source: AGHT+IE6h64K92eu87EKVNu/gVKkMsME55kMAwBdkjr/XSCYVrUyORzK94QcURJR3i67akT23qyV/Q==
+X-Received: by 2002:a05:6808:16ac:b0:3db:15ed:2a21 with SMTP id 5614622812f47-3dd1ee075c7mr4761864b6e.16.1723565452797;
+        Tue, 13 Aug 2024 09:10:52 -0700 (PDT)
+Received: from fedora.. ([2800:e6:4001:fca7:b7e8:4418:a953:72f2])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4f91f2b9179sm969978e0c.5.2024.08.13.09.10.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 09:10:52 -0700 (PDT)
+From: =?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
+To: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: tiwai@suse.com,
+	=?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
+Subject: [PATCH v3] ALSA: usb-audio: Support Yamaha P-125 quirk entry
+Date: Tue, 13 Aug 2024 11:10:53 -0500
+Message-ID: <20240813161053.70256-1-soyjuanarbol@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AQLZFFmAfzrtOTaF"
-Content-Disposition: inline
-In-Reply-To: <20240812162810.3812802-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+This patch adds a USB quirk for the Yamaha P-125 digital piano.
 
---AQLZFFmAfzrtOTaF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Juan José Arboleda <soyjuanarbol@gmail.com>
+---
+Hey! Thanks for taking the time to review my patch.
 
-On Mon, Aug 12, 2024 at 12:28:09PM -0400, Frank Li wrote:
-> Convert ziirave-wdt.txt to yaml format.
->=20
-> Additional change:
-> - Add i2c node in example.
-> - Add ref to watchdog.yaml
->=20
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800=
-000/i2c@30a40000/watchdog@38:
-> 	failed to match any schema with compatible: ['zii,rave-wdt']
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - add ref watchdog.yaml
-> - Remove timeout-sec
-> ---
->  .../bindings/watchdog/zii,rave-wdt.yaml       | 47 +++++++++++++++++++
->  .../bindings/watchdog/ziirave-wdt.txt         | 19 --------
->  2 files changed, 47 insertions(+), 19 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/watchdog/zii,rave-w=
-dt.yaml
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/ziirave-wd=
-t.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml=
- b/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
-> new file mode 100644
-> index 0000000000000..0206d9ddf872d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/watchdog/zii,rave-wdt.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Zodiac RAVE Watchdog Timer
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
+I had a little mistake in V2, I forgot to stage my new diff for
+amending. Sorry
 
-When you're converting bindings, listing yourself as the maintainer only
-really makes sense if you know/care about the hardware IMO.
+Attending your sorting by id suggestion, I've moved the P-125 to the
+bottom.
 
-> +
-> +properties:
-> +  compatible:
-> +    const: zii,rave-wdt
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: i2c slave address of device, usually 0x38
-> +
-> +  reset-duration-ms:
-> +    description:
-> +      Duration of the pulse generated when the watchdog times
-> +      out. Value in milliseconds.
-              ^^^^^^^^^^^^^^^^^^^^^
-This is obvious, and could have been dropped. Keep an eye out for things
-like that while doing conversions.
+Regards,
+-Juan
+---
+ sound/usb/quirks-table.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
+index f13a8d63a019..aaa6a515d0f8 100644
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -273,6 +273,7 @@ YAMAHA_DEVICE(0x105a, NULL),
+ YAMAHA_DEVICE(0x105b, NULL),
+ YAMAHA_DEVICE(0x105c, NULL),
+ YAMAHA_DEVICE(0x105d, NULL),
++YAMAHA_DEVICE(0x1718, "P-125"),
+ {
+ 	USB_DEVICE(0x0499, 0x1503),
+ 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
+-- 
+2.46.0
 
-Thanks,
-Conor.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: watchdog.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        watchdog@38 {
-> +            compatible =3D "zii,rave-wdt";
-> +            reg =3D <0x38>;
-> +            timeout-sec =3D <30>;
-> +            reset-duration-ms =3D <30>;
-> +        };
-> +    };
-> +
-> diff --git a/Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt b=
-/Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt
-> deleted file mode 100644
-> index 3d878184ec3ff..0000000000000
-> --- a/Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt
-> +++ /dev/null
-> @@ -1,19 +0,0 @@
-> -Zodiac RAVE Watchdog Timer
-> -
-> -Required properties:
-> -- compatible: must be "zii,rave-wdt"
-> -- reg: i2c slave address of device, usually 0x38
-> -
-> -Optional Properties:
-> -- timeout-sec: Watchdog timeout value in seconds.
-> -- reset-duration-ms: Duration of the pulse generated when the watchdog t=
-imes
-> -  out. Value in milliseconds.
-> -
-> -Example:
-> -
-> -	watchdog@38 {
-> -		compatible =3D "zii,rave-wdt";
-> -		reg =3D <0x38>;
-> -		timeout-sec =3D <30>;
-> -		reset-duration-ms =3D <30>;
-> -	};
-> --
-> 2.34.1
->=20
->=20
-
---AQLZFFmAfzrtOTaF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZruFUAAKCRB4tDGHoIJi
-0lUwAP4kUZkvMFonhZbuNpnrd6wekgNLyHVLIfWn2GVMJyK1VwD9E1Xo9+df9amP
-iRLPPUJ6PCLE+9TLGf6oo2YbXkcp7A0=
-=JvS/
------END PGP SIGNATURE-----
-
---AQLZFFmAfzrtOTaF--
 
