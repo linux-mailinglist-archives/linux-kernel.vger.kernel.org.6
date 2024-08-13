@@ -1,217 +1,124 @@
-Return-Path: <linux-kernel+bounces-284453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979BD95011A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:19:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FBD95011C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF5E1F21CFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B83231C22B33
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4DA16D33F;
-	Tue, 13 Aug 2024 09:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA92617A92F;
+	Tue, 13 Aug 2024 09:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="q/qerAE6"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/gDzNkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F91A210E7
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3928210E7;
+	Tue, 13 Aug 2024 09:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540774; cv=none; b=bBW5IATWHBsX3SMEsi8ZvuI7v/jiAyLeQsGIU9devpC/ObeYJ5wEhw7UKYLKwnOG7hooh3QTDnEeycrgnXiJ7ATPbBt6osKQJdeZpq9DT0LqwSAbNUIobidoA8bRp6Jpe2/UnfH4JLuRFbYvfE8u4TbrcxtwcUUdDUqGPX6EiPY=
+	t=1723540815; cv=none; b=soW2wgs+h1yayokl7pTmD7w0EdI98mQpMAMp5+7U840fv/M46VgCJB8BQ4QF5swZz6ns1GvPBcdUIYMqvh7c8tbsl+0ActBXqRPHdrjjCr5vDr34naOt7xefaS9VQxTHI7miogtnU8zUZDaYMksKkpC2hfqgHZ65facPFrPv0Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723540774; c=relaxed/simple;
-	bh=fviIXfk/16Iyz6UUP1CbYcG6Q4NIK7zqMivMc+bmjEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qdhOqWqYHSoq5/Hfnn6pni9z57ZHCT60hVkq3WXTu9Q1w8Gws2gqBR7iaNe2qbt8uG6TKpEj3ufJTDcp3MGMg+u3LVtfTW3pf6U+QQtXLHmz+Zl+nZqkSj+XZcWEOqIc8/80XZOlYG3MxKGBjlum7kaVvqBXMoGXnVPnm8foolM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=q/qerAE6; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201cd78c6a3so4654205ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723540772; x=1724145572; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UOIPhCxbCnq3Yq8svFukT75BwpCgCK3DsDifbDiyOd0=;
-        b=q/qerAE6tneqD0WyofibxS+CE57Z3QAfRqgeEa0vlnCWQDl4jCxr7GNn6olCXaWwhe
-         9+0JUxdi56B+dlQoPH6TXvmqL8NFkv2/79Rf/xcvn4lTh6dSuctunK9oc0dQhxOjxqPd
-         DEh8WJtSLgX8bYoEXi2lYV3D848oYnUXHXFfqZ/Gt8zEjJKffbLq6dCLIS1T6MxAXsC0
-         MxErex1IfAf+zClgocTezwHw13ad4wc5KuC3Q5L+fo2K03r3Gl5Mg1tWzt1KNbApudwW
-         OCaxPbWjb+ecg4mimUOcIKoEsemy4lVLIjns2Oz+KxVDu5Cr4DDJ4tDJVBLZUPzB6Xkn
-         NqeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723540772; x=1724145572;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UOIPhCxbCnq3Yq8svFukT75BwpCgCK3DsDifbDiyOd0=;
-        b=PKQVxOZLJHRldbFTpE7+6sMRNTvL1BdSMNTiCxaVxYCPexIiSegpGmbbGdsLeTWuP/
-         xzh3vqmvwBmNhAI++PfgkhViWnNy1Z8dp2V6qFpNSzMTW2SsiUr+dIYEIm58EdID9ShK
-         6uDwnp9cfBKCIGRgKOTWxrD9r4nya8viO9mQZ22WwqrdIL/5/to7xL4UL36qZDdFvlbs
-         vHuJ1AjNTZoJTnObphYRz8JKOS/bfRRdOBtYT+YtneP5SwPU3RaIg2dSSvd+/uMdtvs5
-         shDRYLuBUzNLaObvVFLE5neK9YTDKKlDppiyaI3ndfZaCYluTHtziDqhZVYnEYJmMLqp
-         7Yjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkipchoP9WLZ15PmEg2t8WVCr24eJse0BVy9YAwaJvuhCevDKPnsxltV6q4U7hUL/S7IP2xd5AjED36F17kNXueGb9TjLF1Rujo7dX
-X-Gm-Message-State: AOJu0YyOpNGGqPbZ8bC+ofojor7YATTM4BA7RNMQ/iKRyQUu0jupunbk
-	r4U93Rsw4fPOlv5Xvj2qfAwd9BPDPMfFs13w8htqeUfXRYqZ47hBYcHo1vBcfot+tlLmrp6QhU+
-	e
-X-Google-Smtp-Source: AGHT+IG+YUlmkbgzumQAnDrOC3yJM8EajByKNUPlK1PzPOi8jwfcgoCBenNrzm+PY8E05xjvd16FSA==
-X-Received: by 2002:a17:903:24c:b0:1fd:9420:1073 with SMTP id d9443c01a7336-201ca209610mr42003895ad.43.1723540771793;
-        Tue, 13 Aug 2024 02:19:31 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd12f593sm9468545ad.4.2024.08.13.02.19.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 02:19:31 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sdnge-00FSKT-25;
-	Tue, 13 Aug 2024 19:19:28 +1000
-Date: Tue, 13 Aug 2024 19:19:28 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Anders Blomdell <anders.blomdell@gmail.com>
-Cc: linux-xfs@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: XFS mount timeout in linux-6.9.11
-Message-ID: <ZrslIPV6/qk6cLVy@dread.disaster.area>
-References: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
- <ZraeRdPmGXpbRM7V@dread.disaster.area>
- <252d91e2-282e-4af4-b99b-3b8147d98bc3@gmail.com>
- <ZrfzsIcTX1Qi+IUi@dread.disaster.area>
- <4697de37-a630-402f-a547-cc4b70de9dc3@gmail.com>
- <ZrlRggozUT6dJRh+@dread.disaster.area>
- <6a19bfdf-9503-4c3b-bc5b-192685ec1bdd@gmail.com>
+	s=arc-20240116; t=1723540815; c=relaxed/simple;
+	bh=kJLEtYQcepPSsS8lbEpbemeMKD2Lt0XQEH/PhphCKqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D+faRaWol3XR5Zdzn8P4WHxBorC6fzyOE8APYrPEvrSz85pZbILNCGJzf9dc9ax8hUFrIem/qDviIdC1Sfqs5Qfd/4kqabDy1K7d4AyCoOm7OeIZxMDtzbwcy3As7YJjM0W9YWuL9mGyIq17DyKUuVEKDGx25WDDZR0QF5EQV0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/gDzNkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF73C4AF0B;
+	Tue, 13 Aug 2024 09:20:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723540814;
+	bh=kJLEtYQcepPSsS8lbEpbemeMKD2Lt0XQEH/PhphCKqY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N/gDzNkR0qm59bhD8yXPG+OYfMlY4hKyc8Rm7PjnA4kFPP7BkGvjJGYPk5kc6HiZc
+	 7vXwIK5UJImXF/2Gw3yRt4aFPYlmTR3NtY6/hIkRtpWBuqK2+o+BL/HOHZ1ZhO90jG
+	 2TTYerzYzRZoxdEuGbNDNwDRx4CAwuIXXTyx8dcLdcNAxyePxoOLAtlAXn+6vWfKQw
+	 Mjm3+z4pU+B3teyKUdECEWrHZVzj5Q3rqTFfCcdkvGfbTB45DYaAKVvAxDiDYGpMQW
+	 B1n0gkSU3/HwA9iBV5+a1jGNB9LeiEvQgSMMYcYhTNWx3Z5LWeNJz2rAwX1IUMblt2
+	 2XU8XJaqzVmAw==
+Message-ID: <781e8fcd-3814-4537-8ecf-efab0a380fff@kernel.org>
+Date: Tue, 13 Aug 2024 11:20:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6a19bfdf-9503-4c3b-bc5b-192685ec1bdd@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] ARM: dts: imx6qdl: Rename USB hub node name
+To: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com, Alexander Stein <alexander.stein@ew.tq-group.com>
+References: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
+ <20240812143431.98323-6-Markus.Niebel@ew.tq-group.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240812143431.98323-6-Markus.Niebel@ew.tq-group.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 03:03:49PM +0200, Anders Blomdell wrote:
-> On 2024-08-12 02:04, Dave Chinner wrote:
-> > 
-> > Ok, can you run the same series of commands but this time in another
-> > shell run this command and leave it running for the entire
-> > mount/unmount/mount/unmount sequence:
-> > 
-> > # trace-cmd record -e xfs\* -e printk
+On 12/08/2024 16:34, Markus Niebel wrote:
+> From: Alexander Stein <alexander.stein@ew.tq-group.com>
+> 
+> According to microchip,usb2514.yaml the node name shall be usb-hub.
 
-[snip location of trace]
+That's not true. The schema does not say anything like this. Old name is
+correct. NAK.
 
-> > That will tell me what XFS is doing different at mount time on the
-> > different kernels.
-> Looks like a timing issue, a trylock fails and brings about a READ_AHEAD burst.
 
-Not timing - it is definitely a bug in the commit the bisect pointed
-at.
+Best regards,
+Krzysztof
 
-However, it's almost impossible to actually see until someone or
-something (the trace) points it out directly.
-
-The trace confirmed what I suspected - the READ_AHEAD stuff you see
-is an inode btree being walked. I knew that we walk the free inode
-btrees during mount unless you have a specific feature bit set, but
-I didn't think your filesystem is new enough to have that feature
-set according to the xfs_info output.
-
-However, I couldn't work out why the free inode btrees would take
-that long to walk as the finobt generally tends towards empty on any
-filesystem that is frequently allocating inodes. The mount time on
-the old kernel indicates they are pretty much empty, because the
-mount time is under a second and it's walked all 8 finobts *twice*
-during mount.
-
-What the trace pointed out was that the finobt walk to calculate
-AG reserve space wasn't actually walking the finobt - it was walking
-the inobt. That indexes all allocated inodes, so mount was walking
-the btrees that index the ~30 million allocated inodes in the
-filesystem. That takes a lot of IO, and that's the 450s pause 
-to calculate reserves before we run log recovery, and then the
-second 450s pause occurs after log recovery because we have to
-recalculate the reserves once all the intents and unlinked inodes
-have been replayed.
-
-From that observation, it was just a matter of tracking down the
-code that is triggering the walk and working out why it was running
-down the wrong inobt....
-
-In hindsight, this was a wholly avoidable bug - a single patch made
-two different API modifications that only differed by a single
-letter, and one of the 23 conversions missed a single letter. If
-that was two patches - one for the finobt conversion, the second for
-the inobt conversion, the bug would have been plainly obvious during
-review....
-
-Anders, can you try the patch below? It should fix your issue.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
-
-xfs: xfs_finobt_count_blocks() walks the wrong btree
-
-From: Dave Chinner <dchinner@redhat.com>
-
-As a result of the factoring in commit 14dd46cf31f4 ("xfs: split
-xfs_inobt_init_cursor"), mount started taking a long time on a
-user's filesystem.  For Anders, this made mount times regress from
-under a second to over 15 minutes for a filesystem with only 30
-million inodes in it.
-
-Anders bisected it down to the above commit, but even then the bug
-was not obvious. In this commit, over 20 calls to
-xfs_inobt_init_cursor() were modified, and some we modified to call
-a new function named xfs_finobt_init_cursor().
-
-If that takes you a moment to reread those function names to see
-what the rename was, then you have realised why this bug wasn't
-spotted during review. And it wasn't spotted on inspection even
-after the bisect pointed at this commit - a single missing "f" isn't
-the easiest thing for a human eye to notice....
-
-The result is that xfs_finobt_count_blocks() now incorrectly calls
-xfs_inobt_init_cursor() so it is now walking the inobt instead of
-the finobt. Hence when there are lots of allocated inodes in a
-filesystem, mount takes a -long- time run because it now walks a
-massive allocated inode btrees instead of the small, nearly empty
-free inode btrees. It also means all the finobt space reservations
-are wrong, so mount could potentially given ENOSPC on kernel
-upgrade.
-
-In hindsight, commit 14dd46cf31f4 should have been two commits - the
-first to convert the finobt callers to the new API, the second to
-modify the xfs_inobt_init_cursor() API for the inobt callers. That
-would have made the bug very obvious during review.
-
-Fixes: 14dd46cf31f4 ("xfs: split xfs_inobt_init_cursor")
-Reported-by: Anders Blomdell <anders.blomdell@gmail.com>
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/xfs/libxfs/xfs_ialloc_btree.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/xfs/libxfs/xfs_ialloc_btree.c b/fs/xfs/libxfs/xfs_ialloc_btree.c
-index 496e2f72a85b..797d5b5f7b72 100644
---- a/fs/xfs/libxfs/xfs_ialloc_btree.c
-+++ b/fs/xfs/libxfs/xfs_ialloc_btree.c
-@@ -749,7 +749,7 @@ xfs_finobt_count_blocks(
- 	if (error)
- 		return error;
- 
--	cur = xfs_inobt_init_cursor(pag, tp, agbp);
-+	cur = xfs_finobt_init_cursor(pag, tp, agbp);
- 	error = xfs_btree_count_blocks(cur, tree_blocks);
- 	xfs_btree_del_cursor(cur, error);
- 	xfs_trans_brelse(tp, agbp);
 
