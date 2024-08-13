@@ -1,103 +1,137 @@
-Return-Path: <linux-kernel+bounces-285153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A998B9509E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:12:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4759509EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17011C2259F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B981F23765
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7276E1A0AF3;
-	Tue, 13 Aug 2024 16:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X5Pyu/5D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7221A2540;
+	Tue, 13 Aug 2024 16:13:16 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAA11A0709;
-	Tue, 13 Aug 2024 16:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9761A0709;
+	Tue, 13 Aug 2024 16:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723565530; cv=none; b=kxlX8jh2JUdZHcPOT2vZ2pBuyP7KOvpZASFTq6Kng/rzZ/UDhOqa3zwwJV48iAk2Ju9uNx41q2KOqgudqCBrtWZeimlK+/J5X34Yv1A8e0k/g6hvm2X2Afw4KmEPWaCOs4GKh7jZJ9zvqA9vsuTHRfLJiYHZMykRYe55HAOovCo=
+	t=1723565596; cv=none; b=UIDEugks3lbSy9fImf1BdIplz+JwPCju3dMQ8BRJ3IxwzPY/USyPkVXssnhmWKl1NgWcVoLhP7GQTKeAew/a8Lcgpoidqq6BgZWH/eC3pg1BMMK6/Wnw4XLDV4prneFm6U6n6AOfqJb2RAL995/56nFYtvPZOD4VsvvX8TCUTus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723565530; c=relaxed/simple;
-	bh=OT1jMBEIYbcJ4ISbVWZe5XVYi/0pcQuZSkg7Dpj36hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bN+EJOYAmYXZZnDk6J0sDHo+GMshluefzP6gO6ywDzudT3i+TgQUJIF1te0a48NgGxgkpejC4quR4GNG1487cBLrx6YwdqLzDzsPDCJ28ReaVeOhsRAqVS2IhhxjrqkkCAFOX5k7ChGPVYsDWYq3dDND9LclUN0YWZyanJkx7eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X5Pyu/5D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A30FC4AF0B;
-	Tue, 13 Aug 2024 16:12:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723565530;
-	bh=OT1jMBEIYbcJ4ISbVWZe5XVYi/0pcQuZSkg7Dpj36hI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X5Pyu/5DS3i3+P352b3/TudoHJl3Gy9i0L9Wv5WPSmRm5mgoalV6H82adKYic3G0N
-	 orrvGmbqA8NRVWsFOQ/4hoUFHQx7oGvJRTJ8NrvVsJBrt/7n/oGV5csJmhgZwX9vuy
-	 5dBd0MJkVqMENHar9HP3/WNldyU+oaJ6gQ/jJkvg=
-Date: Tue, 13 Aug 2024 18:12:07 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Chris Wulff <crwulff@gmail.com>
-Cc: linux-usb@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Perr Zhang <perr@usb7.net>, Pavel Hofman <pavel.hofman@ivitera.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] usb: gadget: f_uac1: Change volume name and remove
- alt names
-Message-ID: <2024081348-muskiness-fountain-7e75@gregkh>
-References: <20240804002912.3293177-2-crwulff@gmail.com>
- <2024081335-wrist-earpiece-a738@gregkh>
- <CAB0kiB+ONUpx9Ozg9x836BEdCtSSm-J+jpy2BKoDgVF1CP9O9Q@mail.gmail.com>
+	s=arc-20240116; t=1723565596; c=relaxed/simple;
+	bh=tOmTgnpH+kB10iQjIL4bK0ZmD/wuThDLYeHtlrh5aIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YETYNqlbHM899A543xsa38OK8GJYD/pEwEAYxP88Fv2DEABnQKzWqqOqxLPW83Wta/aTVr4hyT5brxEDvwHXoAYQzye/Nyg+bOEYPauewk6yx8JGIXkjfMeHnakecU6K1E23A4UEyArZAe9TCpUkurP2hTwZzUkOxNJMiWSRGTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7d26c2297eso649012566b.2;
+        Tue, 13 Aug 2024 09:13:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723565593; x=1724170393;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LaQLUo5i7elUXPRL0FJej/1GR8HV8NZJO8YJDS87uUg=;
+        b=LWzdVQ2A/HJsPn/yY4lgmmQ2A7NUYvrlrtEEhEmAHK1PpOJVBcQMkPQRXpLyJnNJuf
+         Pki1HDzc5t3ooY6+iRWtdr/yzzJu8Bh/+oh/r6ec3k2QIu4xwKB6s82ZgsXcxzFDHAxr
+         7EZOQUSEsf7HhNhuG5wuKtk2TbQvkt0LDod/v2Aou6u898HYh6HovfULBBYtsphYVQUL
+         2L1kkbYnF3nuYr3gYeFjdurMYWGf/95ShojMD/F2P+SjL1jS74PHN0NYnUhxSh8NelTQ
+         LySVQOTSn6nkLcEWyrPXeqL1pNiOOUrXtySTMdsCar4ukV2v+z6Zgx93nKn3Q8k+mEdR
+         SRtg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0yBnhATy2nRemLkDITcf6sfPPjKwZCWeFXZgVihXlV5W4VZhReTBL0bJz/ayl94WkTPMEOfMi6E4TnAHd8jJ8VXOUwusACZ6y15OGLZX2+VnMDxYKEoCTtmpczoWzrFHtNaa0uQOsYWBQL//ZdJgAJWwHF9itTffFOUxn3vLNBdpjc/0=
+X-Gm-Message-State: AOJu0YzUWKRtEpql/41h8H5SfpXe12bkcZr4nQ49uHDuu1vNaD/7Dczk
+	q2I21xaaZre3JHXm7SmHSf0Wr+z8yXEHXKRx5dEFYzWBOiWgaZob
+X-Google-Smtp-Source: AGHT+IEuj9MtSNhaX/+jDeUjTi9lD+86KFlQPkIuuk/wrtzy6d6QuWkOuYHCh+LLYaBVdCOFsi5Mnw==
+X-Received: by 2002:a17:907:e68b:b0:a7a:b43e:86cf with SMTP id a640c23a62f3a-a80ed1cece4mr329561666b.27.1723565592788;
+        Tue, 13 Aug 2024 09:13:12 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3f45c86sm80815866b.25.2024.08.13.09.13.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 09:13:11 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: leit@meta.com,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM HOST DRIVERS),
+	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] Do not mark ACPI devices as irq safe
+Date: Tue, 13 Aug 2024 09:12:53 -0700
+Message-ID: <20240813161254.3509409-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAB0kiB+ONUpx9Ozg9x836BEdCtSSm-J+jpy2BKoDgVF1CP9O9Q@mail.gmail.com>
 
-On Tue, Aug 13, 2024 at 08:56:26AM -0400, Chris Wulff wrote:
-> On Tue, Aug 13, 2024 at 4:34 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Sat, Aug 03, 2024 at 08:29:13PM -0400, crwulff@gmail.com wrote:
-> > > From: Chris Wulff <crwulff@gmail.com>
-> > >
-> > > This changes the UAPI to align with disussion of alt settings work.
-> > >
-> > > fu_name is renamed to fu_vol_name, and alt settings mode names
-> > > are removed for now in favor of future work where they will be
-> > > settable in subdirectories for each alt mode.
-> > >
-> > > discussion thread for api changes for alt mode settings:
-> > > https://lore.kernel.org/linux-usb/35be4668-58d3-894a-72cf-de1afaacae45@ivitera.com/T/
-> >
-> > What is now going to break due to this change?  What userspace tools use
-> > the old names that need to be changed?
-> >
-> > Are you _SURE_ that you can rename external files like this and
-> > everything will keep on working?
-> 
-> Nothing is using them, since they were just introduced. I wanted to get
-> the API changed before they make it to mainline and somebody starts
-> using them.
-> 
-> You just applied the patch that introduced them into usb-next on 7/31/2024,
-> just after v6.11-rc1 so they haven't yet made it to the mainline kernel.
-> 
-> This is the patch that introduces them:
-> 
-> https://lore.kernel.org/all/CO1PR17MB541911B0C80D21E4B575E48CE1112@CO1PR17MB5419.namprd17.prod.outlook.com/
+On ACPI machines, the tegra i2c module encounters an issue due to a
+mutex being called inside a spinlock. This leads to the following bug:
 
-Ah, thanks, I totally forgot that.  Remember, I deal with about 1000+
-patches a week...
+	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
+	in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
+	preempt_count: 0, expected: 0
+	RCU nest depth: 0, expected: 0
+	irq event stamp: 0
 
-thanks,
+	Call trace:
+	__might_sleep
+	__mutex_lock_common
+	mutex_lock_nested
+	acpi_subsys_runtime_resume
+	rpm_resume
+	tegra_i2c_xfer
 
-greg k-h
+The problem arises because during __pm_runtime_resume(), the spinlock
+&dev->power.lock is acquired before rpm_resume() is called. Later,
+rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+mutexes, triggering the error.
+
+To address this issue, devices on ACPI are now marked as not IRQ-safe,
+considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+
+Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
+Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+---
+Changelog:
+v2:
+  * Replaced ACPI_HANDLE() by has_acpi_companion() (Andy Shevchenko)
+  * Expanded the comment before the change (Andy Shevchenko)
+  * Simplified the stack in the summary (Andy Shevchenko)
+
+ drivers/i2c/busses/i2c-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 85b31edc558d..1df5b4204142 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1802,9 +1802,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	 * domain.
+ 	 *
+ 	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
+-	 * be used for atomic transfers.
++	 * be used for atomic transfers. ACPI device is not IRQ safe also.
+ 	 */
+-	if (!IS_VI(i2c_dev))
++	if (!IS_VI(i2c_dev) && !has_acpi_companion(i2c_dev->dev))
+ 		pm_runtime_irq_safe(i2c_dev->dev);
+ 
+ 	pm_runtime_enable(i2c_dev->dev);
+-- 
+2.43.5
+
 
