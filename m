@@ -1,111 +1,115 @@
-Return-Path: <linux-kernel+bounces-284854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED46950606
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:09:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA30D950609
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D511F2644D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775B2281795
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC2C19B3D8;
-	Tue, 13 Aug 2024 13:09:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390C318A94E;
-	Tue, 13 Aug 2024 13:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B2F19B3E1;
+	Tue, 13 Aug 2024 13:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWz+fPWy"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0D419ADBA;
+	Tue, 13 Aug 2024 13:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554565; cv=none; b=VbvgytqQLQ2v34wFskOx1AIj6Fi9hJUrjmcu8USSRD0UwcmgBuCedvu7+0a/EN9FeTZf9U16ABi/GC+y+bTFI9SGvj5cTgKsRlScIqMqvZ2Hs4S9LVxnmn/oqINh5OAeZRxKp4K5XGYWpel57zgH8FAqXhz7CZLu/9ecWHEwUaQ=
+	t=1723554594; cv=none; b=tTiYDJH7vSiARHIs6vEKl5OthMFBbO001cGU4LkMM/0fA9SNK5yjbjP6ncRb7pdu5fxwn9nbRYby8jUS+FzQeZfwI7FWBTp5bZvOe7fupg4SsHl/gSvlNUnp7/752e7pxLLQ/6EXpzJSaKfbRL+KOOQHMsaUJsQtAUIUQs/yCUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554565; c=relaxed/simple;
-	bh=ILz6YE5PV2hkpYKxw1tQdKEoLMSr5oeVb5KDJS931ZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iOX/EsBU/hrsKoP6eqU0O6nM+PndyzWMsK3XxiK+aT/Fe8f/qvQ/sWQQj6KNgni4ojQM0owXL+xXCfq+j+Duu60RO4T9SYYbTh5DUt5lNx+5Llw/S4JwDmgRzXKpsx8RqVqp6GFR9OdDCMBBVKMH/Vx4we4SW03uAE1AH7tm0ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9402912FC;
-	Tue, 13 Aug 2024 06:09:49 -0700 (PDT)
-Received: from [10.57.84.20] (unknown [10.57.84.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 64DFD3F6A8;
-	Tue, 13 Aug 2024 06:09:22 -0700 (PDT)
-Message-ID: <c20a07e4-b9e6-4a66-80f5-63d679b17c3b@arm.com>
-Date: Tue, 13 Aug 2024 14:09:20 +0100
+	s=arc-20240116; t=1723554594; c=relaxed/simple;
+	bh=GRkrMa+NzJTC6sMn5hZ/urMe/80d3OUJWRmCv4XjoU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASsE6WJs1a6v2zjTz5ltY22/kFcKKYrltanjROek7aui8y2IMEzxhzJ/GzxCRs/D66JIe4DyDMqgcK7ZAYwACljSv71TqlNqTXnkbSIkT3bRVt/2dbrlnfobjox+T3bLffFzmywq1MEBq6TYFfJuEcJjvE2lbHBA08wzSZ3eB20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWz+fPWy; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-268daf61e8bso2145515fac.0;
+        Tue, 13 Aug 2024 06:09:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723554592; x=1724159392; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5l8u9NIvp6mmIsccM1HWUWBWBG2azze1DXyub334hgs=;
+        b=hWz+fPWySYIPnMpYJcNjNNE/j7zWSbl47eYVTs6RQZ9xGFE21rcpUUJL3xHEbx9YLE
+         oGK7BuVci2b7mZJ9a0iRmrfkP7tw+KdbTRTYSuTrTJm3dmyw3byehv8sW0Fpz77TNnUh
+         n8dyN1kP2wexUbGdVb4gpRbxoieQR7KMPRO+ZSVTQBIgBEbYBcCd0cUwOK+XzlD/l+Oj
+         kX/2BjqYSxjjm++dQqdWtJW5ge0oiXG0+dLhfl9PSeKWBfmelyz7oJ2nSQQ7Un4jaRIT
+         WGiMMb9oAMlU0n4YFWO/5bk/NiAavbCNQNPRR0U9eLJVs6hJYS1mIsLFpuoH+whNMiO8
+         2Qfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723554592; x=1724159392;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5l8u9NIvp6mmIsccM1HWUWBWBG2azze1DXyub334hgs=;
+        b=WWIcsCkrXaWu9pMzvnCKscvRnp1/V1tpbM+6uiQ7QMjeZI4QRkMBd6rzzVbTiw4gnU
+         oUb8ADlqK3ZvKcMQuIEnok1OI5ObeXAoFyXQtLT0dqCcE017BEOq6mT3Nz9L7U+kiQhA
+         T+ZoEAEFfKllcSbcQ7iyLaTIoKJ72+7mI68raPscEkHau8nEvxoRmIOCVUC+UptPiB9B
+         f3MvBE7Cxr60bQRFjmyPE/yypsgUAgqzqhYu2egcdaICgeoePjr2TjdLhK3jqUCNFMeE
+         kjVB20tCXAF856g8bUpXUiH+04cDKXSb4YUuf8Udsc0IbaeiVgijT8f8BpqVKEu+Z3eo
+         4Izw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbeUamEWkPwsLJomZ3Fy3yQxbpGHzLznskcSmU9TTG9pMb3QV2hFUH0LaIBzD83KV7EV/mu4v+q+nnfqS35zOlDjPuVe3k+x7Q7D1FzienJfz4sB04w4G7MSk2U8zNciUtCqP/gU5+w2SpMK3YFulQjJzxQtLP2qkSTfZkEFVMrJRbV6X2
+X-Gm-Message-State: AOJu0YwLwMPInSUkosaDiyOGp7DLwLm4ME2Pu6Foa0wlc1Az7g6QsJrW
+	ykBUdL1+pc1eDwfo0hOIPf1cC4g0135PnfZciN5Yytk7C9nQIOF7SzUDcnpI+Pg=
+X-Google-Smtp-Source: AGHT+IEcZ1mRlZz49KVz2LnlkGCg1L0G+pDdo4t/GumfAt/t/XsbmT597wK5MaAo9C3CJa2YXIuMRQ==
+X-Received: by 2002:a05:6870:d14e:b0:269:2708:aff6 with SMTP id 586e51a60fabf-26fcb67a895mr3604751fac.16.1723554592032;
+        Tue, 13 Aug 2024 06:09:52 -0700 (PDT)
+Received: from ux-UP-WHL01 ([240e:47e:2ef8:4fc3:dde8:ca2c:7f06:eeca])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c697a549d8sm1240600a12.67.2024.08.13.06.09.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 06:09:51 -0700 (PDT)
+Date: Tue, 13 Aug 2024 21:09:39 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: dmitry.torokhov@gmail.com, dan.carpenter@linaro.org, conor@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, jikos@kernel.org,
+	bentiss@kernel.org, hbarnor@chromium.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] HID: add initial support for Goodix HID-over-SPI
+ touchscreen
+Message-ID: <ZrtbE6VhuV6TRtao@ux-UP-WHL01>
+References: <20240618084455.1451461-1-charles.goodix@gmail.com>
+ <ZnlGDCcNch475wWA@ux-UP-WHL01>
+ <CAD=FV=UkHaH_oUojLCozh-C27GUaCgr_6V16_0XKJw86p5wmFQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] cpuidle/menu: avoid prioritizing physical state over
- polling state
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>, rafael@kernel.org,
- daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: gautam@linux.ibm.com
-References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
- <20240809073120.250974-2-aboorvad@linux.ibm.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240809073120.250974-2-aboorvad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UkHaH_oUojLCozh-C27GUaCgr_6V16_0XKJw86p5wmFQ@mail.gmail.com>
 
-On 8/9/24 08:31, Aboorva Devarajan wrote:
-> Update the cpuidle menu governor to avoid prioritizing physical states
-> over polling states when predicted idle duration is lesser than the
-> physical states target residency duration for performance gains.
+Hi Doug,
+
+Thank you for the reminder, and I apologize for overlooking Dmitry's
+review comments. I will address his feedback and submit a v6.
+
+On Thu, Aug 08, 2024 at 10:19:16AM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> ---
->  drivers/cpuidle/governors/menu.c | 11 -----------
->  1 file changed, 11 deletions(-)
+> On Mon, Jun 24, 2024 at 3:10 AM Charles Wang <charles.goodix@gmail.com> wrote:
+> >
+> > Gentle ping...
 > 
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> index f3c9d49f0f2a..cf99ca103f9b 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -354,17 +354,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->  			idx = i; /* first enabled state */
->  
->  		if (s->target_residency_ns > predicted_ns) {
-> -			/*
-> -			 * Use a physical idle state, not busy polling, unless
-> -			 * a timer is going to trigger soon enough.
-> -			 */
-> -			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> -			    s->exit_latency_ns <= latency_req &&
-> -			    s->target_residency_ns <= data->next_timer_ns) {
-> -				predicted_ns = s->target_residency_ns;
-> -				idx = i;
-> -				break;
-> -			}
->  			if (predicted_ns < TICK_NSEC)
->  				break;
->  
+> Looks like Dmitry had some small nits on patch #1. Maybe folks are
+> assuming that you'll send a v6 or at least respond to him about the
+> nits?
+> 
+> -Doug
 
+Thanks again,
 
-How about this?
-data->next_timer_ns is set to KTIME_MAX in case the last few intervals were
-very short, which might be the case for you.
-
--->8--
-
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index f3c9d49f0f2a..77b40201c446 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -360,6 +360,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
-                         */
-                        if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-                            s->exit_latency_ns <= latency_req &&
-+                           data->next_timer_ns != KTIME_MAX &&
-                            s->target_residency_ns <= data->next_timer_ns) {
-                                predicted_ns = s->target_residency_ns;
-                                idx = i;
-
+Charles
 
