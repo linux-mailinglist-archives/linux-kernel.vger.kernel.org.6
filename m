@@ -1,126 +1,164 @@
-Return-Path: <linux-kernel+bounces-284157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C79294FDAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:16:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDED94FDA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED240B234F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:16:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFE5D1F23D50
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FECE4206A;
-	Tue, 13 Aug 2024 06:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E90B3BB32;
+	Tue, 13 Aug 2024 06:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igcconTa"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="BDdFS+O4"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE703AC0D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0EF3218B
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723529758; cv=none; b=R2qx7zz1KTC8XIyTdMX9x7mgrCaixXieZ075A8LipfnpZZmOcgZ/q+OjLshMtDp6iDfpwLPIgslJZ9z+ubxwOwkvJ3hUaXw2AMcHpjmgRbtgk7N1mlsxBDObjX845nSIzBo0Lw0lUlEWR06HHLH8GuH+5xpN/Od4OtmcyNCNuqE=
+	t=1723529753; cv=none; b=BcN4h69STTK2nz/XH+LPoJ/qP/2c1CB8al2tkX9NZUgsmrFvJTjgfK1gFHpU209zgg8ied7n1VvWXkcnu7eqhKCYlgX9HPq44Da1Q3CZrFYFV5ZMfZHeAVeQy4b6u2u6CDhBTlwUB0QGidJ3mqACbUQ0V1QdnsXXEc2yYJgvHKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723529758; c=relaxed/simple;
-	bh=CnTV7t6wDLEAWQjG2kc6iJVZpiK2POpsQBLMxXTJT5g=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mj/3mjHt8hpcQdq+q2ab+NfMDTVHGDldLB2MYCg2o0O6S3YrEnl24HHwomVPQFBnIWoUtYazg22PgG13qlUEIwDiR5HJLqWdF1Sq5bDH6n846dH1lCvQ3efXTX3rACQpDaX3wKjFeZS0ql+2x7EVAUAdOtUz1Qt+5xnSAa+u14M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igcconTa; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f1798eaee6so48948621fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:15:56 -0700 (PDT)
+	s=arc-20240116; t=1723529753; c=relaxed/simple;
+	bh=MDlcYP7MFghiJnxFdNtc6UqcKOzHtvSJqJ34W51yRWE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fq0J3OIlgsWO3o/XB/HYj9SKjrv2dIyFYDADr2POVAEEHCMy/DaBSPtd96qSSKhR6l3ZGO9vk9XQtgdkKths6cvBoIFjTIoAqUQbRMW2vFEo/QdomzJbGvp5QOJE4N2actaYCYecuevOH/mlmRBnMynIsNpwD+83dGL64NcYtys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=BDdFS+O4; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so6609431a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:15:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723529755; x=1724134555; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8oGtIw/pcWW3tXyWgJW8i01oRoVha7ME3aTl6Dtvg8c=;
-        b=igcconTaOv6PExSmq6Ymyl73iJCLydHQY78zHqkiR8JlUjumYigcPtSDGi+4TQo5dj
-         2Y+Ws8pG0/gu/dm3noCs7bjTlvs9f+sYY3Wzs3hpJJYWoB5Wdr1+eICNL6BjR7gp7/ZY
-         FEVxif4CYXI5pZ3wtyX6wY1TE7tJyxN0Q12Y6UdxCn14XftCOZ90ryDESwA792RVHMWE
-         bZ07pEtk1I8fgO2WQ04W+dYNU24RFGGDDnMhzVovwqhHiF0qok7h+V+4INHo2MhY+219
-         gTkzay6RyrWLe+l2TZDGiGsoRfo4uW6uTuDjU4S8fLSc8Gjd3az8nseVAqZGwDhNNrly
-         qr8w==
+        d=kali.org; s=google; t=1723529750; x=1724134550; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJ+ckW8fPFa+FfxKAJA2U4uZ365cTlaQpuQmLUm/TYk=;
+        b=BDdFS+O4AIU+uaH5ZV/ZlF+pnfdRwgoMNaCsbLEywKhQRO2wnPXVfwMlHdrTJGCiMZ
+         N2DR9V+ggnD6XlcCIsdKklZcQBDMC/XG1BvCQ9Ww92TNjFrKui0LnctUTWrKy2fK0kS4
+         tX8j0S3lqj0IVLZzXUGMIB/vm61YQ2V6ZuaVqCDoE/n80gFzUSh+5akWDfbJhY7zn4xl
+         UkO5hGKerkGrCGwdcsNzp7Q2BBatQgkjQLBOE0fQkhpPuQnszg+EMydDVfMgUAdBE5ji
+         sCW+n3+fZOMH9inK5Ode7zWRwL/+nZymrobiJgqiHCqvY85odUH7QQlLyYaDVI05xu2T
+         4LeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723529755; x=1724134555;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8oGtIw/pcWW3tXyWgJW8i01oRoVha7ME3aTl6Dtvg8c=;
-        b=tx28FOfmzpxQ7wILu95h84/BxD757LkyH/1I6tXCOQ017V8ifmP5bG/sO7hHvlfitd
-         2idk6ArT7y6BsJ6C97mgWLBEaLRiWwx1jSWJSyy08SLioFwl8Y5kJnaCkR0LTSAwbwec
-         LM+pHbYNjB5Cesd6PxX0dC4dSC0w2yeHdIun3n66ShyEb+1dT5NSQWXxxtrdN0T7iYNM
-         XKhDKO+7qxg3rSilP3cDueWIx61aKV5gFqOOp+Y5nU+FY0JwQuooGCncUuATBOzbGS9R
-         i6SRfEx+Q9eB7eOlvFbUbYRw/Oqfmwz1m7Zqgl/gK9tCHgnXmevAvAo0ApLI21REV3FO
-         fKQg==
-X-Gm-Message-State: AOJu0YwY26lRywE6GVzNyolgk2E6oeneocN8cbYFLtw5TSVmk6KJ4OZy
-	ByN5cJMf2g3t3ZmZ5YK3gcvr7wdS+EPohMTogjK4bdaUWfzb9WP5
-X-Google-Smtp-Source: AGHT+IEFK7WPkhTya+soHN2m0x3TCOdjXqoSUU4m6XxmX1qg/vemT20sdNymgU3+YyfhEgtaqPPKmA==
-X-Received: by 2002:a05:651c:1197:b0:2ef:2575:de11 with SMTP id 38308e7fff4ca-2f2b714a48emr14315221fa.15.1723529754528;
-        Mon, 12 Aug 2024 23:15:54 -0700 (PDT)
-Received: from [85.64.140.6] (85.64.140.6.dynamic.barak-online.net. [85.64.140.6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7734595sm123630935e9.36.2024.08.12.23.15.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 23:15:54 -0700 (PDT)
-Message-ID: <e04eabb6-fa5f-9eb2-c2a6-812f6a310bc0@outbound.gmail.com>
-Date: Tue, 13 Aug 2024 09:15:23 +0300
+        d=1e100.net; s=20230601; t=1723529750; x=1724134550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QJ+ckW8fPFa+FfxKAJA2U4uZ365cTlaQpuQmLUm/TYk=;
+        b=xM0qg6XbM8QwX7zELfFXbjNr0OW2D8de1QfZtp9NqOaOXYkp/cR1Ta3l4VHvWOkSqt
+         9BPQV6tCi0CEXtccwgvVugMI2er9rZx0Vy5sTmfw/wUBM9fshzXZy7f22+IE4Pxz1YgS
+         obn7wl937Z/kZYvqo1UR+0DxfCCVIq+mDbzOVgOhxrxDPlHETkuRxkzwF1zDSlPSwJYv
+         f9ssaNPc8tThTJHQegJ1nrcwHdzW841bnHAjlGRh9mX/MHTfnTOXRD/i52Qq+xnQUmb8
+         64tPA4xE19uOTsRGsjgsURdqy9AltvZxbOYXkbET0u6EUXrF36SVS/vM3LWuQfUdPnPR
+         ROSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxvt963747hCXusNFEHeypDuFAWLqDXhLDt6+FK0TkjUH6CqcJ35ZM7HkUai+C0ePiu2Z1FF8vPUWdiHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGug5pR/6p+sBC/P6KfotzhseMUUpGEiVfeGI9PjeyfOKlsqGt
+	O88olmBW3mz6ESaCxIkwfU6UqaYaD1E8kqblAVRXJKPxJkCXR+9oAmREGcoJPhU4g3oeqZNeFB3
+	cLczRP5m6ye5939VFJKkNN92IMZNRYTOP+YXoPA==
+X-Google-Smtp-Source: AGHT+IGu1hBC7Cs3wwmL9kJy5yplkBo3X8qqjVkv3nvp18pwu0qYrZ4GOTjyCM5ylwZ5iXpmXEKU3VQO55wGkHKnQSQ=
+X-Received: by 2002:a05:6402:2353:b0:58b:585b:42a2 with SMTP id
+ 4fb4d7f45d1cf-5bd44c7cb00mr1846131a12.38.1723529750024; Mon, 12 Aug 2024
+ 23:15:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-From: Eli Billauer <eli.billauer@gmail.com>
-Subject: Re: [PATCH] drivers/xillybus: fix deadlock upon cleanup_dev
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>, arnd@arndb.de,
- gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
- syzbot+e528c9aad0fb5383ec83@syzkaller.appspotmail.com
-References: <20240813040425.187418-1-snovitoll@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20240813040425.187418-1-snovitoll@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240812-sc8180x-pwrkey-enable-v1-1-2bcc22133774@quicinc.com>
+In-Reply-To: <20240812-sc8180x-pwrkey-enable-v1-1-2bcc22133774@quicinc.com>
+From: Steev Klimaszewski <steev@kali.org>
+Date: Tue, 13 Aug 2024 01:15:38 -0500
+Message-ID: <CAKXuJqgOfqEJQhcLXYV0nUMe2TOOM6eZmYjP6518hwLvR6jShQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sc8180x: Enable the power key
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-I should have sent a response to this syzbot alert, indicating that 
-there is already ongoing work to fix this issue:
-
-https://lore.kernel.org/lkml/20240801121126.60183-1-eli.billauer@gmail.com/
-
-My apologies for not doing that.
-
-On 13/08/2024 7:04, Sabyrzhan Tasbolatov wrote:
-> syzbot found an issue [1] when cleanup_dev() is called twice,
-> causing deadlock.
-
-How is cleanup_dev() called twice? I only see it once in the stack trace.
-
-  It is called in xillyusb_probe()
-> in the end of wakeup_all():
-> 
-> 	INIT_WORK(&xdev->wakeup_workitem, wakeup_all);
-
-INIT_WORK merely initializes the work item, it doesn't cause its execution.
-
-> @@ -2174,7 +2175,6 @@ static int xillyusb_probe(struct usb_interface *interface,
->   
->   fail:
->   	usb_set_intfdata(interface, NULL);
-> -	kref_put(&xdev->kref, cleanup_dev);
->   	return rc;
->   }
->   
-
-This edit causes a memory leak, because the reference count needs to be 
-decremented in other failure scenarios.
-
-Thanks,
-    Eli
+On Mon, Aug 12, 2024 at 10:30=E2=80=AFPM Bjorn Andersson <andersson@kernel.=
+org> wrote:
+>
+> From: Bjorn Andersson <quic_bjorande@quicinc.com>
+>
+> No input events are generated from the pressing of the power key on
+> either Primus or Flex 5G, because the device node isn't enabled.
+>
+> Give the power key node a label and enable this for the two devices.
+>
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts | 4 ++++
+>  arch/arm64/boot/dts/qcom/sc8180x-pmics.dtsi         | 2 +-
+>  arch/arm64/boot/dts/qcom/sc8180x-primus.dts         | 4 ++++
+>  3 files changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts b/arch/a=
+rm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
+> index 575a1a5ae20f..62de4774c556 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
+> @@ -484,6 +484,10 @@ &pcie3_phy {
+>         status =3D "okay";
+>  };
+>
+> +&pmc8180_pwrkey {
+> +       status =3D "okay";
+> +};
+> +
+>  &pmc8180c_lpg {
+>         status =3D "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sc8180x-pmics.dtsi b/arch/arm64/boo=
+t/dts/qcom/sc8180x-pmics.dtsi
+> index b6f8d1558c0d..451c9b984f1f 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8180x-pmics.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc8180x-pmics.dtsi
+> @@ -75,7 +75,7 @@ pmc8180_0: pmic@0 {
+>                 pon: pon@800 {
+>                         compatible =3D "qcom,pm8916-pon";
+>                         reg =3D <0x0800>;
+> -                       pwrkey {
+> +                       pmc8180_pwrkey: pwrkey {
+>                                 compatible =3D "qcom,pm8941-pwrkey";
+>                                 interrupts =3D <0x0 0x8 0x0 IRQ_TYPE_EDGE=
+_BOTH>;
+>                                 debounce =3D <15625>;
+> diff --git a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts b/arch/arm64/boo=
+t/dts/qcom/sc8180x-primus.dts
+> index 9447c1e4577b..79b4d293ea1e 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc8180x-primus.dts
+> @@ -578,6 +578,10 @@ &pcie1_phy {
+>         status =3D "okay";
+>  };
+>
+> +&pmc8180_pwrkey {
+> +       status =3D "okay";
+> +};
+> +
+>  &pmc8180c_lpg {
+>         status =3D "okay";
+>  };
+>
+> ---
+> base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
+> change-id: 20240812-sc8180x-pwrkey-enable-9fe58187583e
+>
+> Best regards,
+> --
+> Bjorn Andersson <quic_bjorande@quicinc.com>
+>
+>
+Tested on the Lenovo Flex 5G.  When I hit the power button, it does
+indeed want to turn off now.
+Tested-by: Steev Klimaszewski <steev@kali.org>
 
