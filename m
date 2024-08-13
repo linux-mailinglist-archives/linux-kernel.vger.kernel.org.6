@@ -1,185 +1,277 @@
-Return-Path: <linux-kernel+bounces-285171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC670950A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:26:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB00950A1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57CC41F235D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E37111C225B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0AB61FCF;
-	Tue, 13 Aug 2024 16:26:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBCF1A0B05;
-	Tue, 13 Aug 2024 16:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E6D1A2548;
+	Tue, 13 Aug 2024 16:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N01tNBbB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4A061FCF
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723566375; cv=none; b=cPmrn9X5GzNIAFP3cK08oiYm8SbVfAVx5wjhpyIA8hK2fwJpx9sQnYfgeOdVwfDvEp0IRQAoTHShQPRltLKZ50JLkiaGEmocMsmORP9QoPKoPghE3SHmfKCQKHPD5hmQJD6HD7LOxYXIOggIGv+wCcj75zyBnWH+GJaGY7koiCE=
+	t=1723566473; cv=none; b=mVog/cVWDDkUSp/e3R3bTUGwobjGxLSScEH8uRL5t5sDYMxJMpjapu3/CsEkgC5HPvIMlEBNjM1YwG4i+EDhAOUVa6vZpXz/j3y7fej1mRtL7yxgB3QPMkm/3PCk2itsN75GeDFnFwDqFKPUA6h0XBgZlDkkMBFBqL222t5VHDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723566375; c=relaxed/simple;
-	bh=CIdIywtMybE4qzk2fc4+X7ax6VAHi/2wrUQv7J5GpyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H0sM340QuQu+BS8mttyKwsWhz7AjoF4ODJaz2mx+a2GZ2oJnxv8ZuVoQ2X2KbAxeS/tmKPoeUbFOb3x9K7JWkhCJKVAZpNADn122O42a0TM+jH3ghqpWuFqZRU2GL/DV2jP4qqcTGCsE4X5SNGeMqHqKvGz+/bGKttGfQ9egzWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A01F12FC;
-	Tue, 13 Aug 2024 09:26:38 -0700 (PDT)
-Received: from [10.57.84.20] (unknown [10.57.84.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C00A3F6A8;
-	Tue, 13 Aug 2024 09:26:09 -0700 (PDT)
-Message-ID: <bfcd8175-c6bc-41a2-8ee9-93061e446c40@arm.com>
-Date: Tue, 13 Aug 2024 17:26:07 +0100
+	s=arc-20240116; t=1723566473; c=relaxed/simple;
+	bh=MVD3KtlDBNL4ylbqwBwnlNnoWPUqH8ebcS4i8wn6QPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNAEfEn4XZU5FxZhFIpsYP8bNtCkS4xQTAWq3bGlsCKS1tbRPlkhyfaYClCG0bTxKaS3TmeMsyIo+JdWoNHorOduuGf3AG+e3lirjOQUh17S9VELkoFlMr5PT5ZV2rMgwMCl7cDzkLhNgoBhOCL489PRiOORN21dpZk3pVGitJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N01tNBbB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723566470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u/wxPouX1WnFR5+lpreMFAWfuh3u1ErH7E1Ghdyy2n8=;
+	b=N01tNBbBfPWZgGXbeJxAjLcqFTnHsWq2goeBzuWkIfafi0O+stNMPsJ2zemd0DSKD09io1
+	U4Sk8DOwW20oRNT/azUasG4Q6PEtCPfmEBl53jwuaqi0Bvs1I27gIVWPIRmZ8/x2XSi499
+	wqgLknomSTJjQYKeNajBJLn7g3ZAOc8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-325-3VP6J6ZKNsKYJBSQtuNz6g-1; Tue, 13 Aug 2024 12:27:46 -0400
+X-MC-Unique: 3VP6J6ZKNsKYJBSQtuNz6g-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42820c29a76so45758085e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:27:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723566466; x=1724171266;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u/wxPouX1WnFR5+lpreMFAWfuh3u1ErH7E1Ghdyy2n8=;
+        b=NxtgLjBS5iPMA+zdZgYhGz/7Oijw7eoJzKfcDGxs1d7SUym2q1EDxIqxRLaKCDsaFC
+         3r4mAvQf9ywiV+0TNFjNVUpoWQ4iDMIt2UZPjqrcvv9/eY+Nt3G7md62hc6sPcsq3PCh
+         5YASMPWX/Yn1UYnOWo7Ffbo27GhjJD9Rvpl4Uspo+E2uf8WlE0WxP56s7j0vcwFrXMWU
+         ovHHlIQ8Q03uujAA7oScIsRz0cN/sVH/JNI2abmOxknM1YKU76Rzumf1jblhcpM7L1d3
+         pr1YEMw6WhQOrRd+o6oVIoVAPlMt0suMUF/LVmDCgujm679vIq22oHMy72YA/PeVMxfA
+         TcYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSpbtjJ+/Bp1Bwn74ghGJj+C48YciJdYWLrvNyaaPQAEri7KjICRNapWa2GsSls0A90Tq5BVqjUXF7ieU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQOR8BGN/D9xVkW8H9kcFUryTGVMQNiGW9fpH+QZqSJIqgrBgS
+	tIW4oSBf6j0UXCjUnI0kdCcBzmYDhoUaqQ/0vJUhE2HY5rrhu+T5wew0UseIRmCecZ/58fHSjeO
+	OkdygyYT4MLpnrFNEe71H0YKcGz2YgaiYfsoAOWqan+wizVaTO/qoCqxtPCrLUQ==
+X-Received: by 2002:a05:600c:548e:b0:428:fb96:e94a with SMTP id 5b1f17b1804b1-429dd2365ffmr468265e9.9.1723566465671;
+        Tue, 13 Aug 2024 09:27:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFXb6pZaD/xaaqJhSa7CuewDH0CF5WczOBWAa2z7gB9cS2UU5Nuu8dznz8JPfLdSE9X4jrIYg==
+X-Received: by 2002:a05:600c:548e:b0:428:fb96:e94a with SMTP id 5b1f17b1804b1-429dd2365ffmr467855e9.9.1723566465062;
+        Tue, 13 Aug 2024 09:27:45 -0700 (PDT)
+Received: from localhost ([2001:b07:ab5:a597:abf4:6782:4209:952e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c775c2b1sm149888065e9.42.2024.08.13.09.27.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 09:27:44 -0700 (PDT)
+Date: Tue, 13 Aug 2024 18:27:41 +0200
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Daniel Xu <dxu@dxuuu.xyz>,
+	Alexander Lobakin <alexandr.lobakin@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Larysa Zaremba <larysa.zaremba@intel.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	Magnus Karlsson <magnus.karlsson@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Jonathan Lemon <jonathan.lemon@gmail.com>,
+	"toke@redhat.com" <toke@redhat.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	David Miller <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Yajun Deng <yajun.deng@linux.dev>,
+	Willem de Bruijn <willemb@google.com>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
+Subject: Re: [xdp-hints] Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch
+ to GRO from netif_receive_skb_list()
+Message-ID: <ZruJfencxeR8XHdm@lore-rh-laptop.lan>
+References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
+ <20220628194812.1453059-33-alexandr.lobakin@intel.com>
+ <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
+ <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
+ <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
+ <e0616dcc-1007-4faf-8825-6bf536799cbf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
- <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- Valentin Schneider <vschneid@redhat.com>, Hongyan Xia
- <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240728184551.42133-1-qyousef@layalina.io>
- <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
- <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
- <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UyDdGDL3oIkMw4TE"
+Content-Disposition: inline
+In-Reply-To: <e0616dcc-1007-4faf-8825-6bf536799cbf@intel.com>
 
-On 8/13/24 09:27, Vincent Guittot wrote:
-> On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
->>
->> On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
->>>
->>> On 7/28/24 19:45, Qais Yousef wrote:
->>>> Improve the interaction with cpufreq governors by making the
->>>> cpufreq_update_util() calls more intentional.
->>>>
->>>> At the moment we send them when load is updated for CFS, bandwidth for
->>>> DL and at enqueue/dequeue for RT. But this can lead to too many updates
->>>> sent in a short period of time and potentially be ignored at a critical
->>>> moment due to the rate_limit_us in schedutil.
->>>>
->>>> For example, simultaneous task enqueue on the CPU where 2nd task is
->>>> bigger and requires higher freq. The trigger to cpufreq_update_util() by
->>>> the first task will lead to dropping the 2nd request until tick. Or
->>>> another CPU in the same policy triggers a freq update shortly after.
->>>>
->>>> Updates at enqueue for RT are not strictly required. Though they do help
->>>> to reduce the delay for switching the frequency and the potential
->>>> observation of lower frequency during this delay. But current logic
->>>> doesn't intentionally (at least to my understanding) try to speed up the
->>>> request.
->>>>
->>>> To help reduce the amount of cpufreq updates and make them more
->>>> purposeful, consolidate them into these locations:
->>>>
->>>> 1. context_switch()
->>>> 2. task_tick_fair()
->>>> 3. sched_balance_update_blocked_averages()
->>>> 4. on sched_setscheduler() syscall that changes policy or uclamp values
->>>> 5. on check_preempt_wakeup_fair() if wakeup preemption failed
->>>> 6. on __add_running_bw() to guarantee DL bandwidth requirements.
->>>>
->>>> The update at context switch should help guarantee that RT get the right
->>>> frequency straightaway when they're RUNNING. As mentioned though the
->>>> update will happen slightly after enqueue_task(); though in an ideal
->>>> world these tasks should be RUNNING ASAP and this additional delay
->>>> should be negligible. For fair tasks we need to make sure we send
->>>> a single update for every decay for the root cfs_rq. Any changes to the
->>>> rq will be deferred until the next task is ready to run, or we hit TICK.
->>>> But we are guaranteed the task is running at a level that meets its
->>>> requirements after enqueue.
->>>>
->>>> To guarantee RT and DL tasks updates are never missed, we add a new
->>>> SCHED_CPUFREQ_FORCE_UPDATE to ignore the rate_limit_us. If we are
->>>> already running at the right freq, the governor will end up doing
->>>> nothing, but we eliminate the risk of the task ending up accidentally
->>>> running at the wrong freq due to rate_limit_us.
->>>>
->>>> Similarly for iowait boost, we ignore rate limits. We also handle a case
->>>> of a boost reset prematurely by adding a guard in sugov_iowait_apply()
->>>> to reduce the boost after 1ms which seems iowait boost mechanism relied
->>>> on rate_limit_us and cfs_rq.decayed preventing any updates to happen
->>>> soon after iowait boost.
->>>>
->>>> The new SCHED_CPUFREQ_FORCE_UPDATE should not impact the rate limit
->>>> time stamps otherwise we can end up delaying updates for normal
->>>> requests.
->>>
->>> Hi Qais,
->>> the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
->>> freq updates still bothered me so let me share my thoughts even though
->>> it might be niche enough for us not to care.
->>>
->>> 1. On fast_switch systems, assuming they are fine with handling the
->>> actual updates, we have a bit more work on each context_switch() and
->>> some synchronisation, too. That should be fine, if anything there's
->>> some performance regression in a couple of niche cases.
->>>
->>> 2. On !fast_switch systems this gets more interesting IMO. So we have
->>> a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
->>> update request. This task will preempt whatever and currently will
->>> pretty much always be running on the CPU it ran last on (so first CPU
->>> of the PD).
->>
->> The !fast_switch is a bit of concern for me too but not for the same
->> reason and maybe the opposite of yours IIUC your proposal below:
->>
->> With fast_switch we have the following sequence:
->>
->> sched_switch() to task A
->> cpufreq_driver_fast_switch -> write new freq target
->> run task A
->>
->> This is pretty straight forward but we have the following sequence
->> with !fast_switch
->>
->> sched_switch() to task A
->> queue_irq_work -> raise an IPI on local CPU
->> Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
->> with 1 CPU per PD)
->> sched_switch() to sugov dl task
->> __cpufreq_driver_target() which can possibly block on a lock
->> sched_switch() to task A
->> run task A
->>
-> 
-> sent a bit too early
-> 
->> We can possibly have 2 context switch and one IPi for each "normal"
->> context switch which is not really optimal
-> 
-> It would be good to find a way to skip the spurious back and forth
-> between the normal task and sugov
 
-Just to confirm I understand your concern correctly, that's more or
-less the behavior without Qais' patch as well though, isn't it?
-Ignoring the move from "This happens at enqueue" vs. "this
-happens at context switch".
-Since sugov doesn't queue any work if the desired frequency doesn't
-change I imagine it's not too bad?
-Or are you more concerned that the work is queued multiple times
-simultaneously for multiple CPUs of the same PD? If so we can
-work around that with the work_in_progress state to at least limit
-that window by a lot.
+--UyDdGDL3oIkMw4TE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[snip]
+On Aug 13, Alexander Lobakin wrote:
+> From: Alexander Lobakin <aleksander.lobakin@intel.com>
+> Date: Thu, 8 Aug 2024 13:57:00 +0200
+>=20
+> > From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+> > Date: Thu, 8 Aug 2024 06:54:06 +0200
+> >=20
+> >>> Hi Alexander,
+> >>>
+> >>> On Tue, Jun 28, 2022, at 12:47 PM, Alexander Lobakin wrote:
+> >>>> cpumap has its own BH context based on kthread. It has a sane batch
+> >>>> size of 8 frames per one cycle.
+> >>>> GRO can be used on its own, adjust cpumap calls to the
+> >>>> upper stack to use GRO API instead of netif_receive_skb_list() which
+> >>>> processes skbs by batches, but doesn't involve GRO layer at all.
+> >>>> It is most beneficial when a NIC which frame come from is XDP
+> >>>> generic metadata-enabled, but in plenty of tests GRO performs better
+> >>>> than listed receiving even given that it has to calculate full frame
+> >>>> checksums on CPU.
+> >>>> As GRO passes the skbs to the upper stack in the batches of
+> >>>> @gro_normal_batch, i.e. 8 by default, and @skb->dev point to the
+> >>>> device where the frame comes from, it is enough to disable GRO
+> >>>> netdev feature on it to completely restore the original behaviour:
+> >>>> untouched frames will be being bulked and passed to the upper stack
+> >>>> by 8, as it was with netif_receive_skb_list().
+> >>>>
+> >>>> Signed-off-by: Alexander Lobakin <alexandr.lobakin@intel.com>
+> >>>> ---
+> >>>>  kernel/bpf/cpumap.c | 43 ++++++++++++++++++++++++++++++++++++++-----
+> >>>>  1 file changed, 38 insertions(+), 5 deletions(-)
+> >>>>
+> >>>
+> >>> AFAICT the cpumap + GRO is a good standalone improvement. I think
+> >>> cpumap is still missing this.
+> >=20
+> > The only concern for having GRO in cpumap without metadata from the NIC
+> > descriptor was that when the checksum status is missing, GRO calculates
+> > the checksum on CPU, which is not really fast.
+> > But I remember sometimes GRO was faster despite that.
+> >=20
+> >>>
+> >>> I have a production use case for this now. We want to do some intelli=
+gent
+> >>> RX steering and I think GRO would help over list-ified receive in som=
+e cases.
+> >>> We would prefer steer in HW (and thus get existing GRO support) but n=
+ot all
+> >>> our NICs support it. So we need a software fallback.
+> >>>
+> >>> Are you still interested in merging the cpumap + GRO patches?
+> >=20
+> > For sure I can revive this part. I was planning to get back to this
+> > branch and pick patches which were not related to XDP hints and send
+> > them separately.
+> >=20
+> >>
+> >> Hi Daniel and Alex,
+> >>
+> >> Recently I worked on a PoC to add GRO support to cpumap codebase:
+> >> - https://github.com/LorenzoBianconi/bpf-next/commit/a4b8264d5000ecf01=
+6da5a2dd9ac302deaf38b3e
+> >>   Here I added GRO support to cpumap through gro-cells.
+> >> - https://github.com/LorenzoBianconi/bpf-next/commit/da6cb32a4674aa724=
+01c7414c9a8a0775ef41a55
+> >>   Here I added GRO support to cpumap trough napi-threaded APIs (with a=
+ some
+> >>   changes to them).
+> >=20
+> > Hmm, when I was testing it, adding a whole NAPI to cpumap was sorta
+> > overkill, that's why I separated GRO structure from &napi_struct.
+> >=20
+> > Let me maybe find some free time, I would then test all 3 solutions
+> > (mine, gro_cells, threaded NAPI) and pick/send the best?
+> >=20
+> >>
+> >> Please note I have not run any performance tests so far, just verified=
+ it does
+> >> not crash (I was planning to resume this work soon). Please let me kno=
+w if it
+> >> works for you.
+>=20
+> I did tests on both threaded NAPI for cpumap and my old implementation
+> with a traffic generator and I have the following (in Kpps):
+>=20
+>             direct Rx    direct GRO    cpumap    cpumap GRO
+> baseline    2900         5800          2700      2700 (N/A)
+> threaded                               2300      4000
+> old GRO                                2300      4000
+
+out of my curiority, have you tested even the gro_cells one?
+
+Lorenzo
+
+>=20
+> IOW,
+>=20
+> 1. There are no differences in perf between Lorenzo's threaded NAPI
+>    GRO implementation and my old implementation, but Lorenzo's is also
+>    a very nice cleanup as it switches cpumap to threaded NAPI completely
+>    and the final diffstat even removes more lines than adds, while mine
+>    adds a bunch of lines and refactors a couple hundred, so I'd go with
+>    his variant.
+>=20
+> 2. After switching to NAPI, the performance without GRO decreases (2.3
+>    Mpps vs 2.7 Mpps), but after enabling GRO the perf increases hugely
+>    (4 Mpps vs 2.7 Mpps) even though the CPU needs to compute checksums
+>    manually.
+>=20
+> Note that the code is not polished to the top and I also have a good
+> improvement for allocating skb heads from the percpu NAPI cache in my
+> old tree which I'm planning to add to the series, so the final
+> improvement will be even bigger.
+>=20
+> + after we find how to pass checksum hint to cpumap, it will be yet
+> another big improvement for GRO (current code won't benefit from
+> this at all)
+>=20
+> To Lorenzo:
+>=20
+> Would it be fine if I prepare a series containing your patch for
+> threaded NAPI for cpumap (I'd polish it and break into 2 or 3) +
+> skb allocation optimization and send it OR you wanted to send this
+> on your own? I'm fine with either, in the first case, everything
+> would land within one series with the respective credits; in case
+> of the latter, I'd need to send a followup :)
+>=20
+> >>
+> >> Regards,
+> >> Lorenzo
+> >>
+> >>>
+> >>> Thanks,
+> >>> Daniel
+>=20
+> Thanks,
+> Olek
+>=20
+
+--UyDdGDL3oIkMw4TE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZruJewAKCRA6cBh0uS2t
+rEIdAP9dns2tzikgzJ2YFjvZOk+3iBBzAnW4zrb0WTT/isfyBwD+MDFS8+HnM61f
+CyDD9SD3t4XZuDPiuJSLQbvRrN9jtAw=
+=CRDn
+-----END PGP SIGNATURE-----
+
+--UyDdGDL3oIkMw4TE--
+
 
