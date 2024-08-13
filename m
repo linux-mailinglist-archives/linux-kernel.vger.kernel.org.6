@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-284876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC768950655
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:21:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A152B95064E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8B43B26D8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45EF31F22764
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECF719CD02;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8135119CD03;
 	Tue, 13 Aug 2024 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="i9URXlIr"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E02819B3C4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.8
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="idiuLaVw"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41A519CCF0
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555185; cv=none; b=fx3M4/RP7VkR8VJPfn3qdQqF022UfbcE9DI+HxDAroh2qXYWhAz5xmLbpdpu3AtaHhluIY2IMyAMM4xT0qiugX5QI2CJKygG8my3ddESpmLyxnWlR7DyJOhTGRJ0YxqfDtoF4JMbFVelCIRck4fK0J5fbzRABqH4i4hLhGfnvsQ=
+	t=1723555185; cv=none; b=REco3q+ftmihxvj1aia/E8IoIrJGT3PnWqghUY7d9RJSTQLn4grljA8UBfy8SF2igUDiN/qgpLJaOR2gK9pdCz1NTnJ7gpVhfPZV11xS2Tq6gLzrNsirY/kU5UEX86z81f2wc5FFGKclvXVTj6JNVy4nOlnHZrhjc/b57VzgizQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723555185; c=relaxed/simple;
-	bh=GkgzyLap7vbKK/2M61n5+NUkEkSTVPiSEk6iQHTmri8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BkrBNBDqDeq+Td2ONJfYCzxj3ftoQ+knlsqlbTniMIMJ+Mma3COqMLJt8BrRLTR6MoIjWepl6NFUVxLfypOA14ZtmxlyWanq59qutELE9ix6jeDCiWwO7L8hMX5cD8eA+NFsNBB/NCCK1PdRPIGA9ZhLKjyA+qIFMAng/ZIV/cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=i9URXlIr; arc=none smtp.client-ip=220.197.31.8
+	bh=ZMGTy6L5ameQtkF0U00DXCC0w5avqUDwOcTxgkwPhVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ofgoQvId/Ixx3Anmuu0uW9yfZEpnCd7/NG7Ui4F15N93darPDq/hsovorwPPCBTZND/CiAj+erVYIXZfSvk1Vcvbl1xGlGK9P+O5E+whnVqEZhHIgHocsM3HB+ggf0uPM+355uhNefCiRxP15DNRu5NB3JPsiZXpjXoyp5vrtFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=idiuLaVw; arc=none smtp.client-ip=117.135.210.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=9Jeb5
-	e74J4dPt7FF4MpjSKrhHRkLkwzpjDHXDqU1Wdw=; b=i9URXlIrEIINggtx8oRmf
-	l0mPkPo/ke7uB1DEGHjvNK2nA00d4mvc6vliRhuIeAnuEDVO3/GmKmAtazKAeoaB
-	b3UzR9ekUHMxbxN5S37ns6OOanTbvCB9DEH8YHTmnTgS3PYWLSdUo/pcpCbzjNlt
-	3G/U63eTy+XvVGnv8XuS5Q=
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=5hybL
+	gfjPzD38zj1PtzkVJO3sqnNe/5QU/Bs5Yqk2sA=; b=idiuLaVwMGrNU9YRKIyRw
+	3gUvgNDcCUPOw9G+qS4UOVb8/kLTGnVEPt7+UmMHjud3G4trIUP+aVH9DKewjjAC
+	5Tnk9TOZr8hGXAueU6mFPC+SaT/LoqJ2Coxkte94syjLxv+7nd4LyIv6Y++SfUR+
+	D15W5JK6f8bpwp0CWpkuAA=
 Received: from localhost.localdomain (unknown [113.246.65.153])
-	by gzsmtp5 (Coremail) with SMTP id qSkvCgC3TgMgXbtmXgThAA--.17606S2;
-	Tue, 13 Aug 2024 21:18:25 +0800 (CST)
+	by gzsmtp1 (Coremail) with SMTP id pSkvCgAXj5krXbtm_V7cAA--.37546S2;
+	Tue, 13 Aug 2024 21:18:36 +0800 (CST)
 From: Bing Huang <huangbing775@126.com>
 To: peterz@infradead.org
 Cc: dietmar.eggemann@arm.com,
@@ -48,9 +48,9 @@ Cc: dietmar.eggemann@arm.com,
 	mgorman@suse.de,
 	mingo@redhat.com,
 	vincent.guittot@linaro.org
-Subject: [PATCH RESEND] sched/fair: Remove sg_lb_stats forward declaration
-Date: Tue, 13 Aug 2024 21:18:24 +0800
-Message-Id: <20240813131824.2680-1-huangbing775@126.com>
+Subject: [PATCH RESEND] sched/fair: Remove stale buddies comment for last and skip
+Date: Tue, 13 Aug 2024 21:18:35 +0800
+Message-Id: <20240813131835.2747-1-huangbing775@126.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,37 +59,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qSkvCgC3TgMgXbtmXgThAA--.17606S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFWxtr18urW8Zw1Uur47XFb_yoWxArg_Cw
-	4kCws3Kayjyr1Y9a93C3yIqryrta48Ka40kwnFvrW8A34qvr93Jr95CF1fCr9xWrn7Gan8
-	JrnxWF1vvr10gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUULSdPUUUUU==
-X-CM-SenderInfo: xkxd0w5elqwlixv6ij2wof0z/1tbiEBg5r2VLdCXq6QABsj
+X-CM-TRANSID:pSkvCgAXj5krXbtm_V7cAA--.37546S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrur4fKFW3AFW5Ww4DXw17trb_yoWDGFX_Cw
+	nYg3s5Gr10yr1agrW7Gw4fXr9Yqay8KFyrZ3Z8tFZ7t3WIqr98JF95CFyfWr93Gwn2kF4D
+	Grn3Was29F18GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbNJ53UUUUU==
+X-CM-SenderInfo: xkxd0w5elqwlixv6ij2wof0z/1tbimgw6r2VLdDSBDgAAsi
 
 From: Bing Huang <huangbing@kylinos.cn>
 
-struct sg_lb_stats has already been declared previously,
-so there is no need for a forward declaration
+commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") has removed last and
+skip. Modify the comment accordingly.
 
 Signed-off-by: Bing Huang <huangbing@kylinos.cn>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/fair.c | 3 ---
- 1 file changed, 3 deletions(-)
+ kernel/sched/fair.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 41b58387023d..5a94769f1f2d 100644
+index 41b58387023d..383582f87def 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -10203,9 +10203,6 @@ static inline enum fbq_type fbq_classify_rq(struct rq *rq)
- }
- #endif /* CONFIG_NUMA_BALANCING */
- 
--
--struct sg_lb_stats;
--
- /*
-  * task_running_on_cpu - return 1 if @p is running on @cpu.
+@@ -5466,8 +5466,6 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+  * Pick the next process, keeping these things in mind, in this order:
+  * 1) keep things fair between processes/task groups
+  * 2) pick the "next" process, since someone really wants that to run
+- * 3) pick the "last" process, for cache locality
+- * 4) do not run the "skip" process, if something else is available
   */
+ static struct sched_entity *
+ pick_next_entity(struct cfs_rq *cfs_rq)
 -- 
 2.25.1
 
