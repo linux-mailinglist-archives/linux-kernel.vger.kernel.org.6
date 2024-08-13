@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-284637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9F895035B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:12:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF33950364
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB3E0B27C71
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD6E1F23AF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C76D1990A2;
-	Tue, 13 Aug 2024 11:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDko4rdU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DCE198E61;
+	Tue, 13 Aug 2024 11:14:12 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D9260EC4;
-	Tue, 13 Aug 2024 11:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B384760EC4;
+	Tue, 13 Aug 2024 11:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723547524; cv=none; b=ZkHDUOo59+OBLxE+XtTiQdj7t6XCo42aqKQCN1BgREcqMaN2PATFZl6XRzUVgZSSMH4c4ibM2oQj5BK2DBsyOQGiSXKKK3axE7feXaTekpvUTqUpQTr5ERVkXDiX6zgVAistGTqY3D93+bc77xbjZHk/ssX8KBhHYp4M1LLlRZY=
+	t=1723547652; cv=none; b=P9Qzs9NUcLfaZpnsBeqamM5O3A0Ti1cj5PRmUpOemEc6K6WPt2sVTPYYyMki/4DAAbWaTpHNUWzXzIE209we19VZ44VyhKktpuvDyQTDwGypKusXoL7phvcvlhItql6i3dMS2mrSdFA4TpZyELM86wI5N+lfrsPI43Y4gHI+E6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723547524; c=relaxed/simple;
-	bh=q/BYpNAcIZekIKxSVC4OgrS7MA7S3fwGwMg28nu8F4A=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Dfp7EWxwEezYKZzmDQvXFETkOFioCBp4pQs3dsrfGJLybX1dQryflWP6/O5xyAY19tEFOyyVpVIFM8OJcJdM+4rgXmwupbGUqVrChcKSp4IYxRXKTT9o0yQrmsmbjQg33QdtxHgbjTh6Pkxcsto+qucBRyJqLZ+ojrsdYIR2Nb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDko4rdU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C481AC4AF09;
-	Tue, 13 Aug 2024 11:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723547524;
-	bh=q/BYpNAcIZekIKxSVC4OgrS7MA7S3fwGwMg28nu8F4A=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=QDko4rdUaDGuHL4tlZDBJugI2IbtfZdSZwzEQ6QB3t3JeOLwodxdvDXSQejy8SpdI
-	 9p2pDNG6YvcN/bK7Q1vIb3CFlmlYEy9YIrFDkbTt7+3dVzu14VybO3B/x6ySLvUNqm
-	 mN2D2tupIeUcR9zefHYKm/O/H4yJjlr7UyokgZwoeJX4RFM70vah2vef3Hy6JJ0HrB
-	 VyP9+dV8HPthpbUToD3xRKxUl6kKltj+DkS4lL0IjKysI1KW0gVG4zQP0AMVXxMdmX
-	 9ngKLjnzepNgfTt1TCuQ1hgU9/M2MJRKiWoKs+Vijwwtax7a2FfP+Ll7gJG/oMnDGY
-	 ZYzbJYpjdr/SA==
-Date: Tue, 13 Aug 2024 05:12:02 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1723547652; c=relaxed/simple;
+	bh=K9JdzVB0fIMIfOYbHOF7mCR3evhjGdJnoLr6CowGjJA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kgHivxlpfV1hRUQ6oNl8HPm83uK08+3R+EI07M/5SpkCzR1V3caa+DndkDZnXjUhtdkhlqaVPWFL4R7bR8b5dg0e8o9ibol4HqU/LV6SVvv7rUMm8cG0wDnZAhf8qOJzjW+yOgbI7P9jmheWyGFJeP1RK44wuMotguDb7yY56AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowABXfQDwP7tmmckCBg--.3668S2;
+	Tue, 13 Aug 2024 19:14:01 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: giometti@enneenne.com,
+	gregkh@linuxfoundation.org,
+	sudipm.mukherjee@gmail.com,
+	christophe.jaillet@wanadoo.fr,
+	linux@treblig.org,
+	akpm@linux-foundation.org,
+	make24@iscas.ac.cn
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] pps: add an error check in parport_attach
+Date: Tue, 13 Aug 2024 19:13:50 +0800
+Message-Id: <20240813111350.4017390-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Utsav Agarwal <utsav.agarwal@analog.com>
-Cc: devicetree@vger.kernel.org, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Oliver Gaskell <oliver.gaskell@analog.com>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-kernel@vger.kernel.org, 
- Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
- Conor Dooley <conor.dooley@microchip.com>, 
- Arturs Artamonovs <arturs.artamonovs@analog.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-input@vger.kernel.org, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-In-Reply-To: <20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com>
-References: <20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com>
- <20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com>
-Message-Id: <172354752239.384988.5705833300903132689.robh@kernel.org>
-Subject: Re: [PATCH v10 3/3] dt-bindings: input: pure gpio support for
- adp5588
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXfQDwP7tmmckCBg--.3668S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fZw4xGFWxZr4xZFy7ZFb_yoW8Ww4xpa
+	1kuFyjqrZ7Xayqkws7Z3Z5WF1rCw4xta18uFWUK34ak3W3KryFyFy2934F9F18Jr4DAa45
+	CrnxKayjkF47AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
+In parport_attach, the return value of ida_alloc is unchecked, witch leads
+to the use of an invalid index value.
 
-On Tue, 13 Aug 2024 10:51:33 +0100, Utsav Agarwal wrote:
-> Adding software support for enabling the pure gpio capability of the
-> device - which allows all I/O to be used as GPIO. Previously, I/O
-> configuration was limited by software to partial GPIO support only.
-> 
-> When working in a pure gpio mode, the device does not require the
-> certain properties and hence, the following are now made optional:
-> 	- interrupts
-> 	- keypad,num-rows
-> 	- keypad,num-columns
-> 	- linux,keymap
-> 
-> However, note that the above are required to be specified when
-> configuring the device as a keypad, for which dependencies have been added
-> such that specifying either one requires the remaining as well.
-> 
-> Also, note that interrupts are made optional, but required when the device
-> has either been configured in keypad mode or as an interrupt controller.
-> This has been done since they may not necessarily be used when leveraging
-> the device purely for GPIO.
-> 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
-> ---
->  .../devicetree/bindings/input/adi,adp5588.yaml     | 40 ++++++++++++++++++----
->  1 file changed, 34 insertions(+), 6 deletions(-)
-> 
+To address this issue, index should be checked. When the index value is
+abnormal, the device should be freed.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Found by code review, compile tested only.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: [error] syntax error: could not find expected ':' (syntax)
+Cc: stable@vger.kernel.org
+Fixes: 55dbc5b5174d ("pps: remove usage of the deprecated ida_simple_xx() API")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- removed error output as suggestions.
+---
+ drivers/pps/clients/pps_parport.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/adi,adp5588.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could not find expected ':'
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/input/adi,adp5588.example.dts'
-Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could not find expected ':'
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/input/adi,adp5588.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
+index 63d03a0df5cc..abaffb4e1c1c 100644
+--- a/drivers/pps/clients/pps_parport.c
++++ b/drivers/pps/clients/pps_parport.c
+@@ -149,6 +149,9 @@ static void parport_attach(struct parport *port)
+ 	}
+ 
+ 	index = ida_alloc(&pps_client_index, GFP_KERNEL);
++	if (index < 0)
++		goto err_free_device;
++
+ 	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
+ 	pps_client_cb.private = device;
+ 	pps_client_cb.irq_func = parport_irq;
+@@ -159,7 +162,7 @@ static void parport_attach(struct parport *port)
+ 						    index);
+ 	if (!device->pardev) {
+ 		pr_err("couldn't register with %s\n", port->name);
+-		goto err_free;
++		goto err_free_ida;
+ 	}
+ 
+ 	if (parport_claim_or_block(device->pardev) < 0) {
+@@ -187,8 +190,9 @@ static void parport_attach(struct parport *port)
+ 	parport_release(device->pardev);
+ err_unregister_dev:
+ 	parport_unregister_device(device->pardev);
+-err_free:
++err_free_ida:
+ 	ida_free(&pps_client_index, index);
++err_free_device:
+ 	kfree(device);
+ }
+ 
+-- 
+2.25.1
 
 
