@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-284874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC997950647
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:19:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E092950644
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B0901C21D55
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0591F218C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470EA19CCEF;
-	Tue, 13 Aug 2024 13:19:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D35C19B5AA;
-	Tue, 13 Aug 2024 13:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CFA19B3EC;
+	Tue, 13 Aug 2024 13:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXKiW91z"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CA619B3C4;
+	Tue, 13 Aug 2024 13:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555141; cv=none; b=Dk1ae1sr7+Q9aVHastAzE+HEeYuQ88O1MC6qETWV8ujNS0oaGpe2P3QWSQebLA0qMobdxK+Xr+r4l8l27lm6OaUoXpDGAG+1INTDXHUZbvK939kA2VZbA3RtA0ULpF8Ca9e6tM8iDi2lyaYcwKvck/EjCRwH5FSjh/JICcGJO88=
+	t=1723555137; cv=none; b=ikaj0mevCauwFbJYIQX3vxK5i0iIOvEshMWRJTeEHevzR96G1+2uORb5n+8AJycIPRoHgc+3ojHgFKc3dP0lMi5jCy57YWw9wtAOQ2+YCOVfywS0imJr7R6vnxDljvr2SuaPLkEiRRrtJKDi2upORps3w4QjGkFP6KRlV8FOQno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555141; c=relaxed/simple;
-	bh=As2Ctddd9kS83EAEw6FmFisbJ2kCBeI6qG1/GGqbgQo=;
+	s=arc-20240116; t=1723555137; c=relaxed/simple;
+	bh=nj9WIj9PsaDS9hjlGSd2Xp2zVfSnB703wX0ciFGOUWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K5YKQCAbaEzrNROWC8ZT8OT8zlRu/8rzrLQLuj94VkJMLvaNmRN27m/4GXtQ3ygX9oPm97+iej+q1ETYEHVQewwRd1P9TSopuffzsijTiUMtz8cMrHQXJ1yIeXqdX69pwjEajUXEexQ7BXJ1EKUnDo0K73LHz3/Vr1M2DXgbyQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD19312FC;
-	Tue, 13 Aug 2024 06:19:24 -0700 (PDT)
-Received: from [10.57.84.20] (unknown [10.57.84.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3F453F6A8;
-	Tue, 13 Aug 2024 06:18:55 -0700 (PDT)
-Message-ID: <86d4bf8f-186d-4a65-9f06-3e4d5a2a2e1c@arm.com>
-Date: Tue, 13 Aug 2024 14:18:53 +0100
+	 In-Reply-To:Content-Type; b=MQ6bcFTPXO6doV06nC5DkDZm2mnjpxdr5IecsuahcKwmnvFbj2gvpKaiBwY9/SHkMmEUiA7mGcb3A4vcm7TvfcEKZgi5BypHrP/E5QS+hUspmVsoP+vvh1bCTzm2ueXQG3/TAkMDlgrBfJDsSVR/0kJVK3hz0nK09le0zH4q89s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXKiW91z; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so414963966b.1;
+        Tue, 13 Aug 2024 06:18:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723555134; x=1724159934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HPR5mlciumKWlIa6TShcrh39dYVxLo3iT9ymS47VzxA=;
+        b=MXKiW91z8YL5Om9ZGRfna1RlXO6SI/DQel26TmspBI7egqQaHwfvidWoSyqRCfFYaa
+         BX93WNf7lG1unwIju9hvy1Tfd+G7kOPWgf4XalT1LClGkEvpsUBGLS/hydpty/6RRcN8
+         h74nuf26WxKdBUdQjaBGTBsBJsfVOoV5/ekkYyCNpxZkJPPrqv/EtVt4Yv60mZLufToI
+         q1jZ2bPM77UEkoUOuKB2w0vQGKuvLIVJPD7rC0YObTuceBxA5Fld4jU6GFJcjJjCywkV
+         F9Shp6iKRbSphZ3xhHbsaP0w/ns0Fuq+sXfz651A8cxJ0QMo03qxSUqBcylMUnhGkCyT
+         2Ubw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723555134; x=1724159934;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HPR5mlciumKWlIa6TShcrh39dYVxLo3iT9ymS47VzxA=;
+        b=aQJoobUh9CM1vCm6tpvnwA4Imi2dpSJfCyDdxFkEGAVecLkuxscFsf1pYiAkZIFgLp
+         yEnJsl2SBhT3DHGwUwzsTYt/bxP9Ff4A7cpQCrkCxfW5GMPX4XMxiS3JtSr9OxxzUQfC
+         axUF/AuyVTE2E5yTv+ivIkazj07ctjqcrQ6Dsbp3OoHBwmM5CmarYV8DZgZlGQa+HA5x
+         wA9Jc8v7AxKBPfC1JnIQhq6GVKUIe/e+nM1TjfweAT4PXiWtfByoJTmyjAVYz0XNwwvp
+         lF49aJ4bbTQMfwWYMnvviqxkzxAJOspECb0D25KkjPAXwzjlogus6c8IGrgj4qrryza0
+         QndQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1TOvr58N6ljJF4ky9VcBhWS+SKs8zpjG1owPTx3U5zU1lJybSNXjWnGL44K5C9ENmgUGeBRUu3iMt31ZCg+W1CIscH3HAIWUxiTnq
+X-Gm-Message-State: AOJu0Yxvt1ljLDYE3+1q15RVMDJTtZSXLuXv7N/ZXw0a8IPBaLrNUteE
+	A1kxvF4s1GEnIIPPSpho5z9kPyV56KoK1Tpf/OohCrB+FreZgVfE60CLwtzf
+X-Google-Smtp-Source: AGHT+IHoLmtgT5Yu34k1+GShoPzKAE2DGAvgrCYcNGWnM5grTF+T4PiXT4JKlYQocF33z60HaLNczg==
+X-Received: by 2002:a17:907:d15:b0:a7a:93c9:3925 with SMTP id a640c23a62f3a-a80ed1aafd5mr283462766b.6.1723555133306;
+        Tue, 13 Aug 2024 06:18:53 -0700 (PDT)
+Received: from [192.168.42.52] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411aee8sm68807966b.138.2024.08.13.06.18.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 06:18:53 -0700 (PDT)
+Message-ID: <e23dd6a3-fe1f-48e0-8d05-2b5c1e87f3a3@gmail.com>
+Date: Tue, 13 Aug 2024 14:19:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,73 +75,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1.y] cpuidle: teo: Remove recent intercepts metric
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, stable@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
- daniel.lezcano@linaro.org, ulf.hansson@linaro.org, anna-maria@linutronix.de,
- dsmythies@telus.net, kajetan.puchalski@arm.com, lukasz.luba@arm.com,
- dietmar.eggemann@arm.com
-References: <20240628095955.34096-1-christian.loehle@arm.com>
- <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
- <9bbf6989-f41f-4533-a7c8-b274744663cd@arm.com>
- <181bb5c2-5790-41bf-9ed8-3d3164b8697d@arm.com>
- <2024081236-entourage-matter-37c6@gregkh>
+Subject: Re: [PATCH] io_uring/fdinfo: add timeout_list to fdinfo
+To: Ruyi Zhang <ruyi.zhang@samsung.com>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ peiwei.li@samsung.com
+References: <CGME20240812020140epcas5p3431842ed5508ffb5ae9f1d1812cae4d5@epcas5p3.samsung.com>
+ <20240812020052.8763-1-ruyi.zhang@samsung.com>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <2024081236-entourage-matter-37c6@gregkh>
-Content-Type: text/plain; charset=UTF-8
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240812020052.8763-1-ruyi.zhang@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/12/24 13:42, Greg KH wrote:
-> On Mon, Aug 05, 2024 at 03:58:09PM +0100, Christian Loehle wrote:
->> commit 449914398083148f93d070a8aace04f9ec296ce3 upstream.
->>
->> The logic for recent intercepts didn't work, there is an underflow
->> of the 'recent' value that can be observed during boot already, which
->> teo usually doesn't recover from, making the entire logic pointless.
->> Furthermore the recent intercepts also were never reset, thus not
->> actually being very 'recent'.
->>
->> Having underflowed 'recent' values lead to teo always acting as if
->> we were in a scenario were expected sleep length based on timers is
->> too high and it therefore unnecessarily selecting shallower states.
->>
->> Experiments show that the remaining 'intercept' logic is enough to
->> quickly react to scenarios in which teo cannot rely on the timer
->> expected sleep length.
->>
->> See also here:
->> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
->>
->> Fixes: 77577558f25d ("cpuidle: teo: Rework most recent idle duration values treatment")
->> Link: https://patch.msgid.link/20240628095955.34096-3-christian.loehle@arm.com
->> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>  drivers/cpuidle/governors/teo.c | 79 ++++++---------------------------
->>  1 file changed, 14 insertions(+), 65 deletions(-)
+On 8/12/24 03:00, Ruyi Zhang wrote:
+> io_uring fdinfo contains most of the runtime information,
+> which is helpful for debugging io_uring applications;
+> However, there is currently a lack of timeout-related
+> information, and this patch adds timeout_list information.
 > 
-> We can't just take a 6.1.y backport without newer kernels also having
-> this fix.  Can you resend this as backports for all relevant kernels
-> please?
+> Signed-off-by: Ruyi Zhang <ruyi.zhang@samsung.com>
+> ---
+>   io_uring/fdinfo.c  | 16 ++++++++++++++--
+>   io_uring/timeout.c | 12 ------------
+>   io_uring/timeout.h | 12 ++++++++++++
+>   3 files changed, 26 insertions(+), 14 deletions(-)
+> 
+> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+> index b1e0e0d85349..33c3efd79f98 100644
+> --- a/io_uring/fdinfo.c
+> +++ b/io_uring/fdinfo.c
+> @@ -14,6 +14,7 @@
+>   #include "fdinfo.h"
+>   #include "cancel.h"
+>   #include "rsrc.h"
+> +#include "timeout.h"
+>   
+>   #ifdef CONFIG_PROC_FS
+>   static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
+> @@ -54,6 +55,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>   {
+>   	struct io_ring_ctx *ctx = file->private_data;
+>   	struct io_overflow_cqe *ocqe;
+> +	struct io_timeout *timeout;
+>   	struct io_rings *r = ctx->rings;
+>   	struct rusage sq_usage;
+>   	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
+> @@ -219,9 +221,19 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+>   
+>   		seq_printf(m, "  user_data=%llu, res=%d, flags=%x\n",
+>   			   cqe->user_data, cqe->res, cqe->flags);
+> -
+>   	}
+> -
+>   	spin_unlock(&ctx->completion_lock);
+> +
+> +	seq_puts(m, "TimeoutList:\n");
+> +	spin_lock(&ctx->timeout_lock);
 
-Hi Greg,
-the email thread might've looked a bit strange to you but as I wrote
-in a previous reply:
-https://lore.kernel.org/linux-pm/20240628095955.34096-1-christian.loehle@arm.com/T/#ma5bcd00c4b0ffa1fc34e8d7fa237b8de4ee8a25c
-@stable
-4b20b07ce72f cpuidle: teo: Don't count non-existent intercepts
-449914398083 cpuidle: teo: Remove recent intercepts metric
-0a2998fa48f0 Revert: "cpuidle: teo: Introduce util-awareness"
-apply as-is to
-linux-6.10.y
-linux-6.6.y
-for linux-6.1.y only 449914398083 ("cpuidle: teo: Remove recent intercepts metric")
-is relevant, I'll reply with a backport.
+_irq
+
+> +	list_for_each_entry(timeout, &ctx->timeout_list, list) {
+> +		struct io_kiocb *req = cmd_to_io_kiocb(timeout);
+> +		struct io_timeout_data *data = req->async_data;
+> +
+
+I'd argue we don't want it, there should be better way for
+reflection.
+
+And we also don't want to walk a potentially very long list
+under spinlock without IRQs, especially from procfs path,
+and even more so with seq_printf in there doing a lot of
+work. Yes, we already walk the list like that for cancellation,
+but it's lighter than seq_printf, and we should be moving in
+the direction of improving it, not aggravating the situation.
 
 
-Ideally I would wait for an Ack from Rafael though.
-Hopefully that makes more sense then.
+> +		seq_printf(m, "  off=%d, target_seq=%d, repeats=%x,  ts.tv_sec=%lld, ts.tv_nsec=%ld\n",
+> +			   timeout->off, timeout->target_seq, timeout->repeats,
+> +			   data->ts.tv_sec, data->ts.tv_nsec);
+
+We should be deprecating sequences, i.e. target_seq, not exposing
+it further to the user.
+
+> +	}
+> +	spin_unlock(&ctx->timeout_lock);
+>   }
+>   #endif
+
+-- 
+Pavel Begunkov
 
