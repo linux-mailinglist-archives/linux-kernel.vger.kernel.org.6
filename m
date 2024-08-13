@@ -1,270 +1,202 @@
-Return-Path: <linux-kernel+bounces-284270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F2394FF2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7456294FF33
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379011F24D6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:56:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1D01F21D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC0E7A15B;
-	Tue, 13 Aug 2024 07:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AD061FE1;
+	Tue, 13 Aug 2024 07:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l5iF+mAk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gw/Mo+mQ"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BE5D531;
-	Tue, 13 Aug 2024 07:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92EF58ABF
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 07:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723535803; cv=none; b=EErRoJPvsevaozI4s1houDbUB/ml+wqdpKDHt57veb3S0GmQwGBXrWgZpIIiG6NYyOnKeceZFDq2uMfzd66e9pYnoFk0mypvxbe540wRBgdNl6Thxs+iGjE9mf48JnPB2KN75pNrsPq2FR6G3/CMR5x0l5fPs6frtm06RcTMgWM=
+	t=1723535913; cv=none; b=C84WKfTpBfZ73+/xXZYeGby6hTQbKcCEEFa985jofTGYgMiPBRV/JOoBajriVZ58bjjqBb3rwjYRb52d+TXAs4ABeWfnjGfRPu7EruZjSykTYxzWEqgjvvn3nzGjE0+cs/+8pXZ8osCoPD+ZFuRIn8ZRl40djyy1jN2oybxR2Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723535803; c=relaxed/simple;
-	bh=KYijDMxWTruxUOHeIXuSweAvO2AIcNRXv9pQTHmdND4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hcF6ZOsPWfHmrJohvnI0ZotVyo5PmzILwrFGZmeRyGF2qyvyujezyIDhPofIrWJShTFyTuMgCbpbBQDLa6ZSkUsgzhqmIIjPUIydcyU5uFlsj1d+RFV9t4JAULUhTq7PZokyBfek5iiJSp81uVzF/ah0Ie7k6II0pOu19sJ4Cts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l5iF+mAk; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723535800; x=1755071800;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=KYijDMxWTruxUOHeIXuSweAvO2AIcNRXv9pQTHmdND4=;
-  b=l5iF+mAkHJ8O6704NkawDsDOkhCf/ZgC6w57SwuCdrkLFwAKnktObs4/
-   wCU0zW7MG/1ltHEk1aKcw8FyXziaPyDnC8Kk5DGZJEtxqwj4Hd2vMzCz+
-   hZSkRjo5ujyzskQ2Piw216/49F4Oozool//mJmEeUQG6gwxgy55cwv58a
-   Vg+AP/H5Z0gHH+IyWk4MJRKe+5NwePSYjVOTa6xstAg4/FsEYiir4fovK
-   bfK5B8zlHmVa5tmDjkEgqwjb7qSETl2GqAxS2wvz1oE+QghFarnKRk9g6
-   zOYGjnIkfTqvvlhWcSEGZO0Q1P592v2JFuSFuzvb1c1RfHftdB76OXI46
-   g==;
-X-CSE-ConnectionGUID: rr+6QuegRUmbXfP3dIm97w==
-X-CSE-MsgGUID: uyrk4iu1TXCR4loK6taZ4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="25546395"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="25546395"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:56:39 -0700
-X-CSE-ConnectionGUID: lG7mVi4oRlqiqUXf6sr6fg==
-X-CSE-MsgGUID: kpoadPFQSNGgFJblkarbew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="63438975"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.234])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:56:33 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Alex Deucher
- <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Harry
- Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo
- Siqueira <Rodrigo.Siqueira@amd.com>, Mario Limonciello
- <mario.limonciello@amd.com>, Matt Hartley <matt.hartley@gmail.com>, Kieran
- Levin <ktl@framework.net>, Hans de Goede <hdegoede@redhat.com>, Xinhui Pan
- <Xinhui.Pan@amd.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
- linux-doc@vger.kernel.org, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <linux@weissschuh.net>
-Subject: Re: [PATCH v4 1/3] drm: Add panel backlight quirks
-In-Reply-To: <20240812-amdgpu-min-backlight-quirk-v4-1-56a63ff897b7@weissschuh.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net>
- <20240812-amdgpu-min-backlight-quirk-v4-1-56a63ff897b7@weissschuh.net>
-Date: Tue, 13 Aug 2024 10:56:30 +0300
-Message-ID: <878qx026vl.fsf@intel.com>
+	s=arc-20240116; t=1723535913; c=relaxed/simple;
+	bh=jJTjQME7tCjsf3cZR4sxhuOS0caxnMLD3jgtJBmw6Zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JJhwOGDutL8GH4bvmv2SDNP2kI2jI3AxotAvd3a1yZJ2yVWS5azi9CPkamkRMQOcafpt/knRpozMzxd8csov4Ld6MvTlC07cWmxQsU/76saBZyCflMD+riYZBIjCN8zqZkIwgisOjBvwG4HShtZzle6/ixv6+SPr2QsSqJ1CwwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gw/Mo+mQ; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f136e23229so54647771fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 00:58:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723535910; x=1724140710; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2V3KFwhTBRCQs0TGLrZG9sPYqXcbuU/Y45R5EunYuwA=;
+        b=Gw/Mo+mQDwnfYXg11R3lDD0TELrNTGckdXZKcHD8BGAxJaqxy1lIityQQeiabzIRSH
+         3b3ilAFuyuGFEkfUDoOvZ0TK48UQOAMdIfh6JWawbyrAhHe/P1N7wTiVpiWPiksadP6h
+         /jX+2Rg2UBVM8Sd0BuS7GgBRmZjI5UKMe+bdDn+ATUxzAtagJTo8hQuxBXpgC0efEwKo
+         cxdApH1soegtZMqAwd2GiIkXfkS5MU4Wvy6MZ4XiG0ZtMmdftvVWVamJwIZma3/55gkt
+         xvoqqsgUKz01Tf1O3wfs9sUHRZxyTTsvio5UJ1ui0c0EKcE3l/0lbCDOLP7faJEK1gYy
+         xOlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723535910; x=1724140710;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2V3KFwhTBRCQs0TGLrZG9sPYqXcbuU/Y45R5EunYuwA=;
+        b=cgYu09Hg6ZH4dCepMaZkmqL3+Lqv6l8AN29O4AXzOkTYLX0TKvg9wIKzX1Pz1ppehR
+         1qqUObBoObJjPLDG5+5AJo4TN9o+GJDzFsKQhuptdgRmS+rsGwrJ6zZ3s0PXd0BJPS8K
+         IZfrPuFVHUtefGLLr9pFVKsCMHJsvstvs1947anMnwGtVA0DMaX7kOGNCIIonSqvHq4e
+         AyXq79olxx8vyxU40nBnBtldAhjwfR0r7KDkaXSdc+jqzJQikPvnaxifxs/vwR1+d46B
+         4VGNgjOjZ6SYoLCmNpTDoKk8dNUN52Rfq9IY160JBfyhntzsd0w2bohAIH5N3DzKB3A7
+         XaAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIjEh+FUvlWDCrZzpzc/zrNZ8Cvfw6HNucwbKYmsHl11qCSAzU1kpSsQuMvTB4Izl9c/ZH/HhVgjz5mL1RsXWdcTUpUY4S3e04DSKm
+X-Gm-Message-State: AOJu0YySC3/bhSDwPic6Ksay9CpI02HZeuSsuiD9A0GAOaP6uQiTANfE
+	+lASkptSG00aMyYXu/sSu8Qg87CrqdZNPibsd8aO2rPRhP1NESOuhOaXU+bNhWM=
+X-Google-Smtp-Source: AGHT+IF9WYmvKOwlQKiaI4MOt8VdhhGRxPabvxUzgi6ujf//nOdvuQDnJLjNlge/OPVP3D2pzLO+oQ==
+X-Received: by 2002:a2e:be0d:0:b0:2f0:198e:cf86 with SMTP id 38308e7fff4ca-2f2b717f3dcmr18292341fa.33.1723535909795;
+        Tue, 13 Aug 2024 00:58:29 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa4653sm47963666b.51.2024.08.13.00.58.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 00:58:28 -0700 (PDT)
+Date: Tue, 13 Aug 2024 10:58:24 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, warp5tw@gmail.com, tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+	avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	andi.shyti@kernel.org, wsa+renesas@sang-engineering.com,
+	rand.sec96@gmail.com, kwliu@nuvoton.com, jjliu0@nuvoton.com,
+	kfting@nuvoton.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v1 5/7] drivers: i2c: use i2c frequency table
+Message-ID: <d512d659-0891-4219-bc8c-bf272755e3d2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807100244.16872-6-kfting@nuvoton.com>
 
-On Mon, 12 Aug 2024, Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
-> Panels using a PWM-controlled backlight source without an do not have a
-> standard way to communicate their valid PWM ranges.
-> On x86 the ranges are read from ACPI through driver-specific tables.
-> The built-in ranges are not necessarily correct, or may grow stale if an
-> older device can be retrofitted with newer panels.
->
-> Add a quirk infrastructure with which the minimum valid backlight value
-> can be maintained as part of the kernel.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->  Documentation/gpu/drm-kms-helpers.rst        |  3 ++
->  drivers/gpu/drm/Kconfig                      |  4 ++
->  drivers/gpu/drm/Makefile                     |  1 +
->  drivers/gpu/drm/drm_panel_backlight_quirks.c | 69 ++++++++++++++++++++++=
-++++++
->  include/drm/drm_utils.h                      |  3 ++
->  5 files changed, 80 insertions(+)
->
-> diff --git a/Documentation/gpu/drm-kms-helpers.rst b/Documentation/gpu/dr=
-m-kms-helpers.rst
-> index 8435e8621cc0..a26989500129 100644
-> --- a/Documentation/gpu/drm-kms-helpers.rst
-> +++ b/Documentation/gpu/drm-kms-helpers.rst
-> @@ -230,6 +230,9 @@ Panel Helper Reference
->  .. kernel-doc:: drivers/gpu/drm/drm_panel_orientation_quirks.c
->     :export:
->=20=20
-> +.. kernel-doc:: drivers/gpu/drm/drm_panel_backlight_quirks.c
-> +   :export:
-> +
->  Panel Self Refresh Helper Reference
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20=20
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index 6b2c6b91f962..9ebb8cdb535e 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -454,6 +454,10 @@ config DRM_HYPERV
->  config DRM_EXPORT_FOR_TESTS
->  	bool
->=20=20
-> +# Separate option as not all DRM drivers use it
-> +config DRM_PANEL_BACKLIGHT_QUIRKS
-> +	tristate
-> +
->  config DRM_LIB_RANDOM
->  	bool
->  	default n
-> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> index 68cc9258ffc4..adf85999aee2 100644
-> --- a/drivers/gpu/drm/Makefile
-> +++ b/drivers/gpu/drm/Makefile
-> @@ -92,6 +92,7 @@ drm-$(CONFIG_DRM_PANIC) +=3D drm_panic.o
->  obj-$(CONFIG_DRM)	+=3D drm.o
->=20=20
->  obj-$(CONFIG_DRM_PANEL_ORIENTATION_QUIRKS) +=3D drm_panel_orientation_qu=
-irks.o
-> +obj-$(CONFIG_DRM_PANEL_BACKLIGHT_QUIRKS) +=3D drm_panel_backlight_quirks=
-.o
->=20=20
->  #
->  # Memory-management helpers
-> diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/d=
-rm/drm_panel_backlight_quirks.c
-> new file mode 100644
-> index 000000000000..a88e77db97c5
-> --- /dev/null
-> +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-> @@ -0,0 +1,69 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/array_size.h>
-> +#include <linux/dmi.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <drm/drm_utils.h>
-> +
-> +struct drm_panel_min_backlight_quirk {
-> +	struct {
-> +		enum dmi_field field;
-> +		const char * const value;
-> +	} dmi_match;
-> +	struct drm_edid_ident ident;
-> +	u8 min_brightness;
-> +};
-> +
-> +static const struct drm_panel_min_backlight_quirk drm_panel_min_backligh=
-t_quirks[] =3D {
-> +};
-> +
-> +static bool drm_panel_min_backlight_quirk_matches(const struct drm_panel=
-_min_backlight_quirk *quirk,
-> +						  const struct drm_edid *edid)
-> +{
-> +	if (!dmi_match(quirk->dmi_match.field, quirk->dmi_match.value))
-> +		return false;
-> +
-> +	if (!drm_edid_match(edid, &quirk->ident))
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +/**
-> + * drm_get_panel_min_brightness_quirk - Get minimum supported brightness=
- level for a panel.
-> + * @edid: EDID of the panel to check
-> + *
-> + * This function checks for platform specific (e.g. DMI based) quirks
-> + * providing info on the minimum backlight brightness for systems where =
-this
-> + * cannot be probed correctly from the hard-/firm-ware.
-> + *
-> + * Returns:
-> + * A negative error value or
-> + * an override value in the range [0, 255] representing 0-100% to be sca=
-led to
-> + * the drivers target range.
-> + */
-> +int drm_get_panel_min_brightness_quirk(const struct drm_edid *edid)
-> +{
-> +	const struct drm_panel_min_backlight_quirk *quirk;
-> +	size_t i;
-> +
-> +	if (!IS_ENABLED(CONFIG_DMI))
-> +		return -ENODATA;
-> +
-> +	if (!edid)
-> +		return -EINVAL;
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(drm_panel_min_backlight_quirks); i++) {
-> +		quirk =3D &drm_panel_min_backlight_quirks[i];
-> +
-> +		if (drm_panel_min_backlight_quirk_matches(quirk, edid))
-> +			return quirk->min_brightness;
-> +	}
-> +
-> +	return -ENODATA;
-> +}
-> +EXPORT_SYMBOL(drm_get_panel_min_brightness_quirk);
-> +
-> +MODULE_DESCRIPTION("Quirks for panel backlight overrides");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/drm/drm_utils.h b/include/drm/drm_utils.h
-> index 70775748d243..267711028dd4 100644
-> --- a/include/drm/drm_utils.h
-> +++ b/include/drm/drm_utils.h
-> @@ -11,9 +11,12 @@
->  #define __DRM_UTILS_H__
->=20=20
->  #include <linux/types.h>
-> +#include <drm/drm_edid.h>
+Hi,
 
-Please prefer forward declarations over includes where possible.
+kernel test robot noticed the following build warnings:
 
-Here,
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-struct drm_edid;
+url:    https://github.com/intel-lab-lkp/linux/commits/warp5tw-gmail-com/i2c-npcm-correct-the-read-write-operation-procedure/20240807-182210
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20240807100244.16872-6-kfting%40nuvoton.com
+patch subject: [PATCH v1 5/7] drivers: i2c: use i2c frequency table
+config: arm-randconfig-r073-20240812 (https://download.01.org/0day-ci/archive/20240813/202408130818.FgDP5uNm-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project f86594788ce93b696675c94f54016d27a6c21d18)
 
-is sufficient.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202408130818.FgDP5uNm-lkp@intel.com/
 
-BR,
-Jani.
+New smatch warnings:
+drivers/i2c/busses/i2c-npcm7xx.c:1956 npcm_i2c_init_clk() error: buffer overflow 'smb_timing' 21 <= 21 (assuming for loop doesn't break)
+drivers/i2c/busses/i2c-npcm7xx.c:1973 npcm_i2c_init_clk() error: buffer overflow 'smb_timing' 17 <= 21
 
->=20=20
->  int drm_get_panel_orientation_quirk(int width, int height);
->=20=20
-> +int drm_get_panel_min_brightness_quirk(const struct drm_edid *edid);
-> +
->  signed long drm_timeout_abs_to_jiffies(int64_t timeout_nsec);
->=20=20
->  #endif
+Old smatch warnings:
+drivers/i2c/busses/i2c-npcm7xx.c:752 npcm_i2c_slave_enable() error: buffer overflow 'npcm_i2caddr' 2 <= 9
+drivers/i2c/busses/i2c-npcm7xx.c:1960 npcm_i2c_init_clk() error: buffer overflow 'smb_timing' 21 <= 21 (assuming for loop doesn't break)
+drivers/i2c/busses/i2c-npcm7xx.c:1974 npcm_i2c_init_clk() error: buffer overflow 'smb_timing' 17 <= 21
+drivers/i2c/busses/i2c-npcm7xx.c:1976 npcm_i2c_init_clk() error: buffer overflow 'smb_timing' 17 <= 21
+drivers/i2c/busses/i2c-npcm7xx.c:1979 npcm_i2c_init_clk() error: buffer overflow 'smb_timing' 21 <= 21 (assuming for loop doesn't break)
 
---=20
-Jani Nikula, Intel
+vim +1956 drivers/i2c/busses/i2c-npcm7xx.c
+
+56a1485b102ed1 Tali Perry          2020-05-27  1919  static int npcm_i2c_init_clk(struct npcm_i2c *bus, u32 bus_freq_hz)
+56a1485b102ed1 Tali Perry          2020-05-27  1920  {
+a946fe9698f261 Tyrone Ting         2024-08-07  1921  	struct  SMB_TIMING_T *smb_timing;
+a946fe9698f261 Tyrone Ting         2024-08-07  1922  	u8   scl_table_cnt = 0, table_size = 0;
+a946fe9698f261 Tyrone Ting         2024-08-07  1923  
+56a1485b102ed1 Tali Perry          2020-05-27  1924  	u8   fast_mode = 0;
+56a1485b102ed1 Tali Perry          2020-05-27  1925  	u32  src_clk_khz;
+56a1485b102ed1 Tali Perry          2020-05-27  1926  	u32  bus_freq_khz;
+56a1485b102ed1 Tali Perry          2020-05-27  1927  
+56a1485b102ed1 Tali Perry          2020-05-27  1928  	src_clk_khz = bus->apb_clk / 1000;
+56a1485b102ed1 Tali Perry          2020-05-27  1929  	bus_freq_khz = bus_freq_hz / 1000;
+56a1485b102ed1 Tali Perry          2020-05-27  1930  	bus->bus_freq = bus_freq_hz;
+56a1485b102ed1 Tali Perry          2020-05-27  1931  
+a946fe9698f261 Tyrone Ting         2024-08-07  1932  	switch (bus_freq_hz) {
+a946fe9698f261 Tyrone Ting         2024-08-07  1933  	case I2C_MAX_STANDARD_MODE_FREQ:
+a946fe9698f261 Tyrone Ting         2024-08-07  1934  		smb_timing = SMB_TIMING_100KHZ;
+a946fe9698f261 Tyrone Ting         2024-08-07  1935  		table_size = ARRAY_SIZE(SMB_TIMING_100KHZ);
+a946fe9698f261 Tyrone Ting         2024-08-07  1936  		break;
+a946fe9698f261 Tyrone Ting         2024-08-07  1937  	case I2C_MAX_FAST_MODE_FREQ:
+a946fe9698f261 Tyrone Ting         2024-08-07  1938  		smb_timing = SMB_TIMING_400KHZ;
+a946fe9698f261 Tyrone Ting         2024-08-07  1939  		table_size = ARRAY_SIZE(SMB_TIMING_400KHZ);
+56a1485b102ed1 Tali Perry          2020-05-27  1940  		fast_mode = I2CCTL3_400K_MODE;
+a946fe9698f261 Tyrone Ting         2024-08-07  1941  		break;
+a946fe9698f261 Tyrone Ting         2024-08-07  1942  	case I2C_MAX_FAST_MODE_PLUS_FREQ:
+a946fe9698f261 Tyrone Ting         2024-08-07  1943  		smb_timing = SMB_TIMING_1000KHZ;
+a946fe9698f261 Tyrone Ting         2024-08-07  1944  		table_size = ARRAY_SIZE(SMB_TIMING_1000KHZ);
+56a1485b102ed1 Tali Perry          2020-05-27  1945  		fast_mode = I2CCTL3_400K_MODE;
+a946fe9698f261 Tyrone Ting         2024-08-07  1946  		break;
+a946fe9698f261 Tyrone Ting         2024-08-07  1947  	default:
+56a1485b102ed1 Tali Perry          2020-05-27  1948  		return -EINVAL;
+56a1485b102ed1 Tali Perry          2020-05-27  1949  	}
+56a1485b102ed1 Tali Perry          2020-05-27  1950  
+a946fe9698f261 Tyrone Ting         2024-08-07  1951  	for (scl_table_cnt = 0 ; scl_table_cnt < table_size ; scl_table_cnt++)
+a946fe9698f261 Tyrone Ting         2024-08-07  1952  		if (bus->apb_clk >= smb_timing[scl_table_cnt].core_clk)
+a946fe9698f261 Tyrone Ting         2024-08-07  1953  			break;
+
+The minimum smb_timing[scl_table_cnt].core_clk value is 10000000 or 20000000 so
+I can't tell just from the context that we are always going to hit this break
+statement.
+
+a946fe9698f261 Tyrone Ting         2024-08-07  1954  
+56a1485b102ed1 Tali Perry          2020-05-27  1955  	/* write sclfrq value. bits [6:0] are in I2CCTL2 reg */
+a946fe9698f261 Tyrone Ting         2024-08-07 @1956  	iowrite8(FIELD_PREP(I2CCTL2_SCLFRQ6_0, smb_timing[scl_table_cnt].sclfrq & 0x7F),
+                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+56a1485b102ed1 Tali Perry          2020-05-27  1957  		 bus->reg + NPCM_I2CCTL2);
+56a1485b102ed1 Tali Perry          2020-05-27  1958  
+56a1485b102ed1 Tali Perry          2020-05-27  1959  	/* bits [8:7] are in I2CCTL3 reg */
+a946fe9698f261 Tyrone Ting         2024-08-07  1960  	iowrite8(fast_mode | FIELD_PREP(I2CCTL3_SCLFRQ8_7, (smb_timing[scl_table_cnt].sclfrq >> 7)
+a946fe9698f261 Tyrone Ting         2024-08-07  1961  		 & 0x3),
+56a1485b102ed1 Tali Perry          2020-05-27  1962  		 bus->reg + NPCM_I2CCTL3);
+56a1485b102ed1 Tali Perry          2020-05-27  1963  
+56a1485b102ed1 Tali Perry          2020-05-27  1964  	/* Select Bank 0 to access NPCM_I2CCTL4/NPCM_I2CCTL5 */
+56a1485b102ed1 Tali Perry          2020-05-27  1965  	npcm_i2c_select_bank(bus, I2C_BANK_0);
+56a1485b102ed1 Tali Perry          2020-05-27  1966  
+56a1485b102ed1 Tali Perry          2020-05-27  1967  	if (bus_freq_hz >= I2C_MAX_FAST_MODE_FREQ) {
+56a1485b102ed1 Tali Perry          2020-05-27  1968  		/*
+56a1485b102ed1 Tali Perry          2020-05-27  1969  		 * Set SCL Low/High Time:
+56a1485b102ed1 Tali Perry          2020-05-27  1970  		 * k1 = 2 * SCLLT7-0 -> Low Time  = k1 / 2
+56a1485b102ed1 Tali Perry          2020-05-27  1971  		 * k2 = 2 * SCLLT7-0 -> High Time = k2 / 2
+56a1485b102ed1 Tali Perry          2020-05-27  1972  		 */
+a946fe9698f261 Tyrone Ting         2024-08-07 @1973  		iowrite8(smb_timing[scl_table_cnt].scllt, bus->reg + NPCM_I2CSCLLT);
+a946fe9698f261 Tyrone Ting         2024-08-07  1974  		iowrite8(smb_timing[scl_table_cnt].sclht, bus->reg + NPCM_I2CSCLHT);
+56a1485b102ed1 Tali Perry          2020-05-27  1975  
+a946fe9698f261 Tyrone Ting         2024-08-07  1976  		iowrite8(smb_timing[scl_table_cnt].dbcnt, bus->reg + NPCM_I2CCTL5);
+56a1485b102ed1 Tali Perry          2020-05-27  1977  	}
+56a1485b102ed1 Tali Perry          2020-05-27  1978  
+a946fe9698f261 Tyrone Ting         2024-08-07  1979  	iowrite8(smb_timing[scl_table_cnt].hldt, bus->reg + NPCM_I2CCTL4);
+56a1485b102ed1 Tali Perry          2020-05-27  1980  
+56a1485b102ed1 Tali Perry          2020-05-27  1981  	/* Return to Bank 1, and stay there by default: */
+56a1485b102ed1 Tali Perry          2020-05-27  1982  	npcm_i2c_select_bank(bus, I2C_BANK_1);
+56a1485b102ed1 Tali Perry          2020-05-27  1983  
+56a1485b102ed1 Tali Perry          2020-05-27  1984  	return 0;
+56a1485b102ed1 Tali Perry          2020-05-27  1985  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
