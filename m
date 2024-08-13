@@ -1,114 +1,136 @@
-Return-Path: <linux-kernel+bounces-284568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFDD950292
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6805B950294
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F21B1C218EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:39:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1856E1F2258F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64B6193093;
-	Tue, 13 Aug 2024 10:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AC2191489;
+	Tue, 13 Aug 2024 10:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eG3LZVoK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vwRw7BTm"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7515D208AD
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E79208AD
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723545541; cv=none; b=HEXSInoEToEoPovB8yEhF1CZ2BxEX4ouum/yG8GDw6+vEPadLq5DFI9ced3heECTt//FQEfgUOaK6btZjTj1HyL2aVpZOtL6BPv3FG5K+tIhYkBCAfgnfkBd6LydVexpbv4zvUTe5qjmLVtG5uJAuHnXdFrlj+HEfv2V69WVUL4=
+	t=1723545552; cv=none; b=F+rFbyrz9WGpfkOaLjNA6iXLav+SJS4Iq8N0qF+dGV+6wwo4lDk/kh/gg5G+uPxHfGyutItjgMrhUMHvYxNDnxqR7La8JmxSoEHDIfvBWWDtaJNOFaDG90oDhpFn50J0SB/oNdnT34a+iHLWQKnPjWd7JeOO10V8VM3304vmb+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723545541; c=relaxed/simple;
-	bh=NLasph2LUzWhlRlK1KaqaYGGzd0J6XC+IteugDtQdvM=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=qlZeH/x/qFGQjs0tZ33aNAhlXhqdMvJ2jNJHKaoKfmYYCr903alttW+faaBFzoNUgRSNDen3WXkY9z1mEgvVpKYAtR7pYp3DzrZIlBlfnoREfi7WUdtVdLnda8lkrh2uyakDidXGFJeVc+Ng6Sh64UfrdsOMbHh2EYXLMT58IkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eG3LZVoK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723545538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=Ixn5tUGrJ3/F5Fy+d7CnP50Vy0bDBTb14a4kmnKr/7A=;
-	b=eG3LZVoK+yydAd6g5sClNeg34gKLYv1BnLeSRDLoj2A+3sQ3y0JtnnkqOGGuLAH9k4y9Wx
-	SvwK3PtsWB87qP0ZrJAnZdkHlgtp+zfXxywEy/Vk713v8wnt8z7yW6pw7UhV7y6KNibEaE
-	BFIGZFZv9Lx5tglY9goH1HaT016gbc4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-qiCENhkZPJ2ke3PjaFlSIw-1; Tue,
- 13 Aug 2024 06:38:54 -0400
-X-MC-Unique: qiCENhkZPJ2ke3PjaFlSIw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 059001955F3E;
-	Tue, 13 Aug 2024 10:38:53 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFF871956048;
-	Tue, 13 Aug 2024 10:38:52 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id A990C30C1C18; Tue, 13 Aug 2024 10:38:51 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id A69C13FB48;
-	Tue, 13 Aug 2024 12:38:51 +0200 (CEST)
-Date: Tue, 13 Aug 2024 12:38:51 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-    Khazhismel Kumykov <khazhy@google.com>, 
-    Zdenek Kabelac <zdenek.kabelac@gmail.com>
-Subject: [PATCH v4 1/2] dm suspend: return -ERESTARTSYS instead of -EINTR
-Message-ID: <75a5ffa-47b6-8a1e-7d8-0c310401284@redhat.com>
+	s=arc-20240116; t=1723545552; c=relaxed/simple;
+	bh=fBiBB72seByPR/LQjvOJc5w6OgAxSgqTj1kzOZj3ods=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pq2b7BX7oLNpcvkeenntXq2QD/B8WVvTIQUyo0sNV4KsuYDo9BOtitrW8nMG70ov3ONNYQ8U1pPd8XL6kBZA7SjRvzMv+keqeUc1FmCfk/9RK+N35nhFvf97JWzZTjXv8r11ffTmTJis+y3G6bxyizHT9AHV49IzYi2I0OcX9w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vwRw7BTm; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44ff9281e93so28077321cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723545549; x=1724150349; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jodWGM3qFCwiaXWXlR6WrhJO0c3QgWrsycfmzzz4DaQ=;
+        b=vwRw7BTmuDXi7bmCrLEn45b88nQHpvViz1JFALOM0Y13ZbPqltypcc3W7and4wZDah
+         Gq9Y6UNTHLlGcxP8lyL8RoxOfl++XLJrC3t6cCDXW3nb/bgB+Sr3D3uaWqm9xNEswQ/I
+         +STmmU+TRWKWD/ZEEYAxwNG3pZiEzeEs6dLEhfta/rxlub+DUY40n7lMmSY2U/Fac/C6
+         p8DepSE2m3iMP/s+VPTqVK7oyk93Y/xAN1VQsVFsBIlLh+OICQYiqJYEscJsC4qTkJOK
+         1OyQVlDG724Ec8Fs0nFQ4ZeE9MTzSojqMrGEV0asGVmChQ+uSl2roktYypWQapMEwGFI
+         Z/6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723545549; x=1724150349;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jodWGM3qFCwiaXWXlR6WrhJO0c3QgWrsycfmzzz4DaQ=;
+        b=hKgypsnVWpGXFwkucyB/U4EIG96p6Kt5lscGIzYZS0qhaIHfcLZXC74+Q1thWF44oi
+         xBQdCJ2CUAYPFQDkFqbM+IXimrempfaX+D3eStcwi1k/PP1aylBKowB6k/l7HJA69RV1
+         pTf07PETroX0SPzvMMoB3OUGdfwTtaL3HzDhqbp+WOk1RlvsLCIy/gpwjqDNWj3qtkyv
+         t20ICLavGyZRNmsJ2su5SoiKtwDCuGgAbQ3T5wRCpcQJNHRT1Z7RYHVN2M3nbeWwZTMP
+         0Wjuwr9nRs2G9mwGHxNAxgWZTYItN/f5/SGfKiZOfZjDyCifMmgNxxBR34MoMUSsyMHU
+         fsxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0f8sHkGA8iMyIF4wO/UxqxCl7GJ+l2FlH8G7DQ6zanxXOiMUU80Mv8IjOC428bni9t+bjY/19IiWC8hMbu4uTA7oM6thDDYpP35I3
+X-Gm-Message-State: AOJu0YwD7ikCRG5oUhe5PqHI3LJDkXJfKieqJ3eDdIst25zu2FyHXTP2
+	oIpQta05OeY79ZsAQSd9W1r0vUyJHlHjR9fCw1PYQIGTlyK3IIwDw2yC6iSIuZY=
+X-Google-Smtp-Source: AGHT+IEQhu0sZEQwCMkuuHp2+Eej+3CluKEqgv7pqdVvvNrpNNxUEkdiadArn7M6LWgxB6RNVXMWSQ==
+X-Received: by 2002:a05:622a:2486:b0:44f:fb58:8c3e with SMTP id d75a77b69052e-45349a60677mr39456191cf.46.1723545549177;
+        Tue, 13 Aug 2024 03:39:09 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c28fdcfsm30942681cf.90.2024.08.13.03.39.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 03:39:08 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH net-next] nfc: mrvl: use scoped device node handling to simplify cleanup
+Date: Tue, 13 Aug 2024 12:39:04 +0200
+Message-ID: <20240813103904.75978-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
 
-This commit changes device mapper, so that it returns -ERESTARTSYS
-instead of -EINTR when it is interrupted by a signal (so that the syscal
-will restart the ioctl).
+Obtain the device node reference with scoped/cleanup.h to reduce error
+handling and make the code a bit simpler.
 
-The manpage signal(7) says that the ioctl function should be restarted if
-the signal was handled with SA_RESTART.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/md/dm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/nfc/nfcmrvl/uart.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Index: linux-2.6/drivers/md/dm.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm.c	2024-07-30 14:06:55.000000000 +0200
-+++ linux-2.6/drivers/md/dm.c	2024-07-31 18:10:21.000000000 +0200
-@@ -2737,7 +2737,7 @@ static int dm_wait_for_bios_completion(s
- 			break;
+diff --git a/drivers/nfc/nfcmrvl/uart.c b/drivers/nfc/nfcmrvl/uart.c
+index 956ae92f7573..01760f92e68a 100644
+--- a/drivers/nfc/nfcmrvl/uart.c
++++ b/drivers/nfc/nfcmrvl/uart.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2015, Marvell International Ltd.
+  */
  
- 		if (signal_pending_state(task_state, current)) {
--			r = -EINTR;
-+			r = -ERESTARTSYS;
- 			break;
- 		}
++#include <linux/cleanup.h>
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/of_gpio.h>
+@@ -59,10 +60,10 @@ static const struct nfcmrvl_if_ops uart_ops = {
+ static int nfcmrvl_uart_parse_dt(struct device_node *node,
+ 				 struct nfcmrvl_platform_data *pdata)
+ {
+-	struct device_node *matched_node;
+ 	int ret;
  
-@@ -2762,7 +2762,7 @@ static int dm_wait_for_completion(struct
- 			break;
+-	matched_node = of_get_compatible_child(node, "marvell,nfc-uart");
++	struct device_node *matched_node __free(device_node) = of_get_compatible_child(node,
++										       "marvell,nfc-uart");
+ 	if (!matched_node) {
+ 		matched_node = of_get_compatible_child(node, "mrvl,nfc-uart");
+ 		if (!matched_node)
+@@ -72,15 +73,12 @@ static int nfcmrvl_uart_parse_dt(struct device_node *node,
+ 	ret = nfcmrvl_parse_dt(matched_node, pdata);
+ 	if (ret < 0) {
+ 		pr_err("Failed to get generic entries\n");
+-		of_node_put(matched_node);
+ 		return ret;
+ 	}
  
- 		if (signal_pending_state(task_state, current)) {
--			r = -EINTR;
-+			r = -ERESTARTSYS;
- 			break;
- 		}
+ 	pdata->flow_control = of_property_read_bool(matched_node, "flow-control");
+ 	pdata->break_control = of_property_read_bool(matched_node, "break-control");
  
+-	of_node_put(matched_node);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
 
 
