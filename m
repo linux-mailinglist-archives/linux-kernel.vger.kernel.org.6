@@ -1,175 +1,146 @@
-Return-Path: <linux-kernel+bounces-284183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE0194FE0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:43:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F001394FE0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8191C2250A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937701F217B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14203D3BF;
-	Tue, 13 Aug 2024 06:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA3F40BE3;
+	Tue, 13 Aug 2024 06:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u2vC9BMS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="85s1Hz1L";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u2vC9BMS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="85s1Hz1L"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TrpBpHKM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413493BBC5;
-	Tue, 13 Aug 2024 06:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730BA80B;
+	Tue, 13 Aug 2024 06:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723531417; cv=none; b=Qr/p+UpYcQPx9ar71mW4bUxqdK/2J4d0dMhXFGQAgQJfF1YprPQFCGXGR0WEf1IL2/vpQobZq7zAQG0pJbpQi9ElMALejIW2dA9BFLt0WtLB09lJ/Vu4iA+BVeqUhhcNJGxLQEsONBRkmEVWqyYrjyv1OhHK2gEKss1UBLtt2/0=
+	t=1723531645; cv=none; b=svVPUpOZGePXH142B8u76NK/TjBIsDCOPRGWEp3E+yRjcOK3lF6trc/xJO4/waXyoIC8ufqx7CCHIPUiyqH+bCKm8n39rfXu7hLzicp7BMya4jqgKQzSzelUaO96j4AdJMG4OpNAU124ZkrKByEE0Xd0P913LxnTSjrO4xhoIbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723531417; c=relaxed/simple;
-	bh=n3Q8ujzM+BHuw1uUmaBoWsUnALIPKIcP+FK0TnsEwyY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eXgc4767HRIkKpqBS86HYgoKIjrA38GqLV3uQUEdDAX4IIE8JviDzJ2FtnJoj5N1BMalx8G9kJ35hywZtPyamlVYG/8tGb+GS4vUzIp3Ka2XqZJPBXtZx4Hi68Vz9OP4aevLxlwpLiOaOAkuIlEjd8Ao7ThvnTAtlfpZ/wM9DSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u2vC9BMS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=85s1Hz1L; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u2vC9BMS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=85s1Hz1L; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3D03522721;
-	Tue, 13 Aug 2024 06:43:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723531413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zzt+7PwpiA7+5DBqZif280/U0cpF6Vg2+xMwnhvF+qA=;
-	b=u2vC9BMS+kyBs5HvI0m8zbMu9dXNHuVHyruhNpnKIAOY/RIbtQhz1ZcmJV+hd3FAU2BA7X
-	2u44AYQVhUIq4xP1dl36tksUbGSsDZ81o8RuIE0rDY0fV9Yro4Cc8+/OaCVsfJTtb/YhN0
-	lldOvU5iKo+ZbCDWNs6G99mOnm4IX9E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723531413;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zzt+7PwpiA7+5DBqZif280/U0cpF6Vg2+xMwnhvF+qA=;
-	b=85s1Hz1L2x1fkCnxxUusqZa4QB1MdMihCMvX+zu/aKSPbg+Vh72Fy25eeUCpweKmTypCI3
-	WaU5oPP8prBuJFBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=u2vC9BMS;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=85s1Hz1L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723531413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zzt+7PwpiA7+5DBqZif280/U0cpF6Vg2+xMwnhvF+qA=;
-	b=u2vC9BMS+kyBs5HvI0m8zbMu9dXNHuVHyruhNpnKIAOY/RIbtQhz1ZcmJV+hd3FAU2BA7X
-	2u44AYQVhUIq4xP1dl36tksUbGSsDZ81o8RuIE0rDY0fV9Yro4Cc8+/OaCVsfJTtb/YhN0
-	lldOvU5iKo+ZbCDWNs6G99mOnm4IX9E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723531413;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zzt+7PwpiA7+5DBqZif280/U0cpF6Vg2+xMwnhvF+qA=;
-	b=85s1Hz1L2x1fkCnxxUusqZa4QB1MdMihCMvX+zu/aKSPbg+Vh72Fy25eeUCpweKmTypCI3
-	WaU5oPP8prBuJFBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0971913983;
-	Tue, 13 Aug 2024 06:43:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dwyQAJUAu2aaFQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 13 Aug 2024 06:43:33 +0000
-Date: Tue, 13 Aug 2024 08:44:13 +0200
-Message-ID: <87ed6sdirm.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Juan =?ISO-8859-1?Q?Jos=E9?= Arboleda <soyjuanarbol@gmail.com>
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Subject: Re: [PATCH 1/2] ALSA: usb-audio: Support Yamaha P-125 quirk entry
-In-Reply-To: <64d6f88a8f978fa6fa090e9c81ed2a834bf21308.1723518816.git.soyjuanarbol@gmail.com>
-References: <cover.1723518816.git.soyjuanarbol@gmail.com>
-	<64d6f88a8f978fa6fa090e9c81ed2a834bf21308.1723518816.git.soyjuanarbol@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723531645; c=relaxed/simple;
+	bh=ChdSfw0AR7o9n0G3g+U1PMyf8JHWQ2KCBgTbA4+uGmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MrYi7K/ozX25uQUlLL9BDMurrCGdzmdGP9TvXjO0HnO9LszqSO6sboA6A/58uLhG1Xo65/YHQ9m5t8DHc+H3oq4v3tzu3FX8ihQtqkM8AyxhMn9OlMRLctJaYvhManW9qsQItrMF7ZEFnH9ZCfkIMmSq0WKr1g5qZQ4PQb1sVY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TrpBpHKM; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723531644; x=1755067644;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ChdSfw0AR7o9n0G3g+U1PMyf8JHWQ2KCBgTbA4+uGmg=;
+  b=TrpBpHKMu7URLRzWKvvk882XXK4grJynfaUud18/oid1lA9gn0aAL3lQ
+   Pr98QnYhfDbTKW7c3+HjM2AHORQcDZ35ixISBj2xQAbT5EGmSXLTPiya3
+   A4kC3kzHdinAXY18z98yGQXUmtLI6DxQNCYwc53b5c0Gk+UUqVTAoQYBf
+   p8R63LfbEGGSyWbhTIq8A33bHjnkqrSqVBLvYxPp3IXrKjTWZY1mlkCDX
+   lZszefM3XxZGnQj40GSJhHHXhTs/JcawfW1KBiIfUgIexTUtmaU3HCD2l
+   YbOHJqFq0shsDCFAYZW7PsWCYguxSms52PCPDNVXTwyo5Y7Pz2WsNvHON
+   w==;
+X-CSE-ConnectionGUID: EPfR3uGiTHOu6sZoVny3Lw==
+X-CSE-MsgGUID: wb8PvlwlRVqogC3HymqDCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21486938"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="21486938"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:47:22 -0700
+X-CSE-ConnectionGUID: RCyIl5YAQSiNMbcwNKXPvg==
+X-CSE-MsgGUID: pA0avmJgRD6FrUX0BYkeqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="58243188"
+Received: from unknown (HELO [10.238.8.207]) ([10.238.8.207])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:47:19 -0700
+Message-ID: <42d844c9-2a17-4cb0-8710-328e7774b4d4@linux.intel.com>
+Date: Tue, 13 Aug 2024 14:47:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -5.51
-X-Rspamd-Queue-Id: 3D03522721
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/25] KVM: TDX: Get system-wide info about TDX module on
+ initialization
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ linux-kernel@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-10-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240812224820.34826-10-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 13 Aug 2024 05:31:27 +0200,
-Juan José Arboleda wrote:
-> 
-> This patch adds a USB quirk for the Yamaha P-125 digital piano.
-> 
-> Signed-off-by: Juan José Arboleda <soyjuanarbol@gmail.com>
+
+
+
+On 8/13/2024 6:48 AM, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>
+> TDX KVM needs system-wide information about the TDX module, store it in
+> struct tdx_info.  Release the allocated memory on module unloading by
+> hardware_unsetup() callback.
+
+It seems the shortlog and changelog are stale or mismatched.
+
+>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 > ---
->  sound/usb/quirks-table.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-> index f13a8d63a019..24e6f68e2f1e 100644
-> --- a/sound/usb/quirks-table.h
-> +++ b/sound/usb/quirks-table.h
-> @@ -239,6 +239,7 @@ YAMAHA_DEVICE(0x1030, "PSR-295/293"),
->  YAMAHA_DEVICE(0x1031, "DGX-205/203"),
->  YAMAHA_DEVICE(0x1032, "DGX-305"),
->  YAMAHA_DEVICE(0x1033, "DGX-505"),
-> +YAMAHA_DEVICE(0x1718, "P-125"),
->  YAMAHA_DEVICE(0x1034, NULL),
->  YAMAHA_DEVICE(0x1035, NULL),
->  YAMAHA_DEVICE(0x1036, NULL),
+> uAPI breakout v1:
+>   - Mention about hardware_unsetup(). (Binbin)
+>   - Added Reviewed-by. (Binbin)
+>   - Eliminated tdx_md_read(). (Kai)
+>   - Include "x86_ops.h" to tdx.c as the patch to initialize TDX module
+>     doesn't include it anymore.
+>   - Introduce tdx_vm_ioctl() as the first tdx func in x86_ops.h
+>
+> v19:
+>   - Added features0
+>   - Use tdx_sys_metadata_read()
+>   - Fix error recovery path by Yuan
+>
+> Change v18:
+>   - Newly Added
+> ---
+>   arch/x86/include/uapi/asm/kvm.h | 28 +++++++++++++
+>   arch/x86/kvm/vmx/tdx.c          | 70 +++++++++++++++++++++++++++++++++
+>   2 files changed, 98 insertions(+)
+>
+[...]
+> +
+>   #endif /* _ASM_X86_KVM_H */
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index de14e80d8f3a..90b44ebaf864 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -3,6 +3,7 @@
+>   #include <asm/tdx.h>
+>   #include "capabilities.h"
+>   #include "x86_ops.h"
+> +#include "mmu.h"
 
-The entries for Yamaha are sorted in the device ID order.
-Please try to put at the right place.
+Is this needed by this patch?
 
 
-thanks,
-
-Takashi
+>   #include "tdx.h"
+>   
+>   #undef pr_fmt
+> @@ -30,6 +31,72 @@ static void __used tdx_guest_keyid_free(int keyid)
+>   	ida_free(&tdx_guest_keyid_pool, keyid);
+>   }
+>   
+>
+[...]
 
