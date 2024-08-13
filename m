@@ -1,69 +1,54 @@
-Return-Path: <linux-kernel+bounces-284583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF6A9502CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:46:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF199502D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB51286DB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580F3282FEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889B619A2A2;
-	Tue, 13 Aug 2024 10:46:22 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D23C199380;
+	Tue, 13 Aug 2024 10:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="r3l1+fhI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5511B368;
-	Tue, 13 Aug 2024 10:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FB876025;
+	Tue, 13 Aug 2024 10:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723545982; cv=none; b=CKIp5NFMv2p/L4Q7us/P4mi6NF9llm9QxNq39eSug9t8y6i0AUCHTcVKoU4dKjalX5Y1PA1e13SD/njFCobRl8cTOpekJR+3cLdYyeNMQzySqGbGulcdn6VJkBn54a/KbSHlqZp34coIeMlRQkoCBRz0ITe92v6+EoU9O2hw0PY=
+	t=1723546068; cv=none; b=R8o0ob2LL5zRb2OU+/+2TG9bDBNsDUE5PNPZiRkQTKoyggatVOQrrtdZFJOweRt14WxR+lRLiZXdqLlK9XL/DYkVuPpG0Vcz2z37EAqLFKw+V95rvMJgKG0nqM2C06SWdSzdyFkfsCcbnCk4w8n47Z+3S+U2sbLUs8JuIZiFha8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723545982; c=relaxed/simple;
-	bh=/fjXahSEjF9ZhlV6L3LaHMKecBdvEBPMXHpQdm2U2cA=;
+	s=arc-20240116; t=1723546068; c=relaxed/simple;
+	bh=Ushq3yq7eWPKyCu11/TlftefcEeOEHU4isTbb6y9I+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBZrMCnh7CNooZotXuirRUPF53+EkwDJOnIaAdlvGTpiPOQNMfn+9MmSat3+i73TOFfKadjvz3d9Jq5IeG0hcrAheHl9S4ozDULuM66T36z5JeJy86IKCBuHM1n7wP4VDcjcWV6nGtw8txJLxIDkR/8ikUb/B45UXb+1OBAAJm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso581346266b.0;
-        Tue, 13 Aug 2024 03:46:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723545979; x=1724150779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EaRqNknoiXIxBgYUXTCTJlYjmV6mokfwA1oMnDDM/HA=;
-        b=niYtyPj+sTHt88R2K9tau2cy3xqKNsFZLanL+LRDknhe9iBU8i1Ew2HGaw9AOGieIW
-         dDApjyObDOmCeuoFwQOTFttjYDcqrSZ1v2OeKEzmZk6DkO6OtDkTDHFmPF4RmO7C9eJa
-         HIRa4BbIIPQsJypsYCDN0Ezq2ZBK/RrakROqYP8qVxHCXOan3gd1DbecwH92BxylWulo
-         6TfhO1RJ2/Py3Zih5gkT9VP33STKJuSBx2/wkNGBA752Tr+ldb6f0G3aXipwG4tWv5bi
-         AbOpXLv21+RcxxpjNRRXxjIjfFDFl8bHQwH8jkDgjq7NSHAk3kElhTSrOIRv8Zf8oiHv
-         Q4+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXvp63pjBKRUAv1Lkb/DbLSMZzVO7kd5EMThqT6wNrARXE6So1kmNK03SNhlUgRkc00FrhY7roKkN995WjAQxokVTJOk/eTPSefBDRwcyFuth6/m454GLERtKfMXuCI0GUZBSFBQLBBnJf/ejPTP//Ri3Bd9ea28zU34WayL3fIreuikVAr
-X-Gm-Message-State: AOJu0YzmHSWgHWbF5d8aezfgnENdNJ6DZoET71tdeJ8nAp6Hhnv0dcFe
-	dUf7f/nr6INF85keMup9z0UcPCL5WKkZSlFyMqcd6cnEWFMKwqJ7vTlKfQ==
-X-Google-Smtp-Source: AGHT+IHDTiyEw8hKE9wVP2vCQm1qA4pO92wamZ6Y1mgtvqkgOHxFimnP6vee5n3w6zJbOY3sUnEVUQ==
-X-Received: by 2002:a17:906:db03:b0:a7a:a7b8:adb1 with SMTP id a640c23a62f3a-a80ed258a71mr203720766b.36.1723545978473;
-        Tue, 13 Aug 2024 03:46:18 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3f47b4asm59489166b.36.2024.08.13.03.46.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 03:46:17 -0700 (PDT)
-Date: Tue, 13 Aug 2024 03:46:15 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: netconsole: Constify struct
- config_item_type
-Message-ID: <Zrs5dyMWT5u8qXNV@gmail.com>
-References: <9c205b2b4bdb09fc9e9d2cb2f2936ec053da1b1b.1723325900.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=toHK916jyhqlT82zHzWXk8ZYdm2JYVfM46TPeiE2Y7bZ5GwPE4EeVhnqjrp35sflCew7TDrqgEkkQHi/dxRdSp+i9aCvjG9tN4Ag5REdDj5NRwKxN9kj7L8D/qIQrMv6w2dWm259GnfEdo4SpiwNaA3qxc6eRjnMuz/0q2UBFpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=r3l1+fhI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A2CC4AF09;
+	Tue, 13 Aug 2024 10:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723546067;
+	bh=Ushq3yq7eWPKyCu11/TlftefcEeOEHU4isTbb6y9I+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r3l1+fhIRmS9mVp9YWscCFT0O+MMtFftrTyItd37qVs5e8+2XwFCbwuB6TvXljSfa
+	 IP1Scsg6cBjg3zWrUne6jNxPwG1JNQsnKaT0JkRQ1mcbCZji01evJYP156ZxJXo2IP
+	 f7lcKvbRAFa8yVN5r2qYVLRU3zy45mkz15IyKHWw=
+Date: Tue, 13 Aug 2024 12:47:44 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: dennis@kernel.org, tj@kernel.org, cl@linux.com, mpe@ellerman.id.au,
+	benh@kernel.crashing.org, paulus@samba.org,
+	christophe.leroy@csgroup.eu, mahesh@linux.ibm.com,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v5.10 v2] powerpc: Avoid nmi_enter/nmi_exit in real mode
+ interrupt.
+Message-ID: <2024081318-onion-record-fdc7@gregkh>
+References: <20240806071616.1671691-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,42 +57,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9c205b2b4bdb09fc9e9d2cb2f2936ec053da1b1b.1723325900.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240806071616.1671691-1-ruanjinjie@huawei.com>
 
-Hello Christophe,
+On Tue, Aug 06, 2024 at 07:16:16AM +0000, Jinjie Ruan wrote:
+> From: Mahesh Salgaonkar <mahesh@linux.ibm.com>
+> 
+> [ Upstream commit 0db880fc865ffb522141ced4bfa66c12ab1fbb70 ]
+> 
+> nmi_enter()/nmi_exit() touches per cpu variables which can lead to kernel
+> crash when invoked during real mode interrupt handling (e.g. early HMI/MCE
+> interrupt handler) if percpu allocation comes from vmalloc area.
+> 
+> Early HMI/MCE handlers are called through DEFINE_INTERRUPT_HANDLER_NMI()
+> wrapper which invokes nmi_enter/nmi_exit calls. We don't see any issue when
+> percpu allocation is from the embedded first chunk. However with
+> CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there are chances where percpu
+> allocation can come from the vmalloc area.
+> 
+> With kernel command line "percpu_alloc=page" we can force percpu allocation
+> to come from vmalloc area and can see kernel crash in machine_check_early:
+> 
+> [    1.215714] NIP [c000000000e49eb4] rcu_nmi_enter+0x24/0x110
+> [    1.215717] LR [c0000000000461a0] machine_check_early+0xf0/0x2c0
+> [    1.215719] --- interrupt: 200
+> [    1.215720] [c000000fffd73180] [0000000000000000] 0x0 (unreliable)
+> [    1.215722] [c000000fffd731b0] [0000000000000000] 0x0
+> [    1.215724] [c000000fffd73210] [c000000000008364] machine_check_early_common+0x134/0x1f8
+> 
+> Fix this by avoiding use of nmi_enter()/nmi_exit() in real mode if percpu
+> first chunk is not embedded.
+> 
+> CVE-2024-42126
+> Cc: stable@vger.kernel.org#5.10.x
+> Cc: gregkh@linuxfoundation.org
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Tested-by: Shirisha Ganta <shirisha@linux.ibm.com>
+> Signed-off-by: Mahesh Salgaonkar <mahesh@linux.ibm.com>
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> Link: https://msgid.link/20240410043006.81577-1-mahesh@linux.ibm.com
+> [ Conflicts in arch/powerpc/include/asm/interrupt.h
+>   because machine_check_early() and machine_check_exception()
+>   has been refactored. ]
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v2:
+> - Also fix for CONFIG_PPC_BOOK3S_64 not enabled.
+> - Add Upstream.
+> - Cc stable@vger.kernel.org.
 
-On Sat, Aug 10, 2024 at 11:39:04PM +0200, Christophe JAILLET wrote:
-> 'struct config_item_type' is not modified in this driver.
-> 
-> This structure is only used with config_group_init_type_name() which takes
-> a const struct config_item_type* as a 3rd argument.
-> 
-> This also makes things consistent with 'netconsole_target_type' witch is
-> already const.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   33007	   3952	   1312	  38271	   957f	drivers/net/netconsole.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   33071	   3888	   1312	  38271	   957f	drivers/net/netconsole.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+You forgot a 5.15.y version, which is of course required if we were to
+take a 5.10.y version :(
 
-Reviewed-by: Breno Leitao <leitao@debian.org>
+Please resubmit both.
 
-> Compile tested-only.
+thanks,
 
-I've tested it using a selftime I am creating, and it is all good.
-
-Thanks for the patch!
---breno
+greg k-h
 
