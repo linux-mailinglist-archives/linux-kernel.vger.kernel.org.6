@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-284658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7129503BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF4F9503BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 678DDB232F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:32:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B052B23526
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74401990DB;
-	Tue, 13 Aug 2024 11:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2415A199392;
+	Tue, 13 Aug 2024 11:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="HmH4etQt"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="XMoOm/Ty"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728191990D2;
-	Tue, 13 Aug 2024 11:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA188199249;
+	Tue, 13 Aug 2024 11:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723548737; cv=none; b=KNdREsdNdO0Vtek0FiOUAjHP5wonpqty07S8QTi0CXw/GjGDcMVR7VaH06H31uuOB6hdfRPy+Iv+I/yAUIV07xjeryXd4fChALowopUQEqzei+spJaLFQZfKF7ozlGI02FWdYEUeF+8TNGfwbt1kuntkBotCLwVeAljQ2eiax2g=
+	t=1723548745; cv=none; b=o2658Ao5OOcNGOoduA4gJuW1lrUwyRCUOGHU3nn6trCiCs/rbAfB/yHBAeqy8QDT8nutB9EhHZo174/AscQr8Z8T1TY6wVpjjPPzMUY1+TSXV1ZB49CsFYLlLwTZbRDKBj4NPKIVwynodw7dercWy9joU4TuRgFe0vOi3MzTL10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723548737; c=relaxed/simple;
-	bh=tMnQOJChe9KXLcZG5XFMABHUyzPRb5t0/FS7qg6VR3A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G1WRCfhMxZBIWu9B16sKHMn5YRB+GyjKQQ0B52O+J01EUKDQUK8RZyEMxdM4xLPt1YLHgFN5L4WDIENResctG8K5lx4gIJ4FeAXYiyV8jCm1juZLqwPOKnPHdOAftfdnsfgdYr3ifJGcXGzcz0lu5zSjVMTyjavv43PlEHWE3uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=HmH4etQt; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D2TvUh023256;
-	Tue, 13 Aug 2024 06:32:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=u68SVm+ii+JgiV4O
-	dRIuHVByVWx9R++flkNsbG3/me0=; b=HmH4etQtR7T5gdj9Pi5S/le4r7rdZYsh
-	hZluyda6kGT/jXnNfLzrER2pqTtvhj731RlH3/wjgAtM6aOmaTQPsTNtuDx0+KKr
-	kMkN1YQY5ECCDcTdZBwNt2qVDadJGvukNEoQt2WSv6jHlioQDRkaiY5pYrXhPgSe
-	d1YZSKcDabNPgaoJ8zz+IuZBjbKnOVZdZhNzwEkn7AQUPi4zNa+8V7w1wEiiDmTF
-	N2e2BHYWOGjQjG/8B6OIJKD0q+VLt4kPL/vyMCm/K1/2p52igC4M8J9Htrz6XuEW
-	n190aoBNz9xLGgA4HuaQGhvTuL66CZ4q75hXMK3FG8+jEmKmQPFZ3w==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40x5kwk4x9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 06:32:13 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
- 2024 12:32:11 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 13 Aug 2024 12:32:11 +0100
-Received: from EDIN4L06LR3.ad.cirrus.com (EDIN4L06LR3.ad.cirrus.com [198.61.68.170])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 0DE1B820241;
-	Tue, 13 Aug 2024 11:32:11 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <tiwai@suse.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Richard Fitzgerald
-	<rf@opensource.cirrus.com>
-Subject: [PATCH] ALSA: hda: cs35l41: Remove redundant call to hda_cs_dsp_control_remove()
-Date: Tue, 13 Aug 2024 12:32:09 +0100
-Message-ID: <20240813113209.648-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723548745; c=relaxed/simple;
+	bh=KvjJGzz1xQNHWNACafMPW1Wkpkmc0RPCTQ8VSp9K8kM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oZlmusTL9LU4bSnptC5LQB1QUjgs7bp8zp/t9hotaKNW8MQ66eVTESIUxOwrRv7LlSUkE7djD72hNrR6hvMLQt89FQ0IuDZ/ln6WXZ6rOASryAeA59/Za7bMbSzSi376nPqG9zQzrpOQFVmGzJUtcFXu1XhSqqT+Aj+rQVZGQuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=XMoOm/Ty; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4280bca3960so42034465e9.3;
+        Tue, 13 Aug 2024 04:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1723548742; x=1724153542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MQABmyNW1RlBrkRbzNCFM1S6Y1XBMV0+uzxHW7+CsqE=;
+        b=XMoOm/TyknUqy2H7bWa9ZxDUyLzJzpfmPC45YJKZHFrSaR+KigMPCorzGkKgnbV1SC
+         vNoZwobgzqD+mG6Ef2c0oFGc5lyvkF9tNFxCw7DurQEy+/6lgXjuWgqfA/WGBh+PcXat
+         BcBn1V3kWawQIEGw3OqJBtaUDdrrm+CjydemmA28Y5PXcMplRbPFdtjV/dDKnq5PziKm
+         CqPsyDccW+8kZHFv6Zi+RpVF/ORTqy3er5TDEP+Xnk3XH4q25PgPM+In4L3+9M2VpSEm
+         hntJcNIL6kNZCzCTUh7vSy3Bf+W45UmtHwiYGo9vkKGL5sACZbgYqKqNI4NueXgoEmp5
+         zzhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723548742; x=1724153542;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MQABmyNW1RlBrkRbzNCFM1S6Y1XBMV0+uzxHW7+CsqE=;
+        b=DmScgFMB1h2vwXI+8/gXztnuqkWdAuO0XnntjKVqTfPmOVR4zRg8ForLjFEYJyJBbm
+         SugwvT3M7H5tGnaDaOdw18kE0QyZ7jo643NjYx2HeeGAsOWlj2y4i4yfvtG8ZYcFxOCN
+         ic9WbrZ5xQb8yKt/UGHCbUgXA2CdOqCx+HCusYPFemlslA7ic8CgkhC/oUSR00CfrSeg
+         BT2aqdg9+EM4NS9rrwfx4JjpgXsAnyTUncYeYy6BH94k97mEH7QYaYDVCjHdiFMUkcQI
+         i3zI/RDYztG/Kjx39Jp3yDLnW6ggp9ufIzvhTgVDT+cmjjPqud2KsKcXOW7o7TN0SJT+
+         peYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu+9u+sASjQX5Nezm/4twyxkmAwSLCbLIYUos2UqUkjIa/FiD2p2yiqQOpx9K/FzvSpeDUYwhh@vger.kernel.org, AJvYcCXgUMWITlHE+O5qTN08Z1TZZpr3Yncg2DENn5d9OoVe3cXre59t8XgeovMn+g/m/GWzXMy95L1xM6cdE3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzev0nht8EMpVdhqGjEfhzdQDhURvg26xADwExCjCMVUrkWj6be
+	QH/qc22hw11AfKKlBPPsJAmMWf/39Uyha/ZEbDL+WCsbMrRw8IifhtXnJqA=
+X-Google-Smtp-Source: AGHT+IESryEa0asHTPnoFS7YMhj5meOeCzPgPfOAkdjqUQzXXWQtykthSh3Dr83QzmofWloKvGjzeQ==
+X-Received: by 2002:a05:600c:4713:b0:426:61e8:fb3b with SMTP id 5b1f17b1804b1-429d48738c0mr25837595e9.27.1723548741894;
+        Tue, 13 Aug 2024 04:32:21 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2ac34a.dip0.t-ipconnect.de. [91.42.195.74])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c739083sm215211905e9.18.2024.08.13.04.32.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 04:32:21 -0700 (PDT)
+Message-ID: <0fa4405b-deda-4761-bfae-973676302282@googlemail.com>
+Date: Tue, 13 Aug 2024 13:32:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240812160146.517184156@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240812160146.517184156@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: t_Zww_c1c2Mbx_mH0l6kBsmQPA3rfHTs
-X-Proofpoint-GUID: t_Zww_c1c2Mbx_mH0l6kBsmQPA3rfHTs
-X-Proofpoint-Spam-Reason: safe
 
-The driver doesn't create any ALSA controls for firmware controls, so it
-shouldn't be calling hda_cs_dsp_control_remove().
+Am 12.08.2024 um 18:00 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.10.5 release.
+> There are 263 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-commit 312c04cee408 ("ALSA: hda: cs35l41: Stop creating ALSA Controls for
-firmware coefficients") removed the call to hda_cs_dsp_add_controls() but
-didn't remove the call for destroying those controls.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Fixes: 312c04cee408 ("ALSA: hda: cs35l41: Stop creating ALSA Controls for firmware coefficients")
----
- sound/pci/hda/cs35l41_hda.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-diff --git a/sound/pci/hda/cs35l41_hda.c b/sound/pci/hda/cs35l41_hda.c
-index 3a92e98da72d..d68bf7591d90 100644
---- a/sound/pci/hda/cs35l41_hda.c
-+++ b/sound/pci/hda/cs35l41_hda.c
-@@ -134,7 +134,7 @@ static const struct reg_sequence cs35l41_hda_mute[] = {
- };
- 
- static const struct cs_dsp_client_ops client_ops = {
--	.control_remove = hda_cs_dsp_control_remove,
-+	/* cs_dsp requires the client to provide this even if it is empty */
- };
- 
- static int cs35l41_request_tuning_param_file(struct cs35l41_hda *cs35l41, char *tuning_filename,
+
+Beste Grüße,
+Peter Schneider
+
 -- 
-2.39.2
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
