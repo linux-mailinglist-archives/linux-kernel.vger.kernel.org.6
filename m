@@ -1,538 +1,234 @@
-Return-Path: <linux-kernel+bounces-284661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C529503C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:34:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 914BB9503C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FCA8280ECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:34:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E16D9B21674
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589711991A9;
-	Tue, 13 Aug 2024 11:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AAF170A2B;
+	Tue, 13 Aug 2024 11:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6DHWpY4"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQ+nHa/T"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162C0198E90;
-	Tue, 13 Aug 2024 11:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723548853; cv=none; b=TbIK6aMKiQ13IQ6SmxFfUF4234DOdZSOcA6tv2KQHn3No5DOqzYIWciJtxow2Zo9I45U6CiSD5Q6t5vj0ACeOhmA9VsHfE96RcZUBPBCLRz9sBoNCdoQJ6QEoU4tbMzhfu4FpWWApq/bHnfmQjMzbVcqdF/VNSSLbyQLKR7Xwos=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723548853; c=relaxed/simple;
-	bh=2DJCosDzcUDolj/tK96nNC4qhoUEoVo8FvfKAbVWBC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJAKRUDsMIEMPmKGakJdEtk7lT9xqMD1meSSX0HxWBc0FolNZKvP9KzWSQShmKuo67ZDpZ9RblkYue/E+IDgEdbLA4y3EZ1v0xWWf0MX80kGOiGYhZp1UQUvgtBKhh+OC5CD62c0t0BLsCJ9+9wwKXXEbm6b/tjkE/fhvO6EywE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6DHWpY4; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428ec6c190eso41341645e9.1;
-        Tue, 13 Aug 2024 04:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723548849; x=1724153649; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n0eWLTuKbirGiqkpxqRewLWPNs7IRhY6QQeXDJp7JMU=;
-        b=m6DHWpY41FrBTJsdi1dGyPkQWhpP9MB1tSPXm0pLTlWNRXtNOu1Ib0CZyY/HDuAOuv
-         reig2FogfYXb6egrUS+jbl5yuBf8xHfIG4ysFHpwGAatI85Q8XknmRWw66qJYnaTAtfu
-         s3gI1DEPq7P05FDmGsJFut85MdjaZQI/xhV4CmjQwce+ChCiYvFD4iqOS0g3PhUnM+rx
-         33NJNONetGDoiszAXGPZeYQmIIvJutS1nIdHjAmb+32bUIvhTR1F5j2kyj74evmbs8tb
-         gspIopm+xV6IZZWIMUvF+pbu6HqdCzN72+Ux2nNNVt3a8S2uxAG8kPtRacaJC4Wkjd1Z
-         kZnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723548849; x=1724153649;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n0eWLTuKbirGiqkpxqRewLWPNs7IRhY6QQeXDJp7JMU=;
-        b=Y3Z6j7cDaVU3tH3ZDsofgOoyI1TQ/+L3DYbTvco9jOfDq8d7XMiRaN7iWpdhl7XzaF
-         zmeQNUJasJinAsoxPBDwHeTVN7Pr2GZP+X/ZILlyVpfSYVmMhVo4OoRBW3MlXM4wc67C
-         wTQZUTfegHCprMWThmcDh2eQYlZlIL0GxukNU0VNLXSAV6CEb0kH+S/l5tkvLas7W0FS
-         D+pfi6tQrFQ75wsRRX2nj6htUZaIIuu1o+pAfjjTTS3mIAFELXpbhRDNmoOnqqAEQ09w
-         Mg1zdpr2M6YLRC2UOR/By09lOafkKJYkYEC4+WjWwEX8IVtvz+a7SNYeWFJMaoyB1OG2
-         BcMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtutQN4dOVCIlDILrZSxycuC6NWRdtPkzk9Amn6vS2u4tk9eSXwE4A3Wc0ZfG7tp/wbRFwvnokbGK3PqcTuOOXy/xnZIMf/eceh+N3
-X-Gm-Message-State: AOJu0YxdlIKojB3PMJVAJ4tDWYGiGayUbNjbd7b/cSMaj+7rXI1MEBlv
-	gBIC4iypFNwoEOzmYAIFXqxPrJ9O1A2f1LP8rtF8JW5fHf6/kcGe
-X-Google-Smtp-Source: AGHT+IEPzHL/+PAmJq8gVnlaVVs9VmpfGrYOdrV2DeJaPy2+yiUqOYZZR8Y/pYofNUr0fkGzf7tC2Q==
-X-Received: by 2002:a05:600c:4e87:b0:426:5216:3247 with SMTP id 5b1f17b1804b1-429d47f43c5mr21606945e9.6.1723548848927;
-        Tue, 13 Aug 2024 04:34:08 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c77510asm229422805e9.33.2024.08.13.04.34.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 04:34:08 -0700 (PDT)
-Date: Tue, 13 Aug 2024 14:34:05 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dsa: vsc73xx: implement FDB operations
-Message-ID: <20240813113405.a65caznayd2tsx2v@skbuf>
-References: <20240811195649.2360966-1-paweldembicki@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1B518733C;
+	Tue, 13 Aug 2024 11:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723548877; cv=fail; b=f3o32/mvPi2XAGrLtuCfl1BK0hxziQ7rEpxQx6NYO7HUV2LfsrJqvclYgU7qWuBJyjhpfLar9FonAluJO82Zf7o2mcCWfgfjpbzW+rEeMruVSN2lCSrAQY5Vf98fTYpICq/L3vIob6fpM7nIf3jC6ERa/4wW6U5iE/CkJnLesZ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723548877; c=relaxed/simple;
+	bh=Az0Dff/QPMyaDj41wktSu5RYjHJ+PSTFVPqoOn2kOh0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZilDAWHMEP8rKQsypyI8jB0LHHWJXqmgpSAkzYLkPxlbU+f+cN2NBC4rtKmZPZ+z3i1ZhV33F8rvjAFCUi7pXdDp6rTnV4XulyuvVRqVJlOxw67d2a8SULSG+4QfYfhcjnchHVCR4XVp4Cf/OKM66839MLu7Yt2XP/D9lP/XHm8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQ+nHa/T; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723548875; x=1755084875;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=Az0Dff/QPMyaDj41wktSu5RYjHJ+PSTFVPqoOn2kOh0=;
+  b=XQ+nHa/TN89sZMX6AjjzRfhLn16cDZgUGZ0y3GeBmwqTKbNQ3d7+Kp/d
+   CBpwCunm4ZGp1cWEwXtRXdZ3E/0r17ceP5HGuiQAzjerV/c6SMdyhZt9O
+   4R93IGgN7pC35gmTwoXpgSKsSP2beo4MXP4rSGiYrO2UbX9coSVdwZ4n4
+   Zq08nr050Pw99wprz/oJTHt3FP4tswBUvU/MbMvccZWTdYZoWyirc83Wu
+   Sy2GT27nz3WZ6Rcz+KzMbcn4EKYQwbwS41VUPmmgO/j+btvrRIR70vFHM
+   5FPMAxk26zoNzr2IH3qPxZ7qC3Ja81Rlk7vNb2wTcnWBjilzWvWYU0wPK
+   g==;
+X-CSE-ConnectionGUID: ixhKNR6OShCyjca4dvK3UQ==
+X-CSE-MsgGUID: MlhjmKIxRSy7IC9Nx391oQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21575031"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="21575031"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:34:34 -0700
+X-CSE-ConnectionGUID: TifFxGjRSIyOrZGcw4/lTQ==
+X-CSE-MsgGUID: tibyuvNNQnu3e12qidHF3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="96172216"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Aug 2024 04:34:34 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 13 Aug 2024 04:34:33 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 13 Aug 2024 04:34:33 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 13 Aug 2024 04:34:33 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.44) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 13 Aug 2024 04:34:32 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a1LfJhhR+J4rOk3N3sKJyAjWheAiTjI9y1KzEVWzG1PuX6tEjAOtE9xvv10NpVi6u8xXxTJH1mhSSiWrkMAZzDay5znjO6NXTMeEL9YRzUpHk8UDX4f8lc9zTI0DmzmEqfcV+1dnU+xl0Q0+TlK4VcsExEUdTJ8mMumJhUARXitaEVrcbIBnB8DPNPn0+FF7QKDOfDo4bCQ66XzOB4cPmn9uyIqs/yWywQVWtYNTotBAwSJktLYWVohnFTUssXztS7HV5lcFYISaZBU3iq0oLN/PBjXsce0H5NCuHKSoRUI7R5Mm8rNICwWTYb7cF2IW0Z2VZR2MxDpDctsWw7RF5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Az0Dff/QPMyaDj41wktSu5RYjHJ+PSTFVPqoOn2kOh0=;
+ b=QpoGntHZk+E36PLFgFLVRju/5B/xnXc2DYz+tbkX80kd1zyCXy6KPUPwxM1AiCJUkWyhCTJ56nYG3bWJls5e5nRD5mxTrRPZcMwr3FfGsBC7O/5ZjI8oSyrRbCxE5qgbd52pYTTftB0WzuNSwwP5EDIZStvg4oueVOXhafE4nyS9rahN4h6R8JcqykUD1DI422Q8dGy9lbX+24HSPW1EMQp1m2bl0Bnq7N2Ipz87YA1z5bECM7H+7cVh4137Gss+s1h9QpH8sXc0fkZWzcRrEtodQddDvkSLHl/ZZhNktXoFbTFy4lD2/PqvmytJLFlYqExZaP91khnCDFYV03+ing==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by DM3PR11MB8736.namprd11.prod.outlook.com (2603:10b6:0:47::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.27; Tue, 13 Aug 2024 11:34:31 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.7828.023; Tue, 13 Aug 2024
+ 11:34:30 +0000
+Date: Tue, 13 Aug 2024 19:34:20 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<kai.huang@intel.com>, <isaku.yamahata@gmail.com>,
+	<tony.lindgren@linux.intel.com>, <xiaoyao.li@intel.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
+ KVM_GET_SUPPORTED_CPUID
+Message-ID: <ZrtEvEh4UJ6ZbPq5@chao-email>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-26-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240812224820.34826-26-rick.p.edgecombe@intel.com>
+X-ClientProxiedBy: SI2PR04CA0008.apcprd04.prod.outlook.com
+ (2603:1096:4:197::20) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240811195649.2360966-1-paweldembicki@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|DM3PR11MB8736:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35ca8a9f-2c11-4053-37cc-08dcbb8be57a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Jsf6HZ3mHf92EkVTtl8EjIW50itQKN2l2iNi+571dGRu4g8mtI7yXDKSvbEe?=
+ =?us-ascii?Q?ORdpQDjgFdh1eH6nZZXF9bXZwM0cEiHq9Z5DQgSvQ9JVoWGRQ6YoyY2orlZL?=
+ =?us-ascii?Q?mHr0FTQknU7ujks3L9OhSJv4GkcAX5xLIoQC7gvuGwJejS/1KdD+HEICKhbY?=
+ =?us-ascii?Q?C+XMfSqMOKKwaEVMltES8UezVFA6rA+gPNQMvt0ji1e/+0vky7qlmsm0DcMm?=
+ =?us-ascii?Q?NKws28QSgloTQr4jsh0F92ZcnHBN98L1ppeqx4+VXkmybP9qM2uDgA7qwmtu?=
+ =?us-ascii?Q?zTnmo3koBoTAbPLRpDGbx3GA4x4ed268xVylcaws2c6604SZER4jb8wox9jg?=
+ =?us-ascii?Q?h1UZsCAe7YbTQz7Bs3EkPpqe4q4P6aQGLDAYJf4DCmM5BMAbTANXYkMTGrcL?=
+ =?us-ascii?Q?+3HjEHMTi++4ieya1YQ8VoacS+rMKEB8JowRuX4qdS/+x9xK8zK95aXgiuUP?=
+ =?us-ascii?Q?hpAvSyNIsRfvSXKqPf3ydbGJMP4euLBV4wEv8QN1QmxUAA2a5qzlrQVSuiG0?=
+ =?us-ascii?Q?m6Xbxqt53NOHN7IcKYCzZLnkytGUwDK9hDGuGNwrfy7N+zAgqgBMTJm2Ca6E?=
+ =?us-ascii?Q?pyFZIoDeXob4VebYFu/SSsh8onRYMmB480R3BxpLt3Np5Mins2nIEXJF3lj/?=
+ =?us-ascii?Q?4zsK/TBYXVjD086INyQQAYNVhUmhZ8qV3r+XMMBAxavqb40Kb4htO8XMl0av?=
+ =?us-ascii?Q?ev42tftdPXc//ckhFgWGXJGfK3DXpj/LCPLFO4HtyxpbnrxqcoX/fK86NKq5?=
+ =?us-ascii?Q?FDpSHxRY5RJUNSIJmc/XPHeoIpGzn2qFpczpD/2hVXG4jJ4a4ti6eGas3GYb?=
+ =?us-ascii?Q?KMxJ0lpNS8l9XkStSCgXxviGyPsSmQFvau+jX8YYo+Vno3QK/yyjV0raKL8r?=
+ =?us-ascii?Q?xO5yS3n41mH5BQjJCRtYVa4k13sIYoyDpW0bEpVNG5Z5H2uTtaMlXwA15W/m?=
+ =?us-ascii?Q?BfRDyVkAtLGRdErpZbydC4kB/qlLKHTmuKV4QPBOrxV2rX8og1vQ0YcXjyQV?=
+ =?us-ascii?Q?cj4woTrgscURg6LQwDx6Mfvus/VjsMZ+YKd08XU89zKmrocYcDTX59Ygbc/3?=
+ =?us-ascii?Q?l/boJ0JP/tHeInnQXZb3WNpri0it+pdn3uYQqNFSM5rIAcvArLMXwY6IOL1S?=
+ =?us-ascii?Q?Ooppbt/FVjWaBKbo5EPD7mAqtNyQU95zI0WCpdj0e+bqvML/xGM8n4Vg4Ow2?=
+ =?us-ascii?Q?1bwHnlCkf3pfc+/buLSgvVmjgYOyO4oQ1WUeRxSn8+rV4RN2we6TzaMiZ8/n?=
+ =?us-ascii?Q?mCwxR9JTGNV1Zy+Dz5eFwVdlPqAvRABWfU9qisGznEHdUFKwkm2mayGBRtW5?=
+ =?us-ascii?Q?WcExWjDkj7xdivH4uigJn7vo+IRDWPbNQvwIqRlhieXwcg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RFLTUXxNGKn5XvFqsKv6UNKexV4cLw4zRsioQxVKnidyb4MDB6QK3m9NrdDR?=
+ =?us-ascii?Q?ESGitSyHAPGdRC+oTSqMroMAsr679Gra11u3TkggDLOnVHZ3NqQrZDYWdqVB?=
+ =?us-ascii?Q?NbNfmLkFf+dcD5EyNY7ZiAorNCr1QxrWnTQMI4F9Ve4lnMfVR6AnKHS5CwQ7?=
+ =?us-ascii?Q?NPUP3kkm8/Q45sYCQnUSiXPXN+sGxgX6KkOKBCApDl6MvP1VWc5Iq0TZEHIU?=
+ =?us-ascii?Q?5vhmsKrgGxu7guplG4NYqi/0i/m3xiiIC6KbILhrUePMjlB5EX4kEzkN0i8U?=
+ =?us-ascii?Q?z+0EEcYofi4CfO8S8mpys5ddUTTMZhBcOe2nQgKqFDOUVrOwqNDM5lhavXNE?=
+ =?us-ascii?Q?SF5sGtn6GQTJSyLnqMTmVAYg8XlVwcycyL/t2k7CRtIzPKFLgO+/jf7rtFda?=
+ =?us-ascii?Q?HE9SexDepqTfdmVD+y9ySAT4Ueu863WUAxDZJAAqvvHQoDKYjFH4rGnQ78ej?=
+ =?us-ascii?Q?sJ743KzN84aCpCcFSPzwmDZfsbKSU2otBcv3EuiwvoYSJt98uK5afZiG9RZJ?=
+ =?us-ascii?Q?gf+7zT4LL5IGFnJzMu8yrI6Nmiwzhniap5hBglbx9ujo7vMw4ATdpf8a5qkm?=
+ =?us-ascii?Q?yMfSQDiRceeyna+RzhdloeghTOeFQKTLaVkLnE0gOizQDVySPXBtTz25ZJNr?=
+ =?us-ascii?Q?5NSXncNTxtXZClPY/Lag6BSoIqAapA8VDE2h4be2NN9uEBXp9jRPP86KF9/q?=
+ =?us-ascii?Q?VhwxlbCHVngftJJq+55pPZ/wGKDKAM2KV1sZgHzhnMyHxeSvdek/j7UINyGq?=
+ =?us-ascii?Q?bHnTN6pnfkEH6ASk95CjHaXg299Jv1VeUi/sV1i+DuxyBfyP4JunYJe0UeV6?=
+ =?us-ascii?Q?Nad/1RxU2PbK1sm21SJfNv928t4m343SmSYXYfBcBtFNpRGwGpxyabE/MAmy?=
+ =?us-ascii?Q?fOP5OVFlWaotdOQPfB0JYrsAmXUqz5//m5G3yyYZCvW9hiFA83E0PyLUXMyP?=
+ =?us-ascii?Q?Hfcm1nUkhg8QaUQTzOUbvz/vMXxsoOAJA/Kbpk6yJ2ibTZ+KucTdsjOlxX+x?=
+ =?us-ascii?Q?Ee9etuWaisT/uEft1Q3Ek1yVedcKGBP+znvvYF842G1CifcTZdzy9CFscWR9?=
+ =?us-ascii?Q?94FKzqiTrEmwrT+nJjl4y3ZwWaMnRqftCi3ifXLXyuR8tXMui7n81xASwzlC?=
+ =?us-ascii?Q?aHgYiS9xoWch+ROidqB0v27crI9LC5PVzwyL9yAF4vcsMiVMvqcPsSbw33+U?=
+ =?us-ascii?Q?nwaNYidK8Q3Sh9QPC7UXul+unX5oEr35AkTJULIvxWeYJqZKQti21i07G1V4?=
+ =?us-ascii?Q?WDtiXUC2n2NiLIUSm3jqZp7u+l6w3qzTtDeATTz/TP827v3xTC8ObQygNfdz?=
+ =?us-ascii?Q?wsL5liDwoqIbQB1cQSxGlcgbP5pDQLP2vcHEgrqBICWNMfoTgKChMPxs6uxc?=
+ =?us-ascii?Q?rIWMOGVWsIt7LLn+f2VXTk7xzwgrDNrij0xCvBru66CxaSqVz5bx5YLUN5k0?=
+ =?us-ascii?Q?lJbFcF2lnTTEjm2JrDb/8xytA6nDKZGGWUaV58tG9FUcd2fSykF/6n+L/7QZ?=
+ =?us-ascii?Q?4g2tG/sMz7uyU6YoZKYTGGdHjQ0hBtAG5yDjlCSIZ+NSNS1RupN2yr0trcq/?=
+ =?us-ascii?Q?gDyDnrTbpuqP7gpOdKXBS+msh/PAiBhlYZDPTYuJ?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35ca8a9f-2c11-4053-37cc-08dcbb8be57a
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 11:34:30.5915
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: E8yyvKk9XTCO04t0RaGm9QA33Y2JNe8W3HY3WnJm98tlBZOJT41y6pT/xOICX+RoqHpkStRn34lUkvrOlFB+rQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8736
+X-OriginatorOrg: intel.com
 
-On Sun, Aug 11, 2024 at 09:56:49PM +0200, Pawel Dembicki wrote:
-> This commit introduces implementations of three functions:
-> .port_fdb_dump
-> .port_fdb_add
-> .port_fdb_del
-> 
-> The FDB database organization is the same as in other old Vitesse chips:
-> It has 2048 rows and 4 columns (buckets). The row index is calculated by
-> the hash function 'vsc73xx_calc_hash' and the FDB entry must be placed
-> exactly into row[hash]. The chip selects the row number by itself.
+On Mon, Aug 12, 2024 at 03:48:20PM -0700, Rick Edgecombe wrote:
+>Originally, the plan was to filter the directly configurable CPUID bits
+>exposed by KVM_TDX_CAPABILITIES, and the final configured bit values
+>provided by KVM_TDX_GET_CPUID. However, several issues were found with
+>this. Both the filtering done with KVM_TDX_CAPABILITIES and
+>KVM_TDX_GET_CPUID had the issue that the get_supported_cpuid() provided
+>default values instead of supported masks for multi-bit fields (i.e. those
+>encoding a multi-bit number).
+>
+>For KVM_TDX_CAPABILITIES, there was also the problem of bits that are
+>actually supported by KVM, but missing from get_supported_cpuid() for one
+>reason or another. These include X86_FEATURE_MWAIT, X86_FEATURE_HT and
+>X86_FEATURE_TSC_DEADLINE_TIMER. This is currently worked around in QEMU by
+>adjusting which features are expected. Some of these are going to be added
+>to get_supported_cpuid(), and that is probably the right long term fix.
+>
+>For KVM_TDX_GET_CPUID, there is another problem. Some CPUID bits are fixed
+>on by the TDX module, but unsupported by KVM. This means that the TD will
+>have them set, but KVM and userspace won't know about them. This class of
 
-You mean "selects the bucket" maybe?
+What's the problem of having KVM and userspace see some unsupported bits set?
 
-> 
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-> ---
->  drivers/net/dsa/vitesse-vsc73xx-core.c | 302 +++++++++++++++++++++++++
->  drivers/net/dsa/vitesse-vsc73xx.h      |   2 +
->  2 files changed, 304 insertions(+)
-> 
-> diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
-> index a82b550a9e40..7da1641b8bab 100644
-> --- a/drivers/net/dsa/vitesse-vsc73xx-core.c
-> +++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
-> @@ -46,6 +46,8 @@
->  #define VSC73XX_BLOCK_MII_EXTERNAL	0x1 /* External MDIO subblock */
->  
->  #define CPU_PORT	6 /* CPU port */
-> +#define VSC73XX_NUM_FDB_RECORDS	2048
+>bits is dealt with by having QEMU expect not to see them. The bits include:
+>X86_FEATURE_HYPERVISOR. The proper fix for this specifically is probably to
+>change KVM to show it as supported (currently a patch exists). But this
+>scenario could be expected in the end of TDX module ever setting and
+>default 1, or fixed 1 bits. It would be good to have discussion on whether
+>KVM community should mandate that this doesn't happen.
 
-Terminology issue perhaps, but do you call a "record" as something that
-holds 1 FDB entry, or 4? There should be 2048 * 4 records, and 2048 "rows"?
+Just my two cents:
 
-There's also vsc73xx_port_read_mac_table_entry(), which calls an FDB
-"entry" an array of 4 addresses. Do you have a consistent name for a
-switch data structure that holds a single address?
+Mandating that all fixed-1 bits be supported by KVM would be a burden for both
+KVM and the TDX module: the TDX module couldn't add any fixed-1 bits until KVM
+supports them, and KVM shouldn't drop any feature that was ever a fixed-1 bit
+in any TDX module. I don't think this is a good idea. TDX module support for a
+feature will likely be ready earlier than KVM's, as TDX module is smaller and
+is developed inside Intel. Requiring the TDX module to avoid adding fixed-1
+bits doesn't make much sense, as making all features configurable would
+increase its complexity.
 
-> +#define VSC73XX_NUM_BUCKETS	4
->  
->  /* MAC Block registers */
->  #define VSC73XX_MAC_CFG		0x00
-> @@ -197,6 +199,21 @@
->  #define VSC73XX_SRCMASKS_MIRROR			BIT(26)
->  #define VSC73XX_SRCMASKS_PORTS_MASK		GENMASK(7, 0)
->  
-> +#define VSC73XX_MACHDATA_VID			GENMASK(27, 16)
-> +#define VSC73XX_MACHDATA_VID_SHIFT		16
-> +#define VSC73XX_MACHDATA_MAC0_SHIFT		8
-> +#define VSC73XX_MACHDATA_MAC1_SHIFT		0
-> +#define VSC73XX_MACLDATA_MAC2_SHIFT		24
-> +#define VSC73XX_MACLDATA_MAC3_SHIFT		16
-> +#define VSC73XX_MACLDATA_MAC4_SHIFT		8
-> +#define VSC73XX_MACLDATA_MAC5_SHIFT		0
-> +#define VSC73XX_MAC_BYTE_MASK			GENMASK(7, 0)
-> +
-> +#define VSC73XX_MACTINDX_SHADOW			BIT(13)
-> +#define VSC73XX_MACTINDX_BUCKET_MASK		GENMASK(12, 11)
-> +#define VSC73XX_MACTINDX_BUCKET_MASK_SHIFT	11
-> +#define VSC73XX_MACTINDX_INDEX_MASK		GENMASK(10, 0)
-> +
->  #define VSC73XX_MACACCESS_CPU_COPY		BIT(14)
->  #define VSC73XX_MACACCESS_FWD_KILL		BIT(13)
->  #define VSC73XX_MACACCESS_IGNORE_VLAN		BIT(12)
-> @@ -204,6 +221,7 @@
->  #define VSC73XX_MACACCESS_VALID			BIT(10)
->  #define VSC73XX_MACACCESS_LOCKED		BIT(9)
->  #define VSC73XX_MACACCESS_DEST_IDX_MASK		GENMASK(8, 3)
-> +#define VSC73XX_MACACCESS_DEST_IDX_MASK_SHIFT	3
->  #define VSC73XX_MACACCESS_CMD_MASK		GENMASK(2, 0)
->  #define VSC73XX_MACACCESS_CMD_IDLE		0
->  #define VSC73XX_MACACCESS_CMD_LEARN		1
-> @@ -329,6 +347,13 @@ struct vsc73xx_counter {
->  	const char *name;
->  };
->  
-> +struct vsc73xx_fdb {
-> +	u16 vid;
-> +	u8 port;
-> +	u8 mac[6];
-
-u8 mac[ETH_ALEN]
-
-> +	bool valid;
-> +};
-> +
->  /* Counters are named according to the MIB standards where applicable.
->   * Some counters are custom, non-standard. The standard counters are
->   * named in accordance with RFC2819, RFC2021 and IEEE Std 802.3-2002 Annex
-> @@ -1829,6 +1854,278 @@ static void vsc73xx_port_stp_state_set(struct dsa_switch *ds, int port,
->  		vsc73xx_refresh_fwd_map(ds, port, state);
->  }
->  
-> +static u16 vsc73xx_calc_hash(const unsigned char *addr, u16 vid)
-> +{
-> +	/* VID 5-0, MAC 47-44 */
-> +	u16 hash = ((vid & GENMASK(5, 0)) << 4) | (addr[0] >> 4);
-> +
-> +	/* MAC 43-33 */
-> +	hash ^= ((addr[0] & GENMASK(3, 0)) << 7) | (addr[1] >> 1);
-> +	/* MAC 32-22 */
-> +	hash ^= ((addr[1] & BIT(0)) << 10) | (addr[2] << 2) | (addr[3] >> 6);
-> +	/* MAC 21-11 */
-> +	hash ^= ((addr[3] & GENMASK(5, 0)) << 5) | (addr[4] >> 3);
-> +	/* MAC 10-0 */
-> +	hash ^= ((addr[4] & GENMASK(2, 0)) << 8) | addr[5];
-> +
-> +	return hash;
-> +}
-> +
-> +static int
-> +vsc73xx_port_wait_for_mac_table_cmd(struct vsc73xx *vsc)
-> +{
-> +	int ret, err;
-> +	u32 val;
-> +
-> +	ret = read_poll_timeout(vsc73xx_read, err,
-> +				err < 0 ||
-> +				((val & VSC73XX_MACACCESS_CMD_MASK) ==
-> +				 VSC73XX_MACACCESS_CMD_IDLE),
-> +				VSC73XX_POLL_SLEEP_US, VSC73XX_POLL_TIMEOUT_US,
-> +				false, vsc, VSC73XX_BLOCK_ANALYZER,
-> +				0, VSC73XX_MACACCESS, &val);
-> +	if (ret)
-> +		return ret;
-> +	return err;
-> +}
-> +
-> +static int vsc73xx_port_read_mac_table_entry(struct vsc73xx *vsc, u16 index,
-> +					     struct vsc73xx_fdb *fdb)
-> +{
-> +	int ret, i;
-> +	u32 val;
-> +
-> +	if (!fdb)
-> +		return -EINVAL;
-> +	if (index >= VSC73XX_NUM_FDB_RECORDS)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < VSC73XX_NUM_BUCKETS; i++) {
-> +		vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACTINDX,
-> +			      (i ? 0 : VSC73XX_MACTINDX_SHADOW) |
-> +			      i << VSC73XX_MACTINDX_BUCKET_MASK_SHIFT |
-> +			      index);
-
-Could you check for error codes from vsc73xx_read() and vsc73xx_write()
-as well? This is applicable to the entire patch.
-
-> +		ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
-> +		if (ret)
-> +			return ret;
-> +
-> +		vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
-> +				    VSC73XX_MACACCESS,
-> +				    VSC73XX_MACACCESS_CMD_MASK,
-> +				    VSC73XX_MACACCESS_CMD_READ_ENTRY);
-> +		ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
-> +		if (ret)
-> +			return ret;
-> +
-> +		vsc73xx_read(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACACCESS,
-> +			     &val);
-> +		fdb[i].valid = val & VSC73XX_MACACCESS_VALID;
-> +		if (!fdb[i].valid)
-> +			continue;
-> +
-> +		fdb[i].port = (val & VSC73XX_MACACCESS_DEST_IDX_MASK) >>
-> +			      VSC73XX_MACACCESS_DEST_IDX_MASK_SHIFT;
-> +
-> +		vsc73xx_read(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACHDATA,
-> +			     &val);
-> +		fdb[i].vid = (val & VSC73XX_MACHDATA_VID) >>
-> +			     VSC73XX_MACHDATA_VID_SHIFT;
-> +		fdb[i].mac[0] = (val >> VSC73XX_MACHDATA_MAC0_SHIFT) &
-> +				VSC73XX_MAC_BYTE_MASK;
-> +		fdb[i].mac[1] = (val >> VSC73XX_MACHDATA_MAC1_SHIFT) &
-> +				VSC73XX_MAC_BYTE_MASK;
-> +
-> +		vsc73xx_read(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACLDATA,
-> +			     &val);
-> +		fdb[i].mac[2] = (val >> VSC73XX_MACLDATA_MAC2_SHIFT) &
-> +				VSC73XX_MAC_BYTE_MASK;
-> +		fdb[i].mac[3] = (val >> VSC73XX_MACLDATA_MAC3_SHIFT) &
-> +				VSC73XX_MAC_BYTE_MASK;
-> +		fdb[i].mac[4] = (val >> VSC73XX_MACLDATA_MAC4_SHIFT) &
-> +				VSC73XX_MAC_BYTE_MASK;
-> +		fdb[i].mac[5] = (val >> VSC73XX_MACLDATA_MAC5_SHIFT) &
-> +				VSC73XX_MAC_BYTE_MASK;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void
-> +vsc73xx_fdb_insert_mac(struct vsc73xx *vsc, const unsigned char *addr, u16 vid)
-> +{
-> +	u32 val;
-> +
-> +	val = (vid << VSC73XX_MACHDATA_VID_SHIFT) & VSC73XX_MACHDATA_VID;
-> +	val |= (addr[0] << VSC73XX_MACHDATA_MAC0_SHIFT);
-> +	val |= (addr[1] << VSC73XX_MACHDATA_MAC1_SHIFT);
-> +	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACHDATA, val);
-> +
-> +	val = (addr[2] << VSC73XX_MACLDATA_MAC2_SHIFT);
-> +	val |= (addr[3] << VSC73XX_MACLDATA_MAC3_SHIFT);
-> +	val |= (addr[4] << VSC73XX_MACLDATA_MAC4_SHIFT);
-> +	val |= (addr[5] << VSC73XX_MACLDATA_MAC5_SHIFT);
-> +	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACLDATA, val);
-> +}
-> +
-> +static int vsc73xx_fdb_del_entry(struct vsc73xx *vsc, int port,
-> +				 const unsigned char *addr, u16 vid)
-> +{
-> +	struct vsc73xx_fdb fdb[VSC73XX_NUM_BUCKETS];
-> +	u16 hash = vsc73xx_calc_hash(addr, vid);
-> +	int bucket, ret;
-> +
-> +	mutex_lock(&vsc->fdb_lock);
-> +
-> +	ret = vsc73xx_port_read_mac_table_entry(vsc, hash, fdb);
-> +	if (ret)
-> +		goto err;
-> +
-> +	for (bucket = 0; bucket < VSC73XX_NUM_BUCKETS; bucket++) {
-> +		if (fdb[bucket].valid && fdb[bucket].port == port &&
-> +		    !memcmp(addr, fdb[bucket].mac, ETH_ALEN))
-
-ether_addr_equal()
-
-> +			break;
-> +	}
-> +
-> +	if (bucket == VSC73XX_NUM_BUCKETS) {
-> +		/* Can't find MAC in MAC table */
-> +		ret = -ENODATA;
-> +		goto err;
-> +	}
-> +
-> +	vsc73xx_fdb_insert_mac(vsc, addr, vid);
-> +	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACTINDX, hash);
-> +
-> +	ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
-> +	if (ret)
-> +		goto err;
-> +
-> +	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACACCESS,
-> +			    VSC73XX_MACACCESS_CMD_MASK,
-> +			    VSC73XX_MACACCESS_CMD_FORGET);
-> +	ret =  vsc73xx_port_wait_for_mac_table_cmd(vsc);
-> +err:
-> +	mutex_unlock(&vsc->fdb_lock);
-> +	return ret;
-> +}
-> +
-> +static int vsc73xx_fdb_add_entry(struct vsc73xx *vsc, int port,
-> +				 const unsigned char *addr, u16 vid)
-> +{
-> +	struct vsc73xx_fdb fdb[VSC73XX_NUM_BUCKETS];
-> +	u16 hash = vsc73xx_calc_hash(addr, vid);
-> +	int bucket, ret;
-> +	u32 val;
-> +
-> +	mutex_lock(&vsc->fdb_lock);
-> +
-> +	vsc73xx_port_read_mac_table_entry(vsc, hash, fdb);
-> +
-> +	for (bucket = 0; bucket < VSC73XX_NUM_BUCKETS; bucket++) {
-> +		if (!fdb[bucket].valid)
-> +			break;
-> +	}
-> +
-> +	if (bucket == VSC73XX_NUM_BUCKETS) {
-> +		/* Bucket is full */
-> +		ret = -EOVERFLOW;
-> +		goto err;
-> +	}
-> +
-> +	vsc73xx_fdb_insert_mac(vsc, addr, vid);
-> +
-> +	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACTINDX, hash);
-> +	ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
-> +	if (ret)
-> +		goto err;
-> +
-> +	val = (port << VSC73XX_MACACCESS_DEST_IDX_MASK_SHIFT) &
-> +	      VSC73XX_MACACCESS_DEST_IDX_MASK;
-> +
-> +	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
-> +			    VSC73XX_MACACCESS,
-> +			    VSC73XX_MACACCESS_VALID |
-> +			    VSC73XX_MACACCESS_CMD_MASK |
-> +			    VSC73XX_MACACCESS_DEST_IDX_MASK |
-> +			    VSC73XX_MACACCESS_LOCKED,
-> +			    VSC73XX_MACACCESS_VALID |
-> +			    VSC73XX_MACACCESS_CMD_LEARN |
-> +			    VSC73XX_MACACCESS_LOCKED | val);
-> +	ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
-> +
-> +err:
-> +	mutex_unlock(&vsc->fdb_lock);
-> +	return ret;
-> +}
-> +
-> +static int vsc73xx_fdb_add(struct dsa_switch *ds, int port,
-> +			   const unsigned char *addr, u16 vid, struct dsa_db db)
-> +{
-> +	struct vsc73xx *vsc = ds->priv;
-> +
-> +	if (!vid) {
-> +		switch (db.type) {
-> +		case DSA_DB_PORT:
-> +			vid = dsa_tag_8021q_standalone_vid(db.dp);
-> +			break;
-> +		case DSA_DB_BRIDGE:
-> +			vid = dsa_tag_8021q_bridge_vid(db.bridge.num);
-
-I appreciate the intention, but if you don't set ds->fdb_isolation
-(which you don't, although I believe the driver satisfies the documented
-requirements), db.bridge.num will always be passed as 0 in the
-.port_fdb_add() and .port_fdb_del() methods. Thus, dsa_tag_8021q_bridge_vid(0)
-will always be different than what dsa_tag_8021q_bridge_join() selects
-as VLAN-unaware bridge PVID for your ports. The FDB entry will be in a
-different VLAN than what your switch classifies the packets to. This
-means it won't match.
-
-Assuming this went through a reasonable round of testing (add bridge FDB
-entry towards expected port, make sure it isn't sent to others) and this
-issue was not noticed, then maybe the switch performs shared VLAN learning?
-Case in which, if you can't configure it to independent VLAN learning,
-it does not pass the ds->fdb_isolation requirements, plus the entire
-dance of picking a proper VID is pointless, as any chosen VID would have
-the same behavior.
-
-> +			break;
-> +		default:
-> +			return -EOPNOTSUPP;
-> +		}
-> +	}
-> +
-> +	return vsc73xx_fdb_add_entry(vsc, port, addr, vid);
-> +}
-> +
-> +static int vsc73xx_fdb_del(struct dsa_switch *ds, int port,
-> +			   const unsigned char *addr, u16 vid, struct dsa_db db)
-> +{
-> +	struct vsc73xx *vsc = ds->priv;
-> +
-> +	if (!vid) {
-> +		switch (db.type) {
-> +		case DSA_DB_PORT:
-> +			vid = dsa_tag_8021q_standalone_vid(db.dp);
-> +			break;
-> +		case DSA_DB_BRIDGE:
-> +			vid = dsa_tag_8021q_bridge_vid(db.bridge.num);
-> +			break;
-> +		default:
-> +			return -EOPNOTSUPP;
-> +		}
-> +	}
-> +
-> +	return vsc73xx_fdb_del_entry(vsc, port, addr, vid);
-> +}
-> +
-> +static int vsc73xx_port_fdb_dump(struct dsa_switch *ds,
-> +				 int port, dsa_fdb_dump_cb_t *cb, void *data)
-> +{
-> +	struct vsc73xx_fdb fdb[VSC73XX_NUM_BUCKETS];
-> +	struct vsc73xx *vsc = ds->priv;
-> +	u16 i, bucket;
-> +
-> +	mutex_lock(&vsc->fdb_lock);
-> +
-> +	for (i = 0; i < VSC73XX_NUM_FDB_RECORDS; i++) {
-> +		vsc73xx_port_read_mac_table_entry(vsc, i, fdb);
-> +
-> +		for (bucket = 0; bucket < VSC73XX_NUM_BUCKETS; bucket++) {
-> +			if (!fdb[bucket].valid || fdb[bucket].port != port)
-> +				continue;
-> +
-> +			/* We need to hide dsa_8021q VLANs from the user */
-> +			if (vid_is_dsa_8021q(fdb[bucket].vid))
-> +				fdb[bucket].vid = 0;
-> +			cb(fdb[bucket].mac, fdb[bucket].vid, false, data);
-
-"cb" is actually dsa_user_port_fdb_do_dump(). It can return -EMSGSIZE
-when the netlink skb is full, and it is very important that you
-propagate that to the caller:
-
-	err = cb();
-	if (err)
-		goto unlock;
-
-otherwise, you might notice that large FDB dumps will have missing FDB entries.
-
-> +		}
-> +	}
-> +
-> +	mutex_unlock(&vsc->fdb_lock);
-> +	return 0;
-> +}
-> +
->  static const struct phylink_mac_ops vsc73xx_phylink_mac_ops = {
->  	.mac_config = vsc73xx_mac_config,
->  	.mac_link_down = vsc73xx_mac_link_down,
-> @@ -1851,6 +2148,9 @@ static const struct dsa_switch_ops vsc73xx_ds_ops = {
->  	.port_bridge_join = dsa_tag_8021q_bridge_join,
->  	.port_bridge_leave = dsa_tag_8021q_bridge_leave,
->  	.port_change_mtu = vsc73xx_change_mtu,
-> +	.port_fdb_add = vsc73xx_fdb_add,
-> +	.port_fdb_del = vsc73xx_fdb_del,
-> +	.port_fdb_dump = vsc73xx_port_fdb_dump,
->  	.port_max_mtu = vsc73xx_get_max_mtu,
->  	.port_stp_state_set = vsc73xx_port_stp_state_set,
->  	.port_vlan_filtering = vsc73xx_port_vlan_filtering,
-> @@ -1981,6 +2281,8 @@ int vsc73xx_probe(struct vsc73xx *vsc)
->  		return -ENODEV;
->  	}
->  
-> +	mutex_init(&vsc->fdb_lock);
-> +
->  	eth_random_addr(vsc->addr);
->  	dev_info(vsc->dev,
->  		 "MAC for control frames: %02X:%02X:%02X:%02X:%02X:%02X\n",
-> diff --git a/drivers/net/dsa/vitesse-vsc73xx.h b/drivers/net/dsa/vitesse-vsc73xx.h
-> index 3ca579acc798..a36ca607671e 100644
-> --- a/drivers/net/dsa/vitesse-vsc73xx.h
-> +++ b/drivers/net/dsa/vitesse-vsc73xx.h
-> @@ -45,6 +45,7 @@ struct vsc73xx_portinfo {
->   * @vlans: List of configured vlans. Contains port mask and untagged status of
->   *	every vlan configured in port vlan operation. It doesn't cover tag_8021q
->   *	vlans.
-> + * @fdb_lock: Mutex protects fdb access
->   */
->  struct vsc73xx {
->  	struct device			*dev;
-> @@ -57,6 +58,7 @@ struct vsc73xx {
->  	void				*priv;
->  	struct vsc73xx_portinfo		portinfo[VSC73XX_MAX_NUM_PORTS];
->  	struct list_head		vlans;
-> +	struct mutex			fdb_lock; /* protects fdb access */
-
-Redundant comment since it's already in the kernel-doc?
-
->  };
->  
->  /**
-> -- 
-> 2.34.1
-> 
+I think adding new fixed-1 bits is fine as long as they don't break KVM, i.e.,
+KVM shouldn't need to take any action for the new fixed-1 bits, like
+saving/restoring more host CPU states across TD-enter/exit or emulating
+CPUID/MSR accesses from guests
 
