@@ -1,114 +1,77 @@
-Return-Path: <linux-kernel+bounces-284807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25C095055F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:44:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224BA950563
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 884271F256DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:44:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B9501C24584
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D854019B3E2;
-	Tue, 13 Aug 2024 12:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="h8VKp2OM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9A319A2AE;
+	Tue, 13 Aug 2024 12:43:53 +0000 (UTC)
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D051519939D;
-	Tue, 13 Aug 2024 12:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A09919CCF3
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552992; cv=none; b=b+vx3n3I17L9atv+mJYDr0mX7DZLyQbaFBXCSd+CEr0hFUWxxpQEUirRq8mHg4g9Om7gjTACevGTdWs1Zs4yeYmX9eqhhRyh99x4slyrptGuTb/X3IdyFpuCsdyYJ8HPA1e45STfGtW6tsDCAGH85YtYP7q8yqArshPCKgKO3zc=
+	t=1723553033; cv=none; b=Kq12ya/lkCYt7agmUZ8xvF5xNJaoDpW2mWF3FdmYWG7U2EqA56S0zjbWjZ/egMYM+kZGrRsPQqRCYQLKeckFE/pkGtmxfbHDMQYuAC+cC+HRvdjPCSrFztqEzjyJt+kd6yXVAeDpiHHR1uYvzIxviJYR5k2VhhXpVsStS0noQ/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723552992; c=relaxed/simple;
-	bh=A0xDL8KkTPlRgp4KJ4mTJbfYl7ddVVsIH/I+T5JzRlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rab74Sx6zGeKFeLsAKII1bTODRZQbeZhcw/EJf95lEMzL0wIJIJyrQf4Kk7hlHa9yhKAt7t4hyD86tj7uie7ks6gRMD7YhTJ0sMNdI9N6pW7avlD6zxgOp1wSJNHAn5gZOmgfStzYtFFYNoZ/d16WPd4hscCMNe0ggeiBywq9W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=h8VKp2OM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DCJ8w9003117;
-	Tue, 13 Aug 2024 12:43:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YliuGH2uLcBqc30vKu59+LNAekrgoOWTy+92pxgHbT8=; b=h8VKp2OMIlJaeY41
-	aHQe4QXTz6F8oOz1m3TNsB742mx/pLl70GmRN9XpBW7rWufFoxZUvuIBLK26JCZP
-	KmD1+qLitnsqUmYhH2zmE4roz8Zia3pr9vbTs85IBwT5PhiR6a2R7YOOrjjf+vxN
-	avLtdNmAcwHStv7NMqNAZW/Wlr2tCl1g1EAiitHIoIAeGQ71qUtrlbJnMaUsGife
-	nauddILU4bWD52OlLNqByRS215JlqwLRyorR8Zz6CbMEGT3a4fU2cvPW1GIP3NqA
-	A9NAx/w+13adDJzDeG/etMX0leO29XcbhCJLTwnNDDDv0KLyFla7yacsQRFIRMtf
-	lIWkJg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x17sfrqs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 12:43:06 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DCh6xP017347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 12:43:06 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
- 2024 05:43:00 -0700
-Message-ID: <efe17eae-d578-41fd-a169-3a5c779e3b50@quicinc.com>
-Date: Tue, 13 Aug 2024 20:42:58 +0800
+	s=arc-20240116; t=1723553033; c=relaxed/simple;
+	bh=iywICTYyQ4TYXkBo6AMZnGczjmmFtx3nsRjzm927WyI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rUdhbUcrECKGCrqbEPoV4suljhfqM5sWWxbMsfirHgIMaSZ4OhPtAN5u3Vv/Ot5g6hUTFQjgSqU6raDrXh4koqNVSjPwnzNsl2xjrXHUHsFgsMP3UO4ScjoyKEBIcTQgbLz4dUdq95adxjDrtKSfQgPoIUBNcyUzlibVwonzPz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WjrfX2PGGz4wd0;
+	Tue, 13 Aug 2024 22:43:48 +1000 (AEST)
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+To: Michael Ellerman <mpe@ellerman.id.au>, Thomas Gleixner <tglx@linutronix.de>, "Nysal Jan K.A." <nysal@linux.ibm.com>
+Cc: Tyrel Datwyler <tyreld@linux.ibm.com>, Michal Suchanek <msuchanek@suse.de>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Sourabh Jain <sourabhjain@linux.ibm.com>, Dave Hansen <dave.hansen@linux.intel.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Ard Biesheuvel <ardb@kernel.org>, Eric DeVolder <eric.devolder@oracle.com>, Laurent Dufour <ldufour@linux.ibm.com>, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Naveen N Rao <naveen@kernel.org>
+In-Reply-To: <20240731030126.956210-1-nysal@linux.ibm.com>
+References: <20240731030126.956210-1-nysal@linux.ibm.com>
+Subject: Re: [PATCH v2 0/2] Skip offline cores when enabling SMT on PowerPC
+Message-Id: <172355300460.69780.8475775851092917266.b4-ty@ellerman.id.au>
+Date: Tue, 13 Aug 2024 22:43:24 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/13] media: qcom: camss: Add sm8550 support
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <69de592e-a3df-4fb3-ad0c-c8a44ae3efeb@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <69de592e-a3df-4fb3-ad0c-c8a44ae3efeb@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4IayG6-89ERFG_mc1EDNNwHC9Ig2Dj32
-X-Proofpoint-ORIG-GUID: 4IayG6-89ERFG_mc1EDNNwHC9Ig2Dj32
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_04,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxscore=0 phishscore=0 malwarescore=0 adultscore=0 suspectscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- mlxlogscore=775 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130092
 
-Hi Bryan,
-
-On 8/13/2024 8:35 PM, Bryan O'Donoghue wrote:
-
+On Wed, 31 Jul 2024 08:31:11 +0530, Nysal Jan K.A. wrote:
+> After the addition of HOTPLUG_SMT support for PowerPC [1] there was a
+> regression reported [2] when enabling SMT. On a system with at least
+> one offline core, when enabling SMT, the expectation is that no CPUs
+> of offline cores are made online.
 > 
-> @Depeng.
+> On a POWER9 system with 4 cores in SMT4 mode:
+> $ ppc64_cpu --info
+> Core   0:    0*    1*    2*    3*
+> Core   1:    4*    5*    6*    7*
+> Core   2:    8*    9*   10*   11*
+> Core   3:   12*   13*   14*   15*
 > 
-> Can you please fix the following checkpatch splats.
-> 
-> scripts/checkpatch.pl --strict *.patch
-> 
+> [...]
 
-Thanks for the reminder, I didn't add --strict before. I will make sure 
-add --strict option for the new version series.
+Applied to powerpc/fixes.
 
-Thanks,
-Depeng
+[1/2] cpu/SMT: Enable SMT only if a core is online
+      https://git.kernel.org/powerpc/c/6c17ea1f3eaa330d445ac14a9428402ce4e3055e
+[2/2] powerpc/topology: Check if a core is online
+      https://git.kernel.org/powerpc/c/227bbaabe64b6f9cd98aa051454c1d4a194a8c6a
 
+cheers
 
