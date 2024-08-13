@@ -1,206 +1,112 @@
-Return-Path: <linux-kernel+bounces-284679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA07B950400
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:47:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4486D9503FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5E4B235D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:46:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DF21F246CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FE91991D7;
-	Tue, 13 Aug 2024 11:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oNJmBVbQ"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2079.outbound.protection.outlook.com [40.107.244.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69E91991C6;
-	Tue, 13 Aug 2024 11:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549599; cv=fail; b=UDZz1He0yyxULZ+IQ3cmdJyBo/gl463u0UF0/5wCJPHqX5kvykiFBoFkSlFs9eJFE/Va+MT1qsEwFAhimQ7MXuLfTNcQMJKuOiw2GWh+tujx6EvkLjVvA52/9Mr28peNpnizqAeQSCaQSqKXoVcCaTM4OKCbzDNWCvNZtlqRiSI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549599; c=relaxed/simple;
-	bh=ydZH0vv0cdMKBWTFOVgfra/dkByRh8/lJw6FaMAIB+Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dBdnZ7665iLC8BMNxzhK6Y/03/BHALV2KMi6V5jz692RfphscwAG5dIYj1WXSqoy7U5cyPWCae+0axRRoBJwksDWoOtHu3dd89aO04oMiecPye4uINy3GSX9H/1M1LSOkUsf9QDn3pJRUCxAX3KHG1qDXg2mGE/zC4Os22QdGJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oNJmBVbQ; arc=fail smtp.client-ip=40.107.244.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=So3xaeGTZEE6XoPIymiSqtIJ/fq+2VCRqPGx5O+7blBRcr8feZD2n3VraBla2eNVFuDfKOWV5PFp8mzcoD2MMcSMYJb9GvmboLrq7rUvYXh1bd95ecwsaQQmZYQnw7hFL7PNjuNvxEg8+bL3BkI0Hb/s4jhD8o4Md4u3f9f9Z+EXOb6Giv6CrQd/KodXp8mg2Jr12TiPUF+0/2Ukc4inR/Sn0O85sveZR96T0VQxpzzZBgUcaFM17pHXn8yMblvgDZrj179rdp4giPopo8+U8U4oaQ8qfuXG4G+H+3EHxmY4K6lAr4B6kc0Nt+qIqLYhcsuWwYGMM0Be7oheBb4hcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yClQKGRVnY4id6CROoivBgMOYFvzz2jj3rUpTbJhjfY=;
- b=O8potbgo120nHVDJDvEAyc9HZkbRMBuZP48I7y9OrYILU8GsOASaACBbIOAcNmNoBGqNX1FFc5t30LRyMJOZKaCDwmjypsSJhGA4E3cPHdQnA3Vhpjt2x5EJENC34v3iyEEKGVtbj/W2oaKQAECuMHUU/zEkdtLvgIT86N3gAuYQUXPbgyin4ZYOfuIkJxzSeJskYi+BI3MdV+7AI5lLLxloZ24OmP8h1XNc6XOtos094LC9RmgikdByrlXXa5plwqdVCAlniQegfDGXH59wwTXbWhBVBtIlxE9a9rgorgXORjqfnre+MDG46REqkVU/YF8reZWm1oYCBxqrOf5bSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yClQKGRVnY4id6CROoivBgMOYFvzz2jj3rUpTbJhjfY=;
- b=oNJmBVbQua2U1cjLuh/XLdGPrtpYPzAX/uUBIEaWJcob1ElPDxdaiPQYCbTc5FpLFfe0qHhvSmSMossNo7BQEDcoPBfTwU0B41Gfv++DRiNt/FHKqp2zTtXnesxE2MU+a+opMuMYKnMx83krBR9nHyZJxqoJXMMoeNW4kCCi+2A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23)
- by SN7PR12MB6888.namprd12.prod.outlook.com (2603:10b6:806:260::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Tue, 13 Aug
- 2024 11:46:35 +0000
-Received: from DM6PR12MB4123.namprd12.prod.outlook.com
- ([fe80::512d:6caa:552a:7ebf]) by DM6PR12MB4123.namprd12.prod.outlook.com
- ([fe80::512d:6caa:552a:7ebf%4]) with mapi id 15.20.7849.021; Tue, 13 Aug 2024
- 11:46:35 +0000
-Message-ID: <0e8afd21-60f8-4a8a-aaa6-e148d4571908@amd.com>
-Date: Tue, 13 Aug 2024 17:16:24 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/2] ASoC: SOF: amd: move iram-dram fence register
- programming sequence
-Content-Language: en-US
-To: Markus Elfring <Markus.Elfring@web.de>, linux-sound@vger.kernel.org,
- alsa-devel@alsa-project.org, sound-open-firmware@alsa-project.org,
- Mark Brown <broonie@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Basavaraj Hiregoudar <Basavaraj.Hiregoudar@amd.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Sunil-kumar Dommati <Sunil-kumar.Dommati@amd.com>,
- Takashi Iwai <tiwai@suse.com>,
- Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
-References: <20240813105944.3126903-1-Vijendar.Mukunda@amd.com>
- <ac7efdcd-cc79-4984-8b36-50898243afa5@web.de>
-From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-In-Reply-To: <ac7efdcd-cc79-4984-8b36-50898243afa5@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN1PEPF000067F7.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c04::2e) To DM6PR12MB4123.namprd12.prod.outlook.com
- (2603:10b6:5:21f::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514941991B5;
+	Tue, 13 Aug 2024 11:46:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC641990CE
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723549590; cv=none; b=SDjcJo1rS6WaF55BeYrwxPunhf8w5b415knjIxE0jMUVDPgy3xOm/sygRQCKL869hOw/DXj/+jHiQp9jRFKgsFN6h/MOYu3J1pIfjgZOsnaKg9fOmEz8bCclSuxCPMDPuJSuXrjjZC8ilJa3P6m5YAldsd5ADae4Z4B4bTDT3qY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723549590; c=relaxed/simple;
+	bh=FkG8eAW9Ih4myl4ll11jeD/+VIhj+idpMSixGVmnH7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X138xmedMZyB9noIHqgq7j/56DHuegHylONdO8zMHA0y7jm0Bk9JbXxMbH7YIZ71ifZKXxeTqNXYChjpkknIWiX4YYtHJF8MuU6NPgT8zYfRp8KQ2NH/R8WzYVoYDNIkAXfK7EDIT+Hfs1DqOxAfVCh8pLDJE203GGflyAfVk5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BFFC12FC;
+	Tue, 13 Aug 2024 04:46:54 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5115D3F587;
+	Tue, 13 Aug 2024 04:46:27 -0700 (PDT)
+Message-ID: <fc80ffde-2d19-4bd6-9590-a80049302ad7@arm.com>
+Date: Tue, 13 Aug 2024 12:46:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4123:EE_|SN7PR12MB6888:EE_
-X-MS-Office365-Filtering-Correlation-Id: d0f70f0f-b1a7-4b40-b400-08dcbb8d9551
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2t5Vk1LcEZySXllWjRCeDNpSG9ITzdEZnpsazBpRDltSkdtRHhTYnBSczI0?=
- =?utf-8?B?cklTcFpubmVoN3RYNCs4a0ViQWhaY1VITTJEQUk2ME1DNzJ3cUVGTmZCb3pu?=
- =?utf-8?B?Y054bTNPaFNCWDIwa1d6UWtmYXdwT1dPa2doVWY2MWNkOHdvSDN4WlR3TElD?=
- =?utf-8?B?Y1B1UUFJTFU1TzJUUHhSWkp0RUZCOEFOb0R6dmRpRkVPMVp5Njl4U1k3cHFs?=
- =?utf-8?B?K1IwOHF6ejdWT1hjaXFBSUc0aVRSMEowLzR6VWxMNW56RGpSQnZ6bGhCSEVl?=
- =?utf-8?B?enBOTjlBZmNudHc3TnBIb2NIZkcvRFlWaUZYbnR6U3JYV1ovbXI2Q21DWFM0?=
- =?utf-8?B?RjE4RVc3S1U5QmNzemRvRCtGcU1qS1VtQnZnay9ydVVVOXEzSjRwcUJNbzVq?=
- =?utf-8?B?MEYzdGMvQm1Jby9kazQwTzFYeUIwUkpoYnpFa1VsWUtWcStCS2VPTHFzWU1I?=
- =?utf-8?B?Vi9WMCtzTTNRSHhLbHJVYXR0bXp2bDVlZGp0S1lGODNNL1ZORDBjMDNBdndz?=
- =?utf-8?B?R1UvbC9wdUpQOEo3ZlRBV0E5R1JPanNxL2Z4MGp5b2pBZGdSUFJZVTZzSmF2?=
- =?utf-8?B?cGxtMkJFdGxVT0lhZ3lpcThObTNadzBXTUxmbkFURUpiRHZ3SldIYUZ5aTc2?=
- =?utf-8?B?WlNjcnBJSWx1VmJhY0ZrQndkSzFPejRvVy9QUDhxc0FFY0N5dXUvSlpEYlFy?=
- =?utf-8?B?ckQ1SGdmSFV1YjJtTXBlcDhTQlRPVkliREVqUFBHRXNJQ3dBSDhmVjRiMHpW?=
- =?utf-8?B?VmlhY2EwTzZqWWMwbmQxS0JjZ3B4cmFlTmRpb2R5M1NyVklpVFN1V3pKZmdq?=
- =?utf-8?B?elhpR3AzdjkxeWlhUjNCY3FHQ2s3U0grSyt4eDlJZXZPeE1DRHF3RjYzZ3F5?=
- =?utf-8?B?UDBmMU80aVF4cEkrRGd5YVhiRmlDL0g1TDBxRnZCbzJZbWVEeDU3dVM1dFdT?=
- =?utf-8?B?TTdKUmRUWlN1VFRjSUJIeE5mY2kxSmVmY2JCMEdZY2ZWRzNMZmZWL2Z4Ny9p?=
- =?utf-8?B?RVVlZkZYcmEzNlFzTTBmekZCQkYwa3VHWnFCT2VrQVZnbEIrYjA1YURrd1pv?=
- =?utf-8?B?dDIvYStNRjNiYyt5LzhYcjNvRDQ0SStNU2h0cy9vTW5tZTFJbEtNT0NPRm0x?=
- =?utf-8?B?dW8zTyt5NG5GMXUrS2o4Y3dHc2hhY3o2WWlQV3o4YXZaTzRTZCtxWVhicHlG?=
- =?utf-8?B?Uy91THQ5SzRLRm9vZ0hXOWlUdEhQVTNwUHBXTjc1R1VtaDJIZVVUY01sM3hP?=
- =?utf-8?B?dHZqUFJmZ3d1NXpTZUo1b2p6NWtNeHhZdjV5WTJmUTlBcG5nMElRQWxpTDdC?=
- =?utf-8?B?elhvWDFYU05pRjl6ZkNZWFpDL1hJRitsTllRTkFoZXJuZUprVW96TnVnVG9V?=
- =?utf-8?B?WFpaaldYKzdwYnNiaVgwcGV6MEphNVIwc2tDRXJ2dlVnc05mWWlpZjZlR1VN?=
- =?utf-8?B?WkFxbmxKd241c2ZvbEVpUTlhdGttbTFCZDIwd0ZvY0d1WTk0Und6di9wQTQ4?=
- =?utf-8?B?cEdTcXJZeEx5NTJvbmRYUkFvQnR3OXZvUG1PcXdiSnBJN0VlazVTWUdjd0NF?=
- =?utf-8?B?UmdnYTlDc2ltaWRoYlVodEtPcEZlWkEvVVV1bXYvdzBwdE9LaDMrVXg3enIy?=
- =?utf-8?B?MTlpeUNqZ01xb1ovMVRGd1I4cFNabUFuZzBuaTJCaFd2RGlxWW5yYStxOWJI?=
- =?utf-8?B?b2pJYVV6S0tRYnMxeHpHdnBzdjk2QW4rM2xWN0R6V2V5aUhEUlZ0Nis1eXcw?=
- =?utf-8?B?QTBYSTlieXhSeG40VnM5ajFwRUtKYldTTzh0eURrK2U0bTAxY3NkdWdzYW1R?=
- =?utf-8?B?UUNxbUdGUVIzWkwrTXByUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4123.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VWY1bDJhVjBOSmUwSGgyYmxpUFQwbXR6NkFENVZ4NE5TcW8vYzBUUDd6RXdu?=
- =?utf-8?B?b241eFpaNFhQcTc3ajlTb0tnTlhadUNGQmNrdWtUdEVaRGR2RTJrd1Z1OEJ4?=
- =?utf-8?B?bm82RVpIelVnTmZFMkJhLzRETmUyWUM2SzVjU2JWQ3d4RTNZdHdGMnF4d2JM?=
- =?utf-8?B?K0dPM01XcFlzVjArOFg4SmQ3T3Q4MHJnSVczb2wyVVhkU2hKYWhDZG53V2JD?=
- =?utf-8?B?a1diYkZpcVdmTHRQK1FyVGg0dno2VStjYjVJQmlmaGh3RXgwam92K01xbmJJ?=
- =?utf-8?B?eHAraWUwSXhkQldYaThOaExnRTZZeGo0THcreEJMVGhwTTdSaU9sKzB4eWhh?=
- =?utf-8?B?M25memhyVlF5bGEzV3Fyb080WU9EdytEdUJGcTU3ekxrM1BGQ1V3NmJMeFl2?=
- =?utf-8?B?WjY1emM3b0wzVmRkcFpCUGtlVFBmSmlVODM0V2lnK05ETDVRZVZ4dWpDNm9k?=
- =?utf-8?B?NW1zWThuVDVyeXZSL3pQOCtCRHJ1MUFoeHBsYTFsVmtLTzJoM2NSZS9MR2Y2?=
- =?utf-8?B?NHRZNFJINkdmT1BMUEduVU9TNEIxNFZhVkpYZVpOalMvZ1g2TE1WQXVlY2R3?=
- =?utf-8?B?Y2FvT3F1RVBIaG1ZOVduV1RqdFJIRy9iVXZzN3JUTk9QV25YYkVLNm4rU1dQ?=
- =?utf-8?B?Rk1yWUx5SWhpd3VuNFFTOFRXUmdzRGRUMSt5ZW1zL0Nld1NuMys5dkJSNjRx?=
- =?utf-8?B?c3BpZFc4THFPRkJQaDdJNFBrWnEzWmV0bEx1MjJtZ0l0YjdIVDNuNDJraGRV?=
- =?utf-8?B?Y0JGKzE5WFhKb3F3S0crUXhaNzY4U0pNVTQwMHhYekkvSHUvVngySHkrNmpT?=
- =?utf-8?B?UkZvbXFNUUJZS1RkQndIK2VzUW53VTdTQVlIdHc3S3NNWkQwRWd1ZnQ1cDRB?=
- =?utf-8?B?cWpxTVM3OEpYajNnY05POWtZdjNCdE5hV0FLSXd5VnlHSlEydmxLV1crL3ky?=
- =?utf-8?B?ekxBMjE5R2h3UWZWU01wQkhPd1NYM1FnS2ZuazRzQnBsb0pMSHk2WG4yNGI0?=
- =?utf-8?B?VnRZYW1QM0lBNTBMRXpTVnNjdVN5amNpOUdOQjJONWlVQ2h6TzdKV2RyQ0Jw?=
- =?utf-8?B?dUlYRGhOcG54NWJDVVdiTG5WL05XQms1L2crWmt6SEJaaUhOZEo1bEVTOHJ0?=
- =?utf-8?B?aGFsRi9TR09CanpwUWtmSEQyYmtGZm1Sblc3NTFhSHVWUWh3TkhkOWpFVEt5?=
- =?utf-8?B?K1k0OG8xNzBTOTh0UStzKzJ1a0dmZDI1UFJTZjh1ZkFra1dsUDdCenkraXlR?=
- =?utf-8?B?cnB2OC9ONExEN1hkWjYybGJaVkhvdlRKNlZ0RzBMMkNHMU90cGl6QXM2Nkww?=
- =?utf-8?B?SndLckNJTXk3ei9VemdCcU9Tbm91MENoaWowVHozdWhBTDR0NzRIZ01DL201?=
- =?utf-8?B?ZWtIbjBUcjB5RkVORWtQd21GS3R5UVNaOU1pMnNkWTNiNGVEa3FveUFkMW1J?=
- =?utf-8?B?KytEY282TDRUak95L3hUVTZ4SmVjUFFjSkRBbkpCVzcyUVFBWTE3MnNLUitL?=
- =?utf-8?B?NjYzZ001c0p5OGI5OEJtSWhhTXVoMDdrcHN4dWE4SmZVVVlTM0J6ZnZ5Umdu?=
- =?utf-8?B?L2xkcGxBTitvZUd1cDMwZWxMOWVvVDlTa2p1c21VbU93VitUVW5GQzlvRk8z?=
- =?utf-8?B?cGN5aXc0NzJrU1ZKMjFHZHVUWjRxd2ZJUUtOYVk1Y0NTNXdVOUhEbjdUWjA1?=
- =?utf-8?B?L0NFM0xmM0lEZVhENGRLSE9yenMxQlh1YjZnbytkNUNZSnJGaTRudFp6Z0VR?=
- =?utf-8?B?M1NPTU9sSGoyaGFjdmVROUljQ2k0b3hzb1NOT2U1UnVSbC9LRTJ5RFZ0Q3hB?=
- =?utf-8?B?eFA1dzZ1Mm5JYnNLZ0ZjUUpCZ0Q5bHhhRDZtQStqOHF2cmplYmM1VWl2cXEv?=
- =?utf-8?B?SVU5TXI3ZmxjL0hKa054MDJYWHhIYnkvWWd6V3BTd1VBZVdpMlI3TUFsc25E?=
- =?utf-8?B?TFNqSlgvc1plOE9CeEhUZ29POFFmWjBBckhnNWg0ZDRzdzFXMmpDVG5PM2Fj?=
- =?utf-8?B?c0gxVE5WaDdCekdZZ0lQTlRiVkxITjQ1ajhQWERIZHFjSEZhdFZFSXlYMXRQ?=
- =?utf-8?B?TXZrN3VtREJISzZ5SVBSdUxyaDRSUUhSbjU0ZDN2dXpmUS8zbXA0VWN3bDlC?=
- =?utf-8?Q?hi2cNWNlMvarYB7oLhHI8L98e?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0f70f0f-b1a7-4b40-b400-08dcbb8d9551
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4123.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 11:46:35.3345
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F/9E2QVWZbzHcEYIF56afgXlUmC/WI4FU5+Xum2FuJc/9iZT0uf6Vmav5dcegJkoRe9Z3sIfXBL7551V2byPNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6888
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+To: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ will@kernel.org, joro@8bytes.org
+Cc: jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com
+References: <20240812205255.97781-1-smostafa@google.com>
+ <20240812205255.97781-2-smostafa@google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240812205255.97781-2-smostafa@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 13/08/24 17:05, Markus Elfring wrote:
->> The existing code modifies IRAM and DRAM size after sha dma start …
->                                                       SHA DMA?
->
->
-> …
->> sha dma failure …
->   SHA DMA?
-I think above one seems to be okay.
->
->> IRAM size. To fix this issue, Move the iram-dram fence register sequence
->
->              Thus move the IRAM-DRAM …?
- I think above one seems to be okay.
->
->
-> How do you think about to offer cover letters for patch series?
- As these are individual fixes, I don't think a cover letter should
-be included in the patch series.
->
-> Regards,
-> Markus
+On 12/08/2024 9:52 pm, Mostafa Saleh wrote:
+> S2S must be set when stall model is forced "ARM_SMMU_FEAT_STALL_FORCE".
+> But at the moment the driver ignores that, instead of doing the minimum
+> and only set S2S for “ARM_SMMU_FEAT_STALL_FORCE” we can just match what
 
+This was highly confusing, until the 3rd reading when I realised that 
+maybe "instead of..." does not in fact belong to the description of the 
+current behaviour, and it does start making sense if you swap the 
+previous comma and full stop with each other.
+
+> S1 does which also set it for “ARM_SMMU_FEAT_STALL” and the master
+> has requested stalls.
+> This makes the driver more consistent when running on different SMMU
+> instances with different supported stages.
+> 
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> ---
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 5 +++++
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 1 +
+>   2 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index a31460f9f3d4..8d573d9ca93c 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -1562,6 +1562,11 @@ void arm_smmu_make_cdtable_ste(struct arm_smmu_ste *target,
+>   		(cd_table->cdtab_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
+>   		FIELD_PREP(STRTAB_STE_0_S1CDMAX, cd_table->s1cdmax));
+>   
+> +	/* S2S is ignored if stage-2 exists but not enabled. */
+> +	if (master->stall_enabled &&
+> +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
+> +		target->data[0] |= FIELD_PREP(STRTAB_STE_2_S2S, 1);
+
+In the middle of the ASID?
+
+Thanks,
+Robin.
+
+> +
+>   	target->data[1] = cpu_to_le64(
+>   		FIELD_PREP(STRTAB_STE_1_S1DSS, s1dss) |
+>   		FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index 14bca41a981b..0dc7ad43c64c 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -267,6 +267,7 @@ struct arm_smmu_ste {
+>   #define STRTAB_STE_2_S2AA64		(1UL << 51)
+>   #define STRTAB_STE_2_S2ENDI		(1UL << 52)
+>   #define STRTAB_STE_2_S2PTW		(1UL << 54)
+> +#define STRTAB_STE_2_S2S		(1UL << 57)
+>   #define STRTAB_STE_2_S2R		(1UL << 58)
+>   
+>   #define STRTAB_STE_3_S2TTB_MASK		GENMASK_ULL(51, 4)
 
