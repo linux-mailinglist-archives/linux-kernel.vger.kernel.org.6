@@ -1,144 +1,158 @@
-Return-Path: <linux-kernel+bounces-285245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765A5950B25
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:07:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312B5950B1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E931C22F31
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 635951C24749
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8C71A2C17;
-	Tue, 13 Aug 2024 17:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F551A254F;
+	Tue, 13 Aug 2024 17:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DPOxKoGm"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2/wkYSr"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009E91A2C01;
-	Tue, 13 Aug 2024 17:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9437E
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723568771; cv=none; b=XdTm7ZT+XyWO+rqm3BORCGs8Mv1par/4u9BCsYnuJImPQRMp6moxphdhDmcR/3dMQ3vfKNUzYhNoQ8m+l5mdzsHUk1ckPBgyBAGKUG9OS6fvZ4j/o2ZfcCZV9rk7wP57i27C8hTzyS1jvIoHV/tRZt57/9C7wICE/9hmvAeit4Q=
+	t=1723568746; cv=none; b=M8wF3uqKkxJY7VM9/f3gZeTYWHJSHltdgiFk+zAsEAAFRTdRM8CHvOhcB7jJWgFWezQ2VWLNoFyT1SUkTA/M+OEWch8zr7A8M6SYYb+oaZHcHhRULO9J/q/f9+KkO/Y0RNfQe/s1j9WmTmOCBjKCrWqAusLVjFwbwsOXfCbR1tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723568771; c=relaxed/simple;
-	bh=dWbaslV3ImDpvRvaMLnGXkIpncnPCFLL0dppXw0Goew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m16FTV0WgZHbbIK2dXqiC++WbwWnfC64wZpZGZU4yYdhCunSy/Ehf2Ehij62BUMmLmJaRxeWLm0IXO4V6JHKwAaqMvghEAq5fQtu12sUy3LIhOC2mkTxgOw8AZLzzh/tbvCFLeNrdFU8FPA7nYWfXZmIloKIu2aib45RiyQkOAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DPOxKoGm; arc=none smtp.client-ip=209.85.166.45
+	s=arc-20240116; t=1723568746; c=relaxed/simple;
+	bh=7Nkr/05BHI2sNeYewbZ6QoRmVufFqUqQCW3Ocr7/PPw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kn5uMrdPNcG9EFO5keLHsLi+GTyTzr463A6ASEJxbi67JhXP4z1YuCNj8c4YQsf3azt0DVjUz5rEm+10+l9PJ1RbidgwOzdhvoTOxRA54fGs6GDve12ebuMtkhPUzha+OGBXUWasgehbJsBHmgs2zUlX+Ei7XUb1mTJsrqppTTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2/wkYSr; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81fbbd4775bso222883839f.3;
-        Tue, 13 Aug 2024 10:06:09 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a8553db90so681099366b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:05:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723568769; x=1724173569; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723568743; x=1724173543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c0sZsb6ltlwXBeuXfPHSdXrF6cY3aDT1sNvM6eUoQL8=;
-        b=DPOxKoGmAMfATjexjiknVR3UCwIrZEYjPdIVbMAMFaTTVCHruFPIJmmWlhbE6wtI0q
-         7IAs5/VV2tsL9O+dD7jMzzx3cG+p06K+jP6e5bA62YC9TnCU1slINY2WmOyM6xPk9mk3
-         LXDBkcMbE6XzV7uX6r+GYLCE6BJwf/wdfkPzH43gtxW5AoVpB2DenOzn7YSXkmJy+SSc
-         AGwCs2nL0UsIY5iHiWCs6rfGOZWeYWOLoNwq9Xq4w+fscPGQBNYOX50Ff92S/NAN2JQ8
-         RDKoMQexuxy7pJf15KjNASFWjXe+NH41RGnS6ocbznbIOaq/NEvo0wp2eVbJiquO3gBj
-         +5ZQ==
+        bh=jOz+svYSfLxFvq4Zy72aYEHt1zXxUJBN8hR7YMAL2+0=;
+        b=a2/wkYSrZlt2xJGuLqbux1KCiCcCKvskxBA8Tb8hYEuTzxJs6jZV4a/NjQIby2BgLW
+         Yjaf1Cde/1NglL2wvDTnvJPf8A0jhUe5vypHov7k+C8efk9+HFMTHNISrASjTlm/saAz
+         UVAIo9IGPiumrEeEhAwLsIKFGqlAvXvQidzaKNMD7xr6tWBwyqHdDhrytu8faI2qeYnw
+         xnushS8sezwJBgZmc1Sr3ZZWJ8TEMt2XcjjpMG1pVXrCbkkcpVPdw2JOIkx42grAjx1z
+         4gt4YoPtAavSYCgdUKISWvfIIiE4phhyYN9NIDW6Dj4hjV1soPAAvgiko764rHG0TxPZ
+         zX2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723568769; x=1724173569;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723568743; x=1724173543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c0sZsb6ltlwXBeuXfPHSdXrF6cY3aDT1sNvM6eUoQL8=;
-        b=VDMCkWkblT+zpvS1kTVzm17Ib4b9JHPRoHXjVgre28CGDv0CqEJAdLrtAryFA9f45W
-         H54iY/Nt/XukeWTHkZuGEB7ABs9pMUHiJOJkmTw5sUg1YWfmRVfTuui+FUsTcDS6QXsk
-         JjqtSbca7ExerzZWPGmenOo5kdTOnqrGRwtffo5UnZvasYvrN5jybu5DkgMy+g2ZbS/z
-         j/tAuuxo6rMTV4LD/feg4gm7n32LX98he9Y4+/SyYkHqtSe5/QlsfXSI3lrnD/wESP/8
-         ZiHWUTzoeF4VoW8InJrDtEqfejFewW1MCocGoo374WTdPm1smTPfMnJW+pWAXjRgy27r
-         hnJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUz+MwPqkUzJwpwLepH14vuUaIouo6Z6BZvowtDVFXXSkOK1zjxGdmF9JkYhZGwbguAiULj6fvtD4bR+dxRg0GxAfoJ6p3NEl6i3dZ
-X-Gm-Message-State: AOJu0Yxi4Y2dawkcbVhyhLBzLLwoz42bfddEafJ7XvQHq0tFanXMb9/g
-	5KGW1Jv0M32/x6pA8b6sMVTVwe4ZQ9YY/kVfRZbEwT8/oT4nbDAwlRvG/kLI
-X-Google-Smtp-Source: AGHT+IESjOSkHOg1sqqE8IWaty0EbuhRg33ls2pxHZr3llzO5NHrG0AsvgMrxRBsP/ADgZRQADvFBQ==
-X-Received: by 2002:a17:903:1208:b0:1fd:a0b9:2be7 with SMTP id d9443c01a7336-201d638d72fmr2751805ad.13.1723568721909;
-        Tue, 13 Aug 2024 10:05:21 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a947fsm15946425ad.140.2024.08.13.10.05.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 10:05:21 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de
-Subject: [PATCH net-next v2 3/3] net: ag71xx: use devm for register_netdev
-Date: Tue, 13 Aug 2024 10:04:59 -0700
-Message-ID: <20240813170516.7301-4-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240813170516.7301-1-rosenp@gmail.com>
-References: <20240813170516.7301-1-rosenp@gmail.com>
+        bh=jOz+svYSfLxFvq4Zy72aYEHt1zXxUJBN8hR7YMAL2+0=;
+        b=moNGZHTViBe9Xk65JH4pCJ87Lte+5EvAMIT7QIazEsF6B7kvttRwq6acSBXDgXRocU
+         kR0A1yIwY/7Mmy6xFVDT2jHntjJLCkZUQRCYFnrRWYe/3YkSM+44bYdpifKFxK397wsn
+         GN9gMSJdwmtxcmuCJYWRC9Lej9Yq2yRgukb1M961CeCEvl22/68Cf4tzi4y9dbnhd/2B
+         jHpry8sQhnzKrsQRtoreflf4j8ygZ+7tSaGiZ724037Zk7DGlEWEAJMig4mi2dTIW80d
+         nYyhThv0YaQRoS7PeHDGREfNRTeSPUpPqxxGFuDn7MymLSxHq0LNH3xhkH0WvzL7tdsX
+         DsoA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2VQcVDHj2DktPGtdB7z+7VFKP7rSNBH6j5ekgzhVBVTLud60H5n53xzgI1N5ZuCpLfTDzLNNO9Tt6exa2uaWvdAsxjaoSUcn7PWEX
+X-Gm-Message-State: AOJu0YwgVV14UkTcE87+0T4kg57fytRolc6z7glN+2gq9O2SEutYLdvY
+	vcdZR0q6+1rw0kiB0+eTowhiMV3NfWTcTW3KpRZyqD/4qLpDYx0+3Wl8QWcmRBG+3yo3t3xLlLA
+	DETTmUOzTGv7CnoTOU/ZES3Lvujo=
+X-Google-Smtp-Source: AGHT+IGh48Faj6W98ywLsGY4D6XVjmDKjngdRIBi6kpYNkZqiI7S1Wr5wlNq36Mi9HRPG/yqIyiZRI5lPNa70w1HzBI=
+X-Received: by 2002:a17:907:f782:b0:a7a:9f0f:ab14 with SMTP id
+ a640c23a62f3a-a8366d7786fmr692466b.33.1723568743267; Tue, 13 Aug 2024
+ 10:05:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240812-numa_policy-v1-1-1732602b976c@gentwo.org>
+In-Reply-To: <20240812-numa_policy-v1-1-1732602b976c@gentwo.org>
+From: Yang Shi <shy828301@gmail.com>
+Date: Tue, 13 Aug 2024 10:05:31 -0700
+Message-ID: <CAHbLzkqeKLPt=HDaFNgUyFF0QLVsbyi-nBZvpoi=7B8gWq-_Qg@mail.gmail.com>
+Subject: Re: [PATCH] Reenable NUMA policy support in the slab allocator
+To: cl@gentwo.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Allows completely removing the remove function. Nothing is being done
-manually now.
+On Mon, Aug 12, 2024 at 10:55=E2=80=AFAM Christoph Lameter via B4 Relay
+<devnull+cl.gentwo.org@kernel.org> wrote:
+>
+> From: Christoph Lameter <cl@gentwo.org>
+>
+> Revert commit 8014c46ad991f05b15ffbc0c6ae130bdf911187b
+> ("slub: use alloc_pages_node() in alloc_slab_page()").
+>
+> The patch disabled the numa policy support in the slab allocator. It
+> did not consider that alloc_pages() uses memory policies but
+> alloc_pages_node() does not.
+>
+> As a result of this patch slab memory allocations are no longer spread vi=
+a
+> interleave policy across all available NUMA nodes on bootup. Instead
+> all slab memory is allocated close to the boot processor. This leads to
+> an imbalance of memory accesses on NUMA systems.
+>
+> Also applications using MPOL_INTERLEAVE as a memory policy will no longer
+> spread slab allocations over all nodes in the interleave set but allocate
+> memory locally. This may also result in unbalanced allocations
+> on a single node if f.e. a certain process does the memory allocation on
+> behalf of all the other processes.
+>
+> SLUB does not apply memory policies to individual object allocations.
+> However, it relies on the page allocators support of memory policies
+> through alloc_pages() to do the NUMA memory allocations on a per
+> folio or page level. SLUB also applies memory policies when retrieving
+> partial allocated slab pages from the partial list.
+>
 
-Tested on TP-LINK Archer C7v2.
+Please add Fixes id. And should it be sent to stable?
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/atheros/ag71xx.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+The patch makes sense to me. Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index 3c16f6c5e75c..b74856760be3 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -1917,7 +1917,7 @@ static int ag71xx_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = register_netdev(ndev);
-+	err = devm_register_netdev(&pdev->dev, ndev);
- 	if (err) {
- 		netif_err(ag, probe, ndev, "unable to register net device\n");
- 		platform_set_drvdata(pdev, NULL);
-@@ -1931,17 +1931,6 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static void ag71xx_remove(struct platform_device *pdev)
--{
--	struct net_device *ndev = platform_get_drvdata(pdev);
--
--	if (!ndev)
--		return;
--
--	unregister_netdev(ndev);
--	platform_set_drvdata(pdev, NULL);
--}
--
- static const u32 ar71xx_fifo_ar7100[] = {
- 	0x0fff0000, 0x00001fff, 0x00780fff,
- };
-@@ -2026,7 +2015,6 @@ static const struct of_device_id ag71xx_match[] = {
- 
- static struct platform_driver ag71xx_driver = {
- 	.probe		= ag71xx_probe,
--	.remove_new	= ag71xx_remove,
- 	.driver = {
- 		.name	= "ag71xx",
- 		.of_match_table = ag71xx_match,
--- 
-2.46.0
-
+> Signed-off-by: Christoph Lameter <cl@gentwo.org>
+> ---
+>  mm/slub.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index c9d8a2497fd6..4dea3c7df5ad 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2318,7 +2318,11 @@ static inline struct slab *alloc_slab_page(gfp_t f=
+lags, int node,
+>         struct slab *slab;
+>         unsigned int order =3D oo_order(oo);
+>
+> -       folio =3D (struct folio *)alloc_pages_node(node, flags, order);
+> +       if (node =3D=3D NUMA_NO_NODE)
+> +               folio =3D (struct folio *)alloc_pages(flags, order);
+> +       else
+> +               folio =3D (struct folio *)__alloc_pages_node(node, flags,=
+ order);
+> +
+>         if (!folio)
+>                 return NULL;
+>
+>
+> ---
+> base-commit: d74da846046aeec9333e802f5918bd3261fb5509
+> change-id: 20240806-numa_policy-5188f44ba0d8
+>
+> Best regards,
+> --
+> Christoph Lameter <cl@gentwo.org>
+>
+>
+>
 
