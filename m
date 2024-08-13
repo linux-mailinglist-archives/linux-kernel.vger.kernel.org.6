@@ -1,184 +1,170 @@
-Return-Path: <linux-kernel+bounces-284671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59329503E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:39:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AF19503E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C26F282F81
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:39:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1D2DB2556E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF91C1991A4;
-	Tue, 13 Aug 2024 11:39:26 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F771991AD;
+	Tue, 13 Aug 2024 11:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Zca166UX"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA25198E90;
-	Tue, 13 Aug 2024 11:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E9170A2B;
+	Tue, 13 Aug 2024 11:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549166; cv=none; b=Vwjvp8y90ZMhIM+sAc6BSRjK6SpH1QHeDvb5djNmYWmRyevv608NFdOVidr3RyU2IED6Xk3080h6mRx5IVJCdCvgny8FhvonerBne8ak/jOB+IfGbUlkqd6lHfXQDCk0sY5MRWw9Dz7kMffLYZNV3OmOoCA+c9twER4E/H868dA=
+	t=1723549072; cv=none; b=VziQWm4gd8Dt+KkHBJhNx11DcskznT0yOJV4UsSTauDjaz1wJ+oNVNVRquoUmvb/pSIi01Sspe0l8V5vd4XkKmpUlPKiFp3WkkjjIjLAzHcRrHzqfSM143YkdjZ9DHDq//ADwAX5rKgXFUHbZLsY/VAN0T6am408hyBWtRcuFzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549166; c=relaxed/simple;
-	bh=bzgXjRt3to7NhobX2QldsNIECOTnccwcSivMjM9fC9U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H1x5NRn8Ayp5F5HuUJRu6i5RLbkVxbJfO8W0VanWvFQ0BC3cY0sfdEKxyCVyyTEQtfr5D+vsMuC1AEyLN363MsXyVEpKGbC0SsIs7g/gooiC1FKJq67tV4bmk7FpfQipM7B3Hr1gslnqirOZVsL6DCuNkWHS9QB+7Ah5P00K0ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WjqBf5nYjzncyc;
-	Tue, 13 Aug 2024 19:38:02 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1757C140135;
-	Tue, 13 Aug 2024 19:39:22 +0800 (CST)
-Received: from huawei.com (10.67.174.55) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 13 Aug
- 2024 19:39:21 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <dennis@kernel.org>, <tj@kernel.org>, <cl@linux.com>,
-	<mpe@ellerman.id.au>, <benh@kernel.crashing.org>, <paulus@samba.org>,
-	<christophe.leroy@csgroup.eu>, <mahesh@linux.ibm.com>,
-	<gregkh@linuxfoundation.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v5.15 RESEND] powerpc: Avoid nmi_enter/nmi_exit in real mode interrupt.
-Date: Tue, 13 Aug 2024 11:37:05 +0000
-Message-ID: <20240813113705.1837673-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723549072; c=relaxed/simple;
+	bh=PJWrgO5y3JhQ6pVObk1LLEY6Ws3Bwk+wMwfRzlsIZFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fa7scv6IPuV1kBgJ6OlI8DRuKi5DUhm5kVwxkRohV/c4mtMaRKEPdrLsfBXc0pLtz1Ma21izxzcTnGdA7j3+VF9OZL4zG5H1TXXupCfOJfo7Io/cdFhOIU9d53iq212vz8kdMgmp4Kn08Zy5+NncbEq4Pwp9s85EsttyiMd0xwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Zca166UX; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723549060; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=2I77YcUJn4wmoyRvCpJBoQDGsqzU26+ytOtN/lJqgpI=;
+	b=Zca166UXp0gsLxPfMParM7J41ZaWOC1flL67+gzZ/V2W+yGvBXNsPBKbq5Yu6aQOvlggmCGXFkuiOKWCdRKS3O+Nf3kwjgz3cH9Lsda8Aq0JLIc8rOhO5TwXmRS2earhdcN93g20SEwBwUrWRixtnKizp/ng0Mtr7PTtL3kp7/E=
+Received: from 30.221.149.156(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCp.8vm_1723549058)
+          by smtp.aliyun-inc.com;
+          Tue, 13 Aug 2024 19:37:39 +0800
+Message-ID: <b4b49770-2042-4ee8-a1e8-1501cdd807cf@linux.alibaba.com>
+Date: Tue, 13 Aug 2024 19:37:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in
+ txopt_get
+To: Jeongjun Park <aha310510@gmail.com>, wenjia@linux.ibm.com,
+ jaka@linux.ibm.com, gbayer@linux.ibm.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com
+Cc: davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com,
+ pabeni@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
+References: <20240813100722.181250-1-aha310510@gmail.com>
+Content-Language: en-US
+From: "D. Wythe" <alibuda@linux.alibaba.com>
+In-Reply-To: <20240813100722.181250-1-aha310510@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Mahesh Salgaonkar <mahesh@linux.ibm.com>
 
-[ Upstream commit 0db880fc865ffb522141ced4bfa66c12ab1fbb70 ]
 
-nmi_enter()/nmi_exit() touches per cpu variables which can lead to kernel
-crash when invoked during real mode interrupt handling (e.g. early HMI/MCE
-interrupt handler) if percpu allocation comes from vmalloc area.
+On 8/13/24 6:07 PM, Jeongjun Park wrote:
+> Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
+> copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
+>
+> In addition, since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
+> point to the same address, when smc_create_clcsk() stores the newly
+> created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
+> into clcsock. This causes NULL pointer dereference and various other
+> memory corruptions.
+>
+> To solve this, we need to add a smc6_sock structure for ipv6_pinfo_offset
+> initialization and modify the smc_sock structure.
+>
+> Reported-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
+> Tested-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
+> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>   net/smc/smc.h      | 19 ++++++++++---------
+>   net/smc/smc_inet.c | 24 +++++++++++++++---------
+>   2 files changed, 25 insertions(+), 18 deletions(-)
+>
+> diff --git a/net/smc/smc.h b/net/smc/smc.h
+> index 34b781e463c4..f4d9338b5ed5 100644
+> --- a/net/smc/smc.h
+> +++ b/net/smc/smc.h
+> @@ -284,15 +284,6 @@ struct smc_connection {
+>   
+>   struct smc_sock {				/* smc sock container */
+>   	struct sock		sk;
+> -	struct socket		*clcsock;	/* internal tcp socket */
+> -	void			(*clcsk_state_change)(struct sock *sk);
+> -						/* original stat_change fct. */
+> -	void			(*clcsk_data_ready)(struct sock *sk);
+> -						/* original data_ready fct. */
+> -	void			(*clcsk_write_space)(struct sock *sk);
+> -						/* original write_space fct. */
+> -	void			(*clcsk_error_report)(struct sock *sk);
+> -						/* original error_report fct. */
+>   	struct smc_connection	conn;		/* smc connection */
+>   	struct smc_sock		*listen_smc;	/* listen parent */
+>   	struct work_struct	connect_work;	/* handle non-blocking connect*/
+> @@ -325,6 +316,16 @@ struct smc_sock {				/* smc sock container */
+>   						/* protects clcsock of a listen
+>   						 * socket
+>   						 * */
+> +	struct socket		*clcsock;	/* internal tcp socket */
+> +	void			(*clcsk_state_change)(struct sock *sk);
+> +						/* original stat_change fct. */
+> +	void			(*clcsk_data_ready)(struct sock *sk);
+> +						/* original data_ready fct. */
+> +	void			(*clcsk_write_space)(struct sock *sk);
+> +						/* original write_space fct. */
+> +	void			(*clcsk_error_report)(struct sock *sk);
+> +						/* original error_report fct. */
+> +
+>   };
+>   
+>   #define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
+> diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
+> index bece346dd8e9..25f34fd65e8d 100644
+> --- a/net/smc/smc_inet.c
+> +++ b/net/smc/smc_inet.c
+> @@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
+>   };
+>   
+>   #if IS_ENABLED(CONFIG_IPV6)
+> +struct smc6_sock {
+> +	struct smc_sock smc;
+> +	struct ipv6_pinfo np;
+> +};
 
-Early HMI/MCE handlers are called through DEFINE_INTERRUPT_HANDLER_NMI()
-wrapper which invokes nmi_enter/nmi_exit calls. We don't see any issue when
-percpu allocation is from the embedded first chunk. However with
-CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there are chances where percpu
-allocation can come from the vmalloc area.
+I prefer to:
 
-With kernel command line "percpu_alloc=page" we can force percpu allocation
-to come from vmalloc area and can see kernel crash in machine_check_early:
+struct ipv6_pinfo inet6;
 
-[    1.215714] NIP [c000000000e49eb4] rcu_nmi_enter+0x24/0x110
-[    1.215717] LR [c0000000000461a0] machine_check_early+0xf0/0x2c0
-[    1.215719] --- interrupt: 200
-[    1.215720] [c000000fffd73180] [0000000000000000] 0x0 (unreliable)
-[    1.215722] [c000000fffd731b0] [0000000000000000] 0x0
-[    1.215724] [c000000fffd73210] [c000000000008364] machine_check_early_common+0x134/0x1f8
-
-Fix this by avoiding use of nmi_enter()/nmi_exit() in real mode if percpu
-first chunk is not embedded.
-
-CVE-2024-42126
-Cc: stable@vger.kernel.org#5.15.x
-Cc: gregkh@linuxfoundation.org
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Tested-by: Shirisha Ganta <shirisha@linux.ibm.com>
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20240410043006.81577-1-mahesh@linux.ibm.com
-[ Conflicts in arch/powerpc/include/asm/interrupt.h
-  because interrupt_nmi_enter_prepare() and interrupt_nmi_exit_prepare()
-  has been refactored. ]
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- arch/powerpc/include/asm/interrupt.h | 14 ++++++++++----
- arch/powerpc/include/asm/percpu.h    | 10 ++++++++++
- arch/powerpc/kernel/setup_64.c       |  2 ++
- 3 files changed, 22 insertions(+), 4 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/interrupt.h b/arch/powerpc/include/asm/interrupt.h
-index e592e65e7665..49285b147afe 100644
---- a/arch/powerpc/include/asm/interrupt.h
-+++ b/arch/powerpc/include/asm/interrupt.h
-@@ -285,18 +285,24 @@ static inline void interrupt_nmi_enter_prepare(struct pt_regs *regs, struct inte
- 	/*
- 	 * Do not use nmi_enter() for pseries hash guest taking a real-mode
- 	 * NMI because not everything it touches is within the RMA limit.
-+	 *
-+	 * Likewise, do not use it in real mode if percpu first chunk is not
-+	 * embedded. With CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there
-+	 * are chances where percpu allocation can come from vmalloc area.
- 	 */
--	if (!IS_ENABLED(CONFIG_PPC_BOOK3S_64) ||
-+	if ((!IS_ENABLED(CONFIG_PPC_BOOK3S_64) ||
- 			!firmware_has_feature(FW_FEATURE_LPAR) ||
--			radix_enabled() || (mfmsr() & MSR_DR))
-+			radix_enabled() || (mfmsr() & MSR_DR)) &&
-+			!percpu_first_chunk_is_paged)
- 		nmi_enter();
- }
- 
- static inline void interrupt_nmi_exit_prepare(struct pt_regs *regs, struct interrupt_nmi_state *state)
- {
--	if (!IS_ENABLED(CONFIG_PPC_BOOK3S_64) ||
-+	if ((!IS_ENABLED(CONFIG_PPC_BOOK3S_64) ||
- 			!firmware_has_feature(FW_FEATURE_LPAR) ||
--			radix_enabled() || (mfmsr() & MSR_DR))
-+			radix_enabled() || (mfmsr() & MSR_DR)) &&
-+			!percpu_first_chunk_is_paged)
- 		nmi_exit();
- 
- 	/*
-diff --git a/arch/powerpc/include/asm/percpu.h b/arch/powerpc/include/asm/percpu.h
-index 8e5b7d0b851c..634970ce13c6 100644
---- a/arch/powerpc/include/asm/percpu.h
-+++ b/arch/powerpc/include/asm/percpu.h
-@@ -15,6 +15,16 @@
- #endif /* CONFIG_SMP */
- #endif /* __powerpc64__ */
- 
-+#if defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK) && defined(CONFIG_SMP)
-+#include <linux/jump_label.h>
-+DECLARE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
-+
-+#define percpu_first_chunk_is_paged	\
-+		(static_key_enabled(&__percpu_first_chunk_is_paged.key))
-+#else
-+#define percpu_first_chunk_is_paged	false
-+#endif /* CONFIG_PPC64 && CONFIG_SMP */
-+
- #include <asm-generic/percpu.h>
- 
- #include <asm/paca.h>
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index eaa79a0996d1..37d5683ab298 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -825,6 +825,7 @@ static int pcpu_cpu_distance(unsigned int from, unsigned int to)
- 
- unsigned long __per_cpu_offset[NR_CPUS] __read_mostly;
- EXPORT_SYMBOL(__per_cpu_offset);
-+DEFINE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
- 
- static void __init pcpu_populate_pte(unsigned long addr)
- {
-@@ -904,6 +905,7 @@ void __init setup_per_cpu_areas(void)
- 	if (rc < 0)
- 		panic("cannot initialize percpu area (err=%d)", rc);
- 
-+	static_key_enable(&__percpu_first_chunk_is_paged.key);
- 	delta = (unsigned long)pcpu_base_addr - (unsigned long)__per_cpu_start;
- 	for_each_possible_cpu(cpu) {
-                 __per_cpu_offset[cpu] = delta + pcpu_unit_offsets[cpu];
--- 
-2.34.1
+> +
+>   static struct proto smc_inet6_prot = {
+> -	.name		= "INET6_SMC",
+> -	.owner		= THIS_MODULE,
+> -	.init		= smc_inet_init_sock,
+> -	.hash		= smc_hash_sk,
+> -	.unhash		= smc_unhash_sk,
+> -	.release_cb	= smc_release_cb,
+> -	.obj_size	= sizeof(struct smc_sock),
+> -	.h.smc_hash	= &smc_v6_hashinfo,
+> -	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
+> +	.name				= "INET6_SMC",
+> +	.owner				= THIS_MODULE,
+> +	.init				= smc_inet_init_sock,
+> +	.hash				= smc_hash_sk,
+> +	.unhash				= smc_unhash_sk,
+> +	.release_cb			= smc_release_cb,
+> +	.obj_size			= sizeof(struct smc6_sock),
+> +	.h.smc_hash			= &smc_v6_hashinfo,
+> +	.slab_flags			= SLAB_TYPESAFE_BY_RCU,
+> +	.ipv6_pinfo_offset		= offsetof(struct smc6_sock, np),
+>   };
+>   
+>   static const struct proto_ops smc_inet6_stream_ops = {
+> --
 
 
