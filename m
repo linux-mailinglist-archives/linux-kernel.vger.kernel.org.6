@@ -1,126 +1,216 @@
-Return-Path: <linux-kernel+bounces-285443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68600950D8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2ED950D8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD831F22DFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2F01C220A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E491A4F2C;
-	Tue, 13 Aug 2024 20:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WWWHSvnI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A111A4F33;
+	Tue, 13 Aug 2024 20:05:34 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53037A953;
-	Tue, 13 Aug 2024 20:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7241A4F23
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579513; cv=none; b=YsX46KFEP4NzRQQq+S8amMZKbnSWlAJsRDsvLPnSCCjqxqMVrU6ltv0tkO2EXEE54L6eUXp1Th9J7L1rMbiaUUD/5DFKRNPwFVHAWljbiQK2M4+e4GKXhcDF4Zf8FzXSETJQcOyxXkNPt60K2Et6fJsZJmQv+lSSNSRptCO8bGA=
+	t=1723579533; cv=none; b=W2I7uZA0djc87tQ3wrB63To44fxDSqwB4aVPFlXarwAv2dGNYBaYcVwKt7PxYOUYbTpbEv3B/IX0pNyYLhh3ei/LYS0lF+jMkp0dsm6R8CgNoPllfuz3ZiVfxfGQ0Vb6eCPJiZDC5JI3DOBuj7u2yAYMUnWB8t2kJ5fYcWVT9/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579513; c=relaxed/simple;
-	bh=kIy1yq0X5WjGMSdd+FDorAYstfMBeDZ9v9rwsLZoH/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aBAdUfTdph604ylWcPRyy0WQ3urA0UrsQ1gvKPaDENBuU0x/kj7IXb2wiREfahzlo6cSyo67LkG2mFU1nIgHdjobUeWvA+S0sy6KaABXuKGHy9smcY0dTliOvvhMTVAnMHcilt46K7CGlDw3FGU7q5s6DTLLwQJJo/dPy7oHvNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WWWHSvnI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DCjrdP017459;
-	Tue, 13 Aug 2024 20:05:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kIy1yq0X5WjGMSdd+FDorAYstfMBeDZ9v9rwsLZoH/E=; b=WWWHSvnIoJTWbMP7
-	LKsN5mIAIrGd6AVM6psREMMhaCl7H+oOdu4SiEKb6dlMsfYpqv7r00zBpQqXWi+/
-	UyDfzbvKR6d/HYXU2fXi89oF8JVXgWl3R19KENffeqxpIweIxx+YSW8WvlKeRlt7
-	qSmQqtyAbxK131SBBTYAVHseMXqmh6W5gnY5luUJwj2Le7m5PPM3X4vfc7Fyoqn8
-	joVrTsVbR0/f2218zGIO5YQV+cUN1wW5B/SfkjD8uNk8Sg6UZpG4SsHsE596FXAw
-	AbHK2EdPxYHQAqI6ojpKoLg3IdKchQD6+zm6iWFMMvQREttDYUb9nJDkyOCwIPiG
-	gAfFOw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1d4h0b0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 20:05:07 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DK55UT016756
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 20:05:05 GMT
-Received: from [10.71.108.157] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
- 2024 13:05:05 -0700
-Message-ID: <42659c55-8e99-4a66-88d9-357fbb8d7a2d@quicinc.com>
-Date: Tue, 13 Aug 2024 13:05:05 -0700
+	s=arc-20240116; t=1723579533; c=relaxed/simple;
+	bh=I6KwcpM6Y8DRIcGSbPchhTfdkTfQ37eZ1jQhX7yTa/k=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iih9SDaeydk6co9xvfn5Qm7GdLKARwf3IlZRxVGImqS99cnpW35M3h4jKcCFI01QxgZv7V1Rcy7ESyrERyu5U+iuDNXOsARkirjGchNEqXPrz6ljDXXfBQWOsbE3Dl+/BSDd5YjF2hOxbA2YLXxfw6guvx3qbfFgs0D4VEIo8VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39915b8e08dso84224135ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:05:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723579531; x=1724184331;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NefdGqxMuJwAbyUAoYcgGnRpHLr4ojz2P9HUr90xHy0=;
+        b=qDD5zz9TVu0KwA6gfJEUBnbtTpwOb/OO/8Fg2NyQFnVOVQYHMBcFaIdSbE9dHomAL3
+         o1pNNDnZ6ur55N3e1AqJ8P3yyLOMvYNxJz/2JF3IsYgLyKzSQVYa63PXkG0BscaX3lfR
+         eAnftRR+FpZe06ECpjXAYt0s0UL41IluY9BNk3Vk56NLGTQuxngLV8diPTkIyuT8B7ZZ
+         Zcw4n7fn8uAGhLbZAlrzRsh50C6a6SfPe6CHZrUeJgS93giINmjRH2aE4GnW1FmfO+HR
+         0uSA1Oh0m+EhQKEXZHe45cCfEZNkNp6qfGWEFi0P1RdbKVH2aACjyC9O1g01SkAGtguc
+         qeUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLOskxzVMMgTq2KdKdAAzKJhx2cTkPDB6j+bcUp70O8Hi6NuxFqqeeAJ8S9Hyac+PePcGp4Tpjl8edDS4hsrJQRghbcfbsed4RwEW/
+X-Gm-Message-State: AOJu0YzmzxF7UGfCVXGpZLAZO6BgmV7/GQd1vbhnC1oCGGXuXj9I2Q1/
+	FjQJleeyd8dAC49LJ+DIq1nQ5xPD4DgBptd79nuetdEp+v7aqSs4/8ZDlcyJROS6sM0W9mS3+f5
+	PUWvsxw/OquilRw2TXSiowEkGHTVC519Ml7SER3MLWwvO5N1h/5Vx/Ws=
+X-Google-Smtp-Source: AGHT+IFngvkaje5JeHTAeg2y9Use1ldCLVQScaZXGJLwjmezHiN2GxvCov4F/G1+zWS9pchwHIC++BnUyyLQrK361NKT147KatNn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: sc7280: Update eud compatible
- string
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Souradeep Chowdhury
-	<quic_schowdhu@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Elson Serrao <quic_eserrao@quicinc.com>
-CC: <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-4-quic_molvera@quicinc.com>
- <b0058c31-d416-48b5-b6da-5bbdf493febd@kernel.org>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <b0058c31-d416-48b5-b6da-5bbdf493febd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ogWRv5ZzUClThfSDj4czyh09JrRZ1rYb
-X-Proofpoint-GUID: ogWRv5ZzUClThfSDj4czyh09JrRZ1rYb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_10,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- adultscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=662
- malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130145
+X-Received: by 2002:a05:6e02:138c:b0:396:1fc1:7034 with SMTP id
+ e9e14a558f8ab-39d123ca3cbmr591335ab.0.1723579531106; Tue, 13 Aug 2024
+ 13:05:31 -0700 (PDT)
+Date: Tue, 13 Aug 2024 13:05:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b1b164061f96213d@google.com>
+Subject: [syzbot] [ext4?] divide error in ext4_mb_regular_allocator
+From: syzbot <syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, jack@suse.cz, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1655c15d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=1ad8bac5af24d01e2cbd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a8fbc9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bc726d980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e6062f24de48/disk-ee9a43b7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5d3ec6153dbd/vmlinux-ee9a43b7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/98dbabb91d02/bzImage-ee9a43b7.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/4dd4c0acf870/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/ca52271baf46/mount_1.gz
+
+The issue was bisected to:
+
+commit 1f6bc02f18489b9c9ea39b068d0695fb0e4567e9
+Author: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Date:   Fri Dec 15 11:19:50 2023 +0000
+
+    ext4: fallback to complex scan if aligned scan doesn't work
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=118a3d11980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=138a3d11980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=158a3d11980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Fixes: 1f6bc02f1848 ("ext4: fallback to complex scan if aligned scan doesn't work")
+
+EXT4-fs: Ignoring removed oldalloc option
+EXT4-fs (loop0): re-mounted 00000000-0000-0000-0000-000000000000 r/w. Quota mode: none.
+Oops: divide error: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 5224 Comm: syz-executor196 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:ext4_mb_regular_allocator+0x1687/0x3b80 fs/ext4/mballoc.c:2932
+Code: 16 00 00 8b 1a bf 40 00 00 00 89 de e8 e2 ab 38 ff 48 83 fb 3f 0f 87 9f 19 00 00 e8 93 a7 38 ff 89 d9 49 d3 ec 4c 89 f8 31 d2 <49> f7 f4 48 89 d3 31 ff 48 89 d6 e8 59 ac 38 ff 83 bc 24 64 01 00
+RSP: 0018:ffffc9000341e740 EFLAGS: 00010246
+RAX: 0000000000000001 RBX: 0000000000000004 RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000040
+RBP: ffffc9000341e9f0 R08: ffffffff825acf3e R09: ffffffff825bea62
+R10: 0000000000000005 R11: ffff8880282b1e00 R12: 0000000000000000
+R13: 0000000000000003 R14: ffff8880663270e0 R15: 0000000000000001
+FS:  0000555592670380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe13f0d000 CR3: 0000000025072000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ext4_mb_new_blocks+0x10a8/0x4e30 fs/ext4/mballoc.c:6219
+ ext4_ext_map_blocks+0x1c74/0x77b0 fs/ext4/extents.c:4318
+ ext4_map_blocks+0xa5e/0x1d20 fs/ext4/inode.c:652
+ _ext4_get_block+0x239/0x6b0 fs/ext4/inode.c:794
+ ext4_get_block_unwritten+0x2f/0x100 fs/ext4/inode.c:827
+ __block_write_begin_int+0x50c/0x1a70 fs/buffer.c:2125
+ ext4_try_to_write_inline_data+0x7ed/0x1360 fs/ext4/inline.c:739
+ ext4_write_begin+0x2a0/0x10e0 fs/ext4/inode.c:1172
+ ext4_da_write_begin+0x300/0xa70 fs/ext4/inode.c:2943
+ generic_perform_write+0x399/0x840 mm/filemap.c:4019
+ ext4_buffered_write_iter+0xc6/0x350 fs/ext4/file.c:299
+ ext4_file_write_iter+0x1de/0x1a10
+ do_iter_readv_writev+0x60a/0x890
+ vfs_writev+0x37c/0xbb0 fs/read_write.c:971
+ do_pwritev fs/read_write.c:1072 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1131 [inline]
+ __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1122
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb9c91a61d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe13f0c6c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
+RAX: ffffffffffffffda RBX: 00007fb9c91ef095 RCX: 00007fb9c91a61d9
+RDX: 000000000000000f RSI: 00000000200002c0 RDI: 0000000000000004
+RBP: 0031656c69662f2e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000a12 R11: 0000000000000246 R12: 70756f7267647362
+R13: 7461785f72657375 R14: 431bde82d7b634db R15: 00007fb9c91ef03b
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ext4_mb_regular_allocator+0x1687/0x3b80 fs/ext4/mballoc.c:2932
+Code: 16 00 00 8b 1a bf 40 00 00 00 89 de e8 e2 ab 38 ff 48 83 fb 3f 0f 87 9f 19 00 00 e8 93 a7 38 ff 89 d9 49 d3 ec 4c 89 f8 31 d2 <49> f7 f4 48 89 d3 31 ff 48 89 d6 e8 59 ac 38 ff 83 bc 24 64 01 00
+RSP: 0018:ffffc9000341e740 EFLAGS: 00010246
+RAX: 0000000000000001 RBX: 0000000000000004 RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000040
+RBP: ffffc9000341e9f0 R08: ffffffff825acf3e R09: ffffffff825bea62
+R10: 0000000000000005 R11: ffff8880282b1e00 R12: 0000000000000000
+R13: 0000000000000003 R14: ffff8880663270e0 R15: 0000000000000001
+FS:  0000555592670380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe13f0d000 CR3: 0000000025072000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	00 00                	add    %al,(%rax)
+   2:	8b 1a                	mov    (%rdx),%ebx
+   4:	bf 40 00 00 00       	mov    $0x40,%edi
+   9:	89 de                	mov    %ebx,%esi
+   b:	e8 e2 ab 38 ff       	call   0xff38abf2
+  10:	48 83 fb 3f          	cmp    $0x3f,%rbx
+  14:	0f 87 9f 19 00 00    	ja     0x19b9
+  1a:	e8 93 a7 38 ff       	call   0xff38a7b2
+  1f:	89 d9                	mov    %ebx,%ecx
+  21:	49 d3 ec             	shr    %cl,%r12
+  24:	4c 89 f8             	mov    %r15,%rax
+  27:	31 d2                	xor    %edx,%edx
+* 29:	49 f7 f4             	div    %r12 <-- trapping instruction
+  2c:	48 89 d3             	mov    %rdx,%rbx
+  2f:	31 ff                	xor    %edi,%edi
+  31:	48 89 d6             	mov    %rdx,%rsi
+  34:	e8 59 ac 38 ff       	call   0xff38ac92
+  39:	83                   	.byte 0x83
+  3a:	bc 24 64 01 00       	mov    $0x16424,%esp
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 8/8/2024 4:03 AM, Krzysztof Kozlowski wrote:
-> On 07/08/2024 20:32, Melody Olvera wrote:
->> Update eud compatible string to reflect use of non-secure eud.
-> This does not match diff at all. You say here something but do something
-> entirely else. Sorry, that's a NAK.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Will drop this patch.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> Best regards,
-> Krzysztof
->
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
