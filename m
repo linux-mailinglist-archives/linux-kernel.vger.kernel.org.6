@@ -1,97 +1,81 @@
-Return-Path: <linux-kernel+bounces-285150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3CF99509DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:08:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C449509CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC0C1F23E02
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:08:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F43CB21F4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C841A0709;
-	Tue, 13 Aug 2024 16:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0458D1A2546;
+	Tue, 13 Aug 2024 16:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="oHfAyYsC"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PApheRYX"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F251A0710
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA821A0AE6
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723565318; cv=none; b=CoSUB8ARX6P+GWEbFmSR9JiIfYxau+tiWsKqhzHdUIB2GwWyhffsitR2E8CNqeAhAzM4EdQ59qz4I686B7gGeKJguVN9H0c48iALmEKzY6ACEY0HqQRbPx9xQJwOclXmOipopl5JD30OynR2JvZEbmhSxw80dKEJjM0ClkiCK9E=
+	t=1723565124; cv=none; b=JW6r2TWUm0p1hPNs0p5X8ybSXFSgEj30rntrTsA9nVWhn6rWUwDJhq6lxcl+r8iVmXuW2JYOX/BQPYk/+kRcxpt7AH/yzr/inbg3jXKtb9viQe0Wtgnlidm80Wbu4L2rlVIPFC7s8v6VwWpKaIkLNo7oAf9VMeB8yae3SKpMyNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723565318; c=relaxed/simple;
-	bh=Qkun0PY6vrGhrYkv2YE3X7W5jvRFEQBdmsxxg8EsJiI=;
+	s=arc-20240116; t=1723565124; c=relaxed/simple;
+	bh=pE/JJsJwAZs7NmM5OlRmLlnWFQnfpSXYpFpeXH1hGrE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5ZN9J2D8z/n+hcYSwtus5/cQ5nYt6ivysJn/3u8cW7p4S8EkwRnjfuIVWWwfb+qHvxw3ObLVU7nEkfqgzqVYphcGKDy5YkngmjR5DQiDbLJIOb41iEAPg26d8++itHdT4s6Q8yLwa2ruoAiZrvPTGKz1sc7ySwaf+nZ5IdWl+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=oHfAyYsC; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d024f775so376367685a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:08:36 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UKYKlFxBZHhTADCNIsjtVV3kxvty6KFvY+QjWd0Og045UMvxbZ/7tL5gWN/uKDfjyFWh4wRWmqRzgRVte/G3xYIvqlC+6+/X4MJ8lvZg5bn4ybqsHwS5PukQa0fDKGYJzzZOTLXwoLpilciRylZgBbUoEu34mvf/HuU2ugmYgTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PApheRYX; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so3429a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723565315; x=1724170115; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1723565120; x=1724169920; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0RKo59Js/Zip4btvaonTbXw89McgLAOYjyPl/ZQBcR8=;
-        b=oHfAyYsClWuZ8u2ScWXq8+SBE9S1F0j0OxDQkjdqzPAC2NLnh6AnxiP3HVP59iqeQn
-         AR/Ou+s/ynNdOgCJ6nWlyqOg5C7SoXt+fPjWlG1ZmMVk4RVGbEAPCUvbSTN++ScL3i+O
-         KKyXuGtjP+tIv3uGqur8CEkfjsk7iXwZixHA5RLIPvj8izAckbMkpLAIw9Kcl4R6pR3a
-         DLUbh3/lVwa77ynz6WNx0iF04P0V5B+zhfLZ9dpKvHGSWl9jbvKf2j8pPWL+7Xn8281+
-         jYxbbSg2PBjn26sr1Yccna0mdyvMygZA7Cp6rfyVQS4blBuSYZEvX+8AHADZwsBFC27V
-         td7Q==
+        bh=r6TUXGQw9LVl4ztxK/BZhTX+2pcevqPkKUrlJiDLRWU=;
+        b=PApheRYXYAHHQ6m3SBE/210nSXYiyffMdL6ybjtHi7KTMO1kcKOViEmvv26hSq7XGD
+         0HbA7V4KdapGOOXtjjWkV+BbAEUe1kDGB3SATLOTDxzzqdpw0gJYmLszd3JhK6Z0LAob
+         Tni2JkTqKhaRnp+ava8vMYeV0SzV3kkpVe43G1vK3z99lVc3xy4llPEngccdKSMwvBiN
+         ypZd+gk5xC7wTGhxVHms8DO6ZscwiP8E3P6p1Wb0gMfgcA6C7yn4L1EfRFtVBmSfUqD1
+         W5cIrf5nNZxYaZ8tcxA/8KK1tI93Ehxsoe2tw0n9i1rHKm1L1/vMB9hDIvEMwcH/Y/Mq
+         zxww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723565315; x=1724170115;
+        d=1e100.net; s=20230601; t=1723565120; x=1724169920;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0RKo59Js/Zip4btvaonTbXw89McgLAOYjyPl/ZQBcR8=;
-        b=cUmyERvYSb+DKQsUs9DJ4MiwQQXGxc64DBLy97P43y2UDN04Iech/pQg4mu/2esWlU
-         InEy1yW/cFlg62h5SabA7PSkmyONo34pnovDwXH9BXBiyybsmbQE7apJZTpPuhio5MwK
-         9rZObwKSQJFqlg5KTCRzjLWx7mTDCBkVsPbHvLSmDfIWjDCOhJVFpRXl7i02GmZEyv7b
-         oZE3kE6f81WXEcbsCJTLQv3Z5ejL5iv+qRaBfOBmzSSEDG8mPuYNnTZEFfPl13B6jiJt
-         QcsTi9h8CBkmGn+p6rxTmmY31WD1rSkviMgbKpuS3e8UESLRB0HNZQEAPfTMbAqBbI/g
-         9WzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvX908MMlwWIzwpbp0wz0XXKZxdNC5cwozCYGni+RG2KMzuozPgJho9Y4BDBwqsXD2f2kIzsdZvFI97TMoHxuNctLpi2NNtM94qrtx
-X-Gm-Message-State: AOJu0YyrzyqKZF4RDITzT+wNXQyoWCFcPfErvTmXn5dvMl8zL2Ok1Puo
-	TQrif0b25+baNjspKm19pWnTiMo+W/H50sQ+b397sQ2gcm+jXaPMPjLW1DmB574=
-X-Google-Smtp-Source: AGHT+IFwwh2uTmU3fMs1LTMcKllp8DlZibyM6dUroyb0/uLwll1nqejv7yiDVjIHbpYKHyIqqKh3tA==
-X-Received: by 2002:a05:620a:3904:b0:79f:4b5:3696 with SMTP id af79cd13be357-7a4ee3ac21dmr9326785a.56.1723565315308;
-        Tue, 13 Aug 2024 09:08:35 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7e11130sm352658285a.125.2024.08.13.09.08.34
+        bh=r6TUXGQw9LVl4ztxK/BZhTX+2pcevqPkKUrlJiDLRWU=;
+        b=Bok04/qf9s0MEvP08TryZwEOrZagjV9JYLNZPhQYGIaBuRZTcgffHi1U3+Ek/Vw0fO
+         dcPsVcvFDg5GfiS9m3irZLP6g+rxDpcXUuIlGg5Jcy/oPtDqWmdacfp8ye5C5O7aeELg
+         sWILVUaXPPdd8TcdYKP6VozvWkC7YJorun3EhtXPwaJSwGyFvsECMFx+TuXdaDit3V25
+         tx+kczyO20APX+MSbe1YYxI7T3niQrdHWtg3Oe8T2YFpeHqn1xv81b+xi08cuBpzh3lk
+         VIW8Af4ZSoX2Ds+9OlDcwkQecSmP22hCyX7xLYHEAkl+OkSV4+9+UnozvLqTHDtRqKYG
+         q9Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9xl+c0Riy9dQ80dnNYKfcZP+5PGSPJCBrjfdmVQX4KlJCS9yG+0xiz/2UZEtg9FiMR0UqLK0ac6oxsvdiAHqyYQjf5efUeCCqf3pQ
+X-Gm-Message-State: AOJu0YwAztqNP/1wDQwkzU15Crn819sZQJGOegRKi7he0F5DSaEAjxvQ
+	vm6UpziPNnI+++qlV9HgMWoAGMzuYiagTdh+NGoC5hWu5QE7R/ZHFPh4YLs1k5I=
+X-Google-Smtp-Source: AGHT+IE8bZvoNWekXnFDmPVltvx21KeribfH7wtwpDxLU1aDbLB72Ho09fmJhaygrlpzYUl+4P+d6A==
+X-Received: by 2002:a05:6402:354c:b0:57d:4409:4f48 with SMTP id 4fb4d7f45d1cf-5bd462178a9mr3176525a12.15.1723565120152;
+        Tue, 13 Aug 2024 09:05:20 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f4fe2sm3025709a12.9.2024.08.13.09.05.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 09:08:34 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sdu18-008Iyi-0q;
-	Tue, 13 Aug 2024 13:05:02 -0300
-Date: Tue, 13 Aug 2024 13:05:02 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Martin Oliveira <martin.oliveira@eideticom.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v5 3/4] mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
-Message-ID: <20240813160502.GH1985367@ziepe.ca>
-References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
- <20240808183340.483468-4-martin.oliveira@eideticom.com>
- <ZrmuGrDaJTZFrKrc@infradead.org>
- <20240812231249.GG1985367@ziepe.ca>
- <ZrryAFGBCG1cyfOA@infradead.org>
+        Tue, 13 Aug 2024 09:05:19 -0700 (PDT)
+Date: Tue, 13 Aug 2024 18:05:18 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: "zhangyongde.zyd" <zhangwarden@gmail.com>
+Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] livepatch: Add using attribute to klp_func for
+ using function show
+Message-ID: <ZruEPvstxgBQwN1K@pathway.suse.cz>
+References: <20240805064656.40017-1-zhangyongde.zyd@alibaba-inc.com>
+ <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,28 +84,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrryAFGBCG1cyfOA@infradead.org>
+In-Reply-To: <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
 
-On Mon, Aug 12, 2024 at 10:41:20PM -0700, Christoph Hellwig wrote:
-> On Mon, Aug 12, 2024 at 08:12:49PM -0300, Jason Gunthorpe wrote:
-> > > This is unfortunately not really minor unless we have a well documented
-> > > way to force this :(
-> > 
-> > It is not that different from blocking driver unbind while FDs are
-> > open which a lot of places do in various ways?
+On Mon 2024-08-05 14:46:56, zhangyongde.zyd wrote:
+> From: Wardenjohn <zhangwarden@gmail.com>
 > 
-> Where do we block driver unbind with an open resource?  
+> One system may contains more than one livepatch module. We can see
+> which patch is enabled. If some patches applied to one system
+> modifing the same function, livepatch will use the function enabled
+> on top of the function stack. However, we can not excatly know
+> which function of which patch is now enabling.
+> 
+> This patch introduce one sysfs attribute of "using" to klp_func.
+> For example, if there are serval patches  make changes to function
+> "meminfo_proc_show", the attribute "enabled" of all the patch is 1.
+> With this attribute, we can easily know the version enabling belongs
+> to which patch.
+> 
+> The "using" is set as three state. 0 is disabled, it means that this
+> version of function is not used. 1 is running, it means that this
+> version of function is now running. -1 is unknown, it means that
+> this version of function is under transition, some task is still
+> chaning their running version of this function.
+> 
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -773,6 +791,7 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
+>  	INIT_LIST_HEAD(&func->stack_node);
+>  	func->patched = false;
+>  	func->transition = false;
+> +	func->using = 0;
+>  
+>  	/* The format for the sysfs directory is <function,sympos> where sympos
+>  	 * is the nth occurrence of this symbol in kallsyms for the patched
+> @@ -903,6 +922,7 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
+>  static void klp_init_func_early(struct klp_object *obj,
+>  				struct klp_func *func)
+>  {
+> +	func->using = false;
 
-I keep seeing it in different subsystems, safe driver unbind is really
-hard. :\ eg I think VFIO has some waits in it
+It should be enough to initialize the value only one.
+klp_init_func() is the right place.
+klp_init_func_early() does only the bare minimum to allow freeing.
 
-> The whole concept is that open resources will pin the in-memory
-> object (and modulo for a modular driver), but never an unbind or
-> hardware unplug, of which unbind really just is a simulation.
+>  	kobject_init(&func->kobj, &klp_ktype_func);
+>  	list_add_tail(&func->node, &obj->func_list);
+>  }
+> diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+> index 90408500e5a3..bf4a8edbd888 100644
+> --- a/kernel/livepatch/patch.c
+> +++ b/kernel/livepatch/patch.c
+> @@ -104,7 +104,7 @@ static void notrace klp_ftrace_handler(unsigned long ip,
+>  			 * original function.
+>  			 */
+>  			func = list_entry_rcu(func->stack_node.next,
+> -					      struct klp_func, stack_node);
+> +						struct klp_func, stack_node);
 
-Yes, ideally, but not every part of the kernel hits that ideal in my
-experience. It is alot of work and some places don't have any good
-solutions, like here.
+Looks like an unwanted change.
 
-Jason
+>  
+>  			if (&func->stack_node == &ops->func_stack)
+>  				goto unlock;
+> diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+> index ba069459c101..12241dabce6f 100644
+> --- a/kernel/livepatch/transition.c
+> +++ b/kernel/livepatch/transition.c
+> @@ -119,9 +120,35 @@ static void klp_complete_transition(void)
+>  		klp_synchronize_transition();
+>  	}
+>  
+> -	klp_for_each_object(klp_transition_patch, obj)
+> -		klp_for_each_func(obj, func)
+> -			func->transition = false;
+> +	/*
+> +	* The transition patch is finished. The stack top function is now truly
+> +	* running. The previous function should be set as 0 as none task is 
+> +	* using this function anymore.
+> +	* 
+> +	* If this is a patching patch, all function is using.
+> +	* if this patch is unpatching, all function of the func stack top is using
+> +	*/
+> +	if (klp_target_state == KLP_TRANSITION_PATCHED)
+> +		klp_for_each_object(klp_transition_patch, obj)
+> +			klp_for_each_func(obj, func){
+
+Missing space between "){'"
+
+You should check your patch with ./scripts/checkpatch.pl before sending.
+
+> +				func->using = 1;
+> +				func->transition = false;
+> +				next_func = list_entry_rcu(func->stack_node.next,
+> +								struct klp_func, stack_node);
+
+What if there is only one function on the stack?
+You could take inspiration in klp_ftrace_handler.
+
+> +				next_func->using = 0;
+> +			}
+
+Wrong indentation, see Documentation/process/coding-style.rst
+./scripts/checkpatch.pl would likely caught this.
+
+> +	else
+
+Please, always put multi-line code in { }. It helps to avoid mistakes
+and read the code.
+
+> +		// for the unpatch func, if ops exist, the top of this func is using
+> +		klp_for_each_object(klp_transition_patch, obj)
+> +			klp_for_each_func(obj, func){
+> +				func->transition = false;
+> +				ops = klp_find_ops(func->old_func);
+> +				if (ops){
+> +					stack_top_func = list_first_entry(&ops->func_stack, struct klp_func,
+> +							stack_node);
+> +					stack_top_func->using = 1;
+> +				}
+> +			}
+>  
+>  	/* Prevent klp_ftrace_handler() from seeing KLP_TRANSITION_IDLE state */
+>  	if (klp_target_state == KLP_TRANSITION_PATCHED)
+> @@ -538,6 +565,7 @@ void klp_start_transition(void)
+>  		  klp_transition_patch->mod->name,
+>  		  klp_target_state == KLP_TRANSITION_PATCHED ? "patching" : "unpatching");
+>  
+> +
+
+Extra line?
+
+>  	/*
+>  	 * Mark all normal tasks as needing a patch state update.  They'll
+>  	 * switch either in klp_try_complete_transition() or as they exit the
+> @@ -633,6 +661,9 @@ void klp_init_transition(struct klp_patch *patch, int state)
+>  	 *
+>  	 * When unpatching, the funcs are already in the func_stack and so are
+>  	 * already visible to the ftrace handler.
+> +	 * 
+> +	 * When this patch is in transition, all functions of this patch will
+> +	 * set to be unknown
+
+The sentence is not complete. It does not say what exactly is set to unknown.
+
+>  	 */
+>  	klp_for_each_object(patch, obj)
+>  		klp_for_each_func(obj, func)
+
+
+Alternative solution:
+
+The patch adds a lot of extra complexity to maintain the information.
+
+Alternative solution would be to store the pointer of struct klp_ops
+*ops into struct klp_func. Then using_show() could just check if
+the related struct klp_func in on top of the stack.
+
+It would allow to remove the global list klp_ops and all the related
+code. klp_find_ops() would instead do:
+
+   for_each_patch
+     for_each_object
+       for_each_func
+
+The search would need more code. But it would be simple and
+straightforward. We do this many times all over the code.
+
+IMHO, it would actually remove some complexity and be a win-win solution.
+
+Best Regards,
+Petr
 
