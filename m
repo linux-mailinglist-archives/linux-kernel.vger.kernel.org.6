@@ -1,163 +1,179 @@
-Return-Path: <linux-kernel+bounces-284897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27ADF950683
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3C4950687
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D32382864A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:30:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9FB1C227D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CFB19B59C;
-	Tue, 13 Aug 2024 13:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNuTjkaQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827B19B59F;
+	Tue, 13 Aug 2024 13:32:53 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5323E3B192;
-	Tue, 13 Aug 2024 13:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A041E517;
+	Tue, 13 Aug 2024 13:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555820; cv=none; b=Grd+fusnql972HozwtHHeKt1RYoBGe/LQrg95EclV2ilIxcPY5X64t9TuwsVBfJ+Ig6XqLdmPyq9xQnDp/bplZ6O5Odb+7pV2JLStwYhI1vhR9Ru+BT/nIZ6RQbEiKd1zAuQNXZLr/DxYsQ5JnHgutLIDLyw86sizYH5fTVHwDw=
+	t=1723555973; cv=none; b=Zst2lApAfUj8Fk2kaEbpkjerhf8+zE+Mac+ShX0lHMLk5zf1d2Ibwqo2Z42g4TFxeu6hiEkMAacgr6eJhYmooVuN1sISbw5VPr9woexcOzsJiElERhX4O3VW5zRSp9ZERUYBPxP0nq2+vUcSPTCd6YSP7dyCikVVvwRchxMuTfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555820; c=relaxed/simple;
-	bh=8t7jBeDi3PSD/om6S8np+TEcPRhPpfyzvK6hyTPLYpA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Gcd1/qh7qYZ3/obS6l7GznSgFrpkDTkt/CaI1olbySx5/mqHizYLnow9MJmfYA5FV5v1M51U+t+jamve5IFgn39EctGxFXxJ0r2pWLVZ83yFGqih1PwENpW2NVCMKxVCWaCROmZnaJeRkra5hh999aReD5IDVNrI3WyNLQHsUsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNuTjkaQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6892FC4AF09;
-	Tue, 13 Aug 2024 13:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723555819;
-	bh=8t7jBeDi3PSD/om6S8np+TEcPRhPpfyzvK6hyTPLYpA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iNuTjkaQIMVewLQ82yG1dQL9M+ujzfTGlDkKup73sF5hPc18006h5+gGzpApjXuhn
-	 cqQpeyg2g8EkQ6i8gpPxnw5uPe8RJmCGsKT2cI3ilDe+vRjJxzurVpSYT5BHEKnQP1
-	 x80RNbOidUluUEbeRIEKBNWmxVSwj2+pWPYscL0zM0rYrS7RNDnxgD1WDMDGEoZ5/3
-	 kIO1GSfEjukPUn6VK8fspSwTulSPFjEMIR+Q+xUQntLSeeORfRrlSL1aPcclTsAEVX
-	 TW6d3BYMUexahNbB3hGEl9vp93+jQYOsxG2UADQfNi+q32LY3s3m+I8W2zbLX5vS0H
-	 WwkJ7mWZeMazg==
-Date: Tue, 13 Aug 2024 22:30:14 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
- peterz@infradead.org, oleg@redhat.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, jolsa@kernel.org
-Subject: Re: [PATCH v2] uprobes: make trace_uprobe->nhit counter a per-CPU
- one
-Message-Id: <20240813223014.1a5093ede1a5046aaedea34a@kernel.org>
-In-Reply-To: <20240809192357.4061484-1-andrii@kernel.org>
-References: <20240809192357.4061484-1-andrii@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723555973; c=relaxed/simple;
+	bh=q0f3s8C+w6gFHW9rQgBtdyv9AkulcqMJnxrASxFgx2s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CmxHjHtH6WKVHbdQ3a/p8HQOhEPCiPadfiR9XeQQ+/wKDqlpSlM7SzaGsY/8GWH3oeTrFWhpcVWiHAVhgC1tOfjdcEb3PBUsMw1zudTwGwePLoyZ3+kVfnG9pH6FIGUhNBF/rlN5Zx2QLsD+J16SgLva3JnxAg614FdGMGYORIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5af326eddb2so10337630a12.1;
+        Tue, 13 Aug 2024 06:32:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723555970; x=1724160770;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=epsK62fLlKIcu9yHQhnXJ//JRyvJEjXogoukWxR8MKY=;
+        b=X2fmqLfq5uXYidvKn2T3rL6yLCEuus7LUdryZFLtgl3x5UJo1i6jIVQwXuRwgh3H9N
+         wLCLDWdb/NJRSIzmVNiQpmEtUYs9WAlpWJSNr2xrrL1U6dpHioiKL40lPAA3420jVP2N
+         WCMZADaGISWPh0f6kw6SalS5udCFgfnayBOXT1khpP7dOzna25iP7QLOPIVGvVKOOOkm
+         XfxI4o/fhksM7OSB/mj1RWw8E+Hr8hRI1v/Nuf6RR9UuNqNqAU0KQMD6HELn/RWuAnPd
+         dJ+oPppO8isd601SUU/gHvQjozpUjA7j5GO1E4MPruUyLAns7IO4kd8m3PfcHIuJ/UIE
+         V55g==
+X-Forwarded-Encrypted: i=1; AJvYcCV35a85r6y41VwAmLz+fG60r8w6RClv1lpCdnKN9I61toe8QOSIGBosNhjUYDPOHfbsxYOAZ1pJQ8KT0OPGLUqWzu9hZT+iO/YSHmI6vANMfr0rnlDyxQiTNpSPNGvXXPL/JxHwEaCdGeoQKkYWCI7cfl9Svq31+fRZIWG0CXsoxw24YqI=
+X-Gm-Message-State: AOJu0Yya5y+wjiQuUnFtNZpVfAaB5UHJOG5faHXVwvqjeJBCr+xZ2cH3
+	p3NCmadDE2iWrwNY+lmnK4I+K1/a+o5kPVAq7lcLuFUMlvcEQ0tm
+X-Google-Smtp-Source: AGHT+IHdcgoO700Tt+PAinCiGtz7kDD7cKzFzIvM1FE3Iov0eh7VTjP13G/OMHk/oyb1MtWQgfOsoA==
+X-Received: by 2002:a17:907:c1e:b0:a77:d9b5:ad4b with SMTP id a640c23a62f3a-a80f0aa1b3bmr297311466b.9.1723555969294;
+        Tue, 13 Aug 2024 06:32:49 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411bbfcsm70139666b.135.2024.08.13.06.32.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 06:32:48 -0700 (PDT)
+Date: Tue, 13 Aug 2024 06:32:46 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	dmitry.osipenko@collabora.com
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] Do not mark ACPI devices as irq safe
+Message-ID: <ZrtgfkzuCbNju3i9@gmail.com>
+References: <20240808121447.239278-1-leitao@debian.org>
+ <ff4haeeknghdr5pgpp3va7opnrx5ivlpaw5ppboqrq75733iul@zy4c7mu3foma>
+ <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
 
-On Fri,  9 Aug 2024 12:23:57 -0700
-Andrii Nakryiko <andrii@kernel.org> wrote:
+Hello Andy,
 
-> trace_uprobe->nhit counter is not incremented atomically, so its value
-> is questionable in when uprobe is hit on multiple CPUs simultaneously.
+On Fri, Aug 09, 2024 at 02:03:27PM +0300, Andy Shevchenko wrote:
+> On Fri, Aug 9, 2024 at 2:57 AM Andi Shyti <andi.shyti@kernel.org> wrote:
+> > On Thu, Aug 08, 2024 at 05:14:46AM GMT, Breno Leitao wrote:
+
+> > > The problem arises because during __pm_runtime_resume(), the spinlock
+> > > &dev->power.lock is acquired before rpm_resume() is called. Later,
+> > > rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+> > > mutexes, triggering the error.
+> > >
+> > > To address this issue, devices on ACPI are now marked as not IRQ-safe,
+> > > considering the dependency of acpi_subsys_runtime_resume() on mutexes.
 > 
-> Also, doing this shared counter increment across many CPUs causes heavy
-> cache line bouncing, limiting uprobe/uretprobe performance scaling with
-> number of CPUs.
+> This is a step in the right direction
+
+Thanks
+
+> but somewhere in the replies
+> here I would like to hear about roadmap to get rid of the
+> pm_runtime_irq_safe() in all Tegra related code.
+
+Agree, that seems the right way to go, but this is a question to
+maintainers, Laxman and Dmitry.
+
+By the way, looking at lore, I found that the last email from Laxman is
+from 2022. And Dmitry seems to be using a different email!? Let me copy
+the Dmitry's other email (dmitry.osipenko@collabora.com) here.
+
+> > > +     if (!IS_VI(i2c_dev) && !ACPI_HANDLE(i2c_dev->dev))
+> >
+> > looks good to me, can I have an ack from Andy here?
 > 
-> Solve both problems by making this a per-CPU counter.
+> I prefer to see something like
+> is_acpi_node() / is_acpi_device_node() / is_acpi_data_node() /
+> has_acpi_companion()
+> instead depending on the actual ACPI representation of the device.
 > 
+> Otherwise no objections.
+> Please, Cc me (andy@kernel.org) for the next version.
 
-This looks good to me. I would like to pick this to linux-trace/probes/for-next.
+Thanks for the feedback, I agree that leveraging the functions about
+should be better. What about something as:
 
-> @@ -62,7 +63,7 @@ struct trace_uprobe {
->  	struct uprobe			*uprobe;
+Author: Breno Leitao <leitao@debian.org>
+Date:   Thu Jun 6 06:27:07 2024 -0700
 
-BTW, what is this change? I couldn't cleanly apply this to the v6.11-rc3.
-Which tree would you working on? (I missed something?)
+    Do not mark ACPI devices as irq safe
+    
+    On ACPI machines, the tegra i2c module encounters an issue due to a
+    mutex being called inside a spinlock. This leads to the following bug:
+    
+            BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
+            in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
+            preempt_count: 0, expected: 0
+            RCU nest depth: 0, expected: 0
+            irq event stamp: 0
+    
+            Call trace:
+            __might_sleep
+            __mutex_lock_common
+            mutex_lock_nested
+            acpi_subsys_runtime_resume
+            rpm_resume
+            tegra_i2c_xfer
+    
+    The problem arises because during __pm_runtime_resume(), the spinlock
+    &dev->power.lock is acquired before rpm_resume() is called. Later,
+    rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+    mutexes, triggering the error.
+    
+    To address this issue, devices on ACPI are now marked as not IRQ-safe,
+    considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+    
+    Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
+    Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
+    Signed-off-by: Breno Leitao <leitao@debian.org>
 
-Thanks,
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 85b31edc558d..1df5b4204142 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -1802,9 +1802,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	 * domain.
+ 	 *
+ 	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
+-	 * be used for atomic transfers.
++	 * be used for atomic transfers. ACPI device is not IRQ safe also.
+ 	 */
+-	if (!IS_VI(i2c_dev))
++	if (!IS_VI(i2c_dev) && !has_acpi_companion(i2c_dev->dev))
+ 		pm_runtime_irq_safe(i2c_dev->dev);
+ 
+ 	pm_runtime_enable(i2c_dev->dev);
 
->  	unsigned long			offset;
->  	unsigned long			ref_ctr_offset;
-> -	unsigned long			nhit;
-> +	unsigned long __percpu		*nhits;
->  	struct trace_probe		tp;
->  };
->  
-> @@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
->  	if (!tu)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	tu->nhits = alloc_percpu(unsigned long);
-> +	if (!tu->nhits) {
-> +		ret = -ENOMEM;
-> +		goto error;
-> +	}
-> +
->  	ret = trace_probe_init(&tu->tp, event, group, true, nargs);
->  	if (ret < 0)
->  		goto error;
-> @@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
->  	return tu;
->  
->  error:
-> +	free_percpu(tu->nhits);
->  	kfree(tu);
->  
->  	return ERR_PTR(ret);
-> @@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
->  	path_put(&tu->path);
->  	trace_probe_cleanup(&tu->tp);
->  	kfree(tu->filename);
-> +	free_percpu(tu->nhits);
->  	kfree(tu);
->  }
->  
-> @@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
->  {
->  	struct dyn_event *ev = v;
->  	struct trace_uprobe *tu;
-> +	unsigned long nhits;
-> +	int cpu;
->  
->  	if (!is_trace_uprobe(ev))
->  		return 0;
->  
->  	tu = to_trace_uprobe(ev);
-> +
-> +	nhits = 0;
-> +	for_each_possible_cpu(cpu) {
-> +		nhits += READ_ONCE(*per_cpu_ptr(tu->nhits, cpu));
-> +	}
-> +
->  	seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
-> -			trace_probe_name(&tu->tp), tu->nhit);
-> +		   trace_probe_name(&tu->tp), nhits);
->  	return 0;
->  }
->  
-> @@ -1507,7 +1524,8 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
->  	int ret = 0;
->  
->  	tu = container_of(con, struct trace_uprobe, consumer);
-> -	tu->nhit++;
-> +
-> +	this_cpu_inc(*tu->nhits);
->  
->  	udd.tu = tu;
->  	udd.bp_addr = instruction_pointer(regs);
-> -- 
-> 2.43.5
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
