@@ -1,159 +1,163 @@
-Return-Path: <linux-kernel+bounces-284984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 792539507A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:31:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A623A950786
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5881F21C19
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2A21C22090
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BEE19D8B7;
-	Tue, 13 Aug 2024 14:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2B919D8B4;
+	Tue, 13 Aug 2024 14:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="V8tP2ChE"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlzAyLWD"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D91516DEA9;
-	Tue, 13 Aug 2024 14:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D144B19D095;
+	Tue, 13 Aug 2024 14:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559452; cv=none; b=tX32xZ2jBaA9Aj4ldPFLJE4obr09al50S57yFkg1ZtuPLrYr8NwO8rTc+DF01Q+BUg624kOxiVInYpk+HyZnGBtmE/DrKCuq3U+Bw6UlWC46ZqT5ONkgEvhwdQOFr6hdEeUYrdP3UGEcMBXVh/uz6K0OtMEQjIy44jMf9GvQxX0=
+	t=1723559301; cv=none; b=bbgSzJBq+IvRQgABULtfdCdAqSYAie5nvCzj3pOD8ji9NHiD0e6dmbaanObfZcgxLllZVShdH/Ijsp0blGRlvQcYpHKfZVvoWjDxFdwRA45GKgVfkbLN5lj8qScO3wV+qIwMtFrsY/drZV48l5tja+BYe3MFGRiQXBtmt9tg6po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559452; c=relaxed/simple;
-	bh=G8ANgsojX6Q8Ryh6XWoRWtQeiZsBVAQMaxxk0GWN3t4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ItFCoCob7V2+QC+4MKCBME2hXhfNbgQDe4G4ZBiLQvuB1v30xXZwg/q55IWIbU4tjHfcgg9djmVM3fdbPfzRpdpVQtwM1ytbi/YE13NXSHYWz7DblAfrDoP+0mDe8MgQ81tMSwfRAJvuCe1x0eBX458094W4T1ThCoUWgHOLTG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=V8tP2ChE; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id c89ba3403cdacc95; Tue, 13 Aug 2024 16:30:48 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 2A4286A89D1;
-	Tue, 13 Aug 2024 16:30:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723559448;
-	bh=G8ANgsojX6Q8Ryh6XWoRWtQeiZsBVAQMaxxk0GWN3t4=;
-	h=From:Subject:Date;
-	b=V8tP2ChEZCgc41eR/bROtc5eWuTzJzz5UQsX4H1Pdu3AYVnI0v+3rNU0HNo4K7OUN
-	 xcIoZixtVzJvvW+BEguN7tui6GBZj1XVBRdES+UWPRcHPhCe7tl+dQWzs8V9ngJE/S
-	 8MGxAUfWNWIkG90GruDZn5juxVRq39iPPFVEDYp1DmlU7DYJ9RLdmhj1cTVpyaih85
-	 qOwssWTA8xoUwV6qC5osYHmflMm3QnJK/TLh5gdjWn9NYUaPHOrk1xGJoJNEiIlTTA
-	 AgO9s+jUWyN5pS2dqCmrrjyxmPOkYc76xRUxnhh9CuGTHysYyZsEqfexvSSnFgdKlM
-	 FnO8ebTKZAXCg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Peter =?ISO-8859-1?Q?K=E4stle?= <peter@piie.net>
-Subject: [PATCH v1 3/4] thermal: gov_bang_bang: Add .manage() callback
-Date: Tue, 13 Aug 2024 16:27:33 +0200
-Message-ID: <8419356.T7Z3S40VBb@rjwysocki.net>
-In-Reply-To: <1903691.tdWV9SEqCh@rjwysocki.net>
-References: <1903691.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1723559301; c=relaxed/simple;
+	bh=z40n9s51ZlLhvANk2e/ULNzSWTjF41BWJ66lQbWzL38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lcGvYYa9eux4IVP0PmEdhLlX0HAh10HsxG31od/E+O3mhmdOriCsp9le5yvDtO9EYHjamJYECJqy0abmVfvN85zU/kKgZoZ8xKKLuLLZm21VbfWKmxgDDwJKtu9zDwEsFnlvUXsaAjVbyl5i7lXsSOMlwxXvwEhlyBQhEcm3vxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DlzAyLWD; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a9a369055so434181266b.3;
+        Tue, 13 Aug 2024 07:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723559298; x=1724164098; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MHgusO5dO2gYWTqDU455wfSOfSQYn0V50tEQrx9IKO0=;
+        b=DlzAyLWDWLGOZrvpKlreP7FqV+105oAHphELDRd35b/Onrr6Jkb1T1j4ydtYnAg06v
+         /nyoDKqK4ooLbIY4+fHNqA0EJWhAVg6dJ+sUF0Ed6yt6/nEFzFWsqGukqcwMiMjjViZ0
+         pSoRpm11cuyebJuK5i82SAdwUL6JEwcTTZZ5HvHSCUIPGC2XYXPwFfUJ6bq4KFuHY1T4
+         QD0mbs85heDJaUFCm3Vnnr0zFlOnstWV8w5XsLMKbtt0wXLSg37s1UTVP6mhnxRKMd4l
+         6jxxs059PKHknUceIiy92mN9RRT6WWvxmaKHdZxrw/1rL0tfCUMSR2KzhhN510s6K+vp
+         0Pbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723559298; x=1724164098;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MHgusO5dO2gYWTqDU455wfSOfSQYn0V50tEQrx9IKO0=;
+        b=LdqvEEavuqqZWCJBwcYidi5i5AMt0M2rW5rXYOmQ1ELaxHBtF5mIiuhTBypWn4x6Y8
+         17Jlq2HO+tN7Aw4/ypEuXbSZX2NskQjEqjNrjRIwPAU4H2SQuODS2sLyy0NYe3JNL7Ux
+         Bd1ge088nFbJzKK6NLjY3+A2EBV6gmCwYOoNWpD7GP3YFZKlC2Okl5WIecQvOWfnCRzK
+         PI3lI81XQswh5MxTS70WMaFmHd9f9KXxOeb8Zb+FgyJmiTVhI+MKFxd41tvZ/w0FzC5R
+         k2cFguPQB21RsybfZIGunIv68Z7nCBPS0CvqdiMosX2n7LlV8H5Nctj7EKgU0mOu1sqq
+         ipGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIoi1wCTZH+mwruL4Tet6ViPpJF9FcKTjWohWWV+xN7CkgroDcvFtndBELcVUQtWX2ADc6RhdsZOVn5JsZRUFQNkq2gI96hlqySc1prakP3Cw9Syo8OlX0UeFmPn10vTdS1qgOUxTfLqYHVqDJPIPYZn/5UowyV0fVoQgko014EA==
+X-Gm-Message-State: AOJu0Yw+TAkk5cygdww66xjjBnerST3YDi+zRzaMSdODP84YfEw9e2kC
+	FIzgTl7kd4eis6yqsw2C5y83R5REB30NyRRRePl0RZVCJ0O3tY7L
+X-Google-Smtp-Source: AGHT+IF86EMQ/14fppNNRbr34RJ/hsy/7iB8wS8JEl/P4cXaBT3+xLqq8gSA+toVftzW9LTXpQ0A0g==
+X-Received: by 2002:a17:907:72cf:b0:a7a:a6e1:2c60 with SMTP id a640c23a62f3a-a80ed2d4800mr235734966b.61.1723559297852;
+        Tue, 13 Aug 2024 07:28:17 -0700 (PDT)
+Received: from lapsy144.cern.ch (lapsy144.ipv6.cern.ch. [2001:1458:202:99::100:4b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa7c27sm74345166b.66.2024.08.13.07.28.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 07:28:17 -0700 (PDT)
+From: vtpieter@gmail.com
+To: Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	David S Miller <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marex@denx.de>
+Cc: Woojung Huh <Woojung.Huh@microchip.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>
+Subject: [PATCH net-next v6 0/6]  net: dsa: microchip: ksz8795: add Wake on LAN support
+Date: Tue, 13 Aug 2024 16:27:34 +0200
+Message-ID: <20240813142750.772781-1-vtpieter@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgjeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhl
- uhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehpvghtvghrsehpihhivgdrnhgvth
-X-DCC--Metrics: v370.home.net.pl 1024; Body=12 Fuz1=12 Fuz2=12
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
 
-After recent changes, the Bang-bang governor may not adjust the
-initial configuration of cooling devices to the actual situation.
+Add WoL support for KSZ8795 family of switches. This code was tested
+with a KSZ8794 chip.
 
-Namely, if a cooling device bound to a certain trip point starts in
-the "on" state and the thermal zone temperature is below the threshold
-of that trip point, the trip point may never be crossed on the way up
-in which case the state of the cooling device will never be adjusted
-because the thermal core will never invoke the governor's
-.trip_crossed() callback.  [Note that there is no issue if the zone
-temperature is at the trip threshold or above it to start with because
-.trip_crossed() will be invoked then to indicate the start of thermal
-mitigation for the given trip.]
+Strongly based on existing KSZ9477 code which has now been moved to
+ksz_common instead of duplicating, as proposed during the review of
+the v1 version of this patch.
 
-To address this, add a .manage() callback to the Bang-bang governor
-and use it to ensure that all of the thermal instances managed by the
-governor have been initialized properly and the states of all of the
-cooling devices involved have been adjusted to the current zone
-temperature as appropriate.
+In addition to the device-tree addition and the actual code, there's
+two additional patches that fix some bugs found when further testing
+DSA with this KSZ8794 chip.
 
-Fixes: 530c932bdf75 ("thermal: gov_bang_bang: Use .trip_crossed() instead of .throttle()")
-Link: https://lore.kernel.org/linux-pm/1bfbbae5-42b0-4c7d-9544-e98855715294@piie.net/
-Cc: 6.10+ <stable@vger.kernel.org> # 6.10+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
 ---
- drivers/thermal/gov_bang_bang.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+v6:
+ - patch 6/6: use GENMASK macro in dedicated mask macro instead of inline
 
-Index: linux-pm/drivers/thermal/gov_bang_bang.c
-===================================================================
---- linux-pm.orig/drivers/thermal/gov_bang_bang.c
-+++ linux-pm/drivers/thermal/gov_bang_bang.c
-@@ -26,6 +26,7 @@ static void bang_bang_set_instance_targe
- 	 * when the trip is crossed on the way down.
- 	 */
- 	instance->target = target;
-+	instance->initialized = true;
- 
- 	dev_dbg(&instance->cdev->device, "target=%ld\n", instance->target);
- 
-@@ -80,8 +81,37 @@ static void bang_bang_control(struct the
- 	}
- }
- 
-+static void bang_bang_manage(struct thermal_zone_device *tz)
-+{
-+	const struct thermal_trip_desc *td;
-+	struct thermal_instance *instance;
-+
-+	for_each_trip_desc(tz, td) {
-+		const struct thermal_trip *trip = &td->trip;
-+
-+		if (tz->temperature >= td->threshold ||
-+		    trip->temperature == THERMAL_TEMP_INVALID ||
-+		    trip->type == THERMAL_TRIP_CRITICAL ||
-+		    trip->type == THERMAL_TRIP_HOT)
-+			continue;
-+
-+		/*
-+		 * If the initial cooling device state is "on", but the zone
-+		 * temperature is not above the trip point, the core will not
-+		 * call bang_bang_control() until the zone temperature reaches
-+		 * the trip point temperature which may be never.  In those
-+		 * cases, set the initial state of the cooling device to 0.
-+		 */
-+		list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
-+			if (!instance->initialized && instance->trip == trip)
-+				bang_bang_set_instance_target(instance, 0);
-+		}
-+	}
-+}
-+
- static struct thermal_governor thermal_gov_bang_bang = {
- 	.name		= "bang_bang",
- 	.trip_crossed	= bang_bang_control,
-+	.manage		= bang_bang_manage,
- };
- THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
+v5: https://lore.kernel.org/netdev/20240812153015.653044-1-vtpieter@gmail.com/
+ - patch 5/6: split off DSA tag_ksz fix to separate patch 6/6
+
+v4: https://lore.kernel.org/netdev/20240812084945.578993-1-vtpieter@gmail.com/
+ - patch 4/5: rename KSZ8795* macros to KSZ87XX*
+ - patch 5/5: rename ksz8_dev_ops to ksz88x3_dev_ops
+ - patch 5/5: additional DSA tag_ksz fix
+
+v3: https://lore.kernel.org/netdev/20240806132606.1438953-1-vtpieter@gmail.com/
+ - ensure each patch separately compiles & works
+ - additional return value checks where possible
+ - drop v2 patch 5/5 (net: dsa: microchip: check erratum workaround through indirect register read)
+ - add new patch 5/5 that fixes KSZ87xx bugs wrt datasheet
+
+v2: https://lore.kernel.org/netdev/20240731103403.407818-1-vtpieter@gmail.com/
+ - generalize instead of duplicate, much improved
+ - variable declaration reverse Christmas tree
+ - ksz8_handle_global_errata: return -EIO in case of indirect write failure
+ - ksz8_ind_read8/write8: document functions
+ - ksz8_handle_wake_reason: no need for additional write to clear
+ - fix wakeup_source origin comments
+v1: https://lore.kernel.org/netdev/20240717193725.469192-1-vtpieter@gmail.com/
+
+Pieter Van Trappen (6):
+  dt-bindings: net: dsa: microchip: add microchip,pme-active-high flag
+  net: dsa: microchip: move KSZ9477 WoL functions to ksz_common
+  net: dsa: microchip: generalize KSZ9477 WoL functions at ksz_common
+  net: dsa: microchip: add WoL support for KSZ87xx family
+  net: dsa: microchip: fix KSZ87xx family structure wrt the datasheet
+  net: dsa: microchip: fix tag_ksz egress mask for KSZ8795 family
+
+ .../bindings/net/dsa/microchip,ksz.yaml       |   5 +
+ drivers/net/dsa/microchip/ksz8.h              |   3 +
+ drivers/net/dsa/microchip/ksz8795.c           |  94 +++++-
+ drivers/net/dsa/microchip/ksz9477.c           | 197 +------------
+ drivers/net/dsa/microchip/ksz9477.h           |   5 -
+ drivers/net/dsa/microchip/ksz9477_reg.h       |  12 -
+ drivers/net/dsa/microchip/ksz_common.c        | 271 ++++++++++++++++--
+ drivers/net/dsa/microchip/ksz_common.h        |  31 +-
+ net/dsa/tag_ksz.c                             |   6 +-
+ 9 files changed, 391 insertions(+), 233 deletions(-)
 
 
+base-commit: dd1bf9f9df156b43e5122f90d97ac3f59a1a5621
+-- 
+2.43.0
 
 
