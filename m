@@ -1,39 +1,71 @@
-Return-Path: <linux-kernel+bounces-284703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08810950442
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:57:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAF9950449
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B7511C217E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:57:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A341EB23922
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80CE1991D2;
-	Tue, 13 Aug 2024 11:57:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48091194A6B
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D627F1993BA;
+	Tue, 13 Aug 2024 11:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="A4/6p/O3"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4F21991AA
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723550228; cv=none; b=BEbQg/MNsi0NKVdX71sEn6btuQLL/ID44eUkG3ekP8lgBzdsZroJUZe2k/WMb5Zud4AJ6kiVtOuaFfBvc7xHWyikMmvf7CT0ieLIHrpqUoxBVpm9rOQYwy7i+C69BD6HhKB96rVU4iXThLL61Mr292TBNOVjY1EWsH0QJ03U6vg=
+	t=1723550260; cv=none; b=g/T7LcBsfS3Zkv9XXWJ2y/5AQu062VDj7IptoisLVPJBe3lQvw78SCcqGTUvzq0j2yfKVRbH6JuiyK2BiZXh+ytehZWcz7/m5qMuQJ6SaUDFl77qp00+jOWokXm5pUoVsC14kufdE/s8aFxFWbDWGF/rKfje7URN3SUog/Hunzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723550228; c=relaxed/simple;
-	bh=0h9DecTC/wgE/rnQTdT1OO7GVXnGWIxwfqx97IXDET8=;
+	s=arc-20240116; t=1723550260; c=relaxed/simple;
+	bh=hpCWpHjKhZFIJtA8gW87bhIjf/SJHDylr8Z2rSUZJbA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b4u65Uju1cniIRJnXVskGTwN/QHDjmxidh6AGXZpgOs3ZYsEzGG3RY/HNMR5QbgeOLMtzYHI0YHJnCpgPRvmeig6KhoBpD6fRSrBi2+I1P0YFI6p8JUtuPMV4WvkU7atHpky0gkd9rK39cy567wdbglbuWkcyz/IdJmPkHBmmZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DE4112FC;
-	Tue, 13 Aug 2024 04:57:31 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15D7F3F73B;
-	Tue, 13 Aug 2024 04:57:03 -0700 (PDT)
-Message-ID: <e5a8e78e-2459-453a-b3b7-e1ed2ca4addc@arm.com>
-Date: Tue, 13 Aug 2024 12:57:02 +0100
+	 In-Reply-To:Content-Type; b=RE6w47tiqYLf/AxCk+5zi7scnnlHh5TX5e+6V+ZgUtFtZa+EIMRgP8ADUM1708k1vWi9pAOEHlkuYFh9v2lstAvmlrIY1J+yDaXov3+Kl9j7EG9z03IXNN7y99RDv0FjP8vwJwBF9uaPu1SrDxBj8OQpY9j+NDRVaEj2FA48WaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=A4/6p/O3; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7105043330aso4348181b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723550258; x=1724155058; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=TXj6YrMtJ0gWFTWAL5SUSyJeDfI3jpHl1jV8Ck1Ub5w=;
+        b=A4/6p/O3k3S40EBMdVIoV15KHLntcRn6nog21Tgv4Lf/OvAmymNDMsQiA87kiuPx16
+         iJMeEleI0Zuf5WfeFMYz6K7Zs3sXfmbIOmWoV90QKh6WqFLa4qqKW11FfLIEzjah9Vko
+         92COAwABO2ndTJrmUHlZlsmFq/dwYqzeLWeho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723550258; x=1724155058;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TXj6YrMtJ0gWFTWAL5SUSyJeDfI3jpHl1jV8Ck1Ub5w=;
+        b=P2U6Qd8UJESn8sqf3BqPvq+YTBNqn3oGa6JNZUSWKAgXnzNPu4sR4aisP2Dn+rpYOF
+         MOQkWO3bnLllAj0NHhBbkN6kMyUL3+qbhxtdd1Iz1tHNEsnWUUUuAiOUVjoQPKXcHa27
+         oRnYIRWwNGFw985RjdToZb+CKrXyWBysyfQA0NRZleqY3o6AI3KOG6PPnzbxGQdk/1BK
+         rQ4xt3gZm9bQCfubg6XrWyF44tr1y0fGf9hZ7cbW5JrVs3G2/0LV2G7jQKc0bTOQYOG8
+         2kkvdZlPUq8C4LQostRCV8AvXCtdtoH0M/YRXIfRB3eq/w3k9CB6bcn+84MmZP5IhcWj
+         G+LA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7XsAOV0g5KtYXhBc89pm4f9hMNTSOOeB+zp8rfrgwQEj5bLxO6Ed4ltyKmDQ7n/JAjRyRo6tLxGXvzoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx7S13xIjfrBJUSMwgnQNQC+RIqgNGEwk/dob2ipZlraqtxzY+
+	4SIPsHaFYjnuYzGgZCUp9m0ReFzNFeuHHShGuL7FC7oeyzWQnne3RTNU4tljsA==
+X-Google-Smtp-Source: AGHT+IFf7r4+eaG8ovXNz7tpTkFz5zRThgMupBmEqRawhnukS/bBcfpuDdGfM7AGPHQVhuvowwJO2w==
+X-Received: by 2002:a17:903:2345:b0:1fb:3b61:45aa with SMTP id d9443c01a7336-201ca1c0803mr35625745ad.40.1723550257889;
+        Tue, 13 Aug 2024 04:57:37 -0700 (PDT)
+Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd132895sm12031645ad.9.2024.08.13.04.57.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 04:57:37 -0700 (PDT)
+Message-ID: <721da64c-42ec-4be6-8ad3-e2685a84823a@broadcom.com>
+Date: Tue, 13 Aug 2024 13:57:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,108 +73,183 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iommu/arm-smmu-v3: Report stalled S2 events
-To: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- will@kernel.org, joro@8bytes.org
-Cc: jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com
-References: <20240812205255.97781-1-smostafa@google.com>
- <20240812205255.97781-3-smostafa@google.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240812205255.97781-3-smostafa@google.com>
+Subject: Re: [PATCH v10 4/5] wifi: brcmfmac: Add optional lpo clock enable
+ support
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com,
+ Sai Krishna <saikrishnag@marvell.com>
+References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
+ <20240813082007.2625841-5-jacobe.zang@wesion.com>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <20240813082007.2625841-5-jacobe.zang@wesion.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/08/2024 9:52 pm, Mostafa Saleh wrote:
-> Previously, S2 stall was disabled and in case there was an event it
-> wouldn't be reported on the assumption that it's always pinned  by VFIO.
-> 
-> However, now since we can enable stall, devices that use S2 outside
-> VFIO should be able to report the stalls similar to S1.
-> 
-> Also, to keep the old behaviour were S2 events from nested domains were
-> not reported as they are pinned (from VFIO) add a new flag to track this.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+On 8/13/2024 10:20 AM, Jacobe Zang wrote:
+> WiFi modules often require 32kHz clock to function. Add support to
+> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
+> to the top of brcmf_of_probe. Change function prototypes from void
+> to int and add appropriate errno's for return values that will be
+> send to bus when error occurred.
+
+I was going to say it looks good to me, but....
+
+> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
 > ---
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 18 +++++++++++++-----
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h |  2 ++
->   2 files changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 8d573d9ca93c..ffa865529d73 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -1733,6 +1733,7 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
->   	u32 sid = FIELD_GET(EVTQ_0_SID, evt[0]);
->   	struct iopf_fault fault_evt = { };
->   	struct iommu_fault *flt = &fault_evt.fault;
-> +	struct arm_smmu_domain *smmu_domain;
->   
->   	switch (FIELD_GET(EVTQ_0_ID, evt[0])) {
->   	case EVT_ID_TRANSLATION_FAULT:
-> @@ -1744,10 +1745,6 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
->   		return -EOPNOTSUPP;
+>   .../broadcom/brcm80211/brcmfmac/bcmsdh.c      |  4 +-
+>   .../broadcom/brcm80211/brcmfmac/common.c      |  3 +-
+>   .../wireless/broadcom/brcm80211/brcmfmac/of.c | 53 +++++++++++--------
+>   .../wireless/broadcom/brcm80211/brcmfmac/of.h |  9 ++--
+>   .../broadcom/brcm80211/brcmfmac/pcie.c        |  3 ++
+>   .../broadcom/brcm80211/brcmfmac/sdio.c        | 22 +++++---
+>   .../broadcom/brcm80211/brcmfmac/usb.c         |  3 ++
+>   7 files changed, 61 insertions(+), 36 deletions(-)
+
+[...]
+
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> index e406e11481a62..f19dc7355e0e8 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+
+[...]
+
+> @@ -113,33 +118,39 @@ void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
+>   		of_node_put(root);
 >   	}
 >   
-> -	/* Stage-2 is always pinned at the moment */
-> -	if (evt[1] & EVTQ_1_S2)
-> -		return -EFAULT;
+> -	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+> -		return;
 > -
->   	if (!(evt[1] & EVTQ_1_STALL))
->   		return -EOPNOTSUPP;
+>   	err = brcmf_of_get_country_codes(dev, settings);
+>   	if (err)
+>   		brcmf_err("failed to get OF country code map (err=%d)\n", err);
 >   
-> @@ -1782,6 +1779,15 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
->   		goto out_unlock;
+>   	of_get_mac_address(np, settings->mac);
+>   
+> -	if (bus_type != BRCMF_BUSTYPE_SDIO)
+> -		return;
+> +	if (bus_type == BRCMF_BUSTYPE_SDIO) {
+
+Don't like the fact that this now has an extra indentation level and it 
+offers no extra benefit. Just keep the original if-statement and return 
+0. Consequently the LPO clock code should move just before the if-statement.
+
+> +		if (of_property_read_u32(np, "brcm,drive-strength", &val) == 0)
+> +			sdio->drive_strength = val;
+>   
+> -	if (of_property_read_u32(np, "brcm,drive-strength", &val) == 0)
+> -		sdio->drive_strength = val;
+> +		/* make sure there are interrupts defined in the node */
+> +		if (!of_property_present(np, "interrupts"))
+> +			return 0;
+>   
+> -	/* make sure there are interrupts defined in the node */
+> -	if (!of_property_present(np, "interrupts"))
+> -		return;
+> +		irq = irq_of_parse_and_map(np, 0);
+> +		if (!irq) {
+> +			brcmf_err("interrupt could not be mapped\n");
+> +			return 0;
+> +		}
+> +		irqf = irqd_get_trigger_type(irq_get_irq_data(irq));
+> +
+> +		sdio->oob_irq_supported = true;
+> +		sdio->oob_irq_nr = irq;
+> +		sdio->oob_irq_flags = irqf;
+> +	}
+>   
+> -	irq = irq_of_parse_and_map(np, 0);
+> -	if (!irq) {
+> -		brcmf_err("interrupt could not be mapped\n");
+> -		return;
+> +	clk = devm_clk_get_optional_enabled(dev, "lpo");
+> +	if (!IS_ERR_OR_NULL(clk)) {
+> +		brcmf_dbg(INFO, "enabling 32kHz clock\n");
+> +		return clk_set_rate(clk, 32768);
+> +	} else {
+> +		return PTR_ERR_OR_ZERO(clk);
 >   	}
->   
-> +	/* It is guaranteed that smmu_domain exists as EVTQ_1_STALL is checked. */
-> +	smmu_domain = to_smmu_domain(iommu_get_domain_for_dev(master->dev));
-> +
-> +	/* nesting domain is always pinned at the moment */
-> +	if (smmu_domain->enable_nesting) {
 
-Ugh, has the whole enable_nesting method still not gone away already?
+Change this to:
 
-However, at least for now, isn't this functionally equivalent to just 
-testing !(smmu->features & ARM_SMMU_FEAT_TRANS_S1) anyway? We still 
-won't be able to differentiate a nominally-pinned non-nested VFIO domain 
-from a nominally-stallable non-VFIO domain on S2-only hardware.
+ > +	clk = devm_clk_get_optional_enabled(dev, "lpo");
+ > +	if (IS_ERR_OR_NULL(clk)) {
+ > +		return PTR_ERR_OR_ZERO(clk);
+ > +	}
+ > +	brcmf_dbg(INFO, "enabling 32kHz clock\n");
+ > +	clk_set_rate(clk, 32768);
 
-Thanks,
-Robin.
+As said above this should be moved before the if-statement:
 
-> +		ret = -EINVAL;
-> +		goto out_unlock;
-> +	}
-> +
->   	iommu_report_device_fault(master->dev, &fault_evt);
->   out_unlock:
->   	mutex_unlock(&smmu->streams_mutex);
-> @@ -3373,8 +3379,10 @@ static int arm_smmu_enable_nesting(struct iommu_domain *domain)
->   	mutex_lock(&smmu_domain->init_mutex);
->   	if (smmu_domain->smmu)
->   		ret = -EPERM;
-> -	else
-> +	else {
->   		smmu_domain->stage = ARM_SMMU_DOMAIN_S2;
-> +		smmu_domain->enable_nesting = true;
-> +	}
->   	mutex_unlock(&smmu_domain->init_mutex);
+ > -	if (bus_type != BRCMF_BUSTYPE_SDIO)
+ > -		return 0;
+
+> -	irqf = irqd_get_trigger_type(irq_get_irq_data(irq));
 >   
->   	return ret;
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> index 0dc7ad43c64c..f66efeec2cf8 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> @@ -745,6 +745,8 @@ struct arm_smmu_domain {
->   	spinlock_t			devices_lock;
->   
->   	struct mmu_notifier		mmu_notifier;
-> +
-> +	bool				enable_nesting;
->   };
->   
->   /* The following are exposed for testing purposes. */
+> -	sdio->oob_irq_supported = true;
+> -	sdio->oob_irq_nr = irq;
+> -	sdio->oob_irq_flags = irqf;
+> +	return 0;
+>   }
+
+[...]
+
 
