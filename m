@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-285410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C89950D15
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:23:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4612950D1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B739A1F215CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37B61B28638
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67F81A4F2A;
-	Tue, 13 Aug 2024 19:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51821A4F17;
+	Tue, 13 Aug 2024 19:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cSQEfELJ"
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NQ5CaaBR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eUlLWPNz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fipF3S6l";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6i5+tYsn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A601A3BBC;
-	Tue, 13 Aug 2024 19:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CD419D089;
+	Tue, 13 Aug 2024 19:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576980; cv=none; b=n4p+IxzSHFKu8+vAijNdvPY2jMcDhaKlg2AFxqMQOD8+ixIgS6tbpN+1fgIdgwdfXSZiHLwLFd/DGeb3/p+ko2ATPuuqNI5SqSr4OrmeAS7hc9lpIEYBo1x39OwKBn8LtmNIrY8EAQgsFX6mcZEo9uSDbxcoahy4nrw7nQTMbS0=
+	t=1723577127; cv=none; b=S4GswYsxfaoTUlMhCveeUwPqPRoXHSMvFs6Mj317IS9lSXz02RCXyb7dsdwcvk0HUbNn5EkWk3y+tzAzX4t6USDd8Ra5Il5cm6fcpVW1e2Go8jVU2JAuHusID4BHgCyPfStVyUK3IVejwYPsyySU/m+HCPzjQmzK6irvfu/BZw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576980; c=relaxed/simple;
-	bh=S8IgRoT3rGuUs3Taam7C7rdBtNX5Ws5CvI6Kh7gN94I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l0886aCVpkkOLbvIuP5hCqHm2f+eaJY5QQcqNxJ/qSs2iZjt1VH/LiV7zW/VMmmexH/kzAI5EHCL68OxuzWQyJAqo1f4Zh27xTFCKfBgb7X5L9avxDoLVlqIsYE/fqsnYgz93d2rTYG5UxVJdQZ74TPUdrVe29Vls5df2eNLhlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cSQEfELJ; arc=none smtp.client-ip=52.119.213.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1723576979; x=1755112979;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pVY6McdLttZ/ks3QIA7dtEO+Q6+G94A3MUcoEqmhLGE=;
-  b=cSQEfELJ/yRjSK7qxWh3Y7Rc36IhC0izowZIhG/plN99TGqK0XMTMT6a
-   hL2Wr2nRVtmv/I17RiWbHfopC/T+JsV9zo9smYjSbE+iDYWcmJlgfVKHE
-   FkHB4UyOrjXUQ1SA311jqNfAsRXDFOrgXuYLzDSec0SH9cJnwx/ZHMEyV
-   8=;
-X-IronPort-AV: E=Sophos;i="6.09,286,1716249600"; 
-   d="scan'208";a="18728270"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 19:22:55 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:26393]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.39.30:2525] with esmtp (Farcaster)
- id 76dc4125-4df1-46d0-8c75-88bd9d7740c6; Tue, 13 Aug 2024 19:22:54 +0000 (UTC)
-X-Farcaster-Flow-ID: 76dc4125-4df1-46d0-8c75-88bd9d7740c6
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 13 Aug 2024 19:22:53 +0000
-Received: from 88665a182662.ant.amazon.com (10.119.205.65) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 13 Aug 2024 19:22:50 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <mtodorovac69@gmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <shuah@kernel.org>
-Subject: Re: [PATCH v2 1/1] selftests: net: af_unix: convert param to const char* in __recvpair() to fix warning
-Date: Tue, 13 Aug 2024 12:22:41 -0700
-Message-ID: <20240813192241.11560-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240813162004.2464421-3-mtodorovac69@gmail.com>
-References: <20240813162004.2464421-3-mtodorovac69@gmail.com>
+	s=arc-20240116; t=1723577127; c=relaxed/simple;
+	bh=Mt6cj9PlVfv2J3ubnFH9Qln42zBuj+jvEHFHpAtHF1E=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:References:Message-Id:
+	 MIME-Version:Content-Type; b=PxJiHAhWFYmjM7s1xPSco4VghftqHMoOabFStjNNNAYgoJCmvSJBcw2YX6DkCsZtV4fxoIRIASFedP14AtWskAwZFNVN7nKJrAofgCu2npP+PFW/wUXEElXxT2uuCylIT6e5tfO1x6UsWknBn2sZmha7HZhV3z6bHERXqxok55I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NQ5CaaBR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eUlLWPNz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fipF3S6l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6i5+tYsn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E0A812271D;
+	Tue, 13 Aug 2024 19:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723577123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=NQ5CaaBRddWSnMj4ZrG6aoAM08iZw7wD44tyM7DnCEmnWDpJxeP1j66fbCfsadIUIGDYal
+	XxnD77id68+gHQop1R27V4bRkahiAUgvuyQ24aMqnzKAmK7XA8GVqnyiX2KWpLWyaDd2wm
+	p8TknCMuVzyKnUZ4xjkhdgn9gARhJso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723577123;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=eUlLWPNz2tljd0J/s2l2TeE2zpowpXOn9ntXbcSEmyMymjK20a+kB8DbT6NR5nVuXv1GKP
+	XcdGEgWsrmwY3JBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723577121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=fipF3S6lPpRW5BttneiBdn0b1F9NpjtIWSH5au0LrNgAQ4cecqZN0MmrqfC/SV9ZfyezG8
+	Qy8MoyDokytUSJnduUPvjib3wgcfvVey08Rorg6C3Z+pGAAJtzUzv/EAmMnX8C8xK6/NQj
+	XbSgyWiIilAolivj5cIL4GJuuMbrvAE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723577121;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ugKjNhRMNgwXJ5EiAXRajci6DMtc6jQk92sVFu7H7iM=;
+	b=6i5+tYsnvwloc3G2zIj6gi9Rul5fUQ2n0bRG3ZrefsCnqOXYSunlSsY2DKpf0or+HWOSsf
+	tQkpFJ7c4TQh+LCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A4F8A136A2;
+	Tue, 13 Aug 2024 19:25:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6Ww7IiGzu2ZGeQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 13 Aug 2024 19:25:21 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] unicode: constify utf8 data table
+In-Reply-To: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
+Date: Tue, 13 Aug 2024 15:22:59 -0400
+References: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
+Message-Id: <172357697992.2513606.16354340416648362105.b4-ty@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWB002.ant.amazon.com (10.13.138.97) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset="utf-8"; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.989];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Date: Tue, 13 Aug 2024 18:20:06 +0200
-> GCC 13.2.0 reported warning about (void *) being used as a param where (char *)
-> is expected:
-[...]
-> As Simon suggested, all calls to __recvpair() have char * as expected_buf param, so
-> it is safe to change param type from (const void *) to (const char *), which silences
-> the warning.
-> 
-> Fixes: d098d77232c37 ("selftest: af_unix: Add msg_oob.c.")
-> Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
 
-Usually Reported-by is not needed if it's same with SOB.
+On Fri, 09 Aug 2024 17:38:53 +0200, Thomas Wei=C3=9Fschuh wrote:
+> All users already handle the table as const data.
+> Move the table itself into .rodata to guard against accidental or
+> malicious modifications.
 
-and the same feedback to v1.
+Applied, thanks!
 
-Abhinav posted a fix earlier.
+[1/1] unicode: constify utf8 data table
+      commit: 43bf9d9755bd21970d8382dc88f071f74fc18fbf
 
-https://lore.kernel.org/netdev/20240812191122.1092806-1-jain.abhinav177@gmail.com/
-
-Thanks
+Best regards,
+--=20
+Gabriel Krisman Bertazi
 
