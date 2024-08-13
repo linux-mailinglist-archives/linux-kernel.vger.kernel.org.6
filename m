@@ -1,169 +1,108 @@
-Return-Path: <linux-kernel+bounces-285503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C60950E44
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:02:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99600950F1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61391C20BDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3D4281B7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0319D1A3BDF;
-	Tue, 13 Aug 2024 21:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O7ACY/E4"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A006C1A76DC;
+	Tue, 13 Aug 2024 21:22:28 +0000 (UTC)
+Received: from sxb1plsmtpa01-13.prod.sxb1.secureserver.net (sxb1plsmtpa01-13.prod.sxb1.secureserver.net [92.204.81.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2DA1E86A;
-	Tue, 13 Aug 2024 21:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FCB1A704F
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723582948; cv=none; b=SgHPEnQclSbGRXD+wNl7OrtGJIqIwHX4gzaoCzBT1dEpocDXjDLzzn4pT4XICDIwpYGHxIMCgRSmWPLyAtC0ziYpAR1VI5ttUkbcepPhYuodPct+IudL+El5HgxoCzpVGLy7zk3uwEmfKlY/bmk/4wpSbo0HzIifneBrRfJqNWQ=
+	t=1723584148; cv=none; b=rQq8IUAaEce4iwkHdDGEIWvaSkQd3pCggUloUcTPpJWOiYZy58Hdm7wT7c0BIfDLhsq46oUs9oMqx65zod7VS5wsEVIu4x2OW3VRXZYZEbxlic4Zydb7iVnFPZWk++gTJps07Qwg22VIWztkwtv+rPsHec6xmXUOzBJu61XdLak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723582948; c=relaxed/simple;
-	bh=3UZ9S2Y70HljE2j3ZOj5LBkVKN9Mw4UJ4WbwkYnUraA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOqbd2vhffb5WWkjnZZGRUdG/SMyKgKgMxSK+kceScvSlj30SRmbCk+LUssuwj1MAtVx4ooD1f9w6e+mThRd9WMiAZN0bYb740pw8ULH+qxSPDbnf6b3BdH1sPMb69Palm/z3lEWJ6uTN/tl+aVoJIVThxSogb17oeZZ0miFzqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O7ACY/E4; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2IOmSrY70uwk1HcUoylW9y1turDpgUbCA7KHSlUuurs=; b=O7ACY/E4I/53NE4vlQtKuUot2Q
-	y2/CPLUI2Kry3BYvzL4Ru2Y1smRabroqTxun/G2poPbybtSj5br/bc0FopCBjHHNqVC9+AFIoHHH3
-	tjwSYXCiRhYWGFseuVeEAaq6LNbV9NsZrKesEugIo6bw5vVxbgb2EJB7AyLgGZF4PSdDPSPrCZmvp
-	TXUDr8FU7eRW5/E3hD0BK+UtFDidxKZRqRVNip+Qtn7a3ZXOvYquBps2A5DQeJMPXIsAD3OYU67Zx
-	VATxBpxHx+CUmGaZDKH8dCb5Ol9OJJuU+MG3VhN9DyEQ60Ye7DW1ylaudBH+IfkkN5nDXlHRdfi7P
-	+SWwtAeg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdyeh-00000007rGr-3Qlz;
-	Tue, 13 Aug 2024 21:02:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 80DE530074E; Tue, 13 Aug 2024 23:02:09 +0200 (CEST)
-Date: Tue, 13 Aug 2024 23:02:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, pengfei.xu@intel.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	x86@kernel.org, lkft-triage@lists.linaro.org,
-	dan.carpenter@linaro.org, anders.roxell@linaro.org, arnd@arndb.de,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Subject: Re: [tip: perf/core] perf: Fix event_function_call() locking
-Message-ID: <20240813210209.GA35275@noisy.programming.kicks-ass.net>
-References: <Zrq4PRAVxjlnvFnb@xpf.sh.intel.com>
- <20240813151959.99058-1-naresh.kamboju@linaro.org>
- <Zrul5kzUc-5BfWcT@google.com>
+	s=arc-20240116; t=1723584148; c=relaxed/simple;
+	bh=mbq3NW0pnyyTeab8LcRnhlnEuHcGsvBM3EXVOrAD6/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zzb1KB36xNwMojAfYPmagikIhPGP5y3vtsy/xnNhVYTSOyuhdW6OsF3Log+D9aIMuCeiQkgb0iV8s7wRcvJH7Zh423vHoZA95MMvIC9wA+g0dQGYLKqRTkgh42S+RyMF9rrpHuFbPoj0TTslpN3iIT5JyuMTmsbdu5P10f0OZs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net; spf=pass smtp.mailfrom=piie.net; arc=none smtp.client-ip=92.204.81.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piie.net
+Received: from [192.168.1.27] ([109.90.180.58])
+	by :SMTPAUTH: with ESMTPSA
+	id dyfnsVaaUn3BbdyfpsI01x; Tue, 13 Aug 2024 14:03:22 -0700
+X-CMAE-Analysis: v=2.4 cv=AM9iEndf c=1 sm=1 tr=0 ts=66bbca1a
+ a=ujCVow8R4Y5jPCx6COW8WA==:117 a=ujCVow8R4Y5jPCx6COW8WA==:17
+ a=IkcTkHD0fZMA:10 a=M51BFTxLslgA:10 a=QyXUC8HyAAAA:8 a=t3YNmgBSAAAA:8
+ a=p0AuB5x_3uX4-FXbu-EA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=ctH_qozkpUrkr3SVbfwb:22
+X-SECURESERVER-ACCT: peter@piie.net
+Message-ID: <626a39f9-f60f-4dab-8330-8cf68ecb7520@piie.net>
+Date: Tue, 13 Aug 2024 23:03:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zrul5kzUc-5BfWcT@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] thermal: gov_bang_bang: Call
+ __thermal_cdev_update() directly
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ =?UTF-8?Q?Peter_K=C3=A4stle?= <peter@piie.net>
+References: <1903691.tdWV9SEqCh@rjwysocki.net>
+ <13583081.uLZWGnKmhe@rjwysocki.net>
+Content-Language: en-US
+From: =?UTF-8?Q?Peter_K=C3=A4stle?= <peter@piie.net>
+In-Reply-To: <13583081.uLZWGnKmhe@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfImXDGwrG2+7isMXPdh5dhYZU30JJWvh6U0alaylkFoI+YHbzq0QMiQRTkGop5fdtYeGFgmP+x7xLDo669CYQX9Kz4ZJWaYAs/azv4fH0lBcb4FzOSSe
+ 6wqx0HbImj+5ZlbNC72Mu2Jv/Uoqu8pYHdcD5WoHSQw+HyZBFh4FLOMlgN6O4hYJ/tvA46XdMUVqYfwLFf3XGHppX1iIZPrgA5hTZhxfyndQs+Xb0Nn7SglQ
+ pNz1BDSbR9m6z/u5SMFu1WvC8b2fiU4vqlhZZmCKeSakKEplkvFf2Q0xg2lWwRshvIwchzxvpgJlLGzdlBcKJ9hxqDUXT5zzECFyjFdM3f9tywDZou5MzX/I
+ MxT+3rZPKSLyzG9YIgJwAaDv0JUEKQ==
 
-On Tue, Aug 13, 2024 at 11:28:54AM -0700, Namhyung Kim wrote:
+On 13.08.24 16:25, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Instead of clearing the "updated" flag for each cooling device
+> affected by the trip point crossing in bang_bang_control() and
+> walking all thermal instances to run thermal_cdev_update() for all
+> of the affected cooling devices, call __thermal_cdev_update()
+> directly for each of them.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Duh, yeah.
+Acked-by: Peter Kästle <peter@piie.net>
 
 > ---
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 9893ba5e98aa..85204c2376fa 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -298,13 +298,14 @@ static int event_function(void *info)
->  static void event_function_call(struct perf_event *event, event_f func, void *data)
->  {
->  	struct perf_event_context *ctx = event->ctx;
-> -	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
-> +	struct perf_cpu_context *cpuctx;
->  	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
->  	struct event_function_struct efs = {
->  		.event = event,
->  		.func = func,
->  		.data = data,
->  	};
-> +	unsigned long flags;
->  
->  	if (!event->parent) {
->  		/*
-> @@ -327,22 +328,27 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
->  	if (!task_function_call(task, event_function, &efs))
->  		return;
->  
-> +	local_irq_save(flags);
-
-This can just be local_irq_disable() though, seeing how the fingered
-commit replaced raw_spin_lock_irq().
-
-I'll queue the below...
-
----
-Subject: perf: Really fix event_function_call() locking
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue Aug 13 22:55:11 CEST 2024
-
-Commit 558abc7e3f89 ("perf: Fix event_function_call() locking") lost
-IRQ disabling by mistake.
-
-Fixes: 558abc7e3f89 ("perf: Fix event_function_call() locking")
-Reported-by: Pengfei Xu <pengfei.xu@intel.com>
-Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/events/core.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -298,8 +298,8 @@ static int event_function(void *info)
- static void event_function_call(struct perf_event *event, event_f func, void *data)
- {
- 	struct perf_event_context *ctx = event->ctx;
--	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
- 	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
-+	struct perf_cpu_context *cpuctx;
- 	struct event_function_struct efs = {
- 		.event = event,
- 		.func = func,
-@@ -327,22 +327,25 @@ static void event_function_call(struct p
- 	if (!task_function_call(task, event_function, &efs))
- 		return;
- 
-+	local_irq_disable();
-+	cpuctx = this_cpu_ptr(&perf_cpu_context);
- 	perf_ctx_lock(cpuctx, ctx);
- 	/*
- 	 * Reload the task pointer, it might have been changed by
- 	 * a concurrent perf_event_context_sched_out().
- 	 */
- 	task = ctx->task;
--	if (task == TASK_TOMBSTONE) {
--		perf_ctx_unlock(cpuctx, ctx);
--		return;
--	}
-+	if (task == TASK_TOMBSTONE)
-+		goto unlock;
- 	if (ctx->is_active) {
- 		perf_ctx_unlock(cpuctx, ctx);
-+		local_irq_enable();
- 		goto again;
- 	}
- 	func(event, NULL, ctx, data);
-+unlock:
- 	perf_ctx_unlock(cpuctx, ctx);
-+	local_irq_enable();
- }
- 
- /*
+>   drivers/thermal/gov_bang_bang.c |    5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/gov_bang_bang.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
+> +++ linux-pm/drivers/thermal/gov_bang_bang.c
+> @@ -71,12 +71,9 @@ static void bang_bang_control(struct the
+>   		dev_dbg(&instance->cdev->device, "target=%ld\n", instance->target);
+>   
+>   		mutex_lock(&instance->cdev->lock);
+> -		instance->cdev->updated = false; /* cdev needs update */
+> +		__thermal_cdev_update(instance->cdev);
+>   		mutex_unlock(&instance->cdev->lock);
+>   	}
+> -
+> -	list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+> -		thermal_cdev_update(instance->cdev);
+>   }
+>   
+>   static struct thermal_governor thermal_gov_bang_bang = {
+> 
+> 
+> 
 
