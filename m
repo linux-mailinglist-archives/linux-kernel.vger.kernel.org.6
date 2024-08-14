@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-286052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077E09515D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:50:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F539515DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B0D28AD35
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3DBF1C2113C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F4613DDBD;
-	Wed, 14 Aug 2024 07:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4EE13C9C4;
+	Wed, 14 Aug 2024 07:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pJtdTcKX"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N635iou6"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94C013CFB7;
-	Wed, 14 Aug 2024 07:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3FC8488
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723621801; cv=none; b=ToBMFPVhLEqEhN/X6u7D8i4Jh1cZqj6wLexOBo0DbsBoanyglQRowfLGWK99l3/7XzXhGulAwLaQDxpg8cMd2gZyay/jIEfeDxTFNuphP6xf0I7CDSsnPQGL32ez0YbVNGPmgpQkAMCddrl2MEo68QlwltEVvgwOz8/OTNJhWD0=
+	t=1723621911; cv=none; b=KSw5qJIaaDGw+yLtDPDeFxWHeNhShaLTGI0GvUgSQcKGa5OCC11gjQlPGu/xsj/erA0ull89JthqCPKNLzva5jgY1HjRRaqLPBrA3MdsO55nGCICJp625tmJWASJhdiGjGeEhevRTZieFUtfMTZNVSgxlBy3gW8tFqjYWofiHnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723621801; c=relaxed/simple;
-	bh=qjFyWqGVssj1+G9jgMuIQV67hYnTfCZUr57iNzX3JuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tCju+7nnO45rW9QM9BKUqZ33GOyIPrJh0QXp4KKFBlk9byKoiYyRZPicGbs2UlK+OcVWvE1TUzceoTyi3j1F6pGvAnXk8b3WKXITVGYopzuLOMoNbfGR97sECTuYWKhci4+H+0p7R/1egUa2d8xDENEfNH4W5WEpyjPy9OB3j+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pJtdTcKX; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723621795; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=I5pDPKJB+T80C8NVQjfj99TTYk+U6Sl12RWOlJDvLPA=;
-	b=pJtdTcKXQktMWSUiqFrK3/tsPOkJnnPvBTD8wWT4DbuOqxXQ2K0alJbKgkV2PEg+imA5YJ3wEsE0tsiDXad5GfgPASbi6e+ZDTwiG2wKfG0SZwGhQU3pj8jR+bK5BtbkivVNwi9LK3urj1kwqVxu6RSLQV+J3wWoMSLCx4VHndU=
-Received: from 30.221.146.67(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WCraOrA_1723621793)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Aug 2024 15:49:54 +0800
-Message-ID: <7444ba50-20ba-4908-9f46-0fda488f905b@linux.alibaba.com>
-Date: Wed, 14 Aug 2024 15:49:52 +0800
+	s=arc-20240116; t=1723621911; c=relaxed/simple;
+	bh=WDW6rQ/apBzDjXQSNnDaeNH9u9GWWkZywdFllnX/IOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YQqN1lZXzKl69RnrCEgiwLrWZThH17reqqwRBtBdrq+in19u2NkJJ70eI1wtEYpjjGcp9T7ZnXhMgWSeoBAsUrVWQ4x7kL/DMu6jpdSbP42VJT1D9DZmwh3P2pXQv+gluUDySsSfh4Bh5+dUXdwvBvjdk50+yIAK3NPZaNXWgg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N635iou6; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42803bbf842so62365925e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723621908; x=1724226708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PT+zi+/D9eO+wh878fg/U/GNgg7iPwjsl30b4TPDHZA=;
+        b=N635iou6uTv9OX7tD+53GwPt2gr6bcHjSFYt+5thA30IGCUAeJLIYcltUlUo2u71KE
+         idYyuZ7JhC/llSV9f0AYr5vQjXn6Ez552117dKI9qOMR2xzDaiklEuKJTFW9737GvhLe
+         hIaMZou51wPFGiRCe5rlSKbgCIj/sCsDPHbs0rL7kC9lFXEeRVU7iQcEXD+5c3YYjreP
+         JFl3ZP5EdfGToZwMz/jQ/Ab1jRIq+wkY5phiHTEhFt4hAxjrP/NutR+XJOCdtWK2wzga
+         oT+U3zQ8koOysoMcrc/ZgI4xsAyZaTjmdYcff4/szq31QJUyIzia/J8vS+NEXCstxJND
+         VVFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723621908; x=1724226708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PT+zi+/D9eO+wh878fg/U/GNgg7iPwjsl30b4TPDHZA=;
+        b=NYokMrho8NCdJ/S8Iob2373B4jKtu8GHSaP7HmGJhs0U6pJA7SmYitWLCtalsaPF7+
+         DUi8gU12p0+cRb0NCfYO2Cxpv4T9z1QSyeVnL2E3uhaaTHNVGXUAX4gN1j5Dp4lppLf0
+         vyL8dr+LPx6dkAHUECal2pEjX/ri5kF4WTCThhJUwfNUlu7qXEXjXjeeXUAVoO+fYQ4i
+         3phIZXsUC3bQUgpGTdmIpKUHJUhrfWN6JaRBT0SmC7aifLX0sYLXdzHLMGi/uHTXZj8/
+         byYPZikD93ZeGtLFmb/PkvEK495/lxeOnSJdWpbnubRJBd0jH3TdNX8hdZOuQX/Fm/kA
+         W26g==
+X-Forwarded-Encrypted: i=1; AJvYcCVCODYz3S0j71R8eHo5EgUnrMKzsS3yACl0E3M06n/+D6zhP4N4I23u16tZs7p9+GbuTsZzHb/JWOmY3AnxtV0syzuASmnGBJaybWiO
+X-Gm-Message-State: AOJu0YxEPnVv5IsAOsqQP9hhKMhYGILoUqDiBpJbqD2T0cyj37VbTnEc
+	89eNEOq86cEilnscfOqgnz+IGMJxQk6+GK79jOVNaE4ENmM74awM78ndKG6ndV1k4Y9lD4xbqnD
+	RXsZOGQTBn7Dw/m5ZOdeH8SbAe1OchRwTLjHZ
+X-Google-Smtp-Source: AGHT+IHNC/TFNKG7R4ZRJeXKfO788rQbS5/gH98Hg+wPjB1fBpqR9ujBShpY4AhPDFKtH2Hl4xoiX6/Le5LMbGM4xCI=
+X-Received: by 2002:adf:e703:0:b0:367:4dce:1ff4 with SMTP id
+ ffacd0b85a97d-3717775ae03mr1628464f8f.14.1723621907725; Wed, 14 Aug 2024
+ 00:51:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] virtiofs: fix the warning for kernel direct IO
-To: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
- Stefan Hajnoczi <stefanha@redhat.com>,
- Bernd Schubert <bernd.schubert@fastmail.fm>,
- "Michael S . Tsirkin" <mst@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, Benjamin Coddington <bcodding@redhat.com>,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- houtao1@huawei.com
-References: <20240426143903.1305919-1-houtao@huaweicloud.com>
- <5d809485-7e29-41ce-b683-7d19b829f86c@linux.alibaba.com>
- <dbd4499a-8359-6d59-83f6-50f8dba84747@huaweicloud.com>
-Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <dbd4499a-8359-6d59-83f6-50f8dba84747@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-5-dakr@kernel.org>
+In-Reply-To: <20240812182355.11641-5-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 14 Aug 2024 09:51:34 +0200
+Message-ID: <CAH5fLgit0hSFWi_Bv4DFK6vvhoLfSz=BMaPDBU0Z0oyZta9U9w@mail.gmail.com>
+Subject: Re: [PATCH v5 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 12, 2024 at 8:24=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> Implement `Allocator` for `Kmalloc`, the kernel's default allocator,
+> typically used for objects smaller than page size.
+>
+> All memory allocations made with `Kmalloc` end up in `krealloc()`.
+>
+> It serves as allocator for the subsequently introduced types `KBox` and
+> `KVec`.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/helpers.c                 |  3 +-
+>  rust/kernel/alloc.rs           |  2 +-
+>  rust/kernel/alloc/allocator.rs | 63 +++++++++++++++++++++++++++++++++-
+>  3 files changed, 64 insertions(+), 4 deletions(-)
+>
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index 92d3c03ae1bd..9f7275493365 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -193,8 +193,7 @@ void rust_helper_init_work_with_key(struct work_struc=
+t *work, work_func_t func,
+>  }
+>  EXPORT_SYMBOL_GPL(rust_helper_init_work_with_key);
+>
+> -void * __must_check __realloc_size(2)
+> -rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
+> +void *rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flag=
+s)
+>  {
+>         return krealloc(objp, new_size, flags);
+>  }
 
+Why are the various annotations on this helper being removed? This
+deserves an explanation in the commit message.
 
-On 8/14/24 3:46 PM, Hou Tao wrote:
-> Hi,
-> 
-> On 8/14/2024 2:34 PM, Jingbo Xu wrote:
->> Hi, Tao,
->>
->> On 4/26/24 10:39 PM, Hou Tao wrote:
->>> From: Hou Tao <houtao1@huawei.com>
->>>
->>> Hi,
->>>
->>> The patch set aims to fix the warning related to an abnormal size
->>> parameter of kmalloc() in virtiofs. Patch #1 fixes it by introducing
->>> use_pages_for_kvec_io option in fuse_conn and enabling it in virtiofs.
->>> Beside the abnormal size parameter for kmalloc, the gfp parameter is
->>> also questionable: GFP_ATOMIC is used even when the allocation occurs
->>> in a kworker context. Patch #2 fixes it by using GFP_NOFS when the
->>> allocation is initiated by the kworker. For more details, please check
->>> the individual patches.
->>>
->>> As usual, comments are always welcome.
->>>
->>> Change Log:
->>>
->>> v3:
->>>  * introduce use_pages_for_kvec_io for virtiofs. When the option is
->>>    enabled, fuse will use iov_iter_extract_pages() to construct a page
->>>    array and pass the pages array instead of a pointer to virtiofs.
->>>    The benefit is twofold: the length of the data passed to virtiofs is
->>>    limited by max_pages, and there is no memory copy compared with v2.
->>>
->>> v2: https://lore.kernel.org/linux-fsdevel/20240228144126.2864064-1-houtao@huaweicloud.com/
->>>   * limit the length of ITER_KVEC dio by max_pages instead of the
->>>     newly-introduced max_nopage_rw. Using max_pages make the ITER_KVEC
->>>     dio being consistent with other rw operations.
->>>   * replace kmalloc-allocated bounce buffer by using a bounce buffer
->>>     backed by scattered pages when the length of the bounce buffer for
->>>     KVEC_ITER dio is larger than PAG_SIZE, so even on hosts with
->>>     fragmented memory, the KVEC_ITER dio can be handled normally by
->>>     virtiofs. (Bernd Schubert)
->>>   * merge the GFP_NOFS patch [1] into this patch-set and use
->>>     memalloc_nofs_{save|restore}+GFP_KERNEL instead of GFP_NOFS
->>>     (Benjamin Coddington)
->>>
->>> v1: https://lore.kernel.org/linux-fsdevel/20240103105929.1902658-1-houtao@huaweicloud.com/
->>>
->>> [1]: https://lore.kernel.org/linux-fsdevel/20240105105305.4052672-1-houtao@huaweicloud.com/
->>>
->>> Hou Tao (2):
->>>   virtiofs: use pages instead of pointer for kernel direct IO
->>>   virtiofs: use GFP_NOFS when enqueuing request through kworker
->>>
->>>  fs/fuse/file.c      | 12 ++++++++----
->>>  fs/fuse/fuse_i.h    |  3 +++
->>>  fs/fuse/virtio_fs.c | 25 ++++++++++++++++---------
->>>  3 files changed, 27 insertions(+), 13 deletions(-)
->>>
->> We also encountered the same issue as [1] these days when attempting to
->> insmod a module with ~6MB size, which is upon a virtiofs filesystem.
->>
->> It would be much helpful if this issue has a standard fix in the
->> upstream.  I see there will be v4 when reading through the mailing
->> thread.  Glad to know if there's any update to this series.
-> 
-> Being busy with other stuff these days. I hope to send v4 before next
-> weekend.
-
-Many thanks, Tao.
-
-
--- 
-Thanks,
-Jingbo
+Alice
 
