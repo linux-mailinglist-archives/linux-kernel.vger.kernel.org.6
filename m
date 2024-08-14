@@ -1,225 +1,171 @@
-Return-Path: <linux-kernel+bounces-287242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F7F95253B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:06:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D1E9525DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7F51C20A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:06:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33065B2188E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3CE149C60;
-	Wed, 14 Aug 2024 22:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lwBbQsT+"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2062.outbound.protection.outlook.com [40.107.236.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF07E14B06E;
+	Wed, 14 Aug 2024 22:37:43 +0000 (UTC)
+Received: from sxb1plsmtpa01-03.prod.sxb1.secureserver.net (sxb1plsmtpa01-03.prod.sxb1.secureserver.net [188.121.53.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CBA145B05;
-	Wed, 14 Aug 2024 22:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723673167; cv=fail; b=VNrc8ZecQ6ZEqR37sejrDmtgitbVeYJs026L9qgTYRLl2mYzI55sThuYpsOkZOdQXcgz2UneMVDeT5uNlnfc6WwBAoWA/PXlWyrmRHMGTl4q08NJTA7uMQShyoPVGCrXtXlC8HSS9eNu06cqPKc4jpK7fZdwcuM0OsguUuL9kcg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723673167; c=relaxed/simple;
-	bh=DAnWXBVfsvSnMTzh2IuZhpDewfEtONVvZXbnvZBGJSU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aEv5yB2zJCjPg1XZwHtru6aCnx4a5N9SoFeGJrmP75ZTB3da8Y9XhDxrwsGZ3bWxSUfTD3JpoMKNixbGwbu0E0xkkidHP9iJEYc0UZRegluUpQwgQcVqWoU/vBNmMAf21HLafD3yu0i3WU8dxOw3S9FeGI2XD7zGQTkQbfKybcY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lwBbQsT+; arc=fail smtp.client-ip=40.107.236.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X//Edge9iwIC+NzQWyqaLfs7/DqOadX9J4z9g2/ii0cqIem+MjaQRvoy4iNa1w/4BOu+QYn3dac7nXDqsegpR/bIvXRmgsgc9moX2wVZfxS0rrMtobhbrAu5G3I6unKm1xm3jSYtYvQcSTaLN7amfYJsL8eiBtmZ2aAkpSktVmEVGcd/w9HnlRSL/gcKP8ebmZXzo/GeLqobxSBNbwtR0qrwC/Nf/ayoTyUImD9awRjNUvRXGCwWLiFHbrYAJwBklDWFP8kl4N1mOaW8j5M43N/JzyM2ufpX5ZljQ88tJu5R54cDfmpkWsBI1jTmbJ7yId7TTJ6MQELWbWGQHhExwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J/fciiym0czuApQtcgzkzfKnxmM3XURGHOTpiV1t5Dg=;
- b=s9dAuSec/9aSuTTNVJ5Il0CNCiYip3ponXRrgUMAdVZmhR95ZOKt2uXS/DI5LLbx2TaKhlj8fnKGQq6iG2Ov+6hf+qLFy47m8FrB+QtnCAYz5lM3yJSv93u1984v7ZEO+4SjLEc5QQe1cFbRwEuKVf9H3JUgYRwO1RPxAw38/63OlihlrblCREHYqsVUzG9TLIpCKAkn5JyjMf7YGNTJ4FLSyI9/DCzIMGcfZ91etvdbyTMfkoMIR7v5xYrCUVuEA35oINpWQkMhux6Mk7pFI6weTU9c86Z+rhTKBFIGawdDVOeW1jpkmTq79CAjulTp92llWo77iCgwusJNquPo5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J/fciiym0czuApQtcgzkzfKnxmM3XURGHOTpiV1t5Dg=;
- b=lwBbQsT+KEfi/XqKl5GwtFkhGmHaK/IjUQ7QUMoSMBWyX1Lv+6AB695t6QdyvyJPqfrI9WKD0xDzRXnT95sZYyK4EXwvmjrkWYyWKwEbVznWsjG0oLxl9wDZm8KA3lceo2OaENuynbAlnJuR3Zx+cRGsTDRytfIQoq+JWtMg57I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
- by CH2PR12MB4038.namprd12.prod.outlook.com (2603:10b6:610:7b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
- 2024 22:05:58 +0000
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::c170:6906:9ef3:ecef]) by BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::c170:6906:9ef3:ecef%6]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
- 22:05:58 +0000
-Message-ID: <5ef62b3f-32c5-47c8-bab1-397dc7084a17@amd.com>
-Date: Wed, 14 Aug 2024 17:05:54 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: ccp: Add additional information about an SEV
- firmware upgrade
-Content-Language: en-US
-To: Tom Lendacky <thomas.lendacky@amd.com>, linux-crypto@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
- David Miller <davem@davemloft.net>, John Allen <john.allen@amd.com>
-References: <bba259429fc14c4cac9ee4995dfb05d82065b67b.1723668160.git.thomas.lendacky@amd.com>
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <bba259429fc14c4cac9ee4995dfb05d82065b67b.1723668160.git.thomas.lendacky@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN1PR12CA0089.namprd12.prod.outlook.com
- (2603:10b6:802:21::24) To BL3PR12MB9049.namprd12.prod.outlook.com
- (2603:10b6:208:3b8::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6368144D1A
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 22:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723675063; cv=none; b=ep1nltjHxYz9H5QZ1JWlv0cASBkpEiKQPlo8njyCSF7EJ5Sq+d1DWoinr198Zks/oPHujNPiC9jTRmtdoE+3R6Vx79Jl5+NLJdcOs0PzTUAZR7XSnbBgTUMayxxbRm8rlA5WW13MM20T7NCdKfQEilIguJpoB2mCiFXyLHDQWqU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723675063; c=relaxed/simple;
+	bh=3LXwlSHa9sQcULrGFCR8yyHdBnsZLnr0aNpVHqdosak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=svR+uUzWAbbfsuzxHReXXPymr1o0DFujqakHRvbcFccggGVkdKHwubpabaz9INqZM91h+e+C9Fx3UjREmvTToJYvbhXWdds0stIQ5POdUPo0ZrKb8W2QLzBZcPyfN7Ok2GlgS0JEYWX6JTYxkCWJiRTtuT+fhyQZ5zA33G0x0PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net; spf=pass smtp.mailfrom=piie.net; arc=none smtp.client-ip=188.121.53.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piie.net
+Received: from [192.168.1.27] ([109.90.180.58])
+	by :SMTPAUTH: with ESMTPSA
+	id eL1ZsURBGQGq8eL1bs0nzo; Wed, 14 Aug 2024 13:55:20 -0700
+X-CMAE-Analysis: v=2.4 cv=Sp9b6+O0 c=1 sm=1 tr=0 ts=66bd19b9
+ a=ujCVow8R4Y5jPCx6COW8WA==:117 a=ujCVow8R4Y5jPCx6COW8WA==:17
+ a=IkcTkHD0fZMA:10 a=M51BFTxLslgA:10 a=t3YNmgBSAAAA:8 a=QyXUC8HyAAAA:8
+ a=VwQbUJbxAAAA:8 a=nmDrXcoKSNg3NTg_32oA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=ctH_qozkpUrkr3SVbfwb:22 a=AjGcO6oz07-iQ99wixmX:22
+X-SECURESERVER-ACCT: peter@piie.net
+Message-ID: <f226b45b-b7b7-4004-9d2b-740a52c658d3@piie.net>
+Date: Wed, 14 Aug 2024 22:55:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|CH2PR12MB4038:EE_
-X-MS-Office365-Filtering-Correlation-Id: af35bbe2-fbc9-4c4c-0c34-08dcbcad46b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VjNweWR6MWFlT0dYSDdMMjlSTkdlbnFFMEw2R3dZNlhoT2JWY3VPSXh5MnFF?=
- =?utf-8?B?ZkFYSkkyMmwra0VnYUNNcHdoTDdoazcxTnVLc091Ym8vQldiY1o4ck5aMG5M?=
- =?utf-8?B?OC9yVklKb0tYWXMvOTZFRDNUeHNvMDhJZ3dHMmJyczB4cHdlc2hYeUZOek1Y?=
- =?utf-8?B?NlgvZ3gyVlJVYW4rQkdTTjhuc0RxVEptM1B6S001R0RGY28ySEw1aVVONnB4?=
- =?utf-8?B?OGFZNFMvR0RGeTFwK21mbXRKVzhwcUhQTHh4U0g3NWpiMTRQendWVGtkNW9Z?=
- =?utf-8?B?T2M2Z25uekRVcXJCMmtGOGFkeUxNWHNuVVVLL2JPSS9iYi9Gdyt4MGd1TFRk?=
- =?utf-8?B?TS90b1RzQXJwREhJZkpVdWQvMjdWbmc1OENTMEtsWGJNUFlkRDVHK0wzeWYw?=
- =?utf-8?B?TDhQQXRBT3FCVWRsMVhGaFdEQWdSMFlyeUh2MlNhUkhHNEhXZDZlcDd6eW9C?=
- =?utf-8?B?KzB4UXVaVW9mZ1RiWnM5T2JGZk4xRGs1eUU4KzY2OENNaU1HaG1oSFIzM29p?=
- =?utf-8?B?Ym81QzdwQmlPMDF4SVdJWTh4K01Bcjk2QkRHSWxOdjlkOHdaTjBPK2pTRU5Z?=
- =?utf-8?B?VHN5MlpLNytsVWNVVjk4b2Vrdmd4Wmx6MkxCMExZcGJIVk5ONTJ6N1c0NXFt?=
- =?utf-8?B?T3lXRWJjTkNJcTlDdXhMRCtuQXhsR2RBNThoVm5tVVN0RWpmTGttL0pSMXJp?=
- =?utf-8?B?SWRnKzNhYk9NVkRLajkwOUFkSlI5S2MrVlM1enZTVk85QlhzOFIzZmhxTytQ?=
- =?utf-8?B?RXo5NUdwU3dtQzA3aDlWZG5ESHcvVTFSNDR4UWpCeldubEVoQlNKRFNFQVBv?=
- =?utf-8?B?MTVPcG1xUkcwWE1mbTJCdnBYQnFnS3VxNzVXbW9TQjBlYjhyNFQxY0FtdUJj?=
- =?utf-8?B?RlRCTTZJdmRlWUlDN0NXdkJSZThRMEdSaUo2bng4RGhzeERicmZ6cS9DSDlw?=
- =?utf-8?B?TlNHUk13bWNLdGN1Mng2K2NzMkROd2pucFdENmJtZXRCOGtJTTFpTFF5UjlB?=
- =?utf-8?B?STRERkpHY1BBZ1ZEVEhSbTlQbS9vaXVKQ0FaamdJTm5BbVA3akpDWXBJem0v?=
- =?utf-8?B?VGJPMnVrYVJXMkI3MVVLWVRwVTZodDl4a3RjRFpLQnVUbkw0WlhRN09haHp2?=
- =?utf-8?B?eTdqbUl1UDRpQUZ1WDZIMzFkbUNWanE1KzBMbUc5WW5jRHVyYTB2NzRnMG5Q?=
- =?utf-8?B?OFhhWTB0ZjJoZWRFdGVFaVpGQU03bHJhOVpRNDU3Y1phSENjTFo3WmxNcGZw?=
- =?utf-8?B?YjRweEw3eTRZTlY4dURuemI2MjZKSHQ2dHBjcE5USDBmRkxrT2dSQnltenZ5?=
- =?utf-8?B?OW94N0pzMmR6YXJVRkx2a1NDSUJGT04rcDJyV25hY01KOXZaTUx0K0pZTS8r?=
- =?utf-8?B?blBJWXBNSld0RHUrNWJ3cnRqV1hrL2gyV1Q1M2JvWG9hOFAvajNBaWZhQ1My?=
- =?utf-8?B?a3RRZEdYbjQ2WTJiM3lBN2JsbGx3NjJFV3FYUnF0R09MQlZHSVFJcHNxVXRT?=
- =?utf-8?B?cFR1Y2ZjZ0NzUmxQK0puRS8vdVFMRTNmSG5SK2w1L0RXcnRUS2FDajRlcXJP?=
- =?utf-8?B?VmxraTZjMDR4cWs1cnF0M1p2Y2JPbVpRQjFYMkdqVUhMVGNIbWxXcVl5bDlV?=
- =?utf-8?B?Z2J6ZTVMZ2dLSnRqWXpvMmF3Sm5MU1pvTUU2UUZ5SENBMmhob1FVZWM3ekE2?=
- =?utf-8?B?OGpRVElwZkl5cTFqWmNmam9TczBBTjZYaUdFY2RwTnRHeU5wRFlCTkNJeVhq?=
- =?utf-8?B?NjROSmM5bC9pbWlBaFR2cEt6YUJ6K3RjWGszeDFSNjNMc2xJYytmMzdDdEVC?=
- =?utf-8?B?WGJrOUx5bkZWaGRGTkpkdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QTNjQkJ6TGlCUFk0RW1lLzM0SFhlSzhDditTQ3RtTzB0a2grcThsR0FTQytP?=
- =?utf-8?B?NnpaZDRRS2dPelhDazhvUlVxeGdRKzJXTXJReUg2MjlHeVlMd1VJQ2puWW9j?=
- =?utf-8?B?ZkFFS0ZERFllK0M0NTNQMzRJS2RMYlllNy92VkxBQ01yYWF6WUJOdjVoZ1pr?=
- =?utf-8?B?ZkJ3WEdOZWRnSW5qZTZkbEdDYlhHSWxVT2QvYVp0a0RVSDVpV2xLT1BoTTVj?=
- =?utf-8?B?YWVsbWs0M29GVWtleXZPaHViWGVtWTJEOTVmSjhnMHduNmJMbmpPVHNhSUlj?=
- =?utf-8?B?d3BuNnQ0UTJWdGxHVHBhQkt3QXRkQVdMdHdUUlBkMnJ0QVNvWHVaRDNZdjlX?=
- =?utf-8?B?WDBUV051SW9yQm5wS05XUzlZbmpubnFWYXBPN08xMW1VN1Jlam5FYTRDTmZa?=
- =?utf-8?B?QWhQdFEyWGZFUVZDUVdVbXJ6M1ZTbXhYZGJQL0NkMDYxYUdZeXI0czJFNWtk?=
- =?utf-8?B?OEZRUjlibkthTmo2bjdRajc0TVVrVGFzYk9LUDRKRTY1SjNGYmVzYmhMWC9I?=
- =?utf-8?B?SkF5QmlKR3Z2c0hEUnRoalZjNjgxWkc3YWxXOUY1V2JNN05jckJjZ3NScTZa?=
- =?utf-8?B?bGNkNTY5N1hIeVlsUDVZZVd6L0cvcUoyMFFCUU5CQk1YYVBuUmRycFBPKzJv?=
- =?utf-8?B?WUYvT0V2bHZRWWQ1NTBhZjBYZHdtQThkU0V0dFllSFMxNFMvQ25uRmRSRHpT?=
- =?utf-8?B?a0syMWJCS2RpWUNobzV6RU1sTWZod0ZSbjUrajR5dUttYW1waXQyblNKVHZz?=
- =?utf-8?B?WTR4UTkwZ09IQUFRMkdvN01wQVRjcVVKYmQ3eDFGT0N0SjV5VWYySlIxZEp0?=
- =?utf-8?B?SXJXeUhlNWVZai93bzk4UUZVVEVON2U2OU42c0JENlZqeklWMzUzb2krS2hS?=
- =?utf-8?B?bS9sc2Q3a29PQ0dIa0lMdHZOeUxjR09zVHpIZjVIWXZxZlRyeFZWbUduQkd0?=
- =?utf-8?B?UlFObVBLNkVMU0F0b1lPbG9JMkRCalNpeHNFRUdxRG1wWlJsdFJnYWR2V1lO?=
- =?utf-8?B?MjBVd21XOXVsTkt1NjFTaGl4blhyWmx4RlVDd3lpQzFqT203UGJ4MkZYRURD?=
- =?utf-8?B?WDlTcHBqaEYyRHdzTWdVM21WVVlleGxGWmRHejhHVk0zMGVrd2MvOEk0L3Mz?=
- =?utf-8?B?WWdma0FUZ09EalEyU29jSE43MEVUYytKWXYvQjlrWFNLNVhMN05TQ0FLY0N5?=
- =?utf-8?B?VGg5SHVGdUdoUWJ4WlI0WkUrMGxhSjZwMXMyVCtSUEI5cDRTU3FJTmlBdFpp?=
- =?utf-8?B?bk90cURvSXRlL1RDV0FkKzVzZ2UzMXRpTXVJT3VFUkxIaEZwN2FRb05qZkFr?=
- =?utf-8?B?SUpnUzliZ0c1d0ZYQzhwUjdLN1BnMzVnMnV6djVnRURPOHVBejFocS9nZVFk?=
- =?utf-8?B?ZTVadWwrZitRaTArQnB4bWJnMzZkK1FUZHljZjVCNW5lZHNTR1Fkd0FyWmMz?=
- =?utf-8?B?NHp6VUtBRWlzaUVJOVBjaERmUklYOTRyajhJZkh6c0V5ZnBoRmhqYUlGMWtY?=
- =?utf-8?B?aHJtS3c3Wm81R3pBemRocStXbk5VZnB6bjJqT0RUUjRjaVZxSWx2bFdFOGhq?=
- =?utf-8?B?Y0hZU1d2M1RHQkgya0VtR2NvWnJHelloM2I0aEFaZWdTbVVjei9iaWEyb3k1?=
- =?utf-8?B?cUdyWFoxa2tzK2d4VnNVcG5aSTZnZU9Oc2wzRjNhZXRZa1o4R2dhRzBZbGRB?=
- =?utf-8?B?M1F3ZlRlQytWbnZSVTB5S25zVG4vczU5b21GY3RCaG41cEk2TUkzQmlXSzRu?=
- =?utf-8?B?K01NL2pPZVRlRzl5MzltcmNZS2VuaXRiWWdFTlpwSzd1Z2h3VGVYS0xIeUZF?=
- =?utf-8?B?VkZ6OEE3RFZFQ0xoWHhHZlhVcktiOHVuWkNmTWxMWlE3bWZOOUcxNk44M2tj?=
- =?utf-8?B?SVJxY1I3bzRJaFh1c2k5d2p6QS9SZEl6MWhxbVF3MFhXU2VtbFcvQkxZRGd6?=
- =?utf-8?B?TDBTeE5WL21jbEpLTTJoUUVMVnh6NEpNaXV4c2V6L3JKbWJyU1BnNGJML1Rs?=
- =?utf-8?B?czMzcTFaeUFLdjhCcHpPNGFHeGVnTG5Ed0Q3dzd0alovTVVEUGtmY28xZ2Jh?=
- =?utf-8?B?VWFhb0JBQ00zT3JZZ1E3cG9mNDdtVUNXSk5Kc08rbWp2S1Z2VzZMYnBJM1VU?=
- =?utf-8?Q?7iL7pBLC9mpDX4q2G5YtHzCC/?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af35bbe2-fbc9-4c4c-0c34-08dcbcad46b4
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 22:05:58.2600
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s3XoD/1ZjsCz+glB+wIENhHaQ6kyKgkOxkkiN5VGqiL6x1SMdUGlF1JRb0VS3ZSZsly+78KpXj0BSoyIjCYSUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4038
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] thermal: gov_bang_bang: Add .manage() callback
+To: "Rafael J. Wysocki" <rafael@kernel.org>, =?UTF-8?Q?Peter_K=C3=A4stle?=
+ <peter@piie.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>
+References: <1903691.tdWV9SEqCh@rjwysocki.net>
+ <8419356.T7Z3S40VBb@rjwysocki.net>
+ <291044b7-7300-42c2-91e6-fef164482cf3@piie.net>
+ <CAJZ5v0h9b2E0meeHGRtRv+=GbsABUs=L4RqAvAZuCksU+uN0cQ@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Peter_K=C3=A4stle?= <peter@piie.net>
+In-Reply-To: <CAJZ5v0h9b2E0meeHGRtRv+=GbsABUs=L4RqAvAZuCksU+uN0cQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfCcAgy2oqo4m+XYoMedubk2Bc9tI4XHeVtmjtRb9yu723Ck4yKRpDw/9UEqYR32Vzm4hx28jyjTRnE5xfHbnyWLHDc79CBZ2CtXGpPoJAguFo5msTVnZ
+ MYvpyF15b3Au8X5+wChI9yaeqlN4bIjq9PG2C1NzSkINOxnVJZ9IanSREcSoIv+uvQqvrsjFKQdWs9KzXAU4AJIwIAwDnjZSGc5B5xwotcUULkK4o/B/n4qx
+ oS1+kocMXCLxGbPNT8IcxU2lM7bNk/y9CTLkqzB9Wu0pjy1x5C0wVmZyPu2pUdP1czmzzkNEFezMCRoAltUvPgPWlFZyL9ZfnxlYebPdI/2wX2b53q3O8idD
+ JSQ3QjTGT4d0dnJpuwV7/bUYFgX7OWF83vFml0rP/C99oJBTx4eafhUNBRvdHs/QViNIAjxN
 
-On 8/14/2024 3:42 PM, Tom Lendacky wrote:
+Hi Rafael,
 
-> Print additional information, in the form of the old and new versions of
-> the SEV firmware, so that it can be seen what the base firmware was before
-> the upgrade.
->
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  drivers/crypto/ccp/sev-dev.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-> index 9810edbb272d..3b89f23afcd7 100644
-> --- a/drivers/crypto/ccp/sev-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -1629,8 +1629,6 @@ static int sev_update_firmware(struct device *dev)
->  
->  	if (ret)
->  		dev_dbg(dev, "Failed to update SEV firmware: %#x\n", error);
-> -	else
-> -		dev_info(dev, "SEV firmware update successful\n");
->  
->  	__free_pages(p, order);
->  
-> @@ -2382,6 +2380,7 @@ void sev_pci_init(void)
->  {
->  	struct sev_device *sev = psp_master->sev_data;
->  	struct sev_platform_init_args args = {0};
-> +	u8 api_major, api_minor, build;
->  	int rc;
->  
->  	if (!sev)
-> @@ -2392,9 +2391,19 @@ void sev_pci_init(void)
->  	if (sev_get_api_version())
->  		goto err;
->  
-> +	api_major = sev->api_major;
-> +	api_minor = sev->api_minor;
-> +	build     = sev->build;
-> +
->  	if (sev_update_firmware(sev->dev) == 0)
->  		sev_get_api_version();
->  
-> +	if (api_major != sev->api_major || api_minor != sev->api_minor ||
-> +	    build != sev->build)
-> +		dev_info(sev->dev, "SEV firmware updated from %d.%d.%d to %d.%d.%d\n",
-> +			 api_major, api_minor, build,
-> +			 sev->api_major, sev->api_minor, sev->build);
-> +
->  	/* Initialize the platform */
->  	args.probe = true;
->  	rc = sev_platform_init(&args);
-Reviewed-by: Ashish Kalra <ashish.kalra@amd.com>
+On 14.08.24 19:18, Rafael J. Wysocki wrote:
+> On Wed, Aug 14, 2024 at 12:50 AM Peter Kästle <peter@piie.net> wrote:
+>>
+>> On 13.08.24 16:27, Rafael J. Wysocki wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>>> After recent changes, the Bang-bang governor may not adjust the
+>>> initial configuration of cooling devices to the actual situation.
+>>>
+>>> Namely, if a cooling device bound to a certain trip point starts in
+>>> the "on" state and the thermal zone temperature is below the threshold
+>>> of that trip point, the trip point may never be crossed on the way up
+>>> in which case the state of the cooling device will never be adjusted
+>>> because the thermal core will never invoke the governor's
+>>> .trip_crossed() callback.  [Note that there is no issue if the zone
+>>> temperature is at the trip threshold or above it to start with because
+>>> .trip_crossed() will be invoked then to indicate the start of thermal
+>>> mitigation for the given trip.]
+>>>
+>>> To address this, add a .manage() callback to the Bang-bang governor
+>>> and use it to ensure that all of the thermal instances managed by the
+>>> governor have been initialized properly and the states of all of the
+>>> cooling devices involved have been adjusted to the current zone
+>>> temperature as appropriate.
+>>>
+>>> Fixes: 530c932bdf75 ("thermal: gov_bang_bang: Use .trip_crossed() instead of .throttle()")
+>>> Link: https://lore.kernel.org/linux-pm/1bfbbae5-42b0-4c7d-9544-e98855715294@piie.net/
+>>> Cc: 6.10+ <stable@vger.kernel.org> # 6.10+
+>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> oops, previously sent from wrong email address, here again from correct one...
+>> Acked-by: Peter Kästle <peter@piie.net>
+> 
+> No worries and thanks for the ACKs!
+> 
+> I gather that they mean that the changes work for you.
+
+Yes, successfully tested all my use cases and reviewed the code.  Thanks.
+Still working on the acerhdf cleanup, but this will be another patch series.
+
+> 
+>>> ---
+>>>    drivers/thermal/gov_bang_bang.c |   30 ++++++++++++++++++++++++++++++
+>>>    1 file changed, 30 insertions(+)
+>>>
+>>> Index: linux-pm/drivers/thermal/gov_bang_bang.c
+>>> ===================================================================
+>>> --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
+>>> +++ linux-pm/drivers/thermal/gov_bang_bang.c
+>>> @@ -26,6 +26,7 @@ static void bang_bang_set_instance_targe
+>>>         * when the trip is crossed on the way down.
+>>>         */
+>>>        instance->target = target;
+>>> +     instance->initialized = true;
+>>>
+>>>        dev_dbg(&instance->cdev->device, "target=%ld\n", instance->target);
+>>>
+>>> @@ -80,8 +81,37 @@ static void bang_bang_control(struct the
+>>>        }
+>>>    }
+>>>
+>>> +static void bang_bang_manage(struct thermal_zone_device *tz)
+>>> +{
+>>> +     const struct thermal_trip_desc *td;
+>>> +     struct thermal_instance *instance;
+>>> +
+>>> +     for_each_trip_desc(tz, td) {
+>>> +             const struct thermal_trip *trip = &td->trip;
+>>> +
+>>> +             if (tz->temperature >= td->threshold ||
+>>> +                 trip->temperature == THERMAL_TEMP_INVALID ||
+>>> +                 trip->type == THERMAL_TRIP_CRITICAL ||
+>>> +                 trip->type == THERMAL_TRIP_HOT)
+>>> +                     continue;
+>>> +
+>>> +             /*
+>>> +              * If the initial cooling device state is "on", but the zone
+>>> +              * temperature is not above the trip point, the core will not
+>>> +              * call bang_bang_control() until the zone temperature reaches
+>>> +              * the trip point temperature which may be never.  In those
+>>> +              * cases, set the initial state of the cooling device to 0.
+>>> +              */
+>>> +             list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+>>> +                     if (!instance->initialized && instance->trip == trip)
+>>> +                             bang_bang_set_instance_target(instance, 0);
+>>> +             }
+>>> +     }
+>>> +}
+>>> +
+>>>    static struct thermal_governor thermal_gov_bang_bang = {
+>>>        .name           = "bang_bang",
+>>>        .trip_crossed   = bang_bang_control,
+>>> +     .manage         = bang_bang_manage,
+>>>    };
+>>>    THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
+>>>
+>>>
+>>>
+>>
 
