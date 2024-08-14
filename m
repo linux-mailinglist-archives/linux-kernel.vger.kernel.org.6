@@ -1,347 +1,183 @@
-Return-Path: <linux-kernel+bounces-287035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ABB29521EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:18:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6619E9521EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7D52825F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:17:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5A01B20B1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416E01B013F;
-	Wed, 14 Aug 2024 18:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E31B1BD4FC;
+	Wed, 14 Aug 2024 18:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KDm2DmsZ"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012066.outbound.protection.outlook.com [52.101.66.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eHl9lX5k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D4D13CABC;
-	Wed, 14 Aug 2024 18:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723659470; cv=fail; b=uA3him6EOBb3Xz7M4/eizpSf9ult4WzvmMVz+zI7b8TA/YHy0Qkk8565G/UKoHcX5AD11TjTPGbKBdiBAAkyJus+5Q0lacqEn2J/6a+H28EHGpyEStJ2kugDyHeLzVOQEDubIzj5gzu9cg6eUc3I1BVtR2sMN6K7mSRR6a7AZa0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723659470; c=relaxed/simple;
-	bh=0OeenwlKPIgRkns/o9CqjgfaWgco9YJP5xQjuk5tpy4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OpkeAHiegwDQ2QcxmtFkyhqWxb6T/p4IWNbAYRd2rUEX7bigCrZbq8qcLISj1FvAQZ1yE4UMgCYxIw1T3Ox/cUkqN/he5gmjAJHK2b1ILmVqXIlld12QpMd11+cFipzkB+9PH+9vfvOKMMEjRNXRn7V+f3aKdPfCXtGDYWDh0Pc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KDm2DmsZ; arc=fail smtp.client-ip=52.101.66.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oZTnuarXv/U9NvIgD0XU/5fH8HZdeksXr3/TaTCwpJFAPSdFbyHTV2voc5FyheV/KrKrMPcDnCjq1a8OsgP0HTsoXBJOV/o9bxpiELGla7P8cbyVXOzzZUHetHkHJuXqvY8mvCeczuYRGhWjk3N53WexPoZyiXjge7Nb9X+GtDnDrxP0Xt6EMjNfexGZq06Hpf+dM7VjgBkWqD0yjFzCtSnBe+5buY8IxLKrBhm/D7iiPk6ESyVImJYK4uoQe3q08IVgZmcDoW4fVSPMTZl2Ye21A0D+Ptar/64HRoTRlAE/OKoZnRVROvGsN/J94IEmDziC8L8MQCE56Y+Hq6q2Rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T2/YRs/C/9uEJsAzER3w1y+EKOzV1Ne/AUPJxk/nbDQ=;
- b=xNp6YFjrmQOLFr+abKU1LzH/wAaC5lT/rx/n45HGiQ48JwmwrXu95jHp2Dtz0FymLATGR6YMc3+15TZt///Vdd8PzMjcMo9o1pCzgH6LsAZiGljKAE3od5lwU0Y3ECMRfQGb3hxh44YiBpBEjYPqslA3t8mcYMdoxvhOIx+uDu2zp1LfagVZ/WMbHUazCQeSKlQqsqB0p2ieyR2bSjwUgOP7AzRR7xY/dBbOxxjXkJpEE8o+kx1mAsoEGZ71A8Zh3/7cQcevS8nIaOrqVH9JrT+5drp5TKGdLMwLL5gaJmakdoWHCG5M/4LBGWcOWVyGN23nv/+DPIgoWpgh4ZVEfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T2/YRs/C/9uEJsAzER3w1y+EKOzV1Ne/AUPJxk/nbDQ=;
- b=KDm2DmsZXJApR1jWAjEXcXa2i7cP1z6blmPU3fFpdMR+fxxGZ2mNAZlG5FYNjXLzaNrSZEp+U1eUPeq8iORZBYZC5g3UcMD69RFhxAFGodGxMLGRUpqRnbmGdfDJWmsSO3doTi9YS0/JP33lQvJABTcZ1wdc6dvyc8QT+9kO0KsM/6tKFDFvKMUbQBY6sGvROCxluxnyWFA3a14uQLuN4ElUbYT3UBl2Pv2lOAKQPuEPnKz3yRkJkSSJAA+81uDjLly0q6aK3F5/BPL0u5x/NQK313GYTgInxvwdWoY+ljBApjomjQs9vpH37i7aLQ3LQUginZS6hFMnyj52XVFocA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI1PR04MB9956.eurprd04.prod.outlook.com (2603:10a6:800:1e1::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Wed, 14 Aug
- 2024 18:17:45 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
- 18:17:44 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-hwmon@vger.kernel.org (open list:HARDWARE MONITORING),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: hwmon/regulator: Convert ltc2978.txt to yaml
-Date: Wed, 14 Aug 2024 14:17:26 -0400
-Message-Id: <20240814181727.4030958-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY3PR04CA0018.namprd04.prod.outlook.com
- (2603:10b6:a03:217::23) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEA61B9B43
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723659661; cv=none; b=jsuIKha2xNFNt8UaX5ZS34bud/PUZt3Oi4OQX8dK3AFGIg0UmRx4Rb+OfAVEXXo1jhLTC8YOyGlqeibn0xk0O+lYSwC1PqxAHzwG3liABjQd5LIHxiEz1/im24D+GLZP7FV4i5kVEPWcNviOU2o5rJ2UEFUgYArcxwSiI1CC5JY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723659661; c=relaxed/simple;
+	bh=bHDECcYDp19s24S92USoh/2+lUH+B0wiz5SudmVmwDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fvGQ78Ht7WKNrNBQfZDl89RkFGl3HadMWXwU7de/0Yh0eq3el59RpYbW9mApgkbkDPF6/fHgZ6Hp7Fj5p7gy5dxrYNJ4gE2EYtsbymwGDY6xKZdbkefB0CUF1uyHZQvfZvuoNivngiSh7wRchYI7mxldEN9NHYbeCubqLJ/i5Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eHl9lX5k; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723659658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+MjWVAAwhnNERCURST++cb8Cda152SeJC1iT5p1BEFo=;
+	b=eHl9lX5kmVjXctna84JnzKu/a0638IeBHmWgL4vewhmROsrQSIJ4nZHBDuXOD4snUoAMUY
+	Mjt+gPuk9T+yrYFfFRYCjfHz7dK9R1Qxy1nTOrfqOKB4XTQIM4J9/FVib0elrkpC+PLha/
+	mgqPssZA+q82Do6vaFVLe5Wn8pyg7bs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-484-tiJCrZViPlm0vp4hdWi62g-1; Wed, 14 Aug 2024 14:20:57 -0400
+X-MC-Unique: tiJCrZViPlm0vp4hdWi62g-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-427ffa0c9c7so702645e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:20:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723659656; x=1724264456;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+MjWVAAwhnNERCURST++cb8Cda152SeJC1iT5p1BEFo=;
+        b=n52LsB3txyCIL9gm4YLMt4sCka5zyiej0iQSzcFgIrHRImfKcDOCePL95BTmNgkWtf
+         3rgyLzHN2A10xiLXGlSe0+LkJ7rrLJdpXLx8c5BotwvMoyp9L1s+zzuTzQbeKNNZ5CWd
+         gP1bapOGTVja0rIbQgDt1+dj3WOabKaYAqPRlvQLxIBCoNLkJfV9m+0yHS0iAElBUqaV
+         kJa0SpxR9reWKzMgwM8+liqo2J9gKEcQZVaX2h/LLjjPEHARMvudxNT3LYugQiT5tDWB
+         FMijKajdoO6GWPnYdvA5E0Yp4Rd7slpNfxAV+0TCCv03CE/ehcAnCsfuaoeOovT/fAzo
+         +gJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXb92s4f9TirY1RwH53wo0m8cLmrv6ofw4sCKxeCg0kIzAAmTC+3ACWxSQF0evFO8F46gu6K8BXai4yZYu4nb5dT6S5Jb1oNbfN7A44
+X-Gm-Message-State: AOJu0YyLNJNaRjwYc3jdrNL+P5sPnBVfqzf6kf7aQCmasE+48fyQMkyC
+	NyFojHyRtaMDcKuzy+cFTg1GWiP4PzHzveZrboaytBRrU4Rw10enntQU1TAjf1J0//ZF64WyPyk
+	s983qqD8OH30Rgl7G4jsxRjp/cPFanj8+DDNTSeXrcJy28icpFGzUj22g+Ho42w==
+X-Received: by 2002:a05:600c:4e4d:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-429dd25f730mr31814995e9.26.1723659656378;
+        Wed, 14 Aug 2024 11:20:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGz3KdZ+hT/xudOLocHBKfqm0syJCiNBfzo5Wx1XSl+fmJNsfepKFF8yyxqa5f0vgg3nSVZgA==
+X-Received: by 2002:a05:600c:4e4d:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-429dd25f730mr31814835e9.26.1723659655883;
+        Wed, 14 Aug 2024 11:20:55 -0700 (PDT)
+Received: from [192.168.10.47] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm62720955e9.1.2024.08.14.11.20.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 11:20:54 -0700 (PDT)
+Message-ID: <5de9e883-e93b-4f50-b926-ac25613fe0c4@redhat.com>
+Date: Wed, 14 Aug 2024 20:20:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB9956:EE_
-X-MS-Office365-Filtering-Correlation-Id: c51ce261-9609-4fbe-0c19-08dcbc8d64c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|1800799024|7416014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?M204OwyrJXUOROy9/GF1ujfZCB6vWasPoq8Yd4FjrWUaMk6FWI7A3Rnl296m?=
- =?us-ascii?Q?wS969ROACb4rWig0vQVpauqujsnOpIVzminNM5/LVyKjUvBT77kavH+xThhw?=
- =?us-ascii?Q?mTI8Q6pns/Ip69+MKgiHA3T6YiGuK8hJ5CnfGS2mAA2C6l2ZfBqeEOtCMdQi?=
- =?us-ascii?Q?2gCT04DKyGCHpGBr2nmc2pymqRrP7QT0W0nN/wwJa4Ftev19fb2UUaOGVG/F?=
- =?us-ascii?Q?a31/gnl4hNtefNduCnHYypP3pn+L93g0wowvxHjDNYYZOgfHbYXGYgBcbiOd?=
- =?us-ascii?Q?cZmTogLz4tNz+MiJCbOsQqUTXI2R1mcidxZfEa7WviP6oeOeGwesRDYWTzOV?=
- =?us-ascii?Q?LloUxxpwGV2H7C/+JcVO5uNH+rGaXclz5shTzi0b9mZP7SvxVO9ezRYWAVDk?=
- =?us-ascii?Q?nJ6Ls8bswi5It8uKrTjZqYVxS860ZlCbkxx4j7ec6CC0D7kTUhjv1997l+sr?=
- =?us-ascii?Q?WwY8Clnuw2EV+3Ub6qX8cWwcgbZDq2+3OCMquEn/OJOmsYjd2Mv3bugCu2VC?=
- =?us-ascii?Q?Q3SMHOmESgT/GMT6MWvDmEKkcwgl2+1phmdOSWFAlHxIBttO3/srMt2htGo+?=
- =?us-ascii?Q?AL3rC7rFiK5qBOyj+KV3Uw6uPEhg3bh68bKBmam29S/1NXbvmORCb4n8J5Tb?=
- =?us-ascii?Q?hiHcyYZZ9xL/DqoNg+b/8QWOpfvy3a/4tJOidSGC4qyXZDcl8lyJA5kXk5Vx?=
- =?us-ascii?Q?3342IBonhzgWRxsvobesv3IIwQeG+z6LPnLmYM4i9B+FLfP6zvmibuiVXvFg?=
- =?us-ascii?Q?tvDxhkuR1pIaYWd2VGMQHuA0K6/pHzDxU/2nQ1pyKrUlHcWOaw6Yu14vVAd8?=
- =?us-ascii?Q?ZS4cv+jp8+H1TyMllml8ayFvWrTABwV7o1ubX9+vZ1nlTJPBaU/ALqYcy3+S?=
- =?us-ascii?Q?J3OFq3OzeJaAGtjk80YBPya40Gg8Bfm3cJPU6p4upHkFTwPgJ5qEWKkmHRVi?=
- =?us-ascii?Q?n7yGOT89YLDnbInd90iFMHySSPoXL93zZI4XByaeZEw/fGStoZsIPeSM0vED?=
- =?us-ascii?Q?usIlMESeDZqFMdSmdvA3rAusvQkPePxE+5h1geW/NqQBnezO0FKmfB19clFy?=
- =?us-ascii?Q?t/gr7YbJUk6d+tm9acULCzJ72dAtKjcPqOgtpPcCssmP8TaoY5lQMkcS8a3I?=
- =?us-ascii?Q?OnjlJHYgjyPbIRn78i607RUimBVBV8b09GpkwQszP/ESfP7UGdLuLnUDLD9s?=
- =?us-ascii?Q?pRlF8nP1yCZ3YnCxY8I9ZaYt1/2p75ocRHgTQakOcx9HLbohjoiW1SBPpGjd?=
- =?us-ascii?Q?Z/n2SmKRxRaJEcRF32BlvmLlUi6a25JI0OYuejho3F+g9iWwvM3xOdnZvxVc?=
- =?us-ascii?Q?yW6YTTxhry0fM+Dxq+yuSsNa7wGpTcULKh4z6iWXC+ryey3zaAJluq8uzEr3?=
- =?us-ascii?Q?YtbjIf3DN5g7CzT9cqLRvqNtZ+LT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lYXoien00vtRmj2+dpJnS23OdGCUL19DrEdns3ECl2UbZNPNOzq8IViIkuXe?=
- =?us-ascii?Q?aV6O57WPjeF6Rd32Etk/+10sttR7h+WUsBhe17wHAuokUu+vKOoDPxoQTp1u?=
- =?us-ascii?Q?HM0aqflH11vjIOS4Z5N0e2udIJdi9uYn7ql61XCNtas8BmOkCPlsAiM5Wa/i?=
- =?us-ascii?Q?A9Tw3zPtMOfRG2mplg5sHd/nVlDX9OP8eQLkSqiQLnhseg5G8WmB+9oZAODI?=
- =?us-ascii?Q?qB7+28CG68szrW8FkJFSp6t/tx9QpHV8BZ8A7ac6HXNBoqTmVU3hqXFwv2DW?=
- =?us-ascii?Q?vT1qtIgzeegUX3G0Kwhue6NfTAt004FsOprBwY70UW2I1VJDb8XeePYqNGWm?=
- =?us-ascii?Q?eNvu134ANZfdcOrNRr+bpTILzlMTD0gdsNyiw9eHFt0Pv3s8oyUeulXZcFrY?=
- =?us-ascii?Q?lUnRNkFkqRelBmuk9rRbYNK5QEdeDsiRi+BCeW6GBAaQbs1eB2c4jfOX+kH5?=
- =?us-ascii?Q?7uyN7omFO93b2c+4Ty9l2mqioB0/y0aCry0W+SoyPjFxbfH2riBMTjUb7ARa?=
- =?us-ascii?Q?6S7WpxBj5VoKPQc/Xmjz+fxZRg5F0u7/sdkpftrptbvVOk+8XObbMazn9uAT?=
- =?us-ascii?Q?+Bw2by9qNBR+iTaWVshIcPN2c1m7vbMj/Ye9+bOHdj8Z/AM71Zmzxb0xg0EY?=
- =?us-ascii?Q?VB9BliNtymVvFjvh58RAc7yTFx/RFsImEdttoFZXPuo4c69ONcA08Q+NCQHG?=
- =?us-ascii?Q?hIynvlOhllYPMn4fn/WY9bgfm8D4KbDTls/q9r9duFDlyl4HCWxhoGbdF7d3?=
- =?us-ascii?Q?XjCIspn+Ep9HD6SmWDMSSIa1UteDdb6tFGem7QKfs4xxRe9rlIk08mI6/iOQ?=
- =?us-ascii?Q?WWUIKXhPB4Nkh5lBcVm+duW8PkadsULGBSobY4k/DURGK7szAQhMpA4vAsuO?=
- =?us-ascii?Q?v9Ec/VwJ28M6OjwquxBA7twu0u2lqSt+uJfxaUAdvFVuTfaaNxEa7ZxF6bWN?=
- =?us-ascii?Q?6clMB0NtAwz8cd3EOb/Dd1JTFqil6nGRK6K6DVI4WeVDBzlJluiH7CKIx3iT?=
- =?us-ascii?Q?iKjGcmqYrtDamudsmsm7vFYicwLnF6JcZj+A0BgdSVJcBwOEr6v6mHUkGcm6?=
- =?us-ascii?Q?VNyCnfIXvjl6TB+TVWdzO+Hmcl6F75w6fNuToOhG+91285aDJTGVqlwWan78?=
- =?us-ascii?Q?eQ/5px03dEWHN168IMspgQrOL62UoWkmdDUS6gnRZWQm43swjCGroyNULkJI?=
- =?us-ascii?Q?ZYy0654btiMq9eEVvs0aMVijXh7kUmtELUVIOo327EEpu0a9k6xbL5wGTpcO?=
- =?us-ascii?Q?s2EL1sGm3DHb5VmrLiCq1nzwmgkgoaxJ4xhHjX6ng8tWQD/6x1jBQWy2vIOb?=
- =?us-ascii?Q?qhaiRIwza6mW5rMdZwsKGvfu9wX28eY7J8nb6ZfMqZrcMmsJ7tXacltoaZYy?=
- =?us-ascii?Q?FrZTwKhe7XB5t7kw2qnoUKb4r26dYqWyQs5uBgq31jcRXc+qwy1sPRXhZjEG?=
- =?us-ascii?Q?JuREHJoHltiNEjF9Y2OEUWJYpeAQz9XLZj5iOT481/RtQQwQS9GYcavTXJmx?=
- =?us-ascii?Q?SpsjdkPMoPCoScR9U5Wx9RXDb4vg6nFY25paYVNWgYigFYycQKz4npPZqh7+?=
- =?us-ascii?Q?vsvf1Ug9G/1P8RKTIh5lWtHX4yLERbmn/izQ4ECZ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c51ce261-9609-4fbe-0c19-08dcbc8d64c2
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 18:17:44.8046
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nZ28i4EY3FvjT8KCsTCKaWNCkpKu4HOd7YLm2HVli6vQEicATKdkvLjSFXtZbbdfxchkQ5L8AhCOyFWGoz8OzA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9956
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 8/8] KVM: Enable virtualization at load/initialization
+ by default
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
+References: <20240608000639.3295768-1-seanjc@google.com>
+ <20240608000639.3295768-9-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240608000639.3295768-9-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Convert binding doc ltc2978.txt to yaml format.
-Additional change:
-- add i2c node.
-- basic it is regulator according to example, move it under regulator.
+On 6/8/24 02:06, Sean Christopherson wrote:
+> Enable virtualization when KVM loads by default, as doing so avoids the
+> potential runtime overhead associated with using the cpuhp framework to
+> enabling virtualization on each CPU.
 
-Fix below warning:
-arch/arm64/boot/dts/freescale/fsl-lx2160a-clearfog-cx.dtb: /soc/i2c@2000000/i2c-mux@77/i2c@2/regulator@5c:
-	failed to match any schema with compatible: ['lltc,ltc3882']
+Hah, should have read ahead to this point of the series.  Just squash 
+this in the earlier patch and call it a day; and place all the worrisome 
+remarks about possible latency along with documentation for the parameter.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- .../devicetree/bindings/hwmon/ltc2978.txt     | 62 ------------
- .../bindings/regulator/lltc,ltc2972.yaml      | 94 +++++++++++++++++++
- 2 files changed, 94 insertions(+), 62 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/hwmon/ltc2978.txt
- create mode 100644 Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml
+Oops, there's no documentation, :) please add it to 
+Documentation/admin-guide/kernel-parameters.txt in v2.
 
-diff --git a/Documentation/devicetree/bindings/hwmon/ltc2978.txt b/Documentation/devicetree/bindings/hwmon/ltc2978.txt
-deleted file mode 100644
-index 4e7f6215a4533..0000000000000
---- a/Documentation/devicetree/bindings/hwmon/ltc2978.txt
-+++ /dev/null
-@@ -1,62 +0,0 @@
--ltc2978
--
--Required properties:
--- compatible: should contain one of:
--  * "lltc,ltc2972"
--  * "lltc,ltc2974"
--  * "lltc,ltc2975"
--  * "lltc,ltc2977"
--  * "lltc,ltc2978"
--  * "lltc,ltc2979"
--  * "lltc,ltc2980"
--  * "lltc,ltc3880"
--  * "lltc,ltc3882"
--  * "lltc,ltc3883"
--  * "lltc,ltc3884"
--  * "lltc,ltc3886"
--  * "lltc,ltc3887"
--  * "lltc,ltc3889"
--  * "lltc,ltc7880"
--  * "lltc,ltm2987"
--  * "lltc,ltm4664"
--  * "lltc,ltm4675"
--  * "lltc,ltm4676"
--  * "lltc,ltm4677"
--  * "lltc,ltm4678"
--  * "lltc,ltm4680"
--  * "lltc,ltm4686"
--  * "lltc,ltm4700"
--- reg: I2C slave address
--
--Optional properties:
--- regulators: A node that houses a sub-node for each regulator controlled by
--  the device. Each sub-node is identified using the node's name, with valid
--  values listed below. The content of each sub-node is defined by the
--  standard binding for regulators; see regulator.txt.
--
--Valid names of regulators depend on number of supplies supported per device:
--  * ltc2972 vout0 - vout1
--  * ltc2974, ltc2975 : vout0 - vout3
--  * ltc2977, ltc2979, ltc2980, ltm2987 : vout0 - vout7
--  * ltc2978 : vout0 - vout7
--  * ltc3880, ltc3882, ltc3884, ltc3886, ltc3887, ltc3889 : vout0 - vout1
--  * ltc7880 : vout0 - vout1
--  * ltc3883 : vout0
--  * ltm4664 : vout0 - vout1
--  * ltm4675, ltm4676, ltm4677, ltm4678 : vout0 - vout1
--  * ltm4680, ltm4686 : vout0 - vout1
--  * ltm4700 : vout0 - vout1
--
--Example:
--ltc2978@5e {
--	compatible = "lltc,ltc2978";
--	reg = <0x5e>;
--	regulators {
--		vout0 {
--			regulator-name = "FPGA-2.5V";
--		};
--		vout2 {
--			regulator-name = "FPGA-1.5V";
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml b/Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml
-new file mode 100644
-index 0000000000000..20ae6152a2572
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/lltc,ltc2972.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/lltc,ltc2972.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ltc2978
-+
-+maintainers:
-+  - Jean Delvare <jdelvare@suse.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - lltc,ltc2972
-+      - lltc,ltc2974
-+      - lltc,ltc2975
-+      - lltc,ltc2977
-+      - lltc,ltc2978
-+      - lltc,ltc2979
-+      - lltc,ltc2980
-+      - lltc,ltc3880
-+      - lltc,ltc3882
-+      - lltc,ltc3883
-+      - lltc,ltc3884
-+      - lltc,ltc3886
-+      - lltc,ltc3887
-+      - lltc,ltc3889
-+      - lltc,ltc7880
-+      - lltc,ltm2987
-+      - lltc,ltm4664
-+      - lltc,ltm4675
-+      - lltc,ltm4676
-+      - lltc,ltm4677
-+      - lltc,ltm4678
-+      - lltc,ltm4680
-+      - lltc,ltm4686
-+      - lltc,ltm4700
-+
-+  reg:
-+    maxItems: 1
-+
-+  regulators:
-+    type: object
-+    description: |
-+      list of regulators provided by this controller.
-+      Valid names of regulators depend on number of supplies supported per device:
-+      * ltc2972 vout0 - vout1
-+      * ltc2974, ltc2975 : vout0 - vout3
-+      * ltc2977, ltc2979, ltc2980, ltm2987 : vout0 - vout7
-+      * ltc2978 : vout0 - vout7
-+      * ltc3880, ltc3882, ltc3884, ltc3886, ltc3887, ltc3889 : vout0 - vout1
-+      * ltc7880 : vout0 - vout1
-+      * ltc3883 : vout0
-+      * ltm4664 : vout0 - vout1
-+      * ltm4675, ltm4676, ltm4677, ltm4678 : vout0 - vout1
-+      * ltm4680, ltm4686 : vout0 - vout1
-+      * ltm4700 : vout0 - vout1
-+
-+    patternProperties:
-+      "^vout[0-7]$":
-+        $ref: regulator.yaml#
-+        type: object
-+        unevaluatedProperties: false
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        regulator@5e {
-+            compatible = "lltc,ltc2978";
-+            reg = <0x5e>;
-+
-+            regulators {
-+                vout0 {
-+                     regulator-name = "FPGA-2.5V";
-+                };
-+                vout2 {
-+                     regulator-name = "FPGA-1.5V";
-+                };
-+            };
-+        };
-+    };
-+
--- 
-2.34.1
+Thanks,
+
+Paolo
+
+> Prior to commit 10474ae8945c ("KVM: Activate Virtualization On Demand"),
+> KVM _unconditionally_ enabled virtualization during load, i.e. there's no
+> fundamental reason KVM needs to dynamically toggle virtualization.  These
+> days, the only known argument for not enabling virtualization is to allow
+> KVM to be autoloaded without blocking other out-of-tree hypervisors, and
+> such use cases can simply change the module param, e.g. via command line.
+> 
+> Note, the aforementioned commit also mentioned that enabling SVM (AMD's
+> virtualization extensions) can result in "using invalid TLB entries".
+> It's not clear whether the changelog was referring to a KVM bug, a CPU
+> bug, or something else entirely.  Regardless, leaving virtualization off
+> by default is not a robust "fix", as any protection provided is lost the
+> instant userspace creates the first VM.
+> 
+> Suggested-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   virt/kvm/kvm_main.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index e20189a89a64..1440c0a7c3c3 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -5495,7 +5495,7 @@ static struct miscdevice kvm_dev = {
+>   };
+>   
+>   #ifdef CONFIG_KVM_GENERIC_HARDWARE_ENABLING
+> -static bool enable_virt_at_load;
+> +static bool enable_virt_at_load = true;
+>   module_param(enable_virt_at_load, bool, 0444);
+>   
+>   __visible bool kvm_rebooting;
 
 
