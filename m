@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-285689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40F2951155
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:02:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6084A95115A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 417A5B2114E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0BB4285B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55BBB662;
-	Wed, 14 Aug 2024 01:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328FFD51A;
+	Wed, 14 Aug 2024 01:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UimQfpOT"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sloy322b"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B28EA953
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D411A953
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723597324; cv=none; b=nDafo+vqcrJp8oyztRfImo9fqK4SoSsHDXMJ2acHAXNnQCCNKfAU3S7Ql7ir7WtbD3+nKYYPxcPvoehxlM90pSamHcYyfN/Gcs8wT1/654lUiQ6rjrCZzEq9m4J3wr0l+oL3xHgiihPKdnJw7XVeLny/Aov//2c6SaIOeAWJsyo=
+	t=1723597426; cv=none; b=TUDqO48cSC5iwjPJ6tCi5Wgt5E+PfId7xkE+q6M/b7vui4uGxRgSXM9NNcvpxGtvYzJAB2/x8YmBWXet/1OQxS0TLgIf6Y6f85Ffgs3t8+ZMRTMRdcwctCLpyBq3ryQlOr+VddMGQxXpW/SbL8aRLPYxg7RZxU1N5Kl4hQ4SxuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723597324; c=relaxed/simple;
-	bh=o1zvuyQHQbhqIbsgFb5goXzprR6YoWbIlH2Qs2aZ4uA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mWbiPBkTecqZ0KJoJGyIrf66mlGEA+4ADpS9PlUxtPsU9fEjzrzGIj/OGz090DtDA/rcN9FO7XQMCChzl+Z313HjNkmg/w+kWELTQbHQZHP6HCwb5TDLO2wU1r1o7khkhYrWyCBMuqSILUY5qEBk5cb3yoPb7Wolxe7IXrAxzhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UimQfpOT; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723597311; bh=VxSJGLo3yAH3xdSnAqMQU9UizTBDY+DW2zMwtvtfbco=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UimQfpOT6wCmS9zleSn8VHKvg60TPa4HKn6euvLDl4CsT/U223RRx/90sdGL51tnP
-	 bYuH8TyK9awLQD3ukbREEx2YpzBq7uTBlSc02q6H3+qQ7B62rRfDsJJ+nEpSf1F9Bn
-	 4rw0vaq4bErqzmjMrqtd8+7Q6rUiJ7PWYl65GYOw=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 7119216; Wed, 14 Aug 2024 09:01:49 +0800
-X-QQ-mid: xmsmtpt1723597309tqfijnh9n
-Message-ID: <tencent_001B304B341B3D2501BAB0BB2733509E6A08@qq.com>
-X-QQ-XMAILINFO: MAehWEgsdgwGIgvypYFLTwKqARxrWX6UfNIHc1ZnVRviFwkZ/2xhBZkOKLAXHI
-	 nP9izsoqiqrEYjSKumoc1lQ2oGbr4+8jl4facJCwTDMW9/9FjXGi4dGXxU8h/QZ11mMVnh5gFCLM
-	 h1aDVS2PXOn7FFVGf9+2mc8tYXoenSnJMX1Jd0MBRmYWfivtLyR+f4HiXMXkl31fzt9LYlWNrnZM
-	 NS71nRrdgBxGNStJCnJWyQl52VKp5drAF4Bsmzhj0sNvet6W8zID50FfxDwswXQ9igwCiwbCTHEN
-	 C32+M0IwhMDYn1YKCBRDCDD9RasPZGpvfLlkRI+3M7iFuuKSeZhuplcFY/ptDZxh7nVIHnWfCky4
-	 5LcVRze06iTi0ruzmaQV3uNiE9Ad/ViGq9+CJDDzikYsJWEdYu1PcSRPyqVxnNsUBT6LKkW16Gx6
-	 sUz5aT1GxkxW4sUl3RUATVHE7KSj3l5cIxHLVnpy/oSnsyDLvnVfc3qii9gO4n5ALZssyIGSYWmu
-	 SYHwUBaFgF1wykUK/0AihwDvQavQ4UPgyUUc0AmUTVw0UuhQgC3sRtQJMs1kNIs4hJDQeXgxtaqx
-	 oq2G+dYPIiKObIBimBLOE3MyQ4PtzlnWoOSc+AlT/JiRofeDl+G5P6BJqpgLGkuWciGSq5F5qyZK
-	 JqkYSAOfBmUVMRZWiJ2VTQlxpzDzxV259qP1XGZ5vtRU3GbYSoGa9x4KkEeFceWVj0awWjRCbWQV
-	 yNssrWVSN6YRPMukkYsrndIk6ATdllnaC67xbX63TsbN4hsRXzDCriyyZ2DTRXJiwxgpef7RmqJI
-	 xmnGS8760cSRe5ALDtHEA+MsY1w2O8x4vWGvo0G0a+xa1NoX4VtqMXZc0P/ooptVrAG6g89V7Lfi
-	 lbGecUv0KGZgDmvnWlp7tNXGhWC9vr3xBUmolUhci29J0SlPHRyWiJ/F+yOQ0grfycjYjNW66aDM
-	 N/fdIwT3p3zXhmLSFUjg==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space in f2fs_commit_atomic_write
-Date: Wed, 14 Aug 2024 09:01:50 +0800
-X-OQ-MSGID: <20240814010149.515580-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000ebae95061f96be85@google.com>
-References: <000000000000ebae95061f96be85@google.com>
+	s=arc-20240116; t=1723597426; c=relaxed/simple;
+	bh=/l0rXDlvw7NhjD2gM02gSHjD7vmJYerckruLlAuFmaE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gqReJWAYXB+D9maWEuO2+6XdEPEF7Y5H7xQMyA3NrukqjS/3xhARzsu8Z572naUoR/G2GSYBImPgFMvpSpRZ9o3+fT5lsu6LKSX3vM3iL00Sl04JXy1MTuxnDB3SljLti8D7x2zbMSHeg+UuZtiP49HWsAKo9HzIFrAB/ZaI1jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sloy322b; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc5651e888so54323935ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723597424; x=1724202224; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6GXHPkr3SYkJk/BjQwBdG1N86V9MTczoF7nIyPuYFg=;
+        b=sloy322bjPljuN3JUyLo9gt8trnhqIIjr3GV/47Hde1uxkYEhLzWStZsYHSyZEYfid
+         Y2awcIQ4KcVRzEoErYf90Q2RfMap6l6CJamS/gUJ2uWCBKS+Fp/ZXJhjZ8ELTzFOshqe
+         lVUKqU8vOVf5Y7NjlbbUFtvyio3Uc5Kqbq6wEOQ2eJikVK+o8Yr7iOhnE+Lgv+jCbruT
+         1+rVwpXvESAYXTzrkSEfekahRrShqkYKYT6Bn5I9tiValjFo0U8mngoFmIfJKAPETbpA
+         9/n8K8Zx/Pzq9xA2CyGrB3OIXcKBWNAGt16j9d0tnyfBXbSwi3+waNr6xRkfg2tZ8RW8
+         YKRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723597424; x=1724202224;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6GXHPkr3SYkJk/BjQwBdG1N86V9MTczoF7nIyPuYFg=;
+        b=t0cYmOjEX5mzXMVHzfCdBqNJYCVJ4IBO3z9LDPpv67T4Bi9p+7M45O+lKEKuX0dM09
+         wHxNoEo3uwa02dgYU5OCYiFcoL52pONMpG3g07WaQSEUyDZen7bksaBx1dq8OsBb2YwN
+         CIRNJT5BlPVaN8QGqzJJosagbqSvPjw0puTf9LAdRcejTe8iPLCXjJReUM+jv8lTjpQU
+         qC6UJ94lo2IT1dGoKA+SVlSnU/r6XyFiQzNNBr2UZTMCC0UPNEu15Sc6ReGjZ1mVYBOa
+         T3ywyDzW7O3H7oj70PqOwMZMd0awxgKeyQmPDuB9GWMV+Grd6OiLiMnrEvBwplQMplVk
+         lBhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZOLNqcooqW2rlNb5p4WMFL9l8r6K8uIxLuKMiMm6twu7MTrHDZBEAI4Z9BUBhE3zMZslfOyxzZU5ySs54lAI3nI+W1kOE1a+sKrc2
+X-Gm-Message-State: AOJu0YwxonZVuDDs4Lv1ZwnAbwIVHCx/Ip/sRAa4WY65Y32aG0tQLO1y
+	q1zpVD2V9pUukqlJQkCipu0c1/g7Td9gSjqQNNVXsqcaxed+JLY7dfQYhtGsdVUD9hh7mWybbRn
+	k0Q==
+X-Google-Smtp-Source: AGHT+IFp+zkpt1P27X4CXq7C4fu6+sC7L/9JCX5CTa8notXBHyrfBfo5f7Po9lUup6Tm8E2ohsfwgwS1+Wk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:da8b:b0:1fd:6529:7443 with SMTP id
+ d9443c01a7336-201d64b4f7bmr898275ad.11.1723597424379; Tue, 13 Aug 2024
+ 18:03:44 -0700 (PDT)
+Date: Tue, 13 Aug 2024 18:03:42 -0700
+In-Reply-To: <gsntv8049obx.fsf@coltonlewis-kvm.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <ZruZjhSRqo7Zx_1r@google.com> <gsntv8049obx.fsf@coltonlewis-kvm.c.googlers.com>
+Message-ID: <ZrwCbsBWf3ZxAH3d@google.com>
+Subject: Re: [PATCH 0/6] Extend pmu_counters_test to AMD CPUs
+From: Sean Christopherson <seanjc@google.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, mizhang@google.com, ljr.kernel@gmail.com, 
+	jmattson@google.com, aaronlewis@google.com, pbonzini@redhat.com, 
+	shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-unlock i_gc_rwsem[WRITE] before quiting f2fs_commit_atomic_write
+On Tue, Aug 13, 2024, Colton Lewis wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> 
+> > On Tue, Aug 13, 2024, Colton Lewis wrote:
+> > > (I was positive I had sent this already, but I couldn't find it on the
+> > > mailing list to reply to and ask for reviews.)
+> 
+> > You did[*], it's sitting in my todo folder.  Two things.
+> 
+> > 1. Err on the side of caution when potentially resending, and tag
+> > everything
+> > RESEND.  Someone seeing a RESEND version without having seen the
+> > original version
+> > is no big deal.  But someone seeing two copies of the same
+> > patches/emails can get
+> > quite confusing.
+> 
+> Sorry for jumping the gun. I couldn't find the original patches in my
+> email or on the (wrong) list and panicked.
 
-Fixes: 7566a155c666 ("f2fs: atomic: fix to not allow GC to pollute atomic_file")
-Reported-by: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
+Ha, no worries.  FWIW, I highly recommend using lore if you can't (quickly) find
+something in your own mailbox.  If it hit a tracked list, lore will have it.  And
+if you use our corporate mail, the retention policy is 18 months unless you go
+out of your way to tag mails to be kept, i.e. lore is more trustworthy in the
+long run.
 
-correct git tree to linux-next
-
-#syz test: linux-next 9e6869691724
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 741e46f9d0fd..a43054ab0cf1 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -389,13 +389,13 @@ int f2fs_commit_atomic_write(struct inode *inode)
- 
- 	err = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	/* writeback GCing page of cow_inode */
- 	err = filemap_write_and_wait_range(fi->cow_inode->i_mapping,
- 							0, LLONG_MAX);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	filemap_invalidate_lock(inode->i_mapping);
- 
-@@ -407,6 +407,7 @@ int f2fs_commit_atomic_write(struct inode *inode)
- 	f2fs_unlock_op(sbi);
- 
- 	filemap_invalidate_unlock(inode->i_mapping);
-+out:
- 	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
- 
- 	return err;
-
+https://lore.kernel.org/all/?q=f:coltonlewis@google.com
 
