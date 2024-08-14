@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-285907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD294951420
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF61951422
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C471287400
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C76287474
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4745136982;
-	Wed, 14 Aug 2024 06:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OfrGxKJ9"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E6A7345B;
+	Wed, 14 Aug 2024 06:01:14 +0000 (UTC)
+Received: from sonata.ens-lyon.org (domu-toccata.ens-lyon.fr [140.77.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFFD746E;
-	Wed, 14 Aug 2024 06:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6670349654
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.77.166.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723615241; cv=none; b=NCFMgAOZF4TDb49n/f8Sj2mdyLZ1KGgHHpUpkJyc1faHPD6mbDPzno/rxFBnejs/BemsPKBytJMyLo9VkMnP/Ux68rFitdw7LkOCV955aeHYGh1SmIWWkzp7M5xGyyDAesNrdmgrG+xtbGzXcYZR15atBQmT6udndpyEruYuUc0=
+	t=1723615274; cv=none; b=QA4vx2Z+vO5hucRiJbuWtNzhyGtozfiZBWgoVqgMWNBvIOo9OeudaoI1jhKU1FKqZhP0GpkF0z6FaB6XJWnXxMmnc0hH06dSmrdDx/c4RAENxWwgvms7n7k1EdUZ8odZw4jq8qdQT7+0DEJkLcnskPT6D7/p8a9OjYttRVgJ/to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723615241; c=relaxed/simple;
-	bh=FOPl2havV4Ul4eVn3v9RX0fnwuQx/e7cxI411HDaxDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o+vA6NQnox3UwXsAoeQCaxf37IF0k4D9Gca0CjLiQb2GPmf+k/RS0BVCr1LJ38gdit8i7Ib+kf1cljvCOCUmIAR4ZjD8N7fF+pU4n6VyTug5p1NuckAXpGy+6Z/iNvn/mZlXIdnX5NQOio9RBTCIcvb4OViXxl33J4uXijuJeKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OfrGxKJ9; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723615235; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kuNwCNNAn1z+ogm4NogyBe1/xX19uPpstxB17dEWlzk=;
-	b=OfrGxKJ9bkKD5J4cpTDhO8JiTscAPTFHmxb4906vM4meL1n65q92stvIqrOBXn8HodlFHtYPgtlYvAN7DSk7u5qPA1BMJld+YC7MpcQodeBxCTRlqd2GNSHl/z+7oS+eutIk1yh2K2UtUKfW2bDYvNLi0A+P/s8C/NZr0GLj9Oc=
-Received: from 30.221.148.210(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCr9oFT_1723615233)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Aug 2024 14:00:34 +0800
-Message-ID: <4eeb32b7-d750-4c39-87df-43fd8365f163@linux.alibaba.com>
-Date: Wed, 14 Aug 2024 14:00:32 +0800
+	s=arc-20240116; t=1723615274; c=relaxed/simple;
+	bh=JyUiIuGL811vrLgwRypRNjMAq0W0dJB5i60p3WYp9TA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfqX1iuKpxoqOC9kYZ3J3v5D3yomB0nZntU1gNyVmE+qlUPOXXPrXhoce7oc3MJOaKlAc69weXkQnHZPsDe6pwl62kZ0DCnAw1UuDTqpcgHPvTcr1upSVBP8QOnJPK6zzYVmfwA//VDczh/igO5gGayFkm3VxCuEjbv4Gfm/zEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org; arc=none smtp.client-ip=140.77.166.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org
+Received: from localhost (localhost [127.0.0.1])
+	by sonata.ens-lyon.org (Postfix) with ESMTP id 93568A03A1;
+	Wed, 14 Aug 2024 08:01:10 +0200 (CEST)
+Received: from sonata.ens-lyon.org ([127.0.0.1])
+	by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id E1_HODT1NJdd; Wed, 14 Aug 2024 08:01:10 +0200 (CEST)
+Received: from begin.home (apoitiers-658-1-118-253.w92-162.abo.wanadoo.fr [92.162.65.253])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by sonata.ens-lyon.org (Postfix) with ESMTPSA id 536CAA039F;
+	Wed, 14 Aug 2024 08:01:10 +0200 (CEST)
+Received: from samy by begin.home with local (Exim 4.98)
+	(envelope-from <samuel.thibault@ens-lyon.org>)
+	id 1se74H-000000072JD-3ON0;
+	Wed, 14 Aug 2024 08:01:09 +0200
+Date: Wed, 14 Aug 2024 08:01:09 +0200
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: bajing <bajing@cmss.chinamobile.com>
+Cc: w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca,
+	nicolas@fjasle.eu, masahiroy@kernel.org, speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] speakup: genmap: initialization the variable
+Message-ID: <20240814060109.sh34huizfjramdce@begin>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	bajing <bajing@cmss.chinamobile.com>, w.d.hubbs@gmail.com,
+	chris@the-brannons.com, kirk@reisers.ca, nicolas@fjasle.eu,
+	masahiroy@kernel.org, speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org
+References: <20240814030243.2138-1-bajing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in
- txopt_get
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com,
- gbayer@linux.ibm.com, guwen@linux.alibaba.com, jaka@linux.ibm.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com,
- syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com,
- tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-References: <56255393-cae8-4cdf-9c91-b8ddf0bd2de2@linux.alibaba.com>
- <20240814035812.220388-1-aha310510@gmail.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20240814035812.220388-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240814030243.2138-1-bajing@cmss.chinamobile.com>
+Organization: I am not organized
+User-Agent: NeoMutt/20170609 (1.8.3)
 
+bajing, le mer. 14 août 2024 11:02:43 +0800, a ecrit:
+> The variable lc is not initialized before use, so the initialization operation on it is added.
+> 
+> Signed-off-by: bajing <bajing@cmss.chinamobile.com>
+> ---
+>  drivers/accessibility/speakup/genmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/accessibility/speakup/genmap.c b/drivers/accessibility/speakup/genmap.c
+> index 0882bab10fb8..a1ea0ce45c20 100644
+> --- a/drivers/accessibility/speakup/genmap.c
+> +++ b/drivers/accessibility/speakup/genmap.c
+> @@ -48,7 +48,7 @@ static int get_shift_value(int state)
+>  int
+>  main(int argc, char *argv[])
+>  {
+> -	int value, shift_state, i, spk_val = 0, lock_val = 0;
+> +	int value, shift_state, i, lc, spk_val = 0, lock_val = 0;
 
+You have already sent a patch that does drop the use before
+initialization.
 
-On 8/14/24 11:58 AM, Jeongjun Park wrote:
-> Because clcsk_*, like clcsock, is initialized during the smc init process,
-> the code was moved to prevent clcsk_* from having an address like
-> inet_sk(sk)->pinet6, thereby preventing the previously initialized values
-> ​​from being tampered with.
+Samuel
 
-I don't agree with your approach, but I finally got the problem you 
-described. In fact, the issue here is that smc_sock should also be an 
-inet_sock, whereas currently it's just a sock. Therefore, the best 
-solution would be to embed an inet_sock within smc_sock rather than 
-performing this movement as you suggested.
+>  	int max_key_used = 0, num_keys_used = 0;
+>  	struct st_key *this;
+>  	struct st_key_init *p_init;
+> -- 
+> 2.33.0
+> 
+> 
+> 
 
-struct smc_sock {               /* smc sock container */
-     union {
-         struct sock         sk;
-         struct inet_sock    inet;
-     };
-
-     ...
-
-Thanks.
-D. Wythe
-
-
->
-> Additionally, if you don't need alignment in smc_inet6_prot , I'll modify
-> the patch to only add the necessary code without alignment.
->
-> Regards,
-> Jeongjun Park
-
-
->>
->>> Also, regarding alignment, it's okay for me whether it's aligned or
->>> not，But I checked the styles of other types of
->>> structures and did not strictly require alignment, so I now feel that
->>> there is no need to
->>> modify so much to do alignment.
->>>
->>> D. Wythe
->>
->>
->>>>>> +
->>>>>>     static struct proto smc_inet6_prot = {
->>>>>> -     .name           = "INET6_SMC",
->>>>>> -     .owner          = THIS_MODULE,
->>>>>> -     .init           = smc_inet_init_sock,
->>>>>> -     .hash           = smc_hash_sk,
->>>>>> -     .unhash         = smc_unhash_sk,
->>>>>> -     .release_cb     = smc_release_cb,
->>>>>> -     .obj_size       = sizeof(struct smc_sock),
->>>>>> -     .h.smc_hash     = &smc_v6_hashinfo,
->>>>>> -     .slab_flags     = SLAB_TYPESAFE_BY_RCU,
->>>>>> +     .name                           = "INET6_SMC",
->>>>>> +     .owner                          = THIS_MODULE,
->>>>>> +     .init                           = smc_inet_init_sock,
->>>>>> +     .hash                           = smc_hash_sk,
->>>>>> +     .unhash                         = smc_unhash_sk,
->>>>>> +     .release_cb                     = smc_release_cb,
->>>>>> +     .obj_size                       = sizeof(struct smc6_sock),
->>>>>> +     .h.smc_hash                     = &smc_v6_hashinfo,
->>>>>> +     .slab_flags                     = SLAB_TYPESAFE_BY_RCU,
->>>>>> +     .ipv6_pinfo_offset              = offsetof(struct smc6_sock,
->>>>>> np),
->>>>>>     };
->>>>>>
->>>>>>     static const struct proto_ops smc_inet6_stream_ops = {
->>>>>> --
-
+-- 
+Samuel
+ Cliquez sur le lien qui suit dans ce mail...vous n'avez plus qu'a vous
+ inscrire pour gagner de l'argent en restant connecte....et puis faites
+ passer le message et vous gagnerez encore plus d'argent ...
+ -+- AC in NPC : Neuneu a rencontré le Pere Noël -+-
 
