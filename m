@@ -1,81 +1,150 @@
-Return-Path: <linux-kernel+bounces-285657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006A99510E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:11:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D0B9510E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA131F2312F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFB31C2182B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F94A3B;
-	Wed, 14 Aug 2024 00:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE50C639;
+	Wed, 14 Aug 2024 00:11:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IHoY/9Zr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9+H+Ybx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AC5620
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150A53C36;
+	Wed, 14 Aug 2024 00:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723594257; cv=none; b=V31xXrw8PqsV5UpWCsFH11fTojunjbhLK3pMznr48gHxrdzrky6FYhpqKAkq5oIJPEy2fQl4pda+wGEvC/bP17FEWFlRqF+X+yo1zVDGpeJQicNS/DXEGq5qeHoIVS9Ywk1rjaDUH14PIB+ybjbTUFcN7ISS9vx3mFzBcb6umQA=
+	t=1723594279; cv=none; b=jlRtlOyh5snSgpMz+QR28ZHC8iVMhsKcSjC9N6MdOoB0PQsjTmkhXH4TSrLpBouZgHrmRw3acJNNWrp8u4mDhV6/lfteRCwFWavfay4Ik7dlPdFob7h8uFGlimM7CP1KpJz5GhbNRDRnIvmaqdijZjYyqHrHYkRA/jTcsThzyP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723594257; c=relaxed/simple;
-	bh=c7r5OUmvaJQiZogtT5yLK0btcxbn7sNq/ZTe8Wov/6c=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=EILnJMWxgcZ3F0AVzNdOIJT86profcI+S0OlPmbIEaVXZNaMCECXH5zcrbb2r7Fj0DTjqg9S14SGkrM1q659GaC52HsRTd8PPe6o6+HKuK7rjpBm8flOdIHX3wYoq0vbco46dMrLHzIDvINOx6Zt/0P/MGIB/fPg41zw2MNrAJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IHoY/9Zr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5883BC32782;
-	Wed, 14 Aug 2024 00:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1723594256;
-	bh=c7r5OUmvaJQiZogtT5yLK0btcxbn7sNq/ZTe8Wov/6c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IHoY/9ZrpQJOK/DT41cyEvhebsBWlOij3Ygq4bBZKodxAgT6oUW2b/vDDa6zk8qOu
-	 fpQPKjnhIQqiK1cGtDaHVQkhmBjQ5foFuCgAj3UTUFsQED4ojiCah5e3uI7salS6O9
-	 Jw0iF3qWL7RATbT07B0ik4z4oV4DCHcA79KmX8fE=
-Date: Tue, 13 Aug 2024 17:10:55 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Florian Rommel <mail@florommel.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Jason Wessel
- <jason.wessel@windriver.com>, Daniel Thompson <daniel.thompson@linaro.org>,
- Douglas Anderson <dianders@chromium.org>, Lorena Kretzschmar
- <qy15sije@cip.cs.fau.de>, Stefan Saecherl <stefan.saecherl@fau.de>, Peter
- Zijlstra <peterz@infradead.org>, Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>, Randy Dunlap <rdunlap@infradead.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Geert Uytterhoeven
- <geert+renesas@glider.be>, kgdb-bugreport@lists.sourceforge.net,
- x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] kgdb: x86: fix breakpoint removal problems
-Message-Id: <20240813171055.f8805c1db539dfa18e80026b@linux-foundation.org>
-In-Reply-To: <20240811232208.234261-1-mail@florommel.de>
-References: <20240811232208.234261-1-mail@florommel.de>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723594279; c=relaxed/simple;
+	bh=GQowyyBX29diRCIhPzKlyz5n1DfuJvuOy3OTOG0gPis=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=s6T7GoYJI2+lrlCJ6fefAa2LuWv3/YEWdUlyGcZyf/Cz/GFuYloik+UEUQD0cZiSzwllf0ELpLYYZodcHRUtbyrj7A+2MBcI9cE1+Hzsq9a/fTvW/pJ6IKWhNCGCoMBMrfLbyr9f10R/Vk8mjgN1IB5nCBmW2z6doHPHgisVMVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9+H+Ybx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE1DC32782;
+	Wed, 14 Aug 2024 00:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723594278;
+	bh=GQowyyBX29diRCIhPzKlyz5n1DfuJvuOy3OTOG0gPis=;
+	h=From:To:Cc:Subject:Date:From;
+	b=I9+H+YbxTUPSfcLABCNWx/WtoY1AI1osVQh+yrNP5n0wj2Kopkb318lW9+YX6xE2S
+	 6Jz1puFpvuSiCVAyMywNloUdOlrBXcuQ4d5rmU08s5WCpDWaw9EP6yCcnxNL8S7s/y
+	 sxg3geYm4x0UYwxyUhUm4O8evpGZ2v3Hl4lR2uzK7gSDY5iLiUDZVsrTzjG10aIEH9
+	 4Gn4v5fydFAZa1wUvqpsc3oA41/CGguYb9brys+nueCLqT77UorQ5r8CkeXQvlj7P8
+	 +gAGsYQSdeg9FbNvfJn9KgEBr7LfG+2JV9lL1miZHQprU4UFm0OMzvr/9LBWrD8tXO
+	 FGcr2V/xVYD/A==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Tom Zanussi <zanussi@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v3 0/3] tracing: Support poll on event hist file
+Date: Wed, 14 Aug 2024 09:11:13 +0900
+Message-Id: <172359427367.323666.6446548762874507863.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 12 Aug 2024 01:22:06 +0200 Florian Rommel <mail@florommel.de> wrote:
+Hi,
 
-> This series fixes two problems with KGDB on x86 concerning the removal
-> of breakpoints, causing the kernel to hang.  Note that breakpoint
-> removal is not only performed when explicitly deleting a breakpoint,
-> but also happens before continuing execution or single stepping.
+Here is the v3 patch to support polling on event 'hist' file.
+The previous version is here;
 
-Neat.  It would be nice to fix earlier kernels; for that it is
-desirable to identify a Fixes: target.  From a quick look it appears
-this issue is more than a decade old, in which case I don't believe a
-Fixes: is needed - our request becomes "please backport to everything".
+https://lore.kernel.org/all/171998475175.54594.7244942110355338359.stgit@devnote2/
 
+This version is rebased on the v6.11-rc3.
+
+Background
+----------
+There has been interest in allowing user programs to monitor kernel
+events in real time. Ftrace provides `trace_pipe` interface to wait
+on events in the ring buffer, but it is needed to wait until filling
+up a page with events in the ring buffer. We can also peek the
+`trace` file periodically, but that is inefficient way to monitor
+a randomely happening event.
+
+Overview
+--------
+This patch set allows user to `poll`(or `select`, `epoll`) on event
+histogram interface. As you know each event has its own `hist` file
+which shows histograms generated by trigger action. So user can set
+a new hist trigger on any event you want to monitor, and poll on the
+`hist` file until it is updated.
+
+There are 2 poll events are supported, POLLIN and POLLPRI. POLLIN
+means that there are any readable update on `hist` file and this
+event will be flashed only when you call read(). So, this is
+useful if you want to read the histogram periodically.
+The other POLLPRI event is for monitoring trace event. Like the
+POLLIN, this will be returned when the histogram is updated, but
+you don't need to read() the file and use poll() again.
+
+Note that this waits for histogram update (not event arrival), thus
+you must set a histogram on the event at first.
+
+Usage
+-----
+Here is an example usage:
+
+----
+TRACEFS=/sys/kernel/tracing
+EVENT=$TRACEFS/events/sched/sched_process_free
+
+# setup histogram trigger and enable event
+echo "hist:key=comm" >> $EVENT/trigger
+echo 1 > $EVENT/enable
+
+# Wait for update
+poll pri $EVENT/hist
+
+# Event arrived.
+echo "process free event is comming"
+tail $TRACEFS/trace
+----
+
+The 'poll' command is in the selftest patch.
+
+You can take this series also from here;
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/event-hist-poll
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (3):
+      tracing/hist: Add poll(POLLIN) support on hist file
+      tracing/hist: Support POLLPRI event for poll on histogram
+      selftests/tracing: Add hist poll() support test
+
+
+ include/linux/trace_events.h                       |    5 +
+ kernel/trace/trace_events.c                        |   18 ++++
+ kernel/trace/trace_events_hist.c                   |  101 +++++++++++++++++++-
+ tools/testing/selftests/ftrace/Makefile            |    2 
+ tools/testing/selftests/ftrace/poll.c              |   62 ++++++++++++
+ .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 +++++++++++++++
+ 6 files changed, 259 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/poll.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
