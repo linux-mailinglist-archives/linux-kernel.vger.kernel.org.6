@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-285937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB2195147E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:26:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05DA295147F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 883BBB2605D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:26:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD861286D32
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485A8131E2D;
-	Wed, 14 Aug 2024 06:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2241E13A41F;
+	Wed, 14 Aug 2024 06:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="USszB5Ee"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LHeMddkM"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB811F94D;
-	Wed, 14 Aug 2024 06:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF9A137C37
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723616795; cv=none; b=Z4et+mwe/ZeJen3LUQHrrDfkEnDLPEoviIO2J9IMDOebXt+bJLA9plC4j/JcnoWNpNJrK68p7MG32yANs2euQJ19UeQPtG6m0EpepQeJoND8UCjdSjDNoeEup453uDi4z4/mYWiOO2ym4mYE53AVaPK+1a2+rF/Y0+LiOy/Rrxs=
+	t=1723616798; cv=none; b=HhTW8xqAQ4Nx9IGS2zXx8PLbJ/FFkGe5TFZOrRARq2FQL/TZ3qznILTKNHw1OAVc5eUItC8jxB6EbUL8ND5T372OCWgy2GXKZZfqpZPfvvm8OVBsBF7OpnYmvRxzS/+hIfpzkzICCTSkCxg/aneWmxTpLojwg0nNo4vx/J3TYUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723616795; c=relaxed/simple;
-	bh=c/B3zpodqQDg3Gm46P+OGE0a77kg/8gf/IGqyQqdCbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KsycB8MX6uzqfNrhY1rQlB3uOv5sIdDEx5IGNcJeqJYJ7/OJvlQ7SNvDj66iVKOi1+tumH92ouFtZKFYoB0+NTNLgeQmNbC0pbWLlwN5ioUHlKzxUqtohyTH7m2TEBrjQsG9HmL252izOIvOBtX+4OiPStoiCubq23PlvBIYChU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=USszB5Ee; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47E6Q55e083647;
-	Wed, 14 Aug 2024 01:26:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723616765;
-	bh=TV4YYPMGzdKwvmV4+H2ipDGrWg6oUeN1Y/HB2RJrHLU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=USszB5EerDqLAd8bKn+vrAU0auLqrZ2UsqL9IeLDcOvb+IrSUwxizd3ZRYj5eQL8M
-	 CQCfCL52dd/tvD21aOBk/5ODt6eNpawGgTTeQVwgxV03L5Bkj3NnCIKCgVHYH1eNkD
-	 yi+A8We0wmZUSceS4UVOh7HHscEQrBkp5RDeK52A=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47E6Q5wk003091
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 14 Aug 2024 01:26:05 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
- Aug 2024 01:26:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 14 Aug 2024 01:26:05 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47E6PvMF073293;
-	Wed, 14 Aug 2024 01:25:58 -0500
-Message-ID: <69043091-dd59-4b7a-aae0-34f9695b378d@ti.com>
-Date: Wed, 14 Aug 2024 11:55:57 +0530
+	s=arc-20240116; t=1723616798; c=relaxed/simple;
+	bh=i0S3J64BQdkxrV4gx//0PluX+Y3MsgQD+V/K3f34oQY=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ho29q1wKzb/9OJ3yOJoq60w95v8z2j+5T13RYS4J/tJUmiRurkl+FoJhEvQxRg8gJu2jP/o7T4kH74VhBC7p2r62J/JPio6F0z8tOzHZNhDXWscUyJxk14FmJ6iWagIaqNuhWspUl7TqL8rPojZLmefqq5/GkycpskpenuTqOeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LHeMddkM; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-709340f1cb1so1929651a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 23:26:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1723616795; x=1724221595; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wwc1cv5BO+5rtWkwftD9LNj15+/yJ4czUcQ6aWmdEAM=;
+        b=LHeMddkMsisqprRo5SFbZM1H9WmG90qze2cDfryX8irKaOx4M/+cX4CXDau38yhH3G
+         zYIeXLKxp+CfG+XNXWlTbew78noiMXS8Jwrpfg9L1uMfeROkaFIBiCFhFG1yAzsXK1mJ
+         u9e+SzMlAzTM3mkzMtavSLvVW/BkA63owNRMfeD4i/8NyzdatbNq4J0/fC0IkifFH/98
+         umXsHaFnLV84NfDZlJr0xtVHS5nPHmtwojgkwiCNrj277xCqldFMz6TnZ2LS7oR3zyRN
+         zAq43G4rv9p8mSifXGhJp2e1Hnei/cLod1oafNZjoww+F/k/21pzYGLySNl/sGoJaqUc
+         gecA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723616795; x=1724221595;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wwc1cv5BO+5rtWkwftD9LNj15+/yJ4czUcQ6aWmdEAM=;
+        b=Wa2W56PhqTmLBV9+T9WXj1DTfQ06SegcPLGBo5JniBTdJkldkOBFONzeAnjSAKGKgC
+         5wi91/MT2KfvEJEJpw0XRpyhWPwmsDm90+90zYGNzBVut2//FsV03IZSlOh1neoKpqxG
+         ewA7ftX7hbUCEhRS6FmwTmXp6TG9n9Siq/r1iMxzd4by/V6Zub4GgHasBVRQyqfIdGg6
+         LDDIXpQe0HhZdWGTiA/YFWun+0ss22jCvM1yuzEkQCrF7++5ek1IuKHR7LLIMEgpVHug
+         dtvMHI/V6yu5MSH2yjW3RqVhRW9tIrH8cRMhVj42jcOIBXNSy9J23/mrd4fT6XK1sfO/
+         96KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjxfLiI15CydnjnU/t27QzqCwoVl7lt3QQrcvZR5G2Wp9QrC0HfolzUUKBEXs+oO5/XzB1UVdlkp9v05/Nr/vrbDorMa7gjc3Y2IQN
+X-Gm-Message-State: AOJu0YzoNaswrY2jmaZ8IhGzUPM3PGCHJc3aUvm7GxPjdP2HwBUx5ooO
+	AoFYPpx/EMqec8gIaw9Jz80lSdw96Aj0KnHD1/j9lKwoajZL2xe2DyeR449NKL4=
+X-Google-Smtp-Source: AGHT+IHhAfduYALo1MbVjnUfBA1qOzcpqiHc4wEVXsHl2UAtIqJNFPxWlDnMgRPWfrE1Cw0gPMFWRA==
+X-Received: by 2002:a05:6358:33a3:b0:1aa:c71e:2b4d with SMTP id e5c5f4694b2df-1b1aac478d5mr176058055d.20.1723616795453;
+        Tue, 13 Aug 2024 23:26:35 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.238])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a55de3sm6667484b3a.139.2024.08.13.23.26.31
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 13 Aug 2024 23:26:35 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: punit.agrawal@bytedance.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alexghiti@rivosinc.com,
+	cuiyunhui@bytedance.com,
+	chenjiahao16@huawei.com,
+	guoren@kernel.org,
+	vishal.moola@gmail.com,
+	stuart.menefy@codasip.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: add a warning when physical memory address overflows
+Date: Wed, 14 Aug 2024 14:26:25 +0800
+Message-Id: <20240814062625.19794-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 0/7] Introduce HSR offload support for ICSSG
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Javier
- Carrasco <javier.carrasco.cruz@gmail.com>,
-        Jacob Keller
-	<jacob.e.keller@intel.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
-	<horms@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>
-References: <20240813074233.2473876-1-danishanwar@ti.com>
- <d061bfb6-0ccc-4a41-adad-68a90a340475@lunn.ch>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <d061bfb6-0ccc-4a41-adad-68a90a340475@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew,
+The part of physical memory that exceeds the size of the linear mapping
+will be discarded. When the system starts up normally, a warning message
+will be printed to prevent confusion caused by the mismatch between the
+system memory and the actual physical memory.
 
-On 13/08/24 8:19 pm, Andrew Lunn wrote:
-> On Tue, Aug 13, 2024 at 01:12:26PM +0530, MD Danish Anwar wrote:
->> Hi All,
->> This series introduces HSR offload support for ICSSG driver. To support HSR
->> offload to hardware, ICSSG HSR firmware is used.
-> 
-> Oh, no, not another firmware. How does this interact with using the
-> switch firmware and switchdev? I see in your examples you talk about
-> HSR to Dual EMAC, but what about HSR and Switchdev?
-> 
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ arch/riscv/mm/init.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-HSR to Switch mode or switch mode to HSR is not supported by the firmware.
-
-Only dual EMAC to Switch , dual EMAC to HSR, switch to dual EMAC and HSR
-to dual EMAC is supported.
-
-Software HSR, software Switch / bridging can be done only with dual EMAC
-firmware.
-
-To summarize,
-Dual EMAC firmware - Supports normal Ethernet operations, Can do
-software bridging, software HSR
-Switch Firmware - Can do bridging in hardware. For software bridging
-this firmware is not needed, DUAL EMAC firmware will be used.
-HSR firmware - Can do HSR offloading in hardware. For software offload
-this firmware is not needed, dual EMAC firmware will be used for that.
-
-By default the firmware is Dual EMAC firmware. Firmware will only be
-changed when offloading in hardware is needed.
-
-> How many more different firmwares do you have?
-> 
-
-We have these 3 firmwares only for ICSSG.
-
-> 	Andrew
-
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 52290c9bd04bd..c93164dc51658 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -236,8 +236,12 @@ static void __init setup_bootmem(void)
+ 	 */
+ 	if (IS_ENABLED(CONFIG_64BIT)) {
+ 		max_mapped_addr = __pa(PAGE_OFFSET) + KERN_VIRT_SIZE;
+-		memblock_cap_memory_range(phys_ram_base,
+-					  max_mapped_addr - phys_ram_base);
++		if (memblock_end_of_DRAM() > max_mapped_addr) {
++			memblock_cap_memory_range(phys_ram_base,
++						  max_mapped_addr - phys_ram_base);
++			pr_warn("Physical memory overflows the linear mapping size: region above 0x%llx removed",
++				max_mapped_addr);
++		}
+ 	}
+ 
+ 
 -- 
-Thanks and Regards,
-Danish
+2.39.2
+
 
