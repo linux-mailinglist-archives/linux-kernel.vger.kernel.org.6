@@ -1,173 +1,198 @@
-Return-Path: <linux-kernel+bounces-287082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC7DE9522B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:34:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75E259522BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCE728551A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:34:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F83B220F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B33A1BE87E;
-	Wed, 14 Aug 2024 19:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CB51BE87B;
+	Wed, 14 Aug 2024 19:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dIjF7rsz"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hkLsY/bz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63EB679
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8A3B679;
+	Wed, 14 Aug 2024 19:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723664057; cv=none; b=EkPpfUIRMQa6+ziXta//su6tusHPE7PziJ6mSnjydtRrWb+rPUjuTV5qLxsE6JvOyp1427sLgIAbVb0f7nj15UFDwGhdp4L0I9RuYCML0choMH0uay40iay+ryInvvn6MFqu53xjp1hxutFRdKIP8mVQuKvvLhYsNdlU6zvVjX4=
+	t=1723664285; cv=none; b=V1x1HaCVmKimrIEUCFufzxiaO/ri8k5olkDZat/dfKF4IcTnTrZCLaAaxsIhfMt6xSgGn7MlMc/7ok+ChJmiHXGj5ixZVRKDI7aGjuI/TV3cl5QZx9BSNA+MlEyjSB3wkAjzkj9mkEjNbgZJrun7OYWc4uEsvem18Fo7Vac6BP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723664057; c=relaxed/simple;
-	bh=FdU8SvzcWm3PWPtIGFD/hoKydvzDoQz5Wplue72HPm4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IazI8egCC5relG+nTvqj4fG4W3+r8AIdwbElnvEW8vAWy24Lw5suIBeJflULbIoUAIEFvdXQGrLl6jvq0/5nuA8RfLH9azPW2UZ2NzQIDp1Q9qF7dFtjwjk+UF9fj1nAMogsOlKq4GVe2AhPVXrKyx4YdvDtk8eONyB9SkzN46U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dIjF7rsz; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0e78047c98so395182276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723664055; x=1724268855; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y8cWK2+UYGLsva20MxS90pT4B5pootLE6XLQcrnibDs=;
-        b=dIjF7rszBcek1yI7j3xtWOmNk8dOHb1hxHQ22/rd5KSj2kXRdziUn80gkQvVQkZ8Do
-         MIU8CpQ1KaoCqOW5LrC0iY1vT2C2syZzAO8kR98agNdVO+MXLwKRe1vCe+Y4P0ln6s64
-         QEZBuGRju9s+sl4pGtzhN+4XI5g4EWpvxa+Vro1fBEJeP4AQzYPnNy69T+Mb7OMadd1E
-         rsmUeKK4dNsSUmoSzbzhrcnhHFpEPUFH55fOyu3q+pxp3+7hcrMCMQyOGRuSuBTmtI7a
-         KDi109WyXP8z6vMfm9ptU+RDAY9PRNP7gWESev4JXwAFWAudFPGAdrX8yYJ+XxxQjy6K
-         S3uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723664055; x=1724268855;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y8cWK2+UYGLsva20MxS90pT4B5pootLE6XLQcrnibDs=;
-        b=ggIZ0Nq05qMh7CZEmfHzc9OELGV0qFHHa+kFZyR2mkydgAA9gt+kWsWq4P3hC0alyO
-         CEb3MXT1OgzUynlStdUMv9XNOq/TvgiH/42ey/cNdYmSdCszL123eMEzNfv3ZTkebD7/
-         85AxvR5ypMuPE1V7Fdp5ItsQOBqNWwEf7ZTUUDETjJCtSuyGfqbn1xzAOi376Mqn/STJ
-         ZEuzQm8dRKislLeUvw+h6U8Sa70BKTNLkkw9flDuH9gje6h4RnpmEwSdMi29HrV2Fbd9
-         XfLDoEchzbcNjzC0NvLg8DqzxsQMozuBri2F+9jMTaKHEMLQRT/9EcBZG6qMbZHyrs0p
-         q4lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwUN33tth1RGn+Xo4hSj7ZoB/+PoPD5B1U/YFUc44Br7Cp2pbE2qZtIL1nGN8SO8FvawZqTXDbvpR+eVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVo8UDEoeSjR27oLskkT86OBGMrWx72E6TA8BXbQvhKaEYEuau
-	oj8tflFvnQPv4hnH3DkImUtfVnSuVfelwCKSE6iHCqF9fxCKii2Xzl3BzPVDUxKgaKa1nsMfi74
-	9AA==
-X-Google-Smtp-Source: AGHT+IHLt1+HKA0U+xh5NYnbNVB+Ne7FTbbFACVfA5pF/rj2OeD0F++kPiOpi0T4SKQEBxj/Y2L/KElEtSU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:105:b0:e11:5da7:337 with SMTP id
- 3f1490d57ef6-e115da70653mr49577276.3.1723664054395; Wed, 14 Aug 2024 12:34:14
- -0700 (PDT)
-Date: Wed, 14 Aug 2024 12:34:12 -0700
-In-Reply-To: <96293a7d-0347-458e-9776-d11f55894d34@redhat.com>
+	s=arc-20240116; t=1723664285; c=relaxed/simple;
+	bh=2X+S2s1uWqkb1n7zXhrMhhXFROiV45BRva21USi8yEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A8oq6h/ErkWAssNDwZi+GSlCLGCFNFTgFxSf2pvTIHPCaw/luriSi0lyfRq0iIbN4ZYs/vZiqlHft2Ct1GQLhDXslbFkLb+8Qn/IPNjKCFu3iY5sR/4o4cyOllHmftik2c7XGW3Fq9bOo8wXJO91RN+qTpPcW35cHIJ6PcsDhQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hkLsY/bz; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723664283; x=1755200283;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2X+S2s1uWqkb1n7zXhrMhhXFROiV45BRva21USi8yEo=;
+  b=hkLsY/bzXOBRYfmUnB8/H4034KdVQd3nhI5Vh/74lfY3pNP7PvQNd36t
+   6bvby31YyFcBk9e8RS5xPzZNDS0aAaot9XkR7jgfsTws+xTOFS0nQ9Rqr
+   IJx86LN4s2WHym2vcYQikewDW01GnCcLXJIR+VcvwTzH2vjFdzIJnyGjZ
+   Z+jfTPilickLXSinqtQ+nA0MmCe8cj+VqwsD+LfL/qRA1GTv7urAMK/AJ
+   X/YkVjC7OiS/3lyHAMB60EBxy2IE1iOsoK2824GrK49GDYwGapgzodiXP
+   R51WG3aQcobcTQZWwcpHGl29Di/wNk4A3OuPDqD3PEyIbL3EWjemZi/i2
+   Q==;
+X-CSE-ConnectionGUID: 2wDJ5rhPTH6UToHa2vV7Ew==
+X-CSE-MsgGUID: jNE25Dj+Sk+JDIMCzo2GCA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="39357075"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="39357075"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 12:38:02 -0700
+X-CSE-ConnectionGUID: 2B6i/kTCTBeCHe+DcX0SrQ==
+X-CSE-MsgGUID: xqEInKZ4SiuGHiYkPcUHlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="59696423"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 12:38:02 -0700
+Received: from [10.212.17.191] (kliang2-mobl1.ccr.corp.intel.com [10.212.17.191])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 7B08A20CFEDB;
+	Wed, 14 Aug 2024 12:38:00 -0700 (PDT)
+Message-ID: <70657c5e-f771-456b-a5ac-3df590249288@linux.intel.com>
+Date: Wed, 14 Aug 2024 15:37:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-4-seanjc@google.com>
- <96293a7d-0347-458e-9776-d11f55894d34@redhat.com>
-Message-ID: <Zr0GtPKepCbBgjWW@google.com>
-Subject: Re: [PATCH 03/22] KVM: x86/mmu: Trigger unprotect logic only on
- write-protection page faults
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
+To: Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>,
+ peterz@infradead.org, mingo@redhat.com
+Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <87sev7nom4.ffs@tglx>
+ <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com> <87frr7nd28.ffs@tglx>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <87frr7nd28.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024, Paolo Bonzini wrote:
-> On 8/9/24 21:03, Sean Christopherson wrote:
-> > Trigger KVM's various "unprotect gfn" paths if and only if the page fault
-> > was a write to a write-protected gfn.  To do so, add a new page fault
-> > return code, RET_PF_WRITE_PROTECTED, to explicitly and precisely track
-> > such page faults.
-> > 
-> > If a page fault requires emulation for any MMIO (or any reason besides
-> > write-protection), trying to unprotect the gfn is pointless and risks
-> > putting the vCPU into an infinite loop.  E.g. KVM will put the vCPU into
-> > an infinite loop if the vCPU manages to trigger MMIO on a page table walk.
-> > 
-> > Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
-> > Cc: stable@vger.kernel.org
+
+
+On 2024-08-14 3:01 p.m., Thomas Gleixner wrote:
+> On Wed, Aug 14 2024 at 14:15, Kan Liang wrote:
+>> On 2024-08-14 10:52 a.m., Thomas Gleixner wrote:
+>>> Now looking at the HSW specification update specifically erratum HSW11:
+>>>
+>>>   Performance Monitor Precise Instruction Retired Event May Present
+>>>   Wrong Indications
+>>>
+>>>   Problem:
+>>>          When the Precise Distribution for Instructions Retired (PDIR)
+>>>          mechanism is activated (INST_RETIRED.ALL (event C0H, umask
+>>>          value 00H) on Counter 1 programmed in PEBS mode), the processor
+>>>          may return wrong PEBS or Performance Monitoring Interrupt (PMI)
+>>>          interrupts and/or incorrect counter values if the counter is
+>>>          reset with a Sample- After-Value (SAV) below 100 (the SAV is
+>>>          the counter reset value software programs in the MSR
+>>>          IA32_PMC1[47:0] in order to control interrupt frequency).
+>>>
+>>>   Implication:
+>>>          Due to this erratum, when using low SAV values, the program may
+>>>          get incorrect PEBS or PMI interrupts and/or an invalid counter
+>>>          state.
+>>>
+>>>   Workaround:
+>>>          The sampling driver should avoid using SAV<100.
+>>>
+>>> IOW, that's exactly the same issue as the BDM11 erratum.
+>>>
+>>> Kan: Can you please go through the various specification updates and
+>>> identify which generations are affected by this and fix it once and
+>>> forever in a sane way instead of relying on 'tried until it works by
+>>> some definition of works' hacks. These errata are there for a reason.
+>>
+>> Sure. I will check all the related erratum and propose a fix.
+>>
+>>> But that does not explain the fallout with that cve test because that
+>>> does not use PEBS. It's using fixed counter 0.
+>>
+>> The errata also mentions about the PMI interrupts, which may imply
+>> non-PEBS case. I will double check with the architect.
 > 
-> Do we really want Cc: stable@ for all these patches?  Most of them are of
-> the "if it hurts, don't do it" kind;
-
-True.  I was thinking that the VMX PFERR_GUEST_{FINAL,PAGE}_MASK bug in particular
-was stable-worthy, but until TDX comes along, it's only relevant if guests puts
-PDPTRs in an MMIO region.  And in that case, the guest is likely hosed anyway,
-the only difference is if it gets stuck or killed.
-
-I'll drop the stable@ tags unless someone objects.
-
-> as long as there are no infinite loops in a non-killable region, I prefer not
-> to complicate our lives with cherry picks of unknown quality.
-
-Yeah, the RET_PF_WRITE_PROTECTED one in particular has high potential for a bad
-cherry-pick.
-
-> That said, this patch could be interesting for 6.11 because of the effect on
-> prefaulting (see below).
+> Ah. Indeed.
 > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >   arch/x86/kvm/mmu/mmu.c          | 78 +++++++++++++++++++--------------
-> >   arch/x86/kvm/mmu/mmu_internal.h |  3 ++
-> >   arch/x86/kvm/mmu/mmutrace.h     |  1 +
-> >   arch/x86/kvm/mmu/paging_tmpl.h  |  2 +-
-> >   arch/x86/kvm/mmu/tdp_mmu.c      |  6 +--
-> >   5 files changed, 53 insertions(+), 37 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 901be9e420a4..e3aa04c498ea 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -2914,10 +2914,8 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, struct kvm_memory_slot *slot,
-> >   		trace_kvm_mmu_set_spte(level, gfn, sptep);
-> >   	}
-> > -	if (wrprot) {
-> > -		if (write_fault)
-> > -			ret = RET_PF_EMULATE;
-> > -	}
-> > +	if (wrprot && write_fault)
-> > +		ret = RET_PF_WRITE_PROTECTED;
-> >   	if (flush)
-> >   		kvm_flush_remote_tlbs_gfn(vcpu->kvm, gfn, level);
-> > @@ -4549,7 +4547,7 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
-> >   		return RET_PF_RETRY;
-> >   	if (page_fault_handle_page_track(vcpu, fault))
-> > -		return RET_PF_EMULATE;
-> > +		return RET_PF_WRITE_PROTECTED;
-> >   	r = fast_page_fault(vcpu, fault);
-> >   	if (r != RET_PF_INVALID)
-> > @@ -4642,7 +4640,7 @@ static int kvm_tdp_mmu_page_fault(struct kvm_vcpu *vcpu,
-> >   	int r;
-> >   	if (page_fault_handle_page_track(vcpu, fault))
-> > -		return RET_PF_EMULATE;
-> > +		return RET_PF_WRITE_PROTECTED;
-> >   	r = fast_page_fault(vcpu, fault);
-> >   	if (r != RET_PF_INVALID)
-> > @@ -4726,6 +4724,9 @@ static int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code,
-> >   	case RET_PF_EMULATE:
-> >   		return -ENOENT;
-> > +	case RET_PF_WRITE_PROTECTED:
-> > +		return -EPERM;
+>> According to the description of the patch, if I understand correctly, it
+>> runs 100 CVE-2015-3290 tests at the same time. If so, all the GP
+>> counters are used. Huafei, could you please confirm?
 > 
-> Shouldn't this be a "return 0"?  Even if kvm_mmu_do_page_fault() cannot
-> fully unprotect the page, it was nevertheless prefaulted as much as
-> possible.
+> I can reproduce that way on my quad socket HSW almost instantaneously:
+> 
+> [10473.376928] CPU#16: ctrl:       0000000000000000
+> [10473.376930] CPU#16: status:     0000000000000000
+> [10473.376931] CPU#16: overflow:   0000000000000000
+> [10473.376932] CPU#16: fixed:      00000000000000bb
+> [10473.376933] CPU#16: pebs:       0000000000000000
+> [10473.376934] CPU#16: debugctl:   0000000000004000
+> [10473.376935] CPU#16: active:     0000000300000000
+> [10473.376937] CPU#16:   gen-PMC0 ctrl:  0000000000134f2e
+> [10473.376938] CPU#16:   gen-PMC0 count: 0000ffffffffffca
+> [10473.376940] CPU#16:   gen-PMC0 left:  000000000000003b
+> [10473.376941] CPU#16:   gen-PMC1 ctrl:  0000000000000000
+> [10473.376943] CPU#16:   gen-PMC1 count: 0000000000000000
+> [10473.376944] CPU#16:   gen-PMC1 left:  0000000000000000
+> [10473.376946] CPU#16:   gen-PMC2 ctrl:  0000000000000000
+> [10473.376947] CPU#16:   gen-PMC2 count: 0000000000000000
+> [10473.376948] CPU#16:   gen-PMC2 left:  0000000000000000
+> [10473.376949] CPU#16:   gen-PMC3 ctrl:  0000000000000000
+> [10473.376950] CPU#16:   gen-PMC3 count: 0000000000000000
+> [10473.376952] CPU#16:   gen-PMC3 left:  0000000000000000
+> [10473.376953] CPU#16: fixed-PMC0 count: 0000fffffffffffe
+> [10473.376954] CPU#16: fixed-PMC1 count: 0000fffbabf57908
+> [10473.376955] CPU#16: fixed-PMC2 count: 0000000000000000
+> 
+> [10473.376928] CPU#88: ctrl:       0000000000000000
+> [10473.376930] CPU#88: status:     0000000000000000
+> [10473.376931] CPU#88: overflow:   0000000000000000
+> [10473.376932] CPU#88: fixed:      00000000000000bb
+> [10473.376933] CPU#88: pebs:       0000000000000000
+> [10473.376934] CPU#88: debugctl:   0000000000004000
+> [10473.376935] CPU#88: active:     0000000300000000
+> [10473.376937] CPU#88:   gen-PMC0 ctrl:  0000000000134f2e
+> [10473.376939] CPU#88:   gen-PMC0 count: 0000fffffffffff2
+> [10473.376940] CPU#88:   gen-PMC0 left:  00000000000000a8
+> [10473.376942] CPU#88:   gen-PMC1 ctrl:  0000000000000000
+> [10473.376944] CPU#88:   gen-PMC1 count: 0000000000000000
+> [10473.376945] CPU#88:   gen-PMC1 left:  0000000000000000
+> [10473.376946] CPU#88:   gen-PMC2 ctrl:  0000000000000000
+> [10473.376947] CPU#88:   gen-PMC2 count: 0000000000000000
+> [10473.376949] CPU#88:   gen-PMC2 left:  0000000000000000
+> [10473.376950] CPU#88:   gen-PMC3 ctrl:  0000000000000000
+> [10473.376951] CPU#88:   gen-PMC3 count: 0000000000000000
+> [10473.376952] CPU#88:   gen-PMC3 left:  0000000000000000
+> [10473.376953] CPU#88: fixed-PMC0 count: 0000fffffffffffe
+> [10473.376955] CPU#88: fixed-PMC1 count: 0000fffa79a83958
+> [10473.376956] CPU#88: fixed-PMC2 count: 0000000000000000
+> 
+> This happens at the very same time and CPU#88 is the HT sibling of
+> CPU#16
+> 
 
-Hmm, I hadn't thought about it from that perspective.  Ah, right, and the early
-check in page_fault_handle_page_track() only handles PRESENT faults, so KVM will
-at least install a read-only mapping.
+The fixed counter 0 is used which doesn't match of what the HSW11
+describes. I will check if the HSW11 missed the case, or if there is
+another issue.
 
-So yeah, agreed this should return 0.
+Thanks,
+Kan
 
