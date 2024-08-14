@@ -1,192 +1,207 @@
-Return-Path: <linux-kernel+bounces-286598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C5E951CF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B74D951CF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 264FE1F2355E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:21:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C316E1F2124D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013F61B3F18;
-	Wed, 14 Aug 2024 14:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1771B32B8;
+	Wed, 14 Aug 2024 14:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hOWQqIGY"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Swa1MQ2d"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2047.outbound.protection.outlook.com [40.107.220.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE611B32B7
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645270; cv=none; b=ofAj7GRGmSLAMIEGi75EaIehaSt8PENU6JsWkE3N+NCG8L6KJhsEt5Ft0AWWbhVXkc0AzQr0KkKXlDAH/H/h2HArJmDrRvlcutmu33UOVmPIxp38/BreMJw1qZuIurNCfURaEbiK9FNd8t1MY3T6uiokbbEkWL9F26HhaTcg70o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645270; c=relaxed/simple;
-	bh=KWPbFBFD+/3kp0sYWkC5naq5efakh6J4XRAhvmtV6RM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TfycwB2lwrjcV2TKkMHXTXI7frVb4U9NmvD8jaslgf/YA/j9/7ijsLDy0L9iRUkB1BFgIDdNBhbeQzBPqyzGMhEpuEOhl4L9f1bI3UoxhdqaaL5ogMBTwJJuf5GS9GoE9A0+Q43Vv4+OsXF5/2XRDvL26BXMXhGOuyyf21mczcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hOWQqIGY; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70f0a00eb16so4730566b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:21:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723645268; x=1724250068; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ibz0ymMg54eZMZxtA7rzG0mhrc8rFdXmWziKMFauBIM=;
-        b=hOWQqIGYxFmBS2GH4kByIPRyunkv72xgJf+WP0ZyYRIJ1Y73P2R9Okp70H6fNL+dUy
-         tsN1h6RIeJB1offIGwa9ojFOH4gURcrMAluZJOPC3MpZntnMCgEws+51PzcWpVdGO4eZ
-         /p1Ef7L87PKGYbrHI1UegcTwQrJFN1v+bFjcrdMQuXr4CNa6NOjNFH5aFnwOaYWhFvwe
-         i2wQcu0kUP9ETRvxHEi5/ycI3c/nt1sMxHtbxgiDos6BUtVJ6I3DVgCnvbMWz1PwzlPu
-         uQoALk8EcowrlIx28vxysCCPiqt0kJaLCC0s5yevv4Utm9JlGpQnWRrWC03caomNPExD
-         tmyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723645268; x=1724250068;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ibz0ymMg54eZMZxtA7rzG0mhrc8rFdXmWziKMFauBIM=;
-        b=INn/l1w/kZFaR7fjOKFcfBCL6SWNP480saa8xfmnRpOrpUVrXpVDcqwhYLM6ffk7Gr
-         vI5wS9YrY2t9m5LnV19q/HpL0YA49XTR+P1UiBN4HNeZ3jjhc8GKPdC8c+tC57uSQ/EY
-         U+jBEUdFTDsNsvaiyyYgrICewBQUpWFE2w5s5sJyxLm8v8ZmUNUSzN1vYxcLnznHkeqZ
-         bM+BMk7q7OZhoJfya3bd7DT9EvGJTc9Swc/Avyrmyx4HftMTcu1qi9pquJGwIHz8EW4k
-         HPyprMo2AaiTrDUdSpptRzGo7DStJv6tBFSKAgSVwoMsu/l+yzlmSrqUwkA/V7t6E2T2
-         i8rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUV13kz29DP8gk8L2S+eDdkVH8eo3sbUTChgipo3RTqL15JzL6qGwlNJdrUH8Wqfp3zxr/x7rywDkdPgX9U5om7x4sHHPw7TuOEjPJT
-X-Gm-Message-State: AOJu0YzjoMcYABAh2mlElLKaJitQ7wWTY9n43xlk4vH2IatgI7NROXFX
-	aDXkb79Y8q4Qr6BCmdbq+mENi9rJTp9DbGjP6OiFxdWSVJ8WZFdZ27iu8VbF3a8XwqSMKxv2RlW
-	Apw==
-X-Google-Smtp-Source: AGHT+IGx/HmqKQeNIzUKcT8uD2EB3slFOeWrdLpsi2E/sozxcn2/2LhmumDcBwKTUVsRYQYXtEsJPAwJDek=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:8807:b0:70d:30a8:abaa with SMTP id
- d2e1a72fcca58-7126744c0acmr6496b3a.5.1723645267560; Wed, 14 Aug 2024 07:21:07
- -0700 (PDT)
-Date: Wed, 14 Aug 2024 07:21:06 -0700
-In-Reply-To: <20240814114230.hgzrh3cal6k6x2dn@yy-desk-7060>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837431581E5;
+	Wed, 14 Aug 2024 14:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723645350; cv=fail; b=E+pRJWHunGlwt48pdHI0k5XqZIWdub2TLNYfTDuJbdSgS5KGhyddNyZc1bBcIfME4aHebWkhO53EsalHPMMc14qt9Yu0pxDbFT0pIHO4T/YVlYiRC2Qu6/pxZKUE8jwvmRCgOqnPqQcu4RaaWsteYxjR7H56RwGNhmS78UkF6b0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723645350; c=relaxed/simple;
+	bh=XXO5OPYLDFhuFyeLnMXremMCY29o47Pr1x0oO439+6k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sAtaph5O4tBVn2wMTAkN9BCHmnh4XsJVciNyDkoywKx4uuEx56TJRtwIrB4Z5Nf0XV9ckzUlVwL7BAF6+YcQh0tL+LvHEcatLVNVDnzlLFVjgwNpvqraoq/d3WcDmsvuwtwvbANL0uDH582d8NLmxE+VpsVTnngJKGW0kSoN6Sc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Swa1MQ2d; arc=fail smtp.client-ip=40.107.220.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lT215fO1rdOtD0PgmEyfV691t7K5VPpzR9QFiTDQ3xeJ4Fe5X4254xLhdkrQu/n4dNuDDiIICPmDc4O7yv9EvEDoQYcWNz9Eq1AeM4ZgBuhz1jrZa+yNRiN+tEVJhAI30sf+9/4OltlNsCxj9H77nkWRYBgEPHQhvdjzed/CSOrPRu3EnkEldisTcMj29f+Qs6HDu7+jKnm96zrhpOFjtvQyZSYUVHp70ssMUw0miMB2Z/jFaTHCC+mJ99hKpD23AMwnIVra/WGbYc0cUhmzI/t5h3IT4VbXrO9o2QVKUEFJurgHTXA7gspQpnzD7FFuKuE/L9pJxytvebbTU92OTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gVGPwIwmPTz/ECchCg+rTJpWeMeSWI5HoqSpSTfZ5xM=;
+ b=L1S1CUZJRPLf6BzDe1jcOOt5JUshpKYFl4t6Gxa6eEFMHHj2n5LMt3swhvxkWr5e/cvT9bXXSfDj1pMRoL4/3Zg4Okseicns4Za34apXMzg0wPQIJV7LEQ6iMDkk+PQYwuGtVRwEP0MFa13pKfGXfpXXPj1Xhg4O+6LglM8PKFwKKEj6HXbHy7Qh6DH/KvVFbuAo4bTrxp19GgioZ4wm+y6EmA0Ck4RQMXLmd/G4YfzTURwof1aVYfBVoJLwQd/jarGyYnuBU5pcWnoA5BDsNYRShEVYh47m1vbY7UDNEBfognfINI+GFv1cCIFJUqUe+XBz76vZJiNrFRJHaXynAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gVGPwIwmPTz/ECchCg+rTJpWeMeSWI5HoqSpSTfZ5xM=;
+ b=Swa1MQ2dGS+3nQjB72RJ+7Nrc5GGP68dBuNEa8FrRFXTF86R5RNmA00cUQpVYEzOAba2L0/uddalnR56GXfzz23zJiwfES1RdAnoqr1cVHRYwVZ47Zr9UjkbEgP0eoKUPUmvArz7GWFFY4lRRHi2L+uV7wa0Y0LnraMJK+ZJTuU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by MW4PR12MB7000.namprd12.prod.outlook.com (2603:10b6:303:208::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
+ 2024 14:22:26 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
+ 14:22:26 +0000
+Message-ID: <60582be6-e4e1-f3c5-63e7-5ff7016c87a9@amd.com>
+Date: Wed, 14 Aug 2024 09:22:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCHv2 1/4] x86/mm/ident_map: Fix virtual address wrap to zero
+Content-Language: en-US
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Baoquan He <bhe@redhat.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Sean Christopherson <seanjc@google.com>, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, Kai Huang <kai.huang@intel.com>
+References: <20240814124613.2632226-1-kirill.shutemov@linux.intel.com>
+ <20240814124613.2632226-2-kirill.shutemov@linux.intel.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20240814124613.2632226-2-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0172.namprd13.prod.outlook.com
+ (2603:10b6:806:28::27) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-4-seanjc@google.com>
- <20240814114230.hgzrh3cal6k6x2dn@yy-desk-7060>
-Message-ID: <Zry9Us0HVEDmhCB4@google.com>
-Subject: Re: [PATCH 03/22] KVM: x86/mmu: Trigger unprotect logic only on
- write-protection page faults
-From: Sean Christopherson <seanjc@google.com>
-To: Yuan Yao <yuan.yao@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|MW4PR12MB7000:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6c16caf-e9b2-43d0-7070-08dcbc6c8537
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	vY5vXpp7xOlHnogXlPJGWViBhegTo7aRrq5ACNZF/9PbdamR41EtaxZF7bDbQ61M7US6JeBxzsk2NPugIepzoNCbXxP+WaSNVRVqSBEP8Bz9L8IMXLcehBmHBsnYxfb8pkb62RT7KNeGT2ace0+iZyYeSCJ5IDeTDYUW9qNKKfWrLwz+WJru+ysc7cIYNX3XdqZo9rf5eFAvegSwKJUthL341ie+slP7b55giJii09LHRYvbxupjQIOIBhcA7sXfzp+DPI07rHqYqTJ3+zq8aNaZ3FbBju5hJMsnfb74OHr4DcDmuiO4pkyplffjB9KFVyQUHDKdV8WApacUuxsvyqR2n9ZFlrSTGCZzJuA7fA62JmHp6hBxV5ZQ/e9zqY4EAbnlzeXKjODr57sjYrXpmSWjrJWvwneGW+luMgzuxzSp1ZR6yQryPfKc9mGK8KWUWYuOafN8BH08gG89nNHqkBIRfhwNlfsjEW4wrsPUlshwjTlXF+5iEPkCkdmd6iLWIFM1fDwDbZMy93FH20CbhZHTPoPGok+2yAJlGBMjKb4fBjXZ7iJR1gsEvqNSzosySCkkGE+NLupVDsbAuOeLRr/5eeYXOw+6BD4jg8/oT7qaip63RR5c8EDxPmg1ji1l6/7w9/MRmVbtL7vGYS997S6Xjh2SxqeI7oKzXzgZ6RSDl2dkpd74UdD2kZwz6xS5bN3AscKuVobbQdNwCBcHYA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R1FKd21CdTE3NTgxbGpGUHdHQzdTOW9GZkZGdUsyWENwQnYyZmwzRGlSaWtB?=
+ =?utf-8?B?dEdEUUZwUnVDL3FOeUd5SDZpKytTQU11aHIvWjlHV1RmSFVBNXZJQzZabGRm?=
+ =?utf-8?B?RU5mOU9xSlhiR3kvMEo5R2w2Z2dYWlgxak1peTgyTXQrUFlTKzBjWHd4OFJw?=
+ =?utf-8?B?NEFlVkVDNEdlNStISGxrQU5XQkVWZEM5N1F3ZkVSdFBKUEhwZ1JUNHVqbFZE?=
+ =?utf-8?B?N0VId3dIUTNMWm0raDNqUU1jZVlhenE2QWdmQWlQdEg0dkJGL04vajdYSlE3?=
+ =?utf-8?B?WmF4RGNVZTkyVDFNdWVDejhNYllIckRreXhCeXVnNzFrSHFnb21mNHIvTXpF?=
+ =?utf-8?B?YVN5RkJjVkc2dDFKTGRxdFBKNzV5d2ZEZ2c1OFE2ZHgzaXJqTTg2UHVqempk?=
+ =?utf-8?B?aVNzQzhvcjZBWlNsMi9TQ1I0U1Nxbyt6ajJLL3pKMXc4VnRVdXhaYkhzN2RU?=
+ =?utf-8?B?RWgvNnlFdHZqbGcwYmErZDMyMElKblZRVU9Cd2JHZ2EyemwxRHFFWC9tYUN6?=
+ =?utf-8?B?cXlWcHduUHoyYlFFSE9qWmlGVitiR0pvc1JkR2xTMVBnQ2RObEwzdlVaYkZy?=
+ =?utf-8?B?dnNUVExNak1yNDRMSjY5RFJvL2RQUzN6ckt3VEZEQVUxd1ZXWXBJZmF4ekta?=
+ =?utf-8?B?UTRaRUUxa3JXTTJnVnpidURTajVyb055d2lVQlRJaDBmU3dTNDh0WHoxUm1l?=
+ =?utf-8?B?TUhObXlRZHkvVlJlZE56blVRcTYzV1hDREFmT0FGZFpmV0NFNUVxN0h2Ykgw?=
+ =?utf-8?B?WkJVUlAzVnBMaVl0UWpJWVBldnhOTWhsVVl2WXUraE5ydEthcGxKemtLbHlR?=
+ =?utf-8?B?UHZ0V2ZPcElTUmpnQjZyU1MxR3IvZ3ZibmxUYmsyK3Z1enJiak41cTA1NHpM?=
+ =?utf-8?B?blRtWGo0Z0RWUVgxdFdCTWxLeDFTZW5ibUNMaWVrdVArZlZ5V2VUd0FwVnlk?=
+ =?utf-8?B?QlNobGZwS2JuNGVKVTBGMVFoMy9Mak0yRWV2a0MvNmhBbVRFWldQYkg0aUZv?=
+ =?utf-8?B?Y2F4V09WQndpdjl2NFRQcEt3SnVDbkNZTVFBcTYrT3l0YUxUZTBiVGh2S3FR?=
+ =?utf-8?B?aVNqQncvLzd6RDVYRkk0eitiV2RHV1VkTUNDeGpmcVFRcnF0d2JWL2FGOTVx?=
+ =?utf-8?B?cVQ1LzQ1b3pCY29uaWQzZmY3Y0xoWW5vblp6eExiR01taEtoRDIzWlU0UGpu?=
+ =?utf-8?B?clE2Z09NWGxERHFSNExuY1cxNFpXdWNUV0pVak5BYVVCN3o0dlJCenpOQW5B?=
+ =?utf-8?B?OFVrVTJGRVlPQ0VxQXN2Z3RvREpFUnBaWlNxMVpRRmVsQ1NydkVHN2t2Rmln?=
+ =?utf-8?B?TjBBMmtYbGM3NkFsRWdTaForZzhrZWdDK0l6SlVoN1JzNnAybytSY1BNQ3lT?=
+ =?utf-8?B?VXBJODZveWN4Zlh5RE5xQUJRV21tdkhYZWdDK1J6QkVEd2tqRHNpcncwc0g3?=
+ =?utf-8?B?TjVpODF0NnYrUmxzQ3RTSUhwcmdqWjBJTStyaEJocjUxNXZuOVcrYmNtWmFV?=
+ =?utf-8?B?OVRxL1hybGEzbFRVUFI5R1dhc2s2YVo3Y0oxT09kSDdJZ2pqUXhMbmR2Vm5i?=
+ =?utf-8?B?eE1TVUYrUCt1M3d4TW0yRVNEaVN5eW5vbXdHcVEraU96eEg4RmRaK05pSk5C?=
+ =?utf-8?B?Q2xQMVVNRG80MnU4N3UwUEJ5WElyYTB4Qy8vcFFzMTJ6OVRhdXZ1NTBzMFJy?=
+ =?utf-8?B?bDMwdnhaRDFrRmMrdkFScUZrOXZ0SnZDSUh5UGRqaDFRZGxYWWRLN3lWSkx0?=
+ =?utf-8?B?YWc1WXRET0R5ZXg4bUZNTmorazFWYXBHVENkeVZ1UWR4NlN1R3pKa0NKdUR4?=
+ =?utf-8?B?SWU2TFQzczFDakR1NmVRSWU4Q0hmZ09jVHl2SC82eVJKQjRWZE41MU41bWlI?=
+ =?utf-8?B?bTcrOXQ2RXUzN1l6bWpOV3JlczNvRmRMNXJXVGtNRkd1OXBVK1BWekVjRkZE?=
+ =?utf-8?B?VWl0VDRPc05mM2x2Z3FqTkViWUdxYTNRRHRaQWNNUU9welFVdktOb3Bsd2Ur?=
+ =?utf-8?B?TnBjdUdGL0RXMEZBNzc2czhHS2hwek4wbjQwazdHZVBxRWtyNklZWHpzN28w?=
+ =?utf-8?B?Z1lLdzlBemxzNjVyTkplMGljcDNUN2gzL1VISld6ODR5SFlmdnJtM2lCVUJW?=
+ =?utf-8?Q?mGetdvP5RMQEpeTmS4RAPgNQx?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6c16caf-e9b2-43d0-7070-08dcbc6c8537
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 14:22:25.8824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 18uQZJSXF5IcG+vLu/6HwIFVIX/zqgJ28x4pcyQH+bFvEheTYZ5UvnbJjVp4UpTx2qM3OGhlGQGk7uNE+7oD9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7000
 
-On Wed, Aug 14, 2024, Yuan Yao wrote:
-> > @@ -5960,6 +5961,41 @@ void kvm_mmu_track_write(struct kvm_vcpu *vcpu, gpa_t gpa, const u8 *new,
-> >  	write_unlock(&vcpu->kvm->mmu_lock);
-> >  }
-> >
-> > +static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-> > +				       u64 error_code, int *emulation_type)
-> > +{
-> > +	bool direct = vcpu->arch.mmu->root_role.direct;
-> > +
-> > +	/*
-> > +	 * Before emulating the instruction, check if the error code
-> > +	 * was due to a RO violation while translating the guest page.
-> > +	 * This can occur when using nested virtualization with nested
-> > +	 * paging in both guests. If true, we simply unprotect the page
-> > +	 * and resume the guest.
-> > +	 */
-> > +	if (direct &&
-> > +	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE) {
-> > +		kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa));
-> > +		return RET_PF_FIXED;
-> > +	}
-> > +
-> > +	/*
-> > +	 * The gfn is write-protected, but if emulation fails we can still
-> > +	 * optimistically try to just unprotect the page and let the processor
-> > +	 * re-execute the instruction that caused the page fault.  Do not allow
-> > +	 * retrying MMIO emulation, as it's not only pointless but could also
-> > +	 * cause us to enter an infinite loop because the processor will keep
-> > +	 * faulting on the non-existent MMIO address.  Retrying an instruction
-> > +	 * from a nested guest is also pointless and dangerous as we are only
-> > +	 * explicitly shadowing L1's page tables, i.e. unprotecting something
-> > +	 * for L1 isn't going to magically fix whatever issue cause L2 to fail.
-> > +	 */
-> > +	if (!mmio_info_in_cache(vcpu, cr2_or_gpa, direct) && !is_guest_mode(vcpu))
+On 8/14/24 07:46, Kirill A. Shutemov wrote:
+> Calculation of 'next' virtual address doesn't protect against wrapping
+> to zero. It can result in page table corruption and hang. The
+> problematic case is possible if user sets high x86_mapping_info::offset.
 > 
-> Looks the mmio_info_in_cache() checking can be removed,
-> emulation should not come here with RET_PF_WRITE_PROTECTED
-> introduced, may WARN_ON_ONCE() it.
+> Replace manual 'next' calculation with p?d_addr_end() which handles
+> wrapping correctly.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
 
-Yeah, that was my instinct as well.  I kept it mostly because I liked having the
-comment, but also because I was thinking the cache could theoretically get a hit.
-But that's not true.  KVM should return RET_PF_WRITE_PROTECTED if and only if
-there is a memslot, and creating a memslot is supposed to invalidate the MMIO
-cache by virtue of changing the memslot generation.
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-Unless someone feels strongly that the mmio_info_in_cache() call should be
-deleted entirely, I'll tack on this patch.  The cache lookup is cheap, and IMO
-it's helpful to explicitly document that it should be impossible to reach this
-point with what appears to be MMIO.
-
----
- arch/x86/kvm/mmu/mmu.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 50695eb2ee22..7f3f57237f23 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -5997,6 +5997,18 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 	vcpu->arch.last_retry_eip = 0;
- 	vcpu->arch.last_retry_addr = 0;
- 
-+	/*
-+	 * It should be impossible to reach this point with an MMIO cache hit,
-+	 * as RET_PF_WRITE_PROTECTED is returned if and only if there's a valid,
-+	 * writable memslot, and creating a memslot should invalidate the MMIO
-+	 * cache by way of changing the memslot generation.  WARN and disallow
-+	 * retry if MMIO is detect, as retrying MMIO emulation is pointless and
-+	 * could put the vCPU into an infinite loop because the processor will
-+	 * keep faulting on the non-existent MMIO address.
-+	 */
-+	if (WARN_ON_ONCE(mmio_info_in_cache(vcpu, cr2_or_gpa, direct)))
-+		return RET_PF_EMULATE;
-+
- 	/*
- 	 * Before emulating the instruction, check to see if the access may be
- 	 * due to L1 accessing nested NPT/EPT entries used for L2, i.e. if the
-@@ -6029,17 +6041,15 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		return RET_PF_FIXED;
- 
- 	/*
--	 * The gfn is write-protected, but if emulation fails we can still
--	 * optimistically try to just unprotect the page and let the processor
-+	 * The gfn is write-protected, but if KVM detects its emulating an
-+	 * instruction that is unlikely to be used to modify page tables, or if
-+	 * emulation fails, KVM can try to unprotect the gfn and let the CPU
- 	 * re-execute the instruction that caused the page fault.  Do not allow
--	 * retrying MMIO emulation, as it's not only pointless but could also
--	 * cause us to enter an infinite loop because the processor will keep
--	 * faulting on the non-existent MMIO address.  Retrying an instruction
--	 * from a nested guest is also pointless and dangerous as we are only
--	 * explicitly shadowing L1's page tables, i.e. unprotecting something
--	 * for L1 isn't going to magically fix whatever issue cause L2 to fail.
-+	 * retrying an instruction from a nested guest as KVM is only explicitly
-+	 * shadowing L1's page tables, i.e. unprotecting something for L1 isn't
-+	 * going to magically fix whatever issue cause L2 to fail.
- 	 */
--	if (!mmio_info_in_cache(vcpu, cr2_or_gpa, direct) && !is_guest_mode(vcpu))
-+	if (!is_guest_mode(vcpu))
- 		*emulation_type |= EMULTYPE_ALLOW_RETRY_PF;
- 
- 	return RET_PF_EMULATE;
-
-base-commit: 7d33880356496eb0640c6c825cc60898063c4902
---
+> ---
+>  arch/x86/mm/ident_map.c | 14 +++-----------
+>  1 file changed, 3 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
+> index 437e96fb4977..5872f3ee863c 100644
+> --- a/arch/x86/mm/ident_map.c
+> +++ b/arch/x86/mm/ident_map.c
+> @@ -101,9 +101,7 @@ static int ident_pud_init(struct x86_mapping_info *info, pud_t *pud_page,
+>  		pmd_t *pmd;
+>  		bool use_gbpage;
+>  
+> -		next = (addr & PUD_MASK) + PUD_SIZE;
+> -		if (next > end)
+> -			next = end;
+> +		next = pud_addr_end(addr, end);
+>  
+>  		/* if this is already a gbpage, this portion is already mapped */
+>  		if (pud_leaf(*pud))
+> @@ -154,10 +152,7 @@ static int ident_p4d_init(struct x86_mapping_info *info, p4d_t *p4d_page,
+>  		p4d_t *p4d = p4d_page + p4d_index(addr);
+>  		pud_t *pud;
+>  
+> -		next = (addr & P4D_MASK) + P4D_SIZE;
+> -		if (next > end)
+> -			next = end;
+> -
+> +		next = p4d_addr_end(addr, end);
+>  		if (p4d_present(*p4d)) {
+>  			pud = pud_offset(p4d, 0);
+>  			result = ident_pud_init(info, pud, addr, next);
+> @@ -199,10 +194,7 @@ int kernel_ident_mapping_init(struct x86_mapping_info *info, pgd_t *pgd_page,
+>  		pgd_t *pgd = pgd_page + pgd_index(addr);
+>  		p4d_t *p4d;
+>  
+> -		next = (addr & PGDIR_MASK) + PGDIR_SIZE;
+> -		if (next > end)
+> -			next = end;
+> -
+> +		next = pgd_addr_end(addr, end);
+>  		if (pgd_present(*pgd)) {
+>  			p4d = p4d_offset(pgd, 0);
+>  			result = ident_p4d_init(info, p4d, addr, next);
 
