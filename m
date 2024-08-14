@@ -1,211 +1,189 @@
-Return-Path: <linux-kernel+bounces-286050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4289515E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:54:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DFE9515D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05416B283EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 848011C20C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94178143C6A;
-	Wed, 14 Aug 2024 07:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06D6143C40;
+	Wed, 14 Aug 2024 07:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkLgkpHD"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9iKN+Q7"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8C2143C4C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1941980631;
+	Wed, 14 Aug 2024 07:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723621731; cv=none; b=smI2hu3WEs3GW9QnZ/O/rMSF2tne4p2E6q6su4ybqRKHpRPKsobhb/dJtxqrrg6FKrl/6wKxrXmrM5mP5lZcCyAluKUHTPhmKGH/mf4utVNqGZWDU9Xqg9xtkUN6Fw1lVuyCCqiuC4omCgm9ngAEDsVDszpkLk9eU5sKZT2oRqQ=
+	t=1723621728; cv=none; b=Im7RlZ32bo49pI06WLBSves522Wjmil7AtrHEHFeWk8UvkLqGHQ5Qb/XSYKsorRJmvA129OmU9VbdYtPTDm/YkTI95uW0ukdWUrK97WzUSnKyzZ7EMgxZgNhjFm1D/NLkkjE0sJW5u3+gs0+OXvckwaIOjsR07iUROCOS+IwOwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723621731; c=relaxed/simple;
-	bh=5C1j6ezwQ5/mbJIAbQ5bmsAW+tFyXZnIyXCzdEb7NrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUaZm/R0HBi+KgnRqdbw1K/dO0gz5LOcv58ww8FVs2T2HM8bIHbXXfnBoi/LPjUawYujzk88IGSGh7BhvbPwQVsW0m27l3EhVBQjZmPT+MS/vYnt1uU5mtZDKQrHLzzdHwsWXqgzhgOcDSIt+RekdpwIIFeAvnbwEWLsAVTCj8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kkLgkpHD; arc=none smtp.client-ip=209.85.221.177
+	s=arc-20240116; t=1723621728; c=relaxed/simple;
+	bh=iJuDt/e7gDTb1RnY7IiC+ni6rH+Nm1TYE3T9Gv+XET8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qbH8GBwrFqov0/hHeM1bB8UlJx5SlpGFVY5zBRY620JM2GfXqLSd+nMj7T9dYX1RTteAfY06r7eTlZUagir33mGMdWwROZykBNxAzwxsS130RO/NLiCeAtprD64zNc6ZD3KSlagev1aKdgenfXjrnlZg+zeJp2FQHDLKZgMmWs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9iKN+Q7; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4f51981b1beso2290904e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:48:49 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-530e2287825so5906819e87.1;
+        Wed, 14 Aug 2024 00:48:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723621729; x=1724226529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2/wdavvpDC6LcqHnopC8nbqO8FTC/ahoEI/o+/GeLiI=;
-        b=kkLgkpHDMlEaYlPYwJSnQciPAoID6xhBcchMQYRppWuYBbxndTOMLbdPuD1D6RC/e9
-         2FngKzqs5jQyzb5bI19DRKs29BHkxk2MzwqVSRp48VltNYR6iG5rlHqr7fQ0W7Gl022g
-         9YKS4tdBKGXeLVgMsx7xPe201yi9G1iMx80/LDwEyD3utg03ShFSrp2I6LCyVMSyXRzb
-         46v0a/QCrUCgDH9u7d67HmjPIL17PuUmEjozy6jOI7TUKMCqHoAphlxiQb3Rp4RN0Q8P
-         O2OhIs+97DQqfoC1KqrMul/RYnfTfPholLcsGl7nLieFuWiUMbJ33idKl1DHWaCI1XCQ
-         Q8Qw==
+        d=gmail.com; s=20230601; t=1723621725; x=1724226525; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NTBG7pWOTTy/Oj13XKoVBOb8eh5xKMwFm4QHE+CcG2c=;
+        b=S9iKN+Q78IJnjFUbolkyUp/hAiv+bIGt5NKA0KKYwEidUiRt7ULBHXJ59VfS7d7wyv
+         wd31fr0AOjSNecmACGG0d2TK94RzWTf+GLR1wVaYcIr6onCJt+U6gyf4xyMtHFZEeHDf
+         PqHLnItWBojilSKfOwHVTLC5gGEcuef9HYKHYWETM7AsCdfWRWuGAYf61Dg00GKNyD6U
+         U34aPuBoS0fpTVnRrpOhTnCOyn+O18GASsPrg43MVOKt7kjHHGdR978M/1WpjjdS5ku7
+         ikLnc+vUPFQkP3y/77FcmIzBl+QEyFQRlfERK+AuMOZoxolwjyjzqD4IvaUnXlWO57Sd
+         pE5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723621729; x=1724226529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2/wdavvpDC6LcqHnopC8nbqO8FTC/ahoEI/o+/GeLiI=;
-        b=vfVEdAG12a11ziBMsBSFD5T4cXVVgAMrXVkA1G3FNuCVvkaKLziOH3vBAfTnfZKvdT
-         BQLG6R1XXzTA4DAETjmmOx7b7gR2EbmDg2c5j2aH00FhIa11XQGdSpohJBX1KQaivmOo
-         wapoJxcD3L4Z3Ci5k1RrIctSbXFIFzgZlrjSCM3TCGUMORz4vOjJyeG0WLFf2oZBbic8
-         0THmr2sgLkY/n4816aBqQ640mYgweypLDAaiRPbzTcphRx0FCNSrQE1tu8egjhTF5uIc
-         f4NE7UIT4ONfMibAf0mabfkfcKzeTJrSPED1g1CdsI0mI0PxHrmnbWust7rypesE8wEe
-         9ofg==
-X-Gm-Message-State: AOJu0YywhG1tMCgNZ4g+EhQnP28mK724LL44jrDoY3LtZ7+mfJEzaSSq
-	C3MZy4UMCW1eO1ue8ksOdmPv2Ngy+eyg9rBzoqsvBbQMVpUNReb+3lUVbwxnc7y4hNJSWtzkM+r
-	ytdb2/CYP9a+k/XDCzvSR+pDEQvQ=
-X-Google-Smtp-Source: AGHT+IEd3u4Se6fhBEJdd+aYxIvEQnUcxk3LNnsHSN+HNVOu12kUacMSFGxoST5ZwSx72QX0tMd0YsxEaFAmyfuOAxs=
-X-Received: by 2002:a05:6122:411e:b0:4f5:2960:6ca6 with SMTP id
- 71dfb90a1353d-4fad1c2e388mr2546780e0c.2.1723621728923; Wed, 14 Aug 2024
- 00:48:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723621725; x=1724226525;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTBG7pWOTTy/Oj13XKoVBOb8eh5xKMwFm4QHE+CcG2c=;
+        b=G2dggkFb9ysI141/FZJhn8nPy+27yeRNH9RlnwIfn+ob7KkgEtlcc6Cl0MgA4nnL41
+         3v3OIbJwq6b+J+eq4dz0rcR6tYIcNFenabgo/yC0Aki/lGP9mHbkGNTHVl6ecFTDnNcx
+         kvXJiQg6Zk5xmjw94jHQ7+i/DkiciFcb9/VGIL18jNdm5ClJyFlu07rab83FeYCJv1rZ
+         0aHh/jPanJQLOVZYaeFStHd6+Vydao39kABHSTq8rUZoYMibxl2mL/pcb1rmTE/nJBVK
+         3dSyFuNKZjyjbfBOuPfFB+HdiIAR58qCuztSlDzE59Er30flwgd1XGpmv9oKGU8DhWJk
+         ENrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDuea951fMeko2lNQ6MzzCn4EW+cBWYjnskxbiW77SeHdytOGWWh77O1BTO78qpGRTvaD5Q6uFIyId2w==@vger.kernel.org, AJvYcCVMT6AHSoSrftZifN5NmLp8+WaZq5ckrqEH/wwfwafHXzRNKeG32i4k6pAUH+miTEJtecyGO9cxgCoeJwg=@vger.kernel.org, AJvYcCXjA6qLlIiN91fNj7CX9KoXTH+cpKFuCSAVUxlDMc8Es1Odbq1cuENjzDOwLSsRUoPoNesF7soA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw54OzsHWTCGRcyXMBFpwpa6zr7kyipw9sCwHTHedRWjG3yjRiy
+	2mCTNGvNIfI8BPPthJ/CwJtEqB0YHwg836AnlXLitvuoYfzhJejgGmQ5iA==
+X-Google-Smtp-Source: AGHT+IEhSt8fr4BCSjgK03Wnbcx/EW5SSSEcfQBJWk/kQFKB8jP+uHpUayMCIn+lgzoF7G4h1xrhsw==
+X-Received: by 2002:a05:6512:ac5:b0:52e:9382:a36 with SMTP id 2adb3069b0e04-532eda83a37mr1065725e87.30.1723621724241;
+        Wed, 14 Aug 2024 00:48:44 -0700 (PDT)
+Received: from [172.27.34.242] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7c93esm11636355e9.41.2024.08.14.00.48.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 00:48:43 -0700 (PDT)
+Message-ID: <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
+Date: Wed, 14 Aug 2024 10:48:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814062830.26833-1-kanchana.p.sridhar@intel.com> <20240814062830.26833-3-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240814062830.26833-3-kanchana.p.sridhar@intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 14 Aug 2024 19:48:37 +1200
-Message-ID: <CAGsJ_4yWjjY_GqcaJsma9vPsuV29-WFK5Ho9DFZBx=HnL9=nPQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 2/4] mm: vmstat: Per mTHP-size zswap_store vmstat
- event counters.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	ying.huang@intel.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 14, 2024 at 6:28=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Added vmstat event counters per mTHP-size that can be used to account
-> for folios of different sizes being successfully stored in ZSWAP.
->
-> For this RFC, it is not clear if these zswpout counters should instead
-> be added as part of the existing mTHP stats in
-> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats.
->
-> The following is also a viable option, should it make better sense,
-> for instance, as:
->
-> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout.
->
-> If so, we would be able to distinguish between mTHP zswap and
-> non-zswap swapouts through:
->
-> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
->
-> and
->
-> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
->
-> respectively.
->
-> Comments would be appreciated as to which approach is preferable.
-
-Even though swapout might go through zswap, from the perspective of
-the mm core, it shouldn't be aware of that. Shouldn't zswpout be part
-of swpout? Why are they separate? no matter if a mTHP has been
-put in zswap, it has been swapped-out to mm-core? No?
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom
+ code
+To: Erwan Velu <erwanaliasr1@gmail.com>, Yury Norov <yury.norov@gmail.com>
+Cc: Erwan Velu <e.velu@criteo.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240812082244.22810-1-e.velu@criteo.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20240812082244.22810-1-e.velu@criteo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+
+On 12/08/2024 11:22, Erwan Velu wrote:
+> Commit 2acda57736de ("net/mlx5e: Improve remote NUMA preferences used for the IRQ affinity hints")
+> removed the usage of cpumask_local_spread().
+> 
+> The issue explained in this commit was fixed by
+> commit 406d394abfcd ("cpumask: improve on cpumask_local_spread() locality").
+> 
+> Since this commit, mlx5_cpumask_default_spread() is having the same
+> behavior as cpumask_local_spread().
+> 
+
+Adding Yuri.
+
+One patch led to the other, finally they were all submitted within the 
+same patchset.
+
+cpumask_local_spread() indeed improved, and AFAIU is functionally 
+equivalent to existing logic.
+According to [1] the current code is faster.
+However, this alone is not a relevant enough argument, as we're talking 
+about slowpath here.
+
+Yuri, is that accurate? Is this the only difference?
+
+If so, I am fine with this change, preferring simplicity.
+
+[1] https://elixir.bootlin.com/linux/v6.11-rc3/source/lib/cpumask.c#L122
+
+> This commit is about :
+> - removing the specific logic and use cpumask_local_spread() instead
+> - passing mlx5_core_dev as argument to more flexibility
+> 
+> mlx5_cpumask_default_spread() is kept as it could be useful for some
+> future specific quirks.
+> 
+> Signed-off-by: Erwan Velu <e.velu@criteo.com>
 > ---
->  include/linux/vm_event_item.h | 15 +++++++++++++++
->  mm/vmstat.c                   | 15 +++++++++++++++
->  2 files changed, 30 insertions(+)
->
-> diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.=
-h
-> index 747943bc8cc2..2451bcfcf05c 100644
-> --- a/include/linux/vm_event_item.h
-> +++ b/include/linux/vm_event_item.h
-> @@ -114,6 +114,9 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT=
-,
->                 THP_ZERO_PAGE_ALLOC,
->                 THP_ZERO_PAGE_ALLOC_FAILED,
->                 THP_SWPOUT,
-> +#ifdef CONFIG_ZSWAP
-> +               ZSWPOUT_PMD_THP_FOLIO,
-> +#endif
->                 THP_SWPOUT_FALLBACK,
->  #endif
->  #ifdef CONFIG_MEMORY_BALLOON
-> @@ -143,6 +146,18 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOU=
-T,
->                 ZSWPIN,
->                 ZSWPOUT,
->                 ZSWPWB,
-> +               ZSWPOUT_4KB_FOLIO,
-> +#ifdef CONFIG_THP_SWAP
-> +               mTHP_ZSWPOUT_8kB,
-> +               mTHP_ZSWPOUT_16kB,
-> +               mTHP_ZSWPOUT_32kB,
-> +               mTHP_ZSWPOUT_64kB,
-> +               mTHP_ZSWPOUT_128kB,
-> +               mTHP_ZSWPOUT_256kB,
-> +               mTHP_ZSWPOUT_512kB,
-> +               mTHP_ZSWPOUT_1024kB,
-> +               mTHP_ZSWPOUT_2048kB,
-> +#endif
-
-This implementation hardcodes assumptions about the page size being 4KB,
-but page sizes can vary, and so can the THP orders?
-
->  #endif
->  #ifdef CONFIG_X86
->                 DIRECT_MAP_LEVEL2_SPLIT,
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 8507c497218b..0e66c8b0c486 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1375,6 +1375,9 @@ const char * const vmstat_text[] =3D {
->         "thp_zero_page_alloc",
->         "thp_zero_page_alloc_failed",
->         "thp_swpout",
-> +#ifdef CONFIG_ZSWAP
-> +       "zswpout_pmd_thp_folio",
-> +#endif
->         "thp_swpout_fallback",
->  #endif
->  #ifdef CONFIG_MEMORY_BALLOON
-> @@ -1405,6 +1408,18 @@ const char * const vmstat_text[] =3D {
->         "zswpin",
->         "zswpout",
->         "zswpwb",
-> +       "zswpout_4kb_folio",
-> +#ifdef CONFIG_THP_SWAP
-> +       "mthp_zswpout_8kb",
-> +       "mthp_zswpout_16kb",
-> +       "mthp_zswpout_32kb",
-> +       "mthp_zswpout_64kb",
-> +       "mthp_zswpout_128kb",
-> +       "mthp_zswpout_256kb",
-> +       "mthp_zswpout_512kb",
-> +       "mthp_zswpout_1024kb",
-> +       "mthp_zswpout_2048kb",
-> +#endif
-
-The issue here is that the number of THP orders
-can vary across different platforms.
-
->  #endif
->  #ifdef CONFIG_X86
->         "direct_map_level2_splits",
-> --
-> 2.27.0
->
-
-Thanks
-Barry
+>   drivers/net/ethernet/mellanox/mlx5/core/eq.c | 27 +++-----------------
+>   1 file changed, 4 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> index cb7e7e4104af..f15ecaef1331 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> @@ -835,28 +835,9 @@ static void comp_irq_release_pci(struct mlx5_core_dev *dev, u16 vecidx)
+>   	mlx5_irq_release_vector(irq);
+>   }
+>   
+> -static int mlx5_cpumask_default_spread(int numa_node, int index)
+> +static int mlx5_cpumask_default_spread(struct mlx5_core_dev *dev, int index)
+>   {
+> -	const struct cpumask *prev = cpu_none_mask;
+> -	const struct cpumask *mask;
+> -	int found_cpu = 0;
+> -	int i = 0;
+> -	int cpu;
+> -
+> -	rcu_read_lock();
+> -	for_each_numa_hop_mask(mask, numa_node) {
+> -		for_each_cpu_andnot(cpu, mask, prev) {
+> -			if (i++ == index) {
+> -				found_cpu = cpu;
+> -				goto spread_done;
+> -			}
+> -		}
+> -		prev = mask;
+> -	}
+> -
+> -spread_done:
+> -	rcu_read_unlock();
+> -	return found_cpu;
+> +	return cpumask_local_spread(index, dev->priv.numa_node);
+>   }
+>   
+>   static struct cpu_rmap *mlx5_eq_table_get_pci_rmap(struct mlx5_core_dev *dev)
+> @@ -880,7 +861,7 @@ static int comp_irq_request_pci(struct mlx5_core_dev *dev, u16 vecidx)
+>   	int cpu;
+>   
+>   	rmap = mlx5_eq_table_get_pci_rmap(dev);
+> -	cpu = mlx5_cpumask_default_spread(dev->priv.numa_node, vecidx);
+> +	cpu = mlx5_cpumask_default_spread(dev, vecidx);
+>   	irq = mlx5_irq_request_vector(dev, cpu, vecidx, &rmap);
+>   	if (IS_ERR(irq))
+>   		return PTR_ERR(irq);
+> @@ -1145,7 +1126,7 @@ int mlx5_comp_vector_get_cpu(struct mlx5_core_dev *dev, int vector)
+>   	if (mask)
+>   		cpu = cpumask_first(mask);
+>   	else
+> -		cpu = mlx5_cpumask_default_spread(dev->priv.numa_node, vector);
+> +		cpu = mlx5_cpumask_default_spread(dev, vector);
+>   
+>   	return cpu;
+>   }
 
