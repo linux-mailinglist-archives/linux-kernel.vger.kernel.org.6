@@ -1,166 +1,206 @@
-Return-Path: <linux-kernel+bounces-287081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A7A9522B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:30:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAD29522BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA501C2187E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973451C21C7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32241BE842;
-	Wed, 14 Aug 2024 19:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E99E1BF301;
+	Wed, 14 Aug 2024 19:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AV3Bm0tR"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUHG8hUN"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ACF1BD510
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CFA1BE842;
+	Wed, 14 Aug 2024 19:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723663811; cv=none; b=k84PYuGf92Vd1r7lLrg6C68Cm/LD4bxpw02Sqdo8T4S18Kzw/RHiVyhVXBqKn2j1Z0RHPfrIKJiUwyL+TQTDTjme5c0NAXZJtsKZ9ZqE6d+6qVLOHDKzKauuJCC+gHibHPIY4BApGh4y1iTbcQYOz3rocwXJ/rg+Tckdf+b+2Lg=
+	t=1723664481; cv=none; b=aYeU+0euoqwe8zUIu3jjeEaYGqSX7BLWv6SwugRfFphcWWqJzQxYIcY7rr3T99/ZV2G1Kt+j3TxT6wEnvmML9e6WmpaxUotcX7EusSMBiG4D6gJC8tDGFpCgVPVdcsyXTDygvpQOvm1Y/SNz6mnwIAnYwxfkxWuuBuMfItweTHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723663811; c=relaxed/simple;
-	bh=2rkNmEF/58bW5keu0wlIOSfW+TzZxSeo+2mXbxxenf4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PrwNjsvG0v2a3JiNX6j5PsCTEuglg5DJa3YrZIyuR64U6Lcsb+VwqsW9NGUu9i+JTDUBpLFfg66Fe/nmJbOjyW4Qt+7zAiMWTMeIipFnXrZRLkSpQFrT1DEPLctYU4PmfTXMqBacUEk+WIErTSvjU+CSLbGYeEAiooKGg8tPwPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AV3Bm0tR; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1723664481; c=relaxed/simple;
+	bh=SKw2XZUR7W7bDNlsbaYvABmOzH9rYAGAhE8uywbt8pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGnTxpJdnXjh9iKI1brx2KnEDkqlLFi5lwXeEXgguX3FlCTHVu+h0egU0AW3faW4S+tAd+ZRHykyAFGoB3V16evCirnWJ4RRck4fU+KK+WFHaNCP8139+7OAhxLWh66l6sxN0zN+YjpnebZ4r7RlSSGvDYPQfERMIRy5Jf4Ux7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUHG8hUN; arc=none smtp.client-ip=209.85.160.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc611a0f8cso2033855ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:30:10 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fe6672297so1317501cf.1;
+        Wed, 14 Aug 2024 12:41:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723663809; x=1724268609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723664479; x=1724269279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2orC+qE4+JgnSpowxeNtJQNLuO+iy/rKh6rk9hYX5eQ=;
-        b=AV3Bm0tRsdRbmwcu/9P0kS+abWdAiKoiOSJ2heFDAVVMTQ63u4LVP2O4e+WgK4GBRj
-         xDkk++jDS87bE+S9/lhP7xhR9Wnqq1mxMtAOZF05TIf8AlkpTEgC20Nr69cf+EfvoH4n
-         nnEoqjfE5sCkyQC5czz8o5kRjw19ymPt2RxoQXhPerij2QxWrSPULcwYVDrixSXwHkeS
-         CJX9ML/rtIHoPz0NlzynAcmRAeZwPjEb7IYo/FdGjqoEx3IwfsEFd/0orBHkF7o2Oh7T
-         q/+fU+p3EqbnhyELSiTYjbtj0HXH3XIXNBXMUPtRwtKLUm87ogxFaypj2d89YKCzScud
-         sH/w==
+        bh=P7nxP/0wlxFkVaeXCvOut63mGk6zyQ8GTLenWGDTFAU=;
+        b=iUHG8hUNN5xAu5W1YP0Vmv6eYs/g91sq9XxYcJBw8SfwsWkIxdG8rnEM+etJ87Sd8U
+         k5VkOKz5P4uUHVyr/yJACNGqs4UJkdRgGdG+yD8x8IEjkh7I2GtIAxc+HWk7uCA4O2Y8
+         FK4BAolWy30+Fl2enOLQ9GJhczzfOvxrl0fZGYf9G4zSpADEL7nS0RdJEnA5tFyrTsE1
+         ZhBWPVaaliXxqsxJ53qMwNCjud+jV/k91mmBH6BllGUO8KMJNqAVEtH+FdYHmaBqcipO
+         rodGysBH/siJ60LbQ2rtGdUzlwV4fEKmkEWt//1MRDjJM2mDw1BiM5S4tWC7/xcRFEX8
+         Eidw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723663809; x=1724268609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723664479; x=1724269279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2orC+qE4+JgnSpowxeNtJQNLuO+iy/rKh6rk9hYX5eQ=;
-        b=Mz6vT9xjQb12lChKgDGdmjNVj5ATstuo0L9eVtoK1yn0x/IrkIRC3nfvauIOGMYbtm
-         VK3BkIfB7hiiqcxPTiPhh8NPQSCGP58+ILakk8kW42g6eOf8OK/4rbssIKcNlwZ7E+CG
-         ucTRliJxwv+JVsyAVjUzu2oPwspxQWo5ULmYtcBL32nWVaUSnVW5B9MyWAfaraZZkJlT
-         JnhJsiz8iiqpyscSNMdZUisW0QVuo7t1bDheAm8xfeJjm+2y+cq7P+Z1tsLqmoWTXQX6
-         AUluEPmiZjHkyr5LAvvMToF2mqG4lbsyg3kNdyFZoqgWkEb1D1h6WnGA8eQ8wzR7B6C3
-         0t4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyzoUc2c7r7e84evvi3ICm5GbuSzeWVtw2LjAJqk7pRjTGGOvJ48ik92om7sArb/54ECI1OrNHvhAgLQjpkl880n/EIQIcZE+FxLYr
-X-Gm-Message-State: AOJu0YyTG6zV0S/Jg0I2THDtw1AKVj40YAgP9Zj9C4waXqiGxtjAHCPS
-	CQ9REnh4i0niMcuvtkN7eDRQ5VQdQKG02K9Mku2ct25dyO3Wx2FzgnR2X6Ov+WHQGnb5nVMCVsF
-	noMt9qM1Wj/pC/iw/9W2dtM6y5KA=
-X-Google-Smtp-Source: AGHT+IHzARyOZOqSFNAjYmj2+ulO0fvklY9400IzG1zvOPK+AV5vzIrPm4MC4kcom2idbw8b65sYapngSwa3msyPS6E=
-X-Received: by 2002:a17:902:ecc4:b0:1ff:54a2:161b with SMTP id
- d9443c01a7336-201d647e620mr51176815ad.39.1723663809469; Wed, 14 Aug 2024
- 12:30:09 -0700 (PDT)
+        bh=P7nxP/0wlxFkVaeXCvOut63mGk6zyQ8GTLenWGDTFAU=;
+        b=rtvFIjj2VYA09lALHZKYVvWx1SdRAZpKZzE5fdgS5IK6ln11pfrOvkjupukGyntCrN
+         vcZ/t+gFLY+EgcFOCru99lArbp19p2GSah6KqNQCItdRyakwSdCszGxvwsSZHm6t3lw/
+         LUgsTLXHW/u0WNilliHs3c14wR1Dkl1SgdxaSYueB8uwjgtH2QhNpAmuPeCHh5MhOMCb
+         bgQxJXBZLO6yIfmBp176LNCX4wRyqXztVlt3YD0NhF/pNTVbXAXFvAye+gglKkuAAtAe
+         EsxPLBmF3gutDWyxuZYVXlWH+zVEBKD+d3yWggNJsAfBKA13zddpyWZEcklwXvLOUf30
+         6Fkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtC0IYy/HCx8ecuTLyHYGg5QbjbVq0GxbZ5eLPq2ikhJTFWJonFfRkauViEug0w6j79JJZmSMDD9ZwN91ei+/ZDZ0ja8ZoWxVy23H1ETCgyRSlsXytDxlWce+M6xKzhjMow23D3vr55hkm78k=
+X-Gm-Message-State: AOJu0YwvdXdLEbRgZP7OJHXHKEcHE8gXAUD6fBJ7bTS5j3V3pYFVYnSu
+	IgcYdR/7j7FcAgzA5xIQIvBRCVy/DJ69baVNB3XkCl5bYuPkL3qL
+X-Google-Smtp-Source: AGHT+IG43s6HRKXNmIoIQMez0b4aDhVLwvUOvUZXa56lx5CPR6BaSlukxg+NEqSky6No4rxSBs7Hyw==
+X-Received: by 2002:a05:622a:5a8a:b0:44f:f118:d875 with SMTP id d75a77b69052e-4535bb649aemr44940161cf.36.1723664478705;
+        Wed, 14 Aug 2024 12:41:18 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c1a7f12sm44629801cf.20.2024.08.14.12.41.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 12:41:18 -0700 (PDT)
+Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id E088A120008C;
+	Wed, 14 Aug 2024 15:33:43 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 14 Aug 2024 15:33:43 -0400
+X-ME-Sender: <xms:lwa9ZjEHnwkM3-0dwSWDJtmILlk4QkSiYMdcwoWAGFc7UZDM0UplCQ>
+    <xme:lwa9ZgUyTmDuBlhvW1mZlj1ffSYIOnH2pTqyl6DCBDTSfr38yFhHQALc9xk9ZDVpA
+    ceUNE7C54haSkB-gg>
+X-ME-Received: <xmr:lwa9ZlIiOKwQwgbE0BxlHxofRUsmobhriM5MGrdEh-5Ur1sZkIZKatArGMk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtgedgudegudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdet
+    heduudejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvgdpnhgspghrtghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomh
+    dprhgtphhtthhopeifvggushhonhgrfhesghhmrghilhdrtghomhdprhgtphhtthhopehg
+    rghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprh
+    hothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhr
+    ohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrghesshgrmhhsuhhnghdrtg
+    homhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
+X-ME-Proxy: <xmx:lwa9ZhG1N8emzyFNaJqhBj2XetKPlOIy7uom0GRpeGTJSgatsjyPSg>
+    <xmx:lwa9ZpUiVcUwnLDLR33nslFOqzrXxXALspMUua16n1qawyAB5WXGzA>
+    <xmx:lwa9ZsMzlBqq_ytZOytRK4l0FDmR2OJbLNPZhk-7YYbHO3xTqnQoIA>
+    <xmx:lwa9Zo3N_LuZXYrzRMbsrTYjNqEhxwUoTxEmzO9cH98wlFXdFZ9J1g>
+    <xmx:lwa9ZuX__PdUNQIu_Z-WuWkLhzwiIiYMfvQ3Y6Txj0RL5OqoEA52JbPe>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 14 Aug 2024 15:33:43 -0400 (EDT)
+Date: Wed, 14 Aug 2024 12:32:15 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
+Message-ID: <Zr0GP0OXliPRqx4C@boqun-archlinux>
+References: <20240812182355.11641-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230724211428.3831636-1-michal.winiarski@intel.com>
- <CADnq5_NwDn5DXPadzZtegUJ=y=LfVHykO7kG3edmiqRTTCxMNQ@mail.gmail.com> <nqsuaaibncfcnu3d5376ulujxfswbjwq3ptrivh6djpmvcpuih@fepbhcbik272>
-In-Reply-To: <nqsuaaibncfcnu3d5376ulujxfswbjwq3ptrivh6djpmvcpuih@fepbhcbik272>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 14 Aug 2024 15:29:57 -0400
-Message-ID: <CADnq5_Nsx4ii4RnhB4J878naLajOWM6aAHYHzJ6mZyzdAEj7tA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] drm: Use full allocated minor range for DRM
-To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, David Airlie <airlied@linux.ie>, 
-	Oded Gabbay <ogabbay@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
-	Emil Velikov <emil.l.velikov@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, James Zhu <James.Zhu@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812182355.11641-1-dakr@kernel.org>
 
-On Tue, Aug 13, 2024 at 8:19=E2=80=AFPM Micha=C5=82 Winiarski
-<michal.winiarski@intel.com> wrote:
->
-> On Mon, Aug 12, 2024 at 01:38:38PM GMT, Alex Deucher wrote:
-> > Are there any objections to this series?  We have been running into
-> > this limit as a problem for a while now on big servers.
->
-> I don't think there were any objections, just a general lack of
-> interest - so there are no R-b / Acks.
-> If you're interested to have a go at it - I can resend it.
-> It should still apply on latest drm-tip.
+Hi Danilo,
 
-Yeah that would be great!
+On Mon, Aug 12, 2024 at 08:22:46PM +0200, Danilo Krummrich wrote:
+> Hi,
+> 
+> This patch series adds generic kernel allocator support for Rust, which so far
+> is limited to `kmalloc` allocations.
+> 
+> In order to abstain from (re-)adding unstable Rust features to the kernel, this
+> patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
+> nor does it extend the `BoxExt` and `VecExt` extensions.
+> 
+> Instead, this series introduces a kernel specific `Allocator` trait, which is
+> implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
+> implemented in the context of this series.
+> 
+> As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
+> Additionally, this series adds the following type aliases:
+> 
+> ```
+> pub type KBox<T> = Box<T, Kmalloc>;
+> pub type VBox<T> = Box<T, Vmalloc>;
+> pub type KVBox<T> = Box<T, KVmalloc>;
+> 
+> 
+> pub type KVec<T> = Vec<T, Kmalloc>;
+> pub type VVec<T> = Vec<T, Vmalloc>;
+> pub type KVVec<T> = Vec<T, KVmalloc>;
+> ```
+> 
+> With that, we can start using the kernel `Box` and `Vec` types throughout the
+> tree and remove the now obolete extensions `BoxExt` and `VecExt`.
+> 
+> For a final cleanup, this series removes the last minor dependencies to Rust's
+> `alloc` crate and removes it from the entire kernel build.
+> 
+> The series ensures not to break the `rusttest` make target by implementing the
+> `allocator_test` module providing a stub implementation for all kernel
+> `Allocator`s.
+> 
+> This patch series passes all KUnit tests, including the ones added by this
+> series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
+> without any issues.
+> 
+> This series is based on [1], which hit -mm/mm-unstable, and is also available
+> in [2].
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+> 
+> Changes in v5:
+>  - (safety) comment / documentation fixes suggested by Alice, Benno and Gary
+>  - remove `Unique<T>` and implement `Send` and `Sync` for `Box` and `Vec`
+>  - use `KMALLOC_MAX_SIZE` for `KVmalloc` test and add a `Kmalloc` test that
+>    expects to fail for `KMALLOC_MAX_SIZE`
+>  - create use constants `KREALLOC`, `VREALLOC` and `KVREALLOC` for
+>    `ReallocFuncs`
+>  - drop `Box::drop_contents` for now, will add it again, once I actually rebase
+>    on the original patch that introduces it
 
-Thanks,
+I'm trying to put your series on rust-dev, but I hit a few conflicts due
+to the conflict with `Box::drop_contents`, which has been in rust-dev
+for a while. And the conflict is not that trivial for me to resolve.
+So just a head-up, that's a requirement for me to put it on rust-dev for
+more tests from my end ;-)
 
-Alex
+Regards,
+Boqun
 
->
-> -Micha=C5=82
->
-> >
-> > Alex
-> >
-> > On Mon, Jul 24, 2023 at 5:15=E2=80=AFPM Micha=C5=82 Winiarski
-> > <michal.winiarski@intel.com> wrote:
-> > >
-> > > 64 DRM device nodes is not enough for everyone.
-> > > Upgrade it to ~512K (which definitely is more than enough).
-> > >
-> > > To allow testing userspace support for >64 devices, add additional DR=
-M
-> > > modparam (force_extended_minors) which causes DRM to skip allocating =
-minors
-> > > in 0-192 range.
-> > > Additionally - convert minors to use XArray instead of IDR to simplif=
-y the
-> > > locking.
-> > >
-> > > v1 -> v2:
-> > > Don't touch DRM_MINOR_CONTROL and its range (Simon Ser)
-> > >
-> > > v2 -> v3:
-> > > Don't use legacy scheme for >=3D192 minor range (Dave Airlie)
-> > > Add modparam for testing (Dave Airlie)
-> > > Add lockdep annotation for IDR (Daniel Vetter)
-> > >
-> > > v3 -> v4:
-> > > Convert from IDR to XArray (Matthew Wilcox)
-> > >
-> > > v4 -> v5:
-> > > Fixup IDR to XArray conversion (Matthew Wilcox)
-> > >
-> > > v5 -> v6:
-> > > Also convert Accel to XArray
-> > > Rename skip_legacy_minors to force_extended_minors
-> > >
-> > > Micha=C5=82 Winiarski (4):
-> > >   drm: Use XArray instead of IDR for minors
-> > >   accel: Use XArray instead of IDR for minors
-> > >   drm: Expand max DRM device number to full MINORBITS
-> > >   drm: Introduce force_extended_minors modparam
-> > >
-> > >  drivers/accel/drm_accel.c      | 110 +++----------------------------=
---
-> > >  drivers/gpu/drm/drm_drv.c      | 105 ++++++++++++++++---------------
-> > >  drivers/gpu/drm/drm_file.c     |   2 +-
-> > >  drivers/gpu/drm/drm_internal.h |   4 --
-> > >  include/drm/drm_accel.h        |  18 +-----
-> > >  include/drm/drm_file.h         |   5 ++
-> > >  6 files changed, 69 insertions(+), 175 deletions(-)
-> > >
-> > > --
-> > > 2.41.0
-> > >
+>  - improve usage of `size_of_val` in `Box`
+>  - move `InPlaceInit` and `ForeignOwnable` impls into kbox.rs
+>  - fix missing `Box` conversions in rnull.rs
+>  - reworked `Cmalloc` to keep track of the size of memory allocations itself
+>  - remove `GlobalAlloc` together with the `alloc` crate to avoid a linker error
+>  - remove `alloc` from scripts/generate_rust_analyzer.py
+> 
+[...]
 
