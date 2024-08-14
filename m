@@ -1,289 +1,258 @@
-Return-Path: <linux-kernel+bounces-287189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755D4952474
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C7895245A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E304B1F22EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FECF283BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238691C8229;
-	Wed, 14 Aug 2024 21:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9271C6897;
+	Wed, 14 Aug 2024 20:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EMSKsBDI"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hm0WOU5H"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A671C7B6C;
-	Wed, 14 Aug 2024 21:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7996A1B86C1;
+	Wed, 14 Aug 2024 20:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723669581; cv=none; b=J6vA5nTw1RydAM/GopjhjTQVPZtSEbplIFCuQaoxZcHiydsg6VRojbbnugrPwnDMTkoR1o86vjowuqQTTfuwj2gjSTPYGM9ud1tWEeSUQNTXTW/tcbvd70MuG6SANDFergvHZwmAYdyGqglvdkRrM1Q2iHko6RwcgIYdP7HH2iQ=
+	t=1723669150; cv=none; b=LB4nxvnH8iwdxvGaoEDXxcs7M9HDBlWKVjBN0WphGSgeOITZcf69GJOTVMXx0x/QasJK5MsqCY1EFuk7Zu7+TWtkcS+TKI23Vfc/zQvUoiVHctmK/O8UTMmAr8Vjp0hk5maK0UNQMCRGAJQChBa0hSsmh2tIbcYNi750INUJ2Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723669581; c=relaxed/simple;
-	bh=AINCg7PmGTJMVRBBd5cmj+JX4HcKUUl0FLGtBA0n96s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHcHCnobouLUBm0a2lsjyAOCHYpzTH9kb4i2kaTj8MNdH9wExtD6SkRUfwmih37uLuDuAikKbaEQOB+mJ9fECrzpqEA6LSFsqcfkVKSiivIvmKyLJaWG7/QwDVNjoyQBkkW8FVV62+m3dTHAa6qKAc7R1LQ2PpW0IrCrlPxx9nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EMSKsBDI; arc=none smtp.client-ip=209.85.219.54
+	s=arc-20240116; t=1723669150; c=relaxed/simple;
+	bh=8vFVUwpWpI+/TgcmZS2f6NXJyi95TXmRURxuOJMiRuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qGM/YckFYzqaS4pliqYuftEq40/MPzEiTJbMHCobnTOlgrCdqU+UA4Q4b/vG94rD7MnX7j4yWPZ0QJAF/X+UeK+7vIPeoshDMn/PiOqPiI1TbM3nygZcScUUZ1S76+efYSsfdxG93vWOUaob5pBfkfwbsJuS/qREAHOQN6Fc+ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hm0WOU5H; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b5dfcfb165so1549386d6.0;
-        Wed, 14 Aug 2024 14:06:19 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so457944a12.3;
+        Wed, 14 Aug 2024 13:59:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723669578; x=1724274378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723669146; x=1724273946; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bYLAetEAQZjZKqd+n9fHz1LludGiCPIKD9nZ07NlfWY=;
-        b=EMSKsBDIzZRg/q5rQ85D/kZ4i1PO6T06/U9VPWPwk8iuzl3Kjtwy3SuM+REKyIeXoD
-         FfQGlL7U9XkCHPRTaeFEDDiOXEa2fL3b5ijmwQ7NNtdNDkJoTKIuw4k428rbi1gGxwqa
-         GrbrcPJyOVTWgf2G6kB3KWPHA4Ytid5JrH0j/fEXZvNpBlrs8DhlamPo8WMZht+932SP
-         41o+/Qe4PGDSqR08+mTSzric1+GDxI9NOeOgUe9+sVLhL1BSPNTfzcozXUf116ct+3ll
-         Sl8Cb7MSld2jot6nQeBBDLPaD6/d0yRnC0NcIuzvc0201ihBnTkHIT1WlFhgzcTzoxV+
-         zvuA==
+        bh=xUFsxtwjK4qBkT3u2gTB6Vh0/NowA8UD9DfqrFrunBQ=;
+        b=hm0WOU5HppKZU+7oZL95RF3daLFHEx33rV+SjMloWfvriV8wlD9QT2xlwKmRJdnVWU
+         OnTLB2T6xKMpl+OyeC99MMoLBEdvwJaIQMcs99r6plzw4W2lAejjMICm7QcbmahMM+Oc
+         c+P5pg3JCgNgNPcSGmvouKxT/f720mr5/rJvTzAtK4WCb5Ia7WJoUjxdfDKbjCuoiI7x
+         8DWejXxyhXo0dMSfoir3AAFxHfcZBh7XCVAt/LyzGEKe2BJEcbDM3txZlkl8XY6Bh+1d
+         r/GSzIRQYt8kxyZx/phTANyBEIzN81xuG5ZwG5Ym4znKP96CkYIPCQKMRMZLZBQhcfXA
+         kAqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723669578; x=1724274378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723669146; x=1724273946;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bYLAetEAQZjZKqd+n9fHz1LludGiCPIKD9nZ07NlfWY=;
-        b=pzjZNoqhXNec8e7XX5XtT+Lws1CNA1pYzC0bMCzmhaiAFcT4O3qahK5u1nWjRc5ne4
-         liaEMcC0iRY4jMnOfia6PYXqtRpALHziX1ARPn8aBS7jzyvlEPdpIHtFcs5cfdOuG/Ei
-         yqfd075MLeFh+ULL9ywNFmvauDCN5mV9LqldNilspjxWg5npMXuDZNDmTjsId1je4ixe
-         Y+nwx0TptWXN+zBBr8lAHDI7A/HjRwLQLRtPCNcs28AP+JSaqYqrO5t12bYS+FHAnxtB
-         ga0ucE9GF890Msvh4+7UybYhwGP/irbNVvBh+CufFrDSWxFsz6RI6l+/54XtlFSputq+
-         zPiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNUIORShR3KaK3x07aRLlDesETG+nYXjobp71JHG0TDDHIz+3lGZkDrQm0W43nzdScCetQZqSiOXWASDXZrW9Yy1Pw3CA1FtTZIZ3amb9kmZr7+1Pzuqbf4hs6K2c43WKI3TJlBJSz27V2Cus=
-X-Gm-Message-State: AOJu0YwidsVL9GjbVTbD4lvxp4rInrff5poKQ231PYwyJ/KW8DN5IJs9
-	YcU7IfPKRYMLVHldu2XVqJ1ly2Dp6EOOQ3bQjjhc9baNTG8GyFlV
-X-Google-Smtp-Source: AGHT+IGDebjZZDQvDjJA/CwPomFxztz9Urch3ioFcrv3isqjZboh525lba9BHuJbCMp0KQRP0ucCxw==
-X-Received: by 2002:a05:6214:451e:b0:6bb:c0ad:8d78 with SMTP id 6a1803df08f44-6bf5d1def86mr51733676d6.34.1723669578249;
-        Wed, 14 Aug 2024 14:06:18 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fe0db99sm479526d6.36.2024.08.14.14.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 14:06:17 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id E22F4120007A;
-	Wed, 14 Aug 2024 16:59:23 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 14 Aug 2024 16:59:23 -0400
-X-ME-Sender: <xms:qxq9Zn3A9LEVG0V1rBmWNXezv_tKBC2tgaowOLF4KRDiGijuxxaIZw>
-    <xme:qxq9ZmFfWMu5YUj8C59cn4dABNosrAD-ABqR__AUuNDlqmhiSR1z9sAkk_lfToP4_
-    hZPGy-eX_gPzBSrIA>
-X-ME-Received: <xmr:qxq9Zn4aHv39yl6cwlP08DO_BmN7Ge-LnaS5U88XAADlOCVpEfPsbEAi0cA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtgedgudehlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvvddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhoth
-    honhdrmhgvpdhrtghpthhtoheplhihuhguvgesrhgvughhrghtrdgtohhmpdhrtghpthht
-    oheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepuggrkhhrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegrihhrlhhivg
-    gusehrvgguhhgrthdrtghomhdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtgho
-    mhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonh
-    hgmhgrnhesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:qxq9Zs3nqcaZgN3AdTp6nnLANBYSxiQi3Ey7hGx95eYiD0mZo7dRQQ>
-    <xmx:qxq9ZqGk2e-ENVBlePEt15eijUuzVLUhtbcsBaBAvvxfbxpX9bCHPQ>
-    <xmx:qxq9Zt9a5oxvFngrKRiahn4j6KDMqLl59AccRMi7-MOV3bo-SA3o-g>
-    <xmx:qxq9Znmc6o1uLOL1YGDp2wdpzRK7tDHxbK1H3o7pcAv-D9pkpqPz6w>
-    <xmx:qxq9ZmEitmu2ot3_6k3M86S43TKueN7mHq2E4RSwVSKsdvW8RGCcv43I>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Aug 2024 16:59:23 -0400 (EDT)
-Date: Wed, 14 Aug 2024 13:57:55 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
-	airlied@redhat.com, Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Aakash Sen Sharma <aakashsensharma@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 1/3] rust: Introduce irq module
-Message-ID: <Zr0aUwTqJXOxE-ju@boqun-archlinux>
-References: <20240802001452.464985-1-lyude@redhat.com>
- <20240802001452.464985-2-lyude@redhat.com>
- <Zrzq8su-LhUIoavm@boqun-archlinux>
- <1bcae676ec4751ae137782c4ced8aad505ec1bb9.camel@redhat.com>
- <Zr0QyN8sQ6W2hPoJ@boqun-archlinux>
- <9855f198-858d-4e3f-9259-cd9111900c0c@proton.me>
+        bh=xUFsxtwjK4qBkT3u2gTB6Vh0/NowA8UD9DfqrFrunBQ=;
+        b=XjvxuBpbOAQxT406lWgkwxfDry3UoeelNEZFQizMUK187rfMkgkA1bBnFfgKeUL9fp
+         tAdrfrUns4RqP0nWaWKmm5/zpI29yKaicPUf9H4InFjxBEGCTo55v8axski/V/K7AND/
+         elROu1T1algavZqP6KLJ52APOavaSZKQiilcQ6whALh5TxGyZ3vBMeUX9TH5rQ/mJaI9
+         2peAVvL35U7yYksA6tgs4w1DOLfrY5P5njkCcLzu+tR8asWYXj6HtQi1XrLxY2XOUtjA
+         wsjZFpNsQ4Pro+DvK0zuI2ACI1+StFgVslgZnOyb9lQZrTdYY0aD66S9nkH7gcysUAQ/
+         vXjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyi+kwEEDCB7y4mtOhvvs6K57yw7+JsFqjNAi70HE7cTyfC1w9DXNFwvJ5diGpNhbwAY+lqsFO0dpxeyPywMOjLTPg877OTIDj7Ouq/Vfy7nmttGRiqGs2OgUrWan87glQKNz6YZJIfjSlZg==
+X-Gm-Message-State: AOJu0Yzg6N/73OKmTiu5s9W/UDA4AZAJIz/vkix46483+JlCTG9yKS7M
+	zw4HbpLIF3M3M+B168Dx6Al8+WW8XBfAtpg7lRmdzkpVDVYYZcSQ/FioS4t0eQZ4BSUCF8kB/5U
+	gx5hneU1cRWLAaKk+fven+sAZLTI=
+X-Google-Smtp-Source: AGHT+IE+q8WyDRZou/tM0fmC4CDOmu67S4j/1xw7k9NIFZ1RfVTzOUezdCAG+mkrItstm3Yg/SA/rc57D1GEF4GexHI=
+X-Received: by 2002:a17:907:e2cc:b0:a77:dd1c:6276 with SMTP id
+ a640c23a62f3a-a8366c1fc04mr288940966b.7.1723669145319; Wed, 14 Aug 2024
+ 13:59:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9855f198-858d-4e3f-9259-cd9111900c0c@proton.me>
+References: <20240811085954.17162-1-wen.yang@linux.dev> <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
+ <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
+In-Reply-To: <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 14 Aug 2024 22:58:52 +0200
+Message-ID: <CAGudoHFQtxU7r+Y9AV2yPc+JrTdMtzJopsjUinFK8uE5h7cbTQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
+ non-semaphore eventfd
+To: Wen Yang <wen.yang@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Dylan Yudaken <dylany@fb.com>, 
+	David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	kernel test robot <lkp@intel.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 08:44:15PM +0000, Benno Lossin wrote:
-> On 14.08.24 22:17, Boqun Feng wrote:
-> > On Wed, Aug 14, 2024 at 03:38:47PM -0400, Lyude Paul wrote:
-> >> On Wed, 2024-08-14 at 10:35 -0700, Boqun Feng wrote:
-> >>> On Thu, Aug 01, 2024 at 08:10:00PM -0400, Lyude Paul wrote:
-> >>> [...]
-> >>>> +/// Run the closure `cb` with interrupts disabled on the local CPU.
-> >>>> +///
-> >>>> +/// This creates an [`IrqDisabled`] token, which can be passed to functions that must be run
-> >>>> +/// without interrupts.
-> >>>> +///
-> >>>> +/// # Examples
-> >>>> +///
-> >>>> +/// Using [`with_irqs_disabled`] to call a function that can only be called with interrupts
-> >>>> +/// disabled:
-> >>>> +///
-> >>>> +/// ```
-> >>>> +/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
-> >>>> +///
-> >>>> +/// // Requiring interrupts be disabled to call a function
-> >>>> +/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
-> >>>> +///     /* When this token is available, IRQs are known to be disabled. Actions that rely on this
-> >>>> +///      * can be safely performed
-> >>>> +///      */
-> >>>> +/// }
-> >>>> +///
-> >>>> +/// // Disabling interrupts. They'll be re-enabled once this closure completes.
-> >>>> +/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
-> >>>> +/// ```
-> >>>> +#[inline]
-> >>>> +pub fn with_irqs_disabled<T>(cb: impl for<'a> FnOnce(IrqDisabled<'a>) -> T) -> T {
-> >>>
-> >>> Given the current signature, can `cb` return with interrupts enabled (if
-> >>> it re-enables interrupt itself)? For example:
-> >>>
-> >>> 	with_irqs_disabled(|irq_disabled| {
-> >>>
-> >>> 	    // maybe a unsafe function.
-> >>> 	    reenable_irq(irq_disabled);
+On Wed, Aug 14, 2024 at 6:15=E2=80=AFPM Wen Yang <wen.yang@linux.dev> wrote=
+:
+>
+>
+>
+> On 2024/8/11 18:26, Mateusz Guzik wrote:
+> > On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
+> >> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte intege=
+r
+> >> value provided in its buffer to the counter, while a read (2) returns =
+the
+> >> 8-byte value containing the value and resetting the counter value to 0=
+.
+> >> Therefore, the accumulated value of multiple writes can be retrieved b=
+y a
+> >> single read.
 > >>
-> >> JFYI: this wouldn't be unsafe, it would be broken code in all circumstances
-> >> Simply put: `with_irqs_disabled()` does not provide the guarantee that
-> >> interrupts were enabled previously, only that they're disabled now. And it is
-> >> never a sound operation in C or Rust to ever enable interrupts without a
-> >> matching disable in the same scope because that immediately risks a deadlock
-> >> or other undefined behavior. There's no usecase for this, I'd consider any
-> >> kind of function that returns with a different interrupt state then it had
-> >> upon being called to simply be broken.
+> >> However, the current situation is to immediately wake up the read thre=
+ad
+> >> after writing the NON-SEMAPHORE eventfd, which increases unnecessary C=
+PU
+> >> overhead. By introducing a configurable rate limiting mechanism in
+> >> eventfd_write, these unnecessary wake-up operations are reduced.
 > >>
-> >> Also - like we previously mentioned, `IrqDisabled` is just a marker type. It
-> >> doesn't enable or disable anything itself, the most it does is run a debug
-> > 
-> > Yes, I know, but my question is more that should `cb` return a
-> > `IrqDisabled` to prove the interrupt is still in the disabled state?
-> > I.e. no matter what `cb` does, the interrupt remains disabled.
-> 
-> What does this help with? I don't think this will add value (at least
-> with how `IrqDisabled` is designed at the moment).
-> 
+> >>
+> > [snip]
+> >
+> >>      # ./a.out  -p 2 -s 3
+> >>      The original cpu usage is as follows:
+> >> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
+al  %guest  %gnice   %idle
+> >> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >>
+> >> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
+al  %guest  %gnice   %idle
+> >> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >>
+> >> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
+al  %guest  %gnice   %idle
+> >> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >>
+> >> Then enable the ratelimited wakeup, eg:
+> >>      # ./a.out  -p 2 -s 3  -r1000 -c2
+> >>
+> >> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30=
+%), as shown below:
+> >> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
+al  %guest  %gnice   %idle
+> >> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.=
+00    0.00    0.00   38.38
+> >>
+> >> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
+al  %guest  %gnice   %idle
+> >> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.=
+00    0.00    0.00   39.11
+> >>
+> >> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %ste=
+al  %guest  %gnice   %idle
+> >> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.=
+00    0.00    0.00    0.00
+> >> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.=
+00    0.00    0.00   42.71
+> >>
+> >>
+> >
+> > Where are these stats from? Is this from your actual program you coded
+> > the feature for?
+> >
+> > The program you inlined here does next to nothing in userspace and
+> > unsurprisingly the entire thing is dominated by kernel time, regardless
+> > of what event rate can be achieved.
+> >
+> > For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 6=
+6.19s (1:06.19) total
+> >
+> > Even so, looking at perf top shows me that a significant chunk is
+> > contention stemming from calls to poll -- perhaps the overhead will
+> > sufficiently go down if you epoll instead?
+>
+> We have two threads here, one publishing and one subscribing, running on
+> CPUs 2 and 3 respectively. If we further refine and collect performance
+> data on CPU 2, we will find that a large amount of CPU is consumed on
+> the spin lock of the wake-up logic of event write, for example:
+>
+>   # perf top  -C 2  -e cycles:k
+>
+>      65.80%  [kernel]       [k] do_syscall_64
+>      14.71%  [kernel]       [k] _raw_spin_unlock_irq
+>       7.54%  [kernel]       [k] __fget_light
+>       4.52%  [kernel]       [k] ksys_write
+>       1.94%  [kernel]       [k] vfs_write
+>       1.43%  [kernel]       [k] _copy_from_user
+>       0.87%  [kernel]       [k] common_file_perm
+>       0.61%  [kernel]       [k] aa_file_perm
+>       0.46%  [kernel]       [k] eventfd_write
+>
+>
+> One of its call stacks:
+>
+> |--6.39%--vfs_write
+> |           --5.46%--eventfd_write
+> |                      --4.73%--_raw_spin_unlock_irq
+>
+>
+> >  > I think the idea is pretty dodgey. If the consumer program can toler=
+ate
+> > some delay in event processing, this probably can be massaged entirely =
+in
+> > userspace.
+> >
+> > If your real program has the wake up rate so high that it constitutes a
+> > tangible problem I wonder if eventfd is even the right primitive to use
+> > -- perhaps something built around shared memory and futexes would do th=
+e
+> > trick significantly better?
+>
+> Thank you for your feedback.
+>
+> This demo comes from the real world: the test vehicle has sensors with
+> multiple cycles (such as 1ms, 5ms, 10ms, etc.), and due to the large
+> number of sensors, data is reported at all times. The publisher reported
+> data through libzmq and went to the write logic of eventfd, frequently
+> waking up the receiver. We collected flame graph and observed that a
+> significant amount of CPU was consumed in this path: eventfd_write ->
+> _raw_spin_unlock_irq.
+>
+> We did modify a lot of code in user mode on the test vehicle to avoid
+> this issue, such as not using wake-up, not using eventfd, the publisher
+> writing shared memory directly, the receiver periodically extracting the
+> content of shared memory, and so on.
+>
 
-I was trying to make sure that user shouldn't mess up with interrupt
-state in the callback function, but as you mention below, type system
-cannot help here.
+Well I don't have the full picture and whatnot, but given the
+additional info you posted here I even more strongly suspect eventfd
+is a bad fit. AFAICS this boils down to batching a number of updates
+and collecting them at some interval.
 
-> >> assertion to ensure interrupts are disabled upon creation. So dropping it
-> >> doesn't change interrupt state. I think this actually does make sense
-> >> semantically: even if IrqDisabled wasn't a no-op in a world where we could
-> > 
-> > Just to be clear, I'm not suggesting making IrqDisable not a no-op.
-> > 
-> >> somehow implement that without running into the drop order issue - there still
-> >> would not be a guarantee that dropping `IrqDisabled` would enable interrupts
-> >> simply because it could be a nested disable. And there's no way we could make
-> >> interrupt enabled sections explicit without either klint, or carrying around a
-> >> `IrqEnabled` (which we would have to do for every function that could sleep,
-> >> so I don't think that's ideal). So without a token like this all code can do
-> >> is assume it doesn't know the interrupt state, and rely on solutions like
-> >> lockdep to complain if code within an interrupt context tries to perform an
-> >> operation that would be unsound there like sleeping.
-> >>
-> >> This being said - I would be totally alright with us making it so that we
-> >> assert that interrupts are still disabled upon dropping the token. But
-> 
-> We can't implement `Drop`, since it already implements `Copy`. But we
-> could add a debug assert before we call `local_irq_restore`. I think
-> it's a good idea to add a debug assert.
-> 
-> >> interrupts have to disabled throughout the entire closure regardless of the
-> >> presence of IrqDisabled. The same rules apply to C code using
-> >> local_irq_save()/local_irq_restore() - between those two function calls, it is
-> >> always a bug to re-enable interrupts even if they get turned back off. Unsafe
-> > 
-> > Do you mean the particular local_irq_save() and local_irq_restore(), or
-> > do you mean any interrupt disable critical sections? Note that we have
-> > wait_event_interruptible_locked_irq() which does exactly re-enabling
-> > interrupt in the middle to sleep and I'm pretty sure we have other cases
-> > where interrupts are re-enabled. So I'm not sure when you say "the same
-> > rules apply to C code ..."
-> > 
-> >> functions are no exceptions, nor are C bindings, and should simply be
-> >> considered broken (not unsafe) if they violate this. I suppose that's
-> >> something else we could document if people think it's necessary.
-> >>
-> >>
-> >>> 	})
-> >>>
-> >>> note that `cb` is a `-> T` function, other than `-> (IrqDisabled<'a>,
-> >>> T)`, so semantically, it doesn't require IRQ still disabled after
-> >>> return.
-> >>
-> >> This was the reason I originally had us pass IrqDisabled as a reference and
-> >> not a value - specifically since it seemed to make more sense to treat
-> >> IrqDisabled as an object which exists throughout the lifetime of the closure
-> >> regardless of whether we drop our reference to it or not - since it's a no-op.
-> >>
-> > 
-> > I haven't found a problem with `&IrqDisabled` as the closure parameter,
-> > but I may miss something.
-> 
-> We could also use `&'a IrqDisabled` instead of `IrqDisabled<'a>` (note
-> the first one doesn't have a lifetime). But there is no behavioral
-> difference between the two. Originally the intended API was to use `&'a
-> IrqDisabled<'a>` as the closure parameter and `IrqDisabled<'a>` in
-> functions that require irqs being disabled. As long as we decide on a
-> consistent type, I don't mind either (since then we can avoid
-> reborrowing).
-> 
-> > So the key ask from me is: it looks like we are on the same page that
-> > when `cb` returns, the IRQ should be in the same disabled state as when
-> > it gets called. So how do we express this "requirement" then? Type
-> > sytem, comments, safety comments?
-> 
-> I don't think that expressing this in the type system makes sense, since
-> the type that we select (`&'a IrqDisabled` or `IrqDisabled<'a>`) will be
-> `Copy`. And thus you can just produce as many of those as you want.
-> 
+With the assumption that updates to the eventfd counter are guaranteed
+to not overflow within the wakeup delay and that there is constant
+traffic, I'm suspect you would get the expected speed up by using
+timerfd to wake the consumer up periodically. Then you would only
+issue an eventfd read when the timerfd tells you time is up. You would
+(e)poll only on that as well, never on the eventfd.
 
-You're right, we then probably need a doc part of the function saying
-the `cb` cannot return with interrupt enabled.
+Even so, as is I think this wants a page shared between producer(s)
+and the consumer updating everything with atomics and the consumer
+collecting it periodically (atomic add on one side, atomic swap with 0
+on the consumer, I don't know the c11 intrinsics). It would be
+drastically cheaper all around.
 
-Regards,
-Boqun
+Bottom line though, my non-maintainer feedback so far is that the
+functionality you are proposing does not seem warranted for the
+problem you are facing.
 
-> ---
-> Cheers,
-> Benno
-> 
-> 
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
