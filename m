@@ -1,138 +1,211 @@
-Return-Path: <linux-kernel+bounces-286048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4829515E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:53:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA4289515E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED2DB289B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05416B283EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BFF13D52A;
-	Wed, 14 Aug 2024 07:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94178143C6A;
+	Wed, 14 Aug 2024 07:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jOjVb8DM"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kkLgkpHD"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396AF13CFAB
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8C2143C4C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723621715; cv=none; b=C8v1zj9Bgyw+3vq8WVUd9jIiIZ9wIEq6xU78UJQfCeEuY4SuJCItKvSgqYgG9MEtcgKGKanmzHggsnvkpJ3oDigFQXpc6CCQqTAuBc3TzAQHpbU2dN2j6NbCul5lm+CklkL71oR/Q1KZTridvKB1KDu5RWZ8CWHSo2/fDLID7Ek=
+	t=1723621731; cv=none; b=smI2hu3WEs3GW9QnZ/O/rMSF2tne4p2E6q6su4ybqRKHpRPKsobhb/dJtxqrrg6FKrl/6wKxrXmrM5mP5lZcCyAluKUHTPhmKGH/mf4utVNqGZWDU9Xqg9xtkUN6Fw1lVuyCCqiuC4omCgm9ngAEDsVDszpkLk9eU5sKZT2oRqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723621715; c=relaxed/simple;
-	bh=P7D+VZW1XS1Gzk5chH+qiZmPvALantpIIOGu3WIMPsM=;
+	s=arc-20240116; t=1723621731; c=relaxed/simple;
+	bh=5C1j6ezwQ5/mbJIAbQ5bmsAW+tFyXZnIyXCzdEb7NrE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tytSXbWl2KqzvaivP7Vegkktym/YHu+bGxXqSVt00oMBDZD6mAYRcvLjK3Txr2FuFcqGXXRaYu+MifX81puRPA6fEv9RbX6OcyRTTRm98rzDCdBR7zanr64CVhXQgsorad6cp9+Df4Byzzl/c8haqutu/Exk7VYYxriROmRo5/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jOjVb8DM; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so44035505e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:48:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=dUaZm/R0HBi+KgnRqdbw1K/dO0gz5LOcv58ww8FVs2T2HM8bIHbXXfnBoi/LPjUawYujzk88IGSGh7BhvbPwQVsW0m27l3EhVBQjZmPT+MS/vYnt1uU5mtZDKQrHLzzdHwsWXqgzhgOcDSIt+RekdpwIIFeAvnbwEWLsAVTCj8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kkLgkpHD; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4f51981b1beso2290904e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:48:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723621712; x=1724226512; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723621729; x=1724226529; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zRLxSfggsbxe3d7cfCO7JzeyIYzJnFmhVfUunHaRPJs=;
-        b=jOjVb8DMA/+t5Yi7Vcg+nUWzTTTYTpi2cHbOB7hWR0Y6lR5iEy/wRmAx6Ym20g9cca
-         5UW68ERolMqNN1o5wsLUTlpmiQZe//HLjcKkqCOg4mWFonlaFrBTXUV4SJWSmCiKvuit
-         5UvEdZaDKS3Gln0gnEH+Ab0c84fqOcCN+BfrQBA4jjZYlQlMaWG3dw4v9NDia8tyXGTA
-         3SNxXIHZNm6Mq5aYJCfTTOH8X85JXYOhneWWY2X/krCMSXdQ/msF+B++VzeJAQP/tsjn
-         Jhd48abq4Hg+OWr4qeCDiYEC1MURbHgjWDj/riFf8kX//W1AZAWzyjDlUkggxc1R/S/f
-         39iQ==
+        bh=2/wdavvpDC6LcqHnopC8nbqO8FTC/ahoEI/o+/GeLiI=;
+        b=kkLgkpHDMlEaYlPYwJSnQciPAoID6xhBcchMQYRppWuYBbxndTOMLbdPuD1D6RC/e9
+         2FngKzqs5jQyzb5bI19DRKs29BHkxk2MzwqVSRp48VltNYR6iG5rlHqr7fQ0W7Gl022g
+         9YKS4tdBKGXeLVgMsx7xPe201yi9G1iMx80/LDwEyD3utg03ShFSrp2I6LCyVMSyXRzb
+         46v0a/QCrUCgDH9u7d67HmjPIL17PuUmEjozy6jOI7TUKMCqHoAphlxiQb3Rp4RN0Q8P
+         O2OhIs+97DQqfoC1KqrMul/RYnfTfPholLcsGl7nLieFuWiUMbJ33idKl1DHWaCI1XCQ
+         Q8Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723621712; x=1724226512;
+        d=1e100.net; s=20230601; t=1723621729; x=1724226529;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zRLxSfggsbxe3d7cfCO7JzeyIYzJnFmhVfUunHaRPJs=;
-        b=eyRG1V2CbaXlJ/0jL4zi746+00BowRMH/81+f3uHSdRIg9yNJqWu0RikJFfpeC7BHh
-         VTChMFwjQc3nqAmKRgra85kZvLjK1KBUSIdjWycu7GCZ1JfvWCp2TrmymWDrYF/JeyPF
-         lZF1+5TO1VP9gT0izk7FmIoA51C9HyTJztbeCQrr6nkd1ubg4yHCB6zIZWuZ1XIrK+qy
-         LzMQcag+mFQsF8fxJUMMWpmqJA675mA07/8DzLyiezeKFHzKez64bizq6T2aw9SbIZv6
-         dGPjyTaBEWLEF4G843SIsb3d8FLT4kGgmZ9fM7zmkaUmG8WaLy8jFq5Bf05Jwxll+W+B
-         Xdcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4v7Gr9xgNIAS55eA/0JSd18hO6DFUCEhP/DlRNK8+Z73QKa1PX9yG9g6L3f0JYI4MVNG1iDJclHy29QL8Ag/8MQDEI6HtM3VIIO9c
-X-Gm-Message-State: AOJu0YymU++gCCl5e3iBnMw6h/tfS9BvB7Tu3yDZp0j7ndcsL9ohcTd4
-	3vlAoyswDN89UtlcA4bswBsKKFcJSaWoQNWg4UONtPWtka7GLbh9J9QbZYgJXZqNAqqUF5iCWdO
-	NJGsExQAW3O0kxtpvROVlEpfH8naejXVMPIvH
-X-Google-Smtp-Source: AGHT+IFszK04DfhyjnHB8HAsiUvfKiYaTBLS5Cci2eet/nobda0BRm8km1MdiKanezp8dm7Kg4wNR4OK+iD9anVVD1g=
-X-Received: by 2002:adf:f5cc:0:b0:366:e9f3:c242 with SMTP id
- ffacd0b85a97d-37177756be4mr1218451f8f.12.1723621712012; Wed, 14 Aug 2024
- 00:48:32 -0700 (PDT)
+        bh=2/wdavvpDC6LcqHnopC8nbqO8FTC/ahoEI/o+/GeLiI=;
+        b=vfVEdAG12a11ziBMsBSFD5T4cXVVgAMrXVkA1G3FNuCVvkaKLziOH3vBAfTnfZKvdT
+         BQLG6R1XXzTA4DAETjmmOx7b7gR2EbmDg2c5j2aH00FhIa11XQGdSpohJBX1KQaivmOo
+         wapoJxcD3L4Z3Ci5k1RrIctSbXFIFzgZlrjSCM3TCGUMORz4vOjJyeG0WLFf2oZBbic8
+         0THmr2sgLkY/n4816aBqQ640mYgweypLDAaiRPbzTcphRx0FCNSrQE1tu8egjhTF5uIc
+         f4NE7UIT4ONfMibAf0mabfkfcKzeTJrSPED1g1CdsI0mI0PxHrmnbWust7rypesE8wEe
+         9ofg==
+X-Gm-Message-State: AOJu0YywhG1tMCgNZ4g+EhQnP28mK724LL44jrDoY3LtZ7+mfJEzaSSq
+	C3MZy4UMCW1eO1ue8ksOdmPv2Ngy+eyg9rBzoqsvBbQMVpUNReb+3lUVbwxnc7y4hNJSWtzkM+r
+	ytdb2/CYP9a+k/XDCzvSR+pDEQvQ=
+X-Google-Smtp-Source: AGHT+IEd3u4Se6fhBEJdd+aYxIvEQnUcxk3LNnsHSN+HNVOu12kUacMSFGxoST5ZwSx72QX0tMd0YsxEaFAmyfuOAxs=
+X-Received: by 2002:a05:6122:411e:b0:4f5:2960:6ca6 with SMTP id
+ 71dfb90a1353d-4fad1c2e388mr2546780e0c.2.1723621728923; Wed, 14 Aug 2024
+ 00:48:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-9-dakr@kernel.org>
-In-Reply-To: <20240812182355.11641-9-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 14 Aug 2024 09:48:19 +0200
-Message-ID: <CAH5fLggyf=MAKvryzU5vEWFs9RSzjNOiPcz-V-MvCx8WKNiAQg@mail.gmail.com>
-Subject: Re: [PATCH v5 08/26] rust: alloc: add __GFP_NOWARN to `Flags`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+References: <20240814062830.26833-1-kanchana.p.sridhar@intel.com> <20240814062830.26833-3-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240814062830.26833-3-kanchana.p.sridhar@intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 14 Aug 2024 19:48:37 +1200
+Message-ID: <CAGsJ_4yWjjY_GqcaJsma9vPsuV29-WFK5Ho9DFZBx=HnL9=nPQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 2/4] mm: vmstat: Per mTHP-size zswap_store vmstat
+ event counters.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosryahmed@google.com, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	ying.huang@intel.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 8:24=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
+On Wed, Aug 14, 2024 at 6:28=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
 >
-> Some test cases in subsequent patches provoke allocation failures. Add
-> `__GFP_NOWARN` to enable test cases to silence unpleasant warnings.
+> Added vmstat event counters per mTHP-size that can be used to account
+> for folios of different sizes being successfully stored in ZSWAP.
 >
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> For this RFC, it is not clear if these zswpout counters should instead
+> be added as part of the existing mTHP stats in
+> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats.
+>
+> The following is also a viable option, should it make better sense,
+> for instance, as:
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout.
+>
+> If so, we would be able to distinguish between mTHP zswap and
+> non-zswap swapouts through:
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
+>
+> and
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
+>
+> respectively.
+>
+> Comments would be appreciated as to which approach is preferable.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Even though swapout might go through zswap, from the perspective of
+the mm core, it shouldn't be aware of that. Shouldn't zswpout be part
+of swpout? Why are they separate? no matter if a mTHP has been
+put in zswap, it has been swapped-out to mm-core? No?
 
->  rust/bindings/bindings_helper.h | 1 +
->  rust/kernel/alloc.rs            | 5 +++++
->  2 files changed, 6 insertions(+)
+
 >
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
-per.h
-> index b940a5777330..7f781256fda9 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -31,4 +31,5 @@ const gfp_t RUST_CONST_HELPER_GFP_KERNEL_ACCOUNT =3D GF=
-P_KERNEL_ACCOUNT;
->  const gfp_t RUST_CONST_HELPER_GFP_NOWAIT =3D GFP_NOWAIT;
->  const gfp_t RUST_CONST_HELPER___GFP_ZERO =3D __GFP_ZERO;
->  const gfp_t RUST_CONST_HELPER___GFP_HIGHMEM =3D ___GFP_HIGHMEM;
-> +const gfp_t RUST_CONST_HELPER___GFP_NOWARN =3D ___GFP_NOWARN;
->  const blk_features_t RUST_CONST_HELPER_BLK_FEAT_ROTATIONAL =3D BLK_FEAT_=
-ROTATIONAL;
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index f0c80ab78602..295107777a12 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -91,6 +91,11 @@ pub mod flags {
->      /// use any filesystem callback.  It is very likely to fail to alloc=
-ate memory, even for very
->      /// small allocations.
->      pub const GFP_NOWAIT: Flags =3D Flags(bindings::GFP_NOWAIT);
-> +
-> +    /// Suppresses allocation failure reports.
-> +    ///
-> +    /// This is normally or'd with other flags.
-> +    pub const __GFP_NOWARN: Flags =3D Flags(bindings::__GFP_NOWARN);
->  }
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  include/linux/vm_event_item.h | 15 +++++++++++++++
+>  mm/vmstat.c                   | 15 +++++++++++++++
+>  2 files changed, 30 insertions(+)
 >
->  /// The kernel's [`Allocator`] trait.
+> diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.=
+h
+> index 747943bc8cc2..2451bcfcf05c 100644
+> --- a/include/linux/vm_event_item.h
+> +++ b/include/linux/vm_event_item.h
+> @@ -114,6 +114,9 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT=
+,
+>                 THP_ZERO_PAGE_ALLOC,
+>                 THP_ZERO_PAGE_ALLOC_FAILED,
+>                 THP_SWPOUT,
+> +#ifdef CONFIG_ZSWAP
+> +               ZSWPOUT_PMD_THP_FOLIO,
+> +#endif
+>                 THP_SWPOUT_FALLBACK,
+>  #endif
+>  #ifdef CONFIG_MEMORY_BALLOON
+> @@ -143,6 +146,18 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOU=
+T,
+>                 ZSWPIN,
+>                 ZSWPOUT,
+>                 ZSWPWB,
+> +               ZSWPOUT_4KB_FOLIO,
+> +#ifdef CONFIG_THP_SWAP
+> +               mTHP_ZSWPOUT_8kB,
+> +               mTHP_ZSWPOUT_16kB,
+> +               mTHP_ZSWPOUT_32kB,
+> +               mTHP_ZSWPOUT_64kB,
+> +               mTHP_ZSWPOUT_128kB,
+> +               mTHP_ZSWPOUT_256kB,
+> +               mTHP_ZSWPOUT_512kB,
+> +               mTHP_ZSWPOUT_1024kB,
+> +               mTHP_ZSWPOUT_2048kB,
+> +#endif
+
+This implementation hardcodes assumptions about the page size being 4KB,
+but page sizes can vary, and so can the THP orders?
+
+>  #endif
+>  #ifdef CONFIG_X86
+>                 DIRECT_MAP_LEVEL2_SPLIT,
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 8507c497218b..0e66c8b0c486 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1375,6 +1375,9 @@ const char * const vmstat_text[] =3D {
+>         "thp_zero_page_alloc",
+>         "thp_zero_page_alloc_failed",
+>         "thp_swpout",
+> +#ifdef CONFIG_ZSWAP
+> +       "zswpout_pmd_thp_folio",
+> +#endif
+>         "thp_swpout_fallback",
+>  #endif
+>  #ifdef CONFIG_MEMORY_BALLOON
+> @@ -1405,6 +1408,18 @@ const char * const vmstat_text[] =3D {
+>         "zswpin",
+>         "zswpout",
+>         "zswpwb",
+> +       "zswpout_4kb_folio",
+> +#ifdef CONFIG_THP_SWAP
+> +       "mthp_zswpout_8kb",
+> +       "mthp_zswpout_16kb",
+> +       "mthp_zswpout_32kb",
+> +       "mthp_zswpout_64kb",
+> +       "mthp_zswpout_128kb",
+> +       "mthp_zswpout_256kb",
+> +       "mthp_zswpout_512kb",
+> +       "mthp_zswpout_1024kb",
+> +       "mthp_zswpout_2048kb",
+> +#endif
+
+The issue here is that the number of THP orders
+can vary across different platforms.
+
+>  #endif
+>  #ifdef CONFIG_X86
+>         "direct_map_level2_splits",
 > --
-> 2.45.2
+> 2.27.0
 >
+
+Thanks
+Barry
 
