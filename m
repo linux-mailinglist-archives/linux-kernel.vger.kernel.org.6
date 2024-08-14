@@ -1,238 +1,207 @@
-Return-Path: <linux-kernel+bounces-286996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86C195215D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:36:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5903A95217A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F0C282DAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:36:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4BA1F2160F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EC41BC09D;
-	Wed, 14 Aug 2024 17:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B957C1BC9ED;
+	Wed, 14 Aug 2024 17:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MdA/fVYC"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlrEqt2h"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC3D1BC06F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B61566A;
+	Wed, 14 Aug 2024 17:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656948; cv=none; b=ug//shyF3EpNub7swSXB9KDkRMB2BDNvS+DrkEPK7ltJuEhHEKcP/13cTOpP6jVknR5siQDpNXX5zREhCrgrgrIbHvICK7tWfHkeuNOFTPL7Q4Fd+Q4gwGSZ6opIBW9UR+JOsO5RrJFL4D0XTSW+xYkWkhn1eXnr9KwLFTW1yL8=
+	t=1723657581; cv=none; b=s9gCdKEZK5g8HB6nkC6mIcDFRwh3cCknxnt4XKwLPHT5NBSYurrAZw7S4aQhVE4KIXPIz9FDLj+IZ/sPjAk+632mPvo7qWSo+PZLIPBQlkecrDv90DBT0QTrt/wLrjSkIWV2XS/32qrUJNXX79ihWJfhb7ulDAbMBctMdmA17cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656948; c=relaxed/simple;
-	bh=jz4kqxBhPrT98xYHqDoOpdr5ispTydrUx2yAV/G/jW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UPgtA6WR/eRhfCB2yp1qSZXYrbSXcUnpk4vYgEdR+zH9tz/uYogkjFGTOVxRCXnEciOl0kBPTy18yDO2KF1qbvdX/PQcN6Q2pkHlGD5mstglwy1dwX/pK5X0fyPQNjYNrml7oCp/AouLMR+YzlJJIvN5Fny3fMQmueQUEjTV3VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MdA/fVYC; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so1733241fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:35:46 -0700 (PDT)
+	s=arc-20240116; t=1723657581; c=relaxed/simple;
+	bh=zAolmgVSnYlyn1qhiBcFXkMJvLA+AlitjpHcEqrSErQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YReIsWnMrO1TwTzIDa0tkEIlvDT6JvKKEiA+MrUY3HmES4nsyi+M5Kn4K0Qt4i7ftDmygt5iYqk2/RpUp3CxGhIs1LgpwPJQhTW6HDWBR073LZ05HgMU/iCVgWnnUVlOjgpD5PCwgiPUEXJgLmHEuwfIgPpJ0XVGNMrUGaZBjcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlrEqt2h; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70968db52d0so69323a34.3;
+        Wed, 14 Aug 2024 10:46:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723656945; x=1724261745; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=90ty6HASJBOQur0nXRmloHqBZLMYH87XtoB+9vtoNmM=;
-        b=MdA/fVYCnctHhV+8JzJdZGWdE2jcgPy+56Sc3ikNNjUeaJVcMVS6Q7Qx2Lq2Uxt3IH
-         v5bgr6Z6LqH9VeCqUrilCDCg/5OT3vraYFrItsDPJs4P6BaJ9bE9i29xCdt4qPhnoiEg
-         mh6G7IhCLpvI64UtFsLIRPtN0FjO0mVusWJ3A=
+        d=gmail.com; s=20230601; t=1723657579; x=1724262379; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h3dG8HiTnKfYqeHtJsvhTA3bHv2JfPNDX2q2TKLb5tA=;
+        b=PlrEqt2hfFnb2pLsN+8QDt+MxVNY5kPLzrVO8xYp6Eo2xVCYXpkDPrLydUR6YjU3rz
+         m28uFNtEGyEzeFpoVQuXtQRphLBaiT1weGCGPYGo9Km+FxPZxmqjPQ/g2TqnjyfPm62w
+         ys2Y0ox9ohM5rtf1A8wREfJvltVxazujg6YEA1vvUXz2tfBRMNSyBQ6UBVV7UnI0x95X
+         6AvzS35TRvqCn5JyDUY5w4h0wnJsLGE/DDkZIXDrS9O4BEvSstLPPHQRoT+7f2DPAFB3
+         af4Z9Zy5NV8GidNNkpSdNizml2CPmNOO9f8eOSddbIXdonDxeVZQBk5GKZwqMFfr3q8B
+         x++Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723656945; x=1724261745;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=90ty6HASJBOQur0nXRmloHqBZLMYH87XtoB+9vtoNmM=;
-        b=xHwp6zypbj0fyK9BSFMDPl7hujcI8OG8toM5DiIUHeNenPmDLkYa59nXzPZRPQ2E09
-         rRxYV1NuBBUCC14jujwElaaoKc+XJ8PxudlaQLKne0QY1TMvlIhz9zctq5WEk36Vwt5N
-         RaqtUsmvDQmRsqeUh+x7cmIPHcS1Wnrlr0JGrRo67JHb5jdvrjPnL5nApnHeayVObjw0
-         9/IbmYLEG1ifKEC9YqOXT81hM8rA4SZxORTSTswmTQIF0TZk4IQcBDBa9iPNVqtgHDGL
-         H57k8l19AYfOnP6YnJQ+g03BbjmNRP7myYW1g8Ks1VBcNwm5tjIalRQLjzJETqwjVe8+
-         n0hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2IYSvgAe5TaTnENDw1ZpSLAOb/VUtDTbjI24yTTxbInCseo73hP9UKNzx8Opgof6sXBaAGgtDtt4zP9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDm3RB5OHwJdQMj86dlF4QiAzy2Bh0ezVZ6CUyUB/e7DZ4plHi
-	Ns/a9o+vIHptJxhLLOKGAOuJnbGXVGFeANdjiFQM9qctv8ViYNygxopIzS3IPSSCk+MK9oR1uJ0
-	X6eoulgNcALqTLx1pgwVdoH7Ilakf6FUfIzLt
-X-Google-Smtp-Source: AGHT+IEKOu6rB+CNuBMYzXhZa7JxTSVt5I53L3SkIY7qH0wZAkcLxMzooabfHiTVX8qxGb9DXNf5YogWrGhX0ThFvAI=
-X-Received: by 2002:a2e:4609:0:b0:2f3:abca:8b0f with SMTP id
- 38308e7fff4ca-2f3abca8c13mr17537591fa.27.1723656944495; Wed, 14 Aug 2024
- 10:35:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723657579; x=1724262379;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h3dG8HiTnKfYqeHtJsvhTA3bHv2JfPNDX2q2TKLb5tA=;
+        b=RdKXyJ978CP6zzHDrud9PaxW8cql05zoFBemQEPkcfx3sc1yTKlsje6V2zn74bLJR8
+         J56qLdGMuQo1KH9W3IgS7iOwexZqYU5am74AbgcnzTbb5ki69mxZciIpiMaHc8WhgEvH
+         ljKkY0v+fVMDx1XXmUqV14KfCNkLbQuOr7Uak3GBgtaFPVyce4cx827r73kJIrgb33jq
+         rkG9wiIiNHYEtYUHKekyXRrgFU7ji1scA9TlGCWikAWTGn/6p2rma6UHiYiRhjNCzQlS
+         s0bBaxaIRbE2w+5OD5ZLYPFBidJwntm2Q6zo+jcA6q5OYutl5Qp2SbYGDylrFRhg8S4t
+         FcxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVK7jELieEoi4NYi8lvQqo6XJr61RRXk1sbpKg+BEXLowlLSXBmeCqi+bex00aRTWJGibpwT7CzhzBsWOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv6XqSzR8r2fk8aTx0NZcwBDIM09kO4APQkEbgkhDfEnCgmU6+
+	q7zkgDXDEHnq/AdLoO50URylpp0Qb+3NCACxJ9hclwWAcpYcBGN3
+X-Google-Smtp-Source: AGHT+IGCzqyQMpO/z9j+S25FqtCGvYR4AxxECZwhbphbUypAdEz49j0xerkum40V5b3dgHLN0C/uQA==
+X-Received: by 2002:a05:6358:528d:b0:1b1:a7f4:fee4 with SMTP id e5c5f4694b2df-1b1aab8453dmr422060355d.14.1723657579375;
+        Wed, 14 Aug 2024 10:46:19 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82c7eb0csm46255576d6.47.2024.08.14.10.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 10:46:18 -0700 (PDT)
+Received: from phl-compute-08.internal (phl-compute-08.nyi.internal [10.202.2.48])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 1540B1200075;
+	Wed, 14 Aug 2024 13:37:14 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Wed, 14 Aug 2024 13:37:14 -0400
+X-ME-Sender: <xms:Seu8ZqM8Sdwo6gEg-d2ztWEHHy6YxbmYRrG12wEX172mzso-vGrFYg>
+    <xme:Seu8Zo9f4x8peebrMehT7PUvGzqtnkirx-9-6Kv8qL3EusZw6FML-tV9QfTRHFiF4
+    y7B6FR3Im9Dgj0PfQ>
+X-ME-Received: <xmr:Seu8ZhSC3ux4v9D_y4Wbqr3FrIRVhodVkLmMKdLWekc64491v-pZCOt5HibR4Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtgedguddujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
+    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvuddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhihuhguvgesrhgvughhrghtrdgtohhmpd
+    hrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepuggrkhhrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegr
+    ihhrlhhivggusehrvgguhhgrthdrtghomhdprhgtphhtthhopehmihhnghhosehrvgguhh
+    grthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepphgvthgvrhiise
+    hinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:Suu8ZqvG7kp7VNvdMD7EAFqzLSLpljCBf-WFdo3jmHS3bKo4cE_zFw>
+    <xmx:Suu8Zif9DxpTHQwA9ybOvwz-WRq1edtNKXRDKdWG9-omTvVKCeVsqg>
+    <xmx:Suu8Zu1vGin6V5vvVY6SqdVAmc_pan-H2v1LWIQQApBPN1N2vh0grQ>
+    <xmx:Suu8Zm8n6mfXz4yFpoVm8Aavgap5ySES0iCuCayJu98VfTpOZOX-mw>
+    <xmx:Suu8Zh9RJUN90Q9WW4LYNTsEvjvi7YVvnqLaChVLC67reYk0aBMSZJUI>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 14 Aug 2024 13:37:13 -0400 (EDT)
+Date: Wed, 14 Aug 2024 10:35:46 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Aakash Sen Sharma <aakashsensharma@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>
+Subject: Re: [PATCH v3 1/3] rust: Introduce irq module
+Message-ID: <Zrzq8su-LhUIoavm@boqun-archlinux>
+References: <20240802001452.464985-1-lyude@redhat.com>
+ <20240802001452.464985-2-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-2-james.quinlan@broadcom.com> <e1002187-fca0-455c-840c-32489e5eadb4@kernel.org>
- <CA+-6iNzDcF3pA1T3FuGNS4NPn1RrjHxxAVStN6t++xDsx-wUXQ@mail.gmail.com> <c5b0e395-7f2b-4dca-9764-83d0878e99c6@kernel.org>
-In-Reply-To: <c5b0e395-7f2b-4dca-9764-83d0878e99c6@kernel.org>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Wed, 14 Aug 2024 13:35:32 -0400
-Message-ID: <CA+-6iNwgC8RtXu3g70kH8Lkw=LHT-6MtAbt=ZReq_wXp9nF6VA@mail.gmail.com>
-Subject: Re: [PATCH v5 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
- add 7712 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000ed420a061fa827ab"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802001452.464985-2-lyude@redhat.com>
 
---000000000000ed420a061fa827ab
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 01, 2024 at 08:10:00PM -0400, Lyude Paul wrote:
+[...]
+> +/// Run the closure `cb` with interrupts disabled on the local CPU.
+> +///
+> +/// This creates an [`IrqDisabled`] token, which can be passed to functions that must be run
+> +/// without interrupts.
+> +///
+> +/// # Examples
+> +///
+> +/// Using [`with_irqs_disabled`] to call a function that can only be called with interrupts
+> +/// disabled:
+> +///
+> +/// ```
+> +/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
+> +///
+> +/// // Requiring interrupts be disabled to call a function
+> +/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
+> +///     /* When this token is available, IRQs are known to be disabled. Actions that rely on this
+> +///      * can be safely performed
+> +///      */
+> +/// }
+> +///
+> +/// // Disabling interrupts. They'll be re-enabled once this closure completes.
+> +/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
+> +/// ```
+> +#[inline]
+> +pub fn with_irqs_disabled<T>(cb: impl for<'a> FnOnce(IrqDisabled<'a>) -> T) -> T {
 
-On Tue, Aug 13, 2024 at 4:27=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 13/08/2024 00:07, Jim Quinlan wrote:
-> > On Fri, Aug 2, 2024 at 2:43=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
-> >>
-> >> On 01/08/2024 00:28, Jim Quinlan wrote:
-> >>> o Change order of the compatible strings to be alphabetical
-> >>> o Use "maxItems" where needed.
-> >>
-> >> I asked at v3 and then in v4 about splitting this. You never responded
-> >> to that comment, so sorry I won't be repeating the same thing in v5.
-> >
-> > I'm sorry Krzyszof, but I just reviewed your responses in V3 and V4
-> > and I can't find you saying anything about splitting off the above two
-> > bullet points.  Perhaps I am somehow losing email responses but all I
-> > see is this in V3 is the following, where you ask me to do a squash,
-> > not a commit:
-> >
-> >     [JQ] o Change order of the compatible strings to be alphabetical
-> >     []KK] That's a cleanup. You can squash it with a previous patch.
-> >
-> > Now you did say in V3
-> >
-> >     [JQ] o Describe resets/reset-names before using them in rules
-> >     [KK] That's a new commit.
-> >
-> > but this bullet item does not relate to the bullet points you have
-> > highlighted in this email.    As for your responses to V4, I don't see
->
-> It exactly relates to the quoted part. The comment is ALWAYS under exact
-> part of your patch being questioned/commented.
->
-> So first I said one part is cleanup and should be moved away. Then I
-> explained that this part is a NEW COMMIT. New, so one more, different.
->
-> I understand that this was not clear, but you never came with a question
-> what did I mean.
+Given the current signature, can `cb` return with interrupts enabled (if
+it re-enables interrupt itself)? For example:
 
-Hello Krzysztof,
+	with_irqs_disabled(|irq_disabled| {
 
-Sorry to bother you again but I want this to be clear.  This commit
-contains the changes:
+	    // maybe a unsafe function.
+	    reenable_irq(irq_disabled);
+	})
 
-1. alphabetical order of compatible strings
-2. maxItems
-3.  maintainer change
-
-Do you want  me to split off 3 since it is not a "cleanup"?  If not,
-please specify.
+note that `cb` is a `-> T` function, other than `-> (IrqDisabled<'a>,
+T)`, so semantically, it doesn't require IRQ still disabled after
+return.
 
 Regards,
-Jim Quinlan
-Broadcom STB/CM
+Boqun
 
->
-> Best regards,
-> Krzysztof
->
-
---000000000000ed420a061fa827ab
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCAofXOGT7pQrt/NPoHSf4LHt5gDXxxT
-fWZKOdk83hfYKDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MTQxNzM1NDVaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAFTe82bSkbEWLvrLeyMf/i+H1D7AdPKzkQvYHyCFCkqXN+Hdd
-8BePy3uHg8bPBblM1nuySdVZYBHpAAkBzdg3XV/fkGGvjpxWzhNBIpvNsJUkzrU7R4Qg/8dSLBF9
-Rt56rTtozrCp88OZQf6o1PvuBNjr5mAoaGhYH8YZdkzlVV2LkXE4ZvxNxWo9pSfBxpAT+LkY8K/3
-rol6G0AZfv9DeDQuZWNE9dujqAOZYxbJt1rAbNrLgwxsFblNGbO0Fsd2WiJguj1w52rjgJth7CyF
-EaEhGO9lFc2/aYJnpTgAYaSG3+En8hgk2x3ds/9GS7ZvpgdZwyVN1jEzs/94y/hfqw==
---000000000000ed420a061fa827ab--
+> +    // SAFETY: FFI call with no special requirements
+> +    let flags = unsafe { bindings::local_irq_save() };
+> +
+> +    let ret = cb(IrqDisabled(PhantomData));
+> +
+> +    // SAFETY: `flags` comes from our previous call to local_irq_save
+> +    unsafe { bindings::local_irq_restore(flags) };
+> +
+> +    ret
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 274bdc1b0a824..ead3a7ca5ba11 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -36,6 +36,7 @@
+>  pub mod firmware;
+>  pub mod init;
+>  pub mod ioctl;
+> +pub mod irq;
+>  #[cfg(CONFIG_KUNIT)]
+>  pub mod kunit;
+>  #[cfg(CONFIG_NET)]
+> -- 
+> 2.45.2
+> 
+> 
 
