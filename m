@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-285925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F39951458
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:16:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3E895145F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C1A282692
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:16:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A7F7B26C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729698174E;
-	Wed, 14 Aug 2024 06:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A7C136E2E;
+	Wed, 14 Aug 2024 06:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbfs3sQ2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX8e7NGo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2A31F94D;
-	Wed, 14 Aug 2024 06:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE1D2D030;
+	Wed, 14 Aug 2024 06:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723616114; cv=none; b=XwbIJLxe1BuDfRClLjUsu6CUAZmC75k0IBpTBW1H25l/g1heqMs5ZW7o1y8ZB4rGTD2EWi2clUOUU1sNbO03d6XSfDTsT9Ino0Sr4n5qEekk5tqQjoNbu51+2OXV6SuDuxrfer/FxXsMx3qjfCnKGEEIz+gubmHIDfPel144rMc=
+	t=1723616192; cv=none; b=nOYq+ZJ7OPp/JBsX/vw76okjRGY4ZHH3KP1ffA4TV1SMC4uLLlSVfUlrZoNzubVf/UGt3nqedmaUYim9rbP6vHWlCiNXjMhS5zr6Dr2w6hhOfb0i414+HgblLqx34h8/dw+GUClfCeztDHqhes+jGtlDVGMeqnMZd7bJLTm4C50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723616114; c=relaxed/simple;
-	bh=eFATB+IVTP9/D9IoVFDR56zxC7beyXosd5YkDb9+JxY=;
+	s=arc-20240116; t=1723616192; c=relaxed/simple;
+	bh=7J0NaordMkLnaseR0ejiQMBxcas5MlG506PR3I+zC4M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfpV5bfrbgJTzpk87bYW/74ynWTMKajm6FJFUBLWEYTVsYgkSdptkCK5+OYN+eCt/kjMrLkMSfdo63dOs42ZdRR/rq0tn7ZLqPj5/lkfnDjVY3xLk92U47fjjArU+qpOV/8aYWw5YvWpiciQsXkW0ODRb0ZliyzGkw+DThAH330=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbfs3sQ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B08AC4AF0B;
-	Wed, 14 Aug 2024 06:15:08 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=KzaBc5GySY4oS3a8NH698zbYLf3l9vxd10BjyHqq7k5TKyyVfpC+fl91KOYJUCE+e3xOOROBXtqoiED0VHsVkXm2Dta0VaQYWMZPoi2d9EPwoxC4sZRiLDj8SvFmn0RvAC2Yc8so3G9uNHXjEMy5pxEZZRvGs6FZk7XfwoE2FzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LX8e7NGo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FDCCC32786;
+	Wed, 14 Aug 2024 06:16:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723616114;
-	bh=eFATB+IVTP9/D9IoVFDR56zxC7beyXosd5YkDb9+JxY=;
+	s=k20201202; t=1723616191;
+	bh=7J0NaordMkLnaseR0ejiQMBxcas5MlG506PR3I+zC4M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sbfs3sQ2Md725dWGWkDgfswlHwlxn3roNzP28QJ4ByGUrYUN1RPrgPV0H1hZq5nLr
-	 y387KGYR14lT6fRpXCD9UHjhCshOVPxcj0bowKa4T5kVUxX58grgS7fD0hvjlL5ean
-	 Z741s3gCGTs6cugotFgIbzIADo5BNZqQARNaBmP3AY+qgt4aWFzisi0XKfNjRs6Rwu
-	 Sliysl+eSs1rH0ATPkccdk1J72+9U5yCzRzsKUgYfmqG6kAEPisvMCyjSzAAcqxu5w
-	 XTDt3vF67dM4ukEBF5JRTbkLOV0ebCsKi3Uo14uDV1A7O5n6O1bSWcx1A307KEvWR+
-	 MbDCpwdMHFO6Q==
-Message-ID: <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
-Date: Wed, 14 Aug 2024 08:15:06 +0200
+	b=LX8e7NGo6PNLJWtC5fkEIQT2YeDxBP546EDRGNlrfCVfn4D1b89qXhPp45wGKw3TD
+	 fSdCZB8JICVB48efGgNCRy1jdPZd49whYSfEZbcL4FVbbM/sQa/kCpGoV2UYTz46Gl
+	 SR0VlRIZdf+nfKw2rjpk/3rtXXp+5bKYeujH9qFyp+6YhCCo8UUYAe9v1+VtTGUuCH
+	 nLnOmKlZCiNsMo9TKxSOqix0RMopBoNi0BsD/xsWyRHmlEn1D49cajE0ezM/fItNhX
+	 wfT29NzWNQgZMz9Lyx2Q41+GUgOSfcuEHNsW0NvBaO7xD6tgyxVSiLcC5Avv2dJEQ5
+	 CvyHfEhBjw/6w==
+Message-ID: <13f254ed-68b7-438e-91a8-9d75c9e9f2a7@kernel.org>
+Date: Wed, 14 Aug 2024 08:16:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
- strings for eud
-To: Melody Olvera <quic_molvera@quicinc.com>,
- Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v2 2/3] dt-bindings: platform: Add Surface System
+ Aggregator Module
+To: Konrad Dybcio <konradybcio@gmail.com>,
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
- Elson Serrao <quic_eserrao@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-2-quic_molvera@quicinc.com>
- <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
- <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
+ <20240810-topic-sam-v2-2-8a8eb368a4f0@quicinc.com>
+ <1a6ebc27-95ca-4f56-9971-b2a8d03f270a@kernel.org>
+ <36b0ee66-3af3-40c1-86b6-b52cd826298e@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,49 +113,88 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
+In-Reply-To: <36b0ee66-3af3-40c1-86b6-b52cd826298e@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2024 22:03, Melody Olvera wrote:
-> 
-> 
-> On 8/8/2024 4:00 AM, Krzysztof Kozlowski wrote:
->> On 07/08/2024 20:32, Melody Olvera wrote:
->>> The EUD can more accurately be divided into two types; a secure type
->>> which requires that certain registers be updated via scm call and a
->>> nonsecure type which must access registers nonsecurely. Thus, change
->>> the compatible strings to reflect secure and nonsecure eud usage.
+On 13/08/2024 16:27, Konrad Dybcio wrote:
+> On 11.08.2024 4:28 PM, Krzysztof Kozlowski wrote:
+>> On 10/08/2024 03:28, Konrad Dybcio wrote:
+>>> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
 >>>
->>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>>> Add bindings for the Surface System Aggregator Module (SAM/SSAM), the
+>>> Microsoft Surface-standard Embedded Controller, used on both x86- and
+>>> Qualcomm-based devices.
+>>>
+>>> It provides a plethora of functions, depending on what's wired up to
+>>> it. That includes but is not limited to: fan control, keyboard/touchpad
+>>> support, thermal sensors, power control, special buttons, tablet mode.
+>>>
+>>> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
 >>> ---
->>>   Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 6 +++---
->>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>>  .../bindings/platform/microsoft,surface-sam.yaml   | 50 ++++++++++++++++++++++
+>>>  1 file changed, 50 insertions(+)
 >>>
->>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>> index f2c5ec7e6437..476f92768610 100644
->>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>> @@ -17,8 +17,8 @@ properties:
->>>     compatible:
->>>       items:
->>>         - enum:
->>> -          - qcom,sc7280-eud
->>> -      - const: qcom,eud
->>> +          - qcom,secure-eud
->>> +          - qcom,eud
->> Commit msg did not explain me why DT bindings rules are avoided here and
->> you drop existing SoC specific compatible.
+>>> diff --git a/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml b/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml
+>>> new file mode 100644
+>>> index 000000000000..f613738aa31d
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/platform/microsoft,surface-sam.yaml
+>>> @@ -0,0 +1,50 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/platform/microsoft,surface-sam.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Surface System Aggregator Module (SAM, SSAM)
+>>> +
+>>> +maintainers:
+>>> +  - Konrad Dybcio <konradybcio@kernel.org>
+>>> +
+>>> +description: |
 >>
->> This really does not look like having any sense at all, I cannot come up
->> with logic behind dropping existing users. You could deprecate it, but
->> then why exactly this device should have exception from generic bindings
->> rule?
+>> No need for |
 > 
-> Understood. I won't drop this compatible string. Is alright to add the 
-> additional compatible as is?
+> Apparently it's necessary because I have a :
+>>
+>>> +  Surface devices use a standardized embedded controller to let the
+>>> +  operating system interface with various hardware functions. The
+>>> +  specific functionalities are modeled as subdevices and matched on
+>>> +  five levels: domain, category, target, instance and function.
+> 
+>                  ^ here
+> 
+> Should I e.g. s/:/-/, or keep the |?
 
-You always need SoC specific compatible.
+Keep |
+
+> 
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: microsoft,surface-sam
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 1
+>>> +
+>>> +  current-speed:
+>>> +    description: The baudrate in bits per second of the device as it comes
+>>> +      online, current active speed.
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>
+>> This should be just "current-speed: true", because the type will be
+>> brought by serial schema. We should however have some schema with
+>> peripheral properties for serial devices. I'll come with something.
+> 
+> I suppose I should just include:
+> 
+> https://lore.kernel.org/linux-serial/20240811-dt-bindings-serial-peripheral-props-v1-0-1dba258b7492@linaro.org/
+
+
+You could, but then your patchset will depend on mine, so instead I
+propose just "current-speed: true" and later (next release) we will add
+$ref to serial-peripheral-props.
 
 Best regards,
 Krzysztof
