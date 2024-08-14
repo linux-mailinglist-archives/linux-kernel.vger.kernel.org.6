@@ -1,152 +1,108 @@
-Return-Path: <linux-kernel+bounces-286296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B16951935
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E029951938
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03B21B20C8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7A11C21801
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ED41AE86A;
-	Wed, 14 Aug 2024 10:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E331AED33;
+	Wed, 14 Aug 2024 10:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="vhxvKKi8"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy4Iob5K"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5591AE03D;
-	Wed, 14 Aug 2024 10:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FE61AE84C;
+	Wed, 14 Aug 2024 10:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723632178; cv=none; b=EnWSPhpW2gjhJHHVcU59/zjBA09bxFj8bIqwETpFXEkvyJedC3j38QyJ58OkHzbIvIzP296kAHLowHjra8+Yu54Gpt3QxGU18yVyCoYxtrOCrYLa1ZvW8SwlE8JU9q8+p6vaandxmn0uOj6BuN/0ZdG4XSHlIdkfbyZVWQSPoBw=
+	t=1723632199; cv=none; b=CHkvsZJjgb62FyZmtppOS54jYkJQMp+hbkJQkyig9oA+riJD6Un41gRIXNKIIi49rRUynx6VZdPgA1WiVN0H1PGQIQ3S7PRAdsa+D+ENORpOiuE9HmVDRVetCFlISWxINsfj5TuKb9Z4pp0/N/3T32yq64qzp1PK4fB7zLhTZ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723632178; c=relaxed/simple;
-	bh=6mXSBK4xubtEQgdCw6P5qUaQJpOScDBvwcEqrYfyU2k=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=kKXGtT/waAql8Whi9wHIRPvqoB//dT3CAiCeEdlep5sOcuneGV+MZosO5dZkWUqqGaMB4cMLsbca62bHjndAl5DTPuC5dlRkua5+EDEa7Bxn4OzFferQEeyuP33EojPMfr5T3CQKB+kW9ss969HO4nKlL5Qifwmg+6bXW6cMuqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=vhxvKKi8; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:Subject:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To
-	:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=oChSn+ddY3rawqfzReuNujffEuD1pwyybyXLWnykGyA=; t=1723632176;
-	x=1724064176; b=vhxvKKi8uFMCUyyq0Q1PxOhN6sK+V2hZH3Fjhk194HJjoFV9rwSvxtqUC/zAa
-	5WCkO1Lzx+SgQ+mp3U96YAgBMKvYvEy5YgctJNytHsfFZ853MO6XEF9fVc7LlUGEwEW8q3yTqYq6S
-	b25Y3dQPvyvJLZ+9gXWFYISwl49QjDHNMydTsYqKTqg1JI/uZNFM3cnAKOlLdwZ42PC1xRSXHUQ2Z
-	0xlgOoHo8y5YSUldEwAHnvJaZSwmSLHjnYPgsIi8DqyLp6UvpSO++Jv4mFBhNcdIAMelrhlRt3VlM
-	M6hSWifXJ973UoIXMsvUZ/IkyxWUR/uPF4/Y4fXefyLSLcFoSw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1seBSt-0000u4-Nb; Wed, 14 Aug 2024 12:42:51 +0200
-Message-ID: <acaa3e31-a6f4-4c45-b795-d12b0d2743da@leemhuis.info>
-Date: Wed, 14 Aug 2024 12:42:51 +0200
+	s=arc-20240116; t=1723632199; c=relaxed/simple;
+	bh=SJgGuHiDF6Pum/YzBX1eIhR+ZuD4wPAvutfWL+CK068=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GuhYGux0zj/DPj76uyDJv3yYe8+tXrlOAsL3oa6STKEJzh9n5ujVnDjcILA1gh3UzN+qIyqVBPSS/EKtsfiBJfMzqgCJRkPpqsJ1+9va4triEq7TpFvJZOfom7ooLtxATml1R1DbSkBFL+4A3iT0JkdGDlVuAwzAr23U9u4Q/y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fy4Iob5K; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7105043330aso5303333b3a.0;
+        Wed, 14 Aug 2024 03:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723632198; x=1724236998; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJgGuHiDF6Pum/YzBX1eIhR+ZuD4wPAvutfWL+CK068=;
+        b=Fy4Iob5K/lyBmYpymumOJ+AWwqz+c2onNbLAAhYOWPdSDbPvOVxf7w1vQaeBF8gO6c
+         P3dcUkpn0NKkYjRU77jiH9NzoxudOcPb9tCuLv5SxaRnH1c2HYHVZt6KsqifOyxzCI+A
+         IuvSX85rZjI5okN4JhcYsmTLkIxcf0PttLa64XXSj9NRAVUcwo094KBwheDCgtbo2FKk
+         JtLjB93sjJajx7Q/YjaNpj6k+AMZE9iqJSc4+Tt8hkNxvnEddG2ACq6TMTrUYTB39K3V
+         zOOJDGv5dAjysieJKiH7rW26TbYJUAW5cB4xsE8ZxICjtuCbfa6knEi75KPqaSBgnQx4
+         PU/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723632198; x=1724236998;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJgGuHiDF6Pum/YzBX1eIhR+ZuD4wPAvutfWL+CK068=;
+        b=mccuQ1hYZ1z5mAXpny2tPUVQXoPcajCFAVGMu8GGiuDhtF041n4TOiyelVrTPx3hzV
+         aleYQyLwUtWXQfbAPTQIUL4ougMxgcLTxhPVo0B0vYkUIPv9OCIPTZP2wT0UaZD4mwVp
+         5IWXHLU/vdGFpQR/RqB75HlX25ZL70+3dbcr8KEPGGRs2hghnj68XABAREnz4cbHQvfp
+         1Iu8TMGJpzzuqPcsTmVA7cbyD33UiX8DEg+LhBGVQXvURzap99E7d5M64GrSoGODeOAB
+         MUvUi2X2vzVJdJl7DitNMqzx1L18bblFQmjHoOKlKBevddF1jcnfTJHeoVKUJOvEEBXM
+         z6KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3EOq1r+tCBjoroZ7YC5v6fS5zN5yDzRnIOMVBn/qCHgK1Q6F1nu3U+aQUg1sPV0Sr2PB+OvzsdxEsGlydk+o/qHAGRkWoDaFyNae5OHY9Kcm3Urc2BnTOYQlh2xqwlmCWht+of8fUnfSzsVXR8dEKSblzVy3nl5CH8Q/Df3ftcNmOa9bVoMUUm54=
+X-Gm-Message-State: AOJu0YxklN+SSDquf2QZTgnafUriPLGMW6a25NOXXkAAYVYaq7CECEK6
+	6ny1TvwJVlDMrj8VwI0RzZtYX8OMX6yunjaSKtHQycnDrAT4h6xnSgPMx2hONgdy6bbESf3HV+D
+	JGbVTTqAzk6QzPepxj0sBVs38Sik=
+X-Google-Smtp-Source: AGHT+IFIa9V3yWXmwOQT0TMkZa8EL8RuR2frnvNvc4Gi/6m3ZxiWzN6173URG1TTCP3M1canYCwYcwApz8Y44mtHaok=
+X-Received: by 2002:a05:6a21:9184:b0:1c2:8949:5bb3 with SMTP id
+ adf61e73a8af0-1c8eaf63b4bmr2851238637.42.1723632197682; Wed, 14 Aug 2024
+ 03:43:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Sasha Neftin <sasha.neftin@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-Cc: netdev <netdev@vger.kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>,
- intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
- Martin <mwolf@adiumentum.com>
-Subject: [regression] igc does not function anymore after second resume from
- standby
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1723632176;5c4f8b5c;
-X-HE-SMSGID: 1seBSt-0000u4-Nb
+References: <20240507210818.672517-1-ojeda@kernel.org> <ZjqmfIhRz99BqXtD@boqun-archlinux>
+ <29eacb0f-fd78-4024-aac5-1606fe002dc6@de.bosch.com>
+In-Reply-To: <29eacb0f-fd78-4024-aac5-1606fe002dc6@de.bosch.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 14 Aug 2024 12:43:04 +0200
+Message-ID: <CANiq72nLgdkSJ6SgMOP_k9_PUNvPk2gqQQ0sKLGn6Sn9F0+uug@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: rust: split up helpers.c
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, 
+	=?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[Tony, Przemek: lore did not find any mail from Sasha in the past few
-weeks, so from here it looks like this might be something somebody else
-needs to handle.]
+On Wed, Aug 14, 2024 at 9:19=E2=80=AFAM Dirk Behme <dirk.behme@de.bosch.com=
+> wrote:
+>
+> It looks to me that this is the only/last open comment? As it seems
+> there is some consensus that this change makes sense it would be nice to
+> get anything like this :) I just stumbled about a local helpers rebase
+> conflict, again ...
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
+Back then, we delayed this one because Andreas preferred to wait for
+6.12 due to other changes. I think he would be OK with it now, but we
+probably need a new version anyway.
 
-Sasha, I noticed a report about a regression in bugzilla.kernel.org that
-appears to be caused by this change of yours:
-6f31d6b643a32c ("igc: Refactor runtime power management flow") [v6.10-rc1]
-
-As many (most?) kernel developers don't keep an eye on the bug tracker,
-I decided to write this mail. To quote from
-https://bugzilla.kernel.org/show_bug.cgi?id=219143 :
-
->  Martin 2024-08-09 15:17:49 UTC
-> 
-> Starting with Kernel 6.10.x I experienced network connection
-> problems after resuming my system for the second time.
-> 
-> My system contains two Intel I225-V (rev2 and rev3) cards.
-> 
-> I ran a bisection and got a hit: 6f31d6b643a32cc126cf86093fca1ea575948bf0
-> 
-> rmmod igc ; modprobe igc remedies the issue till the next but one resume.
-
-See the ticket for more details. Martin, the reporter, is CCed.
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219143
-#regzbot from: Martin
+Cheers,
+Miguel
 
