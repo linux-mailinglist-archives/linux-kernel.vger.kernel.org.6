@@ -1,181 +1,115 @@
-Return-Path: <linux-kernel+bounces-285942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71ABF951484
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF59951487
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956741C22900
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:29:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCB81C23EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5222113C3EE;
-	Wed, 14 Aug 2024 06:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4385913634A;
+	Wed, 14 Aug 2024 06:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CgAodVzZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="fDHnUQyT"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128B71384B3
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1910113D88E
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723616918; cv=none; b=HXkgMlg3CARaVUsD0K1r//6TgGAx9EfV47L/nmnLKE5AgU6CS1FIuwRfEDkNjYTmWswoPNJkrZeUuQ8U9CPvhSjVzSDMu6udKFjxpaFDYxXlhCtLcBizRCRQyWfoFMqh6NdN2uM1lTHwLWK/4EdzKx5leQxiwglSLU1wL0a0/cA=
+	t=1723616948; cv=none; b=ThWtBNGdTBnidQ/S+yV+E7U4ot5/eGjiz25kMep+PmDK6wT9P+6H35s0dyCoyQEzqp+nVO8wk8h78xYQ7NC4C+y2yiPixqj/y4dvIEXC4Ne9zOz8LKWxyhzF4svgdJ4oq2sd0caUs4jtLo2R8aIjKFLDbNqT2lea5qDzJk8+2OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723616918; c=relaxed/simple;
-	bh=K2v1VkFvaq+3TScgsmYP670KxeFAd1V81S4yNBh/NTc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g7fZNdNxNqWSWTQlM92Yigxp0dzRS49NqE+0xDNF9OaEOz43DvLIwduz3oJW3yF55Y9GBpQWqWtaT3fSxx3MsWLwwrR/VEUy1Xzwfj2sN8UF/10hWokaKMHDXFtohkwImoe37fUw1mqqtCL7bsD4uur218yr6Fk5nCg7TdmwS/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CgAodVzZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723616918; x=1755152918;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=K2v1VkFvaq+3TScgsmYP670KxeFAd1V81S4yNBh/NTc=;
-  b=CgAodVzZm8mlPwJrZFYqajz8uic3OI2sbCBCet/evMMmGtLgETX3jK6s
-   hr+SN7zMeDTg1wXL7VaIAPjJx3K74ZqdJ+zKVYxEqt0DRCqK+khmbsDi+
-   RSuhXkakPmtJ+Rdt+fXs242iG9XD+lrGHGyTBzEZtN8wjDdCwMJtBaXzZ
-   ww4dY1YpAJQRm02LmqxG38f5ctLvTSlJm7wQYDJ7tfw+ZgxEW+O46Xr5G
-   mx1jTBo//i31TNRY6VAOVK2PhyejOrmzI5x8Kz9N8xf83NQSVuLFkPb6P
-   ysNpQ/xqbKoBYwhjHdxWENGegWb2BmDMYuN/FWUi3UgbfyvuTFEGQYAd8
-   g==;
-X-CSE-ConnectionGUID: 3L9fmTLwT5i4Fo9YsXzYBQ==
-X-CSE-MsgGUID: YmO3IS9fR3WM444cQg2ahA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="44333020"
-X-IronPort-AV: E=Sophos;i="6.09,288,1716274800"; 
-   d="scan'208";a="44333020"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 23:28:33 -0700
-X-CSE-ConnectionGUID: 2zyx+9DPTjmnHtf37Gg14Q==
-X-CSE-MsgGUID: Jy9a/cZJQdGV9YY2ZGhG0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,288,1716274800"; 
-   d="scan'208";a="63568762"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by fmviesa004.fm.intel.com with ESMTP; 13 Aug 2024 23:28:33 -0700
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org
-Cc: nanhai.zou@intel.com,
-	wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [RFC PATCH v1 4/4] mm: page_io: Count successful mTHP zswap stores in vmstat.
-Date: Tue, 13 Aug 2024 23:28:30 -0700
-Message-Id: <20240814062830.26833-5-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20240814062830.26833-1-kanchana.p.sridhar@intel.com>
-References: <20240814062830.26833-1-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1723616948; c=relaxed/simple;
+	bh=O+RcdJC0mkogWcz6CVCMl+sgWIBIY7cgxSBRyr8mlgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YDQ6YpMqFAf9U1Y3M7vas2vjzNoaQp3zbA4+mwLi391TG1l3ntkD8bxhtBRKR1EUKVLMMqJDDqBwO+BsPLMvN/tNjuo8Sx39zk+ghHdZw3K9lKaI1ERAkyBElYEmb2vapkOQMHFzrKqIZ0bH0OtS9sTbLXKaf3NYgpkFxMio1wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=fDHnUQyT; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5d5f24d9df8so3092673eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 23:29:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1723616945; x=1724221745; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KY6hpFmE+89V3sOq3p1bZOHhGBKbqrZb35ld0D29Jd4=;
+        b=fDHnUQyTnN/mT77Iuoh6vWaShTGAH2WHKJXJ93dThbcbvgC0ypE0S64MY8koSaDPr9
+         nDKdjA0+BrRG5FZfSwJcyYnxAjBE4gc5cAhljgY0CufhriV1qaoJ9XOHnsZZ5JxA3qev
+         ZZHDL3+SYk6roMtXEbpY+YWZ2e5U/7M1k5Mz+GXSHLKFS+2RyRMC/GlBf5n7Emm5pi22
+         B8FpTkBMtSFFT4iteyZgqAyvFtk8Lgx89TY1xCBHJlnMTMq8Ldif0GJa0XJ4jRELnHBS
+         aZavFvXiaRI1jMgfXlFr/r94d2xpP5hRhDWveftzFlXEStg+HOPdtVsIKVzZiJmCj0VS
+         5NnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723616945; x=1724221745;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KY6hpFmE+89V3sOq3p1bZOHhGBKbqrZb35ld0D29Jd4=;
+        b=SnrNYPqsdUpC8alOSDtFSbW7TQOMrcBTvKsjMZXza5qreUNP8gJFCEblYA5Mv/LLFG
+         P6hWud5cNmRAZ4Br1ttIukDAwiVu+07FEjAriLZP91lYjFDXUzBEjwAneF/te0OFCrpN
+         XpKFa57/RJJCY7FKokb5WiIE/IHkUD5tr7ocWey7+2eirCEB4GAz/2r7sVrw++CCAK0e
+         jJ1l+K58dSy2boF7MQ6dCe+PdXA8oQrbqyEA2JDrMyefmO3pggrOdilAXkOnt4jkg/Ac
+         brNAq/1AFwr0aJ/YGyUo9GB9kiU34zfqLFaBvqfFnxUTgU7b3tXA70utMXUMbjQBjJnW
+         rIqA==
+X-Gm-Message-State: AOJu0YwgyHdhaFwRvvoIg6AIH4lBSNglfAB5Q6hgynTSe03Gj13Fl9p+
+	8tq1d009iYxrCYASd6AuN4j6FyGz3PkrKKO3JGHyfLpnxv5O9pTwPu2d3MpgRJV3lFWp14wBVMz
+	N3MsWJQ==
+X-Google-Smtp-Source: AGHT+IF+40D3XWt34BX3LLvwc+430IjHsHfjuTgtZEU/S7BfUSMyXvXQDDgpmF0Zy7P5FIoiqWBeLQ==
+X-Received: by 2002:a05:6359:4c0c:b0:1aa:a27c:aead with SMTP id e5c5f4694b2df-1b1aab16a30mr167968755d.3.1723616944812;
+        Tue, 13 Aug 2024 23:29:04 -0700 (PDT)
+Received: from sunil-laptop ([106.51.198.16])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710f65cddd7sm5117935b3a.72.2024.08.13.23.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 23:29:04 -0700 (PDT)
+Date: Wed, 14 Aug 2024 11:58:59 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v1 0/7] serial: 8250_platform: refactor and clean up a bit
+Message-ID: <ZrxOq2177rnZXZ1b@sunil-laptop>
+References: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
 
-Added count_zswap_thp_swpout_vm_event() that will increment the
-appropriate mTHP/PMD vmstat event counters if zswap_store succeeds for
-a large folio:
+On Mon, Aug 12, 2024 at 06:47:02PM +0300, Andy Shevchenko wrote:
+> Recent patch against this driver has been added without my review.
+> It was technically my fault, however I was on long vacation.
+> So, instead of blaming anyone, this small series to tidy up the things
+> as I think would look and be maintainable better.
+> 
+> Andy Shevchenko (7):
+>   serial: 8250_platform: Remove duplicate mapping
+>   serial: 8250_platform: Don't shadow error from
+>     serial8250_register_8250_port()
+>   serial: 8250_platform: Use same check for ACPI in the whole driver
+>   serial: 8250_platform: Tidy up ACPI ID table
+>   serial: 8250_platform: Switch to use platform_get_mem_or_io()
+>   serial: 8250_platform: Refactor serial8250_probe()
+>   serial: 8250_platform: Unify comment style
+> 
+>  drivers/tty/serial/8250/8250_platform.c | 107 +++++++++++++-----------
+>  1 file changed, 58 insertions(+), 49 deletions(-)
+> 
+Nice!. Thank you very much!.
 
-zswap_store mTHP order [0, HPAGE_PMD_ORDER-1] will increment these
-vmstat event counters:
+For the series:
 
-  ZSWPOUT_4KB_FOLIO
-  mTHP_ZSWPOUT_8kB
-  mTHP_ZSWPOUT_16kB
-  mTHP_ZSWPOUT_32kB
-  mTHP_ZSWPOUT_64kB
-  mTHP_ZSWPOUT_128kB
-  mTHP_ZSWPOUT_256kB
-  mTHP_ZSWPOUT_512kB
-  mTHP_ZSWPOUT_1024kB
+Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
+Tested-by: Sunil V L <sunilvl@ventanamicro.com>
 
-zswap_store of a PMD-size THP, i.e., mTHP order HPAGE_PMD_ORDER, will
-increment both these vmstat event counters:
-
-  ZSWPOUT_PMD_THP_FOLIO
-  mTHP_ZSWPOUT_2048kB
-
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
----
- mm/page_io.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 0a150c240bf4..ab54d2060cc4 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -172,6 +172,49 @@ int generic_swapfile_activate(struct swap_info_struct *sis,
- 	goto out;
- }
- 
-+/*
-+ * Count vmstats for ZSWAP store of large folios (mTHP and PMD-size THP).
-+ */
-+static inline void count_zswap_thp_swpout_vm_event(struct folio *folio)
-+{
-+	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && folio_test_pmd_mappable(folio)) {
-+		count_vm_event(ZSWPOUT_PMD_THP_FOLIO);
-+		count_vm_event(mTHP_ZSWPOUT_2048kB);
-+	} else if (folio_order(folio) == 0) {
-+		count_vm_event(ZSWPOUT_4KB_FOLIO);
-+	} else if (IS_ENABLED(CONFIG_THP_SWAP)) {
-+		switch (folio_order(folio)) {
-+		case 1:
-+			count_vm_event(mTHP_ZSWPOUT_8kB);
-+			break;
-+		case 2:
-+			count_vm_event(mTHP_ZSWPOUT_16kB);
-+			break;
-+		case 3:
-+			count_vm_event(mTHP_ZSWPOUT_32kB);
-+			break;
-+		case 4:
-+			count_vm_event(mTHP_ZSWPOUT_64kB);
-+			break;
-+		case 5:
-+			count_vm_event(mTHP_ZSWPOUT_128kB);
-+			break;
-+		case 6:
-+			count_vm_event(mTHP_ZSWPOUT_256kB);
-+			break;
-+		case 7:
-+			count_vm_event(mTHP_ZSWPOUT_512kB);
-+			break;
-+		case 8:
-+			count_vm_event(mTHP_ZSWPOUT_1024kB);
-+			break;
-+		case 9:
-+			count_vm_event(mTHP_ZSWPOUT_2048kB);
-+			break;
-+		}
-+	}
-+}
-+
- /*
-  * We may have stale swap cache pages in memory: notice
-  * them here and get rid of the unnecessary final write.
-@@ -196,6 +239,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
- 		return ret;
- 	}
- 	if (zswap_store(folio)) {
-+		count_zswap_thp_swpout_vm_event(folio);
- 		folio_start_writeback(folio);
- 		folio_unlock(folio);
- 		folio_end_writeback(folio);
--- 
-2.27.0
-
+Thanks!
+Sunil
 
