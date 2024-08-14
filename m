@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-286297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E029951938
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:44:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B3D95193A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7A11C21801
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:44:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13BB32827F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E331AED33;
-	Wed, 14 Aug 2024 10:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9722D1AE043;
+	Wed, 14 Aug 2024 10:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fy4Iob5K"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJHtR8tB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FE61AE84C;
-	Wed, 14 Aug 2024 10:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC0633993;
+	Wed, 14 Aug 2024 10:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723632199; cv=none; b=CHkvsZJjgb62FyZmtppOS54jYkJQMp+hbkJQkyig9oA+riJD6Un41gRIXNKIIi49rRUynx6VZdPgA1WiVN0H1PGQIQ3S7PRAdsa+D+ENORpOiuE9HmVDRVetCFlISWxINsfj5TuKb9Z4pp0/N/3T32yq64qzp1PK4fB7zLhTZ+Y=
+	t=1723632263; cv=none; b=QqKB7W8WwtYwKkLXic+UKtTss5PcU0CHRh8jTrLioRx7B6RSDnpjzxn5Xvv60VdWWNBEeEp5bPBaUZ3wUm0h7Dlg6tmiURp5+DgXyjSPgMecVZsCmElW5dNdY8GnEypN7QXWL2PyUx72hZ9C1+p8Uh7NV9F+kh2yl34dtgEilZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723632199; c=relaxed/simple;
-	bh=SJgGuHiDF6Pum/YzBX1eIhR+ZuD4wPAvutfWL+CK068=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GuhYGux0zj/DPj76uyDJv3yYe8+tXrlOAsL3oa6STKEJzh9n5ujVnDjcILA1gh3UzN+qIyqVBPSS/EKtsfiBJfMzqgCJRkPpqsJ1+9va4triEq7TpFvJZOfom7ooLtxATml1R1DbSkBFL+4A3iT0JkdGDlVuAwzAr23U9u4Q/y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fy4Iob5K; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7105043330aso5303333b3a.0;
-        Wed, 14 Aug 2024 03:43:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723632198; x=1724236998; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJgGuHiDF6Pum/YzBX1eIhR+ZuD4wPAvutfWL+CK068=;
-        b=Fy4Iob5K/lyBmYpymumOJ+AWwqz+c2onNbLAAhYOWPdSDbPvOVxf7w1vQaeBF8gO6c
-         P3dcUkpn0NKkYjRU77jiH9NzoxudOcPb9tCuLv5SxaRnH1c2HYHVZt6KsqifOyxzCI+A
-         IuvSX85rZjI5okN4JhcYsmTLkIxcf0PttLa64XXSj9NRAVUcwo094KBwheDCgtbo2FKk
-         JtLjB93sjJajx7Q/YjaNpj6k+AMZE9iqJSc4+Tt8hkNxvnEddG2ACq6TMTrUYTB39K3V
-         zOOJDGv5dAjysieJKiH7rW26TbYJUAW5cB4xsE8ZxICjtuCbfa6knEi75KPqaSBgnQx4
-         PU/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723632198; x=1724236998;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJgGuHiDF6Pum/YzBX1eIhR+ZuD4wPAvutfWL+CK068=;
-        b=mccuQ1hYZ1z5mAXpny2tPUVQXoPcajCFAVGMu8GGiuDhtF041n4TOiyelVrTPx3hzV
-         aleYQyLwUtWXQfbAPTQIUL4ougMxgcLTxhPVo0B0vYkUIPv9OCIPTZP2wT0UaZD4mwVp
-         5IWXHLU/vdGFpQR/RqB75HlX25ZL70+3dbcr8KEPGGRs2hghnj68XABAREnz4cbHQvfp
-         1Iu8TMGJpzzuqPcsTmVA7cbyD33UiX8DEg+LhBGVQXvURzap99E7d5M64GrSoGODeOAB
-         MUvUi2X2vzVJdJl7DitNMqzx1L18bblFQmjHoOKlKBevddF1jcnfTJHeoVKUJOvEEBXM
-         z6KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3EOq1r+tCBjoroZ7YC5v6fS5zN5yDzRnIOMVBn/qCHgK1Q6F1nu3U+aQUg1sPV0Sr2PB+OvzsdxEsGlydk+o/qHAGRkWoDaFyNae5OHY9Kcm3Urc2BnTOYQlh2xqwlmCWht+of8fUnfSzsVXR8dEKSblzVy3nl5CH8Q/Df3ftcNmOa9bVoMUUm54=
-X-Gm-Message-State: AOJu0YxklN+SSDquf2QZTgnafUriPLGMW6a25NOXXkAAYVYaq7CECEK6
-	6ny1TvwJVlDMrj8VwI0RzZtYX8OMX6yunjaSKtHQycnDrAT4h6xnSgPMx2hONgdy6bbESf3HV+D
-	JGbVTTqAzk6QzPepxj0sBVs38Sik=
-X-Google-Smtp-Source: AGHT+IFIa9V3yWXmwOQT0TMkZa8EL8RuR2frnvNvc4Gi/6m3ZxiWzN6173URG1TTCP3M1canYCwYcwApz8Y44mtHaok=
-X-Received: by 2002:a05:6a21:9184:b0:1c2:8949:5bb3 with SMTP id
- adf61e73a8af0-1c8eaf63b4bmr2851238637.42.1723632197682; Wed, 14 Aug 2024
- 03:43:17 -0700 (PDT)
+	s=arc-20240116; t=1723632263; c=relaxed/simple;
+	bh=9Kd4y0d1+E9MxTccvXn5CITcKmt48Cgk8WWylCrsQ/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECjRjNkWxWOYYhA0X4lAVa78CenGUA7w4xeEWKR2TH99UpapbTCv+24A/mhBAjvPTDrFmBDraut/PTrgVQB7+jGSgcPPD2BoApr45G3Uzs4ehFQuI/U+DvVo7p9LAgTTb9yFrf1i5SBOrW23P3+Vx8ODbGIJC6Os30b1cSiolHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJHtR8tB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62538C32786;
+	Wed, 14 Aug 2024 10:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723632263;
+	bh=9Kd4y0d1+E9MxTccvXn5CITcKmt48Cgk8WWylCrsQ/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hJHtR8tB1RmDBKm5/Xns2VjpCZr2G8X0P0FpsAn71HGj/IEfKbAymIVlJKshlxEfM
+	 bXeMeDC4dmD+klmqUUkdtDRdwDqMVsMVvF1teyw3SsTC4FSJ96b1cPPhKl+9ozTc9/
+	 rq2TIFbvwOU6SVX8B5gHxh/Uz3Z6LUClyFnBpTAlbqh4NXVK2iQFPeR07djjcxTDhd
+	 8A3Sm3fixMhEW/VPn0rbPiBvlWVB8SiwKUY7iXuMs82S4uwD6af4bFZmmx0JmdbokQ
+	 Tzgi+cvL8mvK9G0wcUcDT7Vi1PmWeg0b2sD9lEGAi7dm+g7iC5FT3+IauxC52Jh6uC
+	 W05NwUurvKQBQ==
+Date: Wed, 14 Aug 2024 11:44:20 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] LKMP(Bug fixing fall 2024): Fix documentation spelling
+ errors
+Message-ID: <20240814-vexingly-gigahertz-b4fca46f4626@spud>
+References: <20240814103620.8912-1-abhashkumarjha123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507210818.672517-1-ojeda@kernel.org> <ZjqmfIhRz99BqXtD@boqun-archlinux>
- <29eacb0f-fd78-4024-aac5-1606fe002dc6@de.bosch.com>
-In-Reply-To: <29eacb0f-fd78-4024-aac5-1606fe002dc6@de.bosch.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 14 Aug 2024 12:43:04 +0200
-Message-ID: <CANiq72nLgdkSJ6SgMOP_k9_PUNvPk2gqQQ0sKLGn6Sn9F0+uug@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: rust: split up helpers.c
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, 
-	=?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4iROHHSOyiKn+nX0"
+Content-Disposition: inline
+In-Reply-To: <20240814103620.8912-1-abhashkumarjha123@gmail.com>
 
-On Wed, Aug 14, 2024 at 9:19=E2=80=AFAM Dirk Behme <dirk.behme@de.bosch.com=
-> wrote:
->
-> It looks to me that this is the only/last open comment? As it seems
-> there is some consensus that this change makes sense it would be nice to
-> get anything like this :) I just stumbled about a local helpers rebase
-> conflict, again ...
 
-Back then, we delayed this one because Andreas preferred to wait for
-6.12 due to other changes. I think he would be OK with it now, but we
-probably need a new version anyway.
+--4iROHHSOyiKn+nX0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Aug 14, 2024 at 04:06:18PM +0530, Abhash Jha wrote:
+
+btw, your commit $subject is rather odd, as it contains
+"LKMP(Bug fixing fall 2024):".
+
+
+>  Documentation/arch/riscv/vector.rst       | 2 +-
+> --- a/Documentation/arch/riscv/vector.rst
+> +++ b/Documentation/arch/riscv/vector.rst
+> @@ -15,7 +15,7 @@ status for the use of Vector in userspace. The intended usage guideline for
+>  these interfaces is to give init systems a way to modify the availability of V
+>  for processes running under its domain. Calling these interfaces is not
+>  recommended in libraries routines because libraries should not override policies
+> -configured from the parant process. Also, users must noted that these interfaces
+> +configured from the parent process. Also, users must noted that these interfaces
+                                                        ^^^^^
+						There's a second mistake
+						in this line.
+
 
 Cheers,
-Miguel
+Conor.
+
+--4iROHHSOyiKn+nX0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZryKhAAKCRB4tDGHoIJi
+0lTTAQC/CF8ZwTLXN272gEpuoSA1OK4uBgfD2TeN3pGpYT3EOQD+Kdjn18yMUi/i
+k9jGJvlo4swoYVeWrKN8Uk6AQCFO5wE=
+=LHxm
+-----END PGP SIGNATURE-----
+
+--4iROHHSOyiKn+nX0--
 
