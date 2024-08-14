@@ -1,222 +1,138 @@
-Return-Path: <linux-kernel+bounces-286404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CB5951A8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA62951A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298F51F2334E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8501F234AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F391AE855;
-	Wed, 14 Aug 2024 12:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753761AED3C;
+	Wed, 14 Aug 2024 12:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6sHUAau"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ognMeWYN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716DB13D51D;
-	Wed, 14 Aug 2024 12:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B9D13D51D;
+	Wed, 14 Aug 2024 12:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723637231; cv=none; b=fuiK5iFI5tqBbNsFKVhYZX6MZRlCQDsWvGwLJ6nBSyfvl3NbFzRy6hjFwJlLou+n/VQmTA6nmz+W7B3553wqFiV0p9rslGPotXOXBrpj6UhKZwXbfTkICAn0+eKDaBwd9pyHtLTaGuzpO4KknwihFFBpb/FuZMO9cTEWE3c7dBs=
+	t=1723637287; cv=none; b=ezJiRZY862z/EA4pqqN7Pyq2irOvhlpkPZhX3o4KZz07pkgYkKWddyUfAEVdzYhtNinEFxLDaiskWPTQ6esaLSWlom/zEC3VvpDJbQXFOT+rUXBbi84WAd3merMdaYMgQjBNyw5nQ88a4Vgsm3Gx61Kp1ihff9AnlzOArfU9tVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723637231; c=relaxed/simple;
-	bh=ia32pWQM/q7KG1yROuoWfq1IU8rNC89OopuCn7Z/cyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bqaRoFj9nHOLOtefAOYoSJHvOPj2TzUkuazh2y/PQRXhaB4KDJOeF35PjoZP4zzOwU0dx/Nt5cXhiTZYWtLpOgxqRx+JQJwIw2hNICZNH+nzgd9IaCiTKRUHK6d+71ipWeVWDHQkuLl0mouic7GuBwEp/9UPA4dZ1x52+M1j/y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6sHUAau; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6294AC32786;
-	Wed, 14 Aug 2024 12:07:06 +0000 (UTC)
+	s=arc-20240116; t=1723637287; c=relaxed/simple;
+	bh=NRLpSjB2blskWzdVEuxep7r6O7TWmeLLJ2opBFrnFXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CueIksgG1rDZcKm8kXNKMHUTw/Yq77Pry2HE7esyL/ywDZv5ROkeShDucpJghCmhM7KXhRi76a9NtRRGh8QTQ7T9OsRAriYRI0KCfHFQyna39LInqOm/RxPaW+khs6dqYdsvx+jFS5ZId1sDZ5DyQftMLB+zNvxtaoAImtG4Si0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ognMeWYN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9780C4AF0E;
+	Wed, 14 Aug 2024 12:08:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723637231;
-	bh=ia32pWQM/q7KG1yROuoWfq1IU8rNC89OopuCn7Z/cyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T6sHUAaus4f5gwCGoEVjywd3bapaHqNRltn5uTPsX4H9NuKSG/aU4qLMu0JL6iywI
-	 mvGkFD/7K+iq3nqqr2sXLRIZNTrCsMQ+QKIay1JvVbncheMTAELRZvjRzspdBXja74
-	 qataFqnkj0RiIEQmNRFEmgqaA5+uGvmbcNJ+xHaXTkeZT0sQDpcAkUKXziS3eHyaAS
-	 0cUGen+MjhQZKAd6ttUZZXzp2P4VecDD0zX1iTpkDl4qmmdhS+YLaHSPuaNlwQ1bff
-	 KmfDfrMMcW8G7KdAc06N+U0e5q3oobZKFlsscFPVWOn9iF2ZdgVqqTlDdyJutoQXPi
-	 EBBV9oBIkZB/Q==
-Date: Wed, 14 Aug 2024 17:36:55 +0530
-From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v3 13/25] context_tracking, rcu: Rename
- rcu_dynticks_task*() into rcu_task*()
-Message-ID: <20240814120655.GA1412760@neeraj.linux>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
- <ZqphRBrI4mlSdER4@localhost.localdomain>
+	s=k20201202; t=1723637287;
+	bh=NRLpSjB2blskWzdVEuxep7r6O7TWmeLLJ2opBFrnFXw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ognMeWYNbsL4Ndt/N31pW5AQ0q9LIvDwUJeJknGrwkDrZHNBoaSZmVAne8BbYc6WB
+	 48NQI3du7WSrP2U/2M7lZ3k9XhoLRO+2m06aCKZqMZya6HPxQYBe2+ZypAcqeC+O11
+	 UlxPJUCmXA2rH/xXm2uLLyjPXXOdX3yBkka8UpDqyoYu+I8jlRPtQf1q3ko6dT10su
+	 9y6IvASp+/UKlyrEcpW9HJTKlVUFIo1lYVVDnqD967lmKHBunyQQ+5GffcbcT5c9zZ
+	 G0EKiHfUQZjvfAujTQ2b1rr/lRbx1FKSMnrfQg9xmqtAIpHrNxT9X4W18xFbGm37Ht
+	 jHfCGw/LVZLlw==
+Message-ID: <0f6c4fb3-039a-4dc6-a07c-980ca06ecbeb@kernel.org>
+Date: Wed, 14 Aug 2024 14:08:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 11/26] rust: alloc: remove `BoxExt` extension
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
+ akpm@linux-foundation.org, daniel.almeida@collabora.com,
+ faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+ lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+ jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+ lyude@redhat.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <20240812182355.11641-12-dakr@kernel.org>
+ <d83155b4-1c73-4191-85b6-55d1b904a926@de.bosch.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <d83155b4-1c73-4191-85b6-55d1b904a926@de.bosch.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZqphRBrI4mlSdER4@localhost.localdomain>
 
-On Wed, Jul 31, 2024 at 06:07:32PM +0200, Frederic Weisbecker wrote:
-> Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a �crit :
-> > The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
-> > RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
-> > meaning.
-> > 
-> > While at it, flip the suffixes of these helpers. We are not telling
-> > that we are entering dynticks mode from an RCU-task perspective anymore; we
-> > are telling that we are exiting RCU-tasks because we are in eqs mode.
-> > 
-> > Suggested-by: Frederic Weisbecker <frederic@kernel.org>
-> > Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-> > ---
-> >  kernel/context_tracking.c | 28 ++++++++++++++--------------
-> >  1 file changed, 14 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-> > index 8262f57a43636..1c16a7336360f 100644
-> > --- a/kernel/context_tracking.c
-> > +++ b/kernel/context_tracking.c
-> > @@ -38,24 +38,24 @@ EXPORT_SYMBOL_GPL(context_tracking);
-> >  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
-> >  #define TPS(x)  tracepoint_string(x)
-> >  
-> > -/* Record the current task on dyntick-idle entry. */
-> > -static __always_inline void rcu_dynticks_task_enter(void)
-> > +/* Record the current task on exiting RCU-tasks (dyntick-idle entry). */
-> > +static __always_inline void rcu_task_exit(void)
-> 
-> So this makes sense.
-> 
-> >  {
-> >  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
-> >  	WRITE_ONCE(current->rcu_tasks_idle_cpu, smp_processor_id());
-> >  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
-> >  }
-> >  
-> > -/* Record no current task on dyntick-idle exit. */
-> > -static __always_inline void rcu_dynticks_task_exit(void)
-> > +/* Record no current task on entering RCU-tasks (dyntick-idle exit). */
-> > +static __always_inline void rcu_task_enter(void)
-> 
-> That too.
-> 
-> >  {
-> >  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
-> >  	WRITE_ONCE(current->rcu_tasks_idle_cpu, -1);
-> >  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
-> >  }
-> >  
-> > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> > -static __always_inline void rcu_dynticks_task_trace_enter(void)
-> > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
-> > +static __always_inline void rcu_task_trace_exit(void)
-> 
-> But that eventually doesn't, because it's not about not wathing anymore from
-> an RCU-TASKS-TRACE perspective. It's actually about adding more heavyweight
-> ordering to track down RCU-TASKS-TRACE read side while traditional RCU is not
-> watching. Sorry for understanding it that late.
-> 
-> Oh well. So a more accurate name here would be rcu_task_trace_heavyweight_enter().
-> 
-> >  {
-> >  #ifdef CONFIG_TASKS_TRACE_RCU
-> >  	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
-> > @@ -63,8 +63,8 @@ static __always_inline void rcu_dynticks_task_trace_enter(void)
-> >  #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
-> >  }
-> >  
-> > -/* Turn off heavyweight RCU tasks trace readers on idle/user exit. */
-> > -static __always_inline void rcu_dynticks_task_trace_exit(void)
-> > +/* Turn off heavyweight RCU tasks trace readers on kernel entry. */
-> > +static __always_inline void rcu_task_trace_enter(void)
-> 
-> And rcu_task_trace_heavyweight_exit().
-> 
+Hi Dirk,
 
-I have updated it here [1]. Please let me know if something looks
-incorrect.
-
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/commit/?h=next.14.08.24a&id=cfc22b9f1572b137dd9f36da831dd7b69c9fe352
-
-- Neeraj
-
-> Thanks!
+On 8/14/24 1:55 PM, Dirk Behme wrote:
+> On 12.08.2024 20:22, Danilo Krummrich wrote:
+>> Now that all existing `Box` users were moved to the kernel `Box` type,
+>> remove the `BoxExt` extension and all other related extensions.
+> I just noticed that in the recent 'rust-dev' branch we have a change which *adds* something to BoxExt:
 > 
-> >  {
-> >  #ifdef CONFIG_TASKS_TRACE_RCU
-> >  	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
-> > @@ -87,7 +87,7 @@ static noinstr void ct_kernel_exit_state(int offset)
-> >  	 * critical sections, and we also must force ordering with the
-> >  	 * next idle sojourn.
-> >  	 */
-> > -	rcu_dynticks_task_trace_enter();  // Before ->dynticks update!
-> > +	rcu_task_trace_exit();  // Before CT state update!
-> >  	seq = ct_state_inc(offset);
-> >  	// RCU is no longer watching.  Better be in extended quiescent state!
-> >  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && (seq & CT_RCU_WATCHING));
-> > @@ -109,7 +109,7 @@ static noinstr void ct_kernel_enter_state(int offset)
-> >  	 */
-> >  	seq = ct_state_inc(offset);
-> >  	// RCU is now watching.  Better not be in an extended quiescent state!
-> > -	rcu_dynticks_task_trace_exit();  // After ->dynticks update!
-> > +	rcu_task_trace_enter();  // After CT state update!
-> >  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !(seq & CT_RCU_WATCHING));
-> >  }
-> >  
-> > @@ -149,7 +149,7 @@ static void noinstr ct_kernel_exit(bool user, int offset)
-> >  	// RCU is watching here ...
-> >  	ct_kernel_exit_state(offset);
-> >  	// ... but is no longer watching here.
-> > -	rcu_dynticks_task_enter();
-> > +	rcu_task_exit();
-> >  }
-> >  
-> >  /*
-> > @@ -173,7 +173,7 @@ static void noinstr ct_kernel_enter(bool user, int offset)
-> >  		ct->nesting++;
-> >  		return;
-> >  	}
-> > -	rcu_dynticks_task_exit();
-> > +	rcu_task_enter();
-> >  	// RCU is not watching here ...
-> >  	ct_kernel_enter_state(offset);
-> >  	// ... but is watching here.
-> > @@ -240,7 +240,7 @@ void noinstr ct_nmi_exit(void)
-> >  	// ... but is no longer watching here.
-> >  
-> >  	if (!in_nmi())
-> > -		rcu_dynticks_task_enter();
-> > +		rcu_task_exit();
-> >  }
-> >  
-> >  /**
-> > @@ -274,7 +274,7 @@ void noinstr ct_nmi_enter(void)
-> >  	if (rcu_dynticks_curr_cpu_in_eqs()) {
-> >  
-> >  		if (!in_nmi())
-> > -			rcu_dynticks_task_exit();
-> > +			rcu_task_enter();
-> >  
-> >  		// RCU is not watching here ...
-> >  		ct_kernel_enter_state(CT_RCU_WATCHING);
-> > -- 
-> > 2.43.0
-> > 
+> rust: kernel: add drop_contents to BoxExt
+> https://github.com/Rust-for-Linux/linux/commit/62c34da1da6c01a635ea2308cb42996d0571059e
+> 
+> I'm unclear how relevant that is. Just want to mention this in case it would make sense to include that directly in this patch series to avoid a future add-on patch ;)
+
+Thanks for reporting. I'm aware of this patch, we expect it to land before this series.
+I'll add `drop_contents` once I rebase onto it.
+
+- Danilo
+
+> 
+> Thanks,
+> 
+> Dirk
+> 
+> P.S.: It looks like anything like this at least makes the compiler happy:
+> 
+> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> index d67f975502246..e91d441835d54 100644
+> --- a/rust/kernel/alloc/kbox.rs
+> +++ b/rust/kernel/alloc/kbox.rs
+> @@ -9,6 +9,7 @@
+>   use core::mem::MaybeUninit;
+>   use core::ops::{Deref, DerefMut};
+>   use core::pin::Pin;
+> +use core::ptr;
+>   use core::ptr::NonNull;
+>   use core::result::Result;
+> 
+> @@ -270,6 +271,28 @@ pub fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>, A>, AllocError> {
+>           Ok(Box(ptr, PhantomData::<A>))
+>       }
+> 
+> +    /// Drops the contents, but keeps the allocation.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::alloc::{Flags, KBox};
+> +    /// let value = KBox::new([0; 32], GFP_KERNEL)?;
+> +    /// assert_eq!(*value, [0; 32]);
+> +    /// let value = KBox::drop_contents(value);
+> +    /// // Now we can re-use `value`:
+> +    /// let value = KBox::write(value, [1; 32]);
+> +    /// assert_eq!(*value, [1; 32]);
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn drop_contents(this: Self) -> Box<MaybeUninit<T>, A> {
+> +        let ptr = Box::into_raw(this);
+> +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
+> +        unsafe { ptr::drop_in_place(ptr) };
+> +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`.
+> +        unsafe { Box::from_raw(ptr.cast()) }
+> +    }
+> +
+>       /// Constructs a new `Pin<Box<T, A>>`. If `T` does not implement [`Unpin`], then `x` will be
+>       /// pinned in memory and can't be moved.
+>       #[inline]
 
