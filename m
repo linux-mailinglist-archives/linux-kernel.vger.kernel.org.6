@@ -1,237 +1,119 @@
-Return-Path: <linux-kernel+bounces-286686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAE8951DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:56:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FDA951DE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D741F22493
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F501C21341
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2E01B4C3C;
-	Wed, 14 Aug 2024 14:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D141B4C27;
+	Wed, 14 Aug 2024 14:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uj7JpQog"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f0CzECq+"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832251B3F25
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E021B3F19;
+	Wed, 14 Aug 2024 14:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723647367; cv=none; b=qTzh1Wo94preaApN0PshCo9h9k2t/sjIt5knOUqBFaOxa2vZgub4MYJNjh4rojwP5B4HlpWKca/VkPeafpxFpUAax1RRd9r+zQ8A8iZv+LK7JVRhq4xYwvttH4m7hSlzLSWptYK5zni8o5QosOeLIcC7XsOn0PHFQEeUWQYQzNY=
+	t=1723647404; cv=none; b=KB/TfH1mgfVoM3/pMJKXwKIEN8kBsvXX58F2kjVmM6uFGxTp7+rdtCbVF/Y0Er6DLzvoNJkYysfnKDHHrbizXMMvMs9KnpPZO+dAu2a5Jq7TawbLHbUbFneLe5s+66arh+oIALCapYk5M+cWCc+v0UsymmBAIe/n6EyF0Y5R1co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723647367; c=relaxed/simple;
-	bh=tR8RzbqOolXZg8cJLIUMhkkkWhqNewrEo1ZX+xr0SVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eoXYQP+uNFzi/CR9ryWWr79ehnuXUGm7EnlLxEeonBQNpjRW2ZwehlTk1X8cERE9Q2d4hC1a3o6LvwsnBxzW9sQ24YB9RSRLLK/LaYMyVESWaciSyjqWxRatgIG1ICsg8NZ1A4si1ySLb0zRMiZjwM51vSDZ6EeJ6LBcjiyRNwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uj7JpQog; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-709346604a7so2969326a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723647364; x=1724252164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ApWhKzlunlw9OulyCe3WVtwOx7m9YQFR6kgphgn0hHM=;
-        b=uj7JpQogyJ0OQXhKYv2IbMfZ2YTiwSo4zcuyjtQWF/0GzdtRQiJ2jkQt0EcM4+ZzsA
-         fOQYD6iJqbLNmdRHjB4Y/7zVuo4yVmMKrl5FeRa04/B1LmN52h+XtGQAHHb7Va+kX1uk
-         C08ZlVAOH7Ejq3lMv3H+gaEckIUJCWDsLaVw/06PKt3VcmrpR6nHFn/TZVnLrp8sqneL
-         u6hJqiTvBpVMQHRHqUusyh+gObrIjtKyoRszz8hGgbKbMhrfR7OIC6hyD52dEF164ogr
-         ziCyGX5wCAAKkZa/R57UJBIiYTn8lyoWqaLM4CoObQ7UQB6FdZco57zYzVaVhT+/pQdQ
-         wKQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723647364; x=1724252164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ApWhKzlunlw9OulyCe3WVtwOx7m9YQFR6kgphgn0hHM=;
-        b=nOGx5qsB0I/k5Zocue5w2VkzLyM2dHahbmvUEdFko0J/Ar97sbweJtex2XRbumre48
-         u8nqqdCeH1i0FB4/0WE+qnPQXKiFImX4Q+m5lj8dLwZTqWsYVOH+FULeA1hr7QM3EvSy
-         eMdumQGDvX59V858rTeHnUNiPY/E4S4h68osDleFH0KmeIQIjHZmgt3XRcxhOHvO25t3
-         A28RxP3q1/TF5PuqSHd2jWbsY1pRvZtg8G5eidAo/9HHAlZ4G9oVMU9E4QZTwCS0rX9Y
-         cOXCwD3E8zllKQLFtu6BWqrc1/xWIDuZigOk8urbp56+0jbXnhyjRZtoLNQ2i/jMTdz2
-         xhHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Kf2h9skA2H2WEBcIqFu9hSAcUxCz1w7D0KX7cJfJ35ixNcRpMm9Htstaz1ILsaQ9O1tkWSID+kX6TYShjeSMuQWdZVl/Xn1FEf6f
-X-Gm-Message-State: AOJu0Yy1oa1JT5jP+iCYG2vy7c70pVnjz1WrWFY45VQAGdGQ+pKYyfJ+
-	yqZgVv1ZB7EHDanRMq/DbDx0F+7APB4ZQYWlagLeIleuU2+tgS2f+VRXfDsMtLxA5GCqOOXAbxe
-	e7Dkx3qAyvwn8K8d+/stLIIPxURHdjnR82Pb+
-X-Google-Smtp-Source: AGHT+IH9ZAeOvcFpU0wz9rOmS3Zjvy3bWAzT1a2IrWWyXOegJsZPD7qSytaVr6toGHZ8oDdMhi5a1Ic9JEJSRxy3OYE=
-X-Received: by 2002:a05:6359:4c83:b0:1ac:f5dc:5163 with SMTP id
- e5c5f4694b2df-1b1aad5b0a8mr340642555d.29.1723647364192; Wed, 14 Aug 2024
- 07:56:04 -0700 (PDT)
+	s=arc-20240116; t=1723647404; c=relaxed/simple;
+	bh=/URbDQUe8tpIr2dF/FiO/AySyoYhlLDMC4EylewElsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Sdz0yWfveU0KFqJYCZ9+FQ/XqLzWvhn+SbKkbygn5+rUt3jiFjf44S9Xl2XG9pQHITANlezMzZSzfovojaG/9V9WsVpl0a3qTyOgbKzv0xQW3UIIV5ojIp7GPbe02n0mI4g5l02vIVU46a8eaYnTYLvcQLIJR/pdcAePGaOoFZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=f0CzECq+; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EEuNS1070138;
+	Wed, 14 Aug 2024 09:56:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723647383;
+	bh=Zn7iFpMlSGpI1yEk3oG9a9XVdYvt4GFFLghB4MSQFjE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=f0CzECq+zUcrW9q40RbgpXHu30zd29ys5SLfqOzdJRpS751EUzBkIUjYRUakS4vS0
+	 Rh1z/GaRpOpouBnbmZ5inBCD03zfh+Sp5ALuYP6GEJWwfdWwr+HNJLRRvuDuwO25qa
+	 nf9Txojd3X8pwHoUQI18cLTYjoHRaSnYy8pL2ets=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EEuNR1105612
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 14 Aug 2024 09:56:23 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
+ Aug 2024 09:56:22 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 14 Aug 2024 09:56:22 -0500
+Received: from [10.249.135.225] ([10.249.135.225])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EEuDgU034028;
+	Wed, 14 Aug 2024 09:56:14 -0500
+Message-ID: <b1e1f90c-5477-4fc7-b2ac-c6fb0a41d556@ti.com>
+Date: Wed, 14 Aug 2024 20:26:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813211317.3381180-7-almasrymina@google.com> <de7daf80-a2e4-4451-b666-2a67ccc3649e@gmail.com>
-In-Reply-To: <de7daf80-a2e4-4451-b666-2a67ccc3649e@gmail.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Wed, 14 Aug 2024 10:55:49 -0400
-Message-ID: <CAHS8izPMC+XhXKbJOQ3ymizyKuARSOv_cO_xO+q1EG4zoy6Gig@mail.gmail.com>
-Subject: Re: [PATCH net-next v19 06/13] memory-provider: dmabuf devmem memory provider
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 0/7] Introduce HSR offload support for ICSSG
+To: Andrew Lunn <andrew@lunn.ch>, MD Danish Anwar <danishanwar@ti.com>
+CC: Dan Carpenter <dan.carpenter@linaro.org>,
+        Jan Kiszka
+	<jan.kiszka@siemens.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
+	<horms@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>
+References: <20240813074233.2473876-1-danishanwar@ti.com>
+ <d061bfb6-0ccc-4a41-adad-68a90a340475@lunn.ch>
+ <69043091-dd59-4b7a-aae0-34f9695b378d@ti.com>
+ <c2f99f7e-4f36-47eb-aee5-795d41be819e@lunn.ch>
+Content-Language: en-US
+From: "Anwar, Md Danish" <a0501179@ti.com>
+In-Reply-To: <c2f99f7e-4f36-47eb-aee5-795d41be819e@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Aug 14, 2024 at 10:11=E2=80=AFAM Pavel Begunkov <asml.silence@gmail=
-.com> wrote:
-...
-> > diff --git a/net/core/devmem.c b/net/core/devmem.c
-> > index 301f4250ca82..2f2a7f4dee4c 100644
-> > --- a/net/core/devmem.c
-> > +++ b/net/core/devmem.c
-> > @@ -17,6 +17,7 @@
-> >   #include <linux/genalloc.h>
-> >   #include <linux/dma-buf.h>
-> >   #include <net/devmem.h>
-> > +#include <net/mp_dmabuf_devmem.h>
-> >   #include <net/netdev_queues.h>
-> >
-> >   #include "page_pool_priv.h"
-> > @@ -153,6 +154,10 @@ int net_devmem_bind_dmabuf_to_queue(struct net_dev=
-ice *dev, u32 rxq_idx,
-> >       if (err)
-> >               goto err_xa_erase;
-> >
-> > +     err =3D page_pool_check_memory_provider(dev, rxq, binding);
->
-> Frankly, I pretty much don't like it.
->
-> 1. We do it after reconfiguring the queue just to fail and reconfigure
-> it again.
->
 
-I don't see an issue with that? Or is it just me?
 
-> 2. It should be a part of the common path like netdev_rx_queue_restart(),
-> not specific to devmem TCP.
->
-> These two can be fixed by moving the check into
-> netdev_rx_queue_restart() just after ->ndo_queue_mem_alloc, assuming
-> that the callback where we init page pools.
->
+On 8/14/2024 7:34 PM, Andrew Lunn wrote:
+>> We have these 3 firmwares only for ICSSG.
+> 
+> O.K. But i also hope you have learned from this and the next
+> generation of the hardware with have more RAM for firmware, so you
+> only need one firmware image for everything.
+> 
 
-The only reason is that the page_pool_check_memory_provider() needs to
-know the memory provider to check for. Separating them keep
-netdev_rx_queue_restart() usable for other future use cases that don't
-expect a memory provider to be bound, but you are correct in that this
-can be easily resolved by passing the binding to
-netdev_rx_queue_restart() and doing the
-page_pool_check_memory_providers() check inside of that function.
+Yes Andrew, The goal will always be to have a firmware which can do all
+these instead of multiple firmwares in future. Thanks for all the
+reviews and sugestions.
 
-> 3. That implicit check gives me bad feeling, instead of just getting
-> direct feedback from the driver, either it's a flag or an error
-> returned, we have to try to figure what exactly the driver did, with
-> a high chance this inference will fail us at some point.
->
+>      Andrew
 
-This is where I get a bit confused. Jakub did mention that it is
-desirable for core to verify that the driver did the right thing,
-instead of trusting that a driver did the right thing without
-verifying. Relying on a flag from the driver opens the door for the
-driver to say "I support this" but actually not create the mp
-page_pool. In my mind the explicit check is superior to getting
-feedback from the driver.
-
-Additionally this approach lets us detect support in core using 10
-lines of code or so, rather than ask every driver that wants to
-support mp to add boilerplate code to declare support (and run into
-subtle bugs when this boilerplate is missing). There are minor pros
-and cons to each approach; I don't see a showstopping reason to go
-with one over the other.
-
-> And page_pool_check_memory_provider() is not that straightforward,
-> it doesn't walk through pools of a queue.
-
-Right, we don't save the pp of a queue, only a netdev. The outer loop
-checks all the pps of the netdev to find one with the correct binding,
-and the inner loop checks that this binding is attached to the correct
-queue.
-
-> Not looking too deep,
-> but it seems like the nested loop can be moved out with the same
-> effect, so it first looks for a pool in the device and the follows
-> with the bound_rxqs. And seems the bound_rxqs check would always turn
-> true, you set the binding into the map in
-> net_devmem_bind_dmabuf_to_queue() before the restart and it'll be there
-> after restart for page_pool_check_memory_provider(). Maybe I missed
-> something, but it's not super clear.
->
-> 4. And the last thing Jakub mentioned is that we need to be prepared
-> to expose a flag to the userspace for whether a queue supports
-> netiov. Not really doable in a sane manner with such implicit
-> post configuration checks.
->
-
-I don't see a very strong reason to expose the flag to the userspace
-now. userspace can try to bind dmabuf and get an EOPNOTSUPP if the
-operation is not supported, right? In the future if passing the flag
-to userspace becomes needed for some usecase, we do need feedback from
-the driver, and it would be trivial to add similarly to what you
-suggested.
-
-> And that brings us back to the first approach I mentioned, where
-> we have a flag in the queue structure, drivers set it, and
-> netdev_rx_queue_restart() checks it before any callback. That's
-> where the thread with Jakub stopped, and it reads like at least
-> he's not against the idea.
-
-Hmm, the netdev_rx_queue array is created in core, not by the driver,
-does the driver set this flag during initialization? We could run into
-subtle bugs with races if a code path checks for support after core
-has allocated the netdev_rx_queue array but before the driver has had
-a chance to declare support, right? Maybe a minor issue. Instead we
-could add an ndo to the queue API that lets the driver tell us that it
-could support binding on a given rx queue, and check that in
-net_devmem_bind_dmabuf_to_queue() right before we do the bind?
-
-But this is only if declaring support to userspace becomes needed for
-some use case. At the moment I'm under the impression that verifying
-in core that the driver did the right thing is preferred, and I'd like
-to minimize the boilerplate the driver needs to implement if possible.
-
-Additionally this series is big and blocks multiple interesting follow
-up work; maybe going forward with an approach that works - and can
-easily be iterated on later if we run into issues - could be wise. I
-do not see an issue with adding a driver signal in the future (if
-needed) and deprecating the core check (if needed), right?
-
---
-Thanks,
-Mina
+-- 
+Thanks and Regards,
+Md Danish Anwar
 
