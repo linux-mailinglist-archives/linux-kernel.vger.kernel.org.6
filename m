@@ -1,344 +1,164 @@
-Return-Path: <linux-kernel+bounces-286033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1002395159D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:32:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E2E9515A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344F31C272FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51F71C21A29
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3038313C80C;
-	Wed, 14 Aug 2024 07:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="ZCrKHAMA"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021134.outbound.protection.outlook.com [52.101.62.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715F213C3EE;
+	Wed, 14 Aug 2024 07:37:07 +0000 (UTC)
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAC2EA4;
-	Wed, 14 Aug 2024 07:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723620724; cv=fail; b=TQ+CHrrz/8Q+pPG9ClsDftoeoljHzI+YXmbXgAUULu8qAYnaoGq/2Q9EQEC4ZWr2zlG5HByHQkoQMJbT36RqSkwGxgGH/Jeonc9VM8Y8P0ijxkTx4zpQQjv7xiMiEzYHZ8bCGF4r5NxHIP622D5b4eTUti6fuYcMT0ugdDkeR/k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723620724; c=relaxed/simple;
-	bh=5lWqxhDE4xhEng3S2TgY87701m6R/mfLfoVMJ0layPE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WOR69YIbbz6s3E3cWe4UtAyjK2UsHEA1Gc2nWl2l3HoXRX88CsNzODlpK6nVFQW4HFuwKueaD0p9TaEQFBYlpQYB9rtGIJCTZ3pNgNElEp4cwptUU7IAJBbutvt/+zjBeQ4PZy6rbtteJLmyWO729j56BgMCwK8rw1RQcmnxBK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=ZCrKHAMA reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.62.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=anNbuVItrqKSghTV3ryvLEktbf1q5oEuDM97pFUrZU3JOHeOFDQzGvKgMxL3nWDThXKs/J4krY1zosTlUlx0T+HrAg18D2DSN/XIlxBLgKV1wGi4HhZl+Dc1OquNx/DBNQUsdjjO3ZyZbX6UiPjZGlRqzz/fUq0LPg10XwY4nu1ImXJ1lCuP38vzKKACdFC7zHqeSIVzgn4Z2/XdIkCQt5hpTh5R2D1ft6Aw6qTFG60ZUmhPz/kLo/2PWK4fBVOXNjxooA+QH4f5yJ62SHnjH1u6sg3l1f3etvMWitM323Vz4nz/ug4JU6AhflxmS8tLlMfNZF08yKSPusvCTNe2SQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KFPzbBgaXzhw1DDrV3P/S3SkecrYGRRp/y6mR3V+0T0=;
- b=dq2qKYuodilJWTMycAfGcU2pCkDJFfKXnsmmLf71KKSmrsTSM1/skkLovlAERepNM67x37g1kRHMFNBmaPzHatKIPMtxaHjdq9v8ep7EMYh4uYUgONBQiBKwo2FqfeqDGWLSy7g7+rDPyqLvtfiZHavL49kTtKbSy3S9aPQ/U2/Tyzib2AnOkoNQXYYx82f4exlHbeQS4vIOa3VuKePgndX1K93WwhwbJRVFTBsEyLAcrJwn5XizHb0A8em0FY8U26w0GKOIktuY95gvlw89OVineprZAC4hYDjQwAn9UDjEtueQhKzmY6+WJCdW+JwOFL5l3oXwtytPCQFNbPaJnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KFPzbBgaXzhw1DDrV3P/S3SkecrYGRRp/y6mR3V+0T0=;
- b=ZCrKHAMATHtj4Do3CJ/lMNJx29ej9eDbVApqYNVD+v5dzapD1hbhn9IwdBKXyRKskGvbeRVV+OYuylfjA1tpx9rFZbsTGIwrP7aciZNPY7UQnzUjtQo4E0bF6rgh6NfRDePqoBYsDzY19zrqLeaiYjr/WnSzqG/ZXRggidtE4qA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
- PH0PR01MB8120.prod.exchangelabs.com (2603:10b6:510:29f::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.22; Wed, 14 Aug 2024 07:31:55 +0000
-Received: from BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
- 07:31:55 +0000
-Message-ID: <481b00b4-c3b7-49c4-80fe-0c0fb8448673@amperemail.onmicrosoft.com>
-Date: Wed, 14 Aug 2024 14:31:43 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: hwmon: Add maxim max31790
-To: Conor Dooley <conor@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Cc: Chanh Nguyen <chanh@os.amperecomputing.com>,
- Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>,
- Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240813084152.25002-1-chanh@os.amperecomputing.com>
- <20240813084152.25002-2-chanh@os.amperecomputing.com>
- <20240813-sister-hamburger-586eff8b45fc@spud>
- <10680d13-442d-4f12-a77c-2bd05f11dc10@roeck-us.net>
- <20240813-extruding-unfunded-0e14a5c161e1@spud>
-Content-Language: en-US
-From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-In-Reply-To: <20240813-extruding-unfunded-0e14a5c161e1@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0016.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::17) To BL3PR01MB7057.prod.exchangelabs.com
- (2603:10b6:208:35c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866C429CFB
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723621026; cv=none; b=UR7b/6sfvIJ+rl4ZRrHOo6VYroTNhxEILxLuNZ146If1FREOQrralry2S8PcmLpQCY/xCl4DMnYTNZhE5JuJrw7RGsf43MgrlqPOPONS9MTydW9udM0V6nX1uB8GyiNh7KuAsS7Q/fWNvt/WlQgGDl9VRyWNOPsE8GFoPaoBJZE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723621026; c=relaxed/simple;
+	bh=bxyVlW1M45Ct0vG5Lskhq3TKTsbNwnUferSA5EtDQHI=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=l4rKPG0oZjKdWHwOmDjgfRiMZcYvrahDcQSg7g5PZ1bredY8VYF+DDx3JohiY5mjLVmFe3sJAymCs0nd9FF1IsrC8MTwmWf+GvW9gIggmVaoMGR//ZBkXs+SdLLUNhXMkNxHEbflf3f4CSY7t9IH1VT8IyMFrL8ZREdjS9IVFtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-GoodBg: 2
+X-BAN-DOWNLOAD: 1
+X-BAN-SHARE: 1
+X-QQ-SSF: 0040000000000060
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-XMAILINFO: N2SgH8K5gGcG3VPiQSaVIqKmUZekJQOSm7yFoOoBJ/rN8aOGu2Q0ZXhd
+	8Xvqdlvrv50yQ8Wd42+K+KlIsHeTQob4BBwlp5opG4FLy25XObGBwiAaOQc59a8GzDi7QAP
+	56rl1b2G/kME26bUxsRULEempKW1gvzQv0gKOkHgPoffzVtFT59Ryz4wCgKPXUpN089PL6C
+	3Yj2ERWCV1W1n21Dky6aDs9IPahm/nDQyIsGPjNMHfUgD5OKhxaA9+WlQhhRHoNqW7r8vEs
+	D9W6OHeR22V1GnPHV30fgAXFGV+uDrhQU5a98kY2HjFFIRqMd+J51PSzoNeTGW9OUkTFt1a
+	kKiItkcX6o+z8dsX8bfShpjzhruY/HVK7zwjPSdmFmBVufDP3kUgEYeEvJYHIWIGvklQNrH
+	H1p+71+IkVNlPu6Y31lECKfAkuL6OTfg76pH8vso9T5zXKamM0f2j2+W6trPXC5SgklBE1z
+	Oii+PzYmn8lcYvHK63JWLRO+AQiwEVHYnh3LTRW+6RYvnsmKxhkjetCnT4mSAGUpPDyPeKj
+	CjOY18jsAOzGAzEi/Bk0PdWPItlDwRFDmr4D6IcjJpF54N/gA+Sg03JqVdlbYc1LKndVIvn
+	4x561mBkyzge9Ge9g09oE94VUsvMao0D1/rfavBjMF+Dt54lygNgLmZvhzI73hzwLpjAtvV
+	pqGUHkdn25UUGI9CuneBSLrvltoVSdcGFd9ggLpz0KPLZ88MHsL/cxbi60oaZPn4Ei/m2zy
+	XwXnd0sYx1fCDFW9ZQ1Akcjp/p88sq7z5A21ao3UKUGrvG1r834rkk3MiDsTuflLg+UQFyG
+	CdonF6EYzjFAkyULQuYpVbeo9rJa/Y2cYLtDxaqFwhjETmiuJ9CMx20GY7DO142Bto4Ps+c
+	WX/ZGjunI5Fm2WF4Sate5BpSHPGtxhNSdl+MyKBNDYqlp44YF3wM+w==
+X-QQ-FEAT: D4aqtcRDiqQpBpTnjIJt3/f21w9WO3enREO5ZSgO7MU=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: 4bHUgX9eat0b2FhxuKxGJVsTZb5xfOAxhn+JbHXudgs=
+X-QQ-STYLE: 
+X-QQ-mid: t6gz5a-0t1723620864t9758776
+From: "=?utf-8?B?6Jme6ZmG6ZOt?=" <luming.yu@shingroup.cn>
+To: "=?utf-8?B?6Jme6ZmG6ZOt?=" <luming.yu@shingroup.cn>, "=?utf-8?B?bGludXhwcGMtZGV2?=" <linuxppc-dev@lists.ozlabs.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bXBl?=" <mpe@ellerman.id.au>, "=?utf-8?B?bnBpZ2dpbg==?=" <npiggin@gmail.com>, "=?utf-8?B?Y2hyaXN0b3BoZS5sZXJveQ==?=" <christophe.leroy@csgroup.eu>
+Cc: "=?utf-8?B?bHVtaW5nLnl1?=" <luming.yu@gmail.com>, "=?utf-8?B?c2hlbmdodWkucXU=?=" <shenghui.qu@shingroup.cn>, "=?utf-8?B?5p2o5L2z6b6Z?=" <jialong.yang@shingroup.cn>
+Subject: Re:[PATCH v1] powerpc/powernv/pci: fix PE in re-used pci_dn for pnv_pci_enable_device_hook
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|PH0PR01MB8120:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1dafb62-1e8f-4383-896b-08dcbc332c08
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cE9WbG1JRFljUys0YTZGQkNQYVNPcm9DTUZSbjg4TS9oTGYyNzdjanNwWW9l?=
- =?utf-8?B?bUVCaEZSbEFSS1hROC9mN3VEVzN1WUh3YVArSzB6ZzRuSy95WlM3MnZMN1Qv?=
- =?utf-8?B?Z0lGZUVxd1F0QkU4NzR1Wk1CUExjdGo5RGovL0FUelRPbmVzYXJrMzhPVHRv?=
- =?utf-8?B?YmpFa3dDUmxZUVBOaS84V0tOZng0VWI2TFlhdzdySDNYTG8rN2wyWWpLQzF1?=
- =?utf-8?B?NmIrOFZvQ096SnVBc3hIdkMxMTFycmRmNEs2QkNGSHF1SytGN08rTEt1RVhi?=
- =?utf-8?B?Y1BkTGhneTNGVUpmRkcwQndza0J5V0NoTGVFY3dMblM3Q1cwZ2p6MEhKbytQ?=
- =?utf-8?B?M0VwZW5TYzJWVVdQeld3c0pEZHNXUGFXeTZXUlcxRTZhNG9GTWVCQ0t1UW45?=
- =?utf-8?B?THdZWVYzZmR0MEtTUHFoY0hwMCtsOUtZNkFHUXFjaVFlNFd2WEpKcUVzWmM1?=
- =?utf-8?B?a1lrWWlGdzVGOWxtT1BSNXBwRkJoaVU2dWI5MnRia0FTWnRjYXAydng1WHl5?=
- =?utf-8?B?U2x0a2xYaGtJVjdScVJsVTNITGxnTEFCR3FFaGIxZTVtYXFQaFBzdDNCT1lz?=
- =?utf-8?B?enhiV1FacWNSNStVajJwVmJacXd5SnU5RnZoYkJwdmVORml1YTNHdGt6S1lF?=
- =?utf-8?B?SDdld08rRkJaVlBVa3VvdUJua1diL0dwYXlFN2NnbzlhUjQrWXM1bnJaeGZz?=
- =?utf-8?B?NTcyQVVwakZ4ekZQamlVYlpnc3FVdkhYRVdLRGtGTks1dnZOekx5dWJsMzRC?=
- =?utf-8?B?ZjdQZmoxRjF3QUY4blBoNlJDVG1RbUovZ3M2dU9jVnZlMWM4VXQ3Nm9nOFRT?=
- =?utf-8?B?ZDJVN2xKWE5SelJxcmhTeGFhbnNsTkdpNDBlcGZKbnpXb2pRczF6ZDYvUmlj?=
- =?utf-8?B?M1pNdGVtYTZhNmF5eXZrcy82eXUzLzdSUTgyaUtoUlRUdzRoSHoxbm9NNCtW?=
- =?utf-8?B?Z1c3M3hSOUMvTStXMjdhZG92ZEcxREtYOXAxNjBsR0xuYzFCZlJFK293L3A3?=
- =?utf-8?B?Wk9YZXhiMGhmRHBVQlRPeEYyNGhmenNUUnorTDZZYkgvSXovSHZnZXAycFFE?=
- =?utf-8?B?MWJXUXBiQ2R5bExzaUxWL1lOWHg0Rk4yY1ZTanhaOElOSFZ0YTlkY3FMYWNj?=
- =?utf-8?B?akl5RTJrTmFqR2daa3lmaE9odXRMNm0rZFg5SkQ3bzB6MnRUZTFHS0puNjMx?=
- =?utf-8?B?aDBZd0ovZkxreDVEdG4zY2VBeWlpb2I1N1l6V25LdEowU3htWjBJeXBraTJB?=
- =?utf-8?B?aDc3UHA0aTZxTXQxSzZrb2gxb3IvNXZNVkhKK2NyUVZOYlVHL3RBNHNEOXJW?=
- =?utf-8?B?Umc5WlRSYmpNcUFRWGtMaE43cEtXdGU1UCtrdmhhbmRJMXV6b21ZTFE0ZGxH?=
- =?utf-8?B?S29BbUZKeUlxWWNBb2R5elZhdytOMFUycDUyL0tMRGRxTlJJQUt6aEQ2U1BV?=
- =?utf-8?B?MUhla3pzNGxWNkdGQUlpRUYrUXlOSGh6RnpXTnhxZnEwMUxMTGJ1Ym9zY0FJ?=
- =?utf-8?B?MnNzbUxLWWs1SFV6UUtqZkJ1S3ZYMXo4d0krRFgvZzNGUkNhNHM2TjRpYkZH?=
- =?utf-8?B?TkgyZjJ6QVJVcmo2QURwUWdSRW9lSWNwOWNxd21NN1VPTVVIeDdwT0NscFVW?=
- =?utf-8?B?VDJIZjR0c1pKVk1lKzBhZFlqVGxCNlREamlZYVBoRUZ2aldkMVNPNW1GTUcr?=
- =?utf-8?B?RFRWWVVOTWdWTkxBR2NJa1kycU84cFZPcDFqcGZUcEdFZmtzNm9YdnVPck9E?=
- =?utf-8?Q?CJCYIVrkxFjkJ8vDh0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZXJpMDF1VGJVOGowaUN2aDcvdjFRSUI1UFZqSGpMWTArYUVuOGpUeENvVTZT?=
- =?utf-8?B?NWxIM2g0MXBSR290dmp5cjBEdnhrV0plSGJGM05WTFJTaGk4OEpad3d5eFJo?=
- =?utf-8?B?MVZMU1E3M25qWWQ3bTBxQTdWMGJOWDQzTS9TelB2NC9sczlwanAwd3NoMnVM?=
- =?utf-8?B?MUcrSk4xN0RNYklRQ3Rha3VTc010ZWdlOFhYaWRiRlRoYnM4YitsY25lOXFG?=
- =?utf-8?B?Y2xLM1E1RWVXMVRSVlRXUnpleTljY2lybDBsQmtEOW5VbW04SWVrVG5LMzBl?=
- =?utf-8?B?VHZzSTI5RjVUVWRLa29ZRjZKOUtzQ29vT2t4NHFWblZ3eXVZWDh2NWdrTk5s?=
- =?utf-8?B?QU96TEd0cWJHYk1tejRuU1R6Ly9tUUVUa2FyWWw1T2xzZ1gyQ3lzMlArd3J1?=
- =?utf-8?B?WFcxdjZRanJ6RmVCcmdlVFE1bElFY2lXNHpQWExzSUpTOTB3bXNpejdyQzNV?=
- =?utf-8?B?b3JWZzFPSFBpdFFpOENwZnFOckxucVVCRjVTRDlpdUVQKzFzWUdJQ2hQQlJJ?=
- =?utf-8?B?MWg1UHJzTmlHdlBYampWVmx4ZmpJSlNzRDdLa0pXaWVhaWlKT2Z6N1htMWtq?=
- =?utf-8?B?dnh4cFJPVUpobzJIZTVsUVZlTmRDWGt0SFdCczJaRmxSSzF3VVVpQUwzNHYv?=
- =?utf-8?B?M1d3aExXZGR1ZmswUWtkamxBVnl0OGZSMThabHl1cnNROHRhWjVDZFJWWU54?=
- =?utf-8?B?K2pqYklQcCt0Zm0yZUllWVArSE9Rdm5SQ2JmZmJmc1NwTnRFMTBQNWZpTnJ3?=
- =?utf-8?B?U243cHk5SmRWQjNDZmpUNnJnbk1uZ3VNaGhmTFNUdkpZQ1E3UnJsYVdwL1Yv?=
- =?utf-8?B?OHFqTkdUeUlvdkUrSmRTQTVtMWJRN004Z2Y1eS9DNmRtYnYvVHhuRnhXOGl3?=
- =?utf-8?B?MURFN2daSlB3d0ZycTh2MGJTMERjUlZVMzVkNDVlZ2pYeHlJd2lrM3hsWkRo?=
- =?utf-8?B?L3h0OGZkUG5OdWx4VzczUkN2WEJJTktZbzkxaUFpZjBMazU0eUQraUdUWGt4?=
- =?utf-8?B?UTM0VTlORitXR1lGakVqZE51clJnclB0UzBKT01OYUFHRlVjSS96VEJjbmMr?=
- =?utf-8?B?eTlqcnFGVDVrQUVtTjJKajZvcU5UR2k3aUVBWjdJcnJ4aFJoZVZNMjc3ZDBU?=
- =?utf-8?B?alllWWRNN200bzhlR1ZTbWIrMzZmdnEvUnJGNERIRytoR0ZUMzUyYXFDaDlv?=
- =?utf-8?B?bFExcnEzUnZKWXF0WmdiYTlVajFONTdabkk2c1hUMFdoNW1LR1EvQ1JQMFQr?=
- =?utf-8?B?ZnhndVczVDRNVlQyU1gvVVBPU1NQS00vSkRoRkNpTGxIdGZNMEZXUmRyUGk5?=
- =?utf-8?B?NHJ5TG1NdDg4ZnNLQTArbzVoSXpvQ2hqSnZVd0JYQmc4SzZvb2trVWMvbE1N?=
- =?utf-8?B?NkZiUDl4ZURtcVBDUTRsQ0pYMEpDMU1sRHh5dE1ZT0VlT2l0Z00xZGMrSnY4?=
- =?utf-8?B?REtsaE53RVpxMGZ2L1JDOXA0c2dXMkZCRG1GNksybVdOL1VQQnNYaEZZUWNp?=
- =?utf-8?B?aDR2VlF1U01kTWJ1WVZ5dHJwSXlmYjVWVisrYlV6RWVMMDRHaHIrb3FNT2Vo?=
- =?utf-8?B?MUF6b3dZSkxRdEVOUTIwN1pCR2g2YjJneEFuSE1DdmhUYVBQMmM5SXpWbzhW?=
- =?utf-8?B?RFBwWDIzb1U3bGhsQ2FlL2Iyc3hWZ0F6cWM3eXN0WFR3bXJWUTQrcmZWMWZZ?=
- =?utf-8?B?bDFYUlJmNjhCa1FuL21rVmwyakJHWWRRUmZuZVRZT3pRUUtWcGszTyt1U0VO?=
- =?utf-8?B?VDloSzRBemt4Q1NvcHdoQzdaNUdCZXBoNlJ1L29JYUptSW9FdXJnLzJiRlNT?=
- =?utf-8?B?b2NGSWxiZGRqRU82R3F5QjlWTjQ4cnR4OHRCSFpocm50YURmYUc1ZTR1OERP?=
- =?utf-8?B?YzdMSkF4TzZSeVZGZjFOMFRRK3lkRHZkSUtNYTA5TllsNlFyWmkyU1h5cDNP?=
- =?utf-8?B?UnlqazkwUW5VK1Z0TjEzV2NlaGxYQlNPMDZ0T0IwWWEvUVY3TGg1c25BT1hQ?=
- =?utf-8?B?dG9MYktpc3UzcDdQNVhJZUVPdzFzYmJ2RkFYK0h6S1ZIVWkvL1NVR01ucTFJ?=
- =?utf-8?B?ZGVGRXUzWFJTOEFEcGhoNHNEcEpZaS93VWRIckttcllITkJKaGZxcS9DWjBH?=
- =?utf-8?B?VHQ3N2RDVFJzdVUwRjF6VFg3c2JnSFhKeW1XUjhsMmtjc2YrM0czZGtKcHQ4?=
- =?utf-8?Q?pA2nSqJAdRv5WQvNT2Y8u+4=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1dafb62-1e8f-4383-896b-08dcbc332c08
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 07:31:55.3258
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Nka2QwLH7wGvbWw1+H4kyflcXm7ow+bco4hb7CeBik41orkgYQQVE1LvXv6B1TQB4yyGHNDSLkC7V80Il38MzjB9LCsBe2DTxvynVNNKRbrTmpAINgZF6k0OZkOK4OXo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB8120
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Wed, 14 Aug 2024 15:34:23 +0800
+X-Priority: 3
+Message-ID: <tencent_67BBC4A3751146667FF14C21@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <7E99D8C8296BB626+20231128064339.5038-1-luming.yu@shingroup.cn>
+In-Reply-To: <7E99D8C8296BB626+20231128064339.5038-1-luming.yu@shingroup.cn>
+X-QQ-ReplyHash: 2127103431
+X-BIZMAIL-ID: 9014993837306775672
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Wed, 14 Aug 2024 15:34:24 +0800 (CST)
+Feedback-ID: t:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-0
 
+SGksDQoNCkxvb2tzIGxpa2UgdGhlIGxhdGVzdCB1cHN0cmVhbSBrZXJuZWwgaGFzIHNvdmxl
+ZCB0aGUgcHJvYmxlbToNCmVjaG8gMSA+ICAvc3lzL2J1cy9wY2kvZGV2aWNlcy8wMDAxOjBk
+OjAwLjAvcmVtb3ZlDQogZWNobyAxID4gIC9zeXMvYnVzL3BjaS9yZXNjYW4NCg0KWyAgMjMw
+LjM5OTk2OV0gcGNpX2J1cyAwMDAxOjBkOiBDb25maWd1cmluZyBQRSBmb3IgYnVzDQpbICAy
+MzAuMzk5OTc0XSBwY2kgMDAwMTowZCAgICAgOiBbUEUjIGZiXSBTZWNvbmRhcnkgYnVzIDB4
+MDAwMDAwMDAwMDAwMDAwZCBhc3NvY2lhdGVkIHdpdGggUEUjZmINClsgIDIzMC40MDAwODRd
+IHBjaSAwMDAxOjBkOjAwLjA6IENvbmZpZ3VyZWQgUEUjZmINClsgIDIzMC40MDAwODZdIHBj
+aSAwMDAxOjBkICAgICA6IFtQRSMgZmJdIFNldHRpbmcgdXAgMzItYml0IFRDRSB0YWJsZSBh
+dCAwLi44MDAwMDAwMA0KWyAgMjMwLjQwMDY5OF0gcGNpIDAwMDE6MGQgICAgIDogW1BFIyBm
+Yl0gU2V0dGluZyB1cCB3aW5kb3cjMCAwLi4zZmZmZmZmZmZmIHBnPTEwMDAwDQpbICAyMzAu
+NDAwNzAzXSBwY2kgMDAwMTowZCAgICAgOiBbUEUjIGZiXSBFbmFibGluZyA2NC1iaXQgRE1B
+IGJ5cGFzcw0KWyAgMjMwLjQwMDcxNl0gcGNpIDAwMDE6MGQ6MDAuMDogQWRkaW5nIHRvIGlv
+bW11IGdyb3VwIDENClsgIDIzMC40MDA5MTddIG1taW90cmFjZTogaW9yZW1hcF8qKDB4M2Zl
+MDgwODAwMDAwLCAweDIwMDApID0gMDAwMDAwMDBlY2Y1M2ZhMQ0KWyAgMjMwLjQwMTA4OF0g
+bnZtZSBudm1lMDogcGNpIGZ1bmN0aW9uIDAwMDE6MGQ6MDAuMA0KWyAgMjMwLjQwMTA5OF0g
+bnZtZSAwMDAxOjBkOjAwLjA6IGVuYWJsaW5nIGRldmljZSAoMDE0MCAtPiAwMTQyKQ0KWyAg
+MjMwLjQwMTE0Nl0gbW1pb3RyYWNlOiBpb3JlbWFwXyooMHgzZmUwODA4MDQwMDAsIDB4NDAw
+KSA9IDAwMDAwMDAwM2U2YjJlNWINClsgIDIzMC40Mjk2MDBdIG52bWUgbnZtZTA6IEQzIGVu
+dHJ5IGxhdGVuY3kgc2V0IHRvIDEwIHNlY29uZHMNClsgIDIzMC40Mjk4OTZdIG1taW90cmFj
+ZTogaW9yZW1hcF8qKDB4M2ZlMDgwODA0MDAwLCAweDQwMCkgPSAwMDAwMDAwMDZmM2ZkOTJk
+DQpbICAyMzAuNDM5MTM4XSBudm1lIG52bWUwOiA2My8wLzAgZGVmYXVsdC9yZWFkL3BvbGwg
+cXVldWVzDQoNCnRoZSBvcmlnaW5hbCBwcm9ibGVtIGluIHBjaSByZXNjYW4gcGF0aCBhZnRl
+ciBob3QgcmVtb3ZlIGxpa2UgYmVsb3cgaXMgZ29uZSENCnBjaSAwMDIwOjBlOjAwLjA6IEJB
+UiAwOiBhc3NpZ25lZCBbbWVtIDB4M2ZlODAxODIwMDAwLTB4M2ZlODAxODJmZmZmIDY0Yml0
+XQ0KICAgIG52bWUgbnZtZTE6IHBjaSBmdW5jdGlvbiAwMDIwOjBlOjAwLjANCiAgICBudm1l
+IDAwMjA6MGU6MDAuMCBwY2lfZW5hYmxlX2RldmljZSgpIGJsb2NrZWQsIG5vIFBFIGFzc2ln
+bmVkLg0KDQpQcm9iYWJseSBmaXhlZCBieSB0aGUgY29tbWl0Og0KNWFjMTI5Y2RiNTBiNGVm
+ZGE1OWVlNWVhN2M3MTE5OTZhMzYzN2IzNA0KQXV0aG9yOiBKb2VsIFN0YW5sZXkgPGpvZWxA
+am1zLmlkLmF1Pg0KRGF0ZTogICBUdWUgSnVuIDEzIDE0OjIyOjAwIDIwMjMgKzA5MzANCnBv
+d2VycGMvcG93ZXJudi9wY2k6IFJlbW92ZSBpb2RhMSBzdXBwb3J0DQoNCnRoYXQgd2FzIG1l
+cmdlZCBtYWlubGluZSBsYXRlciB0aGFuIHRoZSB1cHN0cmVhbSBrZXJuZWwgSSBzYXcgdGhl
+IHByb2JsZW0gbGFzdCB0aW1lIEkgY2FtZQ0KdXAgd2l0aCB0aGUgcGF0Y2guDQoNCkdpdmVu
+IHRoZSBmYWN0cyBjaGFuZ2VkLCAgdGhlIHBhdGNoIHByb3Bvc2FsIGJlY2FtZSBldmVuIG1v
+cmUgdHJpdmlhbCBub3cuDQpJIHdvbid0IHB1c2ggaXQgZm9yIHVwc3RyZWFtIGluY2x1c2lv
+biBub3cuIEluc3RlYWQsIEkgd2lsbCBrZWVwIGl0IGluIG15IGxvY2FsIHRlc3QgcXVldWUg
+Zm9yIGEgd2hpbGUuICAgDQoNCkNoZWVycyENCkx1bWluZw0KDQotLS0tLS0tLS0tLS0tLS0t
+LS0gT3JpZ2luYWwgLS0tLS0tLS0tLS0tLS0tLS0tDQpGcm9tOiAgIuiZnumZhumTrSI8bHVt
+aW5nLnl1QHNoaW5ncm91cC5jbj47DQpEYXRlOiAgVHVlLCBOb3YgMjgsIDIwMjMgMDI6NDMg
+UE0NClRvOiAgImxpbnV4cHBjLWRldiI8bGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmc+
+OyAibGludXgta2VybmVsIjxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgIm1wZSI8
+bXBlQGVsbGVybWFuLmlkLmF1PjsgIm5waWdnaW4iPG5waWdnaW5AZ21haWwuY29tPjsgImNo
+cmlzdG9waGUubGVyb3kiPGNocmlzdG9waGUubGVyb3lAY3Nncm91cC5ldT47IA0KQ2M6ICAi
+bHVtaW5nLnl1IjxsdW1pbmcueXVAZ21haWwuY29tPjsgImtlLnpoYW8iPGtlLnpoYW9Ac2hp
+bmdyb3VwLmNuPjsgImRhd2VpLmxpIjxkYXdlaS5saUBzaGluZ3JvdXAuY24+OyAic2hlbmdo
+dWkucXUiPHNoZW5naHVpLnF1QHNoaW5ncm91cC5jbj47ICLomZ7pmYbpk60iPGx1bWluZy55
+dUBzaGluZ3JvdXAuY24+OyANClN1YmplY3Q6ICBbUEFUQ0ggdjFdIHBvd2VycGMvcG93ZXJu
+di9wY2k6IGZpeCBQRSBpbiByZS11c2VkIHBjaV9kbiBmb3IgcG52X3BjaV9lbmFibGVfZGV2
+aWNlX2hvb2sNCg0KIA0KDQphZnRlciBob3QgcmVtb3ZlIGEgcGNpZSBkZWl2Y2Ugd2l0aCBw
+Y2lfZG4gaGF2aW5nIHBucF9waHAgZHJpdmVyIGF0dGFjaGVkLA0KcGNpIHJlc2NhbiB3aXRo
+IGVjaG8gMSA+IC9zeXMvYnVzL3BjaS9yZXNjYW4gY291bGQgZmFpbCB3aXRoIGVycm9yDQpt
+ZXNzYWdlIGxpa2U6DQpwY2kgMDAyMDowZTowMC4wOiBCQVIgMDogYXNzaWduZWQgW21lbSAw
+eDNmZTgwMTgyMDAwMC0weDNmZTgwMTgyZmZmZg0KNjRiaXRdDQpudm1lIG52bWUxOiBwY2kg
+ZnVuY3Rpb24gMDAyMDowZTowMC4wDQpudm1lIDAwMjA6MGU6MDAuMCBwY2lfZW5hYmxlX2Rl
+dmljZSgpIGJsb2NrZWQsIG5vIFBFIGFzc2lnbmVkLg0KDQpJdCBhcHBlYXJzIHRoYXQgdGhl
+IHBjaV9kbiBvYmplY3QgaXMgcmV1c2VkIHdpdGggb25seSBwZV9udW1iZXINCmNsb2JiZXJl
+ZCBpbiB0aGUgY2FzZS4gQW5kIGEgc2ltcGxlIGNhbGwgdG8gcG52X2lvZGFfc2V0dXBfZGV2
+X1BFIHNob3VsZA0KZ2V0IFBFIG51bWJlciBiYWNrIGFuZCBzb2x2ZSB0aGUgcHJvYmxlbS4N
+Cg0KU2lnbmVkLW9mZi1ieTogTHVtaW5nIFl1IDxsdW1pbmcueXVAc2hpbmdyb3VwLmNuPg0K
+LS0tDQp2MCAtPiB2MToNCi1jbGVhbiB1cCBnYXJiYWdlIGxlYWtlZCBpbiBnaXQgZm9ybWF0
+IHBhdGNoIHRoYXQgc3RlbXMgZnJvbSBnaXQgY2xvbmUgYW5kIGNoZWNrb3V0IA0KLWNvbmZs
+aWN0cyBvZiBmaWxlcyBpbiBsb2NhbCB3aW5kb3dzIGZpbGVzeXN0ZW0gd2l0aCB3ZWlyZCBj
+YXNlcyBhbmQgbmFtZXMgcXVyaWtzLg0KLS0tDQogYXJjaC9wb3dlcnBjL3BsYXRmb3Jtcy9w
+b3dlcm52L3BjaS1pb2RhLmMgICAgIHwgIDExICstDQogMSBmaWxlcyBjaGFuZ2VkLCA5IGlu
+c2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9hcmNoL3Bvd2Vy
+cGMvcGxhdGZvcm1zL3Bvd2VybnYvcGNpLWlvZGEuYyBiL2FyY2gvcG93ZXJwYy9wbGF0Zm9y
+bXMvcG93ZXJudi9wY2ktaW9kYS5jDQppbmRleCAyOGZhYzQ3NzAwNzMuLjlkN2FkZDc5ZWUz
+ZCAxMDA2NDQNCi0tLSBhL2FyY2gvcG93ZXJwYy9wbGF0Zm9ybXMvcG93ZXJudi9wY2ktaW9k
+YS5jDQorKysgYi9hcmNoL3Bvd2VycGMvcGxhdGZvcm1zL3Bvd2VybnYvcGNpLWlvZGEuYw0K
+QEAgLTIzMjUsMTEgKzIzMjUsMTggQEAgc3RhdGljIHJlc291cmNlX3NpemVfdCBwbnZfcGNp
+X2RlZmF1bHRfYWxpZ25tZW50KHZvaWQpDQogc3RhdGljIGJvb2wgcG52X3BjaV9lbmFibGVf
+ZGV2aWNlX2hvb2soc3RydWN0IHBjaV9kZXYgKmRldikNCiB7DQogCXN0cnVjdCBwY2lfZG4g
+KnBkbjsNCisJc3RydWN0IHBudl9pb2RhX3BlICpwZTsNCiANCiAJcGRuID0gcGNpX2dldF9w
+ZG4oZGV2KTsNCi0JaWYgKCFwZG4gfHwgcGRuLT5wZV9udW1iZXIgPT0gSU9EQV9JTlZBTElE
+X1BFKSB7DQotCQlwY2lfZXJyKGRldiwgInBjaV9lbmFibGVfZGV2aWNlKCkgYmxvY2tlZCwg
+bm8gUEUgYXNzaWduZWQuXG4iKTsNCisJaWYgKCFwZG4pDQogCQlyZXR1cm4gZmFsc2U7DQor
+DQorCWlmIChwZG4tPnBlX251bWJlciA9PSBJT0RBX0lOVkFMSURfUEUpIHsNCisJCXBlID0g
+cG52X2lvZGFfc2V0dXBfZGV2X1BFKGRldik7DQorCQlpZiAoIXBlKSB7DQorCQkJcGNpX2Vy
+cihkZXYsICJwY2lfZW5hYmxlX2RldmljZSgpIGJsb2NrZWQsIG5vIFBFIGFzc2lnbmVkLlxu
+Iik7DQorCQkJcmV0dXJuIGZhbHNlOw0KKwkJfQ0KIAl9DQogDQogCXJldHVybiB0cnVlOw==
 
-
-On 13/08/2024 23:16, Conor Dooley wrote:
-> On Tue, Aug 13, 2024 at 08:52:22AM -0700, Guenter Roeck wrote:
->> On 8/13/24 08:33, Conor Dooley wrote:
->>> On Tue, Aug 13, 2024 at 08:41:52AM +0000, Chanh Nguyen wrote:
->>>> Add device tree bindings and an example for max31790 device.
->>>>
->>>> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
->>>> ---
->>>> Changes in v2:
->>>>    - Update filename of the maxim,max31790.yaml                        [Krzysztof]
->>>>    - Add the common fan schema to $ref                                 [Krzysztof]
->>>>    - Update the node name to "fan-controller" in maxim,max31790.yaml   [Krzysztof]
->>>>    - Drop "driver" in commit title                                     [Krzysztof]
->>>> Changes in v3:
->>>>    - Drop redundant "bindings" in commit title                         [Krzysztof]
->>>>    - Add the clocks and resets property in example                     [Krzysztof]
->>>>    - Add child node refer to fan-common.yaml                           [Krzysztof, Conor]
->>>> ---
->>>>    .../bindings/hwmon/maxim,max31790.yaml        | 81 +++++++++++++++++++
->>>>    1 file changed, 81 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
->>>> new file mode 100644
->>>> index 000000000000..d28a6373edd3
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
->>>> @@ -0,0 +1,81 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: The Maxim MAX31790 Fan Controller
->>>> +
->>>> +maintainers:
->>>> +  - Guenter Roeck <linux@roeck-us.net>
->>>
->>> Why Guenter and not you?
->>>
->>
->> Fine with me, actually. We don't expect individual driver maintainers
->> in the hardware monitoring subsystem, and this chip doesn't have an
->> explicit maintainer. Forcing people to act as maintainer for .yaml
->> files they submit can only result in fewer submissions. I prefer to be
->> listed as maintainer over having no devicetree bindings.
-> 
-> Sure, if you're happy with it. Having someone that knows about how the
-> particular model works is usually preferred however!
-> 
-
-Thank Guenter and Conor for your comments!
-
-I will add me to maintainers list. I'm going to push the patch v4 with 
-this update soon. It will be as below:
-
-  maintainers:
-    - Guenter Roeck <linux@roeck-us.net>
-    - Chanh Nguyen <chanh@os.amperecomputing.com>
-
-I think I can support to reviewing any max31790 binding update later.
-
-Thanks,
-Chanh
-
->>
->>>> +
->>>> +description: >
->>>> +  The MAX31790 controls the speeds of up to six fans using six
->>>> +  independent PWM outputs. The desired fan speeds (or PWM duty cycles)
->>>> +  are written through the I2C interface.
->>>> +
->>>> +  Datasheets:
->>>> +    https://datasheets.maximintegrated.com/en/ds/MAX31790.pdf
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: maxim,max31790
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 1
->>>> +
->>>> +  resets:
->>>> +    maxItems: 1
->>>> +
->>>> +  "#pwm-cells":
->>>> +    const: 1
->>>> +
->>>> +patternProperties:
->>>> +  "^fan-[0-9]+$":
->>>> +    $ref: fan-common.yaml#
->>>> +    unevaluatedProperties: false
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - reg
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    i2c {
->>>> +      #address-cells = <1>;
->>>> +      #size-cells = <0>;
->>>> +
->>>> +      fan-controller@21 {
->>>> +        compatible = "maxim,max31790";
->>>> +        reg = <0x21>;
->>>> +        clocks = <&sys_clk>;
->>>> +        resets = <&reset 0>;
->>>> +      };
->>>> +    };
->>>
->>> What does this example demonstrate? The one below seems useful, this one
->>> I don't quite understand - what's the point of a fan controller with no
->>> fans connected to it? What am I missing?
->>>
->>
->> Just guessing, but maybe this is supposed to reflect a system which only monitors fan
->> speeds but does not implement fan control.
-> 
-> Even without any control, I would expect to see fan-# child nodes, just
-> no pwms property in them. Without the child nodes, how does software
-> determine which fan is being monitored by which channel?
-> 
-> Cheers,
-> Conor.
-> 
->>>> +  - |
->>>> +    i2c {
->>>> +      #address-cells = <1>;
->>>> +      #size-cells = <0>;
->>>> +
->>>> +      pwm_provider: fan-controller@20 {
->>>> +        compatible = "maxim,max31790";
->>>> +        reg = <0x20>;
->>>> +        clocks = <&sys_clk>;
->>>> +        resets = <&reset 0>;
->>>> +        #pwm-cells = <1>;
->>>> +
->>>> +        fan-0 {
->>>> +          pwms = <&pwm_provider 1>;
->>>> +        };
->>>> +
->>>> +        fan-1 {
->>>> +          pwms = <&pwm_provider 2>;
->>>> +        };
->>>> +      };
->>>> +    };
->>>> +
->>>> -- 
->>>> 2.43.0
->>>>
->>
 
