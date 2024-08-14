@@ -1,265 +1,159 @@
-Return-Path: <linux-kernel+bounces-285816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F171C951320
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C184B951322
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6712836C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA5B1F2397E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D503BBC2;
-	Wed, 14 Aug 2024 03:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A4B3CF5E;
+	Wed, 14 Aug 2024 03:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fWfh0xa4"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="C4e3aDpI"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078422BB1C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533184C62B;
+	Wed, 14 Aug 2024 03:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723606272; cv=none; b=A/LGInaOeeqn1Mvqs9tt1Q6td4Vh5LAhlnLTnJhHVR6Tk7lGp5W3Kx8N2K1pRjO6RXkN3+D26qAK9SPc19AEfl9Cb+vmLYXEbDhfuJ+FQaHIRXljh2AZB67tR0Yrta5XsrOBxNQOuPl0T8mOdL3ONSNDQt6lEMcJR70+pF6FYxg=
+	t=1723606297; cv=none; b=pNQ/FNdaLhkNWpnVkvYhC7JZb6DPhiH1kDDm82MQdgMfkPkZQL3i1y1+Q+J7orKn219Y19a7WsbSkHo+x6GaSpcbTQvv2Y8+gXGh4gkqeteO4RG7BZy5gfQY5aav8cL85I3muD7hky0dMMAF/31MSLxtP9+fh5BiJAUtHamiCnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723606272; c=relaxed/simple;
-	bh=qLVZFKDOfZiP1EG8a0DxFzqw3+0uKykLMxJ5BeW/Ak8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R5zg0pW8pnhQ5K/Y3y/ItIEcWA1B8QcYGu/LhSIoXp/HP4r+5bau7PVwRj1TEZ8mgTBp44fHOy5cS0DPRNpaNiC/UCubmlOPP47OQFYWclceerXSQxoFIgr41v4tg325anQzrZSq46QIkP9HdkZt120h1/Dq8V9nUOsJN+OYhPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fWfh0xa4; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-49288fafca9so2315788137.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:31:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723606270; x=1724211070; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y5YMU657YZ05upGCS+aWT0db2wX9BIY3l1kVbynW98U=;
-        b=fWfh0xa4R0WKEi7M2xnItupBK+NNSvycatM3XN0qFp0IEsh3isDil9j9Z4bd3ATW43
-         6PyT+e9+Fp2o4X5WXd+V9Zp+dlYHtsiiej/GPiqykkqrO2QEQPLBqifVZWXXYKpq58Wt
-         AqI2dea7ff4IVh32cuCbwek1m9EqKRvd1+jo8A7yiP3q5mpHOCLAvaBLgaTFYFF+ELu4
-         8QxAYkFqN8Y/NzwRyeoAcw9i8R+8tncFxyJyoLXaOppIoO05eKQJB+TTf4y4rbyfFTon
-         6wNwvoCLiaMiOzIFBw60Pp7L8uecgDq9kEQjamJGmvMALv/z95xypfT4dS5Niv0g/Wrn
-         NT3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723606270; x=1724211070;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y5YMU657YZ05upGCS+aWT0db2wX9BIY3l1kVbynW98U=;
-        b=P+GnGQqd9dUKXaxOeReFHbzozybhUEXi+NCaJ1HwvB4DTkBFuq/ibOHS3NcOIUOf5q
-         cetschwBEcz6HWFPD4i2FpxNnFg3hTOkm5tLbKhE7bGhgwsv0pJ1jhKQSRBEzXdttJrQ
-         Qqz+Ws1dnVZvwUluODi74Y1WjF66hmkJ0WxJB30z1PUX72yA9M3+cFb6oSkcFPm5vzZR
-         Zj7lJgmgLEwX31xmfjwLsggiZF/w09AUC+18v/3du1txrVYJhOTdlaLZpDmxhDuW5/AF
-         h+eoVbiyIFu0bYFXQqUDy6TtB0L/zUtMdILzIB3UZU9xkx/icLSttmhMkrtEi3siu0dG
-         R1FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTZJsfQ9GQZD3X/g3ZvE455fjufUb1KJ4sAnPGhIarS7P7GgbyCCkwjjdx3xNMdzfUqizhKLsbZ75UGA3A0UfZkrzP4RNf9IpyS579
-X-Gm-Message-State: AOJu0YynP00GVdJ1dfmAd8nYdZovwfhWeF0EOjfOVGTYVV+h8ri+C1GN
-	U+J1mYyQ7/+BDIWgMvS3urJGgdmpnePIjSGO5DW5Tk/jQtQ7JfvEoIwhNSSUL+LLDMlPnpRn9NO
-	TFX6we3JssB0b0slItMsXP5xGnIJxHxQLSXau
-X-Google-Smtp-Source: AGHT+IFoI+9BATcpgFSTVKVtMi4ALVq7dXWMVdGEd4sX+JwZXcj4hFKUJe3baRzYW08dVcY16KYq9UFokwSeIr6zrFY=
-X-Received: by 2002:a05:6102:a54:b0:493:e0cb:7263 with SMTP id
- ada2fe7eead31-497599d10fbmr2048954137.29.1723606269636; Tue, 13 Aug 2024
- 20:31:09 -0700 (PDT)
+	s=arc-20240116; t=1723606297; c=relaxed/simple;
+	bh=Ph74HS2yjbx0D/WOttKu/hvhRt4fmOMR4m5CogB0ARc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=loYsz3ODWm8aWiZZgz3Ao2JCe60T0b5mYo1XcQ4BRqOvTdmkY+DLOkraMzX+3Avj6qtX7HXYVlLFYjxJjPiKEK9oeZf69e6tKvmqam5GE+sc3GdDvU2qMVIjIl3qp8tWjmBX4Yd3R1t4uUdAFVXOH7W9IToQgZLkH1H/rQDydRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=C4e3aDpI; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: b0cc3c5459ed11ef87684b57767b52b1-20240814
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=/IeNTLKFaQHUJbgFZkd6PVFv+tJudIYMrE83HpCdIso=;
+	b=C4e3aDpInVHY3FPbSbnGs/mBizfO4SUtmA1iqju9gi40Wsg/ALSMAKpVh2o8O/qpzZ5J2121jGcHivNtCdFm2sMVmKnOCZqxvtNKjA/VIyUX7EtLss5FS1jw35sDZWPGkeSZtp2ChlwgSQTaWqhtAPibSptClS0dwTvXt8Fm7/g=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:5f53c864-65e5-4a06-b2d8-b06054274730,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:7df28cfe-77bb-433c-b174-ffb8012693b0,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: b0cc3c5459ed11ef87684b57767b52b1-20240814
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <jiande.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1628461354; Wed, 14 Aug 2024 11:31:28 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 14 Aug 2024 11:31:26 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 14 Aug 2024 11:31:26 +0800
+From: Jiande Lu <jiande.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
+	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, "Steve
+ Lee" <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Jiande Lu <jiande.lu@mediatek.com>
+Subject: [PATCH v2] Bluetooth: btusb: Add new VID/PID 0489/e139 for MT7925
+Date: Wed, 14 Aug 2024 11:31:24 +0800
+Message-ID: <20240814033124.29418-1-jiande.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813120328.1275952-1-usamaarif642@gmail.com> <20240813120328.1275952-5-usamaarif642@gmail.com>
-In-Reply-To: <20240813120328.1275952-5-usamaarif642@gmail.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Tue, 13 Aug 2024 21:30:31 -0600
-Message-ID: <CAOUHufbmgwZwzUuHVvEDMqPGcsxE2hEreRZ4PhK5yz27GdK-Tw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] mm: Introduce a pageflag for partially mapped folios
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev, 
-	david@redhat.com, baohua@kernel.org, ryan.roberts@arm.com, rppt@kernel.org, 
-	willy@infradead.org, cerasuolodomenico@gmail.com, corbet@lwn.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.271800-8.000000
+X-TMASE-MatchedRID: wDTc/wNgEcOOv/EKrwzF6CbMb0f5D0uqMApqy5cfknU2/UwdvFG5IgBu
+	o8M5Nxn42OsYla+9EV0T3bJgA9T/DR/TUHYtYA4Dbc297PAGtWb4uJ1REX4MHSJlFuUUbH7w+Vi
+	hXqn9xLGFWYX2TPbDErBkcxB01tpxHxPMjOKY7A8LbigRnpKlKSPzRlrdFGDwqxxSLHC+GmPmBV
+	n1oqfVejNcu+WAP3cuzNi+KRsEE4Vk3c0a+pAw0g==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.271800-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: EE7D3F10E5513844D10A2A446C8492234DC17CBC280FB3F24ED432A9D87962822000:8
+X-MTK: N
 
-On Tue, Aug 13, 2024 at 6:03=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
-> Currently folio->_deferred_list is used to keep track of
-> partially_mapped folios that are going to be split under memory
-> pressure. In the next patch, all THPs that are faulted in and collapsed
-> by khugepaged are also going to be tracked using _deferred_list.
->
-> This patch introduces a pageflag to be able to distinguish between
-> partially mapped folios and others in the deferred_list at split time in
-> deferred_split_scan. Its needed as __folio_remove_rmap decrements
-> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
-> possible to distinguish between partially mapped folios and others in
-> deferred_split_scan.
->
-> Eventhough it introduces an extra flag to track if the folio is
-> partially mapped, there is no functional change intended with this
-> patch and the flag is not useful in this patch itself, it will
-> become useful in the next patch when _deferred_list has non partially
-> mapped folios.
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
->  include/linux/huge_mm.h    |  4 ++--
->  include/linux/page-flags.h |  3 +++
->  mm/huge_memory.c           | 21 +++++++++++++--------
->  mm/hugetlb.c               |  1 +
->  mm/internal.h              |  4 +++-
->  mm/memcontrol.c            |  3 ++-
->  mm/migrate.c               |  3 ++-
->  mm/page_alloc.c            |  5 +++--
->  mm/rmap.c                  |  3 ++-
->  mm/vmscan.c                |  3 ++-
->  10 files changed, 33 insertions(+), 17 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 4c32058cacfe..969f11f360d2 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *page)
->  {
->         return split_huge_page_to_list_to_order(page, NULL, 0);
->  }
-> -void deferred_split_folio(struct folio *folio);
-> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
->
->  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->                 unsigned long address, bool freeze, struct folio *folio);
-> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *page)
->  {
->         return 0;
->  }
-> -static inline void deferred_split_folio(struct folio *folio) {}
-> +static inline void deferred_split_folio(struct folio *folio, bool partia=
-lly_mapped) {}
->  #define split_huge_pmd(__vma, __pmd, __address)        \
->         do { } while (0)
->
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index a0a29bd092f8..cecc1bad7910 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -182,6 +182,7 @@ enum pageflags {
->         /* At least one page in this folio has the hwpoison flag set */
->         PG_has_hwpoisoned =3D PG_active,
->         PG_large_rmappable =3D PG_workingset, /* anon or file-backed */
-> +       PG_partially_mapped, /* was identified to be partially mapped */
->  };
->
->  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
-> @@ -861,8 +862,10 @@ static inline void ClearPageCompound(struct page *pa=
-ge)
->         ClearPageHead(page);
->  }
->  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
-> +FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
->  #else
->  FOLIO_FLAG_FALSE(large_rmappable)
-> +FOLIO_FLAG_FALSE(partially_mapped)
->  #endif
->
->  #define PG_head_mask ((1UL << PG_head))
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 6df0e9f4f56c..c024ab0f745c 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3397,6 +3397,7 @@ int split_huge_page_to_list_to_order(struct page *p=
-age, struct list_head *list,
->                          * page_deferred_list.
->                          */
->                         list_del_init(&folio->_deferred_list);
-> +                       folio_clear_partially_mapped(folio);
->                 }
->                 spin_unlock(&ds_queue->split_queue_lock);
->                 if (mapping) {
-> @@ -3453,11 +3454,12 @@ void __folio_undo_large_rmappable(struct folio *f=
-olio)
->         if (!list_empty(&folio->_deferred_list)) {
->                 ds_queue->split_queue_len--;
->                 list_del_init(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
->         }
->         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  }
->
-> -void deferred_split_folio(struct folio *folio)
-> +void deferred_split_folio(struct folio *folio, bool partially_mapped)
->  {
->         struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
-o);
->  #ifdef CONFIG_MEMCG
-> @@ -3485,14 +3487,17 @@ void deferred_split_folio(struct folio *folio)
->         if (folio_test_swapcache(folio))
->                 return;
->
-> -       if (!list_empty(&folio->_deferred_list))
-> -               return;
-> -
->         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> +       if (partially_mapped)
-> +               folio_set_partially_mapped(folio);
-> +       else
-> +               folio_clear_partially_mapped(folio);
->         if (list_empty(&folio->_deferred_list)) {
-> -               if (folio_test_pmd_mappable(folio))
-> -                       count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> -               count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFER=
-RED);
-> +               if (partially_mapped) {
-> +                       if (folio_test_pmd_mappable(folio))
-> +                               count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SPL=
-IT_DEFERRED);
-> +               }
->                 list_add_tail(&folio->_deferred_list, &ds_queue->split_qu=
-eue);
->                 ds_queue->split_queue_len++;
->  #ifdef CONFIG_MEMCG
-> @@ -3541,6 +3546,7 @@ static unsigned long deferred_split_scan(struct shr=
-inker *shrink,
->                 } else {
->                         /* We lost race with folio_put() */
->                         list_del_init(&folio->_deferred_list);
-> +                       folio_clear_partially_mapped(folio);
->                         ds_queue->split_queue_len--;
->                 }
->                 if (!--sc->nr_to_scan)
-> @@ -3558,7 +3564,6 @@ static unsigned long deferred_split_scan(struct shr=
-inker *shrink,
->  next:
->                 folio_put(folio);
->         }
-> -
+Add VID 0489 & PID e139 for Mediatek MT7925 USB Bluetooth chip.
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below
 
-Unintentional change above?
+T:  Bus=07 Lev=01 Prnt=01 Port=10 Cnt=02 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e139 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 
->         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->         list_splice_tail(&list, &ds_queue->split_queue);
->         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 1fdd9eab240c..2ae2d9a18e40 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1758,6 +1758,7 @@ static void __update_and_free_hugetlb_folio(struct =
-hstate *h,
->                 free_gigantic_folio(folio, huge_page_order(h));
->         } else {
->                 INIT_LIST_HEAD(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
+V1 -> V2: code rebase
+Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Why does it need to clear a flag that should never be set on hugeTLB folios=
-?
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 47ae6f4eab0b..e587aadc10f2 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -690,6 +690,9 @@ static const struct usb_device_id quirks_table[] = {
+ 	{ USB_DEVICE(0x0489, 0xe113), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x0489, 0xe139), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
+ 	{ USB_DEVICE(0x13d3, 0x3602), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
+-- 
+2.18.0
 
-HugeTLB does really use _deferred_list -- it clears it only to avoid
-bad_page() because of the overlapping fields:
-                        void *_hugetlb_subpool;
-                        void *_hugetlb_cgroup;
 
