@@ -1,64 +1,74 @@
-Return-Path: <linux-kernel+bounces-286570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0274C951CA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:08:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A1BD951CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350571C210D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58C62866A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0511B150E;
-	Wed, 14 Aug 2024 14:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AB31B32BF;
+	Wed, 14 Aug 2024 14:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bJSV+psT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MOKlONNL"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BF81B1511;
-	Wed, 14 Aug 2024 14:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5F91B29C0
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723644483; cv=none; b=i8w8mgtZTpAoqmwdnalrS9ugBe3pCPvfNHXBtY+xmj4hT9FSh4PBxrMYpnTCduQh5Vk4dU1iiX4sGo9+ri2uULEIoBi2+GLM5FMo8N9pNoQCwsgTbeJO5jjEkzJwJdfrsubuVBe2UXUjzIJp45kEDToI1qJm9SpRUxuo1pcXygs=
+	t=1723644535; cv=none; b=qjPVCyfHj3LkKsiOjzuURffTpGVH0+973CI973ZoyMXF4f71rC8skPC3VWyllK9+7A00SyrjKe7/MZ4D/cGzEiXtuKVK1W1E5A7J+qhmAM5gL4xfwpdQ6sezkf88jn8mEFyIz3xF4+WHYcc8Hh5ZDbloOMJIkTe48F/BTwcd9IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723644483; c=relaxed/simple;
-	bh=UXD7Yz5uxT3M095WHjvjkFG6zafPrLrj0PbfzPxqi1M=;
+	s=arc-20240116; t=1723644535; c=relaxed/simple;
+	bh=gkysqq+eLkCi72KkUF3mmkTlr9D3RYFJHiqsDd5o8oo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TpRdNvQEtVNT9FimfoNGHvzWvsYPuG3ehVDsKuaSo1Jj8MGyqF6V1waCP5ICyI/mCmGpc9szI+xboFcuY9KTf3aXuqUvs773jstOz/eyWBAGeGTHd6vqN0yMlszMp6Cu+NL6RS+Ebhe4hhL7fUScJJTU4Hx6UGXyMgDPsiTClto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bJSV+psT; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723644482; x=1755180482;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=UXD7Yz5uxT3M095WHjvjkFG6zafPrLrj0PbfzPxqi1M=;
-  b=bJSV+psTtYBomZL+6awS78DwGNPAQLrde534Jund3HPESvLrlux9Qsar
-   f4spYpZGcPQFKSqypZYOwoQQx4F5tkwKEebzfGo2HksySAFjtAeXR5QVN
-   Bu2PxrLhMnL+TMiQmw0NApbkhwHbf37UGTbu9qMl2pDoh/Xyv/6G2iCjN
-   AyJ3i45VU9ngFdHqI+tdipCyploiqXe/r1rG8WPiZM05Y2EusUvEvCD8v
-   x3trdCvMFjwDWifK1vfGgopJh3G+oNOQ0EAC11t6iR4IvR+crJG3MlS6K
-   S+1tU0X983+GmZ5uNIGm9UQrSp1DHbNdK9MJ+xvoYFNeKxgnrBURxVsJZ
-   Q==;
-X-CSE-ConnectionGUID: w6fTmK4dSYaZKn9jJYr4kA==
-X-CSE-MsgGUID: dZS675R0Qy6bVqmZHrsIjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="33270338"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="33270338"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 07:08:01 -0700
-X-CSE-ConnectionGUID: J+nroZkKTMKZPQmgrrvMaQ==
-X-CSE-MsgGUID: 7BKcIl+6Tv+ml9wfo0Tz+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="58709885"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 07:07:57 -0700
-Message-ID: <1ea93e69-80da-4dc3-b63c-217b1f9f0447@linux.intel.com>
-Date: Wed, 14 Aug 2024 16:07:55 +0200
+	 In-Reply-To:Content-Type; b=RvTz4B4jb8ZzAj9nGWID3DnEsybjhMJhueEX1dtRy8JSohOkb5BhOB/8vYf9+ue8T3j62vtJCIfk9uvM1WN5AV5hrS1R+NtAyfpLMmQuxUuUDfglovbGXCqE34Yh80epRmCSIyxKnWR9cNx46IXFNzByLvjK1lX0fO+NKrTJxP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MOKlONNL; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428f5c0833bso5526835e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:08:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723644532; x=1724249332; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=N82Nc2+gY4/+lTNM9bo2pmanPWXfOJy6ZWbbOExaRpU=;
+        b=MOKlONNLCgOrJnkneGdvJ78/SfBYYus3A9BHGVscm53nbV9zHatVGCFE+8O7ExP/h4
+         1VrJz1m+gKGlCoGxaWQZcSKK17JGJOSa8ayd059gkNqo8db4bcZAZw1TrXAPzBlLeEB7
+         eCVg2qXmstPYvKWDXwrXNoYF42WTcnqEsQy5fgFlwnY/xGk203PVZ2nH0X0OYPMwLmO9
+         K7oRjXI3rHbrCqTq3mhKW6pYqHYjwDPaFl7GrCr4OVACqXHeKo3ATziHrZI/qwqKwUGj
+         h9WUdNKA3FcBMtERY3MZIFLWo91yBBBODrM1nCHUi3b7tEa4sNseMuKUC6aqp63SihDL
+         5Bew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723644532; x=1724249332;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N82Nc2+gY4/+lTNM9bo2pmanPWXfOJy6ZWbbOExaRpU=;
+        b=TJ5OW1K2qiObogsBt++LhiJw2eGuZ/W5hRN4U/ZfnlgRvKbbw1YdQy8fJCp5ZL67b/
+         DQMMqy/+rhNTM8p5GPMTay9fkgTs36ynN8qb6BjNSkmHZF7p07JjDhAMdq+9CHRVWpNx
+         iBwGr+xROCsL42R/UcNDcLbvdok9nWTxnGIffkBzJlLUroJYjaPUUSQGo0aqLAxZU5uy
+         RcpVeNoE2Re9FYd9VI8opz2OW0h6s9S9t1M1sYvuReWCVOAK95aDdUjSkuzGwFlrLMua
+         wARiu/MnyWnDhF5lj2gnv6Dop4CsiZEXROLs7zH7VO2CFwISos9642mUJeG7Z1p5lbp7
+         PTCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXur+WWpmehPxf4hJDibnWogpN49aprJ+w/26HXaSqcqb2uRtNyb3CZtjZNyOL1NpLTUFh5SUXB+nlStyEz0WnjG1t+3CoXSHIJuDDK
+X-Gm-Message-State: AOJu0YzCvLu5CScbXgOM0z93EUHyPBTto4qFsQAizutmU71x42luKrPL
+	ivlEVzQyrQbn665LsCC98estL8N4YNyVvG+uZIe2Cj6Kfn6+WBR7yuV22Tan838=
+X-Google-Smtp-Source: AGHT+IGDqgiodX5asQzw8Eqc0zS1NjySybHtSTj+w8HqPC6KzCZ1oRb7Ab3PGuHo2p4wURp/PaZg9Q==
+X-Received: by 2002:a5d:4530:0:b0:360:8c88:ab82 with SMTP id ffacd0b85a97d-371796a10b9mr1591919f8f.30.1723644532127;
+        Wed, 14 Aug 2024 07:08:52 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfefa29sm12945847f8f.61.2024.08.14.07.08.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 07:08:51 -0700 (PDT)
+Message-ID: <f504a3e7-cb18-41ce-a76d-267d464b6b05@linaro.org>
+Date: Wed, 14 Aug 2024 16:08:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,57 +76,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH AUTOSEL 6.9 17/40] ASoC: topology: Fix route memory
- corruption
+Subject: Re: [PATCH v10 1/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ pci14e4,449d
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Jacobe Zang <jacobe.zang@wesion.com>,
+ robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
+ <20240813082007.2625841-2-jacobe.zang@wesion.com>
+ <1914cb2b1a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <e7401e25-7802-4dc3-9535-226f32b52be1@kernel.org>
+ <062d8d4e-6d61-4f11-a9c0-1bbe1bfe0542@broadcom.com>
+ <1e442710-a233-4ab2-a551-f28ba6394b5b@linaro.org>
+ <180f7459-39fa-4e96-83d6-504e7802dc94@broadcom.com>
+ <df52a968-96be-4f05-8d6f-32a2abde1d91@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>, Vitaly Chikunov <vt@altlinux.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
- Thorsten Leemhuis <regressions@leemhuis.info>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
- Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
- lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
- linux-sound@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <czx7na7qfoacihuxcalowdosncubkqatf7gkd3snrb63wvpsdb@mncryvo4iiep>
- <14e54a89-5c62-41b2-8205-d69ddf75e7c7@linux.intel.com>
- <e95a876a-b4b4-4a9d-9608-ec27a9db3e0c@leemhuis.info>
- <210a825d-ace3-4873-ba72-2c15347f9812@linux.intel.com>
- <2024081225-finally-grandma-011d@gregkh>
- <20240812103842.p7mcx7iyb5oyj7ly@altlinux.org>
- <2024081227-wrangle-overlabor-cf31@gregkh>
- <53ab1511-b79c-4378-b2b5-ea9e19e8f65b@linux.intel.com>
- <20240814000053.posrfbgoic2yzpsk@altlinux.org>
- <e7b0597c-72d8-4cb6-bcec-19e29c1b864e@sirena.org.uk>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <e7b0597c-72d8-4cb6-bcec-19e29c1b864e@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <df52a968-96be-4f05-8d6f-32a2abde1d91@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/14/2024 12:33 PM, Mark Brown wrote:
-> On Wed, Aug 14, 2024 at 03:00:53AM +0300, Vitaly Chikunov wrote:
->> On Tue, Aug 13, 2024 at 04:42:04PM +0200, Amadeusz Sławiński wrote:
+On 14/08/2024 13:15, Krzysztof Kozlowski wrote:
+> On 14/08/2024 12:59, Arend van Spriel wrote:
+>> On 8/14/2024 12:39 PM, Krzysztof Kozlowski wrote:
+>>> On 14/08/2024 12:08, Arend van Spriel wrote:
+>>>> On 8/14/2024 10:53 AM, Krzysztof Kozlowski wrote:
+>>>>> On 13/08/2024 19:04, Arend Van Spriel wrote:
+>>>>>> On August 13, 2024 10:20:24 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+>>>>>>
+>>>>>>> It's the device id used by AP6275P which is the Wi-Fi module
+>>>>>>> used by Rockchip's RK3588 evaluation board and also used in
+>>>>>>> some other RK3588 boards.
+>>>>>>
+>>>>>> Hi Kalle,
+>>>>>>
+>>>>>> There probably will be a v11, but wanted to know how this series will be
+>>>>>> handled as it involves device tree bindings, arm arch device tree spec, and
+>>>>>> brcmfmac driver code. Can it all go through wireless-next?
+>>>>>
+>>>>> No, DTS must not go via wireless-next. Please split it from the series
+>>>>> and provide lore link in changelog for bindings.
+>>>>
+>>>> Hi Krzysztof,
+>>>>
+>>>> Is it really important how the patches travel upstream to Linus. This
+>>>> binding is specific to Broadcom wifi devices so there are no
+>>>> dependencies(?). To clarify what you are asking I assume two separate
+>>>> series:
+>>>>
+>>>> 1) DT binding + Khadas Edge2 DTS  -> devicetree@vger.kernel.org
+>>>> 	reference to:
+>>>> https://patch.msgid.link/20240813082007.2625841-1-jacobe.zang@wesion.com
+>>>>
+>>>> 2) brcmfmac driver changes	  -> linux-wireless@vger.kernel.org
+>>>
+>>> No. I said only DTS is separate. This was always the rule, since forever.
+>>>
+>>> Documentation/devicetree/bindings/submitting-patches.rst
+>>
+>> I am going slightly mad (by Queen). That documents says:
+>>
+>>    1) The Documentation/ and include/dt-bindings/ portion of the patch 
+>> should
+>>       be a separate patch.
+>>
+>> and
+>>
+>>    4) Submit the entire series to the devicetree mailinglist at
+>>
+>>         devicetree@vger.kernel.org
+>>
+>> Above I mentioned "series", not "patch". So 1) is a series of 3 patches 
+>> (2 changes to the DT binding file and 1 patch for the Khadas Edge2 DTS. 
+>> Is that correct?
+>>
 > 
->>> Should this be cherry-pick of both (they should apply cleanly):
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=e0e7bc2cbee93778c4ad7d9a792d425ffb5af6f7
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=0298f51652be47b79780833e0b63194e1231fa34
->>> or just the second one adjusted to apply for stable trees?
+> My bookmark to elixir.bootling does not work, so could not paste
+> specific line. Now it works, so:
 > 
->> I think having commit with memory corruption fix is more important to
->> stable kernels than not having the code cleanup commit. So, I would
->> suggest stable policy to be changed a bit, and minor commits like this
->> code cleanup, be allowed in stable if they are dependence of bug fixing
->> commits.
+> https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L79
 > 
->> Additionally, these neutral commits just make stable trees become closer
->> to mainline trees (which allows more bug fix commits to be applied
->> cleanly).
+> The rule was/is:
+> 1. Binding for typical devices always go via subsystem tree, with the
+> driver changes.
+> There can be exceptions from above, e.g. some subsystems do not pick up
+> bindings, so Rob does. But how patches are organized is not an exception
+> - it is completely normal workflow.
 > 
-> The reason I nacked the cleanup commit was just that there was no
-> indication that it was a dependency or anything, it just looked like
-> standard stuff with not reviewing bot output.
+> 2. DTS *always* goes via SoC maintainer. DTS cannot go via any other
+> driver subsystem tree. There is no exception here. There cannot be an
+> exception, because it would mean the hardware depends on driver, which
+> is obviously false.
 
-I've send both patches for stable in 
-https://lore.kernel.org/linux-sound/20240814140657.2369433-1-amadeuszx.slawinski@linux.intel.com/T/#t
+In case my message was not clear: we talk here about organizing
+patchsets, not individual patches. If you ask about patches, then DTS,
+bindings and driver are all separate patches. This set already is split
+like that, so this was fine and I did not comment on it. Only through
+whom the DTS patch goes - separate tree.
+
+And just in case: this is neither specific to wireless nor to Broadcom.
+This is for entire Linux kernel.
+
+Best regards,
+Krzysztof
+
 
