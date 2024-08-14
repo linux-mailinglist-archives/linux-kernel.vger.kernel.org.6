@@ -1,108 +1,163 @@
-Return-Path: <linux-kernel+bounces-286347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587B59519E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 808929519ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1FDEB241E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA3AB21376
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB70C1AED52;
-	Wed, 14 Aug 2024 11:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD341AED47;
+	Wed, 14 Aug 2024 11:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwOOf0Eo"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAgAfP3K"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63C01AED3E;
-	Wed, 14 Aug 2024 11:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAE31420A8;
+	Wed, 14 Aug 2024 11:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635062; cv=none; b=ibWMmd+Uko150Kb+gsX0+zGkOH2VvvVWLcSosFuZty+mu2DMae1mpbhBykfXYrhmKbHLszpeOXQKjmX64P6y+nP48zer/Q/3ESaWpzzWA9t5zM+r3LJvnRFAiaE+PFcVyb1ESC8Bnnhaf89FgGJjSZKXcxM3MEz9mjAimr6Qx9M=
+	t=1723635139; cv=none; b=gspz16syCsH1p+cwKpawJGDlZF53S9jKgbfR2w5qU+r94ca/fx9FpuxTRT2MGu/gg9nvWrhM9Pb/UvdG+0wUdRS9PA7Jf0G9PtCmJ9hsm7N6PhF1CVE2G8A7r5seUV/WqiKXotv/MWJvfHy6lOlef50dy06VfWuRNh9jiZe5q8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635062; c=relaxed/simple;
-	bh=InUtdB5UpKfrtYqYOgnR4uD76Y1IegLDBX2+qnakvBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=acbK2ewCXEauvwPbpEXKUV8+zJOA7e8wmFhlyVxtgy/XXUzNuXCfDKgek0jrlZi/tZs8xlylMIrLdOoRK85Fu/n7zMyQfQdWp0fiATwRs7bWwfj59BmhU0E33Ml+epkmF3hPzin94TPpTYTvS+xXt3hI842D3y/eQKcsoswxbVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lwOOf0Eo; arc=none smtp.client-ip=209.85.215.174
+	s=arc-20240116; t=1723635139; c=relaxed/simple;
+	bh=p/4ybLjhoZTgR4Kj7bHpwLlGdr23uGwe2Lc7tbsvbA4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ew26vOajpA2DHkL9C9zoUAjbF/0PugUm3KNENuaf6ZxRB9lcduKVGHWQCz+Vt0U+w/Mdd3Rl1wAg4ft/YEeEnEz/RVKLn6i/06Fj29BLt3nW5gUA2cex6Y2huZ1xypeSFy+1561xNVqKeJsyqRobcSkFG9V9ZaYvynTEZh+a8n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAgAfP3K; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7c6aee8e8daso121604a12.0;
-        Wed, 14 Aug 2024 04:31:00 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d3b36f5366so205453a91.0;
+        Wed, 14 Aug 2024 04:32:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723635060; x=1724239860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=InUtdB5UpKfrtYqYOgnR4uD76Y1IegLDBX2+qnakvBQ=;
-        b=lwOOf0EoXvcYeoHsUu54rT3r4e2h4CDV8zHsvMom3CUzrO67NVFDzmdXqya/K+Sy1Y
-         a4YE7BPvZ/22DpGuniasF7lArn1xPwp373OZr3Ij0n7X0Oz8J0ea2fp9jA+iP1RBgXRB
-         XkFDVxRhLc+o2lV0VOhYYGzbYQgHfQzaTSMa0Hh7A33XyhGvHkUS+zxXhp+3hvCakHEa
-         807OjEAnzHrJuNIAoFMd/Zz/jsAkEhs7sr3P52ot1P+NcaBIVgLOYv856wc5F0wTi+0q
-         1F5I1F1wQZTyON35SO6efUP+jr7wLYAyUICn12CwPmWLulo2ILksNPRz5W6Q8G+LSdc2
-         sAzA==
+        d=gmail.com; s=20230601; t=1723635137; x=1724239937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uApCJTpvejaUyF7Mf6zgNoGDmJ5KuE7S5xQ/c1NjlzM=;
+        b=mAgAfP3K2h5jcn0L/opQ/eDXINpCQllJes5k2qa+9Op3kL0pFeMiqwztWl3yU0cfn4
+         T0fanvnvbauZBoS8D5Q+g+NqFBA87pHeMBIo/JeKbJVNKa95F24cFNkpfCpN/gckBafe
+         Y/tp3m/LJAJCZQIl1IACy1KP4nRDQBLyWWZrI3LdnIHXCxXwNm18fxrQt6EhcgneNAii
+         3+gwUUlqLH+EXfpCVAgfZGeoCRjSeaYjHzlsiEcZlQWbaqrr+4AmAZ2MCzgc3p+tb15m
+         BPQ+gA0vi+CiZM7j3FbxTJkOScVZ/tLDCbTQ0FbxMJTXTn/+r7ycv+ui4BspwRubUvpa
+         lDNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723635060; x=1724239860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=InUtdB5UpKfrtYqYOgnR4uD76Y1IegLDBX2+qnakvBQ=;
-        b=JO0ISVJBXMI9/cURjkjAsh1g2La18dgCmdQVNpUzxmC6xFDAOGFGPxXsV14zRpPVqV
-         49e/ZFG6T3v+QqPyEyL6fAhVMBBtdW1zgn2tRJiC8grr/fNYRo6UpowkU7TXg314fB4T
-         uQHgdwe7EUq+bAL+NiXisLlLidWDYCXy+egibzgvdTJpnmbP6xXeNowxSwCGpQKtaW/F
-         qM74M04J6rbEWBYJO8fKT0EOCLeGg2a0Q+PV/Ozb26E9GG8dz/LpRtBmrCEj4ILoVjYF
-         3CyMKbpouoSPHrIwtMpSxd78rQIaGDJftbWENwKkxWsejnnfmwF7Gw+AakVQEwm7jy7Z
-         JY2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW5L2QT5lVaYX6NZUJ269lhWgQ8ES2osNo6I4NLqapU3fJjTpXpCV4o6kdnT/IBI+o5UEbwbfOuP4eVglmxlgdBT5lPzuXPuPjisqAFGH7iXU1B4/44FQod6DI01/BBXMALQhDyGnRnocnVpv83kMvQzDTvD6ot/K2boNwHVulEAbcGPFSvEP+fN7o=
-X-Gm-Message-State: AOJu0YzDimpI3ZsivUShF9Cts4fVOdim+IWfl5zWBEIkd/nsdLAmhSZA
-	+AkWBg1d7/QoCoE15IMMg5zqYQDI2mCvcDNVMFMrv0CDJGytCz697lZgyFk3dtUbKuKnwKabPUZ
-	ZJjdZth3ZWtiMZxgaW2kUuQ9X1MgCLAHY4LU=
-X-Google-Smtp-Source: AGHT+IGHqVVY7AZWrBMuOmVDEc8fUS5b6xT/BMfprxxksFMS7/qwt/78Na8gyK8oNQBGsC23z/3ZryBjtIb+Fxr04As=
-X-Received: by 2002:a17:90b:1196:b0:2d3:b49f:acdd with SMTP id
- 98e67ed59e1d1-2d3b49fbaa3mr728717a91.21.1723635060040; Wed, 14 Aug 2024
- 04:31:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723635137; x=1724239937;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uApCJTpvejaUyF7Mf6zgNoGDmJ5KuE7S5xQ/c1NjlzM=;
+        b=C2qv1J4bkjIVOdjgk28y04ij/LUV6brJGys01pB2RYigHUuMNkHJDK6eMZeK9MAncQ
+         Qm9F4PFfHcBfAe+Hca9OpVSgZV2f44JBtjX+iHn73navWCgHZJGVXWRqizbAqw+YnXBA
+         ZXgp2+qH5S3R3N8s2QIVXFnSlbwBalu17zzrdQo0ncTZI00caIYuox8hD2KUtyLIsaPW
+         7+6u5MEj2Pvlnf/ZcBg1CWrAVmIibu02O+uM9pVdd85xmgjOespI898QakAVkvcVeAk4
+         oSeCJPn1bEtiE20et6P+uhSq/vSxHUKVOZhBykeEPMZLyvOsLvgKq2jQRWCQu10ffAV/
+         D7+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVS63NVKTtH+6yyJg4+hFoS4n42x7rRtssy7yLBgjmMMJLFcrmZvi4zZp54cNR0EF7fs8Ftnt7CO8UuIZZK8j6kH98YEm1VWi0+bqjG
+X-Gm-Message-State: AOJu0YwTCaFoWUjqR+bi008t4eE5doJlVeGGMg9IU/k/JCzFNZIbJ5Tr
+	5u69ZrMvJav1kJQA8GtGdOSMiNVOPhBx3clxVbv/fFs4R+D9IlGFTiMFVJngfNAIog==
+X-Google-Smtp-Source: AGHT+IEYiFsf1CUh0JaTEZCA1tUtcy0wbn4Ojp8/ElNNp11twGHG3JRK2ZKXSe43nsInl5T6kAp68g==
+X-Received: by 2002:a17:90b:3808:b0:2d1:c9c8:301c with SMTP id 98e67ed59e1d1-2d3aab6baf8mr2486397a91.29.1723635136678;
+        Wed, 14 Aug 2024 04:32:16 -0700 (PDT)
+Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7e80e5sm1467434a91.17.2024.08.14.04.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 04:32:15 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: anshulusr@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH v7 0/2] Add light channel for LTR390
+Date: Wed, 14 Aug 2024 17:01:32 +0530
+Message-ID: <20240814113135.14575-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812232910.2026387-1-mmaurer@google.com> <20240812232910.2026387-2-mmaurer@google.com>
- <CANiq72khUrha-a+59KYZgc63w-3P9=Dp_fs=+sgmV_A17q+PTA@mail.gmail.com>
-In-Reply-To: <CANiq72khUrha-a+59KYZgc63w-3P9=Dp_fs=+sgmV_A17q+PTA@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 14 Aug 2024 13:30:47 +0200
-Message-ID: <CANiq72mJ75ktX_n8jxALM4cVFcwm-OKVK3e6r8+-0AYbEGHk8w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] kbuild: rust: Define probing macros for rustc
-To: Matthew Maurer <mmaurer@google.com>
-Cc: dvyukov@google.com, ojeda@kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>, aliceryhl@google.com, 
-	samitolvanen@google.com, Nicolas Schier <nicolas@fjasle.eu>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 1:27=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> I also had `out-dir` [1] since, if I remember correctly, `rustc` may
-> create temporary files in a potentially read-only location even in
-> this case.
+Hello,
 
-Ah, wait, you are avoiding `try-run` -- is it because of that? I think
-we should try to reuse it, even if we have to add the `TMPOUT`. Or
-what is the reason for not reusing it?
+The first patch adds a new channel for the ALS feature of the sensor.
+The same configuration of gain and resolution has to be provided for this
+channel as well. As there are two IIO channels now, we would need to
+switch the sensor's mode of operation depending on which sensor is being
+accessed. Hence, mode switching is also provided.
 
-Cheers,
-Miguel
+Then the second patch adds support for calculating `counts_per_uvi` based
+on the current gain and resolution value.
+
+Changes in v7:
+- Changed the `ltr390_set_mode` function to do better error handling.
+- Link to v6: https://lore.kernel.org/linux-iio/20240803180950.32821-1-abhashkumarjha123@gmail.com/T/#t
+
+Changes in v6:
+- Changed IIO_CHAN_INFO_PROCESSED to IIO_CHAN_INFO_RAW
+- Changed the scaling code
+- Link to v5: https://lore.kernel.org/linux-iio/CAG=0Rq+q0WJzMroYwQy-4Ng0aSkTvaw-FEMx68i3MqAZwfteCg@mail.gmail.com/T/#t
+
+Changes in v5:
+- Replaced the IIO_INTENSITY channel with IIO_LIGHT channel
+- We calculate the lux value directly using `als_data / (gain * int_time)`
+- Provided a scale channel where the scale is 0.6 * WINDOW_FACTOR
+- Link to v4: https://lore.kernel.org/linux-iio/20240730065822.5707-1-abhashkumarjha123@gmail.com/T/#m
+
+Changes in v4:
+- Added "bitfield.h" include to fix `-Wimplicit-function-declaration`.
+- Link to v3: https://lore.kernel.org/linux-iio/20240729115056.355466-1-abhashkumarjha123@gmail.com/
+
+Changes in v3:
+- Added cover letter to the patch series.
+- Fixed indentation in the patch description.
+- Patch specific changes are listed below.
+
+[PATCH v3 1/3]
+	- Cleaned up the spurious changes made in v2.
+	- ltr390_set_int_time and ltr390_set_gain now return -EINVAL to
+	indicate no match.
+
+[PATCH v3 2/3]
+	- Used enum ltr390_mode inside the ltr390_data struct.
+	- Refactored `ltr390_set_mode` function according to the comments in v2.
+
+[PATCH v3 3/3]
+	- Simplified the formula for `counts_per_uvi` calculation.
+	- Removed spurious whitespace changes introduced in v2.
+
+- Link to v2: https://lore.kernel.org/linux-iio/20240728151957.310237-1-abhashkumarjha123@gmail.com/
+
+Changes in v2:
+- Split the single patch into 3 patches.
+- Used FIELD_PREP to perform bit shifting.
+- Used enum for mode selection instead of defines.
+- Fixed indentation and whitespace issues pointed out in the comments
+- Replaced `mutex_lock(&data->lock)` with `guard(mutex)(&data->lock)`
+- Provided available values for gain and resolution via `read_avail`
+  instead of sysfs attributes.
+- Refactored `ltr390_set_gain` and `ltr390_set_int_time`.
+- Used early returns instead of single exit points.
+
+- Link to v1: https://lore.kernel.org/linux-iio/20240718104947.7384-1-abhashkumarjha123@gmail.com/
+
+Regards,
+Abhash
+
+Abhash Jha (2):
+  iio: light: ltr390: Add ALS channel and support for gain and
+    resolution
+  iio: light: ltr390: Calculate 'counts_per_uvi' dynamically
+
+ drivers/iio/light/ltr390.c | 115 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 100 insertions(+), 15 deletions(-)
+
+-- 
+2.43.0
+
 
