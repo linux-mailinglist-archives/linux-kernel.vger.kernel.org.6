@@ -1,210 +1,243 @@
-Return-Path: <linux-kernel+bounces-286370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CCD951A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:42:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646ED951A3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8CC1C20A7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A55282B89
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125C21B3F05;
-	Wed, 14 Aug 2024 11:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F9F1B3F23;
+	Wed, 14 Aug 2024 11:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dl+QfuuJ"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="H5LHliWF"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20701B32B8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2111B29D7
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635580; cv=none; b=hPayiQbvmLcdFw2L2ndf5XJriBT3OdM/TR4/UuR2gZwDFuw7h7G1T/RVsgBtQLAOI384etEVmZ2N5h1CbO6nTLqYflUR68RmwmJkSfMS59zns99qoldjwxIc1Z/CkoNnFIxKqocjdhh7CJBLS3C2814T8W01YEA8LUEp8e2Ccj4=
+	t=1723635683; cv=none; b=Y+cIzCEk77Z+ONOdMsiyFoIVSQct412JTLrkVze/aEYpMOasJcP8UaSYuK634qIAmK6qWUGNFpYsHk5Y7gjrO4cITECyqyW4R3/33scNYMhlP8uaawcjFNh5vfCMiITUOYMaSyNGRl/3XThCEPcQhERYspvmDyZQD8VV0EVw63g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635580; c=relaxed/simple;
-	bh=+CaEvMFtp6+vW8dd+4vdYR7UCy2/V+0eTuF+Ay8On5w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WU0Na6BiUlO1ic3qe8OBT3SW5UFSnwwCw9qcv+7EkRACYrwpiS5oCnwrPOu7LLpB8hd8zvwX88hhKz1rceKJzE0jU/qHD65bSSyeMTn0oTeQL5482CF85htubi4Hn1Errc8B99GqTT/hanzNKfXV4uMLQOeI8v1Gw9Gm2hmLzjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dl+QfuuJ; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-70949118d26so4804230a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:39:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723635577; x=1724240377; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GH6hs7TBxxS/YEw6+1SJGhyHiJvtnJuQXXY87tDn62g=;
-        b=dl+QfuuJiepA0A96RA/13tNw9Gls+s5+sJNv8SvpTJQTw6dnpKwNgMSkbFEbUlPpyR
-         aYvoWDSB7nGyf9LbgZ4GaFgDJDdaOZmfUvPDO/M/rGc254ywYRd5pvI3+dDMJ3Q2w88T
-         yJumYIb4YDlfz/RtTDucpvHmITPnBYiIu/rb4=
+	s=arc-20240116; t=1723635683; c=relaxed/simple;
+	bh=DswzfU6KA0ZLI/6fdLQwuYhRLpdqAPIp1+TrM2ShbjE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gX29VbmRftim82zbVHICaCzS4hAiznV9wce3ulxo9OYT9k0HWJusLAcAFZmPVVJL4Gm6BAIiw6q0gCUoiN+3/uHNxrPncO7uwArHSt7o8rA53m22Tf/UNdkG3JPTk74UjX+uelEZ9HfooaSbkT6eiyLYDRXWo8CkuGgL2Tvback=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=H5LHliWF; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 600CA400B2
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723635679;
+	bh=nSHDRYsJdX6GlnXtzUsYIpcgg3cxft1twVhFPobl7GY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=H5LHliWF9vT9W1rrK4blOorC5LMhslq6CYjhK3rg3I+CYL8Qa6AsuzkYGcTNvSbg5
+	 njAAQ4Tjpdr/Ff97nNjCSJCGxjHZ2BM6SZE2rdBnU7P1f7sfM0HHzyR+Xq/IeKS3Tz
+	 7yBbCDJkIDT1pKBQbNrw1DtZUSS05amdND5MRqwxEo7gOWEIqrAFgyQ3MVERVp3R4W
+	 Tbv2u3Ly2aDUDbsPy06S1eA/zrJoXRrbMBW+87uNJy4nrhtvt1PNZAzOC3LVMcb2UD
+	 V82DqOFYVSx3uu4Wxvv2o5rJIRhyLBWiAdk5uGIzBwpVMD1+GeYPk0XSjZY8hPiZfJ
+	 4+kpvSRJ6+R3A==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7aa5885be3so484581266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:41:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723635577; x=1724240377;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GH6hs7TBxxS/YEw6+1SJGhyHiJvtnJuQXXY87tDn62g=;
-        b=h8qeGILq0oNQ1EbNT7DdvwUSIoiu7umV4JcDa0sRyZp8Vcy7EdjGCed1QkEBQULhNG
-         GJaL09wxvWzeV8QlqkMJLslckp/VtdUapvY0hKM8EgXkY62qtbJgYJn0aVeSQwyl3Mft
-         qo9ONvoa+HS+5iyQ+vNWf7A1qhvOIimmxdcg5x+wzqRJDZv7Le0BJOPiUS99SUu/jmN/
-         /cJ52uyupyG+QKPMzgmmdwd+dQqGp8iXkyh93gSMqVTIgo2vU3zfHOW7iGw8T4lxShdK
-         UPHB81i+4Liwtyof2U4BxZuBirZQHp8CmUh8s6FfM6SwMFkRU77ixYNoykaEvlGL1PFH
-         7hLw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6zXrAQVfEBwAyoWWm8mOBhEASee2iBRLuEc2QaPhBLNEijU3tDL5qFI5j+CyyYZoJ7ULfEj5jjp72Xr76DM1XjZoD8xcEKVfxn/OU
-X-Gm-Message-State: AOJu0Ywxk1iwHl4P5eMI+J0trS0SznZHd1Rh+O/2MLWgpjZsr6CF7M5z
-	8mYC9PXSK+k0aDQTPqxHVukgycqt1k3M9QAnh3NLCJgx4zyTju7VweuXJpJw2w==
-X-Google-Smtp-Source: AGHT+IEtMdN3+LLVZ8wsdeGDjt8+c2zo2szF4F9XAwgyc+ibeBZWZn4V0pAfv9GBu2VgPAmVm/URKw==
-X-Received: by 2002:a05:6359:410d:b0:1a5:dca5:a902 with SMTP id e5c5f4694b2df-1b1aab85aabmr281649655d.17.1723635576908;
-        Wed, 14 Aug 2024 04:39:36 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82ca0daasm42167916d6.68.2024.08.14.04.39.36
+        d=1e100.net; s=20230601; t=1723635678; x=1724240478;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nSHDRYsJdX6GlnXtzUsYIpcgg3cxft1twVhFPobl7GY=;
+        b=mKUEvUIpcB1bcQjrXqKnzKjFZFskwNkTN7IfZNOHFVICAn4mnQTOYQJJ+t3Kpr4wcB
+         uz5zB7hwR/hY+wDU3w62rOOL/yByiILv8PGcsbNnNHqwwyaM/+v4F796b9jGN4Qn5PRf
+         c8mpITNJYB4OpTe2a0XoBY0vt1hIuoRSFjW3Hax7LsSgW/etD8VKu8c44b2qXZPaOrG0
+         vVd5R5rD91itBjZ9NPvTVgXPDpXvwlsGjegcZN68zyCDE4gpGvScX7dDVe3Z9pFnhUFa
+         rdPWx8R22jeAtLni5x0kIjN25LgK946ZwnkxekesGY3ZRR0JCNLU6not56VQIH/MDse0
+         NnXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFKHJKioUGEfu6Sl0JA9twx7fcGV24qrayELov2FzBTFORCG7OGRhSKA13GkeOVSMKcy3uLN3b0W8bY7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2k4kzlWpauH8yrXxaB8javVZZfTb+AlGa3HIX0o2fqxopPrht
+	4kUMj7NHXnPiMZd0KHeDwpHYCZiUAPttPjqYnm6JcE3uAiwM2uEYM7LlR8NmTX+wQJYxoSvKKQ2
+	shjBTU6Q2ibSQOLyxgVbtMhGN2QDEd69BL3kRoMCqQBaT7+m+s1mThdyNEh/QTAI+n5wjuV8SXd
+	ex1Akj8PIJ0g==
+X-Received: by 2002:a17:906:c141:b0:a7d:a2cc:5d9 with SMTP id a640c23a62f3a-a83670e1ff7mr173150566b.65.1723635678532;
+        Wed, 14 Aug 2024 04:41:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGotkpUpF6+IiOGS3UTz7EmrYzKqKjgcvWNyzXuF1PA1Ds28aPQeCnod3zU//fqsplXHt3pRg==
+X-Received: by 2002:a17:906:c141:b0:a7d:a2cc:5d9 with SMTP id a640c23a62f3a-a83670e1ff7mr173148266b.65.1723635677918;
+        Wed, 14 Aug 2024 04:41:17 -0700 (PDT)
+Received: from amikhalitsyn.. ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa782csm162586166b.60.2024.08.14.04.41.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 04:39:36 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 14 Aug 2024 11:39:30 +0000
-Subject: [PATCH v7 10/10] media: venus: Convert one-element-arrays to
- flex-arrays
+        Wed, 14 Aug 2024 04:41:17 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: mszeredi@redhat.com
+Cc: brauner@kernel.org,
+	stgraber@stgraber.org,
+	linux-fsdevel@vger.kernel.org,
+	Seth Forshee <sforshee@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	German Maglione <gmaglione@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/9] fuse: basic support for idmapped mounts
+Date: Wed, 14 Aug 2024 13:40:25 +0200
+Message-Id: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-cocci-flexarray-v7-10-8a1cc09ae6c4@chromium.org>
-References: <20240814-cocci-flexarray-v7-0-8a1cc09ae6c4@chromium.org>
-In-Reply-To: <20240814-cocci-flexarray-v7-0-8a1cc09ae6c4@chromium.org>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-This structures are not used, and have a single element array at the end
-of them.
+Dear friends,
 
-This fix the following cocci warnings:
-drivers/media/platform/qcom/venus/hfi_helper.h:764:5-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1041:5-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1088:39-51: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1093:5-22: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1144:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1239:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1272:4-13: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_cmds.h:85:5-16: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_cmds.h:180:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_cmds.h:189:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+This patch series aimed to provide support for idmapped mounts
+for fuse. We already have idmapped mounts support for almost all
+widely-used filesystems:
+* local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+* network (ceph)
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/qcom/venus/hfi_cmds.h   |  6 +++---
- drivers/media/platform/qcom/venus/hfi_helper.h | 14 +++++++-------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+Git tree (based on torvalds/master):
+v2: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v2
+current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-index 63b93a34f609..1cd1b5e2d056 100644
---- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-+++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-@@ -82,7 +82,7 @@ struct hfi_sys_set_buffers_pkt {
- 	u32 buffer_type;
- 	u32 buffer_size;
- 	u32 num_buffers;
--	u32 buffer_addr[1];
-+	u32 buffer_addr[];
- };
- 
- struct hfi_sys_ping_pkt {
-@@ -177,7 +177,7 @@ struct hfi_session_empty_buffer_uncompressed_plane1_pkt {
- 	u32 filled_len;
- 	u32 offset;
- 	u32 packet_buffer2;
--	u32 data[1];
-+	u32 data;
- };
- 
- struct hfi_session_empty_buffer_uncompressed_plane2_pkt {
-@@ -186,7 +186,7 @@ struct hfi_session_empty_buffer_uncompressed_plane2_pkt {
- 	u32 filled_len;
- 	u32 offset;
- 	u32 packet_buffer3;
--	u32 data[1];
-+	u32 data;
- };
- 
- struct hfi_session_fill_buffer_pkt {
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index 755aabcd8048..f44059f19505 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -761,7 +761,7 @@ struct hfi_multi_stream_3x {
- 
- struct hfi_multi_view_format {
- 	u32 views;
--	u32 view_order[1];
-+	u32 view_order[];
- };
- 
- #define HFI_MULTI_SLICE_OFF			0x1
-@@ -1038,7 +1038,7 @@ struct hfi_codec_supported {
- 
- struct hfi_properties_supported {
- 	u32 num_properties;
--	u32 properties[1];
-+	u32 properties[];
- };
- 
- struct hfi_max_sessions_supported {
-@@ -1085,12 +1085,12 @@ struct hfi_resource_ocmem_requirement {
- 
- struct hfi_resource_ocmem_requirement_info {
- 	u32 num_entries;
--	struct hfi_resource_ocmem_requirement requirements[1];
-+	struct hfi_resource_ocmem_requirement requirements[];
- };
- 
- struct hfi_property_sys_image_version_info_type {
- 	u32 string_size;
--	u8  str_image_version[1];
-+	u8  str_image_version[];
- };
- 
- struct hfi_codec_mask_supported {
-@@ -1141,7 +1141,7 @@ struct hfi_extradata_header {
- 	u32 port_index;
- 	u32 type;
- 	u32 data_size;
--	u8 data[1];
-+	u8 data[];
- };
- 
- struct hfi_batch_info {
-@@ -1236,7 +1236,7 @@ static inline void hfi_bufreq_set_count_min_host(struct hfi_buffer_requirements
- 
- struct hfi_data_payload {
- 	u32 size;
--	u8 data[1];
-+	u8 data[];
- };
- 
- struct hfi_enable_picture {
-@@ -1269,7 +1269,7 @@ struct hfi_buffer_alloc_mode_supported {
- 
- struct hfi_mb_error_map {
- 	u32 error_map_size;
--	u8 error_map[1];
-+	u8 error_map[];
- };
- 
- struct hfi_metadata_pass_through {
+Changelog for version 2:
+- removed "fs/namespace: introduce fs_type->allow_idmap hook" and simplified logic
+to return -EIO if a fuse daemon does not support idmapped mounts (suggested
+by Christian Brauner)
+- passed an "idmap" in more cases even when it's not necessary to simplify things (suggested
+by Christian Brauner)
+- take ->rename() RENAME_WHITEOUT into account and forbid it for idmapped mount case
+
+Links to previous versions:
+v1: https://lore.kernel.org/all/20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com/#r
+tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v1
+
+Having fuse supported looks like a good next step (before adding support for virtiofs). At the same time
+fuse conceptually close to the network filesystems and supporting it is
+a quite challenging task.
+
+Let me briefly explain what was done in this series and which obstacles we have.
+
+With this series, you can use idmapped mounts with fuse if the following
+conditions are met:
+1. The filesystem daemon declares idmap support (new FUSE_INIT response feature
+flags FUSE_OWNER_UID_GID_EXT and FUSE_ALLOW_IDMAP)
+2. The filesystem superblock was mounted with the "default_permissions" parameter
+3. The filesystem fuse daemon does not perform any UID/GID-based checks internally
+and fully trusts the kernel to do that (yes, it's almost the same as 2.)
+
+I have prepared a bunch of real-world examples of the user space modifications
+that can be done to use this extension:
+- libfuse support
+https://github.com/mihalicyn/libfuse/commits/idmap_support
+- fuse-overlayfs support:
+https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
+- cephfs-fuse conversion example
+https://github.com/mihalicyn/ceph/commits/fuse_idmap
+- glusterfs conversion example (there is a conceptual issue)
+https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
+
+The glusterfs is a bit problematic, unfortunately, because even if the glusterfs
+superblock was mounted with the "default_permissions" parameter (1 and 2 conditions
+are satisfied), it fails to satisfy the 3rd condition. The glusterfs fuse daemon sends
+caller UIDs/GIDs over the wire and all the permission checks are done twice (first
+on the client side (in the fuse kernel module) and second on the glusterfs server side).
+Just for demonstration's sake, I found a hacky (but working) solution for glusterfs
+that disables these server-side permission checks (see [1]). This allows you to play
+with the filesystem and idmapped mounts and it works just fine.
+
+The problem described above is the main problem that we can meet when
+working on idmapped mounts support for network-based filesystems (or network-like filesystems
+like fuse). When people look at the idmapped mounts feature at first they tend to think
+that idmaps are for faking caller UIDs/GIDs, but that's not the case. There was a big
+discussion about this in the "ceph: support idmapped mounts" patch series [2], [3].
+The brief outcome from this discussion is that we don't want and don't have to fool
+filesystem code and map a caller's UID/GID everywhere, but only in VFS i_op's
+which are provided with a "struct mnt_idmap *idmap"). For example ->lookup()
+callback is not provided with it and that's on purpose! We don't expect the low-level
+filesystem code to do any permissions checks inside this callback because everything
+was already checked on the higher level (see may_lookup() helper). For local filesystems
+this assumption works like a charm, but for network-based, unfortunately, not.
+For example, the cephfs kernel client *always* send called UID/GID with *any* request
+(->lookup included!) and then *may* (depending on the MDS configuration) perform any
+permissions checks on the server side based on these values, which obviously leads
+to issues/inconsistencies if VFS idmaps are involved.
+
+Fuse filesystem very-very close to cephfs example, because we have req->in.h.uid/req->in.h.gid
+and these values are present in all fuse requests and userspace may use them as it wants.
+
+All of the above explains why we have a "default_permissions" requirement. If filesystem
+does not use it, then permission checks will be widespread across all the i_op's like
+->lookup, ->unlink, ->readlink instead of being consolidated in the one place (->permission callback).
+
+In this series, my approach is the same as in cephfs [4], [5]. Don't touch req->in.h.uid/req->in.h.gid values
+at all (because we can't properly idmap them as we don't have "struct mnt_idmap *idmap" everywhere),
+instead, provide the userspace with a new optional (FUSE_OWNER_UID_GID_EXT) UID/GID suitable
+only for ->mknod, ->mkdir, ->symlink, ->atomic_open and these values have to be used as the
+owner UID and GID for newly created inodes.
+
+Things to discuss:
+- we enable idmapped mounts support only if "default_permissions" mode is enabled,
+because otherwise, we would need to deal with UID/GID mappings on the userspace side OR
+provide the userspace with idmapped req->in.h.uid/req->in.h.gid values which is not
+something that we probably want to do. Idmapped mounts philosophy is not about faking
+caller uid/gid.
+
+How to play with it:
+1. take any patched filesystem from the list (fuse-overlayfs, cephfs-fuse, glusterfs) and mount it
+2. ./mount-idmapped --map-mount b:1000:0:2 /mnt/my_fuse_mount /mnt/my_fuse_mount_idmapped
+(maps UID/GIDs as 1000 -> 0, 1001 -> 1)
+[ taken from https://raw.githubusercontent.com/brauner/mount-idmapped/master/mount-idmapped.c ]
+
+[1] https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52a492b1904d0b2
+[2] https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/
+[3] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
+[4] https://github.com/ceph/ceph/pull/52575
+[5] https://lore.kernel.org/all/20230807132626.182101-4-aleksandr.mikhalitsyn@canonical.com/
+
+Thanks!
+Alex
+
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Seth Forshee <sforshee@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: German Maglione <gmaglione@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>
+Cc: <linux-fsdevel@vger.kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+
+Alexander Mikhalitsyn (9):
+  fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+  fs/fuse: support idmap for mkdir/mknod/symlink/create
+  fs/fuse: support idmapped getattr inode op
+  fs/fuse: support idmapped ->permission inode op
+  fs/fuse: support idmapped ->setattr op
+  fs/fuse: drop idmap argument from __fuse_get_acl
+  fs/fuse: support idmapped ->set_acl
+  fs/fuse: properly handle idmapped ->rename op
+  fs/fuse: allow idmapped mounts
+
+ fs/fuse/acl.c             |  10 ++-
+ fs/fuse/dir.c             | 146 +++++++++++++++++++++++++-------------
+ fs/fuse/file.c            |   2 +-
+ fs/fuse/fuse_i.h          |  10 ++-
+ fs/fuse/inode.c           |  15 +++-
+ include/uapi/linux/fuse.h |  24 ++++++-
+ 6 files changed, 144 insertions(+), 63 deletions(-)
 
 -- 
-2.46.0.76.ge559c4bf1a-goog
+2.34.1
 
 
