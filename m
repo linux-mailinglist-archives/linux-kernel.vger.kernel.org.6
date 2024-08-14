@@ -1,131 +1,114 @@
-Return-Path: <linux-kernel+bounces-286846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D209B951FA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:19:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4BD951FA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD3F1C219A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777C61F217FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78321B9B34;
-	Wed, 14 Aug 2024 16:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED6D1B86D6;
+	Wed, 14 Aug 2024 16:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="QteaoSks"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UhvFhXtu"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCA71B8EB0;
-	Wed, 14 Aug 2024 16:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098ED1B583E
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652337; cv=none; b=rklbzYUyYDhrXw+CbDg+ispt87+oQVRRUUKC+QzqhKr7JQ2ye6PoamzxMbGG886isRhYInkaDP7pVwbsl0MfvmEwvFAvynkOhqzyj13HAfU4haNBEGR1U+G1tE1eRzugkxH3Dx5Di7akvBe/bPXUVACPlZqo7pgUlrrPNcWYLps=
+	t=1723652332; cv=none; b=dbB2QEeBKyFkN13gzN0oSbsEf0oTzAHhu6+soAa9aiS2OderYFsCEgIxF8TSct/Ars7lWtC0Nva0hHw+C9Xr9RieaZeXxmZubbNGrTQ7u2G6IuDjG4tu7B82F//AjGt0/k4zBgtvz2+pVHpFZKTjHeMgwrQD9z/6bA6JZnkRqNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652337; c=relaxed/simple;
-	bh=zNsgASF057wFi7VlnTNfAZFkCOhBpYb4cACDi4WyeMo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DvIerFkRP1OvJ4PTMFzVjRmQDfI1z61gXAOw95UEaVgCGLE00k15YRU1KPSJUsc1ITOw+CPG3LI6OPnk5TcXWTglza+P/ykMhLzoINxZi6d0hoXXMwqaYDUP4tn1X1WC2TXu1m+/nC4IvpyE0Zp6cBlxunYy7o6bDyTqHk8JiRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=QteaoSks; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1seGhz-00Gwg5-3y; Wed, 14 Aug 2024 18:18:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:From:Subject:MIME-Version:Date:Message-ID;
-	bh=c0KMUdttV/wxsl2RrtTC21pfQ1ygNN4cevwFVGM0qjg=; b=QteaoSksiufHwLg3pf+KM+JE5p
-	0ZDOrShK+UOBanQgzqj3ENoiu/fkXlTQ1kvgSvDjokwmM9GS4rQPkSoOrdItmqf3qLRnRsIekjA4M
-	NDAJDaiIBFe6G4DcQ2hGyUshmh1hcrNCVmNT5Kx6n5zBkDo271O2/Zd430XS+WlTWwYnssIRvejwF
-	a2qEmMZEgnBNnxajvjKVMbKRhhkaCXZfkF7aGL6pVddH+idU0T3++A+6IwQIgeeDITqlrmXtgyuOa
-	x4K9fv6d3HDTZ+XcKjfkiqdB/cYu97FKeWQ3lTXwSfmv0yhWVnNm1ZrdCL8fAA6KONuGgpCTuL4rJ
-	UPH94oCw==;
-Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1seGhy-0005dL-FF; Wed, 14 Aug 2024 18:18:46 +0200
-Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1seGhg-00EP3T-2v; Wed, 14 Aug 2024 18:18:28 +0200
-Message-ID: <a2c8831b-68bf-4c6f-ad5e-3ac67de2d314@rbox.co>
-Date: Wed, 14 Aug 2024 18:18:26 +0200
+	s=arc-20240116; t=1723652332; c=relaxed/simple;
+	bh=PB5dkBysx9T6fJTBpImmumJYpuaHzNjh7FBAg1c/aXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dYKI/jIKlFIrUMnl90BrSbS3vS/AWwAEKlok7OD3buAuCwaalTs9dDBD76qwUOQA9SVC6wcP3JtsumLJMBnaMZxp0eazFNllmebJykDmoIRoY+M597q7R2lyj8h5ROF4C1u5BXxMpHlhr1nqAFi1jkU9jkhWAXO3pkOdUMjfFnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UhvFhXtu; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef7fef3ccfso670461fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723652329; x=1724257129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PB5dkBysx9T6fJTBpImmumJYpuaHzNjh7FBAg1c/aXU=;
+        b=UhvFhXtu/U14ZsRN7z6Qlr3NZts+pe9/ztUEPBlAWEpDnjs+iXYZFL5ITH77/TFSzc
+         RIC9BcYaxgNJ8m8xtt/NhgmRHXq1saPm0oYIIlZH6vx+EDM32nGBOsOh0Tl8seud0sCx
+         9PJ/vNUvPJr6/b1Wrl4VZj1sw3vbAiQgT/JkNSeCyP0G8P5v8G1ZwCbBET2xLiKZ7t6s
+         tltdS0ifJbeE05NO1rzaMHFADBnbY3f4t+apFxfpEcA30fc3mP9ew71nJuCbGABqhTYa
+         1Y9rwAe3oSgPpQqsv+3vqdU1LDoOHIO7c5MJc7O8Nywu5zd+Bf6DfJd/hOhO+4IWUzM7
+         8rMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723652329; x=1724257129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PB5dkBysx9T6fJTBpImmumJYpuaHzNjh7FBAg1c/aXU=;
+        b=JQjHicjn1SkrpdPcXD6VaHc8L+T3OGrnflF2mTP506PCi8hPlhbxIgTal5v03D3FjP
+         aIxmJkcKT48sQnC4ukziPAz7+2VteTMoi+c7ErtxMLH7iEoLw1+KKvYJ2lVG6XPHuhrU
+         aLtFJ5gOITIyBn926HFuhiztFiaz2HtO38qh+OT12ixQgPwTUljNq5ztJ26gVlKrIhje
+         DsdHvaV2DAv62VhF0ykG4VUc0SmoJjQfHIjVGiqXwV1VdA7DmqswjnSaizUPcddUB46p
+         y5nuHgHsy8mA7Cn7M6APbKZA+4BwAAXTHW0EzJFv3dvGvOoOnjt3AixEhj1JUiI8jHu7
+         Tp6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVnzsLQ29q/l2CGWlzcyu5DgFrJfMn6J9PwIUL309UMiZIWm4+YHa8zN6bmskI7YdHcZjDk0tKZYDmeMH5Ef97pq9OXpYKW/DOLlx+o
+X-Gm-Message-State: AOJu0YyxlIh1uQz2Di7SZ00tkE66gr2tcj0CqJGJtqSgYlXPfvx3i0Cr
+	B13RO/gm+j3S7K8ztGL24Smo7Fv0Ykksa+t/NyHSg4ZpzQXOeor2/klorr8p43BWxabY0xyrl83
+	XpmD4r74/oxvLMia4E6FLIkt+xdc=
+X-Google-Smtp-Source: AGHT+IFdJJ9Ga94FBFog8/Rs/M01x5LqjaXMvJcUJF2wIIPlOEq5QOPwKCyibrm2Nbrd4U6tH1VD27icCgoXLwh3u20=
+X-Received: by 2002:a2e:743:0:b0:2ef:1b64:5319 with SMTP id
+ 38308e7fff4ca-2f3aa1bcbf6mr19089351fa.11.1723652328498; Wed, 14 Aug 2024
+ 09:18:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/3] selftests/bpf: Allow setting BPF_F_INGRESS in
- prog_msg_verdict()
-From: Michal Luczaj <mhal@rbox.co>
-To: Jakub Sitnicki <jakub@cloudflare.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
- <87y159yi5m.fsf@cloudflare.com>
- <249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
- <87ttfxy28s.fsf@cloudflare.com>
- <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240814161052.10374-1-andrey.konovalov@linux.dev>
+In-Reply-To: <20240814161052.10374-1-andrey.konovalov@linux.dev>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 14 Aug 2024 18:18:33 +0200
+Message-ID: <CANiq72mAce+-NCgBTE8FsaKC=87x+tGJ6xWU=BTiOLPGYObOFw@mail.gmail.com>
+Subject: Re: [PATCH v2] kasan: simplify and clarify Makefile
+To: andrey.konovalov@linux.dev
+Cc: Marco Elver <elver@google.com>, Matthew Maurer <mmaurer@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Let a selftest set BPF_F_INGRESS for map/hash redirect.
+On Wed, Aug 14, 2024 at 6:11=E2=80=AFPM <andrey.konovalov@linux.dev> wrote:
+>
+> From: Andrey Konovalov <andreyknvl@gmail.com>
+>
+> When KASAN support was being added to the Linux kernel, GCC did not yet
+> support all of the KASAN-related compiler options. Thus, the KASAN
+> Makefile had to probe the compiler for supported options.
+>
+> Nowadays, the Linux kernel GCC version requirement is 5.1+, and thus we
+> don't need the probing of the -fasan-shadow-offset parameter: it exists i=
+n
+> all 5.1+ GCCs.
+>
+> Simplify the KASAN Makefile to drop CFLAGS_KASAN_MINIMAL.
+>
+> Also add a few more comments and unify the indentation.
+>
+> Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
 
-In run_tests(), explicitly reset skel->bss->test_ingress to false. Earlier
-tests might have left it flipped.
+Looks good to me! (I didn't actually test it, though!)
 
-Signed-off-by: Michal Luczaj <mhal@rbox.co>
----
- tools/testing/selftests/bpf/prog_tests/sockmap_listen.c | 2 ++
- tools/testing/selftests/bpf/progs/test_sockmap_listen.c | 6 ++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
-index da5a6fb03b69..a5e7d27760cf 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
-@@ -1850,6 +1850,8 @@ static void test_udp_unix_redir(struct test_sockmap_listen *skel, struct bpf_map
- static void run_tests(struct test_sockmap_listen *skel, struct bpf_map *map,
- 		      int family)
- {
-+	skel->bss->test_ingress = false;
-+
- 	test_ops(skel, map, family, SOCK_STREAM);
- 	test_ops(skel, map, family, SOCK_DGRAM);
- 	test_redir(skel, map, family, SOCK_STREAM);
-diff --git a/tools/testing/selftests/bpf/progs/test_sockmap_listen.c b/tools/testing/selftests/bpf/progs/test_sockmap_listen.c
-index b7250eb9c30c..5a3504d5dfc3 100644
---- a/tools/testing/selftests/bpf/progs/test_sockmap_listen.c
-+++ b/tools/testing/selftests/bpf/progs/test_sockmap_listen.c
-@@ -106,9 +106,11 @@ int prog_msg_verdict(struct sk_msg_md *msg)
- 	int verdict;
- 
- 	if (test_sockmap)
--		verdict = bpf_msg_redirect_map(msg, &sock_map, zero, 0);
-+		verdict = bpf_msg_redirect_map(msg, &sock_map, zero,
-+					       test_ingress ? BPF_F_INGRESS : 0);
- 	else
--		verdict = bpf_msg_redirect_hash(msg, &sock_hash, &zero, 0);
-+		verdict = bpf_msg_redirect_hash(msg, &sock_hash, &zero,
-+						test_ingress ? BPF_F_INGRESS : 0);
- 
- 	count = bpf_map_lookup_elem(&verdict_map, &verdict);
- 	if (count)
--- 
-2.46.0
+Cheers,
+Miguel
 
