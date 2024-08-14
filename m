@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-286577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740DB951CB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:11:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CAED951CB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4331C24F83
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:11:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1852C2866AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D6C1B3725;
-	Wed, 14 Aug 2024 14:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DF41B3F21;
+	Wed, 14 Aug 2024 14:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exksjn/E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfV9y9qZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5721B374B;
-	Wed, 14 Aug 2024 14:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DF71B3F0B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723644633; cv=none; b=VLkcATL5/rh8TZ779LH1U27GUUVWnoypux1RnOnMsy9U3L6yx/6s74oVSrrTSFBO0jMxn932SQ0KpDDml/zDlTbigYGi2uZGTpv0j1KB6DpzZmOE9zuDZ+k6tQ9QlzPCuDUDtpHPCMNGATfcU5bC1eaXr96PJ/MSfkMoNDRjKm4=
+	t=1723644635; cv=none; b=WaUsopN98Gf5TyqkoYZ0S9DlYSn3Y5VrLNfcohoQOmEWXYucA9Tei/iIoAjUEi2hb/5x9t+Y0F3Q1EiFymHB4B18xwntlOa5vBOHmPcOzMQERX4nEuSJe16NwFqLvJPPL5xtMA3yDp2vyCdRj9g+AzOwzf30vq9Fg/vHo1NUwmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723644633; c=relaxed/simple;
-	bh=KdgwpVZN4uMBbr71j9vE0petOsSpXyckYOOAL7K8sQ4=;
+	s=arc-20240116; t=1723644635; c=relaxed/simple;
+	bh=K3AQ07cuCgUyJCPRakco3p9i1a9jiXa67Ur23zs1j0c=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=l4wNav0BkBYEWcPyNZgwtZJVuCNmgPfJKsjvvhATxEystf2ldCvqSZWUgI8LSh6r1pfDradAU5KtkfhfnZbT6/oO5Ai8kI6pbgT+WwMuBymyiJoC9Qz8XcZ0WMMZdU22L/zLrjR/hw8QlRd7jYFYiPHZlAf/T4g8Mn+gXusi0QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exksjn/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1472DC4AF11;
-	Wed, 14 Aug 2024 14:10:33 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=jfis4rnFamdYgXkDosnaYsexBLe7TK7AeQxVpcyLb4teTocDiGdgGVlUsH0kLmLV1XSIYN2Jpf0yVq0l/llJvA6bOMlVLQs4qMoP0ueVz82yunjUuMYNqCnMakUghhqdTFSl/GpEiYr+t4hVkwVV5I40sWM4csSA+H/p15OXIv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfV9y9qZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8546AC4AF09;
+	Wed, 14 Aug 2024 14:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723644633;
-	bh=KdgwpVZN4uMBbr71j9vE0petOsSpXyckYOOAL7K8sQ4=;
+	s=k20201202; t=1723644634;
+	bh=K3AQ07cuCgUyJCPRakco3p9i1a9jiXa67Ur23zs1j0c=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=exksjn/Enaqn+WwSi1BZlTscDfpk98P3YHgxVXlHEQa83TlfoYkiYsdAHid2XdVVA
-	 QIgEGMuoySCw69KG+0LfeZCem8NspAHXtUw6G4S3F9s6BeEA+xOPgWf0XMhfrgX3Zb
-	 dSbPiituiEm127KRnrdO2JhJPMPoEgcP6l4cGItVJCbroNVD3ASDTNPkCO7TZVk7AC
-	 MenuL1z2ndl5AKRGeg0+TMNnrY4U60ocblER3+OojkFAa02v6QHrBv99Y0ux0N7HvX
-	 Dgeoqb5ZFzlTxgRnnyBxDBXZI3mWxGMeaeIlwXnimAqU3LbcPcyxQu4p6KFkTueof7
-	 J7YIjOSnOpanQ==
+	b=NfV9y9qZfixgg3kwogSL9+LtAmZLeIaEZVKYrhxJMEUTY7DpDoMB7263I2Dw+ZDtL
+	 vqHd8kDetJhkkykJoeAH2VMmK/2o3UeUdB/C8lgV4cwRCGQNBR+YoZ9u1AqYUYDj3g
+	 DC07bNb/D5exBk2saq2ylhNbmhVJObqjdsJercZPNcgsQYc3xUmWcPNcMYrtbF6jiF
+	 mZPhAEGb6B7WLU6AI6dKKxKCIO91OXsLQRBUda0zhArpoHMKzSmqL5H1SO3fSVPRo/
+	 3gHQ4M2AR8BNLpR+eqcuwVEYuUOPKkiZ5MGyzvV4UQDC3sLQBGAzT8zMW1aL87FWbh
+	 v/TOg3jOo5Wpg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EB138232A8;
-	Wed, 14 Aug 2024 14:10:33 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB08A38232A8;
+	Wed, 14 Aug 2024 14:10:34 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,54 +51,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 0/4] RISC-V: Parse DT for Zkr to seed KASLR
+Subject: Re: [PATCH v1] riscv/kexec_file: Fix relocation type R_RISCV_ADD16 and
+ R_RISCV_SUB16 unknown
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172364463227.2278280.4833968885789479932.git-patchwork-notify@kernel.org>
-Date: Wed, 14 Aug 2024 14:10:32 +0000
-References: <20240709173937.510084-1-jesse@rivosinc.com>
-In-Reply-To: <20240709173937.510084-1-jesse@rivosinc.com>
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, ardb@kernel.org,
+ <172364463350.2278280.14691701821976528565.git-patchwork-notify@kernel.org>
+Date: Wed, 14 Aug 2024 14:10:33 +0000
+References: <20240711083236.2859632-1-sunying@isrc.iscas.ac.cn>
+In-Reply-To: <20240711083236.2859632-1-sunying@isrc.iscas.ac.cn>
+To: None <sunying@isrc.iscas.ac.cn>
+Cc: linux-riscv@lists.infradead.org, ebiederm@xmission.com,
  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
- justinstitt@google.com, alexghiti@rivosinc.com, conor.dooley@microchip.com,
- masahiroy@kernel.org, twd2.me@gmail.com, christophe.jaillet@wanadoo.fr,
- samitolvanen@google.com, akpm@linux-foundation.org, bhe@redhat.com,
- rppt@kernel.org, vishal.moola@gmail.com, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
+ kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+ zhuhengbo@iscas.ac.cn, petr@tesarici.cz
 
 Hello:
 
-This series was applied to riscv/linux.git (for-next)
+This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Tue,  9 Jul 2024 13:39:33 -0400 you wrote:
-> Add functions to pi/fdt_early.c to help parse the FDT to check if
-> the isa string has the Zkr extension. Then use the Zkr extension to
-> seed the KASLR base address.
+On Thu, 11 Jul 2024 08:32:36 +0000 you wrote:
+> From: Ying Sun <sunying@isrc.iscas.ac.cn>
 > 
-> The first two patches fix the visibility of symbols.
+> Runs on the kernel with CONFIG_RISCV_ALTERNATIVE enabled:
+>   kexec -sl vmlinux
 > 
-> V1 -> V2:
->  - Add RISC-V: pi: Force hidden visibility for all symbol references
->  - Add RISC-V: pi: Add kernel/pi/pi.h
->  - Rewrite archrandom_early.c to parse DT over checking the csr
-> V2 -> V3:
->  - Add RISC-V: lib: Add pi aliases for string functions
->  - Rewrite isa_string_contains in third patch
+> Error:
+>   kexec_image: Unknown rela relocation: 34
+>   kexec_image: Error loading purgatory ret=-8
+> and
+>   kexec_image: Unknown rela relocation: 38
+>   kexec_image: Error loading purgatory ret=-8
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4,1/4] RISC-V: pi: Force hidden visibility for all symbol references
-    https://git.kernel.org/riscv/c/14c3ec67236b
-  - [v4,2/4] RISC-V: lib: Add pi aliases for string functions
-    https://git.kernel.org/riscv/c/d57e19fcbf3f
-  - [v4,3/4] RISC-V: pi: Add kernel/pi/pi.h
-    https://git.kernel.org/riscv/c/b3311827155a
-  - [v4,4/4] RISC-V: Use Zkr to seed KASLR base address
-    https://git.kernel.org/riscv/c/945302df3de1
+  - [v1] riscv/kexec_file: Fix relocation type R_RISCV_ADD16 and R_RISCV_SUB16 unknown
+    https://git.kernel.org/riscv/c/2d1f51d8a4b0
 
 You are awesome, thank you!
 -- 
