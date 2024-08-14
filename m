@@ -1,73 +1,58 @@
-Return-Path: <linux-kernel+bounces-286842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C6951F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:17:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0DF952001
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182B11C216DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:17:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1B73B27836
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA841B86DA;
-	Wed, 14 Aug 2024 16:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3CE1B9B50;
+	Wed, 14 Aug 2024 16:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQzPRwXb"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="QQkhUmtw"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AA71B3F0F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896731B8EBC;
+	Wed, 14 Aug 2024 16:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652255; cv=none; b=JF0dZLel7txsZs+YPFwVFm2O8OVTs1Q7Ure0W7+dEqlJlTylvp6CDfzIyaRTXYUnkmvzi8iOQcmLOmMx5mXR3uK2HAFM4JXhXJtqsVjtiP2gFaT6ZA44PCLpWK1oPoi8zTJ12PEX6LXnXfvddZVrnMImd7MwfeUAVsVHlxs5QR4=
+	t=1723652282; cv=none; b=pB8kkW7beVK1+pw9NInHz8MY2EKJn84bkYQmxQ60FAx2QTIYrqfodZxH4/atBkbCfgl/xb1sdwpz8SIoxSo+zxhVD2o+mJtRbjskuuiZUwKj9hWqHx8xE0bHdkY6ILNI0cA/XljgZ1rx0o3EWBFbbWFBeFa6GGcBipCXFngAuT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652255; c=relaxed/simple;
-	bh=6uU5bPOhpsLtgNrDyr3EXfPL73MUahiX/RBlfJxZcek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zn0dAc2GDCSSX+nnPyF20JG4uK0xeWAT4bVpvN5Kcs1cNHATE9NkTzBCYuTZ3JKAUELZrj91LG88Kuk3rbjnAroQJOcG5/pcDYcHePuk89BManBKj8N5oguw32A87zsJWAwZwdOM+u6k4RXcqwegbILG5Q4VIcHOUZft+kVf8NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQzPRwXb; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-530e22878cfso13814e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723652252; x=1724257052; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DcC1t0kafFLuJe1JRzgDwbaPXnUNDb2757E1G8pYF4A=;
-        b=gQzPRwXbmTYzoUyqJ10UitNT9vx/H8k6pk8KJ1xpyLanPS0XG2fToWg023kkqpqigS
-         zhR8E8hsvWPGbaKDRTBrpwYiyatnAoIrpfFe2s/FLjYRTsZsAh9aNqYN7qKhZUok1syV
-         LvWgLRh/QXgrLgvn1ukIFtqfP+y3gp/1MtAy6xqwXShzyKWZi4bR2clK79JcY434L5HV
-         bzukji1j5m8E2bYsDFGyW+yxEfm0pZVgUgm9U5BalB1fZ6P4104Vu6QM1FxHQglARVJ4
-         bDduhc0ijIM/x5GWJjv1s37GhY19qR6MCioMZlTPohw8LpQRDAHgU891Qw9P44tQJ5QC
-         CdxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723652252; x=1724257052;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DcC1t0kafFLuJe1JRzgDwbaPXnUNDb2757E1G8pYF4A=;
-        b=CpXCB/0krDduEhWZ3StEM3NN9H0bhFyeSt6hCzKkyL4bkTFvbEcsezsBW3TtdYn2nJ
-         vYg3LMWwYxb/gbZuTRxBNYw8eQO7HUsbw3RVk5KlpH9fQsAFUb5xnkcvw0qMM8U15KIY
-         wuX27X0WSgkF4KBQH3w1UV3O91jjxxUihHSaq4dhzJ7zn+YwZvGjf5vIlqEYSYQeLEpr
-         gOn9rQVCaVdwkUPgTv9t6f/WHe5cSK1+tRoRFq30B4sZyejJK/QMclypAtwKn07LAmGr
-         5wlX2Ks+huLYQyz0ww2gDHN47OYHTMvVoFz50QyGoF2LSZNCCvzWosIruSu04N8sYgV7
-         UuaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhZXhju5rc4PddnZ41RFmwuAAxiQn0aSTC0ncL9vh1wrchHJwor+RdXZnFq+pq2iaTmVzDTmi1UCnuuuiUZ2QheAgqhf8DI3wrYg6/
-X-Gm-Message-State: AOJu0Yy00vye8wMig2SqcylyqWDikiEzq3YUAJyaLlWkU3oMSzRGX7aZ
-	tqjLLPV41M7Zx+MyCEG8MZXm8lP/KM4eImXiu8q7llJbm8invG/O
-X-Google-Smtp-Source: AGHT+IEjQIKcBJ5wux2ADElwYZ8qiLfjrritXGwsWqCqFkGfysJr9AKddeiPZr1T8HquAH/I579aGQ==
-X-Received: by 2002:a05:6512:b22:b0:52c:d8e9:5d8b with SMTP id 2adb3069b0e04-532eda86287mr2356129e87.25.1723652251129;
-        Wed, 14 Aug 2024 09:17:31 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::4:61b7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f4183a60sm189405266b.198.2024.08.14.09.17.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 09:17:30 -0700 (PDT)
-Message-ID: <64e9c1b6-79da-488d-8e7f-8b3fce3d14c1@gmail.com>
-Date: Wed, 14 Aug 2024 17:17:30 +0100
+	s=arc-20240116; t=1723652282; c=relaxed/simple;
+	bh=NQTpemzt4Tj8++a5VIsyfyK7+ZLyBcJfu2xffJVhs0k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FitGZ79Mce+3lI2neqBvawvBfBkjvd2mtWxwDVpdd2ugdALtVcEke5fzaBEUoLjGl3A+HDcaMisS5xdXuxtiSpWyCYSY7xtEQiZGwozHXnP1r2KQLidVZtUhIlixDtZerFks6jyKAkuI144gt8y1HlOtN2+5SNicLoTsYKjq21A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=QQkhUmtw; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1seGh1-00H1Fi-33; Wed, 14 Aug 2024 18:17:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:From:Subject:MIME-Version:Date:Message-ID;
+	bh=eO5sD2wD20qYLIyQAYTr+NiDMBMypw6HCWvaYXpaa6s=; b=QQkhUmtwnl8ckO8bW0pQNcbx2m
+	gyEKnUqLeYNWPm3KCygcbh+QFQGqL3H7Qkt8c3EDXk6xjjU1fHzKyBs6QltpBiu1n0adkfj5S2QKQ
+	ygHDNDPKGq1v+KVKZbK9XaWKjKThS/fUVmsyax5sKkXl9ZVhw1s+NgapuTE49iTX8LgVNbCNs0oF4
+	6W9mZxjSumKrdmPDh6TZdOYVI8RmPjT3kljfg2kTOV4fwM8UetI7Yo8E9/CLQE6OUK9muPDOw14fD
+	OLvaqseKMRpDgi6O71HoD1lhuxIOu4+tNoFm34s8f1JPOXioFsceOiPBi3b+NFLoASfjcmp0AWWwN
+	hzeDIF7Q==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1seGh0-0005Xd-9h; Wed, 14 Aug 2024 18:17:46 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1seGgw-00EOyD-7r; Wed, 14 Aug 2024 18:17:42 +0200
+Message-ID: <55559365-8dea-4458-a6f3-3b0cff9f051f@rbox.co>
+Date: Wed, 14 Aug 2024 18:17:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,31 +60,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: drop lruvec->lru_lock if contended when skipping
- folio
-To: Yu Zhao <yuzhao@google.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, leitao@debian.org,
- huangzhaoyang@gmail.com, bharata@amd.com, willy@infradead.org,
- vbabka@suse.cz, linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20240814142647.3668269-1-usamaarif642@gmail.com>
- <CAOUHufasQ5019b4L6R69-G=k-dCa1WuC5g6yGfYvzNOk4Au_iA@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAOUHufasQ5019b4L6R69-G=k-dCa1WuC5g6yGfYvzNOk4Au_iA@mail.gmail.com>
+Subject: [PATCH 1/3] selftests/bpf: Support AF_UNIX SOCK_DGRAM socket pair
+ creation
+From: Michal Luczaj <mhal@rbox.co>
+To: Jakub Sitnicki <jakub@cloudflare.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
+ <87y159yi5m.fsf@cloudflare.com>
+ <249a7dc3-34e2-4579-aae7-8b38b145e4bb@rbox.co>
+ <87ttfxy28s.fsf@cloudflare.com>
+ <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <42939687-20f9-4a45-b7c2-342a0e11a014@rbox.co>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Handle AF_UNIX in init_addr_loopback(). For pair creation, bind() the peer
+socket to make SOCK_DGRAM connect() happy.
 
+Signed-off-by: Michal Luczaj <mhal@rbox.co>
+---
+ .../bpf/prog_tests/sockmap_helpers.h          | 29 +++++++++++++++----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-On 14/08/2024 17:01, Yu Zhao wrote:
-> On Wed, Aug 14, 2024 at 8:26 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>
->> From: Yu Zhao <yuzhao@google.com>
-> 
-> I think in case the patch should be "From" you, "Suggested-by" me, and
-> "Reported-by" and "Tested-by" Bharata.
+diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_helpers.h b/tools/testing/selftests/bpf/prog_tests/sockmap_helpers.h
+index 38e35c72bdaa..c50efa834a11 100644
+--- a/tools/testing/selftests/bpf/prog_tests/sockmap_helpers.h
++++ b/tools/testing/selftests/bpf/prog_tests/sockmap_helpers.h
+@@ -1,6 +1,7 @@
+ #ifndef __SOCKMAP_HELPERS__
+ #define __SOCKMAP_HELPERS__
+ 
++#include <sys/un.h>
+ #include <linux/vm_sockets.h>
+ 
+ /* include/linux/net.h */
+@@ -283,6 +284,15 @@ static inline void init_addr_loopback6(struct sockaddr_storage *ss,
+ 	*len = sizeof(*addr6);
+ }
+ 
++static inline void init_addr_loopback_unix(struct sockaddr_storage *ss,
++					   socklen_t *len)
++{
++	struct sockaddr_un *addr = memset(ss, 0, sizeof(*ss));
++
++	addr->sun_family = AF_UNIX;
++	*len = sizeof(sa_family_t);
++}
++
+ static inline void init_addr_loopback_vsock(struct sockaddr_storage *ss,
+ 					    socklen_t *len)
+ {
+@@ -304,6 +314,9 @@ static inline void init_addr_loopback(int family, struct sockaddr_storage *ss,
+ 	case AF_INET6:
+ 		init_addr_loopback6(ss, len);
+ 		return;
++	case AF_UNIX:
++		init_addr_loopback_unix(ss, len);
++		return;
+ 	case AF_VSOCK:
+ 		init_addr_loopback_vsock(ss, len);
+ 		return;
+@@ -390,21 +403,27 @@ static inline int create_pair(int family, int sotype, int *p0, int *p1)
+ {
+ 	__close_fd int s, c = -1, p = -1;
+ 	struct sockaddr_storage addr;
+-	socklen_t len = sizeof(addr);
++	socklen_t len;
+ 	int err;
+ 
+ 	s = socket_loopback(family, sotype);
+ 	if (s < 0)
+ 		return s;
+ 
+-	err = xgetsockname(s, sockaddr(&addr), &len);
+-	if (err)
+-		return err;
+-
+ 	c = xsocket(family, sotype, 0);
+ 	if (c < 0)
+ 		return c;
+ 
++	init_addr_loopback(family, &addr, &len);
++	err = xbind(c, sockaddr(&addr), len);
++	if (err)
++		return err;
++
++	len = sizeof(addr);
++	err = xgetsockname(s, sockaddr(&addr), &len);
++	if (err)
++		return err;
++
+ 	err = connect(c, sockaddr(&addr), len);
+ 	if (err) {
+ 		if (errno != EINPROGRESS) {
+-- 
+2.46.0
 
-Sounds good, will change it in next revision. I will wait for a couple of days to see if there is feedback on the patch and resend with what you have suggested.
-
-Thanks!
 
