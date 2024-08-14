@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-286939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567A395209E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:01:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109AD9520A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 112FD283187
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:01:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EAB2B26643
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E1E1BBBD1;
-	Wed, 14 Aug 2024 17:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066E11BB6BE;
+	Wed, 14 Aug 2024 17:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9Luck5R"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11453FB3B
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b="OaIJ1igW"
+Received: from xn--80adja5bqm.su (xn--80adja5bqm.su [198.44.140.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDBF3FB3B;
+	Wed, 14 Aug 2024 17:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.44.140.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723654857; cv=none; b=P10a4Vo8YnOHC8QVvwIJeE/xNZNBy0dp/4qLj4Kovpag6LDxqc0Q+hmc2MCrAOU60PpvemClEDEBfo9LSIetEzcR/1FpfnO/O4abdOiPox36Zl4YmNuSn/b1e8op3od3PAiM5y8dlKx1BSVOt3FB3sdwG4Lqg0iwDd5arnu+YYA=
+	t=1723654890; cv=none; b=qX0QmrvxIeFOpEMVNLjxPICgyCN7VX3LS+vc+DKazlvJjXAEyfzzuH2Yo2God5eH1VWaAgAc+pH3pVWsWLCE/whqTG3vlNd+HpPoRZDTkxxx2IhK4Pdnzs4GXP/Twb79yqqUUHCYqJjFTAz+s32SwTEBzBAL3T+gbatOPSQgs4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723654857; c=relaxed/simple;
-	bh=tMNKunLk5goW/y3VPPeJTH5gdtVob2YOFilXLryVWNQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OabL7sRRKJWstqCJTYiUhmRw7nPwpbhW2aCyanKGFXwVUPRmfkJcYV8+a5oQH16bee/79NRJXr6w9gnqRkXlYql8JPepuaFmuyOzz1m7e1s1KzCe63lgdiDmHiJzHcjy45FBKoC4a/aXCHNlQCTy5AT3siy2PU3njUqKzz3pmEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b9Luck5R; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-65fe1239f12so1740747b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723654854; x=1724259654; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tMNKunLk5goW/y3VPPeJTH5gdtVob2YOFilXLryVWNQ=;
-        b=b9Luck5RziTh8umvRJBV0/E+N89tPC8wwd+54j+PDPLcNtf5JPYUS/70lMh3DAN9IP
-         gx3THKW/znXwd65L+R7MkkYra7f2LZaIhWZUgnT5jC6lPLmGhDBL5hcrsSvkyZulNO0H
-         DVkyARHjy0qCk7AGeFuYKwUG8UJ2VzhQtO+MLeie/rTPZ6uvjSeo1YDGDWu/N/AewJ0G
-         jWHLVX9rdSN2UUiAkRNAlRnV3/azOrLQotqn5PoFZbvwwRI8ZK9YYQbXR6djL9mPENnj
-         nHNMLACmaBaMhZWKDXA89pUbptIAmD4NhH/h8/7oHhICvYK348MV51hcL8SolRbHH2OA
-         FPQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723654854; x=1724259654;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tMNKunLk5goW/y3VPPeJTH5gdtVob2YOFilXLryVWNQ=;
-        b=GFFQPP/B7qGWBBjPFOJ1aaYAKVpvCTVU7i6d3EEQZyNUz2YVyY5GfEgQahGnBG76Pi
-         TwLhcRClYHl3iLIUdJx2XRRzQFJckHI3cxBLPjWJhuvTBJFpUaCl8LksnOcm8X3/0LgU
-         dLBvhRf0CRXjfNxqgMOD7nwRHBgsOFO3llSJKlS7mnafLbPebpwOSS6DrLPTfAh8yUDI
-         X8Z2Bm8rctMnberGwbhB2a0BpV99ALcMRSx0kCg83n8Jri8VL8+v0aPFMHHBRSwXQUQ5
-         G+h8cFZx7B3Nmzlntha5/NZ9J4eM424c8bktXl2RioGPiZ/V2TQP6aaE91TCMn1krZVM
-         zdXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUw75hyE9a5Ifn22CrujtiLlDUPt7YsNFIGloxWSG9Vb6V9IwOFy0PHWTP9wnHGUKLHWFu3ShkC1gFhLKCyJkgQVI7GwfLGrpZQ3keR
-X-Gm-Message-State: AOJu0Yw0168sUV6uhYI8B5eUNQKBaGerdv4+F0Yos8q4IYNtQYyLv1h8
-	nPHLQy/DvtqMgtIub1kwD59M6+2cTMcZZdvU3kb9W7UNR20yK762gyZDSnCEPf3n+6nrlDsLpln
-	nguzY/8vBgkz5jacoiAazrn2jayQII5iyeEhVMg==
-X-Google-Smtp-Source: AGHT+IFOk3VYqWbTKciKOosTCRuiEV6h3yG1e9kqTFin1Q7BiOL3QiVjeZp7p4oYQKYKWFnzBhvwTS75twwWuDvHaNo=
-X-Received: by 2002:a05:690c:3103:b0:62f:67b4:790c with SMTP id
- 00721157ae682-6ac97b10984mr33941527b3.14.1723654854591; Wed, 14 Aug 2024
- 10:00:54 -0700 (PDT)
+	s=arc-20240116; t=1723654890; c=relaxed/simple;
+	bh=ud14CC+RqBs4Zw8LHMIZYXCYRKqTwhKHH/MGPrLQyV4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TTMXRwkhp4ieTg172r4jPLVXw/Wet5xX4Jf+UtMZ2F8pTlQRGhtcLVAnQwwjGW11pmdc+8aJ7RUFuPrrbXCd0sq078FwvMuQe6pjRgm/1fq09arH6k3zc/yOvNz23cd4pae6IIrwToE8RQtbi+RW8Qb1Mb/HSqL7ncEe7UB3rS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc; spf=pass smtp.mailfrom=xn--80adja5bqm.su; dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b=OaIJ1igW; arc=none smtp.client-ip=198.44.140.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--80adja5bqm.su
+Received: by xn--80adja5bqm.su (Postfix, from userid 1000)
+	id E351940460CE; Wed, 14 Aug 2024 17:01:11 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 xn--80adja5bqm.su E351940460CE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mediatomb.cc;
+	s=default; t=1723654871;
+	bh=ud14CC+RqBs4Zw8LHMIZYXCYRKqTwhKHH/MGPrLQyV4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OaIJ1igW9am9rTC5WUY7n8vcX5GGNl8lS0kNLCJGvL3lo0RFogqSFbhfigv5fSS+V
+	 QUb/tOcehpKvu9yCJMITog6G7/a4diEkrhP4wTvcG1Uqh1fRwOtHsx5griDOzLo0bC
+	 ekENEXgbHnNEFuWbmbV9DIZJPzAZx6yugDODxzagzrEOQ9JspVltuOORZXXI9vgG5M
+	 Ik+mM813TGc0b2hIA60vwCnTon8kbEOmO4TXCJw4q0iHI2wFxrLeM49PZ9r9sYvj+5
+	 ytM/uIcGTEh8fqZqeGyTh8KoBluYDetinghgU13zB4od1eVGhgXbV5PlAJs/m+CP1S
+	 sI5RaDsy2mlmQ==
+From: Sergey Bostandzhyan <jin@mediatomb.cc>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Bostandzhyan <jin@mediatomb.cc>
+Subject: [PATCH v3 0/3] Add DTS for NanoPi R2S Plus
+Date: Wed, 14 Aug 2024 17:00:45 +0000
+Message-Id: <20240814170048.23816-1-jin@mediatomb.cc>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813190639.154983-1-brgl@bgdev.pl> <172365034673.2714461.1759726822181293291.robh@kernel.org>
-In-Reply-To: <172365034673.2714461.1759726822181293291.robh@kernel.org>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Wed, 14 Aug 2024 19:00:41 +0200
-Message-ID: <CACMJSesrLxbgSFBOtdNsvkYv+3ytNPrws6h_DM+xFmjiw3yUzQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: sc8280xp: enable WLAN and Bluetooth
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 14 Aug 2024 at 17:48, Rob Herring (Arm) <robh@kernel.org> wrote:
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->
+Hi,                                                                              
+                                                                                 
+here is version 3 of the NanoPi R2S Plus patchset.
 
-Bindings were sent separately.
+* a commit which adds mmc-hs200-1_8v in order to improve eMMC performance has
+  been included
+* the licence header has been updated to the newer version, anw now includes
+  optional MIT licensing
 
-Bart
+
+Sergey Bostandzhyan (3):
+  arm64: dts: rockchip: Add DTS for FriendlyARM NanoPi R2S Plus
+  dt-bindings: arm: rockchip: Add NanoPi R2S Plus
+  arm64: dts: rockchip: improve eMMC speed on NanoPi R2S Plus
+
+ .../devicetree/bindings/arm/rockchip.yaml     |  1 +
+ arch/arm64/boot/dts/rockchip/Makefile         |  1 +
+ .../dts/rockchip/rk3328-nanopi-r2s-plus.dts   | 32 +++++++++++++++++++
+ 3 files changed, 34 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+
+-- 
+2.20.1
+
 
