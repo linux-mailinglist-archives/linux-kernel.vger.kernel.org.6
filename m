@@ -1,223 +1,251 @@
-Return-Path: <linux-kernel+bounces-286400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52300951A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D96951A87
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1ED81F23253
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76A01F23742
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A681AD40B;
-	Wed, 14 Aug 2024 12:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150221AED38;
+	Wed, 14 Aug 2024 12:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2HvMOoD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZmb8Zwr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B38E13D51D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBBE13D51D;
+	Wed, 14 Aug 2024 12:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723636972; cv=none; b=pCcOlgFOIzwgBl9w/xVZ/XS/L8W/PCgw/CjZoa3sgpnnIEbBqxvwRP/HItuEkId0Bg9zEvaBsS7ULKIdqQnDBxOYDropoJeSF2PDAwRWuyv078Uv4s11aTtqMHowR7vdY5JGdj64TfLl7u6DiCc9YZ6vC/YGtuO+8m4H+cTXlAc=
+	t=1723637044; cv=none; b=SyidQ3BzYjwgVmIKIOUpLokOYgIpUIp9ksEyLgzY1S4RFtnfyASKl1YtNcYAWobSrqsa1pfa76seg2wv2xk08ziugeBOdKduYBRDWC/ZqSEtIN+8H76G4f7+D+OR9rOJ7KKk0IgxmwTHzDLYppIv+U7CwBI14qzwhpoclneRCbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723636972; c=relaxed/simple;
-	bh=OGyn8eMF3CuGWeBJEAFztHG64evrs8oZxrrmOT3q3DA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AVM/dNOisjOWTvTCwA2MEs3fZPWA8FWadObcv8M+8O0s0uBZmxEtN0VRFv22yY+hv990VC6xlHfqmGnzOsmzoY1U419BNX5BhcNZJYVeZx/e/gI/BnXyV70WBp25oGaHtBv8IDoJ2m9zBgVy1A0qTAvObeDPpv/+N8bC4VDBgv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2HvMOoD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723636969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GMXMQTZDYE6luh611XN2OI8EVP3+a0ynEUGI8ZYLzb8=;
-	b=H2HvMOoD0gQsvgHu39G3eRM/rgn5xMns9gpxEJkltOrZoGltTIf8Xn08nmDzInh1FX8GFa
-	v+M72UmlKtNuWwLKG7vSHfk02aTlmj0LkjSrDEr+Dz1fli8nSmh8DIvfg70mdD0Y8Hrgpm
-	mcp6s74bdr7Jx4IysFhwulk+K5g4r48=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-LlvnhFE7Ps25JTwyDbkyFw-1; Wed, 14 Aug 2024 08:02:48 -0400
-X-MC-Unique: LlvnhFE7Ps25JTwyDbkyFw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3684ea1537fso3153708f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:02:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723636967; x=1724241767;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GMXMQTZDYE6luh611XN2OI8EVP3+a0ynEUGI8ZYLzb8=;
-        b=udebXVprQFcK0q5tSrIaDp1TcTftL0R8j1p5NnroICsYlQegCx5QW+xvh0lbKLwXKg
-         2FEL9B0XiXwVHYR99Vjk9BmpAWRm1WIrgRux6rde8RCa1v/ragmDbL2KkydpTUsjwxso
-         YwrlzRw49XULCEkK0KKQQM/hr+aciDFZSC+JfiNxMfIJ30gK+DFnaIJ15tzC+iBghIVt
-         k9LBtm4vF+FHPuCBQImclLO1XkX9euTbxHjKO0GQEvJZaJz64bt40Mt5GQMoDSH6l/39
-         IrOkKzwE1hqAkIChmFBlSZLPGckzgjGkGSDzANO5AyGHvI6eB6h+z/CW804UeWfX0iBh
-         y12Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWPIHvgFnWZajaI8hUZZ6JRu+PgzJQJ2lplH6MtWFBtGVj+8LAosSsC0hHzyG/H4rawjyhFgttqd1hTXBH+xCeKe2Pk5ID2XXE/83Jf
-X-Gm-Message-State: AOJu0YxBvWTg9ag9/6YNxowcfTBsuZKX+7GSx2eP5h9UPg7L5af0lSRc
-	96MXhtykxKS0jknqMSQbBEEXTsg6yWd+thpeks7MW+JzBA92AVD8GgoTFIqHYmf0fzZ+4MqkAur
-	SBbiOVToN8i6rHUqLqPPVyLPdu182PARjTu9r5c5m5nWuY01yfx3hLv93tbxAOg==
-X-Received: by 2002:adf:f542:0:b0:371:6ff3:d578 with SMTP id ffacd0b85a97d-37177756804mr1908594f8f.6.1723636967264;
-        Wed, 14 Aug 2024 05:02:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IETUgVE1o5r0CQo3MheUwAWZg3aCLbqDQBvgbZWPvVeMLYUHQzD9ZMpTqtmvMSJiclXMA/p+Q==
-X-Received: by 2002:adf:f542:0:b0:371:6ff3:d578 with SMTP id ffacd0b85a97d-37177756804mr1908555f8f.6.1723636966642;
-        Wed, 14 Aug 2024 05:02:46 -0700 (PDT)
-Received: from [192.168.3.141] (p5b0c6e46.dip0.t-ipconnect.de. [91.12.110.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3717d27b9d4sm486496f8f.21.2024.08.14.05.02.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 05:02:46 -0700 (PDT)
-Message-ID: <69f480d6-2dd8-4efb-9516-70d74eceedd5@redhat.com>
-Date: Wed, 14 Aug 2024 14:02:44 +0200
+	s=arc-20240116; t=1723637044; c=relaxed/simple;
+	bh=mJC8bfWvfQg78Ul16meJjJNrey0FbR5OLBUbT9IBlSk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Nu/wNNKVkV9zPQ4hA89Q3oiui6UYwZW0g/auYUx8msEmwLYE552lvJ3FhlCXzTg0NXPZzEOlbKJYtBt7CuV4t1y3Zyf+NKrvV74mG4pWEhqW6CM4FhWL/IVbB7nVBdA3khIkD6kf28ixUt6E1HygwsTyRdUNEp8r6pZH2WaxXA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZmb8Zwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26553C32786;
+	Wed, 14 Aug 2024 12:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723637043;
+	bh=mJC8bfWvfQg78Ul16meJjJNrey0FbR5OLBUbT9IBlSk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=bZmb8ZwrWeaXVp7db4gu2xjMfPYfB0Cytp+1K78HhDjsw3/QWCQLDZmOWBuztkoNS
+	 ubFsmkjzXRFXwkIe1m1HuqrMPe9sYap17TRSoGSCMG98SedWeQB0yDb8EAIvMKLFAy
+	 7uxCGZHLl9td2hERJrL9BHnG1JhBeyj+clz4pw4bsRUdCrlH/MTYzr/pOKN5zbqlEn
+	 oKKuK2C1N/rmhJL38ZBGbdCMKFduhVBNY8SExl31Xe24eFDfrEFURdwj/+/Guqku/W
+	 bs3xnLFfy1egAuXP9WeRN54xSf6z5KnGa05WZ58LfFVFln0ZFnmDaIdrod8prpcWNW
+	 tOUEuBWK0wdZg==
+Message-ID: <4244e028b15819c0149c8f0395d28abcd1da01e4.camel@kernel.org>
+Subject: Re: [PATCH] vfs: drop one lock trip in evict()
+From: Jeff Layton <jlayton@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Date: Wed, 14 Aug 2024 08:04:01 -0400
+In-Reply-To: <20240813143626.1573445-1-mjguzik@gmail.com>
+References: <20240813143626.1573445-1-mjguzik@gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] c0bff412e6: stress-ng.clone.ops_per_sec -2.9%
- regression
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Yin Fengwei <fengwei.yin@intel.com>,
- kernel test robot <oliver.sang@intel.com>, Peter Xu <peterx@redhat.com>,
- oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Huacai Chen <chenhuacai@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>,
- Matthew Wilcox <willy@infradead.org>, Nathan Chancellor <nathan@kernel.org>,
- Ryan Roberts <ryan.roberts@arm.com>, WANG Xuerui <kernel@xen0n.name>,
- linux-mm@kvack.org, ying.huang@intel.com, feng.tang@intel.com
-References: <202407301049.5051dc19-oliver.sang@intel.com>
- <193e302c-4401-4756-a552-9f1e07ecedcf@redhat.com>
- <439265d8-e71e-41db-8a46-55366fdd334e@intel.com>
- <90477952-fde2-41d7-8ff4-2102c45e341d@redhat.com>
- <6uxnuf2gysgabyai2r77xrqegb7t7cc2dlzjz6upwsgwrnfk3x@cjj6on3wqm4x>
- <5a67c103-1d9d-440d-8bed-bbfa7d3ecf71@redhat.com>
- <CAGudoHH4NGgPdTe2yL33TNNFriPM9mVM=0_iuh5dLuesZXQMAQ@mail.gmail.com>
- <5c0979a2-9a56-4284-82d2-42da62bda4a5@redhat.com>
- <c7e0d029-0a64-4b27-bd62-cf9a3577d7ff@intel.com>
- <wbbieqyyjqy7ulbta6muzepxwxi6galwvhjdxpqaqbeljzpcer@dpeoqrbkl5p2>
- <817150f2-abf7-430f-9973-540bd6cdd26f@intel.com>
- <CAGudoHG1=p0GEVaSASA1C+iVYbfA5rryozAPPEoxr5uKtM=ghw@mail.gmail.com>
- <f4ddda8d-3513-4471-8609-acb3ce29219e@intel.com>
- <CAGudoHECfSYd7EcxiY+soh157m9H4xfU1en=TgX_=QkpbsOFdg@mail.gmail.com>
- <116e117c-2821-401d-8e62-b85cdec37f4a@redhat.com>
- <CAGudoHGzNu4MUDyd1OeP+R=TdOzO6Nidk26_hrinBncz6FpGvw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGudoHGzNu4MUDyd1OeP+R=TdOzO6Nidk26_hrinBncz6FpGvw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 14.08.24 13:06, Mateusz Guzik wrote:
-> On Wed, Aug 14, 2024 at 11:45 AM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 14.08.24 06:10, Mateusz Guzik wrote:
->>> On Wed, Aug 14, 2024 at 5:02 AM Yin Fengwei <fengwei.yin@intel.com> wrote:
->>>>
->>>> On 8/13/24 03:14, Mateusz Guzik wrote:
->>>>> would you mind benchmarking the change which merely force-inlines _compund_page?
->>>>>
->>>>> https://lore.kernel.org/linux-mm/66c4fcc5-47f6-438c-a73a-3af6e19c3200@redhat.com/
->>>> This change can resolve the regression also:
->>>
->>> Great, thanks.
->>>
->>> David, I guess this means it would be fine to inline the entire thing
->>> at least from this bench standpoint. Given that this is your idea I
->>> guess you should do the needful(tm)? :)
->>
->> Testing
->>
->> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> index 5769fe6e4950..25e25b34f4a0 100644
->> --- a/include/linux/page-flags.h
->> +++ b/include/linux/page-flags.h
->> @@ -235,7 +235,7 @@ static __always_inline int page_is_fake_head(const struct page *page)
->>           return page_fixed_fake_head(page) != page;
->>    }
->>
->> -static inline unsigned long _compound_head(const struct page *page)
->> +static __always_inline unsigned long _compound_head(const struct page *page)
->>    {
->>           unsigned long head = READ_ONCE(page->compound_head);
->>
->>
->> With a kernel-config based on something derived from Fedora
->> config-6.8.9-100.fc38.x86_64 for convenience with
->>
->> CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP=y
->>
->> add/remove: 15/14 grow/shrink: 79/87 up/down: 12836/-13917 (-1081)
-> [snip]
->> Total: Before=32786363, After=32785282, chg -0.00%
-> 
-> I guess there should be no opposition then?
-> 
-> Given that this is your patch I presume you are going to see this through.
+On Tue, 2024-08-13 at 16:36 +0200, Mateusz Guzik wrote:
+> Most commonly neither I_LRU_ISOLATING nor I_SYNC are set, but the stock
+> kernel takes a back-to-back relock trip to check for them.
+>=20
+> It probably can be avoided altogether, but for now massage things back
+> to just one lock acquire.
+>=20
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>=20
+> there are smp_mb's in the area I'm going to look at removing at some
+> point(tm), in the meantime I think this is an easy cleanup
+>=20
+> has a side effect of whacking a inode_wait_for_writeback which was only
+> there to deal with not holding the lock
+>=20
+>  fs/fs-writeback.c | 17 +++--------------
+>  fs/inode.c        |  5 +++--
+>  2 files changed, 6 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 4451ecff37c4..1a5006329f6f 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1510,13 +1510,12 @@ static int write_inode(struct inode *inode, struc=
+t writeback_control *wbc)
+>   * Wait for writeback on an inode to complete. Called with i_lock held.
+>   * Caller must make sure inode cannot go away when we drop i_lock.
+>   */
+> -static void __inode_wait_for_writeback(struct inode *inode)
+> -	__releases(inode->i_lock)
+> -	__acquires(inode->i_lock)
+> +void inode_wait_for_writeback(struct inode *inode)
+>  {
+>  	DEFINE_WAIT_BIT(wq, &inode->i_state, __I_SYNC);
+>  	wait_queue_head_t *wqh;
+> =20
+> +	lockdep_assert_held(&inode->i_lock);
+>  	wqh =3D bit_waitqueue(&inode->i_state, __I_SYNC);
+>  	while (inode->i_state & I_SYNC) {
+>  		spin_unlock(&inode->i_lock);
+> @@ -1526,16 +1525,6 @@ static void __inode_wait_for_writeback(struct inod=
+e *inode)
+>  	}
+>  }
+> =20
+> -/*
+> - * Wait for writeback on an inode to complete. Caller must have inode pi=
+nned.
+> - */
+> -void inode_wait_for_writeback(struct inode *inode)
+> -{
+> -	spin_lock(&inode->i_lock);
+> -	__inode_wait_for_writeback(inode);
+> -	spin_unlock(&inode->i_lock);
+> -}
+> -
+>  /*
+>   * Sleep until I_SYNC is cleared. This function must be called with i_lo=
+ck
+>   * held and drops it. It is aimed for callers not holding any inode refe=
+rence
+> @@ -1757,7 +1746,7 @@ static int writeback_single_inode(struct inode *ino=
+de,
+>  		 */
+>  		if (wbc->sync_mode !=3D WB_SYNC_ALL)
+>  			goto out;
+> -		__inode_wait_for_writeback(inode);
+> +		inode_wait_for_writeback(inode);
+>  	}
+>  	WARN_ON(inode->i_state & I_SYNC);
+>  	/*
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 73183a499b1c..d48d29d39cd2 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -582,7 +582,7 @@ static void inode_unpin_lru_isolating(struct inode *i=
+node)
+> =20
+>  static void inode_wait_for_lru_isolating(struct inode *inode)
+>  {
+> -	spin_lock(&inode->i_lock);
+> +	lockdep_assert_held(&inode->i_lock);
+>  	if (inode->i_state & I_LRU_ISOLATING) {
+>  		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
+>  		wait_queue_head_t *wqh;
+> @@ -593,7 +593,6 @@ static void inode_wait_for_lru_isolating(struct inode=
+ *inode)
+>  		spin_lock(&inode->i_lock);
+>  		WARN_ON(inode->i_state & I_LRU_ISOLATING);
+>  	}
+> -	spin_unlock(&inode->i_lock);
+>  }
+> =20
+>  /**
+> @@ -765,6 +764,7 @@ static void evict(struct inode *inode)
+> =20
+>  	inode_sb_list_del(inode);
+> =20
+> +	spin_lock(&inode->i_lock);
+>  	inode_wait_for_lru_isolating(inode);
+> =20
+>  	/*
+> @@ -774,6 +774,7 @@ static void evict(struct inode *inode)
+>  	 * the inode.  We just have to wait for running writeback to finish.
+>  	 */
+>  	inode_wait_for_writeback(inode);
+> +	spin_unlock(&inode->i_lock);
+> =20
+>  	if (op->evict_inode) {
+>  		op->evict_inode(inode);
 
-I was hoping that you could send an official patch, after all you did 
-most of the work here.
+...and a nice cleanup to boot.
 
-> 
-> I don't want any mention or cc on the patch, thanks for understanding :)
-
-If I have to send it I will respect it.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
