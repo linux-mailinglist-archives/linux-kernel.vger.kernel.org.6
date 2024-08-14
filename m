@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-286380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD67D951A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B2E951A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C1128102F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132AD1F22A89
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105551B29D7;
-	Wed, 14 Aug 2024 11:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A603C1B5804;
+	Wed, 14 Aug 2024 11:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="UqoZHq6z"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="SXhJjWd5"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA5E1B4C23
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D538A1B4C33
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635690; cv=none; b=Hc8GtTzsgiRZ7w/ODTSI6zKfm0seoNEaN1yqbzRjET7xG0iDxyIW8Uxy0jpGVEh14EaEt9fRJBWYRqUf9JFOlFDvDlI2m4Q1hR9uQM6qrlp6idX7lWZZPmI4F/Ju2Wh6q6ZGE33jm0t7fd4sRBSNGXdP95rigku73pUO7rS+RlU=
+	t=1723635691; cv=none; b=n2g776Cxx8dzkDhppVEt6gBS+iegzRXUALmUPPdTLSkE313Y+cRRHD3dn1ugyzPSvynsd7RR3dlsbdAo4xw1SOwDjNGlsYilEEJ+tfvTcJwxw0yp853zuulzhUGi08D9iIiU8FbUEdetPPuopzeqysP0GcjCNFy8CubDlXzSkfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635690; c=relaxed/simple;
-	bh=4eTUDWhrEbeO6LacpkSTpWZsQS6mjvQhzRI0A/zxHU4=;
+	s=arc-20240116; t=1723635691; c=relaxed/simple;
+	bh=sQYa/TGQk7UO1dlX0MW4Xvi9uLCqrYRQlAcXitEceno=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FYCx6rs771LhtI2xKi0PIgcMpU5PmkO1ZvGTXxHcXThCWm7XUtYcA4HaX2Gv2M3hKL8T+Fxu/tQNXqRpqy8GzSG5yBHd/40NUjmNNc/G8QZp2NHeEurk0plSSiMM293s5lV7XTPu6V75Xl9pLwPF71fBXr8jr3LUeNRm1YytZG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=UqoZHq6z; arc=none smtp.client-ip=185.125.188.122
+	 MIME-Version; b=qQuIscR7SNi8M8dYRg8k+30zd83lUaKGwd9PQIU01vP07ntSgGUvZNMUdWhw/QQpvxKMGnobmrgoLBf+/JKmD5jSF4NLflqZsFbED265b2oVmPukP4IhSnvJ4X1ENKo+1zF8EgFU33lWOg/1hIdMMpvjmvP8LIlWuyrcg+zhfi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=SXhJjWd5; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 624174596C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:25 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4DE23400B2
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723635685;
-	bh=cuULsUu9z+BvalrO9+cGgsIucfP8fxo4BNYi78/zGSU=;
+	s=20210705; t=1723635688;
+	bh=kX3REIljluq5iUQsttUuiM8BSwi4GrOWWl8ceulatPE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=UqoZHq6zTGMAi6LaCTItI7q4lizIQQhQ87OCLeZBJfNRKL2TJbG4WnvlXiJkrR4+a
-	 RBOQd9Bip3O5PA2VeeWEA2HQSW2k3N822x5NMQPJez0AgIhlZ+HddzByXMVMmjlNYX
-	 juLM5fI+FqWXc8ycvm+n+4SM6mVcz2a6qtJNACgmTP538AYuPW8pgoDR/H1edJIn1Z
-	 V0lE6KNl4RCWC/1Hd5nEjvIiQXI2dxQe1aKVagoOfQM4R30W5T0/CvR0R29+zkQSr0
-	 L/GUMUTaYO3p21SqSZ9Y32bjtgxv4eqjGFN+vEwp1iG14cziuKVf/F3vAAin3L/5RO
-	 cMFrjw/iKpRJw==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a7a8281dba5so545934566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:41:25 -0700 (PDT)
+	b=SXhJjWd5wEgmDw3hLEFmCaIq5N55DWwuhDeDl3RYjk32yUsKAUxJjv0bjcwSlOwzB
+	 wZ69EIYD5K/ct2SdrQxlMsqgKzFKtdbh8M26Wmtc9eiebCpzFYKXHQ0Hn76srmJZZK
+	 gyaEK0kPyBlOw6oNrqpEpxyUrApJJctBv44AqRfDZBjlkWMgEL2/Qzz0sY3T+DStJx
+	 RwbUz4f0SOBpoMT37v3Ezizcyk8kH2m3dDidHZCWlC69CDPH5ewZMxSIgXZ+uGHuJt
+	 hMgg882qbLeTVHeRYQn9FrZqa65MV2lG+IxPxEjRGUJlJRMHFXlo36oxFWJFSsdfqB
+	 QaJi5AJTO65sg==
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-53214baf2abso2504151e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:41:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723635685; x=1724240485;
+        d=1e100.net; s=20230601; t=1723635687; x=1724240487;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cuULsUu9z+BvalrO9+cGgsIucfP8fxo4BNYi78/zGSU=;
-        b=VIAGkiHBLrYCs8pnIInaqJJqSy12stwt4P5H/o1qNr4DFNcwnkW782E9IUwRHJt1pj
-         9TlQWsgO6zp4DJJtQL4jf/SwuziwFYgPMm2yAUxEePXcczsHCBXloVCYpzN5Q5Ak2ryq
-         G2f800V9cruYZk6OhaiDUlNtIQhA6hHVAmZ+WU9C2aMbA9kpcxWsv2znuMo4sTQornUT
-         OfSxroH+q0Y46cyvuy6tggGo26FNx2dNyAo1i7VrvfPpDpmO+b18H8cxwo2jUVR5GarY
-         ElnpYaMtwftgPoZlU+Zyqjepks6cvHuIbJjB9+dEGR2AjkolIPX06yN4SPbDtcQoqkvt
-         O/Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVEzK2II0tNIqcBvaFMz+gczlDYuB/2mui2oLkRfzOAAPN5X8reN6Nr19vlzTrvSXpWBjnRXTcz/bImdG4fbegY+t70m5a6fAfFVUZf
-X-Gm-Message-State: AOJu0YzjCpUPLOR6B8WS4jkqU7V7tYksjT74IRgGruwABVGz6EgvRS0W
-	AiidtQ9kZ02erhN+i85doEC8MXCiORKNacq83k1kwc6sXxH9wAF69mZBwHR7ZdJWpsIWspP8HtZ
-	Cm6qLDky5VzZceryV3TJZrtzO2QJ0CcG055i9Grx4uFLRerFr7cmD/bOZiE1tkLPruNLxCE+S+z
-	MGYg==
-X-Received: by 2002:a17:907:e257:b0:a77:e0ed:8c4 with SMTP id a640c23a62f3a-a8366c10d6emr161899266b.7.1723635684820;
-        Wed, 14 Aug 2024 04:41:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSJqi6p3D1QYD5zqxfrHLXoXcCcs9WXjsJL3AnIrFo/DOpEIxIBPJIbf9Ss6W7p94SVwH0Sg==
-X-Received: by 2002:a17:907:e257:b0:a77:e0ed:8c4 with SMTP id a640c23a62f3a-a8366c10d6emr161897366b.7.1723635684266;
-        Wed, 14 Aug 2024 04:41:24 -0700 (PDT)
+        bh=kX3REIljluq5iUQsttUuiM8BSwi4GrOWWl8ceulatPE=;
+        b=qTo1SR2xkEIvCtTHi73MrWbewkNPzx4kLYNoISkEwbhhACvsBC+MkvsnOTkG0RWKTW
+         1lvwdD5dn0hBmpW/nx/QoxIlCQSwoUM4VXMpqpSwpv4ZRRU6+czJ4yPoFc5mSBuHwMEN
+         znOvfCRhbZOkQ3q8L2gTTdkOHLHcG7BX1e0hs+o8adGE2J1b6Ekd8VoJFJ0gL/BnSC1T
+         oxCNPdQn+udt+Q6gh2cwP+/gqF9VFemC/O2oIj4BmYM6yJGgx8/sFScUFzPMLg78Rzf1
+         oAbTadqjTwhIulvOlnvso2qmP4+WY4ObSy83vb93RhxzuGZvbOILJoZNBhTGvwelGO27
+         Gy7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW6pYmtTq8E6bSKE32VG0IDZpg2aN0YbTXsYY2dU1VckvDEzMZ+sD7VBFroZ98w9upqsEsYPPi7sY9lLjOeQLzs1kWz0ohUF5kVq7pQ
+X-Gm-Message-State: AOJu0YyfUlb/g7rSLXOuUpq0jXVTmd+S4OmMMNaKaJZTEqHdQ8SpacdH
+	UazN1DsrDrnA5EZWwfGD9rdrgL8OdT7Y6AXzx+zGCgJxUQnI1gFbGGlkm4HT2CRevtlfVrbq2Qr
+	6eQSweYf60ePxOxLjZD384Ox1QSbYDJvQb6IShBMwrjQIsWLmUVo2AqoDDsqnTtKXptshyRCCFp
+	PJkg==
+X-Received: by 2002:a05:6512:230a:b0:52e:a63d:e5c1 with SMTP id 2adb3069b0e04-532eda83586mr1580865e87.30.1723635687506;
+        Wed, 14 Aug 2024 04:41:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfI4f7MYsqVeqcum/urkA2c8ZrkB367gdfi8exfw6an4iZX6W6jbiZZlbDbsNeu4towZFUWg==
+X-Received: by 2002:a05:6512:230a:b0:52e:a63d:e5c1 with SMTP id 2adb3069b0e04-532eda83586mr1580842e87.30.1723635686883;
+        Wed, 14 Aug 2024 04:41:26 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa782csm162586166b.60.2024.08.14.04.41.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa782csm162586166b.60.2024.08.14.04.41.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 04:41:23 -0700 (PDT)
+        Wed, 14 Aug 2024 04:41:26 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -86,9 +86,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/9] fs/fuse: support idmap for mkdir/mknod/symlink/create
-Date: Wed, 14 Aug 2024 13:40:27 +0200
-Message-Id: <20240814114034.113953-3-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v2 3/9] fs/fuse: support idmapped getattr inode op
+Date: Wed, 14 Aug 2024 13:40:28 +0200
+Message-Id: <20240814114034.113953-4-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
@@ -100,8 +100,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We have all the infrastructure in place, we just need
-to pass an idmapping here.
+We have to:
+- pass an idmapping to the generic_fillattr()
+to properly handle UIG/GID mapping for the userspace.
+- pass -/- to fuse_fillattr() (analog of generic_fillattr() in fuse).
+
+Difference between these two is that generic_fillattr() takes all
+the stat() data from the inode directly, while fuse_fillattr() codepath
+takes a fresh data just from the userspace reply on the FUSE_GETATTR request.
+
+In some cases we can just pass &nop_mnt_idmap, because idmapping won't
+be used in these codepaths. For example, when 3rd argument of fuse_do_getattr()
+is NULL then idmap argument is not used.
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
@@ -111,135 +121,147 @@ Cc: Bernd Schubert <bschubert@ddn.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
- fs/fuse/dir.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+ fs/fuse/dir.c | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 30d27d4f3b5a..1e45c6157af4 100644
+index 1e45c6157af4..a5bf8c18a0ae 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -637,9 +637,9 @@ static void free_ext_value(struct fuse_args *args)
-  * If the filesystem doesn't support this, then fall back to separate
-  * 'mknod' + 'open' requests.
-  */
--static int fuse_create_open(struct inode *dir, struct dentry *entry,
--			    struct file *file, unsigned int flags,
--			    umode_t mode, u32 opcode)
-+static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
-+			    struct dentry *entry, struct file *file,
-+			    unsigned int flags, umode_t mode, u32 opcode)
- {
- 	int err;
- 	struct inode *inode;
-@@ -696,7 +696,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	args.out_args[1].size = sizeof(*outopenp);
- 	args.out_args[1].value = outopenp;
- 
--	err = get_create_ext(&nop_mnt_idmap, &args, dir, entry, mode);
-+	err = get_create_ext(idmap, &args, dir, entry, mode);
- 	if (err)
- 		goto out_put_forget_req;
- 
-@@ -757,6 +757,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 			    umode_t mode)
- {
- 	int err;
-+	struct mnt_idmap *idmap = file_mnt_idmap(file);
- 	struct fuse_conn *fc = get_fuse_conn(dir);
- 	struct dentry *res = NULL;
- 
-@@ -781,7 +782,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 	if (fc->no_create)
- 		goto mknod;
- 
--	err = fuse_create_open(dir, entry, file, flags, mode, FUSE_CREATE);
-+	err = fuse_create_open(idmap, dir, entry, file, flags, mode, FUSE_CREATE);
- 	if (err == -ENOSYS) {
- 		fc->no_create = 1;
- 		goto mknod;
-@@ -792,7 +793,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+@@ -1157,18 +1157,22 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
  	return err;
+ }
  
- mknod:
--	err = fuse_mknod(&nop_mnt_idmap, dir, entry, mode, 0);
-+	err = fuse_mknod(idmap, dir, entry, mode, 0);
- 	if (err)
- 		goto out_dput;
- no_open:
-@@ -802,9 +803,9 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- /*
-  * Code shared between mknod, mkdir, symlink and link
-  */
--static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
--			    struct inode *dir, struct dentry *entry,
--			    umode_t mode)
-+static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *fm,
-+			    struct fuse_args *args, struct inode *dir,
-+			    struct dentry *entry, umode_t mode)
+-static void fuse_fillattr(struct inode *inode, struct fuse_attr *attr,
+-			  struct kstat *stat)
++static void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
++			  struct fuse_attr *attr, struct kstat *stat)
  {
- 	struct fuse_entry_out outarg;
- 	struct inode *inode;
-@@ -826,7 +827,7 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
- 	args->out_args[0].value = &outarg;
+ 	unsigned int blkbits;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
++	vfsuid_t vfsuid = make_vfsuid(idmap, fc->user_ns,
++				      make_kuid(fc->user_ns, attr->uid));
++	vfsgid_t vfsgid = make_vfsgid(idmap, fc->user_ns,
++				      make_kgid(fc->user_ns, attr->gid));
  
- 	if (args->opcode != FUSE_LINK) {
--		err = get_create_ext(&nop_mnt_idmap, args, dir, entry, mode);
-+		err = get_create_ext(idmap, args, dir, entry, mode);
- 		if (err)
- 			goto out_put_forget_req;
+ 	stat->dev = inode->i_sb->s_dev;
+ 	stat->ino = attr->ino;
+ 	stat->mode = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
+ 	stat->nlink = attr->nlink;
+-	stat->uid = make_kuid(fc->user_ns, attr->uid);
+-	stat->gid = make_kgid(fc->user_ns, attr->gid);
++	stat->uid = vfsuid_into_kuid(vfsuid);
++	stat->gid = vfsgid_into_kgid(vfsgid);
+ 	stat->rdev = inode->i_rdev;
+ 	stat->atime.tv_sec = attr->atime;
+ 	stat->atime.tv_nsec = attr->atimensec;
+@@ -1207,8 +1211,8 @@ static void fuse_statx_to_attr(struct fuse_statx *sx, struct fuse_attr *attr)
+ 	attr->blksize = sx->blksize;
+ }
+ 
+-static int fuse_do_statx(struct inode *inode, struct file *file,
+-			 struct kstat *stat)
++static int fuse_do_statx(struct mnt_idmap *idmap, struct inode *inode,
++			 struct file *file, struct kstat *stat)
+ {
+ 	int err;
+ 	struct fuse_attr attr;
+@@ -1261,15 +1265,15 @@ static int fuse_do_statx(struct inode *inode, struct file *file,
+ 		stat->result_mask = sx->mask & (STATX_BASIC_STATS | STATX_BTIME);
+ 		stat->btime.tv_sec = sx->btime.tv_sec;
+ 		stat->btime.tv_nsec = min_t(u32, sx->btime.tv_nsec, NSEC_PER_SEC - 1);
+-		fuse_fillattr(inode, &attr, stat);
++		fuse_fillattr(idmap, inode, &attr, stat);
+ 		stat->result_mask |= STATX_TYPE;
  	}
-@@ -892,13 +893,13 @@ static int fuse_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	args.in_args[0].value = &inarg;
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
--	return create_new_entry(fm, &args, dir, entry, mode);
-+	return create_new_entry(idmap, fm, &args, dir, entry, mode);
+ 
+ 	return 0;
  }
  
- static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
- 		       struct dentry *entry, umode_t mode, bool excl)
+-static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
+-			   struct file *file)
++static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
++			   struct kstat *stat, struct file *file)
  {
--	return fuse_mknod(&nop_mnt_idmap, dir, entry, mode, 0);
-+	return fuse_mknod(idmap, dir, entry, mode, 0);
+ 	int err;
+ 	struct fuse_getattr_in inarg;
+@@ -1308,15 +1312,15 @@ static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
+ 					       ATTR_TIMEOUT(&outarg),
+ 					       attr_version);
+ 			if (stat)
+-				fuse_fillattr(inode, &outarg.attr, stat);
++				fuse_fillattr(idmap, inode, &outarg.attr, stat);
+ 		}
+ 	}
+ 	return err;
  }
  
- static int fuse_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
-@@ -910,7 +911,7 @@ static int fuse_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 	if (fc->no_tmpfile)
- 		return -EOPNOTSUPP;
+-static int fuse_update_get_attr(struct inode *inode, struct file *file,
+-				struct kstat *stat, u32 request_mask,
+-				unsigned int flags)
++static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
++				struct file *file, struct kstat *stat,
++				u32 request_mask, unsigned int flags)
+ {
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+@@ -1347,17 +1351,17 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
+ 		forget_all_cached_acls(inode);
+ 		/* Try statx if BTIME is requested */
+ 		if (!fc->no_statx && (request_mask & ~STATX_BASIC_STATS)) {
+-			err = fuse_do_statx(inode, file, stat);
++			err = fuse_do_statx(idmap, inode, file, stat);
+ 			if (err == -ENOSYS) {
+ 				fc->no_statx = 1;
+ 				err = 0;
+ 				goto retry;
+ 			}
+ 		} else {
+-			err = fuse_do_getattr(inode, stat, file);
++			err = fuse_do_getattr(idmap, inode, stat, file);
+ 		}
+ 	} else if (stat) {
+-		generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
++		generic_fillattr(idmap, request_mask, inode, stat);
+ 		stat->mode = fi->orig_i_mode;
+ 		stat->ino = fi->orig_ino;
+ 		if (test_bit(FUSE_I_BTIME, &fi->state)) {
+@@ -1371,7 +1375,7 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
  
--	err = fuse_create_open(dir, file->f_path.dentry, file, file->f_flags, mode, FUSE_TMPFILE);
-+	err = fuse_create_open(idmap, dir, file->f_path.dentry, file, file->f_flags, mode, FUSE_TMPFILE);
- 	if (err == -ENOSYS) {
- 		fc->no_tmpfile = 1;
- 		err = -EOPNOTSUPP;
-@@ -937,7 +938,7 @@ static int fuse_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	args.in_args[0].value = &inarg;
- 	args.in_args[1].size = entry->d_name.len + 1;
- 	args.in_args[1].value = entry->d_name.name;
--	return create_new_entry(fm, &args, dir, entry, S_IFDIR);
-+	return create_new_entry(idmap, fm, &args, dir, entry, S_IFDIR);
+ int fuse_update_attributes(struct inode *inode, struct file *file, u32 mask)
+ {
+-	return fuse_update_get_attr(inode, file, NULL, mask, 0);
++	return fuse_update_get_attr(&nop_mnt_idmap, inode, file, NULL, mask, 0);
  }
  
- static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
-@@ -953,7 +954,7 @@ static int fuse_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	args.in_args[0].value = entry->d_name.name;
- 	args.in_args[1].size = len;
- 	args.in_args[1].value = link;
--	return create_new_entry(fm, &args, dir, entry, S_IFLNK);
-+	return create_new_entry(idmap, fm, &args, dir, entry, S_IFLNK);
+ int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
+@@ -1515,7 +1519,7 @@ static int fuse_perm_getattr(struct inode *inode, int mask)
+ 		return -ECHILD;
+ 
+ 	forget_all_cached_acls(inode);
+-	return fuse_do_getattr(inode, NULL, NULL);
++	return fuse_do_getattr(&nop_mnt_idmap, inode, NULL, NULL);
  }
  
- void fuse_flush_time_update(struct inode *inode)
-@@ -1147,7 +1148,7 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
- 	args.in_args[0].value = &inarg;
- 	args.in_args[1].size = newent->d_name.len + 1;
- 	args.in_args[1].value = newent->d_name.name;
--	err = create_new_entry(fm, &args, newdir, newent, inode->i_mode);
-+	err = create_new_entry(&nop_mnt_idmap, fm, &args, newdir, newent, inode->i_mode);
- 	if (!err)
- 		fuse_update_ctime_in_cache(inode);
- 	else if (err == -EINTR)
+ /*
+@@ -2094,7 +2098,7 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
+ 			 * ia_mode calculation may have used stale i_mode.
+ 			 * Refresh and recalculate.
+ 			 */
+-			ret = fuse_do_getattr(inode, NULL, file);
++			ret = fuse_do_getattr(idmap, inode, NULL, file);
+ 			if (ret)
+ 				return ret;
+ 
+@@ -2151,7 +2155,7 @@ static int fuse_getattr(struct mnt_idmap *idmap,
+ 		return -EACCES;
+ 	}
+ 
+-	return fuse_update_get_attr(inode, NULL, stat, request_mask, flags);
++	return fuse_update_get_attr(idmap, inode, NULL, stat, request_mask, flags);
+ }
+ 
+ static const struct inode_operations fuse_dir_inode_operations = {
 -- 
 2.34.1
 
