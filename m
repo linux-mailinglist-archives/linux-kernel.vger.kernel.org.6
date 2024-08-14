@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-286103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BDC951681
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:21:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F48A951682
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 856AEB2129D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05FC8285CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B98146D79;
-	Wed, 14 Aug 2024 08:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2F51494C8;
+	Wed, 14 Aug 2024 08:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L9iGdTF3"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fIQCuJVY"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3444D142E86
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D2E143C50
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723623596; cv=none; b=Sb5kmsuN5XnD1ItccsIIPNPmfYABwN+iMxZwtX5U8KHMJmG5J1yfUjYIRH57IQTLRwFdYBK0rXgHTdcrEtntEiVSDmyxxrhiL/bA/nPZhC8qYF6TGGyFXl2emRBIs2/ADZQXp92C2QAZg2TBhH2b+YspHM0yr8EKV5JWPNrnUis=
+	t=1723623597; cv=none; b=D/shYBS0FtnNoc29ihS5W0c612gbOXQITylR5cb0ajYUk2bhguB6IjvkdZseMKynjtoKBAQjMG5cMHcOSOBDPKFHC6tOYp5916oAGupJZcXzd0j0OQiQy36VhUZhIW1+XTX8PcIEqp1l092p/y8H77WXc/JZ4/OK4rcpZ+j82ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723623596; c=relaxed/simple;
-	bh=ha2LReeTda/VFQ8tThojZzBeyjNxSlOLJhSv50oIqfY=;
+	s=arc-20240116; t=1723623597; c=relaxed/simple;
+	bh=OgrIZaRglaW9lLIYFQvj2Tj4ljYg7ePzSg0Mkmo6f9o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AMibzDPDBGYUtoAlsBISWR5fC6RD3k4bMTLgM4oWQlbIwHv04uXKrFlgFSla3jPteh8PJGlvevM2iqwsQDoY15BNZ7Jq2YJQ0guAXZ5v6R3AzIvkB9gAxjkzLgZKM95jC8oimXC5BHLjSyfSVyTKhtdjFjT3mn/iSMxYaNN3+LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L9iGdTF3; arc=none smtp.client-ip=217.70.183.198
+	 In-Reply-To:To:Cc; b=CUAMjg3675PVCwsgHGlvrIu+qiXk+iOVZKI4ggUV9PRJqc5eWqWvTzAtfQQGwi2kubZnlSqP/q3jJv+spKl60lH5egXQMEoByWSWwg86CK5WNLmI0J7IqhNCDxa/lWu1RsuFulEzokv8/MtZYp8c5hUZgFL9UVaemb7ik7ueLOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fIQCuJVY; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 84ED9C000B;
-	Wed, 14 Aug 2024 08:19:51 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AD01CC000F;
+	Wed, 14 Aug 2024 08:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723623592;
+	t=1723623593;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=op2K3KJoi4MhR/F0QxDi5rBLi6a6hU0wv7s1ktIoY50=;
-	b=L9iGdTF34KOZdzBG1/ai19BeeUaiivpb9TfcXhXksIt4+HndamrKZX4LR/BzRljldYCByP
-	1qK1L5fy5n0zpOK/yOJmSLv2xUkgcxo5hLGDQYafmAXAtxH8asXbggIdlrbhRDDPzbRbGO
-	5hBcLu4hkBRWIvECnb8PiftwVzBbuLWZoY/Tz7mBTmEBYBXO7THpXqS3r/7tCvTk+gaCm9
-	/7LQI5DSNNMk9xV+1n4a75vatvPy2iHZhKlVb9omPXZClQUcLjvV57PwcpdcezWleY2Hek
-	jTPy0v6xz5T52HfCu8KazzgxXzV0sqPRemsamZ+bnNvgxUduiLtWY0ZO+jDm+g==
+	bh=+XLqR/82ccZGaCcoGlm+qk8KiKsKQqQDLhoRWrH/3Qw=;
+	b=fIQCuJVYWFiym+vsfPj9/bh1x3x0I6iIQY2PaYQDdM0HkCGOXcPXj8juqukgl6X5aXKfgS
+	reqeIvbrYRK0IML+I5qCr2TxSqRSPNAZ3uwvV+BqewlEUxCgavcPxTSLY9Du8/LkwboydO
+	baRYASH3yyqKv0vHuqsoPmXu52oAkBVHkCYkoK+5sEwxHpluAAUjjZzCiC1znqNNWfm72G
+	eURm1xmd/Qj6tSid0yzrm/Nkh7yosmKmZyDGI9ZmaIXx8B7Iv9JBdLweZ/F7T118prsPt7
+	qSA54erw94R1RU5slvREJ7yG/28le1RXiLkz6EE5qXexcydN0O0j//NoFTaQHw==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 14 Aug 2024 10:19:39 +0200
-Subject: [PATCH v2 6/8] drm/vkms: Change YUV helpers to support u16 inputs
- for conversion
+Date: Wed, 14 Aug 2024 10:19:40 +0200
+Subject: [PATCH v2 7/8] drm/vkms: Create helper macro for YUV formats
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-b4-new-color-formats-v2-6-8b3499cfe90e@bootlin.com>
+Message-Id: <20240814-b4-new-color-formats-v2-7-8b3499cfe90e@bootlin.com>
 References: <20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com>
 In-Reply-To: <20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com>
 To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
@@ -73,125 +72,131 @@ Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
  Louis Chauvet <louis.chauvet@bootlin.com>, 
  20240809-yuv-v10-0-1a7c764166f7@bootlin.com
 X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4712;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5213;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=ha2LReeTda/VFQ8tThojZzBeyjNxSlOLJhSv50oIqfY=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvGifkl3EcsSGMWWw0rL0DS9JEhtBFSZQVitS9
- aNihFUnPw6JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrxonwAKCRAgrS7GWxAs
- 4mtDEACBrb3u6N4EDMd2GHsp9+dp9EUu6PBQiuxKyvc3NS6LDtXIcrA2W9S6YjAj1XsqZBXmhMV
- 55/lZnRYFs3SBXKZLkuMKqE0th4uDj8xp1goZPNsrBnYnS2Qm4NeqnmQGOcZfdYCX+GxxDYij6L
- IcCHLjdJwOKCTwhqIMz88NQS306FmlyQzU+n8XFa9Zgw4pAYY8LSfv6q5xj7Qr/F70dHIoaIwVv
- glOVF8OdoJ59UJqqIuV+N1tJA2GXohYHTeeHoRFU6Upoo7cp9DuooUSvIl3JSqxSLcwIab9AxIa
- VhftYaxyGRVXaaNA3+o4tnckY9v/RsER6xfGyzWPV0TOtEE/gviLTcPctgFQ9G0eAhLjDHN9Rpo
- vKGUtTo3ZWqGo7Pfwe1aBX5e6OyF0BDPco4wtKhk9sJdD+/MEjkGIJYnYcnXKC093+zXHou0LaI
- FGy7C++n4ePGbijz1skKktjxS5x14OO7pN8SA/AMmwqXHLb663xNKPsb5dD0d7QKFDKC/PRlNpT
- g7seJbb9KGTJoWFad7M0Z9yLueQoPhPJWK1UMvPtyYt3ddqvEp016Kc8RwDlKqkKENGj+EGgSpi
- 3YuYEu3fQKcp92ILfXQP0wJRZWLeumJxU5OFXDEkoKabmaiLfO0etm4KknzsG8fX8/wEARIuLF0
- By3BoeRf3V6HL0Q==
+ bh=OgrIZaRglaW9lLIYFQvj2Tj4ljYg7ePzSg0Mkmo6f9o=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvGifM8NYxhUiKoSs23U/LpjvqGyqrDYoxHbj3
+ hJ7zOsBCgmJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrxonwAKCRAgrS7GWxAs
+ 4jf2EADIi8Dvo8G79mSzjEY5OGDg9gA4G5cjEl0QCIIoZLsaTjw2XYGIip37qcWZlk0+A2P9hw4
+ MA2+XAYPU1lKCSBA0iRiP6XXbiyq5tGUxsBsTSB/kc1biK6KwkqBCkBx52m0GuFOjzMxXvUB9kK
+ Urzj1UYGAD3JJISTJo4h4ffS7IQQxnNCQFg0avDlKw37olEvhGAXy03WI1K5tDz+797UEwqsMOb
+ 50oq3sRL7sggppy/lmgvF8Ywzi1jQnyRCgVPqA1rjffJQYKX9eKIxCzj2vijE5+nfLNo7MtemW3
+ Xceq/rnX/g5pP3Zu/v9AdQhT6xO5N4CHweS8As3CLfaGaQvvyYfqeaVqQtW+gy47RiGXeiKwYUV
+ +afsyYzBId05zdreqlrkxOlHmeFKSGWFBD+i3NA1OnXu+dsdjrfhTqx38aODQVSH2/+FJy/KkFY
+ LpEiWT2tLbUHOdsAaVcG45LpVJdD+IAF2ENylbSU5uN+W/L7Jb0piruF3wtCsx/GjxkaFPdFDdk
+ 1UOhf1OxmelZdYJzNTmggFhfsuJeUIOrjpBn0g3Hb+BttgxWLXZVEqk74VvYNNlmlxhMFnWJQ40
+ +y53JkJQetkD1vYUnbPVpht1mXO9Rm1UInJuX/J37M13hHlqQc3F7Fzz584p936XT6fbpC/SkWo
+ 3a9rPa9ufHETwDg==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-Some YUV format uses 16 bit values, so change the helper function for
-conversion to support those new formats.
-
-Add support for the YUV format P010
+The callback functions for line conversion are almost identical for
+semi-planar formats. The generic READ_LINE_YUV_SEMIPLANAR macro
+generate all the required boilerplate to process a line from a
+semi-planar format.
 
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- drivers/gpu/drm/vkms/tests/vkms_format_test.c |  3 ++-
- drivers/gpu/drm/vkms/vkms_formats.c           | 22 ++++++++++++----------
- drivers/gpu/drm/vkms/vkms_formats.h           |  4 ++--
- 3 files changed, 16 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/vkms/vkms_formats.c | 75 ++++++++++++++++++++++++-------------
+ 1 file changed, 48 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/tests/vkms_format_test.c b/drivers/gpu/drm/vkms/tests/vkms_format_test.c
-index 351409897ca3..e3a77954e6dc 100644
---- a/drivers/gpu/drm/vkms/tests/vkms_format_test.c
-+++ b/drivers/gpu/drm/vkms/tests/vkms_format_test.c
-@@ -188,7 +188,8 @@ static void vkms_format_test_yuv_u8_to_argb_u16(struct kunit *test)
- 		get_conversion_matrix_to_argb_u16
- 			(DRM_FORMAT_NV12, param->encoding, param->range, &matrix);
- 
--		argb = argb_u16_from_yuv888(color->yuv.y, color->yuv.u, color->yuv.v, &matrix);
-+		argb = argb_u16_from_yuv161616(&matrix, color->yuv.y * 257, color->yuv.u * 257,
-+					       color->yuv.v * 257);
- 
- 		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.a, color->argb.a), 257,
- 				    "On the A channel of the color %s expected 0x%04x, got 0x%04x",
 diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index b7c378552340..71aae2397c5f 100644
+index 71aae2397c5f..129672a555ce 100644
 --- a/drivers/gpu/drm/vkms/vkms_formats.c
 +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -277,16 +277,17 @@ static struct pixel_argb_u16 argb_u16_from_BGR565(const __le16 *pixel)
- 	return out_pixel;
+@@ -484,35 +484,56 @@ READ_LINE(R8_read_line, px, u8, argb_u16_from_gray8, *px)
+  * - Convert YUV and YVU with the same function (a column swap is needed when setting up
+  * plane->conversion_matrix)
+  */
+-static void semi_planar_yuv_read_line(const struct vkms_plane_state *plane, int x_start,
+-				      int y_start, enum pixel_read_direction direction, int count,
+-				      struct pixel_argb_u16 out_pixel[])
+-{
+-	u8 *y_plane;
+-	u8 *uv_plane;
+-
+-	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0,
+-			       &y_plane);
+-	packed_pixels_addr_1x1(plane->frame_info,
+-			       x_start / plane->frame_info->fb->format->hsub,
+-			       y_start / plane->frame_info->fb->format->vsub, 1,
+-			       &uv_plane);
+-	int step_y = get_block_step_bytes(plane->frame_info->fb, direction, 0);
+-	int step_uv = get_block_step_bytes(plane->frame_info->fb, direction, 1);
+-	int subsampling = get_subsampling(plane->frame_info->fb->format, direction);
+-	int subsampling_offset = get_subsampling_offset(direction, x_start, y_start);
+-	const struct conversion_matrix *conversion_matrix = &plane->conversion_matrix;
+ 
+-	for (int i = 0; i < count; i++) {
+-		*out_pixel = argb_u16_from_yuv161616(conversion_matrix, y_plane[0] * 257,
+-						     uv_plane[0] * 257, uv_plane[1] * 257);
+-		out_pixel += 1;
+-		y_plane += step_y;
+-		if ((i + subsampling_offset + 1) % subsampling == 0)
+-			uv_plane += step_uv;
+-	}
++/**
++ * READ_LINE_YUV_SEMIPLANAR() - Generic generator for a read_line function which can be used for yuv
++ * formats with two planes and block_w == block_h == 1.
++ *
++ * @function_name: Function name to generate
++ * @pixel_1_name: temporary pixel name for the first plane used in the @__VA_ARGS__ parameters
++ * @pixel_2_name: temporary pixel name for the second plane used in the @__VA_ARGS__ parameters
++ * @pixel_1_type: Used to specify the type you want to cast the pixel pointer on the plane 1
++ * @pixel_2_type: Used to specify the type you want to cast the pixel pointer on the plane 2
++ * @callback: Callback to call for each pixels. This function should take
++ *            (struct conversion_matrix*, @__VA_ARGS__) as parameter and return a pixel_argb_u16
++ * @__VA_ARGS__: Argument to pass inside the callback. You can use @pixel_1_name and @pixel_2_name
++ *               to access current pixel values
++ */
++#define READ_LINE_YUV_SEMIPLANAR(function_name, pixel_1_name, pixel_2_name, pixel_1_type,	\
++				 pixel_2_type, callback, ...)					\
++static void function_name(const struct vkms_plane_state *plane, int x_start,			\
++		 int y_start, enum pixel_read_direction direction, int count,			\
++		 struct pixel_argb_u16 out_pixel[])						\
++{												\
++	u8 *plane_1;										\
++	u8 *plane_2;										\
++												\
++	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0,				\
++			       &plane_1);							\
++	packed_pixels_addr_1x1(plane->frame_info,						\
++			       x_start / plane->frame_info->fb->format->hsub,			\
++			       y_start / plane->frame_info->fb->format->vsub, 1,		\
++			       &plane_2);							\
++	int step_1 = get_block_step_bytes(plane->frame_info->fb, direction, 0);			\
++	int step_2 = get_block_step_bytes(plane->frame_info->fb, direction, 1);			\
++	int subsampling = get_subsampling(plane->frame_info->fb->format, direction);		\
++	int subsampling_offset = get_subsampling_offset(direction, x_start, y_start);		\
++	const struct conversion_matrix *conversion_matrix = &plane->conversion_matrix;		\
++												\
++	for (int i = 0; i < count; i++) {							\
++		pixel_1_type *(pixel_1_name) = (pixel_1_type *)plane_1;				\
++		pixel_2_type *(pixel_2_name) = (pixel_2_type *)plane_2;				\
++		*out_pixel = (callback)(conversion_matrix, __VA_ARGS__);			\
++		out_pixel += 1;									\
++		plane_1 += step_1;								\
++		if ((i + subsampling_offset + 1) % subsampling == 0)				\
++			plane_2 += step_2;							\
++	}											\
  }
  
--VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
--							    const struct conversion_matrix *matrix)
-+VISIBLE_IF_KUNIT
-+struct pixel_argb_u16 argb_u16_from_yuv161616(const struct conversion_matrix *matrix,
-+					      u16 y, u16 channel_1, u16 channel_2)
- {
- 	u16 r, g, b;
- 	s64 fp_y, fp_channel_1, fp_channel_2;
- 	s64 fp_r, fp_g, fp_b;
- 
--	fp_y = drm_int2fixp(((int)y - matrix->y_offset) * 257);
--	fp_channel_1 = drm_int2fixp(((int)channel_1 - 128) * 257);
--	fp_channel_2 = drm_int2fixp(((int)channel_2 - 128) * 257);
-+	fp_y = drm_int2fixp((int)y - matrix->y_offset * 257);
-+	fp_channel_1 = drm_int2fixp((int)channel_1 - 128 * 257);
-+	fp_channel_2 = drm_int2fixp((int)channel_2 - 128 * 257);
- 
- 	fp_r = drm_fixp_mul(matrix->matrix[0][0], fp_y) +
- 	       drm_fixp_mul(matrix->matrix[0][1], fp_channel_1) +
-@@ -308,7 +309,7 @@ VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1,
- 
- 	return argb_u16_from_u16161616(0xffff, r, g, b);
- }
--EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
-+EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv161616);
- 
- /**
-  * READ_LINE() - Generic generator for a read_line function which can be used for format with one
-@@ -503,8 +504,8 @@ static void semi_planar_yuv_read_line(const struct vkms_plane_state *plane, int
- 	const struct conversion_matrix *conversion_matrix = &plane->conversion_matrix;
- 
- 	for (int i = 0; i < count; i++) {
--		*out_pixel = argb_u16_from_yuv888(y_plane[0], uv_plane[0], uv_plane[1],
--						  conversion_matrix);
-+		*out_pixel = argb_u16_from_yuv161616(conversion_matrix, y_plane[0] * 257,
-+						     uv_plane[0] * 257, uv_plane[1] * 257);
- 		out_pixel += 1;
- 		y_plane += step_y;
- 		if ((i + subsampling_offset + 1) % subsampling == 0)
-@@ -548,8 +549,9 @@ static void planar_yuv_read_line(const struct vkms_plane_state *plane, int x_sta
- 	const struct conversion_matrix *conversion_matrix = &plane->conversion_matrix;
- 
- 	for (int i = 0; i < count; i++) {
--		*out_pixel = argb_u16_from_yuv888(*y_plane, *channel_1_plane, *channel_2_plane,
--						  conversion_matrix);
-+		*out_pixel = argb_u16_from_yuv161616(conversion_matrix,
-+						     *y_plane * 257, *channel_1_plane * 257,
-+						     *channel_2_plane * 257);
- 		out_pixel += 1;
- 		y_plane += step_y;
- 		if ((i + subsampling_offset + 1) % subsampling == 0) {
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
-index b4fe62ab9c65..eeb208cdd6b1 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.h
-+++ b/drivers/gpu/drm/vkms/vkms_formats.h
-@@ -14,8 +14,8 @@ void get_conversion_matrix_to_argb_u16(u32 format, enum drm_color_encoding encod
- 				       struct conversion_matrix *matrix);
- 
- #if IS_ENABLED(CONFIG_KUNIT)
--struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
--					   const struct conversion_matrix *matrix);
-+struct pixel_argb_u16 argb_u16_from_yuv161616(const struct conversion_matrix *matrix,
-+					      u16 y, u16 channel_1, u16 channel_2);
- #endif
- 
- #endif /* _VKMS_FORMATS_H_ */
++READ_LINE_YUV_SEMIPLANAR(YUV888_semiplanar_read_line, y, uv, u8, u8, argb_u16_from_yuv161616,
++			 y[0] * 257, uv[0] * 257, uv[1] * 257)
++
+ /*
+  * This callback can be used for YUV format where each color component is
+  * stored in a different plane (often called planar formats). It will
+@@ -704,7 +725,7 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
+ 	case DRM_FORMAT_NV21:
+ 	case DRM_FORMAT_NV61:
+ 	case DRM_FORMAT_NV42:
+-		return &semi_planar_yuv_read_line;
++		return &YUV888_semiplanar_read_line;
+ 	case DRM_FORMAT_YUV420:
+ 	case DRM_FORMAT_YUV422:
+ 	case DRM_FORMAT_YUV444:
 
 -- 
 2.44.2
