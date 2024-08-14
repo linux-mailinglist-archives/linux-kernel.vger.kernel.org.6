@@ -1,75 +1,65 @@
-Return-Path: <linux-kernel+bounces-286522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76150951C04
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E18951C0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEC9CB27636
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:40:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0391F25E2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E8F1B1432;
-	Wed, 14 Aug 2024 13:40:34 +0000 (UTC)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375761B143E;
+	Wed, 14 Aug 2024 13:41:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569BC1AE031;
-	Wed, 14 Aug 2024 13:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE5D1AE031
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723642834; cv=none; b=KWL2b0WOvU+7X7l4zWB4qwOBaa4zMWOsuXrpSM6HqDVV7fp+/u69IjQtHi+eek/bM7hQ1J/9cH8hKElNodL5Vu5uZsr3TqMgex/cV/6i3ijAWzmRCvojBWK6CNczhsjL/0hyMOrPWFVJ6YW0s6SHQHg4i+cBWTY6MxbLF2Zhk9s=
+	t=1723642878; cv=none; b=ZxjyNVnnSIWzAPc2XJW1dfal5qbhRYg03bZkpiCNq57+Owj8qYHR34jXXuQJdASdFfpb0ZHlYbEy1GN0UZjAmv62MLsROodDBrdOVQf6QiV4wO4G9r7Ak7pIQMCLOncErPK1//KQGq0xx4rc1Jlw91cN/tahHSah1a+Q47stGOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723642834; c=relaxed/simple;
-	bh=OF+5roG2XR0AnG5rwzzhSa8RYuRbguWPK7v7qCsDHA4=;
+	s=arc-20240116; t=1723642878; c=relaxed/simple;
+	bh=zOjk6hGGDth6yc75Nnd1oYyWL8+rID/sW43+5mDPxXI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6gmLtWEALJfpp0ZckARvk3keRA2J6Yv5e8N0qwhD+cIvGNxdJFz8CHOX3FJQ/j52o/nypBewl4gQwi0wnCb3nU4bnf6tTHzFTtbquEWx6/GTuI16w7xTTADIfyBhXsL/KXE1Y0hQMblyA5m2BZChRh0pVMk0cxMpspDic1JSWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f15e48f35bso66310071fa.0;
-        Wed, 14 Aug 2024 06:40:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723642830; x=1724247630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DceD3bC3bhVPlvpzxDF7BFEfUKClk7sJV1xP1ejwJIA=;
-        b=DbRAOOyoApHOuClrZvvP3rlDxmVBocsxSpeEUUXXFme+7mMfqESmVsFT8raztLUixe
-         wSIHihqar7dAXYVRc/HRaFiMbuyKbupxXrGYQzmEx9CxgC0rzLTaagXsl9qGRWtj2Z+G
-         V3uRi64cmFyVopQyYRkZ5O6uNQkZ3g5qgXTOd4ZwNWWm7/A6YNbW9Y1jnfu3pJWLvI74
-         g5XHQuc40UonTomUBSHOekfyDdin5S0/0/lcXyvcT40zKY074WXx886IePeInlw2PjnI
-         q/tasla0ygnmQ6nM6Lr5bxa1TtHygxVG/pMSrCp43ChmzskirJhRNQ49mwBiLY8uPyLc
-         63VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMYeXSl5J5UCTwK8KqCLwJqfLoKu/WkqRd71Ci9sKpNDoh22A9ddmlP8ZuRnQHhVTQ5tAehusI0GaG/L/vzBH+vA9kwRdNmbfG9xDdjpkKeuzGxY3l4+E7H4psQS4M0xM8jkcJKfL2FoMauUb+aiKkCE+aJm1dzJWDabqNWFkPepG24Po=
-X-Gm-Message-State: AOJu0YyHxp0MsAXLYCvVIexUCshQ6z5xOpe9SRT4Oy3tyLrf3mAWNZcO
-	803dYfnVPhHF1kz2Aq61IdPYSGX9spiCQTP+m9FxGqXgvhvbG4Q8
-X-Google-Smtp-Source: AGHT+IGJ8jImNPZGot03z9mnFcBF4yB4Hp9oIBkAtcB4csqaVkpQHEfF3UZV4DewNQ+K7P3NtM8GFw==
-X-Received: by 2002:a2e:9942:0:b0:2ef:2e59:11dc with SMTP id 38308e7fff4ca-2f3aa1ca28bmr18039971fa.25.1723642829875;
-        Wed, 14 Aug 2024 06:40:29 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd196a5a0asm3892294a12.42.2024.08.14.06.40.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 06:40:29 -0700 (PDT)
-Date: Wed, 14 Aug 2024 06:40:27 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] Do not mark ACPI devices as irq safe
-Message-ID: <Zryzy9hpT1wyZdLZ@gmail.com>
-References: <20240813161254.3509409-1-leitao@debian.org>
- <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
- <ZrxvOr6O8weK5cB6@gmail.com>
- <7cudtahr26xrfn5uccmvtiv3ngyccu3wcrky4evxdstubz34hf@wtxzjv4z4g4w>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s7ajguN/sqAiL1Q46br8G0IaAFmtUD6UVfkYo+FtyNU6BOYG2d7Ut0KzWCssim8GdSGdZCueAOes3clEvYtzqk2AKclW3GsybGA8uNj6iNs32WGsxcMHg5MqhEfWq/OOnUWX0Yk4i6ipDP35yqv8gyEbUm7aQpiU9G6d9iCFVe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1seEFL-00064z-Vs; Wed, 14 Aug 2024 15:41:04 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1seEFL-000N7l-8p; Wed, 14 Aug 2024 15:41:03 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1seEFL-002ZXT-0V;
+	Wed, 14 Aug 2024 15:41:03 +0200
+Date: Wed, 14 Aug 2024 15:41:03 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: usb: microchip,usb2514: add support for
+ port vbus-supply
+Message-ID: <20240814134103.esnt6niyu36adtgp@pengutronix.de>
+References: <20240807-b4-v6-10-topic-usb-onboard-dev-v1-0-f33ce21353c9@pengutronix.de>
+ <20240807-b4-v6-10-topic-usb-onboard-dev-v1-2-f33ce21353c9@pengutronix.de>
+ <20240813185752.GA1423091-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,50 +68,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7cudtahr26xrfn5uccmvtiv3ngyccu3wcrky4evxdstubz34hf@wtxzjv4z4g4w>
+In-Reply-To: <20240813185752.GA1423091-robh@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2024 at 12:02:57PM +0100, Andi Shyti wrote:
-> Hi Breno,
-> 
-> On Wed, Aug 14, 2024 at 01:47:54AM GMT, Breno Leitao wrote:
-> > On Tue, Aug 13, 2024 at 11:53:17PM +0100, Andi Shyti wrote:
-> > > You don't need to resend the patch. Because the changes are only
-> > > in the commit log, I can take care of them.
-> > 
-> > In fact, the changes are in the code itself, see the changelog:
-> > 
-> >   * Replaced ACPI_HANDLE() by has_acpi_companion() (Andy Shevchenko)
-> >   * Expanded the comment before the change (Andy Shevchenko)
-> 
-> I meant no need to send a v3.
-> 
-> > > Besides, you also need:
-> > > 
-> > > Fixes: ede2299f7101 ("i2c: tegra: Support atomic transfers")
-> > > Cc: <stable@vger.kernel.org> # v5.6+
-> > > 
-> > > Can you please check whether this is right?
-> > 
-> > I would say that we probably want to blame the support for ACPI device,
-> > which came later than ede2299f7101 ("i2c: tegra: Support atomic
-> > transfers").
-> > 
-> > I'd suggest the following:
-> > 
-> >  Fixes: bd2fdedbf2ba ("i2c: tegra: Add the ACPI support")
-> >  CC: <stable@vger.kernel.org> # v5.17+
-> 
-> Makes sense.
-> 
-> > I am not planning to submit a new patch with these changes, please let
-> > me know if you need action on my side.
-> 
-> Not for now, you might need to still support the backports to
-> stable as there might be some differences and I can already see
-> that it doesn't apply that far back (from 6.1, basically).
+Hi Rob,
 
-Sure, count me on, if you need backports to stable.
+On 24-08-13, Rob Herring wrote:
+> On Wed, Aug 07, 2024 at 04:36:52PM +0200, Marco Felsch wrote:
+> > Some PCB designs don't connect the USB hub port power control GPIO and
+> > instead make use of an host controllable regulator. Add support for this
+> > use-case by introducing an portX-vbus-supply property.
+> > 
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  Documentation/devicetree/bindings/usb/microchip,usb2514.yaml | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
+> > index 783c27591e56..51d02c4b8f2d 100644
+> > --- a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
+> > +++ b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
+> > @@ -35,6 +35,13 @@ required:
+> >    - compatible
+> >    - reg
+> >  
+> > +patternProperties:
+> > +  "^port[1-7]-vbus-supply$"
+> > +    type: object
+> > +    description:
+> > +      Regulator controlling the USB VBUS on portX. Only required if the host
+> > +      controls the portX VBUS.
+> 
+> This is completely external to the Microchip part, right?
+> 
+> I think each port node should have a 'vbus-supply' property instead.
 
-Thanks for getting this fixed
---breno
+This was my first approach but the problem is that we currently don't
+support such use-case:
+
+	parent-node {
+		/* Parent controlling the supply of the child node */
+
+		child-node {
+			vbus-supply = <&reg>;
+		};
+	};
+
+at least I didn't found such use-case. I'm happy for pointers if you
+know more :) At the moment *-supply properties and device-nodes are
+bound together:
+	
+	parent-node {
+		vbus-supply = <&reg>;
+	};
+
+Regards,
+  Marco
+
+> 
+> Rob
+> 
 
