@@ -1,111 +1,237 @@
-Return-Path: <linux-kernel+bounces-286034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21709515A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:35:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6E39515A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EBA41C276A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12D81F2420B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D95513C684;
-	Wed, 14 Aug 2024 07:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367A013BC2F;
+	Wed, 14 Aug 2024 07:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hf1QrPtF"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YkVQG6EH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386F929CFB
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828BB7F486
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723620910; cv=none; b=EmfnIsILEy/XSKrgxmoYr1JKBw77BwLYVM3de9yoZ9bn9dxihDXkKaS9rH/mqOLv5BnESosR1M7xYDl5PHCJBRHAMARiq8sGJvnJHhYTq0E10GxYfjymlVwC7WRRSwIWsngiuPOcg5zrYLcSjpNnm8s/1+2Q27Py0G3iF7dtils=
+	t=1723621134; cv=none; b=L+mt9rzJZN6qFbllDxPPKhzYP7YUvB4S5qLtHVPGyWm864BWz9lLJLGTauJuGql7MT//7JaY+axzK4bUJN11XDA1DI7TmSfpU8/Jt3g+G4wPQpzwGW1Hy9AzAlTt2DyHuS6/OqbBjw1heFG0wJF6WPK2a3hsgaUtupHSA9OWNTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723620910; c=relaxed/simple;
-	bh=dn+L6oAUJ8ys/t5tJ3WejzYSbtBeeeBMxySZGq3wZzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=izoTOHuM8BhyOo26qv/7OjA283+dJo/AOKVoF145TCv7PkKl+ZVo5tGipazuK35OOuT6janlQlLuZom5uFDDDaxBDhreQikGFVpUXDbEKZumyFCcDzAKVfxOgo44nF+5Cbkwva1n57Er5+fwEEST7Fs7KA0mZn3mhDKVLk9sB6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hf1QrPtF; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a8553db90so748756866b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723620907; x=1724225707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RYvlbKLns5cdVvpTzIYsdMbPag5YJ/RZP19+Oopz0OQ=;
-        b=Hf1QrPtFntJi4a2ZUMCqHkYbjRfgDaYdnELk/ST0tj2n2bhNMiC2yr5OjMKOaQL5Qz
-         wz9NJDyR7OyTXR054sl+dzNVWi57GRMfsiVWJVlt+y/7aIoslcijL5hMPF3vlGFuldHf
-         S8IEy120eJK+N+qp5PrDKTkQvZv+dfq+ryIuvA7maRF1PjHGngJgrZWxRpVGQ9XgHZ4Z
-         hVtnVRAFazpi/aSMClpfP2Xbg1wtlzu6VHGjHNCRNOnRoTU+9ftVhHUHRjuFR0dEJhkE
-         YYR80mv/M1ugp1md05ADOa37hJAv59x53GY5bL3t7Jobj4dtWHasTu9cacx5Iktg2ULX
-         5D/A==
+	s=arc-20240116; t=1723621134; c=relaxed/simple;
+	bh=BuQoxhjnnKWRA0tG104ofbuo5hH2qlxb1EjAS9GDSjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCnsV74ChDtr7nbCV8JEjaJGuNVMIgDM9MzIJU58RgHbLv1SRm72wSKJBXtU10vS+7OKngXb5szHPRlDHqhjAx7QUKB90sUuBkgoGAvrV4qv45hCODv54yQOoD0iZ+0KLFWcSY0hMtFAWVl9JD5GHqYddKzxcI1soJUnBs9Ietk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YkVQG6EH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723621131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oc3aTjU8HWXyxmTz6UJCCM/6umGObf5/rb0G6OpUxpc=;
+	b=YkVQG6EH4q8Eq+kRSJftXxmsgPK+AmlElztPR/qg+Ob40d56CZ9khwk+w2CiuX5noX+UsP
+	DV79Kbd/CssUbXLras2AB1RywOdJtz2/+o+MyUe+M5mtsYbGr4gPS64/3ZkLG1fRoAblSC
+	USTdO+UrHPQMgsZN150Al70vqJNkzUI=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-600-WRAo7Eg6OqyAFAfWtHzr8g-1; Wed, 14 Aug 2024 03:38:49 -0400
+X-MC-Unique: WRAo7Eg6OqyAFAfWtHzr8g-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7ab81eea72so509821166b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:38:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723620907; x=1724225707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RYvlbKLns5cdVvpTzIYsdMbPag5YJ/RZP19+Oopz0OQ=;
-        b=GWKXLrSl48I20trUNFW0fhKhLZSN6FLSUKgC9jETu2cbUxjgU8jvo4cz7dTZD5FyZO
-         goHVrXQqV911gCxkRPDV5ELSTNvkOPr4LJo1Syjtocs8O0P5JJNWve8x82ly8sz1Pwm7
-         A5YmeyiKS5TJKW/eiU1PkuorqH9qaXil5b0r665pmIKnTGXEKNCGMA6soJEDIRnIi1Aw
-         jQyfzKO3zCo7aUhG7lcrPlBXc+hz9i4fb1/JupHhiwwcoBWoUtehVliFQwqd70WzYsPS
-         g+rnIaAPnTEntl/uMebRg60SX27gDt7gYNlCHu1ExfTBpau8glG2CUfW89kao9Q6K84n
-         F+kA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWs5s+pJotISUCT+3o2Os3S3tHzEFGT3jbtZEfhfRjAwLY/8F9RfnAz8M++Q+sr3AcLFtGhlrsjCeu9DE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx57oM5nEpmzwnHmu23kVGPx5Rnjz6aCMXaIDSZiZLcs+ozfR/Y
-	SO/pC32vN+O6mbtTmX+IiyUQEh8J5rMuMEpuhbEjnjRJDMyCjQzQOkJDInrh9IxpibhW+TSGpWO
-	4Hjp+aQoJQa5b3rNUplR9RWtvd+9atQUbH698
-X-Google-Smtp-Source: AGHT+IE/CG/1vgT1Y1n6PG7T2xGjZvOmrCdMCKO7yg5oBdpqAfSoZGVyiIo9FT8otgRh6yvRXfQeu0fk1v0Z/6Ec7BU=
-X-Received: by 2002:a17:907:f155:b0:a77:cb7d:f356 with SMTP id
- a640c23a62f3a-a8367087b2amr110481066b.51.1723620907107; Wed, 14 Aug 2024
- 00:35:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723621128; x=1724225928;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oc3aTjU8HWXyxmTz6UJCCM/6umGObf5/rb0G6OpUxpc=;
+        b=B+nKNqObvrHkr6zFGqwQpzY30yRGFMeUMj3ppyeeWwSQZGNOawyVNwk8g42xDibNG5
+         QhmRcZoRehUP6aqQPFTx6rB4/UxQ5LHtcKciS9gccDG5G4T2J8ix/mw+N3oBvfLSMzX5
+         AHcVECI40fHXyuKlkQRxmqeEn8lVLBQ88elrrI8GasYW2fEwY6BzrkAo4nbVd9C2oT4l
+         mHZ7QOmGeckQdvZkS35mgqGPsvgprCI3OG7/AHLvknV8Ei0qqAii/2FkIP7woNamnQgM
+         uXfKQzjxGSgAgH9OYWWvNMb7RHp7W9RFuWz4KudSFh0ydvHueT9hvpF9CY5j+R4g3uY8
+         ZtYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV6zTjgn0hk8+ssNIgHV8gWys1P/hpiseDtR3LcSFJR4pbtOo1INl1OPskwp39gENa74XtH3DKLQNUUEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkoJC79T/xIigp6pIkyp7sBq/Eyld9eHeZhGDTmDBkAdfHglGG
+	bjXY4obTb4semQNg5nhPr39Z6xT1f1UvBq2+x/wGWPVMwvWaoYHZAcKMAuoQvqzfo9o+ZGAAWu4
+	8KAEr4c+KCfWsoNVexg8BS6AepsOF6Iz+Q44kYZ1zS8Qh5d9WCKDJ9SC2LqB/Yw==
+X-Received: by 2002:a17:907:3f25:b0:a7d:4dc4:3d8 with SMTP id a640c23a62f3a-a836701bb07mr115513766b.54.1723621128528;
+        Wed, 14 Aug 2024 00:38:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHm5GukSx2TiVJhZWRQjxQ16ZMf8mxEx8QfTVbYYaWnyu9LQfARUK6lvCulUuhRsLEWBneSNg==
+X-Received: by 2002:a17:907:3f25:b0:a7d:4dc4:3d8 with SMTP id a640c23a62f3a-a836701bb07mr115510566b.54.1723621127668;
+        Wed, 14 Aug 2024 00:38:47 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:346:dcde:9c09:aa95:551d:d374])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa13desm137152066b.48.2024.08.14.00.38.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 00:38:47 -0700 (PDT)
+Date: Wed, 14 Aug 2024 03:38:43 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>, Ani Sinha <anisinha@redhat.com>,
+	Igor Mammedov <imammedo@redhat.com>, linux-kernel@vger.kernel.org,
+	qemu-devel@nongnu.org
+Subject: Re: [PATCH v7 01/10] acpi/generic_event_device: add an APEI error
+ device
+Message-ID: <20240814033158-mutt-send-email-mst@kernel.org>
+References: <cover.1723591201.git.mchehab+huawei@kernel.org>
+ <0be6db8d06b3abab551f24dcc645d46d72d3f668.1723591201.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812105315.440718-1-kuro@kuroa.me>
-In-Reply-To: <20240812105315.440718-1-kuro@kuroa.me>
-From: Lorenzo Colitti <lorenzo@google.com>
-Date: Wed, 14 Aug 2024 16:34:51 +0900
-Message-ID: <CAKD1Yr3i+858zNvSwbuFLiBHS52xhTw5oh6P-sPgRNcMbWEbhw@mail.gmail.com>
-Subject: Re: [PATCH net,v2] tcp: fix forever orphan socket caused by tcp_abort
-To: Xueming Feng <kuro@kuroa.me>
-Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Jason Xing <kerneljasonxing@gmail.com>, 
-	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0be6db8d06b3abab551f24dcc645d46d72d3f668.1723591201.git.mchehab+huawei@kernel.org>
 
-On Mon, Aug 12, 2024 at 7:53=E2=80=AFPM Xueming Feng <kuro@kuroa.me> wrote:
-> The -ENOENT code comes from the associate patch Lorenzo made for
-> iproute2-ss; link attached below.
+On Wed, Aug 14, 2024 at 01:23:23AM +0200, Mauro Carvalho Chehab wrote:
+> Adds a generic error device to handle generic hardware error
+> events as specified at ACPI 6.5 specification at 18.3.2.7.2:
+> https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event-notification-for-generic-error-sources
+> using HID PNP0C33.
+> 
+> The PNP0C33 device is used to report hardware errors to
+> the guest via ACPI APEI Generic Hardware Error Source (GHES).
+> 
+> Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+> ---
+>  hw/acpi/aml-build.c                    | 10 ++++++++++
+>  hw/acpi/generic_event_device.c         |  8 ++++++++
+>  include/hw/acpi/acpi_dev_interface.h   |  1 +
+>  include/hw/acpi/aml-build.h            |  2 ++
+>  include/hw/acpi/generic_event_device.h |  1 +
+>  5 files changed, 22 insertions(+)
+> 
+> diff --git a/hw/acpi/aml-build.c b/hw/acpi/aml-build.c
+> index 6d4517cfbe3d..cb167523859f 100644
+> --- a/hw/acpi/aml-build.c
+> +++ b/hw/acpi/aml-build.c
+> @@ -2520,3 +2520,13 @@ Aml *aml_i2c_serial_bus_device(uint16_t address, const char *resource_source)
+>  
+>      return var;
+>  }
+> +
+> +/* ACPI 5.0: 18.3.2.6.2 Event Notification For Generic Error Sources */
 
-ENOENT does seem reasonable. It's the same thing that would happen if
-userspace passed in a nonexistent cookie (we have a test for that).
-I'd guess this could happen if userspace was trying to destroy a
-socket but it lost the race against the process owning a socket
-closing it?
 
->         bh_unlock_sock(sk);
->         local_bh_enable();
-> -       tcp_write_queue_purge(sk);
 
-Is this not necessary in any other cases? What if there is
-retransmitted data, shouldn't that be cleared?
+I could not find Event Notification For Generic Error Sources in ACPI
+5.0.
 
-Other than that, I have run the Android tests on this patch and they
-all passed other than the test that checks that closing FIN_WAIT1
-sockets can't be closed. That's expected to fail because it checking
-that the kernel does not support what you are trying to support. I
-uploaded a CL to fix that: https://r.android.com/3217682 .
 
-Tested-By: Lorenzo Colitti <lorenzo@google.com>
+
+Instead, I see
+18.3.2.6.2 SCI Notification For Generic Error Sources
+
+What did I miss?
+
+
+> +Aml *aml_error_device(void)
+> +{
+> +    Aml *dev = aml_device(ACPI_APEI_ERROR_DEVICE);
+> +    aml_append(dev, aml_name_decl("_HID", aml_string("PNP0C33")));
+
+
+
+
+> +    aml_append(dev, aml_name_decl("_UID", aml_int(0)));
+> +
+
+comment on why is this here?
+
+> +    return dev;
+> +}
+> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> index 15b4c3ebbf24..1673e9695be3 100644
+> --- a/hw/acpi/generic_event_device.c
+> +++ b/hw/acpi/generic_event_device.c
+> @@ -26,6 +26,7 @@ static const uint32_t ged_supported_events[] = {
+>      ACPI_GED_PWR_DOWN_EVT,
+>      ACPI_GED_NVDIMM_HOTPLUG_EVT,
+>      ACPI_GED_CPU_HOTPLUG_EVT,
+> +    ACPI_GED_ERROR_EVT
+>  };
+>  
+>  /*
+> @@ -116,6 +117,11 @@ void build_ged_aml(Aml *table, const char *name, HotplugHandler *hotplug_dev,
+>                             aml_notify(aml_name(ACPI_POWER_BUTTON_DEVICE),
+>                                        aml_int(0x80)));
+>                  break;
+> +            case ACPI_GED_ERROR_EVT:
+> +                aml_append(if_ctx,
+> +                           aml_notify(aml_name(ACPI_APEI_ERROR_DEVICE),
+> +                                      aml_int(0x80)));
+> +                break;
+>              case ACPI_GED_NVDIMM_HOTPLUG_EVT:
+>                  aml_append(if_ctx,
+>                             aml_notify(aml_name("\\_SB.NVDR"),
+> @@ -295,6 +301,8 @@ static void acpi_ged_send_event(AcpiDeviceIf *adev, AcpiEventStatusBits ev)
+>          sel = ACPI_GED_MEM_HOTPLUG_EVT;
+>      } else if (ev & ACPI_POWER_DOWN_STATUS) {
+>          sel = ACPI_GED_PWR_DOWN_EVT;
+> +    } else if (ev & ACPI_GENERIC_ERROR) {
+> +        sel = ACPI_GED_ERROR_EVT;
+>      } else if (ev & ACPI_NVDIMM_HOTPLUG_STATUS) {
+>          sel = ACPI_GED_NVDIMM_HOTPLUG_EVT;
+>      } else if (ev & ACPI_CPU_HOTPLUG_STATUS) {
+> diff --git a/include/hw/acpi/acpi_dev_interface.h b/include/hw/acpi/acpi_dev_interface.h
+> index 68d9d15f50aa..8294f8f0ccca 100644
+> --- a/include/hw/acpi/acpi_dev_interface.h
+> +++ b/include/hw/acpi/acpi_dev_interface.h
+> @@ -13,6 +13,7 @@ typedef enum {
+>      ACPI_NVDIMM_HOTPLUG_STATUS = 16,
+>      ACPI_VMGENID_CHANGE_STATUS = 32,
+>      ACPI_POWER_DOWN_STATUS = 64,
+> +    ACPI_GENERIC_ERROR = 128,
+>  } AcpiEventStatusBits;
+>  
+>  #define TYPE_ACPI_DEVICE_IF "acpi-device-interface"
+> diff --git a/include/hw/acpi/aml-build.h b/include/hw/acpi/aml-build.h
+> index a3784155cb33..44d1a6af0c69 100644
+> --- a/include/hw/acpi/aml-build.h
+> +++ b/include/hw/acpi/aml-build.h
+> @@ -252,6 +252,7 @@ struct CrsRangeSet {
+>  /* Consumer/Producer */
+>  #define AML_SERIAL_BUS_FLAG_CONSUME_ONLY        (1 << 1)
+>  
+> +#define ACPI_APEI_ERROR_DEVICE   "GEDD"
+>  /**
+>   * init_aml_allocator:
+>   *
+> @@ -382,6 +383,7 @@ Aml *aml_dma(AmlDmaType typ, AmlDmaBusMaster bm, AmlTransferSize sz,
+>               uint8_t channel);
+>  Aml *aml_sleep(uint64_t msec);
+>  Aml *aml_i2c_serial_bus_device(uint16_t address, const char *resource_source);
+> +Aml *aml_error_device(void);
+>  
+>  /* Block AML object primitives */
+>  Aml *aml_scope(const char *name_format, ...) G_GNUC_PRINTF(1, 2);
+> diff --git a/include/hw/acpi/generic_event_device.h b/include/hw/acpi/generic_event_device.h
+> index 40af3550b56d..9ace8fe70328 100644
+> --- a/include/hw/acpi/generic_event_device.h
+> +++ b/include/hw/acpi/generic_event_device.h
+> @@ -98,6 +98,7 @@ OBJECT_DECLARE_SIMPLE_TYPE(AcpiGedState, ACPI_GED)
+>  #define ACPI_GED_PWR_DOWN_EVT      0x2
+>  #define ACPI_GED_NVDIMM_HOTPLUG_EVT 0x4
+>  #define ACPI_GED_CPU_HOTPLUG_EVT    0x8
+> +#define ACPI_GED_ERROR_EVT          0x10
+>  
+>  typedef struct GEDState {
+>      MemoryRegion evt;
+> -- 
+> 2.46.0
+
 
