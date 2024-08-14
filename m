@@ -1,108 +1,270 @@
-Return-Path: <linux-kernel+bounces-286789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B3E951EFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:47:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2756C951F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2731F1C2178A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA841F245ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A3C1B86D1;
-	Wed, 14 Aug 2024 15:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA7A1B3757;
+	Wed, 14 Aug 2024 15:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VJrBP9ra"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWkWPtjC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307631B29CF
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025C71B580E;
+	Wed, 14 Aug 2024 15:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650428; cv=none; b=b9OjMhHqYfYYeNJC+kI3WO+mM2KYpFrVo+ASY3dmeQ6EaFXDSotAydP4CMhPgWtedaGBb/C1n/z2h5rbZjB4g5UE9hr0n8vY1Znw+WA1jlYFo812Vu6T2PiuSUgyhGnMyEre7uQkni22doQywNEbJV4PvqqQwsY6agNEZ5o/CoY=
+	t=1723650455; cv=none; b=gSy+yglBUerXEls91pNvBvRTvrvQoXycXlsyC4+KKPasNZyy+CLYKmysqJ8xfdSqu/xAABPPnjGDgzqFwAlM8UFGTH/0pM4+g8x8BBokLRdz6hVAjGkCLLShzxs4WeTv8Tlsy4xe1as1FadYE/eX+BAnpm1l/RDk8/MZt6KFHu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650428; c=relaxed/simple;
-	bh=6s2UZiIbIL+xs+ThX4zHMsNr9MWrd6Lm3gZ9jqqawDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuyo8OiGVN1jkDz59kAbqTSdzuis98jKO+DtAnmRDPt2mwJXGFgQK+nIYjPa6BpVsgEX5MQD64+QP5hfMvO/ZFFDfEHkOLNcfBjoPMyaAqMQrQ92lpf3gPzEx6bP52ErNzD3eb/IkLQXJ89dxnsrr1ES52da4ICk4N6kIIQ3GnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VJrBP9ra; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428ec6c190eso52052515e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723650425; x=1724255225; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LxHKY8j9JY9GSssq+v7MBgIA0lHkRpEmbrmi0vFachA=;
-        b=VJrBP9ra2mHREB30p6Ha5hk6E6iqh0Tk/tK1f7PxaujenUMN3aVDRKQkW2xWtojVKE
-         VJImKgzByA5ZQPZTR14/s4r7+05i7UBotqcM4YVduVzF7Qz6ntnuzI1MuhgqPq6k5PlC
-         omhh13mxOrfFHrBlPUelAmCHl/Tv472HK2v9oY7ihLQZyBeWJl/ji9r446lVWNk8mvyH
-         t5G+XGoo7iCU9q6pb46bVxX4K9R6mHgHdzsOTXiEyPzfFwuT+RN3CSf9rTv+5AlbwyaL
-         u00pKmRmJD4kYUhv18BYN/DYgLPWizKuYBYJIfuq7aA7u1rdNXMeas8AesrKuKe2AyW8
-         TTsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723650425; x=1724255225;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LxHKY8j9JY9GSssq+v7MBgIA0lHkRpEmbrmi0vFachA=;
-        b=J1Q7NnUwN3uwOpGFCJ0zDMywehV2tLENAKBbHX3rdQQcG2CUxDYfHhqfehEsG2SI0b
-         NtD7LrIuNLntRJCd8iVxol3JhkrA1vUl8xqrkGR7+4R8YzXMxX+NQB54m/N7HiGxF1hI
-         QRD5E8cGn6lFkGfiJM14blRp6n/wdFTfeSonbqxhUhPv0v8bIkgxPO048ErGxdLR7QSd
-         amX4y11vaH6KYcfE3f2NkndlNBvfiGt4s97XH+q1+1hfrksZ9qwoAblfNqQu9c0PWvde
-         CbE78U/xENHSeauP06Muqvkl7Gev/q2xpUoayfvoWfJEKStCCgzRhtRSavIB8WtQ6Yu1
-         ee7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXrcMnzW4ZjhBTL9d54Dflfk1HGrvjvmM9+GWybFAowkn82dnrcIHykzD/csyUYgRLDquSFAdS4ymgLOYn6jCdieDrowqj+yVkgtTtW
-X-Gm-Message-State: AOJu0YzcjenxfdA41lk45cr244CS+K9Zc7TYSylBd6TpFlSwpnvUX0nl
-	IwTCXp4NRhIYlfKngyypAMYOQZrBM0QeVN3X8q+0snngOal4MBwMIke436niVD4=
-X-Google-Smtp-Source: AGHT+IFJ7TTrqW106H8grxaPaM4TrNtxNgYAZzlQEAw+ii2wjX4qbf7zwRvdMCxwyRkjkZNGpv+B0w==
-X-Received: by 2002:a05:600c:1d06:b0:426:67ad:38e3 with SMTP id 5b1f17b1804b1-429dd22ecb1mr20690655e9.3.1723650425302;
-        Wed, 14 Aug 2024 08:47:05 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded36f55sm23611115e9.26.2024.08.14.08.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:47:05 -0700 (PDT)
-Date: Wed, 14 Aug 2024 18:47:00 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Enno Onneken <ennoonneken@outlook.de>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] reboot: add missing break to switch statement for
- LINUX_REBOOT_CMD_HALT
-Message-ID: <750452a3-ac8a-4af5-849f-3db83158a1e5@stanley.mountain>
-References: <FRZP193MB2563F43FFC350926C0B7EEB1DC872@FRZP193MB2563.EURP193.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1723650455; c=relaxed/simple;
+	bh=VWXqPii6p9P30d6ou5jZRjbh7KsFz67dSp0w6vZgo9k=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=iV/OiGBIyGmV5OqUbijDyR+ZBgdSsqiwACStVhVcJQVVxPfSshlNS3B1zj4CzVbStuUQZSdcHL4YcE9Ain4U3fUjlVZERAyYfGndG/zadoW7emSEsYjWkKFY/t95i8Ju62H2pSv9SKr8Jr8I04vpagJRHP1AL5hiutBwhzjkoIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWkWPtjC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65AB6C116B1;
+	Wed, 14 Aug 2024 15:47:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723650454;
+	bh=VWXqPii6p9P30d6ou5jZRjbh7KsFz67dSp0w6vZgo9k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LWkWPtjCPKbqOUZeACcYSLnXpJgj9h9N/x1Ba9nLw5woFkFoze1ZiNLumjhTOX3p9
+	 pb/huT2uc8P6ugu9LyRz8XTe+5eKojPwv9Hmm93zcDgU9C2dfwLfJxpPWv+16qd7oV
+	 G+insdxBDurDR1iKnEK6TLouMlumyIrPmrJyNYuWm4J31ZQUp7IpF4bezWcUOa7xTK
+	 siYzZWgWvZMYhxp0cbrb5FRRKF1idYlTduqiTVF67lGVYuYmkoRhOzrlRRUFZVu5nW
+	 N3qWb7XnzL9wh5LGzuYW2X6/be2kVf54VY1IsOq65NQBikiFy+8rLKxLXkryq3joAX
+	 +lx5oGFOGZf/g==
+Date: Thu, 15 Aug 2024 00:47:30 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>, Tom
+ Zanussi <zanussi@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] selftests/tracing: Add hist poll() support test
+Message-Id: <20240815004730.180bf760e27cb5a6959898ee@kernel.org>
+In-Reply-To: <2c13840e-2717-4f88-b613-f6a770be2d75@linuxfoundation.org>
+References: <172359427367.323666.6446548762874507863.stgit@devnote2>
+	<172359430351.323666.9768554440535494357.stgit@devnote2>
+	<2c13840e-2717-4f88-b613-f6a770be2d75@linuxfoundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <FRZP193MB2563F43FFC350926C0B7EEB1DC872@FRZP193MB2563.EURP193.PROD.OUTLOOK.COM>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 04:24:45PM +0200, Enno Onneken wrote:
-> All switch-cases should be isolated from each other due to shutting
-> down/rebooting the kernel in different ways.
-> In order to fully isolate this case (like all the others are), this patch
-> adds a "break;" after do_exit(0); .
+On Wed, 14 Aug 2024 05:38:24 -0600
+Shuah Khan <skhan@linuxfoundation.org> wrote:
 
-This patch is obviously harmless but the commit message is not clear what the
-motivation is.  "missing break" in the subject is misleading.
+> On 8/13/24 18:11, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Add a testcase for poll() on hist file. This introduces a helper binary
+> > to the ftracetest, because there is no good way to reliably execute
+> > poll() on hist file.
+> > 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >   Changes in v2:
+> >    - Update poll command to support both of POLLIN and POLLPRI, and timeout.
+> >    - Identify unsupported stable kernel if poll-in returns soon.
+> >    - Test both of POLLIN and POLLPRI.
+> > ---
+> >   tools/testing/selftests/ftrace/Makefile            |    2 +
+> >   tools/testing/selftests/ftrace/poll.c              |   62 +++++++++++++++++
+> >   .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 ++++++++++++++++++++
+> >   3 files changed, 138 insertions(+)
+> >   create mode 100644 tools/testing/selftests/ftrace/poll.c
+> >   create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
+> > index a1e955d2de4c..49d96bb16355 100644
+> > --- a/tools/testing/selftests/ftrace/Makefile
+> > +++ b/tools/testing/selftests/ftrace/Makefile
+> > @@ -6,4 +6,6 @@ TEST_PROGS := ftracetest-ktap
+> >   TEST_FILES := test.d settings
+> >   EXTRA_CLEAN := $(OUTPUT)/logs/*
+> >   
+> > +TEST_GEN_PROGS = poll
+> > +
+> >   include ../lib.mk
+> > diff --git a/tools/testing/selftests/ftrace/poll.c b/tools/testing/selftests/ftrace/poll.c
+> > new file mode 100644
+> > index 000000000000..8003a59fe042
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ftrace/poll.c
+> > @@ -0,0 +1,62 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Simple poll on a file.
+> > + *
+> > + * Copyright (c) 2024 Google LLC.
+> > + */
+> > +
+> > +#include <errno.h>
+> > +#include <fcntl.h>
+> > +#include <poll.h>
+> > +#include <stdio.h>
+> > +#include <stdlib.h>
+> > +#include <string.h>
+> > +#include <unistd.h>
+> > +
+> > +#define BUFSIZE 4096
+> > +
+> > +/*
+> > + * Usage:
+> > + *  poll <in|pri> <FILE> [timeout]
+> > + */
+> > +int main(int argc, char *argv[])
+> > +{
+> > +	struct pollfd pfd;
+> > +	char buf[BUFSIZE];
+> > +	int timeout = -1;
+> > +	int ret;
+> > +
+> > +	if (argc < 3)
+> > +		return -1;
+> > +
+> > +	if (!strcmp(argv[1], "in"))
+> > +		pfd.events = POLLIN;
+> > +	else if (!strcmp(argv[1], "pri"))
+> > +		pfd.events = POLLPRI;
+> > +
+> > +	pfd.fd = open(argv[2], O_RDONLY);
+> > +	if (pfd.fd < 0) {
+> > +		perror("open");
+> > +		return -1;
+> > +	}
+> > +
+> > +	if (argc == 4)
+> > +		timeout = atoi(argv[3]);
+> 
+> This code can be simpler and more maintainable using getopt.
+> Any reason why you didn't use it?
 
-do_exit() is annotated as a __noreturn function so it's already "fully
-isolated".  It sounds like you are using a tool which doesn't understand the
-no return attributes.  Better to fix that instead.
+There is no reason. OK, let me use getopt to clean it up.
 
 > 
-> Fixes: 15d94b82565e ("reboot: move shutdown/reboot related functions to kernel/reboot.c")
+> > +
+> > +	/* Reset poll by read if POLLIN is specified. */
+> > +	if (pfd.events & POLLIN)
+> > +		do {} while (read(pfd.fd, buf, BUFSIZE) == BUFSIZE);
+> > +
+> > +	ret = poll(&pfd, 1, timeout);
+> > +	if (ret < 0 && errno != EINTR) {
+> > +		perror("poll")> +		return -1;
+> > +	}
+> > +	close(pfd.fd);
+> > +
+> > +	/* If timeout happned, return code is 0 */
+> 
+> Spelling - happened
 
-This isn't a bugfix so a Fixes tag isn't appropriate.
+Oops, thanks!
 
-regards,
-dan carpenter
+> 
+> > +	if (ret == 0)
+> > +		return 1;
+> > +
+> > +	return 0;
+> > +}
+> > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+> > new file mode 100644
+> > index 000000000000..53bea74e2234
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
+> > @@ -0,0 +1,74 @@
+> > +#!/bin/sh
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# description: event trigger - test poll wait on histogram
+> > +# requires: set_event events/sched/sched_process_free/trigger events/sched/sched_process_free/hist
+> > +# flags: instance
+> > +
+> > +POLL=${FTRACETEST_ROOT}/poll
+> > +
+> > +if [ ! -x ${POLL} ]; then
+> > +  echo "poll program is not compiled!"
+> > +  exit_unresolved
+> > +fi
+> > +
+> > +EVENT=events/sched/sched_process_free/
+> > +
+> > +# Check poll ops is supported. Before implementing poll on hist file, it
+> > +# returns soon with POLLIN | POLLOUT, but not POLLPRI.
+> > +
+> > +# This must wait >1 sec and return 1 (timeout).
+> > +set +e
+> > +${POLL} in ${EVENT}/hist 1000
+> > +ret=$?
+> > +set -e
+> > +if [ ${ret} != 1 ]; then
+> > +  echo "poll on hist file is not supported"
+> > +  exit_unsupported
+> > +fi
+> > +
+> > +# Test POLLIN
+> > +echo > trace
+> > +echo "hist:key=comm" > ${EVENT}/trigger
+> > +echo 1 > ${EVENT}/enable
+> > +
+> > +# This sleep command will exit after 2 seconds.
+> > +sleep 2 &
+> > +BGPID=$!
+> > +# if timeout happens, poll returns 1.
+> > +${POLL} in ${EVENT}/hist 4000
+> > +echo 0 > tracing_on
+> > +
+> > +if [ -d /proc/${BGPID} ]; then
+> > +  echo "poll exits too soon"
+> > +  kill -KILL ${BGPID} ||:
+> > +  exit_fail
+> > +fi
+> > +
+> > +if ! grep -qw "sleep" trace; then
+> > +  echo "poll exits before event happens"
+> > +  exit_fail
+> > +fi
+> > +
+> > +# Test POLLPRI
+> > +echo > trace
+> > +echo 1 > tracing_on
+> > +
+> > +# This sleep command will exit after 2 seconds.
+> > +sleep 2 &
+> > +BGPID=$!
+> > +# if timeout happens, poll returns 1.
+> > +${POLL} pri ${EVENT}/hist 4000
+> > +echo 0 > tracing_on
+> > +
+> > +if [ -d /proc/${BGPID} ]; then
+> > +  echo "poll exits too soon"
+> > +  kill -KILL ${BGPID} ||:
+> > +  exit_fail
+> > +fi
+> > +
+> > +if ! grep -qw "sleep" trace; then
+> > +  echo "poll exits before event happens"
+> > +  exit_fail
+> > +fi
+> > +
+> > +exit_pass
+> > 
+> 
+> thanks,
+> -- Shuah
+> 
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
