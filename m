@@ -1,125 +1,133 @@
-Return-Path: <linux-kernel+bounces-286725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D053951E3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:13:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCC9951E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6020F1C21BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:13:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5ADBB292BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF511B3F1E;
-	Wed, 14 Aug 2024 15:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251C61B3F3D;
+	Wed, 14 Aug 2024 15:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qIJb/8lH"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FNrYCG/S"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A20D1B3751;
-	Wed, 14 Aug 2024 15:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91791B3F11
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723648381; cv=none; b=JKtu6ZSc0XRUOL7YKKQtlLi/xze0MsGGKG2+P069MUQR79x4dRlXCD3ogsd/47YgZw00XZb5oyvgxDjFEuzjA9R2Bl6FHJoap3sWtEkkRTIuY8rd6ZiXReS5aHcpumpEDkcdNHD/tsemZkWu4IN4hmFecWFPpTlNeEDGbWnk6ao=
+	t=1723648429; cv=none; b=lX6PGbBSd44/7aygAsLGBrAcM4QHaUhb0NDEsny5/eZDVOZNoReaxgeu0wM6mvnd5tK72E6LKU9miMYKCkYl3/h4VlysuKiEptZhX9ANu9oXAaPx+uQa8RO2LSW2jVfPTgCCP3hlIBngPUXgX4oGicuA++XSFoPiUMfUHFdPGO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723648381; c=relaxed/simple;
-	bh=DoSgsVFzInOYcU8QE0XkZwZ3WTtLNLotcTkQ02D7LlI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MdBR7+bArp4XU+k8gsI2r2BeEBzAkPtszITRhzZg0SUxdkCpyfjhB2Emgh33uNrMZ+2uKWTL+z8f7+iMDLVzNtoSBYy34VvGxAycbNlGnUpnb9W6ldtCGxdnIu8Hym4P4cfrmSvEcSSwOlHW8ksO4l6DytcQxItdnkK5zvnlKdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qIJb/8lH; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EFCmGQ084686;
-	Wed, 14 Aug 2024 10:12:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723648368;
-	bh=DSELQhqczh8otWLp4IHWpTWwH59Ek4RdGCsN69OPi1Q=;
-	h=From:To:CC:Subject:Date;
-	b=qIJb/8lHbQ48XEW6ml8cVaPrz+IU12LINLx9xLpcO2RJDMaBUAUd6HVqJ+zHTlxOC
-	 V2lX4gNfFUPNPCcCudpBqr28TQQf08kfqCtPfNNS8vzkIEOSod3OboBYmcgG28w1jV
-	 oztupXn0jmB+7VVOfvCvoCELEMma2KBG7jsH72yg=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EFCm2N115178
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 14 Aug 2024 10:12:48 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
- Aug 2024 10:12:48 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 14 Aug 2024 10:12:48 -0500
-Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EFCkV8054193;
-	Wed, 14 Aug 2024 10:12:46 -0500
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <theo.lebrun@bootlin.com>, <d-gole@ti.com>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] spi: spi-cadence-quadspi: Fix OSPI NOR failures during system resume
-Date: Wed, 14 Aug 2024 20:42:37 +0530
-Message-ID: <20240814151237.3856184-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723648429; c=relaxed/simple;
+	bh=xchCpsjRgDt+1FpeDwE9wT2UIuSmuIQeVcehD9QaCcg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9Bvzsp31bSQ9txbRoe+nzuCqa0YW5H4DP1X2+HCkp0ASymMIaQeyUt+UYjdcEFOlq9CZYWIDHbVjCofuVyMVRxqivsu5SI1zyq6JSZJDo2t0DfGpmtn+GG3UV+kKTaGOjbo9OKP5m7lMp9bVyNXqlGTbTrIoYdTF0Eyqkk/PJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FNrYCG/S; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6694b50a937so485987b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:13:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1723648427; x=1724253227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AX+IfIKOESuUiIvW3aOFuEwOA14R96wJZLKJZ4T5b4Q=;
+        b=FNrYCG/SbHCqEIAMrOXjm4fl3iebzvr+l0CjMTZ0y+OoXSoUTR1d1t2BgoLeqGLc9a
+         vS1yrnKXHQQN2970ZFIBkMdoF6QJArBKK8MaJn3gQaOkwFhaCgvLzo0Kv9POVfX6or2e
+         AXl6/jYdNpWT8RhZhvI3CuXuaTUB19NUfj6knQ2H7IGjLu+CUE3u2Xba1dNQ+7hDkZy4
+         +lTy67pb099nNgGgWrMXA3+R2tCzyjW2WZo43KUQdiAPRMOBLJVT+Yp3lK2+yR6E40Bk
+         LDqK+hyObU6nfo8IfPxyVkQNtq14jm4BL/e4CSgvVGEcEsok19OdI5fyU+hXraUWHxXe
+         HhAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723648427; x=1724253227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AX+IfIKOESuUiIvW3aOFuEwOA14R96wJZLKJZ4T5b4Q=;
+        b=iZFxeoNYmw+eScJ7qLLqA8AA7ruvVYdsaLqZKIYqgFZ//mf7dU6vq1V7toGczJKIZI
+         EuG43UmDDrV0lQNO3ks/TueUb/gWALEpV8i2WqTpSwu3/op6fWZxPBEdsMHdcnlvVDlu
+         GRVnaBf45wNWNkTJxWhSiaZsurpGa2CN3libmbXUVzhqrmyqwbG7yT+zsjDxuExyVwvQ
+         pc7EhUkyKxJWfpe4zznkuuO7fdQhqfBMSjK3pRIGav/Qi9TuKOK0U2j+82Mm4m+NBuNg
+         ixSfV+4+UgyFrr3AJLjuCjCiJAosRJb47CC/Lh2R9CQmjrpzw+1B7L5nAzIzP1KiZBCL
+         GN0g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+BsvJZ7/GQzmcilImwM9qGYgVkC0bFHbVQS4j3R8Yi77XYbUK4DLYxJUA4lUC6t7bZF/IbBwJqxvZCzr0/RnccHwJOn3okttfJOsK
+X-Gm-Message-State: AOJu0YyROfapcQr5I6wQazgauiNffMjNkWnAe44dPmJQ+sxoxVXems3+
+	y3yEM+lYs8uRIa12rkLkiBS0xE5lXAjcSMOC7RSdh3zS3Ctam3RklBMUTBkQNPhZjHChlFNThLR
+	sGAOuq6RWnWMXP59559sI9P+rai2kAcKGLlQV6ZY+Cpkdhsw=
+X-Google-Smtp-Source: AGHT+IFooUxqBZZcqOQKLdlMNlZ2peRqQY9osovnnhB7zHJX8yyywSseq/vOHjb+0XSGyozBIt2AJXkETwlIdZd8LCs=
+X-Received: by 2002:a05:690c:2a88:b0:6ad:feb0:d027 with SMTP id
+ 00721157ae682-6adfeb0defcmr14160067b3.19.1723648426820; Wed, 14 Aug 2024
+ 08:13:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240812174421.1636724-1-mic@digikod.net> <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
+ <20240813.la2Aiyico3lo@digikod.net> <CAHC9VhRrcTo4gXrexb=fqEGbNcynKUUoMWR=EseJ+oa0ZM-8qA@mail.gmail.com>
+ <20240813.ideiNgoo1oob@digikod.net> <CAHC9VhR-jbQQpb6OZjtDyhmkq3gb5GLkt87tfUBQM84uG-q1bQ@mail.gmail.com>
+ <20240814.OiNg5geethah@digikod.net>
+In-Reply-To: <20240814.OiNg5geethah@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 14 Aug 2024 11:13:35 -0400
+Message-ID: <CAHC9VhSC+Qff9gtQ9ZM7mCUPWFqiO23tb=4Er7eYAQTUFZRs6w@mail.gmail.com>
+Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook inconsistencies
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Its necessary to call pm_runtime_force_*() hooks as part of system
-suspend/resume calls so that the runtime_pm hooks get called. This
-ensures latest state of the IP is cached and restored during system
-sleep. This is especially true if runtime autosuspend is enabled as
-runtime suspend hooks may not be called at all before system sleeps.
+On Wed, Aug 14, 2024 at 8:35=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> On Tue, Aug 13, 2024 at 07:39:45PM -0400, Paul Moore wrote:
+> > On Tue, Aug 13, 2024 at 2:28=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > > On Tue, Aug 13, 2024 at 11:04:13AM -0400, Paul Moore wrote:
+> > > > On Tue, Aug 13, 2024 at 6:05=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
+ic@digikod.net> wrote:
+> > > > > On Mon, Aug 12, 2024 at 06:26:58PM -0400, Paul Moore wrote:
+> > > > > > On Mon, Aug 12, 2024 at 1:44=E2=80=AFPM Micka=C3=ABl Sala=C3=BC=
+n <mic@digikod.net> wrote:
 
-Without this patch, OSPI NOR enumeration (READ_ID) fails during resume
-as context saved during suspend path is inconsistent.
+...
 
-Fixes: 6d35eef2f868 ("spi: cadence-qspi: add system-wide suspend and resume callbacks")
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- drivers/spi/spi-cadence-quadspi.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+> > > > > it guarantees
+> > > > > that the VFS semantic is always visible to each LSMs thanks to th=
+e use
+> > > > > of the same f_owner.cred
+> > > >
+> > > > The existing hooks are designed to make sure that the F_SETOWN
+> > > > operation is visible to the LSM.
+> > >
+> > > This should not change the F_SETOWN case.  Am I missing something?
+> >
+> > I don't know, you were talking about making sure the VFS semantics are
+> > visible to the LSM and I was simply suggesting that the existing hooks
+> > do that too.  To be honest, whatever point you are trying to make here
+> > isn't very clear to me.
+>
+> The existing hooks does not reflect the VFS semantic because
+> of the `if (force || !filp->f_owner.pid)` checks in f_modown().
+> When f_modown() is explitly called from user space (F_SETOWN), force is
+> true, but that is not the case for all call sites (e.g. TUN, TTY,
+> dnotify).
 
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 05ebb03d319f..d4607cb89c48 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -2000,13 +2000,25 @@ static int cqspi_runtime_resume(struct device *dev)
- static int cqspi_suspend(struct device *dev)
- {
- 	struct cqspi_st *cqspi = dev_get_drvdata(dev);
-+	int ret;
- 
--	return spi_controller_suspend(cqspi->host);
-+	ret = spi_controller_suspend(cqspi->host);
-+	if (ret)
-+		return ret;
-+
-+	return pm_runtime_force_suspend(dev);
- }
- 
- static int cqspi_resume(struct device *dev)
- {
- 	struct cqspi_st *cqspi = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = pm_runtime_force_resume(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_force_resume failed on resume\n");
-+		return ret;
-+	}
- 
- 	return spi_controller_resume(cqspi->host);
- }
--- 
-2.46.0
+Thanks for the clarification.  I believe moving the hook as discussed
+should resolve this too.
 
+--=20
+paul-moore.com
 
