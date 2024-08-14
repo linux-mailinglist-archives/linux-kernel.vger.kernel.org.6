@@ -1,95 +1,152 @@
-Return-Path: <linux-kernel+bounces-286749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D5F951E8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:28:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292FC951E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1002B253D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:28:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCCF1C21E61
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1685E1B4C32;
-	Wed, 14 Aug 2024 15:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2022B1B4C5B;
+	Wed, 14 Aug 2024 15:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eyPX261q"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pco3XWSs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEC11B3F39
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417321B3F20;
+	Wed, 14 Aug 2024 15:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723649306; cv=none; b=U0ZTbVfZovfEr3/wGmF5yxe9VBaMVkFjJR1xbTSZqPLDXQ4g7lVryQC/uHMLQnA4F1YBFQZxvLB2ITjHPsVbB23uvZS4Fi6uPKiT3EkD2dSZrND/t2l4SGD3mcfizLji9NHngk7HOjg3hzFMXLvu4QzzY+ZcKeNm56d9pUuiuOY=
+	t=1723649318; cv=none; b=FOrC0qpvAUZ+ojLJ0Yxbaab4Ortl6lA5bquixwf8dDOimZSX8YeanE4pCh8lRlZ7B6UnsxC/Fb2l3wiyD05faay6j/fL58a0jg9GeVkilHhK7bYT0okfr7hnUElwmpybw0XgjmiDiOf/5Es07eiLev72tk08TIWCnDFHkCaGil4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723649306; c=relaxed/simple;
-	bh=MuR0TzKoD/82H6FNhNsVi/6dcgoRuB0EnRcZ5RZ2w38=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fafJn8JKys1VnJjsbXPGY4/ZhJnT63LlAQGzmDiW+aRqWIq5ZKDPi33xUuIrPds8a6ijrXOGl2C9T8amKNA16DptC8R0r/KYeNQSHGcEjSKIC8VLQGEVdnND6AsG3I/2b1JL5Qd3wE0wYVfPrdiS6QjabazcAsGLgbJ5aJZKajI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eyPX261q; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723649293; x=1723908493;
-	bh=MuR0TzKoD/82H6FNhNsVi/6dcgoRuB0EnRcZ5RZ2w38=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=eyPX261q1+gOa00RCdL3H899nPWsg3bAblFMAyKWWTMD84a+INhfR5feerWgyNj21
-	 KyB6SZlHj2eGIrCmCmvnWmqBusIYbmmhjLi9mzcpAKaV13pMulyRgXgRa3oSj2p3SC
-	 9alhP9UN/h2oZJOBAOPN+vsdxjNdEvbLIOxzRmViDEMbaUYK3mBiiGp4YgpmVljUlE
-	 t0HmusHD7/Wiifd/hhmMrCW70tsGBCMcTNjm1SRVV79BzZHrRGNgpgls5W6sy6GhQK
-	 8NiixMLXgWB8hA810jwVM7WlxwerE/ida5NKEd3hHa9AljONB5Cqn01YN3j7Tw5dtx
-	 3KnFtXGBtdYIA==
-Date: Wed, 14 Aug 2024 15:28:10 +0000
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
-Message-ID: <fae5176a-20bd-4ed4-b61c-5114adc674fc@proton.me>
-In-Reply-To: <ZrzLHu5Ey9vLwNJg@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-5-dakr@kernel.org> <CAH5fLgit0hSFWi_Bv4DFK6vvhoLfSz=BMaPDBU0Z0oyZta9U9w@mail.gmail.com> <Zryy04DvEsnxsRCj@pollux> <CAH5fLghsONUtxFPgD6vC139H-Uj5LDju7w5eS0JB+BnDMmfngw@mail.gmail.com> <Zry1qwJnPDUtp2Nw@cassiopeiae> <CAH5fLgjNfJyyZygWzeTyrNi8TQNAquufxFxDgJHzq6dan=b9BQ@mail.gmail.com> <Zry4iOGtR0nd6lNP@cassiopeiae> <CANiq72nsSOaG=WhGP5GUQ=ygCh23iDQBc0kgjRP3B5MoF0CUjg@mail.gmail.com> <ZrzLHu5Ey9vLwNJg@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 3b4c5c06824648ccad7be788c21fcae10398f170
+	s=arc-20240116; t=1723649318; c=relaxed/simple;
+	bh=4xOvY7ZUGBscotWO0gF1rUpNxDJ/2bsRi1+aocWjgnk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WhoEH7XcGqpabA8HOLk6mncOnIm4obrrYV6KGh0hFYi1vl8Rwru8NOIZ0I2gVLK/aTlz9lde31lVnQN6QXwMY/fhhRoK4ndWtr30AUC1zMI9CtaN1Y6Mr8ei5edVgUM4ePcfglLqilztdCU2fjAgkAu/Ch0A0MnxtRMzwE4V8rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pco3XWSs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296E0C116B1;
+	Wed, 14 Aug 2024 15:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723649317;
+	bh=4xOvY7ZUGBscotWO0gF1rUpNxDJ/2bsRi1+aocWjgnk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=pco3XWSsNCk5xwrkySFqbpr2EoRoBszgtgcrAYQgvEs+v9LkONAWhBJvoem8mKPxT
+	 Uc9BmHPAuDsUBcKHDfzQlIB0UikuqSddP3nNoPtNwsuwI65TcgOj56TmXrg/uJnFWr
+	 RPGhyfyZYIgzhLlP4mGQf4qiSK/FGlOf/TurzbdNHwapDS9KHTCT56G5gBNAzAOzcb
+	 vmixeCYPZxgD5KAqLXzvLSmiNaYTpH8WFi4AA4D+nTbSjZNXKavf2fC9bW/jRn7tZD
+	 19yUim8yDroDQ1m+PKlHGw9BB1OYVJFh+FP+w0XM/top8fDO/sYig2AznJ5wkJxLQl
+	 Swtr/zQG7E2aA==
+Message-ID: <28a917ac-2b90-474c-8a3b-3298dedf87bc@kernel.org>
+Date: Wed, 14 Aug 2024 17:28:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add JMO Tech
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-0-22a5e58599be@geanix.com>
+ <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-1-22a5e58599be@geanix.com>
+ <ec3462d8-e300-4273-9ce5-5380b506821e@kernel.org> <871q2r5fnq.fsf@geanix.com>
+ <97f60cd3-1433-4dc5-9dc4-ad9a53c1b35a@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <97f60cd3-1433-4dc5-9dc4-ad9a53c1b35a@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 14.08.24 17:19, Danilo Krummrich wrote:
-> On Wed, Aug 14, 2024 at 05:03:21PM +0200, Miguel Ojeda wrote:
->> On Wed, Aug 14, 2024 at 4:00=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
->>>
->>> If we keep them, we'd consequently also need to add them for vrealloc()=
- and
->>> kvrealloc(). But again, they don't do anything for us, and hence are mo=
-re
->>> misleading than helpful IMO.
+On 14/08/2024 17:26, Krzysztof Kozlowski wrote:
+> On 14/08/2024 16:43, Esben Haabendal wrote:
+>> Krzysztof Kozlowski <krzk@kernel.org> writes:
 >>
->> In general, they could do something (e.g. `noreturn`), perhaps in the fu=
-ture.
->=20
-> Indeed, and I think once they're honored we should add them again.
+>>> On 14/08/2024 15:10, Esben Haabendal wrote:
+>>>> Add vendor prefix for JMO Tech CO., LTD. (http://www.jmolcd.com/).
+>>>>
+>>>> Signed-off-by: Esben Haabendal <esben@geanix.com>
+>>>> ---
+>>>>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+>>>> index a70ce43b3dc0..5d2ada6cfa61 100644
+>>>> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+>>>> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+>>>> @@ -758,6 +758,8 @@ patternProperties:
+>>>>      description: Jiandangjing Technology Co., Ltd.
+>>>>    "^jide,.*":
+>>>>      description: Jide Tech
+>>>> +  "^jmo,.*":
+>>>
+>>> Wevsite is jmolcd, so prefix should match it - jmolcd.
+>>
+>> Ok. Even though the companies name is "JMO Tech CO.,LTD", and does not
+>> hint at "jmolcd"?
+> 
+> We use domain names as vendor prefixes, so when another "jmo.com" comes,
+> they will get "jmo", not something else.
 
-That sounds like it will be a lot of work, going through every function
-and checking if it has the given attribute. Especially when the
-attributes are enabled one by one. I think we should keep them (and of
-course introduce them on new functions).
+Although probably that's too far fetched... let it be then:
 
----
-Cheers,
-Benno
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> It's just that I think as long as compiler attributes aren't honored, we =
-should
-> not have them in the first place to avoid confusion about whether they do=
- or do
-> not have any effect.
+Best regards,
+Krzysztof
 
 
