@@ -1,45 +1,74 @@
-Return-Path: <linux-kernel+bounces-285767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312DF951256
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B3E951258
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 453DF1C213BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A400A2826ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178F21CD26;
-	Wed, 14 Aug 2024 02:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD65C17C66;
+	Wed, 14 Aug 2024 02:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="W3YuOef+"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Jm8+mVyo"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5CA33FE;
-	Wed, 14 Aug 2024 02:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B00171A5
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723602340; cv=none; b=XO9T5ZbZYw2pH42SzbYcBEOhw7bJpEvyWnNxmJhb68UOJYB6C2qQNxbaK6cIX2zAEuiqOMRlLoYgxcLa/25HXQMnZ/Q9X2Cty7DomL1X7BQWeZGLj9JdMkSls9wwek4anqwMc2H1vVDvY2kgtffSo7Sb+n5rFaossovWr5o+toM=
+	t=1723602354; cv=none; b=IijVFy9avUBpIuErcV+uVVykMn2BjQDTRng0+XOiz+rOZNgjKCxj/UsK38PNGbnQJWHxi5wICd4m6AsLisS/EZktO8LCB83SPs8etEjEEEJkydX41CWZHuleWvJOZHPUZNF5y0vEaqSIpsgzQ4fL0JURZ4DPDoDjHQOdA2ZqQfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723602340; c=relaxed/simple;
-	bh=sx4e2OSQ4+9w9uZQjuGm9Fj5GtIQiC0v8fBDiSanHbg=;
+	s=arc-20240116; t=1723602354; c=relaxed/simple;
+	bh=2V9ePT8qFQLfcn3Al53k6b66Jf9bRTh5dFrcVZ4ehNw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i7qQHkjVMq6sEEsgglRE2jLIh1fCBVJQT6QZQ/uiSJf/i8/n6qv2SJ+OUFdQ9qXiW8JS5wiKJ7F5rqGGL1QsQxqema814VK+Qupg54HRse6z5pWQpoJlPXPyaG3oUyjy7yOGuGfin6Spkung66XqBgaIKv7Ao+8xf7lcUM78D3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=W3YuOef+; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723602329; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=y07qmhnvEaJYsXCANnWzIUV9fhwW9kyK+2s4Kwdt/8o=;
-	b=W3YuOef+Xu7n45seE03t6wSlmMVGjWwr49XUMjnHqBBv91FSSwEdYdrBRXbnasbUWoFGbIyTQkq2DqJm8NJDp7GAH9cO1nbECsNgojLg/KMTkdGqfXt6/LJUVpmSE+EHZdmkzDLCvUCvSBIAndE//xa+GCtX5QzunxDg/DXb4G0=
-Received: from 30.221.148.210(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCqbUxf_1723602327)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Aug 2024 10:25:28 +0800
-Message-ID: <97b85c74-55e9-4607-8f30-3a938638a309@linux.alibaba.com>
-Date: Wed, 14 Aug 2024 10:25:27 +0800
+	 In-Reply-To:Content-Type; b=aSihofVCPgvbTIaR3i8hAx64+Jfg9CL1poBM1jTubOCVEXmwz9rXq38KPwSMO2MSUEVCjC3TvVgWfoHsvUekX7jgRXFOW/UEXMQWlT91G30R+i0ymCEBAkgsvTFCWOJmOu8Hc4ubVs//tlvZ+31J9YWj4iQaP3fVTqzMfgYlyng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Jm8+mVyo; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39b37b63810so3218745ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1723602352; x=1724207152; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h6LNGe/J5ub4oSc4wEcWX9/lvXmZbxXATcRN21QG/c4=;
+        b=Jm8+mVyoArP0ifQn1Bn16/qrNrDzFXhzWtYz/iVPT4y2mrS2U8vzXhlYjbwWDm6LzL
+         lzDA11RsATJgya26/jgZo5s6OrlhD/ojx5eixhgeYh+qP7G33xEwOIt9HMKPDLfGvhzG
+         pmSRas8eu/kiJvUMQkspbfo4XxqvWiOtbxB27AYwBwmbf/PY6UYDLPVuMK6Pdg8we1z0
+         XRIJfYbLMpAwjcIflkh8Ur6RLUxO9bu+o+lJU1T6zPfLWbD7pH9q3bHm25gaNEdxn0In
+         2ZdU8TR+wlNTvV48yM7RYo+kHzVv+42W/okJj8RaQoNtqSqdcATf4qat3nn+oGQI5ef3
+         hH5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723602352; x=1724207152;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6LNGe/J5ub4oSc4wEcWX9/lvXmZbxXATcRN21QG/c4=;
+        b=e44F+S73J7c0YEGaM1VFqNb/abl7x978JG/sPCWV8MMSqiVNlVoMvtNPUU+sSwoGaC
+         uKLfF41zdgDGyPAm1YGsVF8KD5lXygC0Lq+Z9fuWk9XTuE08f3pQ1tNCLpeohA12TWmC
+         +OZtiP8ukoFwbeyLIG7hZYikEQD/BfN3kXhJU8V07zAEXZeCqGtt4ABy1LklM3B78f1d
+         UmU/OLmnPPeXClUF9iSV2EXgF/g3VUQNzPt84Jhz9+vJfIZXkR2UeZVwmu5WLcrO+gXO
+         sMHY8nYsv3pPYYLl/ZgRjG/BVnh6W3PNGHVI7O1yhoN3idT/rtrNWslgH6s5lOD/RJ/6
+         XkUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGTobYblwUnkjnQ2BUMjnlxjo6AREuHYTcd4FxBsnkK0rZwOH9/s5nsLckIrtD1vVazj61wl10D7bbNmQwV+6B0a4GTm+K2JHOabFc
+X-Gm-Message-State: AOJu0YxesG5+77FZYbqU0z0wO+bQDSOsJFI53fsZs6TqFGx9jJ1KD7bn
+	aE6cOcHAgmZbIODQlN/n5ViI6DfTIAhPNEVXPSx1VmCWUfOojU4R0d54bAKqWzdky/raH08/VPm
+	w
+X-Google-Smtp-Source: AGHT+IEn4p4u+nmkKxqQbRWPDC6r2DEt5JWPBdmKEfZqfN+TfyQpUSmW5aIcJHJ7gF6pbgyQMbYzzg==
+X-Received: by 2002:a05:6e02:1d81:b0:39c:2cf0:42f2 with SMTP id e9e14a558f8ab-39d124f2f2dmr10090755ab.4.1723602351912;
+        Tue, 13 Aug 2024 19:25:51 -0700 (PDT)
+Received: from [10.4.217.215] ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6979ebfaesm2154264a12.24.2024.08.13.19.25.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 19:25:51 -0700 (PDT)
+Message-ID: <382ae7b5-9ccd-4202-a02d-be5d453f7c43@bytedance.com>
+Date: Wed, 14 Aug 2024 10:25:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,145 +76,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in
- txopt_get
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, gbayer@linux.ibm.com,
- tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
- dust.li@linux.alibaba.com, edumazet@google.com, pabeni@redhat.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-References: <20240813100722.181250-1-aha310510@gmail.com>
- <b4b49770-2042-4ee8-a1e8-1501cdd807cf@linux.alibaba.com>
- <CAO9qdTFjG7TZ7BKJZ_dvvOm08tjYooVtjh-8mNSoOZ7Ys5H=Ww@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] userfaultfd: Fix checks for huge PMDs
 Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <CAO9qdTFjG7TZ7BKJZ_dvvOm08tjYooVtjh-8mNSoOZ7Ys5H=Ww@mail.gmail.com>
+To: Jann Horn <jannh@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Pavel Emelianov <xemul@virtuozzo.com>, Andrea Arcangeli
+ <aarcange@redhat.com>, Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+ stable@vger.kernel.org
+References: <20240813-uffd-thp-flip-fix-v2-0-5efa61078a41@google.com>
+ <20240813-uffd-thp-flip-fix-v2-1-5efa61078a41@google.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20240813-uffd-thp-flip-fix-v2-1-5efa61078a41@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 8/13/24 7:48 PM, Jeongjun Park wrote:
-> D. Wythe wrote:
->>
->>
->> On 8/13/24 6:07 PM, Jeongjun Park wrote:
->>> Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
->>> copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
->>>
->>> In addition, since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
->>> point to the same address, when smc_create_clcsk() stores the newly
->>> created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
->>> into clcsock. This causes NULL pointer dereference and various other
->>> memory corruptions.
->>>
->>> To solve this, we need to add a smc6_sock structure for ipv6_pinfo_offset
->>> initialization and modify the smc_sock structure.
->>>
->>> Reported-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
->>> Tested-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
->>> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
->>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->>> ---
->>>    net/smc/smc.h      | 19 ++++++++++---------
->>>    net/smc/smc_inet.c | 24 +++++++++++++++---------
->>>    2 files changed, 25 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/net/smc/smc.h b/net/smc/smc.h
->>> index 34b781e463c4..f4d9338b5ed5 100644
->>> --- a/net/smc/smc.h
->>> +++ b/net/smc/smc.h
->>> @@ -284,15 +284,6 @@ struct smc_connection {
->>>
->>>    struct smc_sock {                           /* smc sock container */
->>>        struct sock             sk;
->>> -     struct socket           *clcsock;       /* internal tcp socket */
->>> -     void                    (*clcsk_state_change)(struct sock *sk);
->>> -                                             /* original stat_change fct. */
->>> -     void                    (*clcsk_data_ready)(struct sock *sk);
->>> -                                             /* original data_ready fct. */
->>> -     void                    (*clcsk_write_space)(struct sock *sk);
->>> -                                             /* original write_space fct. */
->>> -     void                    (*clcsk_error_report)(struct sock *sk);
->>> -                                             /* original error_report fct. */
->>>        struct smc_connection   conn;           /* smc connection */
->>>        struct smc_sock         *listen_smc;    /* listen parent */
->>>        struct work_struct      connect_work;   /* handle non-blocking connect*/
->>> @@ -325,6 +316,16 @@ struct smc_sock {                                /* smc sock container */
->>>                                                /* protects clcsock of a listen
->>>                                                 * socket
->>>                                                 * */
->>> +     struct socket           *clcsock;       /* internal tcp socket */
->>> +     void                    (*clcsk_state_change)(struct sock *sk);
->>> +                                             /* original stat_change fct. */
->>> +     void                    (*clcsk_data_ready)(struct sock *sk);
->>> +                                             /* original data_ready fct. */
->>> +     void                    (*clcsk_write_space)(struct sock *sk);
->>> +                                             /* original write_space fct. */
->>> +     void                    (*clcsk_error_report)(struct sock *sk);
->>> +                                             /* original error_report fct. */
->>> +
->>>    };
->>>
->>>    #define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
->>> diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
->>> index bece346dd8e9..25f34fd65e8d 100644
->>> --- a/net/smc/smc_inet.c
->>> +++ b/net/smc/smc_inet.c
->>> @@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
->>>    };
->>>
->>>    #if IS_ENABLED(CONFIG_IPV6)
->>> +struct smc6_sock {
->>> +     struct smc_sock smc;
->>> +     struct ipv6_pinfo np;
->>> +};
->> I prefer to:
->>
->> struct ipv6_pinfo inet6;
-> Okay, I'll write a v4 patch and send it to you tomorrow.
->
-> Regards,
-> Jeongjun Park
+On 2024/8/14 04:25, Jann Horn wrote:
+> This fixes two issues.
+> 
+> I discovered that the following race can occur:
+> 
+>    mfill_atomic                other thread
+>    ============                ============
+>                                <zap PMD>
+>    pmdp_get_lockless() [reads none pmd]
+>    <bail if trans_huge>
+>    <if none:>
+>                                <pagefault creates transhuge zeropage>
+>      __pte_alloc [no-op]
+>                                <zap PMD>
+>    <bail if pmd_trans_huge(*dst_pmd)>
+>    BUG_ON(pmd_none(*dst_pmd))
+> 
+> I have experimentally verified this in a kernel with extra mdelay() calls;
+> the BUG_ON(pmd_none(*dst_pmd)) triggers.
+> 
+> On kernels newer than commit 0d940a9b270b ("mm/pgtable: allow
+> pte_offset_map[_lock]() to fail"), this can't lead to anything worse than
+> a BUG_ON(), since the page table access helpers are actually designed to
+> deal with page tables concurrently disappearing; but on older kernels
+> (<=6.4), I think we could probably theoretically race past the two BUG_ON()
+> checks and end up treating a hugepage as a page table.
+> 
+> The second issue is that, as Qi Zheng pointed out, there are other types of
+> huge PMDs that pmd_trans_huge() can't catch: devmap PMDs and swap PMDs
+> (in particular, migration PMDs).
+> On <=6.4, this is worse than the first issue: If mfill_atomic() runs on a
+> PMD that contains a migration entry (which just requires winning a single,
+> fairly wide race), it will pass the PMD to pte_offset_map_lock(), which
+> assumes that the PMD points to a page table.
+> Breakage follows: First, the kernel tries to take the PTE lock (which will
+> crash or maybe worse if there is no "struct page" for the address bits in
+> the migration entry PMD - I think at least on X86 there usually is no
+> corresponding "struct page" thanks to the PTE inversion mitigation, amd64
+> looks different).
+> If that didn't crash, the kernel would next try to write a PTE into what it
+> wrongly thinks is a page table.
+> 
+> As part of fixing these issues, get rid of the check for pmd_trans_huge()
+> before __pte_alloc() - that's redundant, we're going to have to check for
+> that after the __pte_alloc() anyway.
+> 
+> Backport note: pmdp_get_lockless() is pmd_read_atomic() in older
+> kernels.
+> 
+> Reported-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Closes: https://lore.kernel.org/r/59bf3c2e-d58b-41af-ab10-3e631d802229@bytedance.com
 
-Before you issue the v4, I still don't know why you move clcsk_xxx from 
-smc_connection
-to smc_sock, can you explain it ?
+Ah, the issue fixed by this patch was not reported by me, so
+I think that this Reported-by does not need to be added. ;)
 
-Also, regarding alignment, it's okay for me whether it's aligned or 
-not，But I checked the styles of other types of
-structures and did not strictly require alignment, so I now feel that 
-there is no need to
-modify so much to do alignment.
+> Cc: stable@vger.kernel.org
+> Fixes: c1a4de99fada ("userfaultfd: mcopy_atomic|mfill_zeropage: UFFDIO_COPY|UFFDIO_ZEROPAGE preparation")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>   mm/userfaultfd.c | 22 ++++++++++++----------
+>   1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index e54e5c8907fa..290b2a0d84ac 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -787,21 +787,23 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
+>   		}
+>   
+>   		dst_pmdval = pmdp_get_lockless(dst_pmd);
+> -		/*
+> -		 * If the dst_pmd is mapped as THP don't
+> -		 * override it and just be strict.
+> -		 */
+> -		if (unlikely(pmd_trans_huge(dst_pmdval))) {
+> -			err = -EEXIST;
+> -			break;
+> -		}
+>   		if (unlikely(pmd_none(dst_pmdval)) &&
+>   		    unlikely(__pte_alloc(dst_mm, dst_pmd))) {
+>   			err = -ENOMEM;
+>   			break;
+>   		}
+> -		/* If an huge pmd materialized from under us fail */
+> -		if (unlikely(pmd_trans_huge(*dst_pmd))) {
+> +		dst_pmdval = pmdp_get_lockless(dst_pmd);
+> +		/*
+> +		 * If the dst_pmd is THP don't override it and just be strict.
+> +		 * (This includes the case where the PMD used to be THP and
+> +		 * changed back to none after __pte_alloc().)
+> +		 */
+> +		if (unlikely(!pmd_present(dst_pmdval) || pmd_trans_huge(dst_pmdval) ||
+> +			     pmd_devmap(dst_pmdval))) {
+> +			err = -EEXIST;
+> +			break;
+> +		}
+> +		if (unlikely(pmd_bad(dst_pmdval))) {
+>   			err = -EFAULT;
+>   			break;
+>   		}
 
-D. Wythe
+Reviewed-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
->
->>> +
->>>    static struct proto smc_inet6_prot = {
->>> -     .name           = "INET6_SMC",
->>> -     .owner          = THIS_MODULE,
->>> -     .init           = smc_inet_init_sock,
->>> -     .hash           = smc_hash_sk,
->>> -     .unhash         = smc_unhash_sk,
->>> -     .release_cb     = smc_release_cb,
->>> -     .obj_size       = sizeof(struct smc_sock),
->>> -     .h.smc_hash     = &smc_v6_hashinfo,
->>> -     .slab_flags     = SLAB_TYPESAFE_BY_RCU,
->>> +     .name                           = "INET6_SMC",
->>> +     .owner                          = THIS_MODULE,
->>> +     .init                           = smc_inet_init_sock,
->>> +     .hash                           = smc_hash_sk,
->>> +     .unhash                         = smc_unhash_sk,
->>> +     .release_cb                     = smc_release_cb,
->>> +     .obj_size                       = sizeof(struct smc6_sock),
->>> +     .h.smc_hash                     = &smc_v6_hashinfo,
->>> +     .slab_flags                     = SLAB_TYPESAFE_BY_RCU,
->>> +     .ipv6_pinfo_offset              = offsetof(struct smc6_sock, np),
->>>    };
->>>
->>>    static const struct proto_ops smc_inet6_stream_ops = {
->>> --
-
+> 
 
