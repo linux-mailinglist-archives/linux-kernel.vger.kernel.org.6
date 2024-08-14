@@ -1,322 +1,135 @@
-Return-Path: <linux-kernel+bounces-287096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADCC9522D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:52:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5949522DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DBC3B25324
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D58280A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989401C2334;
-	Wed, 14 Aug 2024 19:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAB11BF315;
+	Wed, 14 Aug 2024 19:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K/ZOyqyG"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2071.outbound.protection.outlook.com [40.107.94.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgGMQxH3"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF18D1C2308
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723665071; cv=fail; b=c8g0qjS3MbhsrqxRTIYTILeomSnJz7dPRqcFFn2NeY/iP69lnhXFHDjz9/ZuTgHkQfLCE9E77RRuvX/GCj64F2gep7mlZI0Qp3urpSRjpZAEeVjLgBNrXvJL4dgJS3oaKEd6vc5JNWTfVXrTLdeFFlV19BJB59IdT2Sl9oiKuCI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723665071; c=relaxed/simple;
-	bh=OoUqyciTR8PCDD6F8GkhpkfiYxQwwcl3iWyu82ec/7k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EenymLg92z+bYEhu7HsEy62C6OxkPxP3OcymemMbqCWAGTA6ufltFWCHxqIMVga/otk6oFPzR77dFYRhVulD+XwQLzPB/7IjA0vwUokLQh5clAW6CetikBh22w1+k5lp5nOuaWq2hG5NBMkJoWQ1JKeQ0SkbkS4TYqJ24jPJQxc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K/ZOyqyG; arc=fail smtp.client-ip=40.107.94.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=unFpCT3m6Y3JVMv0vah3nxgNKFtwCXVTogf+Vv/R9XT1ZZUug0WqFwSvzfAE3kfDJdWOXOph4jGE+1b2DugxF0ISCebP86cwEGX5M6D2WsB4vetnuDlVhUjY72+1eEXJnK4wpz3CirG8q+er2lU9K7bAQ2+kvTabr2ldvVP3zsc40nzBAH2BiRzwuxBVgpj6poQ1+H0VRSgbSZawg6ueMcecH2vWp+jDYQS1sMh0eOIoNwxhVHQnkK6ayEniGrbjyT2tFBOF99dpGuiaJWF73VhGicL7cKy/S7hTTRfPtEItZxNEtCp6KVIEyRR+poJ+sPDDm27CvIGSDLxend5dyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HC/ZgKM1sNnirwUIzOYUrUnoB4T1UGuhE4FPq7nsUVM=;
- b=cFxDRR8j/zRFD3XkRCEHPrL9UZJQC1XgUHI+mzLznLHTxU/mFOLrM/R1B0GKFWDag2TwGuJh263lVXbsnwE0Y/9AKULpkr425efWAFj9JguE7wEWYVXYXS+1OTiulyyoiZAlJ0QEIkVKmTxgajlViGUQQOOTPhKFh9UFl356kPcPamxtzv3t4f7lbUbY8j0jpx/YJGHyaKzmZS+4VhfQX0c22TaYnxTNA/0xJMgQFfglxAMLkCcyOqnMDqIdICvb7dSun7b7wX89Z7OVsS8eueJ3jQGQ8UeeqnWOgtFSrV4Gib/rv5Orr/6JpvkzVcdfWcTLqHOWfZrBex2nGVyroA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HC/ZgKM1sNnirwUIzOYUrUnoB4T1UGuhE4FPq7nsUVM=;
- b=K/ZOyqyGzBXWcPuvjdEhiU6bwc84Gen2NgSvh1ZXtdMtreiF7cI+8CsA6/dxw9dbH4aOeePPb8qczm/04cYLZIMiVFsmklC+lEBThCtuiFO6Y92WEki/GBG/LWLcZ/x3YQxKz3Y8wkncximqax3zqcsZkswdiBX5FQR/I/s/4LY=
-Received: from MW4PR03CA0008.namprd03.prod.outlook.com (2603:10b6:303:8f::13)
- by MW4PR12MB6949.namprd12.prod.outlook.com (2603:10b6:303:208::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Wed, 14 Aug
- 2024 19:51:08 +0000
-Received: from CO1PEPF000044F8.namprd21.prod.outlook.com
- (2603:10b6:303:8f:cafe::4f) by MW4PR03CA0008.outlook.office365.com
- (2603:10b6:303:8f::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33 via Frontend
- Transport; Wed, 14 Aug 2024 19:51:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F8.mail.protection.outlook.com (10.167.241.198) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.4 via Frontend Transport; Wed, 14 Aug 2024 19:51:07 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
- 2024 14:51:06 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
- 2024 14:51:06 -0500
-Received: from fedora.mshome.net (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 14 Aug 2024 14:51:05 -0500
-From: Jason Andryuk <jason.andryuk@amd.com>
-To: Juergen Gross <jgross@suse.com>, Boris Ostrovsky
-	<boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Stefano Stabellini <sstabellini@kernel.org>, "Oleksandr
- Tyshchenko" <oleksandr_tyshchenko@epam.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>
-CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>, "Jason
- Andryuk" <jason.andryuk@amd.com>
-Subject: [PATCH v2 5/5] x86/pvh: Add 64bit relocation page tables
-Date: Wed, 14 Aug 2024 15:50:53 -0400
-Message-ID: <20240814195053.5564-6-jason.andryuk@amd.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240814195053.5564-1-jason.andryuk@amd.com>
-References: <20240814195053.5564-1-jason.andryuk@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21063370;
+	Wed, 14 Aug 2024 19:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723665141; cv=none; b=IV2u7OQG0LdH64tKYw4LVRTAoPr2HEcgTX2atHrWW3uqpO9kjVBKuCRXA8hxYobKw8hGFo7qWp0QrDiggdIe6fvctJFQskUkkigXa4G7P8+ghYB2V8TRWhz/BhEg1vICAwBZGXIdITmQGOsOMkjh6RA0vM+OAJTE4WvwaHN1PE0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723665141; c=relaxed/simple;
+	bh=IeoPsrjRFuK/BstJVImPOaM8kWcJho5fxj+w3CFGxj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B7SiL2yN8ZrZ+ahbvfm+unEPv+T9rKGR3aJFWl7h4qDtiD9u2mznH/NY6bXjOhGHOhpWmbDjcap9IAFLaQmNu4CpTX/xvNE7dTxRhSxOflYm9wFBydiqVkNWyWxQArvMiNA5P9W8PoAcjY3et+0SaG1W3e8zQKUB5oq5TBPycWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgGMQxH3; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-49762c3eb85so94732137.0;
+        Wed, 14 Aug 2024 12:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723665139; x=1724269939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IeoPsrjRFuK/BstJVImPOaM8kWcJho5fxj+w3CFGxj8=;
+        b=KgGMQxH3L64VHwdM2o26LIdryKZnURPoRRTMkuJTx3gdCjZ0NgQtaviWa6PEPuVDZm
+         7rJufQbFupDQLfC5sD2EOj3avjT7yO2waUA6nT6p2htJIFK6Vr0gJThYaRh1U+c1zHlp
+         ul+02Cx0+AKQwcWYLJA4VQovEQhXK+r1LMTp3FHaF+rh+NkxCLu787qvGneYK2XwzwuY
+         HDIqlOILa4KXPWips5CpY9zmA1pRK89Mlr/ufWo8Hicz/bFP15EEMBziozYZYpI0tjRO
+         iITsYZ1xt/Q87J8HYn7LPadNJzN/BqVmd057Avz+7YVsKDtXKDdyFLM9ldSDdQgACoDH
+         EQLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723665139; x=1724269939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IeoPsrjRFuK/BstJVImPOaM8kWcJho5fxj+w3CFGxj8=;
+        b=M7zrXxVE7Esr36hadelz1zqwDHq6gAx7MJ7ZauoEjGkIHt5t1M9vL/l66yhoaa1cB/
+         B7zjtJB/a/yWjocAhRO4vzoPPCQw2/tP7GiHyPhMJB6AlZIC6nvrPuSHPTI7V2Ludn87
+         hWRsztPWyWyf9JvDHxdV9h+emQpAhdtGBWQh5Y0mggNv+5Q3VspMhrf0Hqodgl7Ziqpc
+         /qHZXLvRsOCN15FDssKGz6YPbS3EuVI1EPpywR6DBH0WJAKxVXx9XLBftsxrUzSOKKnc
+         UiPvLUZlT9IfiE3NDeBgQwMBf6FagJRQYRh6uGrfRvbJJRn2Tj8W9HazFTqMkd+MGPh9
+         jTZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW0WCim+qTj4LohynzLoa+2kMIyfJEFF03QuxH/znRx42lkgCj7Yl+EX5gOb0da9YhyOLnPoqqzWyvVHmduXlQq8j4icI/Bw==
+X-Gm-Message-State: AOJu0YyD/xp9nKJz8e3+OUcgJ3Ydtjw3bmiOs8v/tMaAdfAtObcku1BL
+	8WvEJ7tjU4+DSRe8B8tWB770ImGDWQHHjjNVHsVInJFQAorcI6rZ6qScKQbeQuR6gc7d4XG4w3F
+	kRN0TUQwgvAmMO1D3zz6uGOFhSkM=
+X-Google-Smtp-Source: AGHT+IFmyqM0n36CuBCgp4+9MlTTewpOjvy1XhbCATkx/SyHg8foHFQW1y1fhhdZR0oNy9184AxbZT5JpXLd37GpdXg=
+X-Received: by 2002:a05:6102:cc9:b0:495:c53d:d6f4 with SMTP id
+ ada2fe7eead31-497599d7602mr4427066137.29.1723665138763; Wed, 14 Aug 2024
+ 12:52:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F8:EE_|MW4PR12MB6949:EE_
-X-MS-Office365-Filtering-Correlation-Id: 654818fb-f78b-496e-9fa0-08dcbc9a7095
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?izBEj8tOuyf48lDIrwaZjYcEg5WsLVapYQRRyEGh+vLcoMoKahMuLtVNYmGL?=
- =?us-ascii?Q?Pjz4xndpLAieuCjK/9c8o0bCmcVMU8SkentwAE+Z4Nak3el+J9/YicvccF8z?=
- =?us-ascii?Q?/z5tlQNDIf7EGotgb73sfZ/BF9CwxLkG+RVno/NqZu/IizE1d51nVTXe537a?=
- =?us-ascii?Q?NqqbIsWJjXtQqKStJTxyL7CJPSAkfMou2H79M/RAyD7Hpdls5SGjxAzod7p1?=
- =?us-ascii?Q?twJZF8Vc4QsdAOxjrAE1OXTzrUwCfzc5DwJnHEFOhKQS4CHWYs1ASM0eSA9z?=
- =?us-ascii?Q?yEnmOqbqNVx86kh/xxFO2c8tOVU5ky70X+y/lMKz+v7sFv/FOXcodn3D7wuw?=
- =?us-ascii?Q?e3iG1oftRkyRRpau9yphQVgkn3N0Q4HZqPiaWfMMgM1LFAMWbhjf9klLOKeJ?=
- =?us-ascii?Q?uIc+lphxiXOB33oG5om01fnQkhYti1ky+YqVEBwWDoHPZhIuNNhjD+PHh1pP?=
- =?us-ascii?Q?ey0YRh1sUnUP8+dIp9nyH/1werFfCW0lf3JGs9PFp4Os7e1iZ0euPgn2BUgr?=
- =?us-ascii?Q?WA6YnLRNa8Tu+b7ljwxkOtWfDI8/gQhxE6AIFZbzrTjKeFel7n1ySKivo885?=
- =?us-ascii?Q?QRb/nof0JF7YbmvPYw0cH/cmknZmHd7e1tvHL3jM2ZpPOrB9csyhQcuPAS58?=
- =?us-ascii?Q?aFkf1NNnBJ+fsjqVE36boV2kShcT9ef5fPnihpPUFxEdpMSpBbekkqLSuYR5?=
- =?us-ascii?Q?f6CSLTJWTemZZfvMbVaGCeclZzXNnXz/RvW2Ab9Xo3FPIZSgiMvbLn0uKFLu?=
- =?us-ascii?Q?WBEaOpPju0DEmoaI4p2da6jjjBkmi6M3TYdDkbX/+pfzdppGJ8SniOnAJ8H4?=
- =?us-ascii?Q?LyLcPaLe5u2f34AhYMHLePwIaKvu0iJ5iNt/o3Z0txz6gXSL6KV77kpje3Ae?=
- =?us-ascii?Q?HFl8TJ+tj/c96nUzCBD9HIUApsZYzUysqgc20PZOFw914aFRJFfS8rCyaBkd?=
- =?us-ascii?Q?/yzsbR5ZzaxL3C1TPLp8CFYUg8o9fPMz/uftTQ1BsuMR8QUEf6W+DJ5xLjJS?=
- =?us-ascii?Q?0PplwSh6m9zwpA5DfNFbqbv4NRxYMrzzt+mWZiySne9QhdPhmuFFs9pkrgpH?=
- =?us-ascii?Q?5CW/n+oIeJsNUlaqeGg72SBln0KGabqjKod3GeVxBK2ARYX/UZHJ96K9NH6Z?=
- =?us-ascii?Q?3RZUPSzMiydN7UgcUmDfy4yYs29QKMCuhxm3c9wGUwUTKZu9ZWk2gDDakCid?=
- =?us-ascii?Q?+0YghZoD3vF1G55WC3yT0sGEMJ+z6irBomiDrFdIdkcuXbWLRA0PRufkJ7Eq?=
- =?us-ascii?Q?AMoHLgUS1b0vYBpF1eZMrH6Srk1On+jrk/t1hsSxgDO4YLfO7f89Mz9CRTp5?=
- =?us-ascii?Q?FyFjPtU4eE9yNlidy0fBMsoo2Ic1jAdHAk+NJUrhbpg1mzx4+MKwBn6TZOnb?=
- =?us-ascii?Q?Juyx2zVD0F46+3znzFHoO+ySsOnkZVcLCwr+KC2IasZkoJgVfmMThOefTtK8?=
- =?us-ascii?Q?I72lwduyKxfQFYE6QnAgHv+Njslf4TDV?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 19:51:07.7732
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 654818fb-f78b-496e-9fa0-08dcbc9a7095
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F8.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6949
+References: <20240814171800.23558-1-me@yhndnzj.com>
+In-Reply-To: <20240814171800.23558-1-me@yhndnzj.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 14 Aug 2024 12:52:07 -0700
+Message-ID: <CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
+Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
+ parent cg too
+To: Mike Yuan <me@yhndnzj.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The PVH entry point is 32bit.  For a 64bit kernel, the entry point must
-switch to 64bit mode, which requires a set of page tables.  In the past,
-PVH used init_top_pgt.
+On Wed, Aug 14, 2024 at 10:20=E2=80=AFAM Mike Yuan <me@yhndnzj.com> wrote:
+>
+> Currently, the behavior of zswap.writeback wrt.
+> the cgroup hierarchy seems a bit odd. Unlike zswap.max,
+> it doesn't honor the value from parent cgroups. This
+> surfaced when people tried to globally disable zswap writeback,
+> i.e. reserve physical swap space only for hibernation [1] -
+> disabling zswap.writeback only for the root cgroup results
+> in subcgroups with zswap.writeback=3D1 still performing writeback.
+>
+> The consistency became more noticeable after I introduced
+> the MemoryZSwapWriteback=3D systemd unit setting [2] for
+> controlling the knob. The patch assumed that the kernel would
+> enforce the value of parent cgroups. It could probably be
+> workarounded from systemd's side, by going up the slice unit
+> tree and inherit the value. Yet I think it's more sensible
+> to make it behave consistently with zswap.max and friends.
 
-This works fine when the kernel is loaded at LOAD_PHYSICAL_ADDR, as the
-page tables are prebuilt for this address.  If the kernel is loaded at a
-different address, they need to be adjusted.
+May I ask you to add/clarify this new expected behavior in
+Documentation/admin-guide/cgroup-v2.rst?
 
-__startup_64() adjusts the prebuilt page tables for the physical load
-address, but it is 64bit code.  The 32bit PVH entry code can't call it
-to adjust the page tables, so it can't readily be re-used.
+>
+> [1] https://wiki.archlinux.org/title/Power_management/Suspend_and_hiberna=
+te#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
 
-64bit PVH entry needs page tables set up for identity map, the kernel
-high map and the direct map.  pvh_start_xen() enters identity mapped.
-Inside xen_prepare_pvh(), it jumps through a pv_ops function pointer
-into the highmap.  The direct map is used for __va() on the initramfs
-and other guest physical addresses.
+This is an interesting use case. Never envisioned this when I
+developed this feature :)
 
-Add a dedicated set of prebuild page tables for PVH entry.  They are
-adjusted in assembly before loading.
+> [2] https://github.com/systemd/systemd/pull/31734
+>
+> Signed-off-by: Mike Yuan <me@yhndnzj.com>
+> ---
 
-Add XEN_ELFNOTE_PHYS32_RELOC to indicate support for relocation
-along with the kernel's loading constraints.  The maximum load address,
-KERNEL_IMAGE_SIZE - 1, is determined by a single pvh_level2_ident_pgt
-page.  It could be larger with more pages.
+Personally, I don't feel too strongly about this one way or another. I
+guess you can make a case that people want to disable zswap writeback
+by default, and only selectively enable it for certain descendant
+workloads - for convenience, they would set memory.zswap.writeback =3D=3D
+0 at root, then enable it on selected descendants?
 
-Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
----
-v2:
-Use some defines: PTRS_PER_PGD, PTRS_PER_PMD, PAGE_SIZE
-Add some spaces around operators and after commas
-Include asm/pgtable_64.h
-s/LOAD_PHYSICAL_ADDR/_pa(pvh_start_xen)/ in case they differ
----
- arch/x86/platform/pvh/head.S | 104 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 103 insertions(+), 1 deletion(-)
+It's not super expensive IMHO - we already perform upward traversal on
+every zswap store. This wouldn't be the end of the world.
 
-diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index 14b4345d9bae..cab168428d94 100644
---- a/arch/x86/platform/pvh/head.S
-+++ b/arch/x86/platform/pvh/head.S
-@@ -16,6 +16,7 @@
- #include <asm/segment.h>
- #include <asm/asm.h>
- #include <asm/boot.h>
-+#include <asm/pgtable_64.h>
- #include <asm/processor-flags.h>
- #include <asm/msr.h>
- #include <asm/nospec-branch.h>
-@@ -102,8 +103,47 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	btsl $_EFER_LME, %eax
- 	wrmsr
- 
-+	mov %ebp, %ebx
-+	subl $_pa(pvh_start_xen), %ebx /* offset */
-+	jz .Lpagetable_done
-+
-+	/* Fixup page-tables for relocation. */
-+	leal rva(pvh_init_top_pgt)(%ebp), %edi
-+	movl $PTRS_PER_PGD, %ecx
-+2:
-+	testl $_PAGE_PRESENT, 0x00(%edi)
-+	jz 1f
-+	addl %ebx, 0x00(%edi)
-+1:
-+	addl $8, %edi
-+	decl %ecx
-+	jnz 2b
-+
-+	/* L3 ident has a single entry. */
-+	leal rva(pvh_level3_ident_pgt)(%ebp), %edi
-+	addl %ebx, 0x00(%edi)
-+
-+	leal rva(pvh_level3_kernel_pgt)(%ebp), %edi
-+	addl %ebx, (PAGE_SIZE - 16)(%edi)
-+	addl %ebx, (PAGE_SIZE - 8)(%edi)
-+
-+	/* pvh_level2_ident_pgt is fine - large pages */
-+
-+	/* pvh_level2_kernel_pgt needs adjustment - large pages */
-+	leal rva(pvh_level2_kernel_pgt)(%ebp), %edi
-+	movl $PTRS_PER_PMD, %ecx
-+2:
-+	testl $_PAGE_PRESENT, 0x00(%edi)
-+	jz 1f
-+	addl %ebx, 0x00(%edi)
-+1:
-+	addl $8, %edi
-+	decl %ecx
-+	jnz 2b
-+
-+.Lpagetable_done:
- 	/* Enable pre-constructed page tables. */
--	leal rva(init_top_pgt)(%ebp), %eax
-+	leal rva(pvh_init_top_pgt)(%ebp), %eax
- 	mov %eax, %cr3
- 	mov $(X86_CR0_PG | X86_CR0_PE), %eax
- 	mov %eax, %cr0
-@@ -198,5 +238,67 @@ SYM_DATA_START_LOCAL(early_stack)
- 	.fill BOOT_STACK_SIZE, 1, 0
- SYM_DATA_END_LABEL(early_stack, SYM_L_LOCAL, early_stack_end)
- 
-+#ifdef CONFIG_X86_64
-+/*
-+ * Xen PVH needs a set of identity mapped and kernel high mapping
-+ * page tables.  pvh_start_xen starts running on the identity mapped
-+ * page tables, but xen_prepare_pvh calls into the high mapping.
-+ * These page tables need to be relocatable and are only used until
-+ * startup_64 transitions to init_top_pgt.
-+ */
-+SYM_DATA_START_PAGE_ALIGNED(pvh_init_top_pgt)
-+	.quad   pvh_level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.org    pvh_init_top_pgt + L4_PAGE_OFFSET * 8, 0
-+	.quad   pvh_level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.org    pvh_init_top_pgt + L4_START_KERNEL * 8, 0
-+	/* (2^48-(2*1024*1024*1024))/(2^39) = 511 */
-+	.quad   pvh_level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
-+SYM_DATA_END(pvh_init_top_pgt)
-+
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level3_ident_pgt)
-+	.quad	pvh_level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.fill	511, 8, 0
-+SYM_DATA_END(pvh_level3_ident_pgt)
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level2_ident_pgt)
-+	/*
-+	 * Since I easily can, map the first 1G.
-+	 * Don't set NX because code runs from these pages.
-+	 *
-+	 * Note: This sets _PAGE_GLOBAL despite whether
-+	 * the CPU supports it or it is enabled.  But,
-+	 * the CPU should ignore the bit.
-+	 */
-+	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
-+SYM_DATA_END(pvh_level2_ident_pgt)
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level3_kernel_pgt)
-+	.fill	L3_START_KERNEL, 8, 0
-+	/* (2^48-(2*1024*1024*1024)-((2^39)*511))/(2^30) = 510 */
-+	.quad	pvh_level2_kernel_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
-+	.quad	0 /* no fixmap */
-+SYM_DATA_END(pvh_level3_kernel_pgt)
-+
-+SYM_DATA_START_PAGE_ALIGNED(pvh_level2_kernel_pgt)
-+	/*
-+	 * Kernel high mapping.
-+	 *
-+	 * The kernel code+data+bss must be located below KERNEL_IMAGE_SIZE in
-+	 * virtual address space, which is 1 GiB if RANDOMIZE_BASE is enabled,
-+	 * 512 MiB otherwise.
-+	 *
-+	 * (NOTE: after that starts the module area, see MODULES_VADDR.)
-+	 *
-+	 * This table is eventually used by the kernel during normal runtime.
-+	 * Care must be taken to clear out undesired bits later, like _PAGE_RW
-+	 * or _PAGE_GLOBAL in some cases.
-+	 */
-+	PMDS(0, __PAGE_KERNEL_LARGE_EXEC, KERNEL_IMAGE_SIZE / PMD_SIZE)
-+SYM_DATA_END(pvh_level2_kernel_pgt)
-+
-+	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_RELOC,
-+		     .long CONFIG_PHYSICAL_ALIGN;
-+		     .long LOAD_PHYSICAL_ADDR;
-+		     .long KERNEL_IMAGE_SIZE - 1)
-+#endif
-+
- 	ELFNOTE(Xen, XEN_ELFNOTE_PHYS32_ENTRY,
- 	             _ASM_PTR (pvh_start_xen - __START_KERNEL_map))
--- 
-2.34.1
+Yosry, Johannes - how do you two feel about this?
 
+Code looks solid to me - I think the upward tree traversal should be
+safe, as long as memcg is valid (since memcg holds reference to its
+parent IIRC).
 
