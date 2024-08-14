@@ -1,64 +1,99 @@
-Return-Path: <linux-kernel+bounces-286779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2662951ED6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:44:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850C0951EE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8DC28223D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BBF11F23B34
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804BA1B580B;
-	Wed, 14 Aug 2024 15:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950201B581F;
+	Wed, 14 Aug 2024 15:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uHkEEBJj"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yi6Y5ln5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HfS10ZIg";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yi6Y5ln5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HfS10ZIg"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4CB2E62D;
-	Wed, 14 Aug 2024 15:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAFE1B580C;
+	Wed, 14 Aug 2024 15:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650263; cv=none; b=tHNbnHs9Kd3fvVLVvDzxjA2PzljoaAOOrw8CAie9R73ijlSWoN9iFPHoSgrCHPBtbiXZAIip8O1F3vnb2lUIaScXIZoqix1O7XOVUHFUa8j0N+Mo16WVR1Uu7MYnX5kfBxUFxxuEK2P2tPBjN+yHR2s6DSwHXIxM2SKkZq9nj/Y=
+	t=1723650283; cv=none; b=AsINgCH2YAMK94UQDoGXWvVWDgnC/vqTrtx2YqsMH4ZHSkRE/LIS5Y+bg9t7blK61SmfnmLQvpohZZUOKc+LW+Y9Hx8kBbob/xcNZZnB3eNaNMcmYIhue7OxMBHwR6sTcJeuYlX+v1Ymrdle+MX6HZ1SORXG6jXPIy+bo+U3I1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650263; c=relaxed/simple;
-	bh=GIJ9zOPnHLzaTwF8vHsK12pibqj4o2ked5+CTTr35cA=;
+	s=arc-20240116; t=1723650283; c=relaxed/simple;
+	bh=77q1nxk9tE8ry1ySjlpJ9eGkfSzdeo8446QGWysA1uM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=leCJnj6wMHSbNpTy2Evg4iSL7X14otvXK1rfV/a5FO+zw+KMmmmUIgQlNxKwHTF9FJiS7uheIbhxkfak3KNtqZvnD8P2e8fF9HjycRnaIX3mPMuOHSpAKQBt/c6z1XO3DR0IeyOCZBrYMerS7k5E9sE6pNU9yCJVC5IFL+ur9Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uHkEEBJj; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O5siPism3hnlKEybU5JUKZDF33KhFALxm9RiaLMBk48=; b=uHkEEBJjdHd7Rt9VW0xBOcNO1K
-	asN/RhU+qw+i0r7XnTl4+WRv8NZkj2walfMsCBVv16Xw/ta+u0EKjWWmjFTt1jlZMU8KHcMtBKzql
-	voR3GjRNSDJk/x+YBobH+TTiA38j1QBmD5P1rZUGSZvOfxO5j7TFMw7AZRcJnX2V7X1tzw2Bb0elX
-	QamJWE1ZyrfPbdDRwkgonntY3+SJqpRxPuf9ooN3L+CqhbbLqULpFjrfNdE98y0ZwiKjPmHtq/DEw
-	AzJeY7+GT9YS8uv4Pw/WzYfedtGPgGt7FOlpOcLzYJ7T+/s0pkx0Am3TcyW50THbNSIqTJrhgwlJ2
-	a4N7Ljng==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1seGAd-00000001eTY-0SYa;
-	Wed, 14 Aug 2024 15:44:19 +0000
-Date: Wed, 14 Aug 2024 16:44:19 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-Message-ID: <20240814154419.GT13701@ZenIV>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
- <20240814021817.GO13701@ZenIV>
- <20240814024057.GP13701@ZenIV>
- <df9ee1d9d34b07b9d72a3d8ee8d11c40cf07d193.camel@kernel.org>
- <20240814-visier-alpinsport-027f787afa2c@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ut+FQ7deApxIXC68FpTInR4ky5ld1ubewttHaSp4PaGgnAsckuRPaL5Tpld2rSVA7NdtM2TDNU2h/P2UIc0tzlOLmsXaBKL6dqm7dXiXcNow1lIafbSQCez32clQXjKqiN+lDliTs72FAxbLd8nGo+XLXx0NDSZDfSCQWqEGoSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yi6Y5ln5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HfS10ZIg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yi6Y5ln5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HfS10ZIg; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C147E1FEFF;
+	Wed, 14 Aug 2024 15:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723650279;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DBX9Wa76bfrIa6Qjr9NfjlTPoz1uKh0AviPE8T9sCk4=;
+	b=yi6Y5ln55SgC3piygcLZaD+AQshbMLph2+LRp10kGVargB1Ar3nhEMUsYgu24B0nCH7nGf
+	xsrQtfpaJPC4KN8l+UL8ePEeTqLW96LFLBySF3Xbu0e1MgGHtEVutzuE8LjL2HEKNVS2+8
+	4yyydIIREnul+tIq0AkGMyi2ZAbJdTY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723650279;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DBX9Wa76bfrIa6Qjr9NfjlTPoz1uKh0AviPE8T9sCk4=;
+	b=HfS10ZIgqBEZAHH8esVDkN3514j6A5fxpq0e3OfL+tQHPFsAEhQFbRF6TlIf0FItDzKuYI
+	fnXhA2eKf8fnMeCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723650279;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DBX9Wa76bfrIa6Qjr9NfjlTPoz1uKh0AviPE8T9sCk4=;
+	b=yi6Y5ln55SgC3piygcLZaD+AQshbMLph2+LRp10kGVargB1Ar3nhEMUsYgu24B0nCH7nGf
+	xsrQtfpaJPC4KN8l+UL8ePEeTqLW96LFLBySF3Xbu0e1MgGHtEVutzuE8LjL2HEKNVS2+8
+	4yyydIIREnul+tIq0AkGMyi2ZAbJdTY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723650279;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DBX9Wa76bfrIa6Qjr9NfjlTPoz1uKh0AviPE8T9sCk4=;
+	b=HfS10ZIgqBEZAHH8esVDkN3514j6A5fxpq0e3OfL+tQHPFsAEhQFbRF6TlIf0FItDzKuYI
+	fnXhA2eKf8fnMeCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7C061348F;
+	Wed, 14 Aug 2024 15:44:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YMttKOfQvGbGbQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 14 Aug 2024 15:44:39 +0000
+Date: Wed, 14 Aug 2024 17:44:34 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: send: Fix grammar in comments
+Message-ID: <20240814154433.GY25962@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20240814081328.156202-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,21 +102,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814-visier-alpinsport-027f787afa2c@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20240814081328.156202-2-thorsten.blum@toblux.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[6]
 
-On Wed, Aug 14, 2024 at 02:40:23PM +0200, Christian Brauner wrote:
-> > Christian took in my v3 patch which is a bit different from this one.
-> > It seems to be doing fine in testing with NFS and otherwise.
+On Wed, Aug 14, 2024 at 10:13:29AM +0200, Thorsten Blum wrote:
+> s/a/an and s/then/than
 > 
-> Every branch gets tested with nfs fstests (in addition to the usual
-> suspects):
-> 
-> Failures: generic/732
-> Failed 1 of 600 tests
-> 
-> And that just fails because it's missing your 4fd042e0465c
-> ("generic/732: don't run it on NFS")
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-connectathon would be more interesting...
+Thanks, added to for-next. I'm sure there's more to fix but this needs a
+tool rather than fixing everything manually.
 
