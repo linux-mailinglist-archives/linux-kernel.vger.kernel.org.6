@@ -1,193 +1,113 @@
-Return-Path: <linux-kernel+bounces-286108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC1295168C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:23:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5321795168B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AEED1F242A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:23:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39E01F214B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F35143875;
-	Wed, 14 Aug 2024 08:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A85A13D601;
+	Wed, 14 Aug 2024 08:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vv5ruUpW"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zpuLtBTy"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8611422D8;
-	Wed, 14 Aug 2024 08:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A57320DF4
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723623802; cv=none; b=ACwkk5okc5XbnDeHhSo+X5eKtYzLU6537wE3l7GXqXUPVneWBVppEbUye+BNE2+S2JF2GoO3T/5cafPwdLLAmEAUriNuwdpbsMzHsmZ3qytfsPh/+MJHVxgHbLpsl3qmgK5z93EFWpX3Im16dK8JpebBfjDaQHyfwy5fr3TfafU=
+	t=1723623799; cv=none; b=Fn2DUeNwyB42wdgQKLPOJtVCNr/CyBR4Yet2abopv8gX3fpxE2E7XSsiPZaZyQr1q2nP6KOKml4F9cQit510qQZ8PbWsQdFqS8yK34ESSIA6KioOsyEEXHeUWuDAcFRMdmcLr5q3QEy3Ly3qgHrZwIPoUKxgF8D5gBHOkBull/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723623802; c=relaxed/simple;
-	bh=NYHmjSqazGNuLI4Cs5jcHxD7p9Fxj0pw/IkTnpgLrzI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rzvgAmCjWXTZ3IBE69D/5OJxl+z3shcYhm6pRBNdJ0qmLg7/1+3emw4bGs4+AGZbOeUALi6hlDN3xGm8RQ9Tk5DD0ImLijmKhrsBjvBta3+o2Ve8mbn80LktCho2k2DpMGEKuGhYh7n6bKNPL1lgWw2GmJQaM9wXuTiZ22nQg8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vv5ruUpW; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd70ba6a15so49258565ad.0;
-        Wed, 14 Aug 2024 01:23:20 -0700 (PDT)
+	s=arc-20240116; t=1723623799; c=relaxed/simple;
+	bh=0CSWgPhv1C1tSHCnjvH3fpngV0BuO55p5vt/diV7PqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=czAWZspt83gBw8hKX1jP2RjRaQJUgcQ3CCsA8NNEVOLWjrhGFrzlw1kjQGYheGQ+wRdRqV25LUZhg78Ku82cBqmL7r/8VhRethdx7XzaQ3D1m/VG7cBFWSIYEQg6LZ+5CgZB5HVrzh2ecU2e5XJ+BpBya79QCcYnM5RLTXYW6n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zpuLtBTy; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530e062217eso7789014e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723623800; x=1724228600; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2E37MCKNPZ2bWp0dIw8H8o+KwPbuvWT693efHvCJKdA=;
-        b=Vv5ruUpWrSAQSgx6PdubgHCrcHim26GOIByBwogVd+24PPVUpnsTwjDcPPi8Orau2O
-         yvardAQXWA+bBXarqqSuLCI4Oz+r0K2V8Ilc+kk5mZ22PKR3yGosWstBCStJJFQVKU/z
-         IK8W2LakBksqf91Iah61C8h/oqwWpPQpvN3h3yGm6DaylA7fCeLLwP2zBg6EJJWTlqmA
-         xnDW6YtnVaQ51YqEiZx8zHhN68WdkhDGN5e+PN0hYum7TjTCW0/sUbs+/59UWXxZBbxY
-         bXyw0oGo/2u3AtWSvFOueQrQ8wFIBrWu/WpIyz1WSq5kLZZfhHltRf9mpn8Vzn68V0ud
-         tnKA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723623795; x=1724228595; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xk10wNvxLrP/sk7V6x9kzu7jdVHg9lMcvom23sK8kpk=;
+        b=zpuLtBTydfE1azZCI3cyYdocQ+iOvRBLl6Ms6Tet/7GuwratUJg/VS0tda6q1iUI/X
+         72AZhFCMUN89tBjhRar4OnWRqVdgkChboJMrma5jPeDYe9eI5fU4/sE89sJfqaXMVA3g
+         uM5e7BkuY9YmbJoJVQ7kACL2V+VrFZOUm8xeW+RizdEMfBYXK3ftHyPXIhJ+0biJDA8v
+         5cwNPhzLyH6GJVGobCa3/P6c2lbk0W65zDAIfFUZFLY4bI5hx+8SE9pclcZ7nlKUqVnF
+         DX1ZZG0DjyQRTjuswxnw52u/Rl6uTkiLAIVuTNqE4EnECXkoSfPAJQJ62x8HVSFnmyNy
+         /EAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723623800; x=1724228600;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2E37MCKNPZ2bWp0dIw8H8o+KwPbuvWT693efHvCJKdA=;
-        b=bPQkW2bRyDza9cZTV5NaGErWmkPGHYLjpDEa7+LVQD32fkl6ILpogDjav0tAnQ40UV
-         PVbutjmJVFp8jca9M6Oq3b3ZvukTLFypXysb2qwhcaf5gzC/6UTRX7miKS522/IApwvN
-         p9ub/j9+m2u1FjJR9BKXjhGOACHKEtDsmuTU0p1mh4Ion/xrIr3XTL/q8ADu5V8mumxI
-         iMMuXR4wzoFzUke5snL5yZMmfE2fXxB/ro3GmeGdA+Ft7w49ZErxGcEawC7MNr5acpSc
-         lwLIzZZOUHt9O8/D1nDi74fEmAwXYiDcbkBRsq4QY+YIsnH1kyMRPctg23w9fesHFxNu
-         q2xA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh4KSwfUV1PNfc/h+CsdlVBUgimq2vbHO/wHOr/wtN7b5mCFGGzqr7+IdUwb4KqH35sVHwKyZYOrQLtUWM5PfJhOktk80eY9uj6F2Q
-X-Gm-Message-State: AOJu0YzdMHlvMbeWFofqszqj29GsAWTSkVkb73b5pRXhyRh4AKtD/MuQ
-	XHr9nord2o36aOdSdF0hnATpNhOoXqdNQQIjKvH0asj4/r5k8QMb
-X-Google-Smtp-Source: AGHT+IFDp2vGElIG9u6RMPsszR0k4EpXAMEZW3XIeYTHMt4oiXBedAjxzLmtk80QD+ANtpttu8Uwnw==
-X-Received: by 2002:a17:902:d2c4:b0:1fb:7b96:8467 with SMTP id d9443c01a7336-201d651f85emr20610505ad.63.1723623799666;
-        Wed, 14 Aug 2024 01:23:19 -0700 (PDT)
-Received: from localhost.localdomain ([111.196.36.229])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201cd1ba209sm24933595ad.228.2024.08.14.01.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 01:23:18 -0700 (PDT)
-From: Liang Chen <liangchen.linux@gmail.com>
-To: seanjc@google.com,
-	pbonzini@redhat.com
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liangchen.linux@gmail.com
-Subject: [PATCH] KVM: x86/mmu: Register MMU shrinker only when necessary
-Date: Wed, 14 Aug 2024 16:23:02 +0800
-Message-Id: <20240814082302.50032-1-liangchen.linux@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1723623795; x=1724228595;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xk10wNvxLrP/sk7V6x9kzu7jdVHg9lMcvom23sK8kpk=;
+        b=dNqIjdaQXkgzGZLdgn51tnNHNHaW/SIK6iJ5iquNEt7QQv9NC8ox6XA4XyWI3QZr3/
+         LUkfJMFX54FGHSqjzedbbQuCo3kw3+pAwKBc7/pZYO3EEymtpLo5cV/N6MgfCBOXyx1M
+         vVFc7pZXasY+7p31Veo7dXgRCKxePkX6Bkq/kBAvJkB5x6dVfHPjhnelvcgaqp6Omtc2
+         PbXWa+GcOpHU1fdksvdldxQV1e1kekXWhI/hZKCQjYQmiEyrHZ2BSGr00zoeYGRyoEO/
+         n/c+e/UG4YXDGOPqO31A1jGu747E/st21VhNvt2EuI8PLc/mCXLvKNH5ko7jgClvirQL
+         YY9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUHUe54Y5TXJxty9S78Plugrn/hTtwW1+1wOJI/2KbsBL8/Ps6l0mA9JpbwEc7IsFYhEJ9MXkWCVvTMFUTqRXE7I3iCze1r3pYS+svi
+X-Gm-Message-State: AOJu0Yyp3QoCAIbFnfBPrT4Vuv3cOpVMKWXFWaKWfu8lZB2SHBEOAlfg
+	IF2zBFC3FRfS8qAOmC/3q1AZl221TpDrkn9a0APKxrfU9WeNZ6Ly00kOR2tGuls=
+X-Google-Smtp-Source: AGHT+IG6QSK40+UiY4L+iFUDmpExRkRbgPPw1TX9OKeTaKxcEceJXBh+o1azq0f3RjCLgFSJ+P0yEg==
+X-Received: by 2002:a05:6512:3e0c:b0:530:ad8b:de11 with SMTP id 2adb3069b0e04-532eda8e5ddmr1174870e87.9.1723623795153;
+        Wed, 14 Aug 2024 01:23:15 -0700 (PDT)
+Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51ebcdsm12266411f8f.78.2024.08.14.01.23.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 01:23:14 -0700 (PDT)
+Message-ID: <24215f3d-30bf-4379-bb10-c4b183c16b8a@baylibre.com>
+Date: Wed, 14 Aug 2024 10:23:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/16] Add audio support for the MediaTek Genio 350-evk
+ board
+To: Mark Brown <broonie@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: khilman@baylibre.com, linux-sound@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Will Deacon <will@kernel.org>, linux-media@vger.kernel.org,
+ Sumit Semwal <sumit.semwal@linaro.org>, Takashi Iwai <tiwai@suse.com>,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Nicolas Belin <nbelin@baylibre.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
+ Jaroslav Kysela <perex@perex.cz>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, Catalin Marinas <catalin.marinas@arm.com>
+References: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
+Content-Language: en-US
+From: Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The shrinker is allocated with TDP MMU, which is meaningless except for
-nested VMs, and 'count_objects' is also called each time the reclaim
-path tries to shrink slab caches. Let's allocate the shrinker only when
-necessary.
+Hi guys !
 
-Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
----
- arch/x86/kvm/mmu/mmu.c | 49 ++++++++++++++++++++++++++++++------------
- 1 file changed, 35 insertions(+), 14 deletions(-)
+Simple gentle ping, the serie seems ready to be applied.
+Thanks
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 928cf84778b0..d43d7548d801 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -69,11 +69,17 @@ static uint __read_mostly nx_huge_pages_recovery_ratio = 0;
- #else
- static uint __read_mostly nx_huge_pages_recovery_ratio = 60;
- #endif
-+static struct shrinker *mmu_shrinker;
- 
- static int get_nx_huge_pages(char *buffer, const struct kernel_param *kp);
- static int set_nx_huge_pages(const char *val, const struct kernel_param *kp);
- static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel_param *kp);
- 
-+static unsigned long mmu_shrink_count(struct shrinker *shrink,
-+				      struct shrink_control *sc);
-+static unsigned long mmu_shrink_scan(struct shrinker *shrink,
-+				     struct shrink_control *sc);
-+
- static const struct kernel_param_ops nx_huge_pages_ops = {
- 	.set = set_nx_huge_pages,
- 	.get = get_nx_huge_pages,
-@@ -5666,6 +5672,28 @@ static void init_kvm_nested_mmu(struct kvm_vcpu *vcpu,
- 	reset_guest_paging_metadata(vcpu, g_context);
- }
- 
-+static void kvm_mmu_shrinker_init(void)
-+{
-+	struct shrinker *shrinker = shrinker_alloc(0, "x86-mmu");
-+
-+	if (!shrinker) {
-+		pr_warn_once("could not allocate shrinker\n");
-+		return;
-+	}
-+
-+	/* Ensure mmu_shrinker is assigned only once. */
-+	if (cmpxchg(&mmu_shrinker, NULL, shrinker)) {
-+		shrinker_free(shrinker);
-+		return;
-+	}
-+
-+	mmu_shrinker->count_objects = mmu_shrink_count;
-+	mmu_shrinker->scan_objects = mmu_shrink_scan;
-+	mmu_shrinker->seeks = DEFAULT_SEEKS * 10;
-+
-+	shrinker_register(mmu_shrinker);
-+}
-+
- void kvm_init_mmu(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_mmu_role_regs regs = vcpu_to_role_regs(vcpu);
-@@ -5677,6 +5705,13 @@ void kvm_init_mmu(struct kvm_vcpu *vcpu)
- 		init_kvm_tdp_mmu(vcpu, cpu_role);
- 	else
- 		init_kvm_softmmu(vcpu, cpu_role);
-+
-+	/*
-+	 * Register MMU shrinker only if TDP MMU is disabled or
-+	 * in nested VM scenarios.
-+	 */
-+	if (unlikely(!mmu_shrinker) && (!tdp_mmu_enabled || mmu_is_nested(vcpu)))
-+		kvm_mmu_shrinker_init();
- }
- EXPORT_SYMBOL_GPL(kvm_init_mmu);
- 
-@@ -7092,8 +7127,6 @@ static unsigned long mmu_shrink_count(struct shrinker *shrink,
- 	return percpu_counter_read_positive(&kvm_total_used_mmu_pages);
- }
- 
--static struct shrinker *mmu_shrinker;
--
- static void mmu_destroy_caches(void)
- {
- 	kmem_cache_destroy(pte_list_desc_cache);
-@@ -7223,20 +7256,8 @@ int kvm_mmu_vendor_module_init(void)
- 	if (percpu_counter_init(&kvm_total_used_mmu_pages, 0, GFP_KERNEL))
- 		goto out;
- 
--	mmu_shrinker = shrinker_alloc(0, "x86-mmu");
--	if (!mmu_shrinker)
--		goto out_shrinker;
--
--	mmu_shrinker->count_objects = mmu_shrink_count;
--	mmu_shrinker->scan_objects = mmu_shrink_scan;
--	mmu_shrinker->seeks = DEFAULT_SEEKS * 10;
--
--	shrinker_register(mmu_shrinker);
--
- 	return 0;
- 
--out_shrinker:
--	percpu_counter_destroy(&kvm_total_used_mmu_pages);
- out:
- 	mmu_destroy_caches();
- 	return ret;
 -- 
-2.40.1
-
+Regards,
+Alexandre
 
