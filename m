@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-286694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8B5951DEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:58:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92773951DF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A511F227EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:58:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B87A1F221D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16F41B8EA4;
-	Wed, 14 Aug 2024 14:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C6D1BA87F;
+	Wed, 14 Aug 2024 14:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="O5MdLfox"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="t+SPgvIy"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1801B5819
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4A91B4C5B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723647419; cv=none; b=O2i/TZQXS5kWccAWpy2/YpTp98jdBIk6gNTMm7OR2aPNPw1neumeQJkWsMe+wxSEvqXCZNYxAA5oqyPLejjkDCCq+QtWFL0LEfzU7cvJ4ICMJr2Ee9u1dykoQaTFjiGy+t5/jZ20Wul4dW+13jGpq8L/RjVl/O7b7h/B3xewOwU=
+	t=1723647424; cv=none; b=omc2T6riS0+ezQo1t/pObBhyRdbkPjjaSKJ2IngyiTPWKEmDEiaNQ7ec9N3lgi2hNbUVlKTDfG1MVxasxvq/Vo3/J2MTSI35A4aS0zdZ6tUQGOyt25+b6JxW71SndN3x8xmaZF8VVePNa4VpGXlpRCU/c/TjjSOxpyL2wqIfev8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723647419; c=relaxed/simple;
-	bh=47SxGc6Ly9ooOMdwSuNAFhw8qo3iP8cBfMjLZZZ1EcI=;
+	s=arc-20240116; t=1723647424; c=relaxed/simple;
+	bh=5pWcmcs4C4F2bDx2rFvnxrIHD+0/MF7FaV+eBwdogtc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tStTBhtAaT2fAMmPhUJ6uwNFwlmd5tawOekMo/xvApEK01H1zMj9zm6FUNSKTa9AQfWKeNQmM2UjmmdALO3tCOqv8T3II3Gfv7aX888R1AR967/G9eCKV2gEwx++smvPVMCliJKy1ETIWnzySYE/OiMeyBQleeEVbrZmDUYZ0X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=O5MdLfox; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=X3u/MASliq9izsB/kB8TTlFuwYuxii6mYBHONsPJd8IZkyhIapqAim5YVstMnOIf0FhEOT4uUb/yjS+GqTAegSuxxlgcAPLRHOzSZ4c4zOCHHNw5pladnJJeAV08N2Gf3r1N8DegkJmzeLTgBPmpFypEVBWzQ7d7Gcl2p1uxXSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=t+SPgvIy; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 14543402EC
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:56:54 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CD3024596D
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723647414;
-	bh=dOSvdt4T3jlTBcb6KodFmG9e7Ly2LfYMJaL7xOSj3eg=;
+	s=20210705; t=1723647417;
+	bh=gWgIkbru9J14+uAT7SsXnPIjWj2SSXnesiQDy0WXkBA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=O5MdLfoxDMsn+z7g1iIcllQdF4f+9N26HbnnoSjKIDK0Tuz6Bhj75oabq4zs6+ju3
-	 rot5PEZlaKYkTbDSYEVKI9Y147e0AZVSTS+vwMzTAoYhF47rJ6treaG4BpoD5Pm0dE
-	 3GH0IB0o87VwUbW8vGArNMcZkFl7YdPj63Vhv9cRPCSbZA1+uAA5JND4eFJQewXKOu
-	 GeBJtJy8SznHF5wPo/nJaGzwZSOWWV0QPv45xbdsrgQU8WUgT2NEwALub8talwcNBM
-	 uaRbTofApRxxUV8KyyoKoYeGRLNxbQPjZ98tySULbxN7jsRgiX5u/aS3u38YCK/UFI
-	 TG/GdHGv4G+Ig==
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-53214baf2aaso2561762e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:56:54 -0700 (PDT)
+	b=t+SPgvIymmnM+VFNQySpGHBW4q4lHLyUAQiJfLZ/0vTnaRq/O2mrlh6o3/KrlE7n0
+	 WgqEixP6yVxBlQVEzWZF0TPv+E1m4+qy+eEWe4lxUzF49+2Xjykusca7jJIKNsUnIl
+	 tbWOdsnWZs60E7Y11qz6hsrQyw1f4BEoUqJzqXxh2HeL9+9A6xSpCkUakLDGBAWtQQ
+	 MhQJ5SrciC5QMv6Wy9qo8YcdP5hRksCIuWVN8ncoE/PpnDDAi+1PP30E7unOCdVs8I
+	 Wm3LJN+8dmcS87hVJJc349DzU3gKfoA56OK2M6bRXEnXBUxNmfZArnkwLrC+74h2ZT
+	 vrOXdwjExaMqQ==
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a7aa5885be3so497160066b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:56:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723647411; x=1724252211;
+        d=1e100.net; s=20230601; t=1723647412; x=1724252212;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dOSvdt4T3jlTBcb6KodFmG9e7Ly2LfYMJaL7xOSj3eg=;
-        b=Sgaec2Lc74UMadyk61+ZSOmk9ZHQlAWAYqybQeFVlCN81LbnfiTwCCZVbWszlsbKQe
-         /Tl6nFMcWAupU+gKpGcP4q5DkMU1IOwrpnZvWYL562IRmUu8a+gO9a/gpsF8kSAYwtn5
-         ByEk2lp79mUkGXXDYd8kILPUZ8Q/5irLmQKDKO7VuHowmB9fyFn0kATyRwWfC2BZca9T
-         L4HhASb6ionYSF5ISDn53/0+X2hszSzmPRk5+Hf84pBQwDvWfGCjFNJklG3EkDf/JNjc
-         zPJCzUulRgFhwPXSnwnL42sjOIrelgVv4DXx4UO6CDz2FPa+vz1i36xVRzWAdeuvK6jL
-         IxbA==
-X-Gm-Message-State: AOJu0YwlCo0lQV1vuapTWDMrAe7KTWBTmB+6aBHwYB1ijSj4LtCWd4rS
-	iYpuc5ij1IjtS66ALN8Hjl3TMBFk1+wGfxhwkYuZXJPqczC036Kw5UYJYGgmt3Bt5/5I+ZWpl4K
-	WppnK2HyAPGZJC+h1ytHaz84fRk+WpCXYrZ46csoydSJM7lUsRsAdGogSqhzt+9zu4eMTf7JFYJ
-	/SjiqYYIsoHw==
-X-Received: by 2002:a05:6512:3d9f:b0:52c:e119:7f1 with SMTP id 2adb3069b0e04-532edbbf2bbmr2673958e87.51.1723647411067;
+        bh=gWgIkbru9J14+uAT7SsXnPIjWj2SSXnesiQDy0WXkBA=;
+        b=pQLtEGuTQ3JVaAvKFGaZc2KBq797Bm0kh6+PyA6DY+lTmF+oAkEvVKC2ZBMcBHd6zQ
+         WL4DWPLwqMJBtMbVmTAHg3omg/hR/IDu7BSVqP/mwrBDfbOWDr6rU6Cs7DPw0kB2cThs
+         unaPncpZ4b85j+NI6Lv+BUWOC8FwhfZpkSD+f/9anUFjf3i0g3xZ2d/H8+bBAWmlKZSq
+         zNNwiHnmq5eLHPMOiq03p3nOwAF9crz+WaPkTCz+8kB0UAd8+B1XlZWyvLjjD5+lyFJs
+         d0ISIJ8q7fAm01gxOUtxZbHANyUSCSuip+91EGuJTKp+Mbcs15oVvRmUg23hcVIsiLdY
+         nqyQ==
+X-Gm-Message-State: AOJu0YwbQIzypxYDLPUVscU8WMmwpeTjyR0O1lYuSwsSDdQLMKqn557m
+	6YwHd1m1fPII6aElGqCuMh9dwTvBRSZDMEMr/Q0UcaWEi8QXZe4VvsvjDolUT5Z+FLNUSfRLuSp
+	YEq92F2HGS3vvtdIyHv+XwCCHZAkJT1uQyqeYFl/PGKZjpY+kzbbyKUnzqYaDfxsefGj/g6xwck
+	JaH8EaEWnPzA==
+X-Received: by 2002:a17:907:e211:b0:a7d:edb2:21f5 with SMTP id a640c23a62f3a-a8366c30b5bmr210882966b.12.1723647411981;
         Wed, 14 Aug 2024 07:56:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFgFXAwyHjES6E7fkIaDAnivwak2wjYQiuQb0rFCs3xDtd1HCvI2yY+1dmem8aEkcG4O8KaeA==
-X-Received: by 2002:a05:6512:3d9f:b0:52c:e119:7f1 with SMTP id 2adb3069b0e04-532edbbf2bbmr2673932e87.51.1723647410263;
-        Wed, 14 Aug 2024 07:56:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGh6y5MIdajZhV+9ZDD5gd/Pe4FLfBYyKgl9kFrMLGCKwzpnlebrJ2F89sA/4+Bqhck6YeZgQ==
+X-Received: by 2002:a17:907:e211:b0:a7d:edb2:21f5 with SMTP id a640c23a62f3a-a8366c30b5bmr210879766b.12.1723647411267;
+        Wed, 14 Aug 2024 07:56:51 -0700 (PDT)
 Received: from stitch.. ([2a01:4262:1ab:c:bbf4:eba3:898f:7501])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411bdcbsm182316866b.105.2024.08.14.07.56.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411bdcbsm182316866b.105.2024.08.14.07.56.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:56:49 -0700 (PDT)
+        Wed, 14 Aug 2024 07:56:50 -0700 (PDT)
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 To: linux-kernel@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
@@ -83,9 +83,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Samuel Holland <samuel.holland@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>
-Subject: [PATCH v1 7/9] Revert "irqchip/sifive-plic: Use devm_xyz() for managed allocation"
-Date: Wed, 14 Aug 2024 16:56:39 +0200
-Message-ID: <20240814145642.344485-8-emil.renner.berthing@canonical.com>
+Subject: [PATCH v1 8/9] Revert "irqchip/sifive-plic: Use dev_xyz() in-place of pr_xyz()"
+Date: Wed, 14 Aug 2024 16:56:40 +0200
+Message-ID: <20240814145642.344485-9-emil.renner.berthing@canonical.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
 References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
@@ -97,7 +97,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This reverts commit b68d0ff529a939a118ec52f271be8cad5d99e79a.
+This reverts commit 25d862e183d4efeb5e8b9843d783c90aaae4b14a.
 
 This is a prerequisite to reverting the patch converting the PLIC into a
 platform driver. Unfortunately this breaks booting the Allwinner D1 SoC.
@@ -105,107 +105,89 @@ platform driver. Unfortunately this breaks booting the Allwinner D1 SoC.
 Fixes: 8ec99b033147 ("irqchip/sifive-plic: Convert PLIC driver into a platform driver")
 Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 ---
- drivers/irqchip/irq-sifive-plic.c | 49 +++++++++++++++++++++----------
- 1 file changed, 33 insertions(+), 16 deletions(-)
+ drivers/irqchip/irq-sifive-plic.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 7dbc662a229c..7cf06bbb3098 100644
+index 7cf06bbb3098..ac274e1166c3 100644
 --- a/drivers/irqchip/irq-sifive-plic.c
 +++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -442,30 +442,39 @@ static int plic_probe(struct platform_device *pdev)
- 			plic_quirks = (unsigned long)id->data;
+@@ -3,6 +3,7 @@
+  * Copyright (C) 2017 SiFive
+  * Copyright (C) 2018 Christoph Hellwig
+  */
++#define pr_fmt(fmt) "plic: " fmt
+ #include <linux/cpu.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -376,10 +377,9 @@ static void plic_handle_irq(struct irq_desc *desc)
+ 	while ((hwirq = readl(claim))) {
+ 		int err = generic_handle_domain_irq(handler->priv->irqdomain,
+ 						    hwirq);
+-		if (unlikely(err)) {
+-			dev_warn_ratelimited(handler->priv->dev,
+-					     "can't find mapping for hwirq %lu\n", hwirq);
+-		}
++		if (unlikely(err))
++			pr_warn_ratelimited("can't find mapping for hwirq %lu\n",
++					hwirq);
  	}
  
--	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
+ 	chained_irq_exit(chip, desc);
+@@ -407,7 +407,7 @@ static int plic_starting_cpu(unsigned int cpu)
+ 		enable_percpu_irq(plic_parent_irq,
+ 				  irq_get_trigger_type(plic_parent_irq));
+ 	else
+-		dev_warn(handler->priv->dev, "cpu%d: parent irq not available\n", cpu);
++		pr_warn("cpu%d: parent irq not available\n", cpu);
+ 	plic_set_threshold(handler, PLIC_ENABLE_THRESHOLD);
  
- 	priv->dev = dev;
- 	priv->plic_quirks = plic_quirks;
- 
--	priv->regs = devm_platform_ioremap_resource(pdev, 0);
--	if (WARN_ON(!priv->regs))
--		return -EIO;
-+	priv->regs = of_iomap(to_of_node(dev->fwnode), 0);
-+	if (WARN_ON(!priv->regs)) {
-+		error = -EIO;
-+		goto out_free_priv;
-+	}
- 
-+	error = -EINVAL;
- 	of_property_read_u32(to_of_node(dev->fwnode), "riscv,ndev", &nr_irqs);
- 	if (WARN_ON(!nr_irqs))
--		return -EINVAL;
-+		goto out_iounmap;
- 
- 	priv->nr_irqs = nr_irqs;
- 
--	priv->prio_save = devm_bitmap_zalloc(dev, nr_irqs, GFP_KERNEL);
-+	priv->prio_save = bitmap_alloc(nr_irqs, GFP_KERNEL);
- 	if (!priv->prio_save)
--		return -ENOMEM;
-+		goto out_free_priority_reg;
- 
- 	nr_contexts = of_irq_count(to_of_node(dev->fwnode));
- 	if (WARN_ON(!nr_contexts))
--		return -EINVAL;
-+		goto out_free_priority_reg;
-+
-+	error = -ENOMEM;
-+	priv->irqdomain = irq_domain_add_linear(to_of_node(dev->fwnode), nr_irqs + 1,
-+						&plic_irqdomain_ops, priv);
-+	if (WARN_ON(!priv->irqdomain))
-+		goto out_free_priority_reg;
- 
- 	for (i = 0; i < nr_contexts; i++) {
- 		struct of_phandle_args parent;
-@@ -536,10 +545,10 @@ static int plic_probe(struct platform_device *pdev)
- 			i * CONTEXT_ENABLE_SIZE;
- 		handler->priv = priv;
- 
--		handler->enable_save = devm_kcalloc(dev, DIV_ROUND_UP(nr_irqs, 32),
--						    sizeof(*handler->enable_save), GFP_KERNEL);
-+		handler->enable_save =  kcalloc(DIV_ROUND_UP(nr_irqs, 32),
-+						sizeof(*handler->enable_save), GFP_KERNEL);
- 		if (!handler->enable_save)
--			return -ENOMEM;
-+			goto out_free_enable_reg;
- done:
- 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++) {
- 			plic_toggle(handler, hwirq, 0);
-@@ -549,11 +558,6 @@ static int plic_probe(struct platform_device *pdev)
- 		nr_handlers++;
- 	}
- 
--	priv->irqdomain = irq_domain_add_linear(to_of_node(dev->fwnode), nr_irqs + 1,
--						&plic_irqdomain_ops, priv);
--	if (WARN_ON(!priv->irqdomain))
--		return -ENOMEM;
--
- 	/*
- 	 * We can have multiple PLIC instances so setup cpuhp state
- 	 * and register syscore operations only once after context
-@@ -580,6 +584,19 @@ static int plic_probe(struct platform_device *pdev)
- 	dev_info(dev, "mapped %d interrupts with %d handlers for %d contexts.\n",
- 		 nr_irqs, nr_handlers, nr_contexts);
  	return 0;
-+
-+out_free_enable_reg:
-+	for_each_cpu(cpu, cpu_present_mask) {
-+		handler = per_cpu_ptr(&plic_handlers, cpu);
-+		kfree(handler->enable_save);
-+	}
-+out_free_priority_reg:
-+	kfree(priv->prio_save);
-+out_iounmap:
-+	iounmap(priv->regs);
-+out_free_priv:
-+	kfree(priv);
-+	return error;
- }
+@@ -483,7 +483,7 @@ static int plic_probe(struct platform_device *pdev)
+ 		unsigned long hartid;
  
- static struct platform_driver plic_driver = {
+ 		if (of_irq_parse_one(to_of_node(dev->fwnode), i, &parent)) {
+-			dev_err(dev, "failed to parse parent for context %d.\n", i);
++			pr_err("failed to parse parent for context %d.\n", i);
+ 			continue;
+ 		}
+ 
+@@ -506,13 +506,13 @@ static int plic_probe(struct platform_device *pdev)
+ 
+ 		error = riscv_of_parent_hartid(parent.np, &hartid);
+ 		if (error < 0) {
+-			dev_warn(dev, "failed to parse hart ID for context %d.\n", i);
++			pr_warn("failed to parse hart ID for context %d.\n", i);
+ 			continue;
+ 		}
+ 
+ 		cpu = riscv_hartid_to_cpuid(hartid);
+ 		if (cpu < 0) {
+-			dev_warn(dev, "Invalid cpuid for context %d\n", i);
++			pr_warn("Invalid cpuid for context %d\n", i);
+ 			continue;
+ 		}
+ 
+@@ -531,7 +531,7 @@ static int plic_probe(struct platform_device *pdev)
+ 		 */
+ 		handler = per_cpu_ptr(&plic_handlers, cpu);
+ 		if (handler->present) {
+-			dev_warn(dev, "handler already present for context %d.\n", i);
++			pr_warn("handler already present for context %d.\n", i);
+ 			plic_set_threshold(handler, PLIC_DISABLE_THRESHOLD);
+ 			goto done;
+ 		}
+@@ -581,8 +581,8 @@ static int plic_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	dev_info(dev, "mapped %d interrupts with %d handlers for %d contexts.\n",
+-		 nr_irqs, nr_handlers, nr_contexts);
++	pr_info("%pOFP: mapped %d interrupts with %d handlers for %d contexts.\n",
++		to_of_node(dev->fwnode), nr_irqs, nr_handlers, nr_contexts);
+ 	return 0;
+ 
+ out_free_enable_reg:
 -- 
 2.43.0
 
