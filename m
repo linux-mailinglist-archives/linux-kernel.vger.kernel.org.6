@@ -1,280 +1,155 @@
-Return-Path: <linux-kernel+bounces-286359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A21D4951A0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:38:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54557951A0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB511C21003
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CAF52847BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521B21AED4E;
-	Wed, 14 Aug 2024 11:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB021B010D;
+	Wed, 14 Aug 2024 11:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y6A8IUj7"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AM0/RTe4"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38C913D28F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A9F13D52A
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635512; cv=none; b=pag1OGVPUGJHD7Ow8+ZxDsBRL2sDbxhkkhLak5idq2c460Qtc8HxxKQkOKjYIiUToNQ6jbT7JJRPUMM+j9AOYhm6vNLZFG+v1Igvr8YWiKoMYmVscpLijIsJpSk8wK0iFMAdSP9mzsfR6ykiGG7luSTn6bl2g9HoKrf1h3wSfTA=
+	t=1723635569; cv=none; b=WnAOsncLCnA/nW2MMHR4F4sbmdNbCq+2Ag+6e0CfmuqLjr4MiwJ2HCz/Kxm/+fC8g5DlEXTr3wRz23WxFSDSnMptRslr50F39VfzCtOhOWIx/vNRNQ6JjQltL5GlSN+B20G+EuQAsXokkhhl27TYkge58NyelvP+KbspGmJvEmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635512; c=relaxed/simple;
-	bh=JSPcamH+sNGiM5g1Yg2W18/X/3so4oRE7sqdh0jPD7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OfT7vTRG4R1ZlCLA93b1jUWUE/ikzMxomk3nof06XonWy25HBVgrfDUEkppvBudg5J6WbrpP+u/D2n5ygEX1yLvHvttD2C7VOU3A+f7a/czGcsynonWzZFwnPple2uid6AC4cbsT9/zbPgqFds4LMwb1O4AueIf3VMqMO+u/4fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y6A8IUj7; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d21a652107so100617a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:38:30 -0700 (PDT)
+	s=arc-20240116; t=1723635569; c=relaxed/simple;
+	bh=Fn+BWVx+icfWGuBcquJ0dO16K9xhh0CkAqA0Pv8bYkA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iqDqyAw9t5qjSvbxwWtzOD2vXeGcBavb7WU9SwCiKkpASXDxV4SxPrFnhNX2EH+ObY5INta0aIfwHUHF9piUVk7+kQVkh7MRniXeL4JxBrQsf70S+383f2j5EMgBOBZBYT6pQRog4Ur/IcbbWSSThJTtC3nQaFzEBk4VLIe0d/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AM0/RTe4; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6bd936f6fc1so16326476d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:39:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723635510; x=1724240310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=asggk/QXp9CMUZLmCX38cnR4hEwxRfJpnzjB+4PaQdM=;
-        b=Y6A8IUj7nRR7RurErhYLV8NGefPwKd2K+fKfSKDierPtKYVJ2kstiV1wcxByQS/jSq
-         tvW+mAyp8x0J7Hap0od/SkZwv6p9rqP+5wwSVvv0GIuGTNUAL5/EtQz0APlC81FEv2/X
-         faK676Q0wXjzD19c6z8EB55LB+T28cwHxvWHU=
+        d=chromium.org; s=google; t=1723635567; x=1724240367; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=crV4WcEqzX/y78Gc0a5APg4xrltVatIzUyaXTSeTgJk=;
+        b=AM0/RTe40JT7Le1eh0j2X1U11UBGq7kVfawfjRWl2z905gVXrCX2GHcuu/sfqiG7dL
+         RB7VKhjtKY7BQqtVNxtNTtoU58M6NdkjnUd8Zu7jpm4vspT1pitO3cwyqh1n+L993KgG
+         4k4iOyqvK+tbNAGaKg4IdOnGEAa1gJQBiS5zs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723635510; x=1724240310;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=asggk/QXp9CMUZLmCX38cnR4hEwxRfJpnzjB+4PaQdM=;
-        b=AtUIv6stCRaNVYGL8GXhoH8YuDmKZGOnO/Tu7n63yV3sCJvHxagsXGtrtvWZPDNxPa
-         6Q16qCJ14KR8y0GanYXQC0S+oEGZon2l2vjtgXto3n34himoby84BgHdOdYF43QonxwY
-         JvRh3UxXWy9UEOZoa7Lcl+nExPQfWsY26omX7gGB+e0noaggwByTSVjdgRJeIHwIEs+c
-         TE1NRsGspp31O/ocQHhBXd0+7UatBbY1SbVLVOmabTZ8VKzJfiNILEA9ylem4owJcJ4R
-         0kjSRdYrfvIopSD6b22b6M+GO6rPnvcjUMNGNFk4JO8twn1AMOoG6cy5bTEEHP6AgatL
-         k7kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVB5UPLsRoBhLJ6z7VyXMOgoB8eaaVDf46RyHepm04KcFxZcT2fPtWaS6u1wR6tR8gI0hLEfny3zXPEXzN5cyuH5m8zVg7GjPtdoA2J
-X-Gm-Message-State: AOJu0Yxl2/ZzceQrzTyoeqmAm01tPGxgwCrDY1hIXR9aG9utS6LF5bKX
-	Gv3BZ9qDRDwajBehLAwIVJN7+N5vU+bQTcc+4A7qKhtLKMj15zBnkDzsAa3BiDY=
-X-Google-Smtp-Source: AGHT+IE4/SfOX9SrqC8Lo28qMZlrqPPd9smyceqkhnEHoaDeCM97VxNhJioQDkrnbMi/8elozNCKOQ==
-X-Received: by 2002:a17:90a:1f42:b0:2c8:4bca:f904 with SMTP id 98e67ed59e1d1-2d3aa879f6cmr1674581a91.0.1723635509945;
-        Wed, 14 Aug 2024 04:38:29 -0700 (PDT)
-Received: from [192.168.104.75] ([223.118.51.114])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7dd3f0sm1464865a91.18.2024.08.14.04.38.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 04:38:29 -0700 (PDT)
-Message-ID: <2c13840e-2717-4f88-b613-f6a770be2d75@linuxfoundation.org>
-Date: Wed, 14 Aug 2024 05:38:24 -0600
+        d=1e100.net; s=20230601; t=1723635567; x=1724240367;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=crV4WcEqzX/y78Gc0a5APg4xrltVatIzUyaXTSeTgJk=;
+        b=bn93xWQMrNCQk2QH6ZaVj4s61XHf5aAAo/GoKQSvENKuJBOqpvO0BCmj93pNth5y61
+         ovlp7nkkCJRT5w92RYhpILNPFT88FW2gFUOSxyXKvag834IgK7X9hlZSOYUaCKBrBQHP
+         nU3wueDtubmiG1LSAe28MdSFMeTjsgq/MVzpENgDrio4WStQqA+4gpslgthgp0reW9Y4
+         dss7yTY2MiALkhS6q+xtpi8upbBJ9t8F/T99DnzILFrW8diBoKgya6FLGniTQOGTNrie
+         chkrC6EiyCOJO9srSEMfNp2XluwbvgKVQPlrMGw/t47RbbguVkJjnr513tAJkM9w5Tmb
+         yRbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDkb3zI5D2scmlKb2wwOhIhlFx2ZK0QyY7ZusgYhNftOzWq/SJiRFlDeMRxeTtXWY8ySibWrl+c+nXmjXHp0VdpcpMpd2axQrKj+Ay
+X-Gm-Message-State: AOJu0YxXtuTRX58sa/RD2/u/EPNTntmGLh4mlR5SXjuID4lv061Qb54N
+	URbN5p3XnL38lD+Os4rD3Eb5PK1/I63PjCCnpletKEwXjlEsJSQw6fpU3J7qgQ==
+X-Google-Smtp-Source: AGHT+IGQx9KGk3bWnxAIeaEOEjBRP8USeRec4fbWI4sj4c36diyFOYNnmiGxNgNPSm4TjDiH8PPqLA==
+X-Received: by 2002:a05:6214:310a:b0:6bb:9e88:c101 with SMTP id 6a1803df08f44-6bf5d26b2b5mr23418286d6.50.1723635567257;
+        Wed, 14 Aug 2024 04:39:27 -0700 (PDT)
+Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82ca0daasm42167916d6.68.2024.08.14.04.39.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 04:39:26 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v7 00/10] media: Fix the last set of coccinelle warnings
+Date: Wed, 14 Aug 2024 11:39:20 +0000
+Message-Id: <20240814-cocci-flexarray-v7-0-8a1cc09ae6c4@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] selftests/tracing: Add hist poll() support test
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>
-Cc: Tom Zanussi <zanussi@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <172359427367.323666.6446548762874507863.stgit@devnote2>
- <172359430351.323666.9768554440535494357.stgit@devnote2>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <172359430351.323666.9768554440535494357.stgit@devnote2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGmXvGYC/4XOzWoCMRDA8VeRnE2ZTL499T3EQ0gmbkCNZO2iy
+ L57oxdL3dLjf2B+M3c2Uis0ss3qzhpNZSz11MOuVywO4bQnXlJvhoAKNFgea4yF5wNdQ2vhxn1
+ wYIMjAY5Y3zo3yuX6FLe73kMZL7Xdngcm8Zj+bU2CA1dBoYgocgLzGYdWj+Xr+FHbnj24Cf8hs
+ BM2UECDMYPRC4T8QeACITsRUwAftdROLH2hXoQB806oTkhpPZEmSugWCPMinJDvhOlEIg8yJ5e
+ 8+03M8/wNV4KJr70BAAA=
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On 8/13/24 18:11, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Add a testcase for poll() on hist file. This introduces a helper binary
-> to the ftracetest, because there is no good way to reliably execute
-> poll() on hist file.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->   Changes in v2:
->    - Update poll command to support both of POLLIN and POLLPRI, and timeout.
->    - Identify unsupported stable kernel if poll-in returns soon.
->    - Test both of POLLIN and POLLPRI.
-> ---
->   tools/testing/selftests/ftrace/Makefile            |    2 +
->   tools/testing/selftests/ftrace/poll.c              |   62 +++++++++++++++++
->   .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 ++++++++++++++++++++
->   3 files changed, 138 insertions(+)
->   create mode 100644 tools/testing/selftests/ftrace/poll.c
->   create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
-> index a1e955d2de4c..49d96bb16355 100644
-> --- a/tools/testing/selftests/ftrace/Makefile
-> +++ b/tools/testing/selftests/ftrace/Makefile
-> @@ -6,4 +6,6 @@ TEST_PROGS := ftracetest-ktap
->   TEST_FILES := test.d settings
->   EXTRA_CLEAN := $(OUTPUT)/logs/*
->   
-> +TEST_GEN_PROGS = poll
-> +
->   include ../lib.mk
-> diff --git a/tools/testing/selftests/ftrace/poll.c b/tools/testing/selftests/ftrace/poll.c
-> new file mode 100644
-> index 000000000000..8003a59fe042
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/poll.c
-> @@ -0,0 +1,62 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Simple poll on a file.
-> + *
-> + * Copyright (c) 2024 Google LLC.
-> + */
-> +
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <poll.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <unistd.h>
-> +
-> +#define BUFSIZE 4096
-> +
-> +/*
-> + * Usage:
-> + *  poll <in|pri> <FILE> [timeout]
-> + */
-> +int main(int argc, char *argv[])
-> +{
-> +	struct pollfd pfd;
-> +	char buf[BUFSIZE];
-> +	int timeout = -1;
-> +	int ret;
-> +
-> +	if (argc < 3)
-> +		return -1;
-> +
-> +	if (!strcmp(argv[1], "in"))
-> +		pfd.events = POLLIN;
-> +	else if (!strcmp(argv[1], "pri"))
-> +		pfd.events = POLLPRI;
-> +
-> +	pfd.fd = open(argv[2], O_RDONLY);
-> +	if (pfd.fd < 0) {
-> +		perror("open");
-> +		return -1;
-> +	}
-> +
-> +	if (argc == 4)
-> +		timeout = atoi(argv[3]);
+With this patchset we are done with all the cocci warning/errors.
 
-This code can be simpler and more maintainable using getopt.
-Any reason why you didn't use it?
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+To: Vikash Garodia <quic_vgarodia@quicinc.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-> +
-> +	/* Reset poll by read if POLLIN is specified. */
-> +	if (pfd.events & POLLIN)
-> +		do {} while (read(pfd.fd, buf, BUFSIZE) == BUFSIZE);
-> +
-> +	ret = poll(&pfd, 1, timeout);
-> +	if (ret < 0 && errno != EINTR) {
-> +		perror("poll")> +		return -1;
-> +	}
-> +	close(pfd.fd);
-> +
-> +	/* If timeout happned, return code is 0 */
+Changes in v7:
+- Invert other of tags. SoB is now the first for all the patches
+- Link to v6: https://lore.kernel.org/r/20240813-cocci-flexarray-v6-0-de903fd8d988@chromium.org
 
-Spelling - happened
+Changes in v6: Thanks Bryan
+- Rebase
+- Instead of removing the unsused structures convert them to flex arrays
+- Link to v5: https://lore.kernel.org/r/20240618-cocci-flexarray-v5-0-6a8294942f48@chromium.org
 
-> +	if (ret == 0)
-> +		return 1;
-> +
-> +	return 0;
-> +}
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> new file mode 100644
-> index 000000000000..53bea74e2234
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> @@ -0,0 +1,74 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: event trigger - test poll wait on histogram
-> +# requires: set_event events/sched/sched_process_free/trigger events/sched/sched_process_free/hist
-> +# flags: instance
-> +
-> +POLL=${FTRACETEST_ROOT}/poll
-> +
-> +if [ ! -x ${POLL} ]; then
-> +  echo "poll program is not compiled!"
-> +  exit_unresolved
-> +fi
-> +
-> +EVENT=events/sched/sched_process_free/
-> +
-> +# Check poll ops is supported. Before implementing poll on hist file, it
-> +# returns soon with POLLIN | POLLOUT, but not POLLPRI.
-> +
-> +# This must wait >1 sec and return 1 (timeout).
-> +set +e
-> +${POLL} in ${EVENT}/hist 1000
-> +ret=$?
-> +set -e
-> +if [ ${ret} != 1 ]; then
-> +  echo "poll on hist file is not supported"
-> +  exit_unsupported
-> +fi
-> +
-> +# Test POLLIN
-> +echo > trace
-> +echo "hist:key=comm" > ${EVENT}/trigger
-> +echo 1 > ${EVENT}/enable
-> +
-> +# This sleep command will exit after 2 seconds.
-> +sleep 2 &
-> +BGPID=$!
-> +# if timeout happens, poll returns 1.
-> +${POLL} in ${EVENT}/hist 4000
-> +echo 0 > tracing_on
-> +
-> +if [ -d /proc/${BGPID} ]; then
-> +  echo "poll exits too soon"
-> +  kill -KILL ${BGPID} ||:
-> +  exit_fail
-> +fi
-> +
-> +if ! grep -qw "sleep" trace; then
-> +  echo "poll exits before event happens"
-> +  exit_fail
-> +fi
-> +
-> +# Test POLLPRI
-> +echo > trace
-> +echo 1 > tracing_on
-> +
-> +# This sleep command will exit after 2 seconds.
-> +sleep 2 &
-> +BGPID=$!
-> +# if timeout happens, poll returns 1.
-> +${POLL} pri ${EVENT}/hist 4000
-> +echo 0 > tracing_on
-> +
-> +if [ -d /proc/${BGPID} ]; then
-> +  echo "poll exits too soon"
-> +  kill -KILL ${BGPID} ||:
-> +  exit_fail
-> +fi
-> +
-> +if ! grep -qw "sleep" trace; then
-> +  echo "poll exits before event happens"
-> +  exit_fail
-> +fi
-> +
-> +exit_pass
-> 
+Changes in v5: Thanks Vikash
+- Remove patches already merged
+- Fix typos and remove hfi_resource_ocmem_requirement
+- Link to v4: https://lore.kernel.org/r/20240606-cocci-flexarray-v4-0-3379ee5eed28@chromium.org
 
-thanks,
--- Shuah
+Changes in v4:
+- Remove patches already merged
+- Combine dvb-frontend/mxl5xx patches and use flex on both (Thanks Hans)
+- Link to v3: https://lore.kernel.org/r/20240527-cocci-flexarray-v3-0-cda09c535816@chromium.org
+
+Changes in v3:
+- Do not rename structure fields. (Thanks Bryan)
+- Link to v2: https://lore.kernel.org/r/20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org
+
+Changes in v2:
+- allegro: Replace hard coded 1 with a define. (Thanks Michael)
+- Link to v1: https://lore.kernel.org/r/20240507-cocci-flexarray-v1-0-4a421c21fd06@chromium.org
+
+---
+Ricardo Ribalda (10):
+      media: venus: Use flex array for hfi_session_release_buffer_pkt
+      media: venus: Refactor struct hfi_uncompressed_plane_info
+      media: venus: Refactor struct hfi_session_get_property_pkt
+      media: venus: Refactor struct hfi_uncompressed_format_supported
+      media: venus: Refactor hfi_session_empty_buffer_uncompressed_plane0_pkt
+      media: venus: Refactor hfi_session_empty_buffer_compressed_pkt
+      media: venus: Refactor hfi_sys_get_property_pkt
+      media: venus: Refactor hfi_session_fill_buffer_pkt
+      media: venus: Refactor hfi_buffer_alloc_mode_supported
+      media: venus: Convert one-element-arrays to flex-arrays
+
+ drivers/media/platform/qcom/venus/hfi_cmds.c   |  8 ++++----
+ drivers/media/platform/qcom/venus/hfi_cmds.h   | 18 +++++++++---------
+ drivers/media/platform/qcom/venus/hfi_helper.h | 20 ++++++++++----------
+ drivers/media/platform/qcom/venus/hfi_parser.c |  2 +-
+ 4 files changed, 24 insertions(+), 24 deletions(-)
+---
+base-commit: c80bfa4f9e0ebfce6ac909488d412347acbcb4f9
+change-id: 20240507-cocci-flexarray-9a807a8e108e
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
