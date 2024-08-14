@@ -1,78 +1,118 @@
-Return-Path: <linux-kernel+bounces-286928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2983952084
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:54:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFED952086
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB5E287133
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CBA1287777
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A85B1BA892;
-	Wed, 14 Aug 2024 16:53:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517331BB699;
+	Wed, 14 Aug 2024 16:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qDRbfxPj"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C1C1B1409
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D17E1B1409
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723654437; cv=none; b=CiVmhzdLbzCWkCuRSj+zSJg8eVeEuQQJtkOY3VyYm5NRzSCd3dGJttF3SHbiI1V6P+ZX99HIr1OIngJG9/c+QHO/AuiGKVKWmh2C9DDQ4eBio5LNL46tzZbdOUuVRbaz211rnzDMQ0QEGYt3wbeZyVPLH7ghYlqr2muimDt/3qc=
+	t=1723654453; cv=none; b=grzuZTa2N9xEsmnCnpuzu0inJ65PECPCKYAQQkBxjnJfWss2ipk7yh634vEEQ050ygPTXNpf59rszEMSPL36FR3byRbNOaTQ6YoOCJfOSmHkByzV6cXanM+gLmomojD7UTDkif6ec+L0GyQ4bVdpKHyZTwjQGZkp9h/2cSqlWQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723654437; c=relaxed/simple;
-	bh=lcDVdJwAqvXQdnxQ/89f0wyCsAKNCwJvkrIcgqcBBBI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T7GEYYDEYXHptcQV15SWfaK/MqADWVYmDk2m2vttIQOTHgTG8gj8p7vDNM84bhb7109i0V25SU612kiSqIe/ZTenhTSDpl09wtJcAuuqKeWoH0byf1N5+cWkA5aTuQZ+8r7AtGaLoTs2gChE1wWr86jPXMojKzQHOT9+IeGiaNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A53FC4AF0A;
-	Wed, 14 Aug 2024 16:53:54 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: ajones@ventanamicro.com,
-	sunilvl@ventanamicro.com,
-	Haibo Xu <haibo1.xu@intel.com>
-Cc: Will Deacon <will@kernel.org>,
-	xiaobo55x@gmail.com,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Gavin Shan <gshan@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: (subset) [PATCH v2 1/2] RISC-V: ACPI: NUMA: initialize all values of acpi_early_node_map to NUMA_NO_NODE
-Date: Wed, 14 Aug 2024 17:53:52 +0100
-Message-Id: <172365442470.132931.8323822182514148315.b4-ty@arm.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <0d362a8ae50558b95685da4c821b2ae9e8cf78be.1722828421.git.haibo1.xu@intel.com>
-References: <0d362a8ae50558b95685da4c821b2ae9e8cf78be.1722828421.git.haibo1.xu@intel.com>
+	s=arc-20240116; t=1723654453; c=relaxed/simple;
+	bh=BU4zEuE/FzoXgkeiwP3hGjtYmPvHNxBj+PElcXeoVWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kpgBXGmLNkUIyIqxKTOi8GQnC6dY+NyQPzNbtwSxmVNJLIDLXzp1blDHGNP2opE0M+3SEvdoRQahZk+s8ZJb5knRHGFugsBKswT0nOAZcCYPODxFHhDo2Zof2tFslLDL3YegZ6WVlfTb2b3ZRf2sXHYZ3cjK3/VngY6q8n1Y4OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qDRbfxPj; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 14 Aug 2024 09:54:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723654448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8iNjSLOWYSnpax906n7NCv/6QDFvRn3ZHzYLxFp7aGQ=;
+	b=qDRbfxPjtIw6qAX6/qHOUEUQer0dZqW27JGbvbBTfSSNbu9zKXO94g+H7O3gGJYmCorYK+
+	FPz1yb2xpb5BAiy7oPhKFLLAr/ZgBziE4YDsK2/eub5nrc1eevcRi85FTVJIuE/XaRso+g
+	q/IOJpKnYXdp1mTrTf0jQzJth3aAM7Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: miklos@szeredi.hu, Amir Goldstein <amir73il@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: use GFP_KERNEL_ACCOUNT for allocations in
+ fuse_dev_alloc
+Message-ID: <6emhfruzu3fujdkpld3j44qz5x2sg54xe7vjfqms552cammrhs@pef3mqv5p3qy>
+References: <20240814112356.112329-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814112356.112329-1-aleksandr.mikhalitsyn@canonical.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 05 Aug 2024 11:30:23 +0800, Haibo Xu wrote:
-> Currently, only acpi_early_node_map[0] was initialized to NUMA_NO_NODE.
-> To ensure all the values were properly initialized, switch to initialize
-> all of them to NUMA_NO_NODE.
+Hi Alexander,
+
+On Wed, Aug 14, 2024 at 01:23:56PM GMT, Alexander Mikhalitsyn wrote:
+> fuse_dev_alloc() is called from the process context and it makes
+> sense to properly account allocated memory to the kmemcg as these
+> allocations are for long living objects.
 > 
+> Link: https://lore.kernel.org/all/20240105152129.196824-3-aleksandr.mikhalitsyn@canonical.com/
 > 
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+> Cc: <linux-fsdevel@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
+>  fs/fuse/inode.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index ed4c2688047f..6dae007186e1 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1486,11 +1486,11 @@ struct fuse_dev *fuse_dev_alloc(void)
+>  	struct fuse_dev *fud;
+>  	struct list_head *pq;
+>  
+> -	fud = kzalloc(sizeof(struct fuse_dev), GFP_KERNEL);
+> +	fud = kzalloc(sizeof(struct fuse_dev), GFP_KERNEL_ACCOUNT);
+>  	if (!fud)
+>  		return NULL;
+>  
+> -	pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
+> +	pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL_ACCOUNT);
+>  	if (!pq) {
+>  		kfree(fud);
+>  		return NULL;
 
-Applied to arm64 (for-next/fixes), thanks!
+No objection from me but let me ask couple of questions to make sure we
+know the impact of this change. It seems like this function is called
+during mount() operation. Is that correct? If yes then basically the
+admin process or node controller is being charged for this memory.
+Nothing bad but this info should be in commit message. Also what is the
+lifetime of these objects? From mount to unmount? Please add that info
+as well. There are other unaccounted allocations in the fuse fs. Is
+there a followup plan to include those as well?
 
-[2/2] arm64: ACPI: NUMA: initialize all values of acpi_early_node_map to NUMA_NO_NODE
-      https://git.kernel.org/arm64/c/a21dcf0ea856
-
--- 
-Catalin
-
+thanks,
+Shakeel
 
