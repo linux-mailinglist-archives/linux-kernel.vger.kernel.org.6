@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-286767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99158951EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:38:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9792951EC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6398B21B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 286E41C21471
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B5A1B580A;
-	Wed, 14 Aug 2024 15:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECB51B86C4;
+	Wed, 14 Aug 2024 15:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KV1VBlgw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vbXqN3YV"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343CE22EEF
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907E41B5807
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723649927; cv=none; b=rds73KC/+t7pAoxylZNS9so5669vsv7VBC25kSYwliPU6ANtqyYfOd95zfa6rPtKFM8574LCHxY4KUbwz6a9Nwj74cqS9/rRGKdkBrf5YGspayNyfiKczwL/MFoemvqT7oTc9Ic3mJ3zCLPb2YR3ydq6T3fJXBlgZ6+UWwMFxXU=
+	t=1723649929; cv=none; b=eTjDXdPVk/6SGxG8qVxdkaHQCvqhjVuC4mIL0HyeIuCJHaSZvvHmRkWibqobY0SWST101JJSjDjtizvMnnv6jaSEBvICAqwpyKT3/WyhLYiXbu+Qom+o07snoXgWg3jxDN7yUEtFq8OaBNXX5dYz1ylJ6ovy2VINXgBfnlMWUSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723649927; c=relaxed/simple;
-	bh=ZoPRwGV6+5ZCXltJco4xn5q57HOxugw7ILBN8Sr55hU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YDxGT3EpoRDYQGoBbCw1UxxOyTUY5CDjhIycEfQxqBaQTHNkgbD5M65SqR3vpUciLeQYGLYGnuwu+x8CZ2ulh6hxIRCLaBvpg55JaNSHrcIBj8+8QnZjsOM/TAaDggF/3D+5HJOoiPDPSTgGfY410wCKObE4P7+yOmFKMUZvb3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KV1VBlgw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723649924;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i0mN78AI6OH+5rESlWtNBfWAVjVg3g3wv0fs76AUNNE=;
-	b=KV1VBlgwG6HVwxWxBdgGRcW8YqozKYJgmvYvjNIQH9heO1HmFlWloZE8pqIPE4MeSMtzd4
-	fsbfxRojkYt9A5/tonxN96JkBQdZMFLQVj45cU0LwEK1bXXcqCmxHO7ssue6Hy0Hvl6pLH
-	4NuM0h/NR8DljIrUcsFsRMfYtXVkdus=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-343-0_cNAYGKMju1oR2SalO6wQ-1; Wed, 14 Aug 2024 11:38:42 -0400
-X-MC-Unique: 0_cNAYGKMju1oR2SalO6wQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280f233115so45903545e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:38:42 -0700 (PDT)
+	s=arc-20240116; t=1723649929; c=relaxed/simple;
+	bh=fwRO+mn6bXwYFAMB2qFIRZLMAWPvS6P1M3+EBY6e18A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvMUYiciXHLilXawdjjmxOQHqp8+GpwqRDvnIKu5LX5JufuGp7sS7dKaEMdHR9Cqy5PbZNfVA2/Rkyj1u8TAC7K3f8yksY8HNOkomm64ZQXwXTaKpv776VYIZlGop/k3he+EKmKXo2EoKenrC112RgYoq3X3kaHbPvfhY8pBDz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vbXqN3YV; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428101fa30aso50454205e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723649926; x=1724254726; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2RlAyCTktp8Ohy45ZHsZAJWDLcmSeRRB2NVCChV9/Eg=;
+        b=vbXqN3YVLzlMG8Jjy23p8b0ioR4QSoqNfZVx9xKoazzAiDRSFVMqhsxBwAZf8Pav2t
+         mHJ7J1i4E/XRCBP+GnknbaT6pQWS8X1f+jPh6iNHpKA1BG0BN0dqfY0us7gEKqUFjJ8c
+         21U0QlKtdZV5oZ8cNCd+0u94xJ0WYxT1A+dIs3gKv/knU9AD+Un5O2G28ndJdSG4uk72
+         3LeYxi8teSwWHdxW+ZlVUtn07ti3R8gG2345oLj0Wg09EP+idAAslo+Q1u6LGZ4xk/Oc
+         yj3gQ+chbgi5LMIloKodVgOMdyuxoLWCBmSXUjKqp5LS4dlbtr7wbt5HM3GvJbEZAszI
+         vm1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723649921; x=1724254721;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i0mN78AI6OH+5rESlWtNBfWAVjVg3g3wv0fs76AUNNE=;
-        b=Kt95GDWGCSDkLwjSre7h03AxfTRdDGMQvXObBKuXqefWXlEMMCV84NTvMw474ef7fz
-         mbsnfXrQXOrd9sU+KuEBk/iu9hOWCvvuk2nreZqnAwo/Lp88Ji5yIrmZxrU6YHhQ0XWQ
-         eUjsZqJusoPnH8obSWL57Kb2OoRqS4VajfZ1KkbwlyEGMeypXJRysTEm+O/5iVE7WgGt
-         fFAEai0Or0li2z4g1sRohWR2eNdBnLVR6jBAHUn1/6zcS828QxMlz6fueYbAUj3kqFFe
-         dht853V2r0q48XC0c1lbsS9RC4pL0So2pWh+x9j7UraCdmhsrHNi14krsn5d/rFh8wIR
-         ZmJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlcPimehNS3ncywB4aJAsAneht1Pgag8e4u2qkJlmRi/O4OnaQO7Ts9o0Fc6IE7NVpQ9qvASdUjojNUPeD9YosJI+ENRZDE9nIlZqM
-X-Gm-Message-State: AOJu0YxFJW4V6svrmEGMyELThJMio7AaYYqc7F4lX3NmkgvgW1zlOw3l
-	HSzkUJIkKUYYWuEWc/CZ5okzJCGkNofqxKNxEICUn++8diDLh/3N9XJXB+2GgB8u5judmNs1rh3
-	WAfdIaRWWvWGJdr5Mv0AAamZqQBS6Lf6uV1to91tuXDQrhG8piz51MK6KrTI3TQjqYTSbftEw7L
-	g/asr8I93SDaqMecSAkegq99EB5o2sNQGkCEou2AOvTPnqCQ==
-X-Received: by 2002:a05:600c:1e23:b0:426:6e86:f82 with SMTP id 5b1f17b1804b1-429dd248517mr23328505e9.22.1723649921183;
-        Wed, 14 Aug 2024 08:38:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEWMPGp7i0MQzIzTAb1271vYV1dkuMqPnhA1T15TWPhCom5X/iJ3a44d0WDgW36QkR+Ea3VA==
-X-Received: by 2002:a05:600c:1e23:b0:426:6e86:f82 with SMTP id 5b1f17b1804b1-429dd248517mr23328145e9.22.1723649920511;
-        Wed, 14 Aug 2024 08:38:40 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429dec83d2asm23671175e9.0.2024.08.14.08.38.39
+        d=1e100.net; s=20230601; t=1723649926; x=1724254726;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2RlAyCTktp8Ohy45ZHsZAJWDLcmSeRRB2NVCChV9/Eg=;
+        b=MX1v9ikQjpREY9TWSnDf8t8P07dcuNfal7mrj4DESDadmvsCuuKc/yrcsKnx2FYCeT
+         cHJjn7w/6A3S0mXy/TA20Vkw19XQ+6qPm8DFvOFGaIzfOC6rjZ8P/unT98Ar0S7eHIsS
+         4L9odl6le0cj5oQiOTN0cMaMjHXm7ADF+5jcVtm/WiFDt3+xZ+4jZuGyUsMLoPpjme/i
+         EQCZy1YCn+TUpXQ9d/0qDv0ccFta8dkpMaZnusediOGgIL21xag5hM+i4hHj5uLbdA+A
+         fFC2HxojwBjHd7K6JI8VzXA17HY2xGlIk2KWe19ipvsS+JTlnDsq2LppHH4v6sTwywVE
+         /mog==
+X-Forwarded-Encrypted: i=1; AJvYcCUlHbiDZ0iY7oQguAgDH7ncn0qOosdtVDVbMqDAxfCMKopM7uppEjPGxd0puNfqEwoc9RdUW6APK3LejF4l/zfNHA9LsEiF2mJOAk2Q
+X-Gm-Message-State: AOJu0YzEY0hdyruPKZieICmBS03w5fq+IrBNaTHf4DPP3+/V799Mnamv
+	Dnv5ziU0jhJJ4ES6x0yGXwRpNPBgiTDPO7RMmABEa4iHZmcqU/hWlt0aRxMgbdc=
+X-Google-Smtp-Source: AGHT+IH9wL7tffaLYUYk3ZHAahngdbyDa6YrmMgjASAFwrlFIshp1+vTMEOATmYfSlMQUgZivFb07w==
+X-Received: by 2002:a05:600c:1da5:b0:427:abed:3602 with SMTP id 5b1f17b1804b1-429dd2603d8mr21605485e9.24.1723649925449;
+        Wed, 14 Aug 2024 08:38:45 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded367ebsm23950265e9.25.2024.08.14.08.38.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:38:40 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, kvm@vger.kernel.org, Paolo
- Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [BUG] arch/x86/kvm/vmx/vmx_onhyperv.h:109:36: error:
- dereference of NULL =?utf-8?B?4oCYMOKAmQ==?=
-In-Reply-To: <ZrzIVnkLqcbUKVDZ@google.com>
-References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
- <Zpq2Lqd5nFnA0VO-@google.com>
- <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
- <87a5i05nqj.fsf@redhat.com>
- <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
- <87plqbfq7o.fsf@redhat.com> <ZrzIVnkLqcbUKVDZ@google.com>
-Date: Wed, 14 Aug 2024 17:38:39 +0200
-Message-ID: <87mslff728.fsf@redhat.com>
+        Wed, 14 Aug 2024 08:38:45 -0700 (PDT)
+Date: Wed, 14 Aug 2024 16:38:43 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Florian Rommel <mail@florommel.de>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kgdbts: fix hw_access_break_test
+Message-ID: <20240814153843.GA168155@aspen.lan>
+References: <20240812085459.291741-1-mail@florommel.de>
+ <CAD=FV=VC20PvOPSf9quqghA8SKKkCduadtU7nso4wkSwVKH3jQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=VC20PvOPSf9quqghA8SKKkCduadtU7nso4wkSwVKH3jQ@mail.gmail.com>
 
-Sean Christopherson <seanjc@google.com> writes:
-
-> On Wed, Aug 14, 2024, Vitaly Kuznetsov wrote:
->> What I meant is something along these lines (untested):
->> 
->> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
->> index eb48153bfd73..e2d8c67d0cad 100644
->> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
->> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
->> @@ -104,6 +104,14 @@ static inline void evmcs_load(u64 phys_addr)
->>         struct hv_vp_assist_page *vp_ap =
->>                 hv_get_vp_assist_page(smp_processor_id());
->>  
->> +       /*
->> +        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
->> +        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
->> +        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
->> +        * but compilers may still complain.
->> +        */
->> +       BUG_ON(!vp_ap);
+On Mon, Aug 12, 2024 at 01:04:22PM -0700, Doug Anderson wrote:
+> Hi,
 >
-> A full BUG_ON() is overkill, and easily avoided.  If we want to add a sanity
-> check here and do more than just WARN, then it's easy enough to plumb in @vcpu
-> and make this a KVM_BUG_ON() so that the VM dies, i.e. so that KVM doesn't risk
-> corrupting the guest somehow.
+> On Mon, Aug 12, 2024 at 1:55 AM Florian Rommel <mail@florommel.de> wrote:
+> >
+> > The test for access watchpoints (hw_access_break_test) was broken
+> > (always failed) because the compiler optimized out the write to the
+> > static helper variable (hw_break_val2), as it is never read anywhere.
+> > This resulted in the target variable (hw_break_val) not being accessed
+> > and thus the breakpoint not being triggered.
+> >
+> > Remove the helper variable (hw_break_val2), and use READ_ONCE to force
+> > reading the target variable (hw_break_val).
+> >
+> > Signed-off-by: Florian Rommel <mail@florommel.de>
+> > ---
+> >  drivers/misc/kgdbts.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
 >
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-I'm still acting under the impression this is an absolutely impossible
-situation :-)
+Looks good. I pushed this through kgdbtest and it likes it too. I can
+turn one of the XFAILs off (yay).
 
-AFAICS, we only call evmcs_load() from vmcs_load() but this one doesn't
-have @vcpu/@kvm either and I wasn't sure it's worth the effort to do the
-plumbing (or am I missing an easy way to go back from @vmcs to
-@vcpu?). On the other hand, vmcs_load() should not be called that ofter
-so if we prefer to have @vcpu there for some other reason -- why not.
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
 
--- 
-Vitaly
+Arnd/Greg: Are you happy to pick this up or should I take it through the kgdb
+tree? FWIW right now there are zero other patches for kgdb this cycle, although
+that could change!
 
+
+Daniel.
 
