@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-286389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09205951A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:46:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE971951A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2F61C21B2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:46:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F22561C219A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74AE1AED4D;
-	Wed, 14 Aug 2024 11:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762DD1AC42B;
+	Wed, 14 Aug 2024 11:47:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YS7Fsndh"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPOAtx+k"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5411AED44
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEF1394;
+	Wed, 14 Aug 2024 11:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635819; cv=none; b=KDz183MMXMXl9pnEy+mVm3DPzFHOqU+OTLjVi9V9Go49gSuHZaVlzzE7r9gxUkvccH4xmCWJX8BVzU1KkfAjmE45n3LgqT5B8SVH43a4FvZigCh8xey47Lvfp/U8mD9IwCWCPjKePQ9upfZfuhmSAfij0K6phGp5e6alJY7TASc=
+	t=1723636054; cv=none; b=sJtMsqylRLcBFPNFiRia+CrXK9VbCa7RfrTnKHbXb+aNZI+nKdrXAshevT26FX2LBWczp5xM3eVi9k5pjdw7ffYfuEfOCs1DhsVD3Mov8MUjhT0X6jckB30mjUjKplrTculK6rj8rJLE8weKoDpr6WaSN+kf0Uw44VqqxNYWdsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635819; c=relaxed/simple;
-	bh=TB/0oHN5F5NutnVQ1VWFaykvrUJTjk/6Yb5WW2uT8gU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W6EHXovdmKFkxP/P8rDftfLWEAC9Z85Yqlm5vZA7Yh1a8r4uoMQophNr7KwcNMQeKth9SSd/rFgEU0BaI5zhfDCy+ozbHxlcZx56dks4kLog/cpfOKUgelGuLug00wQMrv6Pxf1RBi7hnhrpfIMAWp6EIAUjEZ7Y2cNbxLrques=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YS7Fsndh; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc47aef524so4474315ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:43:37 -0700 (PDT)
+	s=arc-20240116; t=1723636054; c=relaxed/simple;
+	bh=kC/4hv7Tlf4rNkCbnBYC0GsGAYl9OySn5/anCt20KgA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B6lcD68pCFJolDRcpwmaTFrVYPPYDMsLeCTuGINE6NNRBXL/2hQH1Sn1DUGKzyplBlx76TEF28wiJPZtcs9BEEuAFPJRCaBfYkuTlc9u++F+2MKuAjZRlJNS/pErEocDfyf/684LqFmD/CeGtna808HCxxjv4/gE1/xSdoqVruU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPOAtx+k; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7a103ac7be3so4047881a12.3;
+        Wed, 14 Aug 2024 04:47:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723635817; x=1724240617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u39ng7G3Zk1YPobD4C5U+D2PWpoaCE9N8Zqv41C64w4=;
-        b=YS7FsndhK3EA4mr8eYrQXKght7/mm7PlXOgK65uRhsCrJTwqvThQpT0NLfWZqq8bAM
-         lAL02hd4nhN+xCoYFsMeJO+4H8qyd4uB9ao62kda0Om6X9bn3Prw2zQItOBB2cWq1wEZ
-         MzFba5s4CVBm/fjDxz/kWKl41EMoM/bX3jcdk=
+        d=gmail.com; s=20230601; t=1723636053; x=1724240853; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q1fDlzH9jTOZIDrqhn7CKak5t9+eLag2AQJVTQtxzNw=;
+        b=CPOAtx+kRFObCHBePV0bDRrt3RpzPT9CNSbkQOL3d4NE+WJDYLbP0sZUXg3YICPuTa
+         fFgKHtheo0ZCfkIKJ2RWx9w3tOvRgNpyt+I62HaBb+XPLI0/H0znjzi2mCWtEK9uevyz
+         DGyPjnmg9fXAU3GW9EKoJJ8P0Onlh+2HP5iZKvbrzdFnP0AXwYTIEjll+dWc6IuK3i6g
+         +5BzkhS/OzUXcSIjaab/WfkUsR2WcbBxzLYcIUZtJ8ck5mHYFqnJe0LBD4QE/xB1GWQj
+         eXCq4GIlvcXAYepuU8tpsb5eCySxYZ+C2rWPnI+5Z9uVlHC3/aJX1nJbquxvoNJOEOdj
+         hdfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723635817; x=1724240617;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u39ng7G3Zk1YPobD4C5U+D2PWpoaCE9N8Zqv41C64w4=;
-        b=Asg03zwEl7yzFIbEdddRoKDbUwD3Xd/KOE8qK+1xTCoSP3dZAyHRJMhtk0unUFIdLb
-         Knjb7FMjSayHJaqpivjCggoOQDBBASC+/rLdcTqJCh6gFEf6VhNMQdmYKn3STB03xoo8
-         TCI87hihze69iyKlTXRistVWMJWAdF1q9sOtgXKbx1s8+xgB330skfTts+qYn9AwAKuM
-         8kvjsJwmn2vhNZta5pjiiEOg9kszYrtDe1rrNARBT8Z9hp3afyW7HxI9/KYOFDGHvDXt
-         Z4iFiFhGH0/FH4ABbrxvPSnIcwSMVxYeM6tz/juonRDoLcxcBCAGgnmEWgDlz9uLRAa7
-         EMWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH5swNW55C8JVH4XX8ch0zV5pV0ENLhwKb14onzS/KtErtw931qCEG9uzEBR3xOQgQyjc2kh4wzBGlCAstOicsU5UPpKjldj3aeBLu
-X-Gm-Message-State: AOJu0YxXYafgkvPZQkxRa8raK13hs8Ulbf/xNEPAl1T7LmLiFQF7q8K9
-	TcNrvBzI/Wrl7pNR/zZGyqITasShcBga5Qk6TSjaLpp7xkOG4Ek1ZHX0aijUf/Y=
-X-Google-Smtp-Source: AGHT+IEz4zBtaa0fPbf9nGtUh5Q7nwM6G4j1+p2RsMPWqPZhHyGalhtvg6CVchZywIYfMtCQ354e6w==
-X-Received: by 2002:a17:902:f0cc:b0:1fb:1ff1:89d2 with SMTP id d9443c01a7336-201d647f0f5mr17105525ad.6.1723635816658;
-        Wed, 14 Aug 2024 04:43:36 -0700 (PDT)
-Received: from [192.168.104.75] ([223.118.51.114])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a93e2sm28176755ad.141.2024.08.14.04.43.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 04:43:36 -0700 (PDT)
-Message-ID: <9016df04-041b-4837-9590-1c5159609826@linuxfoundation.org>
-Date: Wed, 14 Aug 2024 05:43:29 -0600
+        d=1e100.net; s=20230601; t=1723636053; x=1724240853;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q1fDlzH9jTOZIDrqhn7CKak5t9+eLag2AQJVTQtxzNw=;
+        b=BA6BAXUWKF22ApbTyfXmY5ObnAr2Kg26zowV0IVlfhsW+HOwblXCbEqbj4WsEpJk8d
+         1dm4Eu6Y93yl76JjLi5tvWW5a2bEGLXhOeDUlTKcJmfN68SPm2MBpCNp6RWDUunH6TXS
+         Vm8ATKheKnLH8YpWVj4bvc3RvLZEWqhi2bOdzlttNIiWozk8lHEUqn/VkVLF0rpfPpZp
+         Les5TWW0MzbvZvdTwghnwolEpKv6DTlj6lqEgWzlLIhB+PDKV5aesMcAEeIw+wrgUe8p
+         i5qyHTuQ79VcA8dCgAufPs7y2XA2pLJmSHp8Ra1QVCLSl7lc0X/l4FagZHW2lqCBc4dS
+         SmEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG+QWqw5ZntmpON4xbs9b97P9rabnqbn+7dSJfjDiUn5QwX3XShU9+D78K+fszWmCJYCeYB1MJDByP1jyr0ju52tquM5UQY5hRrllI
+X-Gm-Message-State: AOJu0Yz6NhLNs0h6r9nJDRbWwTyB9xAe8alJZmbuwLn/nhY05UogUUbW
+	Cm/mjBkiWoomJNGfN0ysl2Vi43OWHUp4JZrblvhV/a2nDnhCeDWi8BIwLQlAUcKm5K0+saFaQ5K
+	eukJ6WLImZhFelZiTTi33YAjPyZk=
+X-Google-Smtp-Source: AGHT+IH4JPkPrru7hYMt1EtBpe28EVi59tRIW828NVfe2AJkiq2cDKhyzHxj+fhEYLKzGRFlxkxIiNq4UU/GznCEU0Y=
+X-Received: by 2002:a17:90b:350d:b0:2c9:649c:5e08 with SMTP id
+ 98e67ed59e1d1-2d3aaa9979emr2456633a91.15.1723636052751; Wed, 14 Aug 2024
+ 04:47:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/ftrace: Add required dependency for kprobe
- tests
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <171823033048.152840.662759412433336839.stgit@devnote2>
- <20240814095323.c8458e2cb6031c3014a7b7e0@kernel.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240814095323.c8458e2cb6031c3014a7b7e0@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240814103620.8912-1-abhashkumarjha123@gmail.com> <20240814-vexingly-gigahertz-b4fca46f4626@spud>
+In-Reply-To: <20240814-vexingly-gigahertz-b4fca46f4626@spud>
+From: Abhash jha <abhashkumarjha123@gmail.com>
+Date: Wed, 14 Aug 2024 17:17:19 +0530
+Message-ID: <CAG=0RqJ94dpFhAs6GihVZu3DKv2ZjjFMQxbCXd5Ux2tNCRrv2A@mail.gmail.com>
+Subject: Re: [PATCH] LKMP(Bug fixing fall 2024): Fix documentation spelling errors
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/13/24 18:53, Masami Hiramatsu (Google) wrote:
-> Hi Shuah,
-> 
-> Can you pick this? I confirmed this can be applied on v6.11-rc3.
-> 
-> 
-> 
-> On Thu, 13 Jun 2024 07:12:10 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
->> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->>
->> kprobe_args_{char,string}.tc are using available_filter_functions file
->> which is provided by function tracer. Thus if function tracer is disabled,
->> these tests are failed on recent kernels because tracefs_create_dir is
->> not raised events by adding a dynamic event.
->> Add available_filter_functions to requires line.
->>
->> Fixes: 7c1130ea5cae ("test: ftrace: Fix kprobe test for eventfs")
->> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> btw, your commit $subject is rather odd, as it contains
+> "LKMP(Bug fixing fall 2024):".
+I changed it to something appropriate for the mailing list.
 
-Applied to linux-kselftest next for Linux 6.12-rc1
+> > -configured from the parant process. Also, users must noted that these interfaces
+> > +configured from the parent process. Also, users must noted that these interfaces
+>                                                         ^^^^^
+>                                                 There's a second mistake
+>                                                 in this line.
+Thanks for pointing it out, I made the changes in v2.
+Link : https://lore.kernel.org/linux-doc/20240814113003.14508-1-abhashkumarjha123@gmail.com/T/#u
 
-thanks,
--- Shuah
+Regards,
+Abhash
 
