@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-286499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98CC951BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:21:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3E8951BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B73328441E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8B21F22AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4EC1B1418;
-	Wed, 14 Aug 2024 13:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0976F1B1421;
+	Wed, 14 Aug 2024 13:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yhzj/ulf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LeermY8z"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255441B29A3;
-	Wed, 14 Aug 2024 13:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF40C1AC43B;
+	Wed, 14 Aug 2024 13:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723641651; cv=none; b=oWpaEDYtukJzfvpbeRN5toy0LI/nbKLkWrsqBB22w5KRriygEzZ6q3GvsHdsFje0dybz1cv+rC+FNRMAjq7xjqnRGBrdJv6ZtM3gzpFNrPC/iyIILTSS6OSEWnz9HMSUdnHRRQ2Klh8PmYvbNrSdh7hqz4+ShisYAbjLRkcrphc=
+	t=1723641738; cv=none; b=aKGKEUlm1JrK29NMMqVm8CI1o0y6g3vSQ3JpbzYfWjvmDNX4ViPErVFPEpaf6JKMipI3k6jZRE+odTLEZaMM/d2gdAvs31sgnYUIMON0L9/L1nJ9EiLucUxwW9EOWA8+z6wx6/jj5UDCuQuBA7JB4d4kfKZvS6cGN07uy7cTbcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723641651; c=relaxed/simple;
-	bh=H8B+ZeihPN20CX76N3ba7SG1HkcJJ+LNDpRzNR81ZzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=op1OaWmoVDq6SZVhl6kFKfBfWA364Jc8RZdaddU/QQ5YfFwYfFB/7gS6E5DoKHdchSZoNJcOLvqTE/vsekxUI/C/tILCF2OqJy3g8mFuR2R/EVQ3RV78qSAQZwCCVltg028ydaJXXFwYzESKcNWSeDEoYVoo9U4wzww29+ggr2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yhzj/ulf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FE6C4AF0F;
-	Wed, 14 Aug 2024 13:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723641650;
-	bh=H8B+ZeihPN20CX76N3ba7SG1HkcJJ+LNDpRzNR81ZzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yhzj/ulfO0RJII9o9/PauauDjXBPiy2XS7584unItmKwL7+fT4wLT8d8AeVqPD5GB
-	 Z2I76H3JxQ0PRbxbpXZORjqjA9jihtTi/t71quMLorIP+Bo8kQYwb9S/WoJ6Cr48MC
-	 Q2Od0TNRsXhsQpQv7mu/XMcX+i3nJfFhsf6g0vAAuL+5xcNWCr5JsIgR+1VzD5Hii/
-	 ylKJ/Cdm3LwojtPVv9GN0iiPI/h4arM2teruKWRPNiCzfekkicEUopVORG7aUqNmyR
-	 6f/prE89LnQMKrKwLpHfcgZPoZ028mWM0PbFOOzcQFkmgCSgmQoGUG1Y8ZLDtN2c1x
-	 K9+hBsK/N0mQg==
-Date: Wed, 14 Aug 2024 14:20:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
-Message-ID: <b789831b-d744-4173-84a6-61a07bff905e@sirena.org.uk>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
- <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
- <ZrZdrgOQVHhCyWmA@arm.com>
- <Zrag5A5K9pv1K9Uz@finisterre.sirena.org.uk>
- <ZruJCyXDRNhw6U5A@arm.com>
- <e24a93cb-e7ba-4046-a7c6-fe2ea12420e3@sirena.org.uk>
- <Zrx7Lj09b99ozgAE@arm.com>
+	s=arc-20240116; t=1723641738; c=relaxed/simple;
+	bh=52woe/DhP6yxVtoJ7+/JjkpqgmOTnHaYBvNtOBgqJ9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ltFInKF7oCOAVMTWyOeXUDxSv04AJ4muL4nq1ktQpDu7vq94Pb0Ls/jqx8p46v8X/g5uG19qXWSb6m+kNcX3KdxlhIwVMos6XbN8A4wxJgnIboGo7Uv9G/eIZOn8CN5+OpnwavAa+6HvxDdFvLXUlJhiMgJU2Y921tYoGdLkeaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LeermY8z; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EBnJoU032754;
+	Wed, 14 Aug 2024 13:22:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=5
+	2woe/DhP6yxVtoJ7+/JjkpqgmOTnHaYBvNtOBgqJ9Y=; b=LeermY8zHzSZhQJ2s
+	rRYUW2uDhXMXxrOV6Ie/s6OW2Euuqd6PG6eENANPgn6Sa5gc3XqJM++JBt9M+/Sf
+	vez1J/ndQ37EcsBGnERJdDSHW/zLy9Riugf2CFSlh28maRbIMgtyffFqMDQMpmlU
+	GRb6WiCPHzZClygtnmMAcPLtZKCkn32L0eIE1xAbU/Iv80F7/j6luIt1eNF58fhs
+	RmazMSCJFCweF3rWDL2CkH83KtLbw7NukREKSgVJlzepORtMzyzOu0D4Kq0UQr3K
+	rXvfybw5HPbau7DRjwYQiFgAcgW0ucTrRekMKIILBgJMzxZFLysWAxveRrvprEoy
+	tyx0Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 410v1vrcta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 13:22:06 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47EDM5bo024245;
+	Wed, 14 Aug 2024 13:22:06 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 410v1vrct3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 13:22:05 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47ECnG69011511;
+	Wed, 14 Aug 2024 13:22:04 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xjhu9puu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 13:22:04 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47EDLxks51380600
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 Aug 2024 13:22:01 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3DA312004F;
+	Wed, 14 Aug 2024 13:21:59 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0984E2004D;
+	Wed, 14 Aug 2024 13:21:59 +0000 (GMT)
+Received: from [9.152.224.208] (unknown [9.152.224.208])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 Aug 2024 13:21:58 +0000 (GMT)
+Message-ID: <64c2d755-eb4b-42fa-befb-c4afd7e95f03@linux.ibm.com>
+Date: Wed, 14 Aug 2024 15:21:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l+gPSwKlPgIWiTU7"
-Content-Disposition: inline
-In-Reply-To: <Zrx7Lj09b99ozgAE@arm.com>
-X-Cookie: The second best policy is dishonesty.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net,v4] net/smc: prevent NULL pointer dereference in
+ txopt_get
+To: "D. Wythe" <alibuda@linux.alibaba.com>,
+        Jeongjun Park <aha310510@gmail.com>, wenjia@linux.ibm.com,
+        jaka@linux.ibm.com, tonylu@linux.alibaba.com, guwen@linux.alibaba.com,
+        gbayer@linux.ibm.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, dust.li@linux.alibaba.com,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20240814104910.243859-1-aha310510@gmail.com>
+ <e2d56814-0664-4c3a-9d5f-3f32dc15ccd4@linux.alibaba.com>
+Content-Language: en-US
+From: Alexandra Winter <wintera@linux.ibm.com>
+In-Reply-To: <e2d56814-0664-4c3a-9d5f-3f32dc15ccd4@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 0y2k-9VOra7wgj4QZyRJI0DyzkO0nLHd
+X-Proofpoint-GUID: OfSvat6veq4dpmJSbr2dUiDsrpezpumY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_09,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ malwarescore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=748 clxscore=1015 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408140092
 
 
---l+gPSwKlPgIWiTU7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Aug 14, 2024 at 10:38:54AM +0100, Catalin Marinas wrote:
-> On Tue, Aug 13, 2024 at 07:58:26PM +0100, Mark Brown wrote:
+On 14.08.24 15:11, D. Wythe wrote:
+>     struct smc_sock {                /* smc sock container */
+> -    struct sock        sk;
+> +    union {
+> +        struct sock        sk;
+> +        struct inet_sock    inet;
+> +    };
 
-> > ISTR the concerns were around someone being clever with vfork() but I
-> > don't remember anything super concrete.  In terms of the inconsistency
-> > here that was actually another thing that came up - if userspace
-> > specifies a stack for clone3() it'll just get used even with CLONE_VFORK
-> > so it seemed to make sense to do the same thing for the shadow stack.
-> > This was part of the thinking when we were looking at it, if you can
-> > specify a regular stack you should be able to specify a shadow stack.
 
-> Yes, I agree. But by this logic, I was wondering why the current clone()
-> behaviour does not allocate a shadow stack when a new stack is
-> requested with CLONE_VFORK. That's rather theoretical though and we may
-> not want to change the ABI.
-
-The default for vfork() is to reuse both the normal and shadow stacks,
-clone3() does make it all much more flexible.  All the shadow stack
-ABI predates clone3(), even if it ended up getting merged after.
-
-> Anyway, I understood this patch now and the ABI decisions. FWIW:
-
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Thanks!
-
---l+gPSwKlPgIWiTU7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma8rykACgkQJNaLcl1U
-h9BYmQf/YgJrH3MQHcexvWEKefsPyqgzIhddLhnB043UPgEOWfxP5jw/EwXt9URd
-Zm0BqKwhm/pYyNq6E49xVmubE1QUYrA27iJ1W8h9YN/w7zjcLYui946FOFdJgouS
-HThXKY2D5ggFIvjI72l9D8H38c/HCQIcpEjJ/jaVdPkbrTO7mf4KUYo2jUVmPlvS
-ZxjwZIPZr/ubMi7aS5eL9vhZ42FELPkBi/bkMZ1su+96awHbZU6g9V9fpjnkt84N
-9EowvCYQGhVNAxg3936eMYGY9+ciXMysqXeN1UVv/lN9yfgI95ANQqzCwLaR71AH
-SGMpBjWQXE/T6uVxcSByywNgzDxY7A==
-=q9y2
------END PGP SIGNATURE-----
-
---l+gPSwKlPgIWiTU7--
+I don't see a path where this breaks, but it looks risky to me.
+Is an smc_sock always an inet_sock as well? Then can't you go with smc_sock->inet_sock->sk ?
+Or only in the IPPROTO SMC case, and in the AF_SMC case it is not an inet_sock?
 
