@@ -1,282 +1,142 @@
-Return-Path: <linux-kernel+bounces-286423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554AF951AC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:24:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323B9951AC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C7D2854B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0BD21F236E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DBD1B0118;
-	Wed, 14 Aug 2024 12:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709361B0127;
+	Wed, 14 Aug 2024 12:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b="DjbYHbrT"
-Received: from xn--80adja5bqm.su (xn--80adja5bqm.su [198.44.140.76])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B8B1AC427;
-	Wed, 14 Aug 2024 12:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.44.140.76
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiSZwyor"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9651B0104
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723638263; cv=none; b=ZCLMXFGrVgycmu3krkseXy8PjFU7dMP61oHWyZA3CY5VW3DkjLgVBvpSoKUs6ufJ5OOcFrpGBo8FMNycV9XK+ZKJu2m7ksQioFsHKeLWabpAan68rvzF9S9RlhK3QUf+SQSGuSnhRBR3IHpVcF8zv7QXw4jktuYLHrzk5zXfnAM=
+	t=1723638338; cv=none; b=JsGG1byDjZTqkM99aXIIo6mWj0icm85NWHBtqTz0a/WOB12Zh3n27o230DsnYoFz1z3CT+QJTPuVg4uYEuKQz9Pq1BjmCZ1PWhQaXiWT6qGFGWb+odz17MsIZxjk4juQBC5Wuz2DKJt3PUXmaPRNtideRS/edaZq5XQdk+bqwc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723638263; c=relaxed/simple;
-	bh=EHmbgh7ChgPZtT5t/G6sc2EeuM+4y7bLcgcJae38lwU=;
+	s=arc-20240116; t=1723638338; c=relaxed/simple;
+	bh=fX0oLWQmmDLVQc37rhgERLHDmug4NM7ThPA89I0mRAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIQWsPr8STCSQzOd97AAg6/1JdKXaoTm66HDy7shLynMBaE0L55LMC4O1F1pFYkLdaPDU2HZbtZrC9ZFksygYxVbEcbZ4w+txTIgeAUJVX0cYELiw1q+KKTpqA4mpaNQiUN2WV45MF3qwmB5/PtB3SWmCJfoQGSMQmghbrvRqpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc; spf=pass smtp.mailfrom=xn--80adja5bqm.su; dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b=DjbYHbrT; arc=none smtp.client-ip=198.44.140.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--80adja5bqm.su
-Received: by xn--80adja5bqm.su (Postfix, from userid 1000)
-	id 9A5974000222; Wed, 14 Aug 2024 12:24:03 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 xn--80adja5bqm.su 9A5974000222
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mediatomb.cc;
-	s=default; t=1723638244;
-	bh=EHmbgh7ChgPZtT5t/G6sc2EeuM+4y7bLcgcJae38lwU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DjbYHbrT1xxDc3/T/FRPTLbpYBOc1QXADxxd41UOBqYuRZX/x6GdVDpKgEiFF1X1m
-	 z5FH690DE+LTtu3gZNml3cUsn1GDL6klRM9mg9LxTmuVh/j2QPXOdGyFYhIUlisVRQ
-	 jwqjZ1wSX7HiEL1GcZl8tYDxVTXCLuemq0J23D+hyUPWZbg9qjjL6fydPmkJ0o7k68
-	 acT6/3lyuoUhwHtUP0d1m2BHVCOehZuFuSjee3KnRub0lFU/5WBazu00FhSdShCVl2
-	 e1d1dQmWzVLxpI+JP4U3Ficpjo8eHW9mqIu17IFKRPQUfMIOBI2JhENfEKvd0po8Y4
-	 7GIvD6I6G5KMg==
-Date: Wed, 14 Aug 2024 12:24:03 +0000
-From: Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Daniel Golle <daniel@makrotopia.org>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2 RESEND] arm64: dts: rockchip: Add DTS for
- FriendlyARM NanoPi R2S Plus
-Message-ID: <20240814122403.GB21761@ветеран.su>
-References: <22bbec28-41c1-4f36-b776-6e091bf118d9@kernel.org>
- <2309282.ZQ0cqP7t2B@diego>
- <3733110.CjrmPviFsx@diego>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdZ+WFeyMFMWnGzUr/GG4LTHz1S38BHNq80hWmX3np91GdyMIVoQghwV2bCTlTuik5uoL7heADEKHJ4Ex9+i3ZlnDOdSYGrSjtP9U+eOi7KA9SUv6JsdWEpa9yMCnvyk2lf7JEwvUcsO+m8yk8TlvB7yHlmMDHH+E/te3jdI5HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiSZwyor; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723638336;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=svBUuEs8/JFesMl5FGn0p7w8fnS4q4NfMpbFkx3+AVA=;
+	b=SiSZwyorMR3r1EOUYuONCaBJM/MD2LvOuUzQfzENLc1ARBX8P9VC9XX0Aqt6ejLw3ErPIr
+	CiW2Att+2Z7Hfoj1NadlE53hN8D7NQ9GY5b+gRJb4COh3zbiIySoKXq9V7St+ROOWD3/zq
+	BXG2otlVn15oTxn8F6YqQTxxqC6LJ4A=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-GFhNPb5-Pr2UdJg0tYyZRw-1; Wed,
+ 14 Aug 2024 08:25:33 -0400
+X-MC-Unique: GFhNPb5-Pr2UdJg0tYyZRw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD18C197702C;
+	Wed, 14 Aug 2024 12:25:28 +0000 (UTC)
+Received: from asgard.redhat.com (unknown [10.45.242.6])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 38E991955F66;
+	Wed, 14 Aug 2024 12:25:17 +0000 (UTC)
+Date: Wed, 14 Aug 2024 14:25:13 +0200
+From: Eugene Syromiatnikov <esyr@redhat.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-kselftest@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	Artem Savkov <asavkov@redhat.com>
+Subject: Re: [PATCH v2] selftests: fix relative rpath usage
+Message-ID: <20240814122513.GA18728@asgard.redhat.com>
+References: <20240812165650.GA5102@asgard.redhat.com>
+ <3667e585-ecaa-4664-9e6e-75dc9de928e8@linuxfoundation.org>
+ <20240813163348.GA30739@asgard.redhat.com>
+ <c946c5c4-366a-4772-81d9-dc5984777cfd@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3733110.CjrmPviFsx@diego>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <c946c5c4-366a-4772-81d9-dc5984777cfd@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Aug 14, 2024 at 01:36:43PM +0200, Heiko St�bner wrote:
-> Am Mittwoch, 14. August 2024, 13:21:38 CEST schrieb Sergey 'Jin' Bostandzhyan:
-> > Hi,
-> > 
-> > On Sat, Aug 10, 2024 at 09:11:56PM +0200, Heiko St�bner wrote:
-> > > Am Montag, 5. August 2024, 10:59:35 CEST schrieb Sergey 'Jin' Bostandzhyan:
-> > > > On Sun, Aug 04, 2024 at 01:27:50AM +0100, Daniel Golle wrote:
-> > > > > On Thu, Aug 01, 2024 at 05:57:35PM +0000, Sergey Bostandzhyan wrote:
-> > > > > > The R2S Plus is basically an R2S with additional eMMC.
-> > > > > > 
-> > > > > > The eMMC configuration for the DTS has been extracted and copied from
-> > > > > > rk3328-nanopi-r2.dts, v2017.09 branch from the friendlyarm/uboot-rockchip
-> > > > > > repository.
-> > > > > > 
-> > > > > > Signed-off-by: Sergey Bostandzhyan <jin@mediatomb.cc>
-> > > > > > ---
-> > > > > >  arch/arm64/boot/dts/rockchip/Makefile         |  1 +
-> > > > > >  .../dts/rockchip/rk3328-nanopi-r2s-plus.dts   | 31 +++++++++++++++++++
-> > > > > >  2 files changed, 32 insertions(+)
-> > > > > >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-> > > > > > 
-> > > > > > diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> > > > > > index fda1b980eb4b..36258dc8dafd 100644
-> > > > > > --- a/arch/arm64/boot/dts/rockchip/Makefile
-> > > > > > +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> > > > > > @@ -20,6 +20,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c-plus.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2s.dtb
-> > > > > > +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2s-plus.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus-lts.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
-> > > > > > diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..7b83090a2145
-> > > > > > --- /dev/null
-> > > > > > +++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
-> > > > > > @@ -0,0 +1,31 @@
-> > > > > > +// SPDX-License-Identifier: GPL-2.0+
-> > > > > > +/*
-> > > > > > + * (C) Copyright 2018 FriendlyElec Computer Tech. Co., Ltd.
-> > > > > > + * (http://www.friendlyarm.com)
-> > > > > > + *
-> > > > > > + * (C) Copyright 2016 Rockchip Electronics Co., Ltd
-> > > > > > + */
-> > > > > > +
-> > > > > > +/dts-v1/;
-> > > > > > +#include "rk3328-nanopi-r2s.dts"
-> > > > > > +
-> > > > > > +/ {
-> > > > > > +	model = "FriendlyElec NanoPi R2S Plus";
-> > > > > > +	compatible = "friendlyarm,nanopi-r2s-plus", "rockchip,rk3328";
-> > > > > > +
-> > > > > > +	aliases {
-> > > > > > +		mmc1 = &emmc;
-> > > > > > +	};
-> > > > > > +};
-> > > > > > +
-> > > > > > +&emmc {
-> > > > > > +	bus-width = <8>;
-> > > > > > +	cap-mmc-highspeed;
-> > > > > > +	supports-emmc;
-> > > > > > +	disable-wp;
-> > > > > > +	non-removable;
-> > > > > > +	num-slots = <1>;
-> > > > > > +	pinctrl-names = "default";
-> > > > > > +	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
-> > > > > 
-> > > > > I think it's worth adding
-> > > > > 
-> > > > > 	mmc-hs200-1_8v;
-> > > > > 
-> > > > > 
-> > > > > I've tried getting the best speed possible and while HS400 with and
-> > > > > without enhanced strobe did NOT work, hs200 works just fine.
-> > > > > [    0.459863] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
-> > > > > [    0.460884] mmc_host mmc1: Bus speed (slot 0) = 150000000Hz (slot req 150000000Hz, actual 150000000HZ div = 0)
-> > > > > ...
-> > > > > [    0.728220] dwmmc_rockchip ff520000.mmc: Successfully tuned phase to 194
-> > > > > [    0.728940] mmc1: new HS200 MMC card at address 0001
-> > > > > [    0.730774] mmcblk1: mmc1:0001 A3A551 28.9 GiB
-> > > > > [    0.733262]  mmcblk1: p1 p2
-> > > > > [    0.734562] mmcblk1boot0: mmc1:0001 A3A551 4.00 MiB
-> > > > > [    0.736818] mmcblk1boot1: mmc1:0001 A3A551 4.00 MiB
-> > > > > [    0.738503] mmcblk1rpmb: mmc1:0001 A3A551 16.0 MiB, chardev (245:0)
-> > > > > 
-> > > > > root@OpenWrt:/# hdparm -t /dev/mmcblk1
-> > > > > 
-> > > > > /dev/mmcblk1:
-> > > > >  Timing buffered disk reads: 342 MB in  3.00 seconds = 113.81 MB/sec
-> > > > > 
-> > > > > 
-> > > > > Without 'mmc-hs200-1_8v' property in DT the eMMC is detected as
-> > > > > [    0.440465] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
-> > > > > [    0.442032] mmc1: new high speed MMC card at address 0001
-> > > > > [    0.444261] mmcblk1: mmc1:0001 A3A551 28.9 GiB
-> > > > > [    0.447388]  mmcblk1: p1 p2
-> > > > > [    0.448744] mmcblk1boot0: mmc1:0001 A3A551 4.00 MiB
-> > > > > [    0.451065] mmcblk1boot1: mmc1:0001 A3A551 4.00 MiB
-> > > > > [    0.452871] mmcblk1rpmb: mmc1:0001 A3A551 16.0 MiB, chardev (245:0)
-> > > > > 
-> > > > > 
-> > > > > root@OpenWrt:/# hdparm -t /dev/mmcblk1
-> > > > > 
-> > > > > /dev/mmcblk1:
-> > > > >  Timing buffered disk reads: 134 MB in  3.03 seconds =  44.18 MB/sec
-> > > > > 
-> > > > > 
-> > > > > > +	status = "okay";
-> > > > > > +};
-> > > > > 
-> > > > > I'm right now trying to get SDIO RTL8822CS working, so far I'm out of luck,
-> > > > > but it can be added later once we got it working.
-> > > > 
-> > > > would you be interested in taking over my attempted patches? Thing is,
-> > > > that I am a userspace guy who only copy-pasted some entries from
-> > > > FriendlyElec and things happened to work, but I really have no clue what I am
-> > > > doing when it comes to hardware and DTS. I see that some changes were suggested, 
-> > > > not only by you above, but also by others earlier and I have little
-> > > > understanding of where I should be inserting what and how.
-> > > > 
-> > > > At this point I think it would make more sense if someone who actually
-> > > > understands what they are doing would continue to tune the DTS :)
-> > > > 
-> > > > So it'd be great if either you or anyone else would be willing to take
-> > > > over?
-> > > 
-> > > Though, a board devicetree is a nice way to get "your feet wet" in the
-> > > kernel :-) and for a lot of people scratching ones own itches gets them
-> > > started.
-> > 
-> > While this may very well be true, my main issue is not the DT syntax,
-> > but the lack of understanding of the underlying hardware and also a lack of
-> > enthusiasm to dive into the hardware topics - I prefer to stay in
-> > userspace where the kernel provides a very nice abstraction to all those 
-> > details ;)
-> 
-> No worries :-) .
-> 
-> Though in this case you're "on the hook" for the board devicetree :-D .
-> 
-> 
-> > > The devicetree is easy enough, also looks correct and you even got the
-> > > binding change correct - and you're the person with the actual board :-) .
-> > > 
-> > > Could you possibly test if the   mmc-hs200-1_8v; property works for you?
-> > 
-> > It does, I get pretty much the same results as Daniel:
-> > 
-> > root@nanopi-r2s-plus:~# hdparm -t /dev/mmcblk1
-> > /dev/mmcblk1:
-> >  Timing buffered disk reads: 134 MB in  3.04 seconds =  44.13 MB/sec
-> > 
-> > With mmc-hs200-1_8v:
-> > 
-> > root@nanopi-r2s-plus:~# hdparm -t /dev/mmcblk1
-> >  /dev/mmcblk1:
-> >   Timing buffered disk reads: 340 MB in  3.01 seconds = 113.08 MB/sec
-> > 
-> > Should I add a commit on top with this change and submit a v3 patchset?
-> > 
-> > On Thu, Aug 01, 2024 at 11:22:27PM +0200, Heiko St�bner wrote:
-> > > general remark, please don't send new versions as threaded replies to
-> > > old
-> > > versions. The normal case for git-send-email is to create a new thread
-> > > and this continuing inside the old thread confues tooling.
-> > 
-> > In case you tell me to go ahead with a v3 set, should it be in this
-> > thread or not? I understood RESEND's should be new, but updates should
-> > stay in the thread, right?
-> > 
-> > Sorry, I actually did read the guides, but seems misunderstood what I should
-> > be doing as I inserted the in-reply-to header in my last RESEND.
-> 
-> Please do a v3 ... in a new thread.
-
-There was one other note though to which I did not receive a clear
-repsonse. Bjoern A. Zeeb noticed, that the newer version from the
-rockhip repo has // SPDX-License-Identifier: (GPL-2.0+ OR MIT) while the
-one which I copied the code from did not have the "OR MIT" part, hence I
-also did not have it in my patch.
-
-Am I supposed to leave it as is, since I copied the block from the
-sources which indeed were GP-2.0 only or should I add the "OR MIT" part
-as it is apparently the case in newer versions of the dts file from
-rockhcip?
-
-> Also for the process, please add the Ack you received for patch 2
-> in that v3.
-
-You mean, ammend the appropriate commit and add the Acked-By to the
-commit message? OK, will do.
-
-On Wed, Aug 14, 2024 at 01:34:13PM +0200, Diederik de Haas wrote:
-> On Wed Aug 14, 2024 at 1:30 PM CEST, Diederik de Haas wrote:
-> > On Wed Aug 14, 2024 at 1:21 PM CEST, Sergey 'Jin' Bostandzhyan
-> > wrote:
-> > > In case you tell me to go ahead with a v3 set, should it be in
-> > > this
-> > > thread or not? I understood RESEND's should be new, but updates
-> > > should
-> > > stay in the thread, right?
+On Wed, Aug 14, 2024 at 05:14:08AM -0600, Shuah Khan wrote:
+> On 8/13/24 10:33, Eugene Syromiatnikov wrote:
+> >On Mon, Aug 12, 2024 at 05:03:45PM -0600, Shuah Khan wrote:
+> >>On 8/12/24 10:56, Eugene Syromiatnikov wrote:
+> >>>The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
+> >>>relative to current working directory and not the executable directory,
+> >>>which will lead in incorrect resolution when the test executables are run
+> >>>from elsewhere.  Changing it to $ORIGIN makes it resolve relative
+> >>>to the directory in which the executables reside, which is supposedly
+> >>>the desired behaviour.  This patch also moves these CFLAGS to lib.mk,
+> >>>so the RPATH is provided for all selftest binaries, which is arguably
+> >>>a useful default.
+> >>
+> >>Can you elaborate on the erros you would see if this isn't fixed? I understand
+> >>that check-rpaths tool - howebver I would like to know how it manifests and
 > >
-> > No, a new series should be its own thread too.
+> >One would be unable to execute the test binaries that require additional
+> >locally built dynamic libraries outside the directories in which they reside:
+> >
+> >     [build@builder selftests]$ alsa/mixer-test
+> >     alsa/mixer-test: error while loading shared libraries: libatest.so: cannot open shared object file: No such file or directory
+> >
+> >>how would you reproduce this problem while running selftests?
+> >
+> >This usually doesn't come up in a regular selftests usage so far, as they
+> >are usually run via make, and make descends into specific test directories
+> >to execute make the respective make targets there, triggering the execution
+> >of the specific test bineries.
+> >
 > 
-> More correctly and hopefully more clearly:
+> Right. selftests are run usually via make and when they are installed run through
+> a script which descends into specific test directories where the tests are installed.
+> 
+> Unless we see the problem using kselftest use-case, there is no reason the make changes.
 
-Understood, thank you!
+The reason has been outlined in the commit message: relative paths in
+RPATH/RUNPATH are incorrect and ought to be fixed.
 
-Kind regards,
-Sergey
+> Sorry I am not going be taking these patches.
+
+I see, by the same token, kernel maintainers reject any patches that fix
+compilation/build warnings, I guess.
+
+> thanks,
+> -- Shuah
 
 
