@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-286320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF82A951999
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:08:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA7895199B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C0CEB220C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A13E01C2175F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D621AE858;
-	Wed, 14 Aug 2024 11:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="YBRgd9UM"
-Received: from mr85p00im-hyfv06021301.me.com (mr85p00im-hyfv06021301.me.com [17.58.23.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D341AE852;
+	Wed, 14 Aug 2024 11:08:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8483A1AE847
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FF01AE847
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723633671; cv=none; b=LcIp+fu0IBLYX+02bcVLFMNLXirbQUz8PZmihLBC9l9Ohis1E0PQKla88qO9Ma3nhy4HVz0bbQIZtf6tiw0c6upoIAF/5rLGDAAC8u56QJbMY8P2KitBXxyWKisUTBsPIkoqn4vYLqCR8f0vsfhFQaM29/5eXtoJNGE9bRVndTA=
+	t=1723633686; cv=none; b=Pf9TE4f9TfVG1H9h4+P4/hqv9FZOJ4JwFUp1XUnVmusA37VBANR6KZeXX/kDeo6sz4rUV2JwJhTc9GUh45tdFuERJ9b5nLINnbklYmE5I0+fqbTzA64ZMzzQRHeTUtDtUJ0uVOAjybt6USCiTX9TqSIv90DJRVi0B/FxhNVMadk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723633671; c=relaxed/simple;
-	bh=yVxtCLTGgQjGhk74i6g7e4YI385bKUtyaU9n2k1GCyU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=i9Ep7s2P//S0B3hoIpCScujwGzXixzs9JoREAuc5MimNPOzigc7j7Xim60/43MLEQFrBhJS91rrzYK8R2cKpezEOlYi4lcwTn73RVL1qeaTlqIeFI9uCwVD7tsdyMGMcbZbEaJj/VC8utkwn8q2/26Ja6tZQTMRE0aHR6Vy7hxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=YBRgd9UM; arc=none smtp.client-ip=17.58.23.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1723633670;
-	bh=kQllxqwSlax4y60Q/SIAbtg0dy4MqxrZ7h0xytB4dvc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=YBRgd9UMOyXt52n2H0i/a0Jd4EMuhQYZVGJ7v7zrcQOxw6x0f4NKZt0aJTYhv/MPj
-	 enFX764NMsVk6mDmCOaT/ywDnjzrxwFkg5NZuFQw5dBkhMd7sBNj/I+5/GKdhNn5Hx
-	 eD7AXqyXEeP0JyPgF0m6kq+53MZXPFP9KLDCa3ebBpygG6hvl7uaHRPIVOWHJVV6Zm
-	 ji9GHxQNT07p/7mySTk+VaFYwNZ6rpBUB92m5hjSHHo4CUK/05e9XsVkc3FDqkDIrs
-	 YiIHqKenfKbKoDEdoAkHurGo0gwY7FXa9S+XbqnbmMKOk7+m3EfL6/BU4hbHbvJ1M/
-	 xpCQP8nRynLBQ==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-hyfv06021301.me.com (Postfix) with ESMTPSA id DDB022150D07;
-	Wed, 14 Aug 2024 11:07:47 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Wed, 14 Aug 2024 19:07:34 +0800
-Subject: [PATCH] usb: core: sysfs: Unmerge @usb3_hardware_lpm_attr_group in
- remove_power_attributes()
+	s=arc-20240116; t=1723633686; c=relaxed/simple;
+	bh=SD+OyeXa9APVBg9YdDPKM0vYND9PMuicoQXJtX1a4mI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cp3T5wccI92iRU2SU1QptIeTlVcrjS7U1BLX2AaBIiBIqkgtrR6dCsJUoykR9XW+7ktd5d9SFuRwqdyZqj8p2VtPxnlEIRlfiiar5VLAKuXGdp11Hj1iBVvqTheBioGnvZEY4/mCpJEGhRn4FoADbyunjS+oa42Le1tUHXMgz5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b3cd1813aso77882545ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:08:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723633684; x=1724238484;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nj7+5XvyZ2TUrlTVIqSYpUi+N0uS/cJKy21AXHIFeRY=;
+        b=Twmh/lSJs3bfssaPii3sVklPIRp8peiEg2oMxEhydQT6GMEXSI4LBf8WpgiRVIdoxG
+         0MoxBlZUJhQVF6X9GJh160NEtVos5PmU5kPocp85m4jzraH4WqI1UpmcUJk+RxCGz0TV
+         9O4qHQyo4DKQ9x9mrFwFsVMcgjfmRLrrT/tGZ3U3gQsCPtvHatgd1x0BnW7ImfjYmfs0
+         ctQxB04p7WQx+wxclCRqUUiUfm7MevvGxm38HGk8Qz45H2zVyWoYZfPL4sY35apQwymw
+         +UJC+8VEkR34eYHijgGRBNQaExMilEo85pdIl9aCVu1wONyEP6GT9QTUJkHCFwpvYapm
+         Hp+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9xVHFRM80MGTGQzPR9ni1jgAmEvg6fl/gaJG/Y/KvGpsjc3UKcjukRk1a9YhQuMCrrQTOrSGjkSCBZlhdtyhMLJkHWQkaWGygdPxV
+X-Gm-Message-State: AOJu0Yw4fqcgQ3Wcn7SE1tIS698SAsgBMa14B9dz1HUZl8YtWEGFQ52e
+	JLmJA69TEroJIsIphGK5cC0xE4idXW8aCfWrs7X3TjtFDSGKB5WB946JuHTnvdrZShGBcy4q4Z3
+	oMjkuCBlZwWtHOg26SB5WwHEx5p0RbHXv9b7dLT/U9WkZpChonfuvOo8=
+X-Google-Smtp-Source: AGHT+IEHaHYsdGIDkPAcmaX+E+b0sgxDdBA05z6opW758mTVV4Urf68G06/KLm4i+RrpKFToG7Q4+mDV9oIvMLjLuQazFhxecN9S
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-sysfs_fix-v1-1-2224a29a259b@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAPWPvGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDC0MT3eLK4rTi+LTMCl0jIwOzlFTLJANDc0sloPqColSgMNis6NjaWgC
- scZnJWwAAAA==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Kevin Strasser <kevin.strasser@linux.intel.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: W73DaKZkeAHcuJAlEft6q5b5S4Zskhgi
-X-Proofpoint-ORIG-GUID: W73DaKZkeAHcuJAlEft6q5b5S4Zskhgi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_08,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
- clxscore=1011 phishscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2408140077
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+X-Received: by 2002:a05:6e02:216a:b0:39b:2133:8ee5 with SMTP id
+ e9e14a558f8ab-39d12447420mr1763215ab.1.1723633684271; Wed, 14 Aug 2024
+ 04:08:04 -0700 (PDT)
+Date: Wed, 14 Aug 2024 04:08:04 -0700
+In-Reply-To: <tencent_82F24B9E1BD32515BAE8BBDB33A09E7F1B08@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000796850061fa2bdb1@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Hello,
 
-Device attribute group @usb3_hardware_lpm_attr_group is merged by
-add_power_attributes(), but it is not unmerged explicitly, fixed by
-unmerging it in remove_power_attributes().
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Fixes: 655fe4effe0f ("usbcore: add sysfs support to xHCI usb3 hardware LPM")
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/usb/core/sysfs.c | 1 +
- 1 file changed, 1 insertion(+)
+Reported-by: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
+Tested-by: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
 
-diff --git a/drivers/usb/core/sysfs.c b/drivers/usb/core/sysfs.c
-index d83231d6736a..61b6d978892c 100644
---- a/drivers/usb/core/sysfs.c
-+++ b/drivers/usb/core/sysfs.c
-@@ -670,6 +670,7 @@ static int add_power_attributes(struct device *dev)
- 
- static void remove_power_attributes(struct device *dev)
- {
-+	sysfs_unmerge_group(&dev->kobj, &usb3_hardware_lpm_attr_group);
- 	sysfs_unmerge_group(&dev->kobj, &usb2_hardware_lpm_attr_group);
- 	sysfs_unmerge_group(&dev->kobj, &power_attr_group);
- }
+Tested on:
 
----
-base-commit: 82313624b2ae5a943d16475a566b65c873989e9f
-change-id: 20240814-sysfs_fix-2206de9b0179
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12540de5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=174967d9980000
 
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+Note: testing is done by a robot and is best-effort only.
 
