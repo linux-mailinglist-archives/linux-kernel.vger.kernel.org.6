@@ -1,157 +1,129 @@
-Return-Path: <linux-kernel+bounces-286888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43D2952005
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351AE952006
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A6C0282794
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672671C2236D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55111B9B3F;
-	Wed, 14 Aug 2024 16:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFDA1B3F3E;
+	Wed, 14 Aug 2024 16:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UtBqyk/W"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ch9G7Nm8"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C4E1B86C5
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B73E2BB1C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653082; cv=none; b=AzKaoF0alU5Q6ogEPiPDeV0REKh55UrNvpz/a+FzH0oQLeLIJ2FrPIq2YDy7ccTTafT2whsUICi++s66bFdik1MbLTTk+041C2EwwnHE+Bq1n9LwQeDu2WStkpS2OBCYwHLfpTVNP85x0mwkeDGtqoO8suY1K0pZXUTUMfk5a0w=
+	t=1723653123; cv=none; b=Teb2XtY24vnbvESfMmcrVcyR3pNhePioZ7dnwOAdc3y3AmUYU1pER551N4eoOXsQX9j18hymjl3cG2sHYccKQo0AH86xdYYafXgqq8k0J7JwzqNxaxBZLfdXNxF0VkCaN3u2qUSp2LlEZbOhZ7FhRzlkt7Z5BsLtLcP/4Wz+pN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653082; c=relaxed/simple;
-	bh=NxmivKd8kEPQ/sxZlRaqiuDGo9D8KwQC7HsHytxVwHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NIms9E95/ZPsIq87gHz22pLvUnAP9mfYrlDLpECW3yKomVfv86DscPPt9QfD6hvif890L4io6nKi9Lfmv7nseUq46lZ89SIBKCH5ZGsmskNcRQASh27NE5d9X/Z0/vjJCeeG0tJ880hDIWx4sF+yPlJLLhvE/utiD7ArYnVAFLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UtBqyk/W; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1723653123; c=relaxed/simple;
+	bh=sjmlatt2FALf0Ln7dqSn1SM9Qe1qHhGhBTGOwE8pY3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4DjypuGFQAPjS0pUnTi2Y+y4VqWspi9zoHd3m9SEDg5KVgWt1+6zp1cfn3GoQfdMZuTomzACKPk3G4zHH98kAZFmyOP/XSN5ksM6mnRQOYznkNECz9Cnvt2vmjI5Ls9qGKUDWNnhgWI5DGUURYFzJI782Jh8kxtFkgmtcYMAW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ch9G7Nm8; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723653079;
+	s=mimecast20190719; t=1723653120;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DyDrlzMJYgV4eN7sKN7OibLhZnsQZrgEL1DpU8bq5jw=;
-	b=UtBqyk/W60bKs6hN7wxCWRIxK5LxCIOP7GWHJLqvTxefYmbtlfFOOurTJdAOzQYIhcbWYg
-	urjFBSFylNe/J8AjqlDxf32lWVhf+uB/668Vh0iVuQ0BIcIk+v/+ObJ0m1P8kOJU64PpoZ
-	OydXda3jabdTS26OJZWItowXq1sFNMs=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=nAJHyDS3x0gvP3kndDtDDCyfUKvxnbZEPAFmNsdiAMA=;
+	b=Ch9G7Nm8l00oAAitR87aoyl2h61SAV4ORyKxjyxGkHGeyMfS5uqwPOIpEZPU5PvoONqC0L
+	7V/T93p12gFpPHqWGfJimiinRyFdIKBnRDCHrA8QNI8/nlUdFnZDhh64SOK38LPLh3HSJd
+	CpK4lurk8lsQnEzcE2vHZKCkJdDpzOo=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-cnVG2o00NlKpGZlOry-_3g-1; Wed, 14 Aug 2024 12:31:18 -0400
-X-MC-Unique: cnVG2o00NlKpGZlOry-_3g-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3685e0df024so58057f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:31:18 -0700 (PDT)
+ us-mta-460-e7AASxShN1Ca2vZgIOaLGA-1; Wed, 14 Aug 2024 12:31:26 -0400
+X-MC-Unique: e7AASxShN1Ca2vZgIOaLGA-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44fe92a34d2so424711cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:31:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723653077; x=1724257877;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DyDrlzMJYgV4eN7sKN7OibLhZnsQZrgEL1DpU8bq5jw=;
-        b=OVJFiLIW52MIXs01tTqyOne5m4g6q1V9urwr45Wv1YZwvmbZ9SnGf9a1eeP4izdET9
-         acOr9E4K4OBWhVOHL6WWypwyY3W2Oq7VrboUxLuq6noelkRiHYShlenz7RcDJKYYbeLx
-         bfaS549sGaEIcQKhaOv6AiQ4w9XhNkLAum49sEUERsEgXWR4iCrLzw4ESt4ZToDFFaHO
-         GKgaX3al7V8RilLwInkoP5KPmTyZR1CGMW0X0lUQ5rvipSuT7pLE4Z40TaKDh75ZU75r
-         OQj/up9CjVDgw9glP+5M20o62LZ6xFZ40tNFkmJzcmU0i+TLRJTCh8uTprMHwltXKjzj
-         Sg4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTxhIqqYU6d67nWGL3/vOVaEZBQGJKcmEkIRG052Y4dki3eqngFwewn4rsQBv+aJz2C/YaAAgJqvpFxT/mDDmKVEin1RNsDsX8mpO0
-X-Gm-Message-State: AOJu0YyNF8gHwQ3+sny68xa9Jbxncqz1X2D58Nx9IYUxBUl2eOBCmbZx
-	JXy4EGlJDTVwGB/d8tPx8q6ecMuB6mPfvvx0GAl1gDvJHioo5H3SrV8r4Z2elgArAFNElx2LHhn
-	ZeFp9rt/jMCHKuFeGdSlk4GpM0yKhDG4XTjc5DHcKpBDsWvjHkPvuaFTs9wlNMQ==
-X-Received: by 2002:a5d:4286:0:b0:364:d2b6:4520 with SMTP id ffacd0b85a97d-37177652008mr2235823f8f.0.1723653077171;
-        Wed, 14 Aug 2024 09:31:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFgy5MLN3nMAW0ZXZGGk2Wcsf6W7hFNNXPWO3ECBuzDROA/FM0EmSpEWD7i6swgGe/K8o5rZg==
-X-Received: by 2002:a5d:4286:0:b0:364:d2b6:4520 with SMTP id ffacd0b85a97d-37177652008mr2235801f8f.0.1723653076593;
-        Wed, 14 Aug 2024 09:31:16 -0700 (PDT)
-Received: from [192.168.10.3] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4c36bd0csm13245245f8f.22.2024.08.14.09.31.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 09:31:15 -0700 (PDT)
-Message-ID: <a6ba22a3-4e4b-40be-a196-79ae2265a97e@redhat.com>
-Date: Wed, 14 Aug 2024 18:31:14 +0200
+        d=1e100.net; s=20230601; t=1723653086; x=1724257886;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nAJHyDS3x0gvP3kndDtDDCyfUKvxnbZEPAFmNsdiAMA=;
+        b=nA3vP2Scet5eLASsXLEIsbrcK6BdA8ouEDemp32xi6p9Cn2/TV6LPJ9dtyNZylZfFQ
+         7I3yRzE84VNcOz0bXZwrPKtg/NMdk9B5QJoksfL5pmL6EXNRkJGrJx6uLLRqyubiyU0R
+         Bp/vDtpqWYBYomuVkaa91+fH6ObyIZ6unbt87DPIBWoF+7U7CPmorqCsb3AcDKC0LlaB
+         NS9A3/T7YPB46ZgRZZCsa/gi34xKw7kuoEy6w1kd7EDm1oMDy1ve/PdDtc2aILBdlBAz
+         Wm3u0BbWf8ho8zDAFiI3hI5Bvz41abLBMSHutFUMIICf2Zn7BV3hjWgxPPln8LeU2J+P
+         OKCg==
+X-Forwarded-Encrypted: i=1; AJvYcCW69kHTPWaBOXUjSCR98Lo0kFCDj7BpntGIG8xDLGMX3ItvITEvj3jzzwLvFpAdrfReSqBxIJ3fvcN5u1n96Ex7kahBzVjSzGqYcf21
+X-Gm-Message-State: AOJu0YxLtm4i5BLe+5njS7FrK4OpN6DisMPWov/PyZDbOzivC6yXpKjW
+	EwsZVL2N7l2sFE37bJkMnbk1wuSD2l75Lx5u6/difZyqqrtLTLG/Ea6Qha/9Ir0fyRqh+ULmKgl
+	SXVVn9IBTpE5Yrkh2WiPGbSrNznaYPn8pCiTsEADvoeSaovq9I8kRo6Fv0mlXjQ==
+X-Received: by 2002:a05:620a:4007:b0:7a1:d73f:53d2 with SMTP id af79cd13be357-7a4ee32e764mr396351985a.20.1723653085778;
+        Wed, 14 Aug 2024 09:31:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcPEkykVU98AdM6W9o/QSTPGbN3EfEAVyCEDTjPHObiNLTpHiFF4NBrrvxVGHGtrmageAm9w==
+X-Received: by 2002:a05:620a:4007:b0:7a1:d73f:53d2 with SMTP id af79cd13be357-7a4ee32e764mr396349385a.20.1723653085500;
+        Wed, 14 Aug 2024 09:31:25 -0700 (PDT)
+Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7e13605sm447993785a.135.2024.08.14.09.31.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 09:31:25 -0700 (PDT)
+Date: Wed, 14 Aug 2024 09:31:23 -0700
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] iommu/vt-d: Always reserve a domain ID for
+ identity setup
+Message-ID: <ykrcnvpm2wbiwepykl2wmitaabyp3yngw4dborhnlm65ek3ctl@6wteh2n6zrzk>
+References: <20240806023941.93454-1-baolu.lu@linux.intel.com>
+ <20240806023941.93454-4-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/22] KVM: x86: Disallow read-only memslots for SEV-ES
- and SEV-SNP (and TDX)
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>,
- Vishal Annapurve <vannapurve@google.com>,
- Ackerly Tng <ackerleytng@google.com>
-References: <20240809190319.1710470-1-seanjc@google.com>
- <20240809190319.1710470-2-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240809190319.1710470-2-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806023941.93454-4-baolu.lu@linux.intel.com>
 
-On 8/9/24 21:02, Sean Christopherson wrote:
-> Disallow read-only memory for all VMs with protected state, i.e. for
-> upcoming TDX VMs as well as ES/SNP VMs.  For TDX, it's actually possible
-> to support read-only memory, as TDX uses EPT Violation #VE to reflect the
-> fault into the guest, e.g. KVM could configure read-only SPTEs with RX
-> protections and SUPPRESS_VE=0.  But there is no strong use case for
-> supporting read-only memslots on TDX, e.g. the main historical usage is
-> to emulate option ROMs, but TDX disallows executing from shared memory.
-> And if someone comes along with a legitimate, strong use case, the
-> restriction can always be lifted for TDX.
+On Tue, Aug 06, 2024 at 10:39:37AM GMT, Lu Baolu wrote:
+> We will use a global static identity domain. Reserve a static domain ID
+> for it.
 > 
-> Don't bother trying to retroactively apply the restriction to SEV-ES
-> VMs that are created as type KVM_X86_DEFAULT_VM.  Read-only memslots can't
-> possibly work for SEV-ES, i.e. disallowing such memslots is really just
-> means reporting an error to userspace instead of silently hanging vCPUs.
-> Trying to deal with the ordering between KVM_SEV_INIT and memslot creation
-> isn't worth the marginal benefit it would provide userspace.
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Queuing this one for 6.11, thanks.
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-Paolo
+> ---
+>  drivers/iommu/intel/iommu.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 723ea9f3f501..c019fb3b3e78 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -1440,10 +1440,10 @@ static int iommu_init_domains(struct intel_iommu *iommu)
+>  	 * entry for first-level or pass-through translation modes should
+>  	 * be programmed with a domain id different from those used for
+>  	 * second-level or nested translation. We reserve a domain id for
+> -	 * this purpose.
+> +	 * this purpose. This domain id is also used for identity domain
+> +	 * in legacy mode.
+>  	 */
+> -	if (sm_supported(iommu))
+> -		set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
+> +	set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.34.1
+> 
 
 
