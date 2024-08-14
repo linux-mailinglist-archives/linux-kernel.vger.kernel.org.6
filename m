@@ -1,96 +1,104 @@
-Return-Path: <linux-kernel+bounces-285702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE4395118A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:20:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84DF95118E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0756285B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7326F1F2403C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEDC1EA73;
-	Wed, 14 Aug 2024 01:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AED918059;
+	Wed, 14 Aug 2024 01:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vs3TfiGz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cwup81S0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA621864C;
-	Wed, 14 Aug 2024 01:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53492AD5A;
+	Wed, 14 Aug 2024 01:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723598433; cv=none; b=T/tH6dw/ZP8DJKMZW8E39EnEkG7cgBcYh2fTX6uCHdNFOpI3PhEiRGgOKBPLfX4R66Yeb/qcIQbiil5pdG7Vbed1J7Q49E1mq6Ruli1wNUdJ/pcqI6wI9Hk1jRgk1t7vU3G2eVrbqI45Y8c6FBC7x6shkn6lLaZOiypMOJGE2ng=
+	t=1723598468; cv=none; b=SFskXIo7oF4HIcmZNvbbny8ULl3jtwQq1GJES/5P6WTdcFvZHTFc0RacGuK2F8tzVQT198eoVTSZpl0eb5EnJBitq8sRFBP7v95DujaduYQg9eYw7SWyOiwe93Yed4XoITFo9uh6DSwidcor+A8+L/k3XLumXp/2wRcxL9dkFbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723598433; c=relaxed/simple;
-	bh=CbSTNChG/7usi/L4xT2p8Vq+mHUjwbSjnAPNoSiIvtY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lCflS6iLStEzLwa8wg6QBlfiFkFWRxlgiBJubM6EP7OT2SyypmQlJ92xW3CIlSu6RRwGu1CKTZBJk8YJpRMgNJrqaoGsERGNNaqBAaSPXgrmujdShvnAV/KCECz/4YGjehNY98amLO23c9RGtHVjb1inaHEvFnWpZcmu52OfSDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vs3TfiGz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BF22C4AF09;
-	Wed, 14 Aug 2024 01:20:31 +0000 (UTC)
+	s=arc-20240116; t=1723598468; c=relaxed/simple;
+	bh=DHUyAlr5wEveCy7/40XkLjIui63y4HTHoanCym0AGZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DBagmc1xZ8Y08y/BL5jqcCyMruiZpeMt3g/kBIZ48BZrvgmJmALdM1tz6Mb9T9vhCXKTtg1AobZYv+qukEBXDt57xvJJ4NX3vNO1USGuy+uMHfRQp1KGk4Xk2GvhvqsWHnKbxfS0mqfFWuaKPaMME5XKiYkk1bU/4gDByE2oEhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cwup81S0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A4DC32782;
+	Wed, 14 Aug 2024 01:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723598431;
-	bh=CbSTNChG/7usi/L4xT2p8Vq+mHUjwbSjnAPNoSiIvtY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Vs3TfiGz84cOTRtm+gVypeRnILxvGKMP5x7GbzLw+j8DJX7rAfORb5UmmersMvW1e
-	 gizBpk+3j+IM77b9Vk4wWaZSvQdKaO8GEAJSJiGyzbO8rPrkPJ7hOxINZ7TLQJUIFa
-	 MTsercWnqSx36XQWEUHbaMC0RTxuP8pJBNR7qZnfQVqvEusJuf1BOam2SMYAn0Jidc
-	 UvqBxCPdq6JwJGPQWNGbOO/RJ1mvbJeDkbMN0fQiT4xQb7kgtNaLTzSSuIcOY+s0F0
-	 yi8Cm1uScuYUFoKRRAK0ncBVICHvcgAB97LxBpK4cEOkgpNodd0l8/F5iAysUvgL9Z
-	 +ccjUyngry2Yg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB9C33823327;
-	Wed, 14 Aug 2024 01:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723598467;
+	bh=DHUyAlr5wEveCy7/40XkLjIui63y4HTHoanCym0AGZw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Cwup81S0Gz0YNNOuDxFBWy82hWQ0aijzjbxt7nMbNRRJDjnyu4438vun701gaeC67
+	 9lydYszGC3KY1aSguezyHcmzq2Z33EAuECnqy6jXyIzI2IKMDlUznhnJ4PsUzFhWYV
+	 54YdGIZDB2ujMyERoskAJ6eTfT/1+d/O3e/1MULMRkgVNOpizXO4Et08tmZOFeQpOT
+	 aGm6efpzYIaSRg8Jbb0sn/cnlXfnsSQXgfSYYj7pLLFHPYvNcDUXxaE5Rm+pgAuIhc
+	 E7Nv+s4tiDZfPrqdkbXEeepJu1McJgSp6uA2w8oRmw58mZHju0HHqFtf5j3mYbzMVU
+	 rI7d5wmdPySrg==
+Date: Tue, 13 Aug 2024 18:21:06 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ shuah@kernel.org, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH net v2] selftest: af_unix: Fix kselftest compilation
+ warnings
+Message-ID: <20240813182106.1f44d161@kernel.org>
+In-Reply-To: <20240812191122.1092806-1-jain.abhinav177@gmail.com>
+References: <20240812191122.1092806-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 1/1] dt-bindings: net: fsl,qoriq-mc-dpmac: using
- unevaluatedProperties
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172359843050.1830772.5023113302454466803.git-patchwork-notify@kernel.org>
-Date: Wed, 14 Aug 2024 01:20:30 +0000
-References: <20240811184049.3759195-1-Frank.Li@nxp.com>
-In-Reply-To: <20240811184049.3759195-1-Frank.Li@nxp.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- ioana.ciornei@nxp.com, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Tue, 13 Aug 2024 00:41:22 +0530 Abhinav Jain wrote:
+> Change the parameter expected_buf from (const void *) to (const char *)
+> in the function __recvpair() as per the feedback in v1.
+> Add Fixes tag as per feedback in v1.
+>=20
+> This change fixes the below warnings during test compilation:
+>=20
+> ```
+> In file included from msg_oob.c:14:
+> msg_oob.c: In function =E2=80=98__recvpair=E2=80=99:
+>=20
+> ../../kselftest_harness.h:106:40: warning: format =E2=80=98%s=E2=80=99 ex=
+pects argument
+> of type =E2=80=98char *=E2=80=99,but argument 6 has type =E2=80=98const v=
+oid *=E2=80=99 [-Wformat=3D]
+>=20
+> ../../kselftest_harness.h:101:17: note: in expansion of macro =E2=80=98__=
+TH_LOG=E2=80=99
+> msg_oob.c:235:17: note: in expansion of macro =E2=80=98TH_LOG=E2=80=99
+>=20
+> ../../kselftest_harness.h:106:40: warning: format =E2=80=98%s=E2=80=99 ex=
+pects argument
+> of type =E2=80=98char *=E2=80=99,but argument 6 has type =E2=80=98const v=
+oid *=E2=80=99 [-Wformat=3D]
+>=20
+> ../../kselftest_harness.h:101:17: note: in expansion of macro =E2=80=98__=
+TH_LOG=E2=80=99
+> msg_oob.c:259:25: note: in expansion of macro =E2=80=98TH_LOG=E2=80=99
+> ```
+>=20
+> v1:
+> lore.kernel.org/netdev/20240810134037.669765-1-jain.abhinav177@gmail.com
+>=20
+> Fixes: d098d77232c3 ("selftest: af_unix: Add msg_oob.c.")
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Some patchwork malfunction, the patch didn't get registered :(
+Could you resend?
 
-On Sun, 11 Aug 2024 14:40:49 -0400 you wrote:
-> Replace additionalProperties with unevaluatedProperties because it have
-> allOf: $ref: ethernet-controller.yaml#.
-> 
-> Remove all properties, which already defined in ethernet-controller.yaml.
-> 
-> Fixed below CHECK_DTBS warnings:
-> arch/arm64/boot/dts/freescale/fsl-lx2160a-bluebox3.dtb:
->    fsl-mc@80c000000: dpmacs:ethernet@11: 'fixed-link' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/misc/fsl,qoriq-mc.yaml#
-> 
-> [...]
-
-Here is the summary with links:
-  - [v3,1/1] dt-bindings: net: fsl,qoriq-mc-dpmac: using unevaluatedProperties
-    https://git.kernel.org/netdev/net-next/c/be034ee6c33d
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Please keep Kuniyuki's review tag and address his feedback.
 
