@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-286809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E36951F44
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:59:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276EA951F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5BD1F23486
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598881C21F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68611B86D6;
-	Wed, 14 Aug 2024 15:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198D91B86E0;
+	Wed, 14 Aug 2024 16:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxmJ8WeY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LuEz0ygT"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E804D1B5836;
-	Wed, 14 Aug 2024 15:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8111B5808;
+	Wed, 14 Aug 2024 15:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723651139; cv=none; b=CFH96wEISpC0Gn9WloGGFke5LNtGYhsmnnJmCI+wSDuckQ1dIbQjw0WHrSH1lyudhJzKZq4N/nGwRwtSs7MTq5RsfsJpMpGMcWTXO0fVcUnuqLlwmFGMA54Vd3Zi3FmYy4dzDQhrrJsJcytUrkFkkKN+Yhze93UgJ3NEjJYEzMo=
+	t=1723651201; cv=none; b=VCJ/VxjhNA6nqip3pRZ+FHxPVdDZMuwYmWQuNQQcCb7OoqbsdomP0iBtV6TzB6dJ45PckZXgNCkHhnrFo4JNvWowYullZ1IiAR6ZhXlQZCKyD7QeW5n5vUa2XDfiWBRcWqf5rUP+vigaMdD4UF3CaqduBHCcIzOcshfuMhJgb/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723651139; c=relaxed/simple;
-	bh=ebhppG2jJl4kjOhx5+tliZesEl+lN1kt3DqcIRt8yZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdY6ce76uDg7c8o4ROKUMBMJ2QmVwDhzSADPxUEbrzvYKcs5FnXYJCQU9qfWdnVuV6BdouDf4pEsygR+pUF9VIPRsD05JXSAbS/qtlGAntrvIjKknqkgiWaMqoxGClvyBup5F1uBQs4Qka6zXtgKZVwVrvI4FHRBD+DKY3QpPZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxmJ8WeY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EFDC4AF09;
-	Wed, 14 Aug 2024 15:58:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723651138;
-	bh=ebhppG2jJl4kjOhx5+tliZesEl+lN1kt3DqcIRt8yZs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BxmJ8WeYYlLlmy6Yb1oBPI/Ih0P/gcHJgZ8Akq+m364iSP7/wMC6WeMk2j/DB30tG
-	 a9zujq/bdZo6ZkCAQdhX2xOkGiYj8wS2VXH+6m6jcgHIDPRpLIR/qReU4Uy0PUxTdl
-	 /ovdsFpzYXOq2yb7VOKF22Od2gchqWbXSi7XVDW+6d12hL2qBeGpt6s3VQFxlWvwWW
-	 FuAhJXGtfOmZ51Xv8PoJ1Hh8sSeoW4MVQ3nQzixrBVPW3AsElaSn0Ekw9mbuPLC1QV
-	 T0ogsAnAH6cNBESF6tRqFzsibDfHl3kfk9mtiWrj8Alk3xuurK1dkqbN3lpQWoZo7V
-	 r6s4VwdIg9mHA==
-Date: Wed, 14 Aug 2024 16:58:53 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v3 5/9] spi: dt-bindings: axi-spi-engine: document
- spi-offloads
-Message-ID: <20240814-breeding-revolving-ba26c46164de@spud>
-References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
- <20240722-dlech-mainline-spi-engine-offload-2-v3-5-7420e45df69b@baylibre.com>
- <20240726123836.GA998909-robh@kernel.org>
- <9f57e41f-3534-4188-ae78-d323aa45e2a1@baylibre.com>
+	s=arc-20240116; t=1723651201; c=relaxed/simple;
+	bh=PQcZv/InB58hwOmU/7tJIH9BqZDzz4d0NFM1872PSj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AdxIKrLWseH/RDP6XraQfghThxAL+kwZeuA3yBJJaykOvBWE2C1uxggUxK8K4XyssYsktINhYocPDi+ktxb/xGkYspekfPikfqftvFv1ECqgwf+/I6Xovjfs0RL0Bh02LkP0cH3L+A7k2Hii4R2qDnbpcDzmJBeW5WdgMGWPxQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LuEz0ygT; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7F9BA60003;
+	Wed, 14 Aug 2024 15:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723651196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GRkxoicq+udhmwg+wufaOSiQiJFaDc9CkC4zDEA03bI=;
+	b=LuEz0ygT+vVGOFTRw10XG2JcHy16bomY6HgSOwv4iB8w9FdGfWYUimnPsQ0FpQT2qyEktF
+	H+5dNZOCb+Bae54z7nLfHgytAqKvphUUx4wY7iieblyM8WJvSLWaigYTXH+nX+mkhOvhVz
+	e4XmOQt2l61VH60ZRbCU8eVrAEkhEOIK2qjaN776bhNHKrQJ/LePEonItwIGt7FkDnKxtF
+	z2rOAgj9/3SdEce+iCk5XLqXlIRvbfCTOuflqIL759mTgA8sQBoXQnrwZtAkXTdmn22Hbh
+	97mA7zjflqvD16WR5dE8ze8O6eneug8zuqqB8lxYJqnvdO5vzs2RLd2ixCgPsQ==
+Date: Wed, 14 Aug 2024 17:59:52 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Derek Kiernan
+ <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Paul Kocialkowski <contact@paulk.fr>, =?UTF-8?Q?Herv?=
+ =?UTF-8?Q?=C3=A9?= Codina <herve.codina@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-i2c@vger.kernel.org, Paul Kocialkowski
+ <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH v3 0/7] Add support for GE SUNH hot-pluggable connector
+Message-ID: <20240814175952.6b22b7ad@booty>
+In-Reply-To: <20240809-hotplug-drm-bridge-v3-0-b4c178380bc9@bootlin.com>
+References: <20240809-hotplug-drm-bridge-v3-0-b4c178380bc9@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZusG0p1O4JWHSMMm"
-Content-Disposition: inline
-In-Reply-To: <9f57e41f-3534-4188-ae78-d323aa45e2a1@baylibre.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+Hello Rob,
 
---ZusG0p1O4JWHSMMm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 09 Aug 2024 17:34:48 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-On Fri, Jul 26, 2024 at 02:17:00PM -0500, David Lechner wrote:
-> On 7/26/24 7:38 AM, Rob Herring wrote:
-> > On Mon, Jul 22, 2024 at 04:57:12PM -0500, David Lechner wrote:
-> >> The AXI SPI Engine has support for hardware offloading capabilities.
-> >> There can be up to 32 offload instances per SPI controller, so the
-> >> bindings limit the value accordingly.
-> >>
-> >> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> >> ---
-> >>
-> >> RFC: I have a few questions about this one...
-> >>
-> >> 1.  The trigger-source properties are borrowed from the leds bindings.
-> >>     Do we want to promote this to a generic binding that can be used by
-> >>     any type of device?
-> >=20
-> > I would make it specific to spi-offload.
->=20
-> OK
->=20
-> Meanwhile, we are working on some other ADCs (without SPI offload) and
-> finding that they are using basically the same sorts of triggers. And
-> on the driver side of things in this series, I'm getting feedback that
-> we should have some sort of generic trigger device rather than using,
-> e.g. a clk directly. If we need this same sort of trigger abstraction
-> for both SPI offloads and IIO device, it does seems like we might want
-> to consider something like a new trigger subsystem.
+...
 
-A "device" in the sense that "pwm-clk" is a device I suppose. Are any of
-these other things WIP on the lists (that I may have missed while I was
-away) or are they still something you're working on internally.
+> However a few new rough edges emerged that are not yet solved in this
+> v3. Discussion would help in finding the right direction:
+> 
+>  * Describing the NVMEM cell addition still requires adding two properties
+>    to a node in the base tree. Not sure the current NVMEM cell bindings
+>    allow to do better.
 
---ZusG0p1O4JWHSMMm
-Content-Type: application/pgp-signature; name="signature.asc"
+Do you have any thoughts about how to describe the NVMEM cell in DT
+without adding properties?
 
------BEGIN PGP SIGNATURE-----
+As of now...
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrzUPQAKCRB4tDGHoIJi
-0jD4AP0dE6Z/BC26csx6JZBoqN6h2RHSUhANMGAyLa3RP+2TcAEA0T3231n3cMsw
-b3Z3Lf7qc9+eIRitPf5gvLRy2++mlg0=
-=uOLi
------END PGP SIGNATURE-----
+> 2: the "base" overlay
+> 
+> The "base" overlay describes the common components that are required to
+> read the model ID. These are identical for all add-on models, thus only one
+> "base" overlay is needed:
+> 
+>     /dts-v1/;
+>     /plugin/;
+> 
+>     / {
+>         fragment@0 {
+>             target-path = "";
+> 
+>             __overlay__ {
+>                 nvmem-cells = <&addon_id>;
+>                 nvmem-cell-names = "id";
 
---ZusG0p1O4JWHSMMm--
+...the nvmem-cell* properties are the only ones that for lack of a
+good solution get added to a node in the base tree, causing the memory
+leak issue to be still present.
+
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
