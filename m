@@ -1,118 +1,185 @@
-Return-Path: <linux-kernel+bounces-286184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39979517A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EBD951799
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1477C1C22CFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:28:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694EF1C2107B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F96014A61B;
-	Wed, 14 Aug 2024 09:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797C01448FD;
+	Wed, 14 Aug 2024 09:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="I4LyQFne"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dnWNNPyk"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABC214A4D8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46F9143866
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723627610; cv=none; b=TpKI76zCmH+F//JXVKAJ2u5oC8GjApi1aoh2nMeU7wv7u0mAFuW7hFH9Ai0OXsYlz+KaYW7U5L0oGhSC2nvN6vfGDgOYNuUOs8gDtO/jqKbaZj1vE/W+JVjvzyGTQqaDs1ZQQ2CP868Q8356Gp8vgMq+Syan6OXwoLdBEnaMihE=
+	t=1723627596; cv=none; b=Dhwj4lh7ce6wHyzwkU7bzGJH4uZ7kPgAZ5a25EK9UMDCuQWpTfdeBeYKANUlHdLSlLK/JeT4sI8o0CHOF7/tJf5a8TWhEULOYj849BI48eeIye1b1oxAw9YDELYIedeGpD33d1COMUJ9Bh1NxHE4ErPfa6j5D6GpRH0dLFKziaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723627610; c=relaxed/simple;
-	bh=ZN3f9haPlXqDVDHErdMbEB2bMPbsTwGvDOy9CWznDOM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=gmtPxgJ1RZ0m6Hf9e3JXQIQT1ZkmKDf2pL09jl6xSgeH/wuDum4QPNF36tIRUdpWvDcST6V9yvQrH7/P1m4qyuZr3Xvm+hQpDniTOEfZuHblXtuHfi5+EUNJyp2oWM6MVUdToZ8TEaJ4Mj4cDnRia9JqoQ9wivendtYP7fAPSC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=I4LyQFne; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1723627600; x=1726219600;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ZN3f9haPlXqDVDHErdMbEB2bMPbsTwGvDOy9CWznDOM=;
-	b=I4LyQFneexybt2pTZVYYwcrGGG/quvnKzHPGoPW6rjTPK4xqiAehTFVvetvoD0In
-	BCHktGCtdqvgXGgOr3Q/5vNKYIX1V1ocj0wDJklgGzv2t2Aqsgp4fQQaFTXZ3RCV
-	8ZOshTjoFjo3QGYAE7kwZuPzzqa6EA2UaDHPn5sxw1Y=;
-X-AuditID: ac14000a-03e52700000021bc-bf-66bc784f51c1
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id BA.54.08636.F487CB66; Wed, 14 Aug 2024 11:26:39 +0200 (CEST)
-Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 14 Aug
- 2024 11:26:39 +0200
-From: Teresa Remmet <t.remmet@phytec.de>
-Date: Wed, 14 Aug 2024 11:26:13 +0200
-Subject: [PATCH 6/6] arm64: dts: imx8mp-phyboard-pollux: Add usb3_phy1
- regulator reference
+	s=arc-20240116; t=1723627596; c=relaxed/simple;
+	bh=XSd3GC/vD6GigFRdUJdwPYvqWhn/hvMNDJd+SrcI9DY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULjMtay+QpdmJ7jZBN7GZWsg83zIggE0SnYhCbFRDeOIXhC2MV+EkEkpByMGJ7i7A15fUocQw6czYAExAcFWWM/3bPaLtBc9z5sUaeyxzWZL37R0ECMIE86tkeyE5RyW4i46oJv0XiK88HhqCQRCB2KT2L/yYIBflGcLjtpgZxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dnWNNPyk; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428243f928cso44571235e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:26:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723627593; x=1724232393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HWFR1dplhqturIHla+8uDdf1jPTzY9s8gn8hBPScqFE=;
+        b=dnWNNPykRvB1LtbEuToqFPdxu9fbVJ0iTH6/j/ziqNH2sZjyx/qY24KXweAZYnGyXR
+         6SOkenf2Gw6xAYfHsZwnLMszPGL56U7+0cOcnWbyvx68koJkevwam3rYkp8P9SwLiqID
+         LDNZM8l2yXmjb+1ZyqWGW2Ot8uwSLzpTSQcn3iubtrocWf/Ov00dO4uEyq2trQRl7zD8
+         Hkgh6Ax4ymKxpHV+8KyW+dlmgZSDzxXkIEJ5RoXyQxfiR1s2+BXLQPtR6gjp2ZkhycU7
+         MyamQVXrXJWWaAaMx/aSxeYutmnCf+KcbbiT2lQEUyNGTYyaQVf+dFjGwEYfrWEAiF+r
+         XPlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723627593; x=1724232393;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HWFR1dplhqturIHla+8uDdf1jPTzY9s8gn8hBPScqFE=;
+        b=u6Z4SSgNP86xZ/0F6fK9MEzuolMj8uXSE9xrmSog+ZLV9p1Kf5TQ9yheYrRvWIxHED
+         JVkRgaxXwa5o+K/I6so80QWbOm5jIySsTtYdFItgYC3Z1LLtJhZ+8l/P5lq3KULzKIYy
+         bfBG0zjeG2+WTAEuCTnGqOzYiEet2+N53ZoJBkRLeqbyGXvMJzq7cg/UvkU4bljh0iL1
+         Rtph+FTiP+UYmTG+ycOHau5XNVZGdMpl6UN5LTaQpwmKCyc9dhclatIMKjC7Tixr8hUH
+         CT8XLqmAFsMmjw2RiH6dqwTcN8pB4h5vqLh0pclRBc6QQ7Y5Cs9rP1pCQToHuYcyTEW3
+         ktew==
+X-Gm-Message-State: AOJu0YwfnslxSsHDgByLpl2MTR/vP7HyG994Z1uIDwFPqtTLXHagcgzM
+	+Dj8aM2+PD2679BezlZWiDZCs+wFjPMeYv9NDuTSsMsAiEcmi9+VZ1G2E/4R8BI=
+X-Google-Smtp-Source: AGHT+IEAGyFBL2pBSyxaBNonkxJ5lI432QOs6vR7Pu05vSXCEXdHgmHgADCTB9ybYJXCbAOKll2+aQ==
+X-Received: by 2002:a05:600c:4455:b0:426:6416:aa73 with SMTP id 5b1f17b1804b1-429dd2364f4mr14857245e9.12.1723627592824;
+        Wed, 14 Aug 2024 02:26:32 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9e78:fb96:21f1:335c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded80241sm13846895e9.48.2024.08.14.02.26.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 02:26:32 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] iio: dac: ad5449: drop support for platform data
+Date: Wed, 14 Aug 2024 11:26:29 +0200
+Message-ID: <20240814092629.9862-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-6-e2500950c632@phytec.de>
-References: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-0-e2500950c632@phytec.de>
-In-Reply-To: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-0-e2500950c632@phytec.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-CC: Yannic Moog <y.moog@phytec.de>, Benjamin Hahn <b.hahn@phytec.de>,
-	Yashwanth Varakala <y.varakala@phytec.de>, <devicetree@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsWyRpKBRzegYk+aQbOqxZq955gs5h85x2rx
-	8Kq/xcx7rWwWq6buZLF4Oesem8Wmx9dYLS7vmsNm8X/PDnaLv9s3sVi82CJu0f1O3YHHY+es
-	u+wem1Z1snlsXlLv8WLzTEaP/u4WVo/+vwYenzfJBbBHcdmkpOZklqUW6dslcGU82vCDueAX
-	W8W9/08ZGxgb2LoYOTgkBEwkPrR4dTFycQgJLGGSaPnyiA3Cecwo8fH8YZYuRk4ONgENiacr
-	TjOB2CwCqhIXLpxkAmkWFoiR6PycAhLmFRCUODnzCQtImFlAU2L9Ln2QMLOAvMT2t3OYIUqS
-	JVpWg4znBBqfLDF92l1GEJtTIEXi+s1z7CBrRQQmMUkcvXaCEcRhFuhjkuicdp4dpEpCQFji
-	8+41UN3yErsunWSEiMtLTDv3mhnCDpU4smk10wRGoVlIbpqFcNMsJDctYGRexSiUm5mcnVqU
-	ma1XkFFZkpqsl5K6iREURyIMXDsY++Z4HGJk4mA8xCjBwawkwhtositNiDclsbIqtSg/vqg0
-	J7X4EKM0B4uSOO/qjuBUIYH0xJLU7NTUgtQimCwTB6dUA2NUa2yYk1GT1w+9I8pLRIV+dby6
-	kqPg5xlyz0itJN+L7RD/2d/sKWsS1jAwFWqqMO4T/bTpU/jmda0z/jcfYLLnky9dNsEx2TnK
-	5NbX+mOM3NcrInJeBfzr7TCM5Pdlyr4ZWbFM88iUN9/PnxUrn/vaUHvBC7/tm6McC6yXsHhG
-	uB305/+gqsRSnJFoqMVcVJwIAHrwYIiRAgAA
+Content-Transfer-Encoding: 8bit
 
-From: Yashwanth Varakala <y.varakala@phytec.de>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Add VCC_5V_SW regulator reference to the usb1 phy node to reflect the
-schematic. This also silences the fallback dummy regulator warning.
+There are no longer any users of the platform data struct. Remove
+support for it from the driver.
 
-Signed-off-by: Yashwanth Varakala <y.varakala@phytec.de>
-Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/dac/ad5449.c             | 15 ++---------
+ include/linux/platform_data/ad5449.h | 39 ----------------------------
+ 2 files changed, 2 insertions(+), 52 deletions(-)
+ delete mode 100644 include/linux/platform_data/ad5449.h
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-index 62f1819bc1a4..6e81870e177c 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-@@ -260,6 +260,7 @@ &usb_dwc3_0 {
+diff --git a/drivers/iio/dac/ad5449.c b/drivers/iio/dac/ad5449.c
+index 4572d6f49275..953fcfa2110b 100644
+--- a/drivers/iio/dac/ad5449.c
++++ b/drivers/iio/dac/ad5449.c
+@@ -20,8 +20,6 @@
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
  
- /* USB2 4-port USB3.0 HUB */
- &usb3_phy1 {
-+	vbus-supply = <&reg_vcc_5v_sw>;
- 	status = "okay";
- };
+-#include <linux/platform_data/ad5449.h>
+-
+ #define AD5449_MAX_CHANNELS		2
+ #define AD5449_MAX_VREFS		2
  
-
+@@ -268,7 +266,6 @@ static const char *ad5449_vref_name(struct ad5449 *st, int n)
+ 
+ static int ad5449_spi_probe(struct spi_device *spi)
+ {
+-	struct ad5449_platform_data *pdata = spi->dev.platform_data;
+ 	const struct spi_device_id *id = spi_get_device_id(spi);
+ 	struct iio_dev *indio_dev;
+ 	struct ad5449 *st;
+@@ -306,16 +303,8 @@ static int ad5449_spi_probe(struct spi_device *spi)
+ 	mutex_init(&st->lock);
+ 
+ 	if (st->chip_info->has_ctrl) {
+-		unsigned int ctrl = 0x00;
+-		if (pdata) {
+-			if (pdata->hardware_clear_to_midscale)
+-				ctrl |= AD5449_CTRL_HCLR_TO_MIDSCALE;
+-			ctrl |= pdata->sdo_mode << AD5449_CTRL_SDO_OFFSET;
+-			st->has_sdo = pdata->sdo_mode != AD5449_SDO_DISABLED;
+-		} else {
+-			st->has_sdo = true;
+-		}
+-		ad5449_write(indio_dev, AD5449_CMD_CTRL, ctrl);
++		st->has_sdo = true;
++		ad5449_write(indio_dev, AD5449_CMD_CTRL, 0x0);
+ 	}
+ 
+ 	ret = iio_device_register(indio_dev);
+diff --git a/include/linux/platform_data/ad5449.h b/include/linux/platform_data/ad5449.h
+deleted file mode 100644
+index d687ef5726c2..000000000000
+--- a/include/linux/platform_data/ad5449.h
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * AD5415, AD5426, AD5429, AD5432, AD5439, AD5443, AD5449 Digital to Analog
+- * Converter driver.
+- *
+- * Copyright 2012 Analog Devices Inc.
+- *  Author: Lars-Peter Clausen <lars@metafoo.de>
+- */
+-
+-#ifndef __LINUX_PLATFORM_DATA_AD5449_H__
+-#define __LINUX_PLATFORM_DATA_AD5449_H__
+-
+-/**
+- * enum ad5449_sdo_mode - AD5449 SDO pin configuration
+- * @AD5449_SDO_DRIVE_FULL: Drive the SDO pin with full strength.
+- * @AD5449_SDO_DRIVE_WEAK: Drive the SDO pin with not full strength.
+- * @AD5449_SDO_OPEN_DRAIN: Operate the SDO pin in open-drain mode.
+- * @AD5449_SDO_DISABLED: Disable the SDO pin, in this mode it is not possible to
+- *			read back from the device.
+- */
+-enum ad5449_sdo_mode {
+-	AD5449_SDO_DRIVE_FULL = 0x0,
+-	AD5449_SDO_DRIVE_WEAK = 0x1,
+-	AD5449_SDO_OPEN_DRAIN = 0x2,
+-	AD5449_SDO_DISABLED = 0x3,
+-};
+-
+-/**
+- * struct ad5449_platform_data - Platform data for the ad5449 DAC driver
+- * @sdo_mode: SDO pin mode
+- * @hardware_clear_to_midscale: Whether asserting the hardware CLR pin sets the
+- *			outputs to midscale (true) or to zero scale(false).
+- */
+-struct ad5449_platform_data {
+-	enum ad5449_sdo_mode sdo_mode;
+-	bool hardware_clear_to_midscale;
+-};
+-
+-#endif
 -- 
-2.25.1
+2.43.0
 
 
