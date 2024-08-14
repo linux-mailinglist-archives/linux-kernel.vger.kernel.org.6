@@ -1,280 +1,140 @@
-Return-Path: <linux-kernel+bounces-286335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EE99519CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:24:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3609D9519D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B655DB2256E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 681181C20D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592651AED2E;
-	Wed, 14 Aug 2024 11:23:55 +0000 (UTC)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08231AED3B;
+	Wed, 14 Aug 2024 11:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="dfvJ/BYc"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA3B1442F7;
-	Wed, 14 Aug 2024 11:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72F733D8
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723634634; cv=none; b=sWO1AGWbdZOpG0RFwg6tccDj1v8JvqlsIRTY1WX4ub4MEsCmiNUPxFykl3JhxLCk4ZbOGyN5UpisVfGlcl1r/PtIg6S9/LOu6yOJZEKRZCbyyoPhhJbA0M0wuPAmj5ApZTGuPq0vd1BbZiEP6Sumn1aHrYWw3Lj4tJcy9izDRYY=
+	t=1723634665; cv=none; b=rgbWfYdqBwUznusU64uqEJl3LjpyKaKAo+s68g2otLdHqNUbIlUdi8nG53wFwVYbhv/YxCmlJqCiL4ijs1hBdxiS5ZS75+Tfj4xgISy3c3qcmf/jcxKOMj2lSkEhiZFEn9UY/jMdZ+V0EF4EMniFUtq0H0RRVFSqrCsFbeoMJtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723634634; c=relaxed/simple;
-	bh=3bbpPCVD912nzTkYXBBNXx67AoP31V8lFtjaD9zHmXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KhjX55F8sTnql2NQyZQN9C3Qkxc1bEfaLYSTY9h41u0muXjDqiV1QkELxVWmqBieiA9dmwMQDQiYg+GWfB7bS3I0NViK6/MLllOsWdwlv8YcIFppu0e9J+ypirhknbpQ1136yR5+C7tR0bM0AtotoNya9mhKfwFhvqdJBVWomRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-842eee4ad03so161522241.0;
-        Wed, 14 Aug 2024 04:23:52 -0700 (PDT)
+	s=arc-20240116; t=1723634665; c=relaxed/simple;
+	bh=kqDpV6GW4s9LS7UCsXnQnFTFNDMtjqH17Enqz0woQgs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vlh+Yx2lzPdfXR5ObySHNkVtMxANMlT+nXH3mDf6mNH2FLNP5rQL0sRvDD7vk2CuAmf5+0EXSX0l6cSFb0vBo1HHu1zvK2ln2/rDZPnCbyu2bCpWQCxy9BuPdbzVs7aQr4IWwpswf4M5jSgBmKZn7nPzHzXvnYDVJ9kPIjmYcnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=dfvJ/BYc; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C7AC93F322
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723634654;
+	bh=DGRTrpULtBgL9ziW5qYGERpz+KbgogQRgUFpUA3ONkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=dfvJ/BYcniG8ZTZ9kzNEpMMJavOyHkX14qW3lJqDLSwRnwnH71jPL/1lGQqgvWJS4
+	 EOt3z5ASvInzCNoX2PXcVutdRGF5KJKIUCu8jgCwx9CApOev8rxEf4ElOi1Zg4fiTb
+	 eIXznJS88urdS/2KQCIasrktvIY5WkRcuoq7JzJ9PJmAsVCq7umVfHZhwROnIzMear
+	 uG+dj2wXYeDNkLkm015GVyWqhNWAbiub2Nz5PNAtCfZcZlFnNJmOZYodI9CFnho6Xn
+	 MyigY5MtfaJf+NRua8erVYIswelBa92dWMuz1tS6PC4LLAX5YwyFo5i+Y7Ybg6nMip
+	 zf+df4tlRpXSA==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7a822ee907so522951566b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:24:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723634632; x=1724239432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HVSCZnAx0ph5xRRQ7GkxGxeOGoX+028zxOSJgCS/ioo=;
-        b=GHg7WrYeAV5V0MU5vTzMxydrBLfK0ngEYEM2BqRtK5WJBOuG1qnJ8OYjGq8sH4xTel
-         Y3LMS6Trt4Oa/K3gGSNgyWLY4l3HDYEA77pz/80ieGL/m86GXqcKjR+11LbuQQBHRIbP
-         ixzTNly0N+ocP51/LbPViCcrvqQzALRm+kFFkuZQblJWS/AGOfYNes2Z2Cje3CpkeggY
-         0GjMiZ1SQxcSHtytBEiuF1u8aZuyeWMPsJQ/YvoyiJQmKYVewPMgLQq3oB5NpCWZpldP
-         6OkzPAM8FYGpPBtMe8nZ3h7/iRZ+IgYhNSkJX9+kFmyviF+rQcz61wo4XmtUh4xQOadk
-         oFKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuPYpSk1+XL8ujkR2e+yWNt8kpMEvBwemhxFzTUluUkJ1GV1AaWNXWDZBPpSr6H3aTCDRht+t30AIfIlZshmt3Gp9HU2NgRCLIZ9aPHVjbB7ouzy59BFMSR4r5VY0AkOjWgneuj2L/
-X-Gm-Message-State: AOJu0Yzx+hoQ7wBkpMNoo+D0D0MZOg9iD2G8fVIFGLtoRt3m9/nXFllG
-	YxIgaHc2Cjoytx/L8lfgv/qTZ36Q8MdEYtzSRI/V/9mjcnHQFj4aTJmrSdfeobDis8P4BMh+aZl
-	zS7Fbjm7+kOdUfa3UJywTomUp3Ng=
-X-Google-Smtp-Source: AGHT+IGzXOqu6YISJ0i99DXmN81woLtBhlIOuPVGW1ZKvhROMtCyKZYDSVe8tw/itbg3NcFMozoG/Mw+kcLTlwZIMsQ=
-X-Received: by 2002:a05:6102:3907:b0:48f:23b4:1d96 with SMTP id
- ada2fe7eead31-4975990e713mr2530052137.16.1723634631767; Wed, 14 Aug 2024
- 04:23:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723634654; x=1724239454;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DGRTrpULtBgL9ziW5qYGERpz+KbgogQRgUFpUA3ONkY=;
+        b=V+tGc40Rh9zqH3QfD0PUsAeY3A/ZY1gU8an3G6sBn3dKqwvag1mcq8Pj8mpZMb6RL0
+         9IHsO2KiWVlBx3eVLvWa7AoESD43R+X4iljsrHe0wLahvQb+PRo7JjswQtDWhHWiPKuu
+         GZm8Emt46c7WHWif6B4h3UH3Y8GQYR50oGoYqgbBap5lLEASmWOG4sPhs/oR/KSw8Som
+         posdg8liL6sRopvjOKvRY3eXl4AljHv7wLLb4bGVcSbpea11ZTIpyJ1glpHHdmp0fZPv
+         b17asT0vehItIibVVw+sCqExHCZHG/6YO0cj/3nSJj+Yb1XkZJDWDxNC1X3Om75RuY2W
+         ZIHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWj4cFqUkTcah486mAJR90UZTiOrUlEDVkR71O0vfo3SaOpmmi6nxxp/vXqitjk7SBB6cgiaIxx4VESY/+cKES01UDrx03OL6gfOng
+X-Gm-Message-State: AOJu0YwouZjgczCQRDRHgt+WpI3RlMq6WZ2PwQM+L8gP0cb72+9I2mG0
+	3GuUmejLGNuDxy2ek4+8hwdx+8U0TZuTiCAx2EAHaGMHqk1Xr55mQR/yzL3GWaxwSRffRlFGsVf
+	QmiSRusQygy2VlFBhNOa7DG/isNWzdi+XF5jMTykYDNSJPkCK/HQ+srKv9SXkUNI7LlWCzb3BKo
+	8s9w==
+X-Received: by 2002:a17:907:e2d3:b0:a72:750d:ab08 with SMTP id a640c23a62f3a-a8366bfc25bmr166647066b.14.1723634654202;
+        Wed, 14 Aug 2024 04:24:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqJ/FYMhm3HKEPcMJXzca42gbyfdyklEBH91iFSJATAmPNeFRFyyNn+G3/we+Qa3Mu8pH8iw==
+X-Received: by 2002:a17:907:e2d3:b0:a72:750d:ab08 with SMTP id a640c23a62f3a-a8366bfc25bmr166644666b.14.1723634653684;
+        Wed, 14 Aug 2024 04:24:13 -0700 (PDT)
+Received: from amikhalitsyn.. ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fb2110sm159919966b.78.2024.08.14.04.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 04:24:13 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: miklos@szeredi.hu
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fuse: use GFP_KERNEL_ACCOUNT for allocations in fuse_dev_alloc
+Date: Wed, 14 Aug 2024 13:23:56 +0200
+Message-Id: <20240814112356.112329-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813120328.1275952-1-usamaarif642@gmail.com>
- <20240813120328.1275952-5-usamaarif642@gmail.com> <CAGsJ_4ySxmhQCXT5Nw09tdGJA+j9=ZEMEuPa6jgX__tM+EMqXw@mail.gmail.com>
- <59725862-f4fc-456c-bafb-cbd302777881@gmail.com>
-In-Reply-To: <59725862-f4fc-456c-bafb-cbd302777881@gmail.com>
-From: Barry Song <baohua@kernel.org>
-Date: Wed, 14 Aug 2024 23:23:40 +1200
-Message-ID: <CAGsJ_4zT0R_QcHCvPW7EozY86Skbo_3BtgcJz_fd-tipXZJxTQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] mm: Introduce a pageflag for partially mapped folios
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev, 
-	yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org, 
-	willy@infradead.org, cerasuolodomenico@gmail.com, corbet@lwn.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 11:20=E2=80=AFPM Usama Arif <usamaarif642@gmail.com=
-> wrote:
->
->
->
-> On 14/08/2024 12:10, Barry Song wrote:
-> > On Wed, Aug 14, 2024 at 12:03=E2=80=AFAM Usama Arif <usamaarif642@gmail=
-.com> wrote:
-> >>
-> >> Currently folio->_deferred_list is used to keep track of
-> >> partially_mapped folios that are going to be split under memory
-> >> pressure. In the next patch, all THPs that are faulted in and collapse=
-d
-> >> by khugepaged are also going to be tracked using _deferred_list.
-> >>
-> >> This patch introduces a pageflag to be able to distinguish between
-> >> partially mapped folios and others in the deferred_list at split time =
-in
-> >> deferred_split_scan. Its needed as __folio_remove_rmap decrements
-> >> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
-> >> possible to distinguish between partially mapped folios and others in
-> >> deferred_split_scan.
-> >>
-> >> Eventhough it introduces an extra flag to track if the folio is
-> >> partially mapped, there is no functional change intended with this
-> >> patch and the flag is not useful in this patch itself, it will
-> >> become useful in the next patch when _deferred_list has non partially
-> >> mapped folios.
-> >>
-> >> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> >> ---
-> >>  include/linux/huge_mm.h    |  4 ++--
-> >>  include/linux/page-flags.h |  3 +++
-> >>  mm/huge_memory.c           | 21 +++++++++++++--------
-> >>  mm/hugetlb.c               |  1 +
-> >>  mm/internal.h              |  4 +++-
-> >>  mm/memcontrol.c            |  3 ++-
-> >>  mm/migrate.c               |  3 ++-
-> >>  mm/page_alloc.c            |  5 +++--
-> >>  mm/rmap.c                  |  3 ++-
-> >>  mm/vmscan.c                |  3 ++-
-> >>  10 files changed, 33 insertions(+), 17 deletions(-)
-> >>
-> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> >> index 4c32058cacfe..969f11f360d2 100644
-> >> --- a/include/linux/huge_mm.h
-> >> +++ b/include/linux/huge_mm.h
-> >> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *pag=
-e)
-> >>  {
-> >>         return split_huge_page_to_list_to_order(page, NULL, 0);
-> >>  }
-> >> -void deferred_split_folio(struct folio *folio);
-> >> +void deferred_split_folio(struct folio *folio, bool partially_mapped)=
-;
-> >>
-> >>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
-> >>                 unsigned long address, bool freeze, struct folio *foli=
-o);
-> >> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *pag=
-e)
-> >>  {
-> >>         return 0;
-> >>  }
-> >> -static inline void deferred_split_folio(struct folio *folio) {}
-> >> +static inline void deferred_split_folio(struct folio *folio, bool par=
-tially_mapped) {}
-> >>  #define split_huge_pmd(__vma, __pmd, __address)        \
-> >>         do { } while (0)
-> >>
-> >> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> >> index a0a29bd092f8..cecc1bad7910 100644
-> >> --- a/include/linux/page-flags.h
-> >> +++ b/include/linux/page-flags.h
-> >> @@ -182,6 +182,7 @@ enum pageflags {
-> >>         /* At least one page in this folio has the hwpoison flag set *=
-/
-> >>         PG_has_hwpoisoned =3D PG_active,
-> >>         PG_large_rmappable =3D PG_workingset, /* anon or file-backed *=
-/
-> >> +       PG_partially_mapped, /* was identified to be partially mapped =
-*/
-> >>  };
-> >>
-> >>  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
-> >> @@ -861,8 +862,10 @@ static inline void ClearPageCompound(struct page =
-*page)
-> >>         ClearPageHead(page);
-> >>  }
-> >>  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
-> >> +FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
-> >>  #else
-> >>  FOLIO_FLAG_FALSE(large_rmappable)
-> >> +FOLIO_FLAG_FALSE(partially_mapped)
-> >>  #endif
-> >>
-> >>  #define PG_head_mask ((1UL << PG_head))
-> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >> index 6df0e9f4f56c..c024ab0f745c 100644
-> >> --- a/mm/huge_memory.c
-> >> +++ b/mm/huge_memory.c
-> >> @@ -3397,6 +3397,7 @@ int split_huge_page_to_list_to_order(struct page=
- *page, struct list_head *list,
-> >>                          * page_deferred_list.
-> >>                          */
-> >>                         list_del_init(&folio->_deferred_list);
-> >> +                       folio_clear_partially_mapped(folio);
-> >>                 }
-> >>                 spin_unlock(&ds_queue->split_queue_lock);
-> >>                 if (mapping) {
-> >> @@ -3453,11 +3454,12 @@ void __folio_undo_large_rmappable(struct folio=
- *folio)
-> >>         if (!list_empty(&folio->_deferred_list)) {
-> >>                 ds_queue->split_queue_len--;
-> >>                 list_del_init(&folio->_deferred_list);
-> >> +               folio_clear_partially_mapped(folio);
-> >>         }
-> >>         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
-> >>  }
-> >>
-> >> -void deferred_split_folio(struct folio *folio)
-> >> +void deferred_split_folio(struct folio *folio, bool partially_mapped)
-> >>  {
-> >>         struct deferred_split *ds_queue =3D get_deferred_split_queue(f=
-olio);
-> >>  #ifdef CONFIG_MEMCG
-> >> @@ -3485,14 +3487,17 @@ void deferred_split_folio(struct folio *folio)
-> >>         if (folio_test_swapcache(folio))
-> >>                 return;
-> >>
-> >> -       if (!list_empty(&folio->_deferred_list))
-> >> -               return;
-> >> -
-> >>         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> >> +       if (partially_mapped)
-> >> +               folio_set_partially_mapped(folio);
-> >> +       else
-> >> +               folio_clear_partially_mapped(folio);
-> >>         if (list_empty(&folio->_deferred_list)) {
-> >> -               if (folio_test_pmd_mappable(folio))
-> >> -                       count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> >> -               count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DE=
-FERRED);
-> >> +               if (partially_mapped) {
-> >> +                       if (folio_test_pmd_mappable(folio))
-> >> +                               count_vm_event(THP_DEFERRED_SPLIT_PAGE=
-);
-> >> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_=
-SPLIT_DEFERRED);
-> >
-> > This code completely broke MTHP_STAT_SPLIT_DEFERRED for PMD_ORDER. It
-> > added the folio to the deferred_list as entirely_mapped
-> > (partially_mapped =3D=3D false).
-> > However, when partially_mapped becomes true, there's no opportunity to
-> > add it again
-> > as it has been there on the list. Are you consistently seeing the count=
-er for
-> > PMD_ORDER as 0?
-> >
->
-> Ah I see it, this should fix it?
->
-> -void deferred_split_folio(struct folio *folio)
-> +/* partially_mapped=3Dfalse won't clear PG_partially_mapped folio flag *=
-/
-> +void deferred_split_folio(struct folio *folio, bool partially_mapped)
->  {
->         struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
-o);
->  #ifdef CONFIG_MEMCG
-> @@ -3485,14 +3488,14 @@ void deferred_split_folio(struct folio *folio)
->         if (folio_test_swapcache(folio))
->                 return;
->
-> -       if (!list_empty(&folio->_deferred_list))
-> -               return;
-> -
->         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> -       if (list_empty(&folio->_deferred_list)) {
-> +       if (partially_mapped) {
-> +               folio_set_partially_mapped(folio);
->                 if (folio_test_pmd_mappable(folio))
->                         count_vm_event(THP_DEFERRED_SPLIT_PAGE);
->                 count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFER=
-RED);
-> +       }
-> +       if (list_empty(&folio->_deferred_list)) {
->                 list_add_tail(&folio->_deferred_list, &ds_queue->split_qu=
-eue);
->                 ds_queue->split_queue_len++;
->  #ifdef CONFIG_MEMCG
->
+fuse_dev_alloc() is called from the process context and it makes
+sense to properly account allocated memory to the kmemcg as these
+allocations are for long living objects.
 
-not enough. as deferred_split_folio(true) won't be called if folio has been
-deferred_list in __folio_remove_rmap():
+Link: https://lore.kernel.org/all/20240105152129.196824-3-aleksandr.mikhalitsyn@canonical.com/
 
-        if (partially_mapped && folio_test_anon(folio) &&
-            list_empty(&folio->_deferred_list))
-                deferred_split_folio(folio, true);
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: <linux-fsdevel@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ fs/fuse/inode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-so you will still see 0.
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index ed4c2688047f..6dae007186e1 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1486,11 +1486,11 @@ struct fuse_dev *fuse_dev_alloc(void)
+ 	struct fuse_dev *fud;
+ 	struct list_head *pq;
+ 
+-	fud = kzalloc(sizeof(struct fuse_dev), GFP_KERNEL);
++	fud = kzalloc(sizeof(struct fuse_dev), GFP_KERNEL_ACCOUNT);
+ 	if (!fud)
+ 		return NULL;
+ 
+-	pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL);
++	pq = kcalloc(FUSE_PQ_HASH_SIZE, sizeof(struct list_head), GFP_KERNEL_ACCOUNT);
+ 	if (!pq) {
+ 		kfree(fud);
+ 		return NULL;
+-- 
+2.34.1
 
-Thanks
-Barry
 
