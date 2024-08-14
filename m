@@ -1,332 +1,251 @@
-Return-Path: <linux-kernel+bounces-287110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26493952311
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:07:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFC295231A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A63B1F22359
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:07:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300D51C21D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1AE1BF30B;
-	Wed, 14 Aug 2024 20:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F591C2337;
+	Wed, 14 Aug 2024 20:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nzZUlLDX"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TW0M9TZG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CC620B0F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2B9370;
+	Wed, 14 Aug 2024 20:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723666018; cv=fail; b=GTFvfbqh88ZlEgIa4CPaiwBWM8xYnfP8JjRBEcCBmYxR9doEFh+I/UMvYAh02YacRc//TOrRcQ76cceSsPgL60rkCdnqFezZjMvZCOLfU32wkFVZVfJNP750+5u1mcyNkRbFNwvJHOoQWGWcAQZHg0EBRv5lxbaemN2k3ntMCYo=
+	t=1723666491; cv=fail; b=Freuk2dusUyBoiSKn+KP0myLkp0yHzX0yEYMphWH1iYitTDdVIiMFrG+VdqEVoIAQPOuAx2M3zHOZ1jRSZNszoYKp8LkMHYJlfgFTfqVgw1jFU0v9EJHFQcSg8+ZCJuH591mTGE2jNU5BUQFOXbNrYBGOMPosZ8GoatcjPX0lYU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723666018; c=relaxed/simple;
-	bh=bMOYpdq4jU76lYJGCiiANEt36O897jEvASTjrbsRzts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n5fG5yb4ufmOdh2vB4dWnCEAFATRe+KOjPrusH20PWvqd2Bw8QLt73cnHyo0dFsingd+/do5/den89BUnLWbI4cWZh4lOAa6L+IKhYY7LYvyw2fBqf8fUig9SXtljTfUMcjqNq5gb96RMftSNxvPoGUWr3960DwE7iQ5rnPvZzQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nzZUlLDX; arc=fail smtp.client-ip=40.107.223.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1723666491; c=relaxed/simple;
+	bh=vGhtb04FYwDeh3ClZBFQbkLcpNAvrHi43rNinQOOaKY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P7lzFyBE12uHNOYJSiTdj6bbsDgsInEzIslvLpHI6i3WxqVoiuYH7TQbnT6jyMfwGOdshm0d6vu/EYe+RkTZ/dhwpJw7FxliCsCEfN9Xu9SkRwmR8ktxlaJAQk+gGoG80Kkj6SZ5C9hhqk+RLIen73x/0ECZpPLelMa5KvmFwBA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TW0M9TZG; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723666489; x=1755202489;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=vGhtb04FYwDeh3ClZBFQbkLcpNAvrHi43rNinQOOaKY=;
+  b=TW0M9TZGcAo/YwKefqEFfXFyP6/R8fSJdMOvo1T8K/gvao88A7pqZlRd
+   iicMbkzVxD+d2zEBNBE58Hm31S2oRbKgTT5tSEqjjfxJKQa1IbFqYkE/L
+   MSpksPDxf+DaXJT/2KFrvV0bqFxMjiONZgyPOTG/veSp0lah8m2xXGN4D
+   HbbA41/hTT5RnfG+ysaHXX76EXUs2uVxxRBglY5DTmj0kAFmvsfYl0n0E
+   suoG2PJf59JqvcJfKWUcj9tAD7vFwWs/LfyRAhNOb6vfNZMz3PxsH1e96
+   XZpDiRDMopS0hoQdoOD4YW04zb4849t/xYc0LjL/whUevOy7Ti6Nnwv07
+   g==;
+X-CSE-ConnectionGUID: er1JTtABShaWiAQCZE2AwQ==
+X-CSE-MsgGUID: PW3r20KzSv2gh88hYzRk9w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="32481881"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="32481881"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 13:14:48 -0700
+X-CSE-ConnectionGUID: 7q8SqOHRQlmUmLQZMcKbXg==
+X-CSE-MsgGUID: aGD2Yt0ZSJu3agl0DpkGtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="89920857"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Aug 2024 13:14:47 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 14 Aug 2024 13:14:47 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 14 Aug 2024 13:14:47 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 14 Aug 2024 13:14:46 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OJTunrBtXfa+4V5mAXshW5ojQqDqeqxZKRHP35YMSbr65ypUQ7sEoyFVIe1nJGipvM62R4x3GCDX2l/dEWn7HsW11EfGNJhEAeu58tVb0U61qzR2Na5oLEJ4nXx43J5PLjdbu2PTxYsjQGSGULh/hmOvVD9nDktpRTpQ9mvuMvqeMnbD7xBMhpFEt1USiiKgkJqR+gX/dGZtle84zt/NM2+k4QgrLUX1A7/gLUP9SvpdemdU0pfX5r0X2jQN3w4Z/CuQt+d/PiolgJsR52xgcWVVGPxuTzke4mug/7mRWRKILhT1LORGAuCxQuVymLoobLgGcdpDRX8egkneFR/Qpg==
+ b=a4e+R6iyJqMNp53HsRsWy+4FhQM6ypgqZ/7jy4jNd0R/KSEHUxQnHfv70m2pmjZ0UmR4TmpChjr13igT6thdDarm9cep0RisGW9q+njZF7D6csTBhIxIEFnfWZNfqyqY5EyGcjGXJ+Y13KSTjUcDSI1Gwkx4oT4CYQRvq1vQ6sPEoCK1dTGVpdR2h/N0JFc0ag8I1mpRA7esAsnqm7wAQg3o83jI3frccIEM4KKSKpiVkQkFxcll2PUQDJlF1qp8ksjMsRw+FxEsCk/vettv6Dc+WPH/mo2SkHyXxekQtJbH91gLbx2MZgWj51f8INk8P8VoVc7oPPWsVc8czhGkog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XdBDATBVe751VwRjOllojzrOCPxt+DGde7hRH8dOuto=;
- b=xlwjEmdch5Q3InGoZ9md45CdP1A1OBPJuC7L4LhZeFZhLcK4tH+LuNoYDLSdwcEhYOiLwYQWOM+42F+yb71Ks0yObyIwJ6rNfKbORB1t+MdREv8yg8GXMjnuK7urnhj2CPRxIrRTUZZ48j75Ti71fkXGtAxQcEServ5u4plW9wKwiZQKoQzOHPHyRadSKLFk8BEAiSFk1kuwjtLKDK9hh4pF/3ndgG6OlVnPbCyAWb3jo7EdHT+2ARjiWXTJC2EegYIPqlNEIyd6Hq/CuYTM/QNMkfqMs3zdZdbqMB1mw7jXxU1SNcZ7BcAOxRnbW8TJWuU1N5+lvGmYeRjI4E6gWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XdBDATBVe751VwRjOllojzrOCPxt+DGde7hRH8dOuto=;
- b=nzZUlLDX8HYrwzsU8e6T01LI10QlExuoQSBvm9On+c6xApv4WTaCvG0UK8L7BXJ/F313GsL1wN5LOD9QJN6HogRvtCL7JypFdXDd99zzPb1HMVRVx/usVCPaUdi9rGCj0zgs2bL1NE2kAjeQ1AQgAgUuK1TleqDFID1WCyvF6Ro=
-Received: from BYAPR02CA0053.namprd02.prod.outlook.com (2603:10b6:a03:54::30)
- by BY5PR12MB4163.namprd12.prod.outlook.com (2603:10b6:a03:202::18) with
+ bh=pVsfihqbo2mgY3pJ8PWZmXbCWL9m3WsIb/r0Ssn24Qc=;
+ b=WFfYJf9P5w42ldfZjp/Mvw4wFLqd7JzSM9xi+GSPHjA63i9qrTJPmG2b/hJEV1sSZ/SSjVpfzj0A192TjzncTwGNYoBuYTA8GzjqENy8PAaybFI0G+aYh31L+AwnoThzGeHAv2wyFr+fxVORJHyC/PH4eyVUQrEUFPni3mcvzeFmYrCh7xISYqWzYOIR2KDGQmTogiin3B8XpS1mHJzStlSMQ3KQ9ZqzRUHDajpGRIQLl47T7Y7uwCJhn58reH4h2Lmdwh3qAy3Kq5+8ovWFdsGqcGpDKLLyPv8DuBCthYHlm+RPGHEu8KhTt1rGvguFtDhbb4fmXj3wFvQ7GHT/Vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com (2603:10b6:208:3bb::9)
+ by DS7PR11MB6174.namprd11.prod.outlook.com (2603:10b6:8:9a::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Wed, 14 Aug
- 2024 20:06:51 +0000
-Received: from SA2PEPF000015CA.namprd03.prod.outlook.com
- (2603:10b6:a03:54:cafe::91) by BYAPR02CA0053.outlook.office365.com
- (2603:10b6:a03:54::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
- Transport; Wed, 14 Aug 2024 20:06:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF000015CA.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Wed, 14 Aug 2024 20:06:50 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
- 2024 15:06:50 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 14 Aug 2024 15:06:49 -0500
-Message-ID: <c0a66ae8-43ec-257f-92c5-6ecbfcd45c1a@amd.com>
-Date: Wed, 14 Aug 2024 13:06:49 -0700
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Wed, 14 Aug
+ 2024 20:14:44 +0000
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::23a7:1661:19d4:c1ab]) by BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::23a7:1661:19d4:c1ab%2]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
+ 20:14:44 +0000
+Message-ID: <4a4c4a1d-2091-384c-1fc9-68d9e6c07727@intel.com>
+Date: Wed, 14 Aug 2024 13:14:40 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [regression] igc does not function anymore after second resume
+ from standby
+To: Linux regressions mailing list <regressions@lists.linux.dev>, Sasha Neftin
+	<sasha.neftin@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"Lifshits, Vitaly" <vitaly.lifshits@intel.com>, "Ruinskiy, Dima"
+	<dima.ruinskiy@intel.com>
+CC: netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	intel-wired-lan <intel-wired-lan@lists.osuosl.org>, Martin
+	<mwolf@adiumentum.com>
+References: <acaa3e31-a6f4-4c45-b795-d12b0d2743da@leemhuis.info>
+Content-Language: en-US
+From: Tony Nguyen <anthony.l.nguyen@intel.com>
+In-Reply-To: <acaa3e31-a6f4-4c45-b795-d12b0d2743da@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR17CA0070.namprd17.prod.outlook.com
+ (2603:10b6:a03:167::47) To BL3PR11MB6435.namprd11.prod.outlook.com
+ (2603:10b6:208:3bb::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V2 00/10] AMD XDNA driver
-Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20240805173959.3181199-1-lizhi.hou@amd.com>
- <292c06d0-b96a-b5b5-5d82-e74b82bbb6de@quicinc.com>
- <d7f757e9-ed6e-7be6-89db-3ec9ddbb8050@amd.com>
- <1aadcb3d-75e2-285c-2244-e472cc21bb97@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <1aadcb3d-75e2-285c-2244-e472cc21bb97@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB04.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CA:EE_|BY5PR12MB4163:EE_
-X-MS-Office365-Filtering-Correlation-Id: a46c13f0-8b54-4d3f-e86d-08dcbc9ca2a3
+X-MS-TrafficTypeDiagnostic: BL3PR11MB6435:EE_|DS7PR11MB6174:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f3415ff-eac9-4171-906b-08dcbc9dbcc0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGQ2Mmk4UmhnKzEyZERUQzkzb0o1OG1aLzFDRUh4TitwLzI1Mnk0d0kraG5n?=
- =?utf-8?B?djViREtOc1JWTlRodUhWVkJ6RFlMT0ZVMjFkSkQwM1lUa3FlaVVPTTVGYXdJ?=
- =?utf-8?B?ZHdpMmJhUHZiOFJDRGRtZTNzZmxqRlcxQ0NpN1d5eDNIVk9qNWkvQnFqYTBH?=
- =?utf-8?B?Q3dvcG5YWUlnY0h2R0pmbUtXdHNVdmc1YWx1T3kzeWk0elBUL3c5WkNwN3pU?=
- =?utf-8?B?eTlRYWQxRHMyb0FIZWdzNis4NnYxRHl6c3B2TStBbHBNRlh4dUVEY2w3dzh6?=
- =?utf-8?B?MCthM0xpdGdLZkFJTUdaWk1GMjM5d3k4T1IzUVJRcWhlcnR2dm1LRFJ6SHhI?=
- =?utf-8?B?c1RjNms2MXJHYUphbGJWaXU0V1JBNmN5WGRXaGpNeks1SGxJSTZUU1NWOEc3?=
- =?utf-8?B?ODhSWDVHamp3bEZYVU5YaGZMVEQyeDBuaS8xR2xRaUxtaGtGaUlBN2xPczMv?=
- =?utf-8?B?eDd3SUxoK1lPbGI3cHdtZjdLM2hnUU81VGtWcUZpRUtYNTE1QkZ3YzBpb3c5?=
- =?utf-8?B?MU54UWV3RnZPVHgwdDcxSEhXejIzVWNvZXlra05iN21PVEV6bm9uNVdUdFdq?=
- =?utf-8?B?R0RwYWNNMnIydVhQUnJCcjBYTjFhNUgvQXEvcy9EM1JuSlVXVTd5cjE2WHRX?=
- =?utf-8?B?eTFJRGxLRE5Ra1Vnb05XZTdPY0MzUndpOHNhSVBtdlVnU2xkU1kxK0orOVlT?=
- =?utf-8?B?c3dBeUs2TTRBMy8vYis5bGowdDk1NW1vdmhic1oyMTVXZjgraEcybks5VlpJ?=
- =?utf-8?B?RHRqWE5MNTNVbGhqaExEOGRUU2Fady9sVEFNdHp0eDNmSndoTzAvVEdZVmdp?=
- =?utf-8?B?VFRxVEhCbUx2SEVqV0JpeDE2VEZ4c1pFNDNDeFpPUk1SanJ2Nk1FblpwYnJW?=
- =?utf-8?B?QWNIL0JUQ2U3TThQSFQ3TU5iMWQrbnpveUZhNmkrRzJ1T1I1cEw0NTdlNGFF?=
- =?utf-8?B?QmtvWFl6TVYycERHS09NUUJ2K3hUUk95NjFVUHUra0Q5OERjdmMydnpwQm5s?=
- =?utf-8?B?d1pYSlJhU0U5MDFqZ0hxSTVUK1hCdXBnMnR3SkNwVWRiZXdJMWUrUCtmb1Y5?=
- =?utf-8?B?M0hUQXdzTVZ2RDYxanJmN1o5MkJRYzNnazhqMGNsbmN5U0xsbUMvMkVmT0Zv?=
- =?utf-8?B?bjZ5SnZLSXQ1Q0pZajBQVHc3a3M5c0o2bXRrcXRncUFKbTVxUnE3cy9waWlU?=
- =?utf-8?B?SHZMbDJQR2F2SUJGbWdtKzlzYkRsQkQ0RFJraHVkNkRHN1daTGsrSDlKWkJM?=
- =?utf-8?B?Y3FXZFFPYlR0dStKY3BBOFNKUUhCMHpReENXR0NOWkdvQm9NMHV4a0NFVk96?=
- =?utf-8?B?enl4OTJHeW1paEhhWncxY05hcVprcW5rN1dvT2pwaHYvRzhnMFBWTG10bFZC?=
- =?utf-8?B?MTgvM0wvanNxV0RqeExjYlI0eUZPUjRGSVhKWFhlazBNT25uOVhubGFGbDlO?=
- =?utf-8?B?bkI5NmdGV1phM0NqcFlxcEp1UjNuQlcxY2tFem5Fb1VwYi85M1czczNnSDJo?=
- =?utf-8?B?YzNtdW9STmI4QmkvSWI2dDA0eWtraUVTRDhUNnkwUU5BeTJNRVR4aWhxRWp0?=
- =?utf-8?B?a3dHYXZNZ1pxcko4aEo5SGFxNzRhTGdXeDhWY2QyMHArRU1CTlZnbndLM213?=
- =?utf-8?B?NzZZa0Jnd0RUN0VNRTBERGdxc0xJcW1lSXRubEMrSXptaFM5aStmSU1TWlBD?=
- =?utf-8?B?TE1YcTR3RFBpWFpTYXBFT3o3MHBRYTJZa1RjK1ZxV3djWERKa0ZNbnVqakpp?=
- =?utf-8?B?aUFOcURkVFUxd1FZajgrUTNaUElGZXVQU1RZMTNpWDZvN21rNFR1cEFCaEdN?=
- =?utf-8?B?cmFSMVRVT3NiZ1pQRXQ5dkFxaXdxQXRaUGkwaVdJdHFMSUpqS3pndWFLaTRC?=
- =?utf-8?B?ZTc3Vnh2WXp0cXpETWpGaUJGejA4OWRZdlJHQXljaTg1bnc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 20:06:50.8557
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?alJyM1RKRnJXcE54MFZlbUJidlNRNVhWUjg4bUlJQVVrRXBId2M4NFFGSDVF?=
+ =?utf-8?B?aUE1K29LYS9MKzFqMHZpbGxsS0dGaGcyZEdhUEdaRHlVNi9oVkdycFVuZmZq?=
+ =?utf-8?B?TUxYYkdjdjNxblFUa1I5M2JuOWY5NUJEcm5QYTRVU3p4Y3k0dWRxVGhKZGdG?=
+ =?utf-8?B?SVlPNWI2c0ZQVWhtcVQvTkthQk9YQ3FEOUVqSUdtTkt0dE5FcjAzMEtkUnpi?=
+ =?utf-8?B?a29lZ01WalBqcHI1b3F3cU13SDhZeVRMT0dMbkhnUDhaTUphWEdSMExXekRE?=
+ =?utf-8?B?czNtQUh2ZllOejk5c0FiOTBYbWVWd0ltTWg1VU03d2dqV2pBTG95TDYwWHZh?=
+ =?utf-8?B?TUFKWlZ0bnc5cm4waXVGdkJGTVQ2ZkpDeHRDR0FWdk5COW1qTkhkVkxoWTZl?=
+ =?utf-8?B?UCswNVFsMHNNVTlQNXF0b2NjNVJOclM1TWZOZUwxNTlod0FQZlJ2UUprOVdt?=
+ =?utf-8?B?MkhyMVppUG9sWThFSG43ZzkyVTE5eDIvdUVoeURuRk9PUHVxNnUrakNKMnM3?=
+ =?utf-8?B?ZzFPZDV4Y210RlVXN1VNOHRwd2tKZGhFaGJJVUhjaWc4cS9RbWlWKzZTa1JI?=
+ =?utf-8?B?djhlMnFOQmg2Z040cXl1NnN3aGZTSjZuMW1PVDBFbjhaUGYxckxMYzY4OWEz?=
+ =?utf-8?B?SnljbW05M0hlUmpKQ241ckswTE5PSHN5aFVUV2JYR2doQzJGN0xQblVzOVpX?=
+ =?utf-8?B?K3dSVjJ0R1diNXVsaElWVGtLOWdpcjVvQVFhZWhuNUlnS2hRQWJhbHF5MFRF?=
+ =?utf-8?B?R0FlOVkydzFMQStEK295WFYxOUVVdlA4ZXlEOXR2TFZ0TFhsM2NuZFlXeXll?=
+ =?utf-8?B?eDZZR282Z1Vna0tGZ1p6WnVFUlZybEliazJPWUgvRGZMZWlZWjVLdlRLVG1U?=
+ =?utf-8?B?QTI0Vlc3WjFiWXB5VG5WUnY3bXlrdkl2TVBnYlhlRi9EMFdpZHFLSWYxL1JN?=
+ =?utf-8?B?MjkrUmljdUtTUmVoaklNRDJyVVVVek9VQ1lSeDlHOUlQamd6Z3lnRlMwQmth?=
+ =?utf-8?B?NUxRSE1FWmd1N3NDdkFQaEU0aHYvZ3FIY2N2aUtvejZCMXJJNm41ZU44bmJ4?=
+ =?utf-8?B?WkhqWk5HTE5xaTJKeTNHMzlKaWVJY0lodWVFRGlBN3gzUmxHc05OMjV2OEpE?=
+ =?utf-8?B?eDNOYngyOVdQM3l3VlIyUEZHU1l4R0Vndmt5OEZNMEpVbTBTNk1ybE5kSU9H?=
+ =?utf-8?B?M2xMMUVqbjUybGhHR0Myc2R1dlFvUWxBT3VkcWI5UDlZa05vNmprcE9qK01k?=
+ =?utf-8?B?YkJFRjVlcVZQdG91bGlCUnFLY3JXbjlMWTR6SHNWbUhsbEljczJEZURmUzM1?=
+ =?utf-8?B?Z3dkNERpUFJFQlZkNjVlZmExcDcwcUsyU0UrK2FCNW0vTU51Mmw3M09oYXhx?=
+ =?utf-8?B?NmoxcndnSGhXSUNhU0tTSmlIVkFHY0NYUHNCMTdOa29JN0dqTXhTekVMa0NL?=
+ =?utf-8?B?ek5zelRxa0toaUtkRGZaNXJjT29sTjZ3aytzN0pMTVBHU29ZaUd1UU5xSDJN?=
+ =?utf-8?B?UjFJMlArQnhPNU5ieElMamV6TWQ3b1BocGdPSllSUGE0RFhKcWZXUHV0QzQ0?=
+ =?utf-8?B?Q3ZtYW5nMXJHdEJDZmpMOXVqL2w0U3Npd3I5ek1saEVQb2grYWFOemV1Ullk?=
+ =?utf-8?B?ckFRUmJuRDQxV05tZjNwT2NFeVZtOFk3amlJeHNXQmdqc2I5SnNkRXZsSlgx?=
+ =?utf-8?B?Q3I1aHB6emtNOFdTSVZaL3d4b2I4RE5kSm10RlJqSHd1a0YwY1RQNFNMMDZp?=
+ =?utf-8?Q?P4DsAe/uVp6dooGkOI=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6435.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y2N3cWxnL0M1dVE0ZDYxbEZrVEpEdlRpbDFWQTFvUnlYa05VQVJsUEhLdlZk?=
+ =?utf-8?B?Q2dWQlVyM3h1TDhaaW9mQVNmWE1IWFN4TFlmQ1FiUGJFcUZZV1NrS1AzdWlV?=
+ =?utf-8?B?TGJ4aWxUOVlQN1VrMENCSlZmYUNrVzM2RnlZR2NIeHpBY2x0b3NvVlNkSi9a?=
+ =?utf-8?B?ay9nU3pHczRpSEJiOHBMb2ZoQ1gzYW9CdFAyTTJhSkVDV3V1blBlNzd3THV4?=
+ =?utf-8?B?OUJ0STJ6akhpTklDSVlhdVNOWDdaVGcxTnUxLzZSZmVkbjZ1Q3ZTNnVsbEJy?=
+ =?utf-8?B?R2syYThSZEVqL1pnQ0hwMnhodnJsQlkycmFsYVRlcUZIU25ERFI4M2hYVVFU?=
+ =?utf-8?B?a2llZUtQb05zQzMydUcxYklORHFlcFZRUTFlQ0RQOCtFWlpFL3Q0MjQrNTBV?=
+ =?utf-8?B?WnY0WWMvdWdoNlZENENER29MdGVMT2kzVURPNGNUa0taMi9sSjZOR05RWWNu?=
+ =?utf-8?B?ZzZ3VllseTRlbXhEZTdGUTRqQTE3S0U4MW1LZkdlWWEwRm5NWmpZUyszcWRz?=
+ =?utf-8?B?TjZyb1g3a3c3ckRseDYwc25pUDBUSDdPek5LOWFCcFkyZ1pCdTJaYjVDSUR6?=
+ =?utf-8?B?UnhzUk5admZ4SnQ2aGF6VFU2WXE0Rm9veEtkYzY1bGNNTGZ5Sld6ZHUwYnFE?=
+ =?utf-8?B?ZDJFeFN1aUQ1ZHAwUHc0QllHT1lmSDlBK1Jjc051UUpvREo3STllL2tiT0sy?=
+ =?utf-8?B?bzZ6cWJ4OE8wTkZEVEhNYWtxRzNGcjI5eGhneUlPcUsvbk45S0Z5MlZtTTMz?=
+ =?utf-8?B?Q0lxL29USEpmU0NPYW1salhJdDJ2WlNJd2x2VHlJYXN4dVR3UTArUVREdFZ3?=
+ =?utf-8?B?UmhlU2M5UnN5Yi9RREc5MEw1Rlo2dklyNTFyNEtXUzF0QVdxdTZQL0g5Rngz?=
+ =?utf-8?B?cE9YWWQ1clNLUjRWbUJmVCttVWdZNHZBUUpsSnFkNno3TUM0aE9XcU1EK3g4?=
+ =?utf-8?B?MDdWcXRETitGZFY3aDhQUnJFa1dOK2VPRE1xblNvNm1ZV1pXVVNBM2pzZksv?=
+ =?utf-8?B?QnZIVVdJeWFCWjJFUHhCbnU2N2JaVll2ZHdDSDQ3UDNXVjZsUTJucVRRT2E3?=
+ =?utf-8?B?c2g2QkVLZXV6SHdBMkh0UHFvQU5PNm5YY3pKbXpldmVMak1PenZxdTlBN09p?=
+ =?utf-8?B?elcxQ2JZT1NkcDZtTXV5dldsTHdqS0EzSEkxaHZmNnZIVjNuYk1DaFZLaStX?=
+ =?utf-8?B?M1ZaQ05lTWRXOFBSeENnZU8zbTlleW13SW9pK3ZaQnFYY1UrL2tEU1V0a2kv?=
+ =?utf-8?B?dXc4Qk5HOHRFRFlUNUxNUk9NKzZ1RjlOWlFyRFI5Y0c1eXFXSGFyYmVDVmFF?=
+ =?utf-8?B?OVVZd3JKWE1VNnNxejZpcUZ4U3Y3amczcXZrdXVzQXBheVJBenRXUVhyazFl?=
+ =?utf-8?B?QlBQd09xdUNDQXNQQzdRb1M3ZDQwenJFdFNnaEhSYWx3alJCNmZtWEdaY0VU?=
+ =?utf-8?B?Vlgra2VaUlVvZ0Y0dnltVkYwbnN2Ky8zRmg0T1I0dnE3aVU0aUtMOWVFUWRz?=
+ =?utf-8?B?Z1lmWjFSMWtjdERaQlpCVGJ4M3pCZ3FKNFVyR1RMcFp6amdSN2lUZG1vb01Z?=
+ =?utf-8?B?NHVOaWs0a0tRLzhRek5TZG9CSFhCWUdUaFN3OGxSa1Q0YmZVTjNBbWlVdktM?=
+ =?utf-8?B?cTE1STJ0YzNsQUNhRzc0Ky9FSndlaXdNdVErL1cwV3QwOFlzMStrNmFJOWdv?=
+ =?utf-8?B?WXBvR1BnMjFSMkZjRXpZcURoZmsvSEphSVJnQ2xGQXZ0bmxpR256aElCUzhN?=
+ =?utf-8?B?NW4yZUk3VkxsSDFoeWlMcDdkbkhCci93RE41NW5uM2tvTzRRWVlhYU5kTlRv?=
+ =?utf-8?B?MDUxSDNqUUkzemY3ajZVM0I1ZXJsc004MzBGVi9GTEtvT2JHdG1YTVVzRlBK?=
+ =?utf-8?B?QWlEZ1kwZkFWUHAxWmEzRFRmM3RkWVhjNjUvZC9CaTRsSGtJYUVDQjZ1T0RH?=
+ =?utf-8?B?aGxRWklJbzBrV0xhME5aQjR5b1p2RU1XRlJtR1FQSFEzSXpVUnJlNGRVMWcw?=
+ =?utf-8?B?dUhHUmxWSXFpalJLVGdZbkpRZElKU05CZDNlcGRxUmQ5UWN6bUxzQ3VLSXJY?=
+ =?utf-8?B?cWJOMUlyVVp1NUNWRzBraEtKYkkyZ3hLSWxJR3NRZUwwbWJDM2E0YU92SlhZ?=
+ =?utf-8?B?andvbGZJcXhtQkxkWWtLMzByTVcveFh0TmFteG8xeFJYQmxKWDc4RkxrMUdy?=
+ =?utf-8?B?SFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f3415ff-eac9-4171-906b-08dcbc9dbcc0
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 20:14:44.3938
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a46c13f0-8b54-4d3f-e86d-08dcbc9ca2a3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CA.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4163
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VOZsxvoWdpFvxXbZUiisms3F+zYpyyDTEdNlEkxiRb7Z8MrvgMvpAzYJiitpgzi7rdtYj4xMNtrVuBgNaBlsw7q/rmrMA1nQPwww84cq3CQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6174
+X-OriginatorOrg: intel.com
 
 
-On 8/14/24 11:49, Jeffrey Hugo wrote:
-> On 8/12/2024 12:16 PM, Lizhi Hou wrote:
->>
->> On 8/9/24 08:21, Jeffrey Hugo wrote:
->>> On 8/5/2024 11:39 AM, Lizhi Hou wrote:
->>>> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD 
->>>> NPUs.
->>>> The driver is based on Linux accel subsystem.
->>>>
->>>> NPU (Neural Processing Unit) is an AI inference accelerator integrated
->>>> into AMD client CPUs. NPU enables efficient execution of Machine 
->>>> Learning
->>>> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
->>>> architecture [1].
->>>>
->>>> AMD NPU consists of the following components:
->>>>
->>>>    - Tiled array of AMD AI Engine processors.
->>>>    - Micro Controller which runs the NPU Firmware responsible for
->>>>      command processing, AIE array configuration, and execution 
->>>> management.
->>>>    - PCI EP for host control of the NPU device.
->>>>    - Interconnect for connecting the NPU components together.
->>>>    - SRAM for use by the NPU Firmware.
->>>>    - Address translation hardware for protected host memory access 
->>>> by the
->>>>      NPU.
->>>>
->>>> NPU supports multiple concurrent fully isolated contexts. Concurrent
->>>> contexts may be bound to AI Engine array spatially and or temporarily.
->>>>
->>>> The driver is licensed under GPL-2.0 except for UAPI header which is
->>>> licensed GPL-2.0 WITH Linux-syscall-note.
->>>>
->>>> User mode driver stack consists of XRT [2] and AMD AIE Plugin for 
->>>> IREE [3].
->>>
->>> Is there a special branch with the code?  I don't see any of the 
->>> uAPI in either project when searching for the ioctl codes or ioctl 
->>> structures.
->>
->> Please see git repo: https://github.com/amd/xdna-driver
->>
->> This contains the out tree driver and shim code which interact with 
->> driver. E.g.
->>
->> https://github.com/amd/xdna-driver/blob/main/src/shim/bo.cpp#L18
->
-> Ok, I need to have a look at this.  Long term is the plan to move the 
-> shim to the XRT repo once the driver is merged upstream?
-Yes.
->
->>
->>>
->>>>
->>>> The firmware for the NPU is distributed as a closed source binary, 
->>>> and has
->>>> already been pushed to the DRM firmware repository [4].
->>>>
->>>> [1] https://www.amd.com/en/technologies/xdna.html
->>>> [2] https://github.com/Xilinx/XRT
->>>> [3] https://github.com/nod-ai/iree-amd-aie
->>>> [4] 
->>>> https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu 
->>>>
->>>>
->>>> Changes since v1:
->>>> - Remove some inline defines
->>>> - Minor changes based code review comments
->>>>
->>>> Lizhi Hou (10):
->>>>    accel/amdxdna: Add a new driver for AMD AI Engine
->>>>    accel/amdxdna: Support hardware mailbox
->>>>    accel/amdxdna: Add hardware resource solver
->>>>    accel/amdxdna: Add hardware context
->>>>    accel/amdxdna: Add GEM buffer object management
->>>>    accel/amdxdna: Add command execution
->>>>    accel/amdxdna: Add suspend and resume
->>>>    accel/amdxdna: Add error handling
->>>>    accel/amdxdna: Add query functions
->>>>    accel/amdxdna: Add firmware debug buffer support
->>>>
->>>>   MAINTAINERS                                   |   9 +
->>>>   drivers/accel/Kconfig                         |   1 +
->>>>   drivers/accel/Makefile                        |   1 +
->>>>   drivers/accel/amdxdna/Kconfig                 |  15 +
->>>>   drivers/accel/amdxdna/Makefile                |  22 +
->>>>   drivers/accel/amdxdna/TODO                    |   4 +
->>>>   drivers/accel/amdxdna/aie2_ctx.c              | 949 
->>>> ++++++++++++++++++
->>>>   drivers/accel/amdxdna/aie2_error.c            | 349 +++++++
->>>>   drivers/accel/amdxdna/aie2_message.c          | 775 ++++++++++++++
->>>>   drivers/accel/amdxdna/aie2_msg_priv.h         | 372 +++++++
->>>>   drivers/accel/amdxdna/aie2_pci.c              | 756 ++++++++++++++
->>>>   drivers/accel/amdxdna/aie2_pci.h              | 264 +++++
->>>>   drivers/accel/amdxdna/aie2_psp.c              | 137 +++
->>>>   drivers/accel/amdxdna/aie2_smu.c              | 112 +++
->>>>   drivers/accel/amdxdna/aie2_solver.c           | 329 ++++++
->>>>   drivers/accel/amdxdna/aie2_solver.h           | 156 +++
->>>>   drivers/accel/amdxdna/amdxdna_ctx.c           | 597 +++++++++++
->>>>   drivers/accel/amdxdna/amdxdna_ctx.h           | 165 +++
->>>>   drivers/accel/amdxdna/amdxdna_drm.c           | 172 ++++
->>>>   drivers/accel/amdxdna/amdxdna_drm.h           | 114 +++
->>>>   drivers/accel/amdxdna/amdxdna_gem.c           | 700 +++++++++++++
->>>>   drivers/accel/amdxdna/amdxdna_gem.h           |  73 ++
->>>>   drivers/accel/amdxdna/amdxdna_mailbox.c       | 582 +++++++++++
->>>>   drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
->>>>   .../accel/amdxdna/amdxdna_mailbox_helper.c    |  50 +
->>>>   .../accel/amdxdna/amdxdna_mailbox_helper.h    |  43 +
->>>>   drivers/accel/amdxdna/amdxdna_pci_drv.c       | 234 +++++
->>>>   drivers/accel/amdxdna/amdxdna_pci_drv.h       |  31 +
->>>>   drivers/accel/amdxdna/amdxdna_sysfs.c         |  58 ++
->>>>   drivers/accel/amdxdna/npu1_regs.c             |  94 ++
->>>>   drivers/accel/amdxdna/npu2_regs.c             | 111 ++
->>>>   drivers/accel/amdxdna/npu4_regs.c             | 111 ++
->>>>   drivers/accel/amdxdna/npu5_regs.c             | 111 ++
->>>>   include/trace/events/amdxdna.h                | 101 ++
->>>>   include/uapi/drm/amdxdna_accel.h              | 456 +++++++++
->>>>   35 files changed, 8178 insertions(+)
->>>>   create mode 100644 drivers/accel/amdxdna/Kconfig
->>>>   create mode 100644 drivers/accel/amdxdna/Makefile
->>>>   create mode 100644 drivers/accel/amdxdna/TODO
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_error.c
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_message.c
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.c
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.h
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_psp.c
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_smu.c
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_solver.c
->>>>   create mode 100644 drivers/accel/amdxdna/aie2_solver.h
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.c
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.h
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
->>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
->>>>   create mode 100644 drivers/accel/amdxdna/npu1_regs.c
->>>>   create mode 100644 drivers/accel/amdxdna/npu2_regs.c
->>>>   create mode 100644 drivers/accel/amdxdna/npu4_regs.c
->>>>   create mode 100644 drivers/accel/amdxdna/npu5_regs.c
->>>>   create mode 100644 include/trace/events/amdxdna.h
->>>>   create mode 100644 include/uapi/drm/amdxdna_accel.h
->>>>
->>>
->>> No Documentation?
->>
->> Is it ok to add a work item to TODO and add documentation in later 
->> patches?
->
-> I beleive best practice would be to add Documnetation in the same 
-> patch/series that adds the functionality.  I'm not expecting 
-> Documentation for items not implemented in this series, however I 
-> think describing the product/architecture/other high level topics 
-> would help put the code in context during review.
->
-> It does seem like the AMD GPU driver had a lot of documentation, which 
-> makes the lack of documentation for the AMD Accel driver particularly 
-> odd.
 
-Ok.  We will work on the document
+On 8/14/2024 3:42 AM, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [Tony, Przemek: lore did not find any mail from Sasha in the past few
+> weeks, so from here it looks like this might be something somebody else
+> needs to handle.]
 
+Adding a couple of others who are involved in the driver.
 
 Thanks,
+Tony
 
-Lizhi
-
+> Hi, Thorsten here, the Linux kernel's regression tracker.
+> 
+> Sasha, I noticed a report about a regression in bugzilla.kernel.org that
+> appears to be caused by this change of yours:
+> 6f31d6b643a32c ("igc: Refactor runtime power management flow") [v6.10-rc1]
+> 
+> As many (most?) kernel developers don't keep an eye on the bug tracker,
+> I decided to write this mail. To quote from
+> https://bugzilla.kernel.org/show_bug.cgi?id=219143 :
+> 
+>>   Martin 2024-08-09 15:17:49 UTC
+>>
+>> Starting with Kernel 6.10.x I experienced network connection
+>> problems after resuming my system for the second time.
+>>
+>> My system contains two Intel I225-V (rev2 and rev3) cards.
+>>
+>> I ran a bisection and got a hit: 6f31d6b643a32cc126cf86093fca1ea575948bf0
+>>
+>> rmmod igc ; modprobe igc remedies the issue till the next but one resume.
+> 
+> See the ticket for more details. Martin, the reporter, is CCed.
+> 
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> If I did something stupid, please tell me, as explained on that page.
+> 
+> #regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219143
+> #regzbot from: Martin
 
