@@ -1,206 +1,173 @@
-Return-Path: <linux-kernel+bounces-287085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAD29522BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:41:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7DE9522B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:34:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973451C21C7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:41:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCE728551A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E99E1BF301;
-	Wed, 14 Aug 2024 19:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B33A1BE87E;
+	Wed, 14 Aug 2024 19:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUHG8hUN"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dIjF7rsz"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CFA1BE842;
-	Wed, 14 Aug 2024 19:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC63EB679
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723664481; cv=none; b=aYeU+0euoqwe8zUIu3jjeEaYGqSX7BLWv6SwugRfFphcWWqJzQxYIcY7rr3T99/ZV2G1Kt+j3TxT6wEnvmML9e6WmpaxUotcX7EusSMBiG4D6gJC8tDGFpCgVPVdcsyXTDygvpQOvm1Y/SNz6mnwIAnYwxfkxWuuBuMfItweTHg=
+	t=1723664057; cv=none; b=EkPpfUIRMQa6+ziXta//su6tusHPE7PziJ6mSnjydtRrWb+rPUjuTV5qLxsE6JvOyp1427sLgIAbVb0f7nj15UFDwGhdp4L0I9RuYCML0choMH0uay40iay+ryInvvn6MFqu53xjp1hxutFRdKIP8mVQuKvvLhYsNdlU6zvVjX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723664481; c=relaxed/simple;
-	bh=SKw2XZUR7W7bDNlsbaYvABmOzH9rYAGAhE8uywbt8pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGnTxpJdnXjh9iKI1brx2KnEDkqlLFi5lwXeEXgguX3FlCTHVu+h0egU0AW3faW4S+tAd+ZRHykyAFGoB3V16evCirnWJ4RRck4fU+KK+WFHaNCP8139+7OAhxLWh66l6sxN0zN+YjpnebZ4r7RlSSGvDYPQfERMIRy5Jf4Ux7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUHG8hUN; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fe6672297so1317501cf.1;
-        Wed, 14 Aug 2024 12:41:19 -0700 (PDT)
+	s=arc-20240116; t=1723664057; c=relaxed/simple;
+	bh=FdU8SvzcWm3PWPtIGFD/hoKydvzDoQz5Wplue72HPm4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IazI8egCC5relG+nTvqj4fG4W3+r8AIdwbElnvEW8vAWy24Lw5suIBeJflULbIoUAIEFvdXQGrLl6jvq0/5nuA8RfLH9azPW2UZ2NzQIDp1Q9qF7dFtjwjk+UF9fj1nAMogsOlKq4GVe2AhPVXrKyx4YdvDtk8eONyB9SkzN46U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dIjF7rsz; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0e78047c98so395182276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:34:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723664479; x=1724269279; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P7nxP/0wlxFkVaeXCvOut63mGk6zyQ8GTLenWGDTFAU=;
-        b=iUHG8hUNN5xAu5W1YP0Vmv6eYs/g91sq9XxYcJBw8SfwsWkIxdG8rnEM+etJ87Sd8U
-         k5VkOKz5P4uUHVyr/yJACNGqs4UJkdRgGdG+yD8x8IEjkh7I2GtIAxc+HWk7uCA4O2Y8
-         FK4BAolWy30+Fl2enOLQ9GJhczzfOvxrl0fZGYf9G4zSpADEL7nS0RdJEnA5tFyrTsE1
-         ZhBWPVaaliXxqsxJ53qMwNCjud+jV/k91mmBH6BllGUO8KMJNqAVEtH+FdYHmaBqcipO
-         rodGysBH/siJ60LbQ2rtGdUzlwV4fEKmkEWt//1MRDjJM2mDw1BiM5S4tWC7/xcRFEX8
-         Eidw==
+        d=google.com; s=20230601; t=1723664055; x=1724268855; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y8cWK2+UYGLsva20MxS90pT4B5pootLE6XLQcrnibDs=;
+        b=dIjF7rszBcek1yI7j3xtWOmNk8dOHb1hxHQ22/rd5KSj2kXRdziUn80gkQvVQkZ8Do
+         MIU8CpQ1KaoCqOW5LrC0iY1vT2C2syZzAO8kR98agNdVO+MXLwKRe1vCe+Y4P0ln6s64
+         QEZBuGRju9s+sl4pGtzhN+4XI5g4EWpvxa+Vro1fBEJeP4AQzYPnNy69T+Mb7OMadd1E
+         rsmUeKK4dNsSUmoSzbzhrcnhHFpEPUFH55fOyu3q+pxp3+7hcrMCMQyOGRuSuBTmtI7a
+         KDi109WyXP8z6vMfm9ptU+RDAY9PRNP7gWESev4JXwAFWAudFPGAdrX8yYJ+XxxQjy6K
+         S3uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723664479; x=1724269279;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P7nxP/0wlxFkVaeXCvOut63mGk6zyQ8GTLenWGDTFAU=;
-        b=rtvFIjj2VYA09lALHZKYVvWx1SdRAZpKZzE5fdgS5IK6ln11pfrOvkjupukGyntCrN
-         vcZ/t+gFLY+EgcFOCru99lArbp19p2GSah6KqNQCItdRyakwSdCszGxvwsSZHm6t3lw/
-         LUgsTLXHW/u0WNilliHs3c14wR1Dkl1SgdxaSYueB8uwjgtH2QhNpAmuPeCHh5MhOMCb
-         bgQxJXBZLO6yIfmBp176LNCX4wRyqXztVlt3YD0NhF/pNTVbXAXFvAye+gglKkuAAtAe
-         EsxPLBmF3gutDWyxuZYVXlWH+zVEBKD+d3yWggNJsAfBKA13zddpyWZEcklwXvLOUf30
-         6Fkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtC0IYy/HCx8ecuTLyHYGg5QbjbVq0GxbZ5eLPq2ikhJTFWJonFfRkauViEug0w6j79JJZmSMDD9ZwN91ei+/ZDZ0ja8ZoWxVy23H1ETCgyRSlsXytDxlWce+M6xKzhjMow23D3vr55hkm78k=
-X-Gm-Message-State: AOJu0YwvdXdLEbRgZP7OJHXHKEcHE8gXAUD6fBJ7bTS5j3V3pYFVYnSu
-	IgcYdR/7j7FcAgzA5xIQIvBRCVy/DJ69baVNB3XkCl5bYuPkL3qL
-X-Google-Smtp-Source: AGHT+IG43s6HRKXNmIoIQMez0b4aDhVLwvUOvUZXa56lx5CPR6BaSlukxg+NEqSky6No4rxSBs7Hyw==
-X-Received: by 2002:a05:622a:5a8a:b0:44f:f118:d875 with SMTP id d75a77b69052e-4535bb649aemr44940161cf.36.1723664478705;
-        Wed, 14 Aug 2024 12:41:18 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c1a7f12sm44629801cf.20.2024.08.14.12.41.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 12:41:18 -0700 (PDT)
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id E088A120008C;
-	Wed, 14 Aug 2024 15:33:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Wed, 14 Aug 2024 15:33:43 -0400
-X-ME-Sender: <xms:lwa9ZjEHnwkM3-0dwSWDJtmILlk4QkSiYMdcwoWAGFc7UZDM0UplCQ>
-    <xme:lwa9ZgUyTmDuBlhvW1mZlj1ffSYIOnH2pTqyl6DCBDTSfr38yFhHQALc9xk9ZDVpA
-    ceUNE7C54haSkB-gg>
-X-ME-Received: <xmr:lwa9ZlIiOKwQwgbE0BxlHxofRUsmobhriM5MGrdEh-5Ur1sZkIZKatArGMk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtgedgudegudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdet
-    heduudejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvgdpnhgspghrtghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomh
-    dprhgtphhtthhopeifvggushhonhgrfhesghhmrghilhdrtghomhdprhgtphhtthhopehg
-    rghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprh
-    hothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhr
-    ohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrghesshgrmhhsuhhnghdrtg
-    homhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:lwa9ZhG1N8emzyFNaJqhBj2XetKPlOIy7uom0GRpeGTJSgatsjyPSg>
-    <xmx:lwa9ZpUiVcUwnLDLR33nslFOqzrXxXALspMUua16n1qawyAB5WXGzA>
-    <xmx:lwa9ZsMzlBqq_ytZOytRK4l0FDmR2OJbLNPZhk-7YYbHO3xTqnQoIA>
-    <xmx:lwa9Zo3N_LuZXYrzRMbsrTYjNqEhxwUoTxEmzO9cH98wlFXdFZ9J1g>
-    <xmx:lwa9ZuX__PdUNQIu_Z-WuWkLhzwiIiYMfvQ3Y6Txj0RL5OqoEA52JbPe>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Aug 2024 15:33:43 -0400 (EDT)
-Date: Wed, 14 Aug 2024 12:32:15 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
-Message-ID: <Zr0GP0OXliPRqx4C@boqun-archlinux>
-References: <20240812182355.11641-1-dakr@kernel.org>
+        d=1e100.net; s=20230601; t=1723664055; x=1724268855;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y8cWK2+UYGLsva20MxS90pT4B5pootLE6XLQcrnibDs=;
+        b=ggIZ0Nq05qMh7CZEmfHzc9OELGV0qFHHa+kFZyR2mkydgAA9gt+kWsWq4P3hC0alyO
+         CEb3MXT1OgzUynlStdUMv9XNOq/TvgiH/42ey/cNdYmSdCszL123eMEzNfv3ZTkebD7/
+         85AxvR5ypMuPE1V7Fdp5ItsQOBqNWwEf7ZTUUDETjJCtSuyGfqbn1xzAOi376Mqn/STJ
+         ZEuzQm8dRKislLeUvw+h6U8Sa70BKTNLkkw9flDuH9gje6h4RnpmEwSdMi29HrV2Fbd9
+         XfLDoEchzbcNjzC0NvLg8DqzxsQMozuBri2F+9jMTaKHEMLQRT/9EcBZG6qMbZHyrs0p
+         q4lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwUN33tth1RGn+Xo4hSj7ZoB/+PoPD5B1U/YFUc44Br7Cp2pbE2qZtIL1nGN8SO8FvawZqTXDbvpR+eVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVo8UDEoeSjR27oLskkT86OBGMrWx72E6TA8BXbQvhKaEYEuau
+	oj8tflFvnQPv4hnH3DkImUtfVnSuVfelwCKSE6iHCqF9fxCKii2Xzl3BzPVDUxKgaKa1nsMfi74
+	9AA==
+X-Google-Smtp-Source: AGHT+IHLt1+HKA0U+xh5NYnbNVB+Ne7FTbbFACVfA5pF/rj2OeD0F++kPiOpi0T4SKQEBxj/Y2L/KElEtSU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:105:b0:e11:5da7:337 with SMTP id
+ 3f1490d57ef6-e115da70653mr49577276.3.1723664054395; Wed, 14 Aug 2024 12:34:14
+ -0700 (PDT)
+Date: Wed, 14 Aug 2024 12:34:12 -0700
+In-Reply-To: <96293a7d-0347-458e-9776-d11f55894d34@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812182355.11641-1-dakr@kernel.org>
+Mime-Version: 1.0
+References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-4-seanjc@google.com>
+ <96293a7d-0347-458e-9776-d11f55894d34@redhat.com>
+Message-ID: <Zr0GtPKepCbBgjWW@google.com>
+Subject: Re: [PATCH 03/22] KVM: x86/mmu: Trigger unprotect logic only on
+ write-protection page faults
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Danilo,
+On Wed, Aug 14, 2024, Paolo Bonzini wrote:
+> On 8/9/24 21:03, Sean Christopherson wrote:
+> > Trigger KVM's various "unprotect gfn" paths if and only if the page fault
+> > was a write to a write-protected gfn.  To do so, add a new page fault
+> > return code, RET_PF_WRITE_PROTECTED, to explicitly and precisely track
+> > such page faults.
+> > 
+> > If a page fault requires emulation for any MMIO (or any reason besides
+> > write-protection), trying to unprotect the gfn is pointless and risks
+> > putting the vCPU into an infinite loop.  E.g. KVM will put the vCPU into
+> > an infinite loop if the vCPU manages to trigger MMIO on a page table walk.
+> > 
+> > Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
+> > Cc: stable@vger.kernel.org
+> 
+> Do we really want Cc: stable@ for all these patches?  Most of them are of
+> the "if it hurts, don't do it" kind;
 
-On Mon, Aug 12, 2024 at 08:22:46PM +0200, Danilo Krummrich wrote:
-> Hi,
-> 
-> This patch series adds generic kernel allocator support for Rust, which so far
-> is limited to `kmalloc` allocations.
-> 
-> In order to abstain from (re-)adding unstable Rust features to the kernel, this
-> patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
-> nor does it extend the `BoxExt` and `VecExt` extensions.
-> 
-> Instead, this series introduces a kernel specific `Allocator` trait, which is
-> implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
-> implemented in the context of this series.
-> 
-> As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
-> Additionally, this series adds the following type aliases:
-> 
-> ```
-> pub type KBox<T> = Box<T, Kmalloc>;
-> pub type VBox<T> = Box<T, Vmalloc>;
-> pub type KVBox<T> = Box<T, KVmalloc>;
-> 
-> 
-> pub type KVec<T> = Vec<T, Kmalloc>;
-> pub type VVec<T> = Vec<T, Vmalloc>;
-> pub type KVVec<T> = Vec<T, KVmalloc>;
-> ```
-> 
-> With that, we can start using the kernel `Box` and `Vec` types throughout the
-> tree and remove the now obolete extensions `BoxExt` and `VecExt`.
-> 
-> For a final cleanup, this series removes the last minor dependencies to Rust's
-> `alloc` crate and removes it from the entire kernel build.
-> 
-> The series ensures not to break the `rusttest` make target by implementing the
-> `allocator_test` module providing a stub implementation for all kernel
-> `Allocator`s.
-> 
-> This patch series passes all KUnit tests, including the ones added by this
-> series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
-> without any issues.
-> 
-> This series is based on [1], which hit -mm/mm-unstable, and is also available
-> in [2].
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
-> 
-> Changes in v5:
->  - (safety) comment / documentation fixes suggested by Alice, Benno and Gary
->  - remove `Unique<T>` and implement `Send` and `Sync` for `Box` and `Vec`
->  - use `KMALLOC_MAX_SIZE` for `KVmalloc` test and add a `Kmalloc` test that
->    expects to fail for `KMALLOC_MAX_SIZE`
->  - create use constants `KREALLOC`, `VREALLOC` and `KVREALLOC` for
->    `ReallocFuncs`
->  - drop `Box::drop_contents` for now, will add it again, once I actually rebase
->    on the original patch that introduces it
+True.  I was thinking that the VMX PFERR_GUEST_{FINAL,PAGE}_MASK bug in particular
+was stable-worthy, but until TDX comes along, it's only relevant if guests puts
+PDPTRs in an MMIO region.  And in that case, the guest is likely hosed anyway,
+the only difference is if it gets stuck or killed.
 
-I'm trying to put your series on rust-dev, but I hit a few conflicts due
-to the conflict with `Box::drop_contents`, which has been in rust-dev
-for a while. And the conflict is not that trivial for me to resolve.
-So just a head-up, that's a requirement for me to put it on rust-dev for
-more tests from my end ;-)
+I'll drop the stable@ tags unless someone objects.
 
-Regards,
-Boqun
+> as long as there are no infinite loops in a non-killable region, I prefer not
+> to complicate our lives with cherry picks of unknown quality.
 
->  - improve usage of `size_of_val` in `Box`
->  - move `InPlaceInit` and `ForeignOwnable` impls into kbox.rs
->  - fix missing `Box` conversions in rnull.rs
->  - reworked `Cmalloc` to keep track of the size of memory allocations itself
->  - remove `GlobalAlloc` together with the `alloc` crate to avoid a linker error
->  - remove `alloc` from scripts/generate_rust_analyzer.py
+Yeah, the RET_PF_WRITE_PROTECTED one in particular has high potential for a bad
+cherry-pick.
+
+> That said, this patch could be interesting for 6.11 because of the effect on
+> prefaulting (see below).
 > 
-[...]
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/kvm/mmu/mmu.c          | 78 +++++++++++++++++++--------------
+> >   arch/x86/kvm/mmu/mmu_internal.h |  3 ++
+> >   arch/x86/kvm/mmu/mmutrace.h     |  1 +
+> >   arch/x86/kvm/mmu/paging_tmpl.h  |  2 +-
+> >   arch/x86/kvm/mmu/tdp_mmu.c      |  6 +--
+> >   5 files changed, 53 insertions(+), 37 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 901be9e420a4..e3aa04c498ea 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -2914,10 +2914,8 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, struct kvm_memory_slot *slot,
+> >   		trace_kvm_mmu_set_spte(level, gfn, sptep);
+> >   	}
+> > -	if (wrprot) {
+> > -		if (write_fault)
+> > -			ret = RET_PF_EMULATE;
+> > -	}
+> > +	if (wrprot && write_fault)
+> > +		ret = RET_PF_WRITE_PROTECTED;
+> >   	if (flush)
+> >   		kvm_flush_remote_tlbs_gfn(vcpu->kvm, gfn, level);
+> > @@ -4549,7 +4547,7 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+> >   		return RET_PF_RETRY;
+> >   	if (page_fault_handle_page_track(vcpu, fault))
+> > -		return RET_PF_EMULATE;
+> > +		return RET_PF_WRITE_PROTECTED;
+> >   	r = fast_page_fault(vcpu, fault);
+> >   	if (r != RET_PF_INVALID)
+> > @@ -4642,7 +4640,7 @@ static int kvm_tdp_mmu_page_fault(struct kvm_vcpu *vcpu,
+> >   	int r;
+> >   	if (page_fault_handle_page_track(vcpu, fault))
+> > -		return RET_PF_EMULATE;
+> > +		return RET_PF_WRITE_PROTECTED;
+> >   	r = fast_page_fault(vcpu, fault);
+> >   	if (r != RET_PF_INVALID)
+> > @@ -4726,6 +4724,9 @@ static int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code,
+> >   	case RET_PF_EMULATE:
+> >   		return -ENOENT;
+> > +	case RET_PF_WRITE_PROTECTED:
+> > +		return -EPERM;
+> 
+> Shouldn't this be a "return 0"?  Even if kvm_mmu_do_page_fault() cannot
+> fully unprotect the page, it was nevertheless prefaulted as much as
+> possible.
+
+Hmm, I hadn't thought about it from that perspective.  Ah, right, and the early
+check in page_fault_handle_page_track() only handles PRESENT faults, so KVM will
+at least install a read-only mapping.
+
+So yeah, agreed this should return 0.
 
