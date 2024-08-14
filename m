@@ -1,140 +1,116 @@
-Return-Path: <linux-kernel+bounces-285969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F9F99514FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:08:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFEF951500
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E36951F26207
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:07:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EFE8284602
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CAA13A41F;
-	Wed, 14 Aug 2024 07:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z86Fe3O8"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0E713AA36;
+	Wed, 14 Aug 2024 07:08:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C416383BF;
-	Wed, 14 Aug 2024 07:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1CA27446;
+	Wed, 14 Aug 2024 07:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723619268; cv=none; b=DhjH+mw1m3iKHH2rkg/WJyfjUVoIezMmHMUC8yHBU/9SJHkVrnF1DYd2BD0uvgLN+krOBm5kY6bmiDfbLq7FFjF8y4OvkepdHq4O8LDWHGS6Hhy/bqa6gpWuRkQXZv1sOKFrpDotiO0qKZju6NhQGrFcWuCLtZZSHE+MpxD//4w=
+	t=1723619314; cv=none; b=idYtXZPFc5OwY5IWX7oCtZ38DOOwQ7k38eo8De56q+EcnNFLkKLbU3v88Y6qNLZNJo8Vl9SfGUAnN67vXVZvOU/pkcVAiVTWQ8/XBaiYxtVucWubpyKbakemS0GXok8T2gYF6Tc3UMyXLxbG9GIY6epR1TzhTafAVefojlExMkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723619268; c=relaxed/simple;
-	bh=Cpi8GQLgY9JlTH5eHcbt02bHo3t8kotWxohYFaE602M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QUcWvZ85N9phGzoNHNDWdcmhoGwh4sXt+MpyBXZC1EnB+9TpOjQs5YYl76Uf3X4i6FgukaqY1ZRvMyECSwcNOosPyVv3waWaOziflvNM/ccbGUPVcXeHZVdjLzCfukTETeqv+Bl77njD4m6m7FhJaDXOIJdRHo38Dp69LHlIrP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Z86Fe3O8; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47E77Nhm025367;
-	Wed, 14 Aug 2024 02:07:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723619243;
-	bh=MKLdCsSbTvY34AF4URxfsRZ7/JQWH7kQVV6BxO6LVaE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Z86Fe3O8vjE4zlWgdEvUiSG2B08Fj3gxBtPXzWb1Ys24YEYwxo0Vi8LjV4c3LVsrE
-	 e5t4oCxjDiVAZRGFeERGmN0LS5zvqiKsHtt3CHfYtJc+P/gFBqH+1bxvMLAtWWYUXJ
-	 6Sd6kE9cKTQubjWDEju0jsZJCpDopmzjuBCAGCkE=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47E77NeO038949
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 14 Aug 2024 02:07:23 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
- Aug 2024 02:07:23 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 14 Aug 2024 02:07:23 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47E77FJ7003619;
-	Wed, 14 Aug 2024 02:07:15 -0500
-Message-ID: <dd2cf042-f354-4512-9326-cfe5dd29dd9d@ti.com>
-Date: Wed, 14 Aug 2024 12:37:14 +0530
+	s=arc-20240116; t=1723619314; c=relaxed/simple;
+	bh=Gm3F+nnI84YxUt6gJumvaW5Wn1prq0qr+MJe9fRtBbU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=IayDNOCBKBZ5APiu8/CizdzqmRcvKqHMf3gbigOj07LqeZCEE20K/FQcNtYiVITYmILZb5aCgPyfmEvJKfw8YDv8acmXvu5DGoCEIrsaKURlVkqfaqoCHEHT/Npr96KTCsQCL7cQsIMiq3vm2AQuMyZTpQAbMrY/dkq8kSUK/rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WkK8y1j2dz4f3jZL;
+	Wed, 14 Aug 2024 15:08:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8E2EC1A1537;
+	Wed, 14 Aug 2024 15:08:27 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBXzILpV7xmHJyaBg--.14959S3;
+	Wed, 14 Aug 2024 15:08:27 +0800 (CST)
+Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
+ than one blocks per folio
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+ <ZrxBfKi_DpThYo94@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
+Date: Wed, 14 Aug 2024 15:08:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] dt-bindings: soc: ti: pruss: Add documentation for
- PA_STATS support
-To: Jakub Kicinski <kuba@kernel.org>, Nishanth Menon <nm@ti.com>
-CC: Roger Quadros <rogerq@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Sai Krishna
-	<saikrishnag@marvell.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Dan Carpenter
-	<dan.carpenter@linaro.org>,
-        Diogo Ivo <diogo.ivo@siemens.com>,
-        Heiner
- Kallweit <hkallweit1@gmail.com>,
-        Kory Maincent <kory.maincent@bootlin.com>,
-        Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Tero
- Kristo <kristo@kernel.org>,
-        <srk@ti.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20240729113226.2905928-1-danishanwar@ti.com>
- <20240729113226.2905928-2-danishanwar@ti.com>
- <b6196edc-4e14-41e9-826e-7b58f9753ef5@kernel.org>
- <20240806150341.evrprkjp3hb6d74p@mockup>
- <39ed6b90-aab6-452d-a39b-815498a00519@ti.com>
- <20240812172218.3c63cfaf@kernel.org>
+In-Reply-To: <ZrxBfKi_DpThYo94@infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20240812172218.3c63cfaf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXzILpV7xmHJyaBg--.14959S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw47uF4UJF4kKr1xtw47Arb_yoW8JFyfpF
+	WxKa15Gr48tF1fZ3srXayUXr1rK3yfJrW3GFZIq3W29anxGr1a9F1qg3Z0ga47JrnrJF48
+	Xr47Xa4xGFy5Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-
-On 13/08/24 5:52 am, Jakub Kicinski wrote:
-> On Mon, 12 Aug 2024 11:20:56 +0530 MD Danish Anwar wrote:
->>> If the net maintainers are OK, they could potentially take the binding
->>> patch along with the driver mods corresponding to this - I am a bit
->>> unsure of picking up a binding if the driver implementation is heading
->>> the wrong way.   
+On 2024/8/14 13:32, Christoph Hellwig wrote:
+> On Mon, Aug 12, 2024 at 08:11:56PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
 >>
->> Hi Jakub, Paolo, David, Andrew,
->>
->> Will it be okay to pick this binding patch to net-next tree. Nishant is
->> suggesting since the driver changes are done in drivers/net/ the binding
->> can be picked by net maintainers.
->>
->> Please let us know if it will be okay to take this binding to net-next.
->> I can post a new series with just the binding and the driver patch to
->> net-next if needed.
+>> Now we allocate ifs if i_blocks_per_folio is larger than one when
+>> writing back dirty folios in iomap_writepage_map(), so we don't attach
+>> an ifs after buffer write to an entire folio until it starts writing
+>> back, if we partial truncate that folio, iomap_invalidate_folio() can't
+>> clear counterpart block's dirty bit as expected. Fix this by advance the
+>> ifs allocation to __iomap_write_begin().
 > 
-> Nishanth, could you send an official Ack tag?
+> Wouldn't it make more sense to only allocate the ifѕ in
+> iomap_invalidate_folio when it actually is needed?
 > 
-> No problem with merging it via net-next.
-> On the code itself you may want to use ethtool_puts().
 
-Thanks Jakub, I will send out a new series with just the binding and
-driver patch and send it to net-next. I will take care of ethtool_puts().
+Therefore, you mean current strategy of allocating ifs is to try to delay
+the allocation time as much as possible? The advantage is that it could
+avoid some unnecessary allocation operations if the whole folio are
+invalidated before write back. right?
 
--- 
-Thanks and Regards,
-Danish
+> Also do you have a reproducer for this?
+> 
+
+This mistake doesn't case any real problem now, because once the folio
+has been partial truncated, the counterpart range becomes a hole, although
+the ifs dirty bit is not cleared, iomap_writepage_map_blocks() can deal
+with it and won't cause any problem. Hence I don't have reproducer for
+this.
+
+Thanks,
+Yi.
+
 
