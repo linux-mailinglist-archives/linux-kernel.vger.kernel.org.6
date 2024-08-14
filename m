@@ -1,202 +1,227 @@
-Return-Path: <linux-kernel+bounces-286506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAB1951BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:30:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4607E951BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C82E41C2193A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:30:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6CB3B25F9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2B61B29A3;
-	Wed, 14 Aug 2024 13:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D2E1B29CE;
+	Wed, 14 Aug 2024 13:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjn9mCJk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiGV8uqq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521F31B14F9;
-	Wed, 14 Aug 2024 13:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCF41D52D;
+	Wed, 14 Aug 2024 13:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723642202; cv=none; b=I7yEYTHLJvs5lJxAOeQZy6mrnnHLOs8bTxjQZp4X0iwLb5r5mNeNEJ9WIMwIXS48kN+qJZ8lxaTVRDBLm5KstRCJTucTSNspM6Hwq/U/1vDR9INWJ1hMIXl+vTyh/YZW2AsGjs+mn133t4adFCXF7JF/Txw2PMnrS83ue99KGEM=
+	t=1723642300; cv=none; b=u5Z1XawT5AMhAsYm98e23fnyUtgsbNK9DhoEPi7Tt9DbztHLDiAS7IJrC/o2JbF+G6SaIUkPNghwL1XvDEP/TbHiGbZ3atS7cd06Gx5+FDFOMhCgYvnekKW+qt/VsKZS+pBmMBDOaCrGIg7vsH4x4EwswGaYGx6pRKofaCboFDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723642202; c=relaxed/simple;
-	bh=r8U02fHcDjglTW1ClVVqzhXOPoM7YtNCoUpax9EOHuA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MI+Xa9AbRYdBRYOiBkd5lzamg+BY119hkKh2Q4159SaPhCo4w+9EBeReUa3KOFSW8aD2qWQcHPs0v2EYOvNVipxbHcKmLy4ShErb4q6HKN+n+i1SBwJmrw9Q7lEl/3jeR9A6HidhdCkrCCyb0YeRsvX58WLMq2WtYWhCGq8G/nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjn9mCJk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56FE7C32786;
-	Wed, 14 Aug 2024 13:30:00 +0000 (UTC)
+	s=arc-20240116; t=1723642300; c=relaxed/simple;
+	bh=N2JwO/fffqrGNr/VjKdAj72jF63IGLf9g/4hcjAjCOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oJWtYhoyCQP8Oos6GJQLFqbBbW7aYCzbqvaDxdRh8TfGRyrxsG6hN1tpxgaGRUmvXrBKOoAr2INl2qlugUoC7nEVJJNNK3vNFdLaNcUplqrHdlhTDFgBlDrDyfOUseOiYotG4+OiwLcrWx/S1q++7VORU9zfJxXUjAVlf+q8Y7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiGV8uqq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC72C4AF12;
+	Wed, 14 Aug 2024 13:31:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723642201;
-	bh=r8U02fHcDjglTW1ClVVqzhXOPoM7YtNCoUpax9EOHuA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bjn9mCJkWCILjYbICd0fecqIzkCxB3tkBgZFRU8EGY0X2ZuIdOcTiL4IDUaVhvzs7
-	 kWK2XLtb2bVtrKB7kG5WfZHXo0XGJ/5L7C3FkwtU1wKQ0SrvwlV1CLIQskiVZAaQEC
-	 2uIbVZiREp8+/tuv8rbNGnZgSjS4EZzQTNjrUREso0LJKQiQrwS7AWnWDKljZZL+Q7
-	 qSQNgAaYnrDeKpwOqT55CQia1tGoh5ImPB3wTzbeeJLGwPU2maPIuDi7hvbTmJwF2d
-	 vrDDgBgVgHolRbFZoWkVRrprSC++X56P5w/Fmrqlg4bzGKWSjOSCD8kBKKYes2qImY
-	 EGci4jDfjobtg==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Wed, 14 Aug 2024 15:29:46 +0200
-Message-ID: <20240814-vfs-fixes-93bdbd119998@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1723642299;
+	bh=N2JwO/fffqrGNr/VjKdAj72jF63IGLf9g/4hcjAjCOU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CiGV8uqqCefq0FbnKNBCHJSjryx8f/ObU/tr6rx2+q3/7BpGwiEmW0IHARgbJwFiq
+	 6h8nvCASuMqVefMcqEfmVB08gPXFsCnBEwOpZLWOleiIel0H78Mv/7HVOulsWgYYI/
+	 zg2Pi2Je5YHzHCrriRTT1mpy947Sqbdotnfd2vEDYRNxODo1y6HBwDUyvrNkV6StMT
+	 y2H1Fdn+Owrdt5oHubv0bHoAhZty6mL1jSaw/gHWX0hiA1oyiH0XA5EhavzEJ4/3sR
+	 HERwwLKHU9CzKE8TPZXYPK1vHJrkEUZkJsRSSpf5OsffG0ZSUh3WpdTWOLdY+Nv+bl
+	 QfTyefXf2KPtQ==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7aac70e30dso739888866b.1;
+        Wed, 14 Aug 2024 06:31:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmJXF+eVpTwjtRplXNHfNAwQd0dAmnlVVfTd5H75hR/0URW/voAiCAoADEbH6tcZ3AZcpESdmzpHu7TFuMxu7/XHnojr4JKflBwZUYM6mZUFY/7jIPEtdneO2zS7MA6Zxt+PKZ/jfxti8=
+X-Gm-Message-State: AOJu0Yy0vYMkAO4o2cSkvWnOiX/4FJXhY5z4EZYz0q/me3Xk0q6EVABU
+	sdveAmoYud6pDjy3TdVo1o8rznsDIX12gDm7gXpXu3qyocu+jdOrg0V72coqyEqZf8+t+uwya0U
+	IARFg0D/7+V7cd0DFCsTa5DUvm4g=
+X-Google-Smtp-Source: AGHT+IE4tbMsQyQ8pyIi2iebjAdBbDtNjchc/W2yBZTKl44QyGf35FA6kMeBHuRgtmpHys3A0WDL2aAA0CtlpHnpQGA=
+X-Received: by 2002:a17:907:7e9b:b0:a72:4676:4f8 with SMTP id
+ a640c23a62f3a-a83670955fdmr229678066b.62.1723642298112; Wed, 14 Aug 2024
+ 06:31:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5660; i=brauner@kernel.org; h=from:subject:message-id; bh=r8U02fHcDjglTW1ClVVqzhXOPoM7YtNCoUpax9EOHuA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTt2ejnr7vM4LDMuqtFhs9MLj3Z0Gj0VvxzespO/kVPy 50VsmVudpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzETY2R4e4TFomt3+d6rZTe knFyp1399nXusy9mNR3l7F587nqGuQDDXxnPIje2iKMfZ68SP8R4V/erS8eHFT5S525xas8OXlt nyQEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240814-dev_replace_rwsem-new-v1-1-c42120994ce6@kernel.org>
+In-Reply-To: <20240814-dev_replace_rwsem-new-v1-1-c42120994ce6@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Wed, 14 Aug 2024 14:31:00 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H45Ym_QHPYaregfVvUDzaVpm5i62G8==yNQ3Bfd63Ffmw@mail.gmail.com>
+Message-ID: <CAL3q7H45Ym_QHPYaregfVvUDzaVpm5i62G8==yNQ3Bfd63Ffmw@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: relax dev_replace rwsem usage on scrub with rst
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Filipe Manana <fdmanana@suse.com>, Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-/* Summary */
-This contains fixes for this merge window:
+On Wed, Aug 14, 2024 at 1:46=E2=80=AFPM Johannes Thumshirn <jth@kernel.org>=
+ wrote:
+>
+> From: Johannes Thumshin <johannes.thumshirn@wdc.com>
+>
+> Running fstests btrfs/011 with MKFS_OPTIONS=3D"-O rst" to force the usage=
+ of
+> the RAID stripe-tree, we get the following splat from lockdep:
+>
+>  BTRFS info (device sdd): dev_replace from /dev/sdd (devid 1) to /dev/sdb=
+ started
+>
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>  WARNING: possible recursive locking detected
+>  6.11.0-rc3+ #592 Not tainted
+>  --------------------------------------------
+>  btrfs/4203 is trying to acquire lock:
+>  ffff888103f35c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_ma=
+p_block+0x39f/0x2250
+>
+>  but task is already holding lock:
+>  ffff888103f35c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_ma=
+p_block+0x39f/0x2250
+>
+>  other info that might help us debug this:
+>   Possible unsafe locking scenario:
+>
+>         CPU0
+>         ----
+>    lock(&fs_info->dev_replace.rwsem);
+>    lock(&fs_info->dev_replace.rwsem);
+>
+>   *** DEADLOCK ***
 
-VFS:
+Is this really the full splat?
+There should be a stack trace showing that the problem happens when
+btrfs_map_block() is called within the scrub/dev replace code, no?
 
--  Fix the name of file lease slab cache. When file leases were split out of
-   file locks the name of the file lock slab cache was used for the file leases
-   slab cache as well.
 
-- Fix a type in take_fd() helper.
+>
+>   May be due to missing lock nesting notation
+>
+>  1 lock held by btrfs/4203:
+>   #0: ffff888103f35c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btr=
+fs_map_block+0x39f/0x2250
+>
+> This fixes a deadlock on RAID stripe-tree where device replace performs a
+> scrub operation, which in turn calls into btrfs_map_block() to find the
+> physical location of the block.
+>
+> Cc: Filipe Manana <fdmanana@suse.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>
+>
+> Signed-off-by: Johannes Thumshirn <jth@kernel.org>
+> ---
+>  fs/btrfs/volumes.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index 4b9b647a7e29..e5bd2bee912d 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6459,6 +6459,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
+enum btrfs_map_op op,
+>         int dev_replace_is_ongoing =3D 0;
+>         u16 num_alloc_stripes;
+>         u64 max_len;
+> +       bool rst;
 
-- Fix infinite directory iteration for stable offsets in tmpfs.
+The name is a bit confusing, something like "update_rst" is more
+meaningful and clearly indicates it's a boolean/condition.
 
-- When the icache is pruned all reclaimable inodes are marked with I_FREEING
-  and other processes that try to lookup such inodes will block.
+>
+>         ASSERT(bioc_ret);
+>
+> @@ -6475,6 +6476,8 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
+enum btrfs_map_op op,
+>         if (io_geom.mirror_num > num_copies)
+>                 return -EINVAL;
+>
+> +       rst =3D btrfs_need_stripe_tree_update(fs_info, map->type);
+> +
+>         map_offset =3D logical - map->start;
+>         io_geom.raid56_full_stripe_start =3D (u64)-1;
+>         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
+> @@ -6597,13 +6600,19 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
+, enum btrfs_map_op op,
+>                  * For all other non-RAID56 profiles, just copy the targe=
+t
+>                  * stripe into the bioc.
+>                  */
+> +               if (rst && dev_replace_is_ongoing)
+> +                       up_read(&dev_replace->rwsem);
+>                 for (int i =3D 0; i < io_geom.num_stripes; i++) {
+>                         ret =3D set_io_stripe(fs_info, logical, length,
+>                                             &bioc->stripes[i], map, &io_g=
+eom);
 
-  But some filesystems like ext4 can trigger lookups in their inode evict
-  callback causing deadlocks. Ext4 does such lookups if the ea_inode feature is
-  used whereby a separate inode may be used to store xattrs.
+So, why is this safe? The change log doesn't mention anything about
+the chosen fix.
 
-  Introduce I_LRU_ISOLATING which pins the inode while its pages are
-  reclaimed. This avoids inode deletion during inode_lru_isolate() avoiding the
-  deadlock and evict is made to wait until I_LRU_ISOLATING is done.
+So even if this is called while we are not in the device replace code,
+btrfs_need_stripe_tree_update() can return true.
+In that case we unlock the device replace semaphore and can result in
+a use-after-free on a device, like this:
 
-netfs:
+1) btrfs_map_block() called while not in the device replace code
+callchain, and there's a device replace for device X running in
+parallel;
 
-- Fault in smaller chunks for non-large folio mappings for filesystems that
-  haven't been converted to large folios yet.
+2) btrfs_need_stripe_tree_update() returns true;
 
-- Fix the CONFIG_NETFS_DEBUG config option. The config option was renamed a
-  short while ago and that introduced two minor issues. First, it depended on
-  CONFIG_NETFS whereas it wants to depend on CONFIG_NETFS_SUPPORT. The former
-  doesn't exist, while the latter does. Second, the documentation for the
-  config option wasn't fixed up.
+3) we unlock device replace semaphore;
 
-- Revert the removal of the PG_private_2 writeback flag as ceph is using it and
-  fix how that flag is handled in netfs.
+4) we call set_io_stripe() which makes bioc point to device X, which
+is the old device (the one being replaced);
 
-- Fix DIO reads on 9p. A program watching a file on a 9p mount wouldn't see any
-  changes in the size of the file being exported by the server if the file was
-  changed directly in the source filesystem. Fix this by attempting to read the
-  full size specified when a DIO read is requested.
+5) before we read lock the device replace semaphore at
+btrfs_map_block(), the device replace finishes and frees device X;
 
-- Fix a NULL pointer dereference bug due to a data race where a cachefiles
-  cookies was retired even though it was still in use. Check the cookie's
-  n_accesses counter before discarding it.
+6) the bioc still points to device X... and then it's used for doing IO lat=
+er
 
-nsfs:
+Can't this happen? I don't see why not.
+If this is safe we should have an explanation in the changelog about
+the details.
 
-- Fix ioctl declaration for NS_GET_MNTNS_ID from _IO() to _IOR() as the kernel
-  is writing to userspace.
+Thanks.
 
-pidfs:
 
-- Prevent the creation of pidfds for kthreads until we have a use-case for it
-  and we know the semantics we want. It also confuses userspace why they can
-  get pidfds for kthreads.
-
-squashfs:
-
-- Fix an unitialized value bug reported by KMSAN caused by a corrupted symbolic
-  link size read from disk. Check that the symbolic link size is not larger
-  than expected.
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11-rc4.fixes
-
-for you to fetch changes up to 810ee43d9cd245d138a2733d87a24858a23f577d:
-
-  Squashfs: sanity check symbolic link size (2024-08-13 13:56:46 +0200)
-
-----------------------------------------------------------------
-vfs-6.11-rc4.fixes
-
-----------------------------------------------------------------
-Christian Brauner (2):
-      nsfs: fix ioctl declaration
-      pidfd: prevent creation of pidfds for kthreads
-
-David Howells (2):
-      netfs, ceph: Revert "netfs: Remove deprecated use of PG_private_2 as a second writeback flag"
-      netfs: Fix handling of USE_PGPRIV2 and WRITE_TO_CACHE flags
-
-Dominique Martinet (1):
-      9p: Fix DIO read through netfs
-
-Lukas Bulwahn (1):
-      netfs: clean up after renaming FSCACHE_DEBUG config
-
-Mathias Krause (1):
-      file: fix typo in take_fd() comment
-
-Matthew Wilcox (Oracle) (1):
-      netfs: Fault in smaller chunks for non-large folio mappings
-
-Max Kellermann (1):
-      fs/netfs/fscache_cookie: add missing "n_accesses" check
-
-Omar Sandoval (1):
-      filelock: fix name of file_lease slab cache
-
-Phillip Lougher (1):
-      Squashfs: sanity check symbolic link size
-
-Zhihao Cheng (1):
-      vfs: Don't evict inode under the inode lru traversing context
-
-yangerkun (1):
-      libfs: fix infinite directory reads for offset dir
-
- Documentation/filesystems/caching/fscache.rst |   8 +-
- fs/9p/vfs_addr.c                              |   3 +-
- fs/afs/file.c                                 |   3 +-
- fs/ceph/addr.c                                |  28 ++++-
- fs/ceph/inode.c                               |   2 -
- fs/inode.c                                    |  39 ++++++-
- fs/libfs.c                                    |  35 ++++--
- fs/locks.c                                    |   2 +-
- fs/netfs/Kconfig                              |   2 +-
- fs/netfs/buffered_read.c                      | 123 +++++++++++++++++---
- fs/netfs/buffered_write.c                     |   2 +-
- fs/netfs/fscache_cookie.c                     |   4 +
- fs/netfs/io.c                                 | 161 +++++++++++++++++++++++++-
- fs/netfs/objects.c                            |  10 --
- fs/netfs/write_issue.c                        |   4 +-
- fs/nfs/fscache.c                              |   5 +-
- fs/nfs/fscache.h                              |   2 -
- fs/smb/client/file.c                          |   3 +-
- fs/squashfs/inode.c                           |   7 +-
- include/linux/file.h                          |   2 +-
- include/linux/fs.h                            |   5 +
- include/linux/netfs.h                         |   3 -
- include/trace/events/netfs.h                  |   2 +
- include/uapi/linux/nsfs.h                     |   3 +-
- kernel/fork.c                                 |  25 +++-
- 25 files changed, 412 insertions(+), 71 deletions(-)
+> +
+>                         if (ret < 0)
+>                                 break;
+>                         io_geom.stripe_index++;
+>                 }
+> +               if (rst && dev_replace_is_ongoing)
+> +                       down_read(&dev_replace->rwsem);
+> +
+>         }
+>
+>         if (ret) {
+>
+> ---
+> base-commit: 4ce21d87ae81a86b488e0d326682883485317dcb
+> change-id: 20240814-dev_replace_rwsem-new-91c160579246
+>
+> Best regards,
+> --
+> Johannes Thumshirn <jth@kernel.org>
+>
+>
 
