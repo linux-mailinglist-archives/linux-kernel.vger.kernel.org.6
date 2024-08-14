@@ -1,80 +1,93 @@
-Return-Path: <linux-kernel+bounces-286083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0FF951645
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:14:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8634951656
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D8E28347D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1221C21ADE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81AF13D539;
-	Wed, 14 Aug 2024 08:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D97143888;
+	Wed, 14 Aug 2024 08:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="xp5F+2lZ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="NAaHfk4b"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC74394
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8119E13E8A5
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723623257; cv=none; b=mrUYPxAellqqUYFV3DAIL8JRcSGrUYH1nVz4YeLWwB8bQhlfkpkuel3JEGA7eyy/k75oWM8R/DCcD1L6djVwMqsHxtncYgjU9B/kPgItAxg6x2CbJkuKmdOhkGTVXer7k0nJU/Yfn/9AKpsMp4bj7Bvr3ef8WSrV6wtEHI9V8u4=
+	t=1723623284; cv=none; b=rGvVNeVrtIBKNR8MJIAZUinLYQO3AxQ4gjIYIgArvT3/hQ4/ALxpr8kEmbAYsfw0XrrfAbSBZbiGCseauDkH6KmWV4h4aTVRTFEa/wkvudyy53RCx5N4zv9CLx5iPrt/ele9kj4SLmh0wUl7TpudOQcsht30gFNsCxFdYt9AaA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723623257; c=relaxed/simple;
-	bh=lUpCW99eNg5vkK25e0gKoFBbywiIER/+T1SiprkyiTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iZwXXH1xD6eb/q+Zji8V7C4NVk6tvKbapq5HxZ8rvgqPDlRaeU5gMR8MEYZyxsi9wdFg1j6l/bKHOgN0xrOpebc1UlJ07/pfP0coZ0cOd57YBkB+baHvatlizD9tOK6dbeggUGqYH230KGVAO7iBjMalcLlcx9LmvOFeyuH60EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=xp5F+2lZ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42803bbf842so62536095e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:14:14 -0700 (PDT)
+	s=arc-20240116; t=1723623284; c=relaxed/simple;
+	bh=bWRUPKaBCAepxJb/nx46InbXzDqKmciFWUI76EG4SMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BLQKC/ft6H31Rm1b535WSQmcMGXr0yp6UijGA91NmmRjWWwkRVk8f9IyPTxLWAPRiOF2caD1MUnQBKvxIiWUSdIsbjB4IF2EYl5WLAQWjKKh1e4W7veMV1hnZRhZ0K6/r6j9k7prjLa+4NRIK0rEHMzI8Apxvz3fcn/y4kCMKOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=NAaHfk4b; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ff4fa918afso37296895ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:14:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723623253; x=1724228053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a2MhE9T02qlicCXJIOlaKbeQ4BlaVRpkGM8J9n1s408=;
-        b=xp5F+2lZbO7fKF4bhzt5XD6ZfwDUA3B5kNq8mF2K25L8jhEatGqw9oz/+BTY4eNrTg
-         1er4goG/n8CUG0kT5GAV1qhFqKKcm2XJ674bHvzjjkuH8r3tvN4N6ESQSpdF2Pa1lYsd
-         8Sgf9AqTIQ2TScL2fu0xreF8mla7SFj/8QFHLiLCSXRjmbNq+5OQXwOPZzSWS9U0//3d
-         V2WA13QJEWr+dnekZCx7GWD+Pg+cEXStlG+OK0VYND3O6gneOzDpJro/Lo6A3e//LhkN
-         pVuGDhY3BWEkzTToC19aEwA48OuzdSds5jCc6Je1POxkG47H2SpEHKlin5R/wknpq+BK
-         J5Rg==
+        d=sifive.com; s=google; t=1723623283; x=1724228083; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MEQw5iaWeTmNPlPoMjn14hYPwuqLggUjPikbJBTJ9LE=;
+        b=NAaHfk4bxCoGekDjITscXso1KL+SOJ7Q8pIZFx1MFeAqIvAA6KcQdLcmXQ0lxjV5/V
+         bWwPl5MPKM4eJiMp4AQpvfv2UgMTSGcZkYL5DnklYBSz+REr8jjM1oeTeY0Gjp5Pj6Kt
+         ZnlL/XNbRVFNcPHe6MqXzjMbUcpkGVsiY08v0rLtiXN0QAlbo1Cjdxw28ANaLczBxpTV
+         b9ZI7P0H9nk70a+2hTYhEYo5bux4bVf8QLKxqWE25Wsb8/jj3YBR+xDydJMa3EnSdCkV
+         P7MAFLXLXc+D7JTNasp42ep4nYuIiEYObsm+1X9QVsxxsAnrbJQ0F75iRUjGE8WxReMQ
+         Ywfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723623253; x=1724228053;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a2MhE9T02qlicCXJIOlaKbeQ4BlaVRpkGM8J9n1s408=;
-        b=hmM9n5K/udvoxX1y7khjZ5J0fPrUuGVQ07imRktZGwX0MtwVNllP/0b4yHSqm+cG1v
-         1ja/T7hdGZyGt/OfapP4fFrk+bnu/2wieYkELSDhigBXtvnAt9zTHc3HtcmniMukk2Qg
-         sklzblfbOP4InlniW8Th6eVrNEBKT/Ma3yORlAmiC9tkoZ9fPGgkeKh7jKXtrHvK7xrP
-         perKCMRB+PiBMrMPmgMo2Sjr5MPtew02Z3lfg71sTiOqXQKiGQyhUQwkknz33dBuqXXr
-         FZb7QVi2ys1pMKO5A6IP3GcHlrdVdLjHLif3IDsEBobRpEO83PUXQhk3in7WYlSBEgtw
-         UMHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbei57ucMTTMiFeFYwDmzT6pnk29ORgFilp4z0cBPTR6g+izgi17C5C2UwuOcjkThO/vUJISlDv6VeRO1h7ggOymPuFMMIQpZdx6db
-X-Gm-Message-State: AOJu0YxjCNYbbytcfrhn9Mco8mJ1GTTwhwfR8jO0+RG9ejJiJmYOxg9x
-	1GcJAr4I1NtprtJH9Fd9p+DT84Y+Ofq3EBJUVERzIUd+f8iDnN+Rzh+8817rDi8=
-X-Google-Smtp-Source: AGHT+IHpolfM6NNB/HEnomjj8UK5buQ67rajgbPrjTUUH7umLau21LMSc1FmvzG4ylSy6BwkNA6bow==
-X-Received: by 2002:a5d:64ec:0:b0:369:b842:5065 with SMTP id ffacd0b85a97d-371777de9b8mr1845068f8f.41.1723623252726;
-        Wed, 14 Aug 2024 01:14:12 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd374bsm12132027f8f.109.2024.08.14.01.14.11
+        d=1e100.net; s=20230601; t=1723623283; x=1724228083;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MEQw5iaWeTmNPlPoMjn14hYPwuqLggUjPikbJBTJ9LE=;
+        b=Q+Qr0UwdTEHxhDw48rpBNMxuuIxtDfknnwR282IJKq/40LBmAYi1cqD0bdPN2nKKLb
+         r79ShitlKehz2lHu0m9NJjkDNL+XP+n1NXbgAmPTLLSKElI7KBy8/9Me+D4qKEv4qdVp
+         6l901rtU1abh8Npt0ch6fzFz4hjzmBB2Jh7e1lk+gJwhEAWJLzqm7dceu4blHGgZWVfA
+         Eh78sTm6uR5kNzEmKHvpoPvlvXwx3xYihEiIhC24aNgkXiBsVzMxDk6YfIH5FoVgZNNx
+         c5RpIcu5qW7mMaS3sHoiSS10jU2i91vbrkad1Fggwcn6ZhIySQ1whrG6ZArft7XSBjxx
+         rbhw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8+vNxDQ5WiTNtpsYd6nt7l2kQHAYcJ2xx/0zBH5TKkL9O7rvo+8RWh6y8n1f9t+jEuLYC+qwU51BNGhfNhsMZgS+n2e0eIuGgQU2t
+X-Gm-Message-State: AOJu0YywUSOBRDOpUHfk/8e6sFvVjCDuS72ukU/d7VKOFJfOmurHeq5Z
+	7icY0y5YCZ+Shej2KzDeRDutINs2SzDnLVHLkwZseGdbL5K/eozauWzwCLp4HGWvsdvcBRYQGj+
+	b
+X-Google-Smtp-Source: AGHT+IEcmQD/T7vtGlaVu0Q1HEccmE5Hnh2PFCTQZYTL5V2cFC70GH7Xpcj3f6WIrZqy6t2xP38Q5w==
+X-Received: by 2002:a17:902:c402:b0:201:e49e:aae9 with SMTP id d9443c01a7336-201e49eda06mr363875ad.44.1723623282655;
+        Wed, 14 Aug 2024 01:14:42 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd147ec4sm24868335ad.85.2024.08.14.01.14.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 01:14:12 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com
-Cc: linux-btrfs@vger.kernel.org,
+        Wed, 14 Aug 2024 01:14:42 -0700 (PDT)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org
+Cc: devicetree@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
 	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] btrfs: send: Fix grammar in comments
-Date: Wed, 14 Aug 2024 10:13:29 +0200
-Message-ID: <20240814081328.156202-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	Anup Patel <anup@brainfault.org>,
+	Conor Dooley <conor@kernel.org>,
+	kasan-dev@googlegroups.com,
+	Atish Patra <atishp@atishpatra.org>,
+	Evgenii Stepanov <eugenis@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: [PATCH v3 02/10] riscv: Add ISA extension parsing for pointer masking
+Date: Wed, 14 Aug 2024 01:13:29 -0700
+Message-ID: <20240814081437.956855-3-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240814081437.956855-1-samuel.holland@sifive.com>
+References: <20240814081437.956855-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,36 +96,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-s/a/an and s/then/than
+The RISC-V Pointer Masking specification defines three extensions:
+Smmpm, Smnpm, and Ssnpm. Add support for parsing each of them. The
+specific extension which provides pointer masking support to userspace
+(Supm) depends on the kernel's privilege mode, so provide a macro to
+abstract this selection.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Smmpm implies the existence of the mseccfg CSR. As it is the only user
+of this CSR so far, there is no need for an Xlinuxmseccfg extension.
+
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
- fs/btrfs/send.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index 4ca711a773ef..02686e82eb9b 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -62,7 +62,7 @@ struct fs_path {
- 		/*
- 		 * Average path length does not exceed 200 bytes, we'll have
- 		 * better packing in the slab and higher chance to satisfy
--		 * a allocation later during send.
-+		 * an allocation later during send.
- 		 */
- 		char pad[256];
- 	};
-@@ -1136,7 +1136,7 @@ static int iterate_dir_item(struct btrfs_root *root, struct btrfs_path *path,
- 	/*
- 	 * Start with a small buffer (1 page). If later we end up needing more
- 	 * space, which can happen for xattrs on a fs with a leaf size greater
--	 * then the page size, attempt to increase the buffer. Typically xattr
-+	 * than the page size, attempt to increase the buffer. Typically xattr
- 	 * values are small.
- 	 */
- 	buf_len = PATH_MAX;
+Changes in v3:
+ - Rebase on riscv/for-next (ISA extension list conflicts)
+ - Remove RISCV_ISA_EXT_SxPM, which was not used anywhere
+
+Changes in v2:
+ - Provide macros for the extension affecting the kernel and userspace
+
+ arch/riscv/include/asm/hwcap.h | 5 +++++
+ arch/riscv/kernel/cpufeature.c | 3 +++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+index 5a0bd27fd11a..aff21c6fc9b6 100644
+--- a/arch/riscv/include/asm/hwcap.h
++++ b/arch/riscv/include/asm/hwcap.h
+@@ -92,6 +92,9 @@
+ #define RISCV_ISA_EXT_ZCF		83
+ #define RISCV_ISA_EXT_ZCMOP		84
+ #define RISCV_ISA_EXT_ZAWRS		85
++#define RISCV_ISA_EXT_SMMPM		86
++#define RISCV_ISA_EXT_SMNPM		87
++#define RISCV_ISA_EXT_SSNPM		88
+ 
+ #define RISCV_ISA_EXT_XLINUXENVCFG	127
+ 
+@@ -100,8 +103,10 @@
+ 
+ #ifdef CONFIG_RISCV_M_MODE
+ #define RISCV_ISA_EXT_SxAIA		RISCV_ISA_EXT_SMAIA
++#define RISCV_ISA_EXT_SUPM		RISCV_ISA_EXT_SMNPM
+ #else
+ #define RISCV_ISA_EXT_SxAIA		RISCV_ISA_EXT_SSAIA
++#define RISCV_ISA_EXT_SUPM		RISCV_ISA_EXT_SSNPM
+ #endif
+ 
+ #endif /* _ASM_RISCV_HWCAP_H */
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index b3b9735cb19a..ba3dc16e14dc 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -377,9 +377,12 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_BUNDLE(zvksg, riscv_zvksg_bundled_exts),
+ 	__RISCV_ISA_EXT_DATA(zvkt, RISCV_ISA_EXT_ZVKT),
+ 	__RISCV_ISA_EXT_DATA(smaia, RISCV_ISA_EXT_SMAIA),
++	__RISCV_ISA_EXT_DATA(smmpm, RISCV_ISA_EXT_SMMPM),
++	__RISCV_ISA_EXT_SUPERSET(smnpm, RISCV_ISA_EXT_SMNPM, riscv_xlinuxenvcfg_exts),
+ 	__RISCV_ISA_EXT_DATA(smstateen, RISCV_ISA_EXT_SMSTATEEN),
+ 	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
+ 	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
++	__RISCV_ISA_EXT_SUPERSET(ssnpm, RISCV_ISA_EXT_SSNPM, riscv_xlinuxenvcfg_exts),
+ 	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
+ 	__RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
+ 	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
 -- 
-2.46.0
+2.45.1
 
 
