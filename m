@@ -1,172 +1,96 @@
-Return-Path: <linux-kernel+bounces-286057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D589515FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:00:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C6B9516A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2C5B215D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C76FC28328D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEED313D502;
-	Wed, 14 Aug 2024 08:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C2813DDC3;
+	Wed, 14 Aug 2024 08:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="UxgO7wir";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y35f4PEQ"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="rYivM9Zh"
+Received: from mx0a-00176a03.pphosted.com (mx0a-00176a03.pphosted.com [67.231.149.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6333BB59;
-	Wed, 14 Aug 2024 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8AB156CE;
+	Wed, 14 Aug 2024 08:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723622417; cv=none; b=qLxMLymFfQTpbKUrCrqLgY4U6dFSd7SW6UND0hyWOfSNy5WknWUpPwLMHzFHfSffEvtNqXGn1/DuwXzRHRzA7693/+ci2SktEn9LUT+0JxahYHsmaErvzYhwlK7UqLDIiy2droLEaLkQZDPYy871JmISMGChyuihAG6kwnm/XLo=
+	t=1723624493; cv=none; b=E5B07ZFPxurf09YzhxaGocXprMug9HII365QeeenL/Xjfecw59QxbMDr4HfSfqlvQrlT/axGs8FZtI8ayyGzWraJanQbCfo4oDtzN/FmD+QB82dfY39gyzrJxuxhAK8k+kzrWm02ObVh9eLtpe5OnR/QnTjbRaLS59kpqEv8vlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723622417; c=relaxed/simple;
-	bh=upYfMYxBsOchjs998xcox1lv5yKBThiWy8w6XZLUv38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gxwG3bqDV/6iJYIyRr43dmCqHQLoDM86syIm1qZxnPrAo4ZqrjogNL9Dt3l5SwqpPMAM37rsOR1v6PBQEZ8Cl01Sj1HBDj9jzmOGQIdlJlekL0C+t8LeY0jTqSoiwgFrGL8K+Q31hp5cTkmZLpk0WsINXDdZuPPg1l0MScu1Tho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=UxgO7wir; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y35f4PEQ; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id B7654138FD10;
-	Wed, 14 Aug 2024 04:00:14 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 14 Aug 2024 04:00:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723622414;
-	 x=1723708814; bh=b8j+zzW9AgMgFUPW3X+ImFRZLd2nxJo4Pyue7VTayh0=; b=
-	UxgO7wir/s7jA1z5nKZrKpU0UJHI2SFFVuVpSlgl2iBovywhwZpm2zrOW87YDeSu
-	SkHvVn2ArqVzwJz8eY9r4YTT4UF/dnPPmENi1djkDz+kqW2gKO8mF9Wu6OewlaQC
-	XqUljk64hfO7ClCXV8od7cCI00yGfJTuF91ARxI8DZZQ0MISjFEo5lXtdyviWita
-	tyEStkrTwAlrM2gXX2Z+G+uoA9h09WMtP1v4MUdPUm/UkmHTD7qycdZ3iE9nO8kU
-	wODwWrYDrxYCYBF57fUc0J0WWJZCmozM0uoCZjSJKiaJnQAqwlnZj2hOldTLw34F
-	OYgpOkhSQTdyQ5TT5ztZBA==
+	s=arc-20240116; t=1723624493; c=relaxed/simple;
+	bh=7QDLntWldbnSeuBAZcY/ZzFo2vh83BEtMVio1Wckw38=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qvpC2E8/8mh1XjigzSyC5NzkRFW5nk9fkYlnhV/3OtEgsYmeS9CXTm/+nrQ6BhoH0iUln60D0ICVI0APwKnyvxWLvBUXnpjSwq4Zs6yoYvLQNKruRtPC0FHryeS3nSaXzt1jbYkZzNO2vkYj4/9fTPwtjeCy8rVQ2EaCagbCt9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=rYivM9Zh; arc=none smtp.client-ip=67.231.149.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
+Received: from pps.filterd (m0047963.ppops.net [127.0.0.1])
+	by m0047963.ppops.net-00176a03. (8.18.1.2/8.18.1.2) with ESMTP id 47E79cEf048829;
+	Wed, 14 Aug 2024 03:29:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723622414; x=
-	1723708814; bh=b8j+zzW9AgMgFUPW3X+ImFRZLd2nxJo4Pyue7VTayh0=; b=Y
-	35f4PEQdL8i791Vta0LTpqE9ARr94lThnNmMlDdYKP3K2mCcbgMjyjkMvWRM6++B
-	wYxpEKt2ceh5PpQ/e4f67r0xPQGWxv3F06VzE1LIxpptxoPuT6mGPyHku82TH3oN
-	TQEHHTq14xyIQ4qtGhqjQQKFVj1RONhbyQjKRcOJXsu9f20lXFL6WZRq+QJjpmbz
-	mGTvzKkeLZa3x7rOFkSxRr3yVSrLwtDivjc8Sn5Rqe4uq7qPq8vYLetI0e4kHdW/
-	NRcRHPYSW5JrP13hAXVyHwX4er42UHC/6l7hjQ5T1LHtn6t6zJPgGIoA+ig6IeCy
-	C27o3EBc/gIlLrlAKeAGw==
-X-ME-Sender: <xms:DmS8ZhK8abLDVLB6RHVK3QN7RYgYrGpnlOjjnmFtlS_hDjsX0aQp3w>
-    <xme:DmS8ZtJbizrjfRDAcYoE5ZkFade3xSLNPqkQXflwYPXbNDsb0_sMDqzoLYQTgky7S
-    -mSCWe92uxK>
-X-ME-Received: <xmr:DmS8ZpsczdozNTLLUssP2Bb9J5L5kEEOqJrg4dhEK6VZEJbpt0Ug1OKF8naSk1CavYHLTtpb3oXWMnSOafMugEC58MBLGpF5D-MS-IZEGkl5_NGbGBNiBQ4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtfedguddvlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
-    jeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqe
-    enucggtffrrghtthgvrhhnpeefkefhgeeigeetleffgeelteejkeduvdfhheejhfehueei
-    tdehuefhkeeukeffheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthdpnhgspghrtghpthhtohephedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuh
-    igrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegruhhtohhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:DmS8Zibcz37vd77kqvDyx0t45GgZMDiO7s9q8H4CReh_5F2iP5qMZA>
-    <xmx:DmS8ZoakluHnKGNKXe_7JEF9OeP8hpcYaCEVP2ZOCVFxmyRsg_zmvA>
-    <xmx:DmS8ZmANY8V4s_P82cVm1DHtrK-Vl0OK_vZpasSEWE_7mW2A7bCxoA>
-    <xmx:DmS8ZmaDThBmymIAzEy0zAHRr2hAkdNogbxzTXx8Y1wqIY0wlZ-I2g>
-    <xmx:DmS8ZvXYaoq9F8ZjsdT0QXSUhw-7BDskdegQSyeY1w8q5NN8KjLza5c6>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Aug 2024 04:00:12 -0400 (EDT)
-Message-ID: <da8706b9-f1e5-4f88-9250-d05f33021cc7@themaw.net>
-Date: Wed, 14 Aug 2024 16:00:07 +0800
+	gehealthcare.com; h=cc:content-transfer-encoding:date:from
+	:message-id:mime-version:subject:to; s=outbound; bh=yYXBYwKvovwf
+	RYTq1dF6PXijGWFPPekmKyVhJGzLDtg=; b=rYivM9ZhXaFIYZCOzsh1wsi5H78x
+	IJUzdsCphQJmjmT93Q//Om8o6elHnbjR0ez8z4ACpsVK2o6diE47dc/COTy5E9z7
+	192r5ILsY51ABFuJfR5RvyZ1L4bY/znS+qR6N4D4evDkHN/zFHf+lNtEmLm6cxwr
+	zwwMwspo5tQRVA2ivMhElYgFEIfuMVH6Vk1QmvLTYOgLzIxckTGXNHz0wC2+hHKD
+	4j0lonbRmxGzKEUcaJOBfiEnKkBPyBDFREaYE1pL+d9K6w4IJzQGUib9cTzHN7P4
+	2ikkhpVYc+YPSeOe7u7OL0YjcBBGoulbHJopp2U6leLPdMnfq9fLdsLoSQ==
+From: Ian Ray <ian.ray@gehealthcare.com>
+To: Oliver Neukum <oneukum@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ian Ray <ian.ray@gehealthcare.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] cdc-acm: Add DISABLE_ECHO quirk for GE HealthCare UI Controller
+Date: Wed, 14 Aug 2024 10:29:05 +0300
+Message-Id: <20240814072905.2501-1-ian.ray@gehealthcare.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] autofs: add per dentry expire timeout
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
- autofs mailing list <autofs@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20240814035037.44267-1-raven@themaw.net>
- <20240814054552.GR13701@ZenIV>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net;
- keydata= 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
-In-Reply-To: <20240814054552.GR13701@ZenIV>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: Idp6fefdzsS78CHuuaq_A42ttE8PszEg
+X-Proofpoint-GUID: Idp6fefdzsS78CHuuaq_A42ttE8PszEg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_04,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 suspectscore=0
+ phishscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 spamscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408140051
 
+USB_DEVICE(0x1901, 0x0006) may send data before cdc_acm is ready, which
+may be misinterpreted in the default N_TTY line discipline.
 
-On 14/8/24 13:45, Al Viro wrote:
-> On Wed, Aug 14, 2024 at 11:50:37AM +0800, Ian Kent wrote:
->
->> +		inode_lock_shared(inode);
->> +		dentry = try_lookup_one_len(param->path, base, path_len);
->> +		inode_unlock_shared(inode);
->> +		if (!dentry)
->> +			return -ENOENT;
->> +		ino = autofs_dentry_ino(dentry);
-> Why can't we get ERR_PTR(...) from try_lookup_one_len() here?
+Signed-off-by: Ian Ray <ian.ray@gehealthcare.com>
+---
+ drivers/usb/class/cdc-acm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Oops!
-
-Thanks Al, I'll post a v2.
-
-
-Ian
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 0e7439dba8fe..0c1b69d944ca 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1761,6 +1761,9 @@ static const struct usb_device_id acm_ids[] = {
+ 	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
+ 	.driver_info = SINGLE_RX_URB,
+ 	},
++	{ USB_DEVICE(0x1901, 0x0006), /* GE Healthcare Patient Monitor UI Controller */
++	.driver_info = DISABLE_ECHO, /* DISABLE ECHO in termios flag */
++	},
+ 	{ USB_DEVICE(0x1965, 0x0018), /* Uniden UBC125XLT */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
+-- 
+2.39.2
 
 
