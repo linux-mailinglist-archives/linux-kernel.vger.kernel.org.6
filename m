@@ -1,142 +1,174 @@
-Return-Path: <linux-kernel+bounces-286424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323B9951AC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:25:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF3E951AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0BD21F236E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63F111F235B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709361B0127;
-	Wed, 14 Aug 2024 12:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8531B0123;
+	Wed, 14 Aug 2024 12:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiSZwyor"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="NRzbzD5Z"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9651B0104
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5066C1A00F3;
+	Wed, 14 Aug 2024 12:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723638338; cv=none; b=JsGG1byDjZTqkM99aXIIo6mWj0icm85NWHBtqTz0a/WOB12Zh3n27o230DsnYoFz1z3CT+QJTPuVg4uYEuKQz9Pq1BjmCZ1PWhQaXiWT6qGFGWb+odz17MsIZxjk4juQBC5Wuz2DKJt3PUXmaPRNtideRS/edaZq5XQdk+bqwc8=
+	t=1723638524; cv=none; b=X+aN0zZnK03ADbHVzOMBUgrdPVZPHlMK9IX1IJ6/ICLbpQ5kFPT4qJGq5cZu/NQyzw0ngjjVJdVwClO99EDdJNZ6xr0G3sej1/TmfuY3H39NK9Qo1GM6Mig1OjW/NdQ8OlXOSCCeGwvndkdQLEgnGIysf3+cxsw0cYwlx69YSbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723638338; c=relaxed/simple;
-	bh=fX0oLWQmmDLVQc37rhgERLHDmug4NM7ThPA89I0mRAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdZ+WFeyMFMWnGzUr/GG4LTHz1S38BHNq80hWmX3np91GdyMIVoQghwV2bCTlTuik5uoL7heADEKHJ4Ex9+i3ZlnDOdSYGrSjtP9U+eOi7KA9SUv6JsdWEpa9yMCnvyk2lf7JEwvUcsO+m8yk8TlvB7yHlmMDHH+E/te3jdI5HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiSZwyor; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723638336;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=svBUuEs8/JFesMl5FGn0p7w8fnS4q4NfMpbFkx3+AVA=;
-	b=SiSZwyorMR3r1EOUYuONCaBJM/MD2LvOuUzQfzENLc1ARBX8P9VC9XX0Aqt6ejLw3ErPIr
-	CiW2Att+2Z7Hfoj1NadlE53hN8D7NQ9GY5b+gRJb4COh3zbiIySoKXq9V7St+ROOWD3/zq
-	BXG2otlVn15oTxn8F6YqQTxxqC6LJ4A=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-GFhNPb5-Pr2UdJg0tYyZRw-1; Wed,
- 14 Aug 2024 08:25:33 -0400
-X-MC-Unique: GFhNPb5-Pr2UdJg0tYyZRw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD18C197702C;
-	Wed, 14 Aug 2024 12:25:28 +0000 (UTC)
-Received: from asgard.redhat.com (unknown [10.45.242.6])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 38E991955F66;
-	Wed, 14 Aug 2024 12:25:17 +0000 (UTC)
-Date: Wed, 14 Aug 2024 14:25:13 +0200
-From: Eugene Syromiatnikov <esyr@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-kselftest@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Artem Savkov <asavkov@redhat.com>
-Subject: Re: [PATCH v2] selftests: fix relative rpath usage
-Message-ID: <20240814122513.GA18728@asgard.redhat.com>
-References: <20240812165650.GA5102@asgard.redhat.com>
- <3667e585-ecaa-4664-9e6e-75dc9de928e8@linuxfoundation.org>
- <20240813163348.GA30739@asgard.redhat.com>
- <c946c5c4-366a-4772-81d9-dc5984777cfd@linuxfoundation.org>
+	s=arc-20240116; t=1723638524; c=relaxed/simple;
+	bh=nlRWEKYANxfhouyrfMwuggtzkjUrrXPCMyOMXbxUAP0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gK842QeABHOG9/gJup4O1EOTHyRBlogznPsK6uq+J3TnT7ud5Tp6ci+FSPa7Mizfx9hv2tuqIS79m4Kptd9gHnb4VCoRs9rcDFMuYeirFmx0L8jVMZ1NVWDE5F6RDalaLI+rZ0BqauGD1RY6FudC9F6Rv8exWL1oiUmnf0wsSfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=NRzbzD5Z; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723638522; x=1755174522;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nlRWEKYANxfhouyrfMwuggtzkjUrrXPCMyOMXbxUAP0=;
+  b=NRzbzD5ZmoilaU80y2n+HmqkZQTaSC+JLVpGDLaIpqAWsfABsA18JhUV
+   fMDCMa9Z0BduNxaqPmTp0pZPb68vAb7+kqOOcV7sId/AYn+7esuesItbS
+   KNR8HqB7kl80jMTsDjDElbmhzxxZCX6cPtfzTL04iheMwGOcKrqTPDORS
+   dheUILXhQNEmavVAoBW9hV9emI3ava6pC5XLcZLNSTrTo03aMA05BNXYx
+   xQ2q/s1LC3I5qbwi2alguh5aQW+B706zLmU7SsU7qO4mB9tBbDuMtmYpR
+   I6HaZqXeeY7XDlilHLR3g2U1ie6VqE2eBBUkOIJxJcYC/06eNVu4oDksg
+   w==;
+X-CSE-ConnectionGUID: jMfuv37ZSuaTHONLM3a8Iw==
+X-CSE-MsgGUID: HxZoIHuhTTO/xf2mjeGdEQ==
+X-IronPort-AV: E=Sophos;i="6.10,145,1719903600"; 
+   d="scan'208";a="31152274"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2024 05:28:41 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 14 Aug 2024 05:28:38 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 14 Aug 2024 05:28:36 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <peda@axentia.se>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <cristian.birsan@microchip.com>, Andrei Simion
+	<andrei.simion@microchip.com>
+Subject: [PATCH 0/5] Cosmetic Work for ARM/Microchip (AT91)
+Date: Wed, 14 Aug 2024 15:26:28 +0300
+Message-ID: <20240814122633.198562-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c946c5c4-366a-4772-81d9-dc5984777cfd@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, Aug 14, 2024 at 05:14:08AM -0600, Shuah Khan wrote:
-> On 8/13/24 10:33, Eugene Syromiatnikov wrote:
-> >On Mon, Aug 12, 2024 at 05:03:45PM -0600, Shuah Khan wrote:
-> >>On 8/12/24 10:56, Eugene Syromiatnikov wrote:
-> >>>The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
-> >>>relative to current working directory and not the executable directory,
-> >>>which will lead in incorrect resolution when the test executables are run
-> >>>from elsewhere.  Changing it to $ORIGIN makes it resolve relative
-> >>>to the directory in which the executables reside, which is supposedly
-> >>>the desired behaviour.  This patch also moves these CFLAGS to lib.mk,
-> >>>so the RPATH is provided for all selftest binaries, which is arguably
-> >>>a useful default.
-> >>
-> >>Can you elaborate on the erros you would see if this isn't fixed? I understand
-> >>that check-rpaths tool - howebver I would like to know how it manifests and
-> >
-> >One would be unable to execute the test binaries that require additional
-> >locally built dynamic libraries outside the directories in which they reside:
-> >
-> >     [build@builder selftests]$ alsa/mixer-test
-> >     alsa/mixer-test: error while loading shared libraries: libatest.so: cannot open shared object file: No such file or directory
-> >
-> >>how would you reproduce this problem while running selftests?
-> >
-> >This usually doesn't come up in a regular selftests usage so far, as they
-> >are usually run via make, and make descends into specific test directories
-> >to execute make the respective make targets there, triggering the execution
-> >of the specific test bineries.
-> >
-> 
-> Right. selftests are run usually via make and when they are installed run through
-> a script which descends into specific test directories where the tests are installed.
-> 
-> Unless we see the problem using kselftest use-case, there is no reason the make changes.
+This patch set proposes to:
+- clean up coding style errors reported by checkpatch.pl
+- align the nodename and sub nodename according to the devicetree
+specification even with their binding.
 
-The reason has been outlined in the commit message: relative paths in
-RPATH/RUNPATH are incorrect and ought to be fixed.
+Andrei Simion (5):
+  ARM: dts: microchip: Clean up spacing and indentation
+  ARM: dts: microchip: Rename the eeprom nodename
+  ARM: dts: microchip: Rename the pmic node
+  ARM: dts: microchip: Rename the usb node
+  ARM: dts: microchip: Rename LED sub nodes name
 
-> Sorry I am not going be taking these patches.
+ arch/arm/boot/dts/microchip/aks-cdu.dts          | 12 ++++++------
+ arch/arm/boot/dts/microchip/animeo_ip.dts        | 10 +++++-----
+ arch/arm/boot/dts/microchip/at91-ariag25.dts     |  4 ++--
+ arch/arm/boot/dts/microchip/at91-ariettag25.dts  |  6 +++---
+ .../boot/dts/microchip/at91-cosino_mega2560.dts  |  8 ++++----
+ arch/arm/boot/dts/microchip/at91-dvk_som60.dts   |  6 +++---
+ .../boot/dts/microchip/at91-dvk_su60_somc.dtsi   |  6 +++---
+ arch/arm/boot/dts/microchip/at91-foxg20.dts      |  4 ++--
+ arch/arm/boot/dts/microchip/at91-gatwick.dts     |  4 ++--
+ arch/arm/boot/dts/microchip/at91-kizbox.dts      |  2 +-
+ .../boot/dts/microchip/at91-kizbox2-common.dtsi  |  6 +++---
+ arch/arm/boot/dts/microchip/at91-kizbox3-hs.dts  |  6 +++---
+ .../dts/microchip/at91-kizboxmini-common.dtsi    |  4 ++--
+ .../boot/dts/microchip/at91-kizboxmini-mb.dts    |  2 +-
+ arch/arm/boot/dts/microchip/at91-lmu5000.dts     |  4 ++--
+ .../boot/dts/microchip/at91-nattis-2-natte-2.dts |  2 +-
+ arch/arm/boot/dts/microchip/at91-q5xr5.dts       |  4 ++--
+ arch/arm/boot/dts/microchip/at91-qil_a9260.dts   |  4 ++--
+ arch/arm/boot/dts/microchip/at91-sam9_l9260.dts  |  2 +-
+ .../dts/microchip/at91-sam9x60_curiosity.dts     |  6 +++---
+ arch/arm/boot/dts/microchip/at91-sam9x60ek.dts   | 12 ++++++------
+ .../boot/dts/microchip/at91-sama5d27_som1.dtsi   |  2 +-
+ .../boot/dts/microchip/at91-sama5d27_som1_ek.dts | 14 +++++++-------
+ .../boot/dts/microchip/at91-sama5d27_wlsom1.dtsi |  2 +-
+ .../dts/microchip/at91-sama5d27_wlsom1_ek.dts    |  6 +++---
+ .../dts/microchip/at91-sama5d29_curiosity.dts    |  8 ++++----
+ arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts | 16 ++++++++--------
+ .../boot/dts/microchip/at91-sama5d2_ptc_ek.dts   |  8 ++++----
+ .../boot/dts/microchip/at91-sama5d2_xplained.dts |  8 ++++----
+ arch/arm/boot/dts/microchip/at91-sama5d3_eds.dts |  6 +++---
+ .../dts/microchip/at91-sama5d3_ksz9477_evb.dts   |  2 +-
+ .../boot/dts/microchip/at91-sama5d3_xplained.dts |  8 ++++----
+ .../boot/dts/microchip/at91-sama5d4_ma5d4evk.dts |  6 +++---
+ .../boot/dts/microchip/at91-sama5d4_xplained.dts |  6 +++---
+ arch/arm/boot/dts/microchip/at91-sama5d4ek.dts   |  6 +++---
+ arch/arm/boot/dts/microchip/at91-sama7g5ek.dts   |  2 +-
+ arch/arm/boot/dts/microchip/at91-som60.dtsi      |  4 ++--
+ arch/arm/boot/dts/microchip/at91-tse850-3.dts    |  6 +++---
+ arch/arm/boot/dts/microchip/at91-vinco.dts       |  6 +++---
+ arch/arm/boot/dts/microchip/at91-wb45n.dts       |  2 +-
+ arch/arm/boot/dts/microchip/at91-wb45n.dtsi      |  4 ++--
+ arch/arm/boot/dts/microchip/at91-wb50n.dts       |  6 +++---
+ arch/arm/boot/dts/microchip/at91-wb50n.dtsi      |  4 ++--
+ arch/arm/boot/dts/microchip/at91rm9200.dtsi      |  4 ++--
+ arch/arm/boot/dts/microchip/at91rm9200ek.dts     | 10 +++++-----
+ arch/arm/boot/dts/microchip/at91sam9260.dtsi     |  4 ++--
+ arch/arm/boot/dts/microchip/at91sam9260ek.dts    | 10 +++++-----
+ arch/arm/boot/dts/microchip/at91sam9261.dtsi     |  4 ++--
+ arch/arm/boot/dts/microchip/at91sam9261ek.dts    | 10 +++++-----
+ arch/arm/boot/dts/microchip/at91sam9263.dtsi     |  4 ++--
+ arch/arm/boot/dts/microchip/at91sam9263ek.dts    | 12 ++++++------
+ arch/arm/boot/dts/microchip/at91sam9g20ek.dts    |  4 ++--
+ .../boot/dts/microchip/at91sam9g20ek_common.dtsi |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9g45.dtsi     |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9m10g45ek.dts |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9n12.dtsi     |  4 ++--
+ arch/arm/boot/dts/microchip/at91sam9n12ek.dts    |  4 ++--
+ arch/arm/boot/dts/microchip/at91sam9rl.dtsi      |  2 +-
+ arch/arm/boot/dts/microchip/at91sam9rlek.dts     |  2 +-
+ arch/arm/boot/dts/microchip/at91sam9x5.dtsi      |  6 +++---
+ arch/arm/boot/dts/microchip/at91sam9x5ek.dtsi    |  6 +++---
+ arch/arm/boot/dts/microchip/ethernut5.dts        |  4 ++--
+ arch/arm/boot/dts/microchip/evk-pro3.dts         |  4 ++--
+ arch/arm/boot/dts/microchip/mpa1600.dts          |  2 +-
+ arch/arm/boot/dts/microchip/pm9g45.dts           |  4 ++--
+ arch/arm/boot/dts/microchip/sam9x60.dtsi         |  6 +++---
+ arch/arm/boot/dts/microchip/sama5d2.dtsi         |  6 +++---
+ arch/arm/boot/dts/microchip/sama5d3.dtsi         |  6 +++---
+ arch/arm/boot/dts/microchip/sama5d34ek.dts       |  2 +-
+ arch/arm/boot/dts/microchip/sama5d3xcm_cmp.dtsi  |  2 +-
+ arch/arm/boot/dts/microchip/sama5d3xmb.dtsi      |  6 +++---
+ arch/arm/boot/dts/microchip/sama5d3xmb_cmp.dtsi  |  2 +-
+ arch/arm/boot/dts/microchip/sama5d4.dtsi         |  6 +++---
+ arch/arm/boot/dts/microchip/tny_a9263.dts        |  2 +-
+ .../arm/boot/dts/microchip/usb_a9260_common.dtsi |  4 ++--
+ arch/arm/boot/dts/microchip/usb_a9263.dts        |  4 ++--
+ 76 files changed, 205 insertions(+), 205 deletions(-)
 
-I see, by the same token, kernel maintainers reject any patches that fix
-compilation/build warnings, I guess.
 
-> thanks,
-> -- Shuah
+base-commit: 320eb81df4f6c1a1814fd02ebb4ba41eb80a3c7e
+-- 
+2.34.1
 
 
