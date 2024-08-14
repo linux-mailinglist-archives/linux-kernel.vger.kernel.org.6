@@ -1,264 +1,321 @@
-Return-Path: <linux-kernel+bounces-287086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044E79522C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:42:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 415E39522C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CDC1C21CDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:42:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63C691C21D48
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5143F1BF301;
-	Wed, 14 Aug 2024 19:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6001BE25F;
+	Wed, 14 Aug 2024 19:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jj89CwJQ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LyCMj9tX"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="HIIOlntl"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120861BE842;
-	Wed, 14 Aug 2024 19:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB796370
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723664555; cv=fail; b=L+r68nXFaL7ivN4i8ryhxSm8BF0pAnFUUKR5TcWiv3drCl9xOUq8USicJ0shOG1snouOOEVDnf+GFBeq0aNzEHR7UVoQ22t2oygRf5kCfk5A1xFENUfku5dBYoPgjGCG5/T8B5Ypo5K0Nx6rA6s17BvkgHG1f9OOGkJ5BBfhzzQ=
+	t=1723664744; cv=pass; b=IosuZbihadSfOlCV3jlq4HdPTutwi492AIvjCJ2CZ6vp6N8xxsMpHn7JKivH+CUXOESUdVUMFl5C4qvsUVCve5QWZsXwq8MlUK7A+6AN3fipbcLBiWQuZfNSCPgUtG7KA1BqITI5BDSt+zbMoQFrU8j6aEXYMIDfEJuANCv4YTo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723664555; c=relaxed/simple;
-	bh=vQPV4BqDSLHO51Jkj5MDkpix6UVFN+wtA0PzhIIjk+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FCdVO+eMg58Ql/fddBYJwVp4+2Urf1M8T3Tc5j7qaxx+96Yz57VTBenpfHiQFOE3BjzZTJ3hI3aTK8QUkXjTqbrMgm45Ey29ixglSbPdenXqOoEXW6Bz3ZI4oda+feY7zJtYceCAC3JvDqHT+AG9RokDk/Qzk1r30CyDPtWmEB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=jj89CwJQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LyCMj9tX; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EIBLUM015143;
-	Wed, 14 Aug 2024 19:42:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=u7cOp/weKH91cvU
-	knKgKrqMoA05/l5sGGqo4pQRYpr0=; b=jj89CwJQj234Wjs97YDvQ1oy8vh9MlK
-	vZ8gyZ+6brPDqKUmO6QOxdX1QeBHU5+vHeegeGC2DQjsDjmeusAmF5NDKQrZCtx+
-	2VsxhsaR5HHftRI9QsaT18+Lj6OrpMLEoFNwSeHQ2SUN/AU8MTryNTzAj3B2kw4Q
-	ysdmlHPWsaXBT0OI2EFxZmS21gFRM3R7lmu6+TsdpkfurjkCSMnMsKzWxh87bbhB
-	Den0SAoB5CyMseNIowLFVIZ6BtjhlFEEKtbUYuOfYfs4+k5v4y5bbIqxZoE/ihPa
-	gzWTtkTeazcFkQHqxHGYrqoqIaJjxRmRd+clGMZJyGtvq4d/Iuc4COQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wy031axp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 19:42:25 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47EIpBJO003384;
-	Wed, 14 Aug 2024 19:42:24 GMT
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxna9g2h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 19:42:24 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qrYEcq4zoXgEsuinEm3n0K2hRxhVcwdGasgvWApXjIZeTOXdSJf+K4WZUjklo2da4kUI2rghUt+beUIzmEZT5a/aukfxcKUOIDnOP9MiSNzBVn6OSPPl++SdeSNm3hFyyDso39fnp7O+hbgnMsrHOHIKbM/tbLiTQyyctAtCxU+TdqC/IN5K9jd2qlcUUr6kropegHF3d75E1076F9p6f7Dq81bwiRCRdlnyQNwcYg+gkXPV0fF8k1R0vyLLHG5kd+rftDYEulgTq7/a25OveV26yc8DJfvct937D2/Uubajpo9AMTGnyaUQuN62zpawFXw1wMzboRHkI3TyWWBfpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u7cOp/weKH91cvUknKgKrqMoA05/l5sGGqo4pQRYpr0=;
- b=lFYNnIzyvCHeY5LIa3A8R3mFGuFeVLwNZUdRv2PkGvVy8Pva2k0j7pD9ndSRHixysJozZWSbAOtFighk0cyd8qfQlrBXDPR0uDsGtABB8Z/dnbxmQoNpT0UbXjAD14jfQ3x2zvdbR5FrOUIi9lOM6rwqW//FGzKxa4CMTQrkQMm8MTgm5+EBC/X28k71ZlwGgK8dkTALAQNPDJmZIbrWLB6aDuUcehvUDGSToqa4apQwG6mdRwu5888vBbPY9IwvyYvGF7qEGUAsPeZSYF4t7SxP9LYpPCqIL3Cz1Vdpm0jOj9cnZ8yhST47KJFo4FtxudQv/G6CGYcFNx2NKCWvTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u7cOp/weKH91cvUknKgKrqMoA05/l5sGGqo4pQRYpr0=;
- b=LyCMj9tXd5lzOTRKbqDp1neC7ltFVW9r+Aza+3bt04vevwT195+s1v+Gn4S/gGpyLxn0p/eihUuidSPsnHUshOiW86ccEP4wLoMedXuTV93QKLlHngnH/Z5o4lseD15Y5TVnx1VD7uhQaje+QR1dTm55iTKP1aAMZI+/Z1KrLEo=
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
- by CH0PR10MB5162.namprd10.prod.outlook.com (2603:10b6:610:de::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.11; Wed, 14 Aug
- 2024 19:42:22 +0000
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29]) by SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29%3]) with mapi id 15.20.7875.008; Wed, 14 Aug 2024
- 19:42:22 +0000
-Date: Wed, 14 Aug 2024 15:42:19 -0400
-From: Kris Van Hees <kris.van.hees@oracle.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jiri Olsa <olsajiri@gmail.com>,
-        Elena Zannoni <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v5 1/4] kbuild: add mod(name,file)_flags to assembler
- flags for module objects
-Message-ID: <Zr0Im8k6KSqfZLyp@oracle.com>
-References: <20240716031045.1781332-1-kris.van.hees@oracle.com>
- <20240716031045.1781332-2-kris.van.hees@oracle.com>
- <20240814131746.0a226e34@gandalf.local.home>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814131746.0a226e34@gandalf.local.home>
-X-ClientProxiedBy: BN0PR04CA0022.namprd04.prod.outlook.com
- (2603:10b6:408:ee::27) To SN7PR10MB6287.namprd10.prod.outlook.com
- (2603:10b6:806:26d::14)
+	s=arc-20240116; t=1723664744; c=relaxed/simple;
+	bh=1MwEae9yugVNGSqej65PB029iu0JgOF4TNKmoqk3WPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvZKeM9pchmqiSMGZtiqm+Xrg1f4fIP0E+YSHINSdbMnx/2FXqGyCOSEL1Spps6GUem04HhsfcaMNS5Nyvze4S12BqUZqvvT5EXL1Vd+Q4e7kC96IFMiJtoCm+hQdcra1n3ABHrcZoOi4uPkmHHWGA0X/0IkVH+gh3hUOfh1cw0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=HIIOlntl; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: mary.guillemard@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723664725; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Re8WgGTd3avPI6gFETUMNMiDvYoQrh7h/uERDXg77J27cd4FrMZJhZy6JICofFJfMUNdwbtBK05jmcLmKnjl6xDGn1WvQgFQiavB0FD60RaOJ6Ao/xIlz7QjARCBtWy789CzcPbwhwixOKdA/oz8mrEhSy8j2RglGOxAkI+Y9Yg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723664725; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=fETJPviGHXcE+Ld/AZrSoFltK3dyQEM46ti6Tm3HR58=; 
+	b=i8CqvaGak7drpo8ORG9MiFxCGDjKnpPbQnY17FeiF3ytJDeehLF5LYkII9SPCQIG1OXEsaA57UcrP9szRuVJVTFUYIvY4ifFJ2xiWEHF9lDC9nlR3RD0g4ZOXTCdNnPNANi5tXDPeNIpbUc7LEoBGF1yWAoN8lyXqSYwepwomzs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723664725;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=fETJPviGHXcE+Ld/AZrSoFltK3dyQEM46ti6Tm3HR58=;
+	b=HIIOlntlp4N/uMLb0OXTjrAQupXmkTRztOVAzc+v7qHx8XjsoqGif8f6mEeT2+iw
+	nRuC9Lo4KGAM2YMOSsX7Ij3xoM9+V0aJKvMJTKKkGtWEESKsGFo2G6O/5PrJkDDqGBB
+	j34VxHpbbyehypXlB/YHbmqfUbajDgqH188SOTB0=
+Received: by mx.zohomail.com with SMTPS id 1723664723598981.6010620006847;
+	Wed, 14 Aug 2024 12:45:23 -0700 (PDT)
+Date: Wed, 14 Aug 2024 20:45:19 +0100
+From: Adrian Larumbe <adrian.larumbe@collabora.com>
+To: Mary Guillemard <mary.guillemard@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	kernel@collabora.com, Christopher Healy <healych@amazon.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
+Message-ID: <i5zkhbafhidjozr2pf2wuw63ubrigh26zddgh6bo23o2wg46xu@gbe7463qt45j>
+References: <20240812122814.177544-2-mary.guillemard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|CH0PR10MB5162:EE_
-X-MS-Office365-Filtering-Correlation-Id: 929bc664-00ae-48e3-7f78-08dcbc993704
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5T/sJNod5AKJexiNa33879XxLFZMxQ1oBcuXEHbxpL2oB+1b6dMmZVWJlHPM?=
- =?us-ascii?Q?e7j53QQINPqv0Se7gTgMHonTVArjx3YJBFkEejtmLyYypiG0dhYr1UwjqeQ5?=
- =?us-ascii?Q?77wG8rBbAIKcYpwK+onY9UU09YRAlNEsSHcLXFON488EYzQJujPlZ+z4KHhq?=
- =?us-ascii?Q?m4fe6J1rhjLdnpTXe7yj336IoaT0f60vjtqUr7HrJ9SDD4Cxb/SEpVfXCvYH?=
- =?us-ascii?Q?H8iT5CND43A6o8pbJ/8hu4YHWpiCudZBnB8fZQF2RKbulQMX18Gj5JLJJ/Df?=
- =?us-ascii?Q?LTNXZuJtztr8rxN3y2aZbcF/Zcq465LIXs09YgFJv/8U15VuGnlL8AkPza9Z?=
- =?us-ascii?Q?By+Wy3D7MYLMTobklBo8eBdj/NplAWX/gipoiLFAQkKLQiTdl54+fHFrfFLV?=
- =?us-ascii?Q?sKl9lAR40sVao8ByHkiB/OeaUupkOKVDsF/gaAnQFzyL6egPA76phwM8lqlo?=
- =?us-ascii?Q?7jqbMLd2ZjNdzUbz5sNvg6u99vscPVwp63zV0H/Oo3UNBgOdIkdN5FGVlGMl?=
- =?us-ascii?Q?uLMWCiH3RroHEh8c8/1VUIUWsIJiCniS2olecVv3RP3/sQ4kM1UYneLiT+M4?=
- =?us-ascii?Q?h3kfBzOGRN4g/OYm1mhK+zSVWbGwMltgBb6lQS9zB3Ox89nYmWFuzcGPu4qD?=
- =?us-ascii?Q?E16VkNXkgEFzeGrME2teI4FHvjeTkKJi9F8h0xvsji/16GTavqrqfO9TQcZG?=
- =?us-ascii?Q?E/UW9yd9sI0fhoukfFgmqipzIvnvnE8esXxmlKWhJYbiyoKr9bXEFUisBWIa?=
- =?us-ascii?Q?d6t6KdBqWMzvAiEu4IFWiNpOl2ChydB7pqdOrDpChmri3gBvM1295+jj3OzH?=
- =?us-ascii?Q?Zfvomf/R3pv3Va6rQW+Cl4CKFU0ZSgCy+evIizxhecxbVgvsjBdMPrEALyUB?=
- =?us-ascii?Q?xLWUQLOQX7tDeu475TfyvPvqsl0cyxq4RNSU8x+TfwnQvxkjzvYdOhbLvqjH?=
- =?us-ascii?Q?fq40YO0P/l0nlqhTqr1kerLPKOcoWCvfjYG22YjEMa42ha8BciBOxb4CQFbG?=
- =?us-ascii?Q?OZS7kmYZ0b9AjVTLFJoYzDaTc8qaNOfoA9OJ+tCvyObmT5BmLg34vbtX8zY6?=
- =?us-ascii?Q?dM5LjfZpk88D5vBFROj2Lc8Wus23XUkkb5quh+ZA7lXVQD92z6/WgodzBGqH?=
- =?us-ascii?Q?Bs7cK9mZ2S0ka8414MHei5QrKDQlANh4g2ojrA+riwPhqOSD8v7N0WKXbo8w?=
- =?us-ascii?Q?pneUoZtxONzoH9rW91XpPo0YeCzTnfrWJv5ic6mt86sGmH5PnrtdccA4MxhG?=
- =?us-ascii?Q?M+4KWtjr7/L/1oO0P5IOn0912NJeonlvzqkXeNkON241RvFHNSwCU8u/dPFs?=
- =?us-ascii?Q?CcT3HP8Mx6SXQ2nFS2dc1tzdn5ZcP4cSQ57/gE6RmlYMaQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hBxsBM39crH+N283nvOfKuXK/wEdtllM0YxRxSVFla95d/H+uuOEZl4gOrlc?=
- =?us-ascii?Q?k3F8yyuD/JnAGWhEspxMLlF0CwowSQvUOr0UE7sjh4sodgHNdgbwyXBMKPKj?=
- =?us-ascii?Q?+RGnmKBMwXG2yBxAiuZaBXxM7Nd1ilxNB0vPzfLMQZ2dKvMzfHS2CcYgc9b3?=
- =?us-ascii?Q?WbnVNHqqE/gHsGbP+H3JKcZCqgWhw1rK+FTL2OXuIeVyhZwh4puI+oak0aWb?=
- =?us-ascii?Q?yNUTVhAADHjBc8odjYm7T9Wn9v5dujtESgY+jRPOsKuBf4+Bw2ampF2bxSGd?=
- =?us-ascii?Q?6o6qaCwTxMvC5zNYwcOKmHUpnhjycQVLQ90ZHlpjzdVgY9o1Ff8WwFH0D5rz?=
- =?us-ascii?Q?TnRnBjPdveABMyD3dVbg84OywGHfvrH5eC4XM36uKZIk1FB0lHmg+haC3lDB?=
- =?us-ascii?Q?QYR/BfCjc4NVliquGdKOhLT74FWYA8LowSm7GdJrwdcgIMVKTU5uPLYBJrKK?=
- =?us-ascii?Q?y1ROhNhk81kS787j1/2EfsYPTBcpQVOIhJ0Y5Az/c4CG7SEPAGiaAiCpqC4k?=
- =?us-ascii?Q?k3RP1lcHuehW8GJl1Fz9dgq+U6A7K/+Y65Q1kjowHcadzDrEfYXpLfzhwSVe?=
- =?us-ascii?Q?zu9A53y9SKeEWLnA43rvC+guMMpwq782qxUE2B8Zb53aX4aAGrxHoG3e6oTj?=
- =?us-ascii?Q?RfcBCN8+O7JCepstjV+1L6Jcl94P3XUevnS+oc1+EFHRT2ZP0iHPn4NdDWMZ?=
- =?us-ascii?Q?L4UCNtU1x0Xy0qumGa5f3XQxqquAf5NRcWSkOr18JINFFUOA/NznsGvsXISK?=
- =?us-ascii?Q?eRLgrLyZTOmaqdi64lGA9cWoO1ORWKwVWbnSh2bbjaecnoaz0iVy6WgOEPKx?=
- =?us-ascii?Q?gkYxvXvlQpIe3utJ5tMtjHeQTdI4qYDZI1PtZ9FJ9hJcDjmdiVMvXW71wrOM?=
- =?us-ascii?Q?poGUWu2fKn99xUGMs+Ea5Z+J+KoPt1QFSc5NqMbUr9pFG7knQeGLeK+rxBCU?=
- =?us-ascii?Q?A7zybeLRpIuBPylKIqwzvg26v0GHcH6R8UbT2UorhiGW8FX8F4//etcIKDYQ?=
- =?us-ascii?Q?uMoKFUltyJ7blngmLUMYw05OLLN8OHXP99jhY+LtqkakU1S4YU41J0mj8JT/?=
- =?us-ascii?Q?ONmpkFEOZyH9sEhZPZf8s43pRe8rNo79CtK3K0/6jtDyCH9G3KPENSGDMBjq?=
- =?us-ascii?Q?95Ijlcx0UKev+v4qbuV8sSxv4ZqXZo7APMV/uJR/Qg8ZFXDGe+I+CTXm5xLc?=
- =?us-ascii?Q?a/Fb6VapWX5K1veQezjpuHsqiYpuODvA+K3tdCpIONes0xYaPemyFOQjAvt3?=
- =?us-ascii?Q?eM9hBcM0YBaSTHJHGqUFTbv9UAegikQ5uxd2U7VWYINO4j1Dgk7PZn3rz9Vz?=
- =?us-ascii?Q?pRn5lg24grrfRuueEa1bnvKQhRQt0NwdFB7hNM/64y08WhdM0vExp9YIQoT5?=
- =?us-ascii?Q?hlcBx/f2twcKVvNYBrwT4kLotQvkh2KiqKFxXme3R5cGRl/lUHydtng0JLh5?=
- =?us-ascii?Q?TtmLZz1F/ETdohapuwkxr0jXt8X+J/Fv+xtWSexHwfLIuaXh0uNFd+MswGI4?=
- =?us-ascii?Q?FzCSwdugVwMOHAgk08D+pBSIRsm5EM7eToZocewvLsmYLHZBnWMt63T3RDYQ?=
- =?us-ascii?Q?XAv8PPg6yOsTRzf/eGekctakszJI4+d5vb4/qTr/yQ+XThKxsbFaCrKMJk7m?=
- =?us-ascii?Q?XA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	eKJNVQYnft9888G5+O55hvmCjXKevmfHkeIHP9k0wEXYiuHrBQfQdyi20K2je2iqQiDK3HZnxXyLUuvLfBR2HAczaBriwGfwfbuwyXXOtZhtls3tr2UhLvpvOZ9nU5ackpnGyhxjhM831EqKePavfOgkSSgdSEmKvRIRCkc6mFNayok3jRLXyZdyzT15YDh7PuuGfoCnZWErwVdC9Vl6+onw/OSUpSzD77wKsrEiGmN9LRCpPYuaqX9L1PBj3dSn525vz8xjUo1IB+XwvN58D/nk4DhyfBC3WzuUaOlqfsxmys3dWUh9yDBYsJdqxX5ehlmdzs8iO1NaJTHTkjK2lQrqoMVRzg3u17cShZv7W25GcAu/EQV37CI3cmlBwNwfUhOTSnSreZIH72G1kwceRZnqzQiA9NKiYNsExyWgm41nKSr07mVLgjIItf151WXK8JnsL1uIuwCCnhpv4zNfY8+OdRIoZVr99s1/C5OEhs42WK1KTRha3bDm6CnGAipWnALqfErqkFMJRQ0hmRaS/FqcgBLAtUv0TrYlaksW/9BUG7l1ZVdS0UzDDwpibujY40nwgK6KSdKEy9WBxuzgiN9AbmzfiK/6zLCTJWP2Hcw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 929bc664-00ae-48e3-7f78-08dcbc993704
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 19:42:22.0056
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XexjxBO+zKPfEK19uJuWFZluXPpzQ9jucOWiHSTN3JTloga7zbL/xpH3Tt9GEVBws9WcSmDTGW2enBZnOJUgZaL09xfkS8iP1i2Omt3XRtw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5162
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_15,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- mlxlogscore=914 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408140134
-X-Proofpoint-GUID: l4oS4LdqCjK54LxOzJm4xx4Nvn7w3E0A
-X-Proofpoint-ORIG-GUID: l4oS4LdqCjK54LxOzJm4xx4Nvn7w3E0A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240812122814.177544-2-mary.guillemard@collabora.com>
 
-On Wed, Aug 14, 2024 at 01:17:46PM -0400, Steven Rostedt wrote:
-> On Mon, 15 Jul 2024 23:10:42 -0400
-> Kris Van Hees <kris.van.hees@oracle.com> wrote:
-> 
-> 
-> As mentioned before, should start off with the goal.
-> 
->   In order to create the file at build time, modules.builtin.ranges, that
->   contains the range of addresses for all built-in modules, there needs to
->   be a way to identify what code is compiled into modules.
-> 
->   To identify what code is compiled into modules during a kernel build, ...
+Hi Mary,
 
-Ok, I see what you mean.  Fixing that.  Thanks!
+On 12.08.2024 14:28, Mary Guillemard wrote:
+> Expose timestamp information supported by the GPU with a new device
+> query.
+> 
+> Mali uses an external timer as GPU system time. On ARM, this is wired to
+> the generic arch timer so we wire cntfrq_el0 as device frequency.
+> 
+> This new uAPI will be used in Mesa to implement timestamp queries and
+> VK_KHR_calibrated_timestamps.
+> 
+> Since this extends the uAPI and because userland needs a way to advertise
+> those features conditionally, this also bumps the driver minor version.
+> 
+> v2:
+> - Rewrote to use GPU timestamp register
+> - Added timestamp_offset to drm_panthor_timestamp_info
+> - Add missing include for arch_timer_get_cntfrq
+> - Rework commit message
+> 
+> Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 43 ++++++++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_gpu.c | 32 ++++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_gpu.h |  2 ++
+>  include/uapi/drm/panthor_drm.h        | 19 ++++++++++++
+>  4 files changed, 95 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index b8a84f26b3ef..7589f2373ec0 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -3,6 +3,10 @@
+>  /* Copyright 2019 Linaro, Ltd., Rob Herring <robh@kernel.org> */
+>  /* Copyright 2019 Collabora ltd. */
+>  
+> +#ifdef CONFIG_ARM_ARCH_TIMER
+> +#include <asm/arch_timer.h>
+> +#endif
+> +
+>  #include <linux/list.h>
+>  #include <linux/module.h>
+>  #include <linux/of_platform.h>
+> @@ -164,6 +168,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+>  	_Generic(_obj_name, \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
+> +		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+>  		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+> @@ -750,10 +755,33 @@ static void panthor_submit_ctx_cleanup(struct panthor_submit_ctx *ctx,
+>  	kvfree(ctx->jobs);
+>  }
+>  
+> +static int panthor_ioctl_query_timestamp(struct panthor_device *ptdev,
+> +					 struct drm_panthor_timestamp_info *arg)
+> +{
+> +	int ret;
+> +
+> +	ret = pm_runtime_resume_and_get(ptdev->base.dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +#ifdef CONFIG_ARM_ARCH_TIMER
+> +	arg->timestamp_frequency = arch_timer_get_cntfrq();
+> +#else
+> +	arg->timestamp_frequency = 0;
+> +#endif
+> +	arg->current_timestamp = panthor_gpu_read_timestamp(ptdev);
+> +	arg->timestamp_offset = panthor_gpu_read_timestamp_offset(ptdev);
+> +
+> +	pm_runtime_put(ptdev->base.dev);
+> +	return 0;
+> +}
+> +
+>  static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
 
- > In order to be able to identify what code is compiled into modules (even
-> > built-in modules) during a kernel build, one can look for the presence
-> > of the -DKBUILD_MODFILE and -DKBUILD_MODNAME options in the compile
-> > command lines.  A simple grep in .*.cmd files for those options is
-> > sufficient for this.
-> > 
-> > Unfortunately, these options are only passed when compiling C source files.
-> > Various modules also include objects built from assembler source, and these
-> > options are not passed in that case.
-> > 
-> > Adding $(modfile_flags) to modkern_aflags (similar to modkern_cflahs), and
-> > adding $(modname_flags) to a_flags (similar to c_flags) makes it possible
-> > to identify which objects are compiled into modules for both C and
-> > assembler soure files.
-> 
-> The rest looks good.
-> 
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+I think we should not keep the 'ioctl' part in the function name, because those
+are reserved for DRM entry points, as defined in the panthor_drm_driver_ioctls
+array. But then again panthor_ioctl_vm_bind does branch off into a couple
+'ioctl' infixed functions depending on on the type of VM binding, so maybe Boris
+could shed some light on this?
 
-Thanks!
+>  {
+>  	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
+>  	struct drm_panthor_dev_query *args = data;
+> +	struct drm_panthor_timestamp_info timestamp_info;
+> +	int ret;
+>  
+>  	if (!args->pointer) {
+>  		switch (args->type) {
+> @@ -765,6 +793,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  			args->size = sizeof(ptdev->csif_info);
+>  			return 0;
+>  
+> +		case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
+> +			args->size = sizeof(timestamp_info);
+> +			return 0;
+> +
+>  		default:
+>  			return -EINVAL;
+>  		}
+> @@ -777,6 +809,14 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
+>  	case DRM_PANTHOR_DEV_QUERY_CSIF_INFO:
+>  		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->csif_info);
+>  
+> +	case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
+> +		ret = panthor_ioctl_query_timestamp(ptdev, &timestamp_info);
+> +
+> +		if (ret)
+> +			return ret;
+> +
+> +		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -1372,6 +1412,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
+>  /*
+>   * PanCSF driver version:
+>   * - 1.0 - initial interface
+> + * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
+>   */
+>  static const struct drm_driver panthor_drm_driver = {
+>  	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
+> @@ -1385,7 +1426,7 @@ static const struct drm_driver panthor_drm_driver = {
+>  	.desc = "Panthor DRM driver",
+>  	.date = "20230801",
+>  	.major = 1,
+> -	.minor = 0,
+> +	.minor = 1,
+>  
+>  	.gem_create_object = panthor_gem_create_object,
+>  	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
+> index 5251d8764e7d..2ffd9fa34486 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
+> @@ -480,3 +480,35 @@ void panthor_gpu_resume(struct panthor_device *ptdev)
+>  	panthor_gpu_irq_resume(&ptdev->gpu->irq, GPU_INTERRUPTS_MASK);
+>  	panthor_gpu_l2_power_on(ptdev);
+>  }
+> +
+> +/**
+> + * panthor_gpu_read_timestamp() - Read the timstamp register.
+> + * @ptdev: Device.
+> + *
+> + * Return: The GPU timestamp value.
+> + */
+> +unsigned long long panthor_gpu_read_timestamp(struct panthor_device *ptdev)
+> +{
+> +	u32 hi, lo;
+> +
+> +	hi = gpu_read(ptdev, GPU_TIMESTAMP_HI);
+> +	lo = gpu_read(ptdev, GPU_TIMESTAMP_LO);
+> +
+> +	return ((u64)hi << 32) | lo;
+> +}
 
+For this function and the following one, you might want to test for the case of overflow
+between the time the higher and lower parts of the timestamp register are read, as follows:
+
+do {
+	hi = gpu_read(ptdev, GPU_TIMESTAMP_HI);
+	lo = gpu_read(ptdev, GPU_TIMESTAMP_LO);
+} while (hi != gpu_read(pfdev, GPU_TIMESTAMP_HI));
+
+> +/**
+> + * panthor_gpu_read_timestamp_offset() - Read the timstamp offset register.
+> + * @ptdev: Device.
+> + *
+> + * Return: The GPU timestamp offset value.
+> + */
+> +unsigned long long panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev)
+> +{
+> +	u32 hi, lo;
+> +
+> +	hi = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_HI);
+> +	lo = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_LO);
+> +
+> +	return ((u64)hi << 32) | lo;
+> +}
+
+I feel that maybe there's a way to refactor these two functions into a single one, and pass
+only the higher timestamp register offset, and add 0x04 to the former to access the lower half.
+I suppose this is safe to do because register offsets won't be changing for any device this
+driver could ever handle.
+
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.h b/drivers/gpu/drm/panthor/panthor_gpu.h
+> index bba7555dd3c6..73d335859db8 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.h
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.h
+> @@ -48,5 +48,7 @@ int panthor_gpu_l2_power_on(struct panthor_device *ptdev);
+>  int panthor_gpu_flush_caches(struct panthor_device *ptdev,
+>  			     u32 l2, u32 lsc, u32 other);
+>  int panthor_gpu_soft_reset(struct panthor_device *ptdev);
+> +unsigned long long panthor_gpu_read_timestamp(struct panthor_device *ptdev);
+> +unsigned long long panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev);
+>  
+>  #endif
+> diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
+> index aaed8e12ad0b..d4899d9bd507 100644
+> --- a/include/uapi/drm/panthor_drm.h
+> +++ b/include/uapi/drm/panthor_drm.h
+> @@ -260,6 +260,9 @@ enum drm_panthor_dev_query_type {
+>  
+>  	/** @DRM_PANTHOR_DEV_QUERY_CSIF_INFO: Query command-stream interface information. */
+>  	DRM_PANTHOR_DEV_QUERY_CSIF_INFO,
+> +
+> +	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
+> +	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
+>  };
+>  
+>  /**
+> @@ -377,6 +380,22 @@ struct drm_panthor_csif_info {
+>  	__u32 pad;
+>  };
+>  
+> +/**
+> + * struct drm_panthor_timestamp_info - Timestamp information
+> + *
+> + * Structure grouping all queryable information relating to the GPU timestamp.
+> + */
+> +struct drm_panthor_timestamp_info {
+> +	/** @timestamp_frequency: The frequency of the timestamp timer. */
+> +	__u64 timestamp_frequency;
+> +
+> +	/** @current_timestamp: The current timestamp. */
+> +	__u64 current_timestamp;
+> +
+> +	/** @timestamp_offset: The offset of the timestamp timer. */
+> +	__u64 timestamp_offset;
+> +};
+> +
+>  /**
+>   * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
+>   */
 > 
-> -- Steve
-> 
-> > 
-> > Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> > ---
-> >  scripts/Makefile.lib | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> > index 9f06f6aaf7fc..f4aec3553ff2 100644
-> > --- a/scripts/Makefile.lib
-> > +++ b/scripts/Makefile.lib
-> > @@ -238,7 +238,7 @@ modkern_rustflags =                                              \
-> >  
-> >  modkern_aflags = $(if $(part-of-module),				\
-> >  			$(KBUILD_AFLAGS_MODULE) $(AFLAGS_MODULE),	\
-> > -			$(KBUILD_AFLAGS_KERNEL) $(AFLAGS_KERNEL))
-> > +			$(KBUILD_AFLAGS_KERNEL) $(AFLAGS_KERNEL) $(modfile_flags))
-> >  
-> >  c_flags        = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
-> >  		 -include $(srctree)/include/linux/compiler_types.h       \
-> > @@ -248,7 +248,7 @@ c_flags        = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
-> >  rust_flags     = $(_rust_flags) $(modkern_rustflags) @$(objtree)/include/generated/rustc_cfg
-> >  
-> >  a_flags        = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
-> > -		 $(_a_flags) $(modkern_aflags)
-> > +		 $(_a_flags) $(modkern_aflags) $(modname_flags)
-> >  
-> >  cpp_flags      = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
-> >  		 $(_cpp_flags)
+> base-commit: 219b45d023ed0902b05c5902a4f31c2c38bcf68c
+> -- 
+> 2.45.2
+
+Adrian Larumbe
 
