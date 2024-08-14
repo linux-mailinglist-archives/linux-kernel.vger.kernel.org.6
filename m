@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-287090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417389522CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:50:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082AB9522CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751EB1C21C1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77A01F23B11
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87561BE876;
-	Wed, 14 Aug 2024 19:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497F71BF30C;
+	Wed, 14 Aug 2024 19:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="GITHaWje"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PD2gyBGB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77398370
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184761AED23
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723665001; cv=none; b=FwRMCPVqezKZE6HjJYrK5k/jcFRTdg55iD1eixB1JCvmPTzMPI2ESntFNKPfQEfwZ9+Aflmoy1t55q6MtVTmkDKzEOFItZTZfgsbg1QTQws39DbymAlpeksK8J1lQdVqq4m11vAvkwzbWlmfS4wyYpAtOGkGBsdGdMHLU1+mNvs=
+	t=1723665015; cv=none; b=AbfwGuwmgxsREfkuB6FXwBSI+u+AZJ6C28avTqQw3jtzWOjzWh8OADaprUN7tI0+nYUBilsJX+mjJJirtQEiW/owRqrwUasmCiMKZIxPDd4CGzmNmxalHn68gIJm/TeN9G8EqpbdNC9TWBiAfzTGzlbnhGadMZCZcJB1SkVmANk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723665001; c=relaxed/simple;
-	bh=uNGDtklnyXrgX227pyk2/PduqBSORZuNKm1ZBFTIwMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uzWARwNrenmygwd8Aisc7H1x/W2CSmiNRiF30y73QEyL9OJ5z1JeQy0WpwTxCQH2ZFlgDv0uOMlm+bHaC3cY3Jijqr4vRRgSRqYyaDAU+CrHog9teJFtFPXbRbx07Y6hXtwTIkI2KDpCGsPNEd3P6VmLaeYBUAj8Pb790Ojry44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=GITHaWje; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4281c164408so989185e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723664998; x=1724269798; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7z7h8zcOW+FCbWugSVIr3pP+RsvDPXO9smknTWuYPI4=;
-        b=GITHaWjelHTGNFsdqVYeUZ7bOiOxXaWKtVM21SodJFXsfgnAlsCrTLHuJuZ2nh+1fR
-         qESf9kh5HrrUAWEhlPWZYY7WOmUwZVtKPtZST9/uM1kSDbptMGaqRjVp1/WvkmWnW4kA
-         iYkf8SVXh8JypoJAciF6M04LKpYP0oPPAai/xjbSae3boATGq0clBsEB04SJV38hjQwV
-         9p+i/c8ChvJk2ewd8G31SKS0ggbghXr75YimDWOtOe7rStuNaF0SPf2q6wexXSJi/dTl
-         T0rrY4tHAXiwQMdzno4PY3KWE16z5t2GszHD1FpuM0mOLJbccnkvW3/XbFF5LNsoCz4B
-         i7fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723664998; x=1724269798;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7z7h8zcOW+FCbWugSVIr3pP+RsvDPXO9smknTWuYPI4=;
-        b=rLtewaGijLd2Ee4BFtsDNNQDu52PxybRRgTrIeHIfbp0W2ZHN5f3hyjD65ihIeeV7W
-         PDdj2IjH3YkFuTTHKd5YmqnS0cL+m2QrDEJpZj2q1MabfUht8e7WAZGELRQkWdpDjLVW
-         mIWhqfbRdTNhdiLhp3dg69MnFX7a9QgVTPRkodunDA/b1ko6oSn8W9WLgEZskAGDLnrK
-         +yTBFL8qb6oghcXB3rdxXq4VNLlduHYVxJHEoYeGI2XEINsaMrf8A3Vh/87hcUPf7gY+
-         Cdyju3U4OCJ31BttHm/TaRCtb6yhw0xRQ+srqS6WXL/doQcoqarxeirRTZlR3lXkJMDb
-         c8Og==
-X-Forwarded-Encrypted: i=1; AJvYcCULW8hzs2JmRNlMhTzh+8V2udcIka3Ya9HExZuMhEnlepY0A/iB7dd/iSWmQVHbeH0FX4fmSqvDxDyII/SkBvii5bNKT96EoEBMEbqm
-X-Gm-Message-State: AOJu0YyPCBZhPWkh5204Z8ZH+C+vHUj7Mekd7CrxJeHXGtm9U9avq9DQ
-	r8Xew8rdlpc8zzmn71bX1GmQGW8bqRt99izRVq7wEiQkQhtTG9xSS5TF9693S7A=
-X-Google-Smtp-Source: AGHT+IGe2hj4C917Qi/gRbbGz9xJ9hOoCto7Uxc41LGCxi0afw8sSDza/B1LH/zFro4WwIkpA4BC/w==
-X-Received: by 2002:a05:600c:1990:b0:426:6eb9:db07 with SMTP id 5b1f17b1804b1-429dd236c3bmr30316645e9.13.1723664997669;
-        Wed, 14 Aug 2024 12:49:57 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded71ecdsm28300485e9.37.2024.08.14.12.49.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 12:49:57 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: dinguyen@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] clk: socfpga: arria10: Optimize local variables in clk_pll_recalc_rate()
-Date: Wed, 14 Aug 2024 21:49:38 +0200
-Message-ID: <20240814194937.1868-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723665015; c=relaxed/simple;
+	bh=0IJfcZS7r6EPJLniVsMkD68/yY+O53iik/ZnogU9/aw=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Z14uBcysLFDk2Ub8ZbZhEVEyelOKTL9QL3s2wNNJ2AJ6n7getNDXPpzlUs1Yu/3BrNCQJUdEAJTTGhy9HLighXHBEFW9toAcq0I8c227IZm3O/s3f9hlcqpD09iM+zy3yUn+zp4x2fHV0aE+A8EbScKF4aCzUYNFjnrLN4mN1/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PD2gyBGB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723665011;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/f2tGiDB/aYV2fKGojac/R/nY51VPmqymykpR+kaL+k=;
+	b=PD2gyBGBc+kiyl8DSYhdXjNobDnVAHtH/zfjizq1YtP2C5UaEsTp8WFaHgQE7IIUDAs9oW
+	7OAGxI4Q9iREnStpGHTMoRfjgu/Q3QFty6S0Y282v1iGf/O3pe0Tt847lnnrm1+DW9QWSP
+	iYZZWl2M0/GrZvPXnzt+yB9/ValGRQg=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-GYkvsiM6PluIyAv1x30gAA-1; Wed,
+ 14 Aug 2024 15:50:09 -0400
+X-MC-Unique: GYkvsiM6PluIyAv1x30gAA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C148E1953942;
+	Wed, 14 Aug 2024 19:50:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 37E9E19560AA;
+	Wed, 14 Aug 2024 19:50:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
+    Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache by setting folio->private and marking dirty"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2181766.1723665003.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 14 Aug 2024 20:50:03 +0100
+Message-ID: <2181767.1723665003@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Since readl() returns a u32, the local variable reg can also have the
-data type u32. Furthermore, divf and divq are derived from reg and can
-also be a u32.
+    =
 
-Since do_div() casts the divisor to u32 anyway, changing the data type
-of divq to u32 removes the following Coccinelle/coccicheck warning
-reported by do_div.cocci:
+This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
 
-  WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
+In addition to reverting the removal of PG_private_2 wrangling from the
+buffered read code[1][2], the removal of the waits for PG_private_2 from
+netfs_release_folio() and netfs_invalidate_folio() need reverting too.
 
-Compile-tested only.
+It also adds a wait into ceph_evict_inode() to wait for netfs read and
+copy-to-cache ops to complete.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private =
+and marking dirty")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Max Kellermann <max.kellermann@ionos.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Xiubo Li <xiubli@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: ceph-devel@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk =
+[1]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
+ommit/?id=3D8e5ced7804cb9184c4a23f8054551240562a8eda [2]
 ---
- drivers/clk/socfpga/clk-pll-a10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/inode.c |    1 +
+ fs/netfs/misc.c |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index b028f25c658a..62eed964c3d0 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -35,7 +35,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hwclk,
- 					 unsigned long parent_rate)
- {
- 	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
--	unsigned long divf, divq, reg;
-+	u32 divf, divq, reg;
- 	unsigned long long vco_freq;
- 
- 	/* read VCO1 reg for numerator and denominator */
--- 
-2.45.2
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 71cd70514efa..4a8eec46254b 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -695,6 +695,7 @@ void ceph_evict_inode(struct inode *inode)
+ =
+
+ 	percpu_counter_dec(&mdsc->metric.total_inodes);
+ =
+
++	netfs_wait_for_outstanding_io(inode);
+ 	truncate_inode_pages_final(&inode->i_data);
+ 	if (inode->i_state & I_PINNING_NETFS_WB)
+ 		ceph_fscache_unuse_cookie(inode, true);
+diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+index 83e644bd518f..554a1a4615ad 100644
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio *folio, size_=
+t offset, size_t length)
+ =
+
+ 	_enter("{%lx},%zx,%zx", folio->index, offset, length);
+ =
+
++	folio_wait_private_2(folio); /* [DEPRECATED] */
++
+ 	if (!folio_test_private(folio))
+ 		return;
+ =
+
+@@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *folio, gfp_t g=
+fp)
+ =
+
+ 	if (folio_test_private(folio))
+ 		return false;
++	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
++		if (current_is_kswapd() || !(gfp & __GFP_FS))
++			return false;
++		folio_wait_private_2(folio);
++	}
+ 	fscache_note_page_release(netfs_i_cookie(ctx));
+ 	return true;
+ }
 
 
