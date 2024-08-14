@@ -1,285 +1,195 @@
-Return-Path: <linux-kernel+bounces-286797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8030951F1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:52:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B87BF951F29
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF991C225BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53DBBB261C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B481B4C3F;
-	Wed, 14 Aug 2024 15:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908B128DC3;
+	Wed, 14 Aug 2024 15:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAXavuX9"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bP5ilaOV"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35241B3F1E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650762; cv=none; b=muNyBSqJp6yg8+n08Xnl7u8+nooKSIkTVmhBiNZU4y5ZoU+QH0LkKfwnTciDc59OsfD7ivW8RzyUbrvSfCAVI2d2x5BjtGEG9Wkb7c1NEXAXnnCk1tBYzYF1OZlLRXm5wpsSfNmanE4/4pald0wNj1YhopJruHTwmqIdcz7xAVs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650762; c=relaxed/simple;
-	bh=kFJ/0flN14tAjBNKB8uLFY53F4y57WQAWCA5nszbP6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZRCyo/5C86W7nnk58lRvIkjdH3wq+dB0HoQ1i1hTU7WH0jiiMvVpRbJ5D1WYgWXQOdp6eu05cEVzAC6agYd80r5xOJU0ZJ2iMHw6TNteAbdT9hifn12JDZA4ox0MLEddn7mmyQMlqSpKDtF/GhulgdMQWNkrP7lZ+NqL/N1z1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZAXavuX9; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-70b2421471aso64332a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723650760; x=1724255560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EcCdbI/FUUc+6rc9hEkn91YnRqL7K06FCdBgQ0Hf0J8=;
-        b=ZAXavuX975cPS6MpPSnzA7nL2teaB/aZ03JYPrW2NZQ3lJVr9p4whtT6SYkyO9jTPO
-         ZIHCpsbM2BM6WfNNAcfntN0CqRvL/Pz42Y6ZrmRw2nM73SqCPkInsjKPCeH/Ma67YtSV
-         7wqFRhbVD28KLke4hQDwXZaDtMeoWnOUFuuoqdYSq4KgAxrSfs1J5Gr6q4AaDBYb4Vvu
-         NJaeYY5GyiqTF2/jxAX0tMb6bVPmB3X6NDgkNqbewE+EaTzrzcopF5cO3xYT1pntdEM+
-         lq6feGOHE+zMnWHdyNmE9ry73i/0XYl83SEEL1oPD7c4SAWIYbaOshEmDJcf6r4bhmQ9
-         PG2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723650760; x=1724255560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EcCdbI/FUUc+6rc9hEkn91YnRqL7K06FCdBgQ0Hf0J8=;
-        b=hVPhcQZO/y3yHM7uheF9VhpPMynYuCQag4uCiAC3wNgYghK3QB6h4FR/CIDpbDFXaX
-         TYiN4pkcrB5Wux1zZyXhr/jRjZua0M44NRVXKGjrdcbQNuTByMAWJPuo4UKTnMLy+EGq
-         fk/gVWHbyAecr+/wgeOhxUCz1pjpJ0aEeYyhBPdCCFL4RRJuTccnPv23NPsMEikjNKGc
-         rP45le2+PPQInWNLlWPm0A4ORA/o1yqi5SnidHGp56mf+b5htfCmh+y+f+5UYqFHiznC
-         p5TeJtJHEoo5otGZnhqDc/zGoLJP3GWW3hvMasHH3HW3lY7BgG+DcaBjV6LZ/3V71NkI
-         Ntog==
-X-Forwarded-Encrypted: i=1; AJvYcCUgQzArn0v8ANKLb+Oacs0pR3N5ZnrwY2NywOLK2sx7WmVTY1ayjG93Nf/+6oMJvjT5g2FGJFAJJb4jB2zPROq1NlJ3JAtkBQlBt7re
-X-Gm-Message-State: AOJu0YyES/nBO+mHQ4OcTtToZtqmvAs9qAhTeSuoRPW3JlH8rhptdnfa
-	HUPSRtwN0TRqWiJHnpppAYGDzoQ87pILQ2ELSck2MxqI4nSZsrT/eLagMq//h3g=
-X-Google-Smtp-Source: AGHT+IGTnK+od+WC3f2iNRHMgb89W2Yd+T+czWyaFTrNfvgFGlorx8l0R1Gzp8lOpG7q69sKMoRmpg==
-X-Received: by 2002:a05:6a21:1584:b0:1c8:b65b:3db8 with SMTP id adf61e73a8af0-1c8eae4edf7mr4150745637.9.1723650759974;
-        Wed, 14 Aug 2024 08:52:39 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:58b0:43ab:ed9f:f0e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6979d843bsm3258801a12.17.2024.08.14.08.52.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:52:39 -0700 (PDT)
-Date: Wed, 14 Aug 2024 09:52:37 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com,
-	s-anna@ti.com, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] remoteproc: k3-r5: Acquire mailbox handle during
- probe routine
-Message-ID: <ZrzSxdxt64UkgVS3@p14s>
-References: <20240808074127.2688131-1-b-padhi@ti.com>
- <20240808074127.2688131-3-b-padhi@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BFD1B5819;
+	Wed, 14 Aug 2024 15:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723650805; cv=fail; b=nNKKN7s7mv7nWHDnu+6w9ny9pqjJxDZf6BUCayKX+ptxhW0WyhPekZ+PV4mexKu4E042pbvqUguolCi6awweMO8mEDCTjks1cYQHEDuVRMmsvmoQXNWtVPbpSiXifhJcV09BmjnnieZFhKejV1J/sAsavj55nlqrzf2ExMD7U9w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723650805; c=relaxed/simple;
+	bh=wb5NFpJ8rfKvR4NcoReutu4CBIFP21A7mMe8v/NDrTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=o7eHVOTP7Mflkn9nSNOwPVrV5E9wkLKNNVjumqzRnBYqb4QBmRy+S+Wimuu2O7df0i9v/dYHT2ZcbqcYb4tFyvVmdBmXE0ak2hgMvZynlfndA0mXZNzDcqoqtHekY/nghPt8dG3oN1iFcxdMsTZTU1DCLVNa+ezaZnM5WaoDJSc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bP5ilaOV; arc=fail smtp.client-ip=40.107.244.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CV9bectlEDav3fDTFLdI2VQ/drtM0AeC2RvllyUkcTmOh1scl07NZ3HfpM5tfQzanKMC46fgzwwMt+xPvkudyy9c5fpP/LfcU7A7L2UIEcYaalqZYxy4T8KdQCmT7dyeQyEQaM72NvOukeFYIz+6LaxYrT5k6Lccqxz5nSkGm1jUv+EGES6jQyT3eQMIjc5qlvnpjYsHLNTb2XhiEFoPDobl08RjPRfzrPfBhjFe/Sg+vxNe9YIbHwxB9uRHsRHzB/nRkV3ISenkwOz6HgG2j5oNfnOor5UFUQPoeX4KpDFHTHOlYh4VWYRMvAUbh2bhQDVrpDWJJWzUuq4EkIGlAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lfB5cWN7Etape4P9BVQkxXk9RydS0wUToney6qU72/o=;
+ b=ASv14LeHJdHLD/D5kVjLwzA2T1iIV7SlpYmr6By2LfNw++sxH6cFREUX63PAmhsQlNxD8RwIoxNjzxMD+PgaFz6Dh15Fz/aaKOoDUGBo7tMCJNw/1tvxSVFpjqvf7JrRgkZB+PiCqzhugZSh3eG/Ojbayj7jhs9Y196Xse15uRUDsB+q6j/v3U1Lr0zP76OQrsNfJestXgxaThmqEeMBdl2ZKc+WEH48BGxpTIMeMm4PKxrIuNS3oNyBGjsGUjAoANx6ev2uOwYF2cWlaviEQ82DQAMJ5lrVgBmrmhOP3T2b4xWBEqgigmTYLeOFGkYDuNjp/K2rO5Bcv1yfmxpfXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lfB5cWN7Etape4P9BVQkxXk9RydS0wUToney6qU72/o=;
+ b=bP5ilaOVD0y6lmHptJPBnmVrH2n3a+67k52Uxqpi3073Wmk+6HbnaF1U9HdnDR4p7y3t1zcY3ujiLJefljVC9B2ysCHsfjavWtrPXVcEVjTtn4QPsIp9tYszLxnTj0oKOHQVuFwFu0s+I0QUvtwca+we5uweI40YGLfUWq/jQZA3BzkKWcStoiVMNLXTmrkXqMAaB9GKtUCEzFu52U9XOnMkaR1V1I7k2QuAFDokLp/N1m0fTYhCFvCYbaQhOFn+Zw535f0s7fuTlgISP8t3zP/jamIdTm0AAMcHQlSlGcHQhEtlAEeDQm5GY0j8/TH+5ItArQiJkS8U4jsv5wsiYA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16)
+ by SA3PR12MB7880.namprd12.prod.outlook.com (2603:10b6:806:305::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Wed, 14 Aug
+ 2024 15:53:20 +0000
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52]) by DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52%3]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
+ 15:53:20 +0000
+Date: Wed, 14 Aug 2024 12:53:18 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	David Hildenbrand <david@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 03/19] mm: Mark special bits for huge pfn mappings when
+ inject
+Message-ID: <20240814155318.GQ2032816@nvidia.com>
+References: <20240809160909.1023470-1-peterx@redhat.com>
+ <20240809160909.1023470-4-peterx@redhat.com>
+ <20240814124000.GD2032816@nvidia.com>
+ <ZrzL_Yljjw0w9ZSi@x1n>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrzL_Yljjw0w9ZSi@x1n>
+X-ClientProxiedBy: MN2PR14CA0029.namprd14.prod.outlook.com
+ (2603:10b6:208:23e::34) To DM4PR12MB7767.namprd12.prod.outlook.com
+ (2603:10b6:8:100::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808074127.2688131-3-b-padhi@ti.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB7767:EE_|SA3PR12MB7880:EE_
+X-MS-Office365-Filtering-Correlation-Id: 25e9879e-2766-4077-d569-08dcbc7937d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?CYn7XBSP4hK29qd9BzJ+J7sqBfV/oQKoKyr5F5Ba06ZBSYwXal8NhtDJdxpk?=
+ =?us-ascii?Q?nvLVPMjPvJthhQdJoJggybX0P2+vxAlhrOutQeXrXe0V54jF4L6y9dds/ofY?=
+ =?us-ascii?Q?pNmG90Rel/TSw4iYsUroiNgpIH4prm2boaejLXBb6ZvVGFemAuY78Y5phgqD?=
+ =?us-ascii?Q?WLtC7wmM6ma4ofQbWpt5EKKg2Mc8hFtBVV2uqxxV0bvSgwDUPASSlAtsBKL/?=
+ =?us-ascii?Q?1D6LW8gQ+RSs9JTGc7MAXdo6maER7YYjOBzg//t/QJ2VMaCb8LpIAiSYmBDT?=
+ =?us-ascii?Q?Ctp80kF7828+GYky6hEMt0LE0ZE1cTcRC/bMpiHgbVz1jsQnbwZZh0BavIsq?=
+ =?us-ascii?Q?HYiPkdyLKU03GjppSoily3qoHMwklrfVi0vzj1m/jnTDgeY/MrkIbqIXQjWn?=
+ =?us-ascii?Q?jYPRg8ZBvdCy+TV4gmdedn4SDB9IMHhToxwqLqw8OkmMclyoBwH5vuR7m0VZ?=
+ =?us-ascii?Q?futuiD4pQW+/HSTCHsVgWUKFMyt7+6N7FdhD/vZqILVEA0P/78S24aIpQ44r?=
+ =?us-ascii?Q?FQ2zBjTtdg4IoTk+dCixWtx5zbO3+bskLsV8etbZAvp/NhTQuNqPu9GEnsiO?=
+ =?us-ascii?Q?gBixLlT39pt2dT/1rO/01hO3ZOwDeTAUqL80MwsPzf3WaZrPRPqQcdj1Pgjs?=
+ =?us-ascii?Q?/5Vr4zolMAFfqv5/NqWzc+mx5xmyFjcDHBlAP0kU3rhd2PD0iR7ApmxcCMqZ?=
+ =?us-ascii?Q?FLk2vO0ahtKErV/N2qKr7HDMYOKwyXGZYv9BQDHUPL3Q/bs6xhnMgYrTUCZu?=
+ =?us-ascii?Q?a2GsFMdz6YePd1PhnfHkbQvUjTRMIr3fT3ha3IZqxhLYHxDgGcyvKZigIYj2?=
+ =?us-ascii?Q?ARqVYz+g+go7PThta7/eLxL1XnqEQM1z6hJH9HZn8T3734eSNBqVP09+HJ9c?=
+ =?us-ascii?Q?TJZYqueR7MrsN8xh/onp5UsrMIhj17EZ+1n3jonNhXxEmEdD/NS4UqutAZ2r?=
+ =?us-ascii?Q?Mk0nnEMM4lf20yQA39wNX5sxQMMm6VPaLPp429sU1XlCh0ek5QcWISiEue1S?=
+ =?us-ascii?Q?KcXou0JZCuPHHXob3uQCiUUPLQAqFFC9sdHUh5uNr3IQuiaAiqF/qo0DELVq?=
+ =?us-ascii?Q?Lz+maX4pkvSR1rv/gCF3q1sPDydAEBxg4d8BhpB0QMsUgeIKCW3lMp2KyLHR?=
+ =?us-ascii?Q?VOFFafnPBa5UVIH3ervxRDRkHB7C1cC1iWHNRaFo9Z0U035/DlHcO6zd3P2+?=
+ =?us-ascii?Q?VVkismIrEKMsHwUhyM8rjAj4xi4VzZKFDhPPARXzwwvZmy1DH4B5kzqZIT78?=
+ =?us-ascii?Q?UuylK7iDHICyNan6P8ly79g1Cdwnz+GqV8HV2BR1XZph9Lkftp6cqWkINgNS?=
+ =?us-ascii?Q?n0GgnisBHUnRVZZUsslkyQTVoD22pubS5CLyk4hzrSrwWA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nLAh5jl8K9bSIO7s1TUwfhdd9QSZNuI4Pb25NEvpayCFRY2GVkMvWa76PnVG?=
+ =?us-ascii?Q?qm9112/WCc4dYykxnTafTpDe2KB3aRBM2HPF5a/OtHM0ZMdOkhkY+0dx2N1y?=
+ =?us-ascii?Q?yeUHt1AdptVnio6f6sBFqx642WKszrW2TtEssVUsDDrnFuYZoQgDEHIFlgrA?=
+ =?us-ascii?Q?s+bfYYdUW+0ZNYzumqnJmWQyi7J52zZgJwRr3/b+jyXvg2MvcVsVLBdNLQrA?=
+ =?us-ascii?Q?iJoah41Qucsz6PXJDtw2N73q4HOtgTzmypVQjys5V5h5am3uWGWov2usG/cf?=
+ =?us-ascii?Q?nBtTkcdS4UpryTBS1NF+1HdgBOhmtnaqc0lZLwje2nl1Q85FlKz2s6eMAytR?=
+ =?us-ascii?Q?jdIIDSzDF2jMgiVRu0pLRUJr8lgpX6FAKvKJ2Dx10CuQdMQlCg/K+iXL/4NV?=
+ =?us-ascii?Q?3MAvpWsNEwJtKqHDJyF2pzl6fG64j5pcVmlm0fORHmjd3Vn+daCGM0nQwZmp?=
+ =?us-ascii?Q?nbgPPq8Tr6AjCI5f2r3wQ0+McLtZOqTUz7egdsNU7CHmX5n4BMDmMYC5fZQt?=
+ =?us-ascii?Q?0Q/5nSZIgTqc7d3vN6Dmjd1jrM3i166xRZQUHROYhoG9qhayROzgvZfCa4zQ?=
+ =?us-ascii?Q?G3RLjAMUyJFUX+ADftp1+kP3pr274fwwIKQqtjHivE+DT3iWxP00WQzQpxx5?=
+ =?us-ascii?Q?0Jxb/cEZzLqZWh2a0PKkRuSm3yYmINPVvhU17e9J84FrJYlDNcddJaYYYJEN?=
+ =?us-ascii?Q?HJIfA3PJYKgj6Cy+0/XJBBj8J3eMEsECLpAdFNm48KYWNoLjaVJthbMQ4VAq?=
+ =?us-ascii?Q?Wpf/bY8VF+HzgOlsFr72F9hplmzYKhAagv9kOX6u6w+3t3bQ91P0LEYoQgrq?=
+ =?us-ascii?Q?mm7nd/LtbXPWZZUJM5k54N2fI9CQ99uMmvSFDjbYpZ7PBPa2LmSdtOSOalH8?=
+ =?us-ascii?Q?aQc5p6Al2MTXBXginGPWBx5d28O2CnjIeDOdYnVfvDlBev3TvKbUggCrTy32?=
+ =?us-ascii?Q?jZWPQr5EUb2GdOzcoQct4rgay2FhFnK+w2oIHgqWVZvQ+Pu5L79Hd+q1Wqe/?=
+ =?us-ascii?Q?zj/MUvy7V9PnGN+zUxjnIQCgkzk/5pCQjuJvTTSbuTOAcJP1HojSHlQxV+GH?=
+ =?us-ascii?Q?WCgPztTogCmumVCB6u2FY1bkBHohonfvN/dTQ1O6fFPmrn9rPr304uzl4w7h?=
+ =?us-ascii?Q?9dNxl8l8XeWnb1Hq3xvIJ24TcPR367kCufol5JuYn7UgAu+hBS5FQ/tS+ifd?=
+ =?us-ascii?Q?y4AgvrACwSVfIgGSGEokTc9LFr2NT8wmU/Q6lKpmlJSmPWnS4ONMFtReMXLv?=
+ =?us-ascii?Q?lcXZq8GRbLmP0aeO8fxMF/M3EES6dHGH7hajJ3s1kISwSHO0yiUjQDSA3iE2?=
+ =?us-ascii?Q?g0iDSx6J592FBcfaXeL0VKZb0BQA4tZGEy4bc1VJCqP1oDCBp9HaPYUpOT2r?=
+ =?us-ascii?Q?qw4PyMgCotZ+6UHzI5iIs525mqkUr7Qn62/PpDGOKO5olNhbP7qPgoTc2sKM?=
+ =?us-ascii?Q?BwSIO5kcTl405QYP9NnRjvq51uxj2LJ5LHJzu/Dke0pvfZHMPrX64GEZuWBc?=
+ =?us-ascii?Q?FRc/Ctk4iy34VayzyWBfhKS/VAMxT+BK+a/2l0FiJUDdZxie499eGSqOsiVr?=
+ =?us-ascii?Q?zerdjUsFFWIHVme/N6KgMku1XUjzH5Z+JJALblWG?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25e9879e-2766-4077-d569-08dcbc7937d5
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7767.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 15:53:19.5743
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pBKZyCKXQiyroetJ1VspJbPc8Ko6/qgUFb57b8I14jflvNHfR2Jy7glNwYlB5mq9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7880
 
-Hi Beleswar,
-
-On Thu, Aug 08, 2024 at 01:11:26PM +0530, Beleswar Padhi wrote:
-> Acquire the mailbox handle during device probe and do not release handle
-> in stop/detach routine or error paths. This removes the redundant
-> requests for mbox handle later during rproc start/attach. This also
-> allows to defer remoteproc driver's probe if mailbox is not probed yet.
+On Wed, Aug 14, 2024 at 11:23:41AM -0400, Peter Xu wrote:
+> On Wed, Aug 14, 2024 at 09:40:00AM -0300, Jason Gunthorpe wrote:
+> > On Fri, Aug 09, 2024 at 12:08:53PM -0400, Peter Xu wrote:
+> > > We need these special bits to be around to enable gup-fast on pfnmaps.
+> > 
+> > It is not gup-fast you are after but follow_pfn/etc for KVM usage
+> > right?
 > 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->  drivers/remoteproc/ti_k3_r5_remoteproc.c | 78 +++++++++---------------
->  1 file changed, 30 insertions(+), 48 deletions(-)
+> Gup-fast needs it to make sure we don't pmd_page() it and fail early.  So
+> still needed in some sort..
+
+Yes, but making gup-fast fail is not "enabling" it :)
+
+> But yeah, this comment is ambiguous and not describing the whole picture,
+> as multiple places will so far rely this bit, e.g. fork() to identify a
+> private page or pfnmap. Similarly we'll do that in folio_walk_start(), and
+> follow_pfnmap.  I plan to simplify that to:
 > 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 57067308b3c0..8a63a9360c0f 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -194,6 +194,10 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
->  	const char *name = kproc->rproc->name;
->  	u32 msg = omap_mbox_message(data);
->  
-> +	/* Do not forward message from a detached core */
-> +	if (kproc->rproc->state == RPROC_DETACHED)
-> +		return;
-> +
->  	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
->  
->  	switch (msg) {
-> @@ -229,6 +233,10 @@ static void k3_r5_rproc_kick(struct rproc *rproc, int vqid)
->  	mbox_msg_t msg = (mbox_msg_t)vqid;
->  	int ret;
->  
-> +	/* Do not forward message to a detached core */
-> +	if (kproc->rproc->state == RPROC_DETACHED)
-> +		return;
-> +
->  	/* send the index of the triggered virtqueue in the mailbox payload */
->  	ret = mbox_send_message(kproc->mbox, (void *)msg);
->  	if (ret < 0)
-> @@ -399,12 +407,9 @@ static int k3_r5_rproc_request_mbox(struct rproc *rproc)
->  	client->knows_txdone = false;
->  
->  	kproc->mbox = mbox_request_channel(client, 0);
-> -	if (IS_ERR(kproc->mbox)) {
-> -		ret = -EBUSY;
-> -		dev_err(dev, "mbox_request_channel failed: %ld\n",
-> -			PTR_ERR(kproc->mbox));
-> -		return ret;
-> -	}
-> +	if (IS_ERR(kproc->mbox))
-> +		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-> +				     "mbox_request_channel failed\n");
->  
->  	/*
->  	 * Ping the remote processor, this is only for sanity-sake for now;
-> @@ -552,10 +557,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  	u32 boot_addr;
->  	int ret;
->  
-> -	ret = k3_r5_rproc_request_mbox(rproc);
-> -	if (ret)
-> -		return ret;
-> -
->  	boot_addr = rproc->bootaddr;
->  	/* TODO: add boot_addr sanity checking */
->  	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-> @@ -564,7 +565,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  	core = kproc->core;
->  	ret = ti_sci_proc_set_config(core->tsp, boot_addr, 0, 0);
->  	if (ret)
-> -		goto put_mbox;
-> +		return ret;
->  
->  	/* unhalt/run all applicable cores */
->  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
-> @@ -580,13 +581,12 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  		if (core != core0 && core0->rproc->state == RPROC_OFFLINE) {
->  			dev_err(dev, "%s: can not start core 1 before core 0\n",
->  				__func__);
-> -			ret = -EPERM;
-> -			goto put_mbox;
-> +			return -EPERM;
->  		}
->  
->  		ret = k3_r5_core_run(core);
->  		if (ret)
-> -			goto put_mbox;
-> +			return ret;
->  	}
->  
->  	return 0;
-> @@ -596,8 +596,6 @@ static int k3_r5_rproc_start(struct rproc *rproc)
->  		if (k3_r5_core_halt(core))
->  			dev_warn(core->dev, "core halt back failed\n");
->  	}
-> -put_mbox:
-> -	mbox_free_channel(kproc->mbox);
->  	return ret;
->  }
->  
-> @@ -658,8 +656,6 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->  			goto out;
->  	}
->  
-> -	mbox_free_channel(kproc->mbox);
-> -
->  	return 0;
->  
->  unroll_core_halt:
-> @@ -674,42 +670,22 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->  /*
->   * Attach to a running R5F remote processor (IPC-only mode)
->   *
-> - * The R5F attach callback only needs to request the mailbox, the remote
-> - * processor is already booted, so there is no need to issue any TI-SCI
-> - * commands to boot the R5F cores in IPC-only mode. This callback is invoked
-> - * only in IPC-only mode.
-> + * The R5F attach callback is a NOP. The remote processor is already booted, and
-> + * all required resources have been acquired during probe routine, so there is
-> + * no need to issue any TI-SCI commands to boot the R5F cores in IPC-only mode.
-> + * This callback is invoked only in IPC-only mode and exists because
-> + * rproc_validate() checks for its existence.
+>   We need these special bits to be around on pfnmaps.  Mark properly for
+>   !devmap case, reflecting that there's no page struct backing the entry.
 
-Excellent documentation.
+Yes
 
->   */
-> -static int k3_r5_rproc_attach(struct rproc *rproc)
-> -{
-> -	struct k3_r5_rproc *kproc = rproc->priv;
-> -	struct device *dev = kproc->dev;
-> -	int ret;
-> -
-> -	ret = k3_r5_rproc_request_mbox(rproc);
-> -	if (ret)
-> -		return ret;
-> -
-> -	dev_info(dev, "R5F core initialized in IPC-only mode\n");
-> -	return 0;
-> -}
-> +static int k3_r5_rproc_attach(struct rproc *rproc) { return 0; }
->  
->  /*
->   * Detach from a running R5F remote processor (IPC-only mode)
->   *
-> - * The R5F detach callback performs the opposite operation to attach callback
-> - * and only needs to release the mailbox, the R5F cores are not stopped and
-> - * will be left in booted state in IPC-only mode. This callback is invoked
-> - * only in IPC-only mode.
-> + * The R5F detach callback is a NOP. The R5F cores are not stopped and will be
-> + * left in booted state in IPC-only mode. This callback is invoked only in
-> + * IPC-only mode and exists for sanity sake.
-
-I would add the part about detach() being a NOP to attach() above...
-
->   */
-> -static int k3_r5_rproc_detach(struct rproc *rproc)
-> -{
-> -	struct k3_r5_rproc *kproc = rproc->priv;
-> -	struct device *dev = kproc->dev;
-> -
-> -	mbox_free_channel(kproc->mbox);
-> -	dev_info(dev, "R5F core deinitialized in IPC-only mode\n");
-> -	return 0;
-> -}
-> +static int k3_r5_rproc_detach(struct rproc *rproc) { return 0; }
-
-... and just remove this.
-
-Otherwise this patch looks good.
-
->  
->  /*
->   * This function implements the .get_loaded_rsc_table() callback and is used
-> @@ -1278,6 +1254,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->  		kproc->rproc = rproc;
->  		core->rproc = rproc;
->  
-> +		ret = k3_r5_rproc_request_mbox(rproc);
-> +		if (ret)
-> +			return ret;
-> +
->  		ret = k3_r5_rproc_configure_mode(kproc);
->  		if (ret < 0)
->  			goto out;
-> @@ -1392,6 +1372,8 @@ static void k3_r5_cluster_rproc_exit(void *data)
->  			}
->  		}
->  
-> +		mbox_free_channel(kproc->mbox);
-> +
->  		rproc_del(rproc);
->  
->  		k3_r5_reserved_mem_exit(kproc);
-> -- 
-> 2.34.1
-> 
+Jason
 
