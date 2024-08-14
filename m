@@ -1,149 +1,99 @@
-Return-Path: <linux-kernel+bounces-286711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28936951E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:06:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9500951E1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF2B1C21D4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B07E281FFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AAC1B4C43;
-	Wed, 14 Aug 2024 15:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802A51B5812;
+	Wed, 14 Aug 2024 15:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lo8Pr/Gg"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tAiYKLbk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j6DzcVXm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730FE1B3F25;
-	Wed, 14 Aug 2024 15:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693A61B4C23;
+	Wed, 14 Aug 2024 15:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723647967; cv=none; b=mZ95FJWjKh14HUYG4v0ImcJ4vPSKpfqD63rcvNtWPA/GLB+Fc3Ps9nS0+/sL6l7pMKsS3R204y5PCS/n2izDFd1KmBHXqq/2lICOhBxb6t96iQmTFuIH75k/40W4fwdW2pm/5RAYogxn9diwGKJmZ3ASiKl+SCRcMAllFbo5iAk=
+	t=1723647977; cv=none; b=Qnq7gtzSEyckCbw09Fnt9bIsjIfGQOZiryjLFggqWsZVzK4Y0gsZpmXPqURdxG8pshXap02ns8vsRM4YrxOcVEcrZnBTMnTJ+D0Xc4nprYlNy3pmJOkHo3jri6aWngxQ9Vyco9STu5E4oDIX3LgnKN+MswddigNzBcMz0FrFQI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723647967; c=relaxed/simple;
-	bh=8cK0GvF5QFceshCvw1XcYlJrjfm3NLa//F8dGczr9ko=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pq4UKPT5HuQQBAr+FkaoKUsFyKWKvJfeQIeCVMFA3inN9VmheMnzJjrFndMTPP2zksXAmkdwBK4AOgKWn7iDI0z1gST91/4xQaUZjME23rTs1PMmiA3W8VtgvYMxy0Qp9mwZffV791KqGoHszRTTkjR2jtOS9CeaF2E1Vg8I9Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lo8Pr/Gg; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71275436546so147935b3a.1;
-        Wed, 14 Aug 2024 08:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723647965; x=1724252765; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vBNNXqbtdbYFsD6uUrAH/OBdUYwLKiBcMh/OK4+Ox7A=;
-        b=lo8Pr/GgxyuPfLeUK/umgoYFUZK5tUXYSdZYuNggW//zHX68On+LkmORQelEWYAUX8
-         eY72aUYnLLprhuK+AN2q9uQT37mLstTQ5JJBWa+voy3Sn0/NYnKpqg6bpaP3q53Tpzlz
-         4QgDmpixBL1Y6s4jxW+08B/FHLmSOBGSgb7Uk3RDyJNvQGp+lggBCk/q6gVcV8kYNNPd
-         yQc4HQrMt9ArL9XTZPC/GnHjYKclWK13fkey93cxUxll8VOv3j5JhYPn/Bu5RGww0JWi
-         sYokc8/Kma5lCm0XtGuIuhpflc0LOpuL8RRihjHnSeFLfY500YV6VjZZ1VQX6KGx1HZ5
-         F9tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723647965; x=1724252765;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vBNNXqbtdbYFsD6uUrAH/OBdUYwLKiBcMh/OK4+Ox7A=;
-        b=bpJXwmckvOL7WlPtHrlXxT4z7zFUkGG1gZXMeChP8OoFnFdBj2tgQLxJze9tf99WCv
-         3RmBmY9ouPkU+JjaCFflSgqkZu70kJymvYQO3mlcoDTp39Jr4fIMq9v51sM2bzttZ3j0
-         MyGBwttDdMCJXpqvnowO6kPOkfLTLglaGj1R0CKqyqzuh1p+SpJsdRgDCmGIA/+i13nJ
-         YhKfoH7L4CBcTX449f3omewQ66oUgNmKxZLP6I/eQt0FvZT62qSqccVoCGZQlWQGmTAq
-         ReKNdyfx3rg6bGnegjBAH4pxaDGLdn3e1JRNF23WlD6M7RkgotWhWn4Bl7fY8x9ciMwp
-         155A==
-X-Forwarded-Encrypted: i=1; AJvYcCUzI9LgZOwLxLQFK8dDNqC0buQlBDfOBoC4ciRSlqn+COKxQd302qGR71L1ubxaRiVrCOBV3nR1QKxK2vfWvi/ubntTMP0kWiG21V7IIHv9O70MwePOyp+xYvKFkOKa6gttH6e9eweMf6uNiTPD7reyt2ok3eDte/jPMaRYlvs6Iw==
-X-Gm-Message-State: AOJu0Yw7ZS6wpPL1BPNSjxBYtbp0jGLsjetvbe9jFtOODzfU7tvjTWsv
-	8mZb2sIOAN3RzJOkLWasWr5/LP/ayBvpK7cF6HV+5mQh/OUtY1T4
-X-Google-Smtp-Source: AGHT+IG6NXju3u9uZ1M2mdalYsZOqTUXuZluM3xmOKU+R9fWBY3JxN9QRZVLpL2g6H83xxWtFjtB2Q==
-X-Received: by 2002:a05:6a20:d486:b0:1c4:ba7c:741c with SMTP id adf61e73a8af0-1c8eae811a1mr4098557637.21.1723647964422;
-        Wed, 14 Aug 2024 08:06:04 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7126ad714a6sm1236278b3a.186.2024.08.14.08.06.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:06:04 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: wintera@linux.ibm.com,
-	alibuda@linux.alibaba.com,
-	gbayer@linux.ibm.com,
-	guwen@linux.alibaba.com,
-	jaka@linux.ibm.com,
-	tonylu@linux.alibaba.com,
-	wenjia@linux.ibm.com
-Cc: davem@davemloft.net,
-	dust.li@linux.alibaba.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com
-Subject: Re: [PATCH net,v4] net/smc: prevent NULL pointer dereference in txopt_get
-Date: Thu, 15 Aug 2024 00:05:58 +0900
-Message-Id: <20240814150558.46178-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <64c2d755-eb4b-42fa-befb-c4afd7e95f03@linux.ibm.com>
-References: <64c2d755-eb4b-42fa-befb-c4afd7e95f03@linux.ibm.com>
+	s=arc-20240116; t=1723647977; c=relaxed/simple;
+	bh=OU2N/lJoKy29N++pfrNcOUwH/XmHLRz4RAcUETTINHQ=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PWgmWW0Y7OEd6JTsA4ouA1E/CabBYZ8b5dQOlfSn5FU4y9IjVYdZkv4TCBV0yWOkgZ3K03g2L1RandcCj62NKv22NEVggFDqPT5OjlzQGuW4+FeyxcRVP6R281Zz182m5br2tsiXVLqbHRR6azqbaxOaAgnUd0FtSOaGXXvEQ80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tAiYKLbk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j6DzcVXm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723647974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgBDpLd5CRpFg6iGANviJjQZYBMsab2XfI71ntFAp9M=;
+	b=tAiYKLbkjpo3vw7vm6WQ5c7NaedPhBkRMhEoTNaEjtTBNkJoxXr6ch7ieW7REJBS8Bs0bI
+	MFa+tPwBRX6tlTqzlOkNXKFJqYGmLWvZ9WDysaNEfAhIcaMlMI/3ygGfLmajWqPhFF0s1q
+	yT7MMOoKP/YEViRCuJ5mO2f4hMzUtha0fAnOq2umhbBZi0VcQ0vMSJrGAZoJytbmAFBTxB
+	Jo4QqrkLTErYRR4AuF56fvGbFdAjnb6Gdd9bnE0wb1Il1fxN7ZzfA3Pcy7BI+FfXzq+yTq
+	QSPBPJE2RvXKhiKEaXARp2eKHeRbb5B6myXbMlqM6stm/qlbobkrr8b1LuygZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723647974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgBDpLd5CRpFg6iGANviJjQZYBMsab2XfI71ntFAp9M=;
+	b=j6DzcVXm1ZA8IVRQAornEXvVYXU17kS2Dzdyv1mD/k0CSU+9aqtNO+Omhv5JKo36g68YUk
+	Me2HS01vDRJm2JAA==
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, kevin_chen@aspeedtech.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH v2 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
+In-Reply-To: <20240814114106.2809876-4-kevin_chen@aspeedtech.com>
+References: <20240814114106.2809876-1-kevin_chen@aspeedtech.com>
+ <20240814114106.2809876-4-kevin_chen@aspeedtech.com>
+Date: Wed, 14 Aug 2024 17:06:14 +0200
+Message-ID: <87plqbnnyx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Alexandra Winter wrote:
-> 
-> On 14.08.24 15:11, D. Wythe wrote:
-> >     struct smc_sock {                /* smc sock container */
-> > -    struct sock        sk;
-> > +    union {
-> > +        struct sock        sk;
-> > +        struct inet_sock    inet;
-> > +    };
-> 
-> 
-> I don't see a path where this breaks, but it looks risky to me.
-> Is an smc_sock always an inet_sock as well? Then can't you go with smc_sock->inet_sock->sk ?
-> Or only in the IPPROTO SMC case, and in the AF_SMC case it is not an inet_sock?
+On Wed, Aug 14 2024 at 19:41, Kevin Chen wrote:
+> Support for the Aspeed Interrupt Controller found on Aspeed Silicon SoCs,
+> such as the AST2700, which is arm64 architecture.
+>
+> To support ASPEED interrupt controller(INTC) maps the internal interrupt
+> sources of the AST27XX device to an parent interrupt controller.
 
-hmm... then how about changing it to something like this?
+This still lacks a Signed-off-by: tag and my comment about the error
+path in the init function is still valid.
 
-@@ -283,7 +283,7 @@ struct smc_connection {
- };
- 
- struct smc_sock {				/* smc sock container */
--	struct sock		sk;
-+	struct inet_sock	inet;
- 	struct socket		*clcsock;	/* internal tcp socket */
- 	void			(*clcsk_state_change)(struct sock *sk);
- 						/* original stat_change fct. */
-@@ -327,7 +327,7 @@ struct smc_sock {				/* smc sock container */
- 						 * */
- };
- 
--#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
-+#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, inet.sk)
- 
- static inline void smc_init_saved_callbacks(struct smc_sock *smc)
- {
+Do you think that addressing review feedback is optional?
 
-It is definitely not normal to make the first member of smc_sock as sock. 
+Feel free to ignore it, but don't be surprised if I ignore further
+patches from you.
 
-Therefore, I think it would be appropriate to modify it to use inet_sock 
-as the first member like other protocols (sctp, dccp) and access sk in a 
-way like &smc->inet.sk.
+Take your time and go through stuff properly and do not rush out half
+baked patches in a frenzy.
 
-Although this fix would require more code changes, we tested the bug and 
-confirmed that it was not triggered and the functionality was working 
-normally.
+Thanks,
 
-What do you think?
+        tglx
 
-Regards,
-Jeongjun Park
+
+
+
+
 
