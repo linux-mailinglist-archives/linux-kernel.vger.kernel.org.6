@@ -1,92 +1,131 @@
-Return-Path: <linux-kernel+bounces-287076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CE095229F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:25:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501CC9522A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7223B2843B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:25:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A371C21F4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9131BE86B;
-	Wed, 14 Aug 2024 19:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCF51BE864;
+	Wed, 14 Aug 2024 19:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S1//LuYF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2HQX0QJn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="o7E1VZmn"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AE61B1505;
-	Wed, 14 Aug 2024 19:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB1F1B1505
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723663539; cv=none; b=pY8lAwCCvTIehPbpo6lDxoMXZwfEOPrJwNMnzhL7D76zsfxFOPaqUN28XsWAmxEWrZlhm5yxOejhEuVbJQ2EMDGQFQ3IE1owQLfFbyetXtzVbpC1QW901d/0uW+KvXYNucGRiQhJx4YamSuGy+32ZcvpLz42BPMRoW2cM2Lzi30=
+	t=1723663585; cv=none; b=TnIIN4PBXQlPHc8gKAlKbg5vNjqBE3EDeOT2nzLLM8AhedoYF8iuM1MNfjh/SxgSKwvQI5PQ0O4/CuWBaYWg3kA7Ie+z+6YmEMsgF8DvjCpqzk86qRJOxTqKDDA8E//4wnBhhzOglEqLyDYLiAeCjKDsN3jA3OanTroFHFd1Cec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723663539; c=relaxed/simple;
-	bh=zUs3GOAzySbTdSc9thjDMsauHmm8D+weS9Iueso+rSc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Dnn4liexyq2l0ZtI+OGtUoSjHBH6+SGoAhk4OrvPoAhJIYf7skZuy4IdFg/VQwis7YmYT19wE3KGYv6p12cB1wLmSrNCNOvKydcOXgRincmoSykT4p11TLDlCF5JbWUUPe44X4O3aP+2+pTHTFnDv6cWOFq9hpJ/Bg+JRY1KRNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S1//LuYF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2HQX0QJn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723663536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zUs3GOAzySbTdSc9thjDMsauHmm8D+weS9Iueso+rSc=;
-	b=S1//LuYFu3oLHVIwz+8n75aOZTfk43TceWNsotzGY/CwmKLhvhQANbugBHW5KhazKNsvhY
-	MHiUIf87o0Mwh2InpLePWQC28uHAwV59dv/V6GgO9eusJjtJfVCy0tA/S3zJB/zkwuI2VR
-	kCUjMoZfUNPu8poLe7XZ972W6gv+sVQCaygaggn5+SJcgf7Yrkdcn2bABiIw0B2EMiI7v2
-	+VwOpuL1F11/WJNxnUPG6Lnf3iv2Djuel4Ybv/5cjBN5lv4X0Rk5QNoDHshSfvn3ikMSlN
-	DSxKmkKKio/ZbhNkj3dI1vft6QCqfPtjKd2fhYBL9pEwINh3zYKKqfB0stt7xQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723663536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zUs3GOAzySbTdSc9thjDMsauHmm8D+weS9Iueso+rSc=;
-	b=2HQX0QJnorphyLQdzCuiqncEDoNPVHAO4W+9YxTbTIwt2+YPEWAJ9rUGs2mr21QFKPxXJt
-	YfnVHkJR7oYOOVDQ==
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Baoquan He
- <bhe@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Tom Lendacky
- <thomas.lendacky@amd.com>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Sean Christopherson
- <seanjc@google.com>, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCHv2 1/4] x86/mm/ident_map: Fix virtual address wrap to zero
-In-Reply-To: <20240814124613.2632226-2-kirill.shutemov@linux.intel.com>
-References: <20240814124613.2632226-1-kirill.shutemov@linux.intel.com>
- <20240814124613.2632226-2-kirill.shutemov@linux.intel.com>
-Date: Wed, 14 Aug 2024 21:25:35 +0200
-Message-ID: <87cymaoqj4.ffs@tglx>
+	s=arc-20240116; t=1723663585; c=relaxed/simple;
+	bh=X5k43UmXO+Oox+xquAGWcpfpuqgnORzhkAT7Tv+A/A8=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=oSN1ZawWxgItcp3qLXLr2+5tw+8Qi4+oQAeJhiUSFW4JdNGBEbWL+sXCo2NKvMvB3zN4c/0dk9/EymJS977oZnY88gOq0w5XCRlav28yIcr/36dsHuh2m4QFejgeGA65N33P7eY8Qpw0veAm5txL5Db943v8mXvwAX02WfURQBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=o7E1VZmn; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37182eee02dso95310f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723663581; x=1724268381; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rOXkKU2W9D9rNgyzn1pK2KXlz25F7zmkDN5gNLIerY=;
+        b=o7E1VZmngxBOV52wxqiVqoBr2iaktt343Fwt3oFNuxZ886axKEy0JJ/Mv+05y1p0/5
+         eq7I07yUi5BpKw23Wea4Bl0AeY5SSyNXzzRbEwA1JSHBmzweXGR1e4DbF6vtb7G+Suko
+         Z3/HmxxdeRZ5FmHZ6cePmk4e3i5y1eB66Ix91ekABHQ0s3QC2SygYuSFz6qqeejv8Tmc
+         eeiRI9TDD8MaJj7kleLfeUUONPvcpLADl3Th8FGmgGbr3IWbhlObLuOPobTOMM88B9ve
+         QwsNG8O5uqfJ4gcC8QvAe2lhiCYlAgtJT5tU/+/9l42xdGaoSRkPIn9bkvAQICIptl9N
+         KU0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723663581; x=1724268381;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rOXkKU2W9D9rNgyzn1pK2KXlz25F7zmkDN5gNLIerY=;
+        b=Qj6lVmGVz8V2EQ3SLeW/vLzbA91rBPQDjirrKgpsRG4l1dLjELrpXgVnNcYbHHXvKt
+         S+l8I3+Eo3+1XxcAcsfXkeeHpGIFkShVhNfdwRHe0MBabiDyS4/PKzJXwS2ZIvLVWnES
+         GeQvZLRjwH33YQ/psD/kRhJTsUCzAuXkO7djJ9TMwzrsrOkolDniCiBiDIyaRTdm+5/9
+         GoV2Jg/IePb1nblajLWgzHiBdDmtug4ZWir4LSxR4eIE5/3CpFPaQc2A8JycevCAhy4A
+         oc4BlwJAhbFNEPURccgNN61Im4PjSLcZQF75jD3KXuGDyfQ5046WnaX2vPH1TMoTzIJn
+         IHJw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5jYblJbeIxyyPvIupbJHiSRnaoaqd/JbvqjMDmIx9FXIxaTiGX/4NucLeXcQDUtFNvAB7PIooq9tSoqp+2IXl45HQKOlmxeMD6wRg
+X-Gm-Message-State: AOJu0YwDGw7E8OjF1B8aFK4jUACiB29YtCTjMAlrhvk2gVbTycpX34B+
+	M2pPXQzA9+9cWGaZmeMOIRey7sLsugh1FrsfvFq1rOvYHQSZz5s7eZIL46XqhN0=
+X-Google-Smtp-Source: AGHT+IHUnDWpVPfNpPkJ+/ynQ0mR1yA85wCz/I8P8Q8Je8RxXlJ7pr4pT2cjP14L/DBSxoHXE4qMpw==
+X-Received: by 2002:adf:f7cf:0:b0:366:595c:ca0c with SMTP id ffacd0b85a97d-37186c091f8mr395135f8f.24.1723663581314;
+        Wed, 14 Aug 2024 12:26:21 -0700 (PDT)
+Received: from alex-rivos.ba.rivosinc.com (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4f0a6f6fsm13589689f8f.116.2024.08.14.12.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 12:26:20 -0700 (PDT)
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH -fixes v2] riscv: Fix out-of-bounds when accessing Andes per hart vendor extension array
+Date: Wed, 14 Aug 2024 21:26:19 +0200
+Message-Id: <20240814192619.276794-1-alexghiti@rivosinc.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14 2024 at 15:46, Kirill A. Shutemov wrote:
-> Calculation of 'next' virtual address doesn't protect against wrapping
-> to zero. It can result in page table corruption and hang. The
-> problematic case is possible if user sets high x86_mapping_info::offset.
+The out-of-bounds access is reported by UBSAN:
 
-So this should have a Fixes tag, right?
+[    0.000000] UBSAN: array-index-out-of-bounds in ../arch/riscv/kernel/vendor_extensions.c:41:66
+[    0.000000] index -1 is out of range for type 'riscv_isavendorinfo [32]'
+[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2ubuntu-defconfig #2
+[    0.000000] Hardware name: riscv-virtio,qemu (DT)
+[    0.000000] Call Trace:
+[    0.000000] [<ffffffff94e078ba>] dump_backtrace+0x32/0x40
+[    0.000000] [<ffffffff95c83c1a>] show_stack+0x38/0x44
+[    0.000000] [<ffffffff95c94614>] dump_stack_lvl+0x70/0x9c
+[    0.000000] [<ffffffff95c94658>] dump_stack+0x18/0x20
+[    0.000000] [<ffffffff95c8bbb2>] ubsan_epilogue+0x10/0x46
+[    0.000000] [<ffffffff95485a82>] __ubsan_handle_out_of_bounds+0x94/0x9c
+[    0.000000] [<ffffffff94e09442>] __riscv_isa_vendor_extension_available+0x90/0x92
+[    0.000000] [<ffffffff94e043b6>] riscv_cpufeature_patch_func+0xc4/0x148
+[    0.000000] [<ffffffff94e035f8>] _apply_alternatives+0x42/0x50
+[    0.000000] [<ffffffff95e04196>] apply_boot_alternatives+0x3c/0x100
+[    0.000000] [<ffffffff95e05b52>] setup_arch+0x85a/0x8bc
+[    0.000000] [<ffffffff95e00ca0>] start_kernel+0xa4/0xfb6
 
-> Replace manual 'next' calculation with p?d_addr_end() which handles
-> wrapping correctly.
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
+The dereferencing using cpu should actually not happen, so remove it.
+
+Fixes: 23c996fc2bc1 ("riscv: Extend cpufeature.c to detect vendor extensions")
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
+ arch/riscv/kernel/vendor_extensions.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/kernel/vendor_extensions.c b/arch/riscv/kernel/vendor_extensions.c
+index b6c1e7b5d34b..a8126d118341 100644
+--- a/arch/riscv/kernel/vendor_extensions.c
++++ b/arch/riscv/kernel/vendor_extensions.c
+@@ -38,7 +38,7 @@ bool __riscv_isa_vendor_extension_available(int cpu, unsigned long vendor, unsig
+ 	#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_ANDES
+ 	case ANDES_VENDOR_ID:
+ 		bmap = &riscv_isa_vendor_ext_list_andes.all_harts_isa_bitmap;
+-		cpu_bmap = &riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap[cpu];
++		cpu_bmap = riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap;
+ 		break;
+ 	#endif
+ 	default:
+-- 
+2.39.2
+
 
