@@ -1,190 +1,156 @@
-Return-Path: <linux-kernel+bounces-285805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F409512FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:17:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26336951301
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC9F28250D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2A1E1F225EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE8C376F5;
-	Wed, 14 Aug 2024 03:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pP9jP1GG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700143A29C;
+	Wed, 14 Aug 2024 03:18:35 +0000 (UTC)
+Received: from out28-50.mail.aliyun.com (out28-50.mail.aliyun.com [115.124.28.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424A5364AE
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3B9376E9;
+	Wed, 14 Aug 2024 03:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723605427; cv=none; b=UnhrfRi2E2JSW2ouPwe4gkPTCTpJIF0UGnszv9PDh+eiX4IjoxuzY1FVAYUi7psVADB+FQq838tUGGYpbAVIlW642AMIOtfMv6WX6Lrz/HG9XGGn49D8RO153TOPxW4VoQEK1/bl2isNpVn1yTSL6mxU4b4koPbiiUqMujQSdB4=
+	t=1723605515; cv=none; b=Tzk3vV0V/VIfTswl1fIXmBb8fPz9wK3Sbg4sDEbaXbZqu3NpntSlFEFerrd8xxIUIbv2E4K3L4y+Ddf4dERIS8kv+o5tpuvOniPldCbjMBUr/g8/U1U8QRZ2KQP516w9GAryvlJkPEUh07IBZP/1ng0Szx7lmc4qEA49sACts8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723605427; c=relaxed/simple;
-	bh=FBn0TJzuKz5QlU+SwuU8/v8NAWJNdKV4Pp/tO+xkdIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BWeq+4BMJ5KbJ3kK0f77YSPShSgXoWsk6Ibn+1CovTgrdWMiH1IjkwB8kokOICd/eMAFtNKVnbxpMXsMTgv51OrlEy+0t1DlwPtn6+JEt26v4+qJKZgjaZY3mKZmJ4nJzrdtd2d1io+OqZvlDTofCYoUZsroHozYzSSWFJzrlWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pP9jP1GG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2BEC32782;
-	Wed, 14 Aug 2024 03:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723605426;
-	bh=FBn0TJzuKz5QlU+SwuU8/v8NAWJNdKV4Pp/tO+xkdIQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pP9jP1GGTkN8tV4RHK5EGNMuqebUsIXqDhOlgjvnzD+02gVodq945CfZbnD2M4Epo
-	 PW8b8A8+zc+/ZLrpuBB/nSoEL/Ea++J3pgX3vMm/VHN48sD2Lyo/oWu78Hfi58Kx0x
-	 1gG9NydpJ8GiEXJnBQHHybwO48Gabd1uGLCvNkXsxHXklb6BZj+3dgr8DmJpsuLxHK
-	 YEW4h8UNQzZXFZsW+/On0uG+8LjB59dbFZ9fOjxHywjFi/JipWnq2v/YgJXbkRo1P6
-	 dabso4rpQ5Fpwqd90BMfIhXbsyvBplXY/STwbLEP9a20RqAMykP1f9BHqv/bPUNlkb
-	 i18xuzXIHfn+Q==
-Message-ID: <cb4e93f9-1a60-4f98-9690-263fbbe7a99e@kernel.org>
-Date: Wed, 14 Aug 2024 11:17:03 +0800
+	s=arc-20240116; t=1723605515; c=relaxed/simple;
+	bh=AgVFMOPfloqSvCiROULfHPqQsTqxzcHX40p5bF4ZmIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Eb0XZy14ftcJUr6p2shUv7RyxcYVX/K2XLLNhhx22NQS08wC+grC2yBLt7KxxJUgwTyWlX63Gg3IsQtmIkQNfjvSJDjDMXxKcBqKW7kRc1UAWvx0bCQYRd7pkpMSRH6hhkGH+w047F1DPQrWZ41vwSQuv+ywVTreQb9nFW1QyG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=115.124.28.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.Yr7DV9B_1723605491)
+          by smtp.aliyun-inc.com;
+          Wed, 14 Aug 2024 11:18:20 +0800
+From: wangshuaijie@awinic.com
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	kees@kernel.org,
+	gustavoars@kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Cc: wangshuaijie@awinic.com,
+	liweilei@awinic.com,
+	kangjiajun@awinic.com
+Subject: [PATCH V7 0/2] Add support for aw96103/aw96105 proximity sensor
+Date: Wed, 14 Aug 2024 03:18:06 +0000
+Message-ID: <20240814031808.2852418-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] f2fs: convert f2fs_compress_ctx_add_page() to use
- folio
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20240813141331.417067-1-chao@kernel.org>
- <ZrvdD6EVJAik1b5w@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZrvdD6EVJAik1b5w@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/14 6:24, Jaegeuk Kim wrote:
-> Could you please test this series? I hit kernel hang along with refcount warning
-> in f2fs_put_dic, when running fsstress. You can reproduce it quickly.
+From: shuaijie wang <wangshuaijie@awinic.com>
 
----
-  fs/f2fs/data.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+Add drivers that support Awinic aw96103/aw96105 proximity sensors.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 9e21cfe11cc7..4f4e76c33611 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2322,7 +2322,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
-  			}
-  		}
+The aw9610x series are high-sensitivity capacitive proximity detection
+sensors. This device detects human proximity and assists electronic devices
+in reducing specific absorption rate (SAR) to pass SAR related certifications.
+The device reduces RF power and reduces harm when detecting human proximity. 
+Increase power and improve signal quality when the human body is far away.
 
--		if (bio_add_folio(bio, folio, blocksize, 0) < blocksize)
-+		if (!bio_add_folio(bio, folio, blocksize, 0))
-  			goto submit_and_realloc;
+The specific absorption rate (SAR) is a metric that measures the degree of
+absorption of electromagnetic radiation emitted by wireless devices,
+such as mobile phones and tablets, by human tissue.
 
-  		ctx = get_post_read_ctx(bio);
+This patch implements device initialization, registration,
+I/O operation handling and interrupt handling, and passed basic testing.
+
+v1->v2:
+-------
+ - Remove unnecessary log printing.
+ - Optimize comment style.
+ - Issues with modifying the device tree.
+ - Optimize code style.
+
+v2->v3:
+-------
+ - Add a description about the hardware device.
+ - Remove inappropriate configuration items.
+ - Modify the formatting issues.
+ - Modify the structure of the driver.
+ - Change the style of the driver's comments.
+ - Remove unnecessary log printing.
+ - Modify the function used for memory allocation.
+ - Modify the driver registration process.
+ - Remove the functionality related to updating firmware.
+ - Change the input subsystem in the driver to the iio subsystem.
+ - Modify the usage of the interrupt pin.
+ 
+v3->v4:
+-------
+The changes in this patch version are quite significant, and I concur
+with Krzysztof's viewpoint that this driver is indeed overly complex for
+the proximity sensor. Therefore, I have removed the compatibility for the
+aw963xx series, and the driver will now exclusively support the aw9610x series.
+
+ - Modify the software architecture to remove compatibility for
+   the aw963xx series.
+ - Optimize the parsing of register configuration files (.bin).
+ - Remove unnecessary log printing.
+ - Delete redefinition of true and false.
+ - Remove unnecessary interfaces.
+ - Optimize regulator usage.
+ - Convert the I2C communication interface to regmap.
+
+v4->v5:
+-------
+ - Solve errors that occur when executing the make dt_binding_check DT_SCHEMA_FILES.
+
+v5->v6:
+-------
+ - Rename AW9610X to aw96103.
+ - Remove the encapsulation of the i2c communication interface.
+ - Delete the update node.
+ - Modify the usage of regulator.
+ - Delete the remove and shutdown interfaces.
+ - Add iio's event-related interfaces.
+ - Modify the initialization process of iio.
+ - Delete power_supply-related operations.
+ - Modify the register names.
+
+v6->v7:
+-------
+ - Use __free(kfree) when allocating memory.
+ - Modify the way to request the register configuration file,
+   using request_firmware_nowait to request the configuration file.
+
+shuaijie wang (2):
+  dt-bindings: iio: aw96103: Add bindings for aw96103/aw96105 sensor
+  iio: proximity: aw96103: Add support for aw96103/aw96105 proximity
+    sensor
+
+ .../iio/proximity/awinic,aw96103.yaml         |  63 ++
+ drivers/iio/proximity/Kconfig                 |  11 +
+ drivers/iio/proximity/Makefile                |   1 +
+ drivers/iio/proximity/aw96103.c               | 814 ++++++++++++++++++
+ drivers/iio/proximity/aw96103.h               | 116 +++
+ 5 files changed, 1005 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw96103.yaml
+ create mode 100644 drivers/iio/proximity/aw96103.c
+ create mode 100644 drivers/iio/proximity/aw96103.h
+
+
+base-commit: 6b0f8db921abf0520081d779876d3a41069dab95
 -- 
-2.40.1
-
-After applying this, it doesn't complain now.
-
-Thanks,
-
-> 
-> On 08/13, Chao Yu wrote:
->> onvert to use folio, so that we can get rid of 'page->index' to
->> prepare for removal of 'index' field in structure page [1].
->>
->> [1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
->>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>   fs/f2fs/compress.c | 14 +++++++-------
->>   fs/f2fs/data.c     |  4 ++--
->>   fs/f2fs/f2fs.h     |  2 +-
->>   3 files changed, 10 insertions(+), 10 deletions(-)
->>
->> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
->> index 990b93689b46..eb5cd1457ffc 100644
->> --- a/fs/f2fs/compress.c
->> +++ b/fs/f2fs/compress.c
->> @@ -160,17 +160,17 @@ void f2fs_destroy_compress_ctx(struct compress_ctx *cc, bool reuse)
->>   		cc->cluster_idx = NULL_CLUSTER;
->>   }
->>   
->> -void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct page *page)
->> +void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct folio *folio)
->>   {
->>   	unsigned int cluster_ofs;
->>   
->> -	if (!f2fs_cluster_can_merge_page(cc, page->index))
->> +	if (!f2fs_cluster_can_merge_page(cc, folio->index))
->>   		f2fs_bug_on(F2FS_I_SB(cc->inode), 1);
->>   
->> -	cluster_ofs = offset_in_cluster(cc, page->index);
->> -	cc->rpages[cluster_ofs] = page;
->> +	cluster_ofs = offset_in_cluster(cc, folio->index);
->> +	cc->rpages[cluster_ofs] = folio_page(folio, 0);
->>   	cc->nr_rpages++;
->> -	cc->cluster_idx = cluster_idx(cc, page->index);
->> +	cc->cluster_idx = cluster_idx(cc, folio->index);
->>   }
->>   
->>   #ifdef CONFIG_F2FS_FS_LZO
->> @@ -1093,7 +1093,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
->>   		if (PageUptodate(page))
->>   			f2fs_put_page(page, 1);
->>   		else
->> -			f2fs_compress_ctx_add_page(cc, page);
->> +			f2fs_compress_ctx_add_page(cc, page_folio(page));
->>   	}
->>   
->>   	if (!f2fs_cluster_is_empty(cc)) {
->> @@ -1123,7 +1123,7 @@ static int prepare_compress_overwrite(struct compress_ctx *cc,
->>   		}
->>   
->>   		f2fs_wait_on_page_writeback(page, DATA, true, true);
->> -		f2fs_compress_ctx_add_page(cc, page);
->> +		f2fs_compress_ctx_add_page(cc, page_folio(page));
->>   
->>   		if (!PageUptodate(page)) {
->>   release_and_retry:
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index e9570f4e0f21..100b6526717f 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -2429,7 +2429,7 @@ static int f2fs_mpage_readpages(struct inode *inode,
->>   		if (ret)
->>   			goto set_error_page;
->>   
->> -		f2fs_compress_ctx_add_page(&cc, &folio->page);
->> +		f2fs_compress_ctx_add_page(&cc, folio);
->>   
->>   		goto next_page;
->>   read_single_page:
->> @@ -3161,7 +3161,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>   #ifdef CONFIG_F2FS_FS_COMPRESSION
->>   			if (f2fs_compressed_file(inode)) {
->>   				folio_get(folio);
->> -				f2fs_compress_ctx_add_page(&cc, &folio->page);
->> +				f2fs_compress_ctx_add_page(&cc, folio);
->>   				continue;
->>   			}
->>   #endif
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 51fd5063a69c..df436dd3aac1 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -4322,7 +4322,7 @@ bool f2fs_cluster_can_merge_page(struct compress_ctx *cc, pgoff_t index);
->>   bool f2fs_all_cluster_page_ready(struct compress_ctx *cc, struct page **pages,
->>   				int index, int nr_pages, bool uptodate);
->>   bool f2fs_sanity_check_cluster(struct dnode_of_data *dn);
->> -void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct page *page);
->> +void f2fs_compress_ctx_add_page(struct compress_ctx *cc, struct folio *folio);
->>   int f2fs_write_multi_pages(struct compress_ctx *cc,
->>   						int *submitted,
->>   						struct writeback_control *wbc,
->> -- 
->> 2.40.1
+2.45.1
 
 
