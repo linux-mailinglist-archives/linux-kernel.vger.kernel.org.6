@@ -1,232 +1,173 @@
-Return-Path: <linux-kernel+bounces-285855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078C195137A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:25:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15DA95137B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2FB1F24699
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229591C20C6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F044D131;
-	Wed, 14 Aug 2024 04:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B106B4D8A8;
+	Wed, 14 Aug 2024 04:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IgJ3vKTY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CnOibUQs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A152182B5
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C6C3F9D2
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723609544; cv=none; b=qhLKFe1b+gYES8dM/+vRQco0r0c4PGZeZsAFLifejgZc8/ChuK9EOvoKnqYkYRfCeFSjbny8CffManhvKvmyApzjUOV0sf3s4n3IN3yXqHIqiF45QvzRdTxNcsht8BBhazl+R03bpobOTbYUCBjWLvi3qnzuZoG2Y3eXY1A+fuk=
+	t=1723609554; cv=none; b=DNfMieLEgGas3ajlZx7G8Xw783KUwuFzrU0p56iXRtCSuzb9L7woYV+Xr838D/n897QkySGU79ZNlZ+uwqf+HXrrjHAjjw+8IhutaF6naQzFovPT+4js4lRte8uhfki6kBoW518u25E2sfRF8Xx/3UBNMOvkp4tSJhoUprM5ryY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723609544; c=relaxed/simple;
-	bh=IAXwZbG/yxHmgXLz9PP+3jcKw4QniPX3uOcB60JQtU0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=eQJt1EkmSmKD1raPNM4WaZcnZNIGDDJLIZqcszlYIkza5E7r/NFaPiivfnXjLKXeMkxjvA4EE3/3n6MWJkM1DVx/poJRorJHfm5SOcO2NpfQYrPa+a7CWDRyB2EaxA09jUau0Y+B3HcixdmLhIeQdRivKMAiKwSIZ46Nx4qRAGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IgJ3vKTY; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723609542; x=1755145542;
-  h=date:from:to:cc:subject:message-id;
-  bh=IAXwZbG/yxHmgXLz9PP+3jcKw4QniPX3uOcB60JQtU0=;
-  b=IgJ3vKTYmX68NXuuwvJlVV5ocKZvW6B9bGA5yLWggHbUOxnrntqI8uIu
-   VGkxFOgvtRyqget8cHBCDzxEeLvfOEYkEPMzLs3xmLtd85r6lmyFXt0R4
-   TyNeRL7EwNgE+exlg398DuNzIfoyvbV1LLZPhTejcs+vzRpqIJjW+B7x1
-   Q1o71jm5VE+kBhNsD8vOOaEJuzODp/YX11kETywMhnq0KDoGRW4BrUJl3
-   zqC2M3d/Qrvcoo4Chg+JgRPMXy1J7TFGvsUKZr05Ur42uU0DGGZlcXBpy
-   lzC4mLjfYe7nls163AxNhuPPDUd7L85/Bc3q9U52mPLjeo27ZmM+aDGpK
-   g==;
-X-CSE-ConnectionGUID: cKNd3hLYTp+Fe/+YoYmaeg==
-X-CSE-MsgGUID: KCRUwfOPQmW+tIok4JEFiQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="39254821"
-X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
-   d="scan'208";a="39254821"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 21:25:42 -0700
-X-CSE-ConnectionGUID: HIpWcOLuTvaVEvrW/z/MVQ==
-X-CSE-MsgGUID: lRkzhUJXS3el6mYm7qIHCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
-   d="scan'208";a="63730552"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 13 Aug 2024 21:25:41 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1se5Zp-00016u-2u;
-	Wed, 14 Aug 2024 04:25:37 +0000
-Date: Wed, 14 Aug 2024 12:24:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- 50059ccaa3c98badeae197b918e2ae06bb6f5162
-Message-ID: <202408141245.p44TdRV4-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723609554; c=relaxed/simple;
+	bh=Q8y1qhZoFQGUnbjLxGB7HQsVFkIBvrIGi1L0qwc8O5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hohkaM+5/wkWoVSPr4b1mu8ZHfr3gBh2Ivl/6DwLxQAbFFIlp7fKvV8y0iyummR0OfmQyANs1ljuGR28PPENCF+8F4djnoAEQSGnP2/n4J3VbC1MtmyaF31ZTHKRBOmluZqw2wNkBhLsYqZGyWHLR7sQDQuWD1QzYBcyhlnk8rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CnOibUQs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61D0DC4AF09;
+	Wed, 14 Aug 2024 04:25:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723609554;
+	bh=Q8y1qhZoFQGUnbjLxGB7HQsVFkIBvrIGi1L0qwc8O5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CnOibUQsoFCKZkHYLGZFiWPZC4llhehvfV+64pxd9OkGQM67d4VuuCK4sc8lCybk5
+	 XL0kGEpqSk0hp8gh6YN26WizuAIQtqpjsKOhUHGi1zioFZx7mvQAaQnE6cgTwuLxqj
+	 rW9wu/eT87rvOznMjmTBrPIBQMwX5UBFi/5tAJtI=
+Date: Wed, 14 Aug 2024 06:25:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH RFC] regmap: maple: Switch to use irq-safe locking
+Message-ID: <2024081459-paralyses-antarctic-2499@gregkh>
+References: <20240814-regcache-maple-irq-safe-v1-1-1b454c5767de@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814-regcache-maple-irq-safe-v1-1-1b454c5767de@collabora.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: 50059ccaa3c98badeae197b918e2ae06bb6f5162  irqdomain: Always associate interrupts for legacy domains
+On Wed, Aug 14, 2024 at 01:20:21AM +0300, Cristian Ciocaltea wrote:
+> Commit 3d59c22bbb8d ("drm/rockchip: vop2: Convert to use maple tree
+> register cache") enabled the use of maple tree register cache in
+> Rockchip VOP2 driver.  However, building the kernel with lockdep support
+> indicates locking rules violation when trying to unload the rockchipdrm
+> module:
+> 
+> [ 48.360258] ========================================================
+> [ 48.360829] WARNING: possible irq lock inversion dependency detected
+> [ 48.361400] 6.11.0-rc1 #40 Not tainted
+> [ 48.361743] --------------------------------------------------------
+> [ 48.362311] modprobe/685 just changed the state of lock:
+> [ 48.362790] ffff0000087fa798 (&mt->ma_lock){+...}-{2:2}, at: regcache_maple_exit+0x6c/0xe0
+> [ 48.363554] but this lock was taken by another, HARDIRQ-safe lock in the past:
+> [ 48.364212]  (rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock){-.-.}-{2:2}
+> [ 48.364226]
+> 
+>              and interrupts could create inverse lock ordering between them.
+> 
+> [ 48.365874]
+>              other info that might help us debug this:
+> [ 48.366460]  Possible interrupt unsafe locking scenario:
+> 
+> [ 48.367069]        CPU0                    CPU1
+> [ 48.367478]        ----                    ----
+> [ 48.367889]   lock(&mt->ma_lock);
+> [ 48.368197]                                local_irq_disable();
+> [ 48.368729]                                lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
+> [ 48.369551]                                lock(&mt->ma_lock);
+> [ 48.370081]   <Interrupt>
+> [ 48.370336]     lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
+> [ 48.370957]
+>                 *** DEADLOCK ***
+> 
+> [ 48.371489] 2 locks held by modprobe/685:
+> [ 48.371854]  #0: ffff0000018898f8 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x54/0x210
+> [ 48.372739]  #1: ffff800081c6ca80 (component_mutex){+.+.}-{3:3}, at: component_del+0x38/0x158
+> [ 48.373522]
+>                the shortest dependencies between 2nd lock and 1st lock:
+> [ 48.374235]  -> (rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock){-.-.}-{2:2} {
+> [ 48.374941]     IN-HARDIRQ-W at:
+> [ 48.375239]                       lock_acquire+0x1d4/0x320
+> [ 48.375739]                       _raw_spin_lock_irqsave+0x6c/0x98
+> [ 48.376300]                       regmap_lock_spinlock+0x20/0x40
+> [ 48.376845]                       regmap_read+0x44/0x88
+> [ 48.377321]                       vop2_isr+0x90/0x290 [rockchipdrm]
+> [ 48.377919]                       __handle_irq_event_percpu+0x114/0x2b0
+> [ 48.378519]                       handle_irq_event+0x54/0xb8
+> [ 48.379032]                       handle_fasteoi_irq+0x158/0x228
+> [ 48.379577]                       generic_handle_domain_irq+0x34/0x58
+> [ 48.380160]                       gic_handle_irq+0xa4/0x114
+> 
+> [...]
+> 
+> [ 48.466666] -> (&mt->ma_lock){+...}-{2:2} {
+> [ 48.467066]    HARDIRQ-ON-W at:
+> [ 48.467360]                     lock_acquire+0x1d4/0x320
+> [ 48.467849]                     _raw_spin_lock+0x50/0x70
+> [ 48.468337]                     regcache_maple_exit+0x6c/0xe0
+> [ 48.468864]                     regcache_exit+0x8c/0xa8
+> [ 48.469344]                     regmap_exit+0x24/0x160
+> [ 48.469815]                     devm_regmap_release+0x1c/0x28
+> [ 48.470339]                     release_nodes+0x68/0xa8
+> [ 48.470818]                     devres_release_group+0x120/0x180
+> [ 48.471364]                     component_unbind+0x54/0x70
+> [ 48.471867]                     component_unbind_all+0xb0/0xe8
+> [ 48.472400]                     rockchip_drm_unbind+0x44/0x80 [rockchipdrm]
+> [ 48.473059]                     component_del+0xc8/0x158
+> [ 48.473545]                     dw_hdmi_rockchip_remove+0x28/0x40 [rockchipdrm]
+> 
+> The problem is that the regmap lock could be taken by an IRQ context,
+> interrupting the irq-unsafe maple tree lock, which may result in a lock
+> inversion deadlock scenario.
+> 
+> Switch to use irq-safe locking in the maple tree register cache.
+> 
+> Fixes: f033c26de5a5 ("regmap: Add maple tree based register cache")
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/base/regmap/regcache-maple.c | 29 ++++++++++++++++++-----------
+>  1 file changed, 18 insertions(+), 11 deletions(-)
+> 
 
-elapsed time: 844m
+Hi,
 
-configs tested: 140
-configs skipped: 8
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                           tb10x_defconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-14.1.0
-arm                         assabet_defconfig   gcc-13.2.0
-arm                                 defconfig   gcc-13.2.0
-arm                       omap2plus_defconfig   gcc-13.2.0
-arm                           sunxi_defconfig   gcc-13.2.0
-arm64                            allmodconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240814   clang-18
-i386         buildonly-randconfig-002-20240814   clang-18
-i386         buildonly-randconfig-003-20240814   clang-18
-i386         buildonly-randconfig-004-20240814   clang-18
-i386         buildonly-randconfig-005-20240814   clang-18
-i386         buildonly-randconfig-006-20240814   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240814   clang-18
-i386                  randconfig-002-20240814   clang-18
-i386                  randconfig-003-20240814   clang-18
-i386                  randconfig-004-20240814   clang-18
-i386                  randconfig-005-20240814   clang-18
-i386                  randconfig-006-20240814   clang-18
-i386                  randconfig-011-20240814   clang-18
-i386                  randconfig-012-20240814   clang-18
-i386                  randconfig-013-20240814   clang-18
-i386                  randconfig-014-20240814   clang-18
-i386                  randconfig-015-20240814   clang-18
-i386                  randconfig-016-20240814   clang-18
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                       bmips_be_defconfig   gcc-13.2.0
-mips                         rt305x_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      katmai_defconfig   gcc-13.2.0
-powerpc                 mpc837x_rdb_defconfig   gcc-13.2.0
-powerpc                      ppc44x_defconfig   gcc-13.2.0
-powerpc                 xes_mpc85xx_defconfig   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-13.2.0
-s390                                defconfig   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                          landisk_defconfig   gcc-13.2.0
-sh                          rsk7269_defconfig   gcc-13.2.0
-sh                          sdk7780_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240814   clang-18
-x86_64       buildonly-randconfig-002-20240814   clang-18
-x86_64       buildonly-randconfig-003-20240814   clang-18
-x86_64       buildonly-randconfig-004-20240814   clang-18
-x86_64       buildonly-randconfig-005-20240814   clang-18
-x86_64       buildonly-randconfig-006-20240814   clang-18
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240814   clang-18
-x86_64                randconfig-002-20240814   clang-18
-x86_64                randconfig-003-20240814   clang-18
-x86_64                randconfig-004-20240814   clang-18
-x86_64                randconfig-005-20240814   clang-18
-x86_64                randconfig-006-20240814   clang-18
-x86_64                randconfig-011-20240814   clang-18
-x86_64                randconfig-012-20240814   clang-18
-x86_64                randconfig-013-20240814   clang-18
-x86_64                randconfig-014-20240814   clang-18
-x86_64                randconfig-015-20240814   clang-18
-x86_64                randconfig-016-20240814   clang-18
-x86_64                randconfig-071-20240814   clang-18
-x86_64                randconfig-072-20240814   clang-18
-x86_64                randconfig-073-20240814   clang-18
-x86_64                randconfig-074-20240814   clang-18
-x86_64                randconfig-075-20240814   clang-18
-x86_64                randconfig-076-20240814   clang-18
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
