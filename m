@@ -1,197 +1,165 @@
-Return-Path: <linux-kernel+bounces-286121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5A89516DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5ED9516E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5776BB21964
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55FE7283D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAFB1422C3;
-	Wed, 14 Aug 2024 08:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FAF1428FA;
+	Wed, 14 Aug 2024 08:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SV7WyUtB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hg5UqsW6"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB70A13C83D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383C8139D13
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625107; cv=none; b=FfmQ8E2pvue6R3qWx3jGyz6PScgucSBWJYPO9HRG4f40aoPNkOhlUh39rkvzSeQSleZWflWo6yRDYvJfbSg/KKWjGreEISUaDdDND3qObs/SWFAPESkVDbfNiXtBZPnrr/jPlaXWRkF4x1w/i6UQBHBNNTkUmu/R7uCvLMkrbvg=
+	t=1723625121; cv=none; b=fT8pw9U5HCkh9FWxX1ngsLxT+HM9CN9Vl/hzxdcy187Qrg5uqrbvHbxkDpEZXn37U/2hgzlxXzPoR/D4TMLtsrQXTedjGmo40QRe8UgENw1s9coKNtAJG1v+PsU2vYR+3+3RoeFPb5+xOj2m9WF8NGj3nRkUvvvFGijFd3ETe5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625107; c=relaxed/simple;
-	bh=QrDGC86x1xaRXuKpPMO6Uk2eDrZ9ud7JG3yamK/yxnk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QLyKEMGM8z26XVskMKm/iq3I80YMnN4xYSGVyaeCXk0hHsdYFJTx25QX+Eq19PmPH0hoLCGU5lIic3UbKMkkZvWd3gIjQVqSPMsYpUPJXOtKF7vu8swwI/dxaFT+PfIY6/xu59ViK//OvYx0KYO4BF07fk4D7NCRl2jKE/NZMAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SV7WyUtB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723625104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7hwkKCoOBN+b1OvqT/QSoUQZv/ejIIMA/dhfZb9tdx0=;
-	b=SV7WyUtBTe3+/EELOkra8d0WysJxe91HQBctREEgqzVhOVY/YnnUJfnZAofVUxNKMmJjhm
-	JeyQgZazoEpciYf3Uve9BsNG2ZICJmHnP9YKNnZhFgwHC+njtYwuSf8I0kHImSXbZbhRMU
-	PfJQtuE/yr3UC4pAgQAmaOnBTo4bxR0=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-qXt-fFVePo-uREgsWERxjg-1; Wed, 14 Aug 2024 04:45:03 -0400
-X-MC-Unique: qXt-fFVePo-uREgsWERxjg-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-532fbabc468so275991e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:45:03 -0700 (PDT)
+	s=arc-20240116; t=1723625121; c=relaxed/simple;
+	bh=rP0BJSU43YUuU9/R8Fx0nn/NVCzVpX9I9QY7RttkZh4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PL3FAKxOmkq5Zn8hwC0v1KRdSHbdRgeTFzKLj2Dyw/1AXOawxurBYD0jkvXAWd+wV1fAr0EjeMXgGbfc/nS6MpnSSz0NwgiZIL7qmQdgKLP5jpgFsuMuiiMgkOkDc9BuWl2Y5Wra7pCTGN3ORHpt5iMu67LK0uOkMBVnS82JGzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hg5UqsW6; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc4fccdd78so46665215ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1723625119; x=1724229919; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TH1M4v3WVE7mB9RLKtgXX+m2D/YPKIYBQHunV/cYH4Y=;
+        b=hg5UqsW6IsFbRosFffN4LvKAELoXaTvCfXyJOAdpMzq7g0U4nEtsbyDGNNFW6ylPYZ
+         jC7A47Uvy8eBoztewlm6JaHf9yuLfQBoD5iULAaLnUcS3igg/TbMGdfymwWMLcJ5ixmA
+         E/VbOh5ckbjgglidHDgHCVOcnZLPY5aF1jYOB5MoEioSQNcNftZusFkk0cbmzFNpShD7
+         430ajNK0ImEvudbLQGh49IR/wAe5mDj8eMJMTVhVdxjIkr4fULp7k1/bhklV5guepmdf
+         sxb9Q52rkfp8wDMgyGFolQfWwvfIlakc+rr6Y2M/rYIYhjvoIh18eRiCvJqt2ErJAcbz
+         p0XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723625102; x=1724229902;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hwkKCoOBN+b1OvqT/QSoUQZv/ejIIMA/dhfZb9tdx0=;
-        b=L3Q82uDECrG9Gh1QBClxmMugTbEGzV4zl2dsrXeppdMYIzUaPPvC6GVgSBYZOXMboh
-         i+QJIsrVSGcAjSnZ54H+SfatKF0W3htO+FtskO3TEgRbKUyrRCj+0JisC74mckqrLiFj
-         iPtm0ymUz6u1LEL/PgrSpYxEDCNlli3iEkhWI0jDNVDABI//zMsgzY4zYocOk/pWE05W
-         52OIho5ZW3c1trUXNAQX8js6UDNM6dpXZ9VeyDjPnmlT3mUqGZf6b4+J01A6AnlDQG+T
-         3905Z44FL+ckSHmiupTH9d5tVCfzCSOIvFkHE0iQ6fa4AX8JtCowxm5Gz73dZp5ouwcl
-         8rdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXs+6wqCiR3pGWU4mXAKsm/u/+FZLtzvOY5rQ8Z0u3gr5efv5GBGiykdBCM2eB5nqK/SyQfNy1Lota7+Ml/oj6ImItbyTTvZB5fycW
-X-Gm-Message-State: AOJu0Yz2414zwkqWulGUhuzN/3be1H+N/I/mll9QNS/2KKtk97A3qFqQ
-	rRxYJwpLstOGxTE3K+f+fPo/ixHQyXAhCp+gjT2yBeRa2LzPgVOXIZLdGPItcXM3UQe+OYh/1Te
-	eOwyxVKX6t5LZtSBSpsUawnzI2oA1nGfNBhnUL1+UXGriK7hvHOuRlkmd5+X/lA==
-X-Received: by 2002:a05:6512:1388:b0:52e:7542:f471 with SMTP id 2adb3069b0e04-532eda83bd3mr1535834e87.29.1723625101819;
-        Wed, 14 Aug 2024 01:45:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IExvv2JH1bujn3OdzYrvDxJ3jmVSbA8zfxLsfLv8SXbL6vxyV/RWT5TFXZWT1E65o1HmeWJUQ==
-X-Received: by 2002:a05:6512:1388:b0:52e:7542:f471 with SMTP id 2adb3069b0e04-532eda83bd3mr1535805e87.29.1723625101246;
-        Wed, 14 Aug 2024 01:45:01 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd2bb4sm12394742f8f.91.2024.08.14.01.45.00
+        d=1e100.net; s=20230601; t=1723625119; x=1724229919;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TH1M4v3WVE7mB9RLKtgXX+m2D/YPKIYBQHunV/cYH4Y=;
+        b=DPNwrrr3wn9X4J/wr57TYrlr/5jKhOp6AfEvEA4aYOAD88aOX7uwBm9zpHwukFb/2P
+         56t81q2yomq+HCzM7fUVQJsIH6ItMkAYgRIk6YqDjxRBzlIZBg5w52egfVxbrg2iqeAJ
+         dWVPUpejtJhoZHvTvtNH4XE0xNfyyoR9bHE2NeOHyQhj6Qu6CDMiwetk0DaQrFI0YKQD
+         vGr+iQjFQZ/W1fjCzxLjkBr7h6BpGPPf5PmbDmv5Jwrz+wil4Fv/8jhSZ1Zr3cAdG+YN
+         5Ykrw3Gd+A8mY+GyoUyifBbB37GSr8+/F6tR+Bnb4iTyLU+SqxhLRg/ebx8UQbTQcnzJ
+         O/lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9KLI3YSnTjVS3FYrb41YF4ZgYzzC0ezgppR/JZsGDQOs5Cl0SkhJUoIvyNbgtDFctvhnxOeQhjCLTLl/JVxpWVA17HFxLSLWxRWCo
+X-Gm-Message-State: AOJu0Yy1Hj8sAdv6ljR7Bm17mvGOn8mQh2Ie2yse4RtoHBDfFNJ+u0St
+	VtqAxNyVzH9ng7zAEw+Fyj4gDFUgehaMsHsujvQvahvwFnD+mTgiNb3xD4CWpbI=
+X-Google-Smtp-Source: AGHT+IF6U/jKHy8IrZmFjWfX+RHKB/V6pImruUUL82Kvd3FD/Ry4bV66gBZEGB2/4lRsfrz+jjEL7Q==
+X-Received: by 2002:a17:903:41c9:b0:201:e634:d84f with SMTP id d9443c01a7336-201e634db7fmr189975ad.59.1723625119315;
+        Wed, 14 Aug 2024 01:45:19 -0700 (PDT)
+Received: from C02F52LSML85.bytedance.net ([203.208.167.150])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a940esm25151785ad.159.2024.08.14.01.45.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 01:45:00 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>
-Subject: Re: [BUG] arch/x86/kvm/vmx/vmx_onhyperv.h:109:36: error:
- dereference of NULL =?utf-8?B?4oCYMOKAmQ==?=
-In-Reply-To: <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
-References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
- <Zpq2Lqd5nFnA0VO-@google.com>
- <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
- <87a5i05nqj.fsf@redhat.com>
- <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
-Date: Wed, 14 Aug 2024 10:44:59 +0200
-Message-ID: <87plqbfq7o.fsf@redhat.com>
+        Wed, 14 Aug 2024 01:45:17 -0700 (PDT)
+From: Feng zhou <zhoufeng.zf@bytedance.com>
+To: edumazet@google.com,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	dsahern@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	yangzhenze@bytedance.com,
+	wangdongdong.6@bytedance.com,
+	zhoufeng.zf@bytedance.com
+Subject: [PATCH] bpf: Fix bpf_get/setsockopt to tos not take effect when TCP over IPv4 via INET6 API
+Date: Wed, 14 Aug 2024 16:45:04 +0800
+Message-Id: <20240814084504.22172-1-zhoufeng.zf@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Mirsad Todorovac <mtodorovac69@gmail.com> writes:
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
 
-> On 7/29/24 15:31, Vitaly Kuznetsov wrote:
->> Mirsad Todorovac <mtodorovac69@gmail.com> writes:
->> 
->>> On 7/19/24 20:53, Sean Christopherson wrote:
->>>> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
->>>>> Hi, all!
->>>>>
->>>>> Here is another potential NULL pointer dereference in kvm subsystem of linux
->>>>> stable vanilla 6.10, as GCC 12.3.0 complains.
->>>>>
->>>>> (Please don't throw stuff at me, I think this is the last one for today :-)
->>>>>
->>>>> arch/x86/include/asm/mshyperv.h
->>>>> -------------------------------
->>>>>   242 static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
->>>>>   243 {
->>>>>   244         if (!hv_vp_assist_page)
->>>>>   245                 return NULL;
->>>>>   246 
->>>>>   247         return hv_vp_assist_page[cpu];
->>>>>   248 }
->>>>>
->>>>> arch/x86/kvm/vmx/vmx_onhyperv.h
->>>>> -------------------------------
->>>>>   102 static inline void evmcs_load(u64 phys_addr)
->>>>>   103 {
->>>>>   104         struct hv_vp_assist_page *vp_ap =
->>>>>   105                 hv_get_vp_assist_page(smp_processor_id());
->>>>>   106 
->>>>>   107         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
->>>>>   108                 vp_ap->nested_control.features.directhypercall = 1;
->>>>>   109         vp_ap->current_nested_vmcs = phys_addr;
->>>>>   110         vp_ap->enlighten_vmentry = 1;
->>>>>   111 }
->>>>>
->> 
->> ...
->> 
->>>
->>> GCC 12.3.0 appears unaware of this fact that evmcs_load() cannot be called with hv_vp_assist_page() == NULL.
->>>
->>> This, for example, silences the warning and also hardens the code against the "impossible" situations:
->>>
->>> -------------------><------------------------------------------------------------------
->>> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
->>> index eb48153bfd73..8b0e3ffa7fc1 100644
->>> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
->>> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
->>> @@ -104,6 +104,11 @@ static inline void evmcs_load(u64 phys_addr)
->>>         struct hv_vp_assist_page *vp_ap =
->>>                 hv_get_vp_assist_page(smp_processor_id());
->>>  
->>> +       if (!vp_ap) {
->>> +               pr_warn("BUG: hy_get_vp_assist_page(%d) returned NULL.\n", smp_processor_id());
->>> +               return;
->>> +       }
->>> +
->>>         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
->>>                 vp_ap->nested_control.features.directhypercall = 1;
->>>         vp_ap->current_nested_vmcs = phys_addr;
->> 
->> As Sean said, this does not seem to be possible today but I uderstand
->> why the compiler is not able to infer this. If we were to fix this, I'd
->> suggest we do something like "BUG_ON(!vp_ap)" (with a comment why)
->> instead of the suggested patch:
->
-> That sounds awesome, but I really dare not poke into KVM stuff at my level. :-/
->
+When TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
+fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
+take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
+use ip_queue_xmit, inet_sk(sk)->tos.
 
-What I meant is something along these lines (untested):
+So bpf_get/setsockopt needs add the judgment of this case. Just check
+"inet_csk(sk)->icsk_af_ops == &ipv6_mapped".
 
-diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
-index eb48153bfd73..e2d8c67d0cad 100644
---- a/arch/x86/kvm/vmx/vmx_onhyperv.h
-+++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
-@@ -104,6 +104,14 @@ static inline void evmcs_load(u64 phys_addr)
-        struct hv_vp_assist_page *vp_ap =
-                hv_get_vp_assist_page(smp_processor_id());
+Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+---
+ include/net/tcp.h   | 2 ++
+ net/core/filter.c   | 2 +-
+ net/ipv6/tcp_ipv6.c | 5 +++++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 2aac11e7e1cc..ea673f88c900 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -493,6 +493,8 @@ struct request_sock *cookie_tcp_reqsk_alloc(const struct request_sock_ops *ops,
+ 					    struct tcp_options_received *tcp_opt,
+ 					    int mss, u32 tsoff);
  
-+       /*
-+        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
-+        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
-+        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
-+        * but compilers may still complain.
-+        */
-+       BUG_ON(!vp_ap);
++bool is_tcp_sock_ipv6_mapped(struct sock *sk);
 +
-        if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
-                vp_ap->nested_control.features.directhypercall = 1;
-        vp_ap->current_nested_vmcs = phys_addr;
-
-the BUG_ON() will silence compiler warning as well as become a sentinel
-for future code changes.
-
+ #if IS_ENABLED(CONFIG_BPF)
+ struct bpf_tcp_req_attrs {
+ 	u32 rcv_tsval;
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 78a6f746ea0b..9798537044be 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -5399,7 +5399,7 @@ static int sol_ip_sockopt(struct sock *sk, int optname,
+ 			  char *optval, int *optlen,
+ 			  bool getopt)
+ {
+-	if (sk->sk_family != AF_INET)
++	if (sk->sk_family != AF_INET && !is_tcp_sock_ipv6_mapped(sk))
+ 		return -EINVAL;
+ 
+ 	switch (optname) {
+diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
+index 200fea92f12f..84651d630c89 100644
+--- a/net/ipv6/tcp_ipv6.c
++++ b/net/ipv6/tcp_ipv6.c
+@@ -92,6 +92,11 @@ static const struct tcp_sock_af_ops tcp_sock_ipv6_mapped_specific;
+ #define tcp_inet6_sk(sk) (&container_of_const(tcp_sk(sk), \
+ 					      struct tcp6_sock, tcp)->inet6)
+ 
++bool is_tcp_sock_ipv6_mapped(struct sock *sk)
++{
++	return (inet_csk(sk)->icsk_af_ops == &ipv6_mapped);
++}
++
+ static void inet6_sk_rx_dst_set(struct sock *sk, const struct sk_buff *skb)
+ {
+ 	struct dst_entry *dst = skb_dst(skb);
 -- 
-Vitaly
+2.30.2
 
 
