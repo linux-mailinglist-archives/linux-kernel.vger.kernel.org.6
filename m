@@ -1,246 +1,123 @@
-Return-Path: <linux-kernel+bounces-286631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CCFB951D8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:44:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC504951D2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDBE5B2D47B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:36:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787FE28A169
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FB51B580F;
-	Wed, 14 Aug 2024 14:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5E51B3725;
+	Wed, 14 Aug 2024 14:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B3U9C74H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Po2HOw0w"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A881B32DC
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6289518C910
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646080; cv=none; b=tX+aOfZyIVhQkKJxtzJodu0Cozl3fqzNowSxqS7L6vleAn9C2ePzlunfpexzqQnRUahKNkiNdYenj9mAlnZRoFGTeYFlbAswEE7UeYl/nB56BVlC9iKvWY0ovMc0SjPYnaY86/VGWgmrnLuC6aiWta26afvLxPObtWQhbfbEJ5c=
+	t=1723646060; cv=none; b=KyU8zHUvvfb9svZ0B+xXwB8lVJFKEj1L+zwtEYnWRwGrineQ2eNtd6UVx+fw8s8jqcQlRVv9pp5bjeEfViYNUYGgrbA2Py8HqnzFfOtrOFPF5fG+uje1pmZEkpwUK1nfWkX9HXWVXb6+kptng1YlGaulMCX9WZdNfzE7bfBJ8YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646080; c=relaxed/simple;
-	bh=yyYkU1ftial3IHB+h4Bmg6vRVbYC0AGupABRCZ1Be54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N5lUrB7W6/cKLN/lCoUxxMth2DG61AxoJuVGZQkEnYnX0cutQYdUkI/wfTkMiDmZg3p5rgjIXKO0HO4jFvFGLYXuFx9sYrc5tEN55q0nP5Emr5a49reqG7aDC4x5vW/iiyn90avY8/aSXR07xFJZqxHRqYZO1qbUSivBfAongls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B3U9C74H; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723646077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y7rP0orM8QjhHGTk8aHIfF2wBCeC8AcAEDsdCZCHuMQ=;
-	b=B3U9C74HRHrhUZokANSAj7s/cJNZLYX73nmKXQT9Ac9fd9QO2pkhUZSy4R07tG18Nsb0XT
-	t90tz1o+wF5eDaF75gWUFRTb4Ec+vM2EBj2mWCdn1ms+zGZ3zgDFJMWGV3mkz1Eirx12dM
-	CMajKPayF17RJ8cwy1TE4xBWnLIvVGs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-RrtRj-G7Po29_MLGYCKGsw-1; Wed,
- 14 Aug 2024 10:34:34 -0400
-X-MC-Unique: RrtRj-G7Po29_MLGYCKGsw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 497901944EBF;
-	Wed, 14 Aug 2024 14:34:32 +0000 (UTC)
-Received: from fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com (fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com [10.6.24.150])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 086003001FDD;
-	Wed, 14 Aug 2024 14:34:29 +0000 (UTC)
-From: Alexander Aring <aahringo@redhat.com>
-To: teigland@redhat.com
-Cc: gfs2@lists.linux.dev,
-	song@kernel.org,
-	yukuai3@huawei.com,
-	agruenba@redhat.com,
-	mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	ocfs2-devel@lists.linux.dev,
-	lucien.xin@gmail.com,
-	aahringo@redhat.com
-Subject: [RFC dlm/next 04/12] dlm: handle port as __be16 network byte order
-Date: Wed, 14 Aug 2024 10:34:06 -0400
-Message-ID: <20240814143414.1877505-5-aahringo@redhat.com>
-In-Reply-To: <20240814143414.1877505-1-aahringo@redhat.com>
-References: <20240814143414.1877505-1-aahringo@redhat.com>
+	s=arc-20240116; t=1723646060; c=relaxed/simple;
+	bh=eT5FFvtfwZJjX9SlpCIbwQFZM/SYFPR+7CaHAsM34mQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AloNSKJoZF/f2WdOPa+xlea9RuTvcnEiwQCHF/J6Ax6bfPfDYE7EtqEHnK8eJroWH8bAYTn45CftXAREkiEgEM+uE2R42YpNOzLiXCtThNpCJi2ovVavUpojxcOV/7OP8MPBtGQQa9xXd0eYYkgSb+zhMmxGjOO4nCxkbF/ODnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Po2HOw0w; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d3c05ec278so113344a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:34:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723646059; x=1724250859; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SKavW0jMUKbktNcZNV7KuLNxq3tK5FUv2jPt4ATzNto=;
+        b=Po2HOw0wJ21cNQ9eH7FbAIuIbyu505LGGnObz6BJIliKXVF/pMEAaIKBwTCDnc6ixA
+         BxAA7FOGpleerNR4DyeNJcuFpRuVjeTfTgf2rNhxIG0vXXcDCJknH2fpofSJQ36DXUR/
+         HboeCiZneifTTMQOfSdVV29NXXJHqwWe1ieO2sdmFsVlLGTAQE6pdxDdzF/+wdsOpS4Y
+         Vt8rGRuM9DWI49oGBxsNayfBCCn6CDQcAXgrUyYs3NFiLObxPNO268JUKP2lJUMysLJw
+         C3Pn+dG6OpqQh3Eu1+QcQze79GFbYb6OGNx4aK6KDv7w0xKK9OD4ZsSFgyTCMdKDXLTG
+         KmLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723646059; x=1724250859;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SKavW0jMUKbktNcZNV7KuLNxq3tK5FUv2jPt4ATzNto=;
+        b=SfI1hflwzc7JeTbX6hCehFA8kQIeJeEbx8sW5axI3CoAKIj1vym7q+gp325nh6NA/G
+         cC8pwKMcuVUJUffPkPXoWyOHy9QLEcOpg1ELO9Ah1z/Vl2bWmC+Cs45vH4VK4S/qhKvE
+         McEM77IzePuGpaJ1kiOoi25WxuXf6YXD8g5U5xYfIDRNzmatfvhzRXHJmAgQh4GchEER
+         ff6o31cCqr4ukU24vmhddZbCHWSoAznE7MFmyK855CrEyRjvueiMfHgepZ0gZOp7cweF
+         DljdPL05Lb/0HoNqQFIDzxs+3COt0FwGPqEki1zyicADIA0InLoQbErcXKTgkl10yV4W
+         Ig4w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0xU/+6KKp8AD0WcwIoUpMqPXJf/sMDIbydwlbpFtZXuBennY0xJ7nSLemNSvY0tvpeXovPKn6LAMECqCMt7/FU0u6Hq+22nmrmsvF
+X-Gm-Message-State: AOJu0YxTGLmpP2cF1x0Q8CcEr8l7uMh28DBzBHet7/U86w7uegRNfkpi
+	/wfJA2ffT7Oxz08ctWMYJA8Bo5x1RBh3E0fabpJ9joFMHQBd/8xFEjMdO8/cBiDBCweju9hSEXP
+	lpnBYwxl3mb38bM5vOZA0yLVQU3iGzohlvDcNvQ==
+X-Google-Smtp-Source: AGHT+IHyF9Y1f01iZF7fh/Jc8+XzOvZLXjaIXfN7d+YBCNdxSerNV9cnNRIMc3Ldp5FJjlrXiPYMczwdA28YfdDiIg4=
+X-Received: by 2002:a17:90b:1e4d:b0:2d3:adc5:ef25 with SMTP id
+ 98e67ed59e1d1-2d3adc5f1d0mr2117590a91.22.1723646058656; Wed, 14 Aug 2024
+ 07:34:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20240727102732.960974693@infradead.org>
+In-Reply-To: <20240727102732.960974693@infradead.org>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 14 Aug 2024 16:34:06 +0200
+Message-ID: <CAKfTPtALe942tjoyq1RqSYyM40PG+tfEY8skRDxRM1daWLSKUg@mail.gmail.com>
+Subject: Re: [PATCH 00/24] Complete EEVDF
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de, 
+	efault@gmx.de
+Content-Type: text/plain; charset="UTF-8"
 
-This patch handles the DLM listen port setting internally as byte order
-as it is a value that is used as network byte on the wire. The user
-space still sets this value as host byte order for configfs as we don't
-break UAPI here.
+On Sat, 27 Jul 2024 at 13:02, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Hi all,
+>
+> So after much delay this is hopefully the final version of the EEVDF patches.
+> They've been sitting in my git tree for ever it seems, and people have been
+> testing it and sending fixes.
+>
+> I've spend the last two days testing and fixing cfs-bandwidth, and as far
+> as I know that was the very last issue holding it back.
+>
+> These patches apply on top of queue.git sched/dl-server, which I plan on merging
+> in tip/sched/core once -rc1 drops.
+>
+> I'm hoping to then merge all this (+- the DVFS clock patch) right before -rc2.
 
-Signed-off-by: Alexander Aring <aahringo@redhat.com>
----
- fs/dlm/config.c   | 55 +++++++++++++++++++++++++++++++++++------------
- fs/dlm/config.h   |  2 +-
- fs/dlm/lowcomms.c |  8 +++----
- 3 files changed, 46 insertions(+), 19 deletions(-)
+While trying to test what would be the impact of delayed dequeue on
+load_avg, I noticed something strange with the running slice. I have a
+simple test with 2 always running threads on 1 CPU and the each thread
+runs around 100ms continuously before switching to the other one
+whereas I was expecting 3ms (the sysctl_sched_base_slice on my system)
+between 2 context swicthes
 
-diff --git a/fs/dlm/config.c b/fs/dlm/config.c
-index 1b213b5beb19..77a86c180d0e 100644
---- a/fs/dlm/config.c
-+++ b/fs/dlm/config.c
-@@ -73,7 +73,7 @@ const struct rhashtable_params dlm_rhash_rsb_params = {
- 
- struct dlm_cluster {
- 	struct config_group group;
--	unsigned int cl_tcp_port;
-+	__be16 cl_tcp_port;
- 	unsigned int cl_buffer_size;
- 	unsigned int cl_rsbtbl_size;
- 	unsigned int cl_recover_timer;
-@@ -132,6 +132,45 @@ static ssize_t cluster_cluster_name_store(struct config_item *item,
- 
- CONFIGFS_ATTR(cluster_, cluster_name);
- 
-+static ssize_t cluster_tcp_port_show(struct config_item *item, char *buf)
-+{
-+	return sprintf(buf, "%u\n", be16_to_cpu(dlm_config.ci_tcp_port));
-+}
-+
-+static int dlm_check_zero_and_dlm_running(unsigned int x)
-+{
-+	if (!x)
-+		return -EINVAL;
-+
-+	if (dlm_lowcomms_is_running())
-+		return -EBUSY;
-+
-+	return 0;
-+}
-+
-+static ssize_t cluster_tcp_port_store(struct config_item *item,
-+				      const char *buf, size_t len)
-+{
-+	int rc;
-+	u16 x;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	rc = kstrtou16(buf, 0, &x);
-+	if (rc)
-+		return rc;
-+
-+	rc = dlm_check_zero_and_dlm_running(x);
-+	if (rc)
-+		return rc;
-+
-+	dlm_config.ci_tcp_port = cpu_to_be16(x);
-+	return len;
-+}
-+
-+CONFIGFS_ATTR(cluster_, tcp_port);
-+
- static ssize_t cluster_set(struct dlm_cluster *cl, unsigned int *cl_field,
- 			   int *info_field, int (*check_cb)(unsigned int x),
- 			   const char *buf, size_t len)
-@@ -191,17 +230,6 @@ static int dlm_check_protocol_and_dlm_running(unsigned int x)
- 	return 0;
- }
- 
--static int dlm_check_zero_and_dlm_running(unsigned int x)
--{
--	if (!x)
--		return -EINVAL;
--
--	if (dlm_lowcomms_is_running())
--		return -EBUSY;
--
--	return 0;
--}
--
- static int dlm_check_zero(unsigned int x)
- {
- 	if (!x)
-@@ -218,7 +246,6 @@ static int dlm_check_buffer_size(unsigned int x)
- 	return 0;
- }
- 
--CLUSTER_ATTR(tcp_port, dlm_check_zero_and_dlm_running);
- CLUSTER_ATTR(buffer_size, dlm_check_buffer_size);
- CLUSTER_ATTR(rsbtbl_size, dlm_check_zero);
- CLUSTER_ATTR(recover_timer, dlm_check_zero);
-@@ -974,7 +1001,7 @@ int dlm_our_addr(struct sockaddr_storage *addr, int num)
- #define DEFAULT_CLUSTER_NAME      ""
- 
- struct dlm_config_info dlm_config = {
--	.ci_tcp_port = DEFAULT_TCP_PORT,
-+	.ci_tcp_port = cpu_to_be16(DEFAULT_TCP_PORT),
- 	.ci_buffer_size = DLM_MAX_SOCKET_BUFSIZE,
- 	.ci_rsbtbl_size = DEFAULT_RSBTBL_SIZE,
- 	.ci_recover_timer = DEFAULT_RECOVER_TIMER,
-diff --git a/fs/dlm/config.h b/fs/dlm/config.h
-index ed237d910208..9cb4300cce7c 100644
---- a/fs/dlm/config.h
-+++ b/fs/dlm/config.h
-@@ -29,7 +29,7 @@ extern const struct rhashtable_params dlm_rhash_rsb_params;
- #define DLM_PROTO_SCTP	1
- 
- struct dlm_config_info {
--	int ci_tcp_port;
-+	__be16 ci_tcp_port;
- 	int ci_buffer_size;
- 	int ci_rsbtbl_size;
- 	int ci_recover_timer;
-diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-index cb3a10b041c2..df40c3fd1070 100644
---- a/fs/dlm/lowcomms.c
-+++ b/fs/dlm/lowcomms.c
-@@ -660,18 +660,18 @@ static void add_sock(struct socket *sock, struct connection *con)
- 
- /* Add the port number to an IPv6 or 4 sockaddr and return the address
-    length */
--static void make_sockaddr(struct sockaddr_storage *saddr, uint16_t port,
-+static void make_sockaddr(struct sockaddr_storage *saddr, __be16 port,
- 			  int *addr_len)
- {
- 	saddr->ss_family =  dlm_local_addr[0].ss_family;
- 	if (saddr->ss_family == AF_INET) {
- 		struct sockaddr_in *in4_addr = (struct sockaddr_in *)saddr;
--		in4_addr->sin_port = cpu_to_be16(port);
-+		in4_addr->sin_port = port;
- 		*addr_len = sizeof(struct sockaddr_in);
- 		memset(&in4_addr->sin_zero, 0, sizeof(in4_addr->sin_zero));
- 	} else {
- 		struct sockaddr_in6 *in6_addr = (struct sockaddr_in6 *)saddr;
--		in6_addr->sin6_port = cpu_to_be16(port);
-+		in6_addr->sin6_port = port;
- 		*addr_len = sizeof(struct sockaddr_in6);
- 	}
- 	memset((char *)saddr + *addr_len, 0, sizeof(struct sockaddr_storage) - *addr_len);
-@@ -1121,7 +1121,7 @@ static void writequeue_entry_complete(struct writequeue_entry *e, int completed)
- /*
-  * sctp_bind_addrs - bind a SCTP socket to all our addresses
-  */
--static int sctp_bind_addrs(struct socket *sock, uint16_t port)
-+static int sctp_bind_addrs(struct socket *sock, __be16 port)
- {
- 	struct sockaddr_storage localaddr;
- 	struct sockaddr *addr = (struct sockaddr *)&localaddr;
--- 
-2.43.0
+I'm using your sched/core branch. Is it the correct one ?
 
+>
+>
+> Aside from a ton of bug fixes -- thanks all! -- new in this version is:
+>
+>  - split up the huge delay-dequeue patch
+>  - tested/fixed cfs-bandwidth
+>  - PLACE_REL_DEADLINE -- preserve the relative deadline when migrating
+>  - SCHED_BATCH is equivalent to RESPECT_SLICE
+>  - propagate min_slice up cgroups
+>  - CLOCK_THREAD_DVFS_ID
+>
+>
 
