@@ -1,112 +1,112 @@
-Return-Path: <linux-kernel+bounces-286539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36E2951C3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:51:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F9C951C42
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BA55B267BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00836281DAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC4F1B29BD;
-	Wed, 14 Aug 2024 13:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD061B1404;
+	Wed, 14 Aug 2024 13:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvFCD54l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WW4OID71";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i0MXXTrT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD4F1B0121;
-	Wed, 14 Aug 2024 13:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EF71E4B2
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723643470; cv=none; b=D80u3t1ARrgjWZxMbGrAtF2WtLcrpBdO3tyw6mlLg8dEuIaG93qziAULIYQnDj+LbGq6p58vSaz26t5fICzunExHUDi1/qPUMMn6vFg2KuZKvT62cUWcZsgRklzWbnQVDFQNNaULTxI56eEv0NJ8EhxZgaerWUVw99DN3XLzQYw=
+	t=1723643560; cv=none; b=AzUY1cxJIESIEA6pbw/IkOZDuoc1RyzHNZ7JsKRo8d79UJyTLpn+fFbFl9qsAdhWYF+ZDbYrOg6uSzqrHWKTRlbQSH/DoVulhM7TLCQGQX43mmchKQ9cTezgZmTrZE+cqJYW7iFzSww1+arJpgbKjXCIoY2Tq36gEHLgQ1Mrsgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723643470; c=relaxed/simple;
-	bh=D0wbeYwEYlIc0tC9lVOfZ5aSYHYqpRDolJ+IlKgpWoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gUmjwAKigip411Y3B6XOycmZGKIoDxsO1BVD0IKtNGHf/xe4EDQlXNa0utOuC/QVAmqm1GyT6vnojOIHzBvmAMKZRi+C7luqaSvYX1lifeFPUAHe51L5RTKMsZbZ4QflIqjYFKi2NcWK88MpcHQl1Ye8/Q7L1/aFXXK2/IwWNHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvFCD54l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074BFC4AF0D;
-	Wed, 14 Aug 2024 13:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723643469;
-	bh=D0wbeYwEYlIc0tC9lVOfZ5aSYHYqpRDolJ+IlKgpWoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lvFCD54l8ywbh8HVnkAVrRRzdhlifEub+erkgslMAFqylt0X9p1rRn6Vwfivc2RKr
-	 bGZJAa3iPyJCq356ufbpcpWf0A35zu09Fk5XqpYBlVCVKAKOJ4/wN0Dqr6cyeMOnoX
-	 bLmaZiaY+kY3kvyRhYKPW5/BDviCKA3iIgBdXfg6NbSPG4OenKRcTUOq/5QkrIzWTW
-	 yIlLEktu9qNS9l4SxifexNS9vh9jKPfcGDpd/6K+vNWEjaTp2Fl0N4rWZbUufbc6Gd
-	 3E33m5BjrHRu3QQhgPp/aVB/CcEqTsT1lYEgAIjX/NVS7cqyzRj7ujwfFoa/vhKoO4
-	 FlJdb4FL6CwAg==
-Date: Wed, 14 Aug 2024 14:51:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, abdellatif.elkhlifi@arm.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: Update Corstone-1000 maintainers
-Message-ID: <20240814-detergent-given-f062d350f370@spud>
-References: <20240814133525.4090877-1-hugues.kambampiana@arm.com>
+	s=arc-20240116; t=1723643560; c=relaxed/simple;
+	bh=HtGkSyXsVTyJQSr5taCZMMUuPrjC3Ec6Zc14IKQtPIs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k97hK22L3Y0fAO3PsYkt0UW6xpUmjz4YggQMRjbpzaT00ucFMt8a5Ba2hjYu1AjlQRAn7CRGF8eSr0i93Ow7y78TgU0DcO65NbnaEuB/JdY3H4asVX9h49WgytGcGe8z92aAYCbsxctYArT2nq9JJ0Mksgf4q6KwZVwDTpWkGHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WW4OID71; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i0MXXTrT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723643557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p3lH/zrHs0dZEgDAAuKDMA+VDNtH0jYEhkmkzFIeHGM=;
+	b=WW4OID71h1exgfhXYQJkPer2JXYa9fFEtzzg/DYAHG7C2XTBoJc3OoiAhxthhUHlzXCHSi
+	x7Sk1mXRJqpCDz3izZygQ56yErhOYy8k4gImTG4N1+JfNMduM9kQZYpzX8v+xCmlsL7IFr
+	+XsiEnrYtvtPCswQN60nKz+kmcxiWqviT6GOaQIHZgZvBj39elj2VQgygdNprE7rgvsvZE
+	BvQQ6U7UAwczfVMF6Vq+t08Fl4GJw54DJhd2DYVaJwANiIDDiOZ2b2pDgpBSjHKu3q08s4
+	Jlku8Y0l2cwYWuBKbiDBdII7bTkGqOGzHRJzkCbtwbUaxpsfR8iOlnvaOIbf9A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723643557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p3lH/zrHs0dZEgDAAuKDMA+VDNtH0jYEhkmkzFIeHGM=;
+	b=i0MXXTrTgNyIZt6j6BIJmSszP+iQ+uS2rGFugQJwZq+rOSCN8qn78zDSnpflJ4P8c4CrZS
+	CnzJGuXs5JSYirDw==
+To: Daniel Thompson <daniel.thompson@linaro.org>, Florian Rommel
+ <mail@florommel.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
+ Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Jason Wessel <jason.wessel@windriver.com>, Douglas Anderson
+ <dianders@chromium.org>, Lorena Kretzschmar <qy15sije@cip.cs.fau.de>,
+ Stefan Saecherl <stefan.saecherl@fau.de>, Peter Zijlstra
+ <peterz@infradead.org>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, Randy Dunlap <rdunlap@infradead.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, kgdb-bugreport@lists.sourceforge.net,
+ x86@kernel.org, linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH WIP] x86/kgdb: trampolines for shadowed instructions
+In-Reply-To: <20240814102940.GB6016@aspen.lan>
+References: <87wmkkpf5v.ffs@tglx>
+ <20240814085141.171564-1-mail@florommel.de>
+ <20240814102940.GB6016@aspen.lan>
+Date: Wed, 14 Aug 2024 15:52:36 +0200
+Message-ID: <87zfpfnrdn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Rn4szDAqStxIZrlv"
-Content-Disposition: inline
-In-Reply-To: <20240814133525.4090877-1-hugues.kambampiana@arm.com>
+Content-Type: text/plain
+
+On Wed, Aug 14 2024 at 11:29, Daniel Thompson wrote:
+> On Wed, Aug 14, 2024 at 10:51:41AM +0200, Florian Rommel wrote:
+> That's enough to eventuallyremove the int3 instructions but it relies
+> on entering the debug trap handler and there's no limit on how long
+> could take before that happens. For that reason I think the core should
+> also attempt to transition BP_REMOVE_PENDING breakpoints to BP_REMOVE
+> after kgdb_skipexception() returns true. That means if we keep trapping
+> on a disabled breakpoint eventually we will hit a window where the
+> text_mutex is free and clean things up.
+
+Even when text_mutex is uncontended then text_poke_kgdb() is completely
+broken in the KGDB NMI context when the NMI hit into anything related to
+mm switching and tlb flushing, which is utilized in __text_poke().
+
+The same problem is obviously true for installing a breakpoint from that
+context.
+
+I'm starting to be more convinced that the only sane solution for all of
+this is to disable CET when KGDB is on and use CRO.WP to work around all
+of this.
+
+Thanks,
+
+        tglx
 
 
---Rn4szDAqStxIZrlv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 02:35:25PM +0100, Hugues KAMBA MPIANA wrote:
-> - Add new maintainers: Abdellatif El Khlifi, Hugues Kamba Mpiana
-> - Remove maintainers: Vishnu Banavath, Rui Miguel Silva
-> - Update contact information for existing maintainers
 
-I can see what you have done, but why are you doing it?
 
->=20
-> Signed-off-by: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
-> ---
->  Documentation/devicetree/bindings/arm/arm,corstone1000.yaml | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/arm,corstone1000.yaml =
-b/Documentation/devicetree/bindings/arm/arm,corstone1000.yaml
-> index 693f3fe7be60..cff1cdaadb13 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,corstone1000.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,corstone1000.yaml
-> @@ -7,8 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: ARM Corstone1000
-> =20
->  maintainers:
-> -  - Vishnu Banavath <vishnu.banavath@arm.com>
-> -  - Rui Miguel Silva <rui.silva@linaro.org>
-> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-> +  - Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
-> =20
->  description: |+
->    ARM's Corstone1000 includes pre-verified Corstone SSE-710 subsystem th=
-at
-
---Rn4szDAqStxIZrlv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZry2SQAKCRB4tDGHoIJi
-0uoXAQCcCFQwf5DLEw1Q2ZRgnZ1OIbsY3mhEmAbSzJMn7VJgXQD/cJO3vUBYLTuE
-V7ZQLWMFL1UoXdhp9J87nykBPGSHjwk=
-=McgL
------END PGP SIGNATURE-----
-
---Rn4szDAqStxIZrlv--
 
