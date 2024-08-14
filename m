@@ -1,227 +1,136 @@
-Return-Path: <linux-kernel+bounces-287247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED24952551
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:13:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32359952556
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD58284394
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24F11F22BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C03149C64;
-	Wed, 14 Aug 2024 22:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE367149E17;
+	Wed, 14 Aug 2024 22:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkPEkqJY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lzy5PnsV"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC7714389F;
-	Wed, 14 Aug 2024 22:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633E31494DA
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 22:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723673587; cv=none; b=SsY+UpDiAsf5VsF7rLYd1TBkUkRgHFn3rIRNzMFLvYnuvz019GRvQgOB69sclHYxpjPZVdaz3M6H42g/+4gdFQW0TOtRYDhnGFbUuDrk1cNXl8DrVB8OeOoBqrjjDNKBZKrQrmYuXJJh45qkOpQqjrrc/7RJ5FwSNVMqfZcyO5k=
+	t=1723673659; cv=none; b=u8tlDfkWE0kIBo6Vq/BcZKkgCN9tOcep3ua0U+cAdqfVLu++FcC48OvwLpxt2EmOoTHgOISnhQBGwHyeSSaCH9t21k0J9OOY+Dvpj3Hg9xEEwV4rzhxQegoexEbpYvWkTsjd0mjCcT6UAzSS8V/VC7PslX+jSpQTPAm+eXFoyME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723673587; c=relaxed/simple;
-	bh=MN6Nv6m7Xg/Vf3PzVRlISzwMZJpfsZIfImO2JWBcKlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARJZme2dccRtQ2/2jr16QXtZA93MrsutyiM5Qslw4qnr8JiSKi+5Y0Qa22MkasMyPWWqJsOQ7nhok/DFclBm4CgHjTXzE2gCBR5kIoSHjR4Xx9m0ihILUDjsVGbcf7NMINZXw0okF/9kvhthpWNX431Q0wosjw/0x2kA4v4kBY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkPEkqJY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFD7BC116B1;
-	Wed, 14 Aug 2024 22:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723673586;
-	bh=MN6Nv6m7Xg/Vf3PzVRlISzwMZJpfsZIfImO2JWBcKlc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EkPEkqJYvBUhqcsBqM2TWDBT1knywWVaX+ItA9qm7ZUPkWbCDQQkJ4YFE+RQHlP7e
-	 1Y98MSH7gDezbz6vgART6hEUD7TAKjl/QLxevw92Tu23IiFYSVh9xQvD28kWFNJagQ
-	 IhAkmbCAdIbvynTrcrAyNg3OrtkGVPCipcoWHsvCIDs3thqCCcj5P3tDvUNH7lEC/f
-	 RnhnThuVw8Gs8+1qB3BcbhFlaBZLEr04KvlEHhBsy/g2qAf7d0LCb27cN7LeI/6mgS
-	 h5oJBjchDNhLTwWGMV1Xd6HQ3LSQwj9QBPsClETdBA7EXwkVPJqgyutGTz7/Urc3RF
-	 2HWQkP/pa8Tcg==
-Date: Thu, 15 Aug 2024 00:12:58 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
-Message-ID: <Zr0r6sSFMSQIpHEX@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org>
- <20240812182355.11641-7-dakr@kernel.org>
- <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me>
+	s=arc-20240116; t=1723673659; c=relaxed/simple;
+	bh=SNRkXhDmCbbOK8av0t3Uel7gPdjevNHKKfFt/NX9R7w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mUGgqdm//lXkh3HVhN2E0SvsaVsqhU1Q/hIbTthNBW0fP+z6VuapG7qufWr/y+GzWihgDH9LNmnPz+JQOm8cDzL6H5JFh1VgTkVTA2Y7zYxVjK8VwDDZnN6CoW2XQuBldkmpABdWJk9tT30hE2lD0Qvw86xKJkz6BGjcTd8J4MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lzy5PnsV; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc6ee64512so3472805ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723673654; x=1724278454; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9dZakyOosNQEb8ThSHDuM5A07F0pWfsm3wFIDax/xIA=;
+        b=lzy5PnsV22gqWFae0DcyKokPGhdFwt12GnOAr1Rrxb4Y9gDAdyAe5smfHTNCQ+md4q
+         upEZuvfBiOD2HzbS7rbAXCzwjKwP5wqAZ/4O9NEAZwZRijQZHjxK7DN9ABfLCnodD8jE
+         8CdjFbPY+5178V5o8Z8/f/BokCjRL/K2dNbgE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723673654; x=1724278454;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9dZakyOosNQEb8ThSHDuM5A07F0pWfsm3wFIDax/xIA=;
+        b=G1nCrHlth8JpC9FjuMfFSGbxftJqEs5lylKtgw1PcYUB7dOmskz7GITxDkmYwImNOS
+         ojlKDX6KS5YkqgqWfcYE8FTpzXdBWf28nbPkQcmLn4KemkrMtnISbH+7l5bbgj+JGB/9
+         nUm31jEIqcoD/XPspYYBLM4f96Ww5RlisJU/BSFYqAhdglMMWpxhUnU8eae7a8Wvmkdz
+         un0af7HdeLtgdzcwIjU0zjDf2LciTk7bUtLxWRqZhC0j7KNEIRhfcDYbJHBj+BQKwFZN
+         uTQvyecN5vIvfCo+jkEyf3xWl5TCK4tjlLR/mNXhY/RKUnym7fy5n8OMXWkKtfjgUQV5
+         SOGA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Yq/FOSEkLV2VMxjkKlUzxxxHXUMd0a/ypz79ciKiCtVClD1iADt7JNsCZejSagXLXJwqpnsCLf6wuSI6dw8FJIqqaxOkKVfPhi+E
+X-Gm-Message-State: AOJu0YzXq/2yLI/Y6OA9HolE+zjyJRewSe3h7ahl5A5ijrKCpTpLhhY5
+	JUGzyPR6RXv84ROKnUdSp0c0ASHRLCdGclpn80/mlOHHtawtJQxRIp68n6LJOg==
+X-Google-Smtp-Source: AGHT+IHVQcqP4dstKT0IkJfBwrz7BgpmEzWgQOguFtF6ilWFMEfyEMuHWGaFU1rJVz0Q2BKXR6oqnQ==
+X-Received: by 2002:a17:902:db07:b0:1fb:8c35:602f with SMTP id d9443c01a7336-201d639c9c4mr57253855ad.6.1723673654526;
+        Wed, 14 Aug 2024 15:14:14 -0700 (PDT)
+Received: from zipper.pdx.corp.google.com ([2a00:79e0:2e13:6:aab8:3da7:4601:820d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0375725sm1046595ad.132.2024.08.14.15.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 15:14:12 -0700 (PDT)
+From: Fritz Koenig <frkoenig@chromium.org>
+Subject: [PATCH v3 0/2] media: venus: Add hierarchical h.264 controls
+Date: Wed, 14 Aug 2024 15:14:03 -0700
+Message-Id: <20240814-submit-v3-0-f7d05e3e8560@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACssvWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0MT3eLSpNzMEl0DUwsLg0QDcxNjc3MloOKCotS0zAqwQdGxtbUA3pp
+ I/FgAAAA=
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Nathan Hebert <nhebert@chromium.org>, linux-media@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Fritz Koenig <frkoenig@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Wed, Aug 14, 2024 at 04:32:34PM +0000, Benno Lossin wrote:
-> On 12.08.24 20:22, Danilo Krummrich wrote:
-> > Implement `Allocator` for `Vmalloc`, the kernel's virtually contiguous
-> > allocator, typically used for larger objects, (much) larger than page
-> > size.
-> > 
-> > All memory allocations made with `Vmalloc` end up in `vrealloc()`.
-> > 
-> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/helpers.c                      |  7 +++++++
-> >  rust/kernel/alloc/allocator.rs      | 28 ++++++++++++++++++++++++++++
-> >  rust/kernel/alloc/allocator_test.rs |  1 +
-> >  3 files changed, 36 insertions(+)
-> > 
-> > diff --git a/rust/helpers.c b/rust/helpers.c
-> > index 9f7275493365..7406943f887d 100644
-> > --- a/rust/helpers.c
-> > +++ b/rust/helpers.c
-> > @@ -33,6 +33,7 @@
-> >  #include <linux/sched/signal.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/spinlock.h>
-> > +#include <linux/vmalloc.h>
-> >  #include <linux/wait.h>
-> >  #include <linux/workqueue.h>
-> > 
-> > @@ -199,6 +200,12 @@ void *rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
-> >  }
-> >  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
-> > 
-> > +void *rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
-> > +{
-> > +	return vrealloc(p, size, flags);
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_vrealloc);
-> > +
-> >  /*
-> >   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
-> >   * use it in contexts where Rust expects a `usize` like slice (array) indices.
-> > diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-> > index b46883d87715..fdda22c6983f 100644
-> > --- a/rust/kernel/alloc/allocator.rs
-> > +++ b/rust/kernel/alloc/allocator.rs
-> > @@ -9,6 +9,7 @@
-> > 
-> >  use crate::alloc::{AllocError, Allocator};
-> >  use crate::bindings;
-> > +use crate::pr_warn;
-> > 
-> >  /// The contiguous kernel allocator.
-> >  ///
-> > @@ -16,6 +17,12 @@
-> >  /// `bindings::krealloc`.
-> >  pub struct Kmalloc;
-> > 
-> > +/// The virtually contiguous kernel allocator.
-> > +///
-> > +/// The vmalloc allocator allocates pages from the page level allocator and maps them into the
-> > +/// contiguous kernel virtual space.
-> > +pub struct Vmalloc;
-> > +
-> >  /// Returns a proper size to alloc a new object aligned to `new_layout`'s alignment.
-> >  fn aligned_size(new_layout: Layout) -> usize {
-> >      // Customized layouts from `Layout::from_size_align()` can have size < align, so pad first.
-> > @@ -55,6 +62,9 @@ impl ReallocFunc {
-> >      // INVARIANT: `krealloc` satisfies the type invariants.
-> >      const KREALLOC: Self = Self(bindings::krealloc);
-> > 
-> > +    // INVARIANT: `vrealloc` satisfies the type invariants.
-> > +    const VREALLOC: Self = Self(bindings::vrealloc);
-> > +
-> >      /// # Safety
-> >      ///
-> >      /// This method has the same safety requirements as `Allocator::realloc`.
-> > @@ -132,6 +142,24 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
-> >      }
-> >  }
-> > 
-> > +unsafe impl Allocator for Vmalloc {
-> 
-> Missing SAFETY comment.
-> 
-> > +    unsafe fn realloc(
-> 
-> Does this need `#[inline]`?
+v3:
+- dropped reordering patch
+- updated cover letter
 
-Given that we almost only call `ReallocFunc::VREALLOC.call`, inlining this seems
-reasonable. 
+v2:
+- cover letter
+- testing methodology
+- Signed-off-by
 
-> 
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError> {
-> > +        // TODO: Support alignments larger than PAGE_SIZE.
-> > +        if layout.align() > bindings::PAGE_SIZE {
-> > +            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
-> > +            return Err(AllocError);
-> 
-> I think here we should first try to use `build_error!`, most often the
-> alignment will be specified statically, so it should get optimized away.
+V4L2 has support for encoding with hierarchical frames using the
+V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING* controls. This allows for
+specifing frame references needed for temporal scalability. Encoding a
+single stream with a single layer allows for the layer to be dropped and
+the stream to be decoded without artifacts.
 
-Sure, we can try that first.
+ChromeOS is planning to use this feature for the L1T2 web standard[1].
+This allows video conferencing apps to encode once for a clients with
+different performance/bandwidth capabilities. As the application is a
+real time encoder only P frame support is added.
 
-> 
-> How difficult will it be to support this? (it is a weird requirement,
-> but I dislike just returning an error...)
+The ChromeOS test framework ("tast") was used to verify that no
+regressions are present. This was done on SC7180 ("trogdor"). These
+patches were also run on SC7280, but not with as an extensive test set.
 
-It's not difficult to support at all. But it requires a C API taking an
-alignment argument (same for `KVmalloc`).
+Verification of the added controls was done with a bitstream analyser to
+make sure that reference frame management is correct.
 
-Coming up with a vrealloc_aligned() is rather trivial. kvrealloc_aligned() would
-be a bit weird though, because the alignment argument could only be really
-honored if we run into the vrealloc() case. For the krealloc() case it'd still
-depend on the bucket size that is selected for the requested size.
+[1]: https://www.w3.org/TR/webrtc-svc/#L1T2*
 
-Adding the C API, I'm also pretty sure someone's gonna ask what we need an
-alignment larger than PAGE_SIZE for and if we have a real use case for that.
-I'm not entirely sure we have a reasonable answer for that.
+Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
+---
+Fritz Koenig (2):
+      media: venus: Helper function for dynamically updating bitrate
+      media: venus: Enable h.264 hierarchical coding
 
-I got some hacked up patches for that, but I'd rather polish and send them once
-we actually need it.
+ drivers/media/platform/qcom/venus/core.h       |   4 +
+ drivers/media/platform/qcom/venus/venc.c       |  85 +++++++++++------
+ drivers/media/platform/qcom/venus/venc_ctrls.c | 126 ++++++++++++++++++++++---
+ 3 files changed, 171 insertions(+), 44 deletions(-)
+---
+base-commit: d07b43284ab356daf7ec5ae1858a16c1c7b6adab
+change-id: 20240814-submit-05880a074377
 
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +        }
-> > +
-> > +        // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-> > +        // allocated with this `Allocator`.
-> > +        unsafe { ReallocFunc::VREALLOC.call(ptr, layout, flags) }
-> > +    }
-> > +}
-> > +
-> >  #[global_allocator]
-> >  static ALLOCATOR: Kmalloc = Kmalloc;
-> > 
-> > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-> > index 4785efc474a7..e7bf2982f68f 100644
-> > --- a/rust/kernel/alloc/allocator_test.rs
-> > +++ b/rust/kernel/alloc/allocator_test.rs
-> > @@ -7,6 +7,7 @@
-> >  use core::ptr::NonNull;
-> > 
-> >  pub struct Kmalloc;
-> > +pub type Vmalloc = Kmalloc;
-> > 
-> >  unsafe impl Allocator for Kmalloc {
-> >      unsafe fn realloc(
-> > --
-> > 2.45.2
-> > 
-> 
+Best regards,
+-- 
+Fritz Koenig <frkoenig@chromium.org>
+
 
