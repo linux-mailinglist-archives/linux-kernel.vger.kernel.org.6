@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-286970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BF09520FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:23:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E73A952103
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5D41F23019
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D311C20B05
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9E31BC065;
-	Wed, 14 Aug 2024 17:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D07B1BC07C;
+	Wed, 14 Aug 2024 17:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2snk5Th"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KELjCl3n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070111B9B2B
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0181BBBCD
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656178; cv=none; b=Tv8T+BGDwUmKxDUA/h1TZV41r1W/1mPWlLb9KCHKtA4W9VUagwc57VYBduYmO9zmAnGWhCdwmhFyEFnTdfRPdla3XNI7TbXC5glFypvAJn0+x1AghzYDEdLVm1O5iuLn4WNf2JL/p14bmcbasqQI5INctdoh1Qrfe+oCsNMym7c=
+	t=1723656273; cv=none; b=Out8BBU6pNRalmBwsiACls62MO/Y7BZWkFRTj0mfC1Nj2LnAuOSR+MPEx4ZS4mfZ/XgQG1rghDL6/NJqBQeWSyenn5YySa9dHvNfQk4qRFeULKjY25AfCS5n0cwnFlVmoikDfEGXVfzASKNeFZelW/W2MnI2YlKVoJJjX3qDrgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656178; c=relaxed/simple;
-	bh=f1RmKlqVd2mEVwfc2Sh+M2IKkmy1k3LlwnHEvoWTbqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fJtW6wb7a/+do2fZy53FLuI5NH8LIuo/GbANgDXDTMFPFXDbVfPeJzWzZP+oxEL4gRkOaSZvOwudnotPg5m0Swb31Ds9eM4qPbOrnZ3dvYOAhegJHAZ0qamqylQGifOTnma5ugBq1+fMk5qcaj9OX7HACNiKZJtar2cZgS+COiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D2snk5Th; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-827113c1fb4so9947241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723656175; x=1724260975; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1orJ6nO6ZqFwQLaPKdFYgCrAZEOYItqQBupC7tbBRhE=;
-        b=D2snk5ThFVcd65AiKML2/U2T0VeLLX97SXy7BLD3PC1rKRlOjehSp18iJgG+5snpli
-         BP52rAfUtmHiHcwnDSPsnO5LrDsGpj995mrMssn4/ztd66/YGAv898sy3UKwpCl/SeNJ
-         nV9rhj8y/t8jmPyXXjs/e3e6XMFmxNU2ztRVKr4CgVDCYAWe3y7R3WcvFjhlcwCGPI2z
-         pudjwMoK5gMF7lWNsNMHDVwfXUIjfnSSgWcqslaA/gU7ulcJGyz122hLnN+EkfVhcChC
-         wT29XSSUycG1KrNG6VOqfFTvt2OMreE1pCbnn78o6JMPMRRjWTBH2Zll76F+Iw1lxxuA
-         vODQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723656175; x=1724260975;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1orJ6nO6ZqFwQLaPKdFYgCrAZEOYItqQBupC7tbBRhE=;
-        b=fEmQya6i/LFETtNsTScsif+UZ/X0JCLnHM9JlXx7GLy29bMfAqYF8jsiQCf6sgACfR
-         lkPTJ3dVv9WYyIsw5b3y89lVXWWC/pLh3B1CpMQM4hQsqIDIGSnoyGS+STCyt0FNKFeS
-         YH0Ngmui3BkBkFgXzk+LjJnE33/QTyFlaesZmjBGbxCypUt14RzzzmMPjjSXU4IKOZ7E
-         uYtFc9M564ndy378drIkoRoyZXHM5pmGVZZhFFzd915dHq//zaOU/Vrini0ZkZt5CwpD
-         9rvIwwFLigCm5CRo/gNOzRyCoTMmAZgpDLxqx7N60mL04fVDWIbo3MKSvZJMIC7gjoaS
-         jVYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOzfSFKHU0/hB/K8koHkSUx5Ya82WZXx01OAzWFoh97XfzoTCJ5f07SC94SDMZsKOHB1TsIh3+/S749A7Sm1Fc5ZNqpZXhrLgfUPtD
-X-Gm-Message-State: AOJu0Yx8/POM2aIriK6+KKFnpMAbgAc8V9kTDhd9Mp1CBBnbvhYE4MZ4
-	XE/v3R99nTCFiTGPgQa3nPuPDkM+PxtzAQurEOgYvv5l35jU1+eOYHIrzcylY2ljd7Vbsa8+aeX
-	pmYbuqeMgsYBxwR6soRymmfSYrBbxfA4nRlaXcQ==
-X-Google-Smtp-Source: AGHT+IG3b3VoA49ASMXUxYJgavmQR8JbYzZCSLToVi6Teklw6eT/Mpr/6/Fk5ShHKZ00PpJjOdB9b0Ong6gjAsG5qt8=
-X-Received: by 2002:a05:6122:3c89:b0:4f5:f65:26be with SMTP id
- 71dfb90a1353d-4fad17773b8mr5087403e0c.0.1723656174948; Wed, 14 Aug 2024
- 10:22:54 -0700 (PDT)
+	s=arc-20240116; t=1723656273; c=relaxed/simple;
+	bh=/2nqj1zk1eK5KRY1Jy6nsIwDR99wK4nO4cOzT9n6K3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ei2lyUxrMCkcvxR5HH00L4bpU2hxVb4Gpnj55fRq+qEwO0v25J/FC0rlM1Q4y0IMTZO1QhrlctPfgmcrZunYG81T25tf0M0td+Jj4k8sci51V4snqYPaX6xebb5QlnS9HkOLHbrS2V562rpiFw8TQpJQxMAGaf0s4wergvxYeMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KELjCl3n; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723656272; x=1755192272;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/2nqj1zk1eK5KRY1Jy6nsIwDR99wK4nO4cOzT9n6K3s=;
+  b=KELjCl3nDEEk6xx1ffiCrEj7TyI+0sEMd1tfckiWslNFTHr5v2BuWqCN
+   KFReHFOdfKcDABgHnij450gV68+mcVQk1kW8TCP5FCDIvnr6n0w0VRGxF
+   6WTnb1rq+M3hr58u39u75ZJMmkp74VMBBG9i6y+2T9vnSfM+WyZgd1Ee5
+   LQWsS1akAxfkVe12tCsTwS4gwHK4KKOTcP6boasG//nQReFt9qSMwZeFt
+   2PuwB1k+uy8m16NVh8rhhoKfjCTLgg4Cnoto9+nezQXOEOMjTJ8+2GNxA
+   xnOgeZhCYUaVXmNpUH/jkvVP03hNCgqoCWV7kgVxhf0jxi6SoZOuN4ybc
+   g==;
+X-CSE-ConnectionGUID: 1juFCKIFQLazjh9l6fNQgw==
+X-CSE-MsgGUID: ccYDeLCdTNSoYRvOSvP2pg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="32564574"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="32564574"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 10:24:29 -0700
+X-CSE-ConnectionGUID: B1w5T3AwRBejyYsR2BN9bw==
+X-CSE-MsgGUID: DGOFRB0ZR8Kvs/uEdul9jQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="89790981"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 Aug 2024 10:24:24 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1seHjS-0002bz-1S;
+	Wed, 14 Aug 2024 17:24:22 +0000
+Date: Thu, 15 Aug 2024 01:24:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Li Li <dualli@chromium.org>, dualli@google.com,
+	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	cmllamas@google.com, surenb@google.com, arnd@arndb.de,
+	masahiroy@kernel.org, devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org, hridya@google.com,
+	smoreland@google.com
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@android.com
+Subject: Re: [PATCH v1] add binder genl for txn report
+Message-ID: <202408150004.BAtK29zS-lkp@intel.com>
+References: <20240812211844.4107494-1-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814-ufs-bug-fix-v1-0-5eb49d5f7571@linaro.org>
-In-Reply-To: <20240814-ufs-bug-fix-v1-0-5eb49d5f7571@linaro.org>
-From: Amit Pundir <amit.pundir@linaro.org>
-Date: Wed, 14 Aug 2024 22:52:19 +0530
-Message-ID: <CAMi1Hd04z56++7cj+w4=fyi2ov42OO6mAnDbkw5CehJw+fJ8ww@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ufs: qcom: Fix probe failure on SM8550 SoC due to
- broken SDBS field
-To: manivannan.sadhasivam@linaro.org
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
-	Bart Van Assche <bvanassche@acm.org>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Kyoungrul Kim <k831.kim@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812211844.4107494-1-dualli@chromium.org>
 
-On Wed, 14 Aug 2024 at 22:45, Manivannan Sadhasivam via B4 Relay
-<devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
->
-> Hi,
->
-> This series fixes the probe failure on the Qcom SM8550 SoC due to the broken
-> SDBS field in the host controller capabilities register.
->
-> Please consider this series for v6.11 as it fixes a regression.
+Hi Li,
 
-Thank you Mani. This series fixes the UFS regression reported on
-SM8550-HDK with v6.11-rc2.
+kernel test robot noticed the following build errors:
 
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
+[auto build test ERROR on staging/staging-testing]
+[also build test ERROR on staging/staging-next staging/staging-linus linus/master v6.11-rc3 next-20240814]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> Manivannan Sadhasivam (3):
->       ufs: core: Rename LSDB to SDBS to reflect the UFSHCI 4.0 spec
->       ufs: core: Add a quirk for handling broken SDBS field in controller capabilities register
->       ufs: qcom: Add UFSHCD_QUIRK_BROKEN_SDBS_CAP for SM8550 SoC
->
->  drivers/ufs/core/ufshcd.c   | 9 +++++----
->  drivers/ufs/host/ufs-qcom.c | 6 +++++-
->  include/ufs/ufshcd.h        | 9 ++++++++-
->  include/ufs/ufshci.h        | 2 +-
->  4 files changed, 19 insertions(+), 7 deletions(-)
-> ---
-> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-> change-id: 20240814-ufs-bug-fix-4427fb01b860
->
-> Best regards,
-> --
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->
->
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Li-Li/add-binder-genl-for-txn-report/20240814-150338
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20240812211844.4107494-1-dualli%40chromium.org
+patch subject: [PATCH v1] add binder genl for txn report
+config: x86_64-buildonly-randconfig-002-20240814 (https://download.01.org/0day-ci/archive/20240815/202408150004.BAtK29zS-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240815/202408150004.BAtK29zS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408150004.BAtK29zS-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/android/binder_genl.c:20: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * The registered process that would receive binder reports.
+   drivers/android/binder_genl.c:25: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * The policy to verify the type of the binder genl data
+>> drivers/android/binder_genl.c:102: warning: cannot understand function prototype: 'struct genl_small_ops binder_genl_ops[] = '
+>> drivers/android/binder_genl.c:114: warning: cannot understand function prototype: 'struct genl_family binder_gnl_family = '
+--
+   ld: drivers/android/binder_genl.o: in function `binder_genl_cmd_doit':
+>> binder_genl.c:(.text+0x38): undefined reference to `__alloc_skb'
+>> ld: binder_genl.c:(.text+0x61): undefined reference to `genlmsg_put'
+>> ld: binder_genl.c:(.text+0x83): undefined reference to `nla_put'
+>> ld: binder_genl.c:(.text+0xb7): undefined reference to `init_net'
+>> ld: binder_genl.c:(.text+0xbc): undefined reference to `netlink_unicast'
+>> ld: binder_genl.c:(.text+0x135): undefined reference to `skb_trim'
+>> ld: binder_genl.c:(.text+0x144): undefined reference to `sk_skb_reason_drop'
+   ld: binder_genl.c:(.text+0x195): undefined reference to `sk_skb_reason_drop'
+   ld: drivers/android/binder_genl.o: in function `binder_genl_send_report':
+   binder_genl.c:(.text+0x21c): undefined reference to `__alloc_skb'
+   ld: binder_genl.c:(.text+0x248): undefined reference to `genlmsg_put'
+   ld: binder_genl.c:(.text+0x267): undefined reference to `nla_put'
+   ld: binder_genl.c:(.text+0x298): undefined reference to `init_net'
+   ld: binder_genl.c:(.text+0x29d): undefined reference to `netlink_unicast'
+   ld: binder_genl.c:(.text+0x304): undefined reference to `skb_trim'
+   ld: binder_genl.c:(.text+0x313): undefined reference to `sk_skb_reason_drop'
+   ld: binder_genl.c:(.text+0x34c): undefined reference to `sk_skb_reason_drop'
+   ld: drivers/android/binder_genl.o: in function `binder_genl_init':
+>> binder_genl.c:(.init.text+0x12): undefined reference to `genl_register_family'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
