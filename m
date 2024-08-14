@@ -1,174 +1,185 @@
-Return-Path: <linux-kernel+bounces-287228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169AF952505
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF72952506
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355B21C21A67
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CFB28592F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C8C1C8FB0;
-	Wed, 14 Aug 2024 21:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE91E1C8FB2;
+	Wed, 14 Aug 2024 21:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aVsX5gNk"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2081.outbound.protection.outlook.com [40.107.237.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7w3kvYt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202AF7346D;
-	Wed, 14 Aug 2024 21:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723672680; cv=fail; b=OIbi9eYHGtQ0Sl+9nTg8ObzjAZGBaTuz4B/hm2MgzL3FrCy8ii6yrPMm4nKhDjxXbIlv0x2HqbBniVG/PJQUVROPfQ9lkpVlCzz36lKFnBYhz28tCb0wv4iqnqFrTf/U00C8ZC+evMalHk2sAVOREk2O9v8pXFegEAKDaeqfsRs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723672680; c=relaxed/simple;
-	bh=xWD4Et2DtwvNA921et7/F9Q7aA6bQtCLu+jzZTl8hNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=djT1rb329mQqwbkNUVcSBuA6u3tsIHZIqytDw+60LsLx7Gk86s/HKYZLYj97luP/QGumhrERp4jPzJJE1nFx67Ce9fiy90C6Wyg5hxyca3vsSrE+Mh3RTzPPTueVlbqBJodasnk+OZ4Os3dsEzV5dYNyxYd8zsU3SyWf9Wh7NMQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aVsX5gNk; arc=fail smtp.client-ip=40.107.237.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mA+g2xOqworpG1lko4N4Y1SdudDKX4VgyyhG0S2awx3Ruc83HgMpCCupMtpuIoNKz6zYJ/zDw0iapGDdJjO1n6yVRRlMwYVBZjBHtPMYLHovl+QliGz5zCdwRnsC6cj5d2vczqO72F8yRT8u45l5M0cO0DbPd7rya+DbLjfL0h7iP4ZKAQsApRVyCDyZ7yMfT3x3A96BA8z/ZJnQt7Wy6R1z0i7WFNN7lNWxd5ARUQcNyPKMTMXpHVa0Svp8mW3J2JmZYcZ8odpH3OKLig195jySVfAlM7IzSAnB56sngTq0nQTT5zG/MTXaFQ/7vlnjkSyLURYEKArW9mbKYTDiTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uBpORGO059sJYQ/p+IcpgP66b1WHpZaEs3+aaLksUp0=;
- b=Gsob+XW/cZlSBlYFWh+go11cZ5PbFM+nFn16lk2kQzFxN8nTVhj/43DMsURI9hsm5oA+g4hd82/F7DkGQRFaF/mcQDcIqinDz2opQnKy+bFwdtFuSn/Mw7/Rl6Ye+YZ7ipamf7qNhqIsdC9zFMMhtJ+yYQqRWWJUo3UngKEC4Zq0urBVnhw7mgqqNXB6TfxxglVx82fvjUwdWEJkTTzT0l/LACGz7T1uMZBmDC7MS9lvkWB+psl4uVA2rd8GzpXcA+I/TXUNqxBgWQn3ha/vKvkRoybZKQXPsYTuZi7lkwvSfo0o1taZxSam9TKxXJYyt1HVqaJoWSCqyhMDQpzqkA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uBpORGO059sJYQ/p+IcpgP66b1WHpZaEs3+aaLksUp0=;
- b=aVsX5gNk9R+Jmn+wm7J42RexdJMlAB13MOVctuEIU5exW0Qi/iPZKkpcUxPNwymzzU0se3LbWmKKspBszWf/j6Fr6UNi/vQqoPpvRT98CFwc2MGGMOVL7FQ9pKZOzJlTVXzP+Wfep2tOtsMpNKKFrWB+Q0tnSpaQaSWHF1T8PCDoX4V5Jq03LNcLwSkH0N7hwtQSAJXDCl8r2yY7EGWsTBym7jeWmCNOznb5d3rwIR5Lz2HSHRHDtDDt3CrxswCkROZVHYACJ18+3QCKIZ2VHQOQVJhU4KwfRmn/F+deKFTbkqFukfX3zJTfrAOF9j/JmNRmtzUMp/pjZcY/aiTCKw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16)
- by DM4PR12MB8571.namprd12.prod.outlook.com (2603:10b6:8:187::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
- 2024 21:57:55 +0000
-Received: from DM4PR12MB7767.namprd12.prod.outlook.com
- ([fe80::55c8:54a0:23b5:3e52]) by DM4PR12MB7767.namprd12.prod.outlook.com
- ([fe80::55c8:54a0:23b5:3e52%3]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
- 21:57:55 +0000
-Date: Wed, 14 Aug 2024 18:57:53 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v11 8/9] iommu/arm-smmu-v3: Add in-kernel support for
- NVIDIA Tegra241 (Grace) CMDQV
-Message-ID: <20240814215753.GY2032816@nvidia.com>
-References: <cover.1722993435.git.nicolinc@nvidia.com>
- <849c17b97ae0a38db1cee949db2488e4045666df.1722993435.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <849c17b97ae0a38db1cee949db2488e4045666df.1722993435.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BLAP220CA0009.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:32c::14) To DM4PR12MB7767.namprd12.prod.outlook.com
- (2603:10b6:8:100::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1661BBBF4;
+	Wed, 14 Aug 2024 21:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723672697; cv=none; b=ceqnhONekaBes5hFxFAO/3XznAt/SHAqX3Zd6qBh8aO91PFvbGADINPLKxaSuMOfZoonJofiAy/zibtacf/kOQelBSZJmIS/cCjBtPvlIMcd98XOhxPY3BJTQC0AyHTdXnvUtYBplvT6RPdq1ECq1TEYQiViCqkbvyL3/aBlBNE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723672697; c=relaxed/simple;
+	bh=WF7mh1nnaAx+2BtQVDbvZ9mTMjWH5kKojT+9NKpDGDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UQ2HhSry+ymTGrJYt/Mrk/0yo2plxi43/W/q6VqRN9LW+e4tHhAAp4HSmLpOmiEGWlTr8eqN3jFbw9+B6B+jYKVz+3uC0z4KK+djFM8GXIq0KUfvtZlK7yK5WT+4uyYVJT12Yq00p0aAJkDv2l00i8Rj4QP5tQFJJZGo6Y0vaIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7w3kvYt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE173C116B1;
+	Wed, 14 Aug 2024 21:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723672696;
+	bh=WF7mh1nnaAx+2BtQVDbvZ9mTMjWH5kKojT+9NKpDGDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k7w3kvYtTLgFnwfGAbkC9JLrNGliHDW5YldIQLHAnWlAQGLs5TsJfY66aO72aESXS
+	 NKAzOS5reSFyMrmYzZ6KT8V7gvFvZ8RKwAiLJsMU3kolElPZKA1GKL7EtSHkv4IDfZ
+	 OrcYAKWjTCHnih6lBPj/FTY+Ps8T/7fVqhjQB4/wMuu4lJEx4eGp2LQ0aQb+Ya88lX
+	 eRD4kWGW5rTkeu7hPh90Tlpo7OFTwu0dbV4ED5qAEDdyopTMmdoH/WIrQ0YNW1FTLP
+	 xj9y8L/Brrs+/tYVEm9lgyMshxJo91uuSjbWuSsRZehjzQQBzGRva4ZNBNFvz+ypmx
+	 6Me9Hd3WpGkEw==
+Date: Wed, 14 Aug 2024 23:58:08 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 09/26] rust: alloc: implement kernel `Box`
+Message-ID: <Zr0ocI-j3fZZM7Rw@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <20240812182355.11641-10-dakr@kernel.org>
+ <a69e7280-7291-49f7-a46f-1ad465efce04@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB7767:EE_|DM4PR12MB8571:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4187fcc8-1b44-4759-8f47-08dcbcac2709
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	i9Exc+SQ6tyEfYT2a3icCKAjQePUKej4PoY0Ioih++4kwBGzsgTNIlZqmJT/5feFQ6IYUJ3fk4JsWSis5Xa5RXMvBrAyAfkwStsmAcT1jwPUcRYkbT7Z24acThP1fMl6VuokrZtSYcTpxYChvoq8CuTH2QkyrhZjz74FQYTI/R93v+tFtq4io7f7mhli/BbAHyu6spkwnyZdcmAnQ/ZI1WVnaRVIAg9abrTqHDpDUwnQaM7TMogYAcpCSGTG+jtRdIk7NG4ZsV3WBBUizFLDa6gX9nIYyN3E4k15F1sh3r8EP0i8T62opFAb0bfR8pZ3R3L1L5VlfoTXeBcicHJDgEmxIUGEz+GLAjwX6vhUupyqVoHHyesPrBVlZjpe4I2r4ixOqsWe3JnkSAbvUGVpIuMY79YQveGu3U5Lb7r3hBrk75JY06AnP+yLgVL7dwZYhZwuLUQdFN9Vm46E4jZE7bm3dP1eF3wCaGOfL4B0SJKxpcpX8eGjFKgUMs7HSg2OZMSHPamsJL8dExpaWIM1oaKsoB9MdrAm2x/GY7DdvNvmPHMv0xYJAIaASbntDbbr2rNmNr/dzl6YhDa1Rco9rHToYqrck5omXLF4DpwJzIo1AQUv/s6ONQ3F7c5eHVbLUyU6Fnyd0BzRaA+i0H4K6/2BxlueMzBViZ4+XqNpTKI=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HtsShvxoiPlOFFjOvt59O+3RMsSgAwPHZg4hloxghep/y/nRKaEa5N6fonek?=
- =?us-ascii?Q?W6QfAjy6wZiOuViYw9/NCezSnrj3sJbivA+zv9igBWdfDHka2UzZhkprwGmX?=
- =?us-ascii?Q?Ugz+GeBsr1aQPvVYLHW6krradO/ZDiL+XinJDULSU2W8tAkqvdCIwibcUnr3?=
- =?us-ascii?Q?TsHoZ/iEJ0ITn7XQBKy9CX+D0aH3r/Y7RR5YN0lzJ977XoHzAQ07JasPQl/1?=
- =?us-ascii?Q?kA1GJDeulhY/U94+tUFK3Unt5UQ2C/Dv42ShQxDiVDyEtikHnDRKSxbwean9?=
- =?us-ascii?Q?gp3BijQfQ22tm2DMOjJ8MC2dJwAh4guYCaTYJ2DkRSFfAKm7wJDK1wYjb62+?=
- =?us-ascii?Q?P5UdWWUYH6xWYmPomKaYhd6gi2SmET0C+1p9+CwggfDlNu5TLLD1cb6XKojc?=
- =?us-ascii?Q?qlmtWV4UOYoS6dST5nTXGIEkFXrQxWjaYHjOCEu8ZD8KNV6ZHholYeNEd330?=
- =?us-ascii?Q?upiPzIYfrCGAn5TJYZ/oiZPgyXCvqWpgDVqFaPdIisoVHpruhxD7hzOC7UPc?=
- =?us-ascii?Q?9p2HSAtqui3a7fVVpbtHiDeR18RXFcojl1SDVSA3xHtJldF4UVvSuSo/BuS6?=
- =?us-ascii?Q?jUvFkAptQV5hWDzVPbO93Eea0RhVtVbtRLlhdv8vzT6vhrMYfaEjqYWfEcbu?=
- =?us-ascii?Q?6RieRsuKg3neQpP5y3nTvQMZUrPxRkhxPp6IhVCArNr+2Dj9lFLF/YJNX9WE?=
- =?us-ascii?Q?0fLszhyC3GgV6Dba3sUbdoNQh0y7n7jMcnIzXgHTQMDTKtOt8XnDhzYe3MPC?=
- =?us-ascii?Q?5oYCWelDPWGKRvSLtzw3juTCgNnh6390ZbmoNNS9B24p5pmjx9xXlryxVcO4?=
- =?us-ascii?Q?SphM6qBKfBK2Ib84s4wSYE6HQHLfZ2r1mNJK88Lzu7q4ElEf3ji2X85sQ6x7?=
- =?us-ascii?Q?sfQRgNpsmjdnTrC0ycJElvyA8Ojh3VvPnuey6c+qtkm6NunMZ7SZVWw3afSK?=
- =?us-ascii?Q?GRvHAxoB6llCCJN/SViYOd7Mkq4j8tECB2xy2SdhisXR7OzWloSknQ+Ygbr7?=
- =?us-ascii?Q?J2ar6vDS1XzYlfV58kR4SdaWyYfyFyB2qYwWWaRlPvI+FrdU59p07dZexsrX?=
- =?us-ascii?Q?HYyJj7YXqRQlANE3XUTDYG3HWoKANUSZiCGsKPmKXAPb3dT53k+ZrTsd6ryJ?=
- =?us-ascii?Q?/Otb0ZVjR7xGCqqM3FL5HbmeJI8nZqDcjbkDRoF1SnwQSPAWSe0g+xQD83/q?=
- =?us-ascii?Q?3iSDFBCavtidc2vXKZePY8PK3NGg2hBFJ/5/EmalJx53VVS2wsvzSPkI+gpK?=
- =?us-ascii?Q?EvCWJVCd/89w1AC5U/JxWkPXwH3eavnCTezgZvnsl/udV1klRAmKr2wjBX9I?=
- =?us-ascii?Q?71TqgdfX5SDYtN+7CU1bvCTk0l4Rly/XsfTB+jaCXwho0vJOMVtcaLFgoZbr?=
- =?us-ascii?Q?5/5qfbOR8eAz359oK0sZw27huKeAqG2OIS3CSFP7aV9gs5dv64OSAPg1Uanm?=
- =?us-ascii?Q?0Tfd0WBlSMMTcVIkS8UI6yOqIry4yt9g5DGy+eofS6PePBET7GCepc5JQy+w?=
- =?us-ascii?Q?eRZMD/bcTlFY/jof+iJ47sXTV421EZbssGn24/bW0Umz1M81Nd5hN2Q30TkF?=
- =?us-ascii?Q?BagpsIK6S7m4aYpZ5gM=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4187fcc8-1b44-4759-8f47-08dcbcac2709
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7767.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 21:57:55.6360
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X5uuFmJmC4bxj4+Ps40a5gOwuYFtIm7SKQONq/Y+14LbChfzN96nVcb66SZoq+yJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8571
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a69e7280-7291-49f7-a46f-1ad465efce04@proton.me>
 
-On Tue, Aug 06, 2024 at 07:11:53PM -0700, Nicolin Chen wrote:
+On Wed, Aug 14, 2024 at 05:01:34PM +0000, Benno Lossin wrote:
+> On 12.08.24 20:22, Danilo Krummrich wrote:
+> > +/// The kernel's [`Box`] type - a heap allocation for a single value of type `T`.
+> > +///
+> > +/// This is the kernel's version of the Rust stdlib's `Box`. There are a couple of differences,
+> > +/// for example no `noalias` attribute is emitted and partially moving out of a `Box` is not
+> > +/// supported.
+> 
+> I would add "But otherwise it works the same." (I don't know if there is
+> a comma needed after the "otherwise").
 
-> +static struct arm_smmu_device *
-> +tegra241_cmdqv_probe(struct arm_smmu_device *smmu,
-> +		     struct resource *res, int irq)
-> +{
-> +	struct tegra241_cmdqv *cmdqv = NULL;
-> +	struct tegra241_vintf *vintf;
-> +	void __iomem *base;
-> +	u32 regval;
-> +	int lidx;
-> +	int ret;
-> +
-> +	base = ioremap(res->start, resource_size(res));
-> +	if (IS_ERR(base)) {
-> +		dev_err(smmu->dev, "failed to ioremap: %ld\n", PTR_ERR(base));
-> +		goto iounmap;
-> +	}
-> +
-> +	regval = readl(base + TEGRA241_CMDQV_CONFIG);
-> +	if (disable_cmdqv) {
-> +		dev_info(smmu->dev, "Detected disable_cmdqv=true\n");
-> +		writel(regval & ~CMDQV_EN, base + TEGRA241_CMDQV_CONFIG);
-> +		goto iounmap;
-> +	}
-> +
-> +	cmdqv = devm_krealloc(smmu->dev, smmu, sizeof(*cmdqv), GFP_KERNEL);
-> +	if (!cmdqv)
-> +		goto iounmap;
-> +	smmu = &cmdqv->smmu;
+There are more differences we don't list here, and probably don't need to.
+Hence, saying that it otherwise works the same isn't correct.
 
-Should stick a:
+> Also I remember that there was one more difference with a custom box
+> compared to the stdlib, but I forgot what that was, does someone else
+> remember? We should also put that here.
 
-static_assert(offsetof(struct tegra241_cmdqv,smmu) == 0);
+Obviously, there are also quite some API differences. For instance, `Box`
+generally requires two generics, value type and allocator, we take page flags
+and return a `Result`, where std just panics on failure.
 
-In here. The copy inside the krealloc won't work otherwise.
+> 
+> > +///
+> > +/// `Box` works with any of the kernel's allocators, e.g. [`super::allocator::Kmalloc`],
+> > +/// [`super::allocator::Vmalloc`] or [`super::allocator::KVmalloc`]. There are aliases for `Box`
+> > +/// with these allocators ([`KBox`], [`VBox`], [`KVBox`]).
+> > +///
+> > +/// When dropping a [`Box`], the value is also dropped and the heap memory is automatically freed.
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```
+> > +/// let b = KBox::<u64>::new(24_u64, GFP_KERNEL)?;
+> > +///
+> > +/// assert_eq!(*b, 24_u64);
+> > +///
+> > +/// # Ok::<(), Error>(())
+> > +/// ```
+> > +///
+> > +/// ```
+> > +/// # use kernel::bindings;
+> > +///
+> > +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> > +/// struct Huge([u8; SIZE]);
+> > +///
+> > +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err());
+> > +/// ```
+> > +///
+> > +/// ```
+> > +/// # use kernel::bindings;
+> > +///
+> > +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> > +/// struct Huge([u8; SIZE]);
+> > +///
+> > +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
+> > +/// ```
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// The [`Box`]' pointer always properly aligned and either points to memory allocated with `A` or,
+> 
+> "pointer always properly" -> "pointer is properly"
+> 
+> > +/// for zero-sized types, is a dangling pointer.
+> 
+> I think this section would look nicer, if it were formatted using bullet
+> points (that way the bracketing of the "or" is also unambiguous).
+> 
+> Additionally, this is missing that the pointer is valid for reads and
+> writes.
+> 
+> > +pub struct Box<T: ?Sized, A: Allocator>(NonNull<T>, PhantomData<A>);
+> 
+> Why no `repr(transparent)`?
 
-But this still seems Ok to me with the new ops
+I wasn't entirely sure whether that's OK with the additional `PhantomData`, but
+I think it is, gonna add it.
 
-Jason
+> 
+> > +
+> > +/// Type alias for `Box` with a `Kmalloc` allocator.
+> 
+> I think we should add that this is only designed for small values.
+
+I don't want duplicate the existing documentation around kmalloc and friends
+[1].
+
+Maybe we can refer to the existing documentation somehow.
+
+[1] https://www.kernel.org/doc/html/latest/core-api/memory-allocation.html
+
+> 
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```
+> > +/// let b = KBox::new(24_u64, GFP_KERNEL)?;
+> > +///
+> > +/// assert_eq!(*b, 24_u64);
+> > +///
+> > +/// # Ok::<(), Error>(())
+> > +/// ```
+> > +pub type KBox<T> = Box<T, super::allocator::Kmalloc>;
+> > +
+> > +/// Type alias for `Box` with a `Vmalloc` allocator.
+> 
+> Same here, add that this is supposed to be used for big values (or is
+> this also a general-purpose allocator, just not guaranteeing that the
+> memory is physically contiguous? in that case I would document it
+> here and also on `Vmalloc`).
+
+Same as above, I'd rather not duplicate that. But I'm happy to link things in,
+just not sure what's the best way doing it.
+
 
