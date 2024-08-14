@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-286753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE334951E98
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:31:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF8F951E93
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842821F21D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813AD1F22D5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8231B5812;
-	Wed, 14 Aug 2024 15:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0F11B4C40;
+	Wed, 14 Aug 2024 15:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="B5nThtTh"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VulC//mL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F5C1AE878;
-	Wed, 14 Aug 2024 15:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48386364AB
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723649499; cv=none; b=AaVyc4CrhleRTz7CIiQNX9Js4YuHou6Wm/QLCbkUOEylygeK5T5dApMeVq/1gpiDLR5wnNBFMzw9UbLiXlnHVhx2l9YH56ZNL+zi0ZKJqsxUGi64idJG20FlLXXPt0adIbLkzIQGdRA29VTSzlm1bwjJ0GZa88GwBscqhCHjxsE=
+	t=1723649498; cv=none; b=BSJNs4Krc2UQK0ZUKnAi7gfqj6EvLVTS/7SCEni0UP3kPWFBdIuCS+G2NnCfbdWSosIjaLO4KV3klO2UDkEemEU59eEKxA4M+IgTUperONcxJmA3wAFUMI4CVQ03FDoWPaR20Io7+FIq+dBlhp3eyVSilvpzAsVYqH0OtsfvgF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723649499; c=relaxed/simple;
-	bh=Gdq+sxNPAKr5VDvrrpn/8VAibgBS/bz5Otz1L63H1gM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RuvaMKCg/PF2P7w72Rq7o5TUZXdzK2BqplCtepYoS6l+FYYN49rGCC7Hjhfek1Wn7h7BtDiw1zPCbPIn14x3PvrT1ayhzL06BF4tltvmXnMaMLE6JIcbvVNvhUrxLvlknQjgi/liafyupYoNfV5CFxvIwdV/aInjJ3H2TW5Vz5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=B5nThtTh; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qXXIlCYalPd0zJHCfYqZGX6mxTPUzWj2COHc7ZwifQk=; b=B5nThtThF2LUfANjGlKJrz9dY2
-	cTzRFql02FO86TlExchSzNSkUd1UwSiM7Qi1fJhdk7v+5SUZrzIM6epPUfb056CmvDk+KB+Igadbj
-	By8snZ2548MFEyquPa8UDmlhowl5eXNySKiBFkTDHOn6/IAo/F8pdeCbvwPcmZsxNQUOKe2/oGM8g
-	KmNfJraswHuNhuSampSd9mV6/v7YTeM+PvpJrEIImUwmYqIybouJmP76qymuvvdD5oI6WVVeBuxHp
-	3EmicRn1YXl0QAAlhQqtDDsC3WjNR8USHs0AamcCztKY7o0dpB93qS7BI+olDDBWfB0vBBtKtNyhm
-	qZuULYMg==;
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1seFxr-00053d-0h; Wed, 14 Aug 2024 17:31:07 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org,
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Lee Jones <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Muhammed Efe Cetin <efectn@protonmail.com>, Andy Yan <andyshrk@163.com>,
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
-Date: Wed, 14 Aug 2024 17:31:04 +0200
-Message-ID: <21547916.mFnZMskM5D@diego>
-In-Reply-To: <20240802214612.434179-10-detlev.casanova@collabora.com>
-References:
- <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-10-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1723649498; c=relaxed/simple;
+	bh=9XSsEMnw7mjj4lpRgFPcQiUbJQJa5ZJfpuFAqlCw2tY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zb0UOGaxHWLkFQ4YJ8ZU2L+/RlNTxm63PLAMM28VHHS1nNRtDvyI2i4yMDHDT0tckqMo3muPzfu6GOma0NGrus+ro/VJu/rx2JOufAI2mA9Cxsi+QDEwRFaow+OtQLm8ZJTf/CIEcIIGdXnRSoF7dj7smcPvxFvBCpq9y+PZHY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VulC//mL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723649495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IiMPsWJPYDK3P+MCQiM10rUyO4cGMHXEZ4jmPZHJ+ME=;
+	b=VulC//mLR16JgZsFya5Z7UZIhog+zZ6My3Nz9o/Xz4aRje083zR9hfuFiGGLje3kk6aCy7
+	f/iEUUUj1DPY09iJWgZTTLRcnigtjO7HIXthBVzLN5GVbWeMCsF/AfsPpauLn7SX9F4jbw
+	18iHX4kPyo5ConXx5scSHl1YWfNTz5I=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-577-5pYwyYgWPCe6U5M_RfEoUQ-1; Wed,
+ 14 Aug 2024 11:31:31 -0400
+X-MC-Unique: 5pYwyYgWPCe6U5M_RfEoUQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D3A019541A9;
+	Wed, 14 Aug 2024 15:31:29 +0000 (UTC)
+Received: from metal.redhat.com (unknown [10.45.225.193])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 741FF1955E80;
+	Wed, 14 Aug 2024 15:31:24 +0000 (UTC)
+From: Daniel Vacek <neelx@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: Daniel Vacek <neelx@redhat.com>,
+	stable@vger.kernel.org,
+	Bill Peters <wpeters@atpco.net>,
+	Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] sched/core: handle affine_move_task failure case gracefully
+Date: Wed, 14 Aug 2024 17:31:18 +0200
+Message-ID: <20240814153119.27681-1-neelx@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Detlev,
+CPU hangs were reported while offlining/onlining CPUs on s390.
 
-Am Freitag, 2. August 2024, 23:45:36 CEST schrieb Detlev Casanova:
-> This device tree contains all devices necessary for booting from network
-> or SD Card.
-> 
-> It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
-> SDHCI (everything necessary to boot Linux on this system on chip) as
-> well as Ethernet, I2C, SPI and OTP.
-> 
-> Also add the necessary DT bindings for the SoC.
-> 
-> Signed-off-by: Liang Chen <cl@rock-chips.com>
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> [rebase, squash and reword commit message]
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+Analyzing the vmcore data shows `stop_one_cpu_nowait()` in `affine_move_task()`
+can fail when racing with off-/on-lining resulting in a deadlock waiting for
+the pending migration stop work completion which is never done.
 
-looks like (since 2019) there is a strong suggestion for having a soc node.
+Fix this by gracefully handling such condition.
 
-See Krzysztof's mail in
-    https://lore.kernel.org/all/6320e4f3-e737-4787-8a72-7bd314ba883c@kernel.org/
-that references
-    Documentation/devicetree/bindings/writing-bindings.rst [0]
+Fixes: 9e81889c7648 ("sched: Fix affine_move_task() self-concurrency")
+Cc: stable@vger.kernel.org
+Reported-by: Bill Peters <wpeters@atpco.net>
+Tested-by: Bill Peters <wpeters@atpco.net>
+Signed-off-by: Daniel Vacek <neelx@redhat.com>
+---
+ kernel/sched/core.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-So I guess we should probably follow that - at least for new socs for now.
-
-
-Heiko
-
-[0] https://elixir.bootlin.com/linux/v6.11-rc1/source/Documentation/devicetree/bindings/writing-bindings.rst#L90
-
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f3951e4a55e5b..40a3c9ff74077 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2871,8 +2871,25 @@ static int affine_move_task(struct rq *rq, struct task_struct *p, struct rq_flag
+ 		preempt_disable();
+ 		task_rq_unlock(rq, p, rf);
+ 		if (!stop_pending) {
+-			stop_one_cpu_nowait(cpu_of(rq), migration_cpu_stop,
+-					    &pending->arg, &pending->stop_work);
++			stop_pending =
++				stop_one_cpu_nowait(cpu_of(rq), migration_cpu_stop,
++						    &pending->arg, &pending->stop_work);
++			/*
++			 * The state resulting in this failure is not expected
++			 * at this point. At least report a WARNING to be able
++			 * to panic and further debug if reproduced.
++			 */
++			if (WARN_ON(!stop_pending)) {
++				/*
++				 * Then try to handle the failure gracefully
++				 * to prevent the deadlock a few lines later.
++				 */
++				rq = task_rq_lock(p, rf);
++				pending->stop_pending = false;
++				p->migration_pending = NULL;
++				task_rq_unlock(rq, p, rf);
++				complete_all(&pending->done);
++			}
+ 		}
+ 		preempt_enable();
+ 
+-- 
+2.43.0
 
 
