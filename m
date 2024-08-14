@@ -1,128 +1,230 @@
-Return-Path: <linux-kernel+bounces-285886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D062E9513DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178DE9513CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B3C1F24734
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D61D1F21F1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292DB54658;
-	Wed, 14 Aug 2024 05:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PL20CIHW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321617868B;
+	Wed, 14 Aug 2024 05:22:52 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068FA13AD33
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2756F2F4;
+	Wed, 14 Aug 2024 05:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723612996; cv=none; b=EaWWZNVjfoJdBWw0Ib9xJqIeWMrkFPjVXwUbN4mWTa7xUjGnJrPdOom4Zm6aP/ajZYEMScVmEk9agPAtc2/hjLwf89g6wR5XGFB0ACDocmGpKtd3YjOOoHsMU/J80xaLFRkUbpQiLetYg2ym876rcfB3Hl9PnTzFj1cDiwMXkJo=
+	t=1723612971; cv=none; b=Ta0a1TUWYl22HppFijWy54t7cygPC0asHMoJ700Sx37BTCLAJ2d+4RVLZFXOo8lAoVLav3mnDlu6nl04JdKkiF0HoJRKZ0tmdhKBEiFH4dameYbOlgL91QYsqU4S6kJMUWLo0UtgvAZ/c4UJotfmaCGFpTjHJU5g/gHwT1z2+u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723612996; c=relaxed/simple;
-	bh=XJEvt+yIN4yZx5BK8Fprghh8IxukmlAPgsAMgtIfSNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=To3B1SZj9zGnwwW9BOF5fRoFYE0XsEeXkHlA15Vf+6/plIc5bP5IJazenyjdwZVviQhjCnvo6z2+gF76TlkK59ssTVYED4UzYJN8f1iA2lqEGrNf7fknmpyZkYSxq61pf4Zl3DvkeC5OcaETDcCDDox1WYRXA16Y2PDEgCmbFuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PL20CIHW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723612993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vfwh1eGCzguoUvuJz78z6dH7f3hxP70/1uP7cAzG5qY=;
-	b=PL20CIHWYB89jbQ+aAymIJEXGNvcBAaiRLIy0pF9Jsjme6yMXmmuf8sLRJ00iFbevyYyco
-	txPEkG1wQDofp+V8GkpeIhuZP3oykz2yiHj8tGx49PxQJ7N1yVrfk9kdyUWwmlrW/bC6NF
-	/GqzvBNIBPzI9Vmo1id4fXIvIlu8cig=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-688-fhVs7HFGNlKlMCBwDsygtg-1; Wed,
- 14 Aug 2024 01:23:11 -0400
-X-MC-Unique: fhVs7HFGNlKlMCBwDsygtg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 860ED18EB232;
-	Wed, 14 Aug 2024 05:23:09 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.38])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E1F4A1944A95;
-	Wed, 14 Aug 2024 05:23:02 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	venkat.x.venkatsubra@oracle.com,
-	gia-khanh.nguyen@oracle.com
-Subject: [PATCH net-next v7 4/4] virtio-net: synchronize probe with ndo_set_features
-Date: Wed, 14 Aug 2024 13:22:28 +0800
-Message-ID: <20240814052228.4654-5-jasowang@redhat.com>
-In-Reply-To: <20240814052228.4654-1-jasowang@redhat.com>
-References: <20240814052228.4654-1-jasowang@redhat.com>
+	s=arc-20240116; t=1723612971; c=relaxed/simple;
+	bh=QOxvKD6mdRI5zUGMXtUaVqcQjFYBQSeZRXbWDE2fotk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=dZMd00Ah7hO5P1i6v7cS1ODXLnkbz8dHWiVhI6TVxtmCijej84GcpABlH9Dta/W0l0ZYae30yT1kY3ayt2aHMbjhHKPZ509WJWb7KrvVveKxOHZ5FdULrYjAbD5ndXq7Ky4FpLbqawiVd4KGLfdP/IG3VOoYG3cpqtwaYD516Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a94aa5080so720742266b.3;
+        Tue, 13 Aug 2024 22:22:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723612967; x=1724217767;
+        h=content-transfer-encoding:autocrypt:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rBxz/yI6iP/vJJDGJ4pN7KwEbLJNNeReRtmR06yY6Hc=;
+        b=h680e8gdxY+1vVc6nB+jbC3jikZGopUbQjjmaKuPWdjjMAp6xyL8GrhwbMX+Pa4iMZ
+         buohhJfoaURaRqfBaOxfWjq5/SgjFXQcjCDr3ypz8n8DJB16Fc4x/tP+W7xVMAYehVMt
+         CbuvdyWb9OMSinLJQC+ZYezoFN2+jSDeD53+coB59iTf0TARcFYe0d8EyhyPxvlRX6W3
+         UPGikf5wrttqJiDDDhNBaDdXJVzYSov1c43LBZ/9a27nlSt6K4MAnq95JRMfazSQWhwA
+         VtGLigia7X/bOKGGYhBwAUhIdnlxh1sH5Ff5gD7XvTaDFkA6m/u3BPk7o4oD95+XCqS3
+         yDQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAQzJmLbL348JBsmXICQfDswNMNWw8PrHMFOUXmvPQsEm26Wp3ENIr4Wz9GNFxzIgqNVFb2xVky8nkgPBNrdb4i6I6kEVYlKiDZA==
+X-Gm-Message-State: AOJu0Yye01FAhgtAqpeYBD2ewoV4my06bUmpRjgNLFBDEqEqbGsqAkQf
+	To+jqzDoSzV3oYnXf2YOmKxZZucYV8H0tokfblJNU/GV8UEJuvJccFYJ8A==
+X-Google-Smtp-Source: AGHT+IFkp4ZMyR031eOsGBkK52Ysok/eJv1pHfGN8G3HknAgdHQaZ1y5Ea19k9HSF1AN6A/NGlE0dQ==
+X-Received: by 2002:a17:907:d862:b0:a6f:4804:d41a with SMTP id a640c23a62f3a-a8367026b4dmr110999266b.55.1723612966965;
+        Tue, 13 Aug 2024 22:22:46 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414e041sm127289266b.168.2024.08.13.22.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 22:22:46 -0700 (PDT)
+Message-ID: <60ac8988-ace4-4cf0-8c44-028ca741c0a1@kernel.org>
+Date: Wed, 14 Aug 2024 07:22:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+From: Jiri Slaby <jirislaby@kernel.org>
+Subject: ACPI IRQ storm with 6.10
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-We calculate guest offloads during probe without the protection of
-rtnl_lock. This lead to race between probe and ndo_set_features. Fix
-this by moving the calculation under the rtnl_lock.
+Hi,
 
-Fixes: 3f93522ffab2 ("virtio-net: switch off offloads on demand if possible on XDP set")
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/virtio_net.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+one openSUSE's user reported that with 6.10, he sees one CPU under an 
+IRQ storm from ACPI (sci_interrupt):
+    9:   20220768          ...  IR-IO-APIC    9-fasteoi   acpi
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 55b712a71e63..6c79fc43fa31 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -6606,6 +6606,11 @@ static int virtnet_probe(struct virtio_device *vdev)
- 		netif_carrier_on(dev);
- 	}
- 
-+	for (i = 0; i < ARRAY_SIZE(guest_offloads); i++)
-+		if (virtio_has_feature(vi->vdev, guest_offloads[i]))
-+			set_bit(guest_offloads[i], &vi->guest_offloads);
-+	vi->guest_offloads_capable = vi->guest_offloads;
-+
- 	rtnl_unlock();
- 
- 	err = virtnet_cpu_notif_add(vi);
-@@ -6614,11 +6619,6 @@ static int virtnet_probe(struct virtio_device *vdev)
- 		goto free_unregister_netdev;
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(guest_offloads); i++)
--		if (virtio_has_feature(vi->vdev, guest_offloads[i]))
--			set_bit(guest_offloads[i], &vi->guest_offloads);
--	vi->guest_offloads_capable = vi->guest_offloads;
--
- 	pr_debug("virtnet: registered device %s with %d RX and TX vq's\n",
- 		 dev->name, max_queue_pairs);
- 
+At:
+https://bugzilla.suse.com/show_bug.cgi?id=1229085
+
+6.9 was OK.
+
+With acpi.debug_level=0x08000000 acpi.debug_layer=0xffffffff, there is a 
+repeated load of:
+> event-0188 ev_fixed_event_detect : Fixed Event Block: Enable 00000020 Status 00000000
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 00: Status=00, Enable=00, RunEnable=02, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 01: Status=00, Enable=02, RunEnable=02, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 02: Status=00, Enable=00, RunEnable=02, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 03: Status=00, Enable=00, RunEnable=02, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 04: Status=00, Enable=00, RunEnable=02, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 05: Status=00, Enable=00, RunEnable=02, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 06: Status=00, Enable=00, RunEnable=02, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 07: Status=00, Enable=00, RunEnable=02, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 08-0F: RunEnable=00, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 10: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 11: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 12: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 13: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 14: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 15: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 16: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 17: Status=00, Enable=80, RunEnable=80, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 18-1F: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 20-27: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 28-2F: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 30-37: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 38-3F: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 40-47: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 48-4F: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 50-57: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 58-5F: RunEnable=00, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 60: Status=00, Enable=00, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 61: Status=00, Enable=02, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 62: Status=00, Enable=04, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 63: Status=00, Enable=00, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 64: Status=00, Enable=00, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 65: Status=00, Enable=00, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 66: Status=00, Enable=00, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 67: Status=00, Enable=00, RunEnable=06, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 68: Status=00, Enable=00, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 69: Status=00, Enable=02, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 6A: Status=00, Enable=00, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 6B: Status=00, Enable=08, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 6C: Status=00, Enable=00, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 6D: Status=20, Enable=00, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 6E: Status=40, Enable=40, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 6F: Status=00, Enable=00, RunEnable=4A, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 70: Status=00, Enable=00, RunEnable=0E, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 71: Status=00, Enable=02, RunEnable=0E, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 72: Status=00, Enable=04, RunEnable=0E, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 73: Status=00, Enable=08, RunEnable=0E, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 74: Status=00, Enable=00, RunEnable=0E, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 75: Status=00, Enable=00, RunEnable=0E, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 76: Status=00, Enable=00, RunEnable=0E, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 77: Status=00, Enable=00, RunEnable=0E, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 78-7F: RunEnable=00, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 80: Status=00, Enable=01, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 81: Status=00, Enable=00, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 82: Status=00, Enable=00, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 83: Status=00, Enable=00, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 84: Status=00, Enable=00, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 85: Status=00, Enable=00, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 86: Status=40, Enable=00, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 87: Status=00, Enable=00, RunEnable=01, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 88: Status=00, Enable=00, RunEnable=04, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 89: Status=00, Enable=00, RunEnable=04, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 8A: Status=00, Enable=04, RunEnable=04, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 8B: Status=00, Enable=00, RunEnable=04, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 8C: Status=00, Enable=00, RunEnable=04, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 8D: Status=00, Enable=00, RunEnable=04, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 8E: Status=00, Enable=00, RunEnable=04, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE 8F: Status=00, Enable=00, RunEnable=04, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 90-97: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE 98-9F: RunEnable=00, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A0: Status=00, Enable=01, RunEnable=87, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A1: Status=00, Enable=02, RunEnable=87, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A2: Status=00, Enable=04, RunEnable=87, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A3: Status=00, Enable=00, RunEnable=87, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A4: Status=00, Enable=00, RunEnable=87, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A5: Status=00, Enable=00, RunEnable=87, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A6: Status=00, Enable=00, RunEnable=87, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE A7: Status=00, Enable=80, RunEnable=87, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE A8-AF: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE B0-B7: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE B8-BF: RunEnable=00, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C0: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C1: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C2: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C3: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C4: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C5: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C6: Status=00, Enable=00, RunEnable=80, WakeEnable=00
+> evgpe-0673 ev_detect_gpe         : Read registers for GPE C7: Status=00, Enable=80, RunEnable=80, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE C8-CF: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE D0-D7: RunEnable=00, WakeEnable=00
+> evgpe-0396 ev_gpe_detect         : Ignore disabled registers for GPE D8-DF: RunEnable=00, WakeEnable=00
+
+Longer (yet still trimmed due to pace of the messages) log:
+https://bugzilla.suse.com/attachment.cgi?id=876664
+
+Any ideas?
+
+thanks,
 -- 
-2.31.1
-
+js
+suse labs
 
