@@ -1,108 +1,80 @@
-Return-Path: <linux-kernel+bounces-285711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94E295119E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:41:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C6B9511A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75648285D9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CB071C231A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE1E17721;
-	Wed, 14 Aug 2024 01:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4E218E28;
+	Wed, 14 Aug 2024 01:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="mnx/++Ml"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JmQmYNZg"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABA4195;
-	Wed, 14 Aug 2024 01:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E1D195;
+	Wed, 14 Aug 2024 01:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723599709; cv=none; b=eh0PDLl4pVoI3EXXZ8/iy5gTZtdsrW6qVlZgUkhRV+UqB1atMb32rtMMR5dkqo/T630hyyriQ7dyAvYtwV0J+NuVz/XM/y7u0PdD8W2Jl8Rk0ZMeo+sJ4dSePLGW30Qa+7U0vePtoQuqjQnQmBbpYJG1wge8vTeBDdKgsYtOA1g=
+	t=1723599723; cv=none; b=O/xliqnlKsbb7ru/k+yZb21js1nGvYzIfplUMgiDwdfZxbaPyu2vBdZOGp3sutoGLeSw8v21TwqbUqA1FTZVQK06LgKGagjEByn2AiCMjHG5cYKleimBK25nXsQZgFHPLydHsHNGAjsbyDgyDg2PhfHxzK5GXJR+GU5H62cJ4Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723599709; c=relaxed/simple;
-	bh=ndoIQQGmfXCxhqDwh5Uh3xVbrVVoHqkoxLgmdSPBzVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WTVHWQnG9qsQTr7WpVJZfbl0kq1qWYA7DY0nPVC0RqlX6t2xetddvfhFad8NmupT513KI3jYBgzcBscUAJAuCzy6ZedjHRUXvoWJiX4iActUprh3xDTpsNXpBBdMN+b/8aFsM/afI8f5bVK6hiWVKyq399Q11gqyi7t9cXaOTiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=mnx/++Ml; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Wk9w43HWKzlgVnY;
-	Wed, 14 Aug 2024 01:41:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723599697; x=1726191698; bh=rvs/VRBEmNk5DZozy8w5EZO0
-	viZDCy22tk7qlebXLsI=; b=mnx/++MleogbbCyeg13MyyiWQdTrUVmyGKiMasa6
-	hnmkOj1Wmy2/DnEuHkvzTINgbdATitQsCLhkX1X2Nd49TzGvqov3bLVta5uGYjJ5
-	KqzdPGADqPa/ah4oq/X3uD0fxahUEqg33nDUt+nLvXpqc0N/O124nPAUpPz3aB7m
-	FLMdxK5LO+8dOMTgGiB0vYn0pwoKiK9A97Eek642Le1IhWhjjXB6509J7trLkTCY
-	GQlqDgV3zgxx0mHbpiYQR9QukOT2OQnzc8cUHjUhnxcDvFIeChx7y3kn1OfInYxB
-	on9nlZib8zqcDZieknCclqhgsHasvqu9vOJLHBwYOcJqfw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id OUEOPTwRH8iA; Wed, 14 Aug 2024 01:41:37 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Wk9vx75nnzlgVnW;
-	Wed, 14 Aug 2024 01:41:33 +0000 (UTC)
-Message-ID: <b2fbe277-2819-4af4-9b36-b7407618cbf6@acm.org>
-Date: Tue, 13 Aug 2024 18:41:29 -0700
+	s=arc-20240116; t=1723599723; c=relaxed/simple;
+	bh=v7xjZZ1Uy9JXpwj1rcwu45oC1v3jG4Kc1hcr8NJK+CU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ky/ckOxn8xfuS6qdD+FVF/6krrVfpF1erbe/uP6Y1QrY05Zi3ZLsSp3XodRNAFlVmDkAIzc0CHc2fu/NxLDvAaYY/ifrBpwT7bZ/DU2QspEwpWQao5w7WAFfDodovdI5x0NZ5VU639x39lNCQvTnDRO5DirqZEEizB/8ZAX9MNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JmQmYNZg; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=18mKasJHJA4e49i5Ihc0wUDfz+tDEOsamtkS6hb0GWs=; b=JmQmYNZgYMGZ+XIY1CGWFQ13OQ
+	dgmhsbaaITE5zYjvP21bbAkwZfG3ItmvM3KJa+UhBK7tYHvhH2MsAwpJDIGHSboKug6GTLYkaU7lb
+	PIQLOT2qdSJ5sc9kjHXZmVi3FvqrPgu0VxJ5oAbBIfODDXJTeZFHjDTAvzAUIQaTKz++/0c/eQVlL
+	5ixmFJD/NVNOsX6TZYo/iX5XVibZQXVSJuupz96kAtFCxaGAgQ5TXvirUu3Q3DRo/G315fp0KU1uw
+	LDJNc9cmyi2iKftaz7MLRGY8R1c0q9ny245fpPQBnuwcNjyd6UbREcAO9/NJHE5G8pho1cySuAdGx
+	CGzmfT8g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1se31S-00000001UFQ-08Qg;
+	Wed, 14 Aug 2024 01:41:58 +0000
+Date: Wed, 14 Aug 2024 02:41:57 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <20240814014157.GM13701@ZenIV>
+References: <20240814112504.42f77e3c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ufs: core: fix bus timeout in ufshcd_wl_resume flow
-To: ZhangHui <zhanghui31@xiaomi.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: alim.akhtar@samsung.com, avri.altman@wdc.co, peter.wang@mediatek.com,
- manivannan.sadhasivam@linaro.org, huangjianan@xiaomi.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240813134729.284583-1-zhanghui31@xiaomi.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240813134729.284583-1-zhanghui31@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814112504.42f77e3c@canb.auug.org.au>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 8/13/24 6:47 AM, ZhangHui wrote:
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 5e3c67e96956..e5e3e0277d43 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -3291,6 +3291,8 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
->   	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
->   	int err;
->   
-> +	if (hba->ufshcd_reg_state == UFSHCD_REG_RESET)
-> +		return -EBUSY;
->   	/* Protects use of hba->reserved_slot. */
->   	lockdep_assert_held(&hba->dev_cmd.lock);
+On Wed, Aug 14, 2024 at 11:25:04AM +1000, Stephen Rothwell wrote:
+>  	if (at_flags & AT_EMPTY_PATH && vfs_empty_path(dfd, pathname)) {
+>  		CLASS(fd, f)(dfd);
+> -		if (!f.file)
+> +		if (!fd_file(f))
 
-Does this change make ufshcd_exec_dev_cmd() unpredictable - it succeeds
-if the controller is in the normal state and fails if error recovery
-is ongoing? If so, which code paths does this affect and/or break?
+		if (fd_empty(f))
 
-Additionally, I think the above check is racy. hba->ufshcd_reg_state may
-change after the above code checked it and before ufshcd_exec_dev_cmd()
-has finished. Wouldn't it be better to make code that shouldn't be
-executed while the error handler is ongoing wait until error handling
-has finished?
-
-Thanks,
-
-Bart.
-
+actually, and similar for the rest of it.  Anyway, that'll need to be
+sorted out in vfs/vfs.git; sorry about the delay.
 
