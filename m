@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-286958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4371D9520D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35B39520DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F3D289036
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118F91C20C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAD61BC082;
-	Wed, 14 Aug 2024 17:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4A41BC094;
+	Wed, 14 Aug 2024 17:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfzfbRKD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZjypFem"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAC41BC068
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2991B3F25;
+	Wed, 14 Aug 2024 17:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723655713; cv=none; b=drp9YotBJO5r1ZgoRrVuNsdFvEhku31LWfv55eac4AImq9g+U1yy7OIUfUoYXG+fBPLtPPWzIfgMKtVx4/4+um8EoxhF4dq3dUv94eQy67j1P37LqoPV8KZF81zhZ92Tb9LCltniM5PxHELv1SffPbJ5+ZpRnRg5OoQ28KiufwY=
+	t=1723655738; cv=none; b=H6X5t3oFSMLhoSHI9yUr9cRyIVL9YTBHYnM+mY7chqkF/cab3nTfh8hbgayiQ8sVL0KJhVEBwQMmKyc/v/LZn6/By0SB1FdBZFko5uiX79L7zcbKsq4ilRWkICl2ryt5vWGpjOJUSZDbd6s4DfTm84+cm+q7qN7ecIyvFBU3Pnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723655713; c=relaxed/simple;
-	bh=CNLvWdFSpWetfnrk3/sCACP6QDOdIi1nd9Px9y/UFMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DM/pocHu/Onjfeg/p0cyT4YZ5XQZN+D55E5Tl3eTQ7daDSgiD4NY/6J4qC+AaClMjHvhqbuuCgtJ36h4p42FYnyFEMCfzhb5ZZ4HTKKJoruhJ3DNPw3Y14SzxTWlSLfxkJAiWPZuk3dyGJufN1uq8PSgbct5N5pW9d9jPrXZ3EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfzfbRKD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345F8C4AF0F;
-	Wed, 14 Aug 2024 17:15:10 +0000 (UTC)
+	s=arc-20240116; t=1723655738; c=relaxed/simple;
+	bh=sXb5Xiro8MMMUjfccTn033XzuQ3HAuq5W9g4P6QXTk8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NYaekdvTx6exbDhvtDnbmJA0spWNLNVe478OgfrKd51Dz1To4THzWV9sjrnag+5X2nQAXsDlQs28AYhJn9WkgdIZvt2gS+zTNGdVZnJBmMCgoe16RHnLbzcn+FSGUe1BNPZxuhWwtTLlvXJ/DnYzhErPguq4HBtk50aHnh4tYrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZjypFem; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF52DC116B1;
+	Wed, 14 Aug 2024 17:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723655713;
-	bh=CNLvWdFSpWetfnrk3/sCACP6QDOdIi1nd9Px9y/UFMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TfzfbRKD9wGn4D9M8fk4CCETgUFtL32SrbiMFdKE23lCkGfwf1rDw55LhbzMvFBrT
-	 EgdUBKJ3s6013h0AiFvGZ31h4DL306mX7ipmx/kgLFP+FXQUhBZPEPKzTZoqRpTYXm
-	 kvNM4Fuo6gi+MmF1P9/KaxhpzPiqjTREwkdgbSP+R+YYswCBTfT3YfjQGRsfQyKZ0d
-	 g8WdX2pvpPsNS5K8lwY5VjMoG/rkLf+fQadbaz9t7//pKNCKrAy9ltNyfxcy+fh+6v
-	 ojvvVZN6XlBObYLsOXrzEBX25z9bdqs7K7PLsJ75lbXZ8IasDPqo7L78Oi7XSlpBAY
-	 vCucE9LlzDM1Q==
-Date: Wed, 14 Aug 2024 19:15:06 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, Eric Blake <eblake@redhat.com>, Igor Mammedov
- <imammedo@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
- <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
- <peter.maydell@linaro.org>, <linux-kernel@vger.kernel.org>,
- <qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v7 04/10] qapi/acpi-hest: add an interface to do generic
- CPER error injection
-Message-ID: <20240814191506.21894ac7@foz.lan>
-In-Reply-To: <20240814145322.00002dcb@Huawei.com>
-References: <cover.1723591201.git.mchehab+huawei@kernel.org>
-	<c44e6c39e6cf95a738999b721cdf71e4887258a9.1723591201.git.mchehab+huawei@kernel.org>
-	<20240814145322.00002dcb@Huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1723655737;
+	bh=sXb5Xiro8MMMUjfccTn033XzuQ3HAuq5W9g4P6QXTk8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=HZjypFemT5Z5YmJZjyhzlu50fcggdiSH2vtETae0qYhf463slYMEbaXkj45sxHQwm
+	 UTXOf2Iak+TNUDc6hqC7JsluJ0XGhdsusPqaxIQ+Hm4JTNDTVc3/twwJw0hl7LK292
+	 VEZKXUijhpjfQ1eFeac9llMc//tWIKKs4yXWgOSNAsi/+CwRFHPYXmSCchJ/i4k71e
+	 7/I5AOtHXiSIkciRqRZFf7pwlrKdIBxxSMi9MBdRtWHxuXjKqSvxqIcTXaxb4QE0pA
+	 +wjjAX/kllSuNS8nIukdFHLZGIwjXeS0Qa1LjNeBNUneI/D0G4n+jVVjl4KJ7rcN4h
+	 YxhRrYb4ftzRg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7346C3DA4A;
+	Wed, 14 Aug 2024 17:15:37 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH 0/3] ufs: qcom: Fix probe failure on SM8550 SoC due to
+ broken SDBS field
+Date: Wed, 14 Aug 2024 22:45:33 +0530
+Message-Id: <20240814-ufs-bug-fix-v1-0-5eb49d5f7571@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADXmvGYC/x2MQQqAIBAAvyJ7bkFFSvpKdMhabS8WihGIf086z
+ sBMhUyJKcMsKiR6OPMVO6hBwH5uMRDy0Rm01EZaZbD4jK4E9PyiMXryTipnRwm9uBN1/d+WtbU
+ P2w4f2l0AAAA=
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=956;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=sXb5Xiro8MMMUjfccTn033XzuQ3HAuq5W9g4P6QXTk8=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBmvOY3Y4kE4h7MJI+1mE7wM5BWinEHEnY30bAO1
+ JR4NLH8tHuJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZrzmNwAKCRBVnxHm/pHO
+ 9VfjB/kBuingfo75GYcDWtJsbTxQ8j/onH8QYvbibmGzRHAml3/DzbaPypmohIdpNgaHW73xZXt
+ ZQmAqMKbEB5zFYVNKV+u34ZfOUMhQYk8EdZ2PiUyZ3zl6pDjWfnaiV8mGP8BIwzA4p+6dVVl2af
+ Vg35XadJNM5UE4RhmL5mktH8zH8OZUiE554CUeNUFyzQaqsobt57t4Lixj3qPYhTHKalt3YhRpN
+ LLppR5EwxVNNKaCJKq/Y+aCyTlXMnBp0MPXD0UcxCm/kDnjCMuP/b6uQ72CWxTWkLzPXZPFPK6o
+ vnN8PCVsZozTjeWA6ynB+gj3JfqACyYow4yp31RStcBiWH1N
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-Em Wed, 14 Aug 2024 14:53:22 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
+Hi,
 
-> On Wed, 14 Aug 2024 01:23:26 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > Creates a QMP command to be used for generic ACPI APEI hardware error
-> > injection (HEST) via GHESv2.
-> > 
-> > The actual GHES code will be added at the followup patch.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
-> 
-> A few trivial things from a quick glance at this
-> (to remind myself of how this fits together).
-> 
-> > diff --git a/hw/acpi/Kconfig b/hw/acpi/Kconfig
-> > index e07d3204eb36..73ffbb82c150 100644
-> > --- a/hw/acpi/Kconfig
-> > +++ b/hw/acpi/Kconfig
-> > @@ -51,6 +51,11 @@ config ACPI_APEI
-> >      bool
-> >      depends on ACPI
-> >  
-> > +config GHES_CPER
-> > +    bool
-> > +    depends on ACPI_APEI
-> > +    default y
-> > +
-> >  config ACPI_PCI
-> >      bool
-> >      depends on ACPI && PCI
-> > diff --git a/hw/acpi/ghes_cper.c b/hw/acpi/ghes_cper.c
-> > new file mode 100644
-> > index 000000000000..92ca84d738de
-> > --- /dev/null
-> > +++ b/hw/acpi/ghes_cper.c
-> > @@ -0,0 +1,33 @@  
-> 
-> > +#include "qapi/qapi-commands-acpi-hest.h"
-> > +#include "hw/acpi/ghes.h"
-> > +
-> > +void qmp_ghes_cper(const char *qmp_cper,
-> > +                   Error **errp)  
+This series fixes the probe failure on the Qcom SM8550 SoC due to the broken
+SDBS field in the host controller capabilities register.
 
-Heh, with all code changes, this is not a lot simpler than before ;-)
+Please consider this series for v6.11 as it fixes a regression.
 
-I'll address it on a next spin.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (3):
+      ufs: core: Rename LSDB to SDBS to reflect the UFSHCI 4.0 spec
+      ufs: core: Add a quirk for handling broken SDBS field in controller capabilities register
+      ufs: qcom: Add UFSHCD_QUIRK_BROKEN_SDBS_CAP for SM8550 SoC
 
-> That's a very short line wrap.
-> 
-> > +{
-> > +
-> > +    uint8_t *cper;
-> > +    size_t  len;
-> > +
-> > +    cper = qbase64_decode(qmp_cper, -1, &len, errp);
-> > +    if (!cper) {
-> > +        error_setg(errp, "missing GHES CPER payload");
-> > +        return;
-> > +    }
-> > +
-> > +    /* TODO: call a function at ghes */
-> > +}  
-> 
-> > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> > index 419a97d5cbd9..99d12d69c864 100644
-> > --- a/include/hw/acpi/ghes.h
-> > +++ b/include/hw/acpi/ghes.h
-> > @@ -23,6 +23,7 @@
-> >  #define ACPI_GHES_H
-> >  
-> >  #include "hw/acpi/bios-linker-loader.h"
-> > +#include "qapi/error.h"  
-> Odd to have an include added with no other changes in file?
-> Wrong patch maybe?  Or should it be included by a c file instead?
+ drivers/ufs/core/ufshcd.c   | 9 +++++----
+ drivers/ufs/host/ufs-qcom.c | 6 +++++-
+ include/ufs/ufshcd.h        | 9 ++++++++-
+ include/ufs/ufshci.h        | 2 +-
+ 4 files changed, 19 insertions(+), 7 deletions(-)
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240814-ufs-bug-fix-4427fb01b860
 
-Removing it would cause a compilation breakage. It might be moved
-to a c file, but patch 5/10 requires it at ghes.h, as it adds
-this to ghes.h:
-
-	void ghes_record_cper_errors(uint8_t *cper, size_t len,
-        	                     enum AcpiGhesNotifyType notify,Error **errp);
-
-So, instead of poking around moving this to/from .c/.h, I opted to
-place it on its final place.
-
-> >  #include "qemu/notify.h"
-> >  
-> >  extern NotifierList acpi_generic_error_notifiers;
-> > diff --git a/qapi/acpi-hest.json b/qapi/acpi-hest.json  
-> 
-> 
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
 
-
-Thanks,
-Mauro
 
