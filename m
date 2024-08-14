@@ -1,241 +1,115 @@
-Return-Path: <linux-kernel+bounces-286130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C2B9516F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:48:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EAB9516FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C3D286A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BE9D1C22667
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A259149C6F;
-	Wed, 14 Aug 2024 08:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOzM+mpY"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE6E143894;
+	Wed, 14 Aug 2024 08:48:01 +0000 (UTC)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8630E14375C;
-	Wed, 14 Aug 2024 08:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FD31422C3;
+	Wed, 14 Aug 2024 08:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625236; cv=none; b=tFcZsYbqhfvqu3b3NXsO5tdS8Scqw1hhpODrWpCCwwQ9iK8KJHA9AS4usdWZbSCoZAB72I/lVjMUcnBmLU/nmQpebpcsLHh3a1ucTxnVVWVD7v5uQp9WGOPYYRT1lGVFjMV6t2WM4pkqBtXy4sKWYH0m10jYqQsztsIwz3nC6xE=
+	t=1723625281; cv=none; b=J0nIpOgRkM1CSx2XRwutCuSqEqwXdQdwt1ftzTHjrkfUnkVpqfGrC1E3GJ5sbP+02S3Ma+Wenhhx908PwYJcDaSxhmqtQHvbC8U4XSxq9I+4h6qyZLy/zvDZ9VfjmQ4pHgSFFTQzXQ3DgqIqQWA7ZZ3GPpsbpi+5Nhfun2SBDA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625236; c=relaxed/simple;
-	bh=UNXzIpOo4I3UGLxgdEwwuDOJCsyLxZPjEX/otvupq/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PDQxt+XJDOsn8BTAzRa7dZo8Um21eIViZgDeFfLx6tyCnuPbgszaTPkzEy1gXr+xASk1HxrH2VOMhiQGuQtbn+Dh35fhlDu0iJPbuZ7/ueDFjhxAahTsRsgnbCDYyXHBtqnEVZ/3v1almG2vJLLAqyjX+3cqLrmIp94M4ZrR/GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOzM+mpY; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1723625281; c=relaxed/simple;
+	bh=9rX+RbnLcib1ASYWBSEvXjPcnKmaUtLTBClkTMxRHmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYoeoNHkvGfv2UxnYWcIACeZN2D7yvetZWgIhLkl7j938EudXLb3VX47/lY9MP8MTJqObj+Kf0i9O/oml18p2KdrIkeVY+aLD+E/IuipntlW5OQs6RPI2mGMU86HgTRcObK9GUOH750IVjIRRJpqCRBDzqhWFtBWg87IRBg3tDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-530e2287825so5946780e87.1;
-        Wed, 14 Aug 2024 01:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723625233; x=1724230033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v93U00J3W/G+3iiDSm+KOsmeueDudNy3zc5gSs6I6cA=;
-        b=VOzM+mpYHFXFwQVGH3OTJJ9qlHl7668QlrtENaRp/G8pt22CBeYXQaeyYDPJ+gzFwW
-         fq+ytL5BvTlQGsj59Fc9tpGhVWgpAKicVCkYqdRYVTNbBYwhhbw3cstBOdnhF2F0Nc4L
-         Odf+exgaxmjVup42U8dPGWo6xG43hvFy7yJno+GJS9x6ocUTfwZNYV06koTV/jXNvVSy
-         Q+2mg44M/PAqcy+9R36ouOG+ULe+6U8Qs/YbCBwWEHZcmmT0zFGSfctEifRqB27ePLGb
-         Lx1qI90LxK3ZQVMb4b3aRbAsfymO+ok3emH7RuuMNrmTbqBC7bf99LaN6xnXcsHId94y
-         uYxg==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so67243341fa.3;
+        Wed, 14 Aug 2024 01:47:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723625233; x=1724230033;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v93U00J3W/G+3iiDSm+KOsmeueDudNy3zc5gSs6I6cA=;
-        b=HtTDZKj48zhHIQOz2cIaRG3JmeVx4cmD6sGbPPMXZSIhw55JTMQiOECP/B9AYtbkcf
-         VcID3O+a2X3F8xR0WEfmWez0x8WY7y29xU6JhhrDHXd9gKi0vouEBWlibYKOeMd7l0IX
-         c3B0ZMdtHVZ9IWwX0NkqmlP+75qUV4QPVZF7bvEokb0yAMv2QoQIkZD82FmzC5GY7eGh
-         uxm1HO+SnDcEfsPIqNcdTxI5d6ecXRhd8W8m2mh+NqytIS8HkC5VFa2bSTKKlDE13phf
-         mRUKPywnerUSjhNZ9R8OTJz++vB7y0EjIWmmkYvJh2hJOcLKrNV44qWghV9LJ+9n6tLE
-         hOfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIjKqgFDVmsL03mXA2wSz0DMbnBbTgBzFc357r75tn5AnenNWcaUi6t+cD4YUKSZvkMw9fCwZZjARHsgxudowbISMs44N8+T848cq83FSwCY0HccQvNGdShaRI+xnr4qEdWVATZs1dKv2VuXGxu3EmD0s5rpOIFDE4oaWl1pvuoBkAbQmpCeQmY5ORE8mcvd7Ck2u1ANi+eEVUWtYzHTDm
-X-Gm-Message-State: AOJu0YzTOvMIwlSfYYpmR3bdfH8J9G7VJb1e112tPESPzGMORk4MqUDR
-	6TL9bx5UpaB3wT58Wft2oq76UXmMDUp07X82N+GkefjZ9wozIlsU
-X-Google-Smtp-Source: AGHT+IH4EjACtsvCABaDeBjsVWwwYox558+OITuZDnWDDQJqpAVHjQXpEtVnsv3StoTxLrge71ISzA==
-X-Received: by 2002:a05:6512:118f:b0:516:d219:3779 with SMTP id 2adb3069b0e04-532edbd5a4emr1271567e87.58.1723625232130;
-        Wed, 14 Aug 2024 01:47:12 -0700 (PDT)
-Received: from latitude-fedora.localnet ([194.247.191.114])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200f42241sm1180073e87.265.2024.08.14.01.47.10
+        d=1e100.net; s=20230601; t=1723625277; x=1724230077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XoEzFPa5Og2Psgq4HyInxDXXf39Xj956SzleRo/JzaU=;
+        b=Kg4d3HUqzEJSfeigGbJOlX7HILpadnLHqcZwutJ1onb1tNabHYTSgrHAnTAbqXJQXZ
+         3ULrF8ZpmHn+r1inae13MvlUigyANshu6AaxOt+P85lXEWyMWjOGTMryL/rIym5rGOo0
+         +00UZPJ7kSi4Cf45U3uGRRkh18o7KedLTiqGQX8HGvzVnUan6Fh1vl3EiIsgKPu6pU6X
+         pllCjSn6iHtR/cSTbVM4pczmHeSAe2bn/F2vNap/hEdgmJ3HALBzfkM+RSoSHyxqjVdj
+         +kw4L864tE3IzgWQTcRaarIT10SJnbZIoVQJWwgsO60oUcezmJODyTQEbxHgb9j5+gTZ
+         07Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVq2m0IQzNm2SJgsOec3EHvjyTLBxv4xhHxSrJ2fdIA5KDUB+LeB9XQj//NKAe4K67SmBDaDE8vMpDo/U57FnYq8EsDE162HF+jJOHOtUtufxSJ2T6Xlm3RBV+papMASoKv1sQv2wNyAiX6b3R3E60gE53gs9Ia5BcJGTVi/1hqlNvD5KY=
+X-Gm-Message-State: AOJu0Yy90eEu7NM1F1s3Ti1rv7oTUcVZei5fHGSP9+/5aG2Dh/Hl6Xzv
+	XJZptYFyO6pXB7rMiW1LMGScmsJjJIq8xjof3vbKTHvpIMTMFArx
+X-Google-Smtp-Source: AGHT+IG13U8UpfbcuMATjHLEmJgpXZZ1NeV/050xdRLNneKphbDxbBSwsFcLsfpPAQA1ApzdC8fRNw==
+X-Received: by 2002:a2e:4609:0:b0:2f3:abca:8b0f with SMTP id 38308e7fff4ca-2f3abca8c13mr8201251fa.27.1723625276758;
+        Wed, 14 Aug 2024 01:47:56 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a602115sm3598747a12.96.2024.08.14.01.47.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 01:47:11 -0700 (PDT)
-From: Alexey Charkov <alchark@gmail.com>
-To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
- heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
- linux-rockchip@lists.infradead.org
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- nick@khadas.com, Sai Krishna <saikrishnag@marvell.com>,
- Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject:
- Re: [PATCH v10 4/5] wifi: brcmfmac: Add optional lpo clock enable support
-Date: Wed, 14 Aug 2024 11:47:09 +0300
-Message-ID: <2269063.vFx2qVVIhK@latitude-fedora>
-In-Reply-To: <721da64c-42ec-4be6-8ad3-e2685a84823a@broadcom.com>
-References:
- <20240813082007.2625841-1-jacobe.zang@wesion.com>
- <20240813082007.2625841-5-jacobe.zang@wesion.com>
- <721da64c-42ec-4be6-8ad3-e2685a84823a@broadcom.com>
+        Wed, 14 Aug 2024 01:47:56 -0700 (PDT)
+Date: Wed, 14 Aug 2024 01:47:54 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] Do not mark ACPI devices as irq safe
+Message-ID: <ZrxvOr6O8weK5cB6@gmail.com>
+References: <20240813161254.3509409-1-leitao@debian.org>
+ <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
 
-Hi Arend, Jacobe,
+Hello Andi,
 
-On Tuesday, August 13, 2024 2:57:28=E2=80=AFPM GMT+3 Arend van Spriel wrote:
-> On 8/13/2024 10:20 AM, Jacobe Zang wrote:
-> > WiFi modules often require 32kHz clock to function. Add support to
-> > enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
-> > to the top of brcmf_of_probe. Change function prototypes from void
-> > to int and add appropriate errno's for return values that will be
-> > send to bus when error occurred.
->=20
-> I was going to say it looks good to me, but....
->=20
-> > Co-developed-by: Ondrej Jirman <megi@xff.cz>
-> > Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> > Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> > Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> > Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
-> > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> > ---
-> >=20
-> >   .../broadcom/brcm80211/brcmfmac/bcmsdh.c      |  4 +-
-> >   .../broadcom/brcm80211/brcmfmac/common.c      |  3 +-
-> >   .../wireless/broadcom/brcm80211/brcmfmac/of.c | 53 +++++++++++--------
-> >   .../wireless/broadcom/brcm80211/brcmfmac/of.h |  9 ++--
-> >   .../broadcom/brcm80211/brcmfmac/pcie.c        |  3 ++
-> >   .../broadcom/brcm80211/brcmfmac/sdio.c        | 22 +++++---
-> >   .../broadcom/brcm80211/brcmfmac/usb.c         |  3 ++
-> >   7 files changed, 61 insertions(+), 36 deletions(-)
->=20
-> [...]
->=20
-> > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> > b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c index
-> > e406e11481a62..f19dc7355e0e8 100644
-> > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->=20
-> [...]
->=20
-> > @@ -113,33 +118,39 @@ void brcmf_of_probe(struct device *dev, enum
-> > brcmf_bus_type bus_type,>=20
-> >   		of_node_put(root);
-> >   =09
-> >   	}
-> >=20
-> > -	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
-> > -		return;
-> > -
-> >=20
-> >   	err =3D brcmf_of_get_country_codes(dev, settings);
-> >   	if (err)
-> >   =09
-> >   		brcmf_err("failed to get OF country code map (err=3D%d)
-\n", err);
-> >   =09
-> >   	of_get_mac_address(np, settings->mac);
-> >=20
-> > -	if (bus_type !=3D BRCMF_BUSTYPE_SDIO)
-> > -		return;
-> > +	if (bus_type =3D=3D BRCMF_BUSTYPE_SDIO) {
->=20
-> Don't like the fact that this now has an extra indentation level and it
-> offers no extra benefit. Just keep the original if-statement and return
-> 0. Consequently the LPO clock code should move just before the if-stateme=
-nt.
-> > +		if (of_property_read_u32(np, "brcm,drive-strength",=20
-&val) =3D=3D 0)
-> > +			sdio->drive_strength =3D val;
-> >=20
-> > -	if (of_property_read_u32(np, "brcm,drive-strength", &val) =3D=3D 0)
-> > -		sdio->drive_strength =3D val;
-> > +		/* make sure there are interrupts defined in the node */
-> > +		if (!of_property_present(np, "interrupts"))
-> > +			return 0;
-> >=20
-> > -	/* make sure there are interrupts defined in the node */
-> > -	if (!of_property_present(np, "interrupts"))
-> > -		return;
-> > +		irq =3D irq_of_parse_and_map(np, 0);
-> > +		if (!irq) {
-> > +			brcmf_err("interrupt could not be=20
-mapped\n");
-> > +			return 0;
-> > +		}
-> > +		irqf =3D irqd_get_trigger_type(irq_get_irq_data(irq));
-> > +
-> > +		sdio->oob_irq_supported =3D true;
-> > +		sdio->oob_irq_nr =3D irq;
-> > +		sdio->oob_irq_flags =3D irqf;
-> > +	}
-> >=20
-> > -	irq =3D irq_of_parse_and_map(np, 0);
-> > -	if (!irq) {
-> > -		brcmf_err("interrupt could not be mapped\n");
-> > -		return;
-> > +	clk =3D devm_clk_get_optional_enabled(dev, "lpo");
-> > +	if (!IS_ERR_OR_NULL(clk)) {
-> > +		brcmf_dbg(INFO, "enabling 32kHz clock\n");
-> > +		return clk_set_rate(clk, 32768);
-> > +	} else {
-> > +		return PTR_ERR_OR_ZERO(clk);
-> >=20
-> >   	}
->=20
-> Change this to:
->  > +	clk =3D devm_clk_get_optional_enabled(dev, "lpo");
->  > +	if (IS_ERR_OR_NULL(clk)) {
->  > +		return PTR_ERR_OR_ZERO(clk);
+On Tue, Aug 13, 2024 at 11:53:17PM +0100, Andi Shyti wrote:
+> Hi Breno,
+> 
+> You don't need to resend the patch. Because the changes are only
+> in the commit log, I can take care of them.
 
-Perhaps in this case we should go for IS_ERR and PTR_ERR respectively.=20
-devm_clk_get_optional_enabled would return NULL when the optional clock is =
-not=20
-found, so NULL is not an error state but serves as a dummy clock that can b=
-e=20
-used with clk_set_rate.
+In fact, the changes are in the code itself, see the changelog:
 
-This way we won't skip over the interrupts initialization below in case the=
-=20
-clock is absent.
+  * Replaced ACPI_HANDLE() by has_acpi_companion() (Andy Shevchenko)
+  * Expanded the comment before the change (Andy Shevchenko)
 
->  > +	}
->  > +	brcmf_dbg(INFO, "enabling 32kHz clock\n");
->  > +	clk_set_rate(clk, 32768);
->=20
-> As said above this should be moved before the if-statement:
->  > -	if (bus_type !=3D BRCMF_BUSTYPE_SDIO)
->  > -		return 0;
-> >=20
-> > -	irqf =3D irqd_get_trigger_type(irq_get_irq_data(irq));
-> >=20
-> > -	sdio->oob_irq_supported =3D true;
-> > -	sdio->oob_irq_nr =3D irq;
-> > -	sdio->oob_irq_flags =3D irqf;
-> > +	return 0;
-> >=20
-> >   }
+> Besides, you also need:
+> 
+> Fixes: ede2299f7101 ("i2c: tegra: Support atomic transfers")
+> Cc: <stable@vger.kernel.org> # v5.6+
+> 
+> Can you please check whether this is right?
 
-Best regards,
-Alexey
+I would say that we probably want to blame the support for ACPI device,
+which came later than ede2299f7101 ("i2c: tegra: Support atomic
+transfers").
 
+I'd suggest the following:
 
+ Fixes: bd2fdedbf2ba ("i2c: tegra: Add the ACPI support")
+ CC: <stable@vger.kernel.org> # v5.17+
+
+I am not planning to submit a new patch with these changes, please let
+me know if you need action on my side.
+
+Thanks for handling this fix,
+--breno
 
