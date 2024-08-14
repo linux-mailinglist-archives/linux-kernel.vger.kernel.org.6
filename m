@@ -1,67 +1,69 @@
-Return-Path: <linux-kernel+bounces-287191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B22952478
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:08:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2505495247B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17B991C21A12
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1F7286BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8512D1C8232;
-	Wed, 14 Aug 2024 21:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4225D1C8FD1;
+	Wed, 14 Aug 2024 21:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OHsxZShY"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Wwi2d6Pu"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B0F1C7B70
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F68C1C7B78
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723669684; cv=none; b=bEDdRiO38NgF3mRmafQbuIjBFcMmMSOXFtL7J6Jh8Mr4yzvAv3KBMWxiRSy+d3ng1TnQ4akFqnqTTu5WXnQNqWadftAF6UiZ8oGX4o91JrlyNvI/xLHfqgBfiXv95lzdsjkg8injLC0zXZR3BAq43m0wcH6awnPgu0JbTjpZl4o=
+	t=1723669687; cv=none; b=FgUGcgZaIyXe1PmwSh4Wlt+lJTQvSwx+iQWtYE91g7sHsqPrOrhVQ9zlsExWTaZzVvwX/CQLvaLnWYunaJBbKcKckjq1McnMHm3JcCqemfzmJPmdxaIlWLoWTEuTnAfx60LGBgoqIotGtZAVn7Cz6CxJDE61iBpPUFxzH6GZ2r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723669684; c=relaxed/simple;
-	bh=B6S1kKZ2LAB1sgj4bCOpBS2b3utcOlnq6gsW7Ydsghc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fid7qLVoOXdoTw5oc3DBNsUU+4pKqQK8of85aEXX1S9o0908Nr8dc7Ybb7EshxsvpNFq1WftkriVocGwCL4zEklzJrxqQSKNpfcKiDJCeFIrQcpFBFs78qqh7cOCX0W8/iDZLrAHjA9E6IKKKSA81xYVsbxM4frgDr3QRBcaLwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OHsxZShY; arc=none smtp.client-ip=209.85.161.44
+	s=arc-20240116; t=1723669687; c=relaxed/simple;
+	bh=XQNLMLHB8Bq6urDZ7RRKnhgvnEBtv3VWmll28dAOMf4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MZ72EyClLcXJNTJjo71LAzljzluy5aIFHAf8Tqk6wPcG19hvxbQU/p8YB+AfY/6FfuITSP+RurGX+jAz+FglBM9tfUZBvRHLZE1JKuT2/t/eXjjCyCk1K6w4OlYauZp2DHxEUu6IU2kt49vD+C0iy9tEGuJ1EiTHvxd7VwXlTgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Wwi2d6Pu; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5d5c8c1006eso213981eaf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:08:01 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b797a2384cso1724246d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723669681; x=1724274481; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aVlMPR+z4FDqtMhoza2ty5rltEW8xk2p7itsGBcy47c=;
-        b=OHsxZShY6oK5ZkdhDIL/bpl7evCK617fwheXfF6ICpN0jv4X6qWG8zTKnDa8xk+kZr
-         OvRhRvNF7ExBqB0SsNHd9oHyz5u4ksd+3uBekdR2p5ivzWu/LFOiMdWAH/E2TxYmLePC
-         9yZqqDfnJ+xIX5V3lcNDps56xLyv1bcpmVOsI=
+        d=broadcom.com; s=google; t=1723669683; x=1724274483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8sHW2F3yGzQtos1f5meNnseSubKzvRLxPjBnQoi7yoI=;
+        b=Wwi2d6PuBVTgmA66CO+JynwmEoMJ9DEvOjPJJmDPrChSysStpOGDOlR/RMazuBHFtV
+         ovZZAvk5fCBb75v3zl97MUr0mz4BNz/oNh1u92t99tYshrqQjqeVquWf9H1Sbm7zT0gh
+         Y2yULr8FbunIZ40eFlsvtSBVEHJg792g8GVTk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723669681; x=1724274481;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aVlMPR+z4FDqtMhoza2ty5rltEW8xk2p7itsGBcy47c=;
-        b=YTpoqQl+xKOQfBJZnJlVjTdVqQQcyEJlbilhh2YVsJ6+VBpIizTwYIdZ60tO8L8YzT
-         TCE0puI/wpHf9NEUjLg/04EJeogZW43RoV3MboDYmDptiyhmJzMdUkIX/0KCaUGgnfFR
-         L1TEJc86nce49RprGVPPDTBNXmnVHxQwFDBD6FSrI1uAihA5b8zPbXrmchY2XguqXeiY
-         1zkzRDrF6rq2GxajsPbdLbJpquvMCqWxr3oEojbybQ0tzkVgtFmPUuCEoFMiBUZ1dU8N
-         FDsSLCCwrdioqqiqaoj1J5RAM+gthYQhFqQvPIrqGGpEqjQInl0Oh+lSNukhWWcj7EVZ
-         JLtA==
-X-Gm-Message-State: AOJu0YzpYWDSakNqD06GmXU4ms811NNKn1npi9jTa3cebyglM+igh1Fy
-	+lWcOuOXC1pzB4obH3MD65dRjZuBc8Wn7DzJtp8mmUK4zAvdleSrmjzWPTGeQzitMAOtEFOBqhN
-	cakaAOe0qfMqovDYgPcDFLYdSqMKwWUvrURY1gcskpntN5ag0VAQuSs85FSi1C/tv+g+YKFKnVf
-	iPfuh3T2PGZN8teqIPnhgaTQNA3EDpCINRQmSRTYQsQImnJ111zv2c
-X-Google-Smtp-Source: AGHT+IGWZNBv22+iBD24zWCccBL8LYQgDxNIVA2leAHVpJHFl+T6eU6KwdB2TtE3EL2ADO9a+CEZCw==
-X-Received: by 2002:a05:6359:4c0c:b0:1b1:a677:6453 with SMTP id e5c5f4694b2df-1b1aab4dfb9mr468220855d.8.1723669680542;
-        Wed, 14 Aug 2024 14:08:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723669683; x=1724274483;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8sHW2F3yGzQtos1f5meNnseSubKzvRLxPjBnQoi7yoI=;
+        b=NXOeFnrX/KWWd3INm79uZHa8LiONrt1StnXWwb7R+ujD8tgMaEGGB+WkyYmP1nhJaV
+         /7q/n6wLuESbkzqbeUXYLIscsdMS+0dPNhaIdUuZGkSRv5FmCGjn9U+EByfmvd4Vt5Y4
+         KxxrIk2YuJvBFnucGnikT31Lwf2uKcIhgrnOLIif9AH9qL18zElt7clnqHUOrEOVwOkQ
+         S9DU+EGmozIum55d3NzyDJIWZBgV4OHBfhj6qgAUQvqBaHxe/O30zmfEoRONi3eWyMGA
+         b65gTzvUII36/D6ksFBjVI+AUzrrIYs96u90vWG6O8KnE1dBY8C4HBPZu+JIeXIPejB+
+         X4mg==
+X-Gm-Message-State: AOJu0YwR17lQqeKKYgy9yMoCw0z05wSnNaKIMtJ8D6xZiLhCrWGmZojE
+	PB4nXlm/jPBnIRcvhzsMoosVB+oxBNZ8NFmSjpCzms8NSU3MjZoCco0jNleIh0DkK8zI7yotFGC
+	fzubKPLKaGFC89+24vB2COHs+VcYLsi4ZznWI7RR6Gflfg06DPYxQFRonJ22C3uBLYCQK30Fq93
+	093pYkFOyUJZQ5KL+CDH7yPPymQ378IimhM9K8h/IIr4wfoRpdrWwu
+X-Google-Smtp-Source: AGHT+IFIMpLE+58fX37ApJWrzeiVS1CLUDddwvO8oWStXYZRlBPnDD5/J1dS9XGvC5TERyHE3wXqFA==
+X-Received: by 2002:a05:6214:4303:b0:6b7:abe7:5665 with SMTP id 6a1803df08f44-6bf5d22a952mr54358836d6.22.1723669682933;
+        Wed, 14 Aug 2024 14:08:02 -0700 (PDT)
 Received: from amakhalov-build-vm.eng.vmware.com ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef3845sm414526d6.125.2024.08.14.14.07.58
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef3845sm414526d6.125.2024.08.14.14.08.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 14:08:00 -0700 (PDT)
+        Wed, 14 Aug 2024 14:08:02 -0700 (PDT)
 From: Alexey Makhalov <alexey.makhalov@broadcom.com>
 To: linux-kernel@vger.kernel.org,
 	virtualization@lists.linux.dev,
@@ -75,10 +77,12 @@ Cc: x86@kernel.org,
 	bo.gan@broadcom.com,
 	bcm-kernel-feedback-list@broadcom.com,
 	Alexey Makhalov <alexey.makhalov@broadcom.com>
-Subject: [PATCH 1/2] x86/vmware: Log kmsg dump on panic
-Date: Wed, 14 Aug 2024 14:07:30 -0700
-Message-Id: <20240814210731.761010-1-alexey.makhalov@broadcom.com>
+Subject: [PATCH 2/2] x86/vmware: Fix steal time clock under SEV
+Date: Wed, 14 Aug 2024 14:07:31 -0700
+Message-Id: <20240814210731.761010-2-alexey.makhalov@broadcom.com>
 X-Mailer: git-send-email 2.39.4
+In-Reply-To: <20240814210731.761010-1-alexey.makhalov@broadcom.com>
+References: <20240814210731.761010-1-alexey.makhalov@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,190 +91,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Improve debugability of VMware Linux guests by dumping
-kernel messages during a panic to VM log file (vmware.log).
+Shared memory containing steal time counter should be set to
+decrypted when SEV is active.
 
 Co-developed-by: Bo Gan <bo.gan@broadcom.com>
 Signed-off-by: Bo Gan <bo.gan@broadcom.com>
 Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
 ---
- arch/x86/include/asm/vmware.h |   1 +
- arch/x86/kernel/cpu/vmware.c  | 132 ++++++++++++++++++++++++++++++++++
- 2 files changed, 133 insertions(+)
+ arch/x86/kernel/cpu/vmware.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
-index c9cf43d5ef23..433755b41a27 100644
---- a/arch/x86/include/asm/vmware.h
-+++ b/arch/x86/include/asm/vmware.h
-@@ -57,6 +57,7 @@
- #define VMWARE_HYPERVISOR_MAGIC		0x564d5868U
- 
- #define VMWARE_CMD_GETVERSION		10
-+#define VMWARE_CMD_MESSAGE		30
- #define VMWARE_CMD_GETHZ		45
- #define VMWARE_CMD_GETVCPU_INFO		68
- #define VMWARE_CMD_STEALCLOCK		91
 diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index 00189cdeb775..9883766715fe 100644
+index 9883766715fe..f20bdc3128f3 100644
 --- a/arch/x86/kernel/cpu/vmware.c
 +++ b/arch/x86/kernel/cpu/vmware.c
-@@ -28,6 +28,7 @@
- #include <linux/cpu.h>
- #include <linux/reboot.h>
- #include <linux/static_call.h>
-+#include <linux/kmsg_dump.h>
- #include <asm/div64.h>
- #include <asm/x86_init.h>
- #include <asm/hypervisor.h>
-@@ -139,6 +140,13 @@ static unsigned long vmware_get_tsc_khz(void)
- 	return vmware_tsc_khz;
- }
- 
-+static void kmsg_dumper_vmware_log(struct kmsg_dumper *dumper,
-+				enum kmsg_dump_reason reason);
-+
-+static struct kmsg_dumper kmsg_dumper = {
-+	.dump = kmsg_dumper_vmware_log
-+};
-+
- #ifdef CONFIG_PARAVIRT
- static struct cyc2ns_data vmware_cyc2ns __ro_after_init;
- static bool vmw_sched_clock __initdata = true;
-@@ -436,6 +444,8 @@ static void __init vmware_platform_setup(void)
- #endif
- 
- 	vmware_set_capabilities();
-+
-+	kmsg_dump_register(&kmsg_dumper);
- }
- 
- static u8 __init vmware_select_hypercall(void)
-@@ -587,3 +597,125 @@ const __initconst struct hypervisor_x86 x86_hyper_vmware = {
- 	.runtime.sev_es_hcall_finish	= vmware_sev_es_hcall_finish,
- #endif
+@@ -306,9 +306,30 @@ static struct notifier_block vmware_pv_reboot_nb = {
+ 	.notifier_call = vmware_pv_reboot_notify,
  };
-+
-+#define VMWARE_HB_CMD_MESSAGE	0
-+#define MESSAGE_STATUS_SUCCESS	(0x01 << 16)
-+#define MESSAGE_STATUS_CPT	(0x10 << 16)
-+#define MESSAGE_STATUS_HB	(0x80 << 16)
-+
-+#define RPCI_PROTOCOL_NUM	0x49435052 /* 'RPCI' */
-+#define GUESTMSG_FLAG_COOKIE	0x80000000
-+
-+#define MESSAGE_TYPE_OPEN	(0 << 16)
-+#define MESSAGE_TYPE_SENDSIZE	(1 << 16)
-+#define MESSAGE_TYPE_SEND	(2 << 16)
-+#define MESSAGE_TYPE_CLOSE	(6 << 16)
-+
-+struct vmw_msg {
-+	u32 id;
-+	u32 cookie_high;
-+	u32 cookie_low;
-+};
-+
-+static int
-+vmware_log_open(struct vmw_msg *msg)
+ 
++static void __init sev_map_percpu_data(void)
 +{
-+	u32 info;
++	int cpu;
 +
-+	vmware_hypercall6(VMWARE_CMD_MESSAGE | MESSAGE_TYPE_OPEN,
-+			  RPCI_PROTOCOL_NUM | GUESTMSG_FLAG_COOKIE,
-+			  0, &info, &msg->id, &msg->cookie_high,
-+			  &msg->cookie_low);
++	if (cc_vendor != CC_VENDOR_AMD ||
++	    !cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
++		return;
 +
-+	if ((info & MESSAGE_STATUS_SUCCESS) == 0)
-+		return 1;
-+
-+	msg->id &= 0xffff0000UL;
-+	return 0;
-+}
-+
-+static int
-+vmware_log_close(struct vmw_msg *msg)
-+{
-+	u32 info;
-+
-+	vmware_hypercall5(VMWARE_CMD_MESSAGE | MESSAGE_TYPE_CLOSE, 0, msg->id,
-+			  msg->cookie_high, msg->cookie_low, &info);
-+
-+	if ((info & MESSAGE_STATUS_SUCCESS) == 0)
-+		return 1;
-+	return 0;
-+}
-+
-+static int
-+vmware_log_send(struct vmw_msg *msg, const char *string)
-+{
-+	u32 info;
-+	u32 len = strlen(string);
-+
-+retry:
-+	vmware_hypercall5(VMWARE_CMD_MESSAGE | MESSAGE_TYPE_SENDSIZE, len,
-+			  msg->id, msg->cookie_high, msg->cookie_low, &info);
-+
-+	if (!(info & MESSAGE_STATUS_SUCCESS))
-+		return 1;
-+
-+	/* HB port can't access encrypted memory. */
-+	if (!cc_platform_has(CC_ATTR_MEM_ENCRYPT) && (info & MESSAGE_STATUS_HB)) {
-+		vmware_hypercall_hb_out(
-+			VMWARE_HB_CMD_MESSAGE | MESSAGE_STATUS_SUCCESS,
-+			len, msg->id, (uintptr_t) string, msg->cookie_low,
-+			msg->cookie_high, &info);
-+	} else {
-+		do {
-+			u32 word;
-+			size_t s = min_t(u32, len, sizeof(word));
-+
-+			memcpy(&word, string, s);
-+			len -= s;
-+			string += s;
-+
-+			vmware_hypercall5(VMWARE_CMD_MESSAGE | MESSAGE_TYPE_SEND,
-+					  word, msg->id, msg->cookie_high,
-+					  msg->cookie_low, &info);
-+		} while (len && (info & MESSAGE_STATUS_SUCCESS));
-+	}
-+
-+	if ((info & MESSAGE_STATUS_SUCCESS) == 0) {
-+		if (info & MESSAGE_STATUS_CPT)
-+			/* A checkpoint occurred. Retry. */
-+			goto retry;
-+		return 1;
-+	}
-+	return 0;
-+}
-+STACK_FRAME_NON_STANDARD(vmware_log_send);
-+
-+/**
-+ * kmsg_dumper_vmware_log - dumps kmsg to vmware.log file on the host
-+ */
-+static void kmsg_dumper_vmware_log(struct kmsg_dumper *dumper,
-+				enum kmsg_dump_reason reason)
-+{
-+	struct vmw_msg msg;
-+	struct kmsg_dump_iter iter;
-+	static char line[1024];
-+	size_t len = 0;
-+
-+	/* Line prefix to send to VM log file. */
-+	line[0] = 'l';
-+	line[1] = 'o';
-+	line[2] = 'g';
-+	line[3] = ' ';
-+
-+	kmsg_dump_rewind(&iter);
-+	while (kmsg_dump_get_line(&iter, true, line + 4, sizeof(line) - 4,
-+				  &len)) {
-+		line[len + 4] = '\0';
-+		if (vmware_log_open(&msg))
-+			return;
-+		if (vmware_log_send(&msg, line))
-+			return;
-+		vmware_log_close(&msg);
++	for_each_possible_cpu(cpu) {
++		early_set_memory_decrypted(
++			(unsigned long)&per_cpu(vmw_steal_time, cpu),
++			sizeof(vmw_steal_time));
 +	}
 +}
++
+ #ifdef CONFIG_SMP
+ static void __init vmware_smp_prepare_boot_cpu(void)
+ {
++	/*
++	 * Map the per-cpu variables as decrypted before vmware_guest_cpu_init()
++	 * shares the guest physical address with the hypervisor.
++	 */
++	sev_map_percpu_data();
++
+ 	vmware_guest_cpu_init();
+ 	native_smp_prepare_boot_cpu();
+ }
+@@ -371,6 +392,7 @@ static void __init vmware_paravirt_ops_setup(void)
+ 					      vmware_cpu_down_prepare) < 0)
+ 			pr_err("vmware_guest: Failed to install cpu hotplug callbacks\n");
+ #else
++		sev_map_percpu_data();
+ 		vmware_guest_cpu_init();
+ #endif
+ 	}
 -- 
 2.39.4
 
