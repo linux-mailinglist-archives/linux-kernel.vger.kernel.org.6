@@ -1,110 +1,81 @@
-Return-Path: <linux-kernel+bounces-285680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C7C951131
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3171A951134
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4FFBB2246E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:53:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643151C224A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753349445;
-	Wed, 14 Aug 2024 00:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HEx1I8Q3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8799457;
+	Wed, 14 Aug 2024 00:54:34 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E794F171A5;
-	Wed, 14 Aug 2024 00:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3251C17;
+	Wed, 14 Aug 2024 00:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723596828; cv=none; b=JDek51/m5IcCD7D2zfkA8i9zu6G8rZ748k2+fNzYTXr5tsoCtLD4juF+7meK5HVpP8PjJymCwSGjgez5o917aw6jAPTxBxRhM9+0qgd6H+WV9NME8pqWRRKkMNkmXjbwgGd8Jb3WNfzjFYlIa7lb+Zj6HJdHRVcBpUEuraHKZFk=
+	t=1723596873; cv=none; b=GUmIw7suBl5UihWnIbDelIsgycz6UvTo10hnwM90uS4FXl1X6jquQWerjt4eoGf2BUkf7fQEcpwMhSfc+ZK8DtvnafALCidAP8B2AT0zF6LnD1psxjBS3hU+l1EJ1CKJwu69myN6BZsw9r4gN46kLFQDhx6Em0E9HyUvTS5XhnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723596828; c=relaxed/simple;
-	bh=RMZYDQ24Wd2mO+vaoGlTsQlnxWg83fgryxlAoEv0KdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUFfHLxfOzeT91/HlTg64CarxOigOUlVMkkt8gJ2NolYQuBJszuIj90KRDc0HH3YX6IBM14dtidDmltgAbnLzDwR995oHIRnbai1upmkkVS7hAlG5AWFoVL2v5SlTFyb8vwrOk8tAfz/JpV5+i64H+x7JqZhsqdBdgWdQPBNAXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HEx1I8Q3; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723596827; x=1755132827;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RMZYDQ24Wd2mO+vaoGlTsQlnxWg83fgryxlAoEv0KdA=;
-  b=HEx1I8Q3lXeO/yEJA8zWSBl8hsYqLxllfZ/gnnNWPHqIDd4JZNI2YA2F
-   ME0Bz00Jb3NS+yBG5EBbZykYviHYpAzBT90Xg72Yce25mttn94CGqENVX
-   s5cIOTJPklj2zWqqE61nhoLwnlrEFIn2LghRVWdbPZh7/qR/KbaafSQq/
-   dCAYIeT473xrGGuhxB8q7yGcHF/0HLUBSfjSgVk61iZA/0dL/cUaDpXHc
-   xoNgmCZPjHccfX5kGqEYv4WfLILJBkyRoJZxvHEPG0d+x0hbTk71GFRz2
-   MkBupXZN6EUhtWEmRq1vlmdhuzTWpoToox4kWaUQ3dh60vegsoGA2sB0q
-   g==;
-X-CSE-ConnectionGUID: hi4ZnxggTdKZCBAt0sTrgQ==
-X-CSE-MsgGUID: LN+GNln/TVuAuw3TPJYXxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21761041"
-X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
-   d="scan'208";a="21761041"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 17:53:46 -0700
-X-CSE-ConnectionGUID: EOHcmZ0JT4uyQ3rGjvvZtg==
-X-CSE-MsgGUID: 7inkNjP2RtqAGmyXJILYDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
-   d="scan'208";a="58476420"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 17:53:45 -0700
-Date: Tue, 13 Aug 2024 17:53:45 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-	seanjc@google.com, isaku.yamahata@intel.com,
-	rick.p.edgecombe@intel.com, michael.roth@amd.com
-Subject: Re: [PATCH v2 1/2] KVM: x86: Check hypercall's exit to userspace
- generically
-Message-ID: <ZrwAGc/UPtcrN4ug@ls.amr.corp.intel.com>
-References: <20240813051256.2246612-1-binbin.wu@linux.intel.com>
- <20240813051256.2246612-2-binbin.wu@linux.intel.com>
- <d7ae5009-748f-4aa2-937e-d805a3172216@intel.com>
+	s=arc-20240116; t=1723596873; c=relaxed/simple;
+	bh=Gn/yi3KbAwbZGg0oEB4ivFkqHgwxWjeMBzw3MzO6mcY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EYMuIT1VGIGEF9iaODlJlTWASRdEgVNdApwF/7Ql53kyq/koYsgZotTVWvQUfNL5gGqTqPEekJqq3YxzHyeF1yCTwXNhpho0JbebVKbQ8oRgSCG2QQGBuuVJQxhfx5bXEdqXeRf6fN+STYG8Pk0toAKx7lLmEjXy5ldkRUlvzx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 14 Aug
+ 2024 08:54:21 +0800
+Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Wed, 14 Aug 2024 08:54:21 +0800
+From: Jammy Huang <jammy_huang@aspeedtech.com>
+To: <eajames@linux.ibm.com>, <mchehab@kernel.org>, <joel@jms.id.au>,
+	<andrew@aj.id.au>, <pmenzel@molgen.mpg.de>, <krzk@kernel.org>
+CC: <linux-media@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/2] media: aspeed: Allow to capture from SoC display (GFX)
+Date: Wed, 14 Aug 2024 08:54:19 +0800
+Message-ID: <20240814005421.3362441-1-jammy_huang@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d7ae5009-748f-4aa2-937e-d805a3172216@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, Aug 14, 2024 at 11:16:44AM +1200,
-"Huang, Kai" <kai.huang@intel.com> wrote:
+The aim of this series is to add another capture source, SoC
+Display(GFX), for video.
 
-> > ---
-> >   arch/x86/kvm/x86.c | 4 ++--
-> >   arch/x86/kvm/x86.h | 7 +++++++
-> >   2 files changed, 9 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index af6c8cf6a37a..6e16c9751af7 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -10226,8 +10226,8 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
-> >   	cpl = kvm_x86_call(get_cpl)(vcpu);
-> >   	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
-> > -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
-> > -		/* MAP_GPA tosses the request to the user space. */
-> > +	if (!ret && is_kvm_hc_exit_enabled(vcpu->kvm, nr))
-> > +		/* The hypercall is requested to exit to userspace. */
-> >   		return 0;
-> 
-> I believe you put "!ret" check first for a reason?  Perhaps you can add a
-> comment.
+ v4 changes:
+  - Use scoped/cleanup to make aspeed_regmap_lookup simpler.
+  - Update dts
+ v3 changes:
+  - Update for enum_input.
+ v2 changes:
+  - Update patch subject and comments.
 
-I think he'd like to avoid to hit WARN_ON_ONCE().
+Jammy Huang (2):
+  ARM: dts: aspeed: Add properties of scu and gfx for video
+  media: aspeed: Allow to capture from SoC display (GFX)
+
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi      |   2 +
+ drivers/media/platform/aspeed/aspeed-video.c | 192 ++++++++++++++++---
+ include/uapi/linux/aspeed-video.h            |   7 +
+ 3 files changed, 173 insertions(+), 28 deletions(-)
+
+
+base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+2.25.1
+
 
