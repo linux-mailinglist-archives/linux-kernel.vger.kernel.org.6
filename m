@@ -1,271 +1,129 @@
-Return-Path: <linux-kernel+bounces-286851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00339951FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:20:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F74951FB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774251F21F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F621C22A10
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D821A1B9B35;
-	Wed, 14 Aug 2024 16:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7941C1BB68F;
+	Wed, 14 Aug 2024 16:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a7lxwfgN"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="tRSNjNt6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDD41B86C5
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479F81B8EA3;
+	Wed, 14 Aug 2024 16:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652412; cv=none; b=tld7HLAukHmZWXmomGM8z7izS4P36PUMbiLN9GuWgp5jncDmJ0bsoIucC+s6D5+QeTTGlM0FEWApza3tQn8Nx393h823ka9ECqyQPYxPMrSGhXsYXNXiSkOLwRObd/D2W0Zt8j62BfvzghD8jedYGROqwx+QGYtZ5T2pfyTW740=
+	t=1723652414; cv=none; b=CMLompSr3FW26XGWqrzPPgKrXqlj37+v9NYDruvUMnbZXLsYOCIAb3AP/Rn0DMojziH4ODGSHL6L6Flw2qbpj1soOo8idOatf6VKYLuDFMP4rAFCXkwn4AUw/DFJEuNQuyHQH/Rzx/1BBEH5NtZX/BbHzmAMVXrf1A9DQgee1+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652412; c=relaxed/simple;
-	bh=V6a39l3Ageekj4yS2kT4Inux7w8JrV8KSrRV1rzJbIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TzgHSoc5+2b5md2mdkHeCelP0Bi7gOtt7hTuVo57enMQ4KLJAo1wdMYEWll3PWzf1Kum26vSkw/YZAdkG4Pvka6W8+qhwvJVu4/rV2Pdf9CGlcYq/UMQRubjWC9LRQ9dWsm1kiF8DjyBbdZi82+NwAp4BR/QmgjY9SO92NTsxN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=a7lxwfgN; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EBtZhl007009;
-	Wed, 14 Aug 2024 16:20:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=F
-	HexjyU3Q15ZZbT4MhKAGdpth4Y64xmG6/MK3RLc4O0=; b=a7lxwfgNnDjsTO2gi
-	IiCC/TcYUHc2YOJ8zWsjMKJ1A1iFYEW093yfx7NmkTpBz5e2G2lDRGZK8eeMktnb
-	OXw4iDwouF/aigblf0/WQJL2V+A/RKYBbUPqx13+QbOt4p/jgM195LagvFNWdUOt
-	DP1QH6KooEKv7ghiTtoiN4rEUEAuoSwES2aj0u4XLFVY9mrHjKOtQiSjXEKMy/C7
-	+u3E5ZGK7mopLYbYnLgp5gCTWi0JPacZTIcPhijjfXExtZjRBMMwDtRIqNmjj3wZ
-	ZfcYN0lkH0QsQ8EFepGI4Ew3TyuCQwgvOkjrCuieVrWTsg2nxKtIngsekmmOod2a
-	HR7uQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40x0398m0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 16:20:02 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47EGJ2Cv021157;
-	Wed, 14 Aug 2024 16:20:01 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxngn7vb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 16:20:00 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47EGIvCU035951;
-	Wed, 14 Aug 2024 16:20:00 GMT
-Received: from sidkumar-mac.us.oracle.com (dhcp-10-65-174-212.vpn.oracle.com [10.65.174.212])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40wxngn7gt-18;
-	Wed, 14 Aug 2024 16:20:00 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
-        willy@infradead.org, surenb@google.com,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: [PATCH v4 17/17] maple_tree: make write helper functions void
-Date: Wed, 14 Aug 2024 12:19:44 -0400
-Message-ID: <20240814161944.55347-18-sidhartha.kumar@oracle.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
-References: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1723652414; c=relaxed/simple;
+	bh=VXiYQYW56dc1WuzNWrZC5w5JZm2UFMALypsJ26n7j7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oo5Uw7p9Pg2LmTDxrDETXj+nIwFG++kaxOuYWaq8TDPrr3ATJsGULkNa+u5dcYMNe6K5nP7l6Tn48tlnXc+JmWca45+peDrAUnaZ2gppOlHV2sPmw9jhzsxCUVfeIwraNjTLD6OTjTDsCn9RDmlZhYCLyMkPkJFtNCAetWeP0bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=tRSNjNt6; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1723652392; x=1724257192; i=wahrenst@gmx.net;
+	bh=fhv16sAFZtiVB6MEuR24ksCEmVo3hs4EEJychzW9vXQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tRSNjNt6B+3a+h0Vl3BPLciPR3jiSwuS0mcjxJ4CX8lR+k62BFpqsGf8rUofV70j
+	 hTy/Qm8g21k50quHTYC7zguO4/7TFROxl9SVExep8miPzNWQVGPdTg6sWZbsg56AZ
+	 oKYUhoDhINLI1dKWbaaHM7ercj+e3UjpOVKtpQp68mb/s+PF9aRyOYexALuESw62K
+	 ihv9fgT3ZK8GBEMBQsaAX85dR6Q6DpfOCvGAQ4rxplxI4SQBjGlHX7FPjI7fRoQ6J
+	 O5C0KHbgOLyElwBDYoDrCQKCe0w9EC7YC/MXisukO33xOw0ZYU41tWIjzPx6qRwEo
+	 VQeLqOKGFKa7sz2EDg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M1HZi-1scc1y0MFG-007OGa; Wed, 14
+ Aug 2024 18:19:52 +0200
+Message-ID: <da941b0e-8e29-4ff7-aff8-683da0aef8da@gmx.net>
+Date: Wed, 14 Aug 2024 18:19:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_12,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 bulkscore=0
- phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408140111
-X-Proofpoint-ORIG-GUID: l7t_v_9i3qSLTKN8Pp53EdLjA9dyzh5O
-X-Proofpoint-GUID: l7t_v_9i3qSLTKN8Pp53EdLjA9dyzh5O
+User-Agent: Mozilla Thunderbird
+Subject: Re: next-20240814: bcm2711-rpi-4-b boot failed
+To: Naresh Kamboju <naresh.kamboju@linaro.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, krzk+dt@kernel.org,
+ Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>
+References: <CA+G9fYuncv0fuBSC0A1z1G_UOv_XuMQz=DsrLZDK-Wc=10ghag@mail.gmail.com>
+ <CA+G9fYv2M8tqwXQF5At4KmG3PFJoiv3D-4Tn_q87MfBvAqLmag@mail.gmail.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <CA+G9fYv2M8tqwXQF5At4KmG3PFJoiv3D-4Tn_q87MfBvAqLmag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:IeOG4wCqf/I7ymjxrQPF+8blCRLHHx+GB+X2mnKoMgayFr756xQ
+ AUBHwVCJilhu/e0W6C7GUSRomlnhs1QLn0eBfHZth7mpR3J43Zvns+V4mxvdGGOkuqo+3Dl
+ cyjYEgXFzwtK/rpL32r2qgm7OJWN2mg0e/6SEcT3jYFqBKwHWXrjCpI1mcVUnd5D/duvQ7X
+ ZJLn99g1zlMCPYZwa8e6g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MJIlye475sk=;XABxdiC7P8vifFQyBUK9264GLmw
+ qfQXpPXaG+VapmRVWuuI610qcYm5DZJLNB4ByzyCsZBgaINBd+N9Je1aaa9SozSp6yt//L4nM
+ 9CSippfLor2W5vayApOCTfJj+bN4CKHePv/OWJV4HOF0pMYbod3s6Owk11P9mTgunMLSsHVhd
+ gJnCJ5khCCnulKIhxocqB1Oh6D0eoYwimQLpd329CLeCgG4XV8SdfhswxUoT1H95oBGm8geCh
+ EbrlhoKTd7geG9SDwzXxgDhzLwCDxGf+2+sGca3a+7+lS0mGLCxSnsHpHgbaTYVOK+l2QVgnK
+ WYcpj24NZ33Z/muGeXpf71/0GKqj888Oz/XzCjJ6kaA/JsMxOw9/20uaK/Li+/KmtFSNsBZTf
+ JKPmn/wFYLixyAOBRPhSW9qMx0OQbSRoWjVzmeFeKEgdKhCj4t9T1kEMolTOcH6VY9SlN0+wo
+ 4sNCkPLXjbhGidZNFC8P9ORvkV7h3rU/j3sQpi6dQibs+NDFlzvJo5vxlwnq7dtmUdFBehjLM
+ SFRWufYDh4uXaKCGL5ICgZd9zpvNjG8GthDhm4oTfnbLdZX/VPWV8aEoJvayBlPphUpmGrJJ3
+ fn26VXme0HHOaQfvIliPhusGPZxJEakyshbbDNPbApBJBunmUZ5tvBRp/zxvoQC9mKw4/W4B/
+ C+BjT0WFjbUZC9hwnrqLP3xjHyfSfvoQ5M4cdhKW/gm9DZd+sasZVjEzTBuB5zTxrxgfDHOwi
+ xq3Y3jRSplgKpJGqN1CQnN5Xuzvc8u0xxU2vtKpxr589ITwpcgeq8/cMU4t0qKcXFr2WMyG8I
+ nAC1KlFxjgkKpsDrCXT0Aisw==
 
-The return value of various write helper functions are not checked. We
-can safely change the return type of these functions to be void.
+Hi Naresh,
 
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
----
- lib/maple_tree.c | 47 ++++++++++++++++-------------------------------
- 1 file changed, 16 insertions(+), 31 deletions(-)
+Am 14.08.24 um 17:26 schrieb Naresh Kamboju:
+> On Wed, 14 Aug 2024 at 20:54, Naresh Kamboju <naresh.kamboju@linaro.org>=
+ wrote:
+>> The arm64 kernel booting on bcm2711-rpi-4-b boot failed with today's Li=
+nux
+>> next-20240814 tag. The boot failed with half boot log [1]
+>>
+>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>
+>>   GOOD: next-20240813
+>>   BAD:  next-20240814
+>>
+>> The first investigation show the following to changes and I have revert=
+ed the
+>> following two commits and the boot test is back to pass [2].
+>>
+>> $ git log --oneline  next-20240813..next-20240814
+>> arch/arm64/boot/dts/broadcom/
+>>    6e7b99d720da6 ARM: dts: bcm271x: add missing properties to local_int=
+c
+>>    eb81f43c901ff ARM: dts: bcm2837/bcm2712: adjust local intc node name=
+s
+>>
+> Anders bisected down to first bad commit as,
+>     6e7b99d720da ("ARM: dts: bcm271x: add missing properties to local_in=
+tc")
+thank you for the report and sorry about that mess. I don't why i was
+under the impression they were harmless DT properties. I look into this,
+so a revert is the proper solution for now.
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 73ce63d9c3a0..755ba8b18e14 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -2823,10 +2823,8 @@ static inline void *mtree_range_walk(struct ma_state *mas)
-  * orig_l_mas->last is used in mas_consume to find the slots that will need to
-  * be either freed or destroyed.  orig_l_mas->depth keeps track of the height of
-  * the new sub-tree in case the sub-tree becomes the full tree.
-- *
-- * Return: the number of elements in b_node during the last loop.
-  */
--static int mas_spanning_rebalance(struct ma_state *mas,
-+static void mas_spanning_rebalance(struct ma_state *mas,
- 		struct maple_subtree_state *mast, unsigned char count)
- {
- 	unsigned char split, mid_split;
-@@ -2942,7 +2940,7 @@ static int mas_spanning_rebalance(struct ma_state *mas,
- 	mas->offset = l_mas.offset;
- 	mas_wmb_replace(mas, old_enode);
- 	mtree_range_walk(mas);
--	return mast->bn->b_end;
-+	return;
- }
- 
- /*
-@@ -2952,10 +2950,8 @@ static int mas_spanning_rebalance(struct ma_state *mas,
-  *
-  * Rebalance two nodes into a single node or two new nodes that are sufficient.
-  * Continue upwards until tree is sufficient.
-- *
-- * Return: the number of elements in b_node during the last loop.
-  */
--static inline int mas_rebalance(struct ma_state *mas,
-+static inline void mas_rebalance(struct ma_state *mas,
- 				struct maple_big_node *b_node)
- {
- 	char empty_count = mas_mt_height(mas);
-@@ -3300,9 +3296,8 @@ static inline bool mas_push_data(struct ma_state *mas, int height,
-  * mas_split() - Split data that is too big for one node into two.
-  * @mas: The maple state
-  * @b_node: The maple big node
-- * Return: 1 on success, 0 on failure.
-  */
--static int mas_split(struct ma_state *mas, struct maple_big_node *b_node)
-+static void mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- {
- 	struct maple_subtree_state mast;
- 	int height = 0;
-@@ -3380,7 +3375,7 @@ static int mas_split(struct ma_state *mas, struct maple_big_node *b_node)
- 	mas->node = l_mas.node;
- 	mas_wmb_replace(mas, old);
- 	mtree_range_walk(mas);
--	return 1;
-+	return;
- }
- 
- /*
-@@ -3388,7 +3383,7 @@ static int mas_split(struct ma_state *mas, struct maple_big_node *b_node)
-  * @wr_mas: The maple write state
-  * @b_node: The maple big node
-  */
--static noinline_for_kasan int mas_commit_b_node(struct ma_wr_state *wr_mas,
-+static noinline_for_kasan void mas_commit_b_node(struct ma_wr_state *wr_mas,
- 			    struct maple_big_node *b_node)
- {
- 	enum store_type type = wr_mas->mas->store_type;
-@@ -3664,10 +3659,8 @@ static void mte_destroy_walk(struct maple_enode *, struct maple_tree *);
-  * @entry: The entry to store.
-  *
-  * Only valid when the index == 0 and the last == ULONG_MAX
-- *
-- * Return 0 on error, 1 on success.
-  */
--static inline int mas_new_root(struct ma_state *mas, void *entry)
-+static inline void mas_new_root(struct ma_state *mas, void *entry)
- {
- 	struct maple_enode *root = mas_root_locked(mas);
- 	enum maple_type type = maple_leaf_64;
-@@ -3699,7 +3692,7 @@ static inline int mas_new_root(struct ma_state *mas, void *entry)
- 	if (xa_is_node(root))
- 		mte_destroy_walk(root, mas->tree);
- 
--	return 1;
-+	return;
- }
- /*
-  * mas_wr_spanning_store() - Create a subtree with the store operation completed
-@@ -3707,10 +3700,8 @@ static inline int mas_new_root(struct ma_state *mas, void *entry)
-  * Note that mas is expected to point to the node which caused the store to
-  * span.
-  * @wr_mas: The maple write state
-- *
-- * Return: 0 on error, positive on success.
-  */
--static noinline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
-+static noinline void mas_wr_spanning_store(struct ma_wr_state *wr_mas)
- {
- 	struct maple_subtree_state mast;
- 	struct maple_big_node b_node;
-@@ -3802,10 +3793,8 @@ static noinline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
-  * @wr_mas: The maple write state
-  *
-  * Attempts to reuse the node, but may allocate.
-- *
-- * Return: True if stored, false otherwise
-  */
--static inline bool mas_wr_node_store(struct ma_wr_state *wr_mas,
-+static inline void mas_wr_node_store(struct ma_wr_state *wr_mas,
- 				     unsigned char new_end)
- {
- 	struct ma_state *mas = wr_mas->mas;
-@@ -3878,16 +3867,14 @@ static inline bool mas_wr_node_store(struct ma_wr_state *wr_mas,
- 	trace_ma_write(__func__, mas, 0, wr_mas->entry);
- 	mas_update_gap(mas);
- 	mas->end = new_end;
--	return true;
-+	return;
- }
- 
- /*
-  * mas_wr_slot_store: Attempt to store a value in a slot.
-  * @wr_mas: the maple write state
-- *
-- * Return: True if stored, false otherwise
-  */
--static inline bool mas_wr_slot_store(struct ma_wr_state *wr_mas)
-+static inline void mas_wr_slot_store(struct ma_wr_state *wr_mas)
- {
- 	struct ma_state *mas = wr_mas->mas;
- 	unsigned char offset = mas->offset;
-@@ -3919,7 +3906,7 @@ static inline bool mas_wr_slot_store(struct ma_wr_state *wr_mas)
- 		wr_mas->pivots[offset + 1] = mas->last;
- 		mas->offset++; /* Keep mas accurate. */
- 	} else {
--		return false;
-+		return;
- 	}
- 
- 	trace_ma_write(__func__, mas, 0, wr_mas->entry);
-@@ -3930,7 +3917,7 @@ static inline bool mas_wr_slot_store(struct ma_wr_state *wr_mas)
- 	if (!wr_mas->entry || gap)
- 		mas_update_gap(mas);
- 
--	return true;
-+	return;
- }
- 
- static inline void mas_wr_extend_null(struct ma_wr_state *wr_mas)
-@@ -4004,10 +3991,8 @@ static inline unsigned char mas_wr_new_end(struct ma_wr_state *wr_mas)
-  * This is currently unsafe in rcu mode since the end of the node may be cached
-  * by readers while the node contents may be updated which could result in
-  * inaccurate information.
-- *
-- * Return: True if appended, false otherwise
-  */
--static inline bool mas_wr_append(struct ma_wr_state *wr_mas,
-+static inline void mas_wr_append(struct ma_wr_state *wr_mas,
- 		unsigned char new_end)
- {
- 	struct ma_state *mas = wr_mas->mas;
-@@ -4046,7 +4031,7 @@ static inline bool mas_wr_append(struct ma_wr_state *wr_mas,
- 
- 	mas->end = new_end;
- 	trace_ma_write(__func__, mas, new_end, wr_mas->entry);
--	return  true;
-+	return;
- }
- 
- /*
--- 
-2.46.0
-
+Regards
 
