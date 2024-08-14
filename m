@@ -1,309 +1,157 @@
-Return-Path: <linux-kernel+bounces-286096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1C6951670
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:19:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB96A95167A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB651F23309
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:19:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E595B230A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0DB13B2A9;
-	Wed, 14 Aug 2024 08:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDFF13D28F;
+	Wed, 14 Aug 2024 08:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hNWupK9l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KeUKsbMG"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BEC20DF4
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9DC20DF4
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723623533; cv=none; b=EjxNGJZY0LCxTf9HMwk/LjNmqDAr/bvd7jIwSG38m1ER5BqO+/pZV6OMKWcriTVI/EcgctP4koxrCh0CXIgLQd77avNs5SLpaDB8QmXhZqIm/yCrPjBG21lb5CldWDFQu5aBGD+cffqcz9EfpjdI978sD58RUxDA6nCsSOb6W8c=
+	t=1723623590; cv=none; b=Nn2QIeo8zJuDs/zkF+s1Ig1/z2IEzC689c1yTaep4zmpgrXhRe3r7ItxyRpxwCsPgSYHIZkQfJgcrhiwAGsnbh8amy5ZIBZA6nJ9/R/RVwxrawAX3Lnrai3YgqGCz5eG3sB4sYAeDCJpkQQ7TikobKm7Pbw3cLEOds8Zk+s9QPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723623533; c=relaxed/simple;
-	bh=Bo+cvE6AzFqGuhj9yQ85orHVEh4e45C2T9RFCQcQqRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gO9CPvmgB+YWA3xp3x+406nzOl1L7o3E1mnspIOYIZX/IOffqasbkZmcIqwaExv5Otd/y9/kY6JksyfzvgIXOHmU/RJF/ppPsmCApc4BTGLOoRUerJhuBMQTlvGwIN1/ZJ+wu/Z8okvwJK0Nn1VxMzcN8GdCVngDACpgNL8rqUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hNWupK9l; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723623530;
+	s=arc-20240116; t=1723623590; c=relaxed/simple;
+	bh=ZPC3atLxXoEtrqJl2fA9luVfBUd/q7A8/GXQUFWKIdA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Pbqi6Nf/kQNolA6J4apzPtds/iuIUIq57FCtNSI1cy1NPnVBhCxDqGh50XWD3fB0IwCqcHIScEI+Ps7ixQ/um7iaRNkX81bKgTcnb11nQDX9e4SJF81Hvf2hDHplIGaCsYOkXjkPbO0v5jUMBIYND2uNPCn6rks5ExeQWUaYI4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KeUKsbMG; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CADADC0002;
+	Wed, 14 Aug 2024 08:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723623585;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Z94kh2aK5DKJ1BUORso0hBz/WCm43VlL59JWdkhMVvY=;
-	b=hNWupK9lZLLDHVLDh+o+JSkFruQQvq4vNR2dyJxKv5YorbTMoPnPiSYGTvIKCmZAoB3jRX
-	AaCwc5vyGOTtoS381l2erZOOA5exdOtmrZt57IYwQ/4Dtqd/3Z2BxZLG6JoX4b/3YPv0rN
-	Sr/F6Pc/sNH8wy7VtFC8JUNfHiHYR7M=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-214-fGHC01zoNB6Fr8r7BQqbPQ-1; Wed, 14 Aug 2024 04:18:48 -0400
-X-MC-Unique: fGHC01zoNB6Fr8r7BQqbPQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-371730a4870so626202f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:18:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723623527; x=1724228327;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Z94kh2aK5DKJ1BUORso0hBz/WCm43VlL59JWdkhMVvY=;
-        b=fFJ7cJD3x/L2d9Oug3kOCOOaa8B1dXbfbE2K+k0WBgMzcJ/MFjwFL8IsRiB5vBsK7s
-         qZMwxd7H6vGGgxPpK6NqY6rpzIZoNQZpW0FQgPxpMo0NrCnKTZbGBXt6Sy/LDw26htfK
-         GVuyOavFNWZyi053SX7A7jPIpFDduC7pG76wKSQoaEafoE7Qfkqmx0g7XXUBrqzQn4bG
-         T0L+5jBlb3o7IlwNXNdeapgzWtPTvTBqIVSfwLvApEhdXEuQ2XKkM8Z68UogGSSB0w/m
-         yjOXf+sQSnU75m/qo7Lnbf5yD7Wd11pHJr68XNv1k3RN6RKtP89EeXT5MHdChn0diZkQ
-         WbTA==
-X-Forwarded-Encrypted: i=1; AJvYcCX64sM6IVRlwx+lSUJFpF/aAh8HGDDvqjJ4rlGS/O+RiyonY5RA8QizE9I9oYiQ6W//x1YKRFr80+IJxoZIbluqZg70Sq+NOGU0lhiO
-X-Gm-Message-State: AOJu0YxeozhBAKy//dP2jjH4nXiK/sCqaeGdQYw/Jxr2TuHcqnLyp6kc
-	YWLFg+DoCurqN0ZREbtQNeSO15+6qn0lc0L1xtMkzyFFnW2hbX3pViej9Anp6+w3UUeCYATA7hY
-	J8RR6AO/KAW+k60RWJL7jbxE6dePERZumT4rbvleCzf5p/KulWrzx4axnNypnOw==
-X-Received: by 2002:a5d:614e:0:b0:369:f7f9:9ee with SMTP id ffacd0b85a97d-3717775f755mr1442935f8f.6.1723623527183;
-        Wed, 14 Aug 2024 01:18:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQQepLhMSJVK+6laO5CjE0En1HAThAETBNbr0Zt6IO9xIIyhRLRlpQsE8C/wS0ClIhxII2hw==
-X-Received: by 2002:a5d:614e:0:b0:369:f7f9:9ee with SMTP id ffacd0b85a97d-3717775f755mr1442918f8f.6.1723623526625;
-        Wed, 14 Aug 2024 01:18:46 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51ebe4sm12213719f8f.85.2024.08.14.01.18.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 01:18:46 -0700 (PDT)
-Message-ID: <ca3aaa3f-f018-46e4-aad1-c6a4fb8c7f11@redhat.com>
-Date: Wed, 14 Aug 2024 10:18:44 +0200
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qXT2OR2U85EEVIw4IJJAjl0CcFk1v3cp4pbVQDnQAik=;
+	b=KeUKsbMGUDtukmZwyEB0BSkwD6YKMr3zhQOX9674T/VCti625uoCsK5GcEidnitUu0KZtc
+	I+NJbTKh9D/za6CV/OiaquAZsydID85v+JE2t290fgKx8S6OOsorIdYFM/GRzEF5QrhR5/
+	LdLUsqrj2t7V701k0pIS9kZUzEuenDIVy1t/8/nVn0Bo6SPL3DCu9S8LDVTEAhhNrhcSv+
+	PeZwUvuxUqCENdO9eQ/Nv2fBjWInpuk79Koe1CYPgNZkEum8jl0ZbSEK5HnrcMdskTAB3+
+	AedWrEA4gyHfAfumoYS6YfBT9mFhSp3+DJ4hfqAv1yJI3uB9V6eY9m6zJTrRbg==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH v2 0/8] drm/vkms: Add support for multiple plane formats
+Date: Wed, 14 Aug 2024 10:19:33 +0200
+Message-Id: <20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] mm: Override mTHP "enabled" defaults at kernel cmdline
-To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org
-Cc: baohua@kernel.org, baolin.wang@linux.alibaba.com, corbet@lwn.net,
- ioworker0@gmail.com, linux-kernel@vger.kernel.org, ryan.roberts@arm.com,
- v-songbaohua@oppo.com
-References: <20240814020247.67297-1-21cnbao@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240814020247.67297-1-21cnbao@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJVovGYC/22PQW7DIBBFr2Kx7qRAHLCtquo9oiwADw1SMC0QN
+ 1GUu2diq4tK3c0fad77c2MFc8DChubGMs6hhDRRkC8Nc0czfSKEkTKTXLZ8KyTYFib8AZdOKYN
+ POZpaQFjsR9V1VgrD6PQrow+XBbs/UD6GUlO+LpZZPLcrcCfU/8BZAAfdOt975Hor9IdNqZ7Ct
+ HEpssN9dWT8PlPjuoqYNQWJE2OoQzPmCDEU9/o7kOVSn+UilmKWx4bmbanR8R6u55msnLTCaKd
+ VK5Tyf7Tv5L0/AFRNKzAxAQAA
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ 20240809-yuv-v10-0-1a7c764166f7@bootlin.com
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2913;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=ZPC3atLxXoEtrqJl2fA9luVfBUd/q7A8/GXQUFWKIdA=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvGierxBxuguWDbOTC16U0701DGMEr4t1blwOc
+ 6dlN8CWSHGJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrxongAKCRAgrS7GWxAs
+ 4ueID/wJB8hfh94MPCNBMm4UMK/PvYWcNT3ZTiAuctqndMPBc4pr2XZ3Gn+NnsStuBXlwFiGhMf
+ J8d8lOVf6fhw4IhY6V9YjzUB5GwfpPj7gemV33AwyOEszmz8hz225Pr+4Al4kGlNM5bslh4TxG2
+ FcmHxIy2wMPNTJSCph7YLjEkFYoMw2zxq58W2+CK9h01C1oYaBChHVkGMy0BQTfmcU2V6mqJUac
+ AFxV6nm0OKEowfIChKbrtJdNKyZsml9pKiG0DSm6iWHJ0VH1gbij45V1z3BPFkmpDMAz/7adnSI
+ M40HkDirtZ6qhK40aSl+96HIWjXlXyEUCZFG21SG32NRwhr3+okQXgSq72sC3tl44nTF4ikleV+
+ Norvuv3aKfSx6r+D6USatmVxzaKE/JyMBRTaAwV021Y24HLZUtWoNaaFay+8G8hpEsdWgHPMbkG
+ fZt+nTM5FewAa1c1XMy+ouUVBop6GchCnuDJuncASQHDomtTDg9RwkYrO52IfWQnPbZvZEMxGlx
+ aLSiXVOkZ9IDPi+g12KSaAv+0kUqm1o+JyuRsLCsO14gxdtlwScZsLs5mzYjLxLq0EFTRamJ9V+
+ sgdQKEuXpAhQxuUN3AkON3zUDbbJyuIczjf7l0hT17nWoipoYUqx6WCI5v2X2xCAhFN9U8XyBrl
+ 7wI9wax7g4VamEg==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 14.08.24 04:02, Barry Song wrote:
-> From: Ryan Roberts <ryan.roberts@arm.com>
-> 
-> Add thp_anon= cmdline parameter to allow specifying the default
-> enablement of each supported anon THP size. The parameter accepts the
-> following format and can be provided multiple times to configure each
-> size:
-> 
-> thp_anon=<size>,<size>[KMG]:<value>;<size>-<size>[KMG]:<value>
-> 
-> An example:
-> 
-> thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
-> 
-> See Documentation/admin-guide/mm/transhuge.rst for more details.
-> 
-> Configuring the defaults at boot time is useful to allow early user
-> space to take advantage of mTHP before its been configured through
-> sysfs.
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> Co-developed-by: Barry Song <v-songbaohua@oppo.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->   -v4:
->   * use bitmap APIs to set and clear bits. thanks very much for
->     David's comment!
-> 
->   .../admin-guide/kernel-parameters.txt         |  9 ++
->   Documentation/admin-guide/mm/transhuge.rst    | 37 +++++--
->   mm/huge_memory.c                              | 96 ++++++++++++++++++-
->   3 files changed, 134 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index f0057bac20fb..d0d141d50638 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6629,6 +6629,15 @@
->   			<deci-seconds>: poll all this frequency
->   			0: no polling (default)
->   
-> +	thp_anon=	[KNL]
-> +			Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
-> +			state is one of "always", "madvise", "never" or "inherit".
-> +			Can be used to control the default behavior of the
-> +			system with respect to anonymous transparent hugepages.
-> +			Can be used multiple times for multiple anon THP sizes.
-> +			See Documentation/admin-guide/mm/transhuge.rst for more
-> +			details.
-> +
->   	threadirqs	[KNL,EARLY]
->   			Force threading of all interrupt handlers except those
->   			marked explicitly IRQF_NO_THREAD.
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 7072469de8a8..528e1a19d63f 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -284,13 +284,36 @@ that THP is shared. Exceeding the number would block the collapse::
->   
->   A higher value may increase memory footprint for some workloads.
->   
-> -Boot parameter
-> -==============
-> -
-> -You can change the sysfs boot time defaults of Transparent Hugepage
-> -Support by passing the parameter ``transparent_hugepage=always`` or
-> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
-> -to the kernel command line.
-> +Boot parameters
-> +===============
-> +
-> +You can change the sysfs boot time default for the top-level "enabled"
-> +control by passing the parameter ``transparent_hugepage=always`` or
-> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
-> +kernel command line.
-> +
-> +Alternatively, each supported anonymous THP size can be controlled by
-> +passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
-> +where ``<size>`` is the THP size and ``<state>`` is one of ``always``,
-> +``madvise``, ``never`` or ``inherit``.
-> +
-> +For example, the following will set 16K, 32K, 64K THP to ``always``,
-> +set 128K, 512K to ``inherit``, set 256K to ``madvise`` and 1M, 2M
-> +to ``never``::
-> +
-> +	thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
-> +
-> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
-> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
-> +not explicitly configured on the command line are implicitly set to
-> +``never``.
-> +
-> +``transparent_hugepage`` setting only affects the global toggle. If
-> +``thp_anon`` is not specified, PMD_ORDER THP will default to ``inherit``.
-> +However, if a valid ``thp_anon`` setting is provided by the user, the
-> +PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
-> +is not defined within a valid ``thp_anon``, its policy will default to
-> +``never``.
->   
->   Hugepages in tmpfs/shmem
->   ========================
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 1a12c011e2df..c5f4e97b49de 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
->   unsigned long huge_anon_orders_always __read_mostly;
->   unsigned long huge_anon_orders_madvise __read_mostly;
->   unsigned long huge_anon_orders_inherit __read_mostly;
-> +static bool anon_orders_configured;
->   
->   unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->   					 unsigned long vm_flags,
-> @@ -737,7 +738,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
->   	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
->   	 * constant so we have to do this here.
->   	 */
-> -	huge_anon_orders_inherit = BIT(PMD_ORDER);
-> +	if (!anon_orders_configured) {
-> +		huge_anon_orders_inherit = BIT(PMD_ORDER);
-> +		anon_orders_configured = true;
-> +	}
->   
->   	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
->   	if (unlikely(!*hugepage_kobj)) {
-> @@ -922,6 +926,96 @@ static int __init setup_transparent_hugepage(char *str)
->   }
->   __setup("transparent_hugepage=", setup_transparent_hugepage);
->   
-> +static inline int get_order_from_str(const char *size_str)
-> +{
-> +	unsigned long size;
-> +	char *endptr;
-> +	int order;
-> +
-> +	size = memparse(size_str, &endptr);
+This series introduce a macro to generate a function to read simple
+formats. It avoid duplication of the same logic for similar formats.
 
-Do we have to also test if is_power_of_2(), and refuse if not? For 
-example, what if someone would pass 3K, would the existing check catch it?
+PATCH 1 is the introduction of the macro and adaptation of the existing
+code to avoid duplication
+PATCH 2-6 introduce new formats with the help of this macro.
 
-> +	order = fls(size >> PAGE_SHIFT) - 1;
+This series must be applied on top of [1].
 
-Is this a fancy way of writing
+[1]: https://lore.kernel.org/all/20240809-yuv-v10-0-1a7c764166f7@bootlin.com/ 
 
-order = log2(size >> PAGE_SHIFT);
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v2:
+- Add proper casting/type to __le16 when needed to avoid warnings with 
+  sparse
+- Change the function argb_u16_from_yuv8888 to argb_u16_from_yuv161616 to 
+  support 16 bits values.
+- Add support for P010/P012/P016 format
+- Link to v1: https://lore.kernel.org/r/20240516-b4-new-color-formats-v1-0-74cf9fe07317@bootlin.com
 
-? :)
+---
+Louis Chauvet (8):
+      drm/vkms: Create helpers macro to avoid code duplication in format  callbacks
+      drm/vkms: Add support for ARGB8888 formats
+      drm/vkms: Add support for ARGB16161616 formats
+      drm/vkms: Add support for RGB565 formats
+      drm/vkms: Add support for RGB888 formats
+      drm/vkms: Change YUV helpers to support u16 inputs for conversion
+      drm/vkms: Create helper macro for YUV formats
+      drm/vkms: Add P01* formats
 
-Anyhow, if get_order() wraps that, all good.
+ drivers/gpu/drm/vkms/tests/vkms_format_test.c |   3 +-
+ drivers/gpu/drm/vkms/vkms_formats.c           | 320 ++++++++++++++------------
+ drivers/gpu/drm/vkms/vkms_formats.h           |   4 +-
+ drivers/gpu/drm/vkms/vkms_plane.c             |  14 ++
+ 4 files changed, 195 insertions(+), 146 deletions(-)
+---
+base-commit: 219b45d023ed0902b05c5902a4f31c2c38bcf68c
+change-id: 20240312-b4-new-color-formats-1be9d688b21a
+prerequisite-message-id: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
+prerequisite-patch-id: ae2d8b2efbbaa9decce56632c498c87e708288b3
+prerequisite-patch-id: c26b6d4867eaf6566195aa0002765357d4f69f8c
+prerequisite-patch-id: 8791d34a6f3148dc518da5249453067e40d346e3
+prerequisite-patch-id: 26ec7cd5a449004bcfd6ce483671f87655f8635c
+prerequisite-patch-id: 2e855ba871f2e99d4b6b7d85da2ddac6bb32262e
+prerequisite-patch-id: 82523a917646793deeec7cdcc7ff286bd924fd21
+prerequisite-patch-id: 0e355e5316281f53ab5e97ab6e63b0a682f3eb9e
+prerequisite-patch-id: 7a63d245a377d5f5283f48e8f52421b912811752
+prerequisite-patch-id: dda6bf4692cd1795c489ff58e72c0841ea8ffbc4
+prerequisite-patch-id: f70e535b6086cc587975fbfa75741f485f679a32
+prerequisite-patch-id: 6c2aa2645c7d854951608aa4d15a02e076abe1fe
+prerequisite-patch-id: dc61c6d3db73053fc36e115af561e0c42b467de2
+prerequisite-patch-id: deda292af6d8bbf6762b0bf4d351ffd2225995d8
+prerequisite-patch-id: 18554f49b53cbcfd4a8ca50dc83b17dd3cf96474
+prerequisite-patch-id: 5633292e10132d29be2467812e6e2e824cfedb67
+prerequisite-patch-id: 43f37e9c1bc041d491e41dfb59548ed258a1e071
 
-> +	if ((1 << order) & ~THP_ORDERS_ALL_ANON) {
-> +		pr_err("invalid size %s(order %d) in thp_anon boot parameter\n",
-> +			size_str, order);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return order;
-> +}
-
-Apart from that, nothing jumped at me.
-
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Louis Chauvet <louis.chauvet@bootlin.com>
 
 
