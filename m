@@ -1,156 +1,177 @@
-Return-Path: <linux-kernel+bounces-286119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3C09516D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9639516D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24DE1B23B9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEF11C22712
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D47A143C69;
-	Wed, 14 Aug 2024 08:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DCD1428E4;
+	Wed, 14 Aug 2024 08:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VKwzRn/J"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KmEM7s4b"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9048A1411F9
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A337713E02C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723624947; cv=none; b=nvsWvSWEhxzNPlPvqz3eufbx9VIfWRn4JCpVXXwp9UZTGIhxCsTD+hRyWPR8Fm61YeUJBXORD9PrFdShiP5fpE5DNsI0sdI5giyTfILSIxHTJKRuPQCQFieTlEP6TSMOcn7FU5o8jjztTgID4mhA9lNpYW6p9r+5bidmcJkJJ3Q=
+	t=1723624964; cv=none; b=lPMZPaq5QLEWq9bBNO2YzXZKGLJhk9dyIqgq1OcZawF7oOqJDPicu1peIP3q3dFbT4cybamih+WaQJeE1BjVx0ioowRgtk/ab6B2wy10+1mFtBPwc1EyXcQjPIBGjH5jCwisohr426IoV6Li1Z5jpZzlxJgSM+zwgQ7mHsWvGe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723624947; c=relaxed/simple;
-	bh=Q//2af1+GAtPQBK929lJrpeGLSaSBwP7sfQwrAoJ7hY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sxwDXdKV45T7BrG5XeWin1kvpG39vp+sVwVtmXEMjxjQHdnxF8m9HDbL4o4Y2/hVEBNJqaWa9FV6EezGrbKCSf+Vx37ooldw6X+IpAc30FCpifs6ZYAwuYQ9KpGqNAw1Umo7yMPTGR2/Ue+KlCTBeHfC/Vl7GR7Wg+P2SfpjIPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VKwzRn/J; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 40155FF80B;
-	Wed, 14 Aug 2024 08:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723624944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39J9r/cgiMQQbGfPEgnjvEVgEY5DVxwdbT5Fn7hwGoM=;
-	b=VKwzRn/J4ZB0AicdFgA1fZaT1H2z7IQFWYjdkcVlHFAd2RBhCxb58mKdNSSX6UOeAr3jDH
-	/qWDxVfCBejYiQEKB+U+PDlrGNiEMtIxdGWKhmTb38MnZaPo05qPHhw6YODGOWxmWgHoCv
-	cDKLj49WNh6+d4k64gY8p1IoKnnZvOMdx23pJIafWCL0y39ID9DBVmE3a/K4h33IyOTCeA
-	vAZusbVPaa7cU0vZz58dH7QZhnQ4q/y6YmqkrAkbsVYEXHkwIfEqWPiTiZHMV5R8rWdIUr
-	A4Nu8YnhMfijrcRYOo2W1FYeORML24qFqInkmjLqBidpxG+0FEIcqfrDRIPecw==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 14 Aug 2024 10:42:18 +0200
-Subject: [PATCH v2 3/3] drm/vkms: Add support for XRGB2101010
+	s=arc-20240116; t=1723624964; c=relaxed/simple;
+	bh=Yz3FvUcSxm+sPTrIaF3ceIVk5DSTE0gKUp7+I6EngE0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I4av3rMRvkUWO34Xb2w7X68i3PcQrMvf+sURY3xiNjM5UpSMHWhrPZ9y+GqSHPgl/w9DRoP7DjJU3EW4yLUGmTLPXMablS0BY9fboD6tLKYL5VB85hAMWeESchCgeH7cmjQ2nzQSDljnokWRa28vRJmDc/FRGE/GAFOp0sQUvjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KmEM7s4b; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42803bbf842so62752275e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:42:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723624961; x=1724229761; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6GtZhrT/mm/AxwGAt7UwiNX0lEue7r3nHz8XAGJUFqg=;
+        b=KmEM7s4bCf4SHKlU+KNEbCglwEjFzxSALDuvwpqXzAYFKJm7aJx/pvP4JptoIEnBmp
+         nGmZYaq7MGpGyxosy1gsZHB8Z0LQGc6lfMrPvV9opOFoXkGRzhCRMHKgbYc6i24ENs+I
+         6gTWNHaYCcFvZhn1ECDw+YPiRmRM/1xTm9OQWfK35w6JA91PEEea6vQOrt+ajKFeAOWM
+         K/EhTBggqGpc1+d9maw7jsb3agyk5GryUN7ehMH94Qia0yS59DzcuiqmqcRnVMXXC68N
+         5XB8lJfOxgJMNOt6AGsdV9t1TvFeBOLeYW3pMM49jwOROvyiwRNrbH2Uw2+/o3FJtYA+
+         R15A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723624961; x=1724229761;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6GtZhrT/mm/AxwGAt7UwiNX0lEue7r3nHz8XAGJUFqg=;
+        b=ePGAHf/XaozobyUhQfJi5WIOqckY4KP1yZx+4At+ETyWRtUVRcNDk8TsdtOnQhO2XX
+         4TOlbS4iNIRP8PZA7JVAUPjDzhrzkt7jt/CoB2ylR9Ps2/O5S6KcTz/nezoz3ILyKFaS
+         3vLXq+ytdpPPVF2uitNpXmWZUOuouLRy+KrK0eEDhTkHaCaYAtCdwB8tsT7itCZ6vsS2
+         FDIQmTou5Lx7SDrnJEH/Hns4xmbNL48SAIEJbnB9xZGvWQ1FfbcGDX9AM/1n1Q0+0wmt
+         xhvjf3QqaFfUjqEGfxddfD1WEidLdOMb6wnaTUoRLqMUFfbHaepmj0JV9futwX+VTNrF
+         +fJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNt//V0lEX4IF1os+pyaJBSH4p8zw1OXnrC1GVn6IBGefNIxrIfeW2qsxdLhhIu2sLT1fGhG3HaUpo9cN+nuSENdQakKVrmN5cxJ79
+X-Gm-Message-State: AOJu0YzX/cKGeoF6zdEtYBN1toY3HpMaugkwvnrHMbb/m51fECy1bsFa
+	sbczR92oGYNSnMNZmNd6eFcjKr/RfztLT7JcQEp/jKFiITHsXiW2wnV/f2sBGhQGFjqUl7iLq8d
+	vQP8V3YA/pH5D+q9vzT8PMLzAAJzCZw6hNAab
+X-Google-Smtp-Source: AGHT+IFrmL3U1S+rpzBOdS5HfRHkuyTVNTg4EqoC10UJXSwLurGP5QVOWdVYxkQVIjwptFuwedEGKyhyn45M8GLcKU0=
+X-Received: by 2002:a5d:59a5:0:b0:367:9903:a91 with SMTP id
+ ffacd0b85a97d-37177744793mr1608078f8f.11.1723624960494; Wed, 14 Aug 2024
+ 01:42:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-writeback_line_by_line-v2-3-36541c717569@bootlin.com>
-References: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
-In-Reply-To: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2376;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=Q//2af1+GAtPQBK929lJrpeGLSaSBwP7sfQwrAoJ7hY=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvG3rFnEo2Jrdte6ELCuzP943oaZmaGTT4+95Z
- Wo/GdZIwbaJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrxt6wAKCRAgrS7GWxAs
- 4iEWEACGFjNZDjEUQT4zyAbX/97zEp9tNSleBMzBY4cGOr0AKTpQgHgK1e6VVDpM66YXP7kOcHi
- e+q4dj75JSpPuGoiKWd5G9hOYqb3+9Maq0JF9paczH1PPXikfn4DJxclcMDEe23OzoHzQ3s3moG
- RgOyvSTJkXOGpkhYG8ycj4XVKjNA6KQmLey0/AG3zVrF2EWNyr5K3nDId2C3SzHS4sX5W9ZMxAH
- a+9EYu54w01XtdS5P5+bxO4fA/ultDa3mcrAuFswV+YjZwVAVtde1r/n4wOPp4SRzHtse3t5Snm
- 9flj/kyTc0Kun6UlXFwESieZglSfuvyhjl3c0V5KGl7/PKED+Hfx+fjqF7K4klHGlhYBpufuK94
- nfqgENkYcOn2FgrC+eCBmkeXbrDoQUmarMILHPiFCR6flz40tSs6ZeQ9PouEYW6HbYoDvAalXPA
- nsuq5lviic6gwMPa1BzvULenkYHofYJ4i3niL5z417XAG2IqYBiF9BOTSYKwdtGP5TI9c81ZjOR
- a+QqLDvCB4DTIdfM9rd7nFneB3qVkhcPknndhZrUUEBBLMZp5KeVmrmYhecxsMlgeHeNU4v6x9Z
- plMOAgjqXs9SoiAQKKr9vJT2rNGBDVOseR9+GVyhnPRFcSk2IbIZhiYBzXUccfWOCZ70+DVjjpv
- 7jVzBW5PHH3X9+Q==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-14-dakr@kernel.org>
+In-Reply-To: <20240812182355.11641-14-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 14 Aug 2024 10:42:28 +0200
+Message-ID: <CAH5fLggchaAzcRK=i=zRm7hTg6qX0yGBAyAHcO45rG-oEh-AMQ@mail.gmail.com>
+Subject: Re: [PATCH v5 13/26] rust: alloc: implement kernel `Vec` type
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks to the WRITE_LINE macro, adding the format XRGB210101010 is trivial.
+On Mon, Aug 12, 2024 at 8:25=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> `Vec` provides a contiguous growable array type (such as `Vec`) with
+> contents allocated with the kernel's allocators (e.g. `Kmalloc`,
+> `Vmalloc` or `KVmalloc`).
+>
+> In contrast to Rust's `Vec` type, the kernel `Vec` type considers the
+> kernel's GFP flags for all appropriate functions, always reports
+> allocation failures through `Result<_, AllocError>` and remains
+> independent from unstable features.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> [...]
+> +impl<T, A, const N: usize> Box<[T; N], A>
+> +where
+> +    A: Allocator,
+> +{
+> +    /// Convert a `Box<[T, N], A>` to a `Vec<T, A>`.
+> +    pub fn into_vec(b: Self) -> Vec<T, A> {
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_formats.c   | 12 ++++++++++++
- drivers/gpu/drm/vkms/vkms_writeback.c |  3 ++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
+Nit: I would probably make this a From impl.
 
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index a25cdf656d8a..65fdd3999441 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -654,6 +654,14 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
- 	*pixel = cpu_to_le16(r << 11 | g << 5 | b);
- }
- 
-+static void argb_u16_to_XRGB2101010(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
-+{
-+	out_pixel[0] = (u8)(in_pixel->b & 0xFF);
-+	out_pixel[1] = (u8)((in_pixel->b >> 8) & 0x03) | (u8)((in_pixel->g << 2) & 0xFC);
-+	out_pixel[2] = (u8)((in_pixel->g >> 6) & 0x0F) | (u8)((in_pixel->r << 4) & 0xF0);
-+	out_pixel[3] = (u8)((in_pixel->r >> 4) & 0x3F);
-+}
-+
- /**
-  * WRITE_LINE() - Generic generator for write_line functions
-  *
-@@ -700,6 +708,8 @@ WRITE_LINE(XRGB16161616_write_line, argb_u16_to_XRGB16161616)
- 
- WRITE_LINE(RGB565_write_line, argb_u16_to_RGB565)
- 
-+WRITE_LINE(XRGB2101010_write_line, argb_u16_to_XRGB2101010)
-+
- /**
-  * get_pixel_read_function() - Retrieve the correct read_line function for a specific
-  * format. The returned pointer is NULL for unsupported pixel formats. The caller must ensure that
-@@ -977,6 +987,8 @@ pixel_write_line_t get_pixel_write_line_function(u32 format)
- 		return &XRGB16161616_write_line;
- 	case DRM_FORMAT_RGB565:
- 		return &RGB565_write_line;
-+	case DRM_FORMAT_XRGB2101010:
-+		return &XRGB2101010_write_line;
- 	default:
- 		/*
- 		 * This is a bug in vkms_writeback_atomic_check. All the supported
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index f6ed3aa69af8..7e0302c0830c 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -19,7 +19,8 @@ static const u32 vkms_wb_formats[] = {
- 	DRM_FORMAT_XRGB8888,
- 	DRM_FORMAT_XRGB16161616,
- 	DRM_FORMAT_ARGB16161616,
--	DRM_FORMAT_RGB565
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_XRGB2101010,
- };
- 
- static const struct drm_connector_funcs vkms_wb_connector_funcs = {
+> +#[macro_export]
+> +macro_rules! kvec {
+> +    () =3D> (
+> +        {
+> +            $crate::alloc::KVec::new()
+> +        }
+> +    );
+> +    ($elem:expr; $n:expr) =3D> (
+> +        {
+> +            $crate::alloc::KVec::from_elem($elem, $n, GFP_KERNEL)
+> +        }
+> +    );
+> +    ($($x:expr),+ $(,)?) =3D> (
+> +        {
+> +            match $crate::alloc::KBox::new([$($x),+], GFP_KERNEL) {
+> +                Ok(b) =3D> Ok($crate::alloc::KBox::into_vec(b)),
+> +                Err(e) =3D> Err(e),
 
--- 
-2.44.2
+Hmm. This currently generates code that:
 
+1. Creates the array.
+2. Allocates the memory.
+3. Moves the array into the box.
+
+Whereas the stdlib macro swaps step 1 and 2. You can do the same by
+utilizing new_uninit. A sketch:
+
+match KBox::<[_; _]>::new_uninit(GFP_KERNEL) {
+    Ok(b) =3D> Ok(KVec::from(KBox::write(b, [$($x),+]))),
+    Err(e) =3D> Err(e),
+}
+
+> +// SAFETY: `Vec` is `Send` if `T` is `Send` because the data referenced =
+by `self.ptr` is unaliased.
+> +unsafe impl<T, A> Send for Vec<T, A>
+> +where
+> +    T: Send,
+> +    A: Allocator,
+> +{
+> +}
+> +
+> +// SAFETY: `Vec` is `Sync` if `T` is `Sync` because the data referenced =
+by `self.ptr` is unaliased.
+> +unsafe impl<T, A> Sync for Vec<T, A>
+> +where
+> +    T: Send,
+> +    A: Allocator,
+
+Same comment as Box. Ditto about "unaliased". Needs `T: Sync` instead.
+
+> +impl<T: Clone, A: Allocator> Vec<T, A> {
+> +    /// Extend the vector by `n` clones of value.
+> +    pub fn extend_with(&mut self, n: usize, value: T, flags: Flags) -> R=
+esult<(), AllocError> {
+> +        self.reserve(n, flags)?;
+> +
+> +        let spare =3D self.spare_capacity_mut();
+> +
+> +        for item in spare.iter_mut().take(n - 1) {
+
+You need to handle `n =3D=3D 0` here.
+
+Alice
 
