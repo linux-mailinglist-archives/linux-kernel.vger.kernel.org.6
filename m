@@ -1,61 +1,48 @@
-Return-Path: <linux-kernel+bounces-287203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1946952495
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:13:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157ED95249A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37FB4B241E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66D7281AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EDF1C8232;
-	Wed, 14 Aug 2024 21:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SwogjtiO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DBE1C8233;
+	Wed, 14 Aug 2024 21:14:57 +0000 (UTC)
+Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB65210FB;
-	Wed, 14 Aug 2024 21:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4070D210FB;
+	Wed, 14 Aug 2024 21:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723670026; cv=none; b=dqtW0vuawtuIuKlY57PWJdZM8l/3Fnq0CXVeBHkM7Tz512ssyXGIiY45UjIoXqiluffiY0PTsHAceuG7EUGiJAjAhYeQytK0kEh/lKSJXllf5cZScey8lN+BCM1j+EEKn31zl8q8p5Q05mzsB9ETLASDBkwFJjpzZAYXD4iDL4U=
+	t=1723670096; cv=none; b=ZiP1xvm6vG2FRDGrF1gC8CJL1L8HSqb1hjyN/LPPF+3caEjfU51sUv77JYY3P12iNjQz+I1VjLU8/LPthcJ082Z+x1MNrdQgyPuMpnaNhm6BWECjZ2+L+/ZPQOd5ouzNqpovI2WCTmEZ+3IBocKVj/1wiF0M8BthTcNdmyi0clQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723670026; c=relaxed/simple;
-	bh=Xv3awSuwxf4eDrN41xnk4xJagCRp5iKnzwQJYZp6JDQ=;
+	s=arc-20240116; t=1723670096; c=relaxed/simple;
+	bh=JMXSrGzyOrxJwig1REfyP0Pcwp5aaD5R5FYwFDeHZxs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DGqCLwv/bOuiucP+xger/8X4Uv/0h9nNMIF9qxhP7i5dq3Cd4c5O04KNBVEJYXccL5KEVwkwu/mmQLv00nJAxa6XlplYPE0+yVs9++sMFREn78XWw+deU/Mb0xXyaHMKFpL6cpbNL4c8iam2HxGyBR0oKSo9EZ7yDXrY151aThQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SwogjtiO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E865DC116B1;
-	Wed, 14 Aug 2024 21:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723670026;
-	bh=Xv3awSuwxf4eDrN41xnk4xJagCRp5iKnzwQJYZp6JDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SwogjtiOMiVOmDXiVtAOUI/s/R4YueU7dvsz2jxVcJhiwZQaFX05bQW+Ex/Z70rSE
-	 1/RGuNuLGas5w1rFCm1MzGP26Z4kmn4oXNC7de9peEGSmgdPouH5tzjVLn3MapM07p
-	 dz+3MZ9DlVT5rytYPxldA6SrVIK6AtJv3GJCNLYrPyRAo2u62SQSmb+fdBCRlp3HMY
-	 pefhysqrOLz3XqZKKi1PWaCkleWpZR+OMvRv1IXm0WS+3LdneEK9Rpc3bqk8wcJGyN
-	 OLiCeOlNpzN3vrjXvWDc3XBVHWxTFdWNJP+fS98NprnmH9pcmjC5LZiibw6s9CXjQH
-	 pBmHvDsinksKA==
-Date: Wed, 14 Aug 2024 15:13:45 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marek Vasut <marex@denx.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: input: touchscreen: convert ads7846.txt
- to yaml
-Message-ID: <20240814211345.GA4028598-robh@kernel.org>
-References: <20240814185140.4033029-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlV4bEASgiW/9iz/dlciIr20Y+tKGJcey0zIB+rfPGRDdBHmvb6gz1tMZM5uMyduyWmg+7HVLfvf3bJF1MuZZHT1MB7QjBdc5Y4RG70NpMpKS3/TTJIC0S94zA3QHZ5OjBzkNhfF/uLNyZc0PPCn9BcEO4DbU5vBvD8oZqAJSGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
+Received: from localhost (gollum.nazgul.ch [local])
+	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 0a1a0987;
+	Wed, 14 Aug 2024 23:14:51 +0200 (CEST)
+Date: Wed, 14 Aug 2024 23:14:51 +0200
+From: Marcus Glocker <marcus@nazgul.ch>
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH v2 7/7] arm64: dts: qcom: Add Samsung Galaxy Book4 Edge
+ Makefile
+Message-ID: <mtyjmbhqv5otvxhxyyvkxg6tubmtkeouwibmsmywmjdamnqnus@mow2w5trrmok>
+References: <qv5pz4gnmy5xbxxjoqqyyvn4gep5xn3jafcof5merqxxllczwy@oaw3recv3tp5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,27 +51,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814185140.4033029-1-Frank.Li@nxp.com>
+In-Reply-To: <qv5pz4gnmy5xbxxjoqqyyvn4gep5xn3jafcof5merqxxllczwy@oaw3recv3tp5>
 
-On Wed, Aug 14, 2024 at 02:51:35PM -0400, Frank Li wrote:
-> Convert binding doc ads7846.txt to yaml format.
-> Additional change:
-> - add ref to touchscreen.yaml and spi-peripheral-props.yaml.
-> - use common node name touchscreen.
-> 
-> Fix below warning: arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dtb: touchscreen@0:
-> 	ti,x-min: b'\x00}' is not of type 'object', 'array', 'boolean', 'null'
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> There are warning:
-> Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml: properties:ti,x-plate-ohms: '$ref' should not be valid under {'const': '$ref'}
-> 	hint: Standard unit suffix properties don't need a type $ref
-> 
-> I don't know how to fix it. ti,x-plate-ohms is 16bit, but default it is
-> uint32
+Add the new Samsung Galaxy Book4 Edge to the Makefile to compile the
+DTB file.
 
-It's going to have to be a special case in dtschema. I'll work on a fix.
+Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+---
+ arch/arm64/boot/dts/qcom/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-Rob
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index 0e5c810304fb..77a48a5780ed 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -265,3 +265,4 @@ dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-lenovo-yoga-slim7x.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-qcp.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-samsung-galaxy-book4-edge.dtb
+-- 
+2.39.2
+
 
