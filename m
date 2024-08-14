@@ -1,231 +1,212 @@
-Return-Path: <linux-kernel+bounces-286136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D913F951713
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:55:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55405951726
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54EA11F2430C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD31B1F24D67
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FBE143736;
-	Wed, 14 Aug 2024 08:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF491143895;
+	Wed, 14 Aug 2024 08:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="rsu0hNFz"
-Received: from CY4PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11020140.outbound.protection.outlook.com [40.93.198.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Q9Yne//3"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFDB1411E9;
-	Wed, 14 Aug 2024 08:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625693; cv=fail; b=iQsKzzmHvgopjw1JS7OZAibcTxYTEhU6z9B17PhVci7mHR7EcqDPIIWhCssmKG23vUC1Qs2WUm4ALsVHeL6DgOnpmTe4kVTfYIkozTNthuN9CDwO/q4AWy+vaZ3tGpuY1VPLv1crNp6BZWR5hfrBrLih5y2zDLlDX3Fvl6BSvV8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625693; c=relaxed/simple;
-	bh=WurS+1iyll/j1A/UwDv2l/IEelGeDywqeGS9pOlvYHY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HHpPwbRgUY25o7hKXah1UToFgMrSTdv6tIzI3XiG9Z7HRpLjTE+Z4BBdUp/UAVR7+qnRAnSyH2Y/3gAev3gIM1IPO1Y7oDnLDVOhrh410D4OeiBW4GTjyzmLcscWMeo/v0jw8iWZiut5bk0S/gK0YQoKQ/3hKYCy35X20DG3o/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=rsu0hNFz reason="key not found in DNS"; arc=fail smtp.client-ip=40.93.198.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A3GBK4W1kUJSaYUB8y8gtJxCCEsS2VGhwSNwiGAjhMgxLriV2vxbMTvhEjgstcAFpcxSYBCTH9dH6bf0Huw2N0lU7uEU+CtUyszcDgI/I3A+z84KRLje7ttuo+kiFsakHMx7qfC9BSrWDDeaPaJjzM5kkngCfT4qStl1NJWtYWj+1lrTqWSszqx5Bo+7s3akdtZbrQkrhomN7Skm+YEBQVa4lzYOTM09GNKFiPWwMXFKo4S9HvC6kjBZ2CQ3Wvye0E0HBnVy8DcfsOvwk94clr2s/+dNmR3hl6fzUOq3nwW45I+LN1tCv7Zl0xmh9IKoL46ZbcM4iJzzUfcHLw2Qrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Ws/a2UBKl/Wogh7ZchAVwMBuE1wHtMOjpRjYILx4i4=;
- b=lqGpjOfdcGeJK5Tzg2sW5NqX9MzKG8BQS8d93mNlXBDheX8ubZ/KVzD4ZTmpcqpBYqwo6vZvXQsSWoNmsJrPFpjRB+c0rqTORQmx/xOZr1+vUdVCrWz8+cUxuRid27Xzhy2iY0rYvsuOR1VeQXkJQSGcNW6Sz7LHz7CxTfCb/aaKwHqmWLuWa4GT2mGNWgigfnoQVDu1tu2WQRE9Tkmx1fWNHKDzgEkz2PtWwyF9O1EFFXnXh725vcxZCI2JznVPQeIn0aeWJYq0AwHgL7oC0baYQQNcOdkqkdF/4oZeJdCOEW5LX/1YcBv9NDf+JAcNWLSyZPB3dodbXl+IX2+NYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EC4143748
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723625782; cv=none; b=V+MB45ysd0/TZHF/EqcxS3jDv4Vaw2qlmEmQQh9Y/mhAHSItO+po6rU/z1ZfvDwEOjAyZk0zm6ABE2PbqNahyEUCEiXmrMOtChLHnHuYw1H/FsMb7+h5wXlTMe9ADpzOKpqCVus+1B3vDSCOYmrkeb/k33zPtruqt5m9Dmd3S+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723625782; c=relaxed/simple;
+	bh=wQadCnmy4aDcLg/pGq/A/efWmWs40BThFFBuvYrZ3ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VrM74Dfr7BcvimyIKnK0+KuI5TdgK2VzObrJquy3kmrR8bF4vJVKwA6psMP9AKBEbicSEi1S7GfZz1f/6+nNP2dzc4APlly2k8zJ78OTBV3igOUBFNVpNiqcEH/mqoygOSV31rq9Xag938RFpVift3a7Sp8mhYGjNa97HUnKF9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Q9Yne//3; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd69e44596so4831045ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:56:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Ws/a2UBKl/Wogh7ZchAVwMBuE1wHtMOjpRjYILx4i4=;
- b=rsu0hNFz6gO4P2iF3iCOeH2ICbOAQ/I8+R6U2JZEbVUAxpDxMXUGIIbuLEgCZI8ztTVH8CA0aI8+gRH8X3mfE91gFkmqQxa/mrf3i/1ePqyA8mCkn0K0ZDwRHFB1OGeYPraG9fMTxvkkJDDc90UBmDKStAwzLNVw32emQGqfcfQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
- MN0PR01MB7611.prod.exchangelabs.com (2603:10b6:208:376::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.22; Wed, 14 Aug 2024 08:54:47 +0000
-Received: from BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
- 08:54:47 +0000
-Message-ID: <30517c7c-8b42-4bae-905b-2d0aeee986c2@amperemail.onmicrosoft.com>
-Date: Wed, 14 Aug 2024 15:54:35 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: hwmon: Add maxim max31790
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Chanh Nguyen <chanh@os.amperecomputing.com>, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>
-Cc: Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240813084152.25002-1-chanh@os.amperecomputing.com>
- <20240813084152.25002-2-chanh@os.amperecomputing.com>
- <f9f97553-a50a-44c0-b817-3a44f730cfeb@linaro.org>
-Content-Language: en-US
-From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-In-Reply-To: <f9f97553-a50a-44c0-b817-3a44f730cfeb@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR01CA0125.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::29) To BL3PR01MB7057.prod.exchangelabs.com
- (2603:10b6:208:35c::16)
+        d=sifive.com; s=google; t=1723625780; x=1724230580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lmaS/ucUO4ax4xArhdHVTXE+tGzy8O1URFQiuKQW0B8=;
+        b=Q9Yne//3yiEh6QwwRWcWu3ChqXMg9AIzSW3jy/s0vthx58URDT6ckNWojFK6B7ufAb
+         aD7aosAj+gtdhNd7yXpfFXfRtbXZum68Yi0GFus6pO4JtaETKD64EF9bAl2AY9lxjrZI
+         lqzFRxgowageb93PlO1oa3owvY0S/xCVe+xfctxUxjGiH5gK7yYEOJc+GECzaMd9jiaC
+         KGYpXMO9YECKvhOeg/Dw50WpvTwic57ZRUlo4B0Bs+2c5Wdcztca8PB+d5mANJP2kUpr
+         zhowb001574wVX0ah7nW7OjbVVsCDGs8l2q42o8ve6pgx8Dz8ApwP5MGuWXNRnBp0kRo
+         gBTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723625780; x=1724230580;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lmaS/ucUO4ax4xArhdHVTXE+tGzy8O1URFQiuKQW0B8=;
+        b=C51AiXaHou7qvSw/m06KgXkaq9Ef+w8zA8Wd6jN7squz3cqAMYjTPd/4epcNSn8GZp
+         NYRkZ6Oq0D5UMpMsTkTncxXOeXb1eevc3vi+U2D7BEgiO8VbbJaxYph/5zqnvqR41Fpd
+         R2TqGZL150fEImxkU/XOcgN6yfbNGyFBAQkH7hVpHeLYXzmDTNl1RJz5y1r3StAfI0q3
+         Sc6xcxGQYnQoXPu7B4D4kSDxndedksviC1JYaMDFYtKhKsOOfBAe8OVefu2sb9hRfuwZ
+         QTj3UQi17PC4ztmDP0Zzd2seKy2nadcLyUoNHMspPNoJc0JtymbywEH8mBGXeubJRXzQ
+         3tVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQc+zwLN7dQ7PFr8DzwNhJUzd7oItdXzYFttjbA87hnJjVVD2sVOICuG8fk22Ta5yNCc/M7wWH6IIEqnrxFxFCBJawTmj9yJfjgaAX
+X-Gm-Message-State: AOJu0YwanU74S+6UCRabNUPRkSvcZI+2Ya2oyX3ihYvpvNGt9rP3uox5
+	tbA3xlyeKZrpm2kQfYXGpw8oms/9gS0349Jk5mOD43ljQTbqqYvWYq8VatIc02F/u3lnwAacua9
+	O
+X-Google-Smtp-Source: AGHT+IH1j+rcWR7Ja5u/brytrbI7rlDNEm3iDMni88s3lw2tXNH8pNxbcK4NC9zx6bdDjtDvIkOIow==
+X-Received: by 2002:a17:902:da86:b0:1fd:8b77:998e with SMTP id d9443c01a7336-201d9a28d73mr22221125ad.29.1723625780442;
+        Wed, 14 Aug 2024 01:56:20 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14a7b8sm25439615ad.100.2024.08.14.01.56.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 01:56:20 -0700 (PDT)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	kasan-dev@googlegroups.com
+Cc: llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Evgenii Stepanov <eugenis@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: [RFC PATCH 0/7] kasan: RISC-V support for KASAN_SW_TAGS using pointer masking
+Date: Wed, 14 Aug 2024 01:55:28 -0700
+Message-ID: <20240814085618.968833-1-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|MN0PR01MB7611:EE_
-X-MS-Office365-Filtering-Correlation-Id: 796b6709-34f4-494f-dd46-08dcbc3ebf78
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bFIwemlKVW81K0Q5a2ZCWHUvQ25nMVM4eFNYZS9mMnZrNC9yRFI4R25zYnBG?=
- =?utf-8?B?YU8xYUJYdjVWQzhJNlNDTFhXbzhwbUhqNEVSK0NaWkRlbG0xaWJrWVMyNVBH?=
- =?utf-8?B?SXY3YVhVdXlMZWdjQ0Y0T3VYMnV6b3UzQU8vSCtBd011V1RDenBNT0Q4b25s?=
- =?utf-8?B?c2VpdHlkOUEzaHVhbENLL0t2L3h3b1dVS2hQUUpKVUpzVnJqY1pTcXRVbWVX?=
- =?utf-8?B?enpXc1FETWI3MjhnM0N5dDJoZmRZWjdFMGFzZ2hjZHN1Y3locEpEaXRjZkFI?=
- =?utf-8?B?bnpXbjBVYWwxaHhDSjNMTDY1ZWNlbVJVTGxuZmRWalpLQi9BeklzLzdKTStS?=
- =?utf-8?B?UjMyS0xMckpjcGp1UU9GRWRlR0RrLzhoUFpzZi9QdnNSak12Qml6S2hSdEZX?=
- =?utf-8?B?L1FMUWNpYkNQYnNzUHZIRk9Lc1JVNmI5UFdyNlBQSHRKeGY4WGZ6MDM0NUk2?=
- =?utf-8?B?WTg1a084N2pBc2dhcmZWenArUE5TeXgvemJMVzFLRXpJM2xiNzFFZDR6SHhC?=
- =?utf-8?B?VEh5ZVN0aVBQeFZxbHByamxDSTRKWUdJWHB3MG1CN1NneXphOXQ1TDlHQVo5?=
- =?utf-8?B?eWVPdmxnL1g0UVFKUG1rZzlCNWZ0ZDNOaFdncHdGNTFDam5IdFpIU2ExV01T?=
- =?utf-8?B?bDFIb1c4ZFp2MTFIdGpRN0IzemZLakhZZWNyNGdjUFhwUUVoNjhpQnVaYXN1?=
- =?utf-8?B?czlENWhhSmxtTnFvN1ZINnVLbkhaazd4bXdoYi9JcWdFb1hkTm10eld5RUc4?=
- =?utf-8?B?WmhZaER0UTc2RE12ZXVnRjc1bGpEMHkyTUVhNXdhSktBbmRyT0w2UzJydTBp?=
- =?utf-8?B?S2xUblVWdlFJbUFIUStLc0d2SnJJTXh1YzlYekJIckxqT1g3aXE3QTBKUjdR?=
- =?utf-8?B?bTJPOHp4WHNrZkF2WktZbVdZSHRGc0pyNWFhWEJvVkVMSDMzTVhPdFVYMTFt?=
- =?utf-8?B?RWJ4OWh3NTI4SzZhdS9JeU1yNkpEWVBPMU5BblJJZml3UVNPUlBkOU8veEIr?=
- =?utf-8?B?S2xLUkd3blBxTWhSSzFBcGZrczdHbS82NkpBOVFuZS9UZjB5VTQvNVZVdkhj?=
- =?utf-8?B?blJuN2dDaHVoN2tqUk9Gd2ovTm05aCtBVVkzbE81TCtwRUdHWHVwWi9VbU5D?=
- =?utf-8?B?R09FR2xyQXNqc2NMUVdEb0VLdVhRYzBVTEFsSnRFK3U1RTRsNURZNHlHRElU?=
- =?utf-8?B?RmRCYnVMdGNvQkVycjNpWC9lZDNQYWhBODNBK2JQTE5sc1hKS0IrZWQ4VzRu?=
- =?utf-8?B?Q042Z1N1RTZuSkxyclRjODV2Y0NyOTlMeWFSZHFSRHZjckdOWGFET3FkajZW?=
- =?utf-8?B?T09QZUtvcm5zMjlxMnVaSHFSQ21oY2JvTm9LODJQaGpwS3ZwUGlRK1c1bGU3?=
- =?utf-8?B?ZWZDQzVLQ2RzQ1N6K0RCdGVEdXhKK0xvc3pVSFNwejh3UFNkQS9NdWc4djVu?=
- =?utf-8?B?elpOMllHczlxc09BczlKQ2ZTYkhJY0tTRkFRTGdFa2ZPWHlTamZQQnMzWEVK?=
- =?utf-8?B?Sy9CL2U4UWZCdzg3K2MyMTlxWURSUlhDVG1KNXIxNDRQbDAwejJaZ2JIOUt1?=
- =?utf-8?B?dkhBR3FqSE54QjVaNXdwbTVkREZhayszNXVvT1l4S04zTTlZQTlob0k1Qk9K?=
- =?utf-8?B?NENsS2FJS0xiOUxENTFyblJRVVhPcHdjb3gxVjI3Y3dqcEU2TENscXVEY25r?=
- =?utf-8?B?elJCbEt3aXVZVVFsR2MxeVVSOSthWER6Y3pmbkZqclc1anJpd0hqbG8vVzQv?=
- =?utf-8?B?Z0hCWWJmWkVHVkRvZW9VK3czUnNXMVRFckZiZ25YcjR3ekxjVUtzS2tPNE81?=
- =?utf-8?B?WUVzQ2ErM1hzRVJIaWQ1Q2J1QUZueW5ZRDJUZTdOU3h4aVJ1am5DbktIOXpo?=
- =?utf-8?Q?uLIyk3tRjvaUv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dVF4YnNFL3FlcUxYWlFBZnhrZUVwU283UFc0bkVaTW5La2lOOVNjNWJwaG5x?=
- =?utf-8?B?WWRJQjIySG1WY0Vrd21zUy9mbXhpL0NWUFZUNFJpaTlZSERIcTlmZ2cwek16?=
- =?utf-8?B?RWFPUDN6NG9Yc2w3a3B0OTUxM0JjYTIwRUZKNlUwNXFUZE45OXJoOHB1d0ll?=
- =?utf-8?B?Y3I1K3RKbjd3K1ozdlphV2tjcXdxcndHaERHNzZpclErRVhzUFM2OVVLaEtS?=
- =?utf-8?B?d2ZRZ240NWtCWFlLbk5aQ2JURmk3T1VIWWpVTFVDckhyTFpvenNYL2YvWVNZ?=
- =?utf-8?B?RFRyVUE1akhERzVXN0tFdkJ4ZWVUUWptTllZb29jQ3ZXUkthTWtLS3lwSHAx?=
- =?utf-8?B?UFZVdCtYWVdITkFmSHpwNHgwaXM2UTVvbmUzVTNCdGp1Vmp2MVlVZDhPMXpy?=
- =?utf-8?B?SUwraS9JWVdqVnN2ZGdIaGpzNGxQSHlBQnpBajVtZUVOU1dUT1I4UjB0Q2xz?=
- =?utf-8?B?elBFbi9GMkZKNzRGQlhQeDZobWYyVm5QVUdZYXp1NXV1cis0bkhIRFB1M3FI?=
- =?utf-8?B?OW0rMVlYcmNXUnU0c2JYaGRtUmpsbXl1ekZGaW1ONFo2RmFwLzROVC9UYVd0?=
- =?utf-8?B?N2N6Z0FBS0t0WnBGS2trVjkvbWtaaDZOK1pjMGY0d3NaV1FPYWw3YzlVTnZD?=
- =?utf-8?B?bDBTeFcxZEYyeUZKMkRqWjRwS1RYVkM2MHNXNXF0bmRneDFYVm9PTU9QY2hV?=
- =?utf-8?B?SXhLZi81bzdQdlZTM2g0UHB5YjdVU3RtY2FINFZMWEppVW9pc0pFbVhwT04w?=
- =?utf-8?B?T1k1L3JrclBmam1UVVAzaHlsYS9sVXM5cFdxQmJpNm9CaXNuVTRjd3JkTUhU?=
- =?utf-8?B?L0RCdURBZGVXVFZWRjBkdDV0cjZyWm1zYlA3WFJFZEdISkRZTjM0cUhVc2xK?=
- =?utf-8?B?V2x2em9YRGllQVNyZlZUWTBJWXQ0Wmd2Y2lSRld5b0tMQTVnQVN6OFltTTlE?=
- =?utf-8?B?U2F3TDdLM3ZuUjVZR3VwWm9mNFdOWmw4cmZzZGkzNkwrOHN4S1FYZ1FHUW4w?=
- =?utf-8?B?RW8rRWRLcGxNVlR2WUhTeHhkU1UwcGhGR2VUWm54T0pYYU4vTFhrWGNDWmsz?=
- =?utf-8?B?YXpnK3hMazY0ZlBxMXV3L3dqeCsrRFdkYndCU1daS3pHQnBwaEwvYW85SVZn?=
- =?utf-8?B?eUp3VFJFaitnZlRHaCtSMTZhSTJObnZ6RlcwRXMvTkEvTjA0NGZ3QWlyUUdV?=
- =?utf-8?B?dlFlcVUxTTFuUkpjL0RZc2xrMnJjNHlJbUYvY2xLUGtsSUEyb1dmN0JwL29L?=
- =?utf-8?B?bFYrWTlkZ0ZPb0diSS8rN3ExR1dwdk1Tb3NkUjNCQ2JseldMS0U0NUxRSFBC?=
- =?utf-8?B?emJrRFB1WVRkb1lpNnRkUUFQY0pXaUdMdmNNQVNSZy96RDN2aWlMK1BaS0lR?=
- =?utf-8?B?WGhEM3lFeFRpemdJajlVa3lSL3pEcFdoSS9PTDhoTGU5NnlCNFpUeGp3WjJP?=
- =?utf-8?B?RWI5UkxnMTZqdWdUZUdUZ2sweXRaYzRUWEd1UTlhbkhNV0hLT205UGdWN0Fn?=
- =?utf-8?B?VjgzOXVhZGN1QjhMUjFnUjMvSnI5MTd3blFBY282Vm1UcG1LbDFrMnh1cTVX?=
- =?utf-8?B?OHBsdzF0T2VnaWc1aEZFZlB6bUMzMDFwczBLbXZreVowY2pQdDFYczFzbTEw?=
- =?utf-8?B?K3RPR2xFYi9PU0xGL0dSVDRZWGJmM0FrQ1BHOHU2OEkvWUNLRjEvVDR2bERn?=
- =?utf-8?B?TjR3L1lCaHZML2RQSVF0TEVKQjd6Tm9PaXoyV0VFYWNxSFF6YUZZUC8zOWxV?=
- =?utf-8?B?T1FtZ1E4ckRFRmpvc0QrQ3EwSmJaQ2FncHZaUmZtZVI4cmJNV01ZMmdEOXdx?=
- =?utf-8?B?aEhVei83TEhpcFVYdDU4cERQMTB5bGthSGR6RXlwUHVYakNDWUQ1TDBhVmhM?=
- =?utf-8?B?dENjTnJ4Qk9vVm1ZOTdIV2Fkb29zOFJod2FhcFZhMWpncnFtVGd2S2tBZW1m?=
- =?utf-8?B?cStua2pqUm1KVzJvdWRZWXJRaGdaMTh3R3FOZFJhTWVNOUdVMzdhZlg1VU91?=
- =?utf-8?B?MUtncVo0ZEorYU5DU0QxTWsxcFdzTEtWdm5xa01rRG9YUGJhTXNJQjJlakJX?=
- =?utf-8?B?VDZkUFNOVUIvbk4wYnJlWHVaNkFBcXN4SmdYSC9nMTNkck5zdnkvY3JEUlVj?=
- =?utf-8?B?a0R5dDV2YWxzb04wdml2Qm92Yk1FN1FKN1lzUy9XZHB4ZFpKaDRyeDc3QjZP?=
- =?utf-8?Q?TLWEwnkrSbsHEt2+9cuPmT4=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 796b6709-34f4-494f-dd46-08dcbc3ebf78
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 08:54:47.2084
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zWmIKc12NkYwDt53hr/EX7782uMQLZr1lX/q7aB/RWvtXKskfMztP9JyHOY7ZbAL3ZPnz8PPX3iWk4Eb0wxqhXIg+woJxYYtdV4ds3mRNi4/aKL+o2mF2tF8w+2OaJpL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR01MB7611
+Content-Transfer-Encoding: 8bit
+
+This series implements support for software tag-based KASAN using the
+RISC-V pointer masking extension[1], which supports 7 and/or 16-bit
+tags. This implementation uses 7-bit tags, so it is compatible with
+either hardware mode. Patch 3 adds supports for KASAN_SW_TAGS with tag
+widths other than 8 bits.
+
+Pointer masking is an optional ISA extension, and it must be enabled
+using an SBI call to firmware on each CPU. If the SBI call fails on the
+boot CPU, KASAN is globally disabled. Patch 2 adds support for boot-time
+disabling of KASAN_SW_TAGS.
+
+The SBI call is part of the upcoming SBI Firmware Features (FWFT)
+extension[2][3]. Since generic FWFT support is not yet merged to Linux,
+I open-coded the sbi_ecall() in this RFC to keep this series focused.
+
+With my RISC-V KASAN fixes series[4] applied, this implementation passes
+all but one of the KASAN KUnit tests. It fails vmalloc_percpu(), which
+also fails on arm64:
+
+      ...
+      ok 65 vmalloc_oob
+      ok 66 vmap_tags
+      ok 67 vm_map_ram_tags
+      # vmalloc_percpu: EXPECTATION FAILED at mm/kasan/kasan_test.c:1785
+      Expected (u8)((u8)((u64)(c_ptr) >> 57)) < (u8)0x7f, but
+          (u8)((u8)((u64)(c_ptr) >> 57)) == 127 (0x7f)
+          (u8)0x7f == 127 (0x7f)
+      # vmalloc_percpu: EXPECTATION FAILED at mm/kasan/kasan_test.c:1785
+      Expected (u8)((u8)((u64)(c_ptr) >> 57)) < (u8)0x7f, but
+          (u8)((u8)((u64)(c_ptr) >> 57)) == 127 (0x7f)
+          (u8)0x7f == 127 (0x7f)
+      # vmalloc_percpu: EXPECTATION FAILED at mm/kasan/kasan_test.c:1785
+      Expected (u8)((u8)((u64)(c_ptr) >> 57)) < (u8)0x7f, but
+          (u8)((u8)((u64)(c_ptr) >> 57)) == 127 (0x7f)
+          (u8)0x7f == 127 (0x7f)
+      # vmalloc_percpu: EXPECTATION FAILED at mm/kasan/kasan_test.c:1785
+      Expected (u8)((u8)((u64)(c_ptr) >> 57)) < (u8)0x7f, but
+          (u8)((u8)((u64)(c_ptr) >> 57)) == 127 (0x7f)
+          (u8)0x7f == 127 (0x7f)
+      not ok 68 vmalloc_percpu
+      ok 69 match_all_not_assigned
+      ok 70 match_all_ptr_tag
+      ...
+  # kasan: pass:62 fail:1 skip:8 total:71
+  # Totals: pass:62 fail:1 skip:8 total:71
+
+I'm not sure how I'm supposed to hook in to the percpu allocator.
+
+When running with hardware or firmware that doesn't support pointer
+masking, the kernel still boots successfully:
+
+  kasan: test: Can't run KASAN tests with KASAN disabled
+      # kasan:     # failed to initialize (-1)
+  not ok 1 kasan
+
+If stack tagging is enabled but pointer masking is unsupported, an extra
+change (patch 7) is required so all pointers to stack variables are
+tagged with KASAN_TAG_KERENL and can be dereferenced. I'm not sure if
+this change should be RISC-V specific or made more generic.
+
+This series can be tested by applying patch series to LLVM[5], QEMU[6],
+and OpenSBI[7].
+
+[1]: https://github.com/riscv/riscv-j-extension/releases/download/pointer-masking-v1.0.0-rc2/pointer-masking-v1.0.0-rc2.pdf
+[2]: https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ext-firmware-features.adoc
+[3]: https://github.com/riscv-non-isa/riscv-sbi-doc/pull/161
+[4]: https://lore.kernel.org/linux-riscv/20240801033725.28816-1-samuel.holland@sifive.com/
+[5]: https://github.com/SiFiveHolland/llvm-project/commits/up/riscv64-kernel-hwasan
+[6]: https://lore.kernel.org/qemu-devel/20240511101053.1875596-1-me@deliversmonkey.space/
+[7]: https://lists.infradead.org/pipermail/opensbi/2024-August/007244.html
 
 
+Samuel Holland (7):
+  kasan: sw_tags: Use arithmetic shift for shadow computation
+  kasan: sw_tags: Check kasan_flag_enabled at runtime
+  kasan: sw_tags: Support tag widths less than 8 bits
+  riscv: Do not rely on KASAN to define the memory layout
+  riscv: Align the sv39 linear map to 16 GiB
+  riscv: Implement KASAN_SW_TAGS
+  kasan: sw_tags: Support runtime stack tagging control for RISC-V
 
-On 13/08/2024 23:20, Krzysztof Kozlowski wrote:
-> On 13/08/2024 10:41, Chanh Nguyen wrote:
->> Add device tree bindings and an example for max31790 device.
->>
->> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
-> 
-> 
->> +
->> +examples:
->> +  - |
->> +    i2c {
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      fan-controller@21 {
->> +        compatible = "maxim,max31790";
->> +        reg = <0x21>;
->> +        clocks = <&sys_clk>;
->> +        resets = <&reset 0>;
-> 
-> This node is incomplete. I asked to make the example complete, not by
-> adding two incomplete examples or other ways... The binding description
-> says this device controls fan. If so, where is the fan here?
-> 
-> IOW, keep only one, complete example.
-> 
-> Rest looks good. With this addressed (and optionally with maintainer
-> change, which Conor asked):
+ Documentation/arch/riscv/vm-layout.rst | 10 ++---
+ Documentation/dev-tools/kasan.rst      | 14 +++---
+ arch/arm64/Kconfig                     | 10 ++---
+ arch/arm64/include/asm/kasan.h         |  6 ++-
+ arch/arm64/include/asm/memory.h        |  8 ++++
+ arch/arm64/include/asm/uaccess.h       |  1 +
+ arch/arm64/mm/kasan_init.c             |  7 ++-
+ arch/riscv/Kconfig                     |  4 +-
+ arch/riscv/include/asm/cache.h         |  4 ++
+ arch/riscv/include/asm/kasan.h         | 29 +++++++++++-
+ arch/riscv/include/asm/page.h          | 21 +++++++--
+ arch/riscv/include/asm/pgtable.h       |  6 +++
+ arch/riscv/include/asm/tlbflush.h      |  4 +-
+ arch/riscv/kernel/setup.c              |  6 +++
+ arch/riscv/kernel/smpboot.c            |  8 +++-
+ arch/riscv/lib/Makefile                |  2 +
+ arch/riscv/lib/kasan_sw_tags.S         | 61 ++++++++++++++++++++++++++
+ arch/riscv/mm/init.c                   |  2 +-
+ arch/riscv/mm/kasan_init.c             | 30 ++++++++++++-
+ arch/riscv/mm/physaddr.c               |  4 ++
+ include/linux/kasan-enabled.h          | 15 +++----
+ include/linux/kasan-tags.h             | 13 +++---
+ include/linux/kasan.h                  | 10 ++++-
+ mm/kasan/hw_tags.c                     | 10 -----
+ mm/kasan/kasan.h                       |  2 +
+ mm/kasan/sw_tags.c                     |  9 ++++
+ mm/kasan/tags.c                        | 10 +++++
+ scripts/Makefile.kasan                 |  5 +++
+ scripts/gdb/linux/mm.py                |  5 ++-
+ 29 files changed, 255 insertions(+), 61 deletions(-)
+ create mode 100644 arch/riscv/lib/kasan_sw_tags.S
 
-Thank Krzysztof for your review!
+-- 
+2.45.1
 
-I'll keep only complete example. I'm going to push patch v4 in the 
-coming days.
-
-Thanks,
-Chanh
-
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
 
