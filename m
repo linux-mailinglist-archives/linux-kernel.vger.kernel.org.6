@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-286963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537FF9520E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:17:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353309520F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE0811F2416E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:17:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639A31C20B7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FF11B3F25;
-	Wed, 14 Aug 2024 17:17:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380B21BBBE2;
+	Wed, 14 Aug 2024 17:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="Oahb3T25"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675C11BBBCC;
-	Wed, 14 Aug 2024 17:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5672111A1
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723655854; cv=none; b=X3mBkKvbMnxLmE9a2lw9peCqVqjEvXuyYKVewF4SMCs0YYA8mdt2HSLSp/r7YFkBf9P++DJHgHMPGUo39+2kDPxUtIH0QQcZ1pOQaGlIXXOI1Rvfol7csSCTnYXK7gnepzoqtlEa+YOls/ixFHxepobhBkSmseMeBCQavKt9y6E=
+	t=1723655925; cv=none; b=kSGOouLf+j4LqGhPLFzA9aL0iB+MuDJeZ2fw8Sispt/4l31PVOa8TqYbOzWHjV2Q8sQfiEH5xpC3AyqMoE4KiNc37IQKpcRmiTB13TrNOFA3Hv8BesVwfAwuP1UakHXxI8BYYdBDJ9lYjPr53aDZcvSmfykqodPr97xhQ9I0ZPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723655854; c=relaxed/simple;
-	bh=HMX2/eLoTDnU6yYOYrTCte8AzPyhAqThSNP5KPe/mAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VBOTdoOEkrujYJvZetxLuCHrWYKqpWfcOJr1TW37cdqm2OrfInigU1ywIOI25PEay5iGsBMzLxcjVs7m1yyI/hGZLIi9H3x0GQm64pJ3ZAT93DOhv9x2KfeGyKAP6cuYfPOvv89nc2bRfnfurchqQBaNdYrUfih6i5ZE7xLmEDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF0AC4AF0A;
-	Wed, 14 Aug 2024 17:17:32 +0000 (UTC)
-Date: Wed, 14 Aug 2024 13:17:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masahiro
- Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers
- <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni
- <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v5 1/4] kbuild: add mod(name,file)_flags to assembler
- flags for module objects
-Message-ID: <20240814131746.0a226e34@gandalf.local.home>
-In-Reply-To: <20240716031045.1781332-2-kris.van.hees@oracle.com>
-References: <20240716031045.1781332-1-kris.van.hees@oracle.com>
-	<20240716031045.1781332-2-kris.van.hees@oracle.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723655925; c=relaxed/simple;
+	bh=6mmYT3J4QwfeMniA6nvhnCYk9hKmHhhuuvwlFZWssw8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qxT+gtbi6mRFyPn2VW8Ki3F6AWverSGyGrMvLea/fhoZflQrZ+Ji76JCtUB1kTH2dqpbuZoI6tm1d8vsiNwILmA98+SR4rGYPJNMqa+Z9ubpA9qLy7szo18+VstLBhSwR0ZYZT9DyJdmvDofrgjQlS9kHB2YUhNtpch7sJ0O0YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=Oahb3T25; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1723655890; x=1724260690; i=efault@gmx.de;
+	bh=5ibHj9AV3wDKWhb2rF9aNO9l1Q969wURFhpMFe3wYuE=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Oahb3T25cOvNe+TE9o5Bex8oUMv8kx3csVFLI9aUQ0G5HjpGow8QQqZleghJhrKu
+	 oTrVR+QPm6YzEbTQjIbthG6xQFXrU2qjdTt01ib91d62bFqszri2UR6UVBP5y5oI+
+	 U98UO947U2mKRVsoe4rTR/1EX5y9Be7s1SlJjd4JSf5Jda4fsknPIoEqtL/97vJHL
+	 EpGL8JjMLMsP69ebh/01oyc1rGpF19SXGoxHhQIyz28Tg6DXe3pBY7VqxrRZQl8uX
+	 WAFJx+C9rY32024y/UA5s68UkJASmxnisbZGtufGRjY3Xl/R5iuQA5aOUXpEGrEae
+	 JqnzEtoFrEmHLAvvGA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.61]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mlf0K-1rwf5s1mao-00lyT2; Wed, 14
+ Aug 2024 19:18:10 +0200
+Message-ID: <9cc41a877aa2d263b47de698d3ebe724961f9e55.camel@gmx.de>
+Subject: Re: [PATCH 00/24] Complete EEVDF
+From: Mike Galbraith <efault@gmx.de>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
+ juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+ linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
+Date: Wed, 14 Aug 2024 19:18:08 +0200
+In-Reply-To: <CAKfTPtAjXejbsGS+Wd0maiiUyCgSb2xPVZGUXUPCSw_kNLJRDA@mail.gmail.com>
+References: <20240727102732.960974693@infradead.org>
+	 <CAKfTPtALe942tjoyq1RqSYyM40PG+tfEY8skRDxRM1daWLSKUg@mail.gmail.com>
+	 <1572d0f2646312767a3ef8b72f740c9033163bf3.camel@gmx.de>
+	 <CAKfTPtAjXejbsGS+Wd0maiiUyCgSb2xPVZGUXUPCSw_kNLJRDA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5YGAKM5g2hwyF31VY5oQGLv7nCzD1JLJfRdkUOMQO8s1wcgbSVU
+ CLtlneyylI+QQMMzpvKdI/c6+VBi3PP4PdGd9jKs9c8Q1eentBnUchFQFbNEaPjZROnD0m9
+ ZnTev0mbcNlats2vPzaZ7ETXi40xmPKIViaWZY9OovDKm3s+zQumDx9tNpwAih0ehUdKD13
+ HH8jZqYK55SdHSelOCikw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vq1iCbiKo+k=;9HDfadfkAHE/RDL8YMdM/qKDhM1
+ 8omgIfw1UhMtJHokU5k9w+BRIahi9L5Pq5KJ6P3+fx5Hcy76WHTBxFKo82I0pY6XyflFRwo/m
+ IHH01plvruu1jPVcvNFk94W4ajk8C4g+TRTa9AFMao+ta1FZDexy4eKMGPzHGsXoFzyo+x8z1
+ Uc+9Zcmagc4hpphbvsK8a3K7Psd7bigAp+YTFcAl3CsX8VbW2PtKQOuoJxLMSG02IKMvb2zXo
+ EVObS+VbN30cUZXCHX854Ta6rdS3IElq3hJtrgBEKbWLZuMJkymqSrQ4y9EPD35S4bk9uVhlh
+ R6AnpQz6YS9lRoWI/R6esHue5ofUSd+rm7ftonNwcVu5QJSw/ziaa7pE+aym7Uk5AFs+wpN98
+ Gdkvdb7mo7zdyCAv0kgbDJKNg/RcC2DiYZqFn3RbwERXLb2nI8T2Qd37iYwXFpccwe60Splst
+ hGeEbIAMr+KNpaTC6KAHVFKOnuXWghxUKQu0a3ArXzyzeUslJg/hnXWsA451gy6pNUPE5vqYQ
+ jS6hDQWiRsiq7nBiJy45yHf/6tzacvrQlHzKRXhqy9UWwhHJp/+Zmbi3iI+UwNonI3qqgQTvK
+ HdFHEryy4Ljg2iS8MIc7QjnRohAigwop4QojEmthWPbocifpVfJMWaby3H2gbxZ85C097dblv
+ /lBL5H+UyOXfODf8MJ9/oPtr4Pwz3dnQ7Atzn1uPadXbnNivri7pbPrVIr6CRS90Gq0l3KrPk
+ XVpH6cK8Mj0DdKeZ5OVoPf6UwPmMmVxepo1BGyPcqa+pth3pNUTz4yLLnb7wWRi9HKICTUEin
+ bM/fTiaWkXmCJMQM/Hvectlw==
 
-On Mon, 15 Jul 2024 23:10:42 -0400
-Kris Van Hees <kris.van.hees@oracle.com> wrote:
+On Wed, 2024-08-14 at 18:59 +0200, Vincent Guittot wrote:
+> On Wed, 14 Aug 2024 at 18:46, Mike Galbraith <efault@gmx.de> wrote:
+> >
+> > On Wed, 2024-08-14 at 16:34 +0200, Vincent Guittot wrote:
+> > >
+> > > While trying to test what would be the impact of delayed dequeue on
+> > > load_avg, I noticed something strange with the running slice. I have=
+ a
+> > > simple test with 2 always running threads on 1 CPU and the each thre=
+ad
+> > > runs around 100ms continuously before switching to the other one
+> > > whereas I was expecting 3ms (the sysctl_sched_base_slice on my syste=
+m)
+> > > between 2 context swicthes
+> > >
+> > > I'm using your sched/core branch. Is it the correct one ?
+> >
+> > Hm, building that branch, I see the expected tick granularity (4ms).
+>
+> On my side tip/sched/core switches every 4ms but Peter's sched/core,
+> which is delayed queued on top of tip/sched/core if I don't get it
+> wrong, switches every 100ms.
 
+FWIW, I checked my local master-rt tree as well, which has Peter's
+latest eevdf series wedged in (plus 4cc290c20a98 now).. it also worked
+as expected.
 
-As mentioned before, should start off with the goal.
-
-  In order to create the file at build time, modules.builtin.ranges, that
-  contains the range of addresses for all built-in modules, there needs to
-  be a way to identify what code is compiled into modules.
-
-  To identify what code is compiled into modules during a kernel build, ...
-
-
-
-> In order to be able to identify what code is compiled into modules (even
-> built-in modules) during a kernel build, one can look for the presence
-> of the -DKBUILD_MODFILE and -DKBUILD_MODNAME options in the compile
-> command lines.  A simple grep in .*.cmd files for those options is
-> sufficient for this.
-> 
-> Unfortunately, these options are only passed when compiling C source files.
-> Various modules also include objects built from assembler source, and these
-> options are not passed in that case.
-> 
-> Adding $(modfile_flags) to modkern_aflags (similar to modkern_cflahs), and
-> adding $(modname_flags) to a_flags (similar to c_flags) makes it possible
-> to identify which objects are compiled into modules for both C and
-> assembler soure files.
-
-The rest looks good.
-
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
-
-> 
-> Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> ---
->  scripts/Makefile.lib | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 9f06f6aaf7fc..f4aec3553ff2 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -238,7 +238,7 @@ modkern_rustflags =                                              \
->  
->  modkern_aflags = $(if $(part-of-module),				\
->  			$(KBUILD_AFLAGS_MODULE) $(AFLAGS_MODULE),	\
-> -			$(KBUILD_AFLAGS_KERNEL) $(AFLAGS_KERNEL))
-> +			$(KBUILD_AFLAGS_KERNEL) $(AFLAGS_KERNEL) $(modfile_flags))
->  
->  c_flags        = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
->  		 -include $(srctree)/include/linux/compiler_types.h       \
-> @@ -248,7 +248,7 @@ c_flags        = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
->  rust_flags     = $(_rust_flags) $(modkern_rustflags) @$(objtree)/include/generated/rustc_cfg
->  
->  a_flags        = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
-> -		 $(_a_flags) $(modkern_aflags)
-> +		 $(_a_flags) $(modkern_aflags) $(modname_flags)
->  
->  cpp_flags      = -Wp,-MMD,$(depfile) $(NOSTDINC_FLAGS) $(LINUXINCLUDE)     \
->  		 $(_cpp_flags)
-
+	-Mike
 
