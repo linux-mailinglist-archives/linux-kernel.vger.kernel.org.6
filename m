@@ -1,178 +1,170 @@
-Return-Path: <linux-kernel+bounces-285708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C609951197
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:31:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F12795119A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099261F2454C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:31:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC9E7B24309
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAC717C68;
-	Wed, 14 Aug 2024 01:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zj1zR6PI"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0194817721;
+	Wed, 14 Aug 2024 01:33:25 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE04171C2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0B0195;
+	Wed, 14 Aug 2024 01:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723599103; cv=none; b=ijwV3y9MZ0OCbmyNOzn8OX6mWpeZTcX5PLZXGUO5WDihwTyffskctIoIZsPvOxIwmA0Sz+QlKVhn2B5z/Viq7DRtEe5UH2HQ2CB77aaJcFkZkmepPaAlM7uysqkjD57balYKlleAr9sDlA8nfbASOsdZG54ALWYVV72717nQOQo=
+	t=1723599204; cv=none; b=fVFCxTB+2E1EASo5ccZofkGhdwzv0RNwbLcqyCv8QQZcNg+GJjYKgbEAuXaOOmi6YdmPqW+d5wW0yGfMNLdR4VBZFHr7acbv5idq3Vz1GX5uizUqtl6ab4lYK26peCfNB/Y7+gGXzcS0QKlecc/MfDzPcv+HnqL2gwK65zynRW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723599103; c=relaxed/simple;
-	bh=8o4Icar/a4At+/b8xaGVPXtrtbM9FsaQ+MTRBWypSS4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DjVdm2STHnh2M7JqtvLWDMx4OsXwBKqRS2ZzN8pjz429cErgD5JUH78U3TSS489DltyJWathysadlKW89oFofyy1xfqSJwFI2jK+m1A0cFySFfIT6H0nOzWvhPG8bOj9sths8twLmJ/RoEWxTJSLoc2hYCKID4NxyHzU7vM8+xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zj1zR6PI; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-672bea19c63so147194347b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:31:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723599101; x=1724203901; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+sFZ3SIAlPQj6ielgYFy5RPMkg4fE3WIWVRua/D7Dlk=;
-        b=Zj1zR6PIdAsgEuN+D4yiK6ECAXgFYw/RYkbsMuEKjFE84IpaD1r1ErCPmPZiA+pA80
-         lMDnPKyaa3wxXkq9i3+Gg+63FLp7EGxs6OwOgK7d+ZK0qkRZCUGfviZCYEurHp/8S+vJ
-         W7gHF6zSO7z5GYeMeiYLzr79ZqBt7U9/PTfgMNCYLfAJ6sV4WXDKVFlmbRIj+zS94MOP
-         rwkZC50UzvFI7KHGDFSuyjiF+o+0iEg4J9/UymEdQbKTqeY6NF8ETcKSncvgOFW9qyrX
-         KYitvlPwsgd6lzHZuto4uuKU0DUA9IHbRV3RC/phqWyWYACVx8QgPhDYqfzGVMz53ask
-         KRxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723599101; x=1724203901;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+sFZ3SIAlPQj6ielgYFy5RPMkg4fE3WIWVRua/D7Dlk=;
-        b=duChxhIa1TM9xrCOdohKQSpow/sFjTG54EdkKkT2V3qUhCCxIXf/Nibq9WBvcP5X20
-         jq33Z4t/D77F3nwvAM80a8cb2ywUIOaN/t4hnkFrUg++Aj0jVUUB8L0wOWMGENAuAvIY
-         H4vQwVRqYwIvgkhAfxirAbKjWetVj8wez3DLjOsEaxxWb32PsETH1Kz2/0NPWECl62v2
-         HzAS+x7hZCyOKQNLgSKgKelOVE+VRMscUlI9rLbE2agTpDo+7lqpPbVVIQH1P//AlZcU
-         rEX/wD3B5Uj69L5Km9BiLXDJl2KX5+V8NwMFGQS2bGHCukUAdjJvLmHFUcsjnBsbfhwI
-         Kgmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOX7+p6FDIm9HstNuD2iDhwJOGBOHm6v9wwa8+KXChMNL4FxmAvmBlCzmTzXT/CI//DPjoqICFBSOqz7n/Wos/5FitXOnmEidaLxtN
-X-Gm-Message-State: AOJu0YwGIiLuTgehmLQec8PsomXquG0wG+kXVlKPFHfEv39KZzHqyvKN
-	EHgH8g2oNyEokXdAShCVGywUSb1oZu+MlhhiH7OdenSRX2bA7vfGnbAas1pScrLNWLv3ag8VQG8
-	bVw==
-X-Google-Smtp-Source: AGHT+IErM1oyl6dX79PLFBbS0Ue2cTuqm2deVMm1K7Fx1UQZ6ahMkuyTT3QbjPRcQErn+dpEqRps5VUDPf4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:770a:0:b0:64a:d9c2:42c1 with SMTP id
- 00721157ae682-6ac9913772fmr296287b3.5.1723599100911; Tue, 13 Aug 2024
- 18:31:40 -0700 (PDT)
-Date: Tue, 13 Aug 2024 18:31:39 -0700
-In-Reply-To: <Zrv/60HrjlPCaXsi@ls.amr.corp.intel.com>
+	s=arc-20240116; t=1723599204; c=relaxed/simple;
+	bh=wDTRoJXq1+5WgaMwT8JkuFyCS8wfq1HfaF/3VBgpZo8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PZYZ1QIPjJMbUF5eH4TwtQE2VYlN9DL2SD8rTpFL0UOtLGQG4tdYUweoszvbaLQ3XlPwsBUIvBvEVbxOOXI6JzwC3rpVGn0DtiSxB33Y0bwEsAMRcSGIUwXxRjvlRpV3bSDoTqEDtIPy0whKJOBvEMJYTrimHXU0EqeADEgZPts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wk9ft0cnNz1HFwp;
+	Wed, 14 Aug 2024 09:30:14 +0800 (CST)
+Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 07FEB1402CF;
+	Wed, 14 Aug 2024 09:33:18 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 14 Aug 2024 09:33:17 +0800
+Subject: Re: [PATCH] vfs: drop one lock trip in evict()
+To: Mateusz Guzik <mjguzik@gmail.com>, <brauner@kernel.org>
+CC: <viro@zeniv.linux.org.uk>, <jack@suse.cz>, <jlayton@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+References: <20240813143626.1573445-1-mjguzik@gmail.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <0be88aea-9438-2c74-762e-b8aaa549fd40@huawei.com>
+Date: Wed, 14 Aug 2024 09:33:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240813051256.2246612-1-binbin.wu@linux.intel.com>
- <20240813051256.2246612-2-binbin.wu@linux.intel.com> <ZrucyCn8rfTrKeNE@ls.amr.corp.intel.com>
- <b58771a0-352e-4478-b57d-11fa2569f084@intel.com> <Zrv/60HrjlPCaXsi@ls.amr.corp.intel.com>
-Message-ID: <ZrwI-927_7cBxYT1@google.com>
-Subject: Re: [PATCH v2 1/2] KVM: x86: Check hypercall's exit to userspace generically
-From: Sean Christopherson <seanjc@google.com>
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: Kai Huang <kai.huang@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
-	michael.roth@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+In-Reply-To: <20240813143626.1573445-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm000013.china.huawei.com (7.193.23.81)
 
-On Tue, Aug 13, 2024, Isaku Yamahata wrote:
-> On Wed, Aug 14, 2024 at 11:11:29AM +1200,
-> Kai Huang <kai.huang@intel.com> wrote:
+ÔÚ 2024/8/13 22:36, Mateusz Guzik Ð´µÀ:
+> Most commonly neither I_LRU_ISOLATING nor I_SYNC are set, but the stock
+> kernel takes a back-to-back relock trip to check for them.
 > 
-> > 
-> > 
-> > On 14/08/2024 5:50 am, Isaku Yamahata wrote:
-> > > On Tue, Aug 13, 2024 at 01:12:55PM +0800,
-> > > Binbin Wu <binbin.wu@linux.intel.com> wrote:
-> > > 
-> > > > Check whether a KVM hypercall needs to exit to userspace or not based on
-> > > > hypercall_exit_enabled field of struct kvm_arch.
-> > > > 
-> > > > Userspace can request a hypercall to exit to userspace for handling by
-> > > > enable KVM_CAP_EXIT_HYPERCALL and the enabled hypercall will be set in
-> > > > hypercall_exit_enabled.  Make the check code generic based on it.
-> > > > 
-> > > > Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-> > > > ---
-> > > >   arch/x86/kvm/x86.c | 4 ++--
-> > > >   arch/x86/kvm/x86.h | 7 +++++++
-> > > >   2 files changed, 9 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > > index af6c8cf6a37a..6e16c9751af7 100644
-> > > > --- a/arch/x86/kvm/x86.c
-> > > > +++ b/arch/x86/kvm/x86.c
-> > > > @@ -10226,8 +10226,8 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
-> > > >   	cpl = kvm_x86_call(get_cpl)(vcpu);
-> > > >   	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
-> > > > -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
-> > > > -		/* MAP_GPA tosses the request to the user space. */
-> > > > +	if (!ret && is_kvm_hc_exit_enabled(vcpu->kvm, nr))
-> > > > +		/* The hypercall is requested to exit to userspace. */
-> > > >   		return 0;
-> > > >   	if (!op_64_bit)
-> > > > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> > > > index 50596f6f8320..0cbec76b42e6 100644
-> > > > --- a/arch/x86/kvm/x86.h
-> > > > +++ b/arch/x86/kvm/x86.h
-> > > > @@ -547,4 +547,11 @@ int kvm_sev_es_string_io(struct kvm_vcpu *vcpu, unsigned int size,
-> > > >   			 unsigned int port, void *data,  unsigned int count,
-> > > >   			 int in);
-> > > > +static inline bool is_kvm_hc_exit_enabled(struct kvm *kvm, unsigned long hc_nr)
-
-I would rather have "hypercall" in the name, "hc" never jumps out to me as being
-"hypercall". Maybe is_hypercall_exit_enabled(), user_exit_on_hypercall(), or just
-exit_on_hypercall()?
-
-I'd probably vote for user_exit_on_hypercall(), as that clarifies it's all about
-exiting to userspace, not from the guest.
-
-> > > > +{
-> > > > +	if(WARN_ON_ONCE(hc_nr >= sizeof(kvm->arch.hypercall_exit_enabled) * 8))
-> > > > +		return false;
-> > > 
-> > > Is this to detect potential bug? Maybe
-> > > BUILD_BUG_ON(__builtin_constant_p(hc_nr) &&
-> > >               !(BIT(hc_nr) & KVM_EXIT_HYPERCALL_VALID_MASK));
-> > > Overkill?
-> > 
-> > I don't think this is the correct way to use __builtin_constant_p(), i.e. it
-> > doesn't make sense to use __builtin_constant_p() in BUILD_BUG_ON().
-
-KVM does use __builtin_constant_p() to effectively disable some assertions when
-it's allowed (by KVM's arbitrary rules) to pass in a non-constant value.  E.g.
-see all the vmcs_checkNN() helpers.  If we didn't waive the assertion for values
-that aren't constant at compile-time, all of the segmentation code would need to
-be unwound into switch statements.
-
-But for things like guest_cpuid_has(), the rule is that the input must be a
-compile-time constant.
-
-> > IIUC you need some build time guarantee here, but __builtin_constant_p() can
-> > return false, in which case the above BUILD_BUG_ON() does nothing, which
-> > defeats the purpose.
+> It probably can be avoided altogether, but for now massage things back
+> to just one lock acquire.
 > 
-> It depends on what we'd like to detect.  BUILT_BUG_ON(__builtin_constant_p())
-> can detect the usage in the patch 2/2,
-> is_kvm_hc_exit_enabled(vcpu->kvm, KVM_HC_MAP_GPA_RANGE).  The potential
-> future use of is_kvm_hc_exit_enabled(, KVM_HC_MAP_future_hypercall).
-> 
-> Although this version doesn't help for the one in kvm_emulate_hypercall(),
-> !ret check is done first to avoid WARN_ON_ONCE() to hit here.
-> 
-> Maybe we can just drop this WARN_ON_ONCE().
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
 
-Yeah, I think it makes sense to drop the WARN, otherwise I suspect we'll end up
-dancing around the helper just to avoid the warning.
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> 
+> there are smp_mb's in the area I'm going to look at removing at some
+> point(tm), in the meantime I think this is an easy cleanup
+> 
+> has a side effect of whacking a inode_wait_for_writeback which was only
+> there to deal with not holding the lock
+> 
+>   fs/fs-writeback.c | 17 +++--------------
+>   fs/inode.c        |  5 +++--
+>   2 files changed, 6 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 4451ecff37c4..1a5006329f6f 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1510,13 +1510,12 @@ static int write_inode(struct inode *inode, struct writeback_control *wbc)
+>    * Wait for writeback on an inode to complete. Called with i_lock held.
+>    * Caller must make sure inode cannot go away when we drop i_lock.
+>    */
+> -static void __inode_wait_for_writeback(struct inode *inode)
+> -	__releases(inode->i_lock)
+> -	__acquires(inode->i_lock)
+> +void inode_wait_for_writeback(struct inode *inode)
+>   {
+>   	DEFINE_WAIT_BIT(wq, &inode->i_state, __I_SYNC);
+>   	wait_queue_head_t *wqh;
+>   
+> +	lockdep_assert_held(&inode->i_lock);
+>   	wqh = bit_waitqueue(&inode->i_state, __I_SYNC);
+>   	while (inode->i_state & I_SYNC) {
+>   		spin_unlock(&inode->i_lock);
+> @@ -1526,16 +1525,6 @@ static void __inode_wait_for_writeback(struct inode *inode)
+>   	}
+>   }
+>   
+> -/*
+> - * Wait for writeback on an inode to complete. Caller must have inode pinned.
+> - */
+> -void inode_wait_for_writeback(struct inode *inode)
+> -{
+> -	spin_lock(&inode->i_lock);
+> -	__inode_wait_for_writeback(inode);
+> -	spin_unlock(&inode->i_lock);
+> -}
+> -
+>   /*
+>    * Sleep until I_SYNC is cleared. This function must be called with i_lock
+>    * held and drops it. It is aimed for callers not holding any inode reference
+> @@ -1757,7 +1746,7 @@ static int writeback_single_inode(struct inode *inode,
+>   		 */
+>   		if (wbc->sync_mode != WB_SYNC_ALL)
+>   			goto out;
+> -		__inode_wait_for_writeback(inode);
+> +		inode_wait_for_writeback(inode);
+>   	}
+>   	WARN_ON(inode->i_state & I_SYNC);
+>   	/*
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 73183a499b1c..d48d29d39cd2 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -582,7 +582,7 @@ static void inode_unpin_lru_isolating(struct inode *inode)
+>   
+>   static void inode_wait_for_lru_isolating(struct inode *inode)
+>   {
+> -	spin_lock(&inode->i_lock);
+> +	lockdep_assert_held(&inode->i_lock);
+>   	if (inode->i_state & I_LRU_ISOLATING) {
+>   		DEFINE_WAIT_BIT(wq, &inode->i_state, __I_LRU_ISOLATING);
+>   		wait_queue_head_t *wqh;
+> @@ -593,7 +593,6 @@ static void inode_wait_for_lru_isolating(struct inode *inode)
+>   		spin_lock(&inode->i_lock);
+>   		WARN_ON(inode->i_state & I_LRU_ISOLATING);
+>   	}
+> -	spin_unlock(&inode->i_lock);
+>   }
+>   
+>   /**
+> @@ -765,6 +764,7 @@ static void evict(struct inode *inode)
+>   
+>   	inode_sb_list_del(inode);
+>   
+> +	spin_lock(&inode->i_lock);
+>   	inode_wait_for_lru_isolating(inode);
+>   
+>   	/*
+> @@ -774,6 +774,7 @@ static void evict(struct inode *inode)
+>   	 * the inode.  We just have to wait for running writeback to finish.
+>   	 */
+>   	inode_wait_for_writeback(inode);
+> +	spin_unlock(&inode->i_lock);
+>   
+>   	if (op->evict_inode) {
+>   		op->evict_inode(inode);
+> 
 
-I'm 50/50 on the BUILD_BUG_ON().  One one hand, it's kinda overkill.  On the other
-hand, it's zero generated code.
 
