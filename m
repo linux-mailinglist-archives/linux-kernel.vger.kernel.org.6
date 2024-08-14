@@ -1,136 +1,125 @@
-Return-Path: <linux-kernel+bounces-286808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B79951F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E36951F44
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E061F22739
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5BD1F23486
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CC71B8E9C;
-	Wed, 14 Aug 2024 15:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68611B86D6;
+	Wed, 14 Aug 2024 15:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LQUEMZ/X"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxmJ8WeY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F821B86D6;
-	Wed, 14 Aug 2024 15:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E804D1B5836;
+	Wed, 14 Aug 2024 15:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723651002; cv=none; b=e79bFxKig6ZtiIfqkOKvkr3rDhw9FX6qgdUWL8DQRj4erKh91PcR6Dp4dWyxDD3xsIGOkx0PZaW2DaeVCnUsnPQ7aAlHvA0a1zDYN+wQxAEk/NPHp23rRtCF+Mt14FCJAS8K0qk2Lto4ggCPCIYzVx82gWw16fkc5RVo+i5Vwac=
+	t=1723651139; cv=none; b=CFH96wEISpC0Gn9WloGGFke5LNtGYhsmnnJmCI+wSDuckQ1dIbQjw0WHrSH1lyudhJzKZq4N/nGwRwtSs7MTq5RsfsJpMpGMcWTXO0fVcUnuqLlwmFGMA54Vd3Zi3FmYy4dzDQhrrJsJcytUrkFkkKN+Yhze93UgJ3NEjJYEzMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723651002; c=relaxed/simple;
-	bh=vYX1a1MmqMr8/X+YQoiHlaqZccJOOMuyAUMSW2FO3Vo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WY9JnE2BX8vqmD0F2quAa6rZGIW2EEAW9MLlGUEU/LG9LnDr6DKrwH4L2d5RYlPB3ZeVIpV9ByX9SHDcDdF52s9pe3QnqdIBoNFPcLyevYmqd4aAXaZazkpMW+tcur4HcB6hpDZz2s4QU1uMuiToeDkkOiPXCMpt4BHJa5Hfofs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LQUEMZ/X; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EFuW1v083903;
-	Wed, 14 Aug 2024 10:56:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723650992;
-	bh=YRT8ehnV3o4I8flR6HSeR9+yqpIGmlMs9sl5d5CY6cE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=LQUEMZ/XDJeJdgad4A4V1BAgQ85/cjWOuKJZ84H7V7GSlAn/2AksIWoOs6jP9j7Ak
-	 vQTAWO6MKUoK5K1zFhKkzDv+FdF/3+bOp+RttEvzCCLk0EGFNAWApq07lKQ21msg+T
-	 lfMTiQIiXZFYCuwuTA0RTQ/FHvyNzQh1EYhUqY/M=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EFuW7O012859
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 14 Aug 2024 10:56:32 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
- Aug 2024 10:56:31 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 14 Aug 2024 10:56:32 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EFuRN4122507;
-	Wed, 14 Aug 2024 10:56:28 -0500
-Message-ID: <6216b2b4-f745-4183-8454-374d77a15379@ti.com>
-Date: Wed, 14 Aug 2024 21:26:26 +0530
+	s=arc-20240116; t=1723651139; c=relaxed/simple;
+	bh=ebhppG2jJl4kjOhx5+tliZesEl+lN1kt3DqcIRt8yZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdY6ce76uDg7c8o4ROKUMBMJ2QmVwDhzSADPxUEbrzvYKcs5FnXYJCQU9qfWdnVuV6BdouDf4pEsygR+pUF9VIPRsD05JXSAbS/qtlGAntrvIjKknqkgiWaMqoxGClvyBup5F1uBQs4Qka6zXtgKZVwVrvI4FHRBD+DKY3QpPZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxmJ8WeY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94EFDC4AF09;
+	Wed, 14 Aug 2024 15:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723651138;
+	bh=ebhppG2jJl4kjOhx5+tliZesEl+lN1kt3DqcIRt8yZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BxmJ8WeYYlLlmy6Yb1oBPI/Ih0P/gcHJgZ8Akq+m364iSP7/wMC6WeMk2j/DB30tG
+	 a9zujq/bdZo6ZkCAQdhX2xOkGiYj8wS2VXH+6m6jcgHIDPRpLIR/qReU4Uy0PUxTdl
+	 /ovdsFpzYXOq2yb7VOKF22Od2gchqWbXSi7XVDW+6d12hL2qBeGpt6s3VQFxlWvwWW
+	 FuAhJXGtfOmZ51Xv8PoJ1Hh8sSeoW4MVQ3nQzixrBVPW3AsElaSn0Ekw9mbuPLC1QV
+	 T0ogsAnAH6cNBESF6tRqFzsibDfHl3kfk9mtiWrj8Alk3xuurK1dkqbN3lpQWoZo7V
+	 r6s4VwdIg9mHA==
+Date: Wed, 14 Aug 2024 16:58:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v3 5/9] spi: dt-bindings: axi-spi-engine: document
+ spi-offloads
+Message-ID: <20240814-breeding-revolving-ba26c46164de@spud>
+References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+ <20240722-dlech-mainline-spi-engine-offload-2-v3-5-7420e45df69b@baylibre.com>
+ <20240726123836.GA998909-robh@kernel.org>
+ <9f57e41f-3534-4188-ae78-d323aa45e2a1@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: k3-j722s: Change timer nodes
- status to reserved
-To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <tony@atomide.com>, <afd@ti.com>, <hnagalla@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20240814104151.2038457-1-b-padhi@ti.com>
- <20240814104151.2038457-6-b-padhi@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240814104151.2038457-6-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZusG0p1O4JWHSMMm"
+Content-Disposition: inline
+In-Reply-To: <9f57e41f-3534-4188-ae78-d323aa45e2a1@baylibre.com>
 
 
-On 8/14/2024 4:11 PM, Beleswar Padhi wrote:
-> The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
-> use timers. Therefore, change the status of the timer nodes to
-> "reserved" to avoid any clash. Usage is described as below:
->
-> 	+===================+=============+
-> 	|  Remoteproc Node  | Timer Node  |
-> 	+===================+=============+
-> 	| main_r5fss0_core0 | main_timer0 |
-> 	+-------------------+-------------+
-> 	| c7x_0             | main_timer1 |
-> 	+-------------------+-------------+
-> 	| c7x_1             | main_timer2 |
-> 	+-------------------+-------------+
->
-> This change is already incorporated for timer nodes in the MCU voltage
-> domain.
->
-> Fixes: 3308a31c507c ("arm64: dts: ti: k3-am62: Add general purpose timers for am62")
+--ZusG0p1O4JWHSMMm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please check Fixes tag once.
+On Fri, Jul 26, 2024 at 02:17:00PM -0500, David Lechner wrote:
+> On 7/26/24 7:38 AM, Rob Herring wrote:
+> > On Mon, Jul 22, 2024 at 04:57:12PM -0500, David Lechner wrote:
+> >> The AXI SPI Engine has support for hardware offloading capabilities.
+> >> There can be up to 32 offload instances per SPI controller, so the
+> >> bindings limit the value accordingly.
+> >>
+> >> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> >> ---
+> >>
+> >> RFC: I have a few questions about this one...
+> >>
+> >> 1.  The trigger-source properties are borrowed from the leds bindings.
+> >>     Do we want to promote this to a generic binding that can be used by
+> >>     any type of device?
+> >=20
+> > I would make it specific to spi-offload.
+>=20
+> OK
+>=20
+> Meanwhile, we are working on some other ADCs (without SPI offload) and
+> finding that they are using basically the same sorts of triggers. And
+> on the driver side of things in this series, I'm getting feedback that
+> we should have some sort of generic trigger device rather than using,
+> e.g. a clk directly. If we need this same sort of trigger abstraction
+> for both SPI offloads and IIO device, it does seems like we might want
+> to consider something like a new trigger subsystem.
 
-AFAIR, J722S uses am62p not am62
+A "device" in the sense that "pwm-clk" is a device I suppose. Are any of
+these other things WIP on the lists (that I may have missed while I was
+away) or are they still something you're working on internally.
 
+--ZusG0p1O4JWHSMMm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> index dd3b5f7039d7..e03beb0b5aad 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> @@ -566,3 +566,16 @@ &mcasp1 {
->   	       0 0 0 0
->   	>;
->   };
-> +
-> +/* Timers are used by Remoteproc firmware */
-> +&main_timer0 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer1 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer2 {
-> +	status = "reserved";
-> +};
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrzUPQAKCRB4tDGHoIJi
+0jD4AP0dE6Z/BC26csx6JZBoqN6h2RHSUhANMGAyLa3RP+2TcAEA0T3231n3cMsw
+b3Z3Lf7qc9+eIRitPf5gvLRy2++mlg0=
+=uOLi
+-----END PGP SIGNATURE-----
+
+--ZusG0p1O4JWHSMMm--
 
