@@ -1,156 +1,107 @@
-Return-Path: <linux-kernel+bounces-285728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3518A9511E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:14:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6789511E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D59711F24452
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8EE81F24690
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CFB20B33;
-	Wed, 14 Aug 2024 02:14:21 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95821BF53;
+	Wed, 14 Aug 2024 02:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtJweBx/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185851CD00;
-	Wed, 14 Aug 2024 02:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAEC849C;
+	Wed, 14 Aug 2024 02:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723601660; cv=none; b=aX3W4X3Tgl2dBh6B9EEo/+KV8ti6xpXtXRHbUhzbuWNIFaF+iG0F/b6mrXfJPw+dvuW5hbqQFeEvTTeHetC3/kUy4Wpjsr8aJCn75Q5/D3Q3UJoXljqc7MNusbiw48YUkhOXHlkIspGs/ssU8VnrNBMZu11YUQIzdaLIgta6p/s=
+	t=1723601695; cv=none; b=UobwWVwNo+KgCLqVFU47Qi0rfC0s8Iz6kVPkfVpeQ3vTa6lul1ZByx0ESBaQF2EFDMtFqRaO8MaiubiCnyNzGs3tkelJ4ABq5QJfClo0oHznUh2T2Z8X5HA1wgeEij02+yTN+bgEkHp9220mbRluFiwWmLc2GHIyIzu6fbyJlCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723601660; c=relaxed/simple;
-	bh=HyJXPEkHYTcoabYth+nyd9Ejhv6HAsD8uYPKH7RVmbI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=sHXH8g1KEVyv/0ziK67zZCvvLEwHyTl/4t9EHCR7qnMc5PAB705S0Pyy7Us98dyLQBgpmXhgJaPp2VhGuIr0xuL0ZWoT7IaYpx5NWPTI8Tei6AwAXZqEiE9Tkp5zW3Qjusvq0ZH6UWvIUiMryWsVkzQbx0epMeSe2PxyUQY+rRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WkBdF5HHqz4f3jMf;
-	Wed, 14 Aug 2024 10:13:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7A38B1A058E;
-	Wed, 14 Aug 2024 10:14:07 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgB37ILpErxmVISHBg--.38663S3;
-	Wed, 14 Aug 2024 10:14:03 +0800 (CST)
-Subject: Re: [PATCH v2 0/6] iomap: some minor non-critical fixes and
- improvements when block size < folio size
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
- brauner@kernel.org, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <ZrwNG9ftNaV4AJDd@dread.disaster.area>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <feead66e-5b83-7e54-1164-c7c61e78e7be@huaweicloud.com>
-Date: Wed, 14 Aug 2024 10:14:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723601695; c=relaxed/simple;
+	bh=5zU34EoM6DMvuAuNmuBJXg4JRuV8D3pyQIgORZB1PRs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J3Erx6tKZyO5ab8xITm0EcgCiGNxS/stR5gCcX0ULGu0xZ4JnEHc8ghsvFFfFE3D2QlfsVkWyN2/jLSkSX10Mu8RW3YxaiCfygsssHbsSZx7G05UDLtgImpPW5WXElX1XfehFtNFREepvw0k4uqGk+SiFTJoii+f59nlCy8fX4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtJweBx/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10ED6C32782;
+	Wed, 14 Aug 2024 02:14:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723601694;
+	bh=5zU34EoM6DMvuAuNmuBJXg4JRuV8D3pyQIgORZB1PRs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gtJweBx/k4b/Lm+iZaSP4SV/cHBYXdg7IXZzetMA71VbUz/wzl38TyO4H7SvRSeQS
+	 ZCTOulEN6C0eOo3QDwqGk28Aonx1sHBcjkNrTwrClrr+S0OwyaaiIsQcuOEYWxiQPn
+	 pXS/zAwQtOiDKhWPNemVk5FfHk7fZqofh0P/WbtGm7UWK8baqbBst3SGJt9sTqowqa
+	 B3fQAYwo5ic8ORUdVZ+cYZZatT7DloIZ7DIckVRGNwfY2Mpo526kBKzOVgugqd1c9Q
+	 AjUynThHiLMGq6mR2624bu2Ra7uU6epqHFysm5/D0v/C57dptXbTSQNzXtUtyBLl8K
+	 KI+6jSORLoRIA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Bruno Ancona <brunoanconasala@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	mario.limonciello@amd.com,
+	me@jwang.link,
+	end.to.start@mail.ru,
+	git@augustwikerfors.se,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 01/13] ASoC: amd: yc: Support mic on HP 14-em0002la
+Date: Tue, 13 Aug 2024 22:14:32 -0400
+Message-ID: <20240814021451.4129952-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZrwNG9ftNaV4AJDd@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgB37ILpErxmVISHBg--.38663S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFyUCw15uF1kCrykZr15CFg_yoW5Xw17pF
-	Waga4kKryDGr1xt3s29wsrZF1vyw1rtF1rGF1rtwsrCFsxWF4IqFyIqr98ua95Jr4Ikr4j
-	vw1jqF97ury5Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.4
+Content-Transfer-Encoding: 8bit
 
-On 2024/8/14 9:49, Dave Chinner wrote:
-> On Mon, Aug 12, 2024 at 08:11:53PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Changes since v1:
->>  - Patch 5 fix a stale data exposure problem pointed out by Willy, drop
->>    the setting of uptodate bits after zeroing out unaligned range.
->>  - As Dave suggested, in order to prevent increasing the complexity of
->>    maintain the state_lock, don't just drop all the state_lock in the
->>    buffered write path, patch 6 introduce a new helper to set uptodate
->>    bit and dirty bits together under the state_lock, reduce one time of
->>    locking per write, the benefits of performance optimization do not
->>    change too much.
-> 
-> It's helpful to provide a lore link to the previous version so that
-> reviewers don't have to go looking for it themselves to remind them
-> of what was discussed last time.
-> 
-> https://lore.kernel.org/linux-xfs/20240731091305.2896873-1-yi.zhang@huaweicloud.com/T/
+From: Bruno Ancona <brunoanconasala@gmail.com>
 
-Sure, will add in my later iterations.
+[ Upstream commit c118478665f467e57d06b2354de65974b246b82b ]
 
-> 
->> This series contains some minor non-critical fixes and performance
->> improvements on the filesystem with block size < folio size.
->>
->> The first 4 patches fix the handling of setting and clearing folio ifs
->> dirty bits when mark the folio dirty and when invalidat the folio.
->> Although none of these code mistakes caused a real problem now, it's
->> still deserve a fix to correct the behavior.
->>
->> The second 2 patches drop the unnecessary state_lock in ifs when setting
->> and clearing dirty/uptodate bits in the buffered write path, it could
->> improve some (~8% on my machine) buffer write performance. I tested it
->> through UnixBench on my x86_64 (Xeon Gold 6151) and arm64 (Kunpeng-920)
->> virtual machine with 50GB ramdisk and xfs filesystem, the results shows
->> below.
->>
->> UnixBench test cmd:
->>  ./Run -i 1 -c 1 fstime-w
->>
->> Before:
->> x86    File Write 1024 bufsize 2000 maxblocks       524708.0 KBps
->> arm64  File Write 1024 bufsize 2000 maxblocks       801965.0 KBps
->>
->> After:
->> x86    File Write 1024 bufsize 2000 maxblocks       569218.0 KBps
->> arm64  File Write 1024 bufsize 2000 maxblocks       871605.0 KBps
-> 
-> Those are the same performance numbers as you posted for the
-> previous version of the patch. How does this new version perform
-> given that it's a complete rework of the optimisation? It's
+Add support for the internal microphone for HP 14-em0002la laptop using
+a quirk entry.
 
-It's not exactly the same, but the difference is small, I've updated
-the performance number in this cover letter.
+Signed-off-by: Bruno Ancona <brunoanconasala@gmail.com>
+Link: https://patch.msgid.link/20240729045032.223230-1-brunoanconasala@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/amd/yc/acp6x-mach.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> important to know if the changes made actually provided the benefit
-> we expected them to make....
-> 
-> i.e. this is the sort of table of results I'd like to see provided:
-> 
-> platform	base		v1		v2
-> x86		524708.0	569218.0	????
-> arm64		801965.0	871605.0	????
-> 
-
- platform	base		v1		v2
- x86		524708.0	571315.0 	569218.0
- arm64		801965.0	876077.0	871605.0
-
-Thanks,
-Yi.
+diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
+index 36dddf230c2c4..fa0096f2de224 100644
+--- a/sound/soc/amd/yc/acp6x-mach.c
++++ b/sound/soc/amd/yc/acp6x-mach.c
+@@ -423,6 +423,13 @@ static const struct dmi_system_id yc_acp_quirk_table[] = {
+ 			DMI_MATCH(DMI_BOARD_NAME, "8A3E"),
+ 		}
+ 	},
++	{
++		.driver_data = &acp6x_card,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "HP"),
++			DMI_MATCH(DMI_BOARD_NAME, "8B27"),
++		}
++	},
+ 	{
+ 		.driver_data = &acp6x_card,
+ 		.matches = {
+-- 
+2.43.0
 
 
