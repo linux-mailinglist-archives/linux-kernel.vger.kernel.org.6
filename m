@@ -1,173 +1,134 @@
-Return-Path: <linux-kernel+bounces-285856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15DA95137B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:26:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392F9951380
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229591C20C6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF832813C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B106B4D8A8;
-	Wed, 14 Aug 2024 04:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F544CE13;
+	Wed, 14 Aug 2024 04:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CnOibUQs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NuCPPJdN"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C6C3F9D2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F32D55C3E
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723609554; cv=none; b=DNfMieLEgGas3ajlZx7G8Xw783KUwuFzrU0p56iXRtCSuzb9L7woYV+Xr838D/n897QkySGU79ZNlZ+uwqf+HXrrjHAjjw+8IhutaF6naQzFovPT+4js4lRte8uhfki6kBoW518u25E2sfRF8Xx/3UBNMOvkp4tSJhoUprM5ryY=
+	t=1723609623; cv=none; b=NY2GmAIw9xKiukLpMCYGn3J9Ab9gBVvtmr1vO8x1U7oFoaSLieQ/1uC9wRhPxStdkgGKzrlK+AHeQg5DPjQDsvVD2gCmJCu/IwdH2g/xo1icba1UoQiqr2QzlzUvRNnAF796kpP2RixUBATdC8jcg7BDW8tIi9zYtsJTCUaHrvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723609554; c=relaxed/simple;
-	bh=Q8y1qhZoFQGUnbjLxGB7HQsVFkIBvrIGi1L0qwc8O5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hohkaM+5/wkWoVSPr4b1mu8ZHfr3gBh2Ivl/6DwLxQAbFFIlp7fKvV8y0iyummR0OfmQyANs1ljuGR28PPENCF+8F4djnoAEQSGnP2/n4J3VbC1MtmyaF31ZTHKRBOmluZqw2wNkBhLsYqZGyWHLR7sQDQuWD1QzYBcyhlnk8rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CnOibUQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61D0DC4AF09;
-	Wed, 14 Aug 2024 04:25:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723609554;
-	bh=Q8y1qhZoFQGUnbjLxGB7HQsVFkIBvrIGi1L0qwc8O5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CnOibUQsoFCKZkHYLGZFiWPZC4llhehvfV+64pxd9OkGQM67d4VuuCK4sc8lCybk5
-	 XL0kGEpqSk0hp8gh6YN26WizuAIQtqpjsKOhUHGi1zioFZx7mvQAaQnE6cgTwuLxqj
-	 rW9wu/eT87rvOznMjmTBrPIBQMwX5UBFi/5tAJtI=
-Date: Wed, 14 Aug 2024 06:25:51 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, kernel@collabora.com,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH RFC] regmap: maple: Switch to use irq-safe locking
-Message-ID: <2024081459-paralyses-antarctic-2499@gregkh>
-References: <20240814-regcache-maple-irq-safe-v1-1-1b454c5767de@collabora.com>
+	s=arc-20240116; t=1723609623; c=relaxed/simple;
+	bh=/OjkMvtUQsuACR66qNVjtKUOKRCwnBBFDXqQ+hO5LGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=awkY01A1EQmR1fpjLQ1CfiT77/vfr5AruV7GrSyrv4HoADvUJpF8dlCFfHyNynnsZNTRTIF24SqxkLYu2CD05WbzdQ3XezCP1FGkWhLHb4dgJN6BK0m0ALYIcgufFSgu7eicrybz29ZrIsYHEv4i5VKkKc/UPhwve1bGl6FlJ2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NuCPPJdN; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efd855adbso7753025e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723609619; x=1724214419; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p2sGTnWhAAxCBideXOSfildCbbJbkxzd9wlf9Y8JEp8=;
+        b=NuCPPJdNKZzhsd0tfp6D6NAqDFDhjkG0wPxzJoxakX9u0z5IZzFV99gfdSsEbikTmj
+         nvGW5bB4ERW86lSUE7L+RU5kBvTIxbHzcyy+NlxNo7rsL2eM/Woi6BvYx2OF57eoo1B1
+         636XrTzT+iULIPC0+dmIoae7+o6lhI52iRGTg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723609619; x=1724214419;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p2sGTnWhAAxCBideXOSfildCbbJbkxzd9wlf9Y8JEp8=;
+        b=Z9iyHvn5F9i3O6r1JYV9CasvJXXak24tjS9YiE86q229GCPkzKwrdGFmLJwM0JegMM
+         1MvgogRzRBDsCGbiwGrsvydqzZO3LvLiPUABj0PKMB7OxNAUJlNqPENqE2BPQhyApcT0
+         ilg3BXYFgPfmRugxJBPLVO8T2+TvZwoQ05w/NZBgbpkKP4MUVmx6UOi9QUn4wW36ALBx
+         NRVdpqSy6RZWXhi+wJrkqweV8YhgLV5Eq4otGgqOMETyZRu9Rt84BcYeDlw+CLw4G83I
+         ZYpE5nra9b4wyh8FeBAnjUsTKuiSivWcgrMeVn24uHa1XQoZg/CorGtU8WI+N1okl2LI
+         94rw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Uff5JEQcS5QfFmTbdV3COTqfHwTXkN+lQEYMaHVHLxt3+y0WOJtrefHJV8/YcyQuyxSvpkqKOu+OUw+aKpMKgiybESu5l88MD+pv
+X-Gm-Message-State: AOJu0YyF1f2zwEg3LOPPapPQ4PUw6mCmyRVYjH/EnHWIb7r4gfK94iXL
+	1oyL5eZWDrGidWa/4DNF7Fy3KO9E14kYci5xFSFRHe0p/tWPN8wDBzZK4aL8N+vzET9sLzwhzBn
+	gn+fRhe3pN4QbukcH3J9gPfWkD1jXNvjqQDd/
+X-Google-Smtp-Source: AGHT+IGq5JnrkQvBmtbDIMCjqiKcKn4UUIGlSmcL8VKx33PYxUW8uxuiq5DIDlEU7bjWcTHbhZFieWS9pBfHwDH245w=
+X-Received: by 2002:a05:6512:350f:b0:532:f1db:d0bc with SMTP id
+ 2adb3069b0e04-532f1dbd293mr332752e87.20.1723609619020; Tue, 13 Aug 2024
+ 21:26:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814-regcache-maple-irq-safe-v1-1-1b454c5767de@collabora.com>
+References: <20240808095931.2649657-1-wenst@chromium.org> <20240808095931.2649657-2-wenst@chromium.org>
+ <Zrs_YijPxKBFQF0_@smile.fi.intel.com> <20240813191835.GA1598838-robh@kernel.org>
+In-Reply-To: <20240813191835.GA1598838-robh@kernel.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 14 Aug 2024 12:26:47 +0800
+Message-ID: <CAGXv+5ER7DDdE-778JJZu9WTQejy0W0dYM7WZhXj2MzrUWrC6g@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] of: dynamic: Add of_changeset_update_prop_string
+To: Rob Herring <robh@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Saravana Kannan <saravanak@google.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 01:20:21AM +0300, Cristian Ciocaltea wrote:
-> Commit 3d59c22bbb8d ("drm/rockchip: vop2: Convert to use maple tree
-> register cache") enabled the use of maple tree register cache in
-> Rockchip VOP2 driver.  However, building the kernel with lockdep support
-> indicates locking rules violation when trying to unload the rockchipdrm
-> module:
-> 
-> [ 48.360258] ========================================================
-> [ 48.360829] WARNING: possible irq lock inversion dependency detected
-> [ 48.361400] 6.11.0-rc1 #40 Not tainted
-> [ 48.361743] --------------------------------------------------------
-> [ 48.362311] modprobe/685 just changed the state of lock:
-> [ 48.362790] ffff0000087fa798 (&mt->ma_lock){+...}-{2:2}, at: regcache_maple_exit+0x6c/0xe0
-> [ 48.363554] but this lock was taken by another, HARDIRQ-safe lock in the past:
-> [ 48.364212]  (rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock){-.-.}-{2:2}
-> [ 48.364226]
-> 
->              and interrupts could create inverse lock ordering between them.
-> 
-> [ 48.365874]
->              other info that might help us debug this:
-> [ 48.366460]  Possible interrupt unsafe locking scenario:
-> 
-> [ 48.367069]        CPU0                    CPU1
-> [ 48.367478]        ----                    ----
-> [ 48.367889]   lock(&mt->ma_lock);
-> [ 48.368197]                                local_irq_disable();
-> [ 48.368729]                                lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
-> [ 48.369551]                                lock(&mt->ma_lock);
-> [ 48.370081]   <Interrupt>
-> [ 48.370336]     lock(rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock);
-> [ 48.370957]
->                 *** DEADLOCK ***
-> 
-> [ 48.371489] 2 locks held by modprobe/685:
-> [ 48.371854]  #0: ffff0000018898f8 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0x54/0x210
-> [ 48.372739]  #1: ffff800081c6ca80 (component_mutex){+.+.}-{3:3}, at: component_del+0x38/0x158
-> [ 48.373522]
->                the shortest dependencies between 2nd lock and 1st lock:
-> [ 48.374235]  -> (rockchip_drm_vop2:3114:(&vop2_regmap_config)->lock){-.-.}-{2:2} {
-> [ 48.374941]     IN-HARDIRQ-W at:
-> [ 48.375239]                       lock_acquire+0x1d4/0x320
-> [ 48.375739]                       _raw_spin_lock_irqsave+0x6c/0x98
-> [ 48.376300]                       regmap_lock_spinlock+0x20/0x40
-> [ 48.376845]                       regmap_read+0x44/0x88
-> [ 48.377321]                       vop2_isr+0x90/0x290 [rockchipdrm]
-> [ 48.377919]                       __handle_irq_event_percpu+0x114/0x2b0
-> [ 48.378519]                       handle_irq_event+0x54/0xb8
-> [ 48.379032]                       handle_fasteoi_irq+0x158/0x228
-> [ 48.379577]                       generic_handle_domain_irq+0x34/0x58
-> [ 48.380160]                       gic_handle_irq+0xa4/0x114
-> 
-> [...]
-> 
-> [ 48.466666] -> (&mt->ma_lock){+...}-{2:2} {
-> [ 48.467066]    HARDIRQ-ON-W at:
-> [ 48.467360]                     lock_acquire+0x1d4/0x320
-> [ 48.467849]                     _raw_spin_lock+0x50/0x70
-> [ 48.468337]                     regcache_maple_exit+0x6c/0xe0
-> [ 48.468864]                     regcache_exit+0x8c/0xa8
-> [ 48.469344]                     regmap_exit+0x24/0x160
-> [ 48.469815]                     devm_regmap_release+0x1c/0x28
-> [ 48.470339]                     release_nodes+0x68/0xa8
-> [ 48.470818]                     devres_release_group+0x120/0x180
-> [ 48.471364]                     component_unbind+0x54/0x70
-> [ 48.471867]                     component_unbind_all+0xb0/0xe8
-> [ 48.472400]                     rockchip_drm_unbind+0x44/0x80 [rockchipdrm]
-> [ 48.473059]                     component_del+0xc8/0x158
-> [ 48.473545]                     dw_hdmi_rockchip_remove+0x28/0x40 [rockchipdrm]
-> 
-> The problem is that the regmap lock could be taken by an IRQ context,
-> interrupting the irq-unsafe maple tree lock, which may result in a lock
-> inversion deadlock scenario.
-> 
-> Switch to use irq-safe locking in the maple tree register cache.
-> 
-> Fixes: f033c26de5a5 ("regmap: Add maple tree based register cache")
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/base/regmap/regcache-maple.c | 29 ++++++++++++++++++-----------
->  1 file changed, 18 insertions(+), 11 deletions(-)
-> 
+On Wed, Aug 14, 2024 at 3:18=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Tue, Aug 13, 2024 at 02:11:30PM +0300, Andy Shevchenko wrote:
+> > On Thu, Aug 08, 2024 at 05:59:24PM +0800, Chen-Yu Tsai wrote:
+> > > Add a helper function to add string property updates to an OF changes=
+et.
+> > > This is similar to of_changeset_add_prop_string(), but instead of add=
+ing
+> > > the property (and failing if it exists), it will update the property.
+> > >
+> > > This shall be used later in the DT hardware prober.
+> >
+> > ...
+> >
+> > > +int of_changeset_update_prop_string(struct of_changeset *ocs,
+> > > +                               struct device_node *np,
+> > > +                               const char *prop_name, const char *st=
+r)
+> > > +{
+> > > +   struct property prop;
+> > > +
+> > > +   prop.name =3D (char *)prop_name;
+> > > +   prop.length =3D strlen(str) + 1;
+> > > +   prop.value =3D (void *)str;
+> >
+> > Is it the existing style in the file? Otherwise I often see style like =
+this
 
-Hi,
+Yeah. This was mostly copy pasted.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+> >
+> >       struct property prop =3D {
+> >               .name =3D (char *)prop_name;
+> >               .length =3D strlen(str) + 1;
+> >               .value =3D (void *)str;
+> >       };
+> >
+> > in the kernel (IRQ domain, platform core, ...).
+>
+> Okay with me to use this style regardless of existing style.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Ack. I'll update it to the more modern style.
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+ChenYu
 
