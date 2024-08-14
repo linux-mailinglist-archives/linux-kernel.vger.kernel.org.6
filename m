@@ -1,118 +1,258 @@
-Return-Path: <linux-kernel+bounces-287005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECAD95217C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE5F395217E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22DF3B20F8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:46:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1827CB23D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45161BC088;
-	Wed, 14 Aug 2024 17:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A3B1BC09E;
+	Wed, 14 Aug 2024 17:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KlBAsvVb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3ol90VH6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOn21kcP"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9640B566A;
-	Wed, 14 Aug 2024 17:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3642566A;
+	Wed, 14 Aug 2024 17:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723657597; cv=none; b=axwU5IwxeZIOrutWLk64zFFPiYcmQxTfuWEzERphhe8PlEvdKx0Yz5QMUdqXXIhrNICO5R8fZB0F5oIVo2xoTIxZ74P17ylCOtoEDrf/z/FbZuCfst+Zzj3OSFpS+PeuZ+uoFpL1qQ8QMyFdbaeNcxQtT86J1YtSaDlQroJMVVE=
+	t=1723657634; cv=none; b=SFOJLiPGNSUVkKJlIU7Gu1ioEHnWWLbshAiVaes+ANRhqYMGxPIxwXpt6U/tf5RJe6pm5M/T5uuuHKqdFLnugAU130pl1whEfKszFrrmQbK/2OanlXrZytpSBFuJPN2pOdXQXr/yRbNrQuroHiL/7MvO6wMQaWbJW2PvWePTG/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723657597; c=relaxed/simple;
-	bh=YxdryRcEJKefgPC8rYa5ypCyZHo9kaVj8MjzTWEb208=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tmKM8Xe60jnHITbrHKEsh+bvvJbVTMkKURQ+opVcEzMmSM/Q58Xifgxtp38OWgYClEEY+d4h02md0hf8R+mW9QfdvEhPwzviKbhzWs+UpkgrHkrQL60R18bJhu1ll+7BtVOtZ/C9+W0pxnmAU5Pzit0GhYf/RAUkSJ8QDtbmiyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KlBAsvVb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3ol90VH6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 14 Aug 2024 17:46:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723657594;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dkQpb0VZbIj2U4tAAJiGZCFArcqN/45kvDzDEvmVpSY=;
-	b=KlBAsvVbndIxyOJ6bUroB2KpR6CtV+QLf6Rn9yN2cQDN/A71roIqKZCBTDRjcO5RLk3XPt
-	//1HsWRc1g0LQAdZQFoki7i9CiF60wdcQfgmSLoqt9awBGfjdgeetLwSmwpIsN2cxwB1q+
-	W6Wt0vXPEPDon1G4SGnGwjavb2rwrskEJSCWyJvOgj3CGa6GMCFNuui6AJkbpeIJ3PP+2w
-	Mm20LU2CGAb4cmfrN3xF2BEmwSVksa4jKWUbLX/PPO7K3Mmnlfc6/G3w1IRYvPWMJuOgQs
-	KmguBXRzv6B+D3jD0TrHduG15BnbxfsaoMN6HznPJhaxqH/Xa9s7wTFU6nEMjA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723657594;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dkQpb0VZbIj2U4tAAJiGZCFArcqN/45kvDzDEvmVpSY=;
-	b=3ol90VH6jTQOUFWiZIBqQCgOCTifcdpzl1MWu6Jtt0xI6LWamKiihPlo6YOliK2DnMeNzE
-	xfdN6YYU7kQyyRAw==
-From: "tip-bot2 for Yuntao Wang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm: Remove duplicate check from build_cr3()
-Cc: Yuntao Wang <yuntao.wang@linux.dev>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240814124645.51019-1-yuntao.wang@linux.dev>
-References: <20240814124645.51019-1-yuntao.wang@linux.dev>
+	s=arc-20240116; t=1723657634; c=relaxed/simple;
+	bh=Yoo9FBJSP7axuN9sa1Ucm4peAedaUR5Vk84TmmAO/hA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCVhZzUsSIYOdZipEwcKtuj96AiZHlcJegXKTN1Lg2ekEJSSKKyjA+mftb4wr7dVSDC176OJ2TZPWRuqZGFqGTYoWqi0tcGwBEP+yoxlp8tPTZXq/TGLS7bQkrRWtsudH7V0TBwHLgAsTJWK6P0BpeJtJ/Y8EcRm3ReUgrW6SMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOn21kcP; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-201e52ca0caso894945ad.3;
+        Wed, 14 Aug 2024 10:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723657632; x=1724262432; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VyxtgWWB3KD9bQSN4qQJ6q5jA8qs58ZskqXBYA1R0bo=;
+        b=OOn21kcPLryyMwdziSQfkPBoMhdZDLBQu2XasgKR7U0WJt4dhqkuzK5tcSHztsXXkq
+         skfs0YeaHrsrxRB+5nodKf81Iyc04MS9d/RbbKfsMjXP+4C7aNnAk49V9Zgwv4rnIfJa
+         ygJLKe4hfsP8c+rg9zOCnJtsEc0sPaS5q/SLqMgVMFGWiWQKZ9M+cgEma2P3BUEC7oGc
+         DpkBwXAhgXVtZ5jXAnSIMCCSRd5WIS2DP9uW+EF0GRyAHkCOAgwsQ4vJzWxe7zonuRCi
+         YQPlL3ZqGgYAUOCwgwCVLHu1n5IO2gE6r+j7E6D13EI5hJJpjmzZf8yzFFgsqF0KiHZx
+         OR6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723657632; x=1724262432;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VyxtgWWB3KD9bQSN4qQJ6q5jA8qs58ZskqXBYA1R0bo=;
+        b=FlwWWR17tgSyfq5AZCYkclwmuDxm9gjpG1Z7yW+KtUfz8RSl6ZFxqbvWNw5IuFU1v1
+         Hf18qAVp1A8cfGxbnOGZpquAFJ1ChBj4N08y0wJiTTKWUXBpocQjCbCNpjnTog3M1qVU
+         NrEqu2bwrQAWpzZU1N0cSDRTVTD1avGQql3Hay/61FuGZW+R/h6MjtDuzc4qG7FZIiJk
+         tovmfeYGB9hY8B/ZLlrQJlTCzskrN38guYa1b7UHYD0RlG6WiEhceb1lWbIfendzMMbF
+         R+nd3tketWybY2Rua8g2vAX+gqBk7j9BYyGDavBy+NTIvh7v+s0+vzfoMnzlzeiQvhp/
+         sqnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZnhVu2zfv8RzWUWzx0Wwof+MBmb1lTtlWv6YRC5aD/1mGyCiaKWwzXlavyOzEwR/UqKPuEM6v/K4FenGQcbgE66PPSmx5na6egu6puCszfLNJ7LQxy1ZJ5Yk54j7cw3lkKhFYIk3CGA==
+X-Gm-Message-State: AOJu0YxCPb8cR5KYGRmxVM3yUvy499ySMK1wwBthfg1sJz9yGFVgKCrG
+	e1NdmmmSbuLYKkttklUp1neDZBhR5m/Ie/DQXnky5BFXXXdUIs4D
+X-Google-Smtp-Source: AGHT+IF8+FDwmKxyThB72L1gvU1m617yeZV5LplJ9CsVs1k2okHSfEFmpXnKi2Trb0+Jrh6e0RmaCg==
+X-Received: by 2002:a17:902:c943:b0:1fd:9269:72f0 with SMTP id d9443c01a7336-201d64a5b41mr42552705ad.47.1723657631850;
+        Wed, 14 Aug 2024 10:47:11 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40f4:ad:f7ee:918a:4aa:ac70:4849])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1cfd62sm31967895ad.287.2024.08.14.10.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 10:47:11 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] dt-bindings: interrupt-controller: nxp,lpc3220-mic: Convert to dtschema
+Date: Wed, 14 Aug 2024 23:16:47 +0530
+Message-ID: <20240814174651.188748-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172365759351.2215.9195187445227042156.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/mm branch of tip:
+Convert the nxp,lpc3220-mic bindings to yaml format.
 
-Commit-ID:     d4245fd4a62931aebd1c5e6b7b6f51b6ef7ad087
-Gitweb:        https://git.kernel.org/tip/d4245fd4a62931aebd1c5e6b7b6f51b6ef7ad087
-Author:        Yuntao Wang <yuntao.wang@linux.dev>
-AuthorDate:    Wed, 14 Aug 2024 20:46:45 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 14 Aug 2024 19:41:40 +02:00
-
-x86/mm: Remove duplicate check from build_cr3()
-
-There is already a check for 'asid > MAX_ASID_AVAILABLE' in kern_pcid(), so
-it is unnecessary to perform this check in build_cr3() right before calling
-kern_pcid().
-
-Remove it.
-
-Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240814124645.51019-1-yuntao.wang@linux.dev
-
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 ---
- arch/x86/mm/tlb.c | 1 -
- 1 file changed, 1 deletion(-)
+ .../interrupt-controller/nxp,lpc3220-mic.txt  | 58 -------------
+ .../interrupt-controller/nxp,lpc3220-mic.yaml | 85 +++++++++++++++++++
+ 2 files changed, 85 insertions(+), 58 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 09950fe..86593d1 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -158,7 +158,6 @@ static inline unsigned long build_cr3(pgd_t *pgd, u16 asid, unsigned long lam)
- 	unsigned long cr3 = __sme_pa(pgd) | lam;
- 
- 	if (static_cpu_has(X86_FEATURE_PCID)) {
--		VM_WARN_ON_ONCE(asid > MAX_ASID_AVAILABLE);
- 		cr3 |= kern_pcid(asid);
- 	} else {
- 		VM_WARN_ON_ONCE(asid != 0);
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
+deleted file mode 100644
+index 0bfb3ba55f4c..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.txt
++++ /dev/null
+@@ -1,58 +0,0 @@
+-* NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
+-
+-Required properties:
+-- compatible: "nxp,lpc3220-mic" or "nxp,lpc3220-sic".
+-- reg: should contain IC registers location and length.
+-- interrupt-controller: identifies the node as an interrupt controller.
+-- #interrupt-cells: the number of cells to define an interrupt, should be 2.
+-  The first cell is the IRQ number, the second cell is used to specify
+-  one of the supported IRQ types:
+-      IRQ_TYPE_EDGE_RISING = low-to-high edge triggered,
+-      IRQ_TYPE_EDGE_FALLING = high-to-low edge triggered,
+-      IRQ_TYPE_LEVEL_HIGH = active high level-sensitive,
+-      IRQ_TYPE_LEVEL_LOW = active low level-sensitive.
+-  Reset value is IRQ_TYPE_LEVEL_LOW.
+-
+-Optional properties:
+-- interrupts: empty for MIC interrupt controller, cascaded MIC
+-  hardware interrupts for SIC1 and SIC2
+-
+-Examples:
+-
+-	/* LPC32xx MIC, SIC1 and SIC2 interrupt controllers */
+-	mic: interrupt-controller@40008000 {
+-		compatible = "nxp,lpc3220-mic";
+-		reg = <0x40008000 0x4000>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-	};
+-
+-	sic1: interrupt-controller@4000c000 {
+-		compatible = "nxp,lpc3220-sic";
+-		reg = <0x4000c000 0x4000>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-
+-		interrupt-parent = <&mic>;
+-		interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
+-			     <30 IRQ_TYPE_LEVEL_LOW>;
+-	};
+-
+-	sic2: interrupt-controller@40010000 {
+-		compatible = "nxp,lpc3220-sic";
+-		reg = <0x40010000 0x4000>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-
+-		interrupt-parent = <&mic>;
+-		interrupts = <1 IRQ_TYPE_LEVEL_LOW>,
+-			     <31 IRQ_TYPE_LEVEL_LOW>;
+-	};
+-
+-	/* ADC */
+-	adc@40048000 {
+-		compatible = "nxp,lpc3220-adc";
+-		reg = <0x40048000 0x1000>;
+-		interrupt-parent = <&sic1>;
+-		interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
+-	};
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
+new file mode 100644
+index 000000000000..66f2227ed364
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
+@@ -0,0 +1,85 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/nxp,lpc3220-mic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++properties:
++  compatible:
++    enum:
++      - nxp,lpc3220-mic
++      - nxp,lpc3220-sic
++
++  reg:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++    description: |
++      The first cell is the IRQ number, the second cell is used to specify one
++      of the supported IRQ types:
++          IRQ_TYPE_EDGE_RISING = low-to-high edge triggered,
++          IRQ_TYPE_EDGE_FALLING = high-to-low edge triggered,
++          IRQ_TYPE_LEVEL_HIGH = active high level-sensitive,
++          IRQ_TYPE_LEVEL_LOW = active low level-sensitive.
++      Reset value is IRQ_TYPE_LEVEL_LOW.
++
++  interrupts:
++    items:
++      - description: Interrupt for SIC1
++      - description: Interrupt for SIC2
++
++required:
++  - compatible
++  - reg
++  - interrupt-controller
++  - '#interrupt-cells'
++
++if:
++  properties:
++    compatible:
++      const: nxp,lpc3220-sic
++
++then:
++  required:
++    - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    mic: interrupt-controller@40008000 {
++        compatible = "nxp,lpc3220-mic";
++        reg = <0x40008000 0x4000>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++      };
++
++    sic1: interrupt-controller@4000c000 {
++        compatible = "nxp,lpc3220-sic";
++        reg = <0x4000c000 0x4000>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        interrupt-parent = <&mic>;
++        interrupts = <0 IRQ_TYPE_LEVEL_LOW>, <30 IRQ_TYPE_LEVEL_LOW>;
++    };
++
++    sic2: interrupt-controller@40010000 {
++        compatible = "nxp,lpc3220-sic";
++        reg = <0x40010000 0x4000>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        interrupt-parent = <&mic>;
++        interrupts = <1 IRQ_TYPE_LEVEL_LOW>, <31 IRQ_TYPE_LEVEL_LOW>;
++    };
+-- 
+2.46.0
+
 
