@@ -1,146 +1,110 @@
-Return-Path: <linux-kernel+bounces-286775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0127951ECC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:42:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54038951EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64BAA1F23374
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:42:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96B81B22683
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F25E1B580C;
-	Wed, 14 Aug 2024 15:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3DB1B5807;
+	Wed, 14 Aug 2024 15:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BMcMUG39"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OJq/c22m"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D741B3F20;
-	Wed, 14 Aug 2024 15:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD151B4C42
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650122; cv=none; b=dKC/S3FF04ExQEOQmEBYZhHBHWcYJ38gzrNiVjmJE72L/vuq+Ox1WT1hjCIChOusZ2Xv6TL8xZ5FFousRyoN18s5mlNxfsJ9qAkwQLP0NoF65S0J1PrNuTW1HvAa8jqOR6gMA7XQQglpA6oWI3HUT7edHfkz9vq4E7bBWrYp5hg=
+	t=1723650086; cv=none; b=dGI6KdmJSZofAN+I5CvBXUwh4TLpsVje2mHbE/ORKmZBo6OSmeVa6WH5LMa9xVebc8RwcRufMu896PWD4eH5Iy1OnGXoWI9bxmrVtmUUWgwEjfZYsR+xG808neDpihjx1XuGpJi4wFauqM77dAuNDG3Ph8yG//ClDiVuoDOFqk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650122; c=relaxed/simple;
-	bh=MjnTildxpAbHNkgPDPWLipmp28QBUWJrUm+Kw3OHJHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JwwfiahSiAWuWOD2O2OkssIncNP9LpmaTw0e/GsVHeV3NGMMU7CEj9dwxg6CeK4bitj65xw3tSMaZ53DqGrW9YfUZm6GNBnrI5zF3hmmb7KS+sztR4N6QLSqcQ5aEIQ2BZPS4ITH6CohC6qWjKR8gYobb4dJRqIalEh44SwQvkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BMcMUG39; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EFES7o004014;
-	Wed, 14 Aug 2024 17:41:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	/ISX9nWWuQJU87xnhrjQ6QeMAsmctnZJm1c7Gl4Q0hw=; b=BMcMUG39HgKxS7uG
-	hzu1sw2eA2f7UEbbFJZZVJtRG/MC2Cwr3JnUb1EVN2ti+u72yeMuHQcY3Ppu7FbX
-	bRZYJ+XkyfyGuSqyzsx4zlgEKdFovXQ+bAmvaslsSpJvW1W4cKcIs477IrylZdGp
-	UB+BCgWvFzlElUFoVkQWVkJAD30IIGdsRN0tSfyvbld9dW3oOPDZQpQH2phDFP+4
-	YN+lacM75ZeEypdH0ouGK+jNpZf5yPLtywwnsHe/uqyaGLrdPJpzRMQ1Hnhr2X7r
-	ae3TCun6YBfvP+1xm87RsR6fT2B+++cfCC0AOHJNX7FzqBGGXSTQ2VNsfdJwezPK
-	hrnI3w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 410y2402yw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 17:41:25 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A13CD4002D;
-	Wed, 14 Aug 2024 17:41:20 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5B7B227DDE4;
-	Wed, 14 Aug 2024 17:40:40 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 14 Aug
- 2024 17:40:39 +0200
-Message-ID: <119de711-3234-4efa-b311-290ce9fa5c4e@foss.st.com>
-Date: Wed, 14 Aug 2024 17:40:39 +0200
+	s=arc-20240116; t=1723650086; c=relaxed/simple;
+	bh=NgaDpG6DTfA0N471gKketQJKffFKRH0SRwAgGTqaFaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f5DXEQHyN/stIfVmhPMMpeqPmmNBsDVZwusq4S7EEpolf7sUTnDW6C3l6erg4TBNoJx53pdve2ijukSJAc2f17V+ozv6TnfP3m+up4mkTiiPBqlP/OJEpAZW+fVRXzYg0K7vC2qggSnNHxd1RCR9Odm964xIhpa+EuKi/TDE1wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OJq/c22m; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=NgaD
+	pG6DTfA0N471gKketQJKffFKRH0SRwAgGTqaFaE=; b=OJq/c22mtHWsUw8E+B/R
+	yezmS+dts9K0n2vw4eOjYNPYvS2aUDkap+1pttF5c7HRIB9SSle1fCQeXI3RQgSo
+	5VsbKZ4pt+PT+hPgX+x0HcfSnhlX3Iec/vP+wLd/COxv7EZPaYOFx2BLngRGM1lG
+	QV5+vQIP9xv+Ehk2+r+42b23SOB0d34qE5OZaVM1ett5T+g0tO0+cs/5KE43nddC
+	HcnrvOM9q4X6KC8NnzkwXM65Lt/OXAzt0XEe5p6nqMxAQUWc5mco7LyUt0I+1vNq
+	e5z6kUdVW7R4aVzCqY1hX65X32B9sHpzTNPozjkhPBTLnzb714ps2IuQu04QbBzn
+	ig==
+Received: (qmail 2030307 invoked from network); 14 Aug 2024 17:41:19 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Aug 2024 17:41:19 +0200
+X-UD-Smtp-Session: l3s3148p1@Gma3jqYfToFehhrc
+Date: Wed, 14 Aug 2024 17:41:19 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>, tiwai@suse.com,
+	linux-sound@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] i2c: Use IS_REACHABLE() for substituting empty ACPI
+ functions
+Message-ID: <ZrzQH8F22tQWOH-Q@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>, tiwai@suse.com,
+	linux-sound@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+	kernel test robot <lkp@intel.com>
+References: <20240814121649.261693-1-rf@opensource.cirrus.com>
+ <87mslfjk3n.wl-tiwai@suse.de>
+ <Zry4eIOLOTwaYdaC@ninjato>
+ <87ikw3jizv.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] usb: dwc3: st: add missing depopulate in probe error
- path
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@ti.com>, Peter Griffin <peter.griffin@linaro.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Lee Jones <lee@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <stable@vger.kernel.org>
-References: <20240814093957.37940-1-krzysztof.kozlowski@linaro.org>
- <20240814093957.37940-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20240814093957.37940-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_11,2024-08-13_02,2024-05-17_01
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SvPW87wNirmHn1I2"
+Content-Disposition: inline
+In-Reply-To: <87ikw3jizv.wl-tiwai@suse.de>
 
 
+--SvPW87wNirmHn1I2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/14/24 11:39, Krzysztof Kozlowski wrote:
-> Depopulate device in probe error paths to fix leak of children
-> resources.
-> 
-> Fixes: f83fca0707c6 ("usb: dwc3: add ST dwc3 glue layer to manage dwc3 HC")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Context of my other cleanup patches (separate series to be sent soon)
-> will depend on this.
-> ---
->  drivers/usb/dwc3/dwc3-st.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-st.c b/drivers/usb/dwc3/dwc3-st.c
-> index a9cb04043f08..c8c7cd0c1796 100644
-> --- a/drivers/usb/dwc3/dwc3-st.c
-> +++ b/drivers/usb/dwc3/dwc3-st.c
-> @@ -266,7 +266,7 @@ static int st_dwc3_probe(struct platform_device *pdev)
->  	if (!child_pdev) {
->  		dev_err(dev, "failed to find dwc3 core device\n");
->  		ret = -ENODEV;
-> -		goto err_node_put;
-> +		goto depopulate;
->  	}
->  
->  	dwc3_data->dr_mode = usb_get_dr_mode(&child_pdev->dev);
-> @@ -282,6 +282,7 @@ static int st_dwc3_probe(struct platform_device *pdev)
->  	ret = st_dwc3_drd_init(dwc3_data);
->  	if (ret) {
->  		dev_err(dev, "drd initialisation failed\n");
-> +		of_platform_depopulate(dev);
->  		goto undo_softreset;
->  	}
->  
-> @@ -291,6 +292,8 @@ static int st_dwc3_probe(struct platform_device *pdev)
->  	platform_set_drvdata(pdev, dwc3_data);
->  	return 0;
->  
-> +depopulate:
-> +	of_platform_depopulate(dev);
->  err_node_put:
->  	of_node_put(child);
->  undo_softreset:
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> It was a preliminary fix for the change I recently put after the rc3
+> release, and now it surfaced.
 
-Thanks
-Patrice
+Ah, that's an explanation. Thanks!
+
+
+--SvPW87wNirmHn1I2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma80BsACgkQFA3kzBSg
+Kba7AQ/6A41xPlTYz0zKa9qB9fP8o9xD62VW2fF4HImhtNQvaoG/pqr9sTDNVyrf
+SdDfHQFd6eGTI07CWPeX6636W5guAQGvabGiewvmJsZsSEWKIqan3co+mCTDsjhs
+6BrgfvC5WDPyDLfhR/CThWLXFtInm9ZfN6e8SLfblsx+pDijAs8XBAhTwxKNmRSr
+cddpkYqK21iWAYHfNZQwhbZDoaEXblBZk6WHf+7BsHYlgjNbMZQfHVoMg5NLr0dS
+lO/NHqRy3DjyZQgatMPhrrL9+kCpG/Qb9va8AnJoo611LSHFa3vNoV8qfF995VGY
+Lw1xJ1eFsNtEeSdzpBryvY2tilpd4HaNLTltg7RG6VCVm/a2HuCfeWcFUy5ej1gB
+E52v0yE9ZVFSSD1jFV106O1XwMH3ga0u0tvcNDUFxrxyF8cHSt92iCdXn3+mDiow
+RMWsYS9lREMWqqG7RmL2MiNVVqbagAs19p/CV6v0jcK3Bt5zgn8HOOe793iP3fj1
+ZlX6ZiWVlYdBeiE49kjjA64hDbfuXDipMdjesExJ4TAWmLQ0dCGnnBEoi5yalgrC
+snaaMycv+FHtuTHXzZAy9DJSri7qDsBq4AuUDEzGUPahO2uNRRG3v4hSqu/NhnH/
+K/vaJC9MU5S7YxLTVeboCW9ClGynwg/vKAK364XayQqHKX+7Nb8=
+=5UOY
+-----END PGP SIGNATURE-----
+
+--SvPW87wNirmHn1I2--
 
