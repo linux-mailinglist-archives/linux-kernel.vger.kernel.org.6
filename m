@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-286283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBDC951915
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:40:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C9A95191A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAAE3281718
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179621C21154
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B4B1B0115;
-	Wed, 14 Aug 2024 10:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A091AE870;
+	Wed, 14 Aug 2024 10:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DD7OpIbQ"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KNntctkk"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1B51AE847
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A8F1AE842
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723631889; cv=none; b=VPRL4brYCiYSnxWaQhu1I3hJVIOvPsZULcjB2NYJ7Un4tDQ2j0IDTbNyXUWB1H0kHll3s88G8DW+PVaxOVpTffZ79C8196hc4UO2ydhYC1Hyy0PvylIkBXTDk252g7tntJOBwcRHJP9bAkQjC7k2qD3DtC8Mw27/H+hf8AcVbic=
+	t=1723631977; cv=none; b=rid2UAsYnCq3adJvA4fhS9416QN4+TYb5/8063HSWYfa3OSQqnxwPBw2obLSrezmmZexAH+NLMYs9WE/EvTgfkHnVgTKBj9xr58pFeUh5zS2TXDrnjyuSLcZE26pKTtepkWNMjxsWETfxYDVRdrDeUvF03fHefDS7kHw6Nm59RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723631889; c=relaxed/simple;
-	bh=BjLFDKJyMJol4iq7ns3l6PNcv2TAWojsCWm8EzURTP8=;
+	s=arc-20240116; t=1723631977; c=relaxed/simple;
+	bh=++bW5wMefnS7yJM5ubwMFA3JD9os0eJ2KTHGaw/AzjQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dBtZBhItQYdSdA8CJa7jhpp1VX5Sk2+Vb/F196Mx5d6WNUx01lq8zioNiXiiL7E8SrgO8q93tvZSDhDR94xgGgdcYGPDO9FXMKDegV/hEEosgEA4XvdNGYORmne/BSD0SgzCQtnNtEGjKGTIIwBJRv5QqhWQ30hpQxo3JAYAMI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DD7OpIbQ; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:Content-Type; b=HhuLD+7UFXg/7JY5Wv7JoRTssuaoyU3XfZeJdIPicoOliQ2FNQyxPtyjBPpf0NB7HF32q1wjYELPNW36Iiv9UeW3VNaDmdZVkpSdFPc4kAgb8sK+VNecUTiCdwR6JNSLu/ixsxwxm7N0Z/S8ol/REJjCf6zl+NYGdgpu0QYwQyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KNntctkk; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368440b073bso446476f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:38:07 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37172a83a4bso697743f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:39:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723631886; x=1724236686; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723631974; x=1724236774; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fNKkWw51f5wypgz5w1sJpTMeYJTuNSrvezVgh7cX/iw=;
-        b=DD7OpIbQzKUaMSOAKsPFGdPVDH4oT+5nuwnyrNo93E2y/w6bbTo+S9g5yLCx41oPRI
-         9aFguTIb+a3yojSJwW0CW+MRoXlu35C/DIm6un32o7TDegumRiwaNUmT4y3f8dBdlwdt
-         4ui0WfkUUiryyFjvubnAdMIQcAdEBlNse1hEtqOo8SD+5oAfV3UIN8OnnDwdt9mQmtdR
-         79ZbJe2s28BTPJlvmIvNrglGKJ44XeyFjd/ohzVc7L0kuyFm++vfM5n1OdrBeHXaXmF6
-         Ikti87u24oxT1Yv85eiTSmdXSAp3ydfRzhwvaUKRaWbu7NesMKL5U5m2CJ+PVDEX+bl8
-         Jw3A==
+        bh=6WRMEt7FBWJjYyyscCC3U3OCHTs2LMcI2PM9S0kbD08=;
+        b=KNntctkkwlaITc52JBEL6nWMWVf20j0PJzn/YgfC9WIUvuWa+5yE5hEGspKRK9xcBd
+         3QqaZLOL4z2BZdxiH3ZtqcoLPL0BG8r1Ra7I1QtOfDYQLpRPQtxB97M02di5TyhWGGtd
+         +4NnR7fEJ/WY1UIScaSvVEoWRKr6hmf78UYm5TW+ld0e3lp3TqAf1O/JFiDAdKtoa9IR
+         2BQDbmhPLnyzRSPji0HBjpLZwJY47Dx8BxMk+7k9HoPqwlVHscbmampGOGo7NQLk4oJ2
+         tI+vULF1wzqVgRd4n/9rJVJ/39lnqTu6a+M/C/2eaafsbKPoj/5zYeTjC5Z3BsdbGRlx
+         uVlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723631886; x=1724236686;
+        d=1e100.net; s=20230601; t=1723631974; x=1724236774;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fNKkWw51f5wypgz5w1sJpTMeYJTuNSrvezVgh7cX/iw=;
-        b=SYHHcgE6igNaAMZ0kyHX2jCVxvfgxUT/uPv5e92EsqTMeXCzF0HwSckpGfbUGb0L5p
-         XUR5s2UDGp+g62W37oKEi9CMb5hD2DaSoco9UVIN8LV3x8sXYlHHF5j9uYW5gjyGcTkh
-         vSS3SrL145ITdhZPM7MNjhTeV8zZf95w2Is0mEWyod8SNAGg0ywCWmP2wgdQC8CGWomK
-         nrwfpVgoYxRwn5qlx210+KNssA8B6mFI/RDfDlJakaiLpDeR+RCm+NePR4utG2KMGhe4
-         gE+9tFWUhOtv0bB7GLP7hGQkSikriwCjolj+uUXo6vbHNVjMBZE1LLPYDjL8N1ZiDsWw
-         Wbqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrfD1sMvWcjDe4jhwRDnXxB02CI61RDZZIt2i2+1JJY30DU9ZzIwcxH+78h8XQpzwn94Ao6c0lukH+vqdl156iAa9meNnViRoxnN8V
-X-Gm-Message-State: AOJu0YwvefWf+ku2z0Jbrogn2wPyFUySB1YLjExXNuzFQq2kbHUNYDbs
-	BYlm6YepkEmrylY7DJy/gKroOy1HyUElQ20fqOd5/IBJ6b0JttRinb8jrVgkgiE=
-X-Google-Smtp-Source: AGHT+IFAKzLv7ilDET28IMwrLig755ftX5WyeocJ71rGFpy8qsd2JDPFQqU5/gZhPVT74JHfONE3xg==
-X-Received: by 2002:adf:e549:0:b0:36b:a9e8:6b5 with SMTP id ffacd0b85a97d-37179620f6dmr1306544f8f.10.1723631885531;
-        Wed, 14 Aug 2024 03:38:05 -0700 (PDT)
+        bh=6WRMEt7FBWJjYyyscCC3U3OCHTs2LMcI2PM9S0kbD08=;
+        b=g7sCqlbV+wAQyeCncJ91ar9VfnRQc4xnmYqtVUHvRzjTYCvOZ5Dnoa9dG2abkdjhwt
+         +/5w0MNkq0fyxo2I/XbKQGkE+6c8ohLZ09DwiM8Y1YZYLKCTZxdM/h2Fh33wRT8wYgZS
+         t3FIAq1cK+ycNkVDNab7MaoWXhNGSrmuVEhF3oPIsXn4lwYpoceKTR9NiASZ65nGOXYu
+         344TkD6vwIOIe8TGafntR5RNOBIqK1ri/zW3VHQZUwwD4AeO3b77MXe/NaQ2hb2mXIJZ
+         kxrS/9MY2xyiaGQKzjz9wm39e9/eRAEZ3CDXoXPEhwaU2Egz8QZG7SGXB3zLE/+FSZKe
+         619w==
+X-Forwarded-Encrypted: i=1; AJvYcCX3SIQuudzZ3WNmedKkHwIdKABDQn3iWkH07Mpww/QETQ/t7Uu1LMOmG7DA2vXyWmIrWtuvdYGjYdQER2DJYsapnq/nNDYjTM12eq+r
+X-Gm-Message-State: AOJu0YzsSAAP43I6d8Hfq8tcR4/YKOzYLHUgGYnesSqx/+yLRZAsKogY
+	mu+M5bS9epElz04kcPT3xDBsdL09czLnj8Na+uFDMUqojZJ+G2RVSHLMmNiZ74Q=
+X-Google-Smtp-Source: AGHT+IEsFnMkEPMABflOWSpHSTdZcGDUv5V3RMUWkg8aYLGAOnolNRBF80iFXPk0KvmcXBKPYRU9EA==
+X-Received: by 2002:a5d:5012:0:b0:36b:3384:40e5 with SMTP id ffacd0b85a97d-37177786e4dmr1476575f8f.24.1723631973511;
+        Wed, 14 Aug 2024 03:39:33 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51eb10sm12424380f8f.84.2024.08.14.03.38.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c36bcf6sm12456115f8f.17.2024.08.14.03.39.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 03:38:04 -0700 (PDT)
-Message-ID: <7bf93d78-ba51-45b9-85d7-2b7e4e0b2e56@linaro.org>
-Date: Wed, 14 Aug 2024 12:38:02 +0200
+        Wed, 14 Aug 2024 03:39:32 -0700 (PDT)
+Message-ID: <1e442710-a233-4ab2-a551-f28ba6394b5b@linaro.org>
+Date: Wed, 14 Aug 2024 12:39:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,11 +78,11 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v10 1/5] dt-bindings: net: wireless: brcm4329-fmac: add
  pci14e4,449d
-To: Jacobe Zang <jacobe.zang@wesion.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Arend Van Spriel <arend.vanspriel@broadcom.com>, robh@kernel.org,
- krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Jacobe Zang <jacobe.zang@wesion.com>,
+ robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, conor+dt@kernel.org
 Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -94,7 +94,7 @@ References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
  <20240813082007.2625841-2-jacobe.zang@wesion.com>
  <1914cb2b1a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
  <e7401e25-7802-4dc3-9535-226f32b52be1@kernel.org>
- <05785794-6eca-4ade-a990-2deac7156c48@wesion.com>
+ <062d8d4e-6d61-4f11-a9c0-1bbe1bfe0542@broadcom.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -141,14 +141,12 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <05785794-6eca-4ade-a990-2deac7156c48@wesion.com>
+In-Reply-To: <062d8d4e-6d61-4f11-a9c0-1bbe1bfe0542@broadcom.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/08/2024 11:12, Jacobe Zang wrote:
-> 
-> 
-> On 2024/8/14 16:53, Krzysztof Kozlowski wrote:
+On 14/08/2024 12:08, Arend van Spriel wrote:
+> On 8/14/2024 10:53 AM, Krzysztof Kozlowski wrote:
 >> On 13/08/2024 19:04, Arend Van Spriel wrote:
 >>> On August 13, 2024 10:20:24 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 >>>
@@ -164,13 +162,23 @@ On 14/08/2024 11:12, Jacobe Zang wrote:
 >>
 >> No, DTS must not go via wireless-next. Please split it from the series
 >> and provide lore link in changelog for bindings.
->>
 > 
-> I'm little confused that I should push bindings as a series, DTS as a 
-> series and driver as a series separately, so next time I should push 3 
-> series, right?
+> Hi Krzysztof,
+> 
+> Is it really important how the patches travel upstream to Linus. This 
+> binding is specific to Broadcom wifi devices so there are no 
+> dependencies(?). To clarify what you are asking I assume two separate 
+> series:
+> 
+> 1) DT binding + Khadas Edge2 DTS  -> devicetree@vger.kernel.org
+> 	reference to: 
+> https://patch.msgid.link/20240813082007.2625841-1-jacobe.zang@wesion.com
+> 
+> 2) brcmfmac driver changes	  -> linux-wireless@vger.kernel.org
 
-No. I said only DTS.
+No. I said only DTS is separate. This was always the rule, since forever.
+
+Documentation/devicetree/bindings/submitting-patches.rst
 
 Best regards,
 Krzysztof
