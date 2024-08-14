@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-286953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38439520C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:13:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F949520D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57E01F22E39
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:13:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F97B24149
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102261BBBCD;
-	Wed, 14 Aug 2024 17:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0D81BBBD5;
+	Wed, 14 Aug 2024 17:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="es+ldT/D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLcZMwbz"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A0528DC3;
-	Wed, 14 Aug 2024 17:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E081B9B28;
+	Wed, 14 Aug 2024 17:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723655601; cv=none; b=lQOX0I6h/PEw6F8C2NSB13oWrV9sCFTfxt0ls1BfM8yIwWgZpZf0galGViYv6Ms0yM/+baJAjxyGOPUuE5+WAGoGxqetSmpNhErqRJHlC6fYYnN659V9Zm1WrmDuZWqB2sva14DIiln3nD1fSOAY1KbU2QC1pa6Q76Ib3G9HLE4=
+	t=1723655683; cv=none; b=qCNo+LCSYazsvm8zPUkfUgRXrMZD5grNdv+yl10ke8Gb1v3nn2vyWDD/RRmAkqxT8hWauD79aF/gXGjNzzB2Ldzj9HGy9Pwj1t1ZAoNwrAI9s/KGxNG+dm6MP30LrlB6xhyzD5xguqshE1NIVz/esknnujYijB58IP9JOOgj5lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723655601; c=relaxed/simple;
-	bh=DJ0tPf2qO/ZeZBBDG1UOrsbfoOLKy8q+8P0FrWkqchQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J9Oe520FWOEGSqdrW51xoFey8uL5Y0Z2v4LRWNmrYCawOVT0NLh0aUBkYGLYs9WlGtw8uL5asE1zvhqnQU4ezqXsNTqi1OJfe9zi4r25Fesip3wiq+jisuvZLPzzlKfymoGNIdSVFywD1/xVj/RPJezx6x5KnvHGhBypM5ezm9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=es+ldT/D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2310AC116B1;
-	Wed, 14 Aug 2024 17:13:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723655600;
-	bh=DJ0tPf2qO/ZeZBBDG1UOrsbfoOLKy8q+8P0FrWkqchQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=es+ldT/DqHjprxUm+UD9M9GM87UABh2Z+TIJRVfV5qW23yzi1t/USl4Ol43ux+hc6
-	 s33vQxJpkyG90VhNtPvLA06fNvJYw2g1ia8GM/eBSsWu+mfIlXXxvGVa/HZLYUOGjr
-	 dI3otS8ndT9ywKNAx88NfaHHiIfkz5Es6LVdv3GC2uhzus76fM35UMRXoi7b0pL8aM
-	 OGGsovThVWJrvcUVhYXSgfnS3YdLVJat6rixCqxqrHhq7MJFHzoDSUMiNsEIQNw7ta
-	 aKm+GLnGP1eGosY9Pnpn8zgiGMfyfJ0I5HRRJNLoJHZSSaezTAzW7XOVv2hCqHuycl
-	 NyMRv4NoBqRuQ==
-Date: Wed, 14 Aug 2024 19:13:12 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
-Message-ID: <ZrzlqFuZ63QJT8Cx@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org>
- <20240812182355.11641-5-dakr@kernel.org>
- <04b0fd96-c91c-4f38-90e9-8acee31e8445@proton.me>
+	s=arc-20240116; t=1723655683; c=relaxed/simple;
+	bh=5KiMiGMO0+fP9EAr2iCqOfLLXM7bfW30N/BRrU6S01U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMtRWsHlLPcPUyCkqNQDZ7EVnnMbgQ1a29sDUYd7SXI/2cVPgpurZF2F8X6JPfT676tYOBlWwkYTqRBi6GylOM9skQ08FvrBVAub5DVAR+aTGOcNKXQASnSIT/yhMovbtZuU/97YWF+0QQf9kAmEvUl3hQKnMyuPyY4g+7i31gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLcZMwbz; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd65aaac27so7987885ad.1;
+        Wed, 14 Aug 2024 10:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723655680; x=1724260480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kNWX28Qr8ufHC9hLkI8IOVeCXr80mqcgSghAfdwkDc=;
+        b=kLcZMwbzOPARHjvd1x7ijPLJyxVzsY2O/E6gvmPDzbnw3ow24SOcHuPx0/HLvP3ctL
+         gQlvOO3/2lfyf5T6DsaiNiaZoMD4nvw9lO03MvZ6cfR8M3EXw7buXK8fW0EvO4l5yFFF
+         24MuUs752xxZnqR9NdulPp5OLsKugT1EpGESlO69ularPGcHjc4Myk3kZ5dRdFaK+WIf
+         PNoOjzftMNJzhapPQFt4OFWRNJmb5QUdNPRGEW/0euFbrk598n+n20qIMbAIQsKWKnCd
+         fIJAALn/nQXgCgcUVPr0z6OVG8wGq/cPy4apm0bvyLQuI1S21AFwrjmaciLytsKGEBz6
+         dJwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723655680; x=1724260480;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8kNWX28Qr8ufHC9hLkI8IOVeCXr80mqcgSghAfdwkDc=;
+        b=WVX53IQOJvPl+RhEd7qsWvym1YXPA7L2MmQGZacU9Lz2hbj0CKUNCT13gYVBy5Fu6B
+         P5d0ujXX3POG9vhJ3czGgAuuLE0dxGX6ma3aPdu4B4/hXyxzL6fw52d7nzPYZheq2sT1
+         ZJjMcLjTYPLac0K9zoPSXCwHGc+LumlpgIhmx0xubiD9sYZ0Vx32Lhp5rbh4JpIypMNE
+         0KwVsictNuMIx+knvc7ZYkCAZtTNiqiCRZBfCad81uZECJv+XTSv+sOahg/VueG1aPCR
+         l4sIsgji+ZUP+A0aVALc3ds+S7vFn0XktbT64TKraj7oOywGo/ZMq5GrSDziYTXOuZdg
+         IGxw==
+X-Gm-Message-State: AOJu0YxPCGDqJEfcJ8xzuFZ8ZAIF8XR+XSzHG46XaIs99uNhUdFvT11x
+	nuVC0cp1UV4vKhzZ97XpT/tNYGcwU+d9jcKEt8pXnYa86B+x/hF0x/OGzaQHxl+Oyw==
+X-Google-Smtp-Source: AGHT+IHAoMnTLyfFSa2S1Rt10lGttkpwIZvQar+4DQSq03gYC8xiTgYU0L8QKwZNzCcmbxizcVtruA==
+X-Received: by 2002:a17:903:22cb:b0:1fb:9b91:d7d9 with SMTP id d9443c01a7336-201ee4ed160mr4510105ad.26.1723655680321;
+        Wed, 14 Aug 2024 10:14:40 -0700 (PDT)
+Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201cd1bba6bsm32081335ad.225.2024.08.14.10.14.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 10:14:39 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kuba@kernel.org,
+	shuah@kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH] selftests/net/pmtu.sh: Fix typo in error message
+Date: Wed, 14 Aug 2024 22:44:03 +0530
+Message-ID: <20240814171403.32374-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04b0fd96-c91c-4f38-90e9-8acee31e8445@proton.me>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 04:28:04PM +0000, Benno Lossin wrote:
-> On 12.08.24 20:22, Danilo Krummrich wrote:
-> > +unsafe impl Allocator for Kmalloc {
-> 
-> There is a missing SAFETY comment here (and also for Vmalloc, probably
-> also for VKmalloc then).
+The word 'expected' was spelled as 'exepcted'.
+Fixed the typo in this patch.
 
-Any suggestion on what to write here?
+Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+---
+ tools/testing/selftests/net/pmtu.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'd probably come up with something like:
+diff --git a/tools/testing/selftests/net/pmtu.sh b/tools/testing/selftests/net/pmtu.sh
+index cfc849580..62eceb385 100755
+--- a/tools/testing/selftests/net/pmtu.sh
++++ b/tools/testing/selftests/net/pmtu.sh
+@@ -1347,7 +1347,7 @@ test_pmtu_ipvX_over_bridged_vxlanY_or_geneveY_exception() {
+ 		size=$(du -sb $tmpoutfile)
+ 		size=${size%%/tmp/*}
+ 
+-		[ $size -ne 1048576 ] && err "File size $size mismatches exepcted value in locally bridged vxlan test" && return 1
++		[ $size -ne 1048576 ] && err "File size $size mismatches expected value in locally bridged vxlan test" && return 1
+ 	done
+ 
+ 	rm -f "$tmpoutfile"
+-- 
+2.43.0
 
---
-Memory returned from `Kmalloc` remains valid until explicitly freed.
-
-It is valid to pass any pointer to an allocated memory buffer obtained with any
-function of `Kmalloc` to any other function of `Kmalloc`.
-
-If `Kmalloc::realloc` is called with a size of zero, the given memory
-allocation, if any, is freed.
-
-If `Kmalloc::realloc` is called with `None` it behaves like `Kmalloc::alloc`,
-i.e. a new memory allocation is created.
---
-
-and repeat that for `Vmalloc` and `KVmalloc`.
-
-I'm not sure how useful that is though.
-
-> 
-> ---
-> Cheers,
-> Benno
-> 
-> > +    unsafe fn realloc(
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError> {
-> > +        // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
-> > +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
-> > +    }
-> > +}
-> > +
-> >  unsafe impl GlobalAlloc for Kmalloc {
-> >      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-> >          // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
-> > --
-> > 2.45.2
-> > 
-> 
 
