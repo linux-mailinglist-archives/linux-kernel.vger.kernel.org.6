@@ -1,208 +1,201 @@
-Return-Path: <linux-kernel+bounces-286915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E459D95205C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:47:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155B595205E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4780BB2414B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:47:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388901C236A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3A91BA861;
-	Wed, 14 Aug 2024 16:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DD91BA892;
+	Wed, 14 Aug 2024 16:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hpOPAdLI"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2074.outbound.protection.outlook.com [40.107.249.74])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kzpm//R0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEE41B9B51
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723654060; cv=fail; b=Hi3eKMd1NxTIw7lJBBSc0FZlJm4/UzFTo+GDIQzZOfo8l1H9H5ms7ZTPi+wbmwgUPqjfl7wreN1DgGpzCpxXV1zkVzqUPmeWRIGA6qjoGG8J0nmyNy1W5ViNT0O+8/5oDPWe6OEK1blrPZL6A6G1SlEWVlZ3U5lpPBfPwJwlyzo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723654060; c=relaxed/simple;
-	bh=XryEeHjrhLYefSLFydrLheVPDGfBelZCZjTKivg2fHc=;
-	h=Date:From:To:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iEo+YatYG5Hzkj/M9DeFnAj8j2nnYttcecd6XF9XeknbXhzTOuGeD19OfA8mJb10OKj0fnmb7hTibkdMODC96uKLNLLz+R4rOJ7qoIblmOI2nun//6U+aOjH88dLKvsfoG8QpbROQoRroE8Aw4ibPg0hj2SHgZo5iKmfQv1nGZo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hpOPAdLI; arc=fail smtp.client-ip=40.107.249.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jAGmALkU/X0EJYGoc9CGbQBI9LH21mVDYM5No2GOR0eB08GmIWXhFbkVUkYrMeNZ8RMTpbV8FApO0qiqL09U2E9MG9pyER++FtL2UsY6UrzkWWoC6aErzHxxMRJ4bPKIjR/Uv14VgbF+1ve4l8tleUV7Bh38XJq45FwUywy46DQTZZiMudr03YJxwom6tuQiRWCeny/Y9Y0x430BHGerbBUstACpAzVCrg5j7fDRVcsARE2oUExysY1qM3rvNk0t0wTeJa5SzEfDSFCU9wlk7dBadLIkkp2cMOUNUbNQRk1K6pv/tsA343xrb+X1k2t9LYaVT/RLQSJY+t3xAKY1+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BBV4szsV3EKaBC5CTgbe29q084F55+Q2frtgx/OtFjM=;
- b=ga1S7EWaHJYnuTC3B7/ui+L9RHCaNdW8SQBW2HGvgGt1fDh86AhKN3v1HWJ6x4wEsT9P/TE14pSx5r0BwuJkyRQLLOP0n/1cCXZQ8XXxOeJiXDy0Rj96/wDsYdDm3JhzcjwJx1ILXGwHan1LsKCY55eXUdAivf2SXxIve6rme2+GGomJC6444Ar6q2O1wIsEgKgCaXptxt+wLcJbwXhrHB73YtM0WS7mnKcJZ7q7rvmT2v76XidTf7EqSThr+5XhWqNiwxfwpwZ1hFf+GHMEIZXdQDB4b8Sh6QHji1QUPp7cQ9QfxoZoJr3Srq06GCl8FtCxvkZBzlyF5V3aHroEpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BBV4szsV3EKaBC5CTgbe29q084F55+Q2frtgx/OtFjM=;
- b=hpOPAdLIP/W0u6ROAz/xkSBgbH1SEpZL4JDOKBC4ES+P9vDkkhdIblgXb3i39FYl3nPcmodKZuiV42GJ5jwGPdQo3Erv0I5D1/zr55d+tWMFv0McAVL3AgXDYyMFCfd3ZjM9xd1AAb2wEjQ4U0aK2/vWebnN79rtZqNd6k46CxopHpoN7MstVptLr58hfQEbn0uDx8R5yNMVmgWXzuw3W8FG98iEcvEnK6vFLLrjFmc023Gn7XvRe+aRKRX9BCWfuoIYFK890BFOipJr5aPNjxnzR7JywynUBVwVOpgY03OZnacGccsjrBCmnIIfNnpmKZvCMT7Zxssxn6PeYAlxrw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by VI0PR04MB10229.eurprd04.prod.outlook.com (2603:10a6:800:23e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
- 2024 16:47:35 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
- 16:47:35 +0000
-Date: Wed, 14 Aug 2024 12:47:29 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	"open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] clocksource: imx-tpm: fix return -ETIME when delta
- exceeds INT_MAX
-Message-ID: <ZrzfoQdm7MzQlFX4@lizhi-Precision-Tower-5810>
-References: <20240725193355.1436005-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725193355.1436005-1-Frank.Li@nxp.com>
-X-ClientProxiedBy: SN6PR08CA0015.namprd08.prod.outlook.com
- (2603:10b6:805:66::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6614A3FB3B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723654085; cv=none; b=sUaAqkmMm2v2hFLklPq6GD+K+zohW2K1x4iwmpgiZ8gccCCVVs1N7idHtBy8/p/VlsnAz3ZWY9DkFKfe4HvhmQNqccwtxk2fw9krA3/kau5hcNTNJrNfAuPK+mLResKF9zeO6dF0/ua7pnY3Uvg8zbJceuv1jbsANqxilAIBGGo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723654085; c=relaxed/simple;
+	bh=vTfAPEk2c1Ct83IEMiOqxGera7uARBbWF1WLwgPNSIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e1OBuzHKtka8cdSc+/hMcRUrv8pgLkKM28ogY9PSuNFlQBdnVlryUrmi6DDmShXnMCKyDh5kPBMur34pqvv4WOQCifmdjR+FOOeOEig5aAylEuCu2t/fjRFnGkjjw4V5DqsdU8zRGLGo4RAGJfjOmzg7OUytTBxGOwoPBIEjeFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kzpm//R0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723654081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QYxda2UDwR4Xmvyg0lcuf9BUoRVgq+CvoIu/NKSta7Q=;
+	b=Kzpm//R0KArimu3RMB3Sx2Ealmq0vZsbcF6zVy48lZXF6QE7rt+HnoA4EfGhAYaKA6fiDm
+	H46U//Wg5VNOKm7cJbiwacbdBmiA0qH5MSF0KUBuGDorovJsottQlxXZljnox3J9SW41Jf
+	m/7CFY3gJqAqZANl8cDsZfYDtw2/CHE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-557-I8OtXQ60NUaCIoQSdxh6xg-1; Wed, 14 Aug 2024 12:48:00 -0400
+X-MC-Unique: I8OtXQ60NUaCIoQSdxh6xg-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3687f4f9fecso80679f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:48:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723654079; x=1724258879;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QYxda2UDwR4Xmvyg0lcuf9BUoRVgq+CvoIu/NKSta7Q=;
+        b=GCfxypSqg+4NU0SObFRplCI4ip7bxRh5nFHEd/aAM2KAuxXv6ZAEie1y75MCkEZbAD
+         1EWMd9FYYZqEQiw0/XY49xawryKb8b6/fXbveq558S/OHmkHPXOu0HXUABOmSYM3khvg
+         hP1S2XLnsHLKWvDwWq/M3q5rJ7RqwH+JYS6WZvWhwZDFwCykP8NaHz6L9CbKGhG8vkWE
+         G40G+hVxDv3lSPZAN8EVzYBwZnv4ogU3QazJ2dsW/4BtFJxBDdNsFShNdKvoS5AesJP4
+         j0raAV8qWI67DK8OINNi7+W7fel0qj9/IljBUgQoYoNYkku7x4tJT18WhLauIHwWfaJ4
+         yPUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeHWGoEOgmb43wUF8z1fPpzexdJJWi3wQs0fEnZ0bdPFDpyxWKEJDIBHKDLGvWKbnqflg6qb8zQIpvnvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUREzeh48wbtIA1KX5aHVvbTTfJ7xX1eKb/yAt86In2DT5o0y/
+	xHMXdywW/RMmR9TBZGAtuFO5N0iBmwGA35WD7NIcxS6V22dUwqe9X4PhbV6bQ1/zDrun5QDo6YE
+	zJFLVNBR1ZzKWIG1CG5/yA+s3rZXoAgz6BjMm5+PUY1DAiy4Yt3wnbBccpQsg0w==
+X-Received: by 2002:a5d:63d2:0:b0:368:4e35:76f9 with SMTP id ffacd0b85a97d-37177792c5cmr3202379f8f.37.1723654078842;
+        Wed, 14 Aug 2024 09:47:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHlHisBwwOgDSWWZAt8jetKNRxWN9mxvxPG18APJHAdr+BzMtyO7krVv2Z7CFUDIx3n93TEAQ==
+X-Received: by 2002:a5d:63d2:0:b0:368:4e35:76f9 with SMTP id ffacd0b85a97d-37177792c5cmr3202351f8f.37.1723654078206;
+        Wed, 14 Aug 2024 09:47:58 -0700 (PDT)
+Received: from [192.168.10.3] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4e51eaa9sm13321050f8f.68.2024.08.14.09.47.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 09:47:57 -0700 (PDT)
+Message-ID: <2bec792d-22aa-4c79-8324-2f801407a4eb@redhat.com>
+Date: Wed, 14 Aug 2024 18:47:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10229:EE_
-X-MS-Office365-Filtering-Correlation-Id: c00b3364-3fb5-4cd9-5f1c-08dcbc80cc9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	a4kicIQenqxQL289Citrynh+CxYrkfTAwCnJxiQZ+RoaYz7eIvZFCCyKXOpHvCW2orVpgkmoAqMmDy6/SysPrANYidvQ5J9t+1YmD/C5eQpJ38tBcsCRHkMm8kIenVFkujVJ/lPedw7sbkgBzTh3QqYAkA+egpAEBKvaDhT7f+gNVjLa2lZUHYDXAdzuO9FmRYe1zcgPExypNeX/niF4+J5EbHT9aWfDC+61iieVhqKoPRcvKAdj2KUWtrVpKTl5ayIfqNthd9pCgnPrnOgro8r6cpb/wgoKyOE6umIO10LLno5E2ffyG7np5xqbigRGaTvipTbOo5HdiggeaztdVTCDsIfbFCSWgz1ziTwZtMSSZYQWWzSKle8GB38A7EtITvm4JNmu+prRCC3tHpi9hMvMt7L3EnMR68ERng2KGJAkivKpTNuRiLAKpjyT1pH4iOYx733G8zC5EYcXQggAJTcZT6Ykl1LicImQd114cpMjuTZGBAFPeTgbMKAPRIms5nRFLhBhN+DGCQgdLHMvAS1eTcSPWxUTzCSVU6jNHBVW1oK9tIH8sOhTaZPrhlPt9xLOCK7rIDAw9VAKYuGvfRdTgYkXuoWArEW21DxBXPsU+5SGw0ox5agE+jifGnMPXPJEuh9JSSNh5A3rlAgNNlQFUpJuBbMWwNJ4sKCpKMSaX4ot1h3aIWzvkF/4TjIiPpga5vrSnyt7Arln0e2CcY/X0gI7qMmkEfHgU2++xDo=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5IsVYNZJwCg6JbeQ6iMtY3zSlnANuyIe4YLBlzB/4IQmqXLqGN+shlCoWYv5?=
- =?us-ascii?Q?mon722W+bYaH6Ut0ys9g3khl8hPnVyDtbDfIGxtOxWMucIkkaLiSRIkHKjFq?=
- =?us-ascii?Q?hecFcQay2YVjAOHv0NTCVKTf/wraihNf40vhnRLc3bMETCkJjFHpuQlONkFU?=
- =?us-ascii?Q?3/a2jcBkxpDdSH1VA2bN5u1+7srApqOYfZo6CKPrFaqSTu35mvU8ewnHblct?=
- =?us-ascii?Q?vfbU7D1HLHk2m05u1SOW9/op/9YmoGTuYqdU128hDuOtMTdb06EQj88xTVgv?=
- =?us-ascii?Q?ScHoX0+ipuw+A7V0TOY+6mvH2SRxkPfOvlGLfzXIqE6xxYw0A3YIcX7TQYFl?=
- =?us-ascii?Q?XTxG7Qd3nbPssO8h6sUOXGRNW2sQm8SItNf1FPrMt5fuIhcVqyqp1XPETRpM?=
- =?us-ascii?Q?a0V+L249QsV0cc8TQyPPvQ404Vqs2ASfE/z7I6+4kYjw7XyrdaYyroeD3FTv?=
- =?us-ascii?Q?mP9p3b7s6dcdQHBm2BGGOax0+Zhi0hB3mf3yCV+6v9xftH+4EsmpeyD/LJUS?=
- =?us-ascii?Q?Sb1a/dUHDzl6DFY8tS11/mu/nx2YEAr1OyFXAI10TQegjDCCbxupIgiRi9dY?=
- =?us-ascii?Q?SrVyTImSJNG6KHcG+oGJrLwuAf7VvgCmG0nzgz/Ofivwsuqz1ZS2n+vQ/Rtj?=
- =?us-ascii?Q?/bUdkffvGWrl/slhR7hnjCcMJShIRmb9TYbUZDWKMFnLNalN54w/XnlPY89A?=
- =?us-ascii?Q?qlz2JsBgb0kbbHqAei1I6zg4yiSAnmrFBE6fOLozCbhY56NKYKNR/jjn/pKF?=
- =?us-ascii?Q?e33d2qA5X1WLzIY9EVMJf+Y4liIdHNBkznU0SBreN5XDsWEhBsf1pkVsQWvd?=
- =?us-ascii?Q?/rq8GBvZU3QpenshVPjeW6xMAgK5xecNJEI7HZx6lcdC82uAuelNuRFTAHe1?=
- =?us-ascii?Q?pdq9j7ceEcp8K38maDXIlmmglp5MEPOLe4tWZHSa8MKmjTSxAcj8mWzIDLVH?=
- =?us-ascii?Q?Y8wCcO075/PvpYc6cu/jm+kUKVCGW9+daw03GLyvhufylvLBXg7LFhacfSZd?=
- =?us-ascii?Q?wpVkBoe/GfJGTEoXINrabCxyVRZ5SQRTWRG01JTtyWi0D/7Ecao/la4ZLMKP?=
- =?us-ascii?Q?xI5sqOmK4pjFdnsCNE8QJEUX2yE4XtEeps5es7Js3m1f2/eRKpLYAgLNefhJ?=
- =?us-ascii?Q?Rw57Q43DSz4yLo+u5++yg9jU3Ov/W+l3DcPwyaotTebPB4mBviAjcO6Y3oxi?=
- =?us-ascii?Q?y8/NNMHLBqcYW+T3ey99Ih3fKn3/DzKsq/G4C0FCRT8sTBnVgFaP03Fn5JFF?=
- =?us-ascii?Q?RFlu951R8TuxV3XA1bsqF8flpMEwYWqJ23R0n+f+kAWRe52+1ZqLfckqlCUw?=
- =?us-ascii?Q?N0Z86M+Kg1OTOGv6o6HOoUj5nEnAnEB/KE4mKAfdRNYKGH1ODC0J9PsLGgik?=
- =?us-ascii?Q?vpX3a1ovZ0nm44nBfyKYVL6Atnx+oz+L6x57PThAmTkLFX6RR2y0SFeO/4va?=
- =?us-ascii?Q?8TKHJnr+ZmnWqJXtyCveuHiFLHsUaurmALFkvXDdzV/NnykjJOOszaiQMIh0?=
- =?us-ascii?Q?4lWqsPgafkpJO1pXDtrCZVKctDwmEWIT8uIBi1GRNnnIBnVqSLzxz1m2x0hr?=
- =?us-ascii?Q?yB20SDW9V4xkab/rV7xp/vvVxcHb3kQ00ryGSxR1?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c00b3364-3fb5-4cd9-5f1c-08dcbc80cc9f
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 16:47:35.5718
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L34eoY669dMknZBrenuNsgz2fIroFgEKKjDaYpAKqWZbPY3zV7+0lwAVDiLFjgx4QCmTMH8M6XsbjlFw10ZD3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10229
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/22] KVM: x86/mmu: Skip emulation on page fault iff 1+
+ SPs were unprotected
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>,
+ Vishal Annapurve <vannapurve@google.com>,
+ Ackerly Tng <ackerleytng@google.com>
+References: <20240809190319.1710470-1-seanjc@google.com>
+ <20240809190319.1710470-5-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20240809190319.1710470-5-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 25, 2024 at 03:33:54PM -0400, Frank Li wrote:
-> From: Jacky Bai <ping.bai@nxp.com>
->
-> In tpm_set_next_event(delta), return -ETIME by wrong cast to int when delta
-> is larger than INT_MAX.
->
-> For example:
->
-> tpm_set_next_event(delta = 0xffff_fffe)
-> {
->         ...
->         next = tpm_read_counter(); // assume next is 0x10
->         next += delta; // next will 0xffff_fffe + 0x10 = 0x1_0000_000e
->         now = tpm_read_counter();  // now is 0x10
->         ...
->
->         return (int)(next - now) <= 0 ? -ETIME : 0;
->                      ^^^^^^^^^^
->                      0x1_0000_000e - 0x10 = 0xffff_fffe, which is -2 when
->                      cast to int. So return -ETIME.
-> }
->
-> To fix this, introduce a 'prev' variable and check if 'now - prev' is
-> larger than delta.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: 059ab7b82eec ("clocksource/drivers/imx-tpm: Add imx tpm timer support")
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Reviewed-by: Ye Li <ye.li@nxp.com>
-> Reviewed-by: Jason Liu <jason.hui.liu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On 8/9/24 21:03, Sean Christopherson wrote:
+> When doing "fast unprotection" of nested TDP page tables, skip emulation
+> if and only if at least one gfn was unprotected, i.e. continue with
+> emulation if simply resuming is likely to hit the same fault and risk
+> putting the vCPU into an infinite loop.
+> 
+> Note, it's entirely possible to get a false negative, e.g. if a different
+> vCPU faults on the same gfn and unprotects the gfn first, but that's a
+> relatively rare edge case, and emulating is still functionally ok, i.e.
+> the risk of putting the vCPU isn't an infinite loop isn't justified.
+
+English snafu - "the risk of causing a livelock for the vCPU is 
+negligible", perhaps?
+
+Paolo
+
+> Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
+>   arch/x86/kvm/mmu/mmu.c | 28 ++++++++++++++++++++--------
+>   1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index e3aa04c498ea..95058ac4b78c 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -5967,17 +5967,29 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>   	bool direct = vcpu->arch.mmu->root_role.direct;
+>   
+>   	/*
+> -	 * Before emulating the instruction, check if the error code
+> -	 * was due to a RO violation while translating the guest page.
+> -	 * This can occur when using nested virtualization with nested
+> -	 * paging in both guests. If true, we simply unprotect the page
+> -	 * and resume the guest.
+> +	 * Before emulating the instruction, check to see if the access may be
+> +	 * due to L1 accessing nested NPT/EPT entries used for L2, i.e. if the
+> +	 * gfn being written is for gPTEs that KVM is shadowing and has write-
+> +	 * protected.  Because AMD CPUs walk nested page table using a write
+> +	 * operation, walking NPT entries in L1 can trigger write faults even
+> +	 * when L1 isn't modifying PTEs, and thus result in KVM emulating an
+> +	 * excessive number of L1 instructions without triggering KVM's write-
+> +	 * flooding detection, i.e. without unprotecting the gfn.
+> +	 *
+> +	 * If the error code was due to a RO violation while translating the
+> +	 * guest page, the current MMU is direct (L1 is active), and KVM has
+> +	 * shadow pages, then the above scenario is likely being hit.  Try to
+> +	 * unprotect the gfn, i.e. zap any shadow pages, so that L1 can walk
+> +	 * its NPT entries without triggering emulation.  If one or more shadow
+> +	 * pages was zapped, skip emulation and resume L1 to let it natively
+> +	 * execute the instruction.  If no shadow pages were zapped, then the
+> +	 * write-fault is due to something else entirely, i.e. KVM needs to
+> +	 * emulate, as resuming the guest will put it into an infinite loop.
+>   	 */
+>   	if (direct &&
+> -	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE) {
+> -		kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa));
+> +	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE &&
+> +	    kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa)))
+>   		return RET_PF_FIXED;
+> -	}
+>   
+>   	/*
+>   	 * The gfn is write-protected, but if emulation fails we can still
 
-Ping?
-
-
->  drivers/clocksource/timer-imx-tpm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-> index bd64a8a8427f3..cd23caf1e5999 100644
-> --- a/drivers/clocksource/timer-imx-tpm.c
-> +++ b/drivers/clocksource/timer-imx-tpm.c
-> @@ -83,10 +83,10 @@ static u64 notrace tpm_read_sched_clock(void)
->  static int tpm_set_next_event(unsigned long delta,
->  				struct clock_event_device *evt)
->  {
-> -	unsigned long next, now;
-> +	unsigned long next, prev, now;
->
-> -	next = tpm_read_counter();
-> -	next += delta;
-> +	prev = tpm_read_counter();
-> +	next = prev + delta;
->  	writel(next, timer_base + TPM_C0V);
->  	now = tpm_read_counter();
->
-> @@ -96,7 +96,7 @@ static int tpm_set_next_event(unsigned long delta,
->  	 * of writing CNT registers which may cause the min_delta event got
->  	 * missed, so we need add a ETIME check here in case it happened.
->  	 */
-> -	return (int)(next - now) <= 0 ? -ETIME : 0;
-> +	return (now - prev) >= delta ? -ETIME : 0;
->  }
->
->  static int tpm_set_state_oneshot(struct clock_event_device *evt)
-> --
-> 2.34.1
->
 
