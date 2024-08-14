@@ -1,355 +1,159 @@
-Return-Path: <linux-kernel+bounces-287128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8C7952352
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:24:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6D7952357
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD931F226A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5D8282294
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA5C1C37A4;
-	Wed, 14 Aug 2024 20:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E97D1C3F31;
+	Wed, 14 Aug 2024 20:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p06cLFuV"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/0296B2"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4910F139CE3
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723667059; cv=fail; b=szg1tkUTfXvAGtYTs0J52QSp3+XXugAuqS/SaqAAkFegpfnA+G8dUbNyAIRjav/gecq1qIYfYMmDqwdZSLkLVBeLY0W6FSMGkvYjtrYfWPA9jmAJDsEkz/WKq2tz3Q5WHBLCsm896h3uQU6cSJd6h6j6QUBondjECJ1L/BWypjg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723667059; c=relaxed/simple;
-	bh=fb7EEWRtzMy7Zbzus9EgtQ/vqBiqrJuBiY5qvsxHk1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Pjl2hQvWeZoTde98HAjdyxK8Fvb/1MyA1cpDnMv5o/RrtPeAztW8PcRDUD94ik3MNAoLVYSj+gNT807WuSTkZaHKhcm305KpHlQnqTkcS9oxiq2IwIHpeQ2WpXOC9AgmtEg2kRtxqRAi6EIRcDgcwpdM2jDijZtwiprEuLqwpRw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p06cLFuV; arc=fail smtp.client-ip=40.107.94.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FjL0ThuzhXQ1XKxJuOgegl9TmY32nwfx4MuIorm/wCUIrJeXWnbNx6orLLR4FdreHz7pOEETJK9HT4HwIjHs1yziUq+SLdWfVvYrPQ54Nd5zmx6zNyoUw5YgwjpP6KCRx9U0IaiyikJkMKYFScggN965YKspndeazTmgMtfsltxocm2qDb2EcdXDoDRHCMsy4Lky+qmaptf224yCIqVATdU0efoYtTTaz26rsrY+qTiC+EN33NKI1uhPUKVitDzBmgW6pDBhQlWsSxDe0dbcAqc7dHOa42DNZ2ZUWrshmBV2ZtvTmCY7Gz2EUx+1gxTj+iqMtzSbHOsUTzh036Z/6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w3golakSXdwCpa/lpBBCg4tXsqQJtd684Pl89CFs1cQ=;
- b=UQ83iRGGW7cjQahxZJ1WpwcQjaB+PPSjDnYa0C9FRHK4NwSDHMymztEzNnTX8NLdElG7W1d+oEAgxMpGbyqhVhFTIAoAUOtLumjmMKu2DlV2XfEHVwCsy0FcHaQWAfDOSANME+TRwLvyOXr2/3dmKW6C7tdBhi8Zro/fYQP3cu+/sT3SYbaFh7YHa1E6VzA1kBcix/cMKUkLxwCEKIfhycJGRseLW+pgqWz7gmHpB8EeSh2JEY8Ref6W7rCblDpZKgHo/BKUyuBde6awufOJi8vMhdSM+GebQ9ZkP6PyEhfyWDUdAGeW40J1/TG+qXA4EOLahEHbqqzg5GY7JlFZ9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w3golakSXdwCpa/lpBBCg4tXsqQJtd684Pl89CFs1cQ=;
- b=p06cLFuVAN6p+FWfeHZIl8xOfWxe/E9BZoG/zM4LydlAzfW39uDfKCTFBPVMUukROMLwTX3nz4934dvP6WhQ8NCeEmY444Cqt0RrRmVAgCLt69fBTuqhRSaN92t5xCBZF7CNbkxBLhg/zwSMNidGgKQYmUqXFpHHr4+5lAftnc4=
-Received: from CH0PR08CA0024.namprd08.prod.outlook.com (2603:10b6:610:33::29)
- by IA0PR12MB7554.namprd12.prod.outlook.com (2603:10b6:208:43e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Wed, 14 Aug
- 2024 20:24:11 +0000
-Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
- (2603:10b6:610:33:cafe::75) by CH0PR08CA0024.outlook.office365.com
- (2603:10b6:610:33::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23 via Frontend
- Transport; Wed, 14 Aug 2024 20:24:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Wed, 14 Aug 2024 20:24:11 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
- 2024 15:24:10 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 14 Aug 2024 15:24:09 -0500
-Message-ID: <6f50a3d7-0aca-e1a8-423f-75bc5cb6e744@amd.com>
-Date: Wed, 14 Aug 2024 13:24:09 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A850139CE3;
+	Wed, 14 Aug 2024 20:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723667159; cv=none; b=NcS5r8fI9NTst3/D4uN2KngDmgv3Q6M0zLEF99Qg6xwmIfFNozDSCX36AHISK6qe1dZi5Er3H3CoPkpDx6PG0kooQ2QdbVxaj7z2NZ2zD19iuqYD6pv5cPPknc5Yp3ZICL2YlCbvBO+zuN/L7j3LXawf9567iUe6WTJp39QYqKs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723667159; c=relaxed/simple;
+	bh=5THrZT91Dka8vE3WCfMHCQnwH9ElY7cqZ5CXLdQYm9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HNojS4oN5npURYpdzH6EWcyJwwXX3UC29dyuqOuDg00VkeW8KXnpr9W2xFO7M9+QA2uopE2EJK1Iq+6/hO8uubWA4S5EUKkGnyYXQMfCoAgcIyO77v7tJfPmo+g//2exmwnOP4jMyDm6MY7JX64GAxWylxk/4ijF43qs+dvyzwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/0296B2; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so31989866b.1;
+        Wed, 14 Aug 2024 13:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723667156; x=1724271956; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e+7imTotiuh7U0ostSpwsXZ2DttMOuddO+8MDxDc62k=;
+        b=L/0296B2VWjpQcZwLzW33xfUyn1dv8oIBHaMFNs4yAc+iasvdGFBYR4A1Nj7mN40pC
+         EANw0xhyCVcgQoI8T8wy/xe9E2gjv4J8oSlompFrdL186M+omhIFSVX8j73uSBeZ1i+d
+         DDpXczm88dA+M4Jn4L60hA3mV4IIrhTBcw2ZQV9LYo/k6cr3mvLhoJPTE+WGsXNnh+Gf
+         fTiqj/uUUlkC7KjvpEP/0NNLKlB2HBxYgnmDfphyCMABlHpX4ldgL2IYgtAJ6Kx6UVQh
+         vq3zkefJNB3AsUpaoGQJoUogxY+CmwjubH+NTTJEPrlDo6OA4uv3drrhq2KgZA+MvjY2
+         fSFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723667156; x=1724271956;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e+7imTotiuh7U0ostSpwsXZ2DttMOuddO+8MDxDc62k=;
+        b=O1a7j41YRtxEqFAWFWmwd51gg84ZzWvQC1COaqhg8j1Vxbq5i/1gqeFQz04UAg1C3C
+         zf7dc1r5Vz4XNdy0KssV6adyQijr2lLK8+0T7fTdl71PvyokRsIOxCpO616Ia5iRUaEz
+         7PveLLoN98f1qyDr4NObTNHZQ94bqDFSFk8g8agQGNu1cb2p5fH0Y2sQxL/x8Tgk4mGh
+         hEasDhjOQu5u5k4D1o0vDIaAhiNpIhLtTib45fTdvihiCvoGh6Mfl+6X27MItTuSCNy3
+         2qyeW7LhKsxkDcyJrQ4pMAsqTnaj36YKWjJyjGIMAoxICtJ2oJPCIKsOTA8uZLvyE9CK
+         iWTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG6sE6LmT9JnbDf+A6QWcaTC++iKQNCOE4umnKMGKAuHg0agubqKeNvcOSIg7tUrlZDjOu4Zt/Vtnb+Ok1w5wOAFP8t8Yzd2pyYC2LB0egdePxmvB6xgBvr6YR+saQgkW4/osfS3H1G/di7jzD++F7rjzYYleWO3NnpJX5QCREOmYAv+Y1uLJirCph/0de4YhJp047D4FhrA7IbeeTWHNotMY=
+X-Gm-Message-State: AOJu0YyE1IMwWp0lvRa9yDrmt9HWtUcSHVINNaS75GHXF2XraiMueW6y
+	JBSoVejqXI7vNiCYnJoV1SJxy8E3MgWzkl47SGkOjM1jCFqsXX8w
+X-Google-Smtp-Source: AGHT+IH+SZrWskCFaBKMcil9L0FX4p7V/d1rSz8qFi4Xab5CoLt/Ip1kZb8rju6bwMrlzWibwGzJAA==
+X-Received: by 2002:a17:906:4fc7:b0:a7a:a5ae:11bd with SMTP id a640c23a62f3a-a83670723e6mr288279266b.67.1723667155199;
+        Wed, 14 Aug 2024 13:25:55 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa784fsm214857666b.61.2024.08.14.13.25.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 13:25:54 -0700 (PDT)
+Message-ID: <0eca6755-a2ec-404f-b98c-ee6c9f6fb55f@gmail.com>
+Date: Wed, 14 Aug 2024 22:25:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V2 01/10] accel/amdxdna: Add a new driver for AMD AI
- Engine
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
+ strings for eud
+To: Melody Olvera <quic_molvera@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Trilok Soni <quic_tsoni@quicinc.com>,
+ Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+ Elson Serrao <quic_eserrao@quicinc.com>
+Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20240807183205.803847-1-quic_molvera@quicinc.com>
+ <20240807183205.803847-2-quic_molvera@quicinc.com>
+ <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
+ <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
+ <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
+ <2b118a49-2229-4346-ab21-0aa5377d7a4e@kernel.org>
+ <8bb412f8-4fe1-40ca-8414-bb77c66899ae@quicinc.com>
 Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>, Narendra Gutta
-	<VenkataNarendraKumar.Gutta@amd.com>, George Yang <George.Yang@amd.com>
-References: <20240805173959.3181199-1-lizhi.hou@amd.com>
- <20240805173959.3181199-2-lizhi.hou@amd.com>
- <f5e9f517-77b8-998d-9bf7-d9bf4ee2fbb8@quicinc.com>
- <172cde68-930f-381e-df9f-da2a48955828@amd.com>
- <edaa7f7d-a3e8-1b1a-37b8-3fd5a8a7790d@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <edaa7f7d-a3e8-1b1a-37b8-3fd5a8a7790d@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Konrad Dybcio <konradybcio@gmail.com>
+In-Reply-To: <8bb412f8-4fe1-40ca-8414-bb77c66899ae@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|IA0PR12MB7554:EE_
-X-MS-Office365-Filtering-Correlation-Id: add776ca-d3c4-4f20-06db-08dcbc9f0ed7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MERFcjM1c2VzU1BsR0JtZTVpWjVGR21VWEtrNHVSb1U1K09ROTAva3d2QTc5?=
- =?utf-8?B?c01GZ3Z2THc3WUgzQzZBOWc0L3N3ZFd6dFJOUE5JUDN4cUFCUU53bGt1aGNk?=
- =?utf-8?B?ZFUrSEM3QlVmUlpGc1Nab3YwTzFqYjAwajR4R0hmOVl0dm5wMEE5NGhCL0tv?=
- =?utf-8?B?Vzdrd3pPdjd6Nm5xR3FhcUhNVmMrS1JzNzExL0RPZ01ZbGJGNjhpRE5IN2xE?=
- =?utf-8?B?akNwS3d3dTM4a0dVc20zTFVaQTdkbHdjTkRKWVFmaTZCQnZ3WTYzK3p6QTh0?=
- =?utf-8?B?QU1WZndOT3VvbzljRTJjemhnTi9qRURhc3cxcjJBMGYxTjFObDJjWFlndk9Q?=
- =?utf-8?B?WWhYR2tmdkpxT0tOUVlsOWdxeXB3aHMvRG1lQ3pyeUdpME56SGhjQWtoZkVR?=
- =?utf-8?B?WVpDckdQWWYwei9ZN1F4blUza21QRjVMTjN3aTNWMEpCOGk4SzJSRG1mR2Nl?=
- =?utf-8?B?MTh1WjFoQUdRdUNESkhWQjBkWVFoU1BlQjFRbVpqcmk4U1FjWkdXYUphbzB3?=
- =?utf-8?B?QWUvMnVGeUFZVUo0N0JYa0Y4Y1pIQkpVRzhRN24rYlluKzM2eFNTUVZxekRm?=
- =?utf-8?B?RVMyM01BUUhKa3lwaXhhRkI3NHl6YnRyRzFwRXZhbi9kbmxNdytjMTJLa0dT?=
- =?utf-8?B?bVkzOXNweTlwcGYwMTdSRml1NEtTbWd2OXJvcnh3NmdQMzlZZHFPbjVKa2Nn?=
- =?utf-8?B?dXBOY0RocmpDcTJQQnBjajM3S0kxMWZvU2pCOFdqdTd5MThYZ1dNZjdsYnJC?=
- =?utf-8?B?S0F1RHZMNzA5aWRYc1FudlNiUXEzRWFkRnMwRmltVE5PbWJ1NmlwT21mOEZY?=
- =?utf-8?B?L3ZQQ1NRejZtYUxuVFkwTkh6M3JNSE1PUEJpVXAvRGgyTyt0bk83andlLy91?=
- =?utf-8?B?K3UrcFMvWlNVYm1SZ2RLcWdKbWNnNmNDMVZMcnphakwzZmxBV1FFUk1JRmQ3?=
- =?utf-8?B?RFFSSU53ZnhSU2xWSE1aaTRSTFNIVEhRMHczSWUwM25semg5NnM0OWNyaHlR?=
- =?utf-8?B?cWRyT2NCSlVxcHBVS0lCQ1hDQkp1SW5Jbml4dUp3RzNCYlp4bnJUSk01SkpN?=
- =?utf-8?B?SFpPMTRUdTZWYnNXRHJiN05UK1QyYStuS0t5UjkxSi9hYkVUT3pWaU50NWM1?=
- =?utf-8?B?Z080RXJmOTJWOVJYMGR3ZTZUR25CM2M1VnYzMENPT1I3WEhVRmltenNzYy9z?=
- =?utf-8?B?WHY3ZGN3T21WbitKWlBSaHNHakJUc1pEYnhTamx0YUJLQUl2cnJjU1dtaXFs?=
- =?utf-8?B?dy9wWlFGUVZnaTBmUm5ldXBBVS9tcTRnR3R4TDZYeUVjcHlneHE0UC8xSUM5?=
- =?utf-8?B?WDRFQzJWUHQxci9LcXArZUFPRkFwYWdBV3p4QzI1Nk1JcExpY2xOQ1BhQ3Vs?=
- =?utf-8?B?c21rSGdGQ0VidEtkRDBDRjRtM2pxTkNYdXJiZzZnWXZZaTY1US9ISHROdlhQ?=
- =?utf-8?B?czJ4RVZValVSeDZ6NGhEdzMycUJ5dkVUV05yT2lBSkh3ZGQ4eW9CSExkd1Bq?=
- =?utf-8?B?c3dkZE56eVRZQjZlQU1ycWY2cmxYeTNCTmNrUWNFTXdQNFJlQlZzdmwwQ1Nq?=
- =?utf-8?B?YUhzQnVhMzArWFpYeUdjY0Jtc0U1d2plOWdGQlBNMFZ0ckRNK0Q4UFhqYzFj?=
- =?utf-8?B?VnF4T3JRK0wzVHNzWk9FMko3MURCRXBncG9KcWV5bGtDTkltUW5iRTF6ellX?=
- =?utf-8?B?YVV6Q3I0WnJqZks2YXo4Sjl5S3Nrc0QyT3Zsb1FkcVE3T0E2cEhqNFNxeEtZ?=
- =?utf-8?B?WDRuQ1AwL0VTTUV2c0xocTNCN25jNGZtMzE3Wmt2SEVzWUNQU3FvY0dLQ1V4?=
- =?utf-8?B?WGZtWURzTlJjTXA5Mm9rbU94S2NlbTI5Q0NhNUE2QmptSWQ3Vy9xcXZaUStm?=
- =?utf-8?B?V1BRb0xaUWpyZGRCRFpUWGlFSHVCSDVjZW9pd3VKWDBCbDZmTFk2NlJkbW9Y?=
- =?utf-8?Q?owrHV2hLSsvAwDIQriiJMrFI4qqcUHAm?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 20:24:11.3625
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: add776ca-d3c4-4f20-06db-08dcbc9f0ed7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000014A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7554
 
-
-On 8/14/24 11:46, Jeffrey Hugo wrote:
-> On 8/14/2024 12:16 PM, Lizhi Hou wrote:
+On 14.08.2024 7:33 PM, Melody Olvera wrote:
+> 
+> 
+> On 8/14/2024 3:30 AM, Konrad Dybcio wrote:
+>> On 14.08.2024 8:15 AM, Krzysztof Kozlowski wrote:
+>>> On 13/08/2024 22:03, Melody Olvera wrote:
+>>>>
+>>>> On 8/8/2024 4:00 AM, Krzysztof Kozlowski wrote:
+>>>>> On 07/08/2024 20:32, Melody Olvera wrote:
+>>>>>> The EUD can more accurately be divided into two types; a secure type
+>>>>>> which requires that certain registers be updated via scm call and a
+>>>>>> nonsecure type which must access registers nonsecurely. Thus, change
+>>>>>> the compatible strings to reflect secure and nonsecure eud usage.
+>>>>>>
+>>>>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>>>>>> ---
+>>>>>>    Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 6 +++---
+>>>>>>    1 file changed, 3 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+>>>>>> index f2c5ec7e6437..476f92768610 100644
+>>>>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+>>>>>> @@ -17,8 +17,8 @@ properties:
+>>>>>>      compatible:
+>>>>>>        items:
+>>>>>>          - enum:
+>>>>>> -          - qcom,sc7280-eud
+>>>>>> -      - const: qcom,eud
+>>>>>> +          - qcom,secure-eud
+>>>>>> +          - qcom,eud
+>>>>> Commit msg did not explain me why DT bindings rules are avoided here and
+>>>>> you drop existing SoC specific compatible.
+>>>>>
+>>>>> This really does not look like having any sense at all, I cannot come up
+>>>>> with logic behind dropping existing users. You could deprecate it, but
+>>>>> then why exactly this device should have exception from generic bindings
+>>>>> rule?
+>>>> Understood. I won't drop this compatible string. Is alright to add the
+>>>> additional compatible as is?
+>>> You always need SoC specific compatible.
+>> Melody, is there any way to discover (that won't crash the board if we
+>> guess wrong) whether secure accessors are needed?
 >>
->> On 8/9/24 09:11, Jeffrey Hugo wrote:
->>> On 8/5/2024 11:39 AM, Lizhi Hou wrote:
->>>> diff --git a/drivers/accel/amdxdna/aie2_pci.c 
->>>> b/drivers/accel/amdxdna/aie2_pci.c
->>>> new file mode 100644
->>>> index 000000000000..3660967c00e6
->>>> --- /dev/null
->>>> +++ b/drivers/accel/amdxdna/aie2_pci.c
->>>> @@ -0,0 +1,182 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * Copyright (C) 2023-2024, Advanced Micro Devices, Inc.
->>>> + */
->>>> +
->>>> +#include <linux/amd-iommu.h>
->>>> +#include <linux/errno.h>
->>>> +#include <linux/firmware.h>
->>>> +#include <linux/iommu.h>
->>>
->>> You are clearly missing linux/pci.h and I suspect many more.
->> Other headers are indirectly included by "aie2_pci.h" underneath.
->
-> aie2_pci.h also does not directly include linux/pci.h
+> 
+> Unfortunately, no. We considered several options, but none guarantee that we will avoid
+> a crash if we try non-securely. The secure call also won't give a specific error if it fails either
+> (for security reasons) so we can't know if a secure access failed because it's supposed to be
+> accessed non-securely or for another reason; hence this approach. If there's
+> another way to achieve this functionality that might be better, I'm all ears.
 
-it is aie2_pci.h --> amdxdna_pci_drv.h --> linux/pci.h.
+Can we read some fuse values and decide based on that?
 
-It compiles without any issue.
-
->
->>>> +
->>>> +    ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->>>> +    if (ret) {
->>>> +        XDNA_ERR(xdna, "Failed to set DMA mask: %d", ret);
->>>> +        goto release_fw;
->>>> +    }
->>>> +
->>>> +    nvec = pci_msix_vec_count(pdev);
->>>
->>> This feels weird.  Can your device advertise variable number of 
->>> MSI-X vectors?  It only works if all of the vectors are used?
->> That is possible. the driver supports different hardware. And the fw 
->> assigns vector for hardware context dynamically. So the driver needs 
->> to allocate all vectors ahead.
->
-> So, if the device requests N MSIs, but the host is only able to 
-> satisfy 1 (or some number less than N), the fw is completely unable to 
-> function?
-The fw may return interrupt 2 is assigned to hardware context. Then the 
-driver may not deal with it in this case. I think it is ok to fail if 
-the system has very limited resource.
->
->
->>>> +struct psp_device *aie2m_psp_create(struct device *dev, struct 
->>>> psp_config *conf)
->>>> +{
->>>> +    struct psp_device *psp;
->>>> +    u64 offset;
->>>> +
->>>> +    psp = devm_kzalloc(dev, sizeof(*psp), GFP_KERNEL);
->>>> +    if (!psp)
->>>> +        return NULL;
->>>> +
->>>> +    psp->dev = dev;
->>>> +    memcpy(psp->psp_regs, conf->psp_regs, sizeof(psp->psp_regs));
->>>> +
->>>> +    psp->fw_buf_sz = ALIGN(conf->fw_size, PSP_FW_ALIGN) + 
->>>> PSP_FW_ALIGN;
->>>> +    psp->fw_buffer = devm_kmalloc(psp->dev, psp->fw_buf_sz, 
->>>> GFP_KERNEL);
->>>
->>> Feels like this (and a bunch of other instances I haven't commented 
->>> on) should be drmm_* allocs.
->>
->> The PSP code is kind of low level and directly interact with 
->> hardware. All the PSP interfaces use struct device * instead of 
->> drm_device. I think it is kind make sense because PSP is not related 
->> to drm.
->>
->> I will scan all other allocs and change them to drmm_* allocs for the 
->> code related to drm_device. Does this sound ok to you?
->
-> I don't think so.  Look up
-> drm/todo: Add TODO entry for "lints"
-> on the dri-devel list, and its history.
-Ok, I will replace them with drm_*alloc.
->
->>
->>>
->>>> +    if (!psp->fw_buffer) {
->>>> +        dev_err(psp->dev, "no memory for fw buffer");
->>>> +        return NULL;
->>>> +    }
->>>> +
->>>> +    psp->fw_paddr = virt_to_phys(psp->fw_buffer);
->>>
->>> I'm pretty sure virt_to_phys() is always wrong
->>
->> The hardware exposes several registers to communicate with platform 
->> PSP (AMD Platform Security Processor) to load NPU firmware. And PSP 
->> only accept host physical address with current hardware.
->>
->> I understand usually virt_to_phys() should not be needed for device 
->> driver. And maybe it is ok to use if there is hardware requirement? I 
->> can see some drivers use it as well.
->
-> Eh.  I guess the PSP would never have an IOMMU in front of it or 
-> anything like that.
->
-> This feels similar to what Qualcomm MSM platforms do, which uses the 
-> remoteproc framework.  Not sure if that helps you here.
->
-> This still feels not good, but you might have a valid exception here. 
-> I'd suggest putting a justification comment in the code through. 
-> Someone looking at this in X months might raise the same question.
-Sure. I will add a justification.
->
->>
->>>
->>>> +    offset = ALIGN(psp->fw_paddr, PSP_FW_ALIGN) - psp->fw_paddr;
->>>> +    psp->fw_paddr += offset;
->>>> +    memcpy(psp->fw_buffer + offset, conf->fw_buf, conf->fw_size);
->>>> +
->>>> +    return psp;
->>>> +}
->>>> diff --git a/drivers/accel/amdxdna/amdxdna_drm.c 
->>>> b/drivers/accel/amdxdna/amdxdna_drm.c
->>>> new file mode 100644
->>>> index 000000000000..91e4f9c9dac9
->>>> --- /dev/null
->>>> +++ b/drivers/accel/amdxdna/amdxdna_drm.c
->>>
->>> What is the point of this file?  Seems like all of this could just 
->>> be in amdxdna_pci_drv.c
->> The future product may have NPU with non-pci device. So it might be a 
->> amdxdna_plat_drv.c and share the same amdxdna_drm.c in the future.
->
-> This seems like a weak justification.  "may" is not definitive. If 
-> such hardware appears, you could refactor the driver at that time.
-Ok, I will merge them.
->
->
->>>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c 
->>>> b/drivers/accel/amdxdna/amdxdna_pci_drv.c
->>>> new file mode 100644
->>>> index 000000000000..7d0cfd918b0e
->>>> --- /dev/null
->>>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
->>>> @@ -0,0 +1,118 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * Copyright (C) 2022-2024, Advanced Micro Devices, Inc.
->>>> + */
->>>> +
->>>> +#include <linux/module.h>
->>>> +
->>>> +#include "amdxdna_pci_drv.h"
->>>> +
->>>> +/*
->>>> + *  There are platforms which share the same PCI device ID
->>>> + *  but have different PCI revision IDs. So, let the PCI class
->>>> + *  determine the probe and later use the (device_id, rev_id)
->>>> + *  pair as a key to select the devices.
->>>> + */
->>>
->>> Huh?  So, VID == AMD, DID == 0x17f0, rev == 0x1 is a completely 
->>> different device?  That feels like a PCIe spec violation...
->> Maybe the comment is misleading. The hardware with same device id 
->> 0x17f0 uses the same commands, registers etc. And they are same 
->> device with different revisions.
->
-> Then I don't understand why you need to do the class matching. Match 
-> on PCI_VENDOR_ID_AMD with the Device IDs you need to support like a 
-> "normal" PCI(e) driver?
-
-ok. I will used device id to bind.
-
-
-Thanks,
-
-Lizhi
-
->
->>>
->>>> +static const struct pci_device_id pci_ids[] = {
->>>> +    { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_ANY_ID),
->>>> +        .class = PCI_CLASS_SP_OTHER << 8,
->>>
->>> Weird.  I would have expected the Accelerator class to be used
->> We contacted our hardware team to figure out why accelerator class is 
->> not used here. Some of hardware is already released. Hopefully 
->> hardware team may consider to use accelerator class with new products.
+Konrad
 
