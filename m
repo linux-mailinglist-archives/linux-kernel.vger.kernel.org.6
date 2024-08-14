@@ -1,144 +1,142 @@
-Return-Path: <linux-kernel+bounces-285655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5449510DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:02:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207E99510E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE661C220E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 506F21C22007
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B711109;
-	Wed, 14 Aug 2024 00:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DD510FA;
+	Wed, 14 Aug 2024 00:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kCsbcFME"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nvni09KB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570F338DCD
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C0D195;
+	Wed, 14 Aug 2024 00:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723593768; cv=none; b=NijgmUX78/ST2PLwEkWSqYRtFlP0Fp14JmXFzHiEKaqngxY+J4S1GhFT8iDXoqBkLNqDVqz2slVNsWyIpg860xidcw8pipA8AfaShc31c+r8HbLBHgaYI5umPZg4X3gy4xA0fORV5vf4aQM/nW4sSdBmTqcvO1g/ompdBMVq9tg=
+	t=1723594218; cv=none; b=n/9fTj/uxK+kTqCdUIatVFwK37r3eR3vpBsJk6+VwBpYaGgCzs6VBF9swpe8geOHj7woSpsGG9bq0q4NarK2GXXdncviDvgrKJvCPWHwqfxPE6jDi+jWTdb0l1DFlIzkxaCvY4bEmX7Qzs9DPjTiZstu9VUlvBw5P1vdwUi+4qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723593768; c=relaxed/simple;
-	bh=h8VVQ9A8DPOTqaNpNou6lHBkfb8drBFwdY+oqRSKcK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E54q386dchmWyQnaz7Jo6hz79DQac4hwHlFJft7V0cASXJr8ANxfFmkbt/H+kasIqJTeBWu2oJKk4jX8SUHHZk4TtRg+wQYrWlVjrzBareDSC8EP+oL7IuSkZ1MVHtrmUeeyFXip7enUFP/sAt8FjqHH0CfB+5xys0nkyye1ePc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kCsbcFME; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1d3e93cceso38618385a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723593766; x=1724198566; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTKySPg0C0mUlZw+lpD9nr3DuGcnFr36IobOnZTiUuc=;
-        b=kCsbcFMEc34zg2l2eHNpaULkZqYUY6Rwc8xGpzFLSK3f/cuXdV5J/Zny2yL+orUzZM
-         WXTzb0RqF5T5musgqTDLgcrhm9QiKhnMhZNYA70NcNAlJCsUIwWCzl1ceBnnQgk6WGRt
-         VNa7c3Y9huU3/Nw9Ft65mHcDe+uCzEfhOQtNhyBECjwAmaSbpiU4z2R/iUKDpcrFa8r7
-         /+BQr/axP/uUuGZ0i43ElsL5eK/li3P8OSLf1J0cJnyZKUznxYSXhi6jcwkP2ce4qpfO
-         IEGaHV2ULwF2ToNblk14sW61pJPpdGIqogTS/W6Rn8h+UmsxEDRTRptsl/mZ/7Nuwcof
-         eQ9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723593766; x=1724198566;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TTKySPg0C0mUlZw+lpD9nr3DuGcnFr36IobOnZTiUuc=;
-        b=W0sZRGyqF5gavBRJG4rRSSaLsV65NrTzohTo5L2UuOXXd+oOUlLHnLZ5nY9Vghu/Fc
-         O2rK+AN8Xk4oZlH90GiS8EJbTUCfK9kksEVCS9tZWM3DGUpujM7damBb0rQhAItXg7r5
-         WBKrlbZUGv7fuEbdzXYu8U2CMdcTC8T+Rd136tcads27JYqCWUa7ZpCmX+/yOAeNMDEw
-         5BM3okLdcIgZ56gCHwFsgRT5DE21jvKbUkP50+RG9OKnjSazBjlxGAPmOxSIOn5/OscM
-         Exz7i0vhQpDIWVIvILB1RyfEJAVKFXIsaVLSyle3RxPO9fOqY136Ca9ikDFwdfmERTOY
-         t9lw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4dejLuJTjijxZP/t/ttI/lz1qQEACO6JKvF5uvTl4t0EO2w5WE1V0eDfuNL4EWGLK2tw/qDQRsi5NhKTVxpYtU5m/xxNWUgyfGxLK
-X-Gm-Message-State: AOJu0Yw5+KpXw66tkbt4W6peORVDkKuf3Pcc1ezFAgRhaNDyVDKfKw3K
-	YKS+fPGSDS3xQuy7crviceYm0t5b03fWjBRYra47fneFNSenTXUhWoZjYdadAYo=
-X-Google-Smtp-Source: AGHT+IELZQfx8+xdaOH9kPY1NkPGEscrDOIVC5ILmt/1CCzfZ7mr5luUHmGWXl7b2nhzl+Os2iGU7A==
-X-Received: by 2002:a05:620a:4252:b0:7a1:da10:91a with SMTP id af79cd13be357-7a4e37a6f76mr735266185a.12.1723593766145;
-        Tue, 13 Aug 2024 17:02:46 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7e115c0sm375949685a.133.2024.08.13.17.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 17:02:45 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1se1TR-00AVMp-3t;
-	Tue, 13 Aug 2024 21:02:45 -0300
-Date: Tue, 13 Aug 2024 21:02:45 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Martin Oliveira <martin.oliveira@eideticom.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v5 3/4] mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
-Message-ID: <20240814000245.GV1985367@ziepe.ca>
-References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
- <20240808183340.483468-4-martin.oliveira@eideticom.com>
- <ZrmuGrDaJTZFrKrc@infradead.org>
- <20240812231249.GG1985367@ziepe.ca>
- <ZrryAFGBCG1cyfOA@infradead.org>
- <20240813160502.GH1985367@ziepe.ca>
- <66bb91fbcbe66_1c18294fe@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	s=arc-20240116; t=1723594218; c=relaxed/simple;
+	bh=CgGiCU1U9xTQYDZRxZm7Un7VEpNMJSVzVM6bJDlOdxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IsqehI4AjUTinGZqR4LddOZJOQ+UzwnHFwVGiYLIvrtdtC2QPoMrmbaLuXov8bb9IX88KbBh13BZA0QWKU4pKtMZtBFlP5NuWFYppgL6uMlSzMJIgM4mG5aWUIl0vNAWsGIAZMVqJvuAz9VFjrOX5quvEHAZQYpjbDJRw7NTEto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nvni09KB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95D2C32782;
+	Wed, 14 Aug 2024 00:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723594217;
+	bh=CgGiCU1U9xTQYDZRxZm7Un7VEpNMJSVzVM6bJDlOdxk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Nvni09KBGRfPgKM0VLV7+RkFXHKxWveneB40K/7YISiqq8MNws8kWwgwQs1zw5YKX
+	 3TOKan99uX7wRudaxZN6twe2lAaS7QHxgQmu1F9qHXV1PF2uoAceqBpIHQSJuSCvEa
+	 FoFqg7NUsDTM4krBHmtN/pcq+jI7Z9TlSN4IbSY/ZzM7p0p3GAIe4q42GgmcY1Vwsb
+	 DeeWR0BNVGG+a965Kmwx4ZIoOBF+/k1+Wmud6I9png+Rkb7g9qRVa2myEGM2Vw7vbv
+	 LSwh+xVmyXwczJTlnlfpvSUoQF/NfsMtTF8g90NtD8/rXVMko3HnPcZeswM9zLC+SP
+	 4rDf7QhhKwn6w==
+Date: Tue, 13 Aug 2024 17:10:15 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Martin Karsten <mkarsten@uwaterloo.ca>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org, Joe Damato
+ <jdamato@fastly.com>, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Breno Leitao <leitao@debian.org>, Christian Brauner <brauner@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jan Kara
+ <jack@suse.cz>, Jiri Pirko <jiri@resnulli.us>, Johannes Berg
+ <johannes.berg@intel.com>, Jonathan Corbet <corbet@lwn.net>, "open
+ list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:FILESYSTEMS
+ (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>
+Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
+Message-ID: <20240813171015.425f239e@kernel.org>
+In-Reply-To: <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
+References: <20240812125717.413108-1-jdamato@fastly.com>
+	<ZrpuWMoXHxzPvvhL@mini-arch>
+	<2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66bb91fbcbe66_1c18294fe@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 13, 2024 at 10:03:55AM -0700, Dan Williams wrote:
-> Jason Gunthorpe wrote:
-> > On Mon, Aug 12, 2024 at 10:41:20PM -0700, Christoph Hellwig wrote:
-> > > On Mon, Aug 12, 2024 at 08:12:49PM -0300, Jason Gunthorpe wrote:
-> > > > > This is unfortunately not really minor unless we have a well documented
-> > > > > way to force this :(
-> > > > 
-> > > > It is not that different from blocking driver unbind while FDs are
-> > > > open which a lot of places do in various ways?
-> > > 
-> > > Where do we block driver unbind with an open resource?  
+On Mon, 12 Aug 2024 17:46:42 -0400 Martin Karsten wrote:
+> >> Here's how it is intended to work:
+> >>    - An administrator sets the existing sysfs parameters for
+> >>      defer_hard_irqs and gro_flush_timeout to enable IRQ deferral.
+> >>
+> >>    - An administrator sets the new sysfs parameter irq_suspend_timeout
+> >>      to a larger value than gro-timeout to enable IRQ suspension.  
 > > 
-> > I keep seeing it in different subsystems, safe driver unbind is really
-> > hard. :\ eg I think VFIO has some waits in it
-> > 
-> > > The whole concept is that open resources will pin the in-memory
-> > > object (and modulo for a modular driver), but never an unbind or
-> > > hardware unplug, of which unbind really just is a simulation.
-> > 
-> > Yes, ideally, but not every part of the kernel hits that ideal in my
-> > experience. It is alot of work and some places don't have any good
-> > solutions, like here.
+> > Can you expand more on what's the problem with the existing gro_flush_timeout?
+> > Is it defer_hard_irqs_count? Or you want a separate timeout only for the
+> > perfer_busy_poll case(why?)? Because looking at the first two patches,
+> > you essentially replace all usages of gro_flush_timeout with a new variable
+> > and I don't see how it helps.  
 > 
-> ...but there is a distinction between transient and permanent waits,
-> right? The difficult aspect of FOLL_LONGTERM is the holder has no idea
-> someone is trying to cleanup and may never drop its pin.
+> gro-flush-timeout (in combination with defer-hard-irqs) is the default 
+> irq deferral mechanism and as such, always active when configured. Its 
+> static periodic softirq processing leads to a situation where:
+> 
+> - A long gro-flush-timeout causes high latencies when load is 
+> sufficiently below capacity, or
+> 
+> - a short gro-flush-timeout causes overhead when softirq execution 
+> asynchronously competes with application processing at high load.
+> 
+> The shortcomings of this are documented (to some extent) by our 
+> experiments. See defer20 working well at low load, but having problems 
+> at high load, while defer200 having higher latency at low load.
+> 
+> irq-suspend-timeout is only active when an application uses 
+> prefer-busy-polling and in that case, produces a nice alternating 
+> pattern of application processing and networking processing (similar to 
+> what we describe in the paper). This then works well with both low and 
+> high load.
 
-It is the quite similar to userspace holding a FD open while a driver
-is trying to unbind. The FD holder has possibly no idea things are
-waiting on it.
+What about NIC interrupt coalescing. defer_hard_irqs_count was supposed
+to be used with NICs which either don't have IRQ coalescing or have a
+broken implementation. The timeout of 200usec should be perfectly within
+range of what NICs can support.
 
-Nice subsystems allow the FD to keep existing while the driver is
-unplugged, but still many have to wait for the FD to close as
-disconnecting an active driver from it's FD requires some pretty
-careful design.
+If the NIC IRQ coalescing works, instead of adding a new timeout value
+we could add a new deferral control (replacing defer_hard_irqs_count)
+which would always kick in after seeing prefer_busy_poll() but also
+not kick in if the busy poll harvested 0 packets.
 
-Jason
+> > Maybe expand more on what code paths are we trying to improve? Existing
+> > busy polling code is not super readable, so would be nice to simplify
+> > it a bit in the process (if possible) instead of adding one more tunable.  
+> 
+> There are essentially three possible loops for network processing:
+> 
+> 1) hardirq -> softirq -> napi poll; this is the baseline functionality
+> 
+> 2) timer -> softirq -> napi poll; this is deferred irq processing scheme 
+> with the shortcomings described above
+> 
+> 3) epoll -> busy-poll -> napi poll
+> 
+> If a system is configured for 1), not much can be done, as it is 
+> difficult to interject anything into this loop without adding state and 
+> side effects. This is what we tried for the paper, but it ended up being 
+> a hack.
+> 
+> If however the system is configured for irq deferral, Loops 2) and 3) 
+> "wrestle" with each other for control. Injecting the larger 
+> irq-suspend-timeout for 'timer' in Loop 2) essentially tilts this in 
+> favour of Loop 3) and creates the nice pattern describe above.
+
 
