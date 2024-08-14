@@ -1,465 +1,200 @@
-Return-Path: <linux-kernel+bounces-286323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01F79519A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF24D9518A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D551C1C2144F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2071F229F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D743719FA66;
-	Wed, 14 Aug 2024 11:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0431AD9F8;
+	Wed, 14 Aug 2024 10:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kjRyicd5"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TGIYMSIb"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD7C143878;
-	Wed, 14 Aug 2024 11:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7491E13D8AC;
+	Wed, 14 Aug 2024 10:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723633864; cv=fail; b=qLYzKE6ZJjJk+IW+22+z9jNYk4ZuWo/Q4m557Rs0xTv2U7naBK86HtRtuDL1rLh0lfVyKFpfCa821GKFHE+0vXzcDAVs83QZMc4M3mDo6gcAU0CyiaeCbuOaIfyrdEy02uePxyR9vUdZ32mc+ZdhgKRC5H/neQJ1X27BVW265K0=
+	t=1723631112; cv=fail; b=giUa4+C/Tuflcta78o6y9juU018/5IxE8fzwY0juUKA4OlFbQNAF2HLDdN0Lv9ZaUB5Fr0qItZr02m6GzVQbQXxetEuYDGM0OuQbdK4ZFbDkMc+6PSr3ADg61fOANSvDRx8+ZAddGtA4gTEdw5pG/mCsVRKmzdG7SIxujnyX+5U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723633864; c=relaxed/simple;
-	bh=6+Ah8au2Danq2Jq4DWCUfATI6Rh+oeBNbIzGeZCZWvE=;
-	h=References:From:To:CC:Subject:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=A2JojC9IEe5L2sHR8VbkNmCkkFbca5YUasly9b9YHVKfAuoiNNa2FBofCxVEtk4i5ed3qW72SUdY1T0KNiEHTizqFehSSzbie+A+t9mzy6P5GJ6jOixyU0ERSQp76CHCizrZng33oMywZc38CFV3N24zD147oXyiTd/cJLu/jQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kjRyicd5; arc=fail smtp.client-ip=40.107.223.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1723631112; c=relaxed/simple;
+	bh=MURkFSYYYTyY+UjdJY8RYAkKEbcYKQ24GiGJnKtzFLo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=q1yNZHAO9E+epzcC7MNivx1a3zUMccecki6ikUHDx5Nu3H/VVovQKXNiKHj5SRtl6K2ywxdi0tiIHAkjb3/0Ax5e+Q9YON7/CkhOHsyf0JDt9NL4RwpGVn/O82Hu0L2GdvN3INKkli+L0uRHPMvjLXgy0IF4cuJW7PFHBkgCDcE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TGIYMSIb; arc=fail smtp.client-ip=40.107.236.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YlJD9wyW1kwGBcw+zaOjeUoJYplrXMlfm+b8QT2rLOdjRQhdEL0jTPBSX1aWoXMFQNZVFQk1KBq0VeRNywQXkPSdjbstzJG4b0md++wPx6SWc716nG1kjQn2Qv0G588UjzxmdLJ09PK3SBAT5AvWQ/zXFZPpPGLMCFy86+t4LeFII1qsFzW9TldKuHCDVRxvfUoWv9kTbSC2qWstML6uRvH1GDjYcgpWEOTNgovl4Hj1KM1auOASfsYb52URQmsLx7VB/lPQBFdjLcjBA75hP7IojFBrFvGmbtas8QFblXW08s+CZoPp834hMivltxJvU9MsEQo78BnH6NK8qN0rSQ==
+ b=DNwrnD1auseCRke7QL/a5PsIuxV5McGmdhHR0TiQFVpSvgxoGEiaPl9nSZ1YldnGKEh7V8AoPeC3xpGEnZMCHEPhW3CVCz09e8FZ8lbcvQ2YkzCmGmTuF6Mog2I83aBMrDtwPXmvP86vGLOyIQLeERX7s0uS7ap4rkP8CkXzHziqqln8KDOBhmcYaSuYHF3xq+52ABgnA8vUMdo/xO8zzoPh/AQONnI5VFu0ebU9f4PB3Ou7i0COsIrJ58gXrsWURCBaE12ErsW0WI8D11/Ncv3qRa142JLIys/nUF53Fv5LXsZUkgutvlBPgwrLvy3GYLmbQ/GPH5kMz2IMTkHNxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pASjlHF4Xlwe33AOi8y6A4TtJQ1SJxIrOLk8TctaSrk=;
- b=TiRmGdHyI8SnJJhyT5a74qAjOi1knxkQx7hyUTzdDygIVj0Iyqa3e8YZoP4GgFCamqWnsc6kgMiEx1pN7Lw/tuw/CPnt5FriYGQitaJtHZTjNeLoT2dz/TPblPEPRhAIHZtjEyhpBHZKEL4GxR2xdkhBfQxKpkj7FANKFcH6X8otmsSVCz+WXAkuh2ekBx4/I0fqrKUM1a4vzKfKK3p+Sw1Do5ZHW7RDriuzqaBRHLQcbVQ5YikZOmC0BZPIyqEvmYJHGKofrAeEVcN63AkCsG/S9+OzzGqRzpDbW8+jY0Q57Sbao310DoF+YpbgnJHqP7l+rs9uC3ZI7B6+Qll+4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=dP2+sEn6Nxl1pDj4oii1QR4v3N896hnCqaVJaSGSZc0=;
+ b=xATNP56IDOdtTcNNVlprA66gGWtytROMq92UaBHX7n6RKa9mLp+2LH7zZ9Wx11+Vsyu0I8ylK06s5IisBweTsMGzoz30wpOIZWgS0hvZ614p8nMTTOEPWHp/aX7kaqd8v1ipNRNYIKLBYBluDajaJRVzv1dt660kMREtV2d9K+c78EOzjEgWSij7I73XHp9SurwBeEYQlwu0ZLk2oXUDq/12piVFV3S+zGHuDD7imzx0v/jGQvLRJo2lSsCeVqUNCqj9Qq0BOX42FMrTuo3iSBIFzwLr2ONFD6GZT8eYsrzcuvK77kIBtGwVw1Q+8ZEv+iBawqf2YHWffhRpLmiOtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pASjlHF4Xlwe33AOi8y6A4TtJQ1SJxIrOLk8TctaSrk=;
- b=kjRyicd5fpO3AirS7cOPeLc40tpWCy3d6eglXkXMbjp3ShmI9HcBF4Y47xsYDgh2p/oPqO3XJfnQSlnPh39j9+QfajbKJIuVZa97V7tgcmNSL2smO/92rhBXno7AEpZyE+IsuBj9f6HNKtCXtHaxTyfdBwrDBOZ5WzDvI9wkb88+QNCcI0GCFXkPuXHyahAb6f+vJ6gVXpf0l26/7YwsI7rcjlksnxL2lKbkGxuGmu9KLS6CzWEDi5jFp3ktPKVIVjAIE67oeJbSe2l4XZlb9BO19N7RPbRUUkQrDhiSdAem4lSWCPqVa+xg5iCkucGZp08wz4lSf7lKUL94TlUHqg==
-Received: from SJ0PR13CA0239.namprd13.prod.outlook.com (2603:10b6:a03:2c1::34)
- by MW6PR12MB8760.namprd12.prod.outlook.com (2603:10b6:303:23a::6) with
+ bh=dP2+sEn6Nxl1pDj4oii1QR4v3N896hnCqaVJaSGSZc0=;
+ b=TGIYMSIbTsUytOREm0NSeNyUa9vS2qMKT+otefS814LwS4wju5XBEIbRBrPX2J5jDUliMtD1KKwT3g28pO02FPu3rJ/6OqoODe0oZvWo9+Pm91Laebm07xFTX0SwBh84lQOtJFKjm+B4660dIO0L+zCbjA26Iyn0ai+l+IYRf4A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13)
+ by MW4PR12MB7141.namprd12.prod.outlook.com (2603:10b6:303:213::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Wed, 14 Aug
- 2024 11:10:57 +0000
-Received: from SJ1PEPF000023D1.namprd02.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::17) by SJ0PR13CA0239.outlook.office365.com
- (2603:10b6:a03:2c1::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
- Transport; Wed, 14 Aug 2024 11:10:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000023D1.mail.protection.outlook.com (10.167.244.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.8 via Frontend Transport; Wed, 14 Aug 2024 11:10:57 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 14 Aug
- 2024 04:10:42 -0700
-Received: from fedora (10.126.230.35) by rnnvmail201.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 14 Aug
- 2024 04:10:36 -0700
-References: <20240813183825.837091-1-leitao@debian.org>
-User-agent: mu4e 1.8.14; emacs 29.4
-From: Petr Machata <petrm@nvidia.com>
-To: Breno Leitao <leitao@debian.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, <netdev@vger.kernel.org>,
-	David Wei <dw@davidwei.uk>, Willem de Bruijn <willemb@google.com>, "Petr
- Machata" <petrm@nvidia.com>, open list <linux-kernel@vger.kernel.org>, "open
- list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, "Geliang
- Tang" <geliang@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>, "Matthieu
- Baerts" <matttbe@kernel.org>
-Subject: Re: [PATCH net-next v2] net: netconsole: selftests: Create a new
- netconsole selftest
-Date: Wed, 14 Aug 2024 12:24:46 +0200
-In-Reply-To: <20240813183825.837091-1-leitao@debian.org>
-Message-ID: <87r0arl5qw.fsf@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Wed, 14 Aug
+ 2024 10:25:05 +0000
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48]) by IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48%6]) with mapi id 15.20.7849.023; Wed, 14 Aug 2024
+ 10:25:05 +0000
+Message-ID: <a3c1b0b5-dc42-b2bd-16ff-90ffcba2ec6b@amd.com>
+Date: Wed, 14 Aug 2024 12:24:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] KVM: SEV: uapi: fix typo in SEV_RET_INVALID_CONFIG
+Content-Language: en-US
+To: Amit Shah <amit@kernel.org>, seanjc@google.com, pbonzini@redhat.com,
+ x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Cc: amit.shah@amd.com, bp@alien8.de, ashish.kalra@amd.com,
+ thomas.lendacky@amd.com, maz@kernel.org
+References: <20240814083113.21622-1-amit@kernel.org>
+From: "Gupta, Pankaj" <pankaj.gupta@amd.com>
+In-Reply-To: <20240814083113.21622-1-amit@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0351.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f4::14) To IA1PR12MB8189.namprd12.prod.outlook.com
+ (2603:10b6:208:3f0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D1:EE_|MW6PR12MB8760:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2cf7fd93-02df-4168-bb0e-08dcbc51c5a3
+X-MS-TrafficTypeDiagnostic: IA1PR12MB8189:EE_|MW4PR12MB7141:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4db02038-7f75-4bdb-b668-08dcbc4b5d21
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0ls45XU8by/HYxANVZBPONhWa99YvM+WxxHZx4KzqGXIWBMyzpe7LaoGu4UX?=
- =?us-ascii?Q?7agNjU4d867+nWqaX/H97Fe+vei+1GRGS//B14ZZG5jOr98mkjeGnyS6FhYG?=
- =?us-ascii?Q?+Xqt59Dw+D3UKG17aYKy+c/5sVsL9b57ePCes9ZjNbMPBsIcAkeoh1X2h3IO?=
- =?us-ascii?Q?dCKXm/gGrHutVS8c3Re7zdeq159pG7yB1UnOKmk2IOwnpPFaBL9bddHIt3PO?=
- =?us-ascii?Q?5wY9AuSRcd/6fjZmqUhxK26XyXY6NhdZUkrFooBQVdiTd97dqfFgpG829i4e?=
- =?us-ascii?Q?hfCMXH5VxqfAYGpPm5He0pt+RULmGmwW9HryaSyHcBbH0Yn6Xl9w4n8o1D3i?=
- =?us-ascii?Q?gWNTGqvzBdqJ6rFZFZw8xo4hgv+O20tCtJh31f3HjOwxHVawMMySAHilwl8/?=
- =?us-ascii?Q?YIkili9y1WEdG39boeIR2u+tvY7qLyrsE7cHY88vclk8pU//KhU5gqkPUFwm?=
- =?us-ascii?Q?38YkRqZQ+7gvRjOy3crjrlffaxg9o0hYwniab0r1WlM2W46fHFYcX9+mrVBe?=
- =?us-ascii?Q?uXRh7BIEzVZ8n6+iZb/FGLiddU5eI467STROjndkUhAVhl6qOUvnhdn8WBcU?=
- =?us-ascii?Q?ee/6BoHdxg2phggKJ77jddnjrwP6eisw2M5Tw78e0dbBirhGNfCqXFzFJK47?=
- =?us-ascii?Q?i+PB9ebOV+z0UYxoeG5/TbHPcypUqYNE1nWtsAy6tMa1jVBqnEA1mHCoZOfG?=
- =?us-ascii?Q?t9RDbiuC4dfGb+65h4skfrWWf4m4Tm7i8xAFdvSzVDcmGb2exJepxiCgaHad?=
- =?us-ascii?Q?ko+I5RxH3NiMPeApjT++Z5a0Dbx63HIENO3fvscugr20o42G3QXuv1mfH4K2?=
- =?us-ascii?Q?KAFsVBvPs7kFiGlvFbol+c3tQKd9E/rKzKpH49utK0rRctQBrZ+EvB35zVgB?=
- =?us-ascii?Q?ODhtaPrAe05/Yh/6K+keK8XYGoVt/l6SkgSKseYWxzYsQu/x5OhcF+ZMzgQ2?=
- =?us-ascii?Q?o4hNBVIO8oiHaj7UIcKYZSoUEMSxqpqeQcDrW7gbkodd4SafAkMj3GsOzkgW?=
- =?us-ascii?Q?4qq13nM5jqkfKZGIb4wjoWK+RI77+4KxJzPf64jlNKKvfPPNtG7D5BG6Jbka?=
- =?us-ascii?Q?UKXFYzQRNpQli4v1OJRIx43bW1N+YUlHrwh/aaRikviJnA2gsJQBPPmpsnsQ?=
- =?us-ascii?Q?/PiJtG//aeK4sbVLyMnF/5C0t9NwzD3X13uMsPmr0i6NweoddIJV4+P5tkNf?=
- =?us-ascii?Q?sxa0E9fUJ8zDfXZ6l/Q5h/+ATL9SEvmtnddMXTKbEmgYczZmU1zmAf0Lo+/3?=
- =?us-ascii?Q?Fe6jevQ2ujTPfbAHxjAf3E+tZMfEFeL8H208N1lUHXzxeUwQlh0SGnZUi6Px?=
- =?us-ascii?Q?gFHFNKK/k9V3PIf44ZBSs1yNJ/9rqHsLhGxltqRHp8NESHbNLPHeKow4mYy+?=
- =?us-ascii?Q?eVZELaOKnDavUE1fpAzdDxSR6dfMT5lhMlWVb3WKk+YPBde3hx+MGXs/lW8P?=
- =?us-ascii?Q?J4D+JBnlZVoDhfccnrSaejP+1uButNau?=
+	=?utf-8?B?VTkyZUxVZlJYbmdyS1Q1S2JoY3JLR0wyeWYzdTdMb2RTQXBxcENCbkFWWEdj?=
+ =?utf-8?B?T1JTQTViOVBHYy8xZm05VGptTk9xZTg4U2pkcFJRUGljOWhtN2FBazM2N2ZZ?=
+ =?utf-8?B?dG5Mc2ZELzNNcXZHb1lOTEtUY09sblFNZ0VPWVZ4RDRPT01GK2x5MkM5VU5t?=
+ =?utf-8?B?NE5wVnZES3NKMGNmdDAzRmNFamt1T05HWWUzWDFOMFFrYzRraytGOVRPazho?=
+ =?utf-8?B?NnZOYzVlM1NSR24zYXp6THdDeDFycCsyWXIya2I0bk1aNXdVbUU2YXZpMytm?=
+ =?utf-8?B?SzdEOTlnU2YzLzdyRmlFSGFhc3AxK05ZL2ZQbG8xUG5UTUFXV1hSWmhucXg4?=
+ =?utf-8?B?b2hBRFMxOEhVQjBEbVQwZStKbHR0Y2FSMWkzRkI0cmlzOWRCMitiYlVFang3?=
+ =?utf-8?B?dFlJaEIzTHlxSDRDUzlzVGcreDRuWXJvV1p4YTRpV2tJRUlrVXgrNEVtNWJj?=
+ =?utf-8?B?b1d2Qis5K0N2VnZ1QSt4ZnZ5aVVPdnRJS3d6V1JBVEJaZG1Oa3kvZjMySjFL?=
+ =?utf-8?B?aUY4UjJmZEp3WW5JMWp0em1vSzN2aGNMY1p2cFNJUEJWaXZnL0pmNjlkZU0z?=
+ =?utf-8?B?WUFvSXBmZCtiVVIwSE90dWlESkZDWnp3R21KazkveUZtbWdpY08xMlRCckNO?=
+ =?utf-8?B?N2N0WjhJZjlwT1lLeE95bXZuNWcrVHg5NFVPQUdlUjU2MGltMUlsa3dad1JL?=
+ =?utf-8?B?R3ZuczZleEQxV0dUVDg1QUdmeVE0eDZ5MzdTTnlYOWFBR0YxRXlaMDlEOVBT?=
+ =?utf-8?B?ZGdxSmtoRWdLNHRrb3llSW9CN2NQa2xYWkhkb2lHYzFWNmZWOG1kajJtWWgv?=
+ =?utf-8?B?ZFNLMUpTTW5WNDZoZ21aUCtQOGg2VXk0NEgyb0JCUnV2R014M0FVbEpxYjJz?=
+ =?utf-8?B?eEdvQ2pOdlB6eUpnUGJKZ0NhYTgrU3pycXZxT0lkVzY3UStPQnJJSE9yU3Jq?=
+ =?utf-8?B?VFdQRkhPUTNDOWlES0hwSzV1dFQvVWtWNFhkd3BJVzZPb2NRcUVIenEzaXNt?=
+ =?utf-8?B?WkpiRUcrK2NqcXhTZlZ6MmpSOXM5VVp1b3hqS2VERmpld3NkOGdUZjVON0Ro?=
+ =?utf-8?B?LzV3V3lyWTNYYlcrUTNyeUNDdmJkUlJPc3ZhT3VPUVY2NW5tc1ZwcjlZSjNS?=
+ =?utf-8?B?ZXVkaVZ1c0MzdWI1endGUUtVYkVDMVM3SUZLNFdjUnlUZktBQnA1K3pscXY5?=
+ =?utf-8?B?MXpVQVRpY0xySXRTZFAwczQrcEk4ZVg4eDluN21kb0VtVzdFTDNHSy9JQU8x?=
+ =?utf-8?B?cnlDM3hOUytpRFNLcVQ3Yjc3SkZsN2s0OFkvT3FydGVLN1dSZU5LRDNmWGpK?=
+ =?utf-8?B?S2dJVGpZWVNJWlMxNTcwdUNlc1R3Z3lmeFFpRjJ5OGtYYklQOUhQbURzY1F0?=
+ =?utf-8?B?SDhUNUVFT3R0QWd1RWZRaE1mdHlIMEZoNk44bEhvKytCSzBndU9Hd3Z2UFE0?=
+ =?utf-8?B?VXQ3V2czMklDd0MwVDNJRExURnBhV1M3aWplSngySEhFbTZXOEhhTG1WRDJw?=
+ =?utf-8?B?OWxpY2FOVnVIYlE5REM3aStWTU45LzZrM2JFd2VTQTZzcU1kTVpRNi9WMUUr?=
+ =?utf-8?B?RG9lUUhpQjJVa2l5OXBoOWR2RU1LYkQ0SE9sODdzdkR0c1EvdU95LytTY0xX?=
+ =?utf-8?B?NDNaaW1aY05qeGxiR2dRRHZYNTZNWTdPRVlPcmJCNDZmcU1xbHlOanE1b3Fp?=
+ =?utf-8?B?bENkRUJmRWhEejNUVUpXNlRWTXY0OWNIWDlJYjBjV2ZTbVJ5dmkwSmRMRjRN?=
+ =?utf-8?B?OUozblFLU0VNaUZmUUZWVnB3ajFtc1pLOWNmNHUzNzVpTFBRdFZLcXlLNUIw?=
+ =?utf-8?B?bXk0UjE4KzRhb0pxamwvUT09?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 11:10:57.3513
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB8189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RUcvaTdHKzd1dkxUOGJ2d3BLZnY2d1V5NjhlY2JsamEzWGNsaXl0NnhZVDc1?=
+ =?utf-8?B?N21rOGFDajZRbGxvSlY3QU1yQzZYT1dxRE5aajhQN1Bic0ZwK2NzT3p2THNt?=
+ =?utf-8?B?V2NlWWRMY0M5RUlkcmtkV1VqMmZvdWxwUkZSN1lUQ01nTkJQWnVWcEt1bGRw?=
+ =?utf-8?B?YXJWWWhNV2IxTG9odExNbkQ4N2hQVEsybnAyUHhHaXJ2YmphNTlPYTVJSjNT?=
+ =?utf-8?B?UGJBWXRrODVYYmhic3NoQ0pVYTlqN2JiUVQzKy9jeWRPWmdhSWg4a1dTdUln?=
+ =?utf-8?B?eC9IVFhnTUh6ODlIclIraVZJeWJMc243UVFQT0xsTERsSzFCbmFaMTJ1TDRa?=
+ =?utf-8?B?M3doTUJoUWpBSVl4ckNRVmZ1OStnOXZsU2o4SGJWcDhnOXhNZmZKZHpDSlR1?=
+ =?utf-8?B?emk2SDFGdlNQVm5zdGt1Q1lDRGU4ZWtBYVhLUVFUWTNBUis1L1VRSjAwblJ2?=
+ =?utf-8?B?Vm5td25USlM3Sk8rR2VaUmlpZ2tjc2hVU1ZDb1N0RlZMMWpqaTRtREZrZEtM?=
+ =?utf-8?B?WlpSRkR1MStzdnpuNXB4dGcxcUdjNjN3ejdLL0xVb1NlZ2QzR0d3MElnZGc3?=
+ =?utf-8?B?QzM3MjM0RStKT1g3alNQODhyVVlWaUtad3ZiYjNCeEgxaGNrSit5TTRYRW9Q?=
+ =?utf-8?B?MjhiU3lkZXAxZEQ1R1BWYU1XQ3lVQTdJUlZiSFoxYm82V3hEOE1XVk50VW1l?=
+ =?utf-8?B?RGl0aHNha0owbHhRZlJad2JkL2lwV2orWEcvZnVPRHp3RG8raEtwVVVIZEdn?=
+ =?utf-8?B?akFVcTJJU080c2l4cndZTWhvWmlWNUJoUk9RTGdIUVhMNDMwQytKdncvKzZX?=
+ =?utf-8?B?VWN4WnRDY0JQZG1wRS81WWszNFlXb1FGNmpZWHFnbkJIaE1vYzJ6MlNRNDRS?=
+ =?utf-8?B?aVBwOWMzTDZBV3RVVUs4eU5Na0NYRURNcXFnM0dxL0NPOUovWW9MVFVrck9I?=
+ =?utf-8?B?dzJXdUcwVGY4SzZ3NzdINDhaWWFFSEdqT3RjREhieU56NW1rMEhKU29PTHJz?=
+ =?utf-8?B?N2EvdGRJN1VwQTIwelFTalB2ZzMxUEptdEE4bVE2WmFsMDNtQU5vankxL2hy?=
+ =?utf-8?B?bkQ2bjRwUmNMeU9wS1hiTVNqQW5jU3RhcFZISTJJSUNKMXIvWEwzODZEL2RF?=
+ =?utf-8?B?YXQ2NTRaTjBkQlludXhMUFVBT1lYeGxnai9WS1Y3c3lpWDl0TUpnbHJaUG1j?=
+ =?utf-8?B?ZjJhSG0xZUNkZUI5WENiRVNEYVg3UHRBZmlGZmVMcU9md1c5UXI0eEFrYkdU?=
+ =?utf-8?B?cnVLOFFtcXBwQVQvWG9DWFo4aHZYMU5ickFUYjVEdTFMRmNvWkxIU0ZmM0xQ?=
+ =?utf-8?B?NzlJNlp6clYwdlVCdEI0VUJiNlZpeEhMaVJoaEp0QUR5S1RIZ0dGWkN4Mzdo?=
+ =?utf-8?B?M3hnZWozYWVnSmhBWDRCaFh5bnNKVVRYRnF3UmRtd1hIUGx2ajcweGp1bGor?=
+ =?utf-8?B?Z2JyZEtkTTZLekxWRW9mYXBrSmw2eVFDckxCUUhTUWRQVUMzcGg1K1dUbnFt?=
+ =?utf-8?B?diszc2Nqb3VGSUt6NklPTmlSNjVaa0MycXFrdDhkWW9mRFpaOUlMdENJWGNs?=
+ =?utf-8?B?bC9QRENETXZ5OTh3ODlwUlFIQVNybGRRbzRQVkhtc2ZTcXdZRldjSzhtbVNZ?=
+ =?utf-8?B?OWFOS001NVY1dFVISEsvQ2o3VlFPK3BBVTVGbWdjVVZUVWxTRDM0OWlaSk14?=
+ =?utf-8?B?ZFJIbjJSVXpRNjFqS25UT2tVckdtVThHVXBHcUgxODR3ZjZ3Ulc4QU9FNTA4?=
+ =?utf-8?B?aHhqZXc2Tk9kVXFQNklZZXdnWjlaYVNTTllLd0QwYlgvd3ZuNHh5YkJZNXVI?=
+ =?utf-8?B?L2ZlZWM4SExWZWFoaEI3cHNtU2R1UzI3WVJwV0JWYVFvQWdGdmZKK1YxQ3E1?=
+ =?utf-8?B?aTFHNUxHRUF1VGQyemVxKzFGVzBtMFRyQ1ZCb210MUdiZU85L2l4dnVCL2hH?=
+ =?utf-8?B?c2hFSjA5enNJaGEvbkhsWmZFOFNnV3QwTWZhaWtIUGNJWU16NFVrbVEvcGtW?=
+ =?utf-8?B?L3pxKzJJVkJxcWFTUlMxUTV6dXJUbWJ6ZFdaNU9TYTN3a3dXb3U1QWFmWTdq?=
+ =?utf-8?B?eTFOdVlkZThHUG1kL1lTZzhIenlBTzRQQ3BRUU9DVFkyUi9jcXJyQVJ4cFB1?=
+ =?utf-8?Q?1quhFQQdGxbVShAn+8oW3mmVb?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4db02038-7f75-4bdb-b668-08dcbc4b5d21
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB8189.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 10:25:05.2639
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cf7fd93-02df-4168-bb0e-08dcbc51c5a3
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D1.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8760
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UerQHkOCqgbELNpsJxwKg0RHLutT4AhohuHJI/Uiw/9A9Wr8uqf59aDAPKxQ7uCKbYX2KDXQQqzTE9tYXLC4ZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7141
 
+> From: Amit Shah <amit.shah@amd.com>
+> 
+> "INVALID" is misspelt in "SEV_RET_INAVLID_CONFIG". Since this is part of
+> the UAPI, keep the current definition and add a new one with the fix.
+> 
+> Fix-suggested-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Amit Shah <amit.shah@amd.com>
 
-Breno Leitao <leitao@debian.org> writes:
+Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
 
-> Adds a selftest that creates two virtual interfaces, assigns one to a
-> new namespace, and assigns IP addresses to both.
->
-> It listens on the destination interface using socat and configures a
-> dynamic target on netconsole, pointing to the destination IP address.
->
-> The test then checks if the message was received properly on the
-> destination interface.
->
-> Signed-off-by: Breno Leitao <leitao@debian.org>
 > ---
-> Changelog:
->
-> v2:
->  * Change the location of the path (Jakub)
->  * Move from veth to netdevsim
->  * Other small changes in dependency checks and cleanup
->
-> v1:
->  * https://lore.kernel.org/all/ZqyUHN770pjSofTC@gmail.com/
->
->  MAINTAINERS                                   |   1 +
->  tools/testing/selftests/drivers/net/Makefile  |   1 +
->  .../selftests/drivers/net/netcons_basic.sh    | 223 ++++++++++++++++++
->  3 files changed, 225 insertions(+)
->  create mode 100755 tools/testing/selftests/drivers/net/netcons_basic.sh
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a9dace908305..ded45f1dff7e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15770,6 +15770,7 @@ M:	Breno Leitao <leitao@debian.org>
->  S:	Maintained
->  F:	Documentation/networking/netconsole.rst
->  F:	drivers/net/netconsole.c
-> +F:	tools/testing/selftests/drivers/net/netcons_basic.sh
->  
->  NETDEVSIM
->  M:	Jakub Kicinski <kuba@kernel.org>
-> diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-> index e54f382bcb02..928530b26abc 100644
-> --- a/tools/testing/selftests/drivers/net/Makefile
-> +++ b/tools/testing/selftests/drivers/net/Makefile
-> @@ -3,6 +3,7 @@
->  TEST_INCLUDES := $(wildcard lib/py/*.py)
->  
->  TEST_PROGS := \
-> +	netcons_basic.sh \
->  	ping.py \
->  	queues.py \
->  	stats.py \
-> diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
-> new file mode 100755
-> index 000000000000..e0e58fc7e89f
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
-> @@ -0,0 +1,223 @@
-> +#!/usr/bin/env bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# This test creates two netdevsim virtual interfaces, assigns one of them (the
-> +# "destination interface") to a new namespace, and assigns IP addresses to both
-> +# interfaces.
-> +#
-> +# It listens on the destination interface using socat and configures a dynamic
-> +# target on netconsole, pointing to the destination IP address.
-> +#
-> +# Finally, it checks whether the message was received properly on the
-> +# destination interface.  Note that this test may pollute the kernel log buffer
-> +# (dmesg) and relies on dynamic configuration and namespaces being configured.
-> +#
-> +# Author: Breno Leitao <leitao@debian.org>
-> +
-> +set -euo pipefail
-> +
-> +SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-> +
-> +# Simple script to test dynamic targets in netconsole
-> +SRCIF="" # to be populated later
-> +SRCIP=192.168.1.1
-> +DSTIF="" # to be populated later
-> +DSTIP=192.168.1.2
-> +
-> +PORT="6666"
-> +MSG="netconsole selftest"
-> +TARGET=$(mktemp -u netcons_XXXXX)
-> +NETCONS_CONFIGFS="/sys/kernel/config/netconsole"
-> +NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
-> +# This will have some tmp values appended to it in set_network()
-> +NAMESPACE="netconsns_dst"
-> +
-> +# IDs for netdevsim
-> +NSIM_DEV_1_ID=$((256 + RANDOM % 256))
-> +NSIM_DEV_2_ID=$((512 + RANDOM % 256))
-> +
-> +# Used to create and delete namespaces
-> +source "${SCRIPTDIR}"/../../net/lib.sh
-> +
-> +# Create netdevsim interfaces
-> +create_ifaces() {
-> +	local NSIM_DEV_SYS_NEW=/sys/bus/netdevsim/new_device
-> +
-> +	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_NEW"
-> +	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_NEW"
-> +	udevadm settle || true
-> +
-> +	local NSIM_DEV_1_SYS=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_1_ID"
-> +	local NSIM_DEV_2_SYS=/sys/bus/netdevsim/devices/netdevsim"$NSIM_DEV_2_ID"
-> +
-> +	# These are global variables
-> +	SRCIF=$(find "$NSIM_DEV_1_SYS"/net -maxdepth 1 -type d ! \
-> +		-path "$NSIM_DEV_1_SYS"/net -exec basename {} \;)
-> +	DSTIF=$(find "$NSIM_DEV_2_SYS"/net -maxdepth 1 -type d ! \
-> +		-path "$NSIM_DEV_2_SYS"/net -exec basename {} \;)
-> +}
-> +
-> +link_ifaces() {
-> +	local NSIM_DEV_SYS_LINK="/sys/bus/netdevsim/link_device"
-> +	local SRCIF_IFIDX=$(cat /sys/class/net/"$SRCIF"/ifindex)
-> +	local DSTIF_IFIDX=$(cat /sys/class/net/"$DSTIF"/ifindex)
-> +
-> +	exec {NAMESPACE_FD}</var/run/netns/"${NAMESPACE}"
-> +	exec {INITNS_FD}</proc/self/ns/net
-> +
-> +	# Bind the dst interface to namespace
-> +	ip link set "${DSTIF}" netns "${NAMESPACE}"
-> +
-> +	# Linking one device to the other one (on the other namespace}
-> +	echo "${INITNS_FD}:$SRCIF_IFIDX $NAMESPACE_FD:$DSTIF_IFIDX" > $NSIM_DEV_SYS_LINK
-> +	if [ $? -ne 0 ]; then
-> +		echo "linking netdevsim1 with netdevsim2 should succeed"
-> +		cleanup
-> +		exit ${ksft_skip}
-> +	fi
-> +}
-> +
-> +function configure_ip() {
-> +	# Configure the IPs for both interfaces
-> +	ip netns exec "${NAMESPACE}" ip addr add "${DSTIP}"/24 dev "${DSTIF}"
-> +	ip netns exec "${NAMESPACE}" ip link set "${DSTIF}" up
-> +
-> +	ip addr add "${SRCIP}"/24 dev "${SRCIF}"
-> +	ip link set "${SRCIF}" up
-> +}
-> +
-> +function set_network() {
-> +	# This is coming from lib.sh. And it does unbound variable access
-> +	set +u
-> +	setup_ns "${NAMESPACE}"
-> +	set -u
-
-It would make sense to fix lib.sh. I think this is what is needed?
-
-modified   tools/testing/selftests/net/lib.sh
-@@ -178,7 +178,7 @@ setup_ns()
- 		fi
- 
- 		# Some test may setup/remove same netns multi times
--		if [ -z "${!ns_name}" ]; then
-+		if ! declare -p "$ns_name" &> /dev/null; then
- 			eval "${ns_name}=${ns_name,,}-$(mktemp -u XXXXXX)"
- 		else
- 			cleanup_ns "${!ns_name}"
-
-CC'd Geliang Tang <geliang@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>,
-Matthieu Baerts (NGI0) <matttbe@kernel.org> who were in the vicinity
-in the past.
-
-> +	NAMESPACE=${NS_LIST[0]}
-> +
-> +	# Create both interfaces, and assign the destination to a different namespace
-> +	create_ifaces
-> +
-> +	# Link both interfaces back to back
-> +	link_ifaces
-> +
-> +	configure_ip
-> +}
-> +
-> +function create_dynamic_target() {
-> +	DSTMAC=$(ip netns exec "${NAMESPACE}" ip link show "${DSTIF}" | awk '/ether/ {print $2}')
-> +
-> +	# Create a dynamic target
-> +	mkdir "${NETCONS_PATH}"
-> +
-> +	echo "${DSTIP}" > "${NETCONS_PATH}"/remote_ip
-> +	echo "${SRCIP}" > "${NETCONS_PATH}"/local_ip
-> +	echo "${DSTMAC}" > "${NETCONS_PATH}"/remote_mac
-> +	echo "${SRCIF}" > "${NETCONS_PATH}"/dev_name
-> +
-> +	echo 1 > "${NETCONS_PATH}"/enabled
-> +}
-> +
-> +function cleanup() {
-> +	local NSIM_DEV_SYS_DEL="/sys/bus/netdevsim/del_device"
-> +
-> +	# delete netconsole dynamic reconfiguration
-> +	echo 0 > "${NETCONS_PATH}"/enabled
-> +	# Remove the configfs entry
-> +	rmdir "${NETCONS_PATH}"
-> +
-> +	# Delete netdevsim devices
-> +	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_DEL"
-> +	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_DEL"
-> +
-> +	# this is coming from lib.sh
-> +	cleanup_all_ns
-> +}
-> +
-> +function listen_port_and_save_to() {
-> +	OUTPUT=${1}
-
-local
-
-> +	# Just wait for 2 seconds
-> +	timeout 2 ip netns exec "${NAMESPACE}" socat UDP-LISTEN:"${PORT}",fork "${OUTPUT}"
-> +}
-> +
-> +function validate_result() {
-> +	TMPFILENAME="$1"
-
-local
-
-> +
-> +	# Check if the file exists
-> +	if [ ! -f "$TMPFILENAME" ]; then
-> +	    echo "FAIL: File was not generated." >&2
-> +	    return ${ksft_fail}
-
-The indentation seems wrong here.
-
-> +	fi
-> +
-> +	if ! grep -q "${MSG}" "${TMPFILENAME}"; then
-> +	    echo "FAIL: ${MSG} not found in ${TMPFILENAME}" >&2
-> +	    cat "${TMPFILENAME}" >&2
-> +	    return ${ksft_fail}
-> +	fi
-> +
-> +	# Delete the file once it is validated, otherwise keep it
-> +	# for debugging purposes
-> +	rm "${TMPFILENAME}"
-
-Seeing the removal within the validation function is odd, I would expect
-it to be part of cleanup().
-
-> +	return ${ksft_pass}
-> +}
-> +
-> +function check_for_dependencies() {
-> +	if [ "$(id -u)" -ne 0 ]; then
-> +		echo "This script must be run as root" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ! which socat > /dev/null ; then
-> +		echo "SKIP: socat(1) is not available" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ! which ip > /dev/null ; then
-> +		echo "SKIP: ip(1) is not available" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ! which udevadm > /dev/null ; then
-> +		echo "SKIP: udevadm(1) is not available" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if [ ! -d "${NETCONS_CONFIGFS}" ]; then
-> +		echo "SKIP: directory ${NETCONS_CONFIGFS} does not exist. Check if NETCONSOLE_DYNAMIC is enabled" >&2
-> +		exit "${ksft_skip}"
-> +	fi
-> +
-> +	if ip link show "${DSTIF}" 2> /dev/null; then
-> +		echo "SKIP: interface ${DSTIF} exists in the system. Not overwriting it."
-> +		exit "${ksft_skip}"
-> +	fi
-> +}
-> +
-> +# ========== #
-> +# Start here #
-> +# ========== #
-> +modprobe netdevsim || true
-> +# The content of kmsg will be save to the following file
-> +OUTPUT_FILE="/tmp/${TARGET}"
-> +
-> +# Check for basic system dependency and exit if not found
-> +check_for_dependencies
-> +# Remove the namespace, interfaces and netconsole target on exit
-> +trap cleanup EXIT
-> +# Create one namespace and two interfaces
-> +set_network
-> +# Create a dynamic target for netconsole
-> +create_dynamic_target
-> +# Listed for netconsole port inside the namespace and destination interface
-> +listen_port_and_save_to "${OUTPUT_FILE}" &
-> +
-> +# Wait for socat to start and listen to the port.
-> +sleep 1
-> +# Send the message
-> +echo "${MSG}: ${TARGET}" > /dev/kmsg
-> +# Wait until socat saves the file to disk
-> +sleep 1
-> +
-> +# Make sure the message was received in the dst part
-> +validate_result "${OUTPUT_FILE}"
-> +ret=$?
-> +
-> +exit ${ret}
+>   include/uapi/linux/psp-sev.h | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+> index 2289b7c76c59..832c15d9155b 100644
+> --- a/include/uapi/linux/psp-sev.h
+> +++ b/include/uapi/linux/psp-sev.h
+> @@ -51,6 +51,7 @@ typedef enum {
+>   	SEV_RET_INVALID_PLATFORM_STATE,
+>   	SEV_RET_INVALID_GUEST_STATE,
+>   	SEV_RET_INAVLID_CONFIG,
+> +	SEV_RET_INVALID_CONFIG = SEV_RET_INAVLID_CONFIG,
+>   	SEV_RET_INVALID_LEN,
+>   	SEV_RET_ALREADY_OWNED,
+>   	SEV_RET_INVALID_CERTIFICATE,
 
 
