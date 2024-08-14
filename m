@@ -1,117 +1,179 @@
-Return-Path: <linux-kernel+bounces-286031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD5095158D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:30:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E53951590
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866B328AD3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9B31F28077
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96780142E86;
-	Wed, 14 Aug 2024 07:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F55613C80C;
+	Wed, 14 Aug 2024 07:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g9FBZ8Id"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlItA6OR"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8699D1411F9;
-	Wed, 14 Aug 2024 07:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA4BEA4;
+	Wed, 14 Aug 2024 07:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723620529; cv=none; b=jTiWF0ZV7/k8LNKYCP8O6lN3ROLFEgFch0pQ2dh9sevbqRopahA3QWn/IWYxZPps1P/ywvV/E3YTG/aCePUgzwjHiP1MGY7I3WmoUgiM8nnSqRPMwyugn5eKvWGpCQaRmgE5ebI4kaKZLvZLUOBO9LKJQk2cGa7kAqgKmvA/05Q=
+	t=1723620617; cv=none; b=e2fHUVT2pyZ3BSZ5EEPBJqOINiHIXFKJg1rqwv1P8qFgtP8G65OKOUDelyR3AIEbXAGfU34+pQWLgJJHfomU5/r2KFAVQRdMwLeZn4VSRwWA6EHGctvC4AJl3+yqVf25/cn3yO1pwXkN05DlG++5BaqxOnF4tzzHUDAo13cJHkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723620529; c=relaxed/simple;
-	bh=k7H+V99ClMNVyOSzmIwwjYTpVivhVzBGO82VCoBbG8c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d09YvgPcDX+nqqaP7aw65xco7G1zTAvTB9Trt8E5HSlxZysZJmwnAtnnr0qBz8vUlKvcI+y38CxIRmiZW286V+NJ2vtjjZNq0b/lWruX0w2JiQrPWravEBzF4i+eS/T8KhlTFV44r9epKhjjUEekQkHoDiZNMT5xqe64H7xe1BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g9FBZ8Id; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DNFbab032035;
-	Wed, 14 Aug 2024 07:28:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wRvCtGbXCq4qw4ucQ3hOaVXaafB9WOcxdSoagFcK+V0=; b=g9FBZ8IdwRB6OAQa
-	zA0Es9y4FniKiVDNT5+pxjlsYa0scsIVDjDgVUxQlTdV9k5VXLWUnogZ5ZF1ceAT
-	/DwM6pOALuhGlhteugrFqnK8oCJ6VVZCE6du1srdme1O74c7nfPA7DQ/H0T8HezN
-	9lGppYveQPok8jKXy+y6gRcTrzXiGQkRTq3/KLHA+WfJ/4gdFVZDO0UQSAkwMRKz
-	F2r1NAs8j1xJa4aMVnzqg4Y9sQoWt8JA0GqfSkcitRb0K+1JuEQmhqXnI7HNP3+5
-	SzUinNM5X1n32EpvmqJ0/elgS+hyBDwElRSPWvAK02RE6LHj9/rCcBqtvE32QdQ3
-	AN57BQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x168242s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 07:28:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47E7SdUb022235
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 07:28:39 GMT
-Received: from jingyw-gv.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 14 Aug 2024 00:28:36 -0700
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-To: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <quic_tengfan@quicinc.com>
-CC: <quic_jingyw@quicinc.com>
-Subject: [PATCH 3/3] soc: qcom: socinfo: add QCS8275/QCS8300 SoC ID
-Date: Wed, 14 Aug 2024 15:28:06 +0800
-Message-ID: <20240814072806.4107079-4-quic_jingyw@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240814072806.4107079-1-quic_jingyw@quicinc.com>
-References: <20240814072806.4107079-1-quic_jingyw@quicinc.com>
+	s=arc-20240116; t=1723620617; c=relaxed/simple;
+	bh=m3S7JU+HCylBG7tym+JkEbCTnGOtEt9vkuHrFlnGleA=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=kVe+f4VTh8MRrnkCVuxUmJw9DKB4+pdCeCj6eOoVLntkJIzzll1gKtlIvAhbaoG2MRxV9557nsXLlwxx6Jvkx/CWiyzz6udHlIM295pcTcGogAIg2HpKEyMBwy9LyeHtmu+aYpyNI/npxGiCRaA7n8+v8flhmRPWChjpKvYpu6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlItA6OR; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd66cddd4dso60873045ad.2;
+        Wed, 14 Aug 2024 00:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723620615; x=1724225415; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gZjg8zveGCIUd8Xm20UvhZjkI4TEvCstRkn7S7YAXGA=;
+        b=GlItA6OResk2DIJQMDFuVxSMKoPwtmhuWWmOLFfzVkNjw+HxCzJFDVnpls1p+DJyw4
+         XGMd7dMH/E3CPJ4CKGTC67wY7BKSubjqIUBQOZSqx9XDFVID0Vdc5Ya99FH8wLTC1T2k
+         02nHAx3qRqWfxlUTmiKYx2KttE8B8pg9LGlXYHBTaihIxZ4z3lxdrxwXvyUUVCGSdnbY
+         7wtHEX38W/ZulwOCV8p12UqyfvwpA3zMjasN09H2Bb+GINk7o7ElxgfyzLIKevwMqtgt
+         SY4B9XTWOUSglNHKGIbntcYbboTns9I+RzA+iEkjCE/IThSvVRa2FzCPrxtlTGtW1ST7
+         SFiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723620615; x=1724225415;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gZjg8zveGCIUd8Xm20UvhZjkI4TEvCstRkn7S7YAXGA=;
+        b=LzaynaOWqvew7AA6RgOVrBSsMIsuhvf7j/uQ/AkGx4TD2S67i9UiZJAgYIJXTyrlmE
+         l7rmYW3X/y22+EZKimFz3r1hwVWrpd3OfZFP+MTdYXD/puzZFp8r99VjF6nqbHk1ZuFV
+         C0gN3CqdV4TU/1hwsAfjwRPP5bZg8WRUwxjyZgNSo68QBa+kUCjJzuKbQZonWxnTT4+b
+         U7KhGt92n2A/8fiiH7q+IAAG8SmoC6sL/6QWC2rgveUQRK7WcOp/oDsJNQP46CJ/12tM
+         4iR9U6OsYDqRDIfmnwfbJxQx7H65Smbuw4/jOyJGW8o8b70dTRXdhDcFC0R8WD6CyC0V
+         O8hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKZFOPToJhdVK23rXCPaO1WsXyKxXtXVuNrpACTzWGo0gkJgLcecs1F9JpQZTOhJTuB9jnZxhQX+84H4ZB2/FEYkg0UByVkqXH2nRBHV5JxImGKKd+ulvJUQ7+8MfroxS9jWH0RQfaEgGC7en8uHqeUlCWkXq+kmnAbNo3dmojSA==
+X-Gm-Message-State: AOJu0Yy4yvdhn2rZ8liHfeWJgqIz7fszgwsCISyvCc2A3FNNH90acqDf
+	p6FnNQbcbuduZxz8LoGSdqM1s/+X3dwVuvsIXg+HDJFISpyxyf8I
+X-Google-Smtp-Source: AGHT+IF9vetZEBq79rLwnfC3eNHkEvNAwOlqnrjH9+Gl+rQcBXi7+FTtVhF9PCJKqZ3PQov6/++wHw==
+X-Received: by 2002:a17:902:f687:b0:1f8:6bae:28f with SMTP id d9443c01a7336-201d638cec6mr29496275ad.9.1723620615271;
+        Wed, 14 Aug 2024 00:30:15 -0700 (PDT)
+Received: from smtpclient.apple ([2001:e60:a406:4828:124:7d18:f674:4bb1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a94b1sm24050485ad.122.2024.08.14.00.30.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 00:30:14 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Jeongjun Park <aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _dcS9wdbxsxsbs0TKUNTzgaN37vLLQaf
-X-Proofpoint-ORIG-GUID: _dcS9wdbxsxsbs0TKUNTzgaN37vLLQaf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_04,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- suspectscore=0 mlxlogscore=789 impostorscore=0 malwarescore=0 spamscore=0
- mlxscore=0 priorityscore=1501 phishscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408140051
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in txopt_get
+Date: Wed, 14 Aug 2024 16:30:02 +0900
+Message-Id: <75AFEC8C-C050-4AC4-AF63-0B798B040502@gmail.com>
+References: <4eeb32b7-d750-4c39-87df-43fd8365f163@linux.alibaba.com>
+Cc: davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com,
+ gbayer@linux.ibm.com, guwen@linux.alibaba.com, jaka@linux.ibm.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com,
+ syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com,
+ tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+In-Reply-To: <4eeb32b7-d750-4c39-87df-43fd8365f163@linux.alibaba.com>
+To: "D. Wythe" <alibuda@linux.alibaba.com>
+X-Mailer: iPhone Mail (21F90)
 
-Add SoC ID for Qualcomm QCS8275/QCS8300.
 
-Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
----
- drivers/soc/qcom/socinfo.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index d7359a235e3c..3ba29412b9ba 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -441,6 +441,8 @@ static const struct soc_id soc_id[] = {
- 	{ qcom_board_id(QCM8550) },
- 	{ qcom_board_id(IPQ5300) },
- 	{ qcom_board_id(IPQ5321) },
-+	{ qcom_board_id(QCS8300) },
-+	{ qcom_board_id(QCS8275) },
- };
- 
- static const char *socinfo_machine(struct device *dev, unsigned int id)
--- 
-2.25.1
+> D. Wythe wrote:
+>=20
+> =EF=BB=BF
+>=20
+>> On 8/14/24 11:58 AM, Jeongjun Park wrote:
+>> Because clcsk_*, like clcsock, is initialized during the smc init process=
+,
+>> the code was moved to prevent clcsk_* from having an address like
+>> inet_sk(sk)->pinet6, thereby preventing the previously initialized values=
 
+>> =E2=80=8B=E2=80=8Bfrom being tampered with.
+>=20
+> I don't agree with your approach, but I finally got the problem you descri=
+bed. In fact, the issue here is that smc_sock should also be an inet_sock, w=
+hereas currently it's just a sock. Therefore, the best solution would be to e=
+mbed an inet_sock within smc_sock rather than performing this movement as yo=
+u suggested.
+>=20
+> struct smc_sock {               /* smc sock container */
+>     union {
+>         struct sock         sk;
+>         struct inet_sock    inet;
+>     };
+>=20
+>     ...
+>=20
+> Thanks.
+> D. Wythe
+>=20
+
+Wow, I didn't know this could be done this way. I'll test it with that code=20=
+
+and get back to you
+
+Regards,
+Jeongjun Park
+
+>=20
+>>=20
+>> Additionally, if you don't need alignment in smc_inet6_prot , I'll modify=
+
+>> the patch to only add the necessary code without alignment.
+>>=20
+>> Regards,
+>> Jeongjun Park
+>=20
+>=20
+>>>=20
+>>>> Also, regarding alignment, it's okay for me whether it's aligned or
+>>>> not=EF=BC=8CBut I checked the styles of other types of
+>>>> structures and did not strictly require alignment, so I now feel that
+>>>> there is no need to
+>>>> modify so much to do alignment.
+>>>>=20
+>>>> D. Wythe
+>>>=20
+>>>=20
+>>>>>>> +
+>>>>>>>    static struct proto smc_inet6_prot =3D {
+>>>>>>> -     .name           =3D "INET6_SMC",
+>>>>>>> -     .owner          =3D THIS_MODULE,
+>>>>>>> -     .init           =3D smc_inet_init_sock,
+>>>>>>> -     .hash           =3D smc_hash_sk,
+>>>>>>> -     .unhash         =3D smc_unhash_sk,
+>>>>>>> -     .release_cb     =3D smc_release_cb,
+>>>>>>> -     .obj_size       =3D sizeof(struct smc_sock),
+>>>>>>> -     .h.smc_hash     =3D &smc_v6_hashinfo,
+>>>>>>> -     .slab_flags     =3D SLAB_TYPESAFE_BY_RCU,
+>>>>>>> +     .name                           =3D "INET6_SMC",
+>>>>>>> +     .owner                          =3D THIS_MODULE,
+>>>>>>> +     .init                           =3D smc_inet_init_sock,
+>>>>>>> +     .hash                           =3D smc_hash_sk,
+>>>>>>> +     .unhash                         =3D smc_unhash_sk,
+>>>>>>> +     .release_cb                     =3D smc_release_cb,
+>>>>>>> +     .obj_size                       =3D sizeof(struct smc6_sock),
+>>>>>>> +     .h.smc_hash                     =3D &smc_v6_hashinfo,
+>>>>>>> +     .slab_flags                     =3D SLAB_TYPESAFE_BY_RCU,
+>>>>>>> +     .ipv6_pinfo_offset              =3D offsetof(struct smc6_sock,=
+
+>>>>>>> np),
+>>>>>>>    };
+>>>>>>>=20
+>>>>>>>    static const struct proto_ops smc_inet6_stream_ops =3D {
+>>>>>>> --
+>=20
 
