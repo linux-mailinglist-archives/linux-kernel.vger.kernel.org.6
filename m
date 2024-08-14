@@ -1,186 +1,139 @@
-Return-Path: <linux-kernel+bounces-286766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB2D951EBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:37:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99158951EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B2262844A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:37:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6398B21B1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DFE1B5804;
-	Wed, 14 Aug 2024 15:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B5A1B580A;
+	Wed, 14 Aug 2024 15:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="H/Yiv8Qq"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2069.outbound.protection.outlook.com [40.107.247.69])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KV1VBlgw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AE31B4C34;
-	Wed, 14 Aug 2024 15:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723649860; cv=fail; b=W4HsRZyr14Sv6LgbBscJT2tC+kHXg6xZCZB+PM+gXJjdSuBTHeo7W7Bb0dXttCtyjRC6TdUgjiABtapG2NZI2vUE8nAoLtMpDAdzrQYA1WWTIF3xCw497C1vJa6euFrODDclf4VwDjSSdBvyEDqsHRGzdh8OdRSoD3kjM15CyR8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723649860; c=relaxed/simple;
-	bh=ee96NNav/Yu0HUBRj6AH+EgUx4X51rGeQaXeXQSq98w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TSjTj+0iAjtPCNl3GxwxtcvRZ9x01MOVXtyP7N6kWnht4hvKPS1VqliNTB/ZDL05s3p0ZEjrNE6acoZOgV2aKLl1wYAS3nbhW0+8BgW4I116traOWFYZHu6uUVLcrflKtHDZiGk8NAUQd60J3U6IGmHE3mwoga8YZHgwAwCR6hU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=H/Yiv8Qq; arc=fail smtp.client-ip=40.107.247.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d33D+AmHrnIOk7zIbwqMQLvE/PHGvaTz0RPlQb4DK2tM8UU3XGGZWg4UonPe6i7FzljAnzKe58PS89Bb+agwSTzvrBii2HoUenPUp8OlwgIHfydCVdIQnMDv1N1sVYcrfYNQhYFIWdIdEAxkEpxmP3qAZ0p5iHWxsVjF8Hv4n3AslNuF03C1pjqsUJuobV8mBni9CKDeKlGHxnysWst0aLvox50wAwy3CvmRwqJW2NqZEU2vGDtTw8lmxgYKGbuRV6mP6BDI0kfw35jaHqLyrwa5TTmRZ8veFZLDXmjfQocoUZvRm+530+zenUJfa//M4jaLi2JVU/ibQJsd94VuKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+sf5RVy1JZMXh/NCRnmwejz/QZtxkanez5aNDwDwL2k=;
- b=HCeK6Eiljmmo2FSqav4pQBDOo/4X1j+zAUZfeHg1YWNrqaEwLjGO1Tzag5QpxKW75ixf4OUb3kEbKBYn+KJel4t1LxwvjHgoJmCv5ThQ1+YpbE/XUi8Uyjc0eYH23IeCBw7Ddg8wRcFLVIAY8RtGjEigk0EDxB1OT0PntiDkj82iqwqLABL23C+2VmcmZgWWEm/2aPvntnTel4CRRQGHz7cHbfA9aAbk6A1aXMXFYKFi09BdXpPQ/ywePgDhQI8lPR3HMQeLiqQu1kUWU3P9mnGau7vkGtwhS4Qp6Ko+nV/e1LckFy+DX5xpaevRALqVgjXfq07UJK/+HNq0fNsHXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+sf5RVy1JZMXh/NCRnmwejz/QZtxkanez5aNDwDwL2k=;
- b=H/Yiv8QqGathSGS42mKUo3poqx8Q2V17d24LkPRBo4QNqWtFuIygeHvEyId35jIlSsxlY7WlcQTC26vNvOf/9OvsZ3YBXXEZVv/jSwkBlhGs8qvG1zbPwAz2elaDbdOrYqWudO1f5wcOgih1A6m5tVgtmTxiLpETMSrDbdslo6nS5udmz6Cyhsywz5TPqiUd5pT2I5/vq6uqKqlwdeYaplfkjzEckBti0zwUU4Bhbb9dBoxnJF3G7SIyvCdMCEPR2lZy/fAVr3Nm46KSPprP05mSM5pR8u8KUPbfLEmgtWOH36oxr8rEOKQ6KMI6juTKdIaeO94LKZ1dtyJ2iZyFyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PR3PR04MB7228.eurprd04.prod.outlook.com (2603:10a6:102:8c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Wed, 14 Aug
- 2024 15:37:35 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
- 15:37:35 +0000
-Date: Wed, 14 Aug 2024 11:37:26 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: watchdog: fsl-imx-wdt: Add missing
- 'big-endian' property
-Message-ID: <ZrzPNmXLsqxjzM+J@lizhi-Precision-Tower-5810>
-References: <20240806103819.10890-1-animeshagarwal28@gmail.com>
- <39e9fc4a-64f7-4695-bfd2-1f77740714c3@kernel.org>
- <ZrJGFk8+tgukCeGg@lizhi-Precision-Tower-5810>
- <a03c0609-cc13-457b-84ec-5880fc553bd8@roeck-us.net>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a03c0609-cc13-457b-84ec-5880fc553bd8@roeck-us.net>
-X-ClientProxiedBy: SJ0PR03CA0081.namprd03.prod.outlook.com
- (2603:10b6:a03:331::26) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343CE22EEF
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723649927; cv=none; b=rds73KC/+t7pAoxylZNS9so5669vsv7VBC25kSYwliPU6ANtqyYfOd95zfa6rPtKFM8574LCHxY4KUbwz6a9Nwj74cqS9/rRGKdkBrf5YGspayNyfiKczwL/MFoemvqT7oTc9Ic3mJ3zCLPb2YR3ydq6T3fJXBlgZ6+UWwMFxXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723649927; c=relaxed/simple;
+	bh=ZoPRwGV6+5ZCXltJco4xn5q57HOxugw7ILBN8Sr55hU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YDxGT3EpoRDYQGoBbCw1UxxOyTUY5CDjhIycEfQxqBaQTHNkgbD5M65SqR3vpUciLeQYGLYGnuwu+x8CZ2ulh6hxIRCLaBvpg55JaNSHrcIBj8+8QnZjsOM/TAaDggF/3D+5HJOoiPDPSTgGfY410wCKObE4P7+yOmFKMUZvb3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KV1VBlgw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723649924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i0mN78AI6OH+5rESlWtNBfWAVjVg3g3wv0fs76AUNNE=;
+	b=KV1VBlgwG6HVwxWxBdgGRcW8YqozKYJgmvYvjNIQH9heO1HmFlWloZE8pqIPE4MeSMtzd4
+	fsbfxRojkYt9A5/tonxN96JkBQdZMFLQVj45cU0LwEK1bXXcqCmxHO7ssue6Hy0Hvl6pLH
+	4NuM0h/NR8DljIrUcsFsRMfYtXVkdus=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-343-0_cNAYGKMju1oR2SalO6wQ-1; Wed, 14 Aug 2024 11:38:42 -0400
+X-MC-Unique: 0_cNAYGKMju1oR2SalO6wQ-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280f233115so45903545e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:38:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723649921; x=1724254721;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i0mN78AI6OH+5rESlWtNBfWAVjVg3g3wv0fs76AUNNE=;
+        b=Kt95GDWGCSDkLwjSre7h03AxfTRdDGMQvXObBKuXqefWXlEMMCV84NTvMw474ef7fz
+         mbsnfXrQXOrd9sU+KuEBk/iu9hOWCvvuk2nreZqnAwo/Lp88Ji5yIrmZxrU6YHhQ0XWQ
+         eUjsZqJusoPnH8obSWL57Kb2OoRqS4VajfZ1KkbwlyEGMeypXJRysTEm+O/5iVE7WgGt
+         fFAEai0Or0li2z4g1sRohWR2eNdBnLVR6jBAHUn1/6zcS828QxMlz6fueYbAUj3kqFFe
+         dht853V2r0q48XC0c1lbsS9RC4pL0So2pWh+x9j7UraCdmhsrHNi14krsn5d/rFh8wIR
+         ZmJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlcPimehNS3ncywB4aJAsAneht1Pgag8e4u2qkJlmRi/O4OnaQO7Ts9o0Fc6IE7NVpQ9qvASdUjojNUPeD9YosJI+ENRZDE9nIlZqM
+X-Gm-Message-State: AOJu0YxFJW4V6svrmEGMyELThJMio7AaYYqc7F4lX3NmkgvgW1zlOw3l
+	HSzkUJIkKUYYWuEWc/CZ5okzJCGkNofqxKNxEICUn++8diDLh/3N9XJXB+2GgB8u5judmNs1rh3
+	WAfdIaRWWvWGJdr5Mv0AAamZqQBS6Lf6uV1to91tuXDQrhG8piz51MK6KrTI3TQjqYTSbftEw7L
+	g/asr8I93SDaqMecSAkegq99EB5o2sNQGkCEou2AOvTPnqCQ==
+X-Received: by 2002:a05:600c:1e23:b0:426:6e86:f82 with SMTP id 5b1f17b1804b1-429dd248517mr23328505e9.22.1723649921183;
+        Wed, 14 Aug 2024 08:38:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEWMPGp7i0MQzIzTAb1271vYV1dkuMqPnhA1T15TWPhCom5X/iJ3a44d0WDgW36QkR+Ea3VA==
+X-Received: by 2002:a05:600c:1e23:b0:426:6e86:f82 with SMTP id 5b1f17b1804b1-429dd248517mr23328145e9.22.1723649920511;
+        Wed, 14 Aug 2024 08:38:40 -0700 (PDT)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429dec83d2asm23671175e9.0.2024.08.14.08.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 08:38:40 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, kvm@vger.kernel.org, Paolo
+ Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] arch/x86/kvm/vmx/vmx_onhyperv.h:109:36: error:
+ dereference of NULL =?utf-8?B?4oCYMOKAmQ==?=
+In-Reply-To: <ZrzIVnkLqcbUKVDZ@google.com>
+References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
+ <Zpq2Lqd5nFnA0VO-@google.com>
+ <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
+ <87a5i05nqj.fsf@redhat.com>
+ <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
+ <87plqbfq7o.fsf@redhat.com> <ZrzIVnkLqcbUKVDZ@google.com>
+Date: Wed, 14 Aug 2024 17:38:39 +0200
+Message-ID: <87mslff728.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PR3PR04MB7228:EE_
-X-MS-Office365-Filtering-Correlation-Id: cef15126-6970-49b3-0cd7-08dcbc7704e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|366016|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	94Zx35VCGJdKj9KC3NjM9utGDHgvkdwo7Us0BnWvKY77mKzjQwA9jShhIR4PN1Wzo3OwiQ4ZLmQwJzwlJN6PUF4d3KO4viDMCMcH1TWC6f4aUqSKUVlgIkgPUNdBbE9+l/E1CaL2DPWDEH8FTQDMeY5E5D3afFp9NkyVi57lTTBJ+O1AlnKsddMW8gpA5s+NyXFcXQ6JWepqLOqRN1GDXk72Fhf4w1wa3I7pjx9oMDiAGghAugZ0FKdnYz6TBNx0TrvapUZXGK5oCLoS9NMAgfJcCWJzDfKQHH5sku9Uit5tjuAZuOuA0Qqc0GUHeuxjO77CjVR1D3jyshtXs7aopzotD9RxlLdFCcGhPThXd3hggF9ViwurrpmWhAefUxit80ElqLBK/BmPQKh5yPL3X1y9Gz6KUb6ptPd4IaLpS4EywdwtEwd9evbRJ3IwGOW8lxSOTgA3b4XO5NKoNlDbr/1EnmH8zr7RQs3Xc4RnhFcvFzL6ITdA8yfEqPuvyIGJNdyjjGIEIV0rDxM9EtGdVxDjEL8NCEENyyTo78YaPZIrwtJOqB9OgkEH4zPlSHgr+cX+tYA78NEki4yKoksGPv8H68dT2WMSKyMhdt1+VnUDYpD8kfq+PqCMlZYzox1EW87q+sX0mvJBesNZOHqWIdaHp7msCgVN+TnDWvLFjws=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sTQ0Qvw26eVu4a4HBck9blWlTBhn75uhvHlKievXanmNMZ6DknAhg8zu8zAT?=
- =?us-ascii?Q?oCRuv89njjvWJvG+bcaUd9m3Hi6RUcD+shq6Hl/r1V3jVoRRybiv8Nfh9e50?=
- =?us-ascii?Q?laHZhqdQRemQAkznJ3faPFcWeSd/x/ecRdWJiLB6sbJk1kJcmHmlZJPBjBl5?=
- =?us-ascii?Q?dTh7tKb4SgbCHYd7/7/hFxJSx2T+hArtVOtrxH8URsnUNQKyxZZRsUCqD35n?=
- =?us-ascii?Q?1rURIu2yp7XbIGe/5NvNgJwIXOhoKvnteTYpXWfmTsPTKdiXcNwqXMc4EPe2?=
- =?us-ascii?Q?Xhe6uKdDW3HqUYqayO47v9u1IdSuaIPdpUdIf3+5AtmDICxFex/y73R2kSsl?=
- =?us-ascii?Q?PyNmgyZqRPSgc+lGDPl+bTcqi6lCoiKGP+eQJELg0zgALVJTVgMNlIxDdOjf?=
- =?us-ascii?Q?I1uwW04Xtx5ykHcy3IFlQoqd2wgMZRmbF5Hoy9GlQu70jUcx8ew3wSzHQWbs?=
- =?us-ascii?Q?skF9Z6l16e76v4Nq/r44MIa/rlK914hfrQKnnONUviC5GBZcup0s8bxCGfzP?=
- =?us-ascii?Q?rBifZplHqOL7Wzprv/oWxQxu3urD0p2kjtJA1YfAvgDtbtJRt4pO/n0VyAvb?=
- =?us-ascii?Q?QVQRKiQxNG5xkuDtnfj7GDvplVc4zRF1Sby7jk0Cg2mmG7gb9skeV3kl58IG?=
- =?us-ascii?Q?M9GtEld4IZ6nNXzrlml5iy/Ezj6WbZ93FqvB0plp1GhihIoIGSEQIMRDKmXG?=
- =?us-ascii?Q?eooQCgmDFB2LMfbwFBoI9JmN8eLYQMhRK4znE9TVip2O09lJZBWSo1iKD8bD?=
- =?us-ascii?Q?YuVuNPlvvUXk9OEffQO8FoNTk6R8qrSaERQ9z+FdZt7H0Wr+bUb+purmN7iE?=
- =?us-ascii?Q?gE8Az4QMQh5fX082J4AqGxzcU7GFx7aanTS6oumpyp2obQCWOy+zgvmvWrec?=
- =?us-ascii?Q?CONym2iYVaTTqm6hjKowe9zBaRpUMl7re/4wJ6kIkz8zgvWJZFnGRrtVw9cO?=
- =?us-ascii?Q?woi1de6Lyvi8/SovWGaESt0kmUxCGPTl1S1LJnErK3nZMSejaoakMySiml06?=
- =?us-ascii?Q?2FGl4s/vvOW7QAQ1YqH7uiP3LiFhQWxw8LSdFRIiRmsQC91O+HNDj5w7Xw3p?=
- =?us-ascii?Q?yH9KgmeE3yRCe99z6rjMndQQhttrxXt6AtAoo+HbQF+NSyzGAbKJL0lrFjBP?=
- =?us-ascii?Q?gn9LYWFZeutP9bhJ1wHm769zeULJLFi0Ml7fhZtdLSKazg7Ku9MIpGkHieAS?=
- =?us-ascii?Q?prYzZ54raBZeb/dozN7QGPwOjLFgX1oO3xcq3O/CRb0deWlEH4hYIz4Y3OEO?=
- =?us-ascii?Q?fOs238laCYbfXunss4lz4jWT2mFGml53aq4wuPA3ul7UfK6U7l9eLyT+rOft?=
- =?us-ascii?Q?YYz3iPcZXsSwAdnGxqsXLTHbXS02mKK0gAiYD0jtK60sLMHRWPrMO6WjIvY6?=
- =?us-ascii?Q?HudFO/v8lwQADKq+DqKGHtGxqoGLhOpAvN24WcviqM93EZz4jlV+cEdqrWxl?=
- =?us-ascii?Q?lcbrvp9Y5fCXePy3lHp3cdr+MZ2CAOi59+ka3FFRHrg6lURa4YYqVsbLD9Kc?=
- =?us-ascii?Q?E4RqDHlPrWF5Zd17z7480yzdF9CK0Hud64V0uCTyXjv0KWrTYnMWsqRWq/BB?=
- =?us-ascii?Q?D9rHIozW/ENBLXwjQVI=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cef15126-6970-49b3-0cd7-08dcbc7704e7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 15:37:34.9913
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yeuEAkPv24ZAvGkHpCMlm8MxvpoCCIyV32j+iCs5b2d6Pc+YAZP1/5SylBua3raThJkPKIeI80KNuq3pdj+WKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7228
+Content-Type: text/plain
 
-On Tue, Aug 06, 2024 at 09:44:16AM -0700, Guenter Roeck wrote:
-> On 8/6/24 08:49, Frank Li wrote:
-> > On Tue, Aug 06, 2024 at 12:43:07PM +0200, Krzysztof Kozlowski wrote:
-> > > On 06/08/2024 12:38, Animesh Agarwal wrote:
-> > > > Add missing big-endian property in watchdog/fsl-imx-wdt.yaml schema.
-> > > > This fixes dtbs_check errors.
-> > > >
-> > > > Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> > > > Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> > > > ---
-> > > > There are 12 similar errors related to this missing property from
-> > > > different blobs.
-> > > >
-> > > > ./arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dtb: watchdog@2ad0000:
-> > > > Unevaluated properties are not allowed ('big-endian' was unexpected)from
-> > > > schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
-> > > > ---
-> > >
-> > > Not sure if this is correct. I mean, technically it is, but Frank Li was
-> > > removing big-endian properties so please choose consistent approach.
-> >
-> > drivers/watchdog/imx2_wdt.c never parser big-endian. I suggest remove
-> > big-endian in dts file. I suggest keep big-endian only if it really used.
-> >
+Sean Christopherson <seanjc@google.com> writes:
 
-After Alexander Stein point out, check spec, and dump watch dog reset value
-at ls1043a platform.
-
-0x02A80000:  00 30 00 00 00 10 00 04 00 01 00 00 00 00 00 0
-
-It is big-endian. imx2_wdt.c use regmap which call regmap_get_val_endian()
-to handle endian.
-
-So this change is corret.
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-
+> On Wed, Aug 14, 2024, Vitaly Kuznetsov wrote:
+>> What I meant is something along these lines (untested):
+>> 
+>> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
+>> index eb48153bfd73..e2d8c67d0cad 100644
+>> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
+>> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
+>> @@ -104,6 +104,14 @@ static inline void evmcs_load(u64 phys_addr)
+>>         struct hv_vp_assist_page *vp_ap =
+>>                 hv_get_vp_assist_page(smp_processor_id());
+>>  
+>> +       /*
+>> +        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
+>> +        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
+>> +        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
+>> +        * but compilers may still complain.
+>> +        */
+>> +       BUG_ON(!vp_ap);
 >
-> Agreed.
+> A full BUG_ON() is overkill, and easily avoided.  If we want to add a sanity
+> check here and do more than just WARN, then it's easy enough to plumb in @vcpu
+> and make this a KVM_BUG_ON() so that the VM dies, i.e. so that KVM doesn't risk
+> corrupting the guest somehow.
 >
-> Guenter
->
+
+I'm still acting under the impression this is an absolutely impossible
+situation :-)
+
+AFAICS, we only call evmcs_load() from vmcs_load() but this one doesn't
+have @vcpu/@kvm either and I wasn't sure it's worth the effort to do the
+plumbing (or am I missing an easy way to go back from @vmcs to
+@vcpu?). On the other hand, vmcs_load() should not be called that ofter
+so if we prefer to have @vcpu there for some other reason -- why not.
+
+-- 
+Vitaly
+
 
