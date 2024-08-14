@@ -1,97 +1,220 @@
-Return-Path: <linux-kernel+bounces-286975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A18F952108
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:25:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D82952110
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2221F2411B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6736E1F23E9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD561BBBEA;
-	Wed, 14 Aug 2024 17:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EF91BBBFC;
+	Wed, 14 Aug 2024 17:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgHfFeve"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKifysO+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EF41BBBDA;
-	Wed, 14 Aug 2024 17:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47825111A1;
+	Wed, 14 Aug 2024 17:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656338; cv=none; b=pfR1C9J8tEO76EqqLziV/wNx3BcIU27hdC7YFLTXkb8+ozgV8F0FZ27+MYhPR68yUZBeqS2xNrqJMxClgY7Gtb2vswHYgIhhLV9Jh+k06rRJ/Mx+jaUFJTZYTUG8mKTuex9E7zoxkXarFDHd2c2eNB/x9cWVqGPIY1jypK4TDsw=
+	t=1723656399; cv=none; b=FS5KnMayyg7hCPZekm+INi3OwFusUsiFjd8mZW6f1DNAJSbswHCRFKoniMhsg1+yMO2KMKUA7oFv4SOvGLALMxM+NviVdvFti+BEbikKGCZEXhp5vORRNWGaat0QPZ++u9BK04DMYqr7Bjz4VB4g+KKfxri11WoYfpd5JPi73y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656338; c=relaxed/simple;
-	bh=OvWqIDYW1TJozwYWmQwgU+NqjY7ZtiSgr60J19zdmjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TeWesAesX6sEv0cHZou3qURZq3AizovIYSIhHpYqjEt3n831O+5geW1FPHB8Hsk5jtfPqZ7DA2uxAQpOXbCzGfxjx74ZF5Le6aU9XcOyEvrrtO2eT1VYh8CubaZzEwS0KeX2CqyhBMsPjRTVNOJPaeeBzx9ZV8k0JjbCjmIPqTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgHfFeve; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A60FC116B1;
-	Wed, 14 Aug 2024 17:25:36 +0000 (UTC)
+	s=arc-20240116; t=1723656399; c=relaxed/simple;
+	bh=eTnLoZGdchWutqvJYFrXoB9RVGn/dZ58dMhkGG+oPew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qL3lx7QIl1Umso9+drWIEdos15IhBpbQmAm686ugcoEWf1aPYCHVmjhZ20jcMtJS+ILL+Q3s6Uhjg4EbmSY6c6q3L/IHCe1SlaA2j+GXVc8cG1WHnmXT0smd2sNxGc7FtvmmlkDjwCMpS7MjAKhqxzsqT+s+uygNyAilauw1Wic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKifysO+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0435C4AF0D;
+	Wed, 14 Aug 2024 17:26:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723656337;
-	bh=OvWqIDYW1TJozwYWmQwgU+NqjY7ZtiSgr60J19zdmjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YgHfFevePbdkzlTIJnyOF2XC0FJkSntKBL4QKqC4eezf+7anNZArL+rupvynOevUi
-	 K+NFmCz1hIi4jTeWnHTo1ETcdPicJVlTbeNJAVZ88Z22LC3qwUVxAng7v2/PS9eqbj
-	 V86rFgYuHJOrDBpgCC4vaUADKyuQ1UXy92tLqaSMU6PMUxSfu3xM4EjpnpysY0Jaa0
-	 inaskwqUc+7f+jrxcVfzMikKpH4PLJa4UuAyHvOVPYOn36xIglEGLNejYxWX4UYdqH
-	 qRxBKpZGv8b4w09N+s6yloaq4IrNEqo6I3JN6W9cFAieeK+ocFcUGCYmQBFGhh9sth
-	 HNx+my3LnbSTw==
-Date: Wed, 14 Aug 2024 18:25:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: theo.lebrun@bootlin.com, d-gole@ti.com, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] spi: spi-cadence-quadspi: Fix OSPI NOR failures during
- system resume
-Message-ID: <bdbbc2c0-265f-43d1-8bc5-03cf6d84c495@sirena.org.uk>
-References: <20240814151237.3856184-1-vigneshr@ti.com>
+	s=k20201202; t=1723656398;
+	bh=eTnLoZGdchWutqvJYFrXoB9RVGn/dZ58dMhkGG+oPew=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PKifysO+lcCzM678N2K1mv1IQ2FLJutwG0rJdkc2DENLzMr8bNGw4fFi6u+JGlj/1
+	 MdQm/N1GPK9nE0udZQwBkrptZ6iCi2mYt9UzKllvds0oODVeH7iQo7F6VGuq3Bo2bI
+	 xmAkk62md2dERDNtT9Ks9RKChoXr5SvLcyH0u+ycpAbRCDhBjE7PEtADtlCsitVtiW
+	 sLYS6sJble0rQKBnC/bBFvFGj5td3/+7PRAJTcIpscPRo4vFDSpV2VBenTLkTasmyh
+	 eKEq0PqCLV9pzxytkYPjJmZjomdc2bkX11hNnhGq4q8P9mIr4ha1hFCRTGqPm+CI1v
+	 qEysPa96H8BGQ==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-26110765976so18067fac.1;
+        Wed, 14 Aug 2024 10:26:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW/mVThzbPT/SBdXWlv3CfuDwpJykO3jqC24w9hf+/dV9eKndj5/XTwyFT3U2Q+bizzvK3wKUVb9Vubzy8ItBHVsIliEWOh4WbgQQFh
+X-Gm-Message-State: AOJu0YzbF7KUlZh2MD1valj7kVMAspGFMd7WXFjXD8E2Dc2ace0hjfrf
+	UoXsJozD+jQNM6ovqcU5MHDrkdqJqFgEYmPrYjju+Wn4qyP8mhUhzIiG9mMaYkIlMjIgV+DeLyu
+	W6GN9ztI3psWAEHGBcYMX9ifIkOI=
+X-Google-Smtp-Source: AGHT+IENZovxxdHeWc1pSFQJYl614ru0uPWXXnobS9h5XVlXu/A0J4gRih3/rTG4z86U6Xt5771SYhMooaFKguZE7qo=
+X-Received: by 2002:a05:6870:e3cc:b0:260:f1c4:2fe2 with SMTP id
+ 586e51a60fabf-26fe5cc3422mr2028529fac.9.1723656397927; Wed, 14 Aug 2024
+ 10:26:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UTNRJheu+DfhM/pL"
-Content-Disposition: inline
-In-Reply-To: <20240814151237.3856184-1-vigneshr@ti.com>
-X-Cookie: Do not stamp.
-
-
---UTNRJheu+DfhM/pL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <1903691.tdWV9SEqCh@rjwysocki.net> <2285575.iZASKD2KPV@rjwysocki.net>
+ <2f16fd5a59d6655ec9339473d516ac49c89e43f8.camel@intel.com>
+In-Reply-To: <2f16fd5a59d6655ec9339473d516ac49c89e43f8.camel@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 14 Aug 2024 19:26:26 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0icxkRyd_1T53JmX3XDQOC6_Ak9nOD65Yx-rhZbDa4Y_w@mail.gmail.com>
+Message-ID: <CAJZ5v0icxkRyd_1T53JmX3XDQOC6_Ak9nOD65Yx-rhZbDa4Y_w@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] thermal: gov_bang_bang: Use governor_data to
+ reduce overhead
+To: "Zhang, Rui" <rui.zhang@intel.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, 
+	"lukasz.luba@arm.com" <lukasz.luba@arm.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "peter@piie.net" <peter@piie.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 08:42:37PM +0530, Vignesh Raghavendra wrote:
+On Wed, Aug 14, 2024 at 8:09=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
+ote:
+>
+> On Tue, 2024-08-13 at 16:29 +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > After running once, the for_each_trip_desc() loop in
+> > bang_bang_manage() is pure needless overhead because it is not going
+> > to
+> > make any changes unless a new cooling device has been bound to one of
+> > the trips in the thermal zone or the system is resuming from sleep.
+> >
+> > For this reason, make bang_bang_manage() set governor_data for the
+> > thermal zone and check it upfront to decide whether or not it needs
+> > to
+> > do anything.
+> >
+> > However, governor_data needs to be reset in some cases to let
+> > bang_bang_manage() know that it should walk the trips again, so add
+> > an
+> > .update_tz() callback to the governor and make the core additionally
+> > invoke it during system resume.
+> >
+> > To avoid affecting the other users of that callback unnecessarily,
+> > add
+> > a special notification reason for system resume, THERMAL_TZ_RESUME,
+> > and
+> > also pass it to __thermal_zone_device_update() called during system
+> > resume for consistency.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/thermal/gov_bang_bang.c |   18 ++++++++++++++++++
+> >  drivers/thermal/thermal_core.c  |    3 ++-
+> >  include/linux/thermal.h         |    1 +
+> >  3 files changed, 21 insertions(+), 1 deletion(-)
+> >
+> > Index: linux-pm/drivers/thermal/gov_bang_bang.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
+> > +++ linux-pm/drivers/thermal/gov_bang_bang.c
+> > @@ -86,6 +86,10 @@ static void bang_bang_manage(struct ther
+> >         const struct thermal_trip_desc *td;
+> >         struct thermal_instance *instance;
+> >
+> > +       /* If the code below has run already, nothing needs to be
+> > done. */
+> > +       if (tz->governor_data)
+> > +               return;
+> > +
+> >         for_each_trip_desc(tz, td) {
+> >                 const struct thermal_trip *trip =3D &td->trip;
+> >
+> > @@ -107,11 +111,25 @@ static void bang_bang_manage(struct ther
+> >                                 bang_bang_set_instance_target(instanc
+> > e, 0);
+> >                 }
+> >         }
+> > +
+> > +       tz->governor_data =3D (void *)true;
+> > +}
+> > +
+> > +static void bang_bang_update_tz(struct thermal_zone_device *tz,
+> > +                               enum thermal_notify_event reason)
+> > +{
+> > +       /*
+> > +        * Let bang_bang_manage() know that it needs to walk trips
+> > after binding
+> > +        * a new cdev and after system resume.
+> > +        */
+> > +       if (reason =3D=3D THERMAL_TZ_BIND_CDEV || reason =3D=3D
+> > THERMAL_TZ_RESUME)
+> > +               tz->governor_data =3D NULL;
+> >  }
+>
+> can we do the cdev initialization for BIND_CDEV and RESUME notification
+> in .update_tz() directly?
 
-> Without this patch, OSPI NOR enumeration (READ_ID) fails during resume
-> as context saved during suspend path is inconsistent.
->=20
-> Fixes: 6d35eef2f868 ("spi: cadence-qspi: add system-wide suspend and resu=
-me callbacks")
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+That would be viable if the zone temperature was known at the time
+.update_tz() runs, but it isn't.  See this message:
 
-This commit isn't in mainline or my tree...
+https://lore.kernel.org/linux-pm/CAJZ5v0ji_7Z-24iCO_Xxu4Zm4jgVFmR9jVp8QNiCO=
+xzV9gqSnA@mail.gmail.com/
 
---UTNRJheu+DfhM/pL
-Content-Type: application/pgp-signature; name="signature.asc"
+As long as the zone temperature is not known, it is not clear which
+way to initialize the cooling devices.
 
------BEGIN PGP SIGNATURE-----
+Interestingly enough, the zone temperature is first checked by the
+core when the zone is enabled and not when it is registered.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma86I0ACgkQJNaLcl1U
-h9Ad7Qf/QmEWLWcXj6njajMV852o3yuSyOwKee2mb1xmvRIbhmNB38oPGveeQyT0
-7fzVKq5vkrGpvleinHj+Jl0xtDZgRtRCzevRGa0SheNKdwmuCCDa6EzLFykimXa7
-Vtxt10Irlq5JCG2lnTklMrF2uHt4WstFaRxBhPuDSEKGer3k8AeLnhVbAL6nMJCg
-kVLOjvV0HtmoqzWxuP5t7+WNHsDWOubVXFjQYkRhQ6ajVLb54vVCpgFysAI5Qs0E
-x7lDAdAaEr0JKVCACMmn97Gkd/qSsCNLjoyfR41Yu4ZUZciDfj7l/A/jg8Nz6EsT
-r4u/+UcEKwOrHZG06Qtbh40qTHlATA==
-=Myvh
------END PGP SIGNATURE-----
+> Then we don't need .manage() callback. This makes more sense to me
+> because bang_bang governor cares about trip point crossing only.
 
---UTNRJheu+DfhM/pL--
+That's true, but this is all about a corner case in which no trip
+points are crossed and the cooling devices need to be initialized
+properly regardless.
+
+> >  static struct thermal_governor thermal_gov_bang_bang =3D {
+> >         .name           =3D "bang_bang",
+> >         .trip_crossed   =3D bang_bang_control,
+> >         .manage         =3D bang_bang_manage,
+> > +       .update_tz      =3D bang_bang_update_tz,
+> >  };
+> >  THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
+> > Index: linux-pm/drivers/thermal/thermal_core.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/thermal_core.c
+> > +++ linux-pm/drivers/thermal/thermal_core.c
+> > @@ -1692,7 +1692,8 @@ static void thermal_zone_device_resume(s
+> >
+> >         thermal_debug_tz_resume(tz);
+> >         thermal_zone_device_init(tz);
+> > -       __thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+> > +       thermal_governor_update_tz(tz, THERMAL_TZ_RESUME);
+> > +       __thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
+> >
+> >         complete(&tz->resume);
+> >         tz->resuming =3D false;
+> > Index: linux-pm/include/linux/thermal.h
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/include/linux/thermal.h
+> > +++ linux-pm/include/linux/thermal.h
+> > @@ -55,6 +55,7 @@ enum thermal_notify_event {
+> >         THERMAL_TZ_BIND_CDEV, /* Cooling dev is bind to the thermal
+> > zone */
+> >         THERMAL_TZ_UNBIND_CDEV, /* Cooling dev is unbind from the
+> > thermal zone */
+> >         THERMAL_INSTANCE_WEIGHT_CHANGED, /* Thermal instance weight
+> > changed */
+> > +       THERMAL_TZ_RESUME, /* Thermal zone is resuming after system
+> > sleep */
+> >  };
+> >
+> >  /**
+> >
+> >
+> >
+>
 
