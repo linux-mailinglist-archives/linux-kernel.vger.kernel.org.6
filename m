@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-286889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351AE952006
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C890A952008
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672671C2236D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:32:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729781F27AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFDA1B3F3E;
-	Wed, 14 Aug 2024 16:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80F71B9B26;
+	Wed, 14 Aug 2024 16:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ch9G7Nm8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N6bjnwvw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B73E2BB1C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2EF1B3756
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653123; cv=none; b=Teb2XtY24vnbvESfMmcrVcyR3pNhePioZ7dnwOAdc3y3AmUYU1pER551N4eoOXsQX9j18hymjl3cG2sHYccKQo0AH86xdYYafXgqq8k0J7JwzqNxaxBZLfdXNxF0VkCaN3u2qUSp2LlEZbOhZ7FhRzlkt7Z5BsLtLcP/4Wz+pN0=
+	t=1723653130; cv=none; b=qLxyzU3+Oc3EGXbU61EPdeWe3jtZzrrPQVWARq+YC3Db6oC7dhxrdqFajUG5nG99WSc5CmEx/NyLCgyt7m9Pa0XF7rXFzNSC1g9o1+XakbPJqGig40NPrRI8sl4Tsz2c2ad6XO5NeMfsDwUEGAo5QrQSr+XNRckyo5dqOqMrwhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653123; c=relaxed/simple;
-	bh=sjmlatt2FALf0Ln7dqSn1SM9Qe1qHhGhBTGOwE8pY3o=;
+	s=arc-20240116; t=1723653130; c=relaxed/simple;
+	bh=yd5JNvJdC5HkhmulYzfGezhr7UErN+Z7Ol0m2BqggOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4DjypuGFQAPjS0pUnTi2Y+y4VqWspi9zoHd3m9SEDg5KVgWt1+6zp1cfn3GoQfdMZuTomzACKPk3G4zHH98kAZFmyOP/XSN5ksM6mnRQOYznkNECz9Cnvt2vmjI5Ls9qGKUDWNnhgWI5DGUURYFzJI782Jh8kxtFkgmtcYMAW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ch9G7Nm8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723653120;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nAJHyDS3x0gvP3kndDtDDCyfUKvxnbZEPAFmNsdiAMA=;
-	b=Ch9G7Nm8l00oAAitR87aoyl2h61SAV4ORyKxjyxGkHGeyMfS5uqwPOIpEZPU5PvoONqC0L
-	7V/T93p12gFpPHqWGfJimiinRyFdIKBnRDCHrA8QNI8/nlUdFnZDhh64SOK38LPLh3HSJd
-	CpK4lurk8lsQnEzcE2vHZKCkJdDpzOo=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-e7AASxShN1Ca2vZgIOaLGA-1; Wed, 14 Aug 2024 12:31:26 -0400
-X-MC-Unique: e7AASxShN1Ca2vZgIOaLGA-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44fe92a34d2so424711cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:31:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723653086; x=1724257886;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nAJHyDS3x0gvP3kndDtDDCyfUKvxnbZEPAFmNsdiAMA=;
-        b=nA3vP2Scet5eLASsXLEIsbrcK6BdA8ouEDemp32xi6p9Cn2/TV6LPJ9dtyNZylZfFQ
-         7I3yRzE84VNcOz0bXZwrPKtg/NMdk9B5QJoksfL5pmL6EXNRkJGrJx6uLLRqyubiyU0R
-         Bp/vDtpqWYBYomuVkaa91+fH6ObyIZ6unbt87DPIBWoF+7U7CPmorqCsb3AcDKC0LlaB
-         NS9A3/T7YPB46ZgRZZCsa/gi34xKw7kuoEy6w1kd7EDm1oMDy1ve/PdDtc2aILBdlBAz
-         Wm3u0BbWf8ho8zDAFiI3hI5Bvz41abLBMSHutFUMIICf2Zn7BV3hjWgxPPln8LeU2J+P
-         OKCg==
-X-Forwarded-Encrypted: i=1; AJvYcCW69kHTPWaBOXUjSCR98Lo0kFCDj7BpntGIG8xDLGMX3ItvITEvj3jzzwLvFpAdrfReSqBxIJ3fvcN5u1n96Ex7kahBzVjSzGqYcf21
-X-Gm-Message-State: AOJu0YxLtm4i5BLe+5njS7FrK4OpN6DisMPWov/PyZDbOzivC6yXpKjW
-	EwsZVL2N7l2sFE37bJkMnbk1wuSD2l75Lx5u6/difZyqqrtLTLG/Ea6Qha/9Ir0fyRqh+ULmKgl
-	SXVVn9IBTpE5Yrkh2WiPGbSrNznaYPn8pCiTsEADvoeSaovq9I8kRo6Fv0mlXjQ==
-X-Received: by 2002:a05:620a:4007:b0:7a1:d73f:53d2 with SMTP id af79cd13be357-7a4ee32e764mr396351985a.20.1723653085778;
-        Wed, 14 Aug 2024 09:31:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcPEkykVU98AdM6W9o/QSTPGbN3EfEAVyCEDTjPHObiNLTpHiFF4NBrrvxVGHGtrmageAm9w==
-X-Received: by 2002:a05:620a:4007:b0:7a1:d73f:53d2 with SMTP id af79cd13be357-7a4ee32e764mr396349385a.20.1723653085500;
-        Wed, 14 Aug 2024 09:31:25 -0700 (PDT)
-Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7e13605sm447993785a.135.2024.08.14.09.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 09:31:25 -0700 (PDT)
-Date: Wed, 14 Aug 2024 09:31:23 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] iommu/vt-d: Always reserve a domain ID for
- identity setup
-Message-ID: <ykrcnvpm2wbiwepykl2wmitaabyp3yngw4dborhnlm65ek3ctl@6wteh2n6zrzk>
-References: <20240806023941.93454-1-baolu.lu@linux.intel.com>
- <20240806023941.93454-4-baolu.lu@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKGFPymbL0Kl5Dg9Vl7OYxjFK4yvTtWQDa1qNJSopjKEpW9Bs5rnYpLMEqn2aJ/hkiX3PhwMC286AIwo7ftYA2JyvUfIaOzY4E8WZY9r7qOIDlgCFiAe5m58xh+6Jxw8AK9sq0c81XD0FQfY80bq1PZW4knDha/7ooccgPHXrAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N6bjnwvw; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723653128; x=1755189128;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yd5JNvJdC5HkhmulYzfGezhr7UErN+Z7Ol0m2BqggOs=;
+  b=N6bjnwvwPdgBq0/6SJICI03/xFyWVR3vtoFGZG9KRFPcpV9Kr45LBJM7
+   ckE/IglnCQOSLs8v38RaT4Eb6o24GKoajhG5R60CQfY33IZVNfJ1g4AtS
+   yg+u+qt5bMzi0LJ3SX1Eci4X/hkQMpVs9uc1v3HjyLZ7dS7m8qNlf6smb
+   GmmRq57fYJT9a3+3YDmxAEyX55zYgpbZVhk/z5AbkD5VjoGy0nVORmpoz
+   wBQ/B9zgQGmcmF0N+Fhj0X0oc2M5iVttFobOaB+wcoBpShq7HrlWk5Qtp
+   mNMKwe+Txy5S/fVEcrpG24yDCmEQq+dRgzM7LcfT41te6E4mEI1YfuGMs
+   Q==;
+X-CSE-ConnectionGUID: ojayozjrSROSyBKALBDSIg==
+X-CSE-MsgGUID: EepH5fQ4Q1S3stMf5wQPqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="24786696"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="24786696"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 09:32:08 -0700
+X-CSE-ConnectionGUID: ibSyp9AqRUCpmC9ewaZ5UA==
+X-CSE-MsgGUID: q+sRb3TDTFSQ4ZP3HcsePg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="63489748"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 09:32:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1seGuo-0000000FFNX-3gmD;
+	Wed, 14 Aug 2024 19:32:02 +0300
+Date: Wed, 14 Aug 2024 19:32:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kernel test robot <lkp@intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: WARNING: modpost: vmlinux: section mismatch in reference:
+ bitmap_gather+0x68 (section: .text) -> sg_mask (section: .init.rodata)
+Message-ID: <ZrzcAnHNXDF2Ck6K@smile.fi.intel.com>
+References: <202406200829.IytwLyQJ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,40 +82,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806023941.93454-4-baolu.lu@linux.intel.com>
+In-Reply-To: <202406200829.IytwLyQJ-lkp@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Aug 06, 2024 at 10:39:37AM GMT, Lu Baolu wrote:
-> We will use a global static identity domain. Reserve a static domain ID
-> for it.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
++Cc: Clang and bitmap people.
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+On Thu, Jun 20, 2024 at 08:54:29AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   e5b3efbe1ab1793bb49ae07d56d0973267e65112
+> commit: de5f84338970815b9fdd3497a975fb572d11e0b5 lib/bitmap: Introduce bitmap_scatter() and bitmap_gather() helpers
+> date:   3 months ago
+> config: um-randconfig-r123-20240620 (https://download.01.org/0day-ci/archive/20240620/202406200829.IytwLyQJ-lkp@intel.com/config)
+> compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 78ee473784e5ef6f0b19ce4cb111fb6e4d23c6b2)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406200829.IytwLyQJ-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406200829.IytwLyQJ-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>, old ones prefixed by <<):
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+> >> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_gather+0x68 (section: .text) -> sg_mask (section: .init.rodata)
+> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_gather+0x10b (section: .text) -> sg_mask (section: .init.rodata)
+> >> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_scatter+0x68 (section: .text) -> sg_mask (section: .init.rodata)
+> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_scatter+0x119 (section: .text) -> sg_mask (section: .init.rodata)
 
-> ---
->  drivers/iommu/intel/iommu.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 723ea9f3f501..c019fb3b3e78 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -1440,10 +1440,10 @@ static int iommu_init_domains(struct intel_iommu *iommu)
->  	 * entry for first-level or pass-through translation modes should
->  	 * be programmed with a domain id different from those used for
->  	 * second-level or nested translation. We reserve a domain id for
-> -	 * this purpose.
-> +	 * this purpose. This domain id is also used for identity domain
-> +	 * in legacy mode.
->  	 */
-> -	if (sm_supported(iommu))
-> -		set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
-> +	set_bit(FLPT_DEFAULT_DID, iommu->domain_ids);
->  
->  	return 0;
->  }
-> -- 
-> 2.34.1
-> 
+I have no other idea that this is a (yet another) clang compiler bug related to
+the constant data.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
