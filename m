@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-286803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FB8951F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:54:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDF6951F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A201C22DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9216F1F231ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B04E1B86EF;
-	Wed, 14 Aug 2024 15:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F881B5830;
+	Wed, 14 Aug 2024 15:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="RffHno+h"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="E9p4kYGS"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ABD1B5831;
-	Wed, 14 Aug 2024 15:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F041B4C3F
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650830; cv=none; b=aNlgAdc1sNH0IixIiIS6sC7/K3M3++p63iKu1qW2vf9foQkL7y35zcHfUmI3QKuuuynDg66auhFazYkgb6xcDJlKFno2SSCy6ymr+BvWJxH4a6qJxXU5+sIdHXGsxEj2T4+C94zSA9NObBe+miIxW3fA76hC9T6hG47dDfO6iVI=
+	t=1723650717; cv=none; b=hUSnpKUj6V2SctQrXcG+7dRE1kU6dk8ietUEcgeHfwguruWqtAPKnH1pSkWuRXiTKS5loqqXP3fOm/T06vPFVsECHQSXul63VzGPy5fsxykfl/3uGqxdfElkEZ/NoqQroFTVcRUQswdyBdFeCypRB2nwNCGaxgvwmW9OrPRuEig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650830; c=relaxed/simple;
-	bh=cIqSVAB+/UhZd//K3owngicdgqTbJSSxHcKfNZh6dnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SZg/sXzgstSZsSpxsneddtaIjGEfavV+b7fB37cD8SJB2EGJKFMj0AfFdgbBpN1MQoG16gY0E0BD30aWx0GTic8KuEFuyBhiIch0mr4VMEWpT61DCZ7cowJ0l/BeooF8l9ouZ3B4m0fS5rRCL2C1bJ2QNX5+rIIdyre057eVOkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=RffHno+h; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from localhost (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E12A14127B;
-	Wed, 14 Aug 2024 17:53:47 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
-	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id n0HJBvDps1Nf; Wed, 14 Aug 2024 17:53:46 +0200 (CEST)
-From: Yao Zi <ziyao@disroot.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1723650826; bh=cIqSVAB+/UhZd//K3owngicdgqTbJSSxHcKfNZh6dnY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=RffHno+hhvoUiLph2V39hy+3mh0S/fXonWQ8lps1tUFQGCJhT7IDtCQG/kAazPbNy
-	 JQ2o8YKp0ykY0DXTP9vIkakjbKpbXXbZFqGXl7QzUhmNft/j2/6PIVlV2F3ucM4qzl
-	 w7rK6ya/UjNUrsjr+rXy/LLnOinTfxt2XOfJOnrfXCZOxXkxJhy58Yjdx05iJnfq/I
-	 ma0602dii1mv4zKJRw4+kdrJ8AMgn/y3RBrBFQpTxvCXDTYXhX+kJzUA+NTXRyAWBq
-	 5rPKguP1k1lsEjofVKlcXP/3/E1SmoApTfC6/D5szk4/uyFcV+5gJi1HGIALgZIHzw
-	 X+vEcB859KgKw==
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Tim Lunn <tim@feathertop.org>,
-	Andy Yan <andyshrk@163.com>,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	Jagan Teki <jagan@edgeble.ai>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Ondrej Jirman <megi@xff.cz>
-Cc: Celeste Liu <CoelacanthusHex@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v3 4/4] arm64: dts: rockchip: Add Radxa e20c board
-Date: Wed, 14 Aug 2024 15:50:14 +0000
-Message-ID: <20240814155014.18097-5-ziyao@disroot.org>
-In-Reply-To: <20240814155014.18097-1-ziyao@disroot.org>
-References: <20240814155014.18097-1-ziyao@disroot.org>
+	s=arc-20240116; t=1723650717; c=relaxed/simple;
+	bh=8LF8erteSYXqEQ+sv6uPPqfX6ExaNFAVtl6+SQyrxXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ulZCNZ+8NXwCrqoZC8NAo2H9ZPSQwK3NgiyO0S60L9JNugCCHFVxuqz8xq8YN8xq1O39nX/nCk8xnRAiJFgrvslhonxWQSnHpFit47GzdwYFBxQEpSYasHK/dajKD8h5WlNKvvaFHiswKl8YbomY8z9s1Xl6IdbekHTwkXDa4tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=E9p4kYGS; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f6d35d59ccso17698e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723650713; x=1724255513; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T1s0TehfVbhq0HZGHpkiDt/kqWMCBY7b6/k82SpXX8k=;
+        b=E9p4kYGSsdpYR3fB2JvtIWOxb08mt3wozqtMSba3LzZ1Oj6vB5mn1filkEjADlvoXC
+         xYyDeJQRAu7EGlH4E/pP6yZLGxV973KdOcmc3cHKb/ammVLMCJNfAalIThVOztiv9M9a
+         JS5kFRWZ43m64lMzjPW5IzHjkpMYJFMhyqRVBQ+/Db2xS/58RJ+PRTzWa7iVIkLMTmgz
+         NADdcH9BTcMiCayAHOTNgNC2ScKKEL4YY3WIOFyB+V53XeBTH/EkBZqUZUBp09xWZ/Bd
+         ro8C3+zmjZBv1ff6kQn6iIYAdufdrAuRjqlmJ17KGVbnmAf0FKqhSuxdz9n8OvqtQyh4
+         PBVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723650713; x=1724255513;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T1s0TehfVbhq0HZGHpkiDt/kqWMCBY7b6/k82SpXX8k=;
+        b=aN05DFITd3XJSZyGHhzJ4fm8ApJ9FQV3mVq4SlRePCL4NozOq311mdPO53t1p6Aq38
+         FkDFsv3UWec8e6aFZrBSZdq+zYWBUMAr1K2NuIX/IlN6OK/ASW1vEm5xrvJ0EVZckAcj
+         qDXCVE33cXZw1hFVt4b6PYtw+ZhCBqPzBpcxUjGw3SPD+l7vUTw7DpggdW5VEqMYC0fX
+         7EpcqlU6O3DkpHP56WrBXa3jzjLsK0OKpnIZ0flgzbkpv2hL0fzMbST+VRyKVfWL+9PX
+         rhkm7+HGe9/5nZwfO9pNa6961wh/5yyMBVH5J3RW0ZA+9R5Fwz/OGSbiyz4k38PZCCGT
+         h1nw==
+X-Gm-Message-State: AOJu0YymN2jV1zwidD+m51iD4XGI1FFbbUe9cMpN0qq+lCOa/4VSGZgd
+	rfuhOkBJUJXIe/l71KTqWy5poFrylhfsipX2nfFA2JcKoWDHWCmKUfO8ocMJvD1g1veH1EBhoBC
+	j+to=
+X-Google-Smtp-Source: AGHT+IFg6veGNaLgvSE2E0usRoXPVwYia2SifqmSnbsKggLRSM6+BzNLtJNR7f5jIMVRK1+Y/tX3XQ==
+X-Received: by 2002:a05:6122:1348:b0:4f2:ea44:fd2b with SMTP id 71dfb90a1353d-4fad1780186mr3878368e0c.0.1723650712608;
+        Wed, 14 Aug 2024 08:51:52 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf5fa8fc5esm7797076d6.103.2024.08.14.08.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 08:51:52 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1seGHv-00EnrX-F2;
+	Wed, 14 Aug 2024 12:51:51 -0300
+Date: Wed, 14 Aug 2024 12:51:51 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, will@kernel.org,
+	robin.murphy@arm.com, joro@8bytes.org, jean-philippe@linaro.org,
+	nicolinc@nvidia.com, mshavit@google.com
+Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+Message-ID: <20240814155151.GB3468552@ziepe.ca>
+References: <20240814145633.2565126-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240814145633.2565126-1-smostafa@google.com>
 
-Add board-level device tree for Radxa e20c board[1]. This basic
-implementation supports boot into a kernel with only UART console.
-Other features will be added later.
+On Wed, Aug 14, 2024 at 02:56:33PM +0000, Mostafa Saleh wrote:
 
-[1]: https://docs.radxa.com/en/e/e20c
+> Also described in the pseudocode “SteIllegal()”
+>     if eff_idr0_stall_model == '10' && STE.S2S == '0' then
+>         // stall_model forcing stall, but S2S == 0
+>         return TRUE;
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/arm64/boot/dts/rockchip/Makefile         |  1 +
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 22 +++++++++++++++++++
- 2 files changed, 23 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+This clips out an important bit:
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index fda1b980eb4b..ecdd767d0323 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -74,6 +74,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399pro-rock-pi-n10.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3528-radxa-e20c.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg-arc-d.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg-arc-s.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-anbernic-rg353p.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-new file mode 100644
-index 000000000000..d2cdb63d4a9d
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2020 Rockchip Electronics Co., Ltd
-+ * Copyright (c) 2024 Radxa Limited
-+ * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
-+ */
+if STE.Config == '11x' then
+  [..]
+  if eff_idr0_stall_model == '10' && STE.S2S == '0' then
+      // stall_model forcing stall, but S2S == 0
+      return TRUE;
+
+And here we are using STRTAB_STE_0_CFG_S1_TRANS which is 101 and won't
+match the STE.Config qualification.
+
+The plain text language said the S2S is only required if the S2 is
+translating, STRTAB_STE_0_CFG_S1_TRANS puts it in bypass.
+
+> +	/*
+> +	 * S2S is ignored if stage-2 exists but not enabled.
+> +	 * S2S is not compatible with ATS.
+> +	 */
+> +	if (master->stall_enabled && !ats_enabled &&
+> +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
+> +		target->data[2] |= STRTAB_STE_2_S2S;
+
+We can't ignore ATS if it was requested here.
+
+I think that does point to an issue, ATS should be fixed up here:
+
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -2492,6 +2492,9 @@ static bool arm_smmu_ats_supported(struct arm_smmu_master *master)
+        if (!(fwspec->flags & IOMMU_FWSPEC_PCI_RC_ATS))
+                return false;
+ 
++       if (master->stall_enabled)
++               return false;
 +
-+/dts-v1/;
-+#include "rk3528.dtsi"
-+
-+/ {
-+	model = "Radxa E20C";
-+	compatible = "radxa,e20c", "rockchip,rk3528";
-+
-+	chosen {
-+		stdout-path = "serial0:1500000n8";
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
--- 
-2.46.0
+        return dev_is_pci(dev) && pci_ats_supported(to_pci_dev(dev));
+ }
 
+And your hunk above should be placed in arm_smmu_make_s2_domain_ste()
+not arm_smmu_make_cdtable_ste()
+
+Not ignoring the event still makes sense to me, but I didn't check it
+carefully. We can decode the S2 event right?
+
+Jason
 
