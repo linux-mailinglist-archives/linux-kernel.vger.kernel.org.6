@@ -1,378 +1,154 @@
-Return-Path: <linux-kernel+bounces-287217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E669524E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:42:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF239524E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62212287E74
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:42:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7931C21639
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238C41C8235;
-	Wed, 14 Aug 2024 21:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD31C8235;
+	Wed, 14 Aug 2024 21:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b="iWS8QOmB"
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.166])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VtnBZ7+2"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7917C7346D;
-	Wed, 14 Aug 2024 21:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7687346D
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723671734; cv=none; b=BdZNIm1vbyufZFe4R4/hMo4qg6k/xLsh7OqY2TD3qOjk9kH15CMby0a1tKGIf2d9Qs1xsCwABmo8+KYKmDz92DJclwDa7aBYNlQ48lQBlEZB1HWhhXX1b7gCmQxIpWM6ChCG/jDOtXOQeb+EUjRVmUznFW1Wq7aFeRyib94I/60=
+	t=1723671688; cv=none; b=BoXE5TlqSSAW6Ow1Pab6sJGkCavdYjOMKN/LtWFxc1e+vb5cde7Ia5+1/A6KSP9Mx9neqVtzEwkeSGvbTSuEOAhcmkJA7OfPzV9z/ff0frtLJiM6G6XHrujIUSLKp02r5fYjtGbUhy0i8vjzMi40e+vRyX0yLxYVQUyVlLgBl4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723671734; c=relaxed/simple;
-	bh=M3P4qYfTBEGbPWET0J9WU05oJL3CJPfZe0qvH/ww46c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Uyb9S7UdGXk2oqtfG0Vo1Qcq3WyDq6GFhEXijPugx7rN4oYMT3rE5OoT7F/+zyUUjYIgTVhzNsSsMJPSB4lnc/gdSnbeo2okqIXwzweR/efC/SWOaJvUPCTB9bN8JhTXlcM6bxN2WXeoBIYv+buEaDyOuyzBcdp/QKU3JPAuZ9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de; spf=pass smtp.mailfrom=matthias-fetzer.de; dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b=iWS8QOmB; arc=none smtp.client-ip=188.68.63.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matthias-fetzer.de
-Received: from mors-relay-8202.netcup.net (localhost [127.0.0.1])
-	by mors-relay-8202.netcup.net (Postfix) with ESMTPS id 4WkhWf64hBz3xKD;
-	Wed, 14 Aug 2024 23:40:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=matthias-fetzer.de;
-	s=key2; t=1723671646;
-	bh=M3P4qYfTBEGbPWET0J9WU05oJL3CJPfZe0qvH/ww46c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iWS8QOmBC+vs0w7G/TQg3oZZwmOPOIfSQcNNmD6P7pwctFDY4TR15tYnH3Q/ARAge
-	 t1yUgyyoNMWQuKZM3y3lpp6D0+i/H+UsnLOzuKqvNcn1yoUijE1B6AZBr+rFN09f/z
-	 SLjJVNc0Q1ZI2xCoGkrvTTo/Fs+sceSzZGCluImzlDHRWTDIu5FDygcG/QmVGNnruf
-	 8mjweigw/NDQAQJqPJ6FRTslVkoZJnDU1URFPeR9r/8FwIWg86ycluAa6gimhaLYLz
-	 OvBCBD0+reSlH5KluzZcbJ9gRuq9abGFzgbMYoRtSHPdA8kPaLhrz+h4NrPJLxFbyv
-	 72F+ZGkox1VJg==
-Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay-8202.netcup.net (Postfix) with ESMTPS id 4WkhWf5NSCz3xKC;
-	Wed, 14 Aug 2024 23:40:46 +0200 (CEST)
-Received: from mxf9a3.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4WkhY010bpz8sZV;
-	Wed, 14 Aug 2024 23:41:55 +0200 (CEST)
-Received: from matthias-pc.lan (unknown [IPv6:2001:9e8:1a56:7800:f45a:ce65:c933:ba51])
-	by mxf9a3.netcup.net (Postfix) with ESMTPSA id CE3B8402C2;
-	Wed, 14 Aug 2024 23:41:50 +0200 (CEST)
-Authentication-Results: mxf9a3;
-	spf=pass (sender IP is 2001:9e8:1a56:7800:f45a:ce65:c933:ba51) smtp.mailfrom=kontakt@matthias-fetzer.de smtp.helo=matthias-pc.lan
-Received-SPF: pass (mxf9a3: connection is authenticated)
-From: Matthias Fetzer <kontakt@matthias-fetzer.de>
-To: hmh@hmh.eng.br,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Matthias Fetzer <kontakt@matthias-fetzer.de>
-Subject: [PATCH v3] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531 fan
- support
-Date: Wed, 14 Aug 2024 23:39:27 +0200
-Message-ID: <20240814213927.49075-1-kontakt@matthias-fetzer.de>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <e4e32316-509c-28c6-fd18-38ed17e9e35a@linux.intel.com>
-References: <e4e32316-509c-28c6-fd18-38ed17e9e35a@linux.intel.com>
+	s=arc-20240116; t=1723671688; c=relaxed/simple;
+	bh=MBo6i4B+ud6F72Xe3hryLxnM611i6puIHcpoluR7Nus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pg/bsGQOQ5C9e0FP6aql/unpdaqTI2Hl8Ac2ACwL5mne7V7tAEkSYxYXJ38Im+alrNydZ1qbODGXkz3VQ5h9EAio/bu4D0W/YVpGo5hyx1II51oUiZ8Dv+76VG6h0s5D1opLcHNE5KC5BUa92DTG3rpe2JQxNH/7+yhakng8jJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VtnBZ7+2; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 14 Aug 2024 14:41:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723671681;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XkZH7xVDbhk7zC0mNzM98IJtjGbzpC00H/rbbebB8o8=;
+	b=VtnBZ7+2ryBAY6leshpfKVYYOcVSdoAq8sDcEJZgqhk5SIjS3N1KTxoF/B7BlzLGMzcgP5
+	cAS5xpwDMoSmtwlUXbcDI53hk1t1TQg8Gk0OA7bsUQxM3PcQT3EhZJwd/Yejk+rClxwbN3
+	Q1Kv6Gsk8RCpql7Nf1nIO+9pZSzWsjE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH 3/4] memcg: initiate deprecation of oom_control
+Message-ID: <vixhnru2gag4wav5m2qesoihlhuce75s662ccxcekdp3ba44kj@ml7tlkaefqsx>
+References: <20240814202825.2694077-1-shakeel.butt@linux.dev>
+ <20240814202825.2694077-4-shakeel.butt@linux.dev>
+ <CABdmKX2HvW3qZ9zrTq0Gz6q0Gg7_XubVY22o3GJoTOhQg=V+8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <172367171133.29725.15387891987436781293@mxf9a3.netcup.net>
-X-Rspamd-Queue-Id: CE3B8402C2
-X-Rspamd-Server: rspamd-worker-8404
-X-NC-CID: Zmn7l9HjBydQp3pUdy6BupIzQ5qGImbQveu1dytT+RHjS5mGlkibN2xo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABdmKX2HvW3qZ9zrTq0Gz6q0Gg7_XubVY22o3GJoTOhQg=V+8Q@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Fan control on the E531 is done using the ACPI methods FANG and
-FANW. The correct parameters and register values were found by
-analyzing EC firmware as well as DSDT. This has been tested on
-my Thinkpad Edge E531 (6885CTO, BIOS HEET52WW 1.33).
+On Wed, Aug 14, 2024 at 02:00:03PM GMT, T.J. Mercier wrote:
+> On Wed, Aug 14, 2024 at 1:29 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > The oom_control provides functionality to disable memcg oom-killer,
+> > notifications on oom-kill and reading the stats regarding oom-kills.
+> > This interface was mainly introduced to provide functionality for
+> > userspace oom-killers. However it is not robust enough and only supports
+> > OOM handling in the page fault path.
+> >
+> > For v2, the users can use the combination of memory.events notifications
+> > and memory.high interface to provide userspace OOM-killing functionality.
+> > Let's start the deprecation process for v1 and gather the info on how
+> > the current users are using this interface and work on providing a more
+> > robust functionality in v2.
+> >
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > ---
+> >  Documentation/admin-guide/cgroup-v1/memory.rst | 8 ++++++--
+> >  mm/memcontrol-v1.c                             | 7 +++++++
+> >  2 files changed, 13 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/admin-guide/cgroup-v1/memory.rst b/Documentation/admin-guide/cgroup-v1/memory.rst
+> > index afe5e95e9f7b..74cea6712d06 100644
+> > --- a/Documentation/admin-guide/cgroup-v1/memory.rst
+> > +++ b/Documentation/admin-guide/cgroup-v1/memory.rst
+> > @@ -92,6 +92,8 @@ Brief summary of control files.
+> >                                       This knob is deprecated and shouldn't be
+> >                                       used.
+> >   memory.oom_control                 set/show oom controls.
+> > +                                     This knob is deprecated and shouldn't be
+> > +                                     used.
+> >   memory.numa_stat                   show the number of memory usage per numa
+> >                                      node
+> >   memory.kmem.limit_in_bytes          Deprecated knob to set and read the kernel
+> > @@ -846,8 +848,10 @@ It's applicable for root and non-root cgroup.
+> >
+> >  .. _cgroup-v1-memory-oom-control:
+> >
+> > -10. OOM Control
+> > -===============
+> > +10. OOM Control (DEPRECATED)
+> > +============================
+> > +
+> > +THIS IS DEPRECATED!
+> >
+> >  memory.oom_control file is for OOM notification and other controls.
+> >
+> > diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+> > index e0bb54e42011..07343e338e4e 100644
+> > --- a/mm/memcontrol-v1.c
+> > +++ b/mm/memcontrol-v1.c
+> > @@ -1907,6 +1907,9 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+> >                 event->register_event = mem_cgroup_usage_register_event;
+> >                 event->unregister_event = mem_cgroup_usage_unregister_event;
+> >         } else if (!strcmp(name, "memory.oom_control")) {
+> > +               pr_warn_once("oom_control is deprecated and will be removed. "
+> > +                            "Please report your usecase to linux-mm-@kvack.org"
+> > +                            " if you depend on this functionality. \n";
+> 
+> Missing close paren?
 
-Signed-off-by: Matthias Fetzer <kontakt@matthias-fetzer.de>
----
+Ah, thanks for catching that. I compile tested the old version before
+moving text around. Anyways, will resend.
 
-Changes in v3:
-    - Add missing newline
-    - Remove redundant code
-Changes in v2:
-    - Fix typo in EC memory description
-    - Split plausibilty check for better readability
-
- drivers/platform/x86/thinkpad_acpi.c | 150 ++++++++++++++++++++++++++-
- 1 file changed, 149 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index 397b409064c9..64d1b49b7e48 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -7751,6 +7751,28 @@ static struct ibm_struct volume_driver_data = {
-  * 	EC 0x2f (HFSP) might be available *for reading*, but do not use
-  * 	it for writing.
-  *
-+ * TPACPI_FAN_RD_ACPI_FANG:
-+ * 	ACPI FANG method: returns fan control register
-+ *
-+ *	Takes one parameter which is 0x8100 plus the offset to EC memory
-+ *	address 0xf500 and returns the byte at this address.
-+ *
-+ *	0xf500:
-+ *		When the value is less than 9 automatic mode is enabled
-+ *	0xf502:
-+ *		Contains the current fan speed from 0-100%
-+ *	0xf506:
-+ *		Bit 7 has to be set in order to enable manual control by
-+ *		writing a value >= 9 to 0xf500
-+ *
-+ * TPACPI_FAN_WR_ACPI_FANW:
-+ * 	ACPI FANG method: sets fan control registers
-+ *
-+ * 	Takes 0x8100 plus the offset to EC memory address 0xf500 and the
-+ * 	value to be written there as parameters.
-+ *
-+ *	see TPACPI_FAN_RD_ACPI_FANG
-+ *
-  * TPACPI_FAN_WR_TPEC:
-  * 	ThinkPad EC register 0x2f (HFSP): fan control loop mode
-  * 	Supported on almost all ThinkPads
-@@ -7884,6 +7906,7 @@ enum {					/* Fan control constants */
- enum fan_status_access_mode {
- 	TPACPI_FAN_NONE = 0,		/* No fan status or control */
- 	TPACPI_FAN_RD_ACPI_GFAN,	/* Use ACPI GFAN */
-+	TPACPI_FAN_RD_ACPI_FANG,	/* Use ACPI FANG */
- 	TPACPI_FAN_RD_TPEC,		/* Use ACPI EC regs 0x2f, 0x84-0x85 */
- 	TPACPI_FAN_RD_TPEC_NS,		/* Use non-standard ACPI EC regs (eg: L13 Yoga gen2 etc.) */
- };
-@@ -7891,6 +7914,7 @@ enum fan_status_access_mode {
- enum fan_control_access_mode {
- 	TPACPI_FAN_WR_NONE = 0,		/* No fan control */
- 	TPACPI_FAN_WR_ACPI_SFAN,	/* Use ACPI SFAN */
-+	TPACPI_FAN_WR_ACPI_FANW,	/* Use ACPI FANW */
- 	TPACPI_FAN_WR_TPEC,		/* Use ACPI EC reg 0x2f */
- 	TPACPI_FAN_WR_ACPI_FANS,	/* Use ACPI FANS and EC reg 0x2f */
- };
-@@ -7924,9 +7948,13 @@ TPACPI_HANDLE(fans, ec, "FANS");	/* X31, X40, X41 */
- TPACPI_HANDLE(gfan, ec, "GFAN",	/* 570 */
- 	   "\\FSPD",		/* 600e/x, 770e, 770x */
- 	   );			/* all others */
-+TPACPI_HANDLE(fang, ec, "FANG",	/* E531 */
-+	   );			/* all others */
- TPACPI_HANDLE(sfan, ec, "SFAN",	/* 570 */
- 	   "JFNS",		/* 770x-JL */
- 	   );			/* all others */
-+TPACPI_HANDLE(fanw, ec, "FANW",	/* E531 */
-+	   );			/* all others */
- 
- /*
-  * Unitialized HFSP quirk: ACPI DSDT and EC fail to initialize the
-@@ -8033,6 +8061,23 @@ static int fan_get_status(u8 *status)
- 
- 		break;
- 	}
-+	case TPACPI_FAN_RD_ACPI_FANG: {
-+		/* E531 */
-+		int mode, speed;
-+
-+		if (unlikely(!acpi_evalf(fang_handle, &mode, NULL, "dd", 0x8100)))
-+			return -EIO;
-+		if (unlikely(!acpi_evalf(fang_handle, &speed, NULL, "dd", 0x8102)))
-+			return -EIO;
-+
-+		if (likely(status)) {
-+			*status = speed * 7 / 100;
-+			if (mode < 9)
-+				*status |= TP_EC_FAN_AUTO;
-+		}
-+
-+		break;
-+	}
- 	case TPACPI_FAN_RD_TPEC:
- 		/* all except 570, 600e/x, 770e, 770x */
- 		if (unlikely(!acpi_ec_read(fan_status_offset, &s)))
-@@ -8147,6 +8192,17 @@ static int fan2_get_speed(unsigned int *speed)
- 		if (speed)
- 			*speed = lo ? FAN_RPM_CAL_CONST / lo : 0;
- 		break;
-+	case TPACPI_FAN_RD_ACPI_FANG: {
-+		/* E531 */
-+		int speed_tmp;
-+
-+		if (unlikely(!acpi_evalf(fang_handle, &speed_tmp, NULL, "dd", 0x8102)))
-+			return -EIO;
-+
-+		if (likely(speed))
-+			*speed =  speed_tmp * 65535 / 100;
-+		break;
-+	}
- 
- 	default:
- 		return -ENXIO;
-@@ -8157,6 +8213,8 @@ static int fan2_get_speed(unsigned int *speed)
- 
- static int fan_set_level(int level)
- {
-+	int rc;
-+
- 	if (!fan_control_allowed)
- 		return -EPERM;
- 
-@@ -8206,6 +8264,37 @@ static int fan_set_level(int level)
- 			tp_features.fan_ctrl_status_undef = 0;
- 		break;
- 
-+	case TPACPI_FAN_WR_ACPI_FANW:
-+		if (!(level & TP_EC_FAN_AUTO) && (level < 0 || level > 7))
-+			return -EINVAL;
-+		if (level & TP_EC_FAN_FULLSPEED)
-+			return -EINVAL;
-+
-+		if (level & TP_EC_FAN_AUTO) {
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
-+				rc = -EIO;
-+				break;
-+			}
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
-+				rc = -EIO;
-+				break;
-+			}
-+		} else {
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
-+				rc = -EIO;
-+				break;
-+			}
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
-+				rc = -EIO;
-+				break;
-+			}
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, level * 100 / 7)) {
-+				rc = -EIO;
-+				break;
-+			}
-+		}
-+		break;
-+
- 	default:
- 		return -ENXIO;
- 	}
-@@ -8284,6 +8373,19 @@ static int fan_set_enable(void)
- 			rc = 0;
- 		break;
- 
-+	case TPACPI_FAN_WR_ACPI_FANW:
-+		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
-+			rc = -EIO;
-+			break;
-+		}
-+		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
-+			rc = -EIO;
-+			break;
-+		}
-+
-+		rc = 0;
-+		break;
-+
- 	default:
- 		rc = -ENXIO;
- 	}
-@@ -8326,6 +8428,22 @@ static int fan_set_disable(void)
- 			fan_control_desired_level = 0;
- 		break;
- 
-+	case TPACPI_FAN_WR_ACPI_FANW:
-+		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
-+			rc = -EIO;
-+			break;
-+		}
-+		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
-+			rc = -EIO;
-+			break;
-+		}
-+		if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, 0x00)) {
-+			rc = -EIO;
-+			break;
-+		}
-+		rc = 0;
-+		break;
-+
- 	default:
- 		rc = -ENXIO;
- 	}
-@@ -8359,6 +8477,23 @@ static int fan_set_speed(int speed)
- 			rc = -EINVAL;
- 		break;
- 
-+	case TPACPI_FAN_WR_ACPI_FANW:
-+		if (speed >= 0 && speed <= 65535) {
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
-+				rc = -EIO;
-+				break;
-+			}
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
-+				rc = -EIO;
-+				break;
-+			}
-+			if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd",
-+					0x8102, speed * 100 / 65535))
-+				rc = -EIO;
-+		} else
-+			rc = -EINVAL;
-+		break;
-+
- 	default:
- 		rc = -ENXIO;
- 	}
-@@ -8701,6 +8836,10 @@ static int __init fan_init(struct ibm_init_struct *iibm)
- 		TPACPI_ACPIHANDLE_INIT(gfan);
- 		TPACPI_ACPIHANDLE_INIT(sfan);
- 	}
-+	if (tpacpi_is_lenovo()) {
-+		TPACPI_ACPIHANDLE_INIT(fang);
-+		TPACPI_ACPIHANDLE_INIT(fanw);
-+	}
- 
- 	quirks = tpacpi_check_quirks(fan_quirk_table,
- 				     ARRAY_SIZE(fan_quirk_table));
-@@ -8720,6 +8859,9 @@ static int __init fan_init(struct ibm_init_struct *iibm)
- 	if (gfan_handle) {
- 		/* 570, 600e/x, 770e, 770x */
- 		fan_status_access_mode = TPACPI_FAN_RD_ACPI_GFAN;
-+	} else if (fang_handle) {
-+		/* E531 */
-+		fan_status_access_mode = TPACPI_FAN_RD_ACPI_FANG;
- 	} else {
- 		/* all other ThinkPads: note that even old-style
- 		 * ThinkPad ECs supports the fan control register */
-@@ -8766,6 +8908,11 @@ static int __init fan_init(struct ibm_init_struct *iibm)
- 		fan_control_access_mode = TPACPI_FAN_WR_ACPI_SFAN;
- 		fan_control_commands |=
- 		    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_ENABLE;
-+	} else if (fanw_handle) {
-+		/* E531 */
-+		fan_control_access_mode = TPACPI_FAN_WR_ACPI_FANW;
-+		fan_control_commands |=
-+		    TPACPI_FAN_CMD_LEVEL | TPACPI_FAN_CMD_SPEED | TPACPI_FAN_CMD_ENABLE;
- 	} else {
- 		if (!gfan_handle) {
- 			/* gfan without sfan means no fan control */
-@@ -8917,6 +9064,7 @@ static int fan_read(struct seq_file *m)
- 
- 	case TPACPI_FAN_RD_TPEC_NS:
- 	case TPACPI_FAN_RD_TPEC:
-+	case TPACPI_FAN_RD_ACPI_FANG:
- 		/* all except 570, 600e/x, 770e, 770x */
- 		rc = fan_get_status_safe(&status);
- 		if (rc)
-@@ -8937,7 +9085,7 @@ static int fan_read(struct seq_file *m)
- 			 * No other levels settings available
- 			 */
- 			seq_printf(m, "level:\t\t%s\n", status & FAN_NS_CTRL ? "unknown" : "auto");
--		} else {
-+		} else if (fan_status_access_mode == TPACPI_FAN_RD_TPEC) {
- 			if (status & TP_EC_FAN_FULLSPEED)
- 				/* Disengaged mode takes precedence */
- 				seq_printf(m, "level:\t\tdisengaged\n");
--- 
-2.46.0
-
+> 
+> >                 event->register_event = mem_cgroup_oom_register_event;
+> >                 event->unregister_event = mem_cgroup_oom_unregister_event;
+> >         } else if (!strcmp(name, "memory.pressure_level")) {
+> > @@ -2754,6 +2757,10 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
+> >  {
+> >         struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+> >
+> > +       pr_warn_once("oom_control is deprecated and will be removed. "
+> > +                    "Please report your usecase to linux-mm-@kvack.org if you "
+> > +                    "depend on this functionality. \n";
+> > +
+> 
+> Missing close paren?
+> 
+> >         /* cannot set to root cgroup and only 0 and 1 are allowed */
+> >         if (mem_cgroup_is_root(memcg) || !((val == 0) || (val == 1)))
+> >                 return -EINVAL;
+> > --
+> > 2.43.5
+> >
+> >
 
