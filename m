@@ -1,140 +1,136 @@
-Return-Path: <linux-kernel+bounces-286607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5824F951D0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:26:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1F3951D19
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:30:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BC311C21933
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:26:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2D66B2AF3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8D91B32CB;
-	Wed, 14 Aug 2024 14:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96001B32C1;
+	Wed, 14 Aug 2024 14:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+QEBhPU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GsVA+dTO"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8C61581E5;
-	Wed, 14 Aug 2024 14:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D2D1B32A9
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645610; cv=none; b=fJgQMiXVMmE9BMjuV+NJn9vWEXd77lDxizCfmn5LJnfP8W4sNgNqlGStm9b6tPMfWrzcMK8FBSY7dShD8FJg9sS9rfkZ6kJDEy6dT3114xByNw7j0dlUFxLs3eHVHE7WQJ0Jh0iwiCzH6yH9O0wlpEyOa2J0PkxW/CSPRhknWRo=
+	t=1723645620; cv=none; b=RAL6WUYRKkI9qR6HC7jWL9TSQb1iL+JBwGqEsf4zOGMPS8ITtpUXtCR+M+HvQjJbVpG7gui/wB8Nm0FDmCcnuFiBDdCW7xSYCi3jUxYksUqQ0N//qavGjYYgtsWaEbUeZkkciyMkbIJyJx2O5jlPhRl83+CAH8pgG1GtU47yx30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645610; c=relaxed/simple;
-	bh=DSAXxI8CR5eMEBxy+K143NKZS+eXuAmJNkaIp6iTpak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pd/SWIFN2/Q299vqZE9mA8/nYttCR+G6s5As54Dv1vCecvvCq9c7jz/IqvG/W9eXM/jV0AUPCI6/O5u5FKYbkOxSYkEfiB/p9aq0iOMVg/hHpZ9+Hr2voles/Q1haVJybAOBx8PZQELoc8GEFYrSEpniHOrw1XZzohoP29NkYQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+QEBhPU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966F2C116B1;
-	Wed, 14 Aug 2024 14:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723645610;
-	bh=DSAXxI8CR5eMEBxy+K143NKZS+eXuAmJNkaIp6iTpak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s+QEBhPUfwPxsH5kqHwQP+c3jeoQ0DFCSv6RAy0k2N87KrP7r1HWTVDTdAbW/vMEz
-	 11Upjdov2H6DNPob7XvZIvEn4kN1opBXY2Sk6TH9iOGiKnm4uz8S+ummtAcvn+ZEBe
-	 RccUx0oDMuqMKALdzWbRqsNLTh8Hh3adCP7CRVRETGxvfFOfwAOFPhPKN2JRYoPYoZ
-	 +s/Fvhss/xaRd4qxSDZekjzNT8Ux6cctygVqKlg/EGyVf9+2EPvV/40qXOSw5a22cm
-	 RZmxSKLik1rxjT89HErWOHHXKEFvn7XGMR/R4yjloxNMh50kPLM1B/vfUvmDfGLE+n
-	 f9AvcZnNtQ7lQ==
-Date: Wed, 14 Aug 2024 15:26:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Bao Cheng Su <baocheng.su@siemens.com>,
-	Diogo Ivo <diogo.ivo@siemens.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: soc: ti: am645-system-controller:
- add child nodes used by main domain
-Message-ID: <20240814-passable-phrasing-7e78fce590f5@spud>
-References: <cover.1723529100.git.jan.kiszka@siemens.com>
- <ac1622c04e5ae2bb80075e70dbde23abc2f3a4b5.1723529100.git.jan.kiszka@siemens.com>
- <20240813-outrank-mumble-8dddbfc68586@spud>
- <a838d867-def7-49f8-b9cf-9f4d638ff2d6@siemens.com>
+	s=arc-20240116; t=1723645620; c=relaxed/simple;
+	bh=Kqsjs+e1NOlUMGPGmqTLI4cvaMW7NNLLcEqgX5TaoDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rs2jiEwcbQc+mLXHnXMoVm21wrI+mqYbXB7FSbxWJbQ109j7NS6uyX11f6yPLSzBdnlsJo5FoLwtajBf9fa4hHUD2tySOOV98WmI6NlmOMnsm6ao2O5Lml8LHhhTkllLGkXzqBq5uTtKR/6qpJIjDvNcYIdUsBHHTjbKr0vrCa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GsVA+dTO; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a1e0ff6871so370695385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:26:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723645617; x=1724250417; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8s5PcKxFDUFsNJHv4vSWmkKdsgjHkeKLgCsEPLUanfA=;
+        b=GsVA+dTOwBpHIGzR7ymLN6zg338DSm45snAix319rygnkHHbotCR6G1cSysg0IwdhY
+         V4GOM+bz6wpQKLo+ZHVazcw0YhpEpjKHv4Ksfj4z0B/S09N+nxh81TnmH260AuduaPTJ
+         MApPPBxavjp1r/8uvGKzQHjxKM8DbqhRiHZ4NhEse7etp+pH4Z/tkHkduOPMUU6EPjo8
+         6MChuWWq1jpkHF1WKbPJWeiwyXUwfq3JOrwpX8C8nVzXFQZk/JbFmG7UwO1k6NfEEM8o
+         u1nrQvG3kDfPuNijJ519q2Kjy5CkZdn8V7x9U+a2UpobMoZlhuK4uVdOt7LPyfj2Vxp+
+         /yJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723645617; x=1724250417;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8s5PcKxFDUFsNJHv4vSWmkKdsgjHkeKLgCsEPLUanfA=;
+        b=o/vxinwwzKI7XI+3beM3DpxsailB068PNtnZqQzyQqB314ZdeX3HNFQ4gu4Prrtjsc
+         3A4ZK8EI/90I21yiupPWBVURAwoGrfQUfGo6vD3dAEWS+eLSBiMsw2ecByh6c6ufhlLA
+         prOAgLFfIGqiZtGnIOCRF5YQifqOdjr3sk/JgKN56uK5oBTXYrA21qewLAHkQz1FjnMp
+         dK2ctEK9LKyDd8bKB5M6WOzb20igibt5evvsngDmMHzGgwz8dChPpiEKHELEyDVKytQT
+         6ndi1tjmMfmT2W9pY1yJ+0+qG4ANuKaJNtbGcEW7V3NTRrt4PybPLhWmss2boYmhZEz2
+         4c+A==
+X-Forwarded-Encrypted: i=1; AJvYcCV44lg9HBVAgg8nOqsfrvRhTYT9DvN+MjKIYry9A6xvhNwnsMSkZk2sBQSLo+N4VzyXrKEymXO9MRQjE/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmfq9enpuHTFscl10ghF2DB7ruYdDB64mu9rjKdxrBwnbk/k4d
+	Qs72XsZsATk6gW4wdkMfOm7ytajEEwubBKRkt4lkPbAwDTXvhokU
+X-Google-Smtp-Source: AGHT+IES/6r2HuU4sA8FZ1SjvqDBS1kUps6OK6CqMwkxtqkTtWHYl2uTeWGdJFZd03n2Muq68Ycyeg==
+X-Received: by 2002:a05:620a:3720:b0:7a3:5f3f:c084 with SMTP id af79cd13be357-7a4ee34e1b7mr309474985a.30.1723645617215;
+        Wed, 14 Aug 2024 07:26:57 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-112.fbsv.net. [2a03:2880:20ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d7122bsm438906485a.40.2024.08.14.07.26.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 07:26:56 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org
+Cc: yuzhao@google.com,
+	david@redhat.com,
+	leitao@debian.org,
+	huangzhaoyang@gmail.com,
+	bharata@amd.com,
+	willy@infradead.org,
+	vbabka@suse.cz,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH] mm: drop lruvec->lru_lock if contended when skipping folio
+Date: Wed, 14 Aug 2024 15:26:47 +0100
+Message-ID: <20240814142647.3668269-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6hKkgKvhDyD9KJ+A"
-Content-Disposition: inline
-In-Reply-To: <a838d867-def7-49f8-b9cf-9f4d638ff2d6@siemens.com>
+Content-Transfer-Encoding: 8bit
 
+From: Yu Zhao <yuzhao@google.com>
 
---6hKkgKvhDyD9KJ+A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+lruvec->lru_lock is highly contended and is held when calling
+isolate_lru_folios. If the lru has a large number of CMA folios
+consecutively, while the allocation type requested is not MIGRATE_MOVABLE,
+isolate_lru_folios can hold the lock for a very long time while it
+skips those. vmscan_lru_isolate tracepoint showed that skipped can go
+above 70k in production.
+This can cause lockups [1] and high memory pressure for extended periods of
+time [2]. Hence release the lock if its contended when skipping a folio to
+give other tasks a chance to acquire it and not stall.
 
-On Wed, Aug 14, 2024 at 06:49:39AM +0200, Jan Kiszka wrote:
-> On 13.08.24 17:40, Conor Dooley wrote:
-> > On Tue, Aug 13, 2024 at 08:04:59AM +0200, Jan Kiszka wrote:
-> >> From: Jan Kiszka <jan.kiszka@siemens.com>
-> >>
-> >> Expand bindings to cover both the MCU and the main usage of the AM654
-> >> system controller.
-> >>
-> >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> >> ---
-> >>  .../soc/ti/ti,am654-system-controller.yaml    | 25 +++++++++++++++++++
-> >>  1 file changed, 25 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-=
-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-=
-controller.yaml
-> >> index e79803e586ca..5a689ec3c5c9 100644
-> >> --- a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-control=
-ler.yaml
-> >> +++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-control=
-ler.yaml
-> >> @@ -29,11 +29,36 @@ properties:
-> >> =20
-> >>    ranges: true
-> >> =20
-> >> +  mux-controller:
-> >> +    type: object
-> >> +    ref: /schemas/mux/reg-mux.yaml#
-> >> +    description:
-> >> +      This is the SERDES lane control mux.
-> >> +
-> >>  patternProperties:
-> >>    "^phy@[0-9a-f]+$":
-> >>      type: object
-> >>      $ref: /schemas/phy/ti,phy-gmii-sel.yaml#
-> >> =20
-> >> +  "^clock@[0-9a-f]+$":
-> >=20
-> > Could you explain to me why these are all patternProperties? Why are the
-> > addresses of these things not fixed for an am654?
-> >=20
->=20
-> I could indeed spell out dss-oldi-io-ctrl@41e0 and
-> clock-controller@4140, and their addresses are likely fixed, indeed. But
-> there are also clock@4080 and clock@4090 - should I duplicate their
-> object descriptions while moving them to the regular properties?
+[1] https://lore.kernel.org/all/CAOUHufbkhMZYz20aM_3rHZ3OcK4m2puji2FGpUpn_-DevGk3Kg@mail.gmail.com/
+[2] https://lore.kernel.org/all/ZrssOrcJIDy8hacI@gmail.com/
 
-If you're going to itemise the 3 clocks, I think you should mention
-what's different about each of them. Otherwise, if they're all
-identical, leave them as a patternProperty.
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+---
+ mm/vmscan.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---6hKkgKvhDyD9KJ+A
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 25f4e8403f41..4e817d78abbb 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1696,8 +1696,14 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+ 		if (folio_zonenum(folio) > sc->reclaim_idx ||
+ 				skip_cma(folio, sc)) {
+ 			nr_skipped[folio_zonenum(folio)] += nr_pages;
+-			move_to = &folios_skipped;
+-			goto move;
++			list_move(&folio->lru, &folios_skipped);
++			if (!spin_is_contended(&lruvec->lru_lock))
++				continue;
++			if (!list_empty(dst))
++				break;
++			spin_unlock_irq(&lruvec->lru_lock);
++			cond_resched();
++			spin_lock_irq(&lruvec->lru_lock);
+ 		}
+ 
+ 		/*
+-- 
+2.43.5
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZry+pQAKCRB4tDGHoIJi
-0l1bAQDFrc3ssqpzwfxRezLS45vOGDjY/enN3BWQZI2UUS1vAQEAq/5yTSLl7M3i
-9lIfFZiKIjai97JDqtk5WtzakCI6OA8=
-=OoWi
------END PGP SIGNATURE-----
-
---6hKkgKvhDyD9KJ+A--
 
