@@ -1,215 +1,109 @@
-Return-Path: <linux-kernel+bounces-286576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A38951CAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:11:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740DB951CB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F18C1F2223E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4331C24F83
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9D11B3743;
-	Wed, 14 Aug 2024 14:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D6C1B3725;
+	Wed, 14 Aug 2024 14:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DB1WRNnI"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exksjn/E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EB91B32C7
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5721B374B;
+	Wed, 14 Aug 2024 14:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723644632; cv=none; b=LAzoB+gqFg9pNsXkhlJIMTQrIDbAmCr03C1QEy6kOVR9CgfFVB7SsmnQNCl4RV2GvxHI4/YupHYMqrPpQ1iHjDlHN/ZgFgXoWXjz5HnTaSzVUL32/bgLlP3qr4AtGoV2TbbzghLEqrqYJpDVbFQJvYt80Pgm1ZQ8BCKT8q0jaeA=
+	t=1723644633; cv=none; b=VLkcATL5/rh8TZ779LH1U27GUUVWnoypux1RnOnMsy9U3L6yx/6s74oVSrrTSFBO0jMxn932SQ0KpDDml/zDlTbigYGi2uZGTpv0j1KB6DpzZmOE9zuDZ+k6tQ9QlzPCuDUDtpHPCMNGATfcU5bC1eaXr96PJ/MSfkMoNDRjKm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723644632; c=relaxed/simple;
-	bh=4gn8bYoICNRPD5yYaXqN7k4ps+ZaI5ktDDh23/kBYnI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WAbZUB+Pfk3yGqUYe2s2oY009bRUd3ZNU3+0Ojkei/Yz5/6C7roQiVzz37yGAAzEuontdjWEm+uvvviz3egi1FgNYTFqCCCVZp6WFB971XpRW3pekHQC4bcgmy5SjS2e4KW4/MoOR+18bzVYd6iYBax5ngft344FWYpuHOWrlnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DB1WRNnI; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6bb96ef0e96so36666166d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723644629; x=1724249429; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=54a5u/AIPf3FUAW8TNrqnrThXWk83FvG6faGGYYzLrQ=;
-        b=DB1WRNnIlvhxurNUWgR+OE5VSZXk0ZEjvalmFRPFIo9xZp4lxnKLG8aCRC6+cPFXJF
-         4f5vc2x3XkTOMr4i/MLhPzlqBYiXSU5/4WiAAohhXiYJ30AUlfKBd5+ukIwTGHVWKo6Z
-         5IlDSJukIbgxCcfZFzAp8PI8hzA2LAdKZ6Lx4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723644629; x=1724249429;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=54a5u/AIPf3FUAW8TNrqnrThXWk83FvG6faGGYYzLrQ=;
-        b=icQXMxw/AeH54eM4rS6RpW9T501A5V6WcEve1l0s7lpZZghsuTZWrdvVxD6xlw8fXm
-         SEeCODsObJiVJArSXyQE/iLKEAe3RwdFF+3OFmsLhMX8176BDC7sdn1Ls5GIE3iEgP++
-         T63PKHzP5SknWTv1+OVKMTjCJgVyOt3jJHQYTbPvhyTrxl25pM+w+g3qVpY5Lcy9+kkv
-         7JYbMZdLetu2xJ+Da87dKGvEU3ef/fgqTVLBaDq/Thg2gpzwL+JEBNFjlsmFlTGmnQRB
-         yUNVaFK2l5VV02zaWuH+kjEjTEL8jCqgjsNeFPxUbkjo++ELvvJFewcrTxZ/+gEJvQa6
-         jiEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpdjNjtAgzquT/yq6hISR2haCtSFu49rIXPYn8iN2vPhCuFtNeVv1WxuymIorXPnn33jWF8eKzqPb1BqnV+t/WbwhvThEzapl+iyv4
-X-Gm-Message-State: AOJu0Yw1ybB6s6g1Pc/fLxQHUZC1SvyGQDCM/Q2lim0W4hNFmuwRJY/F
-	CZO0TDWe4SW188llMhB9EStRthfXVRRVBV9oNP1xdZviJNf2yereGBHyMSy+i9BGALi/QOxMkDi
-	Nefv3
-X-Google-Smtp-Source: AGHT+IGoc+E8kKrWo1+MczAL0858Q7D1ror/nkleb+dMvRF8IpoDO/rkwov2Dl1lO/HtMEEoy1wPXA==
-X-Received: by 2002:a05:6214:225:b0:6bf:6375:397f with SMTP id 6a1803df08f44-6bf63753b38mr12558086d6.25.1723644628736;
-        Wed, 14 Aug 2024 07:10:28 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82c61637sm43861036d6.7.2024.08.14.07.10.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:10:28 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 14 Aug 2024 14:10:23 +0000
-Subject: [PATCH v2 2/2] media: drivers/media/dvb-core: Refactor
- dvb_frontend_open locking
+	s=arc-20240116; t=1723644633; c=relaxed/simple;
+	bh=KdgwpVZN4uMBbr71j9vE0petOsSpXyckYOOAL7K8sQ4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=l4wNav0BkBYEWcPyNZgwtZJVuCNmgPfJKsjvvhATxEystf2ldCvqSZWUgI8LSh6r1pfDradAU5KtkfhfnZbT6/oO5Ai8kI6pbgT+WwMuBymyiJoC9Qz8XcZ0WMMZdU22L/zLrjR/hw8QlRd7jYFYiPHZlAf/T4g8Mn+gXusi0QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exksjn/E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1472DC4AF11;
+	Wed, 14 Aug 2024 14:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723644633;
+	bh=KdgwpVZN4uMBbr71j9vE0petOsSpXyckYOOAL7K8sQ4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=exksjn/Enaqn+WwSi1BZlTscDfpk98P3YHgxVXlHEQa83TlfoYkiYsdAHid2XdVVA
+	 QIgEGMuoySCw69KG+0LfeZCem8NspAHXtUw6G4S3F9s6BeEA+xOPgWf0XMhfrgX3Zb
+	 dSbPiituiEm127KRnrdO2JhJPMPoEgcP6l4cGItVJCbroNVD3ASDTNPkCO7TZVk7AC
+	 MenuL1z2ndl5AKRGeg0+TMNnrY4U60ocblER3+OojkFAa02v6QHrBv99Y0ux0N7HvX
+	 Dgeoqb5ZFzlTxgRnnyBxDBXZI3mWxGMeaeIlwXnimAqU3LbcPcyxQu4p6KFkTueof7
+	 J7YIjOSnOpanQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EB138232A8;
+	Wed, 14 Aug 2024 14:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-coccinelle-followup-v2-2-88b4e4a9af56@chromium.org>
-References: <20240814-coccinelle-followup-v2-0-88b4e4a9af56@chromium.org>
-In-Reply-To: <20240814-coccinelle-followup-v2-0-88b4e4a9af56@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 0/4] RISC-V: Parse DT for Zkr to seed KASLR
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <172364463227.2278280.4833968885789479932.git-patchwork-notify@kernel.org>
+Date: Wed, 14 Aug 2024 14:10:32 +0000
+References: <20240709173937.510084-1-jesse@rivosinc.com>
+In-Reply-To: <20240709173937.510084-1-jesse@rivosinc.com>
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, ardb@kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+ justinstitt@google.com, alexghiti@rivosinc.com, conor.dooley@microchip.com,
+ masahiroy@kernel.org, twd2.me@gmail.com, christophe.jaillet@wanadoo.fr,
+ samitolvanen@google.com, akpm@linux-foundation.org, bhe@redhat.com,
+ rppt@kernel.org, vishal.moola@gmail.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
 
-Split out the wait function, and introduce some new toys: guard and
-lockdep.
+Hello:
 
-This fixes the following cocci warnings:
-drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2776
-drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2786
-drivers/media/dvb-core/dvb_frontend.c:2897:1-7: preceding lock on line 2809
+This series was applied to riscv/linux.git (for-next)
+by Palmer Dabbelt <palmer@rivosinc.com>:
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/dvb-core/dvb_frontend.c | 58 ++++++++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 21 deletions(-)
+On Tue,  9 Jul 2024 13:39:33 -0400 you wrote:
+> Add functions to pi/fdt_early.c to help parse the FDT to check if
+> the isa string has the Zkr extension. Then use the Zkr extension to
+> seed the KASLR base address.
+> 
+> The first two patches fix the visibility of symbols.
+> 
+> V1 -> V2:
+>  - Add RISC-V: pi: Force hidden visibility for all symbol references
+>  - Add RISC-V: pi: Add kernel/pi/pi.h
+>  - Rewrite archrandom_early.c to parse DT over checking the csr
+> V2 -> V3:
+>  - Add RISC-V: lib: Add pi aliases for string functions
+>  - Rewrite isa_string_contains in third patch
+> 
+> [...]
 
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
-index e81b9996530e..7f5d0c297464 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -30,6 +30,7 @@
- #include <linux/kthread.h>
- #include <linux/ktime.h>
- #include <linux/compat.h>
-+#include <linux/lockdep.h>
- #include <asm/processor.h>
- 
- #include <media/dvb_frontend.h>
-@@ -2826,6 +2827,34 @@ static int __dvb_frontend_open(struct inode *inode, struct file *file)
- 	return ret;
- }
- 
-+static int wait_dvb_frontend(struct dvb_adapter *adapter,
-+			     struct dvb_device *mfedev)
-+{
-+	struct dvb_frontend *mfe = mfedev->priv;
-+	struct dvb_frontend_private *mfepriv = mfe->frontend_priv;
-+	int mferetry = (dvb_mfe_wait_time << 1);
-+	int ret = 0;
-+
-+	lockdep_assert_held(&adapter->mfe_lock);
-+
-+	if (mfedev->users == -1 && !mfepriv->thread)
-+		return 0;
-+
-+	mutex_unlock(&adapter->mfe_lock);
-+
-+	while (mferetry-- && (mfedev->users != -1 || mfepriv->thread)) {
-+		if (msleep_interruptible(500))
-+			if (signal_pending(current)) {
-+				ret = -EINTR;
-+				break;
-+			}
-+	}
-+
-+	mutex_lock(&adapter->mfe_lock);
-+
-+	return ret;
-+}
-+
- static int dvb_frontend_open(struct inode *inode, struct file *file)
- {
- 	struct dvb_device *dvbdev = file->private_data;
-@@ -2840,19 +2869,16 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
- 	if (!adapter->mfe_shared)
- 		return __dvb_frontend_open(inode, file);
- 
-+	guard(mutex)(&adapter->mfe_lock);
-+
- 	if (adapter->mfe_shared == 2) {
--		mutex_lock(&adapter->mfe_lock);
- 		if ((file->f_flags & O_ACCMODE) != O_RDONLY) {
- 			if (adapter->mfe_dvbdev &&
--			    !adapter->mfe_dvbdev->writers) {
--				mutex_unlock(&adapter->mfe_lock);
-+			    !adapter->mfe_dvbdev->writers)
- 				return -EBUSY;
--			}
- 			adapter->mfe_dvbdev = dvbdev;
- 		}
- 	} else {
--		mutex_lock(&adapter->mfe_lock);
--
- 		if (!adapter->mfe_dvbdev) {
- 			adapter->mfe_dvbdev = dvbdev;
- 		} else if (adapter->mfe_dvbdev != dvbdev) {
-@@ -2862,34 +2888,24 @@ static int dvb_frontend_open(struct inode *inode, struct file *file)
- 				*mfe = mfedev->priv;
- 			struct dvb_frontend_private
- 				*mfepriv = mfe->frontend_priv;
--			int mferetry = (dvb_mfe_wait_time << 1);
--
--			mutex_unlock(&adapter->mfe_lock);
--			while (mferetry-- && (mfedev->users != -1 ||
--					      mfepriv->thread)) {
--				if (msleep_interruptible(500)) {
--					if (signal_pending(current))
--						return -EINTR;
--				}
--			}
- 
--			mutex_lock(&adapter->mfe_lock);
-+			ret = wait_dvb_frontend(adapter, mfedev);
-+			if (ret)
-+				return ret;
-+
- 			if (adapter->mfe_dvbdev != dvbdev) {
- 				mfedev = adapter->mfe_dvbdev;
- 				mfe = mfedev->priv;
- 				mfepriv = mfe->frontend_priv;
- 				if (mfedev->users != -1 ||
--				    mfepriv->thread) {
--					mutex_unlock(&adapter->mfe_lock);
-+				    mfepriv->thread)
- 					return -EBUSY;
--				}
- 				adapter->mfe_dvbdev = dvbdev;
- 			}
- 		}
- 	}
- 
- 	ret = __dvb_frontend_open(inode, file);
--	mutex_unlock(&adapter->mfe_lock);
- 
- 	return ret;
- }
+Here is the summary with links:
+  - [v4,1/4] RISC-V: pi: Force hidden visibility for all symbol references
+    https://git.kernel.org/riscv/c/14c3ec67236b
+  - [v4,2/4] RISC-V: lib: Add pi aliases for string functions
+    https://git.kernel.org/riscv/c/d57e19fcbf3f
+  - [v4,3/4] RISC-V: pi: Add kernel/pi/pi.h
+    https://git.kernel.org/riscv/c/b3311827155a
+  - [v4,4/4] RISC-V: Use Zkr to seed KASLR base address
+    https://git.kernel.org/riscv/c/945302df3de1
 
+You are awesome, thank you!
 -- 
-2.46.0.76.ge559c4bf1a-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
