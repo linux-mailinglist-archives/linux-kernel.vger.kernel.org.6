@@ -1,105 +1,113 @@
-Return-Path: <linux-kernel+bounces-287042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B8A952210
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D733D9521C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3061F23817
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF8D1F21769
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6A21BD504;
-	Wed, 14 Aug 2024 18:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615571BD036;
+	Wed, 14 Aug 2024 18:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="bfFmdQ2J"
-Received: from mail-m1017.netease.com (mail-m1017.netease.com [154.81.10.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGN0386R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993F21B0111;
-	Wed, 14 Aug 2024 18:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853541BB699
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723660185; cv=none; b=i4v/KXGERPBYFgpcKC5rOZxW8WUErujdG8hxiWBUopIIn5iww0Ad0sTsimU0OQJ825xR8vBAYebsz4RXdPIrbAadaqWftO3nG1rHyt6OJCyy8QkfuXaad4mzEON0Z5zkXd2ee3HzGyjn+/ZS/3I5RvW9r01zLQhwfc0IgyhN4Ew=
+	t=1723658679; cv=none; b=LUe5IHOqYchL09P1pVzqCTx70R5hlp7Z9RoHoj0XK7RcGIJQ0PpspvPThns+Pj87T6/LmrUsB9aokD2SILPdDfIUhOxvsZuQP69H6LoN+0MihEaObz2U9weRfaLeRMTFbvQLr84b7tDNnrkDAw3kvBGMMD3urt1kJlitQYe5bJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723660185; c=relaxed/simple;
-	bh=Y9c/XLRJlf8KnnkMcsULdAtCn226wo9wTDZfFWWtVBs=;
-	h=Message-ID:Date:MIME-Version:Cc:To:From:Subject:Content-Type; b=t2vI1oPb/7HdOC/bZ0yu+jVPUfEdRUZnAJ2EdzBOx0VzOxvQuulmEf1KpMqK1i+swwvJETOxgIdhkgSIgHOAgc+LXCssz4Md49/0WjZgywNt+w/+3PfS88Zml/JtjNFiY94LzKFhOHS5f+1acd91TmrRob+DkOZEJJsZ6Z4sbU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=bfFmdQ2J; arc=none smtp.client-ip=154.81.10.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=bfFmdQ2JOyRtEM8Haweg5FGlJmlqS4Jm/rCbQjBX08K827IQQQFjQw9nMddgOGtkZNosiOSkCXQFIwIJLREmr/gJZIAYlykkK4xF0cT2nKiAOlMmkmRHPD6Qf7UX+7n6g04xqJLN9HwMIiLStj2HhueMbA6CT0Tt1PQJXVAmL2k=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=o8T7XJcjR9eOeMW62BDQdgaQ5z2uFScakm2eov4tfpQ=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.45] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id B090C460862;
-	Wed, 14 Aug 2024 18:12:38 +0800 (CST)
-Message-ID: <3dd691bc-d13d-483b-96d1-7aae79ea6671@rock-chips.com>
-Date: Wed, 14 Aug 2024 18:12:38 +0800
+	s=arc-20240116; t=1723658679; c=relaxed/simple;
+	bh=At677fhWlanLpG6mtxJGtZbeN9D+2cS3dulKaVfdZg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMZlYsWd04f3JHYl++2TEZ7hB7a/pkg3HL7W0/HvQwLDAw+XPOeItGl8fmOEoV4JhaVXut7clVKlxC7SdJvScPJiUGQD4hC2h/Ck4HvavTQKZeU3ORzQGLX+U1op5cVfI8bp6jYXSxDIwcQn4QTjWYmIG1xdmO2wHDQrPcMMK9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGN0386R; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723658677; x=1755194677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=At677fhWlanLpG6mtxJGtZbeN9D+2cS3dulKaVfdZg4=;
+  b=iGN0386R3AYw487NE4UQWvtcQx+DoClkmVu+L0KZGAVkyzoIvxkVMa1b
+   ja9biE37Y2304WebLjrhBFhOrMXgaSICYJWShJA8IB9UWzMRVEXQ1ktRU
+   UOMFRzEK1A1PNqphLmdkhIlYj574EzZJdN8AP65IB3ugykLXUXevyWeib
+   14lCae/OGMnW+qY7wKeFFYAw0hGH9ANM5AsqSdNIy9mu8yKze0uLry2f5
+   Wp83frsl0Zd5W8h48oAcDbVAPq1Y4I4k34Xk8ymTSwGcmHDg//2J2CYfy
+   d+purKIdKqFjhmqGnJ18l3OT9Z9ICGo+w6KGhUqfdsgOcWS1kx9W15WkV
+   A==;
+X-CSE-ConnectionGUID: GNeW389dQamSDFb6YRVLQg==
+X-CSE-MsgGUID: JXEqT4CNQ8asTHlaeecmCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22051520"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="22051520"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:04:37 -0700
+X-CSE-ConnectionGUID: qtsMKiiRRcK33NckGV4wBQ==
+X-CSE-MsgGUID: Ttk86e14Q1qn5H1amE6iQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="59063940"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:04:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1seIML-0000000FHLt-0y4K;
+	Wed, 14 Aug 2024 21:04:33 +0300
+Date: Wed, 14 Aug 2024 21:04:32 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kernel test robot <lkp@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>
+Subject: Re: WARNING: modpost: vmlinux: section mismatch in reference:
+ bitmap_gather+0x6b (section: .text) -> sg_mask (section: .init.rodata)
+Message-ID: <ZrzxsORf3QL5FTr6@smile.fi.intel.com>
+References: <202407291552.gxr1x7vB-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Lucas Stach <l.stach@pengutronix.de>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jingoo Han <jingoohan1@gmail.com>,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Language: en-GB
-To: Andrey Smirnov <andrew.smirnov@gmail.com>,
- Jisheng Zhang <jszhang@kernel.org>, Joao Pinto <Joao.Pinto@synopsys.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Subject: Re: [v4,05/11] PCI: dwc: imx6: Share PHY debug register definitions
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUMYGFZPTkxMGU9CSxhPHh1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a915060139903aekunmb090c460862
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PCo6KRw*NzIzH01WKAoMNRYW
-	GFEwFAxVSlVKTElITUhLSE5CQkpMVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUhKQ0o3Bg++
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202407291552.gxr1x7vB-lkp@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi folks,
+On Mon, Jul 29, 2024 at 03:06:19PM +0800, kernel test robot wrote:
+> Hi Andy,
+> 
+> FYI, the error/warning still remains.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   dc1c8034e31b14a2e5e212104ec508aec44ce1b9
+> commit: de5f84338970815b9fdd3497a975fb572d11e0b5 lib/bitmap: Introduce bitmap_scatter() and bitmap_gather() helpers
+> date:   5 months ago
+> config: um-randconfig-001-20240729 (https://download.01.org/0day-ci/archive/20240729/202407291552.gxr1x7vB-lkp@intel.com/config)
+> compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240729/202407291552.gxr1x7vB-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407291552.gxr1x7vB-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-       DWC PCIe driver introduced a default method to check link up for
-DWC controller. However, this is broken by test and can't work 100%
-reliably. It was first added by commit 1 and fixed by commit 2. Finally
-commit 3 moved PHY debug regs to PCIE_PORT_DEBUG1 which checks
-cxpl_debug_info[63:32].
+This is dup of https://lore.kernel.org/r/202406200829.IytwLyQJ-lkp@intel.com,
+where the main discussion is ongoing.
 
-Quoted from DWC databook, section 8.2.3 AXI Bridge Initialization, 
-Clocking and Reset:
-
-"In RC Mode, your AXI application must not generate any MEM or I/O
-requests, until the host software has enabled the Memory Space Enable
-(MSE), and IO Space Enable (ISE) bits respectively. Your RC application
-should not generate CFG requests until it has confirmed that the link is
-up by sampling the smlh_link_up and rdlh_link_up outputs."
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-So the problem is very clear that cxpl_debug_info from DWC core is
-missing rdlh_link_up. So reading PCIE_PORT_DEBUG1 and check smlh_link_up
-isn't enough. But I don't know what PCIE_PHY_DEBUG_R1 means. Does it
-means both of smlh_link_up and rdlh_link_up? If yes, than commit 3 
-should be removed. Otherwise it was broken already from the beginning
-commit 1.
-
-[1]: commit dac29e6c5460 ("PCI: designware: Add default link up check if
-sub-driver doesn't override")
-
-[2]: commit 01c076732e82 ("PCI: designware: Check LTSSM training bit
-before deciding link is up")
-
-[3]: commit 60ef4b072ba0 ("PCI: dwc: imx6: Share PHY debug register
-definitions")
 
