@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-286495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A7B951BAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23544951BB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D815E1F22391
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:20:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9880B1F222E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C47D1B140F;
-	Wed, 14 Aug 2024 13:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787541B012A;
+	Wed, 14 Aug 2024 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cLRJJB2B"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Py7y+rgi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7086F1879;
-	Wed, 14 Aug 2024 13:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723641603; cv=fail; b=T200DalP/1vHuOWV6rRjLJMTpefpEAi/p0RVa3CAfnUAg15R7OoxnVIVKNm1I8HYms36jAY57QYMWPg2xj2C5xwAv8DO36TpHM0i9I0KEIu/f4TledrKr8xhc/au50x8tvI9H5FgT/MVplcOGXHzfsx9R/6WDbuorvgcC5F6Cp8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723641603; c=relaxed/simple;
-	bh=Iac1H0ewvdlyTuvTK7oZcnawCHfS2Y5XB46rgwaiYqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KZDiHrNj8jgwb/2S2tdW7y9LW3H7zS1a5qaOrT11LpL6Vj+ctCbx8B6XmmI+npWGx4aQ6lCHyf63ph+SXU/CSSlBCAEe+yOWUWajFpeJm+CF/sN7PrttIJHL6VPNVgJCXTEwOp6awnqNTBcfwcyUOsNSE1e6BevazeYRPKbIolY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cLRJJB2B; arc=fail smtp.client-ip=40.107.244.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d9u5YVFEx4pvKYO/d8il0tdwaMWmMCvbcU0AT/e8x4zPgNvcMu2/qDL2gfYR133YA87daT6Xu3nWku1XTuqfU2vHD2PiyzqHJfSiG+8r8GgJ1JuW4JUKecu18if7ru0qWp2I7NdS8gEDcdXLn3biOy/Cc8pJOAYZH9n69paJ4k2/dYc7NeT7gDYvblEVYU1Rsf6ot1+T78qVIiT1qabMXMMCGkkddRjQhyI0Vc2dcyFKv8dl8bLqKUQ/dLZ3VGuebFH2k/PVQ/OzBmNU1NJyIdzkw4/SSCF4UllQRc0xlum71wGEGgqI+py16lwbjAd5XjxqUyFqpzwzveWsZwle2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wcABRMHL2ulYhthnVZF/fRMjR5F0znFiDK12irBq6p8=;
- b=JH+GdVmb7Ova3WJgsTvQVDy62gaEevKvsqkKKjgrEIWZGaEmpvmh739O4Kxb9n3EnQtyEu+DvbQh5dofenjc4cdhk6U2Yk/N6/2LzhOJhN1mbiyO9C+dNbFNfbzgaJCk+DsoFuvizZM2qbPq3uzF8iwDRGHKJZh5k8+pR58wcFtrsHir0TYInTHfv1X+Ml8SOvr+6AaFU9Nrmiepi9J5kYF+zpVkhi6PxHgF28YKXsehalHfQAUOj+ww3uTJ3GtPzvNyMr17KDq/jHiuL9FuBvdydj7WJ9XzCv88Qk5f/1AM/ROwgrkHTDWIS2HcWtN3qH5mAQcF9Vbrq2RzMrgXQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wcABRMHL2ulYhthnVZF/fRMjR5F0znFiDK12irBq6p8=;
- b=cLRJJB2BgXvLI7+wctpLOthf0EL47Klylp+sxjwzv3pWVgwx1KsfIyFcETNJzzLimw9wSBZTFTqhTuruZM27qyrgKtvwpZDUIKzI60TnegpRqD7679s8+vEuj/Tvy8/FvOPOZeE59fEb2DT0s7XuuoYW13fHnCHL2yly52hGNNApGKWR/vMYeinThE7z9lC9TzgAZeJB2D5uXA/S/PaRIdlBD8JvybRZTAoRpQcULDMkmlcFfO39DHGRXLLn01WeXJBOoqbPzGRLXpFpz+EckQWR+tjliMwVvmMc5++52yupj5zX/I8lBLckKDToQ8bAcpFxYcY8ti4gfb24GfFJXQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16)
- by SA1PR12MB6823.namprd12.prod.outlook.com (2603:10b6:806:25e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Wed, 14 Aug
- 2024 13:19:56 +0000
-Received: from DM4PR12MB7767.namprd12.prod.outlook.com
- ([fe80::55c8:54a0:23b5:3e52]) by DM4PR12MB7767.namprd12.prod.outlook.com
- ([fe80::55c8:54a0:23b5:3e52%3]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
- 13:19:56 +0000
-Date: Wed, 14 Aug 2024 10:19:54 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	David Hildenbrand <david@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: Re: [PATCH 09/19] mm: New follow_pfnmap API
-Message-ID: <20240814131954.GK2032816@nvidia.com>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240809160909.1023470-10-peterx@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809160909.1023470-10-peterx@redhat.com>
-X-ClientProxiedBy: BL1PR13CA0232.namprd13.prod.outlook.com
- (2603:10b6:208:2bf::27) To DM4PR12MB7767.namprd12.prod.outlook.com
- (2603:10b6:8:100::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABDC1879;
+	Wed, 14 Aug 2024 13:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723641615; cv=none; b=LsAeyY4EsVTBPx2mxkWMmPpS9fdmzAIKmYPEnLDuyCqHVpzZtW6MdFxwHnrsj/jmkK6oaU1UcsShbgoqOUMO8Rm8EimLr8Xfv5kV3CdccO6ee5nsIx357yqu1k48iVPv0tV7XPGAIMz5xBUcVlDNh9qxYRq7uhgDlFbyVE96j4M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723641615; c=relaxed/simple;
+	bh=jlwesP2p6A7+NnxRcE8C0Ggn999OEbzh5LFIm/R8GyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FX87YLnuoXsN6P9Yt2nu8Xh8Kb1MlwJrBz2GVFmN+GDMbsvrl6JsWbqlWdSbVDM05XNxZZKgRBz60Ac/xD1gh8T/Bl84xnUJzga95dUNnjsPVjBm+o+O5cE8diULTesF0ONCGm6Mi0+8QzQRaBTTUsn/7KHbUooEocrGIIVqPy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Py7y+rgi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B420DC32786;
+	Wed, 14 Aug 2024 13:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723641615;
+	bh=jlwesP2p6A7+NnxRcE8C0Ggn999OEbzh5LFIm/R8GyI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Py7y+rgiRUdGlGuWnw7+1F40OHxq48g2BcVPT4+WkTzdPa9NalKWXJ/vGHXUO2vSX
+	 LanLXF0hg8iaLuAbxaFu+UhMVI7FN+tECeQTl0qacQfUlHeyRMwCCdlMRUFTiSMnXF
+	 QSn7N79RcFyUkLuhJS4RRKolxd2m8C/o/nt3+RPFTBR2L61LJG5FDUEzl7Sa098LEU
+	 VzFFI8s4Z2S1BS4PYViG/3V/CLmJKHJr2JvTaYuJ+hlXdJ66ywB97hruQo6g9tiMxl
+	 5v9EebDvoABqiS1aFU/5/NK5QiW19KMER8L7oyNXgzTwQpapphNyRd+fS7x7bdNKfB
+	 24GYe/Ma391eA==
+Message-ID: <3294e2d3-5142-4d7f-89d3-35528f26066e@kernel.org>
+Date: Wed, 14 Aug 2024 15:20:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB7767:EE_|SA1PR12MB6823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2696fc85-905d-4d04-da45-08dcbc63ca1b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	Y8f9/I/bHlv5c4PDPxV671cXf5xIzGW94ZTkdYkBVvjfH3FtoaSAKdcoP6iRbjSiD0BePxcEoow82nbdy7QZLg7uC5mQK18qxQ5JWPVd+RK+2y6D20Krof3dRnMkp0pCy1l5YChNqMP0T1U+RmoTO/BQxAjoXqt0iekGjNX1qt7Ld1EnQkFFLwhYOVWuWIZqKARQBxDEvPzwBb+YsUCp+wO3cGtoAS65pbDQ2eyp2GMV3Cm65e1DAqNwVSWSIsfIl1D1HF6sW33T197zWf7WIS8jd5JYokmEVEYvwwn6rcRRDe83ZaEz8unCEI6gYRm/pA5zxeUMs0U1u/68Ce0RY/6w9W6+X7LYPOSa5fJFHmnUjzPtL4rtKIq0/Y9mrwkGKIo1Kmjfol+/wWwND45PHDCkpbLhUMi4Lm/xyvMhofg59TI993d1x7tW2kksCYFBuGeNXrfE5g7XQ6taKfItbLt6fQJZV5WigzhmLY0pNy4D9CdGCNESobuLtgdRhBmQVjnOH1U+K71WGLI3rIqPTq/TrNW+at3P1mvIxm0owh4zyKxT2mrrnL569/sFQ4+ZoYowWe8kXvABlbY6TfgLXj6kY7uuIBcgT9cmHupGdMwzU5iD57zFZzPEaHbnEy+5+6ALXNrbBie2Zxn4a6YKSVyZ82GPqRpTO95UmoiXxPU=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cyPTSAUc/4m0xD2ih334aJxqMsS2rb4zHpfiFEK4ThFEUcAvUs2v0bbHeE0l?=
- =?us-ascii?Q?G1dYfjeYGetc1lTPDuomII9wuIjDGYXc/BzaxeRKOZckfYuFqvUO20yPhmAb?=
- =?us-ascii?Q?tnhsv+QOEzdALWBKgOlilLV7eXnF2czS1k17gukLmtkIvHAbhM2/lRFnXrbG?=
- =?us-ascii?Q?HCbGDYbvOcTCzY/+5oa05XFIu5jGQOWyaUfiPDvYRk32DPBbThG4Wu4s5RK9?=
- =?us-ascii?Q?9WI9zB3GYZKlbg5zHHknVcnB4BDCR3znEjh9db6RyOzKPEA1nSCTpzHZ5GwH?=
- =?us-ascii?Q?Nc09IwXka/rhlYar+2xTEQy9gS9a3MRaoUuSpozAeDf9M9HDIAijhyDSJa0R?=
- =?us-ascii?Q?tYytVs5DdtoVuhjUIES3A90b6bM3Lys/ngwOfjx+QRyXN+JoPuNftUluFLyj?=
- =?us-ascii?Q?cs9nDFcfyHslR6rUwA//sHYs3eIUpslmhVUgquIWQafBEKs/B3xvPVLfq8gy?=
- =?us-ascii?Q?y2v1K6yqUtivOiDF4zlpxvxmol4HU6u8qn6BZwK+0eKq+HhhF/0nilUzv2+y?=
- =?us-ascii?Q?0FbV2KQYBBRc8AQpN4GOyIrkwWZS2f7VonQbrd9VhUXDoW9HNJ7IeVMjaQHH?=
- =?us-ascii?Q?kUzy+Mp/Y3hn3rRJH10nXWd0qB+9in3jLVRh23Pe33Qq/OUCmWUV+bHae0sA?=
- =?us-ascii?Q?m90AAmsSqpwErpPBaD2PhnQQlFrXEpYVH1Ig7DaKb+LPSPiyMI+SDa5itkrm?=
- =?us-ascii?Q?TSlnsyz928qFkj42SpI8FGgqhFs+rKt5SF2fSmmLvo2rknQX12ZWyS6FQyBb?=
- =?us-ascii?Q?mkhZcNgRQmzk+/OogmzbXQbpzjfcEOGzTcmcgA6qo2E8EwWLq4ARceN8ESzz?=
- =?us-ascii?Q?xzXwjjvnOx2QOylogIGfrQcOvEgoWXbV6s2rlcac1RNcpG6kRC+nps1vS+1N?=
- =?us-ascii?Q?NYEcCB+8FfMZJmg7WYbuC7N8svT7+ffvrRCJ/yhqcHRSLATkz4AeJhY1Gc74?=
- =?us-ascii?Q?Pu6W1EzpLXSzPn6/RfkcFm0bt74he5F6ibWzvQXBz1QbO1E1nkR8MgYdDRUP?=
- =?us-ascii?Q?qmIBZcCbotRaZ2Dl6J9IsgGN7aBq+NFUnkb0eff5Nz6iRczGSIkS5Nr1ZRsF?=
- =?us-ascii?Q?MhRsfYjzICMaAJmZ3e9S6XEr9O2FGW8hqTUl0+3bjIwksnNwKOO81Lbt5DIO?=
- =?us-ascii?Q?uzkn22jA0onamjcMhkkA/cBuurYJZgkCZrDR2q8inkVLe+lozzYtQM2fCnk4?=
- =?us-ascii?Q?iAIEnv8L6NfkuV/9Qs5AQczobe335Te8O5pLZkMjo0FYgHjbPwSolY17a2lF?=
- =?us-ascii?Q?uU9qYBK+5If3gzOAUJb7JsrCdfno+AR3fBcHrOWP69qXOpHzVafpXKNglGXP?=
- =?us-ascii?Q?9ZKf4xE0vaSkqRr+0f2lh1kelT6HgjSCFvfpTByIezT7l1nM8Y2F3DOTu71S?=
- =?us-ascii?Q?y5T0Gt9/C7HBeaVDQuPpBukybXG4CirCGVp4mW3uCDCirKvTECf7HGYt8gQo?=
- =?us-ascii?Q?h4t8x9rMSIPygiCCzWZX6bwZelWYQGnMTsrl+RYlTeu2t+C4qjzxnkHRFsUo?=
- =?us-ascii?Q?g6se6BFVRLZ4eaiIQ2zbN0YPbuWmYPlYNnUHidqDsKG/Uq2fZIiFLNB2TqJE?=
- =?us-ascii?Q?/mxlrtCU4tDyA6Db3N85SMc0UTAu5MbdHFrCgROG?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2696fc85-905d-4d04-da45-08dcbc63ca1b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7767.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 13:19:56.0004
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5cFQS8qss3iBcxaeCgh7IuLPjgJxck5EZ66J1HO32L5ooDVSdlA0KNM92BSutJHd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6823
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] ARM: dts: microchip: Clean up spacing and indentation
+To: Andrei Simion <andrei.simion@microchip.com>, claudiu.beznea@tuxon.dev,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, peda@axentia.se
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, cristian.birsan@microchip.com
+References: <20240814122633.198562-1-andrei.simion@microchip.com>
+ <20240814122633.198562-2-andrei.simion@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240814122633.198562-2-andrei.simion@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 09, 2024 at 12:08:59PM -0400, Peter Xu wrote:
+On 14/08/2024 14:26, Andrei Simion wrote:
+> Checkpatch.pl reports some ERRORS related
+> to coding style (spacing and indentation).
+> So clean up : checkpatch.pl --fix-inplace
 
-> +/**
-> + * follow_pfnmap_start() - Look up a pfn mapping at a user virtual address
-> + * @args: Pointer to struct @follow_pfnmap_args
-> + *
-> + * The caller needs to setup args->vma and args->address to point to the
-> + * virtual address as the target of such lookup.  On a successful return,
-> + * the results will be put into other output fields.
-> + *
-> + * After the caller finished using the fields, the caller must invoke
-> + * another follow_pfnmap_end() to proper releases the locks and resources
-> + * of such look up request.
-> + *
-> + * During the start() and end() calls, the results in @args will be valid
-> + * as proper locks will be held.  After the end() is called, all the fields
-> + * in @follow_pfnmap_args will be invalid to be further accessed.
-> + *
-> + * If the PTE maps a refcounted page, callers are responsible to protect
-> + * against invalidation with MMU notifiers; otherwise access to the PFN at
-> + * a later point in time can trigger use-after-free.
-> + *
-> + * Only IO mappings and raw PFN mappings are allowed.  
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-What does this mean? The paragraph before said this can return a
-refcounted page?
+Please be specific what are you changing.
 
-> + * The mmap semaphore
-> + * should be taken for read, and the mmap semaphore cannot be released
-> + * before the end() is invoked.
 
-This function is not safe for IO mappings and PFNs either, VFIO has a
-known security issue to call it. That should be emphasised in the
-comment.
+> 
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> ---
+> Split the bloated patch into small patches on topics
+> based on comments:
+> https://lore.kernel.org/linux-arm-kernel/89f51615-0dee-4ab0-ab72-e3c057fee1e7@tuxon.dev/
+> ---
+>  arch/arm/boot/dts/microchip/at91-cosino_mega2560.dts  | 2 +-
+>  arch/arm/boot/dts/microchip/at91-sama5d27_som1_ek.dts | 8 ++++----
+>  arch/arm/boot/dts/microchip/at91-sama5d2_icp.dts      | 8 ++++----
+>  arch/arm/boot/dts/microchip/at91sam9263ek.dts         | 2 +-
+>  4 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/microchip/at91-cosino_mega2560.dts b/arch/arm/boot/dts/microchip/at91-cosino_mega2560.dts
+> index 04cb7bee937d..1279dfb38300 100644
+> --- a/arch/arm/boot/dts/microchip/at91-cosino_mega2560.dts
+> +++ b/arch/arm/boot/dts/microchip/at91-cosino_mega2560.dts
+> @@ -7,7 +7,7 @@
+>   *			HCE Engineering
+>   *
+>   * Derived from at91sam9g35ek.dts by:
+> - * 	Copyright (C) 2012 Atmel,
+> + *	Copyright (C) 2012 Atmel,
 
-The caller must be protected by mmu notifiers or other locking that
-guarentees the PTE cannot be removed while the caller is using it. In
-all cases. 
+Not sure what you are fixing here, but unnecessary tab was here before
+and still exists...
 
-Since this hold the PTL until end is it always safe to use the
-returned address before calling end?
+>   *      2012 Nicolas Ferre <nicolas.ferre@atmel.com>
+>   */
+>  
 
-Jason
+Best regards,
+Krzysztof
+
 
