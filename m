@@ -1,174 +1,156 @@
-Return-Path: <linux-kernel+bounces-286550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159BB951C61
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415AF951C64
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2871F22A11
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:59:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 691CA1C2301A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF75E1B1505;
-	Wed, 14 Aug 2024 13:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD1D1B150A;
+	Wed, 14 Aug 2024 13:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo7J5Iya"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r4G1ysX5"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2ACCC148;
-	Wed, 14 Aug 2024 13:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B580BC148;
+	Wed, 14 Aug 2024 13:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723643959; cv=none; b=VMRf04h8b019LYpryddpOpsImdc3IViumSATHfx8IbfXjoxV+bSc29jNzfvxxZ+IA2ixuhfnNfxrA0ocSdckrocu8o8Bm07H99iqTQG0XcAzENuxl1sFrUhdp4WhAXQNfpPfOBskfLpuglUR+M9j7pay38Y7MLp7aQK//Ea+N5w=
+	t=1723643969; cv=none; b=uezaDpObS+RrPYAIHfm9eS7XXcrrVp62I3RJdP5biyCz5c3UloLyu1VOXpgzLR2iRor1jAvCi30r7daac/bBtsWKHFYvnxbH4uH90UMWas6tdotlyCFCmfhHgar2RnNPM3Ue0U1/zVdAZ75O/CDdlko5V8TFUg9U5doACwO+m2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723643959; c=relaxed/simple;
-	bh=i2XInDiKAjKFZ/WCnSnrMBUbrC57+wTSUjcr1ZI14hU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WHvmlvuflI/b6u5Nk/YEHJhgzJfV/CzQWKz2wnie5Ppm6b+BhYjsqDMvtw1VrNr2kAGhdm6TDZO39C/b/O1a+as4wviiTKQzErOSImKrmC/ILUUBOtnYUgIpYUP9fsm1Www9NQR9x4zYZf3a0BM4UfRnfKCObXn7v3UEdfMhDeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bo7J5Iya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D39C116B1;
-	Wed, 14 Aug 2024 13:59:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723643958;
-	bh=i2XInDiKAjKFZ/WCnSnrMBUbrC57+wTSUjcr1ZI14hU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bo7J5IyaqAZMcWE4jq4EC8jYNr+t8VU8JaJ5Bd8iOtVmU6W3X9tLeALH897enyLil
-	 MpSE8dU/ZQUdowOK3CPs+Gc+l93MZlzDQRiSKKrcLVnHkQqBGwQpH3BisUkMKM3k9l
-	 A0dkvNt7N4+IXssfHSjVGsmtKIsKal7ApNc7wJm+px5eNjgV6LoI23u+ScWNoVOYML
-	 ER9UyXniAiDGDTZpOJ3si8EkLMINPkneifqHka2tEOGbqAHHDo3LnMeu31ipL4ydlX
-	 KgeRUzXx1C1lWrTixV1g/wXxYAc0NfSBnMxapyjHORCAIAqoH74u3l2QZdMrJcT3hu
-	 jiqbh3rGANdyg==
-Date: Wed, 14 Aug 2024 14:59:11 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Manikandan Muralidharan <manikandan.m@microchip.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, airlied@gmail.com, daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux@armlinux.org.uk,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, arnd@arndb.de, geert+renesas@glider.be,
-	mpe@ellerman.id.au, rdunlap@infradead.org, dharma.b@microchip.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: bridge: add
- sam9x75-mipi-dsi binding
-Message-ID: <20240814-anaerobic-unpainted-532b8b117b79@spud>
-References: <20240814105256.177319-1-manikandan.m@microchip.com>
- <20240814105256.177319-2-manikandan.m@microchip.com>
+	s=arc-20240116; t=1723643969; c=relaxed/simple;
+	bh=eresiUV05oJ03ZxQXDx5eDB//C8s/+2nKuI+JT5al7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mQAnDfKLW4R0apYKmmdHhx7EjNH6lPc+UGr0799KZa1Tsrtgd1YQP1KEeF4pV7OWLhQy72Ulkgcu+sjxAtYr2t3CElCtCdEtpY3YAAw/9hbxgKYeU83tYyvCsEzd7h/PlhsIDI8fV0WsBoe6wRMMkWDZD6L/nO5GYtdOQglxzbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r4G1ysX5; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EDxF0E066840;
+	Wed, 14 Aug 2024 08:59:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723643955;
+	bh=7lNRzDbzANYCfAVIqAPp0GsNMJXVw4S+liQhK+NUegg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=r4G1ysX5KcCPD5uLqF6fMTCxIdgjEID182QLKd22TBcK1gpXPUTRUEC8/9tGw5YiA
+	 D7qChHO0Vs8TGAdAnY27/nGGZ/+l0AQ+neeFixyRFse0tXyNzpN5TUI63uZpiMG12M
+	 WwpPNEoJLjlTX4+MVS9sJB1LMYtkzC2vYuVumNas=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EDxFKg012112
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 14 Aug 2024 08:59:15 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
+ Aug 2024 08:59:15 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 14 Aug 2024 08:59:15 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EDxFe8102447;
+	Wed, 14 Aug 2024 08:59:15 -0500
+Message-ID: <6134b3c1-f7ea-4cca-8777-56e5705aadf6@ti.com>
+Date: Wed, 14 Aug 2024 08:59:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+8ausa8IKd49KxfE"
-Content-Disposition: inline
-In-Reply-To: <20240814105256.177319-2-manikandan.m@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] Add and fix ESM nodes
+To: Jan Kiszka <jan.kiszka@siemens.com>, <devicetree@vger.kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        Rob
+ Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Nishanth Menon <nm@ti.com>
+References: <20240813230312.3289428-1-jm@ti.com>
+ <4295a15a-6285-4005-bc40-328e52addc2b@siemens.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <4295a15a-6285-4005-bc40-328e52addc2b@siemens.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hi Jan,
 
---+8ausa8IKd49KxfE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/13/24 11:04 PM, Jan Kiszka wrote:
+> On 14.08.24 01:03, Judith Mendez wrote:
+>> The following patch adds ESM nodes and fixes ESM source
+>> interrupts for Sitara K3 platforms. Currently watchdog cannot
+>> reset the CPU because of misconfiguration or missing ESM node
+>> in DT.
+>>
+>> ESM node was added for am62ax and am65x. For am62px ESM source
+>> interrupts are fixed. Comments were also added for clarity on what
+>> source interrupts are routed to ESM based on device TRM.
+>>
+>> ESM nodes like MCU ESM for am65x are added for device completion,
+>> currently, some ESM0 events are not routed to MCU ESM, so watchdog
+>> cannot reset the CPU using the current implementation.
+> 
+> Yes, that's why there is https://github.com/siemens/k3-rti-wdt and
+> probably similar bits in other R5 firmware. I was always told that is
+> the only way to reset the /system/ (CPU alone would not help). That
+> information is still correct?
 
-On Wed, Aug 14, 2024 at 04:22:53PM +0530, Manikandan Muralidharan wrote:
-> Add the 'sam9x75-mipi-dsi' compatible binding, which describes the
-> Microchip's specific wrapper for the Synopsys DesignWare MIPI DSI HOST
-> Controller for the sam9x75 series System-on-Chip (SoC) devices.
->=20
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> ---
-> changes in v3:
-> - Describe the clocks used
->=20
-> changes in v2:
-> - List the clocks with description
-> - remove describing 'remove-endpoint' properties
-> - remove unused label, node and fix example DT indentation
-> - cosmetic fixes
-> ---
->  .../bridge/microchip,sam9x75-mipi-dsi.yaml    | 116 ++++++++++++++++++
->  1 file changed, 116 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/micr=
-ochip,sam9x75-mipi-dsi.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/display/bridge/microchip,s=
-am9x75-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/mic=
-rochip,sam9x75-mipi-dsi.yaml
-> new file mode 100644
-> index 000000000000..3c86f0cd49e9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/microchip,sam9x75-=
-mipi-dsi.yaml
-> @@ -0,0 +1,116 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/microchip,sam9x75-mipi=
--dsi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip SAM9X75 MIPI DSI Controller
-> +
-> +maintainers:
-> +  - Manikandan Muralidharan <manikandan.m@microchip.com>
-> +
-> +description:
-> +  Microchip specific extensions or wrapper to the Synopsys Designware MI=
-PI DSI.
-> +  The MIPI Display Serial Interface (DSI) Host Controller implements all
-> +  protocol functions defined in the MIPI DSI Specification.The DSI Host
-> +  provides an interface between the LCD Controller (LCDC) and the MIPI D=
--PHY,
-> +  allowing communication with a DSI-compliant display.
-> +
-> +allOf:
-> +  - $ref: /schemas/display/dsi-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: microchip,sam9x75-mipi-dsi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description:
-> +          Peripheral Bus Clock between LCDC and MIPI DPHY
-> +      - description:
-> +          MIPI DPHY Interface reference clock for PLL block
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pclk
-> +      - const: refclk
-> +
-> +  microchip,sfr:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      phandle to Special Function Register (SFR) node.To enable the DSI/=
-CSI
-> +      selection bit in SFR's ISS Configuration Register.
+If you look at 9.4.14 MCU_ESM0 Interrupt Map, ESM0_ESM_INT_CFG_LVL_0,
+ESM0_ESM_INT_HI_LVL_0, and ESM0_ESM_INT_LOW_LVL_0 are not routed to
+MCU_ESM0. So the current implementation to route events from ESM0 to
+MCU_ESM0 to reset the CPU will not work for AM65x, this is the
+implementation on other K3 Sitara platforms and how watchdog can reset
+the cpu.
 
-I'm curious - why is this phandle required? How many SFR nodes are there
-on the platform?
+I did find MAIN_ESM_ERROR_INT which should be SOC_SAFETY_ERRORn, look
+at Figure 12-3690. Perhaps the ESMs could be configured to use
+SOC_SAFETY_ERRORn instead, not sure.
 
---+8ausa8IKd49KxfE
-Content-Type: application/pgp-signature; name="signature.asc"
+The above should apply to both SR1 and SR2 devices according to the TRM.
 
------BEGIN PGP SIGNATURE-----
+~ Judith
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZry4LwAKCRB4tDGHoIJi
-0jgGAQCNlJez7U3bg6KubO9BcmyXeM+Ooq60GqLPvS/jU0f6LgD/ep76NL779/5C
-MBFLfGv3IMIHjffXUIBEpJSOsnvPnAI=
-=UfmW
------END PGP SIGNATURE-----
+> 
+> Jan
+> 
+>>
+>> Changes since v1:
+>> - Remove watchdog patch
+>> - Add am64x patch 5/6
+>> - Add am65x patch 6/6
+>> - Add missing bootph flag
+>>
+>> Judith Mendez (5):
+>>    arm64: dts: ti: k3-am62a: Add ESM nodes
+>>    arm64: dts: ti: k3-am62p: Fix ESM interrupt sources
+>>    arm64: dts: ti: k3-am62: Add comments to ESM nodes
+>>    arm64: dts: ti: k3-am64: Add more ESM interrupt sources
+>>    arm64: dts: ti: k3-am65: Add ESM nodes
+>>
+>> Santhosh Kumar K (1):
+>>    arm64: dts: ti: k3-am62p: Remove 'reserved' status for ESM
+>>
+>>   arch/arm64/boot/dts/ti/k3-am62-main.dtsi               | 1 +
+>>   arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi                | 1 +
+>>   arch/arm64/boot/dts/ti/k3-am62a-main.dtsi              | 8 ++++++++
+>>   arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi               | 8 ++++++++
+>>   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 3 ++-
+>>   arch/arm64/boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi  | 4 ++--
+>>   arch/arm64/boot/dts/ti/k3-am64-main.dtsi               | 3 ++-
+>>   arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi                | 3 ++-
+>>   arch/arm64/boot/dts/ti/k3-am65-main.dtsi               | 8 ++++++++
+>>   arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi                | 8 ++++++++
+>>   10 files changed, 42 insertions(+), 5 deletions(-)
+>>
+>>
+>> base-commit: e3cce1229c34b5c28f103361c4d6b3ef17302d5d
+> 
 
---+8ausa8IKd49KxfE--
 
