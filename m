@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-286516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6FD951BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCF9951BF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A45DB26F50
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129051F24A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AC51AC435;
-	Wed, 14 Aug 2024 13:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678A71B151D;
+	Wed, 14 Aug 2024 13:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ch0FM+3o"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sqqBjltb"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45D61B143E;
-	Wed, 14 Aug 2024 13:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A181B14EC
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723642540; cv=none; b=etNjtrn2nRhf5Wn97/glWlg4k8NXEp7BfJgBskhck4WhDe3E7FA5b+B74hLwIX1cDI83UA5NM5a/8mfNWjEsVJWKr6aC/Nh3PohSj/84cINaUwE+YLldOsfI8yURrm81HiENVMFDLBqbDVvhLSGfNeWPOI1KjLNHwwigpu/dPto=
+	t=1723642541; cv=none; b=Vw3G6NQMgJeVfZET2kq7rukFYth0HN/VmPCJSeM3lQATZlMOlgWTaoCrYqfDAOM4NBBwtf7cUlum8NMTv566i+NjnkfwRLzYy5JMKwsZe211GxILG9JBRdwIspzk4av9IQQUOU/MxOROF+kv1jmghC8Sieq6ilt+9lx0lJL+Y3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723642540; c=relaxed/simple;
-	bh=S/zIiy42wYWO1Sut5X2WceNkWc9AbBbKBZ5kmTmvTKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MlrtAMkaR+stD51dPVbNh4dUyVOcB1d/18VHAf9GLqlVcFFilNNhqJmiigN9qWDW9DT7F0L+2ICCw6VegmfPtrL7OElNfLsKYIGRd5eE0dDujYcDalCGFMdLrGqtGiRuYQU+ZJ6hPIDJ6XZuJVFDe1ZcqFrSr6VrhTrMgZPoZvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ch0FM+3o; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d2b921c48so5085579b3a.1;
-        Wed, 14 Aug 2024 06:35:38 -0700 (PDT)
+	s=arc-20240116; t=1723642541; c=relaxed/simple;
+	bh=HArTnaIs5I706mOz1poccY5SHaZ05WHMDlgQ4maz0tE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YYIpm2iuHQbj7MJZqCjq0/bUkVefovoX9hsusR2i9elOeyKLHZ10YQ4Ydr1ohi/Fzm9ewUEgu0iHjWBC1tXcUZAfU4dxmI+KMhB0HcQ88ZddTlC4Drj0flKqUNfZLtDb1TYNpIwschThSHgKm2mQt6GwOM3pMBpR8HWH8IHpH0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sqqBjltb; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc691f1f83aso686889276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723642538; x=1724247338; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=/8zePmdNyrEQSqQAUATf9uIk3IL2i5bmjy0HiYMffak=;
-        b=Ch0FM+3oeR0RHqEyrhadJVtfKi18qxeZzJAa6GjsmzgD/c0iF7svG+3u9d0IhfBLQV
-         WA0BTY1MTJR8tGVM19sDrzzek+sjSffzxklKhsPccsRh7IBf1yRhJWxLpWdfc4Na607D
-         7P2YF5WkjUk5TRmol/g9YW1eoLeL4NQTJF8uOwVo0pbBz0AmRNVWkr31Y1ByNSi/qEWX
-         BPrqQH7Z+h9g55vFOiGe7kCu+zZJqvRlSC3TcFOJvW96jKcgt0RPsxpUFT3cv8pfyV8O
-         xZkBKHY1V5YF5+dIaqVOr1+EZOVkYq+X18Oa+SF41BHJIZCfhPONCn3iKZYtRzipRX9W
-         TAaQ==
+        d=google.com; s=20230601; t=1723642539; x=1724247339; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2yB1fsNKU+rC23A4wdfQI4foI6aJ47uPDU6FQQvIzDE=;
+        b=sqqBjltbRuqZKdl/R1S21JZS6DfsVtKax/m1ec5xJ3h4pjUACi08an6Be5wgczgXrY
+         vrW76LaJ6353pXPVg8EDA9vulMoH9TDhdSH8DvTOxQ01gPvBkdPhtZ/Z2le5JBVtqmr5
+         oDQ43tgOjwrs6B4sHpD5jhe4iK1lHappMzrz9CsBXyFsWyJbS0TzUitfUdZZz1WLfRUF
+         HdcRWQy5bW4DRFgHBWiQNN8JpMh7QBy0Yp+flHzARl4Xx/b1fyDqTk886QxiF4ufJn4f
+         YC9sS8l+aklQCN5gHCs70fkNNuLTpYBAD1czQePrrE8CZWGAL8ncxEU7XyIFxXlYI5lW
+         qaww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723642538; x=1724247338;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/8zePmdNyrEQSqQAUATf9uIk3IL2i5bmjy0HiYMffak=;
-        b=F8uluAsszmh7WpTJTRXNTpL++hvM9LEuuFlBcuHYpyT08wYbVQMEj7wmHC1g+1scc/
-         TpOod+RScqpRFR3vVAHSmAjvIX8C5i9LpWhw96G4D0a9lAVT8oqovqSULiUOcciAT6dN
-         2V2fZu/iGFmnJkneVqN9atF20xOdpIJn/E/dkAUY1O5oGvK22RZ5JoR5AUXslP5ZwXXZ
-         gPneD2s90vQVa6dCSus3WhnuV6Lel8zT/HMw6evQDxCs23cJ9ymiqihPuVY3GJwjdQpK
-         HU7EePmV7NqOsvG9YLnqK2XgLmXn3gsNNxQP6VztUwH87UR2Q1P/Zg/Q8/nTpY754aSZ
-         3jLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXckup9+gZicg9b2JxjKBm1e0spywS/LBNSWVD2GbBAgCb8nwXqpbCzMlgRP5KmgVx0Zzd8Q1wH65ybeR3q94eAy6eNSi5g0eUecJYkARZIIq6kZHqZlAgJnXYkw5FJVLRk1P0OhOugxRM=
-X-Gm-Message-State: AOJu0Yw0I3MjEyx0fnp2v/R0nw1ZzWzcZZfUlbUH37g6Qn8tCNhxDYwG
-	4klyM0/9z6fvzVwSRGeVIMYZB49VwxIV2ExGkkgsnbD7u4Wx5vWr
-X-Google-Smtp-Source: AGHT+IE0DQVievfpHjofd7g7jFDdfLteDHbIpHlIEKdATcd/rJVMpRPBYT7SR9h5ZhIQpxz9spaXDg==
-X-Received: by 2002:a05:6a21:3a81:b0:1c4:cf0a:ee9d with SMTP id adf61e73a8af0-1c8eae81669mr3581302637.19.1723642537860;
-        Wed, 14 Aug 2024 06:35:37 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5ac3d48sm7332973b3a.211.2024.08.14.06.35.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 06:35:36 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <6048b4d2-8d15-4a85-99c1-13b176d7404c@roeck-us.net>
-Date: Wed, 14 Aug 2024 06:35:35 -0700
+        d=1e100.net; s=20230601; t=1723642539; x=1724247339;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2yB1fsNKU+rC23A4wdfQI4foI6aJ47uPDU6FQQvIzDE=;
+        b=V8lNfLufPwiTyT/WjeKdpzoEweJznh/HGXMtgftMh1q/D8HwwT0x1X9ziOfwpaGvzR
+         Ztsk8qNi5ukAsRr+7gcFacosZ1zYk8kLm9DImdaWx1qhInFZsiHnmxP/vLE2PYP/6OU3
+         WWCwjW7nCwNemsEHqaAVG/uHblrEEq0Dd5M5xw/04/6AHYlyYXogmKO7oujS3IqIXAN0
+         zrSIpBpqiJWXCq956zs11nXQGypGiPR9D6qIShY9fd2MNFbNftW5IDM/uR3LDnwgrQ3l
+         wihBEdMVCDdQ0cU2NEcUYhhRTQU0iEC69e1atrc+y5CAYE8DXnbFebwM+z6xxQtWNqtH
+         faPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUk+XlSoEhQACJVYI9Ev5/CYWXFXToUh+/xWBEofcONXq0pp/n6JpasaFxZBkOc4DpF+Hzc8c9WAwOVzNcgFqHp6cAVu9BznNAj4miU
+X-Gm-Message-State: AOJu0Yx39LQx1TnAlI0y1xxgn18syZZLkiLOxyUD0z83OE7AsRs8XDsW
+	6ub5n+EynFo4LXKtwO81SLz6m08eGg/xMor2b1xC8QUqaKlv8tRLbkZLKlRoUL6SLU8pmNmI3HM
+	gcw==
+X-Google-Smtp-Source: AGHT+IEdY6D4ceAOiB1K58rOcRL2CYndwzpMFmSnJbi8t4xsgcKGLtqnGBvdw/DDXolwv1dqY4+g/ThZRes=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a5b:788:0:b0:e0b:f6aa:8088 with SMTP id
+ 3f1490d57ef6-e1154eb1c7fmr73408276.1.1723642539048; Wed, 14 Aug 2024 06:35:39
+ -0700 (PDT)
+Date: Wed, 14 Aug 2024 06:35:37 -0700
+In-Reply-To: <ZryLE+wNxhYHpyIP@chao-email>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] hwmon/misc: amd-sbi: Move core sbrmi from hwmon to
- misc
-To: Akshay Gupta <akshay.gupta@amd.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, arnd@arndb.de, naveenkrishna.chatradhi@amd.com
-References: <20240814095954.2359863-1-akshay.gupta@amd.com>
- <20240814095954.2359863-2-akshay.gupta@amd.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240814095954.2359863-2-akshay.gupta@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-26-rick.p.edgecombe@intel.com> <ZrtEvEh4UJ6ZbPq5@chao-email>
+ <efc22d22-9cb6-41f7-a703-e96cbaf0aca7@intel.com> <Zrv+uHq2/mm4H58x@chao-email>
+ <ZrwFWiSQc6pRHrCG@google.com> <ZryLE+wNxhYHpyIP@chao-email>
+Message-ID: <Zryyqe6ibAR9h-yq@google.com>
+Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from KVM_GET_SUPPORTED_CPUID
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com, 
+	isaku.yamahata@gmail.com, tony.lindgren@linux.intel.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/14/24 02:59, Akshay Gupta wrote:
-> This is done to support other functionality provided by the SBRMI, which
-> does not fit in the hwmon subsystem.
+On Wed, Aug 14, 2024, Chao Gao wrote:
+> On Tue, Aug 13, 2024 at 06:16:10PM -0700, Sean Christopherson wrote:
+> >On Wed, Aug 14, 2024, Chao Gao wrote:
+> >> On Tue, Aug 13, 2024 at 11:14:31PM +0800, Xiaoyao Li wrote:
+> >> >On 8/13/2024 7:34 PM, Chao Gao wrote:
+> >> >> I think adding new fixed-1 bits is fine as long as they don't break KVM, i.e.,
+> >> >> KVM shouldn't need to take any action for the new fixed-1 bits, like
+> >> >> saving/restoring more host CPU states across TD-enter/exit or emulating
+> >> >> CPUID/MSR accesses from guests
+> >> >
+> >> >I disagree. Adding new fixed-1 bits in a newer TDX module can lead to a
+> >> >different TD with same cpu model.
+> >> 
+> >> The new TDX module simply doesn't support old CPU models.
+> >
+> >What happens if the new TDX module is needed to fix a security issue?  Or if a
+> >customer wants to support a heterogenous migration pool, and older (physical)
+> >CPUs don't support the feature?  Or if a customer wants to continue hosting
+> >existing VM shapes on newer hardware?
+> >
+> >> QEMU can report an error and define a new CPU model that works with the TDX
+> >> module. Sometimes, CPUs may drop features;
+> >
+> >Very, very rarely.  And when it does happen, there are years of warning before
+> >the features are dropped.
+> >
+> >> this may cause KVM to not support some features and in turn some old CPU
+> >> models having those features cannot be supported.  is it a requirement for
+> >> TDX modules alone that old CPU models must always be supported?
+> >
+> >Not a hard requirement, but a pretty firm one.  There needs to be sane, reasonable
+> >behavior, or we're going to have problems.
 > 
-> - Move the SBRMI core functionality and I2C device probing part to misc.
-> - Move hwmon device sensor to misc as only power is reported through
->    hwmon sensor.
+> OK. So, the expectation is the TDX module should avoid adding new fixed-1 bits.
 > 
-> Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
-> Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
+> I suppose this also applies to "native" CPUID bits, which are not configurable
+> and simply reflected as native values to TDs.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+Yes, unless all of Intel's customers are ok with the effective restriction that
+the *only* valid vCPU model for a TDX VM is the real underlying CPU model.  To
+me, that seems like a poor bet to make.  The cost of allowing feature bits to be
+flexible isn't _that_ high, versus the potential cost of forcing customers to
+change how they operate and manage VM shapes, CPU/platform upgrades, etc.
 
+Maybe Intel has already had those conversations with product folk and everyone
+is ok with the restriction, it just seems like very avoidable pain to me.
 
+> One scenario where "fixed-1" bits can help is: we discover a security issue and
+> release a microcode update to expose a feature indicating which CPUs are
+> vulnerable. if the TDX module allows the VMM to configure the feature as 0
+> (i.e., not vulnerable) on vulnerable CPUs, a TD might incorrectly assume it's
+> not vulnerable, creating a security issue.
+>
+> I think in above case, the TDX module has to add a "fixed-1" bit. An example of
+> such a feature is RRSBA in the IA32_ARCH_CAPABILITIES MSR.
+
+That would be fine, I would classify that as reasonable.  However, that scenario
+doesn't really work in practice, at least not the way Intel probably hopes it
+plays out.  For the new fixed-1 bit to provide value, it would require a guest
+reboot and likely a guets kernel upgrade.
 
