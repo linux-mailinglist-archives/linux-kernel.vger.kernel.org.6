@@ -1,116 +1,199 @@
-Return-Path: <linux-kernel+bounces-286315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8F6951988
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504ED95198C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2989D1C21DAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D56A2832CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073031AE85F;
-	Wed, 14 Aug 2024 10:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D0C1AE87A;
+	Wed, 14 Aug 2024 11:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NRI3tSwE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Jld8sOSF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="W4MQ4491"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF66AD5A;
-	Wed, 14 Aug 2024 10:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082861AE84E
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723633174; cv=none; b=JmX+4sGHMng2dB1s4YfiNveuDd36HqPl9MtJEyi7/RZwRJV+10ccgGwp5mztK0Wd+OBwXQD7ZEVDrZOBCIuJCEAwCOYJcsMyL8+2jrkPZ/X4/x4k3lUngFi5oGwRLSZW7tO1+ju2L9ODYA5z0Hvq6qxNmEJfNVcZvlB2YeLpgyg=
+	t=1723633202; cv=none; b=mVC0UH4B6o6L655IIn5dhEzhbDL8x9WZ2iedx7JxABSt1lncVMREVlhlO9+iJgAVzIdb+27Yjji6MSKHU0+lZqGWgbm+G86cBBvzf5lQ6ViFGQ1y+u01YYtm5pblGLqglrGpBDJ18AXpmy5IX4C/lx5/iBZ/7rqIJSw5SzhHLWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723633174; c=relaxed/simple;
-	bh=F/M/Vxi3EnARwbop+Y/BElYUTAWJG1MJJUQ7EeIPi0g=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=sRXiPiQbRjTlyTWpwX7GDyVot1v+e7zhpSVhCdhMkf5+qnVWLuS3v3/T3UBcWmol6ofVDfQ9B1zQkFdT6bba9u6LtsPh49CV67B5PABLvQs1aeHUEPaQ34hXnitDUv0Zay8bZtxhcXXDIDn2Qq03iOw/a4G9NAvHqCur+v2SRRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NRI3tSwE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Jld8sOSF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 14 Aug 2024 10:59:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723633171;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GGVvCB9MV4tgGO1fWP0J06GLQAF3SweWE3g8hu6rBOg=;
-	b=NRI3tSwEYxUf+uhrlvzkcggabmeL2acVf4AvsalIjPFtNzBQPC7XBmlfWRqe031BvnbG6W
-	keV4DztOa7nNxjcCGWsePFGczQ7XmRtQyrm8vcGsInQb5ss2DOVPu5V0TfKxofr3YQVZuv
-	J9OqqKFO7yel7DBbKyGcqIMRk54aWfJezGpOMbcp78yYvt/o5EDhobZkxhcjyd1ussPHFx
-	Ucopze+Y0E/MMBg6gkyn998/pM0hjHc3RXlUFgtGURTmTxPwdPGKeL+DRKOZ+u/ktIxOKU
-	/pOXQ0mpU0HIKGvvk+aXKBF4VFev+JPhDbtXdTtJxdxRQrEExZYxdl0bQPW7Cg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723633171;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GGVvCB9MV4tgGO1fWP0J06GLQAF3SweWE3g8hu6rBOg=;
-	b=Jld8sOSFeh59MrV9GwZFpH2EXyQ3XIQvsuezdQ7+LHFvqeplGU4D6iUClVSJDnMQiu9Rlq
-	RNHOl3DvN6uq2oAg==
-From: "tip-bot2 for Yue Haibing" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/platform] x86/platform/uv: Remove unused declaration
- uv_irq_2_mmr_info()
-Cc: Yue Haibing <yuehaibing@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240814031636.1304772-1-yuehaibing@huawei.com>
-References: <20240814031636.1304772-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1723633202; c=relaxed/simple;
+	bh=gkPgVpcGFwGoavkuUi2MpeQrl95zZ+AG1mO5RvrBy8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GJ+zNF173lleWEPMvsZcrbGg3z+uQEfFHQnpxk0uzWj3DvLw031IL0xmUQb55RgVUtFRQ38qXmKqq1KrBjLRNSvzuZU0L7aNnmKQ069d7/c/3x44z7tLSp3CGYsj6MYUAe/QOD1thKJdEEj73dlA4dHEFWi3WfmS1ChN9Jg231o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=W4MQ4491; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd69e44596so5468155ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723633200; x=1724238000; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3qUjSfJL0D2qc7SMFf2eMAHEIrrW3XFkl0wbXvVknJU=;
+        b=W4MQ4491tHExu2t+TZuLwALMeSgBM3+b/9Nf1YZtJ4s0kAmhIioRclCsQd0Xm4V7b2
+         szUmWuDuMoBXcBM8NlPVi1wtJBwPwKpwRLX3fRvg0R/ciBKI4yQ2d5MdiIQ1UQlRQAAh
+         0M8eUWMWno3RhHgMUyYgNemomFk7sSrYS8mIk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723633200; x=1724238000;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3qUjSfJL0D2qc7SMFf2eMAHEIrrW3XFkl0wbXvVknJU=;
+        b=wbV5i7fzuoX43OrwMXo73sHdM2yj+d1rXG2Ie7QRJeHcvnO8OhaWyS6FeqzEdtsnCW
+         2bCJO7ylwkMPyt91Tc6giMKk2cphgD6naH38Hv5lnWZScrfiuhxLyg5e/UeRMv8hpKVi
+         uSTUwM5UcgPoePAcH6PkF5ovsuuh/QseX/vA/d9oCgExIUmLaRvezEt/+GDTxLHX701P
+         NUyIzKJn1G2zocel2pcZOgBnKNBlI4ldMT8k6w5PiMwKgSTYHUtC3zgWH6vpYA4mzwYQ
+         YT2doIoGbKJa0nArwJRem6iKLvllNwll4ceocEGWvumoXJAO+zbR/t/rP4OgXEPTZZD3
+         s1ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUV9SmslTG2/BRqpX3yKLTWd5Rq+K8w+IelDVOHXHn48VHFkVlDTLaWhVldU8hsXIUJZG8lO4eDeQUgvc2efbvI+uCxSkUWOVjebnCv
+X-Gm-Message-State: AOJu0Yx83hKBgD9ZSU5hK4r2I5pAGWsbCmeGlz5WkwtBsRivCKayZpr9
+	yIUzfG1DmUCjzbwpMeUh2gfis2hImFLLyLM+Ry9WJEOV7sKzCactQ56ZZhJOWg==
+X-Google-Smtp-Source: AGHT+IFqOffgtQAjEk0phUboPbU/XKGUxX1A7ojT9F7/rLRq7j3XznoSX+PZCtEeLMgGbxudFio86w==
+X-Received: by 2002:a17:902:dac9:b0:1fb:2ebc:d16b with SMTP id d9443c01a7336-201cbba0316mr94862705ad.7.1723633200258;
+        Wed, 14 Aug 2024 04:00:00 -0700 (PDT)
+Received: from [10.176.68.61] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14ac10sm27389575ad.102.2024.08.14.03.59.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 03:59:59 -0700 (PDT)
+Message-ID: <180f7459-39fa-4e96-83d6-504e7802dc94@broadcom.com>
+Date: Wed, 14 Aug 2024 12:59:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172363317050.2215.13627603380600979711.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ pci14e4,449d
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Jacobe Zang <jacobe.zang@wesion.com>,
+ robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
+ <20240813082007.2625841-2-jacobe.zang@wesion.com>
+ <1914cb2b1a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <e7401e25-7802-4dc3-9535-226f32b52be1@kernel.org>
+ <062d8d4e-6d61-4f11-a9c0-1bbe1bfe0542@broadcom.com>
+ <1e442710-a233-4ab2-a551-f28ba6394b5b@linaro.org>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <1e442710-a233-4ab2-a551-f28ba6394b5b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/platform branch of tip:
+On 8/14/2024 12:39 PM, Krzysztof Kozlowski wrote:
+> On 14/08/2024 12:08, Arend van Spriel wrote:
+>> On 8/14/2024 10:53 AM, Krzysztof Kozlowski wrote:
+>>> On 13/08/2024 19:04, Arend Van Spriel wrote:
+>>>> On August 13, 2024 10:20:24 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+>>>>
+>>>>> It's the device id used by AP6275P which is the Wi-Fi module
+>>>>> used by Rockchip's RK3588 evaluation board and also used in
+>>>>> some other RK3588 boards.
+>>>>
+>>>> Hi Kalle,
+>>>>
+>>>> There probably will be a v11, but wanted to know how this series will be
+>>>> handled as it involves device tree bindings, arm arch device tree spec, and
+>>>> brcmfmac driver code. Can it all go through wireless-next?
+>>>
+>>> No, DTS must not go via wireless-next. Please split it from the series
+>>> and provide lore link in changelog for bindings.
+>>
+>> Hi Krzysztof,
+>>
+>> Is it really important how the patches travel upstream to Linus. This
+>> binding is specific to Broadcom wifi devices so there are no
+>> dependencies(?). To clarify what you are asking I assume two separate
+>> series:
+>>
+>> 1) DT binding + Khadas Edge2 DTS  -> devicetree@vger.kernel.org
+>> 	reference to:
+>> https://patch.msgid.link/20240813082007.2625841-1-jacobe.zang@wesion.com
+>>
+>> 2) brcmfmac driver changes	  -> linux-wireless@vger.kernel.org
+> 
+> No. I said only DTS is separate. This was always the rule, since forever.
+> 
+> Documentation/devicetree/bindings/submitting-patches.rst
 
-Commit-ID:     22f42697265589534df9b109fe0b0efa36896509
-Gitweb:        https://git.kernel.org/tip/22f42697265589534df9b109fe0b0efa36896509
-Author:        Yue Haibing <yuehaibing@huawei.com>
-AuthorDate:    Wed, 14 Aug 2024 11:16:36 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 14 Aug 2024 12:49:35 +02:00
+I am going slightly mad (by Queen). That documents says:
 
-x86/platform/uv: Remove unused declaration uv_irq_2_mmr_info()
+   1) The Documentation/ and include/dt-bindings/ portion of the patch 
+should
+      be a separate patch.
 
-Commit 43fe1abc18a2 ("x86/uv: Use hierarchical irqdomain to manage UV interrupts")
-removed the implementation but left declaration.
+and
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240814031636.1304772-1-yuehaibing@huawei.com
+   4) Submit the entire series to the devicetree mailinglist at
 
----
- arch/x86/include/asm/uv/uv_irq.h | 1 -
- 1 file changed, 1 deletion(-)
+        devicetree@vger.kernel.org
 
-diff --git a/arch/x86/include/asm/uv/uv_irq.h b/arch/x86/include/asm/uv/uv_irq.h
-index d6b17c7..1876b5e 100644
---- a/arch/x86/include/asm/uv/uv_irq.h
-+++ b/arch/x86/include/asm/uv/uv_irq.h
-@@ -31,7 +31,6 @@ enum {
- 	UV_AFFINITY_CPU
- };
- 
--extern int uv_irq_2_mmr_info(int, unsigned long *, int *);
- extern int uv_setup_irq(char *, int, int, unsigned long, int);
- extern void uv_teardown_irq(unsigned int);
- 
+Above I mentioned "series", not "patch". So 1) is a series of 3 patches 
+(2 changes to the DT binding file and 1 patch for the Khadas Edge2 DTS. 
+Is that correct?
+
+Regards,
+Arend
 
