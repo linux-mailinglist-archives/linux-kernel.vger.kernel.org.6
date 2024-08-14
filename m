@@ -1,120 +1,154 @@
-Return-Path: <linux-kernel+bounces-286561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE22951C87
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:05:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF518951C89
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49B80B27581
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:05:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5227C28335D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064611B32C8;
-	Wed, 14 Aug 2024 14:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE4E1B29CE;
+	Wed, 14 Aug 2024 14:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oixb9P7I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tPNw2PjX"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8AE1B29D2;
-	Wed, 14 Aug 2024 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08DE1AE874;
+	Wed, 14 Aug 2024 14:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723644315; cv=none; b=syn3tNWZcTXh0gVxuGYvHKfBuu4iT7DPTrH0kpBs6Ju1iSSGCg8PaJ4SwCcpmJyiK+k99xY1eU+6kEekZcS024Kk8DYxzsJCuMqIlbHWOmx3sg67aaJdffCRYaS52uDldI3aQI5C1E1Z/eUPrPM2RBniaCe8rZfFfJ/fMhsv3mk=
+	t=1723644344; cv=none; b=rxhJb4S0X1x3jPBOh5l2yP9GBjl4IGMTvBrUhubt4YN09EM0WZoPQOpV/U4oDbB9A5CICyo7l5Ejs+4y+cy5GWnB7+CkSIhyNLfwygrOgu8DRWQOd54/luYQ/DJS00uHPHMf6LAWY0rGGS5jKigjqzcToqDpfsvnjSOcOVnYwAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723644315; c=relaxed/simple;
-	bh=rsrPj3HibZ4DCsL9Ic4OQt4Rsa7JTdGV+7CZoZd1B/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jtw8W+5w997ibV//VfDMqGBTASno0/HZAOcl76LKnlrIXTjGWCA3HSUWyF31jQ0NodajoXZc9et06dtmi/Wm09E3ASPbiV90StefQoRz2rdKcz2Crtf7BinUURnB4mKtKKwS3jP8wZKHqPVXYl+p8kntZQ0/jT/xDZtAVrRDxkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oixb9P7I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941C6C32786;
-	Wed, 14 Aug 2024 14:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723644314;
-	bh=rsrPj3HibZ4DCsL9Ic4OQt4Rsa7JTdGV+7CZoZd1B/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oixb9P7IKMS3/QO3M+v6BsLenBwFo04WV3M2FM4b+PnTBnM+H8LGThWzI2ZaiPrE7
-	 KnT4LaSTN8Kbn7uJ49JPGpPqAKL0lh631pNmnutXfEGcuXmdOA4rpjWCkuWPEMokQi
-	 RdVWgigeciXAaPBIGcO8bVETqszsvXDHmm8iXRlMMpdMixIuPRF2C9V/sIagWgkXJg
-	 fXvbuxQwilJ+8zcimVOxsdl2OCfVzZGJqL0Op6IpfoN2iSy/Tn2aWkun7cfUo3g4bF
-	 iLdGMW7At7uBIBcF1QgTtSnnoddaLSLLq40P7swf55ctf26w506ePlPRSDM1XCw9Wb
-	 4isDAlOl8VI0w==
-Date: Wed, 14 Aug 2024 15:05:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, khilman@baylibre.com,
-	linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Will Deacon <will@kernel.org>, linux-media@vger.kernel.org,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Takashi Iwai <tiwai@suse.com>, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Nicolas Belin <nbelin@baylibre.com>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v7 00/16] Add audio support for the MediaTek Genio
- 350-evk board
-Message-ID: <ae9a5147-95a9-4da3-a56a-ecc22f4e8f04@sirena.org.uk>
-References: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
- <24215f3d-30bf-4379-bb10-c4b183c16b8a@baylibre.com>
+	s=arc-20240116; t=1723644344; c=relaxed/simple;
+	bh=xWrDdBoR9KIKIK3gmLexA45on25zaUxo6g4vt14pnRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SCe3DZy5ma//drTcgR9Lri9hdSIPLgJb8sihFhOuhxbxdTH1eIMJsEx4bWOJsXwy8lL47KhYx1gH7EJ88QpeqE4w5W1LTFdGSCp3QuyVAtYQub/rxYW2XE8FEtVXuCTnr9QlWhLhUtLru2QEHmeNva268HveJl90Qzd8Zryzw78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tPNw2PjX; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EE5ZiI118767;
+	Wed, 14 Aug 2024 09:05:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723644335;
+	bh=Pho+5c3aL6FYMaSK7tRT6r/pIvncBOkqz9wPCmBdfIQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=tPNw2PjX2+dQwinivA8JRySocCBkbL0ZmxWTpye1JfM+xbK7bNWEeCjV7/hag6ysK
+	 fSnx0JBB87Gq+fQujdBuyONH1pN7xKfLMSOphJw6IV/Em4TKnXh072Fc4ChcasuCGs
+	 Jvcdl1I5Av+wki64gcTpAr50x3IzcLjBTgZmcMR8=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EE5Z4g032313
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 14 Aug 2024 09:05:35 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
+ Aug 2024 09:05:34 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 14 Aug 2024 09:05:34 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EE5Yj7117471;
+	Wed, 14 Aug 2024 09:05:34 -0500
+Message-ID: <c5c378e1-e503-43e6-a5ce-1fd53da19375@ti.com>
+Date: Wed, 14 Aug 2024 09:05:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8B/Fc53TUe95dwQa"
-Content-Disposition: inline
-In-Reply-To: <24215f3d-30bf-4379-bb10-c4b183c16b8a@baylibre.com>
-X-Cookie: The second best policy is dishonesty.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] arm64: dts: ti: k3-am65: Add ESM nodes
+To: Nishanth Menon <nm@ti.com>, Jan Kiszka <jan.kiszka@siemens.com>,
+        <devicetree@vger.kernel.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>
+References: <20240813230312.3289428-1-jm@ti.com>
+ <20240813230312.3289428-7-jm@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240813230312.3289428-7-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+
+Hi all,
+
+On 8/13/24 6:03 PM, Judith Mendez wrote:
+> Add Error Signaling Module (ESM) instances in MCU and MAIN
+> domains, set ESM interrupt sources for rti as per TRM [0] 9.4
+> Interrupt Sources.
+> 
+> Add comments to describe what interrupt sources are routed to
+> ESM modules.
+> 
+> [0] https://www.ti.com/lit/ug/spruid7e/spruid7e.pdf
+> 
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+> Changes since v1:
+> - Add patch 6/6 for am65x
+> ---
+>   arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 8 ++++++++
+>   arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi  | 8 ++++++++
+>   2 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> index 1af3dedde1f67..07c9f043dac0b 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> @@ -54,6 +54,14 @@ gic_its: msi-controller@1820000 {
+>   		};
+>   	};
+>   
+> +	main_esm: esm@700000 {
+> +		compatible = "ti,j721e-esm";
+> +		reg = <0x00 0x700000 0x00 0x1000>;
+> +		/* Interrupt sources: rti0, rti1, rti2, rti3 */
+> +		ti,esm-pins = <224>, <225>, <226>, <227>;
+
+I am not sure if someone knows the answer to this question, but..
+
+I noticed that for rti, the interrupt source id's are different
+for SR1 vs SR2, so which should be used here in k3-am65-main?
+
+Here, I assumed SR2.
+
+~ Judith
 
 
---8B/Fc53TUe95dwQa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +		bootph-pre-ram;
+> +	};
+> +
+>   	serdes0: serdes@900000 {
+>   		compatible = "ti,phy-am654-serdes";
+>   		reg = <0x0 0x900000 0x0 0x2000>;
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> index 43c6118d2bf0f..e10cb9f483698 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> @@ -440,6 +440,14 @@ mcu_r5fss0_core1: r5f@41400000 {
+>   		};
+>   	};
+>   
+> +	mcu_esm: esm@40800000 {
+> +		compatible = "ti,j721e-esm";
+> +		reg = <0x00 0x40800000 0x00 0x1000>;
+> +		/* Interrupt sources: mrti0, mrti1 */
+> +		ti,esm-pins = <104>, <105>;
+> +		bootph-pre-ram;
+> +	};
+> +
+>   	mcu_rti1: watchdog@40610000 {
+>   		compatible = "ti,j7-rti-wdt";
+>   		reg = <0x0 0x40610000 0x0 0x100>;
 
-On Wed, Aug 14, 2024 at 10:23:12AM +0200, Alexandre Mergnat wrote:
-
-> Simple gentle ping, the serie seems ready to be applied.
-
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
-
---8B/Fc53TUe95dwQa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma8uZIACgkQJNaLcl1U
-h9C15Qf/aWN3somXkLeCmkhFfrV7QHTBExyjsMeiPhzPWZtkgtCnWe3qurwNFxJW
-hZepPzW5OTzlmzxUY13O4q1omXjfbfIM5wpYSui2CeaJo15WV+/BxfMEjLwhB942
-fDai25vauENBytYGG0rmb5lW0+92gWHVXdFYjB/Zew6sMd3uNCQNZGsfEVXJD3pU
-U9rb2939laF2Lqbjvr502BhhHEPgiBCx0vsPCVtasNrArpTFfinGw2wYA4ZNRGM3
-IB78TudnvuQHQtt9ytOfos5mN+fv5LxoYO16MMmuhTP753QbXipEJ4wYBKWSSPs1
-JLIAGwiAAXiCyPEMjizKQ3fph09SVg==
-=LwLG
------END PGP SIGNATURE-----
-
---8B/Fc53TUe95dwQa--
 
