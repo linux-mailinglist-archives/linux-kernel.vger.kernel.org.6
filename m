@@ -1,54 +1,50 @@
-Return-Path: <linux-kernel+bounces-285800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1140B9512ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:10:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CB59512EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22AD286DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:10:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9545BB2436E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5635E339A0;
-	Wed, 14 Aug 2024 03:10:42 +0000 (UTC)
-Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FEB71CAA2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10DD3A29F;
+	Wed, 14 Aug 2024 03:09:49 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EA639879;
+	Wed, 14 Aug 2024 03:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723605041; cv=none; b=hjuWv0UdqeWlCwyfjFnIsZlH8UP7mTIDjt+VSe2lDUy06ca0MF4c2m5bGJT/y+jOdcIBkAKvEM2IKRfn1GsWZO1dmAcnqG+nkFNTigKka1FeIRRVA87hwBdvvMI25l1QiB8ZljVmFLqeDUx/5HmKrsQJ6Jd2yz1jQ0JwVCb6B4g=
+	t=1723604989; cv=none; b=YGy2oMGjMezlIqd9mPX8FXrolgoARIBeA4TdRSVOkKAw0VaMY4vKV3oOVqWYXvbfm/BRvoFgwyuubEa6LhBhL9rpnrNKQCtD9yBM6VNLH04JYsi37KvF3BfnVPpP1OBLVS5to4McaWK77x1edtEMmtW43XahDrzmnKrlveDDQfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723605041; c=relaxed/simple;
-	bh=OTxT8T0qivJ9vX8SANxrZ/y/s8fwsAgbbxnKenve2Xc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5HitduLaHmFeWC22gff67+1DN2NjhW84/yfKMxwHAt8GTwSvnpdG3zBQIN7h5ntpeaHxPjfbSaeuVakKuXaFdkSd8cteCF+oVEx8dF4+w63Q75stJ85YQuJ3Y1RqF2fHkAcBK/Y0nGzfM4IaUeeq8gli7F82UUHdH5v0XQm5zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee966bc1f71d3a-3fd3b;
-	Wed, 14 Aug 2024 11:07:29 +0800 (CST)
-X-RM-TRANSID:2ee966bc1f71d3a-3fd3b
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.99])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee566bc1f5bd63-21e67;
-	Wed, 14 Aug 2024 11:07:29 +0800 (CST)
-X-RM-TRANSID:2ee566bc1f5bd63-21e67
-From: bajing <bajing@cmss.chinamobile.com>
-To: w.d.hubbs@gmail.com
-Cc: chris@the-brannons.com,
-	kirk@reisers.ca,
-	samuel.thibault@ens-lyon.org,
-	speakup@linux-speakup.org,
-	linux-kernel@vger.kernel.org,
-	bajing <bajing@cmss.chinamobile.com>
-Subject: [PATCH] speakup: i18n: modify incorrect comments
-Date: Wed, 14 Aug 2024 11:00:17 +0800
-Message-Id: <20240814030017.2094-1-bajing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1723604989; c=relaxed/simple;
+	bh=HSxV9DCwxnKbAClnBF2Sl7FFbF6SYtxpSn25/kSssvY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WKicVPxKBTRT+M2MW8dq5KL48PlpGNUdhO1nfPayQgRCXYbpxm8tyR3LuDqTW/eowvxRK41Lbp4YSVSBUIukR2Cqm+hW/E9Ch2zZtFOSxFCScOq1PhArNOWrqkd4uBYBqcg7bYJfl1tigkltCT9guv4B7K36/G1BOcn10wJmdFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WkCr82457zndv7;
+	Wed, 14 Aug 2024 11:08:24 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8DB4B1400FD;
+	Wed, 14 Aug 2024 11:09:44 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
+ 2024 11:09:44 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
+	<michal.simek@amd.com>
+Subject: [PATCH -next] pinctrl: pinctrl-zynq: fix module autoloading
+Date: Wed, 14 Aug 2024 03:01:55 +0000
+Message-ID: <20240814030155.3876069-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,30 +52,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-Regarding the text part, the comment was written incorrectly, so it needs to be modified.
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+based on the alias from of_device_id table.
 
-Signed-off-by: bajing <bajing@cmss.chinamobile.com>
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
 ---
- drivers/accessibility/speakup/i18n.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/pinctrl-zynq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/accessibility/speakup/i18n.c b/drivers/accessibility/speakup/i18n.c
-index d62079b1661f..10c7cdc685f7 100644
---- a/drivers/accessibility/speakup/i18n.c
-+++ b/drivers/accessibility/speakup/i18n.c
-@@ -541,7 +541,7 @@ static bool fmt_validate(char *template, char *user)
-  * If the function fails, then user_messages is untouched.
-  * Arguments:
-  * - index: a message number, as found in i18n.h.
-- * - text:  text of message.  Not NUL-terminated.
-+ * - text:  text of message.  Not NULL-terminated.
-  * - length: number of bytes in text.
-  * Failure conditions:
-  * -EINVAL -  Invalid format specifiers in formatted message or illegal index.
+diff --git a/drivers/pinctrl/pinctrl-zynq.c b/drivers/pinctrl/pinctrl-zynq.c
+index 0e8de27d0de8..caa8a2ca3e68 100644
+--- a/drivers/pinctrl/pinctrl-zynq.c
++++ b/drivers/pinctrl/pinctrl-zynq.c
+@@ -1202,6 +1202,7 @@ static const struct of_device_id zynq_pinctrl_of_match[] = {
+ 	{ .compatible = "xlnx,pinctrl-zynq" },
+ 	{ }
+ };
++MODULE_DEVICE_TABLE(of, zynq_pinctrl_of_match);
+ 
+ static struct platform_driver zynq_pinctrl_driver = {
+ 	.driver = {
 -- 
-2.33.0
-
-
+2.34.1
 
 
