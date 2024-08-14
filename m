@@ -1,136 +1,94 @@
-Return-Path: <linux-kernel+bounces-287221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F05FB9524F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:49:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248BC9524F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1E01F22EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:49:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B964DB2222C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F031C8FB1;
-	Wed, 14 Aug 2024 21:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1D31C8FAA;
+	Wed, 14 Aug 2024 21:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ejs7FKlZ"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAK3439c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C277346D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828077346D;
+	Wed, 14 Aug 2024 21:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723672150; cv=none; b=lcCU9nKPBx5nevAlsSGtIw1lk3BoeSLNM/piVhZueyfLKwBwTCLKi1Yv2/HSmLR0DP/lQaNU+RlhWQSN6bDIiTvhbD29SoM19Acv9ElWXuX8UwXH3Ewsy4vbqFxEfa5EO42F0juMkq3H1QLqbYA3BRbT56cqEt8qUkECITDv5CA=
+	t=1723672143; cv=none; b=fL2od705Vu+BtTmwBKDrf82hhxu/2Kf01zrf1tgCjOCETG6N/ceu+mCv8p5YMFksrU5ePgC8i4ZqW8jqy/4YdeDSwJAOS3bNv548/r42q2xJ3N4n9OjroZBpNWE5/2N8bczd6IDPamiCV3sYHRPqk5lI64rINVfzzg8NTENxqD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723672150; c=relaxed/simple;
-	bh=8xhDo+ZnjUSH1S+3H0xzJx5i48z1o9oM4o9isEVAHxE=;
+	s=arc-20240116; t=1723672143; c=relaxed/simple;
+	bh=qUGZc78pzcRRgjxPHtI30pcwqdtIA4voVWxMwOfXCLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NCNRUy8SABnA6T6J/fND20MM/o/Ft1URg3uDByalNZFIImO3IciHRbs6UU54AF93Y1TxPW4Cq894QuS6NcfQj8Pf6vPU6IK11CVI0U4QB//SrILs0KkdN+n6wfo6FoWKCCxjqg0t4Lq+b9r26UB9cbTk+DA4tzHpo+pMs0YR/4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ejs7FKlZ; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 14 Aug 2024 14:49:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723672145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bfz+tInBoeolRrtoXPsGQjhjRpHjQBGUo7rwsFTiXqA=;
-	b=Ejs7FKlZYp7kRaj+qN/pnYUF/TAjVFChDAVad+mNprhdz2Pggck7VBt9OHgY5rtnXKnjjC
-	3vKsBOnuCpk+4+L5w1XsgzoNRlNVyVm375DYtjYikgklqtRzFF5siRFDpPNJbO82vdhQr0
-	egozFJpZIipBQ83KIxayOg+B+Dpvs1k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
-Subject: Re: [PATCH 3/4] memcg: initiate deprecation of oom_control
-Message-ID: <vhmogrjr4zehf2duzhd5treij77j6npyisch5f2vyshjztgn57@db5suilpihly>
-References: <20240814202825.2694077-1-shakeel.butt@linux.dev>
- <20240814202825.2694077-4-shakeel.butt@linux.dev>
- <CABdmKX2HvW3qZ9zrTq0Gz6q0Gg7_XubVY22o3GJoTOhQg=V+8Q@mail.gmail.com>
- <vixhnru2gag4wav5m2qesoihlhuce75s662ccxcekdp3ba44kj@ml7tlkaefqsx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+MeaQ0g1fpj4iXOHu4Xv5Bsf4rbqwU/XcZijieN/9W1P0nJi08KgUJs8SA5Sx41F3pQKb+MeoyrHYnNuIahQH9dx2viLlIPyJGgZf2UjqaPexlnxD1VRwjFskMrqCBmB1CrECCWmPL6wIgwj2zGdBj9e7Ldq7cJRmdz9LdDJsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAK3439c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3498C116B1;
+	Wed, 14 Aug 2024 21:49:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723672143;
+	bh=qUGZc78pzcRRgjxPHtI30pcwqdtIA4voVWxMwOfXCLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lAK3439cax+vjGyan4WGa2XyIzrJfZ0dyv+7H6Q8tOeQeiHXOEFw+sS4YX3jhgrsM
+	 4J/CQ9RSdVH8nq+eThIix9rWo8UdiJZ0Gx9d8J58YRSDG8G03PyEnJYIJxGAjl0RGr
+	 ctSUtR7BdTfnPHbeVD3t6Tb3mFLjbXrQ2L5fF6vFa/wDgd2Vo5ytawhWDCk8KF5q/y
+	 jKQ/sRISmKa7HXXjfQvBcl7mriaPcPOPBBkXnCJpCTtpmlLQthfF23kkMrlec6DM4f
+	 Jr1MwPzTBDVKy8CxU1yRaSuxyBJ3OoHmVsepyDdMjOd6hH+03e6hmBB+8H+Ypt58xn
+	 e13ChSIQ8tfSQ==
+Date: Wed, 14 Aug 2024 15:49:02 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Marek Vasut <marex@denx.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: input: touchscreen: convert ads7846.txt
+ to yaml
+Message-ID: <20240814214902.GA4101180-robh@kernel.org>
+References: <20240814185140.4033029-1-Frank.Li@nxp.com>
+ <20240814211345.GA4028598-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <vixhnru2gag4wav5m2qesoihlhuce75s662ccxcekdp3ba44kj@ml7tlkaefqsx>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240814211345.GA4028598-robh@kernel.org>
 
-On Wed, Aug 14, 2024 at 02:41:13PM GMT, Shakeel Butt wrote:
-> On Wed, Aug 14, 2024 at 02:00:03PM GMT, T.J. Mercier wrote:
-> > On Wed, Aug 14, 2024 at 1:29 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > >
-> > > The oom_control provides functionality to disable memcg oom-killer,
-> > > notifications on oom-kill and reading the stats regarding oom-kills.
-> > > This interface was mainly introduced to provide functionality for
-> > > userspace oom-killers. However it is not robust enough and only supports
-> > > OOM handling in the page fault path.
-> > >
-> > > For v2, the users can use the combination of memory.events notifications
-> > > and memory.high interface to provide userspace OOM-killing functionality.
-> > > Let's start the deprecation process for v1 and gather the info on how
-> > > the current users are using this interface and work on providing a more
-> > > robust functionality in v2.
-> > >
-> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > > ---
-> > >  Documentation/admin-guide/cgroup-v1/memory.rst | 8 ++++++--
-> > >  mm/memcontrol-v1.c                             | 7 +++++++
-> > >  2 files changed, 13 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/Documentation/admin-guide/cgroup-v1/memory.rst b/Documentation/admin-guide/cgroup-v1/memory.rst
-> > > index afe5e95e9f7b..74cea6712d06 100644
-> > > --- a/Documentation/admin-guide/cgroup-v1/memory.rst
-> > > +++ b/Documentation/admin-guide/cgroup-v1/memory.rst
-> > > @@ -92,6 +92,8 @@ Brief summary of control files.
-> > >                                       This knob is deprecated and shouldn't be
-> > >                                       used.
-> > >   memory.oom_control                 set/show oom controls.
-> > > +                                     This knob is deprecated and shouldn't be
-> > > +                                     used.
-> > >   memory.numa_stat                   show the number of memory usage per numa
-> > >                                      node
-> > >   memory.kmem.limit_in_bytes          Deprecated knob to set and read the kernel
-> > > @@ -846,8 +848,10 @@ It's applicable for root and non-root cgroup.
-> > >
-> > >  .. _cgroup-v1-memory-oom-control:
-> > >
-> > > -10. OOM Control
-> > > -===============
-> > > +10. OOM Control (DEPRECATED)
-> > > +============================
-> > > +
-> > > +THIS IS DEPRECATED!
-> > >
-> > >  memory.oom_control file is for OOM notification and other controls.
-> > >
-> > > diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-> > > index e0bb54e42011..07343e338e4e 100644
-> > > --- a/mm/memcontrol-v1.c
-> > > +++ b/mm/memcontrol-v1.c
-> > > @@ -1907,6 +1907,9 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
-> > >                 event->register_event = mem_cgroup_usage_register_event;
-> > >                 event->unregister_event = mem_cgroup_usage_unregister_event;
-> > >         } else if (!strcmp(name, "memory.oom_control")) {
-> > > +               pr_warn_once("oom_control is deprecated and will be removed. "
-> > > +                            "Please report your usecase to linux-mm-@kvack.org"
-> > > +                            " if you depend on this functionality. \n";
+On Wed, Aug 14, 2024 at 03:13:45PM -0600, Rob Herring wrote:
+> On Wed, Aug 14, 2024 at 02:51:35PM -0400, Frank Li wrote:
+> > Convert binding doc ads7846.txt to yaml format.
+> > Additional change:
+> > - add ref to touchscreen.yaml and spi-peripheral-props.yaml.
+> > - use common node name touchscreen.
 > > 
-> > Missing close paren?
+> > Fix below warning: arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dtb: touchscreen@0:
+> > 	ti,x-min: b'\x00}' is not of type 'object', 'array', 'boolean', 'null'
+> > 
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > There are warning:
+> > Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml: properties:ti,x-plate-ohms: '$ref' should not be valid under {'const': '$ref'}
+> > 	hint: Standard unit suffix properties don't need a type $ref
+> > 
+> > I don't know how to fix it. ti,x-plate-ohms is 16bit, but default it is
+> > uint32
 > 
-> Ah, thanks for catching that. I compile tested the old version before
-> moving text around. Anyways, will resend.
-> 
+> It's going to have to be a special case in dtschema. I'll work on a fix.
 
-Oh I was building without CONFIG_MEMCG_V1.
+Should be fixed now in dtschema main branch.
+
+Rob
 
