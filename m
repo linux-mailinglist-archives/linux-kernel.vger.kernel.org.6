@@ -1,125 +1,62 @@
-Return-Path: <linux-kernel+bounces-287023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6352E9521C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB0B9521C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55B81F223FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:01:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA681F21E54
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A9E1BBBDC;
-	Wed, 14 Aug 2024 18:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D5951BD4F7;
+	Wed, 14 Aug 2024 18:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZTD6ismn"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MiQQtrCh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4311B8EB4
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96731BBBDC;
+	Wed, 14 Aug 2024 18:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658507; cv=none; b=RXhoQyNFsE4s8mS78BuSrvhJJmf5C9kLjwgdCxph2bEguLqqV35KxaF1viT3XFFLaDWB8Ed+qMAoZqINprIPyljmsjdrFbq8tQxTQeBoy6L2hII4p/190alm5HdQTF0iqw9zMY0Jo2ML/t1Lhm013q0Wdb37GFCQzpX1t5/bvfc=
+	t=1723658541; cv=none; b=b1bA00vNaG0jUg43JJPI8Xbvy1JvsXvlonWgPJhvInPT+4bHYJc08ZPBW7bPinRIYClunNWaZpR/0ibb7bTDMoSQAD6K4OV3nMDo0+IRjmAYoox6rrVoKF3nayIjPp+O0Ed3jGo9SGOOBYqVOEU4+T5uRNKYEw5k66pRz6nl8W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658507; c=relaxed/simple;
-	bh=VKidP+OQljS2EXJyioas4CypU+BVrUWJoPUVdLvxkoA=;
+	s=arc-20240116; t=1723658541; c=relaxed/simple;
+	bh=b3IL0IuKAL/2fFGkzh5hUHW0BTCue6XPE1uAmeSBXSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MlbQnEtWOF1xkDBlvSShJt8cu7Y5gZNtYE6D6Uxq1KzJf1LQiHG9ifcbnUQ0CLX9v+dx7ZpCsD3UdOvgB++rkQytQ/DTWsmbTH1jrDXaXnakMcfbxkP+JmkzhU8YBDW47PKAYfIFS9ClRxiOc6MJeRuJrewmLGP4WrEVw2/OI7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZTD6ismn; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3687fd09251so112085f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723658504; x=1724263304; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iKG1BA6nZA/+iN2W0nGROx4tq6HJetKTMlW3JVQELg0=;
-        b=ZTD6ismnXgkRbK6WF3IeepqWr8YZY0DolpdxJ6Xq/AmWZY/mdBcpLeqeHY3MmmJL7S
-         N8AsNXVlWrK7UlqUg1gSlgUBD0ULB3V85WnGYrlrUjFZrOyWp4ubQPy4TwpVD7xIsfOO
-         ENKdhuYLXKIFaLaG2SED8fxQZLfL5KztqKa/E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723658504; x=1724263304;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iKG1BA6nZA/+iN2W0nGROx4tq6HJetKTMlW3JVQELg0=;
-        b=axp7mZyA392FVKQSvXZYWfN4CohUEzDkRgkLupF2ZrKS6B9YvS3W5U5jlQjmvASubZ
-         HglE6o7eX9zNAMqbHgiQEgXGj9qJzESpL6Z4DZQuTcH7+16khGh6K3nCUbjl5D9meqGF
-         akFY+11yIYsbRi2ETocY2sU55OFkd9GOKrp4RpGNEsuWrPOWtgMLjExJsW//C7gIyegx
-         x9odWbeP46xZD7lTalsPN3CBw8xYcqITBpm+nOZil1SYnx04aS5py7ABjHc1nouqUSUj
-         KSYjCWnLL57WuG+8alnKyFPjrY0CVVu6JGfOY1NpuulyLwwLua7okNvFp02WTuzNo88r
-         AhGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpMZmGRFrJzEucRowIknZQmhHTJkj90bpDDuM70YtNact3AxTjJNTRsd17Q6Wo9iEAZcklTqCmEXMsx1D2r/pxEGlCX4QBp7Sd3PQw
-X-Gm-Message-State: AOJu0Yy1FpAomEda4eIutyn8RD1iCXDR7WFuK0gbaAMueE364PHqJCAE
-	ox5jI2t4bGb2UXOhQjMw2z1CtvTbWz12WwNzx55mNqLcUnEMUK4i8T8zQAe17hw=
-X-Google-Smtp-Source: AGHT+IGCmSIjhxSRM6zFrHvolmN2wXREY83zZw95/jXyk6UpHYC0uXJzFqUFz4BGJeihuJswIDQe0w==
-X-Received: by 2002:a5d:59a5:0:b0:36b:357a:bfee with SMTP id ffacd0b85a97d-37177749bc7mr2760473f8f.1.1723658503541;
-        Wed, 14 Aug 2024 11:01:43 -0700 (PDT)
-Received: from LQ3V64L9R2 ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3718479c332sm548792f8f.87.2024.08.14.11.01.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 11:01:43 -0700 (PDT)
-Date: Wed, 14 Aug 2024 19:01:40 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Shay Drori <shayd@nvidia.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Jiri Pirko <jiri@resnulli.us>, Leon Romanovsky <leon@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Shailend Chand <shailend@google.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Ziwei Xiao <ziweixiao@google.com>
-Subject: Re: [RFC net-next 0/6] Cleanup IRQ affinity checks in several drivers
-Message-ID: <ZrzxBAWwA7EuRB24@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Shay Drori <shayd@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Jiri Pirko <jiri@resnulli.us>, Leon Romanovsky <leon@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Shailend Chand <shailend@google.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Ziwei Xiao <ziweixiao@google.com>
-References: <20240812145633.52911-1-jdamato@fastly.com>
- <20240813171710.599d3f01@kernel.org>
- <ZrxZaHGDTO3ohHFH@LQ3V64L9R2.home>
- <ZryfGDU9wHE0IrvZ@LQ3V64L9R2.home>
- <20240814080915.005cb9ac@kernel.org>
- <ZrzLEZs01KVkvBjw@LQ3V64L9R2>
- <701eb84c-8d26-4945-8af3-55a70e05b09c@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfMRn94PVqPZ4ujq535te2awgMJB4Cnpsox1wSLrFdRlcW43PBWVp5PyDvzwZlLtF234yrqcoNC2j5TyZE1JJH2kbUQkib/U69+XvUwLRjRvA0LpePjOw+SQEeJ4qSDjMc1nI+wreHEk/K5O+21w5G/rp8ZzTvs5UN5o6H11tvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MiQQtrCh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B202EC116B1;
+	Wed, 14 Aug 2024 18:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723658541;
+	bh=b3IL0IuKAL/2fFGkzh5hUHW0BTCue6XPE1uAmeSBXSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MiQQtrChhx1PuqevUgzHPsGXtsoqQLZaxr1lhUlcLAgyVH/lAum0ssFnLZRwu0HMM
+	 IwVI5t/6aKHU2GO9waNqBNrrxVI67HMFIfuNMo+A6NHW0BqE/UvJ88gG0ej2wiRWu2
+	 WYhJl6AdTST7MLRYWdVviguexw/Yi6/fs5rxsldgEtmyhdl0RQTQDUyZXpTXXTCO3r
+	 i8TQlr9XtSi7X4H8eBDB7tfw+8In1oDUb1DceRgP24se5d0/SSmT0LX+jjsdXPdIeu
+	 16WvWCnNozuZpioNgAV3sLhqUo8tHPsASR0a0ikVHqI8BS67KAcmS+Xo2clYXrKGes
+	 01Nng+NdQwuIQ==
+Date: Wed, 14 Aug 2024 11:02:19 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+	"clm@fb.com" <clm@fb.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"dsterba@suse.com" <dsterba@suse.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"gustavoars@kernel.org" <gustavoars@kernel.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH] btrfs: Annotate structs with __counted_by()
+Message-ID: <20240814180219.GA2542470@thelio-3990X>
+References: <20240812103619.2720-2-thorsten.blum@toblux.com>
+ <e7cbec5f-269a-410c-bb5a-e00de15078f6@wdc.com>
+ <106F3A42-A7CF-402E-B7F7-05AA506C5B7D@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -128,61 +65,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <701eb84c-8d26-4945-8af3-55a70e05b09c@nvidia.com>
+In-Reply-To: <106F3A42-A7CF-402E-B7F7-05AA506C5B7D@toblux.com>
 
-On Wed, Aug 14, 2024 at 07:03:35PM +0300, Shay Drori wrote:
+On Mon, Aug 12, 2024 at 02:03:44PM +0200, Thorsten Blum wrote:
+> On 12. Aug 2024, at 12:54, Johannes Thumshirn <Johannes.Thumshirn@wdc.com> wrote:
+> > On 12.08.24 12:37, Thorsten Blum wrote:
+> >> Add the __counted_by compiler attribute to the flexible array member
+> >> stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> >> CONFIG_FORTIFY_SOURCE.
+> >> 
+> >> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> >> ---
+> >>  fs/btrfs/volumes.h | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >> 
+> >> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+> >> index 37a09ebb34dd..f28fa318036b 100644
+> >> --- a/fs/btrfs/volumes.h
+> >> +++ b/fs/btrfs/volumes.h
+> >> @@ -551,7 +551,7 @@ struct btrfs_io_context {
+> >>   * stripes[data_stripes + 1]: The Q stripe (only for RAID6).
+> >>   */
+> >>   u64 full_stripe_logical;
+> >> - struct btrfs_io_stripe stripes[];
+> >> + struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
+> >>  };
+> >> 
+> >>  struct btrfs_device_info {
+> >> @@ -591,7 +591,7 @@ struct btrfs_chunk_map {
+> >>   int io_width;
+> >>   int num_stripes;
+> >>   int sub_stripes;
+> >> - struct btrfs_io_stripe stripes[];
+> >> + struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
+> >>  };
+> >> 
+> >>  #define btrfs_chunk_map_size(n) (sizeof(struct btrfs_chunk_map) + \
+> > 
+> > Looks good to me,
+> > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> > 
+> > Out of curiosity, have you encountered any issues with this patch applied?
 > 
-> 
-> On 14/08/2024 18:19, Joe Damato wrote:
-> > On Wed, Aug 14, 2024 at 08:09:15AM -0700, Jakub Kicinski wrote:
-> > > On Wed, 14 Aug 2024 13:12:08 +0100 Joe Damato wrote:
-> > > > Actually... how about a slightly different approach, which caches
-> > > > the affinity mask in the core?
-> > > 
-> > > I was gonna say :)
-> > > 
-> > > >    0. Extend napi struct to have a struct cpumask * field
-> > > > 
-> > > >    1. extend netif_napi_set_irq to:
-> > > >      a. store the IRQ number in the napi struct (as you suggested)
-> > > >      b. call irq_get_effective_affinity_mask to store the mask in the
-> > > >         napi struct
-> > > >      c. set up generic affinity_notify.notify and
-> > > >         affinity_notify.release callbacks to update the in core mask
-> > > >         when it changes
-> > > 
-> > > This part I'm not an export on.
-> 
-> several net drivers (mlx5, mlx4, ice, ena and more) are using a feature
-> called ARFS (rmap)[1], and this feature is using the affinity notifier
-> mechanism.
-> Also, affinity notifier infra is supporting only a single notifier per
-> IRQ.
-> 
-> Hence, your suggestion (1.c) will break the ARFS feature.
-> 
-> [1] see irq_cpu_rmap_add()
+> I only compile-tested it.
 
-Thanks for taking a look and your reply.
+This change is now in next-20240814 and I see a UBSAN warning at runtime
+as a result because the assignment of ->num_stripes happens after
+accessing ->stripes[] (which breaks one of the requirements for using
+__counted_by [1]), meaning that UBSAN thinks this is a zero sized array
+due to bioc being allocated with kzalloc().
 
-I did notice ARFS use by some drivers and figured that might be why
-the notifiers were being used in some cases.
+  [   24.992264] ------------[ cut here ]------------
+  [   25.009196] UBSAN: array-index-out-of-bounds in fs/btrfs/volumes.c:6602:11
+  [   25.021963] index 1 is out of range for type 'struct btrfs_io_stripe[] __counted_by(num_stripes)' (aka 'struct btrfs_io_stripe[]')
+  [   25.036463] CPU: 28 UID: 0 PID: 1171 Comm: systemd-random- Not tainted 6.11.0-rc3-next-20240814 #1
+  [   25.048172] Hardware name: ADLINK Ampere Altra Developer Platform/Ampere Altra Developer Platform, BIOS TianoCore 2.04.100.11 (SYS: 2.06.20220308) 11/06/2
+  [   25.064754] Call trace:
+  [   25.069965]  dump_backtrace+0x114/0x19c
+  [   25.076564]  show_stack+0x28/0x3c
+  [   25.082642]  dump_stack_lvl+0x48/0x94
+  [   25.089068]  __ubsan_handle_out_of_bounds+0x10c/0x184
+  [   25.096883]  btrfs_map_block+0x540/0xb3c
+  [   25.103570]  btrfs_submit_bio+0xf8/0x654
+  [   25.110256]  write_one_eb+0x290/0x444
+  [   25.116682]  btree_write_cache_pages+0x44c/0x5a8
+  [   25.124063]  btree_writepages+0x2c/0x8c
+  [   25.130662]  do_writepages+0x10c/0x34c
+  [   25.137175]  filemap_fdatawrite_wbc+0x84/0xb0
+  [   25.144295]  filemap_fdatawrite_range+0x74/0xac
+  [   25.151589]  btrfs_write_marked_extents+0xa0/0x140
+  [   25.159143]  btrfs_sync_log+0x298/0xa98
+  [   25.165743]  btrfs_sync_file+0x440/0x608
+  [   25.172429]  __arm64_sys_fsync+0x90/0xd4
+  [   25.179115]  invoke_syscall+0x8c/0x11c
+  [   25.185628]  el0_svc_common
+  [   25.191185]  do_el0_svc+0x2c/0x3c
+  [   25.197264]  el0_svc+0x48/0xf0
+  [   25.203083]  el0t_64_sync_handler+0x98/0x108
+  [   25.210118]  el0t_64_sync+0x19c/0x1a0
+  [   25.216552] ---[ end trace ]---
 
-I guess the question comes down to whether adding a call to
-irq_get_effective_affinity_mask in the hot path is a bad idea.
+The fix might be as simple as something like
 
-If it is, then the only option is to have the drivers pass in their
-IRQ affinity masks, as Stanislav suggested, to avoid adding that
-call to the hot path.
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 4a259bdaa21c..0cabc2ebde71 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6561,6 +6561,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	}
+ 	bioc->map_type = map->type;
+ 
++	bioc->num_stripes = io_geom.num_stripes;
+ 	/*
+ 	 * For RAID56 full map, we need to make sure the stripes[] follows the
+ 	 * rule that data stripes are all ordered, then followed with P and Q
+@@ -6621,7 +6622,6 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	}
+ 
+ 	*bioc_ret = bioc;
+-	bioc->num_stripes = io_geom.num_stripes;
+ 	bioc->max_errors = io_geom.max_errors;
+ 	bioc->mirror_num = io_geom.mirror_num;
+ 
 
-If not, then the IRQ from napi_struct can be used and the affinity
-mask can be generated on every napi poll. i40e/gve/iavf would need
-calls to netif_napi_set_irq to set the IRQ mapping, which seems to
-be straightforward.
+but I am not sure of the implications of this change on quick glance
+with regards to error handling and such.
 
-In both cases: the IRQ notifier stuff would be left as is so that it
-wouldn't break ARFS.
+[1]: https://people.kernel.org/gustavoars/how-to-use-the-new-counted_by-attribute-in-c-and-linux
 
-I suspect that the preferred solution would be to avoid adding that
-call to the hot path, right?
+Cheers,
+Nathan
 
