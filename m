@@ -1,112 +1,93 @@
-Return-Path: <linux-kernel+bounces-286881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B598951FEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:28:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52B4951FF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D7E284977
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC3E288B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA171BA87E;
-	Wed, 14 Aug 2024 16:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6D81BBBD4;
+	Wed, 14 Aug 2024 16:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvd7wWM9"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="QQsAdwZs"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8E81AED24;
-	Wed, 14 Aug 2024 16:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E1C1B9B31
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652869; cv=none; b=dEAKdyUYC+WtzM1s+eVy/gRRD54SHzuHEwbgLTIQJYz8Auy/ToHsAWgWM6hJ22TmtFIyw1rrZ3+FW5FdwD5TdmOW2wL0fx0YEw2+hFw8M0S27CJzg8L/es3VWBI54ErEfJHVpDJtes4wynPzDjeSrp8DKFODp/+xdHMZqmTzl5I=
+	t=1723652892; cv=none; b=c9m64OCWkc1Yt3+gD4GgqzrlVT110IjIjYQZDsybFPUOObmZ5Vx/jFISgghnM4M+6Hi3J/tuDFahb+76LMRK/UpVM8CKokm+9lvSbkZWIWsuw+apd/SWNdCL8snbSX8/1bM8f0bAL+I93MHKWlbFjbOjKplBxSkac4JyhZ8TVnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652869; c=relaxed/simple;
-	bh=SCHhtiuOOre5UIbLOojVF8ki6EgWNqtLzrYpLiUUYa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sh/1NtAgz9B3zR5ITGbxBlMYLwzhTS/o+PQ+s7JSlhRHtd6vV0R/84cWN6ZV30mZbUcUBsScG/TsnpWZr7xUo8tIQ5r2wrmGPox+OYo7Fu4gPXmGejqHXWkMspcEcttF7ZfOHgN6YVYEf5N3LQOvM9o/z9S6d34jXxjT63d/giY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvd7wWM9; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efd91dd28so2838e87.1;
-        Wed, 14 Aug 2024 09:27:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723652864; x=1724257664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5MPQ1QUqseOgwKYNiAImYbxJzlGOMm4xDJh/aLy/Nw8=;
-        b=lvd7wWM9lYF9TpB/h87CnRBReWrvYS6wQTN5LuHYNgrNQXtsgk3j2+SRZL7gFvKG6n
-         AoMekBNGJ8NhX/bcw1fSFG+vjZkYNhnEm8RChTASUbn9l7hD9U7IOv19P1NDzHxiGalT
-         UC8ntKmtdpP7+dBfDkMHETKwMn++IskFrRGafjgjImzz4Efu7E3abRa0ByLMSlWsUFor
-         HqrZPx7rYgIR1xWqYrWAsijHvu9Qp0x32atcepLi3nh1LSG1sH4D8Mp3VTnkdAP8cp9Y
-         6PeafbDGRG6thVjhaH/w8Y0ylMeoD4DOSwDV4LFYNyidqNSPbOy/GvJUZ4ICUd/CgkTJ
-         JyXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723652864; x=1724257664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5MPQ1QUqseOgwKYNiAImYbxJzlGOMm4xDJh/aLy/Nw8=;
-        b=KORJonutl0tivDOCUmdxvV2zb3yznt9yjwyEn2liMuA/CbkXYsI2Gi08qAAyLZ0LTF
-         ShG+vazqQjZi7UUzzF9ca1wEJDGhG248bkfb9YuxpcwsS/q2pPm1bym8JsvPYc20YsB3
-         0kXOMRCiLYs2ff5ipZVNx3wVPn/bFHJ+BgoOfYM1kFvxgMpinuTU5AZTV7dvr9a/gt5b
-         IVquOWbdOiW99hgQ2fxsB5aDIo56UKSmZMNR+zFD/n3gfZ+doVWkdRUnAKyNr3dmPBnF
-         UeQ+d1Rkg1sVaixNmnB4sQVTy6DM7HCLs89tEjM8EEPpfYaZUT13R1OWrAfs1u8CfXVN
-         IlNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKoN7vLGX/hNFYrmPbL0pCl37jZv2ouNmxbBxTDCjtoyV0qdNXi+RgEFnrC62WtB4bzZZxZedg1Rvh@vger.kernel.org, AJvYcCWSUqOSSxz3t9eQeg/iNHtcI0wnLioVVeswQGxlbYaIBt3M+jTCnSaIFF8GUu/zIl5GwbXOCWQr8SSIkd6T@vger.kernel.org, AJvYcCWzwPHCwXczD/xZCQRePivYDZzcX/bRclBHlPl2f94Mw0PpmsDCuXDFqI+DDZBL4YAyWjfpodSGr5xxdr8dpbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwysDj0Q/kGaQ1D8AwEnDzU7RNUzIcxpsQnus7rTLI0jgdFPS6j
-	t30b2Y/9Mn1vC06gPFEFJVljK4BjQA1IT4NVU2HU3LoAYj6oa5Ayjnq1yMFqkIj1Wn69aCZxWqv
-	kprlr0zSiX0Oq9b/dM86cxuiyn+w=
-X-Google-Smtp-Source: AGHT+IE8T795cCVhLDVAkkR6XeRgBNw44XWGGSMe78NC8Z2bOheuicfqH7HWm4YY3z4o9PP9bb4zlgA2+xLen5QhdKU=
-X-Received: by 2002:a05:6512:3f0f:b0:52e:f99e:5dd3 with SMTP id
- 2adb3069b0e04-532edbd08edmr1178690e87.8.1723652864100; Wed, 14 Aug 2024
- 09:27:44 -0700 (PDT)
+	s=arc-20240116; t=1723652892; c=relaxed/simple;
+	bh=BCF631W1Ro9Qz7XCjmHPFII2HSDE5iVITaN4S0vTNpc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lotgc1BTUXThcw8Lb86b7OyNvQi5cPDEAWnQDjSZHYSDMRRXni1F4ChHjuKfNbl8d7C7HI1C7zL3LKIsfnZSK5kQD63uMkePDR6Zfvxo6sq97T+QJj62yYDCoKRapSCUzg0xapvJaO33Kpwg1R6JxXHaTiYApPUOrgfEp4v0OhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=QQsAdwZs; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=izgnb2xml5epbownengd5anrua.protonmail; t=1723652889; x=1723912089;
+	bh=NDeEv674K9CkcHgDcHkn+qiS/pKjJ9GtImDj4uiP3aQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=QQsAdwZspwhYXiBTOLgkyaYacs88TeDdy2W62teQVW1o3zcV47SasonfXnROSt1DY
+	 HiPafgcGhh2U0OVBrOjQxozFaI9lsSRSa3gR3HDfHsMEQ8weTXufXdfLN7boi8xwzS
+	 dqv3vdBpyhgExQTSXLaweXFQjoGZYItymUpSvyfKla3vB/+g9Qsnahi8oSx9iVc/Tv
+	 ya4+0gY39dODpqe3fSTDT1KUjDxT/ZBp3mPKV+lAWbv9HgCq8sToVCeDVg79ZZzBbP
+	 1ZdoeVYvTkDq8jrk1rCto8d+lPv1D6fwn/iSz+4kLZvxPvsnk8JgMuJ0ONGXF50DqX
+	 Mm+QL2FHmN4wg==
+Date: Wed, 14 Aug 2024 16:28:04 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <04b0fd96-c91c-4f38-90e9-8acee31e8445@proton.me>
+In-Reply-To: <20240812182355.11641-5-dakr@kernel.org>
+References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-5-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 88f8c24039c7706740f395f5716dfb216a4a06aa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806103819.10890-1-animeshagarwal28@gmail.com>
- <39e9fc4a-64f7-4695-bfd2-1f77740714c3@kernel.org> <ZrJGFk8+tgukCeGg@lizhi-Precision-Tower-5810>
- <a03c0609-cc13-457b-84ec-5880fc553bd8@roeck-us.net> <ZrzPNmXLsqxjzM+J@lizhi-Precision-Tower-5810>
-In-Reply-To: <ZrzPNmXLsqxjzM+J@lizhi-Precision-Tower-5810>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 14 Aug 2024 13:27:32 -0300
-Message-ID: <CAOMZO5DOUbhKHOfX0z+hV0KtCsqN0ta=S1U64QXKNSExHbM_Kw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: watchdog: fsl-imx-wdt: Add missing
- 'big-endian' property
-To: Frank Li <Frank.li@nxp.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Animesh Agarwal <animeshagarwal28@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 12:37=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+On 12.08.24 20:22, Danilo Krummrich wrote:
+> +unsafe impl Allocator for Kmalloc {
 
-> After Alexander Stein point out, check spec, and dump watch dog reset val=
-ue
-> at ls1043a platform.
->
-> 0x02A80000:  00 30 00 00 00 10 00 04 00 01 00 00 00 00 00 0
->
-> It is big-endian. imx2_wdt.c use regmap which call regmap_get_val_endian(=
-)
-> to handle endian.
->
-> So this change is corret.
->
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+There is a missing SAFETY comment here (and also for Vmalloc, probably
+also for VKmalloc then).
 
-Shouldn't 'big-endian: true' be conditionally enabled only for the
-Layerscape platforms?
+---
+Cheers,
+Benno
+
+> +    unsafe fn realloc(
+> +        ptr: Option<NonNull<u8>>,
+> +        layout: Layout,
+> +        flags: Flags,
+> +    ) -> Result<NonNull<[u8]>, AllocError> {
+> +        // SAFETY: `ReallocFunc::call` has the same safety requirements =
+as `Allocator::realloc`.
+> +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
+> +    }
+> +}
+> +
+>  unsafe impl GlobalAlloc for Kmalloc {
+>      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+>          // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero=
+ size by the function safety
+> --
+> 2.45.2
+>=20
+
 
