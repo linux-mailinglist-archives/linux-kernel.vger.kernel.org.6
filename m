@@ -1,218 +1,121 @@
-Return-Path: <linux-kernel+bounces-285853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D133F951373
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:21:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B8E951376
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537DA1F21E71
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499B41C22E93
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EA24CE13;
-	Wed, 14 Aug 2024 04:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD444D8D0;
+	Wed, 14 Aug 2024 04:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="F5RbE/ar"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2051.outbound.protection.outlook.com [40.107.100.51])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kLcFEAiY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0901182B5
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723609264; cv=fail; b=pcp7gsdp5hXwmzBNBdMXsuOXTT0a8IL858mFb6gioQJFC/DRN1f/RV1aerkBnYwJQpPc0E6JTEJImEAozpskuM9W9PMiCWer8wDTGrIUwdsltqsb7l4q5md7Ic8hFQqT86AfYTh9sb6WY8Pdjwp0IjCKgEcNts27o18XboxBSbo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723609264; c=relaxed/simple;
-	bh=EgauVXRUqoogmo+lDCir2Y7ZHhnew/LxhMVGCU0/sgw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=peG8POjtR4ha37n1uYkpLJhZ+/pDi2L3cfwiD7YUBPz10K3Po56nVHI3L0e3wvZVTN6VREUuGwbjLI4z/1zUebfjhOufjqQcIAlk2/Dlgvf4ZzijCCtaDvCcd0vH+UQRfeosNwLTX92sAS9H8AhTCHd11SQDXfLGVhQt2lWBskQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=F5RbE/ar; arc=fail smtp.client-ip=40.107.100.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f+Ko/wUqIqWE78nTNB42x3eFUL25qVoob0TrdCcgXgJ/LfOhN/Yi8oUylrVUbSqBLBhuS4VdQJvmC4FWEP/xJ0VnyoB4h/0OON+aSQLNgYhBkZ2J7tCzXew/ecrJ65sCbyL67wb9ZQLUV3TE4Agk7AT7gTpaUobqnayyuTbj/r5tOBzZ4040w7HvwiaF/8SECf93wTiwqHQ07h8d76OHXqb1FoG2097nBm9mztu6fefNeugULUhJMPSxqk88krnf5CJlT/c14MLiH9DOc9S92aNytwqCt3xvxSIjsfrvgHYJFLd1gtDwZY7DiPu7YTQJ9gyX/d4xZ8PHgROY3daNQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XL+SiZfLYhczlHul1GSlZ89MW+Jtvqju+ph40nWOlY4=;
- b=sRUUmjOSAf3ggdGvr4eOkVqFRNk+tuIdqvUUwKgRF722zJPQTRdP3fgw6gmGZNeoVEKFv3O6et9Fz7B0eF3DPY1CjTK9KZKOd1YzY0SDq4GimXp/gMyYhPNjNlGCbCLrfVKl4h1myDhRt8UF4GmOjSzcy62isa71tUpSHN/i3lEgGnTKP9Nm+IC2G3DKij17VuLtJ9mfQQUt0tDshB15p63nvSsMZ+ufVS8R8+2zbwFy6V7N6GiOLB9acA2XZzcfX7Vm+qMD4Ir9VfwnXzXMOUyO5knkxrauQfia0OQkDYXOEygQmN1ZWjwGzfqVeZdiL+0qXYA1zKRKs4pSJ3riwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XL+SiZfLYhczlHul1GSlZ89MW+Jtvqju+ph40nWOlY4=;
- b=F5RbE/arfLfNJJAbOMM0zUx++s/Ylpg+3S6qjOivzh3tnYGIqpQ/agdixCEE1D/hqh3zbI6+seCfLzx4+gR/w+8I3rdXabn9D/Mp7GoiEgOOg97mimDbnEZglRO9w/339V82e2z/STKDE/flPsoTIoSbVvabtuE4QEihUGghncM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ0PR12MB6760.namprd12.prod.outlook.com (2603:10b6:a03:44c::18)
- by CH3PR12MB7620.namprd12.prod.outlook.com (2603:10b6:610:150::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Wed, 14 Aug
- 2024 04:21:00 +0000
-Received: from SJ0PR12MB6760.namprd12.prod.outlook.com
- ([fe80::25c8:f399:b2e8:1947]) by SJ0PR12MB6760.namprd12.prod.outlook.com
- ([fe80::25c8:f399:b2e8:1947%5]) with mapi id 15.20.7849.023; Wed, 14 Aug 2024
- 04:20:57 +0000
-Message-ID: <ae511933-e191-4e25-a919-21504fa31b93@amd.com>
-Date: Wed, 14 Aug 2024 00:20:12 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] drm: Use full allocated minor range for DRM
-To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>,
- Alex Deucher <alexdeucher@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- intel-gfx@lists.freedesktop.org,
- Pekka Paalanen <pekka.paalanen@collabora.com>,
- David Airlie <airlied@linux.ie>, Oded Gabbay <ogabbay@kernel.org>,
- Maxime Ripard <mripard@kernel.org>, Emil Velikov <emil.l.velikov@gmail.com>,
- Matthew Wilcox <willy@infradead.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, James Zhu <James.Zhu@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-References: <20230724211428.3831636-1-michal.winiarski@intel.com>
- <CADnq5_NwDn5DXPadzZtegUJ=y=LfVHykO7kG3edmiqRTTCxMNQ@mail.gmail.com>
- <nqsuaaibncfcnu3d5376ulujxfswbjwq3ptrivh6djpmvcpuih@fepbhcbik272>
-Content-Language: en-US
-From: James Zhu <jamesz@amd.com>
-Organization: AMD RTG
-In-Reply-To: <nqsuaaibncfcnu3d5376ulujxfswbjwq3ptrivh6djpmvcpuih@fepbhcbik272>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YQZPR01CA0105.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:83::22) To SJ0PR12MB6760.namprd12.prod.outlook.com
- (2603:10b6:a03:44c::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B73182B5;
+	Wed, 14 Aug 2024 04:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723609341; cv=none; b=otS6ieKsp9TJShmluX3JqGfVyfqIeXN+9h8dL+dCyjBtLTytPa+bIhOoEEB6uojEQeOK16+B7tyuxOsx4GA0gKi3H2j5o9fMMeuqSiUNdKaANv9kL6nZmGwFc4mlMr0Zon3smGun2P2EAQFQdhomkuonylPFU3I5wHQHE5d8LHs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723609341; c=relaxed/simple;
+	bh=Umh3zMhFXKL1dHtYPdGRhTXjQf+cXqe3JQ5A+Vx+L5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UKprxoGexoH9Qx5n1y+u8sibqof1HuwpfQ/LWarH6a+9iBm2tXZh/0GrHcfC+ePI2Hq34UcIottGVCa/OSoObLw43Qv+YGABylPB+fut9rj0sbtKuOgbNxYptOb3fhtWB1Z11MF3UOvNOY2BYMixM1o1/JNc1Za8IntlfXc8TaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kLcFEAiY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47E2clNf016977;
+	Wed, 14 Aug 2024 04:22:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	n26wZzdKE0a9/zaYRFmywMl5+MoJimZr3OH3v/Yy5WE=; b=kLcFEAiY7UX2rt2P
+	c22nwZeiv3T6imyN3L27dG5Ppm78iZIFDRWZwvz8zVI5LGXXnA0DLVjVI815A5N8
+	j5R5TVtlOm/qF6XsJYX0enBBuqudwMccZYtCdyyTPa63XJgVao+Aw1nfuP/b9UwC
+	lwakZ0qkIyQJMZsIeMM5Gnt37XxJRGGdrfZpa/PKoeJflW375rxrNnE9EuVKo+Nd
+	u+nxMjIiaErnxEzKXFptKu90S2U9Hqlzb5mYGYmmacm4cxVKAMxGqWI20CeQkEB7
+	AYHDXyuQSVJGKwFr7aREFdCc0eHawvz7gMKqa8GiuQSMGjZyyuGAsFmHC6468UHj
+	xxyDoA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410kywg640-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 04:22:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47E4M7Dk017977
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 04:22:07 GMT
+Received: from [10.218.35.239] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 21:22:05 -0700
+Message-ID: <04fc6990-b249-29cb-bc15-7fe85292f6a0@quicinc.com>
+Date: Wed, 14 Aug 2024 09:52:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR12MB6760:EE_|CH3PR12MB7620:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10620e38-ff76-4308-ca1f-08dcbc187ef8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	oi8t7uQmpbycZTqkj3uB6dAk4//UlfcLvanLh7qT0N6Ho/uk29cL9hEg6dAZFnT43D0Eu+zG2JPv4b6bGHUBs+lu9aNIuf73avHHDnLfaSiN9B4BYUaJDVLXYS1DqtBz53PuwecLrBk1fne3iID+XceWHVd/L8XzkQhHwpL2i2x5K11dF11G2cID9VlOz+q3Pm1fw9gYdu1du2linzDz7PV/jA8krd3liYYfP8q5rcCcPX3irA4gMGCQQObsbEAG5NWdjYZZpGvWGHVFQQP7kshQa18ouKrxtMSo9/iFMelHkKbclcPUiQy9khYPMOq45CDs1qRcVsV6OLMoBcUpuqNe4AXePWwNYW2zAxIF3IZmWZZVUprf512ZPmCKyEnuu5XdTqlRgRVACtrka7JG/pV8C7IZiPkYwKoSyc96bJbMQAc7DWH5snGuHCLNFSQWc6GVJiLWw/YPrdokItC79FsMjZQFfA9Yw8mm3P1jphaM3zkFNm5nTdr+kAui/Kk+Mfp5+kTg9YQtgIL9xW4Jc1dVw4ucfgESLbvCDV+oh7Ha+XdZG5qFhacq5mnAQOJqujM4Si/jSyKMtRtbDuKQE++buf3iavuiuc+a14o4kKIhL9Zv4cOLtbr6n3ONeZO5kBfb+fmxyYHeIsJQFl2hZAye943oAcOmLtCO1En1/So=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB6760.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aW9nbElkY0h3SUpSR2VGOC9uNFppVVhsY0xkSXJZSVNjSWlFU2JMZTRMaHA5?=
- =?utf-8?B?ckVuUUlyNFZIWjExSW9GK2hLb3dsdGtPNExBaWJ5SllhZ3Q5QWJtcldkalBX?=
- =?utf-8?B?RG5HNEt4NlNZY1I2UExhRXFOZk00SHJ1SXQzdjNKUUdMWHlFVU5RNXJKNnpa?=
- =?utf-8?B?aFJXdTZBVE05L2NabWhNdDg5ZTlDa0kzWHRWNE15UnE5QWwxM1lPemYxSXNC?=
- =?utf-8?B?NXE3d3VqR245eWZCUTY2MGxQQi93clRRb2xKUjdDRDRLSDQ2NFQxMWtOM2FN?=
- =?utf-8?B?emlFc29IN2d4WnVlY2xKcWxzb0QwV1FXY1orVHBSRUU1TFQ2RkVDS0gyZEVm?=
- =?utf-8?B?ek15d09pcnhhOWh3VG9WRHFlaUZQcytSKzJadDhQRXBieU42akpqaUV5dW1I?=
- =?utf-8?B?VFhWZEdwWGJWQU40cEhPYU81N1dOcmRZcFVQcmFoYnpWSEN6dVppUjFnVjBw?=
- =?utf-8?B?UldQSjR2MXI1RlJxNWRTUjAxY3E3NCszd3NsMjh4aktxZlpodTZtOWFUZ1Zp?=
- =?utf-8?B?QUdaemlGZEVPOWMwQ3ZoM0NzbDVUblMxL0dZeGszbnYrVFp0U1kwU2RkTHdX?=
- =?utf-8?B?TDg1Q0VWY1padS9FTkhTSVQ3MUVzN1lMTmRGZGlveGpzNHpJZGVqSlVoYm9W?=
- =?utf-8?B?eTYyS1ZEVnhZMEFSOG9MdFowQ2g0aDEyM0JCSG1DZDR6RVF3QjVkOS9EZDAz?=
- =?utf-8?B?SGxCaDRaWkwzNDdYYVVQVVU0N3Z5RU5LQjFhS2h3WG9FMU1wOHk2a1NjS3ox?=
- =?utf-8?B?VkJ5clg1OTFyRXd4L1hlK1ZPVDJRWlY1VUtLZ0daUkN3NHlXaExjakpLWjdn?=
- =?utf-8?B?ZWw1OTNacy9hbmM2bStZMGVSTkp5U2ZhbjZCZXdRMmJkaW91NXpFSndkYXFJ?=
- =?utf-8?B?NmhRRnhzbUhzVC95YVk1bU04ZGNONGpJZ0x4VVlXc3JFQ3NVWHVvMXN2YkdY?=
- =?utf-8?B?UDVHTHE0eFYrVldObkdwMUgvN0hVWFEyTU1rcjg1UEZJYXY0MEthZnc5ODlF?=
- =?utf-8?B?MlhxNWNtRHVpQkpFSXFER1AzckcvMklpME1ma04xcWgvblhROUsrbmxzSFA4?=
- =?utf-8?B?dVVRaGdJam1ya3JvbjVjR1JSdFRpT3d0TlpzQnFSMEZIeTZUTG5haTVFcy82?=
- =?utf-8?B?NmhZd0RkNU1FUktrUG1LRENzaUJwdUEyV1V3RGd0M3czUjdjOFB1LzRzMEZo?=
- =?utf-8?B?L3NzUitER1hNa3h1ZEtobFVGdDN1TEhSb0g5ck1XQWNDT1k4cVJSSFB2bEJS?=
- =?utf-8?B?N2VaZm9qNTkxdzRwdmtNa1I1NFRnUlpJdEI0WWgrMFR3Y3ZISXVScGkxaGI3?=
- =?utf-8?B?cjlTZDhqSVIxK3pGellKQzlmcDRvVWVRN3h6am96S1JJT0puMUpNZnJ2dTlF?=
- =?utf-8?B?U0RQaFZrNVpBbnpqME9GMXQzRGFWSlIybngwZEcrZVFTZXdHUTZxVUJWdk1q?=
- =?utf-8?B?dU54RjUxNnlKRzhuc1gvc0liSXNBWlJLdEcwNzFzYk41bnR5b2l1ZFd1K01h?=
- =?utf-8?B?YnVFci9naGg4aWQ4Q2tJMWMzOEY5cXFuQTVuTGNFdWtlT2Z3ZjVrK3RNQXhU?=
- =?utf-8?B?ZVFIbnN0KzIyRTR3TnZuYXc3dHZUakE0eUZDSURaQ0RLb1JrNW9hbmNweWFR?=
- =?utf-8?B?aHo4ajVtc1hvTHh1WnIvaE5kNnFQN1J4TURwM1lqRThQZkFKc1FKUXppUmFx?=
- =?utf-8?B?cE5uSmhyVmpUYjhpSEsxeVA3VzROdHZ2NkFrV0NHdExSdU1MNWtpcTllYlI3?=
- =?utf-8?B?VGRiV1l6dzdGZTBYazFCeXl0YlY0bXhoWGxLeEM1MTN0aHI4alNFT1BFVmwz?=
- =?utf-8?B?ejF4ZHVvbVFJYmNjUmVjbjZJUWFHMEpnaHpNMGxzUXpMT052VW9NcTNNZmFG?=
- =?utf-8?B?a2VGSzdJVlEzbmwwOG95WTBtdHh3dVIrRlZoNnQyaGwrV0lEOEdNMTdUQjJF?=
- =?utf-8?B?a3RrZVd5d21odktiT2FqT2poK1VxWE5vODgreFVObXNOOHFmN3VKY05nUGc1?=
- =?utf-8?B?TFROb1VTQWxmL3UxTXNMendXaXB4TzU1SENSK3QzT00yNnlVUTJESUEyL1My?=
- =?utf-8?B?NldPM21zcnE1dExpNjZSRlhSV0NTUUZWZUNhUlQzUlZEbk5ydUNnQmZQR1R3?=
- =?utf-8?Q?YxMJA5edVP/oCscDd3zun732m?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10620e38-ff76-4308-ca1f-08dcbc187ef8
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB6760.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 04:20:57.6857
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qmf3Yv9wJKm8ZMcTOfCze8LRT0l4xdiJyowRLsAdppvQb85Z/mngkt3OJkK7Jexe
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7620
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] usb: dwc3: Fix latency of DSTS while receiving wakeup
+ event
+Content-Language: en-US
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240730124742.561408-1-quic_prashk@quicinc.com>
+ <20240806235142.cem5f635wmds4bt4@synopsys.com>
+ <ec99fcdc-9404-8cd9-6a30-95e4f5c1edcd@quicinc.com>
+ <20240808000604.quk6rheiqt6ghjhv@synopsys.com>
+ <a89b5098-f9d6-4758-52b4-29d24244a09b@quicinc.com>
+ <20240813233043.uhsxocjr2pn4ujle@synopsys.com>
+From: Prashanth K <quic_prashk@quicinc.com>
+In-Reply-To: <20240813233043.uhsxocjr2pn4ujle@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: U3DC_W_ehm6TxCOAMc8KUCv-Ci7pCLnc
+X-Proofpoint-GUID: U3DC_W_ehm6TxCOAMc8KUCv-Ci7pCLnc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_03,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ impostorscore=0 mlxscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ mlxlogscore=749 priorityscore=1501 bulkscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408140028
 
-Hi Michal
 
-I did give Tested-by before. If you need Acks, Here  I can give
-Acked-by: James Zhu <James.Zhu@amd.com> for the series
 
-Best Regards!
-
-James
-
-On 2024-08-13 20:18, Michał Winiarski wrote:
-> On Mon, Aug 12, 2024 at 01:38:38PM GMT, Alex Deucher wrote:
->> Are there any objections to this series?  We have been running into
->> this limit as a problem for a while now on big servers.
-> I don't think there were any objections, just a general lack of
-> interest - so there are no R-b / Acks.
-> If you're interested to have a go at it - I can resend it.
-> It should still apply on latest drm-tip.
->
-> -Michał
->
->> Alex
+On 14-08-24 05:00 am, Thinh Nguyen wrote:
+>>> When we receive the wakeup event, then the device is no longer in
+>>> L1/L2/U3. The Start Tranfer command should go through. >
+>> Ok will do this, I hope there won't be any corner cases where the link is
+>> down when start_xfer happens. I was not really sure about the history, thats
+>> why tried to incorporate my fix into the above IF check.
 >>
->> On Mon, Jul 24, 2023 at 5:15 PM Michał Winiarski
->> <michal.winiarski@intel.com> wrote:
->>> 64 DRM device nodes is not enough for everyone.
->>> Upgrade it to ~512K (which definitely is more than enough).
->>>
->>> To allow testing userspace support for >64 devices, add additional DRM
->>> modparam (force_extended_minors) which causes DRM to skip allocating minors
->>> in 0-192 range.
->>> Additionally - convert minors to use XArray instead of IDR to simplify the
->>> locking.
->>>
->>> v1 -> v2:
->>> Don't touch DRM_MINOR_CONTROL and its range (Simon Ser)
->>>
->>> v2 -> v3:
->>> Don't use legacy scheme for >=192 minor range (Dave Airlie)
->>> Add modparam for testing (Dave Airlie)
->>> Add lockdep annotation for IDR (Daniel Vetter)
->>>
->>> v3 -> v4:
->>> Convert from IDR to XArray (Matthew Wilcox)
->>>
->>> v4 -> v5:
->>> Fixup IDR to XArray conversion (Matthew Wilcox)
->>>
->>> v5 -> v6:
->>> Also convert Accel to XArray
->>> Rename skip_legacy_minors to force_extended_minors
->>>
->>> Michał Winiarski (4):
->>>    drm: Use XArray instead of IDR for minors
->>>    accel: Use XArray instead of IDR for minors
->>>    drm: Expand max DRM device number to full MINORBITS
->>>    drm: Introduce force_extended_minors modparam
->>>
->>>   drivers/accel/drm_accel.c      | 110 +++------------------------------
->>>   drivers/gpu/drm/drm_drv.c      | 105 ++++++++++++++++---------------
->>>   drivers/gpu/drm/drm_file.c     |   2 +-
->>>   drivers/gpu/drm/drm_internal.h |   4 --
->>>   include/drm/drm_accel.h        |  18 +-----
->>>   include/drm/drm_file.h         |   5 ++
->>>   6 files changed, 69 insertions(+), 175 deletions(-)
->>>
->>> --
->>> 2.41.0
->>>
+> 
+> It was initially implemented verbatim base on the Start Transfer command
+> suggestion from the programming guide without considering the dwc3
+> driver flow. First dwc3 checks for U1/U2/U3 state. Then we fixed to only
+> check for L1/L2/U3 state, but it's still not right. I've had this on my
+> TODO list for awhile and haven't made an update since it's not critical.
+> 
+Sure, thanks for the confirmation, will send v2.
+
+Regards,
+Prashanth K
 
