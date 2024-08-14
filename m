@@ -1,349 +1,300 @@
-Return-Path: <linux-kernel+bounces-285849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CEF951365
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:16:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C3B951369
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370821C22D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8F01C22C4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C3D3F9D2;
-	Wed, 14 Aug 2024 04:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="DPGOONec"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C334D131;
+	Wed, 14 Aug 2024 04:17:37 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CCD347A2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A122248CCD;
+	Wed, 14 Aug 2024 04:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723608971; cv=none; b=Fz+zwLyNksLqWgNlu/eKR2cwGb07t4/ZbVAkL/ANgCnB6BOLtphHz+QBqKqwcBcQn/O9nhrYK/49grQUL7PT2ByrzDdkqY3g8+XItX7qVEgcI1PxH49oOC+v6g7OZMnDJotbOr0DwJ6FMCIf49IVnVoNo24vYPEy3GBuaqh84vw=
+	t=1723609056; cv=none; b=Qndi0kmHqkZfV8hfo5NHFOOq1sOhsV1Hy65s2zyFk7rCh64GwNkVvAu5IouV/aQZGw9RG7f+M6Xt7tzy3b9E6Fev0wv04iwePOGaCacS0nSqEj7idQAxQmJjObeeqqmCA3H7wpxmRcJIklLtILdHSDAZ+Vk+4bf2raOyr6tG0dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723608971; c=relaxed/simple;
-	bh=zCnBktmuHb8S0oItWlD2E7+fgEfZFgdEZaT9HYDRmlE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioXLp/y5k7hJvIlRFYWqKWY3UgW7OmoD75lFJVV+pf7fFeX/NEhS6x8/cw5ttEUdBHxg+1tncf9tYmeWyjqki4nQ4TZdm7g7gG9Rb2PsHUoGul7lGy9cz6yXhamtsvY8kP4BRIRSA/n9/WLgVaF8jTu5ImQJeVO0rQFo1zyklio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=DPGOONec; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5d5f9d68805so3498269eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723608966; x=1724213766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IgqVz4uNdrlVNRUUOct5ecF7FdwbpcK22WoA0RYT8b8=;
-        b=DPGOONec7+vf92W1NBfdXWxDpQtGgvaGmRAZlJqg9Lnz4OK35ByrxqaG1rcoAmYMs+
-         h8gBqimDgyzyX6yeRV2OfkdJahnfyvCzfWc3WjuoxPQnZLfQnRPSoz3QdwhkeObKOPK7
-         /PvFbEf5pVD/uwkOrSw+nlvRI2jMuCRS3GG42sQSTvGj018x9ctgVSEWfNI1BCL4ykIN
-         o39nkVH5kv9O5xngxkC0sV4dBEgBAUE4tBpvCPnJDcfQHnTcgRAma5+nlevKMMVMME8i
-         PqHLwZhYEYiCbgwOoR2AtrVM1ycD/9qWXak0kDgV+IWmfkrTZ9HLGk8wxhuM+JjcrYme
-         SkOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723608966; x=1724213766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IgqVz4uNdrlVNRUUOct5ecF7FdwbpcK22WoA0RYT8b8=;
-        b=JgDFusdAdJ9KXqistZeCdRhtSVs7+thyVYkgOV/Pf+sTkCEy8mFNCDFAFJQuMHvNct
-         +syljCCy1DgjvxRd8Y9Kr/q29/9oCabej/aRkOz0QuYBhgP2j6bsX2DdFHDt2pFoXHFE
-         i67heONzEfNMORRSqoxKD5uWDL7cSJ4qfjoCI6FCo+gl8fJbyQarDistbKoefKUdnj49
-         /hBHhlKQ3HxaKuoUY7pmQejMAHOrGxRaUT5lIze725lwi58fC40ZgqkFcaGzu7s8XBrM
-         gGI2jTtjdbc9Qi8WpLn7/D0CNA3/WIk1gHaBQwPVPZHJ0uwKtiBvqIyfWN8BKiLffQRP
-         JUow==
-X-Forwarded-Encrypted: i=1; AJvYcCUK/4P3mUeVLAwC6CDBCZmCxm10o/5LrddsuEHtsbha8DHrlWfAuRZ3AqJfjUnkNaeWuSnn4W09/IXhjdHws8dVOJUayrrO3f0HF+7Y
-X-Gm-Message-State: AOJu0Yw2J8ZB64hgEtfE7xgOnA0vBC2Fwe4b6Ou6er49fhu2GjowhqR6
-	+lcOnULicJIrzIEd2MoJZdoC+hOPRfrBPajdZC7kIdKINOQ3DCBABe0DziGxPf3wggvwtnAOZLP
-	Mavs59acqGCSwJuaJIxrTSXWPCiKaOKlHKuGAwA==
-X-Google-Smtp-Source: AGHT+IGE+B9dkHFdyyMlIWT4iYlR/QQVPIZ7UK6C9s+2z/+qBODo3PtYne+tQRRpV6Ft3OkOJI/tZHqBgojAkea9rBc=
-X-Received: by 2002:a05:6820:1c82:b0:5d5:9ffb:b9de with SMTP id
- 006d021491bc7-5da7c68ea8fmr2158936eaf.4.1723608966431; Tue, 13 Aug 2024
- 21:16:06 -0700 (PDT)
+	s=arc-20240116; t=1723609056; c=relaxed/simple;
+	bh=38D9Gm76/BCdG2mH3chnkiVmq2C0mG7/kSlfAf64Q9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HZwpCl3JAARqEsIvc+PT32ib/Vp9PW4qJlxcRWCVC8IPcCdYUqFlBEIxnhuwuHJ+LBr0m+YWuVLsTQQ9031PpeSmP38Mw3qwaVtBFEjvGxchPv19wdb2CEEgaQyRbQoDt0KJFqI+8+hK6g8u/ZJK/NdYSZQPzbzk81eEhZLC/hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WkFLJ56CDzndx2;
+	Wed, 14 Aug 2024 12:16:08 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0D0591800D0;
+	Wed, 14 Aug 2024 12:17:29 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 14 Aug 2024 12:17:27 +0800
+Message-ID: <2c23e9cc-5593-84d0-9157-1e946df941d9@huawei.com>
+Date: Wed, 14 Aug 2024 12:17:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725074155.20565-1-cuiyunhui@bytedance.com>
- <CAHVXubiyJtmiquZ+vmAa+T-nP-pXbAAvf2S=DSCZMk99wuhhpg@mail.gmail.com>
- <CAEEQ3wkDprXSGmPO8ufYqJMiTjuxoQwFHG+OAtfd9p0ggC8y_g@mail.gmail.com> <CAHVXubiaFuTpSAw_1kS_tHFBASNJnT7i=wxv0E556AitQKyfRQ@mail.gmail.com>
-In-Reply-To: <CAHVXubiaFuTpSAw_1kS_tHFBASNJnT7i=wxv0E556AitQKyfRQ@mail.gmail.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Wed, 14 Aug 2024 12:15:55 +0800
-Message-ID: <CAEEQ3wnw52RmRF_sj8v+MiMZa9Cbaq=OVaGB-JQG6oO5MquymQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2] riscv: mm: add paging_check() before paging_init()
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, samitolvanen@google.com, gregkh@linuxfoundation.org, 
-	suagrfillet@gmail.com, akpm@linux-foundation.org, shikemeng@huaweicloud.com, 
-	willy@infradead.org, charlie@rivosinc.com, xiao.w.wang@intel.com, 
-	conor.dooley@microchip.com, chenjiahao16@huawei.com, guoren@kernel.org, 
-	jszhang@kernel.org, ajones@ventanamicro.com, bhe@redhat.com, 
-	vishal.moola@gmail.com, ndesaulniers@google.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] uprobes: Optimize the allocation of insn_slot for
+ performance
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	"oleg@redhat.com >> Oleg Nesterov" <oleg@redhat.com>, Andrii Nakryiko
+	<andrii@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
+	<rostedt@goodmis.org>, <paulmck@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>
+References: <20240727094405.1362496-1-liaochang1@huawei.com>
+ <7eefae59-8cd1-14a5-ef62-fc0e62b26831@huawei.com>
+ <CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com>
+ <85991ce3-674d-b46e-b4f9-88a50f7f5122@huawei.com>
+ <CAEf4BzYvpgfFGckcKdzkC_g1J1SFi7xBe=_cjdVy4KEMikvGMw@mail.gmail.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <CAEf4BzYvpgfFGckcKdzkC_g1J1SFi7xBe=_cjdVy4KEMikvGMw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-Hi Alex,
 
-On Tue, Aug 13, 2024 at 10:21=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosin=
-c.com> wrote:
->
-> Hi Yunhui,
->
-> Sorry I was off last week.
->
-> On Sat, Aug 3, 2024 at 8:28=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.co=
-m> wrote:
-> >
-> > Hi Alex,
-> >
-> > On Thu, Aug 1, 2024 at 4:02=E2=80=AFPM Alexandre Ghiti <alexghiti@rivos=
-inc.com> wrote:
-> > >
-> > > Hi Yunhui,
-> > >
-> > > On Thu, Jul 25, 2024 at 9:42=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedan=
-ce.com> wrote:
-> > > >
-> > > > When establishing a linear mapping, the virtual address is obtained
-> > > > through __va(). If the physical address is too large, such as 1TB, =
-then
-> > > > the virtual address will overflow in the address space of sv39.
-> > > > The log is as follows:
-> > > > [    0.000000] Unable to handle kernel paging request at virtual ad=
-dress 000000d97fdf7ad8
-> > > > [    0.000000] [000000d97fdf7ad8] pgd=3D000000407ff7e801, p4d=3D000=
-000407ff7e801, pud=3D000000407ff7e801
-> > > > [    0.000000] Unable to handle kernel paging request at virtual ad=
-dress 000000d97fdfaff0
-> > > > [    0.000000] [000000d97fdfaff0] pgd=3D000000407ff7e801, p4d=3D000=
-000407ff7e801, pud=3D000000407ff7e801
-> > > > ...
-> > > > [    0.000000] Insufficient stack space to handle exception!
-> > > > [    0.000000] Task stack:     [0xffffffff81400000..0xffffffff81404=
-000]
-> > > > [    0.000000] Overflow stack: [0xffffffff80c67370..0xffffffff80c68=
-370]
-> > > > [    0.000000] CPU: 0 PID: 0 Comm: swapper Tainted: G        W     =
-     6.6.3-00133-g60497fad461d-dirty #71
-> > > > [    0.000000] epc : die_kernel_fault+0x158/0x1c8
-> > > > [    0.000000]  ra : die_kernel_fault+0x12a/0x1c8
-> > > > [    0.000000] epc : ffffffff808cde36 ra : ffffffff808cde08 sp : ff=
-ffffff813fff80
-> > > > [    0.000000]  gp : ffffffff815a1678 tp : 0000000000000000 t0 : 00=
-00003130386537
-> > > > [    0.000000]  t1 : 0000000000000031 t2 : 6537666637303430 s0 : ff=
-ffffff813fffc0
-> > > > [    0.000000]  s1 : ffffffff815b0b28 a0 : 0000000000000016 a1 : ff=
-ffffff81495298
-> > > > [    0.000000]  a2 : 0000000000000010 a3 : ffffffff81495298 a4 : 00=
-000000000001fe
-> > > > [    0.000000]  a5 : 000000d97fdfa000 a6 : ffffffff814250d0 a7 : 00=
-00000000000030
-> > > > [    0.000000]  s2 : 000000d97fdfaff0 s3 : ffffffff81400040 s4 : 00=
-0000d97fdfaff0
-> > > > [    0.000000]  s5 : ffffffff815a0ed0 s6 : 0000000000000000 s7 : 00=
-0000008f604390
-> > > > [    0.000000]  s8 : 0000000000000000 s9 : ffffffffffffffff s10: 00=
-00000000000000
-> > > > [    0.000000]  s11: 0000000000000000 t3 : ffffffff815baa9b t4 : ff=
-ffffff815baa9b
-> > > > [    0.000000]  t5 : ffffffff815baa88 t6 : ffffffff813ffda8
-> > > > [    0.000000] status: 0000000200000100 badaddr: 000000d97fdfaff0 c=
-ause: 000000000000000d
-> > > > [    0.000000] Kernel panic - not syncing: Kernel stack overflow
-> > > > [    0.000000] CPU: 0 PID: 0 Comm: swapper Tainted: G        W     =
-     6.6.3-00133-g60497fad461d-dirty #71
-> > > > [    0.000000] Call Trace:
-> > > > [    0.000000] [<ffffffff800066bc>] dump_backtrace+0x28/0x30
-> > > > [    0.000000] [<ffffffff808cdac8>] show_stack+0x38/0x44
-> > > > [    0.000000] [<ffffffff808d9d40>] dump_stack_lvl+0x44/0x5c
-> > > > [    0.000000] [<ffffffff808d9d70>] dump_stack+0x18/0x20
-> > > > [    0.000000] [<ffffffff808cdfb6>] panic+0x110/0x2f2
-> > > > [    0.000000] [<ffffffff80006532>] walk_stackframe+0x0/0x120
-> > > > [    0.000000] [<ffffffff808cde08>] die_kernel_fault+0x12a/0x1c8
-> > > > [    0.000000] ---[ end Kernel panic - not syncing: Kernel stack ov=
-erflow ]---
-> > > >
-> > > > In other words, the maximum value of the physical address needs to =
-meet
-> > > > Documentation/riscv/vm-layout.rst to ensure that there is no overfl=
-ow.
-> > > > For sv48/57, the actual virtual address space is huge, so this prob=
-lem
-> > > > is generally not triggered, but it is also checked in the code.
-> > > >
-> > > > We give a warning for the overflowed physical address region and re=
-verve it
-> > > > so that the kernel can bringup successfully.
-> > > >
-> > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > > ---
-> > > >  arch/riscv/include/asm/page.h    |  9 +++++++++
-> > > >  arch/riscv/include/asm/pgtable.h |  1 +
-> > > >  arch/riscv/kernel/setup.c        |  1 +
-> > > >  arch/riscv/mm/init.c             | 30 ++++++++++++++++++++++++++++=
-++
-> > > >  4 files changed, 41 insertions(+)
-> > > >
-> > > > diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm=
-/page.h
-> > > > index 57e887bfa34c..f6c0f6e14ecb 100644
-> > > > --- a/arch/riscv/include/asm/page.h
-> > > > +++ b/arch/riscv/include/asm/page.h
-> > > > @@ -38,6 +38,15 @@
-> > > >   */
-> > > >  #define PAGE_OFFSET_L4         _AC(0xffffaf8000000000, UL)
-> > > >  #define PAGE_OFFSET_L3         _AC(0xffffffd800000000, UL)
-> > > > +
-> > > > +/*
-> > > > + * See vm-layout.rst, the size of L3 direct mapping of all physica=
-l
-> > > > + * memory 124GB, L4 is 64TB, L5 is 32PB.
-> > > > + */
-> > > > +#define MAX_PFN_MEM_ADDR_L5    (0x80000000000000ULL)
-> > > > +#define MAX_PFN_MEM_ADDR_L4    (0x400000000000ULL)
-> > > > +#define MAX_PFN_MEM_ADDR_L3    (0x1F00000000ULL)
-> > > > +
-> > > >  #else
-> > > >  #define PAGE_OFFSET            _AC(CONFIG_PAGE_OFFSET, UL)
-> > > >  #endif /* CONFIG_64BIT */
-> > > > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/=
-asm/pgtable.h
-> > > > index c8e8867c42f6..e4835de5a743 100644
-> > > > --- a/arch/riscv/include/asm/pgtable.h
-> > > > +++ b/arch/riscv/include/asm/pgtable.h
-> > > > @@ -915,6 +915,7 @@ extern uintptr_t _dtb_early_pa;
-> > > >  #endif /* CONFIG_XIP_KERNEL */
-> > > >  extern u64 satp_mode;
-> > > >
-> > > > +void paging_check(void);
-> > > >  void paging_init(void);
-> > > >  void misc_mem_init(void);
-> > > >
-> > > > diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-> > > > index 2a79d4ed2660..366918578544 100644
-> > > > --- a/arch/riscv/kernel/setup.c
-> > > > +++ b/arch/riscv/kernel/setup.c
-> > > > @@ -273,6 +273,7 @@ void __init setup_arch(char **cmdline_p)
-> > > >         parse_early_param();
-> > > >
-> > > >         efi_init();
-> > > > +       paging_check();
-> > > >         paging_init();
-> > > >
-> > > >         /* Parse the ACPI tables for possible boot-time configurati=
-on */
-> > > > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > > > index b0cc28f7595f..aa25dcf8a0ff 100644
-> > > > --- a/arch/riscv/mm/init.c
-> > > > +++ b/arch/riscv/mm/init.c
-> > > > @@ -1482,6 +1482,36 @@ static void __init reserve_crashkernel(void)
-> > > >         crashk_res.end =3D crash_base + crash_size - 1;
-> > > >  }
-> > > >
-> > > > +static void __init phymem_addr_overflow(void)
-> > > > +{
-> > > > +       phys_addr_t end =3D memblock_end_of_DRAM();
-> > > > +
-> > > > +       if (pgtable_l5_enabled) {
-> > > > +               if (end > MAX_PFN_MEM_ADDR_L5) {
-> > > > +                       memblock_reserve(MAX_PFN_MEM_ADDR_L5, end -=
- MAX_PFN_MEM_ADDR_L5);
-> > > > +                       WARN(true, "Phymem addr 0x%llx overflowed, =
-reserve [0x%llx-0x%llx] directly.",
-> > > > +                            end, MAX_PFN_MEM_ADDR_L5, end);
-> > > > +               }
-> > > > +       }
-> > > > +       if (pgtable_l4_enabled) {
-> > > > +               if (end > MAX_PFN_MEM_ADDR_L4) {
-> > > > +                       memblock_reserve(MAX_PFN_MEM_ADDR_L4, end -=
- MAX_PFN_MEM_ADDR_L4);
-> > > > +                       WARN(true, "Phymem addr 0x%llx overflowed, =
-reserve [0x%llx-0x%llx] directly.",
-> > > > +                            end, MAX_PFN_MEM_ADDR_L4, end);
-> > > > +               }
-> > > > +       }
-> > > > +       if (end > MAX_PFN_MEM_ADDR_L3) {
-> > > > +               memblock_reserve(MAX_PFN_MEM_ADDR_L3, end - MAX_PFN=
-_MEM_ADDR_L3);
-> > > > +               WARN(true, "Phymem addr 0x%llx overflowed, reserve =
-[0x%llx-0x%llx] directly.",
-> > > > +                    end, MAX_PFN_MEM_ADDR_L3, end);
-> > > > +       }
-> > > > +}
-> > > > +
-> > > > +void __init paging_check(void)
-> > > > +{
-> > > > +       phymem_addr_overflow();
-> > > > +}
-> > > > +
-> > > >  void __init paging_init(void)
-> > > >  {
-> > > >         setup_bootmem();
-> > > > --
-> > > > 2.39.2
-> > > >
-> > >
-> > > So the following patch should fix your issue and was posted some time
-> > > ago https://lore.kernel.org/linux-riscv/bdfbed9b-ea04-4415-8416-d6e9d=
-0a643a3@ghiti.fr/T/#me26a82cf32f46cae12e2ea8892a3bc16d4fc37e3.
-> > > I prefer this solution as it does not introduce a bunch of hardcoded
-> > > defines and relies on the already existing memblock API.
-> > >
-> > > Let me know if that's not the case!
-> > I understand that there is no problem with the functionality of this
-> > patch, but since the actual physical memory is lost, we need a Warning
-> > message to avoid confusion about memory disappearance for no reason.
->
-> Yes, you're right, we should advertise people when something like this
-> happens. What do you think of the following instead?
->
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index de8a608eec1a..29c8e321eadc 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -254,8 +254,11 @@ static void __init setup_bootmem(void)
->          */
->         if (IS_ENABLED(CONFIG_64BIT)) {
->                 max_mapped_addr =3D __pa(PAGE_OFFSET) + KERN_VIRT_SIZE;
-> -               memblock_cap_memory_range(phys_ram_base,
-> -                                         max_mapped_addr - phys_ram_base=
-);
-> +               if (memblock_end_of_DRAM() > max_mapped_addr) {
-> +                       memblock_cap_memory_range(phys_ram_base,
-> +                                                 max_mapped_addr -
-> phys_ram_base);
-> +                       pr_warn("Physical memory overflows the linear
-> mapping size: region above 0x%llx removed", max_mapped_addr);
-> +               }
-Yeah, but it's better to be more eye-catching, All right, I'll update
-this patch.
 
->         }
->
->         /*
->
-> Thanks,
->
-> Alex
->
-> >
-> > >
-> > > Thanks,
-> > >
-> > > Alex
-> >
-> > Thanks,
-> > Yunhui
+在 2024/8/13 1:49, Andrii Nakryiko 写道:
+> On Mon, Aug 12, 2024 at 4:11 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>
+>>
+>>
+>> 在 2024/8/9 2:26, Andrii Nakryiko 写道:
+>>> On Thu, Aug 8, 2024 at 1:45 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>
+>>>> Hi Andrii and Oleg.
+>>>>
+>>>> This patch sent by me two weeks ago also aim to optimize the performance of uprobe
+>>>> on arm64. I notice recent discussions on the performance and scalability of uprobes
+>>>> within the mailing list. Considering this interest, I've added you and other relevant
+>>>> maintainers to the CC list for broader visibility and potential collaboration.
+>>>>
+>>>
+>>> Hi Liao,
+>>>
+>>> As you can see there is an active work to improve uprobes, that
+>>> changes lifetime management of uprobes, removes a bunch of locks taken
+>>> in the uprobe/uretprobe hot path, etc. It would be nice if you can
+>>> hold off a bit with your changes until all that lands. And then
+>>> re-benchmark, as costs might shift.
+>>>
+>>> But also see some remarks below.
+>>>
+>>>> Thanks.
+>>>>
+>>>> 在 2024/7/27 17:44, Liao Chang 写道:
+>>>>> The profiling result of single-thread model of selftests bench reveals
+>>>>> performance bottlenecks in find_uprobe() and caches_clean_inval_pou() on
+>>>>> ARM64. On my local testing machine, 5% of CPU time is consumed by
+>>>>> find_uprobe() for trig-uprobe-ret, while caches_clean_inval_pou() take
+>>>>> about 34% of CPU time for trig-uprobe-nop and trig-uprobe-push.
+>>>>>
+>>>>> This patch introduce struct uprobe_breakpoint to track previously
+>>>>> allocated insn_slot for frequently hit uprobe. it effectively reduce the
+>>>>> need for redundant insn_slot writes and subsequent expensive cache
+>>>>> flush, especially on architecture like ARM64. This patch has been tested
+>>>>> on Kunpeng916 (Hi1616), 4 NUMA nodes, 64 cores@ 2.4GHz. The selftest
+>>>>> bench and Redis GET/SET benchmark result below reveal obivious
+>>>>> performance gain.
+>>>>>
+>>>>> before-opt
+>>>>> ----------
+>>>>> trig-uprobe-nop:  0.371 ± 0.001M/s (0.371M/prod)
+>>>>> trig-uprobe-push: 0.370 ± 0.001M/s (0.370M/prod)
+>>>>> trig-uprobe-ret:  1.637 ± 0.001M/s (1.647M/prod)
+>>>
+>>> I'm surprised that nop and push variants are much slower than ret
+>>> variant. This is exactly opposite on x86-64. Do you have an
+>>> explanation why this might be happening? I see you are trying to
+>>> optimize xol_get_insn_slot(), but that is (at least for x86) a slow
+>>> variant of uprobe that normally shouldn't be used. Typically uprobe is
+>>> installed on nop (for USDT) and on function entry (which would be push
+>>> variant, `push %rbp` instruction).
+>>>
+>>> ret variant, for x86-64, causes one extra step to go back to user
+>>> space to execute original instruction out-of-line, and then trapping
+>>> back to kernel for running uprobe. Which is what you normally want to
+>>> avoid.
+>>>
+>>> What I'm getting at here. It seems like maybe arm arch is missing fast
+>>> emulated implementations for nops/push or whatever equivalents for
+>>> ARM64 that is. Please take a look at that and see why those are slow
+>>> and whether you can make those into fast uprobe cases?
+>>
+>> Hi Andrii,
+>>
+>> As you correctly pointed out, the benchmark result on Arm64 is counterintuitive
+>> compared to X86 behavior. My investigation revealed that the root cause lies in
+>> the arch_uprobe_analyse_insn(), which excludes the Arm64 equvialents instructions
+>> of 'nop' and 'push' from the emulatable instruction list. This forces the kernel
+>> to handle these instructions out-of-line in userspace upon breakpoint exception
+>> is handled, leading to a significant performance overhead compared to 'ret' variant,
+>> which is already emulated.
+>>
+>> To address this issue, I've developed a patch supports  the emulation of 'nop' and
+>> 'push' variants. The benchmark results below indicates the performance gain of
+>> emulation is obivious.
+>>
+>> xol (1 cpus)
+>> ------------
+>> uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
+>> uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
+>> uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
+>> uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
+>> uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
+>> uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+>>
+>> emulation (1 cpus)
+>> -------------------
+>> uprobe-nop:  1.862 ± 0.002M/s  (1.862M/s/cpu)
+>> uprobe-push: 1.743 ± 0.006M/s  (1.743M/s/cpu)
+>> uprobe-ret:  1.840 ± 0.001M/s  (1.840M/s/cpu)
+>> uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/s/cpu)
+>> uretprobe-push: 0.936 ± 0.004M/s  (0.936M/s/cpu)
+>> uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/s/cpu)
+>>
+>> As you can see, the performance gap between nop/push and ret variants has been significantly
+>> reduced. Due to the emulation of 'push' instruction need to access userspace memory, it spent
+>> more cycles than the other.
+> 
+> Great, it's an obvious improvement. Are you going to send patches
+> upstream? Please cc bpf@vger.kernel.org as well.
 
-Thanks,
-Yunhui
+I'll need more time to thoroughly test this patch. The emulation o push/nop
+instructions also impacts the kprobe/kretprobe paths on Arm64, As as result,
+I'm working on enhancements to trig-kprobe/kretprobe to prevent performance
+regression.
+
+> 
+> 
+> I'm also thinking we should update uprobe/uretprobe benchmarks to be
+> less x86-specific. Right now "-nop" is the happy fastest case, "-push"
+> is still happy, slightly slower case (due to the need to emulate stack
+> operation) and "-ret" is meant to be the slow single-step case. We
+> should adjust the naming and make sure that on ARM64 we hit similar
+> code paths. Given you seem to know arm64 pretty well, can you please
+> take a look at updating bench tool for ARM64 (we can also rename
+> benchmarks to something a bit more generic, rather than using
+> instruction names)?
+
+Let me use a matrix below for the structured comparsion of uprobe/uretprobe
+benchmarks on X86 and Arm64:
+
+Architecture  Instrution Type   Handling method   Performance
+X86           nop               Emulated          Fastest
+X86           push              Emulated          Fast
+X86           ret               Single-step       Slow
+Arm64         nop               Emulated          Fastest
+Arm64         push              Emulated          Fast
+Arm64         ret               Emulated          Faster
+
+I suggest categorize benchmarks into 'emu' for emulated instructions and 'ss'
+for 'single-steppable' instructions. Generally, emulated instructions should
+outperform single-step ones across different architectures. Regarding the
+generic naming, I propose using a self-explanatory style, such as
+s/nop/empty-insn/g, s/push/push-stack/g, s/ret/func-return/g.
+
+Above all, example "bench --list" output:
+
+X86:
+  ...
+  trig-uprobe-emu-empty-insn
+  trig-uprobe-ss-func-return
+  trig-uprobe-emu-push-stack
+  trig-uretprobe-emu-empyt-insn
+  trig-uretprobe-ss-func-return
+  trig-uretprobe-emu-push-stack
+  ...
+
+Arm64:
+  ...
+  trig-uprobe-emu-empty-insn
+  trig-uprobe-emu-func-return
+  trig-uprobe-emu-push-stack
+  trig-uretprobe-emu-empyt-insn
+  trig-uretprobe-emu-func-return
+  trig-uretprobe-emu-push-stack
+  ...
+
+This structure will allow for direct comparison of uprobe/uretprobe
+performance across different architectures and instruction types.
+Please let me know your thought, Andrii.
+
+Thanks.
+
+> 
+>>
+>>>
+>>>>> trig-uretprobe-nop:  0.331 ± 0.004M/s (0.331M/prod)
+>>>>> trig-uretprobe-push: 0.333 ± 0.000M/s (0.333M/prod)
+>>>>> trig-uretprobe-ret:  0.854 ± 0.002M/s (0.854M/prod)
+>>>>> Redis SET (RPS) uprobe: 42728.52
+>>>>> Redis GET (RPS) uprobe: 43640.18
+>>>>> Redis SET (RPS) uretprobe: 40624.54
+>>>>> Redis GET (RPS) uretprobe: 41180.56
+>>>>>
+>>>>> after-opt
+>>>>> ---------
+>>>>> trig-uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
+>>>>> trig-uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
+>>>>> trig-uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
+>>>>> trig-uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
+>>>>> trig-uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
+>>>>> trig-uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+>>>>> Redis SET (RPS) uprobe: 43939.69
+>>>>> Redis GET (RPS) uprobe: 45200.80
+>>>>> Redis SET (RPS) uretprobe: 41658.58
+>>>>> Redis GET (RPS) uretprobe: 42805.80
+>>>>>
+>>>>> While some uprobes might still need to share the same insn_slot, this
+>>>>> patch compare the instructions in the resued insn_slot with the
+>>>>> instructions execute out-of-line firstly to decides allocate a new one
+>>>>> or not.
+>>>>>
+>>>>> Additionally, this patch use a rbtree associated with each thread that
+>>>>> hit uprobes to manage these allocated uprobe_breakpoint data. Due to the
+>>>>> rbtree of uprobe_breakpoints has smaller node, better locality and less
+>>>>> contention, it result in faster lookup times compared to find_uprobe().
+>>>>>
+>>>>> The other part of this patch are some necessary memory management for
+>>>>> uprobe_breakpoint data. A uprobe_breakpoint is allocated for each newly
+>>>>> hit uprobe that doesn't already have a corresponding node in rbtree. All
+>>>>> uprobe_breakpoints will be freed when thread exit.
+>>>>>
+>>>>> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+>>>>> ---
+>>>>>  include/linux/uprobes.h |   3 +
+>>>>>  kernel/events/uprobes.c | 246 +++++++++++++++++++++++++++++++++-------
+>>>>>  2 files changed, 211 insertions(+), 38 deletions(-)
+>>>>>
+>>>
+>>> [...]
+>>
+>> --
+>> BR
+>> Liao, Chang
+
+-- 
+BR
+Liao, Chang
 
