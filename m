@@ -1,71 +1,74 @@
-Return-Path: <linux-kernel+bounces-286680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1A6951DBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150F0951E34
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C6F81C21676
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3F528349C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188741B3F0E;
-	Wed, 14 Aug 2024 14:51:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49BB1B3744;
-	Wed, 14 Aug 2024 14:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2FA1B4C52;
+	Wed, 14 Aug 2024 15:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="m4df2kK2"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEFE1B3F1E
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723647112; cv=none; b=s6mFy4Rwqm3dFr+hanW/n03x1nJ6nOkQRYrB0+NboQwqIlzwwghTuSnDZuc/Z4JkeZBZGRunkRfWlQ4OPYcTOfDtyNkI+cppiYDEYadnxsNCaVW9YuBBqCjOCIBw5a7VF2lwUFGfJ6FMh1SzXBFYx5FlFut6HGSK/idte/4BwPY=
+	t=1723648205; cv=none; b=aI2pq/xX2nYID/uhGGyu9xFk87T9MTL9SSTWvCF7dli96wocWr9fy6OSVsQLFZ9RbPvHszy0nnh3weRV4i9aAc4PzT7zPJdkYSL/6rSU//NlhSR8hp9S2n5kAcb4n1C0mrX0kesSjrvokDcB+mU8GHBbXb1Jcygt0D4RXprHYIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723647112; c=relaxed/simple;
-	bh=E1PvKzZfFbl9Y7vjlzg9rl6r2PYqNMNxihVjb/Okon4=;
+	s=arc-20240116; t=1723648205; c=relaxed/simple;
+	bh=FHx7qJc0rABbF4NSf3NTybFhb4n7ip9vSjH8KWDE5R0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RI4JI0ZaAkoLbES6TtAguSGJfub3DbxgIzH7Qk02VZxWgcPaUFOMymyuFl4wHNOLigLEsN7Sbmz8DnnqrPJ0OVgzRQ/TDQKNgLRXLXgWUEUNPuAph+BdIoe52KAidM+ikPoROBGWIsqBwylw1ZUZMUt8g7rOKytxy4n3vpYhg/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4071DA7;
-	Wed, 14 Aug 2024 07:52:14 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6CB73F58B;
-	Wed, 14 Aug 2024 07:51:44 -0700 (PDT)
-Date: Wed, 14 Aug 2024 15:51:42 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
- context for signal handlers
-Message-ID: <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EhJFGkYLz+atGbHy1b8SAuWN4Ler/dBR9Jx0wEkqg+YrDlehn0inQrbENmRJouT+zCod9WOMwptd9mYV6txlkmjgFjDGisQLhmS2hHDXR9CBJ//pmwlkIAe79qOvNyUfrHQ1hlEYykOoADMpjJuon0V6CMlHjNzIIsLMPX9W9Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=m4df2kK2; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EEWxvM029220;
+	Wed, 14 Aug 2024 14:52:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pps0720; bh=6khWYz4q73IP7+Nkk+qlC5A
+	rVKc5YVb8/czRVJNToBo=; b=m4df2kK2P0MnhQLslXZVr/fqIX6EvA1/vawdR+1
+	vh/qHCgWQ4vdF9yawT7csyywBzLNao9biK/6AmevXSe4EKtoE79XarnrIpKIhlzi
+	adbiNNhxd2EpTqgLzRxEzeV+zGKUHHzAQ6HoPl6VeVlZqEoH8V7jLmhS2yu7j9xk
+	bf0ujhwZSk5H/wnK5jSbq+XeDRe474QnkkTyfKSOvxZG6tWgLFHw0Z+RKF1XTseU
+	3EMWMzzu2XY1raaQHzMX46d/HO+HkMJ4CfberAXIB/Q674sFr/0xwxcbZupD14qF
+	asIcgy6ba3viS87zCmwpdKYuErHxcKI+sBeU6OgJuiEpZ/A==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 410w3j8xcu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 14:52:02 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id B335B806B18;
+	Wed, 14 Aug 2024 14:52:00 +0000 (UTC)
+Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id CBA298014E4;
+	Wed, 14 Aug 2024 14:51:56 +0000 (UTC)
+Date: Wed, 14 Aug 2024 09:51:54 -0500
+From: Steve Wahl <steve.wahl@hpe.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: steve.wahl@hpe.com, justin.ernst@hpe.com, kyle.meyer@hpe.com,
+        dimitri.sivanich@hpe.com, russ.anderson@hpe.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] x86/apic: Remove unused declaration
+ uv_irq_2_mmr_info()
+Message-ID: <ZrzEiq7HC8kr8y5o@swahl-home.5wahls.com>
+References: <20240814031636.1304772-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,88 +77,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
+In-Reply-To: <20240814031636.1304772-1-yuehaibing@huawei.com>
+X-Proofpoint-GUID: i_SyV04zL2U1_68805GK0OGhQGxJ8BtF
+X-Proofpoint-ORIG-GUID: i_SyV04zL2U1_68805GK0OGhQGxJ8BtF
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_10,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1011
+ suspectscore=0 mlxscore=0 priorityscore=1501 adultscore=0 mlxlogscore=840
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408140104
 
-On Thu, Aug 01, 2024 at 01:06:50PM +0100, Mark Brown wrote:
-> When invoking a signal handler we use the GCS configuration and stack
-> for the current thread.
+On Wed, Aug 14, 2024 at 11:16:36AM +0800, Yue Haibing wrote:
+> Commit 43fe1abc18a2 ("x86/uv: Use hierarchical irqdomain to manage UV interrupts")
+> removed the implementation but leave declaration.
 > 
-> Since we implement signal return by calling the signal handler with a
-> return address set up pointing to a trampoline in the vDSO we need to
-> also configure any active GCS for this by pushing a frame for the
-> trampoline onto the GCS.  If we do not do this then signal return will
-> generate a GCS protection fault.
-> 
-> In order to guard against attempts to bypass GCS protections via signal
-> return we only allow returning with GCSPR_EL0 pointing to an address
-> where it was previously preempted by a signal.  We do this by pushing a
-> cap onto the GCS, this takes the form of an architectural GCS cap token
-> with the top bit set and token type of 0 which we add on signal entry
-> and validate and pop off on signal return.  The combination of the top
-> bit being set and the token type mean that this can't be interpreted as
-> a valid token or address.
-> 
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+
+Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
+
 > ---
->  arch/arm64/include/asm/gcs.h |   1 +
->  arch/arm64/kernel/signal.c   | 134 +++++++++++++++++++++++++++++++++++++++++--
->  arch/arm64/mm/gcs.c          |   1 +
->  3 files changed, 131 insertions(+), 5 deletions(-)
+>  arch/x86/include/asm/uv/uv_irq.h | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+> diff --git a/arch/x86/include/asm/uv/uv_irq.h b/arch/x86/include/asm/uv/uv_irq.h
+> index d6b17c760622..1876b5edd142 100644
+> --- a/arch/x86/include/asm/uv/uv_irq.h
+> +++ b/arch/x86/include/asm/uv/uv_irq.h
+> @@ -31,7 +31,6 @@ enum {
+>  	UV_AFFINITY_CPU
+>  };
+>  
+> -extern int uv_irq_2_mmr_info(int, unsigned long *, int *);
+>  extern int uv_setup_irq(char *, int, int, unsigned long, int);
+>  extern void uv_teardown_irq(unsigned int);
+>  
+> -- 
+> 2.34.1
+> 
 
-[...]
-
-> +#ifdef CONFIG_ARM64_GCS
-> +
-> +static int gcs_signal_entry(__sigrestore_t sigtramp, struct ksignal *ksig)
-> +{
-> +	unsigned long __user *gcspr_el0;
-> +	int ret = 0;
-> +
-> +	if (!system_supports_gcs())
-> +		return 0;
-> +
-> +	if (!task_gcs_el0_enabled(current))
-> +		return 0;
-> +
-> +	/*
-> +	 * We are entering a signal handler, current register state is
-> +	 * active.
-> +	 */
-> +	gcspr_el0 = (unsigned long __user *)read_sysreg_s(SYS_GCSPR_EL0);
-> +
-> +	/*
-> +	 * Push a cap and the GCS entry for the trampoline onto the GCS.
-> +	 */
-> +	put_user_gcs((unsigned long)sigtramp, gcspr_el0 - 2, &ret);
-> +	put_user_gcs(GCS_SIGNAL_CAP(gcspr_el0 - 1), gcspr_el0 - 1, &ret);
-> +	if (ret != 0)
-> +		return ret;
-
-What happens if we went wrong here, or if the signal we are delivering
-was caused by a GCS overrun or bad GCSPR_EL0 in the first place?
-
-It feels like a program has no way to rescue itself from excessive
-recursion in some thread.  Is there something equivalent to
-sigaltstack()?
-
-Or is the shadow stack always supposed to be big enough to cope with
-recursion that exhausts the main stack and alternate signal stack (and
-if so, how is this ensured)?
-
-> +
-> +	gcsb_dsync();
-> +
-> +	gcspr_el0 -= 2;
-> +	write_sysreg_s((unsigned long)gcspr_el0, SYS_GCSPR_EL0);
-> +
-> +	return 0;
-> +}
-
-[...]
-
-Cheers
----Dave
+-- 
+Steve Wahl, Hewlett Packard Enterprise
 
