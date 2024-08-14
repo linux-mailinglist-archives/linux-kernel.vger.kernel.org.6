@@ -1,359 +1,274 @@
-Return-Path: <linux-kernel+bounces-286322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DA395199E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:10:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E609519A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C43D1C2166E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3101C1F234F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD461AE852;
-	Wed, 14 Aug 2024 11:10:42 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E291AE84E;
+	Wed, 14 Aug 2024 11:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEdiwC6q"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DAAB679;
-	Wed, 14 Aug 2024 11:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3083D552;
+	Wed, 14 Aug 2024 11:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723633841; cv=none; b=iMN2XpQFf3iHYSEo20k0OIy9/aepu+beTxRYJCfVZARwUEeboBZ0ZnfIDHVbxFuMhUg5wHZxilZC8wb5kx6dNYp62jF31yRkwZfMRW3Lmtw52g+15BgchWBeuU68FMgp7/mhU11C7w8CqRCsH7moj3v327x0CPOMJ5csl2St/4I=
+	t=1723633891; cv=none; b=AL5K7vXNEAaca+MQd4L3qo3ftoze9ryEmyN4L9mr7BkMIGgrMPAmL9k9ip7v71xvb3tJW4u1PpAZuIRBZjJaJVLUfgDoOZmcdRt8KAPSRNY7e5fzml2w3NzIBECzU2TXDS8l5S5BDCsvUVYEtwF3of5hNpInihmqc2Gl+tVjVHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723633841; c=relaxed/simple;
-	bh=j8pEXE9PVlJYvlw6ZK1FH3arytThtP5WQMjRFt6T5xA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PnUb1PfGRK08cmAQCJAdMft882YStjbQcjP8yKdizy6cAIHDLa0BHMm0bBwftyPI5dLzJlP2q1+S38awn/G7oIKSzkvDiQ4pCJt2C6JdlvwM1eN1RBpYUICnhFqXvkuwbcrMC7Wf7BrtUY1UVPOPobbl73q6onPqEdZgYt3oku8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1723633891; c=relaxed/simple;
+	bh=6x+EwFgMlixsQabpUKBOp0rSA0BXSFVYfxNw3TXOwU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VU8QIciHaUIsWGgGZc0yal8fWA/bmNs2498hRbB6W5xbBFGdvV1J61yAcYEEJZPyvFuPRz2qmMyPfcUXH5xL6YDkY5n1/dAGLlIrwNPIyQKn3Du9u8BIyIEC6VJ5PibOHHCGjvzlDhnWzh+rPO7fs+1GEun8bzevWBvel40Kays=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEdiwC6q; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4f52bd5b555so504642e0c.1;
-        Wed, 14 Aug 2024 04:10:39 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a83597ce5beso121128766b.1;
+        Wed, 14 Aug 2024 04:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723633888; x=1724238688; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bd95t4QRiWzWEZTdTjQVQS44zRvwX6u9xVdH0F86DIg=;
+        b=PEdiwC6q3gP0c0EAte7By/ugLh9YwMmECEkKxkx2bYFhn9OzDGQgUlJ1OGYcCzZyso
+         4bgRP869DPepWF737h9xGRbwkIsAPQaf0nBMcE2wColnmeKDOtaHZZ2REYq0mX+/4i4E
+         fEYfKeY+5hE7KFgQdlvrJdh7q7l9CtHkNajGAQY/IOEOXKPI/5p31mw436IBDTe4Mij8
+         3wJgA67GczjhoQ3i5CiSEJFb4Vs/DNwg/Ouvbwmw0z8IXr3eaXceuav7On9ibd7XEWqy
+         lJYWbzjkXy+mug/95MEBZd9JseYRNaGZlJ8IVd6JbtxImQmQjN3rUrMBD+aQ1XDhDGAU
+         gP0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723633839; x=1724238639;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tKBWMOZpHAAA5MQNXuooT8nERpHIRTsKHqQ8nBNa4qM=;
-        b=NSd8ixOAqMMDuVTvf8jflbmOS16V4Uctq4SV8bZeXoi+K1Qy3ULVxaAXRzJzF+s/iz
-         /ugEKEqtgCEkutYA1GFlAn43sQISsw3mIt0xIFvusAVfRX1fKUd14KkDUuz7dtxaqQrx
-         eKdElfsWsMPQR+yMnLlHdUHO79Rd7q3jLY4Wj9JnxO9dpvLrhkT4hbQxXBZ8Wmj+tbR6
-         t2O8fASDIK18ELtqO0Ys1XO3mdx4zhPeN4ZI6KMNk8HaCqVzX/KihLwrrKpF01Q+YRrK
-         SnDf7+KqYp/3XQj0U1UwK3Dpw+uyjth2aMkqIqCcRC17JjPK5FqMvv907pDX5C8mvkvC
-         vGbg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4X5NQXDn3cFpZERaAbwA9G2F3SkbV8Uk7QKTlauSWzG5RLm3Q3mWmjX4gju22Jslv9TqWKraKSoNjwt44Wkw3c7LuTbCPhUIhbKveL3L1RkgHks8Hv6gY3QsA1CqzhMagKk42LSHE
-X-Gm-Message-State: AOJu0YxoKKVQBGqUm1IXuqAWQOs+OwBKxdARw7/FGhwPqqvRffO0hPrN
-	8q9jT4ZB6/w/I0rbXHgsL31UujMYSWaGxqcIlXvFUSMqu9AeNAHrqjr1L/vqBLBL3tGFgR5tmIz
-	xatuQqRi7p3UO5SYAAe71qcQZUXw=
-X-Google-Smtp-Source: AGHT+IFHgr/BQNWyLd6y2D+x0J3hYd9uJcbjA4OqOeeGBarXFRitZS2fB2fPvtdzpMbd30EAMfhGGrR3DACkRgOL9OU=
-X-Received: by 2002:a1f:4b47:0:b0:4f5:2849:598d with SMTP id
- 71dfb90a1353d-4fac1aba611mr2748884e0c.4.1723633838617; Wed, 14 Aug 2024
- 04:10:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723633888; x=1724238688;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bd95t4QRiWzWEZTdTjQVQS44zRvwX6u9xVdH0F86DIg=;
+        b=Mntokq75MCvjS7wCbqPnIkCDo673wUD+CBKSLCVY6uTWBqhzQhMFZZW0ElIhXLCxPX
+         D4hS3tSwjyHXK56Wdel1fHs+rhnGgbtkwlTvvOJejNn3f/qLsBqXCeVppklVL2EKJH5C
+         UjgL0jBeKp4zEwsCKKPyBN9jIayFNwEqJ9LxvrXZ1UVfNKRAg7k8o2DemC8l9sLukhp2
+         6fLY4mSOeFhfjHDspjlQ2BGyoXHw0Ws5NUHXyL5oqo9jF4DvIOWQbQ5TKugiuykLXvoN
+         lvbGm91+mEqDUqyeih/yJbqEksYtjEuzFGFxP0XWBd0l9/0e301ZyrhXnGZOvhMRpOAj
+         UX8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIqItCrPOaDhWPTRtgUpjcvH3pOS6RdY359rG9JUomJShmKgFeWPbZH5u+4UdU6h+wb6hFJ2hiWRmDshFfu3KXFUKYPqsYgt2SVHHW/ALJSk32t6xeYfNZR8sQKLZi7bvzuj/c4dvd
+X-Gm-Message-State: AOJu0YygTPddTZXGZbjU8iXlNSYGmH2gc4TKmgSxgJeDdfNBFClFVViW
+	9BjjZCLxTVHh2SUqrNjZ9HoNGcr/o86ifeqB5xC1RmqIv+3dp/UA
+X-Google-Smtp-Source: AGHT+IGBU4oEgLhtMtUTy0jy1FrOvevihP2RUEWR89Y1SrW/4ky4uCUP/QrzhHHHWRNNQ88+2LKuiQ==
+X-Received: by 2002:a17:907:e257:b0:a7c:d284:4f1d with SMTP id a640c23a62f3a-a836afcbf78mr152560766b.28.1723633887604;
+        Wed, 14 Aug 2024 04:11:27 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::4:61b7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f4184ec9sm159151466b.219.2024.08.14.04.11.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 04:11:27 -0700 (PDT)
+Message-ID: <925804e4-0b33-45eb-905d-e00f67192828@gmail.com>
+Date: Wed, 14 Aug 2024 12:11:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813120328.1275952-1-usamaarif642@gmail.com> <20240813120328.1275952-5-usamaarif642@gmail.com>
-In-Reply-To: <20240813120328.1275952-5-usamaarif642@gmail.com>
-From: Barry Song <baohua@kernel.org>
-Date: Wed, 14 Aug 2024 23:10:27 +1200
-Message-ID: <CAGsJ_4ySxmhQCXT5Nw09tdGJA+j9=ZEMEuPa6jgX__tM+EMqXw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] mm: Introduce a pageflag for partially mapped folios
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev, 
-	yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org, 
-	willy@infradead.org, cerasuolodomenico@gmail.com, corbet@lwn.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] mm: Introduce a pageflag for partially mapped
+ folios
+To: Barry Song <baohua@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+ yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org,
+ willy@infradead.org, cerasuolodomenico@gmail.com, corbet@lwn.net,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20240813120328.1275952-1-usamaarif642@gmail.com>
+ <20240813120328.1275952-5-usamaarif642@gmail.com>
+ <CAGsJ_4x+5fiCoWv4G0NsYq+aJRqZsrCEHO_DF+CnNFdqx0VgMQ@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAGsJ_4x+5fiCoWv4G0NsYq+aJRqZsrCEHO_DF+CnNFdqx0VgMQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 12:03=E2=80=AFAM Usama Arif <usamaarif642@gmail.com=
-> wrote:
->
-> Currently folio->_deferred_list is used to keep track of
-> partially_mapped folios that are going to be split under memory
-> pressure. In the next patch, all THPs that are faulted in and collapsed
-> by khugepaged are also going to be tracked using _deferred_list.
->
-> This patch introduces a pageflag to be able to distinguish between
-> partially mapped folios and others in the deferred_list at split time in
-> deferred_split_scan. Its needed as __folio_remove_rmap decrements
-> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
-> possible to distinguish between partially mapped folios and others in
-> deferred_split_scan.
->
-> Eventhough it introduces an extra flag to track if the folio is
-> partially mapped, there is no functional change intended with this
-> patch and the flag is not useful in this patch itself, it will
-> become useful in the next patch when _deferred_list has non partially
-> mapped folios.
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
->  include/linux/huge_mm.h    |  4 ++--
->  include/linux/page-flags.h |  3 +++
->  mm/huge_memory.c           | 21 +++++++++++++--------
->  mm/hugetlb.c               |  1 +
->  mm/internal.h              |  4 +++-
->  mm/memcontrol.c            |  3 ++-
->  mm/migrate.c               |  3 ++-
->  mm/page_alloc.c            |  5 +++--
->  mm/rmap.c                  |  3 ++-
->  mm/vmscan.c                |  3 ++-
->  10 files changed, 33 insertions(+), 17 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 4c32058cacfe..969f11f360d2 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *page)
->  {
->         return split_huge_page_to_list_to_order(page, NULL, 0);
->  }
-> -void deferred_split_folio(struct folio *folio);
-> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
->
->  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->                 unsigned long address, bool freeze, struct folio *folio);
-> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *page)
->  {
->         return 0;
->  }
-> -static inline void deferred_split_folio(struct folio *folio) {}
-> +static inline void deferred_split_folio(struct folio *folio, bool partia=
-lly_mapped) {}
->  #define split_huge_pmd(__vma, __pmd, __address)        \
->         do { } while (0)
->
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index a0a29bd092f8..cecc1bad7910 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -182,6 +182,7 @@ enum pageflags {
->         /* At least one page in this folio has the hwpoison flag set */
->         PG_has_hwpoisoned =3D PG_active,
->         PG_large_rmappable =3D PG_workingset, /* anon or file-backed */
-> +       PG_partially_mapped, /* was identified to be partially mapped */
->  };
->
->  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
-> @@ -861,8 +862,10 @@ static inline void ClearPageCompound(struct page *pa=
-ge)
->         ClearPageHead(page);
->  }
->  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
-> +FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
->  #else
->  FOLIO_FLAG_FALSE(large_rmappable)
-> +FOLIO_FLAG_FALSE(partially_mapped)
->  #endif
->
->  #define PG_head_mask ((1UL << PG_head))
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 6df0e9f4f56c..c024ab0f745c 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3397,6 +3397,7 @@ int split_huge_page_to_list_to_order(struct page *p=
-age, struct list_head *list,
->                          * page_deferred_list.
->                          */
->                         list_del_init(&folio->_deferred_list);
-> +                       folio_clear_partially_mapped(folio);
->                 }
->                 spin_unlock(&ds_queue->split_queue_lock);
->                 if (mapping) {
-> @@ -3453,11 +3454,12 @@ void __folio_undo_large_rmappable(struct folio *f=
-olio)
->         if (!list_empty(&folio->_deferred_list)) {
->                 ds_queue->split_queue_len--;
->                 list_del_init(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
->         }
->         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  }
->
-> -void deferred_split_folio(struct folio *folio)
-> +void deferred_split_folio(struct folio *folio, bool partially_mapped)
->  {
->         struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
-o);
->  #ifdef CONFIG_MEMCG
-> @@ -3485,14 +3487,17 @@ void deferred_split_folio(struct folio *folio)
->         if (folio_test_swapcache(folio))
->                 return;
->
-> -       if (!list_empty(&folio->_deferred_list))
-> -               return;
-> -
->         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> +       if (partially_mapped)
-> +               folio_set_partially_mapped(folio);
-> +       else
-> +               folio_clear_partially_mapped(folio);
->         if (list_empty(&folio->_deferred_list)) {
-> -               if (folio_test_pmd_mappable(folio))
-> -                       count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> -               count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFER=
-RED);
-> +               if (partially_mapped) {
-> +                       if (folio_test_pmd_mappable(folio))
-> +                               count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SPL=
-IT_DEFERRED);
 
-This code completely broke MTHP_STAT_SPLIT_DEFERRED for PMD_ORDER. It
-added the folio to the deferred_list as entirely_mapped
-(partially_mapped =3D=3D false).
-However, when partially_mapped becomes true, there's no opportunity to
-add it again
-as it has been there on the list. Are you consistently seeing the counter f=
-or
-PMD_ORDER as 0?
 
-> +               }
->                 list_add_tail(&folio->_deferred_list, &ds_queue->split_qu=
-eue);
->                 ds_queue->split_queue_len++;
->  #ifdef CONFIG_MEMCG
-> @@ -3541,6 +3546,7 @@ static unsigned long deferred_split_scan(struct shr=
-inker *shrink,
->                 } else {
->                         /* We lost race with folio_put() */
->                         list_del_init(&folio->_deferred_list);
-> +                       folio_clear_partially_mapped(folio);
->                         ds_queue->split_queue_len--;
->                 }
->                 if (!--sc->nr_to_scan)
-> @@ -3558,7 +3564,6 @@ static unsigned long deferred_split_scan(struct shr=
-inker *shrink,
->  next:
->                 folio_put(folio);
->         }
-> -
->         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->         list_splice_tail(&list, &ds_queue->split_queue);
->         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 1fdd9eab240c..2ae2d9a18e40 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1758,6 +1758,7 @@ static void __update_and_free_hugetlb_folio(struct =
-hstate *h,
->                 free_gigantic_folio(folio, huge_page_order(h));
->         } else {
->                 INIT_LIST_HEAD(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
->                 folio_put(folio);
->         }
->  }
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 52f7fc4e8ac3..d64546b8d377 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -662,8 +662,10 @@ static inline void prep_compound_head(struct page *p=
-age, unsigned int order)
->         atomic_set(&folio->_entire_mapcount, -1);
->         atomic_set(&folio->_nr_pages_mapped, 0);
->         atomic_set(&folio->_pincount, 0);
-> -       if (order > 1)
-> +       if (order > 1) {
->                 INIT_LIST_HEAD(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
-> +       }
->  }
->
->  static inline void prep_compound_tail(struct page *head, int tail_idx)
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e1ffd2950393..0fd95daecf9a 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4669,7 +4669,8 @@ static void uncharge_folio(struct folio *folio, str=
-uct uncharge_gather *ug)
->         VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
->         VM_BUG_ON_FOLIO(folio_order(folio) > 1 &&
->                         !folio_test_hugetlb(folio) &&
-> -                       !list_empty(&folio->_deferred_list), folio);
-> +                       !list_empty(&folio->_deferred_list) &&
-> +                       folio_test_partially_mapped(folio), folio);
->
->         /*
->          * Nobody should be changing or seriously looking at
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 3288ac041d03..6e32098ac2dc 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1734,7 +1734,8 @@ static int migrate_pages_batch(struct list_head *fr=
-om,
->                          * use _deferred_list.
->                          */
->                         if (nr_pages > 2 &&
-> -                          !list_empty(&folio->_deferred_list)) {
-> +                          !list_empty(&folio->_deferred_list) &&
-> +                          folio_test_partially_mapped(folio)) {
->                                 if (!try_split_folio(folio, split_folios,=
- mode)) {
->                                         nr_failed++;
->                                         stats->nr_thp_failed +=3D is_thp;
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 408ef3d25cf5..a145c550dd2a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -957,8 +957,9 @@ static int free_tail_page_prepare(struct page *head_p=
-age, struct page *page)
->                 break;
->         case 2:
->                 /* the second tail page: deferred_list overlaps ->mapping=
- */
-> -               if (unlikely(!list_empty(&folio->_deferred_list))) {
-> -                       bad_page(page, "on deferred list");
-> +               if (unlikely(!list_empty(&folio->_deferred_list) &&
-> +                   folio_test_partially_mapped(folio))) {
-> +                       bad_page(page, "partially mapped folio on deferre=
-d list");
->                         goto out;
->                 }
->                 break;
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index a6b9cd0b2b18..9ad558c2bad0 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1579,7 +1579,8 @@ static __always_inline void __folio_remove_rmap(str=
-uct folio *folio,
->          */
->         if (partially_mapped && folio_test_anon(folio) &&
->             list_empty(&folio->_deferred_list))
-> -               deferred_split_folio(folio);
-> +               deferred_split_folio(folio, true);
-> +
->         __folio_mod_stat(folio, -nr, -nr_pmdmapped);
->
->         /*
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 25e43bb3b574..25f4e8403f41 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1233,7 +1233,8 @@ static unsigned int shrink_folio_list(struct list_h=
-ead *folio_list,
->                                          * Split partially mapped folios =
-right away.
->                                          * We can free the unmapped pages=
- without IO.
->                                          */
-> -                                       if (data_race(!list_empty(&folio-=
->_deferred_list)) &&
-> +                                       if (data_race(!list_empty(&folio-=
->_deferred_list) &&
-> +                                           folio_test_partially_mapped(f=
-olio)) &&
->                                             split_folio_to_list(folio, fo=
-lio_list))
->                                                 goto activate_locked;
->                                 }
-> --
-> 2.43.5
->
+On 14/08/2024 11:44, Barry Song wrote:
+> On Wed, Aug 14, 2024 at 12:03 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>> Currently folio->_deferred_list is used to keep track of
+>> partially_mapped folios that are going to be split under memory
+>> pressure. In the next patch, all THPs that are faulted in and collapsed
+>> by khugepaged are also going to be tracked using _deferred_list.
+>>
+>> This patch introduces a pageflag to be able to distinguish between
+>> partially mapped folios and others in the deferred_list at split time in
+>> deferred_split_scan. Its needed as __folio_remove_rmap decrements
+>> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
+>> possible to distinguish between partially mapped folios and others in
+>> deferred_split_scan.
+>>
+>> Eventhough it introduces an extra flag to track if the folio is
+>> partially mapped, there is no functional change intended with this
+>> patch and the flag is not useful in this patch itself, it will
+>> become useful in the next patch when _deferred_list has non partially
+>> mapped folios.
+>>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>> ---
+>>  include/linux/huge_mm.h    |  4 ++--
+>>  include/linux/page-flags.h |  3 +++
+>>  mm/huge_memory.c           | 21 +++++++++++++--------
+>>  mm/hugetlb.c               |  1 +
+>>  mm/internal.h              |  4 +++-
+>>  mm/memcontrol.c            |  3 ++-
+>>  mm/migrate.c               |  3 ++-
+>>  mm/page_alloc.c            |  5 +++--
+>>  mm/rmap.c                  |  3 ++-
+>>  mm/vmscan.c                |  3 ++-
+>>  10 files changed, 33 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 4c32058cacfe..969f11f360d2 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *page)
+>>  {
+>>         return split_huge_page_to_list_to_order(page, NULL, 0);
+>>  }
+>> -void deferred_split_folio(struct folio *folio);
+>> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
+>>
+>>  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>>                 unsigned long address, bool freeze, struct folio *folio);
+>> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *page)
+>>  {
+>>         return 0;
+>>  }
+>> -static inline void deferred_split_folio(struct folio *folio) {}
+>> +static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
+>>  #define split_huge_pmd(__vma, __pmd, __address)        \
+>>         do { } while (0)
+>>
+>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>> index a0a29bd092f8..cecc1bad7910 100644
+>> --- a/include/linux/page-flags.h
+>> +++ b/include/linux/page-flags.h
+>> @@ -182,6 +182,7 @@ enum pageflags {
+>>         /* At least one page in this folio has the hwpoison flag set */
+>>         PG_has_hwpoisoned = PG_active,
+>>         PG_large_rmappable = PG_workingset, /* anon or file-backed */
+>> +       PG_partially_mapped, /* was identified to be partially mapped */
+>>  };
+>>
+>>  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
+>> @@ -861,8 +862,10 @@ static inline void ClearPageCompound(struct page *page)
+>>         ClearPageHead(page);
+>>  }
+>>  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
+>> +FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+>>  #else
+>>  FOLIO_FLAG_FALSE(large_rmappable)
+>> +FOLIO_FLAG_FALSE(partially_mapped)
+>>  #endif
+>>
+>>  #define PG_head_mask ((1UL << PG_head))
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 6df0e9f4f56c..c024ab0f745c 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -3397,6 +3397,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>>                          * page_deferred_list.
+>>                          */
+>>                         list_del_init(&folio->_deferred_list);
+>> +                       folio_clear_partially_mapped(folio);
+>>                 }
+>>                 spin_unlock(&ds_queue->split_queue_lock);
+>>                 if (mapping) {
+>> @@ -3453,11 +3454,12 @@ void __folio_undo_large_rmappable(struct folio *folio)
+>>         if (!list_empty(&folio->_deferred_list)) {
+>>                 ds_queue->split_queue_len--;
+>>                 list_del_init(&folio->_deferred_list);
+>> +               folio_clear_partially_mapped(folio);
+>>         }
+>>         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+>>  }
+>>
+>> -void deferred_split_folio(struct folio *folio)
+>> +void deferred_split_folio(struct folio *folio, bool partially_mapped)
+>>  {
+>>         struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+>>  #ifdef CONFIG_MEMCG
+>> @@ -3485,14 +3487,17 @@ void deferred_split_folio(struct folio *folio)
+>>         if (folio_test_swapcache(folio))
+>>                 return;
+>>
+>> -       if (!list_empty(&folio->_deferred_list))
+>> -               return;
+>> -
+>>         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>> +       if (partially_mapped)
+>> +               folio_set_partially_mapped(folio);
+>> +       else
+>> +               folio_clear_partially_mapped(folio);
+> 
+> Hi Usama,
+> 
+> Do we need this? When can a partially_mapped folio on deferred_list become
+> non-partially-mapped and need a clear? I understand transferring from
+> entirely_map
+> to partially_mapped is a one way process? partially_mapped folios can't go back
+> to entirely_mapped?
+> 
+Hi Barry,
+
+deferred_split_folio function is called in 3 places after this series, at fault, collapse and partial mapping. partial mapping can only happen after fault/collapse, and we have FOLIO_FLAG_FALSE(partially_mapped), i.e. flag initialized to false, so technically its not needed. A partially_mapped folio on deferred list wont become non-partially mapped. 
+
+I just did it as a precaution if someone ever changes the kernel and calls deferred_split_folio with partially_mapped set to false after it had been true. The function arguments of deferred_split_folio make it seem that passing partially_mapped=false as an argument would clear it, which is why I cleared it as well. I could change the patch to something like below if it makes things better? i.e. add a comment at the top of the function:
+
+
+-void deferred_split_folio(struct folio *folio)
++/* partially_mapped=false won't clear PG_partially_mapped folio flag */
++void deferred_split_folio(struct folio *folio, bool partially_mapped)
+ {
+        struct deferred_split *ds_queue = get_deferred_split_queue(folio);
+ #ifdef CONFIG_MEMCG
+@@ -3485,14 +3488,15 @@ void deferred_split_folio(struct folio *folio)
+        if (folio_test_swapcache(folio))
+                return;
+ 
+-       if (!list_empty(&folio->_deferred_list))
+-               return;
+-
+        spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
++       if (partially_mapped)
++               folio_set_partially_mapped(folio);
+        if (list_empty(&folio->_deferred_list)) {
+-               if (folio_test_pmd_mappable(folio))
+-                       count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+-               count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
++               if (partially_mapped) {
++                       if (folio_test_pmd_mappable(folio))
++                               count_vm_event(THP_DEFERRED_SPLIT_PAGE);
++                       count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
++               }
+                list_add_tail(&folio->_deferred_list, &ds_queue->split_queue);
+                ds_queue->split_queue_len++;
+ #ifdef CONFIG_MEMCG
+
+
+> I am trying to rebase my NR_SPLIT_DEFERRED counter on top of your
+> work, but this "clear" makes that job quite tricky. as I am not sure
+> if this patch
+> is going to clear the partially_mapped flag for folios on deferred_list.
+> 
+> Otherwise, I can simply do the below whenever folio is leaving deferred_list
+> 
+>         ds_queue->split_queue_len--;
+>         list_del_init(&folio->_deferred_list);
+>         if (folio_test_clear_partially_mapped(folio))
+>                 mod_mthp_stat(folio_order(folio),
+> MTHP_STAT_NR_SPLIT_DEFERRED, -1);
+> 
 
