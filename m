@@ -1,65 +1,86 @@
-Return-Path: <linux-kernel+bounces-286025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E67295157B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:28:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD9C951580
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D211F2ACF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:28:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F6C1F26E4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60BF13D503;
-	Wed, 14 Aug 2024 07:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDBC1448EB;
+	Wed, 14 Aug 2024 07:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P+HLG3Vg"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IHrJq4vB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089426F2FD
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A5713BC0C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723620365; cv=none; b=brFiu4K4rqvs9AidWD5jlJCErdg2VHh5jUNJ+6kY95yjD29+jVvPowAJTS/8RbC3mLJ1qf1BvGbY3hj87xvfa99EOIvYG00bF5qe7UblgNZDlXH3UxiSPBU/4oDVHI7n7clsVOgi8f3Rk3nCCFlg7vq1mFlncrM8AtOzeu5/84I=
+	t=1723620447; cv=none; b=dYCvqlbk4m+bQkzwfqNJhf4upsZtWuUXqzTEDsbQE75xZ/PEEjeUPqa0CmVF051DlR17PmYl2z4C5b9hrbMmzVWhJC7P0vTZIbdVyUUi+1MEHsXUHw/yBr1KSYBteKEQqv5sPuVR6Aaa7aZ+uSDnLAoYbj/uKqdMogoF7tOfCbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723620365; c=relaxed/simple;
-	bh=poywOuStYhUetZu/UHSF/VloBA8a4576b2vd54xGlvQ=;
+	s=arc-20240116; t=1723620447; c=relaxed/simple;
+	bh=1UP383j6hjG1P69n1FRHYze421i09BJSQebpheB6rVc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QqUmFwElyulRroUFKSBT5LG5Vh6xFwDJ/U5FAT++HoFuNY/fVLyp2OLPivlx5/rR0ciWkJFKVFSwaXLU1EdQ7bKQcp+Qsia4ONxZkf0Fe8lWHeHigfOWWqID4e2NRY0C8b7h2xEjNmvKloRi0FwwWeRI5G59URXrmCQek2DJkmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P+HLG3Vg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ktl7L6T+RI2efOnQZ23lWcMkdOS4KwDH6qEDEskAmOM=; b=P+HLG3VgbJO6d9nTBqXaPC666y
-	V8/q+MAGTvGFL/5yAHJmlfyuy4QJWZiFmoYL38PWxhOnZMfOotuWriudoxO/OxotS2Jxk5l32PyGI
-	/v/+Zkiipcdu9sZGQeOjELNTDDyP2CbONSoK6iBrR4BCOylWKjmNgqna+HXhJypVrgo8ANJFhIA/q
-	9KX5cfvOd2Ochhbd11JbA0Ak2cb1ZtC9W+A9XDOb4A98HpqZF9AZA3IBA1R2owMrdmqL/2DD0GPCV
-	/1vDxiwhCH/O0ify03uk7zz+dyb7xnUS6+t6bREOif9zaTsCcAs3R85QfGgn0VchdHt7Co2ScXDmz
-	bf3atzeg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1se8OE-00000000532-0Pm7;
-	Wed, 14 Aug 2024 07:25:50 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8586130074E; Wed, 14 Aug 2024 09:25:48 +0200 (CEST)
-Date: Wed, 14 Aug 2024 09:25:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 19/24] sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE
-Message-ID: <20240814072548.GB22686@noisy.programming.kicks-ass.net>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.514088302@infradead.org>
- <xhsmh7ccky4mr.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <20240813221806.GB10328@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AECP6WAJ/vTHeeG5b1r/NRlzHq7wViyc2xWzVGoZj2EcZ8omYpSd9LlNqCjP7OuShgiFzDl52LJz0vGIiGP7741ZWdtJjQqCOk2koTk2wmOI1bqWGqJKnMxDpe7oXLD9ytzrFQfylMHgsL1YkjXg2wZ7NYpv6hElNsrsP5njyJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IHrJq4vB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723620444;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lWW6/JtLLOdbS2RriwQ1Xt/j+3UDgvX+fkiP4SLbmfs=;
+	b=IHrJq4vB/fV7DRuOiSPfu5RX7YoX/yvRXHH/6WEWiFD5ehUC437Ssa2gMhgcxVebi04kYE
+	4gYejjKWcz5fiLjVFlh+bfnd34HcRozjlLUiWtIqor4T9iS2glBloRZ9f9hzGNUmCpvG/I
+	ABQvmsetuss58ca9/tpYNn7i5QzKu+8=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-g7T-xtRMPMSpf5cF6ABslA-1; Wed, 14 Aug 2024 03:27:22 -0400
+X-MC-Unique: g7T-xtRMPMSpf5cF6ABslA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a77e044ff17so405877266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:27:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723620440; x=1724225240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWW6/JtLLOdbS2RriwQ1Xt/j+3UDgvX+fkiP4SLbmfs=;
+        b=Rl8cn00Yg0Sq0EXww4uheY5yjsIagZDINwdi7wz+X+iDP+9hmxurnOHm5eHZeGOUsg
+         TiM+C2ltk+lEOQQnfPSNqPLqN7x8pTfulTfpH5ACpEdBWdvDXVtLI6xjmtAZ3wcWPXa3
+         y16uhbctYjmtz6b8bau1HrVWXFEn7+xqmscWE+0qhfPHoT9DV+3k/cPoaHjfCcqSFyeE
+         oSuDZo6MkO6/fEhvWW/G2vtcdHEXeWnedR9pCAYQsSAedm73BMoww5Q/J3Y4xOFtsGYN
+         C2xNPU5bLFeez5E3lvGeUr21XrIxRWusjFUX0c1qkEV2uodhG03OrsDlClGcgVOnDL1r
+         hEig==
+X-Forwarded-Encrypted: i=1; AJvYcCX/zFWL87nX52M6xIaAZR8SU3pcFR4UOboUF0aIo8KzGDjA0TOnODaRpl66ySb0t+HbaDreau+EvI+ne6ld3IHgYxGO1shghD1efWnu
+X-Gm-Message-State: AOJu0Yy0V8hCS5y4SuJ0cWsAFDemfFHdudlvFRUkNKvnhty4veGwevek
+	0AI/uem+z5szs5wfjFm+juP7FwT8x849xdCIwmBt1sOw8H3jf8EkGpm/SG6rkWAi8GUGyHXTW33
+	edyQZSO6TEqZaF8vrq8bipaBy8t0yzpqTA5+XtevxcIMybe2auHQdAG+mdj3aR6cGjHKvZg==
+X-Received: by 2002:a17:907:e6cb:b0:a7a:83f8:cfd5 with SMTP id a640c23a62f3a-a8366c31b00mr116565866b.18.1723620440172;
+        Wed, 14 Aug 2024 00:27:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFWLP3dpgqeL2l8ABzufX/5DIla/d7Ejaojfhfx0OWK/1bdtH+0ljIF9zLiuDaMf7faqOl25Q==
+X-Received: by 2002:a17:907:e6cb:b0:a7a:83f8:cfd5 with SMTP id a640c23a62f3a-a8366c31b00mr116563466b.18.1723620439327;
+        Wed, 14 Aug 2024 00:27:19 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:346:dcde:9c09:aa95:551d:d374])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411d225sm137283666b.107.2024.08.14.00.27.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 00:27:18 -0700 (PDT)
+Date: Wed, 14 Aug 2024 03:27:14 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: dtatulea@nvidia.com, lingshan.zhu@intel.com, kvm@vger.kernel.org,
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] vhost_vdpa: assign irq bypass producer token
+ correctly
+Message-ID: <20240814032700-mutt-send-email-mst@kernel.org>
+References: <20240808082044.11356-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,133 +89,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813221806.GB10328@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240808082044.11356-1-jasowang@redhat.com>
 
-On Wed, Aug 14, 2024 at 12:18:07AM +0200, Peter Zijlstra wrote:
-> On Tue, Aug 13, 2024 at 02:43:56PM +0200, Valentin Schneider wrote:
-> > On 27/07/24 12:27, Peter Zijlstra wrote:
-> > > Note that tasks that are kept on the runqueue to burn off negative
-> > > lag, are not in fact runnable anymore, they'll get dequeued the moment
-> > > they get picked.
-> > >
-> > > As such, don't count this time towards runnable.
-> > >
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  kernel/sched/fair.c  |    2 ++
-> > >  kernel/sched/sched.h |    6 ++++++
-> > >  2 files changed, 8 insertions(+)
-> > >
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -5388,6 +5388,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
-> > >                       if (cfs_rq->next == se)
-> > >                               cfs_rq->next = NULL;
-> > >                       se->sched_delayed = 1;
-> > > +			update_load_avg(cfs_rq, se, 0);
-> > 
-> > Shouldn't this be before setting ->sched_delayed? accumulate_sum() should
-> > see the time delta as spent being runnable.
-> > 
-> > >                       return false;
-> > >               }
-> > >       }
-> > > @@ -6814,6 +6815,7 @@ requeue_delayed_entity(struct sched_enti
-> > >       }
-> > >
-> > >       se->sched_delayed = 0;
-> > > +	update_load_avg(cfs_rq, se, 0);
-> > 
-> > Ditto on the ordering
+On Thu, Aug 08, 2024 at 04:20:44PM +0800, Jason Wang wrote:
+> We used to call irq_bypass_unregister_producer() in
+> vhost_vdpa_setup_vq_irq() which is problematic as we don't know if the
+> token pointer is still valid or not.
 > 
-> Bah, so I remember thinking about it and then I obviously go and do it
-> the exact wrong way around eh? Let me double check this tomorrow morning
-> with the brain slightly more awake :/
+> Actually, we use the eventfd_ctx as the token so the life cycle of the
+> token should be bound to the VHOST_SET_VRING_CALL instead of
+> vhost_vdpa_setup_vq_irq() which could be called by set_status().
+> 
+> Fixing this by setting up  irq bypass producer's token when handling
+> VHOST_SET_VRING_CALL and un-registering the producer before calling
+> vhost_vring_ioctl() to prevent a possible use after free as eventfd
+> could have been released in vhost_vring_ioctl().
+> 
+> Fixes: 2cf1ba9a4d15 ("vhost_vdpa: implement IRQ offloading in vhost_vdpa")
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-OK, so I went over it again and I ended up with the below diff -- which
-assuming I didn't make a giant mess of things *again*, I should go fold
-back into various other patches ...
+Want to post a non-RFC version?
 
----
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1b15dbfb1ce5..fa8907f2c716 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5461,14 +5461,10 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- {
- 	bool sleep = flags & DEQUEUE_SLEEP;
- 
-+	update_curr(cfs_rq);
-+
- 	if (flags & DEQUEUE_DELAYED) {
--		/*
--		 * DEQUEUE_DELAYED is typically called from pick_next_entity()
--		 * at which point we've already done update_curr() and do not
--		 * want to do so again.
--		 */
- 		SCHED_WARN_ON(!se->sched_delayed);
--		se->sched_delayed = 0;
- 	} else {
- 		bool delay = sleep;
- 		/*
-@@ -5479,14 +5475,13 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 			delay = false;
- 
- 		SCHED_WARN_ON(delay && se->sched_delayed);
--		update_curr(cfs_rq);
- 
- 		if (sched_feat(DELAY_DEQUEUE) && delay &&
- 		    !entity_eligible(cfs_rq, se)) {
- 			if (cfs_rq->next == se)
- 				cfs_rq->next = NULL;
--			se->sched_delayed = 1;
- 			update_load_avg(cfs_rq, se, 0);
-+			se->sched_delayed = 1;
- 			return false;
- 		}
- 	}
-@@ -5536,6 +5531,12 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
- 		update_min_vruntime(cfs_rq);
- 
-+	if (flags & DEQUEUE_DELAYED) {
-+		se->sched_delayed = 0;
-+		if (sched_feat(DELAY_ZERO) && se->vlag > 0)
-+			se->vlag = 0;
-+	}
-+
- 	if (cfs_rq->nr_running == 0)
- 		update_idle_cfs_rq_clock_pelt(cfs_rq);
- 
-@@ -5611,11 +5612,6 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- 	struct sched_entity *se = pick_eevdf(cfs_rq);
- 	if (se->sched_delayed) {
- 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
--		SCHED_WARN_ON(se->sched_delayed);
--		SCHED_WARN_ON(se->on_rq);
--		if (sched_feat(DELAY_ZERO) && se->vlag > 0)
--			se->vlag = 0;
--
- 		return NULL;
- 	}
- 	return se;
-@@ -6906,7 +6902,7 @@ requeue_delayed_entity(struct sched_entity *se)
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
- 
- 	/*
--	 * se->sched_delayed should imply both: se->on_rq == 1.
-+	 * se->sched_delayed should imply: se->on_rq == 1.
- 	 * Because a delayed entity is one that is still on
- 	 * the runqueue competing until elegibility.
- 	 */
-@@ -6927,8 +6923,8 @@ requeue_delayed_entity(struct sched_entity *se)
- 		}
- 	}
- 
--	se->sched_delayed = 0;
- 	update_load_avg(cfs_rq, se, 0);
-+	se->sched_delayed = 0;
- }
- 
- /*
+> ---
+> Note for Dragos: Please check whether this fixes your issue. I
+> slightly test it with vp_vdpa in L2.
+> ---
+>  drivers/vhost/vdpa.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index e31ec9ebc4ce..388226a48bcc 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -209,11 +209,9 @@ static void vhost_vdpa_setup_vq_irq(struct vhost_vdpa *v, u16 qid)
+>  	if (irq < 0)
+>  		return;
+>  
+> -	irq_bypass_unregister_producer(&vq->call_ctx.producer);
+>  	if (!vq->call_ctx.ctx)
+>  		return;
+>  
+> -	vq->call_ctx.producer.token = vq->call_ctx.ctx;
+>  	vq->call_ctx.producer.irq = irq;
+>  	ret = irq_bypass_register_producer(&vq->call_ctx.producer);
+>  	if (unlikely(ret))
+> @@ -709,6 +707,12 @@ static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
+>  			vq->last_avail_idx = vq_state.split.avail_index;
+>  		}
+>  		break;
+> +	case VHOST_SET_VRING_CALL:
+> +		if (vq->call_ctx.ctx) {
+> +			vhost_vdpa_unsetup_vq_irq(v, idx);
+> +			vq->call_ctx.producer.token = NULL;
+> +		}
+> +		break;
+>  	}
+>  
+>  	r = vhost_vring_ioctl(&v->vdev, cmd, argp);
+> @@ -747,13 +751,14 @@ static long vhost_vdpa_vring_ioctl(struct vhost_vdpa *v, unsigned int cmd,
+>  			cb.callback = vhost_vdpa_virtqueue_cb;
+>  			cb.private = vq;
+>  			cb.trigger = vq->call_ctx.ctx;
+> +			vq->call_ctx.producer.token = vq->call_ctx.ctx;
+> +			vhost_vdpa_setup_vq_irq(v, idx);
+>  		} else {
+>  			cb.callback = NULL;
+>  			cb.private = NULL;
+>  			cb.trigger = NULL;
+>  		}
+>  		ops->set_vq_cb(vdpa, idx, &cb);
+> -		vhost_vdpa_setup_vq_irq(v, idx);
+>  		break;
+>  
+>  	case VHOST_SET_VRING_NUM:
+> @@ -1419,6 +1424,7 @@ static int vhost_vdpa_open(struct inode *inode, struct file *filep)
+>  	for (i = 0; i < nvqs; i++) {
+>  		vqs[i] = &v->vqs[i];
+>  		vqs[i]->handle_kick = handle_vq_kick;
+> +		vqs[i]->call_ctx.ctx = NULL;
+>  	}
+>  	vhost_dev_init(dev, vqs, nvqs, 0, 0, 0, false,
+>  		       vhost_vdpa_process_iotlb_msg);
+> -- 
+> 2.31.1
+
 
