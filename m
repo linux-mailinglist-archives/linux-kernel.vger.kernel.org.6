@@ -1,232 +1,151 @@
-Return-Path: <linux-kernel+bounces-286123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38DA9516E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:46:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AB79516EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49ABC2811BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:46:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B816EB22CC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7DB14373B;
-	Wed, 14 Aug 2024 08:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEC91428F4;
+	Wed, 14 Aug 2024 08:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FdsiK+vF"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ae6//wum"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B00E2BAE8;
-	Wed, 14 Aug 2024 08:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B4F1411E9
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625191; cv=none; b=OV17ze9pZUbfIcnC6oUgTCsAsAzf9x16DYd7tpQkuywuWofi6ZlN6v6xNZSaOj7/xHLw6eBHg9pp0b6VLlUYJaQ53ZHR8obud9Hs8fmxE+uUOZgYl0bQloEai/W2BP7I+qhRsw+LyN6l//7rC/DVz48lwMf7IAkRaTBgXRhqonY=
+	t=1723625224; cv=none; b=LJydzulGVKuafU03zEeIRA1w92/4LJBcBkPZEkn2hScCyoCymoazKjnrkrusiDZHn+2qaoLaDllPJ+yYHaHlGe40SV2XiBmQAtnyAF+2XUMh2+vxGl5j1doaiT1Jb4ZLQPdk4ragVN2PXizIn0ilXFjVmkrgLK7teVAF7TatV2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625191; c=relaxed/simple;
-	bh=uNzw9J4WE8npfPuqFzki9uq65FktmGhF48iIhaLpTf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=osmyxTADurgjDfBWf+d/wVLuGSY9geeEnPwGog3+XsDs1kvZfDRnqsDSpgN79QEZkhzm36SqtSfnH8AuGKJ1aJif3K0TNT1tMzauumN2cYEwKkH8P9iNnmyiuy3Ofy4s7BpliYdKOUrSfM2Sn19F7hDLyMDnZxqUBWkd2iu8cUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FdsiK+vF; arc=none smtp.client-ip=217.70.183.193
+	s=arc-20240116; t=1723625224; c=relaxed/simple;
+	bh=V2cOUf8bwQK2ya9bk+bxBWz3vR7mG6wL1NlE1cWXOGk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EvqDqtNsds0o+BTVgxYhn8scr/ZN2dxXq2rb21KNJS8QjZDET4UkWayY75cH1ff4kdpGpFo+rXv9TwiokJJVmrjwI+5lOus6IVkaIfZhCZR4Gulm7VYSAt1GJoiWqSfpSOgdkT0oDs7fr+GAPYqQ8J7f+2sVT1F3g0Z0LRuWAGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ae6//wum; arc=none smtp.client-ip=217.70.183.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7A91E240002;
-	Wed, 14 Aug 2024 08:46:24 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1C1FCFF804;
+	Wed, 14 Aug 2024 08:47:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723625187;
+	t=1723625220;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ucah7eJHaaeq3ephNaG8kgL8jqU515QWycrDeI4W32U=;
-	b=FdsiK+vFzIxzAqPbfc+zcpWwxzSkeu0QWaWCCAjEbz0ECS+4Gop5b9iMy9KvidVfzrT8YS
-	R3glCu3H/fqGqqli0J7bcQs1w03PBRnmCapSt56E9eryaNugOsi1PeVvaPMZvrGAhfIkSu
-	/t4pALdm08hT/0XNHlcrmjKN0EZBCdXNgFQPpp1Z0aEC9SrkAFKSLnmVn9py1QCfRHIjnT
-	2sHSq8VKWfcCkSJJEP/ynJ4bZVshyjwgQhXFQlj4veogBmCtfuNurSeoBV7fWvqLvn4VxT
-	XCZP930UGMK7PVedVe/wN8EbyAnhDkfoixyA+y09If7Os0pmm1Gwux56yiPboQ==
-Date: Wed, 14 Aug 2024 10:46:23 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, "broonie@kernel.org"
- <broonie@kernel.org>, "pratyush@kernel.org" <pratyush@kernel.org>,
- "richard@nod.at" <richard@nod.at>, "vigneshr@ti.com" <vigneshr@ti.com>,
- "sbinding@opensource.cirrus.com" <sbinding@opensource.cirrus.com>,
- "lee@kernel.org" <lee@kernel.org>, "james.schulman@cirrus.com"
- <james.schulman@cirrus.com>, "david.rhodes@cirrus.com"
- <david.rhodes@cirrus.com>, "rf@opensource.cirrus.com"
- <rf@opensource.cirrus.com>, "perex@perex.cz" <perex@perex.cz>,
- "tiwai@suse.com" <tiwai@suse.com>, "linux-spi@vger.kernel.org"
- <linux-spi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "michael@walle.cc" <michael@walle.cc>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
- "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
- "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>, "Simek, Michal"
- <michal.simek@amd.com>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
- <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
- <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
- <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
- "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, Conor Dooley
- <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
-Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
- spi-nor
-Message-ID: <20240814104623.72eef495@xps-13>
-In-Reply-To: <IA0PR12MB769997D5958C191215254983DC872@IA0PR12MB7699.namprd12.prod.outlook.com>
-References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
-	<c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org>
-	<BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<b3d3c457-a43b-478a-85b3-52558227d139@linaro.org>
-	<BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org>
-	<BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org>
-	<BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org>
-	<9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
-	<BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
-	<20240812103812.72763f69@xps-13>
-	<IA0PR12MB769997D5958C191215254983DC872@IA0PR12MB7699.namprd12.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fNuuZuYThGLr8uNfwKyVec7VNOTlprUdjtT+el7yIZE=;
+	b=Ae6//wumlWKVkWPtDDX1GcvgaW1dhTHpdjhpqn56RtSiJnYVYf/9V3nXJzru/zYtMU3Uzt
+	lsYcouMgk8Bvnv7KBGKxj3z/57M3nTAMDJjPx2SoGq0bHzbCWLeWSkgQFZCPCAnpyW9BKx
+	JM1M2pLw20d+vbl4BGUU3zV5HBWu3WtPmyrUsTPCHJXp19+j7bxNZiGsMRD71AcR8OFpN5
+	hOrfFqYJKECG6/tR4mVTGRlkTbcojKOU3XyYYOwCJgY/xtuFoxarXUsvsFHGq9muk1R4bP
+	vE2rQyDK5EZrwDBEsuMI314i7nDuxm4241aqeWSuuFSe11d55XvEOK9Fy+njow==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH 0/3] drm/vkms: Miscelanious clarifications
+Date: Wed, 14 Aug 2024 10:46:57 +0200
+Message-Id: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAFvvGYC/43PTW7DIBAF4KtYrDst2PhXVdR7VFEEeOyiGNMAc
+ RJFuXuntrroolJX8BDvY7iziMFiZF12ZwEXG62fKYinjJkPNY8ItqfMcp5LXuYcRu/HCcFMKtj
+ BGpWoEKHHHpveaCwaxaj7GXCw19V932854OlMfNoOmVaRFO+cTV3WBwfORvPys4EZr+kbchijW
+ qfostd1iIa3cDsvsAgOHISqTV1JUVVD/aa9T5Odn4nd/VEWErQk/UJvTz7A4INTKcKSE9boQra
+ tGbDl+E/sEuhHWpnjge7iQd/WdeOKqpTC1KIuq/Y3t388vgBfjK1jegEAAA==
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2918;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=V2cOUf8bwQK2ya9bk+bxBWz3vR7mG6wL1NlE1cWXOGk=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvG8DNIHE9Fej0DxsdSnZou8wTjmZvJKOjU+Vj
+ uMHsVSTwD+JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrxvAwAKCRAgrS7GWxAs
+ 4uNSD/0a9Ml43IpjaHF7e4erJG/5s1kKmWJr/o9PUXk0ShKCxQAxywukEK70PH2RcfxINw8fE7H
+ V0UwQrJRCnwFcVC2ZvJLsntWUcHoh4DTc6J6BZ3UNvqB1bqj5RkPiJCQVsz/cPCF/fbtYeixN9k
+ e8uVkx2u4kl/G/wf36lyT4wiK8lwbRKT013r6FcZhUPXWCc955Gukph1V+kvXDkEHnMuHD2SVl9
+ c/wqQcRMXYGyyPHmplzuz37evY2CY9h4w6TuTWFEpdHI87KotghbA/1zMVSMsF/4y7qJ/syIUQD
+ oSlRc2Pu5p2qDjz1ur18j0FnWsBXZuCCLOsT1K4RkRxm5sLNY9KshOLo+IoQkI1tg66zqIo1SE7
+ gzF2mXXiccUzLwVVSzTHgUbDMDmYqlUL/huXpGKJrFdS86Q/BVAiF5EX/7hd7VRctZlK9UN6biC
+ W/bAhhKPwq8ATy1s2HAJm6HGCA2G/XUh4qV2jl5ZXtyJmmvbDva5FFeeFuJj1IWVi4fvQwrDY0d
+ dwWSX5nX+qLa0t5MZPScQwRjbzqZsgN6CflGx4JN2ixf8QSM1LCivSB+zwjFB6RWAiq2CUypj80
+ wtqSskCChQVpg3HgMW2OkdJu6OC+ihAhZ4I4mQEnt+hoMcH2awiJ0oosw5ehqnGF7gg9tw+IXPo
+ 4uHUZbWCobV8m3A==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Amit,
+This series does not introduce functionnal changes, only some
+documentation and renaming to clarify the code.
 
-amit.kumar-mahapatra@amd.com wrote on Wed, 14 Aug 2024 07:13:35 +0000:
+This series is based on [1].
 
-> Hello Miquel,
->=20
-> > > Based on the inputs/suggestions from Tudor, i am planning to add a new
-> > > layer between the SPI-NOR and MTD layers to support stacked and
-> > > parallel configurations. This new layer will be part of the spi-nor
-> > > and located in mtd/spi-nor/ =20
-> >=20
-> > For now I don't think you need a totally generic implementation. As lon=
-g as
-> > there is only one controller supporting these modes, I'd say this is no=
-t super
-> > relevant. =20
->=20
-> IMHO, there should be a general solution since this isn't limited to just=
-=20
-> one controller. Any controller can support stacked mode with multiple=20
-> native-cs or multiple gpio-cs, or with a combination of a native-cs and a=
-=20
-> gpio-cs.
+[1]: https://lore.kernel.org/all/20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com/
 
-That's not what was initially discussed. The Xilinx use case was:
-a controller is managing two devices "at the same time" transparently
-from the host. So the two flashes appear like a single one and thus,
-are described like a single one.
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Louis Chauvet (3):
+      drm/vkms: Formatting and typo fix
+      drm/vkms: Rename index to possible_crtc
+      drm/vkms: Add documentation
 
-You don't need anything in the bindings nor in the core to manage two
-flashes connected to the same controller otherwise. The only use case
-the Xilinx model was bringing, was to consider the storage bigger from
-a host perspective and thus be able to store files across the device
-boundary natively.
+ drivers/gpu/drm/vkms/vkms_drv.c    |  6 ++-
+ drivers/gpu/drm/vkms/vkms_drv.h    | 85 +++++++++++++++++++++++++++++++-------
+ drivers/gpu/drm/vkms/vkms_output.c | 23 ++++++++---
+ drivers/gpu/drm/vkms/vkms_plane.c  |  4 +-
+ 4 files changed, 94 insertions(+), 24 deletions(-)
+---
+base-commit: 219b45d023ed0902b05c5902a4f31c2c38bcf68c
+change-id: 20240520-google-clarifications-dede8dcbe38a
+prerequisite-message-id: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
+prerequisite-patch-id: ae2d8b2efbbaa9decce56632c498c87e708288b3
+prerequisite-patch-id: c26b6d4867eaf6566195aa0002765357d4f69f8c
+prerequisite-patch-id: 8791d34a6f3148dc518da5249453067e40d346e3
+prerequisite-patch-id: 26ec7cd5a449004bcfd6ce483671f87655f8635c
+prerequisite-patch-id: 2e855ba871f2e99d4b6b7d85da2ddac6bb32262e
+prerequisite-patch-id: 82523a917646793deeec7cdcc7ff286bd924fd21
+prerequisite-patch-id: 0e355e5316281f53ab5e97ab6e63b0a682f3eb9e
+prerequisite-patch-id: 7a63d245a377d5f5283f48e8f52421b912811752
+prerequisite-patch-id: dda6bf4692cd1795c489ff58e72c0841ea8ffbc4
+prerequisite-patch-id: f70e535b6086cc587975fbfa75741f485f679a32
+prerequisite-patch-id: 6c2aa2645c7d854951608aa4d15a02e076abe1fe
+prerequisite-patch-id: dc61c6d3db73053fc36e115af561e0c42b467de2
+prerequisite-patch-id: deda292af6d8bbf6762b0bf4d351ffd2225995d8
+prerequisite-patch-id: 18554f49b53cbcfd4a8ca50dc83b17dd3cf96474
+prerequisite-patch-id: 5633292e10132d29be2467812e6e2e824cfedb67
+prerequisite-patch-id: 43f37e9c1bc041d491e41dfb59548ed258a1e071
+prerequisite-message-id: <20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com>
+prerequisite-patch-id: d10db4cb12a88de2e5f6440e9fcf5ddda191e3cd
+prerequisite-patch-id: 16bac0ef1f1dc010a72ce2faae66631797d23d3f
+prerequisite-patch-id: 8e0e5cc0727e8fd2d14ebafc5538fd987c2dd38e
+prerequisite-patch-id: 32bad3bf3df46d042e9edd4c1259c2e2a3fb8975
+prerequisite-patch-id: 4bd9e4cef308abd17b7b274a5575a3de73a1503b
+prerequisite-patch-id: a98fac5a2c60fe23fbc6a455e9a4ab8b0f187ee8
+prerequisite-patch-id: 62c8d109a22b9978f755255b67f13fe74fb7008d
+prerequisite-patch-id: baa8da4871dd90b03a07c6d9ddb45e10929ee70a
+prerequisite-message-id: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
+prerequisite-patch-id: df699289213021fa202fcdf1b4bdff513d09caa2
+prerequisite-patch-id: 59d021ccb166fbe2962de9cda72aceb3caa9cabe
+prerequisite-patch-id: 895ace6d58b3776798791705b7b05e26b8d37c7b
 
-> For parallel configurations, there are other controllers from=20
-> Microchip and some flash devices that operate similarly to AMD's parallel=
-=20
-> mode.
+Best regards,
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
 
-Yes, Tudor reminded me about these.
-
-> > > This layer would perform the following tasks:
-> > >  - During probing, store information from all the connected flashes,
-> > >    whether in stacked or parallel mode, and present it as a single de=
-vice
-> > >    to the MTD layer.
-> > >  - Register callbacks through this new layer instead of spi-nor/core.=
-c and
-> > >    handle MTD device registration.
-> > >  - In stacked mode, select the appropriate spi-nor flash based on the
-> > >    address provided by the MTD layer during flash operations.
-> > >  - Manage flash crossover operations in stacked mode.
-> > >  - Ensure both connected flashes are identical in parallel mode.
-> > >  - Handle odd byte count requests from the MTD layer during flash
-> > >    operations in parallel mode.
-> > >
-> > > For implementing this the current DT binding need to be updated as
-> > > follows. =20
-> >=20
-> > So you want to go back to step 1 and redefine bindings? Is that worth? =
-=20
->=20
-> The current bindings are effective if we only support identical=20
-> flash devices or flashes of the same make but with different sizes=20
-> connected in stacked mode. However, if we want to extend stacked support=
-=20
-> to include flashes of different makes in stacked mode,
-
-The only actual feature the stacked mode brings is the ability to
-consider two devices like one. This is abstracted by hardware, this is
-a controller capability. The only way this can work is if the two
-storage devices are of the same kind and accept the same commands/init
-cycles.
-
-If you consider two different devices, then there is no hardware
-abstraction anymore, the controller is no longer "smart" enough and you
-are back to the standard situation with two devices connected using
-their own independent CS, known by the host. In this case the
-"stacked-mode" bindings no longer apply. You need to describe the two
-chips independently in the DT, and your stacked feature in the
-controller can no longer be used.
-
-You need other bindings to support this case because it is a different
-situation. For this case, there was a mtd-concat approach (which was
-never merged). But this is really something different than the stacked
-mode in your controller because there is no specific hardware feature
-involved, it's just pure software.
-
-> the current=20
-> bindings may not be adequate. That's why I suggested updating the binding=
-s=20
-> to accommodate all possible scenario.
->=20
-> >  =20
-> > > stacked-memories DT changes:
-> > >  - Flash size information can be retrieved directly from the flash, s=
-o it
-> > >    has been removed from the DT binding.
-> > >  - Each stacked flash will have its own flash node. This approach all=
-ows
-> > >    flashes of different makes and sizes to be stacked together, as ea=
-ch
-> > >    flash will be probed individually. =20
-> >=20
-> > And how will you define partitions crossing device boundaries? I believ=
-e this
-> > constraint has been totally forgotten in this proposal. =20
->=20
-> According to the new binding proposal, one of the two flash nodes will=20
-> have a partition that crosses the device boundary.
-
-=46rom a bindings perspective, it feels very awkward and I doubt it will
-be accepted. From a code perspective, you're gonna need to butcher the
-core...
-
-> > The whole idea of stacking two devices this way was to simplify the use=
-r's life
-> > with a single device exposed and the controller handling itself the CS =
-changes.
-> > That is precisely what the current binding do. =20
->=20
-> That's true, but as I mentioned earlier, if we're not inclined to support=
-=20
-> stacked mode for flashes of different makes, then the current bindings=20
-> are sufficient.
-
-Thanks,
-Miqu=C3=A8l
 
