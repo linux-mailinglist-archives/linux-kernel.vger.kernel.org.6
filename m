@@ -1,101 +1,104 @@
-Return-Path: <linux-kernel+bounces-286416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EFF951AAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:17:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD83951AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C561C2101A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:17:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1D6DB237FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E007E1B010A;
-	Wed, 14 Aug 2024 12:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mtkd/ouG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF781B013A;
+	Wed, 14 Aug 2024 12:17:11 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9491AED49;
-	Wed, 14 Aug 2024 12:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1C41B140B;
+	Wed, 14 Aug 2024 12:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723637820; cv=none; b=F7fWymONOg4dZiuQnxoHXIDKOrhRBaAtqv3CdwF2uTzm7kkxFV7pmy8nlgEiSGwOmiTq6UO3IvSkDZ31aW5LNzVl2i3ZNnZunJ5jn9kr1yZEEDhvOjNmNRs+yLN1zmoDWWTwsnxCJQfEFEQHFNi04Gtp3O0ijgtvoA36Ix412Sc=
+	t=1723637831; cv=none; b=eFC/dJCwvevabGcT+4uKFYrlOaihNz5ZSKNj5iDaawe0Lb9giq/nA7Pnf9nOU3ssJol8OurJt3iOZ757pErrAdsPIgRir5iS5FmdDj50PYDWoFPjOXSfKjEmaTxZjrB2pCcKx9M3vbwnBbxlBM0QTIdg0FSj+pU4Zi9hYAcVTfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723637820; c=relaxed/simple;
-	bh=ya3Hqm0nXBf3LYIevNixQhJ5MXPNo3X3y6RgGDWBNi8=;
+	s=arc-20240116; t=1723637831; c=relaxed/simple;
+	bh=qWnpU0FL3BYwKNeluUfXzWfBOxcccUWo4UKNvbP0U1I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFGLtbNKUTluR1baGA+8PaXG2AjhcQAOYZGhCI1+0oc/P2PM1ykx1OmCjxzo+fAo96rjrO6yin+RvyJRmEjgk+raiPWzGxk2tlduDYTFBRWPe5r63kNyhw3/8bFgQvbkZ0UExMd6fzzjiqC2Z/VjiQ6MHT81xoWD1ScrSmnZUl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mtkd/ouG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6854EC32786;
-	Wed, 14 Aug 2024 12:16:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723637819;
-	bh=ya3Hqm0nXBf3LYIevNixQhJ5MXPNo3X3y6RgGDWBNi8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mtkd/ouGMJTWnITDdPlFNHBMylqaXtj5pTT7LCl/hpuoCG1RjVSBw+aQK8PNe6aYx
-	 eoIpKP4oiUe4mV9vh9kvXRU+duLxi6Ju7CYRhN0zJUZfnLDDsp07SNw+5pk+fG8aD8
-	 +XG0LQzYalpySObz/onbfbEnBm0haoIh5++2RbLeRw+kkOshWvFhRaqtScoMFaFiX+
-	 heDmDyyf1jZ1jGf9+0yor3Tl1tVcMYWFOKr/KRn6oxF/ob8LEkZ/o6g+m4j+LBcrMm
-	 olIFIExMcy5SvHIa96YirERTQAouqn0Lp+ymtn7P7Am2+0OzlYoidqaT3Jw7yBRgRU
-	 /lcaZyQj2/LKA==
-Date: Wed, 14 Aug 2024 17:46:54 +0530
-From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH rcu 1/6] rcu/tasks: Check processor-ID assumptions
-Message-ID: <20240814121654.GA1412801@neeraj.linux>
-References: <41c68c6b-2c55-4c2d-ab70-f2a5b38eb374@paulmck-laptop>
- <20240802003426.4134196-1-paulmck@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZ3o+ElOuGjikDfqS+xcdGO57uDqCpkSle66K+hkuJygPjjyaLGVTPU92uxWOFoe/Lwhvq3VKg6MClUEbeneHgP7juHZtRritdH/Fldiv78cDqKPcCvAwVf5l37t3kbmm7+znbobNwx/tspHvtU5mSBnXfYEowAjf+J3MvuWxjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id AF73B1C0082; Wed, 14 Aug 2024 14:17:01 +0200 (CEST)
+Date: Wed, 14 Aug 2024 14:17:01 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	fujita.tomonori@gmail.com, zhengzucheng@huawei.com
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/149] 6.1.105-rc2 review
+Message-ID: <ZrygPRGECbPEswtL@duo.ucw.cz>
+References: <20240813061957.925312455@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="03LUWFP1oONQbrQ3"
+Content-Disposition: inline
+In-Reply-To: <20240813061957.925312455@linuxfoundation.org>
+
+
+--03LUWFP1oONQbrQ3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240802003426.4134196-1-paulmck@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi!
 
-On Thu, Aug 01, 2024 at 05:34:21PM -0700, Paul E. McKenney wrote:
-> The current mapping of smp_processor_id() to a CPU processing Tasks-RCU
-> callbacks makes some assumptions about layout.  This commit therefore
-> adds a WARN_ON() to check these assumptions.
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> ---
->  kernel/rcu/tasks.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-> index b6fcf744af75d..d473846a572aa 100644
-> --- a/kernel/rcu/tasks.h
-> +++ b/kernel/rcu/tasks.h
-> @@ -355,6 +355,7 @@ static void call_rcu_tasks_generic(struct rcu_head *rhp, rcu_callback_t func,
->  	rcu_read_lock();
->  	ideal_cpu = smp_processor_id() >> READ_ONCE(rtp->percpu_enqueue_shift);
->  	chosen_cpu = cpumask_next(ideal_cpu - 1, cpu_possible_mask);
-> +	WARN_ON_ONCE(chosen_cpu >= nr_cpu_ids);
+> This is the start of the stable review cycle for the 6.1.105 release.
+> There are 149 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I have changed this s/nr_cpu_ids/rcu_task_cpu_ids/ , as there is a
-another commit 	fd70e9f1d85f "rcu-tasks: Fix access non-existent percpu
-rtpcp variable in rcu_tasks_need_gpcb()" which is included in the tree
-here [1]. Please let me know if something looks incorrect.
+> FUJITA Tomonori <fujita.tomonori@gmail.com>
+>     PCI: Add Edimax Vendor ID to pci_ids.h
 
+This define is unused in at least 6.1-stable and older. We don't need
+this patch.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=next.14.08.24a
+> Zheng Zucheng <zhengzucheng@huawei.com>
+>     sched/cputime: Fix mul_u64_u64_div_u64() precision for cputime
 
+Comment here says:
 
-- Neeraj
++        * Because mul_u64_u64_div_u64() can approximate on some
++        * achitectures; enforce the constraint that: a*b/(b+c) <=3D a.
 
->  	rtpcp = per_cpu_ptr(rtp->rtpcpu, chosen_cpu);
->  	if (!raw_spin_trylock_rcu_node(rtpcp)) { // irqs already disabled.
->  		raw_spin_lock_rcu_node(rtpcp); // irqs already disabled.
-> -- 
-> 2.40.1
-> 
+Afaict it should say "a*b/(a+b)"?
+
+Best regards,
+	   		 	     		      		Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--03LUWFP1oONQbrQ3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZrygPQAKCRAw5/Bqldv6
+8nHnAJ9Q1vb5gw6oo4aNQftcBwQECnfxtQCgwJr6Mjoi2rsJ9+3mWAz7weP5lX4=
+=EgxR
+-----END PGP SIGNATURE-----
+
+--03LUWFP1oONQbrQ3--
 
