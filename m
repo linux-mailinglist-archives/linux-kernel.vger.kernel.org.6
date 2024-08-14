@@ -1,318 +1,154 @@
-Return-Path: <linux-kernel+bounces-287288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFFC19525F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2969525FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E676B2205B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:47:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6BDFB225B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691B314AD20;
-	Wed, 14 Aug 2024 22:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5331614B976;
+	Wed, 14 Aug 2024 22:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qoZWWgRc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UQcyJcQo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a1fEymYV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3337346D;
-	Wed, 14 Aug 2024 22:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5842F149C68;
+	Wed, 14 Aug 2024 22:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723675668; cv=none; b=BtdT8P607BEkza1SBZReOhf3dNZP5yODfHD3941x0G5LVsdON2X0GCrfGI35BEqC5EpMK6JdxcMcvyz9VYB1cW9BQ8sOywxQL/at5eRe5+A5V8J0z3dnUaDfhcocUcY0dA0nCTgbPxyZ2V1jVPca6hYiDi+DOYhKa5XsomozaCo=
+	t=1723675850; cv=none; b=L6U3TLiOVDx87Fr5fCD6lnVLsR1cHLExf3K+uVoRakiaDj2HHgOBQuq/PgtipwOPk9VdIVKidYFKYKSX9BuNOMx3OkXc1nSx8L/fpm9VJsHfOxw0z3z64pjahmuLFKV7fi91/dcjsuXmrfhUitBpmggDvplxU7bs1a2jqtPyc9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723675668; c=relaxed/simple;
-	bh=oAsW3ALRb2L/L1VSxlS3PeVwvzoUTOy9LVHYau2FFUI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y9Vo9IJudulmQYqi+MOVCY7jK7NwpOegS7Oh7hAbvPJhVmkk2EM8l7v1pmG2Su7xCHV+LX7jHJ+t3KCdrA+DdmuTN/FSZlgPN6Ksgoc9HLHK1h96GQLwuRccO+qn4vOOJyictTjDGNg7boQD4HoVTJ8MSq3wycjG1ZJsBw+UbbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qoZWWgRc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UQcyJcQo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723675663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TEBkZJEgq/1j0sqdK8RDzUheGmdmMnYbuKi5UkgQAbo=;
-	b=qoZWWgRcsuDkXjOpRyz7WFFEnpHWWB3SvJMReyx1SmPyIc62yxiYlV5h2Qp2Vwgg4+ww8m
-	PMiW17eoxpaU6LtwUtP3O/mJ6HmgXlBdWIj1baJxRyl4P4oUI2/bWaiMeT3eHb2I8X70s8
-	M1bdc9YdLYAuZvjCiyJk4OJTKz/x7EE87X5iSpsay/WcGXnKLaN7zeuGPi9WTpiZ6v33BX
-	wycj4/rkWzEwfwMqCjd1FVaqMuD+5h1Q9bq9W6nrWzUqUZ4ddsJxUc4FVXc/5xwsRj46Nd
-	fzYCSp4AMQWlUJAQncn2QIL9wsm9J8tavICpDAQVcs5yUD1DOun8O/1sLFxa1Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723675663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TEBkZJEgq/1j0sqdK8RDzUheGmdmMnYbuKi5UkgQAbo=;
-	b=UQcyJcQoOxSPnW6A7lzK5oG/VKeoWNfJ1Cr3UtaJPD2oPV0h+hM8grogjvXH0v/5UoVc9z
-	0BebqUH3HOgf4AAw==
-To: "Liang, Kan" <kan.liang@linux.intel.com>, Li Huafei
- <lihuafei1@huawei.com>, peterz@infradead.org, mingo@redhat.com
-Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
-In-Reply-To: <70657c5e-f771-456b-a5ac-3df590249288@linux.intel.com>
-References: <87sev7nom4.ffs@tglx>
- <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com>
- <87frr7nd28.ffs@tglx>
- <70657c5e-f771-456b-a5ac-3df590249288@linux.intel.com>
-Date: Thu, 15 Aug 2024 00:47:42 +0200
-Message-ID: <875xs2oh69.ffs@tglx>
+	s=arc-20240116; t=1723675850; c=relaxed/simple;
+	bh=XACRDTFRCEdt4Ybi1MT/HUspbONa/ZokfleowFT6sVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiifErx8/lPu3U6KDbAkWNNS7gvuLUzfc+M1Q05/CnWP2gOL1qRoDbEvfc1emk5Aa2lgFZkUSyCL5Fplza6x9GYFAUTzhxXmwA0gGAxgafZlu9J6hr4zHMUHtQm+22p7hnHC5LLFjEQmL6ZTPK45tmFJzTCzplA+1Jefc/I1Lxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a1fEymYV; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723675847; x=1755211847;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XACRDTFRCEdt4Ybi1MT/HUspbONa/ZokfleowFT6sVA=;
+  b=a1fEymYVtATT83042PXmI/bJVXHong5CHtGk97N78t99THdINuMSveaU
+   i8dZ+TmGdhDWoIftw0xNlwpyTc1tUxrFPGqS0ZfMIcYEPLCZaUbsMgk8x
+   WjRgPVWm6hIQ+ZsdXXDbs/tk5CxCsjjQVGer0sDiKUHhWmfzL1/AAuWsb
+   uryyx7loXDr80rfid6G5bTMC7tn63KIYwYEgTN/37PKJ17unoU2zjTqq8
+   a+JpCSxCjILWNjEllzRdKr4J+5J0qaNnDDE05eP7VeLx7ZnqDkcSgWo7M
+   BCPBc3QIO0U7yUwqUmvIh16ARkvsyyW5aWUtLD9zC891MxT/4fKaCFzZl
+   g==;
+X-CSE-ConnectionGUID: anTOy87zQs6UQLD2LySSiA==
+X-CSE-MsgGUID: p28pns+KTFmIGCUM0uPibg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="33330266"
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="33330266"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 15:50:46 -0700
+X-CSE-ConnectionGUID: NCgkFaq2RLaUvtWr7qMiIQ==
+X-CSE-MsgGUID: qow68/JDQyaVfRBa7KD4qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="58834085"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 14 Aug 2024 15:50:44 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1seMpF-0002xE-18;
+	Wed, 14 Aug 2024 22:50:41 +0000
+Date: Thu, 15 Aug 2024 06:50:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vipin Sharma <vipinsh@google.com>, seanjc@google.com,
+	pbonzini@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, dmatlack@google.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Vipin Sharma <vipinsh@google.com>
+Subject: Re: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP
+ MMU under MMU read lock
+Message-ID: <202408150646.VV4z8Znl-lkp@intel.com>
+References: <20240812171341.1763297-3-vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812171341.1763297-3-vipinsh@google.com>
 
-On Wed, Aug 14 2024 at 15:37, Kan Liang wrote:
-> On 2024-08-14 3:01 p.m., Thomas Gleixner wrote:
->> This happens at the very same time and CPU#88 is the HT sibling of
->> CPU#16
->
-> The fixed counter 0 is used which doesn't match of what the HSW11
-> describes. I will check if the HSW11 missed the case, or if there is
-> another issue.
+Hi Vipin,
 
-This looks like a plain stupid software issue at the first glance. The
-hack I use to look at that is at the end of the mail. Most of the output
-here is heavily trimmed for readability:
+kernel test robot noticed the following build warnings:
 
-65.147782: x86_perf_event_set_period: idx:    32 period:         1 left:  2
-65.147783: intel_pmu_handle_irq:      loops: 001 status: 100000000
+[auto build test WARNING on 332d2c1d713e232e163386c35a3ba0c1b90df83f]
 
-65.147784: x86_perf_event_set_period: idx:    32 period:         1 left:  2
-65.147784: intel_pmu_handle_irq:      loops: 002 status: 100000000         
+url:    https://github.com/intel-lab-lkp/linux/commits/Vipin-Sharma/KVM-x86-mmu-Split-NX-hugepage-recovery-flow-into-TDP-and-non-TDP-flow/20240814-091542
+base:   332d2c1d713e232e163386c35a3ba0c1b90df83f
+patch link:    https://lore.kernel.org/r/20240812171341.1763297-3-vipinsh%40google.com
+patch subject: [PATCH 2/2] KVM: x86/mmu: Recover NX Huge pages belonging to TDP MMU under MMU read lock
+config: x86_64-randconfig-123-20240814 (https://download.01.org/0day-ci/archive/20240815/202408150646.VV4z8Znl-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240815/202408150646.VV4z8Znl-lkp@intel.com/reproduce)
 
-and this continues up to 100 times.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408150646.VV4z8Znl-lkp@intel.com/
 
-If I'm not missing something then a period of 1 or even 2 is way too
-small for fixed counter 0 which is rearmed in the NMI and counts user
-_and_ kernel.
+sparse warnings: (new ones prefixed by >>)
+>> arch/x86/kvm/mmu/tdp_mmu.c:847:21: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   arch/x86/kvm/mmu/tdp_mmu.c:847:21: sparse:    unsigned long long [usertype] *
+   arch/x86/kvm/mmu/tdp_mmu.c:847:21: sparse:    unsigned long long [noderef] [usertype] __rcu *
+   arch/x86/kvm/mmu/tdp_mmu.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
+   include/linux/rcupdate.h:812:25: sparse: sparse: context imbalance in '__tdp_mmu_zap_root' - unexpected unlock
+   arch/x86/kvm/mmu/tdp_mmu.c:1447:33: sparse: sparse: context imbalance in 'tdp_mmu_split_huge_pages_root' - unexpected unlock
 
-But what's weird is that earlier in the trace I can see in the context
-of a different task the following w/o looping in the handler:
+vim +847 arch/x86/kvm/mmu/tdp_mmu.c
 
-65.084029: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-65.084033: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-65.085654: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-65.085660: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-65.085667: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-65.085673: x86_perf_event_set_period: idx: 32 period:          2 left:          2
-65.085681: x86_perf_event_set_period: idx: 32 period:          4 left:          4
-65.085687: x86_perf_event_set_period: idx: 32 period:          7 left:          7
-65.085693: x86_perf_event_set_period: idx: 32 period:         14 left:         14
-65.085699: x86_perf_event_set_period: idx: 32 period:         26 left:         26
-65.085705: x86_perf_event_set_period: idx: 32 period:         49 left:         49
-65.085708: x86_perf_event_set_period: idx: 32 period:         95 left:         95
-65.085711: x86_perf_event_set_period: idx: 32 period:        303 left:        303
-65.085713: x86_perf_event_set_period: idx: 32 period:        967 left:        550
-65.085716: x86_perf_event_set_period: idx: 32 period:       3118 left:       2799
-65.085722: x86_perf_event_set_period: idx: 32 period:       9723 left:       9411
+   819	
+   820	static bool tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
+   821	{
+   822		struct tdp_iter iter = {};
+   823	
+   824		lockdep_assert_held_read(&kvm->mmu_lock);
+   825	
+   826		/*
+   827		 * This helper intentionally doesn't allow zapping a root shadow page,
+   828		 * which doesn't have a parent page table and thus no associated entry.
+   829		 */
+   830		if (WARN_ON_ONCE(!sp->ptep))
+   831			return false;
+   832	
+   833		iter.old_spte = kvm_tdp_mmu_read_spte(sp->ptep);
+   834		iter.sptep = sp->ptep;
+   835		iter.level = sp->role.level + 1;
+   836		iter.gfn = sp->gfn;
+   837		iter.as_id = kvm_mmu_page_as_id(sp);
+   838	
+   839	retry:
+   840		/*
+   841		 * Since mmu_lock is held in read mode, it's possible to race with
+   842		 * another CPU which can remove sp from the page table hierarchy.
+   843		 *
+   844		 * No need to re-read iter.old_spte as tdp_mmu_set_spte_atomic() will
+   845		 * update it in the case of failure.
+   846		 */
+ > 847		if (sp->spt != spte_to_child_pt(iter.old_spte, iter.level))
+   848			return false;
+   849	
+   850		if (tdp_mmu_set_spte_atomic(kvm, &iter, SHADOW_NONPRESENT_VALUE))
+   851			goto retry;
+   852	
+   853		return true;
+   854	}
+   855	
 
-This goes on to almost 100k period and then goes back down to 50k.
-
-The test case sets it up with
-
-    attr::freq        = 1
-    attr::sample_freq = max_sample_rate / 5
-
-max_sample_rate is read from /proc/sys/kernel/perf_event_max_sample_rate,
-which contains 100000 after boot, so the requested value is 20000.
-
-So in the good case the period = 1 manages to not have the status bit
-set at, after handling.
-
-The bad case stays there forever. Of course setting a limit makes this
-magically go away, but honestly this is not a solution.
-
-Another one magically cures itself:
-
-65.131743: x86_perf_event_set_period: idx:    32 period:         1 left:          2
-65.131745: x86_perf_event_set_period: idx:    32 period:         1 left:          2
-65.131745: intel_pmu_handle_irq:      loops: 001 status: 100000000
-65.131746: x86_perf_event_set_period: idx:    32 period:         1 left:          2
-65.131746: intel_pmu_handle_irq:      loops: 002 status: 100000000
-65.131747: x86_perf_event_set_period: idx:    32 period:         1 left:          2
-65.131944: x86_perf_event_set_period: idx:    32 period:         1 left:          2
-65.131950: x86_perf_event_set_period: idx:    32 period:         1 left:          2
-65.131955: x86_perf_event_set_period: idx:    32 period:         1 left:          2
-65.131961: x86_perf_event_set_period: idx:    32 period:         2 left:          2
-65.131965: x86_perf_event_set_period: idx:    32 period:         5 left:          5
-....
-65.132331: x86_perf_event_set_period: idx:    32 period:     83183 left:      82871
-
-I just wanted to look at something else and started a single instance of
-the cve test right after booting and that ran into the same problem.
-
-Full trace at: https://tglx.de/~tglx/t.txt
-
-I think I see a pattern with that now. In all cases I saw so far the
-problem happens when two HT siblings get the PMI at the very same time.
-
-# grep handle t.txt
-
-shows you the cases where it goes into the loop. I checked all the
-previous traces and the pattern is always identical.
-
-That aside. What really puzzles me is this period adjustment
-algorithm.
-
-# grep 'cve-2015-3290-2715.*idx: 32' t.txt
-
-316.966607: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-316.966621: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-316.966977: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-316.966985: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-316.970507: x86_perf_event_set_period: idx: 32 period:       9980 left:       9980
-316.970516: x86_perf_event_set_period: idx: 32 period:       9980 left:       9616
-316.970562: x86_perf_event_set_period: idx: 32 period:       9980 left:       9674
-316.970580: x86_perf_event_set_period: idx: 32 period:       8751 left:       8446
-316.970596: x86_perf_event_set_period: idx: 32 period:      10733 left:      10428
-
-This looks more than broken .... Seriously. 
-
-    attr::freq        = 1
-    attr::sample_freq = 20000
-
-means 20000 samples per second, i.e. one sample every 50 microseconds,
-unless this uses some magic new fangled math.
-
-That CPU runs with 3.3GHz. Let's assume 1.0 IPC for simplicity. That
-means in 50us it executes 16500 instructions, right?
-
-So why on earth start with 1 as the estimate for the frequency
-especially for this particular event which is guaranteed to fire
-immediately? That makes no sense at all.
-
-But even when you start with 1, then latest at the third event in the
-loop or the third event within a couple of microseconds the frequency
-estimate algorithm should notice that a period of 1 is bonkers.
-
-
-But ranting^Wreasoning about all of this made me understand what goes
-actually wrong.
-
-Look at the "good" case:
-
-316.966607: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-316.966621: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-
-Now the bad case:
-
-# grep -E '\[063|135\]' t.txt
-
-   cve-2015-3290-2725    [063] d..3.   316.967339: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-   cve-2015-3290-2725    [063] d.Z3.   316.967343: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-           <...>-2743    [135] d..3.   316.968473: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-           <...>-2743    [135] d.Z3.   316.968478: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-           <...>-2743    [135] d.h2.   316.970502: x86_perf_event_set_period: idx: 32 period:       5596 left:       5596
-   cve-2015-3290-2725    [063] d.h2.   316.970503: x86_perf_event_set_period: idx: 32 period:       9385 left:       9385
-
-Here the two hyperthread NMIs are interleaved by a few microseconds,
-which is still good by some definition of good, but later it goes south:
-
-   cve-2015-3290-2808    [063] d.Z3.   316.970712: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-   cve-2015-3290-2806    [135] d.Z3.   316.970712: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-
-Starting here they are not longer interleaved. They happen simultanously.
-
-   cve-2015-3290-2806    [135] d.Z3.   316.970713: intel_pmu_handle_irq: 001        100000000
-   cve-2015-3290-2808    [063] d.Z3.   316.970713: intel_pmu_handle_irq: 001        100000000
-   cve-2015-3290-2808    [063] d.Z3.   316.970713: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-   cve-2015-3290-2806    [135] d.Z3.   316.970713: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-
-...
-   cve-2015-3290-2808    [063] d.Z3.   316.970819: intel_pmu_handle_irq: 099        100000000
-   cve-2015-3290-2806    [135] d.Z3.   316.970819: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-   cve-2015-3290-2808    [063] d.Z3.   316.970819: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-   cve-2015-3290-2806    [135] d.Z3.   316.970819: intel_pmu_handle_irq: 099        100000000
-   cve-2015-3290-2808    [063] d.Z3.   316.970820: intel_pmu_handle_irq: 100        100000000
-   cve-2015-3290-2806    [135] d.Z3.   316.970820: x86_perf_event_set_period: idx: 32 period:          1 left:          2
-   cve-2015-3290-2806    [135] d.Z3.   316.970820: intel_pmu_handle_irq: 100        100000000
-
-Which means they are almost in lockstep. TBH, I could not be bothered to
-repeat the experiment and turn on nanoseconds resolution for the trace
-because it's too obvious what's going on.
-
-In the single threaded case period == 1 (left == 2) does not matter
-because the status register stays zero after handling the event and is
-only updated after the NMI returns which makes the NMI come back
-immediately, but that does not cause a loop.
-
-But in the HT sibling concurrent case the hardware behaves differently
-and the status register is updated for whatever reason before returning
-from the NMI, which causes the endless loop because both hyper threads
-get that treatment.
-
-To prove my point I disabled hyperthreading via /sys/.../cpu/smt/control
-and as expected the test case can't trigger the problem anymore.
-Grepping for the loop trace_printk() comes back empty. I disabled the
-other one to reduce the noise over several runs, which keeps the trace
-completely empty.
-
-Reverse engineering hardware is fun, isn't it?
-
-It's not hard either because every reproducible problem has a pattern.
-You just have to look for it.
-
-Now the conclusion of this fun exercise is:
-
-    1) The hardware behaves differently when the perf event happens
-       concurrently on HT siblings
-
-    2) The frequency estimation algorithm is broken
-
-    3) Using a 'limit' guestimate is just papering over the underlying
-       problems
-
-Thanks,
-
-        tglx
----
- arch/x86/events/core.c       |    1 +
- arch/x86/events/intel/core.c |    5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1400,6 +1400,7 @@ int x86_perf_event_set_period(struct per
- 
- 	static_call_cond(x86_pmu_limit_period)(event, &left);
- 
-+	trace_printk("idx: %2d period: %10lld left: %10lld\n", idx, period, left);
- 	this_cpu_write(pmc_prev_left[idx], left);
- 
- 	/*
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3164,13 +3164,16 @@ static int intel_pmu_handle_irq(struct p
- 
- 	loops = 0;
- again:
-+	if (loops)
-+		trace_printk("%03d %16llx\n,", loops, status);
- 	intel_pmu_lbr_read();
- 	intel_pmu_ack_status(status);
- 	if (++loops > 100) {
- 		static bool warned;
- 
- 		if (!warned) {
--			WARN(1, "perfevents: irq loop stuck!\n");
-+			tracing_off();
-+			//WARN(1, "perfevents: irq loop stuck!\n");
- 			perf_event_print_debug();
- 			warned = true;
- 		}
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
