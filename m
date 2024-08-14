@@ -1,197 +1,265 @@
-Return-Path: <linux-kernel+bounces-286112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78259516A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:32:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88219516BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558131F23859
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:32:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59A92B21691
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E68E13DB88;
-	Wed, 14 Aug 2024 08:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4708A13E02C;
+	Wed, 14 Aug 2024 08:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LzJeVabQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TOiJSIRz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24421156CE
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723624361; cv=none; b=TjKkY9f84o+gRfyzUF3alD7MamqEsIk7h4AVD0OmYXyfhJuoAka0p4HPCciLWtUdWrnOKscA5wG8yhpU2Zm22FjcOC2Gq9n1PjGjDcj6OC5eQC0itKBjiDLZNmFdra+tBygek6csN2aWVTtP2fL48cLn3OYPRqXtcNYyLePSM0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723624361; c=relaxed/simple;
-	bh=Lp6lHOH68t1rgeDRXVJ5Y8ad6z6s3Im8JweIwZX5LbA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=G2TLV1oKUhjbajBL2HVfoRdLd25momjVoAYMt6N2rhib1KdoaD+gVTG3/dYeJ4c7z4l5x5QyWYmew8FKbR+fLkcl1rZScidib0zOLHfoGLfxgYM/vrNvGlg2TI6/T9Dj8G/p3J3RZK/e7neEVyi4AE7XhXnECNiyZDvRn3Ds8bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LzJeVabQ; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD6F13AA3F;
+	Wed, 14 Aug 2024 08:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723624682; cv=fail; b=eFJSKolhgA5doNQ7q7feZzaXoHPmadIvKSwKUkYy9nmwauTETleEltUl8iRJfd5fSfM+0k5BAqSAqteNjrkKsWtji9alhAXh1EHxlo1h3+wJNlIoUayzhgLREw/zWsURr5ApJA2y/4eB0b9/oX6kI3lMB2l3XRmfpj9nUYtUopw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723624682; c=relaxed/simple;
+	bh=RswAI+lYvz7jKIPor0QwmEE5FoQ+OGC55K3GuJTOFBY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=K4GxlseGtjWYv8wZ+nzZiQH2KDdLa9L6An3N4a9g3UxWzutrl6jSshzKRM8PpdPiSCXnExGm5+Ur96AGwsnM+fCkRKssbpI13/vsU4A7ECQC86sBhf+gArnNCILZAxRH8IwfCTDt9qP1PTKCxjx3QG/x7/aNyn5QPmMjuNBMD8s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TOiJSIRz; arc=fail smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723624359; x=1755160359;
-  h=date:from:to:cc:subject:message-id;
-  bh=Lp6lHOH68t1rgeDRXVJ5Y8ad6z6s3Im8JweIwZX5LbA=;
-  b=LzJeVabQvfvy365zH8EieTIDU/yv3dEf039mDB4Zckurw7EgG+xXxrHk
-   ETd6sb6o06GovGPdX1I9kKLlSYBN39teRfuL3VPPZsG7TdbzlShM6UoGe
-   /hLExMusA3S3RIj7xu0LugQcQtAjO9a98FXVRFgZjR1G7D0RAkmFk9Zio
-   zNfmBNvFSNCPlSZz8lplkJG4wBliIcQksrKWLYaLYnzy2H9CMzvLSpPA+
-   ypvvWXF1sEhXSeZw4E16aRvKkIXGcv2m5+g37AAAT9dwU1BJXfFyLw5nj
-   Yhj4MkhK5T7u+fgRbOw1P2ARx+Kbc65+3lSA0uYRuL2EAD/C3jogu0L9k
-   A==;
-X-CSE-ConnectionGUID: Lwu1OXbrQ/ujJijJD3IH+w==
-X-CSE-MsgGUID: cYzTvVNUQvGpp24SSm9txw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21957204"
+  t=1723624681; x=1755160681;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=RswAI+lYvz7jKIPor0QwmEE5FoQ+OGC55K3GuJTOFBY=;
+  b=TOiJSIRzfJGg5HLPOrP0agCQwhoxhDxOxpuEnn3/RScxGE11f+jh6oTW
+   4kbNB2N25waPs2dntpawwBJtmVBgB8GcxGem9sEzNZvSJObm/GxVsKX9T
+   ONX8V74AN8Smob3xU0ikq8BvO7+jk+K6fouTaUcMJvMkB76HtbWmZrL5I
+   6bWmtxs2wbtdRSy5oQTj3DOIot98mDImGLO7TLS3j7/1peLW1pqkeh3lR
+   TTby9oOZ3SLk/5USvEqckTxPokiPn3wbLzrzdsfvRFNYtP7nAEu8DTAOP
+   LA5Rcx9qsSzngAQ6TRqg1QMd8Jup69bKPkVcEa6try/uIlCi8Vg+hi/Vl
+   w==;
+X-CSE-ConnectionGUID: HyDRNQuRS6eC71quRiMF8Q==
+X-CSE-MsgGUID: IgnC30OzT+ijCUc4KixWlg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21993564"
 X-IronPort-AV: E=Sophos;i="6.09,288,1716274800"; 
-   d="scan'208";a="21957204"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 01:32:38 -0700
-X-CSE-ConnectionGUID: 9h29C0V8ScSEOXqecMkT2g==
-X-CSE-MsgGUID: eTaffTqHQVabT4S960JtAA==
+   d="scan'208";a="21993564"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 01:37:59 -0700
+X-CSE-ConnectionGUID: ifQsMkp/Tz2meO8THR1aqQ==
+X-CSE-MsgGUID: Tc87k4V+Q56cpEy5srWKrQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,288,1716274800"; 
-   d="scan'208";a="58638732"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 14 Aug 2024 01:32:37 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1se9Qp-0001Ss-0w;
-	Wed, 14 Aug 2024 08:32:35 +0000
-Date: Wed, 14 Aug 2024 16:32:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/fred] BUILD SUCCESS
- a97756cbec448032f84b5bbfe4e101478d1e01e0
-Message-ID: <202408141614.buoWJ62P-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+   d="scan'208";a="96457748"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Aug 2024 01:37:59 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 14 Aug 2024 01:37:58 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 14 Aug 2024 01:37:58 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 14 Aug 2024 01:37:58 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 14 Aug 2024 01:37:58 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HXNtN+4Drw6MuWyuaFV6Kp0hom+wVmRwFUoAkYadnt13of8OeyT68CanPCcIRP4E2nLl3Fr1LBilYbbYhunaM+Z6bnvWHnuWNUA/cpHDkRopa6q3um3gdfjigo8y0tC3xo6DQlRNj5n2C6lZXBV9kC2CQYpTRWD7Wp70BO2fRJa8pSpERudWo86pT1DxXprrHdLxEQbngc5b3Z5w46EgerEnMtvqAPZWixKS2H2Ahsp7/JQvvt3yLz4xKOIpwduAtw9l8oRwL9548N3R3rWLy/Lz8WN2FY1c+AwRcH5Uyx42jgfms1n0l+oAW6nTocxkTX5HnS4w7P8QJxOrfJGXnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=okB8JQicT6sB+9QldcDgBNv17G3iqF6xGagEZLSO0P4=;
+ b=HXlDnkqPO7AwOUJF3sV2zwGQGLpAk94Y1vqiOtozKEJVLrXG/Y/GcLrifk/W0dtYLJrREz8yqCjgtOgIYn6cKxFbUae/HfT96oNrcCn5MA3lUPFEvgZqHW2qfqzTCr8NctczWPSB4mN/USzOe6EdTxSX3fE2TxUIsPcymPg3bUw+aChDNSQBjuzVYt3duEPjivYFEEKh3jwFhha0QXDA98HZXt+T/Q6xxJvJ9V7uHfrxI/3RywDYllm0War7KZl+B74El1hZMHUWN9ZYTs9cq3Qyq42XBE/WN1pwpISW8iHHJxGv6DKAK5oxiXFlS0RVx6t1KXL6AMx5lOH66OIkJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
+ by SA1PR11MB8376.namprd11.prod.outlook.com (2603:10b6:806:389::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31; Wed, 14 Aug
+ 2024 08:37:56 +0000
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9%3]) with mapi id 15.20.7828.031; Wed, 14 Aug 2024
+ 08:37:55 +0000
+Message-ID: <88320f60-d55b-4aa5-881f-530375659c27@intel.com>
+Date: Wed, 14 Aug 2024 14:07:44 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
+To: Andi Shyti <andi.shyti@linux.intel.com>
+CC: Raag Jadav <raag.jadav@intel.com>, <jani.nikula@linux.intel.com>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<tursulin@ursulin.net>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<linux@roeck-us.net>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-hwmon@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <anshuman.gupta@intel.com>,
+	<riana.tauro@intel.com>, <ashutosh.dixit@intel.com>,
+	<karthik.poosa@intel.com>, <andriy.shevchenko@linux.intel.com>
+References: <20240809061525.1368153-1-raag.jadav@intel.com>
+ <23dc7824-50cd-4ba3-be5a-df141e8fe69a@intel.com>
+ <ZrXslA1c-BhO6zYr@ashyti-mobl2.lan>
+Content-Language: en-US
+From: "Nilawar, Badal" <badal.nilawar@intel.com>
+In-Reply-To: <ZrXslA1c-BhO6zYr@ashyti-mobl2.lan>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA1PR01CA0168.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:d::23) To BN9PR11MB5530.namprd11.prod.outlook.com
+ (2603:10b6:408:103::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|SA1PR11MB8376:EE_
+X-MS-Office365-Filtering-Correlation-Id: f336ed13-502f-48b5-ad03-08dcbc3c64c6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z1dCRk1RZXFYS3l4OEZVOFpQSmNPODgwSFJzdjlQdlF1eVJaMHYwWWl6MnFn?=
+ =?utf-8?B?Qkh6eE1QZ0NVcmZyQkpQZVJBWEU5UHc5dkFuM3NnMWFnRTd1aVVPSkprOHpi?=
+ =?utf-8?B?Q3JlMDdWWUdDeFVzOFQrdHY0UkVndHNRZ3RvVzQwQlFxc2tidTZuN05ZODJi?=
+ =?utf-8?B?RzdSMEU0UE9KcVNLQWpFdVZaU2djQzhhQmR6Ny9DdWd2czhZTk5zZllYeXV0?=
+ =?utf-8?B?VjNqb3JlRXd4cmxKTEFNSVRadGZXdXNLdE1jcG8rY0VYWkxNY2VtalRoVElo?=
+ =?utf-8?B?MSs2Wkl6L28xM3lyajY2WElDS1MrMnJUVHdsSmxEclhqY082QkxGY043Zjkw?=
+ =?utf-8?B?ck1qUlEzV0tUTFJEZzNBK29hSWlvWjFqZ1NYQ0piWnNYOUVHUDBpMnVBRms3?=
+ =?utf-8?B?YTUrcEhubVVGSHIxUjdMbVg3SXhyZGI4WEJtM0UxblRBVWFjWWlUY0d2QlZH?=
+ =?utf-8?B?dkprbE1jRktTWXJnWGJFY29MUFhncUk3cytUTk9TUUlFS1NjaGFzd3VENHZa?=
+ =?utf-8?B?M21wMzdkYmRhRGQ4RzQ1elFsZ0NDUVVydjY1MWZjak5jSW5pdGtoYUJkb2Jl?=
+ =?utf-8?B?R0lTZytrdHppVVhVZHhjY0lKY1FEYUJLVWttNTlIU29NY1dsWFdwRjdiM2dx?=
+ =?utf-8?B?M25YcEpraWlLQ2dyNzJ2YmlOYm5DeHIveUtHNnJuNVRJOHBhYzFEdWxNQmh3?=
+ =?utf-8?B?ME16dlpsQzlrdXcwcGhMcktIMXlhbW9aY29OUi9RRVhWRFN3UnBxV1hYNWR1?=
+ =?utf-8?B?OHV5SEpUSFNRK2hsWXFaY3dGZVVZZkJhZ0pETHVxOFo5K3Y4T24xTDhRVFRE?=
+ =?utf-8?B?YWJTWjh2dWw2WDNXWlhrK0JoRDlaai9rZ2FncWQwcHVMamVlRDk3cUFWMnJ2?=
+ =?utf-8?B?Z3A1SzBYTXVRYTQvNVhFYjR1RG1FSXd4VVlzaGdPeEZaRXBuc2hZR3RhUmVQ?=
+ =?utf-8?B?Y1JVVmF4LzBzeHVSaFA5SW5DN084YnNyTUhqKzdLOFFXOTJZRzVUWHNxd1kw?=
+ =?utf-8?B?cDJRQ3hVU3hxenZBN1U3MmtrYllMTU9CWVk0QW1TbU4vZUxFMkFiNysxZDVG?=
+ =?utf-8?B?SDdicmsvYlNCc1ZNQTU1NE1EWndQbUJLcmcwc0NwbXFjaEFjbHNodXhzbE4v?=
+ =?utf-8?B?YlNGd1IzeU5hVDFrdTY0UXBzQW5pR21KVGgxdkFTY3AxSGlBSS9CUDJ1ME10?=
+ =?utf-8?B?VVhnaUxyckpNSE1SZFFSbEt3c0Z5bjBsREN1SkxqMnk1VUc3aEFnZkJWSjVi?=
+ =?utf-8?B?aFJEckJKL3J0L2s0eFd5cnN0M0ptY1N2ZXpJenc3VVZQN3R4S0MyV1dJcHVG?=
+ =?utf-8?B?U2dZdmZMWjJUcXdXR0hTNkpXd0k4TENjaW9ySE90SWtoOGRyd28rRVY5cmRN?=
+ =?utf-8?B?RGhFVmRLTGNKaXBxKzhxNmZXcG05T0hidjF6UWZ2ZEhJK1NTMUlWMWg0UkJG?=
+ =?utf-8?B?RjhXVEYxTFpxdjNmNjVWVG5ya2RZYVVML3ZiVnJEcTMyQXFGanozQ1FZbktq?=
+ =?utf-8?B?eEV4VGhDd3R3WWFxSy9xalZQVExDMXFLelg4cXpITGhTNUFxbXAwTGQ4SkxI?=
+ =?utf-8?B?SUhoZG9odGw4eXpJODhSL1BxZFVzcW9QMUhlZldIYm5mZ3VqcVN2YXdRY2xp?=
+ =?utf-8?B?WkVxajZiL0dwTllpVXBUL1VFVXBhcFRSZ2lmeU55MDRVWVRBekUwNVZadUZz?=
+ =?utf-8?B?em9OeEI0SGxJbGgwalVTMUpQQ2M2dDQ4SUhyaUlsb1h2Wk1LRGJYaW5yT3pu?=
+ =?utf-8?B?SmREZ2RWTUJpMitOWTF6b0c4RXVvNkRydGFhSlgvcm5iUjFwV3ZKY1FoeGdL?=
+ =?utf-8?B?ckpGV1ZPbS9hRmo2bTAvUT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Mnh2ZXIxdGc1RStKbTh4WVlMbkNSbStNbjdKKy96ZFdnVnFpVjl1dElJNHJh?=
+ =?utf-8?B?b1VabXhkUE5RQkN5amppM0lwUHdYL2pJZkVBcjU2SVBDNVhqK2xBVDQzdmhB?=
+ =?utf-8?B?QWVIVVhpWlZ5K3NnVytsV3Y3R3pGcVVhQlpvajRsZHVxZElHRjVZZ3RScVgy?=
+ =?utf-8?B?Q2V3aTQ3STlyZWNoNFZ2NFYyd3NJZEpGRUdyeEdENDFHOGs5YkZnVGxXUis1?=
+ =?utf-8?B?SWNKcCtvNTc0ZlExenBpNHkyOXIxcEtNeHJ2YlA1NEhzcFM2YUQ0b3ZDOFFF?=
+ =?utf-8?B?dUVHTElBYk1XQVFaNVhLM1ZDWHpLWC9aUXcrVVlTdlh0YlIwdW1EeFc3OURK?=
+ =?utf-8?B?ODBMREIzbTJpVFViYk1CU1RoVTd6alA3MGVsa01MM3lHZGgvNy83TjB5aVBi?=
+ =?utf-8?B?c0RWMjJMSXJDS25Gb3RjanBxa2dXS0hrTDl5QU8zS29TUkJ3c0RCdHc2MkVO?=
+ =?utf-8?B?R1YwU3JJQ0V3MmFkQXJFb3oyNm9tbit1UURXblMwYlREZ1ZSVGRFbUIrYk1J?=
+ =?utf-8?B?cnFFZGRlOHV0cEFXS21ncjVjL2pZM2w0ZHU2aDFISXVNYXAyaG9vQU9qZS81?=
+ =?utf-8?B?VEdWUDB2Mmp0aXd4bWVFdERVbnF4WG93M0hOcHd1OC9CcExyaERQWitYTnhp?=
+ =?utf-8?B?TTE1TmM2MTF3ODAxdGdhSWpxSTJpQVFaVTQ0bWdzcG84ZThDSVd4a3hSWHNM?=
+ =?utf-8?B?Wlh5U3pMZFZNOTB1Y05UQ0VCdXlmWmFJK0J6QUpieFl2Q25vdlNJQlkzelc2?=
+ =?utf-8?B?aGwxUXU3Q2ErSDJQZ1VhMmlkUURFSkZTSkZFdTFVeU5nalZPdk9QSzFPZ0h5?=
+ =?utf-8?B?YUlUcGd4azNxbWdpUk8vb2IyZ0VUK3FETHRkWVhOVDFmK09hRVF6eUhSUVNh?=
+ =?utf-8?B?TWxVcVdyNTZrOTlTVjVIMTUxMWxlejdldVA3M2lwai8yTS9lbzdHeEdYMlQr?=
+ =?utf-8?B?dmNQeWIvc1FZdEVmSXViWVZmalQvOUN2UGE3cFRLUENqZS9pNTFFQUZMczBE?=
+ =?utf-8?B?a2pFNUFId05IQk5CODZUZ25waEZzQzRhaXg3d1BDenZ2ODY1dUtwWnFPbzdx?=
+ =?utf-8?B?RzJpNi9nTWswYklTdHNIUndBMC91ZDNla1ZLN1NKZHBETjNtMGtlb0VheFFX?=
+ =?utf-8?B?TDVqWitaa3Y5WUowc0huOUtTR1RmVlRNUzJTbFpkRGhtUjhHdWFmU3orK1Rl?=
+ =?utf-8?B?dUZ2dDB0Zjh6c0pubDB4SnIzTzF5dG4zTkxYZDJGUDh6azcrdUFQWGdoWHcz?=
+ =?utf-8?B?M2RpdGpOME9MZkx2WWlteGNZbUljZzVIcFdMRHgvdGRRTHM2YkxxTU0yZTVy?=
+ =?utf-8?B?VDVMVTJrMTNJRVoyblpyZ1JvZUVBcjBqOW83RlNtRC93U0tXcUFlV3JoU0x4?=
+ =?utf-8?B?ZForT3phTDYvRTc0ejUycUZjZHJ4MTNVSHU0bmhuTmszUzNRaUFTOXNCTnpU?=
+ =?utf-8?B?Ynh6U2ovNkRvakFWMzl4OFljVnZsZUxSNkw0cVhSMFEyWGpDR2JycW9hSG1K?=
+ =?utf-8?B?YytyaG5SQU16cUhIMEtPVTAyUTRPNkZwY3RuY3hIamY2OStaWnpTbWZVcnNy?=
+ =?utf-8?B?WVZlQ25QRTl2RUxaVjhrL0dleFdpOGZsM0Zqc05lcnNlVzJOZWh4c1dGVm8z?=
+ =?utf-8?B?N2pRbGtGdkVZanhDbm8wZGNaV1dVaEZ2ZUh4SFUxRmRyeXU0VVZ2KzUvZjBX?=
+ =?utf-8?B?aTg4NkQvWTNtZERjRk4yRU1GNk5wMlpDZ09nL2VkdW5rVDJlNWd1TStlRzda?=
+ =?utf-8?B?SVF3VHpkVWR2QTEzMXJNRzlDVmRFeEtXbmlzeTZpMU5VN1djMUZWYzFJajJ1?=
+ =?utf-8?B?WEJiL3NiTDc0MEZIYVZndHMybStOZFhtZkJTTVpBSGQ5SHQ1N3cydDVqNGVa?=
+ =?utf-8?B?SjVDOWpidDRkZ203V3VnQlIxYklMUXVKK3Q5N3NlMTBOMFVUbG8zb1JsNFQv?=
+ =?utf-8?B?dEdtWk9JZ1h4TUxMaGRTcHRzSHBmc01rMFZ3OVVkK2dhTlVQaWMxY1RrOHc1?=
+ =?utf-8?B?U1dJWTZSYU91NmJpWXA0RmhIZXBnNVZmYWdWNnJoazFQM2tiWWV2NThjWEFa?=
+ =?utf-8?B?RmptSW5yMHNWSGhtN1IwTHZtemVIK01hSmNGQ1BFWUJuVXIwMDBTZHYzeTdu?=
+ =?utf-8?B?RnVTVnNYeW9rbTFzR3FVTkJzVmFmcHZrd2hpY1Bxd0Q3OHhXL2dSaWFac21t?=
+ =?utf-8?B?eUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f336ed13-502f-48b5-ad03-08dcbc3c64c6
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 08:37:55.8023
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xGebGcEITL4SOCaU7g6mJDrtc3iE+CTwxiBPHqNB4EVch/jgoXCWE7xX+ovvrg0sIgSzXqjcG1lWu1o+D0uhRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8376
+X-OriginatorOrg: intel.com
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/fred
-branch HEAD: a97756cbec448032f84b5bbfe4e101478d1e01e0  x86/fred: Enable FRED right after init_mem_mapping()
 
-elapsed time: 728m
+Hi Andi,
 
-configs tested: 105
-configs skipped: 128
+On 09-08-2024 15:46, Andi Shyti wrote:
+> Hi Badal,
+> 
+>>> +static int
+>>> +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+>>> +{
+>>> +	struct i915_hwmon *hwmon = ddat->hwmon;
+>>> +	struct hwm_fan_info *fi = &ddat->fi;
+>>> +	u32 reg_val, pulses, time, time_now;
+>>> +	intel_wakeref_t wakeref;
+>>> +	long rotations;
+>>> +	int ret = 0;
+>>> +
+>>> +	if (attr != hwmon_fan_input)
+>>> +		return -EOPNOTSUPP;
+>> Using a switch case in rev3 is more logical here. It will also simplify
+>> adding more fan attributes in the future. This is why switch cases are used
+>> in other parts of the file.
+> 
+> it was my suggestion and to be honest I would rather prefer it
+> this way. I can understand it if we were expecting more cases in
+> the immediate, like it was in your case.
+> 
+> But I wouldn't have an ugly and unreadable one-case-switch in the
+> eventuality that something comes in the future. In that case, we
+> can always convert it.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+My rationale for suggesting a switch case is that in the current 
+alignment hwm_XX_read() function is designed to handle all 
+possible/supported attributes of the XX sensor type.
+With the proposed change, hwm_fan_read() would only manage the 
+hwmon_fan_input attribute.
+If a single switch case isn’t preferred, I would recommend creating a 
+helper function dedicated to hwmon_fan_input.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                                 defconfig   gcc-13.2.0
-arm                            dove_defconfig   gcc-12.4.0
-arm                            hisi_defconfig   gcc-12.4.0
-arm                          moxart_defconfig   gcc-12.4.0
-arm                         mv78xx0_defconfig   gcc-12.4.0
-arm                         wpcm450_defconfig   gcc-12.4.0
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-i386                             alldefconfig   gcc-12.4.0
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240814   clang-18
-i386         buildonly-randconfig-002-20240814   clang-18
-i386         buildonly-randconfig-003-20240814   clang-18
-i386         buildonly-randconfig-004-20240814   clang-18
-i386         buildonly-randconfig-005-20240814   clang-18
-i386         buildonly-randconfig-005-20240814   gcc-12
-i386         buildonly-randconfig-006-20240814   clang-18
-i386         buildonly-randconfig-006-20240814   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240814   clang-18
-i386                  randconfig-002-20240814   clang-18
-i386                  randconfig-002-20240814   gcc-12
-i386                  randconfig-003-20240814   clang-18
-i386                  randconfig-003-20240814   gcc-12
-i386                  randconfig-004-20240814   clang-18
-i386                  randconfig-005-20240814   clang-18
-i386                  randconfig-006-20240814   clang-18
-i386                  randconfig-011-20240814   clang-18
-i386                  randconfig-011-20240814   gcc-12
-i386                  randconfig-012-20240814   clang-18
-i386                  randconfig-012-20240814   gcc-12
-i386                  randconfig-013-20240814   clang-18
-i386                  randconfig-014-20240814   clang-18
-i386                  randconfig-014-20240814   gcc-11
-i386                  randconfig-015-20240814   clang-18
-i386                  randconfig-015-20240814   gcc-12
-i386                  randconfig-016-20240814   clang-18
-i386                  randconfig-016-20240814   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                         amcore_defconfig   gcc-12.4.0
-m68k                                defconfig   gcc-13.2.0
-m68k                        mvme16x_defconfig   gcc-12.4.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-openrisc                  or1klitex_defconfig   gcc-12.4.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                      katmai_defconfig   gcc-12.4.0
-powerpc                       ppc64_defconfig   gcc-12.4.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                                defconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                  defconfig   gcc-14.1.0
-sh                            migor_defconfig   gcc-12.4.0
-sh                          polaris_defconfig   gcc-12.4.0
-sh                      rts7751r2d1_defconfig   gcc-12.4.0
-sh                           sh2007_defconfig   gcc-12.4.0
-sh                     sh7710voipgw_defconfig   gcc-12.4.0
-sparc                       sparc64_defconfig   gcc-12.4.0
-sparc64                             defconfig   gcc-14.1.0
-um                                allnoconfig   gcc-14.1.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
+hwm_fan_read()
+{
+	if (attr == hwmon_fan_input)
+		return helper(); //hwmon_fan_input_read()
+	return -EOPNOTSUPP;
+}
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Badal
+> 
+> Thanks,
+> Andi
 
