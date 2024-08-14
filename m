@@ -1,291 +1,304 @@
-Return-Path: <linux-kernel+bounces-286697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6AF951DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9096951DF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3281F226C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCFA41C21CC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17251BA883;
-	Wed, 14 Aug 2024 14:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18A41B3F16;
+	Wed, 14 Aug 2024 15:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="qWKTCIXz"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JjUXuMI3"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2347E1B9B3B
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5625B1B3F07
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723647424; cv=none; b=MEPBjKBTxuLexWp3iIuxjt+ZwAnhL4ic4rlAeOw51jZa11hgPdOMEiJf7V+Eu5WzD9sF3L9Te+JF3uwT7P98Tnh7i21PbUPsVFr0CRRgt31YdaBWmZZZKXCTo6TbxYSPsvLwrdSyts28MbPdHz+XfSQj1PKOS6wXGNYv1v0KsEE=
+	t=1723647620; cv=none; b=KneNs+RBTV6s+Y+l4WFtgSfff47gYT4MoxOH0AyaVJ0eJ2KYFjvvUlJikPcT62/k4f54g+fLkHMpnXnT6O3QocWFVEylbejUSCZIMVLZM25x2lSxdZXJ5oCCRcBEk5W3aRwnnJ4L53++5JMPSo8zso0XUVPXYVl0x7Cu5a4aA8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723647424; c=relaxed/simple;
-	bh=CUrDPT8yIm9H7mP4RQEH7d9BPFr2CIu6wTUn6f/D5M4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nvPNgD/3A4U4VVHn4DCsyqSVypweSDPYP1qnXWW7PPWZsR0cbI6DS7BsFQhFdZSOJ4Yp9/941KgClHrOjUJyhq86xJXPPepY028WeHAMQPCcREYOEb4h0NB6qK2WlhjyDCUVIB1lfuYlKWSNXmPqV6quGFyn4E48HE0jrSMUupE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=qWKTCIXz; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A76344597F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:56:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723647417;
-	bh=yjCwWNcb2RwBz1G+TBCUPH+94PCiJ1raP+HTH6kWRGU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version;
-	b=qWKTCIXzF5FbcTl5TErntFpJRRt0vupjKJKQPx5CtjG6ItCDKQ2WueyyleigL+IWv
-	 MF6pWbd2+zNfjKlDZ3iHqe/ZCQLLZm9WN6BfcJ++JvyQlVICjuKdbP5FYFIYrTEMfz
-	 Houn23KiigVW27DEMEKpQo0VVsHjoKKa5LjUSZ99oAwZv+Ulc+ykfGaD1rFzPVCh3U
-	 MaL5NzZ7PJLJMIO2Lyq5+JirYCzOURCZDL1nSPEDnwaz6qf8JTBSvQlWmbo9+aJco9
-	 M3tzYCEIXE1ttHeHlMeO2n/Yy5lWywZZd1LyjfHBSR8bBpv30vVUhN0k8EwpqMJglQ
-	 l8LlIBACmKIgQ==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a7ab81eea72so539774466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:56:57 -0700 (PDT)
+	s=arc-20240116; t=1723647620; c=relaxed/simple;
+	bh=8hvipVdBkoFqioEROoZkbc9cbBFMzvKgB/VSGU3jFW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iG5MN6wdaFuJeRzV2/4vMhv0pdiZaGeFFFAZ8UUTJL7ftYQUarVYSC9+ZCzUF0dls+6GK+LLM0D+W+pmpE1gy9JOuhGddYlxKPXfb1NFdqU9dE7/U+KJE3/6zL+MHz+sx3wkyi/6GiuAvVULr7eOfuiRFSybnYdlnPLH+R30CGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JjUXuMI3; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc587361b6so57294515ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723647618; x=1724252418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dbHCr0op/VQjYjFoPEioKUUX066cfRvLBk10sukcDPI=;
+        b=JjUXuMI37ZJeZePP3IwQ8imOyjv59Mwb4Jw+/RDlxR+XD3c8a92CQTNMfQ5+dmJcsk
+         J9ERkjKRwavjfdF4X+aD7AD34nPocYEoOff4IYquwcb7joeD7L5G6AlPVgaTPFBKitmx
+         mmd6gvgFmZzQLM8BklBEa5q5o3VLY4/KpJki82g5I6mKJZOjweelTzBlnvVIj0xdaowl
+         RqW9QMjzU5Y2OdAid0qLJXinytmXoSdIGfOv0Dhs3UKa015mtd2gVSw8DbJAzErPpt8o
+         VMFHvjAbTZ7e71PRmlJrkDN96M9xUyueD69E2FeUU/ZPpt1dNX3cltTyYO/8b1qglmn0
+         EotA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723647413; x=1724252213;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yjCwWNcb2RwBz1G+TBCUPH+94PCiJ1raP+HTH6kWRGU=;
-        b=j4BppPOVQfVoS3TZX/1ShLetvCRrDeAgyG9e53hZEQvmCh8AsqE6RkmT4nqWk0kxkG
-         NCRyuOSzOVOgX+fUlzdSOG8tDBBuek/fSd8KYn3splAlpQtnfy/9tVcamSOs7u9e1vnd
-         susFTe7frdHUD0A/G+CD6YSst75EYWtFRQf080Eiuh22pksVXoRaCjzWPnWsdej8v4wk
-         jhi0xYkfu+dmF4ebkN6C4R6aToa3kZCWqbqOhPWwRF0qHxfAr2UHVrY7Ah/CUQZifgpN
-         W9UPiU66EidjCXlPQZm0Kde6Z/65x/az/gp6c3G+2d9lof2PRPrIaHlrXIUJ45E2kCfY
-         NBCA==
-X-Gm-Message-State: AOJu0YzL8MA3BOc5SKD/+Ws441x9qeDrUZ+qRLR1/eQi0veBFLpzQ3Pi
-	9hfg8PGP9QVVlqJFmt14yp9jPQlDPog7J680XYEhj2DV/0ld2oDronUorjdVzdzq9Q70KP/+/yj
-	66BNdSiziVB4KizNfmW5obOID9vfSf5tXCH/UyFN22cvuxW8np4hbGq2MGre3c9KFpwZDBChp0Z
-	OfAbmg6bZqFQ==
-X-Received: by 2002:a17:906:d24f:b0:a7a:ae85:f24d with SMTP id a640c23a62f3a-a83670156afmr183670166b.51.1723647412768;
-        Wed, 14 Aug 2024 07:56:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHaDsSWoa2KsGlc6OyPJgRDW+q0rWS6QSZ3gIEWLEGWbf/cNuU3Zj/MyvRCW2i/aNyUts1xw==
-X-Received: by 2002:a17:906:d24f:b0:a7a:ae85:f24d with SMTP id a640c23a62f3a-a83670156afmr183667066b.51.1723647412019;
-        Wed, 14 Aug 2024 07:56:52 -0700 (PDT)
-Received: from stitch.. ([2a01:4262:1ab:c:bbf4:eba3:898f:7501])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411bdcbsm182316866b.105.2024.08.14.07.56.51
+        d=1e100.net; s=20230601; t=1723647618; x=1724252418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dbHCr0op/VQjYjFoPEioKUUX066cfRvLBk10sukcDPI=;
+        b=q7uY+m3clbGSlguBS4duV0q2xsIXMAPFlswcBtlxkaVOdK4rf9npOUvGe2D0z0mBLz
+         CxcJPTcjsf7X4yM2CmV5zwh9XHWpavAuqZAd2vFZ6H/AnSNWVvmQB41U/u8FT7AWVdEJ
+         lZu2DiFTZ/VdI79q+3jFyDKIzIF5ZVQDsgGO7pc1TrxekFCXS1nejAFYpD2PCy3Z3elU
+         z+NVgw/b0jb1Lcv7zgpAmQzF+MarIVcXsLA0lXim3mYlZW/GQAmPMdViNVV2ZeyGVpE3
+         QkQvN642PJ7l5N8yL8js2xg12km20GcILLx7rbdK6kQu686n3u49/BpbHZpBZ0fPosuU
+         9TXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV46pvX5M0wCpqr3tSX0pYb62GSe1sab3r6IAZTwiOZL40pa5Y9clreR/SBOKfpjHcLlGyGEEcOpr5SpJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6T/MhaEPfB028GMZBsjJS1hRGrD29LpKuW5IRehndz/nfsFw2
+	YBBHWjrVdgOPfJ+zrjNI4E623uDh9doJVlskvr12EOI6l4ait7Vlyn17nWzQd6U=
+X-Google-Smtp-Source: AGHT+IFjkZdeCy3ttB1+N6PonqSVgzwx6/8vpCT2DGG5nYAfJZdLDmhJ/GAb7wGMXw/qa14hbL8Qqg==
+X-Received: by 2002:a17:902:ec90:b0:1fd:93d2:fba4 with SMTP id d9443c01a7336-201d64a5bd9mr37801815ad.48.1723647617183;
+        Wed, 14 Aug 2024 08:00:17 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:58b0:43ab:ed9f:f0e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1cbad6sm30554035ad.250.2024.08.14.08.00.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:56:51 -0700 (PDT)
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-To: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Anup Patel <apatel@ventanamicro.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Subject: [PATCH v1 9/9] Revert "irqchip/sifive-plic: Convert PLIC driver into a platform driver"
-Date: Wed, 14 Aug 2024 16:56:41 +0200
-Message-ID: <20240814145642.344485-10-emil.renner.berthing@canonical.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
+        Wed, 14 Aug 2024 08:00:16 -0700 (PDT)
+Date: Wed, 14 Aug 2024 09:00:13 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	Marek Vasut <marex@denx.de>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off for
+ i.MX7ULP
+Message-ID: <ZrzGfS/7vv90F5C1@p14s>
+References: <20240719-imx_rproc-v2-0-cd8549aa3f1f@nxp.com>
+ <20240719-imx_rproc-v2-2-cd8549aa3f1f@nxp.com>
+ <Zqe23DlboRPSXiQO@p14s>
+ <DB9PR04MB84615384294C38EEA5B95F0088B02@DB9PR04MB8461.eurprd04.prod.outlook.com>
+ <ZquK5CNtRJTTtlkD@p14s>
+ <DB9PR04MB846152D0289467468CE0077588B32@DB9PR04MB8461.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9PR04MB846152D0289467468CE0077588B32@DB9PR04MB8461.eurprd04.prod.outlook.com>
 
-This reverts commit 8ec99b033147ef3bb8f0a560c24eb1baec3bc0be.
+On Fri, Aug 02, 2024 at 04:59:45AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system off
+> > for i.MX7ULP
+> > 
+> > On Tue, Jul 30, 2024 at 08:06:22AM +0000, Peng Fan wrote:
+> > > > Subject: Re: [PATCH v2 2/2] remoteproc: imx_rproc: handle system
+> > off
+> > > > for i.MX7ULP
+> > > >
+> > > > On Fri, Jul 19, 2024 at 04:49:04PM +0800, Peng Fan (OSS) wrote:
+> > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > >
+> > > > > The i.MX7ULP Cortex-A7 is under control of Cortex-M4. The
+> > > > i.MX7ULP
+> > > > > Linux poweroff and restart rely on rpmsg driver to send a message
+> > > > > to
+> > > > > Cortex-M4 firmware. Then Cortex-A7 could poweroff or restart by
+> > > > > Cortex-M4 to configure the i.MX7ULP power controller properly.
+> > > > >
+> > > > > However the reboot and restart kernel common code use atomic
+> > > > notifier,
+> > > > > so with blocking tx mailbox will trigger kernel dump, because of
+> > > > > blocking mailbox will use wait_for_completion_timeout. In such
+> > > > > case, linux no need to wait for completion.
+> > > > >
+> > > > > Current patch is to use non-blocking tx mailbox channel when
+> > > > > system
+> > > > is
+> > > > > going to poweroff or restart.
+> > > > >
+> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > ---
+> > > > >  drivers/remoteproc/imx_rproc.c | 36
+> > > > > ++++++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 36 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > > > b/drivers/remoteproc/imx_rproc.c index
+> > > > 01cf1dfb2e87..e1abf110abc9
+> > > > > 100644
+> > > > > --- a/drivers/remoteproc/imx_rproc.c
+> > > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > > > @@ -18,6 +18,7 @@
+> > > > >  #include <linux/of_reserved_mem.h>  #include
+> > > > > <linux/platform_device.h>  #include <linux/pm_domain.h>
+> > > > > +#include <linux/reboot.h>
+> > > > >  #include <linux/regmap.h>
+> > > > >  #include <linux/remoteproc.h>
+> > > > >  #include <linux/workqueue.h>
+> > > > > @@ -114,6 +115,7 @@ struct imx_rproc {
+> > > > >  	u32				entry;		/* cpu start
+> > > > address */
+> > > > >  	u32				core_index;
+> > > > >  	struct dev_pm_domain_list	*pd_list;
+> > > > > +	struct sys_off_data		data;
+> > > >
+> > > > What is this for?  I don't see it used in this patch.
+> > >
+> > > Oh, it was added when I was developing this feature, but in the end
+> > > this seems not needed.
+> > >
+> > > >
+> > > > >  };
+> > > > >
+> > > > >  static const struct imx_rproc_att imx_rproc_att_imx93[] = { @@
+> > > > > -1050,6 +1052,22 @@ static int imx_rproc_clk_enable(struct
+> > > > imx_rproc *priv)
+> > > > >  	return 0;
+> > > > >  }
+> > > > >
+> > > > > +static int imx_rproc_sys_off_handler(struct sys_off_data *data) {
+> > > > > +	struct rproc *rproc = data->cb_data;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	imx_rproc_free_mbox(rproc);
+> > > > > +
+> > > > > +	ret = imx_rproc_xtr_mbox_init(rproc, false);
+> > > > > +	if (ret) {
+> > > > > +		dev_err(&rproc->dev, "Failed to request non-blocking
+> > > > mbox\n");
+> > > > > +		return NOTIFY_BAD;
+> > > > > +	}
+> > > > > +
+> > > > > +	return NOTIFY_DONE;
+> > > > > +}
+> > > > > +
+> > > > >  static int imx_rproc_probe(struct platform_device *pdev)  {
+> > > > >  	struct device *dev = &pdev->dev; @@ -1104,6 +1122,24 @@
+> > static
+> > > > > int imx_rproc_probe(struct
+> > > > platform_device *pdev)
+> > > > >  	if (rproc->state != RPROC_DETACHED)
+> > > > >  		rproc->auto_boot = of_property_read_bool(np,
+> > > > "fsl,auto-boot");
+> > > > >
+> > > > > +	if (of_device_is_compatible(dev->of_node, "fsl,imx7ulp-cm4"))
+> > > > {
+> > > > > +		ret = devm_register_sys_off_handler(dev,
+> > > > SYS_OFF_MODE_POWER_OFF_PREPARE,
+> > > > > +
+> > > > SYS_OFF_PRIO_DEFAULT,
+> > > > > +
+> > > > imx_rproc_sys_off_handler, rproc);
+> > > >
+> > > > Why does the mailbox needs to be set up again when the system is
+> > > > going down...
+> > >
+> > > As wrote in commit message:
+> > > "i.MX7ULP Linux poweroff and restart rely on rpmsg driver to send a
+> > > message," so need to set up mailbox in non-blocking way to send a
+> > > message to M4 side.
+> > >
+> > > >
+> > > > > +		if (ret) {
+> > > > > +			dev_err(dev, "register power off handler
+> > > > failure\n");
+> > > > > +			goto err_put_clk;
+> > > > > +		}
+> > > > > +
+> > > > > +		ret = devm_register_sys_off_handler(dev,
+> > > > SYS_OFF_MODE_RESTART_PREPARE,
+> > > > > +
+> > > > SYS_OFF_PRIO_DEFAULT,
+> > > > > +
+> > > > imx_rproc_sys_off_handler, rproc);
+> > > >
+> > > > ... and why does it need to be free'd when the system is going up?
+> > >
+> > >
+> > > Sorry, I not get your point. The free is in imx_rproc_sys_off_handler.
+> > > During system booting, the mailbox is not freed.
+> > 
+> > Why is the same operation done at both startup and shutdown - that is
+> > not clear.
+> 
+> The below commit shows request/free done in startup and shutdown.
+> Hope this explains what you ask.
 
-This change makes the Allwinner D1 SoC lock up at boot as described in
-the thread below.
+Unfortunately it doesn't.  I just spent another hour trying to understand why
+the same operations are carried out for both shutdown and restart without
+success.  I am out of time for this patch and have to move on to other patchset
+waiting to be reviewed.  I suggest you ask Daniel to help clarify the changelog
+and comments in the code and submit another revision.
 
-Link: https://lore.kernel.org/linux-riscv/CAJM55Z9hGKo4784N3s3DhWw=nMRKZKcmvZ58x7uVBghExhoc9A@mail.gmail.com/
-Fixes: 8ec99b033147 ("irqchip/sifive-plic: Convert PLIC driver into a platform driver")
-Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
----
- drivers/irqchip/irq-sifive-plic.c | 103 ++++++++++++------------------
- 1 file changed, 41 insertions(+), 62 deletions(-)
+Thanks,
+Mathieu
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index ac274e1166c3..bf0b40b0fad4 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -64,7 +64,6 @@
- #define PLIC_QUIRK_EDGE_INTERRUPT	0
- 
- struct plic_priv {
--	struct device *dev;
- 	struct cpumask lmask;
- 	struct irq_domain *irqdomain;
- 	void __iomem *regs;
-@@ -413,50 +412,30 @@ static int plic_starting_cpu(unsigned int cpu)
- 	return 0;
- }
- 
--static const struct of_device_id plic_match[] = {
--	{ .compatible = "sifive,plic-1.0.0" },
--	{ .compatible = "riscv,plic0" },
--	{ .compatible = "andestech,nceplic100",
--	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
--	{ .compatible = "thead,c900-plic",
--	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
--	{}
--};
--
--static int plic_probe(struct platform_device *pdev)
-+static int __init __plic_init(struct device_node *node,
-+			      struct device_node *parent,
-+			      unsigned long plic_quirks)
- {
- 	int error = 0, nr_contexts, nr_handlers = 0, i;
--	struct device *dev = &pdev->dev;
--	unsigned long plic_quirks = 0;
--	struct plic_handler *handler;
--	struct plic_priv *priv;
--	bool cpuhp_setup;
--	unsigned int cpu;
- 	u32 nr_irqs;
--
--	if (is_of_node(dev->fwnode)) {
--		const struct of_device_id *id;
--
--		id = of_match_node(plic_match, to_of_node(dev->fwnode));
--		if (id)
--			plic_quirks = (unsigned long)id->data;
--	}
-+	struct plic_priv *priv;
-+	struct plic_handler *handler;
-+	unsigned int cpu;
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
--	priv->dev = dev;
- 	priv->plic_quirks = plic_quirks;
- 
--	priv->regs = of_iomap(to_of_node(dev->fwnode), 0);
-+	priv->regs = of_iomap(node, 0);
- 	if (WARN_ON(!priv->regs)) {
- 		error = -EIO;
- 		goto out_free_priv;
- 	}
- 
- 	error = -EINVAL;
--	of_property_read_u32(to_of_node(dev->fwnode), "riscv,ndev", &nr_irqs);
-+	of_property_read_u32(node, "riscv,ndev", &nr_irqs);
- 	if (WARN_ON(!nr_irqs))
- 		goto out_iounmap;
- 
-@@ -466,13 +445,13 @@ static int plic_probe(struct platform_device *pdev)
- 	if (!priv->prio_save)
- 		goto out_free_priority_reg;
- 
--	nr_contexts = of_irq_count(to_of_node(dev->fwnode));
-+	nr_contexts = of_irq_count(node);
- 	if (WARN_ON(!nr_contexts))
- 		goto out_free_priority_reg;
- 
- 	error = -ENOMEM;
--	priv->irqdomain = irq_domain_add_linear(to_of_node(dev->fwnode), nr_irqs + 1,
--						&plic_irqdomain_ops, priv);
-+	priv->irqdomain = irq_domain_add_linear(node, nr_irqs + 1,
-+			&plic_irqdomain_ops, priv);
- 	if (WARN_ON(!priv->irqdomain))
- 		goto out_free_priority_reg;
- 
-@@ -482,7 +461,7 @@ static int plic_probe(struct platform_device *pdev)
- 		int cpu;
- 		unsigned long hartid;
- 
--		if (of_irq_parse_one(to_of_node(dev->fwnode), i, &parent)) {
-+		if (of_irq_parse_one(node, i, &parent)) {
- 			pr_err("failed to parse parent for context %d.\n", i);
- 			continue;
- 		}
-@@ -518,7 +497,7 @@ static int plic_probe(struct platform_device *pdev)
- 
- 		/* Find parent domain and register chained handler */
- 		if (!plic_parent_irq && irq_find_host(parent.np)) {
--			plic_parent_irq = irq_of_parse_and_map(to_of_node(dev->fwnode), i);
-+			plic_parent_irq = irq_of_parse_and_map(node, i);
- 			if (plic_parent_irq)
- 				irq_set_chained_handler(plic_parent_irq,
- 							plic_handle_irq);
-@@ -560,29 +539,20 @@ static int plic_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * We can have multiple PLIC instances so setup cpuhp state
--	 * and register syscore operations only once after context
--	 * handlers of all online CPUs are initialized.
-+	 * and register syscore operations only when context handler
-+	 * for current/boot CPU is present.
- 	 */
--	if (!plic_cpuhp_setup_done) {
--		cpuhp_setup = true;
--		for_each_online_cpu(cpu) {
--			handler = per_cpu_ptr(&plic_handlers, cpu);
--			if (!handler->present) {
--				cpuhp_setup = false;
--				break;
--			}
--		}
--		if (cpuhp_setup) {
--			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
--					  "irqchip/sifive/plic:starting",
--					  plic_starting_cpu, plic_dying_cpu);
--			register_syscore_ops(&plic_irq_syscore_ops);
--			plic_cpuhp_setup_done = true;
--		}
-+	handler = this_cpu_ptr(&plic_handlers);
-+	if (handler->present && !plic_cpuhp_setup_done) {
-+		cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
-+				  "irqchip/sifive/plic:starting",
-+				  plic_starting_cpu, plic_dying_cpu);
-+		register_syscore_ops(&plic_irq_syscore_ops);
-+		plic_cpuhp_setup_done = true;
- 	}
- 
--	pr_info("%pOFP: mapped %d interrupts with %d handlers for %d contexts.\n",
--		to_of_node(dev->fwnode), nr_irqs, nr_handlers, nr_contexts);
-+	pr_info("%pOFP: mapped %d interrupts with %d handlers for"
-+		" %d contexts.\n", node, nr_irqs, nr_handlers, nr_contexts);
- 	return 0;
- 
- out_free_enable_reg:
-@@ -599,11 +569,20 @@ static int plic_probe(struct platform_device *pdev)
- 	return error;
- }
- 
--static struct platform_driver plic_driver = {
--	.driver = {
--		.name		= "riscv-plic",
--		.of_match_table	= plic_match,
--	},
--	.probe = plic_probe,
--};
--builtin_platform_driver(plic_driver);
-+static int __init plic_init(struct device_node *node,
-+			    struct device_node *parent)
-+{
-+	return __plic_init(node, parent, 0);
-+}
-+
-+IRQCHIP_DECLARE(sifive_plic, "sifive,plic-1.0.0", plic_init);
-+IRQCHIP_DECLARE(riscv_plic0, "riscv,plic0", plic_init); /* for legacy systems */
-+
-+static int __init plic_edge_init(struct device_node *node,
-+				 struct device_node *parent)
-+{
-+	return __plic_init(node, parent, BIT(PLIC_QUIRK_EDGE_INTERRUPT));
-+}
-+
-+IRQCHIP_DECLARE(andestech_nceplic100, "andestech,nceplic100", plic_edge_init);
-+IRQCHIP_DECLARE(thead_c900_plic, "thead,c900-plic", plic_edge_init);
--- 
-2.43.0
-
+> 
+> commit 99b142cf7191b08adcd23f700ea0a3d7dffdd0c1
+> Author: Peng Fan <peng.fan@nxp.com>
+> Date:   Fri Oct 21 12:15:25 2022 +0800
+> 
+>     remoteproc: imx_rproc: Request mbox channel later
+>     
+>     It is possible that when remote processor crash, the communication
+>     channel will be broken with garbage value in mailbox, such as
+>     when Linux is issuing a message through mailbox, remote processor
+>     crashes, we need free & rebuild the mailbox channels to make sure
+>     no garbage value in mailbox channels.
+>     
+>     So move the request/free to start/stop for managing remote procesosr in
+>     Linux, move to attach/detach for remote processor is out of control of
+>     Linux.
+>     
+>     Previous, we just request mbox when attach for CM4 boot early before
+>     Linux, but if mbox defer probe, remoteproc core will do resource cleanup
+>     and corrupt resource table for later probe.
+>     
+>     So move request mbox ealier and still keep mbox request when attach
+>     for self recovery case, but keep a check when request/free mbox.
+> 
+> > 
+> > I am currently away from the office, returning on August 12th.  As such
+> > I will not be following up on this thread until then.
+> 
+> sure. Thanks for letting me know.
+> 
+> Thanks,
+> Peng.
+> 
+> > 
+> > >
+> > > Thanks,
+> > > Peng.
+> > >
+> > > >
+> > > > > +		if (ret) {
+> > > > > +			dev_err(dev, "register restart handler
+> > > > failure\n");
+> > > > > +			goto err_put_clk;
+> > > > > +		}
+> > > > > +	}
+> > > > > +
+> > > > >  	ret = rproc_add(rproc);
+> > > > >  	if (ret) {
+> > > > >  		dev_err(dev, "rproc_add failed\n");
+> > > > >
+> > > > > --
+> > > > > 2.37.1
+> > > > >
+> > > > >
 
