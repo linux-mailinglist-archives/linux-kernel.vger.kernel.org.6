@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-286418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD83951AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6261951ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1D6DB237FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:17:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8161C2159D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF781B013A;
-	Wed, 14 Aug 2024 12:17:11 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E515C1B0111;
+	Wed, 14 Aug 2024 12:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PpQ1vpEy"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1C41B140B;
-	Wed, 14 Aug 2024 12:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671B21B0106
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723637831; cv=none; b=eFC/dJCwvevabGcT+4uKFYrlOaihNz5ZSKNj5iDaawe0Lb9giq/nA7Pnf9nOU3ssJol8OurJt3iOZ757pErrAdsPIgRir5iS5FmdDj50PYDWoFPjOXSfKjEmaTxZjrB2pCcKx9M3vbwnBbxlBM0QTIdg0FSj+pU4Zi9hYAcVTfw=
+	t=1723638119; cv=none; b=nV0ZfZii0OXyUV+/DkFV2KSqh2TX5XpKrtBeCm/mk8TxYK357dkf7nHIzv6bUwEcJVPOwG86TBWQMzxirhtcwlmLx2jvK5jgBDQEeyErZhwIH42WiFBnTbmvwhdyEFu/vBUQfFB+lF0oGCXLxHwo05lMuKgHNz1PN4edbsmkdlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723637831; c=relaxed/simple;
-	bh=qWnpU0FL3BYwKNeluUfXzWfBOxcccUWo4UKNvbP0U1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZ3o+ElOuGjikDfqS+xcdGO57uDqCpkSle66K+hkuJygPjjyaLGVTPU92uxWOFoe/Lwhvq3VKg6MClUEbeneHgP7juHZtRritdH/Fldiv78cDqKPcCvAwVf5l37t3kbmm7+znbobNwx/tspHvtU5mSBnXfYEowAjf+J3MvuWxjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id AF73B1C0082; Wed, 14 Aug 2024 14:17:01 +0200 (CEST)
-Date: Wed, 14 Aug 2024 14:17:01 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	fujita.tomonori@gmail.com, zhengzucheng@huawei.com
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/149] 6.1.105-rc2 review
-Message-ID: <ZrygPRGECbPEswtL@duo.ucw.cz>
-References: <20240813061957.925312455@linuxfoundation.org>
+	s=arc-20240116; t=1723638119; c=relaxed/simple;
+	bh=oc7pCqgTDJhaq2i36boZtpB4yaoA7PKtJV+APNsDq0s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iFaNmGn3VsJ/4OAI8ebl3a71WpIabgQ1wfi7ZyrcF9zH+Zd9N50T2bly8uP8Jkp4kqZntrGJc+KvzG8WcSHLOUXjADOlm/elRV6LD2BOvJEGh7b+svbYgQMNPAX9qNv2L2Sl5vZ4XIfH8l22gUBUztnqqEGnVUKBAPvqarjgVX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PpQ1vpEy; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47ECKrOt096773;
+	Wed, 14 Aug 2024 07:20:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723638053;
+	bh=EqkHqqKAoc8Djpm1ZElzO9BtZimR5uXL+u0mCRMQBbU=;
+	h=From:To:CC:Subject:Date;
+	b=PpQ1vpEyIo586XmYMoCfXjUUPEYiiYtnvGO889Pf3vinjOp+boBKNGL1n+Ec55jnf
+	 6kuWLF5y/RpCIc0wsEdkAIMYy8Fsd1x/NxnVEEumiR0dkXFAM65YwSkYE3Yb2aH/ML
+	 SfXR8JYyibjUydB7RtbY2l5WuuzX4J9ETp+xfnhs=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47ECKr29030477
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 14 Aug 2024 07:20:53 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
+ Aug 2024 07:20:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 14 Aug 2024 07:20:53 -0500
+Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.152])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47ECKlf7049558;
+	Wed, 14 Aug 2024 07:20:48 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <broonie@kernel.org>
+CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
+        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
+        <13564923607@139.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
+        <cameron.berkenpas@gmail.com>, <tiwai@suse.de>, <baojun.xu@ti.com>,
+        <soyer@irl.hu>, <Baojun.Xu@fpt.com>, <robinchen@ti.com>,
+        Shenghao Ding
+	<shenghao-ding@ti.com>
+Subject: [PATCH v1] ALSA: hda: tas2563: mark const variables as __maybe_unused
+Date: Wed, 14 Aug 2024 20:20:42 +0800
+Message-ID: <20240814122043.1731-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="03LUWFP1oONQbrQ3"
-Content-Disposition: inline
-In-Reply-To: <20240813061957.925312455@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+From: Baojun Xu <baojun.xu@ti.com>
 
---03LUWFP1oONQbrQ3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+An earlier patch changed the DECLARE_TLV_DB_SCALE declaration, but
+now there are additional static const variables that cause
+the same build warnings:
 
-Hi!
+In file included from sound/pci/hda/tas2781_hda_i2c.c:23:
+include/sound/tas2563-tlv.h:21:28: error: 'tas2563_dvc_table' defined but not used [-Werror=unused-const-variable=]
+   21 | static const unsigned char tas2563_dvc_table[][4] = {
+      |                            ^~~~~~~~~~~~~~~~~                                 ^~~~~~~~~~~~~~~
 
-> This is the start of the stable review cycle for the 6.1.105 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Mark it as unused as well.
 
-> FUJITA Tomonori <fujita.tomonori@gmail.com>
->     PCI: Add Edimax Vendor ID to pci_ids.h
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
-This define is unused in at least 6.1-stable and older. We don't need
-this patch.
+---
+v1:
+---
+ include/sound/tas2563-tlv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Zheng Zucheng <zhengzucheng@huawei.com>
->     sched/cputime: Fix mul_u64_u64_div_u64() precision for cputime
+diff --git a/include/sound/tas2563-tlv.h b/include/sound/tas2563-tlv.h
+index faa3e194f73b..bb269b21f460 100644
+--- a/include/sound/tas2563-tlv.h
++++ b/include/sound/tas2563-tlv.h
+@@ -18,7 +18,7 @@
+ static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2563_dvc_tlv, -12150, 50, 1);
+ 
+ /* pow(10, db/20) * pow(2,30) */
+-static const unsigned char tas2563_dvc_table[][4] = {
++static const __maybe_unused unsigned char tas2563_dvc_table[][4] = {
+ 	{ 0X00, 0X00, 0X00, 0X00 }, /* -121.5db */
+ 	{ 0X00, 0X00, 0X03, 0XBC }, /* -121.0db */
+ 	{ 0X00, 0X00, 0X03, 0XF5 }, /* -120.5db */
+-- 
+2.43.0
 
-Comment here says:
-
-+        * Because mul_u64_u64_div_u64() can approximate on some
-+        * achitectures; enforce the constraint that: a*b/(b+c) <=3D a.
-
-Afaict it should say "a*b/(a+b)"?
-
-Best regards,
-	   		 	     		      		Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---03LUWFP1oONQbrQ3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZrygPQAKCRAw5/Bqldv6
-8nHnAJ9Q1vb5gw6oo4aNQftcBwQECnfxtQCgwJr6Mjoi2rsJ9+3mWAz7weP5lX4=
-=EgxR
------END PGP SIGNATURE-----
-
---03LUWFP1oONQbrQ3--
 
