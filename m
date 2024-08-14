@@ -1,123 +1,90 @@
-Return-Path: <linux-kernel+bounces-286262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAEE9518D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:30:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2759518D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6DB0B20F19
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C0A1C21539
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E161E1AE851;
-	Wed, 14 Aug 2024 10:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4141AE858;
+	Wed, 14 Aug 2024 10:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjLOT/ol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YalDkqGi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vO8MBuyx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6F81AE038;
-	Wed, 14 Aug 2024 10:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D65F1AE869
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723631410; cv=none; b=ZLyjdtL/3pt90LYE71trYjSNm750Cx2ZwIoAsLJYiObvlVq6L+JzMeVPU7AUjbPFVu6Yu2uiTKWYNuKa1CwhpR7OW5vFtxp94qV78k8p3uyEmJv7j3Dfpc0gG7lyOFODF34GVDxNXpVwfAbGU/vaaNOMlLqg4vYh7HYHJV8ScV8=
+	t=1723631415; cv=none; b=vBrgPYuC/k4jyKT1IxHM5dYAXbUjI7QHRCWw/GX5DN4dgjbJKtNIHOUqc3j33W19tG7U7U6z3HW7Bs7i7MEZNqJGqV+fs+n0m2Vysp+D5ybpN5sO+sUoefoiSKa9HyGBAKZpbqCSKAqf5yzdlSGBihE71CuHJqBe8I5gWNQ8Mjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723631410; c=relaxed/simple;
-	bh=K6G/iVkagitlkBAW0XnQFiBIC8Njt7zMbRnHDyYHvUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QamOAmrvoAji/ASX2JKrCM11HTOaC0UydA9yaBBiLDm2i5ngKrqeXoqudRqzz6mHnjw4dtI4zPMt4WuHLXJX7Oq4f84qt8jpI9VNoUYRLvJKWG2crO/pmenEVxXsNerQXOehtBCBWrrqdHIP/M+5oJCCWRduu9IFe0iu/LWVmss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjLOT/ol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6341CC4AF0E;
-	Wed, 14 Aug 2024 10:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723631409;
-	bh=K6G/iVkagitlkBAW0XnQFiBIC8Njt7zMbRnHDyYHvUQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MjLOT/olQjjNrZ+8agrDv2BJZ19s9teYUeSjYjm8BBAOKtr57qk7/vLb/3NL2TNrt
-	 JgF1Lz8EBaHOKikZc3SnaIqPRgsPtgWS74FJoOxhqc1evCdJ0Qo2A2H8uMHMEAMWSi
-	 gfb4UgilueqsU+UfeCSjIRscXOggWsMMr0of33rmQ5LUaZGopEThu2Kw9Vr84eH+d9
-	 CSy20MK2LZ5V1KcxlJ8+VZEyL0N3KMqCaSaS+s7bxkc0t9XqtZZ8lN0F+Mjz3IG94p
-	 ublPVW9Farfa4s9+aulpBThqC/prcmT6frRkrX6QHuWQ5CH4QNxNnSJBfZH8AnkZw6
-	 m4lPcYk8n0DSw==
-Message-ID: <2b118a49-2229-4346-ab21-0aa5377d7a4e@kernel.org>
-Date: Wed, 14 Aug 2024 12:30:01 +0200
+	s=arc-20240116; t=1723631415; c=relaxed/simple;
+	bh=Y0JXjDVhR7lLBt0G8ENRah64qK8CPdkzemr40Mwdo6A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ps49pA/gH2qQ5+dLg+gR6qgNXL5AX86D0ku+VZz+N1TKIdO303o+Mm3vGatiIpdjNQu9ib1rqSdn7oJXctqJulq9DzIvQJoXOAIOQ/xAt0c4lOh0h1+IYza/PrctMaO9sPg5xm4AzDyaSdhtj0kkMF07O8bm01NygfT52d2xlaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YalDkqGi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vO8MBuyx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723631410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kQJcLvdJXGirvTzHx/X5mQxJZfu1qd9LZj5pJq+trw4=;
+	b=YalDkqGid5cIIu7BfMSWEd4UsIKjyU2dhPdda3VcpO78xsLv//xQPjJbd6YpSiw1HwpdHQ
+	+gdykHM6Rz/Dq8bov+c1YanMm9Du8ptDadZJD4C46ZTKj8SuA1TSuW+jhYBN8jiOmeiU8r
+	TQBXqiIAIQ37BTft6sjf/EBnakPZge/Lg7MipnkjUIxN2zJUs6j1pSS2wrMuduYBZnnPiG
+	G3K4ESwelOH7a6NaUVp1cuitsAwq7Q1j0y1NX/ZIn+KQySDLL34mA8zO3X94puJwb53BjO
+	MAk7c1qFU4+6YmfvcwONhOigaqtlOBsa85QB023wy6eVTJY724wQkMncoH5G/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723631410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kQJcLvdJXGirvTzHx/X5mQxJZfu1qd9LZj5pJq+trw4=;
+	b=vO8MBuyx4LB7RymIQGNZ3fBiI0Svk1sljj0EXFjPr0CWwMObzBwqlWPKACIZSqxwk5xRT2
+	bobpqyFt9tVZZWAQ==
+To: Christoph Hellwig <hch@infradead.org>, Max Ramanouski <max8rr8@gmail.com>
+Cc: x86@kernel.org, dave.hansen@linux.intel.com, luto@kernel.org,
+ peterz@infradead.org, linux-kernel@vger.kernel.org, jniethe@nvidia.com,
+ jhubbard@nvidia.com, linux-mm@kvack.org
+Subject: Re: [PATCH v2] x86/ioremap: Use is_ioremap_addr() in iounmap()
+In-Reply-To: <Zrwyh9bKGVzkLzeA@infradead.org>
+References: <20240812203538.82548-1-max8rr8@gmail.com>
+ <Zrwyh9bKGVzkLzeA@infradead.org>
+Date: Wed, 14 Aug 2024 12:30:09 +0200
+Message-ID: <878qwzpfbi.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
- strings for eud
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Melody Olvera <quic_molvera@quicinc.com>,
- Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
- Elson Serrao <quic_eserrao@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-2-quic_molvera@quicinc.com>
- <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
- <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
- <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 14.08.2024 8:15 AM, Krzysztof Kozlowski wrote:
-> On 13/08/2024 22:03, Melody Olvera wrote:
->>
->>
->> On 8/8/2024 4:00 AM, Krzysztof Kozlowski wrote:
->>> On 07/08/2024 20:32, Melody Olvera wrote:
->>>> The EUD can more accurately be divided into two types; a secure type
->>>> which requires that certain registers be updated via scm call and a
->>>> nonsecure type which must access registers nonsecurely. Thus, change
->>>> the compatible strings to reflect secure and nonsecure eud usage.
->>>>
->>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->>>> ---
->>>>   Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 6 +++---
->>>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>> index f2c5ec7e6437..476f92768610 100644
->>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>> @@ -17,8 +17,8 @@ properties:
->>>>     compatible:
->>>>       items:
->>>>         - enum:
->>>> -          - qcom,sc7280-eud
->>>> -      - const: qcom,eud
->>>> +          - qcom,secure-eud
->>>> +          - qcom,eud
->>> Commit msg did not explain me why DT bindings rules are avoided here and
->>> you drop existing SoC specific compatible.
->>>
->>> This really does not look like having any sense at all, I cannot come up
->>> with logic behind dropping existing users. You could deprecate it, but
->>> then why exactly this device should have exception from generic bindings
->>> rule?
->>
->> Understood. I won't drop this compatible string. Is alright to add the 
->> additional compatible as is?
-> 
-> You always need SoC specific compatible.
+On Tue, Aug 13 2024 at 21:28, Christoph Hellwig wrote:
+> Modulo the fixes discussion (and any commit log adjustments related to
+> that), is_ioremap_addr is the right interface to check for an
+> ioremap address.  So for the actual code change:
 
-Melody, is there any way to discover (that won't crash the board if we
-guess wrong) whether secure accessors are needed?
+I'm not opposed to use is_ioremap_addr() as it restricts the check to
+the actual ioremp region.
 
-Konrad
+That said, I'm wondering why iounmap() silently bails out when invoked
+with an address which is outside of the ioremap region. I'd say, any
+invocation with an address outside of it, is broken, but I might be
+missing something as always.
+
+Thanks,
+
+        tglx
+
+
 
