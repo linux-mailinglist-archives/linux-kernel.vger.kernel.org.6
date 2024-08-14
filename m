@@ -1,189 +1,180 @@
-Return-Path: <linux-kernel+bounces-286907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4816F95203D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:41:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D31B9952042
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ECD1B20D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:41:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042DF1C21C0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163611B9B51;
-	Wed, 14 Aug 2024 16:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sytFp4g1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4BE1BA861;
+	Wed, 14 Aug 2024 16:42:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C3A1B1405;
-	Wed, 14 Aug 2024 16:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602E91B9B31;
+	Wed, 14 Aug 2024 16:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653703; cv=none; b=hymzJ9PUs8hCS6lCN2DXBv6DqKWqiVZVKiGZHx9J+PP9LcoBH6BKGUgKlYrE0lQV40ufVdwD0g0fYTYzrnvmDrV7kpK5a8O6a/ltvQqR1I3/foUczQCcUykA4B3hJIoWJAk7XEHnC12KLyl+TEvukLNjMv7qB4uGhFJiwAS3AqY=
+	t=1723653773; cv=none; b=oVNjsKYQlnj6JATrspir7sjNPxEctPm+VLyhU73We4Up/RNtxMLP4HxuFUArfIvLSdoiT/4b17qJJ4sUb0QTYOfed680Oj9vWo4m+ozPP0ARTtWzKs0o5dnsP0ihKOzES/V3VBaPXaPXJK0UjgOqXTAbKeEZc4P4Ekjgz2rPixA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653703; c=relaxed/simple;
-	bh=oRBsxwoUBV8IWRdPaDOxWP9dB1rTaBy9f/k7rxBrtXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YLZa1Pou3HXsJM9JKWIaepQwvifZvJ5Jcu59vTIZ3q6p0v/+jYWn0mcW2B3hg6pV9ZtJgYIWUuYYp/VZkYZIG5HIFldvNRwenqlkP7fdMBiwh7zzFIFlBTpPMZYLG8JJxHycOxMjZ/0bVmMvdwe5NovdLzf0mrGpWBNRfOU8yeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sytFp4g1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64031C116B1;
-	Wed, 14 Aug 2024 16:41:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723653702;
-	bh=oRBsxwoUBV8IWRdPaDOxWP9dB1rTaBy9f/k7rxBrtXw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sytFp4g1ZMhTycSnPEaJtY8FkKC1U6V24Oq2pHY+zQqRagfQhuvoXiV1eoL+9Osb2
-	 ioEgdQuMtyC+1ifVVcA436f0CdNB4rFSalhNvqCxCR222sedIoh5ax3KfH8//wpMMI
-	 Sf3YNckrAMeiZPutvKT0Fv75r05uj8YHxhP1DDnbqwZS4SRm9yT1H9UJEzcugRbVU+
-	 M20W0HA2NG+bC0OjlqhnIWDKK7Xhgz//scASd1iSB57AOmKlsjbc1RyDVBiQIIHGjK
-	 +DNa4fa9qBPBuOYjznUSfkVnAshjmcRImNZuj2/1F8OTthTB5SOU/jEKpWFJGruSTM
-	 tkHsYS8eZVeNQ==
-Date: Wed, 14 Aug 2024 13:41:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Ian Rogers <irogers@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linux perf Profiling <linux-perf-users@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	James Clark <james.clark@arm.com>,
-	"cc: Marc Zyngier" <maz@kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	Asahi Linux <asahi@lists.linux.dev>,
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
- v6.5
-Message-ID: <ZrzeRM3ekLl9zp3z@x1>
-References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
- <ZV1AnNB2CSbAUFVg@archie.me>
- <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
- <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
- <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
- <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
+	s=arc-20240116; t=1723653773; c=relaxed/simple;
+	bh=oi7WYRRaPvjerHLDMNbE+q+FkWLO5UuZ96gbD4eAvWo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uF6E0Nk66HcU4CuxpPEJp8dFaSwfKBPCg1ez17WgFxJMivr3LxGVylCMg7bovyCtwZ7jxe3mPXhdaXhn+l/R/jK95GJOa7vmXG3kmvm21eUXWMB1ReJDSMUdj4n/37zc2Ab+z1JvjEgKry9EG0bR42I3Ds5vJEzPa8saWqoyUtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkYrp1H7Wz6K9Gf;
+	Thu, 15 Aug 2024 00:40:10 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id BE5E3140A90;
+	Thu, 15 Aug 2024 00:42:48 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
+ 2024 17:42:48 +0100
+Date: Wed, 14 Aug 2024 17:42:46 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
+	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 3/9] memory: samsung: exynos5422-dmc: use scoped device
+ node handling to simplify error paths
+Message-ID: <20240814174246.00007e4e@Huawei.com>
+In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-3-5065a8f361d2@linaro.org>
+References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
+	<20240812-cleanup-h-of-node-put-memory-v1-3-5065a8f361d2@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Wed, Aug 14, 2024 at 05:28:42PM +0100, James Clark wrote:
-> 
-> 
-> On 07/08/2024 9:54 am, Thorsten Leemhuis wrote:
-> > On 01.08.24 21:05, Ian Rogers wrote:
-> > > On Wed, Dec 6, 2023 at 4:09 AM Linux regression tracking #update
-> > > (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
-> > > > 
-> > > > [TLDR: This mail in primarily relevant for Linux kernel regression
-> > > > tracking. See link in footer if these mails annoy you.]
-> > > > 
-> > > > On 22.11.23 00:43, Bagas Sanjaya wrote:
-> > > > > On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
-> > > > > > Perf broke on all Apple ARM64 systems (tested almost everything), and
-> > > > > > according to maz also on Juno (so, probably all big.LITTLE) since v6.5.
-> > > > 
-> > > > #regzbot fix: perf parse-events: Make legacy events lower priority than
-> > > > sysfs/JSON
-> > > > #regzbot ignore-activity
-> > > 
-> > > Note, this is still broken.
-> > 
-> > Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
-> > this? Or is this a "we are screwed one way or another and someone has to
-> > bite the bullet" situation?
-> > 
-> > Ciao, Thorsten
-> > 
-> > > The patch changed the priority in the case
-> > > that you do something like:
-> > > 
-> > > $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
-> > > 
-> > > but if you do:
-> > > 
-> > > $ perf stat -e 'cycles' benchmark
-> > > 
-> > > then the broken behavior will happen as legacy events have priority
-> > > over sysfs/json events in that case. To fix this you need to revert:
-> > > 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
-> > > events over legacy"
-> > > 
-> > > This causes some testing issues resolved in this unmerged patch series:
-> > > https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.com/
-> > > 
-> > > There is a bug as the arm_dsu PMU advertises an event called "cycles"
-> > > and this PMU is present on Ampere systems. Reverting the commit above
-> > > will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
-> > > __evlist__add_default") to fix ARM's BIG.little systems (opening a
-> > > cycles event on all PMUs not just 1) will cause the arm_dsu event to
-> > > be opened by perf record and fail as the event won't support sampling.
-> > > 
-> > > The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.com/
-> > > fixes this by only opening the cycles event on core PMUs when choosing
-> > > default events.
-> > > 
-> > > Rather than take this patch the revert happened as Linus runs the
-> > > command "perf record -e cycles:pp" (ie using a specified event and not
-> > > defaults) and considers it a regression in the perf tool that on an
-> > > Ampere system to need to do "perf record -e
-> > > 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
-> > > will choose the cycles event correctly and with better precision the
-> > > pp for systems that support it, but it was still considered a
-> > > regression in the perf tool so the revert was made to happen. There is
-> > > a lack of perf testing coverage for ARM, in particular as they choose
-> > > to do everything in a different way to x86. The patch in question was
-> > > in the linux-next tree for weeks without issues.
-> > > 
-> > > ARM/Ampere could fix this by renaming the event from cycles to
-> > > cpu_cycles, or by following Intel's convention that anything uncore
-> > > uses the name clockticks rather than cycles. This could break people
-> > > who rely on an event called arm_dsu/cycles/ but I imagine such people
-> > > are rare. There has been no progress I'm aware of on renaming the
-> > > event.
-> > > 
-> > > Making perf not terminate on opening an event for perf record seems
-> > > like the most likely workaround as that is at least something under
-> > > the tool maintainers control. ARM have discussed doing this on the
-> > > lists:
-> > > https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com/
-> > > but since the revert in v6.10 no patches have appeared for the v6.11
-> > > merge window. Feature work like coresight improvements and ARMv9 are
-> > > being actively pursued by ARM, but feature work won't resolve this
-> > > regression.
-> > > 
-> 
-> I got some hardware with the DSU PMU so I'm going to have a go at trying to
-> send some fixes for this. My initial idea was to try incorporate the "not
-> terminate on opening" change as discussed in the link directly above. And
-> then do the revert of the "revert of prefer sysfs/json".
-> 
-> FWIW I don't think Juno currently is broken if the kernel supports extended
-> type ID? I could have missed some output in this thread but it seems like
-> it's mostly related to Apple M hardware. I'm also a bit confused why the
-> "supports extended type" check fails there, but maybe the v6.9 commit
-> 25412c036 from Mark is missing?
-> 
-> I sent a small fix the other day to make perf stat default arguments work on
-> Juno, and didn't notice anything out of the ordinary: https://lore.kernel.org/linux-perf-users/dac6ad1d-5aca-48b4-9dcb-ff7e54ca43f6@linaro.org/T/#t
-> I agree that change is quite narrow but it does incrementally improve things
-> for the time being. It's possible that it would become redundant if I can
-> just include Ian's change to use strings for Perf stat.
-> 
-> Of course I only think I have a handle on the issue right now, seems like it
-> has a lot of moving parts and something else always comes up. If I hit a
-> wall at some point I will come back here.
+On Mon, 12 Aug 2024 15:33:57 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-Thanks for working on this, hopefully we'll get to a solution that keeps
-all the expectations expressed in this thread about not breaking
-existing muscle memory and that allows us to progress on this matter.
+> Obtain the device node reference with scoped/cleanup.h to reduce error
+> handling and make the code a bit simpler.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Trivial comments inline
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-- Arnaldo
+> ---
+>  drivers/memory/samsung/exynos5422-dmc.c | 31 +++++++++++--------------------
+>  1 file changed, 11 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+> index da7ecd921c72..d3ae4d95a3ba 100644
+> --- a/drivers/memory/samsung/exynos5422-dmc.c
+> +++ b/drivers/memory/samsung/exynos5422-dmc.c
+> @@ -4,6 +4,7 @@
+>   * Author: Lukasz Luba <l.luba@partner.samsung.com>
+>   */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/clk.h>
+>  #include <linux/devfreq.h>
+>  #include <linux/devfreq-event.h>
+> @@ -1176,10 +1177,10 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
+>  {
+>  	int ret = 0;
+>  	int idx;
+> -	struct device_node *np_ddr;
+
+This would definitely benefit from a
+struct device *dev = dmc->dev;
+
+>  	u32 freq_mhz, clk_period_ps;
+>  
+> -	np_ddr = of_parse_phandle(dmc->dev->of_node, "device-handle", 0);
+> +	struct device_node *np_ddr __free(device_node) = of_parse_phandle(dmc->dev->of_node,
+> +									  "device-handle", 0);
+Trivial. Maybe consider the wrap suggested in patch 1.
+> +	struct device_node *np_ddr __free(device_node) =
+		of_parse_phandle(dmc->dev->of_node, "device-handle", 0);
+
+>  	if (!np_ddr) {
+>  		dev_warn(dmc->dev, "could not find 'device-handle' in DT\n");
+>  		return -EINVAL;
+> @@ -1187,39 +1188,31 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
+>  
+>  	dmc->timing_row = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
+>  					     sizeof(u32), GFP_KERNEL);
+> -	if (!dmc->timing_row) {
+> -		ret = -ENOMEM;
+> -		goto put_node;
+> -	}
+> +	if (!dmc->timing_row)
+> +		return -ENOMEM;
+>  
+>  	dmc->timing_data = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
+>  					      sizeof(u32), GFP_KERNEL);
+> -	if (!dmc->timing_data) {
+> -		ret = -ENOMEM;
+> -		goto put_node;
+> -	}
+> +	if (!dmc->timing_data)
+> +		return -ENOMEM;
+>  
+>  	dmc->timing_power = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
+>  					       sizeof(u32), GFP_KERNEL);
+> -	if (!dmc->timing_power) {
+> -		ret = -ENOMEM;
+> -		goto put_node;
+> -	}
+> +	if (!dmc->timing_power)
+> +		return -ENOMEM;
+>  
+>  	dmc->timings = of_lpddr3_get_ddr_timings(np_ddr, dmc->dev,
+>  						 DDR_TYPE_LPDDR3,
+>  						 &dmc->timings_arr_size);
+>  	if (!dmc->timings) {
+>  		dev_warn(dmc->dev, "could not get timings from DT\n");
+> -		ret = -EINVAL;
+> -		goto put_node;
+> +		return -EINVAL;
+>  	}
+>  
+>  	dmc->min_tck = of_lpddr3_get_min_tck(np_ddr, dmc->dev);
+>  	if (!dmc->min_tck) {
+>  		dev_warn(dmc->dev, "could not get tck from DT\n");
+> -		ret = -EINVAL;
+> -		goto put_node;
+> +		return -EINVAL;
+>  	}
+>  
+>  	/* Sorted array of OPPs with frequency ascending */
+> @@ -1239,8 +1232,6 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
+>  	dmc->bypass_timing_data = dmc->timing_data[idx - 1];
+>  	dmc->bypass_timing_power = dmc->timing_power[idx - 1];
+>  
+> -put_node:
+> -	of_node_put(np_ddr);
+>  	return ret;
+>  }
+>  
+> 
+
 
