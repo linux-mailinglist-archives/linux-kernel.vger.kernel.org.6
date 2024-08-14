@@ -1,142 +1,101 @@
-Return-Path: <linux-kernel+bounces-286930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5350295208B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565DF95208E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0999B1F25D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8845E1C22E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584F41BB69C;
-	Wed, 14 Aug 2024 16:55:49 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786601BB69B;
+	Wed, 14 Aug 2024 16:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZBQo54L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DA31B1409;
-	Wed, 14 Aug 2024 16:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62AC1B1409;
+	Wed, 14 Aug 2024 16:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723654548; cv=none; b=WNX1hD1NWmzGLxOJ65KnIiYHPpMOdOMeUuLI4YygjbgC6GO3ixZ4iuHav1Tsh8Tj7KOj4Qd7wa4eDQEfEO1ADHJJowilQK+M7x8knntsYBHC5HuEEMMyDeFu9k8WXPeQ0ulfFZBphvGx6THKrekUyOy2l08dKJqdfKxNM7nRU4A=
+	t=1723654626; cv=none; b=d8QsBlCcl7X3ER9kw81v1Xpvk+1TFPttYYsmXp1cRnD1kW+WmRdcVOLE0Dw8hyxI5n0qSNoc7pdSARFj1w7tEXgM4pQFkr8Kn/QE/Wv07Yar3IVnGX7XG9OmdijPk+OH9eyrY26EkIasT7q4HfL61PvPLJsMUkDCv+whB38gPH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723654548; c=relaxed/simple;
-	bh=8ky1iVr+QEbGU+/PZctjOx0svo6AKnLXMM6XA2nqJDc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YP/cC8ZBgPJDRL/S2fqFTkdjtFiwlwaQb2q5novPk/2xYHPdxPhEjksRAAh2/+oDPvbrftgT83j985if5asVWJY0AC4j/rD5tiUjP40DYst/X0n81HqcY3+ESt5Sq1dBO1UnyoWuX3spKkzcwWf25aXPRqwqEWNy2x/GQmDXfTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkZ7h5yf1z6K9Jv;
-	Thu, 15 Aug 2024 00:53:04 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7930B1400CD;
-	Thu, 15 Aug 2024 00:55:43 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
- 2024 17:55:42 +0100
-Date: Wed, 14 Aug 2024 17:55:41 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
-	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 9/9] memory: ti-aemif: simplify with scoped for each OF
- child loop
-Message-ID: <20240814175541.00002023@Huawei.com>
-In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
-References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
-	<20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1723654626; c=relaxed/simple;
+	bh=7qQlTpMuGngTf5mDhK/HSkbSaWAoRr/xpzL3hhsR3ZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+fGV21lF3ZDbFaAVU/2NcX5zGYbYVcka2btj4x+E1PSxF/uW9h1QEgMdEbFotnT+JM/lrOUDLP2axLfSquWUnJIJxdKPmlk5uS+2hR34dynbt3yRga01WZANeLW8g0J+kXSq0VccebMIO7tmvHi7cazHMsraXxb51DuGVXfP1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZBQo54L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52417C116B1;
+	Wed, 14 Aug 2024 16:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723654626;
+	bh=7qQlTpMuGngTf5mDhK/HSkbSaWAoRr/xpzL3hhsR3ZU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RZBQo54Ldmxg87PkvleJ+POeP8Y6RZUQ2mkXVHmobhrQD65DrnnWvK4Cb4aFa4S5N
+	 cIS+BStvKnBa1Olj3PHcE1We1HWsBgxaLJgBINGPxmNwSQL3i8OM1XdiXCSSWKWUir
+	 keafaRtrdrgs8YFjRpVqWpUm1mSePfNn66Fndpqqbk63iVoTKZKPfgfvu2nzw491QW
+	 POylZySURYJJLBBMsfh7dyxs3uDosjV3iAdGDcfJgm+n+crKhcSxZQC9WUj7Xibyaw
+	 MDmpfPsUNBplRRLDz9hCfLMmEmJfdnpRHh7f6e+1LbNKw9g5K429dMwzjUxsomDCAC
+	 r0KVLEV3Vydbw==
+Date: Wed, 14 Aug 2024 18:56:58 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <Zrzh2g1AgDm9rfo8@cassiopeiae>
+References: <CAH5fLgit0hSFWi_Bv4DFK6vvhoLfSz=BMaPDBU0Z0oyZta9U9w@mail.gmail.com>
+ <Zryy04DvEsnxsRCj@pollux>
+ <CAH5fLghsONUtxFPgD6vC139H-Uj5LDju7w5eS0JB+BnDMmfngw@mail.gmail.com>
+ <Zry1qwJnPDUtp2Nw@cassiopeiae>
+ <CAH5fLgjNfJyyZygWzeTyrNi8TQNAquufxFxDgJHzq6dan=b9BQ@mail.gmail.com>
+ <Zry4iOGtR0nd6lNP@cassiopeiae>
+ <CANiq72nsSOaG=WhGP5GUQ=ygCh23iDQBc0kgjRP3B5MoF0CUjg@mail.gmail.com>
+ <ZrzLHu5Ey9vLwNJg@cassiopeiae>
+ <CANiq72=u5Nrz_NW3U3_VqywJkD8pECA07q2pFDd1wjtXOWdkAQ@mail.gmail.com>
+ <CANiq72k-haQ5dnUcNx5h1bE1J6_K=K3X+aqv7qJ2K6nag8izyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72k-haQ5dnUcNx5h1bE1J6_K=K3X+aqv7qJ2K6nag8izyA@mail.gmail.com>
 
-On Mon, 12 Aug 2024 15:34:03 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-
-> Use scoped for_each_available_child_of_node_scoped() when iterating over
-> device nodes to make code a bit simpler.
+On Wed, Aug 14, 2024 at 06:16:34PM +0200, Miguel Ojeda wrote:
+> On Wed, Aug 14, 2024 at 6:02 PM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >
+> > I checked about `__must_check`, because it would be nice if it is used
+> > by `bindgen`, and it turns out it already does, but behind
+> > `--enable-function-attribute-detection` (apparently for performance
+> > reasons):
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Nothing wrong with this patch, but I think you can add a precusor
-that will make this neater.
+> I just tried, and the flag seems to work, gives us a bunch of
+> `#[must_use]`s which are nice, and apparently no other change (in
+> usual x86_64 config at least).
 
-Jonathan
+Cool! That's even better then.
 
-> ---
->  drivers/memory/ti-aemif.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-> index e192db9e0e4b..cd2945d4ec18 100644
-> --- a/drivers/memory/ti-aemif.c
-> +++ b/drivers/memory/ti-aemif.c
-> @@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
->  	int ret = -ENODEV;
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> -	struct device_node *child_np;
->  	struct aemif_device *aemif;
->  	struct aemif_platform_data *pdata;
->  	struct of_dev_auxdata *dev_lookup;
-> @@ -374,12 +373,10 @@ static int aemif_probe(struct platform_device *pdev)
->  		 * functions iterate over these nodes and update the cs data
->  		 * array.
->  		 */
-> -		for_each_available_child_of_node(np, child_np) {
-> +		for_each_available_child_of_node_scoped(np, child_np) {
->  			ret = of_aemif_parse_abus_config(pdev, child_np);
-> -			if (ret < 0) {
-> -				of_node_put(child_np);
-> +			if (ret < 0)
->  				goto error;
-I'd precede this patch with use of
-devm_clk_get_enabled()
-
-That would avoid what looks like potential mixed devm and not issues
-and let you return here.
-
-
-> -			}
->  		}
->  	} else if (pdata && pdata->num_abus_data > 0) {
->  		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
-> @@ -402,13 +399,11 @@ static int aemif_probe(struct platform_device *pdev)
->  	 * child will be probed after the AEMIF timing parameters are set.
->  	 */
->  	if (np) {
-> -		for_each_available_child_of_node(np, child_np) {
-> +		for_each_available_child_of_node_scoped(np, child_np) {
->  			ret = of_platform_populate(child_np, NULL,
->  						   dev_lookup, dev);
-> -			if (ret < 0) {
-> -				of_node_put(child_np);
-> +			if (ret < 0)
->  				goto error;
-> -			}
->  		}
->  	} else if (pdata) {
->  		for (i = 0; i < pdata->num_sub_devices; i++) {
+> I don't notice any significant performance difference in our case, so
+> I will send a quick patch to see if others find an issue with it.
 > 
-
+> Cheers,
+> Miguel
+> 
 
