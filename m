@@ -1,177 +1,166 @@
-Return-Path: <linux-kernel+bounces-286239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2CD95186E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:11:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976F1951875
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A701C21F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35C61C21DFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569AA1AD9C8;
-	Wed, 14 Aug 2024 10:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9C81AD9CA;
+	Wed, 14 Aug 2024 10:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5A3ypO/"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1/DwH8Z"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B4E1AD9C2;
-	Wed, 14 Aug 2024 10:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF6560B96;
+	Wed, 14 Aug 2024 10:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723630286; cv=none; b=aWBDehS7o5WB0bXtTFLr8j0r0CcXPma4PepdHAXwUI7KWvHg+T/4wc04Rx0p1BkPMKhgoH/16qvYsqYxkY9RSw/FdgN+wSgo93+HcBcBwolK4NuOleT1lMFfVJOODemsZ7DjLl7a3yBMuKfK7rsv43FwqD/5Ir4GRRPWHX9Gv7M=
+	t=1723630420; cv=none; b=m3mj6hWcgp6KCqG4YUTuO9TSNHzB426FPitdXhGPhPkvNPaf5FFCpFSb7RheJoNl/MRRGRrJF4ifBBEJFNp88wCOKMVQ/EAkWMWBWEmrl4l4jdkcUrUeZmOsiYE1VjKG33GsM1eLcbInkigkYnFD17mOlksxfVLozqJ+18t5hBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723630286; c=relaxed/simple;
-	bh=gjEWhU6xc7MgcXwDvwjZmLLupkYNrjmhcRovxp/YkOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=R+7lWv6pK4ciH4KSVRRPOnpLgfSVPE0srYuzNM6JVC/S4trC1Y09vjZ8szvbWB4yJum+RbgvFI4qPloAJS5OvYMYn75VD/9TrmkyhuPv6s4gCX3CoYUFsBTC1fWVrad9VQ/AueMt2CmXjB0x+EkVTM/3+MO6OqM45vXveqI6kqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S5A3ypO/; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1723630420; c=relaxed/simple;
+	bh=lyasvveaahQXFkvsDSLd+2mRVTa+efgek9lk70n/R30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sw+KpdL+8QxM5C/yxBO4MBZ86Swp4ogmJVAt62afvnjJUS3UFvMzuuPIbWCc8TmNafnnsjCegDWuhZ31Wo3Zv96q+XM3hX2GNTiQoPoSOVyyiYUDru2xVktpmHnTP+hLxhIxfiK7GfPNOB5Jbb94W28KQj61v6SzaHzPuj9C0Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1/DwH8Z; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd90c2fc68so45089465ad.1;
-        Wed, 14 Aug 2024 03:11:24 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so6782588a12.3;
+        Wed, 14 Aug 2024 03:13:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723630284; x=1724235084; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aLAWGueIDsUOOdrNlrNyvVXSsuDgnHJV/4WnHDRAVT4=;
-        b=S5A3ypO/xTej60NMWFV2Lj1veEv1++uPSGIwQysGeGsbGtxoSgu1dUoM3MdBFdCElm
-         AMkvmUkpuYRf3Et3QYftLNrzVi44ilGxT7wl2VnTrJAV95ZGnYtEGyd+iUsNq3ts1NoB
-         EXfDKKIvwpodP6O6sAmXP0+aziQiq3dUUvEiqcnKhc92CILqiTTtpZnt9ox3cNmmcd9L
-         N9gn8LZCIu2hCuwEBcpCVhzlF88b7JWBOWeMLKQHSSAQT4cXFoDLf+gd0E1ATN5NJsHn
-         v0VjBhLSVhsvVwVdhQ/ecaLDqEmJ4SfyvPBkVA7QKcvunEsx8vo0tFaujy7npnN4G+IE
-         uGCQ==
+        d=gmail.com; s=20230601; t=1723630417; x=1724235217; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BNd+he0K68SRIocWwyWopuqY7557TQ2wksIvC7bmzlM=;
+        b=I1/DwH8Zjl7Taz9QV6v0cMVAtkH9avfRzVumlfxpHPuat8mY89YZVGGcYG6s5M0UpM
+         Ue4XC+6xSL106D5yQOTJBNIYsc6LmBFJwDADd2NRTwCSErVf7Xjf3tfHIi+g1E7IJWFh
+         Qxy+kYOJTLZMS2lPa3cmsyuOv4UUHaAhWpWverF3tZYnmmr4N4XEfr4VQX8tb7Td1Iwg
+         LRo3hPXkLh1+z7+YcmHx8uF+v/rxQgCjPP+j0jb8UZGuSC11rEHP9DPo7t2CH2WbiBbu
+         B3lULnA5JCPPuGCiZmX7CJvOhAeivGPPAlgB8/2mLe4lK513Oco2iFna60crI0wpmM6R
+         lJyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723630284; x=1724235084;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aLAWGueIDsUOOdrNlrNyvVXSsuDgnHJV/4WnHDRAVT4=;
-        b=NTMrMd3YOoNmN96JryJj32WkfvEV9Nun6IRnO3al3sj9Nn3KvLcFwJSPU5cMnd6qIJ
-         6yJOS3YSc6yOMhNRFSTle0WO9h6QRROo5WGkIMGSwayYOC2JFhJttDZHA7cPXZSyulm1
-         btZuUbzzce0DRkqDo5X301+POleY82THwuaN849AI3X2IjuKvboDorjvuXZlh83iR15K
-         r7mHVpc+aOPdam+aJYAwDoccu+2U2xXhVM0RsbefVO2xfZnYEea2affSNWT+gaJe1THh
-         7T/1S3Ch1d5kKyg5p0JbvQwJlXNT4zIunTGOh/RetAMxznzuyL6Id1cueMHZfbwH3jg1
-         VG9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUE37C85xldE202lF8r6gQ8g/s9fGmK/YW9Z/vcuSlR4nv+vKPOSQdidsnP3n5tQVpDFRleOMBraNHNh2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlMTObtOvKAjA63WLiPkEvFCyJ/x0+guzRZVwqunZylywNgtPl
-	j6MGS5oYA9NG8gesnEh1a7jhX82/i8HG/7dqmmGAZg2kLx68YvJXGWLRWQ==
-X-Google-Smtp-Source: AGHT+IGyHQkBaeuzoQq+yG2Xx4lrOpTKcgb1mWV7lBLwXoia5IzAszLLilkcWUB8ouu9TLawUjUlNA==
-X-Received: by 2002:a17:902:cece:b0:1fb:37fa:fedb with SMTP id d9443c01a7336-201d639379emr30058505ad.10.1723630284235;
-        Wed, 14 Aug 2024 03:11:24 -0700 (PDT)
-Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1b486csm26656485ad.206.2024.08.14.03.11.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 03:11:23 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] nilfs2: fix state management in error path of log writing function
-Date: Wed, 14 Aug 2024 19:11:19 +0900
-Message-Id: <20240814101119.4070-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240807230742.11151-1-konishi.ryusuke@gmail.com>
-References: <20240807230742.11151-1-konishi.ryusuke@gmail.com>
+        d=1e100.net; s=20230601; t=1723630417; x=1724235217;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BNd+he0K68SRIocWwyWopuqY7557TQ2wksIvC7bmzlM=;
+        b=Hoo+N+410qJC0+VHx3YNzpKMF0bbukb2YnUHyw2T7EknQnXYd7KELOGCMU2hiWHtmf
+         EEDqfi6C4iQ2Tx0WNzGyyCoFrfZeJKwEHLJuBfZlAER3WMpCpkZAffIskKVm76zznmvd
+         rXpDzPVOMZR33IFAo+aZcR51h2jjXZ3wKnHOLIKHl0zfhliy+pO6DDfLvVioGeSYs2nW
+         AYQp091c7vmNFJ5Wu+/1vPAq49ClUBBG8P5zAgD2wq5r0AumvPZ9qD112og/kXNazmhE
+         THHFQHOoyMEcQ9IPMJBxysvKrSVGWvYdF1kILi5CfWu0OwV7pYHXDY6vFsPT+xThWFiy
+         MygQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWD2X5EuSoeaV6aHfNafhy9xZaLxqDe0IMmia8CLjKuECRiHTJHi8CdR9p6EHTnUuOqvOqpd0OT//50axQN0Fqu1SqBEXIJYEiX6r0KNf5lts0pTmi0uOfq4qH7Gx0Ch/DNlOnBoD6T
+X-Gm-Message-State: AOJu0Yw074kN56sfLOI/cICJv/ZYSPnAW+lefBRFtueq0M9qZ71HCVBe
+	OkizeuSF76QDYmTXHBn2QjvbozQIY7nsDUhDBiKrVAkkl54tCpFw
+X-Google-Smtp-Source: AGHT+IE0MyzO6aVdPYX+yPRmrPe85J2EQIBeNQ271y8eY3Wwo+A8u80lRS+O5ZJaQs020YDAO5oEqw==
+X-Received: by 2002:a05:6402:5112:b0:5a1:1b3f:fbf5 with SMTP id 4fb4d7f45d1cf-5bea1c77673mr1806201a12.12.1723630416758;
+        Wed, 14 Aug 2024 03:13:36 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::4:61b7])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd196a696dsm3755173a12.50.2024.08.14.03.13.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 03:13:36 -0700 (PDT)
+Message-ID: <e73c801a-8f36-44d8-a267-dd993aeccf35@gmail.com>
+Date: Wed, 14 Aug 2024 11:13:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] mm: split underutilized THPs
+To: Andi Kleen <ak@linux.intel.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+ yuzhao@google.com, david@redhat.com, baohua@kernel.org,
+ ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
+ cerasuolodomenico@gmail.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kernel-team@meta.com
+References: <20240813120328.1275952-1-usamaarif642@gmail.com>
+ <87y150mj6f.fsf@linux.intel.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <87y150mj6f.fsf@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-After commit a694291a6211 ("nilfs2: separate wait function from
-nilfs_segctor_write") was applied, the log writing function
-nilfs_segctor_do_construct() was able to issue I/O requests
-continuously even if user data blocks were split into multiple logs
-across segments, but two potential flaws were introduced in its error
-handling.
 
-First, if nilfs_segctor_begin_construction() fails while creating the
-second or subsequent logs, the log writing function returns without
-calling nilfs_segctor_abort_construction(), so the writeback flag set
-on pages/folios will remain uncleared.  This causes page cache
-operations to hang waiting for the writeback flag.  For example,
-truncate_inode_pages_final(), which is called via nilfs_evict_inode()
-when an inode is evicted from memory, will hang.
 
-Second, the NILFS_I_COLLECTED flag set on normal inodes remain
-uncleared.  As a result, if the next log write involves checkpoint
-creation, that's fine, but if a partial log write is performed that
-does not, inodes with NILFS_I_COLLECTED set are erroneously removed
-from the "sc_dirty_files" list, and their data and b-tree blocks may
-not be written to the device, corrupting the block mapping.
+On 13/08/2024 18:22, Andi Kleen wrote:
+> Usama Arif <usamaarif642@gmail.com> writes:
+>>
+>> This patch-series is an attempt to mitigate the issue of running out of
+>> memory when THP is always enabled. During runtime whenever a THP is being
+>> faulted in or collapsed by khugepaged, the THP is added to a list.
+>> Whenever memory reclaim happens, the kernel runs the deferred_split
+>> shrinker which goes through the list and checks if the THP was underutilized,
+>> i.e. how many of the base 4K pages of the entire THP were zero-filled.
+> 
+> Sometimes when writing a benchmark I fill things with zero explictly
+> to avoid faults later. For example if you want to measure memory
+> read bandwidth you need to fault the pages first, but that fault
+> pattern may well be zero.
+> 
+> With your patch if there is memory pressure there are two effects:
+> 
+> - If things are remapped to the zero page the benchmark
+> reading memory may give unrealistically good results because
+> what is thinks is a big memory area is actually only backed
+> by a single page.
+> 
+> - If I expect to write I may end up with an unexpected zeropage->real
+> memory fault if the pages got remapped. 
+> 
+> I expect such patterns can happen without benchmarking too.
+> I could see it being a problem for latency sensitive applications.
+> 
+> Now you could argue that this all should only happen under memory
+> pressure and when that happens things may be slow anyways and your
+> patch will still be an improvement.
+> 
+> Maybe that's true but there might be still corner cases
+> which are negatively impacted by this. I don't have a good solution
+> other than a tunable, but I expect it will cause problems for someone.
+> 
 
-Fix these issues by uniformly calling
-nilfs_segctor_abort_construction() on failure of each step in the loop
-in nilfs_segctor_do_construct(), having it clean up logs and segment
-usages according to progress, and correcting the conditions for
-calling nilfs_redirty_inodes() to ensure that the NILFS_I_COLLECTED
-flag is cleared.
+There are currently 2 knobs to control behaviour of THP low utilization shrinker introduced in this series.
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Fixes: a694291a6211 ("nilfs2: separate wait function from nilfs_segctor_write")
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
----
-Andrew, please apply this as a bug fix instead of the one dropped
-recently.
+/sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none:
+The current default value for this is HPAGE_PMD_NR - 1 (511 for x86). If set to 511, the shrinker will immediately remove the folio from the deferred_list (Please see first if statement in thp_underutilized in Patch 5) and split is not attempted. Not a single page is checked at this point and there is no memory accesses done to impact performance.
+If someone sets its to 510, it will exit as soon as a single page containing non-zero data is encountered (the else part in thp_underutilized).
 
-This fixes error path flaws of the log writing function, which could
-lead to a hang due to the writeback flag not being cleared on folios,
-and potential filesystem corruption due to missing blocks in the log
-after an error.
+/sys/kernel/mm/transparent_hugepage/thp_low_util_shrinker:
+Introduced in patch 6, if someone really doesn't want to enable the shrinker, then they can set this to false. The folio will not be added to the _deferred_list at fault or collapse time, and it will be as if these patches didn't exist. Personally, I don't think its absolutely necessary to have this, but I added it incase someone comes up with some corner case.
 
-v1->v2: fixed a regression that caused unexpected cleanup when
-        handling an error at a stage where no logs were ready.
+For the first effect you mentioned, with the default behaviour of the patches with max_ptes_none set to 511, there will be no splitting of THPs, so you will get the same performance as without the series. 
+If there is some benchmark that allocates all of the system memory with zeropages, causing shrinker to run and if someone has changed max_ptes_none and if they have kept thp_low_util_shrinker enabled and if all the benchmark does is read those pages, thus giving good memory results, then that benchmark is not really useful and the good results it gives is not unrealistic but a result of these patches. The stress example I have in the cover letter is an example. With these patches you can run stress or any other benchmark that behaves like this and still run other applications at the same time that consume memory, so the improvement is not unrealistic.
 
-Thanks,
-Ryusuke Konishi
+For the second effect of memory faults affecting latency sensitive applications, if THP is always enabled, and such applications are running out of memory resulting in shrinker to run, then a higher priority should be to have memory to run (which the shrinker will provide) rather than stalling for memory creating memory pressure which will result in latency spikes and possibly OOM killer being invoked killing the application.
 
- fs/nilfs2/segment.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index 0ca3110d6386..871ec35ea8e8 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -1812,6 +1812,9 @@ static void nilfs_segctor_abort_construction(struct nilfs_sc_info *sci,
- 	nilfs_abort_logs(&logs, ret ? : err);
+I think we should focus on real world applications for which I have posted numbers in the cover letter and not tailor this for some benchmarks. If there is some real world low latency application where you could show these patches causing an issue, I would be happy to look into it. But again, with the default max_ptes_none of 511, it wouldn't.
  
- 	list_splice_tail_init(&sci->sc_segbufs, &logs);
-+	if (list_empty(&logs))
-+		return; /* if the first segment buffer preparation failed */
-+
- 	nilfs_cancel_segusage(&logs, nilfs->ns_sufile);
- 	nilfs_free_incomplete_logs(&logs, nilfs);
- 
-@@ -2056,7 +2059,7 @@ static int nilfs_segctor_do_construct(struct nilfs_sc_info *sci, int mode)
- 
- 		err = nilfs_segctor_begin_construction(sci, nilfs);
- 		if (unlikely(err))
--			goto out;
-+			goto failed;
- 
- 		/* Update time stamp */
- 		sci->sc_seg_ctime = ktime_get_real_seconds();
-@@ -2120,10 +2123,9 @@ static int nilfs_segctor_do_construct(struct nilfs_sc_info *sci, int mode)
- 	return err;
- 
-  failed_to_write:
--	if (sci->sc_stage.flags & NILFS_CF_IFILE_STARTED)
--		nilfs_redirty_inodes(&sci->sc_dirty_files);
--
-  failed:
-+	if (mode == SC_LSEG_SR && nilfs_sc_cstage_get(sci) >= NILFS_ST_IFILE)
-+		nilfs_redirty_inodes(&sci->sc_dirty_files);
- 	if (nilfs_doing_gc())
- 		nilfs_redirty_inodes(&sci->sc_gc_inodes);
- 	nilfs_segctor_abort_construction(sci, nilfs, err);
--- 
-2.34.1
 
+> The other problem I have with your patch is that it may cause the kernel
+> to pollute CPU caches in the background, which again will cause noise in
+> the system. Instead of plain memchr_inv, you should probably use some
+> primitive to bypass caches or use a NTA prefetch hint at least.
+> 
+
+A few points on this:
+- the page is checked in 2 places, at shrink time and at split time, so having the page in cache is useful and needed.
+- there is stuff like this already done in the kernel when there is memory pressure, for e.g. at swap time [1]. Its not memchr_inv, but doing the exact same thing as memchr_inv.
+- At the time the shrinker runs, one of the highest priority of the kernel/system is to get free memory. We should not try to make this slower by messing around with caches.
+
+I think the current behaviour in the patches is good because of the above points. But also I don't think there is a standard way of doing NTA prefetch across all architectures, x86 prefetch does it [1], but arm prefetch [2] does pld1keep, i.e. keep the data in L1 cache which is the opposite of what NTA prefetch is intended doing. 
+
+[1] https://elixir.bootlin.com/linux/v6.10.4/source/mm/zswap.c#L1390
+[2] https://elixir.bootlin.com/linux/v6.10.4/source/arch/x86/include/asm/processor.h#L614
+[3] https://elixir.bootlin.com/linux/v6.10.4/source/arch/arm64/include/asm/processor.h#L360
 
