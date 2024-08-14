@@ -1,88 +1,155 @@
-Return-Path: <linux-kernel+bounces-285833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0AD95134A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:58:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42DE95134D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE3E2815DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:58:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9ABB24DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0422548CCD;
-	Wed, 14 Aug 2024 03:58:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F408E4C62B;
+	Wed, 14 Aug 2024 03:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9vAQxMO"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C2F4D8B8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47483F9D2;
+	Wed, 14 Aug 2024 03:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723607887; cv=none; b=lh1oCZIdjwvDHu2LYVmottUPfIatWZE6yKuR2VwcmvnAqX7jiabl+ykOzyt3AB/qLwTOwSQOf9TobFhyzFCq7+6snFCVeBwdeEMK7Kgvv+NJHzQFJNhkxK7RE+9DpA7t+FS2b6JE9F9NQl6i0/NMW17POWF/lO2jVpkYoe5mNuM=
+	t=1723607902; cv=none; b=Tp+izhTmfc/qaTPOUMMO93qU8RGHnvcNqTzoKNoWpjvp+z2/nYLoEkecWjsoJ2jvJVTzSfBfOeEvbqIxgHOUtJELuB6KNqeZy0IOvEV65QU5YrYPofGqwmW/dn1XEeCJdyhiFcli0n0K6/O/n2oizw5p0uaG6vo/XDS/I5qelm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723607887; c=relaxed/simple;
-	bh=xarmgX6V+hl2GirLV804l2UeUWf2Msf/HBqIFnl2ZnY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Cc/dy7FchUvB+P4GRuZjQmSLDl0xVEyMg/7Ms+RIUfL7p/qPFJbpe50Uq5qD83RseDJxOWqLOv6ZTBd88feCz6qIOSh/Grdtgfi4DHtaSrtcGdZ7rVTbkSt+SoNvZX1g6fsw3AzJbFO8uxM3777fmXBaqbYKnPicxGt9o5Gump0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81fa58fbeceso746511039f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:58:05 -0700 (PDT)
+	s=arc-20240116; t=1723607902; c=relaxed/simple;
+	bh=MywvLjGFnu0PuDALyBiz0zB7O/S8FusLCbWrv7VDYL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k+Km/49tR1pJ40QsNwoyLkz5GOFhYpNm1QgVtJLjNHtkSX8hMP1P+yxtC1ZsI0B8JpcpyVK5FSsCsauXxSBRk9XFmTzZS9iPXw/LqpFNVMpVfovFPHKQy1bwCdpvXseLP1VaiP+tTkIK+Yj8JRB7/gj1JQkRkiNvibK9l/Dxdgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k9vAQxMO; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3db23a608eeso4432917b6e.1;
+        Tue, 13 Aug 2024 20:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723607900; x=1724212700; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=asVqmMHKTJYyqQNuXxax/chZqdGHjEmq/OlhVUVNg9s=;
+        b=k9vAQxMOrv4euQtZ6hu/1TE9aj80zeKQXIod5v7GjaTxaOytBn+3giqgBzrwmG+H4a
+         UreCxgxJf95FDzKTQ+oO5rU1kc6qn6NtBm99/dJlwZhD8BCDzwReSMyyPN0caqSCQIlz
+         EAMqOiDQpJkwNVa2qU0GtyD5uW3r/5dMXy0Ueq4qsuvWJXeZkxKavIkAC+id6iFiivWn
+         WRcfs/aZjY6s8zEqztbS9fOla0Jle0nukbecc0oCf+jnkrF2EfYz/+dkCDrMxbMjFxbu
+         Z5Hp7pTNlNce3vKbDbQAxxoStALfCwVPmgXa54mBCHhUaQdLdfwtZIA7xea7ReLBBoiI
+         lgGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723607885; x=1724212685;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zy0kH3FtvEAY/lJRx6KNgcCBe8IP1JXRYh966cn9lQg=;
-        b=OYsJy2SzncesqoqZ+2E+1u6fj5cERmhr1HZ4UororCM+jMVSSs3E9kOH8A+NjgDYKu
-         UaDSVfNkYk33vVDU+aSWwUmnd6MAIIicIexomq9fp1fA/+tq+ING2G9WfYsi0liW8a/H
-         Zou6qk2s79x52eYcfoNKG3LnVtyXy2jXZ/Yi0jn3qzVVmvB/fKobhHW2Tp4OyERs0JIO
-         VhHEoUt8NtI5z80lDClLXR79FAbK+QlfxrkYBCmaOjwHUHEvZoJVwdzoCZ+u231j2G7C
-         iQDLYY2Sq2VHvZlbF5besGc9R3hET3lfC2Bgeg1mVo986hbz9O5M/x8/YjzrzfCWp1MV
-         nEEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCCfD7Xf2oGzAa6pjH5dlAFkSZpxNGWpcNyuOCinrkA/NpGDOcGN905GBvVk7A7BzLMcxr8YNPlKzqV5A6KUCdEMaKLPlTFcIm4uhB
-X-Gm-Message-State: AOJu0YyePANlfs4IhNjtuUWbx06hwx2ypX/AX7FG0h6dm88cmh24RdOa
-	GPHcIM8KJ+GeADIpMY16c7xhDyhjXK0p+rdGZLUOSFiOkXcNf6eBpQsyMBurcVgg3GnydyK4AjZ
-	9GTUP4SZRPYEVphdIKefISiyzjTs9C6u7XVqiXLlDyY46r9C6AXAYYQ0=
-X-Google-Smtp-Source: AGHT+IHFZmitJwYSrclRmM77nXJngzBqWFbFhT3GbBL5VpnHUUerM6xB9Bcn9YVLa4N1mqTxCklpADLkH5Ps3ncucznXbcYdEIhx
+        d=1e100.net; s=20230601; t=1723607900; x=1724212700;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=asVqmMHKTJYyqQNuXxax/chZqdGHjEmq/OlhVUVNg9s=;
+        b=t62/ZDiunrW53xhsW71CA1qlyfbJoSdo6xh+4t7YhSw/i23RSkFfCb1ebQdGgoVdQ/
+         fYnuogAJRyQV+FkIEbc2LtafYBm2LmTJdY1hxWAv6ErkP+tn7vOYkqcwm+X3T2YimbrJ
+         BrIL35dNJPRgrTmrtSPIcZBE2d5w7YRa8bO0FywW0wNmdK5XqRma5iyw5HAwyv19lxAE
+         menx7IhVmkUimjz9UUzi5MTJfWxz4rtFFj1NVumS2A85mZ8mieSfIgFjpvyfAIeCQNA4
+         uTVBnG9PFj83UrhAR/e49tQFQUMWJ0uh3DA9XLrwLVSGCGbxvHYEWWPWYDRkuBPN8RDK
+         bAlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOZN5qe+uI+6WRYPWt3Z801BSoBqbl7KeOQJ62trjOgV4SxSbrwub1vDhM923FAC9Q1hr5ZPNuwBgjlXI=@vger.kernel.org, AJvYcCWkiDHdl0WlMhGxZuO5eB4740TmgfGksZbqkphu+Hv0pUlrrWZffnhJq+uI97dqFvdRpagdcreR@vger.kernel.org, AJvYcCXN0TQtX+339tuW2uHCFMpln0Sjrnwv7sAYWdm6qfhhUwCQEFsFusHu9OhhjmrVT8K/TRocB9eOdJ67rw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKfgnNEItvp8oGcSWyG6HFm1oeCzoa2b+PuF2ZzTM54ygQfBzp
+	0A15JkStbgzraHOUneFXjSYYqBdxLn4ryvHnGs8puKlk6sqT/NEA
+X-Google-Smtp-Source: AGHT+IG6MR8kpk2Z2A693IQiXuZjNyKq/lYek8L2cI0UvC7yGtFnaJXFtGVMHtZM0HwEudIyv5AbFQ==
+X-Received: by 2002:a05:6808:1707:b0:3d9:1f05:845 with SMTP id 5614622812f47-3dd29907957mr1598986b6e.19.1723607899705;
+        Tue, 13 Aug 2024 20:58:19 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c697a72c69sm2221137a12.83.2024.08.13.20.58.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 20:58:19 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: alibuda@linux.alibaba.com
+Cc: aha310510@gmail.com,
+	davem@davemloft.net,
+	dust.li@linux.alibaba.com,
+	edumazet@google.com,
+	gbayer@linux.ibm.com,
+	guwen@linux.alibaba.com,
+	jaka@linux.ibm.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com,
+	tonylu@linux.alibaba.com,
+	wenjia@linux.ibm.com
+Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in txopt_get
+Date: Wed, 14 Aug 2024 12:58:12 +0900
+Message-Id: <20240814035812.220388-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <56255393-cae8-4cdf-9c91-b8ddf0bd2de2@linux.alibaba.com>
+References: <56255393-cae8-4cdf-9c91-b8ddf0bd2de2@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3fd5:b0:808:f0f7:c8d9 with SMTP id
- ca18e2360f4ac-824dae3c898mr2949839f.4.1723607885226; Tue, 13 Aug 2024
- 20:58:05 -0700 (PDT)
-Date: Tue, 13 Aug 2024 20:58:05 -0700
-In-Reply-To: <tencent_001B304B341B3D2501BAB0BB2733509E6A08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bb32a9061f9cbb46@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space
- in f2fs_commit_atomic_write
-From: syzbot <syzbot+78ff2855f26377625419@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Because clcsk_*, like clcsock, is initialized during the smc init process, 
+the code was moved to prevent clcsk_* from having an address like 
+inet_sk(sk)->pinet6, thereby preventing the previously initialized values 
+​​from being tampered with.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Additionally, if you don't need alignment in smc_inet6_prot , I'll modify 
+the patch to only add the necessary code without alignment.
 
-Reported-by: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
-Tested-by: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
+Regards,
+Jeongjun Park
 
-Tested on:
-
-commit:         9e686969 Add linux-next specific files for 20240812
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=126f95c5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
-dashboard link: https://syzkaller.appspot.com/bug?extid=78ff2855f26377625419
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1279c9ed980000
-
-Note: testing is done by a robot and is best-effort only.
+>
+>
+> >
+> > Also, regarding alignment, it's okay for me whether it's aligned or
+> > not，But I checked the styles of other types of
+> > structures and did not strictly require alignment, so I now feel that
+> > there is no need to
+> > modify so much to do alignment.
+> >
+> > D. Wythe
+>
+>
+>
+> >
+> >>
+> >>>> +
+> >>>>    static struct proto smc_inet6_prot = {
+> >>>> -     .name           = "INET6_SMC",
+> >>>> -     .owner          = THIS_MODULE,
+> >>>> -     .init           = smc_inet_init_sock,
+> >>>> -     .hash           = smc_hash_sk,
+> >>>> -     .unhash         = smc_unhash_sk,
+> >>>> -     .release_cb     = smc_release_cb,
+> >>>> -     .obj_size       = sizeof(struct smc_sock),
+> >>>> -     .h.smc_hash     = &smc_v6_hashinfo,
+> >>>> -     .slab_flags     = SLAB_TYPESAFE_BY_RCU,
+> >>>> +     .name                           = "INET6_SMC",
+> >>>> +     .owner                          = THIS_MODULE,
+> >>>> +     .init                           = smc_inet_init_sock,
+> >>>> +     .hash                           = smc_hash_sk,
+> >>>> +     .unhash                         = smc_unhash_sk,
+> >>>> +     .release_cb                     = smc_release_cb,
+> >>>> +     .obj_size                       = sizeof(struct smc6_sock),
+> >>>> +     .h.smc_hash                     = &smc_v6_hashinfo,
+> >>>> +     .slab_flags                     = SLAB_TYPESAFE_BY_RCU,
+> >>>> +     .ipv6_pinfo_offset              = offsetof(struct smc6_sock,
+> >>>> np),
+> >>>>    };
+> >>>>
+> >>>>    static const struct proto_ops smc_inet6_stream_ops = {
+> >>>> --
+> >
+>
 
