@@ -1,124 +1,130 @@
-Return-Path: <linux-kernel+bounces-287299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF8C952618
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:06:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F07952612
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD05428418F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:06:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D45EB21A52
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E0C14E2D6;
-	Wed, 14 Aug 2024 23:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7733214B954;
+	Wed, 14 Aug 2024 23:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWHKHTz0"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nq9uIHw7"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C00D13C820;
-	Wed, 14 Aug 2024 23:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50BB13C820;
+	Wed, 14 Aug 2024 23:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723676754; cv=none; b=NfvFp8BT4Lo9awG9ulVBItAsPCI7F5K/bG63mZOwBPb8zQaA1Lo1NFTy25yMkMoNE3W21OvOXUPKviY0ll30NvcB28OY6I/HBv+oXHETZ4do61UPL1vT/zaVwAEDPylNuNlU7UkKGk0gR/Cc3+2rhzcChnh1jg3p4kU4AVsgr9M=
+	t=1723676608; cv=none; b=KcMDwVohasaZ7k+Z/KbXD6IZPPBP8qCwOw76bfcG/p39LURV0Y7hP5EjD/9dUH7R9WldUrcNg9jG4Z6K1M+win9d/rE3FVyErD4VAdAhimA8lL1mjulhE6woufmKi3KSsJoOX27mm+FPCsfRZAg5S9aeTa+hA9yI0Ifd+16L5r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723676754; c=relaxed/simple;
-	bh=IUvUGm/V0nCqDkIYsDq8Vbc8q/STJeH25QPDhv1EN8s=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=daihnEQzQ3w81PTfAoEPyadqP3knVajkHqWfz5JzMs5I4l2YAQ+T8MzgZ0xqmPIceQDC8tF5mBPivKH/X19UIiIzn3PPp4ulnmbdxLaQ0c5MtvQ6TJeJZaXPTl4sGQmw3KPJktx8VTmQQslpV++4Ik+DQkBzfFbxoyuRlvQY4DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWHKHTz0; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1723676608; c=relaxed/simple;
+	bh=CSdwfR1oJWa/9mmNmOt/w0AcbH/8rOyV+raQPm8sLYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r032TcWjpXUZs2VyE8kwQk2OIfnHNjWW6suOMgA17pL5tSxmWIY3ry+Q/6ZcB4/uWdq382O92cjXkYu2d+R+pqMsOgo0VrnVHtyETmIR+P8g3wUlV861SFlzK98xhX1mlJv0zn0CnSFQxth5GW4uTWfoh3TypO3eYqgAxsuhW6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nq9uIHw7; arc=none smtp.client-ip=209.85.167.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so438818e87.2;
-        Wed, 14 Aug 2024 16:05:51 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3db23a60850so232129b6e.0;
+        Wed, 14 Aug 2024 16:03:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723676750; x=1724281550; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUxNA3Cy2rNBrx7LkTwf7TKvxf2U4CHy2gZA/pu4uTw=;
-        b=OWHKHTz0zrSshnsFQL35Z4F/E1y3EsVViP2/oNnn0gD1/60eYGd7g9mERgERNwIS8r
-         6LQCu/4dFh89iWQE0NO3U+Z0tN3y6Z+FPzYmid3hbCG1u5KbKfTfEHZltqU5sLZ5vW0n
-         if9wQdW+guDgfcDgOnLhDGiy1HgcQ5LldO41pLsXmNPlaa5AmfHmIbL+rtjQineijz6D
-         979V8+ZD3UgjDuabGfchWTvoJahtW1PSeu4cGmAfKzvew7bIcZS/wYOXedtapTQ89n2T
-         fqpw6f3FgrkdJA5pmY6rbugeLvuoFLUQ82NlKn8JOJWQ4WEOxkv51GZfkT64SGWsmzEc
-         eMkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723676750; x=1724281550;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723676605; x=1724281405; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EUxNA3Cy2rNBrx7LkTwf7TKvxf2U4CHy2gZA/pu4uTw=;
-        b=bEssjP59V0hfc8KgP5w+EOtJkaXNW0vB6AEOyjj2JIbQL/86n7KVlFs7VdlTAVHEYB
-         NOT8uOBBEuxI0RHPLPiKTPKvhkA1As0UqfTDJS4vj/Czo4ivuESq7aabyO+whwrNMAO0
-         dk/vifcm9mYufbnphKr+iaVSP1ievfCe7gnVF3bRZ0KwTVKFzdwxpCDynsDPIJeDBc92
-         iulOyl0OWXlU4YfIudpzhOILmu5TxHxpIzHGLWCBJRD5QnnMjySk6M3ET/8Zu84E4KB5
-         WVcnn/baT3JyHjehkx6krbH9BeJwhdHtV0v38KDil8zslbCuUpXxxXcjwaWtmFmzUaJs
-         dusA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUgCacJOOEV/cSVigs52JMag9c8WkXV0c8iQ3gAM6sFlAbYGjL+RznWlrTCO5QFbFoXObTqNMELXUpjII6xbW0qw4KNR1IGcbmLbkN
-X-Gm-Message-State: AOJu0Yw4e7BbvhXTneUOHJ4/S1ckhEioeIU5njWO7g3i+fVwBD4Nr1Lm
-	uQqenTf+U3jQ+SFP945CqpmJbFWyvEdP7xFRmhn34ApCMFS430yo
-X-Google-Smtp-Source: AGHT+IFYIFNwRXAVFQv3xJNu2gquUFbZ1LYoki8yuQzVAJ23YF3lMTLJ+qcWMCFpbRjK2wfbMTHvFA==
-X-Received: by 2002:a05:6512:6c2:b0:52c:df77:6507 with SMTP id 2adb3069b0e04-532edbe9ce5mr2620009e87.37.1723676749908;
-        Wed, 14 Aug 2024 16:05:49 -0700 (PDT)
-Received: from razdolb ([77.220.204.220])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d41df96sm29991e87.202.2024.08.14.16.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 16:05:49 -0700 (PDT)
-References: <20240616202433.227895-1-mike.rudenko@gmail.com>
-User-agent: mu4e 1.10.8; emacs 29.3.50
-From: Mikhail Rudenko <mike.rudenko@gmail.com>
-To: Mikhail Rudenko <mike.rudenko@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo@jmondi.org>,
- Tommaso Merciai <tomm.merciai@gmail.com>, Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>
-Subject: Re: [PATCH 0/4] Omnivision OV4689 cropping and binning
-Date: Thu, 15 Aug 2024 02:01:08 +0300
-In-reply-to: <20240616202433.227895-1-mike.rudenko@gmail.com>
-Message-ID: <8734n63dti.fsf@gmail.com>
+        bh=lBlJcNHTXrvCXg2KqHerDo3Dz+CUwdwlIOy68HBZaZQ=;
+        b=nq9uIHw7lNWMTSbK6RFXnx7ExdTKQ2KSXQWdC4U54BKYNkSe/4eRGWEqlCt1b/BzZX
+         +mvqmxpZw8xeP9xu2FsblzjSIxi1KV2Ok4A9vApaJNMYXOFFEYuAyLSWDfoSbkDN1Utg
+         nviE2dVoCpwxFHUlrW5zt+RQip0v3TyF1CtriTIXAYId4vZpl5lyU+zH125YF0KlSaHV
+         80jAhkDFK+auaUqxDUSOsz0801b6JfBdRzUc6942Fnwg55yyiHdgousvcOul0xcu9U+t
+         5wsFDCog/cyq82SC70YJOIPB1KxvUAxVyNo0ovXZvyvVsRM4d9Sy3zmIpf4UXoNaMcaZ
+         +B+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723676605; x=1724281405;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lBlJcNHTXrvCXg2KqHerDo3Dz+CUwdwlIOy68HBZaZQ=;
+        b=Vu4NI0uJ63XP7UUOGUmHkCHP7eqqHtYlEF5nSxX1i1ZBmxdx72dCbGmuzd95FrVgTN
+         5NK/koVt40P/YAnG4CrA/cx0e32eE4UJEHA5S1lMzH/vI429/WTIZnnfueUWalU6tvzI
+         gLY+f5wYsADEJJqS5UUlQA182+bLqjKFqeu4WJAqe6sgzSXOhXjFW8BYBsL9Vs8xXscV
+         ZJB+tuAdOFdfusPuo0Jk6AYw78wpes5FqHaeWdEZqXDR8A+TeFSc6kmxJ0fZGKX1tZyH
+         3nkoHlNR6YongeiKREDnpqU+j4K/J8QK5O4Dy3xsFKQO6jwlySjl8vMgfoCiG7lfPdyq
+         zG9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXBd2wTawiMIO1IR/apFINpXB4hyYpSJFSEbsFAHVfaAnjWxBl7gwGXo3PERxPmksAD5vkCnMv8WUMJAcflBvuZErGomtu7nXGeTtVeCwTfo3IAdzQOFKrT1g5YBHz1YWAXbHgyEA==
+X-Gm-Message-State: AOJu0YwEXCtHA8rhIRdhejycrg5P3MtCjbqD3+EPe3zkOVHfqC1kDELg
+	UgpPb+TtZmxiRPXA9zvzzBzvObkcPCe7FDHOa4iatpRutURGtIsCOCgp6JYB/n3eGHix1Dmw4OQ
+	Kelq8EGrDPnubfzA+/3OpH+RWa3w=
+X-Google-Smtp-Source: AGHT+IEKmQOIO99Cy2PnIM81KCFOVa4ilM/m0cRNuICz2NTtbhgzxazeUf63/NlAzJ6BqYTxuNKaRq+f3SJXFIotd7Q=
+X-Received: by 2002:a05:6358:528d:b0:1b1:a7f4:fee4 with SMTP id
+ e5c5f4694b2df-1b1aab8453dmr519220855d.14.1723676604637; Wed, 14 Aug 2024
+ 16:03:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
+ <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
+ <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
+ <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org> <vyi7d5fw4d3h5osolpu4reyhcqylgnfi6uz32z67dpektbc2dz@jpu4ob34a2ug>
+In-Reply-To: <vyi7d5fw4d3h5osolpu4reyhcqylgnfi6uz32z67dpektbc2dz@jpu4ob34a2ug>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 14 Aug 2024 16:03:13 -0700
+Message-ID: <CAKEwX=Mc9U_eEqoEYtwdfOUZTa=gboLtbF5FGy4pL--A54JJDw@mail.gmail.com>
+Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-06-16 at 23:24 +03, Mikhail Rudenko <mike.rudenko@gmail.com> wrote:
-
-> This small series consists of patches 17-20 from [1], which were
-> requested to merged separately later. No significant changes have been
-> made since and the R-b's are kept.
+On Wed, Aug 14, 2024 at 9:32=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
 >
-> Patch 1 implements configurable analogue crop rectangle via
-> .set_selection callback. Patches 2 and 3 are refactorings and are not
-> supposed to introduce any functional change. Patch 4 enables 2x2
-> binning option.
 >
-> [1] https://lore.kernel.org/all/20240402164552.19171-1-mike.rudenko@gmail.com/
+> Ccing Nhat
 >
-> Mikhail Rudenko (4):
->   media: i2c: ov4689: Configurable analogue crop
->   media: i2c: ov4689: Eliminate struct ov4689_mode
->   media: i2c: ov4689: Refactor ov4689_s_stream
->   media: i2c: ov4689: Implement 2x2 binning
+> On Wed, Aug 14, 2024 at 02:57:38PM GMT, Jesper Dangaard Brouer wrote:
+> > I suspect the next whac-a-mole will be the rstat flush for the slab cod=
+e
+> > that kswapd also activates via shrink_slab, that via
+> > shrinker->count_objects() invoke count_shadow_nodes().
+> >
 >
->  drivers/media/i2c/ov4689.c | 483 +++++++++++++++++++++++++------------
->  1 file changed, 328 insertions(+), 155 deletions(-)
+> Actually count_shadow_nodes() is already using ratelimited version.
+> However zswap_shrinker_count() is still using the sync version. Nhat is
+> modifying this code at the moment and we can ask if we really need most
+> accurate values for MEMCG_ZSWAP_B and MEMCG_ZSWAPPED for the zswap
+> writeback heuristic.
 
-Gentle ping.
+You are referring to this, correct:
 
-Sakari, in [1] you said the these four patches should be postponed until
-internal API refactoring is complete. Is it complete now? Could you
-point out the places where new API should be used?
+mem_cgroup_flush_stats(memcg);
+nr_backing =3D memcg_page_state(memcg, MEMCG_ZSWAP_B) >> PAGE_SHIFT;
+nr_stored =3D memcg_page_state(memcg, MEMCG_ZSWAPPED);
 
-[1] https://lore.kernel.org/all/ZhzEdXz-R2I6nZXf@kekkonen.localdomain/
+It's already a bit less-than-accurate - as you pointed out in another
+discussion, it takes into account the objects and sizes of the entire
+subtree, rather than just the ones charged to the current (memcg,
+node) combo. Feel free to optimize this away!
 
---
-Best regards,
-Mikhail Rudenko
+In fact, I should probably replace this with another (atomic?) counter
+in zswap_lruvec_state struct, which tracks the post-compression size.
+That way, we'll have a better estimate of the compression factor -
+total post-compression size /  (length of LRU * page size), and
+perhaps avoid the whole stat flushing path altogether...
+
+>
+> > --Jesper
 
