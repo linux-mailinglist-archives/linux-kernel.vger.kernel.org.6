@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-287025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D733D9521C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A72D99521CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF8D1F21769
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:04:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EFD1F22F00
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615571BD036;
-	Wed, 14 Aug 2024 18:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093321BD4F7;
+	Wed, 14 Aug 2024 18:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGN0386R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAb8PMIL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853541BB699
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388D21BD018;
+	Wed, 14 Aug 2024 18:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658679; cv=none; b=LUe5IHOqYchL09P1pVzqCTx70R5hlp7Z9RoHoj0XK7RcGIJQ0PpspvPThns+Pj87T6/LmrUsB9aokD2SILPdDfIUhOxvsZuQP69H6LoN+0MihEaObz2U9weRfaLeRMTFbvQLr84b7tDNnrkDAw3kvBGMMD3urt1kJlitQYe5bJc=
+	t=1723658721; cv=none; b=KTx9ToHU4Jvd8hdF7VAdzapXMR1v0+ugLU/tn6Gt85Q+Be6zFtrCaFKWItixAs4qMbXTL30hgo1G6F4Cn3Er40aq1eDJIPXOhgb/I/ZyZ+8mZ3mTndS8J1SDe9fxWSJ4L4C77SDv1UpbQxeSXLka+vNsxhRLC0gffzbgkF5bd4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658679; c=relaxed/simple;
-	bh=At677fhWlanLpG6mtxJGtZbeN9D+2cS3dulKaVfdZg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMZlYsWd04f3JHYl++2TEZ7hB7a/pkg3HL7W0/HvQwLDAw+XPOeItGl8fmOEoV4JhaVXut7clVKlxC7SdJvScPJiUGQD4hC2h/Ck4HvavTQKZeU3ORzQGLX+U1op5cVfI8bp6jYXSxDIwcQn4QTjWYmIG1xdmO2wHDQrPcMMK9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGN0386R; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723658677; x=1755194677;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=At677fhWlanLpG6mtxJGtZbeN9D+2cS3dulKaVfdZg4=;
-  b=iGN0386R3AYw487NE4UQWvtcQx+DoClkmVu+L0KZGAVkyzoIvxkVMa1b
-   ja9biE37Y2304WebLjrhBFhOrMXgaSICYJWShJA8IB9UWzMRVEXQ1ktRU
-   UOMFRzEK1A1PNqphLmdkhIlYj574EzZJdN8AP65IB3ugykLXUXevyWeib
-   14lCae/OGMnW+qY7wKeFFYAw0hGH9ANM5AsqSdNIy9mu8yKze0uLry2f5
-   Wp83frsl0Zd5W8h48oAcDbVAPq1Y4I4k34Xk8ymTSwGcmHDg//2J2CYfy
-   d+purKIdKqFjhmqGnJ18l3OT9Z9ICGo+w6KGhUqfdsgOcWS1kx9W15WkV
-   A==;
-X-CSE-ConnectionGUID: GNeW389dQamSDFb6YRVLQg==
-X-CSE-MsgGUID: JXEqT4CNQ8asTHlaeecmCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22051520"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="22051520"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:04:37 -0700
-X-CSE-ConnectionGUID: qtsMKiiRRcK33NckGV4wBQ==
-X-CSE-MsgGUID: Ttk86e14Q1qn5H1amE6iQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="59063940"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:04:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1seIML-0000000FHLt-0y4K;
-	Wed, 14 Aug 2024 21:04:33 +0300
-Date: Wed, 14 Aug 2024 21:04:32 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kernel test robot <lkp@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: Re: WARNING: modpost: vmlinux: section mismatch in reference:
- bitmap_gather+0x6b (section: .text) -> sg_mask (section: .init.rodata)
-Message-ID: <ZrzxsORf3QL5FTr6@smile.fi.intel.com>
-References: <202407291552.gxr1x7vB-lkp@intel.com>
+	s=arc-20240116; t=1723658721; c=relaxed/simple;
+	bh=ByaQEa/ebQJriGDv5RGZ5LDmAhNxf5CNIh7glEZdx4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kPV7/B8eQ9k6aGfYGU4dTn/sYW4p+vjrJ5ZeB8iCWcFpE5GC9ken6blMGuKc6oVInTos/T8KwCJUWBg74PpkyMI0iCj3A/0VjsCjjfAUzv0AvRJaA7AOj9CKCnXFFPBf1jSSyMT3E3wEFKa4jJFhov5GW4oygMZ9LvPogGwhspQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAb8PMIL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64248C4AF0A;
+	Wed, 14 Aug 2024 18:05:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723658720;
+	bh=ByaQEa/ebQJriGDv5RGZ5LDmAhNxf5CNIh7glEZdx4k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VAb8PMIL3qxPtUnV9WWo9uG1rQUOVdT5Cq3UOCZ3WlMmpAZMDzFK/ey9LA1j1Cds3
+	 Jd60+UFUohuBtig72vX5e/I5pRkk086w2XL4jBCp0fO21ukHe2U8ZW6w4lqND/FAdn
+	 a2tlJOJCx/oXmJetW8CifmUT8C2LRAoS2DmoldRwVTLT3fXOq/6q/hfSEdIU8XwSeN
+	 K3RAJJFpGIckkg429Kuc0fN0iqjkmqY4FsEUjCAhwmVYVZF35w/SU3QzYo9MEc7knF
+	 Ilrbmmb1MLrufMAivXJZLrCIFAOVEfCtsOM04y4jY3LdKzYu7MOK4YHKqjhtnsBgEC
+	 kmIYtg10Z4dYg==
+Message-ID: <a139a9dd-65b5-45cc-9537-ce0914936101@kernel.org>
+Date: Wed, 14 Aug 2024 20:05:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202407291552.gxr1x7vB-lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
+ add 7712 SoC
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-2-james.quinlan@broadcom.com>
+ <e1002187-fca0-455c-840c-32489e5eadb4@kernel.org>
+ <CA+-6iNzDcF3pA1T3FuGNS4NPn1RrjHxxAVStN6t++xDsx-wUXQ@mail.gmail.com>
+ <c5b0e395-7f2b-4dca-9764-83d0878e99c6@kernel.org>
+ <CA+-6iNwgC8RtXu3g70kH8Lkw=LHT-6MtAbt=ZReq_wXp9nF6VA@mail.gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CA+-6iNwgC8RtXu3g70kH8Lkw=LHT-6MtAbt=ZReq_wXp9nF6VA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 03:06:19PM +0800, kernel test robot wrote:
-> Hi Andy,
+On 14/08/2024 19:35, Jim Quinlan wrote:
+>> I understand that this was not clear, but you never came with a question
+>> what did I mean.
 > 
-> FYI, the error/warning still remains.
+> Hello Krzysztof,
 > 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   dc1c8034e31b14a2e5e212104ec508aec44ce1b9
-> commit: de5f84338970815b9fdd3497a975fb572d11e0b5 lib/bitmap: Introduce bitmap_scatter() and bitmap_gather() helpers
-> date:   5 months ago
-> config: um-randconfig-001-20240729 (https://download.01.org/0day-ci/archive/20240729/202407291552.gxr1x7vB-lkp@intel.com/config)
-> compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240729/202407291552.gxr1x7vB-lkp@intel.com/reproduce)
+> Sorry to bother you again but I want this to be clear.  This commit
+> contains the changes:
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407291552.gxr1x7vB-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>, old ones prefixed by <<):
+> 1. alphabetical order of compatible strings
+> 2. maxItems
 
-This is dup of https://lore.kernel.org/r/202406200829.IytwLyQJ-lkp@intel.com,
-where the main discussion is ongoing.
+Only this one to new commit, because this is a functional change.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 3.  maintainer change
 
+All others are rather trivial or organizational, so they could stay in
+one commit.
+
+> 
+> Do you want  me to split off 3 since it is not a "cleanup"?  If not,
+> please specify.
+> 
+Best regards,
+Krzysztof
 
 
