@@ -1,185 +1,117 @@
-Return-Path: <linux-kernel+bounces-285652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AF19510D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EDF9510D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67B301C21F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F2E1C2294A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F76F1AB523;
-	Wed, 14 Aug 2024 00:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Fp5jItZ0"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799331AC44F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1AB4D8A9;
+	Wed, 14 Aug 2024 00:01:04 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567AB19E;
+	Wed, 14 Aug 2024 00:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723593606; cv=none; b=CKoEKJP4rr4fetGF98o8sO5M4pH+pfGGMkjfhqBr+5NkUBG8pIVOFJ/sn9JBY+x8OAjUYplqYDnbadfJ1zVjpBstMpCxdtOWx4mUl43189wgG7kzsUprMfG5hOyv10M4Q3UEHC9IFyFz1wA/02Mu/3WJvXCBStRxixQ+bNJrLjw=
+	t=1723593663; cv=none; b=Ar3uHtfhn5XJF3+8JOf30zvq/TJgVx5sF+EuQXR2i7S0AmLbNqj8AW6/HtWH39zJcD0BexI/U/LGgBzKyj0i/qxL9OwfsECjhVE3BFvoLBTcHlmYBwZcQrIxtMAyx8JUsG5Tvn3lRon2e0FwrBiPvofqaovNJi5eqmqHxNDmGmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723593606; c=relaxed/simple;
-	bh=lyUBr8DcNwXFGeDmAOEtTkq0g9vv6Eeu+1G6uPz0/T4=;
+	s=arc-20240116; t=1723593663; c=relaxed/simple;
+	bh=/jt2KQ3hYUB2qH6NZxlcN8hjxzqNHCvKIia+tiAkrmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NN4zsndgl79kylFBIqndOrj3C8Ti0W/AtWqGpCkMzdYIXZiICoLtd22PBh9YVfx8odqBFj1v2tbUPH55v+wVdzwxf5rk4DlFhPFb795+RPdyzvVKqYkWsVXkC7Mx6EXtM/+F+isf1D4k6wp8/zqDx/BjwBrTxdcZhSrjLdNfnFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Fp5jItZ0; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5cdf7edddc5so3275940eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723593602; x=1724198402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gQGE2zWdMfVGgSfoUheG6pezAQlX6jQvTcEtw8hGlq0=;
-        b=Fp5jItZ0FRtc/8E1cro5XRTKs/2b07RSSGHjNPFxbSDkvL/PwmxkxM/PvkY4xjpieU
-         JMsduVf0pcqJT70Uovaa45TDQs2D7/p3Vb2x7sXATsvwbi54s/yUKpiQsCXsmhyCni/g
-         hOaooN9Ip7xfEvsEqd+uIqigKb0lUINXICrPNIFo/bWqyjL9Sd2xDtAp7nD5o1nv4u0p
-         TUWDcA2B+w4I/Vuk/tTbDYgUs8wWOwHljnkEoltVsQulmcP9LeVBY7iWpuT4yad3Uigz
-         /W8mthyjPtRhDLJDfblADq2ytAFeksBFWpywLE7+yD4QxCdDj3p9lXhTimcRGfJMVr2e
-         oE8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723593602; x=1724198402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gQGE2zWdMfVGgSfoUheG6pezAQlX6jQvTcEtw8hGlq0=;
-        b=nrhaRm+Wrb4z4MzpsPgvYXh9Weok2pMW0b0UVyiavuIdjD+LGcHGgkNciIm5br0KFy
-         0Q0gAn94GYK86RFMDx8dAazJdKbHkmeYrYkPANz69ghnfD7MdptqS8x6V8zzvDznOznO
-         D0xuAMGHhvkuG7o1DxBPXa9flczpijXgf7q10Wk+LZztftxFviDiapexRu8kS1GAyalp
-         r00TOHg48q+Kh15POIlEkFvxJiDIc/FqiTKiKY2xh6GMYe3V+0hWhcvDFoAkwqxijvX+
-         Xa4RCUwCH7Krb8SrcUYO8AXAfmgdaOuWdXE05f3vhCmwC4v0UCIIdsC/mluoD7lO5Yuf
-         WtWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrJrG+U6549r70Idr2uRif1tl+ZZytnVY//9Yvfck9vPL6hsJYKUUGx811hFAOoyw5tvDM/u9c6orcT9eWqTfko+abOJ3E8eXnD0Vb
-X-Gm-Message-State: AOJu0YxO9Dm9T574bm5934M+aUNiqwK3zwjGRraPG8NKgHEvBlb3Jx8O
-	yzbnXmxYXAwn8QBEpi5WlCgd7OlXMULO5nF0NjBGRPPHWfyO660Hh0CdC5Evsuo=
-X-Google-Smtp-Source: AGHT+IG/rb7hCnWcydFZZ0in+bYCzY+Gq20Mo60sp+Z1pjHVWRsNQtmZT6YFEMIf1f/7Bb3NVEAo2Q==
-X-Received: by 2002:a05:6358:724d:b0:1aa:c9ba:4330 with SMTP id e5c5f4694b2df-1b1aab0fe3fmr133802555d.4.1723593602440;
-        Tue, 13 Aug 2024 17:00:02 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c28ed1csm36351451cf.86.2024.08.13.17.00.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 17:00:01 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1se1Qn-00AUce-3o;
-	Tue, 13 Aug 2024 21:00:01 -0300
-Date: Tue, 13 Aug 2024 21:00:01 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Matthew Rosato <mjrosato@linux.ibm.com>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-	gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com,
-	baolu.lu@linux.intel.com, hca@linux.ibm.com, gor@linux.ibm.com,
-	agordeev@linux.ibm.com, svens@linux.ibm.com, jroedel@suse.de,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH v2] iommu/s390: Implement blocking domain
-Message-ID: <20240814000001.GU1985367@ziepe.ca>
-References: <20240813192803.129449-1-mjrosato@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLabdBJpJXVoxVJvPoyokyOzfr+H2Xqt/6OGBqAJYAYa850n05QWS2nzUsnwQe2fCG/Ibe7XvJHnKsH9Vuu83yzzwla7qUkyHxHL8JSVV8v8UqIVyw4Crhd5UKrKvxV4vUGCq0zvmzskBg4Mec6rZttOFysd79HtLZFlrCjnz8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 7C9D172C8CC;
+	Wed, 14 Aug 2024 03:00:53 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+	by imap.altlinux.org (Postfix) with ESMTPSA id 65D5936D0246;
+	Wed, 14 Aug 2024 03:00:53 +0300 (MSK)
+Date: Wed, 14 Aug 2024 03:00:53 +0300
+From: Vitaly Chikunov <vt@altlinux.org>
+To: Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+	=?utf-8?B?UMOpdGVy?= Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+	Linux kernel regressions list <regressions@lists.linux.dev>
+Subject: Re: [PATCH AUTOSEL 6.9 17/40] ASoC: topology: Fix route memory
+ corruption
+Message-ID: <20240814000053.posrfbgoic2yzpsk@altlinux.org>
+References: <czx7na7qfoacihuxcalowdosncubkqatf7gkd3snrb63wvpsdb@mncryvo4iiep>
+ <14e54a89-5c62-41b2-8205-d69ddf75e7c7@linux.intel.com>
+ <e95a876a-b4b4-4a9d-9608-ec27a9db3e0c@leemhuis.info>
+ <210a825d-ace3-4873-ba72-2c15347f9812@linux.intel.com>
+ <2024081225-finally-grandma-011d@gregkh>
+ <20240812103842.p7mcx7iyb5oyj7ly@altlinux.org>
+ <2024081227-wrangle-overlabor-cf31@gregkh>
+ <53ab1511-b79c-4378-b2b5-ea9e19e8f65b@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240813192803.129449-1-mjrosato@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <53ab1511-b79c-4378-b2b5-ea9e19e8f65b@linux.intel.com>
 
-On Tue, Aug 13, 2024 at 03:28:03PM -0400, Matthew Rosato wrote:
-> This fixes a crash when surprise hot-unplugging a PCI device. This crash
-> happens because during hot-unplug __iommu_group_set_domain_nofail()
-> attaching the default domain fails when the platform no longer
-> recognizes the device as it has already been removed and we end up with
-> a NULL domain pointer and UAF. This is exactly the case referred to in
-> the second comment in __iommu_device_set_domain() and just as stated
-> there if we can instead attach the blocking domain the UAF is prevented
-> as this can handle the already removed device. Implement the blocking
-> domain to use this handling.  With this change, the crash is fixed but
-> we still hit a warning attempting to change DMA ownership on a blocked
-> device.
+Greg, Amadeusz,
+
+On Tue, Aug 13, 2024 at 04:42:04PM +0200, Amadeusz Sławiński wrote:
+> On 8/12/2024 4:11 PM, Greg Kroah-Hartman wrote:
+> > On Mon, Aug 12, 2024 at 01:38:42PM +0300, Vitaly Chikunov wrote:
+> > > Greg,
+> > > 
+> > > On Mon, Aug 12, 2024 at 12:25:54PM +0200, Greg Kroah-Hartman wrote:
+> > > > On Mon, Aug 12, 2024 at 12:01:48PM +0200, Amadeusz Sławiński wrote:
+> > > > > I guess that for completeness you need to apply both patches:
+> > > > > 
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=97ab304ecd95c0b1703ff8c8c3956dc6e2afe8e1
+> > > > 
+> > > > This is already in the tree.
+> > > > 
+> > > > > was an incorrect fix which was later fixed by:
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=0298f51652be47b79780833e0b63194e1231fa34
+> > > > 
+> > > > This commit will not apply :(
+> > > 
+> > > It depends upon e0e7bc2cbee9 ("ASoC: topology: Clean up route loading"),
+> > > which was in the same patchset that didn't get applied.
+> > >    https://lore.kernel.org/stable/?q=ASoC%3A+topology%3A+Clean+up+route+loading
+> > > 
+> > > I see, Mark Brown said it's not suitable material for stable kernels
+> > > (since it's code cleanup), and Sasha Levin dropped it, and the dependent
+> > > commit with real fix.
+> > 
+> > Ok, then someone needs to provide a working backport please...
+> > 
 > 
-> Fixes: c76c067e488c ("s390/pci: Use dma-iommu layer")
-> Co-developed-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> ---
-> Changes for v2:
-> - Added co-author tag from Niklas + my SoB
-> - Removed changes to drivers/iommu/iommu.c
-> - Revert back to -EIO for failed attach in s390-iommu
-> - Set blocking domain during probe_device / remove s390_domain check during
->   blocking attach
-> - Remove s390_iommu_release_device
-> - Update commit message to reflect changes
-> ---
->  drivers/iommu/s390-iommu.c | 64 ++++++++++++++++++++++++++------------
->  1 file changed, 44 insertions(+), 20 deletions(-)
+> Should this be cherry-pick of both (they should apply cleanly):
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=e0e7bc2cbee93778c4ad7d9a792d425ffb5af6f7
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=0298f51652be47b79780833e0b63194e1231fa34
+> or just the second one adjusted to apply for stable trees?
 
-This is probably OK as is, but there are a few things that don't quite
-match the pattern still here
+I think having commit with memory corruption fix is more important to
+stable kernels than not having the code cleanup commit. So, I would
+suggest stable policy to be changed a bit, and minor commits like this
+code cleanup, be allowed in stable if they are dependence of bug fixing
+commits.
 
-The blocking domain should be the iommu_domain type since it is
-global and shared. None of the additional driver members should ever
-be touched as that would maybe become dangerous.
+Additionally, these neutral commits just make stable trees become closer
+to mainline trees (which allows more bug fix commits to be applied
+cleanly).
 
-> +static struct s390_domain s390_blocking_domain = {
+Thanks,
 
-Ideally would be struct iommu_domain s390_blocking_domain
-
-That in turn means going around and looking carefully at
-zdev->s390_domain. All uses can probably be removed except for this:
-
-struct zpci_iommu_ctrs *zpci_get_iommu_ctrs(struct zpci_dev *zdev)
-{
-	if (!zdev || !zdev->s390_domain)
-		return NULL;
-	return &zdev->s390_domain->ctrs;
-}
-
-Which doesn't look good for a blocking domain anyhow. Also the above
-looks racy, nothing prevents s390_domain from being freed if it is
-read outside an iommu op.
-
-The checks for null zdev also don't make sense:
-
-static int blocking_domain_attach_device(struct iommu_domain *domain,
-					 struct device *dev)
-{
-	struct s390_domain *s390_domain = to_s390_domain(domain);
-	struct zpci_dev *zdev = to_zpci_dev(dev);
-	unsigned long flags;
-
-	if (!zdev)
-		return 0;
-
-The core guarentees these functions are never called unless probe
-succeeds and probe won't succeed if zdev is NULL.
-
-And it would be good to rename s390_iommu_detach_device() to
-blocking_domain_attach_device(), then the obsolete "detach" naming is
-gone and this driver just uses a blocked before attach pattern.
-
-> @@ -403,16 +414,14 @@ static int s390_iommu_attach_device(struct iommu_domain *domain,
->  
->  	if (zdev->s390_domain)
->  		s390_iommu_detach_device(&zdev->s390_domain->domain, dev);
-
-s390_domain is never NULL now, the test can go away
-
-> +static int blocking_domain_attach_device(struct iommu_domain *domain,
-> +					 struct device *dev)
-> +{
-> +	struct s390_domain *s390_domain = to_s390_domain(domain);
-> +	struct zpci_dev *zdev = to_zpci_dev(dev);
-> +	unsigned long flags;
-
-flags is never used? Compiler didn't warn?
-
-Jason
 
