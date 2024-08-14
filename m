@@ -1,195 +1,151 @@
-Return-Path: <linux-kernel+bounces-286348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746A39519EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:32:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068A29519F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F27C71F23D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:32:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D0B6B22575
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEE51AED47;
-	Wed, 14 Aug 2024 11:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEB31AED49;
+	Wed, 14 Aug 2024 11:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssByd1aw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eSN26Vae"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAA21420A8;
-	Wed, 14 Aug 2024 11:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EECC1AED47
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635128; cv=none; b=fPNG3NBS8DnUj/+77ksT+KqSbYjVdqweT3SBH/vtyN2KtsaAJ4wnFxNS+9raaqb3d9NBiF2sKA8iF5Xe6B5zdknZOLBHI6f+LfehcY0aJSmSOYiKmbODMJyPFIqUwjtTCIXkCz/4s54hiPFUE4ELYwub5+6evtkyg2dCSB2i6Rs=
+	t=1723635166; cv=none; b=K05fMxPHYPnz7wZpAI9kNLUpknTfc4O/T+5CatJ6RG6ixvRPbWxGazuBdxqKt+uw19nZWRmDTYvgqJyHD5k4h+HqVoONWfvhalaGyJtMTq5wihzOxkUqFscdGwM4FzcYGZLyxhFpCYnlFTHo4iqwJaqKyL2ypfzOJUS7z0YkmY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635128; c=relaxed/simple;
-	bh=AWE3CobVL05Gs8NLBwN0sPmICHJ3iutsNZuS3OojKLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dS46kgPWeUg6OeKrfKnPZNFekrGTMi+Br4UGLzf7uwUVFQD8hji2a3PwdMbLHvIHthXjvJYV4j9bTkZ671B6JNlUmMk/bKU9eKrnd0PbzT3BqL8H5fA5esCRW7V7yT7KcqncJ43/8jxysVfMK3nfqrnahLRHlaKTJf1U8UF3bQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ssByd1aw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE50BC32786;
-	Wed, 14 Aug 2024 11:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723635127;
-	bh=AWE3CobVL05Gs8NLBwN0sPmICHJ3iutsNZuS3OojKLs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ssByd1awoSbcCzi7aTkTckxm+kJMN601gT9A9I0ycGleIO7LsS5QttvS3Bs1nP4qR
-	 3ie3I216kNjnh8ZkRQs6JUpFjJdu6EpprWCVv4TntxzGkUDH1be5/RqWNNPmpFtlIQ
-	 h8cne6kKlT2qc5TbHVX0zz/gFRSb5sxlRBWKC/nl0WfRfvegTz4cC1H0X4Afk2rsIm
-	 7lqGqBFjzBQqNb62Z19eNe4Ipr2btSgyFr5gCbbPYrIzCiYOs+56lgCYoAWqNZyc/C
-	 X24Nhnth36xuG7VOX8hmvaEDlMzKdFyQCTA14TgOxCmLlD+xef+F5dDmcG1P8OS8h2
-	 s1anNbIwJn6cQ==
-Message-ID: <af896c55-723e-4c2b-b153-132f863e2f68@kernel.org>
-Date: Wed, 14 Aug 2024 13:31:50 +0200
+	s=arc-20240116; t=1723635166; c=relaxed/simple;
+	bh=Q6INoOsKAoKQ6mKNN8/pzE1KcZaYtIJB5EmRTEmk8yE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gXksOk7UR7MeD7VvHKFFAH2UA0JIGgCWRT9H2rD/6GMFWPKNy+sGAK4OVSHpqYd4jdV9IkQDHd5yBvkkocbdyEKgf+VLjSSZ2t/JKjOknKqiWGvhsCAm3/lV7V/ITUeXLHY9Y1x0JszroabwS84esfpKc3Jg31MmE5CKUilPEr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eSN26Vae; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0b9589a72dso5889984276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:32:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723635163; x=1724239963; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q6INoOsKAoKQ6mKNN8/pzE1KcZaYtIJB5EmRTEmk8yE=;
+        b=eSN26VaenUq/NkOOnUsz/g47fJC0s4BHTtXg/e//KbTU9u7ubA2LdyONQ/AIgjjHW0
+         h/Wn3Pn1WWL0dBmATGckzTLzKTV1gOu23Fz75zU0yiVVpXgaaNGFjMwAs415SXDBhGfn
+         yrkD05WjIZ0I+gNDFeVmLMjHU6eYJk0KWxmKH7MAnu3i2gyOQNRcA1VVXJhyheLkixsv
+         lIoBw6uLXxUFxZI4cfKVKJxpyVmwMYtDHPXIeRM2m//UabNQYY+nLBj9SEfnYGP9Qk/h
+         C7K4/k2kiWbqowobY8NxZHnUEM1p5azlUzb0Ae9HP1iuhN4v4GfRAWbfkdxlOgaz2kzn
+         fD2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723635163; x=1724239963;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q6INoOsKAoKQ6mKNN8/pzE1KcZaYtIJB5EmRTEmk8yE=;
+        b=krbmNV4ymzvfyGyy6iZp2SLWTTo9YF08CZBwMoZn41y4rEIR3O+eLk9nwY2khz9v8O
+         9NYBIsYFVLc0EqkpxSL/FoPWOOoVh3iERoY8M2Myd7bWFqNDMCup4HAwSxiKNXrNuyPS
+         Yc5QJMOKzymv+raeeejaxniOoa6FlOmq+j2tW1ONiPpf83yPR3ERaxI5GaNQ/EmRkLNt
+         K1Co4AQxwbrG4CvnFt1c1FpZmXhRuvUCMQTqBZPk3DL3g5QCaVBfxjJEDyBngN0FVBQ/
+         z8P9GL5NcsWRr9Hai6WHm5DBb+S1BdwkCcdCq9vzIeNXZksmCjJmgo9vp5ZbW4aUe9o9
+         s/2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUFWS42Ht0nKNAQpoQhPq9zZ0Okx9i8oIa3q+BpkoYqFk/hj26AZ/+GQbqk/KzXq6ISY8mZvpiqa/KQRdt86wNAEQicKdYrZsfzgr4
+X-Gm-Message-State: AOJu0YzFNkHL6hHNMucOteeSjUrlPUxRjBfL6aCvYfkzfx1JLiPYlVX5
+	BqG+aWP8KruIkrNJRX9v1SSniR5DLm2q13kvi8zyFXZguSr0/bS3JLbG3qhZbP75UFuJOA0qIyA
+	XOj09rCwXET7AwNva64IBrP+M497GjrxVpjuAxg==
+X-Google-Smtp-Source: AGHT+IEVYMlVLZl1GJHYSgxm7olBwvP5eRzOw4TjS/5Exafj4XCBFHcDqZGPBvS0sv3Vrq+Nr2AT7fwfqo9yleqL0TM=
+X-Received: by 2002:a25:bcc4:0:b0:e11:5f3c:1324 with SMTP id
+ 3f1490d57ef6-e115f3c18c5mr963371276.57.1723635163293; Wed, 14 Aug 2024
+ 04:32:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next v2] net: netconsole: selftests: Create a new
- netconsole selftest
-Content-Language: en-GB
-To: Petr Machata <petrm@nvidia.com>, Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
- David Wei <dw@davidwei.uk>, Willem de Bruijn <willemb@google.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- Geliang Tang <geliang@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>
-References: <20240813183825.837091-1-leitao@debian.org>
- <87r0arl5qw.fsf@nvidia.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <87r0arl5qw.fsf@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240808042858.2768309-1-make24@iscas.ac.cn> <20240808061245.szz5lq6hx2qwi2ja@pengutronix.de>
+ <1b04b8b3-44ca-427f-a5c9-d765ec30ec33@app.fastmail.com> <CAPDyKFqd=haDWB3tATZ_E1BMpCReNh=hLa5qPGATc3h1NUx09A@mail.gmail.com>
+ <20240814105847.tise4jzneszdxetb@pengutronix.de>
+In-Reply-To: <20240814105847.tise4jzneszdxetb@pengutronix.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 14 Aug 2024 13:32:07 +0200
+Message-ID: <CAPDyKFpcyP5t447twkKeRkyPQ-D3ucdOPLQ_kS4X7TJv2mR=4Q@mail.gmail.com>
+Subject: Re: [PATCH] soc: imx: imx8m-blk-ctrl: Fix NULL pointer dereference
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ma Ke <make24@iscas.ac.cn>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Peng Fan <peng.fan@nxp.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Marek Vasut <marex@denx.de>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, imx@lists.linux.dev, 
+	stable@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Petr, Breno,
+On Wed, 14 Aug 2024 at 12:58, Marco Felsch <m.felsch@pengutronix.de> wrote:
+>
+> On 24-08-13, Ulf Hansson wrote:
+> > On Thu, 8 Aug 2024 at 08:53, Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On Thu, Aug 8, 2024, at 08:12, Marco Felsch wrote:
+> > > >
+> > > > On 24-08-08, Ma Ke wrote:
+> > > >> Check bc->bus_power_dev = dev_pm_domain_attach_by_name() return value using
+> > > >> IS_ERR_OR_NULL() instead of plain IS_ERR(), and fail if bc->bus_power_dev
+> > > >> is either error or NULL.
+> > > >>
+> > > >> In case a power domain attached by dev_pm_domain_attach_by_name() is not
+> > > >> described in DT, dev_pm_domain_attach_by_name() returns NULL, which is
+> > > >> then used, which leads to NULL pointer dereference.
+> > > >
+> > > > Argh.. there are other users of this API getting this wrong too. This
+> > > > make me wonder why dev_pm_domain_attach_by_name() return NULL instead of
+> > > > the error code returned by of_property_match_string().
+> > > >
+> > > > IMHO to fix once and for all users we should fix the return code of
+> > > > dev_pm_domain_attach_by_name().
+> > >
+> > > Agreed, in general any use of IS_ERR_OR_NULL() indicates that there
+> > > is a bad API that should be fixed instead, and this is probably the
+> > > case for genpd_dev_pm_attach_by_id().
+> > >
+> > > One common use that is widely accepted is returning NULL when
+> > > a subsystem is completely disabled. In this case an IS_ERR()
+> > > check returns false on a NULL pointer and the returned structure
+> > > should be opaque so callers are unable to dereference that
+> > > NULL pointer.
+> > >
+> > > genpd_dev_pm_attach_by_{id,name}() is documented to also return
+> > > a NULL pointer when no PM domain is needed, but they return
+> > > a normal 'struct device' that can easily be used in an unsafe
+> > > way after checking for IS_ERR().
+> > >
+> > > Fortunately it seems that there are only a few callers at the
+> > > moment, so coming up with a safer interface is still possible.
+> >
+> > I am not sure it's worth the effort, but I may be wrong.
+> >
+> > It's been a bit tricky to keep the interfaces above consistent with
+> > the legacy interface (dev_pm_domain_attach()). Moreover, we need a way
+> > to allow a PM domain to be optional. By returning NULL (or 0), we are
+> > telling the consumer that there is no PM domain described that we can
+> > attach the device to.
+>
+> Other subsystems like GPIO, regulator have a ..._optional API for this,
+> could this be an option?
 
-On 14/08/2024 12:24, Petr Machata wrote:
-> 
-> Breno Leitao <leitao@debian.org> writes:
-> 
->> Adds a selftest that creates two virtual interfaces, assigns one to a
->> new namespace, and assigns IP addresses to both.
->>
->> It listens on the destination interface using socat and configures a
->> dynamic target on netconsole, pointing to the destination IP address.
->>
->> The test then checks if the message was received properly on the
->> destination interface.
+If we were in a position of re-implementing the interfaces from
+scratch, then probably yes. At this point, I am not so sure the curns
+to have it are worth the benefit.
 
-(...)
+Keep in mind that the legacy dev_pm_domain_attach() is already
+optional and it's used by common bus level code.
 
->> diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
->> new file mode 100755
->> index 000000000000..e0e58fc7e89f
->> --- /dev/null
->> +++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
->> @@ -0,0 +1,223 @@
-
-(...)
-
-> +NAMESPACE="netconsns_dst"
-
-(...)
-
->> +function set_network() {
->> +	# This is coming from lib.sh. And it does unbound variable access
->> +	set +u
->> +	setup_ns "${NAMESPACE}"
->> +	set -u
-> 
-> It would make sense to fix lib.sh. I think this is what is needed?
-> 
-> modified   tools/testing/selftests/net/lib.sh
-> @@ -178,7 +178,7 @@ setup_ns()
->  		fi
->  
->  		# Some test may setup/remove same netns multi times
-> -		if [ -z "${!ns_name}" ]; then
-> +		if ! declare -p "$ns_name" &> /dev/null; then
->  			eval "${ns_name}=${ns_name,,}-$(mktemp -u XXXXXX)"
->  		else
->  			cleanup_ns "${!ns_name}"
-> 
-> CC'd Geliang Tang <geliang@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>,
-> Matthieu Baerts (NGI0) <matttbe@kernel.org> who were in the vicinity
-> in the past.
-Thank you for having CCed me.
-
-I don't know if lib.sh needs to be modified: setup_ns() is supposed to
-be called with the name of an existing variable. Can you not define this
-variable before?
-
-I mean: the modification from Petr looks good to me to support 'set -u',
-but it sounds safer to define the variable before in the script, just in
-case it is defined by in the environment, before starting the test, and
-not taking the expected path.
-
-Note that in all the other selftests, setup_ns() is called with the name
-of the variable, not a variable like you did, e.g.
-
-  NAMESPACE=
-  setup_ns NAMESPACE
-
-instead of:
-
-  NAMESPACE="netconsns_dst"
-  setup_ns "${NAMESPACE}"
-  NAMESPACE=${NS_LIST[0]}
-
-Maybe better to do like the others?
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Kind regards
+Uffe
 
