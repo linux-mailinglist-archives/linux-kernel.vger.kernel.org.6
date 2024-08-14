@@ -1,119 +1,207 @@
-Return-Path: <linux-kernel+bounces-287313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C2D952645
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:38:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34ED952648
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE591C215E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:38:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CBE3B23C81
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293DD150997;
-	Wed, 14 Aug 2024 23:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32AE14F9F8;
+	Wed, 14 Aug 2024 23:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ve8c9/nB"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ozhwh3A/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8854714F102
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 23:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01BD14F10F;
+	Wed, 14 Aug 2024 23:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723678707; cv=none; b=juOZqHADHdsPFFO+NIBxn4Li8L3v1ZNxWxUBtB6VQ6JEw/QeI5Dlg5aBxdQfIY843v20EDvDAdNytgJcHIbG6HqmFZlRZKh/m1HQKB/V0R9FGJjiLR4NZbMaGFW7iXy6sCbIeCuj6kDOmRznyyZnELe2v1YBtjj5pNHhOioOBT0=
+	t=1723678722; cv=none; b=q2T0i4hubbdNyGHAoUQlHsn14tQXQu/vBWq4ruxMqjXbf1AKjq8baJQhedBSjrfW0DOEOu1yv1qZZ+QOsdrrPZOG99qvJDK5L2yOTHHTh9LLMMcEsyXc0GLjl2ZkTgh8aqukqI2iaxlgl153v3e+gVdEtZv6JRja8wSmMYl8t8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723678707; c=relaxed/simple;
-	bh=XQuDxVLpWcUplcGjgjcNKZ/h6rv9ZO6TV8xPUdpFuFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRueUlTYyRskwwTtW3d9RO7VHF7M1hL0qPqs9Vt2/Xz155Aw+Jp1jblVBBqfrIELSkUZe/9Z6quTDZ/NmY4NS5bW0gEXZC1vQtX39xQVHOUUUY8fKR4PlWOT5/gJgT23ogOBbe8RgoM2evoAyjaF2wd+aTUQmheNPQ7omAwTUFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ve8c9/nB; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 14 Aug 2024 16:38:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723678703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SLPSCr45PlozEochk67KHBRJDoHMsgo62YtK7gKgkHM=;
-	b=Ve8c9/nB+Hba/Dde/QOYxHrDLOKPS2ZmDDFYjHKgvtnNyHOG7+y9ZJHQLRdeEplS/30s1C
-	SaD3s5dPr7EUpuFyTiBHo1mu1PTYvszce0Xoi9ahGbnryIg/w2DqXF0ulU/B7Zl9W8ut2V
-	Vlz4VNy6jjOStPZemVZCBdw0xivfjnU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	David Hildenbrand <david@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH 00/19] mm: Support huge pfnmaps
-Message-ID: <Zr0_5gixFGlyQMl7@linux.dev>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240814123715.GB2032816@nvidia.com>
- <ZrzAlchCZx0ptSfR@google.com>
- <20240814144307.GP2032816@nvidia.com>
- <Zr0ZbPQHVNzmvwa6@google.com>
- <Zr09cyPZNShzeZc6@linux.dev>
+	s=arc-20240116; t=1723678722; c=relaxed/simple;
+	bh=sNRoUOkGyXH9fGsphGKhvKnFajpTCP0GUhfiOdkX7gQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=N1fUY+lj8fTSBjiTbc4SiGtpvflGSwyvTfHBpvBeRaEaF+wBaDhaG0VbYUenOtJ2G14bIcZvxt5NRJtqKg9ttvo6Gj0zudgVbgcDH+s/vUXHaaEPbYGpTJAFkUcU8jbk4OBfUd1Ti52OlBTN1+8cb68PRxnEqS90Gib49PGicMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ozhwh3A/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723678710;
+	bh=Ry+s1cUkOXDWfG+OtJTiE9tv+kHdFVW5Py4YlKCBmtM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ozhwh3A/QYxJBO5QL8Fjc6F8PjASauF61vA5xEHVUwFQBV3R3U2DVT5Ab5VDTRAza
+	 2sID8ZxlQPzbCGHHr0iOaE/6lRnwtS0KSBs36H1ydqYWwxChblfAshFWZnOZANiFw0
+	 6mlS/3GDUjEVCJiOBXqyhdxhJKAm0zuMycPnGh0WjH46Y6vjCiQ37LPyxKDQnikkAq
+	 YsbixrvbWrDBU0/HHjjeDiLA2QVRKx406CTzzPOjWn21d4NHFBTL+wldJ1RgzzcaJ0
+	 xLXnaeFAmP8AtzCDy4jQ4qFH/IRJqKv8I2cMr1wjVTMPVr2VJEiG34NCy/rIIJFiZy
+	 VTp9I80d28Pzw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wkl7V42rwz4x5M;
+	Thu, 15 Aug 2024 09:38:30 +1000 (AEST)
+Date: Thu, 15 Aug 2024 09:38:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm tree
+Message-ID: <20240815093829.275058c7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zr09cyPZNShzeZc6@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/BmxE5yJzK6MXNy_q3=u_mdC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Aug 14, 2024 at 04:28:00PM -0700, Oliver Upton wrote:
-> On Wed, Aug 14, 2024 at 01:54:04PM -0700, Sean Christopherson wrote:
-> > TL;DR: it's probably worth looking at mmu_stress_test (was: max_guest_memory_test)
-> > on arm64, specifically the mprotect() testcase[1], as performance is significantly
-> > worse compared to x86,
-> 
-> Sharing what we discussed offline:
-> 
-> Sean was using a machine w/o FEAT_FWB for this test, so the increased
-> runtime on arm64 is likely explained by the CMOs we're doing when
-> creating or invalidating a stage-2 PTE.
-> 
-> Using a machine w/ FEAT_FWB would be better for making these sort of
-> cross-architecture comparisons. Beyond CMOs, we do have some 
+--Sig_/BmxE5yJzK6MXNy_q3=u_mdC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-... some heavy barriers (e.g. DSB(ishst)) we use to ensure page table
-updates are visible to the system. So there could still be some
-arch-specific quirks that'll show up in the test.
+Hi all,
 
-> > and there might be bugs lurking the mmu_notifier flows.
-> 
-> Impossible! :)
-> 
-> > Jumping back to mmap_lock, adding a lock, vma_lookup(), and unlock in x86's page
-> > fault path for valid VMAs does introduce a performance regression, but only ~30%,
-> > not the ~6x jump from x86 to arm64.  So that too makes it unlikely taking mmap_lock
-> > is the main problem, though it's still good justification for avoid mmap_lock in
-> > the page fault path.
-> 
-> I'm curious how much of that 30% in a microbenchmark would translate to
-> real world performance, since it isn't *that* egregious. We also have
-> other uses for getting at the VMA beyond mapping granularity (MTE and
-> the VFIO Normal-NC hint) that'd require some attention too.
-> 
-> -- 
-> Thanks,
-> Oliver
+After merging the mm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+In file included from include/linux/kcsan-checks.h:13,
+                 from include/linux/instrumented.h:12,
+                 from include/asm-generic/bitops/instrumented-atomic.h:14,
+                 from arch/powerpc/include/asm/bitops.h:321,
+                 from include/linux/bitops.h:68,
+                 from arch/powerpc/include/asm/mce.h:12,
+                 from arch/powerpc/include/asm/paca.h:32,
+                 from arch/powerpc/include/asm/percpu.h:30,
+                 from include/linux/err.h:9,
+                 from arch/powerpc/include/asm/ptrace.h:22,
+                 from arch/powerpc/kernel/vdso/sigtramp64.S:14:
+include/linux/compiler_attributes.h:55: warning: "__always_inline" redefined
+   55 | #define __always_inline                 inline __attribute__((__alw=
+ays_inline__))
+      |=20
+In file included from include/linux/stddef.h:5,
+                 from include/linux/string.h:9,
+                 from arch/powerpc/include/asm/paca.h:16:
+include/uapi/linux/stddef.h:8: note: this is the location of the previous d=
+efinition
+    8 | #define __always_inline inline
+      |=20
+include/linux/compiler_attributes.h:91:20: error: missing binary operator b=
+efore token "("
+   91 | #if __has_attribute(__copy__)
+      |                    ^
+include/linux/compiler_attributes.h:104:20: error: missing binary operator =
+before token "("
+  104 | #if __has_attribute(__counted_by__)
+      |                    ^
+include/linux/compiler_attributes.h:107: warning: "__counted_by" redefined
+  107 | # define __counted_by(member)
+      |=20
+include/uapi/linux/stddef.h:55: note: this is the location of the previous =
+definition
+   55 | #define __counted_by(m)
+      |=20
+include/linux/compiler_attributes.h:116:20: error: missing binary operator =
+before token "("
+  116 | #if __has_attribute(__diagnose_as_builtin__)
+      |                    ^
+include/linux/compiler_attributes.h:139:20: error: missing binary operator =
+before token "("
+  139 | #if __has_attribute(__designated_init__)
+      |                    ^
+include/linux/compiler_attributes.h:150:20: error: missing binary operator =
+before token "("
+  150 | #if __has_attribute(__error__)
+      |                    ^
+include/linux/compiler_attributes.h:161:20: error: missing binary operator =
+before token "("
+  161 | #if __has_attribute(__externally_visible__)
+      |                    ^
+include/linux/compiler_attributes.h:198:20: error: missing binary operator =
+before token "("
+  198 | #if __has_attribute(__no_caller_saved_registers__)
+      |                    ^
+include/linux/compiler_attributes.h:209:20: error: missing binary operator =
+before token "("
+  209 | #if __has_attribute(__noclone__)
+      |                    ^
+include/linux/compiler_attributes.h:226:20: error: missing binary operator =
+before token "("
+  226 | #if __has_attribute(__fallthrough__)
+      |                    ^
+include/linux/compiler_attributes.h:252:20: error: missing binary operator =
+before token "("
+  252 | #if __has_attribute(__nonstring__)
+      |                    ^
+include/linux/compiler_attributes.h:264:20: error: missing binary operator =
+before token "("
+  264 | #if __has_attribute(__no_profile_instrument_function__)
+      |                    ^
+include/linux/compiler_attributes.h:283:20: error: missing binary operator =
+before token "("
+  283 | #if __has_attribute(__no_stack_protector__)
+      |                    ^
+include/linux/compiler_attributes.h:294:20: error: missing binary operator =
+before token "("
+  294 | #if __has_attribute(__overloadable__)
+      |                    ^
+include/linux/compiler_attributes.h:313:20: error: missing binary operator =
+before token "("
+  313 | #if __has_attribute(__pass_dynamic_object_size__)
+      |                    ^
+include/linux/compiler_attributes.h:318:20: error: missing binary operator =
+before token "("
+  318 | #if __has_attribute(__pass_object_size__)
+      |                    ^
+include/linux/compiler_attributes.h:342:20: error: missing binary operator =
+before token "("
+  342 | #if __has_attribute(__uninitialized__)
+      |                    ^
+include/linux/compiler_attributes.h:388:20: error: missing binary operator =
+before token "("
+  388 | #if __has_attribute(__warning__)
+      |                    ^
+include/linux/compiler_attributes.h:405:20: error: missing binary operator =
+before token "("
+  405 | #if __has_attribute(disable_sanitizer_instrumentation)
+      |                    ^
+
+Caused by commit
+
+  8e53757638ec ("err.h: add ERR_PTR_PCPU(), PTR_ERR_PCPU() and IS_ERR_PCPU(=
+) functions")
+
+Does include/linux/err.h really need to include asm/percpu.h?  __percpu is
+defined in compiler_types.h which is included in every c code compile.
+
+I have reverted that commit and the following one for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BmxE5yJzK6MXNy_q3=u_mdC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma9P/UACgkQAVBC80lX
+0GxdQggAl7vgqkhLlEWTBmAl0F05pO49AXv34KB1Ravro2TDrWPv331FEJ3rU8xi
+/HEU+zWQGKf1GGO+GJoi0oECdQKvzPFHaC8FHppvGhorXy5s0M+7UGoUUsn3hIMS
+sz0r30uhSgB5FCAl6gSpaEHXmf3ZUkT3XH3jUK8om+xBcAaI7fI8oUhhrGNeNh1M
+k3bxcs9vRu3euc/CWINvDivZ9RhqN02YrhTNmxIeYpOGDRlrqeFx4h8nVvGLnUIW
+e8ujDLv1ZImzbU9TSgWbIP0HWbfEjppkTnmjQkyLokEgWlybYosj8V9imdlZxh7E
+PLfhkFAPxqutzwrS7ie//oIiozakuQ==
+=Jcaa
+-----END PGP SIGNATURE-----
+
+--Sig_/BmxE5yJzK6MXNy_q3=u_mdC--
 
