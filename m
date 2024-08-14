@@ -1,295 +1,241 @@
-Return-Path: <linux-kernel+bounces-286128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BF39516F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:47:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C2B9516F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26041F23F0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34C3D286A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44D0145B2C;
-	Wed, 14 Aug 2024 08:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A259149C6F;
+	Wed, 14 Aug 2024 08:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B6quKT3F"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOzM+mpY"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE414375C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8630E14375C;
+	Wed, 14 Aug 2024 08:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625227; cv=none; b=LzebUDtnFc2aetTnx+WVo5gtwTNoelmCEnpz0wuqxPkvKwhqh1ge1l7l1x9Fy/BL/B+2uzDnHkgf+FQbVaRgLfIuzv9X280qpjeg4SEcEg2H5qKKbjI1ZzGNreOFDN+GRL5/Z77rXru/huUc6Wqii41gvAd381N3NeGDKLHPXXc=
+	t=1723625236; cv=none; b=tFcZsYbqhfvqu3b3NXsO5tdS8Scqw1hhpODrWpCCwwQ9iK8KJHA9AS4usdWZbSCoZAB72I/lVjMUcnBmLU/nmQpebpcsLHh3a1ucTxnVVWVD7v5uQp9WGOPYYRT1lGVFjMV6t2WM4pkqBtXy4sKWYH0m10jYqQsztsIwz3nC6xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625227; c=relaxed/simple;
-	bh=aSuk2mWiTdVUJuBeR3o8G61bWGivtH+IEI1Je9+zlOk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eM8wFu1RYOn7fSSvi2tyHJTjZsEq9RuHrhcFojcGsYs2vLstai4bISn/DZcHnf0+NxezNKNx12YLY8okCnEWzrnT9Zd6tX/wRcEZ6JoreefY8Tmw/a0BnNxkAwRfRJ4EpSvFKTgqwHiamXNVaksLcTXgB1zeRSjGnSquhKn7oAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B6quKT3F; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 15457FF80E;
-	Wed, 14 Aug 2024 08:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723625224;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vUDiBZ7QGmfDJ6NaVojAOKA60EYcBMHsx6yhqDwupvU=;
-	b=B6quKT3FTCNwzUzsjCKbtUV+kJt671euyp6xqClWODszCmB8X1M4Bywq9MIM6YARiAMa/r
-	E4S/0d7PeKeP6NR5pKw6b7nupik1berGNvdYNP4P3Gc/+tbyl3wr0XuCB6j44iA8rngCl7
-	bhZMgu8XBxYjElF3/ZSQfVyVTIFNSaL29x0lfos+GdSCWkkDmineFia0qxQs1oiO6fWQI/
-	1UWRsdXoJKYRpd18GlU0PeQyN5+nZnjVMtgHHjcwGK+MAwGA+b+tT4G8kN53muTnoAesiI
-	PL5FhBbG4AzH/a+n5yMcCktOFevjFgCC+TTmEaaLJC1rFr/j7gyQrfjfd24t8Q==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 14 Aug 2024 10:47:00 +0200
-Subject: [PATCH 3/3] drm/vkms: Add documentation
+	s=arc-20240116; t=1723625236; c=relaxed/simple;
+	bh=UNXzIpOo4I3UGLxgdEwwuDOJCsyLxZPjEX/otvupq/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PDQxt+XJDOsn8BTAzRa7dZo8Um21eIViZgDeFfLx6tyCnuPbgszaTPkzEy1gXr+xASk1HxrH2VOMhiQGuQtbn+Dh35fhlDu0iJPbuZ7/ueDFjhxAahTsRsgnbCDYyXHBtqnEVZ/3v1almG2vJLLAqyjX+3cqLrmIp94M4ZrR/GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOzM+mpY; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-530e2287825so5946780e87.1;
+        Wed, 14 Aug 2024 01:47:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723625233; x=1724230033; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v93U00J3W/G+3iiDSm+KOsmeueDudNy3zc5gSs6I6cA=;
+        b=VOzM+mpYHFXFwQVGH3OTJJ9qlHl7668QlrtENaRp/G8pt22CBeYXQaeyYDPJ+gzFwW
+         fq+ytL5BvTlQGsj59Fc9tpGhVWgpAKicVCkYqdRYVTNbBYwhhbw3cstBOdnhF2F0Nc4L
+         Odf+exgaxmjVup42U8dPGWo6xG43hvFy7yJno+GJS9x6ocUTfwZNYV06koTV/jXNvVSy
+         Q+2mg44M/PAqcy+9R36ouOG+ULe+6U8Qs/YbCBwWEHZcmmT0zFGSfctEifRqB27ePLGb
+         Lx1qI90LxK3ZQVMb4b3aRbAsfymO+ok3emH7RuuMNrmTbqBC7bf99LaN6xnXcsHId94y
+         uYxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723625233; x=1724230033;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v93U00J3W/G+3iiDSm+KOsmeueDudNy3zc5gSs6I6cA=;
+        b=HtTDZKj48zhHIQOz2cIaRG3JmeVx4cmD6sGbPPMXZSIhw55JTMQiOECP/B9AYtbkcf
+         VcID3O+a2X3F8xR0WEfmWez0x8WY7y29xU6JhhrDHXd9gKi0vouEBWlibYKOeMd7l0IX
+         c3B0ZMdtHVZ9IWwX0NkqmlP+75qUV4QPVZF7bvEokb0yAMv2QoQIkZD82FmzC5GY7eGh
+         uxm1HO+SnDcEfsPIqNcdTxI5d6ecXRhd8W8m2mh+NqytIS8HkC5VFa2bSTKKlDE13phf
+         mRUKPywnerUSjhNZ9R8OTJz++vB7y0EjIWmmkYvJh2hJOcLKrNV44qWghV9LJ+9n6tLE
+         hOfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIjKqgFDVmsL03mXA2wSz0DMbnBbTgBzFc357r75tn5AnenNWcaUi6t+cD4YUKSZvkMw9fCwZZjARHsgxudowbISMs44N8+T848cq83FSwCY0HccQvNGdShaRI+xnr4qEdWVATZs1dKv2VuXGxu3EmD0s5rpOIFDE4oaWl1pvuoBkAbQmpCeQmY5ORE8mcvd7Ck2u1ANi+eEVUWtYzHTDm
+X-Gm-Message-State: AOJu0YzTOvMIwlSfYYpmR3bdfH8J9G7VJb1e112tPESPzGMORk4MqUDR
+	6TL9bx5UpaB3wT58Wft2oq76UXmMDUp07X82N+GkefjZ9wozIlsU
+X-Google-Smtp-Source: AGHT+IH4EjACtsvCABaDeBjsVWwwYox558+OITuZDnWDDQJqpAVHjQXpEtVnsv3StoTxLrge71ISzA==
+X-Received: by 2002:a05:6512:118f:b0:516:d219:3779 with SMTP id 2adb3069b0e04-532edbd5a4emr1271567e87.58.1723625232130;
+        Wed, 14 Aug 2024 01:47:12 -0700 (PDT)
+Received: from latitude-fedora.localnet ([194.247.191.114])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200f42241sm1180073e87.265.2024.08.14.01.47.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 01:47:11 -0700 (PDT)
+From: Alexey Charkov <alchark@gmail.com>
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
+ heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
+ linux-rockchip@lists.infradead.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ nick@khadas.com, Sai Krishna <saikrishnag@marvell.com>,
+ Arend van Spriel <arend.vanspriel@broadcom.com>
+Subject:
+ Re: [PATCH v10 4/5] wifi: brcmfmac: Add optional lpo clock enable support
+Date: Wed, 14 Aug 2024 11:47:09 +0300
+Message-ID: <2269063.vFx2qVVIhK@latitude-fedora>
+In-Reply-To: <721da64c-42ec-4be6-8ad3-e2685a84823a@broadcom.com>
+References:
+ <20240813082007.2625841-1-jacobe.zang@wesion.com>
+ <20240813082007.2625841-5-jacobe.zang@wesion.com>
+ <721da64c-42ec-4be6-8ad3-e2685a84823a@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-google-clarifications-v1-3-3ee76d7d0c28@bootlin.com>
-References: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
-In-Reply-To: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6986;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=aSuk2mWiTdVUJuBeR3o8G61bWGivtH+IEI1Je9+zlOk=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvG8D2bxpdTOBZKWkasIlq9cPBEXyLdvxEs7Xa
- Ro3ieEmMo+JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrxvAwAKCRAgrS7GWxAs
- 4kHaEADWsuy4j3Dw9nb0hNAkqxAC+ONbsQLL6x6nPJ1JwALS6ilapqlNqRTyvgRYIb4IyWMGSGH
- RxolxgsdFNIa78HGPqJbG3Lk7QF4i2ae9ViOi1kPDye5N/mNxPw8658mrjSkrMMw8mJUFMv3jx2
- jziBG9dtzw3RAiiZ1bHutgl2KKHTe0H7VGDgnIgBDDS5gK2jDCV7HikBuZmZFSJ8e3h/dd3Qz3s
- hs6pOShZkIfpM5p6zQYNMtKy8TEKAQw93iwaS9vb+Oy+Y2j8iarGTWVcFxg7Adno6DAgn+mbEO2
- BPTAdZObIgaldHa6zGKqFnfu8GdzVi2oGD5U2OObeXo2AO579ySKT5KcUQUjJ1sX6fjdORFaiVG
- UGPnnc6ZhonwW/76Mpd/nG8yAoAUCt9LDaP6FtngZ/2LeMSH/yGl5OuabXBQvPYD8KUC8fQ/wTN
- Pl7XLSqDhP06zuBIvLt4MsfOPElcYNyTOM9vpZ6izLGoOckj/FpQRQ7uMNmwHJr9OIpwecjFd/D
- XuCiNwVhWxJJ8nTftoHVW4mkkYMeV8A4lcYk4BHBsCFa58mT5uietJwZpQhw9vK7CAmax/xB7ru
- 6rQ43TkA7wLaQPIFJ7lTBSjrhUHAO250V9pYatMMKdhOJIB665AteIT6ag7I+WzdU6ceFwuFpW6
- TyqajSxxK3UY03A==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
 
-Add documentation around vkms_output and its initialization.
+Hi Arend, Jacobe,
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_drv.h    | 81 ++++++++++++++++++++++++++++++++------
- drivers/gpu/drm/vkms/vkms_output.c | 12 +++++-
- 2 files changed, 80 insertions(+), 13 deletions(-)
+On Tuesday, August 13, 2024 2:57:28=E2=80=AFPM GMT+3 Arend van Spriel wrote:
+> On 8/13/2024 10:20 AM, Jacobe Zang wrote:
+> > WiFi modules often require 32kHz clock to function. Add support to
+> > enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
+> > to the top of brcmf_of_probe. Change function prototypes from void
+> > to int and add appropriate errno's for return values that will be
+> > send to bus when error occurred.
+>=20
+> I was going to say it looks good to me, but....
+>=20
+> > Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> > Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> > Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> > Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> > Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
+> > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> > ---
+> >=20
+> >   .../broadcom/brcm80211/brcmfmac/bcmsdh.c      |  4 +-
+> >   .../broadcom/brcm80211/brcmfmac/common.c      |  3 +-
+> >   .../wireless/broadcom/brcm80211/brcmfmac/of.c | 53 +++++++++++--------
+> >   .../wireless/broadcom/brcm80211/brcmfmac/of.h |  9 ++--
+> >   .../broadcom/brcm80211/brcmfmac/pcie.c        |  3 ++
+> >   .../broadcom/brcm80211/brcmfmac/sdio.c        | 22 +++++---
+> >   .../broadcom/brcm80211/brcmfmac/usb.c         |  3 ++
+> >   7 files changed, 61 insertions(+), 36 deletions(-)
+>=20
+> [...]
+>=20
+> > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> > b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c index
+> > e406e11481a62..f19dc7355e0e8 100644
+> > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+>=20
+> [...]
+>=20
+> > @@ -113,33 +118,39 @@ void brcmf_of_probe(struct device *dev, enum
+> > brcmf_bus_type bus_type,>=20
+> >   		of_node_put(root);
+> >   =09
+> >   	}
+> >=20
+> > -	if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+> > -		return;
+> > -
+> >=20
+> >   	err =3D brcmf_of_get_country_codes(dev, settings);
+> >   	if (err)
+> >   =09
+> >   		brcmf_err("failed to get OF country code map (err=3D%d)
+\n", err);
+> >   =09
+> >   	of_get_mac_address(np, settings->mac);
+> >=20
+> > -	if (bus_type !=3D BRCMF_BUSTYPE_SDIO)
+> > -		return;
+> > +	if (bus_type =3D=3D BRCMF_BUSTYPE_SDIO) {
+>=20
+> Don't like the fact that this now has an extra indentation level and it
+> offers no extra benefit. Just keep the original if-statement and return
+> 0. Consequently the LPO clock code should move just before the if-stateme=
+nt.
+> > +		if (of_property_read_u32(np, "brcm,drive-strength",=20
+&val) =3D=3D 0)
+> > +			sdio->drive_strength =3D val;
+> >=20
+> > -	if (of_property_read_u32(np, "brcm,drive-strength", &val) =3D=3D 0)
+> > -		sdio->drive_strength =3D val;
+> > +		/* make sure there are interrupts defined in the node */
+> > +		if (!of_property_present(np, "interrupts"))
+> > +			return 0;
+> >=20
+> > -	/* make sure there are interrupts defined in the node */
+> > -	if (!of_property_present(np, "interrupts"))
+> > -		return;
+> > +		irq =3D irq_of_parse_and_map(np, 0);
+> > +		if (!irq) {
+> > +			brcmf_err("interrupt could not be=20
+mapped\n");
+> > +			return 0;
+> > +		}
+> > +		irqf =3D irqd_get_trigger_type(irq_get_irq_data(irq));
+> > +
+> > +		sdio->oob_irq_supported =3D true;
+> > +		sdio->oob_irq_nr =3D irq;
+> > +		sdio->oob_irq_flags =3D irqf;
+> > +	}
+> >=20
+> > -	irq =3D irq_of_parse_and_map(np, 0);
+> > -	if (!irq) {
+> > -		brcmf_err("interrupt could not be mapped\n");
+> > -		return;
+> > +	clk =3D devm_clk_get_optional_enabled(dev, "lpo");
+> > +	if (!IS_ERR_OR_NULL(clk)) {
+> > +		brcmf_dbg(INFO, "enabling 32kHz clock\n");
+> > +		return clk_set_rate(clk, 32768);
+> > +	} else {
+> > +		return PTR_ERR_OR_ZERO(clk);
+> >=20
+> >   	}
+>=20
+> Change this to:
+>  > +	clk =3D devm_clk_get_optional_enabled(dev, "lpo");
+>  > +	if (IS_ERR_OR_NULL(clk)) {
+>  > +		return PTR_ERR_OR_ZERO(clk);
 
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index 3028678e4f9b..8f6c9e67e671 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -147,29 +147,51 @@ struct vkms_color_lut {
- };
- 
- /**
-- * vkms_crtc_state - Driver specific CRTC state
-+ * struct vkms_crtc_state - Driver specific CRTC state
-+ *
-  * @base: base CRTC state
-  * @composer_work: work struct to compose and add CRC entries
-- * @n_frame_start: start frame number for computed CRC
-- * @n_frame_end: end frame number for computed CRC
-+ *
-+ * @num_active_planes: Number of active planes
-+ * @active_planes: List containing all the active planes (counted by
-+ *  @num_active_planes). They should be stored in z-order.
-+ * @active_writeback: Current active writeback job
-+ * @gamma_lut: Look up table for gamma used in this CRTC
-+ * @crc_pending: Protected by @vkms_output.composer_lock.
-+ * @wb_pending: Protected by @vkms_output.composer_lock.
-+ * @frame_start: Protected by @vkms_output.composer_lock.
-+ * @frame_end: Protected by @vkms_output.composer_lock.
-  */
- struct vkms_crtc_state {
- 	struct drm_crtc_state base;
- 	struct work_struct composer_work;
- 
- 	int num_active_planes;
--	/* stack of active planes for crc computation, should be in z order */
- 	struct vkms_plane_state **active_planes;
- 	struct vkms_writeback_job *active_writeback;
- 	struct vkms_color_lut gamma_lut;
- 
--	/* below four are protected by vkms_output.composer_lock */
- 	bool crc_pending;
- 	bool wb_pending;
- 	u64 frame_start;
- 	u64 frame_end;
- };
- 
-+/**
-+ * struct vkms_output - Internal representation of all output components in vkms
-+ *
-+ * @crtc: Base crtc in drm
-+ * @encoder: DRM encoder used for this output
-+ * @connector: DRM connector used for this output
-+ * @wb_connecter: DRM writeback connector used for this output
-+ * @vblank_hrtimer:
-+ * @period_ns:
-+ * @composer_workq: Ordered workqueue for composer_work
-+ * @lock: Lock used to project concurrent acces to the composer
-+ * @composer_enabled: Protected by @lock.
-+ * @composer_state:
-+ * @composer_lock: Lock used internally to protect @composer_state members
-+ */
- struct vkms_output {
- 	struct drm_crtc crtc;
- 	struct drm_encoder encoder;
-@@ -177,28 +199,38 @@ struct vkms_output {
- 	struct drm_writeback_connector wb_connector;
- 	struct hrtimer vblank_hrtimer;
- 	ktime_t period_ns;
--	/* ordered wq for composer_work */
- 	struct workqueue_struct *composer_workq;
--	/* protects concurrent access to composer */
- 	spinlock_t lock;
- 
--	/* protected by @lock */
- 	bool composer_enabled;
- 	struct vkms_crtc_state *composer_state;
- 
- 	spinlock_t composer_lock;
- };
- 
--struct vkms_device;
--
-+/**
-+ * struct vkms_config - General configuration for VKMS driver
-+ *
-+ * @writeback: If true, a writeback buffer can be attached to the CRTC
-+ * @cursor: If true, a cursor plane is created in the VKMS device
-+ * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
-+ * @dev: Used to store the current vkms device. Only set when the device is instancied.
-+ */
- struct vkms_config {
- 	bool writeback;
- 	bool cursor;
- 	bool overlay;
--	/* only set when instantiated */
- 	struct vkms_device *dev;
- };
- 
-+/**
-+ * struct vkms_device - Description of a vkms device
-+ *
-+ * @drm - Base device in drm
-+ * @platform - Associated platform device
-+ * @output - Configuration and sub-components of the vkms device
-+ * @config: Configuration used in this vkms device
-+ */
- struct vkms_device {
- 	struct drm_device drm;
- 	struct platform_device *platform;
-@@ -206,6 +238,10 @@ struct vkms_device {
- 	const struct vkms_config *config;
- };
- 
-+/*
-+ * The following helpers are used to convert a member of a struct into its parent.
-+ */
-+
- #define drm_crtc_to_vkms_output(target) \
- 	container_of(target, struct vkms_output, crtc)
- 
-@@ -218,12 +254,33 @@ struct vkms_device {
- #define to_vkms_plane_state(target)\
- 	container_of(target, struct vkms_plane_state, base.base)
- 
--/* CRTC */
-+/**
-+ * vkms_crtc_init() - Initialize a crtc for vkms
-+ * @dev: drm_device associated with the vkms buffer
-+ * @crtc: uninitialized crtc device
-+ * @primary: primary plane to attach to the crtc
-+ * @cursor plane to attach to the crtc
-+ */
- int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
- 		   struct drm_plane *primary, struct drm_plane *cursor);
-+/**
-+ * vkms_output_init() - Initialize all sub-components needed for a vkms device.
-+ *
-+ * @vkmsdev: vkms device to initialize
-+ * @possible_crtc_index: Crtc which can be attached to the planes. The caller must ensure that
-+ * possible_crtc_index is positive and less or equals to 31.
-+ */
- 
- int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index);
- 
-+/**
-+ * vkms_plane_init() - Initialize a plane
-+ *
-+ * @vkmsdev: vkms device containing the plane
-+ * @type: type of plane to initialize
-+ * @possible_crtc_index: Crtc which can be attached to the plane. The caller must ensure that
-+ * possible_crtc_index is positive and less or equals to 31.
-+ */
- struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
- 				   enum drm_plane_type type, int possible_crtc_index);
- 
-diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-index d42ca7d10389..36db2c8923cb 100644
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -21,6 +21,7 @@ static int vkms_conn_get_modes(struct drm_connector *connector)
- {
- 	int count;
- 
-+	/* Use the default modes list from drm */
- 	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
- 	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
- 
-@@ -58,8 +59,13 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
- 	int writeback;
- 	unsigned int n;
- 
-+	/*
-+	 * Initialize used plane. One primary plane is required to perform the composition.
-+	 *
-+	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
-+	 * composition.
-+	 */
- 	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, possible_crtc_index);
--
- 	if (IS_ERR(primary))
- 		return PTR_ERR(primary);
- 
-@@ -96,6 +102,10 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
- 		DRM_ERROR("Failed to init encoder\n");
- 		goto err_encoder;
- 	}
-+	/*
-+	 * This is an hardcoded value to select crtc for the encoder.
-+	 * 1 here designate the first registered CRTC, the one allocated in [1]
-+	 */
- 	encoder->possible_crtcs = 1;
- 
- 	ret = drm_connector_attach_encoder(connector, encoder);
+Perhaps in this case we should go for IS_ERR and PTR_ERR respectively.=20
+devm_clk_get_optional_enabled would return NULL when the optional clock is =
+not=20
+found, so NULL is not an error state but serves as a dummy clock that can b=
+e=20
+used with clk_set_rate.
 
--- 
-2.44.2
+This way we won't skip over the interrupts initialization below in case the=
+=20
+clock is absent.
+
+>  > +	}
+>  > +	brcmf_dbg(INFO, "enabling 32kHz clock\n");
+>  > +	clk_set_rate(clk, 32768);
+>=20
+> As said above this should be moved before the if-statement:
+>  > -	if (bus_type !=3D BRCMF_BUSTYPE_SDIO)
+>  > -		return 0;
+> >=20
+> > -	irqf =3D irqd_get_trigger_type(irq_get_irq_data(irq));
+> >=20
+> > -	sdio->oob_irq_supported =3D true;
+> > -	sdio->oob_irq_nr =3D irq;
+> > -	sdio->oob_irq_flags =3D irqf;
+> > +	return 0;
+> >=20
+> >   }
+
+Best regards,
+Alexey
+
 
 
