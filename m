@@ -1,474 +1,164 @@
-Return-Path: <linux-kernel+bounces-287183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE323952460
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:00:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5176952464
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2382858CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63CF61F22047
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE77D1BDAA5;
-	Wed, 14 Aug 2024 21:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5F81C7B78;
+	Wed, 14 Aug 2024 21:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBYUkfiI"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g/Nwcb8J"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CAB1B9B59;
-	Wed, 14 Aug 2024 21:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2F61C68B4
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723669228; cv=none; b=KMM8+GFdjYfLggorFTOTbGErXmHwCd0guPOlvCmdYOCyNviez4w7+Nau5WuGDNarJ7j2VymFOLlKH4yhgWVK0uBMvqQouzIaztwczq1RaN9CMqPlzb5dqP0RocA7TuqfCx8D8pnJ8aCqykryk3x7YpmWgvbfLJZ+geceXCxmQMA=
+	t=1723669287; cv=none; b=MNDvPrC2GuaxpmC9WevnutJlCkYSNEeajmWIfZBhVcFkep9iBuK7SM3BkGOqS3HGrli8QfJ/SMCGWdqyaNUjTCD9qLoF9NL0BKKtzYC6xFnr2xxb+QO/6sdFo+Oyb7gaOx3FcdggU4O3NJmOKtYuoKK8ettrJuVjcEvk9dC3aQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723669228; c=relaxed/simple;
-	bh=DzDTsvmObquPyGzIFTK7wf7BeEVUJOGrq0ajpa/zX08=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AcG8iRNabzs0trywc45U2bSNGfygwVPgD7QoUrqnqoSs2jqZQolfXHjNa3+6QCbnJZAYL1wEgvcI3h6Ubi9pM5nwcXVveuzwrZIMWVBRFRWy/0RSwKrsrg51ny9DsH7mghqUeFcfN3c8jueAGzHVzzcgOSoPszFadb2Wd3h47pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBYUkfiI; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2689f749702so187247fac.3;
-        Wed, 14 Aug 2024 14:00:25 -0700 (PDT)
+	s=arc-20240116; t=1723669287; c=relaxed/simple;
+	bh=QFUMlwKJJ22GxYAqA6y3hNWVCyOLZH77nEyNH3dVRVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oBYlMgPKrnVKPlraPaqInvZPANkEgvgidQnhC7II1hc9jM43E60Q98j3ETXdD49/YPTFhCJ8XO/B9PxAeaKYNlQQjKtvfw3tzJENWtZvZ93wv0XYxfT+OG/4OL2RCTFAZOmyCCTxYTh9RE4i2Kje4JotNKp6n8qevnml8w6DOMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g/Nwcb8J; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so540791a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:01:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723669224; x=1724274024; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=e1NygBbcJ8x72qP+tM/Wp1YkzJ5Lw47jE4xYaVvdbwc=;
-        b=TBYUkfiICBbWPeIT/Yu/ISzhWChMqIbSKOS0KYgWLrU6drwvAG455hZ4R4pBOcf6RS
-         ViFqlfM6VNOyu0FlKyrC9okIVnbNvWb2pdS+uhJYNloIEQMONNAyJ7Rsvk22zqcCEtfV
-         pWLoxXJhpb9dk7nbe3pEvnPAf/IriONlLmzduAIdmKNzYKKz6XZ+GTpIFlJxNteXD4D+
-         /DlNTxQ4Hr4a5Z4SEC0iWFqgNtCexX+A3aKwKdpDzgfV1d8eT12EQOlNlQTnEe24wRCh
-         Kc83O+lfdeufEgKI6h8+ObCZYReKvZqKNCHSXTTW0tUX1CnqzAqQHxY1Ba/9/91f3ZvA
-         jpgw==
+        d=google.com; s=20230601; t=1723669281; x=1724274081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PtSWn6D+L1i0S8D9pk47VhJVmM2hM2e0bEFMHwPQzZo=;
+        b=g/Nwcb8J1eH6FtKoBGBgheeUSE9s8w9ugmA+ABJSCJJmg1Rs9nVw+0tp3HRmFgXp/b
+         EmnIX6AcUCLvPaZTHrjEnH2CijGpTbMLPwGW8AmQMdU88EbYzmiYlW24oCBypsexIrCy
+         1Chs+TuOgaFbWkIj8bcafatNVbe4lpYYV39pyjWqukVhK4dZvIVWaOhwX53GBFNA0ADK
+         Fz9vEECNix4AJWdQ3nylXt4S5BvexYgw6CqLui8oYOsvMcgUD3pzqTyguADdGj02QqXE
+         6dVVcfGAfGNNwkKavyFkPzrnq0JKFJfMoFz5bG/O1rsiW39rc6Z5kej2JpAn6p7J+gWv
+         Qw3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723669224; x=1724274024;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e1NygBbcJ8x72qP+tM/Wp1YkzJ5Lw47jE4xYaVvdbwc=;
-        b=Ym1WeMS+7jEesEzXcfhpmE5H9Em4hD5/AIMhLIs9v2rnCQTdKn3Y3Al33qmQVldl9O
-         nBqJEX9M795zGUernEYAXJozbfRXI6+kz96y5sNewWgztN7/ovanr77lxjYaACVzOnAU
-         QFnesvjYWhUO0pc0Cghh7srpxGz29+CNsqy6+NEalaCsYIHieD4W/t0t6QINaoenGMJ2
-         +lPDx0Kl7hJ4CTf6SBM792Ac8b3dfjV45VvRdnjWDTY0RUNyaYFz1Jl/75iK9zbV3nvG
-         zNfDD9SkOdHewf/ByBLz4smh3wAUqXX4wt7kz1VAlwiScvNzmC4GmDnFDRlHQfrxp6mW
-         zJ1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWhvZ6LXsM+XJVYqvOs01ONcEGDSUJZeYbdtAH7+lFQ7meDTvj19HbH6Fe7gY6yPkcSwKDT4mnU+bBIvY8LMLOUe2iqsfNUEajhsmh4
-X-Gm-Message-State: AOJu0Yxd0y7bAA9Q4i5nYuCNT/QLF9offY9ASSgjfH7rkoHTcTK3UIMT
-	3NI2KXXB6SBaalQspjs3eJLihSQncU3yI1fyLo6AIh445ma815Kr
-X-Google-Smtp-Source: AGHT+IG/yiWqO0H6ViVm+AspkVWf1BH2fpLRIW708oGGkUvZsXz90qpoJMlLGLVWQDSIDUzQX0eRsg==
-X-Received: by 2002:a05:6870:b6a0:b0:260:e453:5368 with SMTP id 586e51a60fabf-26fe5c2f603mr4785472fac.46.1723669224438;
-        Wed, 14 Aug 2024 14:00:24 -0700 (PDT)
-Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
-        by smtp.googlemail.com with ESMTPSA id 586e51a60fabf-270044811ddsm34789fac.13.2024.08.14.14.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 14:00:24 -0700 (PDT)
-Message-ID: <d9814d6628599b7b28ed29c71d6fb6631123fdef.camel@gmail.com>
-Subject: Re: [PATCH net-next v13 11/14] mm: page_frag: introduce
- prepare/probe/commit API
-From: Alexander H Duyck <alexander.duyck@gmail.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org,  pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton
-	 <akpm@linux-foundation.org>, linux-mm@kvack.org
-Date: Wed, 14 Aug 2024 14:00:21 -0700
-In-Reply-To: <20240808123714.462740-12-linyunsheng@huawei.com>
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
-	 <20240808123714.462740-12-linyunsheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        d=1e100.net; s=20230601; t=1723669281; x=1724274081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PtSWn6D+L1i0S8D9pk47VhJVmM2hM2e0bEFMHwPQzZo=;
+        b=dvT4eo6c7KaWZrgdh8mx2AGTsp1GrV29KskKFAdEtqXejPnhzjcGRFaTg5I04sOBP+
+         ucYxjUq8whci3wVKKRiCost/ORNaexSD6b3uscqQ8xobfIcS9tlEEOcmwe8tFHruZ4dj
+         Fu95IxGddWSAanRyTZnsvzZl6JT1sCbcBwlIQ0Xa3ewSNulVRZ4PDR1uxBNaVrUoMPnm
+         ckcA5ul97MmT2t6JyGjvNSJa7B9ZqM3MqsWkOUCgyCU24yGZ1UpPBORG+7EV2Rlh5ker
+         1IJbUSofvLpy72Qiq1VZKVm44t5hrZ5KjaBZ/SArF+H+mPk1+G/l6qGlyQl5rzTlA95e
+         zIsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVa5Kc+Zoe4iAf9QYnaQCjBSJueMd+4f07/yTSZgN0eNBXftKUimNuU0szICL0qvTHIE/bX2/RcWqWKbu8iAImVUmPDbdW5BykCgX9y
+X-Gm-Message-State: AOJu0YwKjETsx0GDZ4STS0OeQO2gKu2hMeFHt+Ci047vFhOvDdorfQiE
+	EbKgXQeyBVfn9znYxf+W5Gsuwxxmol2RKZBtoSX2DKqg//bIVnmL3LHWeIBCCmNwoiYBPEvZLR5
+	50EvpymXSqk3s6UN2msCDxV7ZttpL5tC1sG+5
+X-Google-Smtp-Source: AGHT+IGRA6vdncRy2nz6tiF7hG9ZotPO8yndJSxBHfEImNy31+XsN/M4EX4g0JuPoNUaluTpzizpWso7xAtF766k5Fw=
+X-Received: by 2002:a05:6402:3514:b0:57c:7471:a0dd with SMTP id
+ 4fb4d7f45d1cf-5bea1c739c4mr2561925a12.12.1723669281004; Wed, 14 Aug 2024
+ 14:01:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240814202825.2694077-1-shakeel.butt@linux.dev> <20240814202825.2694077-5-shakeel.butt@linux.dev>
+In-Reply-To: <20240814202825.2694077-5-shakeel.butt@linux.dev>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Wed, 14 Aug 2024 14:01:06 -0700
+Message-ID: <CABdmKX1adgyideAM+hggM2vYSQqoXVPNPDicAi2iGHL2MG-SMA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] memcg: initiate deprecation of pressure_level
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
-> There are many use cases that need minimum memory in order
-> for forward progress, but more performant if more memory is
-> available or need to probe the cache info to use any memory
-> available for frag caoleasing reason.
->=20
-> Currently skb_page_frag_refill() API is used to solve the
-> above use cases, but caller needs to know about the internal
-> detail and access the data field of 'struct page_frag' to
-> meet the requirement of the above use cases and its
-> implementation is similar to the one in mm subsystem.
->=20
-> To unify those two page_frag implementations, introduce a
-> prepare API to ensure minimum memory is satisfied and return
-> how much the actual memory is available to the caller and a
-> probe API to report the current available memory to caller
-> without doing cache refilling. The caller needs to either call
-> the commit API to report how much memory it actually uses, or
-> not do so if deciding to not use any memory.
->=20
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+On Wed, Aug 14, 2024 at 1:29=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> The pressure_level in memcg v1 provides memory pressure notifications to
+> the user space. At the moment it provides notifications for three levels
+> of memory pressure i.e. low, medium and critical, which are defined
+> based on internal memory reclaim implementation details. More
+> specifically the ratio or scanned and reclaimed pages during a memory
+> reclaim. However this is not robust as there are workloads with mostly
+> unreclaimable user memory or kernel memory.
+>
+> For v2, the users can use PSI for memory pressure status of the system
+> or the cgroup. Let's start the deprecation process for pressure_level
+> and add warnings to gather the info on how the current users are using
+> this interface and how they can be used to PSI.
+>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 > ---
->  include/linux/page_frag_cache.h |  75 ++++++++++++++++
->  mm/page_frag_cache.c            | 152 ++++++++++++++++++++++++++++----
->  2 files changed, 212 insertions(+), 15 deletions(-)
->=20
-> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
-che.h
-> index 0abffdd10a1c..ba5d7f8a03cd 100644
-> --- a/include/linux/page_frag_cache.h
-> +++ b/include/linux/page_frag_cache.h
-> @@ -7,6 +7,8 @@
->  #include <linux/build_bug.h>
->  #include <linux/log2.h>
->  #include <linux/types.h>
-> +#include <linux/mm.h>
-> +#include <linux/mmdebug.h>
->  #include <linux/mm_types_task.h>
-> =20
->  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
-> @@ -67,6 +69,9 @@ static inline unsigned int page_frag_cache_page_size(un=
-signed long encoded_va)
-> =20
->  void page_frag_cache_drain(struct page_frag_cache *nc);
->  void __page_frag_cache_drain(struct page *page, unsigned int count);
-> +struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
-> +				unsigned int *offset, unsigned int fragsz,
-> +				gfp_t gfp);
->  void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
->  				 unsigned int fragsz, gfp_t gfp_mask,
->  				 unsigned int align_mask);
-> @@ -79,12 +84,82 @@ static inline void *page_frag_alloc_va_align(struct p=
-age_frag_cache *nc,
->  	return __page_frag_alloc_va_align(nc, fragsz, gfp_mask, -align);
->  }
-> =20
-> +static inline unsigned int page_frag_cache_page_offset(const struct page=
-_frag_cache *nc)
-> +{
-> +	return page_frag_cache_page_size(nc->encoded_va) - nc->remaining;
-> +}
+>  Documentation/admin-guide/cgroup-v1/memory.rst | 8 ++++++--
+>  mm/memcontrol-v1.c                             | 3 +++
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/cgroup-v1/memory.rst b/Documentati=
+on/admin-guide/cgroup-v1/memory.rst
+> index 74cea6712d06..8ec1faf08b6b 100644
+> --- a/Documentation/admin-guide/cgroup-v1/memory.rst
+> +++ b/Documentation/admin-guide/cgroup-v1/memory.rst
+> @@ -86,6 +86,8 @@ Brief summary of control files.
+>                                       used.
+>   memory.force_empty                 trigger forced page reclaim
+>   memory.pressure_level              set memory pressure notifications
+> +                                     This knob is deprecated and shouldn=
+'t be
+> +                                     used.
+>   memory.swappiness                  set/show swappiness parameter of vms=
+can
+>                                      (See sysctl's vm.swappiness)
+>   memory.move_charge_at_immigrate     set/show controls of moving charges
+> @@ -898,8 +900,10 @@ At reading, current status of OOM is shown.
+>            The number of processes belonging to this cgroup killed by any
+>            kind of OOM killer.
+>
+> -11. Memory Pressure
+> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +11. Memory Pressure (DEPRECATED)
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
 > +
->  static inline void *page_frag_alloc_va(struct page_frag_cache *nc,
->  				       unsigned int fragsz, gfp_t gfp_mask)
->  {
->  	return __page_frag_alloc_va_align(nc, fragsz, gfp_mask, ~0u);
->  }
-> =20
-> +void *page_frag_alloc_va_prepare(struct page_frag_cache *nc, unsigned in=
-t *fragsz,
-> +				 gfp_t gfp);
-> +
-> +static inline void *page_frag_alloc_va_prepare_align(struct page_frag_ca=
-che *nc,
-> +						     unsigned int *fragsz,
-> +						     gfp_t gfp,
-> +						     unsigned int align)
-> +{
-> +	WARN_ON_ONCE(!is_power_of_2(align) || align > PAGE_SIZE);
-> +	nc->remaining =3D nc->remaining & -align;
-> +	return page_frag_alloc_va_prepare(nc, fragsz, gfp);
-> +}
-> +
-> +struct page *page_frag_alloc_pg_prepare(struct page_frag_cache *nc,
-> +					unsigned int *offset,
-> +					unsigned int *fragsz, gfp_t gfp);
-> +
-> +struct page *page_frag_alloc_prepare(struct page_frag_cache *nc,
-> +				     unsigned int *offset,
-> +				     unsigned int *fragsz,
-> +				     void **va, gfp_t gfp);
-> +
-> +static inline struct page *page_frag_alloc_probe(struct page_frag_cache =
-*nc,
-> +						 unsigned int *offset,
-> +						 unsigned int *fragsz,
-> +						 void **va)
-> +{
-> +	unsigned long encoded_va =3D nc->encoded_va;
-> +	struct page *page;
-> +
-> +	VM_BUG_ON(!*fragsz);
-> +	if (unlikely(nc->remaining < *fragsz))
-> +		return NULL;
-> +
-> +	*va =3D encoded_page_address(encoded_va);
-> +	page =3D virt_to_page(*va);
-> +	*fragsz =3D nc->remaining;
-> +	*offset =3D page_frag_cache_page_size(encoded_va) - *fragsz;
-> +	*va +=3D *offset;
-> +
-> +	return page;
-> +}
-> +
+> +THIS IS DEPRECATED!
+>
+>  The pressure level notifications can be used to monitor the memory
+>  allocation cost; based on the pressure, applications can implement
+> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+> index 07343e338e4e..420c7d15f12a 100644
+> --- a/mm/memcontrol-v1.c
+> +++ b/mm/memcontrol-v1.c
+> @@ -1913,6 +1913,9 @@ static ssize_t memcg_write_event_control(struct ker=
+nfs_open_file *of,
+>                 event->register_event =3D mem_cgroup_oom_register_event;
+>                 event->unregister_event =3D mem_cgroup_oom_unregister_eve=
+nt;
+>         } else if (!strcmp(name, "memory.pressure_level")) {
+> +               pr_warn_once("pressure_level is deprecated and will be re=
+moved. "
+> +                            "Please report your usecase to linux-mm-@kva=
+ck.org "
+> +                            "if you depend on this functionality. \n";
 
-I still think this should be populating a bio_vec instead of passing
-multiple arguments by pointer. With that you would be able to get all
-the fields without as many arguments having to be passed.
+Missing close paren? Extra space at the end too.
 
-> +static inline void page_frag_alloc_commit(struct page_frag_cache *nc,
-> +					  unsigned int fragsz)
-> +{
-> +	VM_BUG_ON(fragsz > nc->remaining || !nc->pagecnt_bias);
-> +	nc->pagecnt_bias--;
-> +	nc->remaining -=3D fragsz;
-> +}
-> +
-
-I would really like to see this accept a bio_vec as well. With that you
-could verify the page and offset matches the expected value before
-applying fragsz.
-
-> +static inline void page_frag_alloc_commit_noref(struct page_frag_cache *=
-nc,
-> +						unsigned int fragsz)
-> +{
-> +	VM_BUG_ON(fragsz > nc->remaining);
-> +	nc->remaining -=3D fragsz;
-> +}
-> +
-
-Same here.
-
-> +static inline void page_frag_alloc_abort(struct page_frag_cache *nc,
-> +					 unsigned int fragsz)
-> +{
-> +	nc->pagecnt_bias++;
-> +	nc->remaining +=3D fragsz;
-> +}
-> +
-
-This doesn't add up. Why would you need abort if you have commit? Isn't
-this more of a revert? I wouldn't think that would be valid as it is
-possible you took some sort of action that might have resulted in this
-memory already being shared. We shouldn't allow rewinding the offset
-pointer without knowing that there are no other entities sharing the
-page.
-
->  void page_frag_free_va(void *addr);
-> =20
->  #endif
-> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-> index 27596b84b452..f8fad7d2cca8 100644
-> --- a/mm/page_frag_cache.c
-> +++ b/mm/page_frag_cache.c
-> @@ -19,27 +19,27 @@
->  #include <linux/page_frag_cache.h>
->  #include "internal.h"
-> =20
-> -static bool __page_frag_cache_reuse(unsigned long encoded_va,
-> -				    unsigned int pagecnt_bias)
-> +static struct page *__page_frag_cache_reuse(unsigned long encoded_va,
-> +					    unsigned int pagecnt_bias)
->  {
->  	struct page *page;
-> =20
->  	page =3D virt_to_page((void *)encoded_va);
->  	if (!page_ref_sub_and_test(page, pagecnt_bias))
-> -		return false;
-> +		return NULL;
-> =20
->  	if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
->  		free_unref_page(page, encoded_page_order(encoded_va));
-> -		return false;
-> +		return NULL;
->  	}
-> =20
->  	/* OK, page count is 0, we can safely set it */
->  	set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
-> -	return true;
-> +	return page;
->  }
-> =20
-> -static bool __page_frag_cache_refill(struct page_frag_cache *nc,
-> -				     gfp_t gfp_mask)
-> +static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
-> +					     gfp_t gfp_mask)
->  {
->  	unsigned long order =3D PAGE_FRAG_CACHE_MAX_ORDER;
->  	struct page *page =3D NULL;
-> @@ -55,7 +55,7 @@ static bool __page_frag_cache_refill(struct page_frag_c=
-ache *nc,
->  		page =3D __alloc_pages(gfp, 0, numa_mem_id(), NULL);
->  		if (unlikely(!page)) {
->  			memset(nc, 0, sizeof(*nc));
-> -			return false;
-> +			return NULL;
->  		}
-> =20
->  		order =3D 0;
-> @@ -69,29 +69,151 @@ static bool __page_frag_cache_refill(struct page_fra=
-g_cache *nc,
->  	 */
->  	page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
-> =20
-> -	return true;
-> +	return page;
->  }
-> =20
->  /* Reload cache by reusing the old cache if it is possible, or
->   * refilling from the page allocator.
->   */
-> -static bool __page_frag_cache_reload(struct page_frag_cache *nc,
-> -				     gfp_t gfp_mask)
-> +static struct page *__page_frag_cache_reload(struct page_frag_cache *nc,
-> +					     gfp_t gfp_mask)
->  {
-> +	struct page *page;
-> +
->  	if (likely(nc->encoded_va)) {
-> -		if (__page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_bias))
-> +		page =3D __page_frag_cache_reuse(nc->encoded_va, nc->pagecnt_bias);
-> +		if (page)
->  			goto out;
->  	}
-> =20
-> -	if (unlikely(!__page_frag_cache_refill(nc, gfp_mask)))
-> -		return false;
-> +	page =3D __page_frag_cache_refill(nc, gfp_mask);
-> +	if (unlikely(!page))
-> +		return NULL;
-> =20
->  out:
->  	/* reset page count bias and remaining to start of new frag */
->  	nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
->  	nc->remaining =3D page_frag_cache_page_size(nc->encoded_va);
-> -	return true;
-> +	return page;
-> +}
-> +
-
-None of the functions above need to be returning page.
-
-> +void *page_frag_alloc_va_prepare(struct page_frag_cache *nc,
-> +				 unsigned int *fragsz, gfp_t gfp)
-> +{
-> +	unsigned int remaining =3D nc->remaining;
-> +
-> +	VM_BUG_ON(!*fragsz);
-> +	if (likely(remaining >=3D *fragsz)) {
-> +		unsigned long encoded_va =3D nc->encoded_va;
-> +
-> +		*fragsz =3D remaining;
-> +
-> +		return encoded_page_address(encoded_va) +
-> +			(page_frag_cache_page_size(encoded_va) - remaining);
-> +	}
-> +
-> +	if (unlikely(*fragsz > PAGE_SIZE))
-> +		return NULL;
-> +
-> +	/* When reload fails, nc->encoded_va and nc->remaining are both reset
-> +	 * to zero, so there is no need to check the return value here.
-> +	 */
-> +	__page_frag_cache_reload(nc, gfp);
-> +
-> +	*fragsz =3D nc->remaining;
-> +	return encoded_page_address(nc->encoded_va);
-> +}
-> +EXPORT_SYMBOL(page_frag_alloc_va_prepare);
-> +
-> +struct page *page_frag_alloc_pg_prepare(struct page_frag_cache *nc,
-> +					unsigned int *offset,
-> +					unsigned int *fragsz, gfp_t gfp)
-> +{
-> +	unsigned int remaining =3D nc->remaining;
-> +	struct page *page;
-> +
-> +	VM_BUG_ON(!*fragsz);
-> +	if (likely(remaining >=3D *fragsz)) {
-> +		unsigned long encoded_va =3D nc->encoded_va;
-> +
-> +		*offset =3D page_frag_cache_page_size(encoded_va) - remaining;
-> +		*fragsz =3D remaining;
-> +
-> +		return virt_to_page((void *)encoded_va);
-> +	}
-> +
-> +	if (unlikely(*fragsz > PAGE_SIZE))
-> +		return NULL;
-> +
-> +	page =3D __page_frag_cache_reload(nc, gfp);
-> +	*offset =3D 0;
-> +	*fragsz =3D nc->remaining;
-> +	return page;
-> +}
-> +EXPORT_SYMBOL(page_frag_alloc_pg_prepare);
-> +
-> +struct page *page_frag_alloc_prepare(struct page_frag_cache *nc,
-> +				     unsigned int *offset,
-> +				     unsigned int *fragsz,
-> +				     void **va, gfp_t gfp)
-> +{
-> +	unsigned int remaining =3D nc->remaining;
-> +	struct page *page;
-> +
-> +	VM_BUG_ON(!*fragsz);
-> +	if (likely(remaining >=3D *fragsz)) {
-> +		unsigned long encoded_va =3D nc->encoded_va;
-> +
-> +		*offset =3D page_frag_cache_page_size(encoded_va) - remaining;
-> +		*va =3D encoded_page_address(encoded_va) + *offset;
-> +		*fragsz =3D remaining;
-> +
-> +		return virt_to_page((void *)encoded_va);
-> +	}
-> +
-> +	if (unlikely(*fragsz > PAGE_SIZE))
-> +		return NULL;
-> +
-> +	page =3D __page_frag_cache_reload(nc, gfp);
-> +	*offset =3D 0;
-> +	*fragsz =3D nc->remaining;
-> +	*va =3D encoded_page_address(nc->encoded_va);
-> +
-> +	return page;
-> +}
-> +EXPORT_SYMBOL(page_frag_alloc_prepare);
-> +
-> +struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
-> +				unsigned int *offset, unsigned int fragsz,
-> +				gfp_t gfp)
-> +{
-> +	unsigned int remaining =3D nc->remaining;
-> +	struct page *page;
-> +
-> +	VM_BUG_ON(!fragsz);
-> +	if (likely(remaining >=3D fragsz)) {
-> +		unsigned long encoded_va =3D nc->encoded_va;
-> +
-> +		*offset =3D page_frag_cache_page_size(encoded_va) -
-> +				remaining;
-> +
-> +		return virt_to_page((void *)encoded_va);
-> +	}
-> +
-> +	if (unlikely(fragsz > PAGE_SIZE))
-> +		return NULL;
-> +
-> +	page =3D __page_frag_cache_reload(nc, gfp);
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	*offset =3D 0;
-> +	nc->remaining =3D remaining - fragsz;
-> +	nc->pagecnt_bias--;
-> +
-> +	return page;
->  }
-> +EXPORT_SYMBOL(page_frag_alloc_pg);
-
-Again, this isn't returning a page. It is essentially returning a
-bio_vec without calling it as such. You might as well pass the bio_vec
-pointer as an argument and just have it populate it directly.
-
-It would be identical to the existing page_frag for all intents and
-purposes. In addition you could use that as an intermediate value
-between the page_frag_cache for your prepare/commit call setup as you
-could limit the size/bv_len to being the only item that can be
-adjusted, specifically reduced between the prepare and commit calls.
-
-
+>                 event->register_event =3D vmpressure_register_event;
+>                 event->unregister_event =3D vmpressure_unregister_event;
+>         } else if (!strcmp(name, "memory.memsw.usage_in_bytes")) {
+> --
+> 2.43.5
+>
+>
 
