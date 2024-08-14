@@ -1,70 +1,80 @@
-Return-Path: <linux-kernel+bounces-287032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB5F9521DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:15:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005199521E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A04B224A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:15:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296E81C22B27
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026CE1BD4E2;
-	Wed, 14 Aug 2024 18:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5E11BD501;
+	Wed, 14 Aug 2024 18:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i+RD1Ec0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LVDIHWTw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9606713CABC;
-	Wed, 14 Aug 2024 18:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759A14D8B7
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723659318; cv=none; b=A9fcgh+bvICgSD+J4XSjDBYNaNe7YX+q+nFb3NYsLPjPlXGI/XCuSzbrro23XE5xxiykKxA1MvUzkrVyDZtJ3sOO3Y59GpgPB7rXkZiaj06f82f5/Wib1387wCjexd4OhKcIrtZXtcAYl43DMJ8vlCYKjgP0805MF8ZFdXRlMfE=
+	t=1723659347; cv=none; b=sEw0YxDGlqIRFjJDD9yvA76ZB+2JQbKQdO36+XnCyT8n1T5usXIYxzpN9Sn8Q5eU71Uf49kU3U/bKSmdvA310IGreinjX/DF6oGc7EnB08sqiuPEZTAlnoz1OQDFpeBvL9He+Ei8p/d/oPMPwX+8+3SpUi8543H8gg/UFR/fjDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723659318; c=relaxed/simple;
-	bh=is7S2/rJ4MTcclVdO3VVsiHsnMVP/hqoxQUNrq2oNUg=;
+	s=arc-20240116; t=1723659347; c=relaxed/simple;
+	bh=IgmLLxdFrfOUorJmUDHd7eFcVGsHkaucJD9AIG6Y6+0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GtlT0kHeY7X9RfKV0miuCgW2LhJu+7L+SOnaHz3WTfTR/6f9nF/mgBNGLeLXZcjSLHuC31S39UOWwbIshdM4TghKmUChcOiYNwyBxrthxhiXLUVLuUu8xtW5ymS/lnnLJIgzj/5b9q+Z+NPxV+zYd7JMCOs3Cg1/VEaogJiNbFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i+RD1Ec0; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723659317; x=1755195317;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=is7S2/rJ4MTcclVdO3VVsiHsnMVP/hqoxQUNrq2oNUg=;
-  b=i+RD1Ec0pO+8Ehhjk0o7OkiOOGMo2KnzHLpvydUZP4Cdwoqov92IFsqi
-   3Feq1IqCPPcy3dte+LqMBjpbCmIc6g2d0LM02p/zPdfU9xKWt4TDjx4CY
-   eEL/Wb+o8A4Uf+c1X5jI9oeOx2vO/OL0KA3gVNV94bp0JiYojihIUZd9u
-   nHXds35bPyMGRHhpP7Erdnl81IU+NrLm1ZfDBzcgCnGtpPc2SEpIbYzY4
-   TXKkO5fW3FOH/8LRHzEJXhxf5zs43NJpEqhhYd9Tz8wWqZONlY9rFcANm
-   8gYeWoHTp9beqhZCArfEliC+3T7pAclAXqbEINFLG6uvpVXXXUd3wu4PF
-   Q==;
-X-CSE-ConnectionGUID: DCwE11ZoRjeZc9d88/jrPA==
-X-CSE-MsgGUID: hNyLFZdQQMOH4ofXDV6KSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="32525568"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="32525568"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:15:16 -0700
-X-CSE-ConnectionGUID: CPZA/4CmT8+ybdwBjwyLRg==
-X-CSE-MsgGUID: poKIMBO7RS6shBqh0/JtHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="58767112"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:15:15 -0700
-Received: from [10.212.17.191] (kliang2-mobl1.ccr.corp.intel.com [10.212.17.191])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 57C7120CFED8;
-	Wed, 14 Aug 2024 11:15:13 -0700 (PDT)
-Message-ID: <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com>
-Date: Wed, 14 Aug 2024 14:15:11 -0400
+	 In-Reply-To:Content-Type; b=Y95Ckl6K/b3C4V5YbTE45yWC5p3HO6J6GbCcX1Lc4D/7YdO0ywFfKBkAx70+wbx8BHfrp44XGGu52+JosRBVCg4ip8w89TbKIBQ1v4NklzKEIvkeFz8y7gFdlsmBTynS1Uz7D968jzwEWwX2CNDklyUPfWAzy79U6nB/fsGgrAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LVDIHWTw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723659344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VbxqRbUq0VJMDm70f2A7+YGMoi31xCukMW6txgMsyoc=;
+	b=LVDIHWTwZcv8mmCgDTvuys0c0FO8TnX7ilq2aO5cc87V2lVDBUyXQjM6f9d/duLGoeI+cd
+	VSgZGQ8vQbweEolXggNd8HcsJqh94lRHEj2dbFOCsCvbo6M3KkYgipl6ZqZVfQa1JDzYgy
+	yWi6pP0HTOyaH1W5JAX/Ee8FbWzK0B8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-5B_GhA3-OXCWtx1sg5SHsw-1; Wed, 14 Aug 2024 14:15:38 -0400
+X-MC-Unique: 5B_GhA3-OXCWtx1sg5SHsw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36b356a73fcso89965f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:15:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723659336; x=1724264136;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VbxqRbUq0VJMDm70f2A7+YGMoi31xCukMW6txgMsyoc=;
+        b=dlyqWJTG0IVy7I2OJdicLNwgO6iVb43E/JJRSm5GC4f2sed4uqD64b50yTJieXFwpa
+         Wa8NFeif2/ib4WunkaybFk3YFSCg1rOip6DK31ThI6b/JyVJJDc54G8pRsh7EVxx7031
+         SSp++mUZOGtVfT53xzmf1b+LJClbddF1MVdInTHlTynw7rRpCq/bgu8tTEDZQ2+IZMiN
+         nyCNOeEkFAme0Tv/T72DoMEupEK4WILM2g9Ok0mrcElgQFkHgaFAOBbYh5l7QHJoLNWC
+         8l/Cb1YQCB6s3OnEtwF5QoA2wreQPerUvH9iO7IqjgGriBNjM3T87kmow6BzVcGfluL3
+         1TFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFAzlcHWlKXZ2FcaaE4aeRJlth5h9U8Tv7rkKH1Ypt8C4Yfd2aflLJ99FavjYpc1e05BbgX5efa6wWbx1NOVKZQmkdGnKejvDn9Gc9
+X-Gm-Message-State: AOJu0YxaqptZmvwpq4LuqOW/7+KrIvu7RpFwJ9XHFcfXIzJVs2KkLCWg
+	RqANItaUXq36l0FqN1P4lNAv+Zac2sIh8pXJspWBTkmIhBmzrir0za8NkMxspqjfdzLeN4J9ZQh
+	BGJo0lw74zWAxl8qZGdFyecuutbVqIrMdv2WJy40AHMKt2dPV0ZFkTF4hMS4F+g87eB6K/g==
+X-Received: by 2002:a5d:4dca:0:b0:36d:2941:d530 with SMTP id ffacd0b85a97d-3717778273dmr2270320f8f.16.1723659335942;
+        Wed, 14 Aug 2024 11:15:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEPmi9UlYergIe2TMojdfzTaFYWbEmLXrrzMWK2H4N4faz/PQ8mb/afsqDM8paWTWEH9Vk4qg==
+X-Received: by 2002:a5d:4dca:0:b0:36d:2941:d530 with SMTP id ffacd0b85a97d-3717778273dmr2270306f8f.16.1723659335537;
+        Wed, 14 Aug 2024 11:15:35 -0700 (PDT)
+Received: from [192.168.10.47] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4c9385d3sm13523564f8f.42.2024.08.14.11.15.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 11:15:34 -0700 (PDT)
+Message-ID: <ef4053c9-6bc8-4b08-af8b-6a4a51100283@redhat.com>
+Date: Wed, 14 Aug 2024 20:15:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,116 +82,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
-To: Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>,
- peterz@infradead.org, mingo@redhat.com
-Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <87sev7nom4.ffs@tglx>
+Subject: Re: [PATCH v3 5/8] KVM: Add arch hooks for enabling/disabling
+ virtualization
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
+References: <20240608000639.3295768-1-seanjc@google.com>
+ <20240608000639.3295768-6-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <87sev7nom4.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240608000639.3295768-6-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 6/8/24 02:06, Sean Christopherson wrote:
+> Add arch hooks that are invoked when KVM enables/disable virtualization.
+> x86 will use the hooks to register an "emergency disable" callback, which
+> is essentially an x86-specific shutdown notifier that is used when the
+> kernel is doing an emergency reboot/shutdown/kexec.
+> 
+> Add comments for the declarations to help arch code understand exactly
+> when the callbacks are invoked.  Alternatively, the APIs themselves could
+> communicate most of the same info, but kvm_arch_pre_enable_virtualization()
+> and kvm_arch_post_disable_virtualization() are a bit cumbersome, and make
+> it a bit less obvious that they are intended to be implemented as a pair.
+> 
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   include/linux/kvm_host.h | 14 ++++++++++++++
+>   virt/kvm/kvm_main.c      | 14 ++++++++++++++
+>   2 files changed, 28 insertions(+)
+> 
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 96ad3e8b9ddb..12ef3beb4e47 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1514,6 +1514,20 @@ static inline void kvm_create_vcpu_debugfs(struct kvm_vcpu *vcpu) {}
+>   #endif
+>   
+>   #ifdef CONFIG_KVM_GENERIC_HARDWARE_ENABLING
+> +/*
+> + * kvm_arch_{enable,disable}_virtualization() are called on one CPU, under
+> + * kvm_usage_lock, immediately after/before 0=>1 and 1=>0 transitions of
+> + * kvm_usage_count, i.e. at the beginning of the generic hardware enabling
+> + * sequence, and at the end of the generic hardware disabling sequence.
+> + */
+> +void kvm_arch_enable_virtualization(void);
+> +void kvm_arch_disable_virtualization(void);
+> +/*
+> + * kvm_arch_hardware_{enable,disable}() are called on "every" CPU to do the
+> + * actual twiddling of hardware bits.  The hooks are called all online CPUs
+> + * when KVM enables/disabled virtualization.  Enabling/disabling is also done
+> + * when a CPU is onlined/offlined (or Resumed/Suspended).
+> + */
+>   int kvm_arch_hardware_enable(void);
+>   void kvm_arch_hardware_disable(void);
 
+Since you are at it, rename these to 
+kvm_arch_{enable,disable}_virtualization_cpu()?
 
-On 2024-08-14 10:52 a.m., Thomas Gleixner wrote:
-> Li!
-> 
-> On Tue, Aug 13 2024 at 21:13, Li Huafei wrote:
->> On 2024/8/1 3:20, Thomas Gleixner wrote:
->>>> My machine has 32 physical cores, each with two logical cores. During
->>>> testing, it executes the CVE-2015-3290 test case 100 times concurrently.
->>>>
->>>> This warning was already present in [1] and a patch was given there to
->>>> limit period to 128 on Haswell, but that patch was not merged into the
->>>> mainline.  In [2] the period on Nehalem was limited to 32. I tested 16
->>>> and 32 period on my machine and found that the problem could be
->>>> reproduced with a limit of 16, but the problem did not reproduce when
->>>> set to 32. It looks like we can limit the cycles to 32 on Haswell as
->>>> well.
->>>
->>> It looks like? Either it works or not.
->>
->> It worked for my test scenario. I say "looks like" because I'm not sure
->> how it circumvents the problem, and if the limit of 32 no longer works
->> if I increase the number of test cases executed in parallel. Any
->> suggestions?
-> 
-> If you read back through the email history of these limits, then you can
-> see that too short periods cause that problem on Broadwell due to a
-> erratum, which is explained on top of the BDW limit.
-> 
-> Now looking at the HSW specification update specifically erratum HSW11:
-> 
->   Performance Monitor Precise Instruction Retired Event May Present
->   Wrong Indications
-> 
->   Problem:
->          When the Precise Distribution for Instructions Retired (PDIR)
->          mechanism is activated (INST_RETIRED.ALL (event C0H, umask
->          value 00H) on Counter 1 programmed in PEBS mode), the processor
->          may return wrong PEBS or Performance Monitoring Interrupt (PMI)
->          interrupts and/or incorrect counter values if the counter is
->          reset with a Sample- After-Value (SAV) below 100 (the SAV is
->          the counter reset value software programs in the MSR
->          IA32_PMC1[47:0] in order to control interrupt frequency).
-> 
->   Implication:
->          Due to this erratum, when using low SAV values, the program may
->          get incorrect PEBS or PMI interrupts and/or an invalid counter
->          state.
-> 
->   Workaround:
->          The sampling driver should avoid using SAV<100.
-> 
-> IOW, that's exactly the same issue as the BDM11 erratum.
-> 
-> Kan: Can you please go through the various specification updates and
-> identify which generations are affected by this and fix it once and
-> forever in a sane way instead of relying on 'tried until it works by
-> some definition of works' hacks. These errata are there for a reason.
+Paolo
 
-Sure. I will check all the related erratum and propose a fix.
+>   #endif
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 7bdd744e4821..e20189a89a64 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -5505,6 +5505,16 @@ static DEFINE_PER_CPU(bool, hardware_enabled);
+>   static DEFINE_MUTEX(kvm_usage_lock);
+>   static int kvm_usage_count;
+>   
+> +__weak void kvm_arch_enable_virtualization(void)
+> +{
+> +
+> +}
+> +
+> +__weak void kvm_arch_disable_virtualization(void)
+> +{
+> +
+> +}
+> +
+>   static int __kvm_enable_virtualization(void)
+>   {
+>   	if (__this_cpu_read(hardware_enabled))
+> @@ -5604,6 +5614,8 @@ static int kvm_enable_virtualization(void)
+>   	if (kvm_usage_count++)
+>   		return 0;
+>   
+> +	kvm_arch_enable_virtualization();
+> +
+>   	r = cpuhp_setup_state(CPUHP_AP_KVM_ONLINE, "kvm/cpu:online",
+>   			      kvm_online_cpu, kvm_offline_cpu);
+>   	if (r)
+> @@ -5634,6 +5646,7 @@ static int kvm_enable_virtualization(void)
+>   	unregister_syscore_ops(&kvm_syscore_ops);
+>   	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
+>   err_cpuhp:
+> +	kvm_arch_disable_virtualization();
+>   	--kvm_usage_count;
+>   	return r;
+>   }
+> @@ -5647,6 +5660,7 @@ static void kvm_disable_virtualization(void)
+>   
+>   	unregister_syscore_ops(&kvm_syscore_ops);
+>   	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
+> +	kvm_arch_disable_virtualization();
+>   }
+>   
+>   static int kvm_init_virtualization(void)
 
-> 
-> 
-> But that does not explain the fallout with that cve test because that
-> does not use PEBS. It's using fixed counter 0.
-
-The errata also mentions about the PMI interrupts, which may imply
-non-PEBS case. I will double check with the architect.
-
-According to the description of the patch, if I understand correctly, it
-runs 100 CVE-2015-3290 tests at the same time. If so, all the GP
-counters are used. Huafei, could you please confirm?
-
-Thanks,
-Kan
-> 
-> Li, you added that huge useless backtrace but cut off the output of
-> perf_event_print_debug() after it. Can you please provide that
-> information so we can see what the counter states are?
-> 
->>>> +static void hsw_limit_period(struct perf_event *event, s64 *left)
->>>> +{
->>>> +	*left = max(*left, 32LL);
->>>> +}
->>>
->>> And why do we need a copy of nhm_limit_period() ?
->>>
->>
->> Do you mean why the period is limited to 32 like nhm_limit_period()?
-> 
-> No. If 32 is the correct limit, then we don't need another function
-> which does exactly the same. So you can assign exactly that function for
-> HSW, no?
-> 
-> Thanks,
-> 
->         tglx
 
