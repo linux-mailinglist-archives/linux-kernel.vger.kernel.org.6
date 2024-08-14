@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-286460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F23E951B24
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:49:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6CD951B2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15131C21E6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:49:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D144B21E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624F81AED5C;
-	Wed, 14 Aug 2024 12:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DB71B0133;
+	Wed, 14 Aug 2024 12:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9zakBuw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kgca31zA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BE225762;
-	Wed, 14 Aug 2024 12:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CBE1109;
+	Wed, 14 Aug 2024 12:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723639761; cv=none; b=i6nmVmryfMduX0SmltwbCfhnD3fP+QD+K/QHLfhaJRg9jZbVS1reTMq5XTLc6X74zPPCF2FzrHATzHYBicNetNIO9fhijt3oxVCQ4Z01L07x8MABPu+TO7Y5yByBTvPaCSRjYC5900KY8hVlnrDCgOS/O6fq7d/sG8jV6XsjEGQ=
+	t=1723639984; cv=none; b=pgGpdz1Lk2vCu36eIda5XWttMgxCENyBVTOF8kV5PJkBeua4q1XdRJufzQQInIFtuYqMAuDbGu1HHvru52pSPVBUnplHVWNBZj6JAZHvY3PXQwBEVKGMZQt/EI9KB7scHTGYMRiM+51A2eV6MgV/VICupBXFwRq1Ng0swIpn6r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723639761; c=relaxed/simple;
-	bh=wT4tPFHaUc06gnduj7f0EPAn+I5NgncsA6Mwfo5IE+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IESXlMuHHggwh50hHWAioLgo9PQ/hgaCjdwFfUYGdJH+m9HuQHKz0Zf+UmGsLfBUusbwtTLVVsN+RBkMsBDx/PIfiiDfByuKGFhp8VDdHCU+b1yke+VCdHtJdQTDmMDZUMaZQAb1fHVXeoTt8LKBhWLbfwLoiU5C3PkZr/0P3vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L9zakBuw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F056AC32786;
-	Wed, 14 Aug 2024 12:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723639761;
-	bh=wT4tPFHaUc06gnduj7f0EPAn+I5NgncsA6Mwfo5IE+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L9zakBuwl+yri2rTm0dlVRZGtPXbteslzFTUhE0q5jrThwP6r4foqUtg6eJ7lnt4l
-	 /6DA4Hnr/BKnLeCgDhRE1t+gxm2wdFFQ5Lno/JvbG5HXvJ9t+Eg1HUdwVorbhDUMtq
-	 ViBbj2VVujdGQMlozbdVYw88tQoazmStghDOSsB5an2/xRltLWvjZ9gcPIcUICUq7N
-	 TxE17f/l568mo7oVzFv5kOWYYKetZZVjSEPIndoQBsfMNA+g4eCMZUVMdOzSnEqI39
-	 OJJd0fJvNg8fdvSnT0u0XtRvlk0q546GD6nVDomDtVv+6vKoJ4dP3G2Ip53tPc8F/U
-	 a0v+RgTPAfGSw==
-Date: Wed, 14 Aug 2024 18:19:15 +0530
-From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH rcu 06/11] rcuscale: Provide clear error when async
- specified without primitives
-Message-ID: <20240814124915.GA1412840@neeraj.linux>
-References: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
- <20240802004308.4134731-6-paulmck@kernel.org>
+	s=arc-20240116; t=1723639984; c=relaxed/simple;
+	bh=zhmO0zFzKNae4Kb3ntQiQtymVF8pyZKYQrbO9fHGS0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L3f7zfnNGkvJG8faVvzeZfNyG+ZRzj/5uaEYo0N3hBwA8EOQlfbmRAwYCNRYOq6AShPqj2YKGbKECE+r5yvrHxzEqhKGJNrvhhaClOd4JcihCMSy5Tx3TxI5fQ41tAHl0GnBTRBnsWRtAdCqAhube60HG1rwXtEmD7yf4PpHpVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kgca31zA; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723639983; x=1755175983;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=zhmO0zFzKNae4Kb3ntQiQtymVF8pyZKYQrbO9fHGS0g=;
+  b=Kgca31zA7FRXQOir9sDdUI5JQWnY0FZqrZRoff7z+HdhV+/esulRhpA0
+   aAddjBdJpuD6VRkfW7zZMBI9Gomg3tj7poQsbqNhZVUSsJHCldJIpgZKg
+   XoYrstKKyJ5J2bM1JplWeKglr2CnYAjBEy1ztXQdqYNHgFuVfW3NBYVMb
+   BGoNFeRGKrXkxVLY/fVMLoBz+ovujjkxUihPuk4wN08s+TEhZDhs8673x
+   0PjPwqFL2BedkBgQB4nuo+7fv5N51w7liR/bW/bZ+EC1S4eIe+Rk32XHP
+   Zr+qVV85oVCgPsNrDwrMhbVYJ9YLAiRyCL5/I6JFdmmhjIwzoHi3WMUDM
+   A==;
+X-CSE-ConnectionGUID: x2V+UXAYQ/KnSQJ9WBv3rQ==
+X-CSE-MsgGUID: Gs/Nf5KHQKe4JIFJ6PccrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="39304752"
+X-IronPort-AV: E=Sophos;i="6.10,145,1719903600"; 
+   d="scan'208";a="39304752"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 05:53:02 -0700
+X-CSE-ConnectionGUID: mlQmjvzvR+C1vgsPJsJoQg==
+X-CSE-MsgGUID: PD/B/CEbRpav2gNWOipzvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,145,1719903600"; 
+   d="scan'208";a="63669478"
+Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.246.29.120])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 05:53:00 -0700
+Date: Wed, 14 Aug 2024 14:52:55 +0200
+From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@infradead.org, song@kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com
+Subject: Re: [PATCH RFC -next v2 05/41] md/md-bitmap: add 'sync_size' into
+ struct md_bitmap_stats
+Message-ID: <20240814145255.00002a30@linux.intel.com>
+In-Reply-To: <20240814071113.346781-6-yukuai1@huaweicloud.com>
+References: <20240814071113.346781-1-yukuai1@huaweicloud.com>
+	<20240814071113.346781-6-yukuai1@huaweicloud.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802004308.4134731-6-paulmck@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 05:43:03PM -0700, Paul E. McKenney wrote:
-> Currently, if the rcuscale module's async module parameter is specified
-> for RCU implementations that do not have sync primitives such as
-> call_rcu(), there will be a series of splats due to calls to a NULL
-> pointer.  This commit therefore warns of this situation, but switches
-> to non-async testing.
+On Wed, 14 Aug 2024 15:10:37 +0800
+Yu Kuai <yukuai1@huaweicloud.com> wrote:
+
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-
-I have changed this to below here [1]. Please let me know if I got it
-wrong.
-
-Currently, if the rcuscale module's async module parameter is specified
-for RCU implementations that do not have async primitives such as
-RCU Tasks Rude, there will be a series of splats due to calls to a NULL
-pointer.  This commit therefore warns of this situation, but switches to
-non-async testing.
-
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/commit/?h=next.14.08.24b&id=22d36840adbcab8fd826a7ca827fd60b708f03de
-
-- Neeraj
-
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> To avoid dereferencing bitmap directly in md-cluster to prepare
+> inventing a new bitmap.
+> 
+> BTW, also fix following checkpatch warnings:
+> 
+> WARNING: Deprecated use of 'kmap_atomic', prefer 'kmap_local_page' instead
+> WARNING: Deprecated use of 'kunmap_atomic', prefer 'kunmap_local' instead
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
->  kernel/rcu/rcuscale.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/md/md-bitmap.c  |  6 ++++++
+>  drivers/md/md-bitmap.h  |  1 +
+>  drivers/md/md-cluster.c | 25 +++++++++++++++----------
+>  3 files changed, 22 insertions(+), 10 deletions(-)
 > 
-> diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-> index 933014b381ec0..315ced63ec105 100644
-> --- a/kernel/rcu/rcuscale.c
-> +++ b/kernel/rcu/rcuscale.c
-> @@ -525,7 +525,7 @@ rcu_scale_writer(void *arg)
->  			schedule_timeout_idle(torture_random(&tr) % writer_holdoff_jiffies + 1);
->  		wdp = &wdpp[i];
->  		*wdp = ktime_get_mono_fast_ns();
-> -		if (gp_async) {
-> +		if (gp_async && !WARN_ON_ONCE(!cur_ops->async)) {
->  retry:
->  			if (!rhp)
->  				rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
-> @@ -597,7 +597,7 @@ rcu_scale_writer(void *arg)
->  			i++;
->  		rcu_scale_wait_shutdown();
->  	} while (!torture_must_stop());
-> -	if (gp_async) {
-> +	if (gp_async && cur_ops->async) {
->  		cur_ops->gp_barrier();
->  	}
->  	writer_n_durations[me] = i_max + 1;
-> -- 
-> 2.40.1
-> 
+> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+> index 8a2411040d2f..9ff5ed250ba5 100644
+> --- a/drivers/md/md-bitmap.c
+> +++ b/drivers/md/md-bitmap.c
+> @@ -2096,11 +2096,16 @@ EXPORT_SYMBOL_GPL(md_bitmap_copy_from_slot);
+>  
+>  int md_bitmap_get_stats(struct bitmap *bitmap, struct md_bitmap_stats *stats)
+>  {
+> +	bitmap_super_t *sb;
+>  	struct bitmap_counts *counts;
+
+Hi Kuai,
+
+Use reversed christmas tree convention if possible :)
+
+
+
+> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+> index c8527ba38dfc..1a7ad2cf9f75 100644
+> --- a/drivers/md/md-bitmap.h
+> +++ b/drivers/md/md-bitmap.h
+> @@ -237,6 +237,7 @@ struct bitmap {
+>  struct md_bitmap_stats {
+>  	unsigned long pages;
+>  	unsigned long missing_pages;
+> +	unsigned long sync_size;
+
+Same here.
+
+Anyway, LGTM.
+Mariusz
 
