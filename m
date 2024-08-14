@@ -1,80 +1,327 @@
-Return-Path: <linux-kernel+bounces-285887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53109513DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:24:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46C79513E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512631F246DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:24:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 231A7B22708
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9516F307;
-	Wed, 14 Aug 2024 05:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858EB2E651;
+	Wed, 14 Aug 2024 05:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="LvThM5KO"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PpdbSuwS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081BA4D8BA;
-	Wed, 14 Aug 2024 05:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14292901
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723613065; cv=none; b=DjT+jU2ZNOiR46Woop+qxDDL1l8nds/Na3SdZT9P/qlvT9fEU7fsiOS9mxaT5NCntyUS/AMMxAyjDeho8B+X3Oz6qDPdttieYfiHUwLhdX6qEXYilI61h7/qyfYWFylZxCFk0YxnO+NxDhz6cWYFfEQawgsLiaYeAOHblWpPASM=
+	t=1723613376; cv=none; b=avbsW+MrY9jObA+cfGI6A0cTZcg/XdHnPvUb8NHv0m3LtbDLN1JwjeOoFrzSMb7vRZUbvmAE3jbQdjs9S1+JC/23hj2bUViu17Mw2zYfRevgFTXws9etO+dnGityKyhF+d/6Sry7dpIwXPiazUUS8yHI4/sKDTN+qgZnFdxKIOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723613065; c=relaxed/simple;
-	bh=ZAxxOYNWehSCcsvm+tNpKLI6CNfyAHPQyJL2dWJ2xXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6RWARSZpHcUqy4CFuimM38ZWrAyi0EhoFQY+MOQidUll8hkyWAVBJzHeQRMM/GKunYslKpFwpnI0Dlq2W4GMWVyylaYN/Is10HyUnjzUGd8M3g6598tbM8990Yo+acD7k0+AEnmzkcLQrmn95Dn13r3wNLOoH2LJHxmZKxEkn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=LvThM5KO; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0XbH8lvWz6AYn1hoDnaXp0aSyYrZKSg2GPlTNlTDaw4=; b=LvThM5KOND2zbY450Yu4JNsE/c
-	Yc4iYTfxaxspkUpDkFyfb9xqOad4Jq7rUeJ9q/f2Ynt+DLa4zdOQm4EhAKfKYzxooP9BHpId+yRAH
-	ufLlImG1F+VKhucBj02+VaJZKDLF7zCG9m2p7O2OwljfOy69BlkbZI/qRFxeTbQbg0N3eb90rTn5T
-	0CsrgS+lMsWcSq7t/VrcxEEYy2O/GjmxcI0+tePd2QsBfpJVpecNWfrqS/3q93Lha0BwMwEADMt75
-	Yn4YnqNDeYKuMpminc9/JCZmMFCQyc+/X5Wp8Ni+MIxaI+MYMUOo/MuIweE1fmOPNoTIAs1/0AUyv
-	lAksTCmA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1se6Uf-00000001WWr-06rn;
-	Wed, 14 Aug 2024 05:24:21 +0000
-Date: Wed, 14 Aug 2024 06:24:20 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] close_files(): reimplement based on do_close_on_exec()
-Message-ID: <20240814052420.GQ13701@ZenIV>
-References: <20240812064427.240190-3-viro@zeniv.linux.org.uk>
- <20240812075659.1399447-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1723613376; c=relaxed/simple;
+	bh=64CaOyzQDHd2TXA0O3hUFSnHfkbGMDRj8vJIgxCNCEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f1Sj3g+qB4sXbxTtTkHdfdXroCjC2mmgla5XsUifnWdcoM2OKiZ7vduaIJjGMNSa6hrY+Yll4tc8rbh5XlPfmL9W3x21edinhRQgNgmRMEQp5QzlrJa8FEXTpT+oJKTbsDZ+T7JMiLqgf9+ynYUrEKhYuZChVsdlyupbC40JxDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PpdbSuwS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723613373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIlEfnFgmvlSdoONYnRaRyMO1JuqrT5E8kZFF0GMenY=;
+	b=PpdbSuwS2bow7LwIsdf56sKksqE+c342r3CiAF+dbIUDiWmtUlkiEVVRpzirNoOYto9XqC
+	TM9R1izEg6tADMglma/KD2+O2fkvDgHwSlwu/mUC8dUI+9hV/gfrRrfcLtatIotfF/xIT5
+	JkElJJmG+A63z7feTUSvUuKlgKuGxQs=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-228--L8yXMMMORyVeFqV5ljDag-1; Wed, 14 Aug 2024 01:29:31 -0400
+X-MC-Unique: -L8yXMMMORyVeFqV5ljDag-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2cfe41af75eso7858666a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:29:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723613370; x=1724218170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KIlEfnFgmvlSdoONYnRaRyMO1JuqrT5E8kZFF0GMenY=;
+        b=cTnYJbM5E0mMNxDj8l6lnJTQmpNGHjlEqsRfM9oBwd9ewyLmZRNwPzBEiPDjzNGmrr
+         /HYvy1Ci+CfkThhPMpgaemfd20qYNsNK45UARGufgSvel2njZUSecHX/KDyYT/xGpyZa
+         k8/SC45kOHlCfi/J7zrnHePHfEDWn3MCXXpEJSeEUqYXtiKVl4G3ju+66lKqfgKnUoMc
+         rZ3QtLmALTK6TQTfaschB2OIFAQpx3LNQQB6Te7w+OEQn2VAfuaumheuXJGIAmc7qJ/p
+         u8g/2Rj2Q3Ghg/e7ZtlX2rL35H+ILHwneOUy20CkHlgGzloiYHjU3hvOjNvOOvhGn8sh
+         KEsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyruR0hfwBwJA8Lohw/Ar/Zf5aqvSFOApwJITaivMR4fBmokKfQkTFkdvJDLFded0fIaTkM+uKClXqXFuZ9Yvg3AohoEM6FkJBPvro
+X-Gm-Message-State: AOJu0Yy6u79EoOrq7MC2AX5ZlGMyFwMFXXklkSEl8c/uAxjoum508NvO
+	744tl11XR7K84mmMytzUvkeo8FBtE7z+t8AeND/o030jPbez5eWMvNwal+SFppA4uBLo0tSpQEf
+	O5v7IfCZazywpRhtcbCA23Y4j1UjpiEw3+QL8xYtQ/efZbkDWAVwydU9N5HCLRgnFC92PSeGvK6
+	juz+4Z0qIV+i78mhMaH6znxXOEKoZk10wSn1w/
+X-Received: by 2002:a17:90a:3001:b0:2cb:3748:f5ce with SMTP id 98e67ed59e1d1-2d3aaa98514mr2155555a91.10.1723613370181;
+        Tue, 13 Aug 2024 22:29:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEa6fh1ig63jwprIC69ajFU+IdfDGPo7t7ub4vJrtt7Cvu2Oi2Xr3vNgt/E3WjC/otzyr/9sTrf/uIMgyCAACg=
+X-Received: by 2002:a17:90a:3001:b0:2cb:3748:f5ce with SMTP id
+ 98e67ed59e1d1-2d3aaa98514mr2155531a91.10.1723613369590; Tue, 13 Aug 2024
+ 22:29:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812075659.1399447-1-mjguzik@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240808082044.11356-1-jasowang@redhat.com> <9da68127-23d8-48a4-b56f-a3ff54fa213c@nvidia.com>
+ <CACGkMEshq0=djGQ0gJe=AinZ2EHSpgE6CykspxRgLS_Ok55FKw@mail.gmail.com>
+ <CACGkMEvAVM+KLpq7=+m8q1Wajs_FSSfftRGE+HN16OrFhqX=ow@mail.gmail.com>
+ <ede5a20f-0314-4281-9100-89a265ff6411@nvidia.com> <CACGkMEtVMq83rK9ykrN3OvGDYKg6L1Jnpa2wsnfDEbswpcnM1g@mail.gmail.com>
+ <b4c144f8-5941-4bca-afdb-5feeb23b14c1@nvidia.com>
+In-Reply-To: <b4c144f8-5941-4bca-afdb-5feeb23b14c1@nvidia.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 14 Aug 2024 13:29:18 +0800
+Message-ID: <CACGkMEs2Sr_uEd+7Ry1e5MOcD5eKuSeCzHDLRodD0RbuweJ0qA@mail.gmail.com>
+Subject: Re: [RFC PATCH] vhost_vdpa: assign irq bypass producer token correctly
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: mst@redhat.com, lingshan.zhu@intel.com, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 09:56:58AM +0200, Mateusz Guzik wrote:
-> While here take more advantage of the fact nobody should be messing with
-> the table anymore and don't clear the fd slot.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
-> 
-> how about this instead, I think it's a nicer clean up.
+On Tue, Aug 13, 2024 at 8:53=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+>
+>
+> On 13.08.24 08:26, Jason Wang wrote:
+> > On Mon, Aug 12, 2024 at 7:22=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia=
+.com> wrote:
+> >>
+> >>
+> >>
+> >> On 12.08.24 08:49, Jason Wang wrote:
+> >>> On Mon, Aug 12, 2024 at 1:47=E2=80=AFPM Jason Wang <jasowang@redhat.c=
+om> wrote:
+> >>>>
+> >>>> On Fri, Aug 9, 2024 at 2:04=E2=80=AFAM Dragos Tatulea <dtatulea@nvid=
+ia.com> wrote:
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>> On 08.08.24 10:20, Jason Wang wrote:
+> >>>>>> We used to call irq_bypass_unregister_producer() in
+> >>>>>> vhost_vdpa_setup_vq_irq() which is problematic as we don't know if=
+ the
+> >>>>>> token pointer is still valid or not.
+> >>>>>>
+> >>>>>> Actually, we use the eventfd_ctx as the token so the life cycle of=
+ the
+> >>>>>> token should be bound to the VHOST_SET_VRING_CALL instead of
+> >>>>>> vhost_vdpa_setup_vq_irq() which could be called by set_status().
+> >>>>>>
+> >>>>>> Fixing this by setting up  irq bypass producer's token when handli=
+ng
+> >>>>>> VHOST_SET_VRING_CALL and un-registering the producer before callin=
+g
+> >>>>>> vhost_vring_ioctl() to prevent a possible use after free as eventf=
+d
+> >>>>>> could have been released in vhost_vring_ioctl().
+> >>>>>>
+> >>>>>> Fixes: 2cf1ba9a4d15 ("vhost_vdpa: implement IRQ offloading in vhos=
+t_vdpa")
+> >>>>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> >>>>>> ---
+> >>>>>> Note for Dragos: Please check whether this fixes your issue. I
+> >>>>>> slightly test it with vp_vdpa in L2.
+> >>>>>> ---
+> >>>>>>  drivers/vhost/vdpa.c | 12 +++++++++---
+> >>>>>>  1 file changed, 9 insertions(+), 3 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> >>>>>> index e31ec9ebc4ce..388226a48bcc 100644
+> >>>>>> --- a/drivers/vhost/vdpa.c
+> >>>>>> +++ b/drivers/vhost/vdpa.c
+> >>>>>> @@ -209,11 +209,9 @@ static void vhost_vdpa_setup_vq_irq(struct vh=
+ost_vdpa *v, u16 qid)
+> >>>>>>       if (irq < 0)
+> >>>>>>               return;
+> >>>>>>
+> >>>>>> -     irq_bypass_unregister_producer(&vq->call_ctx.producer);
+> >>>>>>       if (!vq->call_ctx.ctx)
+> >>>>>>               return;
+> >>>>>>
+> >>>>>> -     vq->call_ctx.producer.token =3D vq->call_ctx.ctx;
+> >>>>>>       vq->call_ctx.producer.irq =3D irq;
+> >>>>>>       ret =3D irq_bypass_register_producer(&vq->call_ctx.producer)=
+;
+> >>>>>>       if (unlikely(ret))
+> >>>>>> @@ -709,6 +707,12 @@ static long vhost_vdpa_vring_ioctl(struct vho=
+st_vdpa *v, unsigned int cmd,
+> >>>>>>                       vq->last_avail_idx =3D vq_state.split.avail_=
+index;
+> >>>>>>               }
+> >>>>>>               break;
+> >>>>>> +     case VHOST_SET_VRING_CALL:
+> >>>>>> +             if (vq->call_ctx.ctx) {
+> >>>>>> +                     vhost_vdpa_unsetup_vq_irq(v, idx);
+> >>>>>> +                     vq->call_ctx.producer.token =3D NULL;
+> >>>>>> +             }
+> >>>>>> +             break;
+> >>>>>>       }
+> >>>>>>
+> >>>>>>       r =3D vhost_vring_ioctl(&v->vdev, cmd, argp);
+> >>>>>> @@ -747,13 +751,14 @@ static long vhost_vdpa_vring_ioctl(struct vh=
+ost_vdpa *v, unsigned int cmd,
+> >>>>>>                       cb.callback =3D vhost_vdpa_virtqueue_cb;
+> >>>>>>                       cb.private =3D vq;
+> >>>>>>                       cb.trigger =3D vq->call_ctx.ctx;
+> >>>>>> +                     vq->call_ctx.producer.token =3D vq->call_ctx=
+.ctx;
+> >>>>>> +                     vhost_vdpa_setup_vq_irq(v, idx);
+> >>>>>>               } else {
+> >>>>>>                       cb.callback =3D NULL;
+> >>>>>>                       cb.private =3D NULL;
+> >>>>>>                       cb.trigger =3D NULL;
+> >>>>>>               }
+> >>>>>>               ops->set_vq_cb(vdpa, idx, &cb);
+> >>>>>> -             vhost_vdpa_setup_vq_irq(v, idx);
+> >>>>>>               break;
+> >>>>>>
+> >>>>>>       case VHOST_SET_VRING_NUM:
+> >>>>>> @@ -1419,6 +1424,7 @@ static int vhost_vdpa_open(struct inode *ino=
+de, struct file *filep)
+> >>>>>>       for (i =3D 0; i < nvqs; i++) {
+> >>>>>>               vqs[i] =3D &v->vqs[i];
+> >>>>>>               vqs[i]->handle_kick =3D handle_vq_kick;
+> >>>>>> +             vqs[i]->call_ctx.ctx =3D NULL;
+> >>>>>>       }
+> >>>>>>       vhost_dev_init(dev, vqs, nvqs, 0, 0, 0, false,
+> >>>>>>                      vhost_vdpa_process_iotlb_msg);
+> >>>>>
+> >>>>> No more crashes, but now getting a lot of:
+> >>>>>  vhost-vdpa-X: vq Y, irq bypass producer (token 00000000a66e28ab) r=
+egistration fails, ret =3D  -16
+> >>>>>
+> >>>>> ... seems like the irq_bypass_unregister_producer() that was remove=
+d
+> >>>>> might still be needed somewhere?
+> >>>>
+> >> My statement above was not quite correct. The error comes from the
+> >> VQ irq being registered twice:
+> >>
+> >> 1) VHOST_SET_VRING_CALL ioctl gets called for vq 0. VQ irq is unregist=
+ered
+> >>    (vhost_vdpa_unsetup_vq_irq() and re-registered (vhost_vdpa_setup_vq=
+_irq())
+> >>    successfully. So far so good.
+> >>
+> >> 2) set status !DRIVER_OK -> DRIVER_OK happens. VQ irq setup is done
+> >>    once again (vhost_vdpa_setup_vq_irq()). As the producer unregister
+> >>    was removed in this patch, the register will complain because the p=
+roducer
+> >>    token already exists.
+> >
+> > I see. I think it's probably too tricky to try to register/unregister
+> > a producer during set_vring_call if DRIVER_OK is not set.
+> >
+> > Does it work if we only do vhost_vdpa_unsetup/setup_vq_irq() if
+> > DRIVER_OK is set in vhost_vdpa_vring_ioctl() (on top of this patch)?
+> >
+> > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> > index 388226a48bcc..ab441b8ccd2e 100644
+> > --- a/drivers/vhost/vdpa.c
+> > +++ b/drivers/vhost/vdpa.c
+> > @@ -709,7 +709,9 @@ static long vhost_vdpa_vring_ioctl(struct
+> > vhost_vdpa *v, unsigned int cmd,
+> >                 break;
+> >         case VHOST_SET_VRING_CALL:
+> >                 if (vq->call_ctx.ctx) {
+> > -                       vhost_vdpa_unsetup_vq_irq(v, idx);
+> > +                       if (ops->get_status(vdpa) &
+> > +                           VIRTIO_CONFIG_S_DRIVER_OK)
+> > +                               vhost_vdpa_unsetup_vq_irq(v, idx);
+> >                         vq->call_ctx.producer.token =3D NULL;
+> I was wondering if it's safe to set NULL also for !DRIVER_OK case,
+> but then I noticed that the !DRIVER_OK transition doesn't set .token to
+> NULL so this is actually beneficial. Did I get it right?
 
-> It's literally do_close_on_exec except locking and put fd are deleted.
+Yes, actually the reason is that we use eventfd as the token, so the
+life cycle of the token is tied to eventfd itself. If we don't set the
+token to NULL here the vhost_vring_ioctl() may just release it which
+may lead to a use-after-free. So this patch doesn't set a token during
+DRIVER_OK transition but during SET_VRING_CALL.
 
-TBH, I don't see much benefit that way - if anything, you are doing
-a bunch of extra READ_ONCE() of the same thing (files->fdt), for no
-visible reason...
+>
+> >                 }
+> >                 break;
+> > @@ -752,7 +754,9 @@ static long vhost_vdpa_vring_ioctl(struct
+> > vhost_vdpa *v, unsigned int cmd,
+> >                         cb.private =3D vq;
+> >                         cb.trigger =3D vq->call_ctx.ctx;
+> >                         vq->call_ctx.producer.token =3D vq->call_ctx.ct=
+x;
+> > -                       vhost_vdpa_setup_vq_irq(v, idx);
+> > +                       if (ops->get_status(vdpa) &
+> > +                           VIRTIO_CONFIG_S_DRIVER_OK)
+> > +                               vhost_vdpa_setup_vq_irq(v, idx);
+> >                 } else {
+> >                         cb.callback =3D NULL;
+> >                         cb.private =3D NULL;
+> >
+> Yup, this works.
+>
+> I do understand the fix, but I don't fully understand why this is
+> better than setting the .token to NULL in vhost_vdpa_unsetup_vq_irq()
+> and keeping the token logic inside the vhost_vdpa_setup/unsetup_vq_irq()
+> API.
+
+See the above explanation, hope it clarifies things.
+
+>
+> In any case, if you send this fix:
+> Tested-by: Dragos Tatulea <dtatulea@nvidia.com>
+
+Thanks
+
+>
+> Thanks,
+> Dragos
+> >>
+> >>
+> >>>> Probably, but I didn't see this when testing vp_vdpa.
+> >>>>
+> >>>> When did you meet those warnings? Is it during the boot or migration=
+?
+> >> During boot, on the first 2 VQs only (so before the QPs are resized).
+> >> Traffic does work though when the VM is booted.
+> >
+> > Right.
+> >
+> >>
+> >>>
+> >>> Btw, it would be helpful to check if mlx5_get_vq_irq() works
+> >>> correctly. I believe it should return an error if the virtqueue
+> >>> interrupt is not allocated. After a glance at the code, it seems not
+> >>> straightforward to me.
+> >>>
+> >> I think we're good on that front:
+> >> mlx5_get_vq_irq() returns EOPNOTSUPP if the vq irq is not allocated.
+> >
+> > Good to know that.
+> >
+> > Thanks
+> >
+> >>
+> >>
+> >> Thanks,
+> >> Dragos
+> >>
+> >
+>
+
 
