@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-286381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B2E951A45
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:44:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598F2951A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132AD1F22A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19636282392
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A603C1B5804;
-	Wed, 14 Aug 2024 11:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BE51B5835;
+	Wed, 14 Aug 2024 11:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="SXhJjWd5"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Y5E1Ogwl"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D538A1B4C33
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27AF1B581A
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635691; cv=none; b=n2g776Cxx8dzkDhppVEt6gBS+iegzRXUALmUPPdTLSkE313Y+cRRHD3dn1ugyzPSvynsd7RR3dlsbdAo4xw1SOwDjNGlsYilEEJ+tfvTcJwxw0yp853zuulzhUGi08D9iIiU8FbUEdetPPuopzeqysP0GcjCNFy8CubDlXzSkfI=
+	t=1723635696; cv=none; b=XGMRgm8OdZqcgd4urfUMGivWIf3XA93Yzyp0HDLOgOgEMgSuRUo+DgH0v61iQRMzQ2+6AbHaKSic/3+HO2ZiVX9/+sZSjec4bDiUrgcUSFt6bFSDEeg9AvAbXAzN22SGEz9buiPcDs3JApJRp2SPSPzuAkeAVYq9krHM7e+83xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635691; c=relaxed/simple;
-	bh=sQYa/TGQk7UO1dlX0MW4Xvi9uLCqrYRQlAcXitEceno=;
+	s=arc-20240116; t=1723635696; c=relaxed/simple;
+	bh=ONyUrWrgUBZRJvO+nhcwWS/g3zi/w0z15wLOTv3nesw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qQuIscR7SNi8M8dYRg8k+30zd83lUaKGwd9PQIU01vP07ntSgGUvZNMUdWhw/QQpvxKMGnobmrgoLBf+/JKmD5jSF4NLflqZsFbED265b2oVmPukP4IhSnvJ4X1ENKo+1zF8EgFU33lWOg/1hIdMMpvjmvP8LIlWuyrcg+zhfi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=SXhJjWd5; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=IqkeRy4fMrrS9e5E8h5WYrfi10TgeFUEvAz+a1ntflH/TFuyQkoH3jULUu9K/G5TaNtB0gJ7duhWCBHDUYNs2lc4+poZSeT83Wa4aFEuo5nIJ3TE0sj3i9yjJPcuivCdI1O1VTcAtUocthN/6sXi0Z0YVUAVYvo4gi9aTMkSBTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Y5E1Ogwl; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4DE23400B2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:28 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6431E4596A
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723635688;
-	bh=kX3REIljluq5iUQsttUuiM8BSwi4GrOWWl8ceulatPE=;
+	s=20210705; t=1723635693;
+	bh=+wGAYIUsqVxDBSfRQAij7GIIUQJC7PY8L940f+LK16E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=SXhJjWd5wEgmDw3hLEFmCaIq5N55DWwuhDeDl3RYjk32yUsKAUxJjv0bjcwSlOwzB
-	 wZ69EIYD5K/ct2SdrQxlMsqgKzFKtdbh8M26Wmtc9eiebCpzFYKXHQ0Hn76srmJZZK
-	 gyaEK0kPyBlOw6oNrqpEpxyUrApJJctBv44AqRfDZBjlkWMgEL2/Qzz0sY3T+DStJx
-	 RwbUz4f0SOBpoMT37v3Ezizcyk8kH2m3dDidHZCWlC69CDPH5ewZMxSIgXZ+uGHuJt
-	 hMgg882qbLeTVHeRYQn9FrZqa65MV2lG+IxPxEjRGUJlJRMHFXlo36oxFWJFSsdfqB
-	 QaJi5AJTO65sg==
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-53214baf2abso2504151e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:41:28 -0700 (PDT)
+	b=Y5E1OgwlICh8d+kK1UBixZ4okzc04l6jhRuTM/iuFhdscitsgPZhCG/A7cpM7bb9w
+	 TxICb8D06O2U8Q5ZR22LanANrfRnOs0zNjfBn/kQlbTp2vo9LPc2CmPm+Uw2QiMJgr
+	 kpdDEIES0mUe0ZpEsVLszf4raWcJgyb4FYr8DDovGhEAbBn95OXG2EqGoAclqzwryj
+	 1fmx+wRn1rob3lGdpB8+SAxf+YFjItE+QAXuwh3ktjCpM5mj+KAJARzQR7IotMlGOe
+	 OX8vRA8Uc8Q2njOLBRZ/OQhFTtJZrGtjHwPsFzfwpeIwp3CJaU63ElgmKXlwlKeRAW
+	 ljsls1DP0esjQ==
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5b58f321a2dso4674341a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:41:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723635687; x=1724240487;
+        d=1e100.net; s=20230601; t=1723635692; x=1724240492;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kX3REIljluq5iUQsttUuiM8BSwi4GrOWWl8ceulatPE=;
-        b=qTo1SR2xkEIvCtTHi73MrWbewkNPzx4kLYNoISkEwbhhACvsBC+MkvsnOTkG0RWKTW
-         1lvwdD5dn0hBmpW/nx/QoxIlCQSwoUM4VXMpqpSwpv4ZRRU6+czJ4yPoFc5mSBuHwMEN
-         znOvfCRhbZOkQ3q8L2gTTdkOHLHcG7BX1e0hs+o8adGE2J1b6Ekd8VoJFJ0gL/BnSC1T
-         oxCNPdQn+udt+Q6gh2cwP+/gqF9VFemC/O2oIj4BmYM6yJGgx8/sFScUFzPMLg78Rzf1
-         oAbTadqjTwhIulvOlnvso2qmP4+WY4ObSy83vb93RhxzuGZvbOILJoZNBhTGvwelGO27
-         Gy7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW6pYmtTq8E6bSKE32VG0IDZpg2aN0YbTXsYY2dU1VckvDEzMZ+sD7VBFroZ98w9upqsEsYPPi7sY9lLjOeQLzs1kWz0ohUF5kVq7pQ
-X-Gm-Message-State: AOJu0YyfUlb/g7rSLXOuUpq0jXVTmd+S4OmMMNaKaJZTEqHdQ8SpacdH
-	UazN1DsrDrnA5EZWwfGD9rdrgL8OdT7Y6AXzx+zGCgJxUQnI1gFbGGlkm4HT2CRevtlfVrbq2Qr
-	6eQSweYf60ePxOxLjZD384Ox1QSbYDJvQb6IShBMwrjQIsWLmUVo2AqoDDsqnTtKXptshyRCCFp
-	PJkg==
-X-Received: by 2002:a05:6512:230a:b0:52e:a63d:e5c1 with SMTP id 2adb3069b0e04-532eda83586mr1580865e87.30.1723635687506;
-        Wed, 14 Aug 2024 04:41:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGfI4f7MYsqVeqcum/urkA2c8ZrkB367gdfi8exfw6an4iZX6W6jbiZZlbDbsNeu4towZFUWg==
-X-Received: by 2002:a05:6512:230a:b0:52e:a63d:e5c1 with SMTP id 2adb3069b0e04-532eda83586mr1580842e87.30.1723635686883;
-        Wed, 14 Aug 2024 04:41:26 -0700 (PDT)
+        bh=+wGAYIUsqVxDBSfRQAij7GIIUQJC7PY8L940f+LK16E=;
+        b=q3BsbC/fxlZ6s23ORBYbxppkbytmQm2SZGMuBqAkI86i0q/9hoftq+8IdARIwTOcLG
+         7evHlIl1Rb8CBhdqtPYRl6nWeXGwtulTepjcltgADs0XNtOrl2mtyvLZpxZ8bJEKdK0e
+         70RG7h71pvwTy9e6h7mPJLpRLZBmWRPAPjDjIJ55cADmraFQlulPcC7in+ZrxzI6ANA+
+         XjamKTaMh6BCZQIsfiS2fNAD9foyB9ogmDwxLkR6D9p01fK8ZUAHj5jycY41qizxCJyR
+         dUPMxAYc4Nbvfkwqwus3vR1szMppQzTTShqb9B3lfoKVOXvzJecdEhKCnj0qSXtnC6BO
+         i06Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkpjHonRfFlSzGP8nVdOqOUW7tqh5hOwgvYOxWsAno8VEVlMQCRg/u2tcNIDAjdO5oWdWN+l2zf7Sj9Lj6FhvMJFWkCmxQWENmAJ5R
+X-Gm-Message-State: AOJu0YwcfYhODuIApaYPBrgnQm43v2U7GEp086c5KN5ued7g+JTvgtA0
+	R+WsQTzunwPYz7vbx8/XedfNSpLL/h8KFepsX2tAaGmnXQjsezQ0S5x42DOSeccMwb+Cml5DulB
+	bB+5zYXG5l+inwMdW4EayQvpNRLdqjr5qRRrtw43+9DXnnrgRNOBDdvo6pQby8dPj0HYSlzwn9i
+	6xTwcTHd6uhw==
+X-Received: by 2002:a17:907:e299:b0:a7a:a30b:7b93 with SMTP id a640c23a62f3a-a8366bfc205mr185943966b.2.1723635692272;
+        Wed, 14 Aug 2024 04:41:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVElzlGQvCp40SGYdLshfg4SAiY1Lf5Iy2oHIC3dUD7p8/6p96C39Yy7gEUeBpOKaBSMFHag==
+X-Received: by 2002:a17:907:e299:b0:a7a:a30b:7b93 with SMTP id a640c23a62f3a-a8366bfc205mr185941466b.2.1723635691845;
+        Wed, 14 Aug 2024 04:41:31 -0700 (PDT)
 Received: from amikhalitsyn.. ([188.192.113.77])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa782csm162586166b.60.2024.08.14.04.41.26
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa782csm162586166b.60.2024.08.14.04.41.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 04:41:26 -0700 (PDT)
+        Wed, 14 Aug 2024 04:41:31 -0700 (PDT)
 From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To: mszeredi@redhat.com
 Cc: brauner@kernel.org,
@@ -86,9 +86,9 @@ Cc: brauner@kernel.org,
 	Bernd Schubert <bschubert@ddn.com>,
 	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/9] fs/fuse: support idmapped getattr inode op
-Date: Wed, 14 Aug 2024 13:40:28 +0200
-Message-Id: <20240814114034.113953-4-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v2 4/9] fs/fuse: support idmapped ->permission inode op
+Date: Wed, 14 Aug 2024 13:40:29 +0200
+Message-Id: <20240814114034.113953-5-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com>
@@ -100,18 +100,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We have to:
-- pass an idmapping to the generic_fillattr()
-to properly handle UIG/GID mapping for the userspace.
-- pass -/- to fuse_fillattr() (analog of generic_fillattr() in fuse).
-
-Difference between these two is that generic_fillattr() takes all
-the stat() data from the inode directly, while fuse_fillattr() codepath
-takes a fresh data just from the userspace reply on the FUSE_GETATTR request.
-
-In some cases we can just pass &nop_mnt_idmap, because idmapping won't
-be used in these codepaths. For example, when 3rd argument of fuse_do_getattr()
-is NULL then idmap argument is not used.
+We only cover the case when "default_permissions" flag
+is used. A reason for that is that otherwise all the permission
+checks are done in the userspace and we have to deal with
+VFS idmapping in the userspace (which is bad), alternatively
+we have to provide the userspace with idmapped req->in.h.uid/req->in.h.gid
+which is also not align with VFS idmaps philosophy.
 
 Cc: Christian Brauner <brauner@kernel.org>
 Cc: Seth Forshee <sforshee@kernel.org>
@@ -121,147 +115,31 @@ Cc: Bernd Schubert <bschubert@ddn.com>
 Cc: <linux-fsdevel@vger.kernel.org>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
- fs/fuse/dir.c | 44 ++++++++++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 20 deletions(-)
+ fs/fuse/dir.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 1e45c6157af4..a5bf8c18a0ae 100644
+index a5bf8c18a0ae..cd3b91b60cae 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -1157,18 +1157,22 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
- 	return err;
- }
- 
--static void fuse_fillattr(struct inode *inode, struct fuse_attr *attr,
--			  struct kstat *stat)
-+static void fuse_fillattr(struct mnt_idmap *idmap, struct inode *inode,
-+			  struct fuse_attr *attr, struct kstat *stat)
- {
- 	unsigned int blkbits;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	vfsuid_t vfsuid = make_vfsuid(idmap, fc->user_ns,
-+				      make_kuid(fc->user_ns, attr->uid));
-+	vfsgid_t vfsgid = make_vfsgid(idmap, fc->user_ns,
-+				      make_kgid(fc->user_ns, attr->gid));
- 
- 	stat->dev = inode->i_sb->s_dev;
- 	stat->ino = attr->ino;
- 	stat->mode = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
- 	stat->nlink = attr->nlink;
--	stat->uid = make_kuid(fc->user_ns, attr->uid);
--	stat->gid = make_kgid(fc->user_ns, attr->gid);
-+	stat->uid = vfsuid_into_kuid(vfsuid);
-+	stat->gid = vfsgid_into_kgid(vfsgid);
- 	stat->rdev = inode->i_rdev;
- 	stat->atime.tv_sec = attr->atime;
- 	stat->atime.tv_nsec = attr->atimensec;
-@@ -1207,8 +1211,8 @@ static void fuse_statx_to_attr(struct fuse_statx *sx, struct fuse_attr *attr)
- 	attr->blksize = sx->blksize;
- }
- 
--static int fuse_do_statx(struct inode *inode, struct file *file,
--			 struct kstat *stat)
-+static int fuse_do_statx(struct mnt_idmap *idmap, struct inode *inode,
-+			 struct file *file, struct kstat *stat)
- {
- 	int err;
- 	struct fuse_attr attr;
-@@ -1261,15 +1265,15 @@ static int fuse_do_statx(struct inode *inode, struct file *file,
- 		stat->result_mask = sx->mask & (STATX_BASIC_STATS | STATX_BTIME);
- 		stat->btime.tv_sec = sx->btime.tv_sec;
- 		stat->btime.tv_nsec = min_t(u32, sx->btime.tv_nsec, NSEC_PER_SEC - 1);
--		fuse_fillattr(inode, &attr, stat);
-+		fuse_fillattr(idmap, inode, &attr, stat);
- 		stat->result_mask |= STATX_TYPE;
+@@ -1567,7 +1567,7 @@ static int fuse_permission(struct mnt_idmap *idmap,
  	}
  
- 	return 0;
- }
+ 	if (fc->default_permissions) {
+-		err = generic_permission(&nop_mnt_idmap, inode, mask);
++		err = generic_permission(idmap, inode, mask);
  
--static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
--			   struct file *file)
-+static int fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode,
-+			   struct kstat *stat, struct file *file)
- {
- 	int err;
- 	struct fuse_getattr_in inarg;
-@@ -1308,15 +1312,15 @@ static int fuse_do_getattr(struct inode *inode, struct kstat *stat,
- 					       ATTR_TIMEOUT(&outarg),
- 					       attr_version);
- 			if (stat)
--				fuse_fillattr(inode, &outarg.attr, stat);
-+				fuse_fillattr(idmap, inode, &outarg.attr, stat);
+ 		/* If permission is denied, try to refresh file
+ 		   attributes.  This is also needed, because the root
+@@ -1575,7 +1575,7 @@ static int fuse_permission(struct mnt_idmap *idmap,
+ 		if (err == -EACCES && !refreshed) {
+ 			err = fuse_perm_getattr(inode, mask);
+ 			if (!err)
+-				err = generic_permission(&nop_mnt_idmap,
++				err = generic_permission(idmap,
+ 							 inode, mask);
  		}
- 	}
- 	return err;
- }
  
--static int fuse_update_get_attr(struct inode *inode, struct file *file,
--				struct kstat *stat, u32 request_mask,
--				unsigned int flags)
-+static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
-+				struct file *file, struct kstat *stat,
-+				u32 request_mask, unsigned int flags)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-@@ -1347,17 +1351,17 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
- 		forget_all_cached_acls(inode);
- 		/* Try statx if BTIME is requested */
- 		if (!fc->no_statx && (request_mask & ~STATX_BASIC_STATS)) {
--			err = fuse_do_statx(inode, file, stat);
-+			err = fuse_do_statx(idmap, inode, file, stat);
- 			if (err == -ENOSYS) {
- 				fc->no_statx = 1;
- 				err = 0;
- 				goto retry;
- 			}
- 		} else {
--			err = fuse_do_getattr(inode, stat, file);
-+			err = fuse_do_getattr(idmap, inode, stat, file);
- 		}
- 	} else if (stat) {
--		generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
-+		generic_fillattr(idmap, request_mask, inode, stat);
- 		stat->mode = fi->orig_i_mode;
- 		stat->ino = fi->orig_ino;
- 		if (test_bit(FUSE_I_BTIME, &fi->state)) {
-@@ -1371,7 +1375,7 @@ static int fuse_update_get_attr(struct inode *inode, struct file *file,
- 
- int fuse_update_attributes(struct inode *inode, struct file *file, u32 mask)
- {
--	return fuse_update_get_attr(inode, file, NULL, mask, 0);
-+	return fuse_update_get_attr(&nop_mnt_idmap, inode, file, NULL, mask, 0);
- }
- 
- int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
-@@ -1515,7 +1519,7 @@ static int fuse_perm_getattr(struct inode *inode, int mask)
- 		return -ECHILD;
- 
- 	forget_all_cached_acls(inode);
--	return fuse_do_getattr(inode, NULL, NULL);
-+	return fuse_do_getattr(&nop_mnt_idmap, inode, NULL, NULL);
- }
- 
- /*
-@@ -2094,7 +2098,7 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
- 			 * ia_mode calculation may have used stale i_mode.
- 			 * Refresh and recalculate.
- 			 */
--			ret = fuse_do_getattr(inode, NULL, file);
-+			ret = fuse_do_getattr(idmap, inode, NULL, file);
- 			if (ret)
- 				return ret;
- 
-@@ -2151,7 +2155,7 @@ static int fuse_getattr(struct mnt_idmap *idmap,
- 		return -EACCES;
- 	}
- 
--	return fuse_update_get_attr(inode, NULL, stat, request_mask, flags);
-+	return fuse_update_get_attr(idmap, inode, NULL, stat, request_mask, flags);
- }
- 
- static const struct inode_operations fuse_dir_inode_operations = {
 -- 
 2.34.1
 
