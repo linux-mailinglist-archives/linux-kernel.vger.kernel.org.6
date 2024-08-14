@@ -1,111 +1,127 @@
-Return-Path: <linux-kernel+bounces-287315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C286F952649
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:42:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7ADD95264C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73CA8282ECA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211991C21BE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289E514E2FA;
-	Wed, 14 Aug 2024 23:42:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1119E14B972;
+	Wed, 14 Aug 2024 23:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UUWPIp72"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="TxHjceIO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="t+wnsKU4"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA82B1448D8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 23:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BAB39FE5
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 23:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723678961; cv=none; b=lvylJD8kHisZvcObCqrG1M6mLe/uGjFM0sWMEm+QSt+35eZ4mgDOc0aGjt7UnXyrRQIhcYoa/G/ML4awStv6/Z1wgGQdobEqutiI7UltZ8WyAQyxQsb/1eF0NUx8073vSKOxGw58gh37woD22OyOMIXAGBPPhGc3P+qGz9k7rdk=
+	t=1723679203; cv=none; b=hp7mnSuC06IX055V/JUbPhmS+sV/magwL8Xlx4+ncEPPSlyBT62RZLSjvCkpxF8u+tR5c523f5rctflv4anr0D4dUW1l4EHw1pohkVYS5GjmVJGJbomlRrcCvvF7yBDCe5J5XaYhELuZH5UIEUp7jJg3KpNX8S89TUx3escIbp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723678961; c=relaxed/simple;
-	bh=lR4FffDeSePt0AVj0hB+l38MewoPYskiDBb2i6DJw2o=;
+	s=arc-20240116; t=1723679203; c=relaxed/simple;
+	bh=NstZZzKPfVWghIrao7KIkcvUvW+2jd4+r6TOLl+90FU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8inT1NhpzicC9WHrtFCuo3YENnpF+PErQpSOVQ3RS62l0XFUJw75SQYj7Lx3IH0q4En3dyTB53pY5GfYLtA535nSQHswkFfwsfoZc1XE614Ny8e6u/yS/MagUtyffqS5IBGetrR3IkQAfQMVrx+5YebzLULMHtRiW7wckoK1jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UUWPIp72; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 14 Aug 2024 16:42:31 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723678957;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=powCy6WP/JGwsZWWQApUZ1BP4yfZE6Dxn7LVxtqo9Gg=;
-	b=UUWPIp72abgqNrtwuevubD420Lr2wsihLdU+wC1Q3kouZEfNgYs9JCg4l3JTBFkKu5abjp
-	jAyjwR0qFEs6JIQtCvGugDwsfnXOKtQdIheb1IGRieo4GMblOQVlx/5XfNdajZiKrHd0VW
-	/24nBr5bCdyz6ZSYvASgEp9SGjUB01c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Yosry Ahmed <yosryahmed@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, Yu Zhao <yuzhao@google.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
-Message-ID: <5psrsuvzabh2gwj7lmf6p2swgw4d4svi2zqr4p6bmmfjodspcw@fexbskbtchs7>
-References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
- <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
- <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
- <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org>
- <vyi7d5fw4d3h5osolpu4reyhcqylgnfi6uz32z67dpektbc2dz@jpu4ob34a2ug>
- <CAKEwX=Mc9U_eEqoEYtwdfOUZTa=gboLtbF5FGy4pL--A54JJDw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovEV3/6ECtQHXoxTvbKbK0Zff/TcbrunUZl/sGE2wE7g3FfwBZ5TeKVC8i7e/qYdJW1yPAlFM92bdVOdXzLucfzFfv9g/7goUkcx/TQyoOajp8P/48fhb1e5WnRtALI6NYAZNVpZBOoR/VvXLLHF/xTr52/F4/3xps1sFjJbX0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=TxHjceIO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=t+wnsKU4; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 952F3138FC23;
+	Wed, 14 Aug 2024 19:46:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Wed, 14 Aug 2024 19:46:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1723679199; x=
+	1723765599; bh=eMMkPb4wq72gJTV++/aFkqKt3R3VFtBpA6zEx2Tt4oM=; b=T
+	xHjceIOnyuD4GXmbqVyqmiEzKOQVSoYSanmSY1TLppm6O1aqgWBlR2ED4oijWxoH
+	eLtjoEy1n6HA7iursyhL0FUzGhdlGq8ajDvbxoSJLyD+fIl2n+OF6+RMFh+j7sKj
+	97SvUZgoNmLScAsaAwx3YTiaWpaEMzfxbUitxjr/lBXowbR7wQLoeL+u65S4KyIi
+	o19Z4dLpHCo00H+av75YcnmqK17Kva1dnQFRFUNfBvXdzJPElINR4Gn7AK0/TtLH
+	tm+xJ/PssWvFU6G0ae/jhC1j1MtEsXezpNUmXyWQM6nwYf919TKO9WnkODqMCbMq
+	tBxwAiSaeBrVC4WAWOXjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1723679199; x=1723765599; bh=eMMkPb4wq72gJTV++/aFkqKt3R3V
+	FtBpA6zEx2Tt4oM=; b=t+wnsKU4uIXOzjHX3EQMB6N3cnl/iunmYAdcYjoIHpn5
+	AEqh1qvNIPfpzbrorB7cArZrD9ndH+sezEPgUCQpcwTt9fIppGi5iKIQrXIn8MOh
+	1HPKqbI/vchDMx67CBSUkyV/5AwrDxiLJrPUxwx6QwZLC7B3xnzKP7Ji7Ipa0o9t
+	UON/r2zdWzQen7JR/8/rzw7tNq53JkkLS6JLewcCNe87485CLkVZYj3893c/Cuww
+	FqZ8pXfoyrE+z+4TVEX+oggINk5dd1dmNeNdZRSbwMnvgz5YMhw+LoN/yNakwah/
+	QDtInlryep+y43RjskKT4vwV7UoWSomU14EeH92F9w==
+X-ME-Sender: <xms:30G9ZhXlfCXOitn31vQDFpaw1R9xId0XXeWiKQHOVeYnP3CcdrCzyg>
+    <xme:30G9ZhmEUNld6tzzwG4M5OTj5dnsWDJP62bye6hmUqJYve5mt4vKzMzYJQNGOtza0
+    lYNaXGFbHzqsnPEdAM>
+X-ME-Received: <xmr:30G9ZtYMY0pV_A9p_Ed3GiZPZl0EiTXvFwDwM6YhwQEWzoCcbkBRXZAxKwxisyc0XWCR69GZjCnHFofHkvTgD2cTPs_BRcyOJg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddthedgvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
+    fukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghm
+    ohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrg
+    htthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeu
+    udekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedv
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvg
+    hlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:30G9ZkUn4Fdq0fIVi7lA2M5WeRd0kD0k3Sk2R8nd6_vEJceKKBfsFA>
+    <xmx:30G9Zrl6mBOMfaoAEOsNgT7BKIu7r2t__-rBOTx1x835jS9xHZCrBA>
+    <xmx:30G9ZhcToWcWdeu9tOBkDePvOlZpn4uMToMWhwkL7AVi4BqaNqgPOA>
+    <xmx:30G9ZlFcjdSQuTZQMFPGTNn0GX_CfZFBPjRGu-dM7Y6yBbeXcVu6cQ>
+    <xmx:30G9ZgzGaJs54BzPfYgLNuE2KJoLqZUBsrtcSxnuMyaXRB24-55aEhwU>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 14 Aug 2024 19:46:38 -0400 (EDT)
+Date: Thu, 15 Aug 2024 08:46:36 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] firewire: core/ohci: minor code refactoring
+Message-ID: <20240814234636.GA82950@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+References: <20240814131222.69949-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKEwX=Mc9U_eEqoEYtwdfOUZTa=gboLtbF5FGy4pL--A54JJDw@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240814131222.69949-1-o-takashi@sakamocchi.jp>
 
-On Wed, Aug 14, 2024 at 04:03:13PM GMT, Nhat Pham wrote:
-> On Wed, Aug 14, 2024 at 9:32 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> >
-> > Ccing Nhat
-> >
-> > On Wed, Aug 14, 2024 at 02:57:38PM GMT, Jesper Dangaard Brouer wrote:
-> > > I suspect the next whac-a-mole will be the rstat flush for the slab code
-> > > that kswapd also activates via shrink_slab, that via
-> > > shrinker->count_objects() invoke count_shadow_nodes().
-> > >
-> >
-> > Actually count_shadow_nodes() is already using ratelimited version.
-> > However zswap_shrinker_count() is still using the sync version. Nhat is
-> > modifying this code at the moment and we can ask if we really need most
-> > accurate values for MEMCG_ZSWAP_B and MEMCG_ZSWAPPED for the zswap
-> > writeback heuristic.
+On Wed, Aug 14, 2024 at 10:12:19PM +0900, Takashi Sakamoto wrote:
+> Hi,
 > 
-> You are referring to this, correct:
+> This series of changes include minor code refactoring in core function
+> and 1394 OHCI driver.
 > 
-> mem_cgroup_flush_stats(memcg);
-> nr_backing = memcg_page_state(memcg, MEMCG_ZSWAP_B) >> PAGE_SHIFT;
-> nr_stored = memcg_page_state(memcg, MEMCG_ZSWAPPED);
 > 
-> It's already a bit less-than-accurate - as you pointed out in another
-> discussion, it takes into account the objects and sizes of the entire
-> subtree, rather than just the ones charged to the current (memcg,
-> node) combo. Feel free to optimize this away!
+> Takashi Sakamoto (3):
+>   firewire: ohci: use helper macro for compiler aligned attribute
+>   firewire: ohci: remove unused wrapper macro for dev_info()
+>   firewire: core/ohci: minor refactoring for computation of
+>     configuration ROM size
 > 
-> In fact, I should probably replace this with another (atomic?) counter
-> in zswap_lruvec_state struct, which tracks the post-compression size.
-> That way, we'll have a better estimate of the compression factor -
-> total post-compression size /  (length of LRU * page size), and
-> perhaps avoid the whole stat flushing path altogether...
-> 
+>  drivers/firewire/core-device.c | 3 ++-
+>  drivers/firewire/ohci.c        | 5 ++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 
-That sounds like much better solution than relying on rstat for accurate
-stats.
+Applied to for-next branch.
+
+
+Regards
+
+Takashi Sakamoto
 
