@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-286341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EED89519DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:27:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DE09519F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF59DB210DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4DF1C214F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9921AED3E;
-	Wed, 14 Aug 2024 11:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UVKKvBc+"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0B11AED33;
+	Wed, 14 Aug 2024 11:33:27 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70221AE878;
-	Wed, 14 Aug 2024 11:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720F51AED2F;
+	Wed, 14 Aug 2024 11:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723634854; cv=none; b=Do1/skG205JyLcPl7X8H9k2ZJ0yUYFRtBNifhD78HhOnXOp8vHfc1/HZNcbNjJIlkkjob2ITQ8vRB0AS5WjZLv+0a/wSZZDlMB+Okzdr6f27gkw3L7tr+acZ2UDlYG8ypXquJBN8QvU4bC6jVGMWSrfDQdbDbF0Rv3IS53eJ4OU=
+	t=1723635207; cv=none; b=eCMD1++5/DFqbsAvUvooLrlr1NJ2ljjS//LFF76YkH9HxhD1DiZuT2uEtwfb3ndeNpwiPN0HeBQ1zy2HRyxxwpB4DQORSPqXuRrU1VJ6RzWN1kUWFA02C0blSbnMpcX6hMw6ge0rkPUbaa1NIiKIYFqH2i5XMUHF0uRaJIWHQ6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723634854; c=relaxed/simple;
-	bh=WhU+e2jgq65ehnrJrXCUVJzjobCEAHClPzzdVgzZ17Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gQiFhWvAQ9QUqr/lgVmOK+Rt6Y3gQcfdRAK3V7m0Jwszd6nIWmxm7v8+hyUkhKvkJrjAILApBaEM09YUa3uT19nkbV/MrWKcPLzQHlfA5m1lqae9cf1eLJF59C8zkzZgUWqdYHSwsP5V54IVZDnr8s8+rjittgGIh6B4MqWfGQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UVKKvBc+; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2cf213128a1so4388503a91.2;
-        Wed, 14 Aug 2024 04:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723634852; x=1724239652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WhU+e2jgq65ehnrJrXCUVJzjobCEAHClPzzdVgzZ17Y=;
-        b=UVKKvBc+uf6JL3LR/x/iPT18ImoK+QVFtHMBIfoJZWUrR6/fxsVKQvCn8kongne0hp
-         nnb65BYAsO2bjk2GBMtJO172rmRwZGe60m6vvfVnw77jSN0kq160ppkcJwOOebzDSW9L
-         onj+fhQ5bWRMTFILRoBtQmJ8Fw5f3OD0HCLJWtkDJZttIcpXwOszkSNB0C0nISc4oluZ
-         Fdkosf7Gg0QZXF6/p2g1jbdiwRxBZOM9MadGEYJb4mvMFHrgMNif0wSTSnu2vh/+UVxJ
-         RnOmCY8b8qzpCoGeNe/xV+bJXoO2k8YYEEfsYSYl43qD1POTfoiopY+m9biCySPxzGKj
-         MA5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723634852; x=1724239652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WhU+e2jgq65ehnrJrXCUVJzjobCEAHClPzzdVgzZ17Y=;
-        b=ItNKZlL0PKllrJnYeNy27d46mkYl6diqs+u9cXVokUZ8zD69C/MWleWXRBFvYhetm5
-         TonTW3pGchACbHAW0TX4x0A7+UMpH/qOZHJbudUnguCmX4x+HH0IKMHLQYD64kroPLaZ
-         QhzxwHVTLnDD45LAYOIA19N5XL6rFb6afW3hubJB6OLDW/rFB0L5Us4Nhevp9LSyMRXE
-         oj1heCLKBT4A+MIVtAZjahIq+RnQ25PRV9RkIiFFIlZggflyKEs0TZeK1U57MHR8RKul
-         7mo+PAuxJAQhJfr0x+aSOrUxHic5Fscr+a6BF1aHDfGoRphWpxRLDjKMtzMGRCbkCwzq
-         PyQg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4n9gPZG0srIhLx1Elk1S31P+A6kf+TC9MxiTCtFUzcdp7cK0DzDhbHzb1tY5t+MRn8TnBwPRFEUDjaTAPOKjTKjGMdkinME7mE68phrUH1acaWCwFtPHH4Ys22HwNDxUWBL8I5cJFe2BhfkOFs1d1zc8Eo5fuj5PbiTCNfbVhMV2kvsBh/TC5T7c=
-X-Gm-Message-State: AOJu0YxfTUcPEEZfP8GvYh4qFQJndW7dLy+T2ndWxtfswVe8PxC3v/NG
-	gREveFf2ginBWuKS0OlsjZ+vuKMt8+I8dlpL8AtXT6fH/9MH+tepJNOmeh2FWIINNL81Tn8zWUx
-	rCteJB4GyeI9DlyMdA/fbKhTDVbA=
-X-Google-Smtp-Source: AGHT+IELKdSoSWG2UnYMmakzdFiUo5k7VT5bKKAkwEl/PovcViSJbpFA/Q4ffrafWGIOvcGXFiTjP48gn1Htq58EQOQ=
-X-Received: by 2002:a17:90b:1949:b0:2c9:9ad5:7ca2 with SMTP id
- 98e67ed59e1d1-2d3aaa8d177mr2841773a91.13.1723634851943; Wed, 14 Aug 2024
- 04:27:31 -0700 (PDT)
+	s=arc-20240116; t=1723635207; c=relaxed/simple;
+	bh=DMomTvwQxLY5tBqwf1GAIJ2j7UEKVaj+p1Vp8ym+RJ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5FlFeYypm6wwdXgRcxO7q7b3F6ovx2c68oaDLxJJ/nsB7vKkqD9vGTxpONrC4cVQkxIGFuaIsRqCdLpsdxbIWXDKoJK9kwjvK+qSF5waU3t9q0kzOfRvrOBN60MhO+ekV0F4k+1GdsDbnNJrw/xemLBARGuczXDqdqFLJxCfjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WkR2b07s6z4f3kKn;
+	Wed, 14 Aug 2024 19:33:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5B6121A12CC;
+	Wed, 14 Aug 2024 19:33:20 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBXzIL_lbxmhuyrBg--.22017S4;
+	Wed, 14 Aug 2024 19:33:20 +0800 (CST)
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+To: chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neilb@suse.de,
+	kolga@netapp.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: yukuai1@huaweicloud.com,
+	houtao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	lilingfeng@huaweicloud.com,
+	lilingfeng3@huawei.com
+Subject: [PATCH] NFSD: remove redundant assignment operation
+Date: Wed, 14 Aug 2024 19:29:07 +0800
+Message-Id: <20240814112907.904426-1-lilingfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812232910.2026387-1-mmaurer@google.com> <20240812232910.2026387-2-mmaurer@google.com>
-In-Reply-To: <20240812232910.2026387-2-mmaurer@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 14 Aug 2024 13:27:19 +0200
-Message-ID: <CANiq72khUrha-a+59KYZgc63w-3P9=Dp_fs=+sgmV_A17q+PTA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] kbuild: rust: Define probing macros for rustc
-To: Matthew Maurer <mmaurer@google.com>
-Cc: dvyukov@google.com, ojeda@kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>, aliceryhl@google.com, 
-	samitolvanen@google.com, Nicolas Schier <nicolas@fjasle.eu>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXzIL_lbxmhuyrBg--.22017S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWkCr43CFWftr18CrWUtwb_yoWDZrb_X3
+	W8Gw18GF45Ww47Was3Ar10yrWrCrZ7Jr18W39IqFZFka93tF95uws7Xw4Yka45GFsIqF45
+	J3WrWr1ak3W5tjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VU13ku3UUUUU==
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-On Tue, Aug 13, 2024 at 1:29=E2=80=AFAM Matthew Maurer <mmaurer@google.com>=
- wrote:
->
-> 1. `rustc` support will soon be a minimum rather than a pinned version.
+From: Li Lingfeng <lilingfeng3@huawei.com>
 
-In the meantime, this happened, so we should update this sentence.
+Commit 5826e09bf3dd ("NFSD: OP_CB_RECALL_ANY should recall both read and
+write delegations") added a new assignment statement to add
+RCA4_TYPE_MASK_WDATA_DLG to ra_bmval bitmask of OP_CB_RECALL_ANY. So the
+old one should be removed.
 
-> 2. We already support multiple LLVMs linked into `rustc`, and these are
+Fixes: 5826e09bf3dd ("NFSD: OP_CB_RECALL_ANY should recall both read and write delegations")
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+ fs/nfsd/nfs4state.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I guess you mean `rustc` is able to use multiple major versions of
-LLVM -- or what do you mean by "multiple LLVMs linked"?
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index a20c2c9d7d45..693f7813a49c 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -6644,7 +6644,6 @@ deleg_reaper(struct nfsd_net *nn)
+ 					cl_ra_cblist);
+ 		list_del_init(&clp->cl_ra_cblist);
+ 		clp->cl_ra->ra_keep = 0;
+-		clp->cl_ra->ra_bmval[0] = BIT(RCA4_TYPE_MASK_RDATA_DLG);
+ 		clp->cl_ra->ra_bmval[0] = BIT(RCA4_TYPE_MASK_RDATA_DLG) |
+ 						BIT(RCA4_TYPE_MASK_WDATA_DLG);
+ 		trace_nfsd_cb_recall_any(clp->cl_ra);
+-- 
+2.31.1
 
-> +# $(rustc-option,<flag>)
-> +# Return y if the Rust compiler supports <flag>, n otherwise
-> +# Calls to this should be guarded so that they are not evaluated if
-> +# CONFIG_HAVE_RUST is not set.
-
-Hmm... why `HAVE_RUST`? Should that be `RUST_IS_AVAILABLE`? Or what is
-the intention? Perhaps a comment would help here -- e.g. something
-like the comment I used in the original approach [1]. Otherwise we
-will forget... :)
-
-Also, I guess you wanted to relax the precondition as much as
-possible, which is great, just to double check, do we expect a case
-outside `RUST=3Dy`?
-
-> rustc-option =3D $(success,trap "rm -rf .tmp_$$" EXIT; mkdir .tmp_$$; $(R=
-USTC) $(1) --crate-type=3Drlib /dev/null -o .tmp_$$/tmp.rlib)
-
-I also had `out-dir` [1] since, if I remember correctly, `rustc` may
-create temporary files in a potentially read-only location even in
-this case.
-
-Also, should we do `-Dwarnings` here?
-
-> +# If you are testing for unstable features, consider `rustc-min-version`
-> +# instead, as features may have different completeness while available.
-
-`rustc-min-version` is not mainline yet -- we don't have a user yet,
-but I can send it if so.
-
-Thanks!
-
-[1] https://github.com/Rust-for-Linux/linux/pull/1087#issuecomment-22184453=
-03
-
-Cheers,
-Miguel
 
