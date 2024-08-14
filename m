@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-286662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7EC951DCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:54:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE46951D85
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A211B28BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74B8290308
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0631B3F01;
-	Wed, 14 Aug 2024 14:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EFF1B3F21;
+	Wed, 14 Aug 2024 14:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X9Ov0I7Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RwZwsCTY"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C07D1B372E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BBB1B372E;
+	Wed, 14 Aug 2024 14:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646566; cv=none; b=jrB0dZKcLh2n5PBttAiCUPN+mWI6KXSnPkuboXK+8x8TqJYTbecglNXbfRqdFhKzMjAb0Q8hWeXkeC9ZTJhth0QXKOLizL3Xu61uXaQgNuu/WhvPxYoXuCI+DG0n7806FOvVoDISUtRJf6oPvQcGoD3BcMrP5cEejWht7qkrNPo=
+	t=1723646572; cv=none; b=AQMDye7jS2TBf3OlgWMbigCmIpMP+bQs6oTTb7el0Hfkq5JhPjOQVFEOsI0stts0Ji3FzNpS5ivrd0sZ6UMYn1XsV6YS29I3e6wUpIxyLpLMU6ksvA3v87TDgg/WM3aPNykRBSwXSC/b8eTuSM2a5pxrQ76TPOqFMpGpF2BmIt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646566; c=relaxed/simple;
-	bh=aDnv0IqT062+fKLr04AH2+xuNLUhOsdmpPpXsIdGfVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qfSZFBnBmhymQc/X897bFlv/J+DhgM89kec3NOUMfu9ncm7rVb3L7o4hPiOygoBCN7QMWYin554HrVAqLj0+Qp5Zex8s8x1fycHfUJh4K0FFTlxoEW/xOW+cOH/yTFAgcNzAV7yJnfE3OE6/iy4NBaFsbHAgfFkgT80MeYMbQvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X9Ov0I7Y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723646563;
+	s=arc-20240116; t=1723646572; c=relaxed/simple;
+	bh=FUbY1SpMqbRXeMP/LZen1im+BDgUKZO9g5TId8g/DTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BUZPH9UYqpAt6REOgRhNXupYq5CLhEFc9ddUWFV3ReyiPaqjBb3NGgdrGgNELQHVowqztTyE3vYC35ORmnDkxYGKAK0fE3Ty536UcUOvwDHQzsFDeNAkanQ6CzYb5Xh1JSvdZRFChx74Ogml+Ft2NX2xzQX+0NmKFhd1s8ra6EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RwZwsCTY; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E9C711C0006;
+	Wed, 14 Aug 2024 14:42:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723646568;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xVYdNdGbsg5hDvwTYOliW2fHo02oz1rG9FEP2u4lRJM=;
-	b=X9Ov0I7Y6zMu/rztQMH5/itmeS8Rq4Tf+vFBumDNM+kon1gKQ3BC4EIObnnlXGopQsWGwy
-	GWfikL7yVhaMTIgtStjgzqdeRcwh8fluQ3jZegNCyMrkBoPGLpLhDLyOkbdBz2pYVN/aDi
-	qJMK3Wt+zxVFb4LocpeDzXcOTzPp9jQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-NhnNhuDYOiqJNQYxj92Kvg-1; Wed, 14 Aug 2024 10:42:42 -0400
-X-MC-Unique: NhnNhuDYOiqJNQYxj92Kvg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-427b7a2052bso76009015e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:42:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723646561; x=1724251361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xVYdNdGbsg5hDvwTYOliW2fHo02oz1rG9FEP2u4lRJM=;
-        b=qsY+90MeW9naQC/WWT9m+DEwvTSvX34xNzpGOAFdOt7sf5HfHPam0GhhfogDQk3pWG
-         VnxgFT1G6wp7Qw8jnzWwnksn2KhlJcKKJ/3zVTFOlPGFErBDFZ2mnBvNXwHkKH7JIaB+
-         T5WALw+epibqWtgAOPr0xCVfpVTO2r2jcdh9w1JOqUA81ssTrVv1/mYJ0JTswbAa7Ovw
-         DMiE11soh72BerXuyicuFOX8Hi73sYvCSNA8HdvCjMKUNO31Q1Oo6epqVI74PvVfuv//
-         KomtredLvn4GCoyArUw0q2+URNhhNU9yTXdWIjxZ/YwOqwaa8PI0Q8MBl+71U2CZPpgL
-         hK6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZqcBzdIndEh/zhWisHy4ONPKbrESj0YzqJirdf696vRn8ACw/ZU8KuAAshu2AOKaf0rHkComgT+ORHAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5pV6Yl4119RDacQh9FYRT5I1d0Bgwa4EMkes6qSmlzjeWlSqz
-	Z8fjKo+H6Ad5Y/qUZx26YICvNT9sJgQJao0WrJWH0S1O6LxM/enn3S45yNbs6x6YqhRjOFqV/5P
-	HChQTQwbrE1vh6bMf4o6cG+mvYdr4p/wUYggHeiuhdHt0bLFqSWF2PTn030HGvQ/wz8w7/uJwwp
-	Y5625hu8SMKJR7cqHKTnzbVicGhVnxnAepDg4D
-X-Received: by 2002:a05:6000:2ac:b0:360:75b1:77fb with SMTP id ffacd0b85a97d-37177742ccamr3183757f8f.8.1723646561315;
-        Wed, 14 Aug 2024 07:42:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtP+rSeBmdU6XVoONivIqjh3NiciH9BKIZVBTlvjlI3aofydQJhEqWOqQib+vR63crzrcjSC2qHRhrq2xiWUg=
-X-Received: by 2002:a05:6000:2ac:b0:360:75b1:77fb with SMTP id
- ffacd0b85a97d-37177742ccamr3183718f8f.8.1723646560795; Wed, 14 Aug 2024
- 07:42:40 -0700 (PDT)
+	bh=mCe2Kac2K1pnqt6534QtxlYkCGpJDN6y+35zQbSjIf4=;
+	b=RwZwsCTYIhhY66AzsCf/dIWofDh57t1TnYqLpP0zuRDkXUvGAjgmT/xFwvT8qxDhvS82P8
+	Wh7KEWkuvwSt7oqIEnct+74WUjV818QqHvqS+FybWehsgeZt+5r3lP+qYJptRpOms/ENy5
+	0hlxH7POiA+QjgixWJrak45FLVuI4SI0a9uB9CtI/45LvpXQypH1KAaGvfJUFK6+C+Lrjs
+	0f9Idhlzg3/uTQYolP7HSzWzi2avLrdLa1/2513IhtsR00R13GhOLhATEteT9qKkHpcxPe
+	L6Tft1OOp1Yy2fajeOTv8azmQk5d6xTQ9WFhYJ14BYjf27DH4Yzen9LoIdMKPA==
+Date: Wed, 14 Aug 2024 16:42:44 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Derek Kiernan
+ <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Paul Kocialkowski <contact@paulk.fr>, =?UTF-8?Q?Herv?=
+ =?UTF-8?Q?=C3=A9?= Codina <herve.codina@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-i2c@vger.kernel.org, Paul Kocialkowski
+ <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH v3 1/7] dt-bindings: connector: add GE SUNH hotplug
+ addon connector
+Message-ID: <20240814164244.25e9b3f4@booty>
+In-Reply-To: <20240813151901.GA953664-robh@kernel.org>
+References: <20240809-hotplug-drm-bridge-v3-0-b4c178380bc9@bootlin.com>
+	<20240809-hotplug-drm-bridge-v3-1-b4c178380bc9@bootlin.com>
+	<20240813151901.GA953664-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809160909.1023470-1-peterx@redhat.com> <20240814123715.GB2032816@nvidia.com>
- <ZrzAlchCZx0ptSfR@google.com>
-In-Reply-To: <ZrzAlchCZx0ptSfR@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 14 Aug 2024 16:42:28 +0200
-Message-ID: <CABgObfbaRwob74An5=s+HiaRiPa2_z-LFF1sPtEtAHO8_VuF0g@mail.gmail.com>
-Subject: Re: [PATCH 00/19] mm: Support huge pfnmaps
-To: Sean Christopherson <seanjc@google.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>, 
-	Axel Rasmussen <axelrasmussen@google.com>, linux-arm-kernel@lists.infradead.org, 
-	x86@kernel.org, Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>, 
-	Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Ingo Molnar <mingo@redhat.com>, 
-	Alistair Popple <apopple@nvidia.com>, Borislav Petkov <bp@alien8.de>, David Hildenbrand <david@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Wed, Aug 14, 2024 at 4:35=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
-> > vfio/iommufd will reassemble the contiguous range from the 4k PFNs to
-> > setup the IOMMU, but KVM is not able to do it so reliably.
->
-> Heh, KVM should very reliably do the exact opposite, i.e. KVM should neve=
-r create
-> a huge page unless the mapping is huge in the primary MMU.  And that's ve=
-ry much
-> by design, as KVM has no knowledge of what actually resides at a given PF=
-N, and
-> thus can't determine whether or not its safe to create a huge page if KVM=
- happens
-> to realize the VM has access to a contiguous range of memory.
+Hello Rob,
 
-Indeed: the EPT is managed as a secondary MMU. It replays the contents
-of the primary MMU, apart from A/D bits (which are independent) and
-permissions possibly being more restrictive, and that includes the
-page size.
+On Tue, 13 Aug 2024 09:19:01 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-Which in turn explains why the VA has to be aligned for KVM to pick up
-the hint: aligning the VA allows the primary MMU to use a hugepage,
-which is a prerequisite for using it in EPT.
+> On Fri, Aug 09, 2024 at 05:34:49PM +0200, Luca Ceresoli wrote:
+> > Add bindings for the GE SUNH add-on connector. This is a physical,
+> > hot-pluggable connector that allows to attach and detach at runtime an
+> > add-on adding peripherals on non-discoverable busses.  
+> 
+> Overall, looks pretty good.
 
-Paolo
+Thanks, I'm very glad it does.
 
+> > +    maxItems: 1
+> > +
+> > +  nobus-devices:  
+> 
+> Just 'devices'.
+
+Sure, simple enough.
+
+> > +    description:
+> > +      A container for devices not accessible via any data bus. Common use
+> > +      cases include fixed and GPIO regulators, simple video panels and LED
+> > +      or GPIO backlight devices. When not hot-pluggable, nodes such devices
+> > +      are children of the root node.
+> > +
+> > +      This node should not be present in the connector description in the
+> > +      base device tree. It should be added by overlays along with a subnode
+> > +      per device.
+> > +
+> > +    type: object
+> > +    additionalProperties: false  
+> 
+> The schema needs to work with the overlay applied too. 'true' is fine 
+> here.
+
+Does additionalProperties apply to nodes as well? No properties are
+supposed to be added inside this node, only nodes, so I'm not sure what
+to do about additionalProperties.
+
+Queued all other changes for v4.
+
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
