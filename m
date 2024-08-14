@@ -1,243 +1,224 @@
-Return-Path: <linux-kernel+bounces-286658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C483951D72
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:42:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21FCC951D75
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D012A28B37D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C94C1F22391
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313551B8E97;
-	Wed, 14 Aug 2024 14:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF801B3F1E;
+	Wed, 14 Aug 2024 14:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TpfubSsy"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3LcKHrq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2D81B3F20
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483D91B373B;
+	Wed, 14 Aug 2024 14:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646323; cv=none; b=QZZmM6nKTRWYlf7JkABxuCS8qxnl2IFydyVPpJSqUKT+lV7qsmJtECFctGuUZnLVNRI6EXbo5HUovb+LkSJn8Y1026JTImS9toUGkbJszQ8nNKmSqqGAwFmAXWewhqAQUhVbCBkZfYBI6uj3SlLg1fIW+IOWGoCDIgwiJLI6Ris=
+	t=1723646376; cv=none; b=F99rjQ7EVRO2eScs5pIOZQA+D+MOmKNYQQ5tffQDVNJ7CrIRg9vECDoWr8p7meJsJ9ZP2mli1sQxn4WW6V05QQYE14G61L8b7NCUvXieQbyHTT/6+6/fMPZmTwgqs/YIJfDn2fmeEkMgeSOv+obcMaS5nGoxdIVxZrv2ShGk3ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646323; c=relaxed/simple;
-	bh=aXNaUat3LKXlkjL2pXbnIzgA9XihrC3jZjhzS9S2qWE=;
+	s=arc-20240116; t=1723646376; c=relaxed/simple;
+	bh=Lz3WZju4AIx0XhLGlChFQhykhUMFjefQLlxi1VNM7LU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DR8JKC/PLL4TBaKv/BhRyCHE8+n13zxSA9den/nIQU/Qw3/icw49u/NGm3KG3u2ZsiyO3MqMYV5ZS/aPoLk9O+2VO4p5UqBwPr/Br3Zeg4wAG3KmoUPeYfi84u7solQa9dFm3q1oSmmbVZjicF3h9zDANjcPNHOCAHifvnRzl4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TpfubSsy; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc66fc35f2so7630465ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:38:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723646320; x=1724251120; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VeGClbZuXLA9CO3WbjErOWLZ7t2Jx6TcRcw8Toi87Hw=;
-        b=TpfubSsykWNILpdq7HlxX7wfDHDx2L892MjtihT6jb15imS19TrligHMgoENMkJIHl
-         jEDHpt3aWMJ/+fBE4Hzh0Pz2rnecABmke1amox2jkF9iwPlhzsJe1TtZRXxhV1Ur5ZmM
-         rzwqB/yNtazgSdGBkJkryJHfG0buy626lfsF3bvOzBSW3OxdtQdKyg4LvfJgksSj4NpX
-         28RWUoGNzvqhEdLdKnB9mEJcWmB4i768lB8JFEZy6RkXU9cDlWvOaokyOBFzg7iyhjJR
-         30BBp0IfyYFiFVFPwnk9VMlZ92tXlFNAVmHJSF2mhC9Su8HEIiC3nxvQ/vnLP7LX+eiw
-         kQXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723646320; x=1724251120;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VeGClbZuXLA9CO3WbjErOWLZ7t2Jx6TcRcw8Toi87Hw=;
-        b=pbd3KLdElLZm0/RSGMEDR0aJ6o38OptBYCNtphFApKNgePKnnCMmidMogp0akgSjEu
-         8Yp74NHsI3Tr7cb/zigFfjy+MXkRhQIC1N2yW207/sXRzmfBTTa5MUZSZOGgTGcnvKqr
-         vlKJp3fsbPZQjZv3/OKZ5995OXzGn9dx3Nu0M7nlwolYdvymIYXsXWBP3TfQd8Zh+Mui
-         DEfaMRavqe6uBZ5sqm8yWKMulOdD6pAc3di3DVHNF5bwJy/SL72Lj/cjH3hMcZephfXh
-         2kktu9DU1XVdY+a8t6StV4BtJut7plTCBtyNS4mkH/n7Q1UlirTshfZeWcvJ94EIyLzi
-         dVHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCifYJpti/r/RvPAbiDgJ8F1v7jPGfRWhNckF7/DR8Py0q5KTtRmbdAehATOAOphLsJbeL3f4g6Q/zjzzqcsXoQyOsnl/skdR9q74w
-X-Gm-Message-State: AOJu0YyxNvAR3vG/YOlAmNGBae3A/JeJUrt6DNKON/zZss01Y/uSKD3N
-	/nmCsge2FhAWb3e2bgAlMJSr/sK7jQ9INlHPMLF1iY49uPU4yBOhS8Mg3wF/9aI=
-X-Google-Smtp-Source: AGHT+IFUuropSuxmMoLQTUFTyfhWn0rqyNwVtipty2Kflc9rYsME60ncCjIuU5hnGd4PCRSdPuxcdg==
-X-Received: by 2002:a17:902:d2cc:b0:1fc:4acb:3670 with SMTP id d9443c01a7336-201d99993a9mr42053675ad.12.1723646319926;
-        Wed, 14 Aug 2024 07:38:39 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:58b0:43ab:ed9f:f0e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1aa00csm30446435ad.173.2024.08.14.07.38.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:38:39 -0700 (PDT)
-Date: Wed, 14 Aug 2024 08:38:36 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Hongxing Zhu <hongxing.zhu@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH 6/6] remoteproc: imx_rproc: handle system off for i.MX7ULP
-Message-ID: <ZrzBbFAeq+Aawr6h@p14s>
-References: <20240712-imx_rproc-v1-0-7bcf6732d328@nxp.com>
- <20240712-imx_rproc-v1-6-7bcf6732d328@nxp.com>
- <ZrE4Qnk2UOCGpFv1@lizhi-Precision-Tower-5810>
- <PAXPR04MB8459FA9E502510F906D2880588B92@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkVHVm8/A6sJXkrs3hNSaVvP84ovzCkVpf7ZBCGDo7ZZYgdBIbc3cVF++Cv+etnTS++t1zZlSk7SGVM5J2UA+U3fatQqzH0kVz++G6Tyq/RTMurUu3qgYbv4cWxOqUhL8tcrBx8zxrqNSRZvVKfZUQfcOLAFvOdKSplsE1+v3VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3LcKHrq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A812C116B1;
+	Wed, 14 Aug 2024 14:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723646375;
+	bh=Lz3WZju4AIx0XhLGlChFQhykhUMFjefQLlxi1VNM7LU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P3LcKHrqsXQ/S/eSdVxcNBL9VCpUxk0hLYjOrsaOIY5o6KtN5e/7M6xrghhCMeNz1
+	 +Eann4WzY8xQES0SDLqNU8mgTvM30yikIw1tISdJNwugjrCT6K8VVV2GTA1jxxLxXT
+	 tT4rWXaOA20aMslvdcs5O5mDJ5xyrY5qnScyAnX7/s5jcBasuH1aQA6qnru2Ugvgxc
+	 OmGWR4z8za9O0BPGE+j/VRuMRMB+hixckCBjNn/Xbid3jBjK0/+38J1I8qVvM5s152
+	 bEsjRQOSr8YGjKKvqev6KSG/b7YSsMfoGm0hsy1mP/XVaCFjdR71zY8Cw38Vd33E+A
+	 H0GmXn0WNmocg==
+Date: Wed, 14 Aug 2024 16:39:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <raven@themaw.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	autofs mailing list <autofs@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] autofs: add per dentry expire timeout
+Message-ID: <20240814-darauf-schund-23ec844f4a09@brauner>
+References: <20240814090231.963520-1-raven@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459FA9E502510F906D2880588B92@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <20240814090231.963520-1-raven@themaw.net>
 
-On Thu, Aug 08, 2024 at 02:56:20AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH 6/6] remoteproc: imx_rproc: handle system off for
-> > i.MX7ULP
-> > 
-> > On Fri, Jul 12, 2024 at 04:34:59PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > The i.MX7ULP Cortex-A7 is under control of Cortex-M4. The
-> > i.MX7ULP
-> > > Linux poweroff and restart rely on rpmsg driver to send a message to
-> > > Cortex-M4 firmware. Then Cortex-A7 could poweroff or restart by
-> > > Cortex-M4 to configure the i.MX7ULP power controller properly.
-> > >
-> > > However the reboot and restart kernel common code use atomic
-> > notifier,
-> > > so with blocking tx mailbox will trigger kernel dump, because of
-> > > blocking mailbox will use wait_for_completion_timeout. In such case,
-> > > linux no need to wait for completion.
-> > >
-> > > Current patch is to use non-blocking tx mailbox channel when system
-> > is
-> > > going to poweroff or restart.
-> > >
-> > > Reviewed-by: Jacky Bai <ping.bai@nxp.com>
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  drivers/remoteproc/imx_rproc.c | 36
-> > > ++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 36 insertions(+)
-> > >
-> > > diff --git a/drivers/remoteproc/imx_rproc.c
-> > > b/drivers/remoteproc/imx_rproc.c index
-> > 01cf1dfb2e87..e1abf110abc9
-> > > 100644
-> > > --- a/drivers/remoteproc/imx_rproc.c
-> > > +++ b/drivers/remoteproc/imx_rproc.c
-> > > @@ -18,6 +18,7 @@
-> > >  #include <linux/of_reserved_mem.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/pm_domain.h>
-> > > +#include <linux/reboot.h>
-> > >  #include <linux/regmap.h>
-> > >  #include <linux/remoteproc.h>
-> > >  #include <linux/workqueue.h>
-> > > @@ -114,6 +115,7 @@ struct imx_rproc {
-> > >  	u32				entry;		/* cpu start
-> > address */
-> > >  	u32				core_index;
-> > >  	struct dev_pm_domain_list	*pd_list;
-> > > +	struct sys_off_data		data;
-> > >  };
-> > >
-> > >  static const struct imx_rproc_att imx_rproc_att_imx93[] = { @@
-> > > -1050,6 +1052,22 @@ static int imx_rproc_clk_enable(struct
-> > imx_rproc *priv)
-> > >  	return 0;
-> > >  }
-> > >
-> > > +static int imx_rproc_sys_off_handler(struct sys_off_data *data) {
-> > > +	struct rproc *rproc = data->cb_data;
-> > > +	int ret;
-> > > +
-> > > +	imx_rproc_free_mbox(rproc);
-> > > +
-> > > +	ret = imx_rproc_xtr_mbox_init(rproc, false);
-> > > +	if (ret) {
-> > > +		dev_err(&rproc->dev, "Failed to request non-blocking
-> > mbox\n");
-> > > +		return NOTIFY_BAD;
-> > > +	}
-> > > +
-> > > +	return NOTIFY_DONE;
-> > > +}
-> > > +
-> > >  static int imx_rproc_probe(struct platform_device *pdev)  {
-> > >  	struct device *dev = &pdev->dev;
-> > > @@ -1104,6 +1122,24 @@ static int imx_rproc_probe(struct
-> > platform_device *pdev)
-> > >  	if (rproc->state != RPROC_DETACHED)
-> > >  		rproc->auto_boot = of_property_read_bool(np,
-> > "fsl,auto-boot");
-> > >
-> > > +	if (of_device_is_compatible(dev->of_node, "fsl,imx7ulp-cm4"))
-> > {
-> > 
-> > I don't suggest check compatible string. It'd better add a field  in
-> > imx_rproc_dcfg, such as need_sys_off
-> > 
-> > 	if (dcfg->need_sys_off) {
-> > 		...
-> > 	}
-> > 
-> > If there are new compatible string added, just need set need_sys_off to
-> > true in driver data.
+On Wed, Aug 14, 2024 at 05:02:31PM GMT, Ian Kent wrote:
+> Add ability to set per-dentry mount expire timeout to autofs.
 > 
-> Could we delay the change when there is really new chips need this?
-> The downstream commit time is " Date:   Tue Dec 6 17:10:14 2022",
-> In the past days, I not see other platforms require this.
+> There are two fairly well known automounter map formats, the autofs
+> format and the amd format (more or less System V and Berkley).
 > 
-> Mathieu, which do you prefer? add need_sys_off or keep current
-> approach?
->
+> Some time ago Linux autofs added an amd map format parser that
+> implemented a fair amount of the amd functionality. This was done
+> within the autofs infrastructure and some functionality wasn't
+> implemented because it either didn't make sense or required extra
+> kernel changes. The idea was to restrict changes to be within the
+> existing autofs functionality as much as possible and leave changes
+> with a wider scope to be considered later.
+> 
+> One of these changes is implementing the amd options:
+> 1) "unmount", expire this mount according to a timeout (same as the
+>    current autofs default).
+> 2) "nounmount", don't expire this mount (same as setting the autofs
+>    timeout to 0 except only for this specific mount) .
+> 3) "utimeout=<seconds>", expire this mount using the specified
+>    timeout (again same as setting the autofs timeout but only for
+>    this mount).
+> 
+> To implement these options per-dentry expire timeouts need to be
+> implemented for autofs indirect mounts. This is because all map keys
+> (mounts) for autofs indirect mounts use an expire timeout stored in
+> the autofs mount super block info. structure and all indirect mounts
+> use the same expire timeout.
+> 
+> Now I have a request to add the "nounmount" option so I need to add
+> the per-dentry expire handling to the kernel implementation to do this.
+> 
+> The implementation uses the trailing path component to identify the
+> mount (and is also used as the autofs map key) which is passed in the
+> autofs_dev_ioctl structure path field. The expire timeout is passed
+> in autofs_dev_ioctl timeout field (well, of the timeout union).
+> 
+> If the passed in timeout is equal to -1 the per-dentry timeout and
+> flag are cleared providing for the "unmount" option. If the timeout
+> is greater than or equal to 0 the timeout is set to the value and the
+> flag is also set. If the dentry timeout is 0 the dentry will not expire
+> by timeout which enables the implementation of the "nounmount" option
+> for the specific mount. When the dentry timeout is greater than zero it
+> allows for the implementation of the "utimeout=<seconds>" option.
+> 
+> Signed-off-by: Ian Kent <raven@themaw.net>
+> ---
+>  fs/autofs/autofs_i.h         |  4 ++
+>  fs/autofs/dev-ioctl.c        | 97 ++++++++++++++++++++++++++++++++++--
+>  fs/autofs/expire.c           |  7 ++-
+>  fs/autofs/inode.c            |  2 +
+>  include/uapi/linux/auto_fs.h |  2 +-
+>  5 files changed, 104 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+> index 8c1d587b3eef..77c7991d89aa 100644
+> --- a/fs/autofs/autofs_i.h
+> +++ b/fs/autofs/autofs_i.h
+> @@ -62,6 +62,7 @@ struct autofs_info {
+>  	struct list_head expiring;
+>  
+>  	struct autofs_sb_info *sbi;
+> +	unsigned long exp_timeout;
+>  	unsigned long last_used;
+>  	int count;
+>  
+> @@ -81,6 +82,9 @@ struct autofs_info {
+>  					*/
+>  #define AUTOFS_INF_PENDING	(1<<2) /* dentry pending mount */
+>  
+> +#define AUTOFS_INF_EXPIRE_SET	(1<<3) /* per-dentry expire timeout set for
+> +					  this mount point.
+> +					*/
+>  struct autofs_wait_queue {
+>  	wait_queue_head_t queue;
+>  	struct autofs_wait_queue *next;
+> diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
+> index 5bf781ea6d67..f011e026358e 100644
+> --- a/fs/autofs/dev-ioctl.c
+> +++ b/fs/autofs/dev-ioctl.c
+> @@ -128,7 +128,13 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
+>  			goto out;
+>  		}
+>  
+> +		/* Setting the per-dentry expire timeout requires a trailing
+> +		 * path component, ie. no '/', so invert the logic of the
+> +		 * check_name() return for AUTOFS_DEV_IOCTL_TIMEOUT_CMD.
+> +		 */
+>  		err = check_name(param->path);
+> +		if (cmd == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
+> +			err = err ? 0 : -EINVAL;
+>  		if (err) {
+>  			pr_warn("invalid path supplied for cmd(0x%08x)\n",
+>  				cmd);
+> @@ -396,16 +402,97 @@ static int autofs_dev_ioctl_catatonic(struct file *fp,
+>  	return 0;
+>  }
+>  
+> -/* Set the autofs mount timeout */
+> +/*
+> + * Set the autofs mount expire timeout.
+> + *
+> + * There are two places an expire timeout can be set, in the autofs
+> + * super block info. (this is all that's needed for direct and offset
+> + * mounts because there's a distinct mount corresponding to each of
+> + * these) and per-dentry within within the dentry info. If a per-dentry
+> + * timeout is set it will override the expire timeout set in the parent
+> + * autofs super block info.
+> + *
+> + * If setting the autofs super block expire timeout the autofs_dev_ioctl
+> + * size field will be equal to the autofs_dev_ioctl structure size. If
+> + * setting the per-dentry expire timeout the mount point name is passed
+> + * in the autofs_dev_ioctl path field and the size field updated to
+> + * reflect this.
+> + *
+> + * Setting the autofs mount expire timeout sets the timeout in the super
+> + * block info. struct. Setting the per-dentry timeout does a little more.
+> + * If the timeout is equal to -1 the per-dentry timeout (and flag) is
+> + * cleared which reverts to using the super block timeout, otherwise if
+> + * timeout is 0 the timeout is set to this value and the flag is left
+> + * set which disables expiration for the mount point, lastly the flag
+> + * and the timeout are set enabling the dentry to use this timeout.
+> + */
+>  static int autofs_dev_ioctl_timeout(struct file *fp,
+>  				    struct autofs_sb_info *sbi,
+>  				    struct autofs_dev_ioctl *param)
+>  {
+> -	unsigned long timeout;
+> +	unsigned long timeout = param->timeout.timeout;
+> +
+> +	/* If setting the expire timeout for an individual indirect
+> +	 * mount point dentry the mount trailing component path is
+> +	 * placed in param->path and param->size adjusted to account
+> +	 * for it otherwise param->size it is set to the structure
+> +	 * size.
+> +	 */
+> +	if (param->size == AUTOFS_DEV_IOCTL_SIZE) {
+> +		param->timeout.timeout = sbi->exp_timeout / HZ;
+> +		sbi->exp_timeout = timeout * HZ;
+> +	} else {
+> +		struct dentry *base = fp->f_path.dentry;
+> +		struct inode *inode = base->d_inode;
+> +		int path_len = param->size - AUTOFS_DEV_IOCTL_SIZE - 1;
+> +		struct dentry *dentry;
+> +		struct autofs_info *ino;
+> +
+> +		if (!autofs_type_indirect(sbi->type))
+> +			return -EINVAL;
+> +
+> +		/* An expire timeout greater than the superblock timeout
+> +		 * could be a problem at shutdown but the super block
+> +		 * timeout itself can change so all we can really do is
+> +		 * warn the user.
+> +		 */
+> +		if (timeout >= sbi->exp_timeout)
+> +			pr_warn("per-mount expire timeout is greater than "
+> +				"the parent autofs mount timeout which could "
+> +				"prevent shutdown\n");
 
-This driver is already making extensive use of device data and as such suggest
-to continue with that method.
-
-> Thanks,
-> Peng.
-> 
-> > 
-> > Frank
-> > 
-> > > +		ret = devm_register_sys_off_handler(dev,
-> > SYS_OFF_MODE_POWER_OFF_PREPARE,
-> > > +
-> > SYS_OFF_PRIO_DEFAULT,
-> > > +
-> > imx_rproc_sys_off_handler, rproc);
-> > > +		if (ret) {
-> > > +			dev_err(dev, "register power off handler
-> > failure\n");
-> > > +			goto err_put_clk;
-> > > +		}
-> > > +
-> > > +		ret = devm_register_sys_off_handler(dev,
-> > SYS_OFF_MODE_RESTART_PREPARE,
-> > > +
-> > SYS_OFF_PRIO_DEFAULT,
-> > > +
-> > imx_rproc_sys_off_handler, rproc);
-> > > +		if (ret) {
-> > > +			dev_err(dev, "register restart handler
-> > failure\n");
-> > > +			goto err_put_clk;
-> > > +		}
-> > > +	}
-> > > +
-> > >  	ret = rproc_add(rproc);
-> > >  	if (ret) {
-> > >  		dev_err(dev, "rproc_add failed\n");
-> > >
-> > > --
-> > > 2.37.1
-> > >
+Wouldn't it be possible to just record the lowest known per-dentry
+timeout in idk sbi->exp_lower_bound and reject sbi->exp_timeout changes
+that go below that?
 
