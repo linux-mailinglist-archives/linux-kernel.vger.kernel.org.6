@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-286669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F754951DE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:58:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A6D951D97
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3F45B2D81C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634351F228CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC56E1B373B;
-	Wed, 14 Aug 2024 14:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B51C1B3F0E;
+	Wed, 14 Aug 2024 14:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ob9Smt2F"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEvyZV95"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4979B1B0120;
-	Wed, 14 Aug 2024 14:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E94D14373B;
+	Wed, 14 Aug 2024 14:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646732; cv=none; b=drTbofh477PqTi1zcyNEhAFuBtePTtGsKoHv7n6C0NlNbU0vsbhxujR1bpWU5GXH+chWnNUPiGNaT++LiAPWqgsOatqsrmMX9u03OAXLdUA5t2Ys5UKH/4SUq9AbLgbEOnIxE2RolW0TuBTTLYUvuq/JbvpzsV92pfu502GTLpw=
+	t=1723646741; cv=none; b=GYMCAJTwZfVF3y03xOrq6G4617sIEn1tt4j2cTKJ8cLOiqmhZSsdbdr94sLeInCmrx6e0TOhqbujGwgX9lPDSNR3XTW0mU3Bub296+EC7hyJEyGbi4udZfiWwp64e5k9K2KD6bmuTKnYHiuCyUxRcOKHCO6CIaXFaoCu7ZTHZS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646732; c=relaxed/simple;
-	bh=YvR2oqXHk/mwMfoEylXWNm2Mg/DFzBQEIoh8OjNQAqc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AoDhf8b0VRI0vSMIH1169Xtz2GjxgO05MPg3z1gKBqLII1Yy6OIi2TraHkH/BswYqrmWGfdhSieiy61rgKzilfGuicO9mrDQR57X43C5t2GMNeAm09ypwp3j064osKk2SVi0Oy+H80AUMdPD2mteR4dug3tCJoA47BJ3/200MFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ob9Smt2F; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723646731; x=1755182731;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=YvR2oqXHk/mwMfoEylXWNm2Mg/DFzBQEIoh8OjNQAqc=;
-  b=Ob9Smt2FA2pFXBX/yMh07NoIZ+VlnuMJ/4sthB+o8LLJhxsuB8QsIW7F
-   +QI/2djodXUo8XlNhcM0QOIVnc9OceVZ93pDJSGKt15SwydLUJOeJQMRi
-   KfuR6XuuiDVLg/pfNl1TEEPAomd4jY8YjEFab6c12WqxXcM5m+yZwhn8h
-   HUNsYeDW4RbJ38+8VkXVTrB9As7RfthghEhsn4pEommvidfycFy+hvZB8
-   Sd2e/vO7TNR9pITDPaJ6GgjyvkAEj59/2mdDGlclLE5SictVi+yhugqJi
-   yQ74fLkWmJctACpHZGCAoWC+OM7D4zpkel/KD6BsHyuu5sM/LAqcaJmwc
-   Q==;
-X-CSE-ConnectionGUID: F/jA5Rs8ToK0XvDzayMfCQ==
-X-CSE-MsgGUID: m4CooVLAR5KPDfqFa8K6Zg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="47271630"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="47271630"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 07:45:30 -0700
-X-CSE-ConnectionGUID: K/T4QkfGR1qlWvN8rtGl9A==
-X-CSE-MsgGUID: gl8bKR8RSuuwpNjDeCK/wA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="59037520"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 14 Aug 2024 07:45:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 070F617F; Wed, 14 Aug 2024 17:45:26 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org,
+	s=arc-20240116; t=1723646741; c=relaxed/simple;
+	bh=sIDrVyW5p+dieFxCp1p1Wd8qmZCDRZYV7VnUzL1BCfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6zJqWbX37emsnRPDZK4S9FZHyhg+Hp4f7WL4WCcL5WWhSPMUqx556hmtkYq4eddmD55FhROcwCtWOlY9OHWNojXau4S+oURXVc7HWLOavZ902Bmq2KJBxU0pVFLeW+6xfv9+MF2XemEV5uWruI27Zt5qdD8KEgxNcjEzdETulU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEvyZV95; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso5063242b3a.2;
+        Wed, 14 Aug 2024 07:45:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723646739; x=1724251539; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=em773V98Z8qtfRMHU9D+Z+DGVZZPQSH+f1TO/5ttRR4=;
+        b=XEvyZV95KKgzsMVCJwLAg9ZUqWLaCU1ajhqLubqPiLNET/MoXxicEADP4KfsYB7KbH
+         QumNceENGJfwj+Jhj1w7bhKvHtJm1zEjWoipPNKl7MlGBdi/8xMhx3Mg9Oo3KQMBiBXI
+         XlwAi/WCFVmcXbbxNGffZWuEKOWKHCIT/ZfXyxNKIx5fymX8prXPljXKWUXPO5ZigKo5
+         BKJi4+fgDxYUiAw1MPurvjhl0SshmuBih4HXuSn3sSHrQb04x3mnUr6c0NDzIQ/yS2Kd
+         G7mrV6OIFUhMXqKBEUK86pAHtdAJoarnWgBc+JS8dYMeQYT9fyELQU0P142oMgVCJZ4E
+         oYjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723646740; x=1724251540;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=em773V98Z8qtfRMHU9D+Z+DGVZZPQSH+f1TO/5ttRR4=;
+        b=qgzWwAtTsTQLT1Yo3sa3MBLI5yovPfbl20Rk6Ha7H8TMXBWcvHzxO02e4wUuz/zvh5
+         aaiKxCQEiVTkS/bmDsMXm9YKHhyqoKmtkt5CXLBqfxwNgl3ZRDbmksl62/2RJywRybxY
+         4qln46c8c9dAEHX8rHAKe5kgQpgZQ6XoOqCuWmb5Npnqac0VOL1h/EDrx3JMdFRQVHz0
+         2DTz+IDr4t4fqHhXLno/vThTTs+Ky9p6Y4iup9nZLdtUOiPtY1dAxG5qN5x4HPKh/Lqh
+         fp4jxxO2AFeHI3Bsshkcd8u42674XXvsP5z8nvUDd4Y8XA1huLEWQRqQbaLecU5v+q7z
+         B3aA==
+X-Forwarded-Encrypted: i=1; AJvYcCXi2PkkvS3vOSxRYB5GOxV+24BtUohJ0P5XVgyXQTTboU9J3JOSPatTQf8mzb7kbMO6NQ4PYtgJak7EWjTZ7UMX859yKJ0XeHdGfMV5GR7cXu//mb7Sb3PG5gZ1TmkDhfd3MBsxwf839hMcec/qa79ZGILhONynCScop+s7QUkm6g==
+X-Gm-Message-State: AOJu0YyYPU0Hf49wPzRCn91wKMJWJW9BFH4Bvw6/J/3udE1Zi3shB04+
+	5EDrdc+KubElrwrxBC0CGpgglA7xe7CGGKGUYkOI0FnxIdDmRC7g
+X-Google-Smtp-Source: AGHT+IFwjfanFhv+rPDQ+tu6xGaY+40z4gDjwdcW7JLaZYtDy5L/jAJeExKiqdNOFqRNtt99YRKX0w==
+X-Received: by 2002:a05:6a00:1404:b0:706:65f6:3ab9 with SMTP id d2e1a72fcca58-712673ab9acmr3218112b3a.20.1723646739422;
+        Wed, 14 Aug 2024 07:45:39 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c697a728d9sm2869868a12.88.2024.08.14.07.45.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 07:45:39 -0700 (PDT)
+Date: Wed, 14 Aug 2024 07:45:36 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Tariq Toukan <ttoukan.linux@gmail.com>
+Cc: Erwan Velu <erwanaliasr1@gmail.com>, Erwan Velu <e.velu@criteo.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+	Yury Norov <ynorov@nvidia.com>, Rahul Anand <raanand@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] spi: ppc4xx: Avoid returning 0 when failed to parse and map IRQ
-Date: Wed, 14 Aug 2024 17:45:12 +0300
-Message-ID: <20240814144525.2648450-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom
+ code
+Message-ID: <ZrzDAlMiEK4fnLmn@yury-ThinkPad>
+References: <20240812082244.22810-1-e.velu@criteo.com>
+ <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
 
-0 is incorrect error code when failed to parse and map IRQ.
-Replace OF specific old API for IRQ retrieval with a generic
-one to fix this issue.
+On Wed, Aug 14, 2024 at 10:48:40AM +0300, Tariq Toukan wrote:
+> 
+> 
+> On 12/08/2024 11:22, Erwan Velu wrote:
+> > Commit 2acda57736de ("net/mlx5e: Improve remote NUMA preferences used for the IRQ affinity hints")
+> > removed the usage of cpumask_local_spread().
+> > 
+> > The issue explained in this commit was fixed by
+> > commit 406d394abfcd ("cpumask: improve on cpumask_local_spread() locality").
+> > 
+> > Since this commit, mlx5_cpumask_default_spread() is having the same
+> > behavior as cpumask_local_spread().
+> > 
+> 
+> Adding Yuri.
+> 
+> One patch led to the other, finally they were all submitted within the same
+> patchset.
+> 
+> cpumask_local_spread() indeed improved, and AFAIU is functionally equivalent
+> to existing logic.
+> According to [1] the current code is faster.
+> However, this alone is not a relevant enough argument, as we're talking
+> about slowpath here.
+> 
+> Yuri, is that accurate? Is this the only difference?
+> 
+> If so, I am fine with this change, preferring simplicity.
+> 
+> [1] https://elixir.bootlin.com/linux/v6.11-rc3/source/lib/cpumask.c#L122
 
-Fixes: 0f245463b01e ("spi: ppc4xx: handle irq_of_parse_and_map() errors")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: returned correct error code
- drivers/spi/spi-ppc4xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you end up calling mlx5_cpumask_default_spread() for each CPU, it
+would be O(N^2). If you call cpumask_local_spread() for each CPU, your
+complexity would be O(N*logN), because under the hood it uses binary
+search.
 
-diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
-index 01fdecbf132d..8f6309f32de0 100644
---- a/drivers/spi/spi-ppc4xx.c
-+++ b/drivers/spi/spi-ppc4xx.c
-@@ -27,7 +27,6 @@
- #include <linux/wait.h>
- #include <linux/platform_device.h>
- #include <linux/of_address.h>
--#include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-@@ -412,9 +411,10 @@ static int spi_ppc4xx_of_probe(struct platform_device *op)
- 	}
- 
- 	/* Request IRQ */
--	hw->irqnum = irq_of_parse_and_map(np, 0);
--	if (hw->irqnum <= 0)
-+	ret = platform_get_irq(op, 0);
-+	if (ret < 0)
- 		goto free_host;
-+	hw->irqnum = ret;
- 
- 	ret = request_irq(hw->irqnum, spi_ppc4xx_int,
- 			  0, "spi_ppc4xx_of", (void *)hw);
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+The comment you've mentioned says that you can traverse your CPUs in
+O(N) if you can manage to put all the logic inside the
+for_each_numa_hop_mask() iterator. It doesn't seem to be your case.
 
+I agree with you. mlx5_cpumask_default_spread() should be switched to
+using library code.
+
+Acked-by: Yury Norov <yury.norov@gmail.com>
+
+You may be interested in siblings-aware CPU distribution I've made
+for mana ethernet driver in 91bfe210e196. This is also an example
+where using for_each_numa_hop_mask() over simple cpumask_local_spread()
+is justified.
+
+Thanks,
+Yury
 
