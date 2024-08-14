@@ -1,151 +1,219 @@
-Return-Path: <linux-kernel+bounces-287107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A93F952301
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:59:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A039952309
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14FB4B238A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7C31C220DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068D21C3786;
-	Wed, 14 Aug 2024 19:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045E21C0DC6;
+	Wed, 14 Aug 2024 19:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tBxC7puM"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Eniqi4OJ"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847201C0DCF
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F151BD510;
+	Wed, 14 Aug 2024 19:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723665514; cv=none; b=T4HCv8IQVSGCOZ1fstKk5rTcyXxyqtjIYNtpdIERmSbyHChiFkFhkCy+Kd6VkyMfjW5NxrIRSCniu8ECfV4gqePrq8yoqf1b5KX4sT/pbi4d69O3frh3AOSyuyntX+3u2xe+UXobyulZ2EBL2L3tZRAz72EXwMHA+qnmDkq2cR8=
+	t=1723665582; cv=none; b=WAEPxnSCMnagMSwOtLtIerCpvfGZYWrRBN7u+aVEfR7c1Rob7QQu7rBwmxHkW67mM32tqBKz0qkjBKGAz5BlvntiMOoLzRWotuGXzpn4nzaKs3dsG46SzdLVmdJeSBtW8VqfnH1IRhDQ7/pufBXX5O3Pl5yc1myhm3fivFHouf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723665514; c=relaxed/simple;
-	bh=mMyEb0aqCda54qwh073Rn7++7QwzrUQlVi0xlbd0UY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tC4XdYJzi4MMEcEnHrwrX6JZ+DdopxHweNX6i+huPNgRUJOU/VYwiqx72tqK8DCf2dsp7kFvS5dnKlmEJ/Lb+dvUlammFTq5tTVgzp3LPMI/rRMK9JelLMVVpn3n4p0U9AGchKvTq/fTlL6mzk319Unk8YFvHzRXzD6Cs6aNGdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tBxC7puM; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-429e29933aaso1068325e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723665511; x=1724270311; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x+R8NVOLOXBT5QSEMY/JOLRg5p8mbpf+sRpuYCIgm3Y=;
-        b=tBxC7puMlYOz8w2NNpp9C87Gsbku3Mdq0tyD2HlAmMYYlP637LtAxLzTz+iDAPLNEw
-         ACf20Ts84Pv6Rh+9JhFCmT881YFCKcTqvTqMrdMpJTt6G+j839buwMlYu08GAKCB7pct
-         pt/ssg9aLYPbtwI710WOzfbvuAtPvNizIMXNraJVxOmOL8pVJApwquxSssFKm6e4gney
-         G1p6nzgfdJjoM9ll0hBdF4yowPCUY3p+ZKb8pQ+OkntysvybmHuLA8CTkxAHv8QozEkX
-         1x0z8vZDTizs4LWrK19rLXnTMJPuvdbOi1C/rlgaAPtgh1ykxmjCaCVeu3wtZGNzjPsA
-         +MIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723665511; x=1724270311;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x+R8NVOLOXBT5QSEMY/JOLRg5p8mbpf+sRpuYCIgm3Y=;
-        b=SVvyzUwsKsr8A1CYA+IdhcHWzWiP/qxVkRFUVeKdlSPtlRq+gPlepK1iTnnSoKZ2GU
-         sTJI5+z2jJ/7gKxoIbl47eAdJ7x8C/csHqpSleBwRS/Rs+R/z5N3iSrxU8w+a2rRJM3T
-         FDvkPa9E+M3u1F789r++PMARqYDJKJMkBHzm9k74geAYIK0dcOenxnxkRQ86NzK8kCas
-         vufgyVUmx8g7IMSz/8kwm5JnsE825asNm+3L8PS3ywcGBbgBe47iG16+2TfIgoNNUN1l
-         KDrdy3jDr2pWaF2YWJ7wYlOMiKPsn7U+xiz5Wbc7tFIgBQ5f+ezFhTzgj7WWEFpZai7g
-         J2rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxVoDucJTCfehxgkH6lENtAn1fcI3xjPB/GRzH/BWZtE9NAsVpRcXebaJr+cCdhu3V8BdYnm/Fb/r0uLSuCl+3L18KmOC/E+O33U3T
-X-Gm-Message-State: AOJu0YyPdlfctOxm5AK86z3bGONt+P8jsOAl5PYKp7tWTQD5QZ4EWUqR
-	q5lHo6tO5e/DaAQllZG5mqExtFAYxkkTWSiz5RAe9urW6iSvCHKZcsm/9ILzsWU=
-X-Google-Smtp-Source: AGHT+IF7/aGVxXhF2RySsqAiYYS1dDcsua5Tgb5FyRD6ODYvExfEBCQAP8YxA2bFkOZsnio1gLRMdw==
-X-Received: by 2002:adf:ef0b:0:b0:367:8a3b:2098 with SMTP id ffacd0b85a97d-37177768eb3mr2492404f8f.3.1723665510787;
-        Wed, 14 Aug 2024 12:58:30 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfeef76sm13482263f8f.59.2024.08.14.12.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 12:58:30 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH 3/3] thermal: of: Fix OF node leak in of_thermal_zone_find() error paths
-Date: Wed, 14 Aug 2024 21:58:23 +0200
-Message-ID: <20240814195823.437597-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240814195823.437597-1-krzysztof.kozlowski@linaro.org>
-References: <20240814195823.437597-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1723665582; c=relaxed/simple;
+	bh=GNV4tsHwSCmnO+Fg4jkmp7tkUCJGx/VdzsUl9ZVOIiw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0hiG246U6SkRVckl6ACVzr8hySx3/NbItb7tCAyDGnFsB796FerUxxL1FG6JRsT7okp+iS3tqo7RBkAEHZjxWL3EDq3etIwMM0lSfetmWEgzkNXgIxp+JedTYpEkE3h+HIJHWui8DOWyyUTU/pDAJv/GOejhLZ2ascDkbzEoWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Eniqi4OJ; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id E8AE188A11;
+	Wed, 14 Aug 2024 21:59:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1723665578;
+	bh=5Ru4zIkS1NojlSPj+uZnab0ukXQuEwASFRNgcpKvFKQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Eniqi4OJy7BC4kh1kT+xXEHb+/sFTPF4u/b1qx+xXBn8+whHsxdrfdE90VNRF/PFo
+	 HFI1gmWkJs69EufMecg7SmjdFoIM2p1Nwh8QjspIpSIqMQN2AhLhjUwL/ZrFDj2JSl
+	 yeH+B+zMXNAU/QFrWhCf9XbeEikzmnjk+0kl6+aOKKgNGC9Qig64+aFkYzs7K/z2JQ
+	 +SycMf0PaJZ8eZ6QEM0kc9hGztixvA1hCGHlQoJ5pdnh8sbpXWQj80vHIes0ZeehlZ
+	 SJoQyMWwUSEdVbqBKEj8nQqCw4yxf7ePHpx8FpB8CNVR9yYcjTiSC9yyctrsauJj30
+	 8xV+UtCzHdfyQ==
+Message-ID: <e37da9ec-c730-466f-8a36-7cb91a82fb05@denx.de>
+Date: Wed, 14 Aug 2024 21:58:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dt-bindings: input: touchscreen: convert ads7846.txt
+ to yaml
+To: Frank Li <Frank.Li@nxp.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Alexander Stein
+ <alexander.stein@ew.tq-group.com>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240814185140.4033029-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240814185140.4033029-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Terminating for_each_available_child_of_node() loop requires dropping OF
-node reference, so bailing out on errors misses this.  Solve the OF node
-reference leak with scoped for_each_available_child_of_node_scoped().
+On 8/14/24 8:51 PM, Frank Li wrote:
 
-Fixes: 3fd6d6e2b4e8 ("thermal/of: Rework the thermal device tree initialization")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/thermal/thermal_of.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Hi,
 
-diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-index b08a9b64718d..1f252692815a 100644
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -184,14 +184,14 @@ static struct device_node *of_thermal_zone_find(struct device_node *sensor, int
- 	 * Search for each thermal zone, a defined sensor
- 	 * corresponding to the one passed as parameter
- 	 */
--	for_each_available_child_of_node(np, tz) {
-+	for_each_available_child_of_node_scoped(np, child) {
- 
- 		int count, i;
- 
--		count = of_count_phandle_with_args(tz, "thermal-sensors",
-+		count = of_count_phandle_with_args(child, "thermal-sensors",
- 						   "#thermal-sensor-cells");
- 		if (count <= 0) {
--			pr_err("%pOFn: missing thermal sensor\n", tz);
-+			pr_err("%pOFn: missing thermal sensor\n", child);
- 			tz = ERR_PTR(-EINVAL);
- 			goto out;
- 		}
-@@ -200,18 +200,19 @@ static struct device_node *of_thermal_zone_find(struct device_node *sensor, int
- 
- 			int ret;
- 
--			ret = of_parse_phandle_with_args(tz, "thermal-sensors",
-+			ret = of_parse_phandle_with_args(child, "thermal-sensors",
- 							 "#thermal-sensor-cells",
- 							 i, &sensor_specs);
- 			if (ret < 0) {
--				pr_err("%pOFn: Failed to read thermal-sensors cells: %d\n", tz, ret);
-+				pr_err("%pOFn: Failed to read thermal-sensors cells: %d\n", child, ret);
- 				tz = ERR_PTR(ret);
- 				goto out;
- 			}
- 
- 			if ((sensor == sensor_specs.np) && id == (sensor_specs.args_count ?
- 								  sensor_specs.args[0] : 0)) {
--				pr_debug("sensor %pOFn id=%d belongs to %pOFn\n", sensor, id, tz);
-+				pr_debug("sensor %pOFn id=%d belongs to %pOFn\n", sensor, id, child);
-+				tz = no_free_ptr(child);
- 				goto out;
- 			}
- 		}
--- 
-2.43.0
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml
+> new file mode 100644
+> index 0000000000000..b8239491c747a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml
+> @@ -0,0 +1,170 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/touchscreen/ti,ads7843.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI's SPI driven touch screen controllers.
+> +
+> +maintainers:
+> +  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> +  - Marek Vasut <marex@denx.de>
+> +  - Alexander Stein <alexander.stein@ew.tq-group.com>
+>
 
+Keep the list sorted alphabetically .
+
+  +description:
+> +  Device tree bindings for TI's ADS7843, ADS7845, ADS7846, ADS7873, TSC2046
+> +  SPI driven touch screen controllers.
+> +
+> +  The node for this driver must be a child node of a SPI controller, hence
+> +  all mandatory properties described in
+
+... described in ... what/where ? I think part of the sentence is 
+missing here.
+
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,tsc2046
+> +      - ti,ads7843
+> +      - ti,ads7845
+> +      - ti,ads7846
+> +      - ti,ads7873
+
+Keep the list sorted alphabetically.
+
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  vcc-supply:
+> +    description: A regulator node for the supply voltage.
+> +
+> +  ti,vref-delay-usecs:
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description: vref supply delay in usecs, 0 for external vref (u16).
+
+Maybe the (u16) is duplicate of the $ref'd type ? Drop for all the rest 
+below too ?
+
+> +  ti,vref-mv:
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description:
+> +      The VREF voltage, in millivolts (u16).
+> +      Set to 0 to use internal references (ADS7846).
+> +
+> +  ti,keep-vref-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description: set to keep vref on for differential measurements as well.
+
+Vref , because V (voltage) is written with capitals ...
+
+> +  ti,settle-delay-usec:
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description:
+> +      Settling time of the analog signals; a function of Vcc and the
+
+... like Vcc here.
+
+> +      capacitance on the X/Y drivers.  If set to non-zero, two samples are
+> +      taken with settle_delay us apart, and the second one is used. ~150
+> +      uSec with 0.01uF caps (u16).
+
+[...]
+
+> +  ti,pendown-gpio-debounce:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Platform specific debounce time for the pendown-gpio (u32).
+> +
+> +  pendown-gpio:
+> +    description:
+> +      GPIO handle describing the pin the !PENIRQ line is connected to.
+
+I think the properties have to be sorted alphabetically too.
+
+[...]
+
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vcc-supply
+
+Is vcc-supply really required ?
+
+> +allOf:
+> +  - $ref: touchscreen.yaml#
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi{
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        touchscreen@0 {
+> +           compatible = "ti,tsc2046";
+> +           reg = <0>;	/* CS0 */
+> +           interrupt-parent = <&gpio1>;
+> +           interrupts = <8 0>;	/* BOOT6 / GPIO 8 */
+> +           spi-max-frequency = <1000000>;
+> +           pendown-gpio = <&gpio1 8 0>;
+> +           vcc-supply = <&reg_vcc3>;
+
+Sort please .
+
+> +           ti,x-min = /bits/ 16 <0>;
+> +           ti,x-max = /bits/ 16 <8000>;
+> +           ti,y-min = /bits/ 16 <0>;
+> +           ti,y-max = /bits/ 16 <4800>;
+> +           ti,x-plate-ohms = /bits/ 16 <40>;
+> +           ti,pressure-max = /bits/ 16 <255>;
+> +
+> +           wakeup-source;
+> +       };
+> +    };
+> +
+
+Thanks !
 
