@@ -1,761 +1,222 @@
-Return-Path: <linux-kernel+bounces-286020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BFF951573
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:27:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A07951509
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1351F2A5A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99FB81C242CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25A719DF62;
-	Wed, 14 Aug 2024 07:15:50 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BADC13A41F;
+	Wed, 14 Aug 2024 07:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="g0NCJj0D"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013021.outbound.protection.outlook.com [52.101.67.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FED0166F10;
-	Wed, 14 Aug 2024 07:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723619749; cv=none; b=OCbR6ETYSx1RSEWO/TXZse+PPvFVBuUQ2n9rIe7ysOw9RUIUEd6fuV26H5AsjJeVxS5ePg4sGTpV0zZixlrRL5joD8qSNFaVQ3EG+RKXWjco3JYvxjEpj5NXf6NaYwwRpr+8+l/mO/Agj/a/RD30qaSbyBnntGqgDPUnDdbT6jE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723619749; c=relaxed/simple;
-	bh=nM5DrW6ufGJbFUcY1Cog2gq7SLSG/VpJqsnf94oMp0g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nxt9gwUn3H9KdSkT9s/Ru21WFOpi/iCPDgz1orva8DgQVtjqBJPQLafn0C2n9hMqNYXVzQhgBOvxIT1MJOKD2+bVmcrbbbDX9xw/hSve18PqBu0BxYTiC0KPUvo4rYH7u/X99WyApXNaqq2bxG6TUJYlIEzEf5H8QVCmlyHPvQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WkKKD718Sz4f3jdF;
-	Wed, 14 Aug 2024 15:15:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B58B01A018D;
-	Wed, 14 Aug 2024 15:15:42 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBHboSLWbxmIxKbBg--.47745S45;
-	Wed, 14 Aug 2024 15:15:42 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: mariusz.tkaczyk@linux.intel.com,
-	hch@infradead.org,
-	song@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC -next v2 41/41] md/md-bitmap: make in memory structure internal
-Date: Wed, 14 Aug 2024 15:11:13 +0800
-Message-Id: <20240814071113.346781-42-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240814071113.346781-1-yukuai1@huaweicloud.com>
-References: <20240814071113.346781-1-yukuai1@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8907E27446;
+	Wed, 14 Aug 2024 07:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723619526; cv=fail; b=Pt2Uv4/s4bk5JYdUfBvmMFkvCpAC4bWvHVXQOFj0Ec438VK4iephv1pU7p4lEd1o6FP8xBrsrEIChxcjwN76oo8Mrr1EuRKEyGaLyfeQAQeAlmV36SvOnu7pg+gokKLiVuXScBzF/6P650O9ptu+a7xe77mgNshmdtAbGgB9/Wo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723619526; c=relaxed/simple;
+	bh=4QOqJJLnfv8ouX7O/4zErPM5tqef4eMaufc1YBSNqYo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V/Rxl87OILwd5bK/o9EXzhjyp+tX/YqyYUE5raGLi+0/tN12QwOf4eXpIFsGzuqWwpKZttSeF6wGEVSgD9oAP+XHurBfuy+u44xXiBdL+MXgLaozsglZFeJpKi8gqJ/HsZvs4wLjmACF/1jGoTRQEkoOYM2XAl2fiTCm5Fh0t1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=g0NCJj0D; arc=fail smtp.client-ip=52.101.67.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O55aplCX5byoso7qpazbbviUJ5r/PSBMIQ46ORiOTkoQql8s+cZesnmnx4H/lPUlgc9QgIlzcbEulPEUQvMufEcYYtw+GIzJirJScItJLzNxoo32tKDvjS7Y0lFDR9T7YcpeFphNo0jDPmF6zDPJnoNLxWXKTes8YMJmvn51gW7DOd64Duh7aNQT0PrI6S5z+o40ABRjxuWT53jiA0grJ9f1dvIFbJMY2IyugiIGFSLXmKY8alZHnmQmKKkeq/Nl5/eszErYA/e9s3XRUvVaB7a7eWEZhHWnDAIMfCdKSBF7TVw+xWeCf3DBwnzEuiUdueU3dfTleE+2Dde1CbfLQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SR2RixZUeby84KFgLIrwXIFkeLDNWTjJWOrqFT6buqQ=;
+ b=o4faniuN1mvna9ylOtzAyFdgfmvEd8JzICm9tbu04RQD5ZaQnn+RqjIRBuWcsvJlXMEQ0jROzqor9S1alzIeOX7o/hdJDhqY3XWD/wyjMtVZhwfF2OR/AtjVBC5N+XMwBlcAxRPUuAmRuDM+V4QOY7T0tc0L+2avlPDPAvMGiRIPI0zrio5AfW/9na9L+AU1/JCDErRqzyGVAEVsums8sxa0Eo/y1PM8hzf5fptasePLj8dDEdwRIhycWNA1hFL0KokKp+A0IiV4OD9Pyc12rADnUEp6Q0a1G/AJoWwZcLjJ9NOQ3Lyp29fFtMwSGrcrTa9l8QPDU9geYeptqZKhUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SR2RixZUeby84KFgLIrwXIFkeLDNWTjJWOrqFT6buqQ=;
+ b=g0NCJj0Dxm3rGg0g6byBr09VTdouY3npK8MMVsMtCtMNeAiKruPpQ67RjXmesgSmFQOkoJt8RKBupQ/s2j4UDESQwwLllotKBF9sOhMyhrw04DOz7/AxjcWM2W2cHjIW0NQW7stYfTyrz7eAh1w4+LU6u7KGYqiOzyS89ZzeGBhrL2umn2+gJrXMeuSRvG5fElQms9Jd/yqRHw+f9WYIVeRXtWdEd8GYgqWP8qc54RJU8OIFjRRpBSlmyq2XD0R6tqMGMqxSBzXPfYvxos4rbZ9uA+KHktpQDfDAtpH7j63yrBiKsqdMA8VA9rHaqe9S1ndn00GoekKW4FM1vSgy4Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AS8PR04MB9080.eurprd04.prod.outlook.com (2603:10a6:20b:447::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.16; Wed, 14 Aug
+ 2024 07:12:01 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
+ 07:12:01 +0000
+Message-ID: <22c7155f-0f94-44e4-be06-d3f2b9001894@nxp.com>
+Date: Wed, 14 Aug 2024 15:12:30 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] dt-bindings: display:
+ panel-simple-lvds-dual-ports: add panel-timing: true
+To: Frank Li <Frank.Li@nxp.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240813145021.3864787-1-Frank.Li@nxp.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20240813145021.3864787-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR04CA0155.apcprd04.prod.outlook.com (2603:1096:4::17)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHboSLWbxmIxKbBg--.47745S45
-X-Coremail-Antispam: 1UD129KBjvAXoWfWw4UAF1kAr48Zr17KFW3ZFb_yoW8uF1kZo
-	WxZwnxZr4rXr1rC3yUAFnxKFW3Z34DKF1Fvw4fCrn8WFW7J3WYvrWfWrWxWwn8JF4Ygr17
-	Aa4vqw45JF4fJryxn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUOj7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
-	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
-	Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
-	84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4UJV
-	W0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUtV
-	W8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQFxUU
-	UUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB9080:EE_
+X-MS-Office365-Filtering-Correlation-Id: 26468005-ec93-4955-783f-08dcbc30649a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V1lOZTFDNVE5elZpWVoza1NjQ3FGYUZwNzdiRE1VbHZmdDB0VzNKWDVCUllF?=
+ =?utf-8?B?Z3phb3hCS2hEUW1qYTRHQzJuRFZoUm1MTHY5MmhobGk3TUdBbFQ1RjNLYTVq?=
+ =?utf-8?B?Q1lGRXhxc2thdFVET0hkbm5SL2VPOFBmSmFNVDhIZVZsUzBQakRDbjNaUjVz?=
+ =?utf-8?B?dm9EZkF1Q042Y2ZJZ1RvSUdBTE9ZbmxrdkpESTh2MG90WjZRb0RmNWpYd3px?=
+ =?utf-8?B?RURjY3pWZHQxVUdoTFZpb2FPc2tsRUVobGx4aktrUUVrczNzZlNaT3ZseHlp?=
+ =?utf-8?B?YlFXRkVzSnJpa0ZYUU12Z3BJdUs5eUdPaEFoaXdHb3pTZmpiNjRjSy9QaUU1?=
+ =?utf-8?B?dWRBUUs3M3RtU0I2V2JsVU93YkNFeXBjaHJDbTgvQVVmOSt0K3RvdmJoUUtP?=
+ =?utf-8?B?Smtmd0U0UmtveE91dVV6Um5uNnBORXBTbjZ3OFJLSERLYjZtWmhieE1LOEFr?=
+ =?utf-8?B?K3hLdDIxdVpHU1c3NGp1Y25OMVRTU1o1N01POTYwVEVsWU1oUWYvSjVhalNy?=
+ =?utf-8?B?NnpmS1pHL1Y3cTRyWFQ1MHVidlVxbUFZcy9GNWFhVytoYldoaVdjbnpCbm9y?=
+ =?utf-8?B?eUhPZnBsenRoMi82a0E5MmIyTXNsRFF1OFVONGlDa0EzeUFVdVZLSWhldTZq?=
+ =?utf-8?B?R2lDQzJrTllOK3psRWRHTVg3Q1lPOUc3SHFMT2MzU2gvczZpaWd5NndrU1Nz?=
+ =?utf-8?B?Wlk3YmVzNTh5SEZaN0RjUWtGZ2YzNWtLOHdhczN0S3o4RWt3UVpPWnlyLzZv?=
+ =?utf-8?B?THorM1FLZytjb2VxY2UzdlU4T3Uwd00xTlQyV2VvOFhvUTJEU1l2aXVvRjFn?=
+ =?utf-8?B?QURhNWEwL1lOVGZyVUpQYmNrZ3ZKWmZHNzNBR3BXdUZpY0VuZHV3dzdzQkIz?=
+ =?utf-8?B?ckRsdzQ5aDJDR1lYOEJ3bkw4TVZXZ0wwKzdWbE9PWTErVEN0TGZhMU52dk1K?=
+ =?utf-8?B?bXF2Y2lza0ZMeHZiaEgxazVLVVYwaDFhZ2hLOEYxOEp1Q242WXRYQU9BWVVU?=
+ =?utf-8?B?cjFZOHc5QjFYb25oclhydmk4NUdiaGtscy80cTRXQnk3bFY3bUNWdzJGemFL?=
+ =?utf-8?B?a3FmTUVoanMvQlhMTGEzVHJWOXAxSXpYWWRwZFlCcWEzbWNSSDBnZnpOZ0pr?=
+ =?utf-8?B?STYvdXFNTDhYd0d6YVF0azhTcmczaWErdmkvckpmOWEvaDJLSTVsUmEvRlJS?=
+ =?utf-8?B?emk4Ukxmc3BFdnVacEdoR3BBcDAvRWh6OGtPNmRXRThIaEVCQkROV1ZvSzVQ?=
+ =?utf-8?B?TFRKK1ZNWnJtaGVlK0VVWEwzRGVoZU5ldFhBdnVUbVFzcm5SVW82K0Y0d0ZG?=
+ =?utf-8?B?T2pWTkVteTZ5QmVsOEZEVVdnMzlYS2ZXbUF2OWt5SkFlTW1YV3UxT0FycmNt?=
+ =?utf-8?B?YWhOSEhzTG9vRmFEb1V5eTNwaUxzZ1ZSZkJvb0VERVBpMFMwUTcyYTFLbEdX?=
+ =?utf-8?B?VVRpd016L3FiSXV5NGprV1NBVEZ5S010eWxZRlRISDYxL3YwdzNRV3FhU0pj?=
+ =?utf-8?B?M3dqUWdacDAyLzlaUjQ3aVcvQytCRDFCV2pCcFZydFBBWnprY3lKTlRvRnlH?=
+ =?utf-8?B?bytkOGMvY3A3L3QzZHNHWVBhU2orcXNRaDEwSmUwVFhEb1J3L0tmM3lyWVlS?=
+ =?utf-8?B?MndlMit6dk9IV0FnNjZvSDJuL1BLcUdWNUR3eWdLRWRPM0tVeEU0aXVnM2Vx?=
+ =?utf-8?B?SHgvS0VRakFNWTg1dzRmVjVzUFNKWFBqam0zM3dDUWlzVng3bnJFR1l4Q0NZ?=
+ =?utf-8?B?a0t6dk13UjI5bXo4Mm9yT2JaUjJQVGpZa1FJbWtnMzFRVFFtdlUwd2k1T0V1?=
+ =?utf-8?B?eDlLZHg2cEZISHVhYXVuQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QmtveWlDZllUR0dvSnloM2QvT0NRNkZXRTVUYk93UnVjMG5xVTBwY003OEtU?=
+ =?utf-8?B?dmZuNXZCVWw5WEY1dnFvb25uOFVLbWkydHJBeHl6V3BSd0p4Q3pPTHZqOEVo?=
+ =?utf-8?B?clBhVlJmZGJSQW54Yk9SY09sQkVxSUtPUkJQWGwyR01ZSW8yV1EybitLZjNY?=
+ =?utf-8?B?aXlabGJlTTVoWjlWTXZIcSt1WXJNL3dtK1o2Z1JteW5mMzNBVWlRUGVKTnlt?=
+ =?utf-8?B?b3lsSHc2RjFoUlp4ZzZGa2dMYVgxeGxnaFJzbFJlSEczZ0VOcFF0S3N2cjNj?=
+ =?utf-8?B?ZlFtcUdiWHFrVWJZZmFZRjBKdUdvZTU3TjNXZzI1a2FpQVV2aUFkd0JtMllD?=
+ =?utf-8?B?RXBVY3c4V0h3Z3ZhSmJpUDBsc2FjQzhCRzRVUVJ3UlJxN0UrYlNvdWczWThK?=
+ =?utf-8?B?WG9ZZlpxNDlJR3pONk1PbTl4SU93YjVkRkxFMHA4aG1aNGdWR05BREZwWC84?=
+ =?utf-8?B?MndTaVMwTjVVQXVTZUxXZmVDemc1QWErZ1NiOEFmbGIwNkgzeXl5S3M5UTlk?=
+ =?utf-8?B?UWwvSE1QZzNoNDhmYXp2N01scGlUamdCdVpnSDBBbm9YTFhsSlJSdWphOGZT?=
+ =?utf-8?B?R1VXWUxlWGtsdlBQcmxrRjIvL0VyVzhXMXRnVzRqaHhjbm94a0RjcFJHYkgz?=
+ =?utf-8?B?a2xlL1J1ZysxYVpzNTkwTENTb1hybzZCcUI5UnZLeDBQdDQwQmxkWEJidVRm?=
+ =?utf-8?B?d2RrVXF4R1I5aE9SNCtwVFloU1VVT3VkczhMMkdZMnRyT09keEFiUVJSMmNE?=
+ =?utf-8?B?bHZTbXRVYmV4MEdyMVRydzEvTHg2NkRPVVhaeTRzdW1HNDZ3V2lBZW84cXNM?=
+ =?utf-8?B?dmlzcEYzbDFGRzk3TktFSGtzbnZ1MzdaRHRSanI3ZHpINHQzaHdpTkVWUUZY?=
+ =?utf-8?B?Z3ZHWkJEMXliZk9IRjJOWlVZblBHSitleTJ4MnlXZmlkTUxtWVBXT3kwRmRI?=
+ =?utf-8?B?VitxeHdTZzZWTy9zYTZDVVRpbExqd0d5VE1OeW1qMUNMMUZlYnl1ejREMUJ2?=
+ =?utf-8?B?M0lta0N6NGdNTUdpRmFBZTRRekg2MVZRdHQrRGZQeXpvZmMvWnlrRUNtTzdG?=
+ =?utf-8?B?NzFzc0g0T0llSEZNTzdPbEV4ZWdXMEhnSmlJSnp6S3MzWnpRWVl1enFaMTJK?=
+ =?utf-8?B?dlRMR2p1L3ZFb1orYW85T053MHhXL3J2L0d3M0N5VU96VWFzbGR0OFRvWHJ3?=
+ =?utf-8?B?dmNvRDFRT0tQNW9pVU5aZ0RrM2FuVkdwaG1NOE5SN3pVTnVPZ3RhTEFkRTVH?=
+ =?utf-8?B?V2dnKysyQkJpUWVQS3psUkppdzRuZk1ZaFpOVVl5RlpsVEI2YkxUUGpCY3Y5?=
+ =?utf-8?B?MnFuRldScndNTUJKWGNySkVvNi9HYjdqT2tlaXV0Z2FaL2ZYQmduZHFRdlFo?=
+ =?utf-8?B?OEEzUXRydWs0Y3VRUUNFWlJmY0Era2lha2F0QkkzUmxIOGxoaVlkaUtxaWxl?=
+ =?utf-8?B?bURDV3FtWmlXYWVtKzR2Y2FFamxBTDJTY05lTmVYUml2cXRkWVhWMGJHSjBn?=
+ =?utf-8?B?dWd6TldjTS9VZnFRTEZtSGY1bnE4eWtCNWdMUy9vWUozMnhFRitZd2FIZWky?=
+ =?utf-8?B?eXVtSEt2S1JpbGxFSmJINjBaK3VBbGZmNkNya3ozK0YwV0tKN2YrbkhwMnJt?=
+ =?utf-8?B?eVU4a0pUSUtCSGlReTNadWUrQWV0ZVhnckRwa1B5akszM1VqamduUFY0Z2VF?=
+ =?utf-8?B?ZEt2QXV0NDNmMXVwQzBLeE9Ndm84OFFCMGRLOHBBRThCSzB6TlR5ZFlpT0F4?=
+ =?utf-8?B?WnFwVHFOZUtjNXovM0cyNjQ4NUhhdXh4eHFORWdwczVPZkYwREFpOUppekdl?=
+ =?utf-8?B?d0ZJanhVNG5tKzJDTUt6TGRpOVhRSjVjT1kyS3pIM1pqYzBuZnlzZDFzVjdZ?=
+ =?utf-8?B?Y2UrditIRkxGaStMelJId1pNM1JVVndVdGNsRjA1ZzFvRTNQU2J5WjJNcVdn?=
+ =?utf-8?B?SGZ1dWs0ZFViVFQwSGpSMzBXN2p0T1FmcktxeHJnMHUzVDBKYkRtSTV4WVg2?=
+ =?utf-8?B?VGRLcXNpWk1uc25kY0VpVk1nZXFMd29NbXJpY0dGYURPeGtVUWtNbitBdERl?=
+ =?utf-8?B?UTZCQUFYQXFzZ1ErY08rK1o5cHEzRmxDZGkxN2Vtc28xS1l1Zmg5ZFA2MCtL?=
+ =?utf-8?Q?E4/PTfjCMm/5ECFZUJx5q6OSY?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26468005-ec93-4955-783f-08dcbc30649a
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 07:12:01.5383
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s2VVOSUhIE2koc5YPZ43ANB2CJskXp9HEfJ4ONvFLunaoJBeUBIhkRa1J79CNLXTH4gWYrr4CvZD+V5dcdInkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9080
 
-From: Yu Kuai <yukuai3@huawei.com>
+On 08/13/2024, Frank Li wrote:
+> Add property panel-timing: true to allow use 'panel-timing', which defined
+> in panel-common.yaml.
+> 
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/imx8mp-evk-mx8-dlvds-lcd1.dtb: panel-lvds: 'panel-timing' does not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/display/panel/panel-simple-lvds-dual-ports.yaml#
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - add panel-timing instead of change to unevaluatedProperties
+> ---
+>  .../bindings/display/panel/panel-simple-lvds-dual-ports.yaml     | 1 +
+>  1 file changed, 1 insertion(+)
 
-Now that struct btimap_page and bitmap is not used external anymore,
-move them from md-bitmap.h to md-bitmap.c.(expect that dm-raid is still
-using define marco 'COUNTER_MAX').
+You may add:
+Suggested-by: Liu Ying <victor.liu@nxp.com>
 
-Also fix some checkpatch warnings.
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+> index e78160d1aa24c..1f3222d532787 100644
+> --- a/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-lvds-dual-ports.yaml
+> @@ -87,6 +87,7 @@ properties:
+>    backlight: true
+>    enable-gpios: true
+>    power-supply: true
+> +  panel-timing: true
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md-bitmap.c  | 247 ++++++++++++++++++++++++++++++++++++----
- drivers/md/md-bitmap.h  | 189 +-----------------------------
- drivers/md/md-cluster.c |   4 +-
- drivers/md/md.c         |   2 +-
- drivers/md/md.h         |   2 +-
- drivers/md/raid1.c      |   6 +-
- 6 files changed, 237 insertions(+), 213 deletions(-)
+Nit: As I mentioned in v1 comment, this can be put next to
+'enable-gpios: true' to sort the referenced properties
+alphabetically, like panel-dpi.yaml does.
 
-diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index 8b9f0560f02f..0aee595f5c79 100644
---- a/drivers/md/md-bitmap.c
-+++ b/drivers/md/md-bitmap.c
-@@ -32,6 +32,186 @@
- #include "md.h"
- #include "md-bitmap.h"
- 
-+#define BITMAP_MAJOR_LO 3
-+/* version 4 insists the bitmap is in little-endian order
-+ * with version 3, it is host-endian which is non-portable
-+ * Version 5 is currently set only for clustered devices
-+ */
-+#define BITMAP_MAJOR_HI 4
-+#define BITMAP_MAJOR_CLUSTERED 5
-+#define	BITMAP_MAJOR_HOSTENDIAN 3
-+
-+/*
-+ * in-memory bitmap:
-+ *
-+ * Use 16 bit block counters to track pending writes to each "chunk".
-+ * The 2 high order bits are special-purpose, the first is a flag indicating
-+ * whether a resync is needed.  The second is a flag indicating whether a
-+ * resync is active.
-+ * This means that the counter is actually 14 bits:
-+ *
-+ * +--------+--------+------------------------------------------------+
-+ * | resync | resync |               counter                          |
-+ * | needed | active |                                                |
-+ * |  (0-1) |  (0-1) |              (0-16383)                         |
-+ * +--------+--------+------------------------------------------------+
-+ *
-+ * The "resync needed" bit is set when:
-+ *    a '1' bit is read from storage at startup.
-+ *    a write request fails on some drives
-+ *    a resync is aborted on a chunk with 'resync active' set
-+ * It is cleared (and resync-active set) when a resync starts across all drives
-+ * of the chunk.
-+ *
-+ *
-+ * The "resync active" bit is set when:
-+ *    a resync is started on all drives, and resync_needed is set.
-+ *       resync_needed will be cleared (as long as resync_active wasn't already set).
-+ * It is cleared when a resync completes.
-+ *
-+ * The counter counts pending write requests, plus the on-disk bit.
-+ * When the counter is '1' and the resync bits are clear, the on-disk
-+ * bit can be cleared as well, thus setting the counter to 0.
-+ * When we set a bit, or in the counter (to start a write), if the fields is
-+ * 0, we first set the disk bit and set the counter to 1.
-+ *
-+ * If the counter is 0, the on-disk bit is clear and the stripe is clean
-+ * Anything that dirties the stripe pushes the counter to 2 (at least)
-+ * and sets the on-disk bit (lazily).
-+ * If a periodic sweep find the counter at 2, it is decremented to 1.
-+ * If the sweep find the counter at 1, the on-disk bit is cleared and the
-+ * counter goes to zero.
-+ *
-+ * Also, we'll hijack the "map" pointer itself and use it as two 16 bit block
-+ * counters as a fallback when "page" memory cannot be allocated:
-+ *
-+ * Normal case (page memory allocated):
-+ *
-+ *     page pointer (32-bit)
-+ *
-+ *     [ ] ------+
-+ *               |
-+ *               +-------> [   ][   ]..[   ] (4096 byte page == 2048 counters)
-+ *                          c1   c2    c2048
-+ *
-+ * Hijacked case (page memory allocation failed):
-+ *
-+ *     hijacked page pointer (32-bit)
-+ *
-+ *     [		  ][		  ] (no page memory allocated)
-+ *      counter #1 (16-bit) counter #2 (16-bit)
-+ *
-+ */
-+
-+#define PAGE_BITS (PAGE_SIZE << 3)
-+#define PAGE_BIT_SHIFT (PAGE_SHIFT + 3)
-+
-+#define NEEDED(x) (((bitmap_counter_t) x) & NEEDED_MASK)
-+#define RESYNC(x) (((bitmap_counter_t) x) & RESYNC_MASK)
-+#define COUNTER(x) (((bitmap_counter_t) x) & COUNTER_MAX)
-+
-+/* how many counters per page? */
-+#define PAGE_COUNTER_RATIO (PAGE_BITS / COUNTER_BITS)
-+/* same, except a shift value for more efficient bitops */
-+#define PAGE_COUNTER_SHIFT (PAGE_BIT_SHIFT - COUNTER_BIT_SHIFT)
-+/* same, except a mask value for more efficient bitops */
-+#define PAGE_COUNTER_MASK  (PAGE_COUNTER_RATIO - 1)
-+
-+#define BITMAP_BLOCK_SHIFT 9
-+
-+/*
-+ * bitmap structures:
-+ */
-+
-+/* the in-memory bitmap is represented by bitmap_pages */
-+struct bitmap_page {
-+	/*
-+	 * map points to the actual memory page
-+	 */
-+	char *map;
-+	/*
-+	 * in emergencies (when map cannot be alloced), hijack the map
-+	 * pointer and use it as two counters itself
-+	 */
-+	unsigned int hijacked:1;
-+	/*
-+	 * If any counter in this page is '1' or '2' - and so could be
-+	 * cleared then that page is marked as 'pending'
-+	 */
-+	unsigned int pending:1;
-+	/*
-+	 * count of dirty bits on the page
-+	 */
-+	unsigned int  count:30;
-+};
-+
-+/* the main bitmap structure - one per mddev */
-+struct bitmap {
-+
-+	struct bitmap_counts {
-+		spinlock_t lock;
-+		struct bitmap_page *bp;
-+		/* total number of pages in the bitmap */
-+		unsigned long pages;
-+		/* number of pages not yet allocated */
-+		unsigned long missing_pages;
-+		/* chunksize = 2^chunkshift (for bitops) */
-+		unsigned long chunkshift;
-+		/* total number of data chunks for the array */
-+		unsigned long chunks;
-+	} counts;
-+
-+	struct mddev *mddev; /* the md device that the bitmap is for */
-+
-+	__u64	events_cleared;
-+	int need_sync;
-+
-+	struct bitmap_storage {
-+		/* backing disk file */
-+		struct file *file;
-+		/* cached copy of the bitmap file superblock */
-+		struct page *sb_page;
-+		unsigned long sb_index;
-+		/* list of cache pages for the file */
-+		struct page **filemap;
-+		/* attributes associated filemap pages */
-+		unsigned long *filemap_attr;
-+		/* number of pages in the file */
-+		unsigned long file_pages;
-+		/* total bytes in the bitmap */
-+		unsigned long bytes;
-+	} storage;
-+
-+	unsigned long flags;
-+
-+	int allclean;
-+
-+	atomic_t behind_writes;
-+	/* highest actual value at runtime */
-+	unsigned long behind_writes_used;
-+
-+	/*
-+	 * the bitmap daemon - periodically wakes up and sweeps the bitmap
-+	 * file, cleaning up bits and flushing out pages to disk as necessary
-+	 */
-+	unsigned long daemon_lastrun; /* jiffies of last run */
-+	/*
-+	 * when we lasted called end_sync to update bitmap with resync
-+	 * progress.
-+	 */
-+	unsigned long last_end_sync;
-+
-+	/* pending writes to the bitmap file */
-+	atomic_t pending_writes;
-+	wait_queue_head_t write_wait;
-+	wait_queue_head_t overflow_wait;
-+	wait_queue_head_t behind_wait;
-+
-+	struct kernfs_node *sysfs_can_clear;
-+	/* slot offset for clustered env */
-+	int cluster_slot;
-+};
-+
- static int bitmap_resize(struct mddev *mddev, sector_t blocks, int chunksize,
- 			 bool init);
- 
-@@ -491,9 +671,10 @@ static void md_bitmap_wait_writes(struct bitmap *bitmap)
- 
- 
- /* update the event counter and sync the superblock to disk */
--static void bitmap_update_sb(struct bitmap *bitmap)
-+static void bitmap_update_sb(void *data)
- {
- 	bitmap_super_t *sb;
-+	struct bitmap *bitmap = data;
- 
- 	if (!bitmap || !bitmap->mddev) /* no bitmap for this array */
- 		return;
-@@ -1844,10 +2025,11 @@ static void bitmap_flush(struct mddev *mddev)
- 	bitmap_update_sb(bitmap);
- }
- 
--static void md_bitmap_free(struct bitmap *bitmap)
-+static void md_bitmap_free(void *data)
- {
- 	unsigned long k, pages;
- 	struct bitmap_page *bp;
-+	struct bitmap *bitmap = data;
- 
- 	if (!bitmap) /* there was no bitmap */
- 		return;
-@@ -2075,7 +2257,7 @@ static int bitmap_load(struct mddev *mddev)
- }
- 
- /* caller need to free returned bitmap with md_bitmap_free() */
--static struct bitmap *bitmap_get_from_slot(struct mddev *mddev, int slot)
-+static void *bitmap_get_from_slot(struct mddev *mddev, int slot)
- {
- 	int rv = 0;
- 	struct bitmap *bitmap;
-@@ -2142,15 +2324,18 @@ static int bitmap_copy_from_slot(struct mddev *mddev, int slot, sector_t *low,
- 	return rv;
- }
- 
--static void bitmap_set_pages(struct bitmap *bitmap, unsigned long pages)
-+static void bitmap_set_pages(void *data, unsigned long pages)
- {
-+	struct bitmap *bitmap = data;
-+
- 	bitmap->counts.pages = pages;
- }
- 
--static int bitmap_get_stats(struct bitmap *bitmap, struct md_bitmap_stats *stats)
-+static int bitmap_get_stats(void *data, struct md_bitmap_stats *stats)
- {
- 	bitmap_super_t *sb;
- 	struct bitmap_counts *counts;
-+	struct bitmap *bitmap = data;
- 
- 	if (!bitmap)
- 		return -ENOENT;
-@@ -2499,6 +2684,7 @@ space_show(struct mddev *mddev, char *page)
- static ssize_t
- space_store(struct mddev *mddev, const char *buf, size_t len)
- {
-+	struct bitmap *bitmap;
- 	unsigned long sectors;
- 	int rv;
- 
-@@ -2509,8 +2695,8 @@ space_store(struct mddev *mddev, const char *buf, size_t len)
- 	if (sectors == 0)
- 		return -EINVAL;
- 
--	if (mddev->bitmap &&
--	    sectors < (mddev->bitmap->storage.bytes + 511) >> 9)
-+	bitmap = mddev->bitmap;
-+	if (bitmap && sectors < (bitmap->storage.bytes + 511) >> 9)
- 		return -EFBIG; /* Bitmap is too big for this small space */
- 
- 	/* could make sure it isn't too big, but that isn't really
-@@ -2687,10 +2873,13 @@ __ATTR(metadata, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
- static ssize_t can_clear_show(struct mddev *mddev, char *page)
- {
- 	int len;
-+	struct bitmap *bitmap;
-+
- 	spin_lock(&mddev->lock);
--	if (mddev->bitmap)
--		len = sprintf(page, "%s\n", (mddev->bitmap->need_sync ?
--					     "false" : "true"));
-+	bitmap = mddev->bitmap;
-+	if (bitmap)
-+		len = sprintf(page, "%s\n", (bitmap->need_sync ? "false" :
-+								 "true"));
- 	else
- 		len = sprintf(page, "\n");
- 	spin_unlock(&mddev->lock);
-@@ -2699,17 +2888,24 @@ static ssize_t can_clear_show(struct mddev *mddev, char *page)
- 
- static ssize_t can_clear_store(struct mddev *mddev, const char *buf, size_t len)
- {
--	if (mddev->bitmap == NULL)
-+	struct bitmap *bitmap = mddev->bitmap;
-+
-+	if (!bitmap)
- 		return -ENOENT;
--	if (strncmp(buf, "false", 5) == 0)
--		mddev->bitmap->need_sync = 1;
--	else if (strncmp(buf, "true", 4) == 0) {
-+
-+	if (strncmp(buf, "false", 5) == 0) {
-+		bitmap->need_sync = 1;
-+		return len;
-+	}
-+
-+	if (strncmp(buf, "true", 4) == 0) {
- 		if (mddev->degraded)
- 			return -EBUSY;
--		mddev->bitmap->need_sync = 0;
--	} else
--		return -EINVAL;
--	return len;
-+		bitmap->need_sync = 0;
-+		return len;
-+	}
-+
-+	return -EINVAL;
- }
- 
- static struct md_sysfs_entry bitmap_can_clear =
-@@ -2719,21 +2915,26 @@ static ssize_t
- behind_writes_used_show(struct mddev *mddev, char *page)
- {
- 	ssize_t ret;
-+	struct bitmap *bitmap;
-+
- 	spin_lock(&mddev->lock);
--	if (mddev->bitmap == NULL)
-+	bitmap = mddev->bitmap;
-+	if (!bitmap)
- 		ret = sprintf(page, "0\n");
- 	else
--		ret = sprintf(page, "%lu\n",
--			      mddev->bitmap->behind_writes_used);
-+		ret = sprintf(page, "%lu\n", bitmap->behind_writes_used);
- 	spin_unlock(&mddev->lock);
-+
- 	return ret;
- }
- 
- static ssize_t
- behind_writes_used_reset(struct mddev *mddev, const char *buf, size_t len)
- {
--	if (mddev->bitmap)
--		mddev->bitmap->behind_writes_used = 0;
-+	struct bitmap *bitmap = mddev->bitmap;
-+
-+	if (bitmap)
-+		bitmap->behind_writes_used = 0;
- 	return len;
- }
- 
-diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
-index 364e00833aef..06c46b4e58f4 100644
---- a/drivers/md/md-bitmap.h
-+++ b/drivers/md/md-bitmap.h
-@@ -7,81 +7,7 @@
- #ifndef BITMAP_H
- #define BITMAP_H 1
- 
--#define BITMAP_MAJOR_LO 3
--/* version 4 insists the bitmap is in little-endian order
-- * with version 3, it is host-endian which is non-portable
-- * Version 5 is currently set only for clustered devices
-- */
--#define BITMAP_MAJOR_HI 4
--#define BITMAP_MAJOR_CLUSTERED 5
--#define	BITMAP_MAJOR_HOSTENDIAN 3
--
--/*
-- * in-memory bitmap:
-- *
-- * Use 16 bit block counters to track pending writes to each "chunk".
-- * The 2 high order bits are special-purpose, the first is a flag indicating
-- * whether a resync is needed.  The second is a flag indicating whether a
-- * resync is active.
-- * This means that the counter is actually 14 bits:
-- *
-- * +--------+--------+------------------------------------------------+
-- * | resync | resync |               counter                          |
-- * | needed | active |                                                |
-- * |  (0-1) |  (0-1) |              (0-16383)                         |
-- * +--------+--------+------------------------------------------------+
-- *
-- * The "resync needed" bit is set when:
-- *    a '1' bit is read from storage at startup.
-- *    a write request fails on some drives
-- *    a resync is aborted on a chunk with 'resync active' set
-- * It is cleared (and resync-active set) when a resync starts across all drives
-- * of the chunk.
-- *
-- *
-- * The "resync active" bit is set when:
-- *    a resync is started on all drives, and resync_needed is set.
-- *       resync_needed will be cleared (as long as resync_active wasn't already set).
-- * It is cleared when a resync completes.
-- *
-- * The counter counts pending write requests, plus the on-disk bit.
-- * When the counter is '1' and the resync bits are clear, the on-disk
-- * bit can be cleared as well, thus setting the counter to 0.
-- * When we set a bit, or in the counter (to start a write), if the fields is
-- * 0, we first set the disk bit and set the counter to 1.
-- *
-- * If the counter is 0, the on-disk bit is clear and the stripe is clean
-- * Anything that dirties the stripe pushes the counter to 2 (at least)
-- * and sets the on-disk bit (lazily).
-- * If a periodic sweep find the counter at 2, it is decremented to 1.
-- * If the sweep find the counter at 1, the on-disk bit is cleared and the
-- * counter goes to zero.
-- *
-- * Also, we'll hijack the "map" pointer itself and use it as two 16 bit block
-- * counters as a fallback when "page" memory cannot be allocated:
-- *
-- * Normal case (page memory allocated):
-- *
-- *     page pointer (32-bit)
-- *
-- *     [ ] ------+
-- *               |
-- *               +-------> [   ][   ]..[   ] (4096 byte page == 2048 counters)
-- *                          c1   c2    c2048
-- *
-- * Hijacked case (page memory allocation failed):
-- *
-- *     hijacked page pointer (32-bit)
-- *
-- *     [		  ][		  ] (no page memory allocated)
-- *      counter #1 (16-bit) counter #2 (16-bit)
-- *
-- */
--
--#ifdef __KERNEL__
--
--#define PAGE_BITS (PAGE_SIZE << 3)
--#define PAGE_BIT_SHIFT (PAGE_SHIFT + 3)
-+#define BITMAP_MAGIC 0x6d746962
- 
- typedef __u16 bitmap_counter_t;
- #define COUNTER_BITS 16
-@@ -91,26 +17,6 @@ typedef __u16 bitmap_counter_t;
- #define NEEDED_MASK ((bitmap_counter_t) (1 << (COUNTER_BITS - 1)))
- #define RESYNC_MASK ((bitmap_counter_t) (1 << (COUNTER_BITS - 2)))
- #define COUNTER_MAX ((bitmap_counter_t) RESYNC_MASK - 1)
--#define NEEDED(x) (((bitmap_counter_t) x) & NEEDED_MASK)
--#define RESYNC(x) (((bitmap_counter_t) x) & RESYNC_MASK)
--#define COUNTER(x) (((bitmap_counter_t) x) & COUNTER_MAX)
--
--/* how many counters per page? */
--#define PAGE_COUNTER_RATIO (PAGE_BITS / COUNTER_BITS)
--/* same, except a shift value for more efficient bitops */
--#define PAGE_COUNTER_SHIFT (PAGE_BIT_SHIFT - COUNTER_BIT_SHIFT)
--/* same, except a mask value for more efficient bitops */
--#define PAGE_COUNTER_MASK  (PAGE_COUNTER_RATIO - 1)
--
--#define BITMAP_BLOCK_SHIFT 9
--
--#endif
--
--/*
-- * bitmap structures:
-- */
--
--#define BITMAP_MAGIC 0x6d746962
- 
- /* use these for bitmap->flags and bitmap->sb->state bit-fields */
- enum bitmap_state {
-@@ -152,88 +58,6 @@ typedef struct bitmap_super_s {
-  *    devices.  For raid10 it is the size of the array.
-  */
- 
--#ifdef __KERNEL__
--
--/* the in-memory bitmap is represented by bitmap_pages */
--struct bitmap_page {
--	/*
--	 * map points to the actual memory page
--	 */
--	char *map;
--	/*
--	 * in emergencies (when map cannot be alloced), hijack the map
--	 * pointer and use it as two counters itself
--	 */
--	unsigned int hijacked:1;
--	/*
--	 * If any counter in this page is '1' or '2' - and so could be
--	 * cleared then that page is marked as 'pending'
--	 */
--	unsigned int pending:1;
--	/*
--	 * count of dirty bits on the page
--	 */
--	unsigned int  count:30;
--};
--
--/* the main bitmap structure - one per mddev */
--struct bitmap {
--
--	struct bitmap_counts {
--		spinlock_t lock;
--		struct bitmap_page *bp;
--		unsigned long pages;		/* total number of pages
--						 * in the bitmap */
--		unsigned long missing_pages;	/* number of pages
--						 * not yet allocated */
--		unsigned long chunkshift;	/* chunksize = 2^chunkshift
--						 * (for bitops) */
--		unsigned long chunks;		/* Total number of data
--						 * chunks for the array */
--	} counts;
--
--	struct mddev *mddev; /* the md device that the bitmap is for */
--
--	__u64	events_cleared;
--	int need_sync;
--
--	struct bitmap_storage {
--		struct file *file;		/* backing disk file */
--		struct page *sb_page;		/* cached copy of the bitmap
--						 * file superblock */
--		unsigned long sb_index;
--		struct page **filemap;		/* list of cache pages for
--						 * the file */
--		unsigned long *filemap_attr;	/* attributes associated
--						 * w/ filemap pages */
--		unsigned long file_pages;	/* number of pages in the file*/
--		unsigned long bytes;		/* total bytes in the bitmap */
--	} storage;
--
--	unsigned long flags;
--
--	int allclean;
--
--	atomic_t behind_writes;
--	unsigned long behind_writes_used; /* highest actual value at runtime */
--
--	/*
--	 * the bitmap daemon - periodically wakes up and sweeps the bitmap
--	 * file, cleaning up bits and flushing out pages to disk as necessary
--	 */
--	unsigned long daemon_lastrun; /* jiffies of last run */
--	unsigned long last_end_sync; /* when we lasted called end_sync to
--				      * update bitmap with resync progress */
--
--	atomic_t pending_writes; /* pending writes to the bitmap file */
--	wait_queue_head_t write_wait;
--	wait_queue_head_t overflow_wait;
--	wait_queue_head_t behind_wait;
--
--	struct kernfs_node *sysfs_can_clear;
--	int cluster_slot;		/* Slot offset for clustered env */
--};
--
- struct md_bitmap_stats {
- 	unsigned long pages;
- 	unsigned long missing_pages;
-@@ -271,17 +95,17 @@ struct bitmap_operations {
- 	void (*cond_end_sync)(struct mddev *mddev, sector_t sector, bool force);
- 	void (*close_sync)(struct mddev *mddev);
- 
--	void (*update_sb)(struct bitmap *bitmap);
--	int (*get_stats)(struct bitmap *bitmap, struct md_bitmap_stats *stats);
-+	void (*update_sb)(void *data);
-+	int (*get_stats)(void *data, struct md_bitmap_stats *stats);
- 
- 	void (*sync_with_cluster)(struct mddev *mddev,
- 				  sector_t old_lo, sector_t old_hi,
- 				  sector_t new_lo, sector_t new_hi);
--	struct bitmap *(*get_from_slot)(struct mddev *mddev, int slot);
-+	void *(*get_from_slot)(struct mddev *mddev, int slot);
- 	int (*copy_from_slot)(struct mddev *mddev, int slot, sector_t *lo,
- 			      sector_t *hi, bool clear_bits);
--	void (*set_pages)(struct bitmap *bitmap, unsigned long pages);
--	void (*free)(struct bitmap *bitmap);
-+	void (*set_pages)(void *data, unsigned long pages);
-+	void (*free)(void *data);
- };
- 
- /* the bitmap API */
-@@ -299,4 +123,3 @@ static inline u64 md_bitmap_events_cleared(struct mddev *mddev)
- }
- 
- #endif
--#endif
-diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-index da94f7251da7..eadefa24b8cc 100644
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -1145,7 +1145,7 @@ static int update_bitmap_size(struct mddev *mddev, sector_t size)
- static int resize_bitmaps(struct mddev *mddev, sector_t newsize, sector_t oldsize)
- {
- 	struct dlm_lock_resource *bm_lockres;
--	struct bitmap *bitmap = mddev->bitmap;
-+	void *bitmap = mddev->bitmap;
- 	struct md_bitmap_stats stats;
- 	unsigned long my_pages;
- 	char str[64];
-@@ -1219,7 +1219,7 @@ static int cluster_check_sync_size(struct mddev *mddev)
- 	unsigned long my_sync_size, sync_size = 0;
- 	int node_num = mddev->bitmap_info.nodes;
- 	int current_slot = md_cluster_ops->slot_number(mddev);
--	struct bitmap *bitmap = mddev->bitmap;
-+	void *bitmap = mddev->bitmap;
- 	char str[64];
- 	struct dlm_lock_resource *bm_lockres;
- 	struct md_bitmap_stats stats;
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 6800888152d0..3ba45c41dc0e 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -2324,7 +2324,7 @@ super_1_allow_new_offset(struct md_rdev *rdev,
- 			 unsigned long long new_offset)
- {
- 	/* All necessary checks on new >= old have been done */
--	struct bitmap *bitmap = rdev->mddev->bitmap;
-+	void *bitmap = rdev->mddev->bitmap;
- 	struct md_bitmap_stats stats;
- 	int err;
- 
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index e56193f71ab4..1c6a5f41adca 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -535,7 +535,7 @@ struct mddev {
- 	struct percpu_ref		writes_pending;
- 	int				sync_checkers;	/* # of threads checking writes_pending */
- 
--	struct bitmap			*bitmap; /* the bitmap for the device */
-+	void				*bitmap; /* the bitmap for the device */
- 	struct bitmap_operations	*bitmap_ops;
- 	struct {
- 		struct file		*file; /* the bitmap file */
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 17b1965fec56..6651d44d8605 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1425,7 +1425,6 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
- 	struct r1conf *conf = mddev->private;
- 	struct r1bio *r1_bio;
- 	int i, disks;
--	struct bitmap *bitmap = mddev->bitmap;
- 	unsigned long flags;
- 	struct md_rdev *blocked_rdev;
- 	int first_clone;
-@@ -1578,7 +1577,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
- 	 * at a time and thus needs a new bio that can fit the whole payload
- 	 * this bio in page sized chunks.
- 	 */
--	if (write_behind && bitmap)
-+	if (write_behind && mddev->bitmap)
- 		max_sectors = min_t(int, max_sectors,
- 				    BIO_MAX_VECS * (PAGE_SIZE >> 9));
- 	if (max_sectors < bio_sectors(bio)) {
-@@ -1606,7 +1605,8 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
- 
- 		if (first_clone) {
- 			struct md_bitmap_stats stats;
--			int err = mddev->bitmap_ops->get_stats(bitmap, &stats);
-+			int err = mddev->bitmap_ops->get_stats(mddev->bitmap,
-+							       &stats);
- 
- 			/* do behind I/O ?
- 			 * Not if there are too many, or cannot
+>  
+>  additionalProperties: false
+>  
+
 -- 
-2.39.2
+Regards,
+Liu Ying
 
 
