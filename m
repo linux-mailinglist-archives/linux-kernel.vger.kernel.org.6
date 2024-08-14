@@ -1,381 +1,247 @@
-Return-Path: <linux-kernel+bounces-287280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5519525D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:35:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4483A9525DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0301828391F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69C241C220CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B8014F9D9;
-	Wed, 14 Aug 2024 22:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC40C14BFA8;
+	Wed, 14 Aug 2024 22:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="aokBFlIM"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wjh/wcFn"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E6B60B96;
-	Wed, 14 Aug 2024 22:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723674904; cv=pass; b=RkaIET/gDR0YDCd1hgcq8Y+cWm7pKf7QT+NwXqSF9AkcFtnATsNfI+kP0YoetTcNHDpweTDgVtIL5InhKyqDGT3XqsXwSchtyqiZGT/dBGOFB1n0md28PTOyT3sXcYevkKokF5CPwvDawKd3RBi4PcVNqT1YJLMBep3EPK7vtY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723674904; c=relaxed/simple;
-	bh=lt9QrNAThuMnmsDhWCTY7drPRB+TIQjRb++6AHrZCqM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j2uedlAbc1N6ThH3cUEh19Xu0SzmWJI/WFXiUME1ncvJUsrq2AkqH6eXNDCzp3pcFg03r6bLcIHGX8i4tID4kLaeOhG/9V0ya1N8ogEAaWLFQRL0bWj6k3C/+Ew1W5/Hg1wRbMj2tNc2oO6AJizOuKEOujxbLI4yxhAv1txyQek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=aokBFlIM; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723674877; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EGSXNJEBxi9LLaZ2ZqW649n43+gqF8arv7DpwOIiIL16QzqBapIF5E2VgyND5qvIboPAN0TsYRSKIarbp2+tHPrPv/4dAK0I77DwHaMY7XcLgh6I3+PzHeLO8p+zOTRpdlAEwyAxJAzEz6pbSo0LJjEtjPrn1B5NONdXDPuwhzI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723674877; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=nwZ71hZV+gNmLOh0K/QZssl4osS7eYQruaBZZmkWuuQ=; 
-	b=Td6ViPYjs+uK4BES46eCH2M5/sYR8WzXLZTgRHxRq2Ove0nPUyxDSyV4F6HYbK6DPlXo8/XSp4gARbWDkuIjIBpg6y8rV7NulJXCfo4nn8rtwDEdZljD6LIiB/5+qdik8E2YKKQEQZ/DCF7vd5peOLSGW00JYSJaxHTqkjRCIco=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723674877;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=nwZ71hZV+gNmLOh0K/QZssl4osS7eYQruaBZZmkWuuQ=;
-	b=aokBFlIMffe/NRZYt2Jj3YcNpdc4Gw/BcWuNVpzP03Kz/U/tEHFrrJ5CGNh67cP5
-	tQ8adU12R9N5YZ/gQS+n0Vqc/XESxhP4TYALYoacSiLyu56kDGDp0sh6k1HKWXjlSl1
-	+SMJxrXhrJ9Erdf9SZSvAVu7LW8JcmrFlxZ9RAFM=
-Received: by mx.zohomail.com with SMTPS id 17236748749611007.2751147530727;
-	Wed, 14 Aug 2024 15:34:34 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: [PATCH v3 3/3] mmc: dw_mmc-rockchip: Add internal phase support
-Date: Wed, 14 Aug 2024 18:34:02 -0400
-Message-ID: <20240814223555.3695-4-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240814223555.3695-1-detlev.casanova@collabora.com>
-References: <20240814223555.3695-1-detlev.casanova@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82EB14A61B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 22:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723675045; cv=none; b=pnic0nc+QNqaaDZjDPvGfpYr+iNu+MRCvgUH7DlGbRPMCmENljjwXwnMHXc26OIDEa3je20c+eRODTxRM3hcKkm/Q7UuTdCLBdtiSLYwf1VFZR1gNnphLtwbZv5iDj/kI791RGQXGl5VgAEf8V10N58NilKqwE2OAseVWO5WaFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723675045; c=relaxed/simple;
+	bh=RyBEIF+WkRp3KbGMySEBlxB8nRiemo7+pvynatFUUJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kRdL7kAQt7Oo0fBx56qJe5xmFSg8a00/QsGeJ5IQBdtNJE3IR18IVUPQyzAxKR6I1r7+1pwdhfR1ZZVRtXvT/vqgQC8VOr7wpfXN72jH6Cgv01QyDCcYtMU3FC7gCdRZdD94s19LZL+p2PyFV3ulVLdX0tEXSEGuBh5Cw0p7W7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wjh/wcFn; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <716cbd56-4a44-4451-a6f3-5bacef3e0729@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723675041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f86mRHsZH4bwWIAKgadOnwJ3hSEJ46GTw8tBGGkcal4=;
+	b=wjh/wcFn6Y9Kool1UBy57C1o4V+xz4OEDXKBw49EfwGjgiKzLJHtcZ2LbVGODU0go8Y9A6
+	R8NCLaZcadw/Zs8GZ87RXu+LR6tLJdaoiQ9twKqFnRxCL2sa+WFv1ka0+UhCdC7oKy2BMj
+	96ePr6rzwxMShYVcnAykZCHgYxt2Lzs=
+Date: Wed, 14 Aug 2024 15:37:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next v4 2/2] selftests/bpf: Add mptcp subflow subtest
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Daniel Xu <dxu@dxuuu.xyz>,
+ Manu Bretelle <chantra@meta.com>
+References: <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-0-2b4ca6994993@kernel.org>
+ <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-2-2b4ca6994993@kernel.org>
+ <2136317a-3e95-4993-b2fc-1f3b2c28dbdc@linux.dev>
+ <8a2ff1bd-52dc-421d-87b7-fc2f56e81da2@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+Content-Language: en-US
+In-Reply-To: <8a2ff1bd-52dc-421d-87b7-fc2f56e81da2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+X-Migadu-Flow: FLOW_OUT
 
-From: Shawn Lin <shawn.lin@rock-chips.com>
+On 8/14/24 3:04 AM, Matthieu Baerts wrote:
+> Hi Martin,
+> 
+> Thank you for your reply!
+> 
+> On 14/08/2024 03:12, Martin KaFai Lau wrote:
+>> On 8/5/24 2:52 AM, Matthieu Baerts (NGI0) wrote:
+>>> +static int endpoint_init(char *flags)
+>>> +{
+>>> +    SYS(fail, "ip -net %s link add veth1 type veth peer name veth2",
+>>> NS_TEST);
+>>> +    SYS(fail, "ip -net %s addr add %s/24 dev veth1", NS_TEST, ADDR_1);
+>>> +    SYS(fail, "ip -net %s link set dev veth1 up", NS_TEST);
+>>> +    SYS(fail, "ip -net %s addr add %s/24 dev veth2", NS_TEST, ADDR_2);
+>>> +    SYS(fail, "ip -net %s link set dev veth2 up", NS_TEST);
+>>> +    if (SYS_NOFAIL("ip -net %s mptcp endpoint add %s %s", NS_TEST,
+>>> ADDR_2, flags)) {
+>>> +        printf("'ip mptcp' not supported, skip this test.\n");
+>>> +        test__skip();
+>>
+>> It is always a skip now in bpf CI:
+>>
+>> #171/3   mptcp/subflow:SKIP
+>>
+>> This test is a useful addition for the bpf CI selftest.
+>>
+>> It can't catch regression if it is always a skip in bpf CI though.
+> 
+> Indeed, for the moment, this test is skipped in bpf CI.
+> 
+> The MPTCP CI checks the MPTCP BPF selftests that are on top of net and
+> net-next at least once a day. It is always running with the last stable
+> version of iproute2, so this test is not skipped:
+> 
+>     #169/3   mptcp/subflow:OK
+> 
+> https://github.com/multipath-tcp/mptcp_net-next/actions/runs/10384566794/job/28751869426#step:7:11080
+> 
+>> iproute2 needs to be updated (cc: Daniel Xu and Manu, the outdated
+>> iproute2 is something that came up multiple times).
+>>
+>> Not sure when the iproute2 can be updated. In the mean time, your v3 is
+>> pretty close to getting pm_nl_ctl compiled. Is there other blocker on this?
+> 
+> I will try to find some time to check the modifications I suggested in
+> the v3, but I don't know how long it will take to have them ready, as
+> they might require some adaptations of the CI side as well, I need to
+> check. On the other hand, I understood adding a duplicated version of
+> the mptcp.h UAPI header is not an option either.
+> 
+> So not to block this (already old) series, I thought it would help to
+> first focus on this version using 'ip mptcp', while I'm looking at the
+> selftests modifications. If these modifications are successful, I can
+> always resend the patch 2/3 from the v3 later, and using 'pm_nl_ctl'
+> instead of 'ip mptcp', to be able to work with IPRoute2 5.5.
+> 
+> Do you think that could work like that?
 
-Some Rockchip devices put the phase settings into the dw_mmc controller.
+If there is CI started covering it, staying with the 'ip mptcp' is fine.
 
-The feature is implemented in devices where the USRID register contains
-0x20230002.
+The bpf CI has to start testing it asap also. The iproute2 package will need to 
+be updated on the bpf CI side. I think this has to be done regardless.
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- drivers/mmc/host/dw_mmc-rockchip.c | 184 ++++++++++++++++++++++++++---
- 1 file changed, 170 insertions(+), 14 deletions(-)
+It will be useful to avoid the uapi header dup on its own. The last one you have 
+seems pretty close.
 
-diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
-index 367633f4e8892..03e25a8b8a305 100644
---- a/drivers/mmc/host/dw_mmc-rockchip.c
-+++ b/drivers/mmc/host/dw_mmc-rockchip.c
-@@ -16,6 +16,17 @@
- #include "dw_mmc-pltfm.h"
- 
- #define RK3288_CLKGEN_DIV	2
-+#define USRID_INTER_PHASE	0x20230001
-+#define SDMMC_TIMING_CON0	0x130
-+#define SDMMC_TIMING_CON1	0x134
-+#define ROCKCHIP_MMC_DELAY_SEL BIT(10)
-+#define ROCKCHIP_MMC_DEGREE_MASK 0x3
-+#define ROCKCHIP_MMC_DELAYNUM_OFFSET 2
-+#define ROCKCHIP_MMC_DELAYNUM_MASK (0xff << ROCKCHIP_MMC_DELAYNUM_OFFSET)
-+#define PSECS_PER_SEC 1000000000000LL
-+#define ROCKCHIP_MMC_DELAY_ELEMENT_PSEC 60
-+#define HIWORD_UPDATE(val, mask, shift) \
-+		((val) << (shift) | (mask) << ((shift) + 16))
- 
- static const unsigned int freqs[] = { 100000, 200000, 300000, 400000 };
- 
-@@ -25,9 +36,121 @@ struct dw_mci_rockchip_priv_data {
- 	int			default_sample_phase;
- 	int			num_phases;
- 	bool			use_v2_tuning;
-+	int			usrid;
- 	int			last_degree;
- };
- 
-+/*
-+ * Each fine delay is between 44ps-77ps. Assume each fine delay is 60ps to
-+ * simplify calculations. So 45degs could be anywhere between 33deg and 57.8deg.
-+ */
-+static int rockchip_mmc_get_phase(struct dw_mci *host, bool sample)
-+{
-+	unsigned long rate = clk_get_rate(host->ciu_clk);
-+	u32 raw_value;
-+	u16 degrees;
-+	u32 delay_num = 0;
-+
-+	/* Constant signal, no measurable phase shift */
-+	if (!rate)
-+		return 0;
-+
-+	if (sample)
-+		raw_value = mci_readl(host, TIMING_CON1) >> 1;
-+	else
-+		raw_value = mci_readl(host, TIMING_CON0) >> 1;
-+
-+	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
-+
-+	if (raw_value & ROCKCHIP_MMC_DELAY_SEL) {
-+		/* degrees/delaynum * 1000000 */
-+		unsigned long factor = (ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10) *
-+					36 * (rate / 10000);
-+
-+		delay_num = (raw_value & ROCKCHIP_MMC_DELAYNUM_MASK);
-+		delay_num >>= ROCKCHIP_MMC_DELAYNUM_OFFSET;
-+		degrees += DIV_ROUND_CLOSEST(delay_num * factor, 1000000);
-+	}
-+
-+	return degrees % 360;
-+}
-+
-+static int rockchip_mmc_set_phase(struct dw_mci *host, bool sample, int degrees)
-+{
-+	unsigned long rate = clk_get_rate(host->ciu_clk);
-+	u8 nineties, remainder;
-+	u8 delay_num;
-+	u32 raw_value;
-+	u32 delay;
-+
-+	/*
-+	 * The below calculation is based on the output clock from
-+	 * MMC host to the card, which expects the phase clock inherits
-+	 * the clock rate from its parent, namely the output clock
-+	 * provider of MMC host. However, things may go wrong if
-+	 * (1) It is orphan.
-+	 * (2) It is assigned to the wrong parent.
-+	 *
-+	 * This check help debug the case (1), which seems to be the
-+	 * most likely problem we often face and which makes it difficult
-+	 * for people to debug unstable mmc tuning results.
-+	 */
-+	if (!rate) {
-+		dev_err(host->dev, "%s: invalid clk rate\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	nineties = degrees / 90;
-+	remainder = (degrees % 90);
-+
-+	/*
-+	 * Due to the inexact nature of the "fine" delay, we might
-+	 * actually go non-monotonic.  We don't go _too_ monotonic
-+	 * though, so we should be OK.  Here are options of how we may
-+	 * work:
-+	 *
-+	 * Ideally we end up with:
-+	 *   1.0, 2.0, ..., 69.0, 70.0, ...,  89.0, 90.0
-+	 *
-+	 * On one extreme (if delay is actually 44ps):
-+	 *   .73, 1.5, ..., 50.6, 51.3, ...,  65.3, 90.0
-+	 * The other (if delay is actually 77ps):
-+	 *   1.3, 2.6, ..., 88.6. 89.8, ..., 114.0, 90
-+	 *
-+	 * It's possible we might make a delay that is up to 25
-+	 * degrees off from what we think we're making.  That's OK
-+	 * though because we should be REALLY far from any bad range.
-+	 */
-+
-+	/*
-+	 * Convert to delay; do a little extra work to make sure we
-+	 * don't overflow 32-bit / 64-bit numbers.
-+	 */
-+	delay = 10000000; /* PSECS_PER_SEC / 10000 / 10 */
-+	delay *= remainder;
-+	delay = DIV_ROUND_CLOSEST(delay,
-+			(rate / 1000) * 36 *
-+				(ROCKCHIP_MMC_DELAY_ELEMENT_PSEC / 10));
-+
-+	delay_num = (u8) min_t(u32, delay, 255);
-+
-+	raw_value = delay_num ? ROCKCHIP_MMC_DELAY_SEL : 0;
-+	raw_value |= delay_num << ROCKCHIP_MMC_DELAYNUM_OFFSET;
-+	raw_value |= nineties;
-+
-+	if (sample)
-+		mci_writel(host, TIMING_CON1, HIWORD_UPDATE(raw_value, 0x07ff, 1));
-+	else
-+		mci_writel(host, TIMING_CON0, HIWORD_UPDATE(raw_value, 0x07ff, 1));
-+
-+	dev_dbg(host->dev, "set %s_phase(%d) delay_nums=%u actual_degrees=%d\n",
-+		sample ? "sample" : "drv", degrees, delay_num,
-+		rockchip_mmc_get_phase(host, sample)
-+	);
-+
-+	return 0;
-+}
-+
- static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- {
- 	struct dw_mci_rockchip_priv_data *priv = host->priv;
-@@ -65,8 +188,12 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- 	}
- 
- 	/* Make sure we use phases which we can enumerate with */
--	if (!IS_ERR(priv->sample_clk) && ios->timing <= MMC_TIMING_SD_HS)
--		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-+	if (!IS_ERR(priv->sample_clk) && ios->timing <= MMC_TIMING_SD_HS) {
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true, priv->default_sample_phase);
-+		else
-+			clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-+	}
- 
- 	/*
- 	 * Set the drive phase offset based on speed mode to achieve hold times.
-@@ -129,7 +256,10 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
- 			break;
- 		}
- 
--		clk_set_phase(priv->drv_clk, phase);
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, false, phase);
-+		else
-+			clk_set_phase(priv->drv_clk, phase);
- 	}
- }
- 
-@@ -141,13 +271,16 @@ static int dw_mci_v2_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 	struct dw_mci *host = slot->host;
- 	struct dw_mci_rockchip_priv_data *priv = host->priv;
- 	struct mmc_host *mmc = slot->mmc;
--	u32 degrees[4] = {90, 180, 270, 360};
-+	u32 degree, degrees[4] = {90, 180, 270, 360};
- 	int i;
- 	static bool inherit = true;
- 
- 	if (inherit) {
- 		inherit = false;
--		i = clk_get_phase(priv->sample_clk) / 90 - 1;
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			i = rockchip_mmc_get_phase(host, true) / 90;
-+		else
-+			i = clk_get_phase(priv->sample_clk) / 90 - 1;
- 		goto done;
- 	}
- 
-@@ -156,7 +289,11 @@ static int dw_mci_v2_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 		if (degrees[i] == priv->last_degree)
- 			continue;
- 
--		clk_set_phase(priv->sample_clk, degrees[i]);
-+		degree = (degrees[i] + priv->last_degree + 90) % 360;
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true, degree);
-+		else
-+			clk_set_phase(priv->sample_clk, degree);
- 		if (!mmc_send_tuning(mmc, opcode, NULL))
- 			break;
- 	}
-@@ -189,6 +326,7 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 	int longest_range_len = -1;
- 	int longest_range = -1;
- 	int middle_phase;
-+	int phase;
- 
- 	if (IS_ERR(priv->sample_clk)) {
- 		dev_err(host->dev, "Tuning clock (sample_clk) not defined.\n");
-@@ -209,8 +347,15 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 
- 	/* Try each phase and extract good ranges */
- 	for (i = 0; i < priv->num_phases; ) {
--		clk_set_phase(priv->sample_clk,
--			      TUNING_ITERATION_TO_PHASE(i, priv->num_phases));
-+		/* Cannot guarantee any phases larger than 270 would work well */
-+		if (TUNING_ITERATION_TO_PHASE(i, priv->num_phases) > 270)
-+			break;
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true,
-+				TUNING_ITERATION_TO_PHASE(i, priv->num_phases));
-+		else
-+			clk_set_phase(priv->sample_clk,
-+				TUNING_ITERATION_TO_PHASE(i, priv->num_phases));
- 
- 		v = !mmc_send_tuning(mmc, opcode, NULL);
- 
-@@ -256,7 +401,10 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 	}
- 
- 	if (ranges[0].start == 0 && ranges[0].end == priv->num_phases - 1) {
--		clk_set_phase(priv->sample_clk, priv->default_sample_phase);
-+		if (priv->usrid == USRID_INTER_PHASE)
-+			rockchip_mmc_set_phase(host, true, priv->default_sample_phase);
-+		else
-+			clk_set_phase(priv->sample_clk, priv->default_sample_phase);
- 		dev_info(host->dev, "All phases work, using default phase %d.",
- 			 priv->default_sample_phase);
- 		goto free;
-@@ -293,12 +441,13 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
- 
- 	middle_phase = ranges[longest_range].start + longest_range_len / 2;
- 	middle_phase %= priv->num_phases;
--	dev_info(host->dev, "Successfully tuned phase to %d\n",
--		 TUNING_ITERATION_TO_PHASE(middle_phase, priv->num_phases));
-+	phase = TUNING_ITERATION_TO_PHASE(middle_phase, priv->num_phases);
-+	dev_info(host->dev, "Successfully tuned phase to %d\n", phase);
- 
--	clk_set_phase(priv->sample_clk,
--		      TUNING_ITERATION_TO_PHASE(middle_phase,
--						priv->num_phases));
-+	if (priv->usrid == USRID_INTER_PHASE)
-+		rockchip_mmc_set_phase(host, true, phase);
-+	else
-+		clk_set_phase(priv->sample_clk, phase);
- 
- free:
- 	kfree(ranges);
-@@ -342,6 +491,7 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
- static int dw_mci_rockchip_init(struct dw_mci *host)
- {
- 	int ret, i;
-+	struct dw_mci_rockchip_priv_data *priv = host->priv;
- 
- 	/* It is slot 8 on Rockchip SoCs */
- 	host->sdio_id0 = 8;
-@@ -365,6 +515,12 @@ static int dw_mci_rockchip_init(struct dw_mci *host)
- 			dev_warn(host->dev, "no valid minimum freq: %d\n", ret);
- 	}
- 
-+	priv->usrid = mci_readl(host, USRID);
-+	if (priv->usrid == USRID_INTER_PHASE) {
-+		priv->sample_clk = NULL;
-+		priv->drv_clk = NULL;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.46.0
+> 
+>>> +        goto fail;
+>>> +    }
+>>> +
+>>> +    return 0;
+>>> +fail:
+>>> +    return -1;
+>>> +}
+>>> +
+>>> +static int _ss_search(char *src, char *dst, char *port, char *keyword)
+>>> +{
+>>> +    return SYS_NOFAIL("ip netns exec %s ss -enita src %s dst %s %s %d
+>>> | grep -q '%s'",
+>>> +              NS_TEST, src, dst, port, PORT_1, keyword);
+>>> +}
+>>> +
+>>> +static int ss_search(char *src, char *keyword)
+>>> +{
+>>> +    return _ss_search(src, ADDR_1, "dport", keyword);
+>>> +}
+>>> +
+>>> +static void run_subflow(char *new)
+>>> +{
+>>> +    int server_fd, client_fd, err;
+>>> +    char cc[TCP_CA_NAME_MAX];
+>>> +    socklen_t len = sizeof(cc);
+>>> +
+>>> +    server_fd = start_mptcp_server(AF_INET, ADDR_1, PORT_1, 0);
+>>> +    if (!ASSERT_GE(server_fd, 0, "start_mptcp_server"))
+>>> +        return;
+>>> +
+>>> +    client_fd = connect_to_fd(server_fd, 0);
+>>> +    if (!ASSERT_GE(client_fd, 0, "connect to fd"))
+>>> +        goto fail;
+>>> +
+>>> +    err = getsockopt(server_fd, SOL_TCP, TCP_CONGESTION, cc, &len);
+>>> +    if (!ASSERT_OK(err, "getsockopt(srv_fd, TCP_CONGESTION)"))
+>>> +        goto fail;
+>>> +
+>>> +    send_byte(client_fd);
+>>> +
+>>> +    ASSERT_OK(ss_search(ADDR_1, "fwmark:0x1"), "ss_search fwmark:0x1");
+>>> +    ASSERT_OK(ss_search(ADDR_2, "fwmark:0x2"), "ss_search fwmark:0x2");
+>>> +    ASSERT_OK(ss_search(ADDR_1, new), "ss_search new cc");
+>>> +    ASSERT_OK(ss_search(ADDR_2, cc), "ss_search default cc");
+>>
+>> Is there a getsockopt way instead of ss + grep?
+> 
+> No there isn't: from the userspace, the app communicates with the MPTCP
+> socket, which can have multiple paths (subflows, a TCP socket). To keep
+> the compatibility with TCP, [gs]etsockopt() will look at/modify the
+> whole MPTCP connection. For example, in some cases, a setsockopt() will
+> propagate the option to all the subflows. Depending on the option, the
+> modification might only apply to the first subflow, or to the
+> user-facing socket.
+> 
+> For advanced users who want to have different options set to the
+> different subflows of an MPTCP connection, they can use BPF: that's what
+> is being validated here. In other words, doing a 'getsockopt()' from the
+> userspace program here will not show all the different marks and TCP CC
+> that can be set per subflow with BPF. We can see that in the test: a
+> getsockopt() is done on the MPTCP socket to retrieve the default TCP CC
+> ('cc' which is certainly 'cubic'), but we expect to find another one
+> ('new' which is 'reno'), set by the BPF program from patch 1/2. I guess
+> we could use bpf to do a getsockopt() per subflow, but that's seems a
+> bit cheated to have the BPF test program setting something and checking
+> if it is set. Here, it is an external way. Because it is done from a
+
+I think the result is valid by having a bpf prog to inspect the value of a sock. 
+Inspecting socket is an existing use case. There are many existing bpf tests 
+covering this inspection use case to ensure the result is legit. A separate 
+cgroup/getsockopt program should help here (more on this below).
+
+> dedicated netns, it sounds OK to do that, no?
+
+Thanks for the explanation. I was hoping there is a way to get to the underlying 
+subflow fd. It seems impossible.
+
+In the netns does help here. It is not only about the ss iterating a lot of 
+connections or not. My preference is not depending on external tool/shell-ing if 
+possible, e.g. to avoid the package update discussion like the iproute2 here. 
+The uapi from the testing kernel is always up-to-date. ss is another binary but 
+arguably in the same iproute2 package. There is now another extra "grep" and 
+pipe here. We had been bitten by different shell behaviors and some arch has 
+different shells ...etc.
+
+I think it is ok to take this set as is if you (and Gelang?) are ok to followup 
+a "cgroup/getsockopt" way to inspect the subflow as the very next patch to the 
+mptcp selftest. It seems inspecting subflow will be a common test going forward 
+for mptcp, so it will be beneficial to have a "cgroup/getsockopt" way to inspect 
+the subflow directly.
+
+Take a look at a recent example [0]. The mptcp test is under a cgroup already 
+and has the cgroup setup. An extra "cgroup/getsockopt" prog should be enough. 
+That prog can walk the msk->conn_list and use bpf_rdonly_cast (or the 
+bpf_core_cast macro in libbpf) to cast a pointer to tcp_sock for readonly. It 
+will allow to inspect all the fields in a tcp_sock.
+
+Something needs to a fix in patch 2(replied separately), so a re-spin is needed.
+
+pw-bot: cr
+
+[0]: https://lore.kernel.org/all/20240808150558.1035626-3-alan.maguire@oracle.com/
+
 
 
