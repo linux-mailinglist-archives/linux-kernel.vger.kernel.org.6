@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-286824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0118F951F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E071E951F73
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF5C9B23C8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DD7A285E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6CE1B86DA;
-	Wed, 14 Aug 2024 16:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJwyiW2f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3481B86E7;
+	Wed, 14 Aug 2024 16:07:53 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB11E53A;
-	Wed, 14 Aug 2024 16:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F06028DC3;
+	Wed, 14 Aug 2024 16:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723651615; cv=none; b=T3vjNCDES62mF+5OBKugrWlFILhTIWcELKJYpmn7dTeK7D8kZx2AjSICdUrrWd6/b5waZp/A5XvIF414TPzrWGDikJeN2R/kXFWLnIWB1jGJX8+IeRDuY3N2tQn4J168iyxDoAgH+5W5KyqMjNR1AUQM+b0bu1zzaf6EXUdF/Xo=
+	t=1723651673; cv=none; b=JBQ7UdKc00RVRH4s452IHHIY3B3bvlPkokPgvMvr0u8CZXzBO7j7WTZmVnw6WScvE7nB9SrnSIfwjMehvgvqYDFYGa4367r/64otOVLJ8DWHuIfm6Fz1HZtVM6wzuthUkfmgMFv7Fs/EJXKuEKirgBaeydluKcObAhAkBa6obNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723651615; c=relaxed/simple;
-	bh=ZLTngYn1Z/w0Gi1BAHMxJnppaowKvDzr41t/hl18FBI=;
+	s=arc-20240116; t=1723651673; c=relaxed/simple;
+	bh=vRqPIkdIHBdVxzhU5h0+EbYULZKLvrrnreeIG3lYDCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2LY8+UJTPxuloLdP7h+g1TNy9JdVjpQgRf8vxIPhaYFmkb2iGq2ymcK3TARhwaIP8qPAdyx6qgJD73ZmWYChYnfkGrbvfvI94cTTvksnCcFPhMZT7yyGCbDnsT6udpL3OhDQzZa98fDUC3V5fjO8B8xQ6tVJx5EYBMQe8XwakA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJwyiW2f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69674C116B1;
-	Wed, 14 Aug 2024 16:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723651614;
-	bh=ZLTngYn1Z/w0Gi1BAHMxJnppaowKvDzr41t/hl18FBI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EJwyiW2fEb6yJqIMEUVk0U/2ZW9bpV3GyVFFoK6HcvR82Ao0Eu3xY7hsalODcfBaJ
-	 asN0q/bcY4liJ3PNQUx7P056qD3/a7EVOMSKR4vc0LWuBMINWEweo8drTMbLkvZYdv
-	 +o4It89/QM96H+PCCscUM9zjYjWr5JihtFZTQ1OooFqioztpuaOBqIvd03E8j/4tj4
-	 OEvCxnNABjMkR7jkzEBBhP0UDW45+dhEhRDX311Pz0nvtR0g9zYVpeITRqbERZ0Zog
-	 UUkFEDFE1oO64prmLpfFkeHGms+6Sx9xdPqdXYDqLnaQYO00nKXUh1fwvViTjitm0g
-	 SGPMn2s+RodYA==
-Date: Wed, 14 Aug 2024 17:06:49 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v3 0/9] spi: axi-spi-engine: add offload support
-Message-ID: <20240814-riveting-prenatal-1b6892877da5@spud>
-References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
- <20240723-cabbie-opossum-6e551fe246f2@wendy>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NeHzi+8+Ehye5SyzfXmALPihRHzYtpc8S/4L/1HngDjOnK9tL+oUTG0/Lj140NE5TfotVhOwshBABXQ46sur05zv40NGFDzjyTBA+0488VqYEO3XZLojGNq3Mo6BUxKbLUxppEHgdcNIiY5KOgwj/usHQUBMySq2u8G6d+40kTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso119302a12.1;
+        Wed, 14 Aug 2024 09:07:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723651670; x=1724256470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/D24Yl42RVGhmCxoQ5g0FIFfYf6T2QUPv5Ei3NAhCks=;
+        b=hktxFfGogGRqOavB+GgPoODpKgRnuXOyx4SM2e1Yjgr3iL2I6o0DEOuE4P6gZv7/2B
+         OPCDXoLkLisBABorzEDzBLfo0Y351r9H+o3HuFMqFoxBUdmynamnKvNybU+bvUIE2dCF
+         D/APQ5/rtn+QoTiAsMLkv7TxehKPI1t5mBSiEPSo4lN1asMrwCihtIlJ4ZaZDMrs9qXA
+         yyZiDUhRJo3p9MhgNGUwLBDiqRDMpNFoUf/Vd+8Cw7Q93UxtbGWhSuD72+yntBNxbyFo
+         uFnGM80hQ0akc9YONkXrDF4IFXQ8cK1dG+BTX69QTqfsb5u4zN6YpTp8nHyPy+FIe4wK
+         I9wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVXJZfvfvsHCw7wTdH3LuwXGpziXtkDPkV88dskeDYk8bxqWUFBnX+ieY2BfypSZe3jc46Nkjo2qs8oIcDbH5pdt7YYyLfgvxFkO62NPwb+SPqVHARRsBtTOte0Qf8hvYCybhKDJa5pEvjLvmbi/DrGwYYL91f7kHUV8uCeGPiW3lUKrnX
+X-Gm-Message-State: AOJu0YzvlGhXLJho/I49KRnxcYg95n+DsOzENYZ672Cq9gMy7z9v5038
+	IBu4hs0HuDAVyNxkUYZV4u03JTbIPfdiPc7gfUg9TypT8IRmAFls
+X-Google-Smtp-Source: AGHT+IF+REZ+2INSPDwDp4WqYsoBUywOEBF4z8ulD1n402ji4MyEW9fs06hjPCi4UU9+IDKyuNzwHw==
+X-Received: by 2002:a05:6402:90d:b0:5a3:a9f8:cf20 with SMTP id 4fb4d7f45d1cf-5bea1cb4babmr2249617a12.34.1723651669085;
+        Wed, 14 Aug 2024 09:07:49 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd190adc42sm3973995a12.21.2024.08.14.09.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 09:07:48 -0700 (PDT)
+Date: Wed, 14 Aug 2024 09:07:46 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Petr Machata <petrm@nvidia.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org, David Wei <dw@davidwei.uk>,
+	Willem de Bruijn <willemb@google.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Hangbin Liu <liuhangbin@gmail.com>,
+	Matthieu Baerts <matttbe@kernel.org>
+Subject: Re: [PATCH net-next v2] net: netconsole: selftests: Create a new
+ netconsole selftest
+Message-ID: <ZrzWUg4SGJv7Byp6@gmail.com>
+References: <20240813183825.837091-1-leitao@debian.org>
+ <87r0arl5qw.fsf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PKGRGE32xX0ZFe8k"
-Content-Disposition: inline
-In-Reply-To: <20240723-cabbie-opossum-6e551fe246f2@wendy>
-
-
---PKGRGE32xX0ZFe8k
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87r0arl5qw.fsf@nvidia.com>
 
-On Tue, Jul 23, 2024 at 09:58:30AM +0100, Conor Dooley wrote:
-> On Mon, Jul 22, 2024 at 04:57:07PM -0500, David Lechner wrote:
-> > There is a recap at the end of this cover letter for those not familiar
-> > with the previous discussions. For those that are, we'll get right to
-> > the changes since the last version.
-> >=20
-> > In RFC v2, most of the discussion was around the DT bindings, so that
-> > is what has mostly changed since then. I think we mostly settled on
-> > what properties are needed and where they should go. There are probably
-> > still some details to work out (see PATCH 5/9 for more discussion) but
-> > I think we have the big-picture stuff figured out.
->=20
-> Thanks for the updates. I'm on holiday until rc2, so it'll not be until
-> then that I can really take a look at this. Figured I'd let you know
-> rather than just ignore you...
+On Wed, Aug 14, 2024 at 12:24:46PM +0200, Petr Machata wrote:
+> 
+> Breno Leitao <leitao@debian.org> writes:
 
-Finally got around to actually looking at the binding patches, but since
-Rob got there before me I didn't have all that much to say. Thanks for
-looking into the graph idea, and I think I agree that it is worth
-excluding that until you're actually going to use the crc checker etc.
+> > +	fi
+> > +
+> > +	if ! grep -q "${MSG}" "${TMPFILENAME}"; then
+> > +	    echo "FAIL: ${MSG} not found in ${TMPFILENAME}" >&2
+> > +	    cat "${TMPFILENAME}" >&2
+> > +	    return ${ksft_fail}
+> > +	fi
+> > +
+> > +	# Delete the file once it is validated, otherwise keep it
+> > +	# for debugging purposes
+> > +	rm "${TMPFILENAME}"
+> 
+> Seeing the removal within the validation function is odd, I would expect
+> it to be part of cleanup().
 
---PKGRGE32xX0ZFe8k
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks for all the other feedbacks, all of them make sense.
 
------BEGIN PGP SIGNATURE-----
+Regarding this one, I kept like this, because I only remove the file if
+the test succeed, otherwise I keep the file here for debugging purposes,
+as described in the comment above.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrzWGQAKCRB4tDGHoIJi
-0rb1AQCyQWlmrcF9aDLgp/rABhBhWgKV3D1Mum4bbi6LMRejOQEAowNlXyZCJxs4
-JteWQsOMct51J5TErk+fRtSNQlOe2wg=
-=SUd6
------END PGP SIGNATURE-----
+If that is not a good practice, I am more than happy to move this
+to cleanup.
 
---PKGRGE32xX0ZFe8k--
+
+Thanks for the detailed review,
+--breno
 
