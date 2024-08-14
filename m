@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-286892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D00952014
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:33:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 852AE952016
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C172894AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:32:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ADCD28986B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FFF1B9B3E;
-	Wed, 14 Aug 2024 16:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B351B5816;
+	Wed, 14 Aug 2024 16:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Jr+E9Sdp"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RspJC0PG"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3173C1B5816;
-	Wed, 14 Aug 2024 16:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B5D1B9B38
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653162; cv=none; b=Th15YX1Bf2njJ2YPGYpvUhpuQkm8viAOmQeHOrZ30OUDl39+wExUKxOd67uxmzFYIUo2GwEYpogMV+2Roaw/ATRtsV0UZDwt75F9njldObVex5ds8xmYFRrCsx8e0mOTbDfcwT3SCT9rSF2zVWglW3gjnh+laWY+cZ2OpgIBvQ4=
+	t=1723653166; cv=none; b=DhLpOwk8Enm+GKeP+As+iC/d3bsCuGU1WfKQbtFPxhskI7vreBfHidRW/fnoYv323que77Kd3mILfW9QDpRlkoVm2bsU8ge71dlvIR/VK6NBARVENvAlfPLxx6duBEMTD+dFgx3NqxiQLF5gV46asfrsSy997MlKKkKvdjUUD9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653162; c=relaxed/simple;
-	bh=YYEs76+BWZ0Oj8YVGf2Fub642KbnoevLFK2XkEvq30k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pskZ2pWWZHFBnYUOravFcm5yRsm8i+mU+2Y8Kr/2ZWeMuc6Z7Y4XBno6YBSMkYXmn0fHsGH20pWd2IUXwsEbPShkESy6gjJHJC84IonyMksD6517sJ7UE63qpfXM9oP57j2uzjjzBb+a5drJYOyGti/9NLlDNCnUN49VOhYG70I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Jr+E9Sdp; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723653159; x=1723912359;
-	bh=HzRjnEYxCgd5sweSvuIswq75tHrQWV8FRv4rbaoLB8o=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Jr+E9SdpuUvEJBPiSuhavO9knHg4/Jmoz3U6JzWGbxUA0VXUyt09BFa8+h1IKllu/
-	 pqqSKEufaHwz7Oxv2AZXLRY0CrJIwsRcaPWiJUw31Vb/UahypkScE2+y4iMwVH1Egk
-	 SK64dQ0qcjzR8S/Gvd3coWeLb9+44yJISQCUsE06HHPiovw9zSrYrhDzLchMeMqeYJ
-	 beAn3yGqTbKW7/dzlFFBh4DSusxb1MnerNUaFi1EUPAY1ChenpU4chrskkSbBOFzSY
-	 1Kdy9EC84BUTht6TiUVEySLxpx7umeuJNGFcTKyvF4e1lsa83C1vEa0PRd3QwnnAQZ
-	 jvawIdMVHa1lw==
-Date: Wed, 14 Aug 2024 16:32:34 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
-Message-ID: <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me>
-In-Reply-To: <20240812182355.11641-7-dakr@kernel.org>
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-7-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 514667304e528ccd1bc15957b6357b3f74a19a4b
+	s=arc-20240116; t=1723653166; c=relaxed/simple;
+	bh=wO1EopGHvMxFUW0ZLhEcIq1zQ44KoEsRKY6dKYStsn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zi9cxUVB2EaNKijWiAyVVNwlGdPADyImjKrnGpXC7JJpjumX4u/Qkg1wZ7qZeY13rp7LAEto1sJSknlLcEYceMfk3IYvvGszijgQDhHP6CkgXknPx3eOHwAlINMOmsRxTmRYkd+n33cyKAh/g0UJWHcXkSDGYDQSkoGCIRpGsgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RspJC0PG; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 14 Aug 2024 09:32:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723653161;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EHHfx+7SrVO0qYi7gvV9dreWu/gafPEVhenzIW8CUC8=;
+	b=RspJC0PGSARWi/QcEHuDHJsuu22I8lofD4NM12CLtbrhd1SgF0tNrDkIJ+8Ak9vD8RlouU
+	XgflpmGey87qX2YvnZecJKQp1ajgpVLanU3DaX7hEbN6VbZwxiLdhTC978Mhk3rnODQ293
+	YzJ08a63WBE5KaOIWrhbnLG+nZd9Oj0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
+Message-ID: <vyi7d5fw4d3h5osolpu4reyhcqylgnfi6uz32z67dpektbc2dz@jpu4ob34a2ug>
+References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
+ <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
+ <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
+ <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,151 +62,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 12.08.24 20:22, Danilo Krummrich wrote:
-> Implement `Allocator` for `Vmalloc`, the kernel's virtually contiguous
-> allocator, typically used for larger objects, (much) larger than page
-> size.
->=20
-> All memory allocations made with `Vmalloc` end up in `vrealloc()`.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/helpers.c                      |  7 +++++++
->  rust/kernel/alloc/allocator.rs      | 28 ++++++++++++++++++++++++++++
->  rust/kernel/alloc/allocator_test.rs |  1 +
->  3 files changed, 36 insertions(+)
->=20
-> diff --git a/rust/helpers.c b/rust/helpers.c
-> index 9f7275493365..7406943f887d 100644
-> --- a/rust/helpers.c
-> +++ b/rust/helpers.c
-> @@ -33,6 +33,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
-> +#include <linux/vmalloc.h>
->  #include <linux/wait.h>
->  #include <linux/workqueue.h>
->=20
-> @@ -199,6 +200,12 @@ void *rust_helper_krealloc(const void *objp, size_t =
-new_size, gfp_t flags)
->  }
->  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
->=20
-> +void *rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
-> +{
-> +=09return vrealloc(p, size, flags);
-> +}
-> +EXPORT_SYMBOL_GPL(rust_helper_vrealloc);
-> +
->  /*
->   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we c=
-an
->   * use it in contexts where Rust expects a `usize` like slice (array) in=
-dices.
-> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator=
-.rs
-> index b46883d87715..fdda22c6983f 100644
-> --- a/rust/kernel/alloc/allocator.rs
-> +++ b/rust/kernel/alloc/allocator.rs
-> @@ -9,6 +9,7 @@
->=20
->  use crate::alloc::{AllocError, Allocator};
->  use crate::bindings;
-> +use crate::pr_warn;
->=20
->  /// The contiguous kernel allocator.
->  ///
-> @@ -16,6 +17,12 @@
->  /// `bindings::krealloc`.
->  pub struct Kmalloc;
->=20
-> +/// The virtually contiguous kernel allocator.
-> +///
-> +/// The vmalloc allocator allocates pages from the page level allocator =
-and maps them into the
-> +/// contiguous kernel virtual space.
-> +pub struct Vmalloc;
-> +
->  /// Returns a proper size to alloc a new object aligned to `new_layout`'=
-s alignment.
->  fn aligned_size(new_layout: Layout) -> usize {
->      // Customized layouts from `Layout::from_size_align()` can have size=
- < align, so pad first.
-> @@ -55,6 +62,9 @@ impl ReallocFunc {
->      // INVARIANT: `krealloc` satisfies the type invariants.
->      const KREALLOC: Self =3D Self(bindings::krealloc);
->=20
-> +    // INVARIANT: `vrealloc` satisfies the type invariants.
-> +    const VREALLOC: Self =3D Self(bindings::vrealloc);
-> +
->      /// # Safety
->      ///
->      /// This method has the same safety requirements as `Allocator::real=
-loc`.
-> @@ -132,6 +142,24 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mu=
-t u8 {
->      }
->  }
->=20
-> +unsafe impl Allocator for Vmalloc {
 
-Missing SAFETY comment.
+Ccing Nhat
 
-> +    unsafe fn realloc(
+On Wed, Aug 14, 2024 at 02:57:38PM GMT, Jesper Dangaard Brouer wrote:
+> 
+> 
+> On 14/08/2024 00.30, Shakeel Butt wrote:
+> > On Tue, Aug 13, 2024 at 02:58:51PM GMT, Yosry Ahmed wrote:
+> > > On Tue, Aug 13, 2024 at 2:54 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > > > 
+> > > > The Meta prod is seeing large amount of stalls in memcg stats flush
+> > > > from the memcg reclaim code path. At the moment, this specific callsite
+> > > > is doing a synchronous memcg stats flush. The rstat flush is an
+> > > > expensive and time consuming operation, so concurrent relaimers will
+> > > > busywait on the lock potentially for a long time. Actually this issue is
+> > > > not unique to Meta and has been observed by Cloudflare [1] as well. For
+> > > > the Cloudflare case, the stalls were due to contention between kswapd
+> > > > threads running on their 8 numa node machines which does not make sense
+> > > > as rstat flush is global and flush from one kswapd thread should be
+> > > > sufficient for all. Simply replace the synchronous flush with the
+> > > > ratelimited one.
+> > > > 
+> > > > One may raise a concern on potentially using 2 sec stale (at worst)
+> > > > stats for heuristics like desirable inactive:active ratio and preferring
+> > > > inactive file pages over anon pages but these specific heuristics do not
+> > > > require very precise stats and also are ignored under severe memory
+> > > > pressure.
+> > > > 
+> > > > More specifically for this code path, the stats are needed for two
+> > > > specific heuristics:
+> > > > 
+> > > > 1. Deactivate LRUs
+> > > > 2. Cache trim mode
+> > > > 
+> > > > The deactivate LRUs heuristic is to maintain a desirable inactive:active
+> > > > ratio of the LRUs. The specific stats needed are WORKINGSET_ACTIVATE*
+> > > > and the hierarchical LRU size. The WORKINGSET_ACTIVATE* is needed to
+> > > > check if there is a refault since last snapshot and the LRU size are
+> > > > needed for the desirable ratio between inactive and active LRUs. See the
+> > > > table below on how the desirable ratio is calculated.
+> > > > 
+> > > > /* total     target    max
+> > > >   * memory    ratio     inactive
+> > > >   * -------------------------------------
+> > > >   *   10MB       1         5MB
+> > > >   *  100MB       1        50MB
+> > > >   *    1GB       3       250MB
+> > > >   *   10GB      10       0.9GB
+> > > >   *  100GB      31         3GB
+> > > >   *    1TB     101        10GB
+> > > >   *   10TB     320        32GB
+> > > >   */
+> > > > 
+> > > > The desirable ratio only changes at the boundary of 1 GiB, 10 GiB,
+> > > > 100 GiB, 1 TiB and 10 TiB. There is no need for the precise and accurate
+> > > > LRU size information to calculate this ratio. In addition, if
+> > > > deactivation is skipped for some LRU, the kernel will force deactive on
+> > > > the severe memory pressure situation.
+> > > > 
+> > > > For the cache trim mode, inactive file LRU size is read and the kernel
+> > > > scales it down based on the reclaim iteration (file >> sc->priority) and
+> > > > only checks if it is zero or not. Again precise information is not
+> > > > needed.
+> > > > 
+> > > > This patch has been running on Meta fleet for several months and we have
+> > > > not observed any issues. Please note that MGLRU is not impacted by this
+> > > > issue at all as it avoids rstat flushing completely.
+> > > > 
+> > > > Link: https://lore.kernel.org/all/6ee2518b-81dd-4082-bdf5-322883895ffc@kernel.org [1]
+> > > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > > 
+> > > Just curious, does Jesper's patch help with this problem?
+> > 
+> > If you are asking if I have tested Jesper's patch in Meta's production
+> > then no, I have not tested it. Also I have not taken a look at the
+> > latest from Jesper as I was stuck in some other issues.
+> > 
+> 
+> I see this patch as a whac-a-mole approach.  But it should be applied as
+> a stopgap, because my patches are still not ready to be merged.
+> 
+> My patch is more generic, but *only* solves the rstat lock contention
+> part of the issue.  The remaining issue is that rstat is flushed too
+> often, which I address in my other patch[2] "cgroup/rstat: introduce
+> ratelimited rstat flushing".  In [2], I explicitly excluded memcg as
+> Shakeel's patch demonstrates memcg already have a ratelimit API specific
+> to memcg.
+> 
+>  [2] https://lore.kernel.org/all/171328990014.3930751.10674097155895405137.stgit@firesoul/
+> 
+> I suspect the next whac-a-mole will be the rstat flush for the slab code
+> that kswapd also activates via shrink_slab, that via
+> shrinker->count_objects() invoke count_shadow_nodes().
+>
 
-Does this need `#[inline]`?
+Actually count_shadow_nodes() is already using ratelimited version.
+However zswap_shrinker_count() is still using the sync version. Nhat is
+modifying this code at the moment and we can ask if we really need most
+accurate values for MEMCG_ZSWAP_B and MEMCG_ZSWAPPED for the zswap
+writeback heuristic.
 
-> +        ptr: Option<NonNull<u8>>,
-> +        layout: Layout,
-> +        flags: Flags,
-> +    ) -> Result<NonNull<[u8]>, AllocError> {
-> +        // TODO: Support alignments larger than PAGE_SIZE.
-> +        if layout.align() > bindings::PAGE_SIZE {
-> +            pr_warn!("Vmalloc does not support alignments larger than PA=
-GE_SIZE yet.\n");
-> +            return Err(AllocError);
-
-I think here we should first try to use `build_error!`, most often the
-alignment will be specified statically, so it should get optimized away.
-
-How difficult will it be to support this? (it is a weird requirement,
-but I dislike just returning an error...)
-
----
-Cheers,
-Benno
-
-> +        }
-> +
-> +        // SAFETY: If not `None`, `ptr` is guaranteed to point to valid =
-memory, which was previously
-> +        // allocated with this `Allocator`.
-> +        unsafe { ReallocFunc::VREALLOC.call(ptr, layout, flags) }
-> +    }
-> +}
-> +
->  #[global_allocator]
->  static ALLOCATOR: Kmalloc =3D Kmalloc;
->=20
-> diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allo=
-cator_test.rs
-> index 4785efc474a7..e7bf2982f68f 100644
-> --- a/rust/kernel/alloc/allocator_test.rs
-> +++ b/rust/kernel/alloc/allocator_test.rs
-> @@ -7,6 +7,7 @@
->  use core::ptr::NonNull;
->=20
->  pub struct Kmalloc;
-> +pub type Vmalloc =3D Kmalloc;
->=20
->  unsafe impl Allocator for Kmalloc {
->      unsafe fn realloc(
-> --
-> 2.45.2
->=20
-
+> --Jesper
 
