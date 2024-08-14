@@ -1,195 +1,219 @@
-Return-Path: <linux-kernel+bounces-286054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638BA9515E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CF49515E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAC03B27E3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8C3282D23
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183E913C906;
-	Wed, 14 Aug 2024 07:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8F713C918;
+	Wed, 14 Aug 2024 07:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtZ4pwug"
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gbJQ+onP"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C01311AC
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D54C1311AC
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723622013; cv=none; b=eWC8BdHnszUb9DJLl2qxKplBHr5T4Sa90xPFIyGerBziQ2MUFhE0ic/raJ4lVwO7c1LvstLXpGplQAFk4sXrY244X/UD/V40IOTChVa37mzRmU8UYSik1BaSfGgypCRAX9GrYCqy0Mtmtdl3cDwyT2s6AxE/+LRwnYLQ8zNgMOw=
+	t=1723622021; cv=none; b=sl5HXvqpuEx+fuEmW9GAOlIWoeSA+thPUV4Y0thKTROLhc3KndhaIq1zo+KY31MXFQEeRJc2upa3xZejKeU6jQ1lp6owSYW+8ZA/gz/Fqg43GfHEa65icov9KITzkFi7lXwBtQnfWhfK5fIH3C7qGGoOU84iObsNiVEiGToqii8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723622013; c=relaxed/simple;
-	bh=82z1k8xSu4idd3seG2qx5owXK5dgpMj/66A/uDaTfCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tjKnxuebX7c21N55Kl1Vx2zT5r9urg7u3FQIDlr0II3tXGWCwVyY5fCRSSHlyK4F60vpZvsKGkyPwkc7BHj0tzTPllIEnELEWFpUGKiUV1uK1QlTm+fTencYHq3bm0kWSuM0HYhMXwlaBxt8QO76Uiyr1MIzz1kZrBiAKlvvujQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtZ4pwug; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4f2c8e99c0fso2196123e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:53:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723622011; x=1724226811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oWPmnyLQbNmcYguFPVD4++tm9j3qt13xY2mjBkRs+NQ=;
-        b=NtZ4pwugUkt56AhTNammRRxsdcPgbZOmX36d0KgCEk4ZxGWCdsRiEBZhlM7vHZjryZ
-         Lvw/5li7NGx1DA8RFl5YUzIIDtGYe8ZbLImZ8SaK4oPg4+F8FAInI59+KvxQyhJUYwzX
-         GF5SBPOtL98/ex5CEoqh0jFP4A287+PSiiwd0mOquGI3HXCjnqTq8mWMdIEuVzHwig4I
-         iv7KVybjGiK2WcQ72qZ9RH+VlfbTcq9LKOG4SKt+cpuP6k3KHYFL25TvSBoqf2exzfsV
-         PNw+ckItkEF1i0eau/m72gdR7KKym/I8QsTELNOERPJEZ7FbI6YcWfpVWYkWTGOB+moQ
-         HOWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723622011; x=1724226811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oWPmnyLQbNmcYguFPVD4++tm9j3qt13xY2mjBkRs+NQ=;
-        b=b/SjcFFv44Kymm1zw59j15EuC1TQSv5SfwE1tNqnbLnPTvBIPvoMeGA0GbkUAE7iGR
-         8D5t3JcaUUNH/s0rhuh+mG7nADq8hUNvZ1kRZkTQQ4yubHF1xYreGyydd6hdyIU6eeYa
-         eNgXlhhhqy4N/tQfs62s8+nnZ7x27QOCoUVsKKASYC2+EFshr5zvkS4HPIlsyYIeQI//
-         QbIhLy4AYScoWfAhMiTRM12rUe0++cOjLuLfgCH8fVT1F8AkPsDYqdA+e1jGqtTXSyM8
-         xJOlx/xQfaFEUCaDACpJRywdomCCrQPEobkQepAyET+LzYq/Sbww1D/uk5Hau6hJOScw
-         ASLw==
-X-Gm-Message-State: AOJu0YzPDulTFHZbitVRB/cz63IQpxo50UwttUFZ+5K92oKQLHwsqexV
-	oj5cmH4jSePg6wNMSwSh//Fx0gRtw7Cd8vZsDC0h8nqWZDNS/GQ5Q7sZDz4Ctb+ZTB00lhsTKJ7
-	uXrCYVDSVst0lOYCxPPZ61vhDpzs=
-X-Google-Smtp-Source: AGHT+IHUcw9mHBUfzjYt1BFLmaj9axsllWLkFoBBFMlfq2rgfBtEKDHO4QjdeJwEVjSOOAPXHyz/T96Ffymb+gbkkfA=
-X-Received: by 2002:a05:6122:3b04:b0:4f5:1ea3:736f with SMTP id
- 71dfb90a1353d-4fad234cbc0mr2376312e0c.13.1723622010677; Wed, 14 Aug 2024
- 00:53:30 -0700 (PDT)
+	s=arc-20240116; t=1723622021; c=relaxed/simple;
+	bh=foGPidSdaR07yh1t+KCC69o2/ZRBICNas+5tOgPFCQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FDQ/UGCZ9R2mWjakjO3/Gkqkp44m/QrSKlv4Z3Al6aF8k+y7AMtDGKUmLiEZZyU5me24WhoyGvpANN0faLYKporRBXPP/MD9qBhKIoonK8reMqpb+bXEzhZ4R2/ukUHIU44d9xHEjXMfJsHXA4fiCO3YzrGrBhPJDuWu/uo713w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gbJQ+onP; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723622016; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=+VSuOls8jaaOLJrgF/Ih4DIM6pl/q+nzh+7j/SW0fpc=;
+	b=gbJQ+onPTlZW2nAA1O0zk/MWkLaxi0C+/XK54Wjh2Kt1WtskBx0siA24++bVfU/oGSCNntS4ht4YtmdmJuavFq0pESOY9ZgmOiNvXUyPYkY9p+TgMEhSZ5ZhZcaHpEfhGESwEbUGorOemKQAmFLNeXA9SAgT4x1f0Y33f9ic8oA=
+Received: from 30.97.56.61(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCraQFC_1723622014)
+          by smtp.aliyun-inc.com;
+          Wed, 14 Aug 2024 15:53:35 +0800
+Message-ID: <c82a3834-f1c9-472f-9900-0d8885092943@linux.alibaba.com>
+Date: Wed, 14 Aug 2024 15:53:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814062830.26833-1-kanchana.p.sridhar@intel.com> <20240814062830.26833-5-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240814062830.26833-5-kanchana.p.sridhar@intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 14 Aug 2024 19:53:19 +1200
-Message-ID: <CAGsJ_4yng2ES6C8OSA2qoW5AwQ+zNdEAYWcNpoXmOP+m84qprg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 4/4] mm: page_io: Count successful mTHP zswap
- stores in vmstat.
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	yosryahmed@google.com, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	ying.huang@intel.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] mm: Override mTHP "enabled" defaults at kernel cmdline
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: baohua@kernel.org, corbet@lwn.net, david@redhat.com, ioworker0@gmail.com,
+ linux-kernel@vger.kernel.org, ryan.roberts@arm.com, v-songbaohua@oppo.com
+References: <20240814020247.67297-1-21cnbao@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240814020247.67297-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 6:28=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Added count_zswap_thp_swpout_vm_event() that will increment the
-> appropriate mTHP/PMD vmstat event counters if zswap_store succeeds for
-> a large folio:
->
-> zswap_store mTHP order [0, HPAGE_PMD_ORDER-1] will increment these
-> vmstat event counters:
->
->   ZSWPOUT_4KB_FOLIO
->   mTHP_ZSWPOUT_8kB
->   mTHP_ZSWPOUT_16kB
->   mTHP_ZSWPOUT_32kB
->   mTHP_ZSWPOUT_64kB
->   mTHP_ZSWPOUT_128kB
->   mTHP_ZSWPOUT_256kB
->   mTHP_ZSWPOUT_512kB
->   mTHP_ZSWPOUT_1024kB
->
-> zswap_store of a PMD-size THP, i.e., mTHP order HPAGE_PMD_ORDER, will
-> increment both these vmstat event counters:
->
->   ZSWPOUT_PMD_THP_FOLIO
->   mTHP_ZSWPOUT_2048kB
->
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+
+
+On 2024/8/14 10:02, Barry Song wrote:
+> From: Ryan Roberts <ryan.roberts@arm.com>
+> 
+> Add thp_anon= cmdline parameter to allow specifying the default
+> enablement of each supported anon THP size. The parameter accepts the
+> following format and can be provided multiple times to configure each
+> size:
+> 
+> thp_anon=<size>,<size>[KMG]:<value>;<size>-<size>[KMG]:<value>
+> 
+> An example:
+> 
+> thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
+> 
+> See Documentation/admin-guide/mm/transhuge.rst for more details.
+> 
+> Configuring the defaults at boot time is useful to allow early user
+> space to take advantage of mTHP before its been configured through
+> sysfs.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+
+LGTM. Feel free to add:
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+Just a small nit as below.
+
 > ---
->  mm/page_io.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index 0a150c240bf4..ab54d2060cc4 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -172,6 +172,49 @@ int generic_swapfile_activate(struct swap_info_struc=
-t *sis,
->         goto out;
->  }
->
-> +/*
-> + * Count vmstats for ZSWAP store of large folios (mTHP and PMD-size THP)=
-.
-> + */
-> +static inline void count_zswap_thp_swpout_vm_event(struct folio *folio)
-> +{
-> +       if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) && folio_test_pmd_map=
-pable(folio)) {
-> +               count_vm_event(ZSWPOUT_PMD_THP_FOLIO);
-> +               count_vm_event(mTHP_ZSWPOUT_2048kB);
-> +       } else if (folio_order(folio) =3D=3D 0) {
-> +               count_vm_event(ZSWPOUT_4KB_FOLIO);
-> +       } else if (IS_ENABLED(CONFIG_THP_SWAP)) {
-> +               switch (folio_order(folio)) {
-> +               case 1:
-> +                       count_vm_event(mTHP_ZSWPOUT_8kB);
-> +                       break;
-> +               case 2:
-> +                       count_vm_event(mTHP_ZSWPOUT_16kB);
-> +                       break;
-> +               case 3:
-> +                       count_vm_event(mTHP_ZSWPOUT_32kB);
-> +                       break;
-> +               case 4:
-> +                       count_vm_event(mTHP_ZSWPOUT_64kB);
-> +                       break;
-> +               case 5:
-> +                       count_vm_event(mTHP_ZSWPOUT_128kB);
-> +                       break;
-> +               case 6:
-> +                       count_vm_event(mTHP_ZSWPOUT_256kB);
-> +                       break;
-> +               case 7:
-> +                       count_vm_event(mTHP_ZSWPOUT_512kB);
-> +                       break;
-> +               case 8:
-> +                       count_vm_event(mTHP_ZSWPOUT_1024kB);
-> +                       break;
-> +               case 9:
-> +                       count_vm_event(mTHP_ZSWPOUT_2048kB);
-> +                       break;
-> +               }
-
-The number of orders is PMD_ORDER, also ilog2(MAX_PTRS_PER_PTE) .
-PMD_ORDER isn't necessarily 9. It seems we need some general way
-to handle this and avoid so many duplicated case 1, case 2.... case 9.
-
-> +       }
-> +}
+>   -v4:
+>   * use bitmap APIs to set and clear bits. thanks very much for
+>     David's comment!
+> 
+>   .../admin-guide/kernel-parameters.txt         |  9 ++
+>   Documentation/admin-guide/mm/transhuge.rst    | 37 +++++--
+>   mm/huge_memory.c                              | 96 ++++++++++++++++++-
+>   3 files changed, 134 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index f0057bac20fb..d0d141d50638 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6629,6 +6629,15 @@
+>   			<deci-seconds>: poll all this frequency
+>   			0: no polling (default)
+>   
+> +	thp_anon=	[KNL]
+> +			Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
+> +			state is one of "always", "madvise", "never" or "inherit".
+> +			Can be used to control the default behavior of the
+> +			system with respect to anonymous transparent hugepages.
+> +			Can be used multiple times for multiple anon THP sizes.
+> +			See Documentation/admin-guide/mm/transhuge.rst for more
+> +			details.
 > +
->  /*
->   * We may have stale swap cache pages in memory: notice
->   * them here and get rid of the unnecessary final write.
-> @@ -196,6 +239,7 @@ int swap_writepage(struct page *page, struct writebac=
-k_control *wbc)
->                 return ret;
->         }
->         if (zswap_store(folio)) {
-> +               count_zswap_thp_swpout_vm_event(folio);
->                 folio_start_writeback(folio);
->                 folio_unlock(folio);
->                 folio_end_writeback(folio);
-> --
-> 2.27.0
->
+>   	threadirqs	[KNL,EARLY]
+>   			Force threading of all interrupt handlers except those
+>   			marked explicitly IRQF_NO_THREAD.
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> index 7072469de8a8..528e1a19d63f 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -284,13 +284,36 @@ that THP is shared. Exceeding the number would block the collapse::
+>   
+>   A higher value may increase memory footprint for some workloads.
+>   
+> -Boot parameter
+> -==============
+> -
+> -You can change the sysfs boot time defaults of Transparent Hugepage
+> -Support by passing the parameter ``transparent_hugepage=always`` or
+> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+> -to the kernel command line.
+> +Boot parameters
+> +===============
+> +
+> +You can change the sysfs boot time default for the top-level "enabled"
+> +control by passing the parameter ``transparent_hugepage=always`` or
+> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
+> +kernel command line.
+> +
+> +Alternatively, each supported anonymous THP size can be controlled by
+> +passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
+> +where ``<size>`` is the THP size and ``<state>`` is one of ``always``,
+> +``madvise``, ``never`` or ``inherit``.
+> +
+> +For example, the following will set 16K, 32K, 64K THP to ``always``,
+> +set 128K, 512K to ``inherit``, set 256K to ``madvise`` and 1M, 2M
+> +to ``never``::
+> +
+> +	thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
+> +
+> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
+> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
+> +not explicitly configured on the command line are implicitly set to
+> +``never``.
+> +
+> +``transparent_hugepage`` setting only affects the global toggle. If
+> +``thp_anon`` is not specified, PMD_ORDER THP will default to ``inherit``.
+> +However, if a valid ``thp_anon`` setting is provided by the user, the
+> +PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
+> +is not defined within a valid ``thp_anon``, its policy will default to
+> +``never``.
+>   
+>   Hugepages in tmpfs/shmem
+>   ========================
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 1a12c011e2df..c5f4e97b49de 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+>   unsigned long huge_anon_orders_always __read_mostly;
+>   unsigned long huge_anon_orders_madvise __read_mostly;
+>   unsigned long huge_anon_orders_inherit __read_mostly;
+> +static bool anon_orders_configured;
+>   
+>   unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>   					 unsigned long vm_flags,
+> @@ -737,7 +738,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+>   	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+>   	 * constant so we have to do this here.
+>   	 */
+> -	huge_anon_orders_inherit = BIT(PMD_ORDER);
+> +	if (!anon_orders_configured) {
+> +		huge_anon_orders_inherit = BIT(PMD_ORDER);
+> +		anon_orders_configured = true;
+> +	}
+>   
+>   	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
+>   	if (unlikely(!*hugepage_kobj)) {
+> @@ -922,6 +926,96 @@ static int __init setup_transparent_hugepage(char *str)
+>   }
+>   __setup("transparent_hugepage=", setup_transparent_hugepage);
+>   
+> +static inline int get_order_from_str(const char *size_str)
+> +{
+> +	unsigned long size;
+> +	char *endptr;
+> +	int order;
+> +
+> +	size = memparse(size_str, &endptr);
+> +	order = fls(size >> PAGE_SHIFT) - 1;
 
-Thanks
-Barry
+Nit: using get_order() seems more robust?
+
+> +	if ((1 << order) & ~THP_ORDERS_ALL_ANON) {
+> +		pr_err("invalid size %s(order %d) in thp_anon boot parameter\n",
+> +			size_str, order);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return order;
+> +}
+[snip]
 
