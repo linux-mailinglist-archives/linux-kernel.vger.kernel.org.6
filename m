@@ -1,139 +1,173 @@
-Return-Path: <linux-kernel+bounces-286794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DEA951F08
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:48:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF83951F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5C21C21FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7181C225F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F111B86D6;
-	Wed, 14 Aug 2024 15:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761071B86D6;
+	Wed, 14 Aug 2024 15:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+bY7KIn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLOWP2sR"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E34B28DC3;
-	Wed, 14 Aug 2024 15:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136A628DC3;
+	Wed, 14 Aug 2024 15:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650485; cv=none; b=qApeIJuPAouUcMB4VtPZU7RvVjbLoyBUjxt9mcNXrNLou1+jFxQIDr1SpoyYWpD08j6kaI6hmE2bO7KIBzzC8vaovaN28TWDkwH4Kbx+tPPOFS3yWL53SNnz5OBlyBo0StxESyOBijnq6xT3U1mncmyW5WirBMJX1Sk/IRxp7jQ=
+	t=1723650602; cv=none; b=VfqJZmtmpCafY8LVqTl6ejKEFDwJbQPhoLqT/sc+fF7vOU/h702FKiBPYTK1X4u/5cCS+wAHR4NOaYMUVHMAkgNNDv8d8AxIh/hAmXybEacA87WEy1GP90DfGhJY8aJBV9+3XwPDTT4gmdEkXGkqx5FAHp35lMO4OIc05qfhb30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650485; c=relaxed/simple;
-	bh=n7IuDmJ7xjiLmorJ27Cw4dIAMs1ncBH3/BXHuvFBYho=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=QbJwmrhyizSRVFrox5VWUYojWiM6f74FU/QKdw7p8Yo23A05lg91MV39fnLnqW8pY10Bw7ud7PYOdecr0LWjt4B2doCjRtqhl1pikoo5HMOKdsonqCcTjCHpgsYD3L2DANlHDezCZ2bB9arbJEF/9934Hzc1CM+krId3nDqPHm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+bY7KIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D78C116B1;
-	Wed, 14 Aug 2024 15:48:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723650484;
-	bh=n7IuDmJ7xjiLmorJ27Cw4dIAMs1ncBH3/BXHuvFBYho=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=O+bY7KInwMy24ENMzdpHtvESrz0WsUKoxsDXZXD+E9+VR5hKJCO2vamWOJhe4Ert6
-	 zmTgU/JmkLOSifCEYatpq+Xt4rRZl0rsuURUrYlU2TNb7Qzv1P2aD2zNY5rZXf+4+b
-	 g47y0p6tC9lPSWNUw4U46FYbh2r3tQuxMQUGVxH4//5IHVjehvDg0Nb0YmAOC6/1r7
-	 Zsvr1WFZ3Wx085hkna79BFhDApAgfljTVh0Bbp0OCqTPzljd1KaLshr1Yep+0cTO78
-	 rxAoMg9E4H85mVw/jpE38hRC9dRtdt9sHQOqEIP6Og3CBSYd3ql3DuIlqvnGbqf7lr
-	 Glhi8NcIfmhiA==
-Date: Wed, 14 Aug 2024 09:48:03 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1723650602; c=relaxed/simple;
+	bh=6vcFZWl/iSCK/BZGfGXgt8ur06Ij2rRs68cC5ThdJyg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YrFzmcvlRvWA4Kr3gzyAOzaCDsRsLDN269BpFCF9F99aUqJKMCrOksIzB/ZgjTp7SNfJqBMlRQtAA6l3koTLwrXltrWVvYBu7C9QyROdbCshTuB67uwyIU8t1TzSvqVL63fSOICfxy10C1EBvu5zcWiiDPRDphqgSPMyYZ5HEZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLOWP2sR; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7093472356dso3808967a34.0;
+        Wed, 14 Aug 2024 08:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723650600; x=1724255400; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fDv9V0v7KkpdJrpMs0piYzLNRxXj+irK5gUuUzZpGhs=;
+        b=eLOWP2sR+BDKCHyg1t27NoPaSeje4K4pIGR9xPHFZdEA7vIadrUaxzXJY9HKNHZDgh
+         Ko7dYBloGZWSNBULmrWdpL9j6RsTMpfUfePQ81CoCjQX2UVJPxH6NwW5dG3fvttfnsqp
+         f/bxETrCpDybYP4O/Z2k/PPPr7dbEi41mLrY/6a7oMfPvufWbhn2AA60HSnF7TOhMZ7q
+         Yt/EiZZFellVwdiCI4uCPibIuzSvuFZ/rWXY0KZxJMA82OtmsVc0onHKeMsiJLqaHuGk
+         FxodljGBwBqOgnmvAGwiQqxs2Gf5flh3mrVBxQd9dE+kME5yJG9xN5x9KW/Wh3wG/rGA
+         YU1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723650600; x=1724255400;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fDv9V0v7KkpdJrpMs0piYzLNRxXj+irK5gUuUzZpGhs=;
+        b=i/wVqWdoHd2tFl8xcEaUOj/G0qStpT4zH/eUP4CDLSE/ChptxXWnczqa9Ym+1fqLIL
+         Oy/WqyYxfl15hqM3t7kefnFkaDUjjZooxW4HQXfBxJylwbZ/cQQmYzcUbpP6aXjV5ykx
+         srKfqJ/Z0YKHE2oSrtljGxYPnUcGNUKPSKh3YBH/vSC4jKokk8uWwj5MsyMI9Gods+Dm
+         Sst9VsmrPk2cEkylXk2Ko7YnVgPp9VxnxfvTi5vcbrI0J6FW8OeHkI1bA8v6by8zmmjL
+         opASoHX7TPLm1L+j4/w9kl7r72WXHyRdtFM+cZ3LiwoNOaa1oieOjwUg3ZiX35v/hR1/
+         hEyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJCiznzieD6tQyaYwwroalQbZA2dmX1LIayV6sPfsO8edRT26kxQ/sbOzpziFDxJOjmhYlhi6HCB5uWS1/JUQc0HyqEShtJ9yUE0xmuTqtTX8yJxmZRijNOTq9V6eODMgAJhsRnnRvuIqx9H7ABI2YngI8NLWzd5lLb78hkNtwxuSOorZT07wCS8ExpD3x3YTbGPBsevcDibeoCk/oROzm4HlS345x3rU0WU5YGJsViYc5
+X-Gm-Message-State: AOJu0Yy+1LZLxzdrEfzX5+W4NDgHcaggD6grGK0IPom8RBeR0/WOl32c
+	HkavQDuSm0ENvoM/PPPRDitZ9QJnq30/EfrlxIK4oUhIeK1azUun
+X-Google-Smtp-Source: AGHT+IF+xU5hTvBzD845HScA3WjHDYwvu17hmSc7al7mxeLt+8xp5o7SMvsr67KFPwp2VJkvDAOPFA==
+X-Received: by 2002:a05:6830:638b:b0:709:3f84:c1e0 with SMTP id 46e09a7af769-70c9d9c25a1mr3660423a34.26.1723650600144;
+        Wed, 14 Aug 2024 08:50:00 -0700 (PDT)
+Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
+        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-70c7b880badsm2269478a34.54.2024.08.14.08.49.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 08:49:59 -0700 (PDT)
+Message-ID: <d1a23116d054e2ebb00067227f0cffecefe33e11.camel@gmail.com>
+Subject: Re: [PATCH net-next v13 04/14] mm: page_frag: add '_va' suffix to
+ page_frag API
+From: Alexander H Duyck <alexander.duyck@gmail.com>
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org,  pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Subbaraya Sundeep
+ <sbhatta@marvell.com>, Chuck Lever <chuck.lever@oracle.com>, Sagi Grimberg
+ <sagi@grimberg.me>, Jeroen de Borst <jeroendb@google.com>, Praveen
+ Kaligineedi <pkaligineedi@google.com>, Shailend Chand
+ <shailend@google.com>, Eric Dumazet <edumazet@google.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, hariprasad <hkelam@marvell.com>,
+ Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, Mark Lee
+ <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Keith Busch <kbusch@kernel.org>,
+  Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Chaitanya
+ Kulkarni <kch@nvidia.com>,  "Michael S. Tsirkin" <mst@redhat.com>, Jason
+ Wang <jasowang@redhat.com>, Eugenio =?ISO-8859-1?Q?P=E9rez?=
+ <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP
+ Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  David Howells
+ <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, Jeff Layton
+ <jlayton@kernel.org>,  Neil Brown <neilb@suse.de>, Olga Kornievskaia
+ <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
+ <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+ <anna@kernel.org>,  Shuah Khan <shuah@kernel.org>,
+ intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-nvme@lists.infradead.org, 
+ kvm@vger.kernel.org, virtualization@lists.linux.dev, linux-mm@kvack.org, 
+ bpf@vger.kernel.org, linux-afs@lists.infradead.org,
+ linux-nfs@vger.kernel.org,  linux-kselftest@vger.kernel.org
+Date: Wed, 14 Aug 2024 08:49:53 -0700
+In-Reply-To: <20240808123714.462740-5-linyunsheng@huawei.com>
+References: <20240808123714.462740-1-linyunsheng@huawei.com>
+	 <20240808123714.462740-5-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org
-In-Reply-To: <20240813190639.154983-1-brgl@bgdev.pl>
-References: <20240813190639.154983-1-brgl@bgdev.pl>
-Message-Id: <172365034673.2714461.1759726822181293291.robh@kernel.org>
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: sc8280xp: enable WLAN and
- Bluetooth
 
+On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
+> Currently the page_frag API is returning 'virtual address'
+> or 'va' when allocing and expecting 'virtual address' or
+> 'va' as input when freeing.
+>=20
+> As we are about to support new use cases that the caller
+> need to deal with 'struct page' or need to deal with both
+> 'va' and 'struct page'. In order to differentiate the API
+> handling between 'va' and 'struct page', add '_va' suffix
+> to the corresponding API mirroring the page_pool_alloc_va()
+> API of the page_pool. So that callers expecting to deal with
+> va, page or both va and page may call page_frag_alloc_va*,
+> page_frag_alloc_pg*, or page_frag_alloc* API accordingly.
+>=20
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+> Acked-by: Chuck Lever <chuck.lever@oracle.com>
+> Acked-by: Sagi Grimberg <sagi@grimberg.me>
+> ---
+>  drivers/net/ethernet/google/gve/gve_rx.c      |  4 ++--
+>  drivers/net/ethernet/intel/ice/ice_txrx.c     |  2 +-
+>  drivers/net/ethernet/intel/ice/ice_txrx.h     |  2 +-
+>  drivers/net/ethernet/intel/ice/ice_txrx_lib.c |  2 +-
+>  .../net/ethernet/intel/ixgbevf/ixgbevf_main.c |  4 ++--
+>  .../marvell/octeontx2/nic/otx2_common.c       |  2 +-
+>  drivers/net/ethernet/mediatek/mtk_wed_wo.c    |  4 ++--
+>  drivers/nvme/host/tcp.c                       |  8 +++----
+>  drivers/nvme/target/tcp.c                     | 22 +++++++++----------
+>  drivers/vhost/net.c                           |  6 ++---
+>  include/linux/page_frag_cache.h               | 21 +++++++++---------
+>  include/linux/skbuff.h                        |  2 +-
+>  kernel/bpf/cpumap.c                           |  2 +-
+>  mm/page_frag_cache.c                          | 12 +++++-----
+>  net/core/skbuff.c                             | 16 +++++++-------
+>  net/core/xdp.c                                |  2 +-
+>  net/rxrpc/txbuf.c                             | 15 +++++++------
+>  net/sunrpc/svcsock.c                          |  6 ++---
+>  .../selftests/mm/page_frag/page_frag_test.c   | 13 ++++++-----
+>  19 files changed, 75 insertions(+), 70 deletions(-)
+>=20
 
-On Tue, 13 Aug 2024 21:06:35 +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> This enables WLAN and Bluetooth on two boards using the sc8280xp SoC.
-> For the sc8280xp-crd we add the PMU, wifi and bluetooth nodes with the
-> correctly modelled wiring between them. For the X13s, we rework existing
-> nodes so that they align with the new DT bindings contract.
-> 
-> Bartosz Golaszewski (2):
->   arm64: dts: qcom: sc8280xp-crd: enable bluetooth
->   arm64: dts: qcom: sc8280xp-x13s: model the PMU of the on-board wcn6855
-> 
-> Konrad Dybcio (1):
->   arm64: dts: qcom: sc8280xp-crd: enable wifi
-> 
->  arch/arm64/boot/dts/qcom/sc8280xp-crd.dts     | 169 ++++++++++++++++++
->  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    |  98 ++++++++--
->  2 files changed, 255 insertions(+), 12 deletions(-)
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+I still say no to this patch. It is an unnecessary name change and adds
+no value. If you insist on this patch I will reject the set every time.
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/sc8280xp-crd.dtb qcom/sc8280xp-lenovo-thinkpad-x13s.dtb' for 20240813190639.154983-1-brgl@bgdev.pl:
-
-arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'enable-gpios' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'swctrl-gpios' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'vddio-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'vddbtcxmx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'vddrfa1p7-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'enable-gpios' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'swctrl-gpios' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'vddio-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'vddbtcxmx-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'vddrfa1p7-supply' is a required property
-	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: wifi@0: 'vddrfa1p8-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: wifi@0: 'vddrfa1p8-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
-arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: /wcn6855-pmu: failed to match any schema with compatible: ['qcom,wcn6855-pmu']
-arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: /wcn6855-pmu: failed to match any schema with compatible: ['qcom,wcn6855-pmu']
-
-
-
-
+The fact is it is polluting the git history and just makes things
+harder to maintain without adding any value as you aren't changing what
+the function does and there is no need for this. In addition it just
+makes it that much harder to backport fixes in the future as people
+will have to work around the rename.
 
 
