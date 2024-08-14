@@ -1,46 +1,80 @@
-Return-Path: <linux-kernel+bounces-287037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899109521FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:24:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808FE9521FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37118284FC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:23:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50271C2271D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D551BD51C;
-	Wed, 14 Aug 2024 18:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690901BD4ED;
+	Wed, 14 Aug 2024 18:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="arhIygC1"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE30A1BBBDA;
-	Wed, 14 Aug 2024 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wq9mMIUw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCE41BC09F
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723659827; cv=none; b=ecqMVYTAoQGQPVgtaSAWeGJhUfzGQp2f08y7fOVqbNqTm1M/P/PodtZd1J32iiUHcBLWhPEfa7XrBgK0VbByoawDDZzUa7qA9XfhQ9aQ6M4yhvNdfveEsOG95jssRdB6avaOfWphYYyZtqYUs+iNNJYbHIKLmXywMxB9wBHE+TU=
+	t=1723659835; cv=none; b=LeJt1Ak+f+C8nh/LaIJHD8wz0BeW9a3/okuy8F5MNZ/g+ah/TggWO3Z5FGQr0NNjbqbsyHLIgNpEsvlw+SlbIuQCeCwz3blQlCxB1771gemWmWEbAK3mzqTbNHo1OeizjbwVMgs94MfgkoAblm0r7/qmXeYwXuVmdvz7mhahO3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723659827; c=relaxed/simple;
-	bh=VP+QiCS6zOdtfbT9zGI9LEQCyWB6JQVT2Grcrrb4SEo=;
+	s=arc-20240116; t=1723659835; c=relaxed/simple;
+	bh=KsQ4lkPBRIUashg/DvRScWF667QoH3bq70F3p8yfY1Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=enA1H0FcnXfL5DuueGnZBjbkH2BuyYsOFykiRk/bf6sbi8llo9qlQImUIq/nox5knqN3KfrdkstTbo3K25OSbeWHLpk9mJ5UoA+aXXpYE2hiWGKXLa9nBUq6diUmizS9ryaBFM4pWmB/8HNlnzBevY83OAZFrvcuxzDK8jnBuHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=arhIygC1; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.106.151] (unknown [131.107.174.23])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3D2C020B7165;
-	Wed, 14 Aug 2024 11:23:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3D2C020B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1723659819;
-	bh=rQ4vq6TsUxv4l4kbIL+sjMudyLAkyj4vXkuWLSuksPI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=arhIygC1hFg4TcYMA000C9oRAiO/qMK7FqChi4JOP6pNVnUW0LTKCD5XOeOTvqLjO
-	 OxWN/HJ2LGm2JmHXlgiaG0btNEqrqB5MZKuZtC7CvZRFE5dhaiW+q0w86YV5loKWME
-	 vgVOeLlN6FYqX4YJz687dnyfNgPTF6jdt4sY5pgY=
-Message-ID: <cbf1caa0-835b-4d1d-aed5-9741eb10cf8b@linux.microsoft.com>
-Date: Wed, 14 Aug 2024 11:23:39 -0700
+	 In-Reply-To:Content-Type; b=OS+bo0cml0yjxEO8uXGtPwK7+hXlZwdHPfmZKdUJO8OipILfrtd8SpXAKBDunm4jpQzuj4t5adBTDG8BM7R+ONBS9GAb9zLBG1I6+OhRSYxNAmAr/x7rcmO6lUCogxhh/F4HytWx9PdpFWvEgO8GNYPaGpHUWCKbWMGUVwug424=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wq9mMIUw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723659832;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=imaWqo/6+j7NCYLfqm9y6/BHhB8DY04qFZybPwrTOKM=;
+	b=Wq9mMIUw2Zrbds5XKNGB4LCZ0eF9n4qVQ7FeCpEXjOjUzzbbexWvZkZtMAk1MXIe2xvrPb
+	mXhSGsbPXBFOuJh+BX10OPEgfCA8osXWK35brjq0UKA+RdTqdbolkrZzPvplFloLAwbEqr
+	CB+hdYKVzVIwX0zF1YE1a9q0/QXBYew=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-1yHiWyOAMyGfoLBlYqa8DA-1; Wed, 14 Aug 2024 14:23:51 -0400
+X-MC-Unique: 1yHiWyOAMyGfoLBlYqa8DA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36b356a73fcso92360f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:23:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723659830; x=1724264630;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=imaWqo/6+j7NCYLfqm9y6/BHhB8DY04qFZybPwrTOKM=;
+        b=fUHtFvibZnsqiK86yimXZGSC1yBd6jMs4KI9FIRVZUfme75rxpUU5J3MD+lZd+IFOg
+         Ze7qTdaNsK/ZRwB35xXhXMjdNNjJgBhHsZ6juz7RfC8L0U0YSR8WC4FN38/z1/k255vH
+         zMgOvtlDTRbdGRikDV4foHFrbo0h6sLeZJP0dp50qPm3n2J14s4tAH9/sSXzvUKFTe+/
+         cM2Wbf00QhRAsmHh1uezZq5d7EaCFJ2Fn5uli7OMaKomza7XZA/E6CmzU6g/fzKT72C6
+         2ARjpClzs7v3ozX9qrixBO6q3Fa9UbYgzF866eiVAKEkhvBb0N55oPq+goEn0K2xnkc/
+         2xMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYvYfDrAdIehM/1xXCrLVLbhwumDlqdB/FP6ElS62MDkqzOttsymIJk1DdWCKtMr+cJXiK+FO0143z508=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC90SzLk5HNvYH89OzBBDnp5T7u3l4NwME0tFhrdmAvBdQj5rs
+	ibraBX0CwZC3LA0cw4r9HMKkktM6CyK0llP5wuQXS3y1xlmc3ZjHQFQ4MBFgtuKNlHaL0bTI7Pt
+	FcwNHlWna3sXMUEKGnHU+I8UFyf1A/br18z2IRIstkqe49PavDTAFvpwr6keyGQ==
+X-Received: by 2002:adf:e301:0:b0:367:434f:ca9a with SMTP id ffacd0b85a97d-37177653909mr2342645f8f.0.1723659830184;
+        Wed, 14 Aug 2024 11:23:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIapBRKbjBOIqv+CD0iYGqO5NfL8UesIUtDl5Ueiyq4szLZ088b6nVdpd2lpo8pDX6AklMCg==
+X-Received: by 2002:adf:e301:0:b0:367:434f:ca9a with SMTP id ffacd0b85a97d-37177653909mr2342632f8f.0.1723659829620;
+        Wed, 14 Aug 2024 11:23:49 -0700 (PDT)
+Received: from [192.168.10.47] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4c36bb07sm13621970f8f.5.2024.08.14.11.23.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 11:23:48 -0700 (PDT)
+Message-ID: <e8db3e58-38de-47d4-ac6c-08408f9aaa10@redhat.com>
+Date: Wed, 14 Aug 2024 20:23:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,121 +82,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/20] ipe: add policy parser
-To: Paul Moore <paul@paul-moore.com>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, tytso@mit.edu,
- ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, eparis@redhat.com, linux-doc@vger.kernel.org,
- linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- fsverity@lists.linux.dev, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, audit@vger.kernel.org,
- linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-3-git-send-email-wufan@linux.microsoft.com>
- <20240810155000.GA35219@mail.hallyn.com>
- <e1dd4dcf-8e2e-4e7b-9d40-533efd123103@linux.microsoft.com>
- <CAHC9VhTYT3RTG1FbnZQ2F68a16gU9_QJ-=LSGbroP-40tpRTiw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] KVM: Register cpuhp/syscore callbacks when
+ enabling virt
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>,
+ Marc Zyngier <Marc.Zyngier@arm.com>, Anup Patel <Anup.Patel@wdc.com>,
+ Huacai Chen <chenhuacai@kernel.org>, Oliver Upton <oupton@google.com>
+References: <20240608000639.3295768-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-From: Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <CAHC9VhTYT3RTG1FbnZQ2F68a16gU9_QJ-=LSGbroP-40tpRTiw@mail.gmail.com>
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20240608000639.3295768-1-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 8/13/2024 6:53 PM, Paul Moore wrote:
-> On Tue, Aug 13, 2024 at 1:54 PM Fan Wu <wufan@linux.microsoft.com> wrote:
->> On 8/10/2024 8:50 AM, Serge E. Hallyn wrote:
->>> On Fri, Aug 02, 2024 at 11:08:16PM -0700, Fan Wu wrote:
->>>> From: Deven Bowers <deven.desai@linux.microsoft.com>
->>>>
->>>> IPE's interpretation of the what the user trusts is accomplished through
->>>
->>> nit: "of what the user trusts" (drop the extra 'the')
->>>
->>>> its policy. IPE's design is to not provide support for a single trust
->>>> provider, but to support multiple providers to enable the end-user to
->>>> choose the best one to seek their needs.
->>>>
->>>> This requires the policy to be rather flexible and modular so that
->>>> integrity providers, like fs-verity, dm-verity, or some other system,
->>>> can plug into the policy with minimal code changes.
->>>>
->>>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
->>>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
->>>
->>> This all looks fine.  Just one comment below.
->>>
->> Thank you for reviewing this!
->>
->>>
->>>> +/**
->>>> + * parse_rule() - parse a policy rule line.
->>>> + * @line: Supplies rule line to be parsed.
->>>> + * @p: Supplies the partial parsed policy.
->>>> + *
->>>> + * Return:
->>>> + * * 0              - Success
->>>> + * * %-ENOMEM       - Out of memory (OOM)
->>>> + * * %-EBADMSG      - Policy syntax error
->>>> + */
->>>> +static int parse_rule(char *line, struct ipe_parsed_policy *p)
->>>> +{
->>>> +    enum ipe_action_type action = IPE_ACTION_INVALID;
->>>> +    enum ipe_op_type op = IPE_OP_INVALID;
->>>> +    bool is_default_rule = false;
->>>> +    struct ipe_rule *r = NULL;
->>>> +    bool first_token = true;
->>>> +    bool op_parsed = false;
->>>> +    int rc = 0;
->>>> +    char *t;
->>>> +
->>>> +    r = kzalloc(sizeof(*r), GFP_KERNEL);
->>>> +    if (!r)
->>>> +            return -ENOMEM;
->>>> +
->>>> +    INIT_LIST_HEAD(&r->next);
->>>> +    INIT_LIST_HEAD(&r->props);
->>>> +
->>>> +    while (t = strsep(&line, IPE_POLICY_DELIM), line) {
->>>
->>> If line is passed in as NULL, t will be NULL on the first test.  Then
->>> you'll break out and call parse_action(NULL), which calls
->>> match_token(NULL, ...), which I do not think is safe.
->>>
->>> I realize the current caller won't pass in NULL, but it seems worth
->>> checking for here in case some future caller is added by someone
->>> who's unaware.
->>>
->>> Or, maybe add 'line must not be null' to the function description.
->>
->> Yes, I agree that adding a NULL check would be better. I will include it
->> in the next version.
+On 6/8/24 02:06, Sean Christopherson wrote:
+> Register KVM's cpuhp and syscore callbacks when enabling virtualization in
+> hardware, as the sole purpose of said callbacks is to disable and re-enable
+> virtualization as needed.
 > 
-> We're still waiting to hear back from the device-mapper devs, but if
-> this is the only change required to the patchset I can add a NULL
-> check when I merge the patchset as it seems silly to resend the entire
-> patchset for this.  Fan, do you want to share the code snippet with
-> the NULL check so Serge can take a look?
+> The primary motivation for this series is to simplify dealing with enabling
+> virtualization for Intel's TDX, which needs to enable virtualization
+> when kvm-intel.ko is loaded, i.e. long before the first VM is created.  TDX
+> doesn't _need_ to keep virtualization enabled, but doing so is much simpler
+> for KVM (see patch 3).
 > 
+> That said, this is a nice cleanup on its own, assuming I haven't broken
+> something.  By registering the callbacks on-demand, the callbacks themselves
+> don't need to check kvm_usage_count, because their very existence implies a
+> non-zero count.
+> 
+> The meat is in patch 1.  Patches 2 renames the helpers so that patch 3 is
+> less awkward.  Patch 3 adds a module param to enable virtualization when KVM
+> is loaded.  Patches 4-6 are tangentially related x86 cleanups to registers
+> KVM's "emergency disable" callback on-demand, same as the syscore callbacks.
+> 
+> The suspend/resume and cphup paths still need to be fully tested, as do
+> non-x86 architectures.
 
-Sure, here is the diff.
+Also placed in kvm/queue, mostly as a reminder to myself, and added 
+other maintainers for testing on ARM, RISC-V and LoongArch.  The changes 
+from v3 to v4 should be mostly nits, documentation and organization of 
+the series.
 
-diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
-index 32064262348a..0926b442e32a 100644
---- a/security/ipe/policy_parser.c
-+++ b/security/ipe/policy_parser.c
-@@ -309,6 +309,9 @@ static int parse_rule(char *line, struct 
-ipe_parsed_policy *p)
-         int rc = 0;
-         char *t;
+Thanks,
 
-+       if (IS_ERR_OR_NULL(line))
-+               return -EBADMSG;
-+
-         r = kzalloc(sizeof(*r), GFP_KERNEL);
-         if (!r)
-                 return -ENOMEM;
+Paolo
 
--Fan
+> v3:
+>   - Collect reviews/acks.
+>   - Switch to kvm_usage_lock in a dedicated patch, Cc'd for stable@. [Chao]
+>   - Enable virt at load by default. [Chao]
+>   - Add comments to document how kvm_arch_{en,dis}able_virtualization() fit
+>     into the overall flow. [Kai]
+> 
+> v2:
+>   - https://lore.kernel.org/all/20240522022827.1690416-1-seanjc@google.com
+>   - Use a dedicated mutex to avoid lock inversion issues between kvm_lock and
+>     the cpuhp lock.
+>   - Register emergency disable callbacks on-demand. [Kai]
+>   - Drop an unintended s/junk/ign rename. [Kai]
+>   - Decrement kvm_usage_count on failure. [Chao]
+> 
+> v1: https://lore.kernel.org/all/20240425233951.3344485-1-seanjc@google.com
+> 
+> Sean Christopherson (8):
+>    KVM: Use dedicated mutex to protect kvm_usage_count to avoid deadlock
+>    KVM: Register cpuhp and syscore callbacks when enabling hardware
+>    KVM: Rename functions related to enabling virtualization hardware
+>    KVM: Add a module param to allow enabling virtualization when KVM is
+>      loaded
+>    KVM: Add arch hooks for enabling/disabling virtualization
+>    x86/reboot: Unconditionally define cpu_emergency_virt_cb typedef
+>    KVM: x86: Register "emergency disable" callbacks when virt is enabled
+>    KVM: Enable virtualization at load/initialization by default
+> 
+>   Documentation/virt/kvm/locking.rst |  19 ++-
+>   arch/x86/include/asm/kvm_host.h    |   3 +
+>   arch/x86/include/asm/reboot.h      |   2 +-
+>   arch/x86/kvm/svm/svm.c             |   5 +-
+>   arch/x86/kvm/vmx/main.c            |   2 +
+>   arch/x86/kvm/vmx/vmx.c             |   6 +-
+>   arch/x86/kvm/vmx/x86_ops.h         |   1 +
+>   arch/x86/kvm/x86.c                 |  10 ++
+>   include/linux/kvm_host.h           |  14 ++
+>   virt/kvm/kvm_main.c                | 258 ++++++++++++++---------------
+>   10 files changed, 175 insertions(+), 145 deletions(-)
+> 
+> 
+> base-commit: af0903ab52ee6d6f0f63af67fa73d5eb00f79b9a
+
 
