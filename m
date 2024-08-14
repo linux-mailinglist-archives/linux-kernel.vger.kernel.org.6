@@ -1,123 +1,146 @@
-Return-Path: <linux-kernel+bounces-285694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDCD95116B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:10:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B22951171
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7BB11F23E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9219E1F23CC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7D111717;
-	Wed, 14 Aug 2024 01:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617ED171C2;
+	Wed, 14 Aug 2024 01:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wU47e2IE"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="njnjBOSL"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02E0259C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2207B662
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723597842; cv=none; b=XNU8AJcvZ/oFvpAUDd3uDUhlwptJGREh89oeaaILWGY0gY/AXX6dhey50a8wT17Btm0fD9URpgYsd8javz6V9+e6/RTq7CXfSCaDOA2qY6fZlPqFAPXSpRvQMN9jR3mxxSJhSi/tBJsJ+AA8tYmXa5oMloOQGMnVKAtMQAcN240=
+	t=1723597956; cv=none; b=ubgHRx8xBPMVD7IDc+2f8Nu+LKYRTKe6dOKkbHyHW/PzbbnDAJY71Y8BCQxtdnxkh6HlK4VNuvkUOigj2EVex0A6QDlCkDHlQHcjGagrFPJ+AVPRoPIBbz7fHfqJMWFHXs9GdxD7udsVZbFiiEQer1/OdBjIxK3Wfz+I/PuBBV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723597842; c=relaxed/simple;
-	bh=05ctJLqFzmWTtIoxhUdWL+c73B7LApIAABBMmSXwBlk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Q1XUkUV7iQJuoXe5TKyVHgzrK2rJAWOQK1W/u5SJALWl1+XO/fZZTKgX+XTPkk/eXXfWNo6T9Cdq3YPEHQx6s+2IA3NdHCIML1XAxSCD3KoN+LgTzezZaSZKVHEst1YsDVSKolcKsj06HierXK6IoGvFUHi8at1WHamn0LsMifI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wU47e2IE; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-66a8ce9eecfso5932587b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723597839; x=1724202639; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9hOtc8fNAlhLYuIuFFZ4t4foLKOgj+DhOBObaSJm5DQ=;
-        b=wU47e2IEgSs9O7ZpUFJ2UGpUMwwfdEH5zUR1tbIaDnaqAIVuBnyRxP4Csc7U9pPP/S
-         H5cs3xcS6HmVnTK+0VQbmARPnUYEsGB0IjpFUG5kgiS5lhzyXlPsfdT+ftylHJ8SRErS
-         L/plZFr1/J0GbthbJic1I9+VVakpVmyYVg0jwbOKiv7z4z03a5VF1C7fi2Nq/z/wUSTo
-         /9etyJOh40BEoPY1PVcKiVjWZSAxZkdiHlz1LHsmh3fQoz6jVlK4iMWCo9B2pMqrEdFp
-         j2jwL5dA5ug8GNTtHkggl8ykcBN5RrRyhsxgj39ocs4ZL/nFeGKACW+27gOrz/Ca5pnb
-         i6IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723597839; x=1724202639;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9hOtc8fNAlhLYuIuFFZ4t4foLKOgj+DhOBObaSJm5DQ=;
-        b=e9tKBToZZQ5pA6+tq0qLImICfWySpzEtrcCEvCWsud13uUrHWw7tTduCB2L6Qtzyna
-         M2hp+L0TGI1leo5sdN7kxJSRvimFLh1q3ns4lew1VRzmdAPJ1X9oHf6BB7OA/O3QfcUe
-         N0toDy/Km38OQmKs+BTtbm95ri/LWanVtTbB2dzQ4ZdSGe/PPpv51DHIAPC7lFpx509a
-         NTlRHdGUJifH2qL1bPUJVXOBsvb6WdSBx576U8NQtdkQZ3NcA2FK+eqhzfJPzjjaJuvr
-         dcrpTS0PTSNuTwaA4tRshVoMYwyXTGSOyb02HS/RM4d1zZ53hmg5HkraGcwCzN9aQ3BH
-         SRTg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5+F9HcZfknWq5KZs6fOh6cI1LH6pVFfoY4gP3VZoxp6nO4myQ95k7uhfJYh81hebJcYh/JHXIQkllQu2jAAEBCGjjAyxxlICUxiGS
-X-Gm-Message-State: AOJu0YyvWq42EttjWJO2oB6zh2m+yk7czxmJKn9lRNsZpRvNPvBoqEeQ
-	rxIW+20iXq3hq7g06edVMcFMY+y9kOfdCGXg2nUYt4gkcXk78MeKVtdbBwL5Q+50aSs5s+taRKh
-	Oyw==
-X-Google-Smtp-Source: AGHT+IG/2rDr9URUPDl9FM8oMDrvH3jCXr+cSppLGOe0KQE9X5dKiZqG3sFVtvXlrLbhADZaZ6WgRYBXjd8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a0d:d147:0:b0:651:2eea:4dfe with SMTP id
- 00721157ae682-6a9df63c480mr655687b3.0.1723597839045; Tue, 13 Aug 2024
- 18:10:39 -0700 (PDT)
-Date: Tue, 13 Aug 2024 18:10:37 -0700
-In-Reply-To: <a24f20625203465b54f20d1fc1456a779eee06a1.camel@intel.com>
+	s=arc-20240116; t=1723597956; c=relaxed/simple;
+	bh=Tb69vJqo1ALtu5b0vp82iFIA4z8ojDKaQzyHh2enK58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uMjEF8j52xznzhdSJf6B8/bcQBBGv55/kP0LoNAtSiqHkqGG1nlJb7CY27gZp57AbO4PleJ25Eyb/jqgiOo4wPl/Et5UJThWoujVHlIDogvurhZrOaAhDHkr2KieboyhNVywbinfztC2oko0hYFfx0h1Hwcpo+AGaO+1rh+prtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=njnjBOSL; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2136317a-3e95-4993-b2fc-1f3b2c28dbdc@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723597952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kg3Yn9psi6orOdw+gE/xX9QBdKXuCDu+XFWCUGqknj0=;
+	b=njnjBOSLSz/3Rw6McVXMEy0sMGYmKcFJKusbdJsaEWxfl7gJ4e+43jKEmlW7eCcPz1oGoA
+	uEjT+UWCaX550on6UAhXxWkV7BLDagYkyvQmuwkBd8+ux9pW8G0JPdo7yjP01WRPQa99xM
+	zaX/Z5nk5jexoKRrPOVGN+kMg0cuHuc=
+Date: Tue, 13 Aug 2024 18:12:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-26-rick.p.edgecombe@intel.com> <ZrtEvEh4UJ6ZbPq5@chao-email>
- <a24f20625203465b54f20d1fc1456a779eee06a1.camel@intel.com>
-Message-ID: <ZrwEDTrA2SjWJlen@google.com>
-Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from KVM_GET_SUPPORTED_CPUID
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next v4 2/2] selftests/bpf: Add mptcp subflow subtest
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Daniel Xu <dxu@dxuuu.xyz>,
+ Manu Bretelle <chantra@meta.com>
+References: <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-0-2b4ca6994993@kernel.org>
+ <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-2-2b4ca6994993@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-2-2b4ca6994993@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 13, 2024, Rick P Edgecombe wrote:
-> On Tue, 2024-08-13 at 19:34 +0800, Chao Gao wrote:
-> > Mandating that all fixed-1 bits be supported by KVM would be a burden f=
-or both
-> > KVM and the TDX module: the TDX module couldn't add any fixed-1 bits un=
-til KVM
-> > supports them, and=C2=A0
->=20
-> > KVM shouldn't drop any feature that was ever a fixed-1 bit
-> > in any TDX module.
->=20
-> Honest question...can/does this happen for normal VMs? KVM dropping suppo=
-rt for
-> features?
+On 8/5/24 2:52 AM, Matthieu Baerts (NGI0) wrote:
+> +static int endpoint_init(char *flags)
+> +{
+> +	SYS(fail, "ip -net %s link add veth1 type veth peer name veth2", NS_TEST);
+> +	SYS(fail, "ip -net %s addr add %s/24 dev veth1", NS_TEST, ADDR_1);
+> +	SYS(fail, "ip -net %s link set dev veth1 up", NS_TEST);
+> +	SYS(fail, "ip -net %s addr add %s/24 dev veth2", NS_TEST, ADDR_2);
+> +	SYS(fail, "ip -net %s link set dev veth2 up", NS_TEST);
+> +	if (SYS_NOFAIL("ip -net %s mptcp endpoint add %s %s", NS_TEST, ADDR_2, flags)) {
+> +		printf("'ip mptcp' not supported, skip this test.\n");
+> +		test__skip();
 
-Almost never.  KVM still supports Intel CPUs without virtual NMI support, w=
-hich
-IIRC was something like one SKU of Yonah that was 32-bit only.  Keeping bac=
-kwards
-compability is annoying from time to time, but it's generally not that much=
- of a
-maintenance burden.  The only CPUs I really wish had never existed are thos=
-e that
-have EPT without A/D bits.  Other than that, maintaining support for old CP=
-Us
-doesn't hinder us too much.
+It is always a skip now in bpf CI:
 
-> I think I recall even MPX getting limped along for backward compatibility=
- reasons.
+#171/3   mptcp/subflow:SKIP
 
-Yep, KVM still supports virtualizing MPX.
+This test is a useful addition for the bpf CI selftest.
+
+It can't catch regression if it is always a skip in bpf CI though.
+
+iproute2 needs to be updated (cc: Daniel Xu and Manu, the outdated iproute2 is 
+something that came up multiple times).
+
+Not sure when the iproute2 can be updated. In the mean time, your v3 is pretty 
+close to getting pm_nl_ctl compiled. Is there other blocker on this?
+
+> +		goto fail;
+> +	}
+> +
+> +	return 0;
+> +fail:
+> +	return -1;
+> +}
+> +
+> +static int _ss_search(char *src, char *dst, char *port, char *keyword)
+> +{
+> +	return SYS_NOFAIL("ip netns exec %s ss -enita src %s dst %s %s %d | grep -q '%s'",
+> +			  NS_TEST, src, dst, port, PORT_1, keyword);
+> +}
+> +
+> +static int ss_search(char *src, char *keyword)
+> +{
+> +	return _ss_search(src, ADDR_1, "dport", keyword);
+> +}
+> +
+> +static void run_subflow(char *new)
+> +{
+> +	int server_fd, client_fd, err;
+> +	char cc[TCP_CA_NAME_MAX];
+> +	socklen_t len = sizeof(cc);
+> +
+> +	server_fd = start_mptcp_server(AF_INET, ADDR_1, PORT_1, 0);
+> +	if (!ASSERT_GE(server_fd, 0, "start_mptcp_server"))
+> +		return;
+> +
+> +	client_fd = connect_to_fd(server_fd, 0);
+> +	if (!ASSERT_GE(client_fd, 0, "connect to fd"))
+> +		goto fail;
+> +
+> +	err = getsockopt(server_fd, SOL_TCP, TCP_CONGESTION, cc, &len);
+> +	if (!ASSERT_OK(err, "getsockopt(srv_fd, TCP_CONGESTION)"))
+> +		goto fail;
+> +
+> +	send_byte(client_fd);
+> +
+> +	ASSERT_OK(ss_search(ADDR_1, "fwmark:0x1"), "ss_search fwmark:0x1");
+> +	ASSERT_OK(ss_search(ADDR_2, "fwmark:0x2"), "ss_search fwmark:0x2");
+> +	ASSERT_OK(ss_search(ADDR_1, new), "ss_search new cc");
+> +	ASSERT_OK(ss_search(ADDR_2, cc), "ss_search default cc");
+
+Is there a getsockopt way instead of ss + grep?
+
 
