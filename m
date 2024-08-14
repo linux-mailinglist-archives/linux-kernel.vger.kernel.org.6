@@ -1,132 +1,173 @@
-Return-Path: <linux-kernel+bounces-286156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C48D951758
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:08:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F04951761
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A998B23804
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:08:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B6EBB23BB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED231442E3;
-	Wed, 14 Aug 2024 09:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13842143C69;
+	Wed, 14 Aug 2024 09:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="N0mNBwov"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZbdM4Lfs"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F5F143879
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE3B55E53
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723626503; cv=none; b=W8ffa/cugFi3psIxZm8YrWXwi4p5m7Qg8NCJvcpcP2a3xwlBtlXDLUOAkkqzkxN3bcilETZtoRumMMdnuGMLS41PktbqgUzNzhkF9UnYCeJR4agYJ6hx+fM9CF7UJq285hZUEWEGTNET/hnuFkEofYFrXpCyw5q1m/XlcTGX7rU=
+	t=1723626543; cv=none; b=U+F3YQBeKlHOtnbWzQtrJmkbw3zJ+E1BQaAjjbC4xFJvBDZRzJyIIN7iJ36K3unm3Tuq4lMU06Bmd4nPWwCpzk1TfYlc0LRTzXwYEj8RMilv9aKfIW4LDr/zbdiMTkkvpBUKjm/dQiTsR03Z60aMzRUFVfqBEfxdjAAVFjB4358=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723626503; c=relaxed/simple;
-	bh=44WOPlnqlPk/mb/+BMsrqQCYiSdeF1zdyuVp4QVRKio=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=m5IeW/5pFuA/gvVvyyzbSkGPAU8WBSgwrDmJBE8Enzfj9XQct6SOawkF05+C7+0XFwhFMI7OInWV8g7Jb5sNswRGdJrdRI3bbbKRUIzX8iTilhePHLC7SR1c7wco7lamN0Uqk6mZ7/W/yQhVDafjpNUXyXhyQOozB9zfpjaOszk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=N0mNBwov; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd640a6454so49963845ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723626500; x=1724231300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=32PXXV2QL2XbF8eLBvu4oAhbSZGQ+NlsUMAqd8y/jh8=;
-        b=N0mNBwovtY9nG6vCIuc0W1fNGjX6pR9t1JqrLn4KL43oj3o8Mp0EWsdUagS0IlXwtU
-         XqDFwjP1sczJSjTlEOQf3I6b6m3UkkDr5TwfPdEl0/ey12LIFHZ51MdS8XiuKR4TvCH5
-         /uu+NKwTL/q/UgN7QIYuVSQiMS9JfJ58+4b4f+9ulIwNFjzCX5J2CEDBxtQ8V+nlz6uL
-         R/SSGsEeGTm1oTeLG3HzzXWjYMCD4rPva/x/1HOcMQULq+nCOF+3j/qNIy7Y+4xHxk82
-         w16XscJEn2AD/pEwlyaCjNJhBv7fY/vVN7J+I1wQJ/ytQyYGZdMmylx9IJuwsyjdn+sU
-         a0FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723626500; x=1724231300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=32PXXV2QL2XbF8eLBvu4oAhbSZGQ+NlsUMAqd8y/jh8=;
-        b=jDAPLnk5FLZNC88xtz5yQpxKmjRYPXaMPYSsBLPRdOCemTrmwrBi8OsOTlIz7Y9sxq
-         ubeIvZdxyGCimHzIOYeCQODsp1Ra2/llvonhTvptsY0iPtHMPElBnCTcdIH+JHr67Kx7
-         zfMlV8ebMlPYJj4cgA+s4h9ZlVKHjsaDjspKCvvF2hzidGKa8jW2zU8AqKB3zKk6HwU4
-         PhPQluZa/HRvVQiuISprzoP8KUr+pnmRraylIJH22veZ3yKVWTFTonLndBI5u25hQ+i3
-         5K5nxpJwmGplzEILbII8itNqBnLk3CmUjRL5+IjsFsTjumq7xkuEec701Eg/O35KPS7b
-         fmiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJkKJt5oGmbu4MftEBL31Ny2DfXch6kjujRWtzzkf2cQ2R9q7K+zqee/BAy7oIO2LF2tMPZLm3cd9MFUgLrKFQNFv/sByLr94HWEGb
-X-Gm-Message-State: AOJu0YxNXEei3BjqVWWkh9aH5ftrPZaM4H6UYyfv6DQjchK0bAEylFe+
-	Jw68IDg7smRuueB9AoE11D3H0W9EwSjSucqU6OY80PsZPhieMwh/ggEcsdsJxIo=
-X-Google-Smtp-Source: AGHT+IHuYXuhltEliMauH5KaebG0cPWH0eOsGcHY9bRFUYY3iGer/a5GVOSz9JPxxkNZ4ftgPwkdew==
-X-Received: by 2002:a17:902:f643:b0:1fd:6655:e732 with SMTP id d9443c01a7336-201d64d0e9dmr25671975ad.54.1723626500510;
-        Wed, 14 Aug 2024 02:08:20 -0700 (PDT)
-Received: from C02F52LSML85.bytedance.net ([203.208.167.150])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1c86f3sm25456875ad.244.2024.08.14.02.08.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 02:08:20 -0700 (PDT)
-From: Feng zhou <zhoufeng.zf@bytedance.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	jiri@resnulli.us,
-	bigeasy@linutronix.de,
-	lorenzo@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	yangzhenze@bytedance.com,
-	wangdongdong.6@bytedance.com,
-	zhoufeng.zf@bytedance.com
-Subject: [PATCH] net: Don't allow to attach xdp if bond slave device's upper already has a program
-Date: Wed, 14 Aug 2024 17:08:11 +0800
-Message-Id: <20240814090811.35343-1-zhoufeng.zf@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1723626543; c=relaxed/simple;
+	bh=FWiLB98hRf4UANd5kQyvNhUOiS5PS8g7fDNs89+0wcU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=A45zyEnTD5edS8CEXNtUC3WJ3AOwHKmvDGY5J3qJdXEWTXjSDIyMi28PuBrh90QHnjTerGD1y/VIhev9rpgseE+WmpmIf3tbv70PV9wZ8C+NQ1iwnzbxERJPyrbgpVy67kVns3n9ldJGIScF6/rtqZbxwjNX8rspEJCWif3/MkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZbdM4Lfs; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 26B48E0003;
+	Wed, 14 Aug 2024 09:08:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723626538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VkLZLhKQXpVHMvRnPIvLXvvF5eoBWM6KQDlYAfk1Vb4=;
+	b=ZbdM4Lfs69l0Lxqvoi6WE/fK6UeqJSvEbbkIqKtoPceYPUIs4UtugUvYJYilVVuwBVk8/W
+	+o6VNNPJhyMqZJGsnRdjRMXXmFmjLlS5+9DVpUJ3gzeqPw7fyQZ/xG8BqVAWwGgU9W08Vh
+	7waaFw4ufLwG7ECNGEKGsdtG6qhUButznz6fS3KwUvVpUYEXRzDI3kPu4qtvUHmB40nhNc
+	4JHqW7NjPu0jc81fAcu0HiAyAaTPYzgoRB/7d834L9Nz6sy7NMGvDpCX7v0WbYQTTffBa4
+	sbJ9ui18yWD3xsCnok5WfB1aI29dp6T9KgBmNKmvQT6DR0fu9S0ZWYbfigzpKA==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH RFC 0/6] drm/vkms: Completly split headers
+Date: Wed, 14 Aug 2024 11:08:53 +0200
+Message-Id: <20240814-google-split-headers-v1-0-51712f088f5d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACZ0vGYC/42RTW7DIBCFr2Kx7rSAibGjqqpUqQfotooijMcOq
+ m1SIE6iKHfvxEkXXVTKapi/7z3gxCIGh5EtsxMLOLno/EiJeMiY3ZixQ3AN5UxyqfhCCui873q
+ EuO1dgg2aBkMEZXJNXVm2uWS0ug3YusOM/WQf729sdS0G/N6RRLp1ahMRrB8Gl5ZZEwYYXLRPv
+ wcY8ZAutAFjNLOTZfY8Gyl5BcfdBJPgwEEYbXWhRFG0+rX2PvVufCTsyz/LQkGtiL4n7d4HaH0
+ YTIowSYKVda6qyrZYcbwTtg90o9rYrzXN4ro+zvGKy4uFElYLvSiqO3G3F7a9Ca511iT6EjInL
+ jREXTS64VaWf2mr8/kH2UBpOswBAAA=
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4122;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=FWiLB98hRf4UANd5kQyvNhUOiS5PS8g7fDNs89+0wcU=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvHQnkE5NYr0CZINOzrh3ebNpD+MIqA1v56phf
+ Sf3dkDYAAKJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrx0JwAKCRAgrS7GWxAs
+ 4pNNEACtGS52ioaQpOarXUNWlSuzVE4BT0wzKLHNIqCCRK34/rCnHlJpk+wsfdDQG/ym0UJOdBh
+ lwdeUhX5s0hQBwOG/vtirt7Ojg7IKVBX7ggq1GE0y6jcPBPmbx/sknaN7G7CsP56WSESFFyvPl/
+ R3E/REoxfgt2jwHkrOh9KgWyEGu31Zinh+pq8ZYcOQIjjyilM0+ZOt9p1CP2q2O/+gViAq1Hac0
+ bYzJG21NiPI/o8fcZEOuhSUd5/GhOYwijK60JddfKIYj7oIzqM9PmQuxbpwGTQnSWRYTov8o+sC
+ Vk+rSDxdVV7DCMrWoC33Jxkn5zqlWA/M68QtWrG1cvtcimJlARw9hcn0YWhEhLVLZOvF2PE3Phh
+ DLFqXUTvyuqzvVo1rH9WbYnLAUAyEC1QPwuB5F147Pe5ylQvh9hJXagU9OjMqUZ6Pobr9nG4Pvv
+ 8C3r23yHB8+XYx02cLL7XuNAkDOVgHNymcEYZS7E77C0gvUPKlGU+vJiH8TO4OqoHhSfLiZP9HQ
+ U69VXoxBncBClVgIArr1HT4OJa6htyusMzACW0TuiljB78civ8V/F3Ip3cxTx2YeBp9YGXyDnMR
+ PjIfxQNqdk9CyDSEwXIehlWmFbBnrodlxDxk4J4RPo2Km+mrEGFlKKpjnHS/JAVYR/pboIRbTd2
+ cCPXa58R26HZjqg==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-From: Feng Zhou <zhoufeng.zf@bytedance.com>
+VKMS code is already splitted in many files. In order to avoid mixing 
+code, this series aims to properly add a header for each .c.
 
-Cannot attach when an upper device already has a program, This
-restriction is only for bond's slave devices, and should not be
-accidentally injured for devices like eth0 and vxlan0.
+It will help for the readability as each function defined in a .c will be 
+declared in its own .h, and not mixed with other in a big vkms_drv.h. This 
+will help a lot for the managment of multiple devices and the introduction 
+of ConfigFS.
 
-Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+This series depends on [1].
+
+[1]: https://lore.kernel.org/all/20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com/
+
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- net/core/dev.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Louis Chauvet (6):
+      drm/vkms: Properly extract vkms_formats header
+      drm/vkms: Extract vkms_writeback header
+      drm/vkms: Extract vkms_plane header
+      drm/vkms: Rename to_vkms_plane_state to avoid confusion
+      drm/vkms: Extract vkms_crtc header
+      drm/vkms: Extract vkms_composer header
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 6ea1d20676fb..e1f87662376a 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -9501,10 +9501,12 @@ static int dev_xdp_attach(struct net_device *dev, struct netlink_ext_ack *extack
- 	}
- 
- 	/* don't allow if an upper device already has a program */
--	netdev_for_each_upper_dev_rcu(dev, upper, iter) {
--		if (dev_xdp_prog_count(upper) > 0) {
--			NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
--			return -EEXIST;
-+	if (netif_is_bond_slave(dev)) {
-+		netdev_for_each_upper_dev_rcu(dev, upper, iter) {
-+			if (dev_xdp_prog_count(upper) > 0) {
-+				NL_SET_ERR_MSG(extack, "Cannot attach when an upper device already has a program");
-+				return -EEXIST;
-+			}
- 		}
- 	}
- 
+ drivers/gpu/drm/vkms/vkms_composer.c  |   5 +-
+ drivers/gpu/drm/vkms/vkms_composer.h  |  18 ++++
+ drivers/gpu/drm/vkms/vkms_crtc.c      |   7 +-
+ drivers/gpu/drm/vkms/vkms_crtc.h      |  87 +++++++++++++++
+ drivers/gpu/drm/vkms/vkms_drv.c       |   1 +
+ drivers/gpu/drm/vkms/vkms_drv.h       | 192 ----------------------------------
+ drivers/gpu/drm/vkms/vkms_formats.c   |   4 +
+ drivers/gpu/drm/vkms/vkms_formats.h   |  80 +++++++++++++-
+ drivers/gpu/drm/vkms/vkms_output.c    |   5 +-
+ drivers/gpu/drm/vkms/vkms_plane.c     |   7 +-
+ drivers/gpu/drm/vkms/vkms_plane.h     |  64 ++++++++++++
+ drivers/gpu/drm/vkms/vkms_writeback.c |   5 +-
+ drivers/gpu/drm/vkms/vkms_writeback.h |  21 ++++
+ 13 files changed, 296 insertions(+), 200 deletions(-)
+---
+base-commit: 219b45d023ed0902b05c5902a4f31c2c38bcf68c
+change-id: 20240521-google-split-headers-4a3705228f32
+prerequisite-message-id: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
+prerequisite-patch-id: ae2d8b2efbbaa9decce56632c498c87e708288b3
+prerequisite-patch-id: c26b6d4867eaf6566195aa0002765357d4f69f8c
+prerequisite-patch-id: 8791d34a6f3148dc518da5249453067e40d346e3
+prerequisite-patch-id: 26ec7cd5a449004bcfd6ce483671f87655f8635c
+prerequisite-patch-id: 2e855ba871f2e99d4b6b7d85da2ddac6bb32262e
+prerequisite-patch-id: 82523a917646793deeec7cdcc7ff286bd924fd21
+prerequisite-patch-id: 0e355e5316281f53ab5e97ab6e63b0a682f3eb9e
+prerequisite-patch-id: 7a63d245a377d5f5283f48e8f52421b912811752
+prerequisite-patch-id: dda6bf4692cd1795c489ff58e72c0841ea8ffbc4
+prerequisite-patch-id: f70e535b6086cc587975fbfa75741f485f679a32
+prerequisite-patch-id: 6c2aa2645c7d854951608aa4d15a02e076abe1fe
+prerequisite-patch-id: dc61c6d3db73053fc36e115af561e0c42b467de2
+prerequisite-patch-id: deda292af6d8bbf6762b0bf4d351ffd2225995d8
+prerequisite-patch-id: 18554f49b53cbcfd4a8ca50dc83b17dd3cf96474
+prerequisite-patch-id: 5633292e10132d29be2467812e6e2e824cfedb67
+prerequisite-patch-id: 43f37e9c1bc041d491e41dfb59548ed258a1e071
+prerequisite-message-id: <20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com>
+prerequisite-patch-id: d10db4cb12a88de2e5f6440e9fcf5ddda191e3cd
+prerequisite-patch-id: 16bac0ef1f1dc010a72ce2faae66631797d23d3f
+prerequisite-patch-id: 8e0e5cc0727e8fd2d14ebafc5538fd987c2dd38e
+prerequisite-patch-id: 32bad3bf3df46d042e9edd4c1259c2e2a3fb8975
+prerequisite-patch-id: 4bd9e4cef308abd17b7b274a5575a3de73a1503b
+prerequisite-patch-id: a98fac5a2c60fe23fbc6a455e9a4ab8b0f187ee8
+prerequisite-patch-id: 62c8d109a22b9978f755255b67f13fe74fb7008d
+prerequisite-patch-id: baa8da4871dd90b03a07c6d9ddb45e10929ee70a
+prerequisite-message-id: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
+prerequisite-patch-id: df699289213021fa202fcdf1b4bdff513d09caa2
+prerequisite-patch-id: 59d021ccb166fbe2962de9cda72aceb3caa9cabe
+prerequisite-patch-id: 895ace6d58b3776798791705b7b05e26b8d37c7b
+prerequisite-message-id: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
+prerequisite-patch-id: a4408d1de7730262456bdd618d3cb86f5f5b01ba
+prerequisite-patch-id: f215b5aee5644d2e5b1b2af0bb0f4f1e7609558b
+prerequisite-patch-id: d4f3b4c714324c5f326af3daba394899e6663d75
+
+Best regards,
 -- 
-2.30.2
+Louis Chauvet <louis.chauvet@bootlin.com>
 
 
