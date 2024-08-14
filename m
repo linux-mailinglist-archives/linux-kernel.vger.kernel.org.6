@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-286744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9078A951E7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:24:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73658951E91
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17CD22819A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:24:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7CFB2387D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5651B4C2E;
-	Wed, 14 Aug 2024 15:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A671B4C40;
+	Wed, 14 Aug 2024 15:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNAzQKQk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBRHv6cN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644691B3F0E;
-	Wed, 14 Aug 2024 15:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8211E529;
+	Wed, 14 Aug 2024 15:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723649087; cv=none; b=GdEiTdWGeDY+aaxpluqQ+htDznUv71tLX3jRr98i19sicUq1A2b19khyze7iy8Aik4GpU8ZKRuIqJEf4k+wG9sVjZ/q6vc9hCR25d28ytwOQwC2Dfh+qssty2xabZIA37LW9lVV7BEFQw5WEALsmz1QEuCHJ3NKnxx/zr4ZkiSI=
+	t=1723649422; cv=none; b=BmwjNUSCWv88T2Uj8qV7ucBDaTYADtK+7dpvz3W7rkkYj5/24hx4KbGSJh5qYlFnVbDGovdgnlm54WOI5B71slMcxQ7Sue+tWZMlr2r/cVaWLMyrHxcUh1U+eCYCQKT08UkDzlGkROt6oqAmX14E0Lm0q/4rtmk2b/157go4+J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723649087; c=relaxed/simple;
-	bh=Cmpt700VNNEqH7CQ15CAKefFW0scRjyJ7Wr9SRMpBbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jTq661fTO/241ZSTGiZW9F8c85Gp+7i1gKom4LJ3eHhkurCGeBWRMf6elQvWe5GPVpBziJtIQPB3ziHjyB+gU3KXlakL3oqigmt323ywGRtkQ1kUPaEaR1psAyWZvBV6uOSirbOuM5lh/2z0+GkWQ1Moyu/kTBuSGWbpU4zuz/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNAzQKQk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89860C116B1;
-	Wed, 14 Aug 2024 15:24:45 +0000 (UTC)
+	s=arc-20240116; t=1723649422; c=relaxed/simple;
+	bh=BzdLw5rIVpHo816fyRjRZ3EThOm9Sn4+aJ1smJ+RCfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XVFB0M1RTMl/VCqu//8/a43WsjjaPf+aqnXjdAJYpuUeQw8MGMBGP1oSiorULcDJOcoWRUbJ6y3kxXDJEiqcaC5eni65dV+IAsxyABFVFBV6wrad0el80uz9JXzbZIAqtXGltwtNrlWk1CATvuZhHxuT7gzNMfGDBxR30ywleqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBRHv6cN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1FE3C116B1;
+	Wed, 14 Aug 2024 15:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723649086;
-	bh=Cmpt700VNNEqH7CQ15CAKefFW0scRjyJ7Wr9SRMpBbA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vNAzQKQkdZLIgzm2HlvpMSz8MXQg3GWw1HaAw+E/7XJwURoJFV5EDgxtE4zVYMRYD
-	 OkdqshM180yG2Qnsn7hJuPVF0+sT75G9z8K+AgosJHRphvA3Q8DPkJ3UeJ9P/XykRQ
-	 kqkHFYF5zPFNB143wjpa2bR5ONRC2q0x/AnGjcXAxH8kB/xUOoiwBNntcGv0K0QY8/
-	 +V2XHCTJsuGXVNNe6mvu9OpJwnQsCqQMdoknilffLb4mqxO6Cqy8gxQp3JJXrbn5ww
-	 cvAS7BR+fqb+HOkjSxFERtgIEBt+6ZxFpGAJkcnXXe+MgEglVRGS8MvY/lDXj6V/36
-	 m7aDYVL2d7ybg==
-Date: Wed, 14 Aug 2024 08:29:03 -0700
-From: Bjorn Andersson <andersson@kernel.org>
-To: Marc Gonzalez <mgonzalez@freebox.fr>
-Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Arnaud Vrac <avrac@freebox.fr>, 
-	Pierre-Hugues Husson <phhusson@freebox.fr>, Marijn Suijten <marijn.suijten@somainline.org>
-Subject: Re: [PATCH 2/2] iommu/arm-smmu-qcom: hide last context bank from
- linux
-Message-ID: <a7j3lz62bp6pceuq472muioinjzfgw2mec5pv256zfr7yjsn3p@ok6nfsbsabig>
-References: <20240814-smmu-v1-0-3d6c27027d5b@freebox.fr>
- <20240814-smmu-v1-2-3d6c27027d5b@freebox.fr>
+	s=k20201202; t=1723649422;
+	bh=BzdLw5rIVpHo816fyRjRZ3EThOm9Sn4+aJ1smJ+RCfQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BBRHv6cNgBmyScM3pUV1O6KO/FZ/bNwpxS3h9oKi7Z9wVDV/P8B7CWFCbmw6P33pg
+	 stJTD00Q8z8awKISdwRMnIug8zfxz8tyKu+cMYprxEPABOXA6X+OEiIh2dDCvv3g8/
+	 d1VPfR2v+CaQjXinuKTlp3Hj76mJVTqC+dwhc+BWfgivCuEDOEbbULG94f7hKKHSGd
+	 HZZBRF+SpRoykpuK93dWsGPL9EzACM8VcbHlnQTjPO3FUae05+9TVDuSWO9zyv+k+C
+	 cEIo3UMwRnBXYtG4bw7n6YAXDAkqmWMxctLiuGOmECNS9Bz0ObQfcnJsaXo6gsA1Te
+	 Q43rMhVL+ReIw==
+Message-ID: <5901ef59-9027-48a7-929c-fc66187cf338@kernel.org>
+Date: Wed, 14 Aug 2024 17:30:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814-smmu-v1-2-3d6c27027d5b@freebox.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: ili9881c: Add JMO LCM-JM800WX LCD panel
+To: Esben Haabendal <esben@geanix.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-0-22a5e58599be@geanix.com>
+ <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-2-22a5e58599be@geanix.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-2-22a5e58599be@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 03:59:56PM GMT, Marc Gonzalez wrote:
-> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
-> (base address 0x05100000) produces a system freeze & reboot.
+On 14/08/2024 15:10, Esben Haabendal wrote:
+> Document the compatible value for LCM-JM800WX LCD panels from JMO Tech.
 > 
-> Specifically, here:
-> 
-> 	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
-> 	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
-> 
-> and here:
-> 
-> 	arm_smmu_write_context_bank(smmu, i);
-> 	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
-> 
-> It is likely that FW reserves the last context bank for its own use,
-> thus a simple work-around would be: DON'T USE IT in Linux.
-> 
-> If we decrease the number of context banks, last one will be "hidden".
-> 
-
-I asked you to write something like "the hardware/hypervisor reports 12
-context banks for the lpass smmu on msm8998, but only 11 are
-accessible...override the number of context banks"
-
-It also seems, as the different SMMUs in this platform behave
-differently it might be worth giving them further specific compatibles,
-in which case we could just check if it's the qcom,msm8998-lpass-smmu,
-instead of inventing a property for this quirk.
-
-Regards,
-Bjorn
-
-> Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
 > ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> index 7e65189ca7b8c..e2e1fd9e2452b 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> @@ -282,6 +282,11 @@ static int qcom_smmu_cfg_probe(struct arm_smmu_device *smmu)
->  	u32 smr;
->  	int i;
->  
-> +	if (of_property_read_bool(smmu->dev->of_node, "qcom,last-ctx-bank-reserved")) {
-> +		dev_warn(smmu->dev, "hiding last ctx bank from linux");
-> +		--smmu->num_context_banks;
-> +	}
-> +
->  	/*
->  	 * Some platforms support more than the Arm SMMU architected maximum of
->  	 * 128 stream matching groups. For unknown reasons, the additional
-> 
-> -- 
-> 2.34.1
-> 
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
