@@ -1,167 +1,205 @@
-Return-Path: <linux-kernel+bounces-286624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA17C951D2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE96951D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609421F2614F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3601F2630E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081231B373B;
-	Wed, 14 Aug 2024 14:33:48 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1987F1B3725;
+	Wed, 14 Aug 2024 14:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IuK9MGVO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D3C1B1402;
-	Wed, 14 Aug 2024 14:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF3D1B375B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646027; cv=none; b=hTHE5SqI6W6zpM5k3byzoEnSJuVuUtlh2/2T4+OW59uznHT7uGxrrYN4+fE62qGSdiWA+mCJGbRoHgVjuYdSrSMiKryRvkzeCoN28rsdWqJf/y2Kz1DQLQUgVEAzV23s2ci7Lbri3gGY2PQHSKYT7v9OG05QSnRCzP4DOxmZOV0=
+	t=1723646071; cv=none; b=rnJSECNcUQQHpDRpYhCv7DyATwn66QNpRbJNzLa+izdHiNkHgiCwwFI/9fBaN+wrCJbjk6EKeWofnzIMIC3hABOj38p4NAukBt2a4/KwuzpgwkgdccYW9qLZPbF9aktA25+DJ78KsVRBKB9JwrRC1JLKwyZoNqOTjpO86xrfgCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646027; c=relaxed/simple;
-	bh=M71zOwwtJia4FmprmPWrLM/gnkWUkqhTUT+ZEK7eSKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gQtPrR4ysNR2fuxQlLyHPaWKkgnZNPHd3nljnnQPth/WUKyHSbQ7Pc226iwAs3pGH7Povui2XaPe6r+4sfvYXZeGdmcoIE40tMTgOvT/SZxoA7NN1eVKyojDk9m8+FzSztP1Ei3X8yo5ZLB/N3nR91lGNmLBh7bP2EwRgjlIQ3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WkW2w3rsqz9sPd;
-	Wed, 14 Aug 2024 16:33:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id gYk_3pGPQQOr; Wed, 14 Aug 2024 16:33:44 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WkW2w2c35z9rvV;
-	Wed, 14 Aug 2024 16:33:44 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 49C378B775;
-	Wed, 14 Aug 2024 16:33:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id X5IG7sr2BP6P; Wed, 14 Aug 2024 16:33:44 +0200 (CEST)
-Received: from [192.168.232.91] (unknown [192.168.232.91])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2D05C8B764;
-	Wed, 14 Aug 2024 16:33:43 +0200 (CEST)
-Message-ID: <2af8aef7-6428-461b-a35c-81e61769f65b@csgroup.eu>
-Date: Wed, 14 Aug 2024 16:33:42 +0200
+	s=arc-20240116; t=1723646071; c=relaxed/simple;
+	bh=4aol2bQWGqU7zpfnOajf765lcCf+XqwlLCMMBIrDrSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=muemUBcyrbZci1JY5TQb69HlyDy59kH9SowOEemaN0wIh3XktQDm5qFSS7JR247lqeRZLUTMloLAXg4deSp2sorVi2U1jHVKoPSzeBpJQccVl9YBGnhzp8J+7cetjzTe6/uAw38eSRSLneiSPHLwADIqVv9EnEDEFeG7MqZKipA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IuK9MGVO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723646068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1mwLzvfKy/AKPotQsw4SiDKdUt3reAnrpkwNcVstlDw=;
+	b=IuK9MGVOnlQMgC9zgxRwU3+jraaVrR01N93K4R1ylUdLS2Q9CFk9FKaqU+SxfO44VWZpO1
+	l5xoUjza5doPYsmGYa2Dw9djYmpjf05lOM59oZB1iM54+xocsyM92CGQQLR3cwAuepKk4U
+	ocBNNpJ3RekZdEq+i4ETjJZyu4R6Qxk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-627-xmUo1VUkOParfHt08LfSbg-1; Wed,
+ 14 Aug 2024 10:34:25 -0400
+X-MC-Unique: xmUo1VUkOParfHt08LfSbg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 277381955F6A;
+	Wed, 14 Aug 2024 14:34:22 +0000 (UTC)
+Received: from fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com (fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com [10.6.24.150])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EFE1E300019A;
+	Wed, 14 Aug 2024 14:34:18 +0000 (UTC)
+From: Alexander Aring <aahringo@redhat.com>
+To: teigland@redhat.com
+Cc: gfs2@lists.linux.dev,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	agruenba@redhat.com,
+	mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev,
+	lucien.xin@gmail.com,
+	aahringo@redhat.com
+Subject: [RFC dlm/next 00/12] dlm: net-namespace functionality
+Date: Wed, 14 Aug 2024 10:34:02 -0400
+Message-ID: <20240814143414.1877505-1-aahringo@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v17 04/14] net: sfp: Add helper to return the SFP
- bus name
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Romain Gantois <romain.gantois@bootlin.com>
-References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
- <20240709063039.2909536-5-maxime.chevallier@bootlin.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240709063039.2909536-5-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+Hi,
 
+this patch-series is huge but brings a lot of basic "fun" net-namespace
+functionality to DLM. Currently you need a couple of Linux kernel
+instances running in e.g. Virtual Machines. With this patch-series I
+want to break out of this virtual machine world dealing with multiple
+kernels need to boot them all individually, etc. Now you can use DLM in
+only one Linux kernel instance and each "node" (previously represented
+by a virtual machine) is separate by a net-namespace. Why
+net-namespaces? It just fits to the DLM design for now, you need to have
+them anyway because the internal DLM socket handling on a per node
+basis. What we do additionally is to separate the DLM lockspaces (the
+lockspace that is being registered) by net-namespaces as this represents
+a "network entity" (node). There might be reasons to introduce a
+complete new kind of namespaces (locking namespace?) but I don't want to
+do this step now and as I said net-namespaces are required anyway for
+the DLM sockets.
 
-Le 09/07/2024 à 08:30, Maxime Chevallier a écrit :
-> Knowing the bus name is helpful when we want to expose the link topology
-> to userspace, add a helper to return the SFP bus name.
-> 
-> This call will always be made while holding the RTNL which ensures
-> that the SFP driver won't unbind from the device. The returned pointer
-> to the bus name will only be used while RTNL is held.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> Suggested-by: "Russell King (Oracle)" <linux@armlinux.org.uk>
+You need some new user space tooling as a new netlink net-namespace aware
+UAPI is introduced (but can co-exist with configfs that operates on
+init_net only). See [0] for more steps, there is a copr repo for the
+new tooling and can be enabled by:
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Tested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+$ dnf copr enable aring/nldlm
+$ dnf install nldlm
 
-> ---
->   drivers/net/phy/sfp-bus.c | 22 ++++++++++++++++++++++
->   include/linux/sfp.h       |  6 ++++++
->   2 files changed, 28 insertions(+)
-> 
-> diff --git a/drivers/net/phy/sfp-bus.c b/drivers/net/phy/sfp-bus.c
-> index 56953e66bb7b..f13c00b5b449 100644
-> --- a/drivers/net/phy/sfp-bus.c
-> +++ b/drivers/net/phy/sfp-bus.c
-> @@ -722,6 +722,28 @@ void sfp_bus_del_upstream(struct sfp_bus *bus)
->   }
->   EXPORT_SYMBOL_GPL(sfp_bus_del_upstream);
->   
-> +/**
-> + * sfp_get_name() - Get the SFP device name
-> + * @bus: a pointer to the &struct sfp_bus structure for the sfp module
-> + *
-> + * Gets the SFP device's name, if @bus has a registered socket. Callers must
-> + * hold RTNL, and the returned name is only valid until RTNL is released.
-> + *
-> + * Returns:
-> + *	- The name of the SFP device registered with sfp_register_socket()
-> + *	- %NULL if no device was registered on @bus
-> + */
-> +const char *sfp_get_name(struct sfp_bus *bus)
-> +{
-> +	ASSERT_RTNL();
-> +
-> +	if (bus->sfp_dev)
-> +		return dev_name(bus->sfp_dev);
-> +
-> +	return NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(sfp_get_name);
-> +
->   /* Socket driver entry points */
->   int sfp_add_phy(struct sfp_bus *bus, struct phy_device *phydev)
->   {
-> diff --git a/include/linux/sfp.h b/include/linux/sfp.h
-> index 54abb4d22b2e..60c65cea74f6 100644
-> --- a/include/linux/sfp.h
-> +++ b/include/linux/sfp.h
-> @@ -576,6 +576,7 @@ struct sfp_bus *sfp_bus_find_fwnode(const struct fwnode_handle *fwnode);
->   int sfp_bus_add_upstream(struct sfp_bus *bus, void *upstream,
->   			 const struct sfp_upstream_ops *ops);
->   void sfp_bus_del_upstream(struct sfp_bus *bus);
-> +const char *sfp_get_name(struct sfp_bus *bus);
->   #else
->   static inline int sfp_parse_port(struct sfp_bus *bus,
->   				 const struct sfp_eeprom_id *id,
-> @@ -654,6 +655,11 @@ static inline int sfp_bus_add_upstream(struct sfp_bus *bus, void *upstream,
->   static inline void sfp_bus_del_upstream(struct sfp_bus *bus)
->   {
->   }
-> +
-> +static inline const char *sfp_get_name(struct sfp_bus *bus)
-> +{
-> +	return NULL;
-> +}
->   #endif
->   
->   #endif
+or compile it yourself.
+
+Then there is currently a very simple script [1] to show a 3 nodes cluster
+using gfs2 on a multiple loop block devices on a shared loop block device
+image (sounds weird but I do something like that). There are currently
+some user space synchronization issues that I solve by simple sleeps, but
+they are only user space problems.
+
+To test it I recommend some virtual machine "but only one" and run the
+[1] script. Afterwards you have in your executed net-namespace the 3
+mountpoints /cluster/node1, /cluster/node2/ and /cluster/node3. Any vfs
+operations on those mountpoints acts as a per node entity operation.
+
+We can use it for testing, development and also scale testing to have a
+large number of nodes joining a lockspace (which seems to be a problem
+right now). Instead of running 1000 vms, we can run 1000 net-namespaces
+in a more resource limited environment. For me it seems gfs2 can handle
+several mounts and still separate the resource according their global
+variables. Their data structures e.g. glock hash seems to have in their
+key a separation for that (fsid?). However this is still an experimental
+feature we might run into issues that requires more separation related
+to net-namespaces. However basic testing seems to run just fine.
+
+Limitations
+
+I disable any functionality for the DLM character device that allow
+plock handling or do DLM locking from user space. Just don't use any
+plock locking in gfs2 for now. But basic vfs operations should work. You
+can even sniff DLM traffic on the created "dlmsw" virtual bridge.
+
+- Alex
+
+[0] https://gitlab.com/netcoder/nldlm
+[1] https://gitlab.com/netcoder/gfs2ns-examples/-/blob/main/three_nodes
+
+Alexander Aring (12):
+  dlm: introduce dlm_find_lockspace_name()
+  dlm: disallow different configs nodeid storages
+  dlm: add struct net to dlm_new_lockspace()
+  dlm: handle port as __be16 network byte order
+  dlm: use dlm_config as only cluster configuration
+  dlm: dlm_config_info config fields to unsigned int
+  dlm: rename config to configfs
+  kobject: add kset_type_create_and_add() helper
+  kobject: export generic helper ops
+  dlm: separate dlm lockspaces per net-namespace
+  dlm: add nldlm net-namespace aware UAPI
+  gfs2: separate mount context by net-namespaces
+
+ drivers/md/md-cluster.c |    3 +-
+ fs/dlm/Makefile         |    2 +
+ fs/dlm/config.c         | 1291 +++++++++++++++----------------------
+ fs/dlm/config.h         |  215 +++++--
+ fs/dlm/configfs.c       |  882 ++++++++++++++++++++++++++
+ fs/dlm/configfs.h       |   19 +
+ fs/dlm/debug_fs.c       |   24 +-
+ fs/dlm/dir.c            |    4 +-
+ fs/dlm/dlm_internal.h   |   24 +-
+ fs/dlm/lock.c           |   64 +-
+ fs/dlm/lock.h           |    3 +-
+ fs/dlm/lockspace.c      |  220 ++++---
+ fs/dlm/lockspace.h      |   12 +-
+ fs/dlm/lowcomms.c       |  525 ++++++++--------
+ fs/dlm/lowcomms.h       |   29 +-
+ fs/dlm/main.c           |    5 -
+ fs/dlm/member.c         |   36 +-
+ fs/dlm/midcomms.c       |  287 ++++-----
+ fs/dlm/midcomms.h       |   31 +-
+ fs/dlm/nldlm.c          | 1330 +++++++++++++++++++++++++++++++++++++++
+ fs/dlm/nldlm.h          |  176 ++++++
+ fs/dlm/plock.c          |    2 +-
+ fs/dlm/rcom.c           |   16 +-
+ fs/dlm/rcom.h           |    3 +-
+ fs/dlm/recover.c        |   17 +-
+ fs/dlm/user.c           |   63 +-
+ fs/dlm/user.h           |    2 +-
+ fs/gfs2/glock.c         |    8 +
+ fs/gfs2/incore.h        |    2 +
+ fs/gfs2/lock_dlm.c      |    6 +-
+ fs/gfs2/ops_fstype.c    |    5 +
+ fs/gfs2/sys.c           |   27 +-
+ fs/ocfs2/stack_user.c   |    2 +-
+ include/linux/dlm.h     |    9 +-
+ include/linux/kobject.h |   10 +-
+ lib/kobject.c           |   55 +-
+ 36 files changed, 3941 insertions(+), 1468 deletions(-)
+ create mode 100644 fs/dlm/configfs.c
+ create mode 100644 fs/dlm/configfs.h
+ create mode 100644 fs/dlm/nldlm.c
+ create mode 100644 fs/dlm/nldlm.h
+
+-- 
+2.43.0
+
 
