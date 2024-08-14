@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-287094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDE39522D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:51:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AA29522D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006AB286440
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 831E7286489
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE7C1BF31B;
-	Wed, 14 Aug 2024 19:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C12B1C2321;
+	Wed, 14 Aug 2024 19:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hASncvI7"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2053.outbound.protection.outlook.com [40.107.101.53])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2N0BS+dl"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2040.outbound.protection.outlook.com [40.107.244.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2691B5804
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAA51C231D
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723665066; cv=fail; b=ld8DgHjULkiFpq/HxqkSBa3PLYmKKkMHlZGhZfcHbJqmMe1GuMMnuGehsuNl4aO8IadXHqK0iUgcTe2MCurDKZLs5eJJa7/JH5uje/bHRfTfk5f48wfmQkNl7+jYvHxkpceaJliyneNgQUUYfPf09t3zGcU3OxuXaay9ajXIlng=
+	t=1723665072; cv=fail; b=J7H1IGb094KUmb3iV3i8G0EE4QfvljOXoz7xeubLz1mc/s7p4Mq8VrVowgHcUuHGE4bF8H7FRu8fHhuDanGMYr1BZx1yv75l9e+p6deKU+lEW8/gU2aqvbtecgDIFwYG6FxgHlWn+yF5NTRDjVZi6seP1fxtoyq5EzTAhHV+GX0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723665066; c=relaxed/simple;
-	bh=O7SlO4jUWxkYC5eZi4nXFGEuF8oLFU4y6r+7/UlpaVE=;
+	s=arc-20240116; t=1723665072; c=relaxed/simple;
+	bh=2FzFvosHtwJ3Ohvbho68iW3zK++sKJ+7blGWzs3zOXg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NuxMQiJdHPDDQr6gmH88kAuySZkKPt5SzgcByoAYl2ZzYsXJ+aFAQaEqaT8h2Sw0hSl6NlCJIFGCwq2ZtoDfkKBc9sXWlC5b0Z2vZ6JixMtcOofV/HzO6c16/Qrtn79ti8O+SuwiliVHTjLYY5GrWj4ZBMU2YgOxqcxL6CgADGA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hASncvI7; arc=fail smtp.client-ip=40.107.101.53
+	 MIME-Version:Content-Type; b=lhN/PBaGvE89AmrL89d6PX/X6FPLVUNcN6jsP1gwhZKi61/h+jIzkiv7KoWt7i5VCaX2mlkrG3Jq3bsCaIxz/f6LRCMki4jg/kDysaLw8mkWH4xheK/QSugP8IPPAA1+C9rqOFGYhnaZ/OY0/E+K9iDmuoL6ZQM0QvAmOYpUV/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2N0BS+dl; arc=fail smtp.client-ip=40.107.244.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ClUctrHiLeeVxjjlO3I5JV86fvfIbOoDHdcHf3381Ur5XhNHPIRYuHFJ48xvtICSS6lIeYb7QvXT1ijbsIHwirVKe+le3o93sEhVy0bWDhWIIAG5t81S+oS3L1ExH0/J3DkBbBmbXUEVHIxtIwE04zwAYVLlDco2gs88k0EoVh06NJcNK2DaDbB8v9u4Yi2AmnDh0pPCcuxV1Q+EUDJW4I0pm0JtaCQIDBUz6htB7SIaIaAaVooUl2OdFWejYWepTI/ut/hSK3K9iE5qvYDhkbzlGyVqZKfy3TALsWSwwQnM5/+gxctSaeZKqERTUOchE4Q5uUBRZR/YCpEY033f9A==
+ b=fZ6is2OKSqdYNpys3d1K7VBgqyyAY67MfnY0PjwU3IgcO4WJLdbjIcINGGBAJSc8IqdIGJowJ24vtXJguPj2kVP2WAKFMN8vxAe7sxw6C+kXz7R/ZrXIZnEBqg3NcVyqtOB47+iNfEpd3N87W7+WLdL+xsX+X1od1R1Nsci2USHrlRe/sv7ueRTVdJw0AaEfzfy48ZCRFLO+Xyf/w4Yfy5O0sPVbCz4ZTzlTwYOCUWa9cI6whQRYGUiwLBTxFi/i2pjiSPu6F0hYd4Sz+bP0kNcEgDh0ofdNYh4ei5x7jgxK60ptPAzk3ExzC4FgI1G7erLY8pjnYkIZq3GnbGPsmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=726QpRcn+lvf4rCuApM2KwRHNgakfInv/OKNIzKT6VQ=;
- b=N/OCJHenfd8GrkLCGyVvzqUQtgI7qm+DkJVVnrOKEKZ7IOW7O8bTdwfd9zH7oYhJQsYeLtbx3iJae1OyaPPbQGwiPZV25IxgKZzsRGrzYFjXTXqlgPvJMKdbY1AFpA4ABxABIR8QsU7Cx81N5ZbhZkbNpbnRGVHGWleSMQQjHLT0fExX8NxDMHPNocxOW03it69nQ3HuH1bXsa+Znsvi5ZrBmIbbWipZqb+1zFkrWnlLaesfCuA6PxUlfaFvNDUjwq2w5d/fjrYBqZcDuIIHFHM3WfPzwxFGahHW97hoC3SgOp2EHdpUFxpBpE7JTIl2zzpsA7j4DoMpNA4qJHanHQ==
+ bh=87Cir7MUe+90Zd8HQRFVV15Z21B672vcEXroWazgwgg=;
+ b=ZeAeS989OLttb6QlmfBvI/WoYi0U1R6mMrb0fOEB8YcBjW9VEBVEQCYKkoLHZWT8sQuXa0fYbL4ECr/VZvUV0tM0KB7zCbVEoHpiCf+QDTkNW2qTThSl/Lpd4cOrHACEqE5my7Xq7hVFe+nrqpXIGTJAaTlnHet24eXHxvhq3y94N6uG/TYAG9aaJZ44t6AGbLZpKAE+m0lSgPc6+SXF5hb8NcmHaXLo1BXVHM/ZBBNJ1rPEbyxV05zOS+P4OI/2Cg9egO/JTQ0y+mk+25mD4UleVFCAVlZ9TQ6pUwvRNN8FvrcPbAEOCVcT64T091nzumwuApflbIz+eVYXpCAHIg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=726QpRcn+lvf4rCuApM2KwRHNgakfInv/OKNIzKT6VQ=;
- b=hASncvI7nC6ehjU+hsWeU46XeP/bmnEZQt1s0MdgmZ6YAsB3bu4WdvKT1im/ytH1B2h2yCOCPYyOt76PE/A18n35Vwk9NTyyWGG2f+Ie78T7fstOsl58OmwJaegt+axtoHLegtdXIH2MMEqm+GgbEgzBFfg52rvgZzZJaqrfpYM=
-Received: from MW4PR04CA0091.namprd04.prod.outlook.com (2603:10b6:303:83::6)
- by CY5PR12MB6384.namprd12.prod.outlook.com (2603:10b6:930:3c::8) with
+ bh=87Cir7MUe+90Zd8HQRFVV15Z21B672vcEXroWazgwgg=;
+ b=2N0BS+dlpm/JXu2SbD0i3UpV0TCtpAwk6BYxRwB6S8dgg4+FQypxeHyfcEy7+c3zMcKoTed3iPWweCN/pwDVT13flMK8g+fJcRsO+7KuMxIn5KIbKu5wu0ycfFB4Hkw4LJXt6TVRdyuabXOlwyPdbv0DTKB2b9eW55taluIGNL8=
+Received: from MW2PR16CA0046.namprd16.prod.outlook.com (2603:10b6:907:1::23)
+ by SA1PR12MB8743.namprd12.prod.outlook.com (2603:10b6:806:37c::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
- 2024 19:51:02 +0000
-Received: from CO1PEPF000044F7.namprd21.prod.outlook.com
- (2603:10b6:303:83:cafe::4e) by MW4PR04CA0091.outlook.office365.com
- (2603:10b6:303:83::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23 via Frontend
- Transport; Wed, 14 Aug 2024 19:51:02 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Wed, 14 Aug
+ 2024 19:51:04 +0000
+Received: from CO1PEPF000075F0.namprd03.prod.outlook.com
+ (2603:10b6:907:1:cafe::ad) by MW2PR16CA0046.outlook.office365.com
+ (2603:10b6:907:1::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
+ Transport; Wed, 14 Aug 2024 19:51:04 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F7.mail.protection.outlook.com (10.167.241.197) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000075F0.mail.protection.outlook.com (10.167.249.39) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7897.4 via Frontend Transport; Wed, 14 Aug 2024 19:51:02 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.7828.19 via Frontend Transport; Wed, 14 Aug 2024 19:51:04 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
- 2024 14:51:01 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ 2024 14:51:03 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
- 2024 14:51:01 -0500
+ 2024 14:51:03 -0500
 Received: from fedora.mshome.net (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 14 Aug 2024 14:51:00 -0500
+ Transport; Wed, 14 Aug 2024 14:51:02 -0500
 From: Jason Andryuk <jason.andryuk@amd.com>
 To: Juergen Gross <jgross@suse.com>, Boris Ostrovsky
 	<boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
@@ -86,9 +86,9 @@ To: Juergen Gross <jgross@suse.com>, Boris Ostrovsky
 	<pbonzini@redhat.com>, Brian Gerst <brgerst@gmail.com>
 CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>, "Jason
  Andryuk" <jason.andryuk@amd.com>
-Subject: [PATCH v2 2/5] x86/pvh: Make PVH entrypoint PIC for x86-64
-Date: Wed, 14 Aug 2024 15:50:50 -0400
-Message-ID: <20240814195053.5564-3-jason.andryuk@amd.com>
+Subject: [PATCH v2 3/5] x86/pvh: Set phys_base when calling xen_prepare_pvh()
+Date: Wed, 14 Aug 2024 15:50:51 -0400
+Message-ID: <20240814195053.5564-4-jason.andryuk@amd.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240814195053.5564-1-jason.andryuk@amd.com>
 References: <20240814195053.5564-1-jason.andryuk@amd.com>
@@ -100,193 +100,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: jason.andryuk@amd.com does not
+ designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F7:EE_|CY5PR12MB6384:EE_
-X-MS-Office365-Filtering-Correlation-Id: f8d40ee4-e912-4ded-44d1-08dcbc9a6d40
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F0:EE_|SA1PR12MB8743:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1bc7d726-6511-4f2d-7f26-08dcbc9a6e6a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020;
+	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b5fG4thVHpJa8UBCnUBBURbKKrtZ9+8rNhat9p7NjhKvaO0QpxDzmCEIH0ez?=
- =?us-ascii?Q?bRop2WDvuY5lOBZTNOu2KqnHDR0vc5bZNGJW15cv7tn+iP0WfUD//eUBnNQ+?=
- =?us-ascii?Q?kpLIAgr0fkX9SGXMgReCz5vCfl89zsrahxHS6j7vD6paZXRa90Rh4RBZEgjG?=
- =?us-ascii?Q?RZrnihOOwXFbIG87amymTi3cAhZTwCkSJ/RbIxbCLRBZh59cjlFi2IpNSdD7?=
- =?us-ascii?Q?Jrj90dKr476tys7q4tDFl9h+aIK4sOFXYZa4YAW0XcZNU8ejBJAWRfMCRNdd?=
- =?us-ascii?Q?SjviAZlkGH9qjLfZ1PtmZHeoh3FPlnpIz/crQp5IQecQbEWTKNKNZbxSzlzw?=
- =?us-ascii?Q?vl7e93yzk4op+ZJhx65DvRCzAAwxFMQgUk3o9HqrC1rP5cJzOatlHiAhAM2z?=
- =?us-ascii?Q?watF7tqEAem8bg34/8zg4g0CzT4RHWD9J49JGHs8LGSUFWhAl3XcUT00eZFF?=
- =?us-ascii?Q?ryWrCYNzPTTqfEvlp93fpCmwwLh4Avus7pJHuSxnx5xpJ1f5FISR4na+aGwj?=
- =?us-ascii?Q?uCAvze4MdGlyIB+dbabjigQ813WoSPsi1/gcb3Vs2DZyV148N6PMJzsrGG2T?=
- =?us-ascii?Q?VxQ6zg1pzT0XCIWdmsYGPOp4bERQPDiczsAENmwUA+RCFCSaJDJFXmB12Tbm?=
- =?us-ascii?Q?hlJDAaoQLZDsUapt5IhTxithiXSqYo3lcyYORMs9TrfddWVlV3etu2SFlKtw?=
- =?us-ascii?Q?K4WgFUtTbsYdBwfuNoradvKbriUHKPoNf1N0rZ2Wl9UF/1ZhV/CylbJUPWiQ?=
- =?us-ascii?Q?ieFmbCdXlUX3gv1rz6MBGvSdSZyzjgcAoDsDjtMP83Andl20RxRmMp67Oeyz?=
- =?us-ascii?Q?+AeM+AZYa2rgfW8VfFimumvJ0bHyrIRilnH4XBdaeT8Ch1C/dm7gWWRJQC7D?=
- =?us-ascii?Q?XDMJQWsjHk7/ZZd51bmsIWDdkQMxupzYbySzU+17FLA6QY/j9zbNEfAd1owW?=
- =?us-ascii?Q?5+oiyifA4bVmHHgdHJ4kp27VXTDJyvWLLNJDfnKXm8QhfwO42D2MgSAT4hYt?=
- =?us-ascii?Q?+3OhnjTBwqEGYGKaP4VcJWj/DC4iel3kIWX0949Hhv2MYz6xkHbM8aST2W+x?=
- =?us-ascii?Q?ml/Lh0HvO1UWAdxVHoOL+DKwCynjsaPGADLfbB9ri5DGZqkkcrIQEq3N6e+n?=
- =?us-ascii?Q?5sgfrgYehQCvdn+kp5tK6QnSxpGTcfA+Cxy3/H+7D2Wd5CAj5/SRt5GHM/s5?=
- =?us-ascii?Q?EE9JNoYu5RZR0L08nJvNfMLZf4V3CERfssJsmNlQySpSfhNvyL3AQRSdl7qR?=
- =?us-ascii?Q?Ouimx3pY40hB63zfD+nOFSWSrHOkp6d3CfgK/SQqzCACqsDK2yyfOdy1g/oj?=
- =?us-ascii?Q?yYg+TrTN0LWwqx8+Fh6tvBpJby03OyyfS/U/EHuTNDqDjw1ybdne6qhDcN4x?=
- =?us-ascii?Q?rVkr/p6x0/rsWaD94w44s5qaPECeBlk1ln/G9PXNdelkA1OsC7ecfVK7lNpV?=
- =?us-ascii?Q?zV3liZNppTISEHEScOAvWXhalipSRoYUPu5suOlW5rPJlEOrjGZnOQ=3D=3D?=
+	=?us-ascii?Q?0vzejcCUK6r8Y8Ulc57rWd6+7qNtKC9BzVRWN4QujDn2uG0Yv8w4aK/9J/RV?=
+ =?us-ascii?Q?W6mnTPXhoJcG+AC6Owoojcb/2apBtIhiSZnr2ntiZRMmE35IgLLH9SDXJFs6?=
+ =?us-ascii?Q?6A+zVevCfwpbLTQKzWAH0mTjqMxJ1Kf10Fe8NvwaSusmqZQE/iv/RkiloABj?=
+ =?us-ascii?Q?C9q7zBuo4h8N9Zm8dmTPIgCUQV7gZlOiKIJBocfCCW4N+kk86Wx/O8KrZlz0?=
+ =?us-ascii?Q?H+h0uGIxfp0rR88a4aXZeB+U4J1tCQykfZU6tzf+eepjVh7hgpHQNTmwlEwY?=
+ =?us-ascii?Q?shBWVWzzRvTf9hIbp0Bj3tb4OygaO9Wt+PSaHpvkijd9qa8MA5ScPDBfaW5Z?=
+ =?us-ascii?Q?O9rBhpANAcJZVg3NPLKVMRi3PvtRokxWFm2TWE6YmRu0odDVWv4o8PpdUNW1?=
+ =?us-ascii?Q?i1Fu7c7lLPLuaVwFamgU0XhEilny+WXBglGq5/LtMFPUZV+E3M0RB8z5t3Lc?=
+ =?us-ascii?Q?rRUv2hswC0A7ckbW4cNpgh5ofVKUnIAjtH/sJ0Tq36gjfsLZPvma3qeysZvt?=
+ =?us-ascii?Q?xZRTMDKDKQQmF+I+LYsKP3aW/mq7eLhx2XQN3ISidIQ3AaLRvp+fJT32pzmj?=
+ =?us-ascii?Q?4GTfAkLmlEGhBK9zWSVd6+ZjRiOUspx2wf4qxdIj9PsmLeWyXfkrTaWiRF/b?=
+ =?us-ascii?Q?aHRdwl9lzAcpe2S7dSaAT3ecO08+q4N9Ex71FJ7dyKwGYCNa1s8xzL2stIHe?=
+ =?us-ascii?Q?R5F9hwg8KKcQqUCcMXc384Ah9oyTdwdOyPTLNNlTfORJzDEyKZuqllRPYi4i?=
+ =?us-ascii?Q?AMRZA+Sj4su5jcNflKbRvj4BsGvGyh1kI8sfrO+6nZSytl3Oa/ziGkDqkxVl?=
+ =?us-ascii?Q?NNdY542kA+KSPzZUvMP9bOMcCBytTQHfbnAPAuVbcKQxmrCG6pbfk6Q2qNyb?=
+ =?us-ascii?Q?pxA6jXXs9b371UkZXnVfFbVe+Kw+1XAIIk2oEcMednC78m6YxqAWEeSfLcL2?=
+ =?us-ascii?Q?LRox1gTaRdpcKdlxFpew9LckrF7J7RdHVqBIXMwA98nKTDQ/D03gXtOy1LoT?=
+ =?us-ascii?Q?SUkvObYkNo7mi3aV4fiXrNpWXrlJMEtDviabVDB0aLbnarIopUicKoQjG2SQ?=
+ =?us-ascii?Q?nWhMTXZtJPx30Jl5BNb2jHvkGqQ5RMtLSCLszCq9yZTYpPOMgBn+8mQ3AIUQ?=
+ =?us-ascii?Q?IeICBRZA1bV30ufoY+3uNTkLUtpVMm4It2J0KTIzoJk4/aXEVtMxbWFkC6cn?=
+ =?us-ascii?Q?aXdIgFks5h3yD8Lk83AJ+TZLD+cVmwAHsD4dlRQS6gwX0L2rU17QpjYPba4W?=
+ =?us-ascii?Q?Ao20vOrjv9f3A0ryCQ/t7sh1owFjVm+z7dSU5iMN0IjCEvqo0dDdp82jO+V5?=
+ =?us-ascii?Q?jlG3+/qMF7LABquaQpOls3aOF8AaY9L75Ldyxk2FXfK84OznW9WzagABqc0E?=
+ =?us-ascii?Q?GCf1dfJN95Cmfp4wG2qLFWU3FKVqUYHUqm38J4TBJ1BUEOadT/0VEYm8poQJ?=
+ =?us-ascii?Q?Uu0jHFi5NZh71/cQmcvKgyaMvRubiD7O?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 19:51:02.1650
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 19:51:04.1351
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8d40ee4-e912-4ded-44d1-08dcbc9a6d40
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bc7d726-6511-4f2d-7f26-08dcbc9a6e6a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F7.namprd21.prod.outlook.com
+	CO1PEPF000075F0.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6384
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8743
 
-The PVH entrypoint is 32bit non-PIC code running the uncompressed
-vmlinux at its load address CONFIG_PHYSICAL_START - default 0x1000000
-(16MB).  The kernel is loaded at that physical address inside the VM by
-the VMM software (Xen/QEMU).
-
-When running a Xen PVH Dom0, the host reserved addresses are mapped 1-1
-into the PVH container.  There exist system firmwares (Coreboot/EDK2)
-with reserved memory at 16MB.  This creates a conflict where the PVH
-kernel cannot be loaded at that address.
-
-Modify the PVH entrypoint to be position-indepedent to allow flexibility
-in load address.  Only the 64bit entry path is converted.  A 32bit
-kernel is not PIC, so calling into other parts of the kernel, like
-xen_prepare_pvh() and mk_pgtable_32(), don't work properly when
-relocated.
-
-This makes the code PIC, but the page tables need to be updated as well
-to handle running from the kernel high map.
-
-The UNWIND_HINT_END_OF_STACK is to silence:
-vmlinux.o: warning: objtool: pvh_start_xen+0x7f: unreachable instruction
-after the lret into 64bit code.
+phys_base needs to be set for __pa() to work in xen_pvh_init() when
+finding the hypercall page.  Set it before calling into
+xen_prepare_pvh(), which calls xen_pvh_init().  Clear it afterward to
+avoid __startup_64() adding to it and creating an incorrect value.
 
 Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
 v2:
-Use rip-relative loads in 64bit mode
-Direct jmp to startup_64
+Fix comment style
+Add Juergen's R-b
+s/LOAD_PHYSICAL_ADDR/_pa(pvh_start_xen)/ in case they differ
 ---
- arch/x86/platform/pvh/head.S | 46 ++++++++++++++++++++++++++----------
- 1 file changed, 34 insertions(+), 12 deletions(-)
+ arch/x86/platform/pvh/head.S | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index f7235ef87bc3..ba4d0eab4436 100644
+index ba4d0eab4436..14b4345d9bae 100644
 --- a/arch/x86/platform/pvh/head.S
 +++ b/arch/x86/platform/pvh/head.S
-@@ -7,6 +7,7 @@
- 	.code32
- 	.text
- #define _pa(x)          ((x) - __START_KERNEL_map)
-+#define rva(x)          ((x) - pvh_start_xen)
- 
- #include <linux/elfnote.h>
- #include <linux/init.h>
-@@ -54,7 +55,25 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	UNWIND_HINT_END_OF_STACK
- 	cld
- 
--	lgdt (_pa(gdt))
-+	/*
-+	 * See the comment for startup_32 for more details.  We need to
-+	 * execute a call to get the execution address to be position
-+	 * independent, but we don't have a stack.  Save and restore the
-+	 * magic field of start_info in ebx, and use that as the stack.
-+	 */
-+	mov  (%ebx), %eax
-+	leal 4(%ebx), %esp
-+	ANNOTATE_INTRA_FUNCTION_CALL
-+	call 1f
-+1:	popl %ebp
-+	mov  %eax, (%ebx)
-+	subl $rva(1b), %ebp
-+	movl $0, %esp
-+
-+	leal rva(gdt)(%ebp), %eax
-+	leal rva(gdt_start)(%ebp), %ecx
-+	movl %ecx, 2(%eax)
-+	lgdt (%eax)
- 
- 	mov $PVH_DS_SEL,%eax
- 	mov %eax,%ds
-@@ -62,14 +81,14 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	mov %eax,%ss
- 
- 	/* Stash hvm_start_info. */
--	mov $_pa(pvh_start_info), %edi
-+	leal rva(pvh_start_info)(%ebp), %edi
- 	mov %ebx, %esi
--	mov _pa(pvh_start_info_sz), %ecx
-+	movl rva(pvh_start_info_sz)(%ebp), %ecx
- 	shr $2,%ecx
- 	rep
- 	movsl
- 
--	mov $_pa(early_stack_end), %esp
-+	leal rva(early_stack_end)(%ebp), %esp
- 
- 	/* Enable PAE mode. */
- 	mov %cr4, %eax
-@@ -84,30 +103,33 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
- 	wrmsr
- 
- 	/* Enable pre-constructed page tables. */
--	mov $_pa(init_top_pgt), %eax
-+	leal rva(init_top_pgt)(%ebp), %eax
- 	mov %eax, %cr3
- 	mov $(X86_CR0_PG | X86_CR0_PE), %eax
- 	mov %eax, %cr0
- 
- 	/* Jump to 64-bit mode. */
--	ljmp $PVH_CS_SEL, $_pa(1f)
-+	pushl $PVH_CS_SEL
-+	leal  rva(1f)(%ebp), %eax
-+	pushl %eax
-+	lretl
- 
- 	/* 64-bit entry point. */
- 	.code64
- 1:
-+	UNWIND_HINT_END_OF_STACK
-+
- 	/* Set base address in stack canary descriptor. */
- 	mov $MSR_GS_BASE,%ecx
--	mov $_pa(canary), %eax
-+	leal canary(%rip), %eax
+@@ -125,7 +125,20 @@ SYM_CODE_START_LOCAL(pvh_start_xen)
  	xor %edx, %edx
  	wrmsr
  
++	/*
++	 * Calculate load offset and store in phys_base.  __pa() needs
++	 * phys_base set to calculate the hypercall page in xen_pvh_init().
++	 */
++	movq %rbp, %rbx
++	subq $_pa(pvh_start_xen), %rbx
++	movq %rbx, phys_base(%rip)
  	call xen_prepare_pvh
++	/*
++	 * Clear phys_base.  __startup_64 will *add* to its value,
++	 * so reset to 0.
++	 */
++	xor  %rbx, %rbx
++	movq %rbx, phys_base(%rip)
  
  	/* startup_64 expects boot_params in %rsi. */
--	mov $_pa(pvh_bootparams), %rsi
--	mov $_pa(startup_64), %rax
--	ANNOTATE_RETPOLINE_SAFE
--	jmp *%rax
-+	lea pvh_bootparams(%rip), %rsi
-+	jmp startup_64
- 
- #else /* CONFIG_X86_64 */
- 
-@@ -143,7 +165,7 @@ SYM_CODE_END(pvh_start_xen)
- 	.balign 8
- SYM_DATA_START_LOCAL(gdt)
- 	.word gdt_end - gdt_start
--	.long _pa(gdt_start)
-+	.long _pa(gdt_start) /* x86-64 will overwrite if relocated. */
- 	.word 0
- SYM_DATA_END(gdt)
- SYM_DATA_START_LOCAL(gdt_start)
+ 	lea pvh_bootparams(%rip), %rsi
 -- 
 2.34.1
 
