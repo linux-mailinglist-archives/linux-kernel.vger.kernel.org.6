@@ -1,149 +1,132 @@
-Return-Path: <linux-kernel+bounces-286150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EC3951743
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F30D951745
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69121F263DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06C5BB21890
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C949143C50;
-	Wed, 14 Aug 2024 09:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36817143879;
+	Wed, 14 Aug 2024 09:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HmGiSlZt"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VYDLffLM"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD27013D24C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368DE36134
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723626042; cv=none; b=YIpE0qc2yeNb53zg838cXZ6FSPmTSuq5lgVpkmQEoJGe0C2vidvejp1dJln1ooWU89GWmyLNIA0YeVtqlB54XAx2ZwFbUUy5GT8ogqLmX6XJsPLmgt6tKV6x7+59SrQDv49UalhuE+r3Hc30weYKPQs0zadJ0pUAte0jH/xdMYg=
+	t=1723626138; cv=none; b=ucFyyq3EFoAFFrzVcD3EM77JWlF+L0+9mAnc/HKaH8dlUeeA10ZnBtsv2roLSL/B94NXaFJn0iBu+yaq5R5kka54vfyjD5xbngdScgWSzQNIqQRUFQurO7gpJJlMKKSQSuXWS1x9ErJ4drkXT+cHt9Z9L8E+JEjAoGajgRBN4AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723626042; c=relaxed/simple;
-	bh=b+Wtda2iYnSZWvMXTMr6gkdKX03az6OeFmtiXJm/YjY=;
+	s=arc-20240116; t=1723626138; c=relaxed/simple;
+	bh=dsKV+wqMisbH03QAF7wEuOvOjTFUb6hi739fdjsgYAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sYt7fh368J5AX6tu5pgWzeOW2OBVVZ4XobdKHE6xOYNC4f/qLzWwrlbtecmPZ6IWhTNMq3k+4t+1J3r8vW2+256vFMfWKOI82R2/HIIwoM5KzOJ+LkPRlCdeuC4DlxfdMq/Og1f9wvrN/wH5xEOpxavZ8G7EvPoRpsYrg5lOvW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HmGiSlZt; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3717de33d58so135f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:00:40 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbNqRGQDIyiUucYKWqjAydxn1vXlqnrHX5WfRAerKVFdwTFa6GJrSzZwMPaMRyo3kH9OqQp2lEhSRZ6CecIR2my/4DXmGRB1h6oaAzuRXz4wYlPHuvV51/YIals7wbIAeF6QM6Icc2mVvS9u2aDIBZWiJ6ldJSad6i0dT3pHTu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VYDLffLM; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd657c9199so49695ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723626028; x=1724230828; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723626136; x=1724230936; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e0VrBpxRv+L1cvAlfJueXS2O7eGCDgmOcojPruWBRGc=;
-        b=HmGiSlZtPHtMu6Tr6FgJI7INgaO2iTNqxSTMaqfZ7UNkvQFhqeKy3Pf/U3MPs48ton
-         vIDoLmujNkdCzSoDyscim45CgnfT6uqMM4Xt5AcnIbd5p5mR7uORnfuchLFQAww05BAV
-         DzJSif34yz4Y364ddhydnsz7HB+7JR0YrPe4jYy0c2bbCXczczFlAp38wVeKVVPsBZdJ
-         szGLKjt/hsJp/SfxuFT4jnAL03XupnLe4Xf2BClHnCpzfFeY7UHKmmoUO4OQ5aFbrDR9
-         Gwf4vs90N3NgUOpWGEm+ev38OHHrVq2WTswb76Y//MEK1MYRdLwnSAyh5okG6iZEXDft
-         Sndw==
+        bh=5BeIv8tpPW4wd1BzSToPaTcquF6WJ68vuiwIAiNwYEo=;
+        b=VYDLffLMA9sk7A8LsdsZhJy8otNt85m6xwDk5hsSmx20GgHEM5Si8AFcc0eGIr9Jm2
+         KzZu5TGSLfNZHwUsixKNaq7km9eHkRJtSSYGB7Vzkmxse3PsUsQEaQ0nhv4bHvzpbePS
+         04+emd1Ww3IG+K3B5TT6/nFxkjwwfxhaOzbjxZkjrrgIp310WR44z50I16zhUaokGuje
+         Uuwf6WrnYssVYCPx2aTtDg5GTlxoA9Yj/EmdaDqlQi9H+W3ycTeaOi8lMeBqzk8+bSmn
+         9ZiAVDrI0X1h1appSKeyQFP7Q/x94+dljckIts/nqS20LmqpNsh+5j1Dim61DL4vq8ue
+         5rTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723626028; x=1724230828;
+        d=1e100.net; s=20230601; t=1723626136; x=1724230936;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e0VrBpxRv+L1cvAlfJueXS2O7eGCDgmOcojPruWBRGc=;
-        b=FUZcVH2sEoGh9TYY6VF6Pu1GNVFanfHABwU2GxQFb5T1P1EVZSHCtLdS0L5IVM8vNE
-         +sbiRPuesfJfT0Opalgiazc8n15p0i4mFDLaKbxua/iyeO1CKHrigIl6+V1j5QTAlMhG
-         1tySwltDWkH68goHzoV0sHiuaeKl0V1dNWEb4nBOFKe8SxbuD6U3vESHLoOTBw7CHEku
-         Cmpu+7hUNH/cdEW07Dx/ldTMwivBTLoljEXMiFNE0R/1IMnveXK7hJSREukuzf6qHmLO
-         166SKE8DJXb2H109Qsa1xG3BJplbLbShL7RsKH3whu5U/mTcGlfx3NaRkRN563MF1pHJ
-         iABQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWx807QZGqtagnfs3Wp8H+HcbkCMjfg3Y+wnloLIg7rxgXYLhIMQJrSfmIfXObRu/tIged5Gnci0yWNF6YAipJF4+vgrdfkZ7JpPznC
-X-Gm-Message-State: AOJu0YwPs+3BbEf9v6f+JPtLy6br++2oIaJbI8aBBsLRgl7TiuqOgYrD
-	IlGpxgdZJpTgD3jzNBxYh6VwMk3ZSA/+hgjT5vLPnxdZrzpmfzhRJr/7Yp6JkvU=
-X-Google-Smtp-Source: AGHT+IFyfm3ym+AqlP5pRWLc/xKd5ydJyd/NB3v7AWxcNKzihK2+5E2i19SYg9/O9xIa5ABkRI0+Hg==
-X-Received: by 2002:a05:6000:1a8d:b0:367:8a2e:b550 with SMTP id ffacd0b85a97d-37177832cd1mr1808313f8f.60.1723626027663;
-        Wed, 14 Aug 2024 02:00:27 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3717314e38bsm3500857f8f.97.2024.08.14.02.00.26
+        bh=5BeIv8tpPW4wd1BzSToPaTcquF6WJ68vuiwIAiNwYEo=;
+        b=ctW9grt4xvN2QXsK+zbAtPdQzHUX/07naTNGZGQ5YK7/B5iv6RQTh7gpJkewFBwpak
+         IQtDkWwqo6E6OIMzMJtzRwujtzPRxAS04j5uEZ9xYyjlCl6WujDU6oC0D9lvFf2A2Zj3
+         t2S1SGqBN3Xzfy9qVcRYBJeXas7i+ozgfLej3FSZwFj9okf4gWRMS7xrWKSOmyv37qtL
+         ncosfnYapFyufhiiVfhcd49FPY+i0FMnuK5o64DDc5lCAGAfMW9s9h27izknLzuY02ta
+         yCiuFtz42AH/LpofLHHjk99SCmJnp5fOJVKIreVN+IzllfVOQ3tShJaQQZdVUHCAENP3
+         yqdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlZRFRsgDfc/LslOp4hbUkRoAdl2qYnVSHyRNj4JDY7hGJiA887izrkGPundO1HxwjNXfRa2d1J9DU+AM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEq9b24zNnb538ghat6F9TRzOdphGhSKHvk8Q7A3zgr4yJZEz6
+	AtQTH7sRyk6yluJs7UQ+w7ldZJEVhyxZli1IS+uzI+rdYBtMve6rjP8ezgBVOQ==
+X-Google-Smtp-Source: AGHT+IG7OdlbAYBH+rSxfLKvmXWaZU+mzyHJgiWriDP/OYhsl145DYw3VYr0B7PXkF9ajxWoJVYutw==
+X-Received: by 2002:a17:903:2284:b0:1fc:548f:6533 with SMTP id d9443c01a7336-201d8fd876dmr844895ad.3.1723626135784;
+        Wed, 14 Aug 2024 02:02:15 -0700 (PDT)
+Received: from google.com (202.141.197.35.bc.googleusercontent.com. [35.197.141.202])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a9373sm25374055ad.144.2024.08.14.02.02.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 02:00:26 -0700 (PDT)
-Date: Wed, 14 Aug 2024 11:00:25 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Kinsey Ho <kinseyho@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>
-Subject: Re: [PATCH mm-unstable v2 2/5] mm: don't hold css->refcnt during
- traversal
-Message-ID: <qh77aw6nnsytwtux6f2bkzmene3fzrh4skegvqktlw4b47jgea@oxovqnsrulef>
-References: <20240813204716.842811-1-kinseyho@google.com>
- <20240813204716.842811-3-kinseyho@google.com>
+        Wed, 14 Aug 2024 02:02:15 -0700 (PDT)
+Date: Wed, 14 Aug 2024 09:02:06 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>,
+	Kunkun Jiang <jiangkunkun@huawei.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
+	tangnianyao@huawei.com
+Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+Message-ID: <ZrxyjgNGps1PuIVZ@google.com>
+References: <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
+ <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
+ <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
+ <20240805123001.GB9326@willie-the-truck>
+ <ZrDwolC6oXN44coq@google.com>
+ <20240806124943.GF676757@ziepe.ca>
+ <ZrJIM8-pS31grIVR@google.com>
+ <315e95d4-064d-4322-a9d3-97e96c013b4d@linux.intel.com>
+ <ZrTNGepJXbmfuKBK@google.com>
+ <20240813175658.GO1985367@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nj7zfqzlclqebzss"
-Content-Disposition: inline
-In-Reply-To: <20240813204716.842811-3-kinseyho@google.com>
-
-
---nj7zfqzlclqebzss
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240813175658.GO1985367@ziepe.ca>
 
-On Tue, Aug 13, 2024 at 08:47:12PM GMT, Kinsey Ho <kinseyho@google.com> wro=
-te:
-> To obtain the pointer to the next memcg position, mem_cgroup_iter()
-> currently holds css->refcnt during memcg traversal only to put
-> css->refcnt at the end of the routine. This isn't necessary as an
-> rcu_read_lock is already held throughout the function. The use of
-> the RCU read lock with css_next_descendant_pre() guarantees that
-> sibling linkage is safe without holding a ref on the passed-in @css.
->=20
-> Remove css->refcnt usage during traversal by leveraging RCU.
->=20
-> Signed-off-by: Kinsey Ho <kinseyho@google.com>
-> ---
->  include/linux/memcontrol.h |  2 +-
->  mm/memcontrol.c            | 18 +-----------------
->  2 files changed, 2 insertions(+), 18 deletions(-)
->=20
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 90ecd2dbca06..1aaed2f1f6ae 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -75,7 +75,7 @@ struct lruvec_stats_percpu;
->  struct lruvec_stats;
-> =20
->  struct mem_cgroup_reclaim_iter {
-> -	struct mem_cgroup *position;
-> +	struct mem_cgroup __rcu *position;
+On Tue, Aug 13, 2024 at 02:56:58PM -0300, Jason Gunthorpe wrote:
+> On Thu, Aug 08, 2024 at 01:50:17PM +0000, Pranjal Shrivastava wrote:
+> > 
+> > Kunkun -- Please try this diff and check if it fixes the problem?
+> 
+> This looks OK to me, you should send it as a proper patch..
+> 
+> >  	if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE)) {
+> > -		report_partial_fault(iopf_param, fault);
+> > +		ret = report_partial_fault(iopf_param, fault);
+> >  		iopf_put_dev_fault_param(iopf_param);
+> >  		/* A request that is not the last does not need to be ack'd */
+> > +
+> > +		if (ret)
+> > +			goto err_bad_iopf;
+> >  	}
+> 
+> rebase it on -rc3 and there will be a return line added here
+> too.. Maybe you don't want the goto in that cast
 
-I'm not sure about this annotation.
-This pointer could be modified concurrently with RCU read sections with
-the cmpxchg which would assume that's equivalent with
-rcu_assign_pointer(). (Which it might be but it's not idiomatic, so it
-causes some head wrapping.)
-Isn't this situation covered with a regular pointer and
-READ_ONCE()+cmpxchg?
+Sure, I'll quickly rebase & send it out as a patch. Please let me know
+if should add any tag by you?
 
-Regards,
-Michal
+> 
+> Jason
 
---nj7zfqzlclqebzss
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZrxyJwAKCRAt3Wney77B
-ScF3AP9cGpM5R3nEkhyTYVHmwEk8lBkIAZEhJSg7XT8+mjoBAgEA8MHPEk593wkd
-iR6vP0rVJwmIoAqYDttw3aJO8G+bXA8=
-=7ASr
------END PGP SIGNATURE-----
-
---nj7zfqzlclqebzss--
+Thanks,
+Pranjal
 
