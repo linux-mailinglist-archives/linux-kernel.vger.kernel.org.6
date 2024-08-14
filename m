@@ -1,332 +1,332 @@
-Return-Path: <linux-kernel+bounces-287109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B2695230D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:00:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26493952311
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91C86B243F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:00:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A63B1F22359
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65081BF32B;
-	Wed, 14 Aug 2024 20:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1AE1BF30B;
+	Wed, 14 Aug 2024 20:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Hxyy0YoH";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="gqSZrD2B"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nzZUlLDX"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C222920B0F;
-	Wed, 14 Aug 2024 20:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CC620B0F
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723665616; cv=fail; b=qg8wUBf7tslcXSmE/zzQaof2fclRVdirKDg1Q0Mapi4qbsdM0vfnyp5QEH+siobob/jacB/kOxbiBNTboSPyCx5aKFxUwX9mIgzHNaXDoBKL8ptsVCJURdkzVsoT1rVhBRgUGUkbBKfjaAyi6LF9ZdUfWGFEpHPgyooR1/rPVOU=
+	t=1723666018; cv=fail; b=GTFvfbqh88ZlEgIa4CPaiwBWM8xYnfP8JjRBEcCBmYxR9doEFh+I/UMvYAh02YacRc//TOrRcQ76cceSsPgL60rkCdnqFezZjMvZCOLfU32wkFVZVfJNP750+5u1mcyNkRbFNwvJHOoQWGWcAQZHg0EBRv5lxbaemN2k3ntMCYo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723665616; c=relaxed/simple;
-	bh=lFGRIjtCabAn141Ctz48ZPny1wzQoiruYn8/F9hp9HA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MKQiBPC93jEIH8ezNjZDf2/8KlPy0KWP7N5Hx067c4UC3im6jkKk8S3WgY/Z3EZWoVYA7GAWpstAcb13MFJ2NT6jSwSHlCdwZOWZuqY7FyD4mGTWRn7kCcUHKLSPZRN79ujny4o5BnjOFmcWRyPE4/U+Vd4YLZa/nA6/g41pqtI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Hxyy0YoH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=gqSZrD2B; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EIMTfX015137;
-	Wed, 14 Aug 2024 20:00:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=SvG06ATnhU24nT+
-	VAYelMhW1vIq7kED13aYVbuot0kQ=; b=Hxyy0YoHEgIjpZfxmmzg4NCnV+WGb3O
-	eDPCsjjDAVBesCPVNTwLslHXMPkGGUt728catqZF7KBS/YrQYT4OvE1X8nKblv8o
-	RyFx2m1gfQRbGK7bTp20eAR1EqCZs4VQp5LANpcJwfWzVBRoEJP8u+fjhW6vCUtN
-	XVzy8GT7qZkPgDBcADTz+oH7f6ZqRRQHm7uO8uQW9J7gNEB1RyLQ/NG/2O9v5C2h
-	H190pTJXzZm4a2//LnWe1go7SsPLkclvAgC8ChHme5wtFac/8PnX4sCYN0V4z8El
-	i8cJ9HM8HStIPo6rcG9ymgj4YY+XddOW0Ylm885OmC25zQqY/6wpfHw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wy031c03-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 20:00:06 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47EINhf1020991;
-	Wed, 14 Aug 2024 20:00:05 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxngvxuu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 20:00:05 +0000
+	s=arc-20240116; t=1723666018; c=relaxed/simple;
+	bh=bMOYpdq4jU76lYJGCiiANEt36O897jEvASTjrbsRzts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n5fG5yb4ufmOdh2vB4dWnCEAFATRe+KOjPrusH20PWvqd2Bw8QLt73cnHyo0dFsingd+/do5/den89BUnLWbI4cWZh4lOAa6L+IKhYY7LYvyw2fBqf8fUig9SXtljTfUMcjqNq5gb96RMftSNxvPoGUWr3960DwE7iQ5rnPvZzQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nzZUlLDX; arc=fail smtp.client-ip=40.107.223.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g5wCo05/xW5ygppBOUr35fdHKubGeo/mDa3B6cDZTNyDUwZGkNRY7xuDMJV9Oy8uKdHSsONT0limQ+yEbqjLnh9/gq4apMWsUt8CcA8EBCVu5Xm4XsskTsD0wTNX/PswJ18xezjpNfhzjGxtQN63fyzRNaUa57nAzJLMpnuZTi1yUN0MuwlgLqvrJMfQnJxwfEhZe4cVnN05+W4Fe4U/ZNKWJoD1/cfJ2VOogeRUFjYFwkUChqktZAnBxt6A4bMv8JxXnXxjkTgSslkzq795C1x7drDChkfRfBuuVFvfQv0toKEN7NyZZu+PBPz8uwazXLqN93QV45ulHYp2TgaJ9Q==
+ b=OJTunrBtXfa+4V5mAXshW5ojQqDqeqxZKRHP35YMSbr65ypUQ7sEoyFVIe1nJGipvM62R4x3GCDX2l/dEWn7HsW11EfGNJhEAeu58tVb0U61qzR2Na5oLEJ4nXx43J5PLjdbu2PTxYsjQGSGULh/hmOvVD9nDktpRTpQ9mvuMvqeMnbD7xBMhpFEt1USiiKgkJqR+gX/dGZtle84zt/NM2+k4QgrLUX1A7/gLUP9SvpdemdU0pfX5r0X2jQN3w4Z/CuQt+d/PiolgJsR52xgcWVVGPxuTzke4mug/7mRWRKILhT1LORGAuCxQuVymLoobLgGcdpDRX8egkneFR/Qpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SvG06ATnhU24nT+VAYelMhW1vIq7kED13aYVbuot0kQ=;
- b=b3hihZfEosWNiOPpuvNOko9NM8PfQ9VCU80/pDJjqVNV0JcBkTdN7sdVzjlUL4xSGwdxxLbCUzOVnVgkK7g8T6iEFv3JoKwdWvbSI+i5cUoCbZlAHEDsbHgrn8/D2a0IBJXSuqO8Uee9NdFN+zPS8KylbDxpg4tFC3uFflyoE35xXRkzygqZCi2cy/7hmt0YwN6iJgaqmMctePgydG10+04mWMIFX6TxbHSlGWVlcnKdhugp7ZAEnbKNyMJXx7KsRIqqYowDqrv/aNULKLpJhRifKtx6kgwvoNrDQKWFY3EGlZlRogulB9tiDGIq3kgO5cxMRP3CIDB6BgkQrpZuXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=XdBDATBVe751VwRjOllojzrOCPxt+DGde7hRH8dOuto=;
+ b=xlwjEmdch5Q3InGoZ9md45CdP1A1OBPJuC7L4LhZeFZhLcK4tH+LuNoYDLSdwcEhYOiLwYQWOM+42F+yb71Ks0yObyIwJ6rNfKbORB1t+MdREv8yg8GXMjnuK7urnhj2CPRxIrRTUZZ48j75Ti71fkXGtAxQcEServ5u4plW9wKwiZQKoQzOHPHyRadSKLFk8BEAiSFk1kuwjtLKDK9hh4pF/3ndgG6OlVnPbCyAWb3jo7EdHT+2ARjiWXTJC2EegYIPqlNEIyd6Hq/CuYTM/QNMkfqMs3zdZdbqMB1mw7jXxU1SNcZ7BcAOxRnbW8TJWuU1N5+lvGmYeRjI4E6gWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SvG06ATnhU24nT+VAYelMhW1vIq7kED13aYVbuot0kQ=;
- b=gqSZrD2B91zh+WL3lXvx1h83sOmmZneLFKWTWg5uD+WwE2pfl9/1PqYEHVywRK1LHInDALdElZzRhsyudP7x7rStWWAyROGYD2+CuDVXrw5oFxzLaAZPEH6Ba7OWL5dvVpILemUYev6jiHnJWzQHD4KlARFyjRZGOZsNjmc4bL0=
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
- by DS0PR10MB7127.namprd10.prod.outlook.com (2603:10b6:8:df::18) with
+ bh=XdBDATBVe751VwRjOllojzrOCPxt+DGde7hRH8dOuto=;
+ b=nzZUlLDX8HYrwzsU8e6T01LI10QlExuoQSBvm9On+c6xApv4WTaCvG0UK8L7BXJ/F313GsL1wN5LOD9QJN6HogRvtCL7JypFdXDd99zzPb1HMVRVx/usVCPaUdi9rGCj0zgs2bL1NE2kAjeQ1AQgAgUuK1TleqDFID1WCyvF6Ro=
+Received: from BYAPR02CA0053.namprd02.prod.outlook.com (2603:10b6:a03:54::30)
+ by BY5PR12MB4163.namprd12.prod.outlook.com (2603:10b6:a03:202::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.15; Wed, 14 Aug
- 2024 20:00:03 +0000
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29]) by SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29%3]) with mapi id 15.20.7875.008; Wed, 14 Aug 2024
- 20:00:03 +0000
-Date: Wed, 14 Aug 2024 15:59:58 -0400
-From: Kris Van Hees <kris.van.hees@oracle.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org,
-        Nick Alcock <nick.alcock@oracle.com>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jiri Olsa <olsajiri@gmail.com>,
-        Elena Zannoni <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v5 3/4] scripts: add verifier script for builtin module
- range data
-Message-ID: <Zr0MvswCE3VJBKhp@oracle.com>
-References: <20240716031045.1781332-1-kris.van.hees@oracle.com>
- <20240716031045.1781332-4-kris.van.hees@oracle.com>
- <20240814151945.122da7b6@gandalf.local.home>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814151945.122da7b6@gandalf.local.home>
-X-ClientProxiedBy: SJ0PR05CA0142.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::27) To SN7PR10MB6287.namprd10.prod.outlook.com
- (2603:10b6:806:26d::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Wed, 14 Aug
+ 2024 20:06:51 +0000
+Received: from SA2PEPF000015CA.namprd03.prod.outlook.com
+ (2603:10b6:a03:54:cafe::91) by BYAPR02CA0053.outlook.office365.com
+ (2603:10b6:a03:54::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
+ Transport; Wed, 14 Aug 2024 20:06:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF000015CA.mail.protection.outlook.com (10.167.241.200) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7828.19 via Frontend Transport; Wed, 14 Aug 2024 20:06:50 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
+ 2024 15:06:50 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 14 Aug 2024 15:06:49 -0500
+Message-ID: <c0a66ae8-43ec-257f-92c5-6ecbfcd45c1a@amd.com>
+Date: Wed, 14 Aug 2024 13:06:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V2 00/10] AMD XDNA driver
+Content-Language: en-US
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240805173959.3181199-1-lizhi.hou@amd.com>
+ <292c06d0-b96a-b5b5-5d82-e74b82bbb6de@quicinc.com>
+ <d7f757e9-ed6e-7be6-89db-3ec9ddbb8050@amd.com>
+ <1aadcb3d-75e2-285c-2244-e472cc21bb97@quicinc.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <1aadcb3d-75e2-285c-2244-e472cc21bb97@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB04.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|DS0PR10MB7127:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d46acd1-27ab-40bc-b5ff-08dcbc9baf5b
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015CA:EE_|BY5PR12MB4163:EE_
+X-MS-Office365-Filtering-Correlation-Id: a46c13f0-8b54-4d3f-e86d-08dcbc9ca2a3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?V/vHTlYORZUtw8H07ZDgwtimYNOng+RlrimYAS9PZRP2vbAH6kr+v89o1Tlh?=
- =?us-ascii?Q?f/DJ9/M5zT0MqLoAhCJGGxsniqmQ7MQ9gZDi6M7cakA3ulZTABpRvMR9wJGO?=
- =?us-ascii?Q?Sq/cyIkHpggpFqjr1nc2NlYkhQUVjsMxxO9jZWHnCXsoZF5n5ReIt++/iPOW?=
- =?us-ascii?Q?WnwNL0sOlrteVh/+z/7/Ed6NBGbNEVEhiESM4NE1hwzIv/rjwb5bo8XQ+Ogl?=
- =?us-ascii?Q?fbNfWoT+R556UXbq6MNn6JmX4jE+GpqBzHuX/8lgQN9aYEsvPraB1OQPJZd9?=
- =?us-ascii?Q?IwrIktn4k1kKNYnbg5K7uG4AJL0H6b3IqQFf0TgA1bpcRn+CCyygXeWGmzaK?=
- =?us-ascii?Q?jkCbYutDzo2riDrtllIMyFISHCZvXKTk54fzodiNw7z48rEUDfvBUc/RGPwa?=
- =?us-ascii?Q?tO5XKsDR7E+8/ZYm88q9X+G1rVi02kRW+H/9P7ZZ50Q0CnKc+UUPbOh56qod?=
- =?us-ascii?Q?n4JVNm4Bhy7kvDSNj59aOXjKkSgQ1JOw3ur8R4Mv5WIyPUYISvMk1CMCwhmh?=
- =?us-ascii?Q?WkFEN8pISCGzOGP/ivUjcAKzji6fXH2mkO6WvbRg0WzWP5RNwVDC178lAIMQ?=
- =?us-ascii?Q?0K8hAyBsjvljGvUTVLZBlpZjsk7pmIZ6LktdfKhDAZubZA8KvBhFG9cQDCLp?=
- =?us-ascii?Q?EfZJGDReY5Ki7Am5w8TF2vKcZX1dUoEhstK7mu2Vir7H9//kMmEgcxSptPon?=
- =?us-ascii?Q?16ROlg98k4H5ewf+PK+NJxtJpDq0d08QMibAq1R90l4P6jbklCIEq4y8mbXG?=
- =?us-ascii?Q?VgBs7rtPYNykWB7upzmFUovyenpKEm4zoF6jbcIwcqlhquE/R7f2V1Tynq7W?=
- =?us-ascii?Q?LezacehmrA+/ipMUEA4I/Po/7cNYiMiL5TtFmvvU7lmcqkeYs01a/A2UrUvz?=
- =?us-ascii?Q?Ex47TxDE+6QrMsdH4zpH7GTBtN+9rp2cuWlv9+un+cYNpcSdh+p2xRA1yKk1?=
- =?us-ascii?Q?blu9fd2y9NCUzh3383WyEAgKzsdVU8b7r3Ur71qHyKDXv98Z2y5zfwOvcUqN?=
- =?us-ascii?Q?aps1cYHz4Cm4NfG53XgReqzJbgGqi8MyVBy1dLGNsTC1otxwx1/topxV9FGq?=
- =?us-ascii?Q?LDGOaexU/3InjrSh+lAzVF6u1S+iBH50VeGShzlDPAypv2gP+SQ0ExFRnqUn?=
- =?us-ascii?Q?dOlJZuaxqb9aXUiT4M5GT/LbmyCXi6JXFCf3rU57HXrtuPaNPSqtAf8K5SS/?=
- =?us-ascii?Q?yk2azWwheNZMfwCIfts53fdyVez0uxVBD5W0ozVlUHX3c/JGo15eiW1Woe1w?=
- =?us-ascii?Q?sk0OpVuFlIBrNUF+tyC6ZkGYRCfzmk06nq0WiiZTATWUz5B2TQUQ4B45Ef8M?=
- =?us-ascii?Q?vOxarpEoWBVpTv7uNsRbp4XLmDte5Z5WkBcShY3o4SspWw=3D=3D?=
+	=?utf-8?B?MGQ2Mmk4UmhnKzEyZERUQzkzb0o1OG1aLzFDRUh4TitwLzI1Mnk0d0kraG5n?=
+ =?utf-8?B?djViREtOc1JWTlRodUhWVkJ6RFlMT0ZVMjFkSkQwM1lUa3FlaVVPTTVGYXdJ?=
+ =?utf-8?B?ZHdpMmJhUHZiOFJDRGRtZTNzZmxqRlcxQ0NpN1d5eDNIVk9qNWkvQnFqYTBH?=
+ =?utf-8?B?Q3dvcG5YWUlnY0h2R0pmbUtXdHNVdmc1YWx1T3kzeWk0elBUL3c5WkNwN3pU?=
+ =?utf-8?B?eTlRYWQxRHMyb0FIZWdzNis4NnYxRHl6c3B2TStBbHBNRlh4dUVEY2w3dzh6?=
+ =?utf-8?B?MCthM0xpdGdLZkFJTUdaWk1GMjM5d3k4T1IzUVJRcWhlcnR2dm1LRFJ6SHhI?=
+ =?utf-8?B?c1RjNms2MXJHYUphbGJWaXU0V1JBNmN5WGRXaGpNeks1SGxJSTZUU1NWOEc3?=
+ =?utf-8?B?ODhSWDVHamp3bEZYVU5YaGZMVEQyeDBuaS8xR2xRaUxtaGtGaUlBN2xPczMv?=
+ =?utf-8?B?eDd3SUxoK1lPbGI3cHdtZjdLM2hnUU81VGtWcUZpRUtYNTE1QkZ3YzBpb3c5?=
+ =?utf-8?B?MU54UWV3RnZPVHgwdDcxSEhXejIzVWNvZXlra05iN21PVEV6bm9uNVdUdFdq?=
+ =?utf-8?B?R0RwYWNNMnIydVhQUnJCcjBYTjFhNUgvQXEvcy9EM1JuSlVXVTd5cjE2WHRX?=
+ =?utf-8?B?eTFJRGxLRE5Ra1Vnb05XZTdPY0MzUndpOHNhSVBtdlVnU2xkU1kxK0orOVlT?=
+ =?utf-8?B?c3dBeUs2TTRBMy8vYis5bGowdDk1NW1vdmhic1oyMTVXZjgraEcybks5VlpJ?=
+ =?utf-8?B?RHRqWE5MNTNVbGhqaExEOGRUU2Fady9sVEFNdHp0eDNmSndoTzAvVEdZVmdp?=
+ =?utf-8?B?VFRxVEhCbUx2SEVqV0JpeDE2VEZ4c1pFNDNDeFpPUk1SanJ2Nk1FblpwYnJW?=
+ =?utf-8?B?QWNIL0JUQ2U3TThQSFQ3TU5iMWQrbnpveUZhNmkrRzJ1T1I1cEw0NTdlNGFF?=
+ =?utf-8?B?QmtvWFl6TVYycERHS09NUUJ2K3hUUk95NjFVUHUra0Q5OERjdmMydnpwQm5s?=
+ =?utf-8?B?d1pYSlJhU0U5MDFqZ0hxSTVUK1hCdXBnMnR3SkNwVWRiZXdJMWUrUCtmb1Y5?=
+ =?utf-8?B?M0hUQXdzTVZ2RDYxanJmN1o5MkJRYzNnazhqMGNsbmN5U0xsbUMvMkVmT0Zv?=
+ =?utf-8?B?bjZ5SnZLSXQ1Q0pZajBQVHc3a3M5c0o2bXRrcXRncUFKbTVxUnE3cy9waWlU?=
+ =?utf-8?B?SHZMbDJQR2F2SUJGbWdtKzlzYkRsQkQ0RFJraHVkNkRHN1daTGsrSDlKWkJM?=
+ =?utf-8?B?Y3FXZFFPYlR0dStKY3BBOFNKUUhCMHpReENXR0NOWkdvQm9NMHV4a0NFVk96?=
+ =?utf-8?B?enl4OTJHeW1paEhhWncxY05hcVprcW5rN1dvT2pwaHYvRzhnMFBWTG10bFZC?=
+ =?utf-8?B?MTgvM0wvanNxV0RqeExjYlI0eUZPUjRGSVhKWFhlazBNT25uOVhubGFGbDlO?=
+ =?utf-8?B?bkI5NmdGV1phM0NqcFlxcEp1UjNuQlcxY2tFem5Fb1VwYi85M1czczNnSDJo?=
+ =?utf-8?B?YzNtdW9STmI4QmkvSWI2dDA0eWtraUVTRDhUNnkwUU5BeTJNRVR4aWhxRWp0?=
+ =?utf-8?B?a3dHYXZNZ1pxcko4aEo5SGFxNzRhTGdXeDhWY2QyMHArRU1CTlZnbndLM213?=
+ =?utf-8?B?NzZZa0Jnd0RUN0VNRTBERGdxc0xJcW1lSXRubEMrSXptaFM5aStmSU1TWlBD?=
+ =?utf-8?B?TE1YcTR3RFBpWFpTYXBFT3o3MHBRYTJZa1RjK1ZxV3djWERKa0ZNbnVqakpp?=
+ =?utf-8?B?aUFOcURkVFUxd1FZajgrUTNaUElGZXVQU1RZMTNpWDZvN21rNFR1cEFCaEdN?=
+ =?utf-8?B?cmFSMVRVT3NiZ1pQRXQ5dkFxaXdxQXRaUGkwaVdJdHFMSUpqS3pndWFLaTRC?=
+ =?utf-8?B?ZTc3Vnh2WXp0cXpETWpGaUJGejA4OWRZdlJHQXljaTg1bnc9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ooHxv3reTxb+uciHxEwlIr2qNXqnanFK5t4TsiwgWgMsaVpz/Zddl1enSjer?=
- =?us-ascii?Q?kQjO3lXu3BjKRnK7/bOLdbc+lZtrkZ7sTnPBgPqi3XDpv/hP/xplULLHThy2?=
- =?us-ascii?Q?z50wPs0CS6BiE6O/d15hl+N8X5Q6g1oskanRJPHKCSxeE8BMmqdFrsuBiHLy?=
- =?us-ascii?Q?o0Wg1OcRfuaepzsh7kQHNkWOfnHSDPVH2ax2Epzz4zUgUDBKKsBnNNFq9yLV?=
- =?us-ascii?Q?eTcrjA6WcHTtJ3JvUPUlM0YnGFaLyZFy0JH5tH1np9Ut7foxYWBfKZ9SALIn?=
- =?us-ascii?Q?obrBVJzdW+ukbNNBU7PQLvUmxGW2uO40on2OwmbCiXmVIA7Iij6zyV9NRqN2?=
- =?us-ascii?Q?iqXbS+OiNwj002ftOtS10h/ah8uLWuTdPnAnNLmgQtXHfM1tLczx7W0UyWhK?=
- =?us-ascii?Q?gtrCieugLbwH2p+pUtY8WCGpAYR9+CzNCfc2piKookQYmD0/q04KWav/JF8N?=
- =?us-ascii?Q?+OmWM98nlN8F4lCD8RScJxS3zv+pGsWwNtv0ofnBM8vUwD+wOSl0geyTnObi?=
- =?us-ascii?Q?SqAjgmq9pzc5YOd6nGUBt6KnpisX2OZGpRsH+nIcFFDaJaX7Wa2RW3Qeauud?=
- =?us-ascii?Q?p2NthjR1u54EsA2SUf6/ZEuyxQKCKt4Ems7g4Oz9wMBVF/sJl+kbDWkgyca/?=
- =?us-ascii?Q?nLhZ2xEpNZGOpRhJCTwcPG+SjSb8F0sKH53HZHyZYTMnNmBsCzm9nR6YPYWC?=
- =?us-ascii?Q?woSU3smVHZ+fGx5qXMKpa7cSN/mI5NVJbDUHMtjGF97OIaMcwjAbJ2A4rIoq?=
- =?us-ascii?Q?iI9uGBAMjcTs553ph0As7JWay+tUMTKoqIiIspDlkDw7MUbLjXDuk+AqzhIJ?=
- =?us-ascii?Q?xtVgAg4HQy9nzeSAQjLaWu8BzFYPwaESYwtD6EqzEyQyU+vJRj9Nn1IVBpv3?=
- =?us-ascii?Q?wRViATXPkcncke1ylVmFpl7lwypfv39ukGwMe5iPdrgnku51UES3/F18IRPl?=
- =?us-ascii?Q?rDWPTdr3fYJVCyRIor4zqjBtvMnIOIFt3/Pp8UllWkPilDbFoim6ye6iPryi?=
- =?us-ascii?Q?g2xaZhZnwqt7IVOOcuw/jQMJQ/HQmYIrXWWhMbQYBTR0nvOa6bqTm9ufmdXY?=
- =?us-ascii?Q?YJdiDuUNU9HbET7JqPngUR6zfZ+6zAWeYtnDBJ/FYGUa7RMOPK5J++H9zFda?=
- =?us-ascii?Q?tbPD3Ta1iG/2IlFtSYyRTV7TRYJVbasJPszxxhnO7Bompily+dwiPL9lEKC1?=
- =?us-ascii?Q?/ZyU8UYFjKfot1h6D2wnLC/6Bb4XlF55dzPEiwU5UUfoMOHuzcygSXfDY1Wi?=
- =?us-ascii?Q?gqVhLJaIz878ClhB2GdoxRE/MHw97Xvmx441IN3/DjeGt17Bth1ro3OIBMmt?=
- =?us-ascii?Q?9SlXo+VcVeO/HDMOg0TiF6XnE70CO4+hwN3xYtbi0GXDqZObekxvJn7ZYRbd?=
- =?us-ascii?Q?BgFZEIFNbrCnAksT0qfVLpGXsbCEXGbBGHxcClel0KdB2AR2hiIIOl/hzzKO?=
- =?us-ascii?Q?hTKz5tt0k5YAyaBLVFp8BELi8K/vkyhXrlc93A8IfkHY1yqE7E5x2r2xOOEo?=
- =?us-ascii?Q?j+axzPjL3vZE0ynwkbxxKPyfIadjh/1JOv9YikaPg841oyY7ueJnix1ug82W?=
- =?us-ascii?Q?K4ROilB/UieWab5qSqgFYrgx5SyZRoG98StEQjUYYvqIY5Rw8QT4ObmrRPY9?=
- =?us-ascii?Q?LA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	WjGH6sjSlNtWDVo5OqPAjfDLjXfFcI6R0gglVAckweeOSylLlY77cH+eWCkslVRBj4ILPv3UIFWzZATq+YQV7dGYT2gOIr+V1/aunwtMdUJ9Q6PAIiE6omRjQjTk65zNt2EMcjA4j/lwxCz3cN20l3FS/qsl6v7OvBzSvL5YIFa3QPeXx5viCbr86BNmt4NSMuUzD6DOMYv2mhjDAQ8cuN9j1FgIsoNyEt3nHY845gDth5phMi3ERUWzberpVUWSyg6wepLhyHD0B23ktXoz2lPwtyBzixRFFy56ZqZx+jtjIKCw9z5nL24xpHkmp+Eko/yigMKVbfTE9Ye1XZtbS9HrfBhSQOHSi1ZUeP40mDru0gclHhjRC/U7WVk3+YqFCOwNiWz6/AttzHBYmwEKs59Qfb9K3SKdk2AW2tWXfW1BD5rkMt0SQpgpe/vDW1Hpd3bV9h/y+89pw9ee+11HIFzNUQIC4Zltd6qs+nFU02AO04pAWjTHy/xMBXLfMNHf/rYj+p9yFDtq09LS1Y0n7wZYYB4fl7gj81rU1+KVIjFKU0xNwr/Ntx9kavCsDqIG0frI4KbTkZOhG4fw37/MlxxAct0dv3jtH2VnBpiDsN8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d46acd1-27ab-40bc-b5ff-08dcbc9baf5b
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 20:00:03.0156
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 20:06:50.8557
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DEcNAu/sElF1yqdRsD11fVZysjcfQDPqeE1wLbxOwKYYwASFYFbHkOKsHmt0XvMSlk3aWlBa1H3dPPyXMnFmyQ0x7eW85mwgvgmKrAD2+80=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7127
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_16,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 bulkscore=0
- phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408140137
-X-Proofpoint-GUID: MH8uL0VeXO6NsbkrxtMiKm6h8ZTyf1e9
-X-Proofpoint-ORIG-GUID: MH8uL0VeXO6NsbkrxtMiKm6h8ZTyf1e9
+X-MS-Exchange-CrossTenant-Network-Message-Id: a46c13f0-8b54-4d3f-e86d-08dcbc9ca2a3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015CA.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4163
 
-On Wed, Aug 14, 2024 at 03:19:45PM -0400, Steven Rostedt wrote:
-> 
-> Hmm, does this handle my concern from the last patch. That is, if the
-> previous script is broken by some change, this will catch it?
-> If so, should there be a way to run this always? As it looks to be only
-> used for manual tests.
 
-It is meant to address detecting things going wrong, yes.  I hesitate to make
-this validation be something that is always executed because I wouldn't want
-to disrupt people's kernel builds with failure that are not critical to the
-operation of the kernel itself.  I could make it a config option so it can
-nbe enabled for those who might want to, e.g. for release building?
+On 8/14/24 11:49, Jeffrey Hugo wrote:
+> On 8/12/2024 12:16 PM, Lizhi Hou wrote:
+>>
+>> On 8/9/24 08:21, Jeffrey Hugo wrote:
+>>> On 8/5/2024 11:39 AM, Lizhi Hou wrote:
+>>>> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD 
+>>>> NPUs.
+>>>> The driver is based on Linux accel subsystem.
+>>>>
+>>>> NPU (Neural Processing Unit) is an AI inference accelerator integrated
+>>>> into AMD client CPUs. NPU enables efficient execution of Machine 
+>>>> Learning
+>>>> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
+>>>> architecture [1].
+>>>>
+>>>> AMD NPU consists of the following components:
+>>>>
+>>>>    - Tiled array of AMD AI Engine processors.
+>>>>    - Micro Controller which runs the NPU Firmware responsible for
+>>>>      command processing, AIE array configuration, and execution 
+>>>> management.
+>>>>    - PCI EP for host control of the NPU device.
+>>>>    - Interconnect for connecting the NPU components together.
+>>>>    - SRAM for use by the NPU Firmware.
+>>>>    - Address translation hardware for protected host memory access 
+>>>> by the
+>>>>      NPU.
+>>>>
+>>>> NPU supports multiple concurrent fully isolated contexts. Concurrent
+>>>> contexts may be bound to AI Engine array spatially and or temporarily.
+>>>>
+>>>> The driver is licensed under GPL-2.0 except for UAPI header which is
+>>>> licensed GPL-2.0 WITH Linux-syscall-note.
+>>>>
+>>>> User mode driver stack consists of XRT [2] and AMD AIE Plugin for 
+>>>> IREE [3].
+>>>
+>>> Is there a special branch with the code?  I don't see any of the 
+>>> uAPI in either project when searching for the ioctl codes or ioctl 
+>>> structures.
+>>
+>> Please see git repo: https://github.com/amd/xdna-driver
+>>
+>> This contains the out tree driver and shim code which interact with 
+>> driver. E.g.
+>>
+>> https://github.com/amd/xdna-driver/blob/main/src/shim/bo.cpp#L18
+>
+> Ok, I need to have a look at this.  Long term is the plan to move the 
+> shim to the XRT repo once the driver is merged upstream?
+Yes.
+>
+>>
+>>>
+>>>>
+>>>> The firmware for the NPU is distributed as a closed source binary, 
+>>>> and has
+>>>> already been pushed to the DRM firmware repository [4].
+>>>>
+>>>> [1] https://www.amd.com/en/technologies/xdna.html
+>>>> [2] https://github.com/Xilinx/XRT
+>>>> [3] https://github.com/nod-ai/iree-amd-aie
+>>>> [4] 
+>>>> https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu 
+>>>>
+>>>>
+>>>> Changes since v1:
+>>>> - Remove some inline defines
+>>>> - Minor changes based code review comments
+>>>>
+>>>> Lizhi Hou (10):
+>>>>    accel/amdxdna: Add a new driver for AMD AI Engine
+>>>>    accel/amdxdna: Support hardware mailbox
+>>>>    accel/amdxdna: Add hardware resource solver
+>>>>    accel/amdxdna: Add hardware context
+>>>>    accel/amdxdna: Add GEM buffer object management
+>>>>    accel/amdxdna: Add command execution
+>>>>    accel/amdxdna: Add suspend and resume
+>>>>    accel/amdxdna: Add error handling
+>>>>    accel/amdxdna: Add query functions
+>>>>    accel/amdxdna: Add firmware debug buffer support
+>>>>
+>>>>   MAINTAINERS                                   |   9 +
+>>>>   drivers/accel/Kconfig                         |   1 +
+>>>>   drivers/accel/Makefile                        |   1 +
+>>>>   drivers/accel/amdxdna/Kconfig                 |  15 +
+>>>>   drivers/accel/amdxdna/Makefile                |  22 +
+>>>>   drivers/accel/amdxdna/TODO                    |   4 +
+>>>>   drivers/accel/amdxdna/aie2_ctx.c              | 949 
+>>>> ++++++++++++++++++
+>>>>   drivers/accel/amdxdna/aie2_error.c            | 349 +++++++
+>>>>   drivers/accel/amdxdna/aie2_message.c          | 775 ++++++++++++++
+>>>>   drivers/accel/amdxdna/aie2_msg_priv.h         | 372 +++++++
+>>>>   drivers/accel/amdxdna/aie2_pci.c              | 756 ++++++++++++++
+>>>>   drivers/accel/amdxdna/aie2_pci.h              | 264 +++++
+>>>>   drivers/accel/amdxdna/aie2_psp.c              | 137 +++
+>>>>   drivers/accel/amdxdna/aie2_smu.c              | 112 +++
+>>>>   drivers/accel/amdxdna/aie2_solver.c           | 329 ++++++
+>>>>   drivers/accel/amdxdna/aie2_solver.h           | 156 +++
+>>>>   drivers/accel/amdxdna/amdxdna_ctx.c           | 597 +++++++++++
+>>>>   drivers/accel/amdxdna/amdxdna_ctx.h           | 165 +++
+>>>>   drivers/accel/amdxdna/amdxdna_drm.c           | 172 ++++
+>>>>   drivers/accel/amdxdna/amdxdna_drm.h           | 114 +++
+>>>>   drivers/accel/amdxdna/amdxdna_gem.c           | 700 +++++++++++++
+>>>>   drivers/accel/amdxdna/amdxdna_gem.h           |  73 ++
+>>>>   drivers/accel/amdxdna/amdxdna_mailbox.c       | 582 +++++++++++
+>>>>   drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
+>>>>   .../accel/amdxdna/amdxdna_mailbox_helper.c    |  50 +
+>>>>   .../accel/amdxdna/amdxdna_mailbox_helper.h    |  43 +
+>>>>   drivers/accel/amdxdna/amdxdna_pci_drv.c       | 234 +++++
+>>>>   drivers/accel/amdxdna/amdxdna_pci_drv.h       |  31 +
+>>>>   drivers/accel/amdxdna/amdxdna_sysfs.c         |  58 ++
+>>>>   drivers/accel/amdxdna/npu1_regs.c             |  94 ++
+>>>>   drivers/accel/amdxdna/npu2_regs.c             | 111 ++
+>>>>   drivers/accel/amdxdna/npu4_regs.c             | 111 ++
+>>>>   drivers/accel/amdxdna/npu5_regs.c             | 111 ++
+>>>>   include/trace/events/amdxdna.h                | 101 ++
+>>>>   include/uapi/drm/amdxdna_accel.h              | 456 +++++++++
+>>>>   35 files changed, 8178 insertions(+)
+>>>>   create mode 100644 drivers/accel/amdxdna/Kconfig
+>>>>   create mode 100644 drivers/accel/amdxdna/Makefile
+>>>>   create mode 100644 drivers/accel/amdxdna/TODO
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_error.c
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_message.c
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.c
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.h
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_psp.c
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_solver.c
+>>>>   create mode 100644 drivers/accel/amdxdna/aie2_solver.h
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.c
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.h
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
+>>>>   create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
+>>>>   create mode 100644 drivers/accel/amdxdna/npu1_regs.c
+>>>>   create mode 100644 drivers/accel/amdxdna/npu2_regs.c
+>>>>   create mode 100644 drivers/accel/amdxdna/npu4_regs.c
+>>>>   create mode 100644 drivers/accel/amdxdna/npu5_regs.c
+>>>>   create mode 100644 include/trace/events/amdxdna.h
+>>>>   create mode 100644 include/uapi/drm/amdxdna_accel.h
+>>>>
+>>>
+>>> No Documentation?
+>>
+>> Is it ok to add a work item to TODO and add documentation in later 
+>> patches?
+>
+> I beleive best practice would be to add Documnetation in the same 
+> patch/series that adds the functionality.  I'm not expecting 
+> Documentation for items not implemented in this series, however I 
+> think describing the product/architecture/other high level topics 
+> would help put the code in context during review.
+>
+> It does seem like the AMD GPU driver had a lot of documentation, which 
+> makes the lack of documentation for the AMD Accel driver particularly 
+> odd.
 
-Does that make sense?
+Ok.  We will work on the document
 
-> On Mon, 15 Jul 2024 23:10:44 -0400
-> Kris Van Hees <kris.van.hees@oracle.com> wrote:
-> 
-> > The modules.builtin.ranges offset range data for builtin modules is
-> > generated at compile time based on the list of built-in modules and
-> > the vmlinux.map and vmlinux.o.map linker maps.  This data can be used
-> 						^^
-> As my daughter keeps reminding me, nobody uses double spaces after a period
-> anymore ;-)
 
-I am old-fashion :)
+Thanks,
 
-> > to determine whether a symbol at a particular address belongs to
-> > module code that was configured to be compiled into the kernel proper
-> > as a built-in module (rather than as a standalone module).
-> > 
-> > This patch adds a script that uses the generated modules.builtin.ranges
-> > data to annotate the symbols in the System.map with module names if
-> > their address falls within a range that belongs to one or mre built-in
-> 							   "more" ?
+Lizhi
 
-Oops, yes, thanks.
-
-> > modules.
-> > 
-> > It then processes the vmlinux.map (and if needed, vmlinux.o.map) to
-> > verify the annotation:
-> > 
-> >   - For each top-level section:
-> >      - For each object in the section:
-> >         - Determine whether the object is part of a built-in module
-> >           (using modules.builtin and the .*.cmd file used to compile
-> >            the object as suggested in [0])
-> >         - For each symbol in that object, verify that the built-in
-> >           module association (or lack thereof) matches the annotation
-> >           given to the symbol.
-> > 
-> > Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> > Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
-> > Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-> 
-> After running this, I do get a lot of messages:
-> 
-> uncore_pmu_event_start in intel_uncore (should NOT be)
-> uncore_pcibus_to_dieid in intel_uncore (should NOT be)
-> uncore_die_to_segment in intel_uncore (should NOT be)
-> uncore_device_to_die in intel_uncore (should NOT be)
-> __find_pci2phy_map in intel_uncore (should NOT be)
-> uncore_event_show in intel_uncore (should NOT be)
-> uncore_pmu_to_box in intel_uncore (should NOT be)
-> uncore_msr_read_counter in intel_uncore (should NOT be)
-> uncore_mmio_exit_box in intel_uncore (should NOT be)
-> uncore_mmio_read_counter in intel_uncore (should NOT be)
-> uncore_get_constraint in intel_uncore (should NOT be)
-> uncore_put_constraint in intel_uncore (should NOT be)
-> uncore_shared_reg_config in intel_uncore (should NOT be)
-> uncore_perf_event_update in intel_uncore (should NOT be)
-> uncore_pmu_event_read in intel_uncore (should NOT be)
-> uncore_pmu_event_stop in intel_uncore (should NOT be)
-> uncore_pmu_event_add in intel_uncore (should NOT be)
-> [..]
-> usb_debug_root in usb_common (should NOT be)
-> usb_hcds_loaded in usbcore (should NOT be)
-> iTCO_vendorsupport in iTCO_vendor_support (should NOT be)
-> snd_ecards_limit in snd (should NOT be)
-> snd_major in snd (should NOT be)
-> snd_oss_root in snd (should NOT be)
-> snd_seq_root in snd (should NOT be)
-> ip6_min_hopcount in ipv6 (should NOT be)
-> ip6_ra_chain in ipv6 (should NOT be)
-> raw_v6_hashinfo in ipv6 (should NOT be)
-> Verification of /work/build/nobackup/debiantesting-x86-64/modules.builtin.ranges:
->   Correct matches:   24962 (75% of total)
->     Module matches:      0 (0% of matches)
->   Mismatches:         8262 (24% of total)
->   Missing:               0 (0% of total)
-> 
-> 
-> What does this mean?
-
-Hm, this is certainly why the validation script exists.  I am surprised, though
-not entirely because kernel changes toward the 6.10 branching and such came
-after I create this version.  Would you be willing to send me a copy of your
-.config for this kernel build so I can investigate?  This output is typical
-of a case where the script was not able to determine offse ranges correctly.
-
-	Kris
-
-> > ---
-> > 
-> > Notes:
-> >     Changes since v4:
-> >      - New patch in the series
-> > 
-> >  scripts/verify_builtin_ranges.awk | 348 ++++++++++++++++++++++++++++++
-> >  1 file changed, 348 insertions(+)
-> >  create mode 100755 scripts/verify_builtin_ranges.awk
-> > 
-> > diff --git a/scripts/verify_builtin_ranges.awk b/scripts/verify_builtin_ranges.awk
-> > new file mode 100755
-> > index 000000000000..a2475a38ba50
-> > --- /dev/null
-> > +++ b/scripts/verify_builtin_ranges.awk
-> > @@ -0,0 +1,348 @@
-> > +#!/usr/bin/gawk -f
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# verify_builtin_ranges.awk: Verify address range data for builtin modules
-> > +# Written by Kris Van Hees <kris.van.hees@oracle.com>
-> > +#
-> > +# Usage: verify_builtin_ranges.awk modules.builtin.ranges System.map \
-> > +#				   modules.builtin vmlinux.map vmlinux.o.map
-> > +#
-> > +
-> > +# Return the module name(s) (if any) associated with the given object.
-> > +#
-> > +# If we have seen this object before, return information from the cache.
-> > +# Otherwise, retrieve it from the corresponding .cmd file.
-> > +#
 
