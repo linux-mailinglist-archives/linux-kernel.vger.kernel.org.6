@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-286131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EAB9516FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8CE9516FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BE9D1C22667
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:48:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAFFC1C22AAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE6E143894;
-	Wed, 14 Aug 2024 08:48:01 +0000 (UTC)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FCE14373B;
+	Wed, 14 Aug 2024 08:48:40 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FD31422C3;
-	Wed, 14 Aug 2024 08:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FC8137772;
+	Wed, 14 Aug 2024 08:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625281; cv=none; b=J0nIpOgRkM1CSx2XRwutCuSqEqwXdQdwt1ftzTHjrkfUnkVpqfGrC1E3GJ5sbP+02S3Ma+Wenhhx908PwYJcDaSxhmqtQHvbC8U4XSxq9I+4h6qyZLy/zvDZ9VfjmQ4pHgSFFTQzXQ3DgqIqQWA7ZZ3GPpsbpi+5Nhfun2SBDA0=
+	t=1723625319; cv=none; b=DMSC2Oi63kQVwh+gHu2iAL7AkdlQmbycoReeZlmJK8FSYhF5WG2HQdLsfR77CJzqwui8C9uGXmkgV2FSu7KT+ri1o5RJqKU8L9k3wpRfddR2xVBv9Dhge7HYFhvOd3F0L7Kl4ZhhVQhjtkV4qNKdG8jK66eaXjIX8YS9bKbveTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625281; c=relaxed/simple;
-	bh=9rX+RbnLcib1ASYWBSEvXjPcnKmaUtLTBClkTMxRHmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYoeoNHkvGfv2UxnYWcIACeZN2D7yvetZWgIhLkl7j938EudXLb3VX47/lY9MP8MTJqObj+Kf0i9O/oml18p2KdrIkeVY+aLD+E/IuipntlW5OQs6RPI2mGMU86HgTRcObK9GUOH750IVjIRRJpqCRBDzqhWFtBWg87IRBg3tDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so67243341fa.3;
-        Wed, 14 Aug 2024 01:47:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723625277; x=1724230077;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XoEzFPa5Og2Psgq4HyInxDXXf39Xj956SzleRo/JzaU=;
-        b=Kg4d3HUqzEJSfeigGbJOlX7HILpadnLHqcZwutJ1onb1tNabHYTSgrHAnTAbqXJQXZ
-         3ULrF8ZpmHn+r1inae13MvlUigyANshu6AaxOt+P85lXEWyMWjOGTMryL/rIym5rGOo0
-         +00UZPJ7kSi4Cf45U3uGRRkh18o7KedLTiqGQX8HGvzVnUan6Fh1vl3EiIsgKPu6pU6X
-         pllCjSn6iHtR/cSTbVM4pczmHeSAe2bn/F2vNap/hEdgmJ3HALBzfkM+RSoSHyxqjVdj
-         +kw4L864tE3IzgWQTcRaarIT10SJnbZIoVQJWwgsO60oUcezmJODyTQEbxHgb9j5+gTZ
-         07Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq2m0IQzNm2SJgsOec3EHvjyTLBxv4xhHxSrJ2fdIA5KDUB+LeB9XQj//NKAe4K67SmBDaDE8vMpDo/U57FnYq8EsDE162HF+jJOHOtUtufxSJ2T6Xlm3RBV+papMASoKv1sQv2wNyAiX6b3R3E60gE53gs9Ia5BcJGTVi/1hqlNvD5KY=
-X-Gm-Message-State: AOJu0Yy90eEu7NM1F1s3Ti1rv7oTUcVZei5fHGSP9+/5aG2Dh/Hl6Xzv
-	XJZptYFyO6pXB7rMiW1LMGScmsJjJIq8xjof3vbKTHvpIMTMFArx
-X-Google-Smtp-Source: AGHT+IG13U8UpfbcuMATjHLEmJgpXZZ1NeV/050xdRLNneKphbDxbBSwsFcLsfpPAQA1ApzdC8fRNw==
-X-Received: by 2002:a2e:4609:0:b0:2f3:abca:8b0f with SMTP id 38308e7fff4ca-2f3abca8c13mr8201251fa.27.1723625276758;
-        Wed, 14 Aug 2024 01:47:56 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a602115sm3598747a12.96.2024.08.14.01.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 01:47:56 -0700 (PDT)
-Date: Wed, 14 Aug 2024 01:47:54 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] Do not mark ACPI devices as irq safe
-Message-ID: <ZrxvOr6O8weK5cB6@gmail.com>
-References: <20240813161254.3509409-1-leitao@debian.org>
- <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
+	s=arc-20240116; t=1723625319; c=relaxed/simple;
+	bh=69Ir8pqfruuAGKn5gHlIEQZArS4OW0abJVb6NIeD8Ek=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=REGPBJhvIBDDkXpw2j2PWhXLUTVKSOSUu5+Zl4quiyCHvSs/JgBaFaeaGX9FIcgKQAgw0Xkv6j0+rXVgBf6jNGE4/1alXtWHAj5HK+Ha9jlE0PCsRtjarCcBSobI3rPHybVEYyKKnMuL9Cu5bNTS9xYTkacBNsH+Dq8IAl7BRAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WkMH13cB1z2Cmft;
+	Wed, 14 Aug 2024 16:43:41 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 63D471A016C;
+	Wed, 14 Aug 2024 16:48:33 +0800 (CST)
+Received: from [10.174.179.80] (10.174.179.80) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 14 Aug 2024 16:48:32 +0800
+Subject: Re: [PATCH 2/7] ext4: avoid potential buffer_head leak in
+ __ext4_new_inode
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<tytso@mit.edu>, <adilger.kernel@dilger.ca>
+References: <20240813120712.2592310-1-shikemeng@huaweicloud.com>
+ <20240813120712.2592310-3-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huawei.com>
+Message-ID: <0351b3b1-e84a-9e41-a492-743f5bbea910@huawei.com>
+Date: Wed, 14 Aug 2024 16:48:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
+In-Reply-To: <20240813120712.2592310-3-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-Hello Andi,
-
-On Tue, Aug 13, 2024 at 11:53:17PM +0100, Andi Shyti wrote:
-> Hi Breno,
+On 2024/8/13 20:07, Kemeng Shi wrote:
+> If a group is marked EXT4_GROUP_INFO_IBITMAP_CORRUPT after it's inode
+> bitmap buffer_head was successfully verified, then __ext4_new_inode
+> will get a valid inode_bitmap_bh of a corrupted group from
+> ext4_read_inode_bitmap in which case inode_bitmap_bh misses a release.
+> Hnadle "IS_ERR(inode_bitmap_bh)" and group corruption separately like
+> how ext4_free_inode does to avoid buffer_head leak.
 > 
-> You don't need to resend the patch. Because the changes are only
-> in the commit log, I can take care of them.
-
-In fact, the changes are in the code itself, see the changelog:
-
-  * Replaced ACPI_HANDLE() by has_acpi_companion() (Andy Shevchenko)
-  * Expanded the comment before the change (Andy Shevchenko)
-
-> Besides, you also need:
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> ---
+>  fs/ext4/ialloc.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> Fixes: ede2299f7101 ("i2c: tegra: Support atomic transfers")
-> Cc: <stable@vger.kernel.org> # v5.6+
+> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+> index ad7f13976dc6..f24a238b6b09 100644
+> --- a/fs/ext4/ialloc.c
+> +++ b/fs/ext4/ialloc.c
+> @@ -1054,9 +1054,13 @@ struct inode *__ext4_new_inode(struct mnt_idmap *idmap,
+>  		brelse(inode_bitmap_bh);
+>  		inode_bitmap_bh = ext4_read_inode_bitmap(sb, group);
+>  		/* Skip groups with suspicious inode tables */
+> -		if (((!(sbi->s_mount_state & EXT4_FC_REPLAY))
+> -		     && EXT4_MB_GRP_IBITMAP_CORRUPT(grp)) ||
+> -		    IS_ERR(inode_bitmap_bh)) {
+> +		if (IS_ERR(inode_bitmap_bh)) {
+> +			inode_bitmap_bh = NULL;
+> +			goto next_group;
+> +		}
+> +		if (!(sbi->s_mount_state & EXT4_FC_REPLAY) &&
+> +		    EXT4_MB_GRP_IBITMAP_CORRUPT(grp)) {
+> +			brelse(inode_bitmap_bh);
+>  			inode_bitmap_bh = NULL;
+
+Wouldn't the inode_bitmap_bh be brelsed in the next loop or the end of this
+function? why not just goto next_group?
+
+Thanks,
+Yi.
+
+>  			goto next_group;
+>  		}
 > 
-> Can you please check whether this is right?
-
-I would say that we probably want to blame the support for ACPI device,
-which came later than ede2299f7101 ("i2c: tegra: Support atomic
-transfers").
-
-I'd suggest the following:
-
- Fixes: bd2fdedbf2ba ("i2c: tegra: Add the ACPI support")
- CC: <stable@vger.kernel.org> # v5.17+
-
-I am not planning to submit a new patch with these changes, please let
-me know if you need action on my side.
-
-Thanks for handling this fix,
---breno
 
