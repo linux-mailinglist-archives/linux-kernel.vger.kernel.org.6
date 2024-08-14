@@ -1,237 +1,191 @@
-Return-Path: <linux-kernel+bounces-286410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A2B951A98
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169B0951A9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7506EB214F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:11:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9991B1F21FF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948451AED58;
-	Wed, 14 Aug 2024 12:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C731B0135;
+	Wed, 14 Aug 2024 12:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="CZFckKv4"
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ER91I/pA"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58781AC43D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BCA1B0110
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723637469; cv=none; b=r1mkr8QA2e0nKyxuLy6VqGjfz0eAxh5ayXuEa8mhPKfZcRAHnh1w27IU6CrLa00nchnQo8C+05Hbfi36Cyy39GTw6kcdOjE36rfoXWnymWUqxT8kSrvH7xAcQsc55eK5fiHpwvTu6j+kDH9cxcnJh/vqYKGTISLghAy5OY033b4=
+	t=1723637534; cv=none; b=Fxjx09dr+u/73Vr5jVirGVYE6LqfDOk6cTWCCinRp/l3ykfo0HXcROnm22WKTxGynvIZDtpFAHH6V5wnYfeJ1w3/EiWHKoFF6e537CmEDTvX4mM0EUbt9QXaqObg8QLRuc4IaNDyvkxZD2bs1DkltAZCeSxQm80dbS4GfKsqtDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723637469; c=relaxed/simple;
-	bh=9omUs5eQt37eqG1ja5INiYEOWyqnnkjgd7EVy8uVX8A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l6FSZTcKVV0JPPdnp34qbBPbthYC78ZfjPVe/NE6x+8RATZzPtXuMIi0xla26viQnGObGRmoCqgRgr9LDFfkHPw2rgPqk0Ql5nDZ4jwdxIlzQzBUEduSzWWsNLI8PanyVWJg0pv0Wtjj7KBHbaV9FLCe/AwTa1wGw8AuYRX88ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=CZFckKv4; arc=none smtp.client-ip=185.136.65.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202408141210555c00b4731764bb35a7
-        for <linux-kernel@vger.kernel.org>;
-        Wed, 14 Aug 2024 14:10:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=V4nWFMfJWPuj8vZFKQtZgJuA1Le3ETLyXy4AKLletes=;
- b=CZFckKv4l7b0gC1dqvb9BTI/sqZAiXwSi9rewnQNP6/F/aI0aOWm3LiW2VUAIb6D+J8Ct8
- GUqkXjOHxa9Yid9WyUGarFCujcZWhjxkT3+cJzFMPkPnoFbYoo/2A/LD9Syx2KFstNN2hHdW
- LRbMsCbxyAPpwWLYl7dcgaMZer3x/xRvAe7G0hDDqbW1BbknJq59Qj+OUUW/qRcZ6P/I88Zp
- Ii6hGMXWeCnm6uO4o0a3jVb4oCc9xqUg/eWWLvG54HKqsGm/Vwhj6afhEXdwEVjeeTiGocPo
- VfKycgZZiT+1KY3eBX1yciuG3NhcV/6uQLMeDKsPlT0XJX8cvTFEpLAQ==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de,
-	qyousef@layalina.io,
-	frederic@kernel.org,
-	jan.kiszka@siemens.com,
-	bigeasy@linutronix.de,
-	anna-maria@linutronix.de,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [PATCH v4 1/1] hrtimer: Use and report correct timerslack values for realtime tasks
-Date: Wed, 14 Aug 2024 14:10:32 +0200
-Message-Id: <20240814121032.368444-2-felix.moessbauer@siemens.com>
-In-Reply-To: <20240814121032.368444-1-felix.moessbauer@siemens.com>
-References: <20240814121032.368444-1-felix.moessbauer@siemens.com>
+	s=arc-20240116; t=1723637534; c=relaxed/simple;
+	bh=MQ57xcNRnx2hbtvSnDnW9ALhWFVxGf3zZIIpvn2IVqk=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YF0LzcWRh54JYt6Nm36StsYsGgHUMUXKYiY9JaqIr/IOlaA//8rWV0tspdzi4GmPWJUh/OcvR4bm3+DgRjEFtJg64KZTPdGI2ymSxEw+1zC33lXqZL+CFZPnOHSWFZvFI99FtweWh3BXWrjlZRXfrA+XAVUD16PIND1UJ4c3EMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ER91I/pA; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42819654737so48297835e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1723637531; x=1724242331; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PG9e6JitvYXoqzSTP8p6u30qXecQWEzNyRf8++iwfzg=;
+        b=ER91I/pAUCKFn6ndSuySZNLG422z4clo57ycN76odiFyCjcH0QMFJQp2MN2KmlXIo9
+         /UIISX3qwXpFZT0GEMPLg8kDii+imqwHiSvzq3KPDu+rHcXwilLPLGqqpGZR/7qSjLJ8
+         Xns+oN5HGUECJ2zb3vkHnQT3nPtPVY03X0LNE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723637531; x=1724242331;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PG9e6JitvYXoqzSTP8p6u30qXecQWEzNyRf8++iwfzg=;
+        b=M3HoON0NMyvWlDSK6Utxht9Yg14XBNbGmNCSs3s0tXlEKkREY/BQX6MMOUx4dIfLSB
+         o4so/fKtBtyKw5qRg7AhnhFuHY9KusWy3VQBEbBSEb3yuHPXkumVwwYKL1NXTBg2aVjJ
+         a9G8ZKDMICMOVxxm9kVLPnDiJfd0yDwzjTpymhrX7fV6mBBaB8z63LkiG0y+rm9LbEBo
+         p/MceMAP/Uyuf2TC+e2NwXH4cjebRJZirJN1NTMbk2VasNK4zoFpjK8qHtUwBtUdyCfM
+         239IVgl3uh1kzZ0gBfLhHOzUj2Xo92phYevLoud87RdAkKow5Gm1Mgcrhm1z/MbQF8Ng
+         1wAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqbluUHJGIyt6nTQmdLwUvKfYAZ2T+WsnpjA0qM+K6MXwWolIS3mFzCWDkDAqu8cau4A7DK4+rFY69sIfh9xL+3CxIuHh7pCyAQoda
+X-Gm-Message-State: AOJu0YzJUECCjt1DFxtgMIChZZN5BLKgS4kNDmuwC5EnFOBljX0cs9/f
+	kihRjJJEZqKd4SeAOVdmwkoqn1tFqgFDTDNnQgvGu1DIYC1BORAZLDiKgUGe3hA=
+X-Google-Smtp-Source: AGHT+IEXQhc1DRLmbpucvwdmK1QHHySaNdm9iIXPW0P1dXOgYRVT3R+EtoisglPADmrSMdzG+PAwVw==
+X-Received: by 2002:a05:600c:4710:b0:426:62c5:4741 with SMTP id 5b1f17b1804b1-429dd22fe4dmr18421295e9.2.1723637531117;
+        Wed, 14 Aug 2024 05:12:11 -0700 (PDT)
+Received: from LQ3V64L9R2.home ([80.208.222.2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded1e3f7sm18267235e9.4.2024.08.14.05.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 05:12:10 -0700 (PDT)
+Date: Wed, 14 Aug 2024 13:12:08 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Jiri Pirko <jiri@resnulli.us>, Leon Romanovsky <leon@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Shailend Chand <shailend@google.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Ziwei Xiao <ziweixiao@google.com>
+Subject: Re: [RFC net-next 0/6] Cleanup IRQ affinity checks in several drivers
+Message-ID: <ZryfGDU9wHE0IrvZ@LQ3V64L9R2.home>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Jiri Pirko <jiri@resnulli.us>, Leon Romanovsky <leon@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Shailend Chand <shailend@google.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Ziwei Xiao <ziweixiao@google.com>
+References: <20240812145633.52911-1-jdamato@fastly.com>
+ <20240813171710.599d3f01@kernel.org>
+ <ZrxZaHGDTO3ohHFH@LQ3V64L9R2.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrxZaHGDTO3ohHFH@LQ3V64L9R2.home>
 
-The timerslack_ns setting is used to specify how much the hardware
-timers should be delayed, to potentially dispatch multiple timers in a
-single interrupt. This is a performance optimization. Timers of
-realtime tasks (having a realtime scheduling policy) should not be
-delayed.
+On Wed, Aug 14, 2024 at 08:14:48AM +0100, Joe Damato wrote:
+> On Tue, Aug 13, 2024 at 05:17:10PM -0700, Jakub Kicinski wrote:
+> > On Mon, 12 Aug 2024 14:56:21 +0000 Joe Damato wrote:
+> > > Several drivers make a check in their napi poll functions to determine
+> > > if the CPU affinity of the IRQ has changed. If it has, the napi poll
+> > > function returns a value less than the budget to force polling mode to
+> > > be disabled, so that it can be rescheduled on the correct CPU next time
+> > > the softirq is raised.
+> > 
+> > Any reason not to use the irq number already stored in napi_struct ?
+> 
+> Thanks for taking a look.
+> 
+> IIUC, that's possible if i40e, iavf, and gve are updated to call
+> netif_napi_set_irq first, which I could certainly do.
+> 
+> But as Stanislav points out, I would be adding a call to
+> irq_get_effective_affinity_mask in the hot path where one did not
+> exist before for 4 of 5 drivers.
+> 
+> In that case, it might make more sense to introduce:
+> 
+>   bool napi_affinity_no_change(const struct cpumask *aff_mask)
+> 
+> instead and the drivers which have a cached mask can pass it in and
+> gve can be updated later to cache it.
+> 
+> Not sure how crucial avoiding the irq_get_effective_affinity_mask
+> call is; I would guess maybe some driver owners would object to
+> adding a new call in the hot path where one didn't exist before.
+> 
+> What do you think?
 
-This logic was inconsitently applied to the hrtimers, leading to delays
-of realtime tasks which used timed waits for events (e.g. condition
-variables). Due to the downstream override of the slack for rt tasks,
-the procfs reported incorrect (non-zero) timerslack_ns values.
+Actually... how about a slightly different approach, which caches
+the affinity mask in the core?
 
-This is changed by setting the timer_slack_ns task attribute to 0 for
-all tasks with a rt policy. By that, downstream users do not need to
-specially handle rt tasks (w.r.t. the slack), and the procfs entry
-shows the correct value of "0". Setting non-zero slack values (either
-via procfs or PR_SET_TIMERSLACK) on tasks with a rt policy is ignored,
-as stated in "man 2 PR_SET_TIMERSLACK":
+  0. Extend napi struct to have a struct cpumask * field
 
-  Timer slack is not applied to threads that are scheduled under a
-  real-time scheduling policy (see sched_setscheduler(2)).
+  1. extend netif_napi_set_irq to:
+    a. store the IRQ number in the napi struct (as you suggested)
+    b. call irq_get_effective_affinity_mask to store the mask in the
+       napi struct
+    c. set up generic affinity_notify.notify and
+       affinity_notify.release callbacks to update the in core mask
+       when it changes
 
-The special handling of timerslack on rt tasks in downstream users
-is removed as well.
+  2. add napi_affinity_no_change which now takes a napi_struct
 
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
----
- fs/proc/base.c          |  9 +++++----
- fs/select.c             | 11 ++++-------
- kernel/sched/syscalls.c |  8 ++++++++
- kernel/sys.c            |  2 ++
- kernel/time/hrtimer.c   | 18 +++---------------
- 5 files changed, 22 insertions(+), 26 deletions(-)
+  3. cleanup all 5 drivers:
+    a. add calls to netif_napi_set_irq for all 5 (I think no RTNL
+       is needed, so I think this would be straight forward?)
+    b. remove all affinity_mask caching code in 4 of 5 drivers
+    c. update all 5 drivers to call napi_affinity_no_change in poll
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 72a1acd03675..7ff3618c1e6f 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2569,10 +2569,11 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
- 	}
- 
- 	task_lock(p);
--	if (slack_ns == 0)
--		p->timer_slack_ns = p->default_timer_slack_ns;
--	else
--		p->timer_slack_ns = slack_ns;
-+	if (task_is_realtime(p))
-+		slack_ns = 0;
-+	else if (slack_ns == 0)
-+		slack_ns = p->default_timer_slack_ns;
-+	p->timer_slack_ns = slack_ns;
- 	task_unlock(p);
- 
- out:
-diff --git a/fs/select.c b/fs/select.c
-index 9515c3fa1a03..ad171b7a5c11 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -77,19 +77,16 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
- {
- 	u64 ret;
- 	struct timespec64 now;
-+	u64 slack = current->timer_slack_ns;
- 
--	/*
--	 * Realtime tasks get a slack of 0 for obvious reasons.
--	 */
--
--	if (rt_task(current))
-+	if (slack == 0)
- 		return 0;
- 
- 	ktime_get_ts64(&now);
- 	now = timespec64_sub(*tv, now);
- 	ret = __estimate_accuracy(&now);
--	if (ret < current->timer_slack_ns)
--		return current->timer_slack_ns;
-+	if (ret < slack)
-+		return slack;
- 	return ret;
- }
- 
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index ae1b42775ef9..195d2f2834a9 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -406,6 +406,14 @@ static void __setscheduler_params(struct task_struct *p,
- 	else if (fair_policy(policy))
- 		p->static_prio = NICE_TO_PRIO(attr->sched_nice);
- 
-+	/* rt-policy tasks do not have a timerslack */
-+	if (task_is_realtime(p)) {
-+		p->timer_slack_ns = 0;
-+	} else if (p->timer_slack_ns == 0) {
-+		/* when switching back to non-rt policy, restore timerslack */
-+		p->timer_slack_ns = p->default_timer_slack_ns;
-+	}
-+
- 	/*
- 	 * __sched_setscheduler() ensures attr->sched_priority == 0 when
- 	 * !rt_policy. Always setting this ensures that things like
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 3a2df1bd9f64..e3c4cffb520c 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2557,6 +2557,8 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			error = current->timer_slack_ns;
- 		break;
- 	case PR_SET_TIMERSLACK:
-+		if (task_is_realtime(current))
-+			break;
- 		if (arg2 <= 0)
- 			current->timer_slack_ns =
- 					current->default_timer_slack_ns;
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index b8ee320208d4..18eea0be706a 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -2072,14 +2072,9 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrtimer_mode mode,
- 	struct restart_block *restart;
- 	struct hrtimer_sleeper t;
- 	int ret = 0;
--	u64 slack;
--
--	slack = current->timer_slack_ns;
--	if (rt_task(current))
--		slack = 0;
- 
- 	hrtimer_init_sleeper_on_stack(&t, clockid, mode);
--	hrtimer_set_expires_range_ns(&t.timer, rqtp, slack);
-+	hrtimer_set_expires_range_ns(&t.timer, rqtp, current->timer_slack_ns);
- 	ret = do_nanosleep(&t, mode);
- 	if (ret != -ERESTART_RESTARTBLOCK)
- 		goto out;
-@@ -2249,7 +2244,7 @@ void __init hrtimers_init(void)
- /**
-  * schedule_hrtimeout_range_clock - sleep until timeout
-  * @expires:	timeout value (ktime_t)
-- * @delta:	slack in expires timeout (ktime_t) for SCHED_OTHER tasks
-+ * @delta:	slack in expires timeout (ktime_t)
-  * @mode:	timer mode
-  * @clock_id:	timer clock to be used
-  */
-@@ -2276,13 +2271,6 @@ schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
- 		return -EINTR;
- 	}
- 
--	/*
--	 * Override any slack passed by the user if under
--	 * rt contraints.
--	 */
--	if (rt_task(current))
--		delta = 0;
--
- 	hrtimer_init_sleeper_on_stack(&t, clock_id, mode);
- 	hrtimer_set_expires_range_ns(&t.timer, *expires, delta);
- 	hrtimer_sleeper_start_expires(&t, mode);
-@@ -2302,7 +2290,7 @@ EXPORT_SYMBOL_GPL(schedule_hrtimeout_range_clock);
- /**
-  * schedule_hrtimeout_range - sleep until timeout
-  * @expires:	timeout value (ktime_t)
-- * @delta:	slack in expires timeout (ktime_t) for SCHED_OTHER tasks
-+ * @delta:	slack in expires timeout (ktime_t)
-  * @mode:	timer mode
-  *
-  * Make the current task sleep until the given expiry time has
--- 
-2.39.2
+Then ... anyone who adds support for netif_napi_set_irq to their
+driver in the future gets automatic support in-core for
+caching/updating of the mask? And in the future netdev-genl could
+dump the mask since its in-core?
 
+I'll mess around with that locally to see how it looks, but let me
+know if that sounds like a better overall approach.
+
+- Joe
 
