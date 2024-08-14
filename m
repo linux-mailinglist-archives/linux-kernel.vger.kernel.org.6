@@ -1,108 +1,240 @@
-Return-Path: <linux-kernel+bounces-286836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF349951F8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:14:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542D7951F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A161C20F64
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:14:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60511F22DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F861B8EB0;
-	Wed, 14 Aug 2024 16:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9761B1B8EB1;
+	Wed, 14 Aug 2024 16:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9LriaXj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HdTWjsaP"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DD81B9B3C;
-	Wed, 14 Aug 2024 16:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6501B583E;
+	Wed, 14 Aug 2024 16:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652003; cv=none; b=eJNOOYZjBS/tstm489T7Se/IAcH49yR3M+tkZFAJPdUYuItOQpM/IpBsG1aw8LRp3SegRPS9oxKDreEwm8lEz8O0/Ic4K44q3U2g8ewHrQ6iBXzyH5a9XDeChucEi29Vvb+4/pVJ9ttHXI7Jn97vhJZVTTK4JxVyJ12ZG93DE2M=
+	t=1723652032; cv=none; b=J6ugOuZiFY1VgNqK5xrPg3bf/P8O5ABXz4K2SrDjnt5/fRKY3+PeRL5al0RyfoUug/fH3urGoL4thrOuuy+Y1jSN3tsc5GMV1SvtAXFcfN9e+XczXbgHfdCwLdUx9f7IDLa9W0oiNWqEo3OPFGqze9PHfwaJi/Z4rhzct2aGoeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652003; c=relaxed/simple;
-	bh=8TLQNOFxBRqk82caBG73gqzzPaLL9rUL9a4SwMQA6Lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izJsGjDHG/QdSpZANtTQUhz1w4bY4mEpinHKvY5CFgS0gHksAdVvxUfP23+7LrwtBLhKffhkr5G3TaS7dhBZ5z/EoPAIx9ex2Ay+sr6GfABsdF6pFSZp00yW9BwgdaJzQ3Depyrqv4K3QMK0EeP87YuZxJasnsiqe5xL1zYchNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9LriaXj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A98C4AF0A;
-	Wed, 14 Aug 2024 16:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723652003;
-	bh=8TLQNOFxBRqk82caBG73gqzzPaLL9rUL9a4SwMQA6Lg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=C9LriaXjE6UYtbLp14XkcrzQGfi8AJr7xUvFpSIj1lzFgoimVn/b60RSPHoWT9W9+
-	 VE7qbxtH4E4jTsULNhFIDu9ow3vjDCHfiGHwTJl+M8kMvTZQm9N+8Bi0b5ryY67uR9
-	 ktMQSHPLVE7bAmaqSE5TMkX6KlkGpn+aJH4NQsxXZwGmEfIE3b0416bq1lvx0hDfO+
-	 h2nE3WmkpQ1kprrXuYnJNh55isDDPvGv4QxZ8MLpshdm95Pj408a/wOsIZ4X4MOgYC
-	 uvSSIv9MDU529Mo1iSpt6UEz356h0DYU+46pXjm5m3Y5UwBxv7wcrkAk9eHrE29ieW
-	 XHYXLDplp7DJQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9B63BCE0ACD; Wed, 14 Aug 2024 09:13:22 -0700 (PDT)
-Date: Wed, 14 Aug 2024 09:13:22 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH rcu 1/6] rcu/tasks: Check processor-ID assumptions
-Message-ID: <af7db745-97c6-467d-9ed2-798ef8b686ba@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <41c68c6b-2c55-4c2d-ab70-f2a5b38eb374@paulmck-laptop>
- <20240802003426.4134196-1-paulmck@kernel.org>
- <20240814121654.GA1412801@neeraj.linux>
+	s=arc-20240116; t=1723652032; c=relaxed/simple;
+	bh=K2X6lqIt4oqj9WozWOF5kI2WhgVoaEzw5fLqAo3f+E8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YQpSD7zfHMkwrpLapv+VUci693ldVhsaWVAAnE9ft1MdmSMjiDqXGm7Ru0jF6e5zDUVe6yhwjODALqS55qjX+DzUikat94TFQElMdshbsVM5CDhXPlQ1cPjexK4FFZK1ZROP1B8wdjpPJAx1hXQXcESU0EH5eC7n8mX1hDEyT80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HdTWjsaP; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3db14339fb0so3978841b6e.2;
+        Wed, 14 Aug 2024 09:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723652030; x=1724256830; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sCyjb3mnfTPaKoctmLyaAyNHjt8Z0FPJhAgwTRiDEi0=;
+        b=HdTWjsaPZgC0QUv6XfqYvYX7MyPPLmjCiuYs+E+YFoMXBXYkCo/QWrHcn85S2/zzkW
+         8Yv00kO6NWCmohcmWlMP00GEuz0ujPhRw7hRnhh6VSsa9B1jL3uxzHJJf+5Yq1Rc3zl4
+         qQiWJI5bFwOYMsuqDgQ8Rrzp5UVuvYS8tnHpu2QSzk84eu46UCmx+3PYYcbMb7rnMUdw
+         XfrE9lsUH7sGHf6q5uisoslYvT7EZKgJ0Wbu7lm0yJiU3HcsTaQVr+G3gxkrGgTr2nJO
+         kjI7yo1tdnVbRfTLq5EGGu81VKhO0tMUnGB0Ss8Xf9mJAMB79FKF1eQzOLykGNIHRsjm
+         9Dkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723652030; x=1724256830;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sCyjb3mnfTPaKoctmLyaAyNHjt8Z0FPJhAgwTRiDEi0=;
+        b=bACT3bq6k/TArx19em1c+RCGhoLeTK5L3ZD3bkJ92zF0Hwsvh3WIV88c2CZwloky3P
+         JS4mdm4q4aQVwp4Ymxgkvt2pLPNjLlQhjnaRH1uvAXaS2pwAhcQbcyLh0VP/pAf01AhA
+         0wYDmLMgoDVMcUd+iYwZhJjnE33HQt0icjY5wIfWUqoyojwPSwGez/ENqGWE1NVSGqWw
+         S0LBGDeWqGRVrF1tFXJviwjWQ40AWSZ3qpGVbtDcaQdDa4Xk4rKyBbpjnMH1WwDicGsB
+         jn8knTBZ+q7yT+6ZqkXmoq+J+CB1iCijpLRFVwlvZwCyC51QXLeipCqy4llkUoJUtfXU
+         3itQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXA2wvhIY66mXTNq5mBl062KCWih+0LWPsG4Bu1j+nphQPniGx34gMlEbk0R84ipze1qbOAAlPVu3dx0SZaJUagf0B/q4+VyDyeVxq
+X-Gm-Message-State: AOJu0YxulrYMd9zQlfnH6HvWHLx6emdsqLsANpTb/7jZZdTcC+Ge0BWE
+	DMLSDHiCMGJJGa0cbVSHWAtdXkei8UAMqvG4812on3lEUMH9kP/J1o9u5FdG
+X-Google-Smtp-Source: AGHT+IENU7cpU2pFm0qKgdOlSxiHsZ0ZHuOzmH9FVR0zSBS1p+ccnZee/GztUrMk/geixjsRlTd5Dw==
+X-Received: by 2002:a05:6808:1154:b0:3d9:2bab:de1f with SMTP id 5614622812f47-3dd29914c49mr4057519b6e.25.1723652030211;
+        Wed, 14 Aug 2024 09:13:50 -0700 (PDT)
+Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
+        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3dd060bc16csm2133562b6e.56.2024.08.14.09.13.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 09:13:49 -0700 (PDT)
+Message-ID: <0002cde37fcead62813006ab9516c5b2fdbf113a.camel@gmail.com>
+Subject: Re: [PATCH net-next v13 07/14] mm: page_frag: reuse existing space
+ for 'size' and 'pfmemalloc'
+From: Alexander H Duyck <alexander.duyck@gmail.com>
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org,  pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton
+	 <akpm@linux-foundation.org>, linux-mm@kvack.org
+Date: Wed, 14 Aug 2024 09:13:47 -0700
+In-Reply-To: <20240808123714.462740-8-linyunsheng@huawei.com>
+References: <20240808123714.462740-1-linyunsheng@huawei.com>
+	 <20240808123714.462740-8-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814121654.GA1412801@neeraj.linux>
 
-On Wed, Aug 14, 2024 at 05:46:54PM +0530, Neeraj Upadhyay wrote:
-> Hi Paul,
-> 
-> On Thu, Aug 01, 2024 at 05:34:21PM -0700, Paul E. McKenney wrote:
-> > The current mapping of smp_processor_id() to a CPU processing Tasks-RCU
-> > callbacks makes some assumptions about layout.  This commit therefore
-> > adds a WARN_ON() to check these assumptions.
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > ---
-> >  kernel/rcu/tasks.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-> > index b6fcf744af75d..d473846a572aa 100644
-> > --- a/kernel/rcu/tasks.h
-> > +++ b/kernel/rcu/tasks.h
-> > @@ -355,6 +355,7 @@ static void call_rcu_tasks_generic(struct rcu_head *rhp, rcu_callback_t func,
-> >  	rcu_read_lock();
-> >  	ideal_cpu = smp_processor_id() >> READ_ONCE(rtp->percpu_enqueue_shift);
-> >  	chosen_cpu = cpumask_next(ideal_cpu - 1, cpu_possible_mask);
-> > +	WARN_ON_ONCE(chosen_cpu >= nr_cpu_ids);
-> 
-> I have changed this s/nr_cpu_ids/rcu_task_cpu_ids/ , as there is a
-> another commit 	fd70e9f1d85f "rcu-tasks: Fix access non-existent percpu
-> rtpcp variable in rcu_tasks_need_gpcb()" which is included in the tree
-> here [1]. Please let me know if something looks incorrect.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=next.14.08.24a
+On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
+> Currently there is one 'struct page_frag' for every 'struct
+> sock' and 'struct task_struct', we are about to replace the
+> 'struct page_frag' with 'struct page_frag_cache' for them.
+> Before begin the replacing, we need to ensure the size of
+> 'struct page_frag_cache' is not bigger than the size of
+> 'struct page_frag', as there may be tens of thousands of
+> 'struct sock' and 'struct task_struct' instances in the
+> system.
+>=20
+> By or'ing the page order & pfmemalloc with lower bits of
+> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
+> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
+> And page address & pfmemalloc & order is unchanged for the
+> same page in the same 'page_frag_cache' instance, it makes
+> sense to fit them together.
+>=20
+> After this patch, the size of 'struct page_frag_cache' should be
+> the same as the size of 'struct page_frag'.
+>=20
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/linux/mm_types_task.h   | 16 +++++-----
+>  include/linux/page_frag_cache.h | 52 +++++++++++++++++++++++++++++++--
+>  mm/page_frag_cache.c            | 49 +++++++++++++++++--------------
+>  3 files changed, 85 insertions(+), 32 deletions(-)
+>=20
+> diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.=
+h
+> index b1c54b2b9308..f2610112a642 100644
+> --- a/include/linux/mm_types_task.h
+> +++ b/include/linux/mm_types_task.h
+> @@ -50,18 +50,18 @@ struct page_frag {
+>  #define PAGE_FRAG_CACHE_MAX_SIZE	__ALIGN_MASK(32768, ~PAGE_MASK)
+>  #define PAGE_FRAG_CACHE_MAX_ORDER	get_order(PAGE_FRAG_CACHE_MAX_SIZE)
+>  struct page_frag_cache {
+> -	void *va;
+> -#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+> +	/* encoded_va consists of the virtual address, pfmemalloc bit and order
+> +	 * of a page.
+> +	 */
+> +	unsigned long encoded_va;
+> +
 
-Good catch, looks good, and thank you!
+Rather than calling this an "encoded_va" we might want to call this an
+"encoded_page" as that would be closer to what we are actually working
+with. We are just using the virtual address as the page pointer instead
+of the page struct itself since we need quicker access to the virtual
+address than we do the page struct.
 
-							Thanx, Paul
+> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE) && (BITS_PER_LONG <=3D 32)
+>  	__u16 remaining;
+> -	__u16 size;
+> +	__u16 pagecnt_bias;
+>  #else
+>  	__u32 remaining;
+> +	__u32 pagecnt_bias;
+>  #endif
+> -	/* we maintain a pagecount bias, so that we dont dirty cache line
+> -	 * containing page->_refcount every time we allocate a fragment.
+> -	 */
+> -	unsigned int		pagecnt_bias;
+> -	bool pfmemalloc;
+>  };
+> =20
+>  /* Track pages that require TLB flushes */
+> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
+che.h
+> index 7c9125a9aed3..4ce924eaf1b1 100644
+> --- a/include/linux/page_frag_cache.h
+> +++ b/include/linux/page_frag_cache.h
+> @@ -3,18 +3,66 @@
+>  #ifndef _LINUX_PAGE_FRAG_CACHE_H
+>  #define _LINUX_PAGE_FRAG_CACHE_H
+> =20
+> +#include <linux/bits.h>
+> +#include <linux/build_bug.h>
+>  #include <linux/log2.h>
+>  #include <linux/types.h>
+>  #include <linux/mm_types_task.h>
+> =20
+> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+> +/* Use a full byte here to enable assembler optimization as the shift
+> + * operation is usually expecting a byte.
+> + */
+> +#define PAGE_FRAG_CACHE_ORDER_MASK		GENMASK(7, 0)
+> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT		BIT(8)
+> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT	8
+> +#else
+> +/* Compiler should be able to figure out we don't read things as any val=
+ue
+> + * ANDed with 0 is 0.
+> + */
+> +#define PAGE_FRAG_CACHE_ORDER_MASK		0
+> +#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT		BIT(0)
+> +#define PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT	0
+> +#endif
+> +
 
-> - Neeraj
-> 
-> >  	rtpcp = per_cpu_ptr(rtp->rtpcpu, chosen_cpu);
-> >  	if (!raw_spin_trylock_rcu_node(rtpcp)) { // irqs already disabled.
-> >  		raw_spin_lock_rcu_node(rtpcp); // irqs already disabled.
-> > -- 
-> > 2.40.1
-> > 
+You should probably pull out PAGE_FRAG_CACHE_PFMEMALLOC_BIT and just
+define it as:
+#define PAGE_FRAG_CACHE_PFMEMALLOC_BIT \
+	BIT(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT)
+
+That way there is no risk of the bit and the shift somehow getting
+split up and being different values.
+
+> +static inline unsigned long encode_aligned_va(void *va, unsigned int ord=
+er,
+> +					      bool pfmemalloc)
+
+Rather than passing the virtual address it might make more sense to
+pass the page. With that you know it should be PAGE_SIZE aligned versus
+just being passed some random virtual address.
+
+> +{
+> +	BUILD_BUG_ON(PAGE_FRAG_CACHE_MAX_ORDER > PAGE_FRAG_CACHE_ORDER_MASK);
+> +	BUILD_BUG_ON(PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT >=3D PAGE_SHIFT);
+
+Rather than test the shift I would test the bit versus PAGE_SIZE.
+
+> +
+> +	return (unsigned long)va | (order & PAGE_FRAG_CACHE_ORDER_MASK) |
+> +		((unsigned long)pfmemalloc << PAGE_FRAG_CACHE_PFMEMALLOC_SHIFT);
+> +}
+> +
+> +static inline unsigned long encoded_page_order(unsigned long encoded_va)
+> +{
+> +	return encoded_va & PAGE_FRAG_CACHE_ORDER_MASK;
+> +}
+> +
+> +static inline bool encoded_page_pfmemalloc(unsigned long encoded_va)
+> +{
+> +	return !!(encoded_va & PAGE_FRAG_CACHE_PFMEMALLOC_BIT);
+> +}
+> +
+> +static inline void *encoded_page_address(unsigned long encoded_va)
+> +{
+> +	return (void *)(encoded_va & PAGE_MASK);
+> +}
+> +
+
+This is one of the reasons why I am thinking "encoded_page" might be a
+better name for it. The 3 functions above all have their equivilent for
+a page struct but we pulled that data out and packed it all into the
+encoded_page.
+
+
 
