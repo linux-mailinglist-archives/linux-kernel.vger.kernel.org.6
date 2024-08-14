@@ -1,194 +1,141 @@
-Return-Path: <linux-kernel+bounces-286326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A64F9519B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBB79519B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9E21C2273A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:12:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEF261C2299D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B111AED2F;
-	Wed, 14 Aug 2024 11:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1361AED49;
+	Wed, 14 Aug 2024 11:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kn/9MsqP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YyzzIrM1"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135B01AE851;
-	Wed, 14 Aug 2024 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460F11AE851;
+	Wed, 14 Aug 2024 11:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723633943; cv=none; b=pfEIIf5hwcD12cOIgpBIiPi6Y7FUBtcdoR9KNImzrBJ0k1V1K8ix0g1jNkklhoDOa+DLrFQe4b1oQChiRnWGfWnT7uiPPvrhLNIUVAU7Xxc8Sy3WOzG0VB54OYdGQJrL/cSPSeV0JA3SaguxMv+BExD+Vf6+sexFXsiFKSPSa38=
+	t=1723633949; cv=none; b=P1/17OVwdXB3jrsKwZn+3be8bsJsb3JWKrIzTiuwpavbKtgg2mvt9vkxvllIiho4MR9z8vmD2A3Y789AtSwngqrAEXqzyXqbv8csvyAQmrWvWF55nJo16V8mrtf1r3sNK6gVvyHdEIty62KcsYONFjhU3XaDP6Co9ZrSfFI1Njo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723633943; c=relaxed/simple;
-	bh=w8FGOf6XoIorTPA0onCSDNz0YqeAb5+N618grpFo2H4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=URPCm27k2A+oqtbUxzaOpcgQMcXtva0ORC2BTx6aMCM39v3Wd0hXB3kOa7OGEHgZ++nr/6marocjMywDJHqkYCMAA0wxtBPNRw8b6zAcHGp+MWaCDPf9w+78qPq/BsbJqN1Aqd5BjHTyP/yIBo4Xkdt7AffOsWUxeFEyNr+KpvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kn/9MsqP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EB5k2J031804;
-	Wed, 14 Aug 2024 11:12:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UtlVxWbaUSDeOBQ6P4YT+7imLbtS4jYLDQtPJRL0bEs=; b=Kn/9MsqPZAq9S0Cc
-	LImMK64clfApyJtqyMp7/lva+N6IMCx/+EFquo+iVNH0Hhph396fm9Ye1GeIuf82
-	LOh958o1z3vzTelnRV1PBYD1tQ3xI1tBlLrVXInYZ29qX+awIPJ+fr7gJD2hajao
-	jE5TCsxQeB0Z0xCwMhPILxAKWfWYDt2+gi0UHIfxpqkDp0JnquDNmAz3Xg4TAMHo
-	ZCq0wOE5U+4P3dxPjbrggk4DTjyxxS5DRE1yJxMLi27bZLUs1SFzjFW0S5FmF+pS
-	/uGeIdgna+F0f7n64A69G/nOxZoXDa7Jyf0xSwKrCPcXh7+NsU3IPeQSsx50kCup
-	mgdAYQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41082wk08n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 11:12:19 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47EBCIcp005745
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 11:12:18 GMT
-Received: from [10.218.38.222] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 Aug
- 2024 04:12:15 -0700
-Message-ID: <48651728-a4bb-4bef-81d7-6100a6c2a1fe@quicinc.com>
-Date: Wed, 14 Aug 2024 16:42:12 +0530
+	s=arc-20240116; t=1723633949; c=relaxed/simple;
+	bh=/jlXwub/VVgwOLNXo3NHY827Q79tOts0INn1SM8RMmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cA56IveAEuvs5y8gciumnU6u+rIrPwLAisobUCbPTcmK25GHfzfxAZIVxS+4v74COfcMXn2ouwh7wBWI/M8smYy/KaCSGZXsX0RdMrvN6kPqc6KiLdjf+J2vQocgDjBB9u3XBZHr6ABE4D2oDeRttaQCNzPWK9icZgb4gMo7Q6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YyzzIrM1; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39b3e127748so27861945ab.0;
+        Wed, 14 Aug 2024 04:12:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723633947; x=1724238747; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wF+jCqkozllmCMkDBC4WnutIDupaU5S+6zMucrtIowA=;
+        b=YyzzIrM1Rv9Ksru9dCLHgm1h9sd0+ah5S3L7tAFLAT9y5A4IY3fPurxvY8LtJ4Dk7n
+         /pWFw6Q3o5Ht3p5WJ97kT1HH78vFW2A954COM6QUAPlILC58xLdmNTUHksDKrxtLN1Ve
+         Vb+aswUNo9yp4wSLyTNICmu/GuHgvdtDNGNQJJJbXMH+rfa/nlunrG2ZeA6mo6t56ggm
+         tRBsLJjGtQFzK1PX3oGHSwf3GOh+4JlB39pnOXNdc56zv/GTn46IuRNQ2wHq1D1F5Ko5
+         ILmZT6v/K3tHqy6I7v7Rr9clzORel4iyWPn+q8+w22ntwqGoZrEn9ahf+VHG6OhZub9u
+         gflQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723633947; x=1724238747;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wF+jCqkozllmCMkDBC4WnutIDupaU5S+6zMucrtIowA=;
+        b=SbbjFdQXa3H8bGcci56glnSPAqKR8Ep+EQ319ORTHYLTs+xwmAjNqZaBWkE74zA3cO
+         WBOzmmwNj0C9J7yNKX44VU+g130ihvdt0lfZ2pHLWZn6upnwSvnYH3ZJQENXLCa2/O9f
+         pkXsb/e596EqA6192uzIeAVmruR5QY7GWWNuq3Z4FQEXFVKHq3Mcla2m29xXd2cSkIPX
+         bgLAiOWaxnanECPX+i9dDRdfizlIhlfwRtRIcuYyS3fRuWL8iTvT3htb4ZVdh0Qdmx0A
+         UIKuniflL58R5bRPTeB04WJsLYFHx9e1Ozz3xmf0C4mq+/xvL3U+T1sWbTzAUNz2R8o7
+         91sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVT7eSRJ/Wb02qvYbXfW7x+OA3ytMq4Xc/xFMcOFFFaTKbZFNnYgc+D0Nb17AO3SoGurBbgCUt+zfRdrOokmtu62PF9Yt4dfrG3J6GqK/gvg78NoXim3H7AdZwu77+kya0qRDYXMka72e0=
+X-Gm-Message-State: AOJu0Yy3ojdkzygQguQuPFtvZMa5dIT2EcAuq3XJI9Yejeu3xtVA0tMl
+	XX9NOYqzmLmmnwr4fYmp0gWMnOCqTD6LlJnIeB6TtzxiTg+bsiGrebR1hdcl2TEgTlf1sSGQfl1
+	wHP8ebBTngjYSFq+gziWCuO0Tnww=
+X-Google-Smtp-Source: AGHT+IG23mxNg9sYomPIR65C+wkvcVf1Nh6cR3dMcXd5IewSmI8C/wXzw+Jopbl3+u3Bq8STYJPegmialAMApjmL47Q=
+X-Received: by 2002:a05:6e02:20cf:b0:39b:3205:6b93 with SMTP id
+ e9e14a558f8ab-39d12520b17mr29843795ab.28.1723633947217; Wed, 14 Aug 2024
+ 04:12:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: dwc3: qcom: fix NULL pointer dereference on
- dwc3_qcom_read_usb2_speed
-To: Prashanth K <quic_prashk@quicinc.com>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240813111847.31062-1-quic_faisalh@quicinc.com>
- <20240814001739.ml6czxo6ok67pihz@synopsys.com>
- <ec3a918a-df09-9245-318e-422f517ccf68@quicinc.com>
-Content-Language: en-US
-From: Faisal Hassan <quic_faisalh@quicinc.com>
-In-Reply-To: <ec3a918a-df09-9245-318e-422f517ccf68@quicinc.com>
+References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
+ <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com> <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
+ <CAA+D8AN9JXJr-BZf8aY7d4rB6M60pXS_DG=qv=P6=2r1A18ATA@mail.gmail.com>
+ <ffa85004-8d86-4168-b278-afd24d79f9d8@linux.intel.com> <116041ee-7139-4b77-89be-3a68f699c01b@perex.cz>
+ <930bb152-860a-4ec5-9ef0-1c96f554f365@linux.intel.com> <c9039808-cd04-452d-9f6c-f91811088456@perex.cz>
+ <ed1192e0-00e7-4739-a687-c96dc2d62898@linux.intel.com> <CAA+D8AMOh=G7W5-dYw_=Xx-s0PqEu2suKYorscoWku86Rn-=+A@mail.gmail.com>
+ <542d47c5-7ce3-4c17-8c0a-3a2b2a9e6c6a@linux.intel.com> <c3b8f7b8-fc5e-4285-bee8-7edd448a405d@perex.cz>
+ <CAA+D8ANg7C7vuxU44mAG8EnmcZjB_te5N_=4M4v_-Q9ZyPZ49g@mail.gmail.com>
+ <2be4303e-58e1-4ad7-92cf-f06fa6fa0f08@perex.cz> <7dc039db-ecce-4650-8eb7-96d0cfde09a2@linux.intel.com>
+ <CAA+D8AMv=tHV3b-Rfo9Pjqs0bX5SVschD=WD06qxjJOk5zQmiQ@mail.gmail.com> <3cdb2041-59d4-4d43-ac4d-39d7f9640cef@linux.intel.com>
+In-Reply-To: <3cdb2041-59d4-4d43-ac4d-39d7f9640cef@linux.intel.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 14 Aug 2024 19:12:16 +0800
+Message-ID: <CAA+D8APSrH_pum6Cm0YxDzWMs4Roi=h1hkBjPMfXocXt7z4oVA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec support
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, 
+	tiwai@suse.com, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: F7p3xsx2rAk5bAra8m9sgzB7zj2kD7Fm
-X-Proofpoint-GUID: F7p3xsx2rAk5bAra8m9sgzB7zj2kD7Fm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_08,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 mlxlogscore=961 clxscore=1015 mlxscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408140078
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 14, 2024 at 5:40=E2=80=AFPM Pierre-Louis Bossart
+<pierre-louis.bossart@linux.intel.com> wrote:
+>
+>
+> > Yes, to go further, I think we can use SND_AUDIOCODEC_PCM, then
+> > the SRC type will be dropped.
+>
+> sounds good.
+>
+> > But my understanding of the control means the .set_metadata() API, righ=
+t?
+> > As I said, the output rate, output format, and ratio modifier are appli=
+ed to
+> > the instances of ASRC,  which is the snd_compr_stream in driver.
+> > so only the .set_metadata() API can be used for these purposes.
+>
+> Humm, this is more controversial.
+>
+> The term 'metadata' really referred to known information present in
+> headers or additional ID3 tags and not in the compressed file itself.
+> The .set_metadata was assumed to be called ONCE before decoding.
+>
+> But here you have a need to update the ratio modifier on a regular basis
+> to compensate for the drift. This isn't what this specific callback was
+> designed for. We could change and allow this callback to be used
+> multiple times, but then this could create problems for existing
+> implementations which cannot deal with modified metadata on the fly.
 
+.set_metadata can be called multi times now, no need to change currently.
 
-On 8/14/2024 11:05 AM, Prashanth K wrote:
-> 
-> 
-> On 14-08-24 05:47 am, Thinh Nguyen wrote:
->> On Tue, Aug 13, 2024, Faisal Hassan wrote:
->>> Null pointer dereference occurs when accessing 'hcd' to detect speed
->>> from dwc3_qcom_suspend after the xhci-hcd is unbound.
->>> To avoid this issue, ensure to check for NULL in
->>> dwc3_qcom_read_usb2_speed.
->>>
->>> echo xhci-hcd.0.auto > /sys/bus/platform/drivers/xhci-hcd/unbind
->>>    xhci_plat_remove() -> usb_put_hcd() -> hcd_release() -> kfree(hcd)
->>>
->>>    Unable to handle kernel NULL pointer dereference at virtual address
->>>    0000000000000060
->>>    Call trace:
->>>     dwc3_qcom_suspend.part.0+0x17c/0x2d0 [dwc3_qcom]
->>>     dwc3_qcom_runtime_suspend+0x2c/0x40 [dwc3_qcom]
->>>     pm_generic_runtime_suspend+0x30/0x44
->>>     __rpm_callback+0x4c/0x190
->>>     rpm_callback+0x6c/0x80
->>>     rpm_suspend+0x10c/0x620
->>>     pm_runtime_work+0xc8/0xe0
->>>     process_one_work+0x1e4/0x4f4
->>>     worker_thread+0x64/0x43c
->>>     kthread+0xec/0x100
->>>     ret_from_fork+0x10/0x20
->>>
->>> Fixes: c5f14abeb52b ("usb: dwc3: qcom: fix peripheral and OTG suspend")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
->>> ---
->>>   drivers/usb/dwc3/dwc3-qcom.c | 4 +++-
->>>   1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
->>> index 88fb6706a18d..0c7846478655 100644
->>> --- a/drivers/usb/dwc3/dwc3-qcom.c
->>> +++ b/drivers/usb/dwc3/dwc3-qcom.c
->>> @@ -319,13 +319,15 @@ static bool dwc3_qcom_is_host(struct dwc3_qcom
->>> *qcom)
->>>   static enum usb_device_speed dwc3_qcom_read_usb2_speed(struct
->>> dwc3_qcom *qcom, int port_index)
->>>   {
->>>       struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
->>
->> What if dwc is not available?
-> 
-> Thats unlikely, dwc3_qcom_suspend() -> dwc3_qcom_is_host() checks for
-> dwc, calls dwc3_qcom_read_usb2_speed() only if dwc is valid. But adding
-> an extra check shouldn't cause harm.
+>
+> And then there's the problem of defining a 'key' for the metadata. the
+> definition of the key is a u32, so there's plenty of space for different
+> implementations, but a collision is possible. We'd need an agreement on
+> how to allocate keys to different solutions without changing the header
+> file for every implementation.
 
-Thanks Thinh and Prashanth for reviewing the patch.
-Since the caller is validating 'dwc', I think there is no need to recheck.
+Can we define a private space for each case?   For example the key larger
+than 0x80000000 is private, each driver can define it by themself?
 
->>
->>> -    struct usb_device *udev;
->>> +    struct usb_device __maybe_unused *udev;
->>
->> This is odd.... Is there a scenario where you don't want to set
->> CONFIG_USB if dwc3_qcom is in use?
->>
-> AFAIK this function is used to get the speeds of each ports, so that
-> wakeup interrupts (dp/dm/ss irqs) can be configured accordingly before
-> going to suspend, which is done during host mode only. So there
-> shouldn't be any scenarios where CONFIG_USB isnt set when this is called.
-
-From history I see CONFIG_USB was added to fix build issues for gadget
-only configuration. So configuration without CONFIG_USB also exists.
-
->>>       struct usb_hcd __maybe_unused *hcd;
->>>         /*
->>>        * FIXME: Fix this layering violation.
->>>        */
->>>       hcd = platform_get_drvdata(dwc->xhci);
->>> +    if (!hcd)
->>> +        return USB_SPEED_UNKNOWN;
->>>     #ifdef CONFIG_USB
->>
->> Perhaps this #ifdef shouldn't only be checking this. But that's for
->> another patch >>       udev = usb_hub_find_child(hcd->self.root_hub,
->> port_index + 1);
->>> -- 
->>> 2.17.1
->>>
->>
->> BR,
->> Thinh
-> Thanks,
-> Prashanth K
-Thanks,
-Faisal
+>
+> It sounds like we'd need a 'runtime params' callback - unless there's a
+> better trick to tie the control and compress layers?
+>
 
