@@ -1,133 +1,153 @@
-Return-Path: <linux-kernel+bounces-286755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D41951E9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:32:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C2B951EA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247C61C21FDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784C01F23136
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3253D1B5808;
-	Wed, 14 Aug 2024 15:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710601B5801;
+	Wed, 14 Aug 2024 15:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YMqb83Mn"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKqkeXUc"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0925C1B581F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3101E529;
+	Wed, 14 Aug 2024 15:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723649531; cv=none; b=CIO+3DeL2GARee7OGpfR5sS1/+qLjkAcK04LPxJ0qmSC/pMC0JQYwDarJMl0bkntQ86N53BspTAkogULash+ehKNHVGbR44DQvtGk33mpBl1GOK1Ro2WVuYGVqkerqSEY/ZDu067sryTtdEi6rLJEHtEZ2PY37DRHHo2EUKOk7I=
+	t=1723649640; cv=none; b=aUloyP/CiH3wK6AskHJI8wNrLG/d3yAS2ZT4DG4HyHnlDl8DB6/oDQPBfFy3cguLqG+mxYOxn4up5E/boIXe226j5osv2y5bousUSRG0UhUtAmix+eJAHWuyH4KXq2sHlrldbjd9+LAaM1v2fArTtGgD/HdH0/9Ny3aqy8OuE50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723649531; c=relaxed/simple;
-	bh=7OooO9TplT+lvfE2JkQoIj1MaDEShOjip54yS30SXQE=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=FCNAoEdzmvGbQT5zh2OiRrgH6OUJsShQ4FqF38JmeYxHCFLZFE4s9U3GfgQrS/BUwQjNeA97YIAcgasAhC2EJYbB3YzyqZcb/vXK71q49jS3RuWU3a1QZTn5i9Qkzpvf3qiXxjnpzPFkV3QMwepm6bAKd4ccBqHIjdcsPuEkCe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YMqb83Mn; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b7a3773a95so36786926d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:32:09 -0700 (PDT)
+	s=arc-20240116; t=1723649640; c=relaxed/simple;
+	bh=QLbYuL5iDDVjrekLj6uwxZzS6Qfq6dEj/vjZ3vOcbZg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eJcxvC3XF2r0ffkCdH3POM5E5GcRkEvZP1Q+OlNNPDBYhcNnGewb3OFqGq6yT18FASaKbfoNUzoGOBzA/POIQhu3s6FxoCZvOMSOB8BBZksmlifnC77xPcUGT5jLJZREJmh5pTOsA+O7mms7bZYee1RKbuqEVaSMa/K7ejYBYfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XKqkeXUc; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70930972e19so1931975a34.3;
+        Wed, 14 Aug 2024 08:33:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723649529; x=1724254329; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LJ9fvRwo+hi0Q64GB7HfIEW9tbB2awWX2voQOxbEeD4=;
-        b=YMqb83MnEOE5jmcQHWVB8wgsxz0EYlz+299wNwPPcDct65oB/k5W08vuUQ7HICfnkm
-         cSu9UkzXVAIPrIYc0AH8Q+HkoHhec1eihEJz7B3GvVL4EUw+J+I4SywcM7JWnG/xvSaj
-         uSlX4Hs24Hi2Ii4/F75+LO+ilMPcCTpzoYghb9c8GeFsBd3z1NhZ5VmVSj2SKj9Gtpsr
-         loqCe8DcOE79bAUcHExrZK0VrClZyvmBs+xX4S9n1bk0yWcXX076lAp2eFJ5ppqLCf6b
-         2sq4bbhQcg+Qd2WvNjbDiyQ4GmZknGWPxGsHnQFKYe4DIrVuFfMw5dbJs+4BhPqhl0+w
-         tchg==
+        d=gmail.com; s=20230601; t=1723649638; x=1724254438; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=miqNK+B744VEtho+Cz5BtriydmdXkbKnexaiIQFok4E=;
+        b=XKqkeXUcV2xNnZsYuMIUh+RtZhGRKvcio6Hv8eAioXvu5nP/d38e9m1qbWr8V5UbzK
+         SdFSivmY/hTsD1f8Cmj3lpkXuL5kcFVfsLmyLKIYzirSXGoK3MbSweihoxz8cF7rRIjM
+         MUb4Eplu2zTktziZ/hHcPkEFf/O8SpdDfpSTODPxv4Uge6QfHzLKmIxt0dMbXXMgKaC3
+         jncql18YjVPuooN6DxTZOh37s7AV19vv1YLmM8lPkcCMKbvC8Rk24aTDeE1vZZ2+YPRp
+         LOcdqkkslLRBl4HB+3376yzREb9MvSPjc/pLwk+yFefrvsP9Ezb4iNPPsNhRjsD0lJR5
+         Kupg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723649529; x=1724254329;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LJ9fvRwo+hi0Q64GB7HfIEW9tbB2awWX2voQOxbEeD4=;
-        b=GAiL3m/aV0bKD+Lx748Vf390+rj2gp1KNfU7tHZ4UzOCpD6Ak/2SSj0Q+mclZrY7Oc
-         aKTTUXRY02Yrf4cMJBAM3fIKt3hdgh64a+0+sN28b+yjqSPOljr4Ll8iHpd73LIKWHNe
-         72MPUT+miBIvaLw4iDfBC20fpmkWXWYokeMIFNVdUgVzZBaMAVaTPt5qpqB++x+oD3Wm
-         AmirM2POk9s8knGU6RshgM8/L9E5T1e9CSSEL8uq083qnKCRJUJk0t2EPrG7R7DtCwvm
-         pQstaq789xXZq72Qma0qjfKJoA9fxt5y3mzinkRCmPZqEwyCXMqUkEBE6J0iaz2ebFpF
-         O6tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxJLGJcrwcwZhGzeT1I0/f1gNSvrV4ol3qQhW13aED8qykcDMpCPhbwBHvy4CjFha2TPD+rwiCvKqK7S1Za/EXk92+qGImM5F+T1xT
-X-Gm-Message-State: AOJu0Yx0Wkr3OrMQDsu3+Y+hPFPB2g2PYsFEtX3xHQyKgWE/awXhFFRk
-	RfsvNcwyLg8Ubb0D1OAeESImXG/o24oTct4abeF6gnqHMYJRvc5twagHP5sc2LV8Er2mhHYovOY
-	=
-X-Google-Smtp-Source: AGHT+IEr3vsF6kVgdcrOqiLxJ8Htl5sV9F9/r74PtqYHFUz+Cxr42fM4Gg7zoS2U9E9KIDVqOo9kow==
-X-Received: by 2002:a05:6214:2b99:b0:6bf:5587:f6cd with SMTP id 6a1803df08f44-6bf5d25999dmr26638996d6.42.1723649528855;
-        Wed, 14 Aug 2024 08:32:08 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82c5ef2esm44967696d6.8.2024.08.14.08.32.08
+        d=1e100.net; s=20230601; t=1723649638; x=1724254438;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=miqNK+B744VEtho+Cz5BtriydmdXkbKnexaiIQFok4E=;
+        b=ASFRXUJCqZ1HdqT9nAk9G7eG7YXX2Iaa1xFfKU9tQJOlSllqI0K6TW0Pg0HikSKAYN
+         qxbRf91QajrogcOIcwSxKYyaGSRTGs1m1WS/vrtUNuMqSWFW3k+OxuqXSWWxUwIxPVND
+         C0Mtg59bgl3s6YWc+igz8eaEuYja6u3ztIL3o6h/0hCvRTaL/GZnepjJ64M39wQPR9Dd
+         YEE5l4yW2my89MBG3S6hlql7yfG4brjCcnlcovt35lmiewA4UggAMlBmMYg1vO6b6PfD
+         l51oU+HiXQxmKix5DrH3RvYxOQ1fX+QbCESkxtv7qh2gV8fepFx2TIC9oOoK9gxgd+ar
+         ZLVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPl5jLkBgf06+1Y6myRxCg8uejYeb7oIdWG4qzjgjAVMjzXVc+FtrypjCRwu2OzHqH6ISceSw0Dpr9y65Wq2XwG5rKEpkaDQeFFQcjCrxoAcvUh+p+BEI28+sLfeoAhQoEehcxeAmBtZpse9H4
+X-Gm-Message-State: AOJu0YyCI3VTqVZkHX3i3do5yjLop6m69fOxZTw9NGxtOP57wR1nFqW8
+	h2znOAvPw4fpRybOpO2Zm0S3glwXWfqhhR6ChaOuMJ0pFs8s63rW
+X-Google-Smtp-Source: AGHT+IEwQqDD1BqP+Zoiab/YVxTNQIEozpAACW41iApb8rmqIU4uPEKI6+p9bS5UeKAf+1oOHFHzqA==
+X-Received: by 2002:a05:6830:d13:b0:70a:92e4:6736 with SMTP id 46e09a7af769-70c9d9d9529mr4164350a34.28.1723649638136;
+        Wed, 14 Aug 2024 08:33:58 -0700 (PDT)
+Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
+        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-70c7b89c042sm2254766a34.78.2024.08.14.08.33.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:32:08 -0700 (PDT)
-Date: Wed, 14 Aug 2024 11:32:08 -0400
-Message-ID: <30fc5b38165e4eda57d640eca76b7df1@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20240814
+        Wed, 14 Aug 2024 08:33:57 -0700 (PDT)
+Message-ID: <bc279009c4c3c901033e23601efcf9ed4da8743d.camel@gmail.com>
+Subject: Re: [PATCH net-next v13 02/14] mm: move the page fragment allocator
+ from page_alloc into its own file
+From: Alexander H Duyck <alexander.duyck@gmail.com>
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org,  pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells
+ <dhowells@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Eric
+ Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>,
+ linux-mm@kvack.org,  linux-kselftest@vger.kernel.org
+Date: Wed, 14 Aug 2024 08:33:55 -0700
+In-Reply-To: <20240808123714.462740-3-linyunsheng@huawei.com>
+References: <20240808123714.462740-1-linyunsheng@huawei.com>
+	 <20240808123714.462740-3-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-Linus,
+On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
+> Inspired by [1], move the page fragment allocator from page_alloc
+> into its own c file and header file, as we are about to make more
+> change for it to replace another page_frag implementation in
+> sock.c
+>=20
+> As this patchset is going to replace 'struct page_frag' with
+> 'struct page_frag_cache' in sched.h, including page_frag_cache.h
+> in sched.h has a compiler error caused by interdependence between
+> mm_types.h and mm.h for asm-offsets.c, see [2]. So avoid the compiler
+> error by moving 'struct page_frag_cache' to mm_types_task.h as
+> suggested by Alexander, see [3].
+>=20
+> 1. https://lore.kernel.org/all/20230411160902.4134381-3-dhowells@redhat.c=
+om/
+> 2. https://lore.kernel.org/all/15623dac-9358-4597-b3ee-3694a5956920@gmail=
+.com/
+> 3. https://lore.kernel.org/all/CAKgT0UdH1yD=3DLSCXFJ=3DYM_aiA4OomD-2wXykO=
+42bizaWMt_HOA@mail.gmail.com/
+> CC: David Howells <dhowells@redhat.com>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/linux/gfp.h                           |  22 ---
+>  include/linux/mm_types.h                      |  18 ---
+>  include/linux/mm_types_task.h                 |  18 +++
+>  include/linux/page_frag_cache.h               |  31 ++++
+>  include/linux/skbuff.h                        |   1 +
+>  mm/Makefile                                   |   1 +
+>  mm/page_alloc.c                               | 136 ----------------
+>  mm/page_frag_cache.c                          | 145 ++++++++++++++++++
+>  .../selftests/mm/page_frag/page_frag_test.c   |   2 +-
+>  9 files changed, 197 insertions(+), 177 deletions(-)
+>  create mode 100644 include/linux/page_frag_cache.h
+>  create mode 100644 mm/page_frag_cache.c
+>=20
+>=20
 
-Three SELinux fixes for v6.11-rcX:
+...
 
-- Fix a xperms counting problem where we adding to the xperms count
-  even if we failed to add the xperm.
+> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
+che.h
+> new file mode 100644
+> index 000000000000..a758cb65a9b3
+> --- /dev/null
+> +++ b/include/linux/page_frag_cache.h
+> @@ -0,0 +1,31 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef _LINUX_PAGE_FRAG_CACHE_H
+> +#define _LINUX_PAGE_FRAG_CACHE_H
+> +
+> +#include <linux/log2.h>
+> +#include <linux/types.h>
+> +#include <linux/mm_types_task.h>
+> +
 
-- Propogate errors from avc_add_xperms_decision() back to the caller
-  so that we can trigger the proper cleanup and error handling.
+Minor nit. These should usually be in alphabetical order. So
+mm_types_task.h should be between log2.h and types.h.
 
-- Revert our use of vma_is_initial_heap() in favor of our older logic
-  as vma_is_initial_heap() doesn't correctly handle the no-heap case
-  and it is causing issues with the SELinux process/execheap access
-  control.  While the older SELinux logic may not be perfect, it
-  restores the expected user visible behavior.  Hopefully we will be
-  able to resolve the problem with the vma_is_initial_heap() macro
-  with the mm folks, but we need to fix this in the meantime.
-
--Paul
-
---
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20240814
-
-for you to fetch changes up to 05a3d6e9307250a5911d75308e4363466794ab21:
-
-  selinux: revert our use of vma_is_initial_heap()
-    (2024-08-08 16:22:47 -0400)
-
-----------------------------------------------------------------
-selinux/stable-6.11 PR 20240814
-
-----------------------------------------------------------------
-Paul Moore (1):
-      selinux: revert our use of vma_is_initial_heap()
-
-Zhen Lei (2):
-      selinux: fix potential counting error in
-               avc_add_xperms_decision()
-      selinux: add the processing of the failure of
-               avc_add_xperms_decision()
-
- security/selinux/avc.c   |  8 ++++++--
- security/selinux/hooks.c | 12 +++++++++++-
- 2 files changed, 17 insertions(+), 3 deletions(-)
-
---
-paul-moore.com
 
