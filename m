@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-287021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4229521B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:00:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636189521BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFD8283C43
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:00:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5C2EB271B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4151BD03A;
-	Wed, 14 Aug 2024 18:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8758C1BCA19;
+	Wed, 14 Aug 2024 18:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xLhnetR5"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y6z33loG"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35181BC084
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF87D1B4C3D
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658400; cv=none; b=eiRMd8N1iyBW3FIUxxx+GHoxU8Jlmn65+tlhwGGisp+YObOIZE6raM/6IFdgPhIRbjPyfEWQT/4c8q4J0rcQabKPFuX/61gCN/oP9/oad5p2LxuOgJSdLhIKKruC5MukGTtHRUG/RYwg3R6aSSqi6vpvaVGDW0XQtC8nRnFGdSg=
+	t=1723658478; cv=none; b=j7/ojC8fhRf+fiQvMj3O7/t+0HEOc+vyWOWlg922Z2WI03661ELPK5hxNy6DacXiEASIDwO1hbGks6ftIs8byG6wAd60v4jHNr8rN4jZUu/DwbxwEkyXK7/FfVvU5sYBsunSnU9ULX8DcF84yuxi0q9TnlCrKp2lfSk+rMZ9e38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658400; c=relaxed/simple;
-	bh=gK4sRcaloHcln7TAZ92Aeomv4OGrsTEcLGBDbt0X824=;
+	s=arc-20240116; t=1723658478; c=relaxed/simple;
+	bh=D9ysdIZnNkauYSLlh1fFwfnLMxelm3xkTf9ZAYk0HCc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VSBF5UVTPC4oRMaFWc3sYgDNrVoOQiSB+3Pj6PUI1Vcvdlgy5VKXsoTE0S/o0AtQju7Vg3a7IT4npwHviJzJLYary8w29QdPbPKAKkIK3NjnCwePZc0yU4xoWJ7ljm7M2ut9ojhSzCC0iXP77MxK92RFhZwaDWjRRMOoItbPM4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xLhnetR5; arc=none smtp.client-ip=209.85.128.50
+	 In-Reply-To:Content-Type; b=dXDfJnZJbYO04h2OhWUmsvyfQDLuwC+JvsfNWLgpxSXWmaZ2r8DoIrpQp6Fn5MGmREHlegQ2xdWrNIUZssPA++vl/jg1QGUcEXIGlSSWu1RuJBJAQ/MXvY/2/BFa8mBu0TtXwZBjDnOgvHBZ242Ac6gyE6tSO2vvUGVYyOs9GPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y6z33loG; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42816ca782dso454765e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:59:58 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so2024841fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:01:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723658397; x=1724263197; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723658475; x=1724263275; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=e+0+18kAd1ntL3CjGet64KYdk8UF+VMULzQLsO5d54Y=;
-        b=xLhnetR55buFiABKFeBzWOcMjZ8dTUU/qL86wAkRHXLEl/4PIe4rMXbXDThQJPw+Oe
-         Llovii2JIP7UGH3shLUXZXMauOEiuW+BIbg9ZPB2nMaPEp7iPduCQFCbenZYhtkdNCly
-         0a86I1TiFFjb4xuJvv1fV3j5P4irtDXazo3YJvXRKW2lvcBzmPmthDM/pL3ig75HJmwC
-         GRwRh17Nat0v3HQ3DxwsY2FuniP6T/kxD7gKESugofxEvCFUuTII9EkB+SzNqwKQ3T93
-         NtpU3T5W1Q1ME3+wmIZtNng5S0SOcvYu7HHvfP0RuvoDCGtRFaTSRJg2TZzydOBjWJ1J
-         2zvg==
+        bh=EqWT7co9LLm+zY9hTxt/0Ma/Ff/Hf5HofKmeJ3F+uhw=;
+        b=Y6z33loGUjgahZXlYZFmBzkaWuX9jqrfVMgLAID2zKiGMs8DJ++nD9TBrxAzxQ1LQi
+         MwLGURb/TY7UBZmxVuNN3we/qu6mPXvNKg4DOfgoRTU4SbP9SSDtLyFmIbHO2jSXL78m
+         FDkyHATXJn6nOkvWn2VHsghzITtAV8AH2MmmuyF0aNl/xYM2zSR4j9CROvegE5ZlbkLK
+         rZX3W8cFiRQOiYIELUjJ5t0A3P4Y+ACdZA8mSooHpWKeLmdM/ZnGfN/+7aUUQBZeyV1f
+         IIuoQbODIm9/GLMl4J9uJYxS31KGXE4Mhlit0elAhXNSRh43RkPjvLmbvKvXMrD4IJ71
+         ooag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723658397; x=1724263197;
+        d=1e100.net; s=20230601; t=1723658475; x=1724263275;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e+0+18kAd1ntL3CjGet64KYdk8UF+VMULzQLsO5d54Y=;
-        b=s3AjlNXvs3lmjGyvCeXV1EjWUrm+uVDBXljYj6nFPMsDCJyHELcagXfhO2p7Tm15+p
-         Y8niTwx3UBz9AmrEIpm/1ZHUiODKv0CLb2VoFEpIsSFVp19CRTLd4JarPn+FcLNwV3Cu
-         ixdsatjea8JWxmx/k3WSkGv6xYzytjTyPzOivF1jri30Vx5yDOdOhw67EYB9mReDnwwk
-         qWe3/Zr3svvLHBEQ+tvKIDNKYe0FRmkXQoVb8fXG4R4aAm+zKcjq7zYPlXVhvu5ED6Gc
-         3iw+fs4390Y5GaWXRuC0EsnXlG8KVelg7n8u15vIlordbhe0akImtd6f6GW+Jem6on5f
-         EwYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwVcqxNAe4ddSlXtESK6ZMYdMUH0jMDxg9lEwMQ18BegMaZPepMloBLrVBs8R+sdCfWyBqhTEyvy0wOQykD88fHceFFzxaBBz2G8up
-X-Gm-Message-State: AOJu0YxLQg+nqPJ1+9pV4MfMPFCXb8VUJv+sSH4Gbw/EoossLwCPzkqY
-	DGYDy+eDp5TD8nsR+JImddEI9AqeFeSOV5YPqDS/gXqsgCGmuKMRUj89mVFEyLc=
-X-Google-Smtp-Source: AGHT+IHv1VcCnmzCbrSFCmf9TtFXDTUTp/2jtxGlOatGsJT2eISwIhRuCQHwm7HglJURgLzYox3Nqg==
-X-Received: by 2002:a7b:c385:0:b0:429:d43e:db9e with SMTP id 5b1f17b1804b1-429dd26701dmr20162985e9.36.1723658396976;
-        Wed, 14 Aug 2024 10:59:56 -0700 (PDT)
+        bh=EqWT7co9LLm+zY9hTxt/0Ma/Ff/Hf5HofKmeJ3F+uhw=;
+        b=lD6UErvAmGaENXQpVUBocCb2kAd7uKzLUZeg40IuHgQOUV7uzHxK5fJYTe+nydfVvg
+         9Jq+36iF/0qByum91ZESj1X/PdvkLak2CcE4mLAdJNEhYw/LGQgbv6eAy1pCILzrQrm+
+         nyEOx26Z8FgnltkTOuvly4GeQPxWyl6umyWCwtRXw+3x0RfH/ljVQFHoxQHuyQjgqTNQ
+         Dc/IlMZ0e3VNP33qEYlfnFsREf/L/CxF4IIDjir7KajM4WQ5EVBuP07fjulQf+fASFP6
+         BbhT9lTHGSA538WJjFfogzFsPkxAKx1dE2ks8uVY8ninpi6/r0mBfy//S4ScR9A+0zn5
+         7cyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTvUOSUZPLd4/S8F2URwVvVcjrbkPzWimTiBrJEyU5Oc3y5cG9CRkg/6tTsSi5XU6csCYm7F9vR8feDS71b4XCRuLSImUJcveWBabR
+X-Gm-Message-State: AOJu0YzKW7SSd4v4W5TPdiq/mIpHYIYk6xcMJKe9uWZvcsNSo+lf0dU7
+	/sPAbB4M/tOJ04iyWSt+YS2M8Vey5K2QFJQf6sEr7sKLOb85hGksz8AANlNz+Pg=
+X-Google-Smtp-Source: AGHT+IGOY+fHGA681Phv/bb+Nvm64Jh5qeSZOPlkH6pYx8qHLZa9/HUqI8ecTFDDn08I8Aj9PH7V0g==
+X-Received: by 2002:a05:6512:687:b0:52c:d27b:ddcb with SMTP id 2adb3069b0e04-532eda8e7ecmr2795696e87.3.1723658474687;
+        Wed, 14 Aug 2024 11:01:14 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c93714asm13400232f8f.27.2024.08.14.10.59.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded28cdasm26871565e9.16.2024.08.14.11.01.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 10:59:56 -0700 (PDT)
-Message-ID: <64af1408-d3c8-495b-a69c-7a0718eadfc4@linaro.org>
-Date: Wed, 14 Aug 2024 19:59:54 +0200
+        Wed, 14 Aug 2024 11:01:12 -0700 (PDT)
+Message-ID: <03b93d98-5722-4592-9346-30a3b4f95d1f@linaro.org>
+Date: Wed, 14 Aug 2024 20:01:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,8 +76,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] memory: stm32-fmc2-ebi: simplify with scoped for each
- OF child loop
+Subject: Re: [PATCH 9/9] memory: ti-aemif: simplify with scoped for each OF
+ child loop
 To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
  Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -93,8 +93,8 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
  linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
  linux-tegra@vger.kernel.org
 References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
- <20240812-cleanup-h-of-node-put-memory-v1-4-5065a8f361d2@linaro.org>
- <20240814174502.00003b2c@Huawei.com>
+ <20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
+ <20240814175541.00002023@Huawei.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -141,51 +141,57 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240814174502.00003b2c@Huawei.com>
+In-Reply-To: <20240814175541.00002023@Huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/08/2024 18:45, Jonathan Cameron wrote:
-> On Mon, 12 Aug 2024 15:33:58 +0200
+On 14/08/2024 18:55, Jonathan Cameron wrote:
+> On Mon, 12 Aug 2024 15:34:03 +0200
 > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 > 
 >> Use scoped for_each_available_child_of_node_scoped() when iterating over
 >> device nodes to make code a bit simpler.
 >>
 >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Might be worth using dev_err_probe() in here. Otherwise LGTM
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Nothing wrong with this patch, but I think you can add a precusor
+> that will make this neater.
+> 
+> Jonathan
 > 
 >> ---
->>  drivers/memory/stm32-fmc2-ebi.c | 8 +-------
->>  1 file changed, 1 insertion(+), 7 deletions(-)
+>>  drivers/memory/ti-aemif.c | 13 ++++---------
+>>  1 file changed, 4 insertions(+), 9 deletions(-)
 >>
->> diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
->> index 1c63eeacd071..7167e1da56d3 100644
->> --- a/drivers/memory/stm32-fmc2-ebi.c
->> +++ b/drivers/memory/stm32-fmc2-ebi.c
->> @@ -1573,29 +1573,25 @@ static int stm32_fmc2_ebi_setup_cs(struct stm32_fmc2_ebi *ebi,
->>  static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
->>  {
->>  	struct device *dev = ebi->dev;
->> -	struct device_node *child;
->>  	bool child_found = false;
->>  	u32 bank;
->>  	int ret;
->>  
->> -	for_each_available_child_of_node(dev->of_node, child) {
->> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
->>  		ret = of_property_read_u32(child, "reg", &bank);
->>  		if (ret) {
->>  			dev_err(dev, "could not retrieve reg property: %d\n",
->>  				ret);
->> -			of_node_put(child);
->>  			return ret;
-> 			return dev_err_probe(dev, "could not retrieve reg property\n");
-> perhaps?
+>> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+>> index e192db9e0e4b..cd2945d4ec18 100644
+>> --- a/drivers/memory/ti-aemif.c
+>> +++ b/drivers/memory/ti-aemif.c
+>> @@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
+>>  	int ret = -ENODEV;
+>>  	struct device *dev = &pdev->dev;
+>>  	struct device_node *np = dev->of_node;
+>> -	struct device_node *child_np;
+>>  	struct aemif_device *aemif;
+>>  	struct aemif_platform_data *pdata;
+>>  	struct of_dev_auxdata *dev_lookup;
+>> @@ -374,12 +373,10 @@ static int aemif_probe(struct platform_device *pdev)
+>>  		 * functions iterate over these nodes and update the cs data
+>>  		 * array.
+>>  		 */
+>> -		for_each_available_child_of_node(np, child_np) {
+>> +		for_each_available_child_of_node_scoped(np, child_np) {
+>>  			ret = of_aemif_parse_abus_config(pdev, child_np);
+>> -			if (ret < 0) {
+>> -				of_node_put(child_np);
+>> +			if (ret < 0)
+>>  				goto error;
+> I'd precede this patch with use of
+> devm_clk_get_enabled()
+> 
+> That would avoid what looks like potential mixed devm and not issues
+> and let you return here.
 
-New patch for that... but just mind that deferred probe cannot happen
-here, so only part of dev_err_probe() benefits would be used.
+Yep, that would be useful.
 
 Best regards,
 Krzysztof
