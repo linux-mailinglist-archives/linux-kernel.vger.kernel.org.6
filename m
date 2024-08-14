@@ -1,116 +1,168 @@
-Return-Path: <linux-kernel+bounces-285971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFEF951500
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:09:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9575E95151D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EFE8284602
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73A11C247D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0E713AA36;
-	Wed, 14 Aug 2024 07:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D4E13D28D;
+	Wed, 14 Aug 2024 07:15:32 +0000 (UTC)
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1CA27446;
-	Wed, 14 Aug 2024 07:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CDA3BBF4;
+	Wed, 14 Aug 2024 07:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723619314; cv=none; b=idYtXZPFc5OwY5IWX7oCtZ38DOOwQ7k38eo8De56q+EcnNFLkKLbU3v88Y6qNLZNJo8Vl9SfGUAnN67vXVZvOU/pkcVAiVTWQ8/XBaiYxtVucWubpyKbakemS0GXok8T2gYF6Tc3UMyXLxbG9GIY6epR1TzhTafAVefojlExMkE=
+	t=1723619731; cv=none; b=min13mm39G3WvgA8MtqoKxf5S7btcfllraMb/qjiBvzhbw7H90JEqMHrVJH1DpzN3bOScNx0/uEKzQxzQmhaUDszIEbMCMnafG/L/sJmraQ+3o98SI15GN0o0S/qRv9JC7FeeHtCohl/AT/zaJYy31f+0SrUhTinRk0E/c44jDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723619314; c=relaxed/simple;
-	bh=Gm3F+nnI84YxUt6gJumvaW5Wn1prq0qr+MJe9fRtBbU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=IayDNOCBKBZ5APiu8/CizdzqmRcvKqHMf3gbigOj07LqeZCEE20K/FQcNtYiVITYmILZb5aCgPyfmEvJKfw8YDv8acmXvu5DGoCEIrsaKURlVkqfaqoCHEHT/Npr96KTCsQCL7cQsIMiq3vm2AQuMyZTpQAbMrY/dkq8kSUK/rc=
+	s=arc-20240116; t=1723619731; c=relaxed/simple;
+	bh=K5KizyvoE7JiIK5mXMosl7Yl0gyqw72NSYu72/sGgvU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HZw7kI0wREk2U1LFAaJhdGl20O/e/KEj0WXNT+bjvjl1x8Il3ndv9Fcc3qJzHm24fxw8RLbj3a2Wo4e+a55/2kGjAVDoCYU13k/ZKF3fMEIKH3qOPc0agNTaPNg7CRwP9ctNgbyTQpkVTbuqu1PgwGttv1rPR3tlKcTVpjpOl8Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WkK8y1j2dz4f3jZL;
-	Wed, 14 Aug 2024 15:08:18 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WkKK04gZ9z4f3jZ1;
+	Wed, 14 Aug 2024 15:15:16 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8E2EC1A1537;
-	Wed, 14 Aug 2024 15:08:27 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzILpV7xmHJyaBg--.14959S3;
-	Wed, 14 Aug 2024 15:08:27 +0800 (CST)
-Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
- than one blocks per folio
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
- david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
- <ZrxBfKi_DpThYo94@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <b098d15b-4b80-2b73-d05b-f4dbb5d4631a@huaweicloud.com>
-Date: Wed, 14 Aug 2024 15:08:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	by mail.maildlp.com (Postfix) with ESMTP id F3F391A0359;
+	Wed, 14 Aug 2024 15:15:25 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBHboSLWbxmIxKbBg--.47745S4;
+	Wed, 14 Aug 2024 15:15:25 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: mariusz.tkaczyk@linux.intel.com,
+	hch@infradead.org,
+	song@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC -next v2 00/41] md/md-bitmap: introduce bitmap_operations and make structure internel
+Date: Wed, 14 Aug 2024 15:10:32 +0800
+Message-Id: <20240814071113.346781-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZrxBfKi_DpThYo94@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXzILpV7xmHJyaBg--.14959S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw47uF4UJF4kKr1xtw47Arb_yoW8JFyfpF
-	WxKa15Gr48tF1fZ3srXayUXr1rK3yfJrW3GFZIq3W29anxGr1a9F1qg3Z0ga47JrnrJF48
-	Xr47Xa4xGFy5Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-CM-TRANSID:gCh0CgBHboSLWbxmIxKbBg--.47745S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWfWF1DZrW8Xw1DJw1fJFb_yoWrCF1kpF
+	WDK345Ww43JFs3Ww15AryvyFyrtr1ktrsrKr1fCw1rCFyDAF9xXr48W3WIy34Igr9rJFsx
+	Xr15tr18Ww17XaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUU
+	UUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 2024/8/14 13:32, Christoph Hellwig wrote:
-> On Mon, Aug 12, 2024 at 08:11:56PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Now we allocate ifs if i_blocks_per_folio is larger than one when
->> writing back dirty folios in iomap_writepage_map(), so we don't attach
->> an ifs after buffer write to an entire folio until it starts writing
->> back, if we partial truncate that folio, iomap_invalidate_folio() can't
->> clear counterpart block's dirty bit as expected. Fix this by advance the
->> ifs allocation to __iomap_write_begin().
-> 
-> Wouldn't it make more sense to only allocate the ifѕ in
-> iomap_invalidate_folio when it actually is needed?
-> 
+From: Yu Kuai <yukuai3@huawei.com>
 
-Therefore, you mean current strategy of allocating ifs is to try to delay
-the allocation time as much as possible? The advantage is that it could
-avoid some unnecessary allocation operations if the whole folio are
-invalidated before write back. right?
+Changes in v2:
+ - add patch 1-8 to prevent dereference bitmap directly, and the last
+ patch to make bitmap structure internel.
+ - use plain function alls "bitmap_ops->xxx()" directly;
 
-> Also do you have a reproducer for this?
-> 
+The background is that currently bitmap is using a global spin_lock,
+cauing lock contention and huge IO performance degration for all raid
+levels.
 
-This mistake doesn't case any real problem now, because once the folio
-has been partial truncated, the counterpart range becomes a hole, although
-the ifs dirty bit is not cleared, iomap_writepage_map_blocks() can deal
-with it and won't cause any problem. Hence I don't have reproducer for
-this.
+However, it's impossible to implement a new lock free bitmap with
+current situation that md-bitmap exposes the internal implementation
+with lots of exported apis. Hence bitmap_operations is invented, to
+describe bitmap core implementation, and a new bitmap can be introduced
+with a new bitmap_operations, we only need to switch to the new one
+during initialization.
 
-Thanks,
-Yi.
+And with this we can build bitmap as kernel module, but that's not
+our concern for now.
+
+Noted I just compile this patchset, not tested yet.
+
+Yu Kuai (41):
+  md/raid1: use md_bitmap_wait_behind_writes() in raid1_read_request()
+  md/md-bitmap: replace md_bitmap_status() with a new helper
+    md_bitmap_get_stats()
+  md: use new helper md_bitmap_get_stats() in update_array_info()
+  md/md-bitmap: add 'events_cleared' into struct md_bitmap_stats
+  md/md-bitmap: add 'sync_size' into struct md_bitmap_stats
+  md/md-bitmap: add 'file_pages' into struct md_bitmap_stats
+  md/md-bitmap: add 'behind_writes' and 'behind_wait' into struct
+    md_bitmap_stats
+  md/md-cluster: use helper md_bitmap_get_stats() to get pages in
+    resize_bitmaps()
+  md/md-bitmap: add a new helper md_bitmap_set_pages()
+  md/md-bitmap: introduce struct bitmap_operations
+  md/md-bitmap: simplify md_bitmap_create() + md_bitmap_load()
+  md/md-bitmap: merge md_bitmap_create() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_load() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_destroy() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_flush() into bitmap_operations
+  md/md-bitmap: make md_bitmap_print_sb() internal
+  md/md-bitmap: merge md_bitmap_update_sb() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_status() into bitmap_operations
+  md/md-bitmap: remove md_bitmap_setallbits()
+  md/md-bitmap: merge bitmap_write_all() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_dirty_bits() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_startwrite() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_endwrite() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_start_sync() into bitmap_operations
+  md/md-bitmap: remove the parameter 'aborted' for md_bitmap_end_sync()
+  md/md-bitmap: merge md_bitmap_end_sync() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_close_sync() into bitmap_operations
+  md/md-bitmap: mrege md_bitmap_cond_end_sync() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_sync_with_cluster() into
+    bitmap_operations
+  md/md-bitmap: merge md_bitmap_unplug_async() into md_bitmap_unplug()
+  md/md-bitmap: merge bitmap_unplug() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_daemon_work() into bitmap_operations
+  md/md-bitmap: pass in mddev directly for md_bitmap_resize()
+  md/md-bitmap: merge md_bitmap_resize() into bitmap_operations
+  md/md-bitmap: merge get_bitmap_from_slot() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_copy_from_slot() into struct
+    bitmap_operation.
+  md/md-bitmap: merge md_bitmap_set_pages() into struct
+    bitmap_operations
+  md/md-bitmap: merge md_bitmap_free() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_wait_behind_writes() into
+    bitmap_operations
+  md/md-bitmap: merge md_bitmap_enabled() into bitmap_operations
+  md/md-bitmap: make in memory structure internal
+
+ drivers/md/dm-raid.c     |   7 +-
+ drivers/md/md-bitmap.c   | 561 +++++++++++++++++++++++++++++----------
+ drivers/md/md-bitmap.h   | 272 ++++---------------
+ drivers/md/md-cluster.c  |  79 +++---
+ drivers/md/md.c          | 133 ++++++----
+ drivers/md/md.h          |   3 +-
+ drivers/md/raid1-10.c    |   9 +-
+ drivers/md/raid1.c       |  78 +++---
+ drivers/md/raid10.c      |  73 ++---
+ drivers/md/raid5-cache.c |   8 +-
+ drivers/md/raid5.c       |  62 ++---
+ 11 files changed, 731 insertions(+), 554 deletions(-)
+
+-- 
+2.39.2
 
 
