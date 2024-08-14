@@ -1,266 +1,219 @@
-Return-Path: <linux-kernel+bounces-286592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E267951CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A60A3951CE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD8F8B29826
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:20:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E414BB29920
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29031B3722;
-	Wed, 14 Aug 2024 14:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6971B32C5;
+	Wed, 14 Aug 2024 14:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Kv1LNkky"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="seEb/dxX";
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="6uhHiMOm"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E023E1B32B5
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645190; cv=none; b=ZhKsm8lhgjwtNIB/F8518W8W5pF53vosBwa3RDF/BY61ncNkXd18Xf2S2py/aibJCOoJ7XoJBQO/E6A1kM9jgFlCaPaJPe7nls7JpCxvC8roP1axhPntt2/66Uvb87oX+7QdflLpnzX0FE/ZBDIniJFFSgeQUrHmXE+0UoZq4GU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645190; c=relaxed/simple;
-	bh=HVroeHgT75p4mx/kjl9PfYZHiauPCT5X26P0iCgBt8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N607PT+/ch2RNj3GeDqnD2D8rOhUI88yeKrp98blR5XUFx4969mKFa33lodeUi/keFe6L3nmND5cjoLim26My3mMhB0FcFndump+4R0Y1yfR8RIli1b4JEucK+BhGuyWJr3oRC/RKi7X443ggGMw8Mj18mKENSH172lMzj3UDyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Kv1LNkky; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428141be2ddso49358455e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723645187; x=1724249987; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Da9YmzdiApbeXQcXz3ENTfNNAAvA7VbcLD5ruFK2oT8=;
-        b=Kv1LNkkyR07JHWqaWkJHxmTRgFcMAuCg2XyA/068C6NbwtoVFqA/Ce85IDHFnNEdUJ
-         MGEVPmf11ZaTxOyPK84i+XyGxjuqZTS18R9TzYRZGFhGOM5Qt/PBzs0YFdb5pa6v58Xu
-         3IKZB1UJfL72aCXFGl2+rrZIZPT1z1c8QDEF0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723645187; x=1724249987;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Da9YmzdiApbeXQcXz3ENTfNNAAvA7VbcLD5ruFK2oT8=;
-        b=DpEq0IyCDPUrxIbUWU4Im/zqFMtvXSX5/TKRXsDO+4h7egYxVn9R1fiVkK89J+B28O
-         rejHo6n/iTqLCC9QkV5xkyQ6koG9pkztcqqTqyWUmzUXZq8M36/0PQhaURlNmZCiW/2t
-         2fAyQwchsiTDZUZHaWpFk0ruARqB+onKRGroCFlzSBNPa5Ye3qhdX9iAbplQ1Uq59zxl
-         XOIruqub40KP6pZkcDqe2vHa1v6lIc1ulSYVrmzV6iOG23opt661Tmzeh9/XStIUFHRf
-         W+bWaG2qU7CaO9ZAA/31v918TropqdALK1Z69HtiaS1offwYflnrX1OxXzUw6z+Me6CC
-         6clQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbOoEfX7gbqwDBd7h6B+SpihncFcniiGF48hd5Kjgu2Vjh8sm6nJi/vvUlbf7WdmeKlJ4rIfrOMJeZtESR0BMoECDUwXL8TY7THBMu
-X-Gm-Message-State: AOJu0YzN3Gl3mQXwDEYSiHUiK3hgIWPvNWB8ex2+2zejHVNHfOkyzZ9T
-	k0cMOf/QKaPR6QUhix0sWr7paKv5EKbB52hcGtV2ATb1Msrh2qBRIzr+sJxO4eQ=
-X-Google-Smtp-Source: AGHT+IGjy6UqrgdbSznY5oj8eOp/e9kukvu2+aB5a/gmgZLDw2cmWwT3/5lBN+QfWxZEkEbw6anX3g==
-X-Received: by 2002:a05:600c:4e87:b0:426:6158:962d with SMTP id 5b1f17b1804b1-429dd25fa21mr21152715e9.23.1723645187017;
-        Wed, 14 Aug 2024 07:19:47 -0700 (PDT)
-Received: from LQ3V64L9R2.home ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded32538sm21204145e9.16.2024.08.14.07.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:19:46 -0700 (PDT)
-Date: Wed, 14 Aug 2024 15:19:44 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
-Message-ID: <Zry9AO5Im6rjW0jm@LQ3V64L9R2.home>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <20240812125717.413108-1-jdamato@fastly.com>
- <ZrpuWMoXHxzPvvhL@mini-arch>
- <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
- <ZrqU3kYgL4-OI-qj@mini-arch>
- <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
- <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <66bc21772c6bd_985bf294b0@willemb.c.googlers.com.notmuch>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7F81B1418;
+	Wed, 14 Aug 2024 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723645206; cv=fail; b=NUYPnQWCiZhnVpP59uOGu7IE/AIkV5DnXCssuyzuirvPxGlEaTOQRuZGc2UkIV7kL5V+zRykFNz9OKznComyRSUGErEF7lVWYxixgc5aqZL8ztioiwZuHCZRZ4vqb12iY6e5S8EjnqQ2p+BpuP8YX/v7s92eLyiXtS1KQEzf4gY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723645206; c=relaxed/simple;
+	bh=62aJRSDRWPuZ9bsrztQh/AMMz4vYGJ3FmNIYKbUxYaw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fXNLL94bChuL2Zix16SxyA0KVwBr4QGoiXNhV5ERafmEHnI/i1XZofs5tBFpAfxkEX1TFex5/IaqrZ0n0fLFPRkkP9YpdcJxmDBuwPk6nRf0Syvv/2047/wfHLPLtOx5D3DAmUqcbPTZn9VwGjTsmdVPBN7cQx9SLqmtS4acJYg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=seEb/dxX; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=6uhHiMOm; arc=fail smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723645204; x=1755181204;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=62aJRSDRWPuZ9bsrztQh/AMMz4vYGJ3FmNIYKbUxYaw=;
+  b=seEb/dxXFaQhjYyOxpbzSE1SZN3UrrBYhyAFKE6tvl5t0p/aarB0kvbr
+   Z1o6XBw3KLR4Q8VgbAOoF6IYPZtI3pTTvh7bDCkeQvuI/FPmVsOKMow9+
+   pm3/+qzIA48GYH4SVp0TlSV42Ok8WPUyroYuoKZWxt3w9NStOLPBxdYKm
+   VHf2HJdQ73Ze+tn5LqsrzDTEXlh0n0Ajee+DS/ri6up6wsOcNqVvsrvfb
+   61tQN9VCLZDM/PfiFrl22R1d+rutHSctYhV7kfTPhyQLyUjmUrLhu72u6
+   X9ExjvTtmlAjZTGQ8cmPNsUOOHJpA4OYehmtjSVs7ilbtbPmGigwG/KcE
+   g==;
+X-CSE-ConnectionGUID: Ha4h73V5SiaK46N/+R2CgA==
+X-CSE-MsgGUID: yrclM8fVQrCefOYnUVS4rg==
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="30448157"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2024 07:20:03 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 14 Aug 2024 07:20:02 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.10.215.250)
+ by email.microchip.com (10.10.87.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Wed, 14 Aug 2024 07:20:02 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=akSFd2FFIv8cc3Em5WIpmv+qzeMHQPOF2QFYS+Pt5Ngo4e4s9zc7FwnmdyLyzun/2i+ciRGEP+DtkDCH/jlzMFNvVhDd1oO6BRt14Ni8UurTmEIIH0rDkuXhfCGjfhDOLXiB7VbxvFDz+fu7I5ev7I42ZIqmw3/qvmP4BUinmQZyb7AFH4yjenzvNFMqKiC5MCQfPFeC2B6krUg3nvMAYlI1fqby3hwh6xiOly/lZiftEInq/k+0fkcbPDHoBCl7h4t7GLwTzXkTm9scriqW0M7kYOnGjAoRtWG53j6/LfRlCD61B/oUUHX77+9ssBrxkne8ZsMgpngjx6lQgrqZxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=62aJRSDRWPuZ9bsrztQh/AMMz4vYGJ3FmNIYKbUxYaw=;
+ b=InlaMzvuuEnZaS07SH1TE46zAW4k4SjEHF8wMUq+NqO8YdIDpZWBqD+mdDoNKQqL6IpkXsPlPD7hnZ6bIM16PxRsuisS/ZSLmVmK8v+duAn7NxusLXH6yWNi3j/+330KJi2m0OJsNfkqeMjFEC7nmmxIDBv0Sdgoik98ZN+3/4rcMK2yKwWWbH5L9Lts0s3j156YBLGgqYlp20jp9MA3OSJwDHRjFewIgYotiTnrCdAIqIgEe3ylYiJpGkYczdeXyvpNmj0gWAhU4fykTpi+NcOoTbDJJC1vcPalpnkeSxyZ8yKM7Aa6SxGnBLfCmhniD8f/0mnqVd0mliK0u5PbQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=62aJRSDRWPuZ9bsrztQh/AMMz4vYGJ3FmNIYKbUxYaw=;
+ b=6uhHiMOmCHpxCbB+n+xRj48yqA9gMA9nbSReI3z+HvyINU2aqMr7utGCIbbliFiyLPqjslm6cvdCDf9KhpoWcyydK8d7Dvb+j2IZ+fM5sNXTVGs84L2Wk4epA8e6WDPWyhr2R4veMIMAufLs7b8E3U3tWqJsRTjjfsGctAHqT96GWL27HvtnNCLHOEK/5+LJu7eyLGHPWkT0zDX5vB6zmuFrO0jGvd7Ew/bkFxDAPXY+LPTFoqxNovgx44/BPNHuA72pYr0PgrzlEiJBfiLtEVfYxgBUfSSGfZaTc9iJ5XOgNFjGCrhVM8iiAwS0MTBc7XUfKxVc4iG3WauBOdoHPQ==
+Received: from CH0PR11MB5284.namprd11.prod.outlook.com (2603:10b6:610:bf::8)
+ by SJ0PR11MB5024.namprd11.prod.outlook.com (2603:10b6:a03:2dd::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Wed, 14 Aug
+ 2024 14:20:00 +0000
+Received: from CH0PR11MB5284.namprd11.prod.outlook.com
+ ([fe80::abf1:f70c:ef88:a2a6]) by CH0PR11MB5284.namprd11.prod.outlook.com
+ ([fe80::abf1:f70c:ef88:a2a6%4]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
+ 14:20:00 +0000
+From: <Andrei.Simion@microchip.com>
+To: <krzk@kernel.org>, <claudiu.beznea@tuxon.dev>,
+	<Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<peda@axentia.se>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <Cristian.Birsan@microchip.com>
+Subject: Re: [PATCH 1/5] ARM: dts: microchip: Clean up spacing and indentation
+Thread-Topic: [PATCH 1/5] ARM: dts: microchip: Clean up spacing and
+ indentation
+Thread-Index: AQHa7kWFNuwNC7bEvEeRwM7Smte3h7ImvNOAgAADlICAAAbbgIAABk6A
+Date: Wed, 14 Aug 2024 14:20:00 +0000
+Message-ID: <19500a08-89b7-4853-9708-350320d3aa3c@microchip.com>
+References: <20240814122633.198562-1-andrei.simion@microchip.com>
+ <20240814122633.198562-2-andrei.simion@microchip.com>
+ <3294e2d3-5142-4d7f-89d3-35528f26066e@kernel.org>
+ <5e37e263-ee00-41bd-a650-1c1374e24d66@microchip.com>
+ <a71f5d8e-57bd-4e8e-b0fa-8b9468ec96eb@kernel.org>
+In-Reply-To: <a71f5d8e-57bd-4e8e-b0fa-8b9468ec96eb@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH0PR11MB5284:EE_|SJ0PR11MB5024:EE_
+x-ms-office365-filtering-correlation-id: d5c11fcb-f19f-477f-5f33-08dcbc6c2e72
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB5284.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?cjl2YzVWVEQxOWNZeWd4a2pFT2hUVUxXcnpYaFBhQzJVY3pFZzZtRi81akM0?=
+ =?utf-8?B?RmxCK3RWZHdXeUxRd1VKYlBWQks5NXM2ZzgvOEQ4UTVVWmpUejhXbjNRbmlL?=
+ =?utf-8?B?Wm9pcjZNd2Z1UElNcForMzExcG1HM2tuRzhOM1lLTkJWV2RXWDF3djMwZVI2?=
+ =?utf-8?B?U3cwTFNheHgxT3dtU0dCZFdzcmhyQkx6WSt3OVFkTXZ4aDkvTFo0WmI2b0dz?=
+ =?utf-8?B?dG50N0g0bEtTbFFpMXRKLzEzT0NTUGk3TlNrSGlJcE9TaVpXTzhEUW9kNkU1?=
+ =?utf-8?B?NC9hb1NLQVdBOFpaMmc1MCtmZ2J2M3l1Uk9yR0U0dU0vM0drRDgzVDJTK2xT?=
+ =?utf-8?B?cmtWWVZvTTA3WUpUWGd4OWo5WEFrTXRaZm85SjJSeTR4Tk1BeVFiU01WbVN5?=
+ =?utf-8?B?WWFldFlobW9XU0xKUnhaVUI2R2JNQStLZllTaCtpU0xuSy9LVy94RHByQm5i?=
+ =?utf-8?B?NHF4R1c4ckgza1RWdHpzNXJlTXdxYUhyMWZrNjhCVHVNMUNWT1h2OWtMVjBT?=
+ =?utf-8?B?eFNDT3JxOGlScHRPeWlGYTdrR1UvTkRQUHR0ckR4RjFPaXFRWGxPWlVXTng3?=
+ =?utf-8?B?Q1BhUlg2WVdjOEE5cHgyQ3RYS3JJYXZmZ2FCODVYTDUvOFdEQ0h4bS9Bc1M2?=
+ =?utf-8?B?L040NHk1MHkyQ3dvazE3bzJuOHpKbHVUOXNXZmhkQ21HaFNBUndCSWlIK3M0?=
+ =?utf-8?B?N3RwdXdZM2sxeWtFZkVxcWd0OUxiV0RhaVZ5NXdnTTZ0MDcySHVCdkx1b1F0?=
+ =?utf-8?B?OURYVW9qaVp5VWZNcUdUWDR1ODF2QTZXN3E4Ym83MktxUjZDUnMrMXdLR2Nk?=
+ =?utf-8?B?WVFFSGFmOENDMGovU2lsNGZ4N2tPUkwyTjVIR0wxSUZkZ0NuaGM4aExuY3A3?=
+ =?utf-8?B?R3pha2c4bFZoVTJJakdaN1FIOHNiaktvbkRYOExUcXUyaTZja0xoZDYxT3ha?=
+ =?utf-8?B?VWN0S2lNUXVnUFhiNFRSVWVlYVdhTmlRMFRqVzY0MUsxaHRoOUdxV3VkY0ZS?=
+ =?utf-8?B?WEIycUxjTXlYaU9zQVdkUVNYRWJkVGtzU3VGTjQvMFNWQ1ZRQzJLVW42T0Ir?=
+ =?utf-8?B?Ynd3OWpLVUc2bkpad2RkVU5kUnRuSjJxRGlSUE5KVERRU3NkR3dQNEp0enJD?=
+ =?utf-8?B?VVhJU1lZWDhUS3FzZjJHZGhqNFhSZEhlVWQ2blJWRmVmd2VwS2pxL1FTWE4y?=
+ =?utf-8?B?cmM5SXZTdzVRZnU0SWxlQnViN3MxNTUyaVV2OVRNMnN3enlnd3hsUHJSMFlv?=
+ =?utf-8?B?N2M2MWovdVFjNXhYMThzZjN5Q2xqUno2TU9oOFphWW1hNXFTQTc0SmZVL2lv?=
+ =?utf-8?B?ZDBwVEliWk1NT2o4NmFRT0svcDVaSWpYRk1mZzRuWDI0SC8rSmFIL3ljMjll?=
+ =?utf-8?B?WGNHL3Z1bDljZkZ1UjlJMnd1OXBIbElBdnBSWENGcDdxSEZUY2VyQWdQMGxF?=
+ =?utf-8?B?L0pvTXU2N2RRTFd3cUlCc3h4cGpGckk0SXloQjlXTjlNTnNaZldVMGZNRUZU?=
+ =?utf-8?B?Ung2MTkxbitUV09KaGU0RHArOW1WOG01ZHVkZ2NPbmJWZGQ5NW5DQnB0MnBi?=
+ =?utf-8?B?TEd5MUxTZHVrTTBPMHZhcVBpK1NNK2IwNlRDY3lMNTl5bUV3am9XR1FmT3Vh?=
+ =?utf-8?B?ZGVyVzYrenNaT2tMRms3SHZuV3Ixb3lYdU5vTHJxS1JDV2lMNlN4VWdDOTRh?=
+ =?utf-8?B?ejZjOFozQXFQYXFZNkJIUmdLL1BQdDlsZ1JnTEF5ODRoL2lNdlE4cSs3V3Mz?=
+ =?utf-8?B?U0FlUXVzSTdlc0t5RmhlV1Y5RFdONXZONmYyWXdmRHY2eHVTbjhqS2VMSjl0?=
+ =?utf-8?B?RllyM00wbFc1eEl3UHNiSm1PVmQxb0pkeExqVDVvd1B1WlBOa3hFTWkwTnVI?=
+ =?utf-8?B?V0U3RmE0TXM3RzdQdUhCRkN0QzYzMFZuc1RKd2owVXRDekE9PQ==?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Mm9RT3VTZGxkVVNQRWpyTWFWd09PQTZYMnk5V0Y1S1hsY05sbmlkVEI5R1Zp?=
+ =?utf-8?B?QS80L3JpZU44SmY0TWhFcXhlQnRIOWRmYWdrRGp6K2h6ZXRHbXljck5hUVV3?=
+ =?utf-8?B?bUNNRzBvc3AxbWhxUWNKWEtUSmNoRWhaL20yRkdhTldKOGtETEtzNnFpNDJX?=
+ =?utf-8?B?OGdBY0srYWFqUXVFc1k2OUVMd3d0cW9lT3NpbVordm9DTW9YcCtyTE16ZlFm?=
+ =?utf-8?B?TnpXeU9qNUsrckFYOEttMXlnSzAyN0lVWVhQK09ZSmdYZ3RiMjFPZWNJckNI?=
+ =?utf-8?B?dDdvRHJHbS8xZlE1MkwrazAwSmVXOHlqbm9qZ2ZTeEVqVXhaRVg0ZUNIUnJE?=
+ =?utf-8?B?dmlzQTZPWktJa1NYblFhN2pVMGNtWkF5ZUl1Vk1uUlZQcFUyY1B2N013Q3hZ?=
+ =?utf-8?B?emc4UzlYU3lhMXdCYkdob2FYMy84MVAvc3U3cVhVT1JrbzM1R0F3NUlQOUR5?=
+ =?utf-8?B?WE1CTjIvZlJrcklLUmR2ZDUzb21SbjJGWGFpWmhmMnlIVW5mUW94UTVkM0FE?=
+ =?utf-8?B?QVZVRUhLSVVGcG1tWWxCSEVQZGdKeUZNNmYxdDJBRGlKbU1MTnMxUFFqRUU4?=
+ =?utf-8?B?VlFmV29lSXU0RUNpNjBmSno2Y2hpOHdjQ0dRMEp6WElIeWNLY3lmRG9aMW1x?=
+ =?utf-8?B?QkFoeWNXc25FalF2ZTQyUVZ0QkhLTnpQK0hlL0oyY1NhS1RaVjUvNFgxaDdy?=
+ =?utf-8?B?d1pWbTVQWjlDY3hiN1pwSFlQRVJycEFYVFMwS2JQVlBVQmdQdjRKQ2x2Y0NO?=
+ =?utf-8?B?N1Y3N3NqamQ3M2U0aHpncWt1MVJSUkxJTDBwMG9FUlBvM2lpVEZueUdMdzhC?=
+ =?utf-8?B?czRKUmVWZHQvNGowbC92UkkwSHVkZWwwNW9BSnd4UkMwclNHcXdlckgrRWdj?=
+ =?utf-8?B?VGdVaGNQNlJBUTBqUVVCM29xOUFNVEFMdXBWR3YyR09wakJ2UktzY3RzV0Vw?=
+ =?utf-8?B?NzUxNk5NZ3NCdFBuQmNWRDlIdDcxSklFOTJMUWZNOHZtT25TUjMvUkROMVMz?=
+ =?utf-8?B?N3FvdFNweHBoeFRCVHNnaWd1S2piWTZxd3MxSDBFQkovcER3SnRkeVd4TUsy?=
+ =?utf-8?B?TUxXd2tjYzFuNGJyWFF0NmxHSjdmZlVqdDZGdXZSL3lFc2xyclhheThTZjlR?=
+ =?utf-8?B?OFkyV3p4emVzTjRHd0MzSW1PTC9wVXVONG83SnAvMXdjSC92NUY1M3kxZTZ2?=
+ =?utf-8?B?UlhVYW9HY05qQmdrb25PbUJHc2VtYWdIRkI1NGFvVDMwK21MbFNRR0N0c0Z1?=
+ =?utf-8?B?SFR4Y0lZbkNoU1IvQi92c3RQeDF2K2R6QkdndGtmeENXQ21qdFFCT3dnZXlR?=
+ =?utf-8?B?cmdYR0hEVVByc0xTc3JjTWxsa1pwUTdyYjcrSmhtZDF6aTBYbVU5c1hnMUxU?=
+ =?utf-8?B?YmV6djQ0b0JCQzVyeWJwaEttNFZTa1B5b3gxRi9UNVJQRFpOQW1FdmUzd2Jv?=
+ =?utf-8?B?WUNhZ0VValI1Y2wvL0hUWkZvUkQ1NGo5NXNJeElKZTIxem9TRlpJdEJodDg1?=
+ =?utf-8?B?R0tGZS8rUy9ZSXFLbG5PYSthQ28vdXRqaEl2MzRrVkNNZFhGRWJiSkZmaEg1?=
+ =?utf-8?B?REtKdWtzakpsV3V5NURSQk1tWTRVRWlkMXJEQjQ5a05FM2U3MGtaZWhNVGpD?=
+ =?utf-8?B?d0ZFZFZXb09pQnpUWjNhSHhHVjhLckZJRTl4RHhxdkJVMzZhc2JzWE5PZ2Fu?=
+ =?utf-8?B?QysrYW5jR0wxNkEwRmttb2Q5aUR3SG9rdXU2RzRER3YzaFpLTGY0aWVCdlM4?=
+ =?utf-8?B?UmI3L2pNVmVMR0FWbGRaRkdTY3dTMDRPWWZYOW44Y1ZpZGpTU0N0T2FyMVJv?=
+ =?utf-8?B?bklydlRuQkNXZ0pVMkorQUZMSVFxa3dBL0JUaEpFUXNNb1dlUmpKQUpDd2da?=
+ =?utf-8?B?U3FUWkpqRUJUeGhiRlczZFNUcTQ3bitHcFRDS1VzUDNETzRjQmdHWEw0Zm5h?=
+ =?utf-8?B?YkxiRjYva2hrb2piUkVSZjNjN2U3MXZWU0FpRDlNUWpVQUVjcXRPYTVCUmVR?=
+ =?utf-8?B?cXIrNTl2NHZvcVl1MmsyVDkwU0ZrMVZ3MWRKWGM0MG9uYytudWNTMlVZY0kw?=
+ =?utf-8?B?eFNpVlpZMUI1cE82YUM0amcvYkhBcHFMVERUVTM2VDdKc1FjdUN0RER2SnhW?=
+ =?utf-8?B?N1hLbG1NMUVxY3JzSGhJbXZGS1BHWFN5Y1BFbU9nK0ttTlBIN3BYemtzWkRx?=
+ =?utf-8?B?bFE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BE930157C451014798D4516506C578DB@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <66bc21772c6bd_985bf294b0@willemb.c.googlers.com.notmuch>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR11MB5284.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5c11fcb-f19f-477f-5f33-08dcbc6c2e72
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2024 14:20:00.1041
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: d/GbOpUwoDrpIKevB8agOmz5cK+7LqVvTqXMoWIrzUHL4n8eDqbbkeJ0GV25MYRuXRFmoE9uuBQzMA3bkKKBtHurMmMcXMEJjby/ueKoNAM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5024
 
-On Tue, Aug 13, 2024 at 11:16:07PM -0400, Willem de Bruijn wrote:
-> Martin Karsten wrote:
-> > On 2024-08-13 00:07, Stanislav Fomichev wrote:
-> > > On 08/12, Martin Karsten wrote:
-> > >> On 2024-08-12 21:54, Stanislav Fomichev wrote:
-> > >>> On 08/12, Martin Karsten wrote:
-> > >>>> On 2024-08-12 19:03, Stanislav Fomichev wrote:
-> > >>>>> On 08/12, Martin Karsten wrote:
-> > >>>>>> On 2024-08-12 16:19, Stanislav Fomichev wrote:
-> > >>>>>>> On 08/12, Joe Damato wrote:
-
-[...]
-
-> > >>
-> > >> One of the goals of this patch set is to reduce parameter tuning and make
-> > >> the parameter setting independent of workload dynamics, so it should make
-> > >> things easier. This is of course notwithstanding that per-napi settings
-> > >> would be even better.
-> 
-> I don't follow how adding another tunable reduces parameter tuning.
-
-Thanks for taking a look and providing valuable feedback, Willem.
-
-An early draft of the cover letter included some paragraphs which were removed
-for the sake of brevity that we can add back in, which addresses your comment
-above:
-
- The existing mechanism in the kernel (defer_hard_irqs and gro_flush_timeout)
- is useful, but picking the correct values for these settings is difficult and
- the ideal values change as the type of traffic and workload changes.
-
- For example: picking a large timeout value is good for batching packet
- processing, but induces latency. Picking a small timeout value will interrupt
- user app processing and reduce efficiency. The value chosen would be different
- depending on whether the system is under high load (large timeout) or when less
- busy (small timeout).
-
-As such, adding the new tunable makes it much easier to use the existing ones
-and also produces better performance as shown in the results we presented. 
-
-Please let me know if you have any questions; I know that the change we are
-introducing is very subtle and I am happy to expand the cover letter if it'd be
-helpful for you.
-
-My concern was that the cover letter was too long already, but a big takeaway
-for me thus far has been that we should expand the cover letter.
-
-[...]
-
-> > > Let's see how other people feel about per-dev irq_suspend_timeout. Properly
-> > > disabling napi during busy polling is super useful, but it would still
-> > > be nice to plumb irq_suspend_timeout via epoll context or have it set on
-> > > a per-napi basis imho.
-> > 
-> > Fingers crossed. I hope this patch will be accepted, because it has 
-> > practical performance and efficiency benefits, and that this will 
-> > further increase the motivation to re-design the entire irq 
-> > defer(/suspend) infrastructure for per-napi settings.
-> 
-> Overall, the idea of keeping interrupts disabled during event
-> processing is very interesting.
-
-Thanks; I'm happy to hear we are aligned on this.
-
-> Hopefully the interface can be made more intuitive. Or documented more
-> easily. I had to read the kernel patches to fully (perhaps) grasp it.
-> 
-> Another +1 on the referenced paper. Pointing out a specific difference
-> in behavior that is unrelated to the protection domain, rather than a
-> straightforward kernel vs user argument. The paper also had some
-> explanation that may be clearer for a commit message than the current
-> cover letter:
-> 
-> "user-level network stacks put the application in charge of the entire
-> network stack processing (cf. Section 2). Interrupts are disabled and
-> the application coordinates execution by alternating between
-> processing existing requests and polling the RX queues for new data"
-> " [This series extends this behavior to kernel busy polling, while
-> falling back onto interrupt processing to limit CPU overhead.]
-> 
-> "Instead of re-enabling the respective interrupt(s) as soon as
-> epoll_wait() returns from its NAPI busy loop, the relevant IRQs stay
-> masked until a subsequent epoll_wait() call comes up empty, i.e., no
-> events of interest are found and the application thread is about to be
-> blocked."
-> 
-> "A fallback technical approach would use a kernel timeout set on the
-> return path from epoll_wait(). If necessary, the timeout re-enables
-> interrupts regardless of the application´s (mis)behaviour."
-> [Where misbehavior is not calling epoll_wait again]
-> 
-> "The resulting execution model mimics the execution model of typical
-> user-level network stacks and does not add any requirements compared
-> to user-level networking. In fact, it is slightly better, because it
-> can resort to blocking and interrupt delivery, instead of having to
-> continuously busyloop during idle times."
->
-> This last part shows a preference on your part to a trade-off:
-> you want low latency, but also low cpu utilization if possible.
-> This also came up in this thread. Please state that design decision
-> explicitly.
-
-Sure, we can include that in the list of cover letter updates we
-need to make. I could have called it out more clearly, but in the cover
-letter [1] I mentioned that latency improved for compared CPU usage (i.e.
-CPU efficiency improved):
-
-  The overall takeaway from the results below is that the new mechanism
-  (suspend20, see below) results in reduced 99th percentile latency and
-  increased QPS in the MAX QPS case (compared to the other cases), and
-  reduced latency in the lower QPS cases for comparable CPU usage to the
-  base case (and less CPU than the busy case).
-
-> There are plenty of workloads where burning a core is acceptable
-> (especially as core count continues increasing), not "slightly worse".
-
-Respectfully, I don't think I'm on board with this argument. "Burning a core"
-has side effects even as core counts increase (power, cooling, etc) and it
-seems the counter argument is equally valid, as well: there are plenty of
-workloads where burning a core is undesirable.
-
-Using less CPU to get comparable performance is strictly better, even if a
-system can theoretically support the increased CPU/power/cooling load.
-
-Either way: this is not an either/or. Adding support for the code we've
-proposed will be very beneficial for an important set of workloads without
-taking anything anyway.
-
-- Joe
-
-[1]: https://lore.kernel.org/netdev/20240812125717.413108-1-jdamato@fastly.com/
+T24gMTQuMDguMjAyNCAxNjo1NywgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4+IFdBUk5J
+Tkc6IHBsZWFzZSwgbm8gc3BhY2UgYmVmb3JlIHRhYnMNCj4+ICMxMDogRklMRTogYXJjaC9hcm0v
+Ym9vdC9kdHMvbWljcm9jaGlwL2F0OTEtY29zaW5vX21lZ2EyNTYwLmR0czoxMDoNCj4+ICsgKiBe
+SUNvcHlyaWdodCAoQykgMjAxMiBBdG1lbCwkDQo+Pg0KPj4gYWZ0ZXIgdGhpcyBwYXRjaCA6IHRo
+aXMgd2FybmluZyBkaXNhcHBlYXJzLg0KPiBZZWFoLCBidXQgY29kZSBpcyBub3QgY29ycmVjdCwg
+aXMgaXQ/DQo+IA0KPiBEbyBub3QgcnVuIGNoZWNrcGF0Y2ggLS1pbnBsYWNlIGFuZCBjb21taXQg
+dGhlIGNoYW5nZXMuIFdobyBnYXZlIHlvdQ0KPiBzdWNoIGlkZWE/DQo+DQoNCk5vIG9uZSBnYXZl
+IG1lIHRoaXMgaWRlYS4gDQoNCj4gSW5zdGVhZCBmaXggdGhlIGFjdHVhbCBpc3N1ZSBpbiBhIGNv
+cnJlY3Qgd2F5Lg0KPiANCj4gDQoNCk9LLiBJIHVuZGVyc3RhbmQuDQoNCj4gDQo+IEJlc3QgcmVn
+YXJkcywNCj4gS3J6eXN6dG9mDQoNCkJlc3QgUmVnYXJkcywNCkFuZHJlaSBTaW1pb24NCg==
 
