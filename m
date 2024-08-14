@@ -1,169 +1,122 @@
-Return-Path: <linux-kernel+bounces-286829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D143951F85
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0991951F87
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D71D71F23FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A06301F24040
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF31B86D1;
-	Wed, 14 Aug 2024 16:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0D31B8EA4;
+	Wed, 14 Aug 2024 16:11:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vLOP3kXA"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5z/Mbrw"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA56D1B583E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B451B86D2
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723651863; cv=none; b=kMrTMuOtsnSL+YUR0of+5nncmob1OGAL+Uvrr9CSqwEFx63Mk6OkRU3qCYf/hO/4rkYnxqM1ZgmIIZ/ePB1nJ3UUK3Zp32lLcMyRyXJzGGbkV5DSHZ2DgXa2VnpFGolYGDL90FPGhMm5dWEEq5mJdzYS205ZhbgdzjBeumWzkWQ=
+	t=1723651872; cv=none; b=t64Td11+W73cz6gm509THWM1L7l/aw6Qkca+IEl4n1dFGBunPx6TXiD88uow4vi6dhYcfG0vY6S5LJkk6VQmAv0s8Qee12sGKdadZuERDHT7L9KEY/9QF8FPxLgNfzKaJgsOEbh8/EG2Fn+XIhSqDLLja7k4yHJJhrDPA4dudG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723651863; c=relaxed/simple;
-	bh=078Bn7zk6NtrXcHFJUG+DC8uvq8OxMYGE+AxLhOOtl4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Aj5wOZu8VlPycEMlT5n5sNVAMBoRZKDfpLtyZnCTtBY7kHT3S1fhDRONJ2RvX0if/ayhKflI2aZzzQ+YkSsWWfxhgtu3+er2QAhImf0LjmKrQj1UW2ZHo+pdGW4ScjlMFyf3xkNTRIeK7ioV54hIbDy1CeGAcwUmoFnAYSz68eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vLOP3kXA; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723651857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=CK1cjU9tK76LBIellpq38/TTF/N+OU0syvysYZxFmi4=;
-	b=vLOP3kXA/H1lb3ouW5Pxg+CoriFgubH+OK2L73y/uGDRjDduz8x4p+sJuLuvI8wXMlAo7j
-	n1KIyXyD65A0EqUILQcMlfu+VvpiFjzUmF7dmhu6qQvh7NYjltFjxEJWegB8SRmXhUaXwl
-	umVpD7cqjyDCscKhSbKNKVz9Kc5lvmc=
-From: andrey.konovalov@linux.dev
-To: Marco Elver <elver@google.com>,
-	Matthew Maurer <mmaurer@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	kasan-dev@googlegroups.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kasan: simplify and clarify Makefile
-Date: Wed, 14 Aug 2024 18:10:52 +0200
-Message-Id: <20240814161052.10374-1-andrey.konovalov@linux.dev>
+	s=arc-20240116; t=1723651872; c=relaxed/simple;
+	bh=YojC52uHbpPliLtyLOZFETHeNy9jnfDl4e/WZwHCFg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AIEmMXvQYcKy6B8GLsLjE9u5xMurjnzRS1vfmiBCs9/NhvZdTojX4OStFHWuh2qN8rlmWRy1k3ZSWPZGCYcCjPr4Dqrd0Euh9o3JB4VcnnMk3YY1oDtiAX58P07Ot7jFHFNyyj+RgU9WinJa83TDE4YXZrz3kIguj0433isfuuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5z/Mbrw; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093ba310b0so2985784a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723651869; x=1724256669; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YojC52uHbpPliLtyLOZFETHeNy9jnfDl4e/WZwHCFg8=;
+        b=E5z/Mbrwbh8tINNJI99hxBC6NSbX3gscp9qDkMMOT4bD9Il3+Yzq8NZe1WjTKAUI2h
+         jpKf/Gp9Fwghzpa00ibaSjyabZNXZDZjRv5pjNdSue0SSMlIxXCLoXWInHHE7T05RLdN
+         076sUEvwqUPy4AbUmhXz+cAUd+1f3J2KA2Ta8H8V1nyykaQBmtS2rIClWPMDOwsHzKPr
+         aVED5DXASOOZOkkSLI+SFu9DVFDjLi+uRD4NNyC2j+9Nlc2XzjgNxiX1SnvjjD/3lxvJ
+         Cf+1gYWbVxqOdmftk26rJGh/+UBQ4yhFbdqi9bL8rWdDzT/eI+RvMtsuxyoMJ17odflD
+         LgxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723651869; x=1724256669;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YojC52uHbpPliLtyLOZFETHeNy9jnfDl4e/WZwHCFg8=;
+        b=jHgcZaIr+O4DNZtKZzvDBvgHgODqJGT9igLzqop3Wdn6/zJkM/BLI2lX2+sZ/nIgGS
+         5q8k6dhUq1McCowfhWpSG+XpUsk6n3blvRA+J1LgH5llc3H52X8lO69bzHR2VC1JeIn5
+         9dwyEB0vsvbTiSm+HCQnwvg+3fPIhi5VL6Nw/sNx9ZCFbLC2ZJZQH6EE8x/AV0FR0PFF
+         BNxFIk3YFoLKYWzWKC5XzQube2Q0jd4qASvM6GLDuCy4kyRO6aMmMdX8WyYwuJTk7vLO
+         A7NYkIvR2F9jfenii5RJRLQbL2ecHRT4vw305oZIZ/TpDm3Djs6bucHPB7002U0Y47i7
+         sZkg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2amtwuuiaX43r7k5/HxvIaufZ3GI1C/Y2+Ry1CH+p0PA7HamNFvdjdqaqOwsd9Yjk6rnmuwGau1ha/H6UU34aKUkWhK8c1REaJilE
+X-Gm-Message-State: AOJu0YyFRYV35p2MyyAcmjPKwKvgqNseX8w8F665rLG56oWjlbUrEANk
+	cLlQhPWvm48Kh+AD1J1oSNoSqZ09SnwbJAqdH2P5NKHHJnuB3HuZHRvrruwAhsNTTVxEnZSBOHi
+	yNGc3jI/S7z3paNpyJIVwI4rbz+g=
+X-Google-Smtp-Source: AGHT+IEOu0Zcu88kcsI8Ws76Ej67Sjrk+T87Q9CnQkmM3dkYYSvAW3tzOsVVaTPgvwdLIDUc0jgHqvGUeg8M4MIr4Dw=
+X-Received: by 2002:a05:6358:7244:b0:1a4:ea23:b5f3 with SMTP id
+ e5c5f4694b2df-1b1aa9aacd8mr407202755d.0.1723651869531; Wed, 14 Aug 2024
+ 09:11:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-
+References: <20240813224027.84503-1-andrey.konovalov@linux.dev> <CANiq72mCscukQTu7tnK0kXHg05AiMtB8sHRDTvgjWgcMySbhvQ@mail.gmail.com>
+In-Reply-To: <CANiq72mCscukQTu7tnK0kXHg05AiMtB8sHRDTvgjWgcMySbhvQ@mail.gmail.com>
 From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Wed, 14 Aug 2024 18:10:57 +0200
+Message-ID: <CA+fCnZeD4CJheGP6D+x5dzUc4ABRZz1Db0h7hNVmwH3gUC2zyg@mail.gmail.com>
+Subject: Re: [PATCH] kasan: simplify and clarify Makefile
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: andrey.konovalov@linux.dev, Marco Elver <elver@google.com>, 
+	Matthew Maurer <mmaurer@google.com>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, kasan-dev@googlegroups.com, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	Miguel Ojeda <ojeda@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When KASAN support was being added to the Linux kernel, GCC did not yet
-support all of the KASAN-related compiler options. Thus, the KASAN
-Makefile had to probe the compiler for supported options.
+On Wed, Aug 14, 2024 at 5:37=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Wed, Aug 14, 2024 at 12:40=E2=80=AFAM <andrey.konovalov@linux.dev> wro=
+te:
+> >
+> > Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
+>
+> It is easier to read now, and indeed GCC 5.1+ and LLVM 13+ both
+> support the flags, so `CFLAGS_KASAN_SHADOW` can't be empty.
+>
+> > +# First, enable -fsanitize=3Dkernel-address together with providing th=
+e shadow
+> > +# mapping offset, as for GCC, -fasan-shadow-offset fails without -fsan=
+itize
+> > +# (GCC accepts the shadow mapping offset via -fasan-shadow-offset inst=
+ead of
+> > +# a normal --param). Instead of ifdef-checking the compiler, rely on c=
+c-option.
+>
+> I guess "a normal --param" means here that it is the usual way to
+> tweak the rest of the KASAN parameters, right?
 
-Nowadays, the Linux kernel GCC version requirement is 5.1+, and thus we
-don't need the probing of the -fasan-shadow-offset parameter: it exists in
-all 5.1+ GCCs.
+Yes, clarified in v2.
 
-Simplify the KASAN Makefile to drop CFLAGS_KASAN_MINIMAL.
+> > +# Now, add other parameters enabled in a similar way with GCC and Clan=
+g.
+>
+> I think the "with" sounds strange, but I am not a native speaker.
+> Perhaps "in a similar way with" -> "similarly in both"?
 
-Also add a few more comments and unify the indentation.
+Sure, done in v2.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
-
----
-
-Changes v1->v2:
-- Comments fixes based on Miguel Ojeda's feedback.
----
- scripts/Makefile.kasan | 45 +++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 22 deletions(-)
-
-diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-index 390658a2d5b74..aab4154af00a7 100644
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -22,30 +22,31 @@ endif
- ifdef CONFIG_KASAN_GENERIC
- 
- ifdef CONFIG_KASAN_INLINE
-+	# When the number of memory accesses in a function is less than this
-+	# call threshold number, the compiler will use inline instrumentation.
-+	# 10000 is chosen offhand as a sufficiently large number to make all
-+	# kernel functions to be instrumented inline.
- 	call_threshold := 10000
- else
- 	call_threshold := 0
- endif
- 
--CFLAGS_KASAN_MINIMAL := -fsanitize=kernel-address
--
--# -fasan-shadow-offset fails without -fsanitize
--CFLAGS_KASAN_SHADOW := $(call cc-option, -fsanitize=kernel-address \
--			-fasan-shadow-offset=$(KASAN_SHADOW_OFFSET), \
--			$(call cc-option, -fsanitize=kernel-address \
--			-mllvm -asan-mapping-offset=$(KASAN_SHADOW_OFFSET)))
--
--ifeq ($(strip $(CFLAGS_KASAN_SHADOW)),)
--	CFLAGS_KASAN := $(CFLAGS_KASAN_MINIMAL)
--else
--	# Now add all the compiler specific options that are valid standalone
--	CFLAGS_KASAN := $(CFLAGS_KASAN_SHADOW) \
--	 $(call cc-param,asan-globals=1) \
--	 $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
--	 $(call cc-param,asan-instrument-allocas=1)
--endif
--
--CFLAGS_KASAN += $(call cc-param,asan-stack=$(stack_enable))
-+# First, enable -fsanitize=kernel-address together with providing the shadow
-+# mapping offset, as for GCC, -fasan-shadow-offset fails without -fsanitize
-+# (GCC accepts the shadow mapping offset via -fasan-shadow-offset instead of
-+# a --param like the other KASAN parameters).
-+# Instead of ifdef-checking the compiler, rely on cc-option.
-+CFLAGS_KASAN := $(call cc-option, -fsanitize=kernel-address \
-+		-fasan-shadow-offset=$(KASAN_SHADOW_OFFSET), \
-+		$(call cc-option, -fsanitize=kernel-address \
-+		-mllvm -asan-mapping-offset=$(KASAN_SHADOW_OFFSET)))
-+
-+# Now, add other parameters enabled similarly in both GCC and Clang.
-+# As some of them are not supported by older compilers, use cc-param.
-+CFLAGS_KASAN += $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
-+		$(call cc-param,asan-stack=$(stack_enable)) \
-+		$(call cc-param,asan-instrument-allocas=1) \
-+		$(call cc-param,asan-globals=1)
- 
- # Instrument memcpy/memset/memmove calls by using instrumented __asan_mem*()
- # instead. With compilers that don't support this option, compiler-inserted
-@@ -57,9 +58,9 @@ endif # CONFIG_KASAN_GENERIC
- ifdef CONFIG_KASAN_SW_TAGS
- 
- ifdef CONFIG_KASAN_INLINE
--    instrumentation_flags := $(call cc-param,hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET))
-+	instrumentation_flags := $(call cc-param,hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET))
- else
--    instrumentation_flags := $(call cc-param,hwasan-instrument-with-calls=1)
-+	instrumentation_flags := $(call cc-param,hwasan-instrument-with-calls=1)
- endif
- 
- CFLAGS_KASAN := -fsanitize=kernel-hwaddress \
-@@ -70,7 +71,7 @@ CFLAGS_KASAN := -fsanitize=kernel-hwaddress \
- 
- # Instrument memcpy/memset/memmove calls by using instrumented __hwasan_mem*().
- ifeq ($(call clang-min-version, 150000)$(call gcc-min-version, 130000),y)
--CFLAGS_KASAN += $(call cc-param,hwasan-kernel-mem-intrinsic-prefix=1)
-+	CFLAGS_KASAN += $(call cc-param,hwasan-kernel-mem-intrinsic-prefix=1)
- endif
- 
- endif # CONFIG_KASAN_SW_TAGS
--- 
-2.25.1
-
+Thank you!
 
