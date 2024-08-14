@@ -1,60 +1,76 @@
-Return-Path: <linux-kernel+bounces-286353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DE09519F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:33:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43969519DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4DF1C214F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BAD21F23C63
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0B11AED33;
-	Wed, 14 Aug 2024 11:33:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DEE1AED32;
+	Wed, 14 Aug 2024 11:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EL+lnvOk"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720F51AED2F;
-	Wed, 14 Aug 2024 11:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC3A22F11;
+	Wed, 14 Aug 2024 11:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635207; cv=none; b=eCMD1++5/DFqbsAvUvooLrlr1NJ2ljjS//LFF76YkH9HxhD1DiZuT2uEtwfb3ndeNpwiPN0HeBQ1zy2HRyxxwpB4DQORSPqXuRrU1VJ6RzWN1kUWFA02C0blSbnMpcX6hMw6ge0rkPUbaa1NIiKIYFqH2i5XMUHF0uRaJIWHQ6o=
+	t=1723635024; cv=none; b=PM2uw+lwFD/aecmUkm0UohvnML4vrHEeeytWoN7XkUTBRNJtXMVGKBvbrNtAH7/SYyCRvuzDoXBXTMkTscY8r3KCOfCr8K/rA6oKXoZRB6oLOubS/74dScydDImC6hlJRjfFMpqbH0eXP6zAe+LiM5NML1WOuUR9qLj1ywe8460=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635207; c=relaxed/simple;
-	bh=DMomTvwQxLY5tBqwf1GAIJ2j7UEKVaj+p1Vp8ym+RJ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D5FlFeYypm6wwdXgRcxO7q7b3F6ovx2c68oaDLxJJ/nsB7vKkqD9vGTxpONrC4cVQkxIGFuaIsRqCdLpsdxbIWXDKoJK9kwjvK+qSF5waU3t9q0kzOfRvrOBN60MhO+ekV0F4k+1GdsDbnNJrw/xemLBARGuczXDqdqFLJxCfjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WkR2b07s6z4f3kKn;
-	Wed, 14 Aug 2024 19:33:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5B6121A12CC;
-	Wed, 14 Aug 2024 19:33:20 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzIL_lbxmhuyrBg--.22017S4;
-	Wed, 14 Aug 2024 19:33:20 +0800 (CST)
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-To: chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	kolga@netapp.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yukuai1@huaweicloud.com,
-	houtao1@huawei.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	lilingfeng@huaweicloud.com,
-	lilingfeng3@huawei.com
-Subject: [PATCH] NFSD: remove redundant assignment operation
-Date: Wed, 14 Aug 2024 19:29:07 +0800
-Message-Id: <20240814112907.904426-1-lilingfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723635024; c=relaxed/simple;
+	bh=BBSqAm9f2OIGDmZt6NjthLLTgUmjT92nLpXGcYhp0Fk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Up0uSw+VB8Yv4n2NWNvoQsFuCK7CG/42q6Ytm5sHbPDXo/MauWUz8LiNU3C7+PMJtkjuIL1QAQMaDLI6g44ooUhan62py/JiuSsULqNzY0rNLgbid89CYbEokBg7Kw3RCS1nMB+ZZX7g7ogj1H8FeGAHlpGU0sQyP/m2Jihzqo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EL+lnvOk; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c6b03c414fso28064a12.2;
+        Wed, 14 Aug 2024 04:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723635022; x=1724239822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9phJMT8/Tbm8SJpPaswoaMV7FB484GThIWkV7xEV74Y=;
+        b=EL+lnvOkQxPqHvlcoYeVsIiiS/6BpWw9p3DYcsXoPo/2KzlejkZMLrjYak18etWgCp
+         BNgHLSyE6Dn9EQAzQtyhAFiyNbNEvrLGIbgQB6BYfq8izSSynHkQaPsgpD+2BQ4DiLLe
+         xAoUf2icTYjCIN0dStm8Y06nY7yXbVjSNwp1dINUJ05LaWjS920Trfc5fBocl7vIvKgF
+         ggJff5K60XrpjtKMiohx5d7SdbRQXL7Gz85CHjv1TWEUB/Egs0sLKYe2OwPY9gUdi25U
+         6EyA/OLo8bXSrPoWsgGiwmh7SDFW0CpAbbd8FEAfuTaH8WvhNCCxdJbKAyXvmtCWVrZ/
+         uvZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723635022; x=1724239822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9phJMT8/Tbm8SJpPaswoaMV7FB484GThIWkV7xEV74Y=;
+        b=o784eza+Za+JpEJzoQ3U9hWQAlrJy1sPve4hjww9KVSn46692QpjtVX5ZFLpEKcMnh
+         vwiHAIdBDkWrZmsIgLyWLacZTT6WKzV2B0mOxtpDWSq1Q8dBzk6rKpFxt9A0C1M7OQD6
+         5aPy2AecUi3bHTxEnFvzDGsuIAdKvv4lCiFpnmjfqZrZ0keIo5DFFhfTlM7WhVy3i7N9
+         Gwq8HC8WZ24xBU/bsUE8366ffvwz6jMRJGNoKDs7KsL8VgH9Vs0nNJO0bNTHf6b24iD9
+         2UxS/qeEtG/ub97YOzaCAUKdcablKtGXW1NRLNkzOnEG8LFEqZnF683VUmuAbzdSxtwr
+         wfjg==
+X-Gm-Message-State: AOJu0YxGH1CIUEWwfZuUBbuKx8Sj74DyyB0dc2OHfjU15E0eW98Tm0pV
+	6S1051LCNn87TqMZYWg6dOONnV2G8OoPAnbO2RciT3dan+lPdDKeUXxBExU49UY=
+X-Google-Smtp-Source: AGHT+IFJ6vAedq4LBnhSQ+nIGgea569Ffr3qerfG3y9kIXM7Zw5E3lGBvrHmCFfegmmZOJmZ2PwIYw==
+X-Received: by 2002:a05:6a20:9e4e:b0:1c8:d98d:6006 with SMTP id adf61e73a8af0-1c8eae4dd3cmr3086268637.4.1723635021481;
+        Wed, 14 Aug 2024 04:30:21 -0700 (PDT)
+Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201cd1b8ee4sm27808975ad.195.2024.08.14.04.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 04:30:20 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH v2] Documentation: arch: Fix documentation spelling errors
+Date: Wed, 14 Aug 2024 17:00:03 +0530
+Message-ID: <20240814113003.14508-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,51 +78,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXzIL_lbxmhuyrBg--.22017S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFWkCr43CFWftr18CrWUtwb_yoWDZrb_X3
-	W8Gw18GF45Ww47Was3Ar10yrWrCrZ7Jr18W39IqFZFka93tF95uws7Xw4Yka45GFsIqF45
-	J3WrWr1ak3W5tjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VU13ku3UUUUU==
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-From: Li Lingfeng <lilingfeng3@huawei.com>
+In this commit we correct some simple spelling mistakes
+in the Documentation/arch directory.
 
-Commit 5826e09bf3dd ("NFSD: OP_CB_RECALL_ANY should recall both read and
-write delegations") added a new assignment statement to add
-RCA4_TYPE_MASK_WDATA_DLG to ra_bmval bitmask of OP_CB_RECALL_ANY. So the
-old one should be removed.
-
-Fixes: 5826e09bf3dd ("NFSD: OP_CB_RECALL_ANY should recall both read and write delegations")
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
 ---
- fs/nfsd/nfs4state.c | 1 -
- 1 file changed, 1 deletion(-)
+ Documentation/arch/powerpc/ultravisor.rst | 2 +-
+ Documentation/arch/riscv/vector.rst       | 2 +-
+ Documentation/arch/x86/cpuinfo.rst        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index a20c2c9d7d45..693f7813a49c 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -6644,7 +6644,6 @@ deleg_reaper(struct nfsd_net *nn)
- 					cl_ra_cblist);
- 		list_del_init(&clp->cl_ra_cblist);
- 		clp->cl_ra->ra_keep = 0;
--		clp->cl_ra->ra_bmval[0] = BIT(RCA4_TYPE_MASK_RDATA_DLG);
- 		clp->cl_ra->ra_bmval[0] = BIT(RCA4_TYPE_MASK_RDATA_DLG) |
- 						BIT(RCA4_TYPE_MASK_WDATA_DLG);
- 		trace_nfsd_cb_recall_any(clp->cl_ra);
+diff --git a/Documentation/arch/powerpc/ultravisor.rst b/Documentation/arch/powerpc/ultravisor.rst
+index ba6b1bf1c..6d0407b2f 100644
+--- a/Documentation/arch/powerpc/ultravisor.rst
++++ b/Documentation/arch/powerpc/ultravisor.rst
+@@ -134,7 +134,7 @@ Hardware
+ 
+       * PTCR and partition table entries (partition table is in secure
+         memory). An attempt to write to PTCR will cause a Hypervisor
+-        Emulation Assitance interrupt.
++        Emulation Assistance interrupt.
+ 
+       * LDBAR (LD Base Address Register) and IMC (In-Memory Collection)
+         non-architected registers. An attempt to write to them will cause a
+diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
+index 75dd88a62..e638cf9ba 100644
+--- a/Documentation/arch/riscv/vector.rst
++++ b/Documentation/arch/riscv/vector.rst
+@@ -15,7 +15,7 @@ status for the use of Vector in userspace. The intended usage guideline for
+ these interfaces is to give init systems a way to modify the availability of V
+ for processes running under its domain. Calling these interfaces is not
+ recommended in libraries routines because libraries should not override policies
+-configured from the parant process. Also, users must noted that these interfaces
++configured from the parent process. Also, users must be noted that these interfaces
+ are not portable to non-Linux, nor non-RISC-V environments, so it is discourage
+ to use in a portable code. To get the availability of V in an ELF program,
+ please read :c:macro:`COMPAT_HWCAP_ISA_V` bit of :c:macro:`ELF_HWCAP` in the
+diff --git a/Documentation/arch/x86/cpuinfo.rst b/Documentation/arch/x86/cpuinfo.rst
+index 8895784d4..fd7999c4a 100644
+--- a/Documentation/arch/x86/cpuinfo.rst
++++ b/Documentation/arch/x86/cpuinfo.rst
+@@ -12,7 +12,7 @@ represents an ill-fated attempt from long time ago to put feature flags
+ in an easy to find place for userspace.
+ 
+ However, the amount of feature flags is growing by the CPU generation,
+-leading to unparseable and unwieldy /proc/cpuinfo.
++leading to unparsable and unwieldy /proc/cpuinfo.
+ 
+ What is more, those feature flags do not even need to be in that file
+ because userspace doesn't care about them - glibc et al already use
 -- 
-2.31.1
+2.43.0
 
 
