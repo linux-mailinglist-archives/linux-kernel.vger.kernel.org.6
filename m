@@ -1,177 +1,123 @@
-Return-Path: <linux-kernel+bounces-286038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E719515B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:43:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7BC9515BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51091C20CBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:43:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527421C20C16
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA3813C80E;
-	Wed, 14 Aug 2024 07:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A4F13C9B3;
+	Wed, 14 Aug 2024 07:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rcO4NZSn"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNC8/zIm"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9929229CFB
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B37829CFB;
+	Wed, 14 Aug 2024 07:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723621379; cv=none; b=cmfrlPiimqETR8WpJaOmxsAYaMd0k1srxvUathGs5nhdVLLN75I7Up7TB3s237rYyRxNVy40mGT77eGb9vAr19khQyhYCXV2og6jgkjEzw6dBdAlUrkyEkQm4/nMj+4GtQ6r26aNSCRbOgOnTuoeNPtQ7BgjJ+P3kwPhgdY/UYQ=
+	t=1723621487; cv=none; b=nuB6bBhxrlAuY6yH1QdyAMYgLlgYQMqyCgSA8BwvVkcrpEWcbAiDeQ02iNGMQ4H40L7Q4/qbZEYBkE2ur5HK4yVpG0mjc8pwvpEjWb3MCr1dQvK7quUjqPwncv1jm2KZRZ7TpNm656KPRhkHmyOiRyIF6BnuVK0w0evKaftV6Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723621379; c=relaxed/simple;
-	bh=gqmxEcUMOsois9EFRjr9fV8qCd5R/O5T5M1rf4+okcc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=UAgtHvq6FM0b3iEH4JbwTUeUqwqI7IRsE+Inz6uvJrWriS1VYwNCGnUlIVVDoaIfnRUkvIJBMmgbCJkGWBNU2/TO1F5kHJbVldT/55ZcZDXuTG4Am3/RNfmmTEEklpG34QWzjH8s1fYJNkbD0b0/aF1JwVO6OsJZjXxsgEwCdns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rcO4NZSn; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240814074248epoutp0429bad4d95e3f3e3eeda51595193806a2~riIC4OAt42171621716epoutp04W
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:42:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240814074248epoutp0429bad4d95e3f3e3eeda51595193806a2~riIC4OAt42171621716epoutp04W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723621368;
-	bh=XRrSZrKYhO1Jt5/oeubOXU865fR8qNCCy0GNGhbI0lU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rcO4NZSndFqPqmqwjPUPbVf+TFwH2WvuHq2AI2oS0PB4oJJoXAMt51W4eoRKaZ8kY
-	 XxzlP98chqmDTimHSe+26WDz1Ayt40v2ZWJ5GLsBKkO2qrtRE36e4fqNtpZ1U9o+LH
-	 szv9FBFkH96hgDRNgFAt6VuGqzyZgRZLLwEm0doU=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240814074248epcas1p48bb65801bb98f164c91fb151b9946b73~riICa-zYd1226912269epcas1p4o;
-	Wed, 14 Aug 2024 07:42:48 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.38.232]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WkKwl5vZ9z4x9Q0; Wed, 14 Aug
-	2024 07:42:47 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DC.6F.09734.7FF5CB66; Wed, 14 Aug 2024 16:42:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240814074247epcas1p23e178263d8534eabaf9af0718f32a532~riIBanF5F0620406204epcas1p2F;
-	Wed, 14 Aug 2024 07:42:47 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240814074247epsmtrp217e051cb6c63384ed06cb6d5dc4ac91e~riIBZv5941759317593epsmtrp2C;
-	Wed, 14 Aug 2024 07:42:47 +0000 (GMT)
-X-AuditID: b6c32a35-c03b870000002606-ca-66bc5ff7eecd
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	56.CD.19367.7FF5CB66; Wed, 14 Aug 2024 16:42:47 +0900 (KST)
-Received: from [10.113.111.204] (unknown [10.113.111.204]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240814074246epsmtip245917554ca3cf653ca823b64f047870f~riIBKamyC2359123591epsmtip2f;
-	Wed, 14 Aug 2024 07:42:46 +0000 (GMT)
-Message-ID: <70586c17c515984c3e31506926be026ead9ea58b.camel@samsung.com>
-Subject: Re: [PATCH] drm/exynos: cleanup header include
-From: Kwanghoon Son <k.son@samsung.com>
-To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,  Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 14 Aug 2024 16:42:46 +0900
-In-Reply-To: <20240813-clean_header-v1-1-6f950d09b877@samsung.com>
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1723621487; c=relaxed/simple;
+	bh=X7ZR74qxegvWCExsbqkPxjZ910EyeK2C1VOJ9w+Oeg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N1k3AOOQR2z5+T5vKhb05HlQP2TDNLnBhc1gohMW2K6RjV0ZkIQpMwQfLcsfWvHYdz7A3O49ngI+T9aL24S6urnrgiRj2Hx5AVdtF5AAlKVj6wnx1auvNuaSbxXVYXBUp2zwd1KPVS3gyFHvHNMye0qDpzszS0mXfSpwbSgWTKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNC8/zIm; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so3269365e87.2;
+        Wed, 14 Aug 2024 00:44:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723621483; x=1724226283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X7ZR74qxegvWCExsbqkPxjZ910EyeK2C1VOJ9w+Oeg0=;
+        b=VNC8/zImK+xgHRxQxVYZNX0mulxZtBjAXIMe3tS75yGTlDieRbdRnYlLM8YU9qcy2l
+         UaFEcoTx86yUtgnFZ5rGL4zauWDi+Cet1wHgkpMLVm1Ht2mg/pc6aTgtwTtChJWbbm2W
+         QfN029wUyASM9+zFutvNTedFpvVuDiz8S1ZfvOxGsM+7VQVBC4AA3q7wz2gIoJVB4X9Z
+         fiza2j07WhUTjg9PIhXMKjFhFEOjfDgdRXWC79dA5o3376urdoSjJ4dFT46AwwZbGsRK
+         lLUE00ua69/Z2QJCzU4Nd6VSAsv+pB8uPtyItmN7LiV+Wptp14UCmHdRRvJO3ghNcROE
+         yQyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723621483; x=1724226283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X7ZR74qxegvWCExsbqkPxjZ910EyeK2C1VOJ9w+Oeg0=;
+        b=Ck41jxyW0gPs55qO/emU+wPssDmxPaECeAJXKPvQ60wNUOUCofGkocyok4wVHNEsNM
+         HfmP5lS1PCsz4cQPFhlb47jmibVh/wPJBI/Oep9LtjYyLzZ8KYnNP9AWjEJxRXyA4oy/
+         cr9iR471N6UnjH9oBc6MsYh9y/ShsQFMgQW1lVZfKIaF6dW8EX7mq+CwrbDr8ywtPNuE
+         818HLbnZxM5chg44XUGLM4mYS0+q/v5CJVOlzO7Uokuh1L+7cCxWE0pmR/DqheLoPry9
+         acwchQoMtC5gmSH/I1Lf2IcWyBN18MiHOo+2D/7VBuLbj42/C7z/xGrllsymVfVNsoDf
+         lbfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXp6BnZYbr2VFQOB3lGJAhLYj3JguhBMCRMRGWu83qqYq3EactC3B1OyFq0xBLYWz4O4dIGNt/SQfq6Kfem1aWgE+oMYhOYaDdXZC9GlkkwToF0d7F0j9Abf0Mtcnu6pn6N2/r00tHvaW65Rh5/zDOanvJeKHU1IboHOkJYegum/oEtB6fcIPyL9Yx9csLwi3LxpPt1wGI2mb+tTl76KI8I4NrOVspAS8/xt/g=
+X-Gm-Message-State: AOJu0YxnycHjwejYD6lGkAYxElDsaKxd1dwiGdo0kDiDc9oXkk/yEVaL
+	JrCj391V3/08N0mnJQV38KgzPtR45+xgKrIcn4pl7hNpmvwwyWf/EerMYbkRt0SuB6jHxMGCDMk
+	JZEAtUs+VQbk7LXp+Y46ZUPcXmjg=
+X-Google-Smtp-Source: AGHT+IHJkXde1OwwGBk+YX2XBvSJp2vPJzqn1gETqia69EsI+RMzoJAY0GFmVJ7SQAPl/JBr8Y7slzZETMgovaMcJKQ=
+X-Received: by 2002:a05:651c:2203:b0:2ef:2fcc:c9fb with SMTP id
+ 38308e7fff4ca-2f3aa1f9152mr14192331fa.36.1723621482997; Wed, 14 Aug 2024
+ 00:44:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmnu73+D1pBucu6VqcuL6IyeLBvG1s
-	Fv+3TWS2uPL1PZvFpPsTWCzOn9/AbnG26Q27xabH11gtLu+aw2Yx4/w+JosZk1+yOXB77P22
-	gMVj56y77B6bVnWyedzvPs7ksXlJvUffllWMHp83yQWwR2XbZKQmpqQWKaTmJeenZOal2yp5
-	B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gDdqKRQlphTChQKSCwuVtK3synKLy1JVcjI
-	Ly6xVUotSMkpMC3QK07MLS7NS9fLSy2xMjQwMDIFKkzIzuhd/pil4CVXxdU/LWwNjDM5uxg5
-	OSQETCRW3W1l7GLk4hAS2MEoMaVrChOE84lRYsP6vWxwzpLHF5hhWlbvO8MKkdjJKNG75C9U
-	y3tGiYkte9lBqngFPCRef73MCGILC5hLnJ9xAizOJqAusaRtLTtIg4hAH5PE61uzWUAcZoEe
-	RonzH5aAVbEIqEpsufeNDcTmFHCS2D/1NZjNLKAtsWzha7A7RAXkJRoenmCG2CYocXLmE7BB
-	EgIrOSSebN3BDnGsi8T6Ka+gDheWeHV8C1RcSuLzu71sEHa2xNGPMHaJxPVZi1ghbGOJ/Usn
-	A/3GAbRYU2L9Ln2IG/gk3n3tYQUJSwjwSnS0CUGY8hK3OsshGkUlzjz9CDXQQ+L/3ivMkACa
-	yijxb8YulgmM8rOQfDMLyQezEJYtYGRexSiWWlCcm55abFhgCI/X5PzcTYzglKpluoNx4tsP
-	eocYmTgYDzFKcDArifAGmuxKE+JNSaysSi3Kjy8qzUktPsRoCgzTicxSosn5wKSeVxJvaGJp
-	YGJmZGxiYWhmqCTOe+ZKWaqQQHpiSWp2ampBahFMHxMHp1QD093DTf9XnLK6nHVF7uvllyye
-	lVn8PbNUeROKXt67cTxlwZ5b18xDNI6lvjr75ZhI0SmnK7rVoR1VORf+NR6SLlt3Na/8KrdU
-	ZemTox0rn/6Yu0PCSYd1xt8lu9kcVCdvMa6La+azPSL1bkZ9V+9UntUncy1jJW8qcfw+etP6
-	fgavrr3A4+OLjdjP9XzfcNr8U5ONHl/4ntRFX38rps1tTFio6+Y3NZ9FwtvI5YC9n616i+6p
-	qdv0fRXPnH4lvuHNhjVLr3z/ozll5ia336ttEv99sjrRIbEpatGj/i35G9hmTny4y4TbMqx4
-	3gvTp4xft9Wzq1ltuha2Nnafceoak97W2uN3EnmPPGVhOSWc8lWJpTgj0VCLuag4EQAz/z+s
-	MgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsWy7bCSvO73+D1pBtNOsVucuL6IyeLBvG1s
-	Fv+3TWS2uPL1PZvFpPsTWCzOn9/AbnG26Q27xabH11gtLu+aw2Yx4/w+JosZk1+yOXB77P22
-	gMVj56y77B6bVnWyedzvPs7ksXlJvUffllWMHp83yQWwR3HZpKTmZJalFunbJXBlbGo5xFaw
-	lavi2v2jjA2MTzm6GDk5JARMJFbvO8PaxcjFISSwnVHib8sWFoiEqETH5UbGLkYOIFtY4vDh
-	Yoiat4wSqw6eYAOp4RXwkHj99TIjiC0sYC5xfsYJdhCbTUBdYknbWnaQBhGBfiaJtn39bCAO
-	s0AvUPeuN2BVLAKqElvufQObxCngJLF/6ms2iBUzGSXOfpgNdgazgKZE6/bf7BC2tsSyha+Z
-	QWxRAXmJhocnmCHOEJQ4OfMJywRGwVlIWmYhaZmFpGwBI/MqRtHUguLc9NzkAkO94sTc4tK8
-	dL3k/NxNjODo0Qrawbhs/V+9Q4xMHIyHGCU4mJVEeANNdqUJ8aYkVlalFuXHF5XmpBYfYpTm
-	YFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1ME27LOHM5P1Md+4C7mM/t204XR3nrTR5xbx7
-	lo+vT/rZtdPz7zdz/p/KlyzvTzPd8mUFl1F82YzQ6VxtK35VWH3e+MR8x3vxmovTzum+Mesx
-	2+e1mWFpzp8laxfOrtv+/CyToHmhQNHkgKVl3Ktz/7yKU0g8ILFoVtC0wmab4quCvM9fZHy2
-	+aI687XYGy2BUEmLuNcS9bdXO/5Nfyw2uy/yz6UvR1zzVlYdnP2KdWP83kSjxSzP9EImLpDY
-	sovVuyxn/UwR1r33hd6GW6rp5h1cWirmF2c5/5L4dta1JXNmdMa1yx3M5vl891SB7kl25XrB
-	iimzFicGVnQee9dfqVR19cnxOS3Kscxvjjp9/lqtxFKckWioxVxUnAgARa9f6w0DAAA=
-X-CMS-MailID: 20240814074247epcas1p23e178263d8534eabaf9af0718f32a532
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240813075621epcas1p13a114c471fa953a5038d1897994edca5
-References: <CGME20240813075621epcas1p13a114c471fa953a5038d1897994edca5@epcas1p1.samsung.com>
-	<20240813-clean_header-v1-1-6f950d09b877@samsung.com>
+References: <20240812174421.1636724-1-mic@digikod.net> <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
+ <20240813.la2Aiyico3lo@digikod.net> <CAHC9VhRrcTo4gXrexb=fqEGbNcynKUUoMWR=EseJ+oa0ZM-8qA@mail.gmail.com>
+ <20240813.ideiNgoo1oob@digikod.net> <CAHC9VhR-jbQQpb6OZjtDyhmkq3gb5GLkt87tfUBQM84uG-q1bQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhR-jbQQpb6OZjtDyhmkq3gb5GLkt87tfUBQM84uG-q1bQ@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 14 Aug 2024 09:44:31 +0200
+Message-ID: <CAGudoHEQA5hZf_mpB0byt24doF7Kwj7XO-uJ2-oKm25DXX4s3Q@mail.gmail.com>
+Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook inconsistencies
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-08-13 at 16:55 +0900, Kwanghoon Son wrote:
-> Cleanup header include
->=20
-> Signed-off-by: Kwanghoon Son <k.son=40samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fb.c =7C 5 -----
->  1 file changed, 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exy=
-nos/exynos_drm_fb.c
-> index fc1c5608db96..b6139e179aa9 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> =40=40 -10,17 +10,12 =40=40
-> =20
->  =23include <drm/drm_atomic.h>
->  =23include <drm/drm_atomic_helper.h>
-> -=23include <drm/drm_crtc.h>
->  =23include <drm/drm_framebuffer.h>
-> -=23include <drm/drm_fourcc.h>
->  =23include <drm/drm_gem_framebuffer_helper.h>
-> -=23include <drm/drm_probe_helper.h>
->  =23include <drm/exynos_drm.h>
-> =20
-> -=23include =22exynos_drm_crtc.h=22
->  =23include =22exynos_drm_drv.h=22
->  =23include =22exynos_drm_fb.h=22
-> -=23include =22exynos_drm_fbdev.h=22
+On Wed, Aug 14, 2024 at 1:39=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> I don't see how where the cred reference live will have any impact,
+> you still need to get and drop references which will have an impact.
+> There will always be something.
+>
 
-Please don't merge this.
-This has compile error when add more devices (more than defconfig).
-I'll fix and send v2.
+The patch as posted here adds 2 atomics in the fast path and that
+indeed is a problem, but it can be trivially avoided -- either use
+get/put_cred_many or make it so that the same pointer means the ref is
+held implicitly (after all the f_cred one is guaranteed to be there
+for the entire file's lifetime).
 
-kwang.
+Either way extra overhead does not have to be there (modulo one branch
+on teardown to check for mismatched creds) and can be considered a
+non-factor.
 
-> =20
->  static int check_fb_gem_memory_type(struct drm_device *drm_dev,
->  				    struct exynos_drm_gem *exynos_gem)
->=20
-> ---
-> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-> change-id: 20240813-clean_header-863930a8f82f
->=20
-> Best regards,
+I have no basis to comment on the idea behind the patch.
 
+I'll note however that the patch to move f_owner out of struct file
+(and have *not* present by default) is likely to come through, it
+already landed here:
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dvfs=
+.misc&id=3D0e8540d012189259261c75360d2725a2107761e7
+
+I don't know if it has any bearing on viability of the patch posted here.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
