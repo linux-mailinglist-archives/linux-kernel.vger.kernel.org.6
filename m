@@ -1,233 +1,255 @@
-Return-Path: <linux-kernel+bounces-285875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6999513B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:59:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2949513E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:24:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91D1281758
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8A3E1F25702
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0076C55C3E;
-	Wed, 14 Aug 2024 04:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E857FBA2;
+	Wed, 14 Aug 2024 05:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="oMiWrhK3"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tlrPlieY"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AC7481C0
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14FA78C91
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723611570; cv=none; b=KJKCLtDBkkqLkZXe1ZBxr9X7qjpXB+/OYxarYSYqSTzpNw2sXJm6eGLEOBilYU0j899XozktSVLlAtIuPoY5f6SeS4/RgdrG7Uj74tErMbW4jnHO9CGR8PYtmR3ycIE2hZkIjDsTCCJ4FG89YpKKBtxpmBHeOjBWtQzsSVUZcEI=
+	t=1723613073; cv=none; b=dChQIahmAwEFRg5gdIO5Q366TsuqIxxGcxyEk3YDzrlj+CPpxkMKI4h8g8o121PgiNp5rQMNiYcqwem8u8sLVYCC8brRN3McyjORNCxqOVCyG10DqbHp/NL/pgcR764jQajp1YPyg01JNpoPqqauX409MmF3cKjlRfkapitL9IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723611570; c=relaxed/simple;
-	bh=N0sUmJT0wjmV/m+WHFZMycnAPET6uKJCQrUyePt9ayY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qtEA5heyP2iSKezZO+R98RzVxLn7G87QVciYwlp6sPn09NFekgnWKh/2yOjf++VJffNl2MHtHsRq4e7H/bC63LcUcrs1mzW08GhCnwtO315NkoIj3ciBg54wFY33vTpAdazHU2kPQiIRxffIqg7VQxY6+STpQYSl1D7FJkuvUf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=oMiWrhK3; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cf93dc11c6so4859109a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723611566; x=1724216366; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q9hs9yPPIjAFKNvPKQSLvy6Q7Cm9t0oU+bjgW2/ohow=;
-        b=oMiWrhK3D/eiaMcT9CdZKFxRdCxGstjQQLDGII1fBnwx+Be3R1NsdqfGqX3DpTqALV
-         LhkGsspSa86/eIQ7t8/DUlE988rS3LlIMZZl/dfn6sakXLFfOZBFmEMx/5zcdp6ITYpc
-         5TcFYjl+N0NjiRjkc6prIx4w0Pe3h1oPi61QT6g7lEtbPYRJhwwZ461NtwepwQ3y+T2y
-         e9ose6GlNtsdNelhJh46ANBHjQMOorq+v4VS4/fJGghjz2sQX/OJ+7/ui4cnXAbJZGx+
-         5G5PpVNgMSCEZwDgwtRIkPGOw2+u7vpuNXR8i+fcPLwINr7E6cSSTym0iDJqkF+zdniU
-         u7lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723611566; x=1724216366;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9hs9yPPIjAFKNvPKQSLvy6Q7Cm9t0oU+bjgW2/ohow=;
-        b=FWrdCriAwvOgAA4h9QCK/oGswuHHOzTtQ2p9IaTO2Y68xp9Bx8dviCOfInyvGQ0vep
-         MucX8DYZzEz0ukTBFSWuPT9gQk9FQHWnnv/JpWM08UOyFocxZbqfTeK+0OSwHfGy1yQP
-         moUILqzbZMNLmz94C3PoDWIdlw3edJ/lld6EnFlESi83MJTXLOUa2PX+36Xn+yH5abB9
-         fF4BYJtcB0mjSlEcsmhShA9KnmtmfAGxJDgY18g3JRQ7AQhRHWUyc8d0OKufqWuywdri
-         xYrHzQaEYKxBFF8MSFVbNLLqod5h/pzh8nLAxFqo4DJNU4bo+ieehou0oJSz9NzjpS1N
-         iPMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFSIksMuAavEeF1ntD/ZN4Zu/Kc0pEQ1Xzi9XwQQwqreNjTiWVv+d0jpOV72+BxZV2zejz/vpUGFgaEpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiWLPev9jhMO0V5F68IFCZYwQ41OmBXrQs8bf8HuV4W/SLvG37
-	UU9UbO6EFBfEJYQuGDSG3Dl5GSXcqArG1yEc3NWOoOaivDVMz1c55QI086lhO+I=
-X-Google-Smtp-Source: AGHT+IERVX43gOXYdcf3KbRYaCL9u9fdteGqPIVuHakd/aJAOk7ZsngokahozzcvU6RwEvf5ewwQoA==
-X-Received: by 2002:a17:90a:c909:b0:2ca:a625:f9e9 with SMTP id 98e67ed59e1d1-2d3aabad914mr1819772a91.42.1723611566502;
-        Tue, 13 Aug 2024 21:59:26 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac856c64sm539189a91.55.2024.08.13.21.59.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 21:59:26 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1se66V-00GQUx-2q;
-	Wed, 14 Aug 2024 14:59:23 +1000
-Date: Wed, 14 Aug 2024 14:59:23 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] xfs: convert perag lookup to xarray
-Message-ID: <Zrw5q0qTi9m8AT6+@dread.disaster.area>
-References: <20240812063143.3806677-1-hch@lst.de>
- <20240812063143.3806677-3-hch@lst.de>
+	s=arc-20240116; t=1723613073; c=relaxed/simple;
+	bh=0Jg37okIgoHvF/we1XydAONF+6YuWA/o+HS/lIy1XCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=OiTUJG4hQqT+EDjU5niP5ZdW8FWrhRCt4Ta77iM7GnzhMQQRJVgsAeBHU8fuxBo3gRkNUOUFThDHdjmXZE3GAqnO6itWEsrO6AIzRNL5EfgnwFJU7PxYlpjmS8/jpNU+dfjHIQ3ObwcqUocRVfIiIXBA5JRhB5lOG3Y3tCHlri4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tlrPlieY; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240814052427epoutp0165c5d3ebd36589f08896a75c1eaa30e4~rgPPiWbU71721917219epoutp01Z
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:24:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240814052427epoutp0165c5d3ebd36589f08896a75c1eaa30e4~rgPPiWbU71721917219epoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723613067;
+	bh=tgim6fGfnoteNGPRHZsa18v9V1WUkoyXRCy+g53ak1M=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=tlrPlieYbmE9ez89DP17eRbm4CMGiw2ja8obGfP+e/FgjfjC4uvTeN9SCxEqREdAQ
+	 ClJ2ZdAr7qwV0eao4VlwX2uu1Yw2CTew9dnXavmHp2PAJ23zozIRGH3rYUptm+NSLA
+	 3+9xGPh/mzDEdW52rIS+2Q8CWgp7cApNmrr+Nagw=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240814052426epcas5p15d1ab7ff38b6dca0daf8100be24744f0~rgPPJ_yG72642726427epcas5p1E;
+	Wed, 14 Aug 2024 05:24:26 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WkGs45TQyz4x9Pp; Wed, 14 Aug
+	2024 05:24:24 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E5.7D.08855.88F3CB66; Wed, 14 Aug 2024 14:24:24 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240814045941epcas5p4df2673c284c3b3fc372ef3d75ee769e1~rf5nSrCt01110511105epcas5p4Y;
+	Wed, 14 Aug 2024 04:59:41 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240814045941epsmtrp23715f522932946fe0a5cbe25ef8ae322~rf5nRqCXw2056320563epsmtrp2i;
+	Wed, 14 Aug 2024 04:59:41 +0000 (GMT)
+X-AuditID: b6c32a44-15fb870000002297-c9-66bc3f886966
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	DF.37.19367.CB93CB66; Wed, 14 Aug 2024 13:59:40 +0900 (KST)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240814045938epsmtip1c0d55b73d28bb612aa43db441ec3b0b2~rf5lKyV790771507715epsmtip1l;
+	Wed, 14 Aug 2024 04:59:38 +0000 (GMT)
+Message-ID: <45a638d0-57e0-405f-bbb0-8159d73cc8b6@samsung.com>
+Date: Wed, 14 Aug 2024 10:29:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812063143.3806677-3-hch@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: dwc3: core: Prevent USB core invalid event
+ buffer address access
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>, "dh10.jung@samsung.com"
+	<dh10.jung@samsung.com>, "naushad@samsung.com" <naushad@samsung.com>,
+	"akash.m5@samsung.com" <akash.m5@samsung.com>, "rc93.raju@samsung.com"
+	<rc93.raju@samsung.com>, "taehyun.cho@samsung.com"
+	<taehyun.cho@samsung.com>, "hongpooh.kim@samsung.com"
+	<hongpooh.kim@samsung.com>, "eomji.oh@samsung.com" <eomji.oh@samsung.com>,
+	"shijie.cai@samsung.com" <shijie.cai@samsung.com>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <20240813231744.p4hd4kbhlotjzgmz@synopsys.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmhm6H/Z40g7dTZC3eXF3FanFnwTQm
+	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pwDFPu+k9liwcZHjBaT
+	DoparFpwgN2Bz2P/3DXsHn1bVjF6bNn/mdHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/g
+	eOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoBuVFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnF
+	JbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZ09unsxdcV6lYs3MrWwNjv2wXIyeH
+	hICJxMOz3YxdjFwcQgK7GSU+b1vLDuF8YpS4d/gbC5zz8+wBZpiWid2vWEBsIYGdjBI/HhZC
+	FL1llOh73MUOkuAVsJM42HMbaC4HB4uAqsT7Xg+IsKDEyZlPwHpFBeQl7t+awQ5SIiwQL3G5
+	PRwkLCKgI3HgxHkmEJtZYC+rRP9nbwhbXOLWk/lMIOVsAoYSz07YgIQ5BawlLizdwAJRIi/R
+	vHU2M8g1EgJbOCR2LtvOAlIvIeAiceh0JcT1whKvjm9hh7ClJD6/28sGYVdLrL7zkQ2it4VR
+	4vCTb1BF9hKPjz5iBpnDLKApsX6XPkRYVmLqqXVQZ/JJ9P5+wgQR55XYMQ/GVpU41XgZar60
+	xL0l11ghzvGQ2LfYfQKj4iykMJmF5MlZSL6ZhbB4ASPLKkbJ1ILi3PTUZNMCw7zUcnhkJ+fn
+	bmIEJ18tlx2MN+b/0zvEyMTBeIhRgoNZSYQ30GRXmhBvSmJlVWpRfnxRaU5q8SFGU2DcTGSW
+	Ek3OB6b/vJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamHLPu+9v
+	mZz4+P4thsuv634arJ0mF7htcWzo+t6OX9wM36dsjl59+0TEecV524TvrzF/v7HDxVf/uuRf
+	nxd3WoPsnVN/qPN05Kr8kLv//yu/s+Yf7e9Tb6YVLkhJCjtxJ0vMou7ss0T/9gDX/mCJ3Es5
+	DKdO392xa1fGpptNrTNbsidJfLipdTBn+w13/Qtex98YWLnOOXTlmYHrvlmHz/zSL0zvOH0y
+	Js39THUssybv3tzEOWve71J9JX2JI8gh5ZtgyU4VmdsF3GYBLNmzlAq1o7J2e5vfeTsjMbTy
+	/O3j+Y7myQ0cU8+UuLBdE1ri2LJ20f5HVrcO5XDPM9glmndEPH6jau6Jo9NMeBhbtJRYijMS
+	DbWYi4oTAeg+r+dHBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSnO4eyz1pBmtaTCzeXF3FanFnwTQm
+	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pwDFPu+k9liwcZHjBaT
+	DoparFpwgN2Bz2P/3DXsHn1bVjF6bNn/mdHj8ya5AJYoLpuU1JzMstQifbsErozp7dPZC66r
+	VKzZuZWtgbFftouRk0NCwERiYvcrli5GLg4hge2MEj9+fWOGSEhLvJ7VxQhhC0us/PecHaLo
+	NaPEv9NzwRK8AnYSB3tuA9kcHCwCqhLvez0gwoISJ2c+YQGxRQXkJe7fmsEOYgsLxEus2TYL
+	rFVEQEfiwInzTCAzmQUOskpcmPSLEWLBMiaJRaePgVUxC4hL3HoynwlkAZuAocSzEzYgYU4B
+	a4kLSzewQJSYSXRt7YIql5do3jqbeQKj0Cwkd8xCMmkWkpZZSFoWMLKsYhRNLSjOTc9NLjDU
+	K07MLS7NS9dLzs/dxAiONK2gHYzL1v/VO8TIxMF4iFGCg1lJhDfQZFeaEG9KYmVValF+fFFp
+	TmrxIUZpDhYlcV7lnM4UIYH0xJLU7NTUgtQimCwTB6dUA5N/1ZWMgs9bjdV+85uvcHp0dOKf
+	rSffvXvGy5oel62QvWRD7ePjrYuvzXK5e7rA7jnnRuOeNfcLxafOdDmmvZL9fkleyQ1foZO3
+	bZN8uWo/aXy1mTr3rpMww9THlRpqTQuvLNq8z23ec5V7+TcWKkyUiNQOZmrLXd+m6Ph9KUfE
+	TZ7sjruXi3jtf6pxavUuP25wwbWC78RC9qdfnPcoNGauuXH8bcafp1cvPeur89sizlFWZDhn
+	x4y1ryZel6x6kupkWPTo3JwNXG8WekqoalZ+VF+U6XWdu/XFskA+MTWt34JJbBYOVVfCr+un
+	rnD9YtirJc9fd8TIOcAwbLWrtmaD6W7vmWzGZ5Tsc7Y2eCuxFGckGmoxFxUnAgCSboROIwMA
+	AA==
+X-CMS-MailID: 20240814045941epcas5p4df2673c284c3b3fc372ef3d75ee769e1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240808120605epcas5p2c9164533413706da5f7fa2ed624318cd
+References: <CGME20240808120605epcas5p2c9164533413706da5f7fa2ed624318cd@epcas5p2.samsung.com>
+	<20240808120507.1464-1-selvarasu.g@samsung.com>
+	<20240809232804.or5kccyf7yebbqm6@synopsys.com>
+	<98e0cf35-f729-43e2-97f2-06120052a1cc@samsung.com>
+	<20240813231744.p4hd4kbhlotjzgmz@synopsys.com>
 
-On Mon, Aug 12, 2024 at 08:31:01AM +0200, Christoph Hellwig wrote:
-> Convert the perag lookup from the legacy radix tree to the xarray,
-> which allows for much nicer iteration and bulk lookup semantics.
-> 
-> Note that this removes the helpers for tagged get and grab and the
-> for_each* wrappers built around them and instead uses the xa_for_each*
-> iteration helpers directly in xfs_icache.c, which simplifies the code
-> nicely.
 
-Can we split the implementation change and the API change into two
-separate patches, please?
+On 8/14/2024 4:47 AM, Thinh Nguyen wrote:
+> On Sat, Aug 10, 2024, Selvarasu Ganesan wrote:
+>> On 8/10/2024 4:58 AM, Thinh Nguyen wrote:
+>>> On Thu, Aug 08, 2024, Selvarasu Ganesan wrote:
+>>>> This commit addresses an issue where the USB core could access an
+>>>> invalid event buffer address during runtime suspend, potentially causing
+>>>> SMMU faults and other memory issues. The problem arises from the
+>>>> following sequence.
+>>>>           1. In dwc3_gadget_suspend, there is a chance of a timeout when
+>>>>           moving the USB core to the halt state after clearing the
+>>>>           run/stop bit by software.
+>>>>           2. In dwc3_core_exit, the event buffer is cleared regardless of
+>>>>           the USB core's status, which may lead to an SMMU faults and
+>>> This is a workaround to your specific setup behavior. Please document in
+>>> the commit message which platforms are impacted.
+>> Please correct me if i am wrong. I dont think this workaround only
+>> applicable our specific setup. It could be a common issue across all
+>> other vendor platforms, and it's required to must check the controller
+>> status before clear the event buffers address.  What you think is it
+>> really required to mention the platform details in commit message?
+> How can it be a common issue, the suspend sequence hasn't completed in
+> the dwc3 driver but yet the buffer is no longer accessible? Also, as you
+> noted, we don't know the exact condition for the SMMU fault, and this
+> isn't reproducible all the time.
 
-I have no problems with the xarray conversion, I have reservations
-about the API changes.
-
-I hav eno idea what the new iteration method that is needed looks
-like, but I'd prefer not to be exposing all the perag locking and
-reference counting semantics all over the code - the current
-iterators were introduced to remove all that stuff from existing
-iterators.
-
-This patch makes iteration go back to this model:
-
-
-	rcu_read_lock()
-	xa_for_each....() {
-		/* get active or passive ref count */
-		....
-		rcu_read_unlock();
-
-		/* do work on AG */
-
-		/* put/rele perag */
-
-		/* take RCU lock for next perag lookup */
-		rcu_read_lock();
-	}
-	rcu_read_unlock();
-
-
-And that feels like a step backward from an API perspective, not
-an improvement....
-
-So what's the overall plan for avoiding this sort of mess
-everywhere? Can we re-implement the existing iterators more
-efficiently with xarray iterators, or does xarray-based iteration
-require going back to the old way of open coding all iterations?
-
-> @@ -1493,21 +1497,32 @@ xfs_blockgc_flush_all(
->  	struct xfs_mount	*mp)
->  {
->  	struct xfs_perag	*pag;
-> -	xfs_agnumber_t		agno;
-> +	unsigned long		index = 0;
->  
->  	trace_xfs_blockgc_flush_all(mp, __return_address);
->  
->  	/*
-> -	 * For each blockgc worker, move its queue time up to now.  If it
-> -	 * wasn't queued, it will not be requeued.  Then flush whatever's
-> -	 * left.
-> +	 * For each blockgc worker, move its queue time up to now.  If it wasn't
-> +	 * queued, it will not be requeued.  Then flush whatever is left.
->  	 */
-> -	for_each_perag_tag(mp, agno, pag, XFS_ICI_BLOCKGC_TAG)
-> -		mod_delayed_work(pag->pag_mount->m_blockgc_wq,
-> -				&pag->pag_blockgc_work, 0);
-> +	rcu_read_lock();
-> +	xa_for_each_marked(&mp->m_perags, index, pag, XFS_ICI_BLOCKGC_TAG)
-> +		mod_delayed_work(mp->m_blockgc_wq, &pag->pag_blockgc_work, 0);
-> +	rcu_read_unlock();
+Agree. Will update platform detail in next version.
 >
-> +	index = 0;
-> +	rcu_read_lock();
-> +	xa_for_each_marked(&mp->m_perags, index, pag, XFS_ICI_BLOCKGC_TAG) {
-> +		if (!atomic_inc_not_zero(&pag->pag_active_ref))
-> +			continue;
-> +		rcu_read_unlock();
->  
-> -	for_each_perag_tag(mp, agno, pag, XFS_ICI_BLOCKGC_TAG)
->  		flush_delayed_work(&pag->pag_blockgc_work);
-> +		xfs_perag_rele(pag);
-> +
-> +		rcu_read_lock();
-> +	}
-> +	rcu_read_unlock();
+>>>>           other memory issues. if the USB core tries to access the event
+>>>>           buffer address.
+>>>>
+>>>> To prevent this issue, this commit ensures that the event buffer address
+>>>> is not cleared by software  when the USB core is active during runtime
+>>>> suspend by checking its status before clearing the buffer address.
+>>>>
+>>>> Cc: stable@vger.kernel.org
+>>> We can keep the stable tag, but there's no issue with the commit below.
+>>
+>> By mistaken I mentioned wrong commit ID. The correct commit id would be
+>> 660e9bde74d69 ("usb: dwc3: remove num_event_buffers").
+> The above commit isn't the issue either. If it is, then the problem
+> should still exist prior to that.
 
-And this is the whole problem with open coding iterators. The first
-iterator accesses perag structures and potentially queues them for
-work without holding a valid reference to the perag. The second
-iteration takes reference counts, so can access the perag safely.
 
-Why are these two iterations different? What makes the first,
-non-reference counted iteration safe?
+This issue still persists in older kernels (6.1.X) as well. We believed 
+that it could be a common issue due to the missing condition for 
+checking the controller status in the mentioned commit above. We require 
+this fix in all stable kernel for the Exynos platform. Is it fine to 
+only mention the "Cc" tag in this case?
+>
+>>>> Fixes: 89d7f9629946 ("usb: dwc3: core: Skip setting event buffers for host only controllers")
+>>>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>> - Added separate check for USB controller status before cleaning the
+>>>>     event buffer.
+>>>> - Link to v1: https://urldefense.com/v3/__https://lore.kernel.org/lkml/20240722145617.537-1-selvarasu.g@samsung.com/__;!!A4F2R9G_pg!cvZmnaxTWtJKR4ZDRZDa-8mvxpvkf5KPx57IwSXTSEtEFIVkPullR7sTYP0AM9de0xFbHLKdM_5jzBUiBL3f9SuioYE$
+>>>> ---
+>>>>    drivers/usb/dwc3/core.c | 5 +++++
+>>>>    1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+>>>> index 734de2a8bd21..5b67d9bca71b 100644
+>>>> --- a/drivers/usb/dwc3/core.c
+>>>> +++ b/drivers/usb/dwc3/core.c
+>>>> @@ -564,10 +564,15 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
+>>>>    void dwc3_event_buffers_cleanup(struct dwc3 *dwc)
+>>>>    {
+>>>>    	struct dwc3_event_buffer	*evt;
+>>>> +	u32				reg;
+>>>>    
+>>>>    	if (!dwc->ev_buf)
+>>>>    		return;
+>>>>    
+>>> Please add comment here why we need this and which platform is impacted
+>>> should we need to go back and test.
+>> Do you want add comment as like below?. If yes, As i said earlier not
+>> required to mention our platform name as it could be a common issue
+>> across all the other vendor platforms.
+> See note above.
 
->  
->  	return xfs_inodegc_flush(mp);
->  }
-> @@ -1755,18 +1770,26 @@ xfs_icwalk(
->  	struct xfs_perag	*pag;
->  	int			error = 0;
->  	int			last_error = 0;
-> -	xfs_agnumber_t		agno;
-> +	unsigned long		index = 0;
-> +
-> +	rcu_read_lock();
-> +	xa_for_each_marked(&mp->m_perags, index, pag, goal) {
-> +		if (!atomic_inc_not_zero(&pag->pag_active_ref))
-> +			continue;
-> +		rcu_read_unlock();
->  
-> -	for_each_perag_tag(mp, agno, pag, goal) {
->  		error = xfs_icwalk_ag(pag, goal, icw);
-> +		xfs_perag_rele(pag);
-> +
-> +		rcu_read_lock();
->  		if (error) {
->  			last_error = error;
-> -			if (error == -EFSCORRUPTED) {
-> -				xfs_perag_rele(pag);
-> +			if (error == -EFSCORRUPTED)
->  				break;
-> -			}
->  		}
->  	}
-> +	rcu_read_unlock();
-> +
+Noted.
+>
+>> /*Prevent USB controller invalid event buffer address access
+>> in Exynos platform if USB controller still in active.*/
+> Perhaps this:
+>
+> /*
+>   * Exynos platforms may not be able to access event buffer if the
+>   * controller failed to halt on dwc3_core_exit().
 
-And there's the open coded pattern I talked about earlier that we
-introduced the for_each_perag iterators to avoid.
-
-Like I said, converting to xarray - no problems with that. Changing
-the iterator API - doesn't seem like a step forwards right now.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks for the suggestions. Will update platform detail in next version.
+>   */
+>
+>   BR,
+>   Thinh
+>
+>>>> +	reg = dwc3_readl(dwc->regs, DWC3_DSTS);
+>>>> +	if (!(reg & DWC3_DSTS_DEVCTRLHLT))
+>>>> +		return;
+>>>> +
+>>>>    	evt = dwc->ev_buf;
+>>>>    
+>>>>    	evt->lpos = 0;
+>>>> -- 
+>>>> 2.17.1
+>>>>
+>>> Thanks,
+>>> Thinh
 
