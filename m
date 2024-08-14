@@ -1,200 +1,195 @@
-Return-Path: <linux-kernel+bounces-285768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B3E951258
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:26:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B6A951259
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A400A2826ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739CB1F2363B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD65C17C66;
-	Wed, 14 Aug 2024 02:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643051BDD0;
+	Wed, 14 Aug 2024 02:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Jm8+mVyo"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dIecx3BC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B00171A5
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF272E3E5
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723602354; cv=none; b=IijVFy9avUBpIuErcV+uVVykMn2BjQDTRng0+XOiz+rOZNgjKCxj/UsK38PNGbnQJWHxi5wICd4m6AsLisS/EZktO8LCB83SPs8etEjEEEJkydX41CWZHuleWvJOZHPUZNF5y0vEaqSIpsgzQ4fL0JURZ4DPDoDjHQOdA2ZqQfg=
+	t=1723602370; cv=none; b=C7oTD0brPB3y+jcU2A79Fs5LyJ14s72xtIWRH7CccinNpRfqcDfrQe9YexlCz1/ijZXEhv3aL/K/4C8PT/5Vs+AEszQ4Dca+gi84ryShrS4XqyGdUwYzew13vxubN+u6kHk3DxNa4Q5l8JeggOWHkC8DOpW6FOQ+NAeOZ7+A6Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723602354; c=relaxed/simple;
-	bh=2V9ePT8qFQLfcn3Al53k6b66Jf9bRTh5dFrcVZ4ehNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aSihofVCPgvbTIaR3i8hAx64+Jfg9CL1poBM1jTubOCVEXmwz9rXq38KPwSMO2MSUEVCjC3TvVgWfoHsvUekX7jgRXFOW/UEXMQWlT91G30R+i0ymCEBAkgsvTFCWOJmOu8Hc4ubVs//tlvZ+31J9YWj4iQaP3fVTqzMfgYlyng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Jm8+mVyo; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39b37b63810so3218745ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723602352; x=1724207152; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h6LNGe/J5ub4oSc4wEcWX9/lvXmZbxXATcRN21QG/c4=;
-        b=Jm8+mVyoArP0ifQn1Bn16/qrNrDzFXhzWtYz/iVPT4y2mrS2U8vzXhlYjbwWDm6LzL
-         lzDA11RsATJgya26/jgZo5s6OrlhD/ojx5eixhgeYh+qP7G33xEwOIt9HMKPDLfGvhzG
-         pmSRas8eu/kiJvUMQkspbfo4XxqvWiOtbxB27AYwBwmbf/PY6UYDLPVuMK6Pdg8we1z0
-         XRIJfYbLMpAwjcIflkh8Ur6RLUxO9bu+o+lJU1T6zPfLWbD7pH9q3bHm25gaNEdxn0In
-         2ZdU8TR+wlNTvV48yM7RYo+kHzVv+42W/okJj8RaQoNtqSqdcATf4qat3nn+oGQI5ef3
-         hH5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723602352; x=1724207152;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6LNGe/J5ub4oSc4wEcWX9/lvXmZbxXATcRN21QG/c4=;
-        b=e44F+S73J7c0YEGaM1VFqNb/abl7x978JG/sPCWV8MMSqiVNlVoMvtNPUU+sSwoGaC
-         uKLfF41zdgDGyPAm1YGsVF8KD5lXygC0Lq+Z9fuWk9XTuE08f3pQ1tNCLpeohA12TWmC
-         +OZtiP8ukoFwbeyLIG7hZYikEQD/BfN3kXhJU8V07zAEXZeCqGtt4ABy1LklM3B78f1d
-         UmU/OLmnPPeXClUF9iSV2EXgF/g3VUQNzPt84Jhz9+vJfIZXkR2UeZVwmu5WLcrO+gXO
-         sMHY8nYsv3pPYYLl/ZgRjG/BVnh6W3PNGHVI7O1yhoN3idT/rtrNWslgH6s5lOD/RJ/6
-         XkUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGTobYblwUnkjnQ2BUMjnlxjo6AREuHYTcd4FxBsnkK0rZwOH9/s5nsLckIrtD1vVazj61wl10D7bbNmQwV+6B0a4GTm+K2JHOabFc
-X-Gm-Message-State: AOJu0YxesG5+77FZYbqU0z0wO+bQDSOsJFI53fsZs6TqFGx9jJ1KD7bn
-	aE6cOcHAgmZbIODQlN/n5ViI6DfTIAhPNEVXPSx1VmCWUfOojU4R0d54bAKqWzdky/raH08/VPm
-	w
-X-Google-Smtp-Source: AGHT+IEn4p4u+nmkKxqQbRWPDC6r2DEt5JWPBdmKEfZqfN+TfyQpUSmW5aIcJHJ7gF6pbgyQMbYzzg==
-X-Received: by 2002:a05:6e02:1d81:b0:39c:2cf0:42f2 with SMTP id e9e14a558f8ab-39d124f2f2dmr10090755ab.4.1723602351912;
-        Tue, 13 Aug 2024 19:25:51 -0700 (PDT)
-Received: from [10.4.217.215] ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6979ebfaesm2154264a12.24.2024.08.13.19.25.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 19:25:51 -0700 (PDT)
-Message-ID: <382ae7b5-9ccd-4202-a02d-be5d453f7c43@bytedance.com>
+	s=arc-20240116; t=1723602370; c=relaxed/simple;
+	bh=BpGDBX70JOTkL49NRjho53CQcvZ9FyBoxOHGJveRWa0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=FcABraBHsbHe1SPDO2d/fQs05BnARmqQbEM9RPklnLLgnfyYowAv53cqqlq9DdRF7g/6k2MI6ftQzEN4JCTBgrPOsWDceyMnLHS6yY0rzFHnTfWnqRtqG3MDyq28UKL0G+/XoG4tfQRJa1jiOtbgbcrtsG7SUPftXe85+XKT3rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dIecx3BC; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723602368; x=1755138368;
+  h=date:from:to:cc:subject:message-id;
+  bh=BpGDBX70JOTkL49NRjho53CQcvZ9FyBoxOHGJveRWa0=;
+  b=dIecx3BCXP5uZ7QGxyDhlnFV7Z3J5Uv/FMr1j1f+yE8X/7GmUnu9IZn0
+   oIdvm+9Bl28FN3i1ReqHAs2Iemmto4n/5aec71e1ZqFGzt21yRuuRVIGI
+   seBvypt6fb9kG+ZgupE02PG07N6DcM8RAf2UYeittDi3fpioIYGKuGM7T
+   PUs9uNjtEJu/8capfsR+K6196fg2BUgvI5g31wpOYEW5oz05/s89h2eg6
+   Mm+kYgv4l4zs9YF4mVj1r/1GHqCE7Qjy3PFFDMVP4uvWxqYEUUjFHFxXG
+   HMzll24hoN2rydc6FbeFeFshBCLMbcLda6HpWtgUbESKWf0g5hl656Pfb
+   A==;
+X-CSE-ConnectionGUID: IiVzb1PNRGCWMDznFRLVmw==
+X-CSE-MsgGUID: 5rC4+DgMTkmQYaxZ++Orcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21940223"
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="21940223"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 19:26:07 -0700
+X-CSE-ConnectionGUID: VMiVIC5mQIi522e9WNOS8g==
+X-CSE-MsgGUID: 9r7R7bPLS4qgeBx0wfDFew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="96382880"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 13 Aug 2024 19:26:06 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1se3i8-00010L-0O;
+	Wed, 14 Aug 2024 02:26:04 +0000
 Date: Wed, 14 Aug 2024 10:25:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 0ecc5be200c84e67114f3640064ba2bae3ba2f5a
+Message-ID: <202408141041.MDwhMuUR-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] userfaultfd: Fix checks for huge PMDs
-Content-Language: en-US
-To: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Pavel Emelianov <xemul@virtuozzo.com>, Andrea Arcangeli
- <aarcange@redhat.com>, Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
- stable@vger.kernel.org
-References: <20240813-uffd-thp-flip-fix-v2-0-5efa61078a41@google.com>
- <20240813-uffd-thp-flip-fix-v2-1-5efa61078a41@google.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20240813-uffd-thp-flip-fix-v2-1-5efa61078a41@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 0ecc5be200c84e67114f3640064ba2bae3ba2f5a  x86/apic: Make x2apic_disable() work correctly
 
+elapsed time: 724m
 
-On 2024/8/14 04:25, Jann Horn wrote:
-> This fixes two issues.
-> 
-> I discovered that the following race can occur:
-> 
->    mfill_atomic                other thread
->    ============                ============
->                                <zap PMD>
->    pmdp_get_lockless() [reads none pmd]
->    <bail if trans_huge>
->    <if none:>
->                                <pagefault creates transhuge zeropage>
->      __pte_alloc [no-op]
->                                <zap PMD>
->    <bail if pmd_trans_huge(*dst_pmd)>
->    BUG_ON(pmd_none(*dst_pmd))
-> 
-> I have experimentally verified this in a kernel with extra mdelay() calls;
-> the BUG_ON(pmd_none(*dst_pmd)) triggers.
-> 
-> On kernels newer than commit 0d940a9b270b ("mm/pgtable: allow
-> pte_offset_map[_lock]() to fail"), this can't lead to anything worse than
-> a BUG_ON(), since the page table access helpers are actually designed to
-> deal with page tables concurrently disappearing; but on older kernels
-> (<=6.4), I think we could probably theoretically race past the two BUG_ON()
-> checks and end up treating a hugepage as a page table.
-> 
-> The second issue is that, as Qi Zheng pointed out, there are other types of
-> huge PMDs that pmd_trans_huge() can't catch: devmap PMDs and swap PMDs
-> (in particular, migration PMDs).
-> On <=6.4, this is worse than the first issue: If mfill_atomic() runs on a
-> PMD that contains a migration entry (which just requires winning a single,
-> fairly wide race), it will pass the PMD to pte_offset_map_lock(), which
-> assumes that the PMD points to a page table.
-> Breakage follows: First, the kernel tries to take the PTE lock (which will
-> crash or maybe worse if there is no "struct page" for the address bits in
-> the migration entry PMD - I think at least on X86 there usually is no
-> corresponding "struct page" thanks to the PTE inversion mitigation, amd64
-> looks different).
-> If that didn't crash, the kernel would next try to write a PTE into what it
-> wrongly thinks is a page table.
-> 
-> As part of fixing these issues, get rid of the check for pmd_trans_huge()
-> before __pte_alloc() - that's redundant, we're going to have to check for
-> that after the __pte_alloc() anyway.
-> 
-> Backport note: pmdp_get_lockless() is pmd_read_atomic() in older
-> kernels.
-> 
-> Reported-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> Closes: https://lore.kernel.org/r/59bf3c2e-d58b-41af-ab10-3e631d802229@bytedance.com
+configs tested: 103
+configs skipped: 131
 
-Ah, the issue fixed by this patch was not reported by me, so
-I think that this Reported-by does not need to be added. ;)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> Cc: stable@vger.kernel.org
-> Fixes: c1a4de99fada ("userfaultfd: mcopy_atomic|mfill_zeropage: UFFDIO_COPY|UFFDIO_ZEROPAGE preparation")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
->   mm/userfaultfd.c | 22 ++++++++++++----------
->   1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index e54e5c8907fa..290b2a0d84ac 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -787,21 +787,23 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
->   		}
->   
->   		dst_pmdval = pmdp_get_lockless(dst_pmd);
-> -		/*
-> -		 * If the dst_pmd is mapped as THP don't
-> -		 * override it and just be strict.
-> -		 */
-> -		if (unlikely(pmd_trans_huge(dst_pmdval))) {
-> -			err = -EEXIST;
-> -			break;
-> -		}
->   		if (unlikely(pmd_none(dst_pmdval)) &&
->   		    unlikely(__pte_alloc(dst_mm, dst_pmd))) {
->   			err = -ENOMEM;
->   			break;
->   		}
-> -		/* If an huge pmd materialized from under us fail */
-> -		if (unlikely(pmd_trans_huge(*dst_pmd))) {
-> +		dst_pmdval = pmdp_get_lockless(dst_pmd);
-> +		/*
-> +		 * If the dst_pmd is THP don't override it and just be strict.
-> +		 * (This includes the case where the PMD used to be THP and
-> +		 * changed back to none after __pte_alloc().)
-> +		 */
-> +		if (unlikely(!pmd_present(dst_pmdval) || pmd_trans_huge(dst_pmdval) ||
-> +			     pmd_devmap(dst_pmdval))) {
-> +			err = -EEXIST;
-> +			break;
-> +		}
-> +		if (unlikely(pmd_bad(dst_pmdval))) {
->   			err = -EFAULT;
->   			break;
->   		}
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                           tb10x_defconfig   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                         assabet_defconfig   gcc-13.2.0
+arm                                 defconfig   gcc-13.2.0
+arm                       omap2plus_defconfig   gcc-13.2.0
+arm                           sunxi_defconfig   gcc-13.2.0
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240814   clang-18
+i386         buildonly-randconfig-002-20240814   clang-18
+i386         buildonly-randconfig-003-20240814   clang-18
+i386         buildonly-randconfig-004-20240814   clang-18
+i386         buildonly-randconfig-005-20240814   clang-18
+i386         buildonly-randconfig-006-20240814   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240814   clang-18
+i386                  randconfig-002-20240814   clang-18
+i386                  randconfig-003-20240814   clang-18
+i386                  randconfig-004-20240814   clang-18
+i386                  randconfig-005-20240814   clang-18
+i386                  randconfig-006-20240814   clang-18
+i386                  randconfig-011-20240814   clang-18
+i386                  randconfig-012-20240814   clang-18
+i386                  randconfig-013-20240814   clang-18
+i386                  randconfig-014-20240814   clang-18
+i386                  randconfig-015-20240814   clang-18
+i386                  randconfig-016-20240814   clang-18
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                                defconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                       bmips_be_defconfig   gcc-13.2.0
+mips                         rt305x_defconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                      katmai_defconfig   gcc-13.2.0
+powerpc                 mpc837x_rdb_defconfig   gcc-13.2.0
+powerpc                      ppc44x_defconfig   gcc-13.2.0
+powerpc                 xes_mpc85xx_defconfig   gcc-13.2.0
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                                defconfig   gcc-13.2.0
+s390                                defconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                  defconfig   gcc-14.1.0
+sh                          landisk_defconfig   gcc-13.2.0
+sh                          rsk7269_defconfig   gcc-13.2.0
+sh                          sdk7780_defconfig   gcc-13.2.0
+sparc64                             defconfig   gcc-14.1.0
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-14.1.0
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-11
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
 
-Reviewed-by: Qi Zheng <zhengqi.arch@bytedance.com>
-
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
