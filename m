@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-287265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C8A9525A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C588D9525AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E266E2814CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C8E71F23706
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A118D149C69;
-	Wed, 14 Aug 2024 22:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA45A149DFB;
+	Wed, 14 Aug 2024 22:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAXAWXzu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="gw/eeOJk"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E302250269
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 22:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723674395; cv=none; b=Zshviz2JJZfOReUvIdIcBskCQYakNlRcL1b7euTJEBcpU/CqllgbmTNMgcK4oa0oLQSQJLe1oVu0tqEHlszXVWacDntPK8LM9L+GH6x8qy+b837pq+3h4Nu8SKRgtxTzEf8egdB2H3E7ScZ4aHdByU7y+awBg+++3Tg7+ljv1mo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723674395; c=relaxed/simple;
-	bh=/ev7QCuOLeF1lnYSvn4BubTgvgqIJVaNow7skyZz3x8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTHVSLlX5NWbj9ugtFh24pCwyL/+GXYtHUzMh1Vi1RDZuLspJu3Nonfu0qPXUyVeBtb5JbTHPhdUJzFc7u0HvVZOm6S0KN12vc6SX9vZw6AEy9DVyVA6xHkRduvv5elf0qhaYtf/ia9ORmgSaguALyZGChMBoQCTT9CoGwEl5Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAXAWXzu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C963C116B1;
-	Wed, 14 Aug 2024 22:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723674394;
-	bh=/ev7QCuOLeF1lnYSvn4BubTgvgqIJVaNow7skyZz3x8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aAXAWXzun1RciKPEGpCpDV2IGY85v1I6a+F4jKCwSSmc67gWUyXzZsu+A3wiJ1U5e
-	 RNBEppKXsP86JKxVA5LxwCgF5j1blUH/rx5o4qPzORqjm8JoxOlO6/zR4EhyD/kPjn
-	 jVt6FTgZ9k4jfHCzv6in46SJFd3vUiPl+3S9RYmT1CqwpxLjyFoqAZAIN7vd+T9KMY
-	 +pHZcCBqYdutf4nb4poolDQYht/tjtdYgZXjMunqm468TNeuNVP7YpGjgZ/XsuYvts
-	 66PCQIlF5j1LbpPtoczK675DGJium5W9xG97xRTxa2wg3Bq67hUdOVLTARqBvhCtr0
-	 t0ZCKrF0a7iKw==
-Date: Wed, 14 Aug 2024 23:26:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -fixes v2] riscv: Fix out-of-bounds when accessing Andes
- per hart vendor extension array
-Message-ID: <20240814-overexert-baffling-1abf9a80c7b0@spud>
-References: <20240814192619.276794-1-alexghiti@rivosinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB4B50269;
+	Wed, 14 Aug 2024 22:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723674445; cv=pass; b=mc8q9FXFm1lx2HD5xLFnw5WEGazsY0y5RPZlLazPBufdixX+N9QlL3R5OuOzFo2voz5REPkG+qcxRsSbg4PmWHFv74rfXU3eMQGsofrv96bTvoq/eglLzzh+QM4TTyAS4ZYI7x9YQheV9usk/Xf47/CMJQam7OHYKhpqeo0gB0Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723674445; c=relaxed/simple;
+	bh=9VJ9jjp6t4L7646AKrQL1N28VmVst/aHB1hDiaffkDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PRp/x6QeEhR8SomX1BX3w/C0NdFLQefSj+1aDZSlVeE3gMdnfo0JqiQUEMcNflxhZXIZ80m1K8s61r33K6PprIwIB+wx9Z4K7bJ3ZemXdtgcgeETLkTxEjFEZsVFErI7+HKOL6IcK1beHZL6EalShRO4SqVvGNWx/nbcW3AkIbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=gw/eeOJk; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: detlev.casanova@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723674420; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=X0Q+0WbzCl+mNg8bE/Ns8Z1K2ucO71ZR8jLFHvoxkDcBl2HfYiuK/b6JHPC4DYgNjxGSrzUKzzQ0w8yWgqRayMKzUVU67zuS5a66YXl6D0WJ6d9maeGVWK94HPlEfvksb94apRocJr2SkXFVvPZNQv+obnelSrc5dJ9QaLxs/KE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723674420; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=C5EV/s8GV9lXY41yul4dYE04bI+39q3p/wGsLk5ULio=; 
+	b=DjUkBXuF7vfqFb9VLjh+U4aaYUW949auzqs3O9lS0y8aHkauAbRCkktzwJtVWKTAeX+q8uKcqLfX1judCR+FmQ5ddYPh9t/nO/YpYRHM646RGU5mp8XBNg2mRJiaNOPD5LN6hLnUmq2DKGtXC1OWYrYr3Qg6tTpX1yn+vLijFuQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723674420;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=C5EV/s8GV9lXY41yul4dYE04bI+39q3p/wGsLk5ULio=;
+	b=gw/eeOJkZGdvTIBY+6w+9vXaGby37PS1slrN1B7/qd8hxrZ+1NXHA1LTAA5L/25m
+	B6Z0gqpyJoxei6/w4wJavrHF0lA2iZzP5Q2vodmVfo29OxHvSDmtWmG5wI570XXreuq
+	WJi4Rd3uYyDJvESverBbam8Vr+TxzAJ8H5umvyjc=
+Received: by mx.zohomail.com with SMTPS id 1723674418214400.92705418065145;
+	Wed, 14 Aug 2024 15:26:58 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Jagan Teki <jagan@edgeble.ai>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCH v4 0/2] Add power-controller support for rk3576
+Date: Wed, 14 Aug 2024 18:26:40 -0400
+Message-ID: <20240814222824.3170-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2WckljnaeUer3GVg"
-Content-Disposition: inline
-In-Reply-To: <20240814192619.276794-1-alexghiti@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+Add support for the power domain controller on the rk3576 SoC.
+Patches from downstream have been rebased.
 
---2WckljnaeUer3GVg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Note that the mentioned TRM is not publicly available.
 
-On Wed, Aug 14, 2024 at 09:26:19PM +0200, Alexandre Ghiti wrote:
-> The out-of-bounds access is reported by UBSAN:
->=20
-> [    0.000000] UBSAN: array-index-out-of-bounds in ../arch/riscv/kernel/v=
-endor_extensions.c:41:66
-> [    0.000000] index -1 is out of range for type 'riscv_isavendorinfo [32=
-]'
-> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2u=
-buntu-defconfig #2
-> [    0.000000] Hardware name: riscv-virtio,qemu (DT)
-> [    0.000000] Call Trace:
-> [    0.000000] [<ffffffff94e078ba>] dump_backtrace+0x32/0x40
-> [    0.000000] [<ffffffff95c83c1a>] show_stack+0x38/0x44
-> [    0.000000] [<ffffffff95c94614>] dump_stack_lvl+0x70/0x9c
-> [    0.000000] [<ffffffff95c94658>] dump_stack+0x18/0x20
-> [    0.000000] [<ffffffff95c8bbb2>] ubsan_epilogue+0x10/0x46
-> [    0.000000] [<ffffffff95485a82>] __ubsan_handle_out_of_bounds+0x94/0x9c
-> [    0.000000] [<ffffffff94e09442>] __riscv_isa_vendor_extension_availabl=
-e+0x90/0x92
-> [    0.000000] [<ffffffff94e043b6>] riscv_cpufeature_patch_func+0xc4/0x148
-> [    0.000000] [<ffffffff94e035f8>] _apply_alternatives+0x42/0x50
-> [    0.000000] [<ffffffff95e04196>] apply_boot_alternatives+0x3c/0x100
-> [    0.000000] [<ffffffff95e05b52>] setup_arch+0x85a/0x8bc
-> [    0.000000] [<ffffffff95e00ca0>] start_kernel+0xa4/0xfb6
->=20
-> The dereferencing using cpu should actually not happen, so remove it.
->=20
-> Fixes: 23c996fc2bc1 ("riscv: Extend cpufeature.c to detect vendor extensi=
-ons")
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
+Changes since v3:
+- Remove unused g_mask and reuse DOMAIN_M_O_R
 
-You're missing a changelog here, which is doubly important when you drop
-tags provided to you on an earlier version.
+Changes since v2:
+- Remove unused delay for npu and vop
 
->  arch/riscv/kernel/vendor_extensions.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/riscv/kernel/vendor_extensions.c b/arch/riscv/kernel/ve=
-ndor_extensions.c
-> index b6c1e7b5d34b..a8126d118341 100644
-> --- a/arch/riscv/kernel/vendor_extensions.c
-> +++ b/arch/riscv/kernel/vendor_extensions.c
-> @@ -38,7 +38,7 @@ bool __riscv_isa_vendor_extension_available(int cpu, un=
-signed long vendor, unsig
->  	#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_ANDES
->  	case ANDES_VENDOR_ID:
->  		bmap =3D &riscv_isa_vendor_ext_list_andes.all_harts_isa_bitmap;
-> -		cpu_bmap =3D &riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap[cpu];
-> +		cpu_bmap =3D riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap;
->  		break;
->  	#endif
->  	default:
-> --=20
-> 2.39.2
->=20
->=20
+Changes since v1:
+- Rename rk3576-power.h to rockchip,rk3576-power.h
+- Add memory reset support
+- Squashed header files with bindings commit
+- Updated license
+- Fix commit messages for subsystem.
 
---2WckljnaeUer3GVg
-Content-Type: application/pgp-signature; name="signature.asc"
+Detlev.
 
------BEGIN PGP SIGNATURE-----
+Finley Xiao (2):
+  dt-bindings: power: Add support for RK3576 SoC
+  pmdomain: rockchip: Add support for RK3576 SoC
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr0vFgAKCRB4tDGHoIJi
-0mB+AQCcii4hZUx8zB75c5EsWMRUDn1M+ZGtmR1DLapyGuhBGQD8CbsaIrgPi1zP
-2msCLpBPps1IC1HoBJ8XLXf7PspTWww=
-=b/13
------END PGP SIGNATURE-----
+ .../power/rockchip,power-controller.yaml      |  1 +
+ drivers/pmdomain/rockchip/pm-domains.c        | 45 +++++++++++++++++++
+ .../dt-bindings/power/rockchip,rk3576-power.h | 30 +++++++++++++
+ 3 files changed, 76 insertions(+)
+ create mode 100644 include/dt-bindings/power/rockchip,rk3576-power.h
 
---2WckljnaeUer3GVg--
+-- 
+2.46.0
+
 
