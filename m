@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-286912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E4C952054
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:46:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCB395204F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44D7D1C2293A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B421F22C6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD1E1B9B5C;
-	Wed, 14 Aug 2024 16:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="lKUb5hDO"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36C61BA86A;
+	Wed, 14 Aug 2024 16:45:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8801B32C1
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1A53FB3B;
+	Wed, 14 Aug 2024 16:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653976; cv=none; b=JaT38JAhASCvSVup/N+kMwJru4Wkm/mb+jh2SaO/yh2Ip52qq8xYQPNKgVM6EWp5F9mmwtknUDCXs55CZSR36OLdD7jeVzAjGUhhyCDU8pL1C4WWyGW6yLOWI8mafhieKjbCbKS3bW8uby1aquOmezci62fLNiSTQK68uzM1AQM=
+	t=1723653937; cv=none; b=qLAk13CYsEtsnMoyKwNN8/ALtAA9tEOWlpxAVueDIf41aa3FMGJyOc8YHlHad+s8/RlHFJL3K7z3UzpzAFVtNRii/4kF6Ky/NOJB9Dlzt8S1z8pBvJckIbzZoogl1BJuaehpipz4fItlaj7uxJ4iFC8AcSHEV5E9JrR6YbR4o4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653976; c=relaxed/simple;
-	bh=2j8W6pogQxHvBnWGOy1ygt1i+Idpkez5yfZ+YZqh404=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oXZvlS0Z4bLq+ykKE+IVUjygXRrtPwj/t1vcVrAZCoogi1VYLFxrdCxX6x+x8f57Dx6K3Tz4+awj1yCOeNGDI+nL2Q4FekUOrl3YjLRsmCgyWDWI0Y06pmxDGZiN1eWqMe5X2S0pMlNrain6VvGJKFBexBXsUMP89mtOgvEIiVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=lKUb5hDO; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1723653919; x=1724258719; i=efault@gmx.de;
-	bh=gDH0NO9yMjo+hDvfJkTwFxk83PfYIMAaXvuSfpY6R/k=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lKUb5hDOozekd0GQxjlc20sdVVxYMTllR4N3sAKhtInORdhHCpEnGeJbuJ269gnU
-	 AYY+mehY4HzNwGmanFklnOGN1ecNrud7I98iECygVyAk6upovfkzv204TjO5tJPnv
-	 X4M/vlhItvmCVwnyFC4NzT2o2bolTV9Ys7+0auWeNNotIU4O4Y07k3U8I1/J7ffa+
-	 LjxbpbUgB/85u+WqNOt5U+3anAZmlgkwiCUPJ88fYDV4syAmwcovGuuc79bdTjcGg
-	 r6zrjOI6baq5okcYpV4QACHdixfUZ97ZNlXJ8OL3FEWhKvIUQwFDElbZDid0WQuMS
-	 LQZiuYZd0CJXN0iqDw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.61]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6KUd-1s7M2A1qg5-016bVO; Wed, 14
- Aug 2024 18:45:19 +0200
-Message-ID: <1572d0f2646312767a3ef8b72f740c9033163bf3.camel@gmx.de>
-Subject: Re: [PATCH 00/24] Complete EEVDF
-From: Mike Galbraith <efault@gmx.de>
-To: Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra
-	 <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com,  linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
-Date: Wed, 14 Aug 2024 18:45:17 +0200
-In-Reply-To: <CAKfTPtALe942tjoyq1RqSYyM40PG+tfEY8skRDxRM1daWLSKUg@mail.gmail.com>
-References: <20240727102732.960974693@infradead.org>
-	 <CAKfTPtALe942tjoyq1RqSYyM40PG+tfEY8skRDxRM1daWLSKUg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1723653937; c=relaxed/simple;
+	bh=JoxJjAhjxc5TKpVldN3/QH/WsBZng3l5SfBG4qvHUGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L5szXTGMN8Z0QEnVxLe9XpQRFSCJDsuyLtIShBL3EgdcAVkZZPoqCLgrKRO/DtsT6XzKa1UAJqFF2pX8mrZEtS1Pa5Yao8zRgaNx9+X3mD1OQmeFNmQCdS4W6KGDFTmx+Gp3EcWPb0ObpQCcqzntd0Of8ts3Arjydev9KD2jScs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E66C116B1;
+	Wed, 14 Aug 2024 16:45:35 +0000 (UTC)
+Date: Wed, 14 Aug 2024 12:45:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masahiro
+ Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni
+ <elena.zannoni@oracle.com>
+Subject: Re: [PATCH v5 0/4] Generate address range data for built-in modules
+Message-ID: <20240814124548.6e2cce78@gandalf.local.home>
+In-Reply-To: <20240716031045.1781332-1-kris.van.hees@oracle.com>
+References: <20240716031045.1781332-1-kris.van.hees@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:U6uHhhrl/+GrVz4qpI0I/Ys2ikoGABF/g616D0PygtvxeH/ATii
- fQQUOu6viPPo2E+7qMPizWud4RmxJH/EQii0ttkRAcgogAPa1bA6WdlpzzeG1cS0FVoNO1Y
- Yp4AJQfC1WoCXsPAwwQPrriYoYJP1MWUoX5RyAcBVR/iJ31ALAc/EaQ1M01qzC4dYXf1Z1N
- 7nxIvZBJING7n0TFojZcw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dBz8LJCl0/U=;P6cOozAJBoSJ9kodP1l2U+8bSy9
- zsZAuTqzcjqCnLnC2XCyhytY/Ff6WB9xBiTGD6c+DlpgqjzFWCnRkm4XYDko0RwUzdTK2RMk8
- doZlCLI5CQO/tcKzDVI/bc2Mq9WBUYqjhoMzIm15W78P7LJ17SS72wf1dDazM4kusrjeqjTxu
- etu9X0B5egTzHtTufjfmeCPLxOwbfFOekIck5OWJzz5e2DG6jB2PkOr1nhZWLDSILOjUl6kj8
- 9LP2TqeQClfiyceAnvvjH0KnuOGbOzrNF8YSwDYHdrEXE1wiecrTbIKhjrzKn6PscCaPYKs5L
- bi3+63O8Wqp6vLS/f3kvLMK77T+HYKj0QIb/aeek4mKLoXfbFw3r6HOvPatZsb9fe/JMiSRr9
- fGKW/5G3UtpYaluehivl7Io+BqY4tAdGyE95EisfEn2L3G6hd+Ko83xgsTVy3quSFLVNd1rKZ
- 4Fm7yC5ld2D0ll+d3+hEr0wEYZVkfXbJumwDlVBYe8monOkVj4e0Y/OUOSm97Bsx+n2trBI8b
- WAgzel8ZwwVGUzftUoJSfOZeERjMKRQgRe6nMN0Ej2mu7lITr+p0izxNKZBGkmbbUuZSSGLcg
- c7kokZ7wznZsvwmjenGS/wq11dyIIk92ML7DsRW/6MpkIn40tiBnyenoHwHjyGo73sTe4zr9y
- abVhUuT5vAyqj2XNL9c+XRn6sIJgbAsbEfVzIJzzeye+RrMSVW7CwlQdUJ4zg+rbuT6lgaWY9
- Z3/P+OdPO5w5kQd9bhqAnHqSOVBwreer0VNiEn6t3JoZqDkxh8MW83svyEfV5lHBw0EkwyA5G
- vT2dv4dAhOqfzqf301o4CiLA==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-08-14 at 16:34 +0200, Vincent Guittot wrote:
->
-> While trying to test what would be the impact of delayed dequeue on
-> load_avg, I noticed something strange with the running slice. I have a
-> simple test with 2 always running threads on 1 CPU and the each thread
-> runs around 100ms continuously before switching to the other one
-> whereas I was expecting 3ms (the sysctl_sched_base_slice on my system)
-> between 2 context swicthes
->
-> I'm using your sched/core branch. Is it the correct one ?
+On Mon, 15 Jul 2024 23:10:41 -0400
+Kris Van Hees <kris.van.hees@oracle.com> wrote:
 
-Hm, building that branch, I see the expected tick granularity (4ms).
+> Especially for tracing applications, it is convenient to be able to
+> refer to a symbol using a <module name, symbol name> pair and to be able
+> to translate an address into a <nodule mname, symbol name> pair.  But
+> that does not work if the module is built into the kernel because the
+> object files that comprise the built-in module implementation are simply
+> linked into the kernel image along with all other kernel object files.
+> 
+> This is especially visible when providing tracing scripts for support
+> purposes, where the developer of the script targets a particular kernel
+> version, but does not have control over whether the target system has
+> a particular module as loadable module or built-in module.  When tracing
+> symbols within a module, referring them by <module name, symbol name>
+> pairs is both convenient and aids symbol lookup.  But that naming will
+> not work if the module name information is lost if the module is built
+> into the kernel on the target system.
+> 
+> Earlier work addressing this loss of information for built-in modules
+> involved adding module name information to the kallsyms data, but that
+> required more invasive code in the kernel proper.  This work never did
+> get merged into the kernel tree.
+> 
+> All that is really needed is knowing whether a given address belongs to
+> a particular module (or multiple modules if they share an object file).
+> Or in other words, whether that address falls within an address range
+> that is associated with one or more modules.
+> 
+> Objects can be identified as belonging to a particular module (or
+> modules) based on defines that are passed as flags to their respective
+> compilation commands.  The data found in modules.builtin is used to
+> determine what modules are built into the kernel proper.  Then,
+> vmlinux.o.map and vmlinux.map can be parsed in a single pass to generate
+> a modules.buitin.ranges file with offset range information (relative to
+> the base address of the associated section) for built-in modules.  This
+> file gets installed along with the other modules.builtin.* files.
 
-	-Mike
+Hmm, it's hard to parse the above. So the goal is just to make the
+modules.builtin.ranges file? If so, that should probably be expressed at
+the start, so we know right from the beginning what the result of this is.
+
+  At build time, create the file modules.builtin.ranges that will hold the
+  text address of the built-in modules that can be used by tracers.
+
+That just makes it a bit easier to read the rest. I know I'm being a bit
+anal on this, but jumping between several different patch series, is making
+my head hurt. :-p
+
+But now that I know what you are trying to do, it's now making sense ;-)
+
+-- Steve
+
+
+> 
+> The impact on the kernel build is minimal because everything is done
+> using a single-pass AWK script.  The generated data size is minimal as
+> well, (depending on the exact kernel configuration) usually in the range
+> of 500-700 lines, with a file size of 20-40KB (if all modules are built
+> in, the file contains about 8000 lines, with a file size of about 285KB).
+> 
 
