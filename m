@@ -1,122 +1,182 @@
-Return-Path: <linux-kernel+bounces-286451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD169951B13
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:45:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F6D951B15
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63CEE1F21A79
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F17F1C2107E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABA81AE031;
-	Wed, 14 Aug 2024 12:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VA1K+RUl"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBC51B010C;
+	Wed, 14 Aug 2024 12:45:59 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245E14688
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B864688;
+	Wed, 14 Aug 2024 12:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723639519; cv=none; b=DjMTZ5aHadGG8KwL/w2nxQEZXjetyi5XTa939pDzHCRkdC0U5ELYG//5TXQixSHDXWMtNHa52SVcXCgqxf9iOEVnIr+fS5yIeDiI4hLgohePmrYYzW6DI9SeFlQqfN85nQ2hxeyyJmdSNFxnePinCqnrMI3oApM969NekeIkJYw=
+	t=1723639558; cv=none; b=VwY7IT3HEyuXV4/rB4nsNwncpYu33fSN43yf2o2ygjWBEvRYBS82QqjBVNjf2scpXqHmpIbCmwMwwUQ21wstg8jgtywzq2GbJz28LPPSQmxfqV0mgqjUSdcqOjq5Qa/i4woQWph6IQr1BzKtQdaW4z2ZEenyqRyyXxCLPoW6i8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723639519; c=relaxed/simple;
-	bh=lq0CIfce0tB5J0gVu0c0ocegR1rx81v9Y9wewp28J2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cwuxmCmo1L9UTjp4ODfLaIgrhngXAP2Rz4o5i0SHf/G5tf3AHo1RxgHO8inmVoNb0kerOm8mEXa4h3WM0lusVJEawfhJlllxkg26cMMxVU9I4G7QJohinfTxKTwCw4Q/ZpliAIec6FlEKP7nQq4w+vlCDM8O5xqKzadn9lTcJtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VA1K+RUl; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1723639558; c=relaxed/simple;
+	bh=pqH4k4fCaG9LK8VcwrR/KJzjoalKVpcJd0DemYdHf7U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rLiDmz8v36HqVA8Xuypm/N0EZPvoA/UJtgFUP2WK0iwPggCcHYRL9Z1NGO07Q0dqqQ68MiNfIDgXGqBgmpdu0xnjzJiVujqebBL5N5Zcu9xUJNobR5JbkrevCyKVT65W+BgoWxPoQQMnCr70QodTHjZWmoewLTZdTd3R5Q70ZvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so836626366b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:45:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723639516; x=1724244316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gXiJ6h0vBhMAdw5LUn2BvsS0+bvRUr9R1B0J7lshEqk=;
-        b=VA1K+RUlnYOnFwnyYorvlV4JWUaaAP8bRCbegLbxsPfeO5Hq6XoARVkOEp6ZzMt7Qo
-         cPVwkxVm8rLWuRrlMbwJ95RUn8RDE+k/t8WPxea6UR9eKXcjoFx28RQR1+aAFBEdYfcc
-         SsonDyS9YxUltYg+fx0imFF86rBK6YBRbe22jqQw2LUgmwMeorYoKZ/qy+DSAAeOR10z
-         9jZ9Yj+BGgxzXMQj0y26daINOKYStmQTVTOjZi2Zj0heBuhQMz0RlsJgVg1xozHK5ZjV
-         JUlRExLe3obbSMJQAKSIkfCefY54Nzp+6EGcbyKfm/tIGpRNvsYhM6Wc6tiO38H8/5tP
-         67hQ==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so769438766b.1;
+        Wed, 14 Aug 2024 05:45:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723639516; x=1724244316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gXiJ6h0vBhMAdw5LUn2BvsS0+bvRUr9R1B0J7lshEqk=;
-        b=a0kPkOVDx2tzDwMskoJ+EAElZbP4R2AmlJzfdc2OeCkkLS909JCIxXrBhnark4nlSw
-         70OcgvyWY80AOqeOQ33p6DmrSZ768rriWM7YznUCYVZX+0l6frhJ7+w9Dc03G1AbBbXd
-         Xu0lytuqcPN5Om9GuMPUEMmEzDa3aBZoHVVz8MFBPcenO52KesqotmtaQNiF3++Uk6hn
-         CNsLTTK8qUFIcJkQqlaK2h5ZLVIuJoJws1zrv2P0RppTsgpk06tPkYjnlQEaUT9DzANG
-         cDWrue9V3pYUY9wXV+xF6mOrmEYLC259nCvlhA685Zp+KQW6HZtJVP3+JHUkd1aTBKZD
-         y1Rw==
-X-Gm-Message-State: AOJu0YyTwoCFNailplDmtY7d5dR1G4F7xji4vRVqrQSB8pSoCYYmcojA
-	mjzFi2W4D6ZxoUPm4ev/SlP5J/rNH3IX+jlG298WS2FCrBTdqGuKas+gkgBPYNsWIUtlQEUXHn+
-	y+zNs72lSVtvpx6FQh8TwLfW7SwY=
-X-Google-Smtp-Source: AGHT+IGZr2QwBx3fGlXSkOaUCnb4hbIxI+4OY6LAlhqkkpfUF/4fww8rKMqhp3vT4LPNsuQUeuvbRSxihSq1GVd5UOU=
-X-Received: by 2002:a17:907:d5a2:b0:a7a:9a78:4b59 with SMTP id
- a640c23a62f3a-a8366d4146bmr182304366b.23.1723639516109; Wed, 14 Aug 2024
- 05:45:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723639555; x=1724244355;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lusYOxIcDEu5QGSkeE5IS6Mf4KYg8IOOQ5wgGWMSIVE=;
+        b=hhiH0KCuAo5hGRh//J17NNOkXhNz/psvQ9qt96gP9Skdz7swiQdhUrD9wpm0dKd5MZ
+         PcCFJPsBqd2AmfyvJ2I5V84uDaZy44i7xxUhH4xRq04lmUv5PP0HE/CQ4GhvCbt95RoM
+         eN0sAlo6Efd5YTHJVQhPJUGHReq3eEO4e86qvFwYMA8rKuok4DIZWB2dm4KWnBDx0tmo
+         LQHSIpL4NOrpWL9tiu3ngGgk1gx3Ok3ZEUI+gTScC52kC0lSb+vfnOlkThnLK1yiLoPy
+         VxQ/qHXg52q14o+CY/QU2rvcXBizMJORb3UOhNWZLpHvdkXhNUJqFYhJtuvKsz++LaGJ
+         VHbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZF+Tv87kHjrp1yQcv/yABu2jgeE48fW5NCSSANk4U1APk9ULE4l5kvQSY+D8SdmLlXvoFaeLW9FVdVbm+lNFJ6rFcGPCXM07NUu7k
+X-Gm-Message-State: AOJu0YxY04XbWoK1vpkky77Yy34AOdePNVBTzh4uxP5XJhd0W2+YJJ2r
+	HwHJUcgQi+Ee6MKdCHtOJYY7oEaCBmjKzcqySM4MIEhETXyyzicYcGulSA==
+X-Google-Smtp-Source: AGHT+IHmzXWDf51c6MJUE14MsPMhIlYjXkvFEREl85lcANkVKj86CIkIlJWBCsLcJSaHW346Svxk6w==
+X-Received: by 2002:a17:907:e641:b0:a7a:84ec:8785 with SMTP id a640c23a62f3a-a8366d8c565mr176110666b.40.1723639554376;
+        Wed, 14 Aug 2024 05:45:54 -0700 (PDT)
+Received: from [127.0.0.1] (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411b536sm167379366b.137.2024.08.14.05.45.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 05:45:53 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Date: Wed, 14 Aug 2024 14:45:40 +0200
+Subject: [PATCH] btrfs: relax dev_replace rwsem usage on scrub with rst
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814100035.3100852-1-jani.nikula@intel.com>
-In-Reply-To: <20240814100035.3100852-1-jani.nikula@intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 14 Aug 2024 15:44:40 +0300
-Message-ID: <CAHp75VciLg3KjeSAeEQyc1xa7o1cjoc5oEjYcGCK_MuSzmAWiw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] string: add mem_is_zero() helper to check if
- memory area is all zeros
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, Kees Cook <keescook@chromium.org>, 
-	Andy Shevchenko <andy@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240814-dev_replace_rwsem-new-v1-1-c42120994ce6@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPOmvGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0MT3ZTUsvii1IKcxOTU+KLy4tRc3bzUcl1Lw2RDMwNTc0sjEzMloN6
+ CotS0zAqwudGxtbUAhdRRI2cAAAA=
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johannes Thumshin <johannes.thumshirn@wdc.com>, 
+ Filipe Manana <fdmanana@suse.com>, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
+ Johannes Thumshirn <jth@kernel.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2978; i=jth@kernel.org;
+ h=from:subject:message-id; bh=ygPOXP0/B1vR/WVMuLa9utU2sac6rEx1jJVi5LH6z7o=;
+ b=owGbwMvMwCV2ad4npfVdsu8YT6slMaTtWc5w2ZJl5vQHMdrMvj8yXm3M5RcTuzZl2klN382cc
+ qwZetcVOkpZGMS4GGTFFFmOh9rulzA9wj7l0GszmDmsTCBDGLg4BWAiAd8Y/llsbvok/E/P7lz8
+ 1Ifzj84uyWoM8j15Nt5GuMTzn0LGFT1GhvPnjT53y07harWs0knZF2VtkS7rOS9r3Y1e322S0/S
+ WMwAA
+X-Developer-Key: i=jth@kernel.org; a=openpgp;
+ fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
 
-On Wed, Aug 14, 2024 at 1:00=E2=80=AFPM Jani Nikula <jani.nikula@intel.com>=
- wrote:
->
-> Almost two thirds of the memchr_inv() usages check if the memory area is
-> all zeros, with no interest in where in the buffer the first non-zero
-> byte is located. Checking for !memchr_inv(s, 0, n) is also not very
-> intuitive or discoverable. Add an explicit mem_is_zero() helper for this
-> use case.
->
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+From: Johannes Thumshin <johannes.thumshirn@wdc.com>
 
-...
+Running fstests btrfs/011 with MKFS_OPTIONS="-O rst" to force the usage of
+the RAID stripe-tree, we get the following splat from lockdep:
 
->  void *memchr_inv(const void *s, int c, size_t n);
+ BTRFS info (device sdd): dev_replace from /dev/sdd (devid 1) to /dev/sdb started
 
-I would group them here, or move the above.
+ ============================================
+ WARNING: possible recursive locking detected
+ 6.11.0-rc3+ #592 Not tainted
+ --------------------------------------------
+ btrfs/4203 is trying to acquire lock:
+ ffff888103f35c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
 
->  char *strreplace(char *str, char old, char new);
->
-> +/**
-> + * mem_is_zero - Check if an area of memory is all 0's.
-> + * @s: The memory area
-> + * @n: The size of the area
-> + *
-> + * Return: True if the area of memory is all 0's.
-> + */
-> +static inline bool mem_is_zero(const void *s, size_t n)
-> +{
-> +       return !memchr_inv(s, 0, n);
-> +}
+ but task is already holding lock:
+ ffff888103f35c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
 
---=20
-With Best Regards,
-Andy Shevchenko
+        CPU0
+        ----
+   lock(&fs_info->dev_replace.rwsem);
+   lock(&fs_info->dev_replace.rwsem);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+ 1 lock held by btrfs/4203:
+  #0: ffff888103f35c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
+
+This fixes a deadlock on RAID stripe-tree where device replace performs a
+scrub operation, which in turn calls into btrfs_map_block() to find the
+physical location of the block.
+
+Cc: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+
+
+Signed-off-by: Johannes Thumshirn <jth@kernel.org>
+---
+ fs/btrfs/volumes.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 4b9b647a7e29..e5bd2bee912d 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6459,6 +6459,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	int dev_replace_is_ongoing = 0;
+ 	u16 num_alloc_stripes;
+ 	u64 max_len;
++	bool rst;
+ 
+ 	ASSERT(bioc_ret);
+ 
+@@ -6475,6 +6476,8 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	if (io_geom.mirror_num > num_copies)
+ 		return -EINVAL;
+ 
++	rst = btrfs_need_stripe_tree_update(fs_info, map->type);
++
+ 	map_offset = logical - map->start;
+ 	io_geom.raid56_full_stripe_start = (u64)-1;
+ 	max_len = btrfs_max_io_len(map, map_offset, &io_geom);
+@@ -6597,13 +6600,19 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 		 * For all other non-RAID56 profiles, just copy the target
+ 		 * stripe into the bioc.
+ 		 */
++		if (rst && dev_replace_is_ongoing)
++			up_read(&dev_replace->rwsem);
+ 		for (int i = 0; i < io_geom.num_stripes; i++) {
+ 			ret = set_io_stripe(fs_info, logical, length,
+ 					    &bioc->stripes[i], map, &io_geom);
++
+ 			if (ret < 0)
+ 				break;
+ 			io_geom.stripe_index++;
+ 		}
++		if (rst && dev_replace_is_ongoing)
++			down_read(&dev_replace->rwsem);
++
+ 	}
+ 
+ 	if (ret) {
+
+---
+base-commit: 4ce21d87ae81a86b488e0d326682883485317dcb
+change-id: 20240814-dev_replace_rwsem-new-91c160579246
+
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
+
 
