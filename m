@@ -1,283 +1,194 @@
-Return-Path: <linux-kernel+bounces-286849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6A3951FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:20:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACBC5951FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270E01C21660
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B195282E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76821B8EA0;
-	Wed, 14 Aug 2024 16:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9A1BD00B;
+	Wed, 14 Aug 2024 16:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="K4qP0Na/"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XkjyJ1iV"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12E51B9B38
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CD81BB6BD
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652372; cv=none; b=hNOcXepzSZwpMuiV0hB0XaQkQM5/i4ReOcg0FjnpKvU6fs5sLwWhfQTt2jDWfRSUok3meZvd5Um5fwnLwNSxs4/SSsR6D8N7TXAhAXlKrUoqvweYgWhx2IZUu51wZW4vnt8eQAZNMdtP71ghbqEq1Qe0EBhtu0MkG2ZiQ2ReNxQ=
+	t=1723652417; cv=none; b=U5A94GoWBx5K6zY6akSSg8PrHIo5pi53wYwbgI0FvfR6wrANeWYVn9MESOXQtaWZKVgcEcKE5CiA/oTUNbEQBoW1Mb8jh3I7eoK6FhizR2WxVTRpD7DQe1pi4SIoTIOBPd/T+gb+u2zhjUPN35J2dQHQN6Brbr+UKIXtBFVu0PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652372; c=relaxed/simple;
-	bh=qO9mQiKrw42PacsolHXif6CBO3sM847wIsqfbawWS1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nkWAn/NlXaJmv5Ox7dIKzDE5h7Y3GOE9ebimYOMxfLbs3FlZOmYeaIIl+1NPOxtWQMuQqEyAKqtS1+LHPTjgpyKcPv1yODKNUTwFqj2Hr9j9aI59uZZUorIiYVlmMoW1tcfw8uO7ZfkFblaZVRMAz6WDaYWvaeUfuEjrHvxQ4fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=K4qP0Na/; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso892111fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1723652369; x=1724257169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z9bYe08zohvlv3Ag7Tr+1bJAOCHzj1BmY8rJcktOJCE=;
-        b=K4qP0Na/4RlF6WASsFiES0EFI+RfeqYHfUuvdkVqvygSGYWdCbFBcujjnSqmxy8VZi
-         ejqDz1dFT5hoEteY+hsga2J790JT5elL+PPK7v6VximoCt26Kc6i0wFybQt8WHfR4pWw
-         pDPMf26nfoOjh00eGu4GUOwZmDOELq0mjr0bo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723652369; x=1724257169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z9bYe08zohvlv3Ag7Tr+1bJAOCHzj1BmY8rJcktOJCE=;
-        b=hXl3ccQq7sxi2AcfU9i+Er8IoIhzjkSZ4zfniW8I2OXuD2Z9o1FfrRXYgY50xQK3VG
-         vA3JBz/N2szBXxnszUvW9drp5oyigKNLTTZq3svBgcK3EL+8HO7pMh7xKW94AkOtMwlZ
-         dlTqftqpfRq9K5QpAMiVgjpw1XO6kN24glHjpMh/NEzrSSwjFB+Mec+sSP00wuzzK8hx
-         YsJSeodQLjOvn+5S1Bk9Owp2d6QSVuDfoKBrbmZc2LWx/Kb3dWIBJxhCpcJOrBtHmSQe
-         JAuxFbrT/3Q8nT6I7rlx8RXTPj0IVsEnEZDPkjhugIuHug7anhCfA1qhPUjtXMHe0jlq
-         zl3g==
-X-Gm-Message-State: AOJu0YymawmTqeXgf1z9g7Ax5Mu9IF1ux6TD2wFpLQNrQ60S9f1sf6Jz
-	IJ5tL8hzLXU5LqDc9IjdlPW+iCXBeU87/w5OXvVR8AGbpvLJ58h2MB8qp4qf/kJdkbDX3ZoFI4m
-	uJM+j+TrTITARWNiXe34oLwwHtCkNOxy35wxRbg==
-X-Google-Smtp-Source: AGHT+IEvAXwfmpRhWzsV5otc7NbqOxVZF44J6FM4SSPY5YwhjLeFPJfVjPDpmiR1eV8cR1xsPT5GJG1MIYZq3d6ufLg=
-X-Received: by 2002:a2e:9d8e:0:b0:2f0:27da:6864 with SMTP id
- 38308e7fff4ca-2f3aa1e5e96mr26632541fa.17.1723652368420; Wed, 14 Aug 2024
- 09:19:28 -0700 (PDT)
+	s=arc-20240116; t=1723652417; c=relaxed/simple;
+	bh=2LRmV3WNJmaPL1Z04NMziO4RJOq42NFJgYj/p0geTWM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUonATY/qiMb3WQ9mCSz3wLO4QWxTk32OWM1xUplGz42RQu7jZ+T4HbJv17HchkCgvbkMj9/vogH2sWygaWMivc64+IWvmhsZcEvRciYhyrXHvQD6z8yZt0mtTdIL5Gbl0DWAN5rrtyjl7ABpZxCnbwZa3bTWttj0mSVODPNzp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XkjyJ1iV; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EBtc3E028372;
+	Wed, 14 Aug 2024 16:19:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=corp-2023-11-20; bh=SK/Nu26uetx5TS
+	G6GlCyrLf0Bo09xblzpAwAokPxC9A=; b=XkjyJ1iVoTYnhh5654FaMbuCSSsGNG
+	7EodH+8YMnAHT+3agpNxBUE2jv1pGq//CY7U3cmRpq3axkc1EBjAbKrj1ilwpL3p
+	85jsLQ1R46IwKdqYgrPonvVo6gqXmmJMBw+2ncFL6YuXsZieVXzE3vWHORcy8wpd
+	/DHPMJZ/jVXmV+uvQLaAXEhobFS/vaosAcgVNGraQBA8O82hFJZWIMJNzJ1E4j4m
+	fWPItB7EYHTr0pQjLIlyzmrvegjO9WXXf6nZYI5QMZf4wHx7bBSXNurZt4Wjhwks
+	ytZ51vhdSFj8hcQ3GnH3jbaAFrerZOawaDRSip0Xj9NxoABAF9uw8EEw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxt10sht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 Aug 2024 16:19:49 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47EEuMDk021125;
+	Wed, 14 Aug 2024 16:19:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxngn7hm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 Aug 2024 16:19:48 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47EGIvBu035951;
+	Wed, 14 Aug 2024 16:19:48 GMT
+Received: from sidkumar-mac.us.oracle.com (dhcp-10-65-174-212.vpn.oracle.com [10.65.174.212])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40wxngn7gt-1;
+	Wed, 14 Aug 2024 16:19:47 +0000
+From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
+        willy@infradead.org, surenb@google.com,
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Subject: [PATCH v4 00/17] Introduce a store type enum for the Maple tree
+Date: Wed, 14 Aug 2024 12:19:27 -0400
+Message-ID: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOf5uw=r_eZs6d93bqposDfgcBvax+ZUC865g-H2BwC5g3Hdxw@mail.gmail.com>
- <PAXPR04MB84598DA8723E1F167435F81D88852@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <CAOf5uwkJ9p=WywtsyhWk+x=7M_AodmAjg6mV2_-AeTjmJFUGAQ@mail.gmail.com>
-In-Reply-To: <CAOf5uwkJ9p=WywtsyhWk+x=7M_AodmAjg6mV2_-AeTjmJFUGAQ@mail.gmail.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Wed, 14 Aug 2024 18:19:17 +0200
-Message-ID: <CAOf5uwkG5oj-GXbwbe1MK2x9UnURtQHN6UrgQWTTiUxcA7h9WA@mail.gmail.com>
-Subject: Re: imx6q random crashing using 4 cpus
-To: Peng Fan <peng.fan@nxp.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, 
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_12,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 bulkscore=1
+ phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408140111
+X-Proofpoint-GUID: 24WpDigPHcUZeefFkLGA3z4tHfQ12KSL
+X-Proofpoint-ORIG-GUID: 24WpDigPHcUZeefFkLGA3z4tHfQ12KSL
 
-Hi Peng
+v3[1] -> v4:
+    - move up mas->node = null in mas_start() so mas->node is cleared in all cases.
+    - don't pass gfp into mas_wr_preallocate().This fixes the libfs error reported in v3[2].
+    - change condition of node store so more writes can be eligible node stores.
+    - more cleanup of mas_commit_b_node() as most of the function becomes dead code.
+    - remove wr_bnode as a store type as it is no longer needed.
+    - add a patch to change many write helper functions to be void.
 
-I have a follow up
+================================ OVERVIEW ================================
 
-On Mon, Aug 12, 2024 at 10:45=E2=80=AFAM Michael Nazzareno Trimarchi
-<michael@amarulasolutions.com> wrote:
->
-> Hi Peng
->
-> On Mon, Aug 12, 2024 at 10:33=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrot=
-e:
-> >
-> > Hi,
-> > > Subject: imx6q random crashing using 4 cpus
-> > >
-> > > Hi all
-> > >
-> > > I'm getting random crashes including segmentation fault of service if=
- I
-> > > boot a custom imx6q design with all the cpus (nr_cpus=3D3 works). I d=
-id
-> > > not find anyone that were raising this problem in the past but I woul=
-d
-> > > like to know if you get this in your experience. The revision silicon=
- is
-> > > 1.6 for imx6q
-> > >
-> > > I have tested
-> > >
-> > > 6.10.3
-> >
-> > Upstream kernel?
-> >
->
-> This is upstream kernel
->
+This series implements two work items[3]: "aligning mas_store_gfp() with
+mas_preallocate()" and "enum for store type".
 
-I have increased the internal LDO of the imx6q. Seems that bypass mode
-is not possible to activate
-in mainline and more seems that reduce the lifetime of the device
-according to some application note.
-Anyway I move the voltage to bigger values and now core seems more
-stable. So those are the minor issues on mainline
+mas_store_gfp() is modified to preallocate nodes. This simplies many of
+the write helper functions by allowing them to use mas_store_gfp() rather
+than open coding node allocation and error handling.
 
-1) if we start with performance governor, the voltage are change are
-not applied to the core if the booting frequency is the same
-of the performance once. This means that if the bootloader set a
-voltage this can not be fixed by the kernel
-2) bypass-mode of the regulator does not activate the anatop bypass mode
+The enum defines the following store types:
 
-Michael
+enum store_type {
+    wr_invalid,
+    wr_new_root,
+    wr_store_root,
+    wr_exact_fit,
+    wr_spanning_store,
+    wr_split_store,
+    wr_rebalance,
+    wr_append,
+    wr_node_store,
+    wr_slot_store,
+};
 
+In the current maple tree code, a walk down the tree is done in
+mas_preallocate() to determine the number of nodes needed for this write.
+After node allocation, mas_wr_store_entry() will perform another walk to
+determine which write helper function to use to complete the write.
 
+Rather than performing the second walk, we can store the type of write
+in the maple write state during node allocation and read this field to
+complete the write.
 
-> > > 6.6
-> >
->
-> 6.6-fslc but I have tested on 6.6 lts too, same instability
->
-> > This is upstream kernel or NXP released 6.6 kernel?
-> >
-> > Does older version kernel works well?
-> >
->
-> What revision do you suggest? I can test easily them all
->
-> > >
-> > > I have tested to remove idle state, increase the voltage core etc.
-> >
-> > cpuidle.off=3D1 does not help, right?
-> >
->
-> I have got rid of cpuidle init in mach-imx6q end tested cpuidle.off=3D1 t=
-oo.
->
-> > I could not recall clear about LDO, I remember there is LDO enabled
-> > and LDO disabled. Have you checked LDO?
->
-> I can try to not use LDO from pmic and use the internal one
->
-> >
-> > > Those cpus are industrial
-> > > grade and they can run up to 800Mhz
-> > >
-> > > All kernels look ok if I reduce the number of cpus. Some of the
-> > > backtrace for instance
-> > >
-> > > [  OK  ] Stopped target Preparation for Network.
-> > > [  134.671302] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
-> > > [  134.677247] rcu:     2-...0: (1 GPs behind) idle=3D3c74/1/0x400000=
-00
-> > > softirq=3D1197/1201 fqs=3D421
-> >
-> > CPU 2 seems stuck.
->
-> I have seen but I don't have stuck with 3 cpus. I have seen the power sup=
-ply is
-> 0-1 group and 2-3 group. Is it possible that it's something connected
-> to power supply
-> or anything that makes the core unstable?
->
-> >
-> > > [  134.685445] rcu:     (detected by 0, t=3D2106 jiffies, g=3D1449, q=
-=3D175
-> > > ncpus=3D4)
-> > > [  134.692158] Sending NMI from CPU 0 to CPUs 2:
-> > > [  144.696530] rcu: rcu_sched kthread starved for 995 jiffies! g1449
-> > > f0x0 RCU_GP_DOING_FQS(6) ->state=3D0x0 ->cpu=3D1
-> > > [  144.706543] rcu:     Unless rcu_sched kthread gets sufficient CPU
-> > > time, OOM is now expected behavior.
-> > > [  144.715506] rcu: RCU grace-period kthread stack dump:
-> > > [  144.720563] task:rcu_sched       state:I stack:0     pid:14
-> > > tgid:14    ppid:2      flags:0x00000000
-> > > [  144.729890] Call trace:
-> > > [  144.729902]  __schedule from schedule+0x24/0x90 [  144.737008]
-> > > schedule from schedule_timeout+0x88/0x100 [  144.742175]
-> > > schedule_timeout from rcu_gp_fqs_loop+0xec/0x4c4 [  144.747955]
-> > > rcu_gp_fqs_loop from rcu_gp_kthread+0xc4/0x154 [  144.753556]
-> > > rcu_gp_kthread from kthread+0xdc/0xfc [  144.758381]  kthread from
-> > > ret_from_fork+0x14/0x20 [  144.763108] Exception stack(0xf0875fb0
-> > > to 0xf0875ff8)
-> > > [  144.768172] 5fa0:                                     00000000
-> > > 00000000 00000000 00000000
-> > > [  144.776360] 5fc0: 00000000 00000000 00000000 00000000
-> > > 00000000
-> > > 00000000 00000000 00000000
-> > > [  144.784546] 5fe0: 00000000 00000000 00000000 00000000
-> > > 00000013 00000000 [  144.791169] rcu: Stack dump where RCU GP
-> > > kthread last ran:
-> > > [  144.796659] Sending NMI from CPU 0 to CPUs 1:
-> > > [  144.801027] NMI backtrace for cpu 1 skipped: idling at
-> > > default_idle_call+0x28/0x3c [  144.809643] sysrq: This sysrq operatio=
-n
-> > > is disabled.
-> >
-> > Have you ever tried use jtag to see cpu status?
-> > cpu in idle loop?
-> > cpu runs in invalid address and hang?
->
-> Need to check
->
-> Michael
->
-> >
-> > Regards,
-> > Peng.
-> >
-> > >
-> > > What I'm trying to figure out what could be the problem but I don't
-> > > have similar reference
-> > >
-> > > Michael
-> > >
-> > > --
-> > > Michael Nazzareno Trimarchi
-> > > Co-Founder & Chief Executive Officer
-> > > M. +39 347 913 2170
-> > > michael@amarulasolutions.com
-> > > __________________________________
-> > >
-> > > Amarula Solutions BV
-> > > Joop Geesinkweg 125, 1114 AB, Amsterdam, NL T. +31 (0)85 111 9172
-> > > info@amarulasolutions.com
-> > > https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2F
-> > > www.amarulasolutions.com%2F&data=3D05%7C02%7Cpeng.fan%40nxp.
-> > > com%7C0cfef2a8598047ed1e1808dcbaa62d0d%7C686ea1d3bc2b4c6f
-> > > a92cd99c5c301635%7C0%7C0%7C638590470075161250%7CUnknow
-> > > n%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI
-> > > 6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3D9wzW6km41s
-> > > pIH2J4DjAVZFtW%2FGjIDWeEB%2FJkL74477o%3D&reserved=3D0
->
->
->
-> --
-> Michael Nazzareno Trimarchi
-> Co-Founder & Chief Executive Officer
-> M. +39 347 913 2170
-> michael@amarulasolutions.com
-> __________________________________
->
-> Amarula Solutions BV
-> Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-> T. +31 (0)85 111 9172
-> info@amarulasolutions.com
-> www.amarulasolutions.com
+Patches 1-16 implement this store type feature.
+Patch 17 is a cleanup patch to change functions that have unused return
+types to be void.
+
+================================ RESULTS =================================
+
+Phoronix t-test-1 (Seconds < Lower Is Better)
+    v6.10-rc6
+        Threads: 1
+            33.15
+
+        Threads: 2
+            10.81
+
+    v6.10-rc6 + this series
+            Threads: 1
+            32.69
+
+        Threads: 2
+            10.45
+
+Stress-ng mmap
+                    6.10_base  store_type_v4
+Duration User        2744.65     2769.40
+Duration System     10862.69    10817.59
+Duration Elapsed     1477.58     1478.35
 
 
 
---=20
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
+================================ TESTING =================================
 
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
+Testing was done with the maple tree test suite. A new test case is also
+added to validate the order in which we test for and assign the store type.
+
+[1]: https://lore.kernel.org/linux-mm/80926b22-a8d2-9992-eb5e-27e2c99cf460@google.com/T/#m81044feb66765265f8ca7f21e4b4b3725b18780a
+[2]: https://lore.kernel.org/linux-mm/80926b22-a8d2-9992-eb5e-27e2c99cf460@google.com/T/#mb36c6526486638e82518c0f37a428fb279c84d8a
+[3]: https://lists.infradead.org/pipermail/maple-tree/2023-December/003098.html
+
+Sidhartha Kumar (17):
+  maple_tree: introduce store_type enum
+  maple_tree: introduce mas_wr_prealloc_setup()
+  maple_tree: move up mas_wr_store_setup() and mas_wr_prealloc_setup()
+  maple_tree: introduce mas_wr_store_type()
+  maple_tree: remove mas_destroy() from mas_nomem()
+  maple_tree: preallocate nodes in mas_erase()
+  maple_tree: use mas_store_gfp() in mtree_store_range()
+  maple_tree: print store type in mas_dump()
+  maple_tree: use store type in mas_wr_store_entry()
+  maple_tree: convert mas_insert() to preallocate nodes
+  maple_tree: simplify mas_commit_b_node()
+  maple_tree: remove mas_wr_modify()
+  maple_tree: have mas_store() allocate nodes if needed
+  maple_tree: remove node allocations from various write helper
+    functions
+  maple_tree: remove repeated sanity checks from write helper functions
+  maple_tree: remove unneeded mas_wr_walk() in mas_store_prealloc()
+  maple_tree: make write helper functions void
+
+ include/linux/maple_tree.h       |  14 +
+ lib/maple_tree.c                 | 653 ++++++++++++++++---------------
+ tools/testing/radix-tree/maple.c |  46 ++-
+ 3 files changed, 400 insertions(+), 313 deletions(-)
+
+-- 
+2.46.0
+
 
