@@ -1,308 +1,231 @@
-Return-Path: <linux-kernel+bounces-286135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3701095170F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:54:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D913F951713
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BECE1F237E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54EA11F2430C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7767213E8A5;
-	Wed, 14 Aug 2024 08:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FBE143736;
+	Wed, 14 Aug 2024 08:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5PKGJSP"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="rsu0hNFz"
+Received: from CY4PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11020140.outbound.protection.outlook.com [40.93.198.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05B113D502
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625666; cv=none; b=BwkAaGqxbgVbQpT8t5Ngqk+rQDMNgYpVf18p7fgoTneNN53Bmc9LgrML8/mAm6O/diVD17Girj27bAhU3bqhvils1KTvNdBe4LAwO8UbpBOkPDQ05jg4hAF/U6Hqm/mR/576dAUMy6B5OwFXd8W6TjfbZPQhmcfluvuWd/5U1FI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625666; c=relaxed/simple;
-	bh=3B9YFCmV3YOHxXUcRpJroFEFxVxNC2xKT6w+GASfvTQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b4liXk5tPVXweBw3SvWgScIa54ddnU+LZ3bA4wxBbtKiYU5WnKB5OLy5GJ03du2nu0w58y19E9GBCtcSTnxxtqzTLeIM0WVn6Hw5PSOizBvtd3tl9DZq5BfistqXuHRDQApgtOAxNspz3m4q14cL+dGPU1UJmpgOYi7wwsQVRRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e5PKGJSP; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-261112c303bso4692539fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:54:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFDB1411E9;
+	Wed, 14 Aug 2024 08:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723625693; cv=fail; b=iQsKzzmHvgopjw1JS7OZAibcTxYTEhU6z9B17PhVci7mHR7EcqDPIIWhCssmKG23vUC1Qs2WUm4ALsVHeL6DgOnpmTe4kVTfYIkozTNthuN9CDwO/q4AWy+vaZ3tGpuY1VPLv1crNp6BZWR5hfrBrLih5y2zDLlDX3Fvl6BSvV8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723625693; c=relaxed/simple;
+	bh=WurS+1iyll/j1A/UwDv2l/IEelGeDywqeGS9pOlvYHY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HHpPwbRgUY25o7hKXah1UToFgMrSTdv6tIzI3XiG9Z7HRpLjTE+Z4BBdUp/UAVR7+qnRAnSyH2Y/3gAev3gIM1IPO1Y7oDnLDVOhrh410D4OeiBW4GTjyzmLcscWMeo/v0jw8iWZiut5bk0S/gK0YQoKQ/3hKYCy35X20DG3o/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=rsu0hNFz reason="key not found in DNS"; arc=fail smtp.client-ip=40.93.198.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A3GBK4W1kUJSaYUB8y8gtJxCCEsS2VGhwSNwiGAjhMgxLriV2vxbMTvhEjgstcAFpcxSYBCTH9dH6bf0Huw2N0lU7uEU+CtUyszcDgI/I3A+z84KRLje7ttuo+kiFsakHMx7qfC9BSrWDDeaPaJjzM5kkngCfT4qStl1NJWtYWj+1lrTqWSszqx5Bo+7s3akdtZbrQkrhomN7Skm+YEBQVa4lzYOTM09GNKFiPWwMXFKo4S9HvC6kjBZ2CQ3Wvye0E0HBnVy8DcfsOvwk94clr2s/+dNmR3hl6fzUOq3nwW45I+LN1tCv7Zl0xmh9IKoL46ZbcM4iJzzUfcHLw2Qrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3Ws/a2UBKl/Wogh7ZchAVwMBuE1wHtMOjpRjYILx4i4=;
+ b=lqGpjOfdcGeJK5Tzg2sW5NqX9MzKG8BQS8d93mNlXBDheX8ubZ/KVzD4ZTmpcqpBYqwo6vZvXQsSWoNmsJrPFpjRB+c0rqTORQmx/xOZr1+vUdVCrWz8+cUxuRid27Xzhy2iY0rYvsuOR1VeQXkJQSGcNW6Sz7LHz7CxTfCb/aaKwHqmWLuWa4GT2mGNWgigfnoQVDu1tu2WQRE9Tkmx1fWNHKDzgEkz2PtWwyF9O1EFFXnXh725vcxZCI2JznVPQeIn0aeWJYq0AwHgL7oC0baYQQNcOdkqkdF/4oZeJdCOEW5LX/1YcBv9NDf+JAcNWLSyZPB3dodbXl+IX2+NYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723625664; x=1724230464; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pkMx4p1nJS669ykPG42HHrqlvkwWooNpild6e+mzsQs=;
-        b=e5PKGJSP+rFt/LOV7AeVX9lEXokuaJUz1a2fSrR8vEtxr4OHtu5RuCKRlHXWIEe+ys
-         8SevHT+/aAJB1mYQh+KFi3xZuTPP/cW5WA8yI34I94pJmsRsSb0svd1DaNrtvvuirFEO
-         JYOaoDsdcQ/GRCxSkMdM+p1SxYmEpuUiW6ul5hmzHhFNtE8Fj5hNH/nnP6g4WnYe1LC7
-         /5hWnYNqdMrcVQe8vgjMdpedT7LJ9b+C5JzMZld4jhRXTD9cWttpZMO5DnqdOEruIpwd
-         bs4FDRgvtYNeApHrXR367QcPMbpGRXmzqtADyh6HKro/DiivBJVFEDWQ1wIfzkB6dbuO
-         BSmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723625664; x=1724230464;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pkMx4p1nJS669ykPG42HHrqlvkwWooNpild6e+mzsQs=;
-        b=SrHJlr7aVYK544f8SfiKX43AQQCW1J8vZUtCX7UWPZf0YkkjJLGVDknyfkKwHbrUfj
-         x0ecsxJ7/7akDCBEvdFZp+4O1b5yzdQzodgccUL2sjKvputRqcAOBe1TjcRWNsvWsc+T
-         z8+Ain7JlgjUI8SQllA0ct7w6JEIkBMml6h3kxnF30Ak+pAReo5U/QavCQKcUAzN1Jfn
-         ln6ysiU44euCZJNVQn/SHIhwGRr+5CMnXmjcksZBq/H8r/DxGMR2V9wCDrdmcjQ9pETM
-         3RdLBm/9YwV+6PHFKXptRezpM5l6he0+9RrkByNZOd20dB4q9M4wSr+uu8sMLkNQBCLE
-         7+DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzspFvoEhifeunvdJ6A19GiqUSXeJiIh4N1gQmp0ICwl/c0z07opp1uitWqHxKyRbmzb8UQ7fcuSaYYV+qJEp77n2CUjMM0tywTUXw
-X-Gm-Message-State: AOJu0YwSvxnWI4Khw7TgwKNGziSwaesfDwTHa+X9fnccunA/s0OQCdy9
-	OhrIKjlFm1J7ki58Rk3DMlROZfrNir2MNcRIfvDrmwmDDnrWGSZ2
-X-Google-Smtp-Source: AGHT+IH+GATAJY6H4OqhoorVin3vKHpP3+mvZviBR56XQ6yy+kBvmtt3OK9zcFpDUHtBWu2J4W233Q==
-X-Received: by 2002:a05:6870:4690:b0:25e:7a1:ea8f with SMTP id 586e51a60fabf-26fe5c65bfcmr2595496fac.47.1723625663692;
-        Wed, 14 Aug 2024 01:54:23 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5ab352fsm6918088b3a.189.2024.08.14.01.54.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 01:54:23 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	corbet@lwn.net,
-	ioworker0@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryan.roberts@arm.com,
-	v-songbaohua@oppo.com
-Subject: Re: [PATCH v4] mm: Override mTHP "enabled" defaults at kernel cmdline
-Date: Wed, 14 Aug 2024 20:54:09 +1200
-Message-Id: <20240814085409.124466-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ca3aaa3f-f018-46e4-aad1-c6a4fb8c7f11@redhat.com>
-References: <ca3aaa3f-f018-46e4-aad1-c6a4fb8c7f11@redhat.com>
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3Ws/a2UBKl/Wogh7ZchAVwMBuE1wHtMOjpRjYILx4i4=;
+ b=rsu0hNFz6gO4P2iF3iCOeH2ICbOAQ/I8+R6U2JZEbVUAxpDxMXUGIIbuLEgCZI8ztTVH8CA0aI8+gRH8X3mfE91gFkmqQxa/mrf3i/1ePqyA8mCkn0K0ZDwRHFB1OGeYPraG9fMTxvkkJDDc90UBmDKStAwzLNVw32emQGqfcfQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
+ MN0PR01MB7611.prod.exchangelabs.com (2603:10b6:208:376::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.22; Wed, 14 Aug 2024 08:54:47 +0000
+Received: from BL3PR01MB7057.prod.exchangelabs.com
+ ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
+ ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
+ 08:54:47 +0000
+Message-ID: <30517c7c-8b42-4bae-905b-2d0aeee986c2@amperemail.onmicrosoft.com>
+Date: Wed, 14 Aug 2024 15:54:35 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] dt-bindings: hwmon: Add maxim max31790
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Justin Ledford
+ <justinledford@google.com>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>
+Cc: Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>
+References: <20240813084152.25002-1-chanh@os.amperecomputing.com>
+ <20240813084152.25002-2-chanh@os.amperecomputing.com>
+ <f9f97553-a50a-44c0-b817-3a44f730cfeb@linaro.org>
+Content-Language: en-US
+From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
+In-Reply-To: <f9f97553-a50a-44c0-b817-3a44f730cfeb@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0125.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::29) To BL3PR01MB7057.prod.exchangelabs.com
+ (2603:10b6:208:35c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|MN0PR01MB7611:EE_
+X-MS-Office365-Filtering-Correlation-Id: 796b6709-34f4-494f-dd46-08dcbc3ebf78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bFIwemlKVW81K0Q5a2ZCWHUvQ25nMVM4eFNYZS9mMnZrNC9yRFI4R25zYnBG?=
+ =?utf-8?B?YU8xYUJYdjVWQzhJNlNDTFhXbzhwbUhqNEVSK0NaWkRlbG0xaWJrWVMyNVBH?=
+ =?utf-8?B?SXY3YVhVdXlMZWdjQ0Y0T3VYMnV6b3UzQU8vSCtBd011V1RDenBNT0Q4b25s?=
+ =?utf-8?B?c2VpdHlkOUEzaHVhbENLL0t2L3h3b1dVS2hQUUpKVUpzVnJqY1pTcXRVbWVX?=
+ =?utf-8?B?enpXc1FETWI3MjhnM0N5dDJoZmRZWjdFMGFzZ2hjZHN1Y3locEpEaXRjZkFI?=
+ =?utf-8?B?bnpXbjBVYWwxaHhDSjNMTDY1ZWNlbVJVTGxuZmRWalpLQi9BeklzLzdKTStS?=
+ =?utf-8?B?UjMyS0xMckpjcGp1UU9GRWRlR0RrLzhoUFpzZi9QdnNSak12Qml6S2hSdEZX?=
+ =?utf-8?B?L1FMUWNpYkNQYnNzUHZIRk9Lc1JVNmI5UFdyNlBQSHRKeGY4WGZ6MDM0NUk2?=
+ =?utf-8?B?WTg1a084N2pBc2dhcmZWenArUE5TeXgvemJMVzFLRXpJM2xiNzFFZDR6SHhC?=
+ =?utf-8?B?VEh5ZVN0aVBQeFZxbHByamxDSTRKWUdJWHB3MG1CN1NneXphOXQ1TDlHQVo5?=
+ =?utf-8?B?eWVPdmxnL1g0UVFKUG1rZzlCNWZ0ZDNOaFdncHdGNTFDam5IdFpIU2ExV01T?=
+ =?utf-8?B?bDFIb1c4ZFp2MTFIdGpRN0IzemZLakhZZWNyNGdjUFhwUUVoNjhpQnVaYXN1?=
+ =?utf-8?B?czlENWhhSmxtTnFvN1ZINnVLbkhaazd4bXdoYi9JcWdFb1hkTm10eld5RUc4?=
+ =?utf-8?B?WmhZaER0UTc2RE12ZXVnRjc1bGpEMHkyTUVhNXdhSktBbmRyT0w2UzJydTBp?=
+ =?utf-8?B?S2xUblVWdlFJbUFIUStLc0d2SnJJTXh1YzlYekJIckxqT1g3aXE3QTBKUjdR?=
+ =?utf-8?B?bTJPOHp4WHNrZkF2WktZbVdZSHRGc0pyNWFhWEJvVkVMSDMzTVhPdFVYMTFt?=
+ =?utf-8?B?RWJ4OWh3NTI4SzZhdS9JeU1yNkpEWVBPMU5BblJJZml3UVNPUlBkOU8veEIr?=
+ =?utf-8?B?S2xLUkd3blBxTWhSSzFBcGZrczdHbS82NkpBOVFuZS9UZjB5VTQvNVZVdkhj?=
+ =?utf-8?B?blJuN2dDaHVoN2tqUk9Gd2ovTm05aCtBVVkzbE81TCtwRUdHWHVwWi9VbU5D?=
+ =?utf-8?B?R09FR2xyQXNqc2NMUVdEb0VLdVhRYzBVTEFsSnRFK3U1RTRsNURZNHlHRElU?=
+ =?utf-8?B?RmRCYnVMdGNvQkVycjNpWC9lZDNQYWhBODNBK2JQTE5sc1hKS0IrZWQ4VzRu?=
+ =?utf-8?B?Q042Z1N1RTZuSkxyclRjODV2Y0NyOTlMeWFSZHFSRHZjckdOWGFET3FkajZW?=
+ =?utf-8?B?T09QZUtvcm5zMjlxMnVaSHFSQ21oY2JvTm9LODJQaGpwS3ZwUGlRK1c1bGU3?=
+ =?utf-8?B?ZWZDQzVLQ2RzQ1N6K0RCdGVEdXhKK0xvc3pVSFNwejh3UFNkQS9NdWc4djVu?=
+ =?utf-8?B?elpOMllHczlxc09BczlKQ2ZTYkhJY0tTRkFRTGdFa2ZPWHlTamZQQnMzWEVK?=
+ =?utf-8?B?Sy9CL2U4UWZCdzg3K2MyMTlxWURSUlhDVG1KNXIxNDRQbDAwejJaZ2JIOUt1?=
+ =?utf-8?B?dkhBR3FqSE54QjVaNXdwbTVkREZhayszNXVvT1l4S04zTTlZQTlob0k1Qk9K?=
+ =?utf-8?B?NENsS2FJS0xiOUxENTFyblJRVVhPcHdjb3gxVjI3Y3dqcEU2TENscXVEY25r?=
+ =?utf-8?B?elJCbEt3aXVZVVFsR2MxeVVSOSthWER6Y3pmbkZqclc1anJpd0hqbG8vVzQv?=
+ =?utf-8?B?Z0hCWWJmWkVHVkRvZW9VK3czUnNXMVRFckZiZ25YcjR3ekxjVUtzS2tPNE81?=
+ =?utf-8?B?WUVzQ2ErM1hzRVJIaWQ1Q2J1QUZueW5ZRDJUZTdOU3h4aVJ1am5DbktIOXpo?=
+ =?utf-8?Q?uLIyk3tRjvaUv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dVF4YnNFL3FlcUxYWlFBZnhrZUVwU283UFc0bkVaTW5La2lOOVNjNWJwaG5x?=
+ =?utf-8?B?WWRJQjIySG1WY0Vrd21zUy9mbXhpL0NWUFZUNFJpaTlZSERIcTlmZ2cwek16?=
+ =?utf-8?B?RWFPUDN6NG9Yc2w3a3B0OTUxM0JjYTIwRUZKNlUwNXFUZE45OXJoOHB1d0ll?=
+ =?utf-8?B?Y3I1K3RKbjd3K1ozdlphV2tjcXdxcndHaERHNzZpclErRVhzUFM2OVVLaEtS?=
+ =?utf-8?B?d2ZRZ240NWtCWFlLbk5aQ2JURmk3T1VIWWpVTFVDckhyTFpvenNYL2YvWVNZ?=
+ =?utf-8?B?RFRyVUE1akhERzVXN0tFdkJ4ZWVUUWptTllZb29jQ3ZXUkthTWtLS3lwSHAx?=
+ =?utf-8?B?UFZVdCtYWVdITkFmSHpwNHgwaXM2UTVvbmUzVTNCdGp1Vmp2MVlVZDhPMXpy?=
+ =?utf-8?B?SUwraS9JWVdqVnN2ZGdIaGpzNGxQSHlBQnpBajVtZUVOU1dUT1I4UjB0Q2xz?=
+ =?utf-8?B?elBFbi9GMkZKNzRGQlhQeDZobWYyVm5QVUdZYXp1NXV1cis0bkhIRFB1M3FI?=
+ =?utf-8?B?OW0rMVlYcmNXUnU0c2JYaGRtUmpsbXl1ekZGaW1ONFo2RmFwLzROVC9UYVd0?=
+ =?utf-8?B?N2N6Z0FBS0t0WnBGS2trVjkvbWtaaDZOK1pjMGY0d3NaV1FPYWw3YzlVTnZD?=
+ =?utf-8?B?bDBTeFcxZEYyeUZKMkRqWjRwS1RYVkM2MHNXNXF0bmRneDFYVm9PTU9QY2hV?=
+ =?utf-8?B?SXhLZi81bzdQdlZTM2g0UHB5YjdVU3RtY2FINFZMWEppVW9pc0pFbVhwT04w?=
+ =?utf-8?B?T1k1L3JrclBmam1UVVAzaHlsYS9sVXM5cFdxQmJpNm9CaXNuVTRjd3JkTUhU?=
+ =?utf-8?B?L0RCdURBZGVXVFZWRjBkdDV0cjZyWm1zYlA3WFJFZEdISkRZTjM0cUhVc2xK?=
+ =?utf-8?B?V2x2em9YRGllQVNyZlZUWTBJWXQ0Wmd2Y2lSRld5b0tMQTVnQVN6OFltTTlE?=
+ =?utf-8?B?U2F3TDdLM3ZuUjVZR3VwWm9mNFdOWmw4cmZzZGkzNkwrOHN4S1FYZ1FHUW4w?=
+ =?utf-8?B?RW8rRWRLcGxNVlR2WUhTeHhkU1UwcGhGR2VUWm54T0pYYU4vTFhrWGNDWmsz?=
+ =?utf-8?B?YXpnK3hMazY0ZlBxMXV3L3dqeCsrRFdkYndCU1daS3pHQnBwaEwvYW85SVZn?=
+ =?utf-8?B?eUp3VFJFaitnZlRHaCtSMTZhSTJObnZ6RlcwRXMvTkEvTjA0NGZ3QWlyUUdV?=
+ =?utf-8?B?dlFlcVUxTTFuUkpjL0RZc2xrMnJjNHlJbUYvY2xLUGtsSUEyb1dmN0JwL29L?=
+ =?utf-8?B?bFYrWTlkZ0ZPb0diSS8rN3ExR1dwdk1Tb3NkUjNCQ2JseldMS0U0NUxRSFBC?=
+ =?utf-8?B?emJrRFB1WVRkb1lpNnRkUUFQY0pXaUdMdmNNQVNSZy96RDN2aWlMK1BaS0lR?=
+ =?utf-8?B?WGhEM3lFeFRpemdJajlVa3lSL3pEcFdoSS9PTDhoTGU5NnlCNFpUeGp3WjJP?=
+ =?utf-8?B?RWI5UkxnMTZqdWdUZUdUZ2sweXRaYzRUWEd1UTlhbkhNV0hLT205UGdWN0Fn?=
+ =?utf-8?B?VjgzOXVhZGN1QjhMUjFnUjMvSnI5MTd3blFBY282Vm1UcG1LbDFrMnh1cTVX?=
+ =?utf-8?B?OHBsdzF0T2VnaWc1aEZFZlB6bUMzMDFwczBLbXZreVowY2pQdDFYczFzbTEw?=
+ =?utf-8?B?K3RPR2xFYi9PU0xGL0dSVDRZWGJmM0FrQ1BHOHU2OEkvWUNLRjEvVDR2bERn?=
+ =?utf-8?B?TjR3L1lCaHZML2RQSVF0TEVKQjd6Tm9PaXoyV0VFYWNxSFF6YUZZUC8zOWxV?=
+ =?utf-8?B?T1FtZ1E4ckRFRmpvc0QrQ3EwSmJaQ2FncHZaUmZtZVI4cmJNV01ZMmdEOXdx?=
+ =?utf-8?B?aEhVei83TEhpcFVYdDU4cERQMTB5bGthSGR6RXlwUHVYakNDWUQ1TDBhVmhM?=
+ =?utf-8?B?dENjTnJ4Qk9vVm1ZOTdIV2Fkb29zOFJod2FhcFZhMWpncnFtVGd2S2tBZW1m?=
+ =?utf-8?B?cStua2pqUm1KVzJvdWRZWXJRaGdaMTh3R3FOZFJhTWVNOUdVMzdhZlg1VU91?=
+ =?utf-8?B?MUtncVo0ZEorYU5DU0QxTWsxcFdzTEtWdm5xa01rRG9YUGJhTXNJQjJlakJX?=
+ =?utf-8?B?VDZkUFNOVUIvbk4wYnJlWHVaNkFBcXN4SmdYSC9nMTNkck5zdnkvY3JEUlVj?=
+ =?utf-8?B?a0R5dDV2YWxzb04wdml2Qm92Yk1FN1FKN1lzUy9XZHB4ZFpKaDRyeDc3QjZP?=
+ =?utf-8?Q?TLWEwnkrSbsHEt2+9cuPmT4=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 796b6709-34f4-494f-dd46-08dcbc3ebf78
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 08:54:47.2084
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zWmIKc12NkYwDt53hr/EX7782uMQLZr1lX/q7aB/RWvtXKskfMztP9JyHOY7ZbAL3ZPnz8PPX3iWk4Eb0wxqhXIg+woJxYYtdV4ds3mRNi4/aKL+o2mF2tF8w+2OaJpL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR01MB7611
 
 
-On Wed, Aug 14, 2024 at 8:18 PM David Hildenbrand <david@redhat.com> wrote:
->
-> On 14.08.24 04:02, Barry Song wrote:
-> > From: Ryan Roberts <ryan.roberts@arm.com>
-> >
-> > Add thp_anon= cmdline parameter to allow specifying the default
-> > enablement of each supported anon THP size. The parameter accepts the
-> > following format and can be provided multiple times to configure each
-> > size:
-> >
-> > thp_anon=<size>,<size>[KMG]:<value>;<size>-<size>[KMG]:<value>
-> >
-> > An example:
-> >
-> > thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
-> >
-> > See Documentation/admin-guide/mm/transhuge.rst for more details.
-> >
-> > Configuring the defaults at boot time is useful to allow early user
-> > space to take advantage of mTHP before its been configured through
-> > sysfs.
-> >
-> > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> > Co-developed-by: Barry Song <v-songbaohua@oppo.com>
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >   -v4:
-> >   * use bitmap APIs to set and clear bits. thanks very much for
-> >     David's comment!
-> >
-> >   .../admin-guide/kernel-parameters.txt         |  9 ++
-> >   Documentation/admin-guide/mm/transhuge.rst    | 37 +++++--
-> >   mm/huge_memory.c                              | 96 ++++++++++++++++++-
-> >   3 files changed, 134 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index f0057bac20fb..d0d141d50638 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -6629,6 +6629,15 @@
-> >                       <deci-seconds>: poll all this frequency
-> >                       0: no polling (default)
-> >  
-> > +     thp_anon=       [KNL]
-> > +                     Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
-> > +                     state is one of "always", "madvise", "never" or "inherit".
-> > +                     Can be used to control the default behavior of the
-> > +                     system with respect to anonymous transparent hugepages.
-> > +                     Can be used multiple times for multiple anon THP sizes.
-> > +                     See Documentation/admin-guide/mm/transhuge.rst for more
-> > +                     details.
-> > +
-> >       threadirqs      [KNL,EARLY]
-> >                       Force threading of all interrupt handlers except those
-> >                       marked explicitly IRQF_NO_THREAD.
-> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> > index 7072469de8a8..528e1a19d63f 100644
-> > --- a/Documentation/admin-guide/mm/transhuge.rst
-> > +++ b/Documentation/admin-guide/mm/transhuge.rst
-> > @@ -284,13 +284,36 @@ that THP is shared. Exceeding the number would block the collapse::
-> >  
-> >   A higher value may increase memory footprint for some workloads.
-> >  
-> > -Boot parameter
-> > -==============
-> > -
-> > -You can change the sysfs boot time defaults of Transparent Hugepage
-> > -Support by passing the parameter ``transparent_hugepage=always`` or
-> > -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
-> > -to the kernel command line.
-> > +Boot parameters
-> > +===============
-> > +
-> > +You can change the sysfs boot time default for the top-level "enabled"
-> > +control by passing the parameter ``transparent_hugepage=always`` or
-> > +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
-> > +kernel command line.
-> > +
-> > +Alternatively, each supported anonymous THP size can be controlled by
-> > +passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
-> > +where ``<size>`` is the THP size and ``<state>`` is one of ``always``,
-> > +``madvise``, ``never`` or ``inherit``.
-> > +
-> > +For example, the following will set 16K, 32K, 64K THP to ``always``,
-> > +set 128K, 512K to ``inherit``, set 256K to ``madvise`` and 1M, 2M
-> > +to ``never``::
-> > +
-> > +     thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
-> > +
-> > +``thp_anon=`` may be specified multiple times to configure all THP sizes as
-> > +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
-> > +not explicitly configured on the command line are implicitly set to
-> > +``never``.
-> > +
-> > +``transparent_hugepage`` setting only affects the global toggle. If
-> > +``thp_anon`` is not specified, PMD_ORDER THP will default to ``inherit``.
-> > +However, if a valid ``thp_anon`` setting is provided by the user, the
-> > +PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
-> > +is not defined within a valid ``thp_anon``, its policy will default to
-> > +``never``.
-> >  
-> >   Hugepages in tmpfs/shmem
-> >   ========================
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 1a12c011e2df..c5f4e97b49de 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
-> >   unsigned long huge_anon_orders_always __read_mostly;
-> >   unsigned long huge_anon_orders_madvise __read_mostly;
-> >   unsigned long huge_anon_orders_inherit __read_mostly;
-> > +static bool anon_orders_configured;
-> >  
-> >   unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
-> >                                        unsigned long vm_flags,
-> > @@ -737,7 +738,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
-> >        * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
-> >        * constant so we have to do this here.
-> >        */
-> > -     huge_anon_orders_inherit = BIT(PMD_ORDER);
-> > +     if (!anon_orders_configured) {
-> > +             huge_anon_orders_inherit = BIT(PMD_ORDER);
-> > +             anon_orders_configured = true;
-> > +     }
-> >  
-> >       *hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
-> >       if (unlikely(!*hugepage_kobj)) {
-> > @@ -922,6 +926,96 @@ static int __init setup_transparent_hugepage(char *str)
-> >   }
-> >   __setup("transparent_hugepage=", setup_transparent_hugepage);
-> >  
-> > +static inline int get_order_from_str(const char *size_str)
-> > +{
-> > +     unsigned long size;
-> > +     char *endptr;
-> > +     int order;
-> > +
-> > +     size = memparse(size_str, &endptr);
->
-> Do we have to also test if is_power_of_2(), and refuse if not? For
-> example, what if someone would pass 3K, would the existing check catch it?
 
-no, the existing check can't catch it.
+On 13/08/2024 23:20, Krzysztof Kozlowski wrote:
+> On 13/08/2024 10:41, Chanh Nguyen wrote:
+>> Add device tree bindings and an example for max31790 device.
+>>
+>> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+> 
+> 
+>> +
+>> +examples:
+>> +  - |
+>> +    i2c {
+>> +      #address-cells = <1>;
+>> +      #size-cells = <0>;
+>> +
+>> +      fan-controller@21 {
+>> +        compatible = "maxim,max31790";
+>> +        reg = <0x21>;
+>> +        clocks = <&sys_clk>;
+>> +        resets = <&reset 0>;
+> 
+> This node is incomplete. I asked to make the example complete, not by
+> adding two incomplete examples or other ways... The binding description
+> says this device controls fan. If so, where is the fan here?
+> 
+> IOW, keep only one, complete example.
+> 
+> Rest looks good. With this addressed (and optionally with maintainer
+> change, which Conor asked):
 
-I passed thp_anon=15K-64K:always, then I got 16K enabled:
+Thank Krzysztof for your review!
 
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled
-[always] inherit madvise never
+I'll keep only complete example. I'm going to push patch v4 in the 
+coming days.
 
-I can actually check that by:
+Thanks,
+Chanh
 
-static inline int get_order_from_str(const char *size_str)
-{
-	unsigned long size;
-	char *endptr;
-	int order;
-
-	size = memparse(size_str, &endptr);
-
-	if (!is_power_of_2(size >> PAGE_SHIFT))
-		goto err;
-	order = get_order(size);
-	if ((1 << order) & ~THP_ORDERS_ALL_ANON)
-		goto err;
-
-	return order;
-err:
-	pr_err("invalid size %s in thp_anon boot parameter\n", size_str);
-	return -EINVAL;
-}
-
->
-> > +     order = fls(size >> PAGE_SHIFT) - 1;
->
-> Is this a fancy way of writing
->
-> order = log2(size >> PAGE_SHIFT);
->
-> ? :)
-
-I think ilog2 is implemented by fls ?
-
->
-> Anyhow, if get_order() wraps that, all good.
-
-I guess it doesn't check power of 2?
-
->
-> > +     if ((1 << order) & ~THP_ORDERS_ALL_ANON) {
-> > +             pr_err("invalid size %s(order %d) in thp_anon boot parameter\n",
-> > +                     size_str, order);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     return order;
-> > +}
->
-> Apart from that, nothing jumped at me.
-
-Please take a look at the new get_order_from_str() before I
-send v5 :-)
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
-
-Thanks
-Barry
-
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Best regards,
+> Krzysztof
+> 
 
