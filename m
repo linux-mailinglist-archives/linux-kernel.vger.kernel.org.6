@@ -1,258 +1,219 @@
-Return-Path: <linux-kernel+bounces-286990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D395952141
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:33:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479DE95213F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB79E1F21A28
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:33:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BE611C20EFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA5B1BCA1B;
-	Wed, 14 Aug 2024 17:33:20 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4261BC07E;
+	Wed, 14 Aug 2024 17:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b="e0HUBpcp"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFDD1B3F32;
-	Wed, 14 Aug 2024 17:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48D31BBBF5
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656800; cv=none; b=namFOK5FUfCOyQRZmE6ZdLtN975glNGjTgb485SV2dwPqg4GuGHIw+VRXeAodJvZbBV9VdR1mqfUHPEbEs/XlCyCThRsGI24FGM9jQFdjLSH9EgnQudOFrQIJMtT6TsUcDXttqvw9Gn0ylP2FL6M2BfFxe/GwGeYCbnqCtZ7ef0=
+	t=1723656795; cv=none; b=A21wbDhgYEIlSqW7nP9Q6fPYJd1v/N4YuzdsIn2JK6evRdG924PZz6oWGuo0SwFDlMWgVhLXbzzSHb70DxDhSgJBRWMF9Cd+GCTBawFzVfwqsnAsbblAuHn7JdV7ztsvxjaFE0c4xSdhoHF7RybJBtXPMsKXHF1varFPbUQKMa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656800; c=relaxed/simple;
-	bh=X8gvZGdLWcQYoLz27ibCdBwSl8yNDBRyq5CjNUpiRP4=;
-	h=From:Subject:To:CC:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CSFOzfFp8vz+ZWhpwjJ2LrpRqC/f8Q8/duj/hbZH6DoSQs+pG2548PEkTcLJ8M2vepUdfL1nPV+dZ1AKVkYCphxnv5hEyPt6qGFE1OVNwLtWPa23d5sVfq/Cx3GbMkmd1r9gCscLhJWHziVk5R7QZ1JtBwX7A+qyoVt5QYdPwHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.105] (178.176.78.237) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 14 Aug
- 2024 20:32:53 +0300
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: Re: [PATCH] ata: Replace deprecated PCI devres functions
-To: Philipp Stanner <pstanner@redhat.com>, Damien Le Moal
-	<dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Mikael Pettersson
-	<mikpelinux@gmail.com>
-CC: <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240812084839.37580-2-pstanner@redhat.com>
-Organization: Open Mobile Platform
-Message-ID: <c2d21da0-7fe1-f995-5562-7ff04e9f1b8b@omp.ru>
-Date: Wed, 14 Aug 2024 20:32:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1723656795; c=relaxed/simple;
+	bh=xHPn6y4xO+5SYBhOLhdA2juhFMoy6KgLmbab3AbXS8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GvEVvF8tSbv+XHIcZH5EftweJjKXIri1AEi1GpRzhOfUO2RXPE7FRLBdJaj+pIRhg2vH4llduc7RID33/C4M3Z65NgLo3q3n/WGxkoTg+9mJAgGWdt6bq9ZfMez+H+T/I3TgSD7d5I+tdEzcabzVe8eQ/V+ONdMCUBBmPNEEOQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=freebox.fr; dkim=pass (2048-bit key) header.d=freebox-fr.20230601.gappssmtp.com header.i=@freebox-fr.20230601.gappssmtp.com header.b=e0HUBpcp; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freebox.fr
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso406535e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:33:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=freebox-fr.20230601.gappssmtp.com; s=20230601; t=1723656791; x=1724261591; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VsViqlXuad7EqaJTSukZTNrLwUDaFtbQLR6eV58xusI=;
+        b=e0HUBpcp+yhRqfLOCRHjiRR7XzpVnGVdeo0I6txc+VrNkct+5c+07uDcVO0J1HRXQE
+         3z04C77CWru46CNtoVWtCCtBxErwreNNCE1P7IdUaWPHXtLkfqENJnt8V28+Qz9ArEZ/
+         xvP8K2R7H+jLS1Yv9z4dVRS3aYeK6c1mphEhhw1qqKAXkCZnadZlm4zlj0E+RCLch86A
+         PqBpj1j2GeVixq9nwg5LcXz8CTABWs+8DkfkhTQOx5BeHygGIhYgm+nA0/KwCtLiKtQz
+         Fo0PfxepKwpHvaVCw2Pkf82UMd4RTV93BHyzwcxif626YEtZDKrllAtVVyy7jXvmS7zT
+         Unyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723656791; x=1724261591;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VsViqlXuad7EqaJTSukZTNrLwUDaFtbQLR6eV58xusI=;
+        b=RbGwrQArJtGigyYBKKF8irOPg/Rjoy/r9Nfw82U6+KUSG/I21t0A79A3a+5y+mSEJP
+         b+6cTwvVxJWUbP/MCkrYMbGMIgchm3ulhBO95GqVSD5TkxAD78vOGS/FSG4pEMcrAsf/
+         3ZbJbQs9KcjGoZxoUHHATenTXIL4K+DbAo/syx0vst5yrHTle/HNJ9jgy05J93Pfi0i8
+         yxVQnlFqfnnftj7wA9XtBuZj9x4wDMS718+tZ4mO2zmBwsnla+00hYAHNy2iXTb7iU4h
+         N9hz6x3T+cuZhsWYbx8KtO8sq0rv7b9vqPqD1/Z98/fRzUZ8dPGmbxluThCvqvDJBvUL
+         eZUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWey4uDsShrx3NUUXJAIqZtSPZ+sm+vIq/h6l1XmblbbIm9jmHrbKgHSPjU/BvPdK2cK8SKoOD2e/L7JykmSYPIGdveLnpAmXNtGHx9
+X-Gm-Message-State: AOJu0Yz8F0VBqj4+mTHjPxTW8washowkNfUNz2TsJ5JQ+W13ojFhBP6R
+	kCFN5QPhdFJigstoN0cqYs4A09l3DeBkG54IJZLNbsZ5jkXR/SktqH/N+ZcUG9g=
+X-Google-Smtp-Source: AGHT+IGjd27AWWYXM6KKfwqDHwnfvaRFqeEGxklZ34WgUw5nl1yiZggtjfE6mMr+RwZoA8oB3FddQA==
+X-Received: by 2002:a05:600c:42c8:b0:429:e6bb:a436 with SMTP id 5b1f17b1804b1-429e6bbb75fmr428945e9.9.1723656790860;
+        Wed, 14 Aug 2024 10:33:10 -0700 (PDT)
+Received: from ?IPV6:2a01:cb08:108b:e400:1437:6ff2:646:a3e5? (2a01cb08108be40014376ff20646a3e5.ipv6.abo.wanadoo.fr. [2a01:cb08:108b:e400:1437:6ff2:646:a3e5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c937bb9sm13456330f8f.34.2024.08.14.10.33.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 10:33:10 -0700 (PDT)
+Message-ID: <dfd80103-391a-4777-8944-296ba31a11dd@freebox.fr>
+Date: Wed, 14 Aug 2024 19:33:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240812084839.37580-2-pstanner@redhat.com>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iommu/arm-smmu-qcom: hide last context bank from
+ linux
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, iommu@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Konrad Dybcio <konradybcio@kernel.org>, Arnaud Vrac <avrac@freebox.fr>,
+ Pierre-Hugues Husson <phhusson@freebox.fr>,
+ Marijn Suijten <marijn.suijten@somainline.org>
+References: <20240814-smmu-v1-0-3d6c27027d5b@freebox.fr>
+ <20240814-smmu-v1-2-3d6c27027d5b@freebox.fr>
+ <a7j3lz62bp6pceuq472muioinjzfgw2mec5pv256zfr7yjsn3p@ok6nfsbsabig>
 Content-Language: en-US
+From: Marc Gonzalez <mgonzalez@freebox.fr>
+In-Reply-To: <a7j3lz62bp6pceuq472muioinjzfgw2mec5pv256zfr7yjsn3p@ok6nfsbsabig>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 08/14/2024 17:21:17
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187069 [Aug 14 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 25 0.3.25
- b7c690e6d00d8b8ffd6ab65fbc992e4b6fdb4186
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.237 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.237 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.237
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 08/14/2024 17:24:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 8/14/2024 3:12:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 8/12/24 11:48 AM, Philipp Stanner wrote:
-
-> The ata subsystem uses the PCI devres functions pcim_iomap_table() and
-> pcim_request_regions(), which have been deprecated in commit e354bb84a4c1
-> ("PCI: Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()").
+On 14/08/2024 17:29, Bjorn Andersson wrote:
+> On Wed, Aug 14, 2024 at 03:59:56PM GMT, Marc Gonzalez wrote:
+>> On qcom msm8998, writing to the last context bank of lpass_q6_smmu
+>> (base address 0x05100000) produces a system freeze & reboot.
+>>
+>> Specifically, here:
+>>
+>> 	qsmmu->bypass_cbndx = smmu->num_context_banks - 1;
+>> 	arm_smmu_cb_write(smmu, qsmmu->bypass_cbndx, ARM_SMMU_CB_SCTLR, 0);
+>>
+>> and here:
+>>
+>> 	arm_smmu_write_context_bank(smmu, i);
+>> 	arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_FSR, ARM_SMMU_CB_FSR_FAULT);
+>>
+>> It is likely that FW reserves the last context bank for its own use,
+>> thus a simple work-around would be: DON'T USE IT in Linux.
+>>
+>> If we decrease the number of context banks, last one will be "hidden".
 > 
-> These functions internally already use their successors, notably
-> pcim_request_region(), so they are quite trivial to replace.
-> 
-> However, one thing special about ata is that it stores the iomap table
-> provided by pcim_iomap_table() in struct ata_host. This can be replaced
-> with a __iomem pointer table, statically allocated with size
-> PCI_STD_NUM_BARS so it can house the maximum number of PCI BARs. The
-> only further modification then necessary is to explicitly fill that
-> table, whereas before it was filled implicitly by
-> pcim_request_regions().
-> 
-> Modify the iomap table in struct ata_host.
-> 
-> Replace all calls to pcim_request_region() with ones to
-> pcim_request_region().
+> I asked you to write something like "the hardware/hypervisor reports 12
+> context banks for the lpass smmu on msm8998, but only 11 are
+> accessible...override the number of context banks"
 
-   Huh? :-)
-   Besides, I'm not seeing pcim_request_region() anywhere in this patch...
+I don't understand how the exact number of context banks is relevant?
+It's just that the FW reserves one for itself, which happens to be the last,
+probably because some FW dev thought that was a good idea.
 
-> Remove all calls to pcim_iomap_table().
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-[...]
->  drivers/ata/ata_piix.c      |  7 +++---
->  drivers/ata/libata-sff.c    | 50 ++++++++++++++++++++++++++++++-------
->  drivers/ata/pata_atp867x.c  | 13 ++++++----
->  drivers/ata/pata_hpt3x3.c   |  8 +++---
->  drivers/ata/pata_ninja32.c  | 10 ++++----
->  drivers/ata/pata_pdc2027x.c | 11 ++++----
->  drivers/ata/pata_sil680.c   | 11 ++++----
->  drivers/ata/pdc_adma.c      |  9 +++----
->  drivers/ata/sata_inic162x.c | 10 +++-----
->  drivers/ata/sata_mv.c       |  8 +++---
->  drivers/ata/sata_nv.c       |  8 +++---
->  drivers/ata/sata_promise.c  |  7 +++---
->  drivers/ata/sata_qstor.c    |  7 +++---
->  drivers/ata/sata_sil.c      |  7 +++---
->  drivers/ata/sata_sil24.c    | 20 ++++++++-------
->  drivers/ata/sata_sis.c      |  8 +++---
->  drivers/ata/sata_svw.c      |  9 ++++---
->  drivers/ata/sata_sx4.c      | 17 ++++++++++---
->  drivers/ata/sata_via.c      | 31 ++++++++++++++---------
->  drivers/ata/sata_vsc.c      |  7 +++---
->  include/linux/libata.h      |  7 +++++-
->  21 files changed, 163 insertions(+), 102 deletions(-)
+Also, I don't like the phrasing "override the number of context banks"
+because while this is indeed what is done in the code, the *intent*
+is to "lie" to Linux about the existence of the last context bank.
 
-   I did review all the changes, not just PATA drivers.
+> It also seems, as the different SMMUs in this platform behave
+> differently it might be worth giving them further specific compatibles,
+> in which case we could just check if it's the qcom,msm8998-lpass-smmu,
+> instead of inventing a property for this quirk.
 
-[...]
-> diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-> index 250f7dae05fd..d58db8226436 100644
-> --- a/drivers/ata/libata-sff.c
-> +++ b/drivers/ata/libata-sff.c
-[...]
-> @@ -2172,8 +2173,41 @@ int ata_pci_sff_init_host(struct ata_host *host)
->  			continue;
->  		}
->  
-> -		rc = pcim_iomap_regions(pdev, 0x3 << base,
-> -					dev_driver_string(gdev));
-> +		/*
-> +		 * In a first loop run, we want to get BARs 0 and 1.
-> +		 * In a second run, we want BARs 2 and 3.
-> +		 */
-> +		if (i == 0) {
-> +			io_tmp = pcim_iomap_region(pdev, 0, drv_name);
-> +			if (IS_ERR(io_tmp)) {
-> +				rc = PTR_ERR(io_tmp);
-> +				goto err;
-> +			}
-> +			host->iomap[0] = io_tmp;
-> +
-> +			io_tmp = pcim_iomap_region(pdev, 1, drv_name);
-> +			if (IS_ERR(io_tmp)) {
-> +				rc = PTR_ERR(io_tmp);
-> +				goto err;
-> +			}
-> +			host->iomap[1] = io_tmp;
-> +		} else {
-> +			io_tmp = pcim_iomap_region(pdev, 2, drv_name);
-> +			if (IS_ERR(io_tmp)) {
-> +				rc = PTR_ERR(io_tmp);
-> +				goto err;
-> +			}
-> +			host->iomap[2] = io_tmp;
-> +
-> +			io_tmp = pcim_iomap_region(pdev, 3, drv_name);
-> +			if (IS_ERR(io_tmp)) {
-> +				rc = PTR_ERR(io_tmp);
-> +				goto err;
-> +			}
-> +			host->iomap[3] = io_tmp;
-> +		}
-> +
+Wouldn't that be too specific?
 
-   Ugh... Why you couldn't keep using base (or just i * 2) and avoid
-such code duplication?
+Angelo's patches were even more generic than mine, as he supported
+a list of context banks not-to-be-used-by-linux.
 
-[...]
-> diff --git a/drivers/ata/pata_sil680.c b/drivers/ata/pata_sil680.c
-> index abe64b5f83cf..8a17df73412e 100644
-> --- a/drivers/ata/pata_sil680.c
-> +++ b/drivers/ata/pata_sil680.c
-> @@ -360,15 +360,16 @@ static int sil680_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
->  	/* Try to acquire MMIO resources and fallback to PIO if
->  	 * that fails
->  	 */
-> -	rc = pcim_iomap_regions(pdev, 1 << SIL680_MMIO_BAR, DRV_NAME);
-> -	if (rc)
-> +	mmio_base = pcim_iomap_region(pdev, SIL680_MMIO_BAR, DRV_NAME);
-> +	if (IS_ERR(mmio_base)) {
-> +		rc = PTR_ERR(mmio_base);
-  		goto use_ioports;
+Do you say the LPASS SMMU behaves differently because it's (currently,
+to the best of my knowledge) the only SMMU where a context bank
+(the last) is not available to Linux?
 
-   The code under that label ignores rc, no?
 
-[...]
-> diff --git a/drivers/ata/sata_sx4.c b/drivers/ata/sata_sx4.c
-> index a482741eb181..d115f6f66974 100644
-> --- a/drivers/ata/sata_sx4.c
-> +++ b/drivers/ata/sata_sx4.c
-> @@ -1390,6 +1390,7 @@ static int pdc_sata_init_one(struct pci_dev *pdev,
->  	struct ata_host *host;
->  	struct pdc_host_priv *hpriv;
->  	int i, rc;
-> +	void __iomem *io_tmp;
+For easy future reference, here are the reports for the 5 SMMUs enabled on my system.
 
-   I'd suggest to call it base or s/th...
+[    0.137343] arm-smmu 1680000.iommu: probing hardware configuration...
+[    0.137354] arm-smmu 1680000.iommu: SMMUv2 with:
+[    0.137381] arm-smmu 1680000.iommu: 	stage 1 translation
+[    0.137390] arm-smmu 1680000.iommu: 	address translation ops
+[    0.137399] arm-smmu 1680000.iommu: 	non-coherent table walk
+[    0.137406] arm-smmu 1680000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+[    0.137417] arm-smmu 1680000.iommu: 	stream matching with 16 register groups
+[    0.137447] arm-smmu 1680000.iommu: 	6 context banks (0 stage-2 only)
+[    0.137733] arm-smmu 1680000.iommu: 	Supported page sizes: 0x63315000
+[    0.137743] arm-smmu 1680000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
+[    0.137833] arm-smmu 1680000.iommu: 	preserved 0 boot mappings
 
-[...]
-> diff --git a/drivers/ata/sata_via.c b/drivers/ata/sata_via.c
-> index 57cbf2cef618..73b78834fa3f 100644
-> --- a/drivers/ata/sata_via.c
-> +++ b/drivers/ata/sata_via.c
-> @@ -457,6 +457,7 @@ static int vt6420_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
->  {
->  	const struct ata_port_info *ppi[] = { &vt6420_port_info, NULL };
->  	struct ata_host *host;
-> +	void __iomem *iomem;
 
-   Call it base, maybe?
+[    0.138963] arm-smmu 16c0000.iommu: probing hardware configuration...
+[    0.138974] arm-smmu 16c0000.iommu: SMMUv2 with:
+[    0.138994] arm-smmu 16c0000.iommu: 	stage 1 translation
+[    0.139003] arm-smmu 16c0000.iommu: 	address translation ops
+[    0.139011] arm-smmu 16c0000.iommu: 	non-coherent table walk
+[    0.139019] arm-smmu 16c0000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+[    0.139030] arm-smmu 16c0000.iommu: 	stream matching with 14 register groups
+[    0.139058] arm-smmu 16c0000.iommu: 	10 context banks (0 stage-2 only)
+[    0.139255] arm-smmu 16c0000.iommu: 	Supported page sizes: 0x63315000
+[    0.139265] arm-smmu 16c0000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
+[    0.139341] arm-smmu 16c0000.iommu: 	preserved 0 boot mappings
 
-[...]
-> @@ -486,6 +488,7 @@ static int vt6421_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
->  	const struct ata_port_info *ppi[] =
->  		{ &vt6421_sport_info, &vt6421_sport_info, &vt6421_pport_info };
->  	struct ata_host *host;
-> +	void __iomem *iomem;
 
-   Here as well...
+[    2.424369] arm-smmu 5040000.iommu: probing hardware configuration...
+[    2.428581] arm-smmu 5040000.iommu: SMMUv2 with:
+[    2.434914] arm-smmu 5040000.iommu: 	stage 1 translation
+[    2.439584] arm-smmu 5040000.iommu: 	address translation ops
+[    2.444881] arm-smmu 5040000.iommu: 	non-coherent table walk
+[    2.450522] arm-smmu 5040000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+[    2.456175] arm-smmu 5040000.iommu: 	stream matching with 3 register groups
+[    2.463216] arm-smmu 5040000.iommu: 	3 context banks (0 stage-2 only)
+[    2.483555] arm-smmu 5040000.iommu: 	Supported page sizes: 0x63315000
+[    2.490455] arm-smmu 5040000.iommu: 	Stage-1: 48-bit VA -> 36-bit IPA
+[    2.497171] arm-smmu 5040000.iommu: 	preserved 0 boot mappings
 
-[...]
 
-MBR, Sergey
+[    2.546101] arm-smmu 5100000.iommu: probing hardware configuration...
+[    2.552439] arm-smmu 5100000.iommu: SMMUv2 with:
+[    2.558945] arm-smmu 5100000.iommu: 	stage 1 translation
+[    2.563627] arm-smmu 5100000.iommu: 	address translation ops
+[    2.568923] arm-smmu 5100000.iommu: 	non-coherent table walk
+[    2.574566] arm-smmu 5100000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+[    2.580220] arm-smmu 5100000.iommu: 	stream matching with 12 register groups
+[    2.587263] arm-smmu 5100000.iommu: 	13 context banks (0 stage-2 only)
+[    2.594544] arm-smmu 5100000.iommu: hiding last ctx bank from linux
+[    2.614447] arm-smmu 5100000.iommu: 	Supported page sizes: 0x63315000
+[    2.621358] arm-smmu 5100000.iommu: 	Stage-1: 36-bit VA -> 36-bit IPA
+[    2.627772] arm-smmu 5100000.iommu: 	preserved 0 boot mappings
+
+
+[    2.806781] arm-smmu cd00000.iommu: probing hardware configuration...
+[    2.813029] arm-smmu cd00000.iommu: SMMUv2 with:
+[    2.819627] arm-smmu cd00000.iommu: 	stage 1 translation
+[    2.824304] arm-smmu cd00000.iommu: 	address translation ops
+[    2.829601] arm-smmu cd00000.iommu: 	non-coherent table walk
+[    2.835243] arm-smmu cd00000.iommu: 	(IDR0.CTTW overridden by FW configuration)
+[    2.840897] arm-smmu cd00000.iommu: 	stream matching with 54 register groups
+[    2.847954] arm-smmu cd00000.iommu: 	17 context banks (0 stage-2 only)
+[    2.869307] arm-smmu cd00000.iommu: 	Supported page sizes: 0x63315000
+[    2.875785] arm-smmu cd00000.iommu: 	Stage-1: 32-bit VA -> 36-bit IPA
+[    2.882205] arm-smmu cd00000.iommu: 	preserved 0 boot mappings
+
+
+[   24.525457] arm-smmu 16c0000.iommu: FSR    = 00000402 [Format=2 TF], SID=0x1900
+[   24.525604] arm-smmu 16c0000.iommu: FSYNR0 = 00000001 [S1CBNDX=0 PLVL=1]
+[   24.721874] arm-smmu 16c0000.iommu: FSR    = 00000402 [Format=2 TF], SID=0x1900
+[   24.722033] arm-smmu 16c0000.iommu: FSYNR0 = 00000001 [S1CBNDX=0 PLVL=1]
+
 
