@@ -1,224 +1,125 @@
-Return-Path: <linux-kernel+bounces-286442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0BF951AFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B96951B22
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B76428121A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:39:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C122838C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8401B0128;
-	Wed, 14 Aug 2024 12:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0521AED5C;
+	Wed, 14 Aug 2024 12:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="jfzytGQn"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012051.outbound.protection.outlook.com [52.101.66.51])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6LpNPa4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5E215C9;
-	Wed, 14 Aug 2024 12:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723639139; cv=fail; b=av2322sCFnmmrFaNwbK4Lt5/KDQNx3zb6mc7qeF3Zr7JFQUJ87pQG2dnOlPwO9GNgNxyjBTTpc17kdM3SeJJL/Yz7zqkwDflTCzWP2mFJZHGZ/3s3qRIm30TYuee+BwL7kzcge5rhs+rTkTbdjf+nu84q7xnBTeQH0lNxeeUy5M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723639139; c=relaxed/simple;
-	bh=hbQZ33KfTr7TmcNFv/iUiCeTw3z/GrjXiKz+smAKDqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=aY097XKsm8yPDXVJSCToKTECO5k0XzOfIDpdIONUB1t4NiX/mvX95AYO66wxHX9nJ2VKpd2xMaCVbG4gjZ6/GKM+lkjL3T4fnicrvWomOshUYBS+d6pLnC9b8LI90UmWHiggwgRgDy1PjtsGk4kc6ZhcSghP93nW7C5R/fUGksY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=jfzytGQn; arc=fail smtp.client-ip=52.101.66.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K/xwTIaqMCzusXkMDrIFPd1fwa9O9mLZHXEhUIi8q0y9JXT58ULgl1g4r9jSzeu+o4L4lmhmqmf6U2KnEsa7uH1kqYsTXO5vIjbgOcr1vLuaKbszIcWeJFxCAmni+AcifEO2ZsvSaOyr3vtJNWsAyrywzPXOL47cff6oh0+eK+EsdWc+cUhwqD+GX3DoH+UjU3Fs16pdjh68NSPh3p34dIEAd3b6By+YxqLKfkOyjDCitGz30u913C2LWmDDUITmj3h7LbrhbMRPF14wgrIs5iJnqMrWuf1zaLFDeuXu1uKaGVNk40tFZ6DJM+wMJNaExQv28JA383XeGw72PFyZxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rZBER3YRZSUbF3bopuTiDF4EIeQWF0Xsrrp7C8nUgA0=;
- b=qIf+e8dtKtXfkuwHkcsjHttc3Ynpzjpnjpp3Uds6WJD+JlgGcJeBQo4GjKLYT3WYEFKsR35C/90wRzTvj8WWnfMDlCYCDYB9FC4ymNBBx/qTkl8RbTspgOVTyv7igYQkUXVFB9ZvjSFC0RNviVzb/F3bZ4Cb41GzCLMQgEVu7rNWxeGIJE/5CcRWiFih9M6ivaowAL+gwUk2u+vklITkxfaqZXwYetWHBT6wFQSzJrI7Pwj6J0P1lXx68eyV6hiTZi54VMhaixXeBx8W4MRBwzDPQO72X+cc1Tx0Ez1grrEtiqSa1J+/xE+WPv2Vr8N4A5eIatX1XLNeqR/2w3zOCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rZBER3YRZSUbF3bopuTiDF4EIeQWF0Xsrrp7C8nUgA0=;
- b=jfzytGQnfRSEcDUuBmopdrrR755Wm7QR9tUYJX/AWtETG06gKVdckp8dXrDd7m17jAwbRDsaO44wI7FrDZ1SmT/OEmRAvGU80fiDdeC9eTbf8sv7cIDr0Cme9zW7KPrHjGQpKHBZA0jmGA5lkQVgMUj86xZhbYjlbTPmGrRiDHJLAJDtr+18Rws2SMYInmNlXxs7dG74LTwYXsED3yIQyCuuUpe/ctZ6HqKq6FpEYNJQQdczHYNjFcJJ5XjgMNps++Qx47MfvJm2DvbNMzB27r6mJO6CXeXv0xl5nEsiTlnFgLMPoDniu6tIaZWqa6NpPR0AIH2gLPs39+Fafh1iCg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GV1PR04MB10486.eurprd04.prod.outlook.com (2603:10a6:150:1d3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Wed, 14 Aug
- 2024 12:38:53 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7849.019; Wed, 14 Aug 2024
- 12:38:53 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: ulf.hansson@linaro.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de
-Cc: kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>,
-	Stable@vger.kernel.org,
-	Jacky Bai <ping.bai@nxp.com>
-Subject: [PATCH V2] pmdomain: imx: wait SSAR when i.MX93 power domain on
-Date: Wed, 14 Aug 2024 20:47:40 +0800
-Message-Id: <20240814124740.2778952-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0046.apcprd02.prod.outlook.com
- (2603:1096:3:18::34) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623F625762;
+	Wed, 14 Aug 2024 12:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723639670; cv=none; b=QzlAvgxVU7vpTyrhU9nypUXD0Kb1aFjS5vHdL0/aFKe4xpKoelkp8xcmUoDksCGh8YqC2dN5uSr4e7fxjf718DthcNF3ur2AKEmByT1Tf0GtY/N9pYmrV8QVWNflsLAg2SuA7ILSRM3K3b4uDjFTrdMPrwKrAq26fpVhD3u0bfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723639670; c=relaxed/simple;
+	bh=cdea50Dx9ZmaxycbxHe2JgqHseZmZZXeTrngl7tmHJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bf6zqYTT5JsbQBgfB+wEjA044YPHaZkDXZmQSVVYQ9DqPt83EpjQWX9/x5yolEvJz0e9LS7o/Ww382DZhnKiEAcmA7LVEAaevJxoOqgjFzcXeJq3meEh+PIzNcYAhZdlQCDngUihH+CsYp4sVYAbbgmq6b7CBBrvHdikIrXxLfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6LpNPa4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73151C32786;
+	Wed, 14 Aug 2024 12:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723639669;
+	bh=cdea50Dx9ZmaxycbxHe2JgqHseZmZZXeTrngl7tmHJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N6LpNPa4h9yx+mIwkZVdntlltbCAF+o+9SL23pQHh4oa8xy5LtZZ9hmryY6wXYrK2
+	 kHwiXBQJsimkT3eR+oLI4vczahBQ+uwBCXEG98zCEqE69VB0h2MsP/9TsSBohPFAYI
+	 Sogmo7NuxX6fRf+ndyf+PMK7Gmxz3MSvLf2YjXcLh0Yvf6+E2lxMw8lHlVpgQmTDVE
+	 FU7UI5ynYEEiKXcuxLGcXP/IpK1P9RrqR9WmN+aajyq9nA/39f44lk0PaEjPL7yx9/
+	 TQmAguxYYwUxiL27F6M8WIeQE8pJA/FJ/zwOKbCap/wGjUcYBZaMj5/il9P4y5tywk
+	 i8AYIJ5tdIjrQ==
+Date: Wed, 14 Aug 2024 14:47:46 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: neeraj.upadhyay@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	joel@joelfernandes.org, boqun.feng@gmail.com, urezki@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
+	neeraj.iitr10@gmail.com
+Subject: Re: [PATCH 2/2] context_tracking: Invoke Tasks-RCU enter/exit for
+ NMI context
+Message-ID: <ZryncuVGyxL1-OX1@localhost.localdomain>
+References: <20240807163506.434885-1-neeraj.upadhyay@kernel.org>
+ <20240807163506.434885-3-neeraj.upadhyay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV1PR04MB10486:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68138a7f-eede-4b4b-bdbf-08dcbc5e0e0e
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CN32gZoOIaYv4exeMJiIiccYMso1hRTvLV3dK/PEAvU5PCW6+byYf8Jui6ZS?=
- =?us-ascii?Q?2VoeE3Xt3ZTXvvdZo/fzWyjF9B2mRKbpMdZi3jAx+LyxFx96d9Eax6uJAOEQ?=
- =?us-ascii?Q?x0PJOe2p2DBXRwETALUQBGePnvAF71bwoxmvnXLmpKJbo0bdV5mZC4qZh0V6?=
- =?us-ascii?Q?FqBFzLXgCJ4saClK/lI2YdrPsFvqO8jDuDAxTvJPI9TYr6hwwE9MDdJvpIHn?=
- =?us-ascii?Q?2gQbr6GJxge/V7TyKX1Pf02kc1gbKduIFAfe6ZOGAYwdBP/RCW7+LOY1LpKo?=
- =?us-ascii?Q?5cGEJDhzwjKV+7Jv9VuBddodPDXlavk8Cnedobuvo38/5XqbjPGAZruu35M4?=
- =?us-ascii?Q?tpavYzOruxM327s2yswyE07VvnT4+aCtHaueBcWNFmQSyNFu1TNkMp+Riy+5?=
- =?us-ascii?Q?qvlSLybaL9ewXk0O6qCCN5wfN/y0vuey8Dd2LQi4gbAYzAbGLH7tp9Nycv2J?=
- =?us-ascii?Q?2pFUMmSO85BxCB2iVwaLw+8TxRMjzYWOMpnnGPptHgob1vrEgVLKuHiWFxYI?=
- =?us-ascii?Q?NCD2cL6k/cdtosJy3IwxKxmq5xLFZhaLn7tZ8fzyoIFBOJr22A4AYCmRxQ5K?=
- =?us-ascii?Q?xVnNC9o27h0f9fsGjX253CtVWR9Wmr7F5XiL4zOdIyJn5XIO3QTPBN/Smm9Z?=
- =?us-ascii?Q?+jSKBG/qVU/CVUqN/W/bRkMCSE9ms/bvuSoJfRClEcMSQ0OTI1ZLVt1s90PZ?=
- =?us-ascii?Q?6GDE5rSA0xVZ9a9Vozkl8j6y6Hty5AMGAUL9BPfUKq0uvPKpDmWiBgzju5f6?=
- =?us-ascii?Q?hoCO13sQ7DTU0/NlD2528vFcHptqDI7pHim9GDQ7NNXJbv/w9UklAhiTV+Du?=
- =?us-ascii?Q?WxM2Ab5K/aoaVLKYLrrE70Na2OI7NEUSUG+PDtVPAtDL/ypDlAAiPMCiIZ6b?=
- =?us-ascii?Q?qNO5PX1cdGWv90/7mRyybooqCKTou971w2mnj2uCsYeuiukDxb8pgZDTS5Xd?=
- =?us-ascii?Q?zWwKEWjIu73oh7fmJ9H5F1LRuiY4rjOHgXOJj1jeQeGqKCcypBnhSTXv0hhE?=
- =?us-ascii?Q?6IcgrHuSKOe31j0co34NUEyK3LlMH510xZTbP1L9L8e9X8hdUDxsvkaJNLnM?=
- =?us-ascii?Q?oTj7WQwtuPzewDLGrDkpDUq3rvKITnje5uCS5yAsr9KNGQOgnxVPO3xo5YbD?=
- =?us-ascii?Q?AYNAI1lXMjBIayd3UnjkqyFiIuqtMrY4yO3YMMmgq/jP/fHv/csdZmjTVo3L?=
- =?us-ascii?Q?PiAi0CwE9k0UQ+tktEgymM/Uwl5VBaBWb3Atb+akG7X3ncWaOBSx6KO4XRjr?=
- =?us-ascii?Q?a21LHXsS3iTQdkV9jtPAZr97K5m+tCz567Z6d3BJVEmfQ2QwzrukdUa0HZ8m?=
- =?us-ascii?Q?6FYDLowwXlzv8nRwQwofCByH62IsgTcvrcgwTvMPfIx/us2CEOmfnlsW8Kvw?=
- =?us-ascii?Q?TvttocjJNmmgFv0LRXUxUW2xYvjBRLuI1NodlVt5YecBKCKEKQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VN3LSGdXhBBhOCPL7Q1AMrDepZURhDx70kdUon4FwbnJCuO0tsI08hco3BVb?=
- =?us-ascii?Q?UwwmyFu5iG6ja89o5FlhZU2TVL/KpD2IlELv0i0G7tVLLxIq6NfOUQGevvq6?=
- =?us-ascii?Q?WxNLEbUXXg7XBy1QZv857kqkQxBuakTBFbOcgyH3WxTy9riY1dcsoGGwAREy?=
- =?us-ascii?Q?X3Egdp78G60MLehlbVTp3GTokAZ2sRJAEx9BDjxkjIzhDdxg8BcmdZBpnqVl?=
- =?us-ascii?Q?QUARLYwYgx5SHjj9sRnODZceP/jhKO09+J3kuc2ByM+ypwu8R5aJOUY6Vp+r?=
- =?us-ascii?Q?P/lKKKcS+OASfhbM72T+TsLqXJDkUbZqfwwyxl/aPPcp+N2eolVobktyKDEk?=
- =?us-ascii?Q?3/BDAzKFsMRv8wX4ZIE3Ihd8pPWXRsqiLBKRxOewxFGFnYG3j9jYq4Inw61e?=
- =?us-ascii?Q?5aDqRqN1TWLXxWPNDaK5N4e2quOfQycQuJHIfwo+/BmJzmDmU+uPNzN1BJhY?=
- =?us-ascii?Q?/z8OmY3WhNNcXTGR/trSvqlLLH1QLR4Lj3K/RXrt7lMmv1S/4A0DMpOe1v6F?=
- =?us-ascii?Q?AqImeaU5OONV+psYPkig3OrU0Ibde9G9F1+6ws0c/ii0bvTTfzmjQnkrtVyf?=
- =?us-ascii?Q?sr9RH/ZID/bLYxalRzxdfEWhHmZZh7Y8U862gZJuyziKaounx/NQH7W5RhXC?=
- =?us-ascii?Q?JLi8dWe+mTFamcBdDCnlEDxYD5lbs8zlEIARHG1Efrv5tPXCVL/1AGNCkFxQ?=
- =?us-ascii?Q?ajiv0M+ypseKrEFennDOkLcAbr3RoVwjh/RrhlTjpLnG4ZDByY7HvfSOG2Xj?=
- =?us-ascii?Q?1R48WszNaXzcOOcK/0GNPaz8PtN3vH4l3Hau18MXbpxhbKXqVpOva//7IxZw?=
- =?us-ascii?Q?q0IW009xj4ISosDYUtnwj4WLbF5v83ykzDJXLysAzNByvmRV12bmztOaRuni?=
- =?us-ascii?Q?0FZitXTiX1rB74b5lNrbywnSbHXXJ7BZ0v1Wv+grlM0m5uea/aXcSQ1FuDGf?=
- =?us-ascii?Q?6SJbJ7YhY2z1xHMNmxx91MEzdCpt6MKuGCYWKoGxipHgqV6Ap15nomL/mxD+?=
- =?us-ascii?Q?nTaKovQ+yhgxGh8pCKh+TNgzcNvulvIuaIIT72fbVXfxg9ckrAlauvZMpxgT?=
- =?us-ascii?Q?cL2Q17CkvQAXeRDYv1c5hwqqXG90/KOuCeu9o16c1Xto1Mt5KiivRaE+KNKt?=
- =?us-ascii?Q?c56TS5WPTerltzL4SYTIWCeWdmfMzMV26aerCXC/Z4fMcnhd2ioCBK4HNhwB?=
- =?us-ascii?Q?bNAsCKsQYnGZyJ7WsCn4ZEPiVZfgpZtPdV/jTO+M68BWBAlw/S9WzMR1qjke?=
- =?us-ascii?Q?2OPffgqqXzT3Ak28ov+DyXroKu47RsNmiPfhhUKzFqQMfe4Wd08akGbif6N9?=
- =?us-ascii?Q?+ebdctDOWowzwFqBZHtf6RHZmXhglDy319wvDQF1WWMGSAcfk0/Bjano67U6?=
- =?us-ascii?Q?EdnXEWUs5sQb9r7H0ZGqwkpLDDYrEFm/yijyg+vXOo0aKeUW6e+kGvBvmnOc?=
- =?us-ascii?Q?6T3deTgRzaExRxUEpIAmQbTUmS0D0WRLC7PaPtc1wjN6ppc7vtlVLFPWhHck?=
- =?us-ascii?Q?On7fNji4mbDhsmzZfaOgyXMSkVDcuhd2J+6Tcdl2eBRppwQtypY5kaBGvgmm?=
- =?us-ascii?Q?FY8Dy3Sx5Jsz0Nt0MM3az8Phda3DbwpkTr0iSJtd?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68138a7f-eede-4b4b-bdbf-08dcbc5e0e0e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 12:38:53.2605
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VHvqlYREoAGOXVkqjl5wJwYQegeP6meCpyebNZUbYs1ECI5MliM2+wKELk+YPw/9+lsJau2HbAc6E7cNpXxxkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10486
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240807163506.434885-3-neeraj.upadhyay@kernel.org>
 
-From: Peng Fan <peng.fan@nxp.com>
+Le Wed, Aug 07, 2024 at 10:05:06PM +0530, neeraj.upadhyay@kernel.org a écrit :
+> From: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+> 
+> rcu_task_enter() and rcu_task_exit() are not called on NMI
+> entry and exit. So, Tasks-RCU-Rude grace period wait is required to
+> ensure that NMI handlers have entered/exited into Tasks-RCU eqs.
+> For architectures which do not require Tasks-RCU-Rude (as the code
+> sections where RCU is not watching are marked as noinstr), when
+> those architectures switch to not using Tasks-RCU-Rude, NMI handlers
+> task exit to eqs will need to be handled correctly for Tasks-RCU holdout
+> tasks running on nohz_full CPUs. As it is safe to call these two
+> functions from NMI context, remove the in_nmi() check to ensure that
+> Tasks-RCU entry/exit is marked correctly for NMI handlers.
+> 
+> Reported-by: Frederic Weisbecker <frederic@kernel.org>
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Suggested-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+> ---
+>  kernel/context_tracking.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
+> index 152b485a62db..626dd7a173a5 100644
+> --- a/kernel/context_tracking.c
+> +++ b/kernel/context_tracking.c
+> @@ -239,8 +239,7 @@ void noinstr ct_nmi_exit(void)
+>  	ct_kernel_exit_state(CT_RCU_WATCHING);
+>  	// ... but is no longer watching here.
+>  
+> -	if (!in_nmi())
+> -		rcu_task_exit();
+> +	rcu_task_exit();
 
-With "quiet" set in bootargs, there is power domain failure:
-"imx93_power_domain 44462400.power-domain: pd_off timeout: name:
- 44462400.power-domain, stat: 4"
+And now since it is called by all callers of ct_kernel_exit_state(), you
+can call it from it directly.
 
-The current power on opertation takes ISO state as power on finished
-flag, but it is wrong. Before powering on operation really finishes,
-powering off comes and powering off will never finish because the last
-powering on still not finishes, so the following powering off actually
-not trigger hardware state machine to run. SSAR is the last step when
-powering on a domain, so need to wait SSAR done when powering on.
+>  }
+>  
+>  /**
+> @@ -273,8 +272,7 @@ void noinstr ct_nmi_enter(void)
+>  	 */
+>  	if (!rcu_is_watching_curr_cpu()) {
+>  
+> -		if (!in_nmi())
+> -			rcu_task_enter();
+> +		rcu_task_enter();
+>  
+>  		// RCU is not watching here ...
+>  		ct_kernel_enter_state(CT_RCU_WATCHING);
 
-Since EdgeLock Enclave(ELE) handshake is involved in the flow, enlarge
-the waiting time to 10ms for both on and off to avoid timeout.
+Ditto for ct_kernel_enter_state().
 
-Cc: <Stable@vger.kernel.org>
-Fixes: 0a0f7cc25d4a ("soc: imx: add i.MX93 SRC power domain driver")
-Reviewed-by: Jacky Bai <ping.bai@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
+Thanks.
 
-V2:
- Add Fixes tag and Cc stable (Per Ulf's comment)
-
- drivers/pmdomain/imx/imx93-pd.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
-index 1e94b499c19b..d750a7dc58d2 100644
---- a/drivers/pmdomain/imx/imx93-pd.c
-+++ b/drivers/pmdomain/imx/imx93-pd.c
-@@ -20,6 +20,7 @@
- #define FUNC_STAT_PSW_STAT_MASK		BIT(0)
- #define FUNC_STAT_RST_STAT_MASK		BIT(2)
- #define FUNC_STAT_ISO_STAT_MASK		BIT(4)
-+#define FUNC_STAT_SSAR_STAT_MASK	BIT(8)
- 
- struct imx93_power_domain {
- 	struct generic_pm_domain genpd;
-@@ -50,7 +51,7 @@ static int imx93_pd_on(struct generic_pm_domain *genpd)
- 	writel(val, addr + MIX_SLICE_SW_CTRL_OFF);
- 
- 	ret = readl_poll_timeout(addr + MIX_FUNC_STAT_OFF, val,
--				 !(val & FUNC_STAT_ISO_STAT_MASK), 1, 10000);
-+				 !(val & FUNC_STAT_SSAR_STAT_MASK), 1, 10000);
- 	if (ret) {
- 		dev_err(domain->dev, "pd_on timeout: name: %s, stat: %x\n", genpd->name, val);
- 		return ret;
-@@ -72,7 +73,7 @@ static int imx93_pd_off(struct generic_pm_domain *genpd)
- 	writel(val, addr + MIX_SLICE_SW_CTRL_OFF);
- 
- 	ret = readl_poll_timeout(addr + MIX_FUNC_STAT_OFF, val,
--				 val & FUNC_STAT_PSW_STAT_MASK, 1, 1000);
-+				 val & FUNC_STAT_PSW_STAT_MASK, 1, 10000);
- 	if (ret) {
- 		dev_err(domain->dev, "pd_off timeout: name: %s, stat: %x\n", genpd->name, val);
- 		return ret;
--- 
-2.37.1
-
+> -- 
+> 2.40.1
+> 
 
