@@ -1,143 +1,168 @@
-Return-Path: <linux-kernel+bounces-287171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11090952438
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:53:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB5495243E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B971C210A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:53:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377AF1F28AFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43A11C7B70;
-	Wed, 14 Aug 2024 20:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22E01C7B9B;
+	Wed, 14 Aug 2024 20:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OA7UOBV2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Os5M3DOC"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EB21C3F0E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A101C4607;
+	Wed, 14 Aug 2024 20:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723668468; cv=none; b=uSkkUkTO+XGqfm7BWhU6iIh5xldAk3NzY/GLF6LWW5tXeRDeTmkgJP6ylefCEFV67SkbeicxbP22+3cZrvQZUQ5zSYX89pe9FicVBuAKvZx8nkKpnK5D/IY7q0R5+XYGO1u6IvRSBTpBk1uWRywHRZ+p3zWq/w0XdJXFbaAtX70=
+	t=1723668648; cv=none; b=QPgGJBB27cOpGB3CUm0CafRVmGhDDG2jHWWc8qcEbAhk9WXNj0Q5nwzpzxKYPAOmOGkKnqtEwGSrsulzJNA69Ezq4oJxlxvP907v8BzGeRCBtYsoHPxcSlgYqxDoWo7qXQEMqXckRMMFo0F5QLju2bCj0jJwFyyh4wXjmMapgg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723668468; c=relaxed/simple;
-	bh=xAuqg4LG4M0fbnSo/GQcVfg4wjhYXdK6fQ96rx9RI40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FVnm6jKem8arPbwCXSf3k9u82PgQ2bLFKkYAj8rroZyRdcvcbt36n31efurgkDRpKSaiEqRM/g15m40+UT4HUkzXLV0cwFN80ZtjwIWSJq77W5sV2HL8Mkb86FtHlqoMXbQvBDbkBiFQZp8a1vT4WstWy4AiPPUbdpBhWo7I+LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OA7UOBV2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723668464;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+6lTZVqxZijRPSjfEzQi+vwTAY7CwJ2b1e+TxM4Mrk=;
-	b=OA7UOBV25OigDon4mYpG0PaGojzrCq8mEdXd7EhmqAdIGNWqQ0WOjVSJ5WKYa2xd+4DkOj
-	yh3/4+NVQ0cwBHF7IVZ7T3K1UWkNIqYonSldUUw1oHl6+OAhB1F78XyzzSRAz9Cz+lrBQe
-	nb4OX+LP9lh7bJQwf0ribAeigiLUuas=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-KHf7YhIvNjebrVdxeU-lPQ-1; Wed, 14 Aug 2024 16:47:42 -0400
-X-MC-Unique: KHf7YhIvNjebrVdxeU-lPQ-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ef205d48ebso1961851fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:47:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723668461; x=1724273261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L+6lTZVqxZijRPSjfEzQi+vwTAY7CwJ2b1e+TxM4Mrk=;
-        b=WouqrzcHEIOKqrhcetJtq9bJIS4JWBuyg0Um4dPEVHCa/84yhEjuVCtF+/hGWdFPZN
-         4OoNz7Im1FRC/T89Yw6x4UFWP9B255T/rSzussTwIqYh4uZJBZiHkpCX8atCVYL8cGTn
-         /GqMVyEABN9f2XxuiNzVekiFdagc+APxip++tZ5b3XFllvTUAjEunLZG8dsBy6LVbCIM
-         A0wRCPOFOnzX5sbP3t8ZkKV/2KA77JOsvRb0TXuPy96HOSig20J+oCkZD7w8FkaGEXHD
-         gv257dJQi9W8KBoi4fg3HZ9nFWskXYB/yV9N80Y8ejaW40x+HDA9NvQvnd70hFgUrbpe
-         F+Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwLwZ4TN9JTUYLcOFXKfguiz3QnwaPhYi8JkmbGCglkgBjvfrjQZz+0NjV3A/mwFAHDMPHwKMRPOcDEUGX2coj7Wj6DcEh642goV32
-X-Gm-Message-State: AOJu0Yx2eWUTPio74OBOVRuFU/+dtuFJ7R6kSJQS3rSDQrqmGl2moCp8
-	RWDSXOuHrIqZ5cUudP2CiICKDhA6HduF4JpSyeMvL+QdkjNDi1hC8ayLjVBuwFEF19gu8OpH3kH
-	/7NY28F+dY27yDuhD0OJAQOEKLK5mb1yYB0/y1A+ja7IR+5otT4hMe9Il06vEqExiKMgpiDLGRZ
-	ETpV5vzomuknhhAOBwYbrWWKLQqlq1aDdUZSkE
-X-Received: by 2002:a2e:9683:0:b0:2ef:2ce0:6ac with SMTP id 38308e7fff4ca-2f3aa1f1dd1mr24000341fa.22.1723668460827;
-        Wed, 14 Aug 2024 13:47:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOJF6QT6rKh2U8kgEkPVDV5badXvR0hhWLGciNfUm778LjMDYtscMG23tmLAtY9tHBPsjoWq2/pM4uncBTUwk=
-X-Received: by 2002:a2e:9683:0:b0:2ef:2ce0:6ac with SMTP id
- 38308e7fff4ca-2f3aa1f1dd1mr24000091fa.22.1723668460232; Wed, 14 Aug 2024
- 13:47:40 -0700 (PDT)
+	s=arc-20240116; t=1723668648; c=relaxed/simple;
+	bh=5QOrrcPWYL1MLiry8auoIsfq6qdWOapmxd4c18ijduo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XHu45G5D1rwSE+knQ/rs3J1XxvpsiUIR014++/YeqFITA4IWxEHO6BoMA11WKAHWt7ij5a3+vR3qprGzCCebj9jNqyzFhz/Y0BFdELOBBxmhIq09mbNsPNMF1icDsM18uGWvAN8geP1vddhfZH8Kh+un0rtZOUPVFgw4VKkUYXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Os5M3DOC; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1723668625; x=1724273425; i=wahrenst@gmx.net;
+	bh=5QOrrcPWYL1MLiry8auoIsfq6qdWOapmxd4c18ijduo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Os5M3DOCnaRvKSHlVHlQkl8Kk/Ks+br42UhApK5BGXmxp+e7C0tkjW9GoFqdyBUM
+	 L9BqxWXHgYAAhUkOHM5ShWShE8vmHgpFMuAvv+aTWmytw0RdNBH0+R/vfG/9Q93Ax
+	 t+HNfZvKScduQOLReKZabdFZ/MB+YMHr599KdrB3wTyVsvp5DyNxchyjzoojQZAo/
+	 iOVmotqggWbN7kO0JAHcXVQEC5SFInbq7O4wcFYVciGBdn5SsQRpmkPbNKPxBoEXw
+	 f5cy710U+ht75CNyUAv510fRjunspt0b60LvKR6mUXHZib5YQQsHB4oke3psmBJiM
+	 YYcMoHfTPXeUnVO5Iw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MQMyf-1srJWS2eun-00I4P1; Wed, 14
+ Aug 2024 22:50:25 +0200
+Message-ID: <07154679-42bc-43ba-8b72-62083ed78a4d@gmx.net>
+Date: Wed, 14 Aug 2024 22:50:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814143414.1877505-1-aahringo@redhat.com> <20240814143414.1877505-10-aahringo@redhat.com>
- <2024081445-coffee-antiques-e9cc@gregkh>
-In-Reply-To: <2024081445-coffee-antiques-e9cc@gregkh>
-From: Alexander Aring <aahringo@redhat.com>
-Date: Wed, 14 Aug 2024 16:47:28 -0400
-Message-ID: <CAK-6q+hN8ZRAHc7aS7C_RO4pEGN1t3eA_vDChsSgsQOcJEU4vg@mail.gmail.com>
-Subject: Re: [RFC dlm/next 09/12] kobject: export generic helper ops
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: teigland@redhat.com, gfs2@lists.linux.dev, song@kernel.org, 
-	yukuai3@huawei.com, agruenba@redhat.com, mark@fasheh.com, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, rafael@kernel.org, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev, lucien.xin@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: next-20240814: bcm2711-rpi-4-b boot failed
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Naresh Kamboju <naresh.kamboju@linaro.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ lkft-triage@lists.linaro.org, Linux Regressions
+ <regressions@lists.linux.dev>, kernel-list@raspberrypi.com
+Cc: krzk+dt@kernel.org, Rob Herring <robh@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Anders Roxell <anders.roxell@linaro.org>
+References: <CA+G9fYuncv0fuBSC0A1z1G_UOv_XuMQz=DsrLZDK-Wc=10ghag@mail.gmail.com>
+ <CA+G9fYv2M8tqwXQF5At4KmG3PFJoiv3D-4Tn_q87MfBvAqLmag@mail.gmail.com>
+ <da941b0e-8e29-4ff7-aff8-683da0aef8da@gmx.net>
+ <03524012-0f88-4990-811e-1e76c2b8e7af@broadcom.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <03524012-0f88-4990-811e-1e76c2b8e7af@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7KfDGcsjaiNfH0s+oXJJG03yNgKFiQNyDJp/PCml8Gido0sNTS5
+ SR/oHyTKC7tLMF+0i0xJ144yMQW1Qgs9k4eRI/tqlQupdjzi+T8p2J+raB14uA04Y2Sr4Go
+ 9CfhLmM+kj+iIsuMZ2KHy9sM60+GqatgEEzJkf008eEWPqxts9bnOXO2LLfGK+vAbDalqQo
+ rxAWDz7fhnRcxSrR33aFQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NRuN9n2Xjso=;KzqcaW7lg6nVLxuMsdzgDzB+3cg
+ U1luxqpKL/vuCBOcg+c2x/OhFR/+5/evLFFPVMmxE8xyCXTTYIKVxQWQfsmqYBOudZVu+6CFv
+ xbf9cgy5wvIcOboRgm1C1bOixF7YXaViCvwH8WtZEKi7m87Imk2c399z7EUNHhjZlnoKNOkD+
+ /jczyYu+o2HZ8SNHaw+FPQ1B+OFMm5CPKxOnbXtw9z8nsMM9a7b68el/r0gcRf7Srmws5zEuR
+ 0yiR5r+pqT6NZxR7PZlwKOzyLI6hDVT69bXO5wderl7Gp8fhVJ3oQeAK6YwCuWktWIdujeEBw
+ Bile+1335sytHTGOxH52/r58Ql1tI9wst1N1Zx8FVpHA3s+wVJ1VGxjF3YAgcqXkXhtnN48z8
+ +etTLfUIf3y9mRlE3CZb5tPByxxmkY0XRTVnIrbky2wbPORsx1jjyH7H3H9Xkn0N1bWPyvGvc
+ 7oem4SZUnW8pKoIW8BGaolM1e0nT/UUIE4keAPUipjPDQt+bcllNsT6Qu/eAb5VNjGOxQ12SV
+ lI8NsnWPmYhAyuYIWr5PODMDtZFzNCXhSslU8dEPPOYoUe9FO1J7hZ5RR4zBPqyKzOHqROOOX
+ N9B/mms/vraOxww5m9yijv+ViBlb5rnbT9YdKaKpz3L3gW0K3yV2iAhQQZAvVNi7bchSQghnv
+ vQrOnwLWQP7jE3X6d/2eptt2oNg6kosBfGbnIqA4mr9ogG9o6Yx5JW518Mv5Iz9tXKd5SZ3j1
+ MX6rP717uTHygBIsmajbl9oEkaKOjorwA+Ro3N+7DV3AedV9h2KJ9R0A/r+pHyp/MYf/npcwJ
+ +wn9ejJJrhBImck1msg911Wg==
 
 Hi,
 
-On Wed, Aug 14, 2024 at 11:06=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
-g> wrote:
+[add Raspberry Pi kernel list]
+
+Am 14.08.24 um 21:48 schrieb Florian Fainelli:
+> On 8/14/24 09:19, Stefan Wahren wrote:
+>> Hi Naresh,
+>>
+>> Am 14.08.24 um 17:26 schrieb Naresh Kamboju:
+>>> On Wed, 14 Aug 2024 at 20:54, Naresh Kamboju
+>>> <naresh.kamboju@linaro.org> wrote:
+>>>> The arm64 kernel booting on bcm2711-rpi-4-b boot failed with
+>>>> today's Linux
+>>>> next-20240814 tag. The boot failed with half boot log [1]
+>>>>
+>>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>>>
+>>>> =C2=A0 GOOD: next-20240813
+>>>> =C2=A0 BAD:=C2=A0 next-20240814
+>>>>
+>>>> The first investigation show the following to changes and I have
+>>>> reverted the
+>>>> following two commits and the boot test is back to pass [2].
+>>>>
+>>>> $ git log --oneline=C2=A0 next-20240813..next-20240814
+>>>> arch/arm64/boot/dts/broadcom/
+>>>> =C2=A0=C2=A0 6e7b99d720da6 ARM: dts: bcm271x: add missing properties =
+to
+>>>> local_intc
+>>>> =C2=A0=C2=A0 eb81f43c901ff ARM: dts: bcm2837/bcm2712: adjust local in=
+tc node
+>>>> names
+>>>>
+>>> Anders bisected down to first bad commit as,
+>>> =C2=A0=C2=A0=C2=A0 6e7b99d720da ("ARM: dts: bcm271x: add missing prope=
+rties to
+>>> local_intc")
+>> thank you for the report and sorry about that mess. I don't why i was
+>> under the impression they were harmless DT properties. I look into this=
+,
+>> so a revert is the proper solution for now.
 >
-> On Wed, Aug 14, 2024 at 10:34:11AM -0400, Alexander Aring wrote:
-> > This patch exports generic helpers like kset_release() and
-> > kset_get_ownership() so users can use them in their own struct kobj_typ=
-e
-> > implementation instead of implementing their own functions that do the
-> > same.
+> Without the 'interrupt-controller' of_irq_init() would not be picking
+> up the interrupt-controller@7cd00000 node and it would not attempt to
+> register the driver. We can see that the GIC is still the primary
+> interrupt controller for that system:
 >
-> Why is anyone needing these?  What raw kobjects require this type of
-> stuff?
+> [=C2=A0=C2=A0=C2=A0 0.000000] Root IRQ handler: gic_handle_irq
 >
-
-In this patch series I introduced kset_type_create_and_add() to have
-the possibility to do the exact same what kset_create_and_add() is
-doing, just setting a different "struct kobj_type", for the kset that
-is created internally by kset_create_and_add(). I can't use
-kset_create_and_add() as it always uses "kset_ktype", see [0].
-
-I am doing that to have only a callback for ".child_ns_type" assigned
-as it returns the "&net_ns_type_operations;" structure to tell
-underneath everything is separated by net namespaces.
-I don't want to change anything else so the "struct kobj_type" should
-look like what kset_create_and_add() is doing. Therefore I am creating
-the same structure as kset_create_and_add() is using, see [0]. The
-"kobj_sysfs_ops" structure seems to be already accessible from
-outside, just the two functions I am exporting in this patch are
-missing. Or I implement it in the same way in the dlm/gfs2 codebase
-(that is what nfs is currently doing, see [1]).
-
-And then we are at the two users of those kobjects that are using
-those functions, it's DLM and GFS2 as they used kset_create_and_add()
-before and I just want to add the ".child_ns_type" callback. Other
-users could be nfs [1] (for the release, get_ownership - I have no
-idea).
-
-thanks.
-
-- Alex
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/lib/kobject.c?h=3Dv6.11-rc3#n937
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/fs/nfs/sysfs.c?h=3Dv6.11-rc3#n23
+> my suspicion here is that irq-bcm2836.c still wants to own the inter
+> processor operations and calls set_smp_ipi_range() which then replaces
+> what the GIC has installed, thus diverting all interrupts towards
+> itself, when it should not, and that won't work as there is no
+> coordination with the ARM GIC driver. Stefan do you know how the VPU
+> decides between one interrupt controller versus the other, assuming
+> there is even a choice offered to users?
+Unfortunately not, i hope someone from the Raspberry Pi guys can tell us.
+> Is it via adding/removing the 'interrupt-controller' property, or is
+> it via the more conventional 'status' property?
+>
+> FWIW, I did changes back in the days to support the 7211 sister chip
+> of 2711:
+>
+> https://lore.kernel.org/lkml/20191015185919.GA26464@bogus/T/
+Thanks for pointing out, now i better understand the complexity behind
+it. So the missing properties were intended.
+>
+> Dropping the patch for now, thanks!
 
 
