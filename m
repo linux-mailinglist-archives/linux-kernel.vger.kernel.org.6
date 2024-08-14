@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-286425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E64C951ACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:27:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF688951AE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D0E1C20D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8595D1F235B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191411B0128;
-	Wed, 14 Aug 2024 12:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC7E1B1410;
+	Wed, 14 Aug 2024 12:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k7sR6p68"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpUpmfq0"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87201ABEC6
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250081B0123
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723638465; cv=none; b=Ykp1TAbwFC6Lugs75oOLaqkptBs86csvDkKmcwGGBdvaGPWzNr4SGerAh746s44HBtB2B+0eVI82KWJoTgZrjkrOyEU+pY7AcFiW9pMVNO9o1qRDuzD+qsCzrUmznQrvrU0pBsg5VevRK5QytZDkktyw4GkcFquzkMCNLiWeEBU=
+	t=1723638579; cv=none; b=YqneBXZWC5S8O6QotZQewBK1uXuYvqVaaR6dBW87IaAN1cPQweFdXhWSEAORzrVIiRWPDYjfWezw/Ba1c2/TkuvliLGVQZ0ZVuajhtDD83rnGO6JRXdxJmr5OcjZavSSrOTwgxGjonIkw6zcVY/Suu+iqtxdFM5cHvMjsPIRY3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723638465; c=relaxed/simple;
-	bh=MCOk87ltZF6H24V4o3EuaT8TEO85EAEEdjQr/69xPv0=;
+	s=arc-20240116; t=1723638579; c=relaxed/simple;
+	bh=VrU7+CmKVckiMKyZb2WVhNioB0kDz6sNPDPH+MoDmIw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LUsNiw19D6HR3JLzv9Mvyp9qp2YYS2QnHwz+oxXlD4Es4M0O4Md7WAW4I0A0GI8X0kxEDR6J46aM+geC3Tnxibhi0qoqtwnR3NO9BNCjIe+EGnk6JWyIlKW37XATGc8J98D9FgaZrdNc4bE2K0nrJYA9GceJZhKhJpRNJ1Nljik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k7sR6p68; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e05e4c3228bso6334067276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:27:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=qd3TWCO4AgKHdkASAxevfE8qBtpxj3hfeKe7BpCtdR7U76gE8DP5FuNjAftEZ4TlMq+b//DtPtle6sBiEE/C2OsYXTmMvg2dsw9cME013kCvRxgQO5puxuItVLSDtNGXuFnIggjVGzC+PKuNZs/b2F4dzrwFWElTD4uNV/L5MY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vpUpmfq0; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso64581475e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:29:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723638462; x=1724243262; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9qLRZtDKTr0jSAm7vgxxCmZiYCAFJZ6KbzLPsYTR78E=;
-        b=k7sR6p68TNyMvDbNuMi7MIKE0abbXQn+tQJsMWlCcQRm1R5fMzmTfypX41WMOYjiMn
-         zx9gEpYHfZVzaOuSyWHfIxsg9oLRCUq1gXAT0QBhM3Zd/cJ5jDREDxKVLZzD2drB2bcR
-         vbFEQSW0E8HVdsvvfjqSBnClpAoU936DP+W9NLT3yJ+7CJ8+Q+2teJN0vvUWdgJZdHmt
-         xmAtrCLeDqRbwsEbibskG4NtDptg52e0Txg7itMHQVCRYibigmTXRcGo86d1WDsZUFzx
-         ybNZ1goL6WeghuM+j+1FXXhdgGoyltSPAopUaWQ2S9UBPCE8uUhmlsureH4cjYPMYN5G
-         Gdzg==
+        d=google.com; s=20230601; t=1723638576; x=1724243376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uf2tkvvyZih6R0nwaVIvzZFNfg/HB3eJ1DSI7qHSEuo=;
+        b=vpUpmfq0tF9ig2h82WwsnzHDCS0jrljtFXRwVqD34lC+MCMbNWWLcRGV+LEnTIcOQe
+         pT2K7zBB/7LjtDrXtKbpLYq+WamIxPQo1TYwCAB7gm8ej9JBZuyheC5qItuARUOeXbnN
+         JNr6ktzbKTsZWui3A8vIHtdoJBjXS1TVLIP59S6ZDEXpERHCUtZ/zUCDL8SsWaCLqQ5b
+         Jpi2AFVf9v19zIG6hk4fYS2m5VA272TTqY1wXcp0lgODh6RZ//iPjrpl7EJWDKUPJTO5
+         YgS8n//9CGyHs9QWAxw+fJV+dns2Up9yKOdF+0iTvnBiaPYQop18CkUraOSPd7jhqkRz
+         4FdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723638462; x=1724243262;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9qLRZtDKTr0jSAm7vgxxCmZiYCAFJZ6KbzLPsYTR78E=;
-        b=m5b0xV8OYhAKR7ZyFxDqrTdnE6tx9CWkDTFrxEq32pMBxGDWUprVKG6e0fCsN/Ts/B
-         fN8wOx2tVjnp2PRECWzGdVTvSR1bqFb0FJH4ia0ZXLkstCq5lniDD5+vEKG/l+Odo0dt
-         CZ8ASjzxjtjqunz3uIXYQI8Brdvw6KNcz5zVr7BQP8cYKjTkKkyCN3ymI76LXNzrWvjr
-         eMEhJeArySp9CnSA0wlm2g1vnHZ2dGRUG5fGwx35LMzxsgEzfEUq55ZBywxW/7xWRqTZ
-         BME/ZyZP4F+1MIOyvxcvEvbEYe1jG64BLVuIiFYRw1QmE6GNrxgKR/aUbj4Smk8cwFrP
-         eLZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUDMnpNsxs7lMKraI4XtKa0HIS654cEzigsl/qAuK23lsPIYdpaIS0YglYL8Prd/bgD35jQOtIxXzg/CYwoihGfrySUz2HRZmz2g/s
-X-Gm-Message-State: AOJu0YyJPmjJaZIYwrHmZTzAIMHDubmKhPrkVBuxTIa5RKr2PLGO+u9u
-	nt6zIQHbDNDg+V1kHeSULlGHesCO+nVoSbmUglw2aCXbHy0X/kjLctAneUBXxTgfCWqBuq7JRLG
-	vG3z0NL73x4kSa0+DFrd5VQQ/RdKMG2rxxPKMiW5mtV2npBC7
-X-Google-Smtp-Source: AGHT+IGZNeDFwFKcA5hs1O9iOJjIbT4kC9fliekBbf25Kpj2PSN73rKcDwW575WyFIjWIU4Us23LFsHtHqbVvg9DljI=
-X-Received: by 2002:a05:6902:2e0d:b0:e08:8d4e:ccc1 with SMTP id
- 3f1490d57ef6-e1155bdce60mr2569783276.54.1723638461945; Wed, 14 Aug 2024
- 05:27:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723638576; x=1724243376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uf2tkvvyZih6R0nwaVIvzZFNfg/HB3eJ1DSI7qHSEuo=;
+        b=u22Y0xNr9IyXYqqVlJOefQ14acHwtwfcdaCIuWg3lD2+QHR2LMr2kKV6htLpat+anU
+         5ocZlWOSD15idonfWq1BrNoRXQgek/T9a9bwWN9CFwrKZvtCA+pkYHQJaT17RxzHSW33
+         PNxW+pC+um20IUyKoz2XKMI59rBREPTjj4zwibKuGnK+Hhzsyrot0A5V9Wo/X3f/msRw
+         q29IvijI4V00LCiqmfJZhf7gDTSHKJiDWXNUblp8Asx5ycl7gW5V96zHGgZ2tWszb7r4
+         1Lh4wjdvVAnm0XIUvddsfzrz5VFL+Qwlwo1e/bDuOgr1NYJd9yQaMbX/pUgqw69j8VAw
+         k7aA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXpZeaMrGYBBruH/pTDzPPtI4RS9jM4qsG9usHR77+rCSlEjaE9waLbxzn8hecE+foddD489j+PTnyxtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzabFY3Xjf7YuPUlRmuthPbvNU77dBo6wcEDFhoUA+UHRfZozP2
+	o+Vj3NrnqLGgvJmyfJoZSELmk40RHxfo7edKsQHQR0uZY1TTxrLA11OCLT2L6zKHfecaM3vt2ME
+	PH1qRXmWwDpW6tOZY88QdLZKhIW23pxUvD0h+
+X-Google-Smtp-Source: AGHT+IE9nY3XVZlrx8o5ajRMuNRQyh6zpuaj6qDiq2GVDhymdwbZCe9WDOdgICrWuBgmkldoDg7QxMKEsOyqXjmPOl0=
+X-Received: by 2002:a05:600c:3b88:b0:426:5520:b835 with SMTP id
+ 5b1f17b1804b1-429dd22f28cmr23055905e9.5.1723638576134; Wed, 14 Aug 2024
+ 05:29:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813085748.2144637-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20240813085748.2144637-1-peng.fan@oss.nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 14 Aug 2024 14:27:06 +0200
-Message-ID: <CAPDyKFo_R3=MK9pRzzG2mV4s3HZKGuoZ1kxoNVLwGAqFirupNw@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: imx: wait SSAR when i.MX93 power domain on
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-10-dakr@kernel.org>
+ <CAH5fLgiyDtMWKe0db+uvKGPoPRepjiSxddSrBh8jF1N1COpdDg@mail.gmail.com> <Zryhae9OXD_dqfR8@pollux>
+In-Reply-To: <Zryhae9OXD_dqfR8@pollux>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 14 Aug 2024 14:29:23 +0200
+Message-ID: <CAH5fLghWj1zjaoZpxs+9Gf8jZ0Qm_PcK6GUQz9c7=jVbRO2_dA@mail.gmail.com>
+Subject: Re: [PATCH v5 09/26] rust: alloc: implement kernel `Box`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 13 Aug 2024 at 10:49, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
+On Wed, Aug 14, 2024 at 2:22=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
 >
-> From: Peng Fan <peng.fan@nxp.com>
+> On Wed, Aug 14, 2024 at 10:26:10AM +0200, Alice Ryhl wrote:
+> > On Mon, Aug 12, 2024 at 8:25=E2=80=AFPM Danilo Krummrich <dakr@kernel.o=
+rg> wrote:
+> > > +impl<T, A> From<Box<T, A>> for Pin<Box<T, A>>
+> > > +where
+> > > +    T: ?Sized,
+> > > +    A: Allocator,
+> > > +{
+> > > +    /// Converts a `Box<T, A>` into a `Pin<Box<T, A>>`. If `T` does =
+not implement [`Unpin`], then
+> > > +    /// `*b` will be pinned in memory and can't be moved.
+> > > +    ///
+> > > +    /// See [`Box::into_pin`] for more details.
+> > > +    fn from(b: Box<T, A>) -> Self {
+> > > +        Box::into_pin(b)
+> >
+> > I still think it makes more sense to match std and only provide From
+> > and not an into_pin, but it's not a blocker.
 >
-> With "quite" set in bootargs, there is power domain failure:
-> "imx93_power_domain 44462400.power-domain: pd_off timeout: name:
->  44462400.power-domain, stat: 4"
+> Yeah, I just kept it since I'm not (yet) entirely sure what to think of t=
+he
+> `From` and `Into` stuff in some cases.
 >
-> The current power on opertation takes ISO state as power on finished
-> flag, but it is wrong. Before powering on operation really finishes,
-> powering off comes and powering off will never finish because the last
-> powering on still not finishes, so the following powering off actually
-> not trigger hardware state machine to run. SSAR is the last step when
-> powering on a domain, so need to wait SSAR done when powering on.
+> I don't really like that, depending on the context, it may hide relevant
+> details.
 >
-> Since EdgeLock Enclave(ELE) handshake is involved in the flow, enlarge
-> the waiting time to 10ms for both on and off to avoid timeout.
+> In the kernel, no matter how well documented an API is, I think it's rath=
+er
+> common to look at the code for some implementation details before using i=
+t.
 >
-> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Sometimes it might not be super trivial for the "occasional" reader to fi=
+gure
+> out what's the type of some variable. Calling `into_pin` vs. just `into`
+> immediately tells the reader that things need to be pinned from there on.
+>
+> However, I had no specific example in my mind and I'm also not overly con=
+cerned
+> to remove `into_pin`, but I want to at least share the reason why I kept =
+it in
+> the first place.
 
-Should we add a stable and a fixes tag for this too?
+You can write `Pin::from` to convert the box. I think that reads
+reasonably well.
 
-Kind regards
-Uffe
+But like I said, not a blocker for me.
 
-> ---
->
-> V1:
->  Downstream R-b tag kept
->
->  drivers/pmdomain/imx/imx93-pd.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
-> index 1e94b499c19b..d750a7dc58d2 100644
-> --- a/drivers/pmdomain/imx/imx93-pd.c
-> +++ b/drivers/pmdomain/imx/imx93-pd.c
-> @@ -20,6 +20,7 @@
->  #define FUNC_STAT_PSW_STAT_MASK                BIT(0)
->  #define FUNC_STAT_RST_STAT_MASK                BIT(2)
->  #define FUNC_STAT_ISO_STAT_MASK                BIT(4)
-> +#define FUNC_STAT_SSAR_STAT_MASK       BIT(8)
->
->  struct imx93_power_domain {
->         struct generic_pm_domain genpd;
-> @@ -50,7 +51,7 @@ static int imx93_pd_on(struct generic_pm_domain *genpd)
->         writel(val, addr + MIX_SLICE_SW_CTRL_OFF);
->
->         ret = readl_poll_timeout(addr + MIX_FUNC_STAT_OFF, val,
-> -                                !(val & FUNC_STAT_ISO_STAT_MASK), 1, 10000);
-> +                                !(val & FUNC_STAT_SSAR_STAT_MASK), 1, 10000);
->         if (ret) {
->                 dev_err(domain->dev, "pd_on timeout: name: %s, stat: %x\n", genpd->name, val);
->                 return ret;
-> @@ -72,7 +73,7 @@ static int imx93_pd_off(struct generic_pm_domain *genpd)
->         writel(val, addr + MIX_SLICE_SW_CTRL_OFF);
->
->         ret = readl_poll_timeout(addr + MIX_FUNC_STAT_OFF, val,
-> -                                val & FUNC_STAT_PSW_STAT_MASK, 1, 1000);
-> +                                val & FUNC_STAT_PSW_STAT_MASK, 1, 10000);
->         if (ret) {
->                 dev_err(domain->dev, "pd_off timeout: name: %s, stat: %x\n", genpd->name, val);
->                 return ret;
-> --
-> 2.37.1
->
+Alice
 
