@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-287020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8660E9521AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4229521B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F053283540
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFD8283C43
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488941B8EB4;
-	Wed, 14 Aug 2024 17:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4151BD03A;
+	Wed, 14 Aug 2024 18:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KW1acHrb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xLhnetR5"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8781BC068
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35181BC084
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658347; cv=none; b=lc63TIeRpQWcPUkA+3SSNFY9QW3+4fJY7yrqr7F/woAAl1x8p0a2hIQ6yIlblhXPKiKqQ9h9ntxJJRkqoZprAPZkfSSFRskYUvz3VkRilUEvIjmDSBSM6gwV8NhzqeJkI1NupLbfM3fIdn2Ph8qhoylrn8VJ3QT3nzXjMe4zIRE=
+	t=1723658400; cv=none; b=eiRMd8N1iyBW3FIUxxx+GHoxU8Jlmn65+tlhwGGisp+YObOIZE6raM/6IFdgPhIRbjPyfEWQT/4c8q4J0rcQabKPFuX/61gCN/oP9/oad5p2LxuOgJSdLhIKKruC5MukGTtHRUG/RYwg3R6aSSqi6vpvaVGDW0XQtC8nRnFGdSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658347; c=relaxed/simple;
-	bh=M8GOuLvnypz73WwCDUFc8X7HjtFBve9Hh2f1yHpVwzc=;
+	s=arc-20240116; t=1723658400; c=relaxed/simple;
+	bh=gK4sRcaloHcln7TAZ92Aeomv4OGrsTEcLGBDbt0X824=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MZPGBRa6H1Ubvso1JuJDzcKkQskSQfTPjzg7q1lZ+KHoNKeWmf1RUFfKQ+4hWvnlXZGmGQ/yp7lebaaORP8RoSs5i3iMqoKPkPR7KWKz+bpE8T8eT4ez+svn9fVpe2hBMR/AgA+1S9gWIVMWPireUtnJ4SMsKKRIxi6FqbpqUtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KW1acHrb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723658344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=w1hk3Uwk3crCv48zaKF0+S7Qg23JitwooGXiDV5xo7M=;
-	b=KW1acHrb4srEJaONY1prsLck67GrkbVrhiu2FqfgbP14M3ubxXHP0Pd13MbeZtl9hK9WTO
-	SM5442LaTdtmMOf0wEtOO0eM7isoaGy/6l21grjZpFmC2bJrsvBYgdO20OkjxBFNiwCapy
-	7Y+S+YDa1W+aDf4JXF+9PA+tefM/4CA=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-427-XOqFHixQMFuj-jyB41cSxQ-1; Wed, 14 Aug 2024 13:59:02 -0400
-X-MC-Unique: XOqFHixQMFuj-jyB41cSxQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52efdae5be6so104255e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:59:01 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=VSBF5UVTPC4oRMaFWc3sYgDNrVoOQiSB+3Pj6PUI1Vcvdlgy5VKXsoTE0S/o0AtQju7Vg3a7IT4npwHviJzJLYary8w29QdPbPKAKkIK3NjnCwePZc0yU4xoWJ7ljm7M2ut9ojhSzCC0iXP77MxK92RFhZwaDWjRRMOoItbPM4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xLhnetR5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42816ca782dso454765e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723658397; x=1724263197; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=e+0+18kAd1ntL3CjGet64KYdk8UF+VMULzQLsO5d54Y=;
+        b=xLhnetR55buFiABKFeBzWOcMjZ8dTUU/qL86wAkRHXLEl/4PIe4rMXbXDThQJPw+Oe
+         Llovii2JIP7UGH3shLUXZXMauOEiuW+BIbg9ZPB2nMaPEp7iPduCQFCbenZYhtkdNCly
+         0a86I1TiFFjb4xuJvv1fV3j5P4irtDXazo3YJvXRKW2lvcBzmPmthDM/pL3ig75HJmwC
+         GRwRh17Nat0v3HQ3DxwsY2FuniP6T/kxD7gKESugofxEvCFUuTII9EkB+SzNqwKQ3T93
+         NtpU3T5W1Q1ME3+wmIZtNng5S0SOcvYu7HHvfP0RuvoDCGtRFaTSRJg2TZzydOBjWJ1J
+         2zvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723658340; x=1724263140;
+        d=1e100.net; s=20230601; t=1723658397; x=1724263197;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w1hk3Uwk3crCv48zaKF0+S7Qg23JitwooGXiDV5xo7M=;
-        b=hbC5v2Z6JfZ69sLsR/GflIR5EkgAoTYTASI6k4wTJBfZiCl7MFoNhF0onYDXLtam1G
-         YHuIgJwNk19T5/j+o75wTsFyoXdIEZvjPoOvOMoea4IrrJdSNgIBwKcYEz1WsykoffmE
-         Fa+HyXSh+Ug6fcAzw25Dgghn5kDqykjqmd2AQesWc0Igce1ttiQrdv5TqVTN6+MgGE86
-         Lkz7GVctHUQ1cfq8rcu9Gs7/E+losy50lw6YkZnShhPLOuKQir4L2wkPBGPyKN0nJfC3
-         0juFd2Hwnph0Q1t/0yD19e0Z0N9EpoxkOnFACsadLQCMsQOLm6qzacGAivqU+jX2JKps
-         tcfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLgrIhr8qnk7uddTUTjG+fGoP1mkFEjvIr6ycGggEQ8vIDJRGrD1vMmQPwEUt0oguwmkdmBBHNWuAtfpJ0N+o95DwRfrYDpHfxLYGF
-X-Gm-Message-State: AOJu0YwSrdzrOI8BnUZMjKVqKb8Fa2PgjjZyjdQ+QgyHkcTmWMwV6fIE
-	Vvj2XHaKCyp98CBYnn2SfUorlVDmETlHg2lj/XdAJ922frvXbk72sw6HamppkYgGJmpuI3vdqn2
-	6kZlkKyG6QHsvd0ujvHACdpziLAp+yJug6Lp3/1BtaREQR3va5/y39BeQjVjUqA==
-X-Received: by 2002:a05:6512:2395:b0:530:ac0a:15e8 with SMTP id 2adb3069b0e04-532eda64013mr2096058e87.11.1723658340436;
-        Wed, 14 Aug 2024 10:59:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEImyXCZ4wNRUOvofwfVooQv6fxhtQn2NmAjmGUiAkyZOxLZNMUilj+C7mj+lNQ8my6rni9w==
-X-Received: by 2002:a05:6512:2395:b0:530:ac0a:15e8 with SMTP id 2adb3069b0e04-532eda64013mr2096041e87.11.1723658339839;
-        Wed, 14 Aug 2024 10:58:59 -0700 (PDT)
-Received: from [192.168.10.47] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ded364fesm26861805e9.27.2024.08.14.10.58.58
+        bh=e+0+18kAd1ntL3CjGet64KYdk8UF+VMULzQLsO5d54Y=;
+        b=s3AjlNXvs3lmjGyvCeXV1EjWUrm+uVDBXljYj6nFPMsDCJyHELcagXfhO2p7Tm15+p
+         Y8niTwx3UBz9AmrEIpm/1ZHUiODKv0CLb2VoFEpIsSFVp19CRTLd4JarPn+FcLNwV3Cu
+         ixdsatjea8JWxmx/k3WSkGv6xYzytjTyPzOivF1jri30Vx5yDOdOhw67EYB9mReDnwwk
+         qWe3/Zr3svvLHBEQ+tvKIDNKYe0FRmkXQoVb8fXG4R4aAm+zKcjq7zYPlXVhvu5ED6Gc
+         3iw+fs4390Y5GaWXRuC0EsnXlG8KVelg7n8u15vIlordbhe0akImtd6f6GW+Jem6on5f
+         EwYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwVcqxNAe4ddSlXtESK6ZMYdMUH0jMDxg9lEwMQ18BegMaZPepMloBLrVBs8R+sdCfWyBqhTEyvy0wOQykD88fHceFFzxaBBz2G8up
+X-Gm-Message-State: AOJu0YxLQg+nqPJ1+9pV4MfMPFCXb8VUJv+sSH4Gbw/EoossLwCPzkqY
+	DGYDy+eDp5TD8nsR+JImddEI9AqeFeSOV5YPqDS/gXqsgCGmuKMRUj89mVFEyLc=
+X-Google-Smtp-Source: AGHT+IHv1VcCnmzCbrSFCmf9TtFXDTUTp/2jtxGlOatGsJT2eISwIhRuCQHwm7HglJURgLzYox3Nqg==
+X-Received: by 2002:a7b:c385:0:b0:429:d43e:db9e with SMTP id 5b1f17b1804b1-429dd26701dmr20162985e9.36.1723658396976;
+        Wed, 14 Aug 2024 10:59:56 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c93714asm13400232f8f.27.2024.08.14.10.59.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 10:58:59 -0700 (PDT)
-Message-ID: <1e6955c8-3672-41e7-ba8a-f2a205a601d9@redhat.com>
-Date: Wed, 14 Aug 2024 19:58:58 +0200
+        Wed, 14 Aug 2024 10:59:56 -0700 (PDT)
+Message-ID: <64af1408-d3c8-495b-a69c-7a0718eadfc4@linaro.org>
+Date: Wed, 14 Aug 2024 19:59:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,134 +76,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/22] KVM: x86: Fix multiple #PF RO infinite loop bugs
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>,
- Vishal Annapurve <vannapurve@google.com>,
- Ackerly Tng <ackerleytng@google.com>
-References: <20240809190319.1710470-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 4/9] memory: stm32-fmc2-ebi: simplify with scoped for each
+ OF child loop
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba
+ <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-tegra@vger.kernel.org
+References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
+ <20240812-cleanup-h-of-node-put-memory-v1-4-5065a8f361d2@linaro.org>
+ <20240814174502.00003b2c@Huawei.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240809190319.1710470-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240814174502.00003b2c@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/9/24 21:02, Sean Christopherson wrote:
-> The folks doing TDX enabling ran into a problem where exposing a read-only
-> memslot to a TDX guest put it into an infinite loop.  The most immediate
-> issue is that KVM never creates MMIO SPTEs for RO memslots, because except
-> for TDX (which isn't officially supported yet), such SPTEs can't distinguish
-> between reads and writes, i.e. would trigger MMIO on everything and thus
-> defeat the purpose of having a RX memslot.
+On 14/08/2024 18:45, Jonathan Cameron wrote:
+> On Mon, 12 Aug 2024 15:33:58 +0200
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 > 
-> That breaks TDX, SEV-ES, and SNP, i.e. VM types that rely on MMIO caching
-> to reflect MMIO faults into the guest as #VC/#VE, as the guest never sees
-> the fault, KVM refuses to emulate, the guest loops indefinitely.  That's
-> patch 1.
+>> Use scoped for_each_available_child_of_node_scoped() when iterating over
+>> device nodes to make code a bit simpler.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Might be worth using dev_err_probe() in here. Otherwise LGTM
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 > 
-> Patches 2-4 fix an amusing number of other bugs that made it difficult to
-> figure out the true root cause.
-> 
-> The rest is a bunch of cleanups to consolidate all of the unprotect+retry
-> paths (there are four-ish).
-> 
-> As a bonus, adding RET_PF_WRITE_PROTECTED obviates the need for
-> kvm_lookup_pfn()[*].
-> 
-> [*] https://lore.kernel.org/all/63c41e25-2523-4397-96b4-557394281443@redhat.com
+>> ---
+>>  drivers/memory/stm32-fmc2-ebi.c | 8 +-------
+>>  1 file changed, 1 insertion(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
+>> index 1c63eeacd071..7167e1da56d3 100644
+>> --- a/drivers/memory/stm32-fmc2-ebi.c
+>> +++ b/drivers/memory/stm32-fmc2-ebi.c
+>> @@ -1573,29 +1573,25 @@ static int stm32_fmc2_ebi_setup_cs(struct stm32_fmc2_ebi *ebi,
+>>  static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
+>>  {
+>>  	struct device *dev = ebi->dev;
+>> -	struct device_node *child;
+>>  	bool child_found = false;
+>>  	u32 bank;
+>>  	int ret;
+>>  
+>> -	for_each_available_child_of_node(dev->of_node, child) {
+>> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
+>>  		ret = of_property_read_u32(child, "reg", &bank);
+>>  		if (ret) {
+>>  			dev_err(dev, "could not retrieve reg property: %d\n",
+>>  				ret);
+>> -			of_node_put(child);
+>>  			return ret;
+> 			return dev_err_probe(dev, "could not retrieve reg property\n");
+> perhaps?
 
-Nice!  For now I've placed it in kvm/queue as this is clearly 6.12 
-material.  It will be replaced by the v2 of course before graduating to 
-kvm/next.
+New patch for that... but just mind that deferred probe cannot happen
+here, so only part of dev_err_probe() benefits would be used.
 
-Thanks,
-
-Paolo
-
-> Sean Christopherson (22):
->    KVM: x86: Disallow read-only memslots for SEV-ES and SEV-SNP (and TDX)
->    KVM: VMX: Set PFERR_GUEST_{FINAL,PAGE}_MASK if and only if the GVA is
->      valid
->    KVM: x86/mmu: Trigger unprotect logic only on write-protection page
->      faults
->    KVM: x86/mmu: Skip emulation on page fault iff 1+ SPs were unprotected
->    KVM: x86: Retry to-be-emulated insn in "slow" unprotect path iff sp is
->      zapped
->    KVM: x86: Get RIP from vCPU state when storing it to last_retry_eip
->    KVM: x86: Store gpa as gpa_t, not unsigned long, when unprotecting for
->      retry
->    KVM: x86/mmu: Apply retry protection to "fast nTDP unprotect" path
->    KVM: x86/mmu: Try "unprotect for retry" iff there are indirect SPs
->    KVM: x86/mmu: Replace PFERR_NESTED_GUEST_PAGE with a more descriptive
->      helper
->    KVM: x86: Move EMULTYPE_ALLOW_RETRY_PF to x86_emulate_instruction()
->    KVM: x86: Fold retry_instruction() into x86_emulate_instruction()
->    KVM: x86/mmu: Don't try to unprotect an INVALID_GPA
->    KVM: x86/mmu: Always walk guest PTEs with WRITE access when
->      unprotecting
->    KVM: x86/mmu: Move event re-injection unprotect+retry into common path
->    KVM: x86: Remove manual pfn lookup when retrying #PF after failed
->      emulation
->    KVM: x86: Check EMULTYPE_WRITE_PF_TO_SP before unprotecting gfn
->    KVM: x86: Apply retry protection to "unprotect on failure" path
->    KVM: x86: Update retry protection fields when forcing retry on
->      emulation failure
->    KVM: x86: Rename
->      reexecute_instruction()=>kvm_unprotect_and_retry_on_failure()
->    KVM: x86/mmu: Subsume kvm_mmu_unprotect_page() into the and_retry()
->      version
->    KVM: x86/mmu: Detect if unprotect will do anything based on
->      invalid_list
-> 
->   arch/x86/include/asm/kvm_host.h |  16 ++-
->   arch/x86/kvm/mmu/mmu.c          | 175 ++++++++++++++++++++++----------
->   arch/x86/kvm/mmu/mmu_internal.h |   3 +
->   arch/x86/kvm/mmu/mmutrace.h     |   1 +
->   arch/x86/kvm/mmu/paging_tmpl.h  |   2 +-
->   arch/x86/kvm/mmu/tdp_mmu.c      |   6 +-
->   arch/x86/kvm/vmx/vmx.c          |   5 +-
->   arch/x86/kvm/x86.c              | 133 +++++++-----------------
->   include/linux/kvm_host.h        |   7 ++
->   virt/kvm/kvm_main.c             |   5 +-
->   10 files changed, 184 insertions(+), 169 deletions(-)
-> 
-> 
-> base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+Best regards,
+Krzysztof
 
 
