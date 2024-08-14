@@ -1,105 +1,62 @@
-Return-Path: <linux-kernel+bounces-286954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110AD9520CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:13:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38439520C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E83F281BEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57E01F22E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815D31BBBD9;
-	Wed, 14 Aug 2024 17:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102261BBBCD;
+	Wed, 14 Aug 2024 17:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jMSBkpkE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="es+ldT/D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489FD1D52D;
-	Wed, 14 Aug 2024 17:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A0528DC3;
+	Wed, 14 Aug 2024 17:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723655626; cv=none; b=BfruozZkw3iblIew3Kt2GUPW5srJD7CIKeY973KIvI0/SLlxD729N2XJCVac2tyGy/2rgQh/ao2PgPoVN2pefBa9un3zS8TEdq1yAMt0zdc5HxuJXN/yE8BiIBGwDNQbPdan4AFwWnRnIMTGmbAJsTNzvfkKgR5ZYmHudl8xR3I=
+	t=1723655601; cv=none; b=lQOX0I6h/PEw6F8C2NSB13oWrV9sCFTfxt0ls1BfM8yIwWgZpZf0galGViYv6Ms0yM/+baJAjxyGOPUuE5+WAGoGxqetSmpNhErqRJHlC6fYYnN659V9Zm1WrmDuZWqB2sva14DIiln3nD1fSOAY1KbU2QC1pa6Q76Ib3G9HLE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723655626; c=relaxed/simple;
-	bh=HRDljkfdCjtP0Jhr6VA2fjJ8DjprBgLSgLylCdl2uJc=;
+	s=arc-20240116; t=1723655601; c=relaxed/simple;
+	bh=DJ0tPf2qO/ZeZBBDG1UOrsbfoOLKy8q+8P0FrWkqchQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feXFgHyIj6N2KRo1obsRWqHbW+c0cndT2xdoVSfQVPU1hrNd1q2sBo0gelbGOXnq/D0DCWrohZiamnFYAgSAWBhwl2U57mJUTao4Yo1kSOAxGgY3i0TyxQ0qTflgID0Urg0q3a25qqbJRIbx7FDD7HMgm8Mw2WXKcVCLZ6lFfiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jMSBkpkE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CccF10Y1UVzqVdXNkHG0Q64NFYze/yEsWDqzDzqW7vg=; b=jMSBkpkEqt8WS+F2dp4Vv9k29E
-	uvhexiSRt/j6BZcXWYWhwFZRtiXP6U1lvw1czQiH+KNd72I56m4MYPtsT6fjoLpt5zpYQLn1KJR7V
-	//A13nNRvQuOdUlfQX0zKb1mA9sweTFZhxmoVhdvrLHTy4dtQW1xOoMzDLcm5vc6LlWHvvPRpRVtm
-	kpRvLb8GIfoprE7rCO712liHkEn9FPsoT6qeRz1f+cqBU8GROFhO5kmGFUkcteUQNB60I3VJDJjnc
-	LQoQoyMzpWy5r6yPbdhByxjE2+SCeJzLB2IP5fuzMH37JuKus6pSF5G5VNezNRjd+F8nW5QOzBbuD
-	qVDSrCYg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1seHYS-00000000ndL-2y8J;
-	Wed, 14 Aug 2024 17:13:00 +0000
-Date: Wed, 14 Aug 2024 18:13:00 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: alexs@kernel.org
-Cc: Will Deacon <will@kernel.org>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Nick Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Brian Cain <bcain@quicinc.com>, WANG Xuerui <kernel@xen0n.name>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Naveen N Rao <naveen@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
-	linux-openrisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	Vishal Moola <vishal.moola@gmail.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Lance Yang <ioworker0@gmail.com>, Peter Xu <peterx@redhat.com>,
-	Barry Song <baohua@kernel.org>, linux-s390@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Mike Rapoport <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [RFC PATCH 00/18] use struct ptdesc to replace pgtable_t
-Message-ID: <ZrzlnIWrnaUx66rY@casper.infradead.org>
-References: <20240730064712.3714387-1-alexs@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9Oe520FWOEGSqdrW51xoFey8uL5Y0Z2v4LRWNmrYCawOVT0NLh0aUBkYGLYs9WlGtw8uL5asE1zvhqnQU4ezqXsNTqi1OJfe9zi4r25Fesip3wiq+jisuvZLPzzlKfymoGNIdSVFywD1/xVj/RPJezx6x5KnvHGhBypM5ezm9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=es+ldT/D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2310AC116B1;
+	Wed, 14 Aug 2024 17:13:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723655600;
+	bh=DJ0tPf2qO/ZeZBBDG1UOrsbfoOLKy8q+8P0FrWkqchQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=es+ldT/DqHjprxUm+UD9M9GM87UABh2Z+TIJRVfV5qW23yzi1t/USl4Ol43ux+hc6
+	 s33vQxJpkyG90VhNtPvLA06fNvJYw2g1ia8GM/eBSsWu+mfIlXXxvGVa/HZLYUOGjr
+	 dI3otS8ndT9ywKNAx88NfaHHiIfkz5Es6LVdv3GC2uhzus76fM35UMRXoi7b0pL8aM
+	 OGGsovThVWJrvcUVhYXSgfnS3YdLVJat6rixCqxqrHhq7MJFHzoDSUMiNsEIQNw7ta
+	 aKm+GLnGP1eGosY9Pnpn8zgiGMfyfJ0I5HRRJNLoJHZSSaezTAzW7XOVv2hCqHuycl
+	 NyMRv4NoBqRuQ==
+Date: Wed, 14 Aug 2024 19:13:12 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 04/26] rust: alloc: implement `Allocator` for `Kmalloc`
+Message-ID: <ZrzlqFuZ63QJT8Cx@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <20240812182355.11641-5-dakr@kernel.org>
+ <04b0fd96-c91c-4f38-90e9-8acee31e8445@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,25 +65,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730064712.3714387-1-alexs@kernel.org>
+In-Reply-To: <04b0fd96-c91c-4f38-90e9-8acee31e8445@proton.me>
 
-On Tue, Jul 30, 2024 at 02:46:54PM +0800, alexs@kernel.org wrote:
-> We have struct ptdesc for page table descriptor a year ago, but it
-> has no much usages in kernel, while pgtable_t is used widely.
+On Wed, Aug 14, 2024 at 04:28:04PM +0000, Benno Lossin wrote:
+> On 12.08.24 20:22, Danilo Krummrich wrote:
+> > +unsafe impl Allocator for Kmalloc {
+> 
+> There is a missing SAFETY comment here (and also for Vmalloc, probably
+> also for VKmalloc then).
 
-Hum, I thought I responded to this to point out the problem, but
-I don't see the response anywhere, so I'll try again.
+Any suggestion on what to write here?
 
-> The pgtable_t is typedefed as 'pte_t *' in sparc, s390, powerpc and m68k
-> except SUN3, others archs are all same as 'struct page *'.
+I'd probably come up with something like:
 
-And there's a very good reason for that.  On s390 and powerpc (I cannot
-speak to the sparc/m68k), each page table is (potentially) smaller
-than PAGE_SIZE.  So we cannot do what your patch purports to do, as
-we would not know whether we're referring to the first or subsequent
-page tables contained within a page.
+--
+Memory returned from `Kmalloc` remains valid until explicitly freed.
 
-Maybe at some point in the distant future we'll be able to allocate
-a ptdesc per page table instead of per page allocated for use by page
-tables.  But we cannot do that yet.
+It is valid to pass any pointer to an allocated memory buffer obtained with any
+function of `Kmalloc` to any other function of `Kmalloc`.
+
+If `Kmalloc::realloc` is called with a size of zero, the given memory
+allocation, if any, is freed.
+
+If `Kmalloc::realloc` is called with `None` it behaves like `Kmalloc::alloc`,
+i.e. a new memory allocation is created.
+--
+
+and repeat that for `Vmalloc` and `KVmalloc`.
+
+I'm not sure how useful that is though.
+
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > +    unsafe fn realloc(
+> > +        ptr: Option<NonNull<u8>>,
+> > +        layout: Layout,
+> > +        flags: Flags,
+> > +    ) -> Result<NonNull<[u8]>, AllocError> {
+> > +        // SAFETY: `ReallocFunc::call` has the same safety requirements as `Allocator::realloc`.
+> > +        unsafe { ReallocFunc::KREALLOC.call(ptr, layout, flags) }
+> > +    }
+> > +}
+> > +
+> >  unsafe impl GlobalAlloc for Kmalloc {
+> >      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+> >          // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
+> > --
+> > 2.45.2
+> > 
+> 
 
