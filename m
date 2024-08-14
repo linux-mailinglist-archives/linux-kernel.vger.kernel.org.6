@@ -1,143 +1,105 @@
-Return-Path: <linux-kernel+bounces-286910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E25995204C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:45:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E4C952054
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E61281F86
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:45:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44D7D1C2293A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713E21BA882;
-	Wed, 14 Aug 2024 16:45:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD1E1B9B5C;
+	Wed, 14 Aug 2024 16:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="lKUb5hDO"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB3D1B32C1;
-	Wed, 14 Aug 2024 16:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8801B32C1
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653909; cv=none; b=sjph0j2mN0Wc2K8hgOyNk5dQTMRwOhzRVQ1/fOO5NjQ7CTK6ef5c7ssxcukY+HP/rDObDr+asW9KujV7MpWJQT6mpsFAjYzwPrRojzX30+heaVhGuDZPeYImYBmphumuWqhjPAFceffhVgRw8gnrrLmo01KIxxZSkSia2K0PebI=
+	t=1723653976; cv=none; b=JaT38JAhASCvSVup/N+kMwJru4Wkm/mb+jh2SaO/yh2Ip52qq8xYQPNKgVM6EWp5F9mmwtknUDCXs55CZSR36OLdD7jeVzAjGUhhyCDU8pL1C4WWyGW6yLOWI8mafhieKjbCbKS3bW8uby1aquOmezci62fLNiSTQK68uzM1AQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653909; c=relaxed/simple;
-	bh=/n56xU5JNvQ+uWhPffHfc+6hSiphLiK4sF3OvYACHiM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WTmVxDUJDZ6BGweIjuqnXC5FWVBWssATLKuCDSiIB/vhvC9U/6Z/50oBy1BOlKu9TK5wj4HCBOn6jViFQ24vLaZHRVy1K58/fsgTb0kEx8M6hnBtiS7+oSdLakjUH6x1Rx2tXI9lBPPeReUh+18Tw4idTNVzw0UCIPjr479t1TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkYv46bP1z6K8x1;
-	Thu, 15 Aug 2024 00:42:08 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3E1FC1400CD;
-	Thu, 15 Aug 2024 00:45:04 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
- 2024 17:45:03 +0100
-Date: Wed, 14 Aug 2024 17:45:02 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
-	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4/9] memory: stm32-fmc2-ebi: simplify with scoped for
- each OF child loop
-Message-ID: <20240814174502.00003b2c@Huawei.com>
-In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-4-5065a8f361d2@linaro.org>
-References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
-	<20240812-cleanup-h-of-node-put-memory-v1-4-5065a8f361d2@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1723653976; c=relaxed/simple;
+	bh=2j8W6pogQxHvBnWGOy1ygt1i+Idpkez5yfZ+YZqh404=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oXZvlS0Z4bLq+ykKE+IVUjygXRrtPwj/t1vcVrAZCoogi1VYLFxrdCxX6x+x8f57Dx6K3Tz4+awj1yCOeNGDI+nL2Q4FekUOrl3YjLRsmCgyWDWI0Y06pmxDGZiN1eWqMe5X2S0pMlNrain6VvGJKFBexBXsUMP89mtOgvEIiVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=lKUb5hDO; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1723653919; x=1724258719; i=efault@gmx.de;
+	bh=gDH0NO9yMjo+hDvfJkTwFxk83PfYIMAaXvuSfpY6R/k=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lKUb5hDOozekd0GQxjlc20sdVVxYMTllR4N3sAKhtInORdhHCpEnGeJbuJ269gnU
+	 AYY+mehY4HzNwGmanFklnOGN1ecNrud7I98iECygVyAk6upovfkzv204TjO5tJPnv
+	 X4M/vlhItvmCVwnyFC4NzT2o2bolTV9Ys7+0auWeNNotIU4O4Y07k3U8I1/J7ffa+
+	 LjxbpbUgB/85u+WqNOt5U+3anAZmlgkwiCUPJ88fYDV4syAmwcovGuuc79bdTjcGg
+	 r6zrjOI6baq5okcYpV4QACHdixfUZ97ZNlXJ8OL3FEWhKvIUQwFDElbZDid0WQuMS
+	 LQZiuYZd0CJXN0iqDw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.61]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6KUd-1s7M2A1qg5-016bVO; Wed, 14
+ Aug 2024 18:45:19 +0200
+Message-ID: <1572d0f2646312767a3ef8b72f740c9033163bf3.camel@gmx.de>
+Subject: Re: [PATCH 00/24] Complete EEVDF
+From: Mike Galbraith <efault@gmx.de>
+To: Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra
+	 <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com,  linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com,  youssefesmat@chromium.org, tglx@linutronix.de
+Date: Wed, 14 Aug 2024 18:45:17 +0200
+In-Reply-To: <CAKfTPtALe942tjoyq1RqSYyM40PG+tfEY8skRDxRM1daWLSKUg@mail.gmail.com>
+References: <20240727102732.960974693@infradead.org>
+	 <CAKfTPtALe942tjoyq1RqSYyM40PG+tfEY8skRDxRM1daWLSKUg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:U6uHhhrl/+GrVz4qpI0I/Ys2ikoGABF/g616D0PygtvxeH/ATii
+ fQQUOu6viPPo2E+7qMPizWud4RmxJH/EQii0ttkRAcgogAPa1bA6WdlpzzeG1cS0FVoNO1Y
+ Yp4AJQfC1WoCXsPAwwQPrriYoYJP1MWUoX5RyAcBVR/iJ31ALAc/EaQ1M01qzC4dYXf1Z1N
+ 7nxIvZBJING7n0TFojZcw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dBz8LJCl0/U=;P6cOozAJBoSJ9kodP1l2U+8bSy9
+ zsZAuTqzcjqCnLnC2XCyhytY/Ff6WB9xBiTGD6c+DlpgqjzFWCnRkm4XYDko0RwUzdTK2RMk8
+ doZlCLI5CQO/tcKzDVI/bc2Mq9WBUYqjhoMzIm15W78P7LJ17SS72wf1dDazM4kusrjeqjTxu
+ etu9X0B5egTzHtTufjfmeCPLxOwbfFOekIck5OWJzz5e2DG6jB2PkOr1nhZWLDSILOjUl6kj8
+ 9LP2TqeQClfiyceAnvvjH0KnuOGbOzrNF8YSwDYHdrEXE1wiecrTbIKhjrzKn6PscCaPYKs5L
+ bi3+63O8Wqp6vLS/f3kvLMK77T+HYKj0QIb/aeek4mKLoXfbFw3r6HOvPatZsb9fe/JMiSRr9
+ fGKW/5G3UtpYaluehivl7Io+BqY4tAdGyE95EisfEn2L3G6hd+Ko83xgsTVy3quSFLVNd1rKZ
+ 4Fm7yC5ld2D0ll+d3+hEr0wEYZVkfXbJumwDlVBYe8monOkVj4e0Y/OUOSm97Bsx+n2trBI8b
+ WAgzel8ZwwVGUzftUoJSfOZeERjMKRQgRe6nMN0Ej2mu7lITr+p0izxNKZBGkmbbUuZSSGLcg
+ c7kokZ7wznZsvwmjenGS/wq11dyIIk92ML7DsRW/6MpkIn40tiBnyenoHwHjyGo73sTe4zr9y
+ abVhUuT5vAyqj2XNL9c+XRn6sIJgbAsbEfVzIJzzeye+RrMSVW7CwlQdUJ4zg+rbuT6lgaWY9
+ Z3/P+OdPO5w5kQd9bhqAnHqSOVBwreer0VNiEn6t3JoZqDkxh8MW83svyEfV5lHBw0EkwyA5G
+ vT2dv4dAhOqfzqf301o4CiLA==
 
-On Mon, 12 Aug 2024 15:33:58 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On Wed, 2024-08-14 at 16:34 +0200, Vincent Guittot wrote:
+>
+> While trying to test what would be the impact of delayed dequeue on
+> load_avg, I noticed something strange with the running slice. I have a
+> simple test with 2 always running threads on 1 CPU and the each thread
+> runs around 100ms continuously before switching to the other one
+> whereas I was expecting 3ms (the sysctl_sched_base_slice on my system)
+> between 2 context swicthes
+>
+> I'm using your sched/core branch. Is it the correct one ?
 
-> Use scoped for_each_available_child_of_node_scoped() when iterating over
-> device nodes to make code a bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Might be worth using dev_err_probe() in here. Otherwise LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Hm, building that branch, I see the expected tick granularity (4ms).
 
-> ---
->  drivers/memory/stm32-fmc2-ebi.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
-> index 1c63eeacd071..7167e1da56d3 100644
-> --- a/drivers/memory/stm32-fmc2-ebi.c
-> +++ b/drivers/memory/stm32-fmc2-ebi.c
-> @@ -1573,29 +1573,25 @@ static int stm32_fmc2_ebi_setup_cs(struct stm32_fmc2_ebi *ebi,
->  static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
->  {
->  	struct device *dev = ebi->dev;
-> -	struct device_node *child;
->  	bool child_found = false;
->  	u32 bank;
->  	int ret;
->  
-> -	for_each_available_child_of_node(dev->of_node, child) {
-> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
->  		ret = of_property_read_u32(child, "reg", &bank);
->  		if (ret) {
->  			dev_err(dev, "could not retrieve reg property: %d\n",
->  				ret);
-> -			of_node_put(child);
->  			return ret;
-			return dev_err_probe(dev, "could not retrieve reg property\n");
-perhaps?
->  		}
->  
->  		if (bank >= FMC2_MAX_BANKS) {
->  			dev_err(dev, "invalid reg value: %d\n", bank);
-> -			of_node_put(child);
->  			return -EINVAL;
->  		}
->  
->  		if (ebi->bank_assigned & BIT(bank)) {
->  			dev_err(dev, "bank already assigned: %d\n", bank);
-> -			of_node_put(child);
->  			return -EINVAL;
->  		}
->  
-> @@ -1603,7 +1599,6 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
->  			ret = ebi->data->check_rif(ebi, bank + 1);
->  			if (ret) {
->  				dev_err(dev, "bank access failed: %d\n", bank);
-> -				of_node_put(child);
->  				return ret;
->  			}
->  		}
-> @@ -1613,7 +1608,6 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
->  			if (ret) {
->  				dev_err(dev, "setup chip select %d failed: %d\n",
->  					bank, ret);
-> -				of_node_put(child);
->  				return ret;
->  			}
->  		}
-> 
-
+	-Mike
 
