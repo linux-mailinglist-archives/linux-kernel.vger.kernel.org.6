@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-286193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2829517C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:32:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 641379517B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAF81F25193
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718701C231B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F521448C1;
-	Wed, 14 Aug 2024 09:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C750A149C6A;
+	Wed, 14 Aug 2024 09:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xy87WijU"
-Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="lGtwgmId"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590F53CF5E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6770A14533C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723627926; cv=none; b=pxZqx6XVCHZGLgbUjitcdxRsa6F7cZUqYrt3hUucXBrKQrstolZaIavMKvkSb/gaawC+GmqwBA2bm69AK7rWipzeze+4HoxQqoMM66KnuU+vveCmMxyKz352wt2LzW3qWqRkzNACC5hXHYX5uDdfCw9zHh6g5p6rN+PQlK3FczQ=
+	t=1723627698; cv=none; b=hPDknvkMCLihScNTOXyaVFEGViJKmrWqq6UaRFaRq8izgzJ37NlewNxcSP+BVFg6epmLLA8V0IhWDTMfVazFNfX7JKyO/rFUkbBbLowRk3RsgHZsj+EmKZWz9Gan5NkgvC96VxpqyNm8XcMQtudHgdicf14ByJGYGd1tslL2+T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723627926; c=relaxed/simple;
-	bh=7K1wMLTsX7xoRiV2EGWLfmS4OgCLAEdJHKEzZKgzXg8=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mSZnMKctZcpLbrU3pgYdzb4LA4t0IxRHrfXNcp5TnKDatUgV39CmIL8ejeQtAF2I0Qei90E4D7XJxo0vfBbxMnIT/WtVOaWYOrHrDYJxaRCfCUAw8rSJSJz1Jlt0B7K2ywEOLycVsXZn9xQgj/bjtpQYB5CsZXmegXKBaPWcid8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xy87WijU; arc=none smtp.client-ip=203.205.221.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723627613; bh=BjWm5iNW6k12cGHitMBH2GV92WfnpXy1msZhJDgkWs0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=xy87WijUcu4+bjesxdbUY3w9WaKLHUkaeLDT12HViYsBQLTHNPgsoCdxYdt5Z1BH5
-	 56FO6suFDqTbXe5XtkmBw2FwJZj4AzpbcNyysQ/L+obzOSUeAQSug284zXj/TekazX
-	 5+lBqJfFnPHVneqE1fFBmMODm3pwMLjjyIyfScn4=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 6B395873; Wed, 14 Aug 2024 17:26:51 +0800
-X-QQ-mid: xmsmtpt1723627611t4ll7hh0p
-Message-ID: <tencent_5D5C3C9B368696CC37D64A8A755F77196609@qq.com>
-X-QQ-XMAILINFO: NY/MPejODIJVIqbu1gSDHSOAM7fPuif85TmEWB2TZ/Wuk46c2p3Ue3SwYhvTCM
-	 078wlgS2zKbB2pBY1RmVW/mDZc60oby8r+toV66u3XokAvkp0m2C9fyAFe4OrNfCerg0Xv6Uz+QW
-	 FJ6EzK151PdY+SKkqcFYg04Opt3+Zm/XktJySn68uGz5GxrQfJsu/NV3hBpDRmhcvgIede8wEQPX
-	 rFGnPSG7AfLEcyxW50I3l8m5iSwzrfIxB2bQ9CxUf7DrQJoRzVCxEC3B5zBFppQvnh7T+iJ3Stj1
-	 OcCDQEvtGo9cE5xSzS2bJOWhuNqxRTL2U/g2Qw+2LC5KL7oVnb1r55VvXDzsygTCJl/KQyoHEtot
-	 UsqY3lIaGNU7jOBibiPN7pAgdO+rQrxpWS1ppTY68TD/bcKjjuh5QtGNveQSLElJDXOIfzDFmB75
-	 yw9UhFv2Maj5NouzIA/lDxDvvt4RcXGLndq18yHpTfIWKN+N5h5cRDaVfSSJHrbOW7MruDovYIpV
-	 PvbpyUltyfaIPZTnOFbS6oAvVJ7a+T6aNsMaVgk1w0zUSpTQu9y+B7/YhDVL9DNCP6Y4LgNkJf25
-	 5vypNHSdJSlyvx7JFd4BLBXblT7gtJG2ZkqMVVla+Bxv8kIjY3VQ9/1nB1qPQtpfYD2Q9kZxYAnW
-	 A3Ea1bp31NqTc6AhlYO7P9GKz5Sr+9wAli/4MdHX+klJlUHHnT039MRpY2oT3szgdhOofLt35KMO
-	 OoF1JUQ/NVb+KEH3RNMWOqv0os0RyZKEU/uyX3l0Jno5ZmOkjOtIQxwkL1tI+eDeQW7ytex1z8Qq
-	 KVhUsvhS7SqaxC13BhkBncXPVZMO1HrlN4+c6YQpW/Bsm6T5bN8x9sDIB2mW4PSlybMPrFA8saGF
-	 G6BYWkqUVsS/XyzFkQR2dFneWDdt1Vj/AmBJEFHwt9OZGD7yfZZrFoTrEde/QP3Q/ZC/9PIc+p
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-Date: Wed, 14 Aug 2024 17:26:52 +0800
-X-OQ-MSGID: <20240814092651.1028802-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
-References: <0000000000007ec511061f00a7b2@google.com>
+	s=arc-20240116; t=1723627698; c=relaxed/simple;
+	bh=KdxsryBtMUzqo1RV5EZOLXiAQ9j8G3+iome+hahtQgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VmdmqXssUwBmOA+thV1EMeVFD4c2FY42Mnm+F95DNImVpMj/KN7IdhN4eat4yQDjiP2KzN+lbQynDGN+KcJ0v2xZOi1TZhyA123z1WM8DbxXxcpKc3hjatzsOJr/EMIEzS8fC+w+f13ULXYRoquKqKb1wYU5eAQ1PAP/IG995HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=lGtwgmId; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso6569822e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723627694; x=1724232494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W3P9Jq6VrXIYga285qB+T9g1aGPyBny+fQnSPL8FQbI=;
+        b=lGtwgmId0QJyB3jd826bOukdBQqZwK2/zvtgGWvs4TU+VZHPSYalQt0bTMWZlcbciy
+         u9x3zdC/t4nvb/Dk0ZYd78kgwWmByFlNR+HDpTEiod+XwE/k6ZHeZ5PDY5Axgkv6b3uu
+         YQpOku44Hpm6F6kdnAx5zfFAX5JlagUN3lvzjoiwTYEeV941s6w/iFPqWjphKbJzcm6u
+         A4BT5+MWiP+VtYOFbiq+Mv89NcOmzCJ93eZeZ2U7lRgpYPvR4ZVDW5DgUglaou9ZI2F2
+         ssBMYpAh4XnqMcyTsVVxS0QusB5Vn+30hxBnWowr4YbKYdTVzEJIu45Og3lOsZjBGxBa
+         jMEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723627694; x=1724232494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W3P9Jq6VrXIYga285qB+T9g1aGPyBny+fQnSPL8FQbI=;
+        b=mThgZu1hLRll5SMsnxavPX/G3OJ1SwKy7B4qPmGO91JHu057AvUlMAHyD66T3/soQm
+         4T/5xleQNMzTpKvxUSXB5siXLKAWSDfxfP4Ek6XtlVYW35ajzU7I6rqb6GE6OJbIEaKA
+         GPFZWPPY71jkIOiy3npwITPposeheA6noe0RW8OC3yV6PO3TGF+Brqbsu6M2Y1CgrwLa
+         8osYvDmOPfThbRJqE0+e92NnCOGGexXzQ/NAiTgHGnE2r+gmPvbj8MJleoVSK5G5vw1O
+         1wXKC/cRv/IBTdBn43sKm7J29Ti93WFNEVfIlPP26DSDdko9sx4GTqbXo5vowC0gIDsI
+         7kWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGTLZM/AXHm/mWP50syQpECVx5Mlgx9iiSw73oGoG6b+damqA+W6MhYum3C07ty1bGk6ggz9Yp9nPNff/76SHoOGdsJh5lST+eXSMx
+X-Gm-Message-State: AOJu0YxXlfIGDD/skodE0VDhIWUiSeTedPHjocDmwcxJgLBQ2TZsrMfs
+	b3bzrU7GcpjAWpv/5CEAETgZfD8ffJTWnazdndUtZ7xNH3kV9XxV5I3D/Y1MKBxPUokNrM3TlSK
+	V7yAI9wCsblGmO8gcBw2G7WcTjkLw9rbK97IM7A==
+X-Google-Smtp-Source: AGHT+IFe05bN9bAq9xy+58l7ncXMDFx1z/bJrarVfwaEv3r5G9ew4J8l/Ct5njAjkzJrtDklkvisuQOYqwkGO+3QFcI=
+X-Received: by 2002:a05:6512:3da8:b0:52c:dc25:d706 with SMTP id
+ 2adb3069b0e04-532edbbd3bemr1391778e87.52.1723627694266; Wed, 14 Aug 2024
+ 02:28:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240731-tzmem-efivars-fix-v2-0-f0e84071ec07@linaro.org>
+In-Reply-To: <20240731-tzmem-efivars-fix-v2-0-f0e84071ec07@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 14 Aug 2024 11:28:03 +0200
+Message-ID: <CAMRc=MeS++NAyVn3+9mGpiUypMcX24EyonQPD9NV7tdTf7Ytng@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] firmware: qcom: fix an efivars regression in qseecom
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
+	Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Johan Hovold <johan+linaro@kernel.org>, 
+	Maximilian Luz <luzmaximilian@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-debug
+On Wed, Jul 31, 2024 at 9:45=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> The first patch address the regression with efivars using the qseecom
+> driver reported by Johan Hovold. The second patch removed dead code that
+> was left over during the conversion of the qseecom driver to using
+> tzmeme.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> Changes in v2:
+> - Update the kerneldoc for qcom_tzmem_to_phys()
+> - Link to v1: https://lore.kernel.org/r/20240730-tzmem-efivars-fix-v1-0-b=
+b78884810b5@linaro.org
+>
+> ---
+> Bartosz Golaszewski (2):
+>       firmware: qcom: tzmem: fix virtual-to-physical address conversion
+>       firmware: qcom: qseecom: remove unused functions
+>
+>  drivers/firmware/qcom/qcom_tzmem.c         | 32 +++++++++++++--------
+>  include/linux/firmware/qcom/qcom_qseecom.h | 45 ------------------------=
+------
+>  2 files changed, 21 insertions(+), 56 deletions(-)
+> ---
+> base-commit: 931a3b3bccc96e7708c82b30b2b5fa82dfd04890
+> change-id: 20240730-tzmem-efivars-fix-d9635d39cbf2
+>
+> Best regards,
+> --
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
 
-#syz test: upstream c0ecd6388360
+It's been two weeks. Can this be picked up into v6.11?
 
-diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
-index e0d34e4e9076..cb511d49e35a 100644
---- a/fs/9p/vfs_dir.c
-+++ b/fs/9p/vfs_dir.c
-@@ -218,8 +218,10 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
- 		if ((S_ISREG(inode->i_mode)) && (filp->f_mode & FMODE_WRITE))
- 			retval = filemap_fdatawrite(inode->i_mapping);
- 
-+		printk("fid: %p, %s\n", fid, __func__);
- 		spin_lock(&inode->i_lock);
--		hlist_del(&fid->ilist);
-+		if (refcount_read(&fid->count) == 1)
-+			hlist_del(&fid->ilist);
- 		spin_unlock(&inode->i_lock);
- 		put_err = p9_fid_put(fid);
- 		retval = retval < 0 ? retval : put_err;
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 348cc90bf9c5..acee5f6570a5 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -52,6 +52,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 		omode = v9fs_uflags2omode(file->f_flags,
- 					v9fs_proto_dotu(v9ses));
- 	fid = file->private_data;
-+	printk("fid: %p, %s\n", fid, __func__);
- 	if (!fid) {
- 		fid = v9fs_fid_clone(file_dentry(file));
- 		if (IS_ERR(fid))
-@@ -80,6 +81,8 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 
- 		file->private_data = fid;
- 	}
-+	else
-+		p9_fid_get(fid);
- 
- #ifdef CONFIG_9P_FSCACHE
- 	if (v9ses->cache & CACHE_FSCACHE)
-
+Bart
 
