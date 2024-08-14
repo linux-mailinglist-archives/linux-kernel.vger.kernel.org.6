@@ -1,177 +1,197 @@
-Return-Path: <linux-kernel+bounces-286120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9639516D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:43:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5A89516DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:45:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEF11C22712
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:43:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5776BB21964
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DCD1428E4;
-	Wed, 14 Aug 2024 08:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAFB1422C3;
+	Wed, 14 Aug 2024 08:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KmEM7s4b"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SV7WyUtB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A337713E02C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB70A13C83D
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723624964; cv=none; b=lPMZPaq5QLEWq9bBNO2YzXZKGLJhk9dyIqgq1OcZawF7oOqJDPicu1peIP3q3dFbT4cybamih+WaQJeE1BjVx0ioowRgtk/ab6B2wy10+1mFtBPwc1EyXcQjPIBGjH5jCwisohr426IoV6Li1Z5jpZzlxJgSM+zwgQ7mHsWvGe4=
+	t=1723625107; cv=none; b=FfmQ8E2pvue6R3qWx3jGyz6PScgucSBWJYPO9HRG4f40aoPNkOhlUh39rkvzSeQSleZWflWo6yRDYvJfbSg/KKWjGreEISUaDdDND3qObs/SWFAPESkVDbfNiXtBZPnrr/jPlaXWRkF4x1w/i6UQBHBNNTkUmu/R7uCvLMkrbvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723624964; c=relaxed/simple;
-	bh=Yz3FvUcSxm+sPTrIaF3ceIVk5DSTE0gKUp7+I6EngE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I4av3rMRvkUWO34Xb2w7X68i3PcQrMvf+sURY3xiNjM5UpSMHWhrPZ9y+GqSHPgl/w9DRoP7DjJU3EW4yLUGmTLPXMablS0BY9fboD6tLKYL5VB85hAMWeESchCgeH7cmjQ2nzQSDljnokWRa28vRJmDc/FRGE/GAFOp0sQUvjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KmEM7s4b; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42803bbf842so62752275e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723624961; x=1724229761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6GtZhrT/mm/AxwGAt7UwiNX0lEue7r3nHz8XAGJUFqg=;
-        b=KmEM7s4bCf4SHKlU+KNEbCglwEjFzxSALDuvwpqXzAYFKJm7aJx/pvP4JptoIEnBmp
-         nGmZYaq7MGpGyxosy1gsZHB8Z0LQGc6lfMrPvV9opOFoXkGRzhCRMHKgbYc6i24ENs+I
-         6gTWNHaYCcFvZhn1ECDw+YPiRmRM/1xTm9OQWfK35w6JA91PEEea6vQOrt+ajKFeAOWM
-         K/EhTBggqGpc1+d9maw7jsb3agyk5GryUN7ehMH94Qia0yS59DzcuiqmqcRnVMXXC68N
-         5XB8lJfOxgJMNOt6AGsdV9t1TvFeBOLeYW3pMM49jwOROvyiwRNrbH2Uw2+/o3FJtYA+
-         R15A==
+	s=arc-20240116; t=1723625107; c=relaxed/simple;
+	bh=QrDGC86x1xaRXuKpPMO6Uk2eDrZ9ud7JG3yamK/yxnk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QLyKEMGM8z26XVskMKm/iq3I80YMnN4xYSGVyaeCXk0hHsdYFJTx25QX+Eq19PmPH0hoLCGU5lIic3UbKMkkZvWd3gIjQVqSPMsYpUPJXOtKF7vu8swwI/dxaFT+PfIY6/xu59ViK//OvYx0KYO4BF07fk4D7NCRl2jKE/NZMAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SV7WyUtB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723625104;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7hwkKCoOBN+b1OvqT/QSoUQZv/ejIIMA/dhfZb9tdx0=;
+	b=SV7WyUtBTe3+/EELOkra8d0WysJxe91HQBctREEgqzVhOVY/YnnUJfnZAofVUxNKMmJjhm
+	JeyQgZazoEpciYf3Uve9BsNG2ZICJmHnP9YKNnZhFgwHC+njtYwuSf8I0kHImSXbZbhRMU
+	PfJQtuE/yr3UC4pAgQAmaOnBTo4bxR0=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-qXt-fFVePo-uREgsWERxjg-1; Wed, 14 Aug 2024 04:45:03 -0400
+X-MC-Unique: qXt-fFVePo-uREgsWERxjg-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-532fbabc468so275991e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:45:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723624961; x=1724229761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6GtZhrT/mm/AxwGAt7UwiNX0lEue7r3nHz8XAGJUFqg=;
-        b=ePGAHf/XaozobyUhQfJi5WIOqckY4KP1yZx+4At+ETyWRtUVRcNDk8TsdtOnQhO2XX
-         4TOlbS4iNIRP8PZA7JVAUPjDzhrzkt7jt/CoB2ylR9Ps2/O5S6KcTz/nezoz3ILyKFaS
-         3vLXq+ytdpPPVF2uitNpXmWZUOuouLRy+KrK0eEDhTkHaCaYAtCdwB8tsT7itCZ6vsS2
-         FDIQmTou5Lx7SDrnJEH/Hns4xmbNL48SAIEJbnB9xZGvWQ1FfbcGDX9AM/1n1Q0+0wmt
-         xhvjf3QqaFfUjqEGfxddfD1WEidLdOMb6wnaTUoRLqMUFfbHaepmj0JV9futwX+VTNrF
-         +fJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNt//V0lEX4IF1os+pyaJBSH4p8zw1OXnrC1GVn6IBGefNIxrIfeW2qsxdLhhIu2sLT1fGhG3HaUpo9cN+nuSENdQakKVrmN5cxJ79
-X-Gm-Message-State: AOJu0YzX/cKGeoF6zdEtYBN1toY3HpMaugkwvnrHMbb/m51fECy1bsFa
-	sbczR92oGYNSnMNZmNd6eFcjKr/RfztLT7JcQEp/jKFiITHsXiW2wnV/f2sBGhQGFjqUl7iLq8d
-	vQP8V3YA/pH5D+q9vzT8PMLzAAJzCZw6hNAab
-X-Google-Smtp-Source: AGHT+IFrmL3U1S+rpzBOdS5HfRHkuyTVNTg4EqoC10UJXSwLurGP5QVOWdVYxkQVIjwptFuwedEGKyhyn45M8GLcKU0=
-X-Received: by 2002:a5d:59a5:0:b0:367:9903:a91 with SMTP id
- ffacd0b85a97d-37177744793mr1608078f8f.11.1723624960494; Wed, 14 Aug 2024
- 01:42:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723625102; x=1724229902;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7hwkKCoOBN+b1OvqT/QSoUQZv/ejIIMA/dhfZb9tdx0=;
+        b=L3Q82uDECrG9Gh1QBClxmMugTbEGzV4zl2dsrXeppdMYIzUaPPvC6GVgSBYZOXMboh
+         i+QJIsrVSGcAjSnZ54H+SfatKF0W3htO+FtskO3TEgRbKUyrRCj+0JisC74mckqrLiFj
+         iPtm0ymUz6u1LEL/PgrSpYxEDCNlli3iEkhWI0jDNVDABI//zMsgzY4zYocOk/pWE05W
+         52OIho5ZW3c1trUXNAQX8js6UDNM6dpXZ9VeyDjPnmlT3mUqGZf6b4+J01A6AnlDQG+T
+         3905Z44FL+ckSHmiupTH9d5tVCfzCSOIvFkHE0iQ6fa4AX8JtCowxm5Gz73dZp5ouwcl
+         8rdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXs+6wqCiR3pGWU4mXAKsm/u/+FZLtzvOY5rQ8Z0u3gr5efv5GBGiykdBCM2eB5nqK/SyQfNy1Lota7+Ml/oj6ImItbyTTvZB5fycW
+X-Gm-Message-State: AOJu0Yz2414zwkqWulGUhuzN/3be1H+N/I/mll9QNS/2KKtk97A3qFqQ
+	rRxYJwpLstOGxTE3K+f+fPo/ixHQyXAhCp+gjT2yBeRa2LzPgVOXIZLdGPItcXM3UQe+OYh/1Te
+	eOwyxVKX6t5LZtSBSpsUawnzI2oA1nGfNBhnUL1+UXGriK7hvHOuRlkmd5+X/lA==
+X-Received: by 2002:a05:6512:1388:b0:52e:7542:f471 with SMTP id 2adb3069b0e04-532eda83bd3mr1535834e87.29.1723625101819;
+        Wed, 14 Aug 2024 01:45:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExvv2JH1bujn3OdzYrvDxJ3jmVSbA8zfxLsfLv8SXbL6vxyV/RWT5TFXZWT1E65o1HmeWJUQ==
+X-Received: by 2002:a05:6512:1388:b0:52e:7542:f471 with SMTP id 2adb3069b0e04-532eda83bd3mr1535805e87.29.1723625101246;
+        Wed, 14 Aug 2024 01:45:01 -0700 (PDT)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd2bb4sm12394742f8f.91.2024.08.14.01.45.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 01:45:00 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>
+Subject: Re: [BUG] arch/x86/kvm/vmx/vmx_onhyperv.h:109:36: error:
+ dereference of NULL =?utf-8?B?4oCYMOKAmQ==?=
+In-Reply-To: <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
+References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
+ <Zpq2Lqd5nFnA0VO-@google.com>
+ <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com>
+ <87a5i05nqj.fsf@redhat.com>
+ <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
+Date: Wed, 14 Aug 2024 10:44:59 +0200
+Message-ID: <87plqbfq7o.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-14-dakr@kernel.org>
-In-Reply-To: <20240812182355.11641-14-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 14 Aug 2024 10:42:28 +0200
-Message-ID: <CAH5fLggchaAzcRK=i=zRm7hTg6qX0yGBAyAHcO45rG-oEh-AMQ@mail.gmail.com>
-Subject: Re: [PATCH v5 13/26] rust: alloc: implement kernel `Vec` type
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Aug 12, 2024 at 8:25=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
-wrote:
+Mirsad Todorovac <mtodorovac69@gmail.com> writes:
+
+> On 7/29/24 15:31, Vitaly Kuznetsov wrote:
+>> Mirsad Todorovac <mtodorovac69@gmail.com> writes:
+>> 
+>>> On 7/19/24 20:53, Sean Christopherson wrote:
+>>>> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
+>>>>> Hi, all!
+>>>>>
+>>>>> Here is another potential NULL pointer dereference in kvm subsystem of linux
+>>>>> stable vanilla 6.10, as GCC 12.3.0 complains.
+>>>>>
+>>>>> (Please don't throw stuff at me, I think this is the last one for today :-)
+>>>>>
+>>>>> arch/x86/include/asm/mshyperv.h
+>>>>> -------------------------------
+>>>>>   242 static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
+>>>>>   243 {
+>>>>>   244         if (!hv_vp_assist_page)
+>>>>>   245                 return NULL;
+>>>>>   246 
+>>>>>   247         return hv_vp_assist_page[cpu];
+>>>>>   248 }
+>>>>>
+>>>>> arch/x86/kvm/vmx/vmx_onhyperv.h
+>>>>> -------------------------------
+>>>>>   102 static inline void evmcs_load(u64 phys_addr)
+>>>>>   103 {
+>>>>>   104         struct hv_vp_assist_page *vp_ap =
+>>>>>   105                 hv_get_vp_assist_page(smp_processor_id());
+>>>>>   106 
+>>>>>   107         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
+>>>>>   108                 vp_ap->nested_control.features.directhypercall = 1;
+>>>>>   109         vp_ap->current_nested_vmcs = phys_addr;
+>>>>>   110         vp_ap->enlighten_vmentry = 1;
+>>>>>   111 }
+>>>>>
+>> 
+>> ...
+>> 
+>>>
+>>> GCC 12.3.0 appears unaware of this fact that evmcs_load() cannot be called with hv_vp_assist_page() == NULL.
+>>>
+>>> This, for example, silences the warning and also hardens the code against the "impossible" situations:
+>>>
+>>> -------------------><------------------------------------------------------------------
+>>> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
+>>> index eb48153bfd73..8b0e3ffa7fc1 100644
+>>> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
+>>> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
+>>> @@ -104,6 +104,11 @@ static inline void evmcs_load(u64 phys_addr)
+>>>         struct hv_vp_assist_page *vp_ap =
+>>>                 hv_get_vp_assist_page(smp_processor_id());
+>>>  
+>>> +       if (!vp_ap) {
+>>> +               pr_warn("BUG: hy_get_vp_assist_page(%d) returned NULL.\n", smp_processor_id());
+>>> +               return;
+>>> +       }
+>>> +
+>>>         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
+>>>                 vp_ap->nested_control.features.directhypercall = 1;
+>>>         vp_ap->current_nested_vmcs = phys_addr;
+>> 
+>> As Sean said, this does not seem to be possible today but I uderstand
+>> why the compiler is not able to infer this. If we were to fix this, I'd
+>> suggest we do something like "BUG_ON(!vp_ap)" (with a comment why)
+>> instead of the suggested patch:
 >
-> `Vec` provides a contiguous growable array type (such as `Vec`) with
-> contents allocated with the kernel's allocators (e.g. `Kmalloc`,
-> `Vmalloc` or `KVmalloc`).
+> That sounds awesome, but I really dare not poke into KVM stuff at my level. :-/
 >
-> In contrast to Rust's `Vec` type, the kernel `Vec` type considers the
-> kernel's GFP flags for all appropriate functions, always reports
-> allocation failures through `Result<_, AllocError>` and remains
-> independent from unstable features.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> [...]
-> +impl<T, A, const N: usize> Box<[T; N], A>
-> +where
-> +    A: Allocator,
-> +{
-> +    /// Convert a `Box<[T, N], A>` to a `Vec<T, A>`.
-> +    pub fn into_vec(b: Self) -> Vec<T, A> {
 
-Nit: I would probably make this a From impl.
+What I meant is something along these lines (untested):
 
-> +#[macro_export]
-> +macro_rules! kvec {
-> +    () =3D> (
-> +        {
-> +            $crate::alloc::KVec::new()
-> +        }
-> +    );
-> +    ($elem:expr; $n:expr) =3D> (
-> +        {
-> +            $crate::alloc::KVec::from_elem($elem, $n, GFP_KERNEL)
-> +        }
-> +    );
-> +    ($($x:expr),+ $(,)?) =3D> (
-> +        {
-> +            match $crate::alloc::KBox::new([$($x),+], GFP_KERNEL) {
-> +                Ok(b) =3D> Ok($crate::alloc::KBox::into_vec(b)),
-> +                Err(e) =3D> Err(e),
+diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
+index eb48153bfd73..e2d8c67d0cad 100644
+--- a/arch/x86/kvm/vmx/vmx_onhyperv.h
++++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
+@@ -104,6 +104,14 @@ static inline void evmcs_load(u64 phys_addr)
+        struct hv_vp_assist_page *vp_ap =
+                hv_get_vp_assist_page(smp_processor_id());
+ 
++       /*
++        * When enabling eVMCS, KVM verifies that every CPU has a valid hv_vp_assist_page()
++        * and aborts enabling the feature otherwise. CPU onlining path is also checked in
++        * vmx_hardware_enable(). With this, it is impossible to reach here with vp_ap == NULL
++        * but compilers may still complain.
++        */
++       BUG_ON(!vp_ap);
++
+        if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
+                vp_ap->nested_control.features.directhypercall = 1;
+        vp_ap->current_nested_vmcs = phys_addr;
 
-Hmm. This currently generates code that:
+the BUG_ON() will silence compiler warning as well as become a sentinel
+for future code changes.
 
-1. Creates the array.
-2. Allocates the memory.
-3. Moves the array into the box.
+-- 
+Vitaly
 
-Whereas the stdlib macro swaps step 1 and 2. You can do the same by
-utilizing new_uninit. A sketch:
-
-match KBox::<[_; _]>::new_uninit(GFP_KERNEL) {
-    Ok(b) =3D> Ok(KVec::from(KBox::write(b, [$($x),+]))),
-    Err(e) =3D> Err(e),
-}
-
-> +// SAFETY: `Vec` is `Send` if `T` is `Send` because the data referenced =
-by `self.ptr` is unaliased.
-> +unsafe impl<T, A> Send for Vec<T, A>
-> +where
-> +    T: Send,
-> +    A: Allocator,
-> +{
-> +}
-> +
-> +// SAFETY: `Vec` is `Sync` if `T` is `Sync` because the data referenced =
-by `self.ptr` is unaliased.
-> +unsafe impl<T, A> Sync for Vec<T, A>
-> +where
-> +    T: Send,
-> +    A: Allocator,
-
-Same comment as Box. Ditto about "unaliased". Needs `T: Sync` instead.
-
-> +impl<T: Clone, A: Allocator> Vec<T, A> {
-> +    /// Extend the vector by `n` clones of value.
-> +    pub fn extend_with(&mut self, n: usize, value: T, flags: Flags) -> R=
-esult<(), AllocError> {
-> +        self.reserve(n, flags)?;
-> +
-> +        let spare =3D self.spare_capacity_mut();
-> +
-> +        for item in spare.iter_mut().take(n - 1) {
-
-You need to handle `n =3D=3D 0` here.
-
-Alice
 
