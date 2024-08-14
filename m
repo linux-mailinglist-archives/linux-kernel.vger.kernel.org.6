@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-286724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9CA951E58
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D053951E3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BD0FB27600
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:12:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6020F1C21BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D361B1426;
-	Wed, 14 Aug 2024 15:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF511B3F1E;
+	Wed, 14 Aug 2024 15:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VERw/oj/"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qIJb/8lH"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749611AD9D4;
-	Wed, 14 Aug 2024 15:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A20D1B3751;
+	Wed, 14 Aug 2024 15:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723648329; cv=none; b=gZrDfEYycXwb+tsQeXEt86KiDoAroU4fy8y5kQxeaFmzyDzUkVYOaS2J3AAM6DCaE3YctXKcwuJ3Xx2xO1JFEZJ9slmGN4Su6Nn7YVUn5jNyqykE5RZH3tB+WNskqXPUF5dqXQZNYnUbM08Ah0UKie/j+I9epSy/L2zU+jOKt3c=
+	t=1723648381; cv=none; b=JKtu6ZSc0XRUOL7YKKQtlLi/xze0MsGGKG2+P069MUQR79x4dRlXCD3ogsd/47YgZw00XZb5oyvgxDjFEuzjA9R2Bl6FHJoap3sWtEkkRTIuY8rd6ZiXReS5aHcpumpEDkcdNHD/tsemZkWu4IN4hmFecWFPpTlNeEDGbWnk6ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723648329; c=relaxed/simple;
-	bh=N0GjTO6lw4nWbRucXBBjCG3Ca2P3uIbvoiXaED5K/nw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G2ffU9L0ZO33yv0ibnCuzThVL1sRA7FXa1uaMadJ04DEnC9GHnwUuQieGPfzaTBo+ItY9gOYIcATNCV9hPt6FW3TlqMBFTTNLOYHq79n8kNxP5JYyz1coQ2wx6GG9QOOg+woAcgsUzzB4I/L7d7F+i8zQzFaaanGwq0AcL6duUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VERw/oj/; arc=none smtp.client-ip=198.47.19.141
+	s=arc-20240116; t=1723648381; c=relaxed/simple;
+	bh=DoSgsVFzInOYcU8QE0XkZwZ3WTtLNLotcTkQ02D7LlI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MdBR7+bArp4XU+k8gsI2r2BeEBzAkPtszITRhzZg0SUxdkCpyfjhB2Emgh33uNrMZ+2uKWTL+z8f7+iMDLVzNtoSBYy34VvGxAycbNlGnUpnb9W6ldtCGxdnIu8Hym4P4cfrmSvEcSSwOlHW8ksO4l6DytcQxItdnkK5zvnlKdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qIJb/8lH; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EFBwaZ074051;
-	Wed, 14 Aug 2024 10:11:58 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EFCmGQ084686;
+	Wed, 14 Aug 2024 10:12:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723648318;
-	bh=1mHukVPhO0wytGSj5rvSZUWLOHHrbX9az+sUuQyJhF8=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VERw/oj/xKZIakzD/+8/9qdR4njZhj3TCcr3dvcMzhX7jeb1R9ub92Hmvh8absW0q
-	 MT26UlrbVbMaWBxxhvl410mCRrjJ7WAfx2i4e8+Scn3wg6ehgaYz15RvB8E1FFrCpn
-	 mQ8+Nj/hMeNlAJivznckCmadpSjxWQayV7RK8BtE=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EFBwpE057805
+	s=ti-com-17Q1; t=1723648368;
+	bh=DSELQhqczh8otWLp4IHWpTWwH59Ek4RdGCsN69OPi1Q=;
+	h=From:To:CC:Subject:Date;
+	b=qIJb/8lHbQ48XEW6ml8cVaPrz+IU12LINLx9xLpcO2RJDMaBUAUd6HVqJ+zHTlxOC
+	 V2lX4gNfFUPNPCcCudpBqr28TQQf08kfqCtPfNNS8vzkIEOSod3OboBYmcgG28w1jV
+	 oztupXn0jmB+7VVOfvCvoCELEMma2KBG7jsH72yg=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EFCm2N115178
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 14 Aug 2024 10:11:58 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 14 Aug 2024 10:12:48 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
- Aug 2024 10:11:57 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 10:12:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 14 Aug 2024 10:11:57 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EFBorG079640;
-	Wed, 14 Aug 2024 10:11:51 -0500
-Message-ID: <8394ab04-5e5c-4e06-b1d1-7eb64bacedbe@ti.com>
-Date: Wed, 14 Aug 2024 20:41:49 +0530
+ Frontend Transport; Wed, 14 Aug 2024 10:12:48 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EFCkV8054193;
+	Wed, 14 Aug 2024 10:12:46 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Mark Brown <broonie@kernel.org>
+CC: <theo.lebrun@bootlin.com>, <d-gole@ti.com>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] spi: spi-cadence-quadspi: Fix OSPI NOR failures during system resume
+Date: Wed, 14 Aug 2024 20:42:37 +0530
+Message-ID: <20240814151237.3856184-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-j7200: Change timer nodes
- status to reserved
-To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <tony@atomide.com>, <g-vlaev@ti.com>, <afd@ti.com>, <hnagalla@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240814104151.2038457-1-b-padhi@ti.com>
- <20240814104151.2038457-2-b-padhi@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240814104151.2038457-2-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Its necessary to call pm_runtime_force_*() hooks as part of system
+suspend/resume calls so that the runtime_pm hooks get called. This
+ensures latest state of the IP is cached and restored during system
+sleep. This is especially true if runtime autosuspend is enabled as
+runtime suspend hooks may not be called at all before system sleeps.
 
-On 8/14/2024 4:11 PM, Beleswar Padhi wrote:
-> The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
+Without this patch, OSPI NOR enumeration (READ_ID) fails during resume
+as context saved during suspend path is inconsistent.
 
-There is no DSP on this SOC.
+Fixes: 6d35eef2f868 ("spi: cadence-qspi: add system-wide suspend and resume callbacks")
+Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+---
+ drivers/spi/spi-cadence-quadspi.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Please consider to re-word commit message
+diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
+index 05ebb03d319f..d4607cb89c48 100644
+--- a/drivers/spi/spi-cadence-quadspi.c
++++ b/drivers/spi/spi-cadence-quadspi.c
+@@ -2000,13 +2000,25 @@ static int cqspi_runtime_resume(struct device *dev)
+ static int cqspi_suspend(struct device *dev)
+ {
+ 	struct cqspi_st *cqspi = dev_get_drvdata(dev);
++	int ret;
+ 
+-	return spi_controller_suspend(cqspi->host);
++	ret = spi_controller_suspend(cqspi->host);
++	if (ret)
++		return ret;
++
++	return pm_runtime_force_suspend(dev);
+ }
+ 
+ static int cqspi_resume(struct device *dev)
+ {
+ 	struct cqspi_st *cqspi = dev_get_drvdata(dev);
++	int ret;
++
++	ret = pm_runtime_force_resume(dev);
++	if (ret) {
++		dev_err(dev, "pm_runtime_force_resume failed on resume\n");
++		return ret;
++	}
+ 
+ 	return spi_controller_resume(cqspi->host);
+ }
+-- 
+2.46.0
 
-
-> use timers. Therefore, change the status of the timer nodes to
-> "reserved" to avoid any clash. Usage is described as below:
->
-> 	+===================+==========================+
-> 	|  Remoteproc node  |        Timer Node        |
-> 	+===================+==========================+
-> 	| main_r5fss0_core0 | main_timer0, main_timer2 |
-> 	+-------------------+--------------------------+
-> 	| main_r5fss0_core1 | main_timer1              |
-> 	+-------------------+--------------------------+
-
-
-> This change is already incorporated for timer nodes in the MCU voltage
-> domain.
-
-For whole series,  on MCU domain R5 we have device-manager firmware,
-
-which is needed to get SOC functional. So MCU domain timers are reserved.
-
-So my suggestion will be to avoid above message
-
-
->
-> Fixes: c8a28ed4837c ("arm64: dts: ti: k3-j7200: Add general purpose timers")
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
->   .../boot/dts/ti/k3-j7200-common-proc-board.dts      | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> index 6593c5da82c0..a65066bd7f09 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
-> @@ -471,3 +471,16 @@ &main_mcan3 {
->   	pinctrl-0 = <&main_mcan3_pins_default>;
->   	phys = <&transceiver3>;
->   };
-> +
-> +/* Timers are used by Remoteproc firmware */
-> +&main_timer0 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer1 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer2 {
-> +	status = "reserved";
-> +};
 
