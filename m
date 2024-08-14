@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-286264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF3E9518D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:31:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D9D9518A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41CB1F221D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:31:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68EF21C21174
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7D41AD9F9;
-	Wed, 14 Aug 2024 10:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E621AD9F7;
+	Wed, 14 Aug 2024 10:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QUpzCwxj"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYgUyrMF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123883D552
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F048213C684;
+	Wed, 14 Aug 2024 10:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723631496; cv=none; b=PwA4HZlWFAh/sdQX95k9qbrJE15PaCmY5zV7eSYHJmisJWG3e8/IdY3bWKFDjq/QhfI0rDzgo7QIaMoO2CRYFvStAz65J+PacSMSwactdlIByS47WF2hrih46ee9dIwEKhJJHvM3TlGW3Im+0o8pFDrU0aTokflpNI+4Bzzhdaw=
+	t=1723631155; cv=none; b=iPp3cbEh1uClnO8BdlOnizHWXfEyGLkmfajbqGr9DNusk9klxe0obfDFQQiK+zhF9QIc7YR0kmqU3eyb7fjOj1Wpr/gZ02Se8rNZi4vjhB/lKu3Zs9YvN4Rf9V/S5gFuO7BPZHpKIqYE35B+ZiE4xaUtYRZj8pRHQiVNi69fHns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723631496; c=relaxed/simple;
-	bh=Tg4tygCQprfzp3BUYCzNkr+WKWJZYaNwG/OTPKtwaUw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ihZl5XmYmyaMlz3xejbFcqBkeIgBgO/hLH+7iOcmCscCU3zprZxC88fX9AbxLDEdCeog7VZi35g8MhBhXMeCQYp5Rc8bzInu4qhKCIefamut9PIt5LNlCb2ptOV2vUEPmB6PuCvpB5Rp19Vn7ElPWRzmkcSDlGa9o0yl35T3nec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QUpzCwxj; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723631492; bh=lKYEMxukreESiYpgKdIf+nPzxCncnsQwFLEmg00xCC8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=QUpzCwxj+k8p8/+mHOAaT9JWV+LqKO5MyKF7VQ93ysBnwjHNrBHvgYr+48DTBpgwr
-	 iZGFCKEY+9FHtrKctlicUEvQTM6BxPm2VT4PSCT6YrKMOH6A50+R9zfXW94NU/m6pr
-	 Jn9ULjJJkYp1ddKBn4z6wB2ibMxlpQZAJSuhBGts=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 65BAAC69; Wed, 14 Aug 2024 18:25:27 +0800
-X-QQ-mid: xmsmtpt1723631127tnnin2zau
-Message-ID: <tencent_82F24B9E1BD32515BAE8BBDB33A09E7F1B08@qq.com>
-X-QQ-XMAILINFO: Mdc3TkmnJyI/wsuTk5GiXDLU4WoPMD7zYaDh1ff2GDFpM9dReHQMkkj4dEJgaK
-	 8pxbCjT7Kdwc2vmsTltHJM5iCR/TUQueDtReTVkZ32oBLu8rQlFQsEtbjuILLOlj20UTpc8zHogo
-	 Ed7zmOwSZrytqMgnu8GBSZ8pV1sEmHLmOOOJg5c6RokON/mljjDltX3Pge5ClVUhX50a60fQvsV+
-	 Zx3BWx8Jt4bj16aAZqJbbOfCmFIzJfp3DLJCj8vctP7YHZ66PpL/87AwAqJoj6n3/OZJuthM1g9s
-	 /YWlyxPn3ExO3fRWX4K3UKT59cliX2ShJlQp1cbZlGvhoUwabY63jvqGZuhsORobvLjjVlu/z/gA
-	 9ln9sCATrh08YstsAGSLXyKV0e5Ml3QhQ7tr1bijRAIYG/52Ymvnj0BcYOjhlLZAfDY4wmPVNkTq
-	 SNl6ifOH0iAkj4Mml8gz3N4gK/RoQ9yqWZR/krNFtKA3LWWo2wJpgkuyOYGH5MbU6u0ZE9kQ3/Cj
-	 dMiViytiK1kh7G6MdWguxlNvPmC2sS4mbGXTq3mmqvtkyXJ+OseUVtbHoh2Z3gtRbBdZeuLclZDU
-	 U4w0wBsvKznu2S8uFHEND4W6ZSIdh02ccvxVEW8w8ENwDHwxJTaZYxg2/s+0KqJs30tj6WouDMJh
-	 RlmqI6v0BapMD6LN0BdXWwYU5dCS7RoYkAXlMLFLI3abrXj25GiLGQHBnCHiAm9GrN6LfTFpUZAd
-	 rsuxWHo2uRyevnoOei3zdByJrnd4EvNIdncgTycSwsXTQ+YonSTdNE7co7+iN6AwsssOL6fElkjP
-	 cX91K/o8idh3VK1EMGVQ4UtqwSJBHGNQUbumqLTx6NwQI+DwZefH8ame6KDVhJ501dAtkp/3KEbh
-	 zbvFWmZnJhAp8w4AQ1pLqleKx6IAsy7zcXad/y0n8REFTwzG1geYVRsMnxp4LH2qfx5diCkPxp
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-Date: Wed, 14 Aug 2024 18:25:28 +0800
-X-OQ-MSGID: <20240814102527.1086693-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
-References: <0000000000007ec511061f00a7b2@google.com>
+	s=arc-20240116; t=1723631155; c=relaxed/simple;
+	bh=ftCBlPiwD1RZ3eQGns2Dn6jHwhtrQA2YnZh+/ZTI/aU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h/5KlyDZdFaa5jQWbgpFsYy9z5BYMVDr++OVKAUGGEeJOe304eMSJd0hpMtMtQroRWMaFgJXw2ucevCQnXjX6R/zO6dnk+64TckVDrEN6SbaKWaRM12PjOUphJT2nAEnljDYd1+N/ZVi3mCnvwe793l6Wb9yLYBVMFgLeBekDAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYgUyrMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F39C32786;
+	Wed, 14 Aug 2024 10:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723631154;
+	bh=ftCBlPiwD1RZ3eQGns2Dn6jHwhtrQA2YnZh+/ZTI/aU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NYgUyrMF/3k9Q0BD6O7NqdaZ194K3HGHVfFYpdayYDUM7OeGGseOyTb0fQqtv2A1Q
+	 lfwyXW7p+q8hPjfmaRTv9JkrmvFULVGqTSZ6uTbphB53x9w2hIdWjPzPrfgJVgpd28
+	 nAsvd0TJsLL0qpo5Z8ZpfA2nH/FTWkZZZFSENVlBmo8aE6uDgSxLQIT9HL2CClkuqz
+	 9nzZHrjSLSwPqpDgwocmDFqew7gjejY1HWZvQgsSR5hxBKvG2E+gXPX9B9PSs3pT7v
+	 vIEuya56BzbEkspWwA4SFZcLCxadwE4rl5ZtzDKVsW6ITeQQK+DFqynXv1NHodpZBv
+	 CiGRJ61xYShSw==
+Message-ID: <ca411247-c640-45d7-ab1b-b595da46e6f3@kernel.org>
+Date: Wed, 14 Aug 2024 12:25:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: platform: Add Surface System
+ Aggregator Module
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <quic_kdybcio@quicinc.com>
+References: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
+ <20240810-topic-sam-v2-2-8a8eb368a4f0@quicinc.com>
+ <1a6ebc27-95ca-4f56-9971-b2a8d03f270a@kernel.org>
+ <36b0ee66-3af3-40c1-86b6-b52cd826298e@gmail.com>
+ <13f254ed-68b7-438e-91a8-9d75c9e9f2a7@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <13f254ed-68b7-438e-91a8-9d75c9e9f2a7@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-debug
+On 14.08.2024 8:16 AM, Krzysztof Kozlowski wrote:
+> On 13/08/2024 16:27, Konrad Dybcio wrote:
+>> On 11.08.2024 4:28 PM, Krzysztof Kozlowski wrote:
+>>> On 10/08/2024 03:28, Konrad Dybcio wrote:
+>>>> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+>>>>
+>>>> Add bindings for the Surface System Aggregator Module (SAM/SSAM), the
+>>>> Microsoft Surface-standard Embedded Controller, used on both x86- and
+>>>> Qualcomm-based devices.
+>>>>
+>>>> It provides a plethora of functions, depending on what's wired up to
+>>>> it. That includes but is not limited to: fan control, keyboard/touchpad
+>>>> support, thermal sensors, power control, special buttons, tablet mode.
+>>>>
+>>>> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+>>>> ---
 
-#syz test: upstream c0ecd6388360
+[...]
 
-diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
-index e0d34e4e9076..cb511d49e35a 100644
---- a/fs/9p/vfs_dir.c
-+++ b/fs/9p/vfs_dir.c
-@@ -218,8 +218,10 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
- 		if ((S_ISREG(inode->i_mode)) && (filp->f_mode & FMODE_WRITE))
- 			retval = filemap_fdatawrite(inode->i_mapping);
- 
-+		printk("fid: %p, %s\n", fid, __func__);
- 		spin_lock(&inode->i_lock);
--		hlist_del(&fid->ilist);
-+		if (refcount_read(&fid->count) == 1)
-+			hlist_del(&fid->ilist);
- 		spin_unlock(&inode->i_lock);
- 		put_err = p9_fid_put(fid);
- 		retval = retval < 0 ? retval : put_err;
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 348cc90bf9c5..129354d5b284 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -80,6 +80,8 @@ int v9fs_file_open(struct inode *inode, struct file *file)
- 
- 		file->private_data = fid;
- 	}
-+	printk("fid: %p, %s\n", fid, __func__);
-+	p9_fid_get(fid);
- 
- #ifdef CONFIG_9P_FSCACHE
- 	if (v9ses->cache & CACHE_FSCACHE)
+>>>> +  current-speed:
+>>>> +    description: The baudrate in bits per second of the device as it comes
+>>>> +      online, current active speed.
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>
+>>> This should be just "current-speed: true", because the type will be
+>>> brought by serial schema. We should however have some schema with
+>>> peripheral properties for serial devices. I'll come with something.
+>>
+>> I suppose I should just include:
+>>
+>> https://lore.kernel.org/linux-serial/20240811-dt-bindings-serial-peripheral-props-v1-0-1dba258b7492@linaro.org/
+> 
+> 
+> You could, but then your patchset will depend on mine, so instead I
+> propose just "current-speed: true" and later (next release) we will add
+> $ref to serial-peripheral-props.
 
+You got it!
+
+Konrad
 
