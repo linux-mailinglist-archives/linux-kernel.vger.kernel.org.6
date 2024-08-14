@@ -1,405 +1,274 @@
-Return-Path: <linux-kernel+bounces-286075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8303951636
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:10:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1B495162F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302A01F23246
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDCF22838DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CAD143C65;
-	Wed, 14 Aug 2024 08:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4EA13D88E;
+	Wed, 14 Aug 2024 08:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP4fW4JJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HpwmjInI"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC8E80631;
-	Wed, 14 Aug 2024 08:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C3F13CA8D
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723622972; cv=none; b=q+oF/MntKQm3qJg74uEQD+C5K2JRtoXMlg8SxpkuVk8geW9Ox3WTdw4Yg0YhRibNqF2QC1oL+p2nK90uDVDd9kDGAtAShdHysiELK1JxNKSC8BO5vpZlTDGd6tdQyGyKFFUzo5qD1ZM8i9XOGqDlcomLO9A9eYhBz0EEIctMA+E=
+	t=1723622959; cv=none; b=iY475rq/YZBaoruc47hDs1f9fWw0fBY097h1f8FcWaXRvkMDcw2ImWA/ufrAveyfrN8rl4yZmXFJnZHEx74Efurn4TQagRMhzoECVxJq8b48KWa3pu+zJapzQPb0UR5LD6ScnZA+8UytnukvEhNAkftSwMGCosOLTt1wvG8qmZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723622972; c=relaxed/simple;
-	bh=/7KEHXqyjyLg14Vz+xrDNnkTeJ+IoWu0A6KKsEVjVC0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pySIwYwmfEeDGRdJETUAGK3fwCRlKe/TqIc1zxk0E33ENEZflXgPfYgeNRwafhYeDej8Lz4kdFeX6MHtB79P4D+V2KXonjVXjNjTbUMO4Wv3d+X17GGLyzKS0IlT5zZHBzDpvzHyDR/F5TJ9sel4ECFmOYN1iTVbyQzlRlM9kq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP4fW4JJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92112C32786;
-	Wed, 14 Aug 2024 08:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723622972;
-	bh=/7KEHXqyjyLg14Vz+xrDNnkTeJ+IoWu0A6KKsEVjVC0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VP4fW4JJBuQJroc1NOs9/QG0KBH1kvSF648HdVUG/zQsL9eRZXfyw8J5CT5S5tSw0
-	 1x77f0hqv1+flsDgudtp07L5fvo1Oyp7bfyhX/uDNTLyzFDRGa6fwnnfN3Iwzc1sJA
-	 PlOZ8RiPjNjx4/3tMtV52P55JBvAyFgvl9CS92AzaYGaeTUjExFAR6Zbjl0MiV8sXQ
-	 VIUdbviSrANQxwJJKjZgLWjKbQCbNEV27OmnJ+3CjaxA0c0N2W2t4XFjcCr2dVaaWT
-	 AIHR9WY2WGCZO8djKomy7PqO35UAzM7QpGBJ5499KL6EnMO3XXEKyQ9Tkn+Och/qDk
-	 oE85u5qg211tg==
-From: Conor Dooley <conor@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1723622959; c=relaxed/simple;
+	bh=+3Uy5tVsS1xYJ4Ajxols5h7sv6WqoGWkNmxA3z9JgIw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jp5Oc/JgvOirm4o83S20hz1672xW5HpJDBbGN1a36oRhbtjg4rHbqtAsIMBwESo+X9yj1SCDmafwtHsskB3i9Mw5mElvgoGvfN/ITnwZqznA2l+8n+FXZeJMnwrktoe0ZalR8wmtFD/h37mKNc5rm3IZGulx2Mrh/aTDsTfMUIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HpwmjInI; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc60c3ead4so42991005ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:09:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723622957; x=1724227757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=37oHXzv1vWgVfvyci6NXVgh8uUW+FtKN9bgTbkcfqjw=;
+        b=HpwmjInI9e3uo1+xO0fJuzlfC4v2/q51SpoYOpxLWKgOZVQYcceNy8fc2Sc+ovPwcx
+         WppZpuw0nOxZxAeTEBNpLsMMRbkr/qtG7CcyB/rPUuT0+eV7vHd4XBPKsgX6nQYMMDfk
+         FhHxGiL6qYUP3Wa1xtLOARG52qcoGFAO7Vbhqhkx3PI3MywCzUBHY6KDmgkIt+2XDnrs
+         aDUGrrbitWo3eZJd5aRiwTo/i8kU81n6ux/WzBqfpqF8N/BwfLGCDJ0EKwUfrUQDw41/
+         0cqddNUYfM9rrUFQ7XE0iQBGwDJrnGFTGBzQQ7B97AeA5VGR+wBvWwOEdFxFn6ZT9FFC
+         I1Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723622957; x=1724227757;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=37oHXzv1vWgVfvyci6NXVgh8uUW+FtKN9bgTbkcfqjw=;
+        b=UkLhtsQjoZ/OTho48WG3MbFhYAfldWRFCZIlc+dCNzNWEli1BXqBQL/3z4mt52+kOJ
+         A0n9oDEuljFnR8cLv1Bw9h/O71FXZvMq2Z4Q0nyskVMYnlqp8XksZlmQ9mWZmy7hxQlN
+         syM3oAYTFVPvkxBUdWCfyxm2MP5/O3dvDRW4nQzYzRRgHqqLppV91vt9SgeHjJe0TNRO
+         4/KdbNY4e1u6gG+TT8UbUGYaIm/Zelf+odUxkrmFpI/FQY01wDrk5l7gfIGekjTr5SrM
+         rK3JNiLJGiMIuclmPamzG31dVQLA9mYT2yQtAlYNsUK+i6j+vWtgmBMwCL8F615U6xIE
+         ukbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8TjCWNs9hO6eFHkOAq8wZcPQjYgL1BtA1+u7kwsZMa6HW0DhDZ2OnxNs6zKbn89S+M/1FcSZMX/XrayFaNqak9cFZrkBeIwyfVMLl
+X-Gm-Message-State: AOJu0Yw6B+D64IDf83oe7pwOeYMbav8bhiFzyqgEce5gVfQPLqtD595n
+	OCXq2bmIEltW4SCtzEVtjYigr00fBrisgyOkUw+D8ysqyX08ylB8
+X-Google-Smtp-Source: AGHT+IG7aon1+lVeRD7X2n0PFqqeR3pEbCgpMc9AOTnlPovkqRuRYZjLtQ8wJIEDR9mo4iBU+mwKlg==
+X-Received: by 2002:a17:903:35cf:b0:1fd:91b1:7883 with SMTP id d9443c01a7336-201d63abef6mr24922655ad.14.1723622956728;
+        Wed, 14 Aug 2024 01:09:16 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd12ecb1sm24708325ad.11.2024.08.14.01.09.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 01:09:16 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: baolin.wang@linux.alibaba.com
+Cc: akpm@linux-foundation.org,
+	baohua@kernel.org,
+	corbet@lwn.net,
+	david@redhat.com,
+	ioworker0@gmail.com,
 	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v5 2/2] PCI: microchip: rework reg region handing to support using either instance 1 or 2
-Date: Wed, 14 Aug 2024 09:08:42 +0100
-Message-ID: <20240814-outmost-untainted-cedd4adcd551@spud>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240814-setback-rumbling-c6393c8f1a91@spud>
-References: <20240814-setback-rumbling-c6393c8f1a91@spud>
+	linux-mm@kvack.org,
+	ryan.roberts@arm.com,
+	v-songbaohua@oppo.com
+Subject: Re: [PATCH v4] mm: Override mTHP "enabled" defaults at kernel cmdline
+Date: Wed, 14 Aug 2024 20:09:01 +1200
+Message-Id: <20240814080901.87898-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <c82a3834-f1c9-472f-9900-0d8885092943@linux.alibaba.com>
+References: <c82a3834-f1c9-472f-9900-0d8885092943@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12324; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=/woZ3MBtbZyFyvtmJP2W1CQEVdCP8eIzQm9MYr+ToTo=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGl70jhVThZ7zFrVI+o5bX3utJdbe6/8LrBcXyhQK/VoF UvhiT8qHaUsDGIcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZiI7wmG//HKV1Z7lJ4LCuz+ apvCvvX3+YPT73wRlyhjbpkslR2YtILhn0L1jU9KXxNuTVDauTxddcllL9lO9+9HRFL9/4Z7HTx 4lA8A
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Wed, Aug 14, 2024 at 7:53 PM Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2024/8/14 10:02, Barry Song wrote:
+> > From: Ryan Roberts <ryan.roberts@arm.com>
+> >
+> > Add thp_anon= cmdline parameter to allow specifying the default
+> > enablement of each supported anon THP size. The parameter accepts the
+> > following format and can be provided multiple times to configure each
+> > size:
+> >
+> > thp_anon=<size>,<size>[KMG]:<value>;<size>-<size>[KMG]:<value>
+> >
+> > An example:
+> >
+> > thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
+> >
+> > See Documentation/admin-guide/mm/transhuge.rst for more details.
+> >
+> > Configuring the defaults at boot time is useful to allow early user
+> > space to take advantage of mTHP before its been configured through
+> > sysfs.
+> >
+> > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> > Co-developed-by: Barry Song <v-songbaohua@oppo.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>
+> LGTM. Feel free to add:
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Tested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>
 
-The PCI host controller on PolarFire SoC has multiple "instances", each
-with their own bridge and ctrl address spaces. The original binding has
-an "apb" register region, and it is expected to be set to the base
-address of the host controllers register space. Defines in the driver
-were used to compute the addresses of the bridge and ctrl address ranges
-corresponding to instance1. Some customers want to use instance0 however
-and that requires changing the defines in the driver, which is clearly
-not a portable solution.
+Thanks, Baolin!
 
-The binding has been changed from a single register region to a pair,
-corresponding to the bridge and ctrl regions respectively, so modify the
-driver to read these regions directly from the devicetree rather than
-compute them from the base address of the abp region.
+> Just a small nit as below.
+>
+> > ---
+> >   -v4:
+> >   * use bitmap APIs to set and clear bits. thanks very much for
+> >     David's comment!
+> >
+> >   .../admin-guide/kernel-parameters.txt         |  9 ++
+> >   Documentation/admin-guide/mm/transhuge.rst    | 37 +++++--
+> >   mm/huge_memory.c                              | 96 ++++++++++++++++++-
+> >   3 files changed, 134 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index f0057bac20fb..d0d141d50638 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -6629,6 +6629,15 @@
+> >                       <deci-seconds>: poll all this frequency
+> >                       0: no polling (default)
+> >   
+> > +     thp_anon=       [KNL]
+> > +                     Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
+> > +                     state is one of "always", "madvise", "never" or "inherit".
+> > +                     Can be used to control the default behavior of the
+> > +                     system with respect to anonymous transparent hugepages.
+> > +                     Can be used multiple times for multiple anon THP sizes.
+> > +                     See Documentation/admin-guide/mm/transhuge.rst for more
+> > +                     details.
+> > +
+> >       threadirqs      [KNL,EARLY]
+> >                       Force threading of all interrupt handlers except those
+> >                       marked explicitly IRQF_NO_THREAD.
+> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> > index 7072469de8a8..528e1a19d63f 100644
+> > --- a/Documentation/admin-guide/mm/transhuge.rst
+> > +++ b/Documentation/admin-guide/mm/transhuge.rst
+> > @@ -284,13 +284,36 @@ that THP is shared. Exceeding the number would block the collapse::
+> >   
+> >   A higher value may increase memory footprint for some workloads.
+> >   
+> > -Boot parameter
+> > -==============
+> > -
+> > -You can change the sysfs boot time defaults of Transparent Hugepage
+> > -Support by passing the parameter ``transparent_hugepage=always`` or
+> > -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+> > -to the kernel command line.
+> > +Boot parameters
+> > +===============
+> > +
+> > +You can change the sysfs boot time default for the top-level "enabled"
+> > +control by passing the parameter ``transparent_hugepage=always`` or
+> > +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
+> > +kernel command line.
+> > +
+> > +Alternatively, each supported anonymous THP size can be controlled by
+> > +passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
+> > +where ``<size>`` is the THP size and ``<state>`` is one of ``always``,
+> > +``madvise``, ``never`` or ``inherit``.
+> > +
+> > +For example, the following will set 16K, 32K, 64K THP to ``always``,
+> > +set 128K, 512K to ``inherit``, set 256K to ``madvise`` and 1M, 2M
+> > +to ``never``::
+> > +
+> > +     thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never
+> > +
+> > +``thp_anon=`` may be specified multiple times to configure all THP sizes as
+> > +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
+> > +not explicitly configured on the command line are implicitly set to
+> > +``never``.
+> > +
+> > +``transparent_hugepage`` setting only affects the global toggle. If
+> > +``thp_anon`` is not specified, PMD_ORDER THP will default to ``inherit``.
+> > +However, if a valid ``thp_anon`` setting is provided by the user, the
+> > +PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
+> > +is not defined within a valid ``thp_anon``, its policy will default to
+> > +``never``.
+> >   
+> >   Hugepages in tmpfs/shmem
+> >   ========================
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 1a12c011e2df..c5f4e97b49de 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+> >   unsigned long huge_anon_orders_always __read_mostly;
+> >   unsigned long huge_anon_orders_madvise __read_mostly;
+> >   unsigned long huge_anon_orders_inherit __read_mostly;
+> > +static bool anon_orders_configured;
+> >   
+> >   unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+> >                                        unsigned long vm_flags,
+> > @@ -737,7 +738,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+> >        * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+> >        * constant so we have to do this here.
+> >        */
+> > -     huge_anon_orders_inherit = BIT(PMD_ORDER);
+> > +     if (!anon_orders_configured) {
+> > +             huge_anon_orders_inherit = BIT(PMD_ORDER);
+> > +             anon_orders_configured = true;
+> > +     }
+> >   
+> >       *hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
+> >       if (unlikely(!*hugepage_kobj)) {
+> > @@ -922,6 +926,96 @@ static int __init setup_transparent_hugepage(char *str)
+> >   }
+> >   __setup("transparent_hugepage=", setup_transparent_hugepage);
+> >   
+> > +static inline int get_order_from_str(const char *size_str)
+> > +{
+> > +     unsigned long size;
+> > +     char *endptr;
+> > +     int order;
+> > +
+> > +     size = memparse(size_str, &endptr);
+> > +     order = fls(size >> PAGE_SHIFT) - 1;
+>
+> Nit: using get_order() seems more robust?
 
-To maintain backwards compatibility with the existing binding, the
-driver retains code to handle the "abp" reg and computes the base
-address of the bridge and ctrl regions using the defines if it is
-present. reg-names has always been a required property, so this is
-safe to do.
+Yes. I agree get_order() is better:
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-Dropped Daire's Ack due to substantial rebasing.
----
- .../pci/controller/plda/pcie-microchip-host.c | 116 +++++++++---------
- 1 file changed, 61 insertions(+), 55 deletions(-)
-
-diff --git a/drivers/pci/controller/plda/pcie-microchip-host.c b/drivers/pci/controller/plda/pcie-microchip-host.c
-index 48f60a04b740..57f35290c83b 100644
---- a/drivers/pci/controller/plda/pcie-microchip-host.c
-+++ b/drivers/pci/controller/plda/pcie-microchip-host.c
-@@ -25,9 +25,6 @@
- #define MC_PCIE1_BRIDGE_ADDR			0x00008000u
- #define MC_PCIE1_CTRL_ADDR			0x0000a000u
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index c5f4e97b49de..0f398d0dbaad 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -933,7 +933,7 @@ static inline int get_order_from_str(const char *size_str)
+ 	int order;
  
--#define MC_PCIE_BRIDGE_ADDR			(MC_PCIE1_BRIDGE_ADDR)
--#define MC_PCIE_CTRL_ADDR			(MC_PCIE1_CTRL_ADDR)
--
- /* PCIe Controller Phy Regs */
- #define SEC_ERROR_EVENT_CNT			0x20
- #define DED_ERROR_EVENT_CNT			0x24
-@@ -128,7 +125,6 @@
- 	[EVENT_LOCAL_ ## x] = { __stringify(x), s }
- 
- #define PCIE_EVENT(x) \
--	.base = MC_PCIE_CTRL_ADDR, \
- 	.offset = PCIE_EVENT_INT, \
- 	.mask_offset = PCIE_EVENT_INT, \
- 	.mask_high = 1, \
-@@ -136,7 +132,6 @@
- 	.enb_mask = PCIE_EVENT_INT_ENB_MASK
- 
- #define SEC_EVENT(x) \
--	.base = MC_PCIE_CTRL_ADDR, \
- 	.offset = SEC_ERROR_INT, \
- 	.mask_offset = SEC_ERROR_INT_MASK, \
- 	.mask = SEC_ERROR_INT_ ## x ## _INT, \
-@@ -144,7 +139,6 @@
- 	.enb_mask = 0
- 
- #define DED_EVENT(x) \
--	.base = MC_PCIE_CTRL_ADDR, \
- 	.offset = DED_ERROR_INT, \
- 	.mask_offset = DED_ERROR_INT_MASK, \
- 	.mask_high = 1, \
-@@ -152,7 +146,6 @@
- 	.enb_mask = 0
- 
- #define LOCAL_EVENT(x) \
--	.base = MC_PCIE_BRIDGE_ADDR, \
- 	.offset = ISTATUS_LOCAL, \
- 	.mask_offset = IMASK_LOCAL, \
- 	.mask_high = 0, \
-@@ -179,7 +172,8 @@ struct event_map {
- 
- struct mc_pcie {
- 	struct plda_pcie_rp plda;
--	void __iomem *axi_base_addr;
-+	void __iomem *bridge_base_addr;
-+	void __iomem *ctrl_base_addr;
- };
- 
- struct cause {
-@@ -253,7 +247,6 @@ static struct event_map local_status_to_event[] = {
- };
- 
- static struct {
--	u32 base;
- 	u32 offset;
- 	u32 mask;
- 	u32 shift;
-@@ -325,8 +318,7 @@ static inline u32 reg_to_event(u32 reg, struct event_map field)
- 
- static u32 pcie_events(struct mc_pcie *port)
- {
--	void __iomem *ctrl_base_addr = port->axi_base_addr + MC_PCIE_CTRL_ADDR;
--	u32 reg = readl_relaxed(ctrl_base_addr + PCIE_EVENT_INT);
-+	u32 reg = readl_relaxed(port->ctrl_base_addr + PCIE_EVENT_INT);
- 	u32 val = 0;
- 	int i;
- 
-@@ -338,8 +330,7 @@ static u32 pcie_events(struct mc_pcie *port)
- 
- static u32 sec_errors(struct mc_pcie *port)
- {
--	void __iomem *ctrl_base_addr = port->axi_base_addr + MC_PCIE_CTRL_ADDR;
--	u32 reg = readl_relaxed(ctrl_base_addr + SEC_ERROR_INT);
-+	u32 reg = readl_relaxed(port->ctrl_base_addr + SEC_ERROR_INT);
- 	u32 val = 0;
- 	int i;
- 
-@@ -351,8 +342,7 @@ static u32 sec_errors(struct mc_pcie *port)
- 
- static u32 ded_errors(struct mc_pcie *port)
- {
--	void __iomem *ctrl_base_addr = port->axi_base_addr + MC_PCIE_CTRL_ADDR;
--	u32 reg = readl_relaxed(ctrl_base_addr + DED_ERROR_INT);
-+	u32 reg = readl_relaxed(port->ctrl_base_addr + DED_ERROR_INT);
- 	u32 val = 0;
- 	int i;
- 
-@@ -364,8 +354,7 @@ static u32 ded_errors(struct mc_pcie *port)
- 
- static u32 local_events(struct mc_pcie *port)
- {
--	void __iomem *bridge_base_addr = port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
--	u32 reg = readl_relaxed(bridge_base_addr + ISTATUS_LOCAL);
-+	u32 reg = readl_relaxed(port->bridge_base_addr + ISTATUS_LOCAL);
- 	u32 val = 0;
- 	int i;
- 
-@@ -412,8 +401,12 @@ static void mc_ack_event_irq(struct irq_data *data)
- 	void __iomem *addr;
- 	u32 mask;
- 
--	addr = mc_port->axi_base_addr + event_descs[event].base +
--		event_descs[event].offset;
-+	if (event_descs[event].offset == ISTATUS_LOCAL)
-+		addr = mc_port->bridge_base_addr;
-+	else
-+		addr = mc_port->ctrl_base_addr;
-+
-+	addr += event_descs[event].offset;
- 	mask = event_descs[event].mask;
- 	mask |= event_descs[event].enb_mask;
- 
-@@ -429,8 +422,12 @@ static void mc_mask_event_irq(struct irq_data *data)
- 	u32 mask;
- 	u32 val;
- 
--	addr = mc_port->axi_base_addr + event_descs[event].base +
--		event_descs[event].mask_offset;
-+	if (event_descs[event].offset == ISTATUS_LOCAL)
-+		addr = mc_port->bridge_base_addr;
-+	else
-+		addr = mc_port->ctrl_base_addr;
-+
-+	addr += event_descs[event].mask_offset;
- 	mask = event_descs[event].mask;
- 	if (event_descs[event].enb_mask) {
- 		mask <<= PCIE_EVENT_INT_ENB_SHIFT;
-@@ -460,8 +457,12 @@ static void mc_unmask_event_irq(struct irq_data *data)
- 	u32 mask;
- 	u32 val;
- 
--	addr = mc_port->axi_base_addr + event_descs[event].base +
--		event_descs[event].mask_offset;
-+	if (event_descs[event].offset == ISTATUS_LOCAL)
-+		addr = mc_port->bridge_base_addr;
-+	else
-+		addr = mc_port->ctrl_base_addr;
-+
-+	addr += event_descs[event].mask_offset;
- 	mask = event_descs[event].mask;
- 
- 	if (event_descs[event].enb_mask)
-@@ -554,26 +555,20 @@ static const struct plda_event mc_event = {
- 
- static inline void mc_clear_secs(struct mc_pcie *port)
- {
--	void __iomem *ctrl_base_addr = port->axi_base_addr + MC_PCIE_CTRL_ADDR;
--
--	writel_relaxed(SEC_ERROR_INT_ALL_RAM_SEC_ERR_INT, ctrl_base_addr +
-+	writel_relaxed(SEC_ERROR_INT_ALL_RAM_SEC_ERR_INT, port->ctrl_base_addr +
- 		       SEC_ERROR_INT);
--	writel_relaxed(0, ctrl_base_addr + SEC_ERROR_EVENT_CNT);
-+	writel_relaxed(0, port->ctrl_base_addr + SEC_ERROR_EVENT_CNT);
- }
- 
- static inline void mc_clear_deds(struct mc_pcie *port)
- {
--	void __iomem *ctrl_base_addr = port->axi_base_addr + MC_PCIE_CTRL_ADDR;
--
--	writel_relaxed(DED_ERROR_INT_ALL_RAM_DED_ERR_INT, ctrl_base_addr +
-+	writel_relaxed(DED_ERROR_INT_ALL_RAM_DED_ERR_INT, port->ctrl_base_addr +
- 		       DED_ERROR_INT);
--	writel_relaxed(0, ctrl_base_addr + DED_ERROR_EVENT_CNT);
-+	writel_relaxed(0, port->ctrl_base_addr + DED_ERROR_EVENT_CNT);
- }
- 
- static void mc_disable_interrupts(struct mc_pcie *port)
- {
--	void __iomem *bridge_base_addr = port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
--	void __iomem *ctrl_base_addr = port->axi_base_addr + MC_PCIE_CTRL_ADDR;
- 	u32 val;
- 
- 	/* Ensure ECC bypass is enabled */
-@@ -581,22 +576,22 @@ static void mc_disable_interrupts(struct mc_pcie *port)
- 	      ECC_CONTROL_RX_RAM_ECC_BYPASS |
- 	      ECC_CONTROL_PCIE2AXI_RAM_ECC_BYPASS |
- 	      ECC_CONTROL_AXI2PCIE_RAM_ECC_BYPASS;
--	writel_relaxed(val, ctrl_base_addr + ECC_CONTROL);
-+	writel_relaxed(val, port->ctrl_base_addr + ECC_CONTROL);
- 
- 	/* Disable SEC errors and clear any outstanding */
--	writel_relaxed(SEC_ERROR_INT_ALL_RAM_SEC_ERR_INT, ctrl_base_addr +
-+	writel_relaxed(SEC_ERROR_INT_ALL_RAM_SEC_ERR_INT, port->ctrl_base_addr +
- 		       SEC_ERROR_INT_MASK);
- 	mc_clear_secs(port);
- 
- 	/* Disable DED errors and clear any outstanding */
--	writel_relaxed(DED_ERROR_INT_ALL_RAM_DED_ERR_INT, ctrl_base_addr +
-+	writel_relaxed(DED_ERROR_INT_ALL_RAM_DED_ERR_INT, port->ctrl_base_addr +
- 		       DED_ERROR_INT_MASK);
- 	mc_clear_deds(port);
- 
- 	/* Disable local interrupts and clear any outstanding */
--	writel_relaxed(0, bridge_base_addr + IMASK_LOCAL);
--	writel_relaxed(GENMASK(31, 0), bridge_base_addr + ISTATUS_LOCAL);
--	writel_relaxed(GENMASK(31, 0), bridge_base_addr + ISTATUS_MSI);
-+	writel_relaxed(0, port->bridge_base_addr + IMASK_LOCAL);
-+	writel_relaxed(GENMASK(31, 0), port->bridge_base_addr + ISTATUS_LOCAL);
-+	writel_relaxed(GENMASK(31, 0), port->bridge_base_addr + ISTATUS_MSI);
- 
- 	/* Disable PCIe events and clear any outstanding */
- 	val = PCIE_EVENT_INT_L2_EXIT_INT |
-@@ -605,11 +600,11 @@ static void mc_disable_interrupts(struct mc_pcie *port)
- 	      PCIE_EVENT_INT_L2_EXIT_INT_MASK |
- 	      PCIE_EVENT_INT_HOTRST_EXIT_INT_MASK |
- 	      PCIE_EVENT_INT_DLUP_EXIT_INT_MASK;
--	writel_relaxed(val, ctrl_base_addr + PCIE_EVENT_INT);
-+	writel_relaxed(val, port->ctrl_base_addr + PCIE_EVENT_INT);
- 
- 	/* Disable host interrupts and clear any outstanding */
--	writel_relaxed(0, bridge_base_addr + IMASK_HOST);
--	writel_relaxed(GENMASK(31, 0), bridge_base_addr + ISTATUS_HOST);
-+	writel_relaxed(0, port->bridge_base_addr + IMASK_HOST);
-+	writel_relaxed(GENMASK(31, 0), port->bridge_base_addr + ISTATUS_HOST);
- }
- 
- static int mc_platform_init(struct pci_config_window *cfg)
-@@ -617,12 +612,10 @@ static int mc_platform_init(struct pci_config_window *cfg)
- 	struct device *dev = cfg->parent;
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct pci_host_bridge *bridge = platform_get_drvdata(pdev);
--	void __iomem *bridge_base_addr =
--		port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
- 	int ret;
- 
- 	/* Configure address translation table 0 for PCIe config space */
--	plda_pcie_setup_window(bridge_base_addr, 0, cfg->res.start,
-+	plda_pcie_setup_window(port->bridge_base_addr, 0, cfg->res.start,
- 			       cfg->res.start,
- 			       resource_size(&cfg->res));
- 
-@@ -649,7 +642,7 @@ static int mc_platform_init(struct pci_config_window *cfg)
- static int mc_host_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	void __iomem *bridge_base_addr;
-+	void __iomem *apb_base_addr;
- 	struct plda_pcie_rp *plda;
- 	int ret;
- 	u32 val;
-@@ -661,30 +654,43 @@ static int mc_host_probe(struct platform_device *pdev)
- 	plda = &port->plda;
- 	plda->dev = dev;
- 
--	port->axi_base_addr = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(port->axi_base_addr))
--		return PTR_ERR(port->axi_base_addr);
-+	port->bridge_base_addr = devm_platform_ioremap_resource_byname(pdev, "bridge");
-+	port->ctrl_base_addr = devm_platform_ioremap_resource_byname(pdev, "ctrl");
-+	if (!IS_ERR(port->bridge_base_addr) && !IS_ERR(port->ctrl_base_addr))
-+		goto addrs_set;
- 
-+	/*
-+	 * The original, incorrect, binding that lumped the control and
-+	 * bridge addresses together still needs to be handled by the driver.
-+	 */
-+	apb_base_addr = devm_platform_ioremap_resource_byname(pdev, "apb");
-+	if (IS_ERR(apb_base_addr))
-+		return dev_err_probe(dev, PTR_ERR(apb_base_addr),
-+				     "both legacy apb register and ctrl/bridge regions missing");
-+
-+	port->bridge_base_addr = apb_base_addr + MC_PCIE1_BRIDGE_ADDR;
-+	port->ctrl_base_addr = apb_base_addr + MC_PCIE1_CTRL_ADDR;
-+
-+addrs_set:
- 	mc_disable_interrupts(port);
- 
--	bridge_base_addr = port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
--	plda->bridge_addr = bridge_base_addr;
-+	plda->bridge_addr = port->bridge_base_addr;
- 	plda->num_events = NUM_EVENTS;
- 
- 	/* Allow enabling MSI by disabling MSI-X */
--	val = readl(bridge_base_addr + PCIE_PCI_IRQ_DW0);
-+	val = readl(port->bridge_base_addr + PCIE_PCI_IRQ_DW0);
- 	val &= ~MSIX_CAP_MASK;
--	writel(val, bridge_base_addr + PCIE_PCI_IRQ_DW0);
-+	writel(val, port->bridge_base_addr + PCIE_PCI_IRQ_DW0);
- 
- 	/* Pick num vectors from bitfile programmed onto FPGA fabric */
--	val = readl(bridge_base_addr + PCIE_PCI_IRQ_DW0);
-+	val = readl(port->bridge_base_addr + PCIE_PCI_IRQ_DW0);
- 	val &= NUM_MSI_MSGS_MASK;
- 	val >>= NUM_MSI_MSGS_SHIFT;
- 
- 	plda->msi.num_vectors = 1 << val;
- 
- 	/* Pick vector address from design */
--	plda->msi.vector_phy = readl_relaxed(bridge_base_addr + IMSI_ADDR);
-+	plda->msi.vector_phy = readl_relaxed(port->bridge_base_addr + IMSI_ADDR);
- 
- 	ret = mc_pcie_init_clks(dev);
- 	if (ret) {
--- 
-2.43.0
-
+ 	size = memparse(size_str, &endptr);
+-	order = fls(size >> PAGE_SHIFT) - 1;
++	order = get_order(size);
+ 	if ((1 << order) & ~THP_ORDERS_ALL_ANON) {
+ 		pr_err("invalid size %s(order %d) in thp_anon boot parameter\n",
+ 			size_str, order);
+>
+> > +     if ((1 << order) & ~THP_ORDERS_ALL_ANON) {
+> > +             pr_err("invalid size %s(order %d) in thp_anon boot parameter\n",
+> > +                     size_str, order);
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     return order;
+> > +}
+> [snip]
 
