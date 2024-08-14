@@ -1,221 +1,178 @@
-Return-Path: <linux-kernel+bounces-285707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0340A951196
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:31:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C609951197
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68A40B23FBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099261F2454C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1321912B6C;
-	Wed, 14 Aug 2024 01:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAC717C68;
+	Wed, 14 Aug 2024 01:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Y4r8UaBN";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DkOVyws+"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zj1zR6PI"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93736195
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723599074; cv=fail; b=ciHqn2aRAdvGec7tF/3IeJkZvl/qj4zvh4xF0JPruiEo5mb3DCj7JNgN02wZZyKivmfZfqiQEAkCoG7RgVuVbM2wwDWn5twWo48A40u/ARZVXPlMT24GgfIkSxcRCrKVaXHGQtTwcbdHEsW0Kyty79lyaHurOSqq8qH3+DhHZN8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723599074; c=relaxed/simple;
-	bh=RFuNTAFsWjKsOQQssbG0DMomhA16Mg2nelQ54qk6dXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OuQ+LP13vKUJ8y5yEHfPG5uGhQsy+953rRxK6D2MlPR9Xq6klIp2GSBHO430422nnv8QpTonbE3kz9OPj0hMsLaZ9tGpZNWia0/oCx8f/1eGTBxKPYtIyZr2waJTQZeqhZasT5M8X/qjsLjdUlvY4obBfLhOVUYfCrAahDvgMdk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Y4r8UaBN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DkOVyws+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DN99x9021367;
-	Wed, 14 Aug 2024 01:31:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=O7N7+kbTnBcC74E
-	68ESdUlTgH8wZKXiFEA0g9hcW8r8=; b=Y4r8UaBN0mNUqJUV7E0f5VENCB3Djsp
-	6LwNGP2a8h3uTgdh2lPctJ9oCznLs9KLGQj9j16yDko1JCheT0lRWZUuVVUz/jtr
-	VF3n1MujOSssIHvFUaz3Xe80ObWlH7W4c5WTiJ39e0Tf1/DZgFzaOnCOWVaJ270R
-	aOZyo8s77cfZnKKWy3xbYRNF7vifQhTfvmTtIUbjwE6/Kj+kVG6K1p+ytGLdUcKB
-	FRTRUtHzFe8RYo4FlqCAjjzLDdZi0ap6CLE1O1dPoyIkRvA9OYdocWqaNm5mL99L
-	eqOAMUj4RTB2Jmd6jGSZQ6eOZnDCK/Pfu6TB5j8BCkOx/ZU1dWZpOwg==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40x03975b0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 01:31:07 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47DNnKKo021179;
-	Wed, 14 Aug 2024 01:31:06 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2049.outbound.protection.outlook.com [104.47.66.49])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxnft810-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 01:31:06 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B4tS6vFzBSDs00Efyvh1oZ39+MpmSoorIousRF9BZ5Ey5zg2f1DSkusv8o2tV4CUEvjDohoHx8y6Hq3zBdYBS7797kXItYxYIxoAzn7oou+WWhiTCZBmGxHiGlTLfgL74lTm4kOc4Y68M55S3ebIO23mkzqSJMgbOx9+gPxemtbdEBSOfwNVb1kTqUPQ/XVbat+2fTHOWznl2hqTWCwMUmBG848WCHlOYADNMQOo+oOHPujuhU1aaS2mpP8vIncFdQSUHjJhp/o2JIbTdcn6dxA+KBUNfHaqf3ryDU4uMLmBvw4fIB8W8JtvLlziJMe+q6wbAm/95YZDiAbhr2kZgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O7N7+kbTnBcC74E68ESdUlTgH8wZKXiFEA0g9hcW8r8=;
- b=hudJjc+T9Ab+2yNCbshL4Qr1xIHTem/peThfnEIVrqIvRMBQxwYbrJE/HuM0/xVFYueqmit4Vp2Kqa2sEKS6LuajDka9ejL8s+HnRhAWjmTJSF6zjn5owrYqBCjhphNPZ/wawX32Lhv2HA0+BAfAUFZ2QoTylXFx5f5YiblAZx5wYePUen3n+mNhmi8uEXTwznAgE7sIazeSnU/09EBCnpcPTWuTfpO/V6euv2L3/eY2XSwf6bifeOIj5+rNaqV0ZWW8AJtpk4Or1vV+Auxt+ApQz2lU9nhyrq0UYIG+R+HWJnVy94BD6t8mo/cb1XiIJ/o4nC3bgxbzrEHRzkvQDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE04171C2
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723599103; cv=none; b=ijwV3y9MZ0OCbmyNOzn8OX6mWpeZTcX5PLZXGUO5WDihwTyffskctIoIZsPvOxIwmA0Sz+QlKVhn2B5z/Viq7DRtEe5UH2HQ2CB77aaJcFkZkmepPaAlM7uysqkjD57balYKlleAr9sDlA8nfbASOsdZG54ALWYVV72717nQOQo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723599103; c=relaxed/simple;
+	bh=8o4Icar/a4At+/b8xaGVPXtrtbM9FsaQ+MTRBWypSS4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DjVdm2STHnh2M7JqtvLWDMx4OsXwBKqRS2ZzN8pjz429cErgD5JUH78U3TSS489DltyJWathysadlKW89oFofyy1xfqSJwFI2jK+m1A0cFySFfIT6H0nOzWvhPG8bOj9sths8twLmJ/RoEWxTJSLoc2hYCKID4NxyHzU7vM8+xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zj1zR6PI; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-672bea19c63so147194347b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7N7+kbTnBcC74E68ESdUlTgH8wZKXiFEA0g9hcW8r8=;
- b=DkOVyws+7Itrzf9Mpn/LA4kgwxaaxsHtg8GWetfA4JFiDM8F/8r9jGUzdSCDhx4mSeGlSSgLUqM3ZtQJVvIyRPwTJMhu6zVyp788mX/qARgPpSuLWDNlSkRMWFQT7ataHLdIySfReJLQQ78DvCWqJMZpVDaAw2B3zmkSKti2TUc=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by SN7PR10MB6644.namprd10.prod.outlook.com (2603:10b6:806:2af::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.16; Wed, 14 Aug
- 2024 01:31:03 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
- 01:31:03 +0000
-Date: Tue, 13 Aug 2024 21:31:01 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        maple-tree@lists.infradead.org
-Subject: Re: [PATCH 1/2] maple_tree: fix comment typo of ma_root
-Message-ID: <4jkkom7ble6ireunal7jse63tifepwpwla2y4jpsqkx7mz466m@of74l7ksicon>
-References: <20240812150925.31551-1-richard.weiyang@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812150925.31551-1-richard.weiyang@gmail.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT4PR01CA0070.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:111::16) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+        d=google.com; s=20230601; t=1723599101; x=1724203901; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+sFZ3SIAlPQj6ielgYFy5RPMkg4fE3WIWVRua/D7Dlk=;
+        b=Zj1zR6PIdAsgEuN+D4yiK6ECAXgFYw/RYkbsMuEKjFE84IpaD1r1ErCPmPZiA+pA80
+         lMDnPKyaa3wxXkq9i3+Gg+63FLp7EGxs6OwOgK7d+ZK0qkRZCUGfviZCYEurHp/8S+vJ
+         W7gHF6zSO7z5GYeMeiYLzr79ZqBt7U9/PTfgMNCYLfAJ6sV4WXDKVFlmbRIj+zS94MOP
+         rwkZC50UzvFI7KHGDFSuyjiF+o+0iEg4J9/UymEdQbKTqeY6NF8ETcKSncvgOFW9qyrX
+         KYitvlPwsgd6lzHZuto4uuKU0DUA9IHbRV3RC/phqWyWYACVx8QgPhDYqfzGVMz53ask
+         KRxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723599101; x=1724203901;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+sFZ3SIAlPQj6ielgYFy5RPMkg4fE3WIWVRua/D7Dlk=;
+        b=duChxhIa1TM9xrCOdohKQSpow/sFjTG54EdkKkT2V3qUhCCxIXf/Nibq9WBvcP5X20
+         jq33Z4t/D77F3nwvAM80a8cb2ywUIOaN/t4hnkFrUg++Aj0jVUUB8L0wOWMGENAuAvIY
+         H4vQwVRqYwIvgkhAfxirAbKjWetVj8wez3DLjOsEaxxWb32PsETH1Kz2/0NPWECl62v2
+         HzAS+x7hZCyOKQNLgSKgKelOVE+VRMscUlI9rLbE2agTpDo+7lqpPbVVIQH1P//AlZcU
+         rEX/wD3B5Uj69L5Km9BiLXDJl2KX5+V8NwMFGQS2bGHCukUAdjJvLmHFUcsjnBsbfhwI
+         Kgmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOX7+p6FDIm9HstNuD2iDhwJOGBOHm6v9wwa8+KXChMNL4FxmAvmBlCzmTzXT/CI//DPjoqICFBSOqz7n/Wos/5FitXOnmEidaLxtN
+X-Gm-Message-State: AOJu0YwGIiLuTgehmLQec8PsomXquG0wG+kXVlKPFHfEv39KZzHqyvKN
+	EHgH8g2oNyEokXdAShCVGywUSb1oZu+MlhhiH7OdenSRX2bA7vfGnbAas1pScrLNWLv3ag8VQG8
+	bVw==
+X-Google-Smtp-Source: AGHT+IErM1oyl6dX79PLFBbS0Ue2cTuqm2deVMm1K7Fx1UQZ6ahMkuyTT3QbjPRcQErn+dpEqRps5VUDPf4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:770a:0:b0:64a:d9c2:42c1 with SMTP id
+ 00721157ae682-6ac9913772fmr296287b3.5.1723599100911; Tue, 13 Aug 2024
+ 18:31:40 -0700 (PDT)
+Date: Tue, 13 Aug 2024 18:31:39 -0700
+In-Reply-To: <Zrv/60HrjlPCaXsi@ls.amr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SN7PR10MB6644:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4486f543-a2b7-4a76-683b-08dcbc00c2b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7Ue0DFPvE2c7m/mB1dToEQtrEm+eqMw0fTAt2nvkTiTWLw9bNK862YF1mR01?=
- =?us-ascii?Q?ba8EvRN6UjUDGCLFmYiQEpBgGdoRDPX0W7sIblrbxJKUqqlTzOrdVnh5OTos?=
- =?us-ascii?Q?zFklBJG/AlvwsMjR8yI2YSAfu7y432wo1Q8HJ5V0kh5EjELo2oycYglbH3sC?=
- =?us-ascii?Q?YBYEjpt/3nN7asVd2Ep8a8qRhYHDQe1AewnIp+PojXpocE098RbYwPryN4e6?=
- =?us-ascii?Q?n2ffBuKuAo2y+qLq1EzZXCUQGlZLgURBprW3pI/GNDFsz6kcaU/otn5gJLi0?=
- =?us-ascii?Q?ZOajQzwE7EIZmQaVWGGTCB3HFlszokq8MOIFmZjlpCWrt77RAqJEWvS1FQsB?=
- =?us-ascii?Q?l3aiQbNMEDq3KUtBXePZCPCLFJlP4KHSdX1Pu/iPNk6xCChmZS8dwKMm+uon?=
- =?us-ascii?Q?SkvMLtnNcyVUXJ3be7kiKTLfP4uVdujEHRzFWaGDbIBhmKGbaPf7UG2lekn/?=
- =?us-ascii?Q?4pk1nSNJxjiQGxKNxjgI1N7d9h8Xjq6D8zvKqEFVL1838ClP/pmEfmgPo+YC?=
- =?us-ascii?Q?AyeJjborjv8erMXKbZlY8WWDMOycftjm7yveizybWnJ9VLCI035uOv/CIx15?=
- =?us-ascii?Q?kz2V7Hbn2PUJvyhkD2i5frtAs5QRopYXgi6bx50Wie9MqkX3yPTJRYJ6mVdn?=
- =?us-ascii?Q?GIUqksxvKPHfumRnaYt92AWiHE4v2gctLfmwccwsBRn5bcShIGCUWHY/y2bq?=
- =?us-ascii?Q?UVQJ5H9i/wrqF2BV11BMWqMPJ2hqK3ZeD/CgBGeJl+bCTFEa4KeQVYf2I3v8?=
- =?us-ascii?Q?De9oFOCYvkv/RMGUB2tIztfrrppkg54wW3TGXfkVGXCEA7qIac0WwPIhly+Q?=
- =?us-ascii?Q?KYmAtxAJi+vkCtqG+zEahe3HU6LY/llOJsor7ZYfP+1ZnDvJsRrfGIzhpWI/?=
- =?us-ascii?Q?Ni10cVDgXH1Hxo4j6rGQ4x27x8gSKabQjx+VDKaX4YYNMYbUOA2YrXIRxKcT?=
- =?us-ascii?Q?ipT9YncLQaCqeOB6+8U8IX6VflEAHfClptdwCBI01iO0qJ4laCpX0RjalmzK?=
- =?us-ascii?Q?Whw0j3zL3Bep9AYiZnxkOOFgDQJ2VOAK2Nzr5b8C/dCHqSTMqKWPzgdFQYni?=
- =?us-ascii?Q?FEWxXsTLWa7HB4Bm2TkIyy0R8VPXSkCFmWjc9Dskum+AreaNuUOdF716VAU3?=
- =?us-ascii?Q?/5qaLHMt+jsThec6pU5dwm85c0Rqcl13wQUmqiu6VaeF3YXZoE/jbn+6mzGM?=
- =?us-ascii?Q?KWkj0SbK+4cn/CTGGSC/f3Y1DogxSXlcEE+TxRgSm7O76cFhZ/EKxyqKOges?=
- =?us-ascii?Q?QxpL78MovXBds1lyP/KuLVamz98s5nyKroSQSSXeB/HcuZ7g6mW0Td3jBDyY?=
- =?us-ascii?Q?MZFD9V0yVH0hpuzQsSJY8AXClSTzOczHR7KpVA6ekJQnVg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?0Gsp/XezyCnW8c4npm226enooUwgRghM13XF5I4QSDoVAJ2P/FfOZPqIzZ4s?=
- =?us-ascii?Q?yGOZbQbuN5VyIJLjIzAWppJpgf2z/Oyyp2XT7vkaCc9e8PbSwAkpMiJ/GRJw?=
- =?us-ascii?Q?9sknnUip0OftSFl4s4SxoPTu0T1AnTZhbpY+KJ9VDAriVxJRyJaKsg9IywoY?=
- =?us-ascii?Q?7XvJFwvqQP3EMojmdK2I4c+94b6TJB86FWTVu7ZiMVBVgLeLxN4qCR3EJ/rl?=
- =?us-ascii?Q?c8vd7RwZA20bQL/4xZJLHaIcpcipuYYXBNTEFGBH6J/+RMK5Ma/I4kykemdS?=
- =?us-ascii?Q?K8hFHVYp1qknPubdeQ0g1IJhPR5zjkhbB5X962OErh3BNdAan7DXVus355Fc?=
- =?us-ascii?Q?zl+HQZlh8iDEDKSxP06tnhMR2k3gqvL5MECVKlAJjTP3ae1+844tBW/UqAv9?=
- =?us-ascii?Q?ma3ZZzmLU8zgyIL3FcQRh/lptqRJuWMKz/20OsBoXRZVrTLxabZvjdImrd60?=
- =?us-ascii?Q?w0Nv4fMVn/q8zsgRrttHIU+nXQU25UHC+hr1Lm3Zk+6cTLe+8sz45f00whTf?=
- =?us-ascii?Q?PFN5Zw+o3EoIYlfyySGopaFt2rObcfZI5qAMl6Wx6zpdHsxb5UA0iJr5b758?=
- =?us-ascii?Q?eftinkuzzFzQOx2SR7GJ9qb88cYtRN2rXs3UC+B+p0lPGBqTJHGGq9H4MuyR?=
- =?us-ascii?Q?8UV921yd0Y0Ro7yNBdtGh/puloXrr2WXzLwpbNYIm7OcN/qnDUGuJY1FQT2C?=
- =?us-ascii?Q?ayjyu8cN9LB1x7+P1KAK7oYOMwGlhYzXBVSqMYuivMMXO0u3GjUAkflqZzIM?=
- =?us-ascii?Q?GfEc1jPo9Ar0IvexqhV17KqgRGjGrbTxS5fBOnTUOtNc+9sZ0uRV+W5ufghY?=
- =?us-ascii?Q?Qa5S6k4IdRi4xuErujDo42SJXn0iUB+NTBMOKjQzOr7pjXKS3yrFTFG8kYUE?=
- =?us-ascii?Q?1ouDdlJGtPQMJj+LWBnq2nbNW0nY/5blCJ+A6P7T4QBTaBje6vTfH0HYSFxM?=
- =?us-ascii?Q?hN8+Pj0VLKJc0KQjMsi2TCwX/TCMXSdHeFNb9egHL40pOPCyHvts8etGn9jg?=
- =?us-ascii?Q?zzBu81Jdxk7X36LgWb0w6L/GaLrP8n5/pd++Gw8PZ+z3qhwbNeRgqEGIsODL?=
- =?us-ascii?Q?FULir8OZxeVvhCBFeKqONpeS6woOkQ6zqFg2l0gQxI4CD+fFn+q6iKC3yQxj?=
- =?us-ascii?Q?Nnodr98nJDIZglO3FRA9Mvux4GkgZ8DRH3JQnk6XqpnpaUbu5Mg1dKlNWi2D?=
- =?us-ascii?Q?cNW9kQGxdpL9eATe+CFoI9xqspJ13AtwHx/iryg5826YZANij9gSfatot7PO?=
- =?us-ascii?Q?D8PYJt7hMogFXVjGHAny1oojBSwEo1flfAWSvC6gubNDRHyYOXXFFOg/HqVe?=
- =?us-ascii?Q?TlzQ0oXa1L3KYep+28MpTc39pXcL0NPZyx7gY+vkvf1geGLgnG/ekmq7mvnI?=
- =?us-ascii?Q?FurxMEm5hOtTXjcLk8U8soNnSh0Owrm+h3Ybj4KrVPcXjLMXPmdYbuVkVDRr?=
- =?us-ascii?Q?gypRE66kwYE2mDgjxRzlQYUSiBIk9CL8Byik2Qs8UsXYkv5NGJApf3642RxV?=
- =?us-ascii?Q?rn3MWF1um+K+AeqiYRF94xBV6aSGc3DHMUjyHHocYfSVI8pnUyS1P7df2sQW?=
- =?us-ascii?Q?1aRZ5lEgpyWutbOH2eckPqNCO/9UUQYwngA4P5vy?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	wMV1hKfF8GspphaBdMH6eKf8IThC+Tof4Ck4vfaurNvR37408Qku+C5oh88iNld4dDMkpQLZO5V2GaKC86w3Kg/TXVOdr1TJxA4kZTgJXEPtiuF5heUHh6rDmnioWUfTltwZdEXpT7Sv/H1+iBELeYP6wP6wtqKFGkK6PwulltnS3dphayHyXHEh6mYB4Q2qHM/MNSFpTRE5RvfYRNIYlMZrREbBnQmKmv/GxHRO4zb4RUeyb5wikIArG7F9zNORJxT1APAU0eI9n5EAN3grC8r5Qdgm+7O/GS/riA9XaXw2CU5lBIilYERdrXWi51iwJkfr2QviMeJzNv5I3fGNLY0GyOJlWPU2S14UKkzid5pl/+5xcZyGPdYtVKTrADl/hzk1D1CnwuBi75MxqFJQPk+fY6iwGP6ReGj9+PG4l17OxjHKKKy1KD7toEpRSNQhsR0IWpT8mlRXC1KnYubXEkTcue7yo+1LzQ+GFeayFa8sQNDIgZpo/rmb1lj15KyZ9Ikp0bdelXrD6e3jSzwbfw0tcoxxK5r1aFQwpCRgKl7Trt0CCM02LwK0SUqHusDTh+AUe7/ctGSRxVchLcCDX3/eKz90uhOBCQZT0FgfDqM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4486f543-a2b7-4a76-683b-08dcbc00c2b4
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 01:31:03.3292
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FLsZof7WbyBvA232rFIfcl0SvMnBEfdKhI++vn+8CUVneC9tiJd4/yEWRHa9CHgeDcTTs86xQSBFsKilmcLspQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6644
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_14,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 bulkscore=0
- phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408140010
-X-Proofpoint-ORIG-GUID: ayhkZUtzetiM_M0mgHGUgne2nsrZQiky
-X-Proofpoint-GUID: ayhkZUtzetiM_M0mgHGUgne2nsrZQiky
+Mime-Version: 1.0
+References: <20240813051256.2246612-1-binbin.wu@linux.intel.com>
+ <20240813051256.2246612-2-binbin.wu@linux.intel.com> <ZrucyCn8rfTrKeNE@ls.amr.corp.intel.com>
+ <b58771a0-352e-4478-b57d-11fa2569f084@intel.com> <Zrv/60HrjlPCaXsi@ls.amr.corp.intel.com>
+Message-ID: <ZrwI-927_7cBxYT1@google.com>
+Subject: Re: [PATCH v2 1/2] KVM: x86: Check hypercall's exit to userspace generically
+From: Sean Christopherson <seanjc@google.com>
+To: Isaku Yamahata <isaku.yamahata@intel.com>
+Cc: Kai Huang <kai.huang@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pbonzini@redhat.com, rick.p.edgecombe@intel.com, 
+	michael.roth@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-* Wei Yang <richard.weiyang@gmail.com> [240812 11:09]:
-> In comment of mas_start(), we lists the return value for different
-> cases. In case of a single entry, we set mas->status to ma_root, while
-> the comment uses mas_root, which is not a maple_status.
+On Tue, Aug 13, 2024, Isaku Yamahata wrote:
+> On Wed, Aug 14, 2024 at 11:11:29AM +1200,
+> Kai Huang <kai.huang@intel.com> wrote:
 > 
-> Fix the typo according to the code.
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+> > 
+> > 
+> > On 14/08/2024 5:50 am, Isaku Yamahata wrote:
+> > > On Tue, Aug 13, 2024 at 01:12:55PM +0800,
+> > > Binbin Wu <binbin.wu@linux.intel.com> wrote:
+> > > 
+> > > > Check whether a KVM hypercall needs to exit to userspace or not based on
+> > > > hypercall_exit_enabled field of struct kvm_arch.
+> > > > 
+> > > > Userspace can request a hypercall to exit to userspace for handling by
+> > > > enable KVM_CAP_EXIT_HYPERCALL and the enabled hypercall will be set in
+> > > > hypercall_exit_enabled.  Make the check code generic based on it.
+> > > > 
+> > > > Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
+> > > > ---
+> > > >   arch/x86/kvm/x86.c | 4 ++--
+> > > >   arch/x86/kvm/x86.h | 7 +++++++
+> > > >   2 files changed, 9 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > > index af6c8cf6a37a..6e16c9751af7 100644
+> > > > --- a/arch/x86/kvm/x86.c
+> > > > +++ b/arch/x86/kvm/x86.c
+> > > > @@ -10226,8 +10226,8 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+> > > >   	cpl = kvm_x86_call(get_cpl)(vcpu);
+> > > >   	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
+> > > > -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
+> > > > -		/* MAP_GPA tosses the request to the user space. */
+> > > > +	if (!ret && is_kvm_hc_exit_enabled(vcpu->kvm, nr))
+> > > > +		/* The hypercall is requested to exit to userspace. */
+> > > >   		return 0;
+> > > >   	if (!op_64_bit)
+> > > > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> > > > index 50596f6f8320..0cbec76b42e6 100644
+> > > > --- a/arch/x86/kvm/x86.h
+> > > > +++ b/arch/x86/kvm/x86.h
+> > > > @@ -547,4 +547,11 @@ int kvm_sev_es_string_io(struct kvm_vcpu *vcpu, unsigned int size,
+> > > >   			 unsigned int port, void *data,  unsigned int count,
+> > > >   			 int in);
+> > > > +static inline bool is_kvm_hc_exit_enabled(struct kvm *kvm, unsigned long hc_nr)
 
-If you are fixing typos in a single comment, we can probably do that in
-one patch.
+I would rather have "hypercall" in the name, "hc" never jumps out to me as being
+"hypercall". Maybe is_hypercall_exit_enabled(), user_exit_on_hypercall(), or just
+exit_on_hypercall()?
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+I'd probably vote for user_exit_on_hypercall(), as that clarifies it's all about
+exiting to userspace, not from the guest.
 
-> ---
->  lib/maple_tree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > +{
+> > > > +	if(WARN_ON_ONCE(hc_nr >= sizeof(kvm->arch.hypercall_exit_enabled) * 8))
+> > > > +		return false;
+> > > 
+> > > Is this to detect potential bug? Maybe
+> > > BUILD_BUG_ON(__builtin_constant_p(hc_nr) &&
+> > >               !(BIT(hc_nr) & KVM_EXIT_HYPERCALL_VALID_MASK));
+> > > Overkill?
+> > 
+> > I don't think this is the correct way to use __builtin_constant_p(), i.e. it
+> > doesn't make sense to use __builtin_constant_p() in BUILD_BUG_ON().
+
+KVM does use __builtin_constant_p() to effectively disable some assertions when
+it's allowed (by KVM's arbitrary rules) to pass in a non-constant value.  E.g.
+see all the vmcs_checkNN() helpers.  If we didn't waive the assertion for values
+that aren't constant at compile-time, all of the segmentation code would need to
+be unwound into switch statements.
+
+But for things like guest_cpuid_has(), the rule is that the input must be a
+compile-time constant.
+
+> > IIUC you need some build time guarantee here, but __builtin_constant_p() can
+> > return false, in which case the above BUILD_BUG_ON() does nothing, which
+> > defeats the purpose.
 > 
-> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-> index 3d2e207d9a5f..14ff54078f9e 100644
-> --- a/lib/maple_tree.c
-> +++ b/lib/maple_tree.c
-> @@ -1346,7 +1346,7 @@ static void mas_node_count(struct ma_state *mas, int count)
->   * Return:
->   * - If mas->node is an error or not mas_start, return NULL.
->   * - If it's an empty tree:     NULL & mas->status == ma_none
-> - * - If it's a single entry:    The entry & mas->status == mas_root
-> + * - If it's a single entry:    The entry & mas->status == ma_root
->   * - If it's a tree:            NULL & mas->status == safe root node.
->   */
->  static inline struct maple_enode *mas_start(struct ma_state *mas)
-> -- 
-> 2.34.1
+> It depends on what we'd like to detect.  BUILT_BUG_ON(__builtin_constant_p())
+> can detect the usage in the patch 2/2,
+> is_kvm_hc_exit_enabled(vcpu->kvm, KVM_HC_MAP_GPA_RANGE).  The potential
+> future use of is_kvm_hc_exit_enabled(, KVM_HC_MAP_future_hypercall).
 > 
+> Although this version doesn't help for the one in kvm_emulate_hypercall(),
+> !ret check is done first to avoid WARN_ON_ONCE() to hit here.
+> 
+> Maybe we can just drop this WARN_ON_ONCE().
+
+Yeah, I think it makes sense to drop the WARN, otherwise I suspect we'll end up
+dancing around the helper just to avoid the warning.
+
+I'm 50/50 on the BUILD_BUG_ON().  One one hand, it's kinda overkill.  On the other
+hand, it's zero generated code.
 
