@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-286279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668B3951909
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:39:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EE895190B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB57282CA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:39:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 936C6B2250D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0F91B32C9;
-	Wed, 14 Aug 2024 10:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0132A1AE85E;
+	Wed, 14 Aug 2024 10:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OHVw+Xcx"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mjzMX2gm"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402F51B29CD
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DDA3D552;
+	Wed, 14 Aug 2024 10:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723631780; cv=none; b=FBx+f7fl5Z4nnJxFtyPv0WD9efdHIvmEB0b0ceOjHU+KKNdHNaxs+m1r61X77B3vA8M3L89hWyGhYZfKkGFX81LzmyH6h7gxRk33xM86Eo6ZckizCqjUnDGF7Qv79xJgg2mPL1FfNIkzvOfJQVNxZLy9hNneMHhkDnp8D7bhURk=
+	t=1723631799; cv=none; b=TLgJyZR3gJqOR6nQRQRaBr28WfW0lw+UAtj1ea9FV+wHCmBcAmzL1Jinq1Mys/rUqPTACKV+rs0XLeyDOk+GID84K1uNPzD7AfQeqN8Y0D0OeMkoQAmCkrZ5KMPoSF+9Cib79em59+X8zEdOgPWiGetpBCCxCYuz3Xrv7xTggLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723631780; c=relaxed/simple;
-	bh=ol6ZTXC6dPx1NNnToQYOXH4GwET4WoJKZEvGBAAyChA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Z9AfR+/TERAAc4jdJ+lNSRUQDJWAjMw0S6RiJLaDG/Y41/IpNjpgtm+FqnqIKFsNGUhm3HLwsUjAKuklVuNfvu+BZkvNEAE1JAqdc2/hDKMHdvDS4OXTiCeWRnAxmQSIZPZDOUhUSJascm82ZAOo5YhZ2vgiWz7vHHsCW14+3vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OHVw+Xcx; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4281faefea9so47651625e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:36:19 -0700 (PDT)
+	s=arc-20240116; t=1723631799; c=relaxed/simple;
+	bh=pD1qICRTfQfBXyMHWfEjwsThkEYKZjAlRwhKA1VfgEU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SK2azCLXjawXtUx2kdRMQ1gXREh8f7HjDV9uJjOaCAtMzPMMjaomxfJ8WNsxItALcDYcu31+LCr/tsAOsxXpZbBmkrcLnecgxN22fukYDO3iZCfVXJgwDt0HbRTiag+0W3i4PId8khHSkwgRH4minCnbOHxgaxQUPF3zYFzro/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mjzMX2gm; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d28023accso5189139b3a.0;
+        Wed, 14 Aug 2024 03:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723631777; x=1724236577; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SCsVD5Gw0XMLJtG9b25d0pMLRHt/Ggpq8ks2EPhWn3E=;
-        b=OHVw+XcxLxLT++qHGGL4NfKLxqV69LhFYaxRVer98ARwFZ9xFKYY6CYFcCkx636QSC
-         lbs0CGohaJvIO7MT8pktWQTZGaRXHu+3BnglV1u+q+zEo8GETqc4WI1iyvcD6LbPv5qg
-         zd9aoTXtac9o83cn5jb6+tfq41ExaouewJjEg9G+LC1sJn6UAw8SEYgfB6zPX+cZ8t2y
-         y0KhdbjaFnG/rWVGapQQfaxRCMhyZfazD+G/uzu46IG8p5tx1pdvygo+QTzFF65FEMxA
-         2PiGFgNYo8RuclcQhOz76ZGcGAq7grT5QOoU4u9cBxXxkcbOedIqTcA+drrt8Jl6gpBz
-         1pkw==
+        d=gmail.com; s=20230601; t=1723631797; x=1724236597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P0h+7UnaE/DLI0nJCpVlTNs/3jRtkis6/GXWtA6PfOY=;
+        b=mjzMX2gmrS45fbxRLP2CsualumeNaRkSFBGzAc31xttljAtLO95ZP0P+s4DCv5KLXS
+         GvWkYhpyG1enxSp7qrtOnikcobWCA7RN1c3fePBSmcehlz7yilkZepLLyH7eF8jHmnCl
+         heq3Aco+89YAYafIMvwbejW9h8dq8XTD9HqVbszkDIf1X2+ByWHhT8+X7eFSQEqkoNXP
+         ZEs0+ExIfRUA12SQ0r/m/cQCPnmpjSwKaOvZe3O1+1J97CYsAYV4VzDLDhkL2wAewuE0
+         w18giT3XIYVK9Yvnc8XAT4QGoZruNRHKHe3nfiKF0vA74cPHI1aq3UypYOLIM+1a2A94
+         0wHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723631777; x=1724236577;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SCsVD5Gw0XMLJtG9b25d0pMLRHt/Ggpq8ks2EPhWn3E=;
-        b=e8f/ZjVR50DMsbHtb4C9pgiNe+Q5vX/NUahAMhGSM7g3yHCYsqbfRlQ6UaU+bix27e
-         bQ3t2U+keiqzOsdbIEnL4+rQwEwAkV+E8pag3ChbbhqA3Xp/8rJ6I1TknULcXnYJYJDs
-         JAVblExHlNoY0bsC7V91gpSprkRyv8BDDGCtQzMLdOLM4KG8uuifSOiFgImYcrnk4wVd
-         mYldLnc2h0xSPjt+dnQSOk/ONqlYN+FDwoX6XzG+7HqFNb6x0jr4x5k1/iSQBzeLnToD
-         EjhHwS9KDtzRAZJxNzo9j7jQEOXO1ygl2PpWe7Cr92BLSoEQegbQdnuKRSYcJPmqF7pY
-         WB7g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9wSsm2acE95j7vp+jxEx/R4x4INzGc+9mWSV2OJ55wTcIrdcb/hTrZIr6IC0wZSIWhN2fqUwgTsF33m0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvV14EYuHm2iEC7+nmwLohAp1znIq5ahEDkhgQEBWMgoU3slJn
-	h6GWrGlofZMMG+E+o+0BbNrNinQ5dDvbY6KlRBP5CkvZEl8oz8Q3+d+7usFfqKw=
-X-Google-Smtp-Source: AGHT+IGcxmywyTO2gvy35KOCttJ+ZJhhBQ2L4GtnK9UfIj5G8nLkgiKFU1tAu9Ts0iBIJ00/ObFPsA==
-X-Received: by 2002:a05:600c:1c93:b0:428:f1b4:3473 with SMTP id 5b1f17b1804b1-429dd25f517mr15394135e9.26.1723631777491;
-        Wed, 14 Aug 2024 03:36:17 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded3dd4dsm15501835e9.29.2024.08.14.03.36.15
+        d=1e100.net; s=20230601; t=1723631797; x=1724236597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P0h+7UnaE/DLI0nJCpVlTNs/3jRtkis6/GXWtA6PfOY=;
+        b=WF0tiz8xEo+TZkQTdO/I+pomo3cutCm2Ekt7CfOcVjIaKLwPQQJ20E6R49O6uRq5Mt
+         PkXIGOkH2g/GRpniCTlPj9wwmROguDPAhT3QYGr7v6qmEr/4nyUOtKJdFN81F6QZo+gL
+         hsG9aIUw3O5KisPOMj5L30x+3YQntDdg2VCYEb2eIpBO5BkGlCVgpwXUkWEKJlHkIUwF
+         pJroG/06cGEJUvnxMqXo1DixS53duoQgfBAMDUokMRhl55l46d5DRV1+zg0SeVxPvVfe
+         aryAh1ug3aUdtACh0H5I+UWsIWO3vYE6sq78A1aphAO+OYP3fh6/6crBg80B9yAAOQfA
+         PEpQ==
+X-Gm-Message-State: AOJu0YwXhFu0egksqzzLFlLy9tIqYNj+LfLBruSa2sXLJ/q8FA0gn4zN
+	NFYdtFhmz2i2A9uxNCvFlSG6ikF4gfV+4mxUb0gzqzocuyNaSm7Xqygo1WhbWMo=
+X-Google-Smtp-Source: AGHT+IE30yDPQkUZHYG1aHmEdXElVvOkuLkl7uSUJRc2YaIFPPcWe157IZb5zsqv/SFK0l2nEBeHFA==
+X-Received: by 2002:a05:6a21:398:b0:1c4:dfa7:d3ce with SMTP id adf61e73a8af0-1c8eae6f521mr3264316637.17.1723631796524;
+        Wed, 14 Aug 2024 03:36:36 -0700 (PDT)
+Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201cd1bba6bsm27159465ad.225.2024.08.14.03.36.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 03:36:16 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 14 Aug 2024 12:35:47 +0200
-Subject: [PATCH 11/11] usb: dwc3: xilinx: simplify with dev_err_probe
+        Wed, 14 Aug 2024 03:36:35 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH] LKMP(Bug fixing fall 2024): Fix documentation spelling errors
+Date: Wed, 14 Aug 2024 16:06:18 +0530
+Message-ID: <20240814103620.8912-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-b4-cleanup-h-of-node-put-usb-v1-11-95481b9682bc@linaro.org>
-References: <20240814-b4-cleanup-h-of-node-put-usb-v1-0-95481b9682bc@linaro.org>
-In-Reply-To: <20240814-b4-cleanup-h-of-node-put-usb-v1-0-95481b9682bc@linaro.org>
-To: Patrice Chotard <patrice.chotard@foss.st.com>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Michal Simek <michal.simek@amd.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=890;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=ol6ZTXC6dPx1NNnToQYOXH4GwET4WoJKZEvGBAAyChA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvIiI0pC7cGWUcMPtTN5Rj4I9ue4DwVHlIBTOR
- FZKTmMNbuyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZryIiAAKCRDBN2bmhouD
- 1/31D/4lelP2Ou1IyK4wZSB1Osrpv5THjLFKzvWenV3V5pHokmwuau5AJypaMbC2qkYkpr/mo1g
- WN0nuAtUFwUL57BPiqPpDYXrg9FDydmfDejUCaamjp+u6b6rJNrdNrP77XKpl27yBUP6koL22tH
- a6tGDDWdza5ocxOQu1Dkd44EM7uKDO6m9V7sUfhg1u8fZCL6wVLh/ZkYVSlSWB0/JEG4xOpDPvS
- mz5OYP4ExBLwy1UHPMjxsoWG6fo66yASdJ7oQJeBwrhLwxDiId88883oH7rgXiF7hlQJ/LDe5zp
- CrtGSn+DMV2F+41SmyuXRZgscfeVqGyxFMHVmSd5QqVFxNQVKkzBS6RKCPZNmQjSK7g2Mr65lFL
- jZMlm95cOlybp4FnequD5MWQr0616bw2DTxDKOTnJ9jVRQhM49dfkKoivW1YSxhXVzXXnjiIXGN
- v9Rz+OTnO/57SoVX5fOhI7z+C5FyYSyJA0mjZ5RqPVV3bjp5m/7SjWSzwckXidcwpGWswyahE1q
- tfLywc0KMgHHQLePAVq6LyQ98L48G+hcIo5X3KY0HeAeOnOTm8F4imWVj5ffkZ6FJzKu0V2Gi+l
- wwwYkgm/+wqTvNYRpLWfoUetlqZqSO8w0wLbAEUV5j/BFk6XqTnLhXiw6E0VI9viRD6fSFhT2Qr
- KEl4SJzQy/0HuFQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Use dev_err_probe() to make the error paths a bit simpler.
+In this commit we correct some simple spelling mistakes
+in the Documentation/arch directory.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+1) "Assitance" to "Assistance"
+2) "parant" to "parent"
+
+Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
 ---
- drivers/usb/dwc3/dwc3-xilinx.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ Documentation/arch/powerpc/ultravisor.rst | 2 +-
+ Documentation/arch/riscv/vector.rst       | 2 +-
+ Documentation/arch/x86/cpuinfo.rst        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
-index b7613a106da6..eb535733ce91 100644
---- a/drivers/usb/dwc3/dwc3-xilinx.c
-+++ b/drivers/usb/dwc3/dwc3-xilinx.c
-@@ -285,11 +285,8 @@ static int dwc3_xlnx_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/Documentation/arch/powerpc/ultravisor.rst b/Documentation/arch/powerpc/ultravisor.rst
+index ba6b1bf1c..6d0407b2f 100644
+--- a/Documentation/arch/powerpc/ultravisor.rst
++++ b/Documentation/arch/powerpc/ultravisor.rst
+@@ -134,7 +134,7 @@ Hardware
  
- 	regs = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(regs)) {
--		ret = PTR_ERR(regs);
--		dev_err_probe(dev, ret, "failed to map registers\n");
--		return ret;
--	}
-+	if (IS_ERR(regs))
-+		return dev_err_probe(dev, PTR_ERR(regs), "failed to map registers\n");
+       * PTCR and partition table entries (partition table is in secure
+         memory). An attempt to write to PTCR will cause a Hypervisor
+-        Emulation Assitance interrupt.
++        Emulation Assistance interrupt.
  
- 	match = of_match_node(dwc3_xlnx_of_match, pdev->dev.of_node);
+       * LDBAR (LD Base Address Register) and IMC (In-Memory Collection)
+         non-architected registers. An attempt to write to them will cause a
+diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
+index 75dd88a62..e4a28def3 100644
+--- a/Documentation/arch/riscv/vector.rst
++++ b/Documentation/arch/riscv/vector.rst
+@@ -15,7 +15,7 @@ status for the use of Vector in userspace. The intended usage guideline for
+ these interfaces is to give init systems a way to modify the availability of V
+ for processes running under its domain. Calling these interfaces is not
+ recommended in libraries routines because libraries should not override policies
+-configured from the parant process. Also, users must noted that these interfaces
++configured from the parent process. Also, users must noted that these interfaces
+ are not portable to non-Linux, nor non-RISC-V environments, so it is discourage
+ to use in a portable code. To get the availability of V in an ELF program,
+ please read :c:macro:`COMPAT_HWCAP_ISA_V` bit of :c:macro:`ELF_HWCAP` in the
+diff --git a/Documentation/arch/x86/cpuinfo.rst b/Documentation/arch/x86/cpuinfo.rst
+index 8895784d4..fd7999c4a 100644
+--- a/Documentation/arch/x86/cpuinfo.rst
++++ b/Documentation/arch/x86/cpuinfo.rst
+@@ -12,7 +12,7 @@ represents an ill-fated attempt from long time ago to put feature flags
+ in an easy to find place for userspace.
  
-
+ However, the amount of feature flags is growing by the CPU generation,
+-leading to unparseable and unwieldy /proc/cpuinfo.
++leading to unparsable and unwieldy /proc/cpuinfo.
+ 
+ What is more, those feature flags do not even need to be in that file
+ because userspace doesn't care about them - glibc et al already use
 -- 
 2.43.0
 
