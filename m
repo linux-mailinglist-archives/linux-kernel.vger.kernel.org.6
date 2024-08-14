@@ -1,247 +1,477 @@
-Return-Path: <linux-kernel+bounces-286545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59383951C52
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:54:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C160A951C54
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1281C2152F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:54:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43ED91F2180A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20441B150E;
-	Wed, 14 Aug 2024 13:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422F01B143C;
+	Wed, 14 Aug 2024 13:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ec62/Jl5";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="dpDDfxhJ"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V0riqr0o"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D791B29C2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E7C1B0126;
+	Wed, 14 Aug 2024 13:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723643646; cv=fail; b=i0E0DhAVIBLXyWLEkNOs098RE/+KZglHK1OJgAHXE+o56mTMShlBppnfdU/GgMP8XpgB+T0fMz215kjyLfcPr6g4RPI1Lw7mAbiEdGXZP50znFXstQEljxqanxmay6ZqtBH2Zb3ofvPj/KzmDYnkU/icgBivW6h4A6RDQQGNNG4=
+	t=1723643753; cv=fail; b=h62Tw3fg1e9svfZzuEoQxAHQzYsC22bzniBgQuV0fARNowp9oH++jvv3Os07Lf7BDg/S9BBcacKh4QIOe+V1CTY0maYjQRO+Xw+zQ+4nDP+Qh5HzEockTdyEaptigsKXxfAMdY9cLLyLKB1kMEgKFwvt9ck2zbBIqudnigE9f54=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723643646; c=relaxed/simple;
-	bh=8NwYitaZVTgtWeyyUJPdOllzVuTltxfRkAP3ZEWaNe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=S7OGw200PAKnc+2Uijq+KpfxleQxvmP6gUD6QDJMKP1PJNF4lhMiTB3s/yJUk7s1LCel43OX0EM9jhXn7MHXJyeZ/OMNMUgJc+dJAF2+oy5+VoNrEPL1xURM//B24+87q/mlE6gjP8ptXzxi9Eru9O6GwRRfQWZ6/Cy5eyAkCA4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ec62/Jl5; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=dpDDfxhJ; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EBtZIh007011;
-	Wed, 14 Aug 2024 13:53:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=wR6JAz08HAL9oe/
-	DN3+y2geSaIzoEo5QGdYnDILoBpE=; b=ec62/Jl5D7fAxAZoiRSCxkemfNeGXTd
-	w5dS1tkMcaKBUIbfpI4xFLrpkKO1ecO+8tNwNwoN5TKgdeIdvelGLORJOYhExSEB
-	fBokOfdopPX4tWroxzTxDd4PpCZz7U7HWxjaj5eSiIRir/0xnC7GWd0y6zno3/2y
-	+M3XftGhQ3ps7jMEEY4+YdIXSKG/NQjsNejJBunAXzxG/ei3aDQRjwSULTxpCI0C
-	VSTcu0zdSyRc56Wj1FWRazd4LBRSfDpdInBtVWaSr3s961DC3rkXcp+C6ZJcJEia
-	G9Acc05POSeWRX5CBe643cqfbUtVaNFoVI1QmYqR3cZvIBqB6jlmVEA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40x03987xf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 13:53:55 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47ECnJ68001390;
-	Wed, 14 Aug 2024 13:53:55 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2045.outbound.protection.outlook.com [104.47.70.45])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn9vqs5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 13:53:55 +0000
+	s=arc-20240116; t=1723643753; c=relaxed/simple;
+	bh=IMI4A/qtPF/JmD5/DOT/ZpNqJYieZ7fMYKERjVojYAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BuIhXgk3066afns9ALTaKel3i9UnsE7jvG+7gaE+AtPq8nrymJ6+2V9ZFg6Xd8swzKU+K6t4+uaySsWj1vByYnaoURuTCswJCmYUNS/OVR3fw3ZLIasx7G3tdJxmj27dRzHV8M+FWl3urStK1tdq84NAGcADfJHLuai7h/tteQ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V0riqr0o; arc=fail smtp.client-ip=40.107.92.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SY/1XQdP5K9C17ca2FCcXCNzzKOGcFz9VCAHYajFFn1UFVw9VAO9h/bIcsiYvI2N5WBTum0hlnrGw4ET0jOI0FBNAJqeLmHOkgRv6KQ5K+d52Nw+ucc8ytWHYsr36aiM+h/uud35hbJc5xGHrbc+RSrNFqJYxyA9ZdJUaPMRBad4LuAkMKYVu1dgbORt1/ExrLuSErZfXrfDSN3hHOVZTPO2Yy7Wdf37e9iXIY9gsSy+e84g8mr74eB09mJptwgnNpwHGRmOyrx/MXbEp/vYe7QYrf49ludvAqvqAoTyFZLzpeQsCnzh9ivuamB5tTLECMSq6I+UecG1VfHKoyCxZA==
+ b=aYwPliYAuiBbKyhObhKWnrctEHFLoI3LgGwghb06ZIXwnvjmr0zZgBmRU+PK+4ewmAPCia73YtkrFY+tK2O+HM3RlzdQ4c7GOTxZ6WSB6QzvLRNGUuzz8qxkmORXEYd7GXzcu2xcrC2JezWtfuB7nza3/+BhSkzwcizsgcfaERYxy9FKXr62kB7FY3UovblczTHqGNUBsaEbUUD4THorPNwFEK81tnGvJ70CeoBD7h9Xb4Fh6TX8W+Lpj6UuLk5TGjQXgtLutZr1dpVvZVbeXveMR9NF90R38llJs6spQ3pvF5x4vnB/8Ra7TZVJwsiumSM59jHFWWDMOBIc0lIMCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wR6JAz08HAL9oe/DN3+y2geSaIzoEo5QGdYnDILoBpE=;
- b=OK5qr4/SB3dyI3AkA23mN6Nto6CFVXy7ffPLwHa4WqZf4m28ZnjQDb+bweOc91CfT+SOUbgrs1K8qzb8X8W0OaT6/Rh/NbX1RAjrRovX/frA/GDgZFWtQUX0CpbkXX/SLcAqjMS88NV0S2R76/W1bhoJdozMeLNsGIuN7jz77uAVhPccQDirstuWPqjByy5lfiTJFGNL/FcRTb3fmYQCqzrMSX+FdrE0cDCFcmqXxKtf4q+wznM1w+m39h8L6aEpSfmlIfF0M0eZ387OWf3ZAKWBZppQQ6p12pYtyj6zjOHr9qJWSPKLaXnk/fX5qLqylodezDw6venmwLd+ATq1Uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=9cRT9WbnPaUoi7cnReUQI+3dHtXKU/8A2cU8OT3LzXg=;
+ b=hklbmUo9+TrIp5EtsuCENZWsQmWhBV2zAmhC7Zw1tDy+bIAZDK+IhLAz6w6SU6tDh0KJCW30sLoXHXM3xr6vlye0lElgiwVvp2ZMU7SFCx0GSqG43jik5fZ9XAxDp77JH0kNpxVxAqZ3eaIBKsfNqHFi7e1OlnPoMdJxBOGsWI0+8emHOum09l1OW899Ymrs7fKdbA31w62Hn3Rw3LltNACHzfdASzrCB3v68x7SHM7vvxGDQs6Zc+43l0/caWJ32xG62TrKL0I+3jz/yis9s4y1KjVnjz1kmHmYeg1iziS3qXCiLRxPNwIZhvPbznHnLM3KXUWASk1fsnNJI9nfbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wR6JAz08HAL9oe/DN3+y2geSaIzoEo5QGdYnDILoBpE=;
- b=dpDDfxhJXVGyTBR3cbKVcQNSodx59+770TrAxau1uf/QA/St4DLLSjoUQIBIyUsb0syxvPOyc4879UQWCiIIgwfgptFZ9WXufumzpu2+MI5aWDbkYBKZSR4whQPiW0IiLgPbfgzjgAOH9eMIcZE+Pv3wVLp4Eg/1QDz4thlM5O8=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by SN7PR10MB6450.namprd10.prod.outlook.com (2603:10b6:806:2a1::6) with
+ bh=9cRT9WbnPaUoi7cnReUQI+3dHtXKU/8A2cU8OT3LzXg=;
+ b=V0riqr0ogGixm3Iv2MyP0yywgZ6xFKmXsV3GfMloCVKa2AApkhy5jylcN33yz+AoRN+3ZF2gypv5n+NQP+7eKp+5d30Yzg/4r2FsKqyOTj29gzw2e6Q/v1NmXBCsK8F/mi9+YmrwmeGf5Pb1jO+Y4wYPk8D21BB3CzBhCf6WNOU=
+Received: from BN9PR03CA0884.namprd03.prod.outlook.com (2603:10b6:408:13c::19)
+ by SA1PR12MB7317.namprd12.prod.outlook.com (2603:10b6:806:2ba::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.16; Wed, 14 Aug
- 2024 13:53:52 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7828.023; Wed, 14 Aug 2024
- 13:53:52 +0000
-Date: Wed, 14 Aug 2024 14:53:47 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>
-Subject: Re: [PATCH 04/10] mm: abstract parameters for vma_expand/shrink()
-Message-ID: <d1c80a35-0a96-4dd3-9e91-ce4f062d90d8@lucifer.local>
-References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
- <95292b1d1215f49bd895f1aa38f54a8274c350af.1722849859.git.lorenzo.stoakes@oracle.com>
- <f12608ec-9c40-4977-a5a6-479f86b44e80@kernel.org>
- <2d85f8a8-6937-499c-91fd-7dc5deced71f@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d85f8a8-6937-499c-91fd-7dc5deced71f@lucifer.local>
-X-ClientProxiedBy: LO4P123CA0270.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:194::23) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Wed, 14 Aug
+ 2024 13:55:48 +0000
+Received: from BL02EPF00029928.namprd02.prod.outlook.com
+ (2603:10b6:408:13c:cafe::24) by BN9PR03CA0884.outlook.office365.com
+ (2603:10b6:408:13c::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33 via Frontend
+ Transport; Wed, 14 Aug 2024 13:55:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF00029928.mail.protection.outlook.com (10.167.249.53) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Wed, 14 Aug 2024 13:55:48 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
+ 2024 08:55:27 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
+ 2024 08:55:27 -0500
+Received: from [172.23.60.101] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 14 Aug 2024 08:55:26 -0500
+Message-ID: <88b86f1a-76e2-491f-bbd8-5d9332659d01@amd.com>
+Date: Wed, 14 Aug 2024 09:55:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 8/8] PCI: Align small BARs
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240808215329.GA155982@bhelgaas>
+Content-Language: en-US
+From: Stewart Hildebrand <stewart.hildebrand@amd.com>
+In-Reply-To: <20240808215329.GA155982@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB05.amd.com: stewart.hildebrand@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SN7PR10MB6450:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d988ce0-dd4a-42bd-1b0f-08dcbc6887c2
+X-MS-TrafficTypeDiagnostic: BL02EPF00029928:EE_|SA1PR12MB7317:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc6372b4-57e0-4fce-1d1a-08dcbc68cd09
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Hj9gswQR23hYOkPTgK7JWPT7/kg4wk92xG8/RBkX2SH4e9zoCZ/VjZj9pnXO?=
- =?us-ascii?Q?yhHV8XaDa+OATXGYvPPN7eYhqkoRBTUW6Wb192XThG+XL/K9vUFXutwuxjBV?=
- =?us-ascii?Q?wJ5g1Bj39GONwcPoFAShbeJ8ik07uo2LRCJWVZ+AvR5zUsdBJOGgbKPz2KLj?=
- =?us-ascii?Q?CRTxzDxgfdw1YzqGeMrXCaE4V4K59nSl+BEJxMxDQIfmn5jMWhv0urz9jCTM?=
- =?us-ascii?Q?xrxZPvoM3z/dZMDFdhE3uB1tpSHugZbJMh99vx/RkPbYHVvpv2lvJOWVyWpj?=
- =?us-ascii?Q?WAa1EZKR0/NORiNwDEqc81QMReRSQogwnAsX7rMVL0tk79kI235SG9321OP2?=
- =?us-ascii?Q?FO1pBmiuvZB77TmmJm/tcP+3EXz88hwSRHRg7KmMZ29/Ez9jJZf+JMe7IWUI?=
- =?us-ascii?Q?q7ctmchwObIv7T0d7WwqFEGDvmD30Mr2EUEqQsfFakGkMHN1AI/lkWwKDYwf?=
- =?us-ascii?Q?v+VwChM5xPzz0QNtEhSHsD5LojMRB5CSHeBwiGlJqnTgcUX88i3cNpoOQTCS?=
- =?us-ascii?Q?Q72uqQRM2dRtAjIKPDxk8u67WcE9Zp/XRJ/wy8ogLac1Z7cDZyFXRHjcbomx?=
- =?us-ascii?Q?+jjC9153k8unq0EhdoNA1TzA1w1RrtR080ZDaAZpfziVihyXWmJqr8ypDhTG?=
- =?us-ascii?Q?vvQJDtRGT4PEQrEQCTdOn73H0ExSo7mi6i0Ok2kmD2Dw7TGgI6XVzx2KpSeM?=
- =?us-ascii?Q?/u6qD+fw66uWqJuq0RLxGclvNtPbpyI4VPZD8OoFKfcPR51clW9oDCexbufC?=
- =?us-ascii?Q?1CWoecl/Bdkpva1cCOFfAniKXOX3r5r5Pi56RuMSsNNExdYrwcWsk+cPnhIx?=
- =?us-ascii?Q?GhxmOlSU4qjLnVtyOpdx79NggNQOaDD/anb2KEZrEm1patp0d+ksrb/kxW4D?=
- =?us-ascii?Q?2zqVv+MpOy3EPhcMuE/5SNakHv4hpQG1xbaSuPqm+MLT5jHSi3siNBHVteEh?=
- =?us-ascii?Q?YkoruGovsQtTJ5R3u5hhnPUrERE99TvIoI8jPz2Wmd8kd55mnXy815gFHWfa?=
- =?us-ascii?Q?qykrU5KZWOsNy3+X5l4C+iPrWg6u+ACe3N1VlgS8wpvLUBcE/cranS1hXpe7?=
- =?us-ascii?Q?wyozvi8qbe/BPefC1kZUq//NV8D8ZBSOfSa7xcp+0j+VGU9zKyxfzyt3fqvU?=
- =?us-ascii?Q?Gbdy/7SzGrZlmufwKf8IRhR3x5TStmw8QtplyOw5E+VoJZdeNyDpgKx00r/y?=
- =?us-ascii?Q?yLuJ5FA2rKYu7+3YJvbyLxC6U0JQcCiG7Pln1Wle5S87drFv95lENyiWwCAQ?=
- =?us-ascii?Q?9xx6uiJe0Kluz/QCc4Pwa5h6IXSq2MzM/41rFWEhbKkmOaRgxY60F4SwTY8x?=
- =?us-ascii?Q?q4PKd9PJmlbtQ/cAP1JpnbWZ+NbOMpHlnHQ5KT2Li3H0TQ=3D=3D?=
+	KItojA+f+g0qSmuwsUHEz8KTOFt/2BMIpJIrN36hjQuROr+bp+QBheJVJ9pvDM3ES+NsRRSYSzZPx+Wup3PaiAWLxocHP2y7xXsO0KM+9YjYuIOIE7d4JIpC2FzvKrDlGC55uWbXc/Doxc6Th9NOEs3C3f059ETbiY9SqcgsB1NBYh2m/Ua4iEazyku+gZaQPvihGqKRIGqv/OldUQeh+6yfY3liQmcxSXkRcDV4m3DgMXVLspd2LGW8YLC5IAYg+UOGPPGM9nx+9JcXFC99INML5AbKKilMZyvd9jKDNY3WUo1KX0y1IPPHbKEVbqpZahbC8NhGvubAnz9qTew/WDQbcwesBOvUuXcZmt4MWvIF67nKdUH5oGHK56WDTs/3s3MIV3hW7ZAajFFqZm8DdduVWCPbfT7pU++g1eqXUNYJoYRyw++/7AwATUngztn6XXjUbQQPofQvJ1TvstDy4WOhlCzYbHSLa6lefxJ+ge/mJdpWxnnmT6ZPVVFPQT1ASwnxDjPYwQ2dwjKljgeRxg6k1ESz8NiD/llQsqOL9MY7aqQdHkT/FdDAZ3QzXYJ1LO4OszLeQ4s8vU9OGv+NVry9PRdEMLWCaXV8lrGz9E54nneAjnw2b7c0fcey76b7YShCFywxo7PEqCg4MMiSpsjDH7x7j+xcRXlTp1fihSahufMCDgNMPg1HnoVM1+YM9gPKTyCUax7wm2syaEGBYg==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1AD4misdOYYHEaarih4Eeq1q8crlMA6luBwnNt1c4S7R8V53qLFZJi2oTzRn?=
- =?us-ascii?Q?ojqdsTTbdjWeCZCZmwvUdOa4lTVHHY6cLKfFIMWWpoPmCxt0w8d9RFnQEvM8?=
- =?us-ascii?Q?+5B6ePV24vWw7WCKjdFB0WCVgMXfnSKlnn/PWpD2+RHDd2JWSVtBLHU3VjT2?=
- =?us-ascii?Q?rinLyTvRwk9JGt6WQO7OVCCsPsfxrYq4C7vB5RaZpb3LwxP90Te3yGo/ncIb?=
- =?us-ascii?Q?7+PtzcDC8SNPHSxFI6LwtA/QNFIxJ3MMZ956EugNm4CqrF1gpq7RY/3n1A+w?=
- =?us-ascii?Q?5S3LQ43KI6SggX+JNzGFQNvk5oXwbPd6JVjvBLbIFVj6Gx1CsRaXkosYC6Fi?=
- =?us-ascii?Q?QweQk4ezmoek7MVdj7GgPmiylxW8Jvw3PUQnc0n/7Jp////n8SJAA6/2YEUf?=
- =?us-ascii?Q?F633YyP2Mz/LKSGLqNrEr/SwUM/y6YwYT0ymPiFf67LtqIEU2CD0KxBzk0in?=
- =?us-ascii?Q?K3ZaCjqc9LAo21AVJCxpLYXZtDBiKZJKhBmXfW8tJg/HXsdA9Ad0U4mOX1ES?=
- =?us-ascii?Q?BKf7cpnAYDGtG8Ip2gcZcHFT6IlTbwmL3GdPYuwk9PwgO+VIHkMpZUvZYdv8?=
- =?us-ascii?Q?FonE7eu/sgAfsaWp9eDqgtouVAZEJEHFyXdSWboKj8xH/ZEUCPxnZfwjVUUi?=
- =?us-ascii?Q?YcSUzCeeQ+GHvOJdTQAt8EhmFlfYHLZR00FkXeJXoixsXTgFtX3qReiiYUmf?=
- =?us-ascii?Q?dzpb4LJUTHynYsr5HfVTrJHlyt61quBCcAAnXIZkfNcQ277pk5xS243L+eKf?=
- =?us-ascii?Q?3thCTetgkuRsHkQ7yX/V3RkL+lOpu31/Gux1Al/xPrODq11URjZ25hBQd0mx?=
- =?us-ascii?Q?iuFAUo83SFdnXxeV6YNldnb9Nuby9u2RjEde6suk92e2NggmSfYxZoi8hXDg?=
- =?us-ascii?Q?6sZQyfX3tqbPmaux4tj+nDZ4aSrxG12jFjq4R/RZeY/4XF6GgBSX86wjVgY0?=
- =?us-ascii?Q?4kq3PeZQL5jKAie/J8WkvgZ7Vmu2y0VPaJmB/Y2fpc37gfNunWkg3oWSjSxV?=
- =?us-ascii?Q?T4u8pw7Xdmmg08p7Cmfzf3GZFdfUMztZphFoVxOCpHdmzF3rqFAhjdDylqOP?=
- =?us-ascii?Q?gGwM6Yg6oWFE6YDH/uQzlBtMI2JaX+2J0veusr3KIqUwvmTV8ndChIAvR4bK?=
- =?us-ascii?Q?NRC7uZQhlyU8ahgL2sbxs0A8NVGY7yzrOQ29LAUhX10b0xeZiC/RPXehmnye?=
- =?us-ascii?Q?B830GcOTjveLasd5ulX05tfRoMXXHbtTi24M4bzGyKetXvH1WjRvGX1sco6j?=
- =?us-ascii?Q?Ruop/N1Gw7vGCv7U1WFvt6lhFpB6h/RHhvVozwzRpbPXsBFZfNurMc1CzqMl?=
- =?us-ascii?Q?KkStvK8Y7jqYEP4XVlzF8drYDuIwZbgmK3fUfJrq0qP9lDO+CXJG3JJDUgrV?=
- =?us-ascii?Q?rVQapCGlJJ2EdYeWaeOZF+RxlEEoz2owhG3sTQjUXBKBpPXINDjg5aqFEG8z?=
- =?us-ascii?Q?d//3cTXU/6pDLC36ktSSXGoTSJH9MuQ7P1bFVdCMR2gwbaVHw+TjppmmH0Hm?=
- =?us-ascii?Q?LRbRstAVeyRN37B0q7KuCWuR0ilKZO/61eiDMEBhSYCqQ/8SvQtfrjcopZgQ?=
- =?us-ascii?Q?Q8Z3LL6dkAYVG54ID1lEg9cLNMiKtvhS7JXkfObf/0t5UkHHNzCLMoW3XH5h?=
- =?us-ascii?Q?YrLWnvdiBpvRHbm1xiH6l5GwGDxsQy+//BIW7pb0fXLeFAv8aQ61A14vsvYb?=
- =?us-ascii?Q?ETAl0g=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	DUTSoMQ9iTbOaChpVIBtqZJPLw0UhQ8BcP2n5e5DZQsTZ7Ebql5jSJnVPerHvj9LijTmV3SYQc0MWjMCw6OL+vC9fMX2JOd6XZUKxOJKWXHnrTQ8kx/E0eTYRKBjDM0olSPnKjwNKf81LXyFDpWLLZ82Gs2jMlaTflkmqATHq5AnHSa/GnM8PJa4ZgIM9zVQj6/jhTQWiiKDuSfVZvu3iSA2L0WS4d4i+DLSx97vAF7H2aYPSN73wkw3cewLt3zsgbo5BMjoxJiBEmtOi3zYWu2CZbqXnO4r3EQ+ZerbbRmd+2kjoUSqSYDxxkjNdu5MBUQ/wtCCvwF/WkFXAxTd0NPDo/066gB2D/Bc+CT1B6PUwRRbZiq060Ru9azV/u5IXxp4SMpsk2gShzKODtqXV+u4y01B5T92v/wyFHvZRxYEeNfic/F4l23eXOOQ3yWChN5lT91fKBnrbpJyH6rDEmgzJD4IHV1wHGO9JKNM1njSe94eOl9ZLvhMcCLAuLlV6ITaMp+PDoD73k/ifLDZZPlg4HZdhMSyiyKQMdSnHJyodUnFVbEF9sqRMuZb1Kxhg9b/9xJ1p65uis/M0bYSsWsBmkI3f0izWZDOISut98I=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d988ce0-dd4a-42bd-1b0f-08dcbc6887c2
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 13:53:52.1206
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 13:55:48.1690
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Dw1gZjqs/7XOcA3yvllYb++95cq6GS8RbJ3U4Rx41CK2YoeAgTo1PfF8W6ZOIUuxzTA6lk0ubsbUlrgaINHfbHaQIsBrZpxNOA6mFNI4+L4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6450
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_10,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 phishscore=0 mlxscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408140098
-X-Proofpoint-ORIG-GUID: ceRC-CyA-zif0txksvYMzYxzetjUvV2-
-X-Proofpoint-GUID: ceRC-CyA-zif0txksvYMzYxzetjUvV2-
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc6372b4-57e0-4fce-1d1a-08dcbc68cd09
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00029928.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7317
 
-On Thu, Aug 08, 2024 at 04:45:53PM GMT, Lorenzo Stoakes wrote:
-> On Thu, Aug 08, 2024 at 04:20:26PM GMT, Vlastimil Babka (SUSE) wrote:
-> > On 8/5/24 14:13, Lorenzo Stoakes wrote:
-> > > Equally use struct vma_merge_struct to abstract parameters for VMA
-> > > expansion and shrinking.
-> > >
-> > > This leads the way to further refactoring and de-duplication by
-> > > standardising the interface.
-> > >
-> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > ---
-> > >  mm/mmap.c               | 30 +++++++++++--------
-> > >  mm/vma.c                | 66 ++++++++++++++++++-----------------------
-> > >  mm/vma.h                |  8 ++---
-> > >  tools/testing/vma/vma.c | 18 +++++++++--
-> > >  4 files changed, 65 insertions(+), 57 deletions(-)
-> > >
-> > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > index 721ced6e37b0..04145347c245 100644
-> > > --- a/mm/mmap.c
-> > > +++ b/mm/mmap.c
-> > > @@ -1367,7 +1367,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> > >  	pgoff_t pglen = len >> PAGE_SHIFT;
-> > >  	unsigned long charged = 0;
-> > >  	unsigned long end = addr + len;
-> > > -	unsigned long merge_start = addr, merge_end = end;
-> > >  	bool writable_file_mapping = false;
-> > >  	int error;
-> > >  	VMA_ITERATOR(vmi, mm, addr);
-> > > @@ -1423,28 +1422,26 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> > >  	/* Attempt to expand an old mapping */
-> > >  	/* Check next */
-> > >  	if (next && next->vm_start == end && can_vma_merge_before(&vmg)) {
-> > > -		merge_end = next->vm_end;
-> > > -		vma = next;
-> > > +		/* We can adjust this as can_vma_merge_after() doesn't touch */
-> > > +		vmg.end = next->vm_end;
-> >
-> > Ugh, ok but wonder how fragile that is.
->
-> Yeah you're right this is a bit horrid, I'll find a way to make this less
-> brittle.
+Hi Bjorn,
 
-FYI for when I send out the v2 respin:
+Thanks for the feedback!
 
-Actually, as I work through it now, I think this is OK as-is (I'll remove
-the comment as it's confusing though).
+On 8/8/24 17:53, Bjorn Helgaas wrote:
+> On Wed, Aug 07, 2024 at 11:17:17AM -0400, Stewart Hildebrand wrote:
+>> In this context, "small" is defined as less than max(SZ_4K, PAGE_SIZE).
+>>
+>> Issues observed when small BARs are not sufficiently aligned are:
+>>
+>> 1. Devices to be passed through (to e.g. a Xen HVM guest) with small
+>> BARs require each memory BAR to be page aligned. Currently, the only way
+>> to guarantee this alignment from a user perspective is to fake the size
+>> of the BARs using the pci=resource_alignment= option. This is a bad user
+>> experience, and faking the BAR size is not always desirable. For
+>> example, pcitest is a tool that is useful for PCI passthrough validation
+>> with Xen, but pcitest fails with a fake BAR size.
+> 
+> I guess this is the "money" patch for the main problem you're solving,
+> i.e., passthrough to a guest doesn't work as you want?
 
-The next block checks prev, so the end of the VMA doesn't really matter,
-and in any case isn't checked by can_vma_merge_after(), but rather by the
-prev->vm_end == addr conditional below.
+Haha, yup!
 
-I've addressed your other comments.
+> Is it the case that if you have two BARs in the same page, a device
+> can't be passed through to a guest at all?
 
-[snip]
+If the conditions are just right, passing through such a device could
+maybe work, but in practice it's problematic and unlikely to work
+reliably across different configurations.
+
+Let me show example 1, from a real device that I'm working with.
+Scrubbed/partial output from lspci -vv, from the host's point of view:
+
+	Region 0: Memory at d1924600 (32-bit, non-prefetchable) [size=256]
+	Region 1: Memory at d1924400 (32-bit, non-prefetchable) [size=512]
+	Region 2: Memory at d1924000 (32-bit, non-prefetchable) [size=1K]
+	Region 3: Memory at d1920000 (32-bit, non-prefetchable) [size=16K]
+	Region 4: Memory at d1900000 (32-bit, non-prefetchable) [size=128K]
+	Region 5: Memory at d1800000 (32-bit, non-prefetchable) [size=1M]
+	Capabilities: [b0] MSI-X: Enable- Count=2 Masked-
+		Vector table: BAR=0 offset=00000080
+		PBA: BAR=0 offset=00000090
+	Capabilities: [200 v1] Single Root I/O Virtualization (SR-IOV)
+		IOVCap:	Migration-, Interrupt Message Number: 000
+		IOVCtl:	Enable- Migration- Interrupt- MSE- ARIHierarchy+
+		IOVSta:	Migration-
+		Initial VFs: 4, Total VFs: 4, Number of VFs: 0, Function Dependency Link: 00
+		VF offset: 6, stride: 1, Device ID: 0100
+		Supported Page Size: 00000553, System Page Size: 00000001
+		Region 0: Memory at 00000000d0800000 (64-bit, non-prefetchable)
+		VF Migration: offset: 00000000, BIR: 0
+	Kernel driver in use: pci-endpoint-test
+	Kernel modules: pci_endpoint_test
+
+BARs 0, 1, and 2 are small, and the host firmware placed them on the
+same page. The host firmware did not page align the BARs.
+
+The hypervisor can only map full pages. The hypervisor cannot map
+partial pages. It cannot map a guest page offset from a host page where
+the offset is smaller than PAGE_SIZE.
+
+To pass this device through (physfn) as-is, the hypervisor would need to
+preserve the page offsets of each BAR and propagate them to the guest,
+taking translation into account. The guest (both firmware + OS)
+necessarily has to preserve the offsets as well. If the page offsets
+aren't preserved, the guest would be accessing the wrong data.
+
+We can't reliably predict what the guest behavior will be.
+
+SeaBIOS aligns BARs to 4k [1].
+
+[1] https://review.coreboot.org/plugins/gitiles/seabios/+/refs/tags/rel-1.16.3/src/fw/pciinit.c#28
+
+Xen's hvmloader does not align BARs to 4k. A patch was submitted to fix
+this, but it wasn't merged upstream [2].
+
+[2] https://lore.kernel.org/xen-devel/20200117110811.43321-1-roger.pau@citrix.com/
+
+Arm guests don't usually have firmware to initialize BARs, so it's
+usually up to the OS (which may or may not be Linux).
+
+The point is that there is not a consistent BAR initialization
+strategy/convention in the ecosystem when it comes to small BARs.
+
+The host doesn't have a way to enforce the guest always map the small
+BARs at the required offsets. IMO the most sensible thing to do is not
+impose any sort of arbitrary page offset requirements on guests because
+it happened to suit the host.
+
+If the host were to use fake BAR sizes via the current
+pci=resource_alignment=... option, the fake BAR size would propagate to
+the guest (lying to the guest), pcitest would break, and the guest can't
+do anything about it.
+
+To avoid these problems, small BARs should be predictably page aligned
+in both host and guest.
+
+> Or is it just that all
+> devices with BARs that share a page have to be passed through to the
+> same guest, sort of like how lack of ACS can force several devices to
+> be in the same IOMMU isolation group?
+
+This case is much worse. If two devices have BARs sharing a page in a
+passthrough scenario, it's a security issue because guest can access
+data of another device. See XSA-461 / CVE-2024-31146 [3]. Aside: I was
+unaware that there was a XSA/CVE associated with this until after the
+embargo was lifted.
+
+[3] https://lore.kernel.org/xen-devel/E1seE0f-0001zO-Nj@xenbits.xenproject.org/
+
+For completeness, see example 2:
+
+01:00.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe800000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c000 [size=256]
+        Memory at 7050000000 (64-bit, prefetchable) [size=32]
+
+01:01.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe801000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c100 [size=256]
+        Memory at 7050000020 (64-bit, prefetchable) [size=32]
+
+01:02.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe802000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c200 [size=256]
+        Memory at 7050000040 (64-bit, prefetchable) [size=32]
+
+01:03.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe803000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c300 [size=256]
+        Memory at 7040000000 (64-bit, prefetchable) [size=256M]
+
+This example can reproduced with Qemu's pci-testdev and a SeaBIOS hack.
+Add this to your usual qemu-system-x86_64 args:
+
+    -device pcie-pci-bridge,id=pcie.1 \
+    -device pci-testdev,bus=pcie.1,membar=32 \
+    -device pci-testdev,bus=pcie.1,membar=32 \
+    -device pci-testdev,bus=pcie.1,membar=32 \
+    -device pci-testdev,bus=pcie.1,membar=268435456
+
+Apply this SeaBIOS hack:
+
+diff --git a/src/fw/pciinit.c b/src/fw/pciinit.c
+index b3e359d7..769007a4 100644
+--- a/src/fw/pciinit.c
++++ b/src/fw/pciinit.c
+@@ -25,7 +25,7 @@
+ #include "util.h" // pci_setup
+ #include "x86.h" // outb
+
+-#define PCI_DEVICE_MEM_MIN    (1<<12)  // 4k == page size
++#define PCI_DEVICE_MEM_MIN    (0)
+ #define PCI_BRIDGE_MEM_MIN    (1<<21)  // 2M == hugepage size
+ #define PCI_BRIDGE_IO_MIN      0x1000  // mandated by pci bridge spec
+
+
+If you want to trigger the bridge window realloc (where BAR alignments
+currently get lost), also apply this hack to SeaBIOS in the same file:
+
+@@ -1089,6 +1089,7 @@ pci_region_map_one_entry(struct pci_region_entry *entry, u64 addr)
+         pci_config_writew(bdf, PCI_MEMORY_LIMIT, limit >> PCI_MEMORY_SHIFT);
+     }
+     if (entry->type == PCI_REGION_TYPE_PREFMEM) {
++        limit = addr + PCI_BRIDGE_MEM_MIN - 1;
+         pci_config_writew(bdf, PCI_PREF_MEMORY_BASE, addr >> PCI_PREF_MEMORY_SHIFT);
+         pci_config_writew(bdf, PCI_PREF_MEMORY_LIMIT, limit >> PCI_PREF_MEMORY_SHIFT);
+         pci_config_writel(bdf, PCI_PREF_BASE_UPPER32, addr >> 32);
+
+> I think the subject should mention the problem to help motivate this.
+> 
+> The fact that we address this by potentially reassigning every BAR of
+> every device, regardless of whether the admin even wants to pass
+> through a device to a guest, seems a bit aggressive to me.
+
+Patch [7/8] should limit the impact somewhat, but yes, it's quite
+aggressive... Perhaps such a change in default should be paired with the
+ability to turn it off via pci=realloc=off (or similar), and/or Kconfig.
+
+> Previously we haven't trusted our reassignment machinery enough to
+> enable it all the time, so we still have the "pci=realloc" parameter.
+> By default, I don't think we even move devices around to make space
+> for a BAR that we failed to allocate.
+
+One exception is SR-IOV device resources when
+CONFIG_PCI_REALLOC_ENABLE_AUTO=y.
+
+> I agree "pci=resource_alignment=" is a bit user-unfriendly, and I
+> don't think it solves the problem unless we apply it to every device
+> in the system.
+
+Right.
+
+>> 2. Devices with multiple small BARs could have the MSI-X tables located
+>> in one of its small BARs. This may lead to the MSI-X tables being mapped
+>> in the same 4k region as other data. The PCIe 6.1 specification (section
+>> 7.7.2 MSI-X Capability and Table Structure) says we probably should
+>> avoid that.
+> 
+> If you're referring to this:
+> 
+>   If a Base Address Register or entry in the Enhanced Allocation
+>   capability that maps address space for the MSI-X Table or MSI-X PBA
+>   also maps other usable address space that is not associated with
+>   MSI-X structures, locations (e.g., for CSRs) used in the other
+>   address space must not share any naturally aligned 4-KB address
+>   range with one where either MSI-X structure resides. This allows
+>   system software where applicable to use different processor
+>   attributes for MSI-X structures and the other address space.
+
+Yes, that's the correct reference.
+
+> I think this is technically a requirement about how space within a
+> single BAR should be organized, not about how multiple BARs should be
+> assigned.  I don't think this really adds to the case for what you're
+> doing, so we could just drop it.
+
+I'm OK to drop the reference to the spec. For completeness, example 1
+above was what led me to mention it: This device has the MSI-X tables
+located in BAR 0, which is mapped in the same 4k region as other data.
+
+>> To improve the user experience (i.e. don't require the user to specify
+>> pci=resource_alignment=), and increase conformance to PCIe spec, set the
+>> default minimum resource alignment of memory BARs to the greater of 4k
+>> or PAGE_SIZE.
+>>
+>> Quoting the comment in
+>> drivers/pci/pci.c:pci_request_resource_alignment(), there are two ways
+>> we can increase the resource alignment:
+>>
+>> 1) Increase the size of the resource.  BARs are aligned on their
+>>    size, so when we reallocate space for this resource, we'll
+>>    allocate it with the larger alignment.  This also prevents
+>>    assignment of any other BARs inside the alignment region, so
+>>    if we're requesting page alignment, this means no other BARs
+>>    will share the page.
+>>
+>>    The disadvantage is that this makes the resource larger than
+>>    the hardware BAR, which may break drivers that compute things
+>>    based on the resource size, e.g., to find registers at a
+>>    fixed offset before the end of the BAR.
+>>
+>> 2) Retain the resource size, but use IORESOURCE_STARTALIGN and
+>>    set r->start to the desired alignment.  By itself this
+>>    doesn't prevent other BARs being put inside the alignment
+>>    region, but if we realign *every* resource of every device in
+>>    the system, none of them will share an alignment region.
+>>
+>> Changing pcibios_default_alignment() results in the second method of
+>> alignment with IORESOURCE_STARTALIGN.
+>>
+>> The new default alignment may be overridden by arches by implementing
+>> pcibios_default_alignment(), or by the user on a per-device basis with
+>> the pci=resource_alignment= option (although this reverts to using
+>> IORESOURCE_SIZEALIGN).
+>>
+>> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
+>> ---
+>> Preparatory patches in this series are prerequisites to this patch.
+>>
+>> v2->v3:
+>> * new subject (was: "PCI: Align small (<4k) BARs")
+>> * clarify 4k vs PAGE_SIZE in commit message
+>>
+>> v1->v2:
+>> * capitalize subject text
+>> * s/4 * 1024/SZ_4K/
+>> * #include <linux/sizes.h>
+>> * update commit message
+>> * use max(SZ_4K, PAGE_SIZE) for alignment value
+>> ---
+>>  drivers/pci/pci.c | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index af34407f2fb9..efdd5b85ea8c 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -31,6 +31,7 @@
+>>  #include <asm/dma.h>
+>>  #include <linux/aer.h>
+>>  #include <linux/bitfield.h>
+>> +#include <linux/sizes.h>
+>>  #include "pci.h"
+>>  
+>>  DEFINE_MUTEX(pci_slot_mutex);
+>> @@ -6484,7 +6485,12 @@ struct pci_dev __weak *pci_real_dma_dev(struct pci_dev *dev)
+>>  
+>>  resource_size_t __weak pcibios_default_alignment(void)
+>>  {
+>> -	return 0;
+>> +	/*
+>> +	 * Avoid MSI-X tables being mapped in the same 4k region as other data
+>> +	 * according to PCIe 6.1 specification section 7.7.2 MSI-X Capability
+>> +	 * and Table Structure.
+>> +	 */
+> 
+> I think this is sort of a "spec compliance" comment that is not the
+> *real* reason we want to do this, i.e., it doesn't say that by doing
+> this we can pass through more devices to guests.
+> 
+> Doing this in pcibios_default_alignment() ends up being a very
+> non-obvious way to make this happen.  We have to:
+> 
+>   - Know what the purpose of this is, and the current comment doesn't
+>     point to that.
+> 
+>   - Look at all the implementations of pcibios_default_alignment()
+>     (thanks, powerpc).
+> 
+>   - Trace up through pci_specified_resource_alignment(), which
+>     contains a bunch of code that is not relevant to this case and
+>     always just returns PAGE_SIZE.
+> 
+>   - Trace up again to pci_reassigndev_resource_alignment() to see
+>     where this finally applies to the resources we care about.  The
+>     comment here about "check if specified PCI is target device" is
+>     actively misleading for the passthrough usage.
+> 
+> I hate adding new kernel parameters, but I kind of think this would be
+> easier if we added one that mentioned passthrough or guests and tested
+> it directly in pci_reassigndev_resource_alignment().
+> 
+> This would also be a way to avoid the "Can't reassign resources to
+> host bridge" warning that I think we're going to see all the time.
+
+I did actually prepare a pci=resource_alignment=all patch, but I
+hesitated to send it because of the discussion at [4]. I'll send it with
+the next revision of the series.
+
+[4] https://lore.kernel.org/linux-pci/20160929115422.GA31048@localhost/
+
+I'd like to also propose introducing a Kconfig option, e.g.
+CONFIG_PCI_PAGE_ALIGN_BARS, selectable by menuconfig or other usual
+means.
+
+>> +	return max(SZ_4K, PAGE_SIZE);
+>>  }
+>>  
+>>  /*
+>> -- 
+>> 2.46.0
+>>
+
 
