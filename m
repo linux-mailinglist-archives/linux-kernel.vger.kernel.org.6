@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-286580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650EA951CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:12:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9499F951CC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6929B23E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F101F238CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB861B4C46;
-	Wed, 14 Aug 2024 14:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjmJ2jaL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297CC1B3F08;
+	Wed, 14 Aug 2024 14:11:53 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10091B4C34
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5201B3729;
+	Wed, 14 Aug 2024 14:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723644637; cv=none; b=trnlyALY1FVGQyHpXjiWs1SO+bzM1wZH0huJTWQu5UBWqG3FPct3RR7JGRf0W9A3CQzuQXz2LyyljjFqWFeqw1CQ6gk3I2VcYdpVM0bQ9NPIF2b7mPSL7MJGt4KfgPfJxpwBoJPHQuRck1oEJYU9WgsU/Z/biXB4412OfIDEN6k=
+	t=1723644712; cv=none; b=FzAzk+SjnjY75ns6ivwPjsJUrbdT2xY9XcUxPGmf1pKjN/59LCirPTWeb5kpvqcykkxUPicZMN45xBsuN2FqlVCVet/RZ83exkIDQXhqcZbkeW5L/9Q1QLV2t6+M+7cAnEFAEn8tSs2b9owuyRPLCS7LriAlBbT2MCRyCQ1xm6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723644637; c=relaxed/simple;
-	bh=YwGJUc3Z94a2A/QpganPxW/sR2FdyfIWklhxVLiY1pc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=qfAgHUAUzXOQN/vuxt/Kpj1DD6h+1ozblpdt0vpW2vthPen1oE2X7+b/6yOdRSbJhit6FCNB2xBNltsBWkfAghQeR+B4Vx167+bPl4L1pFddIjQtLtgRDzIRH9XFK4YtwarRn7b8n5dlTqEMWleCnMcKOGPHp+ZvDFva9ayGui0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjmJ2jaL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A7E3C4AF11;
-	Wed, 14 Aug 2024 14:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723644637;
-	bh=YwGJUc3Z94a2A/QpganPxW/sR2FdyfIWklhxVLiY1pc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MjmJ2jaLU84+pDD5IquIjGIfwNDdEU8xQNthDY2vnRfi24oF1gp+NukNp8OoXfuDV
-	 jD4dcWuqouGxtetTgAtDRqHWkXrIHiWK3mj20cSttAKzc+QEanUl9RASmAaSU4j5cm
-	 /rPXK5XUc+mZZWxM9QK9nwsYxlq9BZQqu2OfESgcYfu+ZlLuRqYGG59EzHClrHTUL9
-	 KfH2EEFnQv8S3uRtDTkSICuDAUHSTtsdlUOrlXUTahgxNWDH1wYlg7QDvpbBYU1JPW
-	 tvmyjna3P1J7jY0wsOJtm7cdt0tVw3HkSzBQb2p5zra/2Vhq6O++y51raBEco1Tz59
-	 WaAcp1FoDYP+Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEF338232A8;
-	Wed, 14 Aug 2024 14:10:37 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723644712; c=relaxed/simple;
+	bh=i1CAnk/h9Q4SXCTz0xXO4EAsYZeuzccmTH4b+ucvLnw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SYqJYJIqQA8gBeTreqVM1XfBOTZuyvQIqdOS2jCqcssLUSrUJH8hYt2r4+HBaTxRsvfD8mKEocA5zSrpYVYbBbFFF3vsQ3K9XC2aOC8hi+6Hbj/lxbAPSAorUbj/8xptFqCdFBxd3ZyLjtgeSoT/uFAft6SJs+zvUNZu86Ghxn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAA3P0sOu7xmZa95Bg--.10101S2;
+	Wed, 14 Aug 2024 22:11:33 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	make24@iscas.ac.cn,
+	ansuelsmth@gmail.com,
+	agross@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] phy: qualcomm: Check NULL ptr on data
+Date: Wed, 14 Aug 2024 22:11:25 +0800
+Message-Id: <20240814141125.50763-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,44 +51,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [RFC PATCH] riscv: Enable generic CPU vulnerabilites support
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <172364463625.2278280.12786224959163993278.git-patchwork-notify@kernel.org>
-Date: Wed, 14 Aug 2024 14:10:36 +0000
-References: <20240703022732.2068316-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240703022732.2068316-1-ruanjinjie@huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, samuel.holland@sifive.com,
- tglx@linutronix.de, linux-kernel@vger.kernel.org
+X-CM-TRANSID:qwCowAA3P0sOu7xmZa95Bg--.10101S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKr13KryDCF45ZF4UCFW5trb_yoW3tFcE93
+	4UZr4fuF1ktF1rGr1UtrnIvryIya4qqr48Xa1SgFyrAay5AF1aqF98JFZ8ZrZ8Wa1xJw18
+	J34UuFykZr42qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
+	Gr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hello:
+Check NULL ptr on data, verify that data is not NULL before using it.
 
-This patch was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+Cc: stable@vger.kernel.org
+Fixes: ef19b117b834 ("phy: qualcomm: add qcom ipq806x dwc usb phy driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Wed, 3 Jul 2024 10:27:32 +0800 you wrote:
-> Currently x86, ARM and ARM64 support generic CPU vulnerabilites, but
-> RISC-V not, such as:
-> 
-> 	# cd /sys/devices/system/cpu/vulnerabilities/
-> x86:
-> 	# cat spec_store_bypass
-> 		Mitigation: Speculative Store Bypass disabled via prctl and seccomp
-> 	# cat meltdown
-> 		Not affected
-> 
-> [...]
-
-Here is the summary with links:
-  - [RFC] riscv: Enable generic CPU vulnerabilites support
-    https://git.kernel.org/riscv/c/63dd775cc050
-
-You are awesome, thank you!
+diff --git a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+index 06392ed7c91b..9b9fd9c1b1f7 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
++++ b/drivers/phy/qualcomm/phy-qcom-ipq806x-usb.c
+@@ -492,6 +492,8 @@ static int qcom_ipq806x_usb_phy_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	data = of_device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
+ 
+ 	phy_dwc3->dev = &pdev->dev;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
