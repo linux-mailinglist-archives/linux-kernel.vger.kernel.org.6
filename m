@@ -1,132 +1,101 @@
-Return-Path: <linux-kernel+bounces-286787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DC1951EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:47:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3CB951EE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C10F288453
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:47:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EF0F1C22E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9B21B8E8C;
-	Wed, 14 Aug 2024 15:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D611B581B;
+	Wed, 14 Aug 2024 15:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="loR8/7kD"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cq2iOqfg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90491B86D0;
-	Wed, 14 Aug 2024 15:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB0E1B29CF;
+	Wed, 14 Aug 2024 15:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650403; cv=none; b=YQT4yNaqootKs/G3K1cWMaALh1sFRww4n1qhzTqsvSMDbaT0xhXBVmwedTbMaQ7tFrQYpCicj8OJTV2YjA+jUfQwGX6524d/73oy0DWB7moTT1UIl+SyI5guMCBAm/uJifJZcYeh9Z2piqq5syOKToNjyG2cEolgl8UtOoOb4yI=
+	t=1723650313; cv=none; b=O3cwmyQHyzVhD4/bRGA47Fhx8IFA0+Gl/o/d1sgS2WGPcs1UVftpP+uiMnHSlWM2f5ozKdvRQRZVFrnkBzksM+8FjzBPSUQ/uwMy7STzdGx0a8tVjniEaB2uezK1UXk0FxOL/gf/N/PLaPw7t7mbFqBUJtMQqS2stSb+fDI7otY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650403; c=relaxed/simple;
-	bh=jqE31C3BeVdTHSpaYsa7qHbPgF2YNyfpscbLFOLk09w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=plRTP11i+fNnuKdwczvttgRh/j7UAxLcG30omYLX45NFS8O//7JyLeaU2bYRElJ53dRsxNeN8wyGfKmcZ2b1ivU8q90JRq2XG69e5FdJAkbobcdeMfzTqMcq2G6tkvIERUr2TkGYg6E72aUTXoxKjTEtH7uoBoKGJHG9OD5apCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=loR8/7kD; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EDc2If014466;
-	Wed, 14 Aug 2024 17:46:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	DzRjIDlEMZsP+OJQhkq4KHyY6VBON3S4lF5b9KgVwFE=; b=loR8/7kDJZtP9T3t
-	ytz5hjySXzfhdOItskfiGnZmNSjYQe+b6zvzHLLNq0lIIs1NhbLRcjDGDu/EGzng
-	zWR4ti6WfK6CpVToneRkbFXtwRampwpRh3Ij40O+BcGooONlMe1t/sTvoZmWWI4m
-	B2s9gfKmWC54PgdXeF1sa7DuxvGbpUODJ25n2HZTUh2D3AsBZYgvcLEVEhLTI797
-	sFezVC4mm2UISWh4GIKqGCjjAPuYIch7UBJ48BoCbeSQK/mnpeYmnYIzcqnR6q4K
-	KE09hN3T5mi1RdfFsGgehCKsiJ6wifGi+sTUrS770tGKFegxuIH+4xnUg4ydf62/
-	U6ud1w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4109w9vmvs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 17:46:04 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 54FED4002D;
-	Wed, 14 Aug 2024 17:46:00 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A208727E293;
-	Wed, 14 Aug 2024 17:45:07 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 14 Aug
- 2024 17:45:06 +0200
-Message-ID: <bd6e6650-ed9b-409a-b851-721a7c40d3dc@foss.st.com>
-Date: Wed, 14 Aug 2024 17:45:06 +0200
+	s=arc-20240116; t=1723650313; c=relaxed/simple;
+	bh=eeREinB8Mir7bqqQqG6csHrywof8fVP+bxHSTvDX9tE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CJeFlHOtuEoKlh4chEVyIsqGCl32y6AtMXwfIbaO3rAPWkiPntGMghqwK4cj8SmGwNAlearCNlUIIS7MvuaUuAp14pLA3uQUI/XpqF4HVafIhnSFbg7mnsDoVVGvl8jPFl7t9N5uVEUbAPjy5Ig122wnIPBQKo7doUH1I0/MmUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cq2iOqfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 355A1C116B1;
+	Wed, 14 Aug 2024 15:45:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723650313;
+	bh=eeREinB8Mir7bqqQqG6csHrywof8fVP+bxHSTvDX9tE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cq2iOqfgprdMfRGKaVGTdhuLZ5YQSakYCUwrM37igbxZ81mGB5nm/cvOoGMuCgkdb
+	 HminpE0OuUW+NAQIi2Fg5b6+559rHVH3gS+bHEpKmaqc/XDF3fgHCPJt7ax7gCEOxa
+	 /QXLPalndj63SsBb2l23GEMXekE2lRw+MMZ6X3cYAVR/50JF6JO07I2bTaRLwi7CPF
+	 9UKkE+DvG+2WXxjvWJZWeqwh8j6W5ueDgnwIrLHk1OOWTdxmW3fy1MMXk0MGH3ACL4
+	 1SvifdjdreHP9HT17nLzvxNuImU/n6Ct++lKvWsggUUqXlK32PBx12SlWKv25y0Od7
+	 utJt4IS6BUF5Q==
+Date: Thu, 15 Aug 2024 00:45:09 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Shuah Khan <shuah@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests/ftrace: Add required dependency for kprobe
+ tests
+Message-Id: <20240815004509.b5252f43379124b4ea9c26f5@kernel.org>
+In-Reply-To: <9016df04-041b-4837-9590-1c5159609826@linuxfoundation.org>
+References: <171823033048.152840.662759412433336839.stgit@devnote2>
+	<20240814095323.c8458e2cb6031c3014a7b7e0@kernel.org>
+	<9016df04-041b-4837-9590-1c5159609826@linuxfoundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/11] usb: dwc3: st: simplify pdev->dev usage
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam
-	<festevam@gmail.com>,
-        Michal Simek <michal.simek@amd.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20240814-b4-cleanup-h-of-node-put-usb-v1-0-95481b9682bc@linaro.org>
- <20240814-b4-cleanup-h-of-node-put-usb-v1-3-95481b9682bc@linaro.org>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20240814-b4-cleanup-h-of-node-put-usb-v1-3-95481b9682bc@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_11,2024-08-13_02,2024-05-17_01
 
+On Wed, 14 Aug 2024 05:43:29 -0600
+Shuah Khan <skhan@linuxfoundation.org> wrote:
 
-
-On 8/14/24 12:35, Krzysztof Kozlowski wrote:
-> The probe() function already stores '&pdev->dev' in local 'dev'
-> variable.
+> On 8/13/24 18:53, Masami Hiramatsu (Google) wrote:
+> > Hi Shuah,
+> > 
+> > Can you pick this? I confirmed this can be applied on v6.11-rc3.
+> > 
+> > 
+> > 
+> > On Thu, 13 Jun 2024 07:12:10 +0900
+> > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> > 
+> >> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> >>
+> >> kprobe_args_{char,string}.tc are using available_filter_functions file
+> >> which is provided by function tracer. Thus if function tracer is disabled,
+> >> these tests are failed on recent kernels because tracefs_create_dir is
+> >> not raised events by adding a dynamic event.
+> >> Add available_filter_functions to requires line.
+> >>
+> >> Fixes: 7c1130ea5cae ("test: ftrace: Fix kprobe test for eventfs")
+> >> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/usb/dwc3/dwc3-st.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-st.c b/drivers/usb/dwc3/dwc3-st.c
-> index 7a0b1821768a..2841021f3557 100644
-> --- a/drivers/usb/dwc3/dwc3-st.c
-> +++ b/drivers/usb/dwc3/dwc3-st.c
-> @@ -225,13 +225,13 @@ static int st_dwc3_probe(struct platform_device *pdev)
->  
->  	dwc3_data->syscfg_reg_off = res->start;
->  
-> -	dev_vdbg(&pdev->dev, "glue-logic addr 0x%pK, syscfg-reg offset 0x%x\n",
-> +	dev_vdbg(dev, "glue-logic addr 0x%pK, syscfg-reg offset 0x%x\n",
->  		 dwc3_data->glue_base, dwc3_data->syscfg_reg_off);
->  
->  	struct device_node *child __free(device_node) = of_get_compatible_child(node,
->  										"snps,dwc3");
->  	if (!child) {
-> -		dev_err(&pdev->dev, "failed to find dwc3 core node\n");
-> +		dev_err(dev, "failed to find dwc3 core node\n");
->  		return -ENODEV;
->  	}
->  
-> 
+> Applied to linux-kselftest next for Linux 6.12-rc1
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+Thanks!
 
-Thanks
-Patrice
+> 
+> thanks,
+> -- Shuah
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
