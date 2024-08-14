@@ -1,147 +1,285 @@
-Return-Path: <linux-kernel+bounces-285959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A78F9514DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:58:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033689514DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1CC1C22BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F561F27733
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0E213A40C;
-	Wed, 14 Aug 2024 06:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522A713A418;
+	Wed, 14 Aug 2024 06:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="NQicJqic";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="fgJCpRnp"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fR4NrFTH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB73139CFF;
-	Wed, 14 Aug 2024 06:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB1574424
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723618729; cv=none; b=RTfappUPkN07Y/kPhX4eo9HaaoRIqlcLf30i6i6mJ8IyKN+LXpCTTfqiD3N2ZEoKtn7TLwgryLpVTNlgO8LsNbPNOYlc4WMybsJXuC0EJZW8ixALhnB0JjaAW74sfYprvI732/KCKpXeaHft5UhB3xsJi9EpA8o/rHNvPhjXJD4=
+	t=1723618768; cv=none; b=r1lS+YkukNZ1p2MaU6Mu/bfyS3fJb+zMTwJP7C+ap7/13DsZqHiocoNMtR3zLvSsLORfAYP5bOMlco1vGc4eotl6ff0XeDgygyAjLxnICbKgKTZ77kZhDTzg7M4lMmG3Ck9PUqW61K1IZHUu5RzM/s+tEIjsgbEVMi5Jc8qfo5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723618729; c=relaxed/simple;
-	bh=t7CBaIxNVj9T0fzzc3RFMK3i8sNHL0A5x2Jiz9dAgio=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F+l4+skK4eADpmcBKA7DONyzdwE9x3+1gqprE/VTCmzbH3zfXERooPv/5QPK46v8oAHB5luNF+2gr8fSBb9Hwj8hcjkN6KEh1XPIJ+VTJC/xS12VnqAbShA38jxKSMcvA0S4rBnPQptPm+7NP5udf2fF5Pz1n8WxF9S6dS5QYmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=NQicJqic; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=fgJCpRnp reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723618725; x=1755154725;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=T8Dk74LGDVg/tN90TzcMULyu6cYduNis76nw3yjsFUk=;
-  b=NQicJqic96KGCNX+o7Oqth5xqosH8a5xlABb40D+iwU308Nhw63SiSpX
-   FvMTCtvjZTHSRQmOKRORVNjPmiWHT/wRXpFL/CMYO+odIi4DAUw7/7XFc
-   OH8mj0BRVwz8dzJfWJF5eZio39MMELGldO3zW6tPoDn4YfvXWU2WFBz5X
-   K7kInW0c2hT5i7bJdkn5o4Zj/IVWZdgwTy/O+OIaqpIxNU/HMhDTKfIz8
-   QcxuzB6X8kj1bpPpnYP0m9asdZ2OEAK22+tlyWeKy2Ag/YBEcRXMvUKFp
-   FYybZ8kgwEW9kUBaJY7sPV+GN57AhZIfAQhWVVNuI9etJ6zwKBiFXbaMp
-   Q==;
-X-CSE-ConnectionGUID: mf7OCCk2SCigMPR2/cQ1JQ==
-X-CSE-MsgGUID: 4DQpEQThSDqDRiVxiQEJ3g==
-X-IronPort-AV: E=Sophos;i="6.09,288,1716242400"; 
-   d="scan'208";a="38398272"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 14 Aug 2024 08:58:42 +0200
-X-CheckPoint: {66BC55A2-1F-2C7A84BB-EFCBC4CF}
-X-MAIL-CPID: B571A4AD0AE74DDCB56BA14AD4731CB4_2
-X-Control-Analysis: str=0001.0A782F1F.66BC55A2.0122,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D8FC816339B;
-	Wed, 14 Aug 2024 08:58:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723618718; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=T8Dk74LGDVg/tN90TzcMULyu6cYduNis76nw3yjsFUk=;
-	b=fgJCpRnplIJGp80TfykALyYJ6I7ABhibmBg1B4tRHQNPHBq6ip6aUawUKR3XzYo1pbuNg9
-	0TS3TUS7dWydZ01xAOq1qThL+IOsxLlQkJYTJDTPTltrSzC/DcMxG22XAbRNgR50QVywo/
-	i9Dpnxj8f5p2HCRSRRw5Gd4S0h8u+ibE0WxYlAk5h5LWpYzHIt3Z1Kbc+vQFM/8plscDdR
-	f9Q8KYkD7u0gF2S+w1r5bEsv9CQnGsSdoAnmRHkaVq9CnTqmztmpPtHLpmo0WGdgXSTo0h
-	ET/FjqX96CEdzuuda6AC8bTp2HvG+L4ufWeR+e3f5jkVjbi+9i6iMj9j3Z8oNQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] dt-bindings: usb: microchip,usb2514: Fix reference USB device schema
-Date: Wed, 14 Aug 2024 08:58:32 +0200
-Message-Id: <20240814065833.36372-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723618768; c=relaxed/simple;
+	bh=kvbElDiCsMB32eNATKD4gv3ZtL029AcrIXdC6uKAVy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RtK5LIUc5XGkWS+c69cSBCH+Oty6rBcPbaXHECclp/8LFMCMKNSLBNXtJcBjIoKRV+QAbdVWkBUsuRt2ES5TdpUMTGEiRP2CcVtHvFIFdNxrnMu3/2qKmAMIr1ttRo/uJ4ThP1H1RkpS+2+CuOs56EhDQsV2Y59LQRvhJWQTagI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fR4NrFTH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723618764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7Gh/EP5MoT4S2n3LsQku4lLskRG+2qtj6jK6LOeY2kk=;
+	b=fR4NrFTHite+Bs0p1iu0N7mfyCWlbioCcEMBMRTmTDMPBzmcFm4yAn+KYB+AbMJ4lDQD6R
+	i8DmoREkrRtRp3JuSDoEKzsbHZ7SZ/JSq+CbCq+GokYK+SuNuYnnxF1TvWvYA9McSBa1NC
+	PR/hcEQY0ZpLLWaUb2K1UJSOqfze2Do=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-197-NMA3ZJMbM8WemSVBF2W-ZQ-1; Wed, 14 Aug 2024 02:59:23 -0400
+X-MC-Unique: NMA3ZJMbM8WemSVBF2W-ZQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a7d2f42df2dso83243266b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 23:59:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723618761; x=1724223561;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Gh/EP5MoT4S2n3LsQku4lLskRG+2qtj6jK6LOeY2kk=;
+        b=dEoZlGytw5MVmcndlwP01G7W6jySncCH3YvC9SbqITA7V2A7nPkajKQNBoVR+6afEf
+         yQ5bSWTxdr5dt60frmNvrEw8Bg4/xvr2Oww5HskyjnKJnGvSSIPA7AD1zOCCba11l5Tw
+         fpWQ8HMe6xbIsZ59uZg1AV5DkliXsqcZnZAGvoGojKR6dYImcXOvZ1Pvjtt3u/ieTEog
+         Pb/TUVM//HnrEeaaXxRf4CqVtsw6Wy6wia+jN6myfYHjOFLHmDvXuCsCnpvIYQQ7zTcp
+         mrmYYBphZCX2qoDvLqzxdFTdeHo0Zxj9QjTSjFOo+ubN6E5PHUUGvy2zxnV3kz5OaEvQ
+         IwdQ==
+X-Gm-Message-State: AOJu0YzVSfGPS2dGkb+wHTSEdnKhv1sswc5BQWvGgFLUP6H1aU8m8IJ6
+	zlZiKV39WaNZoOAMedSb0EEu3lswGwD6yVNL37Dq5Z41sOroSMwDShE9LCJ+rHj7UuOQJ51IYTZ
+	P0nAtL4Js/4AkIHzeqoVEvwzYJbXktv6ZnRkp4t9TbUdAgil1+3u0Hc1aEFG5rkAT2+YtccNR2Z
+	tf7hS6KnedwjhUpWz136YKPpTEsRP2iYoQ+4pTlN8=
+X-Received: by 2002:a17:907:97c1:b0:a72:66d5:892c with SMTP id a640c23a62f3a-a836ac0fa95mr97395266b.18.1723618761311;
+        Tue, 13 Aug 2024 23:59:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHzgKRnh7hjFXJB845W3XDjUKTwyj8KvmWkYb+5XTf8Z+cISO3Qg71NGSSJSIt2yFfiMQq/rw==
+X-Received: by 2002:a17:907:97c1:b0:a72:66d5:892c with SMTP id a640c23a62f3a-a836ac0fa95mr97390866b.18.1723618760264;
+        Tue, 13 Aug 2024 23:59:20 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:346:dcde:9c09:aa95:551d:d374])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414f085sm135728166b.156.2024.08.13.23.59.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 23:59:19 -0700 (PDT)
+Date: Wed, 14 Aug 2024 02:59:14 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	virtualization@lists.linux.dev,
+	Darren Kenny <darren.kenny@oracle.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH RFC 0/3] Revert "virtio_net: rx enable premapped mode by
+ default"
+Message-ID: <20240511031404.30903-1-xuanzhuo@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
+X-Mutt-Fcc: =sent
 
-An USB hub is not a HCD, but an USB device. Fix the referenced schema
-accordingly. Adjust example to keep it aligned to other schemas.
+Note: Xuan Zhuo, if you have a better idea, pls post an alternative
+patch.
 
-Fixes: bfbf2e4b77e27 ("dt-bindings: usb: Document the Microchip USB2514 hub")
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-As this USB hub also can contain an USB (ethernet) sub device, I copied
-the subdevice part from usb-hcd.yaml.
+Note2: untested, posting for Darren to help with testing.
 
-I had to add 'additionalProperties: true' as well, because I got that warning
-upon dt_binding_check otherwise:
-> Documentation/devicetree/bindings/usb/microchip,usb2514.yaml: 
->   ^.*@[0-9a-f]{1,2}$: Missing additionalProperties/unevaluatedProperties constraint
+Turns out unconditionally enabling premapped 
+virtio-net leads to a regression on VM with no ACCESS_PLATFORM, and with
+sysctl net.core.high_order_alloc_disable=1
 
-I added a Fixes tag to keep this schema aligned in v6.10 stable tree.
+where crashes and scp failures were reported (scp a file 100M in size to VM):
 
- .../devicetree/bindings/usb/microchip,usb2514.yaml    | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+[  332.079333] __vm_enough_memory: pid: 18440, comm: sshd, bytes: 5285790347661783040 not enough memory for the allocation
+[  332.079651] ------------[ cut here ]------------
+[  332.079655] kernel BUG at mm/mmap.c:3514!
+[  332.080095] invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+[  332.080826] CPU: 18 PID: 18440 Comm: sshd Kdump: loaded Not tainted 6.10.0-2.x86_64 #2
+[  332.081514] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-4.module+el8.9.0+90173+a3f3e83a 04/01/2014
+[  332.082451] RIP: 0010:exit_mmap+0x3a1/0x3b0
+[  332.082871] Code: be 01 00 00 00 48 89 df e8 0c 94 fe ff eb d7 be 01 00 00 00 48 89 df e8 5d 98 fe ff eb be 31 f6 48 89 df e8 31 99 fe ff eb a8 <0f> 0b e8 68 bc ae 00 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+[  332.084230] RSP: 0018:ffff9988b1c8f948 EFLAGS: 00010293
+[  332.084635] RAX: 0000000000000406 RBX: ffff8d47583e7380 RCX: 0000000000000000
+[  332.085171] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[  332.085699] RBP: 000000000000008f R08: 0000000000000000 R09: 0000000000000000
+[  332.086233] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8d47583e7430
+[  332.086761] R13: ffff8d47583e73c0 R14: 0000000000000406 R15: 000495ae650dda58
+[  332.087300] FS:  00007ff443899980(0000) GS:ffff8df1c5700000(0000) knlGS:0000000000000000
+[  332.087888] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  332.088334] CR2: 000055a42d30b730 CR3: 00000102e956a004 CR4: 0000000000770ef0
+[  332.088867] PKRU: 55555554
+[  332.089114] Call Trace:
+[  332.089349] <TASK>
+[  332.089556]  ? die+0x36/0x90
+[  332.089818]  ? do_trap+0xed/0x110
+[  332.090110]  ? exit_mmap+0x3a1/0x3b0
+[  332.090411]  ? do_error_trap+0x6a/0xa0
+[  332.090722]  ? exit_mmap+0x3a1/0x3b0
+[  332.091029]  ? exc_invalid_op+0x50/0x80
+[  332.091348]  ? exit_mmap+0x3a1/0x3b0
+[  332.091648]  ? asm_exc_invalid_op+0x1a/0x20
+[  332.091998]  ? exit_mmap+0x3a1/0x3b0
+[  332.092299]  ? exit_mmap+0x1d6/0x3b0
+[  332.092604] __mmput+0x3e/0x130
+[  332.092882] dup_mm.constprop.0+0x10c/0x110
+[  332.093226] copy_process+0xbd0/0x1570
+[  332.093539] kernel_clone+0xbf/0x430
+[  332.093838]  ? syscall_exit_work+0x103/0x130
+[  332.094197] __do_sys_clone+0x66/0xa0
+[  332.094506]  do_syscall_64+0x8c/0x1d0
+[  332.094814]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.095198]  ? audit_reset_context+0x232/0x310
+[  332.095558]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.095936]  ? syscall_exit_work+0x103/0x130
+[  332.096288]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.096668]  ? syscall_exit_to_user_mode+0x7d/0x220
+[  332.097059]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.097436]  ? do_syscall_64+0xba/0x1d0
+[  332.097752]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.098137]  ? syscall_exit_to_user_mode+0x7d/0x220
+[  332.098525]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.098903]  ? do_syscall_64+0xba/0x1d0
+[  332.099227]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.099606]  ? __audit_filter_op+0xbe/0x140
+[  332.099943]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.100328]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.100706]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.101089]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.101468]  ? wp_page_reuse+0x8e/0xb0
+[  332.101779]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.102163]  ? do_wp_page+0xe6/0x470
+[  332.102465]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.102843]  ? __handle_mm_fault+0x5ff/0x720
+[  332.103197]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.103574]  ? __count_memcg_events+0x4d/0xd0
+[  332.103938]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.104323]  ? count_memcg_events.constprop.0+0x26/0x50
+[  332.104729]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.105114]  ? handle_mm_fault+0xae/0x320
+[  332.105442]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  332.105820]  ? do_user_addr_fault+0x31f/0x6c0
+[  332.106181]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  332.106576] RIP: 0033:0x7ff43f8f9a73
+[  332.106876] Code: db 0f 85 28 01 00 00 64 4c 8b 0c 25 10 00 00 00 45 31 c0 4d 8d 91 d0 02 00 00 31 d2 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 b9 00 00 00 41 89 c5 85 c0 0f 85 c6 00 00
+[  332.108163] RSP: 002b:00007ffc690909b0 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+[  332.108719] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff43f8f9a73
+[  332.109253] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+[  332.109782] RBP: 0000000000000000 R08: 0000000000000000 R09: 00007ff443899980
+[  332.110313] R10: 00007ff443899c50 R11: 0000000000000246 R12: 0000000000000002
+[  332.110842] R13: 0000562e56cd4780 R14: 0000000000000006 R15: 0000562e800346b0
+[  332.111381]  </TASK>
+[  332.111590] Modules linked in: rdmaip_notify scsi_transport_iscsi target_core_mod rfkill mstflint_access cuse rds_rdma rds rdma_ucm rdma_cm iw_cm dm_multipath ib_umad ib_ipoib ib_cm mlx5_ib iTCO_wdt iTCO_vendor_support intel_rapl_msr ib_uverbs intel_rapl_common ib_core crc32_pclmul i2c_i801 joydev virtio_balloon i2c_smbus lpc_ich binfmt_misc xfs sd_mod t10_pi crc64_rocksoft sg crct10dif_pclmul mlx5_core virtio_net ahci net_failover mlxfw ghash_clmulni_intel virtio_scsi failover libahci sha512_ssse3 tls sha256_ssse3 pci_hyperv_intf virtio_pci libata psample sha1_ssse3 virtio_pci_legacy_dev serio_raw dimlib virtio_pci_modern_dev qemu_fw_cfg dm_mirror dm_region_hash dm_log dm_mod fuse aesni_intel crypto_simd cryptd
+[  332.115851] ---[ end trace 0000000000000000 ]---
 
-diff --git a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
-index 245e8c3ce6699..aa3db8e373c70 100644
---- a/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
-+++ b/Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
-@@ -10,7 +10,7 @@ maintainers:
-   - Fabio Estevam <festevam@gmail.com>
- 
- allOf:
--  - $ref: usb-hcd.yaml#
-+  - $ref: usb-device.yaml#
- 
- properties:
-   compatible:
-@@ -36,6 +36,13 @@ required:
-   - compatible
-   - reg
- 
-+patternProperties:
-+  "^.*@[0-9a-f]{1,2}$":
-+    description: The hard wired USB devices
-+    type: object
-+    $ref: /schemas/usb/usb-device.yaml
-+    additionalProperties: true
-+
- unevaluatedProperties: false
- 
- examples:
-@@ -47,7 +54,7 @@ examples:
-         #address-cells = <1>;
-         #size-cells = <0>;
- 
--        usb-hub@1 {
-+        hub@1 {
-             compatible = "usb424,2514";
-             reg = <1>;
-             clocks = <&clks IMX6QDL_CLK_CKO>;
+and another instance splats:
+
+BUG: Bad page map in process PsWatcher.sh  pte:9402e1e2b18c8ae9 pmd:10fe4f067
+[  193.046098] addr:00007ff912a00000 vm_flags:08000070 anon_vma:0000000000000000 mapping:ffff8ec28047eeb0 index:200
+[  193.046863] file:libtinfo.so.6.1 fault:xfs_filemap_fault [xfs] mmap:xfs_file_mmap [xfs] read_folio:xfs_vm_read_folio [xfs]
+[  193.049564] get_swap_device: Bad swap file entry 3803ad7a32eab547
+[  193.050902] BUG: Bad rss-counter state mm:00000000ff28307a type:MM_SWAPENTS val:-1
+[  193.758147] Kernel panic - not syncing: corrupted stack end detected inside scheduler
+[  193.759151] CPU: 5 PID: 22932 Comm: LogFlusher Tainted: G B              6.10.0-rc2+ #1
+[  193.759764] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-4.module+el8.9.0+90173+a3f3e83a 04/01/2014
+[  193.760435] Call Trace:
+[  193.760624]  <TASK>
+[  193.760799]  panic+0x31d/0x340
+[  193.761033]  __schedule+0xb30/0xb30
+[  193.761283]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.761605]  ? enqueue_hrtimer+0x35/0x90
+[  193.761883]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.762207]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.762532]  ? hrtimer_start_range_ns+0x121/0x300
+[  193.762856]  schedule+0x27/0xb0
+[  193.763083]  futex_wait_queue+0x63/0x90
+[  193.763354]  __futex_wait+0x13d/0x1b0
+[  193.763610]  ? __pfx_futex_wake_mark+0x10/0x10
+[  193.763918]  futex_wait+0x69/0xd0
+[  193.764153]  ? pick_next_task+0x9fb/0xa30
+[  193.764430]  ? __pfx_hrtimer_wakeup+0x10/0x10
+[  193.764734]  do_futex+0x11a/0x1d0
+[  193.764976]  __x64_sys_futex+0x68/0x1c0
+[  193.765243]  do_syscall_64+0x80/0x160
+[  193.765504]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.765834]  ? __audit_filter_op+0xaa/0xf0
+[  193.766117]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.766437]  ? audit_reset_context.part.16+0x270/0x2d0
+[  193.766895]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.767237]  ? syscall_exit_to_user_mode_prepare+0x17b/0x1a0
+[  193.767624]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.767972]  ? syscall_exit_to_user_mode+0x80/0x1e0
+[  193.768309]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.768628]  ? do_syscall_64+0x8c/0x160
+[  193.768901]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.769225]  ? audit_reset_context.part.16+0x270/0x2d0
+[  193.769573]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.769901]  ? restore_fpregs_from_fpstate+0x3c/0xa0
+[  193.770241]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.770561]  ? switch_fpu_return+0x4f/0xd0
+[  193.770848]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.771171]  ? syscall_exit_to_user_mode+0x80/0x1e0
+[  193.771505]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.771830]  ? do_syscall_64+0x8c/0x160
+[  193.772098]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.772426]  ? syscall_exit_to_user_mode_prepare+0x17b/0x1a0
+[  193.772805]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.773124]  ? syscall_exit_to_user_mode+0x80/0x1e0
+[  193.773458]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.773781]  ? do_syscall_64+0x8c/0x160
+[  193.774047]  ? srso_alias_return_thunk+0x5/0xfbef5
+[  193.774376]  ? task_mm_cid_work+0x1c1/0x210
+[  193.774669]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  193.775010] RIP: 0033:0x7f4da640e898
+[  193.775270] Code: 24 58 48 85 c0 0f 88 8f 00 00 00 e8 f2 2e 00 00 89 ee 4c 8b 54 24 38 31 d2 41 89 c0 40 80 f6 80 4c 89 ef b8 ca 00 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 ff 00 00 00 44 89 c7 e8 24 2f 00 00 48 8b
+[  193.776404] RSP: 002b:00007f4d797f2750 EFLAGS: 00000282 ORIG_RAX: 00000000000000ca
+[  193.776893] RAX: ffffffffffffffda RBX: 00007f4d402c1b50 RCX: 00007f4da640e898
+[  193.777355] RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f4d402c1b7c
+[  193.777813] RBP: 0000000000000000 R08: 0000000000000000 R09: 00007f4da6ece000
+[  193.778276] R10: 00007f4d797f27a0 R11: 0000000000000282 R12: 00007f4d402c1b28
+[  193.778732] R13: 00007f4d402c1b7c R14: 00007f4d797f2840 R15: 0000000000000002
+[  193.779189]  </TASK>
+[  193.780419] Kernel Offset: 0x13c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  193.781097] Rebooting in 60 seconds..
+
+Even in premapped mode with use_dma_api, in virtnet_rq_alloc(), 
+skb_page_frag_refill() can return order-0 page if
+high order page allocation is disabled. But in current code
+
+       alloc_frag->offset += size;
+
+gets accounted irrespective of the actual page size returned (dma->len). 
+And virtnet_rq_unmap() seems to only work with high order pages.
+
+Suggest reverting for now.
+
+Michael S. Tsirkin (3):
+  Revert "virtio_net: rx remove premapped failover code"
+  Revert "virtio_net: big mode skip the unmap check"
+  Revert "virtio_ring: enable premapped mode whatever use_dma_api"
+
+ drivers/net/virtio_net.c     | 93 +++++++++++++++++++++---------------
+ drivers/virtio/virtio_ring.c |  7 ++-
+ 2 files changed, 60 insertions(+), 40 deletions(-)
+
 -- 
-2.34.1
+MST
 
 
