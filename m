@@ -1,262 +1,206 @@
-Return-Path: <linux-kernel+bounces-286082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E336951643
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:13:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBA295161A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74EE1F221C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3DC61F221AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37B013D601;
-	Wed, 14 Aug 2024 08:13:19 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB8313D24D;
+	Wed, 14 Aug 2024 08:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UzAY+gAD"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE356394;
-	Wed, 14 Aug 2024 08:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DE7381D4
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723623199; cv=none; b=FtkCI9rdR6wEwL47qioo1kmneqtUwJWko/ZnItUZRo6Wke8mLIpDerNfrvnVv/ZCcgmpOllhraUfM2Gbxtj7Ch0Lo2ky5D5c1PzXDNUJKmBseqmWTmdyR9Z+Zt0KkvYvggYGwKe0gER02XYbauq4IUeuYS96dfcyTLU2JkY7Wno=
+	t=1723622760; cv=none; b=hYOBedcWp4LSfAaTdqxY+B3HxTZy6QsSNNc2rlM1wBfiy17WFtYNeaOftPMDIDapSiSsLP9kkoUi71uhKT0Q8MJa8m2OUGfuLaDuQ5+ZzFOzNYZIVpNwfiP3mJpgtXB5geM0Adis3mQPOxGJc7EgTZzJajIa8mWHvlP7KWlfCEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723623199; c=relaxed/simple;
-	bh=MGDQcVscA9rJ1A+eZT5iYZE4lC8HyxO0eR2ZAnsUjAg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uz5MgJcSke6gbXvvBPWys3+vYt3ZzQgVcG4EqzTv+qhBwZJ1SC1rbdFMsKUy61nh08jccF0PRSSU5SUvIqI0RjJXoYzIjjlfnMmQ1GBjBYw1OUDokwdwsnWCRXYi7k6zEKs/JnAYnB8S9heOT4oSLGPfpS80XOqorKh5LbF5kak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WkLbZ6WLTzcdRD;
-	Wed, 14 Aug 2024 16:12:58 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id B3A981400C9;
-	Wed, 14 Aug 2024 16:13:13 +0800 (CST)
-Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
- (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 14 Aug
- 2024 16:13:13 +0800
-From: Liao Chang <liaochang1@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <mhiramat@kernel.org>,
-	<oleg@redhat.com>, <peterz@infradead.org>, <puranjay@kernel.org>,
-	<ast@kernel.org>, <andrii@kernel.org>, <xukuohai@huawei.com>,
-	<revest@chromium.org>, <liaochang1@huawei.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-Subject: [PATCH] arm64: insn: Simulate nop and push instruction for better uprobe performance
-Date: Wed, 14 Aug 2024 08:03:56 +0000
-Message-ID: <20240814080356.2639544-1-liaochang1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723622760; c=relaxed/simple;
+	bh=+eBaqh+2H5uYNm1+WlROU5qD6zqR1eTQrzPcjuqr8dc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=c5AQV3pZE6NdmmE7h3VKeiczxBY+Rlr4CPWB+dUg//jwqV3zxrGGgm65cRcqniOGvHNWwutdHoRrAwP57s+ErWWXlOW1RKl+S9EiG2wBnL3Kp0nqxhPAhpp8yVPR6OQ0zpvO5ID/dbetBlpzu+p0xySA2M3sVNrz6AuFwNx1wug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UzAY+gAD; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0b6584bbdcso10112789276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723622757; x=1724227557; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=itE9r8x085HeFvCy6NcU4TMOBuRl7UvyUI5Grg2pV1o=;
+        b=UzAY+gADUl7HxBg2I45bgt1VppJvGX/3XtzWJTfNcPcSrf0xpNMFOFsKuzK25CKgsj
+         6NbViPxq6gt9gelBcQaNAEmZQ/5oxDmG2VkGlGCTVJeDKe9+JBNcx8p6ihvFbX3GyL3u
+         xQA4t99FeSvBloCmLpgzus6S8BHPfellaDa9qt6gthDc/HayepWJsKBjnSmOqtqLExUk
+         ABXSS57Oi2mTu5hxWW47D8Zehkr4cFkQ8R34EaEp99lIg0tzmEQaX0lmhsSiZZIlfYzR
+         Xhh0UsPTI0kvpTEMkZQl4n6fpVNu886KCyckJyPzy+cVCsDPkgdaM99CO5tHk3X0tdKA
+         x9Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723622757; x=1724227557;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=itE9r8x085HeFvCy6NcU4TMOBuRl7UvyUI5Grg2pV1o=;
+        b=wpzO/O5YivvvU55L5hdijSVe+W022RFHWcEBLtPqyZ5oH/C9WDUwOc/wyyeVs/y0rY
+         FUzpIfrdDB/t/d4hpR2uVBrWcmkJSUE5ig1bO54jiN0GYuMEUvf2sBkJP7n40ziK/4Ta
+         1iaeFgHsXaKsb+a0xF64q+s8NBDpyJak2QBesvCK8eaczTHjXOib0cNIV2g0nza9Y/xL
+         eYuIPrBgFTLhlLsjD6bYPEAORn75tkrZnbDOxQ/6FsMCWu3FFs4+a4Ytz3Wc/PcHZBJU
+         MDPtt9IpuHkw03Z10P4P3jKrhBj09EQFoNvMk+zcrsIZKyJu3WZJPWwkCZjQxnmBzxBk
+         uJdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOyx3xeTGIy9LG3ZOnPwsjI/4UUfoMxof+uUjkeddSCvpRjLFdW0LvRfFZ3PiPfpSuXB9TlrX13B15gljPie/Rzino3pL7yyHxqsou
+X-Gm-Message-State: AOJu0Yx0c7WmtvlfceXt9D1QeH2oKetqD7wFH798qAPEDo8jM5scd6xz
+	rFixXGyrabFUkWcU1wzL7ShZYKEmxK9AG3naWiIJluBkJ0WRNqu7RDSqdJvcMKCbPnv53azR3XU
+	6Qu6V/3Zbhhybfg==
+X-Google-Smtp-Source: AGHT+IHpMYFxTBuHXu1qN09szTEr2M7FiSNTeEYxLMTDlbu+ZlpNeGClNDeZ+xxZvwL2SN19mEI2gB/bjN54Ko0=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a5b:389:0:b0:e11:5c41:54e2 with SMTP id
+ 3f1490d57ef6-e115c4155b1mr2792276.0.1723622756875; Wed, 14 Aug 2024 01:05:56
+ -0700 (PDT)
+Date: Wed, 14 Aug 2024 08:05:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAD9lvGYC/2XNTQ7CIBCG4asY1mJggLa48h7GBT/TStRiWtNom
+ t7dURdN7Yp8hOdlZD12CXu234yswyH1Kbc0zHbDwtm1DfIUaTMQoAWA5NfUXjDS0T84GFlYZ4X
+ TERmJe4d1en5rxxPtMz3K3esbH+Tn9teh0qIzSC64l8FY70qHyh+anJsr7kK+sU9ogBkbUSwxE C69laLSIlhZr7CacQlqiRXhykZvIZTR13qF9Yyr/581YVBYByMFBgsLPE3TG6RBl3JeAQAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4254; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=+eBaqh+2H5uYNm1+WlROU5qD6zqR1eTQrzPcjuqr8dc=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmvGVGG0ATvdsfGHhQPvBlD36YHhNeOwZ3G4fFw
+ Ml/YTrHIVyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZrxlRgAKCRAEWL7uWMY5
+ RpVFEACwaS6W/oqMFD2u/PIcvbmnM/arvfH3Q9dUeSW54Hm6xUcr5HlOm5vlbooUR50UuyNbyne
+ xgUaJfJK6EIDLboLtS9zQ8mUqK9SdOmKDJdxrYmOLpM4WXvcEWLEqUJhXHFKoklFiu+jK8haTtU
+ VDMjHwtIIacj+W8yJEa/Mdw+F/0khUTz9q3MO2VEsXIVyxV+SditRp30z6/Ai1ITLsKQ5Q1KQm4
+ oVyKerK4YoF2FoXZPMWqufVcZpUr/OS2VdtcajX60H9iRT3TaWShW389jV1MtlNojtNBiqFMOoL
+ iIbfSIAgPySz0o/EBM9vwcIMnhgW4ug7DQ8mNxfeN3kE7coEWNo/miLBWK1Q5IH+GYj23DTNQ0s
+ BWIgHapx70tpdQc9z01iVcSevJlnC02gN8BAHANU7cvRWA06LgTPN5/Nxowdz+l1Z+/fGG5uRTJ
+ ZBbogW2xtlf07cCmWby+/jrtFT54bWESr82MIcxWv68xDNORbidt/N7O8vbjYuvdV9FP1lrl5lT
+ Evhjby53tiLfodS4/v//DXMlGncb9Bz7oFt1ypWnPyMfX15LMY9bvsZODJmmvuayU/9h7aiL+nX
+ PJuhTw33unZOX6CLMYHW0LtBZFAquIYoCn6BBhfH9afdMyJ71+x5w2QwtAwURpQ12ZDg5GGOxBB g8JnoMD4REHPFyA==
+X-Mailer: b4 0.13.0
+Message-ID: <20240814-linked-list-v5-0-f5f5e8075da0@google.com>
+Subject: [PATCH v5 00/10] Add Rust linked list for reference counted values
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
+	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
-As Andrii pointed out, the uprobe/uretprobe selftest bench run into a
-counterintuitive result that nop and push variants are much slower than
-ret variant [0]. The root cause lies in the arch_probe_analyse_insn(),
-which excludes 'nop' and 'stp' from the emulatable instructions list.
-This force the kernel returns to userspace and execute them out-of-line,
-then trapping back to kernel for running uprobe callback functions. This
-leads to a significant performance overhead compared to 'ret' variant,
-which is already emulated.
+This patchset contains a Rust implementation of a doubly-linked list for
+use with reference counted values. Linked lists are famously hard to
+implement in Rust [1] given the cyclic nature of the pointers, and
+indeed, this implementation uses unsafe to get around that.
 
-Typicall uprobe is installed on 'nop' for USDT and on function entry
-which starts with the instrucion 'stp x29, x30, [sp, #imm]!' to push lr
-and fp into stack regardless kernel or userspace binary. In order to
-improve the performance of handling uprobe for common usecases. This
-patch supports the emulation of Arm64 equvialents instructions of 'nop'
-and 'push'. The benchmark results below indicates the performance gain
-of emulation is obvious.
+Linked lists aren't great for cache locality reasons, but it can be hard
+to avoid them for cases where you need data structures that don't
+allocate. Most linked lists in Binder are for collections where order
+matters (usually stacks or queues). There are also a few lists that are
+just collections, but linked lists are only used for this purpose in
+cases where the linked list is cold and performance isn't that
+important. The linked list is chosen over Vec in this case so that I
+don't have to worry about reducing the capacity of the vector. (Our
+red/black trees are a much better place to look for improving cache
+locality of collections in Rust Binder, and the upcoming xarray bindings
+would help with that.)
 
-On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
+Please see the Rust Binder RFC [2] for usage examples.
 
-xol (1 cpus)
-------------
-uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
-uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
-uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
-uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
-uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
-uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+The linked lists are used all over Rust Binder, but some pointers for
+where to look for examples:
 
-emulation (1 cpus)
--------------------
-uprobe-nop:  1.862 ± 0.002M/s  (1.862M/prod)
-uprobe-push: 1.743 ± 0.006M/s  (1.743M/prod)
-uprobe-ret:  1.840 ± 0.001M/s  (1.840M/prod)
-uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/prod)
-uretprobe-push: 0.936 ± 0.004M/s  (0.936M/prod)
-uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/prod)
+[PATCH RFC 04/20] rust_binder: add work lists
+Implements the work lists that store heterogeneous items. Uses the
+various macros a bunch.
 
-As shown above, the performance gap between 'nop/push' and 'ret'
-variants has been significantly reduced. Due to the emulation of 'push'
-instruction needs to access userspace memory, it spent more cycles than
-the other.
+[PATCH RFC 10/20] rust_binder: add death notifications
+Uses the cursor. Also has objects with multiple prev/next pointer pairs.
 
-[0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
+[PATCH RFC 15/20] rust_binder: add process freezing
+Uses the iterator with for loops.
 
-Signed-off-by: Liao Chang <liaochang1@huawei.com>
+Link: https://rust-unofficial.github.io/too-many-lists/ [1]
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [2]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- arch/arm64/include/asm/insn.h            | 21 ++++++++++++++++++
- arch/arm64/kernel/probes/decode-insn.c   | 18 +++++++++++++--
- arch/arm64/kernel/probes/decode-insn.h   |  3 ++-
- arch/arm64/kernel/probes/simulate-insn.c | 28 ++++++++++++++++++++++++
- arch/arm64/kernel/probes/simulate-insn.h |  2 ++
- arch/arm64/kernel/probes/uprobes.c       |  2 +-
- 6 files changed, 70 insertions(+), 4 deletions(-)
+Changes in v5:
+- Reword: "must not change implementation" -> "must not change behavior".
+- Fix mixup between zeroed and uninit.
+- Now all patches have a Reviewed-by from Benno.
+- Link to v4: https://lore.kernel.org/r/20240806-linked-list-v4-0-23efc510ec92@google.com
 
-diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-index 8c0a36f72d6f..a246e6e550ba 100644
---- a/arch/arm64/include/asm/insn.h
-+++ b/arch/arm64/include/asm/insn.h
-@@ -549,6 +549,27 @@ static __always_inline bool aarch64_insn_uses_literal(u32 insn)
- 	       aarch64_insn_is_prfm_lit(insn);
- }
- 
-+static __always_inline bool aarch64_insn_is_nop(u32 insn)
-+{
-+	/* nop */
-+	return aarch64_insn_is_hint(insn) &&
-+	       ((insn & 0xFE0) == AARCH64_INSN_HINT_NOP);
-+}
-+
-+static __always_inline bool aarch64_insn_is_stp_fp_lr_sp_64b(u32 insn)
-+{
-+	/*
-+	 * The 1st instruction on function entry often follows the
-+	 * patten 'stp x29, x30, [sp, #imm]!' that pushing fp and lr
-+	 * into stack.
-+	 */
-+	return aarch64_insn_is_stp_pre(insn) &&
-+	       (((insn >> 30) & 0x03) ==  2) && /* opc == 10 */
-+	       (((insn >>  5) & 0x1F) == 31) && /* Rn  is sp */
-+	       (((insn >> 10) & 0x1F) == 30) && /* Rt2 is x29 */
-+	       (((insn >>  0) & 0x1F) == 29);	/* Rt  is x30 */
-+}
-+
- enum aarch64_insn_encoding_class aarch64_get_insn_class(u32 insn);
- u64 aarch64_insn_decode_immediate(enum aarch64_insn_imm_type type, u32 insn);
- u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
-diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
-index 968d5fffe233..df7ca16fc763 100644
---- a/arch/arm64/kernel/probes/decode-insn.c
-+++ b/arch/arm64/kernel/probes/decode-insn.c
-@@ -73,8 +73,22 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
-  *   INSN_GOOD_NO_SLOT If instruction is supported but doesn't use its slot.
-  */
- enum probe_insn __kprobes
--arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api)
-+arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *api,
-+		      bool kernel)
- {
-+	/*
-+	 * While 'nop' and 'stp x29, x30, [sp, #imm]! instructions can
-+	 * execute in the out-of-line slot, simulating them in breakpoint
-+	 * handling offers better performance.
-+	 */
-+	if (aarch64_insn_is_nop(insn)) {
-+		api->handler = simulate_nop;
-+		return INSN_GOOD_NO_SLOT;
-+	} else if (!kernel && aarch64_insn_is_stp_fp_lr_sp_64b(insn)) {
-+		api->handler = simulate_stp_fp_lr_sp_64b;
-+		return INSN_GOOD_NO_SLOT;
-+	}
-+
- 	/*
- 	 * Instructions reading or modifying the PC won't work from the XOL
- 	 * slot.
-@@ -157,7 +171,7 @@ arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi)
- 		else
- 			scan_end = addr - MAX_ATOMIC_CONTEXT_SIZE;
- 	}
--	decoded = arm_probe_decode_insn(insn, &asi->api);
-+	decoded = arm_probe_decode_insn(insn, &asi->api, true);
- 
- 	if (decoded != INSN_REJECTED && scan_end)
- 		if (is_probed_address_atomic(addr - 1, scan_end))
-diff --git a/arch/arm64/kernel/probes/decode-insn.h b/arch/arm64/kernel/probes/decode-insn.h
-index 8b758c5a2062..ec4607189933 100644
---- a/arch/arm64/kernel/probes/decode-insn.h
-+++ b/arch/arm64/kernel/probes/decode-insn.h
-@@ -28,6 +28,7 @@ enum probe_insn __kprobes
- arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi);
- #endif
- enum probe_insn __kprobes
--arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *asi);
-+arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *asi,
-+		      bool kernel);
- 
- #endif /* _ARM_KERNEL_KPROBES_ARM64_H */
-diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
-index 22d0b3252476..0b1623fa7003 100644
---- a/arch/arm64/kernel/probes/simulate-insn.c
-+++ b/arch/arm64/kernel/probes/simulate-insn.c
-@@ -200,3 +200,31 @@ simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs)
- 
- 	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
- }
-+
-+void __kprobes
-+simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
-+{
-+	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
-+}
-+
-+void __kprobes
-+simulate_stp_fp_lr_sp_64b(u32 opcode, long addr, struct pt_regs *regs)
-+{
-+	long imm7;
-+	u64 buf[2];
-+	long new_sp;
-+
-+	imm7 = sign_extend64((opcode >> 15) & 0x7f, 6);
-+	new_sp = regs->sp + (imm7 << 3);
-+
-+	buf[0] = regs->regs[29];
-+	buf[1] = regs->regs[30];
-+
-+	if (copy_to_user((void __user *)new_sp, buf, sizeof(buf))) {
-+		force_sig(SIGSEGV);
-+		return;
-+	}
-+
-+	regs->sp = new_sp;
-+	instruction_pointer_set(regs, instruction_pointer(regs) + 4);
-+}
-diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
-index e065dc92218e..733a47ffa2e5 100644
---- a/arch/arm64/kernel/probes/simulate-insn.h
-+++ b/arch/arm64/kernel/probes/simulate-insn.h
-@@ -16,5 +16,7 @@ void simulate_cbz_cbnz(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
- void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
-+void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
-+void simulate_stp_fp_lr_sp_64b(u32 opcode, long addr, struct pt_regs *regs);
- 
- #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
-diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
-index d49aef2657cd..ec5881db3b7a 100644
---- a/arch/arm64/kernel/probes/uprobes.c
-+++ b/arch/arm64/kernel/probes/uprobes.c
-@@ -44,7 +44,7 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 
- 	insn = *(probe_opcode_t *)(&auprobe->insn[0]);
- 
--	switch (arm_probe_decode_insn(insn, &auprobe->api)) {
-+	switch (arm_probe_decode_insn(insn, &auprobe->api, false)) {
- 	case INSN_REJECTED:
- 		return -EINVAL;
- 
+Changes in v4:
+- Support several impl blocks inside `impl_list_item!`.
+- Link to v3: https://lore.kernel.org/r/20240723-linked-list-v3-0-89db92c7dbf4@google.com
+
+Changes in v3:
+- Add `assert_pinned!` macro and use it to ensure that the field is
+  structurally pinned when using the tracked_by strategy.
+- Improve ListArcSafe docs.
+- Use From trait for UniqueArc->ListArc conversions.
+- Implement AsRef<Arc> for ListArc.
+- Improve safety documentation related to ListItem.
+- Improve invariants of List.
+- Other minor docs improvements.
+- Add Reviewed-by tags
+- Link to v2: https://lore.kernel.org/r/20240506-linked-list-v2-0-7b910840c91f@google.com
+
+Changes in v2:
+- Rebase on top of the new allocation APIs.
+- Implement Default for List.
+- `on_create_list_arc_from_unique` now takes `Pin<&mut Self>`
+- from_unique now calls from_pin_unique instead of the other way around
+- Add #[inline] markers.
+- Use build_assert in pair_from_unique.
+- Simplify transmute_from_arc
+- Make macros consistently use full paths.
+- Many improvements to safety comments.
+- Link to v1: https://lore.kernel.org/r/20240402-linked-list-v1-0-b1c59ba7ae3b@google.com
+
+---
+Alice Ryhl (9):
+      rust: list: add ListArc
+      rust: list: add tracking for ListArc
+      rust: list: add struct with prev/next pointers
+      rust: list: add macro for implementing ListItem
+      rust: list: add List
+      rust: list: add iterators
+      rust: list: add cursor
+      rust: list: support heterogeneous lists
+      rust: list: add ListArcField
+
+Benno Lossin (1):
+      rust: init: add `assert_pinned` macro
+
+ rust/kernel/init.rs                    |  67 ++++
+ rust/kernel/init/__internal.rs         |  29 ++
+ rust/kernel/lib.rs                     |   1 +
+ rust/kernel/list.rs                    | 686 +++++++++++++++++++++++++++++++++
+ rust/kernel/list/arc.rs                | 521 +++++++++++++++++++++++++
+ rust/kernel/list/arc_field.rs          |  96 +++++
+ rust/kernel/list/impl_list_item_mod.rs | 274 +++++++++++++
+ 7 files changed, 1674 insertions(+)
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240221-linked-list-25169a90a4de
+
+Best regards,
 -- 
-2.34.1
+Alice Ryhl <aliceryhl@google.com>
 
 
