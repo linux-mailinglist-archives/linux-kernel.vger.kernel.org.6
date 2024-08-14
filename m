@@ -1,83 +1,122 @@
-Return-Path: <linux-kernel+bounces-286415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D0C951AAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:16:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80163951AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04988280FC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CACF281994
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0034F1B0102;
-	Wed, 14 Aug 2024 12:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14A21B0134;
+	Wed, 14 Aug 2024 12:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a5Vsb4nK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="CKn8KUP+"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140171B0104
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F13D1AED49;
+	Wed, 14 Aug 2024 12:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723637804; cv=none; b=pYjgRAwHC6j8fTTzjxdpZLzbGTQePGJFr+QnTdWS7Jq9odE+Rrf3PgDsvaW0tix01O7ByhOv/WezAySJwWOOhEkujTI9VzHUQcTqmGOxMSnUbx8fyAp4tOpGIJtISW0VLrE0XgeBUDD8hsYrbIKSYeTsrfKTzsn7H/UCVzJ5jT8=
+	t=1723637826; cv=none; b=NPqMxPEBRCKjGfhC4L+t07mIB6FjgAYAL/wUic6JXhUz19mGqLaW7uGYla0RbTAHzAmHdoQAztrQ2GohUCpCJT0KxH46dPfkjoI1qB1S7v2XzsolIgbX36KSykmXgvwv2J5IjgdxLJr1Xr43Ry9jiGAMLwrZHh1wPsQey9gnQLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723637804; c=relaxed/simple;
-	bh=fwrrqi59D8+gyaVDxw+e4glai5gQB/boHoF93Oean/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AqZ/+VnT3nBCDr/oaViqOXmJ08pjoC9eFyi2LH+2euizs4d0egFNiWzKc+q1gxYUk8GPnorWirvW600GdpZPCJw5KDmDFDMg9a0TzZv5LsHIBU8wdSx33RdyEv61GvYTWnae4inDxyd/iyQMZFEKgPPvm5iRJRRdOpAV1+JpeI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a5Vsb4nK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fwrrqi59D8+gyaVDxw+e4glai5gQB/boHoF93Oean/s=; b=a5Vsb4nKZCkCLSWJc4DKosJAcD
-	fq1STNAyLp/GsplezQyiXkheoWHZivKw1ZWUbfKoDNk/SGDUV2pexYYBTKc815KiNmXFhs5k1Neno
-	KD0DTgCfTUi4zh3dxcubMsfycGqVSv/gWbQBerZ8NcuEWQ1Xiz0Oxfd2kDBdiAv18auP0ml5v41PL
-	2dYAUcMfMTOigg5gPpPLfNDHk7Curhj/6YOxgESiLX3teiad4nALIpskfeFIau8j4SYhcW3WiNjSK
-	UIY1HtnpVMvxzn6tW3YI1nmVlix4IgmHcVnQJ6JRK1SKIHVNks2DE6LszjcFzGGGm0MiUoyI0EIol
-	W6HLIPLA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1seCve-00000006tkh-0ev7;
-	Wed, 14 Aug 2024 12:16:38 +0000
-Date: Wed, 14 Aug 2024 05:16:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Christoph Hellwig <hch@infradead.org>,
-	Max Ramanouski <max8rr8@gmail.com>, x86@kernel.org,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	linux-kernel@vger.kernel.org, jniethe@nvidia.com,
-	jhubbard@nvidia.com, linux-mm@kvack.org
-Subject: Re: [PATCH v2] x86/ioremap: Use is_ioremap_addr() in iounmap()
-Message-ID: <ZrygJqIAz_AqqjcT@infradead.org>
-References: <20240812203538.82548-1-max8rr8@gmail.com>
- <Zrwyh9bKGVzkLzeA@infradead.org>
- <878qwzpfbi.ffs@tglx>
- <87le0zmhdp.fsf@nvdebian.thelocal>
+	s=arc-20240116; t=1723637826; c=relaxed/simple;
+	bh=cQ6zoQsOcpFLXMWi3hosEVA+UT+cA/CHR4exBfpLGMA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dermAkfkuc3FkLYEO2xVKMLi6vlxalGULZjMuKliI24lBE4IkggJUzL5ZUEYKh34PugmUN/QmsfNDaGhPV3zyn7Cn5WZz43CSohg9x52al0kBN5bG8NE1y6zoSpgfZPJghG3qlbO2c1ZJ5yfYFVRwTJhfLOdlNGbTdavnfy2AZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=CKn8KUP+; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47E5j9hf020215;
+	Wed, 14 Aug 2024 07:16:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=fpfGa+ZFwQoEjVp1
+	ybtTfwxTGsyWbIL6bk/kfKNVhL8=; b=CKn8KUP+AwqpsJ/LJQpMz0cnBWeNsZ2w
+	Vwe+Fm9NYAwl4kaq0uAN/+AuCy03G9PsTg2HsNGRhFCpHbHOv7EcKSn8RUA1vgpA
+	FHhRFVjifJAk4MwWBXLpKoBnvXHem687uguOQ1/9YfnB3nDRiuH4qQgSN/182dGs
+	vOkBUWjC6RI95DBXDBkxMRB87HeIVjA+FLJk2fk5nfpRYP5eaUdxwhnSbGBoP1Vf
+	WRFiWewCnVgSwjo4OiBxCCWLEjcP+W8N7DgnDt8kVg2bZTSp7pJ4BUQ67OrpCzl7
+	DjzOMzGVbkCa0cVHSHXgjIfcVToIvLBQF+gZFMI51j9ix+NvVK7vzg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40x5kwmgna-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 07:16:52 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 Aug
+ 2024 13:16:50 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 14 Aug 2024 13:16:49 +0100
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id D32A5820241;
+	Wed, 14 Aug 2024 12:16:49 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <wsa+renesas@sang-engineering.com>, <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "kernel test
+ robot" <lkp@intel.com>
+Subject: [PATCH] i2c: Use IS_REACHABLE() for substituting empty ACPI functions
+Date: Wed, 14 Aug 2024 13:16:49 +0100
+Message-ID: <20240814121649.261693-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87le0zmhdp.fsf@nvdebian.thelocal>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: zi_FY9r6dSfo3Z4GJql1AaNhbCkCdX64
+X-Proofpoint-GUID: zi_FY9r6dSfo3Z4GJql1AaNhbCkCdX64
+X-Proofpoint-Spam-Reason: safe
 
-On Wed, Aug 14, 2024 at 10:08:23PM +1000, Alistair Popple wrote:
-> I would tend to agree and had the same thought when we found this. At
-> least some kind of message (WARN_ON, WARN_ON_ONCE, printk, etc) would
-> have made the issue we were debugging much more obvious. FWIW I have
-> tested running with a WARN_ON() there and it never fired except in the
-> bug scenario.
+Replace IS_ENABLED() with IS_REACHABLE() to substitute empty stubs for:
+    i2c_acpi_get_i2c_resource()
+    i2c_acpi_client_count()
+    i2c_acpi_find_bus_speed()
+    i2c_acpi_new_device_by_fwnode()
+    i2c_adapter *i2c_acpi_find_adapter_by_handle()
+    i2c_acpi_waive_d0_probe()
 
-Various architectures had either an early ioremap variant that got
-silently ignored here, or magic carveout that don't get remapped at all.
-None of this should currently apply to x86, though.
+commit f17c06c6608a ("i2c: Fix conditional for substituting empty ACPI
+functions") partially fixed this conditional to depend on CONFIG_I2C,
+but used IS_ENABLED(), which is wrong since CONFIG_I2C is tristate.
+
+CONFIG_ACPI is boolean but let's also change it to use IS_REACHABLE()
+to future-proof it against becoming tristate.
+
+Somehow despite testing various combinations of CONFIG_I2C and CONFIG_ACPI
+we missed the combination CONFIG_I2C=m, CONFIG_ACPI=y.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Fixes: f17c06c6608a ("i2c: Fix conditional for substituting empty ACPI functions")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202408141333.gYnaitcV-lkp@intel.com/
+---
+ include/linux/i2c.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 7eedd0c662da..377def497298 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -1066,7 +1066,7 @@ static inline int of_i2c_get_board_info(struct device *dev,
+ struct acpi_resource;
+ struct acpi_resource_i2c_serialbus;
+ 
+-#if IS_ENABLED(CONFIG_ACPI) && IS_ENABLED(CONFIG_I2C)
++#if IS_REACHABLE(CONFIG_ACPI) && IS_REACHABLE(CONFIG_I2C)
+ bool i2c_acpi_get_i2c_resource(struct acpi_resource *ares,
+ 			       struct acpi_resource_i2c_serialbus **i2c);
+ int i2c_acpi_client_count(struct acpi_device *adev);
+-- 
+2.39.2
 
 
