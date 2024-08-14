@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-285911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B102951427
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:08:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1999295142B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCDF91C23F3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FF828236F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C52757F3;
-	Wed, 14 Aug 2024 06:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5073762EB;
+	Wed, 14 Aug 2024 06:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xv15si/a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AY84MjRw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105F62901;
-	Wed, 14 Aug 2024 06:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E6A54658;
+	Wed, 14 Aug 2024 06:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723615681; cv=none; b=Cb7SRNEb9Qb2D+cGb6bTqg8meNYx30Af0yNSBSZNlj8CroRFHXFjMMC6XcEpMX+NXwHJ7Madfld5vji/y34IjDdxtd7uPNyyPAqRJTeAV6Cg3M49qRtbFPQUm9BusE7gXyUmyhOxnGpzoFAKbmZ5rUtDPYsN5LO5nhLFG6UAXy8=
+	t=1723615753; cv=none; b=KMP5OM/y3g9HGo5uh5UIV+A4T2OcCFXxqMiIkpivX9qNNoZiTSNJGSOCdlF3LCR4RFQTf6P96wv4V0veo+0xiKdd9hlEbey3DjfG0aDzOFO+o699y0INla1tTG3ahmEdFSOHWplFzvFqCJIZtg83kaYK3WnD5Vt1YVjg3LhX+tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723615681; c=relaxed/simple;
-	bh=GanByc4Rn0QLvB23aAAtnwFHAIse/QsrLmZrI38upyI=;
+	s=arc-20240116; t=1723615753; c=relaxed/simple;
+	bh=8Vd1UIp+Mn1hETO/SezGviaXWz0T6IBnUJmfJCVzp8o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RzXVjxIKHGwkderDyLDJWenfb8v6qXuxTl5MUd1ArLQIsJ8bANNj+r4rEzbSRSfAxX7aG2FjANh3YtwzZstM/cjDDgd40jpnELrucTn02CW5ICUItTa0CGoZy22lMHJamoePUhMjPnhbxHVwxv4GtMJVtrQhlj2KlwrDjtQ3rEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xv15si/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1A28C32786;
-	Wed, 14 Aug 2024 06:07:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=K6bC7vLMFwNE69HjJfLhsB+eyxcZhWXN68IRfH5kKG0cmcc1g9NcgxXUTJH+MfjqJ0xUdGRvt5Wp+IxpW6pX0UUlyqWjW1/z3z7ym3c1xrTDhZV4nOIZr1WLBOGrTHsLOenHVheC25olwHMHI3GPQ4Zhz5F88ir3svFLE+mQa+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AY84MjRw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8195C4AF09;
+	Wed, 14 Aug 2024 06:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723615680;
-	bh=GanByc4Rn0QLvB23aAAtnwFHAIse/QsrLmZrI38upyI=;
+	s=k20201202; t=1723615752;
+	bh=8Vd1UIp+Mn1hETO/SezGviaXWz0T6IBnUJmfJCVzp8o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xv15si/aa3BfVFylPjmbR1kl7d0oNalgogNs9EU3ikklkS7VUa29r0WS0o5tTN1d+
-	 SVdygX1dJPl8eriSSsbmL5uaepMTvCxtgol+VT1nEE+vAZEcefBBnaCvrB2M2+6GiG
-	 +reQFMsxGbHJBTzlSYiuBP4PusZLKfC8gx/LToHqvUZSTbBZFoKuhidX8+qE6Ad5CA
-	 znZ9ARwaF/149I3rXHO1HT056PvdtbFKqHy5td/scQbYkzH7Bfz8b0Vg/EQ8GWgiJ9
-	 6WjRg7gVwV7bJBhqkNcGmNExkvnzJNEVEoet3b2R+I5FPXCDd92HKDWFb89zjHp9rb
-	 UPQw/zWJ0E6LQ==
-Message-ID: <c66a45ca-a526-4865-840e-2fce108eab91@kernel.org>
-Date: Wed, 14 Aug 2024 08:07:56 +0200
+	b=AY84MjRwi+bHHZxLk4DSnE7mm+zeKbb7X50Ab8GTHppMYxb7QrU+rs1jWZ9MalYMI
+	 ySfVpkF03qGvxasBAZ0p5WK58Arlp1L45MkatkNY6i4PjfQyibeQTUiVEA8aRsfOu+
+	 7y/SQJf8fZzYLaq0XLjWuRrGLY4fAVUmilnQs/8l2idkRlO6vrHWiMg4uYTKOplNFg
+	 kKSkCOOJ2RZik3b0lP6XdimHnovmoLDCvzN3n09Z779zwd4nvO8Ngt1kqKfs3Yc/t2
+	 3RQiBA5sblzdjP7lWccRsWIjNOJeQBJetWIPFCGEba2msjHENFPLu5aF7i6RkMATdU
+	 6ejv0LTMd/U5w==
+Message-ID: <003090ab-4ce2-4624-b5c5-33ceef521e9d@kernel.org>
+Date: Wed, 14 Aug 2024 08:09:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] ARM: dts: aspeed: Add properties of scu and gfx
- for video
+Subject: Re: [PATCH v4 2/2] media: aspeed: Allow to capture from SoC display
+ (GFX)
 To: Jammy Huang <jammy_huang@aspeedtech.com>, eajames@linux.ibm.com,
  mchehab@kernel.org, joel@jms.id.au, andrew@aj.id.au, pmenzel@molgen.mpg.de
 Cc: linux-media@vger.kernel.org, openbmc@lists.ozlabs.org,
  linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
  linux-kernel@vger.kernel.org
 References: <20240814005421.3362441-1-jammy_huang@aspeedtech.com>
- <20240814005421.3362441-2-jammy_huang@aspeedtech.com>
-Content-Language: en-US
+ <20240814005421.3362441-3-jammy_huang@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -103,22 +103,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240814005421.3362441-2-jammy_huang@aspeedtech.com>
+In-Reply-To: <20240814005421.3362441-3-jammy_huang@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/08/2024 02:54, Jammy Huang wrote:
-> To have video support capture from SoC display(GFX), these properties
-> are added to allow video to control related registers.
-> 
-> Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
-> ---
->  arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+> +/*
+> + * Get regmap without checking res, such as clk/reset, that could lead to
+> + * conflict.
+> + */
+> +static struct regmap *aspeed_regmap_lookup(struct device_node *np, const char *property)
+> +{
+> +	struct device_node *syscon_np __free(device_node) = of_parse_phandle(np, property, 0);
+> +	struct regmap *regmap;
 
-NAK, you still keep adding undocumented properties. I commented already
-that you did not document the bindings for new properties. I also said
-what you need to do, so why doing something entirely else?
+Drop. The point of using __free was to make this very simple.
+
+> +
+> +	if (!syscon_np)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	regmap = device_node_to_regmap(syscon_np);
+> +
+> +	return regmap;
+> +}
+> +
+>  static int aspeed_video_init(struct aspeed_video *video)
+>  {
+>  	int irq;
+>  	int rc;
+>  	struct device *dev = video->dev;
+>  
+> +	video->scu = aspeed_regmap_lookup(dev->of_node, "aspeed,scu");
+> +	video->gfx = aspeed_regmap_lookup(dev->of_node, "aspeed,gfx");
+
+Still undocumented. Respond to previous comment and confirm that you
+understood it.
+
 
 Best regards,
 Krzysztof
