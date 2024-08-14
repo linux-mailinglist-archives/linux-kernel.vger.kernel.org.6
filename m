@@ -1,204 +1,208 @@
-Return-Path: <linux-kernel+bounces-286913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C5A952056
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:46:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD0E95205B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9AEC1F22A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2505D2821B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76431BA883;
-	Wed, 14 Aug 2024 16:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0429B1BB68F;
+	Wed, 14 Aug 2024 16:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EafOgKe9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="N24OdOki"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4031B9B3F;
-	Wed, 14 Aug 2024 16:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4AA1B9B28
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653994; cv=none; b=KUnBaH9b5YuEzKsx1iwOnhbQoritse3tnIV+DooGVWgjuIp8AXJHGtE+QkKkmkTWAJld/Cop+fj2mKoS+UTK/MYsfwPRbh+rRxCFSbN+fkTz2kxtDMybPW/SXcXxQjfgzsakCeVUE/kmwBdaU40chaRpqpmupQwuZaXvDC+A9wM=
+	t=1723654035; cv=none; b=lorFn0NRNB8Jgg9bBEMfHIn28rlvgn0OsgOWHbthbb1F9rwTYwcOOfLWzmBsJK+w6BgJA2pzhYs8L2AvrmDb1mDzr/GUkwLXBEUa/jaL355z1GHX6vh6JS6CEuf1YQxgs9jRP80SVHHVlVKrny89Yo+tT6Px8gojkbNbsXMcyd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653994; c=relaxed/simple;
-	bh=ZDDUrjKwXN16mqKYCG50+U84WXg3cei6E2445DIvFfs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ruFi2qZg8V6B62WXBLTK2QfNubqB2+KpD497L3uLoVhdiixW8CLrSRbppTwG8AkCdyQcB/3s2gEht3rUZJUcrtioqTM2ug/TZ0IJy8BsVGDgWAQjBmN8Zc4WHsK6mDbvLxTlA1lO+S+yN27cllcAwMKgka6bpyWoqulw/LP/qwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EafOgKe9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D8CC4AF09;
-	Wed, 14 Aug 2024 16:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723653994;
-	bh=ZDDUrjKwXN16mqKYCG50+U84WXg3cei6E2445DIvFfs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=EafOgKe9ZBxLkBHo4NviPVlWPJGxnoOsb56B/dj7nav/+4H44egx5EUP9EEak4ZzB
-	 oPgEmhzBhSzPdDzCVyKZij2lscBoa3Z1pWrFMUM9BCksIdTv6hKTdRiHfQF7YRQBiV
-	 EHXnBMdhtofLj0tb8/91811WlKUofM4Vm75OT46er3MZkf7Zu7II6MvhAx8pz3ZVqS
-	 Q/i4mxZ0Zp/2Xj+T8GeLBJVVjM8MnHXZpq1wxhoxdspJ+xKf9X1YKSiASsQn07VO/I
-	 PkUongNtQUtdjmI+LkjlH/MSYCSRRuU+rYV9Q6SdQR2u/ErcqJPnOl4swFg6mgtinQ
-	 DEn6vn79F4xEg==
-Message-ID: <0bcdf69cb17dd542d84c121cb7862dc4867f56af.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew
- Morton <akpm@linux-foundation.org>, Mateusz Guzik <mjguzik@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Wed, 14 Aug 2024 12:46:32 -0400
-In-Reply-To: <20240814154250.GS13701@ZenIV>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
-	 <20240814021817.GO13701@ZenIV> <20240814024057.GP13701@ZenIV>
-	 <df9ee1d9d34b07b9d72a3d8ee8d11c40cf07d193.camel@kernel.org>
-	 <20240814154250.GS13701@ZenIV>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1723654035; c=relaxed/simple;
+	bh=GTTdsljCHP48BKxOxQ6j1dEfFE2+NMQn7BEF6Jymyp0=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=XbF+/qyRGBOOyFCdDXTejOJDgMUi9+Px2RR8MDzGpC1QFH0KQ3uCR7TnTNtTswjg+ozp3ewoY869DPj/GlwrrHF3e3KR3t+8eSUFWLusS4uAM2VvpD/aE3KD5W2UbPhpqPl53cYbN4TqGcObW9nPXZ9/CM62uZANMpxC6wFaNDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=N24OdOki; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a1d81dc0beso615385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723654031; x=1724258831; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0LOkC2hr5mjD/XmAuAJdpJW2ttXWug85zZK1Co9ZjIE=;
+        b=N24OdOkifX7HRQa5eXwZdZnM80f8nsictuYml8WBYV2E9mWUbxpB+lOY75Xi1eKaWS
+         BXtozyFebq2M/Jo4GaJZVw/eCKKzoZ0e00tQ1AEYGJJSCl30ASnL9FvYVsfyoQtV7qTO
+         LinKSGB4wjRH8U+DFnOVF7nBaJtX41sZjigb0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723654031; x=1724258831;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0LOkC2hr5mjD/XmAuAJdpJW2ttXWug85zZK1Co9ZjIE=;
+        b=bL2mF3sOxNZzTSVApOdINKmuc+soUB0ky+RcQxv22Ux8UCtxPGAfQ1/lYwToMVaG7I
+         rmwdupeEQ6+P6i2pHqsOyWwE9u+bceD+KPmYPFKYSxQFEoZ/l+lmJTD7OVC5qP7+a7e9
+         LT3/IJt4DFlW0aY5inYSgm+qzATvF5nC9MWibcYfJ0d1l0cFUR8GobeSANMhROukElbx
+         nFFgz+Nat1Q1hovCMODG82t6UxEu3ribE+96ETeG4k9eWPziHbW2cSq4oVDMUMGtioJi
+         HzObUvBK+EUEKlb2HKujZfRnKb9a0Kk6hsCOHaypxfRlHuw6gOknw01pKg2Bc2SfXdTm
+         y4zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVi1Gi+aHJNsmp1FTFnZ/Wry+94DAc/GUm2WqQ9xqMo25bN3F8jM+3CZq1wZb9RTO0o8PqNiA/GQFqBm4Mmxu9NsivvpbQdH4msx5O
+X-Gm-Message-State: AOJu0YzahbVf+k2dMkLt91mi0gCZ2sJLKjxWPVyotkAFp1TRWwcDhOgG
+	E2V06lRdneNZVYKCxTJBEOzkRWrhKZah4fVvpk1W0MRyWKJXiY1YaxgW+b5Ccg==
+X-Google-Smtp-Source: AGHT+IHTM4N5IaCtzNPE7RF5w4uRXrZaZMciTBo9YGWGeU+4Fzw/BBwdcOTRcfKTQ2pPneokkJCaEA==
+X-Received: by 2002:a05:620a:404b:b0:79f:12e9:1e71 with SMTP id af79cd13be357-7a4ee26d137mr414754385a.0.1723654031043;
+        Wed, 14 Aug 2024 09:47:11 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d6494esm454743585a.2.2024.08.14.09.47.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2024 09:47:10 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, Jacobe Zang <jacobe.zang@wesion.com>, <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>
+CC: <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <nick@khadas.com>
+Date: Wed, 14 Aug 2024 18:47:04 +0200
+Message-ID: <19151c92b40.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <f504a3e7-cb18-41ce-a76d-267d464b6b05@linaro.org>
+References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
+ <20240813082007.2625841-2-jacobe.zang@wesion.com>
+ <1914cb2b1a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <e7401e25-7802-4dc3-9535-226f32b52be1@kernel.org>
+ <062d8d4e-6d61-4f11-a9c0-1bbe1bfe0542@broadcom.com>
+ <1e442710-a233-4ab2-a551-f28ba6394b5b@linaro.org>
+ <180f7459-39fa-4e96-83d6-504e7802dc94@broadcom.com>
+ <df52a968-96be-4f05-8d6f-32a2abde1d91@linaro.org>
+ <f504a3e7-cb18-41ce-a76d-267d464b6b05@linaro.org>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH v10 1/5] dt-bindings: net: wireless: brcm4329-fmac: add pci14e4,449d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-08-14 at 16:42 +0100, Al Viro wrote:
-> On Wed, Aug 14, 2024 at 07:48:17AM -0400, Jeff Layton wrote:
-> > On Wed, 2024-08-14 at 03:40 +0100, Al Viro wrote:
-> > > On Wed, Aug 14, 2024 at 03:18:17AM +0100, Al Viro wrote:
-> > >=20
-> > > > That's not the only problem; your "is it negative" test is
-> > > > inherently
-> > > > racy in RCU mode.=C2=A0 IOW, what is positive at the time you get
-> > > > here can
-> > > > bloody well go negative immediately afterwards.=C2=A0 Hit that with
-> > > > O_CREAT and you've got a bogus ENOENT...
-> > >=20
-> > > Hmm...=C2=A0 OTOH, in that case you end up in step_into(), which will
-> > > do the
-> > > right thing...
-> > >=20
-> > > 	How well does that series survive NFS client regression
-> > > tests?
-> > > That's where I'd expect potentially subtle shite, what with
-> > > short-circuited
-> > > ->d_revalidate() on the final pathwalk step in open()...
-> >=20
-> > Christian took in my v3 patch which is a bit different from this
-> > one.
-> > It seems to be doing fine in testing with NFS and otherwise.
-> >=20
-> > I don't think we short-circuit the d_revalidate though, do we? That
-> > version calls lookup_fast on the last component which should
-> > d_revalidate the last dentry before returning it.
->=20
-> It's not about a skipped call of ->d_revalidate(); it's about the NFS
-> (especially NFS4) dances inside ->d_revalidate(), where it tries to
-> cut down on roundtrips where possible.=C2=A0 The interplay with -
-> >atomic_open()
-> and ->open() is subtle and I'm not sure that we do not depend upon
-> the
-> details of ->i_rwsem locking by fs/namei.c in there - proof of
-> correctness
-> used to be rather convoluted there, especially wrt the unhashing and
-> rehashing aliases.
->=20
-> I'm not saying that your changes break things in there, but that's
-> one
-> area where I would look for trouble.=C2=A0 NFS has fairly extensive
-> regression
-> tests, and it would be a good idea to beat that patchset with those.
+On August 14, 2024 4:08:52 PM Krzysztof Kozlowski 
+<krzysztof.kozlowski@linaro.org> wrote:
 
-I've already run a bunch of NFS tests on it and it seems to be OK so
-far, but I'll keep testing it. My take:
+> On 14/08/2024 13:15, Krzysztof Kozlowski wrote:
+>> On 14/08/2024 12:59, Arend van Spriel wrote:
+>>> On 8/14/2024 12:39 PM, Krzysztof Kozlowski wrote:
+>>>> On 14/08/2024 12:08, Arend van Spriel wrote:
+>>>>> On 8/14/2024 10:53 AM, Krzysztof Kozlowski wrote:
+>>>>>> On 13/08/2024 19:04, Arend Van Spriel wrote:
+>>>>>>> On August 13, 2024 10:20:24 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+>>>>>>>
+>>>>>>>> It's the device id used by AP6275P which is the Wi-Fi module
+>>>>>>>> used by Rockchip's RK3588 evaluation board and also used in
+>>>>>>>> some other RK3588 boards.
+>>>>>>>
+>>>>>>> Hi Kalle,
+>>>>>>>
+>>>>>>> There probably will be a v11, but wanted to know how this series will be
+>>>>>>> handled as it involves device tree bindings, arm arch device tree spec, and
+>>>>>>> brcmfmac driver code. Can it all go through wireless-next?
+>>>>>>
+>>>>>> No, DTS must not go via wireless-next. Please split it from the series
+>>>>>> and provide lore link in changelog for bindings.
+>>>>>
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> Is it really important how the patches travel upstream to Linus. This
+>>>>> binding is specific to Broadcom wifi devices so there are no
+>>>>> dependencies(?). To clarify what you are asking I assume two separate
+>>>>> series:
+>>>>>
+>>>>> 1) DT binding + Khadas Edge2 DTS  -> devicetree@vger.kernel.org
+>>>>> reference to:
+>>>>> https://patch.msgid.link/20240813082007.2625841-1-jacobe.zang@wesion.com
+>>>>>
+>>>>> 2) brcmfmac driver changes  -> linux-wireless@vger.kernel.org
+>>>>
+>>>> No. I said only DTS is separate. This was always the rule, since forever.
+>>>>
+>>>> Documentation/devicetree/bindings/submitting-patches.rst
+>>>
+>>> I am going slightly mad (by Queen). That documents says:
+>>>
+>>> 1) The Documentation/ and include/dt-bindings/ portion of the patch
+>>> should
+>>> be a separate patch.
+>>>
+>>> and
+>>>
+>>> 4) Submit the entire series to the devicetree mailinglist at
+>>>
+>>> devicetree@vger.kernel.org
+>>>
+>>> Above I mentioned "series", not "patch". So 1) is a series of 3 patches
+>>> (2 changes to the DT binding file and 1 patch for the Khadas Edge2 DTS.
+>>> Is that correct?
+>>
+>> My bookmark to elixir.bootling does not work, so could not paste
+>> specific line. Now it works, so:
+>>
+>> https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L79
+>>
+>> The rule was/is:
+>> 1. Binding for typical devices always go via subsystem tree, with the
+>> driver changes.
+>> There can be exceptions from above, e.g. some subsystems do not pick up
+>> bindings, so Rob does. But how patches are organized is not an exception
+>> - it is completely normal workflow.
+>>
+>> 2. DTS *always* goes via SoC maintainer. DTS cannot go via any other
+>> driver subsystem tree. There is no exception here. There cannot be an
+>> exception, because it would mean the hardware depends on driver, which
+>> is obviously false.
+>
+> In case my message was not clear: we talk here about organizing
+> patchsets, not individual patches. If you ask about patches, then DTS,
+> bindings and driver are all separate patches. This set already is split
+> like that, so this was fine and I did not comment on it. Only through
+> whom the DTS patch goes - separate tree.
 
-Opening an extant file with O_CREAT set should behave the same as with
-O_CREAT not set.
+I used the "series" which is my term for "patchset". Sorry for confusion. 
+So "[PATCH 3/5] arm64: dts: rockchip: Add AP6275P wireless support to 
+Khadas Edge 2" should be submitted to rockchip soc related tree and the 
+rest can go through the wireless-next tree. Got it.
 
-I did crawl through NFS's d_revalidate functions. There are a couple of
-places that check for O_CREAT, but they didn't seem to depend on the
-i_rwsem or any particular locking.
+Regards,
+Arend
+---
+$ ./scripts/get_maintainer.pl -f 
+arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+Rob Herring <robh@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED 
+DEVICE TREE BINDINGS)
+Krzysztof Kozlowski <krzk+dt@kernel.org> (maintainer:OPEN FIRMWARE AND 
+FLATTENED DEVICE TREE BINDINGS)
+Conor Dooley <conor+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED 
+DEVICE TREE BINDINGS)
+Heiko Stuebner <heiko@sntech.de> (maintainer:ARM/Rockchip SoC 
+support,commit_signer:11/11=100%,authored:1/11=9%,removed_lines:1/1=100%)
+Muhammed Efe Cetin <efectn@protonmail.com> 
+(commit_signer:10/11=91%,authored:10/11=91%,added_lines:685/685=100%)
+Dragan Simic <dsimic@manjaro.org> (commit_signer:1/11=9%)
+devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE 
+TREE BINDINGS)
+linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support)
+linux-rockchip@lists.infradead.org (open list:ARM/Rockchip SoC support)
+linux-kernel@vger.kernel.org (open list)
 
-Please do let me know if you see anything I missed though.
+>
+> And just in case: this is neither specific to wireless nor to Broadcom.
+> This is for entire Linux kernel.
+>
+> Best regards,
+> Krzysztof
 
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+
+
 
