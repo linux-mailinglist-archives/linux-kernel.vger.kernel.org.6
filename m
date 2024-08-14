@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-286201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E646F9517DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:40:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019B69517DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 812A5B24E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:40:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91486B24EC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63207166F38;
-	Wed, 14 Aug 2024 09:39:51 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5D2165EFE;
+	Wed, 14 Aug 2024 09:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dukT9She"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7800B13E8A5;
-	Wed, 14 Aug 2024 09:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A8D152196
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723628390; cv=none; b=UIt1MRLg4UaJJlBHOdJU1Ey8UEEtfM1nn1k4w6H2xX1ftnCCstTX2xmKh3MCGB4302x/AjZdpz4NQmDa84NxK1ZsZV5CIyn5+QUVCpnoUzAW7sQ6LhixAYC2IRIOwHCAnmWqPeXmIMs2ljVCgGefOOGzWgyq9vWoed0NlEScJTg=
+	t=1723628404; cv=none; b=gmA7i9bTYrpR9UIRuwY3mH9uZWmkKLV2IolVeoqYe9IwJ76/Vwvm6LUF7PcXjivNI6LQbQcUqfEjn4GZWTiErcpSO+UCFSG/Lp7BlfGm47pFV0z1ibqL/QWA0ZH1QtSPeaxESimSqHMMZd8+6a+ObEtTGYDUKD/ElvdS9Ogf68A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723628390; c=relaxed/simple;
-	bh=vJVA25NlVApgT7H0WWSrbrXVJdmhTh1HAQt9tiDC4NI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xxo8cXtskfB9AFgQY9KmiiPIZh7dSsDOkCky8ueDbPpzjOrI8+W1+CgQ7Ux08LhL9AF/o5ceP10SfhQM7uvAHDlRrvKmyJnfHkb6AeL2g9NMYQOe4bLxLI3u4C8T++CnqqCbbn+UO9v6K2qnAb4j33rdgzxRifigoRDYvUxUOH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkNRx5HDsz6K6Cf;
-	Wed, 14 Aug 2024 17:36:29 +0800 (CST)
-Received: from lhrpeml500001.china.huawei.com (unknown [7.191.163.213])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5E8C4140B2A;
-	Wed, 14 Aug 2024 17:39:45 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- lhrpeml500001.china.huawei.com (7.191.163.213) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 14 Aug 2024 10:39:45 +0100
-Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
- lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
- Wed, 14 Aug 2024 10:39:45 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
- migration driver
-Thread-Topic: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
- migration driver
-Thread-Index: AQHa5/1cLifCKuSClUed/yMoPQ/pPbImir+Q
-Date: Wed, 14 Aug 2024 09:39:44 +0000
-Message-ID: <42784fb0fd1c44cf9470c9662e154b88@huawei.com>
-References: <20240806122928.46187-1-liulongfang@huawei.com>
- <20240806122928.46187-4-liulongfang@huawei.com>
-In-Reply-To: <20240806122928.46187-4-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1723628404; c=relaxed/simple;
+	bh=K7a0LCBXq6OZZ3B7ZT3AYD2E1d/U39ngdeL5y8O277s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N0qTz8hrrkPC533uyzBTGr1vQwzOvCMCXGZtRxp+LBAeIOt+VoXeO16dkoLKzLM9666IQlRAt81pDgnQw7ug9mGo84Zfc0hGYLBvWXzAY02tchoy5zv3sOxS9aevD5VdogkIHtRuq5TJNd2XfgUPSlB4BoLxLuigJdRUTKDBLeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dukT9She; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-429c4a4c6a8so34612935e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:40:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723628401; x=1724233201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JmXmcga/zjb6ahfiHPXOSzwplx1CZRP7/PHn0u7sCk0=;
+        b=dukT9SheX7TvEIR5S+jpcr94AZUkvlsmvl3MbErWvJyM5j62080PdspnaMT7pJ9bQx
+         9zsL6Kyo7TAuNjYSh7BK6zr1PPAB95Ef3t+SfsKaf5fwxTQdm5uP9DAQsZ8+OllOkYi7
+         zzwEaYA9lTxA9ptAbz7QT70RpGCsb0adDacca1843junx1eTYV6frc7BjxfKFM5frd3p
+         u6fICjQDefWWZgE+HY6PQay+XcsbpZTtiJeupppd0l7Dg0ix9OTWfmXQkTFh2dL/9WN1
+         OOLnaMoLctG8P7XbEBsufkYhgRwQWp/gODwAUxJJDlHMy7Eie752sx+SZ84tV5NAZmNt
+         XVlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723628401; x=1724233201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JmXmcga/zjb6ahfiHPXOSzwplx1CZRP7/PHn0u7sCk0=;
+        b=dUU8oTZNSY4H87U1Q+rqft4a9lhqAAKgGR0YXCYJaTLb/SBKc84Qp7FO9xNfX7hKvv
+         2veaGbr/FvjwLvphzOpbnxynEfhT3xlnI0iQRrHHyNvG5nbZBN0SzJipi0FfQlG6WHvL
+         gp/HXHZv/lOwbn4uU50K8q400cV3PldSqemHmz7Rdg1l29Vg46zjp6VvtKPEaFi1c2u3
+         0xouLKwTCtgdiD1q/cuOLNqXR7rtO1/Cs0z9PrvbJYqCR6WX96LHDdwOM1lApY+rlA1G
+         AtAARS2gEYsCS+SMrmUopKxXfuL2ZFGlEsBazzw64gYZ1sHf/+dvq0D/MFOH7nJOWkKQ
+         8+Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWRXy/KpUqQ+WZrYY5Weh9NSwvGE8IVONqGLG//PMA0CGne5TKrH1xPSETuGBc0xMFl9weKO7aqLnCGuXBNJ+nzgZQqPJQx3Ieeg4Eo
+X-Gm-Message-State: AOJu0YxKtQEIEkkC7fI6SoO7aIMSyFNfIcL8WbtUCgFncdRUQ8x4HTn4
+	DSsUTTmgeMwn7XaixaDsVm2lMAlL0NQSapy3EAzuVxW3FPpZtTZGd89G4iFB10I=
+X-Google-Smtp-Source: AGHT+IF/bJMKfHmeWBSdbtMjSNM/VzBYMVOeE4F12fOKUYhXLXD2wvGqLv30n/W4um8EnKsh44iMBg==
+X-Received: by 2002:a05:600c:3c96:b0:426:6eae:6596 with SMTP id 5b1f17b1804b1-429dd264983mr13645925e9.25.1723628400773;
+        Wed, 14 Aug 2024 02:40:00 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded28cdasm14195615e9.16.2024.08.14.02.39.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 02:40:00 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Patrice Chotard <patrice.chotard@foss.st.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Felipe Balbi <balbi@ti.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Lee Jones <lee@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] usb: dwc3: st: fix probed platform device ref count on probe error path
+Date: Wed, 14 Aug 2024 11:39:56 +0200
+Message-ID: <20240814093957.37940-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+The probe function never performs any paltform device allocation, thus
+error path "undo_platform_dev_alloc" is entirely bogus.  It drops the
+reference count from the platform device being probed.  If error path is
+triggered, this will lead to unbalanced device reference counts and
+premature release of device resources, thus possible use-after-free when
+releasing remaining devm-managed resources.
 
+Fixes: f83fca0707c6 ("usb: dwc3: add ST dwc3 glue layer to manage dwc3 HC")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/usb/dwc3/dwc3-st.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, August 6, 2024 1:29 PM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum Thodi
-> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v8 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
-> migration driver
-...=20
-> +static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
-> +{
-> +	struct device *vf_dev =3D seq->private;
-> +	struct vfio_pci_core_device *core_device =3D dev_get_drvdata(vf_dev);
-> +	struct vfio_device *vdev =3D &core_device->vdev;
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(vdev);
-> +	size_t vf_data_sz =3D offsetofend(struct acc_vf_data, padding);
-> +	struct acc_vf_data *vf_data =3D NULL;
-> +	int ret;
-> +
-> +	vf_data =3D kzalloc(sizeof(struct acc_vf_data), GFP_KERNEL);
-> +	if (!vf_data)
-> +		return -ENOMEM;
-> +
-> +	mutex_lock(&hisi_acc_vdev->state_mutex);
-> +	ret =3D hisi_acc_vf_debug_check(seq, vdev);
-> +	if (ret) {
-> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
-> +		goto migf_err;
-> +	}
-> +
-> +	vf_data->vf_qm_state =3D hisi_acc_vdev->vf_qm_state;
-> +	ret =3D vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
-> +	if (ret) {
-> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
-> +		goto migf_err;
-> +	}
-> +
-> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
-> +
-> +	seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
-> +			(unsigned char *)vf_data,
-> +			vf_data_sz, false);
-> +
-> +	seq_printf(seq,
-> +		 "acc device:\n"
-> +		 "device  ready: %u\n"
-> +		 "device  opened: %d\n"
-> +		 "data     size: %lu\n",
-> +		 hisi_acc_vdev->vf_qm_state,
-> +		 hisi_acc_vdev->dev_opened,
+diff --git a/drivers/usb/dwc3/dwc3-st.c b/drivers/usb/dwc3/dwc3-st.c
+index 211360eee95a..a9cb04043f08 100644
+--- a/drivers/usb/dwc3/dwc3-st.c
++++ b/drivers/usb/dwc3/dwc3-st.c
+@@ -219,10 +219,8 @@ static int st_dwc3_probe(struct platform_device *pdev)
+ 	dwc3_data->regmap = regmap;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "syscfg-reg");
+-	if (!res) {
+-		ret = -ENXIO;
+-		goto undo_platform_dev_alloc;
+-	}
++	if (!res)
++		return -ENXIO;
+ 
+ 	dwc3_data->syscfg_reg_off = res->start;
+ 
+@@ -233,8 +231,7 @@ static int st_dwc3_probe(struct platform_device *pdev)
+ 		devm_reset_control_get_exclusive(dev, "powerdown");
+ 	if (IS_ERR(dwc3_data->rstc_pwrdn)) {
+ 		dev_err(&pdev->dev, "could not get power controller\n");
+-		ret = PTR_ERR(dwc3_data->rstc_pwrdn);
+-		goto undo_platform_dev_alloc;
++		return PTR_ERR(dwc3_data->rstc_pwrdn);
+ 	}
+ 
+ 	/* Manage PowerDown */
+@@ -300,8 +297,6 @@ static int st_dwc3_probe(struct platform_device *pdev)
+ 	reset_control_assert(dwc3_data->rstc_rst);
+ undo_powerdown:
+ 	reset_control_assert(dwc3_data->rstc_pwrdn);
+-undo_platform_dev_alloc:
+-	platform_device_put(pdev);
+ 	return ret;
+ }
+ 
+-- 
+2.43.0
 
-I think the dev_opened will be always true if it reaches here and can be
-removed from here and from hisi_acc_vf_migf_read() as well.
-
-Please don't respin just for this. Let us wait for others to review this.
-
-Thanks,
-Shameer
 
