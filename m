@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-286392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD69951A5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:48:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A20B951A63
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28EC81F22BEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CA7E1C20C75
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904101AC44E;
-	Wed, 14 Aug 2024 11:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYSMNK7S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91001AC43C;
+	Wed, 14 Aug 2024 11:51:28 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A797A143879;
-	Wed, 14 Aug 2024 11:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC85143879
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723636099; cv=none; b=BkTrwc9xrAx9pS5pzb/7DWquXTRq4FUgCcINeE5+qJ1p+ngTQkfWTG1LvUvB/QK7Ym2zA7JTtYLhMgH88kAk6Wnt2ckZKzvCNeB5Z8tgXTLiUY7xYxwaSokTkHEKbebDz8daOPiUF/jE0YGbEnbY1QHoCrcSGAPPy1R7yZXkJq4=
+	t=1723636288; cv=none; b=Ig4tyHVGiRsHp2EhKpyil/YwT8jL+65qdr1lBCmeGP5yxsyF4tn8XOUTTbzsuy4qxWvwCxxMtMq8WMgzFcS7HVadI85V8wtHFqMMWVNtW9Kc8oI6uqrUbxgFXKXMS3liYGcFhPlR4nJWbNrAGtTqqvdPsAxiFiIpUSEMq3r1crU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723636099; c=relaxed/simple;
-	bh=W+L/sfojA497thSO+8njO/M5WaH5FCjsR9F4mnjTIF4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qxyBp9wtYQPvW+AJmhD/WQLTza3Mgmp8S6K7Hwdx9eC9+xqALXbwVkXnlqmwiNeVghQmApEJ0ZL1mAUmjdKlc887+SHqz+lSQXezHkDzZ5Im+H4vrJ1k9nyQPDNjaSjtlF/8lBTc393pbzWZrNJAqQckNdrnlQ6q8qsZNfM+Us0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYSMNK7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F8EC32786;
-	Wed, 14 Aug 2024 11:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723636099;
-	bh=W+L/sfojA497thSO+8njO/M5WaH5FCjsR9F4mnjTIF4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JYSMNK7SsA6NRR+uf2NTIgIlKnDlQMFNUvJZCxt67tR+wNRJR4PS1xppWke6plTg8
-	 b1eJvp933rtr33332D0KUFye6kfLGDpjs7+a79Tso43TDPsUfxgCNCB++fqMaJ57U7
-	 ddQ6R/ZRAWaLnTlG5PFzySSz52LJndOos0+ehfHlBN0TFW6D6bYWql7/4gkjXNEzDB
-	 GoLEIcBmOkco48uBstxgBmWJyBP7I+/+GCVJ/PIhKTCypqxounVSGnaP64xXj1ZbVI
-	 84qfgPRYxXxzWKZgegsNMby1ONEiiek17+7qVC5aN8A3BeDHz70/QNoXWwKk0FB4o8
-	 JusnbRmd95S1Q==
-Message-ID: <df9ee1d9d34b07b9d72a3d8ee8d11c40cf07d193.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-From: Jeff Layton <jlayton@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew
- Morton <akpm@linux-foundation.org>, Mateusz Guzik <mjguzik@gmail.com>,
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Wed, 14 Aug 2024 07:48:17 -0400
-In-Reply-To: <20240814024057.GP13701@ZenIV>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
-	 <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
-	 <20240814021817.GO13701@ZenIV> <20240814024057.GP13701@ZenIV>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1723636288; c=relaxed/simple;
+	bh=YaiBRNJtWXyugg1Rf+o8s3VdLGcWCkwZHSM/owKJpWI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RhO7vPq7UKd0CXTgHogljsbihxtF0yTBcgWcvIwNJZKEyGvFf5gKins0iKrV2Vxya760lv/H+4rGB/saAdD2BLcgoLz9co9wdlmRIi2sBe8I+zub1nrQVsI4fhYvPm1RHWTPFkrcHVnftDjAY1L1R9a1cdeiColmvpglakGiDUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f8293cdb1so800192639f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:51:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723636285; x=1724241085;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wfhPFen+pJGtXri7WMYT8g/C8iSfG1cnFgoXyp9YAIA=;
+        b=h+Npx5lrlGJuZYVFo9ggSk2nTR1sdTZaP7NpniEvdz7MYT2/C8vy2HM5IbIfjyhcEH
+         517OTD1fDqHndNjq11maw8+bfpvIm/ObB59tPbtHOJ7yRBQWbwtgYfdhXO8cNci2xpPp
+         fBjLSXZgnlJshhrL1gM72ZJXxGQEFI0ZsYxl4J/9Rj2bTD+dK4RcnzRwSkxMmCoD2SAK
+         3NFSn6GF6UVefX18Xera7nk4BUKDbjH+/6uO5vLN/1WrEXJ2BjjfaEUuwkGguyriqaun
+         ExDDIpBkHi8mNP+fV8Gnqp27lBaE6JFXeYTpBqpi4fOIFHxVOd5uAFYkEdIV2gY+3eOf
+         IIdA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1AxxzTtoVq3OYAp72ItBKYkPKuEm8O0O5lWrcMUNjw/1tmUQGlmBrMJqlAQKQ96X+scIsiJm2zDwXHMtJbJjm3Or0t25hrzss45+e
+X-Gm-Message-State: AOJu0YyGNatGGAvL6p+XKIo4mWYHde5sYB8Y0uRoZDLyjnGhCbgXt6y5
+	brEmRp/AvYPoE2TqHWbflF6RXjW3FjbOf0i9zbrJXVffXbaYx38TbIn1guXJ5z6W1gbwadBBZyK
+	2gTsGhf1L//Rq9igxSBahGAo6GQvKz75ovDIHYI5A8IYXnSUxcqx0nK0=
+X-Google-Smtp-Source: AGHT+IHnms+5nTtcNuZshswUQpu1bJOfgn0qohq2NYn9uBNUrbcfJSU6xBHQ46OzBj/w8kmk+ylzaeIIX5haxI+6UaERRc1Wlw0T
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6638:2501:b0:4b7:c9b5:6765 with SMTP id
+ 8926c6da1cb9f-4cab0a2d383mr138659173.5.1723636285040; Wed, 14 Aug 2024
+ 04:51:25 -0700 (PDT)
+Date: Wed, 14 Aug 2024 04:51:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007dfbdb061fa35855@google.com>
+Subject: [syzbot] [f2fs?] WARNING: lock held when returning to user space in f2fs_ioc_start_atomic_write
+From: syzbot <syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2024-08-14 at 03:40 +0100, Al Viro wrote:
-> On Wed, Aug 14, 2024 at 03:18:17AM +0100, Al Viro wrote:
->=20
-> > That's not the only problem; your "is it negative" test is inherently
-> > racy in RCU mode.  IOW, what is positive at the time you get here can
-> > bloody well go negative immediately afterwards.  Hit that with
-> > O_CREAT and you've got a bogus ENOENT...
->=20
-> Hmm...  OTOH, in that case you end up in step_into(), which will do the
-> right thing...
->=20
-> 	How well does that series survive NFS client regression tests?
-> That's where I'd expect potentially subtle shite, what with short-circuit=
-ed
-> ->d_revalidate() on the final pathwalk step in open()...
+Hello,
 
-Christian took in my v3 patch which is a bit different from this one.
-It seems to be doing fine in testing with NFS and otherwise.
+syzbot found the following issue on:
 
-I don't think we short-circuit the d_revalidate though, do we? That
-version calls lookup_fast on the last component which should
-d_revalidate the last dentry before returning it.
---=20
-Jeff Layton <jlayton@kernel.org>
+HEAD commit:    9e6869691724 Add linux-next specific files for 20240812
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1431e405980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+dashboard link: https://syzkaller.appspot.com/bug?extid=733300ca0a9baca7e245
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120ed77d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130e0ef3980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f1b086192f50/disk-9e686969.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b457920fb52e/vmlinux-9e686969.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e63ba9cce98a/bzImage-9e686969.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/08b48c782593/mount_0.gz
+
+The issue was bisected to:
+
+commit 374a8881ce4ccf787f5381a39f825cb17a3f6b14
+Author: Chao Yu <chao@kernel.org>
+Date:   Tue Jun 25 03:13:51 2024 +0000
+
+    f2fs: atomic: fix to forbid dio in atomic_file
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10741429980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12741429980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14741429980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com
+Fixes: 374a8881ce4c ("f2fs: atomic: fix to forbid dio in atomic_file")
+
+F2FS-fs (loop0): Found nat_bits in checkpoint
+F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
+syz-executor312: attempt to access beyond end of device
+loop0: rw=10241, sector=45096, nr_sectors = 8 limit=40427
+================================================
+WARNING: lock held when returning to user space!
+6.11.0-rc3-next-20240812-syzkaller #0 Not tainted
+------------------------------------------------
+syz-executor312/5227 is leaving the kernel with locks still held!
+1 lock held by syz-executor312/5227:
+ #0: ffff8880695aa0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
+ #0: ffff8880695aa0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x2ed/0xac0 fs/f2fs/file.c:2163
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
