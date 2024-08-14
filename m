@@ -1,192 +1,144 @@
-Return-Path: <linux-kernel+bounces-286163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B18951767
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:10:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B72D951768
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 645BA1F2241E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:10:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EEC283E6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC2E14A090;
-	Wed, 14 Aug 2024 09:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0755143C6C;
+	Wed, 14 Aug 2024 09:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bVYNJZgJ"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="DYEnPUxS"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28416146A8A
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910C7143C40
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723626548; cv=none; b=kUaKFjpjwKTS+LBkAJXFCuipIep9Byo/PCzJpeMzMALdPHvNTE+aY2Niobzl8XLRhlGZnSu0UZXpSjw4li0nLoNefjG068LOq1SjffoFybZfyKJiz5RFiR9SCYTyZDh+1wGjgETtycMXihfnFR5iquze0dKwi0dchiT5mCAY+x4=
+	t=1723626610; cv=none; b=J14NoRHt7TRYkP1+5i7Z5BKd2ZT8tqIQCByk/mvEEccVsx5YqZrpziihG8kO7b1qOLOsUYRr+bDu8tVVSgbd/bqWd5YLaAkET1DqXiYC7RttOmC7iU/TlltljDEmDXJemXAR9XjvVL3vBzxWP9B0yFXEUo4Y5RBnjE4hx47gVMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723626548; c=relaxed/simple;
-	bh=EtMwyYObUMMt6YZytBOJHS/AQ/ejyKw1fpw/ux2RB2A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tMAI1rxV1ClnOpIEzC8CXlAks5d8Lo+bcSHNMQ1PVVanQiTIy8r62mO1qDRWkoWC0IeYjPIM5d5+177+7GpI4IEw0tHcAGdwLaK3TjtCprKAoJyBYTwlNsHAR9kcQ4PdrbdXCUl7BEf59aGNRRC4rflPiPLl0d+NiV0TCxcFR0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bVYNJZgJ; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B4ABFE000F;
-	Wed, 14 Aug 2024 09:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723626544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ED+HOeGmnmUkq6frZqCsTOUYHpHML93Xa2aQzTI/HIc=;
-	b=bVYNJZgJIA5TT4IFdWcnD+Mj1HiEl1W6mFFrkVaC7AylwWoMguJg9uqT0Fww4XBU3KQdjC
-	PriVFsvkt50A4VHXzMSpTIPO8G4u184OpfCYb31bas5Wf3oBIupe39oDljJQkhkxYwykse
-	ZRMXJsqbRNf4NYyAYhAgZX+DwmHu1Pv5huMuXZTUggo2EKEQ/jUnRcdwG2+kFg/g5or2RX
-	ME1XD/ok/DqAMfAgqpM13bBihoeEtZX9jTGb4M0yTxbvq/8/FjRW08lR6o9W/D+mz/uMau
-	BnqxartjqCQXkCMSuXlSjOytsij692CISyA76+YWuwZHVrFOSzVCwy0rOsK4zQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 14 Aug 2024 11:08:59 +0200
-Subject: [PATCH RFC 6/6] drm/vkms: Extract vkms_composer header
+	s=arc-20240116; t=1723626610; c=relaxed/simple;
+	bh=H8vj+snF47a3dKn/++E0R5ZZubm/ooXr9fF2Isxx4vQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gZVRctDprPQix60jVlr9Tz7JIyCiu0mnZC237qPBbOv4rNK9+pLoQkXL9yc0oKWFiM9GFAslW/X8IGVLWA74ZY+kwUxfyiTHAGSI4oc46GTbCVcrfqvSeukY0ofy94Q8QwuNiog/s2pSrjhQE28cYF1NsXCBaB5DJuk3nSsiaAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=DYEnPUxS; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093c94435bso2379724a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1723626607; x=1724231407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu1jHSLXuAowuIlG199J7T3IbhFclzyq7SeJSyjAvvk=;
+        b=DYEnPUxS5QhdnZQB0vbwPpAUtrv9pvmS1JoCJ7lRUQHWG3nju5k8GW9nsvj9XSI/7G
+         /SRIz1B/MkP6bTP1kIlGTjpvbL92iSuf+2gpXNRj0yDtSLyU+kfEiExNlZIzKGON6paI
+         fNFKWP7+4CWHZolCM85tYvMP29iZmpEg2yJwWzjtsczS+uJJK4vin1z+WIMuwWTBMVSr
+         4oDLPlixwgvuVPFdhJb0s5ZrWKjY6D7gLJBHcR2X8vOK0By1Yeb+TFW0tLgPg9a1vuNX
+         iQfPyJ3mVZLp34pzqR1UogYuNb7pteTe/R45+mduy1EDP//2QponaAfLA2Q5lxQ2A6kQ
+         sz3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723626607; x=1724231407;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bu1jHSLXuAowuIlG199J7T3IbhFclzyq7SeJSyjAvvk=;
+        b=P6CqGd7URYIdW7RxopBr9v1yvIftJoeaflbsCP1n5cYcj+QzYcDJuN+zRsSlQpRUBE
+         61RvNeUTcPc+02oVVTE7HKY0KJJbyzigLuRvI6DF6m9QDgmpTheK88YXgJMK71U3IjYf
+         yWD0xKTkJr+fSmD+Nv+e6VmRLU8ofQNL3hoyYDeL5kaVelS58gmAsYUhsWWQ/9vudsv9
+         lUTgj7WuCwjhexpdbetmjl+zpQVqcEqN2pWr4p1DNrHcqLUPEPycPdcZHqpTeG5nEDPg
+         UcSkNStPlYWVQUZD2nKAhaqwPkQ2SEjQMQoCCZDe1dt+wyLDBKP5xmmczC8lOkhQOaby
+         7hFA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7ED+5BJNf2l/yRHtJQMTyLP4LRdde1elrLquXiohFfccIszWGYzkTrQGNptwPxL10LMpxYIW2Qy47NtTYUylLgbqeyWgEdpgMFKqh
+X-Gm-Message-State: AOJu0YwmBJlzfMmAsFmhb5e9rldqO1I7MLV93Q0Rc3Tt9Ahg/jKjgiMf
+	eINfQ94kzIO3IrBMTGGorh0q1aQj1baqXibowa37YMuk6FORDIRuTinjAHl9Hgg=
+X-Google-Smtp-Source: AGHT+IHUP8SjxzYXdB9aH7HE/2FgWgwqAyUwnJC7ylng8Zw9pj5VO5tT/oMV6jtiNv7lHO2RA41KVA==
+X-Received: by 2002:a05:6830:490e:b0:709:4a6e:a567 with SMTP id 46e09a7af769-70c9d933298mr2430927a34.14.1723626607602;
+        Wed, 14 Aug 2024 02:10:07 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-712681419d3sm1008802b3a.13.2024.08.14.02.10.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 02:10:07 -0700 (PDT)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Ryo Takakura <takakura@valinux.co.jp>,
+	Shaoqin Huang <shahuang@redhat.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: Fix KASAN random tag seed initialization
+Date: Wed, 14 Aug 2024 02:09:53 -0700
+Message-ID: <20240814091005.969756-1-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-google-split-headers-v1-6-51712f088f5d@bootlin.com>
-References: <20240814-google-split-headers-v1-0-51712f088f5d@bootlin.com>
-In-Reply-To: <20240814-google-split-headers-v1-0-51712f088f5d@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3448;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=EtMwyYObUMMt6YZytBOJHS/AQ/ejyKw1fpw/ux2RB2A=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvHQoS4mVVH+Y4GF0oDaeXFl+TGNQYB9N1GoWg
- qMODdsmgF+JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrx0KAAKCRAgrS7GWxAs
- 4tnKEACIPsado9TgqNkuND6BhB0kJj9Q9QPUjU1v1KmUcCPCp42peWtI5jDISuaIltcZTiQYvmN
- 6S/RNJPseVpToo/C6NAwoIX1XSNaOx7VW8jrA6CmxHHG1KfY5Jfchsk+alunSh/bMjLGVaumdoB
- kOh9BvxkyZzAldsQjcEzQyQYE4aP4JTW91aanEcnq4orFsyFopQModvVO50hg2UcRMz83ooIxH+
- WZACswhy9zb7FxKWLzTv+HYAo4ws7NPgopjU9eb9dz/ZzTbLfdWVdz0phCo+QsNbBi+0yKJugw5
- 8qwlOuadeDRNuKtR3xFx+uC18zQ1h/AAqAyzvXV3LmrdxD/KPQ/21CONjN200Ct5JTYs5Eytg2Z
- 3SFLY4QcHb5xt4nHEM81DQaE+Q8enUREwhrxkrH+Ea8B6lLphmMttPFPzWrTMYaP8AiIR2pn5d7
- 4YV8Dirp09L/5WwbwEEv4R6Xg7vHPZpe5t3Yh5lM78CNOHtvGacV+ZjSHPm+OACohgSNzMIZ4ao
- EnvsgZospmZC4gqpeTHvN4sf2RL2iCXFmi3XmCwMDXSdutrt2jjuxjUCCOPZNVOo0lKIXkfGy8O
- P+O0USZliKxzjCXnAWS+ty4CQX3PSeTbxqmLm7b2iF8d2xeVT/rhO7hCgkxtXTjy0hh3qnM8B6q
- 8EncGhDKXzukx/A==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-The vkms composer functions are defined in a different .c, so make the
-same thing for the function declaration in the headers and create
-vkms_composer.h.
+Currently, kasan_init_sw_tags() is called before setup_per_cpu_areas(),
+so per_cpu(prng_state, cpu) accesses the same address regardless of the
+value of "cpu", and the same seed value gets copied to the percpu area
+for every CPU. Fix this by moving the call to smp_prepare_boot_cpu(),
+which is the first architecture hook after setup_per_cpu_areas().
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Fixes: 3c9e3aa11094 ("kasan: add tag related helper functions")
+Fixes: 3f41b6093823 ("kasan: fix random seed generation for tag-based mode")
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
- drivers/gpu/drm/vkms/vkms_composer.c  |  2 ++
- drivers/gpu/drm/vkms/vkms_composer.h  | 18 ++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_crtc.c      |  1 +
- drivers/gpu/drm/vkms/vkms_drv.h       | 11 -----------
- drivers/gpu/drm/vkms/vkms_writeback.c |  1 +
- 5 files changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-index 139d249454c4..15ef07ed304e 100644
---- a/drivers/gpu/drm/vkms/vkms_composer.c
-+++ b/drivers/gpu/drm/vkms/vkms_composer.c
-@@ -10,7 +10,9 @@
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_vblank.h>
- #include <linux/minmax.h>
-+#include <drm/drm_print.h>
- 
-+#include "vkms_composer.h"
- #include "vkms_crtc.h"
- #include "vkms_writeback.h"
- 
-diff --git a/drivers/gpu/drm/vkms/vkms_composer.h b/drivers/gpu/drm/vkms/vkms_composer.h
-new file mode 100644
-index 000000000000..91b33af1e013
---- /dev/null
-+++ b/drivers/gpu/drm/vkms/vkms_composer.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+
-+#ifndef _VKMS_COMPOSER_H
-+#define _VKMS_COMPOSER_H
-+
-+#include "vkms_drv.h"
-+#include "vkms_crtc.h"
-+
-+void vkms_composer_worker(struct work_struct *work);
-+void vkms_set_composer(struct vkms_output *out, bool enabled);
-+
-+/* CRC Support */
-+const char *const *vkms_get_crc_sources(struct drm_crtc *crtc, size_t *count);
-+int vkms_set_crc_source(struct drm_crtc *crtc, const char *src_name);
-+int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
-+			   size_t *values_cnt);
-+
-+#endif //_VKMS_COMPOSER_H
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index cb6e49a86745..6fae43932b60 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -9,6 +9,7 @@
- #include <drm/drm_print.h>
- 
- #include "vkms_crtc.h"
-+#include "vkms_composer.h"
- #include "vkms_plane.h"
- 
- static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index 943ad55e0172..f74a5c2045f9 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -106,15 +106,4 @@ struct vkms_device {
- 
- int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index);
- 
--/* CRC Support */
--const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
--					size_t *count);
--int vkms_set_crc_source(struct drm_crtc *crtc, const char *src_name);
--int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
--			   size_t *values_cnt);
--
--/* Composer Support */
--void vkms_composer_worker(struct work_struct *work);
--void vkms_set_composer(struct vkms_output *out, bool enabled);
--
- #endif /* _VKMS_DRV_H_ */
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index 48f3f7f2e2a4..5e75880a5845 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -15,6 +15,7 @@
- #include "vkms_writeback.h"
- #include "vkms_crtc.h"
- #include "vkms_formats.h"
-+#include "vkms_composer.h"
- 
- static const u32 vkms_wb_formats[] = {
- 	DRM_FORMAT_ARGB8888,
+ arch/arm64/kernel/setup.c | 3 ---
+ arch/arm64/kernel/smp.c   | 2 ++
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index a096e2451044..b22d28ec8028 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -355,9 +355,6 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
+ 	smp_init_cpus();
+ 	smp_build_mpidr_hash();
+ 
+-	/* Init percpu seeds for random tags after cpus are set up. */
+-	kasan_init_sw_tags();
+-
+ #ifdef CONFIG_ARM64_SW_TTBR0_PAN
+ 	/*
+ 	 * Make sure init_thread_info.ttbr0 always generates translation
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 5e18fbcee9a2..f01f0fd7b7fe 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -467,6 +467,8 @@ void __init smp_prepare_boot_cpu(void)
+ 		init_gic_priority_masking();
+ 
+ 	kasan_init_hw_tags();
++	/* Init percpu seeds for random tags after cpus are set up. */
++	kasan_init_sw_tags();
+ }
+ 
+ /*
 -- 
-2.44.2
+2.45.1
 
 
