@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-287311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578F0952639
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:36:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E43952644
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D37F1C219CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:36:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CF841F23C16
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE9C14E2FA;
-	Wed, 14 Aug 2024 23:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D17014D2B8;
+	Wed, 14 Aug 2024 23:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WBBRj/2l"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Dz0945fL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3FC1448D8
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 23:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C288014F100;
+	Wed, 14 Aug 2024 23:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723678577; cv=none; b=bCeJ5hsH7E13ZW1TQQaCMy1ClVj4kUBqhYcJSk1odCPds+oMt2IWV6nzB1ZKhJzcI/Z0pnCTRg69YWJq1DW8TdMnb8kvWk16N2W+2RreMf8yvBZIZ4NJPhoRVvm0RwSZpmUDdFnBbwaMmyjy/9xlMONLI+Y5Ilz6QX8Yu1jcMLk=
+	t=1723678706; cv=none; b=jvAWX/WZjda7yWXuDjD3aEADVLQUzUx/frbDQ4vJ5WcdeenXezbaMAuYW5Dl7a7ErsogAGYOQzPj3jz/OcARUvexvOltTNboHd0Xno+Tt3c/MJ7TnOA3CN1u8aFu3UmMgQJnbE1ZylOGSBaeL/eFGQo1Ibv3L3/lETTBLKU8CRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723678577; c=relaxed/simple;
-	bh=gBhJ0E6NHaiZ08O1RQfUOyPily9ybMrVIhgj1p2E+dU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRnJJaKIRehMGKNZPFdmwqQnoAK2X+1GVeQpuj796S+589gxOOrG9DCgqR+ECvKHD0cQEfdQOZ51SKUdNApA5wom6OwWyhAgAKqsoAznZ+9zR8axwppFv9+8ufMd+siXEiYkrXGBNoi52BR6pc7bS+PCH5s2rJxRvgF3/o4SqkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WBBRj/2l; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 14 Aug 2024 16:36:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723678572;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x2WFD3PneXB3Rd+FYibt8Nz/Vwl/XrkmHsW23VAaN+4=;
-	b=WBBRj/2lYUKohCoueMwI9fFFjIrOaFNP9VWxDVtNBkYmY4amkDR6AEL+BMkcd18ojnFBF7
-	VGhYD+72w9C8RKDhRrRdFJ+hrPBIhRpr6XXBDQxPvU9oS3mzQSFGFUH/9bYqy0aGATnBIt
-	x2vc8/ecLpBix79HoBhmWqz44F1VGQo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Sean Christopherson <seanjc@google.com>, Peter Xu <peterx@redhat.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	David Hildenbrand <david@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH 00/19] mm: Support huge pfnmaps
-Message-ID: <Zr0_Y7tQ-fBMKxKH@linux.dev>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240814123715.GB2032816@nvidia.com>
- <ZrzAlchCZx0ptSfR@google.com>
- <20240814144307.GP2032816@nvidia.com>
- <Zr0ZbPQHVNzmvwa6@google.com>
- <20240814221031.GA2032816@nvidia.com>
+	s=arc-20240116; t=1723678706; c=relaxed/simple;
+	bh=X+uNf6QBacK7A1SgElpXUmSHJKVqGuB/zzAeavelho4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BpuGQMSLuiT321MUJIRKwNQpoOjwuQlw4mPQeJrg/Ia/IAYFKQrx7Ct85eeBmIN8v7wpBQsLexJBRinGArLvi3sK+1hwzxBFXp0/f9t2deCbmzvTtL9aJsSZ8OCnWnx3Z1QqwEyQ3h3ART4w0BXI0nnh0SF7++I3+9U75/xyDMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Dz0945fL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47ENX68k026141;
+	Wed, 14 Aug 2024 23:38:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3SuX4NbGIm3CicMr0EOOf3ER4u0+E3FHahtNk7oLMLQ=; b=Dz0945fLlkdJpwQg
+	kLxizqFIX7tPUX5Z/fqc/Mm6TnsFdiCM8JOs6gAYVzISNIORsqOmfKxvFzyW40C/
+	/B3lTs2pc1YZBI3gdT3zE3RIJ8IF7iHgZxZU3m+srMzI+CDEc+m15rT11E6wP3Pp
+	WPwbMcXX4kDpqv6q5m97T1s47NeWnaSLHPVA1IBICKos6anHmci8BI8dAEW5HG6H
+	l5ylN0L1N6ttsNLi0LOl7/rxc2VEShtQ2UG0dch9JQIflmFtIH0/Fg7cS3PbX7zG
+	mAsFNs+AFXnLhUQoISvARMaXslV3xwHX9d7w540zzWeMY8OLk4HRIVSG9kz4VhqE
+	kE1gcQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18y4uyx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 23:38:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47ENcEUX026723
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 23:38:14 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 Aug
+ 2024 16:38:14 -0700
+Message-ID: <524c6799-1056-49da-a888-12b6f8e37e25@quicinc.com>
+Date: Wed, 14 Aug 2024 16:38:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814221031.GA2032816@nvidia.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] drm/msm: clean up fault injection usage
+To: Jani Nikula <jani.nikula@intel.com>, <linux-kernel@vger.kernel.org>
+CC: <intel-xe@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <akinobu.mita@gmail.com>,
+        <akpm@linux-foundation.org>, <lucas.demarchi@intel.com>,
+        <rodrigo.vivi@intel.com>, <thomas.hellstrom@linux.intel.com>,
+        <robdclark@gmail.com>, <dmitry.baryshkov@linaro.org>
+References: <20240813121237.2382534-1-jani.nikula@intel.com>
+ <20240813121237.2382534-2-jani.nikula@intel.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240813121237.2382534-2-jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 57f0nh7_NZ4STpljdyMhwAVDcmwTsuYu
+X-Proofpoint-ORIG-GUID: 57f0nh7_NZ4STpljdyMhwAVDcmwTsuYu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_19,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=713
+ suspectscore=0 phishscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1011 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408140165
 
-On Wed, Aug 14, 2024 at 07:10:31PM -0300, Jason Gunthorpe wrote:
 
-[...]
 
-> > Nope.  KVM ARM does (see get_vma_page_shift()) but I strongly suspect that's only
-> > a win in very select use cases, and is overall a non-trivial loss.  
+On 8/13/2024 5:12 AM, Jani Nikula wrote:
+> With the proper stubs in place in linux/fault-inject.h, we can remove a
+> bunch of conditional compilation for CONFIG_FAULT_INJECTION=n.
 > 
-> Ah that ARM behavior was probably what was being mentioned then! So
-> take my original remark as applying to this :)
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Akinobu Mita <akinobu.mita@gmail.com>
+> Cc: Rob Clark <robdclark@gmail.com>
+> Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> ---
+>   drivers/gpu/drm/msm/msm_debugfs.c | 2 --
+>   drivers/gpu/drm/msm/msm_drv.c     | 2 --
+>   drivers/gpu/drm/msm/msm_drv.h     | 4 ----
+>   3 files changed, 8 deletions(-)
 > 
-> > > I don't quite understand your safety argument, if the VMA has 1G of
-> > > contiguous physical memory described with 4K it is definitely safe for
-> > > KVM to reassemble that same memory and represent it as 1G.
-> >
-> > That would require taking mmap_lock to get the VMA, which would be a net negative,
-> > especially for workloads that are latency sensitive.
-> 
-> You can aggregate if the read and aggregating logic are protected by
-> mmu notifiers, I think. A invalidation would still have enough
-> information to clear the aggregate shadow entry. If you get a sequence
-> number collision then you'd throw away the aggregation.
-> 
-> But yes, I also think it would be slow to have aggregation logic in
-> KVM. Doing in the main mmu is much better.
 
-+1.
-
-For KVM/arm64 I'm quite hesitant to change the behavior to PTE mappings
-in this situation (i.e. dump get_vma_page_shift()), as I'm quite certain
-that'll have a performance regression on someone's workload. But once we
-can derive huge PFNMAP from the primary MMU then we should just normalize
-on that.
-
--- 
-Thanks,
-Oliver
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
