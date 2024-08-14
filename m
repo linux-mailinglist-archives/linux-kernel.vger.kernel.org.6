@@ -1,163 +1,156 @@
-Return-Path: <linux-kernel+bounces-286537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C0D951C39
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CA7951C3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664D3283889
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D0B28330B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386F31B143D;
-	Wed, 14 Aug 2024 13:50:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CFE1B1510;
+	Wed, 14 Aug 2024 13:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLzMJL93"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4A1B1439
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E161B0121
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723643452; cv=none; b=IIPeGIQpiKtal9RbWM7J2vArIpyUhRaJvw1owy+gv6Bw0AjhKIyxtKulanYwwngdPcaQTMroKjzRxpRFHh+NQFzrK1Jo4uEw75JvyWJXuyjfN4VEsTGzDFDO5Hp48loEPtuxtT3bkYnsYrwRepEuw+B1W+nQwfMgJWBvlyjaeX0=
+	t=1723643466; cv=none; b=nH+1Bx804sQ+TX1zm9xmZkbBBQiyptB1VeGyNUZ7a5+ZNQmjNpVhzxs6mFhB/bUzElWfinx5kqDeKyr8BQ1kEh3/yoq8PdgGUgHKGBCdqGN4wIwdjdCSPehxJUMhpTkhUAqznUOx/J7l9gy1p+cA3BB9yawJoXou703jit93xLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723643452; c=relaxed/simple;
-	bh=Igpv0BXm+5OOaul2sCB4XuzUr1tHt/lIkoEHnCpdw88=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=htsF8+0b3kt3RBigptKYTW7PDcPdXFGL1QbBrE23aU8UXhs0zcsHtg9w+dYh0UQ+uL61sStPRiFt2u/W5OArdB9Z/jRDLKf4VW9KenmJDiiX+Nu6fMP8pOvyEkZLsRScybUqT/Wekr+vUdJ93OurUYnm+JPOZfev00F3gOXMHP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkV1Z3c6Fz67hQc;
-	Wed, 14 Aug 2024 21:47:30 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id AE049140119;
-	Wed, 14 Aug 2024 21:50:46 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
- 2024 14:50:46 +0100
-Date: Wed, 14 Aug 2024 14:50:44 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
-	Ani Sinha <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Igor
- Mammedov <imammedo@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v7 03/10] acpi/ghes: Add support for GED error device
-Message-ID: <20240814145044.00004d59@Huawei.com>
-In-Reply-To: <f813113e8e7645c2fb654747ecd0726f330af29f.1723591201.git.mchehab+huawei@kernel.org>
-References: <cover.1723591201.git.mchehab+huawei@kernel.org>
-	<f813113e8e7645c2fb654747ecd0726f330af29f.1723591201.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1723643466; c=relaxed/simple;
+	bh=rxaqh40G6QYbFhGgXzDOgOuj/ji5qhnZ1FN1k7hQmDE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=goPtjR9TWo5UYGinbQF4RB4IJxFDFf9m8AyICWw+Z7+64gNgdqi/DyUfztOr4EmYRLilenCAKUnjk2a5N3zcPaRXtldNcB3K1HJurUxKlOw62CRAVduTCIAqWicU2qEjDQmlbbrpv95qWXxV2V5Ep28Pue9bkOOnu5OO/v4ffMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLzMJL93; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D143CC4AF0A;
+	Wed, 14 Aug 2024 13:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723643466;
+	bh=rxaqh40G6QYbFhGgXzDOgOuj/ji5qhnZ1FN1k7hQmDE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RLzMJL93JuH3bI0OtgWhHncPf+1MJqropPEpPcbKCeHmsq3OEPdiA0IkI0LHOnGTe
+	 M3eweyiCpZll8WleGA5CYE4hb8lLAmDqJ+Dr5yVQcfcsNoNaWWZX7VjQcT9dtzBiHh
+	 lHueliT5I8GztePjze4luzL6G3Xzt5b7KXerBKb0aZ6h9vWxJYjmYUYsZALNYuORJ5
+	 /TtUO21OQV/cMv4sY+/RQUULAsPktfNAziwORx7SUcoYMhj5x9K2tfSr1emQYa3Nny
+	 Jw68in1/TVX3dwu5A6+YOEt8y9Tjdy+I4DY2jdO/9Vgn+R7CokpLA/9zILbOQ3q2Q2
+	 Eon8aEiqKGx9A==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v2 8/9] f2fs: convert f2fs_read_multi_pages() to use folio
+Date: Wed, 14 Aug 2024 21:50:59 +0800
+Message-Id: <20240814135059.802454-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Wed, 14 Aug 2024 01:23:25 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+Convert to use folio, so that we can get rid of 'page->index' to
+prepare for removal of 'index' field in structure page [1].
 
-> From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> As a GED error device is now defined, add another type
-> of notification.
-> 
-> Add error notification to GHES v2 using a GED error device GED
-> triggered via interrupt.
-> 
-> [mchehab: do some cleanups at ACPI_HEST_SRC_ID_* checks and
->  rename HEST event to better identify GED interrupt OSPM]
-> 
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-One trivial thing inline (probably my mistake ;)
+[1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
 
-Jonathan
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- check return value of bio_add_folio() correctly.
+ fs/f2fs/data.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-> ---
->  hw/acpi/ghes.c         | 12 +++++++++---
->  include/hw/acpi/ghes.h |  3 ++-
->  2 files changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 13b105c5d02d..280674452a60 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -34,8 +34,8 @@
->  /* The max size in bytes for one error block */
->  #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
->  
-> -/* Now only support ARMv8 SEA notification type error source */
-> -#define ACPI_GHES_ERROR_SOURCE_COUNT        1
-> +/* Support ARMv8 SEA notification type error source and GPIO interrupt. */
-> +#define ACPI_GHES_ERROR_SOURCE_COUNT        2
->  
->  /* Generic Hardware Error Source version 2 */
->  #define ACPI_GHES_SOURCE_GENERIC_ERROR_V2   10
-> @@ -290,6 +290,9 @@ void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
->  static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->  {
->      uint64_t address_offset;
-> +
-> +    assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
-> +
->      /*
->       * Type:
->       * Generic Hardware Error Source version 2(GHESv2 - Type 10)
-> @@ -327,6 +330,9 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->           */
->          build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
->          break;
-> +    case ACPI_HEST_SRC_ID_GED:
-> +        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_GPIO);
-> +        break;
->      default:
->          error_report("Not support this error source");
->          abort();
-> @@ -370,6 +376,7 @@ void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
->      /* Error Source Count */
->      build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
->      build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
-> +    build_ghes_v2(table_data, ACPI_HEST_SRC_ID_GED, linker);
->  
->      acpi_table_end(linker, &table);
->  }
-> @@ -406,7 +413,6 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
->      start_addr = le64_to_cpu(ags->ghes_addr_le);
->  
->      if (physical_address) {
-> -
-
-Clean this accidental change out.
-
->          if (source_id < ACPI_HEST_SRC_ID_RESERVED) {
->              start_addr += source_id * sizeof(uint64_t);
->          }
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index fb80897e7eac..419a97d5cbd9 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -59,9 +59,10 @@ enum AcpiGhesNotifyType {
->      ACPI_GHES_NOTIFY_RESERVED = 12
->  };
->  
-> +/* Those are used as table indexes when building GHES tables */
->  enum {
->      ACPI_HEST_SRC_ID_SEA = 0,
-> -    /* future ids go here */
-> +    ACPI_HEST_SRC_ID_GED,
->      ACPI_HEST_SRC_ID_RESERVED,
->  };
->  
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0779e222f709..4f4e76c33611 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2207,19 +2207,22 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 	/* get rid of pages beyond EOF */
+ 	for (i = 0; i < cc->cluster_size; i++) {
+ 		struct page *page = cc->rpages[i];
++		struct folio *folio;
+ 
+ 		if (!page)
+ 			continue;
+-		if ((sector_t)page->index >= last_block_in_file) {
+-			zero_user_segment(page, 0, PAGE_SIZE);
+-			if (!PageUptodate(page))
+-				SetPageUptodate(page);
+-		} else if (!PageUptodate(page)) {
++
++		folio = page_folio(page);
++		if ((sector_t)folio->index >= last_block_in_file) {
++			folio_zero_segment(folio, 0, folio_size(folio));
++			if (!folio_test_uptodate(folio))
++				folio_mark_uptodate(folio);
++		} else if (!folio_test_uptodate(folio)) {
+ 			continue;
+ 		}
+-		unlock_page(page);
++		folio_unlock(folio);
+ 		if (for_write)
+-			put_page(page);
++			folio_put(folio);
+ 		cc->rpages[i] = NULL;
+ 		cc->nr_rpages--;
+ 	}
+@@ -2279,7 +2282,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 	}
+ 
+ 	for (i = 0; i < cc->nr_cpages; i++) {
+-		struct page *page = dic->cpages[i];
++		struct folio *folio = page_folio(dic->cpages[i]);
+ 		block_t blkaddr;
+ 		struct bio_post_read_ctx *ctx;
+ 
+@@ -2289,7 +2292,8 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 
+ 		f2fs_wait_on_block_writeback(inode, blkaddr);
+ 
+-		if (f2fs_load_compressed_page(sbi, page, blkaddr)) {
++		if (f2fs_load_compressed_page(sbi, folio_page(folio, 0),
++								blkaddr)) {
+ 			if (atomic_dec_and_test(&dic->remaining_pages)) {
+ 				f2fs_decompress_cluster(dic, true);
+ 				break;
+@@ -2299,7 +2303,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 
+ 		if (bio && (!page_is_mergeable(sbi, bio,
+ 					*last_block_in_bio, blkaddr) ||
+-		    !f2fs_crypt_mergeable_bio(bio, inode, page->index, NULL))) {
++		    !f2fs_crypt_mergeable_bio(bio, inode, folio->index, NULL))) {
+ submit_and_realloc:
+ 			f2fs_submit_read_bio(sbi, bio, DATA);
+ 			bio = NULL;
+@@ -2308,7 +2312,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 		if (!bio) {
+ 			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages,
+ 					f2fs_ra_op_flags(rac),
+-					page->index, for_write);
++					folio->index, for_write);
+ 			if (IS_ERR(bio)) {
+ 				ret = PTR_ERR(bio);
+ 				f2fs_decompress_end_io(dic, ret, true);
+@@ -2318,7 +2322,7 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 			}
+ 		}
+ 
+-		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
++		if (!bio_add_folio(bio, folio, blocksize, 0))
+ 			goto submit_and_realloc;
+ 
+ 		ctx = get_post_read_ctx(bio);
+-- 
+2.40.1
 
 
