@@ -1,190 +1,135 @@
-Return-Path: <linux-kernel+bounces-286523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C14951C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D599951C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65461F25B30
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D301F25FCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA401B1430;
-	Wed, 14 Aug 2024 13:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0616A1B143C;
+	Wed, 14 Aug 2024 13:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ONWs1ty3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XmLbRoFk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Yyy5cdXD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RKNbi6LG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pxl3XOUD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F4B1B012D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4381AE031;
+	Wed, 14 Aug 2024 13:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723642857; cv=none; b=K0FKMRFa9a5AdlxeU3r1/9TgpHc6q/UM9U/FY3LhSRIL18r2UnyECOIAhgeGuftSMrB1gAX6YjmVvL5WwVX6k4Zg7g6kg31x//owLpI0NiNPoDhZ+U6Ir3DINGvj3MoD+AsOvDoC7ceZsz9/yMLo60I3srHgkxDhPbB/kgWl+A0=
+	t=1723642921; cv=none; b=n4rjTjV9RrR5HmgNJX6zDLEdb0IFVjWLEsQIIiO/p0e1zb5QO63hhEjAy5eEGwq+pehnWm8SYhZ9U6eCMx7pxi6UBYu4nO2/PPxNPpxefKm4NpbhRNBpEHm4IGF7ZszjVjIBJQwqVwXYXCXokIp4qLRpyN1rGvmdWaI+Tmegqjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723642857; c=relaxed/simple;
-	bh=Exo1mofpZR8sZHUca839qVhpqiUggeT62P2f84zvL+E=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QhJyaJjkosTFiZvMtgwaZdYQbF0YrCHndyr2hb5MqUmNySy3CgoxjpaqltNHbeYdhbbq/xgrQy/UMcZui3SMbixEMaCvfC/NgtDxcae/yh+FN2ZruZ/cYoTwoLoq2o4MsroI2NK+QamBoBVStLfPUQ6/ySCWm58hGeaYtWyDlSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ONWs1ty3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XmLbRoFk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Yyy5cdXD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RKNbi6LG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E55051F7F4;
-	Wed, 14 Aug 2024 13:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723642854; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rg5JKtkkkM33EZLC6zyWrtvhK6J3/MeJhS520JXiFI8=;
-	b=ONWs1ty3GOMoEopyoQA8dbkJzIZkDHeGtQ8SvimAQqwzEUaEnuG6kYMAx14BnSydPdsGy8
-	TsweywaeSGZuf16jdx1smwRTwoPWOjo8AqH5DoTH2wnQaMt9eQCIuhCycGLcVPDmarG6aZ
-	W2TtDdkv4BbKSn/NzIgMlA8KME6l+AY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723642854;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rg5JKtkkkM33EZLC6zyWrtvhK6J3/MeJhS520JXiFI8=;
-	b=XmLbRoFkR7B1gIrTE4YvJ1Oaea2g5fWnpQB8vgNevOboMe56TMjtZMlsKN4Z5WXinH9KPs
-	c3QGOJmeVi0x9qCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723642853; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rg5JKtkkkM33EZLC6zyWrtvhK6J3/MeJhS520JXiFI8=;
-	b=Yyy5cdXDsYNV3Be7nryYyuXujKJlBSYOCP9qaMm7bGjJwyK/EhNZYg36fO+s8BAakJ0Oy3
-	HGgkz7ysMUGa/W31W+PZjRdmddIhmFwFdtW7aAjM71t8BplSIuvekwi+bfVjEpJ9B3h4X8
-	9CikvX8bnY6yWkvOYQZLyVffRBx1fUo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723642853;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rg5JKtkkkM33EZLC6zyWrtvhK6J3/MeJhS520JXiFI8=;
-	b=RKNbi6LGwmFer1K3pYr3PzMXCSbvrD7mFZZtLrpNbqI5M99ys38VP8TZyXeNSVynjXizbL
-	H22VpVSYnC+NN7BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CCA51348F;
-	Wed, 14 Aug 2024 13:40:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EUo0HeWzvGbJRAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 14 Aug 2024 13:40:53 +0000
-Date: Wed, 14 Aug 2024 15:41:33 +0200
-Message-ID: <87o75vjk6q.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<13564923607@139.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<cameron.berkenpas@gmail.com>,
-	<baojun.xu@ti.com>,
-	<soyer@irl.hu>,
-	<Baojun.Xu@fpt.com>,
-	<robinchen@ti.com>
-Subject: Re: [PATCH v1] ALSA: hda: tas2563: mark const variables as __maybe_unused
-In-Reply-To: <20240814122043.1731-1-shenghao-ding@ti.com>
-References: <20240814122043.1731-1-shenghao-ding@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723642921; c=relaxed/simple;
+	bh=hqcfXdtGQKVWLTvbdhM5pBJQQzUtmGdgqcjPbawdyX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rgzvu+J6BRmJCUjkfAeh/N2JW77XiGM+beVGpS4OjI7D4GFsp028I5i65wKUDNj9HA39qm4imOPeHfytwte4GYXZGRoVsh021nd/h14gIiqcUp4VZCR+CeczYvhCneATXpG+4jUxXv0eDDilm1k0ZoJ/h0/dfVjE3iXuICBt5As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pxl3XOUD; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723642919; x=1755178919;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hqcfXdtGQKVWLTvbdhM5pBJQQzUtmGdgqcjPbawdyX8=;
+  b=Pxl3XOUDS22IVqzJSo08IIR0BTJKICw+aJPTnxAlNShxm1Q8w1ph6zn1
+   mDCTW9m/sqvRIkr9kgVN4EXRxjvXEN3LN0qt6ULSk6wZcWXAgS25h3JZK
+   tC7/VJXePzu39tzSyErTJZxb6jx2NjQjUV1SWL344h+6iChd4eiAL0Sle
+   CVUJwrEVotVCZkKJ0n5onaPTY1g8yn+IxfPmK1h9WgbiT0kIGibYelU1u
+   EzR3KM7P7x6ES7w1h5xMn97hX03Z2e3d+2tCT0S0XKG21OMSQga8D91Zz
+   HBhIghPSM684pIJTbE3PMux4hUV7uCVRctCVxIdQTh35k95nTQqA5CNPf
+   g==;
+X-CSE-ConnectionGUID: TkD7PT/iTpKIhQlvWc4m8w==
+X-CSE-MsgGUID: oaKtEZmETkG/J5jQz+pGtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="32536637"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="32536637"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 06:41:58 -0700
+X-CSE-ConnectionGUID: BVNQACSMRPqinWY3Kn6FPQ==
+X-CSE-MsgGUID: /UK/S/1HTIe2pQFmOaearg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="89818646"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 06:41:55 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1seEG8-0000000FC4y-17jJ;
+	Wed, 14 Aug 2024 16:41:52 +0300
+Date: Wed, 14 Aug 2024 16:41:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 5/6] platform/chrome: Introduce device tree hardware
+ prober
+Message-ID: <Zry0ILkU4VrL3Mms@smile.fi.intel.com>
+References: <20240808095931.2649657-1-wenst@chromium.org>
+ <20240808095931.2649657-6-wenst@chromium.org>
+ <ZrtHhcNMiyHmKbal@smile.fi.intel.com>
+ <CAGXv+5EgqdziyheOt7wzkbe036fqPcw_UpSHiMsB3W_nTB3NWQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,139.com,alsa-project.org,vger.kernel.org,intel.com,ti.com,irl.hu,fpt.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -1.80
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5EgqdziyheOt7wzkbe036fqPcw_UpSHiMsB3W_nTB3NWQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 14 Aug 2024 14:20:42 +0200,
-Shenghao Ding wrote:
-> 
-> From: Baojun Xu <baojun.xu@ti.com>
-> 
-> An earlier patch changed the DECLARE_TLV_DB_SCALE declaration, but
-> now there are additional static const variables that cause
-> the same build warnings:
-> 
-> In file included from sound/pci/hda/tas2781_hda_i2c.c:23:
-> include/sound/tas2563-tlv.h:21:28: error: 'tas2563_dvc_table' defined but not used [-Werror=unused-const-variable=]
->    21 | static const unsigned char tas2563_dvc_table[][4] = {
->       |                            ^~~~~~~~~~~~~~~~~                                 ^~~~~~~~~~~~~~~
-> 
-> Mark it as unused as well.
-> 
-> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+On Wed, Aug 14, 2024 at 06:10:03PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Aug 13, 2024 at 7:46 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Aug 08, 2024 at 05:59:28PM +0800, Chen-Yu Tsai wrote:
 
-This isn't found in my tree, maybe found only in Mark's tree?
+...
 
-In anyway, you should put Fixes tag.
+> > > +static void chromeos_of_hw_prober_driver_exit(void)
+> > > +{
+> > > +     if (!chromeos_of_hw_prober_pdev)
+> > > +             return;
+> >
+> > First of all, this is dup for the next call, second, when may this conditional
+> > be true?
+> 
+> When the module is loaded on a machine that doesn't match any entry,
+> neither the driver nor the device are registered. Hence the check.
+> 
+> Or maybe the proper way to handle it is to return -ENODEV or something?
+> I'll work towards that.
+
+The rule of thumb is the _exit() is called when your _init() finished with
+success. This conditional seems confusing and likely reveals the logic issue
+in _init(). Yes, _init() needs to return an error when there is no devices are
+registered or expected to be registered. If there are devices that may appear
+later on, this should be split to pure device driver and board file that
+instantiate device for the known cases.
+
+> > > +     platform_device_unregister(chromeos_of_hw_prober_pdev);
+> > > +     platform_driver_unregister(&chromeos_of_hw_prober_driver);
+> > > +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Takashi
-
-> 
-> ---
-> v1:
-> ---
->  include/sound/tas2563-tlv.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/sound/tas2563-tlv.h b/include/sound/tas2563-tlv.h
-> index faa3e194f73b..bb269b21f460 100644
-> --- a/include/sound/tas2563-tlv.h
-> +++ b/include/sound/tas2563-tlv.h
-> @@ -18,7 +18,7 @@
->  static const __maybe_unused DECLARE_TLV_DB_SCALE(tas2563_dvc_tlv, -12150, 50, 1);
->  
->  /* pow(10, db/20) * pow(2,30) */
-> -static const unsigned char tas2563_dvc_table[][4] = {
-> +static const __maybe_unused unsigned char tas2563_dvc_table[][4] = {
->  	{ 0X00, 0X00, 0X00, 0X00 }, /* -121.5db */
->  	{ 0X00, 0X00, 0X03, 0XBC }, /* -121.0db */
->  	{ 0X00, 0X00, 0X03, 0XF5 }, /* -120.5db */
-> -- 
-> 2.43.0
-> 
 
