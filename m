@@ -1,137 +1,150 @@
-Return-Path: <linux-kernel+bounces-286663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE46951D85
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:44:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B00951DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74B8290308
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:44:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31AB7B21680
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EFF1B3F21;
-	Wed, 14 Aug 2024 14:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFBF1B3F2D;
+	Wed, 14 Aug 2024 14:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RwZwsCTY"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WO+cjit1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lnyiN52O"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BBB1B372E;
-	Wed, 14 Aug 2024 14:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0F71B373B;
+	Wed, 14 Aug 2024 14:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646572; cv=none; b=AQMDye7jS2TBf3OlgWMbigCmIpMP+bQs6oTTb7el0Hfkq5JhPjOQVFEOsI0stts0Ji3FzNpS5ivrd0sZ6UMYn1XsV6YS29I3e6wUpIxyLpLMU6ksvA3v87TDgg/WM3aPNykRBSwXSC/b8eTuSM2a5pxrQ76TPOqFMpGpF2BmIt8=
+	t=1723646587; cv=none; b=MsqilVnyOlGS7pxHVqEb09Vn2S/5tRXDnzykYL/xuqN/XXyM8ySbnOMuTlfw2Yf3Xp+KJ6PJc95BbSxYAXdZkBAXKXpaBrUX3eFUPzvfnoCTR5zbHWJ1aVMaqre4ZJa3kf+NOMbCU798oWDXBManv1eLs9Zzujwb5GhmT0AInLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646572; c=relaxed/simple;
-	bh=FUbY1SpMqbRXeMP/LZen1im+BDgUKZO9g5TId8g/DTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BUZPH9UYqpAt6REOgRhNXupYq5CLhEFc9ddUWFV3ReyiPaqjBb3NGgdrGgNELQHVowqztTyE3vYC35ORmnDkxYGKAK0fE3Ty536UcUOvwDHQzsFDeNAkanQ6CzYb5Xh1JSvdZRFChx74Ogml+Ft2NX2xzQX+0NmKFhd1s8ra6EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RwZwsCTY; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E9C711C0006;
-	Wed, 14 Aug 2024 14:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723646568;
+	s=arc-20240116; t=1723646587; c=relaxed/simple;
+	bh=9xtS5oXDruHKmH17qtvD0oi54++fWO816Kyvd6zH9XQ=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=EVB1roPB2GgR5mZNfHhmSth9sKD9PI9r5vlisbr2sGdfNtYXIBbyoKAXn150ZJ4y7iEJdoUUo328FoU0TDXGc2FW+pNEWIKH00zbCZSD2M1+yGM1Z6zl/k7hrQXEfp9ls6i8gYkgyVb+tG2J2E8+7JRJ6MhPKHDRpyEPJhy65HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WO+cjit1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lnyiN52O; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723646583;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mCe2Kac2K1pnqt6534QtxlYkCGpJDN6y+35zQbSjIf4=;
-	b=RwZwsCTYIhhY66AzsCf/dIWofDh57t1TnYqLpP0zuRDkXUvGAjgmT/xFwvT8qxDhvS82P8
-	Wh7KEWkuvwSt7oqIEnct+74WUjV818QqHvqS+FybWehsgeZt+5r3lP+qYJptRpOms/ENy5
-	0hlxH7POiA+QjgixWJrak45FLVuI4SI0a9uB9CtI/45LvpXQypH1KAaGvfJUFK6+C+Lrjs
-	0f9Idhlzg3/uTQYolP7HSzWzi2avLrdLa1/2513IhtsR00R13GhOLhATEteT9qKkHpcxPe
-	L6Tft1OOp1Yy2fajeOTv8azmQk5d6xTQ9WFhYJ14BYjf27DH4Yzen9LoIdMKPA==
-Date: Wed, 14 Aug 2024 16:42:44 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Derek Kiernan
- <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Paul Kocialkowski <contact@paulk.fr>, =?UTF-8?Q?Herv?=
- =?UTF-8?Q?=C3=A9?= Codina <herve.codina@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-i2c@vger.kernel.org, Paul Kocialkowski
- <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v3 1/7] dt-bindings: connector: add GE SUNH hotplug
- addon connector
-Message-ID: <20240814164244.25e9b3f4@booty>
-In-Reply-To: <20240813151901.GA953664-robh@kernel.org>
-References: <20240809-hotplug-drm-bridge-v3-0-b4c178380bc9@bootlin.com>
-	<20240809-hotplug-drm-bridge-v3-1-b4c178380bc9@bootlin.com>
-	<20240813151901.GA953664-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	 in-reply-to:in-reply-to; bh=Lcrk78kvLD57a6HRaT+x89f6hNY7nMNBaXWKad4tGQk=;
+	b=WO+cjit1yxdN2ENumLFlf+zFyiMX8QxmE8+rmSWwqHSy73vw0hO4t1xNak4/0/S5jA3bp7
+	FDKLx45uGpJ98AaIBjsOT/Z4TZRU79Zc20P3dDpcnMvgbP92ck0d+gnsc/nteKVt8KW6hW
+	b7qcUgWPoGNKU6bvaHhKqFPWck776zxNxAZjr1k51I/OKQT+3GM8IL291dgsl5v9pZGRIt
+	WpJD0f3bBHGWoNU5HRU63J9iwnnjki2Te+MtvtWx+Djf0WzCvf2RteMiRDzsHSFBaN4vWj
+	dK+s1SDq/5phjs+ObdiELDJfl6qhD6yBuUr0lie//vpSOG70o6kVyXUUzv6PBQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723646583;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=Lcrk78kvLD57a6HRaT+x89f6hNY7nMNBaXWKad4tGQk=;
+	b=lnyiN52OR9QBONN9sQB46j5NRyoTYp5K0VDTj00SUkm0V+6wpg+bm9OBBsVCTGUEe+dCKR
+	Pq5dfe18nyMMLAAQ==
+To: Li Huafei <lihuafei1@huawei.com>, peterz@infradead.org, mingo@redhat.com
+Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
+In-Reply-To: <fb87cc82-94b7-31aa-0374-a1d7fa49470e@huawei.com>
+Date: Wed, 14 Aug 2024 16:43:03 +0200
+Message-ID: <87ttfnnp1k.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain
 
-Hello Rob,
+Li!
 
-On Tue, 13 Aug 2024 09:19:01 -0600
-Rob Herring <robh@kernel.org> wrote:
+On Tue, Aug 13 2024 at 21:13, Li Huafei wrote:
+> On 2024/8/1 3:20, Thomas Gleixner wrote:
+>>> My machine has 32 physical cores, each with two logical cores. During
+>>> testing, it executes the CVE-2015-3290 test case 100 times concurrently.
+>>>
+>>> This warning was already present in [1] and a patch was given there to
+>>> limit period to 128 on Haswell, but that patch was not merged into the
+>>> mainline.  In [2] the period on Nehalem was limited to 32. I tested 16
+>>> and 32 period on my machine and found that the problem could be
+>>> reproduced with a limit of 16, but the problem did not reproduce when
+>>> set to 32. It looks like we can limit the cycles to 32 on Haswell as
+>>> well.
+>> 
+>> It looks like? Either it works or not.
+>
+> It worked for my test scenario. I say "looks like" because I'm not sure
+> how it circumvents the problem, and if the limit of 32 no longer works
+> if I increase the number of test cases executed in parallel. Any
+> suggestions?
 
-> On Fri, Aug 09, 2024 at 05:34:49PM +0200, Luca Ceresoli wrote:
-> > Add bindings for the GE SUNH add-on connector. This is a physical,
-> > hot-pluggable connector that allows to attach and detach at runtime an
-> > add-on adding peripherals on non-discoverable busses.  
-> 
-> Overall, looks pretty good.
+If you read back through the email history of these limits, then you can
+see that too short periods cause that problem on Broadwell due to a
+erratum, which is explained on top of the BDW limit.
 
-Thanks, I'm very glad it does.
+Now looking at the HSW specification update specifically erratum HSW11:
 
-> > +    maxItems: 1
-> > +
-> > +  nobus-devices:  
-> 
-> Just 'devices'.
+  Performance Monitor Precise Instruction Retired Event May Present
+  Wrong Indications
 
-Sure, simple enough.
+  Problem:
+         When the Precise Distribution for Instructions Retired (PDIR)
+         mechanism is activated (INST_RETIRED.ALL (event C0H, umask
+         value 00H) on Counter 1 programmed in PEBS mode), the processor
+         may return wrong PEBS or Performance Monitoring Interrupt (PMI)
+         interrupts and/or incorrect counter values if the counter is
+         reset with a Sample- After-Value (SAV) below 100 (the SAV is
+         the counter reset value software programs in the MSR
+         IA32_PMC1[47:0] in order to control interrupt frequency).
 
-> > +    description:
-> > +      A container for devices not accessible via any data bus. Common use
-> > +      cases include fixed and GPIO regulators, simple video panels and LED
-> > +      or GPIO backlight devices. When not hot-pluggable, nodes such devices
-> > +      are children of the root node.
-> > +
-> > +      This node should not be present in the connector description in the
-> > +      base device tree. It should be added by overlays along with a subnode
-> > +      per device.
-> > +
-> > +    type: object
-> > +    additionalProperties: false  
-> 
-> The schema needs to work with the overlay applied too. 'true' is fine 
-> here.
+  Implication:
+         Due to this erratum, when using low SAV values, the program may
+         get incorrect PEBS or PMI interrupts and/or an invalid counter
+         state.
 
-Does additionalProperties apply to nodes as well? No properties are
-supposed to be added inside this node, only nodes, so I'm not sure what
-to do about additionalProperties.
+  Workaround:
+         The sampling driver should avoid using SAV<100.
 
-Queued all other changes for v4.
+IOW, that's exactly the same issue as the BDM11 erratum.
 
-Luca
+Kan: Can you please go through the various specification updates and
+identify which generations are affected by this and fix it once and
+forever in a sane way instead of relying on 'tried until it works by
+some definition of works' hacks. These errata are there for a reason.
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+But that does not explain the fallout with that cve test because that
+does not use PEBS AFAICT. It's using fixed counter 0.
+
+Li, you added that huge useless backtrace to your changelog, but omitted
+the output of perf_event_print_debug() after that. It should tell us
+about which counter is causing that.
+
+>>> +static void hsw_limit_period(struct perf_event *event, s64 *left)
+>>> +{
+>>> +	*left = max(*left, 32LL);
+>>> +}
+>> 
+>> And why do we need a copy of nhm_limit_period() ?
+>> 
+>
+> Do you mean why the period is limited to 32 like nhm_limit_period()?
+
+No. If 32 is the correct limit, then we don't need another function
+which does exactly the same. So you can assign exactly that function for
+HSW, no?
+
+Thanks,
+
+        tglx
 
