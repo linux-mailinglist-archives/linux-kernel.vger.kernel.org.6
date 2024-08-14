@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-287214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4499524D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706099524D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85DAA287831
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8771F218C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 21:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34AF1C824C;
-	Wed, 14 Aug 2024 21:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C981C8235;
+	Wed, 14 Aug 2024 21:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O55Wkapa"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VkoKIQks"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F9B1C3F09
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7FB1B0125;
+	Wed, 14 Aug 2024 21:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723671229; cv=none; b=UjwRYmg8RrDnaz8qIXwY4bhNljKFb6tVG4VZI71QvP0iiSrRdxUN9VdByPHKRcsR58G3Pzu710sPH5r8gkEBqRKVdxZ20YMAaZRI9AAVyzSmCvWzDmDdlsfVLxOPnPbETcZF5ii/8hhtXK47+qV5/d0rhIthr4y7/VWCM5XuXAs=
+	t=1723671523; cv=none; b=NxAKtOABRG4qBsoBZWgjvLTjpVDKgpuSVG2DbVpyVerYGUfgg2nARqlIhIE6KDPeiZAj/oQbXT8rqq8TLELUiOXYhrXotwOhnNjMIw4UoCHDxOBV2UphMxg7Q+Jhb4yW2rUdxZ74ltDE68w2hgVRj6jDn6dD9DVZV/4uPjY5bu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723671229; c=relaxed/simple;
-	bh=0JjqrbPwC03gv1AyevCkxjS8lmm3CFD82pbAPxmZF5Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dNK4livZxqfWUH9sXuhOsOzuFJ7TnQo1IpSPiUCMV8xsRIKzRPVsYPBn8+hdLZxFvPz83ko+ZmrzHfeROTLSlStIsJdoa6dCuVH98Ft6Kk6ahzfwM4Lv+P4gFfxABjWZL6/3ZyNoWbEAapivblJPQt4uOSASrw7haPd8ZLeVc0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O55Wkapa; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2d3c89669a3so84171a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723671224; x=1724276024; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0g5NjtodTEAg1xeSolkAqdDfvHP56di0gLWfcl3NRU=;
-        b=O55Wkapa6cPUEJ4kcca96cElJ4Qc7n7ysvY4tA0gomrLbR61cDZqxbjAdFoIbJhlUH
-         dpgeUphrBsshLYZVggrSNchn09fzdV1n7bF9aUAfEJsDfjO5r8sEdIaylYdHpi89tQfV
-         o8CjcjzSTkh0EbQh8K2ZuK3rfzON+S2An/b/7sHKiSn4oZh2VtujQI6ec/xRemA6Hilw
-         YiLYMzA8MUysEvfkYr+MizNQ+Qv0SbuRIB9NL45jaN9avnF6I3iPIDuGPw5+Tv1j4afQ
-         lgd94CxHocYiiTQg7Dygqj4KCWixJM1T6K/4iR4SGb2JjsaUGp9IVdw3nNEKeZuP/9rR
-         KuoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723671224; x=1724276024;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q0g5NjtodTEAg1xeSolkAqdDfvHP56di0gLWfcl3NRU=;
-        b=d80rCAtp2AJtUfVC9VKHUkbVMY6Vk14s4LCmo0apVTW9H8q6lEWopXyp6gMWj4mSAF
-         26kTv7dBQDWZoiJfbViI4mioZxPFqJkBjSqIIVok53dCjH9pgwx8NqrL662K1v+0X5g+
-         fdL9K1qASr7qFIYmtOcqy+p/hh4HXpVZ6UqfBRfoElDua7i79O51zPd7LZucAmnb2137
-         jzdiMEutTnTRrQQGAp8NuMcigyUCv8sl5mxDeTe265VjJtz5+3Xcubkc9QO1C176CpYs
-         SH1oRsnS1su2IxKW81XfCHVrv+E5pS1rnuhDV9vNZPGOK7CziKVomGrYr6SrTY1ZlZy2
-         Ir9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZPrHPkZrDX7iXW88zRwasmTII8j0YwH0QChYlXQ0yWID5qcqk5e1XBzdLiHDBiKpPpnbGldHyUUApX7/zVkqWT638qs8BsfO18VOH
-X-Gm-Message-State: AOJu0Ywt7e8THv4S/9IVE/Xn2lWh1TkV2s/5HskFGYP/ZJFSYy9+sXiH
-	3iH5tOHV2FYQl9dMd9/G1ksyLZ0BuI7beUSCjeu4rJZlf2eK/bOvq9/SDKN0QO40OejBNR8swHD
-	Otg==
-X-Google-Smtp-Source: AGHT+IHMmJW+eZKzGIU+eHnNK46MXf2jqEOHghKxbPm48duoRJ7tzrlc2lv3bqiOWbip9fnyFn+oZyDwdxI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:7c49:b0:2c9:348a:8ef0 with SMTP id
- 98e67ed59e1d1-2d3aab18fefmr18576a91.3.1723671224150; Wed, 14 Aug 2024
- 14:33:44 -0700 (PDT)
-Date: Wed, 14 Aug 2024 14:33:42 -0700
-In-Reply-To: <20240814203345.2234-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1723671523; c=relaxed/simple;
+	bh=CCbQ83Iy1WzmBG4dBLFnVf1SI1eFl9/q84aiMtQ7YIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yg8X0vI7x3l32F+qReWEo1iq3wlvLzrZLsCS4sd1TnJr9VrFigDdn5TgQTIe3hbmqeo9IDnmHCRt/O8rhDVIWFb21A7bCG6jrQevrrYYmzB91OQjfhVbGPFH2iTnK759xAn97sADQr50hvOLxiN7pfzVEG9nGkoc6YcDc9elT5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VkoKIQks; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=co+EjIeuQKptCH4asuM2220HsBlmKKFCANnTP/24k2g=; b=VkoKIQksG7ZyEOcK2IRicOVob/
+	EX3C9hozgV45MdjC2uw/t5NtCszDQTj/d5t9Q/73NeQb/J6iQTmbrhr3O7vrmKza1yUMIQfAEAF+V
+	d0TSl1tBwRKRnWEeWX7fFJ5Yh95aCm50PJ9PAtZU/gIdog9JHgcWzHXLYNi4aVIXaKIZDURLlUZrg
+	OZudE4pvZxymh7PCXaIz+vYCd//uXolUOpFo7Pe786LehJabUEuqm0rDPj1sGEBAK9JMluHehx9bl
+	X0iSzCZq4DNjMBr/+wR8WI8iv3cXxNTB/3hq6+BRdgiWTZRO4eFfyhsfxGpQyIJ4to5GRhOiJxYdv
+	cit8M0oQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1seLhU-00000001itB-099Y;
+	Wed, 14 Aug 2024 21:38:36 +0000
+Date: Wed, 14 Aug 2024 22:38:35 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Yu Ma <yu.ma@intel.com>
+Cc: brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com,
+	edumazet@google.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pan.deng@intel.com,
+	tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+Message-ID: <20240814213835.GU13701@ZenIV>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-2-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240814203345.2234-2-thorsten.blum@toblux.com>
-Message-ID: <Zr0itgdmn6LGDFsQ@google.com>
-Subject: Re: [PATCH] KVM: x86: Optimize local variable in start_sw_tscdeadline()
-From: Sean Christopherson <seanjc@google.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717145018.3972922-2-yu.ma@intel.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Aug 14, 2024, Thorsten Blum wrote:
-> Change the data type of the local variable this_tsc_khz to u32 because
-> virtual_tsc_khz is also declared as u32.
+On Wed, Jul 17, 2024 at 10:50:16AM -0400, Yu Ma wrote:
+> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+> allocated fd is NULL. Remove this sanity check since it can be assured by
+> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
+> likely/unlikely and expand_file() call avoidance to reduce the work under
+> file_lock.
 
-Heh, thought this looked familiar[*].  I'll plan on applying this for 6.12.
-
-[*] https://lore.kernel.org/all/ZT_WBanoip8zhxis@google.com
-
-> Since do_div() casts the divisor to u32 anyway, changing the data type
-> of this_tsc_khz to u32 also removes the following Coccinelle/coccicheck
-> warning reported by do_div.cocci:
-> 
->   WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
-> 
-> Compile-tested only.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  arch/x86/kvm/lapic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index a7172ba59ad2..40ff955c1859 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -1946,7 +1946,7 @@ static void start_sw_tscdeadline(struct kvm_lapic *apic)
->  	u64 ns = 0;
->  	ktime_t expire;
->  	struct kvm_vcpu *vcpu = apic->vcpu;
-> -	unsigned long this_tsc_khz = vcpu->arch.virtual_tsc_khz;
-> +	u32 this_tsc_khz = vcpu->arch.virtual_tsc_khz;
->  	unsigned long flags;
->  	ktime_t now;
+> +	if (unlikely(fd >= fdt->max_fds)) {
+> +		error = expand_files(files, fd);
+> +		if (error < 0)
+> +			goto out;
 >  
-> -- 
-> 2.45.2
-> 
+> -	/*
+> -	 * If we needed to expand the fs array we
+> -	 * might have blocked - try again.
+> -	 */
+> -	if (error)
+> -		goto repeat;
+> +		/*
+> +		 * If we needed to expand the fs array we
+> +		 * might have blocked - try again.
+> +		 */
+> +		if (error)
+> +			goto repeat;
+
+With that change you can't get 0 from expand_files() here, so the
+last goto should be unconditional.  The only case when expand_files()
+returns 0 is when it has found the descriptor already being covered
+by fdt; since fdt->max_fds is stabilized by ->files_lock we are
+holding here, comparison in expand_files() will give the same
+result as it just had.
+
+IOW, that goto repeat should be unconditional.  The fun part here is
+that this was the only caller that distinguished between 0 and 1...
 
