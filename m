@@ -1,73 +1,144 @@
-Return-Path: <linux-kernel+bounces-285654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D88C9510DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:02:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5449510DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC565B255CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:02:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE661C220E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BC1631;
-	Wed, 14 Aug 2024 00:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B711109;
+	Wed, 14 Aug 2024 00:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMT8PLDN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kCsbcFME"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E225219E;
-	Wed, 14 Aug 2024 00:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570F338DCD
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723593713; cv=none; b=EC6n1+KVzc1n85M90kf1RT82pEIvGZ3eD2YUCb9qkHRCnAqxcMnf8/0teKjsLmFLPyBZa2PZAi/5UzddIp0NW2lksB6OUOF2NqeEuuBpk7cCgw2Ioq63HUc2Nm9rtTrirGW61lYkuAqSdYHxRhdJa12SovNvUzlq1tCIHfkbXn0=
+	t=1723593768; cv=none; b=NijgmUX78/ST2PLwEkWSqYRtFlP0Fp14JmXFzHiEKaqngxY+J4S1GhFT8iDXoqBkLNqDVqz2slVNsWyIpg860xidcw8pipA8AfaShc31c+r8HbLBHgaYI5umPZg4X3gy4xA0fORV5vf4aQM/nW4sSdBmTqcvO1g/ompdBMVq9tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723593713; c=relaxed/simple;
-	bh=O+tDBnWVqdcf72Sp7gBl+Zs0H0ScKcO7cHY7UGsqRb4=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ryHhOGOoWIetK7IB7RleijZE4aKV/uJOnEKHeJrArdzmuwkWjYQ+W9fP5uozL53qEqZAgm+cWZ9LTGuOBErKSfvf9VfJp/URiK1iVxX+fmysoxXjVn/oVMSbGMk5jQnevcUDkRUlYiL/zpA91UtOiWP8GyyuMJaFAVeHpihSJC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMT8PLDN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 767A0C32782;
-	Wed, 14 Aug 2024 00:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723593712;
-	bh=O+tDBnWVqdcf72Sp7gBl+Zs0H0ScKcO7cHY7UGsqRb4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fMT8PLDNvelDL+HOD1J1ZYfRGoqt/Q0iK5aJd7x1P+B5EC1E0NLInZLBX3KaqFqyC
-	 r5coCZOcQJoRZVopkzNQsBlYBayN/L78TDPzA8OLLJTBDVCgx1KZkMHEfRTWDzB3si
-	 p1Rwp9OTfazqu73Df99nbhdmHDOBgc2kjIZ7OpIgV7CD7Fp+lY+Lr9tqK3q/ICJpYT
-	 NIl6mLPJ+rn0Hj1sc2tOmD83V0jgkhUfUGRYobSo0fE5ggy+ffDfLcNegEBgypHnYE
-	 HE0HiyNTZVUdxE/Ug6anRB8lTH04PAI0PRmFoPv97XIopx2idgrTyTb4Oqckmh+IJL
-	 RenYj8Jt8LzaQ==
-Message-ID: <2478bc8a787d07cd3e412b6ee4400669.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723593768; c=relaxed/simple;
+	bh=h8VVQ9A8DPOTqaNpNou6lHBkfb8drBFwdY+oqRSKcK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E54q386dchmWyQnaz7Jo6hz79DQac4hwHlFJft7V0cASXJr8ANxfFmkbt/H+kasIqJTeBWu2oJKk4jX8SUHHZk4TtRg+wQYrWlVjrzBareDSC8EP+oL7IuSkZ1MVHtrmUeeyFXip7enUFP/sAt8FjqHH0CfB+5xys0nkyye1ePc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kCsbcFME; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1d3e93cceso38618385a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:02:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723593766; x=1724198566; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TTKySPg0C0mUlZw+lpD9nr3DuGcnFr36IobOnZTiUuc=;
+        b=kCsbcFMEc34zg2l2eHNpaULkZqYUY6Rwc8xGpzFLSK3f/cuXdV5J/Zny2yL+orUzZM
+         WXTzb0RqF5T5musgqTDLgcrhm9QiKhnMhZNYA70NcNAlJCsUIwWCzl1ceBnnQgk6WGRt
+         VNa7c3Y9huU3/Nw9Ft65mHcDe+uCzEfhOQtNhyBECjwAmaSbpiU4z2R/iUKDpcrFa8r7
+         /+BQr/axP/uUuGZ0i43ElsL5eK/li3P8OSLf1J0cJnyZKUznxYSXhi6jcwkP2ce4qpfO
+         IEGaHV2ULwF2ToNblk14sW61pJPpdGIqogTS/W6Rn8h+UmsxEDRTRptsl/mZ/7Nuwcof
+         eQ9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723593766; x=1724198566;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TTKySPg0C0mUlZw+lpD9nr3DuGcnFr36IobOnZTiUuc=;
+        b=W0sZRGyqF5gavBRJG4rRSSaLsV65NrTzohTo5L2UuOXXd+oOUlLHnLZ5nY9Vghu/Fc
+         O2rK+AN8Xk4oZlH90GiS8EJbTUCfK9kksEVCS9tZWM3DGUpujM7damBb0rQhAItXg7r5
+         WBKrlbZUGv7fuEbdzXYu8U2CMdcTC8T+Rd136tcads27JYqCWUa7ZpCmX+/yOAeNMDEw
+         5BM3okLdcIgZ56gCHwFsgRT5DE21jvKbUkP50+RG9OKnjSazBjlxGAPmOxSIOn5/OscM
+         Exz7i0vhQpDIWVIvILB1RyfEJAVKFXIsaVLSyle3RxPO9fOqY136Ca9ikDFwdfmERTOY
+         t9lw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4dejLuJTjijxZP/t/ttI/lz1qQEACO6JKvF5uvTl4t0EO2w5WE1V0eDfuNL4EWGLK2tw/qDQRsi5NhKTVxpYtU5m/xxNWUgyfGxLK
+X-Gm-Message-State: AOJu0Yw5+KpXw66tkbt4W6peORVDkKuf3Pcc1ezFAgRhaNDyVDKfKw3K
+	YKS+fPGSDS3xQuy7crviceYm0t5b03fWjBRYra47fneFNSenTXUhWoZjYdadAYo=
+X-Google-Smtp-Source: AGHT+IELZQfx8+xdaOH9kPY1NkPGEscrDOIVC5ILmt/1CCzfZ7mr5luUHmGWXl7b2nhzl+Os2iGU7A==
+X-Received: by 2002:a05:620a:4252:b0:7a1:da10:91a with SMTP id af79cd13be357-7a4e37a6f76mr735266185a.12.1723593766145;
+        Tue, 13 Aug 2024 17:02:46 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7e115c0sm375949685a.133.2024.08.13.17.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 17:02:45 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1se1TR-00AVMp-3t;
+	Tue, 13 Aug 2024 21:02:45 -0300
+Date: Tue, 13 Aug 2024 21:02:45 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Martin Oliveira <martin.oliveira@eideticom.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Artemy Kovalyov <artemyko@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	David Sloan <david.sloan@eideticom.com>
+Subject: Re: [PATCH v5 3/4] mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
+Message-ID: <20240814000245.GV1985367@ziepe.ca>
+References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
+ <20240808183340.483468-4-martin.oliveira@eideticom.com>
+ <ZrmuGrDaJTZFrKrc@infradead.org>
+ <20240812231249.GG1985367@ziepe.ca>
+ <ZrryAFGBCG1cyfOA@infradead.org>
+ <20240813160502.GH1985367@ziepe.ca>
+ <66bb91fbcbe66_1c18294fe@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZrsbXMVy1Dsi4UZe@smile.fi.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com> <ZrsbXMVy1Dsi4UZe@smile.fi.intel.com>
-Subject: Re: [PATCH v1 0/4] clk: Switch to use kmemdup_array()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Date: Tue, 13 Aug 2024 17:01:50 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66bb91fbcbe66_1c18294fe@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 
-Quoting Andy Shevchenko (2024-08-13 01:37:48)
-> On Thu, Jun 06, 2024 at 07:09:30PM +0300, Andy Shevchenko wrote:
-> > Replace open coded kmemdup_array(), which does an additional
-> > overflow check.
->=20
-> ...
->=20
-> >   clk: mmp: Switch to use kmemdup_array()
->=20
-> >   clk: visconti: Switch to use kmemdup_array()
+On Tue, Aug 13, 2024 at 10:03:55AM -0700, Dan Williams wrote:
+> Jason Gunthorpe wrote:
+> > On Mon, Aug 12, 2024 at 10:41:20PM -0700, Christoph Hellwig wrote:
+> > > On Mon, Aug 12, 2024 at 08:12:49PM -0300, Jason Gunthorpe wrote:
+> > > > > This is unfortunately not really minor unless we have a well documented
+> > > > > way to force this :(
+> > > > 
+> > > > It is not that different from blocking driver unbind while FDs are
+> > > > open which a lot of places do in various ways?
+> > > 
+> > > Where do we block driver unbind with an open resource?  
+> > 
+> > I keep seeing it in different subsystems, safe driver unbind is really
+> > hard. :\ eg I think VFIO has some waits in it
+> > 
+> > > The whole concept is that open resources will pin the in-memory
+> > > object (and modulo for a modular driver), but never an unbind or
+> > > hardware unplug, of which unbind really just is a simulation.
+> > 
+> > Yes, ideally, but not every part of the kernel hits that ideal in my
+> > experience. It is alot of work and some places don't have any good
+> > solutions, like here.
+> 
+> ...but there is a distinction between transient and permanent waits,
+> right? The difficult aspect of FOLL_LONGTERM is the holder has no idea
+> someone is trying to cleanup and may never drop its pin.
 
-I have them all as "changes requested" so please resend.
+It is the quite similar to userspace holding a FD open while a driver
+is trying to unbind. The FD holder has possibly no idea things are
+waiting on it.
+
+Nice subsystems allow the FD to keep existing while the driver is
+unplugged, but still many have to wait for the FD to close as
+disconnecting an active driver from it's FD requires some pretty
+careful design.
+
+Jason
 
