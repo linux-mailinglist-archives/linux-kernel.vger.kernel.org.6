@@ -1,152 +1,190 @@
-Return-Path: <linux-kernel+bounces-285914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EFF951434
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D057951438
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6A0D285979
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C09E1C24171
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FA477F11;
-	Wed, 14 Aug 2024 06:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5694477F11;
+	Wed, 14 Aug 2024 06:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dc++QcoM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5pz4d7J"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24372901;
-	Wed, 14 Aug 2024 06:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445487345B;
+	Wed, 14 Aug 2024 06:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723615888; cv=none; b=Qoqfm4+fGQrmnK3yxgJejMtn3XIN6oJA/BjXOcsqMN8mQFPn7ms0LCi0HjZ7TkDCRuJ/ow6jjB+LXg78sX460DwShHGR/2Q3ODMfX0R2vIlNrePouBokSJO/kpSULPl+cG/whEAMIBhZV/k7znHnX3pk/pklupBBbz0VY7xM9fU=
+	t=1723615955; cv=none; b=cozMG8ex9m9WcnIiU0wn9LVX1SBUrkRGhHK6TwUKXEOITK6WaRpzp2cumDZWCkzco9U+dOSRMTtLD06tL4R27h+P4CDQsQD4TKZVG6YT9HMXAozmrs9F9g+b7sr2m71RWcaDRy4QFIW0LPdXbhWooJ/2QIxUGW/NnkqBfYfLqok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723615888; c=relaxed/simple;
-	bh=kxWSpDwaqRdW46FFP5ahXye3WeYI47yy9YNZe9Tsjo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7u5DZJZ7CyPOvJtS0IuJkQqb5nzGn6oEp22Aqjggbk+SqgD8YZzbEMEhWKsyPDYNxma9zSGsR9IlWe9bmI7/f0XdwQZl/2kLAzpe7MJG/LSOizCYQKaS8Z5dv9dsniCb8Yei6Pxs5EImHf4G0gyhDzra8Qwqqtx2eXTlfmqbL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dc++QcoM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F785C32786;
-	Wed, 14 Aug 2024 06:11:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723615887;
-	bh=kxWSpDwaqRdW46FFP5ahXye3WeYI47yy9YNZe9Tsjo8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dc++QcoMUNgEObc/ylsBHH48RJ4XoZtUuOmyY/y44MauL8avtwIhZUCiGs0vutXBp
-	 5jVOJwISy0ZiJmc+lFQOHucowrN7t/kwgpjlS904XEPLJ3xv1CQzb99q26f3Dtwyb5
-	 KBtP+ufMIn900ySboxXMJ8HA8L0mJYCi4kjXwwllgAZ42bPnCgzLBWNqqAOqjZVdmf
-	 83WZ/a7SLoqHwDYMitDjVsbUseO2ISgn0gQvsetcG7bHX6m+VEfOprk4rE6tnmvDQk
-	 y00bqz5JRux6fOetI2UsNAOYrgFIwzhjLCZQaGVdGysa0z78jV+ty/QfG52gmKgNWj
-	 7NbszGvZjXEew==
-Message-ID: <5c2ca213-d466-4185-bbd7-2328ef377f16@kernel.org>
-Date: Wed, 14 Aug 2024 08:11:18 +0200
+	s=arc-20240116; t=1723615955; c=relaxed/simple;
+	bh=q286dyo4TntvHLHiIPsmtqW+4bsjtjwx/NjK8sUccpc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SGUsy6MhNYXqiW/WEwGT4qdB4ezXaZioiKI0xOv2AGufDnQpvNsYi2i4qXHpbbLa1mouMD+SCHGsziXMrK5t4X2T/oLUn6E/EVe7ILSj1IH9q+7teDMJ/LAkz9w3FtRw4P3vzsxtcv0WbcdXYVgOxHfUT3ppFXRZ+jcSTnGqCAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5pz4d7J; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-710ec581999so3186751b3a.2;
+        Tue, 13 Aug 2024 23:12:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723615953; x=1724220753; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OPLbhHV3Ad26qETlz+1LjUQ8aQfeRHHfGng3CkRPUMY=;
+        b=F5pz4d7J9/CtdVyAWSuFUaxwc2hrEx7yTDUyUCkA8ILHHx5ICCKK99nl87mlqO9XmC
+         hlKwoH9yF7uaMHG4z7zGgggJvgE7Ji5AUl6eRY0W9/7ewXddUOIJ3s3a8gSzS413NiYB
+         ygcubSP125ZbU4LrVe06MT7K8Sfs231oft8Syj0cm2/NfMQT+1Km6FEhI6XPK4KsksO/
+         A7U0i8jqUn3nWhOWTejDKclNAcQ6pq9zKqFNFoWF39aAHIPuf7sERERS10V22fwsiDia
+         xpRcnwbmGekWnjbqmdZvAWYMCmqVgWEmX/tiQFST+cDtxTYKbT2V9mpa2JUSeiLp0Sjw
+         sw5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723615953; x=1724220753;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OPLbhHV3Ad26qETlz+1LjUQ8aQfeRHHfGng3CkRPUMY=;
+        b=XL1EqoH3GWjVu/RET/+qp/AJhGMnxEt+s3+dKVCLNpOn+XG0aPLip00osMxyr0OFRj
+         77QhjrfIfBj8AKtyxNMrzhamW4iR2seKu7drs7bgPRFTdF18kWumAipm8lolEA0ezDRB
+         GKVAzLXleUmxcHTMPSmGsTlAwc2dWIdHWCIX5E4JICFwbS44fLeed4EDy2PUBL+zqXIy
+         IKG4rRFjS8Mb2bQ/hhkhBhVBM7M8PxfgX7KbOqK4W6pFQ2Ff8qPMRNojL9QBWqbseZJ4
+         Q239eHcaj7NbjC88qXh2Zyk9dRXtMI/F9tBgNs7wlHxniscX9JZcbGt/lXzd01h3zAau
+         SJbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWvxgyiTA+EZosAdERnCo7vIro10XOg9w7pGYR7WMmg7V/gjkbPM4+v+1Xp6YSw101+jjr2QL3g+sQUFBpc6AfYPkEZe+B0F56V8ejj5cNRPQLMafecQYQMaAarhi8xB1hINT9BLGdUFThegKV2SVblloG87bnxVMqlWQT3wnzOsrgFPwR60wT
+X-Gm-Message-State: AOJu0YyhlmFNvNzgZithK4+2U1EnFPOny7dVZw+8+9iXa68TikOmqIkg
+	bDYD9iDJxZf8E4Oi3yDFqIuZaIoQw36DxWAp6oqkMi7KXNzlaxyJEsT71HxXDkLINg==
+X-Google-Smtp-Source: AGHT+IHMiMkhTc5Fb6I+vx/HqPohcmofXYfWD8lzPfYilJbZPDE0D3Ms/u4+Q/Bkvo99p7SmkGuz5w==
+X-Received: by 2002:a05:6a20:c990:b0:1c6:b45a:df51 with SMTP id adf61e73a8af0-1c8eae97a2cmr2617444637.30.1723615953272;
+        Tue, 13 Aug 2024 23:12:33 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40f4:a3:69e7:e4a5:a146:b390:f262])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7dcfc7sm708732a91.14.2024.08.13.23.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 23:12:33 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: watchdog: nxp,lpc1850-wdt: Convert bindings to dtschema
+Date: Wed, 14 Aug 2024 11:42:03 +0530
+Message-ID: <20240814061210.56213-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/2] dt-bindings: net: dsa: microchip: Add
- KSZ8895/KSZ8864 switch support
-To: Tristram.Ha@microchip.com, Woojung Huh <woojung.huh@microchip.com>,
- UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240809212142.3575-1-Tristram.Ha@microchip.com>
- <20240809212142.3575-2-Tristram.Ha@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240809212142.3575-2-Tristram.Ha@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/08/2024 23:21, Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> KSZ8895/KSZ8864 is a switch family developed before KSZ8795 and after
-> KSZ8863, so it shares some registers and functions in those switches.
-> KSZ8895 has 5 ports and so is more similar to KSZ8795.
-> 
-> KSZ8864 is a 4-port version of KSZ8895.  The first port is removed
-> while port 5 remains as a host port.
-> 
-> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-> ---
->  Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> index 52acc15ebcbf..d8efb6f0c253 100644
-> --- a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> +++ b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> @@ -21,6 +21,8 @@ properties:
->        - microchip,ksz8765
->        - microchip,ksz8794
->        - microchip,ksz8795
-> +      - microchip,ksz8895  # 5-port version of KSZ8895 family switch
-> +      - microchip,ksz8864  # 4-port version of KSZ8895 family switch
->        - microchip,ksz8863
->        - microchip,ksz8873
+Convert the NXP LPC18xx Watchdog Timer bindings to yaml format.
 
-Keep the entries sorted.
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+---
+ .../bindings/watchdog/lpc18xx-wdt.txt         | 19 -------
+ .../bindings/watchdog/nxp,lpc1850-wwdt.yaml   | 52 +++++++++++++++++++
+ 2 files changed, 52 insertions(+), 19 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/lpc18xx-wdt.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/nxp,lpc1850-wwdt.yaml
 
-With sorting fixed:
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/watchdog/lpc18xx-wdt.txt b/Documentation/devicetree/bindings/watchdog/lpc18xx-wdt.txt
+deleted file mode 100644
+index 09f6b24969e0..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/lpc18xx-wdt.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-* NXP LPC18xx Watchdog Timer (WDT)
+-
+-Required properties:
+-- compatible: Should be "nxp,lpc1850-wwdt"
+-- reg: Should contain WDT registers location and length
+-- clocks: Must contain an entry for each entry in clock-names.
+-- clock-names: Should contain "wdtclk" and "reg"; the watchdog counter
+-               clock and register interface clock respectively.
+-- interrupts: Should contain WDT interrupt
+-
+-Examples:
+-
+-watchdog@40080000 {
+-	compatible = "nxp,lpc1850-wwdt";
+-	reg = <0x40080000 0x24>;
+-	clocks = <&cgu BASE_SAFE_CLK>, <&ccu1 CLK_CPU_WWDT>;
+-	clock-names = "wdtclk", "reg";
+-	interrupts = <49>;
+-};
+diff --git a/Documentation/devicetree/bindings/watchdog/nxp,lpc1850-wwdt.yaml b/Documentation/devicetree/bindings/watchdog/nxp,lpc1850-wwdt.yaml
+new file mode 100644
+index 000000000000..52878fdbe3ad
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/nxp,lpc1850-wwdt.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/nxp,lpc1850-wwdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC18xx Watchdog Timer (WDT)
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++properties:
++  compatible:
++    const: nxp,lpc1850-wwdt
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Watchdog counter clock
++      - description: Register interface clock
++
++  clock-names:
++    items:
++      - const: wdtclk
++      - const: reg
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/lpc18xx-cgu.h>
++    #include <dt-bindings/clock/lpc18xx-ccu.h>
++
++    watchdog@40080000 {
++        compatible = "nxp,lpc1850-wwdt";
++        reg = <0x40080000 0x24>;
++        clocks = <&cgu BASE_SAFE_CLK>, <&ccu1 CLK_CPU_WWDT>;
++        clock-names = "wdtclk", "reg";
++        interrupts = <49>;
++    };
+-- 
+2.46.0
 
 
