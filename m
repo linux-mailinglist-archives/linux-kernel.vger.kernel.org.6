@@ -1,116 +1,176 @@
-Return-Path: <linux-kernel+bounces-286558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21816951C7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:03:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25DCE951C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C017D1F21C35
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:03:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9D4EB21E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D3D1B29C7;
-	Wed, 14 Aug 2024 14:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B518E1B29C6;
+	Wed, 14 Aug 2024 14:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="G3VqScFP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qC9FGlsJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A861AE855;
-	Wed, 14 Aug 2024 14:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA51A1B1511;
+	Wed, 14 Aug 2024 14:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723644172; cv=none; b=O9jq2q8VdDlY1IBYFS7zY5179rAPb5RgRw1BRNcgRkF45dU7kSV1CZydYBQjcUFOi+DN5/tyqTjQj9owdQCMb1y5T9ZYAInj4X7o9lLPJwzKnlQ39B5pRwLx1FQNq9PlyfaDnA8N3MtdgsVhcxdc3qNw1FvruCh93hwRYDrzzog=
+	t=1723644298; cv=none; b=uiylQJ5wzpCSsT3ZCEA47T5mx+rUFv1TirCRx7y3/VNW6OIbNyT2rfMQVNthlVAuk5wxR82+WRUssZnkFcYQvPul8BTXbisGymyHQKRLnQ2Ub8msLxTs0pW1oDziNfdlwSGhsWdZkAQ8lqblV9y1P19OUWwmBaEq81fo7MUvwIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723644172; c=relaxed/simple;
-	bh=6L8akOPqyyTPBa3PqXH17GTp/Y2Tsj2veKm6veIzVlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LcgpJVFbNSS9ndqB8AtwOkAoldJmX3zXdE3o0htWyiGqUrAuFz5jWux7jhJGBwAyeh0HJCIwdjLIE1mQ8BsaY1Zg77l5zQXg61xkBAEzAElLL05cJ6WpXqpzkwuAlI+7kXXEKmmtGWerc+B8/vekruQyMllA38Skms5A+/rGKb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=G3VqScFP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6+uVBqyTy+4a4I/W2kullK4I72CTIelXCLMBNU2Cl2Y=; b=G3VqScFPDpuoQBh6K2RUl6CHmF
-	S/1jvXjwK1KH9/vCJUZD5plk6V0Cq2oYhjS5Gc0MSO2yaadQ5gTpIxRJPYq9ZpufQR0Q7NeoG3g1e
-	aH5VFWrvwei2A+0KArzqhZ1XSUXG1BsLU/0HahTQWflPbizTDjOe1UOotW1J5U5ejRcI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1seEa6-004lmN-D8; Wed, 14 Aug 2024 16:02:30 +0200
-Date: Wed, 14 Aug 2024 16:02:30 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com,
-	Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net-next v2 4/7] net: ti: icssg-prueth: Add support for
- HSR frame forward offload
-Message-ID: <5128f815-f710-4ab7-9ca9-828506054db2@lunn.ch>
-References: <20240813074233.2473876-1-danishanwar@ti.com>
- <20240813074233.2473876-5-danishanwar@ti.com>
- <082f81fc-c9ad-40d7-8172-440765350b48@lunn.ch>
- <1ae38c1d-1f10-4bb9-abd7-5876f710bcb7@ti.com>
+	s=arc-20240116; t=1723644298; c=relaxed/simple;
+	bh=+TepEU5bEnldk5Y+bEQN4qmVYWp+D4d7TIaKavBZlhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=crz9PB4sT8TK9rTdvHAZKISTPH/dABZpxLGAGMBcptTex5IoxwLCepfE1ZxcMCtlur0467u7AChVGqeEa6aaSbxD29S1cJOSY+s3iH0n+zTw4/AAZqsbPWVarWRHEl2jV8OjwfQTk65QtlH8ermpVIRs/QIdxuVEGSDyuswndL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qC9FGlsJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872D1C116B1;
+	Wed, 14 Aug 2024 14:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723644297;
+	bh=+TepEU5bEnldk5Y+bEQN4qmVYWp+D4d7TIaKavBZlhQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=qC9FGlsJOOJpLB1OB562M1syJJSFv7ntlDrpind3M6AMMfr/zweDn1nQym5S/5dEY
+	 98OlX+JORBJVkyElq34Gmg/4EuI2eF5sNtWpzMVr/VGVPyt+hbXfzeZQgTyspwyAZk
+	 INwT+IO6ZxcfYAnjDZDxFbCgTWFTpu/pvQkeLAIFv05VX1/o+1+rU8cnPkadRtFTzt
+	 Vxy/RwZySE/AbxTAwZcAhH/g2nGG8fjZ+1Yrys+RD4obAPaEvFLUfAvb8q7v5IcDPw
+	 +cRhgU4UBMtleV0YeUT8gMpk6zhYcR2d28gALrxqyNttCiwzsrcH8H2/b+lB77rcA0
+	 O3+laQHvistRQ==
+Message-ID: <31635635-b743-446d-a94e-b3b8082c06a2@kernel.org>
+Date: Wed, 14 Aug 2024 16:04:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ae38c1d-1f10-4bb9-abd7-5876f710bcb7@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: interrupt-controller: Add support for
+ ASPEED AST27XX INTC
+To: Kevin Chen <kevin_chen@aspeedtech.com>, tglx@linutronix.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org
+References: <20240814114106.2809876-1-kevin_chen@aspeedtech.com>
+ <20240814114106.2809876-3-kevin_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240814114106.2809876-3-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Yes, the icssg_init_ and many other APIs are common for switch and hsr.
-> They can be renamed to indicate that as well.
-> 
-> How does icssg_init_switch_or_hsr_mode() sound?
+On 14/08/2024 13:41, Kevin Chen wrote:
+> The ASPEED AST27XX interrupt controller(INTC) contain second level and
+> third level interrupt controller. The third level INTC combines 32 interrupt
+> sources into 1 interrupt into parent interrupt controller. The second
+> level INTC doing hand shake with third level INTC.
 
-I would say it is too long. And when you add the next thing, say
-bonding, will it become icssg_init_switch_or_hsr_or_bond_mode()?
 
-Maybe name the function after what it actually does, not why you call
-it.
+> +maintainers:
+> +  - Kevin Chen <kevin_chen@aspeedtech.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - aspeed,ast2700-intc-ic
+> +
+> +  reg:
+> +    minItems: 1
 
-> >>  static struct icssg_firmwares icssg_switch_firmwares[] = {
-> >>  	{
-> >>  		.pru = "ti-pruss/am65x-sr2-pru0-prusw-fw.elf",
-> >> @@ -152,6 +168,8 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
-> >>  
-> >>  	if (prueth->is_switch_mode)
-> >>  		firmwares = icssg_switch_firmwares;
-> >> +	else if (prueth->is_hsr_offload_mode)
-> >> +		firmwares = icssg_hsr_firmwares;
-> > 
-> > Documentation/networking/netdev-features.rst
-> > 
-> > * hsr-fwd-offload
-> > 
-> > This should be set for devices which forward HSR (High-availability Seamless
-> > Redundancy) frames from one port to another in hardware.
-> > 
-> > To me, this suggests if the flag is not set, you should keep in dual
-> > EMACS or switchdev mode and perform HSR in software.
-> 
-> 
-> Correct. This is the expected behavior. If the flag is not set we remain
-> in dual EMAC firmware and do HSR in software. Please see
-> prueth_hsr_port_link() for detail on this.
+That's unconstrained. Instead: maxItems: 1
 
-O.K.
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 10
+> +    description:
+> +      It contains two types of interrupt controller. The first type is multiple
+> +      interrupt sources into parent interrupt controller. The second type is 
+> +      1 interrupt source to parent interrupt controller.
 
-	Andrew
+I think I asked already - list the items with description.
+
+Why the number is flexible?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    bus {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +    
+> +        interrupt-controller@12101b00 {
+> +          compatible = "aspeed,ast2700-intc-ic";
+
+Messed indentation.
+
+
+
+Best regards,
+Krzysztof
+
 
