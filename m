@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-286137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F161F95171C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:56:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12DC951728
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CBE1C2183A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76CBA1F24D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E83143C69;
-	Wed, 14 Aug 2024 08:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393E9143C6A;
+	Wed, 14 Aug 2024 08:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuDctkVO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7h4EZuE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA96F55E53;
-	Wed, 14 Aug 2024 08:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7303E14386D;
+	Wed, 14 Aug 2024 08:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625767; cv=none; b=Z/uNoOnhzOooMSFcBMQLOLCP8VwchDB34AQCTq/op1wK9CFZWiIIxY6i2c5Ti59KlsdY8sAZd639PwGXvNwskBq48RFqEViZa/tmGORQ1YdGW610sJIvSfGyuZKhvefAfUN4wOyHmZhwlLagsNTGZzhONFP4INfKaAdcTUsEgMM=
+	t=1723625783; cv=none; b=KTQ/MWkPLb0X+VMbGstvgm3Cf5E2oeY/8yIlX0VUnJg/iydst3OPaaou+6NN3f2k5/QG/OlnOZ8E03HeryhCTgYEBGdlJ8G++GyZSDnB2rgbVlfCXPFSZC90nRo6k8coUH0a0wxWN3E8A48Pdjx7mAA8TWhtDYsLWANkfohiz/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625767; c=relaxed/simple;
-	bh=LFcfzgmgj0fjvud0HifLiNgJxiVjTidXJrqLYts5pv8=;
+	s=arc-20240116; t=1723625783; c=relaxed/simple;
+	bh=/Gw7yX7UJcdj/0fJAYkGTcODifOmQDmUWzVyrZRtm1k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=keJjVxAZaOv5ZWfacWZP4d++1/pVkAWG3g6fZemq4w6HUyUqII0SsL9ibTzYFBZ+5r4Ct83Qhi9WacGzj0ufzwLnpOcrnmVNCpcijNI0BwvjR4Q50YIbxeNrfn6siUMxvFRqMOA22ZDH2TKf8lGLkJ3ci9fQBvM/LIU/0a9Hq/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuDctkVO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A075C4AF0D;
-	Wed, 14 Aug 2024 08:56:03 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SOf2J7pKext+Xyv2jB2i0e058gKhI3X4S3hsgdnqq6MSMo0KtRoH17ByeITpJp1xvSO1cUNvTkMy+WgZV86CSaau0lWLQ066bYpE9WFcL5iO1v7ogDn6k7XGL20EkYOVm0HkK/8MfEsfSrN13ZaWvYq9VWFfhw/Cryb66dyBM3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7h4EZuE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95AA6C4AF0E;
+	Wed, 14 Aug 2024 08:56:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723625767;
-	bh=LFcfzgmgj0fjvud0HifLiNgJxiVjTidXJrqLYts5pv8=;
+	s=k20201202; t=1723625783;
+	bh=/Gw7yX7UJcdj/0fJAYkGTcODifOmQDmUWzVyrZRtm1k=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=OuDctkVO0tk35Wx8LumTgNlxPvQkGYgHGHpzuOLIn9syLF2sc8ziE7+x1e5wiHUmR
-	 rZxIoSV3EfnZnMXJnLxkogDSkA6t1pLD2GmLjhuI5YNeI/H0r2zEKxJlXfX1MVdmmn
-	 AeOzNeFFbP4E7EXBXuWlO1TLV9ZNmmcVv9LS0dKYja+fbn7co0xTJlGHCrTky9Dcsq
-	 Xem4PTP3Ui33IiQr0ktjqwQ1bOATGMmH2fEdmLX4GYGzsKl7j3jeOWPwF7B0IYd8wg
-	 kOOetvaEhOPdP4O6/CJ25gdrTgsDE6FJTGTUDgCUMuyCcHQAJlW7lzsq8d7Xyet0fT
-	 PzCekjWLGmEIg==
-Message-ID: <3fd0fa88-eee0-45f8-bd8b-f5b2bc15c25a@kernel.org>
-Date: Wed, 14 Aug 2024 10:56:01 +0200
+	b=P7h4EZuE/NcoGY4LEXSmFogGZ8YfOU6OPVPQLzzcCbs8+K1x7EwFaT5pVezWRLXv+
+	 LrFNBgLrxB4M6nw8PZInFuzPYHW+6stnJTQk1vpuxjPLlQivXAz3Gq85vFFAiFziCn
+	 7W9waiio4Yw0SowjMqQ8e2W/cxwQhZBeYs5MWYnGj05V/Iv4PK1Fm0OgEzWssQIAxX
+	 6EeDqE85C7d2iCAA24pq8dCSynBOPXf9ZyiGJw3TuwhOHrZzREyEtEEi4W1NNC7kbx
+	 c8JNRSvA7Ij6k/vya/Oc8bgZArLiu+ncQ823V85HCEwZcAGRi6399ehMpjHLkYoOXi
+	 fyJL8dKTRiJhA==
+Message-ID: <f814c629-711c-4145-b35b-e94a03d7b3c1@kernel.org>
+Date: Wed, 14 Aug 2024 10:56:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: arm: qcom: document QCS8275/QCS8300 SoC
- and reference board
+Subject: Re: [PATCH 2/3] dt-bindings: arm: qcom,ids: add SoC ID for
+ QCS8275/QCS8300
 To: Jingyi Wang <quic_jingyw@quicinc.com>, linux-arm-msm@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com,
  quic_tengfan@quicinc.com
 References: <20240814072806.4107079-1-quic_jingyw@quicinc.com>
- <20240814072806.4107079-2-quic_jingyw@quicinc.com>
+ <20240814072806.4107079-3-quic_jingyw@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,43 +103,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240814072806.4107079-2-quic_jingyw@quicinc.com>
+In-Reply-To: <20240814072806.4107079-3-quic_jingyw@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/08/2024 09:28, Jingyi Wang wrote:
-> Document the QCS8275/QCS8300 SoC and its reference board QCS8300 RIDE.
-> QCS8300 is an Industrial Safe SoC, while QCS8275 is the Industrial
-> Non-Safe version which can share the same SoC dtsi and board DTS.
+> Add the ID for Qualcomm QCS8275/QCS8300 SoC.
 > 
 > Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index f08e13b61172..3952e1579767 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -42,6 +42,8 @@ description: |
->          msm8996
->          msm8998
->          qcs404
-> +        qcs8275
-> +        qcs8300
->          qcs8550
->          qcm2290
->          qcm6490
-> @@ -884,6 +886,12 @@ properties:
->            - const: qcom,qcs404-evb
->            - const: qcom,qcs404
->  
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs8300-ride
+>  include/dt-bindings/arm/qcom,ids.h | 2 ++
+>  1 file changed, 2 insertions(+)
 
-This is not used. You miss DTS patch. Look how people upstream things:
-such binding *never* goes separate from the DTS.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
