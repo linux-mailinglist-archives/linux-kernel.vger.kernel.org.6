@@ -1,91 +1,161 @@
-Return-Path: <linux-kernel+bounces-286468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17960951B44
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:56:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4B7951B46
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB931F23502
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:56:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8BB1B24B0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267F11B1409;
-	Wed, 14 Aug 2024 12:56:50 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAD41B1407;
+	Wed, 14 Aug 2024 12:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+QLheuc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5941AC42B;
-	Wed, 14 Aug 2024 12:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB75C142651;
+	Wed, 14 Aug 2024 12:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723640209; cv=none; b=dNY/whOCV/zQt9xAWnqj+i6FWwRE7sFkEGPAFwHYZOV5h/wWSnv8nQvIB3jo2hIWANwawyNZB4fp9tJskR375ZSOuzgxW4ayt4PQTLJjxx2Pa5GMJ7SEviJrbWWNK/FXa8mWeayxKYlfKxt25aHDwJg9zconUT66JVmBMaf4Qp8=
+	t=1723640263; cv=none; b=PpI0R9a1gSJ1Hx+Z7RGwg3/U64+PQvXDTlZqKnW/lshyEh+exjRcDzBMS1r9vz5psson92OfRuAToQAhP0sElniHn9x2ili4ESpahHbfX//HFauDu1c2LcwgRSeXUOxxYZqjE9THM2tLnxJV5r0TalNs4XZrvV3RhHRQUt1wTJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723640209; c=relaxed/simple;
-	bh=eRpfdhaG6QEPoF+V5ZDBN6K80IgJhfENEwx5AylKrXQ=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFNiPjbXTHACDkWTUEso20eIJH7YDHtj6I/+xSpp+rMpSWe55yzlhfZyn85C4aYxJd0I2i2PWGYCO+ea9dxw70Hp/X8+iKe6xoQbZ7Ut1GKjQMVLFDtgYtXKiCAZYNmBvhsHDUNZcNEeVqXucbfFGXcBKg6AQKl5mRuky1g5Kf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: F5f5FUkJR+aCxxRULLfh7g==
-X-CSE-MsgGUID: E4bj1UsfSoWsucrSgg+KLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="39305443"
-X-IronPort-AV: E=Sophos;i="6.10,145,1719903600"; 
-   d="scan'208";a="39305443"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 05:56:47 -0700
-X-CSE-ConnectionGUID: zInlDfUxTLO/48mrJr1Vzg==
-X-CSE-MsgGUID: otyy+w8qR6yY+muYXeAdQw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,145,1719903600"; 
-   d="scan'208";a="89703794"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 05:56:45 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1seDYP-0000000FBQu-2Ohr;
-	Wed, 14 Aug 2024 15:56:41 +0300
-Date: Wed, 14 Aug 2024 15:56:41 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Breno Leitao <leitao@debian.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] Do not mark ACPI devices as irq safe
-Message-ID: <ZrypiZfNRlYE1y2X@smile.fi.intel.com>
-References: <20240813161254.3509409-1-leitao@debian.org>
- <CAHp75VcLR5ehrCyVsY0TKWSogRt-_ETqkZ1VE=ATVqRc8Y_9vg@mail.gmail.com>
- <Zru4NpfJZCzE6uoa@shikoro>
+	s=arc-20240116; t=1723640263; c=relaxed/simple;
+	bh=aTyhtGtgdJk4Q5FCiryBiL3pR4RSq8FA/pjWp1jwZLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pPx3j3I/QEBn3/GEf93N9x4oh4wE5HpncGIsBDL66lBTTVlcpwsSyLuF5NHvShGebN+5wMnYzFmewG+5XtpkrQeEFf05jZrF8NaIBZvrHNrV9UX0d1DMBqlrII6HBGPe64CmnLc3mZeti21KQcKFgzxAe4iqT2V7KtaoW70cCcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+QLheuc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FD02C32786;
+	Wed, 14 Aug 2024 12:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723640262;
+	bh=aTyhtGtgdJk4Q5FCiryBiL3pR4RSq8FA/pjWp1jwZLw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=L+QLheucYpn6NXe5AWVMiKgJkvZl34jrpH1MUqNKt60ApPTUOl9bXD6RvwZ0eNMkP
+	 3j7/3KcLedGn8TwWpNNaSe584n/PaST/63jUJ1cHPh1FNUMivaxYEjythm6ZoF43hU
+	 qdIo5Dh1nsAl8b5xhTGeXPTVJp0oabFsyDK3mlW0uwvBxBemHLWfvpwREVTiCRSMyF
+	 IstVAl9ggvLcBY5ZW1IIKJAG4MJoZWtYB5AlhV4k2o79t2GQ8yRDQQ8y57ry/g9e3J
+	 NGM6l0WwLiAJMal052OcCDfkIfKXinbdJ9bTd5029Ht4ZWJL7KCWBpH8C8a7QBMVuQ
+	 25tvTcoWy0q6w==
+Message-ID: <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org>
+Date: Wed, 14 Aug 2024 14:57:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zru4NpfJZCzE6uoa@shikoro>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
+To: Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Yu Zhao <yuzhao@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
+ <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
+ <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 09:47:02PM +0200, Wolfram Sang wrote:
+
+
+On 14/08/2024 00.30, Shakeel Butt wrote:
+> On Tue, Aug 13, 2024 at 02:58:51PM GMT, Yosry Ahmed wrote:
+>> On Tue, Aug 13, 2024 at 2:54 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>>>
+>>> The Meta prod is seeing large amount of stalls in memcg stats flush
+>>> from the memcg reclaim code path. At the moment, this specific callsite
+>>> is doing a synchronous memcg stats flush. The rstat flush is an
+>>> expensive and time consuming operation, so concurrent relaimers will
+>>> busywait on the lock potentially for a long time. Actually this issue is
+>>> not unique to Meta and has been observed by Cloudflare [1] as well. For
+>>> the Cloudflare case, the stalls were due to contention between kswapd
+>>> threads running on their 8 numa node machines which does not make sense
+>>> as rstat flush is global and flush from one kswapd thread should be
+>>> sufficient for all. Simply replace the synchronous flush with the
+>>> ratelimited one.
+>>>
+>>> One may raise a concern on potentially using 2 sec stale (at worst)
+>>> stats for heuristics like desirable inactive:active ratio and preferring
+>>> inactive file pages over anon pages but these specific heuristics do not
+>>> require very precise stats and also are ignored under severe memory
+>>> pressure.
+>>>
+>>> More specifically for this code path, the stats are needed for two
+>>> specific heuristics:
+>>>
+>>> 1. Deactivate LRUs
+>>> 2. Cache trim mode
+>>>
+>>> The deactivate LRUs heuristic is to maintain a desirable inactive:active
+>>> ratio of the LRUs. The specific stats needed are WORKINGSET_ACTIVATE*
+>>> and the hierarchical LRU size. The WORKINGSET_ACTIVATE* is needed to
+>>> check if there is a refault since last snapshot and the LRU size are
+>>> needed for the desirable ratio between inactive and active LRUs. See the
+>>> table below on how the desirable ratio is calculated.
+>>>
+>>> /* total     target    max
+>>>   * memory    ratio     inactive
+>>>   * -------------------------------------
+>>>   *   10MB       1         5MB
+>>>   *  100MB       1        50MB
+>>>   *    1GB       3       250MB
+>>>   *   10GB      10       0.9GB
+>>>   *  100GB      31         3GB
+>>>   *    1TB     101        10GB
+>>>   *   10TB     320        32GB
+>>>   */
+>>>
+>>> The desirable ratio only changes at the boundary of 1 GiB, 10 GiB,
+>>> 100 GiB, 1 TiB and 10 TiB. There is no need for the precise and accurate
+>>> LRU size information to calculate this ratio. In addition, if
+>>> deactivation is skipped for some LRU, the kernel will force deactive on
+>>> the severe memory pressure situation.
+>>>
+>>> For the cache trim mode, inactive file LRU size is read and the kernel
+>>> scales it down based on the reclaim iteration (file >> sc->priority) and
+>>> only checks if it is zero or not. Again precise information is not
+>>> needed.
+>>>
+>>> This patch has been running on Meta fleet for several months and we have
+>>> not observed any issues. Please note that MGLRU is not impacted by this
+>>> issue at all as it avoids rstat flushing completely.
+>>>
+>>> Link: https://lore.kernel.org/all/6ee2518b-81dd-4082-bdf5-322883895ffc@kernel.org [1]
+>>> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>
+>> Just curious, does Jesper's patch help with this problem?
 > 
-> > end it will be ~5-6 lines only. Other than that, LGTM.
+> If you are asking if I have tested Jesper's patch in Meta's production
+> then no, I have not tested it. Also I have not taken a look at the
+> latest from Jesper as I was stuck in some other issues.
 > 
-> What about a proper prefix in the subject?
 
-Indeed, but seems Andi is kind to amend this whilst applying.
+I see this patch as a whac-a-mole approach.  But it should be applied as
+a stopgap, because my patches are still not ready to be merged.
 
--- 
-With Best Regards,
-Andy Shevchenko
+My patch is more generic, but *only* solves the rstat lock contention
+part of the issue.  The remaining issue is that rstat is flushed too
+often, which I address in my other patch[2] "cgroup/rstat: introduce
+ratelimited rstat flushing".  In [2], I explicitly excluded memcg as
+Shakeel's patch demonstrates memcg already have a ratelimit API specific
+to memcg.
 
+  [2] 
+https://lore.kernel.org/all/171328990014.3930751.10674097155895405137.stgit@firesoul/
 
+I suspect the next whac-a-mole will be the rstat flush for the slab code
+that kswapd also activates via shrink_slab, that via
+shrinker->count_objects() invoke count_shadow_nodes().
+
+--Jesper
 
