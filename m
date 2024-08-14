@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-286726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCC9951E5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:18:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69C3951E45
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5ADBB292BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869FF28394C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251C61B3F3D;
-	Wed, 14 Aug 2024 15:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06FD1B3F30;
+	Wed, 14 Aug 2024 15:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FNrYCG/S"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y7JhGhPc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91791B3F11
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A661AD9D4;
+	Wed, 14 Aug 2024 15:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723648429; cv=none; b=lX6PGbBSd44/7aygAsLGBrAcM4QHaUhb0NDEsny5/eZDVOZNoReaxgeu0wM6mvnd5tK72E6LKU9miMYKCkYl3/h4VlysuKiEptZhX9ANu9oXAaPx+uQa8RO2LSW2jVfPTgCCP3hlIBngPUXgX4oGicuA++XSFoPiUMfUHFdPGO8=
+	t=1723648463; cv=none; b=Kgl5+uHVJHoJ7bqMcZ+egf/B4iAC2MQewYfOXdZ669zKFqZGb52Uqjsf7rT8adlUeGcvqm3DZtU37JWH1aSuujiXI6l6e/V+wX59Yzgb65ZO4NqAbrcnYP5nN/FVgiTLxOS5z+lRKejrS8ALmM9s99MnpRzk5Z6eBIYfpvp7dto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723648429; c=relaxed/simple;
-	bh=xchCpsjRgDt+1FpeDwE9wT2UIuSmuIQeVcehD9QaCcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h9Bvzsp31bSQ9txbRoe+nzuCqa0YW5H4DP1X2+HCkp0ASymMIaQeyUt+UYjdcEFOlq9CZYWIDHbVjCofuVyMVRxqivsu5SI1zyq6JSZJDo2t0DfGpmtn+GG3UV+kKTaGOjbo9OKP5m7lMp9bVyNXqlGTbTrIoYdTF0Eyqkk/PJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FNrYCG/S; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6694b50a937so485987b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723648427; x=1724253227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AX+IfIKOESuUiIvW3aOFuEwOA14R96wJZLKJZ4T5b4Q=;
-        b=FNrYCG/SbHCqEIAMrOXjm4fl3iebzvr+l0CjMTZ0y+OoXSoUTR1d1t2BgoLeqGLc9a
-         vS1yrnKXHQQN2970ZFIBkMdoF6QJArBKK8MaJn3gQaOkwFhaCgvLzo0Kv9POVfX6or2e
-         AXl6/jYdNpWT8RhZhvI3CuXuaTUB19NUfj6knQ2H7IGjLu+CUE3u2Xba1dNQ+7hDkZy4
-         +lTy67pb099nNgGgWrMXA3+R2tCzyjW2WZo43KUQdiAPRMOBLJVT+Yp3lK2+yR6E40Bk
-         LDqK+hyObU6nfo8IfPxyVkQNtq14jm4BL/e4CSgvVGEcEsok19OdI5fyU+hXraUWHxXe
-         HhAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723648427; x=1724253227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AX+IfIKOESuUiIvW3aOFuEwOA14R96wJZLKJZ4T5b4Q=;
-        b=iZFxeoNYmw+eScJ7qLLqA8AA7ruvVYdsaLqZKIYqgFZ//mf7dU6vq1V7toGczJKIZI
-         EuG43UmDDrV0lQNO3ks/TueUb/gWALEpV8i2WqTpSwu3/op6fWZxPBEdsMHdcnlvVDlu
-         GRVnaBf45wNWNkTJxWhSiaZsurpGa2CN3libmbXUVzhqrmyqwbG7yT+zsjDxuExyVwvQ
-         pc7EhUkyKxJWfpe4zznkuuO7fdQhqfBMSjK3pRIGav/Qi9TuKOK0U2j+82Mm4m+NBuNg
-         ixSfV+4+UgyFrr3AJLjuCjCiJAosRJb47CC/Lh2R9CQmjrpzw+1B7L5nAzIzP1KiZBCL
-         GN0g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+BsvJZ7/GQzmcilImwM9qGYgVkC0bFHbVQS4j3R8Yi77XYbUK4DLYxJUA4lUC6t7bZF/IbBwJqxvZCzr0/RnccHwJOn3okttfJOsK
-X-Gm-Message-State: AOJu0YyROfapcQr5I6wQazgauiNffMjNkWnAe44dPmJQ+sxoxVXems3+
-	y3yEM+lYs8uRIa12rkLkiBS0xE5lXAjcSMOC7RSdh3zS3Ctam3RklBMUTBkQNPhZjHChlFNThLR
-	sGAOuq6RWnWMXP59559sI9P+rai2kAcKGLlQV6ZY+Cpkdhsw=
-X-Google-Smtp-Source: AGHT+IFooUxqBZZcqOQKLdlMNlZ2peRqQY9osovnnhB7zHJX8yyywSseq/vOHjb+0XSGyozBIt2AJXkETwlIdZd8LCs=
-X-Received: by 2002:a05:690c:2a88:b0:6ad:feb0:d027 with SMTP id
- 00721157ae682-6adfeb0defcmr14160067b3.19.1723648426820; Wed, 14 Aug 2024
- 08:13:46 -0700 (PDT)
+	s=arc-20240116; t=1723648463; c=relaxed/simple;
+	bh=/v/ps4Y8cbzJoIBSwxvN5Nge/u0LIt3Un4CN8jfq6uE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fxSU8qBRrMy54G66Ugi52KiYFzEvE0pbgICkO5iCuM+OBvELz8pevYzY6CNbM6W5SsTNkSOrhWK2z0aAr1pH6/paPoyXc9bwltd4cS7PMxmSHLZskBMl+b9ePZBB3TAL6vNgDgDLrSFhSZH/jipKtDnVy3vIYOruNuzpcvuHO5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y7JhGhPc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EAUM2W027646;
+	Wed, 14 Aug 2024 15:14:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eVpMWtTM1ORgv9oHD5UJy6luhZg1G8PYkwk3gZbgKls=; b=Y7JhGhPcNWmpe9t5
+	VV01sos3y5MYPdXQcGuhv12+smUBH9ZV97IbL04/bE8mBI3sDwVcIQS+TSn+r/EW
+	THIj8J7VspLgaQ46vFUL9OY9Z5MGRj/WsMEfitjFF9KwIlh3DyvSU6SjApMzU2Dg
+	AL6FcjBjOY6aQHxjkmOp4/MkhrTKotr0NIWLFrJokWlO0d2rLsEogW3PfLx69LCx
+	fpvJkeXQQBtYWZM7h7UCx97fSv2ENGtA2AJzejSDD08o3LemNPF6qSM4sznrOT1K
+	jlV8G9S2WMYEdbtWnBznLYyMaJthTYx7B2NXfiaArCV7eiaI9X2nhYSodNkUcM43
+	3iu5sw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x3etbhnh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 15:14:09 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47EFE8Er027136
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 15:14:08 GMT
+Received: from [10.253.15.254] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 Aug
+ 2024 08:14:03 -0700
+Message-ID: <5e84204f-ff47-427c-a077-4e68773ad20e@quicinc.com>
+Date: Wed, 14 Aug 2024 23:13:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812174421.1636724-1-mic@digikod.net> <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
- <20240813.la2Aiyico3lo@digikod.net> <CAHC9VhRrcTo4gXrexb=fqEGbNcynKUUoMWR=EseJ+oa0ZM-8qA@mail.gmail.com>
- <20240813.ideiNgoo1oob@digikod.net> <CAHC9VhR-jbQQpb6OZjtDyhmkq3gb5GLkt87tfUBQM84uG-q1bQ@mail.gmail.com>
- <20240814.OiNg5geethah@digikod.net>
-In-Reply-To: <20240814.OiNg5geethah@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 14 Aug 2024 11:13:35 -0400
-Message-ID: <CAHC9VhSC+Qff9gtQ9ZM7mCUPWFqiO23tb=4Er7eYAQTUFZRs6w@mail.gmail.com>
-Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook inconsistencies
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add common PLL clock
+ controller for IPQ SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>
+References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
+ <20240808-qcom_ipq_cmnpll-v1-1-b0631dcbf785@quicinc.com>
+ <81524fee-c32c-405b-b63b-d048dde6ae33@kernel.org>
+ <a0fe7735-76fd-4a53-9446-5371e341ba17@quicinc.com>
+ <53f25764-41d6-491f-9397-988d3e672189@kernel.org>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <53f25764-41d6-491f-9397-988d3e672189@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8vwXA-O1Lao4WF03ICb33NZmdBaiB5U7
+X-Proofpoint-ORIG-GUID: 8vwXA-O1Lao4WF03ICb33NZmdBaiB5U7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_11,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408140105
 
-On Wed, Aug 14, 2024 at 8:35=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Tue, Aug 13, 2024 at 07:39:45PM -0400, Paul Moore wrote:
-> > On Tue, Aug 13, 2024 at 2:28=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > On Tue, Aug 13, 2024 at 11:04:13AM -0400, Paul Moore wrote:
-> > > > On Tue, Aug 13, 2024 at 6:05=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > > On Mon, Aug 12, 2024 at 06:26:58PM -0400, Paul Moore wrote:
-> > > > > > On Mon, Aug 12, 2024 at 1:44=E2=80=AFPM Micka=C3=ABl Sala=C3=BC=
-n <mic@digikod.net> wrote:
 
-...
 
-> > > > > it guarantees
-> > > > > that the VFS semantic is always visible to each LSMs thanks to th=
-e use
-> > > > > of the same f_owner.cred
-> > > >
-> > > > The existing hooks are designed to make sure that the F_SETOWN
-> > > > operation is visible to the LSM.
-> > >
-> > > This should not change the F_SETOWN case.  Am I missing something?
-> >
-> > I don't know, you were talking about making sure the VFS semantics are
-> > visible to the LSM and I was simply suggesting that the existing hooks
-> > do that too.  To be honest, whatever point you are trying to make here
-> > isn't very clear to me.
->
-> The existing hooks does not reflect the VFS semantic because
-> of the `if (force || !filp->f_owner.pid)` checks in f_modown().
-> When f_modown() is explitly called from user space (F_SETOWN), force is
-> true, but that is not the case for all call sites (e.g. TUN, TTY,
-> dnotify).
+On 8/10/2024 7:30 PM, Krzysztof Kozlowski wrote:
+> On 09/08/2024 15:01, Jie Luo wrote:
+>>>> +  clock-names:
+>>>> +    items:
+>>>> +      - const: ref
+>>>> +      - const: ahb
+>>>> +      - const: sys
+>>>> +
+>>>> +  clock-output-names:
+>>>> +    items:
+>>>> +      - const: ppe-353mhz
+>>>> +      - const: eth0-50mhz
+>>>> +      - const: eth1-50mhz
+>>>> +      - const: eth2-50mhz
+>>>> +      - const: eth-25mhz
+>>>
+>>> Drop entire property. If the names are fixed, what's the point of having
+>>> it in DTS? There is no.
+>>
+>> We had added the output names here for the reasons below. Can you please
+>> let us know your suggestion whether keeping these here is fine?
+>>
+>> 1.) These output clocks are used as input reference clocks to other
+>> consumer blocks. For example, an on-board Ethernet PHY device may be
+>> wired to receive a specific clock from the above output clocks as
+>> reference clock input, and hence the PHY's DTS node would need to
+>> reference a particular index in this output clock array.
+>>
+>> Without these output clocks being made available in this DTS, the PHY
+>> driver in above case would not know the clock specifier to access the
+>> handle for the desired input clock.
+> 
+> That's not true. clock-output-names do not have anything to do with
+> clock specifier.
+> 
+>>
+>> 2.) One of the suggestions from the internal code review with Linaro was
+>> to name the output clocks specifically based on rate and destination
+>> (Ex: 'ppe-353mhz' for fixed rate 353 MHZ output clock connected to
+>> Packet Process Engine block), so that the dt-bindings describe the
+>> input/output clocks clearly.
+> 
+> Again, that's unrelated. None of above points address my concern. It's
+> like you talk about some entirely different topic. Again:
+> clock-output-names have nothing to do with what you want to achieve here.
 
-Thanks for the clarification.  I believe moving the hook as discussed
-should resolve this too.
+OK, understand. I will drop this property "clock-output-names" from the
+bindings and DTS. These names will instead be defined in the driver. For
+the consumer clock device DTS nodes that need to reference these output
+clocks, I will export the clock specifiers for these output clocks from
+a header file. Hope this approach is fine.
 
---=20
-paul-moore.com
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
