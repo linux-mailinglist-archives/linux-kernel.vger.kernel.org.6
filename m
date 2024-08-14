@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-286717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418BD951E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D23CC951E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746901C220C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:09:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10D2F1C225AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71951B4C30;
-	Wed, 14 Aug 2024 15:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33AD1B4C51;
+	Wed, 14 Aug 2024 15:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZ58epVN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="flUVwimz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3B51B3F32;
-	Wed, 14 Aug 2024 15:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174831B4C38;
+	Wed, 14 Aug 2024 15:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723648145; cv=none; b=QSJazv3Uv696gtVaOKqPZ1u/1qoGq/gXnevnM6ioacyRjsG14Qyb2b/dHGNIlJ4G+V5RrKpKk27hufgY1HqU9GlVe6ujzOQyqWJ4yBwm2dcIR5Ly6p6RGrqkdktHG/MKv0qxBCexPRFlpcXXxitkRRb66uQ3zd7swMtoqR06+8s=
+	t=1723648158; cv=none; b=I5SqECkPXCqnlw0y+lt995Vtf/ZiQQuSPb+JaRGnP7CvcFvzHQaqnYjTgLW2RFFe+a9sd9ehuI2BgE3nD6k4Hc0mNcZNgZqej4ovhUq5tPU1JHpMjrrxjHHfQK4BO20cowDXhrNN56JqRRwro21TLFITVl/bgTrAXuot03YCdSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723648145; c=relaxed/simple;
-	bh=e6sAMiUX3GtLQq9riJitTJsvMdsIIIcPjPpZ2JAVQ2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=usv2V1EWUYgRB/8HRfJBsXlZPL9SocKH6W9DWIMBuz0SvuCZrlu3xehXBMSLFNJvCjsfnXx+I3QBoeFf1yvHp68DmhlK9YEjWGxfECR+3r/YmF0nx9b66S3PtLB1Bb7n2N4nxpNEqjVoZur5hQwLfGcr7E9/V7ph1Q8x+t2FlmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZ58epVN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E9DC4AF09;
-	Wed, 14 Aug 2024 15:09:04 +0000 (UTC)
+	s=arc-20240116; t=1723648158; c=relaxed/simple;
+	bh=XhIk/ivJe9y/rFLSzxxGWtrccGrpo6Zo1KfaOrHUh0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uTpCN5n9jEuoHg9T7z/b/m0okMCNWzeUV0f1qSIUdmuwxZdMeB5eANT22qClI8DERVcdVRIMP0dRTXC6H7U19zLyY+Km2ZIOcStNBq0Kqa760k9MYXpYB3qN6WTR2aQ+2z+VZd374Oss/Vd6MlQmZRjsBynMMxvYlSkkPH88uv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=flUVwimz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEF7C116B1;
+	Wed, 14 Aug 2024 15:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723648144;
-	bh=e6sAMiUX3GtLQq9riJitTJsvMdsIIIcPjPpZ2JAVQ2c=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=lZ58epVNPQS7W9qTq31xFecYgDHivNV3NMB7tmltxyfhTJr7D50TPuioi8o5kWNbz
-	 yZhan4PrpyylwDmKbt519CA4y00OIv2a8G3CVgw32gq6P+qXvidXoGRxx6CuNh73NJ
-	 DpyibF2c8BJGxenQbQBEhzBEG1EU2HyaTE98PqYxTX8qTrRMS6xBLONz9nG/x5mkNn
-	 gc6p19d5lHJNU1hEp31FyyiYEsuBXneRv1pQVk+KKqLzTGMGae0AO9t5NiJTFxCuQm
-	 8pVBDi8VBbXpUeMvT/ghUwGX9lsrImUGLxCIWX6fMH+tufqaJ9eqcyszt7Z3tq16Et
-	 dgPvc0a2UaiYA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 5E1B1CE0ACD; Wed, 14 Aug 2024 08:09:04 -0700 (PDT)
-Date: Wed, 14 Aug 2024 08:09:04 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH rcu 06/11] rcuscale: Provide clear error when async
- specified without primitives
-Message-ID: <dfcc1432-6230-42ae-b3d4-0081918bc979@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
- <20240802004308.4134731-6-paulmck@kernel.org>
- <20240814124915.GA1412840@neeraj.linux>
+	s=k20201202; t=1723648157;
+	bh=XhIk/ivJe9y/rFLSzxxGWtrccGrpo6Zo1KfaOrHUh0A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=flUVwimzH7kKJ075Wx5f8LVKW0LbSvueMiSoq5G5rJqfot7EoqUHkR1LLhfURHmMk
+	 DyXOdkM1A02mYqsd4Cp6ASe3m7jug9VLitb45786NlXmKdtU70AIVjYr8v9AEyl+m9
+	 OHgfhQLoM6YtXLYcr3vLLfidluRpUNHW1TOu4Uf45W/OQyTaqu7S4E/iZ0EG+wWe4d
+	 bFKaKLyv1tOyfvKiFRGb+ssQusYjc9iVKWfwue5tDOtllx0PrFuZ9U6J3mIaHK/cyE
+	 fmgAhdNFmXVPt6dcepm2Q2HjyB+NPX8aZsHejMNwJEe7PaxszKgtLhdwUGtqI3d/eh
+	 L8aNgZbB1NdMA==
+Date: Wed, 14 Aug 2024 08:09:15 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>, "moderated list:INTEL
+ ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, Jeroen de Borst
+ <jeroendb@google.com>, Jiri Pirko <jiri@resnulli.us>, Leon Romanovsky
+ <leon@kernel.org>, open list <linux-kernel@vger.kernel.org>, "open
+ list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>, Lorenzo
+ Bianconi <lorenzo@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Praveen
+ Kaligineedi <pkaligineedi@google.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Shailend Chand
+ <shailend@google.com>, Tariq Toukan <tariqt@nvidia.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Willem de Bruijn <willemb@google.com>, Yishai
+ Hadas <yishaih@nvidia.com>, Ziwei Xiao <ziweixiao@google.com>
+Subject: Re: [RFC net-next 0/6] Cleanup IRQ affinity checks in several
+ drivers
+Message-ID: <20240814080915.005cb9ac@kernel.org>
+In-Reply-To: <ZryfGDU9wHE0IrvZ@LQ3V64L9R2.home>
+References: <20240812145633.52911-1-jdamato@fastly.com>
+	<20240813171710.599d3f01@kernel.org>
+	<ZrxZaHGDTO3ohHFH@LQ3V64L9R2.home>
+	<ZryfGDU9wHE0IrvZ@LQ3V64L9R2.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814124915.GA1412840@neeraj.linux>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024 at 06:19:15PM +0530, Neeraj Upadhyay wrote:
-> On Thu, Aug 01, 2024 at 05:43:03PM -0700, Paul E. McKenney wrote:
-> > Currently, if the rcuscale module's async module parameter is specified
-> > for RCU implementations that do not have sync primitives such as
-> > call_rcu(), there will be a series of splats due to calls to a NULL
-> > pointer.  This commit therefore warns of this situation, but switches
-> > to non-async testing.
-> > 
+On Wed, 14 Aug 2024 13:12:08 +0100 Joe Damato wrote:
+> Actually... how about a slightly different approach, which caches
+> the affinity mask in the core?
+
+I was gonna say :)
+
+>   0. Extend napi struct to have a struct cpumask * field
 > 
-> I have changed this to below here [1]. Please let me know if I got it
-> wrong.
+>   1. extend netif_napi_set_irq to:
+>     a. store the IRQ number in the napi struct (as you suggested)
+>     b. call irq_get_effective_affinity_mask to store the mask in the
+>        napi struct
+>     c. set up generic affinity_notify.notify and
+>        affinity_notify.release callbacks to update the in core mask
+>        when it changes
+
+This part I'm not an export on.
+
+>   2. add napi_affinity_no_change which now takes a napi_struct
 > 
-> Currently, if the rcuscale module's async module parameter is specified
-> for RCU implementations that do not have async primitives such as
-> RCU Tasks Rude, there will be a series of splats due to calls to a NULL
-> pointer.  This commit therefore warns of this situation, but switches to
-> non-async testing.
-
-How about something like this, but perhaps wordsmithed a bit?
-
-	"Currently, if the rcuscale module's async module parameter
-	is specified for RCU implementations that do not have
-	async primitives such as RCU Tasks Rude (which now lacks
-	a call_rcu_tasks_rude() function), there will be a series of
-	splats due to calls to a NULL pointer.	This commit therefore
-	warns of this situation, but switches to non-async testing."
-
-							Thanx, Paul
-
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/commit/?h=next.14.08.24b&id=22d36840adbcab8fd826a7ca827fd60b708f03de
+>   3. cleanup all 5 drivers:
+>     a. add calls to netif_napi_set_irq for all 5 (I think no RTNL
+>        is needed, so I think this would be straight forward?)
+>     b. remove all affinity_mask caching code in 4 of 5 drivers
+>     c. update all 5 drivers to call napi_affinity_no_change in poll
 > 
-> - Neeraj
+> Then ... anyone who adds support for netif_napi_set_irq to their
+> driver in the future gets automatic support in-core for
+> caching/updating of the mask? And in the future netdev-genl could
+> dump the mask since its in-core?
 > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > ---
-> >  kernel/rcu/rcuscale.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-> > index 933014b381ec0..315ced63ec105 100644
-> > --- a/kernel/rcu/rcuscale.c
-> > +++ b/kernel/rcu/rcuscale.c
-> > @@ -525,7 +525,7 @@ rcu_scale_writer(void *arg)
-> >  			schedule_timeout_idle(torture_random(&tr) % writer_holdoff_jiffies + 1);
-> >  		wdp = &wdpp[i];
-> >  		*wdp = ktime_get_mono_fast_ns();
-> > -		if (gp_async) {
-> > +		if (gp_async && !WARN_ON_ONCE(!cur_ops->async)) {
-> >  retry:
-> >  			if (!rhp)
-> >  				rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
-> > @@ -597,7 +597,7 @@ rcu_scale_writer(void *arg)
-> >  			i++;
-> >  		rcu_scale_wait_shutdown();
-> >  	} while (!torture_must_stop());
-> > -	if (gp_async) {
-> > +	if (gp_async && cur_ops->async) {
-> >  		cur_ops->gp_barrier();
-> >  	}
-> >  	writer_n_durations[me] = i_max + 1;
-> > -- 
-> > 2.40.1
-> > 
+> I'll mess around with that locally to see how it looks, but let me
+> know if that sounds like a better overall approach.
+
+Could we even handle this directly as part of __napi_poll(),
+once the driver gives core all of the relevant pieces of information ?
 
