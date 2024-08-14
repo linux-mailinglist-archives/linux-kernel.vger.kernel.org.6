@@ -1,151 +1,152 @@
-Return-Path: <linux-kernel+bounces-286600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F360951CFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:23:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF89A951D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C6DB22BC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52B15B26D3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70941B32CB;
-	Wed, 14 Aug 2024 14:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AA01B32D2;
+	Wed, 14 Aug 2024 14:23:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GTPsVi4J"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RstFQ6GC"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1570A8488;
-	Wed, 14 Aug 2024 14:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8331B32BA;
+	Wed, 14 Aug 2024 14:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645382; cv=none; b=olFFIxW9pYXeARGOExkL/gmAgugdGhtONJDf+iA4S7imQFChq6bvE5t+IPbO00Sl0WphwlEg9W56h+s+Q/83M94bLGvr2MtN9ydPoaMq/or1UYXbc+dTLTZVn5YpjUwvFw+HsAkhl+A5neW0HAbkqQGGknbkCkZveL7CapkcYTE=
+	t=1723645418; cv=none; b=InrDXrLOJRwx7iBfUSYfL2O6io8rwnWJRdOJzxrta5K9ocwNsPxPysIr7i0R/C8PMkepnK9AYhLILagBdeAMJPTDJDyzymyff+dDkEO36OoaYPWtnYyhBNwKdQ73HIx3JVqS8FKZyKZPOqXESAiiNejm2FvOID1v/6kiQXwlPeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645382; c=relaxed/simple;
-	bh=7JddpSzpIdwJyrFN0CXYXRnC98zxS8Ov5FQ7yTjREuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLuY4V/ybcWy1FLgqjR+VclGxaW4PGZ8CKqjFPZB0glQaZOHGVlNEPAKgNrGjD+EU6lgeXA5CLiiKzkyDs+7aXHmL+fHFniANCLTnG2UPkbw2wuCo0rSpvOvlvuwcvxNE5vAqCVnyyKbYvTDjZD4/hIG0yjilXMGGZ7jeyRODb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GTPsVi4J; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723645381; x=1755181381;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7JddpSzpIdwJyrFN0CXYXRnC98zxS8Ov5FQ7yTjREuU=;
-  b=GTPsVi4J5XCD7uLeLYVkvB3jfn0L+zfYKQ6KbXMLEryTUib1tnVt4Rth
-   TvK7pDJuW2jV8k4iSDcnas9IScxiX3A4meVG6QYkdn7eNOCl3KiEq1r34
-   4enHllvI+fipS0Pi+UDMqZ2U2VHKRrSakMNGkn/dVGWAJ+XFqzSAYhBli
-   yHVZIaOBAjfqeq5vhqkY6eVGKV9NaaeLedtlTr8jmzr2gRitJBw4kVOhC
-   BaZvD+8Ns03vOCPGXtxctC3sofuJKrhE4+8yQmAhpVgJCXT+vnw7pHkve
-   fuCKwIuovDodqKetKu+YnQyFId1dwABgDfZgus1ecV3tKw+27dLQHyTkf
-   A==;
-X-CSE-ConnectionGUID: vhBzQwJgTG6l0DysjEVdyQ==
-X-CSE-MsgGUID: HZgbHtIIRgqkr6oMAcbvXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22023309"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="22023309"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 07:23:00 -0700
-X-CSE-ConnectionGUID: b7FOZrw7S5uWXaj9r1GWNg==
-X-CSE-MsgGUID: w5deM1wESuanoRi4KmalMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="59002049"
-Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
-  by orviesa009.jf.intel.com with ESMTP; 14 Aug 2024 07:22:58 -0700
-Date: Wed, 14 Aug 2024 22:22:56 +0800
-From: Yuan Yao <yuan.yao@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Gonda <pgonda@google.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Vishal Annapurve <vannapurve@google.com>,
-	Ackerly Tng <ackerleytng@google.com>
-Subject: Re: [PATCH 04/22] KVM: x86/mmu: Skip emulation on page fault iff 1+
- SPs were unprotected
-Message-ID: <20240814142256.7neuthobi7k2ilr6@yy-desk-7060>
-References: <20240809190319.1710470-1-seanjc@google.com>
- <20240809190319.1710470-5-seanjc@google.com>
+	s=arc-20240116; t=1723645418; c=relaxed/simple;
+	bh=j74WdyQXVWcDrfg5XPtYj9eG6pkEqtR24h8qsuz6yMg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=mdX+kxxF+W2A3veT4KuTb2ZxTKfCJoOZjbhvjGk4OVleCV8ho/C/uaft+ciUiU8AVUPdPWMOY/Lt0r6joQC4VnOdhiP5wsRsRGOCc4FiHAp20mmq6Vk1AdlPR/3qIe26SN9zrpcDeZuIavTnUjskHsNBJU3Q163U+A8KkHy1foQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RstFQ6GC; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70eae5896bcso5951175b3a.2;
+        Wed, 14 Aug 2024 07:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723645417; x=1724250217; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZEwBbTOSCcz+gyRlt+RtWB3gJ5IyjKyciqGik3kfB9g=;
+        b=RstFQ6GCO31rsvLrfwQAqa8V5c8NDj5d4vXVDB2r3JFXa3oxnjxl1KP1lFLT4k7d+/
+         E5JPeNY0ytyE2TsYiBx5ljBVoGZlh81hBXD/IJhwMwu6N2x3vR+j4m1sCmHV1vNU3Yra
+         aCwlVh2qMU6CTv6QyvLOJ9l7AIgOXzB5gchrnv5DFgVCICccIPiV75WMu9kS5t8WlTLS
+         VcN2S4TaRcJ0PZGZTo685BGhv4foakIfDLouqSHEQMJ5QOeC6Ko+eI+TUbtTGjWgUrYd
+         s96Getx4gNYJmcyKVzLn21Z4nZdlTksFLPECXqg38wRielRhlfFjpKjJ5pkNEQ3yBviy
+         8b2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723645417; x=1724250217;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZEwBbTOSCcz+gyRlt+RtWB3gJ5IyjKyciqGik3kfB9g=;
+        b=l7bSw43KelI9VUtpEWW4tDz0J/D7srQPCOq6GoIWtnvXqWAm6YBAXl0vw07CNVlOo4
+         80DtQskoTTcbAhB0toAjesO+8XTo3nVm65TdEaT44sCRfjsprZKzIpBcph1/npq7XMfH
+         aaDysjWsfXmscIKGyiVqI3xbscp7TkjH2rEBlLz/4Dwz4GQdJkvVEJx7A/mwlr8WD2XF
+         01PGTqGiGWzdxQH3Og3soxOhu1PARh+CK5R8GpCWO+y0mkIcLSFh8xxTZlQa1B6lmiTH
+         vEJcFASMIkjCk7cU7d++aSrPGozBTMLkpNEpJLMGyoV1LbYvTcvQmd8+NckdzssL0DXb
+         Frmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVijxoupeC9Wp393PKJiefAXDZcU3L9CSEwO2TgB3VVsRvcNLchWu11s/wAQFAF6ZLhhYFUIF9eXn7m0wyFo8PpTifLcQPdkmH+xOb1hyEc2YLBtSjGEG/ia3DrdzK46hEnRFqlyLOSpRhx4g==
+X-Gm-Message-State: AOJu0YwFsENN6QR6MJ/sO8S48bKb7XNl620IXbCw7ehvU32kSRvEILaN
+	nlWJMyNPdvHRq8dxqCFgclE9h7fFYbW1R8OOmEsgfZ1hSjg1dV/r
+X-Google-Smtp-Source: AGHT+IHKOerRTaU/O8AUqtGWUqkzMwgVb12bcqegnY6XFKcrBPfiFZ6VqdyO6G1gA0kJF5+ncgbjRw==
+X-Received: by 2002:a05:6a00:2e89:b0:70d:3420:9314 with SMTP id d2e1a72fcca58-7126710dea9mr3518367b3a.12.1723645416552;
+        Wed, 14 Aug 2024 07:23:36 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.176.14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58aa1easm7398268b3a.53.2024.08.14.07.23.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2024 07:23:36 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809190319.1710470-5-seanjc@google.com>
-User-Agent: NeoMutt/20171215
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v2 1/1] livepatch: Add using attribute to klp_func for
+ using function show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <ZruEPvstxgBQwN1K@pathway.suse.cz>
+Date: Wed, 14 Aug 2024 22:23:21 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0BFE862C-BD2B-43D1-B926-11A48BBC8C1B@gmail.com>
+References: <20240805064656.40017-1-zhangyongde.zyd@alibaba-inc.com>
+ <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
+ <ZruEPvstxgBQwN1K@pathway.suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On Fri, Aug 09, 2024 at 12:03:01PM -0700, Sean Christopherson wrote:
-> When doing "fast unprotection" of nested TDP page tables, skip emulation
-> if and only if at least one gfn was unprotected, i.e. continue with
-> emulation if simply resuming is likely to hit the same fault and risk
-> putting the vCPU into an infinite loop.
->
-> Note, it's entirely possible to get a false negative, e.g. if a different
-> vCPU faults on the same gfn and unprotects the gfn first, but that's a
-> relatively rare edge case, and emulating is still functionally ok, i.e.
-> the risk of putting the vCPU isn't an infinite loop isn't justified.
->
-> Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index e3aa04c498ea..95058ac4b78c 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -5967,17 +5967,29 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->  	bool direct = vcpu->arch.mmu->root_role.direct;
->
->  	/*
-> -	 * Before emulating the instruction, check if the error code
-> -	 * was due to a RO violation while translating the guest page.
-> -	 * This can occur when using nested virtualization with nested
-> -	 * paging in both guests. If true, we simply unprotect the page
-> -	 * and resume the guest.
-> +	 * Before emulating the instruction, check to see if the access may be
-> +	 * due to L1 accessing nested NPT/EPT entries used for L2, i.e. if the
-> +	 * gfn being written is for gPTEs that KVM is shadowing and has write-
-> +	 * protected.  Because AMD CPUs walk nested page table using a write
-> +	 * operation, walking NPT entries in L1 can trigger write faults even
-> +	 * when L1 isn't modifying PTEs, and thus result in KVM emulating an
-> +	 * excessive number of L1 instructions without triggering KVM's write-
-> +	 * flooding detection, i.e. without unprotecting the gfn.
-> +	 *
-> +	 * If the error code was due to a RO violation while translating the
-> +	 * guest page, the current MMU is direct (L1 is active), and KVM has
-> +	 * shadow pages, then the above scenario is likely being hit.  Try to
-> +	 * unprotect the gfn, i.e. zap any shadow pages, so that L1 can walk
-> +	 * its NPT entries without triggering emulation.  If one or more shadow
-> +	 * pages was zapped, skip emulation and resume L1 to let it natively
-> +	 * execute the instruction.  If no shadow pages were zapped, then the
-> +	 * write-fault is due to something else entirely, i.e. KVM needs to
-> +	 * emulate, as resuming the guest will put it into an infinite loop.
->  	 */
 
-Reviewed-by: Yuan Yao <yuan.yao@intel.com>
 
->  	if (direct &&
-> -	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE) {
-> -		kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa));
-> +	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE &&
-> +	    kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa)))
->  		return RET_PF_FIXED;
-> -	}
->
->  	/*
->  	 * The gfn is write-protected, but if emulation fails we can still
-> --
-> 2.46.0.76.ge559c4bf1a-goog
->
->
+> On Aug 14, 2024, at 00:05, Petr Mladek <pmladek@suse.com> wrote:
+>=20
+> Alternative solution would be to store the pointer of struct klp_ops
+> *ops into struct klp_func. Then using_show() could just check if
+> the related struct klp_func in on top of the stack.
+>=20
+> It would allow to remove the global list klp_ops and all the related
+> code. klp_find_ops() would instead do:
+>=20
+>   for_each_patch
+>     for_each_object
+>       for_each_func
+>=20
+> The search would need more code. But it would be simple and
+> straightforward. We do this many times all over the code.
+>=20
+> IMHO, it would actually remove some complexity and be a win-win =
+solution.
+
+Hi Peter!
+
+With your suggestions, it seems that you suggest move the klp_ops pinter =
+into struct klp_func.
+
+I may do this operation:
+
+struct klp_func {
+
+/* internal */
+void *old_func;
+struct kobject kobj;
+struct list_head node;
+struct list_head stack_node;
++ struct klp_ops *ops;
+unsigned long old_size, new_size;
+bool nop;
+bool patched;
+bool transition;
+};
+
+With this operation, klp_ops global list will no longer needed. And if =
+we want the ftrace_ops of a function, we just need to get the ops member =
+of klp_func eg, func->ops.=20
+
+And klp_find_ops() will be replaced by `ops =3D func->ops`, which is =
+more easy.
+
+Is it right?
+
+Best Regards.
+Wardenjohn.
+
+
+
 
