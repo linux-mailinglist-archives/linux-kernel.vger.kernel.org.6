@@ -1,203 +1,122 @@
-Return-Path: <linux-kernel+bounces-286973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0606952105
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:25:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016D6952106
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10561C2123D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E271F2412F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62151BBBF4;
-	Wed, 14 Aug 2024 17:25:07 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246121BBBEA;
+	Wed, 14 Aug 2024 17:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VsiYCBqf"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A5B111A1;
-	Wed, 14 Aug 2024 17:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0061B9B2B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656307; cv=none; b=FbfYM1Xpqn67XAPGcVJZ1uoE2WXy1TgBf1RHNK6KSVfOvEnqi2AyBx69i0kXt5GcISXrvOl54cg0GvLkT5L3fMSvm6YNCJiMb5whMAHcf0HHcKp06WFJfe9k/mT5tNAPxbCv3jL/YB7hNNkPKsHjOu2JdY79Cay1hGZ2+3MBZF0=
+	t=1723656326; cv=none; b=m6hxDayGkYUSjPegqpY3a+FFP47lLAZLwnyDiVyJz+zEefTcodlGVMtylhTjjmwTnyR79TMRXR975RVqREoaLruvWZJtBjJgHNX4ouh41TMvWGtCDdM5euX+1XnjcZLSYJkecZ1xcW+vUFMXIKBH7V0hJx7gldKTA3PBPpfb7do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656307; c=relaxed/simple;
-	bh=Z3uLl1tvie8RHOYfT6GE5r9VjtWSZ+RqULeYciisB4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZGmIOgAlhrcQsf9qFP+DW3UnGps6ERqXIkb1jCjgD68NWcEeSNFRdhLLtVIyGc0jbpam0rcsljnaTP09CqUBYiVvPAzdAp0KAAKwO1bYUfsxZx5jRFM3tniKZsZeepMNdJUVyr6wv9UqZ6DmYuHD95/Y2UgMblCjmt0ewGb9X8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WkZrb1fnlz9sRy;
-	Wed, 14 Aug 2024 19:25:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id jxUP_fGYFpiT; Wed, 14 Aug 2024 19:25:03 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WkZrb0QPfz9sRs;
-	Wed, 14 Aug 2024 19:25:03 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F20568B775;
-	Wed, 14 Aug 2024 19:25:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id TDpg8Vpdl9oq; Wed, 14 Aug 2024 19:25:02 +0200 (CEST)
-Received: from [192.168.232.91] (unknown [192.168.232.91])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4CC9B8B764;
-	Wed, 14 Aug 2024 19:25:02 +0200 (CEST)
-Message-ID: <a5127803-238a-4bcb-b518-718c85e63a23@csgroup.eu>
-Date: Wed, 14 Aug 2024 19:25:02 +0200
+	s=arc-20240116; t=1723656326; c=relaxed/simple;
+	bh=pAJ5YUxTT+Iwim1Yg5afwz+MZOShUsNFhllc3NfzqwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R8rGfkkgb5sqTTJw3/a+bouUxN7p29R0tyoI3TWqleIrugYlvjpZQ35GJZOoBUi128MJOKUZdyS9Wvtp34TDJ1GMyqhXxxbhh2/dPLl4tQZi7ClRcUxUOk+AR/suMPTQjSCN6KclAlPpx8mOsBIFrQZ+NwD6wKPl3KdNV79I29o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VsiYCBqf; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d067d5bbso3006385a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723656324; x=1724261124; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=48MqnTmoLNla70Qt0w+hF2CCbTExY23nQT0Cc6bIV9A=;
+        b=VsiYCBqf86kINDVde2cWLgqIDII/VkHoavstlVx5k/AKkrwZ8MUrEoDoDW/UhLmgfs
+         BUrVwRVIMGgmQ7LabstjheE76O9Qxcs63+wnVbn6CsmcOYcxOobqe7WutUCLtVe3uD9k
+         p5eiSA1qtPOsEa6/jh3sEXU9lLFarwl6q+AWtes6MYd1xVTGjlBmN7PDPpQ+KyOtW0V4
+         nL9zu8SHubhsQr1uiEZzaYX+bK/Pjoibfo5eZLWhJ33zDGbfCWvYGjiGXku3xrcHGa3E
+         bPOKi8ua528ThdnnR83KUhGJzF8h25xRW7u50j3UFyQmpXRaBULjBQBuDsTssSg4N+k8
+         vqhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723656324; x=1724261124;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=48MqnTmoLNla70Qt0w+hF2CCbTExY23nQT0Cc6bIV9A=;
+        b=cTk9VnSMzQOQs8C9xndA0ynyBIizcy3Rk84EaFrSzbz55fISje1zPvfoR2BTe035I4
+         2JUiVB56bA4r/kObc/TDB21j38FTb7dInaeptGnaUwdw8AJ//aoA08A1RbQzM+Iti7wk
+         lzA1h+HvQqWIWpmQycR3P3HeT3xDQxTg4BuzXxpGStoMkKCBKvh+IZK7ih/hfdPpmrYK
+         HU9r7Cs/xot6xV07NgdJoDdfAqrEIau23f32Fikq+su+WxKG5vXuoOW36LnIQ6IVZ4EY
+         f7HZoCGre3ODuabMavV5+692Ng4VFKL9XhHVWVYDjmNKGkba3/MzU9coedi4PwuhE98s
+         1FGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvY1vTemv9KQIma/43LHh4VYTJfLRxjeMOc0kmIev8/JgiLnAPFpNDK53Q/NaQ1KGytwogTg91n+FRAoO52O6TBOKtijxFmRe7m21n
+X-Gm-Message-State: AOJu0YzDQDw/I5iOtsHaI5R9tn5Il93jyhyqbbK91qXBTnOTstgRpHup
+	7ILkzPIjpsC+0lAnBoK3nT04GFCsTttxAIJRY2tKTQCwhv0n87Osa054ucVX6rlQKgKnOcDPtTC
+	wSwSz6vNDvAHhdVINd5xuNUtzje6DEmFKaVqZXQ==
+X-Google-Smtp-Source: AGHT+IEEb+UT904t7qw6Sw+IZKhO9dpP+ZUuW4ox2PynJUXy9DtcPymBmhEVP2TIRcLGcfiZcaU6kOauIRMC8Hz36Ko=
+X-Received: by 2002:a05:620a:17a5:b0:79f:aa2:5023 with SMTP id
+ af79cd13be357-7a4ee3e86b0mr445253685a.46.1723656323596; Wed, 14 Aug 2024
+ 10:25:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-To: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- James Houghton <jthoughton@google.com>, stable@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Muchun Song <muchun.song@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
-References: <20240731122103.382509-1-david@redhat.com> <ZqpQILQ7A_7qTvtq@x1n>
- <2b0131cf-d066-44ba-96d9-a611448cbaf9@redhat.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <2b0131cf-d066-44ba-96d9-a611448cbaf9@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240727102732.960974693@infradead.org> <CAKfTPtALe942tjoyq1RqSYyM40PG+tfEY8skRDxRM1daWLSKUg@mail.gmail.com>
+ <1572d0f2646312767a3ef8b72f740c9033163bf3.camel@gmx.de> <CAKfTPtAjXejbsGS+Wd0maiiUyCgSb2xPVZGUXUPCSw_kNLJRDA@mail.gmail.com>
+ <9cc41a877aa2d263b47de698d3ebe724961f9e55.camel@gmx.de>
+In-Reply-To: <9cc41a877aa2d263b47de698d3ebe724961f9e55.camel@gmx.de>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 14 Aug 2024 19:25:11 +0200
+Message-ID: <CAKfTPtA671h00MdA+CYW5tckxfk+9SVoH6RowR1Ut3_LJY1rjQ@mail.gmail.com>
+Subject: Re: [PATCH 00/24] Complete EEVDF
+To: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org, 
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
+	tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 14 Aug 2024 at 19:18, Mike Galbraith <efault@gmx.de> wrote:
+>
+> On Wed, 2024-08-14 at 18:59 +0200, Vincent Guittot wrote:
+> > On Wed, 14 Aug 2024 at 18:46, Mike Galbraith <efault@gmx.de> wrote:
+> > >
+> > > On Wed, 2024-08-14 at 16:34 +0200, Vincent Guittot wrote:
+> > > >
+> > > > While trying to test what would be the impact of delayed dequeue on
+> > > > load_avg, I noticed something strange with the running slice. I have a
+> > > > simple test with 2 always running threads on 1 CPU and the each thread
+> > > > runs around 100ms continuously before switching to the other one
+> > > > whereas I was expecting 3ms (the sysctl_sched_base_slice on my system)
+> > > > between 2 context swicthes
+> > > >
+> > > > I'm using your sched/core branch. Is it the correct one ?
+> > >
+> > > Hm, building that branch, I see the expected tick granularity (4ms).
+> >
+> > On my side tip/sched/core switches every 4ms but Peter's sched/core,
+> > which is delayed queued on top of tip/sched/core if I don't get it
+> > wrong, switches every 100ms.
+>
+> FWIW, I checked my local master-rt tree as well, which has Peter's
+> latest eevdf series wedged in (plus 4cc290c20a98 now).. it also worked
+> as expected.
 
+After looking at deadline and slice, the issue is on my tool was
+trying to change the slice (an old trial for previous version) which
+got clamp to 100ms.
+we can forgot this, sorry for the noise
 
-Le 31/07/2024 à 18:33, David Hildenbrand a écrit :
-> On 31.07.24 16:54, Peter Xu wrote:
->> On Wed, Jul 31, 2024 at 02:21:03PM +0200, David Hildenbrand wrote:
->>> We recently made GUP's common page table walking code to also walk 
->>> hugetlb
->>> VMAs without most hugetlb special-casing, preparing for the future of
->>> having less hugetlb-specific page table walking code in the codebase.
->>> Turns out that we missed one page table locking detail: page table 
->>> locking
->>> for hugetlb folios that are not mapped using a single PMD/PUD.
->>>
->>> Assume we have hugetlb folio that spans multiple PTEs (e.g., 64 KiB
->>> hugetlb folios on arm64 with 4 KiB base page size). GUP, as it walks the
->>> page tables, will perform a pte_offset_map_lock() to grab the PTE table
->>> lock.
->>>
->>> However, hugetlb that concurrently modifies these page tables would
->>> actually grab the mm->page_table_lock: with USE_SPLIT_PTE_PTLOCKS, the
->>> locks would differ. Something similar can happen right now with hugetlb
->>> folios that span multiple PMDs when USE_SPLIT_PMD_PTLOCKS.
->>>
->>> This issue can be reproduced [1], for example triggering:
->>>
->>> [ 3105.936100] ------------[ cut here ]------------
->>> [ 3105.939323] WARNING: CPU: 31 PID: 2732 at mm/gup.c:142 
->>> try_grab_folio+0x11c/0x188
->>> [ 3105.944634] Modules linked in: [...]
->>> [ 3105.974841] CPU: 31 PID: 2732 Comm: reproducer Not tainted 
->>> 6.10.0-64.eln141.aarch64 #1
->>> [ 3105.980406] Hardware name: QEMU KVM Virtual Machine, BIOS 
->>> edk2-20240524-4.fc40 05/24/2024
->>> [ 3105.986185] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS 
->>> BTYPE=--)
->>> [ 3105.991108] pc : try_grab_folio+0x11c/0x188
->>> [ 3105.994013] lr : follow_page_pte+0xd8/0x430
->>> [ 3105.996986] sp : ffff80008eafb8f0
->>> [ 3105.999346] x29: ffff80008eafb900 x28: ffffffe8d481f380 x27: 
->>> 00f80001207cff43
->>> [ 3106.004414] x26: 0000000000000001 x25: 0000000000000000 x24: 
->>> ffff80008eafba48
->>> [ 3106.009520] x23: 0000ffff9372f000 x22: ffff7a54459e2000 x21: 
->>> ffff7a546c1aa978
->>> [ 3106.014529] x20: ffffffe8d481f3c0 x19: 0000000000610041 x18: 
->>> 0000000000000001
->>> [ 3106.019506] x17: 0000000000000001 x16: ffffffffffffffff x15: 
->>> 0000000000000000
->>> [ 3106.024494] x14: ffffb85477fdfe08 x13: 0000ffff9372ffff x12: 
->>> 0000000000000000
->>> [ 3106.029469] x11: 1fffef4a88a96be1 x10: ffff7a54454b5f0c x9 : 
->>> ffffb854771b12f0
->>> [ 3106.034324] x8 : 0008000000000000 x7 : ffff7a546c1aa980 x6 : 
->>> 0008000000000080
->>> [ 3106.038902] x5 : 00000000001207cf x4 : 0000ffff9372f000 x3 : 
->>> ffffffe8d481f000
->>> [ 3106.043420] x2 : 0000000000610041 x1 : 0000000000000001 x0 : 
->>> 0000000000000000
->>> [ 3106.047957] Call trace:
->>> [ 3106.049522]  try_grab_folio+0x11c/0x188
->>> [ 3106.051996]  follow_pmd_mask.constprop.0.isra.0+0x150/0x2e0
->>> [ 3106.055527]  follow_page_mask+0x1a0/0x2b8
->>> [ 3106.058118]  __get_user_pages+0xf0/0x348
->>> [ 3106.060647]  faultin_page_range+0xb0/0x360
->>> [ 3106.063651]  do_madvise+0x340/0x598
->>>
->>> Let's make huge_pte_lockptr() effectively use the same PT locks as any
->>> core-mm page table walker would. Add ptep_lockptr() to obtain the PTE
->>> page table lock using a pte pointer -- unfortunately we cannot convert
->>> pte_lockptr() because virt_to_page() doesn't work with kmap'ed page
->>> tables we can have with CONFIG_HIGHPTE.
->>>
->>> Take care of PTE tables possibly spanning multiple pages, and take 
->>> care of
->>> CONFIG_PGTABLE_LEVELS complexity when e.g., PMD_SIZE == PUD_SIZE. For
->>> example, with CONFIG_PGTABLE_LEVELS == 2, core-mm would detect
->>> with hugepagesize==PMD_SIZE pmd_leaf() and use the pmd_lockptr(), which
->>> would end up just mapping to the per-MM PT lock.
->>>
->>> There is one ugly case: powerpc 8xx, whereby we have an 8 MiB hugetlb
->>> folio being mapped using two PTE page tables.  While hugetlb wants to 
->>> take
->>> the PMD table lock, core-mm would grab the PTE table lock of one of both
->>> PTE page tables.  In such corner cases, we have to make sure that both
->>> locks match, which is (fortunately!) currently guaranteed for 8xx as it
->>> does not support SMP and consequently doesn't use split PT locks.
->>>
->>> [1] 
->>> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2F1bbfcc7f-f222-45a5-ac44-c5a1381c596d%40redhat.com%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cf91a0b3cdcab46c7bd6108dcb17e9454%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638580404425532305%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=%2FQ4QFqbyThojISHACwzxCdtYbgwc4JsMIP%2Bmx4PneOk%3D&reserved=0
->>>
->>> Fixes: 9cb28da54643 ("mm/gup: handle hugetlb in the generic 
->>> follow_page_mask code")
->>> Reviewed-by: James Houghton <jthoughton@google.com>
->>> Cc: <stable@vger.kernel.org>
->>> Cc: Peter Xu <peterx@redhat.com>
->>> Cc: Oscar Salvador <osalvador@suse.de>
->>> Cc: Muchun Song <muchun.song@linux.dev>
->>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>
->> Nitpick: I wonder whether some of the lines can be simplified if we write
->> it downwards from PUD, like,
->>
->> huge_pte_lockptr()
->> {
->>          if (size >= PUD_SIZE)
->>             return pud_lockptr(...);
->>          if (size >= PMD_SIZE)
->>             return pmd_lockptr(...);
->>          /* Sub-PMD only applies to !CONFIG_HIGHPTE, see 
->> pte_alloc_huge() */
->>          WARN_ON(IS_ENABLED(CONFIG_HIGHPTE));
->>          return ptep_lockptr(...);
->> }
-> 
-> Let me think about it. For PUD_SIZE == PMD_SIZE instead of like core-mm
-> calling pmd_lockptr we'd call pud_lockptr().
-
-I guess it is only when including asm-generic/pgtable-nopmd.h
-
-Otherwise you should have more than one entry in the PMD table so 
-PMD_SIZE would always be smaller than PUD_SIZE, wouldn't it ?
-
-So maybe some simplification could be done, like having pud_lock() a nop 
-in that case ?
-
-
-Christophe
+>
+>         -Mike
+>
 
