@@ -1,78 +1,210 @@
-Return-Path: <linux-kernel+bounces-286883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A718951FF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D756951FF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183CB288630
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7674280E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4703E1BA87D;
-	Wed, 14 Aug 2024 16:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305061B8EB4;
+	Wed, 14 Aug 2024 16:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YF7yF6je"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GXJTyyCQ"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F311B8EB5;
-	Wed, 14 Aug 2024 16:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668CC1B86E7
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652891; cv=none; b=tx5X5BuVEMEBr7M0gJhh/FT8Hme+fZttrI8zhGLqwoN6Jc+/IsEB5N19mdBPxYe5ChGQa3bTTEUK9LSyVXBL4ZHXvADgR4EjhVOsixLgxwyQIi6oKIMAyPNGUtZv8nRykKRubTob5JxzmJT1yRh9+UgYQ2nk0OXrpTXX7NhyrpQ=
+	t=1723652927; cv=none; b=OF5JCtPfUd1uL1mEzT57gSmCmORGQGizMlkJoawvgNFp8oghLUppZYB33m8bmLgyEFh0/fZwj6/vXPpeFI0QTrXUdyI5gg3XPntTpM9mF1Toy8vWhvFXsbExOk7uUMQ6f3d0txf8sNGEyA2V+VR6k7AegdXUM2B4N0kvTMM+a1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652891; c=relaxed/simple;
-	bh=qMyqAYiD1xBjteoCtdLOra6ThFdlapF9VTpqVUN2Ri4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UQER9V5QveEC+A++QvnVMxjVNDWAGIAi8ktE/ZWIuUm0wBYoAcEQhIH6c3u4Vp4jbOuIBRJ9Vm2Y39GeXdw+lz8aRq5JVykTL0QxYfjuzjjBbRiVCbeoMxwu9oP70GERet4kA5zTwecSOhxy6ko+7xxpJOdd0ol1u6ge30lhho0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YF7yF6je; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 072F0C4AF0A;
-	Wed, 14 Aug 2024 16:28:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723652891;
-	bh=qMyqAYiD1xBjteoCtdLOra6ThFdlapF9VTpqVUN2Ri4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=YF7yF6je7UBZ18bsmzEsL2M+z1fk+ZSX/HnWfN2A1p6D0wT/hrEFa+e20OZya96Ts
-	 BTDSXTtge0G7OHFUuYMOYYKEy2y4jGn7b0uDiHjZa2Ea73iAYyeVbUqmFmwzQxtsE7
-	 JOI5LyON99QkszUsTMrREcWsQiVv/g45uZKBvEfpeShTfZsHQbHOcPk7M71DVBR7xe
-	 ztsbxEOR4YcJC+rqHRDP+lnartm5ajnrmyugyAFUU3+337IBDzS1Xl2oHynx9KYrgw
-	 TEQQXUrjDfwP6pw6krg+HBay6YGT2cIAvXA4j4+QoZ0fPKBqKiPW9LDITAFyTaOXv1
-	 IxgrMXh+UqCzw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 712C638232A8;
-	Wed, 14 Aug 2024 16:28:11 +0000 (UTC)
-Subject: Re: [GIT PULL] selinux/selinux-pr-20240814
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <30fc5b38165e4eda57d640eca76b7df1@paul-moore.com>
-References: <30fc5b38165e4eda57d640eca76b7df1@paul-moore.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <30fc5b38165e4eda57d640eca76b7df1@paul-moore.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240814
-X-PR-Tracked-Commit-Id: 05a3d6e9307250a5911d75308e4363466794ab21
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9d5906799f7d89c9e12f6d2e0fccb00713c945ab
-Message-Id: <172365289010.2319409.1724128984605755694.pr-tracker-bot@kernel.org>
-Date: Wed, 14 Aug 2024 16:28:10 +0000
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1723652927; c=relaxed/simple;
+	bh=NKfwsZeTlnXRMDvq8E5vaLoO5hPrCvbfTXzCITw9KOA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bB8gweybeUYg+65hXlkHxgxTPhUnpkXl95S3BkFaPPoubdJgI3mGpTqt3GNy7pdtCvXOcS5gcPdrBnyQ2Dj1Di7vJR5f6fzIAlHf6WSKrkNJoJ0rlSpy1CpjoW1oO7eQRyTPP/t+//xjZf+ahwADLoc6kOd5rohLUs9ptcN17UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GXJTyyCQ; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42809d6e719so52269365e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723652924; x=1724257724; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ClfwenGLJtFMHfZRAp5xBKpkrKx7yBYttQI6ee32yHs=;
+        b=GXJTyyCQ6YT7s0eWG77FPvxHk4mLT6Wr+dULrejIK1eBN5uaXKhXDwWul81IQme8az
+         9l4QB9Doa2565L8JhZvxZLDRNWiKZsttBwplLZSYKNSrckHehL/FilEVVDXqeSWz01X2
+         YUXPQhhhRULNmHeINhae/m0LQmnBsJJQGY56iyy24tPKBZniBE1Cv5Y3JhvxPXCV7PnM
+         XoxpkKCmDsp4uoaJ9iK8EOHJdJufrBcAX5vpW1QF2THI3cEu+DNxnjgvXOf7+6xyc+w6
+         4D9QkQHnrR5geyV4zn4LdTOSLe76TVMUqvJR5C2Mx80RNIosAncBuCzDwJcIr9xIRQtf
+         jWag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723652924; x=1724257724;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ClfwenGLJtFMHfZRAp5xBKpkrKx7yBYttQI6ee32yHs=;
+        b=FUxl4XWtIcizu7npQgPsz1ScLWZJyFs4L6rHTHAFr9D8ewdohXmq9MrK+3b0c/wfMF
+         bg70UipcHzpEZEav2mAtPTQeXRGHojN8gN3P4PwPsvZ9XldNgnnvSKXbcMhW7UibPUr7
+         3vKYaDz20SdzImucw7eAkMJo7XOMcS8vhsidPtI34E1nzr1KZChCNS7P8JL03ml8D5+J
+         rk6jHk68Jc0LC4KcCsPpLdp2bU6P2exB/QzMfTKqAWXuLWn5f8yr8X4gfeddBJFEBo6z
+         eWs05ztu+g/dmAySFjll9h+ApImeAdWPiYAG5M5oF8bh9qnsnV39k9nxlKigD+zj4CsN
+         aVbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYdk3SUrABATfyb2rUiQPWzynmrEQN7gC37cLakZqijfeYqd7Nc+uSuIUg8swBnXFcRVC2O0FKQLJMl5xjctlGmJ4LtkeVf5mxxDC0
+X-Gm-Message-State: AOJu0YwtztY7hZ51OYK4+1vl0op9cSmM+6stJGqZmJiTAs1JGp0E08ik
+	bm2/3Fb0q8tXItl1k/n5ZlYOBqnKBqjaesyqi9xNScuDe20ZnD8QwXkpV/qxPaA=
+X-Google-Smtp-Source: AGHT+IFvN9G5J/WAGwqQb+FfIdaSv/o6JbQZtqSoFJqYXKwjyr2vAVPTq3A4iENCVN6KuTwWS4rSPw==
+X-Received: by 2002:a05:600c:a07:b0:428:2e9:65a9 with SMTP id 5b1f17b1804b1-429e0f80bc3mr8847605e9.28.1723652923491;
+        Wed, 14 Aug 2024 09:28:43 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877f234sm48235275e9.1.2024.08.14.09.28.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 09:28:43 -0700 (PDT)
+Message-ID: <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
+Date: Wed, 14 Aug 2024 17:28:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
+ v6.5
+To: Thorsten Leemhuis <regressions@leemhuis.info>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>, Ian Rogers <irogers@google.com>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: Linux perf Profiling <linux-perf-users@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ James Clark <james.clark@arm.com>, "cc: Marc Zyngier" <maz@kernel.org>,
+ Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>,
+ Ian Rogers <irogers@google.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ "to: Mark Rutland" <mark.rutland@arm.com>
+References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
+ <ZV1AnNB2CSbAUFVg@archie.me>
+ <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
+ <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
+ <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Wed, 14 Aug 2024 11:32:08 -0400:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20240814
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9d5906799f7d89c9e12f6d2e0fccb00713c945ab
+On 07/08/2024 9:54 am, Thorsten Leemhuis wrote:
+> On 01.08.24 21:05, Ian Rogers wrote:
+>> On Wed, Dec 6, 2023 at 4:09 AM Linux regression tracking #update
+>> (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
+>>>
+>>> [TLDR: This mail in primarily relevant for Linux kernel regression
+>>> tracking. See link in footer if these mails annoy you.]
+>>>
+>>> On 22.11.23 00:43, Bagas Sanjaya wrote:
+>>>> On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
+>>>>> Perf broke on all Apple ARM64 systems (tested almost everything), and
+>>>>> according to maz also on Juno (so, probably all big.LITTLE) since v6.5.
+>>>
+>>> #regzbot fix: perf parse-events: Make legacy events lower priority than
+>>> sysfs/JSON
+>>> #regzbot ignore-activity
+>>
+>> Note, this is still broken.
+> 
+> Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
+> this? Or is this a "we are screwed one way or another and someone has to
+> bite the bullet" situation?
+> 
+> Ciao, Thorsten
+> 
+>> The patch changed the priority in the case
+>> that you do something like:
+>>
+>> $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
+>>
+>> but if you do:
+>>
+>> $ perf stat -e 'cycles' benchmark
+>>
+>> then the broken behavior will happen as legacy events have priority
+>> over sysfs/json events in that case. To fix this you need to revert:
+>> 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
+>> events over legacy"
+>>
+>> This causes some testing issues resolved in this unmerged patch series:
+>> https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.com/
+>>
+>> There is a bug as the arm_dsu PMU advertises an event called "cycles"
+>> and this PMU is present on Ampere systems. Reverting the commit above
+>> will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
+>> __evlist__add_default") to fix ARM's BIG.little systems (opening a
+>> cycles event on all PMUs not just 1) will cause the arm_dsu event to
+>> be opened by perf record and fail as the event won't support sampling.
+>>
+>> The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.com/
+>> fixes this by only opening the cycles event on core PMUs when choosing
+>> default events.
+>>
+>> Rather than take this patch the revert happened as Linus runs the
+>> command "perf record -e cycles:pp" (ie using a specified event and not
+>> defaults) and considers it a regression in the perf tool that on an
+>> Ampere system to need to do "perf record -e
+>> 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
+>> will choose the cycles event correctly and with better precision the
+>> pp for systems that support it, but it was still considered a
+>> regression in the perf tool so the revert was made to happen. There is
+>> a lack of perf testing coverage for ARM, in particular as they choose
+>> to do everything in a different way to x86. The patch in question was
+>> in the linux-next tree for weeks without issues.
+>>
+>> ARM/Ampere could fix this by renaming the event from cycles to
+>> cpu_cycles, or by following Intel's convention that anything uncore
+>> uses the name clockticks rather than cycles. This could break people
+>> who rely on an event called arm_dsu/cycles/ but I imagine such people
+>> are rare. There has been no progress I'm aware of on renaming the
+>> event.
+>>
+>> Making perf not terminate on opening an event for perf record seems
+>> like the most likely workaround as that is at least something under
+>> the tool maintainers control. ARM have discussed doing this on the
+>> lists:
+>> https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com/
+>> but since the revert in v6.10 no patches have appeared for the v6.11
+>> merge window. Feature work like coresight improvements and ARMv9 are
+>> being actively pursued by ARM, but feature work won't resolve this
+>> regression.
+>>
 
-Thank you!
+I got some hardware with the DSU PMU so I'm going to have a go at trying 
+to send some fixes for this. My initial idea was to try incorporate the 
+"not terminate on opening" change as discussed in the link directly 
+above. And then do the revert of the "revert of prefer sysfs/json".
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+FWIW I don't think Juno currently is broken if the kernel supports 
+extended type ID? I could have missed some output in this thread but it 
+seems like it's mostly related to Apple M hardware. I'm also a bit 
+confused why the "supports extended type" check fails there, but maybe 
+the v6.9 commit 25412c036 from Mark is missing?
+
+I sent a small fix the other day to make perf stat default arguments 
+work on Juno, and didn't notice anything out of the ordinary: 
+https://lore.kernel.org/linux-perf-users/dac6ad1d-5aca-48b4-9dcb-ff7e54ca43f6@linaro.org/T/#t
+I agree that change is quite narrow but it does incrementally improve 
+things for the time being. It's possible that it would become redundant 
+if I can just include Ian's change to use strings for Perf stat.
+
+Of course I only think I have a handle on the issue right now, seems 
+like it has a lot of moving parts and something else always comes up. If 
+I hit a wall at some point I will come back here.
+
+Thanks
+James
 
