@@ -1,357 +1,242 @@
-Return-Path: <linux-kernel+bounces-287250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FAD95255A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:15:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D6095255C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353901C20B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:15:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8CD1F2232F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E766414B095;
-	Wed, 14 Aug 2024 22:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F11F149DF8;
+	Wed, 14 Aug 2024 22:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b0JXmDwO"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BLGORsvB"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2043.outbound.protection.outlook.com [40.107.236.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C40149C58
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 22:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723673660; cv=none; b=IPK+wLnJ+88ffkGUk9rC0EhN2oopjAHf4TB0qB2aTVTB7VzDHRYLyVEUEu8ryMNi4PcyRWao5aD0Ij6L6SJ6SSC97ZQ2wHYK6/OHX0hhBbFmj35BuWN7ZV1Ld315tQYnlROz4r4fh44Fs+AgZ82MokwYHj1VfEGMp8ceFhBSwwY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723673660; c=relaxed/simple;
-	bh=g3+1rXrVGK6e6kvEGUQXjS1eg9BCbbdzxfIWW2UBOzs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NZMBcPKh4ElfkDrpQIigiiUGEVftbShP3YQ/UpO0me1s9OF2XDwsxMuKX9Tp7/NCmojq7ZLB7drkOIplb44MfycGGgKT9S8Z6Zg/0ZK7HCGLLgb/HKyIWNzmOpbgAw6Br00juGQwrO5vHTqS2DpHJpkS271+Xe+AMvXpZ8mQVFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b0JXmDwO; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc566ac769so3287805ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:14:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723673657; x=1724278457; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EIq4wNydhj/PvuoGRWZ7DkKKTJPlbKQ7LujNOleJ5eo=;
-        b=b0JXmDwOM4+UyLSjrsKKaC6r9HP8IFWzOJaZ5hHTE+i4H/MHxz5EmToXIGJZSUJF2C
-         CY4fC+H5/Qqa3l4l3TVBTSeImvcxr04gBwetyULzGGxCYdWCTiIDsjWKxTVQL62jmf2d
-         L48tBHNfUbPM1DwX1npL+B+6ra5RdJtCXuiqI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723673657; x=1724278457;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EIq4wNydhj/PvuoGRWZ7DkKKTJPlbKQ7LujNOleJ5eo=;
-        b=lz00/g2cOObWFXGVBqJodZUt9MI3KUphtT/g+sVj/soBw9zvigTzAsxe2Dk1HcFj6t
-         jgPo7eXHiIUGcz1a5yLcvLB/PrJZ59RS3OwRQTWTLe+G0rgyn3dLv2vBcPUzaDOrSOrl
-         mSIkR8ogoQv0PKuiFNgqEWSZijDnN+d0gEsjnrvmAkmsbJPO79n8MwKgjPO9zH5sn3dp
-         bnkoecYvmOnTJWRV9lcIOwzWo1GNKNvj/GyXHbyWDySysT0I1RgIOk/p7kPVaYSp9ocC
-         nRBJh5xhYBdv1WvOBjUFm/e0p6wNXZECoem7rmsFG516NNvkEkVDSYWc1h58iWPf7Bcy
-         kMGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3LxqUWOeL3aiPalg0dldSZW64QCtp6zhp7jcsi4R/ZUIEdyeatvkjRhR1j5G/pvb4CwgCPpLEbjrKcV7hGSCI2g26Vazlbgx3MaJB
-X-Gm-Message-State: AOJu0Yz9oeh/X336YvVtyrLx8BH1mD6RvxyLtPlvDsxJ4GMHKaSAFcH2
-	XTI9ejE9aKKdDtly+P6/4/3aoAt+9l9EmLLNIB5p2MF/mQpegkntyieW0V/oow==
-X-Google-Smtp-Source: AGHT+IF75/3P+9x6GVjTTX48CbPnzoDxgCxwnu6xe/hY2peSPXpuIomwL61xlReWeDCnp009l7PdwQ==
-X-Received: by 2002:a17:902:ecc3:b0:1fc:72f5:43b6 with SMTP id d9443c01a7336-201d63dcbbcmr49050035ad.20.1723673656770;
-        Wed, 14 Aug 2024 15:14:16 -0700 (PDT)
-Received: from zipper.pdx.corp.google.com ([2a00:79e0:2e13:6:aab8:3da7:4601:820d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0375725sm1046595ad.132.2024.08.14.15.14.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 15:14:15 -0700 (PDT)
-From: Fritz Koenig <frkoenig@chromium.org>
-Date: Wed, 14 Aug 2024 15:14:05 -0700
-Subject: [PATCH v3 2/2] media: venus: Enable h.264 hierarchical coding
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC941494B9;
+	Wed, 14 Aug 2024 22:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723673692; cv=fail; b=AUOX2cK1X55w0p6wCXGk8btQwqW+EbD6ySRuxPq3JXotHMOaD1xhwbagYNh/s9MAlj9Aifq4av2a7D+CKU10JnxkMcenUoZI3IP/wLUNGlKacSuEXipZSSpPOzqmlQI46Wa8oM2gx1UOXoQ1TosNDhz0EgkYRd3cmTpwCCqDEpU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723673692; c=relaxed/simple;
+	bh=cghXwVPgPMYWxwFGOmIk020IkdgVXT9yWcRIncdkz8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eC8/eIQvlJ32jhp3BB/i6CZZIJCESmCrQpuHVdQMrVI7LKHpOG90HlY+B2CntX9425GI6ceaK9rtLLUSnp4D6vVsMV54QUclXKNIQuo5GN7i3YcbziztCdoQOhOf5M8dGq1VwWQJkVVQLu/Dx2f0JuGQX4B7nBlowj1WsNya0SY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BLGORsvB; arc=fail smtp.client-ip=40.107.236.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cAs+v9+XLqBVy2GBR8Cw6pz9Huiy7c00MBW1s/j2alNky6YSePC3EiE+51dJs00iOf+jZIMPkkvbrw0pO6hgrsfK+CNK1RB1aeQEieUWDuTBOWGyTWZJ/YB7b0Znl0Jz3pk2ROiIXwSWRQM997Y5b1ou9B8LnCLnrDu9iZ6wvNZ2JLYtGQJ9aGFuQobH1eAaEB8hhdV3hbs99/NuwGBRm4qu5QFM1xnx1bDscbx3JPS0+jxWqrW+LvGbC1S1PguW5IAn/Oqdol3l+a0cyb4wGCsDCnSsWA2D5Zy5k4veBPcP1tx3E/xa7YBakf3hnHel5ZpP4tmB0dwyIzW+RbqF7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=glYGzTBqvDDJ5Qp6VAm4DOCq9eEx3qfz2l+/1M1l/OU=;
+ b=WSl2Y9Z4+kuvfAsPpqLB7to8nVPBffgfEkRxIrQu6abmjAIxHFmrqRL6iOGHJ65cCH3DW7GIe7sy7HCUGZPDUroUZwI71QKVd3js2LSFhAXc2mcgIgLnzWnhN73q5U5Sq2CZ3hDaUEBTyAlnzTXoeIIA4vsOBbZ0BF3peLhm96kIuQkVuXPsT4WK1e1kzLaul6Kmo8NVsSWMTxRHcNIrdIwQfvDZ/ioaOafHADYY15sDJxcDWCEjEYrQVHAJDwPAgmMFzk8VQCykUTXRO8w1cR6+25entaMRdkVLeVwcBlw4sjrli+Y8Iq8VEv3tVP4LxkXqm9VWM3KQT7bmK/j6/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=glYGzTBqvDDJ5Qp6VAm4DOCq9eEx3qfz2l+/1M1l/OU=;
+ b=BLGORsvBw7JBu+vlpnHeh9GlJzjUXWBKX4RZC+flcpCqv9Bdpfsx4KuhtPRW70e6nGPWgVu2FiHowv2YsaEB46CLtoP2UOlPZSef9ZwQVq0DcvFl9r46exR1jTLgkc3a5xTUAwfxQnJVzSJ3z5iw0fbSDije9CUZMpqKhmtL1LBAHjW29tMTP2wbpEqgW68M4MpkD+R4/zaLoZFFZss48GQCCPmGa8QvJlaA384h6ih+yL3MM4TFT5TyUBCudrgZa1zyTUIMu9oZvqWVLFZmCUooHeD7ANHtgWKw0CZbagE3ccWTbNA4FAJayS8LrjOUPMeiI2UwnjL94zBKXn+Edg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by PH8PR12MB8429.namprd12.prod.outlook.com (2603:10b6:510:258::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
+ 2024 22:14:44 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
+ 22:14:43 +0000
+Date: Wed, 14 Aug 2024 19:14:41 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	David Hildenbrand <david@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 09/19] mm: New follow_pfnmap API
+Message-ID: <20240814221441.GB2032816@nvidia.com>
+References: <20240809160909.1023470-1-peterx@redhat.com>
+ <20240809160909.1023470-10-peterx@redhat.com>
+ <20240814131954.GK2032816@nvidia.com>
+ <Zrz2b82-Z31h4Suy@x1n>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zrz2b82-Z31h4Suy@x1n>
+X-ClientProxiedBy: MN2PR12CA0036.namprd12.prod.outlook.com
+ (2603:10b6:208:a8::49) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-submit-v3-2-f7d05e3e8560@chromium.org>
-References: <20240814-submit-v3-0-f7d05e3e8560@chromium.org>
-In-Reply-To: <20240814-submit-v3-0-f7d05e3e8560@chromium.org>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Nathan Hebert <nhebert@chromium.org>, linux-media@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Fritz Koenig <frkoenig@chromium.org>
-X-Mailer: b4 0.13.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|PH8PR12MB8429:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f932bb3-2998-4bbb-cdc8-08dcbcae7fe6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kdTdt/zS+JqKYbvs10MluAYWGULwdVhr81LUoHF4HOu5Ocp18m9pl8oy0JxA?=
+ =?us-ascii?Q?qESMSyQnvc5OuV5gAyp58REbEZIf3cCLRSN2DcjxDCnNcifKIHZJrOA7Re2y?=
+ =?us-ascii?Q?/aU2oOhUjwx1IgV7bM9yA69finj10N0VQ5W0GpRJ1TZ1E7Po6eliUEQq311l?=
+ =?us-ascii?Q?nWYhKhU7gaZVL0LPHsBti3xdCImVQg+IYasMsgcim1Sd7dEwLfbqxCbMDSiC?=
+ =?us-ascii?Q?gTcvH9Ul7hKubm6znnlV4pUbLA64dYkVbBWVFd9T395DRlz3X6JpAXz3jq7u?=
+ =?us-ascii?Q?mPGoq9wZO/X8l9/7vN0AYMfj6ahLiJ7AIVCKxGXK8MvnJpHMg0JdwyYLt51a?=
+ =?us-ascii?Q?v+rNJjMPp0eJkxskMgmrV4H6sUH/5Ir74m8rOwagq08L6NvPKh7HyQndFQdI?=
+ =?us-ascii?Q?ffp7RwkuY7PZnXvm2OTwijA7nipXDdVQnnE5qEiDOTcMVqZ2ZveZN/DbpsRA?=
+ =?us-ascii?Q?OAlZHNfY3tlqsyLhXQC4q7Xac2rcAKtbuS9M0ZR6Lm1i44QvfVNwttNU7du6?=
+ =?us-ascii?Q?WnHqO3RklHacYQk5PqgX0CyiUmbXnvVAlbVoFSBrrzNWnzgd4hzjHQa4ZFc2?=
+ =?us-ascii?Q?+w99Va9wqd1y9ZG/YuIUA7eeyj4Qd5ThmoMl9QhilHPDotRNCHvCeKKjw5E7?=
+ =?us-ascii?Q?2+TxNIz3vPOXvf7s3SWYrqt5sIc4TI7t5zJZ3eGjFco/h/gccGyjbDWAENy1?=
+ =?us-ascii?Q?IVR5MS+vqeuJWF5JnPTr0N82P4GTwKyN9+Zj1yMHNmOj83Jy84IMRp3pWq2a?=
+ =?us-ascii?Q?8MSoTCHIkiMv1WOtfzdLnlxbziW0y+kB6XyuGxGNNCDtpS47ngsvYO15NZKq?=
+ =?us-ascii?Q?sXaMV4BK1Ee4tflL82/HxWSJ6FvOL/2eYbVFFK6zO/nuetPi3i5w2waQJtL8?=
+ =?us-ascii?Q?DhqYSKIqbu+94+nAWYE5vKcSRzJQDT7HBwcjvpTi9PSNVRIt8yDJsZJ2nzSY?=
+ =?us-ascii?Q?ToYq0CdBPkP4keZUDIwrFBAd2H3U3a/9CNXYGU6NjgjY10UZnDcqEFiuMVfi?=
+ =?us-ascii?Q?gv9A3shtx3P7yqbKQ3Dg0Wr0MeoFKnjJIq2sV9mOR+RaUpmmhqyvcKSTETOM?=
+ =?us-ascii?Q?ghlrGvtkE7CjA7UEw6CO4jdYdkqB5pZZCou+OwMDzWs/60oHI4hdHFaGSyin?=
+ =?us-ascii?Q?yMETkinFahBs6/KezI+l5Q9X7F3JUaW0EHEw7NxZ9VC1ReCydHFjjveEK4/p?=
+ =?us-ascii?Q?l8rzW2xW3ltCMDSsBdmLVDI6nyGrrdjU/jC3YUOpgrBBCmB/iQmoxbiw8g0v?=
+ =?us-ascii?Q?K/HieHndfh+IPGxLHx2osK1DRZpnz3xixwbhVs5a9cC6y53+oqMp60f0M2Qz?=
+ =?us-ascii?Q?8NDq42PX4NHt+sMUNN3KELXPfxijvNdwuJaR6PJQnpVwSg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SMEb13DMIpf0z3bcBRtU7FITKI8slwjoBWuNZMqknIwGLlw1hKM1vbv95oRS?=
+ =?us-ascii?Q?JOONvkwZW0J1iB6f9R2nXbAeICn06GRZg/QLlyQW93xUuhDCpZyt9uGPQmce?=
+ =?us-ascii?Q?66LBmFJry0y1vV7mVGEuXU00WyngCX2jZzcVBfaHuwG8Mfhz/xm0AyP097KL?=
+ =?us-ascii?Q?WI5AdBPwFEX2TobFPAocElPSxx2PpQisb40fg6AcvSEcRsVL0kDHfbbD9m3Q?=
+ =?us-ascii?Q?dpXhuoiv0fZHaeSptYd+qPKoqu7UUqc8I+UDVKKI8maqsbTxI0CAcP71rmWX?=
+ =?us-ascii?Q?d4EwqORsDmkLGLpyJmJeAM8yE67cRaTrm7Papf10CAD6KccC8ofneHYPCUZQ?=
+ =?us-ascii?Q?9yQa9GhgzRkRTxOuoUxnbXOeeL6BG3YyDqbYCACGL/cWLhlGCKKPDlL9Umif?=
+ =?us-ascii?Q?0Gkxevl5Ydd+DfznVkVUyDH510BDKkY3YsNFEV0lYTtbzEicL4slJqmGhKdS?=
+ =?us-ascii?Q?5S9VuVoMxAxn6Ek0kmci8BgyDPHyEjcwCRHslYjlHVJ0kTc1c3V2wv1dQMDi?=
+ =?us-ascii?Q?W5Ffo9uNmrfuLBJnkz/SrxpXmdnJz14FVH1LVoqYas7eovG+DMbAe+vFrn1Q?=
+ =?us-ascii?Q?kZpRrlMUW7USrk7cOtUQ1yT8S05qeF4aecBTAoVYdkm1I+fURkUxXf4iDmM0?=
+ =?us-ascii?Q?kH7SGOGklwf8jxDNoFEIYfjLGh+y7Scjo+0yAw5vk+gRJDr7S68Onk2QAbZZ?=
+ =?us-ascii?Q?GyCebg7oB3JTwqCuPtl9DsGLDIo4N8d4UhAbdFo8qzQkkd+roTc4IYBZ8TlB?=
+ =?us-ascii?Q?RKuZ71XhlyL//HTkzz71hlPr7OdAIdXaq2t1l2+zuM0XglzcYkMc+MdAVYdR?=
+ =?us-ascii?Q?9oOSon9RH+61BZSaBWEDyMnPnFgjRMcqtvPzPjrBDjL1h1niZ0JgLI1igzSy?=
+ =?us-ascii?Q?fiXqbatjMd/OQH47hdxQr1oEIDMdi+ONn9lOwCsgx2c59TruES7gUi2x4BVc?=
+ =?us-ascii?Q?Wp98gAYPE52c6TVj1y2ie+KZ+FBy2V46utFjmYa3iHw2YsWlx3FdMfomME4K?=
+ =?us-ascii?Q?Bz53khP8g/ZFLKqO568/dizeytQ/ZG3gH49kjhd8sjvTWCJr9pQq2UUUMGEC?=
+ =?us-ascii?Q?0nHaxEDUZs1KCobBOl7tVJJF5+cH8MReP4EDTlmEe8riNhXgFfsBxM9JYNjM?=
+ =?us-ascii?Q?EVsuU+TMFGovjVtiHJ1RDsm+jV79MTuH+DWdNIyHIViAaU2g1F6ckzc12I4y?=
+ =?us-ascii?Q?S7PaWExEahIWMNAg3JuXyft7B/kWtRqHxzlk0M9PlTZnL1OaWTbGIAJEQBMb?=
+ =?us-ascii?Q?ikwugfDmdyiwYDhfqg6zl07pxuna1LoW1vQ9ruM4sS69Fqzv4drWkvXeyzdb?=
+ =?us-ascii?Q?H+N0S4Zch4z9p6ltzhTCl38OXaELBWwlXP3vMeRBsX7a1NBz4us6SAc3Dyuo?=
+ =?us-ascii?Q?qh6RFrNLFbwqGXGtoA2lkTHYFJ2kysBF6SNQowgFGq8I6mkMhoQx6w+tD5La?=
+ =?us-ascii?Q?UVsLHhgm6dUPPRyRdLcl9P6X07h1ulffgl40jLVvSqr0AWwu+f8hJyysKJzM?=
+ =?us-ascii?Q?blgxfZpAkd5DPlJI4wMcgRn8xZapKDwYiYJQwwl6yQbdjqRh65uXOiqLyeK3?=
+ =?us-ascii?Q?g1ljA6KscaMMQl3EnKo=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f932bb3-2998-4bbb-cdc8-08dcbcae7fe6
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 22:14:43.7776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8xQbT33GDKxD/cJL05MgflbPbonGYfSGsCUPUDRPWMWPqUCljGrmzQ8DqIYwqz5B
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8429
 
-HFI supports hierarchical P encoding and the ability to specify the
-bitrate for the different layers.
+On Wed, Aug 14, 2024 at 02:24:47PM -0400, Peter Xu wrote:
+> On Wed, Aug 14, 2024 at 10:19:54AM -0300, Jason Gunthorpe wrote:
+> > On Fri, Aug 09, 2024 at 12:08:59PM -0400, Peter Xu wrote:
+> > 
+> > > +/**
+> > > + * follow_pfnmap_start() - Look up a pfn mapping at a user virtual address
+> > > + * @args: Pointer to struct @follow_pfnmap_args
+> > > + *
+> > > + * The caller needs to setup args->vma and args->address to point to the
+> > > + * virtual address as the target of such lookup.  On a successful return,
+> > > + * the results will be put into other output fields.
+> > > + *
+> > > + * After the caller finished using the fields, the caller must invoke
+> > > + * another follow_pfnmap_end() to proper releases the locks and resources
+> > > + * of such look up request.
+> > > + *
+> > > + * During the start() and end() calls, the results in @args will be valid
+> > > + * as proper locks will be held.  After the end() is called, all the fields
+> > > + * in @follow_pfnmap_args will be invalid to be further accessed.
+> > > + *
+> > > + * If the PTE maps a refcounted page, callers are responsible to protect
+> > > + * against invalidation with MMU notifiers; otherwise access to the PFN at
+> > > + * a later point in time can trigger use-after-free.
+> > > + *
+> > > + * Only IO mappings and raw PFN mappings are allowed.  
+> > 
+> > What does this mean? The paragraph before said this can return a
+> > refcounted page?
+> 
+> This came from the old follow_pte(), I kept that as I suppose we should
+> allow VM_IO | VM_PFNMAP just like before, even if in this case I suppose
+> only the pfnmap matters where huge mappings can start to appear.
 
-Connect the controls that V4L2 provides and HFI supports.
+If that is the intention it should actively block returning anything
+that is vm_normal_page() not check the VM flags, see the other
+discussion..
 
-Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
----
- drivers/media/platform/qcom/venus/core.h       |  4 ++
- drivers/media/platform/qcom/venus/venc.c       | 85 +++++++++++++++---------
- drivers/media/platform/qcom/venus/venc_ctrls.c | 92 ++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+), 30 deletions(-)
+It makes sense as a restriction if you call the API follow pfnmap.
 
-diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-index 55202b89e1b9..fd46a7778d8c 100644
---- a/drivers/media/platform/qcom/venus/core.h
-+++ b/drivers/media/platform/qcom/venus/core.h
-@@ -26,6 +26,7 @@
- #define VIDC_CLKS_NUM_MAX		4
- #define VIDC_VCODEC_CLKS_NUM_MAX	2
- #define VIDC_RESETS_NUM_MAX		2
-+#define VIDC_MAX_HIER_CODING_LAYER 6
- 
- extern int venus_fw_debug;
- 
-@@ -255,6 +256,7 @@ struct venc_controls {
- 	u32 rc_enable;
- 	u32 const_quality;
- 	u32 frame_skip_mode;
-+	u32 layer_bitrate;
- 
- 	u32 h264_i_period;
- 	u32 h264_entropy_mode;
-@@ -273,6 +275,8 @@ struct venc_controls {
- 	s32 h264_loop_filter_alpha;
- 	s32 h264_loop_filter_beta;
- 	u32 h264_8x8_transform;
-+	u32 h264_hier_layers;
-+	u32 h264_hier_layer_bitrate[VIDC_MAX_HIER_CODING_LAYER];
- 
- 	u32 hevc_i_qp;
- 	u32 hevc_p_qp;
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index 3ec2fb8d9fab..af2c92069967 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -734,6 +734,29 @@ static int venc_set_properties(struct venus_inst *inst)
- 		if (ret)
- 			return ret;
- 
-+		if (ctr->layer_bitrate) {
-+			unsigned int i;
-+
-+			ptype = HFI_PROPERTY_PARAM_VENC_HIER_P_MAX_NUM_ENH_LAYER;
-+			ret = hfi_session_set_property(inst, ptype, &ctr->h264_hier_layers);
-+			if (ret)
-+				return ret;
-+
-+			ptype = HFI_PROPERTY_CONFIG_VENC_HIER_P_ENH_LAYER;
-+			ret = hfi_session_set_property(inst, ptype, &ctr->layer_bitrate);
-+			if (ret)
-+				return ret;
-+
-+			for (i = 0; i < ctr->h264_hier_layers; ++i) {
-+				ptype = HFI_PROPERTY_CONFIG_VENC_TARGET_BITRATE;
-+				brate.bitrate = ctr->h264_hier_layer_bitrate[i];
-+				brate.layer_id = i;
-+
-+				ret = hfi_session_set_property(inst, ptype, &brate);
-+				if (ret)
-+					return ret;
-+			}
-+		}
- 	}
- 
- 	if (inst->fmt_cap->pixfmt == V4L2_PIX_FMT_H264 ||
-@@ -823,45 +846,47 @@ static int venc_set_properties(struct venus_inst *inst)
- 			return ret;
- 	}
- 
--	if (!ctr->bitrate)
--		bitrate = 64000;
--	else
--		bitrate = ctr->bitrate;
-+	if (!ctr->layer_bitrate) {
-+		if (!ctr->bitrate)
-+			bitrate = 64000;
-+		else
-+			bitrate = ctr->bitrate;
- 
--	ptype = HFI_PROPERTY_CONFIG_VENC_TARGET_BITRATE;
--	brate.bitrate = bitrate;
--	brate.layer_id = 0;
-+		ptype = HFI_PROPERTY_CONFIG_VENC_TARGET_BITRATE;
-+		brate.bitrate = bitrate;
-+		brate.layer_id = 0;
- 
--	ret = hfi_session_set_property(inst, ptype, &brate);
--	if (ret)
--		return ret;
-+		ret = hfi_session_set_property(inst, ptype, &brate);
-+		if (ret)
-+			return ret;
- 
--	if (inst->fmt_cap->pixfmt == V4L2_PIX_FMT_H264 ||
--	    inst->fmt_cap->pixfmt == V4L2_PIX_FMT_HEVC) {
--		ptype = HFI_PROPERTY_CONFIG_VENC_SYNC_FRAME_SEQUENCE_HEADER;
--		if (ctr->header_mode == V4L2_MPEG_VIDEO_HEADER_MODE_SEPARATE)
--			en.enable = 0;
-+		if (inst->fmt_cap->pixfmt == V4L2_PIX_FMT_H264 ||
-+				inst->fmt_cap->pixfmt == V4L2_PIX_FMT_HEVC) {
-+			ptype = HFI_PROPERTY_CONFIG_VENC_SYNC_FRAME_SEQUENCE_HEADER;
-+			if (ctr->header_mode == V4L2_MPEG_VIDEO_HEADER_MODE_SEPARATE)
-+				en.enable = 0;
-+			else
-+				en.enable = 1;
-+
-+			ret = hfi_session_set_property(inst, ptype, &en);
-+			if (ret)
-+				return ret;
-+		}
-+
-+		if (!ctr->bitrate_peak)
-+			bitrate *= 2;
- 		else
--			en.enable = 1;
-+			bitrate = ctr->bitrate_peak;
- 
--		ret = hfi_session_set_property(inst, ptype, &en);
-+		ptype = HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE;
-+		brate.bitrate = bitrate;
-+		brate.layer_id = 0;
-+
-+		ret = hfi_session_set_property(inst, ptype, &brate);
- 		if (ret)
- 			return ret;
- 	}
- 
--	if (!ctr->bitrate_peak)
--		bitrate *= 2;
--	else
--		bitrate = ctr->bitrate_peak;
--
--	ptype = HFI_PROPERTY_CONFIG_VENC_MAX_BITRATE;
--	brate.bitrate = bitrate;
--	brate.layer_id = 0;
--
--	ret = hfi_session_set_property(inst, ptype, &brate);
--	if (ret)
--		return ret;
--
- 	ptype = HFI_PROPERTY_PARAM_VENC_SESSION_QP;
- 	if (inst->fmt_cap->pixfmt == V4L2_PIX_FMT_HEVC) {
- 		quant.qp_i = ctr->hevc_i_qp;
-diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c b/drivers/media/platform/qcom/venus/venc_ctrls.c
-index 3e1f6f26eddf..e340783a4ef2 100644
---- a/drivers/media/platform/qcom/venus/venc_ctrls.c
-+++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
-@@ -346,6 +346,55 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
- 
- 		ctr->h264_8x8_transform = ctrl->val;
- 		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_TYPE:
-+		if (ctrl->val != V4L2_MPEG_VIDEO_H264_HIERARCHICAL_CODING_P)
-+			return -EINVAL;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING:
-+		ctr->layer_bitrate = ctrl->val;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER:
-+		if (ctrl->val > VIDC_MAX_HIER_CODING_LAYER)
-+			return -EINVAL;
-+		ctr->h264_hier_layers = ctrl->val;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L0_BR:
-+		ctr->h264_hier_layer_bitrate[0] = ctrl->val;
-+		ret = dynamic_bitrate_update(inst, ctr->h264_hier_layer_bitrate[0], 0);
-+		if (ret)
-+			return ret;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L1_BR:
-+		ctr->h264_hier_layer_bitrate[1] = ctrl->val;
-+		ret = dynamic_bitrate_update(inst, ctr->h264_hier_layer_bitrate[1], 1);
-+		if (ret)
-+			return ret;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L2_BR:
-+		ctr->h264_hier_layer_bitrate[2] = ctrl->val;
-+		ret = dynamic_bitrate_update(inst, ctr->h264_hier_layer_bitrate[2], 2);
-+		if (ret)
-+			return ret;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L3_BR:
-+		ctr->h264_hier_layer_bitrate[3] = ctrl->val;
-+		ret = dynamic_bitrate_update(inst, ctr->h264_hier_layer_bitrate[3], 3);
-+		if (ret)
-+			return ret;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L4_BR:
-+		ctr->h264_hier_layer_bitrate[4] = ctrl->val;
-+		ret = dynamic_bitrate_update(inst, ctr->h264_hier_layer_bitrate[4], 4);
-+		if (ret)
-+			return ret;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L5_BR:
-+		ctr->h264_hier_layer_bitrate[5] = ctrl->val;
-+		ret = dynamic_bitrate_update(inst, ctr->h264_hier_layer_bitrate[5], 5);
-+		if (ret)
-+			return ret;
-+		break;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -628,6 +677,49 @@ int venc_ctrl_init(struct venus_inst *inst)
- 			  V4L2_CID_MPEG_VIDEO_INTRA_REFRESH_PERIOD, 0,
- 			  ((4096 * 2304) >> 8), 1, 0);
- 
-+	if (IS_V4(inst->core) || IS_V6(inst->core)) {
-+		v4l2_ctrl_new_std_menu(&inst->ctrl_handler, &venc_ctrl_ops,
-+				       V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_TYPE,
-+				       V4L2_MPEG_VIDEO_H264_HIERARCHICAL_CODING_P,
-+				       1, V4L2_MPEG_VIDEO_H264_HIERARCHICAL_CODING_P);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING, 0, 1, 1, 0);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER, 0,
-+				  VIDC_MAX_HIER_CODING_LAYER, 1, 0);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L0_BR,
-+				  BITRATE_MIN, BITRATE_MAX, BITRATE_STEP, BITRATE_DEFAULT);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L1_BR,
-+				  BITRATE_MIN, BITRATE_MAX,
-+				  BITRATE_STEP, BITRATE_DEFAULT);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L2_BR,
-+				  BITRATE_MIN, BITRATE_MAX,
-+				  BITRATE_STEP, BITRATE_DEFAULT);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L3_BR,
-+				  BITRATE_MIN, BITRATE_MAX,
-+				  BITRATE_STEP, BITRATE_DEFAULT);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L4_BR,
-+				  BITRATE_MIN, BITRATE_MAX,
-+				  BITRATE_STEP, BITRATE_DEFAULT);
-+
-+		v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
-+				  V4L2_CID_MPEG_VIDEO_H264_HIER_CODING_L5_BR,
-+				  BITRATE_MIN, BITRATE_MAX,
-+				  BITRATE_STEP, BITRATE_DEFAULT);
-+	}
-+
- 	ret = inst->ctrl_handler.error;
- 	if (ret)
- 		goto err;
+> > > + * The mmap semaphore
+> > > + * should be taken for read, and the mmap semaphore cannot be released
+> > > + * before the end() is invoked.
+> > 
+> > This function is not safe for IO mappings and PFNs either, VFIO has a
+> > known security issue to call it. That should be emphasised in the
+> > comment.
+> 
+> Any elaboration on this?  I could have missed that..
 
--- 
-2.46.0.184.g6999bdac58-goog
+Just because the memory is a PFN or IO doesn't mean it is safe to
+access it without a refcount. There are many driver scenarios where
+revoking a PFN from mmap needs to be a hard fence that nothing else
+has access to that PFN. Otherwise it is a security problem for that
+driver.
 
+> I suppose so?  As the pgtable is stable, I thought it means it's safe, but
+> I'm not sure now when you mentioned there's a VFIO known issue, so I could
+> have overlooked something.  There's no address returned, but pfn, pgprot,
+> write, etc.
+
+zap/etc will wait on the PTL, I think, so it should be safe for at
+least the issues I am thinking of.
+
+> The user needs to do proper mapping if they need an usable address,
+> e.g. generic_access_phys() does ioremap_prot() and recheck the pfn didn't
+> change.
+
+No, you can't take the phys_addr_t outside the start/end region that
+explicitly holds the lock protecting it. This is what the comment must
+warn against doing.
+
+Jason
 
