@@ -1,406 +1,120 @@
-Return-Path: <linux-kernel+bounces-286248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57287951897
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C80F951894
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3581F210DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5551F286DFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32671AD9EE;
-	Wed, 14 Aug 2024 10:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED1B1AD9C6;
+	Wed, 14 Aug 2024 10:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b="OCXsrx97"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BP3hB0nk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732061A4F10;
-	Wed, 14 Aug 2024 10:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723631037; cv=pass; b=VzAaOoYJhHdKgde2XxnMdi1jjputADw92QtAvNYoO2TBu0emJ87DVJ1dIgQjoLW4whEIYizfoBgIMsJfN7HqGk2W3xiD3/5zdpzDXFlg1JLFSCUf/kRjqJD9ppUMEvpyPTvcqxZ7AFwzvT3vT6hHdjLxU3aRVhIrE2mHRMQJn6I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723631037; c=relaxed/simple;
-	bh=FJhdXmcJfITXAU0eY6mADQeSuP/jponqtb7pDgHUZc0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=fHJbqxKvNxl0eqCJHM4pVk8M29HQAVa9NIjrQn65R7SIfZ26gtAf4WRmq1oZuXvz+CTlRvOaId4PRLI5YEfdWBIsftIjf9SF+TBpRkhdJdjPUkZiT01O6SWVCbX4hlnL0qLSc7rycTV2FExWhkhW4/oH5695ecqC/cNk+kELzJs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b=OCXsrx97; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: nicolas.dufresne@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723630979; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Mv+Lbq4LftFO8c0ZzwICdAtOSIiOuoXWVn7T/4qjtEQggbgOgWJPYKpPffffv4Nbo8hH+2WfvhHHaiVbWwztoyKLdkWZZEvM69dZNjrCuMXOFca2smBY4qo+ij3YIACiHtkCtm/HLfwh5zhICJUoTgFVCWuXVffnJ9b/1YRhw6I=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723630979; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=KDSuq+GdTkk8usdOD1M6R1p5SyZGtUFOvVvC4JR/q4U=; 
-	b=VIRKkSZS1V38FTAYMJWOsrHpd0ihEA2+9xc2585g5ZhgRID7YfUqYSfMqhJwL+kpbZ+L4U9IG4UD9owpzyrCEYQjL0xk2rp/0vtl+hsfUTrXz4KqCb3LERCJQxzo+/4CbVtSoAxHNCAKdQKPGM3g1YFkYJbdyGw9oZlN4WxtpEI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=shreeya.patel@collabora.com;
-	dmarc=pass header.from=<shreeya.patel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723630979;
-	s=zohomail; d=collabora.com; i=shreeya.patel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=KDSuq+GdTkk8usdOD1M6R1p5SyZGtUFOvVvC4JR/q4U=;
-	b=OCXsrx97mNoLm5XwPuTPdi9MywUJusqE5tG1wZimWkhm5AqWqhwYZPgLQIntrseC
-	tMgnmWI8rxO4xN63+RWOBqyDhUFUHSeoalq4k2rAzXheFErrGP/W+x4mgeduWOqshFB
-	mOIXMjBHfGGkE1b11nREH3ksmSb6HP/hhqljU/lg=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1723630978549368.7322665721008; Wed, 14 Aug 2024 03:22:58 -0700 (PDT)
-Date: Wed, 14 Aug 2024 15:52:56 +0530
-From: Shreeya Patel <shreeya.patel@collabora.com>
-To: "Tim Surber" <me@timsurber.de>
-Cc: "heiko" <heiko@sntech.de>, "mchehab" <mchehab@kernel.org>,
-	"robh" <robh@kernel.org>, "krzk+dt" <krzk+dt@kernel.org>,
-	"conor+dt" <conor+dt@kernel.org>,
-	"mturquette" <mturquette@baylibre.com>, "sboyd" <sboyd@kernel.org>,
-	"p.zabel" <p.zabel@pengutronix.de>,
-	"jose.abreu" <jose.abreu@synopsys.com>,
-	"nelson.costa" <nelson.costa@synopsys.com>,
-	"shawn.wen" <shawn.wen@rock-chips.com>,
-	"nicolas.dufresne" <nicolas.dufresne@collabora.com>,
-	"hverkuil" <hverkuil@xs4all.nl>,
-	"hverkuil-cisco" <hverkuil-cisco@xs4all.nl>,
-	"kernel" <kernel@collabora.com>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-media" <linux-media@vger.kernel.org>,
-	"devicetree" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-	"linux-rockchip" <linux-rockchip@lists.infradead.org>
-Message-ID: <19150697f90.11f343d091099757.4301715823219222254@collabora.com>
-In-Reply-To: <6f5c4ebb-84ab-4b65-9817-ac5f6158911f@timsurber.de>
-References: <20240719124032.26852-1-shreeya.patel@collabora.com> <6f5c4ebb-84ab-4b65-9817-ac5f6158911f@timsurber.de>
-Subject: Re: [PATCH v4 0/4] Add Synopsys DesignWare HDMI RX Controller
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B9013D8AC
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723631008; cv=none; b=ZEeiZJ/OvuB43zljv6iJGv4fabB8yyomvSNju9eHWNMDsORpHkmAzDRnK776eBr2CO5t92MbC2aMiau6gmcjnetiznDvAIOP3IRXHLnTpl7gjnvDfh6h4gPXzaphyfnC3b9RbdkintXo+R8bZUujCOrkpK/okQNVDniVECLaA9A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723631008; c=relaxed/simple;
+	bh=7cw1/AbKBPeqsJV9coJxF8dZAjVe8TO+fPAe15u0eMc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LulDWy6zXioBM35R06gEigRodPlZsrdTeXSbWBiFGyK9MkThN785w0UiVT2xfeJrKy3wDmeSUKPhahihn/kc3xpXHYJN6IHerf0MOyvZmGOQ/FSD/dHGhmac1dmxMS1CgnY9k8aM3iC8TlqPxFKoXmjsceoGFl5BtuyDh8JV+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BP3hB0nk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723631006;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xf8FewnhDBtJSkHfcGafEfhFMcIiUCCNI1/G2S8BSV8=;
+	b=BP3hB0nk5gfqQHvO9D9nM2yHDrvu1hPj6qWkcC1jZ8u3/w26ae57/U58gJmG509CEK5GMD
+	g3DVzriJcsBM3zKy5EYdiyofPPvWC3pC1+JTfy+w/jsmWR3JCmtw3MUugn7LV+Y41lu5PJ
+	IjJ6cEd74VJPvFt7p3iC5/EeMSk/EXc=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-694-us3zOpNiMcGSIqlXX7mvVQ-1; Wed, 14 Aug 2024 06:23:24 -0400
+X-MC-Unique: us3zOpNiMcGSIqlXX7mvVQ-1
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-44fe92025d8so70327451cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:23:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723631004; x=1724235804;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xf8FewnhDBtJSkHfcGafEfhFMcIiUCCNI1/G2S8BSV8=;
+        b=SACyQcH0DQbOWBomVk3a1uhyNB6EyCrgs1jt4p8Hnw8bjUKRMW3mbMsG/m8nqSLaJl
+         0uOZuVj5cdVFLRGfIq/wZMAX480QzD6dhEKfa0bRQSPce/sC/vfb0KzjcZN48/If+cpK
+         8ENdjOpqqYEPfHD/gaYlb8BR9LGv1rwHopvu2pi/Q6i3yogiX+2VtpM3WD/9XStivP0o
+         qOOXziG6T5aztdTefuGO6gsksaqM+2u7+5WFtuaCjlTPGVEDCqZJ45nTDma72EZnU9Ge
+         Wj2VyO+5rysIjvgHROzZmntrGXD4IhSYRtRQI/eASgnS9cznVDVoDIb4ex7uV4E4+sbr
+         BD1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW/qqwPgF7ks7yvPfNEIkLbHTwVf1NmMfHRTKspD3CLGtRDoa8KzfJj3+UI6EoSXhUZGNEY9KrBZgcAFfxh9gVEq0QmjbGkG6mKxnHu
+X-Gm-Message-State: AOJu0YxWgeQiie+dciEwRVz7AwgFJOKYCPPL2DzBWO9Q5B9vfUse7ryK
+	ipIplVmNhJX5lv/6g2Ye2rYQJMUwC9bT8E0G0p5qeFLqdUs6O5F5LAKFdCgHzxwx6c9NKGqJQgu
+	59wIYV9Ql7ce8c1fbiuoBnysY3EbGn/aYK27pzaYpcNFtCNFDFr1gi3RxbFOoQrLbJ31SlA==
+X-Received: by 2002:a05:622a:424a:b0:44f:feef:d804 with SMTP id d75a77b69052e-4535bb8d5b5mr28175251cf.40.1723631003878;
+        Wed, 14 Aug 2024 03:23:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEZlm4Od5fa3O6bmSEd3xQHQa8InlgJn2CTPA0YW8+GZLXQ9jguTRXmBvfMLWk6lUGFsVfXoQ==
+X-Received: by 2002:a05:622a:424a:b0:44f:feef:d804 with SMTP id d75a77b69052e-4535bb8d5b5mr28175001cf.40.1723631003581;
+        Wed, 14 Aug 2024 03:23:23 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c291c11sm39593971cf.97.2024.08.14.03.23.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 03:23:23 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de,
+ efault@gmx.de
+Subject: Re: [PATCH 19/24] sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE
+In-Reply-To: <20240814072548.GB22686@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105030.514088302@infradead.org>
+ <xhsmh7ccky4mr.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20240813221806.GB10328@noisy.programming.kicks-ass.net>
+ <20240814072548.GB22686@noisy.programming.kicks-ass.net>
+Date: Wed, 14 Aug 2024 12:23:19 +0200
+Message-ID: <xhsmh34n7xv1k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: text/plain
 
- ---- On Sun, 04 Aug 2024 05:27:08 +0530  Tim Surber  wrote ---=20
- > Hi Shreeya,
- >=20
+On 14/08/24 09:25, Peter Zijlstra wrote:
+> On Wed, Aug 14, 2024 at 12:18:07AM +0200, Peter Zijlstra wrote:
+>> On Tue, Aug 13, 2024 at 02:43:56PM +0200, Valentin Schneider wrote:
+>> > On 27/07/24 12:27, Peter Zijlstra wrote:
+>> > > @@ -6814,6 +6815,7 @@ requeue_delayed_entity(struct sched_enti
+>> > >       }
+>> > >
+>> > >       se->sched_delayed = 0;
+>> > > +	update_load_avg(cfs_rq, se, 0);
+>> >
+>> > Ditto on the ordering
+>>
+>> Bah, so I remember thinking about it and then I obviously go and do it
+>> the exact wrong way around eh? Let me double check this tomorrow morning
+>> with the brain slightly more awake :/
+>
+> OK, so I went over it again and I ended up with the below diff -- which
+> assuming I didn't make a giant mess of things *again*, I should go fold
+> back into various other patches ...
+>
 
-Hi Tim,
+Looks right to me, thanks! I'll go test the newer stack of patches.
 
-
- > I tested your patch and noticed problems when using 3840x2160 resolution=
-=20
- > at =C2=A060fps.
- >=20
- > For my testing I connected an HDMI source and set it to 4k60fps. I=20
- > verified that this source and the cables work on a screen at this=20
- > resolution.
- >=20
- > Using
- > 'v4l2-ctl --verbose -d /dev/video1=20
- > --set-fmt-video=3Dwidth=3D3840,height=3D2160,pixelformat=3D'NV12'=20
- > --stream-mmap=3D4 --stream-skip=3D3 --stream-count=3D100 --stream-poll'
- > I get the video format output, but not the periodic output which shows=
-=20
- > the fps.
- >=20
- > Using
- > 'GST_DEBUG=3D4 gst-launch-1.0 -v v4l2src device=3D/dev/video1 !=20
- > fpsdisplaysink text-overlay=3Dfalse video-sink=3D"fakevideosink"'
- > I get the following error message:
- >=20
- > (gst-launch-1.0:3231): GStreamer-CRITICAL **: 01:34:39.137:=20
- > gst_memory_resize: assertion 'size + mem->offset + offset <=3D=20
- > mem->maxsize' failed
- > 0:00:03.489382529 =C2=A03231 0xffffa0000b90 WARN =C2=A0v4l2bufferpool=20
- > gstv4l2bufferpool.c:2209:gst_v4l2_buffer_pool_process:=20
- > Dropping truncated buffer, this is likely a driver bug.
- > 0:00:03.489421906 =C2=A03231 0xffffa0000b90 WARN =C2=A0bufferpool=20
- > gstbufferpool.c:1252:default_reset_buffer: Buffer=20
- > 0xffff98008e80 without the memory tag has maxsize (8294400) that is=20
- > smaller than the configured buffer pool size (12441600). The buffer will=
-=20
- > be not be reused. This is most likely a bug in this GstBufferPool subcla=
-ss
- >=20
- >=20
- > Everything works with 4k30fps or 1080p 60fps. The hardware should=20
- > support 4k60fps.
- >=20
-
-
-Sorry for the delayed response, I've been trying to reproduce this on my si=
-de
-and to also fix it.
-
-It seems you are right, 4K@60 fps doesn't work with the latest version of H=
-DMIRX.
-We found out that it could be because of the current EDID which shows some =
-failures.
-
-Though I wasn't able to test the following on my side since my device doesn=
-'t support
-4K, one of my colleague tried to replace the EDID and 4K@60 fps worked fine=
- after that.
-
-If you'd like to try it yourself then following is the command to get the n=
-ew EDID
-
-v4l2-ctl --show-edid type=3Dhdmi-4k-600mhz
-
-You will have to replace the EDID in the driver with the EDID you get the f=
-rom the above
-command in HEX format.
-
-Thanks for reporting this, I will soon send v5 with this change included in=
- it.
-
-
-Thanks,
-Shreeya Patel
-
-
- > Best regards,
- > Tim
- >=20
- > On 19.07.24 14:40, Shreeya Patel wrote:
- > > This series implements support for the Synopsys DesignWare
- > > HDMI RX Controller, being compliant with standard HDMI 1.4b
- > > and HDMI 2.0.
- > >
- > > Features that are currently supported by the HDMI RX driver
- > > have been tested on rock5b board using a HDMI to micro-HDMI cable.
- > > It is recommended to use a good quality cable as there were
- > > multiple issues seen during testing the driver.
- > >
- > > Please note the below information :-
- > > * While testing the driver on rock5b we noticed that the binary BL31
- > > from Rockchip contains some unknown code to get the HDMI-RX PHY
- > > access working without any errors.
- > > With TF-A BL31, the HDMI-RX PHY also works fine but there were no
- > > interrupts seen for rk_hdmirx-hdmi leading to some errors when
- > > loading the driver [0]. It doesn't affect the functionality of the
- > > driver though.
- > > * We have tested the working of OBS studio with HDMIRX driver and
- > > there were no issues seen.
- > > * We also tested and verified the support for interlaced video.
- > >
- > > [0] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/tru=
-sted-firmware-a/-/issues/1
- > >
- > > To test the HDMI RX Controller driver, following example commands can =
-be used :-
- > >
- > > root@debian-rockchip-rock5b-rk3588:~# v4l2-ctl --verbose -d /dev/video=
-0 \
- > > --set-fmt-video=3Dwidth=3D1920,height=3D1080,pixelformat=3D'BGR3' --st=
-ream-mmap=3D4 \
- > > --stream-skip=3D3 --stream-count=3D100 --stream-to=3D/home/hdmiin4k.ra=
-w --stream-poll
- > >
- > > root@debian-rockchip-rock5b-rk3588:~# ffmpeg -f rawvideo -vcodec rawvi=
-deo \
- > > -s 1920x1080 -r 60 -pix_fmt bgr24 -i /home/hdmiin4k.raw output.mkv
- > >
- > > CEC compliance test results :-
- > >
- > > * https://gitlab.collabora.com/-/snippets/381
- > > * https://gitlab.collabora.com/-/snippets/380
- > >
- > > Following is the v4l2-compliance test result :-
- > >
- > > root@debian-rockchip-rock5b-rk3588:~# v4l2-compliance -d /dev/video0
- > > v4l2-compliance 1.27.0-5220, 64 bits, 64-bit time_t
- > > v4l2-compliance SHA: 8387e3673837 2024-07-01 11:09:32
- > >
- > > Compliance test for snps_hdmirx device /dev/video0:
- > >
- > > Driver Info:
- > > =C2=A0=C2=A0=C2=A0=C2=A0Driver name      : snps_hdmirx
- > > =C2=A0=C2=A0=C2=A0=C2=A0Card type        : snps_hdmirx
- > > =C2=A0=C2=A0=C2=A0=C2=A0Bus info         : platform:fdee0000.hdmi-rece=
-iver
- > > =C2=A0=C2=A0=C2=A0=C2=A0Driver version   : 6.10.0
- > > =C2=A0=C2=A0=C2=A0=C2=A0Capabilities     : 0x84201000
- > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Video Capture Multipla=
-nar
- > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Streaming
- > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Extended Pix Format
- > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Device Capabilities
- > > =C2=A0=C2=A0=C2=A0=C2=A0Device Caps      : 0x04201000
- > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Video Capture Multipla=
-nar
- > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Streaming
- > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0Extended Pix Format
- > >
- > > Required ioctls:
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_QUERYCAP: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test invalid ioctls: OK
- > >
- > > Allow for multiple opens:
- > > =C2=A0=C2=A0=C2=A0=C2=A0test second /dev/video0 open: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_QUERYCAP: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_PRIORITY: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test for unlimited opens: OK
- > >
- > > Debug ioctls:
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_DBG_G/S_REGISTER: OK (Not Supporte=
-d)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_LOG_STATUS: OK
- > >
- > > Input ioctls:
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not=
- Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_ENUMAUDIO: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S/ENUMINPUT: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_AUDIO: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0Inputs: 1 Audio Inputs: 0 Tuners: 0
- > >
- > > Output ioctls:
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_MODULATOR: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_ENUMAUDOUT: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_AUDOUT: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0Outputs: 0 Audio Outputs: 0 Modulators: 0
- > >
- > > Input/Output configuration ioctls:
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Suppor=
-ted)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_DV_TIMINGS_CAP: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_EDID: OK
- > >
- > > Control ioctls (Input 0):
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_QUERYCTRL: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_CTRL: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S/TRY_EXT_CTRLS: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0Standard Controls: 3 Private Controls: 0
- > >
- > > Format ioctls (Input 0):
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS=
-: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G/S_PARM: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G_FBUF: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G_FMT: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_TRY_FMT: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_S_FMT: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supporte=
-d)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test Cropping: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test Composing: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test Scaling: OK (Not Supported)
- > >
- > > Codec ioctls (Input 0):
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Support=
-ed)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_G_ENC_INDEX: OK (Not Supported)
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_(TRY_)DECODER_CMD: OK (Not Support=
-ed)
- > >
- > > Buffer ioctls (Input 0):
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test CREATE_BUFS maximum buffers: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_REMOVE_BUFS: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test VIDIOC_EXPBUF: OK
- > > =C2=A0=C2=A0=C2=A0=C2=A0test Requests: OK (Not Supported)
- > >
- > > Total for snps_hdmirx device /dev/video0: 47, Succeeded: 47, Failed: 0=
-, Warnings: 0
- > >
- > > Changes in v4 :-
- > >    - Remove DTS changes included in the device tree patch
- > >    - Remove the hdmi rx pin info as it's already present
- > >      in the rk3588-base-pinctrl.dtsi
- > >    - Create a separate config option for selecting the EDID
- > >      and enable it by default
- > >    - Improve the comment related to DV timings and move it
- > >      to the side of hdmirx_get_detected_timings
- > >    - Add 100ms delay before pulling the HPD high
- > >    - Do not return the detected timings from VIDIOC_G_DV_TIMINGS
- > >    - Drop the bus info from hdmirx_querycap
- > >    - If *num_planes !=3D 0 then return 0 in hdmirx_queue_setup
- > >    - Set queue->min_queued_buffers to 1
- > >    - Drop q->allow_cache_hints =3D 0; as it's always 0 by default
- > >    - Add a comment for q->dma_attrs =3D DMA_ATTR_FORCE_CONTIGUOUS;
- > >    - Drop .read =3D vb2_fop_read as it's not supported by driver
- > >    - Remove redundant edid_init_data_600M
- > >    - Make HPD low when driver is loaded
- > >    - Add support for reading AVI Infoframe
- > >    - Remove msg_len checks from hdmirx_cec_transmit
- > >    - Add info about the CEC compliance test in the cover letter
- > >    - Add arbitration lost status
- > >    - Validate the physical address inside the EDID
- > >
- > > Changes in v3 :-
- > >    - Use v4l2-common helpers in the HDMIRX driver
- > >    - Rename cma node and phandle names
- > >    - Elaborate the comment to explain 160MiB calculation
- > >    - Move &hdmi_receiver_cma to the rock5b dts file
- > >    - Add information about interlaced video testing in the
- > >      cover-letter
- > >
- > > Changes in v2 :-
- > >    - Fix checkpatch --strict warnings
- > >    - Move the dt-binding include file changes in a separate patch
- > >    - Add a description for the hardware in the dt-bindings file
- > >    - Rename resets, vo1 grf and HPD properties
- > >    - Add a proper description for grf and vo1-grf phandles in the
- > >      bindings
- > >    - Rename the HDMI RX node name to hdmi-receiver
- > >    - Include gpio header file in binding example to fix the
- > >      dt_binding_check failure
- > >    - Move hdmirx_cma node to the rk3588.dtsi file
- > >    - Add an entry to MAINTAINERS file for the HDMIRX driver
- > >
- > > Shreeya Patel (4):
- > >    MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
- > >    dt-bindings: media: Document bindings for HDMI RX Controller
- > >    arm64: dts: rockchip: Add device tree support for HDMI RX Controlle=
-r
- > >    media: platform: synopsys: Add support for hdmi input driver
- > >
- > >   .../bindings/media/snps,dw-hdmi-rx.yaml       |  132 +
- > >   MAINTAINERS                                   |    8 +
- > >   .../dts/rockchip/rk3588-base-pinctrl.dtsi     |   14 +
- > >   .../arm64/boot/dts/rockchip/rk3588-extra.dtsi |   56 +
- > >   drivers/media/platform/Kconfig                |    1 +
- > >   drivers/media/platform/Makefile               |    1 +
- > >   drivers/media/platform/synopsys/Kconfig       |    3 +
- > >   drivers/media/platform/synopsys/Makefile      |    2 +
- > >   .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
- > >   .../media/platform/synopsys/hdmirx/Makefile   |    4 +
- > >   .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2763 +++++++++++++++=
-++
- > >   .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
- > >   .../synopsys/hdmirx/snps_hdmirx_cec.c         |  285 ++
- > >   .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
- > >   14 files changed, 3734 insertions(+)
- > >   create mode 100644 Documentation/devicetree/bindings/media/snps,dw-h=
-dmi-rx.yaml
- > >   create mode 100644 drivers/media/platform/synopsys/Kconfig
- > >   create mode 100644 drivers/media/platform/synopsys/Makefile
- > >   create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
- > >   create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
- > >   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmir=
-x.c
- > >   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmir=
-x.h
- > >   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmir=
-x_cec.c
- > >   create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmir=
-x_cec.h
- > >
- >=20
 
