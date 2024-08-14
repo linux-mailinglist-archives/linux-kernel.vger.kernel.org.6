@@ -1,138 +1,115 @@
-Return-Path: <linux-kernel+bounces-286313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664B6951983
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:59:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8722951986
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCFB5B22259
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4735A1F2259B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF461AE847;
-	Wed, 14 Aug 2024 10:59:19 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2871AE878;
+	Wed, 14 Aug 2024 10:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NVhbgg6U";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oxQpfr9q"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42080AD5A
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7EFAD5A;
+	Wed, 14 Aug 2024 10:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723633159; cv=none; b=d1FIV99etv+wL8P1aO25Mfha7/4Lnk5qStFGC1fCO2TLucSyF/EATP+Et02iGwpysSVUiiF6rmtcEk4ZlqamAnd89Pe8lo75DZhCj3nYR2h3wXl0VcU6euaO6quY5YeSet02hEaHfR63dPmx/vXvTiAIgSGiUvJukbWOuunwsE0=
+	t=1723633166; cv=none; b=pwM6Rfe1ibjLXALJu8U2gQaE8SBf2bBL9RDrSl7g9Ri2dm9bJwW/3V/RgAEsXJ7O8vJuSxf/dg2Mc4oSOmpcoY8nNDMFb3JbO2mO26QHThmAbDRHSyxaa5LNiqybyakNHoEp7BLRxOv+03EZY2lN8j80yr8Yz7egTXyFFapGaII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723633159; c=relaxed/simple;
-	bh=FDGJ3XkEIaTOpwp5kPnPZXSAuVrkVe3XypLywdy1494=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DdOhimiHCzYP9SzwqS431b7P+XUwnoeFfQbbKxLA0XwjjgT45JkNTf5BPMISi9E2kkG1DDhJiC5oYs0yRAHa/hFoEigbhvBBuwdGUjMjTV5ymYsm5buUWe64MnVAnYBFw9W6PLqkxm64YEaHhTb+/c1V4tZrdOH1vGqD3b6clqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1seBiM-0007qt-4B; Wed, 14 Aug 2024 12:58:50 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1seBiJ-000LFZ-HT; Wed, 14 Aug 2024 12:58:47 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1seBiJ-002Wsl-1H;
-	Wed, 14 Aug 2024 12:58:47 +0200
-Date: Wed, 14 Aug 2024 12:58:47 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ma Ke <make24@iscas.ac.cn>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Peng Fan <peng.fan@nxp.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Marek Vasut <marex@denx.de>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	imx@lists.linux.dev, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH] soc: imx: imx8m-blk-ctrl: Fix NULL pointer dereference
-Message-ID: <20240814105847.tise4jzneszdxetb@pengutronix.de>
-References: <20240808042858.2768309-1-make24@iscas.ac.cn>
- <20240808061245.szz5lq6hx2qwi2ja@pengutronix.de>
- <1b04b8b3-44ca-427f-a5c9-d765ec30ec33@app.fastmail.com>
- <CAPDyKFqd=haDWB3tATZ_E1BMpCReNh=hLa5qPGATc3h1NUx09A@mail.gmail.com>
+	s=arc-20240116; t=1723633166; c=relaxed/simple;
+	bh=0IZQ1fQIihhxg9831hBdaDdg64hb2jHVuHxJTPdbot8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PtGKlxJr3qKog1fGJsEigcyZ163Q7QZ9pL5v21eGeADajBSKDI6IHKSlpzyk95d3ID7lsj+t6WwFPmy5goZn3PNexd+5VYUIfbWzNCqAKhBqwpxwKMvEBYzazfVl//bLAFKbSG1xa6pnIrx1PJuxMJWdrltpvbbjbPFxLcQHWu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NVhbgg6U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oxQpfr9q; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 14 Aug 2024 10:59:22 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723633163;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sS6NJnBpwH9ALMSVfzB9VXJbAYfoDUWFwvSDqX3wb5M=;
+	b=NVhbgg6UXOxdKBOG7k86nMtHmTQ3jrPeQm08Jq/ZcQkbFsyN3MxQijmTdle1oMHwQR7Jt5
+	yxVz2wPff7WHTxYjKBtUYI4ZHhcsWfbLxS2ZRNzFlfN0GWndPvntnbUm2CX8zvjdAJWP/r
+	CMoVsI360gVv/Ri+vW1FI00Kme3VEINvpAZ/I+u3rnWbtBCTRvA6xOSbuNA9yieKbgVnYT
+	hDtTrwwhVQuN0rwcfG3oIDJcp4bSrCIi1tWfaqaSjzUXxtZ53HBcqOHsrrgh0z8HUWL8cF
+	AZpu+eGgiPnFq77g+dMOgCYN0EvePYdjk3BzLYT1r69m0ipDNBCU4jVLOzqQRw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723633163;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sS6NJnBpwH9ALMSVfzB9VXJbAYfoDUWFwvSDqX3wb5M=;
+	b=oxQpfr9qf91eNp2pBXYRR7wY8gIW1W68GE8cEGfEqg4PW2LHXiNpAsOnXrb8bvm7NS8HmW
+	nySmTo9+MQh18EAw==
+From: "tip-bot2 for Yue Haibing" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mm] x86/mm: Remove unused NX related declarations
+Cc: Yue Haibing <yuehaibing@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240814031922.2333198-1-yuehaibing@huawei.com>
+References: <20240814031922.2333198-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFqd=haDWB3tATZ_E1BMpCReNh=hLa5qPGATc3h1NUx09A@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Message-ID: <172363316258.2215.1864908698109295570.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 24-08-13, Ulf Hansson wrote:
-> On Thu, 8 Aug 2024 at 08:53, Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Thu, Aug 8, 2024, at 08:12, Marco Felsch wrote:
-> > >
-> > > On 24-08-08, Ma Ke wrote:
-> > >> Check bc->bus_power_dev = dev_pm_domain_attach_by_name() return value using
-> > >> IS_ERR_OR_NULL() instead of plain IS_ERR(), and fail if bc->bus_power_dev
-> > >> is either error or NULL.
-> > >>
-> > >> In case a power domain attached by dev_pm_domain_attach_by_name() is not
-> > >> described in DT, dev_pm_domain_attach_by_name() returns NULL, which is
-> > >> then used, which leads to NULL pointer dereference.
-> > >
-> > > Argh.. there are other users of this API getting this wrong too. This
-> > > make me wonder why dev_pm_domain_attach_by_name() return NULL instead of
-> > > the error code returned by of_property_match_string().
-> > >
-> > > IMHO to fix once and for all users we should fix the return code of
-> > > dev_pm_domain_attach_by_name().
-> >
-> > Agreed, in general any use of IS_ERR_OR_NULL() indicates that there
-> > is a bad API that should be fixed instead, and this is probably the
-> > case for genpd_dev_pm_attach_by_id().
-> >
-> > One common use that is widely accepted is returning NULL when
-> > a subsystem is completely disabled. In this case an IS_ERR()
-> > check returns false on a NULL pointer and the returned structure
-> > should be opaque so callers are unable to dereference that
-> > NULL pointer.
-> >
-> > genpd_dev_pm_attach_by_{id,name}() is documented to also return
-> > a NULL pointer when no PM domain is needed, but they return
-> > a normal 'struct device' that can easily be used in an unsafe
-> > way after checking for IS_ERR().
-> >
-> > Fortunately it seems that there are only a few callers at the
-> > moment, so coming up with a safer interface is still possible.
-> 
-> I am not sure it's worth the effort, but I may be wrong.
-> 
-> It's been a bit tricky to keep the interfaces above consistent with
-> the legacy interface (dev_pm_domain_attach()). Moreover, we need a way
-> to allow a PM domain to be optional. By returning NULL (or 0), we are
-> telling the consumer that there is no PM domain described that we can
-> attach the device to.
+The following commit has been merged into the x86/mm branch of tip:
 
-Other subsystems like GPIO, regulator have a ..._optional API for this,
-could this be an option?
+Commit-ID:     1aa0c92f816b3a136cc3a31ef184206a19fc3c03
+Gitweb:        https://git.kernel.org/tip/1aa0c92f816b3a136cc3a31ef184206a19fc3c03
+Author:        Yue Haibing <yuehaibing@huawei.com>
+AuthorDate:    Wed, 14 Aug 2024 11:19:22 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 14 Aug 2024 12:51:07 +02:00
 
-Regards,
-  Marco
+x86/mm: Remove unused NX related declarations
 
-> 
-> Kind regards
-> Uffe
-> 
+Since commit 4763ed4d4552 ("x86, mm: Clean up and simplify NX enablement")
+these declarations is unused and can be removed.
+
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240814031922.2333198-1-yuehaibing@huawei.com
+---
+ arch/x86/include/asm/pgtable_types.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 2f32113..6f82e75 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -517,8 +517,6 @@ typedef struct page *pgtable_t;
+ 
+ extern pteval_t __supported_pte_mask;
+ extern pteval_t __default_kernel_pte_mask;
+-extern void set_nx(void);
+-extern int nx_enabled;
+ 
+ #define pgprot_writecombine	pgprot_writecombine
+ extern pgprot_t pgprot_writecombine(pgprot_t prot);
 
