@@ -1,159 +1,110 @@
-Return-Path: <linux-kernel+bounces-285817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C184B951322
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA81C951326
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA5B1F2397E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABC6284B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A4B3CF5E;
-	Wed, 14 Aug 2024 03:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773743BB48;
+	Wed, 14 Aug 2024 03:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="C4e3aDpI"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4tfajyt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533184C62B;
-	Wed, 14 Aug 2024 03:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22912BB1C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723606297; cv=none; b=pNQ/FNdaLhkNWpnVkvYhC7JZb6DPhiH1kDDm82MQdgMfkPkZQL3i1y1+Q+J7orKn219Y19a7WsbSkHo+x6GaSpcbTQvv2Y8+gXGh4gkqeteO4RG7BZy5gfQY5aav8cL85I3muD7hky0dMMAF/31MSLxtP9+fh5BiJAUtHamiCnA=
+	t=1723606417; cv=none; b=fJzWqinGWUFbVJSrpnKZRJxsZRUYBaB/ENoW2IbBa+GmOaSkRtu6UoWlsHukcZ2geeVSphxmGVT2lNvjYZvM1eQd08fLVqmfZWQnmVARvEjCnkVzFL47f+TjpNcYjQDcZGebxzHeIxfjeRHqYThhFQ1gBLNJCbEiNnhqLFKKvws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723606297; c=relaxed/simple;
-	bh=Ph74HS2yjbx0D/WOttKu/hvhRt4fmOMR4m5CogB0ARc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=loYsz3ODWm8aWiZZgz3Ao2JCe60T0b5mYo1XcQ4BRqOvTdmkY+DLOkraMzX+3Avj6qtX7HXYVlLFYjxJjPiKEK9oeZf69e6tKvmqam5GE+sc3GdDvU2qMVIjIl3qp8tWjmBX4Yd3R1t4uUdAFVXOH7W9IToQgZLkH1H/rQDydRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=C4e3aDpI; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b0cc3c5459ed11ef87684b57767b52b1-20240814
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=/IeNTLKFaQHUJbgFZkd6PVFv+tJudIYMrE83HpCdIso=;
-	b=C4e3aDpInVHY3FPbSbnGs/mBizfO4SUtmA1iqju9gi40Wsg/ALSMAKpVh2o8O/qpzZ5J2121jGcHivNtCdFm2sMVmKnOCZqxvtNKjA/VIyUX7EtLss5FS1jw35sDZWPGkeSZtp2ChlwgSQTaWqhtAPibSptClS0dwTvXt8Fm7/g=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:5f53c864-65e5-4a06-b2d8-b06054274730,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:7df28cfe-77bb-433c-b174-ffb8012693b0,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: b0cc3c5459ed11ef87684b57767b52b1-20240814
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <jiande.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1628461354; Wed, 14 Aug 2024 11:31:28 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 14 Aug 2024 11:31:26 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 14 Aug 2024 11:31:26 +0800
-From: Jiande Lu <jiande.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Chris Lu <chris.lu@mediatek.com>,
-	Deren Wu <deren.Wu@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, "Steve
- Lee" <steve.lee@mediatek.com>, linux-bluetooth
-	<linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Jiande Lu <jiande.lu@mediatek.com>
-Subject: [PATCH v2] Bluetooth: btusb: Add new VID/PID 0489/e139 for MT7925
-Date: Wed, 14 Aug 2024 11:31:24 +0800
-Message-ID: <20240814033124.29418-1-jiande.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1723606417; c=relaxed/simple;
+	bh=EpuLSgfvUytePDBb/IQzp2Wnvo6eIoYC51acrnOgLbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EXEH8cRyxMiFAZRWZ54l2q6LINDLAMCmSPaZShQdX7xR4SZEq7uec8cttDkYNRvX4SGKMVIsFOn3Y9aSHY5vdldhw/OYq4eDNKMaEbP+qkjY11eCKdrnkwjo8ac1qXAkLYEP2Sx0oOL+/bulOMtf5yTrFvtUbgrWJZHJxYWrf8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4tfajyt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A14C32782;
+	Wed, 14 Aug 2024 03:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723606416;
+	bh=EpuLSgfvUytePDBb/IQzp2Wnvo6eIoYC51acrnOgLbE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=t4tfajytKCQfAlcaVn6v+H1gnB28gQ2+8v/5q+SD+j+qRlXuHq69Ocr2BrGYTCslM
+	 GRXL7pHRxjNDWmtsNaX/zgQF9zQJRlzDSGu6FG7ScnpTrMhE0cD5PgiG62Z++7YQOE
+	 zR0ZtvRUyZPnedyqge4kXRmRm0GhHCYzEaQMHcBwRvBE25VW7rauPMYnmk+3xFtFle
+	 N9jMqk18F8FCb/fo3BjG6yfDJR7wT6jWLpmAIMFHNvxGA2oEWauPogfzZ4ofWTCdU/
+	 174q7vlDWIVKIg23YMGBYu+5zrsfxEJ/5d4pSSLuuxiMP3oLL/yky3WU+QO3Cg58YD
+	 OJQNaQ96vp85Q==
+Message-ID: <02214d48-6aee-40f7-9a40-60b4091b5bfa@kernel.org>
+Date: Wed, 14 Aug 2024 11:33:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--5.271800-8.000000
-X-TMASE-MatchedRID: wDTc/wNgEcOOv/EKrwzF6CbMb0f5D0uqMApqy5cfknU2/UwdvFG5IgBu
-	o8M5Nxn42OsYla+9EV0T3bJgA9T/DR/TUHYtYA4Dbc297PAGtWb4uJ1REX4MHSJlFuUUbH7w+Vi
-	hXqn9xLGFWYX2TPbDErBkcxB01tpxHxPMjOKY7A8LbigRnpKlKSPzRlrdFGDwqxxSLHC+GmPmBV
-	n1oqfVejNcu+WAP3cuzNi+KRsEE4Vk3c0a+pAw0g==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.271800-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: EE7D3F10E5513844D10A2A446C8492234DC17CBC280FB3F24ED432A9D87962822000:8
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space
+ in f2fs_commit_atomic_write
+To: Edward Adam Davis <eadavis@qq.com>,
+ syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
+Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000ebae95061f96be85@google.com>
+ <tencent_E51B7925E5BAF4BBCF33739E5E1BFA4B9F08@qq.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <tencent_E51B7925E5BAF4BBCF33739E5E1BFA4B9F08@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add VID 0489 & PID e139 for Mediatek MT7925 USB Bluetooth chip.
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below
+On 2024/8/14 8:48, Edward Adam Davis wrote:
+> unlock i_gc_rwsem[WRITE] before quiting f2fs_commit_atomic_write
+> 
+> Fixes: 7566a155c666 ("f2fs: atomic: fix to not allow GC to pollute atomic_file")
 
-T:  Bus=07 Lev=01 Prnt=01 Port=10 Cnt=02 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e139 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+Since original patch has not been merged, if you don't mind, I'd like to
+fix this issue in original patch.
 
-V1 -> V2: code rebase
-Signed-off-by: Jiande Lu <jiande.lu@mediatek.com>
----
- drivers/bluetooth/btusb.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks,
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 47ae6f4eab0b..e587aadc10f2 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -690,6 +690,9 @@ static const struct usb_device_id quirks_table[] = {
- 	{ USB_DEVICE(0x0489, 0xe113), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH |
- 						     BTUSB_VALID_LE_STATES },
-+	{ USB_DEVICE(0x0489, 0xe139), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH |
-+						     BTUSB_VALID_LE_STATES },
- 	{ USB_DEVICE(0x13d3, 0x3602), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH |
- 						     BTUSB_VALID_LE_STATES },
--- 
-2.18.0
+> Reported-by: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
+> 
+> #syz test: net-next 9e6869691724
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 741e46f9d0fd..a43054ab0cf1 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -389,13 +389,13 @@ int f2fs_commit_atomic_write(struct inode *inode)
+>   
+>   	err = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
+>   	if (err)
+> -		return err;
+> +		goto out;
+>   
+>   	/* writeback GCing page of cow_inode */
+>   	err = filemap_write_and_wait_range(fi->cow_inode->i_mapping,
+>   							0, LLONG_MAX);
+>   	if (err)
+> -		return err;
+> +		goto out;
+>   
+>   	filemap_invalidate_lock(inode->i_mapping);
+>   
+> @@ -407,6 +407,7 @@ int f2fs_commit_atomic_write(struct inode *inode)
+>   	f2fs_unlock_op(sbi);
+>   
+>   	filemap_invalidate_unlock(inode->i_mapping);
+> +out:
+>   	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
+>   
+>   	return err;
+> 
 
 
