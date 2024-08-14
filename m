@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-285726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B2519511E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F549511E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13072844DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D433284457
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7F41CAA2;
-	Wed, 14 Aug 2024 02:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9004E1CAA2;
+	Wed, 14 Aug 2024 02:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E91PY0Qh"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VNQCkvmD"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B661CD06;
-	Wed, 14 Aug 2024 02:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7542327713;
+	Wed, 14 Aug 2024 02:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723601523; cv=none; b=dYr9w9L6fA4BgYXEkR5LuRbkvkXr3QSzIaFqMXN2oS1uU3diQVxXhMunHB7lCxRN2SJfy34n0PCAYj5UPDmyE6DRilUqcziJfyRG1iNLFJAvV1tQ7cVuUbna2zbBIGkVbOpp9DBNERi7oZQAmnNPK3VrZOK3ivTrkIxgWfS2LcY=
+	t=1723601532; cv=none; b=lS+AMpQ+YYCumGA63mHe2NHd6d8ajPGQZfUOAyQOY3syJxZ7Hi79XKbj8xELUxQzFHrjjHvbjaJ1tQoA8pYey3UsB3CH+TPoF8U8scEsuMu8yKxcOuHjUCFUmBQ4p70axMXBFVbQ4uslDU9qLjNmxzMs0OOoxs4arH0WbfT2XS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723601523; c=relaxed/simple;
-	bh=qjWNxatVepm9lmO+9FgXCva7g5Nu5Dg8pKaKKJ0IaZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UE+keru5zwvK/obBDWl70QIGFogcd5vhY/16npg6qoPiMdSeSiwQA53rdGcllKgrwwCqThANzGxMcQueGlsXzLMz7QpxXaSMTs2jV2pK+kppjBq4LM/34/kA6P3tCIB+4Jgp8sRwEyCh+hL4Xv0EwgOL5TAwZiKXgjJq0WParWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E91PY0Qh; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-710ffaf921fso305290b3a.1;
-        Tue, 13 Aug 2024 19:12:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723601521; x=1724206321; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgQt2+VGAGY/RroWfxhoKY1UxciJC2B6QVwLu16mYH0=;
-        b=E91PY0QhHecGN+fgsE0mKtaSMJ6kZAsP2oeXqOaRbPggPOB9zG7ymvfkPNbq+8OtdV
-         h8Cl9EimMTbDGJARLJXkBTRGqWM/SHz6W3WD+y9I0Os1iYn+w6R3FPpOWYWHB0E/SMgn
-         DwUsxo2XgY/YrZtRz1Drlf1H2f3gyYwxWEN0KCBwr6ZXH9TexacY9w9omipvWdU2SYFU
-         yB0PMU3nugGJ9XCwbv8Yv1qh35KwbWCo/6ZRH+orieN+vmaeYN3GRHjHuVh3rlS9D5iS
-         t+lHjS4mhWpzrj9TYPfBaCZvFzsgQUWYLLTVdOaHUegc0/wPa+7BBT8xNGQjAtBMEkrH
-         JBlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723601521; x=1724206321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wgQt2+VGAGY/RroWfxhoKY1UxciJC2B6QVwLu16mYH0=;
-        b=lppxgbgSD/d57dHFGCk4IJkn5MpFdWWeZ+tn+8SmEKs6f8tAWyK4yjefV/StvCDg9p
-         +JWVuayv8KWu9Oz7bMRvx5MPtzgwcpaCMCcEEWwT1ZGKKxYWDFahE59bAqDNLLDJBR91
-         0gefCxhBYjQxnti03DrkF0q0qAA2xNTgn4iS2REklphZXErzZ7w34UjaQA/tmYMUj2M1
-         A9mAAnm1qCB71rY5kCvek2OYKpsRK8IfAhwfOIkb/KmxkCb0b5ZXqxB6cSmVrnZeYdCT
-         RQYcKYe70ZcrfNwiRwtkFhV8XlHaAIZ9pfdyGh9UPuzBkr7sC+VGrZp4K+nDyqcwIP9k
-         GYBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdS5Y2xZzA/mmENx2jH9pGzOuVINHio1Zp7WB2I5mYExPHBMSwPCx90p6pRoZv9vBi7y1TlHhHiQU3BcUSdPae7zTlWW/y0EPlbN+c+sLsKa+mic/7nM0sWM2P8qPru+6lcbfonLkBim3W00PGMOxMHm1ok/G2F8fXRF/gRwJgmWnVoCcV
-X-Gm-Message-State: AOJu0YzePsbIPRlldkuIgrwZlk7QYNqcFTu0M7NO5IfqR1bXOneBsOaA
-	Vw7slS8KeZUfOUYQ6E8seprpjmoTWexztRLBrhBx/liZ3rqxAQTk
-X-Google-Smtp-Source: AGHT+IE+JEWKhfRkf5F4tu2TR4+I4T+y1Sh8oOhAQItB9Y0LNz4oM5JPDKC3DoLO2lBxGaMuMQmtkw==
-X-Received: by 2002:a05:6a20:c889:b0:1c4:779b:fb02 with SMTP id adf61e73a8af0-1c8ee9c68fcmr1101408637.21.1723601520808;
-        Tue, 13 Aug 2024 19:12:00 -0700 (PDT)
-Received: from Laptop-X1 ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58a99acsm6363636b3a.71.2024.08.13.19.11.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 19:12:00 -0700 (PDT)
-Date: Wed, 14 Aug 2024 10:11:48 +0800
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, Petr Machata <petrm@nvidia.com>,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mat Martineau <martineau@kernel.org>
-Subject: Re: [PATCH net] selftests: net: lib: kill PIDs before del netns
-Message-ID: <ZrwSZGj-BgJJADaG@Laptop-X1>
-References: <20240813-upstream-net-20240813-selftests-net-lib-kill-v1-1-27b689b248b8@kernel.org>
+	s=arc-20240116; t=1723601532; c=relaxed/simple;
+	bh=aNasdxu4yIswcEWQRn7spxwYDmyLSm0tj1clLR5XF0I=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=A481zbTznNtr69uPVqtlCo9fEFnhHTPHZD4nGs27XR/dxzDAIW6SlFHiSjrxPaJ9vGYx3N5KSxMLkEKy3xKISQnJ9h0JvbBbktMup0pIwTeSJSzNAZyAx+r742spxU4TZqYy0dvHv9julyXpWUOnDmZ8bFglvnXYL1VkRlGVw80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VNQCkvmD; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723601523; bh=3wsPyn91f/PVLo4SVvbVk5KTI6RKkQpp5yoClszyFoI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VNQCkvmDW3yKfUo9+PnYbl7xA8a4O9MW8++7yIZ0/6Fp9HFSlVJsxyK8QLKSBt/ew
+	 /GxXLueUMNo3j/tZRAt2lB3I0KasVqZNKsQLPftws1hmjezcCzjdD+90kuFZXaFG5B
+	 T9rTFB+HHE5VPOCfSqNpDw+zsZ6nfkMgkT+VeQHw=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 300060B1; Wed, 14 Aug 2024 10:12:00 +0800
+X-QQ-mid: xmsmtpt1723601520ten4rqrpk
+Message-ID: <tencent_42D9D2CB066909BF6EDDAEDB8C8067F3C606@qq.com>
+X-QQ-XMAILINFO: M589RIiAniBCFCgDGCNO+FPRn8oVsIM3oyBNFg2Xh78Tso9bAEpOnZxstfE7zi
+	 RjH5tTZIo9D4uSGmJinkfJQy3WO1SZ4JR0XHbATaSwsvksx8FjbfWOTkoS4JPJF6VuTWqvdtFW4O
+	 9OQ1MHTwEjsrX2guwU1IslKAdFhzoNrxXDmbLSZBS/gC2IiUISc5d1Zt8ow2yOaU9tC87LluR18D
+	 Qblrmwgdj+mZX1A+bi9XaQdH7KHHzdQa4vkAFfS2n9sib9WaCE/Ll14xm2Vwa4tRLml6bsDQaPAb
+	 Pt43MmR3rXN5COIR7GBrb1bmn+KOK8hk9NfrtudRanXq7Lup7wVwITrBAw/inpnX5Y4bu6H0BbIk
+	 bdnAKTCgTJ49o46VXQ8jLWo+p2Xmo8zvaiXbGKKe02sZVw3XPSChGeJzMHEB0J8u2kWymxlKbeZE
+	 ukBk14zQgo+VRcTUAZDlafmpfCvOP/uCX6maOV1fZ/9Z2ZYgjj6z46vPh5mfXuYLLP8ziqH8i5OQ
+	 IoSWt66nZDXtJFVxOzCwS+p1+5C5Ux1kCihJ+GGLQaHeZQ+xbD4M4hcrv+g1nW9AI++U2EUsAllc
+	 flf6Fq6fXnemwMOdya7psjATJNCPH8I+M/NG+eTKVviivYLk4jMIirQ32TpohI3609MbMZvrWzT6
+	 83FoaRYM/3P4MiGdhpYTrWuM3WFoGIEAn2X8Dp63eWMx1fMVHqQetg5gz7fmLdA6VAWE1M8si+iF
+	 WtkcyNQ7oqBpSDkHuB4GupBNSmFJJwIPqFcngggg9GLNvnAv2ix7+bB4oRjGaPZzFFtxFbLcKU/K
+	 iyWN46u92vBdob4GcnJWTRKfdOB7FJtyflz+stFV/0JdEpZWT+O+dY4WQW28p0HLDMt/cIhxGz95
+	 3nBSbwpgJBVHNLNSEHmJdLHwD9AmhSSDhSgsFgYVYWW5wAv/J/+HR/oDBtYGiR6wfNJbxmx7vo
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Cc: adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com,
+	syzkaller-bugs@googlegroups.com,
+	tytso@mit.edu
+Subject: [PATCH] ext4: fix divide error in ext4_mb_regular_allocator
+Date: Wed, 14 Aug 2024 10:12:00 +0800
+X-OQ-MSGID: <20240814021159.587619-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000b1b164061f96213d@google.com>
+References: <000000000000b1b164061f96213d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813-upstream-net-20240813-selftests-net-lib-kill-v1-1-27b689b248b8@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 03:39:34PM +0200, Matthieu Baerts (NGI0) wrote:
-> When deleting netns, it is possible to still have some tasks running,
-> e.g. background tasks like tcpdump running in the background, not
-> stopped because the test has been interrupted.
-> 
-> Before deleting the netns, it is then safer to kill all attached PIDs,
-> if any. That should reduce some noises after the end of some tests, and
-> help with the debugging of some issues. That's why this modification is
-> seen as a "fix".
-> 
-> Fixes: 25ae948b4478 ("selftests/net: add lib.sh")
-> Acked-by: Mat Martineau <martineau@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
->  tools/testing/selftests/net/lib.sh | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/net/lib.sh b/tools/testing/selftests/net/lib.sh
-> index d0219032f773..8ee4489238ca 100644
-> --- a/tools/testing/selftests/net/lib.sh
-> +++ b/tools/testing/selftests/net/lib.sh
-> @@ -146,6 +146,7 @@ cleanup_ns()
->  
->  	for ns in "$@"; do
->  		[ -z "${ns}" ] && continue
-> +		ip netns pids "${ns}" 2> /dev/null | xargs -r kill || true
->  		ip netns delete "${ns}" &> /dev/null || true
->  		if ! busywait $BUSYWAIT_TIMEOUT ip netns list \| grep -vq "^$ns$" &> /dev/null; then
->  			echo "Warn: Failed to remove namespace $ns"
-> 
-> ---
-> base-commit: 58a63729c957621f1990c3494c702711188ca347
-> change-id: 20240813-upstream-net-20240813-selftests-net-lib-kill-f7964a3a58fe
-> 
-> Best regards,
-> -- 
-> Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> 
+Before determining that the goal length is a multiple of the stripe size,
+check CR_GOAL_LEN_FAST and CR_BEST_AVAIL_LEN first.
 
-Thanks for the fix
+Fixes: 1f6bc02f1848 ("ext4: fallback to complex scan if aligned scan doesn't work")
+Reported-and-tested-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1ad8bac5af24d01e2cbd
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ext4/mballoc.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Reviewed-by: Hangbin Liu <liuhangbin@gmail.com>
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 9dda9cd68ab2..451f92cde461 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -2928,13 +2928,12 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
+ 			if (cr == CR_POWER2_ALIGNED)
+ 				ext4_mb_simple_scan_group(ac, &e4b);
+ 			else {
+-				bool is_stripe_aligned = sbi->s_stripe &&
++				bool is_stripe_aligned = (cr == CR_GOAL_LEN_FAST ||
++					cr == CR_BEST_AVAIL_LEN) && sbi->s_stripe &&
+ 					!(ac->ac_g_ex.fe_len %
+ 					  EXT4_B2C(sbi, sbi->s_stripe));
+ 
+-				if ((cr == CR_GOAL_LEN_FAST ||
+-				     cr == CR_BEST_AVAIL_LEN) &&
+-				    is_stripe_aligned)
++				if (is_stripe_aligned)
+ 					ext4_mb_scan_aligned(ac, &e4b);
+ 
+ 				if (ac->ac_status == AC_STATUS_CONTINUE)
+-- 
+2.43.0
+
 
