@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-286641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5227A951D5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:39:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED82951D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DA91C256C0
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8649CB276BE
 	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6823C1B4C2C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456CA1B4C29;
 	Wed, 14 Aug 2024 14:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Jg4WxRQP"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i+kmEQDo"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8AE1B32CB
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822581B3732
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646199; cv=none; b=DdK58XGTmVbdWrk8uurOfY9MNLFhIsK7lKbnY5X8IWMe3cyH95bz87mQRA8nP4DDaT9XL+HUYtJgSdgm/cROvgz85YxCPYyJdz69dLEaIuJnsB59nHNydunrIOG4Y/2T5Kw+9mFAuYs58T3TqJr/GhTlKxoTbd1ZbegEDuRNQgA=
+	t=1723646199; cv=none; b=oBA3ASqbwps8RXCf2Jwy9l4CZeW2QtenYi4aTTObrcDgMOHm6XJHe3tjAR8pd2Y5mxRwccIdgFQuH+aOlaDb0FaRiSP0OndZuX1ZS5ifLINfu6Kt3FPLs2yfMiYrkHEvdu8lxhVimUA32SKi4tIQ6P8DSH9+jnGKsAHCHP7lK7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723646199; c=relaxed/simple;
-	bh=yDTccv+0dZ7Aabi+dmm1rf/JO0AhUOad8SHsKBlROaE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gat0mRduPgDMAAFCMYt/9mLGTC+4vC1cG9o1wxlvWNaWtw+3VwBB7qp3YpThVYKmZCCo59hi+WOUDG3cBcWgWC8tzMNJUvaEGRw5W3m2mDM+XvgK5WS706anTPStZQMdBG3uSAns9yWW8rWJl3/wTWW3Tucn0IU3cGPbj/sHYlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Jg4WxRQP; arc=none smtp.client-ip=217.70.183.197
+	bh=QLAjOjwHapYP9G4IFhnwtelvbUro7gbDDe4ixI5k8dA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HuvhFEAVNWJECinryctv1HrRFg5QZ2C6KgwYpmRSpCjRSB9X0pDy3M/Ebt0koKUbvW1+pIX4QmCXOe93qBgBFBuTFC0A2V+uwr81RthpCaOvH/yBBEzluES2MytGV1UTMEE5efOZmtRFaCY4e9t4JqwEVEqFc8XGF5RNjFIs0DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i+kmEQDo; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1B4451C0002;
-	Wed, 14 Aug 2024 14:36:27 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BD3991C0008;
+	Wed, 14 Aug 2024 14:36:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723646189;
+	t=1723646190;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=r10XbKn0C2LL96F8YKgkP1WRC33QYRh/k5Wbvd3nF2I=;
-	b=Jg4WxRQPrHfOpeQClF5fLROmmZOvx+Yd/p7wkQfCegtYVpASiJZQ6MgqmFgGNAqRDBlLAc
-	B+87rAlo5lNNVG8LIF9qR4LxigrlnL+AzCD5CgpuhUfPQVREJ/GDgToH+yVLN6xXzu2Vh7
-	cnuY3NkyY6Si5kYi+Pt1zyNldAGJCvZbyHpabGvIpH+Nu1GIZJckjpZalPzET8J/8jeNr/
-	kwfTl60AOWZsIJVkg+pRjjoD0sVFB8g5HoodtlmiCkwWtYAsytvnodWrWQ2fp6Ba+SiL4w
-	6fAtYle9wY7dhVnIK9cFDPFPRPfUZMpgkrXvqdBWVWq5pxBGsCSRQhx6Fb3yrg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eF/g/e9xyf2rr4km0n8jSrkU5dfzWS16jpF7TN6tyR0=;
+	b=i+kmEQDoTc5UcmhFyS/BGglA4SyL3EormN70z0AGzVYTJMMVe7j4PxnqsikIn6tzJPma2J
+	ptBagwhWlbaliy+DPR/uiBUxXhs0TDr/rXM9uFA6JEJ75ByRZ10hSvp/HqewvrS0l/8l0/
+	GaYRC6vg534VhV8LJAb6aOF27SEA+DnKrNQDfI2xEru33m5EDTfAKadQyw2pwmviBna6ON
+	Ct3YxeO2mZWEMy5Bw4OdTjOKR5uV5BIU5w6UVlB+y6Ybv4QwLyzeWkqc+z9o+7fEmGD4GI
+	Hp81XAYiqRvrsYbTdiT1yNYtV8LC7Ru+0gwDzoT5RwaFRuuIOnfh32SflMvViw==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: [PATCH RFC 00/15] drm/vkms: Introduce detailed configuration
-Date: Wed, 14 Aug 2024 16:36:22 +0200
-Message-Id: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
+Date: Wed, 14 Aug 2024 16:36:23 +0200
+Subject: [PATCH RFC 01/15] drm/vkms: Remove useles devres group
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,14 +54,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAObAvGYC/5XRS27CMBAA0KtEWXda2yRxgqqqUqUeoNsKIX/GY
- BHH1DYBhLh7TaCLLirRlX/jN+PxqYwYLMZyXpzKgKON1g95QR+KUq3FsEKwOq9LRlhFakZh5f2
- qRwjo/IigQlJgB40HMME72IogHCYMYDphJKOKi7Yus7YNaOxhyvRZfry/lYvrZsCvXc6abidSx
- Kx652yaFzo4cDaqp58JDHhIF81hjGIqbl48T7W1pIPjboSREiBABVe8qWjTGP4qvU+9HR4z+/L
- HZVqBrLK+z7l7n6v3wYkUYWQZa+Ws6jplsCN4J7YP+UVSqM0yx+JSHqfxys2ausp9obxuuju5W
- 9NVL4I1VomUfykXRy8aIm8010Sx9n9a3PY2wRqFxnDDasopM6RtTa3/h40bF8GJIQfoq8WFbGX
- bMUrJ7Le1OJ+/AYFgna94AgAA
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240814-google-remove-crtc-index-from-parameter-v1-1-6e179abf9fd4@bootlin.com>
+References: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
+In-Reply-To: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
 To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
  Melissa Wen <melissa.srw@gmail.com>, 
  =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
@@ -72,139 +69,104 @@ Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
  linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
  miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
  seanpaul@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>, 
- =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+ Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5883;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2158;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=yDTccv+0dZ7Aabi+dmm1rf/JO0AhUOad8SHsKBlROaE=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvMDplfCMJqfAyTZrfrb75NZMhFSSYRDmUoc5C
- JdNFOlVzn6JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrzA6QAKCRAgrS7GWxAs
- 4qDFD/94Z/IWnDGvo1GWJiFiMdyOiGb5s+/7nNWQasiBBTbg9Lz12Vtjnm9oSFlogXuGbHTC8iw
- 3xbkwJwXo5aFQlne6OJ29928J5JJOJl01kMixhbphjNKZUVwkhzsBW4s8dz2pv7HuAZ/Bw7f4oh
- 5JYlHDu0RfLXEfseRxhQ9IS5iO4wmdAzGEiOEnV+n1GcF9X0URWGykebo1MbFeqB2ih4JJqo+zn
- OcugLg9FNELQm12n7Ocza80hpm/ic7t99EJJtfu7VHc+CfbQFxmwZg15Jwu6h+iiHtYVXwFUdYb
- 24ydW8apH2w5c+kEBpgDN72zkylH24YPoKN5WHGYQy3H3JMagEZIR9i7FDgVb8uidccE1gXGgyv
- vAN4QupbC58KDb/HDxXt94uCKc4fuRKm3ksos0ZkbcucNiSYSmARYHg1z1Rupu1tbUs0ZjRFmlo
- tlCi/u93Q5Xd2uThe5Z16YETD4g6j9SK1wQBvdmawDkgEyaeLR5rvS6tFzy6wQvNgnfOo7LTJoQ
- ez/IazcWvuVlQ/dqVnM78QwukNxc4PT2DZaVL254Jxd3Kny8v0bM0+XHfFu6UFbLUCUZmqTgR7v
- 78gr1C1i7eBfc1mV4t6QpsPMWhTfd51+xyb36u4vZyDl1X/OlbUQT1EYvwiCA+GT+rAoMUhQKxA
- eLM4uzWLcO96ilQ==
+ bh=QLAjOjwHapYP9G4IFhnwtelvbUro7gbDDe4ixI5k8dA=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvMDqaNNbQt4vZtJxwAG1VpPbZq4w8JjIi8Xkj
+ utFmLTi+76JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrzA6gAKCRAgrS7GWxAs
+ 4rEyEADAM3Zuqga1gLTTIqu2xnxwAtMPs6sMRnWsHhnXd4novePYULsml77ZAacX3ar4FTEwVjP
+ oE3Xb8DbSJeNe6G1bZ7Dm+zIgBbg8vzteM4W0MjDvXc3COrz9sOEwE/qev0m2YP9Yx304SYu2Ug
+ nHM7Pcft8eDjMQmAzcLOAynYNOPJ6mZgTo6nfHnvLQ7rGDVIxAuHNSqSpiJ+Qdj6sGd6s0C+YWS
+ vXaeJvL9MUsXi6Rdk004sCYFq6Op4DooRdKJkmMLst0qUd15ffRlftoJ5y6Dsaov2751gf+QrI6
+ uAodQE/zloe4dRbtZM3TwcLeF+HJh6tTkcZKD64od/D5bWp4P6KdO1FCewTGBoaoihrBuSTBhSo
+ bkiMrM5Z5do03orRDnFgDPrMbBO9Z3IdA+TufcGoZ3CFRQu5FkUohIVYUXssFY+2MJogtz8vTaZ
+ MyZ7ubjJcy0k9g+Jg0McugpDmkcmyAKuQL9rEzFsx2YlU4B1QIZI1czmR0LOjKUDNf5QFhv2FM/
+ ZouyewjgaNGLy9pX6XcRl8lLNE/w0yrwnEF4fgV/lor158KJBijfeOcCdph9/pH9PzEmgazvul9
+ lcziSWUtohrd6j7lqlyUyfHgolJ0OFVa6VK3qLU+YGdzbICLuIbwj6ArKkLOeijGUKUC3yl8MBk
+ oVvSOBnDMoIfJpQ==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-The current code is not flexible to configure the VKMS device. In
-preparation for ConfigFS interface introduce few structure that can be
-used to configure the device creation: `vkms_config`.
-
-This part is splitted from the ConfigFS implementation itself to avoid
-mixing two complex interfaces.
-
-The vkms_config structure will allows the configuration of:
-- planes
-    - name
-    - possible_crtcs
-    - supported_color_encodings
-    - supported_rotations
-    - supported_color_ranges
-    - default_rotation
-    - default_color_range
-    - default_color_encoding
-    - type
-- crtcs
-    - name
-    - possible_planes [automatically filled by helpers]
-    - possible_encoders [automatically filled by helpers]
-- encoders
-    - name
-    - possible_crtcs
+As the driver now uses drm managed allocation, the devres group is not
+needed anymore, so remove it.
 
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
-Louis Chauvet (15):
-      drm/vkms: Remove useles devres group
-      drm/vkms: remove possible crtc from parameters
-      drm/vkms: Extract vkms_config header
-      drm/vkms: Add a validation function for vkms configuration
-      drm/vkms: Move default_config creation to its own function
-      drm/vkms: Introduce plane configuration
-      drm/vkms: Introduce plane name configuration
-      drm/vkms: Introduce plane rotation configuration
-      drm/vkms: Introduce configuration for plane color encoding
-      drm/vkms: Introduce configuration for plane color range
-      drm: writeback: Add drm_writeback_connector cleanup
-      drm/vkms: Add configuration for CRTCs and encoders
-      drm/vkms: Add name configuration for encoders
-      drm/vkms: Add name configuration for CRTCs
-      drm/vkms: Add test for config structure
+ drivers/gpu/drm/vkms/vkms_drv.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
- drivers/gpu/drm/drm_writeback.c               |  10 +
- drivers/gpu/drm/vkms/Makefile                 |   3 +-
- drivers/gpu/drm/vkms/tests/Makefile           |   1 +
- drivers/gpu/drm/vkms/tests/vkms_config_test.c | 135 ++++++++
- drivers/gpu/drm/vkms/vkms_config.c            | 426 ++++++++++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_config.h            | 203 ++++++++++++
- drivers/gpu/drm/vkms/vkms_crtc.c              |  22 +-
- drivers/gpu/drm/vkms/vkms_crtc.h              |   3 +-
- drivers/gpu/drm/vkms/vkms_drv.c               | 168 ++++------
- drivers/gpu/drm/vkms/vkms_drv.h               |  15 +-
- drivers/gpu/drm/vkms/vkms_plane.c             |  23 +-
- drivers/gpu/drm/vkms/vkms_plane.h             |   5 +-
- include/drm/drm_writeback.h                   |  11 +
- 13 files changed, 888 insertions(+), 137 deletions(-)
----
-base-commit: 219b45d023ed0902b05c5902a4f31c2c38bcf68c
-change-id: 20240521-google-remove-crtc-index-from-parameter-f9afb21c7a85
-prerequisite-message-id: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
-prerequisite-patch-id: ae2d8b2efbbaa9decce56632c498c87e708288b3
-prerequisite-patch-id: c26b6d4867eaf6566195aa0002765357d4f69f8c
-prerequisite-patch-id: 8791d34a6f3148dc518da5249453067e40d346e3
-prerequisite-patch-id: 26ec7cd5a449004bcfd6ce483671f87655f8635c
-prerequisite-patch-id: 2e855ba871f2e99d4b6b7d85da2ddac6bb32262e
-prerequisite-patch-id: 82523a917646793deeec7cdcc7ff286bd924fd21
-prerequisite-patch-id: 0e355e5316281f53ab5e97ab6e63b0a682f3eb9e
-prerequisite-patch-id: 7a63d245a377d5f5283f48e8f52421b912811752
-prerequisite-patch-id: dda6bf4692cd1795c489ff58e72c0841ea8ffbc4
-prerequisite-patch-id: f70e535b6086cc587975fbfa75741f485f679a32
-prerequisite-patch-id: 6c2aa2645c7d854951608aa4d15a02e076abe1fe
-prerequisite-patch-id: dc61c6d3db73053fc36e115af561e0c42b467de2
-prerequisite-patch-id: deda292af6d8bbf6762b0bf4d351ffd2225995d8
-prerequisite-patch-id: 18554f49b53cbcfd4a8ca50dc83b17dd3cf96474
-prerequisite-patch-id: 5633292e10132d29be2467812e6e2e824cfedb67
-prerequisite-patch-id: 43f37e9c1bc041d491e41dfb59548ed258a1e071
-prerequisite-message-id: <20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com>
-prerequisite-patch-id: d10db4cb12a88de2e5f6440e9fcf5ddda191e3cd
-prerequisite-patch-id: 16bac0ef1f1dc010a72ce2faae66631797d23d3f
-prerequisite-patch-id: 8e0e5cc0727e8fd2d14ebafc5538fd987c2dd38e
-prerequisite-patch-id: 32bad3bf3df46d042e9edd4c1259c2e2a3fb8975
-prerequisite-patch-id: 4bd9e4cef308abd17b7b274a5575a3de73a1503b
-prerequisite-patch-id: a98fac5a2c60fe23fbc6a455e9a4ab8b0f187ee8
-prerequisite-patch-id: 62c8d109a22b9978f755255b67f13fe74fb7008d
-prerequisite-patch-id: baa8da4871dd90b03a07c6d9ddb45e10929ee70a
-prerequisite-message-id: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
-prerequisite-patch-id: df699289213021fa202fcdf1b4bdff513d09caa2
-prerequisite-patch-id: 59d021ccb166fbe2962de9cda72aceb3caa9cabe
-prerequisite-patch-id: 895ace6d58b3776798791705b7b05e26b8d37c7b
-prerequisite-message-id: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
-prerequisite-patch-id: a4408d1de7730262456bdd618d3cb86f5f5b01ba
-prerequisite-patch-id: f215b5aee5644d2e5b1b2af0bb0f4f1e7609558b
-prerequisite-patch-id: d4f3b4c714324c5f326af3daba394899e6663d75
-prerequisite-message-id: <20240814-google-split-headers-v1-0-51712f088f5d@bootlin.com>
-prerequisite-patch-id: 55e5c2ded8332cd6600d9c0c2b7be657c793e2a0
-prerequisite-patch-id: 88323ab9ea04fb21a0a4c65642bcd499f2354042
-prerequisite-patch-id: 437b67cf9bdc036fa7c5e11b5c9ab387b10cc151
-prerequisite-patch-id: d34801b7f3035ab15facd42281c1c96e61d35a4c
-prerequisite-patch-id: 37862a6437ff407a42e5aaff0b8e742fc9901e03
-prerequisite-patch-id: 43a5079497a1579aef713ea9c4ec47ef53a177a2
-prerequisite-message-id: <20240814-google-vkms-managed-v1-0-7ab8b8921103@bootlin.com>
-prerequisite-patch-id: f07b5109188f67a6b11f83e6c591d04d8d9f7eb4
-prerequisite-patch-id: 29f74417aff64dc7bb65ecc2902540073cd73352
-prerequisite-patch-id: 23bdc1fb18aba22e0f40f62a7aaae1619f0eb89c
-prerequisite-patch-id: 0acd7f43a33491b7987e9665b5b800c4f8aa266a
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index e79832e10f3c..7ac3ab7e16e5 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -297,16 +297,11 @@ static int vkms_create(struct vkms_config *config)
+ 	if (IS_ERR(pdev))
+ 		return PTR_ERR(pdev);
+ 
+-	if (!devres_open_group(&pdev->dev, NULL, GFP_KERNEL)) {
+-		ret = -ENOMEM;
+-		goto out_unregister;
+-	}
+-
+ 	vkms_device = devm_drm_dev_alloc(&pdev->dev, &vkms_driver,
+ 					 struct vkms_device, drm);
+ 	if (IS_ERR(vkms_device)) {
+ 		ret = PTR_ERR(vkms_device);
+-		goto out_devres;
++		goto out_unregister;
+ 	}
+ 	vkms_device->platform = pdev;
+ 	vkms_device->config = config;
+@@ -317,32 +312,30 @@ static int vkms_create(struct vkms_config *config)
+ 
+ 	if (ret) {
+ 		DRM_ERROR("Could not initialize DMA support\n");
+-		goto out_devres;
++		goto out_unregister;
+ 	}
+ 
+ 	ret = drm_vblank_init(&vkms_device->drm, 1);
+ 	if (ret) {
+ 		DRM_ERROR("Failed to vblank\n");
+-		goto out_devres;
++		goto out_unregister;
+ 	}
+ 
+ 	ret = vkms_modeset_init(vkms_device);
+ 	if (ret)
+-		goto out_devres;
++		goto out_unregister;
+ 
+ 	drm_debugfs_add_files(&vkms_device->drm, vkms_config_debugfs_list,
+ 			      ARRAY_SIZE(vkms_config_debugfs_list));
+ 
+ 	ret = drm_dev_register(&vkms_device->drm, 0);
+ 	if (ret)
+-		goto out_devres;
++		goto out_unregister;
+ 
+ 	drm_fbdev_shmem_setup(&vkms_device->drm, 0);
+ 
+ 	return 0;
+ 
+-out_devres:
+-	devres_release_group(&pdev->dev, NULL);
+ out_unregister:
+ 	platform_device_unregister(pdev);
+ 	return ret;
+@@ -383,7 +376,6 @@ static void vkms_destroy(struct vkms_config *config)
+ 
+ 	drm_dev_unregister(&config->dev->drm);
+ 	drm_atomic_helper_shutdown(&config->dev->drm);
+-	devres_release_group(&pdev->dev, NULL);
+ 	platform_device_unregister(pdev);
+ 
+ 	config->dev = NULL;
 
-Best regards,
 -- 
-Louis Chauvet <louis.chauvet@bootlin.com>
+2.44.2
 
 
