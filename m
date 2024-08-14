@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-286855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00296951FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:21:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC606951FFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8197F1F23967
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:21:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B32D7B2A3D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B6C1BBBEA;
-	Wed, 14 Aug 2024 16:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCB41BF30C;
+	Wed, 14 Aug 2024 16:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nZBIKsmq"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U47gcGkn"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9446A1B9B28
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BEB1BB695
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652415; cv=none; b=u70R9myoFLJm+UKZ1WGDS8ij00Y/vRx+ffqDOSdkhA61PS2Sx0cv2wC96vXWjsA43EHsBcXdmSH5swADximN0YCBDcB7mcLaeqmL0zQfsWsoSwNY3KdtzFwczV+nvrlYT7ukTjgU+MpZKYvXxV2Xo89zhm1ydndF2QlwGGooock=
+	t=1723652420; cv=none; b=hG9zf6tMxnwe0DhJJZ+WpsB+1bEUnrZWLFNte76B9CLO4C28UcRKvp+3xg9b5DfO6fSOXcQeK+vuqjvQP2WdFVK9NZUMOlnzpBaBuAl/v5d4Molko59sfVDnRKmJrA7zqYZeFeNXzpL3V7GSTlcBBqaReTK3OAWg7I5xGw385e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652415; c=relaxed/simple;
-	bh=Yam73ovSl+OyClzN1WENJH+xQhwVYgNhxt2cyTaTdLw=;
+	s=arc-20240116; t=1723652420; c=relaxed/simple;
+	bh=xvtjLsqo1zm7GJ8wGRr2aUcUgp13PhRzKWUO2x2acrE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d4bzwPi0QcRh/7DkuLOO5Q2bR0fVenblLUbcOhJckdX1JfDaM/8+8WWurKxWNqCL5kICqtVOL7lGvMR6phTonEjXufBAdhgJfb2cByBSVQ75TJ7+gIvpkIZ/Nb5c21fR5f+vKvVeMPUFlrqFMsOnZjXtvSlU1hV31PnpswjzFJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nZBIKsmq; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=fP8RvqDZgp9rcU6xvlAru9fWirzTpQr3p31Ha1V+/9V03limekAwqDD9AhVmle/yGweTdaouI//MHvIzF5rj8uAOWs9ea8XMNjXPDMigcPFdku3uURHWyIZz0Nl+8R6O4j9TMCWLzqp3hqsnurQsMAJSrcZJYcM1MOcuza0bSS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=U47gcGkn; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EBtZ2p028354;
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EBtZ2q028354;
 	Wed, 14 Aug 2024 16:19:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=z
-	Oe6rYReOJ9R8LQkfQkW5rBoXsJ7vwbdrjrfz4Pketk=; b=nZBIKsmq3qfVDaDOR
-	NFFfs0Q1jRlhfa5GlaKoXfrdhdqeTn+TY3tZzmF2j5K5d6uungZgFxi6qMHhAMmQ
-	RiKNhom+4tcnMagmGVicBeo30y8Fb7A1ldRREU8N2Y8ECVkHlYxn3ACEy+QYZ4yD
-	u+fja3wHjXel0jgu37GTyaYjVQj/DOPVqp10MEawmBRZ7Z6H0DjfndUEm2Tv4CwB
-	MLZzaEjFXpd8l1qt2aE3pGlBysVMoCA9AdaRD00hsm0Epqqa/2IpmL3vMbJorien
-	xvwlLcqBzQfVgqyXYYsjOqtGEAmV+jdnzXtx2iKR+4VxGEerEa2jE/Zp5ZSKzAcw
-	9zwZQ==
+	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=U
+	GEoYZW0sw4JTr+KtFllFbwfaNVoSsnR7nGvPPo51B0=; b=U47gcGknT2xsxJP8j
+	a9Y7GWU4zPM8Jy+OuCj0mjpmLsrNuaa3u9lcz8ISjgV+Pij4bMdU2mzVUsc9SY+4
+	W0qqP0uTwLYutr3bs7dmgsd4YY81viTX/kk+8bI9+Dmwjr/O9fuJscrvM/gW7XHL
+	IVz3cgPxgDBHB1xH8xNCgRJJNalWCKKrSE+8Zw3AyWjWxaVNktBZEOo/B4wsxwXm
+	Ftuf5dROFN0BQBQeADiTtmKbX3012Cyo2XHqtXNIEcmlpy6QTyiqAc8YK+KNhefv
+	+SdtWTT2Fo54UTyBsH3Qey7mjiStkPCiWYq/0AKqXJx8J2Y6z1HAWfwl5oeUYiUj
+	CuLsg==
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxt10shw-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxt10shx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Wed, 14 Aug 2024 16:19:53 +0000 (GMT)
 Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47EFqAgH021061;
-	Wed, 14 Aug 2024 16:19:51 GMT
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47EFQeGb021164;
+	Wed, 14 Aug 2024 16:19:52 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxngn7ma-1
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxngn7mx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 16:19:51 +0000
+	Wed, 14 Aug 2024 16:19:52 +0000
 Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47EGIvC4035951;
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47EGIvC6035951;
 	Wed, 14 Aug 2024 16:19:51 GMT
 Received: from sidkumar-mac.us.oracle.com (dhcp-10-65-174-212.vpn.oracle.com [10.65.174.212])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40wxngn7gt-5;
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40wxngn7gt-6;
 	Wed, 14 Aug 2024 16:19:51 +0000
 From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
 Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
         willy@infradead.org, surenb@google.com,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: [PATCH v4 04/17] maple_tree: introduce mas_wr_store_type()
-Date: Wed, 14 Aug 2024 12:19:31 -0400
-Message-ID: <20240814161944.55347-5-sidhartha.kumar@oracle.com>
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: [PATCH v4 05/17] maple_tree: remove mas_destroy() from mas_nomem()
+Date: Wed, 14 Aug 2024 12:19:32 -0400
+Message-ID: <20240814161944.55347-6-sidhartha.kumar@oracle.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
 References: <20240814161944.55347-1-sidhartha.kumar@oracle.com>
@@ -85,349 +86,200 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxs
  phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
  definitions=main-2408140111
-X-Proofpoint-GUID: 2sRgIeRR8qHOa4oJ-mYnfXbiem0eaLIF
-X-Proofpoint-ORIG-GUID: 2sRgIeRR8qHOa4oJ-mYnfXbiem0eaLIF
+X-Proofpoint-GUID: O2M6SR9o4ay1I-4Ym4vLae6geAmveOtk
+X-Proofpoint-ORIG-GUID: O2M6SR9o4ay1I-4Ym4vLae6geAmveOtk
 
-Introduce mas_wr_store_type() which will set the correct store type
-based on a walk of the tree. In mas_wr_node_store() the <= min_slots
-condition is changed to < as if new_end is = to mt_min_slots then there
-is not enough room.
+Separate call to mas_destroy() from mas_nomem() so we can check for no
+memory errors without destroying the current maple state in
+mas_store_gfp(). We then add calls to mas_destroy() to callers of
+mas_nomem().
 
-mas_prealloc_calc() is also introduced to abstract the calculation used
-to determine the number of nodes needed for a store operation.
-
-In this change a call to mas_reset() is removed in the error case of
-mas_prealloc(). This is only needed in the MA_STATE_REBALANCE case of
-mas_destroy(). We can move the call to mas_reset() directly to
-mas_destroy().
-
-Also, add a test case to validate the order that we check the store type
-in is correct. This test models a vma expanding and then shrinking which
-is part of the boot process.
-
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 ---
- lib/maple_tree.c                 | 217 ++++++++++++++++++++++---------
- tools/testing/radix-tree/maple.c |  36 +++++
- 2 files changed, 193 insertions(+), 60 deletions(-)
+ lib/maple_tree.c                 | 37 +++++++++++++++++++++-----------
+ tools/testing/radix-tree/maple.c | 10 +++++----
+ 2 files changed, 30 insertions(+), 17 deletions(-)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index de4a91ced8ca..d0b9b3795b96 100644
+index d0b9b3795b96..58985107cf00 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -1372,9 +1372,9 @@ static inline struct maple_enode *mas_start(struct ma_state *mas)
- 			return NULL;
- 		}
+@@ -4519,6 +4519,7 @@ int mas_alloc_cyclic(struct ma_state *mas, unsigned long *startp,
+ 	if (*next == 0)
+ 		mas->tree->ma_flags |= MT_FLAGS_ALLOC_WRAPPED;
  
-+		mas->node = NULL;
- 		/* empty tree */
- 		if (unlikely(!root)) {
--			mas->node = NULL;
- 			mas->status = ma_none;
- 			mas->offset = MAPLE_NODE_SLOTS;
- 			return NULL;
-@@ -3890,7 +3890,7 @@ static inline bool mas_wr_node_store(struct ma_wr_state *wr_mas,
- 	bool in_rcu = mt_in_rcu(mas->tree);
- 
- 	/* Check if there is enough data. The room is enough. */
--	if (!mte_is_root(mas->node) && (new_end <= mt_min_slots[wr_mas->type]) &&
-+	if (!mte_is_root(mas->node) && (new_end < mt_min_slots[wr_mas->type]) &&
- 	    !(mas->mas_flags & MA_STATE_BULK))
- 		return false;
- 
-@@ -4275,6 +4275,146 @@ static inline void mas_wr_prealloc_setup(struct ma_wr_state *wr_mas)
- 	wr_mas->content = mas_start(mas);
- }
- 
-+/**
-+ * mas_prealloc_calc() - Calculate number of nodes needed for a
-+ * given store oepration
-+ * @mas: The maple state
-+ * @entry: The entry to store into the tree
-+ *
-+ * Return: Number of nodes required for preallocation.
-+ */
-+static inline int mas_prealloc_calc(struct ma_state *mas, void *entry)
-+{
-+	int ret = mas_mt_height(mas) * 3 + 1;
-+
-+	switch (mas->store_type) {
-+	case wr_invalid:
-+		WARN_ON_ONCE(1);
-+		break;
-+	case wr_new_root:
-+		ret = 1;
-+		break;
-+	case wr_store_root:
-+		if (likely((mas->last != 0) || (mas->index != 0)))
-+			ret = 1;
-+		else if (((unsigned long) (entry) & 3) == 2)
-+			ret = 1;
-+		else
-+			ret = 0;
-+		break;
-+	case wr_spanning_store:
-+		ret =  mas_mt_height(mas) * 3 + 1;
-+		break;
-+	case wr_split_store:
-+		ret =  mas_mt_height(mas) * 2 + 1;
-+		break;
-+	case wr_rebalance:
-+		ret =  mas_mt_height(mas) * 2 - 1;
-+		break;
-+	case wr_node_store:
-+		ret = mt_in_rcu(mas->tree) ? 1 : 0;
-+		break;
-+	case wr_append:
-+	case wr_exact_fit:
-+	case wr_slot_store:
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+
-+/*
-+ * mas_wr_store_type() - Set the store type for a given
-+ * store operation.
-+ * @wr_mas: The maple write state
-+ */
-+static inline void mas_wr_store_type(struct ma_wr_state *wr_mas)
-+{
-+	struct ma_state *mas = wr_mas->mas;
-+	unsigned char new_end;
-+
-+	if (unlikely(mas_is_none(mas) || mas_is_ptr(mas))) {
-+		mas->store_type = wr_store_root;
-+		return;
-+	}
-+
-+	if (unlikely(!mas_wr_walk(wr_mas))) {
-+		mas->store_type = wr_spanning_store;
-+		return;
-+	}
-+
-+	/* At this point, we are at the leaf node that needs to be altered. */
-+	mas_wr_end_piv(wr_mas);
-+	if (!wr_mas->entry)
-+		mas_wr_extend_null(wr_mas);
-+
-+	new_end = mas_wr_new_end(wr_mas);
-+	if ((wr_mas->r_min == mas->index) && (wr_mas->r_max == mas->last)) {
-+		mas->store_type = wr_exact_fit;
-+		return;
-+	}
-+
-+	if (unlikely(!mas->index && mas->last == ULONG_MAX)) {
-+		mas->store_type = wr_new_root;
-+		return;
-+	}
-+
-+	/* Potential spanning rebalance collapsing a node */
-+	if (new_end < mt_min_slots[wr_mas->type]) {
-+		if (!mte_is_root(mas->node)) {
-+			mas->store_type = wr_rebalance;
-+			return;
-+		}
-+		mas->store_type = wr_node_store;
-+		return;
-+	}
-+
-+	if (new_end >= mt_slots[wr_mas->type]) {
-+		mas->store_type = wr_split_store;
-+		return;
-+	}
-+
-+	if (!mt_in_rcu(mas->tree) && (mas->offset == mas->end)) {
-+		mas->store_type = wr_append;
-+		return;
-+	}
-+
-+	if ((new_end == mas->end) && (!mt_in_rcu(mas->tree) ||
-+		(wr_mas->offset_end - mas->offset == 1))) {
-+		mas->store_type = wr_slot_store;
-+		return;
-+	}
-+
-+	if (mte_is_root(mas->node) || (new_end >= mt_min_slots[wr_mas->type]) ||
-+		(mas->mas_flags & MA_STATE_BULK)) {
-+		mas->store_type = wr_node_store;
-+		return;
-+	}
-+
-+	mas->store_type = wr_invalid;
-+	MAS_WARN_ON(mas, 1);
-+}
-+
-+/**
-+ * mas_wr_preallocate() - Preallocate enough nodes for a store operation
-+ * @wr_mas: The maple write state
-+ * @entry: The entry that will be stored
-+ *
-+ */
-+static inline void mas_wr_preallocate(struct ma_wr_state *wr_mas, void *entry)
-+{
-+	struct ma_state *mas = wr_mas->mas;
-+	int request;
-+
-+	mas_wr_prealloc_setup(wr_mas);
-+	mas_wr_store_type(wr_mas);
-+	request = mas_prealloc_calc(mas, entry);
-+	if (!request)
-+		return;
-+
-+	mas_node_count(mas, request);
-+}
-+
- /**
-  * mas_insert() - Internal call to insert a value
-  * @mas: The maple state
-@@ -5508,69 +5648,25 @@ EXPORT_SYMBOL_GPL(mas_store_prealloc);
- int mas_preallocate(struct ma_state *mas, void *entry, gfp_t gfp)
- {
- 	MA_WR_STATE(wr_mas, mas, entry);
--	unsigned char node_size;
--	int request = 1;
--	int ret;
--
--
--	if (unlikely(!mas->index && mas->last == ULONG_MAX))
--		goto ask_now;
-+	int ret = 0;
-+	int request;
- 
- 	mas_wr_prealloc_setup(&wr_mas);
--	/* Root expand */
--	if (unlikely(mas_is_none(mas) || mas_is_ptr(mas)))
--		goto ask_now;
--
--	if (unlikely(!mas_wr_walk(&wr_mas))) {
--		/* Spanning store, use worst case for now */
--		request = 1 + mas_mt_height(mas) * 3;
--		goto ask_now;
--	}
--
--	/* At this point, we are at the leaf node that needs to be altered. */
--	/* Exact fit, no nodes needed. */
--	if (wr_mas.r_min == mas->index && wr_mas.r_max == mas->last)
--		return 0;
--
--	mas_wr_end_piv(&wr_mas);
--	node_size = mas_wr_new_end(&wr_mas);
--
--	/* Slot store, does not require additional nodes */
--	if (node_size == mas->end) {
--		/* reuse node */
--		if (!mt_in_rcu(mas->tree))
--			return 0;
--		/* shifting boundary */
--		if (wr_mas.offset_end - mas->offset == 1)
--			return 0;
--	}
-+	mas_wr_store_type(&wr_mas);
-+	request = mas_prealloc_calc(mas, entry);
-+	if (!request)
-+		return ret;
- 
--	if (node_size >= mt_slots[wr_mas.type]) {
--		/* Split, worst case for now. */
--		request = 1 + mas_mt_height(mas) * 2;
--		goto ask_now;
-+	mas_node_count_gfp(mas, request, gfp);
-+	if (mas_is_err(mas)) {
-+		mas_set_alloc_req(mas, 0);
-+		ret = xa_err(mas->node);
-+		mas_destroy(mas);
-+		mas_reset(mas);
-+		return ret;
- 	}
- 
--	/* New root needs a single node */
--	if (unlikely(mte_is_root(mas->node)))
--		goto ask_now;
--
--	/* Potential spanning rebalance collapsing a node, use worst-case */
--	if (node_size  - 1 <= mt_min_slots[wr_mas.type])
--		request = mas_mt_height(mas) * 2 - 1;
--
--	/* node store, slot store needs one node */
--ask_now:
--	mas_node_count_gfp(mas, request, gfp);
- 	mas->mas_flags |= MA_STATE_PREALLOC;
--	if (likely(!mas_is_err(mas)))
--		return 0;
--
--	mas_set_alloc_req(mas, 0);
--	ret = xa_err(mas->node);
--	mas_reset(mas);
--	mas_destroy(mas);
--	mas_reset(mas);
++	mas_destroy(mas);
  	return ret;
  }
- EXPORT_SYMBOL_GPL(mas_preallocate);
-@@ -5596,7 +5692,8 @@ void mas_destroy(struct ma_state *mas)
- 	 */
- 	if (mas->mas_flags & MA_STATE_REBALANCE) {
- 		unsigned char end;
--
-+		if (mas_is_err(mas))
-+			mas_reset(mas);
- 		mas_start(mas);
- 		mtree_range_walk(mas);
- 		end = mas->end + 1;
+ EXPORT_SYMBOL(mas_alloc_cyclic);
+@@ -5601,21 +5602,25 @@ int mas_store_gfp(struct ma_state *mas, void *entry, gfp_t gfp)
+ 	unsigned long index = mas->index;
+ 	unsigned long last = mas->last;
+ 	MA_WR_STATE(wr_mas, mas, entry);
++	int ret = 0;
+ 
+-	mas_wr_store_setup(&wr_mas);
+-	trace_ma_write(__func__, mas, 0, entry);
+ retry:
+-	mas_wr_store_entry(&wr_mas);
++	mas_wr_preallocate(&wr_mas, entry);
+ 	if (unlikely(mas_nomem(mas, gfp))) {
+ 		if (!entry)
+ 			__mas_set_range(mas, index, last);
+ 		goto retry;
+ 	}
+ 
+-	if (unlikely(mas_is_err(mas)))
+-		return xa_err(mas->node);
++	if (mas_is_err(mas)) {
++		ret = xa_err(mas->node);
++		goto out;
++	}
+ 
+-	return 0;
++	mas_wr_store_entry(&wr_mas);
++out:
++	mas_destroy(mas);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(mas_store_gfp);
+ 
+@@ -6374,6 +6379,7 @@ void *mas_erase(struct ma_state *mas)
+ 		goto write_retry;
+ 	}
+ 
++	mas_destroy(mas);
+ 	return entry;
+ }
+ EXPORT_SYMBOL_GPL(mas_erase);
+@@ -6388,10 +6394,8 @@ EXPORT_SYMBOL_GPL(mas_erase);
+ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
+ 	__must_hold(mas->tree->ma_lock)
+ {
+-	if (likely(mas->node != MA_ERROR(-ENOMEM))) {
+-		mas_destroy(mas);
++	if (likely(mas->node != MA_ERROR(-ENOMEM)))
+ 		return false;
+-	}
+ 
+ 	if (gfpflags_allow_blocking(gfp) && !mt_external_lock(mas->tree)) {
+ 		mtree_unlock(mas->tree);
+@@ -6469,6 +6473,7 @@ int mtree_store_range(struct maple_tree *mt, unsigned long index,
+ {
+ 	MA_STATE(mas, mt, index, last);
+ 	MA_WR_STATE(wr_mas, &mas, entry);
++	int ret = 0;
+ 
+ 	trace_ma_write(__func__, &mas, 0, entry);
+ 	if (WARN_ON_ONCE(xa_is_advanced(entry)))
+@@ -6484,10 +6489,12 @@ int mtree_store_range(struct maple_tree *mt, unsigned long index,
+ 		goto retry;
+ 
+ 	mtree_unlock(mt);
++
+ 	if (mas_is_err(&mas))
+-		return xa_err(mas.node);
++		ret = xa_err(mas.node);
+ 
+-	return 0;
++	mas_destroy(&mas);
++	return ret;
+ }
+ EXPORT_SYMBOL(mtree_store_range);
+ 
+@@ -6523,6 +6530,7 @@ int mtree_insert_range(struct maple_tree *mt, unsigned long first,
+ 		unsigned long last, void *entry, gfp_t gfp)
+ {
+ 	MA_STATE(ms, mt, first, last);
++	int ret = 0;
+ 
+ 	if (WARN_ON_ONCE(xa_is_advanced(entry)))
+ 		return -EINVAL;
+@@ -6538,9 +6546,10 @@ int mtree_insert_range(struct maple_tree *mt, unsigned long first,
+ 
+ 	mtree_unlock(mt);
+ 	if (mas_is_err(&ms))
+-		return xa_err(ms.node);
++		ret = xa_err(ms.node);
+ 
+-	return 0;
++	mas_destroy(&ms);
++	return ret;
+ }
+ EXPORT_SYMBOL(mtree_insert_range);
+ 
+@@ -6595,6 +6604,7 @@ int mtree_alloc_range(struct maple_tree *mt, unsigned long *startp,
+ 
+ unlock:
+ 	mtree_unlock(mt);
++	mas_destroy(&mas);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(mtree_alloc_range);
+@@ -6676,6 +6686,7 @@ int mtree_alloc_rrange(struct maple_tree *mt, unsigned long *startp,
+ 
+ unlock:
+ 	mtree_unlock(mt);
++	mas_destroy(&mas);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(mtree_alloc_rrange);
 diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-index ef5b83cf94ea..ad42a36231fb 100644
+index ad42a36231fb..c5b00aca9def 100644
 --- a/tools/testing/radix-tree/maple.c
 +++ b/tools/testing/radix-tree/maple.c
-@@ -36283,6 +36283,38 @@ static void check_nomem_writer_race(struct maple_tree *mt)
- 	mtree_unlock(mt);
- }
- 
-+ /* test to simulate expanding a vma from [0x7fffffffe000, 0x7ffffffff000)
-+  * to [0x7ffde4ca1000, 0x7ffffffff000) and then shrinking the vma to
-+  * [0x7ffde4ca1000, 0x7ffde4ca2000)
-+  */
-+static inline int check_vma_modification(struct maple_tree *mt)
-+{
-+	MA_STATE(mas, mt, 0, 0);
-+
-+	mtree_lock(mt);
-+	/* vma with old start and old end */
-+	__mas_set_range(&mas, 0x7fffffffe000, 0x7ffffffff000 - 1);
-+	mas_preallocate(&mas, xa_mk_value(1), GFP_KERNEL);
-+	mas_store_prealloc(&mas, xa_mk_value(1));
-+
-+	/* next write occurs partly in previous range [0, 0x7fffffffe000)*/
-+	mas_prev_range(&mas, 0);
-+	/* expand vma to {0x7ffde4ca1000, 0x7ffffffff000) */
-+	__mas_set_range(&mas, 0x7ffde4ca1000, 0x7ffffffff000 - 1);
-+	mas_preallocate(&mas, xa_mk_value(1), GFP_KERNEL);
-+	mas_store_prealloc(&mas, xa_mk_value(1));
-+
-+	/* shrink vma to [0x7ffde4ca1000, 7ffde4ca2000) */
-+	__mas_set_range(&mas, 0x7ffde4ca2000, 0x7ffffffff000 - 1);
-+	mas_preallocate(&mas, NULL, GFP_KERNEL);
-+	mas_store_prealloc(&mas, NULL);
-+	mt_dump(mt, mt_dump_hex);
-+
+@@ -120,7 +120,7 @@ static noinline void __init check_new_node(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas.alloc->slot[0] == NULL);
+ 	mas_push_node(&mas, mn);
+ 	mas_reset(&mas);
+-	mas_nomem(&mas, GFP_KERNEL); /* free */
 +	mas_destroy(&mas);
-+	mtree_unlock(mt);
-+	return 0;
-+}
-+
- void farmer_tests(void)
- {
- 	struct maple_node *node;
-@@ -36290,6 +36322,10 @@ void farmer_tests(void)
+ 	mtree_unlock(mt);
  
- 	mt_dump(&tree, mt_dump_dec);
  
-+	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_LOCK_EXTERN | MT_FLAGS_USE_RCU);
-+	check_vma_modification(&tree);
-+	mtree_destroy(&tree);
-+
- 	tree.ma_root = xa_mk_value(0);
- 	mt_dump(&tree, mt_dump_dec);
+@@ -144,7 +144,7 @@ static noinline void __init check_new_node(struct maple_tree *mt)
+ 	mn->parent = ma_parent_ptr(mn);
+ 	ma_free_rcu(mn);
+ 	mas.status = ma_start;
+-	mas_nomem(&mas, GFP_KERNEL);
++	mas_destroy(&mas);
+ 	/* Allocate 3 nodes, will fail. */
+ 	mas_node_count(&mas, 3);
+ 	/* Drop the lock and allocate 3 nodes. */
+@@ -161,7 +161,7 @@ static noinline void __init check_new_node(struct maple_tree *mt)
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != 3);
+ 	/* Free. */
+ 	mas_reset(&mas);
+-	mas_nomem(&mas, GFP_KERNEL);
++	mas_destroy(&mas);
+ 
+ 	/* Set allocation request to 1. */
+ 	mas_set_alloc_req(&mas, 1);
+@@ -277,6 +277,7 @@ static noinline void __init check_new_node(struct maple_tree *mt)
+ 		}
+ 		mas_reset(&mas);
+ 		MT_BUG_ON(mt, mas_nomem(&mas, GFP_KERNEL));
++		mas_destroy(&mas);
+ 
+ 	}
+ 
+@@ -299,7 +300,7 @@ static noinline void __init check_new_node(struct maple_tree *mt)
+ 	}
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != total);
+ 	mas_reset(&mas);
+-	mas_nomem(&mas, GFP_KERNEL); /* Free. */
++	mas_destroy(&mas); /* Free. */
+ 
+ 	MT_BUG_ON(mt, mas_allocated(&mas) != 0);
+ 	for (i = 1; i < 128; i++) {
+@@ -35847,6 +35848,7 @@ static noinline void __init check_nomem(struct maple_tree *mt)
+ 	mas_store(&ms, &ms); /* insert 1 -> &ms */
+ 	mas_nomem(&ms, GFP_KERNEL); /* Node allocated in here. */
+ 	mtree_unlock(mt);
++	mas_destroy(&ms);
+ 	mtree_destroy(mt);
+ }
  
 -- 
 2.46.0
