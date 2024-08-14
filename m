@@ -1,178 +1,116 @@
-Return-Path: <linux-kernel+bounces-287303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD54952625
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA80952629
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8AA31C21B55
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF0728517F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56E114AD2C;
-	Wed, 14 Aug 2024 23:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5314EC79;
+	Wed, 14 Aug 2024 23:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PteqQVt5"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFotiRHu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E1B1494D9
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 23:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154F914B954;
+	Wed, 14 Aug 2024 23:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723677619; cv=none; b=XOJFMJY9cX5DLQ3Bsa/Mm4ayO5a/MTst4MBqoTw2dyYYYWoA9HSD3Rq+OS8mMFljd6YFOTa9UhCJUFbYlgtyxGh2iG7ceUFp3eePvudiWcMzFHPQaNeet39qHeMWMRRe0goPTZeVVpkcCSJmRoV9gafIgPFfHvX4lxdj9mqK1wg=
+	t=1723677666; cv=none; b=EyiFiJCuKsTduaM+Cm2WIPHjCe4uXzk31z1qxVZNHGmg/DnyL+arRCgzStgfgUeZZxNeck8iy8qKR1N+wir9WsVVt9rPc8n9aivNZZs9bbw2iceqYDqvgwNkTW/ebm50JyMJB2IiTppFZ/5posINuKLcUIVztqy8GfWQYX7XL78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723677619; c=relaxed/simple;
-	bh=PZLN4N17zBIpHYBXZkwihX7EPgZeSLBMItw/slpELCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jhPSuRxuvZjJvtfLAzVK9Hl2+29VivwN+t2hl47eKBYX3Bo5sZEZPnasTg2sdyRITd9kInIS44WroluVRb2tRa3FH4u9TlXe+jfXuNn8pVG5OSpzlyZMQ/cnfjMwdGlMn9lnNi40PQh6l5cSNJJHmhurb68bV3SAZl7RYZwZxl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PteqQVt5; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f015ea784so62711e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723677616; x=1724282416; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9+duQA/mHkN4x/u1uIv4BDkW5OCTH29gngwXk4SCuCA=;
-        b=PteqQVt5Fd/xpVdsZVuaYrdHAHmYQprPnPmPGAfJjSvk/447Jjkx+Kk1T4uE+0BmP3
-         ezj8lqVvPFV+4A5MOBxFfLY+gQ0LwKVsxakSMMezlGq5ginBPDmmJUgZz/Y+UbWFnvpn
-         LiOTS6md8CR0Akd6b+Qlj3mC2/pVF9BFE8J9FkDoWOfQPXTvVNJUcfZ1hz5dFwOlxCdm
-         Eq0WFW/5bXV6cqH4vMbTdAmiyt+Y7gbpMLiQLnIUhG5YGMzviqQ6NBDZlG1GTHl3kjlH
-         YUXVMHFedtQiP2y9Jb262C4Ghbrq2sylYQt4gsOsp4zM5cjW5T7Tdh9cE+HqQjlfsyuC
-         qnfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723677616; x=1724282416;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9+duQA/mHkN4x/u1uIv4BDkW5OCTH29gngwXk4SCuCA=;
-        b=PUONRvcROfZu9YMqJ2qGNUsPd81noIEczAe8iqNf5M1Sp5DlKI3LkhChfnAc4w+0g/
-         juNGWoCleTC8C5fWFMF2I9a0Hbgus1Do3sHlfQ4WL493FuKKCfqevuCA2h+YzdfcGE2v
-         JBaiDKLV62GXcwlTEBwg7gVhspE0VFBSTtl4skHi8P2gB0j4+sBeV6ZXOh5jlInvLcQp
-         DGZCGQXhtS9+0ZS2AF084MNwdLISPUJ+uctaRRBYzjK2SCfQvCAA++F+LkcD2Ks86vZC
-         6gklXdcapjPwUNNUwqsSTjpal/fDW+7MFycA4BjhZdy3vjF5owunu3lYoeKWmSjsQ0PK
-         j4PA==
-X-Forwarded-Encrypted: i=1; AJvYcCV99pHSdpB5hImHivHUPisdX81Dl+NYe5aWw75zPyvQKtgVSiMyCuR2HQUcl0pKFxg7oZiEZz7+qluNr81WjZodpbTMU44Jo+LlzW0k
-X-Gm-Message-State: AOJu0YwiuNvi9jjuP/oN72iETK/4eS4OmtedCqNR0EA11Y7uWJKmJu7q
-	PcjkAhj3kWaVSV6+QF4KmlnXNwVnTWDSnToD3TkgZL2Ca4tkObUgjzMyXVMabbg=
-X-Google-Smtp-Source: AGHT+IH+zpAbnWR0RFbKIop47GHGSsAo7482OTcO2tWlZY85pxwGVPWS8HuSvZWuImCttl0DLTw/TQ==
-X-Received: by 2002:a2e:be90:0:b0:2ef:315c:67e1 with SMTP id 38308e7fff4ca-2f3b4a43cbdmr2763291fa.4.1723677615658;
-        Wed, 14 Aug 2024 16:20:15 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b7703a18sm160771fa.81.2024.08.14.16.20.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 16:20:15 -0700 (PDT)
-Message-ID: <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
-Date: Thu, 15 Aug 2024 02:20:14 +0300
+	s=arc-20240116; t=1723677666; c=relaxed/simple;
+	bh=4a7ZlA74vWDlCN9VZFGaIdiwH7xx/e/zJNrlaQbo+G0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPZQ8olBp4unyqlsd0hMYJLm1JmDfZajYaEmn08tEl7ON8jSkQ1FrHgdntEnMtbKSEylcZ5JH4uMJrFh9kSr6wybQmKCNY5F0KOEthYvOMpV2vZD10NQQgUWo6WyUwe4Bosp1TCySpjvqJR5AzbwYXGhSdXUK5UTVCGjSIHFS+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFotiRHu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7AFDC116B1;
+	Wed, 14 Aug 2024 23:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723677665;
+	bh=4a7ZlA74vWDlCN9VZFGaIdiwH7xx/e/zJNrlaQbo+G0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OFotiRHu7gmqVX7vYiru0C3Y+GoXeKj4bfovAzecyqAdLX1vrYBY//vVc/51GS/gX
+	 gOugq/QXhkvcSP5msIEQK9bXoWZyBnbESwu3i+xcYUHZL3BRdXYX6BZjc5W1eMdDmI
+	 Y2QBh6X7X5Qsy7/OCMD8awa4qtPRQDWMK24dmoB4QIqoj0oVF/8X5fYgujG1frAqOA
+	 ofRVHYbCeujeuEwn1GtZwQ8VY+T+PmAMEzcQRbBBCry7n9qCbyj5ykWYQBeMjbfAk6
+	 RvYYIHvozt0Ffv565DD0BfnK/YXnz3RF1wuUmEABRjJ2rOpPiPPOXGKm8k3mY1Ymy1
+	 LmsSX/8aIKOTg==
+Date: Thu, 15 Aug 2024 01:20:58 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
+Message-ID: <Zr072oSej9KIc1S6@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <20240812182355.11641-7-dakr@kernel.org>
+ <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me>
+ <Zr0r6sSFMSQIpHEX@cassiopeiae>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-Content-Language: en-US
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
- <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr0r6sSFMSQIpHEX@cassiopeiae>
 
-Hi Depeng,
+On Thu, Aug 15, 2024 at 12:13:06AM +0200, Danilo Krummrich wrote:
+> 
+> > 
+> > > +        ptr: Option<NonNull<u8>>,
+> > > +        layout: Layout,
+> > > +        flags: Flags,
+> > > +    ) -> Result<NonNull<[u8]>, AllocError> {
+> > > +        // TODO: Support alignments larger than PAGE_SIZE.
+> > > +        if layout.align() > bindings::PAGE_SIZE {
+> > > +            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
+> > > +            return Err(AllocError);
+> > 
+> > I think here we should first try to use `build_error!`, most often the
+> > alignment will be specified statically, so it should get optimized away.
+> 
+> Sure, we can try that first.
 
-On 8/14/24 16:10, Depeng Shao wrote:
-> Hi Vladimir,
-> 
-> On 8/14/2024 7:13 PM, Vladimir Zapolskiy wrote:
->> Hi Depeng,
->>
->> please find a few review comments, all asked changes are non-functional.
->>
-> 
->>> +void camss_reg_update(struct camss *camss, int hw_id, int port_id,
->>> bool is_clear)
->>
->> Please let it be just a declarative 'clear' instead of questioning
->> 'is_clear'.
->>
->>> +{
->>> +    struct csid_device *csid;
->>> +
->>> +    if (hw_id < camss->res->csid_num) {
->>> +        csid = &(camss->csid[hw_id]);
->>> +
->>> +        csid->res->hw_ops->reg_update(csid, port_id, is_clear);
->>> +    }
->>> +}
->>> +
->>
->> Please add the new exported function camss_reg_update() in a separate
->> preceding commit.
->>
->>>    void camss_buf_done(struct camss *camss, int hw_id, int port_id)
->>>    {
->>>        struct vfe_device *vfe;
-> 
-> Thanks for your comments, I will address them in new series.
-> 
-> But I have some concern about above comment, you want to add a separate
-> commit for camss_reg_update, maybe camss_buf_done also need to do this,
-> but I guess I will get new comments from Krzysztof if I make a separate
-> change, Krzysztof posted few comments in v3 series, he asked, "must
-> organize your patches in logical junks" and the code must have a user.
-> 
-> Please check below comments.
-> 
-> https://lore.kernel.org/all/e1b298df-05da-4881-a628-149a8a625544@kernel.org/
-> 
-> https://lore.kernel.org/all/d0f8b72d-4355-43cd-a5f9-c44aab8147e5@kernel.org/
+I think I spoke too soon here. I don't think `build_error!` or `build_assert!`
+can work here, it would also fail the build when the compiler doesn't know the
+value of the alignment, wouldn't it? I remember that I wasn't overly happy about
+failing this on runtime either when I first thought about this case, but I also
+couldn't think of something better.
 
-Krzysztof is absolutely right in his two comments.
-
- From what I see there is a difference between his concerns and mine ones
-though, Krzysztof points to unused data, which should raise a build time
-warning, and I asked to make a separate commit for a non-static function,
-I believe it'll be removed by the linker silently...
-
-The potential runtime logic change introduced by camss_reg_update() in the
-generic code is not trivial, which opens an option to update/fix it lately
-referencing a commit from generic domain rather than platform specific one.
-
-If someone for whatever reasons wants to merge a new generic and shared
-camss_reg_update() function within a the platform specific code/commit,
-I won't strongly object, let it be merged together then.
+In the end it's rather unlikely to ever hit this case, and probably even more
+unlikely to hit it for a sane reason.
 
 > 
-> Or I don't add reg update and buf done functionality in
-> camss-csid-gen3.c and camss-vfe-780.c firstly, then add them in a later
-> commit.
+> > 
+> > How difficult will it be to support this? (it is a weird requirement,
+> > but I dislike just returning an error...)
 > 
-> Could you please comment on whether this is acceptable? Please also help
-> to common on if one commit to add them or need two separate commits, one
-> is for reg update and the other one is for buf done.
+> It's not difficult to support at all. But it requires a C API taking an
+> alignment argument (same for `KVmalloc`).
 > 
-
-I would prefer to see two more separate commits within non-platform specific
-code, however as I stated above if it causes anyone's concerns, including
-your own, let it be kept as it is done today. Eventually we do discuss
-a non-functional change.
-
---
-Best wishes,
-Vladimir
+> Coming up with a vrealloc_aligned() is rather trivial. kvrealloc_aligned() would
+> be a bit weird though, because the alignment argument could only be really
+> honored if we run into the vrealloc() case. For the krealloc() case it'd still
+> depend on the bucket size that is selected for the requested size.
+> 
+> Adding the C API, I'm also pretty sure someone's gonna ask what we need an
+> alignment larger than PAGE_SIZE for and if we have a real use case for that.
+> I'm not entirely sure we have a reasonable answer for that.
+> 
+> I got some hacked up patches for that, but I'd rather polish and send them once
+> we actually need it.
 
