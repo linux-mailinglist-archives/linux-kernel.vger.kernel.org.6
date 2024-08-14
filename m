@@ -1,107 +1,111 @@
-Return-Path: <linux-kernel+bounces-285670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA8E95110F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:33:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716BD95111A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76654283E3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:33:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D03D0B22C02
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677CA1FC4;
-	Wed, 14 Aug 2024 00:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D45079D2;
+	Wed, 14 Aug 2024 00:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b="gRFugSD/"
-Received: from read.uberspace.de (read.uberspace.de [185.26.156.133])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="JuX3qUZx"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE31197
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23D81C2D;
+	Wed, 14 Aug 2024 00:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723595615; cv=none; b=ZE8e7wQmbAN7MMCIef0ASxk/8KxLviZlCVB0HjRSrH0Gxv4l/lU7O7wCWZUNFmqHoxkmnty8Mw6ziQuiIlcCq5ixj0VrVUM2nhl6wQzb/U7dm7Ikc42BH7qm413vnJtCMePIBB7fqwIN2hVOz3mzt28UNI7eF+IubuKGO4cidKY=
+	t=1723596117; cv=none; b=t6Kf7syYZoJ8SPoeT3qmNnote5LlZkvpV3c6EIOcD6/2fqbjY5/Sh3ctBm1xTPEHrT0g1DfUEi6IM6eygbqKlE5zUU8felXAlj1o7z6iIBBwSMMdHg5CMDv4HCTGtwq6/HQW60IgYxEP4fK0+wkcTb6WFkmoQ+5AwNl7kEeiKzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723595615; c=relaxed/simple;
-	bh=mZxBMSBOXUjPtNMzQYsC/w4amo62xoxfgDzla/4sRKo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ib/lhGs1op+SHA5lZ6S/dQo7ZefulmfYkEYluJQclz9pSVbhz0bbvpghu2omrwqqjs9qLKQXn0er4jt8k/XDEXGEF3yUqdy5DAfrvLrgqbwpq4P/bhd5ek23WTGEvlBiHX5+eP7kTRiQf5DOeCqNLQhRq3576u5EA27jR/ke++U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de; spf=pass smtp.mailfrom=florommel.de; dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b=gRFugSD/; arc=none smtp.client-ip=185.26.156.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=florommel.de
-Received: (qmail 6617 invoked by uid 990); 14 Aug 2024 00:33:29 -0000
-Authentication-Results: read.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by read.uberspace.de (Haraka/3.0.1) with ESMTPSA; Wed, 14 Aug 2024 02:33:29 +0200
-Message-ID: <d5c8fdfbdfa096c9c1215a2ccd1cabefc63f1ec8.camel@florommel.de>
-Subject: Re: [PATCH 0/2] kgdb: x86: fix breakpoint removal problems
-From: Florian Rommel <mail@florommel.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Jason Wessel
- <jason.wessel@windriver.com>, Daniel Thompson <daniel.thompson@linaro.org>,
- Douglas Anderson <dianders@chromium.org>,  Lorena Kretzschmar
- <qy15sije@cip.cs.fau.de>, Stefan Saecherl <stefan.saecherl@fau.de>, Peter
- Zijlstra <peterz@infradead.org>, Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>,  Randy Dunlap <rdunlap@infradead.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Geert Uytterhoeven
- <geert+renesas@glider.be>,  kgdb-bugreport@lists.sourceforge.net,
- x86@kernel.org,  linux-kernel@vger.kernel.org
-Date: Wed, 14 Aug 2024 02:33:29 +0200
-In-Reply-To: <20240813171055.f8805c1db539dfa18e80026b@linux-foundation.org>
-References: <20240811232208.234261-1-mail@florommel.de>
-	 <20240813171055.f8805c1db539dfa18e80026b@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1723596117; c=relaxed/simple;
+	bh=SZueXCPsSwfQWQQRkkfy9Gvaa/gZGT4D4UaM1oMlS7c=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=QEW/tMmOmgbZCAIt/qoRQfT2LdfrCKh7q97GXn+8ArB9OWsW6LtxViqwUR/Fk40gnf8xlvJx9s7piAJQuvzE/9lpE3aOSmZJedTFRIGJnOn5dcLAq4bIEbhjJZ0YPDtHBK7WqmauXaTy8mRoQxRFjczVnzqS1xrIiYvtoypqrBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=JuX3qUZx; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723596103; bh=1WoIqjyPOPpAbzQq1AkdHEQBFtRD7wsw0eve6XHnTzk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=JuX3qUZxn8A16aGvAuc2WJ9onBFKuTrUX0nt7DLp4Fm77EF83JtRNBfezhZ3p5E6D
+	 i/rRJUjKZ1LQSs2F/PbuRcxLUz06dIidKjvUW+hUdvmq6c4Wnb9vXKiudmlFyrmhZO
+	 J8dFVuF5rJn9Gq35YZaNqUZn2ovkrw16QIcNiov4=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 8DF11A6A; Wed, 14 Aug 2024 08:35:31 +0800
+X-QQ-mid: xmsmtpt1723595731t2onn319p
+Message-ID: <tencent_0F27C706CC52D386584988EECBEEC0CCA206@qq.com>
+X-QQ-XMAILINFO: MK3JR/K3P3T7Gsg+hjNuBVrNdLaojcyfnqq8oxqSxnS3PyoRfOBicmuGAlKK5g
+	 U7DiHH8M7nNo6wlJvId7HYwlc51Riby+d5VHR8ih7xNyztRPR42ckpAfxvstOnxlT6ohq/BNyT7y
+	 RThrYxZM3bmzhWd9NAPco6Xo6YT4BhbvPhNlEr3K00ZpNzTziKQ9M+Ibxovg68KD8J1WhP7jgRx3
+	 RNimmFk8HQLNpi+08BgYsvC9XGqWIBGo5rykeTSluwPVs9KQnfPHksSPgbE+l1z9hcgsddJWoTVM
+	 wQZ7+0XZz6Ql4W2wEqdsyHAvHheIALQslS6TKRL7r7fUP8ZEacn4n5SPau6/CsL3KQSYErzdJidV
+	 6JKC/Ecu4Pyota/aXCZToH7OZ9hpG9PS6HCcvwCOalhqs8VtqwxCwRAJSCe7N9Rw/lZhxNIbOKx/
+	 TlNIvBlsPsWYtueCR7gEHy39BQzZJSAuZY/7qqRz7fe0+pUfVtYYcq1dzSBVeSEsWVaNBcBwVIYd
+	 tnKR2c77DSR/qVC9+pibea1vwIJI0EaVXk2ykmvfdckNWLAuJCev+XgWOkOvXB+B1pzb/4DFE7Yq
+	 vqJp7i9n7Hfm5DEy/6ZI/YniSsRWL0Ta0SqF6jg3CN7jEvq4mL4jYaGhBmBq7OSYtbcMM4KJ7lN6
+	 6LoymJDIM9i5BXPz6+4iC1+OxHz/jPcZA9ILxnJPOfgxSFp6p+UCF1vhJXAmwEV33ahZF40wSoAV
+	 XWgh3CCCvvdIQAUipWA+Q/RaBmF84+QtNOOy/JmZ6UcbD3hbpuoCi1sM0ORPkqUORcOIa7IpScqf
+	 s5E2TeS6z5WWu4aDETCdnjI5k3FfakANeK7na2W6j1RsfrTm90I8WVi62FzxTpJKtTjXdUpGtpIm
+	 L/jjSjg/Fhwrf7lJvLLgLDQ7gN0Tyos4xAGWiHFAjMshYX0o8yh24p9M76hPNO+w==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Cc: adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com,
+	syzkaller-bugs@googlegroups.com,
+	tytso@mit.edu
+Subject: Re: [syzbot] [ext4?] divide error in ext4_mb_regular_allocator
+Date: Wed, 14 Aug 2024 08:35:26 +0800
+X-OQ-MSGID: <20240814003525.489111-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000b1b164061f96213d@google.com>
+References: <000000000000b1b164061f96213d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Bar: +
-X-Rspamd-Report: SUSPICIOUS_RECIPS(1.5) BAYES_HAM(-0.138129) MIME_GOOD(-0.1)
-X-Rspamd-Score: 1.26187
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=florommel.de; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=mZxBMSBOXUjPtNMzQYsC/w4amo62xoxfgDzla/4sRKo=;
-	b=gRFugSD/tFere1sDgEeavx+9foLS7dCf39ZuQyBbk24KBMq0GPAaDRviGhNNPNOf/tmQR8NVBS
-	yEPWObIrPYUHPIwSBkTG6qi7uEg9/sGe5nCNsPCg5+EMypljVKsHiLU1tExSECKFDv5DMOHVB/Gj
-	xV712O5dIx1V9i86TrdMDqw+z+Fg2P0Lgib740/zYXAC/LDSquElO2jaZMaPo9xhW3WMAkkHxFUG
-	3zFRVtkJxlUhUYDrv/l3Vlt+xE0TLoCZtxepeV8+wUJH/JvaM+jisIG2Hcfp26CGAatyQ2fD3KGy
-	DBf951Q5cTmuh+EZKOya/Oc4WH4Vuy4RS/8VqRYFybcOY9aJWSqNn7X8lY9jdi06bwBstMDJ22Fb
-	i7KKLjfHKujr6MwkTaIWSCDrDkKKsc6iJ30/wZpDtYfpmEhoHr6k/jiWdeNL06ekJ/EJwFmNkyO8
-	CpVkPPYipmzVJczFD2EDfNt3VKjGFe6s27dGRsutnGMNcVaRg/iTf3FM8sqlCZsta7KZ3Am7lSzt
-	AW1E6DFHBsHIL2MLCTnow+n9lH3HAB6nP0U9dAiqOZgCwO8Kb5QDMsVBbtPRPIjAJH4WmisHz4d+
-	IdkBh0+P9JuJ5t/gIS/eNGUAPy5b5s1d8dzMAX7VOJUaD8Kfe6wsOhcpGmCtmvOIKw4aEieg10gZ
-	o=
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-08-13 at 17:10 -0700, Andrew Morton wrote:
-> On Mon, 12 Aug 2024 01:22:06 +0200 Florian Rommel <mail@florommel.de> wro=
-te:
->=20
-> > This series fixes two problems with KGDB on x86 concerning the removal
-> > of breakpoints, causing the kernel to hang.  Note that breakpoint
-> > removal is not only performed when explicitly deleting a breakpoint,
-> > but also happens before continuing execution or single stepping.
->=20
-> Neat.  It would be nice to fix earlier kernels; for that it is
-> desirable to identify a Fixes: target.  From a quick look it appears
-> this issue is more than a decade old, in which case I don't believe a
-> Fixes: is needed - our request becomes "please backport to everything".
->=20
+Before determining that the goal length is a multiple of the stripe size, 
+check CR_GOAL_LEN_FAST and CR_BEST_AVAIL_LEN first.
 
-Thanks. There is already a v2 (due to my negligence on the details) and
-a bit of discussion:
-https://lore.kernel.org/all/20240812174338.363838-1-mail@florommel.de/
+Fixes: 1f6bc02f1848 ("ext4: fallback to complex scan if aligned scan doesn't work")
+Reported-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
 
-Rgeards,
-Florian
+#syz test: upstream ee9a43b7cfe2
+
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 9dda9cd68ab2..451f92cde461 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -2928,13 +2928,12 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
+ 			if (cr == CR_POWER2_ALIGNED)
+ 				ext4_mb_simple_scan_group(ac, &e4b);
+ 			else {
+-				bool is_stripe_aligned = sbi->s_stripe &&
++				bool is_stripe_aligned = (cr == CR_GOAL_LEN_FAST ||
++					cr == CR_BEST_AVAIL_LEN) && sbi->s_stripe &&
+ 					!(ac->ac_g_ex.fe_len %
+ 					  EXT4_B2C(sbi, sbi->s_stripe));
+ 
+-				if ((cr == CR_GOAL_LEN_FAST ||
+-				     cr == CR_BEST_AVAIL_LEN) &&
+-				    is_stripe_aligned)
++				if (is_stripe_aligned)
+ 					ext4_mb_scan_aligned(ac, &e4b);
+ 
+ 				if (ac->ac_status == AC_STATUS_CONTINUE)
 
 
