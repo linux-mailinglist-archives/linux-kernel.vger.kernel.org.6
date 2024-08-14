@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-286204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AF19517E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:40:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EB59517E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB291C20D2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCA48B21DB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B033A166307;
-	Wed, 14 Aug 2024 09:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B69165EF3;
+	Wed, 14 Aug 2024 09:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h0zYzBZj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b="C4eYxQCb"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673C013A418;
-	Wed, 14 Aug 2024 09:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723628427; cv=none; b=mnoTX7hOcmQh//k18gaSO4qBY2OELp4R+tqY8iSp9Ouy8Oz/hBL8ZLROdx/5i+RfchNH45/KeFvvitPdcJuhGj7IklFQ0zHmAPBp2sROOMw9oZBre/SEcLNHleJlBU6++t0ES5j6qiyobdL6mruBEVQnSiRv3xohXYpC9PI9L7U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723628427; c=relaxed/simple;
-	bh=Oqk/yZOBqPAJ0OhO/1w+U3YacKqLDREg7ya+gkJZJJY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32CA12C484
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723628552; cv=pass; b=TDRsNL7IMHRr6ZXd7/JH7CbU3E9Bi1EKyA1NTEto2kfUY9g0IwYH0mejfC8ycG2RIzNgeZf/SVklELlKWe/TndZf6YmUupra9B/qCdqXMi3G4ZanUZYkJa105muKKhNmubT0xiNNk23MQA3C03wgojm6wunMowqt3se3xr7WUxE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723628552; c=relaxed/simple;
+	bh=L6MXgYiwTPXtSCnb2Bpqp0fFrX64gXmNzK0UApHAmP4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OG8pSO8lK5tafk3w3KIr2gGLybRKsfzOjOq4VHIqpbSa/auJNcgw/Jrnud7fqeKUTT7lXu3lEGp7G84qa8Q7BzFXdL7eWFGjpfSx1YG6KxEYdTWE8QiuWihOOLBwMJIWaDuAHOTjePxa9K2EGHeYYxvoC8IdHvQYUWb9ankfWOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h0zYzBZj; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723628426; x=1755164426;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Oqk/yZOBqPAJ0OhO/1w+U3YacKqLDREg7ya+gkJZJJY=;
-  b=h0zYzBZjydmCvUY1QprEJUOuDwWU42wUJTfD3SFo6fxEx7AZAl26DW9V
-   Y4L74kpbPZlecYgbRPPslV0+iKSH/LHAzZjSAkSSx0Vd2Fb8cySqTxL8Z
-   AzKewHqqfFFHJLTKsvvnM8retey2Rf9vrLOjBDTLe73yhrZQ6SUwbOgwC
-   haw7s67gSV+akB4tJgkhVZsnoBS40j62FukvF7HqVoCrZ5OSSv+/iTgPF
-   2hBv08+2xZssqRiWh1IvNgw8lAV2rLh07nZh+bLa/jnr1GTG5q0lBXOqX
-   YiLb2vnKLqLiXG55IcfAwkxm2T/PgccR5FSMBba2uPnn3SiY35eQ4lZ+W
-   w==;
-X-CSE-ConnectionGUID: 5D0JWrkITFug+gXuWW3Y5g==
-X-CSE-MsgGUID: wA9eMzSwTKqe2EUd4bIpNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="25635381"
-X-IronPort-AV: E=Sophos;i="6.09,288,1716274800"; 
-   d="scan'208";a="25635381"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 02:40:25 -0700
-X-CSE-ConnectionGUID: QoDtG2jcQa6/Jw1/h4JPTA==
-X-CSE-MsgGUID: 8/qT9Z0oRlGlDA7pwKz4LQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,288,1716274800"; 
-   d="scan'208";a="58918758"
-Received: from slindbla-desk.ger.corp.intel.com (HELO [10.245.246.67]) ([10.245.246.67])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 02:40:20 -0700
-Message-ID: <3cdb2041-59d4-4d43-ac4d-39d7f9640cef@linux.intel.com>
-Date: Wed, 14 Aug 2024 11:40:18 +0200
+	 In-Reply-To:Content-Type; b=Xa5+ijPR8xV+CVnxsXWM84SEBVGC5olYdwZtaq8/Eqk3cUZEPgkV5MdP6monJwV8TEwmSGUD8ITjgcXO+CfOAN7+BimECtJhWJ+EaBrejH7YCuC+gA5xUWjK4huHUww+5vGAWHPqtQtQ3SfH00oaqVkaaOYTtX+Qu4ujc5pcGmk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b=C4eYxQCb; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: helen.koike@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723628545; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=D1rJcxESAtBdt6i8nWdAh0w8/sRVVAlSEhDWMMJzPZOSL8C+as9cABEP9xhYwv7zkKr5kul+Xn2Tpk7uh4uDfJfFDr+yt+Pb8BRnGj5B/EISKXomQ90+bx/NgT8guQpex32BA025GqLwk74BOzi7R5yQcWn7Ov6MQjE0uUJbZDI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723628545; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=w1lj4Ku49BfHwbSHApbEdIO8jbS21dyuVJ1bMcM9HxE=; 
+	b=DGtgCWGHXFKXPw2X9LCjuPpe21UFvqthtsZwE2p2/FUF3hQsxeP0Ry/o+PylaoavrVwNAK5yosfMhM54F9Lr+A7ZQDJ3aXNGHlYlsnTy3uKswpaO4ZqhWTO9RgloDBFRGVKS7Eg5cDaotQYJDHkQ0601f2KyDPHWuOBNaHytEfM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=vignesh.raman@collabora.com;
+	dmarc=pass header.from=<vignesh.raman@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723628545;
+	s=zohomail; d=collabora.com; i=vignesh.raman@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=w1lj4Ku49BfHwbSHApbEdIO8jbS21dyuVJ1bMcM9HxE=;
+	b=C4eYxQCbm66rnLSCnBPdTOPY6pf/WYLAOEMXXFTgxAEFgCMqjqCn4J3zAqjrW1qb
+	DkCEC9Z8qizHs7FuadnBBO7oaiZLZi/d9BVHK03ga3YrJK1sE9SBV04UnKYOSH4UbIE
+	TZAynknCHDHTWDimepJZCPJjFoq3cC3hEKS9Bcwg=
+Received: by mx.zohomail.com with SMTPS id 1723628542404965.8729371058215;
+	Wed, 14 Aug 2024 02:42:22 -0700 (PDT)
+Message-ID: <42753719-9619-45f1-b76a-8ff8d19cec22@collabora.com>
+Date: Wed, 14 Aug 2024 15:12:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,66 +60,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec
- support
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Shengjiu Wang <shengjiu.wang@nxp.com>,
- vkoul@kernel.org, tiwai@suse.com, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
- lgirdwood@gmail.com, broonie@kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
- <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com>
- <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
- <CAA+D8AN9JXJr-BZf8aY7d4rB6M60pXS_DG=qv=P6=2r1A18ATA@mail.gmail.com>
- <ffa85004-8d86-4168-b278-afd24d79f9d8@linux.intel.com>
- <116041ee-7139-4b77-89be-3a68f699c01b@perex.cz>
- <930bb152-860a-4ec5-9ef0-1c96f554f365@linux.intel.com>
- <c9039808-cd04-452d-9f6c-f91811088456@perex.cz>
- <ed1192e0-00e7-4739-a687-c96dc2d62898@linux.intel.com>
- <CAA+D8AMOh=G7W5-dYw_=Xx-s0PqEu2suKYorscoWku86Rn-=+A@mail.gmail.com>
- <542d47c5-7ce3-4c17-8c0a-3a2b2a9e6c6a@linux.intel.com>
- <c3b8f7b8-fc5e-4285-bee8-7edd448a405d@perex.cz>
- <CAA+D8ANg7C7vuxU44mAG8EnmcZjB_te5N_=4M4v_-Q9ZyPZ49g@mail.gmail.com>
- <2be4303e-58e1-4ad7-92cf-f06fa6fa0f08@perex.cz>
- <7dc039db-ecce-4650-8eb7-96d0cfde09a2@linux.intel.com>
- <CAA+D8AMv=tHV3b-Rfo9Pjqs0bX5SVschD=WD06qxjJOk5zQmiQ@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/ci: enable lockdep detection
+To: Helen Mae Koike Fornazier <helen.koike@collabora.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+ daniels <daniels@collabora.com>, airlied <airlied@gmail.com>,
+ daniel <daniel@ffwll.ch>, robdclark <robdclark@gmail.com>,
+ "guilherme.gallo" <guilherme.gallo@collabora.com>,
+ "sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
+ "deborah.brouwer" <deborah.brouwer@collabora.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+References: <20240812112030.81774-1-vignesh.raman@collabora.com>
+ <191483d05a3.129198f97500814.8001634600010504645@collabora.com>
+ <0a3db7dc-4533-4111-bec9-35cc68e35d83@collabora.com>
+ <1914d612d8e.f2d5101b916106.3138016556910118397@collabora.com>
 Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <CAA+D8AMv=tHV3b-Rfo9Pjqs0bX5SVschD=WD06qxjJOk5zQmiQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <1914d612d8e.f2d5101b916106.3138016556910118397@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
+
+Hi Helen,
+
+On 14/08/24 01:44, Helen Mae Koike Fornazier wrote:
+> 
+> 
+> 
+> 
+> ---- On Tue, 13 Aug 2024 02:26:48 -0300 Vignesh Raman  wrote ---
+> 
+>   > Hi Helen,
+>   >
+>   > On 13/08/24 01:47, Helen Mae Koike Fornazier wrote:
+>   > >
+>   > > Hi Vignesh,
+>   > >
+>   > > Thanks for your patch.
+>   > >
+>   > >
+>   > > ---- On Mon, 12 Aug 2024 08:20:28 -0300 Vignesh Raman  wrote ---
+>   > >
+>   > >   > We have enabled PROVE_LOCKING (which enables LOCKDEP) in drm-ci.
+>   > >   > This will output warnings when kernel locking errors are encountered
+>   > >   > and will continue executing tests. To detect if lockdep has been
+>   > >   > triggered, check the debug_locks value in /proc/lockdep_stats after
+>   > >   > the tests have run. When debug_locks is 0, it indicates that lockdep
+>   > >   > has detected issues and turned itself off. So check this value and
+>   > >   > exit with an error if lockdep is detected.
+>   > >
+>   > > Should we exit with an error? Or with a warning? (GitLab-CI supports that).
+>   > > Well, I guess it is serious enough.
+>   >
+>   > I think we can exit with an error since we check the status at the end
+>   > of the tests.
+> 
+> I mean, we can exit with a specific error and configure this specific error in gitlab-ci to be a warning,
+> so the job will be yellow and not red.
+> 
+> But maybe the lockdep issue should be a strong error.
+
+Yes agree. We can exit with an error for lockdep issue instead of a warning.
+
+> 
+>   >
+>   > >
+>   > > Should we also track on the xfail folder? So we can annotate those errors as well?
+>   >
+>   > Do you mean reporting this error in expectation files?
+> 
+> I wonder if there will be cases were we are getting this error and we should ignore it, so in the code
+> we should check the xfail files to see if we should exit with an error or ignore it.
+> 
+> For instance, if we have a case where we are having this error, and it is flaky, we might want to add it
+> to the flakes file list.
+> 
+> Maybe this is not the case, I'm just wondering.
 
 
-> Yes, to go further, I think we can use SND_AUDIOCODEC_PCM, then
-> the SRC type will be dropped.
+The tests are passing but log shows lockdep warning 
+(https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/62177711).
 
-sounds good.
+Moreover if the lockdep warning is emitted, lockdep will not continue to 
+run and there is no need to check this warning for each tests.
+So added the check at the end of the tests.
 
-> But my understanding of the control means the .set_metadata() API, right?
-> As I said, the output rate, output format, and ratio modifier are applied to
-> the instances of ASRC,  which is the snd_compr_stream in driver.
-> so only the .set_metadata() API can be used for these purposes.
+> 
+> 
+>   >
+>   > > Did you have an entire pipeline with this? To see if everything is still green?
+>   >
+>   > Yes. https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/62177711
+>   >
+>   > This is a test branch in which I reverted a fix for the lockdep issue.
+>   > We see 'WARNING: bad unlock balance detected!' in logs and pipeline is
+>   > still green.
+> 
+> But with your patch, it would red right?
 
-Humm, this is more controversial.
+Yes it would fail and the pipeline will be red.
 
-The term 'metadata' really referred to known information present in
-headers or additional ID3 tags and not in the compressed file itself.
-The .set_metadata was assumed to be called ONCE before decoding.
+> With the current patch, is the pipeline still all green?
 
-But here you have a need to update the ratio modifier on a regular basis
-to compensate for the drift. This isn't what this specific callback was
-designed for. We could change and allow this callback to be used
-multiple times, but then this could create problems for existing
-implementations which cannot deal with modified metadata on the fly.
+With this current patch, it will fail.
+Pipeline link to show lockdep_stats before and after tests,
+https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1246721
 
-And then there's the problem of defining a 'key' for the metadata. the
-definition of the key is a u32, so there's plenty of space for different
-implementations, but a collision is possible. We'd need an agreement on
-how to allocate keys to different solutions without changing the header
-file for every implementation.
+Regards,
+Vignesh
 
-It sounds like we'd need a 'runtime params' callback - unless there's a
-better trick to tie the control and compress layers?
-
+> 
+> Regards,
+> Helen
+> 
+>   >
+>   > Regards,
+>   > Vignesh
+>   >
+>   > >
+>   > > Helen
+>   > >
+>   > >   >
+>   > >   > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com>
+>   > >   > ---
+>   > >   >
+>   > >   > v1:
+>   > >   >  - Pipeline link to show lockdep_stats before and after tests,
+>   > >   > https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1246721
+>   > >   >
+>   > >   > ---
+>   > >   >  drivers/gpu/drm/ci/igt_runner.sh | 11 +++++++++++
+>   > >   >  1 file changed, 11 insertions(+)
+>   > >   >
+>   > >   > diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
+>   > >   > index f38836ec837c..d2c043cd8c6a 100755
+>   > >   > --- a/drivers/gpu/drm/ci/igt_runner.sh
+>   > >   > +++ b/drivers/gpu/drm/ci/igt_runner.sh
+>   > >   > @@ -85,6 +85,17 @@ deqp-runner junit \
+>   > >   >  --limit 50 \
+>   > >   >  --template "See https://$CI_PROJECT_ROOT_NAMESPACE.pages.freedesktop.org/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/results/{{testcase}}.xml"
+>   > >   >
+>   > >   > +# Check if /proc/lockdep_stats exists
+>   > >   > +if [ -f /proc/lockdep_stats ]; then
+>   > >   > +    # If debug_locks is 0, it indicates lockdep is detected and it turns itself off.
+>   > >   > +    debug_locks=$(grep 'debug_locks:' /proc/lockdep_stats | awk '{print $2}')
+>   > >   > +    if [ "$debug_locks" -eq 0 ]; then
+>   > >   > +        echo "LOCKDEP issue detected. Please check dmesg logs for more information."
+>   > >   > +        cat /proc/lockdep_stats
+>   > >   > +        ret=1
+>   > >   > +    fi
+>   > >   > +fi
+>   > >   > +
+>   > >   >  # Store the results also in the simpler format used by the runner in ChromeOS CI
+>   > >   >  #sed -r 's/(dmesg-warn|pass)/success/g' /results/results.txt > /results/results_simple.txt
+>   > >   >
+>   > >   > --
+>   > >   > 2.43.0
+>   > >   >
+>   > >   >
+>   >
 
