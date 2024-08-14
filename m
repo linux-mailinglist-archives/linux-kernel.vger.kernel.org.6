@@ -1,143 +1,232 @@
-Return-Path: <linux-kernel+bounces-286728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC99951E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:14:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F3A951E60
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929861C21BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:14:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9455B28C42
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40C31B4C46;
-	Wed, 14 Aug 2024 15:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B27A1B4C5F;
+	Wed, 14 Aug 2024 15:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oumkvIra"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ENlEKYS/"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366351B4C31;
-	Wed, 14 Aug 2024 15:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA281DFF7
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723648466; cv=none; b=h9o7rVVtcYC7K359WV3sL26MYrx722Ls1jz2pgwlW5lASeRO7aolh5FH+cHoO9Ec5ehWspD9twF/qF/f/x1CBF0Lr/cYH+6Qt6iaTDdIuEN42aDzINiAfzU2Bnwe3g9kYI5TQlwyGseHczqL6Z3Dk3YNEv8Cw7e7KsAjMpJ2OWc=
+	t=1723648567; cv=none; b=fG75cmOg5uI8LgNXQDh4dFUAAGLb0MQEGQKy6SCmncKN8/QxDPa54VftkosXGnYejj/SrZ903KE2kUlGC/jPjde45bSfW17hTzkOnBE7pHYCqLiBGRyN4cnynSRed1RAHn4ZUtUMhe20jwmrPiY15yrcNJIrX8lgWhnvMDl01sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723648466; c=relaxed/simple;
-	bh=4Q00RGCTF5GDpOGhKM+Oj+is+jUI0FdH6CnteZN5WgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=POZ+vF2oOB5ZFaQX1ML3tHQnQvNiW1Ed9KrDOXV28LE/rUzWklRiHhPAbtugpRssAAqQzs1qRSUmzBYgy9INWEErwYMP0tZdIqzyRVXQmhzLjGWfjN1YgTpGJ47qsRkAtgYt2JUfhVqlP1PslTCj0XG6KMidL7RREHOpq5ZCQsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oumkvIra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEFD0C116B1;
-	Wed, 14 Aug 2024 15:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723648465;
-	bh=4Q00RGCTF5GDpOGhKM+Oj+is+jUI0FdH6CnteZN5WgA=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=oumkvIraSVSOtie2QwrPbtCKRCG6HGlv9frRe8f6h2YDpHJsLXHrUACwuZtRzQiJN
-	 lI1BFe/4g8k71w5DZeULgz6YHM+VudrvLdqWEJM5xxbrq3VDdq5bUvVgxgy3IGEBO9
-	 Sc3PHC2uCtmnrGk2JrhtqcIi3vLhthr2HXH9FoOVRtLTVK5YSBWVGn5wwpknX5cldA
-	 0q4e77ifWzp3CyCqln1S1d++t8pt04ayqALHoAGzvhN5jcJYjBGj7zrIPJFrrhLhUb
-	 V2m0LKu87dbxOh+X8kinJcZL0D7L8tb/eJ2IIONvjvG35nF0DdXKivblAcgEnVMxqU
-	 McPGudXmrFEnw==
-Message-ID: <1bf9edfe-5b32-4382-83d4-5be91e6c036e@kernel.org>
-Date: Wed, 14 Aug 2024 17:14:20 +0200
+	s=arc-20240116; t=1723648567; c=relaxed/simple;
+	bh=mZ0N4ofCQdzNrfFqiieS980B7tWtPrmaj9HBebS5+jU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qKuUAsN4ZXujQp2OYKL/8ZEjAgFbPlzGCgYeduJMR2HrUtNri33v11kGv7kuMdD2lrOBlJl92ezge41Zp+Zc5gdTHJdvOfuwOfSDuny8KsNlb9mCBVEdM4//q8mb1b+eACkJaNb3s/7zpRWnn9mpXx5+OkWcD4UcFBTDIQum1fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ENlEKYS/; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9FC8D60004;
+	Wed, 14 Aug 2024 15:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723648560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r1Qvrko9juw0lhGwRM2iYDhdqP2zfN581x87n+jL5CQ=;
+	b=ENlEKYS/lGt3wpV64FW1shUkBKcVAvdXCsDiZlfcdboEUFoj8XNUoyDq21JL6DRgGB23ir
+	MwiFJGG0RVVuoAADsAiFiH6TTPeOpwqUayD/49laZaqTdkKqnqci2TVJNlnBCB4TzE+tHN
+	ZEDcDNV8WWuyNQcoXfvuKPX5tpnxXyQxCUvPpADikGSKzptrNXeL7k5QMwAxsR9y+/SGl/
+	QNXhamC6prmLwpKMzesePzksw6y8QjLG1nWuYPNH01cC8U+OejQ6vuJjsQMvt4RtnyjJB+
+	mJAapfyNfU/pKxc2RXXzjhiJqx1tGzQa2XELkVN5isFzJJRh67J0V+7Ay0eb6w==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH RFC 0/7] drm/vkms: ConfigFS interface
+Date: Wed, 14 Aug 2024 17:15:47 +0200
+Message-Id: <20240814-google-config-fs-v1-0-8363181907a6@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Add support for AST2700 INTC
-To: Kevin Chen <kevin_chen@aspeedtech.com>, tglx@linutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org
-References: <20240814114106.2809876-1-kevin_chen@aspeedtech.com>
- <20240814114106.2809876-2-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240814114106.2809876-2-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACTKvGYC/5XRzU4DIRAA4Fdp9uwobHdhaYwxMfEBvJqm4WdYi
+ ctSgW7bNH136Y8HDyb2BAPDxwwcqoTRYaoWs0MVcXLJhbEE9G5W6Q859gjOlLiqSd2QtqbQh9A
+ PCDqM1vVgEygxbxVjqjNcVeXYOqJ1uzP5Xr29vlTLy2LEr03h83VHyXRSvHd5MTPRg3dJP/xMY
+ MRdPmkeU5LnKhazx3MRHRGw30wwUQIEqOSas4YyZvmzCiEPbrwv7NMfh2kDqin6ttw9hAg2RC9
+ zgqkuWKfmjRDaoiD4T2wbS0dK6s9VycWV2p/HCzdnbUM1p7xl4p/cz+sOMjrrtMzlO0px9KQhc
+ ma4IbrubtPSenAZPlAajFespZzWlnSdbc1t2PTpE3g5lgRzsbhUnepETSmZ32ZF9GEq3caswY0
+ Gd2Bj8LCWUXrMGC8+Q8qFVFZY0/z2l8fjN1Kbuh7BAgAA
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, nicolejadeyee@google.com, 
+ Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6655;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=mZ0N4ofCQdzNrfFqiieS980B7tWtPrmaj9HBebS5+jU=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBmvMonmJPahd2dkMBNOqX9z+slF+lNIAZqnZwWd
+ FrBW7YP/reJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZrzKJwAKCRAgrS7GWxAs
+ 4vbTD/9fTDKY2WqMI5+ePlJVjZNvRv4r3rtx3I3F9NT7WkaKcEZnDHCvUZBsWz2WRV8ccGBW4JF
+ gEBhUvP9ZhcACvBjyGqcUXwFkUajbZSqWIY39G4r+2mTzW14rMLYlAUqVOIv9YSFKUART9vwYhQ
+ GqGNGt23tQ19mB/EXhW4Wd6lp7K+ZXOQKrCUDENSV5C26/yB05xiZwwjhpUPcWFyPYQfKeFrN01
+ 0JeBH+7VzHzbY7dasfGvn6nOnlcRkqdIzqhXAv41uvN0u2hv1q77zc+HPvzisloK3IkRutZsXYs
+ O2ZIcBbNgCzxazJmHwYETgTx81njnIVj2FhmBH0okZMIo9KEBs6FUi56Dv/DE+dZ7Jm8Mtce0fL
+ QOaiipCkaZnc/l20K/GpuGJJgTmF7lX/NUo4ukaxcopDwsOnXkHTyB1/hXOT3SrQkgR0M4z340e
+ xZu4GUgrWelU/N76jgrTVV/zxa0jwv3FdinJDn3hfjeFJX4+s3U/s0swHGPN2M3/6sjmcox52aq
+ EcKjc7WEbhDpS5Zx3wWdokOjGzYkwBiEz6st70/RuP0zP3RKwW7428sYoqNdvOdsMaINMzvRkfd
+ TV+ju6uIlIdk+zghGiT5fgbcZZDzwFb7UKe2cggEEyYS+cvFkUPNzx+K9LFVLHytFqYRIuFwIqh
+ +Drj/oxJlKazl5Q==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 14/08/2024 13:41, Kevin Chen wrote:
-> Support for the Aspeed Interrupt Controller found on Aspeed 7th Geration Silicon
-> SoCs.
-> 
-> ASPEED interrupt controller(INTC) maps the internal interrupt sources of
-> the AST27XX devices to an parent interrupt controller.
-> 
-> Changes since v2:
-> Combine the aspeed_intc_ic_of_init and aspeed_intc_ic_of_init_v2.
-> Switch raw_spin_lock_irqsave to scoped_guard and guard.
-> Fix the error of make dt_binding_check.
-> Refine the aspeed,ast2700-intc.yaml.
+VKMS is manly used to test userspace program and its behavior. The current 
+implementation is not very configurable as you can only have one device, 
+with few specific planes.
 
-It seems that entire Aspeed has troubles working with people in the
-community. You do not address feedback, you ignore it and asks us to
-re-review the same crap.
+This series aims to introduce a new interface, using ConfigFS, to create 
+and configure more devices. This will introduce:
+- Device creation
+- Plane creation
+- Plane configuration (type, color encoding, color range, rotations)
+- Encoder creation
+- CRTC creation
+- Linking between CRTC and planes/encoders
 
-Before we proceed further:
-1. Answer, inline, without confidentiality notice (after asking you this
-5 times, I think you should fix it finally) that you:
- - agree (ack/ok/agree)
- - disagree with explanation why
+The proposition is:
+/config/vkms
+	DEVICE_1
+	┣━ enable
+	┣━ writeback
+	┣━ planes
+	┃  ┣━ PLANE_1
+	┃  ┃  ┣━ type
+	┃  ┃  ┣━ supported_rotations
+	┃  ┃  ┣━ color_range
+	┃  ┃  ┣━ color_encoding
+	┃  ┃  ┣━ default_color_encoding
+	┃  ┃  ┣━ default_rotations
+	┃  ┃  ┣━ default_color_range
+	┃  ┃  ┗━ possible_crtcs
+	┃  ┃     ┗━ >> /config/vkms/DEVICE_1/crtc/CRTC_1 
+	┃  ┣━ PLANE_2
+	┃  ┃  ┗━ ditto
+	┃  ┗━ PLANE_3
+	┃     ┗━ ditto
+	┃
+	┣━ encoders
+	┃  ┣━ ENCODER_1
+	┃  ┃  ┗━ possible_crtcs
+	┃  ┃     ┗━ >> /config/vkms/DEVICE_1/crtc/CRTC_1
+	┃  ┗━ ENCODER_2
+	┃     ┗━ ditto
+	┃
+	┗━ crtc
+	   ┗━ CRTC_1
+	
+This interface aims to be extendable (new property can easly be added in 
+objects) and easy to use (objects are created simply by creating folders, 
+and configured by writing files).
 
-2. Then double check that your new version implements everything above.
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Louis Chauvet (7):
+      drm/vkms: Add vkms_delete/create_device helper
+      drm/vkms: Introduce ConfigFS interface
+      drm/vkms: Introduce basic plane creation
+      drm/vkms: Introduce plane rotation in ConfigFS
+      drm/vkms: Add color encoding to ConfigFS
+      drm/vkms: Add color range in ConfigFS
+      drm/vkms: Add crtc and encoder configuration in ConfigFS
 
-3. Then send new version (max once per 24h) with changelog and
-versioning (just use `b4`).
-
-If you keep ignoring step 1 and 2, you will annoy reviewers up to the
-point of automatic NAK or being ignored.
+ drivers/gpu/drm/vkms/Kconfig         |   1 +
+ drivers/gpu/drm/vkms/Makefile        |   1 +
+ drivers/gpu/drm/vkms/vkms_configfs.c | 953 +++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_configfs.h | 105 ++++
+ drivers/gpu/drm/vkms/vkms_drv.c      |  19 +-
+ drivers/gpu/drm/vkms/vkms_drv.h      |   3 +
+ 6 files changed, 1078 insertions(+), 4 deletions(-)
+---
+base-commit: 219b45d023ed0902b05c5902a4f31c2c38bcf68c
+change-id: 20240521-google-config-fs-b935b66b8d7b
+prerequisite-message-id: <20240809-yuv-v10-0-1a7c764166f7@bootlin.com>
+prerequisite-patch-id: ae2d8b2efbbaa9decce56632c498c87e708288b3
+prerequisite-patch-id: c26b6d4867eaf6566195aa0002765357d4f69f8c
+prerequisite-patch-id: 8791d34a6f3148dc518da5249453067e40d346e3
+prerequisite-patch-id: 26ec7cd5a449004bcfd6ce483671f87655f8635c
+prerequisite-patch-id: 2e855ba871f2e99d4b6b7d85da2ddac6bb32262e
+prerequisite-patch-id: 82523a917646793deeec7cdcc7ff286bd924fd21
+prerequisite-patch-id: 0e355e5316281f53ab5e97ab6e63b0a682f3eb9e
+prerequisite-patch-id: 7a63d245a377d5f5283f48e8f52421b912811752
+prerequisite-patch-id: dda6bf4692cd1795c489ff58e72c0841ea8ffbc4
+prerequisite-patch-id: f70e535b6086cc587975fbfa75741f485f679a32
+prerequisite-patch-id: 6c2aa2645c7d854951608aa4d15a02e076abe1fe
+prerequisite-patch-id: dc61c6d3db73053fc36e115af561e0c42b467de2
+prerequisite-patch-id: deda292af6d8bbf6762b0bf4d351ffd2225995d8
+prerequisite-patch-id: 18554f49b53cbcfd4a8ca50dc83b17dd3cf96474
+prerequisite-patch-id: 5633292e10132d29be2467812e6e2e824cfedb67
+prerequisite-patch-id: 43f37e9c1bc041d491e41dfb59548ed258a1e071
+prerequisite-message-id: <20240814-b4-new-color-formats-v2-0-8b3499cfe90e@bootlin.com>
+prerequisite-patch-id: d10db4cb12a88de2e5f6440e9fcf5ddda191e3cd
+prerequisite-patch-id: 16bac0ef1f1dc010a72ce2faae66631797d23d3f
+prerequisite-patch-id: 8e0e5cc0727e8fd2d14ebafc5538fd987c2dd38e
+prerequisite-patch-id: 32bad3bf3df46d042e9edd4c1259c2e2a3fb8975
+prerequisite-patch-id: 4bd9e4cef308abd17b7b274a5575a3de73a1503b
+prerequisite-patch-id: a98fac5a2c60fe23fbc6a455e9a4ab8b0f187ee8
+prerequisite-patch-id: 62c8d109a22b9978f755255b67f13fe74fb7008d
+prerequisite-patch-id: baa8da4871dd90b03a07c6d9ddb45e10929ee70a
+prerequisite-message-id: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
+prerequisite-patch-id: df699289213021fa202fcdf1b4bdff513d09caa2
+prerequisite-patch-id: 59d021ccb166fbe2962de9cda72aceb3caa9cabe
+prerequisite-patch-id: 895ace6d58b3776798791705b7b05e26b8d37c7b
+prerequisite-message-id: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
+prerequisite-patch-id: a4408d1de7730262456bdd618d3cb86f5f5b01ba
+prerequisite-patch-id: f215b5aee5644d2e5b1b2af0bb0f4f1e7609558b
+prerequisite-patch-id: d4f3b4c714324c5f326af3daba394899e6663d75
+prerequisite-message-id: <20240814-google-split-headers-v1-0-51712f088f5d@bootlin.com>
+prerequisite-patch-id: 55e5c2ded8332cd6600d9c0c2b7be657c793e2a0
+prerequisite-patch-id: 88323ab9ea04fb21a0a4c65642bcd499f2354042
+prerequisite-patch-id: 437b67cf9bdc036fa7c5e11b5c9ab387b10cc151
+prerequisite-patch-id: d34801b7f3035ab15facd42281c1c96e61d35a4c
+prerequisite-patch-id: 37862a6437ff407a42e5aaff0b8e742fc9901e03
+prerequisite-patch-id: 43a5079497a1579aef713ea9c4ec47ef53a177a2
+prerequisite-message-id: <20240814-google-vkms-managed-v1-0-7ab8b8921103@bootlin.com>
+prerequisite-patch-id: f07b5109188f67a6b11f83e6c591d04d8d9f7eb4
+prerequisite-patch-id: 29f74417aff64dc7bb65ecc2902540073cd73352
+prerequisite-patch-id: 23bdc1fb18aba22e0f40f62a7aaae1619f0eb89c
+prerequisite-patch-id: 0acd7f43a33491b7987e9665b5b800c4f8aa266a
+prerequisite-message-id: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
+prerequisite-patch-id: fd938b3fbc43ffddcc868695ce51365ed409422f
+prerequisite-patch-id: 9a7fc92090a98cd28fcfedc70c5a9bb0dc84aff0
+prerequisite-patch-id: a1eede0b482e196cba448de0ce20e7fd8a1ad340
+prerequisite-patch-id: f0d5640738b5947ab84272c458a2f729a611ab0f
+prerequisite-patch-id: 06cccc5f67dbf4ee107fb589db683520a461a3dc
+prerequisite-patch-id: 9e8a432700a4ff98afe15c13b4f9c16c3e37ff8f
+prerequisite-patch-id: 32b3f0835d1af86ea0abf6036187217a490a70a8
+prerequisite-patch-id: 93571d6f80d345fa5d705d8a677bca183852554f
+prerequisite-patch-id: 26b9a61db21be516a2c84072a71f2c11d21a828d
+prerequisite-patch-id: 2fb61fa3f3dca5be99a3f911a60fc0746fbc32b1
+prerequisite-patch-id: 8f7cafe2af8d20568c82c378e75a3f1fc891f83c
+prerequisite-patch-id: aad52692d9f74d57c0c39a7c326397721ad7a1ab
+prerequisite-patch-id: 5e7e07bbddfe053a2d0f88f529be7986cb94c057
+prerequisite-patch-id: e943af2b2aae5adcba568d63e74e8b361a0a9336
+prerequisite-patch-id: aad15fe60f490bb6d7af23a4aa705dd5ec8e3167
 
 Best regards,
-Krzysztof
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
 
 
