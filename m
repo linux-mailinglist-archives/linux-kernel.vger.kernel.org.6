@@ -1,137 +1,140 @@
-Return-Path: <linux-kernel+bounces-286605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996C9951D08
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:26:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5824F951D0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:26:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 671FBB2A674
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BC311C21933
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202191B14E8;
-	Wed, 14 Aug 2024 14:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8D91B32CB;
+	Wed, 14 Aug 2024 14:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWRF+1TY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+QEBhPU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591C41B32A9;
-	Wed, 14 Aug 2024 14:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8C61581E5;
+	Wed, 14 Aug 2024 14:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645508; cv=none; b=jeIcE3go+fP6O99KdCOMRHWVwxUoURhSRtOlulaLrq69wKgPUKs+bciDnOa4y3k46vH6UAGrfZMDN9iR1VKTuFa5WWH7C+D6m4DSZnZMt0tpHxIQ8IkugX87bvqvbqnOLvzKrf89wawcPVvIXYodds9xBapp/50zTY4hkdUwm+w=
+	t=1723645610; cv=none; b=fJgQMiXVMmE9BMjuV+NJn9vWEXd77lDxizCfmn5LJnfP8W4sNgNqlGStm9b6tPMfWrzcMK8FBSY7dShD8FJg9sS9rfkZ6kJDEy6dT3114xByNw7j0dlUFxLs3eHVHE7WQJ0Jh0iwiCzH6yH9O0wlpEyOa2J0PkxW/CSPRhknWRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645508; c=relaxed/simple;
-	bh=QUn0U64jkd1BhX/o1Z6SeV4VyZZ3SzM96EApJXQPaKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U3cCGLnEXi4D0Kaoht0GNhMBnwqkXM5eUfMjo+5GJBn/omWlRVPzPzDRNZOd0OOu2sW85qNY64FPk7sM+w1OUN5E1zxeFrlZ8nvzCOpwtTZ+iBFH2+sjcWZXBwWheo9xnpk7qa/FQO0VPyYWy74WmlVOJZC3h9dW5FOko4KhI9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWRF+1TY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F660C116B1;
-	Wed, 14 Aug 2024 14:25:02 +0000 (UTC)
+	s=arc-20240116; t=1723645610; c=relaxed/simple;
+	bh=DSAXxI8CR5eMEBxy+K143NKZS+eXuAmJNkaIp6iTpak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pd/SWIFN2/Q299vqZE9mA8/nYttCR+G6s5As54Dv1vCecvvCq9c7jz/IqvG/W9eXM/jV0AUPCI6/O5u5FKYbkOxSYkEfiB/p9aq0iOMVg/hHpZ9+Hr2voles/Q1haVJybAOBx8PZQELoc8GEFYrSEpniHOrw1XZzohoP29NkYQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+QEBhPU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966F2C116B1;
+	Wed, 14 Aug 2024 14:26:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723645507;
-	bh=QUn0U64jkd1BhX/o1Z6SeV4VyZZ3SzM96EApJXQPaKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GWRF+1TYKK/jH+cfKEW0+vmEnC07FxhUU+3B0VXo1XNAqBwB9ajYbJvG00LAN7x+Z
-	 hy1LZ79TmCf4YyhEHKC+5eumxOjXZ4jrPAUidK1ka0f/4xlixroR9trpjvv+j6fSyU
-	 co36EAhmXJCUyDerrI1XNo0RYPhEPYx0LotQ5Ki/MPvAluz4CBSaxsVbnwTHUmfB+p
-	 R4TJz1CtEatRaMfEyBCrJOR86uHhKoRKyTOMLGYeQ4MaHq1rIQ+6zFfpXCh/K3eNEI
-	 JdChHM8a+oMYaC9kZ/RKo7T0atdi/s3jB4TeV2umIsjWjZv2yGXsslWnChxoAyV/n1
-	 qzuiFn2WFNUQg==
-Message-ID: <ec3462d8-e300-4273-9ce5-5380b506821e@kernel.org>
-Date: Wed, 14 Aug 2024 16:25:00 +0200
+	s=k20201202; t=1723645610;
+	bh=DSAXxI8CR5eMEBxy+K143NKZS+eXuAmJNkaIp6iTpak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s+QEBhPUfwPxsH5kqHwQP+c3jeoQ0DFCSv6RAy0k2N87KrP7r1HWTVDTdAbW/vMEz
+	 11Upjdov2H6DNPob7XvZIvEn4kN1opBXY2Sk6TH9iOGiKnm4uz8S+ummtAcvn+ZEBe
+	 RccUx0oDMuqMKALdzWbRqsNLTh8Hh3adCP7CRVRETGxvfFOfwAOFPhPKN2JRYoPYoZ
+	 +s/Fvhss/xaRd4qxSDZekjzNT8Ux6cctygVqKlg/EGyVf9+2EPvV/40qXOSw5a22cm
+	 RZmxSKLik1rxjT89HErWOHHXKEFvn7XGMR/R4yjloxNMh50kPLM1B/vfUvmDfGLE+n
+	 f9AvcZnNtQ7lQ==
+Date: Wed, 14 Aug 2024 15:26:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Bao Cheng Su <baocheng.su@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>
+Subject: Re: [PATCH v3 2/3] dt-bindings: soc: ti: am645-system-controller:
+ add child nodes used by main domain
+Message-ID: <20240814-passable-phrasing-7e78fce590f5@spud>
+References: <cover.1723529100.git.jan.kiszka@siemens.com>
+ <ac1622c04e5ae2bb80075e70dbde23abc2f3a4b5.1723529100.git.jan.kiszka@siemens.com>
+ <20240813-outrank-mumble-8dddbfc68586@spud>
+ <a838d867-def7-49f8-b9cf-9f4d638ff2d6@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: Add JMO Tech
-To: Esben Haabendal <esben@geanix.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-0-22a5e58599be@geanix.com>
- <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-1-22a5e58599be@geanix.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240814-drm-panel-ili9881c-lcm-jm800wx-v1-1-22a5e58599be@geanix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6hKkgKvhDyD9KJ+A"
+Content-Disposition: inline
+In-Reply-To: <a838d867-def7-49f8-b9cf-9f4d638ff2d6@siemens.com>
 
-On 14/08/2024 15:10, Esben Haabendal wrote:
-> Add vendor prefix for JMO Tech CO., LTD. (http://www.jmolcd.com/).
-> 
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> index a70ce43b3dc0..5d2ada6cfa61 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> @@ -758,6 +758,8 @@ patternProperties:
->      description: Jiandangjing Technology Co., Ltd.
->    "^jide,.*":
->      description: Jide Tech
-> +  "^jmo,.*":
 
-Wevsite is jmolcd, so prefix should match it - jmolcd.
+--6hKkgKvhDyD9KJ+A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Wed, Aug 14, 2024 at 06:49:39AM +0200, Jan Kiszka wrote:
+> On 13.08.24 17:40, Conor Dooley wrote:
+> > On Tue, Aug 13, 2024 at 08:04:59AM +0200, Jan Kiszka wrote:
+> >> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>
+> >> Expand bindings to cover both the MCU and the main usage of the AM654
+> >> system controller.
+> >>
+> >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> >> ---
+> >>  .../soc/ti/ti,am654-system-controller.yaml    | 25 +++++++++++++++++++
+> >>  1 file changed, 25 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-=
+controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-=
+controller.yaml
+> >> index e79803e586ca..5a689ec3c5c9 100644
+> >> --- a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-control=
+ler.yaml
+> >> +++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-control=
+ler.yaml
+> >> @@ -29,11 +29,36 @@ properties:
+> >> =20
+> >>    ranges: true
+> >> =20
+> >> +  mux-controller:
+> >> +    type: object
+> >> +    ref: /schemas/mux/reg-mux.yaml#
+> >> +    description:
+> >> +      This is the SERDES lane control mux.
+> >> +
+> >>  patternProperties:
+> >>    "^phy@[0-9a-f]+$":
+> >>      type: object
+> >>      $ref: /schemas/phy/ti,phy-gmii-sel.yaml#
+> >> =20
+> >> +  "^clock@[0-9a-f]+$":
+> >=20
+> > Could you explain to me why these are all patternProperties? Why are the
+> > addresses of these things not fixed for an am654?
+> >=20
+>=20
+> I could indeed spell out dss-oldi-io-ctrl@41e0 and
+> clock-controller@4140, and their addresses are likely fixed, indeed. But
+> there are also clock@4080 and clock@4090 - should I duplicate their
+> object descriptions while moving them to the regular properties?
 
+If you're going to itemise the 3 clocks, I think you should mention
+what's different about each of them. Otherwise, if they're all
+identical, leave them as a patternProperty.
+
+--6hKkgKvhDyD9KJ+A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZry+pQAKCRB4tDGHoIJi
+0l1bAQDFrc3ssqpzwfxRezLS45vOGDjY/enN3BWQZI2UUS1vAQEAq/5yTSLl7M3i
+9lIfFZiKIjai97JDqtk5WtzakCI6OA8=
+=OoWi
+-----END PGP SIGNATURE-----
+
+--6hKkgKvhDyD9KJ+A--
 
