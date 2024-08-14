@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-286501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B4E951BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA2C951BC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406742840B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2BDDB20E86
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B460F1B1432;
-	Wed, 14 Aug 2024 13:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEAB1B29BD;
+	Wed, 14 Aug 2024 13:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLpoHZB+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/Vp1GJY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEA61AE867;
-	Wed, 14 Aug 2024 13:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC7D1B1514;
+	Wed, 14 Aug 2024 13:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723641761; cv=none; b=F4tCo/ptj/ovaAlcbAEWz97/CUFqJg0wGrgoUbGLK23EuhoEU74NL+Qa4kqZiioKTgA1w5HRjZbgQ1FnCSuWrH6RBTTbA/mapSrcNLVm65s5F4v64AE2+++wMB2FuYCKBg5zZvMYmua71iUNssZ+0yl8oFsnJZj+EexMOd8u968=
+	t=1723641815; cv=none; b=Mu2nDgNqc3wDN1RjWKFWFGo+EuFH53RxxWN6mBeeeyRz1mna+diJ5YMr8rr1RjGMZ3ujGyqJ+ouhEcZ7RtYvKfWrp6xt4W3axfmDv38oTMCSZemWsInqc7JctZU9Lrj3h3Egc/mH5vDGa/EZusVZcS2Z4Xvc5y3P6eIKDJI2CMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723641761; c=relaxed/simple;
-	bh=lCyefVEk1UgcqnD+KmVG48WLG/feRn1Jw6ZCOpurnYs=;
+	s=arc-20240116; t=1723641815; c=relaxed/simple;
+	bh=hw7FVdUg8+/hVrB/1sSc4Ts8tubAvQ2hKuj4D2TszK8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JVekiAT5XVb0mEzwkELt6Sg/+mRicEAEo6F6zV84hPVlAwYPJ1a8lSIUylBFXx4tVXVo+GnX1BDaEe7VrWNeqPULIfeHJBRV8YlCRHC4j0Cnlslr30mF0o4GL1NV3BiBs8/cQ5NSyaO1cgV7JFnAAlN45qccJoUdozVAyGjeIY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLpoHZB+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39D8C32786;
-	Wed, 14 Aug 2024 13:22:36 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lNpuQG4Byh3q8WgRvbpZ0T/U+j7bmqmthxxbrrT0Gzn0FMZpgURKBFrJH6N3uDTeFocgmGzzbLmFZksKmOkpMP3tVdYC7Ei+ZAfMLAE94BzylRXyfnB0Yc0lbioKDQHMCV7xYxSBRBWBrL7IrbF0BYJU/VBmr6rBAK1QauA1A2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/Vp1GJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A92C32786;
+	Wed, 14 Aug 2024 13:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723641760;
-	bh=lCyefVEk1UgcqnD+KmVG48WLG/feRn1Jw6ZCOpurnYs=;
+	s=k20201202; t=1723641815;
+	bh=hw7FVdUg8+/hVrB/1sSc4Ts8tubAvQ2hKuj4D2TszK8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lLpoHZB+iy6ffmAMJfppczjKToLYCp8pjw+p+nk2ZzcJtIeub4nUnyClCZAulbwNS
-	 2+v0wfzbGJwi6KA+Zau9hsJ5YgkiNWTthXQXte1Q+l5j6eEAH4BP3r9K401MMhdeyY
-	 t7nO+FkkPHNcYKm6cVqpQTFYlxZ1OvboIYRXAqzklcU4jpkB5CHeJou5sQJNTosjVr
-	 k/k2ntQRz+TNEmEA6v1HeCRH/Gbk3GMKDGVb3cSZjMU846PvsDv+nfPbDthBtdwXA3
-	 6MWxGNeaYPneOddKg70OKlBIXHtzbdugVn4qzleVI/jBheseHNblcsMmnyJ8nS8xDn
-	 jDiXL5M7OKNQQ==
-Message-ID: <29e5fada-8f8a-4cc0-b1d0-14396f6736a6@kernel.org>
-Date: Wed, 14 Aug 2024 15:22:34 +0200
+	b=s/Vp1GJYjFwmRmDtpY1wrrA20bY/W2nHI/ND5yp+X3iFUPmFuFrpvRRI4RTwnPAGH
+	 I3NBCUE5Or5IbIPsAzm1Q5LiG8i/K/fxuTHTzhX9WXjFAnis2WO4C5KaNzfOCrl6zh
+	 jDfgS7wZ7eRZV1FWiqVFla0LAj63JFxLVK47ImCXeGzJVJsPuyMDj8JefQRfF2+mGs
+	 zeXE3fUPOxL8Ai4w9L1rXSLRaL/Yus6JBOp/WEzd0l9Cv4VG2Sla2foEkT+feOGUIm
+	 UMuv/rqbZ507Cg3/U5OZ0Yc2331ciOayOpIwW4QypsC3ffbGJbypga8UUme+9AlyET
+	 O7Xibm6CtwSBw==
+Message-ID: <c2b0051a-1d17-4454-849a-726c42c8d36f@kernel.org>
+Date: Wed, 14 Aug 2024 15:23:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] ARM: dts: microchip: Rename the usb node
+Subject: Re: [PATCH 5/5] ARM: dts: microchip: Rename LED sub nodes name
 To: Andrei Simion <andrei.simion@microchip.com>, claudiu.beznea@tuxon.dev,
  nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, peda@axentia.se
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, cristian.birsan@microchip.com
 References: <20240814122633.198562-1-andrei.simion@microchip.com>
- <20240814122633.198562-5-andrei.simion@microchip.com>
+ <20240814122633.198562-6-andrei.simion@microchip.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,84 +102,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240814122633.198562-5-andrei.simion@microchip.com>
+In-Reply-To: <20240814122633.198562-6-andrei.simion@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/08/2024 14:26, Andrei Simion wrote:
-> Rename the usb node according to devicetree
-> specification and update the label according
-> with the node-specific standard as: ohci, ehci
-> or gadget.
-
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
-...
-
-
+> dtbs_check warnings:
+> leds: 'd[0-9]', 'ds[0-9]' do not match any of the regexes:
+> '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
+> leds: 'red', 'green', 'blue' do not match any of regexes:
+> '(^led-[0-9a-f]$|led)', 'pinctrl-[0-9]+'
 > 
-> diff --git a/arch/arm/boot/dts/microchip/aks-cdu.dts b/arch/arm/boot/dts/microchip/aks-cdu.dts
-> index 742fcf525e1b..52e166c8a365 100644
-> --- a/arch/arm/boot/dts/microchip/aks-cdu.dts
-> +++ b/arch/arm/boot/dts/microchip/aks-cdu.dts
-> @@ -50,13 +50,13 @@ macb0: ethernet@fffc4000 {
->  				status = "okay";
->  			};
->  
-> -			usb1: gadget@fffa4000 {
-> +			gadget: usb@fffa4000 {
->  				atmel,vbus-gpio = <&pioC 15 GPIO_ACTIVE_HIGH>;
->  				status = "okay";
->  			};
->  		};
->  
-> -		usb0: ohci@500000 {
-> +		ohci: usb@500000 {
+> Rename the led sub nodes according to devicetree
+> specification and leds-gpio.yaml.
+> 
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> ---
+> Split the bloadted patch into small patches on topics
+> based on comments:
+> https://lore.kernel.org/linux-arm-kernel/89f51615-0dee-4ab0-ab72-e3c057fee1e7@tuxon.dev/
+> ---
 
-I don't think that these label renames are correct.
+Changelog / v2 is missing.
 
->  			num-ports = <2>;
->  			status = "okay";
->  		};
-> diff --git a/arch/arm/boot/dts/microchip/animeo_ip.dts b/arch/arm/boot/dts/microchip/animeo_ip.dts
-> index 29936bfbeeb7..911c8d9ee013 100644
-> --- a/arch/arm/boot/dts/microchip/animeo_ip.dts
-> +++ b/arch/arm/boot/dts/microchip/animeo_ip.dts
-> @@ -136,7 +136,7 @@ ubi@60000 {
->  			};
->  		};
->  
-> -		usb0: ohci@500000 {
-> +		ohci: usb@500000 {
->  			num-ports = <2>;
->  			atmel,vbus-gpio = <&pioB 15 GPIO_ACTIVE_LOW>;
->  			status = "okay";
-> diff --git a/arch/arm/boot/dts/microchip/at91-ariag25.dts b/arch/arm/boot/dts/microchip/at91-ariag25.dts
-> index 713d18f80356..fedcf30a924e 100644
-> --- a/arch/arm/boot/dts/microchip/at91-ariag25.dts
-> +++ b/arch/arm/boot/dts/microchip/at91-ariag25.dts
-> @@ -173,11 +173,11 @@ &usart3 {
->  	status = "okay";
->  };
->  
-> -&usb0 {
-> +&ohci {
->  	status = "okay";
->  	num-ports = <3>;
->  };
->  
-> -&usb1 {
-> +&ehci {
->  	status = "okay";
->  };
-
-And how now the sorting works? I don't get the point of it. What is
-exactly wrong in the label that justifies the code reshuffling.
-
-BTW, is this some sort of v2? If so, provide changelog and properly
-version your patches.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
