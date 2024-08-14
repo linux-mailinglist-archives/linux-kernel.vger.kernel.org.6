@@ -1,112 +1,126 @@
-Return-Path: <linux-kernel+bounces-286969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863909520FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:21:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BF09520FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81DB1C239D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5D41F23019
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3491BC060;
-	Wed, 14 Aug 2024 17:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9E31BC065;
+	Wed, 14 Aug 2024 17:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="rX0Hz9+x"
-Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2snk5Th"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D510C1B9B2D;
-	Wed, 14 Aug 2024 17:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070111B9B2B
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656062; cv=none; b=Q+Yvl+9BIKW5L32TQoyW9kO8SdyXRmJgxCUiWINZvsIZnFoSvwpH/+M6WkmG+D6hbMtzygDANBi4S8six2xi1+mEjv98b4PlIytlqF4dx9UCVJvo20YHAfxTK1ALsuitrtUmwCkQAWPG8+gXC5FeBdByxp+hWTJeq8lSEVEXHe0=
+	t=1723656178; cv=none; b=Tv8T+BGDwUmKxDUA/h1TZV41r1W/1mPWlLb9KCHKtA4W9VUagwc57VYBduYmO9zmAnGWhCdwmhFyEFnTdfRPdla3XNI7TbXC5glFypvAJn0+x1AghzYDEdLVm1O5iuLn4WNf2JL/p14bmcbasqQI5INctdoh1Qrfe+oCsNMym7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656062; c=relaxed/simple;
-	bh=IgZ7iXb0VplK9LNa2MsWb2FY183hnDcwKBS1+wCHqWU=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nBM0cdWSyoy0/wQ+TrDgexn7na6LoAbLICUegN5KGFSJOjPKQ9fOLYQicxGVcB/po6OZY2AgUCMLQt+c3Kj27SvFutkPB+QOflCDZ/C/DW2d/XlGlAvG0jZsFutzI1l/gedTRd5RB0p2FP8bsYwBTSSmYju8kkoEygQyaPwqKHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=rX0Hz9+x; arc=none smtp.client-ip=185.70.43.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
-	s=protonmail; t=1723656056; x=1723915256;
-	bh=IgZ7iXb0VplK9LNa2MsWb2FY183hnDcwKBS1+wCHqWU=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=rX0Hz9+xpmgIMUX2RhrFnScChBoAd+veIg6XS7a0ra8P/29v+kwF5Sst8pVelnspP
-	 gTV3bmKGNI+6A6DG9Q3YfgfEpmSB+FuW3jCsDxwqf927kgqteRdYmD9Lh7qGDdPqj2
-	 YCzOh8qvPHJa/EKDeMu9NSSLWbw0hTkUifMSw6cdOP1amBg7eBgSybrG09xfWc8ir+
-	 m75d0ZebHQivD8kuz+X/6t9bsqPUN6AgW6M6kgS+dSbN4VFxeBY7vEGYWzr9t+nhqQ
-	 U/AaoQnWum2NzNyEw17V8/y2wHIS1mMd2nC9kRO5trqpVUWNnGZ8ZoEuwckMDZTKWB
-	 /vf2P2I9wUunw==
-Date: Wed, 14 Aug 2024 17:20:54 +0000
-To: linux-kernel@vger.kernel.org
-From: Mike Yuan <me@yhndnzj.com>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, Mike Yuan <me@yhndnzj.com>
-Subject: [PATCH] mm/memcontrol: respect zswap.writeback setting from parent cg too
-Message-ID: <20240814171800.23558-1-me@yhndnzj.com>
-Feedback-ID: 102487535:user:proton
-X-Pm-Message-ID: 969223f01f1ac371f277dee78cd59a00649796cc
+	s=arc-20240116; t=1723656178; c=relaxed/simple;
+	bh=f1RmKlqVd2mEVwfc2Sh+M2IKkmy1k3LlwnHEvoWTbqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fJtW6wb7a/+do2fZy53FLuI5NH8LIuo/GbANgDXDTMFPFXDbVfPeJzWzZP+oxEL4gRkOaSZvOwudnotPg5m0Swb31Ds9eM4qPbOrnZ3dvYOAhegJHAZ0qamqylQGifOTnma5ugBq1+fMk5qcaj9OX7HACNiKZJtar2cZgS+COiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D2snk5Th; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-827113c1fb4so9947241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723656175; x=1724260975; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1orJ6nO6ZqFwQLaPKdFYgCrAZEOYItqQBupC7tbBRhE=;
+        b=D2snk5ThFVcd65AiKML2/U2T0VeLLX97SXy7BLD3PC1rKRlOjehSp18iJgG+5snpli
+         BP52rAfUtmHiHcwnDSPsnO5LrDsGpj995mrMssn4/ztd66/YGAv898sy3UKwpCl/SeNJ
+         nV9rhj8y/t8jmPyXXjs/e3e6XMFmxNU2ztRVKr4CgVDCYAWe3y7R3WcvFjhlcwCGPI2z
+         pudjwMoK5gMF7lWNsNMHDVwfXUIjfnSSgWcqslaA/gU7ulcJGyz122hLnN+EkfVhcChC
+         wT29XSSUycG1KrNG6VOqfFTvt2OMreE1pCbnn78o6JMPMRRjWTBH2Zll76F+Iw1lxxuA
+         vODQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723656175; x=1724260975;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1orJ6nO6ZqFwQLaPKdFYgCrAZEOYItqQBupC7tbBRhE=;
+        b=fEmQya6i/LFETtNsTScsif+UZ/X0JCLnHM9JlXx7GLy29bMfAqYF8jsiQCf6sgACfR
+         lkPTJ3dVv9WYyIsw5b3y89lVXWWC/pLh3B1CpMQM4hQsqIDIGSnoyGS+STCyt0FNKFeS
+         YH0Ngmui3BkBkFgXzk+LjJnE33/QTyFlaesZmjBGbxCypUt14RzzzmMPjjSXU4IKOZ7E
+         uYtFc9M564ndy378drIkoRoyZXHM5pmGVZZhFFzd915dHq//zaOU/Vrini0ZkZt5CwpD
+         9rvIwwFLigCm5CRo/gNOzRyCoTMmAZgpDLxqx7N60mL04fVDWIbo3MKSvZJMIC7gjoaS
+         jVYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOzfSFKHU0/hB/K8koHkSUx5Ya82WZXx01OAzWFoh97XfzoTCJ5f07SC94SDMZsKOHB1TsIh3+/S749A7Sm1Fc5ZNqpZXhrLgfUPtD
+X-Gm-Message-State: AOJu0Yx8/POM2aIriK6+KKFnpMAbgAc8V9kTDhd9Mp1CBBnbvhYE4MZ4
+	XE/v3R99nTCFiTGPgQa3nPuPDkM+PxtzAQurEOgYvv5l35jU1+eOYHIrzcylY2ljd7Vbsa8+aeX
+	pmYbuqeMgsYBxwR6soRymmfSYrBbxfA4nRlaXcQ==
+X-Google-Smtp-Source: AGHT+IG3b3VoA49ASMXUxYJgavmQR8JbYzZCSLToVi6Teklw6eT/Mpr/6/Fk5ShHKZ00PpJjOdB9b0Ong6gjAsG5qt8=
+X-Received: by 2002:a05:6122:3c89:b0:4f5:f65:26be with SMTP id
+ 71dfb90a1353d-4fad17773b8mr5087403e0c.0.1723656174948; Wed, 14 Aug 2024
+ 10:22:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240814-ufs-bug-fix-v1-0-5eb49d5f7571@linaro.org>
+In-Reply-To: <20240814-ufs-bug-fix-v1-0-5eb49d5f7571@linaro.org>
+From: Amit Pundir <amit.pundir@linaro.org>
+Date: Wed, 14 Aug 2024 22:52:19 +0530
+Message-ID: <CAMi1Hd04z56++7cj+w4=fyi2ov42OO6mAnDbkw5CehJw+fJ8ww@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ufs: qcom: Fix probe failure on SM8550 SoC due to
+ broken SDBS field
+To: manivannan.sadhasivam@linaro.org
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Kyoungrul Kim <k831.kim@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Currently, the behavior of zswap.writeback wrt.
-the cgroup hierarchy seems a bit odd. Unlike zswap.max,
-it doesn't honor the value from parent cgroups. This
-surfaced when people tried to globally disable zswap writeback,
-i.e. reserve physical swap space only for hibernation [1] -
-disabling zswap.writeback only for the root cgroup results
-in subcgroups with zswap.writeback=3D1 still performing writeback.
+On Wed, 14 Aug 2024 at 22:45, Manivannan Sadhasivam via B4 Relay
+<devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
+>
+> Hi,
+>
+> This series fixes the probe failure on the Qcom SM8550 SoC due to the broken
+> SDBS field in the host controller capabilities register.
+>
+> Please consider this series for v6.11 as it fixes a regression.
 
-The consistency became more noticeable after I introduced
-the MemoryZSwapWriteback=3D systemd unit setting [2] for
-controlling the knob. The patch assumed that the kernel would
-enforce the value of parent cgroups. It could probably be
-workarounded from systemd's side, by going up the slice unit
-tree and inherit the value. Yet I think it's more sensible
-to make it behave consistently with zswap.max and friends.
+Thank you Mani. This series fixes the UFS regression reported on
+SM8550-HDK with v6.11-rc2.
 
-[1] https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate=
-#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
-[2] https://github.com/systemd/systemd/pull/31734
+Tested-by: Amit Pundir <amit.pundir@linaro.org>
 
-Signed-off-by: Mike Yuan <me@yhndnzj.com>
----
- mm/memcontrol.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 8f2f1bb18c9c..2dcdaaf358ce 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -8423,7 +8423,14 @@ void obj_cgroup_uncharge_zswap(struct obj_cgroup *ob=
-jcg, size_t size)
- bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
- {
- =09/* if zswap is disabled, do not block pages going to the swapping devic=
-e */
--=09return !is_zswap_enabled() || !memcg || READ_ONCE(memcg->zswap_writebac=
-k);
-+=09if (!is_zswap_enabled())
-+=09=09return true;
-+
-+=09for (; memcg; memcg =3D parent_mem_cgroup(memcg))
-+=09=09if (!READ_ONCE(memcg->zswap_writeback))
-+=09=09=09return false;
-+
-+=09return true;
- }
-=20
- static u64 zswap_current_read(struct cgroup_subsys_state *css,
---=20
-2.46.0
-
-
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> Manivannan Sadhasivam (3):
+>       ufs: core: Rename LSDB to SDBS to reflect the UFSHCI 4.0 spec
+>       ufs: core: Add a quirk for handling broken SDBS field in controller capabilities register
+>       ufs: qcom: Add UFSHCD_QUIRK_BROKEN_SDBS_CAP for SM8550 SoC
+>
+>  drivers/ufs/core/ufshcd.c   | 9 +++++----
+>  drivers/ufs/host/ufs-qcom.c | 6 +++++-
+>  include/ufs/ufshcd.h        | 9 ++++++++-
+>  include/ufs/ufshci.h        | 2 +-
+>  4 files changed, 19 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> change-id: 20240814-ufs-bug-fix-4427fb01b860
+>
+> Best regards,
+> --
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+>
+>
 
