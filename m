@@ -1,175 +1,208 @@
-Return-Path: <linux-kernel+bounces-286237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032D4951861
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE7C951869
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A770D2819A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D60BF283ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39931AD9E8;
-	Wed, 14 Aug 2024 10:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1F61AD9C8;
+	Wed, 14 Aug 2024 10:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fwdbNQX2"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j/iEdSU3"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AC31AD9C2
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCEE1AD9C3
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723630113; cv=none; b=NRH3EcTqdghUSgzhoaFArOUuHIxPl+ciraYv7DNfOl0DPwpTHuFJARrbW3gXNfIC3RhERsEiyI/lwrctCHy7KE+Mdsxmpqtg+rM3R3U+iSVNHUBfHYZd6JO6vEN5C31JdJb8K1fPSec1CPdf1BkarMgSNPAiplm66stXV5NJ4II=
+	t=1723630218; cv=none; b=rXAk5kFWT+yNExVLPgy7Le/nIYaxBOEjEeZIDlZnfUsVcd0H8/gtINAF2yeLq5gdfHv5LnloQLWfwTZQmiMhtgqRj8A8RcABDpuo7Ifs9J/tVsvpirUvO8ywsr5LIzyeLPjJyKcErEQ0Nz3rh151nDMp/VbI1LRulcuMTnWhahM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723630113; c=relaxed/simple;
-	bh=/yvcpgQL7YsOakh1ZZgYOmYEL8DHxUcZYqTcMiaQ1UM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ldTUyO9bPvlwWbIxOG+TBi0mZ2ZEV/yu0srpspYynwYR5SdbxRxRZp4/p9F5YQSMH+FRbcKDCivrpPVQbJAT9rxUZrLiYgy0zmcrw/iHnPnuUvRvsBeY8EwtNh+ednHuROqN33CmiRQDmL5zxC1AnuUNhvFlHVl1TeOSdin0Ixc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fwdbNQX2; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-82c30468266so2139212241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:08:31 -0700 (PDT)
+	s=arc-20240116; t=1723630218; c=relaxed/simple;
+	bh=HtmsSU5ENdUZpr+MPxoYuH51F28PtAovj20fVUAbRwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K5UO4/UlwHe6AJgZv4JCavM1P1QXWInQC1EOiG32jyYNHlIE5ga/rzZUMWkkghM3bbnXRIoAVkDcEBU0QfBfxhh5uUt9ILJPlUQViVwmlT3oDu1TFMUzVArobZpP46qJd9wgGt7btTCRSEVYN5mfl5r2+HEB8FhrVV2Hd8+fC10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=j/iEdSU3; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f025b94e07so76185231fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:10:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723630111; x=1724234911; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GO1gpGlqnXx6rrq7fEF14fbnpek+f401Lx8pqVRRvH4=;
-        b=fwdbNQX2x4y5vfF0lcVjbLa2hMZGNVhu30hKb0rVjGTkl8QUSNVVhEE1bABcD/PQFN
-         ZZSRslgbzu7TpqEmdRbu4IminZGLfg8C9JNThR56M9L3b9xI0uUXHV7njlC4Su7baJEF
-         Q36nyBhHlJDMmwH7D/5iiJEk6FiTL+DtifGEg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723630111; x=1724234911;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1723630215; x=1724235015; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GO1gpGlqnXx6rrq7fEF14fbnpek+f401Lx8pqVRRvH4=;
-        b=obmTpoG1Hr0kV+S85ZQfVXcxFi4A8dzvIFDybh1Yf7laN2ydvrx6rPv635b1sEEGJ3
-         8GX7bivunO0pg11AyNXpyyqSAH8FhcspaGF3lMB7MDA9zyo8upT7ZuAK0hEtuoeUDKOG
-         FEKkfUmocFmL/C0L5m+eKJRR/aA2J7iawfphhimr4EhQ1LZ2uy/6AP9F5XVAUfNLf+4x
-         FrNU5q9gs8TzDtJ82il32493iEZ5kydV5ssn9p7/dhpQqBBpQHjdcvcbOodMwf7saCVF
-         PvUZjkIogb7DHANOUEfLinpEoqLpWZOS3G8wmhsHJ+H9+eLuMFx53DkiQB4ozHiTOHPH
-         W/zg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7EsUIyXocsO0kr/mDv3ylOFG9SHXCYk7CTCvA5jJovHIK/KYZH7ZlRv3dmT1oEe5cvy3KNnM4IuTJDtxaUiygXoa+/h7c9grSoF7H
-X-Gm-Message-State: AOJu0Ywtin+PYVpfsh2MTaR2end794dASMKbC3jYVQH1/54/ssbZTaeG
-	7NnT7CPHe/I8l4aXxSfqcgwQstOP4B69JjVqCwO/6dKp4rswySap83lyzRGXDQ==
-X-Google-Smtp-Source: AGHT+IHnSprTBQHtsftCeIJH+ST+/bauf+Gi28YbsGhsgOk/A7sg9LX+ajA+Q+B/EmNjbwptrbdHBQ==
-X-Received: by 2002:a05:6102:c4c:b0:494:813:8d3f with SMTP id ada2fe7eead31-4975991b855mr2835876137.14.1723630110955;
-        Wed, 14 Aug 2024 03:08:30 -0700 (PDT)
-Received: from [10.176.68.61] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d721e9sm413377985a.51.2024.08.14.03.08.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 03:08:30 -0700 (PDT)
-Message-ID: <062d8d4e-6d61-4f11-a9c0-1bbe1bfe0542@broadcom.com>
-Date: Wed, 14 Aug 2024 12:08:25 +0200
+        bh=HQxN/7VWNI1muBwzClG5Zirbw85McBRj904vS8Fpu0c=;
+        b=j/iEdSU3Gv1uH9TUVPNvmrm/2QZpGumGlEgCXh1a8G+aqAIkvOXGrnRes9Lrj9FySQ
+         xVoyqhzc2aBlr6hgPU7xeJsD0dEhX0355GPFPcKSMIk6rXUh8/jNNQ5yTbGj91V8XY1R
+         cmGhzrXSkAi0yqSv6ol5zigy7mjAeL/f6iCoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723630215; x=1724235015;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HQxN/7VWNI1muBwzClG5Zirbw85McBRj904vS8Fpu0c=;
+        b=HXSWOWQX9yYj9udoJeYDUe50EE+KwFEYve5RMdoKRRBn0Cqe/WNfqu291ZyT8Srp/e
+         A4lznsbQtxm8u5a1DXEQR0z2nc3WUnooH2om/K30tb0rx4DCO+6HtcEZYBw4aNzyPaNF
+         iQ45olDP3A133iXilwJ9LydzKIqq59orPTzy2qrpHMVrH03hoknf9tAR63iTtnS057T4
+         IyCz9fuJCyx32RtJfBpqb9W4JG9iNGUXHBxncHh+v1b1XOZgtnFGWufmZNKLbBX6+a3J
+         uwmrr3HMZOERIUJnQnGLIIWDYWcVKZ4uxuwJbYfe/7n/qIsB4nuL+hHrapHq3xEX1y2H
+         +vWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/2YZ9Zgfb9XP36BdGDVj+lmqzk8I1vDi4KxAdv3NyxmYDKC+8DUdIVSMFAq1ydF7mRpmCs2i73jBrg+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDH2hW91u9teLp2ztGhSs63MvhrB+y8tkq7+dvByTEkx4vPZ3S
+	e+R+dsmon7UjNZggikv3BzVi0XV9Rx+jF7ujRVMoQ5SbP53e4WEXpR2rkyc2Fhf3TA3lwQBGgDr
+	C7jih75jG614gMJ7VzhZHOFoocfGksgbDVEYE
+X-Google-Smtp-Source: AGHT+IEe32jN8gUqbf1l9ngrSD5IPLARvV8fpV4Tje3WEqH7kkd+ZQY+1xW4UvomRXZlgVtw/pLaiYHStH4ShpBNc/E=
+X-Received: by 2002:a2e:4a1a:0:b0:2f0:33e:d286 with SMTP id
+ 38308e7fff4ca-2f3aa1a5198mr14064661fa.20.1723630214840; Wed, 14 Aug 2024
+ 03:10:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/5] dt-bindings: net: wireless: brcm4329-fmac: add
- pci14e4,449d
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
- heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org
-Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
- minipli@grsecurity.net, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
- <20240813082007.2625841-2-jacobe.zang@wesion.com>
- <1914cb2b1a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <e7401e25-7802-4dc3-9535-226f32b52be1@kernel.org>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <e7401e25-7802-4dc3-9535-226f32b52be1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240808095931.2649657-1-wenst@chromium.org> <20240808095931.2649657-6-wenst@chromium.org>
+ <ZrtHhcNMiyHmKbal@smile.fi.intel.com>
+In-Reply-To: <ZrtHhcNMiyHmKbal@smile.fi.intel.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 14 Aug 2024 18:10:03 +0800
+Message-ID: <CAGXv+5EgqdziyheOt7wzkbe036fqPcw_UpSHiMsB3W_nTB3NWQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] platform/chrome: Introduce device tree hardware prober
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/14/2024 10:53 AM, Krzysztof Kozlowski wrote:
-> On 13/08/2024 19:04, Arend Van Spriel wrote:
->> On August 13, 2024 10:20:24 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
->>
->>> It's the device id used by AP6275P which is the Wi-Fi module
->>> used by Rockchip's RK3588 evaluation board and also used in
->>> some other RK3588 boards.
->>
->> Hi Kalle,
->>
->> There probably will be a v11, but wanted to know how this series will be
->> handled as it involves device tree bindings, arm arch device tree spec, and
->> brcmfmac driver code. Can it all go through wireless-next?
-> 
-> No, DTS must not go via wireless-next. Please split it from the series
-> and provide lore link in changelog for bindings.
+On Tue, Aug 13, 2024 at 7:46=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Aug 08, 2024 at 05:59:28PM +0800, Chen-Yu Tsai wrote:
+> > Some devices are designed and manufactured with some components having
+> > multiple drop-in replacement options. These components are often
+> > connected to the mainboard via ribbon cables, having the same signals
+> > and pin assignments across all options. These may include the display
+> > panel and touchscreen on laptops and tablets, and the trackpad on
+> > laptops. Sometimes which component option is used in a particular devic=
+e
+> > can be detected by some firmware provided identifier, other times that
+> > information is not available, and the kernel has to try to probe each
+> > device.
+> >
+> > This change attempts to make the "probe each device" case cleaner. The
+> > current approach is to have all options added and enabled in the device
+> > tree. The kernel would then bind each device and run each driver's prob=
+e
+> > function. This works, but has been broken before due to the introductio=
+n
+> > of asynchronous probing, causing multiple instances requesting "shared"
+> > resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> > time, with only one instance succeeding. Work arounds for these include
+> > moving the pinmux to the parent I2C controller, using GPIO hogs or
+> > pinmux settings to keep the GPIO pins in some fixed configuration, and
+> > requesting the interrupt line very late. Such configurations can be see=
+n
+> > on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> > Lenovo Thinkpad 13S.
+> >
+> > Instead of this delicate dance between drivers and device tree quirks,
+> > this change introduces a simple I2C component prober. For any given
+> > class of devices on the same I2C bus, it will go through all of them,
+> > doing a simple I2C read transfer and see which one of them responds.
+> > It will then enable the device that responds.
+> >
+> > This requires some minor modifications in the existing device tree.
+> > The status for all the device nodes for the component options must be
+> > set to "failed-needs-probe". This makes it clear that some mechanism is
+> > needed to enable one of them, and also prevents the prober and device
+> > drivers running at the same time.
+>
+> ...
+>
+> > + * Copyright (c) 2023 Google LLC
+>
+> At bare minimum we are in 2024 now.
 
-Hi Krzysztof,
+Ack.
 
-Is it really important how the patches travel upstream to Linus. This 
-binding is specific to Broadcom wifi devices so there are no 
-dependencies(?). To clarify what you are asking I assume two separate 
-series:
+> ...
+>
+> > +#include <linux/array_size.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/module.h>
+>
+> > +#include <linux/of.h>
+>
+> Why?
 
-1) DT binding + Khadas Edge2 DTS  -> devicetree@vger.kernel.org
-	reference to: 
-https://patch.msgid.link/20240813082007.2625841-1-jacobe.zang@wesion.com
+Might have been left over from previous work and squashed into the wrong
+commit. Will remove.
 
-2) brcmfmac driver changes	  -> linux-wireless@vger.kernel.org
+> > +#include <linux/platform_device.h>
+>
+> ...
+>
+> > +     for (size_t i =3D 0; i < ARRAY_SIZE(hw_prober_platforms); i++) {
+> > +             if (!of_machine_is_compatible(hw_prober_platforms[i].comp=
+atible))
+> > +                     continue;
+>
+> > +             int ret;
+>
+> I didn't know we allow this kind of definition mix besides for-loop and
+> __free()... Can you point me out where this style change was discussed?
 
-Regards,
-Arend
+Will move to the top of the for loop block.
+
+> > +             ret =3D hw_prober_platforms[i].prober(&pdev->dev, hw_prob=
+er_platforms[i].data);
+> > +             /* Ignore unrecoverable errors and keep going through oth=
+er probers */
+> > +             if (ret =3D=3D -EPROBE_DEFER)
+> > +                     return ret;
+> > +     }
+>
+> ...
+>
+> > +static void chromeos_of_hw_prober_driver_exit(void)
+> > +{
+> > +     if (!chromeos_of_hw_prober_pdev)
+> > +             return;
+>
+> First of all, this is dup for the next call, second, when may this condit=
+ional
+> be true?
+
+When the module is loaded on a machine that doesn't match any entry,
+neither the driver nor the device are registered. Hence the check.
+
+Or maybe the proper way to handle it is to return -ENODEV or something?
+I'll work towards that.
+
+Thanks
+ChenYu
+
+> > +     platform_device_unregister(chromeos_of_hw_prober_pdev);
+> > +     platform_driver_unregister(&chromeos_of_hw_prober_driver);
+> > +}
+> > +module_exit(chromeos_of_hw_prober_driver_exit);
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
