@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-286792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E9D951F02
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DEA951F08
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5413128B04A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5C21C21FF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446771BA86B;
-	Wed, 14 Aug 2024 15:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F111B86D6;
+	Wed, 14 Aug 2024 15:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c35oT3os"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+bY7KIn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0958A1B8EBF;
-	Wed, 14 Aug 2024 15:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E34B28DC3;
+	Wed, 14 Aug 2024 15:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650435; cv=none; b=KAUc5NA9fj2bYEN8zOwfGXWoRHZwTT56FhzAvbUT5+1HpZpyJfSBULPx5arWlQawWGR/Mim7ibjzbimI0SmwTWJ68BJTTmlE2cwf0w9fJB5hwkeL1gPoUQBBK8UciRVapbhx20UaesTDLDBd2ClQWhNkZCJUlkE0eizkFeBgKj0=
+	t=1723650485; cv=none; b=qApeIJuPAouUcMB4VtPZU7RvVjbLoyBUjxt9mcNXrNLou1+jFxQIDr1SpoyYWpD08j6kaI6hmE2bO7KIBzzC8vaovaN28TWDkwH4Kbx+tPPOFS3yWL53SNnz5OBlyBo0StxESyOBijnq6xT3U1mncmyW5WirBMJX1Sk/IRxp7jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650435; c=relaxed/simple;
-	bh=mF3IyTz4B68pPQXgPxWQqg6T2YX1f2V+LIgDKhqHrQA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IroAGB/WM0sXBerWf0v+MC91uGxf+e18E0nZW4P3o10fT4dt4IcXkpagadZ5C231+gifLKGN5hdHjSJpOubmRI758QiOBpudGyNLJDExiSB1WYxzK7MqhMRoziZGSBayScEOicBg/uqakTQN2nVjJDtggS8EMh4mbKketqcFsEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c35oT3os; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723650434; x=1755186434;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mF3IyTz4B68pPQXgPxWQqg6T2YX1f2V+LIgDKhqHrQA=;
-  b=c35oT3osToJj35ljfNrEkvbSoYekcEUFREFqsxm44ZPCFPuIIlm2ll3K
-   w5dWTJkR/UV7UbmtxDXhiEO2Vz89FXx8hpU2StEVWAz2Gi2cRXkT6mFyH
-   6U0GVAg1LpL5pVdEGzjW7NEboxbJ6POZaHUy0KFR2EaCUlaQONPQ+YcfJ
-   hS85rmSt8GW1o24B00ePOafuzTVymGOvN8Xu1vrkt1aEdikY+Z8qQjKvX
-   X/FAlXzwCQPZ5SMbifIaMXIPeF4wT//xHFbafVTBTLAhbsx62YBxA8gqS
-   XroUbLH4yR0FioVO1CKKTxpPCToCYG0KVFqWkPkx3q1FCmnIdMP4iWYQC
-   Q==;
-X-CSE-ConnectionGUID: 3TM5qvJKREyRo+jJkVSOvw==
-X-CSE-MsgGUID: 1znsFfddQQKU6c84vmBzgA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="47279532"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="47279532"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 08:47:06 -0700
-X-CSE-ConnectionGUID: pTb/7qr1QgWk4nqWPvmY0w==
-X-CSE-MsgGUID: 8xM7Sv2hREyamnKvVm16Eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="58936611"
-Received: from dev2.igk.intel.com ([10.237.148.94])
-  by orviesa010.jf.intel.com with ESMTP; 14 Aug 2024 08:47:02 -0700
-From: =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
-	tiwai@suse.com,
-	perex@perex.cz,
-	lgirdwood@gmail.com,
-	=?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	Vitaly Chikunov <vt@altlinux.org>,
-	Mark Brown <broonie@kernel.org>,
-	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>
-Subject: [PATCH for stable v2 2/2] ASoC: topology: Fix route memory corruption
-Date: Wed, 14 Aug 2024 17:47:49 +0200
-Message-Id: <20240814154749.2723275-3-amadeuszx.slawinski@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240814154749.2723275-1-amadeuszx.slawinski@linux.intel.com>
-References: <20240814154749.2723275-1-amadeuszx.slawinski@linux.intel.com>
+	s=arc-20240116; t=1723650485; c=relaxed/simple;
+	bh=n7IuDmJ7xjiLmorJ27Cw4dIAMs1ncBH3/BXHuvFBYho=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=QbJwmrhyizSRVFrox5VWUYojWiM6f74FU/QKdw7p8Yo23A05lg91MV39fnLnqW8pY10Bw7ud7PYOdecr0LWjt4B2doCjRtqhl1pikoo5HMOKdsonqCcTjCHpgsYD3L2DANlHDezCZ2bB9arbJEF/9934Hzc1CM+krId3nDqPHm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+bY7KIn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D78C116B1;
+	Wed, 14 Aug 2024 15:48:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723650484;
+	bh=n7IuDmJ7xjiLmorJ27Cw4dIAMs1ncBH3/BXHuvFBYho=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=O+bY7KInwMy24ENMzdpHtvESrz0WsUKoxsDXZXD+E9+VR5hKJCO2vamWOJhe4Ert6
+	 zmTgU/JmkLOSifCEYatpq+Xt4rRZl0rsuURUrYlU2TNb7Qzv1P2aD2zNY5rZXf+4+b
+	 g47y0p6tC9lPSWNUw4U46FYbh2r3tQuxMQUGVxH4//5IHVjehvDg0Nb0YmAOC6/1r7
+	 Zsvr1WFZ3Wx085hkna79BFhDApAgfljTVh0Bbp0OCqTPzljd1KaLshr1Yep+0cTO78
+	 rxAoMg9E4H85mVw/jpE38hRC9dRtdt9sHQOqEIP6Og3CBSYd3ql3DuIlqvnGbqf7lr
+	 Glhi8NcIfmhiA==
+Date: Wed, 14 Aug 2024 09:48:03 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org
+In-Reply-To: <20240813190639.154983-1-brgl@bgdev.pl>
+References: <20240813190639.154983-1-brgl@bgdev.pl>
+Message-Id: <172365034673.2714461.1759726822181293291.robh@kernel.org>
+Subject: Re: [PATCH 0/3] arm64: dts: qcom: sc8280xp: enable WLAN and
+ Bluetooth
 
-[ Upstream commit 0298f51652be47b79780833e0b63194e1231fa34 ]
 
-It was reported that recent fix for memory corruption during topology
-load, causes corruption in other cases. Instead of being overeager with
-checking topology, assume that it is properly formatted and just
-duplicate strings.
+On Tue, 13 Aug 2024 21:06:35 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> This enables WLAN and Bluetooth on two boards using the sc8280xp SoC.
+> For the sc8280xp-crd we add the PMU, wifi and bluetooth nodes with the
+> correctly modelled wiring between them. For the X13s, we rework existing
+> nodes so that they align with the new DT bindings contract.
+> 
+> Bartosz Golaszewski (2):
+>   arm64: dts: qcom: sc8280xp-crd: enable bluetooth
+>   arm64: dts: qcom: sc8280xp-x13s: model the PMU of the on-board wcn6855
+> 
+> Konrad Dybcio (1):
+>   arm64: dts: qcom: sc8280xp-crd: enable wifi
+> 
+>  arch/arm64/boot/dts/qcom/sc8280xp-crd.dts     | 169 ++++++++++++++++++
+>  .../qcom/sc8280xp-lenovo-thinkpad-x13s.dts    |  98 ++++++++--
+>  2 files changed, 255 insertions(+), 12 deletions(-)
+> 
+> --
+> 2.43.0
+> 
+> 
+> 
 
-Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Closes: https://lore.kernel.org/linux-sound/171812236450.201359.3019210915105428447.b4-ty@kernel.org/T/#m8c4bd5abf453960fde6f826c4b7f84881da63e9d
-Suggested-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
-Link: https://lore.kernel.org/r/20240613090126.841189-1-amadeuszx.slawinski@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
----
- sound/soc/soc-topology.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index 52752e0a5dc27..27aba69894b17 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1052,21 +1052,15 @@ static int soc_tplg_dapm_graph_elems_load(struct soc_tplg *tplg,
- 			break;
- 		}
- 
--		route->source = devm_kmemdup(tplg->dev, elem->source,
--					     min(strlen(elem->source), maxlen),
--					     GFP_KERNEL);
--		route->sink = devm_kmemdup(tplg->dev, elem->sink,
--					   min(strlen(elem->sink), maxlen),
--					   GFP_KERNEL);
-+		route->source = devm_kstrdup(tplg->dev, elem->source, GFP_KERNEL);
-+		route->sink = devm_kstrdup(tplg->dev, elem->sink, GFP_KERNEL);
- 		if (!route->source || !route->sink) {
- 			ret = -ENOMEM;
- 			break;
- 		}
- 
- 		if (strnlen(elem->control, maxlen) != 0) {
--			route->control = devm_kmemdup(tplg->dev, elem->control,
--						      min(strlen(elem->control), maxlen),
--						      GFP_KERNEL);
-+			route->control = devm_kstrdup(tplg->dev, elem->control, GFP_KERNEL);
- 			if (!route->control) {
- 				ret = -ENOMEM;
- 				break;
--- 
-2.34.1
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/sc8280xp-crd.dtb qcom/sc8280xp-lenovo-thinkpad-x13s.dtb' for 20240813190639.154983-1-brgl@bgdev.pl:
+
+arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'enable-gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'swctrl-gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'vddio-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'vddbtcxmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: bluetooth: 'vddrfa1p7-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'enable-gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'swctrl-gpios' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'vddio-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'vddbtcxmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: bluetooth: 'vddrfa1p7-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: wifi@0: 'vddrfa1p8-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: wifi@0: 'vddrfa1p8-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-crd.dtb: /wcn6855-pmu: failed to match any schema with compatible: ['qcom,wcn6855-pmu']
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: /wcn6855-pmu: failed to match any schema with compatible: ['qcom,wcn6855-pmu']
+
+
+
+
 
 
