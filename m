@@ -1,508 +1,152 @@
-Return-Path: <linux-kernel+bounces-287237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746E895252E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:02:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 967CA952530
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55051F2329F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:02:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC75A1C22358
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5C313A268;
-	Wed, 14 Aug 2024 22:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CF91494DA;
+	Wed, 14 Aug 2024 22:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjJtPJSq"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZqMkm04B"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A714389F;
-	Wed, 14 Aug 2024 22:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723672910; cv=none; b=ro3gh9w29gXhYhKN5in8TLfOHvT6OxV4pLu320ouyGWN5EDPMo0oJatItjdzLZifYnCBHbzpOlB9F4T3KxuX6pX2+IK59r49EIVYTrPGWk8/zoMRQPFi3K5olAvMs7cAIbl0PjnoxUYvxKSmqDrzq7yF70jfsQgLOnEcG1YXczY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723672910; c=relaxed/simple;
-	bh=JgR+5pUUFdEBu+CLEhc5Ct/mjo3k4E6z/0DU6sOfWEY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sdK+v/O+j+kiFZxVvz49A7anBov/hcsCdsjQ3FLBO6JtAd81ZXvvud789LGOnlPcmmcE69HkxepHQsSriM2rMlUZyqA8mVRGlhDj/xg975k37+NJBxNec9MnMyERjaSiodiuQknjdvwu5P2HeVaPc2yTCtLVDUkYrCBRdG7ZbjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjJtPJSq; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso330886a12.2;
-        Wed, 14 Aug 2024 15:01:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723672906; x=1724277706; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=v8bT9nQVgHrKlpDM0654oBIbzorki97BZwntPNW1GuQ=;
-        b=TjJtPJSqcn5crgFpyT7ARtmT1vHbAqU0UvmntmoRv4mEh7DxLEJjOab+UGsNGIN0ZK
-         A7yWOPlqLvOFfCka2ruAUcF9pHvSFG7QHwabsqhvRezE9maRgPRdNw4ch54wtnJmARVF
-         unmRmrkdnfaAkOQsJ27IlnneqiJ8ZcdN7vbqLqsrmiHd3vhLPOYGKypYuwMlNkpKhvCx
-         1RE0OXu6QvnpBlKvdgcc6XAUyZwGtiIbfqN37GGmIi5vcVq3vDjCpblgp75msQED/+HE
-         xzBhCBMgbp4oxt9jDlbGsiCeRJsnizMQtVyJlhjI0eeI31pypuBPLhMHzYc8Pmqldt+B
-         ha/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723672906; x=1724277706;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v8bT9nQVgHrKlpDM0654oBIbzorki97BZwntPNW1GuQ=;
-        b=cZPy77VjieUxg4MFeqhPG2wSD63MSBXqH8KObfzW3MyZ+VZvHVmBfY6cTIlhqxE7QH
-         so7yCrhi/MaLboV66wsWS+DG8l+EDWscfgCRiFnlG0e8mOs8BX6St5fqodBhTZ5PG1Z2
-         2j3WUNvTVf69peaARqSwuKtN/CB70PQ2SxO5VZbIiDkn8a3Gs64ULOxVtiQ8ZpFKg9Hr
-         gSpi5ncoWVb03FZBPLkAe0Ma8AClNsu1UIu9t6WWzI3ICw9aWUCpyR4PUCc9xP4AVWY1
-         h2HVq1rDphhcUz33aV/lPtD/ol40Sc6HP7ujrcON6+wgazX9tUn7GEZqWa+TLP5lojqb
-         SLBw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1nktky1DYHOiuGM3d2SPZF2VWLsT7bzR6jiTN2WCECOAcLqM8YIXlZAYedMKLc2LETfwVzaZ6/kBWix2g@vger.kernel.org, AJvYcCWzJBQbkKgjGF7Wo+mM3/7xqhrtCnVSbmx5e6BfHpf/raJX0QkjeUy/uArymjspT3GQvKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAMNQZUwavAVQMjixVTvtdceNJ82J3p/REmasjFyAspxaG2g8h
-	RaTvZgtaIjmxNMzG1/tM1aCJi6QdaTZQawty8LGtbILMolayZuLC
-X-Google-Smtp-Source: AGHT+IGP/sgTMlCcNUcO7pLU+9GygJIRYCWc03JOq27h+FyeDaXC/17UfPTQaoU7d2r7+KZjRaHRqg==
-X-Received: by 2002:a17:90a:9318:b0:2cf:c9df:4cc8 with SMTP id 98e67ed59e1d1-2d3aab8a4ebmr4712159a91.38.1723672905573;
-        Wed, 14 Aug 2024 15:01:45 -0700 (PDT)
-Received: from ?IPv6:2605:59c8:829:4c00:82ee:73ff:fe41:9a02? ([2605:59c8:829:4c00:82ee:73ff:fe41:9a02])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7ca442sm2314451a91.5.2024.08.14.15.01.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 15:01:45 -0700 (PDT)
-Message-ID: <4b0b48c30dbfa1f4bc35577552af414bc307717b.camel@gmail.com>
-Subject: Re: [PATCH net-next v13 12/14] net: replace page_frag with
- page_frag_cache
-From: Alexander H Duyck <alexander.duyck@gmail.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org,  pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Mat Martineau
- <martineau@kernel.org>, Ayush Sawal <ayush.sawal@chelsio.com>, Eric Dumazet
- <edumazet@google.com>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jason Wang <jasowang@redhat.com>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>,  Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
- Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, John Fastabend <john.fastabend@gmail.com>,
- Jakub Sitnicki <jakub@cloudflare.com>, David Ahern <dsahern@kernel.org>,
- Matthieu Baerts <matttbe@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, Boris Pismenny <borisp@nvidia.com>,
- bpf@vger.kernel.org,  mptcp@lists.linux.dev
-Date: Wed, 14 Aug 2024 15:01:42 -0700
-In-Reply-To: <20240808123714.462740-13-linyunsheng@huawei.com>
-References: <20240808123714.462740-1-linyunsheng@huawei.com>
-	 <20240808123714.462740-13-linyunsheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D584B1459EA;
+	Wed, 14 Aug 2024 22:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723672948; cv=fail; b=E0fQXU14zNQAp09RHnF92RQp1MOcmkgoBR0WJHoWVudjiNiRFeoZSIy/1xjRaJgw9xpMRYiSnLJeSkqD+bovAUF9XNgSv08oHSyjwPH0UxRYhOWdLnXwd1vC0qf3icthNvdJt8DxMLAVZSd4Bu5ZmAm9K2hiIcWv1DjveeqMwwg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723672948; c=relaxed/simple;
+	bh=u7N+gefs3HOnE3Y+MrArvGj9URkPApSveoDmJzhG4xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=syVgwgehAatnKmm2yxx7tZBoJovitejV41SnEOmB3W0RaLyWlZ0hdpaD0rV3SMHxJ48L8teuEWKquZl/Y3NC1oY5uj15715CMwaLjokAe4NbgTwKH7XiKK5OnlhfUtBhrn2FbMkxaT3fMNJ7ZeTPjPhJW/BWXNEkGymcZrCPoFw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZqMkm04B; arc=fail smtp.client-ip=40.107.237.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FMIjnR5GX1v1nBMPSK1y6CcwprV4b9e2BqF7dXYl5rhH3YJnSOiy/Q8T+Jvgsk5jiVr0d/oCxR0hAX55TxlGoulecNo7qaewb1FB3dN/L0BS/8ufRiIpxTFgDG6vIlt8tEnYr/67ioGfpMrhKcXL/oXKXJX7ngRxvBnXhrXaQIOAM5yLMFd3Gzy3v8rqv/OVo+/0s0eywYZ2GiUB6lRDyrYMZR+zeZp2eITMEIJ4aU/iRQwJVrJlmqzz4bEC/REtL7QD8eyCxZIPleE33Dd4/bXrDB8iETYvPFiZMBgH+aq2w/uM5uDGYjHoDGZFhr2EnLYVrOHSOS4s6J3z5cKOlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MGddz5WzOh9QEH86TpYJTPHODLpBXajraZr4nTi3DBI=;
+ b=aDPRhdE+gW1XVebqViEDPJe5fb/mpVijvZyJ8onpxVGSHm/7JK1bV8XziZX1iebsINqjVTj6DAet7ASYHD+B1gqAEVb5ivUkvc9HnnhzPPe4B0KogdPuh0rchcgjZcGxlMe6z6G6O/t0HojcnZHtepYPGdadp5jYKUq9rOGtYsLGP1kRDH6b+t6BJxOTY+T+FmzV2fSzJ/NNQtSm978S/1TzBfwEAORGnGfN68wHlFFB3/DSMHig7xaRrA9lSr4j2Khnnhz1f9U2oczKlSayT0J94AUBp++w5yPtrp2b0PuEUYt9aIar3BK8Fe/WgL/ZBp5O40Fefi2Fxj+sxwcy3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MGddz5WzOh9QEH86TpYJTPHODLpBXajraZr4nTi3DBI=;
+ b=ZqMkm04BtBVs8WK8MXZkhdmAYkPZqbY/g4SNzYAUuupyEs9lNfLJ+SECcksaWr2yIER0LwEr0NOtcDIoXyOxv3Zu/OpldMKqMiVpTrX7BKOJSHy6/ti9n/QGsUtxi/QXAZKaH1U8DkKfW5FZzyOvBgOGCyo4ehiht+KbK7xGEODeblpjrM/2IPvCJC8DLQjs5q52d0bdcu6d3VmCqZVOG7VlwU4LShCK+JtJxzp01WBlkyHwHQtKZeQdbifh/G79QxX6iQSU2Q+gdK3HAlN0m8ujXlWmIm59xvDqEmckJQLGiOJ9KpJO+lvEC64hWiWnpSSAcgHsnCwO3tGje4fLIQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16)
+ by CH3PR12MB7594.namprd12.prod.outlook.com (2603:10b6:610:140::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
+ 2024 22:02:23 +0000
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52]) by DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52%3]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
+ 22:02:23 +0000
+Date: Wed, 14 Aug 2024 19:02:21 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v1 05/16] iommufd/viommu: Add
+ IOMMU_VIOMMU_SET/UNSET_VDEV_ID ioctl
+Message-ID: <20240814220221.GZ2032816@nvidia.com>
+References: <cover.1723061377.git.nicolinc@nvidia.com>
+ <e35a24d4337b985aabbcfe7857cac2186d4f61e9.1723061378.git.nicolinc@nvidia.com>
+ <Zrzkwu7srmLTch+a@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zrzkwu7srmLTch+a@Asurada-Nvidia>
+X-ClientProxiedBy: MN0P222CA0019.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:208:531::25) To DM4PR12MB7767.namprd12.prod.outlook.com
+ (2603:10b6:8:100::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB7767:EE_|CH3PR12MB7594:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58b4c981-cf75-4677-6a08-08dcbcacc69b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	PSuWzYCqWMv4Sz/+cJeChU1aPhuBACE5dsMXDuzJ3xUaGklpQir9EjEUFG1JRneU8jOJzR9HLNOXNkbbwmu/FxLh+1V2QW81dur7k/RfjzebFWTfApW5QJOUrCpTrhh9oIlXljFUeMUmbVvIg78vPboWVaUjTj0GxGoEMxSSsx1qJVMND8fD50t/okRZHA45mtrc4ontfEJBCSdwx5EbmfopaYk9IuQfwOwnLKMubPD6nKCPZ9KdWbDCgRKbB9WLQntFUeGAj706M5AnmD6ktUhTBPDh+egtpx8HkmplfW2ML6VoHP5bPWXwW3+X781zdyfmjaWOe4FWW7oPnNM8vNvUTWa7nGkdBbEzgbxExmsazqmcER8tDDFsLao8cl16p/RXiSFb/VlgQpGE/0WbBDC29RSqN+vo5egzrLONB+80emyU4ZJsqRr49Kfjep5BtuDABAyUAXZke5Fef43DqokvZKG3qrXKjexOnAHfKC5VLe+u2ZodnV+U8jbnX5ep9b00xbeH4fy4qHn5YdWBPPyJYTVGKjtpa/GbqQ64p41TPi2IwJb/Zk63y5P2Yo3Tdku3RwSxuzUQPKvTuO/jSDS9BiLgIbthy8nhdCwIiDbhCiEGMc3ECyJIQqlPk4IKeD9H2/32kORzGzma7nu1yGL0RexCvV+V5EPbqmPBx+Q=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SEiWds3PYSXyYCKOK016wNBqDdbWGV+H7tBXIwKqyyhOZl65CIJ6FUV7UUXD?=
+ =?us-ascii?Q?fJMkdwuAp5OWpRvkP11phQgpPSOYLwUBQqWKznvDTb+O9WQ+Dnn4YtpvkLZa?=
+ =?us-ascii?Q?iF9uq+UJDJyYkm5fDTkB4vHcmPPkp7pFI7OLr1z0QoScMTLBpNQpchKI8RjN?=
+ =?us-ascii?Q?MyHpA79cFjANaizqrwfG7G/ml/4+cXRmpLs1N5MFHnkB/NiLMPk6LeSyQu9B?=
+ =?us-ascii?Q?+xYVbhtefzayFLcF5ApkHNR2Z61EH4Y92jmH0/Pluo0hlnOZPjgu9p2krSZZ?=
+ =?us-ascii?Q?4Xtb/qElOwxP6gm337OjdSpcAeCA5f9N5pGnKaKPXJxOE+vQf2VGVj7NG8n1?=
+ =?us-ascii?Q?dxDEUvtNREnYXMsQuKuYPgpTyO4yI0j/fJsY94pz62Ps7f6qySX0FEYJ0kYT?=
+ =?us-ascii?Q?NDe/IN59HXclqdPw/hyRxboeFGBp3gOGyNZXpuLbO3D4NoF5QiOggg9uBPmH?=
+ =?us-ascii?Q?0uf35RUESiVzsAUwuRyR/vy3IDI+7K2PBQVrfZcjRKJRCfENMa9MoRPa/tXo?=
+ =?us-ascii?Q?x1HF9WdYYXeqrkNQ7TleQWAAKNEqX0VLZCOKsC7iJTlSphxeFltg4H5fh35o?=
+ =?us-ascii?Q?WRfsRnSglrdQHpvmgBH3rQLSVPIGmtm+Uu4wfXVj9DYsa8VbuT7OdGujKxlA?=
+ =?us-ascii?Q?KdUZhj29isdU6pHeRmd7X+M1+cIFaO4Gmn5h19hee0IiqwtmgVXmELCTTrLe?=
+ =?us-ascii?Q?4a7bFQF3MH4JsZRJQ412ILsoW+fg9bZY2LG3WmLj7JaSpt0gzZhkAPtocb3j?=
+ =?us-ascii?Q?GdsYFLEa4NIj+hzcBgoL4z2+S9E6Co7KD9g8QlY0Lbcyfk7V8ir9tEgWzC58?=
+ =?us-ascii?Q?M8W2eLU4AmoKDvgGl87nvaeyb8dMNXGVT6IejPxo/JbZ+FFYirNqmLt5SQg9?=
+ =?us-ascii?Q?GnO026bqN+ED1+P5IBuD0PBw/ir6AspEDybjAM3arHLSmzdjCSdjvgd15uPM?=
+ =?us-ascii?Q?IcRei9crRTGJjiF9hf/xeEp2YRIV5zoKz8E1UfTmQMLikrWc0DawkMHmM8q3?=
+ =?us-ascii?Q?5YPBVsNZB95UDzwyPdhntnVtTSzqI0L+Mn+ja0D1OlCj6UXbYT3SsTEPuAFK?=
+ =?us-ascii?Q?YuFdrr8PE36aZuQluMkultaNon5nPX1NdM6dSocoHnfJiCSH9FE3CO7RiV5Y?=
+ =?us-ascii?Q?+BYza9CHoO3g0pgPPRH/+MfTsO+o7v+LCjow8On8+vTWD6pv/3QvDQrBxIHr?=
+ =?us-ascii?Q?JCfGslsx0QfKBeGVAVgEkSHls/7iLS7Rw4kc8hu7nGW6ZCRq3v6/49H7crj9?=
+ =?us-ascii?Q?JQx2C3LSIN/Ep9lkvDwP81LaEqs0n6r7+BI283ZEDlqvSHZlG0hyj8KUU3PH?=
+ =?us-ascii?Q?rXYd1FbwO7O9+gaHV+BcJARt3vfj9mhg+RDRT1RWvST7MnUuvwWyDEp+vC/e?=
+ =?us-ascii?Q?gWBgO3hRlCSg2/qasCJabaTaeXeNnEy/n4ZfBtaomnJLH8EWZth/XjhqJJ0K?=
+ =?us-ascii?Q?tWxJ8oQmEhsYbwEv7vO3kTD0BqRsux0bsBcoK/fR3sormOQ7E5TG9LG1dWNS?=
+ =?us-ascii?Q?f/rBB7OOMxNgmTW1aeWRsQckl9UXjViB7zDrkzBP7gtuRrhp6sUlhwtvqO3h?=
+ =?us-ascii?Q?8HEx+kow/mRg5/fkLrY=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58b4c981-cf75-4677-6a08-08dcbcacc69b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7767.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 22:02:23.3892
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s/Ci0KRnX4zWPhpovg5MJzCOw+V/9PVnGDhmMBGFKnjpq0ev3jhxJGO2coz+qhXB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7594
 
-On Thu, 2024-08-08 at 20:37 +0800, Yunsheng Lin wrote:
-> Use the newly introduced prepare/probe/commit API to
-> replace page_frag with page_frag_cache for sk_page_frag().
->=20
-> CC: Alexander Duyck <alexander.duyck@gmail.com>
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> Acked-by: Mat Martineau <martineau@kernel.org>
-> ---
->  .../chelsio/inline_crypto/chtls/chtls.h       |   3 -
->  .../chelsio/inline_crypto/chtls/chtls_io.c    | 100 ++++---------
->  .../chelsio/inline_crypto/chtls/chtls_main.c  |   3 -
->  drivers/net/tun.c                             |  48 +++---
->  include/linux/sched.h                         |   2 +-
->  include/net/sock.h                            |  14 +-
->  kernel/exit.c                                 |   3 +-
->  kernel/fork.c                                 |   3 +-
->  net/core/skbuff.c                             |  59 +++++---
->  net/core/skmsg.c                              |  22 +--
->  net/core/sock.c                               |  46 ++++--
->  net/ipv4/ip_output.c                          |  33 +++--
->  net/ipv4/tcp.c                                |  32 ++--
->  net/ipv4/tcp_output.c                         |  28 ++--
->  net/ipv6/ip6_output.c                         |  33 +++--
->  net/kcm/kcmsock.c                             |  27 ++--
->  net/mptcp/protocol.c                          |  67 +++++----
->  net/sched/em_meta.c                           |   2 +-
->  net/tls/tls_device.c                          | 137 ++++++++++--------
->  19 files changed, 347 insertions(+), 315 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h b/d=
-rivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h
-> index 7ff82b6778ba..fe2b6a8ef718 100644
-> --- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h
-> +++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls.h
-> @@ -234,7 +234,6 @@ struct chtls_dev {
->  	struct list_head list_node;
->  	struct list_head rcu_node;
->  	struct list_head na_node;
-> -	unsigned int send_page_order;
->  	int max_host_sndbuf;
->  	u32 round_robin_cnt;
->  	struct key_map kmap;
-> @@ -453,8 +452,6 @@ enum {
-> =20
->  /* The ULP mode/submode of an skbuff */
->  #define skb_ulp_mode(skb)  (ULP_SKB_CB(skb)->ulp_mode)
-> -#define TCP_PAGE(sk)   (sk->sk_frag.page)
-> -#define TCP_OFF(sk)    (sk->sk_frag.offset)
-> =20
->  static inline struct chtls_dev *to_chtls_dev(struct tls_toe_device *tlsd=
-ev)
->  {
-> diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c =
-b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c
-> index d567e42e1760..334381c1587f 100644
-> --- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c
-> +++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c
-> @@ -825,12 +825,6 @@ void skb_entail(struct sock *sk, struct sk_buff *skb=
-, int flags)
->  	ULP_SKB_CB(skb)->flags =3D flags;
->  	__skb_queue_tail(&csk->txq, skb);
->  	sk->sk_wmem_queued +=3D skb->truesize;
-> -
-> -	if (TCP_PAGE(sk) && TCP_OFF(sk)) {
-> -		put_page(TCP_PAGE(sk));
-> -		TCP_PAGE(sk) =3D NULL;
-> -		TCP_OFF(sk) =3D 0;
-> -	}
->  }
-> =20
->  static struct sk_buff *get_tx_skb(struct sock *sk, int size)
-> @@ -882,16 +876,12 @@ static void push_frames_if_head(struct sock *sk)
->  		chtls_push_frames(csk, 1);
->  }
-> =20
-> -static int chtls_skb_copy_to_page_nocache(struct sock *sk,
-> -					  struct iov_iter *from,
-> -					  struct sk_buff *skb,
-> -					  struct page *page,
-> -					  int off, int copy)
-> +static int chtls_skb_copy_to_va_nocache(struct sock *sk, struct iov_iter=
- *from,
-> +					struct sk_buff *skb, char *va, int copy)
->  {
->  	int err;
-> =20
-> -	err =3D skb_do_copy_data_nocache(sk, skb, from, page_address(page) +
-> -				       off, copy, skb->len);
-> +	err =3D skb_do_copy_data_nocache(sk, skb, from, va, copy, skb->len);
->  	if (err)
->  		return err;
-> =20
-> @@ -1114,82 +1104,44 @@ int chtls_sendmsg(struct sock *sk, struct msghdr =
-*msg, size_t size)
->  			if (err)
->  				goto do_fault;
->  		} else {
-> +			struct page_frag_cache *pfrag =3D &sk->sk_frag;
+On Wed, Aug 14, 2024 at 10:09:22AM -0700, Nicolin Chen wrote:
 
-Is this even valid? Shouldn't it be using sk_page_frag to get the
-reference here? Seems like it might be trying to instantiate an unused
-cache.
+> This helps us to build a device-based virq report function:
+> +void iommufd_device_report_virq(struct device *dev, unsigned int data_type,
+> +                               void *data_ptr, size_t data_len);
+> 
+> I built a link from device to viommu reusing Baolu's work:
+> struct device -> struct iommu_group -> struct iommu_attach_handle
+> -> struct iommufd_attach_handle -> struct iommufd_device (idev)
+> -> struct iommufd_vdev_id (idev->vdev_id)
 
-As per my earlier suggestion this could be made very simple if we are
-just pulling a bio_vec out from the page cache at the start. With that
-we could essentially plug it into the TCP_PAGE/TCP_OFF block here and
-most of it would just function the same.
+That makes sense, the vdev id would be 1:1 with the struct device, and
+the iommufd_device is also supposed to be 1:1 with the struct device.
 
->  			int i =3D skb_shinfo(skb)->nr_frags;
-> -			struct page *page =3D TCP_PAGE(sk);
-> -			int pg_size =3D PAGE_SIZE;
-> -			int off =3D TCP_OFF(sk);
-> -			bool merge;
-> -
-> -			if (page)
-> -				pg_size =3D page_size(page);
-> -			if (off < pg_size &&
-> -			    skb_can_coalesce(skb, i, page, off)) {
-> +			unsigned int offset, fragsz;
-> +			bool merge =3D false;
-> +			struct page *page;
-> +			void *va;
-> +
-> +			fragsz =3D 32U;
-> +			page =3D page_frag_alloc_prepare(pfrag, &offset, &fragsz,
-> +						       &va, sk->sk_allocation);
-> +			if (unlikely(!page))
-> +				goto wait_for_memory;
-> +
-> +			if (skb_can_coalesce(skb, i, page, offset))
->  				merge =3D true;
-> -				goto copy;
-> -			}
-> -			merge =3D false;
-> -			if (i =3D=3D (is_tls_tx(csk) ? (MAX_SKB_FRAGS - 1) :
-> -			    MAX_SKB_FRAGS))
-> +			else if (i =3D=3D (is_tls_tx(csk) ? (MAX_SKB_FRAGS - 1) :
-> +				       MAX_SKB_FRAGS))
->  				goto new_buf;
-> =20
-> -			if (page && off =3D=3D pg_size) {
-> -				put_page(page);
-> -				TCP_PAGE(sk) =3D page =3D NULL;
-> -				pg_size =3D PAGE_SIZE;
-> -			}
-> -
-> -			if (!page) {
-> -				gfp_t gfp =3D sk->sk_allocation;
-> -				int order =3D cdev->send_page_order;
-> -
-> -				if (order) {
-> -					page =3D alloc_pages(gfp | __GFP_COMP |
-> -							   __GFP_NOWARN |
-> -							   __GFP_NORETRY,
-> -							   order);
-> -					if (page)
-> -						pg_size <<=3D order;
-> -				}
-> -				if (!page) {
-> -					page =3D alloc_page(gfp);
-> -					pg_size =3D PAGE_SIZE;
-> -				}
-> -				if (!page)
-> -					goto wait_for_memory;
-> -				off =3D 0;
-> -			}
-> -copy:
-> -			if (copy > pg_size - off)
-> -				copy =3D pg_size - off;
-> +			copy =3D min_t(int, copy, fragsz);
->  			if (is_tls_tx(csk))
->  				copy =3D min_t(int, copy, csk->tlshws.txleft);
-> =20
-> -			err =3D chtls_skb_copy_to_page_nocache(sk, &msg->msg_iter,
-> -							     skb, page,
-> -							     off, copy);
-> -			if (unlikely(err)) {
-> -				if (!TCP_PAGE(sk)) {
-> -					TCP_PAGE(sk) =3D page;
-> -					TCP_OFF(sk) =3D 0;
-> -				}
-> +			err =3D chtls_skb_copy_to_va_nocache(sk, &msg->msg_iter,
-> +							   skb, va, copy);
-> +			if (unlikely(err))
->  				goto do_fault;
-> -			}
-> +
->  			/* Update the skb. */
->  			if (merge) {
->  				skb_frag_size_add(
->  						&skb_shinfo(skb)->frags[i - 1],
->  						copy);
-> +				page_frag_alloc_commit_noref(pfrag, copy);
->  			} else {
-> -				skb_fill_page_desc(skb, i, page, off, copy);
-> -				if (off + copy < pg_size) {
-> -					/* space left keep page */
-> -					get_page(page);
-> -					TCP_PAGE(sk) =3D page;
-> -				} else {
-> -					TCP_PAGE(sk) =3D NULL;
-> -				}
-> +				skb_fill_page_desc(skb, i, page, offset, copy);
-> +				page_frag_alloc_commit(pfrag, copy);
->  			}
-> -			TCP_OFF(sk) =3D off + copy;
->  		}
->  		if (unlikely(skb->len =3D=3D mss))
->  			tx_skb_finalize(skb);
-
-Really there is so much refactor here it is hard to tell what is what.
-I would suggest just trying to plug in an intermediary value and you
-can save the refactor for later.
-
-> diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.=
-c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-> index 455a54708be4..ba88b2fc7cd8 100644
-> --- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-> +++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-> @@ -34,7 +34,6 @@ static DEFINE_MUTEX(notify_mutex);
->  static RAW_NOTIFIER_HEAD(listen_notify_list);
->  static struct proto chtls_cpl_prot, chtls_cpl_protv6;
->  struct request_sock_ops chtls_rsk_ops, chtls_rsk_opsv6;
-> -static uint send_page_order =3D (14 - PAGE_SHIFT < 0) ? 0 : 14 - PAGE_SH=
-IFT;
-> =20
->  static void register_listen_notifier(struct notifier_block *nb)
->  {
-> @@ -273,8 +272,6 @@ static void *chtls_uld_add(const struct cxgb4_lld_inf=
-o *info)
->  	INIT_WORK(&cdev->deferq_task, process_deferq);
->  	spin_lock_init(&cdev->listen_lock);
->  	spin_lock_init(&cdev->idr_lock);
-> -	cdev->send_page_order =3D min_t(uint, get_order(32768),
-> -				      send_page_order);
->  	cdev->max_host_sndbuf =3D 48 * 1024;
-> =20
->  	if (lldi->vr->key.size)
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index 1d06c560c5e6..51df92fd60db 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -1598,21 +1598,19 @@ static bool tun_can_build_skb(struct tun_struct *=
-tun, struct tun_file *tfile,
->  }
-> =20
->  static struct sk_buff *__tun_build_skb(struct tun_file *tfile,
-> -				       struct page_frag *alloc_frag, char *buf,
-> -				       int buflen, int len, int pad)
-> +				       char *buf, int buflen, int len, int pad)
->  {
->  	struct sk_buff *skb =3D build_skb(buf, buflen);
-> =20
-> -	if (!skb)
-> +	if (!skb) {
-> +		page_frag_free_va(buf);
->  		return ERR_PTR(-ENOMEM);
-> +	}
-> =20
->  	skb_reserve(skb, pad);
->  	skb_put(skb, len);
->  	skb_set_owner_w(skb, tfile->socket.sk);
-> =20
-> -	get_page(alloc_frag->page);
-> -	alloc_frag->offset +=3D buflen;
-> -
-
-Rather than freeing the buf it would be better if you were to just
-stick to the existing pattern and commit the alloc_frag at the end here
-instead of calling get_page.
-
->  	return skb;
->  }
-> =20
-> @@ -1660,7 +1658,7 @@ static struct sk_buff *tun_build_skb(struct tun_str=
-uct *tun,
->  				     struct virtio_net_hdr *hdr,
->  				     int len, int *skb_xdp)
->  {
-> -	struct page_frag *alloc_frag =3D &current->task_frag;
-> +	struct page_frag_cache *alloc_frag =3D &current->task_frag;
->  	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
->  	struct bpf_prog *xdp_prog;
->  	int buflen =3D SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-> @@ -1676,16 +1674,16 @@ static struct sk_buff *tun_build_skb(struct tun_s=
-truct *tun,
->  	buflen +=3D SKB_DATA_ALIGN(len + pad);
->  	rcu_read_unlock();
-> =20
-> -	alloc_frag->offset =3D ALIGN((u64)alloc_frag->offset, SMP_CACHE_BYTES);
-> -	if (unlikely(!skb_page_frag_refill(buflen, alloc_frag, GFP_KERNEL)))
-> +	buf =3D page_frag_alloc_va_align(alloc_frag, buflen, GFP_KERNEL,
-> +				       SMP_CACHE_BYTES);
-> +	if (unlikely(!buf))
->  		return ERR_PTR(-ENOMEM);
-> =20
-> -	buf =3D (char *)page_address(alloc_frag->page) + alloc_frag->offset;
-> -	copied =3D copy_page_from_iter(alloc_frag->page,
-> -				     alloc_frag->offset + pad,
-> -				     len, from);
-> -	if (copied !=3D len)
-> +	copied =3D copy_from_iter(buf + pad, len, from);
-> +	if (copied !=3D len) {
-> +		page_frag_alloc_abort(alloc_frag, buflen);
->  		return ERR_PTR(-EFAULT);
-> +	}
-> =20
->  	/* There's a small window that XDP may be set after the check
->  	 * of xdp_prog above, this should be rare and for simplicity
-> @@ -1693,8 +1691,7 @@ static struct sk_buff *tun_build_skb(struct tun_str=
-uct *tun,
->  	 */
->  	if (hdr->gso_type || !xdp_prog) {
->  		*skb_xdp =3D 1;
-> -		return __tun_build_skb(tfile, alloc_frag, buf, buflen, len,
-> -				       pad);
-> +		return __tun_build_skb(tfile, buf, buflen, len, pad);
->  	}
-> =20
->  	*skb_xdp =3D 0;
-> @@ -1711,21 +1708,16 @@ static struct sk_buff *tun_build_skb(struct tun_s=
-truct *tun,
->  		xdp_prepare_buff(&xdp, buf, pad, len, false);
-> =20
->  		act =3D bpf_prog_run_xdp(xdp_prog, &xdp);
-> -		if (act =3D=3D XDP_REDIRECT || act =3D=3D XDP_TX) {
-> -			get_page(alloc_frag->page);
-> -			alloc_frag->offset +=3D buflen;
-> -		}
->  		err =3D tun_xdp_act(tun, xdp_prog, &xdp, act);
-> -		if (err < 0) {
-> -			if (act =3D=3D XDP_REDIRECT || act =3D=3D XDP_TX)
-> -				put_page(alloc_frag->page);
-> -			goto out;
-> -		}
-> -
->  		if (err =3D=3D XDP_REDIRECT)
->  			xdp_do_flush();
-> -		if (err !=3D XDP_PASS)
-> +
-> +		if (err =3D=3D XDP_REDIRECT || err =3D=3D XDP_TX) {
-> +			goto out;
-> +		} else if (err < 0 || err !=3D XDP_PASS) {
-> +			page_frag_alloc_abort(alloc_frag, buflen);
->  			goto out;
-> +		}
-> =20
-
-Your abort function here is not necessarily safe. It is assuming that
-nothing else might have taken a reference to the page or modified it in
-some way. Generally we shouldn't allow rewinding the pointer until we
-check the page count to guarantee nobody else is now working with a
-copy of the page.
-
->  		pad =3D xdp.data - xdp.data_hard_start;
->  		len =3D xdp.data_end - xdp.data;
-> @@ -1734,7 +1726,7 @@ static struct sk_buff *tun_build_skb(struct tun_str=
-uct *tun,
->  	rcu_read_unlock();
->  	local_bh_enable();
-> =20
-> -	return __tun_build_skb(tfile, alloc_frag, buf, buflen, len, pad);
-> +	return __tun_build_skb(tfile, buf, buflen, len, pad);
-> =20
->  out:
->  	bpf_net_ctx_clear(bpf_net_ctx);
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index f8d150343d42..bb9a8e9d6d2d 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1355,7 +1355,7 @@ struct task_struct {
->  	/* Cache last used pipe for splice(): */
->  	struct pipe_inode_info		*splice_pipe;
-> =20
-> -	struct page_frag		task_frag;
-> +	struct page_frag_cache		task_frag;
-> =20
->  #ifdef CONFIG_TASK_DELAY_ACCT
->  	struct task_delay_info		*delays;
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index b5e702298ab7..8f6cc0dd2f4f 100644
->=20
-
-It occurs to me that bio_vec and page_frag are essentially the same
-thing. Instead of having your functions pass a bio_vec it might make
-more sense to work with just a page_frag as the unit to be probed and
-committed with the page_frag_cache being what is borrowed from.
-
-With that I think you could clean up a bunch of the change this code is
-generating as there is too much refactor to make this easy to review.
-If you were to change things though so that you maintain working with a
-page_frag and are just probing it out of the page_frag_cache and
-committing your change back in it would make the diff much more
-readable in my opinion.
-
-The general idea would be that the page and offset should not be
-changed from probe to commit, and size would only be able to be reduced
-vs remaining. It would help to make this more readable instead of
-returning page while passing pointers to offset and length/size.
-
-Also as I mentioned earlier we cannot be rolling the offset backwards.
-It needs to always be making forward progress unless we own all
-instances of the page as it is possible that a section may have been
-shared out from underneath us when we showed some other entity the
-memory.
+Jason
 
