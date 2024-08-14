@@ -1,93 +1,68 @@
-Return-Path: <linux-kernel+bounces-286671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7294C951D9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:46:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F62F951DA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1CC1C2439A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB4528812F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF40C1B3744;
-	Wed, 14 Aug 2024 14:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC55F1B3F1B;
+	Wed, 14 Aug 2024 14:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="a/65HTTM"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bOwXC4O9"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D6B1AE872;
-	Wed, 14 Aug 2024 14:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22201EF1D;
+	Wed, 14 Aug 2024 14:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646809; cv=none; b=gIcD3EGYD1GKr/APBSzZWjz8zF1vSqzxiZE0XH6NNARFwDo/paUEF4PhrrxBAr6wG0/x4F1fcKUIA8aOBKESgBQ6tuCzpjEl7eGjx415f7AqF3drXM1GxNxCDuF587U3SQxaV0l0qLEVajykKCN4Briqf8j9zNR4fwwg8g3R7jk=
+	t=1723646918; cv=none; b=gyOB11+WB0jIKUXPtM5X9wHFgIzej3OwLyitalZ+1Uuny0kZJW194sspr0e4IOXMaAO5Mzbb1/scoqgvR/hFHymor5CCtXiORdmUgyJNl/DChBaToQZWQAx6etKHGWr/xlZLg8eRwQms6KGQBYhxAwOVF7qRPm+HSG027/o99KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646809; c=relaxed/simple;
-	bh=MrMdfHFc7DN4P8cobS1SgsWZXFCwinhPD2p8GEm5rxA=;
+	s=arc-20240116; t=1723646918; c=relaxed/simple;
+	bh=iBH/EKGzj7vcdFzXqvNwaURrKXDvWju/7ZkBckM/1Tk=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pCNFhYqA9mUies7SbhDzytwu73qOkzpdWjrYelNwQVZRURNezN3xFVL5bm0nCt5n9OmG5YeULHrIB1BZPtUowuPw2xaLSNRmXvGRMW/zBe7rniwjRwuYyRTVOtBnjFkhyw5RyP9gQBHPHEW6pulpyDO8XEWj4WfhrpvZAAMytdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=a/65HTTM; arc=none smtp.client-ip=217.70.183.193
+	 MIME-Version:Content-Type; b=BvByBV6gytBmTMpm2SqXLAgbu5911KkdRTx6aazhxndhYFBQvJkS9mOwIFHWQDWXZeNHa2Avj4pyBsxTq2CAuJesp4ecUSzeXfQ5pjyHjf9h06yo996sUvbMkqvmlb+azJFDK8s2Pj0ykwWmRB0D/Hfusfn5bpLXvQRB1FyWKxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bOwXC4O9; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 620DA240005;
-	Wed, 14 Aug 2024 14:46:43 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D42FC0003;
+	Wed, 14 Aug 2024 14:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723646805;
+	t=1723646908;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xDfSsuNrPtx6YX5pobWJTyhNVK0h9n02y4gpLyd5QZ0=;
-	b=a/65HTTM/Z2uuPVwZKhtoPVKYKAssPIOGi1yJ87QWyxc0Yy9B/HO9r53TlM7SKb4aDZ+/Q
-	W6rJ9e2mF+xR+Jl744Ovws0z1I5cdIq31Vv1pwpD9wLK7HEBFJIpuIWK6Vaq7l0IYBIqV7
-	4b3HVhC09ke19XLLWgBT/5VwLBJ8J7Oset9eu1j5nL89W/N3sK6iHbvqDSK38O0Ezl39Bi
-	OFCgH/+vOzdJFjrKLhZCp7ZfV0xiV4MPwJkRjCHxESDQtvz8wbMP5qBNdtgqN719/o5xpQ
-	eg3SAKUv5Kfqp+R+i9NkVYRsaGc0wZCqzTMUSS2knl3fnKuXGO3BFN+Hl++fEQ==
-Date: Wed, 14 Aug 2024 16:46:42 +0200
+	bh=vsvtyLqIUdSFch0aam54nIRgOyDlKRcYRX1ld/c3r+U=;
+	b=bOwXC4O98tmMfIQq1u2pQCdj1qbCJxUlfYRCwaxA7rLeigiFBvaPYJcacO7Vqy9sjst+Z+
+	m2OYoiIBXIe07wKjZIG4mJ3hd3VPwyiimsu8iJdVX9WFUdvV7hUTNnAUyuLE2fa9+f1Blb
+	3bW+t66yPW4+znXAcPaB3l2axEr/MjtgmqG1K85/EQU+4msA6sxVlehpFZEK28PC0eVqcB
+	LWCg49rd+G3Oa8enGhHnpyt2WtQYMezcqEDHRng/mi0uG+cbo53k4h1NjDJ1Cw+ezFqByM
+	/ACgtMBMstUUEbpJRsiQQ1xC5RBetdOZzF/KkMrLZFWkCssqmHGP40HIfa2ZzA==
+Date: Wed, 14 Aug 2024 16:48:24 +0200
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, "broonie@kernel.org"
- <broonie@kernel.org>, "pratyush@kernel.org" <pratyush@kernel.org>,
- "richard@nod.at" <richard@nod.at>, "vigneshr@ti.com" <vigneshr@ti.com>,
- "sbinding@opensource.cirrus.com" <sbinding@opensource.cirrus.com>,
- "lee@kernel.org" <lee@kernel.org>, "james.schulman@cirrus.com"
- <james.schulman@cirrus.com>, "david.rhodes@cirrus.com"
- <david.rhodes@cirrus.com>, "rf@opensource.cirrus.com"
- <rf@opensource.cirrus.com>, "perex@perex.cz" <perex@perex.cz>,
- "tiwai@suse.com" <tiwai@suse.com>, "linux-spi@vger.kernel.org"
- <linux-spi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "michael@walle.cc" <michael@walle.cc>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
- "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
- "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>, "Simek, Michal"
- <michal.simek@amd.com>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
- <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
- <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
- <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
- "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, Conor Dooley
- <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
-Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
- spi-nor
-Message-ID: <20240814164642.24705f18@xps-13>
-In-Reply-To: <IA0PR12MB7699670B7EE37C60C672FC5EDC872@IA0PR12MB7699.namprd12.prod.outlook.com>
-References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
-	<b3d3c457-a43b-478a-85b3-52558227d139@linaro.org>
-	<BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org>
-	<BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org>
-	<BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org>
-	<9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
-	<BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com>
-	<IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
-	<20240812103812.72763f69@xps-13>
-	<IA0PR12MB769997D5958C191215254983DC872@IA0PR12MB7699.namprd12.prod.outlook.com>
-	<20240814104623.72eef495@xps-13>
-	<IA0PR12MB7699670B7EE37C60C672FC5EDC872@IA0PR12MB7699.namprd12.prod.outlook.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Keguang Zhang <keguang.zhang@gmail.com>, Richard Weinberger
+ <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-media@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] dt-bindings: mtd: Add Loongson-1 NAND Controller
+Message-ID: <20240814164824.5c4f18af@xps-13>
+In-Reply-To: <20240814-delicate-oil-d1eef61f0eda@spud>
+References: <20240808-loongson1-nand-v8-0-c96dea418b41@gmail.com>
+	<20240808-loongson1-nand-v8-1-c96dea418b41@gmail.com>
+	<20240808-backyard-unglue-3cf429ad8da5@spud>
+	<CAJhJPsVOTAj9ePzeHkwDX049FKd=9Rs_NjQE2qwQL76GKSC66Q@mail.gmail.com>
+	<20240809-smuggler-patrol-067003f0ba9b@spud>
+	<20240814091231.1d9525be@xps-13>
+	<20240814-delicate-oil-d1eef61f0eda@spud>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
@@ -100,66 +75,31 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Amit,
+Hi Conor,
 
-> > > > > For implementing this the current DT binding need to be updated as
-> > > > > follows. =20
-> > > >
-> > > > So you want to go back to step 1 and redefine bindings? Is that wor=
-th? =20
-> > >
-> > > The current bindings are effective if we only support identical flash
-> > > devices or flashes of the same make but with different sizes connected
-> > > in stacked mode. However, if we want to extend stacked support to
-> > > include flashes of different makes in stacked mode, =20
+conor@kernel.org wrote on Wed, 14 Aug 2024 15:23:23 +0100:
+
+> On Wed, Aug 14, 2024 at 09:12:31AM +0200, Miquel Raynal wrote:
+> > Hi,
+> >  =20
+> > > > > When I first read "nfc" here I thought it was a copy-paste mistak=
+e, as
+> > > > > "nfc" is a technology of it's own. I think it would make sense to=
+ rename
+> > > > > to "loongson,ls1b-nand-controller" etc to remove that sort of con=
+fusion.
+> > > > > These devices might not implement NFC, but what's to say that a f=
+uture
+> > > > > device will not? =20
 > >=20
-> > The only actual feature the stacked mode brings is the ability to consi=
-der two
-> > devices like one. This is abstracted by hardware, this is a controller =
-capability. =20
+> > I believe the nfc (also, nc) abbreviation pre-dates the NFC spec. But I
+> > agree, it may be misleading. Even though I don't foresee any NAND
+> > controller with NFC coming, =20
 >=20
-> Stacked mode is a software abstraction rather than a controller feature o=
-r=20
-> capability. At any given time, the controller communicates with one of th=
-e=20
-> two connected flash devices, as determined by the requested address and d=
-ata=20
-> length. If an operation starts on one flash and ends on the other, the co=
-re=20
-> needs to split it into two separate operations and adjust the data length=
-=20
-> accordingly.
+> Hm, I think you misunderstood - I meant loongsoon SoCs that had nfc
+> controllers and nand controllers - not nand controllers with nfc!
 
-I'm sorry, that was not my understanding, cf the initial RFC:
-
-	Subject: [RFC PATCH 0/3] Dual stacked/parallel memories bindings
-	Date: Fri, 12 Nov 2021 16:24:08 +0100
-
-	"[...] supporting specific SPI controller modes like Xilinx's
-	where the controller can highly abstract the hardware and
-	provide access to a single bigger device instead [...]"
-
-Furthermore, I rapidly checked the Zynq7000 TRM, it suggests that the
-controller is capable of addressing the right memory itself based on
-the address, especially in linear mode?=20
-
-	https://docs.amd.com/r/en-US/ug585-zynq-7000-SoC-TRM/Dual-SS-4-bit-Stacked=
--I/O
-
-	"The lower SPI flash memory should always be connected if the
-	linear Quad-SPI memory subsystem is used, and the upper flash
-	memory is optional. Total address space is 32 MB with a 25-bit
-	address. In IO mode, the MSB of the address is defined by
-	U_PAGE which is located at bit 28 of register 0xA0 . In Linear
-	address mode, AXI address bit 24 determines the upper or lower
-	memory page. All of the commands will be executed by the device
-	selected by U_PAGE in I/O mode and address bit 24 in linear
-	mode."
-
-Anyway, you may decide to go down the "pure software" route, which is
-probably easier from an implementation perspective, but means you're
-gonna have to argue -again- in favor of the representation of a purely
-virtual device that is not hardware.
+Ah! Well, yes, it may be even more misleading then :-)
 
 Cheers,
 Miqu=C3=A8l
