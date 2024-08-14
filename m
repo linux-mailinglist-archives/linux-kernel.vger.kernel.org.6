@@ -1,149 +1,589 @@
-Return-Path: <linux-kernel+bounces-286875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3466951FD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E665951FDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95577283A00
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC322838FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B961BBBE2;
-	Wed, 14 Aug 2024 16:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2861BC084;
+	Wed, 14 Aug 2024 16:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4rPNJ6Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VoWI5RIi"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F135D1BBBC1;
-	Wed, 14 Aug 2024 16:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519741B8E93
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652514; cv=none; b=r3MSCah6bq70dpv42QfWQaocr5iXxMwGHY7ZCl+SspKMpj9h2/AhCotoWBLopAe2P7YyyI+N4ArQ3CBlqbcpIrnDpvl5LGRFYOmZKZ9qTtC56PWe4E8mlo5Yhz1OXH0eef4wiESvy4Qj4/t7xtacTDb1fXicixRJdA15l1vWcjc=
+	t=1723652626; cv=none; b=YB8AU31EkjDWv37aBstemHNPxCqRderHCXj620vzUT7S88cKIH5jf5uvaI9ufYmegzayWKbIB5VKdL0clXd3yZ84GnzmU5DxZ09czNJvV3+Y1AUUkD6kJ5LWumtssXkxkCk3bcn/5+GDqwQszsb2Jv7DTUWwR/YUy3Vh7SoAjIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652514; c=relaxed/simple;
-	bh=y8gPBkTOEvl5zKXterrWvlJucqFgWO/8eWjzKQnvzD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MypPMNqIFcx80G15We0GjLvZpIA/0VzUFScWZrw3gD/EgtXRrmBzU9oDXtlApeuBIpgWmgPgT+foK8IAEuIRCon6ICva2hJJsAkI2GktoBfodfNXPrCQdC1Er+O6d/DO6nYfbKe+WEpQ8yfCuzJAQPv165ezRpDtgC8PAOh2saQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4rPNJ6Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5CBC4AF09;
-	Wed, 14 Aug 2024 16:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723652513;
-	bh=y8gPBkTOEvl5zKXterrWvlJucqFgWO/8eWjzKQnvzD4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q4rPNJ6ZS8/YTjHc/9HkxRU27ouAY0yibwaXXAm+1vcSBPqrepnOKEU4AR3KEhnOt
-	 s58dD84l+9v/yfPZN6YN2ee+5/Ym6lay4t2aiB6H3CiXfg445fDVhup1StlDclBTyN
-	 d6Tf9ZIXcKqcM2L3sfgF+ddNkeVAxqDhU5qIjR7ZPgaAoUWw/E0xVSN5pIIVghvJgH
-	 ao3pIeIoMl3CcpagSZ9IYoUJzDC0aICQgPiBRlV88oVgdcBIHluUExu1ctrkOZWkoE
-	 9l/H09OLwebwQfZ3EaETR7W2P/kahXmTAg0E5aVvsQbbYfL+9JItY7NLBOg8IGqomK
-	 WAZ23R2KyrVjw==
-Date: Wed, 14 Aug 2024 17:21:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 24/40] arm64/signal: Expose GCS state in signal frames
-Message-ID: <7433e3d2-996a-45a0-b917-666a340ad109@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
- <ZrzIv3FWNgJizDc2@e133380.arm.com>
+	s=arc-20240116; t=1723652626; c=relaxed/simple;
+	bh=oaXe0wVXtTfG5LUb+AjozQ5I4KR5ALnGYV2CbkzMjls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cA2W5WJrsyznMrPXXOMglQeGI3l5FctXhKCgtZU0M+eh9cuNWxAwpAbbXMZ3seYbYG3RQRZuaxi8n25KGdR8udcL7G1t8uwsAT5JWjJ/EdbVZoWkqsDIXSPFMyEj9dxu8lPFYOIiC92Q50PiWMk+df9I/LPJO8bAh0cp67RdIUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VoWI5RIi; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42816ca782dso52250845e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:23:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723652623; x=1724257423; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PqrE40BP3GnDSJet5rt+K6ncIATI9HPA4YaJCmHPTHM=;
+        b=VoWI5RIi5HA3JenEri19i4/u0n8SMRibKhg2weFXE5zyC31WZOuKJaxrUglzSvZOjq
+         0PMp+2Zb2AqDMAxGeRVAvmqtIkEYulHsxtTz3OITjNe+zaZ395CJeL832i9yaM9WDeiB
+         yflTIiHt+hTtZz2PTZm+L++fh01NpGp1AwruASezcNblAH9O5PBlx0rWJpjoo58iDS4d
+         wXAWvL5wFOJNJE8hDdPxPCCsT5no8ggzTPC/pmViYcU+oAaigUO3idDhO+SxCiyKKR7S
+         5A50FuLAC1KTHAEebqRXMjmEizqIsWyqSuBsVg9836W8VCkmZe0DVG2uflAlW7U6X+z6
+         Wfdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723652623; x=1724257423;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PqrE40BP3GnDSJet5rt+K6ncIATI9HPA4YaJCmHPTHM=;
+        b=EueQ7InqrAjRoloh6Lx6z01Ri4bExqiDmrz/8hSYG2ZujoEqDu6aFwY0IgytkKxWZr
+         5U+4wv3I5tC37GA+pPTNCRbrLs6i9IlHmzZvl6Hj+Zv55yU9/e8g6iHgn5rzcV03aWSd
+         xXXV9MAp2LgNALmZuj57SScwtgt+SW70w0qv7Dubg/B9IRTR0xn1itcRNrTJPqPH2QHK
+         r8KqN83QyGn114wEKvqMsKFPdPOFabfFiZ5o7mJAg9sz2YrwphkQYFyb4CTvNozsYQAX
+         HT8vrWCmgYd+tAtf2gUkcikW/4Kkscs10Ks1CxoqTBGtcyaSwBqxUgoO/8N8mdmchJXL
+         Z/mA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw9488HxdPXnuolWKZY+Xw50G2SFaCm4GrE+TNwVNeo/LBBzkwNrsnY9oxTZB6Tr1T6rBnjeljsDD6piGG7Lslva0TrZAnQfl7VI5e
+X-Gm-Message-State: AOJu0YzStdZrOzc/BhCGRf3WAKu0P/964w5VNtL/jE4pciAZacNR3TTD
+	uXY4z/g4A5Eg2CfwP9GD2FRy/xkhavBJcL4tGNKHvG7//9qbj/M1xh4CM9sKEeo=
+X-Google-Smtp-Source: AGHT+IE44uztKLBkFWlFW6yVlJbysSpM2V4ugi+8KFstLRkQARMzbMAdcaYeZQ2xa+xgkUFLogiP3g==
+X-Received: by 2002:a05:600c:4715:b0:428:eb6:2e73 with SMTP id 5b1f17b1804b1-429dd25d9a1mr24204475e9.29.1723652622399;
+        Wed, 14 Aug 2024 09:23:42 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded71ecdsm23807105e9.37.2024.08.14.09.23.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 09:23:41 -0700 (PDT)
+Message-ID: <b78f23ca-eb6e-45cf-9e42-86c906ff901f@linaro.org>
+Date: Wed, 14 Aug 2024 17:23:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m4k347TUK5jMfMto"
-Content-Disposition: inline
-In-Reply-To: <ZrzIv3FWNgJizDc2@e133380.arm.com>
-X-Cookie: The second best policy is dishonesty.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
+ version Titan 780
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-14-quic_depengs@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240812144131.369378-14-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 12/08/2024 15:41, Depeng Shao wrote:
+> Add support for VFE found on SM8550 (Titan 780). This implementation is
+> based on the titan 480 implementation. It supports the normal and lite
+> VFE.
+> 
+> Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
+> Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
+> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/Makefile    |   1 +
+>   .../media/platform/qcom/camss/camss-vfe-780.c | 148 ++++++++++++++++++
+>   drivers/media/platform/qcom/camss/camss-vfe.c |  33 ++--
+>   drivers/media/platform/qcom/camss/camss-vfe.h |   1 +
+>   drivers/media/platform/qcom/camss/camss.c     | 132 ++++++++++++++++
+>   drivers/media/platform/qcom/camss/camss.h     |   2 +
+>   6 files changed, 304 insertions(+), 13 deletions(-)
+>   create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-780.c
+> 
+> diff --git a/drivers/media/platform/qcom/camss/Makefile b/drivers/media/platform/qcom/camss/Makefile
+> index c336e4c1a399..a83b7a8dcef7 100644
+> --- a/drivers/media/platform/qcom/camss/Makefile
+> +++ b/drivers/media/platform/qcom/camss/Makefile
+> @@ -17,6 +17,7 @@ qcom-camss-objs += \
+>   		camss-vfe-4-8.o \
+>   		camss-vfe-17x.o \
+>   		camss-vfe-480.o \
+> +		camss-vfe-780.o \
+>   		camss-vfe-gen1.o \
+>   		camss-vfe.o \
+>   		camss-video.o \
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-780.c b/drivers/media/platform/qcom/camss/camss-vfe-780.c
+> new file mode 100644
+> index 000000000000..e1c4d25cdc40
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe-780.c
+> @@ -0,0 +1,148 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * camss-vfe-780.c
+> + *
+> + * Qualcomm MSM Camera Subsystem - VFE (Video Front End) Module v780 (SM8550)
+> + *
+> + * Copyright (c) 2024 Qualcomm Technologies, Inc.
+> + */
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +
+> +#include "camss.h"
+> +#include "camss-vfe.h"
+> +
+> +#define BUS_REG_BASE			(vfe_is_lite(vfe) ? 0x200 : 0xC00)
+> +
+> +#define VFE_BUS_WM_CGC_OVERRIDE		(BUS_REG_BASE + 0x08)
+> +#define		WM_CGC_OVERRIDE_ALL		(0x7FFFFFF)
+> +
+> +#define VFE_BUS_WM_TEST_BUS_CTRL	(BUS_REG_BASE + 0xDC)
+> +
+> +#define VFE_BUS_WM_CFG(n)		(BUS_REG_BASE + 0x200 + (n) * 0x100)
+> +#define		WM_CFG_EN			BIT(0)
+> +#define		WM_VIR_FRM_EN			BIT(1)
+> +#define		WM_CFG_MODE			BIT(16)
+> +#define VFE_BUS_WM_IMAGE_ADDR(n)	(BUS_REG_BASE + 0x204 + (n) * 0x100)
+> +#define VFE_BUS_WM_FRAME_INCR(n)	(BUS_REG_BASE + 0x208 + (n) * 0x100)
+> +#define VFE_BUS_WM_IMAGE_CFG_0(n)	(BUS_REG_BASE + 0x20c + (n) * 0x100)
+> +#define		WM_IMAGE_CFG_0_DEFAULT_WIDTH	(0xFFFF)
+> +#define VFE_BUS_WM_IMAGE_CFG_1(n)	(BUS_REG_BASE + 0x210 + (n) * 0x100)
+> +#define VFE_BUS_WM_IMAGE_CFG_2(n)	(BUS_REG_BASE + 0x214 + (n) * 0x100)
+> +#define		WM_IMAGE_CFG_2_DEFAULT_STRIDE	(0xFFFF)
+> +#define VFE_BUS_WM_PACKER_CFG(n)	(BUS_REG_BASE + 0x218 + (n) * 0x100)
+> +#define VFE_BUS_WM_HEADER_ADDR(n)	(BUS_REG_BASE + 0x220 + (n) * 0x100)
+> +#define VFE_BUS_WM_HEADER_INCR(n)	(BUS_REG_BASE + 0x224 + (n) * 0x100)
+> +#define VFE_BUS_WM_HEADER_CFG(n)	(BUS_REG_BASE + 0x228 + (n) * 0x100)
+> +
+> +#define VFE_BUS_WM_IRQ_SUBSAMPLE_PERIOD(n)	(BUS_REG_BASE + 0x230 + (n) * 0x100)
+> +#define VFE_BUS_WM_IRQ_SUBSAMPLE_PATTERN(n)	(BUS_REG_BASE + 0x234 + (n) * 0x100)
+> +#define VFE_BUS_WM_FRAMEDROP_PERIOD(n)		(BUS_REG_BASE + 0x238 + (n) * 0x100)
+> +#define VFE_BUS_WM_FRAMEDROP_PATTERN(n)		(BUS_REG_BASE + 0x23c + (n) * 0x100)
+> +
+> +#define VFE_BUS_WM_MMU_PREFETCH_CFG(n)		(BUS_REG_BASE + 0x260 + (n) * 0x100)
+> +#define VFE_BUS_WM_MMU_PREFETCH_MAX_OFFSET(n)	(BUS_REG_BASE + 0x264 + (n) * 0x100)
+> +#define VFE_BUS_WM_SYSTEM_CACHE_CFG(n)		(BUS_REG_BASE + 0x268 + (n) * 0x100)
+> +
+> +/* for titan 780, each bus client is hardcoded to a specific path */
+> +#define RDI_WM(n)			((vfe_is_lite(vfe) ? 0x0 : 0x17) + (n))
+> +
+> +static void vfe_wm_start(struct vfe_device *vfe, u8 wm, struct vfe_line *line)
+> +{
+> +	struct v4l2_pix_format_mplane *pix =
+> +		&line->video_out.active_fmt.fmt.pix_mp;
+> +
+> +	wm = RDI_WM(wm); /* map to actual WM used (from wm=RDI index) */
+> +
+> +	/* no clock gating at bus input */
+> +	writel(WM_CGC_OVERRIDE_ALL, vfe->base + VFE_BUS_WM_CGC_OVERRIDE);
+> +
+> +	writel(0x0, vfe->base + VFE_BUS_WM_TEST_BUS_CTRL);
+> +
+> +	writel(ALIGN(pix->plane_fmt[0].bytesperline, 16) * pix->height >> 8,
+> +	       vfe->base + VFE_BUS_WM_FRAME_INCR(wm));
+> +	writel((WM_IMAGE_CFG_0_DEFAULT_WIDTH & 0xFFFF),
+> +	       vfe->base + VFE_BUS_WM_IMAGE_CFG_0(wm));
+> +	writel(WM_IMAGE_CFG_2_DEFAULT_STRIDE,
+> +	       vfe->base + VFE_BUS_WM_IMAGE_CFG_2(wm));
+> +	writel(0, vfe->base + VFE_BUS_WM_PACKER_CFG(wm));
+> +
+> +	/* no dropped frames, one irq per frame */
+> +	writel(0, vfe->base + VFE_BUS_WM_FRAMEDROP_PERIOD(wm));
+> +	writel(1, vfe->base + VFE_BUS_WM_FRAMEDROP_PATTERN(wm));
+> +	writel(0, vfe->base + VFE_BUS_WM_IRQ_SUBSAMPLE_PERIOD(wm));
+> +	writel(1, vfe->base + VFE_BUS_WM_IRQ_SUBSAMPLE_PATTERN(wm));
+> +
+> +	writel(1, vfe->base + VFE_BUS_WM_MMU_PREFETCH_CFG(wm));
+> +	writel(0xFFFFFFFF, vfe->base + VFE_BUS_WM_MMU_PREFETCH_MAX_OFFSET(wm));
+> +
+> +	writel(WM_CFG_EN | WM_CFG_MODE, vfe->base + VFE_BUS_WM_CFG(wm));
+> +}
+> +
+> +static void vfe_wm_stop(struct vfe_device *vfe, u8 wm)
+> +{
+> +	wm = RDI_WM(wm); /* map to actual WM used (from wm=RDI index) */
+> +	writel(0, vfe->base + VFE_BUS_WM_CFG(wm));
+> +}
+> +
+> +static void vfe_wm_update(struct vfe_device *vfe, u8 wm, u32 addr,
+> +			  struct vfe_line *line)
+> +{
+> +	wm = RDI_WM(wm); /* map to actual WM used (from wm=RDI index) */
+> +	writel((addr >> 8) & 0xFFFFFFFF, vfe->base + VFE_BUS_WM_IMAGE_ADDR(wm));
+> +
+> +	dev_dbg(vfe->camss->dev, "%s wm:%d, image buf addr:0x%x\n",
+> +		__func__, wm, addr);
+> +}
+> +
+> +static void vfe_reg_update(struct vfe_device *vfe, enum vfe_line_id line_id)
+> +{
+> +	int port_id = line_id;
+> +
+> +	/* RUP(register update) registers has beem moved to CSID in Titan 780.
+> +	 * Notify the event of trigger RUP.
+> +	 */
+> +	camss_reg_update(vfe->camss, vfe->id, port_id, false);
+> +}
+> +
+> +static inline void vfe_reg_update_clear(struct vfe_device *vfe,
+> +					enum vfe_line_id line_id)
+> +{
+> +	int port_id = line_id;
+> +
+> +	/* RUP(register update) registers has beem moved to CSID in Titan 780.
+> +	 * Notify the event of trigger RUP clear.
+> +	 */
+> +	camss_reg_update(vfe->camss, vfe->id, port_id, true);
+> +}
+> +
+> +static const struct camss_video_ops vfe_video_ops_780 = {
+> +	.queue_buffer = vfe_queue_buffer_v2,
+> +	.flush_buffers = vfe_flush_buffers,
+> +};
+> +
+> +static void vfe_subdev_init(struct device *dev, struct vfe_device *vfe)
+> +{
+> +	vfe->video_ops = vfe_video_ops_780;
+> +}
+> +
+> +const struct vfe_hw_ops vfe_ops_780 = {
+> +	.enable_irq = NULL,
+> +	.global_reset = NULL,
+> +	.hw_version = vfe_hw_version,
+> +	.isr = NULL,
+> +	.pm_domain_off = vfe_pm_domain_off,
+> +	.pm_domain_on = vfe_pm_domain_on,
+> +	.subdev_init = vfe_subdev_init,
+> +	.vfe_disable = vfe_disable,
+> +	.vfe_enable = vfe_enable_v2,
+> +	.vfe_halt = NULL,
+> +	.vfe_wm_start = vfe_wm_start,
+> +	.vfe_wm_stop = vfe_wm_stop,
+> +	.vfe_buf_done = vfe_buf_done,
+> +	.vfe_wm_update = vfe_wm_update,
+> +	.reg_update = vfe_reg_update,
+> +	.reg_update_clear = vfe_reg_update_clear,
+> +};
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index 71bd55e854bb..507fc7785ac8 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -343,6 +343,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   	case CAMSS_845:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> +	case CAMSS_8550:
+>   		switch (sink_code) {
+>   		case MEDIA_BUS_FMT_YUYV8_1X16:
+>   		{
+> @@ -674,15 +675,17 @@ int vfe_reset(struct vfe_device *vfe)
+>   {
+>   	unsigned long time;
+>   
+> -	reinit_completion(&vfe->reset_complete);
+> +	if (vfe->res->hw_ops->global_reset) {
+> +		reinit_completion(&vfe->reset_complete);
+>   
+> -	vfe->res->hw_ops->global_reset(vfe);
+> +		vfe->res->hw_ops->global_reset(vfe);
+>   
+> -	time = wait_for_completion_timeout(&vfe->reset_complete,
+> -		msecs_to_jiffies(VFE_RESET_TIMEOUT_MS));
+> -	if (!time) {
+> -		dev_err(vfe->camss->dev, "VFE reset timeout\n");
+> -		return -EIO;
+> +		time = wait_for_completion_timeout(&vfe->reset_complete,
+> +			msecs_to_jiffies(VFE_RESET_TIMEOUT_MS));
+> +		if (!time) {
+> +			dev_err(vfe->camss->dev, "VFE reset timeout\n");
+> +			return -EIO;
+> +		}
+
+Per my comment on the CSID - this feels like a fix you are introducing 
+here in the guise of a silicon add.
+
+Please break it up.
+
+If you have a number of fixes to core functionality they need to be
+
+1. Granular and individual
+2. Indivdually scrutable with their own patch and descritption
+3. git cherry-pickable
+4. Have a Fixes tag
+5. And be cc'd to stable@vger.kernel.org
+
+Can't accept either the fixes or the silicon add if the two live mixed 
+up in one patch.
+
+>   	}
+>   
+>   	return 0;
+> @@ -1120,7 +1123,8 @@ void vfe_put(struct vfe_device *vfe)
+>   	} else if (vfe->power_count == 1) {
+>   		if (vfe->was_streaming) {
+>   			vfe->was_streaming = 0;
+> -			vfe->res->hw_ops->vfe_halt(vfe);
+> +			if (vfe->res->hw_ops->vfe_halt)
+> +				vfe->res->hw_ops->vfe_halt(vfe);
+
+Similar comment.
+
+>   		}
+>   		camss_disable_clocks(vfe->nclocks, vfe->clock);
+>   		pm_runtime_put_sync(vfe->camss->dev);
+> @@ -1807,11 +1811,13 @@ int msm_vfe_subdev_init(struct camss *camss, struct vfe_device *vfe,
+>   	vfe->irq = ret;
+>   	snprintf(vfe->irq_name, sizeof(vfe->irq_name), "%s_%s%d",
+>   		 dev_name(dev), MSM_VFE_NAME, id);
+> -	ret = devm_request_irq(dev, vfe->irq, vfe->res->hw_ops->isr,
+> -			       IRQF_TRIGGER_RISING, vfe->irq_name, vfe);
+> -	if (ret < 0) {
+> -		dev_err(dev, "request_irq failed: %d\n", ret);
+> -		return ret;
+> +	if (vfe->res->hw_ops->isr) {
+
+And again.
+
+> +		ret = devm_request_irq(dev, vfe->irq, vfe->res->hw_ops->isr,
+> +				       IRQF_TRIGGER_RISING, vfe->irq_name, vfe);
+> +		if (ret < 0) {
+> +			dev_err(dev, "request_irq failed: %d\n", ret);
+> +			return ret;
+> +		}
+>   	}
+>   
+>   	/* Clocks */
+> @@ -1963,6 +1969,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
+>   	case CAMSS_845:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> +	case CAMSS_8550:
+>   		ret = 16;
+>   		break;
+>   	default:
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.h b/drivers/media/platform/qcom/camss/camss-vfe.h
+> index fcbf4f609129..9dec5bc0d1b1 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.h
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.h
+> @@ -243,6 +243,7 @@ extern const struct vfe_hw_ops vfe_ops_4_7;
+>   extern const struct vfe_hw_ops vfe_ops_4_8;
+>   extern const struct vfe_hw_ops vfe_ops_170;
+>   extern const struct vfe_hw_ops vfe_ops_480;
+> +extern const struct vfe_hw_ops vfe_ops_780;
+>   
+>   int vfe_get(struct vfe_device *vfe);
+>   void vfe_put(struct vfe_device *vfe);
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 7ee102948dc4..92a0fa02e415 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -1666,6 +1666,125 @@ static const struct camss_subdev_resources csid_res_8550[] = {
+>   	}
+>   };
+>   
+> +static const struct camss_subdev_resources vfe_res_8550[] = {
+> +	/* VFE0 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe0_fast_ahb",
+> +			   "vfe0", "cpas_vfe0", "camnoc_axi" },
+
+Should the camnoc AXI clock go here or in the CSID ?
 
 
---m4k347TUK5jMfMto
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> +		.clock_rate = { { 0, 0, 0, 0, 0 },
+> +				{ 0, 0, 0, 0, 80000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 466000000, 594000000, 675000000, 785000000, 785000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 } },
+> +		.reg = { "vfe0" },
+> +		.interrupt = { "vfe0" },
+> +		.vfe = {
+> +			.line_num = 3,
+> +			.is_lite = false,
+> +			.has_pd = true,
+> +			.pd_name = "ife0",
+> +			.hw_ops = &vfe_ops_780,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE1 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe1_fast_ahb",
+> +			   "vfe1", "cpas_vfe1", "camnoc_axi" },
+> +		.clock_rate = {	{ 0, 0, 0, 0, 0 },
+> +				{ 0, 0, 0, 0, 80000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 466000000, 594000000, 675000000, 785000000, 785000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 } },
+> +		.reg = { "vfe1" },
+> +		.interrupt = { "vfe1" },
+> +		.vfe = {
+> +			.line_num = 3,
+> +			.is_lite = false,
+> +			.has_pd = true,
+> +			.pd_name = "ife1",
+> +			.hw_ops = &vfe_ops_780,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE2 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe2_fast_ahb",
+> +			   "vfe2", "cpas_vfe2", "camnoc_axi" },
+> +		.clock_rate = {	{ 0, 0, 0, 0, 0 },
+> +				{ 0, 0, 0, 0, 80000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 466000000, 594000000, 675000000, 785000000, 785000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 } },
+> +		.reg = { "vfe2" },
+> +		.interrupt = { "vfe2" },
+> +		.vfe = {
+> +			.line_num = 3,
+> +			.is_lite = false,
+> +			.has_pd = true,
+> +			.pd_name = "ife2",
+> +			.hw_ops = &vfe_ops_780,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE3 lite */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe_lite_ahb",
+> +			   "vfe_lite", "cpas_ife_lite", "camnoc_axi" },
+> +		.clock_rate = {	{ 0, 0, 0, 0, 0 },
+> +				{ 0, 0, 0, 0, 80000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 400000000, 480000000, 480000000, 480000000, 480000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 } },
+> +		.reg = { "vfe_lite0" },
+> +		.interrupt = { "vfe_lite0" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_780,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE4 lite */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "gcc_axi_hf", "cpas_ahb", "cpas_fast_ahb_clk", "vfe_lite_ahb",
+> +			   "vfe_lite", "cpas_ife_lite", "camnoc_axi" },
+> +		.clock_rate = {	{ 0, 0, 0, 0, 0 },
+> +				{ 0, 0, 0, 0, 80000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
 
-On Wed, Aug 14, 2024 at 04:09:51PM +0100, Dave Martin wrote:
-> On Thu, Aug 01, 2024 at 01:06:51PM +0100, Mark Brown wrote:
+I realise you're specifying all of the operating points here but the 
+clock only needs to appear once i.e.
 
-> > +	if (add_all || task_gcs_el0_enabled(current)) {
-> > +		err = sigframe_alloc(user, &user->gcs_offset,
-> > +				     sizeof(struct gcs_context));
-> > +		if (err)
-> > +			return err;
-> > +	}
+1 x 300 MHz
+1 x 400 MHz
+1 x 480 MHz
 
-> Who turns on GCS?  I have a concern that if libc is new enough to be
-> built for GCS then the libc startup code will to turn it on, even if
-> the binary stack running on top of libc is old.
+etc.
 
-It should normally be the dynamic linker which should be looking for
-annotatations in the binaries it's loading before it decides if it's
-going to turn on GCS (and libc doing something similar if it's going to
-dlopen() things in a process with GCS enabled).
+> +				{ 400000000, 480000000, 480000000, 480000000, 480000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 },
+> +				{ 300000000, 300000000, 400000000, 400000000, 400000000 } },
+> +		.reg = { "vfe_lite1" },
+> +		.interrupt = { "vfe_lite1" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_780,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +};
+> +
+>   static const struct resources_icc icc_res_sm8550[] = {
+>   	{
+>   		.name = "ahb",
+> @@ -1846,6 +1965,17 @@ void camss_pm_domain_off(struct camss *camss, int id)
+>   	}
+>   }
+>   
+> +void camss_reg_update(struct camss *camss, int hw_id, int port_id, bool is_clear)
+> +{
+> +	struct csid_device *csid;
+> +
+> +	if (hw_id < camss->res->csid_num) {
 
-> Is there any scenario where it is legitimate for the signal handler to
-> change the shadow stack mode or to return with an altered GCSPR_EL0?
+Does this cause do anything ? Is it just defensive programming ? Can the 
+hw_id index exceed the number of CSIDs defined and if so why ?
 
-If userspace can rewrite the stack pointer on return (eg, to return to a
-different context as part of userspace threading) then it will need to
-be able to also update GCSPR_EL0 to something consistent otherwise
-attempting to return from the interrupted context isn't going to go
-well.  Changing the mode is a bit more exotic, as it is in general.
-It's as much to provide information to the signal handler as anything
-else.
+Smells wrong.
 
-> Is the guarded stack considered necessary (or at least beneficial) for
-> backtracing, or is the regular stack sufficient?
+> +		csid = &(camss->csid[hw_id]);
+> +
+> +		csid->res->hw_ops->reg_update(csid, port_id, is_clear);
+> +	}
+> +}
+> +
+>   void camss_buf_done(struct camss *camss, int hw_id, int port_id)
+>   {
+>   	struct vfe_device *vfe;
+> @@ -2668,10 +2798,12 @@ static const struct camss_resources sm8550_resources = {
+>   	.pd_name = "top",
+>   	.csiphy_res = csiphy_res_8550,
+>   	.csid_res = csid_res_8550,
+> +	.vfe_res = vfe_res_8550,
+>   	.icc_res = icc_res_sm8550,
+>   	.icc_path_num = ARRAY_SIZE(icc_res_sm8550),
+>   	.csiphy_num = ARRAY_SIZE(csiphy_res_8550),
+>   	.csid_num = ARRAY_SIZE(csid_res_8550),
+> +	.vfe_num = ARRAY_SIZE(vfe_res_8550),
+>   	.link_entities = camss_link_entities
+>   };
+>   
+> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
+> index d6b6558a82b9..697846e70e78 100644
+> --- a/drivers/media/platform/qcom/camss/camss.h
+> +++ b/drivers/media/platform/qcom/camss/camss.h
+> @@ -157,5 +157,7 @@ int camss_vfe_get(struct camss *camss, int id);
+>   void camss_vfe_put(struct camss *camss, int id);
+>   void camss_delete(struct camss *camss);
+>   void camss_buf_done(struct camss *camss, int hw_id, int port_id);
+> +void camss_reg_update(struct camss *camss, int hw_id,
+> +		      int port_id, bool is_clear);
+>   
+>   #endif /* QC_MSM_CAMSS_H */
 
-It's potentially beneficial, being less vulnerable to corruption and
-simpler to parse if all you're interested in is return addresses.
-Profiling in particular was mentioned, grabbing a linear block of memory
-will hopefully be less overhead than chasing down the stack.  The
-regular stack should generally be sufficient though.
+All in all good work, looks like good progress and thanks for sticking 
+with your submissions.
 
---m4k347TUK5jMfMto
-Content-Type: application/pgp-signature; name="signature.asc"
+Please follow up on the points raised.
 
------BEGIN PGP SIGNATURE-----
+---
+bod
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma82ZcACgkQJNaLcl1U
-h9Dw8Af/XElMBO/KVokIR07KfaB7sgnHeJUwP31NSZhm66aDj1xZVgyEok6vrQOQ
-UAQRifPV98myi1QmsusRk+fCC2OGUG2eLWctGHDghxBwYs5hOCl5kebcUIKzzjNH
-8aqD3GZNX1JLH8PLbzDMVhdLpM4uyKOvZFammGDrnoXjhZaBVSKS0PibtS54TY+R
-HA7tSTIm/+xG4rXkAPJ/vo9YZf+cF1bTp1ccC47oQGzsPJIlPfulipp25A71VIiQ
-9enlRUbkSEEZhQH+UZ2Rkpk1+sMCKUv5uT/m2vNWx1gRkngD8YkNUG2TnE9FQqSE
-01uJahLacQ3yCSaWsm6UnjpUxI3Qng==
-=9afo
------END PGP SIGNATURE-----
-
---m4k347TUK5jMfMto--
 
