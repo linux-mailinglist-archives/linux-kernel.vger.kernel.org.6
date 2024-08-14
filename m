@@ -1,164 +1,337 @@
-Return-Path: <linux-kernel+bounces-286419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACBB951ABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:21:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B375951ABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38BBEB23921
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:21:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79047B23C73
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3A21B0113;
-	Wed, 14 Aug 2024 12:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6751E1B0111;
+	Wed, 14 Aug 2024 12:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="XXdkkJCP"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vGPQYS+X"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C784B1AED58;
-	Wed, 14 Aug 2024 12:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC261AC427
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723638066; cv=none; b=tIi/Blh8leHToqrSaZgl3+HIW5HSZ0p+CaCPdWjjIdzVzowQ52hFRpRyM3jens+mhHJAkpV6fJPDH4tUQHiEvzIuVJxrWZFiYuGabvEbDDV09HDSlwzwaMOPMvxKuBWmcMHid6od4+77NFYm5/Ua8sqCga8kSf+nXFWznzYqZnM=
+	t=1723638105; cv=none; b=macCbgb5mQ7Uk1N5+yFDsyVzJKFgwLykZt3ZFuGwQF4ollANBOHY/WHMVEsNQ5ilB9lmySylT4mKaywsC/QA6vfiPSF692ucLf+9DxIecRBc6QK2kMhEZMCvK38p8Dtlqhntmh5Hi9/M3XybmshxWCLfV0RJJmW73dsycnQGh3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723638066; c=relaxed/simple;
-	bh=FOYiYgwgLe8u1/scC2yAr2l6dIH1fLXzPRVWEcl63Pk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ryFef5ByoVh0m8bUGgQ0gsgEsUFdxFx91icJ/Qst6ZZhltloniEY8rUmcvZOjdUbaTX/c71nNsmHJILMLABPWbLqxy6XxJXYdsLlvLSzShfmBVyXiScxMj1EqZevLYiOidki4rSr59U3MCAlNkSrWsVlfPzSmC7ZVmA2JpQTngM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=XXdkkJCP; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1723638060;
-	bh=fgOthRZ2ayNuF/r5WTO+8XOA5hDEqUuFX5e2Mv7rhns=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XXdkkJCPrfQySwAt6IcRZyZNn0zm601vzMnopXepexwOJSI6Qj3WNb8zqlaeyNPkc
-	 1SMBxJFkYwgsCUkauoiz3l4sYH8+QT/pdrK8JWHMNFKV0EWh5WWHa24edTF2AOPn87
-	 cZULR9uXIGYk7dRVIZ9Gv4c75n+QbeBI0sNTCA3cMaV7spsSUBBaz+kY54bPTCVDq7
-	 6nKWXjOZCQ1oyv1iU/wxxY71X13WldwHWCxUm1Ld8ibMt795hhCGcCTzdjjAdSAQqO
-	 Bg5nBoVB3hEXO95hHTzRidVo32TOIwCcU7ee0nm5JO05ye3jrWZhYZz/1GbaqS05K3
-	 IbxdM5XCB8u7w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WkS5j4V1yz4x1V;
-	Wed, 14 Aug 2024 22:20:57 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: =?utf-8?Q?Kolbj=C3=B8rn?= Barmen <linux-ppc@kolla.no>,
- linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, =?utf-8?B?Sm9u?=
- =?utf-8?B?w6HFoQ==?= Vidra
- <vidra@ufal.mff.cuni.cz>, Christoph Hellwig <hch@lst.de>,
- linux@roeck-us.net
-Subject: Re: Since 6.10 - kernel oops/panics on G4 macmini due to change in
- drivers/ata/pata_macio.c
-In-Reply-To: <Zrt028rSVT5hVPbU@ryzen.lan>
-References: <62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no>
- <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
- <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc> <87sev81u3f.fsf@mail.lhotse>
- <Zrt028rSVT5hVPbU@ryzen.lan>
-Date: Wed, 14 Aug 2024 22:20:55 +1000
-Message-ID: <87jzgj1ejc.fsf@mail.lhotse>
+	s=arc-20240116; t=1723638105; c=relaxed/simple;
+	bh=0bPzn3hETIOTnJ2/MPKPYCyuzyee1ybkGScDFxhDOtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DJc7G8m/TCLFnwzor7nHtR/sFBAaQH2fAgpmuIDpMslxFPNbuB2Wggg/CujdMhC1Tp4Aa8Gyp7MnQTd9VqZhDILOV42OR73K3KMaXxj5zqgBrZeIi1ZPIJKsrPuZXHav0ctBgiRG0yiSNhBCzzVe3RNuptq6H6/Fyp7BlAkVo58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vGPQYS+X; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52fc4388a64so9177289e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723638100; x=1724242900; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rhz8oK3vUQCTeEMfFLgxVPGzVrAvnjGUu+F3hij75O0=;
+        b=vGPQYS+XhVPfc1b1zJtBFVp6FdN7GWpUnfHR5ApgOQao0soAmrJxd85kTKnKZff64S
+         XrECFUS7plrRXhP4+H9+AMKO0HAwqfJD8OrcQUoUgVSwKTTEfY1oJhZiJCj+mwMcyaDV
+         UK8XHllEx9svAIQWse+wtZxSTWT2BEOqJjvGX9XAIZTligq/I0fHDu+fu/og5xrJiXal
+         WZVM6sv7qtCXnqQt2s0VXIc0BwHE+UMjOIc9zunTUJdvp7X7KbwhnFfRyYEjQA7amC83
+         niCqP/Ybf1An1xeScajzHQ705LM5oT0Vzkx5mQRxBAxuTTCOZJYaQGTHrsirk1yhG51T
+         vZbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723638100; x=1724242900;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rhz8oK3vUQCTeEMfFLgxVPGzVrAvnjGUu+F3hij75O0=;
+        b=qhMzUSdUe1Tge4A27GO+it3MC5q/nddnLH3+bKL3NGV2A2OfUu8FcpAjgMaXjJPchR
+         Y0yUDqGeuyuPRffaX4CjdTKUaMUntHYPmwfnbLJhhf9MWxhh9aS5AtnTyeOhiUA0yzd3
+         zue3KgRceml5SMIoyeCnZyqt4+GSu01oKdkgz/TgqxBB5WNU/b8SkWJ7/d9meYBGviin
+         9U0YIhh0Z95vUGqb9mzwZaJCrTyAfo5F85knvyJuwhKtwTxK2ajTTIAAh+l34jjrZDbG
+         gxIUZdNL+VyRiILbk533MXLXnGETT8Hruwr6jdntveBtSvP5jlbJQqkpycYGQJ4ahx6v
+         lIfQ==
+X-Gm-Message-State: AOJu0Yyn553pSF0sT8PYks84WPqW0e0kpucfPUGpqJ65Wof73AZVPCsg
+	RpN2bpCljwwBSooD2TUSxM3i1zOcr1izqCErowiVVa+cbCpAIucOQWXWRKC/qrI=
+X-Google-Smtp-Source: AGHT+IG56lVsrCfZXaacs5hV2uXKUmCj6kSfOVwXxejKzARO9OHE+LgDHjuddhx+i5ImLh1TOdiTYA==
+X-Received: by 2002:a05:6512:b86:b0:52e:9670:e40b with SMTP id 2adb3069b0e04-532edbae0e4mr1668869e87.39.1723638099431;
+        Wed, 14 Aug 2024 05:21:39 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9e78:fb96:21f1:335c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfeedc8sm12832509f8f.55.2024.08.14.05.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 05:21:39 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] mtd: rawnand: davinci: make platform_data private
+Date: Wed, 14 Aug 2024 14:21:18 +0200
+Message-ID: <20240814122120.13975-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Niklas Cassel <cassel@kernel.org> writes:
-> On Tue, Aug 13, 2024 at 10:32:36PM +1000, Michael Ellerman wrote:
->> Niklas Cassel <cassel@kernel.org> writes:
->> > On Tue, Aug 13, 2024 at 07:49:34AM +0200, Jon=C3=A1=C5=A1 Vidra wrote:
-...
->> >> ------------[ cut here ]------------
->> >> kernel BUG at drivers/ata/pata_macio.c:544!
->> >
->> > https://github.com/torvalds/linux/blob/v6.11-rc3/drivers/ata/pata_maci=
-o.c#L544
->> >
->> > It seems that the
->> > while (sg_len) loop does not play nice with the new .max_segment_size.
->>=20
->> Right, but only for 4KB kernels for some reason. Is there some limit
->> elsewhere that prevents the bug tripping on 64KB kernels, or is it just
->> luck that no one has hit it?
->
-> Have your tried running fio (flexible I/O tester), with reads with a very
-> large block sizes?
->
-> I would be surprised if it isn't possible to trigger the same bug with
-> 64K page size.
->
-> max segment size =3D 64K
-> MAX_DCMDS =3D 256
-> 256 * 64K =3D 16 MiB
-> What happens if you run fio with a 16 MiB blocksize?
->
-> Something like:
-> $ sudo fio --name=3Dtest --filename=3D/dev/sdX --direct=3D1 --runtime=3D6=
-0 --ioengine=3Dio_uring --rw=3Dread --iodepth=3D4 --bs=3D16M
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Nothing interesting happens, fio succeeds.
+There are no longer any users of the platform data for davinci rawnand
+in board files. We can remove the public pdata headers and move the
+structures that are still used into the driver compilation unit while
+removing the rest.
 
-The largest request that comes into pata_macio_qc_prep() is 1280KB,
-which results in 40 DMA list entries.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/mtd/nand/raw/davinci_nand.c           | 70 +++++++++++++--
+ .../linux/platform_data/mtd-davinci-aemif.h   | 36 --------
+ include/linux/platform_data/mtd-davinci.h     | 88 -------------------
+ 3 files changed, 65 insertions(+), 129 deletions(-)
+ delete mode 100644 include/linux/platform_data/mtd-davinci-aemif.h
+ delete mode 100644 include/linux/platform_data/mtd-davinci.h
 
-I tried with a larger block size but it doesn't change anything. I guess
-there's some limit somewhere else in the stack?
+diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
+index 051deea768db..392678143a36 100644
+--- a/drivers/mtd/nand/raw/davinci_nand.c
++++ b/drivers/mtd/nand/raw/davinci_nand.c
+@@ -20,8 +20,71 @@
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ 
+-#include <linux/platform_data/mtd-davinci.h>
+-#include <linux/platform_data/mtd-davinci-aemif.h>
++#define NRCSR_OFFSET		0x00
++#define NANDFCR_OFFSET		0x60
++#define NANDFSR_OFFSET		0x64
++#define NANDF1ECC_OFFSET	0x70
++
++/* 4-bit ECC syndrome registers */
++#define NAND_4BIT_ECC_LOAD_OFFSET	0xbc
++#define NAND_4BIT_ECC1_OFFSET		0xc0
++#define NAND_4BIT_ECC2_OFFSET		0xc4
++#define NAND_4BIT_ECC3_OFFSET		0xc8
++#define NAND_4BIT_ECC4_OFFSET		0xcc
++#define NAND_ERR_ADD1_OFFSET		0xd0
++#define NAND_ERR_ADD2_OFFSET		0xd4
++#define NAND_ERR_ERRVAL1_OFFSET		0xd8
++#define NAND_ERR_ERRVAL2_OFFSET		0xdc
++
++/* NOTE:  boards don't need to use these address bits
++ * for ALE/CLE unless they support booting from NAND.
++ * They're used unless platform data overrides them.
++ */
++#define	MASK_ALE		0x08
++#define	MASK_CLE		0x10
++
++struct davinci_nand_pdata {
++	uint32_t		mask_ale;
++	uint32_t		mask_cle;
++
++	/*
++	 * 0-indexed chip-select number of the asynchronous
++	 * interface to which the NAND device has been connected.
++	 *
++	 * So, if you have NAND connected to CS3 of DA850, you
++	 * will pass '1' here. Since the asynchronous interface
++	 * on DA850 starts from CS2.
++	 */
++	uint32_t		core_chipsel;
++
++	/* for packages using two chipselects */
++	uint32_t		mask_chipsel;
++
++	/* board's default static partition info */
++	struct mtd_partition	*parts;
++	unsigned int		nr_parts;
++
++	/* none  == NAND_ECC_ENGINE_TYPE_NONE (strongly *not* advised!!)
++	 * soft  == NAND_ECC_ENGINE_TYPE_SOFT
++	 * else  == NAND_ECC_ENGINE_TYPE_ON_HOST, according to ecc_bits
++	 *
++	 * All DaVinci-family chips support 1-bit hardware ECC.
++	 * Newer ones also support 4-bit ECC, but are awkward
++	 * using it with large page chips.
++	 */
++	enum nand_ecc_engine_type engine_type;
++	enum nand_ecc_placement ecc_placement;
++	u8			ecc_bits;
++
++	/* e.g. NAND_BUSWIDTH_16 */
++	unsigned int		options;
++	/* e.g. NAND_BBT_USE_FLASH */
++	unsigned int		bbt_options;
++
++	/* Main and mirror bbt descriptor overrides */
++	struct nand_bbt_descr	*bbt_td;
++	struct nand_bbt_descr	*bbt_md;
++};
+ 
+ /*
+  * This is a device driver for the NAND flash controller found on the
+@@ -54,8 +117,6 @@ struct davinci_nand_info {
+ 	uint32_t		mask_cle;
+ 
+ 	uint32_t		core_chipsel;
+-
+-	struct davinci_aemif_timing	*timing;
+ };
+ 
+ static DEFINE_SPINLOCK(davinci_nand_lock);
+@@ -775,7 +836,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
+ 	info->chip.options	= pdata->options;
+ 	info->chip.bbt_td	= pdata->bbt_td;
+ 	info->chip.bbt_md	= pdata->bbt_md;
+-	info->timing		= pdata->timing;
+ 
+ 	info->current_cs	= info->vaddr;
+ 	info->core_chipsel	= pdata->core_chipsel;
+diff --git a/include/linux/platform_data/mtd-davinci-aemif.h b/include/linux/platform_data/mtd-davinci-aemif.h
+deleted file mode 100644
+index a49826214a39..000000000000
+--- a/include/linux/platform_data/mtd-davinci-aemif.h
++++ /dev/null
+@@ -1,36 +0,0 @@
+-/*
+- * TI DaVinci AEMIF support
+- *
+- * Copyright 2010 (C) Texas Instruments, Inc. https://www.ti.com/
+- *
+- * This file is licensed under the terms of the GNU General Public License
+- * version 2. This program is licensed "as is" without any warranty of any
+- * kind, whether express or implied.
+- */
+-#ifndef _MACH_DAVINCI_AEMIF_H
+-#define _MACH_DAVINCI_AEMIF_H
+-
+-#include <linux/platform_device.h>
+-
+-#define NRCSR_OFFSET		0x00
+-#define AWCCR_OFFSET		0x04
+-#define A1CR_OFFSET		0x10
+-
+-#define ACR_ASIZE_MASK		0x3
+-#define ACR_EW_MASK		BIT(30)
+-#define ACR_SS_MASK		BIT(31)
+-
+-/* All timings in nanoseconds */
+-struct davinci_aemif_timing {
+-	u8	wsetup;
+-	u8	wstrobe;
+-	u8	whold;
+-
+-	u8	rsetup;
+-	u8	rstrobe;
+-	u8	rhold;
+-
+-	u8	ta;
+-};
+-
+-#endif
+diff --git a/include/linux/platform_data/mtd-davinci.h b/include/linux/platform_data/mtd-davinci.h
+deleted file mode 100644
+index dd474dd44848..000000000000
+--- a/include/linux/platform_data/mtd-davinci.h
++++ /dev/null
+@@ -1,88 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * mach-davinci/nand.h
+- *
+- * Copyright © 2006 Texas Instruments.
+- *
+- * Ported to 2.6.23 Copyright © 2008 by
+- *   Sander Huijsen <Shuijsen@optelecom-nkf.com>
+- *   Troy Kisky <troy.kisky@boundarydevices.com>
+- *   Dirk Behme <Dirk.Behme@gmail.com>
+- *
+- * --------------------------------------------------------------------------
+- */
+-
+-#ifndef __ARCH_ARM_DAVINCI_NAND_H
+-#define __ARCH_ARM_DAVINCI_NAND_H
+-
+-#include <linux/mtd/rawnand.h>
+-
+-#define NANDFCR_OFFSET		0x60
+-#define NANDFSR_OFFSET		0x64
+-#define NANDF1ECC_OFFSET	0x70
+-
+-/* 4-bit ECC syndrome registers */
+-#define NAND_4BIT_ECC_LOAD_OFFSET	0xbc
+-#define NAND_4BIT_ECC1_OFFSET		0xc0
+-#define NAND_4BIT_ECC2_OFFSET		0xc4
+-#define NAND_4BIT_ECC3_OFFSET		0xc8
+-#define NAND_4BIT_ECC4_OFFSET		0xcc
+-#define NAND_ERR_ADD1_OFFSET		0xd0
+-#define NAND_ERR_ADD2_OFFSET		0xd4
+-#define NAND_ERR_ERRVAL1_OFFSET		0xd8
+-#define NAND_ERR_ERRVAL2_OFFSET		0xdc
+-
+-/* NOTE:  boards don't need to use these address bits
+- * for ALE/CLE unless they support booting from NAND.
+- * They're used unless platform data overrides them.
+- */
+-#define	MASK_ALE		0x08
+-#define	MASK_CLE		0x10
+-
+-struct davinci_nand_pdata {		/* platform_data */
+-	uint32_t		mask_ale;
+-	uint32_t		mask_cle;
+-
+-	/*
+-	 * 0-indexed chip-select number of the asynchronous
+-	 * interface to which the NAND device has been connected.
+-	 *
+-	 * So, if you have NAND connected to CS3 of DA850, you
+-	 * will pass '1' here. Since the asynchronous interface
+-	 * on DA850 starts from CS2.
+-	 */
+-	uint32_t		core_chipsel;
+-
+-	/* for packages using two chipselects */
+-	uint32_t		mask_chipsel;
+-
+-	/* board's default static partition info */
+-	struct mtd_partition	*parts;
+-	unsigned		nr_parts;
+-
+-	/* none  == NAND_ECC_ENGINE_TYPE_NONE (strongly *not* advised!!)
+-	 * soft  == NAND_ECC_ENGINE_TYPE_SOFT
+-	 * else  == NAND_ECC_ENGINE_TYPE_ON_HOST, according to ecc_bits
+-	 *
+-	 * All DaVinci-family chips support 1-bit hardware ECC.
+-	 * Newer ones also support 4-bit ECC, but are awkward
+-	 * using it with large page chips.
+-	 */
+-	enum nand_ecc_engine_type engine_type;
+-	enum nand_ecc_placement ecc_placement;
+-	u8			ecc_bits;
+-
+-	/* e.g. NAND_BUSWIDTH_16 */
+-	unsigned		options;
+-	/* e.g. NAND_BBT_USE_FLASH */
+-	unsigned		bbt_options;
+-
+-	/* Main and mirror bbt descriptor overrides */
+-	struct nand_bbt_descr	*bbt_td;
+-	struct nand_bbt_descr	*bbt_md;
+-
+-	/* Access timings */
+-	struct davinci_aemif_timing	*timing;
+-};
+-
+-#endif	/* __ARCH_ARM_DAVINCI_NAND_H */
+-- 
+2.43.0
 
-That was testing on qemu, but I don't think it should matter?
-
-I guess there's no way to run the fio test against a file, ie. without a
-raw partition? My real G5 doesn't have any spare disks/partitions in it.
-
-cheers
-
-
-fio-3.37
-Starting 1 process
-
-test: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D257: Wed Aug 14 22:18:59 2024
-  read: IOPS=3D6, BW=3D195MiB/s (204MB/s)(96.0MiB/493msec)
-    slat (usec): min=3D32973, max=3D35222, avg=3D33836.35, stdev=3D1212.51
-    clat (msec): min=3D378, max=3D448, avg=3D413.35, stdev=3D34.99
-     lat (msec): min=3D413, max=3D481, avg=3D447.19, stdev=3D33.87
-    clat percentiles (msec):
-     |  1.00th=3D[  380],  5.00th=3D[  380], 10.00th=3D[  380], 20.00th=3D[=
-  380],
-     | 30.00th=3D[  380], 40.00th=3D[  414], 50.00th=3D[  414], 60.00th=3D[=
-  414],
-     | 70.00th=3D[  447], 80.00th=3D[  447], 90.00th=3D[  447], 95.00th=3D[=
-  447],
-     | 99.00th=3D[  447], 99.50th=3D[  447], 99.90th=3D[  447], 99.95th=3D[=
-  447],
-     | 99.99th=3D[  447]
-   bw (  KiB/s): min=3D195047, max=3D195047, per=3D97.82%, avg=3D195047.00,=
- stdev=3D 0.00, samples=3D1
-   iops        : min=3D    5, max=3D    5, avg=3D 5.00, stdev=3D 0.00, samp=
-les=3D1
-  lat (msec)   : 500=3D100.00%
-  cpu          : usr=3D1.62%, sys=3D11.97%, ctx=3D22, majf=3D0, minf=3D1540
-  IO depths    : 1=3D33.3%, 2=3D66.7%, 4=3D0.0%, 8=3D0.0%, 16=3D0.0%, 32=3D=
-0.0%, >=3D64=3D0.0%
-     submit    : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
-=3D0.0%, >=3D64=3D0.0%
-     complete  : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
-=3D0.0%, >=3D64=3D0.0%
-     issued rwts: total=3D3,0,0,0 short=3D0,0,0,0 dropped=3D0,0,0,0
-     latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D4
-
-Run status group 0 (all jobs):
-   READ: bw=3D195MiB/s (204MB/s), 195MiB/s-195MiB/s (204MB/s-204MB/s), io=
-=3D96.0MiB (101MB), run=3D493-493msec
-
-Disk stats (read/write):
-  sda: ios=3D78/0, sectors=3D196608/0, merge=3D0/0, ticks=3D745/0, in_queue=
-=3D745, util=3D66.89%
 
