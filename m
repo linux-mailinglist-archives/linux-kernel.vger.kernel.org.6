@@ -1,210 +1,285 @@
-Return-Path: <linux-kernel+bounces-286885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D756951FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:29:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82804952017
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7674280E42
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C58CB23736
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305061B8EB4;
-	Wed, 14 Aug 2024 16:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BAE2BB1C;
+	Wed, 14 Aug 2024 16:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GXJTyyCQ"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EyqHZOa0"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2085.outbound.protection.outlook.com [40.107.21.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668CC1B86E7
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652927; cv=none; b=OF5JCtPfUd1uL1mEzT57gSmCmORGQGizMlkJoawvgNFp8oghLUppZYB33m8bmLgyEFh0/fZwj6/vXPpeFI0QTrXUdyI5gg3XPntTpM9mF1Toy8vWhvFXsbExOk7uUMQ6f3d0txf8sNGEyA2V+VR6k7AegdXUM2B4N0kvTMM+a1M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723652927; c=relaxed/simple;
-	bh=NKfwsZeTlnXRMDvq8E5vaLoO5hPrCvbfTXzCITw9KOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bB8gweybeUYg+65hXlkHxgxTPhUnpkXl95S3BkFaPPoubdJgI3mGpTqt3GNy7pdtCvXOcS5gcPdrBnyQ2Dj1Di7vJR5f6fzIAlHf6WSKrkNJoJ0rlSpy1CpjoW1oO7eQRyTPP/t+//xjZf+ahwADLoc6kOd5rohLUs9ptcN17UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GXJTyyCQ; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42809d6e719so52269365e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723652924; x=1724257724; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ClfwenGLJtFMHfZRAp5xBKpkrKx7yBYttQI6ee32yHs=;
-        b=GXJTyyCQ6YT7s0eWG77FPvxHk4mLT6Wr+dULrejIK1eBN5uaXKhXDwWul81IQme8az
-         9l4QB9Doa2565L8JhZvxZLDRNWiKZsttBwplLZSYKNSrckHehL/FilEVVDXqeSWz01X2
-         YUXPQhhhRULNmHeINhae/m0LQmnBsJJQGY56iyy24tPKBZniBE1Cv5Y3JhvxPXCV7PnM
-         XoxpkKCmDsp4uoaJ9iK8EOHJdJufrBcAX5vpW1QF2THI3cEu+DNxnjgvXOf7+6xyc+w6
-         4D9QkQHnrR5geyV4zn4LdTOSLe76TVMUqvJR5C2Mx80RNIosAncBuCzDwJcIr9xIRQtf
-         jWag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723652924; x=1724257724;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ClfwenGLJtFMHfZRAp5xBKpkrKx7yBYttQI6ee32yHs=;
-        b=FUxl4XWtIcizu7npQgPsz1ScLWZJyFs4L6rHTHAFr9D8ewdohXmq9MrK+3b0c/wfMF
-         bg70UipcHzpEZEav2mAtPTQeXRGHojN8gN3P4PwPsvZ9XldNgnnvSKXbcMhW7UibPUr7
-         3vKYaDz20SdzImucw7eAkMJo7XOMcS8vhsidPtI34E1nzr1KZChCNS7P8JL03ml8D5+J
-         rk6jHk68Jc0LC4KcCsPpLdp2bU6P2exB/QzMfTKqAWXuLWn5f8yr8X4gfeddBJFEBo6z
-         eWs05ztu+g/dmAySFjll9h+ApImeAdWPiYAG5M5oF8bh9qnsnV39k9nxlKigD+zj4CsN
-         aVbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYdk3SUrABATfyb2rUiQPWzynmrEQN7gC37cLakZqijfeYqd7Nc+uSuIUg8swBnXFcRVC2O0FKQLJMl5xjctlGmJ4LtkeVf5mxxDC0
-X-Gm-Message-State: AOJu0YwtztY7hZ51OYK4+1vl0op9cSmM+6stJGqZmJiTAs1JGp0E08ik
-	bm2/3Fb0q8tXItl1k/n5ZlYOBqnKBqjaesyqi9xNScuDe20ZnD8QwXkpV/qxPaA=
-X-Google-Smtp-Source: AGHT+IFvN9G5J/WAGwqQb+FfIdaSv/o6JbQZtqSoFJqYXKwjyr2vAVPTq3A4iENCVN6KuTwWS4rSPw==
-X-Received: by 2002:a05:600c:a07:b0:428:2e9:65a9 with SMTP id 5b1f17b1804b1-429e0f80bc3mr8847605e9.28.1723652923491;
-        Wed, 14 Aug 2024 09:28:43 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877f234sm48235275e9.1.2024.08.14.09.28.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 09:28:43 -0700 (PDT)
-Message-ID: <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
-Date: Wed, 14 Aug 2024 17:28:42 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FDD1B3F3E;
+	Wed, 14 Aug 2024 16:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723653000; cv=fail; b=Mo3aFMiI/xi/9w1Z/tz+W0YkO66NJeebXB1xs0jgANjA7sXN8RHHakaMScda+u5YXkRZc4RiSZ9PdoFVQoQP87VuKCeag6fK2+3iL6s8Xs5gY8xN4b4eW8G1VXQWc6pP2nw0ZMr2/8BnzsQhWAaqWQZesUJYBnLkmwEBSqRvUYY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723653000; c=relaxed/simple;
+	bh=D77HdHorRMGtr2lOZACJqO0Fg7eU3Zbg5ZLZtrwapTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rozalzktUxPGcLZ9rKt/RuWnd7+cUnv6Uu8ffLW4kWWp8MnkxjLUZu7WX3OnAf9JsGVNMtWHe9s/kkoZqMhIfv4iR5kFjBeKdGYu9l57eApoax0OYtRchmvyKi648blQq088lBYGw/sMSPyeR9HQtdpYd3R4fNlxYS/PbVmSPfk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EyqHZOa0; arc=fail smtp.client-ip=40.107.21.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GetAFQOfkaQGdDyLlvbo0Igy6BzVBLblvt0+55z0/a5uwmYZKA6Ue0V/G+OQFPXKe1aif6WcckV46R1jBmISWZYFL+hBm0uuoOga+iCOORDZGdSlSszf1l9YB+HSLTnUMvXHIIQn0Syx+A+yHCDZyj7VdhkxS8bldnIti7Elinr1VgiO9CCSrwL/pfne76x02Zr80FKDkH6Mrw16L4eIeTupfBoDhrNgGnsPFxjhpRLW9gGo5LNIxkgLVDtVZkoLT8P+nwqQpoDHyzijFbEkzISV6jcb7g9F6sdYlxq5eQvVqkBELr/g+iLOmhL005cKCVfnmeZq3/v7wGZnh6vurw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H+svNqFpRLn6j7VyTLsyb2YgFQ5TN8rzUoiSzv7vKyM=;
+ b=R8HCksYolbw9/1TsRUGxH/BdzXE4mpwds1XhO2l4BIyeyIbLcVRnxZHGMLziEaAmHnfseE0Fa1DjIVP9QnC1imYjpWs2dUiTj0UM0lPMbgF6rFZEvcyNU0Gt0oZ6tJQZ7KsKLMxDSiYdIxbUev1I5pKuox6pxjfTTLY/A7gnbz7InWt8IWsjifx0UmyyQGCW+QDqYMMUyZxpoXkcuVcHVbDGhghEsLEUlc5xizMWmhDEHKZfio7ktdM3b3WeRXyc4n11AL/ixUJiGnTdcvjaE4sQnJK318GYM5IPUbfx5HKq788KMgkAMgXntLazjuzMQVAFHd4CSkDZyKny49a2gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H+svNqFpRLn6j7VyTLsyb2YgFQ5TN8rzUoiSzv7vKyM=;
+ b=EyqHZOa05eKqc0DbANE6HMiJ+6dWB7RRjfKDoxugnhvfUkTr6m5KY+b4JocHDZ3WelxyVyzjTRBXWjyK1FRShOjC1NBIx7P+KMuy3jjuWEe+1gbnQsy4xcAaCbk22gM9kPf9stzNwwqmJAnOdrU1RvEpIbNyelZ45j1QlS90mCYgHaF4BWBjh1FiNkHIJlu9DWvLSeKFyFJzaX2IInXaWQJZVE6Sw1X6uvyJoEYfyFAYjTD0MD+A+9NHvx13VGhbVkf2OqmlLuRsNAQC+nh7wiPcVArmtPs3JwBQSYXSgyIjvw0+ppGyOWYu8d5UbX9DKIgssLM3UrFE3VWIWuqPxw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8530.eurprd04.prod.outlook.com (2603:10a6:20b:421::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Wed, 14 Aug
+ 2024 16:29:55 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
+ 16:29:55 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sanchayan Maity <maitysanchayan@gmail.com>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] dt-bindings: input: touchscreen: convert colibri-vf50-ts.txt to yaml
+Date: Wed, 14 Aug 2024 12:29:35 -0400
+Message-Id: <20240814162940.4020520-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR11CA0070.namprd11.prod.outlook.com
+ (2603:10b6:a03:80::47) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
- v6.5
-To: Thorsten Leemhuis <regressions@leemhuis.info>,
- Arnaldo Carvalho de Melo <acme@redhat.com>, Ian Rogers <irogers@google.com>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: Linux perf Profiling <linux-perf-users@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- James Clark <james.clark@arm.com>, "cc: Marc Zyngier" <maz@kernel.org>,
- Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>,
- Ian Rogers <irogers@google.com>,
- Linux regressions mailing list <regressions@lists.linux.dev>,
- "to: Mark Rutland" <mark.rutland@arm.com>
-References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
- <ZV1AnNB2CSbAUFVg@archie.me>
- <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
- <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
- <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8530:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7505c40-be1f-4694-29d3-08dcbc7e54af
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	wUVOuLFY+s1Lqu/vd5N7PgO8in4/PUZ+qMB7UFlbjzbKxzTOvSD9nRqU2GUAlfXTq5aqux+mvmHSZ5fH+5fQWx27gzlYMCt2jE65S/Bv8jTeEp3u8SqTDwtrt8H47fRnR0QLaz4pV7iXCfOg+18yTHY5wTKPECIfeidu7bz0L7IxeP25lQFO0c4odulRW3wqoVaDiwI7QMU/GcYbHuGfQBjPZUwVe0K8R7Wm3DodGe85fCY5p1JnSADqIBA2pq03pNodcl11hNFG9X2/5BQTbTSxD6QE2//OpkFUxwOgdSbtx833oMnVk9sa2po7Y5zLMDEW/SHm8oo002dk5aPHwMDkUllEiPsX/zveGW7vlTcrlN4S4HH5HPH7I1mJR/ao+CshJbXqC2dypSrMm2jmrRODi5knciWEIfVT4Dr8bdjbCLneKiTnfdUXjTnnkpXIXTNE0lYksEFe5i10wn8xdYWt//MsB6kNkWlxYSvC4lUHyTv1i+IPUY/sAMAoUUT+noSfizRzEZAd+cI7LLCUH3Jewl80sqAgflY6rFGp1B54sAc45AFlUqmuaVN5o2vcDziNJc3hJDGt+/kZimaQRQGJ/5faWpxYN/ow7i11Bo+Yw+qREFpclTQaHWkdU9qZoyoG7JSsjYDIPhSTkK2PcjoBBrtiidCG4Zt8P8bRlNZyyj4K7aYx+tEpeUk/RG2p
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3hl03hluUJSP7ebO2w5AQLTFrnZljic1n7LrzbvVCW1tl7CQLC97BZOQF9UP?=
+ =?us-ascii?Q?ordqzP7gjv4OH8BD9G1jp7191D3w5IXsfy3XgiRxFaxyWmwWJL9XCvSbv58Y?=
+ =?us-ascii?Q?JxxXVpKy/t9yC4s6wFeVZdZGnefxaB8A3Umx6eJ1oJayPHcaZLGGBr74sl7q?=
+ =?us-ascii?Q?mTbyRbHt2eamvMw5fa82r7XwOIpLrI5FvIkmGg6/n+VXhseDVLFQUXsyxHwZ?=
+ =?us-ascii?Q?O8csllyfpgTuCZ4ZYxp3Ipkw0NCeqAPE5iazF1YNJUIbv5t/NkqxgfsPVDkx?=
+ =?us-ascii?Q?wy5bWwPPTI2VYhfaas8dt/wFBfrWuLtY4MW9n3+rSLDfKPMZXihqNcyu3PTa?=
+ =?us-ascii?Q?Js8Qn3Uz3le8sRrd7KT419A/qg8f5Ip1LAbGuwGmSODkL69iqpHGy+ep90Z9?=
+ =?us-ascii?Q?Y1OrRWqc/FeKXDsrsE1LYNjQgR9HdDiXwTVPsOfRFwJI+W+fkuIbP0v1vuHp?=
+ =?us-ascii?Q?5TrJ7vNFfF5G9li2sAZghamgYIdo6YqhLx4cjP8xwRJJ1lbbpd2w71jc6Crc?=
+ =?us-ascii?Q?N8O5A7XvBdIb3F5w2S0baBIV3llXCIi9c/khsDfkv84Hg43PToIkKF9XC4AE?=
+ =?us-ascii?Q?3ONostvFZ0coa96kLuudq+3hRi2nAsJt4BP60uirWR+nV2+EaVoqE94CqbOS?=
+ =?us-ascii?Q?cQXV7P17t3H4wdta/REsf22vnYQMeB/C4Hn8ycLunc0a28Qxf1OzYoLH6Oi8?=
+ =?us-ascii?Q?8AAr2h3IvHqzm4BgaAs0mTAgmsada666ScZJEzfXLpUizcRaYfhfBeuq1d4S?=
+ =?us-ascii?Q?b1MhKXF/iv0D1Zf5QzAdE+PnT5VzZUJTunYsnogGACXiHF3K1XWRpjD+HoxL?=
+ =?us-ascii?Q?zgBogs36PyoBb0jXY+iMMZamuYADZONo171AOsOXNj7SM8IkxugEEkbgoC5K?=
+ =?us-ascii?Q?vusKHf5/tMVnb/KWRV/rbxVPo3mfYdiD3CQTamRJqjYO6bmbYCaRDLM+juPJ?=
+ =?us-ascii?Q?hY+EBEepjrZAkWh6nd53nhIjMW8NYKekzeVWMdtuu9hTeC0QW+tx+k9il3Js?=
+ =?us-ascii?Q?Ijz0/LcGygSqBaVJ8T/TDNmYjkGCUmY5soiWGHI1BLthFi0eFBJazemDWB7Z?=
+ =?us-ascii?Q?KPvRKchNmsQlnH8oVTmSv+l/mADY5+SxskGjnkESKJ10r4sY3+tvYXF0HKQc?=
+ =?us-ascii?Q?+r6B815e1S95bOe1jeyaZKVSEFx4FeHpjHCqvcsDCzf4/uh+nixJxRZyz6Xr?=
+ =?us-ascii?Q?ID/dCfnRsIYZItEgMKDB6hLyDPHc7lEgERb3w0OPU9JQ+iKXw+NmUkipGW3O?=
+ =?us-ascii?Q?TDUskx64NBa5jqhjbUbhMnMEM/No3VETu7d/5csV5my9H2vVnHpKz41nVjov?=
+ =?us-ascii?Q?u0zDg9GdWUxk5DN0bhAv9yLRgDvvLwfcoQbhIV9cUe4P6JvH5vAjfrhx/etN?=
+ =?us-ascii?Q?Lp7PSHcbRDtGExAS3NEs0Hc58I73FkB7J2m+E6Iro4gLRpYsuYnYTSPa5nF6?=
+ =?us-ascii?Q?JdDpmacQFT3u4DBwoZLE0Xnm8Nlp+t6aCWJtYImkS1tOJ80Cvl1VPKlO274S?=
+ =?us-ascii?Q?BGSaQqT3ZCT2W/SwyN0yecG61Sv8gYzinaRaajlRvW11FIx8dkFeW6biGpfH?=
+ =?us-ascii?Q?AIPG9LBDGc/VChqZMCUnMQcgxR93N5R/JXOYUkmn?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7505c40-be1f-4694-29d3-08dcbc7e54af
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 16:29:55.3520
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PStltvvzIdjoPF9xmuQDyxrBk4/iiyXO5TLtpLOWAZQW+NluuOZ4Y6FfiGzfwpSd+cCGTIICTesqm/cvwH7QOQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8530
 
+Convert binding doc colibri-vf50-ts.txt to yaml.
+Additional change:
+- add ref touchscreen.yaml.
+- remove standard pinctrl properties.
 
+Fix below warning:
+arch/arm64/boot/dts/freescale/imx8qm-apalis-eval.dtb: /touchscreen:
+  failed to match any schema with compatible: ['toradex,vf50-touchscreen']
 
-On 07/08/2024 9:54 am, Thorsten Leemhuis wrote:
-> On 01.08.24 21:05, Ian Rogers wrote:
->> On Wed, Dec 6, 2023 at 4:09 AM Linux regression tracking #update
->> (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
->>>
->>> [TLDR: This mail in primarily relevant for Linux kernel regression
->>> tracking. See link in footer if these mails annoy you.]
->>>
->>> On 22.11.23 00:43, Bagas Sanjaya wrote:
->>>> On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
->>>>> Perf broke on all Apple ARM64 systems (tested almost everything), and
->>>>> according to maz also on Juno (so, probably all big.LITTLE) since v6.5.
->>>
->>> #regzbot fix: perf parse-events: Make legacy events lower priority than
->>> sysfs/JSON
->>> #regzbot ignore-activity
->>
->> Note, this is still broken.
-> 
-> Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
-> this? Or is this a "we are screwed one way or another and someone has to
-> bite the bullet" situation?
-> 
-> Ciao, Thorsten
-> 
->> The patch changed the priority in the case
->> that you do something like:
->>
->> $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
->>
->> but if you do:
->>
->> $ perf stat -e 'cycles' benchmark
->>
->> then the broken behavior will happen as legacy events have priority
->> over sysfs/json events in that case. To fix this you need to revert:
->> 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
->> events over legacy"
->>
->> This causes some testing issues resolved in this unmerged patch series:
->> https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.com/
->>
->> There is a bug as the arm_dsu PMU advertises an event called "cycles"
->> and this PMU is present on Ampere systems. Reverting the commit above
->> will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
->> __evlist__add_default") to fix ARM's BIG.little systems (opening a
->> cycles event on all PMUs not just 1) will cause the arm_dsu event to
->> be opened by perf record and fail as the event won't support sampling.
->>
->> The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.com/
->> fixes this by only opening the cycles event on core PMUs when choosing
->> default events.
->>
->> Rather than take this patch the revert happened as Linus runs the
->> command "perf record -e cycles:pp" (ie using a specified event and not
->> defaults) and considers it a regression in the perf tool that on an
->> Ampere system to need to do "perf record -e
->> 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
->> will choose the cycles event correctly and with better precision the
->> pp for systems that support it, but it was still considered a
->> regression in the perf tool so the revert was made to happen. There is
->> a lack of perf testing coverage for ARM, in particular as they choose
->> to do everything in a different way to x86. The patch in question was
->> in the linux-next tree for weeks without issues.
->>
->> ARM/Ampere could fix this by renaming the event from cycles to
->> cpu_cycles, or by following Intel's convention that anything uncore
->> uses the name clockticks rather than cycles. This could break people
->> who rely on an event called arm_dsu/cycles/ but I imagine such people
->> are rare. There has been no progress I'm aware of on renaming the
->> event.
->>
->> Making perf not terminate on opening an event for perf record seems
->> like the most likely workaround as that is at least something under
->> the tool maintainers control. ARM have discussed doing this on the
->> lists:
->> https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.com/
->> but since the revert in v6.10 no patches have appeared for the v6.11
->> merge window. Feature work like coresight improvements and ARMv9 are
->> being actively pursued by ARM, but feature work won't resolve this
->> regression.
->>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Change from v1 to v2
+- fix missed required properties
+- use original submitter and input maintainer
+- add value limitted vf50-ts-min-pressure, just provide rough range, which
+not mention in original doc
+- fix style problem in example
+---
+ .../input/touchscreen/colibri-vf50-ts.txt     | 34 --------
+ .../input/touchscreen/toradex,vf50.yaml       | 78 +++++++++++++++++++
+ 2 files changed, 78 insertions(+), 34 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml
 
-I got some hardware with the DSU PMU so I'm going to have a go at trying 
-to send some fixes for this. My initial idea was to try incorporate the 
-"not terminate on opening" change as discussed in the link directly 
-above. And then do the revert of the "revert of prefer sysfs/json".
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt b/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
+deleted file mode 100644
+index ca304357c374a..0000000000000
+--- a/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
++++ /dev/null
+@@ -1,34 +0,0 @@
+-* Toradex Colibri VF50 Touchscreen driver
+-
+-Required Properties:
+-- compatible must be toradex,vf50-touchscreen
+-- io-channels: adc channels being used by the Colibri VF50 module
+-    IIO ADC for Y-, X-, Y+, X+ connections
+-- xp-gpios: FET gate driver for input of X+
+-- xm-gpios: FET gate driver for input of X-
+-- yp-gpios: FET gate driver for input of Y+
+-- ym-gpios: FET gate driver for input of Y-
+-- interrupts: pen irq interrupt for touch detection, signal from X plate
+-- pinctrl-names: "idle", "default"
+-- pinctrl-0: pinctrl node for pen/touch detection, pinctrl must provide
+-    pull-up resistor on X+, X-.
+-- pinctrl-1: pinctrl node for X/Y and pressure measurement (ADC) state pinmux
+-- vf50-ts-min-pressure: pressure level at which to stop measuring X/Y values
+-
+-Example:
+-
+-	touchctrl: vf50_touchctrl {
+-		compatible = "toradex,vf50-touchscreen";
+-		io-channels = <&adc1 0>,<&adc0 0>,
+-				<&adc0 1>,<&adc1 2>;
+-		xp-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+-		xm-gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
+-		yp-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
+-		ym-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+-		interrupt-parent = <&gpio0>;
+-		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
+-		pinctrl-names = "idle","default";
+-		pinctrl-0 = <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpios>;
+-		pinctrl-1 = <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_gpios>;
+-		vf50-ts-min-pressure = <200>;
+-	};
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml
+new file mode 100644
+index 0000000000000..cdf6c073dcb8c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml
+@@ -0,0 +1,78 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/touchscreen/toradex,vf50.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Toradex Colibri VF50 Touchscreen
++
++maintainers:
++  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
++  - Sanchayan Maity <maitysanchayan@gmail.com>
++
++properties:
++  compatible:
++    const: toradex,vf50-touchscreen
++
++  interrupts:
++    maxItems: 1
++
++  io-channels:
++    maxItems: 4
++    description:
++      adc channels being used by the Colibri VF50 module
++      IIO ADC for Y-, X-, Y+, X+ connections
++
++  xp-gpios:
++    description: FET gate driver for input of X+
++
++  xm-gpios:
++    description: FET gate driver for input of X-
++
++  yp-gpios:
++    description: FET gate driver for input of Y+
++
++  ym-gpios:
++    description: FET gate driver for input of Y-
++
++  vf50-ts-min-pressure:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 50
++    maximum: 2000
++    description: pressure level at which to stop measuring X/Y values
++
++required:
++  - compatible
++  - io-channels
++  - xp-gpios
++  - xm-gpios
++  - yp-gpios
++  - ym-gpios
++  - interrupts
++  - vf50-ts-min-pressure
++
++allOf:
++  - $ref: touchscreen.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++
++    touchscreen {
++        compatible = "toradex,vf50-touchscreen";
++        interrupt-parent = <&gpio0>;
++        interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
++        io-channels = <&adc1 0>, <&adc0 0>, <&adc0 1>, <&adc1 2>;
++        xp-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
++        xm-gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
++        yp-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
++        ym-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
++        pinctrl-names = "idle", "default";
++        pinctrl-0 = <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpios>;
++        pinctrl-1 = <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_gpios>;
++        vf50-ts-min-pressure = <200>;
++    };
++
+-- 
+2.34.1
 
-FWIW I don't think Juno currently is broken if the kernel supports 
-extended type ID? I could have missed some output in this thread but it 
-seems like it's mostly related to Apple M hardware. I'm also a bit 
-confused why the "supports extended type" check fails there, but maybe 
-the v6.9 commit 25412c036 from Mark is missing?
-
-I sent a small fix the other day to make perf stat default arguments 
-work on Juno, and didn't notice anything out of the ordinary: 
-https://lore.kernel.org/linux-perf-users/dac6ad1d-5aca-48b4-9dcb-ff7e54ca43f6@linaro.org/T/#t
-I agree that change is quite narrow but it does incrementally improve 
-things for the time being. It's possible that it would become redundant 
-if I can just include Ian's change to use strings for Perf stat.
-
-Of course I only think I have a handle on the issue right now, seems 
-like it has a lot of moving parts and something else always comes up. If 
-I hit a wall at some point I will come back here.
-
-Thanks
-James
 
