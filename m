@@ -1,57 +1,87 @@
-Return-Path: <linux-kernel+bounces-286897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B90952020
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:37:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2D1952018
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93FCEB21F44
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:36:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F96DB2CFB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764021B86EF;
-	Wed, 14 Aug 2024 16:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D511B4C35;
+	Wed, 14 Aug 2024 16:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="KtUVRdbB"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q5jVEtw3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A8C2BB1C;
-	Wed, 14 Aug 2024 16:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23151B8E93
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653393; cv=none; b=VwmhG3v/AsODA677uyQLqhRJpYZxNhAMz3THnbxviaPbG181EmTK9VoF6bfco2wPZZA4GZiP2FR0LCPu/ubT2CD/6DVKP1y7J9yM8yyyeKRQN/uIbh+iNBheyOmxyvkdRnBHJHUAZWZCQsRaxSM5xQEc65u2kwYBAEvmUW0tTI4=
+	t=1723652363; cv=none; b=heWIM28//rzhAqI2P48vtl2sGa0FxSMOfEXdq1CTIXZvb7WZGv7HWvbxqpYUeAQTrd9OvxUutBpk61FNEQghzBqA4eobuwJGmDoygm5eq/VLn8ucmeNHn/nzFMPO9xpExrk0bXzBKKvxB/ZQPoP1YB6HlDzfkVeFOfOIVuAAEq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653393; c=relaxed/simple;
-	bh=SD4ky/IGZ61AUsL3mlyIH0wAdX/QeyBja3qwrblQLCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eRoqu+ZcMsq0O9slq1HAr10PoNS4eNxZnFMB/9zDaw5wbx9RdqxRz/9DTRkcl1mhXbnaT6ApKfrRvY+uNMY73/YcGUfnPklvdJG2LVgaGzubvXdA1VoDGjT1ERE41OO8xxHBho7gIEyj6gYqerE+V2kPzeLQU/fSOiBuUd7M4Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=KtUVRdbB; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
-	List-Owner:List-Archive; bh=+XpfXLOB0tocY50bNKQJ2ipYCYlbg8wHXzHAW0qFiAM=; b=K
-	tUVRdbBqDrp0jrRi3gCXjpHNOU9kRO3WNVkVqYqw0ngYhOY2gbAynfhM9pmiKrfedRcYtgni6X3RG
-	yjdSUqqp3E1ecKDiM1VViWZjsZbHf4wa7LfPhla1GeDD7NGV4hqL0wt8lm+0hlpbMdN6QgkWHOz2g
-	DLPllvyTrehK8BlxclvadOrAxU+T6k7eZzdlTdKA3W9/WBsEb3NEoiGYJa7e4LJMyrt1RyFpL08qw
-	qF7vzUDqkdqnPi3LRFSqVnUIHvvZFxhD7v/KgxMdtpQQycLjYFG75RxbZvBTMxrqo/FzR2t8mOe7V
-	bEKGG40AhrE+q4edmoC5bvfJnu2bMqL0Q==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1seGiK-00BLyg-26;
-	Wed, 14 Aug 2024 17:19:08 +0100
-Date: Wed, 14 Aug 2024 17:19:08 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-Subject: [RFC] [PATCH] tpm: Clean up TPM space after command failure
-Message-ID: <ZrzY_LWIXABkqd-S@earth.li>
+	s=arc-20240116; t=1723652363; c=relaxed/simple;
+	bh=OwGhmYU9SpdjEP/Qg74+ZT0vmXSL65coCmc5E0UHD9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTjoFvb3PsoNlUoiLxpQv8873uktyrbMRBBQ9beVN9qhTsLB1tAvjHvIXJmgtDbJqyodXzu2mMk8x/dWJZ6XIwLGGe2mvIW5oYZla+2wwM0bogr55hrr0dEged/VQLTZaOtQa7+UcbTzsoNFo2k6lYYEVxSuXDQUlyWYB9tnWj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q5jVEtw3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723652360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sKjhEHT5Khyzus+b/pzSGTlNSXgqg5g7ApvnqngqfJo=;
+	b=Q5jVEtw3o7jGERQs/7q7NVk0SF72kJJwnEdD2PNMak4dvc7lIEOZEyI4+XdjdAlpmtfDHz
+	JR+uoCjlXCoGRkVmkN+ERBQq7AhyiBF0aQulNljPVgoTnL+Lg0e71E7x+CDS8CvDATXEu0
+	lNWFpul7hrdGBeRQs2JVHk4Yeg0zQpM=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-70-iWKg3ueaMBu5jhqhuPzKHA-1; Wed, 14 Aug 2024 12:19:19 -0400
+X-MC-Unique: iWKg3ueaMBu5jhqhuPzKHA-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a1dc85c14aso819389785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:19:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723652358; x=1724257158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sKjhEHT5Khyzus+b/pzSGTlNSXgqg5g7ApvnqngqfJo=;
+        b=VcMvQJICJavK0x8PcCfUFG8O1xuySqHdUecH+nc1AaDf74OmXA7Oel+mbr2XVSwGWB
+         rHpdP6PaaYyWAscnFZmdxRk/gsHdidL0/aa8C8NnsVLy7GYVlCo05IZJNDPRuPFk+Hn6
+         nqpGOv+StKZ44DnMbjdajRbFKTHBJG2UzpkhbzYj1EmzNBTRZKeQNDFrHuWW0Xt6Lrig
+         PU2OXLelWEwke/9x/17dkTUTixOsxH1rDizxM7xZyrL9bZJqTKBWpPO/AI/rV5/NtkMg
+         s4EBZwC50cnU0stJZ1M01b10Ktb9TUkwM97X+x6BvXROrHyGtqLEeCyASqATcYpvQYbJ
+         rZAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbov8W3fb94yIiWLmI07dYtSyyQzJn3MRLmx7cZB/QJvQdrXzo11CqwRIIDcInuK6kUHMlxDptx/lao1lKoSzHtjEQT63ClhCcyE11
+X-Gm-Message-State: AOJu0YxkksumWOC7iwpd/zrT+72gIr4yU4oltvJYBc/9EwNlNcJuz338
+	OHrATBTD/9TQI6QYYbiobgYC3XhMhP2hIpGq7aWJ16D185HzhWB1OCnkzWzxP3ZpK4+oXtptIAF
+	i7gDm6sPDti5PzJZw/uVFvWS+a0Bqvdf+CxFJ3el8/6s7wNDfHlox9qtH/M3jeQ==
+X-Received: by 2002:a05:6214:5c01:b0:6b2:bdcc:f45b with SMTP id 6a1803df08f44-6bf5d26aa76mr29082686d6.47.1723652358511;
+        Wed, 14 Aug 2024 09:19:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEt9hHbhI3xO/6YOemajUbtX/MgNEDnatt18EPskyAe5F9AR4KMUR9C9UJlEn1m9ge+IrtqvA==
+X-Received: by 2002:a05:6214:5c01:b0:6b2:bdcc:f45b with SMTP id 6a1803df08f44-6bf5d26aa76mr29082496d6.47.1723652358093;
+        Wed, 14 Aug 2024 09:19:18 -0700 (PDT)
+Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6a7a8c02sm2632526d6.10.2024.08.14.09.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 09:19:17 -0700 (PDT)
+Date: Wed, 14 Aug 2024 09:19:16 -0700
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] iommu/vt-d: Factor out helpers from
+ domain_context_mapping_one()
+Message-ID: <ubyjtqgr3seyd6w7oafei2g7illhxqwfpbfms7gyymt7sc7qup@zqutbrqunwxq>
+References: <20240806023941.93454-1-baolu.lu@linux.intel.com>
+ <20240806023941.93454-6-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,52 +90,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240806023941.93454-6-baolu.lu@linux.intel.com>
 
-We've been seeing a problem where TPM commands time out, which if
-they're the last command before the TPM device is closed causes a leak
-of transient handles. They can be seen and cleaned up (with a flush
-context) if the /dev/tpm0 device is used instead of /dev/tpmrm0, but it
-seems like we should be doing this automatically on the transmit error
-path. Patch below adds a tpm2_flush_space on error to avoid this.
+On Tue, Aug 06, 2024 at 10:39:39AM GMT, Lu Baolu wrote:
+> Extract common code from domain_context_mapping_one() into new helpers,
+> making it reusable by other functions such as the upcoming identity domain
+> implementation. No intentional functional changes.
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Does this seem reasonable? The other query is whether tpm2_del_space
-should cleanup the contexts as well, rather than just the sessions.
-
-(Obviously in an ideal world we wouldn't see the timeouts at all, and
-I'm still trying to work on getting to the bottom of these, which are
-generally infrequent, but happening enough across our fleet that we were
-able to observe this handle leak.)
-
-From: Jonathan McDowell <noodles@meta.com>
-
-tpm_dev_transmit prepares the TPM space before attempting command
-transmission. However if the command fails no rollback of this
-preparation is done. This can result in transient handles being leaked
-if the device is subsequently closed with no further commands performed.
-
-Fix this by flushing the space in the event of command transmission
-failure.
-
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
-
----
- drivers/char/tpm/tpm-dev-common.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 30b4c288c1bb..c3fbbf4d3db7 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -47,6 +47,8 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 
- 	if (!ret)
- 		ret = tpm2_commit_space(chip, space, buf, &len);
-+	else
-+		tpm2_flush_space(chip);
- 
- out_rc:
- 	return ret ? ret : len;
--- 
-2.46.0
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
 
