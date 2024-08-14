@@ -1,68 +1,183 @@
-Return-Path: <linux-kernel+bounces-286965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FF59520EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6929520F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA3028B581
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:18:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BCF28BFBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892901BBBF8;
-	Wed, 14 Aug 2024 17:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439C81B9B2D;
+	Wed, 14 Aug 2024 17:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyOrKVu1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQMkLTO+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB87C1BB6B8;
-	Wed, 14 Aug 2024 17:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2FE1BC072;
+	Wed, 14 Aug 2024 17:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723655889; cv=none; b=IFJy00Lgk5zBfmItNDyUAkHINp9r+s67nJj0dSzAQb+4pa2rLV7Qw7CipacIAMBTZNjq+GNjRDT811aGhAlq61+UZfndOuUOyGC/KOo52Gsev3wLwpEuMZTzFVCeiLSj8uEYG6qqPeG3eoeBuYDmdzHkqeTx1GgUF6OtpD8JpfA=
+	t=1723655929; cv=none; b=TUezd+srBGNljdNXZz7hlXRsJVMgixacxC0EujZm8uhJ6e5mKbkt93d3EK/eBk7263CNaUW3dZ+TjifgYxGdoKNL8bwvDcpcpZXIn3lmFqkmxa/cGgPCcq5+9X1sZzmVU/i8IPiJmHiG3+6zI/ZZ7WDJKMr63hLE6Z0r7Gev7uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723655889; c=relaxed/simple;
-	bh=HxlRhzk1Ob/LiT8iJm67CmU6Xj5N9LEAoLVSK1YCj1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sjg+Z/08QW5No+cFHuPrMMfJ4+MWcDiGHyk6e8Kqyhb218NFzUqNONzJxtVjauL185arK9DPAIdSMiKh+ZnPr05UWDtlSR0ADTd4/UsL6GoglXz+beLYqjXN/nw3QcCfUh8SAsMs2D54ouixGxddEHUMcUkC0uAOV4DyZqj+rBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyOrKVu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804FDC116B1;
-	Wed, 14 Aug 2024 17:18:09 +0000 (UTC)
+	s=arc-20240116; t=1723655929; c=relaxed/simple;
+	bh=JAX+m4fppNgSQ/+GhddMYohO4O4t5T3sNGxMKK7zuSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dqXRZ/5fQq/YGlIUIm4MC48X9/Jve7jP9b/sKCL5IdBhsV13ne+qgzxtOos3wZAeE1Du005QJvFdkFssT6eW1fTEffgB0LgNkVCoMvKcrUdLJ2kApK+xc6FtcCUGD0Uel3t6nuxO5z3E6CgGJLDtXfdq0rcQIwHwyHtMm0l6zw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQMkLTO+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0C1DC4AF0B;
+	Wed, 14 Aug 2024 17:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723655889;
-	bh=HxlRhzk1Ob/LiT8iJm67CmU6Xj5N9LEAoLVSK1YCj1U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OyOrKVu1Cjc4kTEy4uyKTsK83WCfe+AmUf3bp5ShhcJRurp0LYXOCmushoZQHwvd4
-	 gbD5FHKLYgx6wtqaQOtH3Bl2noO7aDqR/CZBUjCyd+rwWBLvc4ojNtdf+8QmzXl/9Z
-	 PoENmCHBCsJOg8UIC9LeSSwp9Un5yct/70HOMbZK/8Z5YWupiH+bko6EMt4D63bdW6
-	 C6p+0TR+0E9lz1ICAi5dZ24G6+X25C9mXcSca1NMQUo19QW5m9ze/zcM8qgJAuwYl7
-	 FwNmvjsCjwn/SlQbelYL3nXU2bj2G5wT5HWSHaYJTJsACLRcP6M2OmqWMuK7WwF2W7
-	 jrgpXrOUQ0MhQ==
-Date: Wed, 14 Aug 2024 10:18:08 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org
-Subject: Re: [PATCH] selftests/net/pmtu.sh: Fix typo in error message
-Message-ID: <20240814101808.4409c4b7@kernel.org>
-In-Reply-To: <20240814171403.32374-1-abhashkumarjha123@gmail.com>
-References: <20240814171403.32374-1-abhashkumarjha123@gmail.com>
+	s=k20201202; t=1723655928;
+	bh=JAX+m4fppNgSQ/+GhddMYohO4O4t5T3sNGxMKK7zuSc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KQMkLTO+GrZza97ONRv7qao/005tKEIOtXRv85kDSL6S2k3RrmjviX1hO1GLa1+kM
+	 wDdbvnH93u2oFc6dnuXGEFt9scwU9PSUAhsprcIfu6qN+hTBNo19RErPvf2/n56+l1
+	 yCv4mR45wIDKykkMRG+k0mrax4qOT/DlKxayB7hdyZh3mXsDpYrN7Nk444vLmqtVCs
+	 dfsZhbc0s3bA0SFm3pqxK3XCYXhRISfyCmvUjL5AK6MCrJJv5J+E1wpAW8XBJX3rDV
+	 qOoKatU1rZDJZY3NEi5WWqyi7R2ZzBf9CVNjzWvOIdo7ZAMH0M9Ze59/LsIJ7UhMEQ
+	 osgUwx4JrEYGA==
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3db165f8211so2572b6e.1;
+        Wed, 14 Aug 2024 10:18:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQrbLaRoEGSGgD6OKI05Hv4pte77OT9GaFCRVx75ZAd9nFUOOgqEAHtSdxOuvCa/PMpg2QbptclUn1B5Y=@vger.kernel.org, AJvYcCWRGbwN80FlCdArMfbVHInecEtdNnB31HxqaySVbHzSBJUzzsOQEyRTZeLcSRaaHCwAfoz/PDJiXNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWgha0Ib4iGn4j9sayQmwi2BXt3PN3fQj31Iw8NpLKc9BzhTN9
+	Gv1uiw7u9aZh3r+zluJzqCbXMb9aDg0gnD68wCbmjOaYXwD+jLQ7smp6Yk3WEvBg+WQQKuD7HVL
+	K7mECl98DY3lmEoz8Kc9QWB4VQrM=
+X-Google-Smtp-Source: AGHT+IEcPur4ZSNbQqbpwTgvwU44XbV9zRTh9m5di2rNYc+Kr8Hli3o+31uaJek63R9rWQJmXuoHZ9cqVzGZKhITdtU=
+X-Received: by 2002:a05:6870:ac11:b0:25e:dce:491b with SMTP id
+ 586e51a60fabf-26fe59bb7bbmr2475269fac.1.1723655928230; Wed, 14 Aug 2024
+ 10:18:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1903691.tdWV9SEqCh@rjwysocki.net> <8419356.T7Z3S40VBb@rjwysocki.net>
+ <291044b7-7300-42c2-91e6-fef164482cf3@piie.net>
+In-Reply-To: <291044b7-7300-42c2-91e6-fef164482cf3@piie.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 14 Aug 2024 19:18:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h9b2E0meeHGRtRv+=GbsABUs=L4RqAvAZuCksU+uN0cQ@mail.gmail.com>
+Message-ID: <CAJZ5v0h9b2E0meeHGRtRv+=GbsABUs=L4RqAvAZuCksU+uN0cQ@mail.gmail.com>
+Subject: Re: [PATCH v1 3/4] thermal: gov_bang_bang: Add .manage() callback
+To: =?UTF-8?Q?Peter_K=C3=A4stle?= <peter@piie.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 14 Aug 2024 22:44:03 +0530 Abhash Jha wrote:
-> The word 'expected' was spelled as 'exepcted'.
-> Fixed the typo in this patch.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+On Wed, Aug 14, 2024 at 12:50=E2=80=AFAM Peter K=C3=A4stle <peter@piie.net>=
+ wrote:
+>
+> On 13.08.24 16:27, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > After recent changes, the Bang-bang governor may not adjust the
+> > initial configuration of cooling devices to the actual situation.
+> >
+> > Namely, if a cooling device bound to a certain trip point starts in
+> > the "on" state and the thermal zone temperature is below the threshold
+> > of that trip point, the trip point may never be crossed on the way up
+> > in which case the state of the cooling device will never be adjusted
+> > because the thermal core will never invoke the governor's
+> > .trip_crossed() callback.  [Note that there is no issue if the zone
+> > temperature is at the trip threshold or above it to start with because
+> > .trip_crossed() will be invoked then to indicate the start of thermal
+> > mitigation for the given trip.]
+> >
+> > To address this, add a .manage() callback to the Bang-bang governor
+> > and use it to ensure that all of the thermal instances managed by the
+> > governor have been initialized properly and the states of all of the
+> > cooling devices involved have been adjusted to the current zone
+> > temperature as appropriate.
+> >
+> > Fixes: 530c932bdf75 ("thermal: gov_bang_bang: Use .trip_crossed() inste=
+ad of .throttle()")
+> > Link: https://lore.kernel.org/linux-pm/1bfbbae5-42b0-4c7d-9544-e9885571=
+5294@piie.net/
+> > Cc: 6.10+ <stable@vger.kernel.org> # 6.10+
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> oops, previously sent from wrong email address, here again from correct o=
+ne...
+> Acked-by: Peter K=C3=A4stle <peter@piie.net>
 
-Missing cc: netdev@ please repost
+No worries and thanks for the ACKs!
+
+I gather that they mean that the changes work for you.
+
+> > ---
+> >   drivers/thermal/gov_bang_bang.c |   30 ++++++++++++++++++++++++++++++
+> >   1 file changed, 30 insertions(+)
+> >
+> > Index: linux-pm/drivers/thermal/gov_bang_bang.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
+> > +++ linux-pm/drivers/thermal/gov_bang_bang.c
+> > @@ -26,6 +26,7 @@ static void bang_bang_set_instance_targe
+> >        * when the trip is crossed on the way down.
+> >        */
+> >       instance->target =3D target;
+> > +     instance->initialized =3D true;
+> >
+> >       dev_dbg(&instance->cdev->device, "target=3D%ld\n", instance->targ=
+et);
+> >
+> > @@ -80,8 +81,37 @@ static void bang_bang_control(struct the
+> >       }
+> >   }
+> >
+> > +static void bang_bang_manage(struct thermal_zone_device *tz)
+> > +{
+> > +     const struct thermal_trip_desc *td;
+> > +     struct thermal_instance *instance;
+> > +
+> > +     for_each_trip_desc(tz, td) {
+> > +             const struct thermal_trip *trip =3D &td->trip;
+> > +
+> > +             if (tz->temperature >=3D td->threshold ||
+> > +                 trip->temperature =3D=3D THERMAL_TEMP_INVALID ||
+> > +                 trip->type =3D=3D THERMAL_TRIP_CRITICAL ||
+> > +                 trip->type =3D=3D THERMAL_TRIP_HOT)
+> > +                     continue;
+> > +
+> > +             /*
+> > +              * If the initial cooling device state is "on", but the z=
+one
+> > +              * temperature is not above the trip point, the core will=
+ not
+> > +              * call bang_bang_control() until the zone temperature re=
+aches
+> > +              * the trip point temperature which may be never.  In tho=
+se
+> > +              * cases, set the initial state of the cooling device to =
+0.
+> > +              */
+> > +             list_for_each_entry(instance, &tz->thermal_instances, tz_=
+node) {
+> > +                     if (!instance->initialized && instance->trip =3D=
+=3D trip)
+> > +                             bang_bang_set_instance_target(instance, 0=
+);
+> > +             }
+> > +     }
+> > +}
+> > +
+> >   static struct thermal_governor thermal_gov_bang_bang =3D {
+> >       .name           =3D "bang_bang",
+> >       .trip_crossed   =3D bang_bang_control,
+> > +     .manage         =3D bang_bang_manage,
+> >   };
+> >   THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
+> >
+> >
+> >
+>
 
