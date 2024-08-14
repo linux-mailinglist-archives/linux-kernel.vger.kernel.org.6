@@ -1,83 +1,89 @@
-Return-Path: <linux-kernel+bounces-285812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728A695130D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:22:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B93E95130B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F518283485
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:21:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DC4A1C212A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262CB383A1;
-	Wed, 14 Aug 2024 03:21:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BEA383A1;
+	Wed, 14 Aug 2024 03:21:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A59394
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7310F394
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723605712; cv=none; b=bWZXkCHnNwy3653c3eqyIiK30SWH26tjHkooewUR6TJQD6KE6pufGHKXydoFXYt6DG7OR2IWFxJvgj/NDV+0gKP2RNptv6HHxBwKZQZMLMC06mmZZKsaTMnHxJQSTPJSkTGZievARrqcsJ84tStDjGdW0V5A1Tlwvv4hY5cRp1g=
+	t=1723605664; cv=none; b=B0QRox6NjIAZzhjG1IqGdowI7dDx5+r32do1WJtyBbWFGJ2WRHd6IUnzbdAzQ+IjXwyrcVA+MTs1EdrUGH85vwiWVvi4Mm+4oj2J2/rv3WoRdb9e/yF9GR0IG/2nFIAGL7lysR2PSoDasfLutmjSsIxo51MboouOutzR6pG1nKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723605712; c=relaxed/simple;
-	bh=EKYlbfu5feokexzhrIUj+yx5rJK5eP7daBYvPdDtJ2M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uz3yDkwY6MsH6+L5HqSNOaJgcmDi5hlUcjg5QqRYvv3ntjGIl2mjCXbYCjXAk8cqeBU+5pSPD0xW6sM3wFYB7ddmwt++9YgyPMhWySJzjKyUn925Ijd8winTe6wVY7cvodFN3ep4hPRbwM0HosHQ5BohCJKOXtq+DH7wcu4p31o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WkD631sGRzndtW;
-	Wed, 14 Aug 2024 11:20:27 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 894FE1400C9;
-	Wed, 14 Aug 2024 11:21:47 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 Aug
- 2024 11:21:47 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH -next] x86/mm: Remove unused nx declarations
-Date: Wed, 14 Aug 2024 11:19:22 +0800
-Message-ID: <20240814031922.2333198-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723605664; c=relaxed/simple;
+	bh=3QiDnqCHEQ46lmUl9YmleytrkQ8uAgIxKEHEJOmI+Zw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bC949gmMW0ba+hfphZqLouz5Y0FUClf0i8R7p0UvgSGVk31Kd/m9G66d9NZbokCsV0TUTBxlTbeyTYeODqDctvDnxwBt4bTXKDK1014zWvCISoZy18MQ1Vi/8WnazPRKpnRibyybV9gGzywnlKHRF9pjfDU8ViArg7gF5K0V9OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f901cd3b5so819020939f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:21:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723605662; x=1724210462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WeOzwsxqi4uut10yzktkikUuXeNCFeLLytVzbuzAQVc=;
+        b=qNA2Txg9zJtkckgoqEObCWpkP6ajfcffMAcUh10Z9Zpv5m6LFqC527Px3Q96gmLPKP
+         RnI9TvloPTdzqqUTexlLdpHWjPPiFfau3NLxgxq88oBssdljVohWSQVUgVbTcOjlGAlt
+         ObhxtPgVY6OlVH7oFXKQkg8/1Qi4MfU1iuBCCMe2f8EA4D+PXho2npHMlHcRlMQf7n1l
+         qGV2h0eb+hwXh64Xw8rPNvyq6lvaAQAk10FY1ABKNTPOdMYGlMi6JsljymJqTO2S59vS
+         VFjGJrrIhiupTQYYvRNXTDxoxJsSF0R71V6vPIqFBPaO2qjOI67YOjtvD3pozdkUwYkF
+         j4PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMi8YuNkXOZb2B1/P3DU3mwEdrRBn2yWimzMv4bxJxti+xXzRfz7gVmleGeV76noSK7BNpj8tQw/voAzS7U34zhnpL+5wKbA8HxPCX
+X-Gm-Message-State: AOJu0YySwvm1WtsDD76jgkmxJJbbR/UJKiX5NLCgVd3sEM/3yAVVuw0X
+	XfRetKCwqnVM5Lja31ge0rZFvs/aPuF/g5tJjhngBV4cdK7NfSRQFc6MTmoikA/qxToTr5kSRlq
+	0BqxYrTENHtbYTjYyW0a8jnOVfgj6DNax/N/Hu1diLDQL2Jxg3hzgsAM=
+X-Google-Smtp-Source: AGHT+IFxkSO3aZTNJt8hWQTD3LoqkCKnVNyDTj/OWSvEOT8GzebrqSfd43uiKYo16jcstJ3dEOq2saHmdnj4TPPKy6dnZ0iDaJm7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-Received: by 2002:a05:6638:9827:b0:4c2:8e08:f588 with SMTP id
+ 8926c6da1cb9f-4cab08327e2mr67442173.2.1723605662600; Tue, 13 Aug 2024
+ 20:21:02 -0700 (PDT)
+Date: Tue, 13 Aug 2024 20:21:02 -0700
+In-Reply-To: <tencent_E51B7925E5BAF4BBCF33739E5E1BFA4B9F08@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000409ec1061f9c376a@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space
+ in f2fs_commit_atomic_write
+From: syzbot <syzbot+78ff2855f26377625419@syzkaller.appspotmail.com>
+To: chao@kernel.org, eadavis@qq.com, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Since commit 4763ed4d4552 ("x86, mm: Clean up and simplify NX enablement")
-these declarations is unused and can be removed.
+Hello,
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- arch/x86/include/asm/pgtable_types.h | 2 --
- 1 file changed, 2 deletions(-)
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 2f321137736c..6f82e75b6149 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -517,8 +517,6 @@ typedef struct page *pgtable_t;
- 
- extern pteval_t __supported_pte_mask;
- extern pteval_t __default_kernel_pte_mask;
--extern void set_nx(void);
--extern int nx_enabled;
- 
- #define pgprot_writecombine	pgprot_writecombine
- extern pgprot_t pgprot_writecombine(pgprot_t prot);
--- 
-2.34.1
+failed to checkout kernel repo git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git on commit 9e6869691724: failed to run ["git" "checkout" "9e6869691724"]: exit status 1
+error: pathspec '9e6869691724' did not match any file(s) known to git
+
+
+
+Tested on:
+
+commit:         [unknown 
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git 9e6869691724
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+dashboard link: https://syzkaller.appspot.com/bug?extid=78ff2855f26377625419
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13f2af7d980000
 
 
