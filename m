@@ -1,253 +1,139 @@
-Return-Path: <linux-kernel+bounces-287163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E83D952421
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30252952429
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2EC81C235E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 634511C20996
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF23A1EB4BB;
-	Wed, 14 Aug 2024 20:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IwZ7L/gQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABF3201243;
+	Wed, 14 Aug 2024 20:42:38 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5021EB486
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930B21C822A;
+	Wed, 14 Aug 2024 20:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723668140; cv=none; b=RzAqw5FHliajYAuPHM+pZvsaWTHVowqVZBatAQ9cqPLMPekm/RlBXtZ1agJ8Fb590qG2ytq4/0Ji2Pu7lBS50VJ0pWUN/grZDcBzVpBp1fQfgr4QFCQl8np5LX8EXrwkI3aSOh1D/wcEg4kwdXPQzMgRaZJTTLHJFXLDSCq3Yl4=
+	t=1723668158; cv=none; b=n1aZgsO94R9n5hjT7J13nG0eyaqYotPe8CzF1IJBdrsChcfvR+riYyg8s7LPRscdsTBb8lqfOkW6GjYyAWN4OzBeC7pa3r3GKZXHUYH/Sukxbl5+ulusUDeB8yUq8NmaSthav8eTiPUHljtj5KxKUR8xzpIq+RDMPQ5lGp12ids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723668140; c=relaxed/simple;
-	bh=/4RHZpXKGmdLr3x2mXP5YKs8fw+5k6cV3FZeRK23GrQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lFimb+6pLATIJ23VTTWEth3QmXQkV41y+SQ8mJtxveFmQRR9zhtGOpH+LrZtTwuAe3hbNtaKLURC+QQESZdpALv8PrQDKGXBAWv8hZkeMZRVIP/Lu+Vt7o9xG9QIRNESo5/ri2g17WDZ8OCIV+E6xRFSHYYeyfMKlVoDrLb5SE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IwZ7L/gQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723668135;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G4MNzaMiFDukGg48jovETePA3npABSpoRCz9c88nf5g=;
-	b=IwZ7L/gQG9rokjh/Nh4CF4gDfwPFIv4tUePx4Wgh5Db7mi1qOVtopyVTipTuzwDxfW0s+4
-	+fa25mwdhy1YmVihkz5jj5fw4V15DZPjoRia0dEYyW3hRgS1XtNCRhKCLd+n3+GJEjAEeu
-	YHRPrUnY628jEHkKG/T2UKt+F1FCbeM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-497-k4Nb6-ZQNa-w-MVZAByrPQ-1; Wed,
- 14 Aug 2024 16:42:11 -0400
-X-MC-Unique: k4Nb6-ZQNa-w-MVZAByrPQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97CAC1954B0F;
-	Wed, 14 Aug 2024 20:42:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9B2041955F66;
-	Wed, 14 Aug 2024 20:42:02 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Enzo Matsumiya <ematsumiya@suse.de>
-Subject: [PATCH v2 25/25] cifs: Don't support ITER_XARRAY
-Date: Wed, 14 Aug 2024 21:38:45 +0100
-Message-ID: <20240814203850.2240469-26-dhowells@redhat.com>
-In-Reply-To: <20240814203850.2240469-1-dhowells@redhat.com>
-References: <20240814203850.2240469-1-dhowells@redhat.com>
+	s=arc-20240116; t=1723668158; c=relaxed/simple;
+	bh=cy+Uj5YrfZw9WjaKbMCWzQAmFBIl0nEA1MIelRBOvZw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VOqhqCNPm8wkUvYUoJXCjG1rmBf0iG6FDv7Z7dKy/RkuhEr21dbRD8AvnHyszPUSihf9rAOjnobzEjdvZ0ls7K9jeUsxMiz9l0dnsQOquqigXFnYhMmILpFtKyiEwEBV5syp8B+kjNcTm/FK/XYAzgKKeUKbaCQ0UzXAP4QwCyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.105] (178.176.78.237) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 14 Aug
+ 2024 23:42:02 +0300
+Subject: Re: [PATCH] usb: dwc3: ep0: Don't reset resource alloc flag
+ (including ep0)
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>, Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+References: <20240814-dwc3hwep0reset-v1-1-087b0d26f3d0@pengutronix.de>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <c0e06e73-f6d1-1943-fc83-2cf742280398@omp.ru>
+Date: Wed, 14 Aug 2024 23:42:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20240814-dwc3hwep0reset-v1-1-087b0d26f3d0@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 08/14/2024 20:30:35
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187071 [Aug 14 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 25 0.3.25
+ b7c690e6d00d8b8ffd6ab65fbc992e4b6fdb4186
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.237 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.176.78.237 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.78.237
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 08/14/2024 20:35:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 8/14/2024 6:43:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-There's now no need to support ITER_XARRAY in cifs as netfslib hands down
-ITER_FOLIOQ instead - and that's simpler to use with iterate_and_advance()
-as it doesn't hold the RCU read lock over the step function.
+On 8/14/24 8:39 PM, Michael Grzeschik wrote:
 
-This is part of the process of phasing out ITER_XARRAY.
+> The DWC3_EP_RESOURCE_ALLOCATED flag ensures that the resource of an
+> endpoint is only assigned once. Unless the endpoint is reset, don't
+> clear this flag. Otherwise we may set endpoint resource again, which
+> prevents the driver from initiate transfer after handling a STALL or
+> endpoint halt to the control endpoint.
+> 
+> Commit f2e0eee47038 (usb: dwc3: ep0: Don't reset resource alloc flag)
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Tom Talpey <tom@talpey.com>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: linux-cifs@vger.kernel.org
----
- fs/smb/client/cifsencrypt.c | 51 -------------------------------------
- fs/smb/client/smbdirect.c   | 49 -----------------------------------
- 2 files changed, 100 deletions(-)
+   You forgot the double quotes around the summary, the same as you
+do in the Fixes tag.
 
-diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
-index 991a1ab047e7..7481b21a0489 100644
---- a/fs/smb/client/cifsencrypt.c
-+++ b/fs/smb/client/cifsencrypt.c
-@@ -25,54 +25,6 @@
- #include "../common/arc4.h"
- #include <crypto/aead.h>
- 
--/*
-- * Hash data from an XARRAY-type iterator.
-- */
--static ssize_t cifs_shash_xarray(const struct iov_iter *iter, ssize_t maxsize,
--				 struct shash_desc *shash)
--{
--	struct folio *folios[16], *folio;
--	unsigned int nr, i, j, npages;
--	loff_t start = iter->xarray_start + iter->iov_offset;
--	pgoff_t last, index = start / PAGE_SIZE;
--	ssize_t ret = 0;
--	size_t len, offset, foffset;
--	void *p;
--
--	if (maxsize == 0)
--		return 0;
--
--	last = (start + maxsize - 1) / PAGE_SIZE;
--	do {
--		nr = xa_extract(iter->xarray, (void **)folios, index, last,
--				ARRAY_SIZE(folios), XA_PRESENT);
--		if (nr == 0)
--			return -EIO;
--
--		for (i = 0; i < nr; i++) {
--			folio = folios[i];
--			npages = folio_nr_pages(folio);
--			foffset = start - folio_pos(folio);
--			offset = foffset % PAGE_SIZE;
--			for (j = foffset / PAGE_SIZE; j < npages; j++) {
--				len = min_t(size_t, maxsize, PAGE_SIZE - offset);
--				p = kmap_local_page(folio_page(folio, j));
--				ret = crypto_shash_update(shash, p, len);
--				kunmap_local(p);
--				if (ret < 0)
--					return ret;
--				maxsize -= len;
--				if (maxsize <= 0)
--					return 0;
--				start += len;
--				offset = 0;
--				index++;
--			}
--		}
--	} while (nr == ARRAY_SIZE(folios));
--	return 0;
--}
--
- static size_t cifs_shash_step(void *iter_base, size_t progress, size_t len,
- 			      void *priv, void *priv2)
- {
-@@ -96,9 +48,6 @@ static int cifs_shash_iter(const struct iov_iter *iter, size_t maxsize,
- 	struct iov_iter tmp_iter = *iter;
- 	int err = -EIO;
- 
--	if (iov_iter_type(iter) == ITER_XARRAY)
--		return cifs_shash_xarray(iter, maxsize, shash);
--
- 	if (iterate_and_advance_kernel(&tmp_iter, maxsize, shash, &err,
- 				       cifs_shash_step) != maxsize)
- 		return err;
-diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-index c946b38ca825..80262a36030f 100644
---- a/fs/smb/client/smbdirect.c
-+++ b/fs/smb/client/smbdirect.c
-@@ -2584,52 +2584,6 @@ static ssize_t smb_extract_folioq_to_rdma(struct iov_iter *iter,
- 	return ret;
- }
- 
--/*
-- * Extract folio fragments from an XARRAY-class iterator and add them to an
-- * RDMA list.  The folios are not pinned.
-- */
--static ssize_t smb_extract_xarray_to_rdma(struct iov_iter *iter,
--					  struct smb_extract_to_rdma *rdma,
--					  ssize_t maxsize)
--{
--	struct xarray *xa = iter->xarray;
--	struct folio *folio;
--	loff_t start = iter->xarray_start + iter->iov_offset;
--	pgoff_t index = start / PAGE_SIZE;
--	ssize_t ret = 0;
--	size_t off, len;
--	XA_STATE(xas, xa, index);
--
--	rcu_read_lock();
--
--	xas_for_each(&xas, folio, ULONG_MAX) {
--		if (xas_retry(&xas, folio))
--			continue;
--		if (WARN_ON(xa_is_value(folio)))
--			break;
--		if (WARN_ON(folio_test_hugetlb(folio)))
--			break;
--
--		off = offset_in_folio(folio, start);
--		len = min_t(size_t, maxsize, folio_size(folio) - off);
--
--		if (!smb_set_sge(rdma, folio_page(folio, 0), off, len)) {
--			rcu_read_unlock();
--			return -EIO;
--		}
--
--		maxsize -= len;
--		ret += len;
--		if (rdma->nr_sge >= rdma->max_sge || maxsize <= 0)
--			break;
--	}
--
--	rcu_read_unlock();
--	if (ret > 0)
--		iov_iter_advance(iter, ret);
--	return ret;
--}
--
- /*
-  * Extract page fragments from up to the given amount of the source iterator
-  * and build up an RDMA list that refers to all of those bits.  The RDMA list
-@@ -2657,9 +2611,6 @@ static ssize_t smb_extract_iter_to_rdma(struct iov_iter *iter, size_t len,
- 	case ITER_FOLIOQ:
- 		ret = smb_extract_folioq_to_rdma(iter, rdma, len);
- 		break;
--	case ITER_XARRAY:
--		ret = smb_extract_xarray_to_rdma(iter, rdma, len);
--		break;
- 	default:
- 		WARN_ON_ONCE(1);
- 		return -EIO;
+> was fixing the initial issue, but did this only for physical ep1. Since
+> the function dwc3_ep0_stall_and_restart is resetting the flags for both
+> physical endpoints, this also has to be done for ep0.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: b311048c174d ("usb: dwc3: gadget: Rewrite endpoint allocation flow")
+> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+> ---
+>  drivers/usb/dwc3/ep0.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
+> index d96ffbe520397..c9533a99e47c8 100644
+> --- a/drivers/usb/dwc3/ep0.c
+> +++ b/drivers/usb/dwc3/ep0.c
+> @@ -232,7 +232,8 @@ void dwc3_ep0_stall_and_restart(struct dwc3 *dwc)
+>  	/* stall is always issued on EP0 */
+>  	dep = dwc->eps[0];
+>  	__dwc3_gadget_ep_set_halt(dep, 1, false);
+> -	dep->flags = DWC3_EP_ENABLED;
+> +	dep->flags &= DWC3_EP_RESOURCE_ALLOCATED;
 
+   No ~ afer &=?
+
+[...]
+
+MBR, Sergey
 
