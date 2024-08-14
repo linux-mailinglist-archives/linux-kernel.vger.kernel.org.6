@@ -1,120 +1,209 @@
-Return-Path: <linux-kernel+bounces-286890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C890A952008
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:32:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04D00952014
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729781F27AAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C172894AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80F71B9B26;
-	Wed, 14 Aug 2024 16:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FFF1B9B3E;
+	Wed, 14 Aug 2024 16:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N6bjnwvw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Jr+E9Sdp"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2EF1B3756
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3173C1B5816;
+	Wed, 14 Aug 2024 16:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723653130; cv=none; b=qLxyzU3+Oc3EGXbU61EPdeWe3jtZzrrPQVWARq+YC3Db6oC7dhxrdqFajUG5nG99WSc5CmEx/NyLCgyt7m9Pa0XF7rXFzNSC1g9o1+XakbPJqGig40NPrRI8sl4Tsz2c2ad6XO5NeMfsDwUEGAo5QrQSr+XNRckyo5dqOqMrwhI=
+	t=1723653162; cv=none; b=Th15YX1Bf2njJ2YPGYpvUhpuQkm8viAOmQeHOrZ30OUDl39+wExUKxOd67uxmzFYIUo2GwEYpogMV+2Roaw/ATRtsV0UZDwt75F9njldObVex5ds8xmYFRrCsx8e0mOTbDfcwT3SCT9rSF2zVWglW3gjnh+laWY+cZ2OpgIBvQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723653130; c=relaxed/simple;
-	bh=yd5JNvJdC5HkhmulYzfGezhr7UErN+Z7Ol0m2BqggOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKGFPymbL0Kl5Dg9Vl7OYxjFK4yvTtWQDa1qNJSopjKEpW9Bs5rnYpLMEqn2aJ/hkiX3PhwMC286AIwo7ftYA2JyvUfIaOzY4E8WZY9r7qOIDlgCFiAe5m58xh+6Jxw8AK9sq0c81XD0FQfY80bq1PZW4knDha/7ooccgPHXrAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N6bjnwvw; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723653128; x=1755189128;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yd5JNvJdC5HkhmulYzfGezhr7UErN+Z7Ol0m2BqggOs=;
-  b=N6bjnwvwPdgBq0/6SJICI03/xFyWVR3vtoFGZG9KRFPcpV9Kr45LBJM7
-   ckE/IglnCQOSLs8v38RaT4Eb6o24GKoajhG5R60CQfY33IZVNfJ1g4AtS
-   yg+u+qt5bMzi0LJ3SX1Eci4X/hkQMpVs9uc1v3HjyLZ7dS7m8qNlf6smb
-   GmmRq57fYJT9a3+3YDmxAEyX55zYgpbZVhk/z5AbkD5VjoGy0nVORmpoz
-   wBQ/B9zgQGmcmF0N+Fhj0X0oc2M5iVttFobOaB+wcoBpShq7HrlWk5Qtp
-   mNMKwe+Txy5S/fVEcrpG24yDCmEQq+dRgzM7LcfT41te6E4mEI1YfuGMs
-   Q==;
-X-CSE-ConnectionGUID: ojayozjrSROSyBKALBDSIg==
-X-CSE-MsgGUID: EepH5fQ4Q1S3stMf5wQPqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="24786696"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="24786696"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 09:32:08 -0700
-X-CSE-ConnectionGUID: ibSyp9AqRUCpmC9ewaZ5UA==
-X-CSE-MsgGUID: q+sRb3TDTFSQ4ZP3HcsePg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="63489748"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 09:32:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1seGuo-0000000FFNX-3gmD;
-	Wed, 14 Aug 2024 19:32:02 +0300
-Date: Wed, 14 Aug 2024 19:32:02 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kernel test robot <lkp@intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>
-Subject: Re: WARNING: modpost: vmlinux: section mismatch in reference:
- bitmap_gather+0x68 (section: .text) -> sg_mask (section: .init.rodata)
-Message-ID: <ZrzcAnHNXDF2Ck6K@smile.fi.intel.com>
-References: <202406200829.IytwLyQJ-lkp@intel.com>
+	s=arc-20240116; t=1723653162; c=relaxed/simple;
+	bh=YYEs76+BWZ0Oj8YVGf2Fub642KbnoevLFK2XkEvq30k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pskZ2pWWZHFBnYUOravFcm5yRsm8i+mU+2Y8Kr/2ZWeMuc6Z7Y4XBno6YBSMkYXmn0fHsGH20pWd2IUXwsEbPShkESy6gjJHJC84IonyMksD6517sJ7UE63qpfXM9oP57j2uzjjzBb+a5drJYOyGti/9NLlDNCnUN49VOhYG70I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Jr+E9Sdp; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723653159; x=1723912359;
+	bh=HzRjnEYxCgd5sweSvuIswq75tHrQWV8FRv4rbaoLB8o=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Jr+E9SdpuUvEJBPiSuhavO9knHg4/Jmoz3U6JzWGbxUA0VXUyt09BFa8+h1IKllu/
+	 pqqSKEufaHwz7Oxv2AZXLRY0CrJIwsRcaPWiJUw31Vb/UahypkScE2+y4iMwVH1Egk
+	 SK64dQ0qcjzR8S/Gvd3coWeLb9+44yJISQCUsE06HHPiovw9zSrYrhDzLchMeMqeYJ
+	 beAn3yGqTbKW7/dzlFFBh4DSusxb1MnerNUaFi1EUPAY1ChenpU4chrskkSbBOFzSY
+	 1Kdy9EC84BUTht6TiUVEySLxpx7umeuJNGFcTKyvF4e1lsa83C1vEa0PRd3QwnnAQZ
+	 jvawIdMVHa1lw==
+Date: Wed, 14 Aug 2024 16:32:34 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
+Message-ID: <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me>
+In-Reply-To: <20240812182355.11641-7-dakr@kernel.org>
+References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-7-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 514667304e528ccd1bc15957b6357b3f74a19a4b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202406200829.IytwLyQJ-lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-+Cc: Clang and bitmap people.
+On 12.08.24 20:22, Danilo Krummrich wrote:
+> Implement `Allocator` for `Vmalloc`, the kernel's virtually contiguous
+> allocator, typically used for larger objects, (much) larger than page
+> size.
+>=20
+> All memory allocations made with `Vmalloc` end up in `vrealloc()`.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/helpers.c                      |  7 +++++++
+>  rust/kernel/alloc/allocator.rs      | 28 ++++++++++++++++++++++++++++
+>  rust/kernel/alloc/allocator_test.rs |  1 +
+>  3 files changed, 36 insertions(+)
+>=20
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index 9f7275493365..7406943f887d 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/sched/signal.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/vmalloc.h>
+>  #include <linux/wait.h>
+>  #include <linux/workqueue.h>
+>=20
+> @@ -199,6 +200,12 @@ void *rust_helper_krealloc(const void *objp, size_t =
+new_size, gfp_t flags)
+>  }
+>  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
+>=20
+> +void *rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
+> +{
+> +=09return vrealloc(p, size, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_vrealloc);
+> +
+>  /*
+>   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we c=
+an
+>   * use it in contexts where Rust expects a `usize` like slice (array) in=
+dices.
+> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator=
+.rs
+> index b46883d87715..fdda22c6983f 100644
+> --- a/rust/kernel/alloc/allocator.rs
+> +++ b/rust/kernel/alloc/allocator.rs
+> @@ -9,6 +9,7 @@
+>=20
+>  use crate::alloc::{AllocError, Allocator};
+>  use crate::bindings;
+> +use crate::pr_warn;
+>=20
+>  /// The contiguous kernel allocator.
+>  ///
+> @@ -16,6 +17,12 @@
+>  /// `bindings::krealloc`.
+>  pub struct Kmalloc;
+>=20
+> +/// The virtually contiguous kernel allocator.
+> +///
+> +/// The vmalloc allocator allocates pages from the page level allocator =
+and maps them into the
+> +/// contiguous kernel virtual space.
+> +pub struct Vmalloc;
+> +
+>  /// Returns a proper size to alloc a new object aligned to `new_layout`'=
+s alignment.
+>  fn aligned_size(new_layout: Layout) -> usize {
+>      // Customized layouts from `Layout::from_size_align()` can have size=
+ < align, so pad first.
+> @@ -55,6 +62,9 @@ impl ReallocFunc {
+>      // INVARIANT: `krealloc` satisfies the type invariants.
+>      const KREALLOC: Self =3D Self(bindings::krealloc);
+>=20
+> +    // INVARIANT: `vrealloc` satisfies the type invariants.
+> +    const VREALLOC: Self =3D Self(bindings::vrealloc);
+> +
+>      /// # Safety
+>      ///
+>      /// This method has the same safety requirements as `Allocator::real=
+loc`.
+> @@ -132,6 +142,24 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mu=
+t u8 {
+>      }
+>  }
+>=20
+> +unsafe impl Allocator for Vmalloc {
 
-On Thu, Jun 20, 2024 at 08:54:29AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   e5b3efbe1ab1793bb49ae07d56d0973267e65112
-> commit: de5f84338970815b9fdd3497a975fb572d11e0b5 lib/bitmap: Introduce bitmap_scatter() and bitmap_gather() helpers
-> date:   3 months ago
-> config: um-randconfig-r123-20240620 (https://download.01.org/0day-ci/archive/20240620/202406200829.IytwLyQJ-lkp@intel.com/config)
-> compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 78ee473784e5ef6f0b19ce4cb111fb6e4d23c6b2)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406200829.IytwLyQJ-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406200829.IytwLyQJ-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>, old ones prefixed by <<):
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-> >> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_gather+0x68 (section: .text) -> sg_mask (section: .init.rodata)
-> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_gather+0x10b (section: .text) -> sg_mask (section: .init.rodata)
-> >> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_scatter+0x68 (section: .text) -> sg_mask (section: .init.rodata)
-> WARNING: modpost: vmlinux: section mismatch in reference: bitmap_scatter+0x119 (section: .text) -> sg_mask (section: .init.rodata)
+Missing SAFETY comment.
 
-I have no other idea that this is a (yet another) clang compiler bug related to
-the constant data.
+> +    unsafe fn realloc(
 
--- 
-With Best Regards,
-Andy Shevchenko
+Does this need `#[inline]`?
 
+> +        ptr: Option<NonNull<u8>>,
+> +        layout: Layout,
+> +        flags: Flags,
+> +    ) -> Result<NonNull<[u8]>, AllocError> {
+> +        // TODO: Support alignments larger than PAGE_SIZE.
+> +        if layout.align() > bindings::PAGE_SIZE {
+> +            pr_warn!("Vmalloc does not support alignments larger than PA=
+GE_SIZE yet.\n");
+> +            return Err(AllocError);
+
+I think here we should first try to use `build_error!`, most often the
+alignment will be specified statically, so it should get optimized away.
+
+How difficult will it be to support this? (it is a weird requirement,
+but I dislike just returning an error...)
+
+---
+Cheers,
+Benno
+
+> +        }
+> +
+> +        // SAFETY: If not `None`, `ptr` is guaranteed to point to valid =
+memory, which was previously
+> +        // allocated with this `Allocator`.
+> +        unsafe { ReallocFunc::VREALLOC.call(ptr, layout, flags) }
+> +    }
+> +}
+> +
+>  #[global_allocator]
+>  static ALLOCATOR: Kmalloc =3D Kmalloc;
+>=20
+> diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allo=
+cator_test.rs
+> index 4785efc474a7..e7bf2982f68f 100644
+> --- a/rust/kernel/alloc/allocator_test.rs
+> +++ b/rust/kernel/alloc/allocator_test.rs
+> @@ -7,6 +7,7 @@
+>  use core::ptr::NonNull;
+>=20
+>  pub struct Kmalloc;
+> +pub type Vmalloc =3D Kmalloc;
+>=20
+>  unsafe impl Allocator for Kmalloc {
+>      unsafe fn realloc(
+> --
+> 2.45.2
+>=20
 
 
