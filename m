@@ -1,292 +1,235 @@
-Return-Path: <linux-kernel+bounces-286300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687F5951945
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:45:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAC96951954
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CBC91C224C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:45:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91CA928524A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EEC1AE870;
-	Wed, 14 Aug 2024 10:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8E61AE05C;
+	Wed, 14 Aug 2024 10:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QgBiCUtp"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARCQ+6LE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B34B1AE038
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723632308; cv=none; b=JGDkhQ/QMq4MwtSK+jWa3DWtZ8apm5r3XunH+nU0a2Q80GA+8668Is5ShwPl4B4QVUOYljWan1fpi5YZlx+sfYmhtXqfAe2uaR2BgX1IGC4SHfxzmMp2sV5VTK/2wCEUkTQ3YrUTQVhCT+HnYcjKJY9o66J4QwWQ1w5FjI+Jmsg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723632308; c=relaxed/simple;
-	bh=cZ9BkgG63rEN8kNe9FhooxE8MhReOnBZMnAbDlarQAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pqa65jt7T1lb+R+RyNBfxM6sq2rET1P/xyxvNpCsMRijcBCfCs84pJ6GCc6LWxfb4af0QiXrxukTRGiJYS0lGy12pk4lNqDLNwJn5GL6u3cyG5A9Eyi/+O0vKYW5HSslKMndNmBt+S3ZJJYuB264zmz5sjiTcW5lai//+DlxpjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QgBiCUtp; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b7b23793c1so37791096d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723632305; x=1724237105; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LFk4lh3cCjG0SR06SvOvwiuhTMezfgXvWpzfkPomYos=;
-        b=QgBiCUtpXay0ZhB65ngHKiBM74LRtmQEDxXXIn2/XXjq0QggV11C+PHdes5yT0WZII
-         1UU4rqBRDAfKfcKR6LgFstRXi+v80/a+9EaCzbiSEsGqLuhT5OrdJjPCjOEw73cYOOeL
-         J2UqsUf0nRPwQhDRuL6TLvQZNbVdaf2SzV268=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723632305; x=1724237105;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LFk4lh3cCjG0SR06SvOvwiuhTMezfgXvWpzfkPomYos=;
-        b=MhjoGuHdr0c4HzmhWwYKrIIVHVMqm0vinofBdOck1+ZlCyhTmiCUANyWuLZMCHP1rz
-         h9+t6axQu9gvS14eB1EO5D7HPkHhG+o2QY/F2NY5xXO3xSiVlU7jjS2eAbIAh+Bz2QI2
-         k7bD5CDB5R9QRpYjiQWXtyF0QYllQHY9MGu9gK8gq/b5IwRS5CPuOnFtaSW9IPHEBwAL
-         KQu/08jtLukoSG2nwY6zEO//FykdpEdmKfhFUUjHYnhv1+YnM7HSw/qW9ugCDdDIvA7A
-         Rr8XGYCOc+wM6VBQAAPgEWs71/tgBBEgxcA6wJzsBiv89XZI2Kw6GbF7UGdlhH5oIl+7
-         mJEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuUTIsiv4a6FPWkx/XESrX7X2bMEeJyS8J26hND4nkwc14DVh4bn1+IuPmFia4izPj6XDSVs0JyWOxjDTtSxg80GtA+ONsRneIJHTt
-X-Gm-Message-State: AOJu0YyP6xvwo9kuWEtiJlv4Rx4P1C6NwMbJ2cZA4r9Rz23V2jST4ksP
-	Hxhp0ivprFEu6Avjv9ykMIkMvMcRybJ96/vsgaKBm6ke/2B4yD81xo0cPE6Ypw==
-X-Google-Smtp-Source: AGHT+IGINV7Cr6/yUzciRzHq2zhc1Ek5UNVW7N0rj9HFgKO7ExivX+a6umTbzKbdjzFu5OuVUGXsyg==
-X-Received: by 2002:a0c:f7ce:0:b0:6bf:6714:43b3 with SMTP id 6a1803df08f44-6bf6714448emr2393696d6.21.1723632304908;
-        Wed, 14 Aug 2024 03:45:04 -0700 (PDT)
-Received: from [10.176.68.61] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82c87843sm42263316d6.31.2024.08.14.03.45.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 03:45:04 -0700 (PDT)
-Message-ID: <8de856d4-8526-4662-bb29-898b80476df9@broadcom.com>
-Date: Wed, 14 Aug 2024 12:44:58 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396FC13635F;
+	Wed, 14 Aug 2024 10:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723632424; cv=fail; b=AxuL3BFXhcYHYbyt1TM3ttqxbo1OqvBLajlcc3XFrTgDYt6+O7+gJy38g78tCp73QwMLblWA8ExcpJl8aqYAuHelKjBGpS+E8OBm/HkA3mX+udE72UYgIbXrncPxsEe6AZzSBgxy0B+sASWfG99Z/7czplVo0GfpgRrm22SYRSE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723632424; c=relaxed/simple;
+	bh=+6v4zupK70agjbjdDSdXkoyxTaaQka9grtztPC0pKl0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gzLGs2I0qpPmFop26AArBh5/j/ojDIeGku+INHHSbc2kUmLznXJV8WtCPelw1iGD4wL4N0smxOWIQ0lfydERomQ66nI7NaaM8NSmluAipBolkk9Yo2UkIuBx8n2p8rQN4ZggJL5YSXzneCc7o2Tcpn2a8MCttZZYLoTa3Yj5Xb0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARCQ+6LE; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723632422; x=1755168422;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=+6v4zupK70agjbjdDSdXkoyxTaaQka9grtztPC0pKl0=;
+  b=ARCQ+6LEOtc/zP+q43Q9ie0PjTghIDnPiekE6fO/RHD1YJbWB+GBgNan
+   p403J/nCW7yGIZX4wa/63OhSM3sMuM+hI0zvtayEt7pQlskoOF+0j/WMr
+   iD1H0tLibIe/exJoYvDo4eVl8pzJk+HDeVVQcnPNoGHehwcLG+hImBXtW
+   gEASJt9NvKoQOzCFmm02HQ/uh3eVTGY/Ylck43v/zXLJBexjhfxH7pdP0
+   ZTb60+MTFfkQtv/ahXU9KgJg3m/VDeEKbdWpcTB7UuQW1kC2j3nLsL6Y/
+   eIhm1IUOyMVnIvPJf972tbArNhAxLlhUNOc6toiFcy2UNjLWNEFXurDR1
+   Q==;
+X-CSE-ConnectionGUID: orBJq0KiRouVQt92lZDosA==
+X-CSE-MsgGUID: 6FJNctW6TGmm7eWSglFMvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21698899"
+X-IronPort-AV: E=Sophos;i="6.09,145,1716274800"; 
+   d="scan'208";a="21698899"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 03:47:01 -0700
+X-CSE-ConnectionGUID: xojUtlRMTtW0h0jh16/jWw==
+X-CSE-MsgGUID: ddpdSTgUQj2MFPXeDVVhgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,145,1716274800"; 
+   d="scan'208";a="63823557"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Aug 2024 03:47:01 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 14 Aug 2024 03:47:01 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 14 Aug 2024 03:47:00 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.173)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 14 Aug 2024 03:47:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zose42uBFzd0zpifvI3Jlp56uomndSsUijVcwaO2BpjYF6B2d2WWKsRX1qnQuvbn4wADafS5Iz/T1qoOteq/5j3EnD1R2VBrpKP8+T4uCFXAuPnFgzwolryU0D3irBpkHInlYl7YORXN0kElXMmO68T/fC/qL4AI3KX4S0uXbLVFDQcSsLzrbbqTptmNsKYMkzSiaIKK6nTgWkSFF+6OYXhnvqD8sf2WLjfAg23CJ59z+akt7M5gbf6uuiJAhXCn7XYeNHJPGX76X9nTgxI4K4BTps0N+ARyTmAUgfQb/dGvoXx4MGvFp0EGgivcnCUdANprOsXMdg4ECbKqEyEYqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FfjbM8eCNCRlbQiMZrE0i4y8dzeaEYMVsYwR7ZnfmMU=;
+ b=eArI5Gax2gyfdGB6o2MTlbtSqVt+DCYYVL4RdV7smvUTCV3t9G8jsDrAZbcGSP84jg7Vi/3z2VQuG3hmwWt+07Yh83DOiWgfeKroCnOJTgsXFsqZ2mu0ZwmjqhYQ3qebEYJDRGv2PcSCZl0EXrBXFpZ78e3WJazN36vnbfrlWIvgyqpEuF1fXWYyCjxc+z5zUFLXMvCkTMUbJ5cnq/yO12qqImaKVhwXe1703uMghB+Ry6xgLneCOu7YnF7vZlGVhblK3vTxx5XAmV4aikFMmCMP+5PYsmFeF4dLWJ3QmSMXYTwIAk35ETG7IYxE8XZIih/2F8jhEWixM+n+QQ8kQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA1PR11MB5826.namprd11.prod.outlook.com (2603:10b6:806:235::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31; Wed, 14 Aug
+ 2024 10:46:53 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%3]) with mapi id 15.20.7875.016; Wed, 14 Aug 2024
+ 10:46:53 +0000
+Date: Wed, 14 Aug 2024 18:46:43 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe
+	<rick.p.edgecombe@intel.com>, <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+	<kai.huang@intel.com>, <isaku.yamahata@gmail.com>,
+	<tony.lindgren@linux.intel.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
+ KVM_GET_SUPPORTED_CPUID
+Message-ID: <ZryLE+wNxhYHpyIP@chao-email>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-26-rick.p.edgecombe@intel.com>
+ <ZrtEvEh4UJ6ZbPq5@chao-email>
+ <efc22d22-9cb6-41f7-a703-e96cbaf0aca7@intel.com>
+ <Zrv+uHq2/mm4H58x@chao-email>
+ <ZrwFWiSQc6pRHrCG@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZrwFWiSQc6pRHrCG@google.com>
+X-ClientProxiedBy: SG2P153CA0038.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::7)
+ To CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/5] wifi: brcmfmac: Add optional lpo clock enable
- support
-To: Alexey Charkov <alchark@gmail.com>, Jacobe Zang <jacobe.zang@wesion.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, conor+dt@kernel.org, linux-rockchip@lists.infradead.org,
- efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, arend@broadcom.com,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, megi@xff.cz,
- duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- nick@khadas.com, Sai Krishna <saikrishnag@marvell.com>
-References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
- <20240813082007.2625841-5-jacobe.zang@wesion.com>
- <721da64c-42ec-4be6-8ad3-e2685a84823a@broadcom.com>
- <2269063.vFx2qVVIhK@latitude-fedora>
- <fa019ee9-3f4d-4bea-92a7-929713518dc9@wesion.com>
- <CABjd4YwTbG8pm_xwrOVtVwMwvarvz2SB9bapH3LDMqPn6pH9Ew@mail.gmail.com>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <CABjd4YwTbG8pm_xwrOVtVwMwvarvz2SB9bapH3LDMqPn6pH9Ew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA1PR11MB5826:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48e76aeb-3b28-472e-8db6-08dcbc4e6915
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?LEV+tHLstrsihVu/S79EMa15+z8ROfsfBN8Jndo1UYK4EHCwb3csyLUCYXGy?=
+ =?us-ascii?Q?19y48LUYySnM5NOh1UluWiC67Iji4bre112VJOCpct74QonLnW5gcnU2NmrU?=
+ =?us-ascii?Q?3fTTQaeGvRuIIfnQSIJsS3xfyT4XVjzctf/2l1NhF3dlqh9wrEZnNnPwFAvU?=
+ =?us-ascii?Q?n2XaTlfqV9BQ6+qd59LS04ucLhb6u5PhVzo6x2++g4Xvnl2tumB6LZuiRWF2?=
+ =?us-ascii?Q?h9zmf4pNERj2rz7c6cugzMPsXmuO8F+XsMmep7U+jVYASy5Z53YO21H+pVAt?=
+ =?us-ascii?Q?YmQAZQX/H7ChnGyhidB10O7inYD31k0wWt6vtezdmJ3Cs8nz6eZLaAeQ8URD?=
+ =?us-ascii?Q?BW8e0QyXTHa7qqo52J2DiHSsFk7+620/ZV5UeMfX4smj/n6GGutqSoXE2ixl?=
+ =?us-ascii?Q?mjlORd+XJsrX1XlPQSkoSloLW2nX/CLjACJNNiC8BXeL1m2l0G44jqN0iO1d?=
+ =?us-ascii?Q?0qA20Gjbs0ynFukdLTkK1EDkSnxAomQvslCYZKZHzsqCAMis2uphXYYJkFb3?=
+ =?us-ascii?Q?2XePv8hxzRQIZ6BJKfe957gzhAKr3M3fe53sEPYy6BOkGJG/V0w2fRpEXe6X?=
+ =?us-ascii?Q?5/uwz+e63S7sqn91QQlLtGYVfnEE5qd+4UBTk55KQjKoL1usjjMIx8+KKR2z?=
+ =?us-ascii?Q?nYG1a9K1/5WmbPuUGpPs5XiAktLdTwVEQVae405a6oGiXLi7m+QtYC4hyMNX?=
+ =?us-ascii?Q?soMdrOA7+EFvxnwq4BDZaY0PDyS0XApYYD9EnCe5SK0xioZGjw/jXzlANl7X?=
+ =?us-ascii?Q?AK6TxZ9tMs3L5WnCuJx5kZAV7Hcb+CNdGmg3fRpCrn1ETVnkomuAEXOT1W25?=
+ =?us-ascii?Q?LEE3ePbwxMnNWhN2ZMRJzckBh0mI8ezNnqWH/vQLMhwPX/QbreosXu9QLM1u?=
+ =?us-ascii?Q?ZP/DszHGcGIU7Xi8T3QEOyrZ9ow5c9qfJkEWtY7SSvIVt+zRR0EBCs/rXuHR?=
+ =?us-ascii?Q?NE6SfwM/6dPI87dxVtzDKNA7LIRrq9JgEWMMXK5Uq/Q/P1UpG6QdgF+vF3Fm?=
+ =?us-ascii?Q?mJ3ikPksSi+xsQeBU5G1y0tSyxRl57sXEAAKhJUNhaL24pg5naDHVHP6BLsH?=
+ =?us-ascii?Q?VA0xCPRv0N9EdEmo/sR55AVGtXuoH5duJIgyusS+TU7EeYf3iXdPCYNgSJbV?=
+ =?us-ascii?Q?63/S93vOm7qvUrfd/aye45YBsO+RDcIM5ZfovMpCBfye9PV+evewkFVbZDNo?=
+ =?us-ascii?Q?3yavpMfB5k1bRqXqyMx3ksHLv9WINM7bQcXd4wIFmLIORwCum5PDmWhI3Io4?=
+ =?us-ascii?Q?brpAuQsMHAm8E+zInvLki9pECRyH+kuHS4+6vXXpLjUZ1NQoy5LtjYOco33a?=
+ =?us-ascii?Q?yXw77ErcWSJY+9+RveZnrv4nDVI6wDyCXZz/a/JipH6/Pg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ev+HWKWT7I9L1JvCz97WbqMi3NxDivoOiR7os1nyZRTNVK0SZ9EvBrAE5hhM?=
+ =?us-ascii?Q?OvlNJfJW3sJFFJr8rukChI2WhrXNiW0NdOcIdM8SHOQb5NY3mFCDXQJp59e1?=
+ =?us-ascii?Q?THRsC22ILMKl95Obd6eeSwFMuTu3vaKh7cfhDdQrsEwirjJ0Ub6GH+by8lNr?=
+ =?us-ascii?Q?5i9v/ciENC79BRXI7S8crMmPraVay5I4yHKCBfyVWpxm6R2nvg/yAaHfg5u0?=
+ =?us-ascii?Q?YPtl/drmupqNm52r4A+uzvdDt4kMPGB+PIVh1M+5U2VOOdTEMyorZFkAOipc?=
+ =?us-ascii?Q?q5ujyLOiZhGYO0EojidrV+xudhJQtW1r4FgqMQ7v8WjWFQC3MYJgDm1vLFbY?=
+ =?us-ascii?Q?vEUh9ng7Y8s7dVtlAbq856QOu3w+QSu+l4qdqlJagmQmDo9DPSMNvUUFcY4q?=
+ =?us-ascii?Q?FJ6nnxgoHLJd1pq935pEpg4BtLcE/cTkWZuPvwb6ZWzMIVEyQg9JhNz3cixv?=
+ =?us-ascii?Q?ishpROHZgCNkXDwwa5bjE/A+EvVn7YyZ0qibwNLw9rLLXW4ttT+MxGqjrkHn?=
+ =?us-ascii?Q?l/xrF+bjcYO/aFSv+Lmkjg3SvXzc678Y9ZDNCPpD4jMmJgu6ec9lQIZ/tTuQ?=
+ =?us-ascii?Q?k6RdT01NcrPjf/t92C9y4UqTVLnQAwtrYFPdCwkIEUOc+k2UEM3AzHoJQkFt?=
+ =?us-ascii?Q?elrQnA5JR7xrNBFiZ+YS2lpT/mmpWx4Ag5RPesKQWhjyG317NKgSYgdW8owN?=
+ =?us-ascii?Q?fU2CxVRiMfUuR82OXbx1vIADdC++htwyFnX17PckSjLERNp47786qjuSWhCj?=
+ =?us-ascii?Q?puBoVSQx8agyCYxLOaJ4asnbrzKztbTd15FSVH3YpDRiNsAL5fIqvNziB+5d?=
+ =?us-ascii?Q?Eky2JEEjrNPfGiJtV6gRpMkM1zY4GwrYj5bIQe/bzX4hQMwH3layzPHpxhNy?=
+ =?us-ascii?Q?4jWlHe4/QCPpZ3NQWjC476HYlbYI+7VMVYOAac0JxHtjIapqXUvqAChVZkpF?=
+ =?us-ascii?Q?xIosH4hFBtooBItgi0lm8ivVi+X7pBSfkQUC6A/p7dQhRV2EJwG465KA0T4w?=
+ =?us-ascii?Q?w8y4gPX9GNHduT80gHSc11tHAhQb0B1JVwCkbRxy2jmj3w53h62DAGYEJPXt?=
+ =?us-ascii?Q?Eby86pRErtTvdmwjGzCpr8YqdRI6NlOaODwX7URWUzU7ktwUBOTz6KRlnp66?=
+ =?us-ascii?Q?NbZhGvBY2cpYhKqS8xgeebqjC9Ic8JSmq0y834WCfoAJTUh8OJOEBRWiVufa?=
+ =?us-ascii?Q?B3EEJLymYXwbBDROFt4dIvgI4Ek6mVIsSHpUw2eLfhzSqNHfwuuOnAc11hvs?=
+ =?us-ascii?Q?Uk++1/aKEnSSOgVSpaSrHiuyeFcpqaJpjoIYna0p6CkuBnxrfadUNZaG3I3k?=
+ =?us-ascii?Q?DqJPvf9OiKhpT5/nWawitLqSEgUuFs6CMQ1IX0vYynZZlSJp/OKYdTaT5FQd?=
+ =?us-ascii?Q?aljWR7ACeXNw5SSLYG48sh0NigVeEsmAswWVM6xnvc1DVxK2MIe+ux4+0d2I?=
+ =?us-ascii?Q?db+gzf8b17cIwF+BaWpVytJmF1Rjir9uDtSWB04KAl4ECfk5SIM4LNUcEZ9V?=
+ =?us-ascii?Q?joo0fTMzUb+9sVSZAK6y2WbVeA79gVtBhAHN98t8XF8PElEHt+U8rW6KapA1?=
+ =?us-ascii?Q?WIIPAy7IT+WodddW26KpixBIgI4xPTl9BPLO30dN?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48e76aeb-3b28-472e-8db6-08dcbc4e6915
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 10:46:53.7319
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kyU9WX9AxJFYwOWoYNmDSHszyIIh/uhnJVpWP0RsDJ7cQ6Ef4z/0UhKzvQpd/hwIZYHvbViIcPU8TJXFbS4UEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5826
+X-OriginatorOrg: intel.com
 
-On 8/14/2024 11:48 AM, Alexey Charkov wrote:
-> On Wed, Aug 14, 2024 at 12:27 PM Jacobe Zang <jacobe.zang@wesion.com> wrote:
->>
->>
->>
->> On 2024/8/14 16:47, Alexey Charkov wrote:
->>> Hi Arend, Jacobe,
->>>
->>> On Tuesday, August 13, 2024 2:57:28 PM GMT+3 Arend van Spriel wrote:
->>>> On 8/13/2024 10:20 AM, Jacobe Zang wrote:
->>>>> WiFi modules often require 32kHz clock to function. Add support to
->>>>> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
->>>>> to the top of brcmf_of_probe. Change function prototypes from void
->>>>> to int and add appropriate errno's for return values that will be
->>>>> send to bus when error occurred.
->>>>
->>>> I was going to say it looks good to me, but....
->>>>
->>>>> Co-developed-by: Ondrej Jirman <megi@xff.cz>
->>>>> Signed-off-by: Ondrej Jirman <megi@xff.cz>
->>>>> Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>>>> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>>>> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
->>>>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->>>>> ---
->>>>>
->>>>>     .../broadcom/brcm80211/brcmfmac/bcmsdh.c      |  4 +-
->>>>>     .../broadcom/brcm80211/brcmfmac/common.c      |  3 +-
->>>>>     .../wireless/broadcom/brcm80211/brcmfmac/of.c | 53 +++++++++++--------
->>>>>     .../wireless/broadcom/brcm80211/brcmfmac/of.h |  9 ++--
->>>>>     .../broadcom/brcm80211/brcmfmac/pcie.c        |  3 ++
->>>>>     .../broadcom/brcm80211/brcmfmac/sdio.c        | 22 +++++---
->>>>>     .../broadcom/brcm80211/brcmfmac/usb.c         |  3 ++
->>>>>     7 files changed, 61 insertions(+), 36 deletions(-)
->>>>
->>>> [...]
->>>>
->>>>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>>>> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c index
->>>>> e406e11481a62..f19dc7355e0e8 100644
->>>>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>>>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>>>
->>>> [...]
->>>>
->>>>> @@ -113,33 +118,39 @@ void brcmf_of_probe(struct device *dev, enum
->>>>> brcmf_bus_type bus_type,>
->>>>>              of_node_put(root);
->>>>>
->>>>>      }
->>>>>
->>>>> -   if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
->>>>> -           return;
->>>>> -
->>>>>
->>>>>      err = brcmf_of_get_country_codes(dev, settings);
->>>>>      if (err)
->>>>>
->>>>>              brcmf_err("failed to get OF country code map (err=%d)
->>> \n", err);
->>>>>
->>>>>      of_get_mac_address(np, settings->mac);
->>>>>
->>>>> -   if (bus_type != BRCMF_BUSTYPE_SDIO)
->>>>> -           return;
->>>>> +   if (bus_type == BRCMF_BUSTYPE_SDIO) {
->>>>
->>>> Don't like the fact that this now has an extra indentation level and it
->>>> offers no extra benefit. Just keep the original if-statement and return
->>>> 0. Consequently the LPO clock code should move just before the if-statement.
->>>>> +           if (of_property_read_u32(np, "brcm,drive-strength",
->>> &val) == 0)
->>>>> +                   sdio->drive_strength = val;
->>>>>
->>>>> -   if (of_property_read_u32(np, "brcm,drive-strength", &val) == 0)
->>>>> -           sdio->drive_strength = val;
->>>>> +           /* make sure there are interrupts defined in the node */
->>>>> +           if (!of_property_present(np, "interrupts"))
->>>>> +                   return 0;
->>>>>
->>>>> -   /* make sure there are interrupts defined in the node */
->>>>> -   if (!of_property_present(np, "interrupts"))
->>>>> -           return;
->>>>> +           irq = irq_of_parse_and_map(np, 0);
->>>>> +           if (!irq) {
->>>>> +                   brcmf_err("interrupt could not be
->>> mapped\n");
->>>>> +                   return 0;
->>>>> +           }
->>>>> +           irqf = irqd_get_trigger_type(irq_get_irq_data(irq));
->>>>> +
->>>>> +           sdio->oob_irq_supported = true;
->>>>> +           sdio->oob_irq_nr = irq;
->>>>> +           sdio->oob_irq_flags = irqf;
->>>>> +   }
->>>>>
->>>>> -   irq = irq_of_parse_and_map(np, 0);
->>>>> -   if (!irq) {
->>>>> -           brcmf_err("interrupt could not be mapped\n");
->>>>> -           return;
->>>>> +   clk = devm_clk_get_optional_enabled(dev, "lpo");
->>>>> +   if (!IS_ERR_OR_NULL(clk)) {
->>>>> +           brcmf_dbg(INFO, "enabling 32kHz clock\n");
->>>>> +           return clk_set_rate(clk, 32768);
->>>>> +   } else {
->>>>> +           return PTR_ERR_OR_ZERO(clk);
->>>>>
->>>>>      }
->>>>
->>>> Change this to:
->>>>    > +        clk = devm_clk_get_optional_enabled(dev, "lpo");
->>>>    > +        if (IS_ERR_OR_NULL(clk)) {
->>>>    > +                return PTR_ERR_OR_ZERO(clk);
->>>
->>> Perhaps in this case we should go for IS_ERR and PTR_ERR respectively.
->>> devm_clk_get_optional_enabled would return NULL when the optional clock is not
->>> found, so NULL is not an error state but serves as a dummy clock that can be> used with clk_set_rate.
->>
->> I think we don't need to set clock rate for clock is NULL. So it should
->> be changed to:
->>
->> +       clk = devm_clk_get_optional_enabled(dev, "lpo");
->> +       if (IS_ERR(clk)) {
->> +               return PTR_ERR(clk);
->> +       } else if (clk) {
->> +               brcmf_dbg(INFO, "enabling 32kHz clock\n");
->> +               clk_set_rate(clk, 32768);
->> +       }
-> 
-> If clk is NULL then clk_set_rate returns immediately with status zero,
-> so there is little difference from whether you wrap it into another if
-> (clk) or not. You can probably drop the debug statement altogether and
-> call clk_set_rate unconditionally - this will look neater.
+On Tue, Aug 13, 2024 at 06:16:10PM -0700, Sean Christopherson wrote:
+>On Wed, Aug 14, 2024, Chao Gao wrote:
+>> On Tue, Aug 13, 2024 at 11:14:31PM +0800, Xiaoyao Li wrote:
+>> >On 8/13/2024 7:34 PM, Chao Gao wrote:
+>> >> I think adding new fixed-1 bits is fine as long as they don't break KVM, i.e.,
+>> >> KVM shouldn't need to take any action for the new fixed-1 bits, like
+>> >> saving/restoring more host CPU states across TD-enter/exit or emulating
+>> >> CPUID/MSR accesses from guests
+>> >
+>> >I disagree. Adding new fixed-1 bits in a newer TDX module can lead to a
+>> >different TD with same cpu model.
+>> 
+>> The new TDX module simply doesn't support old CPU models.
+>
+>What happens if the new TDX module is needed to fix a security issue?  Or if a
+>customer wants to support a heterogenous migration pool, and older (physical)
+>CPUs don't support the feature?  Or if a customer wants to continue hosting
+>existing VM shapes on newer hardware?
+>
+>> QEMU can report an error and define a new CPU model that works with the TDX
+>> module. Sometimes, CPUs may drop features;
+>
+>Very, very rarely.  And when it does happen, there are years of warning before
+>the features are dropped.
+>
+>> this may cause KVM to not support some features and in turn some old CPU
+>> models having those features cannot be supported.  is it a requirement for
+>> TDX modules alone that old CPU models must always be supported?
+>
+>Not a hard requirement, but a pretty firm one.  There needs to be sane, reasonable
+>behavior, or we're going to have problems.
 
-The construct above is indeed only needed to get the debug statement 
-correct given the behavior of clk_set_rate(). However, for debugging it 
-is useful to know that the LPO clock is defined and used or not. Maybe 
-do this:
+OK. So, the expectation is the TDX module should avoid adding new fixed-1 bits.
 
-        clk = devm_clk_get_optional_enabled(dev, "lpo");
-        if (IS_ERR(clk))
-                return PTR_ERR(clk);
+I suppose this also applies to "native" CPUID bits, which are not configurable
+and simply reflected as native values to TDs.
 
-        brcmf_dbg(INFO, "%s LPO clock\n", clk ? "enable" : "no");
-        clk_set_rate(clk, 32768);
+One scenario where "fixed-1" bits can help is: we discover a security issue and
+release a microcode update to expose a feature indicating which CPUs are
+vulnerable. if the TDX module allows the VMM to configure the feature as 0
+(i.e., not vulnerable) on vulnerable CPUs, a TD might incorrectly assume it's
+not vulnerable, creating a security issue.
 
-Regards,
-Arend
+I think in above case, the TDX module has to add a "fixed-1" bit. An example of
+such a feature is RRSBA in the IA32_ARCH_CAPABILITIES MSR.
 
