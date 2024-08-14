@@ -1,223 +1,209 @@
-Return-Path: <linux-kernel+bounces-287253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF27952569
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3197495257F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A757287CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:18:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD713289B63
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BCA149C62;
-	Wed, 14 Aug 2024 22:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6288F14E2FD;
+	Wed, 14 Aug 2024 22:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q8ZSbr55"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="vSJzvx5n"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28543143C5D;
-	Wed, 14 Aug 2024 22:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723673883; cv=fail; b=ijhw/bGyQiKQjgmD7NmKXh6B0+noAJZyDlD7Z6I9AFuHrcEsmit56HX9k4PgvzNUULRI2uW1ObIFqlnWfskG1SHIJTTa9l9sawcsCw874OaQEQd3cTf+CtBFD7vNoFvBXCzbUA5j86ygEVPRZyXBoocfmY71NpgAXIuFjL64xx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723673883; c=relaxed/simple;
-	bh=Ed2LaId+x5l6QnaU9F6/rF2/cTO1GzfxeNbUKULOcoY=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nhTM8YSajfWdlA4hx6ORFSRA03ro3q0b8hXqTFR92i0iCmj8GwTDvPpLqDC15V7Fm1mpRZlwp23I9OXg5HrF5D6SaYO8NjI4536niUkzS3GdcPbCjlGpLc0yHeXf5G1MFc9UZ2HPVXiC1jfmDBee5zS2ahaOW79Y974Zql0QroU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q8ZSbr55; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723673882; x=1755209882;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Ed2LaId+x5l6QnaU9F6/rF2/cTO1GzfxeNbUKULOcoY=;
-  b=Q8ZSbr55uYXiIzWV7f1kzQ2H5qLxGlJk8IWFAZv/McDgSTKcedQ1lzAA
-   2EI4h3trjofnMGe1KSGO/FPG+Qn7uZy2ynkxksHEnfMl2NAaJg3V80hCp
-   W5a0Q36wo5zqVDahB7kXSX5NIEx7xjlnPJoqDcJGL+jgEhN7UpoAap9x6
-   dkjRRGEurLreScYdPAMvRwC+SA1gQ3ctf1Xjveb2oTmtbpTKgs4momebK
-   MiK+csN1WhkhGM1PMmG5c/Q/lYwziT1NwDbmAa6VuIrjG7GyAZz33y3c9
-   J4TI0KJt3pYMe7NID9Ayn7kvits8uvAClMt8GwaJA+w80j7CzNItLbG4D
-   g==;
-X-CSE-ConnectionGUID: O+lOnv+7T3u2qvGoTHJ4zQ==
-X-CSE-MsgGUID: /qT9OLXjRmugs0uVQQBoow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22067138"
-X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
-   d="scan'208";a="22067138"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 15:18:01 -0700
-X-CSE-ConnectionGUID: kHhFJ9S+REWavvEwVIWahQ==
-X-CSE-MsgGUID: cSbqxNmlQ9S7ggKi52JnAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
-   d="scan'208";a="63582200"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Aug 2024 15:17:54 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 14 Aug 2024 15:17:53 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 14 Aug 2024 15:17:53 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 14 Aug 2024 15:17:53 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.177)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 14 Aug 2024 15:17:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A+2Evj/rCCC2Xhb0CzS4/CXmOhTqoEBwq/AxP6X5unKr3HgAK1nodZFZqiL+cqiOTlToLXsq+ROR1qVohNfl3w6oq4IWjmVJY+ITB5plrEeiuhyUq/LrVo5kjwBrPnFOZE1m40uPM2MvQ2O44RCZJzzIdk6gr6he5pt3Me8Zpz2Y2GtTu8boYhBiqrd7vnZ/ptcHUIAYyAngE2HclPa/UnCJbX5238D0+jKUITgYO2YpSKThzceMCfiMZ67chbSkQvaI6MEnm07o51jT9246xiBwIcAq0R9+xYnkt2LROphMdhR8BsRjeENytipMeVxy7Ivf9CiPhsBhhk8RJpSoGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vwEAje9WSE2TaCN8Aqmdlp2TyVHgFgKgY9eywtE9ZuI=;
- b=RJCuhYZbQXFiRchwPI887NEJmI1JPGtx199+mTzrY1nqA+iJ5EcgRxwJh2t9GH9ymCe+53MDUvWFkXb9bkhgXEmPFbAQi93V86BaurtoG0r48TyzAOegaY52FQ/CZKWraJ/vOpdVEQkbAQm1jMhBfMHtZ+VbKfnBoaf1dfW2rt61yxWNBVwJhpiKagFxrq2mq/d0HfVudjHnj37RGGD4Cf7ZLoPj8vZf87Q1P0+qyObIPDPaZ4R+sb06+qEtcy8EMk/tx4HovmYing3F4JdP4NEdxAQ3B7iPCm1z9jY/nFNKnWbpWYjGqHLcWm8eyLM/hzCw/9ajcgiLSp9wE97JPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by SN7PR11MB6826.namprd11.prod.outlook.com (2603:10b6:806:2a1::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.30; Wed, 14 Aug
- 2024 22:17:50 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%7]) with mapi id 15.20.7828.030; Wed, 14 Aug 2024
- 22:17:50 +0000
-Message-ID: <cc44c0da-4f9f-456f-84e5-87bd4fa47af6@intel.com>
-Date: Thu, 15 Aug 2024 10:17:42 +1200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/8] KVM: Register cpuhp/syscore callbacks when
- enabling virt
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
-	<seanjc@google.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chao Gao
-	<chao.gao@intel.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Anup Patel
-	<Anup.Patel@wdc.com>, Huacai Chen <chenhuacai@kernel.org>, Oliver Upton
-	<oupton@google.com>
-References: <20240608000639.3295768-1-seanjc@google.com>
- <e8db3e58-38de-47d4-ac6c-08408f9aaa10@redhat.com>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <e8db3e58-38de-47d4-ac6c-08408f9aaa10@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR11CA0049.namprd11.prod.outlook.com
- (2603:10b6:a03:80::26) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2C135894;
+	Wed, 14 Aug 2024 22:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.208
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723673913; cv=none; b=rgJ++uaCYQMJ0UkNbnZC7QwTKuBRb95ELpgn21qJx/Jh7B5hBq4EA+FnIuspJf+baMYRtlcpE2/1j8L6DbqOyTlZ6c7m0NCV0qA3yhrcBlbvhNU7ty5QyPbkxEmdMzsWqNUR2Ru4kUltbfhlNja6Bot4TLcH9A/UCyD07KlRKjc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723673913; c=relaxed/simple;
+	bh=7QFKDQf2QDftS5MiuC8M0RpYXRT4VGeXC/a9a/cPQEA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IQDrFIrFLct//6gnTIM0m7yaJcX66L0zBZNFXZjlBAmI98dYydq43eHmwETuD4uPX9lwY1hhRLO+spq3vRCEaF8dQBTGFqV1nyxkOmls33rUrWyBrSpYMQjuefFEU6zys4F6X9Lp+/WNgzBmASctMWo8Bpw6rEs38SA7f2pqkbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=vSJzvx5n; arc=none smtp.client-ip=192.19.144.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id F0ABCC0000E7;
+	Wed, 14 Aug 2024 15:18:21 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com F0ABCC0000E7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1723673902;
+	bh=7QFKDQf2QDftS5MiuC8M0RpYXRT4VGeXC/a9a/cPQEA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=vSJzvx5nJYvH5gq4/5M55wKFRv2QO6lJmrly0gObGE48GUbp1HsD2Tvy04aKr7rXI
+	 A6HDozFN+OZX3rN8uN5mI8THG4ji0mYdXV5oX9KPAt+1jQ3uTfv17RmEwm586nBoUq
+	 pBLmUnM5MK16pcfnpDTlOOesuB7TPfiaM89DAWuU=
+Received: from pcie-dev03.dhcp.broadcom.net (pcie-dev03.dhcp.broadcom.net [10.59.171.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id CEA3218041CAC8;
+	Wed, 14 Aug 2024 15:18:18 -0700 (PDT)
+From: jitendra.vegiraju@broadcom.com
+To: netdev@vger.kernel.org
+Cc: alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	jitendra.vegiraju@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	richardcochran@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	fancer.lancer@gmail.com,
+	rmk+kernel@armlinux.org.uk,
+	ahalaney@redhat.com,
+	xiaolei.wang@windriver.com,
+	rohan.g.thomas@intel.com,
+	Jianheng.Zhang@synopsys.com,
+	leong.ching.swee@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	bpf@vger.kernel.org,
+	andrew@lunn.ch,
+	linux@armlinux.org.uk,
+	horms@kernel.org,
+	florian.fainelli@broadcom.com
+Subject: [net-next v4 0/5] net: stmmac: Add PCI driver support for BCM8958x
+Date: Wed, 14 Aug 2024 15:18:13 -0700
+Message-Id: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|SN7PR11MB6826:EE_
-X-MS-Office365-Filtering-Correlation-Id: fae9aa9a-51b6-4202-51ca-08dcbcaeef40
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RlVxc0QwVjZOdU5tTU5HNU94dlRlOHdFN0ZwNnF2bW4vY3lsN1hvaFhOd0xy?=
- =?utf-8?B?bktzcHpYMHBnQ3ZjK3dhc3dPYzVnZUdCZUVWb0VuaVc1MC9jWnl6K081SlNO?=
- =?utf-8?B?Z1hKQzZMTkp2YWk4Y1NVenN3UTRCWEg1SnpuMlpNMW5jVlBFaUx2UmZjMXZs?=
- =?utf-8?B?ZDgzdDNyS1JOOW9QWklTNlRWSHlYWDhtb09pNklHRkpRbkc4YytXdkwyU25l?=
- =?utf-8?B?eDBSY3F2NHhlQ0ZHZ3ZaOUlTb3cxbmNBTTNncFdRVnY0RVk1RGk5VXpQZlhB?=
- =?utf-8?B?Qm5uR29CREppVC9ibzZBR0VIVlg1aHBGM1BldTlmSC92TDNtNy8rTHFSWFRi?=
- =?utf-8?B?MU9SaGExV0pqeEdWa2VES293QW0rUTJSQzRGNUhac2dhWUlZK0k4RU5NTElQ?=
- =?utf-8?B?a1FVMUJIb3ArQ1NXMk1FNlZlZWhtMVVpcXU5elRZRVozY0gvUURwczBhTFVL?=
- =?utf-8?B?Ukk1MWxCM2JkSkREdDVNUHppRmdLYjRHc2h4UWpQU1hQR20zNXZNdXJjUE91?=
- =?utf-8?B?dVcrTnJ5Y2ZOY1ZPbjU5emRxcHJVcExTemI5aGVVSCtRdnhPOU01Q1ZIY3hD?=
- =?utf-8?B?VGltVmo2ZHZpamJhRFNZNU9TcmpFdmNHOVlvYlBWTEtRNlkwU2pVcEpndTRO?=
- =?utf-8?B?WSs0YWJzWWRyZEdoUVlqT093U2NoVy9ZNWpCcThpNlhXQnVGMlJKMmlHNjh2?=
- =?utf-8?B?RlhqdE1pWDhMbDVsL1E2UTFwY0E0SVVLVW5qbEZxOFBsRFVJaGVOQi91bHBv?=
- =?utf-8?B?RDVsRXF4VEorUTBTbDdiNVNlNHlMSHBBY2JJZHVXc1Mwb3k5bVYrRk83aCtC?=
- =?utf-8?B?dWJkbG4yQ0tadytiSnBYZnN6aEVQejZQY3dJTVN6V1NqbU5EQ1VwOC9UYnpB?=
- =?utf-8?B?ejNvbDl5RVdVQU05Lzd4cHZVOVUwRVJKcFJsSXJUOW5sL1JLZkQ1Q1hNbDZ4?=
- =?utf-8?B?WFJDYkptVkRRaVA1Yk8xbkF4UjdFdTZCcEpTWDhBa0NEMFJDZ2NyWG02ZE9n?=
- =?utf-8?B?MWJvcnNUYmdabkVBUG04T21VUXNmWUVjSzRFdTFJTUlHTE5MRlJmeUdiOVVj?=
- =?utf-8?B?ODBWcmg2cW1wMzk1L0xIUXh4Z1l0aTdWeUEvcVI1aWQ2L2lId2dGR1UwK1M3?=
- =?utf-8?B?MmJCVkp5by8rT05FbVVqWDFXb0htWHZ5MWpTOUpvN3hqUnpjdkRoenpPRmcw?=
- =?utf-8?B?cXBVbWxEdHBlc2tuNm1hWFRnRExkUzA4T3dITGFNejVjbnRmSGwyTzhaaFh3?=
- =?utf-8?B?ZUx6NDRNdHF6ckRhLy82eWZNYjlCbWRwUU14eHVva2RhWmpJVDFQWjlLeFZL?=
- =?utf-8?B?YW9PcHlCQ1l5SDFsbHJ6dzJ6UjNlSnBMT2VjZ2FJNTZUVU5laUxpVkJFM2xm?=
- =?utf-8?B?MWxYQS8rTzRQREhhQ1Nxc3JESm9vaXZmZll4N1p3ZzloSmxpV2VRMEpOZ1pT?=
- =?utf-8?B?M0xvWXNCZXE0U25EbndBMFRoY2Q0QjQrajU2K3hYN0Mvamx1cTdpaUdJZEow?=
- =?utf-8?B?amUzaDJKQnNIVnJOUzRnRUNKTGpmaTYxUUt0c0RJYWE1OW5pTUxrTnlqYnJ6?=
- =?utf-8?B?VTJvanNuU29RekhEL0ttMzM5Y01JVUk4eWVaNDJpWGVzOTJvM2JKNHUwU1Rt?=
- =?utf-8?B?cExVSkIyblZWaDZvVjJoQnlvR1ZZaWlHOUg5Smtwam1oVWpRaXYvZGc1Slcr?=
- =?utf-8?B?WmNQSlVmK2hRb0tjc1FPV2YzZWwxYXhRMXFrUzYvbHBQbEo0RnJNOE5Wa01m?=
- =?utf-8?B?RXVlUWZtMDFpTUljS0dqV0hoK2FHbGVKQk8vNG55WjZHMElKU01YQXVRTDV1?=
- =?utf-8?B?aXpnN3BHRVZmUmxvNUZPZz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eFVmQlZoN3lPeUpCdkhTa09PbHhBRHBxdlJkRHFYN3E4TW82cmdkK1hkcnUy?=
- =?utf-8?B?ak5wcnVnUmZLdlBxTWR3cHVZVmQxejNvTW5tdnNXVVVMSW8wTnNlMC9zUUR4?=
- =?utf-8?B?RFkyaWhJeVBuNjZxUjhxZTZNSnZxaGx2V01BemN5aXdNbzVCUXRZd00yeVZG?=
- =?utf-8?B?VWREbGxKVkhOTVdxSjVJZGY5cEQyK3pTSWVBYWtiVEgxbU1jOXJXUFlmNVQ0?=
- =?utf-8?B?TlNsbWpjamcrYmM0VUludEViUXZjN2hOcUQzdmxRaFBRNnEzdEZVVWhQRFZK?=
- =?utf-8?B?SytraGRkUkVRc0U0R1NJWStEbUN4M3pzVkdxMFZNcElBMVBjQ2xZQzA0aUtw?=
- =?utf-8?B?eUZVakF0L1BjU2thbGRjVDR3Wm8yaDdTTmRoUlNLY0VUblZTT1piNDl3RlZ6?=
- =?utf-8?B?dzBoZ1VsdGZaSVlDeVZIZ29la2VFWnZlUmlRcWFvb1FvVGJmdllQODJ5Mi9v?=
- =?utf-8?B?NnBJUVlUbjEwMVhyS3ZFeUxjVjAxR3M4cFQ3d3Q4SnR5cXhJZy9TR2h4Q2tW?=
- =?utf-8?B?VFBGb29BbDZHaDFIdkhZTC9oU1FOSFI4TlVDV0JvUGZCejh4MFhoejFweXRY?=
- =?utf-8?B?N0hWZ2tqbUxZeG5YZCtOTHdYbmlmalQ2TitIb056clRTclRMSHNWeE1OWFds?=
- =?utf-8?B?M292Ty9xTzlnSjBQVi96TldPaEJ2TW1yZGlCS3c5SGVqYXhZTUVsWCtVUXZN?=
- =?utf-8?B?NDh4aVNrMTM0U1g0Y2VBckV5R01mRlJiRnRTTUlpcUdtc3AxbHRQWkc4bXdL?=
- =?utf-8?B?V3pwZWIvSVcyV0N0NmhlMTBON05NVUpON01uSDZnOEN5MExUZi9NRW9nV1Z6?=
- =?utf-8?B?V3pvajdoQm1hakZxZFRkL21sY3V1c1BvQlpickFJNjl4UDR1S1p5N05vMER3?=
- =?utf-8?B?OTArN1NQM1dHU1NSU3MvYXNZSUUxeUQyamtPV2w3ZkFacldxOEZvUzZEV3pE?=
- =?utf-8?B?TTNsWDc3YnFZcW84d2crTjlVdWRacHVjc0dZQVRTY0RJdkZ3SWExeU1STEp5?=
- =?utf-8?B?c2x6V09jOWJKaHdaWGptMFJ3dm56eFFLaVZpVkM1eWJYL0Y2QjE2V0p2TmN2?=
- =?utf-8?B?UENTbDEzMVZhdElIc0hselJNZmVQMlNIWXMwTVlmNGFaNDZTd051S2pxQmNV?=
- =?utf-8?B?aEdPWDFDY1hOVCtFWHFmcEd0VktyZldFNzBDUlI5dUtmeEZza2VwZjVweHFn?=
- =?utf-8?B?TXJMbm5oVFNjYS9FcitUbkVTMVQyTUFIMTFWU1NERHlPbUhLV1RrYUlTYWhk?=
- =?utf-8?B?dHgrUnpwenVGR080SDNjcFpoeDNTM0dHTzJmUldYME1ReEluWHpmQXZFL1dr?=
- =?utf-8?B?Vjh5SjVya3A4YTduMWt6QnllUW5pSzFrdUhmOGVhdk1XQ01RL2J1eWlKczh1?=
- =?utf-8?B?eGZDRHJpOWxRNkQ4R2g5cDlsT1FtdmlOblJ2aS92L1hENllaSGFVRno3cEdl?=
- =?utf-8?B?M2xpNFVGSDl2dGFWN1RjWG0xcFkySHhlVDUxdEVleGJ0ZmpPOWhZMGh1UDY2?=
- =?utf-8?B?bTVxTGZtdllUZG0zanlxN0RZa1FqRWRhajQ1T2RINnJuMFVJQmZCMTJtV1Rn?=
- =?utf-8?B?Wnd1b2xINXdhMTBnOEkvaVdzNmpENVI3MExUNmtHaTBYMXVvbFlhUlBRVHI3?=
- =?utf-8?B?TURNMTVpVWRQUDVib0tnVFNUVUR0SS93cGpJaGt1ZG93Y2lnVVRwSnFNSnRX?=
- =?utf-8?B?UnFQTlM2cHhrVVZ3V0xSc0F6bnBTeGxraXRXZkxndTdsZU1XaWNVRUh0cUV6?=
- =?utf-8?B?WHZuN1VsNGRUQWswamhpay8rUGFxT2dqWGhvdzB4dy9sSVEwbVMva25lSGti?=
- =?utf-8?B?QU0wV2U1cXNESWM5aHh0QU9yVXFLcFdPT0NreGVDMW10MHFreWQ2NmhQdFpz?=
- =?utf-8?B?RFp2bG15dENlTTV5b0VybkhmL0x5MkJZeWJ0dzVnY0dwc1VyZlQvTXhKYkRE?=
- =?utf-8?B?WW5IcnkyVXd5TnRNbWNCMzVXY0gyLzRvZS9GNDM3c2llZjh6YmhocjVyOHlI?=
- =?utf-8?B?VExvRTh3cElEcXhWT1g5aGNjTk9WaDlEZGpsUVdzZzhjRUpBUzZwdUJDaHBH?=
- =?utf-8?B?TFE4WW4yRzRkQmh0UU1tR3d0d2dKVUtNaTVqQnBPbjNHRk4yVVJaRGpLYytm?=
- =?utf-8?Q?pl/JsBiWQs47yqjrrAO1V+h5l?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fae9aa9a-51b6-4202-51ca-08dcbcaeef40
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 22:17:50.6073
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vMQZm4GPFRLBLBJlmC2u3zozYxPvhXREkAouZpBZrohK7I4jzSetbPdRR33lnnSMYbcv39ERTQc39wbDpfE3nA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6826
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
+From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
 
-> Also placed in kvm/queue, mostly as a reminder to myself, and added 
-> other maintainers for testing on ARM, RISC-V and LoongArch.  The changes 
-> from v3 to v4 should be mostly nits, documentation and organization of 
-> the series.
-> 
+This patchset adds basic PCI ethernet device driver support for Broadcom
+BCM8958x Automotive Ethernet switch SoC devices.
 
-Also another reminder:
+This SoC device has PCIe ethernet MAC attached to an integrated ethernet
+switch using XGMII interface. The PCIe ethernet controller is presented to
+the Linux host as PCI network device.
 
-Could you also remove the WARN_ON() in kvm_uninit_virtualization() so 
-that we can allow additional kvm_disable_virtualization() after that for 
-TDX?
+The following block diagram gives an overview of the application.
+             +=================================+
+             |       Host CPU/Linux            |
+             +=================================+
+                        || PCIe
+                        ||
+        +==========================================+
+        |           +--------------+               |
+        |           | PCIE Endpoint|               |
+        |           | Ethernet     |               |
+        |           | Controller   |               |
+        |           |   DMA        |               |
+        |           +--------------+               |
+        |           |   MAC        |   BCM8958X    |
+        |           +--------------+   SoC         |
+        |               || XGMII                   |
+        |               ||                         |
+        |           +--------------+               |
+        |           | Ethernet     |               |
+        |           | switch       |               |
+        |           +--------------+               |
+        |             || || || ||                  |
+        +==========================================+
+                      || || || || More external interfaces
+
+The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. This
+MAC IP introduces new DMA architecture called Hyper-DMA for virtualization
+scalability.
+
+Driver functionality specific to new MAC (DW25GMAC) is implemented in
+new file dw25gmac.c.
+
+Management of integrated ethernet switch on this SoC is not handled by
+the PCIe interface.
+This SoC device has PCIe ethernet MAC directly attached to an integrated
+ethernet switch using XGMII interface.
+
+v3->v4:
+   Based on Serge's questions, received a confirmation from Synopsis that
+   the MAC IP is indeed the new 25GMAC design.
+   Renamed all references of XGMAC4 to 25GMAC.
+   The patch series is rearranged slightly as follows.
+   Patch1 (new): Define HDMA mapping data structure in kernel's stmmac.h
+   Patch2 (v3 Patch1): Adds dma_ops for dw25gmac in stmmac core
+       Renamed new files dwxgmac4.* to dw25gmac.* - Serge Semin
+       Defined new Synopsis version and device id macros for DW25GMAC.
+       Coverted bit operations to FIELD_PREP macros - Russell King
+       Moved hwif.h to this patch, Sparse flagged warning - Simon Horman
+       Defined macros for hardcoded values TDPS etc - Serge Semin
+       Read number of PDMAs/VDMAs from hardware - Serge Semin
+   Patch3 (v3 Patch2): Hooks in hardware interface handling for dw25gmac
+       Resolved user_version quirks questions - Serge, Russell, Andrew
+       Added new stmmac_hw entry for DW25GMAC. - Serge
+       Added logic to override synopsis_dev_id by glue driver.
+   Patch4 (v3 Patch3): Adds PCI driver for BCM8958x device
+       Define bitmmap macros for hardcoded values - Andrew Lunn
+       Added per device software node - Andrew Lunn
+   Patch5(new/split): Adds BCM8958x driver to build system
+   
+v2->v3:
+   Addressed v2 comments from Andrew, Jakub, Russel and Simon.
+   Based on suggestion by Russel and Andrew, added software node to create
+   phylink in fixed-link mode.
+   Moved dwxgmac4 specific functions to new files dwxgmac4.c and dwxgmac4.h
+   in stmmac core module.
+   Reorganized the code to use the existing glue logic support for xgmac in
+   hwif.c and override ops functions for dwxgmac4 specific functions.
+   The patch is split into three parts.
+     Patch#1 Adds dma_ops for dwxgmac4 in stmmac core
+     Patch#2 Hooks in the hardware interface handling for dwxgmac4
+     Patch#3 Adds PCI driver for BCM8958x device
+   https://lore.kernel.org/netdev/20240802031822.1862030-1-jitendra.vegiraju@broadcom.com/
+
+v1->v2:
+   Minor fixes to address coding style issues.
+   Sent v2 too soon by mistake, without waiting for review comments.
+   Received feedback on this version.
+   https://lore.kernel.org/netdev/20240511015924.41457-1-jitendra.vegiraju@broadcom.com/
+
+v1:  
+   https://lore.kernel.org/netdev/20240510000331.154486-1-jitendra.vegiraju@broadcom.com/
+
+Jitendra Vegiraju (5):
+  Add HDMA mapping for dw25gmac support
+  Add basic dw25gmac support to stmmac core
+  Integrate dw25gmac into stmmac hwif handling
+  Add PCI driver support for BCM8958x
+  Add BCM8958x driver to build system
+
+ MAINTAINERS                                   |   8 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   3 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h  |   2 +
+ .../net/ethernet/stmicro/stmmac/dw25gmac.c    | 173 ++++++
+ .../net/ethernet/stmicro/stmmac/dw25gmac.h    |  90 +++
+ .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 530 ++++++++++++++++++
+ .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  31 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |  25 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |   1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |   1 +
+ include/linux/stmmac.h                        |  50 ++
+ 12 files changed, 922 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw25gmac.h
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
+
+-- 
+2.34.1
+
 
