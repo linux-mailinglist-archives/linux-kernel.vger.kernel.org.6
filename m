@@ -1,159 +1,112 @@
-Return-Path: <linux-kernel+bounces-286968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7A69520F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:21:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863909520FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3141F23E62
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81DB1C239D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71C21BC06B;
-	Wed, 14 Aug 2024 17:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3491BC060;
+	Wed, 14 Aug 2024 17:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="owe/A3ZV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b="rX0Hz9+x"
+Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F99F1B9B2D;
-	Wed, 14 Aug 2024 17:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D510C1B9B2D;
+	Wed, 14 Aug 2024 17:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656053; cv=none; b=Iqr3ynDDEl+oI6im+TqF6XlBsmzp1LIRJ4AiJdLvxu7l4c/mYW+pOiQolJdRTOgHijX1lnNwMA8bS9wgkE9AXVvEj79rRQlFkfwCNHws1hLEDOGb6Lq0eNsCzyZTGYWusUDZbdJ4I/R4PBhbO9HUaT5F/8Gp2EAY1PXyt7P9Znk=
+	t=1723656062; cv=none; b=Q+Yvl+9BIKW5L32TQoyW9kO8SdyXRmJgxCUiWINZvsIZnFoSvwpH/+M6WkmG+D6hbMtzygDANBi4S8six2xi1+mEjv98b4PlIytlqF4dx9UCVJvo20YHAfxTK1ALsuitrtUmwCkQAWPG8+gXC5FeBdByxp+hWTJeq8lSEVEXHe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656053; c=relaxed/simple;
-	bh=smuak+zqjyB1uSWmMRGThmE3BA9R58lXtjJBjh3OZVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HgXRwwzY4syKDlhl46puuC1dIbrfLT+xHU9B7h8Tx/cgc6H2x1EQHJjhLOi2FWUUn09nFmzIF7FfvLTNHeufEassvMh1aR+BAQmxl7aKXcHCoyetJPIcpGb7l71kS97QMUj1gDYdrd73eX6jIOpSKnTHjdbMSFVTiBA/pEc/yMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=owe/A3ZV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EADMr7026876;
-	Wed, 14 Aug 2024 17:20:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xRGpGeGkdYD2yIn+lOnT/kFxW5i6tGEXWoAkx9Y3rLk=; b=owe/A3ZVYisipyZ6
-	CGUy2B/c9dQcTpg5jzKmlOgwNAlA8V6BZQiUcqVJJOyuoNgmqe3o99WB3Cn05GWf
-	rokvHpRc7GvB1wfWC/5HMfoK6/d5+z+Gd5hBDXyUiKNWWONshvSkic0PRxyIgECX
-	V7fSGxgzXkAxgCWLLbAc0lmlBArAiucf+k0jFEpV08VmJadNGRulnqZrLV8d+cje
-	Qm8RdB5tOfykSvhWqPzUVJ6THfMvLsTygwjWaCL0zJyFbZgGPM3zhDpzShrDlem6
-	dYeunkkc43t0YB5mIkMYEmLvzcCURLqKboc3jBD03NOAU0dRbKkif3THqM9Ph50X
-	Hrq8JA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18y433m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 17:20:46 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47EHKjt9015895
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 17:20:45 GMT
-Received: from [10.71.108.157] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 Aug
- 2024 10:20:44 -0700
-Message-ID: <09bc73fc-65bd-41b5-90fa-14cb0ff79e77@quicinc.com>
-Date: Wed, 14 Aug 2024 10:20:45 -0700
+	s=arc-20240116; t=1723656062; c=relaxed/simple;
+	bh=IgZ7iXb0VplK9LNa2MsWb2FY183hnDcwKBS1+wCHqWU=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nBM0cdWSyoy0/wQ+TrDgexn7na6LoAbLICUegN5KGFSJOjPKQ9fOLYQicxGVcB/po6OZY2AgUCMLQt+c3Kj27SvFutkPB+QOflCDZ/C/DW2d/XlGlAvG0jZsFutzI1l/gedTRd5RB0p2FP8bsYwBTSSmYju8kkoEygQyaPwqKHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com; spf=pass smtp.mailfrom=yhndnzj.com; dkim=pass (2048-bit key) header.d=yhndnzj.com header.i=@yhndnzj.com header.b=rX0Hz9+x; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yhndnzj.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yhndnzj.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yhndnzj.com;
+	s=protonmail; t=1723656056; x=1723915256;
+	bh=IgZ7iXb0VplK9LNa2MsWb2FY183hnDcwKBS1+wCHqWU=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=rX0Hz9+xpmgIMUX2RhrFnScChBoAd+veIg6XS7a0ra8P/29v+kwF5Sst8pVelnspP
+	 gTV3bmKGNI+6A6DG9Q3YfgfEpmSB+FuW3jCsDxwqf927kgqteRdYmD9Lh7qGDdPqj2
+	 YCzOh8qvPHJa/EKDeMu9NSSLWbw0hTkUifMSw6cdOP1amBg7eBgSybrG09xfWc8ir+
+	 m75d0ZebHQivD8kuz+X/6t9bsqPUN6AgW6M6kgS+dSbN4VFxeBY7vEGYWzr9t+nhqQ
+	 U/AaoQnWum2NzNyEw17V8/y2wHIS1mMd2nC9kRO5trqpVUWNnGZ8ZoEuwckMDZTKWB
+	 /vf2P2I9wUunw==
+Date: Wed, 14 Aug 2024 17:20:54 +0000
+To: linux-kernel@vger.kernel.org
+From: Mike Yuan <me@yhndnzj.com>
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, Mike Yuan <me@yhndnzj.com>
+Subject: [PATCH] mm/memcontrol: respect zswap.writeback setting from parent cg too
+Message-ID: <20240814171800.23558-1-me@yhndnzj.com>
+Feedback-ID: 102487535:user:proton
+X-Pm-Message-ID: 969223f01f1ac371f277dee78cd59a00649796cc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
- strings for eud
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Souradeep Chowdhury
-	<quic_schowdhu@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Elson Serrao <quic_eserrao@quicinc.com>
-CC: <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-2-quic_molvera@quicinc.com>
- <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
- <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
- <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jvUOOiqhtBKs0QxiF-nyMuRz6b4avE9p
-X-Proofpoint-ORIG-GUID: jvUOOiqhtBKs0QxiF-nyMuRz6b4avE9p
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_13,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=934
- suspectscore=0 phishscore=0 malwarescore=0 mlxscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408140118
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Currently, the behavior of zswap.writeback wrt.
+the cgroup hierarchy seems a bit odd. Unlike zswap.max,
+it doesn't honor the value from parent cgroups. This
+surfaced when people tried to globally disable zswap writeback,
+i.e. reserve physical swap space only for hibernation [1] -
+disabling zswap.writeback only for the root cgroup results
+in subcgroups with zswap.writeback=3D1 still performing writeback.
+
+The consistency became more noticeable after I introduced
+the MemoryZSwapWriteback=3D systemd unit setting [2] for
+controlling the knob. The patch assumed that the kernel would
+enforce the value of parent cgroups. It could probably be
+workarounded from systemd's side, by going up the slice unit
+tree and inherit the value. Yet I think it's more sensible
+to make it behave consistently with zswap.max and friends.
+
+[1] https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate=
+#Disable_zswap_writeback_to_use_the_swap_space_only_for_hibernation
+[2] https://github.com/systemd/systemd/pull/31734
+
+Signed-off-by: Mike Yuan <me@yhndnzj.com>
+---
+ mm/memcontrol.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 8f2f1bb18c9c..2dcdaaf358ce 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -8423,7 +8423,14 @@ void obj_cgroup_uncharge_zswap(struct obj_cgroup *ob=
+jcg, size_t size)
+ bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
+ {
+ =09/* if zswap is disabled, do not block pages going to the swapping devic=
+e */
+-=09return !is_zswap_enabled() || !memcg || READ_ONCE(memcg->zswap_writebac=
+k);
++=09if (!is_zswap_enabled())
++=09=09return true;
++
++=09for (; memcg; memcg =3D parent_mem_cgroup(memcg))
++=09=09if (!READ_ONCE(memcg->zswap_writeback))
++=09=09=09return false;
++
++=09return true;
+ }
+=20
+ static u64 zswap_current_read(struct cgroup_subsys_state *css,
+--=20
+2.46.0
 
 
-
-On 8/13/2024 11:15 PM, Krzysztof Kozlowski wrote:
-> On 13/08/2024 22:03, Melody Olvera wrote:
->>
->> On 8/8/2024 4:00 AM, Krzysztof Kozlowski wrote:
->>> On 07/08/2024 20:32, Melody Olvera wrote:
->>>> The EUD can more accurately be divided into two types; a secure type
->>>> which requires that certain registers be updated via scm call and a
->>>> nonsecure type which must access registers nonsecurely. Thus, change
->>>> the compatible strings to reflect secure and nonsecure eud usage.
->>>>
->>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 6 +++---
->>>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>> index f2c5ec7e6437..476f92768610 100644
->>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>> @@ -17,8 +17,8 @@ properties:
->>>>      compatible:
->>>>        items:
->>>>          - enum:
->>>> -          - qcom,sc7280-eud
->>>> -      - const: qcom,eud
->>>> +          - qcom,secure-eud
->>>> +          - qcom,eud
->>> Commit msg did not explain me why DT bindings rules are avoided here and
->>> you drop existing SoC specific compatible.
->>>
->>> This really does not look like having any sense at all, I cannot come up
->>> with logic behind dropping existing users. You could deprecate it, but
->>> then why exactly this device should have exception from generic bindings
->>> rule?
->> Understood. I won't drop this compatible string. Is alright to add the
->> additional compatible as is?
-> You always need SoC specific compatible.
-
-Got it. Will change to SoC specific then.
-
-
-Thanks,
-Melody
 
