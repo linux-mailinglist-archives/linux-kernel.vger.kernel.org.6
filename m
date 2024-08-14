@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-286182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C463C9517A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:27:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840679517A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E03EB21D1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:27:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD261F243F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00D914AD20;
-	Wed, 14 Aug 2024 09:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C66714B970;
+	Wed, 14 Aug 2024 09:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="MqO+7/Gq"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="pTSd5Ixh"
 Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F91149C68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C787149E05
 	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723627609; cv=none; b=DsGVvztvehNZ1H5Iyvtf2Ds9wRD36QNRPUPWZjrgbLV/MiNnZUY81zVtMq0xEgIswRk/IBKSIHAqIvr/B5/UaJyCPZfo2r5fNVe1JOyh17GWM0+SdRNIRcxky9uq0k7N7R86v/CwC7an8PcmBPPxCKRAp6N5Sd8a/CpIBzgeSlk=
+	t=1723627609; cv=none; b=dmGFMj5pIkVqlsdRaM2EjeJjYNrEFVzoTIngUlks2bCYERC1agqTmoSfumB86eUTuvBfWC6tTs9zpa25QoyXMZPhH1wLLDEKVY533HBU1iFdjHufySjsDoDp+hYm538rKsmLRKV+RcQEzercEkTmSja09UDQWNrcdKt0+RGpu48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723627609; c=relaxed/simple;
-	bh=d9r69nqmECkkEgXIbSmevUGwzmEqByJwViwec/ag+Bk=;
+	bh=+dsAQi+pVfp48Iz8ltFfF87UQX/PXN/QMw8KGQTIrBY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=KDanvhNd6NarcAnHbS17Pkmgv8xA+qffVex90speE8ZirVLdP3Hcoo7iPxBWnswZVKJ6p2PX/3LffybGYO/cqjKk5bhAlkWhDg/rYM+ssZtjObe9a+HMHfwXDoR1fP6l7DUtl/wBVMhoAH0dqLEtOB5Ujp94wsisCPyJEczktLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=MqO+7/Gq; arc=none smtp.client-ip=91.26.50.163
+	 In-Reply-To:To:CC; b=JtI0Fz/ht53fzh3Yml9rl+7+qV7DeGEcGcbM3dpJjDgU35Q/R5fsX9gHNDx8wyqlrkrdqC1OgN3sgGnk51TFD8f69qlqmwwUyrg9TSXKEkeAqutRx5GQQ7yDQ83+4PicOGDg+h1LKJEgYFyTfcyFdY7EHcDXsq+DmnvLHv3GElM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=pTSd5Ixh; arc=none smtp.client-ip=91.26.50.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
 DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
@@ -36,23 +36,23 @@ DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=d9r69nqmECkkEgXIbSmevUGwzmEqByJwViwec/ag+Bk=;
-	b=MqO+7/GqmeM6s+KlyZeUDJTuUE1v9pYX94o1mW/ykBvfMDiayw86ZTcjgLT7D4HG
-	ZXNxPa7msTtm4mhacQdvW5KyvblAT4ChnWrz06vaa8VOCNJaYjU/W05CTksVBUec
-	U5HQwKbFRUO2GsUDaSnAcWmp4W13mjradgYOyPnsFMA=;
-X-AuditID: ac14000a-03e52700000021bc-bd-66bc784f9340
+	bh=+dsAQi+pVfp48Iz8ltFfF87UQX/PXN/QMw8KGQTIrBY=;
+	b=pTSd5Ixhubk+TBLBK13fyulxmOWJAjDkhca97DvMC0acIuvNUWcw1x5TKl5fZfZW
+	ozkw6i2+jPkBacICxAzJbG4PqNejVQaYm3BLuqEl0FgULfyP48NsYSBR1Q/DSw/3
+	wv7y06t85WmDATV6DFOuZl8zF8F7+WMYVykw1nyaH7M=;
+X-AuditID: ac14000a-03251700000021bc-be-66bc784f43b1
 Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
 	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 09.54.08636.F487CB66; Wed, 14 Aug 2024 11:26:39 +0200 (CEST)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id E9.54.08636.F487CB66; Wed, 14 Aug 2024 11:26:39 +0200 (CEST)
 Received: from augenblix2.phytec.de (172.25.0.11) by Berlix.phytec.de
  (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 14 Aug
  2024 11:26:39 +0200
 From: Teresa Remmet <t.remmet@phytec.de>
-Date: Wed, 14 Aug 2024 11:26:11 +0200
-Subject: [PATCH 4/6] arm64: dts: imx8mp-phyboard-pollux: Assign regulator
- to EEPROM node
+Date: Wed, 14 Aug 2024 11:26:12 +0200
+Subject: [PATCH 5/6] arm64: dts: imx8mp-phyboard-pollux: Add VCC_5V_SW
+ regulator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-4-e2500950c632@phytec.de>
+Message-ID: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-5-e2500950c632@phytec.de>
 References: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-0-e2500950c632@phytec.de>
 In-Reply-To: <20240814-b4-wip-t-remmet-phytec-de-bspimx8m-3392_upstream-v1-0-e2500950c632@phytec.de>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -75,42 +75,50 @@ CC: Yannic Moog <y.moog@phytec.de>, Benjamin Hahn <b.hahn@phytec.de>,
 X-Mailer: b4 0.14.1
 X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
  (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42JZI8nAo+tfsSfN4MZcXYs1e88xWcw/co7V
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42JZI8nAo+tfsSfN4OhjY4s1e88xWcw/co7V
 	4uFVf4uZ91rZLFZN3cli8XLWPTaLTY+vsVpc3jWHzeL/nh3sFn+3b2KxeLFF3KL7nboDj8fO
-	WXfZPTat6mTz2Lyk3uPF5pmMHv3dLawe/X8NPD5vkgtgj+KySUnNySxLLdK3S+DKONK4nLWg
-	g73i+Jp2lgbGDrYuRk4OCQETiV1L9zB2MXJxCAksYZKYdOAsG4TzmFHi4/nDLCBVbAIaEk9X
-	nGbqYuTgYBFQlZj0PgskLCwQJfFuzgFGEJtXQFDi5MwnLCAlzAKaEut36YOEmQXkJba/ncMM
-	UZIscWjdLjBbCMiePu0uWCunQIrE9Zvn2EHWighMYpI4eu0E2EHMAn1MEp3TzrNDXCos8Xn3
-	GjaIbnmJXZdOMkLE5SWmnXvNDGGHShzZtJppAqPQLCQ3zUK4aRaSmxYwMq9iFMrNTM5OLcrM
-	1ivIqCxJTdZLSd3ECIolEQauHYx9czwOMTJxMB5ilOBgVhLhDTTZlSbEm5JYWZValB9fVJqT
-	WnyIUZqDRUmcd3VHcKqQQHpiSWp2ampBahFMlomDU6qBMWb9oQk3vvUoXcx4fGNtz/o0qSUv
-	czjdK9qLDsXO9OpyPr363aZ/e9nVn87hX7+r2nCtvbrdDTdLn613F6ULsU1s2HC3Mso3xfWq
-	2atyFYn9Ghprnq88/CUpU2oeo0AVv8TJpRMY1r648v1Exq2OG18vb+loV53z99Tcj3pGRtO6
-	z57+OeOCXLISS3FGoqEWc1FxIgCehAVVkwIAAA==
+	WXfZPTat6mTz2Lyk3uPF5pmMHv3dLawe/X8NPD5vkgtgj+KySUnNySxLLdK3S+DK+HjtPlNB
+	O2fFwQuP2RsYn7F3MXJySAiYSNy4dxbI5uIQEljCJPH/yF8o5zGjxMfzh1lAqtgENCSerjjN
+	1MXIwcEioCrx8AUXSFhYIEjixpS9TCA2r4CgxMmZT1hASpgFNCXW79IHCTMLyEtsfzuHGaIk
+	WWJly2NWEFsIyJ4+7S4jiM0pkCJx/eY5sLUiApOYJI5eO8EI4jAL9DFJdE47D3WpsMTn3WvY
+	ILrlJXZdOskIEZeXmHbuNTOEHSpxZNNqpgmMQrOQ3DQL4aZZSG5awMi8ilEoNzM5O7UoM1uv
+	IKOyJDVZLyV1EyMolkQYuHYw9s3xOMTIxMF4iFGCg1lJhDfQZFeaEG9KYmVValF+fFFpTmrx
+	IUZpDhYlcd7VHcGpQgLpiSWp2ampBalFMFkmDk6pBka2DuPZ152aYo99SZ7OVWGzJpUj5svn
+	1KzaRf6c91hTLbol/Re1hTIaVZeVt75jYuFfHKK9wkE6/fGCqz12fFMf226r5vrSPP+eE7un
+	vAePia3zQ/6GfxVeTLbiV3LtX+9/8dBHfPK6o5837Lv3eMPCssumWmHnhf8rSWSVr9s2W+tw
+	x/dFGUosxRmJhlrMRcWJAPqhtG6TAgAA
 
 From: Yashwanth Varakala <y.varakala@phytec.de>
 
-Add VCC_3V3_SW regulator reference to the EEPROM node to reflect the
-schematic. This also silences the fallback dummy regulator warning.
+Add fixed  regulator VCC_5V_SW based on the phyBOARD-Pollux schematics
+to reflect the connectivity on the phyBOARD-Pollux-i.MX8MP.
 
 Signed-off-by: Yashwanth Varakala <y.varakala@phytec.de>
 Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
 ---
- arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-index 341baa167191..4cdb3b9fff08 100644
+index 4cdb3b9fff08..62f1819bc1a4 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-@@ -171,6 +171,7 @@ eeprom@51 {
- 		compatible = "atmel,24c02";
- 		reg = <0x51>;
- 		pagesize = <16>;
-+		vcc-supply = <&reg_vcc_3v3_sw>;
+@@ -43,6 +43,15 @@ panel1_in: endpoint {
+ 		};
  	};
  
- 	leds@62 {
++	reg_vcc_5v_sw: regulator-vcc-5v-sw {
++		compatible = "regulator-fixed";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-max-microvolt = <5000000>;
++		regulator-min-microvolt = <5000000>;
++		regulator-name = "VCC_5V_SW";
++	};
++
+ 	reg_can1_stby: regulator-can1-stby {
+ 		compatible = "regulator-fixed";
+ 		pinctrl-names = "default";
 
 -- 
 2.25.1
