@@ -1,270 +1,113 @@
-Return-Path: <linux-kernel+bounces-286793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2756C951F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:48:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B79DD951F05
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA841F245ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:48:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CB45B23010
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA7A1B3757;
-	Wed, 14 Aug 2024 15:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF901B9B26;
+	Wed, 14 Aug 2024 15:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWkWPtjC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ge4ULKRh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025C71B580E;
-	Wed, 14 Aug 2024 15:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBE71B8E8B;
+	Wed, 14 Aug 2024 15:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650455; cv=none; b=gSy+yglBUerXEls91pNvBvRTvrvQoXycXlsyC4+KKPasNZyy+CLYKmysqJ8xfdSqu/xAABPPnjGDgzqFwAlM8UFGTH/0pM4+g8x8BBokLRdz6hVAjGkCLLShzxs4WeTv8Tlsy4xe1as1FadYE/eX+BAnpm1l/RDk8/MZt6KFHu4=
+	t=1723650433; cv=none; b=gaJFSQ/MgSBnNRp6G6fmKZdUrLFb0YWCSfFeUiqEYjVPk12++aByvg/glsqwAkdIYMeWbVtQxNUOsol869OLc6dGOtKf1jJk1e6u7I8be0fbNaa2nTNxNFCxonsw1SP0cOiICt27EXXK666idAJj0vsosIVQPUSUYxGieD+TPks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650455; c=relaxed/simple;
-	bh=VWXqPii6p9P30d6ou5jZRjbh7KsFz67dSp0w6vZgo9k=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iV/OiGBIyGmV5OqUbijDyR+ZBgdSsqiwACStVhVcJQVVxPfSshlNS3B1zj4CzVbStuUQZSdcHL4YcE9Ain4U3fUjlVZERAyYfGndG/zadoW7emSEsYjWkKFY/t95i8Ju62H2pSv9SKr8Jr8I04vpagJRHP1AL5hiutBwhzjkoIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWkWPtjC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65AB6C116B1;
-	Wed, 14 Aug 2024 15:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723650454;
-	bh=VWXqPii6p9P30d6ou5jZRjbh7KsFz67dSp0w6vZgo9k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LWkWPtjCPKbqOUZeACcYSLnXpJgj9h9N/x1Ba9nLw5woFkFoze1ZiNLumjhTOX3p9
-	 pb/huT2uc8P6ugu9LyRz8XTe+5eKojPwv9Hmm93zcDgU9C2dfwLfJxpPWv+16qd7oV
-	 G+insdxBDurDR1iKnEK6TLouMlumyIrPmrJyNYuWm4J31ZQUp7IpF4bezWcUOa7xTK
-	 siYzZWgWvZMYhxp0cbrb5FRRKF1idYlTduqiTVF67lGVYuYmkoRhOzrlRRUFZVu5nW
-	 N3qWb7XnzL9wh5LGzuYW2X6/be2kVf54VY1IsOq65NQBikiFy+8rLKxLXkryq3joAX
-	 +lx5oGFOGZf/g==
-Date: Thu, 15 Aug 2024 00:47:30 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Shuah Khan <shuah@kernel.org>, Tom
- Zanussi <zanussi@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] selftests/tracing: Add hist poll() support test
-Message-Id: <20240815004730.180bf760e27cb5a6959898ee@kernel.org>
-In-Reply-To: <2c13840e-2717-4f88-b613-f6a770be2d75@linuxfoundation.org>
-References: <172359427367.323666.6446548762874507863.stgit@devnote2>
-	<172359430351.323666.9768554440535494357.stgit@devnote2>
-	<2c13840e-2717-4f88-b613-f6a770be2d75@linuxfoundation.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723650433; c=relaxed/simple;
+	bh=CbEh9vZsDIkvt9w/RJG8miSMP2IpSdBMNNw0Z+T+ZdQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hKx6+PgN3R79drdRyqyew51wjwJ/BwMsOGrhFhN7HX3eMMnQue/oVJXaKX7qmdki10BLYelFXKTrdupv3ZUI00XOBOygNcpeLR9AHA4HPPr5YeWQLilF0wPgr8UYL8riSvuqZstnLVtbBkrQvQOkQ+MmwRv1hpIvo/9UJH6pP/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ge4ULKRh; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723650432; x=1755186432;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CbEh9vZsDIkvt9w/RJG8miSMP2IpSdBMNNw0Z+T+ZdQ=;
+  b=ge4ULKRhHEysgANy0pQCyrNzr9CWFF/xv0JdMdngXjOppQ2vrtyJqZZd
+   r/7HPpLipj2gqSHpY0IrEpDHU3kIb0X9+yEZFyxZh07cVlvXSzbFCPH7Z
+   1ZYBpCoIqC0BQRHnrTtc1HdxTovQeFM8lMBxMPOFrq+bc76nDok0GFqF/
+   MPREztIV0lj9TIgRqPqHOC/rK7bYhji8q8Mgim65Ux5+sh/Bg/TWHgf0N
+   vNsom74zoD3qrZRVmJzhkIgno9WTlJdz7zQ3ctWdnYdtzcYauZ/oIaY0n
+   V0VW89mYdl6PSlGgmgCw1fwPr3ccdBYHoEdJn2yzGSD4g8DHxtS1TxuEP
+   g==;
+X-CSE-ConnectionGUID: NFVANyKMSriEk2Nx7mz/Yw==
+X-CSE-MsgGUID: g0QRuBFuSHmFheC+dmK7Vw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="47279481"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="47279481"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 08:46:58 -0700
+X-CSE-ConnectionGUID: nkE4UlE0QZCydyjUw8BQRw==
+X-CSE-MsgGUID: W2wVLuKMQZmrfa/wcWgPog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="58936548"
+Received: from dev2.igk.intel.com ([10.237.148.94])
+  by orviesa010.jf.intel.com with ESMTP; 14 Aug 2024 08:46:55 -0700
+From: =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
+	tiwai@suse.com,
+	perex@perex.cz,
+	lgirdwood@gmail.com,
+	=?UTF-8?q?P=C3=A9ter=20Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Thorsten Leemhuis <regressions@leemhuis.info>,
+	Vitaly Chikunov <vt@altlinux.org>,
+	Mark Brown <broonie@kernel.org>,
+	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>
+Subject: [PATCH for stable v2 0/2] ASoC: topology: Fix loading topology issue
+Date: Wed, 14 Aug 2024 17:47:47 +0200
+Message-Id: <20240814154749.2723275-1-amadeuszx.slawinski@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 14 Aug 2024 05:38:24 -0600
-Shuah Khan <skhan@linuxfoundation.org> wrote:
+Commit 97ab304ecd95 ("ASoC: topology: Fix references to freed memory")
+is a problematic fix for issue in topology loading code, which was
+cherry-picked to stable. It was later corrected in
+0298f51652be ("ASoC: topology: Fix route memory corruption"), however to
+apply cleanly e0e7bc2cbee9 ("ASoC: topology: Clean up route loading")
+also needs to be applied.
 
-> On 8/13/24 18:11, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Add a testcase for poll() on hist file. This introduces a helper binary
-> > to the ftracetest, because there is no good way to reliably execute
-> > poll() on hist file.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >   Changes in v2:
-> >    - Update poll command to support both of POLLIN and POLLPRI, and timeout.
-> >    - Identify unsupported stable kernel if poll-in returns soon.
-> >    - Test both of POLLIN and POLLPRI.
-> > ---
-> >   tools/testing/selftests/ftrace/Makefile            |    2 +
-> >   tools/testing/selftests/ftrace/poll.c              |   62 +++++++++++++++++
-> >   .../ftrace/test.d/trigger/trigger-hist-poll.tc     |   74 ++++++++++++++++++++
-> >   3 files changed, 138 insertions(+)
-> >   create mode 100644 tools/testing/selftests/ftrace/poll.c
-> >   create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/Makefile b/tools/testing/selftests/ftrace/Makefile
-> > index a1e955d2de4c..49d96bb16355 100644
-> > --- a/tools/testing/selftests/ftrace/Makefile
-> > +++ b/tools/testing/selftests/ftrace/Makefile
-> > @@ -6,4 +6,6 @@ TEST_PROGS := ftracetest-ktap
-> >   TEST_FILES := test.d settings
-> >   EXTRA_CLEAN := $(OUTPUT)/logs/*
-> >   
-> > +TEST_GEN_PROGS = poll
-> > +
-> >   include ../lib.mk
-> > diff --git a/tools/testing/selftests/ftrace/poll.c b/tools/testing/selftests/ftrace/poll.c
-> > new file mode 100644
-> > index 000000000000..8003a59fe042
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/ftrace/poll.c
-> > @@ -0,0 +1,62 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Simple poll on a file.
-> > + *
-> > + * Copyright (c) 2024 Google LLC.
-> > + */
-> > +
-> > +#include <errno.h>
-> > +#include <fcntl.h>
-> > +#include <poll.h>
-> > +#include <stdio.h>
-> > +#include <stdlib.h>
-> > +#include <string.h>
-> > +#include <unistd.h>
-> > +
-> > +#define BUFSIZE 4096
-> > +
-> > +/*
-> > + * Usage:
-> > + *  poll <in|pri> <FILE> [timeout]
-> > + */
-> > +int main(int argc, char *argv[])
-> > +{
-> > +	struct pollfd pfd;
-> > +	char buf[BUFSIZE];
-> > +	int timeout = -1;
-> > +	int ret;
-> > +
-> > +	if (argc < 3)
-> > +		return -1;
-> > +
-> > +	if (!strcmp(argv[1], "in"))
-> > +		pfd.events = POLLIN;
-> > +	else if (!strcmp(argv[1], "pri"))
-> > +		pfd.events = POLLPRI;
-> > +
-> > +	pfd.fd = open(argv[2], O_RDONLY);
-> > +	if (pfd.fd < 0) {
-> > +		perror("open");
-> > +		return -1;
-> > +	}
-> > +
-> > +	if (argc == 4)
-> > +		timeout = atoi(argv[3]);
-> 
-> This code can be simpler and more maintainable using getopt.
-> Any reason why you didn't use it?
+Link: https://lore.kernel.org/linux-sound/ZrwUCnrtKQ61LWFS@sashalap/T/#mbfd273adf86fe93b208721f1437d36e5d2a9aa19
 
-There is no reason. OK, let me use getopt to clean it up.
+Should be applied to stable 6.1, 6.6, 6.9.
 
-> 
-> > +
-> > +	/* Reset poll by read if POLLIN is specified. */
-> > +	if (pfd.events & POLLIN)
-> > +		do {} while (read(pfd.fd, buf, BUFSIZE) == BUFSIZE);
-> > +
-> > +	ret = poll(&pfd, 1, timeout);
-> > +	if (ret < 0 && errno != EINTR) {
-> > +		perror("poll")> +		return -1;
-> > +	}
-> > +	close(pfd.fd);
-> > +
-> > +	/* If timeout happned, return code is 0 */
-> 
-> Spelling - happened
+v2:
+ - Mention base commit
+ - Sign-off patches again, as those are cherrypicks
 
-Oops, thanks!
+Amadeusz Sławiński (2):
+  ASoC: topology: Clean up route loading
+  ASoC: topology: Fix route memory corruption
 
-> 
-> > +	if (ret == 0)
-> > +		return 1;
-> > +
-> > +	return 0;
-> > +}
-> > diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> > new file mode 100644
-> > index 000000000000..53bea74e2234
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-hist-poll.tc
-> > @@ -0,0 +1,74 @@
-> > +#!/bin/sh
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# description: event trigger - test poll wait on histogram
-> > +# requires: set_event events/sched/sched_process_free/trigger events/sched/sched_process_free/hist
-> > +# flags: instance
-> > +
-> > +POLL=${FTRACETEST_ROOT}/poll
-> > +
-> > +if [ ! -x ${POLL} ]; then
-> > +  echo "poll program is not compiled!"
-> > +  exit_unresolved
-> > +fi
-> > +
-> > +EVENT=events/sched/sched_process_free/
-> > +
-> > +# Check poll ops is supported. Before implementing poll on hist file, it
-> > +# returns soon with POLLIN | POLLOUT, but not POLLPRI.
-> > +
-> > +# This must wait >1 sec and return 1 (timeout).
-> > +set +e
-> > +${POLL} in ${EVENT}/hist 1000
-> > +ret=$?
-> > +set -e
-> > +if [ ${ret} != 1 ]; then
-> > +  echo "poll on hist file is not supported"
-> > +  exit_unsupported
-> > +fi
-> > +
-> > +# Test POLLIN
-> > +echo > trace
-> > +echo "hist:key=comm" > ${EVENT}/trigger
-> > +echo 1 > ${EVENT}/enable
-> > +
-> > +# This sleep command will exit after 2 seconds.
-> > +sleep 2 &
-> > +BGPID=$!
-> > +# if timeout happens, poll returns 1.
-> > +${POLL} in ${EVENT}/hist 4000
-> > +echo 0 > tracing_on
-> > +
-> > +if [ -d /proc/${BGPID} ]; then
-> > +  echo "poll exits too soon"
-> > +  kill -KILL ${BGPID} ||:
-> > +  exit_fail
-> > +fi
-> > +
-> > +if ! grep -qw "sleep" trace; then
-> > +  echo "poll exits before event happens"
-> > +  exit_fail
-> > +fi
-> > +
-> > +# Test POLLPRI
-> > +echo > trace
-> > +echo 1 > tracing_on
-> > +
-> > +# This sleep command will exit after 2 seconds.
-> > +sleep 2 &
-> > +BGPID=$!
-> > +# if timeout happens, poll returns 1.
-> > +${POLL} pri ${EVENT}/hist 4000
-> > +echo 0 > tracing_on
-> > +
-> > +if [ -d /proc/${BGPID} ]; then
-> > +  echo "poll exits too soon"
-> > +  kill -KILL ${BGPID} ||:
-> > +  exit_fail
-> > +fi
-> > +
-> > +if ! grep -qw "sleep" trace; then
-> > +  echo "poll exits before event happens"
-> > +  exit_fail
-> > +fi
-> > +
-> > +exit_pass
-> > 
-> 
-> thanks,
-> -- Shuah
-> 
-
+ sound/soc/soc-topology.c | 32 ++++++++------------------------
+ 1 file changed, 8 insertions(+), 24 deletions(-)
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.34.1
+
 
