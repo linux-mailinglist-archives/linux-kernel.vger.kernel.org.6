@@ -1,80 +1,70 @@
-Return-Path: <linux-kernel+bounces-287031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC8A9521DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:15:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB5F9521DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550CE1C2202B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:15:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A04B224A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DA01BD515;
-	Wed, 14 Aug 2024 18:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026CE1BD4E2;
+	Wed, 14 Aug 2024 18:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AFyxU3Qx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i+RD1Ec0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B645F1BD014
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9606713CABC;
+	Wed, 14 Aug 2024 18:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723659297; cv=none; b=KxkrrD6v3QoalfjuxKghwOFgbQlhsjXkci6NKreAE/TUfVSumobcAjJh4gLWhqnyV96iErFf3hj5SUAhQvQeP/vcQKAVX55lizw5TnMkl7zlxzvuWk1a0RRRmPjZpU+qvEV7PYz1/V/EEzDy9w0NO1g58ko6sISv6mllajXCCHk=
+	t=1723659318; cv=none; b=A9fcgh+bvICgSD+J4XSjDBYNaNe7YX+q+nFb3NYsLPjPlXGI/XCuSzbrro23XE5xxiykKxA1MvUzkrVyDZtJ3sOO3Y59GpgPB7rXkZiaj06f82f5/Wib1387wCjexd4OhKcIrtZXtcAYl43DMJ8vlCYKjgP0805MF8ZFdXRlMfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723659297; c=relaxed/simple;
-	bh=i6BkDoLlaoX+JjFd1Eh5Avh6/AbATM1NS+hHzsa1tSM=;
+	s=arc-20240116; t=1723659318; c=relaxed/simple;
+	bh=is7S2/rJ4MTcclVdO3VVsiHsnMVP/hqoxQUNrq2oNUg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hxypFS7/AA93GtjRWwNTnEe0P+BE2sLXW3pzB5za+kS8EHfZQrCco7bZgIenE3MpO9e/oYrU5JLKGlEXh0qJvwNmb6s3ziqaJnudWchXoEofaDpA59Zxl2xXFObfLlwWmbKqNXfczsaGKL1gUfaU0yrPS57mGLRyWcWIYdFtn80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AFyxU3Qx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723659294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=umYOps4F9bHTm9Ep0XCxv21fl142J86XVlpY2IGreP4=;
-	b=AFyxU3Qx0jN15+lqRuUXauHlcw/O5xhMx5TPJsWhfkGQZvxx+oFeEGwtXeQ/JSFdlEdZQ3
-	98F2eTjwp79rCRz6mSuiZ2JXltIj17iXhAQ8xcS3z0+6ZxxWdbfAlOj02GWXTAHTFZ5Koc
-	dJl9y65W2IPhT8kJiGwfIfpHqDwBiiA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-10-9BnljSO4N2W3qQ9Z-s7mnA-1; Wed, 14 Aug 2024 14:14:53 -0400
-X-MC-Unique: 9BnljSO4N2W3qQ9Z-s7mnA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-427ffa0c9c7so657205e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:14:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723659291; x=1724264091;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=umYOps4F9bHTm9Ep0XCxv21fl142J86XVlpY2IGreP4=;
-        b=r/dbInlncmhIg7B2E3QcmKGzZyrVOgQ7gFM2H6YQl77J0Vi3rqObsnmMy6pu2PN2V1
-         xVJj9br1VkFmiL9yKe3RxAOax62oA76QZZcuiok3qB4Xr2LJKskMhZ6XrczsO969pyqp
-         P71G5we8VqmGy2jIf0iTHruYkvWJ0TpRC5uSCquv2stYQwMpJPuZPJPpY7+fuwbIbOlZ
-         xaWfjOuzna4q5T3DS9zRN2fMjIAc9wM/UTipN9p6Muy2q59lb/7CzTmmJLoDZnxvRl16
-         w5b/fCu2uORIJB3fF/tIspJ0AQuU3T1LCQYcgqI89vgVULiMbqDz8PHvekKzDReP8+mS
-         ARQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMxM9QZgq1jZ3DiM1CmmxcnUN+MFFH4eEQ8yuCkpQMkSkjMkk0KW7247tN16dgh8fUUGJG7p65+olYjwerYYcvONbDL+vzPAU97Epi
-X-Gm-Message-State: AOJu0YxrzQ3noCa7XiWXP8lyjlY8UEYmDm/Q+LQX3s/CsqJWg2jvrzNz
-	RbDKcflbgXeKLjTeS+QMKFQmp5iiZ/+cgK0wXz2QOshZf6nywVMbkB8ft53OWKLD5jbcGYLhJuf
-	P/d5yfatG/lK+tMDtO/ys0cOW6TeaQoI4lu8j0PMAsRlRdQAnLUc3yXQhXpVLZnlojc4VRw==
-X-Received: by 2002:a05:600c:3b21:b0:426:6f87:65fc with SMTP id 5b1f17b1804b1-429dd23ce14mr30734175e9.17.1723659291423;
-        Wed, 14 Aug 2024 11:14:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6lRWgEY+GRw+Y2rxo2WrjU1gDgeDGJu9UBl9Icg/Y/Fj/LoEevNAbPFHDDVjcOvyablY/YQ==
-X-Received: by 2002:a05:600c:3b21:b0:426:6f87:65fc with SMTP id 5b1f17b1804b1-429dd23ce14mr30734045e9.17.1723659290916;
-        Wed, 14 Aug 2024 11:14:50 -0700 (PDT)
-Received: from [192.168.10.47] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ded582fcsm26990805e9.44.2024.08.14.11.14.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 11:14:49 -0700 (PDT)
-Message-ID: <c4f7cb72-c0af-433d-ab52-e68728af1446@redhat.com>
-Date: Wed, 14 Aug 2024 20:14:46 +0200
+	 In-Reply-To:Content-Type; b=GtlT0kHeY7X9RfKV0miuCgW2LhJu+7L+SOnaHz3WTfTR/6f9nF/mgBNGLeLXZcjSLHuC31S39UOWwbIshdM4TghKmUChcOiYNwyBxrthxhiXLUVLuUu8xtW5ymS/lnnLJIgzj/5b9q+Z+NPxV+zYd7JMCOs3Cg1/VEaogJiNbFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i+RD1Ec0; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723659317; x=1755195317;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=is7S2/rJ4MTcclVdO3VVsiHsnMVP/hqoxQUNrq2oNUg=;
+  b=i+RD1Ec0pO+8Ehhjk0o7OkiOOGMo2KnzHLpvydUZP4Cdwoqov92IFsqi
+   3Feq1IqCPPcy3dte+LqMBjpbCmIc6g2d0LM02p/zPdfU9xKWt4TDjx4CY
+   eEL/Wb+o8A4Uf+c1X5jI9oeOx2vO/OL0KA3gVNV94bp0JiYojihIUZd9u
+   nHXds35bPyMGRHhpP7Erdnl81IU+NrLm1ZfDBzcgCnGtpPc2SEpIbYzY4
+   TXKkO5fW3FOH/8LRHzEJXhxf5zs43NJpEqhhYd9Tz8wWqZONlY9rFcANm
+   8gYeWoHTp9beqhZCArfEliC+3T7pAclAXqbEINFLG6uvpVXXXUd3wu4PF
+   Q==;
+X-CSE-ConnectionGUID: DCwE11ZoRjeZc9d88/jrPA==
+X-CSE-MsgGUID: hNyLFZdQQMOH4ofXDV6KSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="32525568"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="32525568"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:15:16 -0700
+X-CSE-ConnectionGUID: CPZA/4CmT8+ybdwBjwyLRg==
+X-CSE-MsgGUID: poKIMBO7RS6shBqh0/JtHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="58767112"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 11:15:15 -0700
+Received: from [10.212.17.191] (kliang2-mobl1.ccr.corp.intel.com [10.212.17.191])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 57C7120CFED8;
+	Wed, 14 Aug 2024 11:15:13 -0700 (PDT)
+Message-ID: <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com>
+Date: Wed, 14 Aug 2024 14:15:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,163 +72,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] KVM: Add a module param to allow enabling
- virtualization when KVM is loaded
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
-References: <20240608000639.3295768-1-seanjc@google.com>
- <20240608000639.3295768-5-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
+To: Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>,
+ peterz@infradead.org, mingo@redhat.com
+Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <87sev7nom4.ffs@tglx>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240608000639.3295768-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <87sev7nom4.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/8/24 02:06, Sean Christopherson wrote:
-> Add an off-by-default module param, enable_virt_at_load, to let userspace
-> force virtualization to be enabled in hardware when KVM is initialized,
-> i.e. just before /dev/kvm is exposed to userspace.  Enabling virtualization
-> during KVM initialization allows userspace to avoid the additional latency
-> when creating/destroying the first/last VM.  Now that KVM uses the cpuhp
-> framework to do per-CPU enabling, the latency could be non-trivial as the
-> cpuhup bringup/teardown is serialized across CPUs, e.g. the latency could
-> be problematic for use case that need to spin up VMs quickly.
+
+
+On 2024-08-14 10:52 a.m., Thomas Gleixner wrote:
+> Li!
 > 
-> Enabling virtualizaton during initialization will also allow KVM to setup
-> the Intel TDX Module, which requires VMX to be fully enabled, without
-> needing additional APIs to temporarily enable virtualization.
+> On Tue, Aug 13 2024 at 21:13, Li Huafei wrote:
+>> On 2024/8/1 3:20, Thomas Gleixner wrote:
+>>>> My machine has 32 physical cores, each with two logical cores. During
+>>>> testing, it executes the CVE-2015-3290 test case 100 times concurrently.
+>>>>
+>>>> This warning was already present in [1] and a patch was given there to
+>>>> limit period to 128 on Haswell, but that patch was not merged into the
+>>>> mainline.  In [2] the period on Nehalem was limited to 32. I tested 16
+>>>> and 32 period on my machine and found that the problem could be
+>>>> reproduced with a limit of 16, but the problem did not reproduce when
+>>>> set to 32. It looks like we can limit the cycles to 32 on Haswell as
+>>>> well.
+>>>
+>>> It looks like? Either it works or not.
+>>
+>> It worked for my test scenario. I say "looks like" because I'm not sure
+>> how it circumvents the problem, and if the limit of 32 no longer works
+>> if I increase the number of test cases executed in parallel. Any
+>> suggestions?
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-I think we should enable it by default and wait for someone to complain. 
-  Or notice, even.
-
-Paolo
-
-> ---
->   virt/kvm/kvm_main.c | 37 +++++++++++++++++++++++++++++++++++++
->   1 file changed, 37 insertions(+)
+> If you read back through the email history of these limits, then you can
+> see that too short periods cause that problem on Broadwell due to a
+> erratum, which is explained on top of the BDW limit.
 > 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 98e52d12f137..7bdd744e4821 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -5495,6 +5495,9 @@ static struct miscdevice kvm_dev = {
->   };
->   
->   #ifdef CONFIG_KVM_GENERIC_HARDWARE_ENABLING
-> +static bool enable_virt_at_load;
-> +module_param(enable_virt_at_load, bool, 0444);
-> +
->   __visible bool kvm_rebooting;
->   EXPORT_SYMBOL_GPL(kvm_rebooting);
->   
-> @@ -5645,15 +5648,41 @@ static void kvm_disable_virtualization(void)
->   	unregister_syscore_ops(&kvm_syscore_ops);
->   	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
->   }
-> +
-> +static int kvm_init_virtualization(void)
-> +{
-> +	if (enable_virt_at_load)
-> +		return kvm_enable_virtualization();
-> +
-> +	return 0;
-> +}
-> +
-> +static void kvm_uninit_virtualization(void)
-> +{
-> +	if (enable_virt_at_load)
-> +		kvm_disable_virtualization();
-> +
-> +	WARN_ON(kvm_usage_count);
-> +}
->   #else /* CONFIG_KVM_GENERIC_HARDWARE_ENABLING */
->   static int kvm_enable_virtualization(void)
->   {
->   	return 0;
->   }
->   
-> +static int kvm_init_virtualization(void)
-> +{
-> +	return 0;
-> +}
-> +
->   static void kvm_disable_virtualization(void)
->   {
->   
-> +}
-> +
-> +static void kvm_uninit_virtualization(void)
-> +{
-> +
->   }
->   #endif /* CONFIG_KVM_GENERIC_HARDWARE_ENABLING */
->   
-> @@ -6395,6 +6424,10 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
->   
->   	kvm_gmem_init(module);
->   
-> +	r = kvm_init_virtualization();
-> +	if (r)
-> +		goto err_virt;
-> +
->   	/*
->   	 * Registration _must_ be the very last thing done, as this exposes
->   	 * /dev/kvm to userspace, i.e. all infrastructure must be setup!
-> @@ -6408,6 +6441,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
->   	return 0;
->   
->   err_register:
-> +	kvm_uninit_virtualization();
-> +err_virt:
->   	kvm_vfio_ops_exit();
->   err_vfio:
->   	kvm_async_pf_deinit();
-> @@ -6433,6 +6468,8 @@ void kvm_exit(void)
->   	 */
->   	misc_deregister(&kvm_dev);
->   
-> +	kvm_uninit_virtualization();
-> +
->   	debugfs_remove_recursive(kvm_debugfs_dir);
->   	for_each_possible_cpu(cpu)
->   		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
+> Now looking at the HSW specification update specifically erratum HSW11:
+> 
+>   Performance Monitor Precise Instruction Retired Event May Present
+>   Wrong Indications
+> 
+>   Problem:
+>          When the Precise Distribution for Instructions Retired (PDIR)
+>          mechanism is activated (INST_RETIRED.ALL (event C0H, umask
+>          value 00H) on Counter 1 programmed in PEBS mode), the processor
+>          may return wrong PEBS or Performance Monitoring Interrupt (PMI)
+>          interrupts and/or incorrect counter values if the counter is
+>          reset with a Sample- After-Value (SAV) below 100 (the SAV is
+>          the counter reset value software programs in the MSR
+>          IA32_PMC1[47:0] in order to control interrupt frequency).
+> 
+>   Implication:
+>          Due to this erratum, when using low SAV values, the program may
+>          get incorrect PEBS or PMI interrupts and/or an invalid counter
+>          state.
+> 
+>   Workaround:
+>          The sampling driver should avoid using SAV<100.
+> 
+> IOW, that's exactly the same issue as the BDM11 erratum.
+> 
+> Kan: Can you please go through the various specification updates and
+> identify which generations are affected by this and fix it once and
+> forever in a sane way instead of relying on 'tried until it works by
+> some definition of works' hacks. These errata are there for a reason.
 
+Sure. I will check all the related erratum and propose a fix.
+
+> 
+> 
+> But that does not explain the fallout with that cve test because that
+> does not use PEBS. It's using fixed counter 0.
+
+The errata also mentions about the PMI interrupts, which may imply
+non-PEBS case. I will double check with the architect.
+
+According to the description of the patch, if I understand correctly, it
+runs 100 CVE-2015-3290 tests at the same time. If so, all the GP
+counters are used. Huafei, could you please confirm?
+
+Thanks,
+Kan
+> 
+> Li, you added that huge useless backtrace but cut off the output of
+> perf_event_print_debug() after it. Can you please provide that
+> information so we can see what the counter states are?
+> 
+>>>> +static void hsw_limit_period(struct perf_event *event, s64 *left)
+>>>> +{
+>>>> +	*left = max(*left, 32LL);
+>>>> +}
+>>>
+>>> And why do we need a copy of nhm_limit_period() ?
+>>>
+>>
+>> Do you mean why the period is limited to 32 like nhm_limit_period()?
+> 
+> No. If 32 is the correct limit, then we don't need another function
+> which does exactly the same. So you can assign exactly that function for
+> HSW, no?
+> 
+> Thanks,
+> 
+>         tglx
 
