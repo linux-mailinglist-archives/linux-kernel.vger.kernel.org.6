@@ -1,154 +1,155 @@
-Return-Path: <linux-kernel+bounces-286473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D65D951B4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:01:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB3B951B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1553D2830FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:01:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F670B23E4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24746381D4;
-	Wed, 14 Aug 2024 13:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32721B1407;
+	Wed, 14 Aug 2024 13:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wyq7uAAS"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gqe7U6Ab"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B841E49F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A13381D4
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723640493; cv=none; b=NvEjJMwq866K6lMaP6qzMgSr8VaXac6XJ42KCKM5LuKHgsz93tp+Up36D3T1lSZNKGrAXKkbsjSDXH7SysJK7COSVSUP9R9HTLXnlDn2kuAHP4jeBIv2Koj8uLzvcAFRd9JIc/MU5HJi2XVLOV1raubNLQ2qXV0CMcGjvFEWFJU=
+	t=1723640570; cv=none; b=mSH0tT7OawQZ2AA/VlCAm4oR7mLusu7BhCk6JAKzJ79OMN2ngupBTPLFKLA4ROzRZAvwkQx8VnvEqdOZSwjyd+syZ8uOc7wgqCuxAf5EAOzFn762JC/kDjSI7QDXwL5iHxusP3JtyFTd/TlusbmpXanikPrM2Gif5ZY/QTlBbdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723640493; c=relaxed/simple;
-	bh=q/uJbkjsZVe1udBwRTk4Z0NblBdsbyD+dlaoHPUzTfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WzQnBR3syAxDGqIwWoa7b/Mz1hOMrycGQiPdCOZ6e9we+O4qlHAyqpJ/B2azeQCzYwUm9AAOgWJutXfLnpvA4wb3p30YXdBDSruRtsErd57tzhH95CbVa88HsG9awtdjhql99mOq/FEF+DH/ZI6lacUHWWfZpdLC5YLiaPni5ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wyq7uAAS; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso5876733276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:01:31 -0700 (PDT)
+	s=arc-20240116; t=1723640570; c=relaxed/simple;
+	bh=NT+wGZ9R/+yI3DIAo9Gmeit9wV4Vawzv31a8JT9RhX4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=WoGRCuJws4oo5CTD5p+OmzKk+wyyi+TsT6Pj+kCHUtnpEghFMJ3JYga8k/VgN6CDZGMnVYIN5986eOvu8KFJYrUFBOmz2BV9UjCf5FkZRZe9QU+GfESalCm03/X1P4y/OifgwLQPcmkeHI2mFhl1V8+T3tkzQfM47Y6MnGpFOyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gqe7U6Ab; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-429d2d7be1eso5128665e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723640491; x=1724245291; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7jfobO0h8PCWvLzZDgipywq+q6ry4w+xtSJdMM8OsI8=;
-        b=wyq7uAASsaengzfHPU49sQat/HWe/WmS1L2lwZ9yYY2j3EedHaQqDLk3ZkuNxcF8ss
-         S5Ob9Cw96H22xFbaLJO/oEPdsESjpW3vc9HvvGzSon8+6KqZ76LDwBr6EdCcHnbhaCwg
-         iNNnAPenqd2k8ECjACCeG1RhuGRm2Siz33T2Zm1B11LrEgLwfNn+mltmnyV5Mcshb1gw
-         A8MlisojbKlFsYNgkcwQAyosiWM0xtm2vugCDrgvPIP/1bO+VxdLJXAQH9qPupM4iM8Z
-         ON0bie1ck1YaWWsPOmAgerNSipCuAsOzcwLiFqYkRP0KmyIz2+avqycYiTzAOCWuqwBs
-         OKgQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723640566; x=1724245366; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O4K4BDaLCEtdbulY6HtobHdsh36KQUSnYp7/rzF5PLA=;
+        b=gqe7U6AbuiiG03QJujRb18WTRgcI1loYGO2DdPtPX+l4oMNGikH3gKC6FQ0G1Vh2MW
+         RovaleWSzXqeSiE55LQjdgREpvfJpuhhibALpgeowscT0qJCEz0YOgcdFbt+wzGqZfky
+         Ks6+Xh9UkckYm55GSmgLaLNdnLxvnyXOngdLPhPVZc1YQDYf1VMtmlbJ8+XmOhz5HURI
+         SQt8jF+OoIHE3AAi1k6k/FUW7CEplqMVy+j8/+JyKWrFS8W9Lms5a/xHPOCStY3GFgi+
+         xCQee99xylX0ZoqJ6bpCI8byvWzBVWiRTKJL935G/XSS2r48QXz4cjIe5caKPNdjueZ0
+         gFcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723640491; x=1724245291;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7jfobO0h8PCWvLzZDgipywq+q6ry4w+xtSJdMM8OsI8=;
-        b=Q+oSjnf1BOHER7AfnX3uQ+zhO0exr46m3P+2zmwKy34xNv+W7CHfY3GOn/gj06R209
-         Xmnp8ij0ioKToLBkc1dwSCpiBg68sScxjAyWQWROA7xkmf+xMpKtfgpLYvYJ6r6STm1E
-         SU73HpjTDinOljMliScRY/Lxflymdw3tCqHUEA3XGLCiEIXJHcdsmIQTo3rW4bl0o9kp
-         /c0ZLYbIqOc4g1tGi94IGFiZsFcA4dGO2wrrC7vlylF+R/65OsPKMb5gi5lA4eaeOXv8
-         +InjUmMpj69Gw66DV/oguliwFJwcZfgkX0bzn4BSH7sEfDh1scSjaQH0Ek7JsJFG/tO2
-         msww==
-X-Forwarded-Encrypted: i=1; AJvYcCWQsfQyYxzeQ8F/QxjJ9XL+lya+21nqcA+QPa/DylhNOa/jI00bb5gvA/ceOxI05HMXCXbjcIdnqw4Yai+pnC/uSEhUqjJKrxW12mtB
-X-Gm-Message-State: AOJu0Yx7dUmzeHN8/7t//4t3Hwa47+2G1vQw02YbaJhtSRC/XF4L6Jb/
-	2AlIyIxfQxG3w9XxX2bBYZnfaDnbymWHUIPtIiwLY95eyztxY/x+QZA0nj9NnEMMqA53O6qB0rh
-	5Lo/ESUnrpXz8d0EeYncUalLG3A2sLwpNNBqelQ==
-X-Google-Smtp-Source: AGHT+IHrp4Xh3i1XqddMFLTNR0pu3w38VmxhIBnGcCEYDdONQahxkdZEFtRyur/hzKD2ig6aNbR/s73+CN6uArFqY3M=
-X-Received: by 2002:a05:6902:2201:b0:e0b:c402:b03f with SMTP id
- 3f1490d57ef6-e1155ae6007mr2993583276.27.1723640489000; Wed, 14 Aug 2024
- 06:01:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723640566; x=1724245366;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=O4K4BDaLCEtdbulY6HtobHdsh36KQUSnYp7/rzF5PLA=;
+        b=lgR6ty+LzKlxS2XjQRqqTtZx8gLFznv9K3ucluLMu0axE0WfnTB3mHhiK7dpvWL8NN
+         EqpWJYMklK/5Em7v2lwkY2+atrji8rFfOxJg17DHfMxQ7PDw5kvm9PqNyQqbBsnXrGgm
+         nXkea9yYOXIYwYgIj98HWt4ZTW2bonRYKEkbKWV0+E3Heq2qmH3YzICfs2BnYG5vsq5N
+         8I7rH5RgkLmy6mdcCfpDT1VIhSJ+gwE9swSiOs2GO1b82y6XOf9Ez7Z7entq5cNc9ytt
+         JMukhaYq6ikHyvFagMFsoaPtMCEnUovh3SQN8LbiIbWV33myM3wNhMDjKSWI55ICjms1
+         Vn4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWuuFl9O17BXreiU3iTt2NTjmsYJYVcSJTri3nzK+WxQcOoFcAotv6ipsCN5d8XIG+XV+iCC1kklMMlHpMD19tjq9ifOouk7kNczyPa
+X-Gm-Message-State: AOJu0Yx2j9/8bwFf66/3hD9YrkHZ4hcvm428xaul7YHEy300bhK0hK0r
+	6pKrNBccuDhZgwR4gDttxJ/tErB3vYPiwjP5k1vu/YA1jpN4OJ12hJzIsPpMWrE=
+X-Google-Smtp-Source: AGHT+IEiuMuerzIZhsH7pz9MJFOaYB3RXunMQWiFhAXvL252urYZEie5hvV1BugT/j84AicdA4rzZA==
+X-Received: by 2002:a05:600c:19c9:b0:424:a7f1:ba2 with SMTP id 5b1f17b1804b1-429d62fe113mr51591955e9.17.1723640563879;
+        Wed, 14 Aug 2024 06:02:43 -0700 (PDT)
+Received: from localhost ([2a01:e0a:448:76e0:3b04:df6a:3044:6b7d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded327f8sm19376945e9.18.2024.08.14.06.02.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 06:02:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240814124740.2778952-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20240814124740.2778952-1-peng.fan@oss.nxp.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 14 Aug 2024 15:00:52 +0200
-Message-ID: <CAPDyKFrUyEfSsEdjfXGLX5NJuWaGNBZg1D+kCR=EikG42_eL0w@mail.gmail.com>
-Subject: Re: [PATCH V2] pmdomain: imx: wait SSAR when i.MX93 power domain on
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>, Stable@vger.kernel.org, Jacky Bai <ping.bai@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 14 Aug 2024 15:02:42 +0200
+Message-Id: <D3FNL323ZXLQ.2D0QLACO67VTP@baylibre.com>
+Subject: Re: [PATCH RFC 0/5] iio: adc: ad4030: new driver for AD4030 and
+ similar ADCs
+From: "Esteban Blanc" <eblanc@baylibre.com>
+To: "Jonathan Cameron" <jic23@kernel.org>
+Cc: "Lars-Peter Clausen" <lars@metafoo.de>, "Michael Hennerich"
+ <Michael.Hennerich@analog.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Nuno Sa" <nuno.sa@analog.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "David
+ Lechner" <dlechner@baylibre.com>
+X-Mailer: aerc 0.17.0
+References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
+ <20240629174039.3e6053e5@jic23-huawei>
+In-Reply-To: <20240629174039.3e6053e5@jic23-huawei>
 
-On Wed, 14 Aug 2024 at 14:38, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
+On Sat Jun 29, 2024 at 6:40 PM CEST, Jonathan Cameron wrote:
+> On Thu, 27 Jun 2024 13:59:11 +0200
+> Esteban Blanc <eblanc@baylibre.com> wrote:
 >
-> From: Peng Fan <peng.fan@nxp.com>
+> > This is adding DT bindings and a new driver for AD4030, AD4630 and
+> > AD4632 ADCs.
+> >=20
+> > This work is being done in collaboration with Analog Devices Inc.,
+> > hence they are listed as maintainers rather than me.
+> >=20
+> > The code has been tested on a Zedboard with an EVAL-AD4030-24FMCZ,
+> > an EVAL-AD4630-24FMCZ and an EVAL-AD4630-16FMCZ. As there is no eval
+> > board for AD4632 the support can't be tested at the moment. The main
+> > difference is the reduced throughput.
+> >=20
+> > This series is taged as RFC because I think I'm misusing
+> > IIO_CHAN_INFO_CALIB*. For CALIBBIAS the doc in sysfs-bus-iio says
+> > "Hardware applied calibration offset (assumed to fix production
+> > inaccuracies)" but AD4030 offset in on 24bits and I would argue that at
+> > this point it's not just here to fix production inaccuracies. Same this
+> > for CALIBSCALE. What IIO attributes should I use instead?
 >
-> With "quiet" set in bootargs, there is power domain failure:
-> "imx93_power_domain 44462400.power-domain: pd_off timeout: name:
->  44462400.power-domain, stat: 4"
->
-> The current power on opertation takes ISO state as power on finished
-> flag, but it is wrong. Before powering on operation really finishes,
-> powering off comes and powering off will never finish because the last
-> powering on still not finishes, so the following powering off actually
-> not trigger hardware state machine to run. SSAR is the last step when
-> powering on a domain, so need to wait SSAR done when powering on.
->
-> Since EdgeLock Enclave(ELE) handshake is involved in the flow, enlarge
-> the waiting time to 10ms for both on and off to avoid timeout.
->
-> Cc: <Stable@vger.kernel.org>
-> Fixes: 0a0f7cc25d4a ("soc: imx: add i.MX93 SRC power domain driver")
-> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Interesting.   So awkward question for you.  What's the point in applying
+> a digital offset?  calibbias is normally about tweaking the Analog side.
+> This just seems to be adding a value on.  I'm not sure it affects what
+> can actually be captured without saturation.
 
-Applied for fixes, thanks!
+True, both scale and offset applied with thoses registers can lead to
+saturation.
 
-Kind regards
-Uffe
+> Maybe it has influence by changing the input range and scale for the
+> block averaging filter?  I'm not sure.
+>
+> You can use offset for this given it's a simple linear value and not
+> anything to do with calibration. It's a little awkward though as that
+> is post scale rather than the other way around which is rather more
+> common.
+> Controls are in the form
+> voltage =3D (raw + offset) * scale=20
+>
+> So here
+> voltage =3D (raw + offset_reg / (gain_reg * other scaling)) * gain_reg * =
+otherscaling.
+>
+> Hence your offset is a bit fiddly to compute.
 
-> ---
->
-> V2:
->  Add Fixes tag and Cc stable (Per Ulf's comment)
->
->  drivers/pmdomain/imx/imx93-pd.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
-> index 1e94b499c19b..d750a7dc58d2 100644
-> --- a/drivers/pmdomain/imx/imx93-pd.c
-> +++ b/drivers/pmdomain/imx/imx93-pd.c
-> @@ -20,6 +20,7 @@
->  #define FUNC_STAT_PSW_STAT_MASK                BIT(0)
->  #define FUNC_STAT_RST_STAT_MASK                BIT(2)
->  #define FUNC_STAT_ISO_STAT_MASK                BIT(4)
-> +#define FUNC_STAT_SSAR_STAT_MASK       BIT(8)
->
->  struct imx93_power_domain {
->         struct generic_pm_domain genpd;
-> @@ -50,7 +51,7 @@ static int imx93_pd_on(struct generic_pm_domain *genpd)
->         writel(val, addr + MIX_SLICE_SW_CTRL_OFF);
->
->         ret = readl_poll_timeout(addr + MIX_FUNC_STAT_OFF, val,
-> -                                !(val & FUNC_STAT_ISO_STAT_MASK), 1, 10000);
-> +                                !(val & FUNC_STAT_SSAR_STAT_MASK), 1, 10000);
->         if (ret) {
->                 dev_err(domain->dev, "pd_on timeout: name: %s, stat: %x\n", genpd->name, val);
->                 return ret;
-> @@ -72,7 +73,7 @@ static int imx93_pd_off(struct generic_pm_domain *genpd)
->         writel(val, addr + MIX_SLICE_SW_CTRL_OFF);
->
->         ret = readl_poll_timeout(addr + MIX_FUNC_STAT_OFF, val,
-> -                                val & FUNC_STAT_PSW_STAT_MASK, 1, 1000);
-> +                                val & FUNC_STAT_PSW_STAT_MASK, 1, 10000);
->         if (ret) {
->                 dev_err(domain->dev, "pd_off timeout: name: %s, stat: %x\n", genpd->name, val);
->                 return ret;
-> --
-> 2.37.1
->
+After talking to ADI engineer about this, the conclusion is that I was
+wrong and this is indeed mostly for calibration. They left the range
+of values quite wide in case a user wanted to use this to apply an
+offset or scale to the raw value directly in order to avoid doing some
+post processing later on. But the main goal is calibration.
+
+If that's ok with you I will keep CALIBBIAS and CALIBSCALE for the next
+round and remove the RFC tag.
+
+Thanks for your time and sorry for the confusion,
+
+--=20
+Esteban "Skallwar" Blanc
+BayLibre
+
 
