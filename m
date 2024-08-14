@@ -1,179 +1,169 @@
-Return-Path: <linux-kernel+bounces-286919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A80952069
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D0695206E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2D9B249FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:50:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD88CB250CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BAD1BB6AF;
-	Wed, 14 Aug 2024 16:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BA11BA876;
+	Wed, 14 Aug 2024 16:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aPvYMOs9"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s3ZqzLtL"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2082.outbound.protection.outlook.com [40.107.244.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1170E1BA888
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723654219; cv=none; b=Mhj0H63pfjzRxMmuaQ+nVb3j0dNHXnFm8looInkXgTFIKqy2OxCWajeMuQLmk022ySTFkWD+lB9WrCl3qKBfXNpP4hbjbVlgowRVokjnXXilrU3LsUFoKyvWLl+qvLUY/Hby3mh9QsjrMPeSMGsyldH4ol1NRTAfBArxeK9rEsw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723654219; c=relaxed/simple;
-	bh=Vrwema0xFcBld6oC//DSwypTI0kbcyFn23o/KAGzSp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jy5tEHhYVLz+Cu0mJz9J3pynAeE4kJ2g0c6kitrwHa1D37G/VhE2BtkfXYlxfwXDW1js9KI4GLswIsmJBqh1SkbNHgVFQ0iBrXwf+lavt8tdT4qFYJdBLsEKChejlTSlB43XXosWZj8NWUw635s6BE6JCpwJFuHxR1fS81Xq6sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aPvYMOs9; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39d19d0c6b6so35465ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723654216; x=1724259016; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0YFDtBYwOmSYuxWwjwpQ3dIXITALL9SoN+FyAgYHQsE=;
-        b=aPvYMOs9OLhljPsp3zyjUWq96b2NCxZcDZbQbVtBHLlp0wxwSYP6cfX8bQniYpY4zw
-         FAoPQnFjUjWVKvHlA/4C/4e5ariAqFXUzcnM6qKsU3px3x43QPHaM77IWsfDPbKJFmK8
-         HBsgZBoKzE59AUPqwXGdrHRxnADjzYNQpTh2eyxpz2lWd7WF046tZtDTkeeIWTsp6blu
-         D9CUuuhZYR1JBTDhdtJl2eUEzBUwZkEGWufYL/7XqqLf3Zq6GoQd4JUI45M9kjIVxrbw
-         E97suaobvHFeGgQwBTYXj/oGdYftMaq+U8SRTjZZWfpD/zY1yVSDPdjtBCks2beY3Zg5
-         gNIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723654216; x=1724259016;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0YFDtBYwOmSYuxWwjwpQ3dIXITALL9SoN+FyAgYHQsE=;
-        b=wxgiILCKY+fUh46yB5PKm61MoI6mZxJRtziRmYdHiPksV6OfyQsFAy1nyJlNCyNLAB
-         PmIcxqVw6LizyBF6NuEuB2DOLcvevb89Sfx0F5NBaFDtIGmXrPGh4/PVnmnO9DajVggb
-         1kOxUhcek+pw47cJ1DYDiLXVEMM5f90IDOBsYwz+wCR+d1AYt3KOt6peKi1Cm3HD3e4y
-         oyJG6jx6Rz6MC+O8LuzQoVmSb4YTMjrxBlIoy/hp61hcudae3jSVxhwALFrwTZnjd0qR
-         9NtN6twWVhN7eyMLlht0VK/O1i68So1DNxAww4bWnZ+zSwhxnAh4M/1854EWpf2o4yaZ
-         Whhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDssdlMp8oxVqtHCwLRgf/yTpBcEgThxjJ3+kFBrQAA0k/dE5HWT5LWUf8eF5ZgZdB62pheU9K4Bo1YUbK3R7b1deByCzreVTobW4J
-X-Gm-Message-State: AOJu0YwEowoDQX6xOncQpa9Y8sZkI5DC84Yj1HjlO9pWCuDgyPdOsrDJ
-	S5y6QS90XYf5qAXXz/1PbruYxzj/lyYXKaw/g/K8m44T7sBSIEWCm73Hotlr14U=
-X-Google-Smtp-Source: AGHT+IFJ/MLg8CBevS/Vk7hL5sTp4+rQDH8qrLOVI0a4WaLDx+K/uAOK0wPjZlGyjPqdw3Opm832NQ==
-X-Received: by 2002:a05:6e02:b23:b0:39a:f26b:3557 with SMTP id e9e14a558f8ab-39d124fe82amr25575385ab.5.1723654216018;
-        Wed, 14 Aug 2024 09:50:16 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca769418e7sm3353505173.66.2024.08.14.09.50.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 09:50:15 -0700 (PDT)
-Message-ID: <096fafc8-f3fa-42d2-a374-101d4facbe86@kernel.dk>
-Date: Wed, 14 Aug 2024 10:50:14 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193B71BA870;
+	Wed, 14 Aug 2024 16:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723654255; cv=fail; b=PNoVr/W3CZCRKVlDTjBekdRLPuAHlbTYls2gA9eovexvCqJlxptikQry4n4s1Hcs/DdG2RhHX8jataqdczBQGCLL0ZX6eqe2iea0R+GCPFBZXnfOQ6Wf9M7lIBJtQKPgoOVbEySp3web4gOB2CkdRTN8IWRvhWrxDEeZiuSorWs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723654255; c=relaxed/simple;
+	bh=KMs2aforGD4l8sPsSL+wqBd8/qPr1hJsIFrFYwspndM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2SARhYZRO0tp33Dh8f/57Jc/XzqT7ALeOEpR5vSNFUmve9KJVu49LkaraViFRfRF6T4SclPl+D2qdtJedk2nedSIYmhI42/+3Je0QqHD36bs4Cp30b2OztuULgCQXqCSeCg56JeIkskU2326Slo5ZvEXOMvrl33J2tGxjVrSec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s3ZqzLtL; arc=fail smtp.client-ip=40.107.244.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J67hDhtbC4u/ZAD12HCNXWHBXCW2yNtyz1Ps3ndJhfqs646aF45CBTg8g908w1bl7Y7fJqApyIRjJj/lY01JyRF3X/2FIl32NTIyiMff02FivuvpPqT56k4pK5RiweboB6EGPFjpj4XdOwp3v/wZd4pPH18soo78w+XZRUuT7YK0vbScDZ7kZqCSV7kkL3Ag4j3em6bWiKVZkqoXasMfJnzcKzma1414XrtG2kRiOCPS9Xhxl3KF7p1zaNt98X7ktfIBucX88vaWFKPOoqVSm/Sm7l71VfD/X2YYbDmzN79hy1uKQcm1tMclTXmr8Z+x5PebiFiE7rUSOcwygyGqgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bKr0hwfVnkU1vXXWn3jWvt7vU7H+F4oTg418YSUiH4w=;
+ b=SfA+jhrP3Z2dxqJ3CZGHlm6rJFiueNEFyHfBgCaXFdmIxdgX/vwMF6g8RVF5zIrRgoeAgbr86ZdFMPIwhMDol/jmlR7f4omF7Ku3WGliIMUIftn939bknz1hQI8xolglcJ2utBTyLBE9ThfBX3Q41vmi/pwFI/cR2rVzm/5mkgzYIT8D4MXydaMo4u1zgBI4/QMRhYZmVLRCrJkK+IOIdKnHwIHdmk5vnD+1+aSF6OIqG5jm1PowJCMf7yFsn4xXjX6i7D52ijVoGCrjPBzrR29KsFbqPJpI4g9AMvSWdGob0V1jBejSOUPjec4VojYROsvEwuhH8IIr6WponkxPew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bKr0hwfVnkU1vXXWn3jWvt7vU7H+F4oTg418YSUiH4w=;
+ b=s3ZqzLtLkmuo9TSkdWGKV/c1uyEn5gHXPcJHTqhqw7ySWu27cZkPg0Mwe46ZxLhg8izWPzD68Nqubr108VOmkWAyFQWrZ7SecsyUEi/flKh82SrKiR0x5MltsmXM1LGAmi+qUMo3Uo1+aI6cOyh4ksNEGLl1LuYkv88CejLzjdRtIFWIbanUf/I8vehrmIiI81y2WYC3HodbWyHYG04H7hEUZgPVJjj50n73JMaQNE0ip8qzZWB7kM6NzupyefoWSDuSb1xG2ubAxyvCvXjGVnjGdyz1X3l9Wg56b1y2OoOyl8wJYf1rLLwFk1ZX1wGPdwRNELABTtCSMrm86/mcaQ==
+Received: from CH0PR03CA0390.namprd03.prod.outlook.com (2603:10b6:610:119::14)
+ by BL1PR12MB5900.namprd12.prod.outlook.com (2603:10b6:208:398::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Wed, 14 Aug
+ 2024 16:50:50 +0000
+Received: from CH1PEPF0000AD74.namprd04.prod.outlook.com
+ (2603:10b6:610:119:cafe::d7) by CH0PR03CA0390.outlook.office365.com
+ (2603:10b6:610:119::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33 via Frontend
+ Transport; Wed, 14 Aug 2024 16:50:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH1PEPF0000AD74.mail.protection.outlook.com (10.167.244.52) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Wed, 14 Aug 2024 16:50:50 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 14 Aug
+ 2024 09:50:29 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 14 Aug
+ 2024 09:50:29 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 14 Aug 2024 09:50:28 -0700
+Date: Wed, 14 Aug 2024 09:50:26 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>
+CC: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>,
+	<robin.murphy@arm.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
+	<shuah@kernel.org>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v1 01/16] iommufd/viommu: Add IOMMUFD_OBJ_VIOMMU and
+ IOMMU_VIOMMU_ALLOC ioctl
+Message-ID: <ZrzgUkagKokrjjXp@Asurada-Nvidia>
+References: <cover.1723061377.git.nicolinc@nvidia.com>
+ <536c5e908af3847649d1f4b7050af17d77d8b524.1723061378.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
- non-semaphore eventfd
-To: Wen Yang <wen.yang@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Dylan Yudaken <dylany@fb.com>,
- David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>,
- Dave Young <dyoung@redhat.com>, kernel test robot <lkp@intel.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240811085954.17162-1-wen.yang@linux.dev>
- <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
- <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <536c5e908af3847649d1f4b7050af17d77d8b524.1723061378.git.nicolinc@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD74:EE_|BL1PR12MB5900:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1995321-a5e1-42b9-883c-08dcbc8140bb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IixZLS/p/aB6F9tzGV0pnkye96+wUa1PwgpEGXoR943vzFL/UeRt4yYO7jdy?=
+ =?us-ascii?Q?oR8rkU6lTEHJR0+gXd+3CLUUolyHJ4mV5xJrmZCl57lh4DchMCW/Y0q406Hj?=
+ =?us-ascii?Q?qRGz95QCO+GrgazKzgeYSjmI7ef5vUbNldKBHJALVBpCSg1Cf4oU80xJoG6q?=
+ =?us-ascii?Q?lXoWjW+ZuJT0jUjjy/9t3yXEBWAeCK/XJKXmv8pkFZHROd5pxHobnruJkMwl?=
+ =?us-ascii?Q?LwYCs0g2T9nKQczrZvXXjyUs9C90a4x+LA/QpwQ06PR/G0zxUFx8bW+Rpy0G?=
+ =?us-ascii?Q?lEPfxSQttr16TkMmbmID97IkCL7KZ8AZ6/Ph5wEkIjJvQ0q4d/H3Nr+4mk/d?=
+ =?us-ascii?Q?BOUjlS24v6RVu9WTZJGJyvl+E1rOe/2z+oU1mSQCek9Iko2H01R0igptwre1?=
+ =?us-ascii?Q?Uf6i5/5SgReV2NrVbT/oVKNsSTpsEitck7CZlfHguK+CIEBLwxQvpDh3POcN?=
+ =?us-ascii?Q?OlHe4YVEp2cV4EDUczt3r6WxPfMbWmCxXrHHv3fOpUH6gFR43KfuBXlKUwXP?=
+ =?us-ascii?Q?mwL0tcGml8vLgPQhC1WjwSmJIeCWRz4yklAzctG0a+V8cw89gNy5xcvV9w8P?=
+ =?us-ascii?Q?HrAze3PqIenwZLBsnFjmultd4TXdWEBbM5+O9l8urpAwm+Y4g1lXFBbWrKEF?=
+ =?us-ascii?Q?xrs7MnLOZUSigPGdmOR01Ew8QHSBPhT4581URVr48ISh+9l/BDicRD84/h3u?=
+ =?us-ascii?Q?GQRjF00Q44zNAOkeWcSAy9NEMXDXEypLKxwPmZtC1Sv6gv0EOwreNLK35EiR?=
+ =?us-ascii?Q?QNODLSZttrKiLE+ot5TN5ak0X5PnR4FBAn9301VkHTOmN/CrO1WB8VxH1qjf?=
+ =?us-ascii?Q?Q4NpVCJqhrGKQbS6+fCn60MzkIwKI6Vah30kxe6lVSOxuHTmJYMRtAPCsplk?=
+ =?us-ascii?Q?59q+sR1NuP/fia5+PIX3dQk/2aSTcJOAbQJIF9tIIF500sWbDXR1DCbnT17m?=
+ =?us-ascii?Q?UkDjgDnvbOGSfwTjtakz5wNDfgKh1qD09oR4Cn1bKhxHkw3SxhQ6xkdvCY2S?=
+ =?us-ascii?Q?AC5GR56yBWqOFhRPM3vwsTMWTd08V2XrMbzvGrES6SKiwAyqSqWzjYJWdzPl?=
+ =?us-ascii?Q?UyptcctKN9Q3F46EdDq3eVCQ/WxL1prjK5Sz+SpXOG9qAeqPvX3AcGSjQZRE?=
+ =?us-ascii?Q?WaTNVToEJk8whRppEsee5O9bZ23owc5i8vxt+RR1vyarlMOB7TyNke8WTYiT?=
+ =?us-ascii?Q?kS4K0dDISacPl65+tyUI+v+7MLOJoFq3Rz/fWU3mk+Z4J8pD+jim3CVY291B?=
+ =?us-ascii?Q?0FS7asZXD+mMgqLuTPw906b7JX6RXJTPswugoShD3cX1yvDyELFG2fSBRuG3?=
+ =?us-ascii?Q?8vcV0ndhT6IDL5MBxFSjUlbrT5QtYW2J3JWvm5AkhjuWaVhVBkyt0njwEZi9?=
+ =?us-ascii?Q?5S4ctzGTjhPSP9T1CwOEHZOInnBKJnzYjhV96k11rJL0gRSx6nNo/qJrcx19?=
+ =?us-ascii?Q?p4eQmKdyfkq3kL1WFpvmcEwNT/JrPddN?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 16:50:50.0102
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1995321-a5e1-42b9-883c-08dcbc8140bb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD74.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5900
 
-On 8/14/24 10:15 AM, Wen Yang wrote:
-> 
-> 
-> On 2024/8/11 18:26, Mateusz Guzik wrote:
->> On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
->>> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
->>> value provided in its buffer to the counter, while a read (2) returns the
->>> 8-byte value containing the value and resetting the counter value to 0.
->>> Therefore, the accumulated value of multiple writes can be retrieved by a
->>> single read.
->>>
->>> However, the current situation is to immediately wake up the read thread
->>> after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
->>> overhead. By introducing a configurable rate limiting mechanism in
->>> eventfd_write, these unnecessary wake-up operations are reduced.
->>>
->>>
->> [snip]
->>
->>>     # ./a.out  -p 2 -s 3
->>>     The original cpu usage is as follows:
->>> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>
->>> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>
->>> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>
->>> Then enable the ratelimited wakeup, eg:
->>>     # ./a.out  -p 2 -s 3  -r1000 -c2
->>>
->>> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
->>> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
->>>
->>> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
->>>
->>> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
->>>
->>>
->>
->> Where are these stats from? Is this from your actual program you coded
->> the feature for?
->>
->> The program you inlined here does next to nothing in userspace and
->> unsurprisingly the entire thing is dominated by kernel time, regardless
->> of what event rate can be achieved.
->>
->> For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 66.19s (1:06.19) total
->>
->> Even so, looking at perf top shows me that a significant chunk is
->> contention stemming from calls to poll -- perhaps the overhead will
->> sufficiently go down if you epoll instead?
-> 
-> We have two threads here, one publishing and one subscribing, running
-> on CPUs 2 and 3 respectively. If we further refine and collect
-> performance data on CPU 2, we will find that a large amount of CPU is
-> consumed on the spin lock of the wake-up logic of event write, for
-> example:
+On Wed, Aug 07, 2024 at 01:10:42PM -0700, Nicolin Chen wrote:
 
-This is hardly surprising - you've got probably the worst kind of
-producer/consumer setup here, with the producer on one CPU, and the
-consumer on another. You force this relationship by pinning both of
-them. Then you have a queue in between, and locking that needs to be
-acquired on both sides.
+>  /**
+> @@ -876,4 +877,33 @@ struct iommu_fault_alloc {
+>         __u32 out_fault_fd;
+>  };
+>  #define IOMMU_FAULT_QUEUE_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_FAULT_QUEUE_ALLOC)
+> +
+> +/**
+> + * enum iommu_viommu_type - Virtual IOMMU Type
+> + * @IOMMU_VIOMMU_TYPE_DEFAULT: Core-managed VIOMMU type
+> + */
+> +enum iommu_viommu_type {
+> +       IOMMU_VIOMMU_TYPE_DEFAULT,
 
-It's hard to come up with a WORSE way of doing that.
+This needs a "= 0x0". I fixed locally along with others in this series.
 
-I'll have to agree with the notion that you're using the wrong tool for
-the job, and hacking around it is not the right solution.
-
--- 
-Jens Axboe
-
+Nicolin
 
