@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-286992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C950952152
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FBF952156
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229451F21913
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:35:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEC4228176F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C357A1BC076;
-	Wed, 14 Aug 2024 17:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8C11B32D2;
+	Wed, 14 Aug 2024 17:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1lAQCGd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H/tNz8Ht"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E303398B;
-	Wed, 14 Aug 2024 17:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E071BC06F
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656853; cv=none; b=M3ImXDarH4/4HTdiR+HKTTNzvJMXqIgDwBQml0fWknpzahTJLB64u0Cn1ve+uLdJOxm9IqfXDnI4wmVMNmNC62VAfF53whuvXEcVz1LdCM4jlfD5HJWwslJFSjYDf3eFe3pYLCdQNARjx+oVtYT0vw6pU9/fTCidtE/lcxZYaQc=
+	t=1723656919; cv=none; b=UlracmMiovzEHAef/MjuMVae61rdZhNoigD2qRJjWjf3LjJZ57tUDOPwsZhBbaaHurFr1LoIlssbglGH7YLujxyKDk6R67Gv6Yzf3WJfhQ+kVY7NZxhOLtO3s3KlKDSYg9Ohgo17KAxLbPN+6Sob+9RQrHEWS66vKIpMy9KZotI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656853; c=relaxed/simple;
-	bh=fQ25DDdxzXuW/iNuiQQd9sq11uV6yC4w4ps48LKQQyQ=;
+	s=arc-20240116; t=1723656919; c=relaxed/simple;
+	bh=xWbitBG4Vy57q6SFKYvH/+aIN3UK4pDJiwGhdEeSOtA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LOUlwjtjH6QXggDYnkDe3EsJ1LyX+RmlGgcwSVAufHQt8VWb+eX2naM/wbBYtrFHJPOHpd+c7Ot21EztxOYSBIH+ARrbpN3h+ZA/wufwOI5M5s0UZXbGIh+r3h/pB3KviP6Y7URK96QWmdXy39QkCnWajQiHj7i445aKPNwjnEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1lAQCGd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F3FC4AF0D;
-	Wed, 14 Aug 2024 17:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723656852;
-	bh=fQ25DDdxzXuW/iNuiQQd9sq11uV6yC4w4ps48LKQQyQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g1lAQCGdpQpVcIuhHfU5vU3KZJlWKPrfoXllM5Aa9dP75PPsa2x478Gc9x67J4lno
-	 +DtWQ86a+RXwIQZMOBsKTwGLyGcN8it1/QDo7gepSLTSqNIapXneFlXZFBIbwrIKhv
-	 w0Jzh+zhOPYEwneg3/d5rirXRDdVsm9ACpteoEZGKWY6CJlnnO/lSYMJUpbl7NVGsM
-	 hOB0pCcciKeHVkUT7PeW5FLVfko7tmOyO3j10Aaona375wnkR2rQJ3DzVIV3ryLl1T
-	 zP76AxzjC3+CqeNHNMK6lj4LcoNqUUEfbgECVIWfkiyc+/8vUvAmPz9zY8D+MUISNI
-	 gKCGNjBFN+9+w==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7092f277242so4285a34.3;
-        Wed, 14 Aug 2024 10:34:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXmxh2wBffExbb99u5nDR3ExOlw9TN49kD3NewczOQYoaP67jM5S8QUwfnKhsju0eDtw1jPmm9jrjJ9h7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyWTh5CTt4hT/ZG7q9hu9/ZX8pcQPpeXK1EBpas84tN7yRqFdA
-	B1eeyMuqGSIwoXJYIBOz3faTXc9ioKtfkqdscgOef8ncLox1Fzz36xgerYdEqf5vzD+smRDBJkr
-	L8AL6AH7FeT8RvM6Rue0TBwq/+9Y=
-X-Google-Smtp-Source: AGHT+IHbnr0oFxfpfMtSjmICfH0Gl0AmarG4KF+rru3FK/scRaIOuflZR2a1SpgFpUGYIJpz7O54/7hvEu4IV6aWT14=
-X-Received: by 2002:a05:6820:2c95:b0:5da:6c8a:daa4 with SMTP id
- 006d021491bc7-5da8a1b052dmr107102eaf.0.1723656851747; Wed, 14 Aug 2024
- 10:34:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=HPBdrN46JJbLUVJvuLN3I+qjkZo81S4b30h7zMjBmMvcY9vDXX2RovxE7PWAi7RGnSXIZZgZ1hguLUfhkSql0i1UVaq9j/gSpWkE5B49rmpFSu/wlwWJFG0/aw8NGKBryJ7xeeCENkSS7PAw3DhIr1074hAvNhYcSsJzwZD+Q6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H/tNz8Ht; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so1739411fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723656915; x=1724261715; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xWbitBG4Vy57q6SFKYvH/+aIN3UK4pDJiwGhdEeSOtA=;
+        b=H/tNz8HtkGiGMKcPN+qSt5RnpqVA9WH2BkwImL0krz6Fua4FH9X/Ppt1QilJ9B4Ql7
+         M4b5j91OMzPo9u/ZJdJgBY9XQBnQr5PhsHYl1z29hVnt/hvSGsfiXUxW8uWwIpmeJUb8
+         rImxKi1pjrV7IxFX4WW6zW+Sn6XyNFTUitj6U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723656915; x=1724261715;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xWbitBG4Vy57q6SFKYvH/+aIN3UK4pDJiwGhdEeSOtA=;
+        b=N2SWH+dX25cA5XMejHxI5w/84+eAb6db0usM65ZJFVzifS9w9PplBI7uWF2bb/mZ4y
+         qYuznSbcxZhX7ZI4Jokeb0XYM4R1FGULQ4lCFDkBcmCQPN98oc4tj130NKi9PG+g++xf
+         eBrhcHAafPf3dHos9K2YdKyFv/UPgi1XJbESabmbDdZSkF/PStp49xoDTejKDvtXzaDK
+         HemalL6fCQrKSEvVEtTMILtnxYC+fbBwI1AGQVANtURzXMZS5RBZISRafWpjZtvTPc0u
+         PomCrIBPKVbVS2r1RkPYvvEP8TfrupTZEpbzV4zsOT3b9WYM8Sv18HdF9TELy1hZgPor
+         uvGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFtwcEMKH8INCKFS5ctoglWj7tIsf5j/ar5jBmPEC7r0O6dsew6V5jfd8AFB7QSQlWFrqhYcqDQ9spE/tQ2Zj7VSwz1O7SUbaEyjoo
+X-Gm-Message-State: AOJu0YwxLWX8jHpbPpAaaaHW1I5qbc1FfNdCrlukUal+sQUXmcSEtF8G
+	lFKcIKThPJgrk27FW/e3yJWs7V2KPmb6cK/agjo35S7Z38+z3Or2VOrazvSUekJEbvao3/P7qbs
+	=
+X-Google-Smtp-Source: AGHT+IGZkRKWEI5sIniQmiBMHwvZtJHUtyI8DG5fx/Ykz5++dMq+TvOp/g0N6JwMF13mBqNwP+YKXQ==
+X-Received: by 2002:a05:651c:2203:b0:2ef:2dfd:15dc with SMTP id 38308e7fff4ca-2f3aa1c941bmr32502471fa.9.1723656915084;
+        Wed, 14 Aug 2024 10:35:15 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f29203d82dsm15198311fa.87.2024.08.14.10.35.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 10:35:14 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f00ad303aso114777e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:35:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKNc/jomKLwHehC9Oi9zlfbkIEgEqsHTRMA2gO4joVlc71NRvtYa/avF0raa0rKG3/slLquGptc5YkqEqm7skWFtwPJOzODOlF5ygG
+X-Received: by 2002:a05:6512:10c6:b0:52c:dc6f:75a3 with SMTP id
+ 2adb3069b0e04-532edba89e2mr2666679e87.40.1723656913739; Wed, 14 Aug 2024
+ 10:35:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1903691.tdWV9SEqCh@rjwysocki.net> <13583081.uLZWGnKmhe@rjwysocki.net>
- <28c4f62c7f4ae2a94c2bb36e82f9827332b8205f.camel@intel.com>
-In-Reply-To: <28c4f62c7f4ae2a94c2bb36e82f9827332b8205f.camel@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 14 Aug 2024 19:34:00 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jaU=YY+A2qQYavh4iHbhYUAZy-ShZa+cKZ9V5B6Qdajw@mail.gmail.com>
-Message-ID: <CAJZ5v0jaU=YY+A2qQYavh4iHbhYUAZy-ShZa+cKZ9V5B6Qdajw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] thermal: gov_bang_bang: Call __thermal_cdev_update()
- directly
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, 
-	"lukasz.luba@arm.com" <lukasz.luba@arm.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "peter@piie.net" <peter@piie.net>
+References: <20240814173021.3726785-1-agordeev@linux.ibm.com>
+In-Reply-To: <20240814173021.3726785-1-agordeev@linux.ibm.com>
+From: Brian Norris <briannorris@chromium.org>
+Date: Wed, 14 Aug 2024 10:35:00 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXMafY_w5Cm5EWS+dUn59kL3d_h4ZBW9w_Hn=7OZ=5n8kQ@mail.gmail.com>
+Message-ID: <CA+ASDXMafY_w5Cm5EWS+dUn59kL3d_h4ZBW9w_Hn=7OZ=5n8kQ@mail.gmail.com>
+Subject: Re: [PATCH] tools build: Provide consistent build options for fixdep
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, linux-s390@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	bpf@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 8:18=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
-ote:
->
-> On Tue, 2024-08-13 at 16:25 +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Instead of clearing the "updated" flag for each cooling device
-> > affected by the trip point crossing in bang_bang_control() and
-> > walking all thermal instances to run thermal_cdev_update() for all
-> > of the affected cooling devices, call __thermal_cdev_update()
-> > directly for each of them.
->
-> with this change, we may invoke thermal_cdev_set_cur_state() for
-> multiple times instead of one, in one bang_bang_control() run.
+Hi,
 
-No, this cannot happen AFAICS because one cooling device cannot be
-bound to the same trip point more than once.
+On Wed, Aug 14, 2024 at 10:30=E2=80=AFAM Alexander Gordeev
+<agordeev@linux.ibm.com> wrote:
+>
+> The fixdep binary is being compiled and linked in one step since commit
+> ea974028a049 ("tools build: Avoid circular .fixdep-in.o.cmd issues").
+> While the host linker flags are passed to the compiler the host compiler
+> flags are missed.
+>
+> That might lead to failures as result of the compiler vs linker flags
+> inconsistency. For example, during RPM package build redhat-hardened-ld
+> script is provided to gcc, while redhat-hardened-cc1 script is missed.
+> That leads to an error on s390:
+>
+> /usr/bin/ld: /tmp/ccUT8Rdm.o: `stderr@@GLIBC_2.2' non-PLT reloc for
+> symbol defined in shared library and accessed from executable (rebuild
+> file with -fPIC ?)
+>
+> Provide both KBUILD_HOSTCFLAGS and KBUILD_HOSTLDFLAGS to avoid that.
+>
+> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
-Since bang_bang_control() only checks thermal instances for one trip
-point, all cooling devices pointed to by them are guaranteed to be
-different.
+FWIW, I already fielded some reports about this, and proposed a very
+similar (but not identical) fix:
 
-> So this effectively changes the notifications and statistics.
->
-> If this is not a problem, maybe better to mention this change in the
-> changelog?
->
-> thanks,
-> rui
-> >
-> > No intentional functional impact.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/thermal/gov_bang_bang.c |    5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> >
-> > Index: linux-pm/drivers/thermal/gov_bang_bang.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
-> > +++ linux-pm/drivers/thermal/gov_bang_bang.c
-> > @@ -71,12 +71,9 @@ static void bang_bang_control(struct the
-> >                 dev_dbg(&instance->cdev->device, "target=3D%ld\n",
-> > instance->target);
-> >
-> >                 mutex_lock(&instance->cdev->lock);
-> > -               instance->cdev->updated =3D false; /* cdev needs update
-> > */
-> > +               __thermal_cdev_update(instance->cdev);
-> >                 mutex_unlock(&instance->cdev->lock);
-> >         }
-> > -
-> > -       list_for_each_entry(instance, &tz->thermal_instances,
-> > tz_node)
-> > -               thermal_cdev_update(instance->cdev);
-> >  }
-> >
-> >  static struct thermal_governor thermal_gov_bang_bang =3D {
-> >
-> >
-> >
->
+https://lore.kernel.org/lkml/20240814030436.2022155-1-briannorris@chromium.=
+org/
+
+Frankly, I wasn't sure about HOSTxxFLAGS vs KBUILD_HOSTxxFLAGS -- and
+that's the difference between yours and mine. If yours works, that
+looks like the cleaner solution. So:
+
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+
+Either way, it might be good to also include some of these tags if
+this is committed:
+
+Closes: https://lore.kernel.org/lkml/99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@l=
+eemhuis.info/
+Fixes: ea974028a049 ("tools build: Avoid circular .fixdep-in.o.cmd issues")
+
+Brian
 
