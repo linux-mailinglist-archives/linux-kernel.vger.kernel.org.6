@@ -1,189 +1,113 @@
-Return-Path: <linux-kernel+bounces-286049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DFE9515D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:49:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FEF9515DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 848011C20C72
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:49:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C650B2879F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06D6143C40;
-	Wed, 14 Aug 2024 07:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9iKN+Q7"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AD313D51E;
+	Wed, 14 Aug 2024 07:49:50 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1941980631;
-	Wed, 14 Aug 2024 07:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3335813CFAD;
+	Wed, 14 Aug 2024 07:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723621728; cv=none; b=Im7RlZ32bo49pI06WLBSves522Wjmil7AtrHEHFeWk8UvkLqGHQ5Qb/XSYKsorRJmvA129OmU9VbdYtPTDm/YkTI95uW0ukdWUrK97WzUSnKyzZ7EMgxZgNhjFm1D/NLkkjE0sJW5u3+gs0+OXvckwaIOjsR07iUROCOS+IwOwQ=
+	t=1723621789; cv=none; b=DjJijwmUmnUKr9VE8un0iSYk3bSWZtT7GhhJZeE+gEvYIUzJzTyg17LWNV784u5qi4oZxoLi6K+Mk5HfM96nSJGoQh6WgZMRDPYJw1eSGnYHRKeH8J8rCoVKWy2TwipN8p8utywmS56D6ix3649UpLEim2/0nNfxxHFOd85PPVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723621728; c=relaxed/simple;
-	bh=iJuDt/e7gDTb1RnY7IiC+ni6rH+Nm1TYE3T9Gv+XET8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qbH8GBwrFqov0/hHeM1bB8UlJx5SlpGFVY5zBRY620JM2GfXqLSd+nMj7T9dYX1RTteAfY06r7eTlZUagir33mGMdWwROZykBNxAzwxsS130RO/NLiCeAtprD64zNc6ZD3KSlagev1aKdgenfXjrnlZg+zeJp2FQHDLKZgMmWs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9iKN+Q7; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-530e2287825so5906819e87.1;
-        Wed, 14 Aug 2024 00:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723621725; x=1724226525; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NTBG7pWOTTy/Oj13XKoVBOb8eh5xKMwFm4QHE+CcG2c=;
-        b=S9iKN+Q78IJnjFUbolkyUp/hAiv+bIGt5NKA0KKYwEidUiRt7ULBHXJ59VfS7d7wyv
-         wd31fr0AOjSNecmACGG0d2TK94RzWTf+GLR1wVaYcIr6onCJt+U6gyf4xyMtHFZEeHDf
-         PqHLnItWBojilSKfOwHVTLC5gGEcuef9HYKHYWETM7AsCdfWRWuGAYf61Dg00GKNyD6U
-         U34aPuBoS0fpTVnRrpOhTnCOyn+O18GASsPrg43MVOKt7kjHHGdR978M/1WpjjdS5ku7
-         ikLnc+vUPFQkP3y/77FcmIzBl+QEyFQRlfERK+AuMOZoxolwjyjzqD4IvaUnXlWO57Sd
-         pE5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723621725; x=1724226525;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NTBG7pWOTTy/Oj13XKoVBOb8eh5xKMwFm4QHE+CcG2c=;
-        b=G2dggkFb9ysI141/FZJhn8nPy+27yeRNH9RlnwIfn+ob7KkgEtlcc6Cl0MgA4nnL41
-         3v3OIbJwq6b+J+eq4dz0rcR6tYIcNFenabgo/yC0Aki/lGP9mHbkGNTHVl6ecFTDnNcx
-         kvXJiQg6Zk5xmjw94jHQ7+i/DkiciFcb9/VGIL18jNdm5ClJyFlu07rab83FeYCJv1rZ
-         0aHh/jPanJQLOVZYaeFStHd6+Vydao39kABHSTq8rUZoYMibxl2mL/pcb1rmTE/nJBVK
-         3dSyFuNKZjyjbfBOuPfFB+HdiIAR58qCuztSlDzE59Er30flwgd1XGpmv9oKGU8DhWJk
-         ENrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDuea951fMeko2lNQ6MzzCn4EW+cBWYjnskxbiW77SeHdytOGWWh77O1BTO78qpGRTvaD5Q6uFIyId2w==@vger.kernel.org, AJvYcCVMT6AHSoSrftZifN5NmLp8+WaZq5ckrqEH/wwfwafHXzRNKeG32i4k6pAUH+miTEJtecyGO9cxgCoeJwg=@vger.kernel.org, AJvYcCXjA6qLlIiN91fNj7CX9KoXTH+cpKFuCSAVUxlDMc8Es1Odbq1cuENjzDOwLSsRUoPoNesF7soA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw54OzsHWTCGRcyXMBFpwpa6zr7kyipw9sCwHTHedRWjG3yjRiy
-	2mCTNGvNIfI8BPPthJ/CwJtEqB0YHwg836AnlXLitvuoYfzhJejgGmQ5iA==
-X-Google-Smtp-Source: AGHT+IEhSt8fr4BCSjgK03Wnbcx/EW5SSSEcfQBJWk/kQFKB8jP+uHpUayMCIn+lgzoF7G4h1xrhsw==
-X-Received: by 2002:a05:6512:ac5:b0:52e:9382:a36 with SMTP id 2adb3069b0e04-532eda83a37mr1065725e87.30.1723621724241;
-        Wed, 14 Aug 2024 00:48:44 -0700 (PDT)
-Received: from [172.27.34.242] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7c93esm11636355e9.41.2024.08.14.00.48.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 00:48:43 -0700 (PDT)
-Message-ID: <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
-Date: Wed, 14 Aug 2024 10:48:40 +0300
+	s=arc-20240116; t=1723621789; c=relaxed/simple;
+	bh=X0BPic8eQPasyPeyCHg42srZGxwKg9hcdcACQW/ypxw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rn/l/dyObdYr9eXpUtXS3ABNdd/K+zyxMqEx726gZ30EgChYUROfdb7ENJZxuZZKXJSnpgjkBjL8XTc/n5Ouc8rnbL0nDyDNlxn7XDzSn/qYgSnqjSNrE1mNd0RbQsACcK4lA6b1HOWsZHpD5ocYC8HzZTBUw3GfVkY1xgB6d5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WkL4Z0lQZz4f3jjn;
+	Wed, 14 Aug 2024 15:49:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6AB071A07B6;
+	Wed, 14 Aug 2024 15:49:43 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBnj4WVYbxm4kqdBg--.48851S3;
+	Wed, 14 Aug 2024 15:49:43 +0800 (CST)
+Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, brauner@kernel.org,
+ david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+ <ZrxCYbqSHbpKpZjH@infradead.org>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <7824fcb7-1de9-7435-e9f7-03dd7da6ec0a@huaweicloud.com>
+Date: Wed, 14 Aug 2024 15:49:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom
- code
-To: Erwan Velu <erwanaliasr1@gmail.com>, Yury Norov <yury.norov@gmail.com>
-Cc: Erwan Velu <e.velu@criteo.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240812082244.22810-1-e.velu@criteo.com>
+In-Reply-To: <ZrxCYbqSHbpKpZjH@infradead.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20240812082244.22810-1-e.velu@criteo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBnj4WVYbxm4kqdBg--.48851S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrZF45Gw15ZrW3JF4fuFW7Jwb_yoW8JryrpF
+	ZxK3WkGr1kK397u3s3C34fJr1F9342vr4YkF1UGr15CF93Wr1IgF47Ka1vv3W5Kw1ftw4S
+	qay0gryUW3WUA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-
-On 12/08/2024 11:22, Erwan Velu wrote:
-> Commit 2acda57736de ("net/mlx5e: Improve remote NUMA preferences used for the IRQ affinity hints")
-> removed the usage of cpumask_local_spread().
+On 2024/8/14 13:36, Christoph Hellwig wrote:
+> On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
+>> folio by folio_mark_dirty() even the map length is shorter than one
+>> folio. However, on the filesystem with more than one blocks per folio,
+>> we'd better to only set counterpart block's dirty bit according to
+>> iomap_length(), so open code folio_mark_dirty() and pass the correct
+>> length.
 > 
-> The issue explained in this commit was fixed by
-> commit 406d394abfcd ("cpumask: improve on cpumask_local_spread() locality").
+> What about moving the folio_mark_dirty out of the loop and directly
+> into iomap_page_mkwrite so that it is exactly called once?  The
+> iterator then does nothing for the !buffer_head case (but we still
+> need to call it to allocate the blocks).
 > 
-> Since this commit, mlx5_cpumask_default_spread() is having the same
-> behavior as cpumask_local_spread().
-> 
 
-Adding Yuri.
+Sorry, this makes me confused. How does this could prevent setting
+redundant dirty bits?
 
-One patch led to the other, finally they were all submitted within the 
-same patchset.
+Suppose we have a 3K regular file on a filesystem with 1K block size.
+In iomap_page_mkwrite(), the iter.len is 3K, if the folio size is 4K,
+folio_mark_dirty() will also mark all 4 bits of ifs dirty. And then,
+if we expand this file size to 4K, and this will still lead to a hole
+with dirty bit set but without any block allocated/reserved. Am I
+missing something?
 
-cpumask_local_spread() indeed improved, and AFAIU is functionally 
-equivalent to existing logic.
-According to [1] the current code is faster.
-However, this alone is not a relevant enough argument, as we're talking 
-about slowpath here.
+Thanks,
+Yi.
 
-Yuri, is that accurate? Is this the only difference?
-
-If so, I am fine with this change, preferring simplicity.
-
-[1] https://elixir.bootlin.com/linux/v6.11-rc3/source/lib/cpumask.c#L122
-
-> This commit is about :
-> - removing the specific logic and use cpumask_local_spread() instead
-> - passing mlx5_core_dev as argument to more flexibility
-> 
-> mlx5_cpumask_default_spread() is kept as it could be useful for some
-> future specific quirks.
-> 
-> Signed-off-by: Erwan Velu <e.velu@criteo.com>
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/eq.c | 27 +++-----------------
->   1 file changed, 4 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> index cb7e7e4104af..f15ecaef1331 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> @@ -835,28 +835,9 @@ static void comp_irq_release_pci(struct mlx5_core_dev *dev, u16 vecidx)
->   	mlx5_irq_release_vector(irq);
->   }
->   
-> -static int mlx5_cpumask_default_spread(int numa_node, int index)
-> +static int mlx5_cpumask_default_spread(struct mlx5_core_dev *dev, int index)
->   {
-> -	const struct cpumask *prev = cpu_none_mask;
-> -	const struct cpumask *mask;
-> -	int found_cpu = 0;
-> -	int i = 0;
-> -	int cpu;
-> -
-> -	rcu_read_lock();
-> -	for_each_numa_hop_mask(mask, numa_node) {
-> -		for_each_cpu_andnot(cpu, mask, prev) {
-> -			if (i++ == index) {
-> -				found_cpu = cpu;
-> -				goto spread_done;
-> -			}
-> -		}
-> -		prev = mask;
-> -	}
-> -
-> -spread_done:
-> -	rcu_read_unlock();
-> -	return found_cpu;
-> +	return cpumask_local_spread(index, dev->priv.numa_node);
->   }
->   
->   static struct cpu_rmap *mlx5_eq_table_get_pci_rmap(struct mlx5_core_dev *dev)
-> @@ -880,7 +861,7 @@ static int comp_irq_request_pci(struct mlx5_core_dev *dev, u16 vecidx)
->   	int cpu;
->   
->   	rmap = mlx5_eq_table_get_pci_rmap(dev);
-> -	cpu = mlx5_cpumask_default_spread(dev->priv.numa_node, vecidx);
-> +	cpu = mlx5_cpumask_default_spread(dev, vecidx);
->   	irq = mlx5_irq_request_vector(dev, cpu, vecidx, &rmap);
->   	if (IS_ERR(irq))
->   		return PTR_ERR(irq);
-> @@ -1145,7 +1126,7 @@ int mlx5_comp_vector_get_cpu(struct mlx5_core_dev *dev, int vector)
->   	if (mask)
->   		cpu = cpumask_first(mask);
->   	else
-> -		cpu = mlx5_cpumask_default_spread(dev->priv.numa_node, vector);
-> +		cpu = mlx5_cpumask_default_spread(dev, vector);
->   
->   	return cpu;
->   }
 
