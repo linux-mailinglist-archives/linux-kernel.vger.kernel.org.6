@@ -1,95 +1,120 @@
-Return-Path: <linux-kernel+bounces-285926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76738951459
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:16:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83103951424
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A89F61C22579
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:16:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1F86B21116
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C35B139CEC;
-	Wed, 14 Aug 2024 06:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390747172F;
+	Wed, 14 Aug 2024 06:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YQzcg8K1"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKfFfVpW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BFD131E2D
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC172901
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723616130; cv=none; b=sPbXVCKbPxJU4dtfEJhW69q7ZZFPC6QSeq4Up/nrRFlTwJuJm3bxmQIgnaY9aqOoP2sTfRhhX5w1EmDiHUiuEOqtTCYo+JISdW7vMrSrOgUFRcgz1Nc8kGmpn5QRnMhq25BAQzJBRSwSUhCQ2n4QyZK9LOaBkAzWxpsVH1k/uhs=
+	t=1723615618; cv=none; b=W/8nlEeeruZjVOoH3x2kN6Y54dTW1R3Z31ayPjmEgQMrndpkoiMnU1ohex+rvb/F/OdlsM2qeH+2ZeIxPX96Gw3zKLbdXhiiCW4L1mPeTTF4RitJeC6jxBBL2A8Iqj7ngwmisO7QD7j7sJjB1zUdJxsoQbWrMnm8oBo1Dl3x5Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723616130; c=relaxed/simple;
-	bh=RmCkPq2QwE3sY1sXnCJo/x3ZDa73TDQW3Qpdb88iclU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=HpcfpYhy4itdtHiiz1uvlGxZKeFQlYH8hqftBVM20ykaD/Uxs+hTRCV1uc/AwlxUSfbMS45Ze9rhs+Fai4jPuEZBD5GQfsYkr+0B6SZQGm6KSBDoHKlGqwiDlqBycSJe2yef7fXebJDJTq0Jj2dpbjlkclbSfwRkLVLNKLRbH+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YQzcg8K1; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1723616126; bh=Vd36r7lQbv6nYXOkYc6WOC+IDipSdZw8rVIbaVDIHpg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YQzcg8K15BFaQAXOgba4xMrMbTvvfM37gNhZXdVuQwbeqYNSeK4Nc37clQHgPn6WO
-	 85TDjN+I1EZ04OXI19jhw3QrEMnnua4aL3hQ6gQVIy04BllItt6II0Pa6pDog4pEYi
-	 68M2bmMZBdVBJv0tDXP2AMxhEthKtYl99mWQL6d4=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 78A8E64; Wed, 14 Aug 2024 14:01:56 +0800
-X-QQ-mid: xmsmtpt1723615316tx6efirj6
-Message-ID: <tencent_F748BAE7BB0A33E19E051BFF4B4D1BE72508@qq.com>
-X-QQ-XMAILINFO: OZZSS56D9fAjJIdlgdGWbpRtNP3ugXQhEvNeaN9QPTyTN8cb+fx+IOB34H/ROc
-	 zNf+xUHBe5NnK2nthP6uOo+g7aXn2ZQQ0Eb0Rey4qyGiFLanTuj530cxyXrqFqIccQj7O0GE5+qV
-	 eNPWckBmY3B27TBLPx1JQYxfd3r91v9sSfOpnuPpCHtoxyuKJOqLTaEZOcDSS897QumBSgTA/c2O
-	 w68cL38m98y3SlAEDatJRK96S0TSrcD1kjWjwlH89OKw1Lxwi1WEoyOeTlFd1nJD5QUKGoFC0qwR
-	 j1bh3sdgHaDFkcZZDNkYhNDNhsSOLkPp7b4AKnW/bg9OANbYHKKd8Vi8KJtI1lnh30qpfQBY2/MC
-	 7d1Q5yux+sifwQIf/TCUoegXVlUefRaL+ahHhz400z7QMkfJCEI9w8hw1fEQzB/UdZCqapGRL/J7
-	 L3GqMG8TEiJk8SRId+JHL5d6ygOQ3o1j4wlTqaSJT2tiXX1TcXC8pSIEqxB42SQz/WPUNy2C4vW6
-	 K3ldM4ri3LiuCy16nMBk1Jv4UVYrYmqUcuXvk5i3sCNnx+pXyn7huvG/3q8ziPQXdeER5wDKmxSp
-	 NbUzQigGpQ9L3nd4vu5L4qDTt2kOTadi13t6c+wnPtR/AtdMsd/tsxsOmmvDxq//qQcGsfVin/pq
-	 4MWqaM3VNb4ANuoTiZzdaTzcc2NINk52M/UH+zTBRKkFvLxVcS9ZMkoi4hJ7pzW7onPZpdX75RJz
-	 Bmu5oVWGdhUBqp/sD9TqiyyS2kbMsovbr2jL6cFFOC8ml/+4GU0pe95D1hZRI2URXlx9Z5oVJfda
-	 MA9e8M+oRjvmBikd/pq4+FRYEEk0hJTkxBhSbPLxxpuGK2kCGBz9k+Qs+yHoy+DqZ9Ca7HLlqjB7
-	 fiwoLsI7DGP2kRGA7YmOqinvvQnAIsvYOvzUKj3ChMe7Jt9/zrmJJpwS9IaXJvwU8MYT8xIiiYEN
-	 QxxlrupjItoRid4sZFOm6RyvzPECKVbCxEQbnxvCAGQt33exPNnoUWwsbKdjMRrkHxrELtRZkWmz
-	 KYYf9zVw==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: chao@kernel.org
-Cc: eadavis@qq.com,
-	jaegeuk@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	syzbot+78ff2855f26377625419@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space in f2fs_commit_atomic_write
-Date: Wed, 14 Aug 2024 14:01:57 +0800
-X-OQ-MSGID: <20240814060156.827415-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <02214d48-6aee-40f7-9a40-60b4091b5bfa@kernel.org>
-References: <02214d48-6aee-40f7-9a40-60b4091b5bfa@kernel.org>
+	s=arc-20240116; t=1723615618; c=relaxed/simple;
+	bh=I9d3Su2O+qtI1/ksIckhStLzcwwzH6KlYIVuPGvetkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H1ke0nyrLwHY0oRwdfeDIIA4NyScmCvM3rI1OlDeBtnSmzsYSMXOfMgYFCVqgNuefx5dj3LaMiI8J1EOC7nCIsU7jRb2sM5iVAemViTce+NgcLrYrelZSaY6xeCmXP8VFUb9UWijKKpgZTJv0RU0HMg4zuKGS2u8JaM9OYWUIPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKfFfVpW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FF0C32786;
+	Wed, 14 Aug 2024 06:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723615617;
+	bh=I9d3Su2O+qtI1/ksIckhStLzcwwzH6KlYIVuPGvetkA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TKfFfVpWbzn91jRjhyTsGBDqoMSna2rZA35ufnAWbCE+j9rGlowHwxJZrnhKldzzs
+	 sWxt07blKhKVmg7adzFgkhYz/np7ECg3bt6DriESIkqIwipllOu3EJbvc5pC5dFrMV
+	 q9DAlyVPbziGSgNsDeMp/J2wkPrhzD+ouYCD/+R93RNY/iIoMKThgG0jpv0LI35a/+
+	 GeXnC3g1y2+AdFa2y4sHzrYjQ4eVfvLoaPmKazMdcuY6ToIwmKkJHaXg0+60oBETU/
+	 9/lg8oN4sDKl8fD075HyIISsBoYdw/GxEwzVnQTgDvyC+crDwrSgjzK2PKIRdcHjHJ
+	 iUHJtsU3Y/4VA==
+Message-ID: <7bf7aa1c-d28c-4228-a36b-067dfabbfdf4@kernel.org>
+Date: Wed, 14 Aug 2024 08:06:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] mfd: max14577: fix module autoloading
+To: Liao Chen <liaochen4@huawei.com>, linux-kernel@vger.kernel.org
+Cc: cw00.choi@samsung.com, lee@kernel.org
+References: <20240814025710.3875859-1-liaochen4@huawei.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240814025710.3875859-1-liaochen4@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 14 Aug 2024 11:33:32 +0800, Chao Yu wrote:
-> > unlock i_gc_rwsem[WRITE] before quiting f2fs_commit_atomic_write
-> >
-> > Fixes: 7566a155c666 ("f2fs: atomic: fix to not allow GC to pollute atomic_file")
+On 14/08/2024 04:57, Liao Chen wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.
 > 
-> Since original patch has not been merged, if you don't mind, I'd like to
-> fix this issue in original patch.
-Okay, it's a small matter.
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+> ---
+>  drivers/mfd/max14577.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Thanks,
-> 
-> > Reported-by: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
