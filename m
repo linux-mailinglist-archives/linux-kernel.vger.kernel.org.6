@@ -1,244 +1,209 @@
-Return-Path: <linux-kernel+bounces-286480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16463951B70
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:09:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09A03951B78
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C178D281D8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42953B25781
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CC81B29AD;
-	Wed, 14 Aug 2024 13:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34A71B1431;
+	Wed, 14 Aug 2024 13:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cGRR1J0x"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BLo15t5n"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB371B14F1;
-	Wed, 14 Aug 2024 13:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723640924; cv=none; b=c7XfT9B+8TVROY15SUbFA37Xde+inBi0AiJ9xmTq+5DF74MA42Fsd6c/ftYb6O9x4nML1FOnqqu9qZzUXx3noxiM1KqT29y/jh6NbBtSH3T82Fd3mdPB569PPCl95UhfUvZM9KDrJaKQc+qP+ruwZeGAmA1+HK7wD8tXXLtaFzQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723640924; c=relaxed/simple;
-	bh=LpdH+au59OIpNdlZn19j66zBHVPFRvM5JfFNRAVaOyw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=afBFMtgJ7B1qy97NFKVk2LPbnpeN8x/QYTc7qD7YFNhtRBoBGVjhJdZtoqli37r+VNp1LftFfuqWOo6ZyYedGHhmu1sWZWC8kw5UtprRTpWC0OoWVgdVZvm54QyqqB2wjxLwZ9ckyUpZ33BB0f7CcbiqDiecZW3xbMSdebUuDwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cGRR1J0x; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723640914; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ga+RxWbWwtR+NQAJyKeFx1fCN02t+BuQ4hzfRvw9GcY=;
-	b=cGRR1J0xHtFHm+gzFJg0nEe6gtTL22Z4Z07EOdznj553DniWhjHsCvFn7xaVz3UicPRX93V38mh0++ImKTUHvZZyhER9Zd5STMt0tVeQkZXRhZGES+NXtY30iS/YyOgnvHHiBvMmMk3t5I5w2fcpDN5dtvJgBS7AyS/D9QRHdWU=
-Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WCt6n2h_1723640911)
-          by smtp.aliyun-inc.com;
-          Wed, 14 Aug 2024 21:08:32 +0800
-From: Wen Gu <guwen@linux.alibaba.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v3 2/2] net/smc: introduce statistics for ringbufs usage of net namespace
-Date: Wed, 14 Aug 2024 21:08:27 +0800
-Message-Id: <20240814130827.73321-3-guwen@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20240814130827.73321-1-guwen@linux.alibaba.com>
-References: <20240814130827.73321-1-guwen@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB221B1419;
+	Wed, 14 Aug 2024 13:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723640961; cv=fail; b=pQy4bKv/MBzCViPNNGj2jgzFdzkLX7aAcdI/Aw9VB3achMDdhq8R/T0Kb7fAySWe0ru03vQx8QNp8srHsvhwDyqwmGFDqjgi87OcFvmihXiCQOXSwBXGrAVqUMue1E9rFBwN5OZZn1kqvSOTiGG4HtAgkdykvdE0ugZTCyvGbRY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723640961; c=relaxed/simple;
+	bh=1K1TCi8CxHIWutim9Fw+JM2vfa3bz2TyshERMPz7eYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YoxFKEdFVlrimorxC4UAAIdQw0/rMTHGtUYZ+NoLFrPDMrTNX27bVi6ku8BapeiDt5/csBVd7LSbrbxJAMWXKDC/J6/3dZDuJ7fNltwa8GasdG1vK2SfN4tQw381QG1ISRbh9BKEtGBVN2btB9v/pdcONzwtjDg//xnnA5yx1SM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BLo15t5n; arc=fail smtp.client-ip=40.107.223.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uMQ3nJiELJABuJsnnZhxWFDFWMpHXzjZBlpn9Cy50/VYf6rvEBMQGE/4yyt55XJkRg2egzD1mZn3cBQACRTxgh4t2YAhJc/gscnkg6K5MgpH4P4PVijvom1mtIEMMQ1hLwSgckosEwplSe/AINV3bKRvS4CNDrby6BrSe6bEy/o8mqkLZVr3gGFiplOmb2Hte3jpd4+u5m7Yz0YLF+c+AWIR/GUw3PKVh4rf7RN6Jy1qVDsMfc6dTqzGTGizFReqTlT6mxlU+MxzL0087zD7FtSAuG99olZ7km3VgkJgSCQRAo3fHy7e8meR7FXhC6Uu2Hq2qNNQ+5pa35v+E0gxYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2/TJEe73rZpagFT95/zy/wwUQhKNYVINv7n+OXIYB2w=;
+ b=deOmRgEGwb4N0txst4wAAnDWyAv27rP9mpNNHJvutlfkhrb214Kdlm12KGE3firimu4FVx3Q+09dfzMchuzSgHxk65zAboIoiBw5RyV/4Z2JjcfvaiCIavhKHjsd1MFrqhuKPqAKJbtZyHkR4z/98ioiTZwFUZFKPaFzGQ5IHmEB0H65npuPjSobx4j5iWy297yiJ6JAcj+lKyCxDCx8S4o22K7pt/JTpWPB7EcoAIhALlIBgyQOIV2/fZRB2yUUrp9WcVVz85ybHR3FK6iE9lfQZ6lkp18MhEU7PlxJVUDUMj8GJgh9c+O6Gi1dgVfhXM4avI92zcvM/tu9WUn0PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2/TJEe73rZpagFT95/zy/wwUQhKNYVINv7n+OXIYB2w=;
+ b=BLo15t5neotpVE6FAhoRuPdlDWdA2eyicXDbhzrcS0IsuePlqHVCXTyudi9n0N/HuP4CaatzshMZlQn2NdntXMA4h7/s742T4H4Ef8/vq8mjxKYUVi25aijTPgmYmmRb5EOssXSTnKzizrGMvHl7z6mQB0eQc2e30evx7vB1DjXq7w1lxN1/IAIYt8rtZPoR279mA6gZuBGRei8ITPHlD70uqN05gdJfocUsMzyqJp3F64U+NZqXVBlFw8RHaGXss8pjVnhDpd1ku9WxSEQM/LrEBxpNaxwTbxQr4ab0BsP3PmM6TWwhrnm3EDMJXJW/CS33eayr4psx8qGD6cMMAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16)
+ by SJ0PR12MB6854.namprd12.prod.outlook.com (2603:10b6:a03:47c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Wed, 14 Aug
+ 2024 13:09:17 +0000
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52]) by DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52%3]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
+ 13:09:17 +0000
+Date: Wed, 14 Aug 2024 10:09:15 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	David Hildenbrand <david@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 08/19] mm: Always define pxx_pgprot()
+Message-ID: <20240814130915.GI2032816@nvidia.com>
+References: <20240809160909.1023470-1-peterx@redhat.com>
+ <20240809160909.1023470-9-peterx@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809160909.1023470-9-peterx@redhat.com>
+X-ClientProxiedBy: BL1P221CA0016.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c5::29) To DM4PR12MB7767.namprd12.prod.outlook.com
+ (2603:10b6:8:100::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB7767:EE_|SJ0PR12MB6854:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d8d4370-d164-466d-ec26-08dcbc624d3a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zzNhbWwHQC4KR8O3uzAVvFZgGsliOBP9373qhbDQVEL2vc6Q4sFj3AG7l4dI?=
+ =?us-ascii?Q?J/AjyjFJrHOHmOZulHWvFZ61z7AGILXidSBzbSKC7wGH/nUyVesH9uGVRHDV?=
+ =?us-ascii?Q?znJxSz2ie5+1tsFxsrzazuDlXrHQvn2k2v+ubkmIg8P1FCZ33M5wb/Jm8F/b?=
+ =?us-ascii?Q?eHzbKvBLKloQ4lCkoOlYKw71l8HVGGJpMqUzTErXxatsjMPJB7ixGfGDzqed?=
+ =?us-ascii?Q?XZ9bm8Zs0e+6M8M9+fmw3+J9iIIXp7D04hiSA+KIL4ZvI0WQ0VtFDHO0F05h?=
+ =?us-ascii?Q?GeDK+4BItNPcVpuqNJR6Bx/4YYg1UlnKp6MlZxj9XjklYMVl3zqhomQfQScl?=
+ =?us-ascii?Q?rSO/IUkoW+lf4ejhf1Aop0wh00gzGzTFkSY5mJu8zBAH2HDSIBA1+w8RzbDO?=
+ =?us-ascii?Q?Pl4FXfCSajC9PykkvYOISAGywG2gxdGsAEdRImyXfMApRsxALWzXw91f0OEO?=
+ =?us-ascii?Q?SbVEWvRCniRoiJs8ITrHooVF7DJiEDPqKB+DL0rarNqyoI/oSGK0iLmrr4zl?=
+ =?us-ascii?Q?xacjaIZtVgvEcpy2m696AslJluzg/C07Qaylb4XmzreSghLoPIBHfbjiUd7F?=
+ =?us-ascii?Q?Ox/Uxqc1/cZDvyqXYUCyW0Nj2o4u5a+9GSS2l8n5FWMGeiqc8a/++qLsWn7O?=
+ =?us-ascii?Q?YMBVOcxOuBV2dC/ADyzpSeqrbaOjaM7BkG+Zwoj7BRS4ZMxV1G+kG5ZOUY/L?=
+ =?us-ascii?Q?9SfasAdQyw88Wqb/tZg6o0dFHQHb+bHYEl40Ovq5ZwCeLYAAKtqf4Y0Lyoj0?=
+ =?us-ascii?Q?8rAxV/T3i8u8v8Z3QxOscvcq23HoE/FnuUW+wLPZMSet/3XUurFEsawloeCN?=
+ =?us-ascii?Q?gchiqE8Ya+RMP8KZMse/spr1OKAjZk5xM80EolIC//bO8ArSyx+Ohna2CZyi?=
+ =?us-ascii?Q?mhjvRkjzvHwfabPHqo//3U0zW39Fnf/l1NkPu6EUcFdQ9YkQIJ3kNo5Tsflh?=
+ =?us-ascii?Q?6TIolv0Xqjq8GzPDQjT4asUP62f+L+0geHDdhh769Bbfvh9xg3pZU7KSZ8Uj?=
+ =?us-ascii?Q?gt3sSiLyUCMAxaYhGkZn7kbsAVw4Droec3ZB4VDKHDAuGEXbrYsNLwXCgX+1?=
+ =?us-ascii?Q?sM8ZxQucSFi76YT+lr3mW/qY6nQMHz5RQHTFs9mWvJlpGnQbl6LYPZ/ZAWwM?=
+ =?us-ascii?Q?LJwqnb9On4cAzSXRaXIDbKgFBd1Do4VUmyZBYTj8UKUVaLD46Z4cyFlOIwxO?=
+ =?us-ascii?Q?xdG/ClWxDLQhjK2UIVrrkkKdeYprIz1fE2yNYsy39cpyqQugA7NcaE+g8LGr?=
+ =?us-ascii?Q?jzdwa6cSDU0mdvACg88i8rYetfY9WIhXwYfPLJ6ENdpHj7XJmGCCnoHI8hNM?=
+ =?us-ascii?Q?29kH/0Q9Z3qsJkeFaOCmY0GdBnF2afptA4UyT8ltb2efGg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NoYf40ZAoLkvFxSawH3NYj2wfHj4RILuAr9gUn1hxgchWofArUHc//A6s5TA?=
+ =?us-ascii?Q?sZdfyuQVeKaAUhoY8zqPaN5DwSQSuSgsqLnwMpsB3bF1SmNZ+017u36xg0M/?=
+ =?us-ascii?Q?CHNZhDDCTTXJypHzuIEct0S97i8sIzoDRfXTvkxL6K8JTpeE4RUKkrsL6Fns?=
+ =?us-ascii?Q?UZcSqTjgY4RduPh/NCTu0tuuLNPvUZmLd/AM2I2JgQE+4nC//NYsM0k93FQG?=
+ =?us-ascii?Q?zOdx5ANtk/wMXdGkPbDANWmqvscsSnvrBunNIWfOnn77O5hwhRmUnwOF8QSL?=
+ =?us-ascii?Q?aCPyTUelJ9IYi0IbYO0zgVEvZMD8wCJs+Ywi/b4N0Krk/JaJTIl4Rr/wczHH?=
+ =?us-ascii?Q?H32GVqtc71USdP7BX8bfhsRXchM60DPCe4C4MrTk9xSiL9CRR5R/fptRU5NN?=
+ =?us-ascii?Q?gkOL3FJOLbV5o6nDGCDP0W4OAU2iOkoSA7xpUpcJ6y/EjG5Y2Lbq07Kd7w/7?=
+ =?us-ascii?Q?MdbR1rcclRR5njOW4A2CJC3tQNYmbRGRumYb0r8atCtexTjzHTE+Bc1ciF9F?=
+ =?us-ascii?Q?5bQcwnrqlq28gQxg3vuSouWeclKeA/uh2YRe+V75+G65m43dp7q1wc7XrKnZ?=
+ =?us-ascii?Q?f5f7DynYkzahEQWvBJYDemJ8UckOaRJthLFARG0AWT4/GXded3BrhWvdJ+ex?=
+ =?us-ascii?Q?ipHFJQYl6KRXH6/mFL7Gum3CMek/OppZRM+zClwnkkEW+eApR+q1j90lh/wY?=
+ =?us-ascii?Q?iuZYOwMRSv45FquOsQgvz+6FQL7Z4eom9jfuW9nTtkknfLqSnK7AVoRWqYnQ?=
+ =?us-ascii?Q?HU/lkcCrWt+/dTKhKWokxW0OU/x7BSFZ0R7YO3gKjkNJANdRDatETYwj8Z2L?=
+ =?us-ascii?Q?I0HBImZWE04fyo7Px5KPHHsGn4KxH6pnlnZKVhHbMsNr89wNMPWxgaVDqxWm?=
+ =?us-ascii?Q?YrCmQo7BSQ6Gn00kDJ7cw0ifQRfoCnhhOHeVSQ5q3kMJw/WcwF/5SuxnKOO9?=
+ =?us-ascii?Q?ZOFlNpjF+2uYSQUK9RxOGOPTdv0wRfhK2ZHp6y8a7qAEcjr0FYgPanNBzA6O?=
+ =?us-ascii?Q?92ONHgK1gSUtzgs09rqdhknT1bftMnxGhSc+i+kwkLL1OegG2ZAsUMjE9w4X?=
+ =?us-ascii?Q?UIsEtjWTWU2NBUbVRPTSwULtHtLelFt+gTwjXRpmSxPIxFkwggGhtvaL/wLe?=
+ =?us-ascii?Q?aP6FQdyPSOO+bhlm1DMPa/ve7i6INLx/M4KVxIF01HVSceVjsnnvE8AF0WR8?=
+ =?us-ascii?Q?GggtdYnk2/QPPCjLbn7VhSar6s1nx551EWJLpf1ocqfMFtyFuZGFpXTXSGgU?=
+ =?us-ascii?Q?WBDjoM3BzEw8Pwwvhx0BJvDoiWuimRM6e+XhLbDn2caiui2elZamcoQoru68?=
+ =?us-ascii?Q?EGsY2SW8CPOyjh9JoAHjRh9OcBpliJSsT+Jxu3ZwoyepL8eEhGQM7hS2VpLq?=
+ =?us-ascii?Q?UW5oHZ1oTs/fKD0wuZwhFHpPE40KKi1XoBKV86sdTfJLS8Cl6I/xgKRbTae0?=
+ =?us-ascii?Q?9bh3PBgSs3x9iDEm5P54trvgzeM4TIz+zEY9iI/qa1fRVdN2ugaaE2KWL5IY?=
+ =?us-ascii?Q?B39OSaSIabKtxm6gwGJc0ZQcECC7+SS4lL6QGwlT9T18RU/U3kUpx5USbF1p?=
+ =?us-ascii?Q?NAij+W4dEgw9FQHi+43yvuDMBcs5gA7kFeRLjZ0r?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d8d4370-d164-466d-ec26-08dcbc624d3a
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7767.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 13:09:17.0106
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uBdfUpeLn9en4stQZEc+CgQFbBCfOkmbPGCqcGPSEYz85NqBr+X8zgg5qjopmyXN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6854
 
-The buffer size histograms in smc_stats, namely rx/tx_rmbsize, record
-the sizes of ringbufs for all connections that have ever appeared in
-the net namespace. They are incremental and we cannot know the actual
-ringbufs usage from these. So here introduces statistics for current
-ringbufs usage of existing smc connections in the net namespace into
-smc_stats, it will be incremented when new connection uses a ringbuf
-and decremented when the ringbuf is unused.
+On Fri, Aug 09, 2024 at 12:08:58PM -0400, Peter Xu wrote:
+> There're:
+> 
+>   - 8 archs (arc, arm64, include, mips, powerpc, s390, sh, x86) that
+>   support pte_pgprot().
+> 
+>   - 2 archs (x86, sparc) that support pmd_pgprot().
+> 
+>   - 1 arch (x86) that support pud_pgprot().
+> 
+> Always define them to be used in generic code, and then we don't need to
+> fiddle with "#ifdef"s when doing so.
+> 
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  arch/arm64/include/asm/pgtable.h    |  1 +
+>  arch/powerpc/include/asm/pgtable.h  |  1 +
+>  arch/s390/include/asm/pgtable.h     |  1 +
+>  arch/sparc/include/asm/pgtable_64.h |  1 +
+>  include/linux/pgtable.h             | 12 ++++++++++++
+>  5 files changed, 16 insertions(+)
 
-Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
----
- include/uapi/linux/smc.h |  2 ++
- net/smc/smc_core.c       | 22 +++++++++++++++-------
- net/smc/smc_stats.c      |  6 ++++++
- net/smc/smc_stats.h      | 28 +++++++++++++++++++---------
- 4 files changed, 42 insertions(+), 16 deletions(-)
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-diff --git a/include/uapi/linux/smc.h b/include/uapi/linux/smc.h
-index 9b74ef79070a..1f58cb0c266b 100644
---- a/include/uapi/linux/smc.h
-+++ b/include/uapi/linux/smc.h
-@@ -253,6 +253,8 @@ enum {
- 	SMC_NLA_STATS_T_TX_BYTES,	/* u64 */
- 	SMC_NLA_STATS_T_RX_CNT,		/* u64 */
- 	SMC_NLA_STATS_T_TX_CNT,		/* u64 */
-+	SMC_NLA_STATS_T_RX_RMB_USAGE,	/* uint */
-+	SMC_NLA_STATS_T_TX_RMB_USAGE,	/* uint */
- 	__SMC_NLA_STATS_T_MAX,
- 	SMC_NLA_STATS_T_MAX = __SMC_NLA_STATS_T_MAX - 1
- };
-diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-index 8dcf1c7f1526..4e694860ece4 100644
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -1203,22 +1203,30 @@ static void smcd_buf_detach(struct smc_connection *conn)
- static void smc_buf_unuse(struct smc_connection *conn,
- 			  struct smc_link_group *lgr)
- {
-+	struct smc_sock *smc = container_of(conn, struct smc_sock, conn);
-+	bool is_smcd = lgr->is_smcd;
-+	int bufsize;
-+
- 	if (conn->sndbuf_desc) {
--		if (!lgr->is_smcd && conn->sndbuf_desc->is_vm) {
-+		bufsize = conn->sndbuf_desc->len;
-+		if (!is_smcd && conn->sndbuf_desc->is_vm) {
- 			smcr_buf_unuse(conn->sndbuf_desc, false, lgr);
- 		} else {
--			memzero_explicit(conn->sndbuf_desc->cpu_addr, conn->sndbuf_desc->len);
-+			memzero_explicit(conn->sndbuf_desc->cpu_addr, bufsize);
- 			WRITE_ONCE(conn->sndbuf_desc->used, 0);
- 		}
-+		SMC_STAT_RMB_SIZE(smc, is_smcd, false, false, bufsize);
- 	}
- 	if (conn->rmb_desc) {
--		if (!lgr->is_smcd) {
-+		bufsize = conn->rmb_desc->len;
-+		if (!is_smcd) {
- 			smcr_buf_unuse(conn->rmb_desc, true, lgr);
- 		} else {
--			memzero_explicit(conn->rmb_desc->cpu_addr,
--					 conn->rmb_desc->len + sizeof(struct smcd_cdc_msg));
-+			bufsize += sizeof(struct smcd_cdc_msg);
-+			memzero_explicit(conn->rmb_desc->cpu_addr, bufsize);
- 			WRITE_ONCE(conn->rmb_desc->used, 0);
- 		}
-+		SMC_STAT_RMB_SIZE(smc, is_smcd, true, false, bufsize);
- 	}
- }
- 
-@@ -2427,7 +2435,7 @@ static int __smc_buf_create(struct smc_sock *smc, bool is_smcd, bool is_rmb)
- 		buf_desc = smc_buf_get_slot(bufsize_comp, lock, buf_list);
- 		if (buf_desc) {
- 			buf_desc->is_dma_need_sync = 0;
--			SMC_STAT_RMB_SIZE(smc, is_smcd, is_rmb, bufsize);
-+			SMC_STAT_RMB_SIZE(smc, is_smcd, is_rmb, true, bufsize);
- 			SMC_STAT_BUF_REUSE(smc, is_smcd, is_rmb);
- 			break; /* found reusable slot */
- 		}
-@@ -2448,7 +2456,7 @@ static int __smc_buf_create(struct smc_sock *smc, bool is_smcd, bool is_rmb)
- 		}
- 
- 		SMC_STAT_RMB_ALLOC(smc, is_smcd, is_rmb);
--		SMC_STAT_RMB_SIZE(smc, is_smcd, is_rmb, bufsize);
-+		SMC_STAT_RMB_SIZE(smc, is_smcd, is_rmb, true, bufsize);
- 		buf_desc->used = 1;
- 		down_write(lock);
- 		smc_lgr_buf_list_add(lgr, is_rmb, buf_list, buf_desc);
-diff --git a/net/smc/smc_stats.c b/net/smc/smc_stats.c
-index ca14c0f3a07d..e71b17d1e21c 100644
---- a/net/smc/smc_stats.c
-+++ b/net/smc/smc_stats.c
-@@ -218,6 +218,12 @@ static int smc_nl_fill_stats_tech_data(struct sk_buff *skb,
- 			      smc_tech->tx_bytes,
- 			      SMC_NLA_STATS_PAD))
- 		goto errattr;
-+	if (nla_put_uint(skb, SMC_NLA_STATS_T_RX_RMB_USAGE,
-+			 smc_tech->rx_rmbuse))
-+		goto errattr;
-+	if (nla_put_uint(skb, SMC_NLA_STATS_T_TX_RMB_USAGE,
-+			 smc_tech->tx_rmbuse))
-+		goto errattr;
- 	if (nla_put_u64_64bit(skb, SMC_NLA_STATS_T_RX_CNT,
- 			      smc_tech->rx_cnt,
- 			      SMC_NLA_STATS_PAD))
-diff --git a/net/smc/smc_stats.h b/net/smc/smc_stats.h
-index 9d32058db2b5..6ac465380431 100644
---- a/net/smc/smc_stats.h
-+++ b/net/smc/smc_stats.h
-@@ -79,6 +79,8 @@ struct smc_stats_tech {
- 	u64			tx_bytes;
- 	u64			rx_cnt;
- 	u64			tx_cnt;
-+	u64			rx_rmbuse;
-+	u64			tx_rmbuse;
- };
- 
- struct smc_stats {
-@@ -135,38 +137,46 @@ do { \
- } \
- while (0)
- 
--#define SMC_STAT_RMB_SIZE_SUB(_smc_stats, _tech, k, _len) \
-+#define SMC_STAT_RMB_SIZE_SUB(_smc_stats, _tech, k, _is_add, _len) \
- do { \
-+	typeof(_smc_stats) stats = (_smc_stats); \
-+	typeof(_is_add) is_a = (_is_add); \
- 	typeof(_len) _l = (_len); \
- 	typeof(_tech) t = (_tech); \
- 	int _pos; \
- 	int m = SMC_BUF_MAX - 1; \
- 	if (_l <= 0) \
- 		break; \
--	_pos = fls((_l - 1) >> 13); \
--	_pos = (_pos <= m) ? _pos : m; \
--	this_cpu_inc((*(_smc_stats)).smc[t].k ## _rmbsize.buf[_pos]); \
-+	if (is_a) { \
-+		_pos = fls((_l - 1) >> 13); \
-+		_pos = (_pos <= m) ? _pos : m; \
-+		this_cpu_inc((*stats).smc[t].k ## _rmbsize.buf[_pos]); \
-+		this_cpu_add((*stats).smc[t].k ## _rmbuse, _l); \
-+	} else { \
-+		this_cpu_sub((*stats).smc[t].k ## _rmbuse, _l); \
-+	} \
- } \
- while (0)
- 
- #define SMC_STAT_RMB_SUB(_smc_stats, type, t, key) \
- 	this_cpu_inc((*(_smc_stats)).smc[t].rmb ## _ ## key.type ## _cnt)
- 
--#define SMC_STAT_RMB_SIZE(_smc, _is_smcd, _is_rx, _len) \
-+#define SMC_STAT_RMB_SIZE(_smc, _is_smcd, _is_rx, _is_add, _len) \
- do { \
- 	struct net *_net = sock_net(&(_smc)->sk); \
- 	struct smc_stats __percpu *_smc_stats = _net->smc.smc_stats; \
-+	typeof(_is_add) is_add = (_is_add); \
- 	typeof(_is_smcd) is_d = (_is_smcd); \
- 	typeof(_is_rx) is_r = (_is_rx); \
- 	typeof(_len) l = (_len); \
- 	if ((is_d) && (is_r)) \
--		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, rx, l); \
-+		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, rx, is_add, l); \
- 	if ((is_d) && !(is_r)) \
--		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, tx, l); \
-+		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_D, tx, is_add, l); \
- 	if (!(is_d) && (is_r)) \
--		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, rx, l); \
-+		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, rx, is_add, l); \
- 	if (!(is_d) && !(is_r)) \
--		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, tx, l); \
-+		SMC_STAT_RMB_SIZE_SUB(_smc_stats, SMC_TYPE_R, tx, is_add, l); \
- } \
- while (0)
- 
--- 
-2.32.0.3.g01195cf9f
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 7a4f5604be3f..b78cc4a6758b 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -384,6 +384,7 @@ static inline void __sync_cache_and_tags(pte_t pte, unsigned int nr_pages)
+>  /*
+>   * Select all bits except the pfn
+>   */
+> +#define pte_pgprot pte_pgprot
+>  static inline pgprot_t pte_pgprot(pte_t pte)
+>  {
+>  	unsigned long pfn = pte_pfn(pte);
 
+Stylistically I've been putting the #defines after the function body,
+I wonder if there is a common pattern..
+
+Jason
 
