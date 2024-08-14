@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-286375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A765C951A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:43:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4985E951A3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9C501C21583
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0019E1F215CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4511B1512;
-	Wed, 14 Aug 2024 11:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1351B29B7;
+	Wed, 14 Aug 2024 11:41:19 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7101F1B14E9;
-	Wed, 14 Aug 2024 11:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE021B150F;
+	Wed, 14 Aug 2024 11:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723635676; cv=none; b=u9918owX7ruH7nZHfjoo2hHI/4nRgoPjVs7unjm+xX6lLCMvGe3/6uDCjnV3o4eCYCA02bNZ7M+0FbnRoKsBzXNax4+/pgcOE3bci9mFh02yss7NMz6Hwf6noBfAvKQZAXaXEy0tri0bGMsDn5QZPWn0R1oSsdDG5I1HzSN/X5A=
+	t=1723635678; cv=none; b=E74DISnn/TweMMpTlb/B+0z/tVhzGFZXytmSracRhV+svQF3G7q2WzpaqqyVv1BISCHD3XaT30rFFIxqCZ9QzjquT4DlHBraRdfSpVz51/S/opjdUz0qB1PffUs6qSVPHiC10uY/ctedxZyPqThPfDv3t3HFcljt+SxLmQ3lghA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723635676; c=relaxed/simple;
-	bh=15W++Gq9Yz/K95lmP9DTHfuEXA628Wov8hJTzf8MUZw=;
+	s=arc-20240116; t=1723635678; c=relaxed/simple;
+	bh=plQkBDhUPuz8qOadhsy1ZDkT4es2cfut7LKpTQ1aUe0=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H1XPIkdbdsRjVxhBy0MeMd1Xd+RP9f9Qg4kycDmhajJzSVX5JWKzjyGNCUNd9EFsAhjpO6Nc2svyhBWFgYT09U8DeVTD2MgngOyKLAOdQv8ZjHJ2pS121tFI8OLOw5EBNuXvWsis462+OX49WCWZQkST3bs0+KbLyUFDmWx5voU=
+	 MIME-Version:Content-Type; b=N7knfW4LTtB2c5dQzs37ulHaujeURnp8kHueKc/mUkCeFozO4AOyzmNUnC0nSBgr6+eyV6o+/2yh7+EmD3fJHuewyItNKeK9oJ4i7PPHWt5BYVp8Wj5Y8fslq4/17iJVCVJjU84bgZotKafz7886f6xgQjCVcyxYPIIbGG1gTW4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -41,9 +41,9 @@ To: <tglx@linutronix.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
 	<kevin_chen@aspeedtech.com>, <linux-kernel@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-aspeed@lists.ozlabs.org>
-Subject: [PATCH v2 0/2] Add support for AST2700 INTC
-Date: Wed, 14 Aug 2024 19:41:04 +0800
-Message-ID: <20240814114106.2809876-2-kevin_chen@aspeedtech.com>
+Subject: [PATCH v2 1/2] dt-bindings: interrupt-controller: Add support for ASPEED AST27XX INTC
+Date: Wed, 14 Aug 2024 19:41:05 +0800
+Message-ID: <20240814114106.2809876-3-kevin_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240814114106.2809876-1-kevin_chen@aspeedtech.com>
 References: <20240814114106.2809876-1-kevin_chen@aspeedtech.com>
@@ -56,30 +56,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Support for the Aspeed Interrupt Controller found on Aspeed 7th Geration Silicon
-SoCs.
-
-ASPEED interrupt controller(INTC) maps the internal interrupt sources of
-the AST27XX devices to an parent interrupt controller.
-
-Changes since v2:
-Combine the aspeed_intc_ic_of_init and aspeed_intc_ic_of_init_v2.
-Switch raw_spin_lock_irqsave to scoped_guard and guard.
-Fix the error of make dt_binding_check.
-Refine the aspeed,ast2700-intc.yaml.
-
-
-Kevin Chen (2):
-  dt-bindings: interrupt-controller: Add support for ASPEED AST27XX INTC
-  irqchip/aspeed-intc: Add support for AST27XX INTC
-
- .../aspeed,ast2700-intc.yaml                  |  71 +++++++++
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-aspeed-intc.c             | 137 ++++++++++++++++++
- 3 files changed, 209 insertions(+)
+The ASPEED AST27XX interrupt controller(INTC) contain second level and
+third level interrupt controller. The third level INTC combines 32 interrupt
+sources into 1 interrupt into parent interrupt controller. The second
+level INTC doing hand shake with third level INTC.
+---
+ .../aspeed,ast2700-intc.yaml                  | 71 +++++++++++++++++++
+ 1 file changed, 71 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
- create mode 100644 drivers/irqchip/irq-aspeed-intc.c
 
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
+new file mode 100644
+index 000000000000..9a76d5c3b66b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
+@@ -0,0 +1,71 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Aspeed AST2700 Interrupt Controller
++
++description:
++  This interrupt controller hardware is second level interrupt controller that
++  is hooked to a parent interrupt controller. It's useful to combine multiple
++  interrupt sources into 1 interrupt to parent interrupt controller.
++
++maintainers:
++  - Kevin Chen <kevin_chen@aspeedtech.com>
++
++properties:
++  compatible:
++    enum:
++      - aspeed,ast2700-intc-ic
++
++  reg:
++    minItems: 1
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++  interrupts:
++    minItems: 1
++    maxItems: 10
++    description:
++      It contains two types of interrupt controller. The first type is multiple
++      interrupt sources into parent interrupt controller. The second type is 
++      1 interrupt source to parent interrupt controller.
++
++required:
++  - compatible
++  - reg
++  - interrupt-controller
++  - '#interrupt-cells'
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    bus {
++        #address-cells = <2>;
++        #size-cells = <2>;
++    
++        interrupt-controller@12101b00 {
++          compatible = "aspeed,ast2700-intc-ic";
++          reg = <0 0x12101b00 0 0x10>;
++          #interrupt-cells = <2>;
++          interrupt-controller;
++          interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++                       <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
++        };
++    };
 -- 
 2.34.1
 
