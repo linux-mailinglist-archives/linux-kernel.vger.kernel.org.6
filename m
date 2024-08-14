@@ -1,179 +1,84 @@
-Return-Path: <linux-kernel+bounces-285893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A20E9513F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB979513F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED071C23244
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:35:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0181C230DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07C57345B;
-	Wed, 14 Aug 2024 05:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C606F2FE;
+	Wed, 14 Aug 2024 05:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aYbxL442"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VaShOaTf"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D5542A90;
-	Wed, 14 Aug 2024 05:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A3538385;
+	Wed, 14 Aug 2024 05:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723613715; cv=none; b=PwHq/HUnF6q16Qb3gvBH3IY4ZZdaONfgyb7WAf0YTYlf+t6kXS9DLYT/8vm49A+6vdoQLjhnCGUD431wRyaUfm6tpRbxedavWaL+9cmvm3jcDIyE2x5/rUFMC6O6sf6XMXfFhPcx1R4d2dyDMmysm5m6VnUk4B71BjBL+zoxJ8w=
+	t=1723613795; cv=none; b=aElkra05axZp3Vqc0QPXNdUUVDd1An2T/k4ZanV/i70f3takGBn/mwov3MD7LXVbHWVkRXDWYdAoG/g6/pIj02tueyRPHPZQafqJZdVRkxYyCysjsQpVcILu6FwKTIcIyf09zMRI1eGDnZWkd0QaqJTb9AQIdbxDn6lrQ0wjHyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723613715; c=relaxed/simple;
-	bh=9IKpXMGwe4dCJjZKsmbAa/wqCA0aKzkzGbM2fSVdjz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rRFq2khARugx8HsNQkun0zOHxLGwQm8zN7m0k6rYAp3wEI9G8QSin1TVyWw0JQtjWCMADfxGAf4UghV/eJo6mcGFMZwra2JKpjKFjVfCWAcA/EQj69kzm69gxF9VmFH9Le3XlgHjtZKyUWG5A4zhG6Kd1krpLa/Me648gUZl3cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aYbxL442; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DNFTxK031225;
-	Wed, 14 Aug 2024 05:35:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	98fCPF9GKy9gMo9iUX9FZDLf6m48HTIb41hYJkt76kg=; b=aYbxL442nQz1DbaW
-	i9AFohgfc9T1YzqoUy0BimEEZnS81RWmS4YM6lIjCVM1DJqjaBHXAdNFoLsbXuUi
-	9ZvY1QAKqa+T2pqGKtJlQRcsLVN1f8mHCGR/UIbdF5lUHodnVm4yQL8Tf2PsHqbq
-	ofMtFM6hOXzGZj8RU/mY8W80foG2zLJ3YkQFmOhNCO6Ekl1ATSU/TuxEY0x0lcgQ
-	wwXY5n8MiBp1SEZAnApO6+VCDOoRqisakpy5rpV2aPBct3Jd8x/Gc4pCOXgDuB33
-	JlBUgp22iLNH99xI3P5exQuia2ChXSldf3vrB68qdrVOQd+Pp4So6yTJu5oamBi4
-	eAJd0g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41082wj3m9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 05:35:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47E5Z85v002677
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 05:35:08 GMT
-Received: from [10.218.35.239] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
- 2024 22:35:05 -0700
-Message-ID: <ec3a918a-df09-9245-318e-422f517ccf68@quicinc.com>
-Date: Wed, 14 Aug 2024 11:05:02 +0530
+	s=arc-20240116; t=1723613795; c=relaxed/simple;
+	bh=/rAEJs1r0VD4fmwlanwnKSDqoQUALUIzkvQEReJ6Jvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTbxTd+AQf3wnJMXINR4lltab1DeotJmCQCD6Mdl/qyledkys7Bqrk2CebpPheTfzec2rLVSeLg/dbni5iCwMR8PmD38pU8X/EKeZnUKwU0PJVippWoo1z3Usyn0ldxvYfD+dsk7+v5Jxk1APyRoy0euOy1RJMY3GgjWWU6RLWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VaShOaTf; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xEfWbo8r2cyR9oaWqebE1Q4YcRl+hmd5XVA7kyPWT3I=; b=VaShOaTf5lfz3eoGIoM2Zqoyk+
+	GpoKDkROSOU/YhGjjqEvAb3i4qE2dzzDu2ceLytVmzakSVv2i9pkVLMPuK2XIalOqCBdQDy7VFEXs
+	7fDLSuaillPBuDTAHHRWdB97GEq2Ft6uDWfE1GCqbCQ6nROU40R1NjA81jTgA6HPKlwRvGg2Loe7j
+	g5+xPWtIN1k1zJmiIeQLtnWgCz1cSYaMOsi2KB1N7Uq8LBFfnNAHRUIPMnArRpdRpRGmtgX/pR45N
+	kM9YhMvpuM5L5PHUW4KiVjHpFN5fbD6Mntda234wLgWeNv0I4FzjOOQ4sOVvjVhtU4k4ePmAfEgsy
+	TNYtAiEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1se6gT-00000005p9e-2EX9;
+	Wed, 14 Aug 2024 05:36:33 +0000
+Date: Tue, 13 Aug 2024 22:36:33 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, david@fromorbit.com, jack@suse.cz,
+	willy@infradead.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
+Message-ID: <ZrxCYbqSHbpKpZjH@infradead.org>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] usb: dwc3: qcom: fix NULL pointer dereference on
- dwc3_qcom_read_usb2_speed
-Content-Language: en-US
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Faisal Hassan
-	<quic_faisalh@quicinc.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240813111847.31062-1-quic_faisalh@quicinc.com>
- <20240814001739.ml6czxo6ok67pihz@synopsys.com>
-From: Prashanth K <quic_prashk@quicinc.com>
-In-Reply-To: <20240814001739.ml6czxo6ok67pihz@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YE-wrZ7Lb0xL5ug-bgfrTgAvqoxURtjk
-X-Proofpoint-GUID: YE-wrZ7Lb0xL5ug-bgfrTgAvqoxURtjk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_04,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 mlxlogscore=850 clxscore=1011 mlxscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408140037
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
+> folio by folio_mark_dirty() even the map length is shorter than one
+> folio. However, on the filesystem with more than one blocks per folio,
+> we'd better to only set counterpart block's dirty bit according to
+> iomap_length(), so open code folio_mark_dirty() and pass the correct
+> length.
 
+What about moving the folio_mark_dirty out of the loop and directly
+into iomap_page_mkwrite so that it is exactly called once?  The
+iterator then does nothing for the !buffer_head case (but we still
+need to call it to allocate the blocks).
 
-On 14-08-24 05:47 am, Thinh Nguyen wrote:
-> On Tue, Aug 13, 2024, Faisal Hassan wrote:
->> Null pointer dereference occurs when accessing 'hcd' to detect speed
->> from dwc3_qcom_suspend after the xhci-hcd is unbound.
->> To avoid this issue, ensure to check for NULL in dwc3_qcom_read_usb2_speed.
->>
->> echo xhci-hcd.0.auto > /sys/bus/platform/drivers/xhci-hcd/unbind
->>    xhci_plat_remove() -> usb_put_hcd() -> hcd_release() -> kfree(hcd)
->>
->>    Unable to handle kernel NULL pointer dereference at virtual address
->>    0000000000000060
->>    Call trace:
->>     dwc3_qcom_suspend.part.0+0x17c/0x2d0 [dwc3_qcom]
->>     dwc3_qcom_runtime_suspend+0x2c/0x40 [dwc3_qcom]
->>     pm_generic_runtime_suspend+0x30/0x44
->>     __rpm_callback+0x4c/0x190
->>     rpm_callback+0x6c/0x80
->>     rpm_suspend+0x10c/0x620
->>     pm_runtime_work+0xc8/0xe0
->>     process_one_work+0x1e4/0x4f4
->>     worker_thread+0x64/0x43c
->>     kthread+0xec/0x100
->>     ret_from_fork+0x10/0x20
->>
->> Fixes: c5f14abeb52b ("usb: dwc3: qcom: fix peripheral and OTG suspend")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
->> ---
->>   drivers/usb/dwc3/dwc3-qcom.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
->> index 88fb6706a18d..0c7846478655 100644
->> --- a/drivers/usb/dwc3/dwc3-qcom.c
->> +++ b/drivers/usb/dwc3/dwc3-qcom.c
->> @@ -319,13 +319,15 @@ static bool dwc3_qcom_is_host(struct dwc3_qcom *qcom)
->>   static enum usb_device_speed dwc3_qcom_read_usb2_speed(struct dwc3_qcom *qcom, int port_index)
->>   {
->>   	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
-> 
-> What if dwc is not available?
-
-Thats unlikely, dwc3_qcom_suspend() -> dwc3_qcom_is_host() checks for 
-dwc, calls dwc3_qcom_read_usb2_speed() only if dwc is valid. But adding 
-an extra check shouldn't cause harm.
-> 
->> -	struct usb_device *udev;
->> +	struct usb_device __maybe_unused *udev;
-> 
-> This is odd.... Is there a scenario where you don't want to set
-> CONFIG_USB if dwc3_qcom is in use?
-> 
-AFAIK this function is used to get the speeds of each ports, so that 
-wakeup interrupts (dp/dm/ss irqs) can be configured accordingly before 
-going to suspend, which is done during host mode only. So there 
-shouldn't be any scenarios where CONFIG_USB isnt set when this is called.
->>   	struct usb_hcd __maybe_unused *hcd;
->>   
->>   	/*
->>   	 * FIXME: Fix this layering violation.
->>   	 */
->>   	hcd = platform_get_drvdata(dwc->xhci);
->> +	if (!hcd)
->> +		return USB_SPEED_UNKNOWN;
->>   
->>   #ifdef CONFIG_USB
-> 
-> Perhaps this #ifdef shouldn't only be checking this. But that's for
-> another patch >>   	udev = usb_hub_find_child(hcd->self.root_hub, port_index + 1);
->> -- 
->> 2.17.1
->>
-> 
-> BR,
-> Thinh
-Thanks,
-Prashanth K
 
