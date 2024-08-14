@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-285904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7092951415
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:58:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CDF951418
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023DB2869D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A79B31C23F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5407640D;
-	Wed, 14 Aug 2024 05:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LrZThKw7"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB2B6F307;
+	Wed, 14 Aug 2024 06:00:04 +0000 (UTC)
+Received: from sonata.ens-lyon.org (domu-toccata.ens-lyon.fr [140.77.166.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4D3481B9;
-	Wed, 14 Aug 2024 05:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA565FBBA
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.77.166.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723615108; cv=none; b=X3t/sI9JboHZE57Y6V6DAADB0Jrz2KE4ZgBdg79ST7IHH15t8UqjsCH1wlYRT+QVvWpzzSwjOu+5YwNmGRPf6LGCF0c6obNFFgB7vSb7ImGsHD6El7GzNRtzn4Gt1vzcIsGKLKOWmMm5YuyMV7QMAbRuq6iR6Ni7+c7e0TRlTk8=
+	t=1723615204; cv=none; b=pkjy8FtRXE71EB3/rDjJppsX3caYZteu+DCQKgn3xwmexZdV53HDrqUvOJUqA1+7ARhWOPhE1liNHXtSyOc35ZNSi9l5uBZ+6ymvafRQ6xEXZNkrefioLy/ePCrom/z1kKYO9SFUTmBu873MxR8w0bsCcSOq4vV+7Xs/1laA/A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723615108; c=relaxed/simple;
-	bh=5tXHn0K5SkAJ+jgWL6wJ7H8EVkfSAfNHrxLXNufvRSA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=euYpRrPf+x/OtPcfDRzQfN/7G8jMPgqLHGRIrmrBiWJppY4u0KfUWjMGKFH26stPu7vjyHI6qNdrhcDHrVmhiRyQdJ3+yBR+QoOS0iYEjbJyQVHQ+CIF/r44Dkyu8GIoiEVYAdY7n41dZSk9lsvKHv5f+9QrbnZHWc7llugUkws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LrZThKw7; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-70943b07c2cso3900931a34.1;
-        Tue, 13 Aug 2024 22:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723615106; x=1724219906; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OOGwqfLdO1LRJs7tntcM+ssKA5Nit4pcjRhwD+QLbGw=;
-        b=LrZThKw7oWcMrq7PPnupJ8TnA7eS8ifJawoEttkPQ3wkKD/yKjkde/7ghFJgp1+mN/
-         XohdKgedjNV1gaH7lzqOz5B4DJpwEsIPZkj2B6HufpQxNoFScqzQwBDebQdzNwEXmWoZ
-         6Awt0smWZC2W90cr11mn31c6L4d6hFD/xl+q9aZHvtRQ4CZIOT952DYhmtSV4uUy49hv
-         1MickQoBuBvuUpf1oXKsCFjIVWwrZgSwSaE4QlEA7VxQ7ncnwIlQ372c58b3YIArH2Qc
-         rdLVvg8cmyiQkvj6RIbXEBZU36G0XG560DLLlqDSH9AgzM9JUlFY0fgsirk+LdrCpo48
-         sqFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723615106; x=1724219906;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OOGwqfLdO1LRJs7tntcM+ssKA5Nit4pcjRhwD+QLbGw=;
-        b=j0dwL1aOec0Pf1IbVfSWVWZ0pBO73+Z+2IkCwPyRoIxCl4IU61qEE8dnSYR626TMJZ
-         bfNeZNsFodP8bVq1z637rdUZKOlT/URXPUKPHHQbwANlFvvE/KdFFoMnha+WFzWX863B
-         bHcnPPBXO7n4npzFoYhDJm7C/NFqEefyehTdLuxR0kKO/DDPXuCbPV/jiEsf9r2iMOuM
-         rO8M0j3PHTS5+FjVldWflSwy1FcjoBIGBOauaBEYI74vNxXaF/+43X/WEHaj9WtzySlI
-         UV7zANs9Tv6v6GbLDZqjFuQH6DmloRCJv0/8zEPEkIRiAsU5zd3hjquM+atjupJsv3R4
-         8ocg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuHv4AJxlfUSDOHqGnF0Oc2W+OQMyaPWZRDACziTjs6rmh+F3fyqBb15Tg69nu6BRnRt+0Qxj3qhfggTTkrC8jWGgdD5lSPenyDwemz+i+9mzUUBS394OuLrIyzIskNawZG6O862GZzWcJ4aIJ3GoU+TDpMlpPLnF4ZJBUaoOsYaS4HCmAELE=
-X-Gm-Message-State: AOJu0YznNa4VZI8ALtNwqkw+JwYIlNmimJ3ViS52PELc+zHdp1yiJuA8
-	ZOcUPeZT28lzuRXaun/ScXay2euB+ylxCMlukokaIZOcYJWSRlU=
-X-Google-Smtp-Source: AGHT+IGoKwhar7NlMl2apZUwCOXmcqLKM6ZBxJnDLCv9X+cK9Yfd5D28VbDOZGaOKZdXxk5Hv9Qk2A==
-X-Received: by 2002:a05:6830:700a:b0:709:396c:f295 with SMTP id 46e09a7af769-70c9da20784mr2698574a34.32.1723615106398;
-        Tue, 13 Aug 2024 22:58:26 -0700 (PDT)
-Received: from swift.. ([123.113.248.90])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c697a06d90sm2433129a12.43.2024.08.13.22.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 22:58:26 -0700 (PDT)
-From: LidongLI <wirelessdonghack@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	mark.esler@canonical.com,
-	stf_xl@wp.pl,
-	wirelessdonghack@gmail.com,
-	tytso@mit.edu,
-	stern@rowland.harvard.edu
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer Dereference&Use-After-Free Vulnerability
-Date: Wed, 14 Aug 2024 13:58:16 +0800
-Message-Id: <20240814055816.2786467-1-wirelessdonghack@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2024080359-getaway-concave-623e@gregkh>
-References: <2024080359-getaway-concave-623e@gregkh>
+	s=arc-20240116; t=1723615204; c=relaxed/simple;
+	bh=MoCIpQSOsSyGkRuE9Cv+ng65BbYT5IPL6kKQgK4qFWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AN/lcqjZqL4jvcSWMIoXVOqGpUUw1X+vD3BZaRW1BIoN3M2+klYwfPRcQ9LBj4IGrDi/Lu/6qRVevsSrZyhTxI7bpbxuCvAz8K8bzcVq7K5a8/LAPWsDtlgO+FNGOlCqmwTuPTY6wZG+oT3I18/zJAvZCbvBmaINrqSDAsDODuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org; arc=none smtp.client-ip=140.77.166.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org
+Received: from localhost (localhost [127.0.0.1])
+	by sonata.ens-lyon.org (Postfix) with ESMTP id D580BA03A1;
+	Wed, 14 Aug 2024 07:59:59 +0200 (CEST)
+Received: from sonata.ens-lyon.org ([127.0.0.1])
+	by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id q-65m9eZU7RT; Wed, 14 Aug 2024 07:59:59 +0200 (CEST)
+Received: from begin.home (apoitiers-658-1-118-253.w92-162.abo.wanadoo.fr [92.162.65.253])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by sonata.ens-lyon.org (Postfix) with ESMTPSA id 8671DA039F;
+	Wed, 14 Aug 2024 07:59:56 +0200 (CEST)
+Received: from samy by begin.home with local (Exim 4.98)
+	(envelope-from <samuel.thibault@ens-lyon.org>)
+	id 1se735-000000072Ep-3REY;
+	Wed, 14 Aug 2024 07:59:55 +0200
+Date: Wed, 14 Aug 2024 07:59:55 +0200
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: bajing <bajing@cmss.chinamobile.com>
+Cc: w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca,
+	speakup@linux-speakup.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] speakup: i18n: modify incorrect comments
+Message-ID: <20240814055955.4mf5idugote3pihu@begin>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	bajing <bajing@cmss.chinamobile.com>, w.d.hubbs@gmail.com,
+	chris@the-brannons.com, kirk@reisers.ca, speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org
+References: <20240814030017.2094-1-bajing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240814030017.2094-1-bajing@cmss.chinamobile.com>
+Organization: I am not organized
+User-Agent: NeoMutt/20170609 (1.8.3)
 
+bajing, le mer. 14 août 2024 11:00:17 +0800, a ecrit:
+> Regarding the text part, the comment was written incorrectly, so it needs to be modified.
+> 
+> Signed-off-by: bajing <bajing@cmss.chinamobile.com>
+> ---
+>  drivers/accessibility/speakup/i18n.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/accessibility/speakup/i18n.c b/drivers/accessibility/speakup/i18n.c
+> index d62079b1661f..10c7cdc685f7 100644
+> --- a/drivers/accessibility/speakup/i18n.c
+> +++ b/drivers/accessibility/speakup/i18n.c
+> @@ -541,7 +541,7 @@ static bool fmt_validate(char *template, char *user)
+>   * If the function fails, then user_messages is untouched.
+>   * Arguments:
+>   * - index: a message number, as found in i18n.h.
+> - * - text:  text of message.  Not NUL-terminated.
+> + * - text:  text of message.  Not NULL-terminated.
 
-Dear 
+? Man ascii says it's called NUL, not NULL. We don't want people to
+confuse it with the NULL pointer anyway, so no, we don't to change this.
 
+Samuel
 
-
-When will the patch be released? We are waiting to test it.
-
-
-
-
-Best regards
-
+>   * - length: number of bytes in text.
+>   * Failure conditions:
+>   * -EINVAL -  Invalid format specifiers in formatted message or illegal index.
+> -- 
+> 2.33.0
 
