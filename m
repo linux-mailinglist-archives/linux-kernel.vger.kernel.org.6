@@ -1,231 +1,879 @@
-Return-Path: <linux-kernel+bounces-287033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005199521E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:15:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72709521E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296E81C22B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E687282446
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5E11BD501;
-	Wed, 14 Aug 2024 18:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0541BBBDA;
+	Wed, 14 Aug 2024 18:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LVDIHWTw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3XhLyHlc"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759A14D8B7
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723659347; cv=none; b=sEw0YxDGlqIRFjJDD9yvA76ZB+2JQbKQdO36+XnCyT8n1T5usXIYxzpN9Sn8Q5eU71Uf49kU3U/bKSmdvA310IGreinjX/DF6oGc7EnB08sqiuPEZTAlnoz1OQDFpeBvL9He+Ei8p/d/oPMPwX+8+3SpUi8543H8gg/UFR/fjDk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723659347; c=relaxed/simple;
-	bh=IgmLLxdFrfOUorJmUDHd7eFcVGsHkaucJD9AIG6Y6+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y95Ckl6K/b3C4V5YbTE45yWC5p3HO6J6GbCcX1Lc4D/7YdO0ywFfKBkAx70+wbx8BHfrp44XGGu52+JosRBVCg4ip8w89TbKIBQ1v4NklzKEIvkeFz8y7gFdlsmBTynS1Uz7D968jzwEWwX2CNDklyUPfWAzy79U6nB/fsGgrAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LVDIHWTw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723659344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VbxqRbUq0VJMDm70f2A7+YGMoi31xCukMW6txgMsyoc=;
-	b=LVDIHWTwZcv8mmCgDTvuys0c0FO8TnX7ilq2aO5cc87V2lVDBUyXQjM6f9d/duLGoeI+cd
-	VSgZGQ8vQbweEolXggNd8HcsJqh94lRHEj2dbFOCsCvbo6M3KkYgipl6ZqZVfQa1JDzYgy
-	yWi6pP0HTOyaH1W5JAX/Ee8FbWzK0B8=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-133-5B_GhA3-OXCWtx1sg5SHsw-1; Wed, 14 Aug 2024 14:15:38 -0400
-X-MC-Unique: 5B_GhA3-OXCWtx1sg5SHsw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36b356a73fcso89965f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:15:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723659336; x=1724264136;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VbxqRbUq0VJMDm70f2A7+YGMoi31xCukMW6txgMsyoc=;
-        b=dlyqWJTG0IVy7I2OJdicLNwgO6iVb43E/JJRSm5GC4f2sed4uqD64b50yTJieXFwpa
-         Wa8NFeif2/ib4WunkaybFk3YFSCg1rOip6DK31ThI6b/JyVJJDc54G8pRsh7EVxx7031
-         SSp++mUZOGtVfT53xzmf1b+LJClbddF1MVdInTHlTynw7rRpCq/bgu8tTEDZQ2+IZMiN
-         nyCNOeEkFAme0Tv/T72DoMEupEK4WILM2g9Ok0mrcElgQFkHgaFAOBbYh5l7QHJoLNWC
-         8l/Cb1YQCB6s3OnEtwF5QoA2wreQPerUvH9iO7IqjgGriBNjM3T87kmow6BzVcGfluL3
-         1TFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFAzlcHWlKXZ2FcaaE4aeRJlth5h9U8Tv7rkKH1Ypt8C4Yfd2aflLJ99FavjYpc1e05BbgX5efa6wWbx1NOVKZQmkdGnKejvDn9Gc9
-X-Gm-Message-State: AOJu0YxaqptZmvwpq4LuqOW/7+KrIvu7RpFwJ9XHFcfXIzJVs2KkLCWg
-	RqANItaUXq36l0FqN1P4lNAv+Zac2sIh8pXJspWBTkmIhBmzrir0za8NkMxspqjfdzLeN4J9ZQh
-	BGJo0lw74zWAxl8qZGdFyecuutbVqIrMdv2WJy40AHMKt2dPV0ZFkTF4hMS4F+g87eB6K/g==
-X-Received: by 2002:a5d:4dca:0:b0:36d:2941:d530 with SMTP id ffacd0b85a97d-3717778273dmr2270320f8f.16.1723659335942;
-        Wed, 14 Aug 2024 11:15:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEPmi9UlYergIe2TMojdfzTaFYWbEmLXrrzMWK2H4N4faz/PQ8mb/afsqDM8paWTWEH9Vk4qg==
-X-Received: by 2002:a5d:4dca:0:b0:36d:2941:d530 with SMTP id ffacd0b85a97d-3717778273dmr2270306f8f.16.1723659335537;
-        Wed, 14 Aug 2024 11:15:35 -0700 (PDT)
-Received: from [192.168.10.47] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4c9385d3sm13523564f8f.42.2024.08.14.11.15.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 11:15:34 -0700 (PDT)
-Message-ID: <ef4053c9-6bc8-4b08-af8b-6a4a51100283@redhat.com>
-Date: Wed, 14 Aug 2024 20:15:33 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C234D8B7
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723659449; cv=fail; b=kszkEguuUJUECpnNUHfLOmh1tzuEFohE6VXQfVRtSjDyId7tXhY69fG5qNQvvoFel4J5ddywbaPap8mHbJB5F+RrtPTKsYR1HrpWs6i8s/ucxp33ADVWyQZk90oStWczaq+ISTNWWQXm0cSsKv6/MYQwsLVOEqhMyDWSx+sHXD8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723659449; c=relaxed/simple;
+	bh=l2YRc8RJrQYKBIZTLBDGKmezXTNBxO5j0M9i1vAYx3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f1SCAnC0Y4EvVWadlMQokOeZj8ABKCAdvG0Z070+23SMAD/KVCsxmE/6TI5XY4PyqdT//VqLysaWJIqoo8EpwEEaVTWWqteeMb0KGlUxDrqgpkBu8YifClD99SAqqSvfVQEcLbEIICEZtEybenr5apKlnsk9hJoQAXigW1vwGDg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3XhLyHlc; arc=fail smtp.client-ip=40.107.223.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Yes8QTSVGCo9aUJIY1+vxfSI1zrlTYIl9j0ncvn4Ab5+HodCveuhb/nGXEPpkq6i2ehkMJOrEhCrXoT+GBVGUnCtdh3tVzL1WcewKiAOLXxC/LmUHjQKYNHQU4GG75RQ7mxl4FTcDYu0xxVPTXe0sa2NVBe3tcTEO/BJ1zcrbCKUGdVdskH0sTP5HJvfedrMRVE0HHIEah0KotLxo22Wx8F76ZI7B+z0ai0fCrG+qAUz+0ueR9AQd0n0d4sunF0XS8Mymu8HY80jfc4RyFIFQEYOAjZtbPzXIqdIpgfG1OdYUQAieXsy1SP2635PWrkwfPDyjCijkHdZAqGAjwY+tQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BOo1i0y8KnUOkKSNRpg/2M1HkZRW0MHG0dfAnDdbnOE=;
+ b=x1A19AO0jK1awW/OwLFRDbI+QtXhO+qibl4BF6wEHnRdQ8Hb/Pz6vubp0XPJIGv6ZHhjTAa0mE9X0OyyVCoYSci6zRE/gMDLXq5GlcdiOMnz1lQ27x/QT3ro6lMFQ/CTiMGGG/Zd8R1WtVvpN/40CbATT+2hhmtn8ABvbLboKJow8Bss7+Kx9xJUl4prjh7fcM29YtiiV4kveDLeQb65UP6s5nmG0dsuuAPsTHARQZZhRN1S4CbaYs4Le8RQMs7XY7SxdircjPhKn5Pjmp1hTXEXCdDW/mIzmDHoUcs531N4H1cw+nRfQq+Xwz5yZBB7tmaYeeez3CpDyl2093mM1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BOo1i0y8KnUOkKSNRpg/2M1HkZRW0MHG0dfAnDdbnOE=;
+ b=3XhLyHlc4rWpquiS5cQvHurVKU82IWi2YsMdnO75gBqkZeyw3EYkQgnIUDUMZis+pYZ0h2LQvHOsqr5o38ZkZo3tLSndeRwgBpxhFVLzvbJKYDWweAR8VAIKgxPp1QKZO5PBB0ETCxuO+Jytdm2kc46KYDyOHiOFzEUVYfVAyHs=
+Received: from SJ0PR03CA0286.namprd03.prod.outlook.com (2603:10b6:a03:39e::21)
+ by SJ2PR12MB8953.namprd12.prod.outlook.com (2603:10b6:a03:544::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.19; Wed, 14 Aug
+ 2024 18:17:23 +0000
+Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
+ (2603:10b6:a03:39e:cafe::e8) by SJ0PR03CA0286.outlook.office365.com
+ (2603:10b6:a03:39e::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33 via Frontend
+ Transport; Wed, 14 Aug 2024 18:17:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Wed, 14 Aug 2024 18:17:07 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
+ 2024 13:16:47 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
+ 2024 13:16:47 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 14 Aug 2024 13:16:46 -0500
+Message-ID: <172cde68-930f-381e-df9f-da2a48955828@amd.com>
+Date: Wed, 14 Aug 2024 11:16:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] KVM: Add arch hooks for enabling/disabling
- virtualization
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
-References: <20240608000639.3295768-1-seanjc@google.com>
- <20240608000639.3295768-6-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V2 01/10] accel/amdxdna: Add a new driver for AMD AI
+ Engine
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240608000639.3295768-6-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>, Narendra Gutta
+	<VenkataNarendraKumar.Gutta@amd.com>, George Yang <George.Yang@amd.com>
+References: <20240805173959.3181199-1-lizhi.hou@amd.com>
+ <20240805173959.3181199-2-lizhi.hou@amd.com>
+ <f5e9f517-77b8-998d-9bf7-d9bf4ee2fbb8@quicinc.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <f5e9f517-77b8-998d-9bf7-d9bf4ee2fbb8@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|SJ2PR12MB8953:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5e37ec0-9040-4fa5-4c47-08dcbc8d4ea7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V1Q1T0pCb0ZIeXdhWk1sQmpxY1hxQnBZZTc1UGRLQVMySFBjeWVhMzRRc1FR?=
+ =?utf-8?B?dUsvZXBnYjE0ajRseHhYZ3g0ai92Q3loalJqNmJJMTBsM29jaHk2TXZNNHdk?=
+ =?utf-8?B?TUtFRmZ3RnNjK2tSdW91VzQ2cmtGc3U1cjVkSjFUK3p6RkxXdTZDME5QWEFJ?=
+ =?utf-8?B?ZWN5VHJEa3hIRkpzZGppZEE3QmgxR09uSlUvMWpmYVA0MFNrRmIrdXgxYUo5?=
+ =?utf-8?B?SytOU2R2MUI3MFZtbkJTaG1STXJMODVPYVI1TkExL0JVb3dndll5YUZHcFIz?=
+ =?utf-8?B?d2xPelgwVmF4OE93YlJiY3d2STdzdnJETkpFZTRRSmZTNlh5eVU1RWhnc2FM?=
+ =?utf-8?B?b3VjaGVzaVQ5OWdocWh3QzI1djNJeFBOeGxFeThLRGx2YXVwYTg2MHp2eEsx?=
+ =?utf-8?B?Y2w0dVEzMmlvUlRNNy9SbndVSGxDT2F2YTFSa2MvcldXVUZiRVpHVUFwVlho?=
+ =?utf-8?B?UmdUc2VIL01GOVFIeEIzUGVJazV3ZVdrYjNneS9oUTR4c3R4YjdSL0xOZXpN?=
+ =?utf-8?B?UHF1Q3B5WVF4c1EwZTJxRHl0dE8va3RQK0tEcGxwZFBBZ0w1N2pjR2c2Y29n?=
+ =?utf-8?B?Vk90TDUxei8xQS83ckU0eHdJTmpRQ3FVQkl4M1JmV0RhT3ZYNFpycllUcngy?=
+ =?utf-8?B?c1F2ODVoN1RQN1JXTDYrL0Y4YzRCTWtpSXg0SjY5MHA3MlBYVko4ajZqRDFC?=
+ =?utf-8?B?cEdLSmdQOVdtaEo2YzhwQnZaaTFVSW5JaVBOSVI3eFZDanFYMkEwT2hkSnhC?=
+ =?utf-8?B?ZGM1UUQ4OEpQdUUxd1UwQ2QxdmJOWUpRa3V1MTNxL0lVRzRSSnhxbktxZXVa?=
+ =?utf-8?B?b0FkT3BLZGFyR01nbjR0MmtydnB0aVBOUUdyVU9RNGJpV2pwMGNXVmlJYmpq?=
+ =?utf-8?B?dmhsNVk2N1BkRjVoNGI1cFZkcllDUXRhUzl5eC94My9WdnBINWpDRXJXbzFM?=
+ =?utf-8?B?WDN6bEFtbzdsbnpBWGRCeFg0MzdJbTV5VWIvTmVzODVKNWNocjVEaWpDb0Zn?=
+ =?utf-8?B?bnVzTm5pc0JTRmIvbml1ak5oM0JHcTZqZG9oTy9mYy9vZFlvNWFLT2Y3d3px?=
+ =?utf-8?B?T0JvZ0xOaWxGbWVQclkzeVgrMWRNTHFSQnBFWXc2UEFGVnZ1K3BEcC9IN09T?=
+ =?utf-8?B?VlJSQ2ZzdGVqT1RWU0lZckhJdTJ6MmtwWFcwaUFQNUJRdk9ubFkrWEhUTStH?=
+ =?utf-8?B?LytnVHdkVDNDaEl6S1l1WDIxTkZYcTA2SlNKbzUvMCtLWTZYMyt5SFE0ZFpw?=
+ =?utf-8?B?Q21DWU56UmRHMEtTek10aXY1ZjczQno4VFBRcXlKZ3pCZ3NrbDlpUndIVzdF?=
+ =?utf-8?B?T3g5dE9taG44OS91YTh1bnlpNFpRZlVmSTAzdVBYSS8zcWwrWVhOZ0Q1ZC8z?=
+ =?utf-8?B?aFFuTHByS3I0QzdJRk5Wa0Rkdk9vK1phT1ZYRTF4WEhoNSt6dk9PbHFDRjY1?=
+ =?utf-8?B?S1g0QWYrWFQ5R3J3dkdKdkNhViszNGp6a2dSQjdyelJ3NWtXbWVlaytDWWFy?=
+ =?utf-8?B?QU03VDVYS2V1UlUyQUVZMFovUzdMaTdSa2NhcndUa3plVXNyV1dPdEZoWkJG?=
+ =?utf-8?B?K1RadDdadlRYc0liTWlITWxCQTEyU0FaS2QvZWRmd2dpVVlNYUNhT2lWOTl4?=
+ =?utf-8?B?MTNhOE1rbUZFUTJVT2ljY09DbU81Yk1rTU5jaFBySjd6SEdpQ3hBWmk1L2JQ?=
+ =?utf-8?B?MFMrL3llOHYwa1UwVUlFckZOSXNUZ2F3SldWVzBiNHhZS3pvdHo2UFFPOXlt?=
+ =?utf-8?B?S3Jjc0NRbUpNOUl5Yjc5RWF2TGVBZXd6UmlDQTBzbkpUaGF0THl4YXhFYmxI?=
+ =?utf-8?B?RFd3SUIrOG1lRVRMQmZ3K3A2eHdvZEk5WGpLU3RKRDhNTWRNcUdMSHBlR0hR?=
+ =?utf-8?B?V2EwbjRhTm14RXNsVXlhRk5MbHkycG54OGZESnUvL2NkaHBieGVodHdBRDRM?=
+ =?utf-8?Q?KKqBny1ld3p6rnbZz235XtqqVmckBc//?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 18:17:07.1702
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5e37ec0-9040-4fa5-4c47-08dcbc8d4ea7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000066EC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8953
 
-On 6/8/24 02:06, Sean Christopherson wrote:
-> Add arch hooks that are invoked when KVM enables/disable virtualization.
-> x86 will use the hooks to register an "emergency disable" callback, which
-> is essentially an x86-specific shutdown notifier that is used when the
-> kernel is doing an emergency reboot/shutdown/kexec.
-> 
-> Add comments for the declarations to help arch code understand exactly
-> when the callbacks are invoked.  Alternatively, the APIs themselves could
-> communicate most of the same info, but kvm_arch_pre_enable_virtualization()
-> and kvm_arch_post_disable_virtualization() are a bit cumbersome, and make
-> it a bit less obvious that they are intended to be implemented as a pair.
-> 
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   include/linux/kvm_host.h | 14 ++++++++++++++
->   virt/kvm/kvm_main.c      | 14 ++++++++++++++
->   2 files changed, 28 insertions(+)
-> 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 96ad3e8b9ddb..12ef3beb4e47 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1514,6 +1514,20 @@ static inline void kvm_create_vcpu_debugfs(struct kvm_vcpu *vcpu) {}
->   #endif
->   
->   #ifdef CONFIG_KVM_GENERIC_HARDWARE_ENABLING
-> +/*
-> + * kvm_arch_{enable,disable}_virtualization() are called on one CPU, under
-> + * kvm_usage_lock, immediately after/before 0=>1 and 1=>0 transitions of
-> + * kvm_usage_count, i.e. at the beginning of the generic hardware enabling
-> + * sequence, and at the end of the generic hardware disabling sequence.
-> + */
-> +void kvm_arch_enable_virtualization(void);
-> +void kvm_arch_disable_virtualization(void);
-> +/*
-> + * kvm_arch_hardware_{enable,disable}() are called on "every" CPU to do the
-> + * actual twiddling of hardware bits.  The hooks are called all online CPUs
-> + * when KVM enables/disabled virtualization.  Enabling/disabling is also done
-> + * when a CPU is onlined/offlined (or Resumed/Suspended).
-> + */
->   int kvm_arch_hardware_enable(void);
->   void kvm_arch_hardware_disable(void);
 
-Since you are at it, rename these to 
-kvm_arch_{enable,disable}_virtualization_cpu()?
+On 8/9/24 09:11, Jeffrey Hugo wrote:
+> On 8/5/2024 11:39 AM, Lizhi Hou wrote:
+>> AMD AI Engine forms the core of AMD NPU and can be used for accelerating
+>> machine learning applications.
+>>
+>> Add the driver to support AI Engine integrated to AMD CPU.
+>> Only very basic functionalities are added.
+>>    - module and PCI device initialization
+>>    - firmware load
+>>    - power up
+>>    - low level hardware initialization
+>>
+>> Co-developed-by: Narendra Gutta <VenkataNarendraKumar.Gutta@amd.com>
+>> Signed-off-by: Narendra Gutta <VenkataNarendraKumar.Gutta@amd.com>
+>> Co-developed-by: George Yang <George.Yang@amd.com>
+>> Signed-off-by: George Yang <George.Yang@amd.com>
+>> Co-developed-by: Min Ma <min.ma@amd.com>
+>> Signed-off-by: Min Ma <min.ma@amd.com>
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>> ---
+>>   MAINTAINERS                             |   8 ++
+>>   drivers/accel/Kconfig                   |   1 +
+>>   drivers/accel/Makefile                  |   1 +
+>>   drivers/accel/amdxdna/Kconfig           |  15 ++
+>>   drivers/accel/amdxdna/Makefile          |  14 ++
+>>   drivers/accel/amdxdna/TODO              |   4 +
+>>   drivers/accel/amdxdna/aie2_pci.c        | 182 ++++++++++++++++++++++++
+>>   drivers/accel/amdxdna/aie2_pci.h        | 144 +++++++++++++++++++
+>>   drivers/accel/amdxdna/aie2_psp.c        | 137 ++++++++++++++++++
+>>   drivers/accel/amdxdna/aie2_smu.c        | 112 +++++++++++++++
+>>   drivers/accel/amdxdna/amdxdna_drm.c     |  20 +++
+>>   drivers/accel/amdxdna/amdxdna_drm.h     |  65 +++++++++
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.c | 118 +++++++++++++++
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.h |  31 ++++
+>>   drivers/accel/amdxdna/amdxdna_sysfs.c   |  47 ++++++
+>>   drivers/accel/amdxdna/npu1_regs.c       |  94 ++++++++++++
+>>   drivers/accel/amdxdna/npu2_regs.c       | 111 +++++++++++++++
+>>   drivers/accel/amdxdna/npu4_regs.c       | 111 +++++++++++++++
+>>   drivers/accel/amdxdna/npu5_regs.c       | 111 +++++++++++++++
+>>   include/uapi/drm/amdxdna_accel.h        |  27 ++++
+>>   20 files changed, 1353 insertions(+)
+>>   create mode 100644 drivers/accel/amdxdna/Kconfig
+>>   create mode 100644 drivers/accel/amdxdna/Makefile
+>>   create mode 100644 drivers/accel/amdxdna/TODO
+>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.h
+>>   create mode 100644 drivers/accel/amdxdna/aie2_psp.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu1_regs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu2_regs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu4_regs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu5_regs.c
+>>   create mode 100644 include/uapi/drm/amdxdna_accel.h
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 36d66b141352..3d2b9f1f1a07 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -1146,6 +1146,14 @@ M:    Sanjay R Mehta <sanju.mehta@amd.com>
+>>   S:    Maintained
+>>   F:    drivers/spi/spi-amd.c
+>>   +AMD XDNA DRIVER
+>> +M:    Min Ma <min.ma@amd.com>
+>> +M:    Lizhi Hou <lizhi.hou@amd.com>
+>> +L:    dri-devel@lists.freedesktop.org
+>> +S:    Supported
+>> +F:    drivers/accel/amdxdna
+>
+> Trailing "/"?
+>
+>> +F:    include/uapi/drm/amdxdna_accel.h
+>
+> T: ?
+Sure. I will fix above two.
+>
+>> +
+>>   AMD XGBE DRIVER
+>>   M:    "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>
+>>   L:    netdev@vger.kernel.org
+>
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.c 
+>> b/drivers/accel/amdxdna/aie2_pci.c
+>> new file mode 100644
+>> index 000000000000..3660967c00e6
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/aie2_pci.c
+>> @@ -0,0 +1,182 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2023-2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#include <linux/amd-iommu.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/firmware.h>
+>> +#include <linux/iommu.h>
+>
+> You are clearly missing linux/pci.h and I suspect many more.
+Other headers are indirectly included by "aie2_pci.h" underneath.
+>
+>> +
+>> +#include "aie2_pci.h"
+>> +
+>> +static void aie2_hw_stop(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
+>> +    struct amdxdna_dev_hdl *ndev = xdna->dev_handle;
+>> +
+>> +    aie2_psp_stop(ndev->psp_hdl);
+>> +    aie2_smu_fini(ndev);
+>> +    pci_clear_master(pdev);
+>> +    pci_disable_device(pdev);
+>
+> pci_clear_master() is redundant with pci_disable_device(), no?
+You are right. I will remove it.
+>
+>> +}
+>> +
+>> +static int aie2_hw_start(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
+>> +    struct amdxdna_dev_hdl *ndev = xdna->dev_handle;
+>> +    int ret;
+>> +
+>> +    ret = pci_enable_device(pdev);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "failed to enable device, ret %d", ret);
+>> +        return ret;
+>> +    }
+>> +    pci_set_master(pdev);
+>> +
+>> +    ret = aie2_smu_init(ndev);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "failed to init smu, ret %d", ret);
+>> +        goto disable_dev;
+>> +    }
+>> +
+>> +    ret = aie2_psp_start(ndev->psp_hdl);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "failed to start psp, ret %d", ret);
+>> +        goto fini_smu;
+>> +    }
+>> +
+>> +    return 0;
+>> +
+>> +fini_smu:
+>> +    aie2_smu_fini(ndev);
+>> +disable_dev:
+>> +    pci_disable_device(pdev);
+>> +    pci_clear_master(pdev);
+>
+> Again, clear_master appears redundant
+>
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int aie2_init(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
+>> +    struct amdxdna_dev_hdl *ndev;
+>> +    struct psp_config psp_conf;
+>> +    const struct firmware *fw;
+>> +    void __iomem * const *tbl;
+>
+> Is there an extra "*" here?
+It looks a match with pcim_iomap_table() return type.
+>
+>> +    int i, bars, nvec, ret;
+>> +
+>> +    ndev = devm_kzalloc(&pdev->dev, sizeof(*ndev), GFP_KERNEL);
+>> +    if (!ndev)
+>> +        return -ENOMEM;
+>> +
+>> +    ndev->priv = xdna->dev_info->dev_priv;
+>> +    ndev->xdna = xdna;
+>> +
+>> +    ret = request_firmware(&fw, ndev->priv->fw_path, &pdev->dev);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "failed to request_firmware %s, ret %d",
+>> +             ndev->priv->fw_path, ret);
+>> +        return ret;
+>> +    }
+>> +
+>> +    ret = pcim_enable_device(pdev);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "pcim enable device failed, ret %d", ret);
+>> +        goto release_fw;
+>> +    }
+>> +
+>> +    bars = pci_select_bars(pdev, IORESOURCE_MEM);
+>> +    for (i = 0; i < PSP_MAX_REGS; i++) {
+>> +        if (!(BIT(PSP_REG_BAR(ndev, i)) && bars)) {
+>> +            XDNA_ERR(xdna, "does not get pci bar%d",
+>> +                 PSP_REG_BAR(ndev, i));
+>> +            ret = -EINVAL;
+>> +            goto release_fw;
+>> +        }
+>> +    }
+>> +
+>> +    ret = pcim_iomap_regions(pdev, bars, "amdxdna-npu");
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "map regions failed, ret %d", ret);
+>> +        goto release_fw;
+>> +    }
+>> +
+>> +    tbl = pcim_iomap_table(pdev);
+>> +    if (!tbl) {
+>> +        XDNA_ERR(xdna, "Cannot get iomap table");
+>> +        ret = -ENOMEM;
+>> +        goto release_fw;
+>> +    }
+>> +    ndev->sram_base = tbl[xdna->dev_info->sram_bar];
+>> +    ndev->smu_base = tbl[xdna->dev_info->smu_bar];
+>
+> Doesn't this throw a sparse error from directly accessing memory 
+> marked iomem?
 
-Paolo
+It does not. tbl[] returns the iomem pointer and the driver uses 
+writel/readl to access.
 
->   #endif
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 7bdd744e4821..e20189a89a64 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -5505,6 +5505,16 @@ static DEFINE_PER_CPU(bool, hardware_enabled);
->   static DEFINE_MUTEX(kvm_usage_lock);
->   static int kvm_usage_count;
->   
-> +__weak void kvm_arch_enable_virtualization(void)
-> +{
-> +
-> +}
-> +
-> +__weak void kvm_arch_disable_virtualization(void)
-> +{
-> +
-> +}
-> +
->   static int __kvm_enable_virtualization(void)
->   {
->   	if (__this_cpu_read(hardware_enabled))
-> @@ -5604,6 +5614,8 @@ static int kvm_enable_virtualization(void)
->   	if (kvm_usage_count++)
->   		return 0;
->   
-> +	kvm_arch_enable_virtualization();
-> +
->   	r = cpuhp_setup_state(CPUHP_AP_KVM_ONLINE, "kvm/cpu:online",
->   			      kvm_online_cpu, kvm_offline_cpu);
->   	if (r)
-> @@ -5634,6 +5646,7 @@ static int kvm_enable_virtualization(void)
->   	unregister_syscore_ops(&kvm_syscore_ops);
->   	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
->   err_cpuhp:
-> +	kvm_arch_disable_virtualization();
->   	--kvm_usage_count;
->   	return r;
->   }
-> @@ -5647,6 +5660,7 @@ static void kvm_disable_virtualization(void)
->   
->   	unregister_syscore_ops(&kvm_syscore_ops);
->   	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
-> +	kvm_arch_disable_virtualization();
->   }
->   
->   static int kvm_init_virtualization(void)
+e.g. writel(0, SMU_REG(ndev, SMU_RESP_REG));
 
+>
+>> +
+>> +    ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "Failed to set DMA mask: %d", ret);
+>> +        goto release_fw;
+>> +    }
+>> +
+>> +    nvec = pci_msix_vec_count(pdev);
+>
+> This feels weird.  Can your device advertise variable number of MSI-X 
+> vectors?  It only works if all of the vectors are used?
+That is possible. the driver supports different hardware. And the fw 
+assigns vector for hardware context dynamically. So the driver needs to 
+allocate all vectors ahead.
+>
+>> +    if (nvec <= 0) {
+>> +        XDNA_ERR(xdna, "does not get number of interrupt vector");
+>> +        ret = -EINVAL;
+>> +        goto release_fw;
+>> +    }
+>> +
+>> +    ret = pci_alloc_irq_vectors(pdev, nvec, nvec, PCI_IRQ_MSIX);
+>> +    if (ret < 0) {
+>> +        XDNA_ERR(xdna, "failed to alloc irq vectors, ret %d", ret);
+>> +        goto release_fw;
+>> +    }
+>> +
+>> +    ret = iommu_dev_enable_feature(&pdev->dev, IOMMU_DEV_FEAT_SVA);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "Enable PASID failed, ret %d", ret);
+>> +        goto free_irq;
+>> +    }
+>> +
+>> +    psp_conf.fw_size = fw->size;
+>> +    psp_conf.fw_buf = fw->data;
+>> +    for (i = 0; i < PSP_MAX_REGS; i++)
+>> +        psp_conf.psp_regs[i] = tbl[PSP_REG_BAR(ndev, i)] + 
+>> PSP_REG_OFF(ndev, i);
+>> +    ndev->psp_hdl = aie2m_psp_create(&pdev->dev, &psp_conf);
+>> +    if (!ndev->psp_hdl) {
+>> +        XDNA_ERR(xdna, "failed to create psp");
+>> +        ret = -ENOMEM;
+>> +        goto disable_sva;
+>> +    }
+>> +    xdna->dev_handle = ndev;
+>> +
+>> +    ret = aie2_hw_start(xdna);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "start npu failed, ret %d", ret);
+>> +        goto disable_sva;
+>> +    }
+>> +
+>> +    release_firmware(fw);
+>> +    return 0;
+>> +
+>> +disable_sva:
+>> +    iommu_dev_disable_feature(&pdev->dev, IOMMU_DEV_FEAT_SVA);
+>> +free_irq:
+>> +    pci_free_irq_vectors(pdev);
+>> +release_fw:
+>> +    release_firmware(fw);
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static void aie2_fini(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
+>> +
+>> +    aie2_hw_stop(xdna);
+>> +    iommu_dev_disable_feature(&pdev->dev, IOMMU_DEV_FEAT_SVA);
+>> +    pci_free_irq_vectors(pdev);
+>> +}
+>> +
+>> +const struct amdxdna_dev_ops aie2_ops = {
+>> +    .init           = aie2_init,
+>> +    .fini           = aie2_fini,
+>> +};
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.h 
+>> b/drivers/accel/amdxdna/aie2_pci.h
+>> new file mode 100644
+>> index 000000000000..984bf65b7a2b
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/aie2_pci.h
+>> @@ -0,0 +1,144 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2023-2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#ifndef _AIE2_PCI_H_
+>> +#define _AIE2_PCI_H_
+>> +
+>> +#include <linux/device.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/io.h>
+>> +
+>> +#include "amdxdna_pci_drv.h"
+>> +
+>> +#define AIE2_INTERVAL    20000    /* us */
+>> +#define AIE2_TIMEOUT    1000000    /* us */
+>> +
+>> +/* Firmware determines device memory base address and size */
+>> +#define AIE2_DEVM_BASE    0x4000000
+>> +#define AIE2_DEVM_SIZE    (48 * 1024 * 1024)
+>
+> I'd expect to see some SZ_ macros used here
+Sure.
+>
+>> +
+>> +#define NDEV2PDEV(ndev) \
+>> +    (to_pci_dev((ndev)->xdna->ddev.dev))
+>> +
+>> +#define AIE2_SRAM_OFF(ndev, addr) \
+>> +    ((addr) - (ndev)->priv->sram_dev_addr)
+>> +#define AIE2_MBOX_OFF(ndev, addr) \
+>> +    ((addr) - (ndev)->priv->mbox_dev_addr)
+>> +
+>> +#define PSP_REG_BAR(ndev, idx) \
+>> +    ((ndev)->priv->psp_regs_off[(idx)].bar_idx)
+>> +#define PSP_REG_OFF(ndev, idx) \
+>> +    ((ndev)->priv->psp_regs_off[(idx)].offset)
+>> +#define SRAM_REG_OFF(ndev, idx) \
+>> +    ((ndev)->priv->sram_offs[(idx)].offset)
+>
+> Really looks like these 6 macros can all fit on a single line, why 
+> split them up?
+I will fix these. and other places.
+>
+>> +
+>> +#define SMU_REG(ndev, idx) \
+>> +({ \
+>> +    typeof(ndev) _ndev = ndev; \
+>> +    ((_ndev)->smu_base + (_ndev)->priv->smu_regs_off[(idx)].offset); \
+>> +})
+>> +#define SRAM_GET_ADDR(ndev, idx) \
+>> +({ \
+>> +    typeof(ndev) _ndev = ndev; \
+>> +    ((_ndev)->sram_base + SRAM_REG_OFF((_ndev), (idx))); \
+>> +})
+>> +
+>> +#define SMU_MPNPUCLK_FREQ_MAX(ndev) \
+>> +    ((ndev)->priv->smu_mpnpuclk_freq_max)
+>> +#define SMU_HCLK_FREQ_MAX(ndev) \
+>> +    ((ndev)->priv->smu_hclk_freq_max)
+>> +
+>> +enum aie2_smu_reg_idx {
+>> +    SMU_CMD_REG = 0,
+>> +    SMU_ARG_REG,
+>> +    SMU_INTR_REG,
+>> +    SMU_RESP_REG,
+>> +    SMU_OUT_REG,
+>> +    SMU_MAX_REGS /* Kepp this at the end */
+>
+> "keep"
+Got it. Thanks.
+>
+>> diff --git a/drivers/accel/amdxdna/aie2_psp.c 
+>> b/drivers/accel/amdxdna/aie2_psp.c
+>> new file mode 100644
+>> index 000000000000..c24207c252a1
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/aie2_psp.c
+>> @@ -0,0 +1,137 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2022-2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#include <linux/bitfield.h>
+>> +#include <linux/firmware.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/slab.h>
+>> +#include "aie2_pci.h"
+>> +
+>> +#define PSP_STATUS_READY    BIT(31)
+>> +
+>> +/* PSP commands */
+>> +#define PSP_VALIDATE        1
+>> +#define PSP_START        2
+>> +#define PSP_RELEASE_TMR        3
+>> +
+>> +/* PSP special arguments */
+>> +#define PSP_START_COPY_FW    1
+>> +
+>> +/* PSP response error code */
+>> +#define PSP_ERROR_CANCEL    0xFFFF0002
+>> +#define PSP_ERROR_BAD_STATE    0xFFFF0007
+>> +
+>> +#define PSP_FW_ALIGN        0x10000
+>> +#define PSP_POLL_INTERVAL    20000    /* us */
+>> +#define PSP_POLL_TIMEOUT    1000000    /* us */
+>> +
+>> +#define PSP_REG(p, reg) \
+>> +    ((p)->psp_regs[reg])
+>
+> This is not valid with __iomem
+Sorry, I am not fully understand the comment.
+
+Each element of ->psp_regs[] is a void __iomem *. And readl/writel are 
+used with it.
+
+e.g. writel(reg_vals[i], PSP_REG(psp, i));
+
+>
+>> +struct psp_device *aie2m_psp_create(struct device *dev, struct 
+>> psp_config *conf)
+>> +{
+>> +    struct psp_device *psp;
+>> +    u64 offset;
+>> +
+>> +    psp = devm_kzalloc(dev, sizeof(*psp), GFP_KERNEL);
+>> +    if (!psp)
+>> +        return NULL;
+>> +
+>> +    psp->dev = dev;
+>> +    memcpy(psp->psp_regs, conf->psp_regs, sizeof(psp->psp_regs));
+>> +
+>> +    psp->fw_buf_sz = ALIGN(conf->fw_size, PSP_FW_ALIGN) + PSP_FW_ALIGN;
+>> +    psp->fw_buffer = devm_kmalloc(psp->dev, psp->fw_buf_sz, 
+>> GFP_KERNEL);
+>
+> Feels like this (and a bunch of other instances I haven't commented 
+> on) should be drmm_* allocs.
+
+The PSP code is kind of low level and directly interact with hardware. 
+All the PSP interfaces use struct device * instead of drm_device. I 
+think it is kind make sense because PSP is not related to drm.
+
+I will scan all other allocs and change them to drmm_* allocs for the 
+code related to drm_device. Does this sound ok to you?
+
+>
+>> +    if (!psp->fw_buffer) {
+>> +        dev_err(psp->dev, "no memory for fw buffer");
+>> +        return NULL;
+>> +    }
+>> +
+>> +    psp->fw_paddr = virt_to_phys(psp->fw_buffer);
+>
+> I'm pretty sure virt_to_phys() is always wrong
+
+The hardware exposes several registers to communicate with platform PSP 
+(AMD Platform Security Processor) to load NPU firmware. And PSP only 
+accept host physical address with current hardware.
+
+I understand usually virt_to_phys() should not be needed for device 
+driver. And maybe it is ok to use if there is hardware requirement? I 
+can see some drivers use it as well.
+
+>
+>> +    offset = ALIGN(psp->fw_paddr, PSP_FW_ALIGN) - psp->fw_paddr;
+>> +    psp->fw_paddr += offset;
+>> +    memcpy(psp->fw_buffer + offset, conf->fw_buf, conf->fw_size);
+>> +
+>> +    return psp;
+>> +}
+>> diff --git a/drivers/accel/amdxdna/amdxdna_drm.c 
+>> b/drivers/accel/amdxdna/amdxdna_drm.c
+>> new file mode 100644
+>> index 000000000000..91e4f9c9dac9
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/amdxdna_drm.c
+>
+> What is the point of this file?  Seems like all of this could just be 
+> in amdxdna_pci_drv.c
+The future product may have NPU with non-pci device. So it might be a 
+amdxdna_plat_drv.c and share the same amdxdna_drm.c in the future.
+>
+>> @@ -0,0 +1,20 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2022-2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#include <drm/drm_ioctl.h>
+>> +#include <drm/drm_accel.h>
+>> +
+>> +#include "amdxdna_drm.h"
+>> +
+>> +DEFINE_DRM_ACCEL_FOPS(amdxdna_fops);
+>> +
+>> +const struct drm_driver amdxdna_drm_drv = {
+>> +    .driver_features = DRIVER_GEM | DRIVER_COMPUTE_ACCEL,
+>> +    .fops = &amdxdna_fops,
+>> +    .name = "amdxdna_accel_driver",
+>> +    .desc = "AMD XDNA DRM implementation",
+>> +    .major = AMDXDNA_DRIVER_MAJOR,
+>> +    .minor = AMDXDNA_DRIVER_MINOR,
+>
+> These are deprecated.  You should drop them
+Sure. I will remove them.
+>
+>> +};
+>> diff --git a/drivers/accel/amdxdna/amdxdna_drm.h 
+>> b/drivers/accel/amdxdna/amdxdna_drm.h
+>> new file mode 100644
+>> index 000000000000..2b18bcbdc23e
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/amdxdna_drm.h
+>> @@ -0,0 +1,65 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2022-2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#ifndef _AMDXDNA_DRM_H_
+>> +#define _AMDXDNA_DRM_H_
+>> +
+>> +#include <drm/amdxdna_accel.h>
+>> +#include <drm/drm_drv.h>
+>> +#include <drm/drm_gem.h>
+>> +#include <drm/drm_managed.h>
+>> +#include <drm/drm_print.h>
+>> +#include <drm/drm_file.h>
+>> +
+>> +#define XDNA_INFO(xdna, fmt, args...) drm_info(&(xdna)->ddev, fmt, 
+>> ##args)
+>> +#define XDNA_WARN(xdna, fmt, args...) drm_warn(&(xdna)->ddev, "%s: 
+>> "fmt, __func__, ##args)
+>> +#define XDNA_ERR(xdna, fmt, args...) drm_err(&(xdna)->ddev, "%s: 
+>> "fmt, __func__, ##args)
+>> +#define XDNA_DBG(xdna, fmt, args...) drm_dbg(&(xdna)->ddev, fmt, 
+>> ##args)
+>> +#define XDNA_INFO_ONCE(xdna, fmt, args...) 
+>> drm_info_once(&(xdna)->ddev, fmt, ##args)
+>> +
+>> +#define to_xdna_dev(drm_dev) \
+>> +    ((struct amdxdna_dev *)container_of(drm_dev, struct amdxdna_dev, 
+>> ddev))
+>> +
+>> +extern const struct drm_driver amdxdna_drm_drv;
+>> +
+>> +struct amdxdna_dev;
+>> +
+>> +/*
+>> + * struct amdxdna_dev_ops - Device hardware operation callbacks
+>> + */
+>> +struct amdxdna_dev_ops {
+>> +    int (*init)(struct amdxdna_dev *xdna);
+>> +    void (*fini)(struct amdxdna_dev *xdna);
+>> +};
+>> +
+>> +/*
+>> + * struct amdxdna_dev_info - Device hardware information
+>> + * Record device static information, like reg, mbox, PSP, SMU bar 
+>> index,
+>
+> The last "," is weird
+Will fix it. Thanks.
+>
+>> + */
+>> +struct amdxdna_dev_info {
+>> +    int                reg_bar;
+>> +    int                mbox_bar;
+>> +    int                sram_bar;
+>> +    int                psp_bar;
+>> +    int                smu_bar;
+>> +    int                device_type;
+>> +    int                first_col;
+>> +    u32                dev_mem_buf_shift;
+>> +    u64                dev_mem_base;
+>> +    size_t                dev_mem_size;
+>> +    char                *vbnv;
+>> +    const struct amdxdna_dev_priv    *dev_priv;
+>> +    const struct amdxdna_dev_ops    *ops;
+>> +};
+>> +
+>> +struct amdxdna_dev {
+>> +    struct drm_device        ddev;
+>> +    struct amdxdna_dev_hdl        *dev_handle;
+>> +    const struct amdxdna_dev_info    *dev_info;
+>> +
+>> +    struct mutex            dev_lock; /* per device lock */
+>> +};
+>> +
+>> +#endif /* _AMDXDNA_DRM_H_ */
+>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c 
+>> b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> new file mode 100644
+>> index 000000000000..7d0cfd918b0e
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> @@ -0,0 +1,118 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2022-2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +
+>> +#include "amdxdna_pci_drv.h"
+>> +
+>> +/*
+>> + *  There are platforms which share the same PCI device ID
+>> + *  but have different PCI revision IDs. So, let the PCI class
+>> + *  determine the probe and later use the (device_id, rev_id)
+>> + *  pair as a key to select the devices.
+>> + */
+>
+> Huh?  So, VID == AMD, DID == 0x17f0, rev == 0x1 is a completely 
+> different device?  That feels like a PCIe spec violation...
+Maybe the comment is misleading. The hardware with same device id 0x17f0 
+uses the same commands, registers etc. And they are same device with 
+different revisions.
+>
+>> +static const struct pci_device_id pci_ids[] = {
+>> +    { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_ANY_ID),
+>> +        .class = PCI_CLASS_SP_OTHER << 8,
+>
+> Weird.  I would have expected the Accelerator class to be used
+We contacted our hardware team to figure out why accelerator class is 
+not used here. Some of hardware is already released. Hopefully hardware 
+team may consider to use accelerator class with new products.
+>
+>> +        .class_mask = 0xFFFF00,
+>> +    },
+>> +    {0}
+>> +};
+>> +
+>> +MODULE_DEVICE_TABLE(pci, pci_ids);
+>> +
+>> +static const struct amdxdna_device_id amdxdna_ids[] = {
+>> +    { 0x1502, 0x0,  &dev_npu1_info },
+>> +    { 0x17f0, 0x0,  &dev_npu2_info },
+>> +    { 0x17f0, 0x10, &dev_npu4_info },
+>> +    { 0x17f0, 0x11, &dev_npu5_info },
+>> +    {0}
+>> +};
+>> +
+>
+>> +module_pci_driver(amdxdna_pci_driver);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_AUTHOR("XRT Team <runtimeca39d@amd.com>");
+>> +MODULE_VERSION("0.1");
+>
+> This is redundant with the kernel version, no?  How are you going to 
+> have different module versions for the same kernel version?
+This is used in out of tree driver. It is meaningless for upstream. I 
+will remove it.
+>
+>> +MODULE_DESCRIPTION("amdxdna driver");
+>> diff --git a/include/uapi/drm/amdxdna_accel.h 
+>> b/include/uapi/drm/amdxdna_accel.h
+>> new file mode 100644
+>> index 000000000000..1b699464150e
+>> --- /dev/null
+>> +++ b/include/uapi/drm/amdxdna_accel.h
+>> @@ -0,0 +1,27 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> +/*
+>> + * Copyright (C) 2022-2024, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#ifndef _UAPI_AMDXDNA_ACCEL_H_
+>> +#define _UAPI_AMDXDNA_ACCEL_H_
+>> +
+>> +#include "drm.h"
+>> +
+>> +#if defined(__cplusplus)
+>> +extern "C" {
+>> +#endif
+>> +
+>> +#define AMDXDNA_DRIVER_MAJOR    1
+>> +#define AMDXDNA_DRIVER_MINOR    0
+>
+> Drop these.
+
+Sure.
+
+
+Thanks,
+
+Lizhi
+
+>
+>> +
+>> +enum amdxdna_device_type {
+>> +    AMDXDNA_DEV_TYPE_UNKNOWN = -1,
+>> +    AMDXDNA_DEV_TYPE_KMQ,
+>> +};
+>> +
+>> +#if defined(__cplusplus)
+>> +} /* extern c end */
+>> +#endif
+>> +
+>> +#endif /* _UAPI_AMDXDNA_ACCEL_H_ */
+>
 
