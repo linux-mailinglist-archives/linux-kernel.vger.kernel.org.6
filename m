@@ -1,132 +1,323 @@
-Return-Path: <linux-kernel+bounces-286151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F30D951745
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:02:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18D5951749
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06C5BB21890
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6101F263F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36817143879;
-	Wed, 14 Aug 2024 09:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VYDLffLM"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5F1143C4C;
+	Wed, 14 Aug 2024 09:02:53 +0000 (UTC)
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368DE36134
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A8036134;
+	Wed, 14 Aug 2024 09:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723626138; cv=none; b=ucFyyq3EFoAFFrzVcD3EM77JWlF+L0+9mAnc/HKaH8dlUeeA10ZnBtsv2roLSL/B94NXaFJn0iBu+yaq5R5kka54vfyjD5xbngdScgWSzQNIqQRUFQurO7gpJJlMKKSQSuXWS1x9ErJ4drkXT+cHt9Z9L8E+JEjAoGajgRBN4AY=
+	t=1723626172; cv=none; b=XRM70fNDxv6lemrSD3c/zR3+jTAYfIjMd6VecaW8ETAop/hknnB1b8XvPDpAgwdo08EckaHDMJ/x/ucxQPujhDSfqcteHM6NCWcc8XfT30fwQ8onzfb6iNPV2yc8gm0SM9+BnbBgMN4O50D43bMhspe4G2TXOWmRpsQTqYP850w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723626138; c=relaxed/simple;
-	bh=dsKV+wqMisbH03QAF7wEuOvOjTFUb6hi739fdjsgYAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbNqRGQDIyiUucYKWqjAydxn1vXlqnrHX5WfRAerKVFdwTFa6GJrSzZwMPaMRyo3kH9OqQp2lEhSRZ6CecIR2my/4DXmGRB1h6oaAzuRXz4wYlPHuvV51/YIals7wbIAeF6QM6Icc2mVvS9u2aDIBZWiJ6ldJSad6i0dT3pHTu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VYDLffLM; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd657c9199so49695ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723626136; x=1724230936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5BeIv8tpPW4wd1BzSToPaTcquF6WJ68vuiwIAiNwYEo=;
-        b=VYDLffLMA9sk7A8LsdsZhJy8otNt85m6xwDk5hsSmx20GgHEM5Si8AFcc0eGIr9Jm2
-         KzZu5TGSLfNZHwUsixKNaq7km9eHkRJtSSYGB7Vzkmxse3PsUsQEaQ0nhv4bHvzpbePS
-         04+emd1Ww3IG+K3B5TT6/nFxkjwwfxhaOzbjxZkjrrgIp310WR44z50I16zhUaokGuje
-         Uuwf6WrnYssVYCPx2aTtDg5GTlxoA9Yj/EmdaDqlQi9H+W3ycTeaOi8lMeBqzk8+bSmn
-         9ZiAVDrI0X1h1appSKeyQFP7Q/x94+dljckIts/nqS20LmqpNsh+5j1Dim61DL4vq8ue
-         5rTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723626136; x=1724230936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5BeIv8tpPW4wd1BzSToPaTcquF6WJ68vuiwIAiNwYEo=;
-        b=ctW9grt4xvN2QXsK+zbAtPdQzHUX/07naTNGZGQ5YK7/B5iv6RQTh7gpJkewFBwpak
-         IQtDkWwqo6E6OIMzMJtzRwujtzPRxAS04j5uEZ9xYyjlCl6WujDU6oC0D9lvFf2A2Zj3
-         t2S1SGqBN3Xzfy9qVcRYBJeXas7i+ozgfLej3FSZwFj9okf4gWRMS7xrWKSOmyv37qtL
-         ncosfnYapFyufhiiVfhcd49FPY+i0FMnuK5o64DDc5lCAGAfMW9s9h27izknLzuY02ta
-         yCiuFtz42AH/LpofLHHjk99SCmJnp5fOJVKIreVN+IzllfVOQ3tShJaQQZdVUHCAENP3
-         yqdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlZRFRsgDfc/LslOp4hbUkRoAdl2qYnVSHyRNj4JDY7hGJiA887izrkGPundO1HxwjNXfRa2d1J9DU+AM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEq9b24zNnb538ghat6F9TRzOdphGhSKHvk8Q7A3zgr4yJZEz6
-	AtQTH7sRyk6yluJs7UQ+w7ldZJEVhyxZli1IS+uzI+rdYBtMve6rjP8ezgBVOQ==
-X-Google-Smtp-Source: AGHT+IG7OdlbAYBH+rSxfLKvmXWaZU+mzyHJgiWriDP/OYhsl145DYw3VYr0B7PXkF9ajxWoJVYutw==
-X-Received: by 2002:a17:903:2284:b0:1fc:548f:6533 with SMTP id d9443c01a7336-201d8fd876dmr844895ad.3.1723626135784;
-        Wed, 14 Aug 2024 02:02:15 -0700 (PDT)
-Received: from google.com (202.141.197.35.bc.googleusercontent.com. [35.197.141.202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a9373sm25374055ad.144.2024.08.14.02.02.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 02:02:15 -0700 (PDT)
-Date: Wed, 14 Aug 2024 09:02:06 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>,
-	Kunkun Jiang <jiangkunkun@huawei.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Michael Shavit <mshavit@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
-	tangnianyao@huawei.com
-Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-Message-ID: <ZrxyjgNGps1PuIVZ@google.com>
-References: <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
- <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
- <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
- <20240805123001.GB9326@willie-the-truck>
- <ZrDwolC6oXN44coq@google.com>
- <20240806124943.GF676757@ziepe.ca>
- <ZrJIM8-pS31grIVR@google.com>
- <315e95d4-064d-4322-a9d3-97e96c013b4d@linux.intel.com>
- <ZrTNGepJXbmfuKBK@google.com>
- <20240813175658.GO1985367@ziepe.ca>
+	s=arc-20240116; t=1723626172; c=relaxed/simple;
+	bh=v+l7BX0yF1YRztI9C1dl2FLnz22KaX24AC4H+t90P5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gfJvVDHRlrrhjvoEVUGKfca6f+gBwchCuRxS/ZDKyAokZsvYbwW2ujRPjQPk8u8XzyFnjunsIeWRoAAh1QkfX4W1rAK+AUQP3W9Gz66+arGiA3yFZdvZiIUQxff93wAZLkzc+ECDNNPmXRKbUxAUCgYgFuu7CemU8sX/P8L5azM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 941221005B9;
+	Wed, 14 Aug 2024 19:02:47 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id zqFqx6t9y05f; Wed, 14 Aug 2024 19:02:47 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 88FED10068A; Wed, 14 Aug 2024 19:02:47 +1000 (AEST)
+X-Spam-Level: 
+Received: from mickey.redhat.com (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id A6087100565;
+	Wed, 14 Aug 2024 19:02:45 +1000 (AEST)
+From: Ian Kent <raven@themaw.net>
+To: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Cc: autofs mailing list <autofs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Ian Kent <raven@themaw.net>
+Subject: [PATCH v2] autofs: add per dentry expire timeout
+Date: Wed, 14 Aug 2024 17:02:31 +0800
+Message-ID: <20240814090231.963520-1-raven@themaw.net>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813175658.GO1985367@ziepe.ca>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 02:56:58PM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 08, 2024 at 01:50:17PM +0000, Pranjal Shrivastava wrote:
-> > 
-> > Kunkun -- Please try this diff and check if it fixes the problem?
-> 
-> This looks OK to me, you should send it as a proper patch..
-> 
-> >  	if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE)) {
-> > -		report_partial_fault(iopf_param, fault);
-> > +		ret = report_partial_fault(iopf_param, fault);
-> >  		iopf_put_dev_fault_param(iopf_param);
-> >  		/* A request that is not the last does not need to be ack'd */
-> > +
-> > +		if (ret)
-> > +			goto err_bad_iopf;
-> >  	}
-> 
-> rebase it on -rc3 and there will be a return line added here
-> too.. Maybe you don't want the goto in that cast
+Add ability to set per-dentry mount expire timeout to autofs.
 
-Sure, I'll quickly rebase & send it out as a patch. Please let me know
-if should add any tag by you?
+There are two fairly well known automounter map formats, the autofs
+format and the amd format (more or less System V and Berkley).
 
-> 
-> Jason
+Some time ago Linux autofs added an amd map format parser that
+implemented a fair amount of the amd functionality. This was done
+within the autofs infrastructure and some functionality wasn't
+implemented because it either didn't make sense or required extra
+kernel changes. The idea was to restrict changes to be within the
+existing autofs functionality as much as possible and leave changes
+with a wider scope to be considered later.
 
-Thanks,
-Pranjal
+One of these changes is implementing the amd options:
+1) "unmount", expire this mount according to a timeout (same as the
+   current autofs default).
+2) "nounmount", don't expire this mount (same as setting the autofs
+   timeout to 0 except only for this specific mount) .
+3) "utimeout=<seconds>", expire this mount using the specified
+   timeout (again same as setting the autofs timeout but only for
+   this mount).
+
+To implement these options per-dentry expire timeouts need to be
+implemented for autofs indirect mounts. This is because all map keys
+(mounts) for autofs indirect mounts use an expire timeout stored in
+the autofs mount super block info. structure and all indirect mounts
+use the same expire timeout.
+
+Now I have a request to add the "nounmount" option so I need to add
+the per-dentry expire handling to the kernel implementation to do this.
+
+The implementation uses the trailing path component to identify the
+mount (and is also used as the autofs map key) which is passed in the
+autofs_dev_ioctl structure path field. The expire timeout is passed
+in autofs_dev_ioctl timeout field (well, of the timeout union).
+
+If the passed in timeout is equal to -1 the per-dentry timeout and
+flag are cleared providing for the "unmount" option. If the timeout
+is greater than or equal to 0 the timeout is set to the value and the
+flag is also set. If the dentry timeout is 0 the dentry will not expire
+by timeout which enables the implementation of the "nounmount" option
+for the specific mount. When the dentry timeout is greater than zero it
+allows for the implementation of the "utimeout=<seconds>" option.
+
+Signed-off-by: Ian Kent <raven@themaw.net>
+---
+ fs/autofs/autofs_i.h         |  4 ++
+ fs/autofs/dev-ioctl.c        | 97 ++++++++++++++++++++++++++++++++++--
+ fs/autofs/expire.c           |  7 ++-
+ fs/autofs/inode.c            |  2 +
+ include/uapi/linux/auto_fs.h |  2 +-
+ 5 files changed, 104 insertions(+), 8 deletions(-)
+
+diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+index 8c1d587b3eef..77c7991d89aa 100644
+--- a/fs/autofs/autofs_i.h
++++ b/fs/autofs/autofs_i.h
+@@ -62,6 +62,7 @@ struct autofs_info {
+ 	struct list_head expiring;
+ 
+ 	struct autofs_sb_info *sbi;
++	unsigned long exp_timeout;
+ 	unsigned long last_used;
+ 	int count;
+ 
+@@ -81,6 +82,9 @@ struct autofs_info {
+ 					*/
+ #define AUTOFS_INF_PENDING	(1<<2) /* dentry pending mount */
+ 
++#define AUTOFS_INF_EXPIRE_SET	(1<<3) /* per-dentry expire timeout set for
++					  this mount point.
++					*/
+ struct autofs_wait_queue {
+ 	wait_queue_head_t queue;
+ 	struct autofs_wait_queue *next;
+diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
+index 5bf781ea6d67..f011e026358e 100644
+--- a/fs/autofs/dev-ioctl.c
++++ b/fs/autofs/dev-ioctl.c
+@@ -128,7 +128,13 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
+ 			goto out;
+ 		}
+ 
++		/* Setting the per-dentry expire timeout requires a trailing
++		 * path component, ie. no '/', so invert the logic of the
++		 * check_name() return for AUTOFS_DEV_IOCTL_TIMEOUT_CMD.
++		 */
+ 		err = check_name(param->path);
++		if (cmd == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
++			err = err ? 0 : -EINVAL;
+ 		if (err) {
+ 			pr_warn("invalid path supplied for cmd(0x%08x)\n",
+ 				cmd);
+@@ -396,16 +402,97 @@ static int autofs_dev_ioctl_catatonic(struct file *fp,
+ 	return 0;
+ }
+ 
+-/* Set the autofs mount timeout */
++/*
++ * Set the autofs mount expire timeout.
++ *
++ * There are two places an expire timeout can be set, in the autofs
++ * super block info. (this is all that's needed for direct and offset
++ * mounts because there's a distinct mount corresponding to each of
++ * these) and per-dentry within within the dentry info. If a per-dentry
++ * timeout is set it will override the expire timeout set in the parent
++ * autofs super block info.
++ *
++ * If setting the autofs super block expire timeout the autofs_dev_ioctl
++ * size field will be equal to the autofs_dev_ioctl structure size. If
++ * setting the per-dentry expire timeout the mount point name is passed
++ * in the autofs_dev_ioctl path field and the size field updated to
++ * reflect this.
++ *
++ * Setting the autofs mount expire timeout sets the timeout in the super
++ * block info. struct. Setting the per-dentry timeout does a little more.
++ * If the timeout is equal to -1 the per-dentry timeout (and flag) is
++ * cleared which reverts to using the super block timeout, otherwise if
++ * timeout is 0 the timeout is set to this value and the flag is left
++ * set which disables expiration for the mount point, lastly the flag
++ * and the timeout are set enabling the dentry to use this timeout.
++ */
+ static int autofs_dev_ioctl_timeout(struct file *fp,
+ 				    struct autofs_sb_info *sbi,
+ 				    struct autofs_dev_ioctl *param)
+ {
+-	unsigned long timeout;
++	unsigned long timeout = param->timeout.timeout;
++
++	/* If setting the expire timeout for an individual indirect
++	 * mount point dentry the mount trailing component path is
++	 * placed in param->path and param->size adjusted to account
++	 * for it otherwise param->size it is set to the structure
++	 * size.
++	 */
++	if (param->size == AUTOFS_DEV_IOCTL_SIZE) {
++		param->timeout.timeout = sbi->exp_timeout / HZ;
++		sbi->exp_timeout = timeout * HZ;
++	} else {
++		struct dentry *base = fp->f_path.dentry;
++		struct inode *inode = base->d_inode;
++		int path_len = param->size - AUTOFS_DEV_IOCTL_SIZE - 1;
++		struct dentry *dentry;
++		struct autofs_info *ino;
++
++		if (!autofs_type_indirect(sbi->type))
++			return -EINVAL;
++
++		/* An expire timeout greater than the superblock timeout
++		 * could be a problem at shutdown but the super block
++		 * timeout itself can change so all we can really do is
++		 * warn the user.
++		 */
++		if (timeout >= sbi->exp_timeout)
++			pr_warn("per-mount expire timeout is greater than "
++				"the parent autofs mount timeout which could "
++				"prevent shutdown\n");
++
++		inode_lock_shared(inode);
++		dentry = try_lookup_one_len(param->path, base, path_len);
++		inode_unlock_shared(inode);
++		if (IS_ERR_OR_NULL(dentry))
++			return dentry ? PTR_ERR(dentry) : -ENOENT;
++		ino = autofs_dentry_ino(dentry);
++		if (!ino) {
++			dput(dentry);
++			return -ENOENT;
++		}
++
++		if (ino->exp_timeout && ino->flags & AUTOFS_INF_EXPIRE_SET)
++			param->timeout.timeout = ino->exp_timeout / HZ;
++		else
++			param->timeout.timeout = sbi->exp_timeout / HZ;
++
++		if (timeout == -1) {
++			/* Revert to using the super block timeout */
++			ino->flags &= ~AUTOFS_INF_EXPIRE_SET;
++			ino->exp_timeout = 0;
++		} else {
++			/* Set the dentry expire flag and timeout.
++			 *
++			 * If timeout is 0 it will prevent the expire
++			 * of this particular automount.
++			 */
++			ino->flags |= AUTOFS_INF_EXPIRE_SET;
++			ino->exp_timeout = timeout * HZ;
++		}
++		dput(dentry);
++	}
+ 
+-	timeout = param->timeout.timeout;
+-	param->timeout.timeout = sbi->exp_timeout / HZ;
+-	sbi->exp_timeout = timeout * HZ;
+ 	return 0;
+ }
+ 
+diff --git a/fs/autofs/expire.c b/fs/autofs/expire.c
+index 39d8c84c16f4..5c2d459e1e48 100644
+--- a/fs/autofs/expire.c
++++ b/fs/autofs/expire.c
+@@ -429,8 +429,6 @@ static struct dentry *autofs_expire_indirect(struct super_block *sb,
+ 	if (!root)
+ 		return NULL;
+ 
+-	timeout = sbi->exp_timeout;
+-
+ 	dentry = NULL;
+ 	while ((dentry = get_next_positive_subdir(dentry, root))) {
+ 		spin_lock(&sbi->fs_lock);
+@@ -441,6 +439,11 @@ static struct dentry *autofs_expire_indirect(struct super_block *sb,
+ 		}
+ 		spin_unlock(&sbi->fs_lock);
+ 
++		if (ino->flags & AUTOFS_INF_EXPIRE_SET)
++			timeout = ino->exp_timeout;
++		else
++			timeout = sbi->exp_timeout;
++
+ 		expired = should_expire(dentry, mnt, timeout, how);
+ 		if (!expired)
+ 			continue;
+diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+index cf792d4de4f1..068f273757bf 100644
+--- a/fs/autofs/inode.c
++++ b/fs/autofs/inode.c
+@@ -19,6 +19,7 @@ struct autofs_info *autofs_new_ino(struct autofs_sb_info *sbi)
+ 		INIT_LIST_HEAD(&ino->expiring);
+ 		ino->last_used = jiffies;
+ 		ino->sbi = sbi;
++		ino->exp_timeout = -1;
+ 		ino->count = 1;
+ 	}
+ 	return ino;
+@@ -28,6 +29,7 @@ void autofs_clean_ino(struct autofs_info *ino)
+ {
+ 	ino->uid = GLOBAL_ROOT_UID;
+ 	ino->gid = GLOBAL_ROOT_GID;
++	ino->exp_timeout = -1;
+ 	ino->last_used = jiffies;
+ }
+ 
+diff --git a/include/uapi/linux/auto_fs.h b/include/uapi/linux/auto_fs.h
+index 1f7925afad2d..8081df849743 100644
+--- a/include/uapi/linux/auto_fs.h
++++ b/include/uapi/linux/auto_fs.h
+@@ -23,7 +23,7 @@
+ #define AUTOFS_MIN_PROTO_VERSION	3
+ #define AUTOFS_MAX_PROTO_VERSION	5
+ 
+-#define AUTOFS_PROTO_SUBVERSION		5
++#define AUTOFS_PROTO_SUBVERSION		6
+ 
+ /*
+  * The wait_queue_token (autofs_wqt_t) is part of a structure which is passed
+-- 
+2.46.0
+
 
