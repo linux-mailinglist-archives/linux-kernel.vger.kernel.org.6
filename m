@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-285761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4E7951248
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:23:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF6C95124B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C781285554
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:23:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937E41C20150
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D8D15958D;
-	Wed, 14 Aug 2024 02:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE8A1CD06;
+	Wed, 14 Aug 2024 02:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhPTPruz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="u3HBsvkM"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304F2158D94;
-	Wed, 14 Aug 2024 02:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F9E1CD31;
+	Wed, 14 Aug 2024 02:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723601758; cv=none; b=IYfaI8zYBN22WiaoRmr0OchKUp8zTvJEYFsBVzoy/LfkBAMk2JXxO5CCe7dP/KSB6wWwj1SjGPqgjthSfMKCCF33WgzlblQ0baUXmk7AuBSh7pein5iRiof63vrPs5sU0z1OvInJ9qtNV+wZRKyGNrKI1Py3GlpUnmTdVLMfJIw=
+	t=1723601902; cv=none; b=p6c/UkR3d1nEcYKdV8L9OmOvZxQQ4KSCK9bCgIFE8PEUGywdEbdJGwdLgAMzLTljbdZEpvu2mAEhj0ZYUcRSV7aGS5EkikNcADLF8LpLdoXYDQdOgyOLnBKEKWkzKxLDBHIzlb98UJq2wTltIyYu4wO37JA2N2z1aeukV8HhoyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723601758; c=relaxed/simple;
-	bh=bPy2ydlw5CRJ9UeB5/7mcqeuNR1bFpJyThQtc2vgNlk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IKWoQVvAFRWU12slr5ajYDZaS3TCpsdvcgv6Y1KIiMTxyEzRUHgWaBanQuILL8w5rn4N/8N190VNkQpzbVKzJ2NzXg3bqi/1aaT8qkmx2kVvB36QqfPIBEDDPZEDVmRV5vwz7aGHUn+yCdXEI/icewJx5tUMW9f2U3PbAAu/3Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhPTPruz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF63C32782;
-	Wed, 14 Aug 2024 02:15:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723601757;
-	bh=bPy2ydlw5CRJ9UeB5/7mcqeuNR1bFpJyThQtc2vgNlk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XhPTPruzmP93Nl/n81Syrwl52sgWyLwwZidsXOQRYPuCVqQcFqrq6wqiubl4xgsOc
-	 ASuvQaF+mOWwTtfKEi1EpZstCVD+iYYK8+cvTwJxCCOMcZTeLy8irQC2Lv6aGJu8wX
-	 9YosdzaUGOT4grcz3FUDOC/j26+c7FJ/OrVZUkriFUHfqjiqj82ju+EY2ZkcU9YafF
-	 VjT/OaMtf/DHNlOyEEkShNZJUoygSnXLvakEY5TiAhOwmLrJ6M/dMAGOxUjLAi79Zz
-	 8mlSJJgUrkFvj8KtNxULLF0GLz+5rXQwxCPhY/ClgoS1glhonk6jECm6zRjyJUnFVs
-	 5HsQOAmJe1wEw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: ZHANG Yuntian <yt@radxa.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	bjorn@mork.no,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19] net: usb: qmi_wwan: add MeiG Smart SRM825L
-Date: Tue, 13 Aug 2024 22:15:55 -0400
-Message-ID: <20240814021555.4130704-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723601902; c=relaxed/simple;
+	bh=nA6UxXiujvxSFnNeSvgiILf4WW8LZvvaIFl7hB21qf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uljHNQwuvBoP0dcEBqlS9Su1kgnm8lbcdnesf0pe18/MSCAUyYW+ThkjzcRy6AiSzmPWYXlsbhcoQ+6SlwXvQ8UW5Oqy9Oky805SwQ6TA/W36+phyjHCOb92xSa7Sz4ctyA9nz/XaZlUUKbGVu+Oum0IAj+LHEneCjxFEMCyonY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=u3HBsvkM; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q8M9VFnTo721A/GaQMu/ptKzt9bsSKNvxU7i0Y8y6/0=; b=u3HBsvkMkekX42LhLvvmEnD1Dq
+	XePLEqR4fxTwT6ip7u/VWTS7qLqQtCLiMV/szNIVqCNdAjC5k9M/DKdeldVWMV3uI1WGn7KP/dnT3
+	zqacKx77YuJwJxKyxPXZZLCIXeFgGGYtnU0MOmCt3pWNE+eZKwmUVCFJrQ6pKtNBByI0KMBfhaGDZ
+	AgGYYzL3CfFYhU86X1ggjYG1MplxOr192HOGH9KbBdEQLAD2DBen0lPOR1Z30LY5DzCpbglaDHEFM
+	UgfRuH1bNmsgC/cQuc8toLIo32yRL4AlxxwrOOnBYUR8B+KXt+Xf07WBduC7mBOLME8UYo6NBQG+b
+	CgfD/jcg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1se3ab-00000001Uge-0Q3n;
+	Wed, 14 Aug 2024 02:18:17 +0000
+Date: Wed, 14 Aug 2024 03:18:17 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+Message-ID: <20240814021817.GO13701@ZenIV>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+ <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.319
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: ZHANG Yuntian <yt@radxa.com>
+On Tue, Aug 06, 2024 at 03:51:35PM -0400, Jeff Layton wrote:
 
-[ Upstream commit 1ca645a2f74a4290527ae27130c8611391b07dbf ]
+> > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
+> > +{
+> > +	struct dentry *dentry;
+> > +
+> > +	if (open_flag & O_CREAT) {
+> > +		/* Don't bother on an O_EXCL create */
+> > +		if (open_flag & O_EXCL)
+> > +			return NULL;
+> > +
+> > +		/*
+> > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
+> > +		 * use the dentry. For now, don't do this, since it shifts
+> > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
+> > +		 * Reconsider this once dentry refcounting handles heavy
+> > +		 * contention better.
+> > +		 */
+> > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
+> > +			return NULL;
+> > +	}
+> > +
+> > +	if (trailing_slashes(nd))
+> > +		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+> > +
+> > +	dentry = lookup_fast(nd);
+> 
+> Self-NAK on this patch. We have to test for IS_ERR on the returned
+> dentry here. I'll send a v3 along after I've retested it.
 
-Add support for MeiG Smart SRM825L which is based on Qualcomm 315 chip.
-
-T:  Bus=04 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=5000 MxCh= 0
-D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P:  Vendor=2dee ProdID=4d22 Rev= 4.14
-S:  Manufacturer=MEIG
-S:  Product=LTE-A Module
-S:  SerialNumber=6f345e48
-C:* #Ifs= 6 Cfg#= 1 Atr=80 MxPwr=896mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=83(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=85(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=60 Driver=option
-E:  Ad=87(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=86(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=88(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=89(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=8e(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=0f(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-
-Signed-off-by: ZHANG Yuntian <yt@radxa.com>
-Link: https://patch.msgid.link/D1EB81385E405DFE+20240803074656.567061-1-yt@radxa.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 3c65549a8688a..9e3a7dde52604 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1389,6 +1389,7 @@ static const struct usb_device_id products[] = {
- 	{QMI_FIXED_INTF(0x2692, 0x9025, 4)},    /* Cellient MPL200 (rebranded Qualcomm 05c6:9025) */
- 	{QMI_QUIRK_SET_DTR(0x1546, 0x1342, 4)},	/* u-blox LARA-L6 */
- 	{QMI_QUIRK_SET_DTR(0x33f8, 0x0104, 4)}, /* Rolling RW101 RMNET */
-+	{QMI_FIXED_INTF(0x2dee, 0x4d22, 5)},    /* MeiG Smart SRM825L */
- 
- 	/* 4. Gobi 1000 devices */
- 	{QMI_GOBI1K_DEVICE(0x05c6, 0x9212)},	/* Acer Gobi Modem Device */
--- 
-2.43.0
-
+That's not the only problem; your "is it negative" test is inherently
+racy in RCU mode.  IOW, what is positive at the time you get here can
+bloody well go negative immediately afterwards.  Hit that with
+O_CREAT and you've got a bogus ENOENT...
 
