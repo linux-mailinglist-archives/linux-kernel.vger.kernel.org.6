@@ -1,238 +1,146 @@
-Return-Path: <linux-kernel+bounces-286541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C1F951C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:53:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DF8951C49
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E61A1F21450
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:53:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464F71C214B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABA91B143D;
-	Wed, 14 Aug 2024 13:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LBXZavRu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCCE1B1406;
+	Wed, 14 Aug 2024 13:53:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CC11E4B2;
-	Wed, 14 Aug 2024 13:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53881B0126
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723643591; cv=none; b=Ib19euFR30TJb1HvnJil0ZEmJ0pd9MPUXrjn2iPuznizXU7GdMKnJZW1l1KJY5EKKNIxUhbpvYSaBiWfMVnyl1KJeQexKZO+6QbmAIAjMQKzEWQvpvIGPE9EucKGhKFRZnHMokp0XH9INbjjw9nWpRBalnvErtiKDd0dc+0JR7I=
+	t=1723643610; cv=none; b=CpyhbAFP0onR33BA5m8fshnhlQaIOYmmSMiq9LRMZlrfIhLwGsJApA+5jqyVBs8bYm40Pq7p7RIu9pvVDflNm6Po0KZ6CfAs+UPe3qcYnBzpL3+1LO5kp9ZV+7vQN4h9JTaTEhxbdLhp11HgzDCytdCbEL4loudGxTDdCXbZerg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723643591; c=relaxed/simple;
-	bh=sXDg6SJ866AaNtAk2Tp+FQv+cJ3dVaRfO0uMyWTSizM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JlQidZRuOHr4WrrCFVj4FjQ0VOpv0bQncbvjjEqRKzkFEEkyvDkACA+DeW2OQHMpWbA78TxL7Qdtzcti24pDyzQBEjCZYZ5us+S+w24ABLukzpxNjn2/e3/sL5ujE2l8Dw2ai+Id2p6RtgjDldK6hopCD2bjbUcvq5Tg/qRVYdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LBXZavRu; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723643590; x=1755179590;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=sXDg6SJ866AaNtAk2Tp+FQv+cJ3dVaRfO0uMyWTSizM=;
-  b=LBXZavRuN/Clknov31BXS/vhDRnJkwoQYV6YME382TaXupz4JSLilSsb
-   XzQwqqZnud5P9O+cxFgmPxw3pRdRIxExnNA2TZ9/XShjlcLV2fj6aLbOO
-   y5RjtKMaw494WPrWtUpam8Nu2SU3rtf1yGJu4gut8kCgwgaxiuXtAPYtf
-   dV+5yKxi6nGTlDW3F74VTYHGBLCX/IWzJ+BvD643bvmzLoKgEGt5J+vnA
-   xzrfAjEZR19YJvYWK+/+2UKXI1siDRi6HgaR1Gnwwb/J34HPjA/64ONmZ
-   ipaShrqrCAYrrZhBRxFfUYcJxfp1lf8kxRo6C4VNuc8q/+mwPOzxQ5AGV
-   w==;
-X-CSE-ConnectionGUID: miOM+WX5Tl+HOOiJ3IN7YQ==
-X-CSE-MsgGUID: i+6bE4NbTimBIZ7JswGNfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22028617"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="22028617"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 06:53:09 -0700
-X-CSE-ConnectionGUID: GZjAjcOBS/2tvWYCAMukvQ==
-X-CSE-MsgGUID: DprzkeJOTT65SAJzcEe9iA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="58898765"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 06:53:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1seEQv-0000000FCFz-3dM9;
-	Wed, 14 Aug 2024 16:53:01 +0300
-Date: Wed, 14 Aug 2024 16:53:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] i2c: of-prober: Add GPIO and regulator support
-Message-ID: <Zry2vbJ-BT4mI0eO@smile.fi.intel.com>
-References: <20240808095931.2649657-1-wenst@chromium.org>
- <20240808095931.2649657-5-wenst@chromium.org>
- <ZrtGXfKE6BwupPPA@smile.fi.intel.com>
- <CAGXv+5E+D8oXr7nh67HEPermJYoRp+Xf+oqSefOiUoCpyoKYUQ@mail.gmail.com>
+	s=arc-20240116; t=1723643610; c=relaxed/simple;
+	bh=4nLAUq5Wbs/w8LUTj/K9xp3NXFMBG/xWFnlIk9pIwnU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CG2OnFv0tzeFYm/2TNyoZzmGs1eeQxrrw94bJfm49EdIOuIZY5a+9Z6HVo7/by0iB18NFNNkBfrZmyKCPOdtjhLfKOr8QGfadOcumERlENnc6Vn4HVZ7OoDoA7TWHHNwiL18OdGFcv9T92z3vCOpo+99pp+iyN5Hg9AiqKXbG+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkV5L2JYbz6JBCj;
+	Wed, 14 Aug 2024 21:50:46 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 99BFE140B33;
+	Wed, 14 Aug 2024 21:53:24 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
+ 2024 14:53:24 +0100
+Date: Wed, 14 Aug 2024 14:53:22 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eric
+ Blake <eblake@redhat.com>, Igor Mammedov <imammedo@redhat.com>, Markus
+ Armbruster <armbru@redhat.com>, Michael Roth <michael.roth@amd.com>, Paolo
+ Bonzini <pbonzini@redhat.com>, Peter Maydell <peter.maydell@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+	<qemu-devel@nongnu.org>
+Subject: Re: [PATCH v7 04/10] qapi/acpi-hest: add an interface to do generic
+ CPER error injection
+Message-ID: <20240814145322.00002dcb@Huawei.com>
+In-Reply-To: <c44e6c39e6cf95a738999b721cdf71e4887258a9.1723591201.git.mchehab+huawei@kernel.org>
+References: <cover.1723591201.git.mchehab+huawei@kernel.org>
+	<c44e6c39e6cf95a738999b721cdf71e4887258a9.1723591201.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5E+D8oXr7nh67HEPermJYoRp+Xf+oqSefOiUoCpyoKYUQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Wed, Aug 14, 2024 at 07:34:00PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Aug 13, 2024 at 7:41 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Aug 08, 2024 at 05:59:27PM +0800, Chen-Yu Tsai wrote:
+On Wed, 14 Aug 2024 01:23:26 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-...
-
-> > > This adds GPIO and regulator management to the I2C OF component prober.
-
-> > Can this be two patches?
+> Creates a QMP command to be used for generic ACPI APEI hardware error
+> injection (HEST) via GHESv2.
 > 
-> You mean one for GPIOs and one for regulators right? Sure.
-
-Yes.
-
-...
-
-> > > +#define RESOURCE_MAX 8
-> >
-> > Badly (broadly) named constant. Is it not the same that defines arguments in
-> > the OF phandle lookup? Can you use that instead?
+> The actual GHES code will be added at the followup patch.
 > 
-> I'm not sure what you are referring to. This is how many unique instances
-> of a given resource (GPIOs or regulators) the prober will track.
-> 
-> MAX_TRACKED_RESOURCES maybe?
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Better, but still ambiguous. We have a namespace approach, something like
-I2C_PROBER_... I have checked the existing constant and it's not what you
-want, so forget about that part, only name of the definition is questionable.
+A few trivial things from a quick glance at this
+(to remind myself of how this fits together).
 
-...
+> diff --git a/hw/acpi/Kconfig b/hw/acpi/Kconfig
+> index e07d3204eb36..73ffbb82c150 100644
+> --- a/hw/acpi/Kconfig
+> +++ b/hw/acpi/Kconfig
+> @@ -51,6 +51,11 @@ config ACPI_APEI
+>      bool
+>      depends on ACPI
+>  
+> +config GHES_CPER
+> +    bool
+> +    depends on ACPI_APEI
+> +    default y
+> +
+>  config ACPI_PCI
+>      bool
+>      depends on ACPI && PCI
+> diff --git a/hw/acpi/ghes_cper.c b/hw/acpi/ghes_cper.c
+> new file mode 100644
+> index 000000000000..92ca84d738de
+> --- /dev/null
+> +++ b/hw/acpi/ghes_cper.c
+> @@ -0,0 +1,33 @@
 
-> > > +#define REGULATOR_SUFFIX "-supply"
-> >
-> > Name is bad, also move '-' to the code, it's not part of the suffix, it's a
-> > separator AFAICT.
-> 
-> OF_REGULATOR_SUPPLY_SUFFIX then?
-> 
-> Also, "supply" is not a valid property. It is always "X-supply".
-> Having the '-' directly in the string makes things simpler, albeit
-> making the name slightly off.
+> +#include "qapi/qapi-commands-acpi-hest.h"
+> +#include "hw/acpi/ghes.h"
+> +
+> +void qmp_ghes_cper(const char *qmp_cper,
+> +                   Error **errp)
+That's a very short line wrap.
 
-Let's use proper SUFFIX and separator separately.
+> +{
+> +
+> +    uint8_t *cper;
+> +    size_t  len;
+> +
+> +    cper = qbase64_decode(qmp_cper, -1, &len, errp);
+> +    if (!cper) {
+> +        error_setg(errp, "missing GHES CPER payload");
+> +        return;
+> +    }
+> +
+> +    /* TODO: call a function at ghes */
+> +}
 
-#define I2C_PROBER_..._SUFFIX "supply"
-
-(or alike)
-
-...
-
-> > > +     p = strstr(prop->name, REGULATOR_SUFFIX);
-> >
-> > strstr()?! Are you sure it will have no side effects on some interesting names?
-> >
-> > > +     if (!p)
-> > > +             return 0;
-> >
-> > > +     if (strcmp(p, REGULATOR_SUFFIX))
-> > > +             return 0;
-> >
-> > Ah, you do it this way...
-> >
-> > What about
-> 
-> About? (feels like an unfinished comment)
-
-Yes, sorry for that. Since you found a better alternative, no need to finish
-this part :-)
-
-> Looking around, it seems I could just rename and export "is_supply_name()"
-> from drivers/regulator/of_regulator.c .
-
-Even better!
-
-Something similar most likely can be done with GPIO (if not, we are always open
-to the ideas how to deduplicate the code).
-
-...
-
-> > > +#define GPIO_SUFFIX "-gpio"
-> >
-> > Bad define name, and why not "gpios"?
-> 
-> "-gpio" in strstr() would match against both "foo-gpio" and "foo-gpios".
-> More like laziness.
-
-And opens can of worms with whatever ending of the property name.
-Again, let's have something that GPIO library provides for everybody.
-
-...
-
-> > > +     ret = of_parse_phandle_with_args_map(node, prop->name, "gpio", 0, &phargs);
-> > > +     if (ret)
-> > > +             return ret;
-
-(1)
-
-> > > +     gpiod = fwnode_gpiod_get_index(fwnode, con_id, 0, GPIOD_ASIS, "i2c-of-prober");
-> > > +     if (IS_ERR(gpiod)) {
-> > > +             of_node_put(phargs.np);
-> > > +             return PTR_ERR(gpiod);
-> > > +     }
-> >
-> > Try not to mix fwnode and OF specifics. You may rely on fwnode for GPIO completely.
-> 
-> Well, fwnode doesn't give a way to identify GPIOs without requesting them.
-> 
-> Instead I think I could first request GPIOs exclusively, and if that fails
-> try non-exclusive and see if that GPIO descriptor matches any known one.
-> If not then something in the DT is broken and it should error out. Then
-> the phandle parsing code could be dropped.
-
-What I meant, the, e.g., (1) can be rewritten using fwnode API, but if you know
-better way of doing things, then go for it.
-
-> > > +     if (data->gpiods_num == ARRAY_SIZE(data->gpiods)) {
-> > > +             of_node_put(phargs.np);
-> > > +             gpiod_put(gpiod);
-> > > +             return -ENOMEM;
-> > > +     }
-
-...
-
-> > > +     for (int i = data->regulators_num; i >= 0; i--)
-> > > +             regulator_put(data->regulators[i]);
-> >
-> > Bulk regulators?
-> 
-> Bulk regulators API uses its own data structure which is not just an
-> array. So unlike gpiod_*_array() it can't be used in this case.
-
-But it sounds like a bulk regulator case...
-Whatever, it's Mark's area and he might suggest something better.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 419a97d5cbd9..99d12d69c864 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -23,6 +23,7 @@
+>  #define ACPI_GHES_H
+>  
+>  #include "hw/acpi/bios-linker-loader.h"
+> +#include "qapi/error.h"
+Odd to have an include added with no other changes in file?
+Wrong patch maybe?  Or should it be included by a c file instead?
+>  #include "qemu/notify.h"
+>  
+>  extern NotifierList acpi_generic_error_notifiers;
+> diff --git a/qapi/acpi-hest.json b/qapi/acpi-hest.json
 
 
 
