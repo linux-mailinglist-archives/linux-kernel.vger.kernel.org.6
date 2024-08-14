@@ -1,95 +1,113 @@
-Return-Path: <linux-kernel+bounces-286449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE09951B0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:43:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53125951B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D114B219C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CCA8282A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438BF1B0124;
-	Wed, 14 Aug 2024 12:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVZMC3wR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3FA1B0128;
+	Wed, 14 Aug 2024 12:43:26 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8972515C9;
-	Wed, 14 Aug 2024 12:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71811B1409
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723639392; cv=none; b=XZoYYDYAJ4qr78d1fMoTZHgYFF2XGixCrIcU07R08OO+h+5BR76B0aApPsF5aizVm5HrqjRXtp3Qf24XQQJSi0fBSwzA7fj/hijh2nrnxfcv1yw84ZhjBSeQLPBs53WHHQuX540c1+NV+x16t0bOKl4lWIJnvfyFQ1FSzYoZcXE=
+	t=1723639406; cv=none; b=XqgKnPWBdsipGBIgihH0C1qMNQOPcllia6zsS902AlZiepibTyXirzSDd6zqRoYuRpywxTZeqmLsUzkCE2JS4L5YwiyAYtl+SNaBybPlMLZA3Y8Usw2mhuUq6Xdh3yZIuLeNK8tJa+VN9za0LN6JIs26wQNfPv9jvZc6tH/s0IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723639392; c=relaxed/simple;
-	bh=9XpBIEy57Jbne2fnkWqnxjZB/6USaoP6RVYiQyX3mSo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F+l1T4fjAWCyIhmNtIlrtrF2pCPYlohuIqX4I3Uz4b9uXk7LHEwlI7lDUTMck6SXrpjvirAUNEJzdWKvFRfjfxlkQHbZ8sAwUltRuVOHauKUs7HzrK5/WaKFABVCNTJg3Hi1LBKu+NziN8bL75rpd3Yw9T+NJwgz1Ca0/3an2AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVZMC3wR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42441C32786;
-	Wed, 14 Aug 2024 12:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723639392;
-	bh=9XpBIEy57Jbne2fnkWqnxjZB/6USaoP6RVYiQyX3mSo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kVZMC3wRN7zUPFTqF0GGSuy/lRChcTbs1ULH3xu4j0UGYUsJMubiuleEoPnjw0WPb
-	 EqcFfZV5nKqSDk5/fBLILz+AiaSa7gzD5Fnw7aWD58imqFeGh/SKA+I4Fu2zE1fSv/
-	 3IXunequdKeUVzZDtqkfsF3Uetc8hKP1A8IhCS0LMXX0tBDz9xJrgNzGYy+yhdCiAT
-	 rMEeh+vSPUBF19a2Py2M4NfD3DkBcREbxbwxwWSYk+v8F0S/L52VBXYMEaEFnt8nFl
-	 fSeNERMsIpe3AHoaDO8Jtz/3h0jQ+G8X/rNa9br2+G60SzJZ7FpQX5WlzKjWCwzeGx
-	 bLjh4dcoZmwSg==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	jlayton@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: drop one lock trip in evict()
-Date: Wed, 14 Aug 2024 14:43:03 +0200
-Message-ID: <20240814-banknoten-podium-752bc822ac71@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240813143626.1573445-1-mjguzik@gmail.com>
-References: <20240813143626.1573445-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1723639406; c=relaxed/simple;
+	bh=RuBfvE/W9BI7mVERMpAQtsW56y6ZI/QxMSfLfnONHrc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TZHfV8IeAlVj/VA0uoZ6k0/V6NqFTcOfTAmoWibmyCu+/EY8pPByR0029Ee0Fst++7sGRwkptAYW40T9zVd3e9KJWpqfu0HnmQEDQTpWY7OVJHhxJAevyfogA6Shetk2p4k9m7KiFRTXqsBnxjNINs5NX3MfLtId4LjteRMVKXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b3d98c318so81110475ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:43:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723639404; x=1724244204;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hDJmLsEquh5f4ZcvIw4RcS1IgBdOTTkxgLTeAPJZD0c=;
+        b=HY+DNbF9R0doKJza6rPuSvaQOfQyVqXMfWm8cvdYK6liCBbNNF0NozBX5iJe0rGgvy
+         WSfH12fbmO2pwzCw8JPPbuuNDOdFX88PyReQ6sVZ4wyV7fBLqEQT3QzK2AdfLBWvGuqz
+         Tz2Z5Ofpr5L1hz6VJyVhHImrBCNAB4J2NGV+i6gxjrdWKtLWpU2onjLE4BZwOUPfaFmf
+         sf+K2KVt1/2HYfdKaUyjz2h2+HAOQFzIPYW4g9Pcy3d1jpIO4oQeYVAQjX2/wJqCS4k/
+         3l8rnfGBTkodzwhlyuOmoJJGbKNz02F57dBwHEdOKoFFMpbbD3CHqohbkKSFJ5RAgivc
+         QRsw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8lTxcM6NEdsLMH9J87xUgjUiRc1nzjGiRCymvx1bmDu3gjF+3KYFpwOM82cPUKOpTFY1yAoY0M6vfuYlSub4G3ItuDNZpEm32QXBO
+X-Gm-Message-State: AOJu0Yz8+Gkr1lHAOVv+HmBfETkLuD6o4hEdWq3fbCSG3Na7yErrusJi
+	iiVX1pVfGZpV0uphYnV2mfITe/bJIpyr9P5Jtfh4XKszbfj+rhUhpmG1CLszxL5uwcPzoysHw7T
+	qSZS4C51c7pn88yXVXwQ3klRc6p9m68OyEmbosOQDNbafaclzV+GnJAY=
+X-Google-Smtp-Source: AGHT+IEpMs7mc0JKJw9xhHzszN6yeUc3B71RtVaVQ07Q1BBvXw33euB7RINDfUlsEBCCFTnY/9HOc89J2Bods7UkB0i0l7ZHcxoq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1068; i=brauner@kernel.org; h=from:subject:message-id; bh=9XpBIEy57Jbne2fnkWqnxjZB/6USaoP6RVYiQyX3mSo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTtWRaVfSNofWmRknL3+W1PPswROXf9nui0uXsdT36fn FHm88KepaOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiHMsZGeYrHF3xbd2Sm32s HRLeSY5HN/F+61Y2uP4lc/cNaz3HTntGhqfpXLeXzk4x/qhesHiKb4dB3eYJYkteMr2XeOJ6zTa tjAsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2184:b0:380:9233:96e6 with SMTP id
+ e9e14a558f8ab-39d124d4ee0mr1961145ab.4.1723639403849; Wed, 14 Aug 2024
+ 05:43:23 -0700 (PDT)
+Date: Wed, 14 Aug 2024 05:43:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000633cf1061fa4125b@google.com>
+Subject: [syzbot] Monthly bpf report (Aug 2024)
+From: syzbot <syzbot+list2edbf5245474e3beec7a@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 13 Aug 2024 16:36:26 +0200, Mateusz Guzik wrote:
-> Most commonly neither I_LRU_ISOLATING nor I_SYNC are set, but the stock
-> kernel takes a back-to-back relock trip to check for them.
-> 
-> It probably can be avoided altogether, but for now massage things back
-> to just one lock acquire.
-> 
-> 
-> [...]
+Hello bpf maintainers/developers,
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+This is a 31-day syzbot report for the bpf subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/bpf
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+During the period, 2 new issues were detected and 6 were fixed.
+In total, 48 issues are still open and 269 have been fixed so far.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Some of the still happening issues:
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Ref  Crashes Repro Title
+<1>  19123   Yes   possible deadlock in trie_delete_elem
+                   https://syzkaller.appspot.com/bug?extid=9d95beb2a3c260622518
+<2>  13875   Yes   KASAN: slab-out-of-bounds Read in btf_datasec_check_meta
+                   https://syzkaller.appspot.com/bug?extid=cc32304f6487ebff9b70
+<3>  8937    Yes   possible deadlock in task_fork_fair
+                   https://syzkaller.appspot.com/bug?extid=1a93ee5d329e97cfbaff
+<4>  1885    Yes   WARNING in bpf_map_lookup_percpu_elem
+                   https://syzkaller.appspot.com/bug?extid=dce5aae19ae4d6399986
+<5>  1371    Yes   possible deadlock in __bpf_ringbuf_reserve
+                   https://syzkaller.appspot.com/bug?extid=850aaf14624dc0c6d366
+<6>  336     Yes   general protection fault in dev_map_enqueue (2)
+                   https://syzkaller.appspot.com/bug?extid=cca39e6e84a367a7e6f6
+<7>  199     Yes   KMSAN: uninit-value in ___bpf_prog_run (4)
+                   https://syzkaller.appspot.com/bug?extid=853242d9c9917165d791
+<8>  147     Yes   possible deadlock in __queue_map_get
+                   https://syzkaller.appspot.com/bug?extid=8bdfc2c53fb2b63e1871
+<9>  102     No    possible deadlock in trie_update_elem
+                   https://syzkaller.appspot.com/bug?extid=ea624e536fee669a05cf
+<10> 77      Yes   INFO: rcu detected stall in sys_openat (3)
+                   https://syzkaller.appspot.com/bug?extid=23d96fb466ad56cbb5e5
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[1/1] vfs: drop one lock trip in evict()
-      https://git.kernel.org/vfs/vfs/c/8b30d568bd8d
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
