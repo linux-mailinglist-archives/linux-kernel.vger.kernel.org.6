@@ -1,176 +1,151 @@
-Return-Path: <linux-kernel+bounces-286282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A3D951910
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:39:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E55A95198F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E3181C225BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30DEA1C219FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66BE1AE864;
-	Wed, 14 Aug 2024 10:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94141AE04A;
+	Wed, 14 Aug 2024 11:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J2Sm+F81"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="XkJFtD1g"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE3B1AE030;
-	Wed, 14 Aug 2024 10:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF00142E70
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723631855; cv=none; b=B0oTCgG6plVuClLsTzWbPlL80VqhykUO18dZsHkr223a88EWtouEHEuYrRPS1c+fpPUKq8O7i40RRWolhXGB7kHKUybMFriQq2rzmp//yNJtiqkGUXMHny0D4+S/ChIz7DuPc4zUYgZvG4D4O0073B8RhF8cs1MB+juxXLahnDw=
+	t=1723633310; cv=none; b=R6qxW5UDapt74NK1jZf8bEHOxGlWmpXv8MMHeeFRkD2c5aXdQJ8ddJeAuC5MfhCxA7P2T4VdkhZB+h9uJb7/nt7zC3huQ4RCRd/k1xzb7ArgNbTiJewzjWdmZtCyxwxbx/zYG82nW/90ILjH/4CH4QGAMhh80XstO301aGBzV3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723631855; c=relaxed/simple;
-	bh=lIDZfIJCwS9kOpHOYSU0fUk1LBYFw3wNKq7zRpsW9ZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JSo5A9bGxobEJ58Pt1OzZ5n67gSuzG/huKTQBgoK0sYcpOt3kQi0Nzomc931TKwwcIrkJO+UVQS9rH+E0m399THx262EGQwJnjhl2wfGdr4UAWqvbGQRZQUtdHtqgenzdj9/DnpXZamkQT6R/yb6l20XrVCjPZLik1396erBV3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J2Sm+F81; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so497396a12.0;
-        Wed, 14 Aug 2024 03:37:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723631853; x=1724236653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tuYo2+Zx6hAIj6J/3osNO/3OPdKH5IIxqLSLHJJmTBI=;
-        b=J2Sm+F81rpZIjNHrG68kyKuLtnA2/JjZcqrnV6tIZHHZJS1bs0v1NJPsZgmMldK7hj
-         HipzlYjvMqBKtlO4MTU4IG/iSY0kKa+3RX4YqIOf73BEz2u6/00xer44Moym3+6/AxOt
-         E321awv/ToB+BzhkhId2GuDyiIMeNK7hLk0gE9XCxDUKNPq2dGMIpTaYQy+hp9ocfF89
-         WzdtNrR55yEPgANv0I0Pu5W8KuCZ3x47w4Ak05BGWvyDHn6LsXu557BQp7PtyxOD5zHH
-         NYnrqgx/OBqWVPfKNe6nv9F63Bt6GEBFPYwCr5dDtHARi97WtrjrZTu9j/9bdSxWCek8
-         pObA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723631853; x=1724236653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tuYo2+Zx6hAIj6J/3osNO/3OPdKH5IIxqLSLHJJmTBI=;
-        b=b5WS5gUjPVGqqYa8eLCO9uT96BtHKf/mhlzxhlZrr7H/QL/EbeYS1C/tjrWCzbfhgr
-         Eo5AoEHA4ug3PJ4yQ2bnWCNQSBNP/phqphjc1K04kvgsMb5eAxoM4vfZb5loPlArquF7
-         QCEheMs9Y5vjuRKuLx3OCDweDZQVnEEpjF8rxBXf9c18/hD2PvI4qTfxMh0DlN7ndi3j
-         nVipbW2U3Bg7PWmUXGC6a1bivCUTlxXwOXX8JHbA3kMfjdccP5NnobSiJzdjumZ4i7Uz
-         uw+m0k/SiYm58XfXE9Ye8vfOFsAXpVt2L319G+VyXkh/j+zAoS7hU47tqaB+Wfd/YUU7
-         Pa8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVf46YvJbefBCNOnlAuyrfSYHS5LsqunK9DdLnVHJw+WlvpFiHGonYSuWpy1Zd6uZUuGo3DNnDGrocbLxFWhzZXBONrBnxkRdQyoOZbXuFrbiyxPIM+nq0h6m2vuUpVoEGRUc9XSWANd90rhnT0amNHwCPFlmy6+jTl/wigokOgNw==
-X-Gm-Message-State: AOJu0YxZpakjTQLLQgfSEKCMZcMbJImXZqcQSfr2Se05DgcgQMazADaV
-	GxALx/hsOpEmq70AhFn1dYFp6gaaVH1tqkdNA7s7YhB3c6GYhSYGYDR74c4Jrqs55mncIJW8xyn
-	+b4G+1y2Mtd187BjKHYFZDfO+meE=
-X-Google-Smtp-Source: AGHT+IGBFWuLGzL/ikc1kuuvu59ml2SiwwutFZWQ8BtuzM8bfmR90/zyu1Z/RvYcLeWY3ZlW3o3X4Fv5CiPOiw2MhDA=
-X-Received: by 2002:a17:90b:4b12:b0:2cb:5fe6:8a1d with SMTP id
- 98e67ed59e1d1-2d39424d4edmr8982969a91.9.1723631852956; Wed, 14 Aug 2024
- 03:37:32 -0700 (PDT)
+	s=arc-20240116; t=1723633310; c=relaxed/simple;
+	bh=/ben4x4Lt7ar33USmuN4cvpXOjmOGf5LZVeZmW7Ul58=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iu34Mp5DQFH94nG0oaeR8h7JnFxNWyW+mIUsENBvBADJVCUP5uWFcPuEjU+BQWJdbz2A33c5mQlaG9rkjZMYfYWFWvvrZ+KpYy9thpSGaS4Yn1X6Yw9Y91BbeJBVVMhAsvyI59WXsM4B4rkUcezCcbBd4V/ifseswGQGQMw+FZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=XkJFtD1g; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=8phpuiSof5rMSznwRec8HdGorNFfCz+rTFjE5R8oajk=; b=Xk
+	JFtD1gQDKI9kJuhDiD0QfQ1EG47w+G9KIji92E/YbWWBlsubmgQSRfBD/RQExMJjPvyCAaj3b7FOb
+	Q566Mc0t2C2K/PbSenHCZ3rIb5jzR4PgYu/X25CQL33om9S7+ry92G7Ez/ts1/pGi/ZXtaw3VoCYv
+	NAhirZ3ksgN/6gFJdA/l8Hx1JBxMMjrSbwYWPs3xiiiknEe41dFlN/JB4S7Ov+itRazGGGUkbrQKZ
+	TY1aoVbITxi2X2STpxwxZ1efSPZWGobjSLmuRwnufLxv+bT6RWsCOVNsSI+wC8rzwK5+uy7ye0c99
+	tQGSL3Zdo2v9OYIhRtMAx2qq3Cs938lQ==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1seBNl-0007uf-Fu; Wed, 14 Aug 2024 12:37:33 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1seBNk-000Ke4-2h;
+	Wed, 14 Aug 2024 12:37:33 +0200
+From: Esben Haabendal <esben@geanix.com>
+Date: Wed, 14 Aug 2024 12:37:26 +0200
+Subject: [PATCH] drm/bridge: nwl-dsi: Use vsync/hsync polarity from display
+ mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <56255393-cae8-4cdf-9c91-b8ddf0bd2de2@linux.alibaba.com>
- <20240814035812.220388-1-aha310510@gmail.com> <4eeb32b7-d750-4c39-87df-43fd8365f163@linux.alibaba.com>
-In-Reply-To: <4eeb32b7-d750-4c39-87df-43fd8365f163@linux.alibaba.com>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Wed, 14 Aug 2024 19:37:20 +0900
-Message-ID: <CAO9qdTG=aspVkmB9zSh1x-5QLc-FBkxsnPfVErPVmCR3saCe9A@mail.gmail.com>
-Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in txopt_get
-To: "D. Wythe" <alibuda@linux.alibaba.com>
-Cc: davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com, 
-	gbayer@linux.ibm.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com, 
-	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240814-nwl-dsi-sync-polarity-v1-1-ee198e369196@geanix.com>
+X-B4-Tracking: v=1; b=H4sIAOWIvGYC/x3MSQqAMAxA0atI1gYcUhCvIi5KGzVQqjTigHh3i
+ 8u3+P8B5SSs0BcPJD5EZY0ZdVmAW2ycGcVnQ1M1VHU1YTwDehXUOzrc1mCT7Dd670xHrbHkCHK
+ 7JZ7k+r/D+L4fcX8yEGcAAAA=
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723631852; l=2368;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=/ben4x4Lt7ar33USmuN4cvpXOjmOGf5LZVeZmW7Ul58=;
+ b=5lZFs/bcJBod73IHhPaK12LCIwYp19NdB2uj04v5OIa0czZT8x+qy/rqRL5P8u4gs8rxgyL0B
+ RgKDLjqJOGqBIRNfMjs2jsBLwEUVcyyw3IO78v84Xg/hlvtHP6Nnj32
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27367/Wed Aug 14 10:36:34 2024)
 
-2024=EB=85=84 8=EC=9B=94 14=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 3:00, D=
-. Wythe <alibuda@linux.alibaba.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
->
->
-> On 8/14/24 11:58 AM, Jeongjun Park wrote:
-> > Because clcsk_*, like clcsock, is initialized during the smc init proce=
-ss,
-> > the code was moved to prevent clcsk_* from having an address like
-> > inet_sk(sk)->pinet6, thereby preventing the previously initialized valu=
-es
-> > from being tampered with.
->
-> I don't agree with your approach, but I finally got the problem you
-> described. In fact, the issue here is that smc_sock should also be an
-> inet_sock, whereas currently it's just a sock. Therefore, the best
-> solution would be to embed an inet_sock within smc_sock rather than
-> performing this movement as you suggested.
->
-> struct smc_sock {               /* smc sock container */
->      union {
->          struct sock         sk;
->          struct inet_sock    inet;
->      };
->
->      ...
->
-> Thanks.
-> D. Wythe
->
+Using the correct bit helps. The documentation specifies bit 0 in both
+registers to be controlling polarity of dpi_vsync_input and
+dpi_hsync_input polarity. Bit 1 is reserved, and should therefore not be
+set.
 
-I tested it myself and it doesn't trigger the existing issue, so
-I'll write a v4 patch with this code and send it to you.
+Tested with panel that requires active high vsync and hsync.
 
-Regards,
-Jeongjun Park
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+ drivers/gpu/drm/bridge/nwl-dsi.c | 8 ++++----
+ drivers/gpu/drm/bridge/nwl-dsi.h | 4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
->
-> >
-> > Additionally, if you don't need alignment in smc_inet6_prot , I'll modi=
-fy
-> > the patch to only add the necessary code without alignment.
-> >
-> > Regards,
-> > Jeongjun Park
->
->
-> >>
-> >>> Also, regarding alignment, it's okay for me whether it's aligned or
-> >>> not=EF=BC=8CBut I checked the styles of other types of
-> >>> structures and did not strictly require alignment, so I now feel that
-> >>> there is no need to
-> >>> modify so much to do alignment.
-> >>>
-> >>> D. Wythe
-> >>
-> >>
-> >>>>>> +
-> >>>>>>     static struct proto smc_inet6_prot =3D {
-> >>>>>> -     .name           =3D "INET6_SMC",
-> >>>>>> -     .owner          =3D THIS_MODULE,
-> >>>>>> -     .init           =3D smc_inet_init_sock,
-> >>>>>> -     .hash           =3D smc_hash_sk,
-> >>>>>> -     .unhash         =3D smc_unhash_sk,
-> >>>>>> -     .release_cb     =3D smc_release_cb,
-> >>>>>> -     .obj_size       =3D sizeof(struct smc_sock),
-> >>>>>> -     .h.smc_hash     =3D &smc_v6_hashinfo,
-> >>>>>> -     .slab_flags     =3D SLAB_TYPESAFE_BY_RCU,
-> >>>>>> +     .name                           =3D "INET6_SMC",
-> >>>>>> +     .owner                          =3D THIS_MODULE,
-> >>>>>> +     .init                           =3D smc_inet_init_sock,
-> >>>>>> +     .hash                           =3D smc_hash_sk,
-> >>>>>> +     .unhash                         =3D smc_unhash_sk,
-> >>>>>> +     .release_cb                     =3D smc_release_cb,
-> >>>>>> +     .obj_size                       =3D sizeof(struct smc6_sock)=
-,
-> >>>>>> +     .h.smc_hash                     =3D &smc_v6_hashinfo,
-> >>>>>> +     .slab_flags                     =3D SLAB_TYPESAFE_BY_RCU,
-> >>>>>> +     .ipv6_pinfo_offset              =3D offsetof(struct smc6_soc=
-k,
-> >>>>>> np),
-> >>>>>>     };
-> >>>>>>
-> >>>>>>     static const struct proto_ops smc_inet6_stream_ops =3D {
-> >>>>>> --
->
+diff --git a/drivers/gpu/drm/bridge/nwl-dsi.c b/drivers/gpu/drm/bridge/nwl-dsi.c
+index 8d54091ec66e..5f05647a3bea 100644
+--- a/drivers/gpu/drm/bridge/nwl-dsi.c
++++ b/drivers/gpu/drm/bridge/nwl-dsi.c
+@@ -289,13 +289,13 @@ static int nwl_dsi_config_dpi(struct nwl_dsi *dsi)
+ 
+ 	nwl_dsi_write(dsi, NWL_DSI_INTERFACE_COLOR_CODING, NWL_DSI_DPI_24_BIT);
+ 	nwl_dsi_write(dsi, NWL_DSI_PIXEL_FORMAT, color_format);
+-	/*
+-	 * Adjusting input polarity based on the video mode results in
+-	 * a black screen so always pick active low:
+-	 */
+ 	nwl_dsi_write(dsi, NWL_DSI_VSYNC_POLARITY,
++		      dsi->mode.flags & DRM_MODE_FLAG_PVSYNC ?
++		      NWL_DSI_VSYNC_POLARITY_ACTIVE_HIGH :
+ 		      NWL_DSI_VSYNC_POLARITY_ACTIVE_LOW);
+ 	nwl_dsi_write(dsi, NWL_DSI_HSYNC_POLARITY,
++		      dsi->mode.flags & DRM_MODE_FLAG_PHSYNC ?
++		      NWL_DSI_HSYNC_POLARITY_ACTIVE_HIGH :
+ 		      NWL_DSI_HSYNC_POLARITY_ACTIVE_LOW);
+ 
+ 	burst_mode = (dsi->dsi_mode_flags & MIPI_DSI_MODE_VIDEO_BURST) &&
+diff --git a/drivers/gpu/drm/bridge/nwl-dsi.h b/drivers/gpu/drm/bridge/nwl-dsi.h
+index a247a8a11c7c..61e7d65cb1eb 100644
+--- a/drivers/gpu/drm/bridge/nwl-dsi.h
++++ b/drivers/gpu/drm/bridge/nwl-dsi.h
+@@ -30,11 +30,11 @@
+ #define NWL_DSI_PIXEL_FORMAT			0x20c
+ #define NWL_DSI_VSYNC_POLARITY			0x210
+ #define NWL_DSI_VSYNC_POLARITY_ACTIVE_LOW	0
+-#define NWL_DSI_VSYNC_POLARITY_ACTIVE_HIGH	BIT(1)
++#define NWL_DSI_VSYNC_POLARITY_ACTIVE_HIGH	BIT(0)
+ 
+ #define NWL_DSI_HSYNC_POLARITY			0x214
+ #define NWL_DSI_HSYNC_POLARITY_ACTIVE_LOW	0
+-#define NWL_DSI_HSYNC_POLARITY_ACTIVE_HIGH	BIT(1)
++#define NWL_DSI_HSYNC_POLARITY_ACTIVE_HIGH	BIT(0)
+ 
+ #define NWL_DSI_VIDEO_MODE			0x218
+ #define NWL_DSI_HFP				0x21c
+
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240814-nwl-dsi-sync-polarity-ddc58435a4c4
+
+Best regards,
+-- 
+Esben Haabendal <esben@geanix.com>
+
 
