@@ -1,81 +1,113 @@
-Return-Path: <linux-kernel+bounces-286287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B9F951924
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:41:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FF3951927
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD1A1F253F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:41:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1720A1C210BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11691AE857;
-	Wed, 14 Aug 2024 10:41:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7F11AE042;
+	Wed, 14 Aug 2024 10:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HDB0wtei"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302D1137772;
-	Wed, 14 Aug 2024 10:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917CC481A7;
+	Wed, 14 Aug 2024 10:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723632073; cv=none; b=Oq3nLtxaaYaE3IMUtUt40eutEQjoSsB/Po+b7e48LNzTpK2FW9nEIIlpTBfA6LC3FwMWNT16m6zJI7ZWSzENpKeqMaGZdm9NQgQx7pV1SialE8j/SIx7Bftcxe+uLzsk3TbVdXBUCwdV1iLiakzLHQ3/rbIZlRXhrIHJohd7w34=
+	t=1723632137; cv=none; b=CKZyYVrm/rJ8AzdoJVncqmt6/Oh7Jeb+rS9nyxEpCXLgzfKpe7+urRp6kQD4ijLFsoI6VCT7SLXc8cqlSwSxartrDRkNiadEeBUtoKGAcdjgWF/OdrvgPRhyq2jePPzHUAwyY7p3bBsF7A+9aotSTMZ4AO6zXsSSvIzNOkKbMno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723632073; c=relaxed/simple;
-	bh=GrfhgTdwcOC7b0fHeuZAKfRJXDx7CObsVd9dSJmplzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g3+6jC85JMsxEcx/l0nMth4KsAqVw3e+bmseYPwXhe7S2VezfTZWJAo7DuZiSKlMNLPk/UZlejK6a8Qw0QyU19C54MVSTgCSzZ9mozbn6gmajC1Cws66jwyIJC8JIHFUVwiduSbBtmW52aidJvD5xMEuf/maxVguQ4fbW4hyCto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309F1C4AF0D;
-	Wed, 14 Aug 2024 10:41:08 +0000 (UTC)
-Date: Wed, 14 Aug 2024 11:41:05 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH RFT v8 3/9] mm: Introduce ARCH_HAS_USER_SHADOW_STACK
-Message-ID: <ZryJwQNsl3qCYMi_@arm.com>
-References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
- <20240808-clone3-shadow-stack-v8-3-0acf37caf14c@kernel.org>
+	s=arc-20240116; t=1723632137; c=relaxed/simple;
+	bh=gObtWvsDa3FYmPi616P7kh9bb0b79KvayEN+vUo0/9k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rPRp6ShT5uEUeaytRHVvYpTMJ/a/EV3quj0hdUjf2OI7pq3x1wleKrr0tzqoMEcJ2uZm7dzIZWwtAhq2eXgceusfSdb+FwnsVQmtz8OAkkcNv5DwCCQYUZJfmLj7oe+qaZ5M0Ftv9K8QHVMar05UHpmad9K/v8FJiiyUpEgoGPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HDB0wtei; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47EAfuSg084398;
+	Wed, 14 Aug 2024 05:41:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723632116;
+	bh=LnqOWvrw+6QHzG1sUxDz08ztLpISRnZA5onqpWG/+HM=;
+	h=From:To:CC:Subject:Date;
+	b=HDB0wteiw4EGc1iRiws5SoZuha85pcmCWTkq2kRssKQbBbPuJYQJToF0WrlIviSmV
+	 ww+bxO3ZefDbILpkVsJ7vP5TpYYZdicR5lZwGVSWVCau73iqhT9Y9EZPyNwKwXL5JG
+	 VXVl9N1axKFqnmIYVDgEYvOdxEereSU40TzaMu9g=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47EAfurQ089836
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 14 Aug 2024 05:41:56 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 14
+ Aug 2024 05:41:56 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 14 Aug 2024 05:41:56 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47EAfpSf068615;
+	Wed, 14 Aug 2024 05:41:52 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <tony@atomide.com>, <g-vlaev@ti.com>, <afd@ti.com>,
+        <hnagalla@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/5] Reserve Timer Nodes to avoid clash with Remoteproc
+Date: Wed, 14 Aug 2024 16:11:46 +0530
+Message-ID: <20240814104151.2038457-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808-clone3-shadow-stack-v8-3-0acf37caf14c@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Aug 08, 2024 at 09:15:24AM +0100, Mark Brown wrote:
-> Since multiple architectures have support for shadow stacks and we need to
-> select support for this feature in several places in the generic code
-> provide a generic config option that the architectures can select.
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
-> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
+use timers. At the same time, if Linux probes the timers, some
+instability is observed while booting remote cores. Therefore, change
+the status of the timer nodes to "reserved" to avoid any clash. 
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+This change is already incorporated for timer nodes in the MCU voltage
+domain.
+
+v2: Changelog:
+- Split the changes into individual patches for each SoC to tag the
+  correct offending commit for "Fixes:" tag.
+
+* Udit
+1) Add the correct clashing timer nodes for J7200 SoC.
+2) Port these changes to board level dts files instead of SoC level dtsi files.
+
+Link to v1:
+https://lore.kernel.org/all/20240607105559.771080-1-b-padhi@ti.com/
+
+Beleswar Padhi (5):
+  arm64: dts: ti: k3-j7200: Change timer nodes status to reserved
+  arm64: dts: ti: k3-j721e: Change timer nodes status to reserved
+  arm64: dts: ti: k3-j721s2: Change timer nodes status to reserved
+  arm64: dts: ti: k3-j784s4: Change timer nodes status to reserved
+  arm64: dts: ti: k3-j722s: Change timer nodes status to reserved
+
+ .../dts/ti/k3-j7200-common-proc-board.dts     | 13 ++++++
+ .../dts/ti/k3-j721e-common-proc-board.dts     | 29 +++++++++++++
+ .../dts/ti/k3-j721s2-common-proc-board.dts    | 25 +++++++++++
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts       | 13 ++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts      | 41 +++++++++++++++++++
+ 5 files changed, 121 insertions(+)
+
+-- 
+2.34.1
+
 
