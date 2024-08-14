@@ -1,376 +1,292 @@
-Return-Path: <linux-kernel+bounces-286299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4DF95193C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:44:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687F5951945
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D189B21E5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:44:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CBC91C224C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DC01A00F3;
-	Wed, 14 Aug 2024 10:44:42 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EEC1AE870;
+	Wed, 14 Aug 2024 10:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QgBiCUtp"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CC133993;
-	Wed, 14 Aug 2024 10:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B34B1AE038
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723632282; cv=none; b=lIoFf6Cra/U9pLq9TlN8Ptbp/7LcrZNJZzwAiT3wy0SRv7lKufgBX3teRqH2psaUoXdudD01okBcny6KSU19eqP4NU94ytoDZJYDK8j5KZkorr9tyEkQuSpANq50+1b5wGMcTEqg0JLIkJLZmrt65tNYzI1XW4NKh+wtBu3uOwk=
+	t=1723632308; cv=none; b=JGDkhQ/QMq4MwtSK+jWa3DWtZ8apm5r3XunH+nU0a2Q80GA+8668Is5ShwPl4B4QVUOYljWan1fpi5YZlx+sfYmhtXqfAe2uaR2BgX1IGC4SHfxzmMp2sV5VTK/2wCEUkTQ3YrUTQVhCT+HnYcjKJY9o66J4QwWQ1w5FjI+Jmsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723632282; c=relaxed/simple;
-	bh=Hi0KMPArLAHcZUBpcAqW5Nwm2thrJkZWmhX/o1QVAhA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VVuKEW32zAPnk+inCBO4uk5Lkvu63B/01iddgU0VokhjhagRKwZbm4DikDG8p67/VKaQEz099oLSZh+ZLwmjsmI756XiCo1UpdOpHWy5IkMKkQyYee11TZVL5NXikyOpgNMtX/DeIrDJV4RGbGN/ao3juFUuXpjBLs2DZjrPgcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-842eee4ad03so150996241.0;
-        Wed, 14 Aug 2024 03:44:40 -0700 (PDT)
+	s=arc-20240116; t=1723632308; c=relaxed/simple;
+	bh=cZ9BkgG63rEN8kNe9FhooxE8MhReOnBZMnAbDlarQAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pqa65jt7T1lb+R+RyNBfxM6sq2rET1P/xyxvNpCsMRijcBCfCs84pJ6GCc6LWxfb4af0QiXrxukTRGiJYS0lGy12pk4lNqDLNwJn5GL6u3cyG5A9Eyi/+O0vKYW5HSslKMndNmBt+S3ZJJYuB264zmz5sjiTcW5lai//+DlxpjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QgBiCUtp; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b7b23793c1so37791096d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723632305; x=1724237105; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LFk4lh3cCjG0SR06SvOvwiuhTMezfgXvWpzfkPomYos=;
+        b=QgBiCUtpXay0ZhB65ngHKiBM74LRtmQEDxXXIn2/XXjq0QggV11C+PHdes5yT0WZII
+         1UU4rqBRDAfKfcKR6LgFstRXi+v80/a+9EaCzbiSEsGqLuhT5OrdJjPCjOEw73cYOOeL
+         J2UqsUf0nRPwQhDRuL6TLvQZNbVdaf2SzV268=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723632279; x=1724237079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uhuKELtUQfqg3R4iz6eojJcLJbisHRVhT9vIlErWfrI=;
-        b=E8e8fGabJQ6gbdjFkSEC9rPGWAymfCTjUCrQvm9lejn4F2j44p3ZWsAcsmIRxFB4nH
-         9BIYTuoK0sUNPogg88YqA/kC+2TxhUz3SKYkqvJKMurH5hPi87rkuLAdVjrPc9NSmH8Y
-         WKk0cGH7T+mwRLn64T9GzteOcE/WSp5bLUeolaI2qPiihZThSXVk/lJx7UfZMgTuZqup
-         FywK01OAbjwzRftAMvkrANeApFPv1wp4ok6KKBuydVasqX3ox6xNHVV4G25rokouAGKA
-         VRzwBHiK517wO1Z6tBoJUr2nX4322mxBioJpqFCdbOKlhY4g5rKzW9PDSls3veV40qVU
-         X3KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlevuE7a5RQfquaaD2cnQSeOdxRN1ocWecDONXDxT0kA9cZEvZZaNJekLCYZTPsNNt1pcWQvDOi5oWpmtGEVltmbu5eu2AMUof6G5P+qvAOj8egdaQ5JqZaNohb85RvGPMGXEYYGzD
-X-Gm-Message-State: AOJu0YyJDQCFZbK/PipFJLX9AOdIE6o55yClab7Q/CwN0ubBqlc4XYRh
-	m0/f4BEusMhVnjpCgs6GV3yzDX9kIOCtUIrO8/WLYAHchKcWp4WKsk3lL8M5Ua5tb7ms+GkJeVQ
-	YsenfW0AhRT89NRr1vsmOJjT2B7c=
-X-Google-Smtp-Source: AGHT+IGvTxOOiGrecP98na1TniR3pGbwft7uwJhXmKYL1krRvlVLTZHT6Do3qhB3ZBPA61t509Af7/3PGjvMETZRImA=
-X-Received: by 2002:a05:6102:3f4f:b0:493:b06d:eea2 with SMTP id
- ada2fe7eead31-497599eb9e5mr2372406137.31.1723632278898; Wed, 14 Aug 2024
- 03:44:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723632305; x=1724237105;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LFk4lh3cCjG0SR06SvOvwiuhTMezfgXvWpzfkPomYos=;
+        b=MhjoGuHdr0c4HzmhWwYKrIIVHVMqm0vinofBdOck1+ZlCyhTmiCUANyWuLZMCHP1rz
+         h9+t6axQu9gvS14eB1EO5D7HPkHhG+o2QY/F2NY5xXO3xSiVlU7jjS2eAbIAh+Bz2QI2
+         k7bD5CDB5R9QRpYjiQWXtyF0QYllQHY9MGu9gK8gq/b5IwRS5CPuOnFtaSW9IPHEBwAL
+         KQu/08jtLukoSG2nwY6zEO//FykdpEdmKfhFUUjHYnhv1+YnM7HSw/qW9ugCDdDIvA7A
+         Rr8XGYCOc+wM6VBQAAPgEWs71/tgBBEgxcA6wJzsBiv89XZI2Kw6GbF7UGdlhH5oIl+7
+         mJEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuUTIsiv4a6FPWkx/XESrX7X2bMEeJyS8J26hND4nkwc14DVh4bn1+IuPmFia4izPj6XDSVs0JyWOxjDTtSxg80GtA+ONsRneIJHTt
+X-Gm-Message-State: AOJu0YyP6xvwo9kuWEtiJlv4Rx4P1C6NwMbJ2cZA4r9Rz23V2jST4ksP
+	Hxhp0ivprFEu6Avjv9ykMIkMvMcRybJ96/vsgaKBm6ke/2B4yD81xo0cPE6Ypw==
+X-Google-Smtp-Source: AGHT+IGINV7Cr6/yUzciRzHq2zhc1Ek5UNVW7N0rj9HFgKO7ExivX+a6umTbzKbdjzFu5OuVUGXsyg==
+X-Received: by 2002:a0c:f7ce:0:b0:6bf:6714:43b3 with SMTP id 6a1803df08f44-6bf6714448emr2393696d6.21.1723632304908;
+        Wed, 14 Aug 2024 03:45:04 -0700 (PDT)
+Received: from [10.176.68.61] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82c87843sm42263316d6.31.2024.08.14.03.45.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 03:45:04 -0700 (PDT)
+Message-ID: <8de856d4-8526-4662-bb29-898b80476df9@broadcom.com>
+Date: Wed, 14 Aug 2024 12:44:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813120328.1275952-1-usamaarif642@gmail.com> <20240813120328.1275952-5-usamaarif642@gmail.com>
-In-Reply-To: <20240813120328.1275952-5-usamaarif642@gmail.com>
-From: Barry Song <baohua@kernel.org>
-Date: Wed, 14 Aug 2024 22:44:27 +1200
-Message-ID: <CAGsJ_4x+5fiCoWv4G0NsYq+aJRqZsrCEHO_DF+CnNFdqx0VgMQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] mm: Introduce a pageflag for partially mapped folios
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	riel@surriel.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev, 
-	yuzhao@google.com, david@redhat.com, ryan.roberts@arm.com, rppt@kernel.org, 
-	willy@infradead.org, cerasuolodomenico@gmail.com, corbet@lwn.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/5] wifi: brcmfmac: Add optional lpo clock enable
+ support
+To: Alexey Charkov <alchark@gmail.com>, Jacobe Zang <jacobe.zang@wesion.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, conor+dt@kernel.org, linux-rockchip@lists.infradead.org,
+ efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, arend@broadcom.com,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, megi@xff.cz,
+ duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ nick@khadas.com, Sai Krishna <saikrishnag@marvell.com>
+References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
+ <20240813082007.2625841-5-jacobe.zang@wesion.com>
+ <721da64c-42ec-4be6-8ad3-e2685a84823a@broadcom.com>
+ <2269063.vFx2qVVIhK@latitude-fedora>
+ <fa019ee9-3f4d-4bea-92a7-929713518dc9@wesion.com>
+ <CABjd4YwTbG8pm_xwrOVtVwMwvarvz2SB9bapH3LDMqPn6pH9Ew@mail.gmail.com>
+Content-Language: en-US
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
+Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
+ 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
+In-Reply-To: <CABjd4YwTbG8pm_xwrOVtVwMwvarvz2SB9bapH3LDMqPn6pH9Ew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 12:03=E2=80=AFAM Usama Arif <usamaarif642@gmail.com=
-> wrote:
->
-> Currently folio->_deferred_list is used to keep track of
-> partially_mapped folios that are going to be split under memory
-> pressure. In the next patch, all THPs that are faulted in and collapsed
-> by khugepaged are also going to be tracked using _deferred_list.
->
-> This patch introduces a pageflag to be able to distinguish between
-> partially mapped folios and others in the deferred_list at split time in
-> deferred_split_scan. Its needed as __folio_remove_rmap decrements
-> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
-> possible to distinguish between partially mapped folios and others in
-> deferred_split_scan.
->
-> Eventhough it introduces an extra flag to track if the folio is
-> partially mapped, there is no functional change intended with this
-> patch and the flag is not useful in this patch itself, it will
-> become useful in the next patch when _deferred_list has non partially
-> mapped folios.
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
->  include/linux/huge_mm.h    |  4 ++--
->  include/linux/page-flags.h |  3 +++
->  mm/huge_memory.c           | 21 +++++++++++++--------
->  mm/hugetlb.c               |  1 +
->  mm/internal.h              |  4 +++-
->  mm/memcontrol.c            |  3 ++-
->  mm/migrate.c               |  3 ++-
->  mm/page_alloc.c            |  5 +++--
->  mm/rmap.c                  |  3 ++-
->  mm/vmscan.c                |  3 ++-
->  10 files changed, 33 insertions(+), 17 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 4c32058cacfe..969f11f360d2 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -321,7 +321,7 @@ static inline int split_huge_page(struct page *page)
->  {
->         return split_huge_page_to_list_to_order(page, NULL, 0);
->  }
-> -void deferred_split_folio(struct folio *folio);
-> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
->
->  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->                 unsigned long address, bool freeze, struct folio *folio);
-> @@ -495,7 +495,7 @@ static inline int split_huge_page(struct page *page)
->  {
->         return 0;
->  }
-> -static inline void deferred_split_folio(struct folio *folio) {}
-> +static inline void deferred_split_folio(struct folio *folio, bool partia=
-lly_mapped) {}
->  #define split_huge_pmd(__vma, __pmd, __address)        \
->         do { } while (0)
->
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index a0a29bd092f8..cecc1bad7910 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -182,6 +182,7 @@ enum pageflags {
->         /* At least one page in this folio has the hwpoison flag set */
->         PG_has_hwpoisoned =3D PG_active,
->         PG_large_rmappable =3D PG_workingset, /* anon or file-backed */
-> +       PG_partially_mapped, /* was identified to be partially mapped */
->  };
->
->  #define PAGEFLAGS_MASK         ((1UL << NR_PAGEFLAGS) - 1)
-> @@ -861,8 +862,10 @@ static inline void ClearPageCompound(struct page *pa=
-ge)
->         ClearPageHead(page);
->  }
->  FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
-> +FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
->  #else
->  FOLIO_FLAG_FALSE(large_rmappable)
-> +FOLIO_FLAG_FALSE(partially_mapped)
->  #endif
->
->  #define PG_head_mask ((1UL << PG_head))
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 6df0e9f4f56c..c024ab0f745c 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3397,6 +3397,7 @@ int split_huge_page_to_list_to_order(struct page *p=
-age, struct list_head *list,
->                          * page_deferred_list.
->                          */
->                         list_del_init(&folio->_deferred_list);
-> +                       folio_clear_partially_mapped(folio);
->                 }
->                 spin_unlock(&ds_queue->split_queue_lock);
->                 if (mapping) {
-> @@ -3453,11 +3454,12 @@ void __folio_undo_large_rmappable(struct folio *f=
-olio)
->         if (!list_empty(&folio->_deferred_list)) {
->                 ds_queue->split_queue_len--;
->                 list_del_init(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
->         }
->         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  }
->
-> -void deferred_split_folio(struct folio *folio)
-> +void deferred_split_folio(struct folio *folio, bool partially_mapped)
->  {
->         struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
-o);
->  #ifdef CONFIG_MEMCG
-> @@ -3485,14 +3487,17 @@ void deferred_split_folio(struct folio *folio)
->         if (folio_test_swapcache(folio))
->                 return;
->
-> -       if (!list_empty(&folio->_deferred_list))
-> -               return;
-> -
->         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> +       if (partially_mapped)
-> +               folio_set_partially_mapped(folio);
-> +       else
-> +               folio_clear_partially_mapped(folio);
+On 8/14/2024 11:48 AM, Alexey Charkov wrote:
+> On Wed, Aug 14, 2024 at 12:27 PM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+>>
+>>
+>>
+>> On 2024/8/14 16:47, Alexey Charkov wrote:
+>>> Hi Arend, Jacobe,
+>>>
+>>> On Tuesday, August 13, 2024 2:57:28 PM GMT+3 Arend van Spriel wrote:
+>>>> On 8/13/2024 10:20 AM, Jacobe Zang wrote:
+>>>>> WiFi modules often require 32kHz clock to function. Add support to
+>>>>> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
+>>>>> to the top of brcmf_of_probe. Change function prototypes from void
+>>>>> to int and add appropriate errno's for return values that will be
+>>>>> send to bus when error occurred.
+>>>>
+>>>> I was going to say it looks good to me, but....
+>>>>
+>>>>> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+>>>>> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+>>>>> Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>>>>> Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>>>>> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
+>>>>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+>>>>> ---
+>>>>>
+>>>>>     .../broadcom/brcm80211/brcmfmac/bcmsdh.c      |  4 +-
+>>>>>     .../broadcom/brcm80211/brcmfmac/common.c      |  3 +-
+>>>>>     .../wireless/broadcom/brcm80211/brcmfmac/of.c | 53 +++++++++++--------
+>>>>>     .../wireless/broadcom/brcm80211/brcmfmac/of.h |  9 ++--
+>>>>>     .../broadcom/brcm80211/brcmfmac/pcie.c        |  3 ++
+>>>>>     .../broadcom/brcm80211/brcmfmac/sdio.c        | 22 +++++---
+>>>>>     .../broadcom/brcm80211/brcmfmac/usb.c         |  3 ++
+>>>>>     7 files changed, 61 insertions(+), 36 deletions(-)
+>>>>
+>>>> [...]
+>>>>
+>>>>> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+>>>>> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c index
+>>>>> e406e11481a62..f19dc7355e0e8 100644
+>>>>> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+>>>>> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+>>>>
+>>>> [...]
+>>>>
+>>>>> @@ -113,33 +118,39 @@ void brcmf_of_probe(struct device *dev, enum
+>>>>> brcmf_bus_type bus_type,>
+>>>>>              of_node_put(root);
+>>>>>
+>>>>>      }
+>>>>>
+>>>>> -   if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+>>>>> -           return;
+>>>>> -
+>>>>>
+>>>>>      err = brcmf_of_get_country_codes(dev, settings);
+>>>>>      if (err)
+>>>>>
+>>>>>              brcmf_err("failed to get OF country code map (err=%d)
+>>> \n", err);
+>>>>>
+>>>>>      of_get_mac_address(np, settings->mac);
+>>>>>
+>>>>> -   if (bus_type != BRCMF_BUSTYPE_SDIO)
+>>>>> -           return;
+>>>>> +   if (bus_type == BRCMF_BUSTYPE_SDIO) {
+>>>>
+>>>> Don't like the fact that this now has an extra indentation level and it
+>>>> offers no extra benefit. Just keep the original if-statement and return
+>>>> 0. Consequently the LPO clock code should move just before the if-statement.
+>>>>> +           if (of_property_read_u32(np, "brcm,drive-strength",
+>>> &val) == 0)
+>>>>> +                   sdio->drive_strength = val;
+>>>>>
+>>>>> -   if (of_property_read_u32(np, "brcm,drive-strength", &val) == 0)
+>>>>> -           sdio->drive_strength = val;
+>>>>> +           /* make sure there are interrupts defined in the node */
+>>>>> +           if (!of_property_present(np, "interrupts"))
+>>>>> +                   return 0;
+>>>>>
+>>>>> -   /* make sure there are interrupts defined in the node */
+>>>>> -   if (!of_property_present(np, "interrupts"))
+>>>>> -           return;
+>>>>> +           irq = irq_of_parse_and_map(np, 0);
+>>>>> +           if (!irq) {
+>>>>> +                   brcmf_err("interrupt could not be
+>>> mapped\n");
+>>>>> +                   return 0;
+>>>>> +           }
+>>>>> +           irqf = irqd_get_trigger_type(irq_get_irq_data(irq));
+>>>>> +
+>>>>> +           sdio->oob_irq_supported = true;
+>>>>> +           sdio->oob_irq_nr = irq;
+>>>>> +           sdio->oob_irq_flags = irqf;
+>>>>> +   }
+>>>>>
+>>>>> -   irq = irq_of_parse_and_map(np, 0);
+>>>>> -   if (!irq) {
+>>>>> -           brcmf_err("interrupt could not be mapped\n");
+>>>>> -           return;
+>>>>> +   clk = devm_clk_get_optional_enabled(dev, "lpo");
+>>>>> +   if (!IS_ERR_OR_NULL(clk)) {
+>>>>> +           brcmf_dbg(INFO, "enabling 32kHz clock\n");
+>>>>> +           return clk_set_rate(clk, 32768);
+>>>>> +   } else {
+>>>>> +           return PTR_ERR_OR_ZERO(clk);
+>>>>>
+>>>>>      }
+>>>>
+>>>> Change this to:
+>>>>    > +        clk = devm_clk_get_optional_enabled(dev, "lpo");
+>>>>    > +        if (IS_ERR_OR_NULL(clk)) {
+>>>>    > +                return PTR_ERR_OR_ZERO(clk);
+>>>
+>>> Perhaps in this case we should go for IS_ERR and PTR_ERR respectively.
+>>> devm_clk_get_optional_enabled would return NULL when the optional clock is not
+>>> found, so NULL is not an error state but serves as a dummy clock that can be> used with clk_set_rate.
+>>
+>> I think we don't need to set clock rate for clock is NULL. So it should
+>> be changed to:
+>>
+>> +       clk = devm_clk_get_optional_enabled(dev, "lpo");
+>> +       if (IS_ERR(clk)) {
+>> +               return PTR_ERR(clk);
+>> +       } else if (clk) {
+>> +               brcmf_dbg(INFO, "enabling 32kHz clock\n");
+>> +               clk_set_rate(clk, 32768);
+>> +       }
+> 
+> If clk is NULL then clk_set_rate returns immediately with status zero,
+> so there is little difference from whether you wrap it into another if
+> (clk) or not. You can probably drop the debug statement altogether and
+> call clk_set_rate unconditionally - this will look neater.
 
-Hi Usama,
+The construct above is indeed only needed to get the debug statement 
+correct given the behavior of clk_set_rate(). However, for debugging it 
+is useful to know that the LPO clock is defined and used or not. Maybe 
+do this:
 
-Do we need this? When can a partially_mapped folio on deferred_list become
-non-partially-mapped and need a clear? I understand transferring from
-entirely_map
-to partially_mapped is a one way process? partially_mapped folios can't go =
-back
-to entirely_mapped?
+        clk = devm_clk_get_optional_enabled(dev, "lpo");
+        if (IS_ERR(clk))
+                return PTR_ERR(clk);
 
-I am trying to rebase my NR_SPLIT_DEFERRED counter on top of your
-work, but this "clear" makes that job quite tricky. as I am not sure
-if this patch
-is going to clear the partially_mapped flag for folios on deferred_list.
+        brcmf_dbg(INFO, "%s LPO clock\n", clk ? "enable" : "no");
+        clk_set_rate(clk, 32768);
 
-Otherwise, I can simply do the below whenever folio is leaving deferred_lis=
-t
-
-        ds_queue->split_queue_len--;
-        list_del_init(&folio->_deferred_list);
-        if (folio_test_clear_partially_mapped(folio))
-                mod_mthp_stat(folio_order(folio),
-MTHP_STAT_NR_SPLIT_DEFERRED, -1);
-
->         if (list_empty(&folio->_deferred_list)) {
-> -               if (folio_test_pmd_mappable(folio))
-> -                       count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> -               count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFER=
-RED);
-> +               if (partially_mapped) {
-> +                       if (folio_test_pmd_mappable(folio))
-> +                               count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SPL=
-IT_DEFERRED);
-> +               }
->                 list_add_tail(&folio->_deferred_list, &ds_queue->split_qu=
-eue);
->                 ds_queue->split_queue_len++;
->  #ifdef CONFIG_MEMCG
-> @@ -3541,6 +3546,7 @@ static unsigned long deferred_split_scan(struct shr=
-inker *shrink,
->                 } else {
->                         /* We lost race with folio_put() */
->                         list_del_init(&folio->_deferred_list);
-> +                       folio_clear_partially_mapped(folio);
->                         ds_queue->split_queue_len--;
->                 }
->                 if (!--sc->nr_to_scan)
-> @@ -3558,7 +3564,6 @@ static unsigned long deferred_split_scan(struct shr=
-inker *shrink,
->  next:
->                 folio_put(folio);
->         }
-> -
->         spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->         list_splice_tail(&list, &ds_queue->split_queue);
->         spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 1fdd9eab240c..2ae2d9a18e40 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1758,6 +1758,7 @@ static void __update_and_free_hugetlb_folio(struct =
-hstate *h,
->                 free_gigantic_folio(folio, huge_page_order(h));
->         } else {
->                 INIT_LIST_HEAD(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
->                 folio_put(folio);
->         }
->  }
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 52f7fc4e8ac3..d64546b8d377 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -662,8 +662,10 @@ static inline void prep_compound_head(struct page *p=
-age, unsigned int order)
->         atomic_set(&folio->_entire_mapcount, -1);
->         atomic_set(&folio->_nr_pages_mapped, 0);
->         atomic_set(&folio->_pincount, 0);
-> -       if (order > 1)
-> +       if (order > 1) {
->                 INIT_LIST_HEAD(&folio->_deferred_list);
-> +               folio_clear_partially_mapped(folio);
-> +       }
->  }
->
->  static inline void prep_compound_tail(struct page *head, int tail_idx)
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e1ffd2950393..0fd95daecf9a 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4669,7 +4669,8 @@ static void uncharge_folio(struct folio *folio, str=
-uct uncharge_gather *ug)
->         VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
->         VM_BUG_ON_FOLIO(folio_order(folio) > 1 &&
->                         !folio_test_hugetlb(folio) &&
-> -                       !list_empty(&folio->_deferred_list), folio);
-> +                       !list_empty(&folio->_deferred_list) &&
-> +                       folio_test_partially_mapped(folio), folio);
->
->         /*
->          * Nobody should be changing or seriously looking at
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 3288ac041d03..6e32098ac2dc 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1734,7 +1734,8 @@ static int migrate_pages_batch(struct list_head *fr=
-om,
->                          * use _deferred_list.
->                          */
->                         if (nr_pages > 2 &&
-> -                          !list_empty(&folio->_deferred_list)) {
-> +                          !list_empty(&folio->_deferred_list) &&
-> +                          folio_test_partially_mapped(folio)) {
->                                 if (!try_split_folio(folio, split_folios,=
- mode)) {
->                                         nr_failed++;
->                                         stats->nr_thp_failed +=3D is_thp;
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 408ef3d25cf5..a145c550dd2a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -957,8 +957,9 @@ static int free_tail_page_prepare(struct page *head_p=
-age, struct page *page)
->                 break;
->         case 2:
->                 /* the second tail page: deferred_list overlaps ->mapping=
- */
-> -               if (unlikely(!list_empty(&folio->_deferred_list))) {
-> -                       bad_page(page, "on deferred list");
-> +               if (unlikely(!list_empty(&folio->_deferred_list) &&
-> +                   folio_test_partially_mapped(folio))) {
-> +                       bad_page(page, "partially mapped folio on deferre=
-d list");
->                         goto out;
->                 }
->                 break;
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index a6b9cd0b2b18..9ad558c2bad0 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1579,7 +1579,8 @@ static __always_inline void __folio_remove_rmap(str=
-uct folio *folio,
->          */
->         if (partially_mapped && folio_test_anon(folio) &&
->             list_empty(&folio->_deferred_list))
-> -               deferred_split_folio(folio);
-> +               deferred_split_folio(folio, true);
-> +
->         __folio_mod_stat(folio, -nr, -nr_pmdmapped);
->
->         /*
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 25e43bb3b574..25f4e8403f41 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1233,7 +1233,8 @@ static unsigned int shrink_folio_list(struct list_h=
-ead *folio_list,
->                                          * Split partially mapped folios =
-right away.
->                                          * We can free the unmapped pages=
- without IO.
->                                          */
-> -                                       if (data_race(!list_empty(&folio-=
->_deferred_list)) &&
-> +                                       if (data_race(!list_empty(&folio-=
->_deferred_list) &&
-> +                                           folio_test_partially_mapped(f=
-olio)) &&
->                                             split_folio_to_list(folio, fo=
-lio_list))
->                                                 goto activate_locked;
->                                 }
-> --
-> 2.43.5
->
-
-Thanks
-Barry
+Regards,
+Arend
 
