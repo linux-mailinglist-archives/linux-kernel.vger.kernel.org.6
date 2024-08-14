@@ -1,99 +1,138 @@
-Return-Path: <linux-kernel+bounces-286047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B3E9515D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:49:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4829515E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4D29285A11
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:49:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED2DB289B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E4D13D51E;
-	Wed, 14 Aug 2024 07:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BFF13D52A;
+	Wed, 14 Aug 2024 07:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fgADI9D+"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jOjVb8DM"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969713CABC
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396AF13CFAB
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723621701; cv=none; b=iCZ9yK7VgzNg6pB/c4b0xrZFTPwMPD6Ufyt/zEnLQxJoF8nlJyAINWewZsnQ6oDl3ngP7pHfL3ZDu5Ozl3V8uzDNjA47ted7eU6gwbGLMd+pbUgjkxFhPSODGsNDBKi8MB9nA9xF5qUcr9ENG1wj+Jbuq8kc13fUELTzhRWXcyc=
+	t=1723621715; cv=none; b=C8v1zj9Bgyw+3vq8WVUd9jIiIZ9wIEq6xU78UJQfCeEuY4SuJCItKvSgqYgG9MEtcgKGKanmzHggsnvkpJ3oDigFQXpc6CCQqTAuBc3TzAQHpbU2dN2j6NbCul5lm+CklkL71oR/Q1KZTridvKB1KDu5RWZ8CWHSo2/fDLID7Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723621701; c=relaxed/simple;
-	bh=JZkPj2Cj5l6KrmXL0vbqvyYLl7gc6iX0WSxoSoidQqY=;
+	s=arc-20240116; t=1723621715; c=relaxed/simple;
+	bh=P7D+VZW1XS1Gzk5chH+qiZmPvALantpIIOGu3WIMPsM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UDyFuSwgxJOg5gw7F24JZjOZm7jBmHPyHVnze26DtKSN7J00mDgukxWKbUO8hnPivb2lIsUBEov4EvNlMHTrwio2GNyUwKTn8VNiyiensJC1+7fiyR9+NL6etw+lmXeJCgd/JzKPDtlkVX5xudhPEFrUxEzz5pZOVkYr/AWXPm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fgADI9D+; arc=none smtp.client-ip=209.85.208.41
+	 To:Cc:Content-Type; b=tytSXbWl2KqzvaivP7Vegkktym/YHu+bGxXqSVt00oMBDZD6mAYRcvLjK3Txr2FuFcqGXXRaYu+MifX81puRPA6fEv9RbX6OcyRTTRm98rzDCdBR7zanr64CVhXQgsorad6cp9+Df4Byzzl/c8haqutu/Exk7VYYxriROmRo5/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jOjVb8DM; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5af326eddb2so991838a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:48:19 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so44035505e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:48:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723621698; x=1724226498; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723621712; x=1724226512; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JZkPj2Cj5l6KrmXL0vbqvyYLl7gc6iX0WSxoSoidQqY=;
-        b=fgADI9D+gR5x2mh9GZg64+hbX+ciNIADAOttC/YGkaJG6Lq04IY64kqr8w8O2skpiE
-         KSfPlUv7HkwCvZZES44knERJASd1J22jK6f8V9S+0DdvJhfWqCS6BjmFsnpNA98BVb5i
-         tgXedKmsbTdLIgrEHC81vWQ22WR5eShRSMmD73EwNKioOJiXsCImJVPHqUAKew8Mr4VN
-         Mw5j3SJNr2VyrU+Eg7pFwdh8dEzdyl53I7RD6PzhvS7jedtTWQBEvIARruRCc+GtH+5r
-         o57cSqmzepEy7lgPYKU+B8cWsYifeN/r26XDzHjen1geVTQa3fWbelbP6XGJxFHXWFBc
-         yanA==
+        bh=zRLxSfggsbxe3d7cfCO7JzeyIYzJnFmhVfUunHaRPJs=;
+        b=jOjVb8DMA/+t5Yi7Vcg+nUWzTTTYTpi2cHbOB7hWR0Y6lR5iEy/wRmAx6Ym20g9cca
+         5UW68ERolMqNN1o5wsLUTlpmiQZe//HLjcKkqCOg4mWFonlaFrBTXUV4SJWSmCiKvuit
+         5UvEdZaDKS3Gln0gnEH+Ab0c84fqOcCN+BfrQBA4jjZYlQlMaWG3dw4v9NDia8tyXGTA
+         3SNxXIHZNm6Mq5aYJCfTTOH8X85JXYOhneWWY2X/krCMSXdQ/msF+B++VzeJAQP/tsjn
+         Jhd48abq4Hg+OWr4qeCDiYEC1MURbHgjWDj/riFf8kX//W1AZAWzyjDlUkggxc1R/S/f
+         39iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723621698; x=1724226498;
+        d=1e100.net; s=20230601; t=1723621712; x=1724226512;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JZkPj2Cj5l6KrmXL0vbqvyYLl7gc6iX0WSxoSoidQqY=;
-        b=Gbsnv2J1AvGHhkSyrhGBN8T1EJz5HQNIR0LoOJVPcsF496MBHl5/79oTVK951Cd/rD
-         Ib7NAR8Q+rYzpR15DrAK9asTMzdANNHMBnErLuzVfD8NLZcoc3LIb1KIpiAzSrnGvoNK
-         1lEo9M6QaPWdy9qNbHGA7VUObfXacVHJQSSVCkVZXpGI3uF2jnvRYBwvwpzmIdfOh561
-         pPlyJMf8d4XHvobYwPtPr93YQ62+p5hzVlZM+IOaAaFoPhSMiAT6bZdjEHgMF9RO0Khx
-         P+3pNRTOlCUvhyyfgltVl8DW9e+98/3US0zv1JZrpO0heez8iAxwy4bZKi0lnzMJnzwb
-         R7Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjNk+XPqYjR/1WmOAVWiA5zS6R+rKHvZWTmMF6dFZRtHpibCyeRmHMMTwNYJbEqfszTtbO/eO+pWz5NAqxm4rohS6cMml8gfpWReYC
-X-Gm-Message-State: AOJu0Ywvst4bBmFnjuIYcWB/E23qbtje19+BPXrgEk+F+WAUIY9EtN2u
-	ueFV/f7BCBPXficJJp3n9v6NviNbK8AI9dcEUQB0msyS+oNnNpGVNbFOeRy8VOybWXiBN4Kvk5y
-	3DcKoDTUoczdN9IGKZ1l/QawHGmReCBtvdeu0
-X-Google-Smtp-Source: AGHT+IEw0FWddU2VM7FL4SB4ziEIiea9ZyXl/wiMmVamK8vTcv4llrjwTmWjCDjcfsY7rSUg1pZnLpq0uxNNch7PRO8=
-X-Received: by 2002:a17:906:4796:b0:a77:ab9e:9202 with SMTP id
- a640c23a62f3a-a80f0a778c1mr394590666b.4.1723621698031; Wed, 14 Aug 2024
- 00:48:18 -0700 (PDT)
+        bh=zRLxSfggsbxe3d7cfCO7JzeyIYzJnFmhVfUunHaRPJs=;
+        b=eyRG1V2CbaXlJ/0jL4zi746+00BowRMH/81+f3uHSdRIg9yNJqWu0RikJFfpeC7BHh
+         VTChMFwjQc3nqAmKRgra85kZvLjK1KBUSIdjWycu7GCZ1JfvWCp2TrmymWDrYF/JeyPF
+         lZF1+5TO1VP9gT0izk7FmIoA51C9HyTJztbeCQrr6nkd1ubg4yHCB6zIZWuZ1XIrK+qy
+         LzMQcag+mFQsF8fxJUMMWpmqJA675mA07/8DzLyiezeKFHzKez64bizq6T2aw9SbIZv6
+         dGPjyTaBEWLEF4G843SIsb3d8FLT4kGgmZ9fM7zmkaUmG8WaLy8jFq5Bf05Jwxll+W+B
+         Xdcg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4v7Gr9xgNIAS55eA/0JSd18hO6DFUCEhP/DlRNK8+Z73QKa1PX9yG9g6L3f0JYI4MVNG1iDJclHy29QL8Ag/8MQDEI6HtM3VIIO9c
+X-Gm-Message-State: AOJu0YymU++gCCl5e3iBnMw6h/tfS9BvB7Tu3yDZp0j7ndcsL9ohcTd4
+	3vlAoyswDN89UtlcA4bswBsKKFcJSaWoQNWg4UONtPWtka7GLbh9J9QbZYgJXZqNAqqUF5iCWdO
+	NJGsExQAW3O0kxtpvROVlEpfH8naejXVMPIvH
+X-Google-Smtp-Source: AGHT+IFszK04DfhyjnHB8HAsiUvfKiYaTBLS5Cci2eet/nobda0BRm8km1MdiKanezp8dm7Kg4wNR4OK+iD9anVVD1g=
+X-Received: by 2002:adf:f5cc:0:b0:366:e9f3:c242 with SMTP id
+ ffacd0b85a97d-37177756be4mr1218451f8f.12.1723621712012; Wed, 14 Aug 2024
+ 00:48:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801111611.84743-1-kuro@kuroa.me> <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
- <CAL+tcoAHBSDLTNobA1MJ2itLja1xnWwmejDioPBQJh83oma55Q@mail.gmail.com>
- <CAL+tcoDnFCWpFvkjs=7r2C2L_1Fb_8X2J9S0pDNV1KfJKsFo+Q@mail.gmail.com>
- <CANn89iLNnXEnaAY8xMQR6zeJPTd6ZxnJWo3vHE4d7oe9uXRMUg@mail.gmail.com> <CAKD1Yr2rqFdtCNmvacEvd_DR3nGVo8+7+sbGPU=g6Gr45T9TQQ@mail.gmail.com>
-In-Reply-To: <CAKD1Yr2rqFdtCNmvacEvd_DR3nGVo8+7+sbGPU=g6Gr45T9TQQ@mail.gmail.com>
-From: Lorenzo Colitti <lorenzo@google.com>
-Date: Wed, 14 Aug 2024 16:48:06 +0900
-Message-ID: <CAKD1Yr0SkjAKLpsvRw9J82f0vHfqLv_VTFQjtZvamzJ7jwVcHw@mail.gmail.com>
-Subject: Re: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
-To: Eric Dumazet <edumazet@google.com>
-Cc: Jason Xing <kerneljasonxing@gmail.com>, Xueming Feng <kuro@kuroa.me>, 
-	"David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
-	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Maciej_=C5=BBenczykowski?= <zenczykowski@gmail.com>
+References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-9-dakr@kernel.org>
+In-Reply-To: <20240812182355.11641-9-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 14 Aug 2024 09:48:19 +0200
+Message-ID: <CAH5fLggyf=MAKvryzU5vEWFs9RSzjNOiPcz-V-MvCx8WKNiAQg@mail.gmail.com>
+Subject: Re: [PATCH v5 08/26] rust: alloc: add __GFP_NOWARN to `Flags`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 1:43=E2=80=AFPM Lorenzo Colitti <lorenzo@google.com=
-> wrote:
-> though unfortunately they don't pass on unmodified kernels (I didn't
-> look into why - maybe Maciej knows).
+On Mon, Aug 12, 2024 at 8:24=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> Some test cases in subsequent patches provoke allocation failures. Add
+> `__GFP_NOWARN` to enable test cases to silence unpleasant warnings.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Actually, they do: just git clone
-https://android.googlesource.com/kernel/tests and from the kernel tree
-do path/to/net/test/run_net_test.sh sock_diag_test.py
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
+>  rust/bindings/bindings_helper.h | 1 +
+>  rust/kernel/alloc.rs            | 5 +++++
+>  2 files changed, 6 insertions(+)
+>
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index b940a5777330..7f781256fda9 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -31,4 +31,5 @@ const gfp_t RUST_CONST_HELPER_GFP_KERNEL_ACCOUNT =3D GF=
+P_KERNEL_ACCOUNT;
+>  const gfp_t RUST_CONST_HELPER_GFP_NOWAIT =3D GFP_NOWAIT;
+>  const gfp_t RUST_CONST_HELPER___GFP_ZERO =3D __GFP_ZERO;
+>  const gfp_t RUST_CONST_HELPER___GFP_HIGHMEM =3D ___GFP_HIGHMEM;
+> +const gfp_t RUST_CONST_HELPER___GFP_NOWARN =3D ___GFP_NOWARN;
+>  const blk_features_t RUST_CONST_HELPER_BLK_FEAT_ROTATIONAL =3D BLK_FEAT_=
+ROTATIONAL;
+> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> index f0c80ab78602..295107777a12 100644
+> --- a/rust/kernel/alloc.rs
+> +++ b/rust/kernel/alloc.rs
+> @@ -91,6 +91,11 @@ pub mod flags {
+>      /// use any filesystem callback.  It is very likely to fail to alloc=
+ate memory, even for very
+>      /// small allocations.
+>      pub const GFP_NOWAIT: Flags =3D Flags(bindings::GFP_NOWAIT);
+> +
+> +    /// Suppresses allocation failure reports.
+> +    ///
+> +    /// This is normally or'd with other flags.
+> +    pub const __GFP_NOWARN: Flags =3D Flags(bindings::__GFP_NOWARN);
+>  }
+>
+>  /// The kernel's [`Allocator`] trait.
+> --
+> 2.45.2
+>
 
