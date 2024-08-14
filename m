@@ -1,103 +1,93 @@
-Return-Path: <linux-kernel+bounces-285762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF6C95124B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9860195124D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937E41C20150
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54071284D31
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE8A1CD06;
-	Wed, 14 Aug 2024 02:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8E82E633;
+	Wed, 14 Aug 2024 02:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="u3HBsvkM"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD/hBeC/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F9E1CD31;
-	Wed, 14 Aug 2024 02:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C362943F;
+	Wed, 14 Aug 2024 02:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723601902; cv=none; b=p6c/UkR3d1nEcYKdV8L9OmOvZxQQ4KSCK9bCgIFE8PEUGywdEbdJGwdLgAMzLTljbdZEpvu2mAEhj0ZYUcRSV7aGS5EkikNcADLF8LpLdoXYDQdOgyOLnBKEKWkzKxLDBHIzlb98UJq2wTltIyYu4wO37JA2N2z1aeukV8HhoyU=
+	t=1723601932; cv=none; b=vCt68/IUhtrgokCrozd4cFjdy7JIV9oO9q5YkZZkaTLFZAbVEasjLymoqHURvm7bgHTdJAzEUwWmfwWGffiDEr7lbdBx0MViPFN97k98aYqsMqEt/8MmHr/dXS2agj4LGUG/EIqBIMhvGfug6bR0JvlJkCEUdkg2bTJTmDLw6R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723601902; c=relaxed/simple;
-	bh=nA6UxXiujvxSFnNeSvgiILf4WW8LZvvaIFl7hB21qf8=;
+	s=arc-20240116; t=1723601932; c=relaxed/simple;
+	bh=SYXpdKKAIUAaMVyIUQOLGHSUglp33AepZ89w18ifSmg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uljHNQwuvBoP0dcEBqlS9Su1kgnm8lbcdnesf0pe18/MSCAUyYW+ThkjzcRy6AiSzmPWYXlsbhcoQ+6SlwXvQ8UW5Oqy9Oky805SwQ6TA/W36+phyjHCOb92xSa7Sz4ctyA9nz/XaZlUUKbGVu+Oum0IAj+LHEneCjxFEMCyonY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=u3HBsvkM; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=q8M9VFnTo721A/GaQMu/ptKzt9bsSKNvxU7i0Y8y6/0=; b=u3HBsvkMkekX42LhLvvmEnD1Dq
-	XePLEqR4fxTwT6ip7u/VWTS7qLqQtCLiMV/szNIVqCNdAjC5k9M/DKdeldVWMV3uI1WGn7KP/dnT3
-	zqacKx77YuJwJxKyxPXZZLCIXeFgGGYtnU0MOmCt3pWNE+eZKwmUVCFJrQ6pKtNBByI0KMBfhaGDZ
-	AgGYYzL3CfFYhU86X1ggjYG1MplxOr192HOGH9KbBdEQLAD2DBen0lPOR1Z30LY5DzCpbglaDHEFM
-	UgfRuH1bNmsgC/cQuc8toLIo32yRL4AlxxwrOOnBYUR8B+KXt+Xf07WBduC7mBOLME8UYo6NBQG+b
-	CgfD/jcg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1se3ab-00000001Uge-0Q3n;
-	Wed, 14 Aug 2024 02:18:17 +0000
-Date: Wed, 14 Aug 2024 03:18:17 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-Message-ID: <20240814021817.GO13701@ZenIV>
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRjDwnLxPjryD0kkMyIXunmdsswLc9Loh7qOJk6AZoHhi7sOgGq/sU7twUrFAYfqaDczFQnsJbqAVs6x+dfuQ0sWOJXNv5DiqEj3tfjMjbc1Kkxh96154k3QPl64Dvb7MkAlNhyXHE8zfdq8/M+wIX14nWAfkPkQUEa6WjY+/m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vD/hBeC/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE16C32782;
+	Wed, 14 Aug 2024 02:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723601932;
+	bh=SYXpdKKAIUAaMVyIUQOLGHSUglp33AepZ89w18ifSmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vD/hBeC/kQYwGGdgwg2F1siBMH5FbFMAmwb0EfwSIAEcMQdWalSE1LVApkJABpQjT
+	 N+jdTQNNs41B/zxCzu0axloV0m+o3N/vtrNg8cSo6xapJu4xAJ+A5zE9xrZupZ3amE
+	 woHpZKWblgCFgQ+DG5r85KaskKbqptgwXHMB6ZC140DPEWqKiaQHSSZulKjthmvUsy
+	 Gxi7o/sGvczwtu8KD2tsLU0lj6O/p4xB0oMmpsLoJV6lSFlZKgEe9R8qFxC+v1VxIc
+	 4tiBoW1TJbS/vYiJEuCRXxJlELk3sTdCZZvhBN2eHM2NJkypx14CymvGSW9+GjdBPy
+	 p8guwfOB7Vm7g==
+Date: Tue, 13 Aug 2024 22:18:50 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
+	=?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	Vitaly Chikunov <vt@altlinux.org>, stable@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.9 17/40] ASoC: topology: Fix route memory
+ corruption
+Message-ID: <ZrwUCnrtKQ61LWFS@sashalap>
+References: <czx7na7qfoacihuxcalowdosncubkqatf7gkd3snrb63wvpsdb@mncryvo4iiep>
+ <14e54a89-5c62-41b2-8205-d69ddf75e7c7@linux.intel.com>
+ <e95a876a-b4b4-4a9d-9608-ec27a9db3e0c@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <e95a876a-b4b4-4a9d-9608-ec27a9db3e0c@leemhuis.info>
 
-On Tue, Aug 06, 2024 at 03:51:35PM -0400, Jeff Layton wrote:
+On Mon, Aug 12, 2024 at 11:53:17AM +0200, Thorsten Leemhuis wrote:
+>Hi, top-posting for once, to make this easily accessible to everyone.
+>
+>Greg, Sasha, to me it looks like something fell through the cracks.
+>Pierre-Louis afaics about a week ago asked (see the quote below) to
+>revert 97ab304ecd95c0 ("ASoC: topology: Fix references to freed memory")
+>[v6.10-rc6, v6.9.11, v6.6.42, v6.1.101] from the stable branches *or*
+>pick up b9dd212b14d27a ("ASoC: topology: Fix route memory corruption").
+>But nothing like that has happened yet and I can't see any of those
+>resolutions in the 6.6 queue.
+>
+>Side note: I have a very strong feeling that I'm missing or
+>misunderstood something, but I decided to send this mail despite this...
+>If something like that was the case: apologies in advance.
 
-> > +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int open_flag)
-> > +{
-> > +	struct dentry *dentry;
-> > +
-> > +	if (open_flag & O_CREAT) {
-> > +		/* Don't bother on an O_EXCL create */
-> > +		if (open_flag & O_EXCL)
-> > +			return NULL;
-> > +
-> > +		/*
-> > +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
-> > +		 * use the dentry. For now, don't do this, since it shifts
-> > +		 * contention from parent's i_rwsem to its d_lockref spinlock.
-> > +		 * Reconsider this once dentry refcounting handles heavy
-> > +		 * contention better.
-> > +		 */
-> > +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
-> > +			return NULL;
-> > +	}
-> > +
-> > +	if (trailing_slashes(nd))
-> > +		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-> > +
-> > +	dentry = lookup_fast(nd);
-> 
-> Self-NAK on this patch. We have to test for IS_ERR on the returned
-> dentry here. I'll send a v3 along after I've retested it.
+For AUTOSEL mails, I only end up looking at the threads when I'm about
+to actually queue those commits up into the stable-queue, which is what
+happened here.
 
-That's not the only problem; your "is it negative" test is inherently
-racy in RCU mode.  IOW, what is positive at the time you get here can
-bloody well go negative immediately afterwards.  Hit that with
-O_CREAT and you've got a bogus ENOENT...
+-- 
+Thanks,
+Sasha
 
