@@ -1,95 +1,107 @@
-Return-Path: <linux-kernel+bounces-285669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F5D95110D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA8E95110F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940EE28368F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76654283E3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BBA4A0C;
-	Wed, 14 Aug 2024 00:32:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677CA1FC4;
+	Wed, 14 Aug 2024 00:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b="gRFugSD/"
+Received: from read.uberspace.de (read.uberspace.de [185.26.156.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E284A01
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE31197
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 00:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723595526; cv=none; b=aaVO5TaC1DVSbfs2TwtnTNi7t44MuCQgOreqcMZxlLk6HJQL56mU2VBzhSbz7qhYInzk3Ab0zAWe0uWckjyvE8cFW6bQIRvGNGYuap/RKKcLI3cvsP+wAWdCWgKALrhb/fFMDaaTJ6OQXI8t+d8p4IPP3HayJBC7g+J8cc2rZV0=
+	t=1723595615; cv=none; b=ZE8e7wQmbAN7MMCIef0ASxk/8KxLviZlCVB0HjRSrH0Gxv4l/lU7O7wCWZUNFmqHoxkmnty8Mw6ziQuiIlcCq5ixj0VrVUM2nhl6wQzb/U7dm7Ikc42BH7qm413vnJtCMePIBB7fqwIN2hVOz3mzt28UNI7eF+IubuKGO4cidKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723595526; c=relaxed/simple;
-	bh=0AJ0HRNyjUJdZzMl0FTmNH4D7MeA9pIfXvP+Njv1Cew=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CpcUOZv6RS95a6pPFASZ9wmgXz2sZ0c+n0QtnAREoXcTzRsUdvddlW91eYlnIWqUS0umaNxk31HUW15jDJ/fTuBm8C1AIZMxdoyWe2fbovJcl2uOKtM0GxMBVI8EK2WfMEIGcGCta8rhKDhSOqZ1vF6bNMgc4nr06pHUUc0Yk9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b3d98c318so74740845ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723595524; x=1724200324;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KN5LyX62t8kajm/Aoto7iYQTQrVYYSEk/pn2RlwMI5k=;
-        b=XZS9MXnh1I0Tb9jvs0pCy9tvJUwd/dkirsrJLXfZMZxgy7o3VrYnRekfxFtT6b7V4g
-         hfwIR9BeAi5FaF0Bb8l9Q4BYGEfh6ArrGYgqOByKbzRs4dQDwyF2HSz1jHXQXf4TpTeu
-         xLRYDjXlrNSCpuGr2aW/kO/TzcaJOQP/LGbo0q2+7xXVn5a+vquvIcVq8Dn5Woxp3DfB
-         NJuP+y7AhxOh6kX/FDp+MuJhOqA/L8KYlgXbYitbghwho2bT1Kzc/q/AU2lY8LGq/nAv
-         R7GRhmKdIlXcH7mWU8CbtbvS1q+VP5JKVdHsQ/84iFuizPduqHfEGCoxfOFRIHflZDIu
-         SvEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfq5ptM3KNSX9RzyAhOQoIvVUjOEBCgBoKmXaI+R4RRkQl9g5YKqRJV+IU0AmMQMyR6Ww9TAuBas8h9NglqQKM4DTSUABKBtsJ3g3i
-X-Gm-Message-State: AOJu0YydNKC0pNBgPfunFK2mgkVA6hIUxZ2kbtP7ONu1hhc8yxa61NIn
-	Ng3Y5vHgkykZWIBokrHlqZ+KBr6UaLdwOPzqwEcPLbcxp4mAjPqScdupuHKx6gg10IIwvMbmZkW
-	t3xkd65xoDh+VmNza+9135PtKqXr0VvnPZKHznSXtCEcqrovSn81NQ34=
-X-Google-Smtp-Source: AGHT+IH/g8aCJGElQ8/VklE5ry7A0gnFjQgBbmtCcpZz0jkOADdHDRelv0/VaixlspNKb+4RvqquWD/KTAwBB1bAKcnlGLxEbNk8
+	s=arc-20240116; t=1723595615; c=relaxed/simple;
+	bh=mZxBMSBOXUjPtNMzQYsC/w4amo62xoxfgDzla/4sRKo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ib/lhGs1op+SHA5lZ6S/dQo7ZefulmfYkEYluJQclz9pSVbhz0bbvpghu2omrwqqjs9qLKQXn0er4jt8k/XDEXGEF3yUqdy5DAfrvLrgqbwpq4P/bhd5ek23WTGEvlBiHX5+eP7kTRiQf5DOeCqNLQhRq3576u5EA27jR/ke++U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de; spf=pass smtp.mailfrom=florommel.de; dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b=gRFugSD/; arc=none smtp.client-ip=185.26.156.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=florommel.de
+Received: (qmail 6617 invoked by uid 990); 14 Aug 2024 00:33:29 -0000
+Authentication-Results: read.uberspace.de;
+	auth=pass (plain)
+Received: from unknown (HELO unkown) (::1)
+	by read.uberspace.de (Haraka/3.0.1) with ESMTPSA; Wed, 14 Aug 2024 02:33:29 +0200
+Message-ID: <d5c8fdfbdfa096c9c1215a2ccd1cabefc63f1ec8.camel@florommel.de>
+Subject: Re: [PATCH 0/2] kgdb: x86: fix breakpoint removal problems
+From: Florian Rommel <mail@florommel.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Jason Wessel
+ <jason.wessel@windriver.com>, Daniel Thompson <daniel.thompson@linaro.org>,
+ Douglas Anderson <dianders@chromium.org>,  Lorena Kretzschmar
+ <qy15sije@cip.cs.fau.de>, Stefan Saecherl <stefan.saecherl@fau.de>, Peter
+ Zijlstra <peterz@infradead.org>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>,  Randy Dunlap <rdunlap@infradead.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Geert Uytterhoeven
+ <geert+renesas@glider.be>,  kgdb-bugreport@lists.sourceforge.net,
+ x86@kernel.org,  linux-kernel@vger.kernel.org
+Date: Wed, 14 Aug 2024 02:33:29 +0200
+In-Reply-To: <20240813171055.f8805c1db539dfa18e80026b@linux-foundation.org>
+References: <20240811232208.234261-1-mail@florommel.de>
+	 <20240813171055.f8805c1db539dfa18e80026b@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c49:b0:374:9a34:a0a with SMTP id
- e9e14a558f8ab-39d12505416mr900485ab.6.1723595523843; Tue, 13 Aug 2024
- 17:32:03 -0700 (PDT)
-Date: Tue, 13 Aug 2024 17:32:03 -0700
-In-Reply-To: <000000000000be3c1a0604b53a1c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ef7be4061f99da2f@google.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in filemap_unaccount_folio
-From: syzbot <syzbot+17a207d226b8a5fb0fd9@syzkaller.appspotmail.com>
-To: airlied@redhat.com, akpm@linux-foundation.org, christian.koenig@amd.com, 
-	daniel@ffwll.ch, david@redhat.com, dri-devel@lists.freedesktop.org, 
-	fengwei.yin@intel.com, gurchetansingh@chromium.org, hughd@google.com, 
-	kraxel@redhat.com, linaro-mm-sig-bounces@lists.linaro.org, 
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-mm@kvack.org, sumit.semwal@linaro.org, 
-	syzkaller-bugs@googlegroups.com, vivek.kasireddy@intel.com
-Content-Type: text/plain; charset="UTF-8"
+X-Rspamd-Bar: +
+X-Rspamd-Report: SUSPICIOUS_RECIPS(1.5) BAYES_HAM(-0.138129) MIME_GOOD(-0.1)
+X-Rspamd-Score: 1.26187
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=florommel.de; s=uberspace;
+	h=from:to:cc:subject:date;
+	bh=mZxBMSBOXUjPtNMzQYsC/w4amo62xoxfgDzla/4sRKo=;
+	b=gRFugSD/tFere1sDgEeavx+9foLS7dCf39ZuQyBbk24KBMq0GPAaDRviGhNNPNOf/tmQR8NVBS
+	yEPWObIrPYUHPIwSBkTG6qi7uEg9/sGe5nCNsPCg5+EMypljVKsHiLU1tExSECKFDv5DMOHVB/Gj
+	xV712O5dIx1V9i86TrdMDqw+z+Fg2P0Lgib740/zYXAC/LDSquElO2jaZMaPo9xhW3WMAkkHxFUG
+	3zFRVtkJxlUhUYDrv/l3Vlt+xE0TLoCZtxepeV8+wUJH/JvaM+jisIG2Hcfp26CGAatyQ2fD3KGy
+	DBf951Q5cTmuh+EZKOya/Oc4WH4Vuy4RS/8VqRYFybcOY9aJWSqNn7X8lY9jdi06bwBstMDJ22Fb
+	i7KKLjfHKujr6MwkTaIWSCDrDkKKsc6iJ30/wZpDtYfpmEhoHr6k/jiWdeNL06ekJ/EJwFmNkyO8
+	CpVkPPYipmzVJczFD2EDfNt3VKjGFe6s27dGRsutnGMNcVaRg/iTf3FM8sqlCZsta7KZ3Am7lSzt
+	AW1E6DFHBsHIL2MLCTnow+n9lH3HAB6nP0U9dAiqOZgCwO8Kb5QDMsVBbtPRPIjAJH4WmisHz4d+
+	IdkBh0+P9JuJ5t/gIS/eNGUAPy5b5s1d8dzMAX7VOJUaD8Kfe6wsOhcpGmCtmvOIKw4aEieg10gZ
+	o=
 
-syzbot suspects this issue was fixed by commit:
+On Tue, 2024-08-13 at 17:10 -0700, Andrew Morton wrote:
+> On Mon, 12 Aug 2024 01:22:06 +0200 Florian Rommel <mail@florommel.de> wro=
+te:
+>=20
+> > This series fixes two problems with KGDB on x86 concerning the removal
+> > of breakpoints, causing the kernel to hang.  Note that breakpoint
+> > removal is not only performed when explicitly deleting a breakpoint,
+> > but also happens before continuing execution or single stepping.
+>=20
+> Neat.  It would be nice to fix earlier kernels; for that it is
+> desirable to identify a Fixes: target.  From a quick look it appears
+> this issue is more than a decade old, in which case I don't believe a
+> Fixes: is needed - our request becomes "please backport to everything".
+>=20
 
-commit 7d79cd784470395539bda91bf0b3505ff5b2ab6d
-Author: Vivek Kasireddy <vivek.kasireddy@intel.com>
-Date:   Mon Jun 24 06:36:13 2024 +0000
+Thanks. There is already a v2 (due to my negligence on the details) and
+a bit of discussion:
+https://lore.kernel.org/all/20240812174338.363838-1-mail@florommel.de/
 
-    udmabuf: use vmf_insert_pfn and VM_PFNMAP for handling mmap
+Rgeards,
+Florian
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17dad691980000
-start commit:   9b6de136b5f0 Merge tag 'loongarch-fixes-6.7-1' of git://gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6ae1a4ee971a7305
-dashboard link: https://syzkaller.appspot.com/bug?extid=17a207d226b8a5fb0fd9
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f58d67680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a78c62e80000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: udmabuf: use vmf_insert_pfn and VM_PFNMAP for handling mmap
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
