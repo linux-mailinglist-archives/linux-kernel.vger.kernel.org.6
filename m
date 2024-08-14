@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-287028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44919521D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:12:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740E99521D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD3D285C43
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:12:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B41A2809DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602EA1B32A6;
-	Wed, 14 Aug 2024 18:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D793E1BE23C;
+	Wed, 14 Aug 2024 18:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fjan/mZT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qCMimJA6"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436D51BD017
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723659139; cv=none; b=XT8lwcZevC7n5b8DQTaiS7YDGxZztn0QKcpQjeMSdvdsg0aiXMF0oE/4Fbq6GwFeXkZAmYJeWwJAB2pZlM6q9wZ8aMdvpGIYvB92oGiGLJzazl3ukXHQkOttNRWSnH1DGczCZdwz9MqWyk6ZhTCdOmMM9w2Evmt9AJn8qNzSXcI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723659139; c=relaxed/simple;
-	bh=hV66myumtR5cSOOfrPaWxnlBZDRz7vS7E8vqFj3zZIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D7f6ksLtE8iuQn69jFL73BkjCh3pC2y86QXPxdFRN38RXJKTOoFIO9g3ksOWj4QsbFn6/llutmBSqQsfq5cdwahNqrk8GTOZseaiT5Cl/u5d2XhfR9/vHxaSfgxmIbtSHdocobkYTTkWSSiWhsn7UtVeJ29SJpHB1rx1SiI9wa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fjan/mZT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723659136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OStzYQ3CcSqvcPVYW6U3k5VNAvtV6PLOXsyokOlAIHY=;
-	b=Fjan/mZTyMDqDJeUQE5UInQVdDy+zdfwleL6ecDtFzNpEIrXSvpcHiUUywc5IpF2NGVHp+
-	FY5Pa9ODz8inCCJ9wD6z5H5RvbBqov68RQsxFxsha/Hx7u2j9m6hfyNksBW5bhaau1N5mV
-	rLaTMznVfo1J3pB43rgABnLeAYIwGwk=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-590-sPaZFubnP3exYKpXxbj-6A-1; Wed, 14 Aug 2024 14:12:12 -0400
-X-MC-Unique: sPaZFubnP3exYKpXxbj-6A-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-428076fef5dso324285e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:12:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723659131; x=1724263931;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OStzYQ3CcSqvcPVYW6U3k5VNAvtV6PLOXsyokOlAIHY=;
-        b=XUx31is9yqTKWNdUjkL28bgcBhkDVgIwyB+4UhiR72VrsKIDHWrf+MKrNREv4E7G7E
-         rsZnHYboOdX2kyt7u5E/NhAP75jqOQJlE52Ar85u4+EY7gDmtMzjHl+nadO+EHZcZKkG
-         JfI4SPgKVga4qCEkceyOnskGTp6+CFjRM948/4LHkKAEysc3JwoHTWND9IM0oxilf0Dw
-         zehL9DmV9YipKfnKRIfmftpHkxeJZ2dWj01WeozRpH+zrj4UZJvr8ILMTuOlIWfv3aEs
-         xCbf0AtpSOSlMN/ijqd4Jhbhe5ObwMsYyJQeNo9InsC3zR1iSfAyjJWIPxVZinM48E/K
-         hkcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwU4lwCWn7MFa1FOrcvALbcfrZSL3kvtmvTFVYISGtiu7xNTBGLtkwAIPMQifpgXVp3xIpeKSR8e9jXFvzzCig2qH9OMsUpUJjk9sq
-X-Gm-Message-State: AOJu0Yy5ZEf9SNTMX+tbzvcsINXho0O4of3ClhNzH802Dlp2sJQR5x2u
-	xs6sjj9E4KIhhaIYo+eR88Fo5dTK4qK3Zw1GNNdc8dMwatkDkFbiBrH3mGTRKXZzKbgCui2PKGO
-	LZBtMSPoiBLSdT8E/u1a2OQvBWTV9/koWk0M1DCgWAATeaqVkUsT84PbgY9Epqg==
-X-Received: by 2002:a05:600c:3b08:b0:428:fcb:95c with SMTP id 5b1f17b1804b1-429dd264deamr26006825e9.23.1723659130856;
-        Wed, 14 Aug 2024 11:12:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEZCNIW0GlKat0WZVHYQnj4GZLbKXTNxu0xbXl7IAIUsgbwDqgiNRNBynLOfo4fcdH88+1lgQ==
-X-Received: by 2002:a05:600c:3b08:b0:428:fcb:95c with SMTP id 5b1f17b1804b1-429dd264deamr26006665e9.23.1723659130251;
-        Wed, 14 Aug 2024 11:12:10 -0700 (PDT)
-Received: from [192.168.10.47] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ded720fbsm27802005e9.35.2024.08.14.11.12.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 11:12:08 -0700 (PDT)
-Message-ID: <76605c6e-37f8-4abc-ade3-3ba381d6c9c4@redhat.com>
-Date: Wed, 14 Aug 2024 20:12:07 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FFA1BD509;
+	Wed, 14 Aug 2024 18:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723659141; cv=fail; b=czTHsWqDyaaCcnHwrwLTnAbJwhJk9LQh49vDDS1XSSWjQhTg/c2d4UuX7kkjC3IBDYTM8OpaCzfBsNhue7YfOhO0bPmiIKpK3SCgQ3t60eSQKLnruj45bAoQ54HOl0u8wymvkFGG1KUzuT9KX0k6lIOnNoOEaa5ghYLb7TdLxyw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723659141; c=relaxed/simple;
+	bh=o4dfIunzq6h8DDdW5TyidbwaSVSoeJU8wVuirRIgP5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VOMmnY+JsFQ5AGfmij9d+rSjyJSiVtSbamBBPhu7I1PbFWs5YkoNU6Y0pHXmixhdaEMgQIhIk+vvhGCbnawW1SyFRuHykaWtpF/NTsgrBRYmt+qCiRcAfTmm74AI48WSEaY6bQJinTv0ioiyEKD5YD5om1NY0HySnZxuG80jG8k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qCMimJA6; arc=fail smtp.client-ip=40.107.223.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CThBqjDroYNhNhCBtpjSgupIuauXeXcxnH1vFLkCBhqUsozFK5OoLugDjef+xpauinm0MgRqaTzsN8PNzLKe8gmbpaOO4NHBM8sacePZ7qxoasQNF6kScOwi9C6H5GDy92snKYIhe9wF1tlVkAsHfIBD6pNVCnEk4WxykJ8ceOri0q0ut0UKllbwsV9fZpCnKXk4g/iX6le8ZD6S9pyVTms7HQF/ux+tVrz0i1Lz7eWQkZKe4KC8RASDQrnGmdP+NLna0gHbSYNKx8qFJxf3NR6VbfQ79avcuT003LsiUTAUED3/pJ3ASQbl7gI0GFhb6U1eJ+BU6KVWwfjh4vAX4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GfXy5zzabu6F7nEWXuv8tL3KEQj2Xs646mlLGjfoAS0=;
+ b=gNCHPgg7kakS8HqWUSefVy02fCDvlb49rbs5wT7r+xYmucu+++twJiRal1plEiWGeyLBzIcWfhYYH7h9ektT8N95NvgCLAP9fnvcw7t62nEGTXO5JTvuuYVnq9NKnpqIhN50mB6qVv2RevEGqKmkqNlD1KHUGv6d31u0uKgl7tq+Y9Ma0llR9PiTSoS1Dwlf08LFj8igok4boJl52dL1laEK6p+iR9E/Io8tfwU5IAmJxkcppj9eKiomJyB/O4dV2eIzAd3Dczus2k+INzU1AGf/bxw/Y+f+jD7bNTXOVfImejhg9MdYF/9nTCx7BTPGyLZXKwhNcCAWXzo1LKNvxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GfXy5zzabu6F7nEWXuv8tL3KEQj2Xs646mlLGjfoAS0=;
+ b=qCMimJA6e3Zo48hH4Q7FVaCXlhXYtIcwztvZhX0aWOPkLT/jAcmrw4isGcAYh5at+TKZA7/zA2EmkrgvVGr3BNz+qo7vaQQBYHpUB3zUuqDy3Uz/Iz7RdQV9CLjDb+EsaU8USs3qgL0s7y4br2rPU//p/ziexqLa+qiktebzMRI=
+Received: from PH7P220CA0120.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32d::22)
+ by SA3PR12MB9226.namprd12.prod.outlook.com (2603:10b6:806:396::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Wed, 14 Aug
+ 2024 18:12:16 +0000
+Received: from CO1PEPF000042A7.namprd03.prod.outlook.com
+ (2603:10b6:510:32d:cafe::96) by PH7P220CA0120.outlook.office365.com
+ (2603:10b6:510:32d::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23 via Frontend
+ Transport; Wed, 14 Aug 2024 18:12:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1PEPF000042A7.mail.protection.outlook.com (10.167.243.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7828.19 via Frontend Transport; Wed, 14 Aug 2024 18:12:15 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 14 Aug
+ 2024 13:12:14 -0500
+Received: from [172.23.60.101] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 14 Aug 2024 13:12:13 -0500
+Message-ID: <cc986313-4eb3-4ec9-a217-5d8dac141fe9@amd.com>
+Date: Wed, 14 Aug 2024 14:12:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,352 +81,224 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] KVM: Register cpuhp and syscore callbacks when
- enabling hardware
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
-References: <20240608000639.3295768-1-seanjc@google.com>
- <20240608000639.3295768-3-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v3 3/8] PCI: Restore resource alignment
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240808215443.GA158993@bhelgaas>
 Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240608000639.3295768-3-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Stewart Hildebrand <stewart.hildebrand@amd.com>
+In-Reply-To: <20240808215443.GA158993@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB03.amd.com: stewart.hildebrand@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042A7:EE_|SA3PR12MB9226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e4265dd-a94d-48e5-46fc-08dcbc8ca0cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QjJVWVI5cnViRWRldXNpVXQvL2FGbTFqUnVhUVM0bjQ4bXMycHBCb3g5YUFJ?=
+ =?utf-8?B?VjB5NzNac0NseHM5VzA3eHhFMEFmV3hrTUJkL1lZTWRkTnNVa2dKTHFldUJj?=
+ =?utf-8?B?UUVVUVFKYTRidGorV1hOTGQvZm1yZ2JlY0Ivc3h2bEhXQ0xxT3ptWWtuZWV5?=
+ =?utf-8?B?QU9rVy9NL0wveGNnc2lSdUF3SlFHVXlXR0ZRUzRQbXlZbXhaZXVNbFgxbmNj?=
+ =?utf-8?B?VjZiQlhCM041RjA1bWFYV3ZDZHVpek9yS3lWczJCSDMrS2Q2a3kzSmxSdlRZ?=
+ =?utf-8?B?Tjc0R2hzQ0lvQ1hMRUFlYmNaQ1pWYVpnR2FBb0I0c2V0N0R5bS93anRjOFdu?=
+ =?utf-8?B?clBZYlVMMHFjc05uTFhCcDJnWWJLZ3ZROE41dTRxRE0zTXBmNU5UcXUrSWNV?=
+ =?utf-8?B?d0U0Tmlnc2hKaTc0bXYwdFgrdkVTZHRwYUFJVmlBOGRpYi9rVTBEcjc3V0JI?=
+ =?utf-8?B?S2RJSGxSVDZDU0RDKzNxbzdOMVh1K2F2RFRxU2lNRktZSEYwYjBmbUdTV1BJ?=
+ =?utf-8?B?RGZ3K1pNaE1Id2NzL3NaaWFyTXVyQVROREpMbGNFZytBZ1lsNlU2QXVYZEZH?=
+ =?utf-8?B?bER0ejhoSVMxRE9QdW8yRXdjaFdGcHd6NTdjT2kwUFByZFQ2OTNGWDBRTVl5?=
+ =?utf-8?B?cS9NVTV3MHNTUHNqdnZxM1RSbFpNTzFabFRXbURlVlpuUGpMa0RSbVFrZ3Vm?=
+ =?utf-8?B?eTVTanJ2T1N2REgxWWtoRVJUVGx0MlBpU05xNkIzcjRSWXQva1R6cWIxSTJH?=
+ =?utf-8?B?TFE3TFhpaXM4c0pudTBlcDBHemlPZEZ0NUo2dklnQ3RMbDRsRXIwT2dUckVj?=
+ =?utf-8?B?dmZvT0VTN2hVMGZIMVY1V0VOampPZzMrbmppaDBVODFsSXhyMkYybXZrUnNo?=
+ =?utf-8?B?eFlYQ2hmQStxbUdXTEdRenE1ZUJpNHBpZnJYNkhqVS9ZMGo5N2lHQlB1UERY?=
+ =?utf-8?B?SHcwNzNKb3p6cHdhV05qQ1ZnRWZIVmN0anJnb29ja2xrdnFGeXJHQjY1TWRK?=
+ =?utf-8?B?VS9EelRGY0F6aEUyMkFwaTVXVkQ3emp1elE1dC9hK0hybGsvMEt1bHR6TUNH?=
+ =?utf-8?B?V3ZIYXp6S1F0S2dTcENzK3RHLzRFWDYwcWJKam1YUnNMdnJMOCtWNHhyK0F5?=
+ =?utf-8?B?Y3V6RytGUndNWFkvMW12WStCOGRiQ0VXeWlueFlYYlRybmtsazlkei9RV1VD?=
+ =?utf-8?B?L09SMzM5QklDNENMWCs1aldBYWFOQnhJSkhOWXdHYVhFL3N3ZE5xeEF3VmFO?=
+ =?utf-8?B?YzkyRStHSlBYZGlUMkJMV3Nudm5iQnZET3NCMTBIUnRJckJjUDVWdVZzOEZw?=
+ =?utf-8?B?MWJEUXNiaHBZRHZtUU9jQ0FabmgvYno0SnIzV1A2dU9vUXlhQWQySmFIUm5K?=
+ =?utf-8?B?bXJza0xKbVNJVmVVRDRGN2VGb3BLZ3pRSlFCMTRxbG5GYnRHN2tqME5mcVRl?=
+ =?utf-8?B?RER6OHFPK1FxUXZsNzh5RWVoK2F0NnZxeUtzTmVRWFEzaWJmSUt4cnpNK3VR?=
+ =?utf-8?B?TS9jVnBvT1JIV3phbEU1elc1cE9LWUJ6cmV6TC92aWxkTUQ3YkZhNnJYY0g2?=
+ =?utf-8?B?Sk83MG9WNEQrSWFzTmJxSXc5YkE5WmN0YzJUZm5vVE1wbXFLNlpteWVmd2FM?=
+ =?utf-8?B?SXJzRzBiTmpJNGxzQzI5ZmRNYXVMK3Jqd2t3d0pQRzVEdkg4TXE2SjA2STdD?=
+ =?utf-8?B?RjlDU0swYTZXNW9VdktCNTZIN01jSENFRGFneDhxNGNxdE9hdkdBWGpZT3Ro?=
+ =?utf-8?B?NlFkZWhGWngzayt6Q25mTFhiVEx2OTVEdEpzR2N0OWswb2NZSGlKQmwrN1Jt?=
+ =?utf-8?B?Y201YUNJbWd3YnZUczVzVFJZT1JBUzJYN3JKa1NZNmZaVHlRR3Zwd0cvYXVM?=
+ =?utf-8?B?UmJxY1JjbmhaSG5iM3VlZ09sNG9DSWZRallvTW9qVEcwN1l5OGY4S3J4UCto?=
+ =?utf-8?Q?QubFWT84leactj5hSSRQCK8GzGlYGYHb?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 18:12:15.7143
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e4265dd-a94d-48e5-46fc-08dcbc8ca0cd
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042A7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9226
 
-On 6/8/24 02:06, Sean Christopherson wrote:
-> Register KVM's cpuhp and syscore callback when enabling virtualization
-> in hardware instead of registering the callbacks during initialization,
-> and let the CPU up/down framework invoke the inner enable/disable
-> functions.  Registering the callbacks during initialization makes things
-> more complex than they need to be, as KVM needs to be very careful about
-> handling races between enabling CPUs being onlined/offlined and hardware
-> being enabled/disabled.
+On 8/8/24 17:54, Bjorn Helgaas wrote:
+> On Thu, Aug 08, 2024 at 04:28:50PM -0400, Stewart Hildebrand wrote:
+>> On 8/8/24 15:28, Bjorn Helgaas wrote:
+>>> On Wed, Aug 07, 2024 at 11:17:12AM -0400, Stewart Hildebrand wrote:
+>>>> Devices with alignment specified will lose their alignment in cases when
+>>>> the bridge resources have been released, e.g. due to insufficient bridge
+>>>> window size. Restore the alignment.
+>>>
+>>> I guess this fixes a problem when the user has specified
+>>> "pci=resource_alignment=..." and we've decided to release and
+>>> reallocate a bridge window?  Just looking for a bit more concrete
+>>> description of what this problem would look like to a user.
+>>
+>> Yes. When alignment has been specified via pcibios_default_alignment()
+>> or by the user with "pci=resource_alignment=...", and the bridge window
+>> is being reallocated, the specified alignment is lost and the resource
+>> may not be sufficiently aligned after reallocation.
+>>
+>> I can expand the commit description.
 > 
-> Intel TDX support will require KVM to enable virtualization during KVM
-> initialization, i.e. will add another wrinkle to things, at which point
-> sorting out the potential races with kvm_usage_count would become even
-> more complex.
+> I think a hint about where the alignment gets lost would be helpful,
+> too.
 > 
-> Note, using the cpuhp framework has a subtle behavioral change: enabling
-> will be done serially across all CPUs, whereas KVM currently sends an IPI
-> to all CPUs in parallel.  While serializing virtualization enabling could
-> create undesirable latency, the issue is limited to creation of KVM's
-> first VM,
+> This seems like a problem users could be seeing today, even
+> independent of the device passthrough issue that I think is the main
+> thrust of this series.  If there's a problem report or an easy way to
+> reproduce this problem, that would be nice, too.
 
-Isn't that "limited to when kvm_usage_count goes from 0 to 1", so every 
-time a VM is started if you never run two?
+Oh, sorry, I just realized that it's only alignments with
+IORESOURCE_STARTALIGN that get lost during bridge window realloc.
+Specifically, r->start gets overwritten in __release_child_resources().
+There are a few code paths, such as the one in
+__release_child_resources(), that assume IORESOURCE_SIZEALIGN. In case
+of IORESOURCE_SIZEALIGN, the alignment is restored by a simple
+calculation. However, with IORESOURCE_STARTALIGN, we can't use a simple
+calculation, instead we need to consult
+pci_reassigndev_resource_alignment() to restore the alignment. I'll
+update the commit message.
 
-You're fixing this later though, so this is just an issue with the 
-commit message.
+An alternative approach might be to store the alignment in a new member
+in struct resource, thus saving us from having to call
+pci_reassigndev_resource_alignment() for each PCI device on the bridge
+undergoing reallocation.
 
-Paolo
+BTW, this patch and the two "[powerpc,x86]/pci: Preserve
+IORESOURCE_STARTALIGN alignment" patches could potentially be folded
+into a single patch as they're all dealing with fixing
+IORESOURCE_STARTALIGN.
 
-  and even that can be mitigated, e.g. by letting userspace force
-> virtualization to be enabled when KVM is initialized.
-> 
-> Cc: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   virt/kvm/kvm_main.c | 174 ++++++++++++++++----------------------------
->   1 file changed, 61 insertions(+), 113 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index d9b0579d3eea..f6b114f42433 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -5502,7 +5502,7 @@ static DEFINE_PER_CPU(bool, hardware_enabled);
->   static DEFINE_MUTEX(kvm_usage_lock);
->   static int kvm_usage_count;
->   
-> -static int __hardware_enable_nolock(void)
-> +static int hardware_enable_nolock(void)
->   {
->   	if (__this_cpu_read(hardware_enabled))
->   		return 0;
-> @@ -5517,34 +5517,18 @@ static int __hardware_enable_nolock(void)
->   	return 0;
->   }
->   
-> -static void hardware_enable_nolock(void *failed)
-> -{
-> -	if (__hardware_enable_nolock())
-> -		atomic_inc(failed);
-> -}
-> -
->   static int kvm_online_cpu(unsigned int cpu)
->   {
-> -	int ret = 0;
-> -
->   	/*
->   	 * Abort the CPU online process if hardware virtualization cannot
->   	 * be enabled. Otherwise running VMs would encounter unrecoverable
->   	 * errors when scheduled to this CPU.
->   	 */
-> -	mutex_lock(&kvm_usage_lock);
-> -	if (kvm_usage_count)
-> -		ret = __hardware_enable_nolock();
-> -	mutex_unlock(&kvm_usage_lock);
-> -	return ret;
-> +	return hardware_enable_nolock();
->   }
->   
->   static void hardware_disable_nolock(void *junk)
->   {
-> -	/*
-> -	 * Note, hardware_disable_all_nolock() tells all online CPUs to disable
-> -	 * hardware, not just CPUs that successfully enabled hardware!
-> -	 */
->   	if (!__this_cpu_read(hardware_enabled))
->   		return;
->   
-> @@ -5555,78 +5539,10 @@ static void hardware_disable_nolock(void *junk)
->   
->   static int kvm_offline_cpu(unsigned int cpu)
->   {
-> -	mutex_lock(&kvm_usage_lock);
-> -	if (kvm_usage_count)
-> -		hardware_disable_nolock(NULL);
-> -	mutex_unlock(&kvm_usage_lock);
-> +	hardware_disable_nolock(NULL);
->   	return 0;
->   }
->   
-> -static void hardware_disable_all_nolock(void)
-> -{
-> -	BUG_ON(!kvm_usage_count);
-> -
-> -	kvm_usage_count--;
-> -	if (!kvm_usage_count)
-> -		on_each_cpu(hardware_disable_nolock, NULL, 1);
-> -}
-> -
-> -static void hardware_disable_all(void)
-> -{
-> -	cpus_read_lock();
-> -	mutex_lock(&kvm_usage_lock);
-> -	hardware_disable_all_nolock();
-> -	mutex_unlock(&kvm_usage_lock);
-> -	cpus_read_unlock();
-> -}
-> -
-> -static int hardware_enable_all(void)
-> -{
-> -	atomic_t failed = ATOMIC_INIT(0);
-> -	int r;
-> -
-> -	/*
-> -	 * Do not enable hardware virtualization if the system is going down.
-> -	 * If userspace initiated a forced reboot, e.g. reboot -f, then it's
-> -	 * possible for an in-flight KVM_CREATE_VM to trigger hardware enabling
-> -	 * after kvm_reboot() is called.  Note, this relies on system_state
-> -	 * being set _before_ kvm_reboot(), which is why KVM uses a syscore ops
-> -	 * hook instead of registering a dedicated reboot notifier (the latter
-> -	 * runs before system_state is updated).
-> -	 */
-> -	if (system_state == SYSTEM_HALT || system_state == SYSTEM_POWER_OFF ||
-> -	    system_state == SYSTEM_RESTART)
-> -		return -EBUSY;
-> -
-> -	/*
-> -	 * When onlining a CPU, cpu_online_mask is set before kvm_online_cpu()
-> -	 * is called, and so on_each_cpu() between them includes the CPU that
-> -	 * is being onlined.  As a result, hardware_enable_nolock() may get
-> -	 * invoked before kvm_online_cpu(), which also enables hardware if the
-> -	 * usage count is non-zero.  Disable CPU hotplug to avoid attempting to
-> -	 * enable hardware multiple times.
-> -	 */
-> -	cpus_read_lock();
-> -	mutex_lock(&kvm_usage_lock);
-> -
-> -	r = 0;
-> -
-> -	kvm_usage_count++;
-> -	if (kvm_usage_count == 1) {
-> -		on_each_cpu(hardware_enable_nolock, &failed, 1);
-> -
-> -		if (atomic_read(&failed)) {
-> -			hardware_disable_all_nolock();
-> -			r = -EBUSY;
-> -		}
-> -	}
-> -
-> -	mutex_unlock(&kvm_usage_lock);
-> -	cpus_read_unlock();
-> -
-> -	return r;
-> -}
-> -
->   static void kvm_shutdown(void)
->   {
->   	/*
-> @@ -5658,8 +5574,7 @@ static int kvm_suspend(void)
->   	lockdep_assert_not_held(&kvm_usage_lock);
->   	lockdep_assert_irqs_disabled();
->   
-> -	if (kvm_usage_count)
-> -		hardware_disable_nolock(NULL);
-> +	hardware_disable_nolock(NULL);
->   	return 0;
->   }
->   
-> @@ -5668,8 +5583,7 @@ static void kvm_resume(void)
->   	lockdep_assert_not_held(&kvm_usage_lock);
->   	lockdep_assert_irqs_disabled();
->   
-> -	if (kvm_usage_count)
-> -		WARN_ON_ONCE(__hardware_enable_nolock());
-> +	WARN_ON_ONCE(hardware_enable_nolock());
->   }
->   
->   static struct syscore_ops kvm_syscore_ops = {
-> @@ -5677,6 +5591,60 @@ static struct syscore_ops kvm_syscore_ops = {
->   	.resume = kvm_resume,
->   	.shutdown = kvm_shutdown,
->   };
-> +
-> +static int hardware_enable_all(void)
-> +{
-> +	int r;
-> +
-> +	guard(mutex)(&kvm_usage_lock);
-> +
-> +	if (kvm_usage_count++)
-> +		return 0;
-> +
-> +	r = cpuhp_setup_state(CPUHP_AP_KVM_ONLINE, "kvm/cpu:online",
-> +			      kvm_online_cpu, kvm_offline_cpu);
-> +	if (r)
-> +		goto err_cpuhp;
-> +
-> +	register_syscore_ops(&kvm_syscore_ops);
-> +
-> +	/*
-> +	 * Undo virtualization enabling and bail if the system is going down.
-> +	 * If userspace initiated a forced reboot, e.g. reboot -f, then it's
-> +	 * possible for an in-flight operation to enable virtualization after
-> +	 * syscore_shutdown() is called, i.e. without kvm_shutdown() being
-> +	 * invoked.  Note, this relies on system_state being set _before_
-> +	 * kvm_shutdown(), e.g. to ensure either kvm_shutdown() is invoked
-> +	 * or this CPU observes the impending shutdown.  Which is why KVM uses
-> +	 * a syscore ops hook instead of registering a dedicated reboot
-> +	 * notifier (the latter runs before system_state is updated).
-> +	 */
-> +	if (system_state == SYSTEM_HALT || system_state == SYSTEM_POWER_OFF ||
-> +	    system_state == SYSTEM_RESTART) {
-> +		r = -EBUSY;
-> +		goto err_rebooting;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_rebooting:
-> +	unregister_syscore_ops(&kvm_syscore_ops);
-> +	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
-> +err_cpuhp:
-> +	--kvm_usage_count;
-> +	return r;
-> +}
-> +
-> +static void hardware_disable_all(void)
-> +{
-> +	guard(mutex)(&kvm_usage_lock);
-> +
-> +	if (--kvm_usage_count)
-> +		return;
-> +
-> +	unregister_syscore_ops(&kvm_syscore_ops);
-> +	cpuhp_remove_state(CPUHP_AP_KVM_ONLINE);
-> +}
->   #else /* CONFIG_KVM_GENERIC_HARDWARE_ENABLING */
->   static int hardware_enable_all(void)
->   {
-> @@ -6382,15 +6350,6 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
->   	int r;
->   	int cpu;
->   
-> -#ifdef CONFIG_KVM_GENERIC_HARDWARE_ENABLING
-> -	r = cpuhp_setup_state_nocalls(CPUHP_AP_KVM_ONLINE, "kvm/cpu:online",
-> -				      kvm_online_cpu, kvm_offline_cpu);
-> -	if (r)
-> -		return r;
-> -
-> -	register_syscore_ops(&kvm_syscore_ops);
-> -#endif
-> -
->   	/* A kmem cache lets us meet the alignment requirements of fx_save. */
->   	if (!vcpu_align)
->   		vcpu_align = __alignof__(struct kvm_vcpu);
-> @@ -6401,10 +6360,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
->   					   offsetofend(struct kvm_vcpu, stats_id)
->   					   - offsetof(struct kvm_vcpu, arch),
->   					   NULL);
-> -	if (!kvm_vcpu_cache) {
-> -		r = -ENOMEM;
-> -		goto err_vcpu_cache;
-> -	}
-> +	if (!kvm_vcpu_cache)
-> +		return -ENOMEM;
->   
->   	for_each_possible_cpu(cpu) {
->   		if (!alloc_cpumask_var_node(&per_cpu(cpu_kick_mask, cpu),
-> @@ -6461,11 +6418,6 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
->   	for_each_possible_cpu(cpu)
->   		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
->   	kmem_cache_destroy(kvm_vcpu_cache);
-> -err_vcpu_cache:
-> -#ifdef CONFIG_KVM_GENERIC_HARDWARE_ENABLING
-> -	unregister_syscore_ops(&kvm_syscore_ops);
-> -	cpuhp_remove_state_nocalls(CPUHP_AP_KVM_ONLINE);
-> -#endif
->   	return r;
->   }
->   EXPORT_SYMBOL_GPL(kvm_init);
-> @@ -6487,10 +6439,6 @@ void kvm_exit(void)
->   	kmem_cache_destroy(kvm_vcpu_cache);
->   	kvm_vfio_ops_exit();
->   	kvm_async_pf_deinit();
-> -#ifdef CONFIG_KVM_GENERIC_HARDWARE_ENABLING
-> -	unregister_syscore_ops(&kvm_syscore_ops);
-> -	cpuhp_remove_state_nocalls(CPUHP_AP_KVM_ONLINE);
-> -#endif
->   	kvm_irqfd_exit();
->   }
->   EXPORT_SYMBOL_GPL(kvm_exit);
+To repro the issue on x86, we will need to apply this series except the
+current patch [3/8].
+
+I ran into the issue with the following device. Let's call it example 1.
+Scrubbed/partial output from lspci -vv:
+
+	Region 0: Memory at d1924600 (32-bit, non-prefetchable) [size=256]
+	Region 1: Memory at d1924400 (32-bit, non-prefetchable) [size=512]
+	Region 2: Memory at d1924000 (32-bit, non-prefetchable) [size=1K]
+	Region 3: Memory at d1920000 (32-bit, non-prefetchable) [size=16K]
+	Region 4: Memory at d1900000 (32-bit, non-prefetchable) [size=128K]
+	Region 5: Memory at d1800000 (32-bit, non-prefetchable) [size=1M]
+	Capabilities: [b0] MSI-X: Enable- Count=2 Masked-
+		Vector table: BAR=0 offset=00000080
+		PBA: BAR=0 offset=00000090
+	Capabilities: [200 v1] Single Root I/O Virtualization (SR-IOV)
+		IOVCap:	Migration-, Interrupt Message Number: 000
+		IOVCtl:	Enable- Migration- Interrupt- MSE- ARIHierarchy+
+		IOVSta:	Migration-
+		Initial VFs: 4, Total VFs: 4, Number of VFs: 0, Function Dependency Link: 00
+		VF offset: 6, stride: 1, Device ID: 0100
+		Supported Page Size: 00000553, System Page Size: 00000001
+		Region 0: Memory at 00000000d0800000 (64-bit, non-prefetchable)
+		VF Migration: offset: 00000000, BIR: 0
+	Kernel driver in use: pci-endpoint-test
+	Kernel modules: pci_endpoint_test
+
+BARs 0, 1, and 2 are small, and the host firmware placed them on the
+same page. The host firmware did not page align the BARs. There is also
+an SR-IOV BAR that the firmware couldn't fit in the bridge window.
+
+In example 1, I did not specify pci=realloc=on. I used a kernel with
+CONFIG_PCI_REALLOC_ENABLE_AUTO=y, and the SR-IOV BAR triggered the
+bridge window realloc. Alignment was requested for BARs 0, 1, and 2 of
+this device, using IORESOURCE_STARTALIGN, because of patch [8/8]. The
+alignment was lost during realloc.
+
+Such a device from example 1 may be hard to come by, so here's a way to
+reproduce with qemu. Example 2:
+
+01:00.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe800000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c000 [size=256]
+        Memory at 7050000000 (64-bit, prefetchable) [size=32]
+
+01:01.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe801000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c100 [size=256]
+        Memory at 7050000020 (64-bit, prefetchable) [size=32]
+
+01:02.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe802000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c200 [size=256]
+        Memory at 7050000040 (64-bit, prefetchable) [size=32]
+
+01:03.0 Unclassified device [00ff]: Red Hat, Inc. QEMU PCI Test Device
+        Subsystem: Red Hat, Inc. QEMU Virtual Machine
+        Flags: fast devsel
+        Memory at fe803000 (32-bit, non-prefetchable) [size=4K]
+        I/O ports at c300 [size=256]
+        Memory at 7040000000 (64-bit, prefetchable) [size=256M]
+
+This example can reproduced with Qemu's pci-testdev and a SeaBIOS hack.
+In this case we will need to specify pci=realloc=on to trigger the
+realloc because there's no SR-IOV BAR to trigger it automatically. Add
+this to your usual qemu-system-x86_64 args:
+
+    -append "console=ttyS0 ignore_loglevel pci=realloc=on" \
+    -device pcie-pci-bridge,id=pcie.1 \
+    -device pci-testdev,bus=pcie.1,membar=32 \
+    -device pci-testdev,bus=pcie.1,membar=32 \
+    -device pci-testdev,bus=pcie.1,membar=32 \
+    -device pci-testdev,bus=pcie.1,membar=268435456
+
+Apply this SeaBIOS hack:
+
+diff --git a/src/fw/pciinit.c b/src/fw/pciinit.c
+index b3e359d7..769007a4 100644
+--- a/src/fw/pciinit.c
++++ b/src/fw/pciinit.c
+@@ -25,7 +25,7 @@
+ #include "util.h" // pci_setup
+ #include "x86.h" // outb
+
+-#define PCI_DEVICE_MEM_MIN    (1<<12)  // 4k == page size
++#define PCI_DEVICE_MEM_MIN    (0)
+ #define PCI_BRIDGE_MEM_MIN    (1<<21)  // 2M == hugepage size
+ #define PCI_BRIDGE_IO_MIN      0x1000  // mandated by pci bridge spec
+@@ -1089,6 +1089,7 @@ pci_region_map_one_entry(struct pci_region_entry *entry, u64 addr)
+         pci_config_writew(bdf, PCI_MEMORY_LIMIT, limit >> PCI_MEMORY_SHIFT);
+     }
+     if (entry->type == PCI_REGION_TYPE_PREFMEM) {
++        limit = addr + PCI_BRIDGE_MEM_MIN - 1;
+         pci_config_writew(bdf, PCI_PREF_MEMORY_BASE, addr >> PCI_PREF_MEMORY_SHIFT);
+         pci_config_writew(bdf, PCI_PREF_MEMORY_LIMIT, limit >> PCI_PREF_MEMORY_SHIFT);
+         pci_config_writel(bdf, PCI_PREF_BASE_UPPER32, addr >> 32);
 
 
