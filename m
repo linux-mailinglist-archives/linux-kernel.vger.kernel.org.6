@@ -1,234 +1,302 @@
-Return-Path: <linux-kernel+bounces-287321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13C095265E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:57:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BD6952660
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC471F24794
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06629284587
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C90A14F9D9;
-	Wed, 14 Aug 2024 23:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3A014A098;
+	Wed, 14 Aug 2024 23:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="NPpE7be0"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02olkn2054.outbound.protection.outlook.com [40.92.43.54])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="IFfEBRrv"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C60839FE5;
-	Wed, 14 Aug 2024 23:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.43.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723679832; cv=fail; b=ADs+QdSMec/Gjoh018NIOvtzSkoAM1Ro28BUrY2ot/MedHZXhU+1GUGDdauZU9vbfEu22L6E1n089zpLHuLd+FapNp8NvexEoJn5PlhE3nfBGjsne2kYQX93Ekfa1/GqcCce4S5H+DG9W/ddfaMUve3PMLZ70rbqM/mTdoUZpGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723679832; c=relaxed/simple;
-	bh=hFu7bIUm5KXpUtlqIFq6XbW3C2XZETPO/Nv8ulpH0Ds=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Zx/YsNlJoj22HVkQuTeu9QQ7dvcVOtr2BvnZ5iRt1FPklC19T+pAy/o9x/f3oF5eE5CtgEFwfLR5lFwHOVPuZB97CRdxWNCUcJvX3fdJ8qVkNBwXmpvRupH8AbNIQRtWofKyGH1kUUo3eEBVP+G7JsBVEPS+j/qag3H2oXttQJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=NPpE7be0; arc=fail smtp.client-ip=40.92.43.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i2QmxD4CB6UuZ6DTizWw6ZE7QJKvYVVDeAHgnKEk4/o0nkLluU/hbDpRSMnDVCmm1YVFrdrOalnwhqPRyjcBVxivkxdbeL83X6QrGwD65eEOJG6Jrziqi3sPGziVMMkGjVNVqN7KF7S5SF2mcuoLERxCrovX6P81Drca8hq+9AuvtpUku7DL2FwJqGumV5sYTiPwpoX8psyiQnxagwHAuPnCE/p7rEc9bqo1xHaI45nRidomT7C10lgZ45Oa+cZGhg655n3aCFNRq/Lw0FxRApRbDf+Tcb1riB0PhhNbbaS7hyB3szKp90i/Mwtwpt996/CaslvP/LJtAkoLqzgm+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l0bxjjdjaZW+x3wGlCC3Dlde+V/r1A/YrT99HoZbFlk=;
- b=FlZvU1fkUGGpVYK/eEg9gYNk5DuFh2Ra0JbrpLqdnd3iXDMSCJZhFGyPtVdlCv+tmsLtljJ54h26C+HFdF8Er2SMbmTsdDDLvTKEO9TubSHHoh++7KBFYK/siA2YrGJ34nICvl59nM3mcP8NjRaPjpgKM+Pqi/C0vE97IBumA3heyaSUHCf/8rEmkd1XOoLOTtFewmilf35r3MytauEnW2Fk7e+IijtD8kFj/jnjy3Fe5wgsjF2ORDL8e2cK/RoB+F9e/Sh6X5F6pbu17zz441lh8sNErF4rxDCJLZHHXF2A02Fj7VmgQhc5dkl7C0gvWfRo0t+Org6aysk8waZ/8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l0bxjjdjaZW+x3wGlCC3Dlde+V/r1A/YrT99HoZbFlk=;
- b=NPpE7be0vnP8Lfz0oQPVx31sBCFNMknKQ4WgpWnvWvTmcd6HteSNdyTVUSUKsdPEOV2J0ihK1RnXim7gp2TY6LHJEOP9eVb40w6zYNZPuQron6n8HnEa4I+I/YmWq7VeHzePoEGHwZeGOsthPC2DmTk6X18CfEalITs1gUXraCquZw6HkIeY1DLc2bDJKm7q+EouOY1HHTRaIvgv1iSPIWKlCfWV1f1hquYiBbBXKd0lyTBRSGdtE7I/z9Dsmq4Z8JXALpi1gEdj9hlcg7cAn8eDcicsS7raIdqihRhjX+4wxjZJWlCTy1gi+SLtipcezxxAlmnqPeaDr9v4MF971A==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DM6PR02MB6809.namprd02.prod.outlook.com (2603:10b6:5:218::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Wed, 14 Aug
- 2024 23:57:07 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
- 23:57:07 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, "kys@microsoft.com"
-	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
-	<decui@microsoft.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "ernis@microsoft.com" <ernis@microsoft.com>
-Subject: RE: [PATCH v2] net: netvsc: Update default VMBus channels
-Thread-Topic: [PATCH v2] net: netvsc: Update default VMBus channels
-Thread-Index: AQHa7mtihlctUjAqEkyZ5zpnW8ltobInaf0A
-Date: Wed, 14 Aug 2024 23:57:07 +0000
-Message-ID:
- <SN6PR02MB4157330500B79F4E728DFF7FD4872@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <1723654753-27893-1-git-send-email-ernis@linux.microsoft.com>
-In-Reply-To: <1723654753-27893-1-git-send-email-ernis@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [s+QGmKsdXT8sQhy65HLMtdmDdXU4oPmm]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DM6PR02MB6809:EE_
-x-ms-office365-filtering-correlation-id: 102b9317-ae4e-4ef4-b3f2-08dcbcbccde3
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799003|19110799003|8060799006|461199028|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- XjPrM6M7YPRS0uNuUt3ZFE+OKCQ6mSbjXINRwN+Iu+0hv5EK6ku4UwZcXuT8xd/U52j44fn2u5JdBBGq3R4YxQVYHACIVa4Gu/1vZK0gq9vHlZm/QkHCK1mQMLYNI+uZyD0UkepJtqNz0ayrJ9nygBZgZ3fyXrGetoOrcwh0NyuYPKfhxm/W2I6y4Bkq0Efff4b4p6KsB5MwHQwy4kHUsCIgg5V7W7ji58Pv9dgtoxfZgkLvivqnm/LdEDHlJwZAvNBzMmDi6UVLoEp/S3vloFL/2eW0uV3//WnGjMFDM/6hnxW7yY42u6hRLLIlTGmkWSpRHioi63ZMuPvyVlV38Xe/45+uJqgg3/8Rl49DGUyR5Wfti5BEMOYY8V4FnzpNlHO4bBIs67TJxTAFyTNfYhBgEHPsY6PUJTc8ajA5jBQ0YPFqrEBk0dY62jOJiSboFP3XVFtmXFvyNIkgwjzruOYMvB6r3ZXkNwTX4/IazIGIsyVi/fVMQrHl1ShxVONf9rNmHhovSC/RwzhCtzH1DPyMtXEhc6XCqyHIhfM03l1RlbT7cBMklPbkRGdqhE0Lndb4h5qvI9OqVMb2DQpYsDRXxHqOIBDLkO3uPx9Y5oPBgHzYL+cozSkt0BkW6CvTuErKnw8331gcyZzST4gJZhBTMBIDXRpGZApmc7uupYMHiqCwyIwAigMtHBOh/Agv
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?r+APi7rHDS6jcfcjtEcLN7IC4Edt/WcKXmA1NZeXu9kQgSBqmhZ2Yw1Lytjz?=
- =?us-ascii?Q?oKuiwFH8Nr36JQCFbXWSvenrqcSSRF2P5f6vH1xsweVedwdJjlp7OhzJzSp3?=
- =?us-ascii?Q?iJdFUSvLl9N1gs5wZgjc9OQNTwsEvlCM/4Qfb6YFJ3v1RE8/IpX5J1/Ca9RU?=
- =?us-ascii?Q?A/2BuuqMDDVYkyW2P15JwtP5ILgRB8ew/VqcLGEmRgYNbzEdV0JQWsnmv5+q?=
- =?us-ascii?Q?Exa2+WRINtfB0Z8pCCEHaiQ/hsAaW6GfNtOugRJdd9j4BtOQrD/18yxTqXcs?=
- =?us-ascii?Q?e9uI04B2d27HPoz5YkR90GAzlZ0Vox9qZbLg8E7f8La2eeVsOeLbhVEZjEQS?=
- =?us-ascii?Q?BmGoQ/3nSv1X1qbou653I/UV5zjmwxrvOYHfwrImtyGLXliOLTJ6669MK96O?=
- =?us-ascii?Q?YJIfEZ3M4vK+TeAu/u4Z7KN89Q9VzPUnayPDQvGGe4J7cLVbK7JrqeRz5+Wq?=
- =?us-ascii?Q?Nm18rN462dUn4eDjyotaGUZPHqlgo6S3ehykuxEd2wGgFtof5m6YqfneDI00?=
- =?us-ascii?Q?7kSerpdA8BXpDfH06PSL0SCbP7Y9NI7Af2dSSk2qh9HfD/EyX72R1m36rfAV?=
- =?us-ascii?Q?j0C7u+18Zw0yu2s7avPc7SIEmlwf3oY4SKgCgJx4x7EOkksj4WReHetsqev3?=
- =?us-ascii?Q?8+X5qvaM4mQpHSs4YaUsEpjiNxALFxofG0L7iuBaLuTUtaqNIWNISZazvot7?=
- =?us-ascii?Q?qDgIRKYLGAH4tJKrPOOi6b+SK9jJjqSNPQUvz3bbjHcyvrNOE5jSDGwVd7sl?=
- =?us-ascii?Q?P6XGffquayMeWuUsvOaLkN3CxRY6w38cLULk8ZMdgiDZoL6GHvF07BFK0Bvx?=
- =?us-ascii?Q?F0PK3h2wm6FxtQoS3J6aVcErU0sPwPxYW8FDutc74JzRqJ2/X3l9uBdE7vcD?=
- =?us-ascii?Q?Eh/eutS9o4kcpvvn9WwRpBy0zB08sB4+88CohbJ37hK1czISuHzILOgKw+1F?=
- =?us-ascii?Q?F9OcPgoRhkEtSLJlAIoYCBuADFcocPgqM9yQsgtbUz915OqXhJzZc3q6IN9I?=
- =?us-ascii?Q?h/2o2xJlvH7sIKldX9vTZkuNTZIHEyk7rU24z+ughaCeM9e0yUUQ9nVqAilf?=
- =?us-ascii?Q?IIC3G+F+7Mu8CkdIx0v3R9Alju/ajQJ3DQKbH4bZ4hryRDdw7AUn0r27KrO8?=
- =?us-ascii?Q?1umnAhwtr70GttLiTAprxj197XmEP0lpuOMy4dUXtq2lkqbhjiR9uPuM4fuk?=
- =?us-ascii?Q?6xNCs+efpWJlZpZzStUu2CWLZyiRez059gH4qLqVkqn5swZci1iRG8auhTs?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFD214900E;
+	Wed, 14 Aug 2024 23:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723679861; cv=none; b=M7x1uYMLt1f4hl1QxopQUkZnmpwQsvTsVU5yuqypF2Fbc0x48rpVB47C9Ajn9ET3HoeVLzW+WM4xOHgwWxhwHIlST+nNqNU5GXJ+q/8dp6GeVEtIvXfDOkOotEwgD0f27Kj6eltarm9cJhJaba8Ba/NVSizefFYJ4NjESgSm1H8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723679861; c=relaxed/simple;
+	bh=zZdagAj/nB+c749l2/BsbKxGaPOeBu9jRl+QnpTr6Ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rh3eXPmVISQiZS2/R7BPSybWtd9Im8eky3yVaUQXL0IsSq+FW8HqCG75wAkyg1N4XzjsvpQ0q9tEfrhfO879IiXTpTZx6SyIm0w5xFbbvuRfOF6AXweXFScNtP1vx+Gwz6uj4tXTvrVjc3qC/iwNCGlkCSxf3116POOiW5f+drY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=IFfEBRrv; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723679855;
+	bh=Z3ayeBSbWvFEAMa6x9onBIH7T1ibHShFjN1i9QJQoEE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IFfEBRrvZaTkEnweYQGh6HHP8MYZIbBJOL9/QSEqhafYndOQp1y0tqefOysfEpDzM
+	 wbXgADyB8sg5UUFE3UN1vMvfWoA8MkRHWmDHJDOKU9sDtlaO7HFw7B2obwpoSoF4ta
+	 XDytS1RJUUN3eo0f4A7fm82tREOk+a8PQKpLNJTno3UejVQmhrkaIxtsk7pa75RWLv
+	 lysuV5uNThrAoKqO2uDQCC4+DGUjAB1YTOurhxCE1Tjwzv2vUuO2Tc6GoL9EuMcu/5
+	 xeJ/uEM1+1MnS6xSy+alLm6PGK+NjKni0Apk5orXomRfkzFDPTIebm3Dw2ge4jYOuE
+	 6N1TfzstcxT/Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WklYW05rTz4w2N;
+	Thu, 15 Aug 2024 09:57:34 +1000 (AEST)
+Date: Thu, 15 Aug 2024 09:57:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm tree
+Message-ID: <20240815095734.751c6ec5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 102b9317-ae4e-4ef4-b3f2-08dcbcbccde3
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2024 23:57:07.3388
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6809
+Content-Type: multipart/signed; boundary="Sig_/R1lQ63et=S47eRji8nY6/TR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com> Sent: Wednesday, A=
-ugust 14, 2024 9:59 AM
->=20
-> Change VMBus channels macro (VRSS_CHANNEL_DEFAULT) in
-> Linux netvsc from 8 to 16 to align with Azure Windows VM
-> and improve networking throughput.
->=20
-> For VMs having less than 16 vCPUS, the channels depend
-> on number of vCPUs. Between 16 to 32 vCPUs, the channels
-> default to VRSS_CHANNEL_DEFAULT. For greater than 32 vCPUs,
-> set the channels to number of physical cores / 2 as a way
-> to optimize CPU resource utilization and scale for high-end
-> processors with many cores.
-> Maximum number of channels are by default set to 64.
+--Sig_/R1lQ63et=S47eRji8nY6/TR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Where in the code is this enforced? It's not part of this patch. It
-might be in rndis_set_subchannel(), where a value larger than
-64 could be sent to the Hyper-V host, expecting that the Hyper-V
-host will limit it to 64. But netvsc driver code is declaring an array
-of size VRSS_CHANNEL_MAX, and there's nothing that guarantees
-that Hyper-V will always limit the channel count to 64. But maybe
-the netvsc driver enforces the limit of VRSS_CHANNEL_MAX in a
-place that I didn't immediately see in a quick look at the code.
+Hi all,
 
->=20
-> Based on this change the subchannel creation would change as follows:
->=20
-> -------------------------------------------------------------
-> |No. of vCPU	|dev_info->num_chn	|subchannel created |
-> -------------------------------------------------------------
-> |  0-16		|	16		|	vCPU	    |
-> | >16 & <=3D32	|	16		|	16          |
-> | >32 & <=3D128	|	vCPU/2		|	vCPU/2      |
-> | >128		|	vCPU/2		|	64          |
-> -------------------------------------------------------------
+After merging the mm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-The terminology here is slightly wrong. A VMBus device has one
-primary channel plus zero or more subchannels. The chart
-above is specifying the total number of channels (primary plus
-subchannels), not the number of subchannels.
+drivers/nvme/host/fault_inject.c: In function 'nvme_fault_inject_init':
+drivers/nvme/host/fault_inject.c:29:18: error: implicit declaration of func=
+tion 'debugfs_create_dir'; did you mean 'kernfs_create_dir'? [-Werror=3Dimp=
+licit-function-declaration]
+   29 |         parent =3D debugfs_create_dir(dev_name, NULL);
+      |                  ^~~~~~~~~~~~~~~~~~
+      |                  kernfs_create_dir
+drivers/nvme/host/fault_inject.c:29:16: error: assignment to 'struct dentry=
+ *' from 'int' makes pointer from integer without a cast [-Werror=3Dint-con=
+version]
+   29 |         parent =3D debugfs_create_dir(dev_name, NULL);
+      |                ^
+drivers/nvme/host/fault_inject.c:39:17: error: implicit declaration of func=
+tion 'debugfs_remove_recursive' [-Werror=3Dimplicit-function-declaration]
+   39 |                 debugfs_remove_recursive(parent);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/nvme/host/fault_inject.c:47:9: error: implicit declaration of funct=
+ion 'debugfs_create_x16' [-Werror=3Dimplicit-function-declaration]
+   47 |         debugfs_create_x16("status", 0600, dir, &fault_inj->status);
+      |         ^~~~~~~~~~~~~~~~~~
+drivers/nvme/host/fault_inject.c:48:9: error: implicit declaration of funct=
+ion 'debugfs_create_bool'; did you mean 'kernfs_create_root'? [-Werror=3Dim=
+plicit-function-declaration]
+   48 |         debugfs_create_bool("dont_retry", 0600, dir, &fault_inj->do=
+nt_retry);
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         kernfs_create_root
+cc1: all warnings being treated as errors
+drivers/iommu/iommufd/selftest.c: In function 'iommufd_test_init':
+drivers/iommu/iommufd/selftest.c:1562:9: error: implicit declaration of fun=
+ction 'debugfs_remove_recursive' [-Werror=3Dimplicit-function-declaration]
+ 1562 |         debugfs_remove_recursive(dbgfs_root);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+kernel/futex/core.c: In function 'fail_futex_debugfs':
+kernel/futex/core.c:98:9: error: implicit declaration of function 'debugfs_=
+create_bool'; did you mean 'kernfs_create_root'? [-Werror=3Dimplicit-functi=
+on-declaration]
+   98 |         debugfs_create_bool("ignore-private", mode, dir,
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         kernfs_create_root
+cc1: all warnings being treated as errors
+mm/fail_page_alloc.c: In function 'fail_page_alloc_debugfs':
+mm/fail_page_alloc.c:57:9: error: implicit declaration of function 'debugfs=
+_create_bool'; did you mean 'kernfs_create_root'? [-Werror=3Dimplicit-funct=
+ion-declaration]
+   57 |         debugfs_create_bool("ignore-gfp-wait", mode, dir,
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         kernfs_create_root
+mm/fail_page_alloc.c:61:9: error: implicit declaration of function 'debugfs=
+_create_u32' [-Werror=3Dimplicit-function-declaration]
+   61 |         debugfs_create_u32("min-order", mode, dir, &fail_page_alloc=
+.min_order);
+      |         ^~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+mm/failslab.c: In function 'failslab_debugfs_init':
+mm/failslab.c:65:9: error: implicit declaration of function 'debugfs_create=
+_bool'; did you mean 'kernfs_create_root'? [-Werror=3Dimplicit-function-dec=
+laration]
+   65 |         debugfs_create_bool("ignore-gfp-wait", mode, dir,
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         kernfs_create_root
+cc1: all warnings being treated as errors
+lib/fault-inject.c: In function 'debugfs_create_ul':
+lib/fault-inject.c:186:9: error: implicit declaration of function 'debugfs_=
+create_file'; did you mean 'debugfs_create_ul'? [-Werror=3Dimplicit-functio=
+n-declaration]
+  186 |         debugfs_create_file(name, mode, parent, value, &fops_ul);
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         debugfs_create_ul
+lib/fault-inject.c: In function 'fault_create_debugfs_attr':
+lib/fault-inject.c:217:15: error: implicit declaration of function 'debugfs=
+_create_dir'; did you mean 'debugfs_create_ul'? [-Werror=3Dimplicit-functio=
+n-declaration]
+  217 |         dir =3D debugfs_create_dir(name, parent);
+      |               ^~~~~~~~~~~~~~~~~~
+      |               debugfs_create_ul
+lib/fault-inject.c:217:13: error: assignment to 'struct dentry *' from 'int=
+' makes pointer from integer without a cast [-Werror=3Dint-conversion]
+  217 |         dir =3D debugfs_create_dir(name, parent);
+      |             ^
+lib/fault-inject.c:223:9: error: implicit declaration of function 'debugfs_=
+create_atomic_t'; did you mean 'debugfs_create_ul'? [-Werror=3Dimplicit-fun=
+ction-declaration]
+  223 |         debugfs_create_atomic_t("times", mode, dir, &attr->times);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+      |         debugfs_create_ul
+lib/fault-inject.c:226:9: error: implicit declaration of function 'debugfs_=
+create_u32'; did you mean 'debugfs_create_ul'? [-Werror=3Dimplicit-function=
+-declaration]
+  226 |         debugfs_create_u32("verbose_ratelimit_interval_ms", mode, d=
+ir,
+      |         ^~~~~~~~~~~~~~~~~~
+      |         debugfs_create_ul
+lib/fault-inject.c:230:9: error: implicit declaration of function 'debugfs_=
+create_bool'; did you mean 'debugfs_create_ul'? [-Werror=3Dimplicit-functio=
+n-declaration]
+  230 |         debugfs_create_bool("task-filter", mode, dir, &attr->task_f=
+ilter);
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         debugfs_create_ul
+lib/fault-inject.c:235:9: error: implicit declaration of function 'debugfs_=
+create_xul'; did you mean 'debugfs_create_ul'? [-Werror=3Dimplicit-function=
+-declaration]
+  235 |         debugfs_create_xul("require-start", mode, dir, &attr->requi=
+re_start);
+      |         ^~~~~~~~~~~~~~~~~~
+      |         debugfs_create_ul
+cc1: all warnings being treated as errors
 
-Michael
+Caused by commit
 
->=20
-> Performance tests showed significant improvement in throughput:
-> - 0.54% for 16 vCPUs
-> - 0.83% for 32 vCPUs
-> - 1.76% for 48 vCPUs
-> - 10.35% for 64 vCPUs
-> - 13.47% for 96 vCPUs
->=20
-> Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-> ---
-> Changes in v2:
-> * Set dev_info->num_chn based on vCPU count
-> ---
->  drivers/net/hyperv/hyperv_net.h | 2 +-
->  drivers/net/hyperv/netvsc_drv.c | 5 ++++-
->  2 files changed, 5 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_=
-net.h
-> index 810977952f95..e690b95b1bbb 100644
-> --- a/drivers/net/hyperv/hyperv_net.h
-> +++ b/drivers/net/hyperv/hyperv_net.h
-> @@ -882,7 +882,7 @@ struct nvsp_message {
->=20
->  #define VRSS_SEND_TAB_SIZE 16  /* must be power of 2 */
->  #define VRSS_CHANNEL_MAX 64
-> -#define VRSS_CHANNEL_DEFAULT 8
-> +#define VRSS_CHANNEL_DEFAULT 16
->=20
->  #define RNDIS_MAX_PKT_DEFAULT 8
->  #define RNDIS_PKT_ALIGN_DEFAULT 8
-> diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_=
-drv.c
-> index 44142245343d..e32eb2997bf7 100644
-> --- a/drivers/net/hyperv/netvsc_drv.c
-> +++ b/drivers/net/hyperv/netvsc_drv.c
-> @@ -27,6 +27,7 @@
->  #include <linux/rtnetlink.h>
->  #include <linux/netpoll.h>
->  #include <linux/bpf.h>
-> +#include <linux/cpumask.h>
->=20
->  #include <net/arp.h>
->  #include <net/route.h>
-> @@ -987,7 +988,9 @@ struct netvsc_device_info *netvsc_devinfo_get(struct
-> netvsc_device *nvdev)
->  			dev_info->bprog =3D prog;
->  		}
->  	} else {
-> -		dev_info->num_chn =3D VRSS_CHANNEL_DEFAULT;
-> +		int count =3D num_online_cpus();
-> +
-> +		dev_info->num_chn =3D (count < 32) ? VRSS_CHANNEL_DEFAULT : DIV_ROUND_=
-UP(count, 2);
->  		dev_info->send_sections =3D NETVSC_DEFAULT_TX;
->  		dev_info->send_section_size =3D NETVSC_SEND_SECTION_SIZE;
->  		dev_info->recv_sections =3D NETVSC_DEFAULT_RX;
-> --
-> 2.34.1
->=20
+  2771559a5531 ("fault-inject: improve build for CONFIG_FAULT_INJECTION=3Dn=
+")
+
+This is just whack-a-mole ... :-(
+
+I have applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 15 Aug 2024 09:47:30 +1000
+Subject: [PATCH] fix up for "fault-inject: improve build for CONFIG_FAULT_I=
+NJECTION=3Dn"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/iommu/iommufd/selftest.c | 1 +
+ drivers/nvme/host/fault_inject.c | 1 +
+ kernel/futex/core.c              | 1 +
+ lib/fault-inject.c               | 1 +
+ mm/fail_page_alloc.c             | 1 +
+ mm/failslab.c                    | 1 +
+ 6 files changed, 6 insertions(+)
+
+diff --git a/drivers/iommu/iommufd/selftest.c b/drivers/iommu/iommufd/selft=
+est.c
+index f95e32e29133..d9024c00c6c3 100644
+--- a/drivers/iommu/iommufd/selftest.c
++++ b/drivers/iommu/iommufd/selftest.c
+@@ -8,6 +8,7 @@
+ #include <linux/xarray.h>
+ #include <linux/file.h>
+ #include <linux/anon_inodes.h>
++#include <linux/debugfs.h>
+ #include <linux/fault-inject.h>
+ #include <linux/platform_device.h>
+ #include <uapi/linux/iommufd.h>
+diff --git a/drivers/nvme/host/fault_inject.c b/drivers/nvme/host/fault_inj=
+ect.c
+index 1d1b6441a339..105d6cb41c72 100644
+--- a/drivers/nvme/host/fault_inject.c
++++ b/drivers/nvme/host/fault_inject.c
+@@ -6,6 +6,7 @@
+  */
+=20
+ #include <linux/moduleparam.h>
++#include <linux/debugfs.h>
+ #include "nvme.h"
+=20
+ static DECLARE_FAULT_ATTR(fail_default_attr);
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index 06a1f091be81..f7cddf321593 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -36,6 +36,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/plist.h>
+ #include <linux/memblock.h>
++#include <linux/debugfs.h>
+ #include <linux/fault-inject.h>
+ #include <linux/slab.h>
+=20
+diff --git a/lib/fault-inject.c b/lib/fault-inject.c
+index d608f9b48c10..d5853defe77a 100644
+--- a/lib/fault-inject.c
++++ b/lib/fault-inject.c
+@@ -9,6 +9,7 @@
+ #include <linux/export.h>
+ #include <linux/interrupt.h>
+ #include <linux/stacktrace.h>
++#include <linux/debugfs.h>
+ #include <linux/fault-inject.h>
+=20
+ /*
+diff --git a/mm/fail_page_alloc.c b/mm/fail_page_alloc.c
+index 532851ce5132..4c7aa18450c9 100644
+--- a/mm/fail_page_alloc.c
++++ b/mm/fail_page_alloc.c
+@@ -1,4 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/debugfs.h>
+ #include <linux/fault-inject.h>
+ #include <linux/error-injection.h>
+ #include <linux/mm.h>
+diff --git a/mm/failslab.c b/mm/failslab.c
+index af16c2ed578f..4b02bc8b420e 100644
+--- a/mm/failslab.c
++++ b/mm/failslab.c
+@@ -1,4 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/debugfs.h>
+ #include <linux/fault-inject.h>
+ #include <linux/error-injection.h>
+ #include <linux/slab.h>
+--=20
+2.43.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/R1lQ63et=S47eRji8nY6/TR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma9RG4ACgkQAVBC80lX
+0GzzZQf6A+QLrnr+VsvIqUT8wxk5FAAIva4isj6t6XKkJrkyNLgwb210OShHoBhx
+eN1cOI4gH00UcB7wymOW4XbsDQYWbypL753TyyJM4KWShbsOt32Kf3AKJ6CpGhMU
+UtJspgAAdIG2tnjnwTk2voNyWLV9mDPozjSCnyDqDhs7V/eAGpmK1dx/kiwlxmtA
+H5Vgki6DvsYioYNNVQxXcbmHIADU3VhDJkYCBE8ZkCo3JpCSXw2u1/uKdT21c1EJ
+luSIodsgUePaxBcrH4rFGqJ5fK6qP0qEie1ygu92VkBjbT9qbZQjPYjQLvlchAHn
+HPVCDOPAW6DTEUTPfs0Bil9+JNARbw==
+=2k5C
+-----END PGP SIGNATURE-----
+
+--Sig_/R1lQ63et=S47eRji8nY6/TR--
 
