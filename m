@@ -1,173 +1,140 @@
-Return-Path: <linux-kernel+bounces-287121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AD07952345
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:20:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFFE952348
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA3B285851
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:20:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10001B20C48
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591401CB30E;
-	Wed, 14 Aug 2024 20:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF571C231D;
+	Wed, 14 Aug 2024 20:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qvg0l7ga"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Cus6QGVH"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D269E1C824A
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F801762D2
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723666696; cv=none; b=AEWaq+qofTBztUU3yMW0gIDn50V52fwPlZ85Bycelm8GsL9EXm5YB4vW9Omjgyuw3cGa113dXtfcR3aCwo2V/Pwy0Pc63XTkL0Ji3+0T+b4hpVa2KwuGU7AuKcJygfCIbqfKxtLbkr+f7VBlDmoyRVZ+STXRd3wbIbQYhIgs7AY=
+	t=1723666926; cv=none; b=aElRVvdt2FATBa2sYDsNxdPnYvnSGoNHbJI3gi2TwFNOzDIU9yMmzgbav6Y8jasPQvtvdsnYD3oE9mHj1/hoDBPO1Q03o7f+kHh1SQkuW9xpmarn+HqlKrH3hC7Hslgd/J/xt1QsiidMg/t2F4HSH0XeSnfyD74ZZwStN7YFP6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723666696; c=relaxed/simple;
-	bh=qjB1r7xWZkiqepaZBKt71uec8dzopsPxrHTPtf78T+A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mpbFeSoh5ftKqA7ojO3N4i+LyKaBehKVsPKh7xCZRw3HKVEhEAzQt9uq7en/KkRYsGto7KA1tpB9I3gguYoNB3u6nEypKgWj8BIqGzSZ9aiQXwq0H1GpFfoKSFSMJuhRWwuh/YSmrhGy+U/3h6jK857gzhR5QO8v17ImPoEhZlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qvg0l7ga; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-367990aaef3so139973f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:18:14 -0700 (PDT)
+	s=arc-20240116; t=1723666926; c=relaxed/simple;
+	bh=klgx7fIfxIwYSsC2xOg20bcBSN5EhBdfHpM3HGgPJp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZlRLpMNhfdMk4F+BfFr2mkYq2rI6Oock4Vk7vUph/5EzxgEHvLIy4V1W8hwwQsDB7/6Bpj78MaD8GoGJ9lOe+Qn3vjRjqsqxpIpx+wy9Smy65Hx+BxyGzRUZ8RCRnKbHG6bNjDlKmag0VO54uOzgLeeqDOJAIEO5LRiQRdvdYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Cus6QGVH; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd66cddd07so2264605ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723666693; x=1724271493; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KkMza/iQJ0QUiOTZWS7zmA9N7fZVP+GD4cxhszqTjVw=;
-        b=qvg0l7gah/aSSQEQzeV0Tz0yB01+9NpwgychFuBe7kAcnohwfSW/fYIrtyrWm9O0rb
-         ELEY7i7fOzIKw5BEtQClnV+jeOwSaDZql+rWuzHnhdaJujphJHauLSlwPkRMVHMYXhKT
-         h/4v+RH3HGcn702MFjF2Ffc8BWxsN6ed5XKAzSc73VGyMebg1WiimMG+YEaPn5KthmMS
-         dsys4P8UJvaAWVEk5ZJbVgO7LwVukwTeumbUYHKzlunzuZ+7NNampu0rG5S8my/I+XzH
-         /5XibjPV85C8+PK7BJ2NO6B8URQAUU5ZpPiAGICbv7nIpD7i+wy1rn++UlOc7eaDqgQy
-         uLEA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723666923; x=1724271723; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=stUNjkX0MpnpU5tgftjr7ORKywYwQiBPnahluN05hMI=;
+        b=Cus6QGVHJoNRRd9n9iYi/k/KX7fIuSDutQEm08zxLHKE3BzCtTEEgjKOkV4mg3s1E5
+         S1C6FEG7LFYJiXK1LEjd7EpsoRnKI6DrbRTR/WJOhGBaQr1D1HdOmFaPWVDCgq9sT5Mb
+         HbgXJxsIWIDs+i+w69n6kgWviZZN1xU6esL0/lOHr6u68+h8o1t9SWsqcYgGhqaHdJv7
+         OjkcovMGWsZU20oxV7joN5SgLqjkNJMenVQVjF9yh3Hre2V0/rursoTiT3Bkz9uzmTIb
+         iGeVJ+O6uBp3rNBXcJHZNyK3u+VI1zlW6eosGumslTsWcmSPMrMqSIWM/PCJGmmivnHy
+         7o4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723666693; x=1724271493;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KkMza/iQJ0QUiOTZWS7zmA9N7fZVP+GD4cxhszqTjVw=;
-        b=NCHkVhOei6xCA9zEY/1g+CuKPURzJDKJ26ADLCs/pCpa/rMynEwxF+hkN0Kl5XxCYn
-         acErnUKd1cNhQm3hxjHIx50KHt5TOyna0k/h1xnUQtjVI5H25dZWk/OS9388HX3W9o4z
-         25WxjxrdjjUwx8+NV54cKf9qBYz37Ev6AAmdMzx32d9c8IliiXZfgH5gbgd5v8OHRK90
-         fmygkYRiBesYRnQGbde2Ok2fqIA5ge8u10SMlVHx34ncMFMnN8yKAcsDTH6DrRX23tZJ
-         nJ+aWC7fw2O5iFYLErNWKyOhH+IJvr1VRzL79IKmP+cFqYPgosjtTy+HxT6zgvU+hUo5
-         P9kA==
-X-Forwarded-Encrypted: i=1; AJvYcCU59ihrl/a7TGwgRr+8/WD7qIcmSqI8E+w/MTYNcBkc1neAnn5zWHMV1gtz1IZUoMsT5Ebsh/gRlMtcRagNf0d9CXjkyjOYiUIIa2Pb
-X-Gm-Message-State: AOJu0YxcAFyeZn0zoLno7gfTrczAnJznemYBKSuFe+pDKvxmvH8p4y9d
-	UFw3WNA2kjV+5h1WxglBtpdvHqmZCR1m7e8IfnfE379qM58+tcI0VNVMYFcxY8U=
-X-Google-Smtp-Source: AGHT+IGnTWLywH9MaoyhJRh9e6rqTQpuA5DArTXIC0CU3PtawcT4ViUxduJrjccfNP+6pW3j7swlVg==
-X-Received: by 2002:adf:e702:0:b0:369:ba89:a577 with SMTP id ffacd0b85a97d-371777b1bd1mr2864629f8f.34.1723666693157;
-        Wed, 14 Aug 2024 13:18:13 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd3631sm13623519f8f.110.2024.08.14.13.18.11
+        d=1e100.net; s=20230601; t=1723666923; x=1724271723;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=stUNjkX0MpnpU5tgftjr7ORKywYwQiBPnahluN05hMI=;
+        b=UQgAdgJgvWBhmbP+wW22ruBBek1gYo/qOlUKQg4U6A8vGpZyTGH6NQ/HDBBcFv7dqw
+         BOj3qnthh3cc58hJpATSxehUrbmaQEhOFN7SjhX4zGfW3YDQoVSZOEVnAXEOlQT4fQpv
+         mHny/BA/qOMzkOmqsIxmKqC2wV+pGAOHvhABUFOULg3gYWWHFCdyqtK7sJ3rvSFuMr0W
+         vam7P0DZs1EM+JJsRFIN891qtvgnMBPwolyyvVH5Lb9QaupMuVTtPbfGSY8HAMNwOpU4
+         C1yugWetkQ21y5tToM/JUD62VwEJmbhxtB3ZVgSB/ISzcgSav6D2QA6NtncPCPWa60Fc
+         kqQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5cE3sJO+BTq9VhzWYeSWL/rcim6/7iasuVaD5daZVRlUcLd6XXeI6T+ANOLF1QeJSx/pGuAWhcjmtGy+gUqb1AatWs+/eVWRhzV8U
+X-Gm-Message-State: AOJu0Ywfmlwj0hrkTv87QoE41KCBiOHWIOwYGh5RUOzgDvh2cdEqA4Zb
+	sn1+EzJN29xpQMzhCAkxBFoJPlGOxUXkgHnvuqH4PgzNzOa4DQ9EM81KAX+OIrc=
+X-Google-Smtp-Source: AGHT+IG0/CFBU9Bq6alVt+gaPLnIf7VfsUi7sesDXbH+O9QNL5l0cs0hatjNsXRKHdrcTaXkzS3OXQ==
+X-Received: by 2002:a17:903:2291:b0:1fb:8c35:6022 with SMTP id d9443c01a7336-201d6393a51mr46560335ad.4.1723666923538;
+        Wed, 14 Aug 2024 13:22:03 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f038b4d8sm238005ad.206.2024.08.14.13.22.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 13:18:12 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 14 Aug 2024 22:17:53 +0200
-Subject: [PATCH 7/7] thermal: sun8i: Use scoped device node handling to
- simplify error paths
+        Wed, 14 Aug 2024 13:22:02 -0700 (PDT)
+Date: Wed, 14 Aug 2024 13:21:59 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Andy Chiu <andy.chiu@sifive.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -fixes v2] riscv: Fix out-of-bounds when accessing Andes
+ per hart vendor extension array
+Message-ID: <Zr0R5/gHWGs+eK/5@ghost>
+References: <20240814192619.276794-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-b4-cleanup-h-of-node-put-thermal-v1-7-7a1381e1627e@linaro.org>
-References: <20240814-b4-cleanup-h-of-node-put-thermal-v1-0-7a1381e1627e@linaro.org>
-In-Reply-To: <20240814-b4-cleanup-h-of-node-put-thermal-v1-0-7a1381e1627e@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1690;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=qjB1r7xWZkiqepaZBKt71uec8dzopsPxrHTPtf78T+A=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvRD1tu+OfU0AIMkIy7rwyVDG9h4CyZBJq2lx9
- T9f0OzUoMWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr0Q9QAKCRDBN2bmhouD
- 1+c6D/9L71ii7X8SXP+hER4rvtyMdzBnxiA9V6HcUp4+DoljLDog0tR7F9bq8L6vfBfgJrUClwB
- l1BVN5h89/Nq0ZXHFkTZysFdiBmTrSUJiaCbHRhA8EEEGmxZVyARP6yTAOxy5nSIP3RapG0kZPa
- sCn1XVWO6zFIg3hYsZga906bNygVn+vaw1eSkNWmdj1IyNlvXGoyncGt4gGBHszuA3V7NUwplXL
- xUFYvwGZoE6MDswhKkYs2Mzd/2444ochaXS8mooZDTpOefionTRgovxfXlcAoi+qGsdmEPe3WPG
- uumzRLm4iwQ4aUkhVSygpRVh9eK0Qt+adknlmqWQROyiW7i1rdhF5jkzVwONHNolQDQjUhp+qfV
- WAXfmTI1sx2pPmSgEtrnmvJCz7z+6qxfDxXqnzcMluf2pZjn6GMyh6zcmimIDnlfRgi+lf84E12
- IMmZ7UEX7spYVxwaTsWizJd10bPP8LPk3tQiwBy7LrZ27d8NLlrb7LJbPp4ukO4P4jPCRrr1s1R
- E0D0QDeC9mZNZrhwTx+GSfood/gTRLj55h3tz78QkMXT9jMkWPnF8MYMXWbWpDbez5q+Ibb/L1x
- FomdxaFfQIkSN3Q6NRtv78555UJxK6REVC8guvyyfhFFFu5fI/+AnnVGddvsx8vv9gUrEVgoAr/
- 8szxukJ5Iy1aydg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814192619.276794-1-alexghiti@rivosinc.com>
 
-Obtain the device node reference with scoped/cleanup.h to reduce error
-handling and make the code a bit simpler.
+On Wed, Aug 14, 2024 at 09:26:19PM +0200, Alexandre Ghiti wrote:
+> The out-of-bounds access is reported by UBSAN:
+> 
+> [    0.000000] UBSAN: array-index-out-of-bounds in ../arch/riscv/kernel/vendor_extensions.c:41:66
+> [    0.000000] index -1 is out of range for type 'riscv_isavendorinfo [32]'
+> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2ubuntu-defconfig #2
+> [    0.000000] Hardware name: riscv-virtio,qemu (DT)
+> [    0.000000] Call Trace:
+> [    0.000000] [<ffffffff94e078ba>] dump_backtrace+0x32/0x40
+> [    0.000000] [<ffffffff95c83c1a>] show_stack+0x38/0x44
+> [    0.000000] [<ffffffff95c94614>] dump_stack_lvl+0x70/0x9c
+> [    0.000000] [<ffffffff95c94658>] dump_stack+0x18/0x20
+> [    0.000000] [<ffffffff95c8bbb2>] ubsan_epilogue+0x10/0x46
+> [    0.000000] [<ffffffff95485a82>] __ubsan_handle_out_of_bounds+0x94/0x9c
+> [    0.000000] [<ffffffff94e09442>] __riscv_isa_vendor_extension_available+0x90/0x92
+> [    0.000000] [<ffffffff94e043b6>] riscv_cpufeature_patch_func+0xc4/0x148
+> [    0.000000] [<ffffffff94e035f8>] _apply_alternatives+0x42/0x50
+> [    0.000000] [<ffffffff95e04196>] apply_boot_alternatives+0x3c/0x100
+> [    0.000000] [<ffffffff95e05b52>] setup_arch+0x85a/0x8bc
+> [    0.000000] [<ffffffff95e00ca0>] start_kernel+0xa4/0xfb6
+> 
+> The dereferencing using cpu should actually not happen, so remove it.
+> 
+> Fixes: 23c996fc2bc1 ("riscv: Extend cpufeature.c to detect vendor extensions")
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/kernel/vendor_extensions.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/kernel/vendor_extensions.c b/arch/riscv/kernel/vendor_extensions.c
+> index b6c1e7b5d34b..a8126d118341 100644
+> --- a/arch/riscv/kernel/vendor_extensions.c
+> +++ b/arch/riscv/kernel/vendor_extensions.c
+> @@ -38,7 +38,7 @@ bool __riscv_isa_vendor_extension_available(int cpu, unsigned long vendor, unsig
+>  	#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_ANDES
+>  	case ANDES_VENDOR_ID:
+>  		bmap = &riscv_isa_vendor_ext_list_andes.all_harts_isa_bitmap;
+> -		cpu_bmap = &riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap[cpu];
+> +		cpu_bmap = riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap;
+>  		break;
+>  	#endif
+>  	default:
+> -- 
+> 2.39.2
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/thermal/sun8i_thermal.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Thanks!
 
-diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
-index 3203d8bd13a8..22674790629a 100644
---- a/drivers/thermal/sun8i_thermal.c
-+++ b/drivers/thermal/sun8i_thermal.c
-@@ -9,6 +9,7 @@
-  */
- 
- #include <linux/bitmap.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/interrupt.h>
-@@ -348,19 +349,18 @@ static void sun8i_ths_reset_control_assert(void *data)
- 
- static struct regmap *sun8i_ths_get_sram_regmap(struct device_node *node)
- {
--	struct device_node *sram_node;
- 	struct platform_device *sram_pdev;
- 	struct regmap *regmap = NULL;
- 
--	sram_node = of_parse_phandle(node, "allwinner,sram", 0);
-+	struct device_node *sram_node __free(device_node) =
-+		of_parse_phandle(node, "allwinner,sram", 0);
- 	if (!sram_node)
- 		return ERR_PTR(-ENODEV);
- 
- 	sram_pdev = of_find_device_by_node(sram_node);
- 	if (!sram_pdev) {
- 		/* platform device might not be probed yet */
--		regmap = ERR_PTR(-EPROBE_DEFER);
--		goto out_put_node;
-+		return ERR_PTR(-EPROBE_DEFER);
- 	}
- 
- 	/* If no regmap is found then the other device driver is at fault */
-@@ -369,8 +369,7 @@ static struct regmap *sun8i_ths_get_sram_regmap(struct device_node *node)
- 		regmap = ERR_PTR(-EINVAL);
- 
- 	platform_device_put(sram_pdev);
--out_put_node:
--	of_node_put(sram_node);
-+
- 	return regmap;
- }
- 
-
--- 
-2.43.0
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
 
 
