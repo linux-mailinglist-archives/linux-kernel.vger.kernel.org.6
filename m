@@ -1,132 +1,87 @@
-Return-Path: <linux-kernel+bounces-285786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB559512B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:47:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73C69512BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92851F246E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:47:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 513E5B231EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 02:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D682D058;
-	Wed, 14 Aug 2024 02:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YFWlQEIl"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07792D7B8;
+	Wed, 14 Aug 2024 02:59:41 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B9E374F6
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC83B2BB1C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723603628; cv=none; b=MiYWWI7nZa/BW9q3NrvyccQvFwcBwDbHvsSgvXul99/27ahNLQsfMeJ4PBPEjM5kh8pSCgf/Sl04nl8CAGMaAx6ztuA6TzUKIk7UC6dfRhB1aqQpT3c+6WxWAMfuGIxaVm9atWEkuUp9BHH/y+DWKA7sbyan8n6ramadYTsFnLM=
+	t=1723604381; cv=none; b=Llp8WnP8cmkAL95B63rIuWkcLY4Xc8PHxw5Q4v1GnbVS743h8fxKJXGHlmT6JjzyMgetgppjK2dg8sRW0vgku9ABgKAshFkjROcqvbTpxgASunolNUuupic4q+RdWCy0P4+yXeWXR7hd6gEFxjWknRcjCsjyxpMY7ddxltHqFYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723603628; c=relaxed/simple;
-	bh=+XSQP6JjRisu6j+WPBg6o/c6mx52smfB/O54cIEbdwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQT/xwD61xKc91Nv1agM0b2+2W+O0GnlJH3hKKMwvt7ujWVXViaWWR+Z+GB/MlJisoWzeb/EJ+lm0XdCOqRuHB+9+6xl5tJKtlNcZaJ0VL5+wNBfRPbK3fmtDOrHq+Dpl1R4hBycGzQbIVUyxs0PuPSotThSOLIvJnBwUc2RfMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YFWlQEIl; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7bcf8077742so4426937a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723603626; x=1724208426; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HndCF9glIkOMUvWq/mEOxgU2lZeOnPtNB9Xnwe55q3I=;
-        b=YFWlQEIlPEvEWs0LdGfHHM4fN5ynFFJBk8v1jaZnuX5K5gT2mZtwj+CV34rQ8lFYT8
-         pJ4JDvB2JuYI0ogyER/u/NmiAtvWNiV+K0q490ReT5TPyxyCBkPVTDvGUKMNwW+003fe
-         Nxyfr5Q6PqhRG3aAFoad11jOWKeG1fIEhYP8R8zKo6fKVPSb1Ftx8ifk1yifQkhRFnuV
-         oMIqlKymMo2xs6W1LeLV0pjKMsWZSc7fxCETKBsTFO/gnxyV7MtZsW52zIL2NeMnxv7G
-         0/A84dxRf50jgYW1VF6ZdGKNQhXqJNFNxl2g92SLH8kcnmeMDZUxNa0OqJT61M0R9Se2
-         H94w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723603626; x=1724208426;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HndCF9glIkOMUvWq/mEOxgU2lZeOnPtNB9Xnwe55q3I=;
-        b=HOU7h1CGD9swjeF1EMyTj6RVqxhGDNP8r2jw1Bgq3E9JxOR0TjulZlrzNFpcuU9oYH
-         Bx2/lLibQWWRb+krNGApBee5k4tVt1AolaECIVJdhaPAGVN0q6NNesFrZfFGqXR4m6Yy
-         HL3L/M/ozCmcIv/2vtOa/QPdly2KHW/0bQpbOxuTyAACDvHlIDxZDppTrKa2qBC9GWKs
-         gRlpN4Ni9mUimWjlBf3fvWzaH4SNtsiI//T0tFl678SNUN1TkZw+ndBLTTC0GGVBCGAn
-         8oiWSniX9MsRLMrxvMdw7mLINQ4XWCK7tPZr5WN458LuR3D5KggfH76Zg2GIQhDOV0M9
-         CKbg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ch1bhiqPf67cm3LYykPsyo0m8xGL1EFJx+ahPkTw0emLg4mSLHwe75hjXpdUYqLYq3CMsbUCy08dmNqN4gp7A75EJVzlk0t0KY4+
-X-Gm-Message-State: AOJu0YxoYuiXoEp+WAsscuUyPEZAy1rl/zDQ/Ag6akybZBx7CNuXitv4
-	wZY6rMQZSVFePh0VopRtXz4QqqXU2r8p5zbaU5JEPQqnB8FRQZ6C+VgNMS9LBPc=
-X-Google-Smtp-Source: AGHT+IHp+5SEOXnqyHBJUu8nZh2c1nW001BOSSG1PaVG7oaO5Q+f5qABUl3n1SRexvQ5+uArfDwtLA==
-X-Received: by 2002:a05:6a21:3a81:b0:1c6:f043:693f with SMTP id adf61e73a8af0-1c8eae6f47dmr1952825637.17.1723603625970;
-        Tue, 13 Aug 2024 19:47:05 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14de23sm20058735ad.104.2024.08.13.19.47.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 19:47:05 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1se42R-00GJdn-1E;
-	Wed, 14 Aug 2024 12:47:03 +1000
-Date: Wed, 14 Aug 2024 12:47:03 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, jack@suse.cz, willy@infradead.org,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 0/6] iomap: some minor non-critical fixes and
- improvements when block size < folio size
-Message-ID: <Zrwap10baOW8XeIv@dread.disaster.area>
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <ZrwNG9ftNaV4AJDd@dread.disaster.area>
- <feead66e-5b83-7e54-1164-c7c61e78e7be@huaweicloud.com>
+	s=arc-20240116; t=1723604381; c=relaxed/simple;
+	bh=nUtIwrlrVLc7A521ytt2TRqpCkUSA76qI/D8xaZgtUM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IyiPR3tkS/uTQ0/HYLejDMyOypcVr9dbUu0Jl6dnb6+R3KvVjpMSLFGc1p5tT/ZqqyEI0cf2wQ+1RU0NTky77xAGJDKTUtVrJonzVb+UACwqt6d3Y7daHeu+BGhxtg6OxR+iWOszI8EdMhY9ItCQLD408DCdnw4RbY/7vG1meog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WkCXN5Mtzz2ClmC;
+	Wed, 14 Aug 2024 10:54:44 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 54289180019;
+	Wed, 14 Aug 2024 10:59:36 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
+ 2024 10:59:36 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-rockchip@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <linux-kernel@vger.kernel.org>, <jassisinghbrar@gmail.com>,
+	<heiko@sntech.de>, <wxt@rock-chips.com>
+Subject: [PATCH -next] mailbox: rockchip: fix a typo in module autoloading
+Date: Wed, 14 Aug 2024 02:51:47 +0000
+Message-ID: <20240814025147.3875634-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <feead66e-5b83-7e54-1164-c7c61e78e7be@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On Wed, Aug 14, 2024 at 10:14:01AM +0800, Zhang Yi wrote:
-> On 2024/8/14 9:49, Dave Chinner wrote:
-> > important to know if the changes made actually provided the benefit
-> > we expected them to make....
-> > 
-> > i.e. this is the sort of table of results I'd like to see provided:
-> > 
-> > platform	base		v1		v2
-> > x86		524708.0	569218.0	????
-> > arm64		801965.0	871605.0	????
-> > 
-> 
->  platform	base		v1		v2
->  x86		524708.0	571315.0 	569218.0
->  arm64	801965.0	876077.0	871605.0
+MODULE_DEVICE_TABLE(of, rockchip_mbox_of_match) could let the module
+properly autoloaded based on the alias from of_device_id table. It
+should be 'rockchip_mbox_of_match' instead of 'rockchp_mbox_of_match',
+just fix it.
 
-So avoiding the lock cycle in iomap_write_begin() (in patch 5) in
-this partial block write workload made no difference to performance
-at all, and removing a lock cycle in iomap_write_end provided all
-that gain?
+Fixes: f70ed3b5dc8b ("mailbox: rockchip: Add Rockchip mailbox driver")
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
+---
+ drivers/mailbox/rockchip-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is this an overwrite workload or a file extending workload? The
-result implies that iomap_block_needs_zeroing() is returning false,
-hence it's an overwrite workload and it's reading partial blocks
-from disk. i.e. it is doing synchronous RMW cycles from the ramdisk
-and so still calling the uptodate bitmap update function rather than
-hitting the zeroing case and skipping it.
-
-Hence I'm just trying to understand what the test is doing because
-that tells me what the result should be...
-
-Cheers,
-
-Dave.
+diff --git a/drivers/mailbox/rockchip-mailbox.c b/drivers/mailbox/rockchip-mailbox.c
+index 8ffad059e898..4d966cb2ed03 100644
+--- a/drivers/mailbox/rockchip-mailbox.c
++++ b/drivers/mailbox/rockchip-mailbox.c
+@@ -159,7 +159,7 @@ static const struct of_device_id rockchip_mbox_of_match[] = {
+ 	{ .compatible = "rockchip,rk3368-mailbox", .data = &rk3368_drv_data},
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, rockchp_mbox_of_match);
++MODULE_DEVICE_TABLE(of, rockchip_mbox_of_match);
+ 
+ static int rockchip_mbox_probe(struct platform_device *pdev)
+ {
 -- 
-Dave Chinner
-david@fromorbit.com
+2.34.1
+
 
