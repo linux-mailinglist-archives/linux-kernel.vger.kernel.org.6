@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-286670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A6D951D97
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:45:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7294C951D9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634351F228CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1CC1C2439A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B51C1B3F0E;
-	Wed, 14 Aug 2024 14:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF40C1B3744;
+	Wed, 14 Aug 2024 14:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEvyZV95"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="a/65HTTM"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E94D14373B;
-	Wed, 14 Aug 2024 14:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D6B1AE872;
+	Wed, 14 Aug 2024 14:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723646741; cv=none; b=GYMCAJTwZfVF3y03xOrq6G4617sIEn1tt4j2cTKJ8cLOiqmhZSsdbdr94sLeInCmrx6e0TOhqbujGwgX9lPDSNR3XTW0mU3Bub296+EC7hyJEyGbi4udZfiWwp64e5k9K2KD6bmuTKnYHiuCyUxRcOKHCO6CIaXFaoCu7ZTHZS8=
+	t=1723646809; cv=none; b=gIcD3EGYD1GKr/APBSzZWjz8zF1vSqzxiZE0XH6NNARFwDo/paUEF4PhrrxBAr6wG0/x4F1fcKUIA8aOBKESgBQ6tuCzpjEl7eGjx415f7AqF3drXM1GxNxCDuF587U3SQxaV0l0qLEVajykKCN4Briqf8j9zNR4fwwg8g3R7jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723646741; c=relaxed/simple;
-	bh=sIDrVyW5p+dieFxCp1p1Wd8qmZCDRZYV7VnUzL1BCfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B6zJqWbX37emsnRPDZK4S9FZHyhg+Hp4f7WL4WCcL5WWhSPMUqx556hmtkYq4eddmD55FhROcwCtWOlY9OHWNojXau4S+oURXVc7HWLOavZ902Bmq2KJBxU0pVFLeW+6xfv9+MF2XemEV5uWruI27Zt5qdD8KEgxNcjEzdETulU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEvyZV95; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso5063242b3a.2;
-        Wed, 14 Aug 2024 07:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723646739; x=1724251539; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=em773V98Z8qtfRMHU9D+Z+DGVZZPQSH+f1TO/5ttRR4=;
-        b=XEvyZV95KKgzsMVCJwLAg9ZUqWLaCU1ajhqLubqPiLNET/MoXxicEADP4KfsYB7KbH
-         QumNceENGJfwj+Jhj1w7bhKvHtJm1zEjWoipPNKl7MlGBdi/8xMhx3Mg9Oo3KQMBiBXI
-         XlwAi/WCFVmcXbbxNGffZWuEKOWKHCIT/ZfXyxNKIx5fymX8prXPljXKWUXPO5ZigKo5
-         BKJi4+fgDxYUiAw1MPurvjhl0SshmuBih4HXuSn3sSHrQb04x3mnUr6c0NDzIQ/yS2Kd
-         G7mrV6OIFUhMXqKBEUK86pAHtdAJoarnWgBc+JS8dYMeQYT9fyELQU0P142oMgVCJZ4E
-         oYjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723646740; x=1724251540;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=em773V98Z8qtfRMHU9D+Z+DGVZZPQSH+f1TO/5ttRR4=;
-        b=qgzWwAtTsTQLT1Yo3sa3MBLI5yovPfbl20Rk6Ha7H8TMXBWcvHzxO02e4wUuz/zvh5
-         aaiKxCQEiVTkS/bmDsMXm9YKHhyqoKmtkt5CXLBqfxwNgl3ZRDbmksl62/2RJywRybxY
-         4qln46c8c9dAEHX8rHAKe5kgQpgZQ6XoOqCuWmb5Npnqac0VOL1h/EDrx3JMdFRQVHz0
-         2DTz+IDr4t4fqHhXLno/vThTTs+Ky9p6Y4iup9nZLdtUOiPtY1dAxG5qN5x4HPKh/Lqh
-         fp4jxxO2AFeHI3Bsshkcd8u42674XXvsP5z8nvUDd4Y8XA1huLEWQRqQbaLecU5v+q7z
-         B3aA==
-X-Forwarded-Encrypted: i=1; AJvYcCXi2PkkvS3vOSxRYB5GOxV+24BtUohJ0P5XVgyXQTTboU9J3JOSPatTQf8mzb7kbMO6NQ4PYtgJak7EWjTZ7UMX859yKJ0XeHdGfMV5GR7cXu//mb7Sb3PG5gZ1TmkDhfd3MBsxwf839hMcec/qa79ZGILhONynCScop+s7QUkm6g==
-X-Gm-Message-State: AOJu0YyYPU0Hf49wPzRCn91wKMJWJW9BFH4Bvw6/J/3udE1Zi3shB04+
-	5EDrdc+KubElrwrxBC0CGpgglA7xe7CGGKGUYkOI0FnxIdDmRC7g
-X-Google-Smtp-Source: AGHT+IFwjfanFhv+rPDQ+tu6xGaY+40z4gDjwdcW7JLaZYtDy5L/jAJeExKiqdNOFqRNtt99YRKX0w==
-X-Received: by 2002:a05:6a00:1404:b0:706:65f6:3ab9 with SMTP id d2e1a72fcca58-712673ab9acmr3218112b3a.20.1723646739422;
-        Wed, 14 Aug 2024 07:45:39 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c697a728d9sm2869868a12.88.2024.08.14.07.45.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:45:39 -0700 (PDT)
-Date: Wed, 14 Aug 2024 07:45:36 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: Erwan Velu <erwanaliasr1@gmail.com>, Erwan Velu <e.velu@criteo.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	Yury Norov <ynorov@nvidia.com>, Rahul Anand <raanand@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom
- code
-Message-ID: <ZrzDAlMiEK4fnLmn@yury-ThinkPad>
-References: <20240812082244.22810-1-e.velu@criteo.com>
- <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
+	s=arc-20240116; t=1723646809; c=relaxed/simple;
+	bh=MrMdfHFc7DN4P8cobS1SgsWZXFCwinhPD2p8GEm5rxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pCNFhYqA9mUies7SbhDzytwu73qOkzpdWjrYelNwQVZRURNezN3xFVL5bm0nCt5n9OmG5YeULHrIB1BZPtUowuPw2xaLSNRmXvGRMW/zBe7rniwjRwuYyRTVOtBnjFkhyw5RyP9gQBHPHEW6pulpyDO8XEWj4WfhrpvZAAMytdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=a/65HTTM; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 620DA240005;
+	Wed, 14 Aug 2024 14:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723646805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xDfSsuNrPtx6YX5pobWJTyhNVK0h9n02y4gpLyd5QZ0=;
+	b=a/65HTTM/Z2uuPVwZKhtoPVKYKAssPIOGi1yJ87QWyxc0Yy9B/HO9r53TlM7SKb4aDZ+/Q
+	W6rJ9e2mF+xR+Jl744Ovws0z1I5cdIq31Vv1pwpD9wLK7HEBFJIpuIWK6Vaq7l0IYBIqV7
+	4b3HVhC09ke19XLLWgBT/5VwLBJ8J7Oset9eu1j5nL89W/N3sK6iHbvqDSK38O0Ezl39Bi
+	OFCgH/+vOzdJFjrKLhZCp7ZfV0xiV4MPwJkRjCHxESDQtvz8wbMP5qBNdtgqN719/o5xpQ
+	eg3SAKUv5Kfqp+R+i9NkVYRsaGc0wZCqzTMUSS2knl3fnKuXGO3BFN+Hl++fEQ==
+Date: Wed, 14 Aug 2024 16:46:42 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, "broonie@kernel.org"
+ <broonie@kernel.org>, "pratyush@kernel.org" <pratyush@kernel.org>,
+ "richard@nod.at" <richard@nod.at>, "vigneshr@ti.com" <vigneshr@ti.com>,
+ "sbinding@opensource.cirrus.com" <sbinding@opensource.cirrus.com>,
+ "lee@kernel.org" <lee@kernel.org>, "james.schulman@cirrus.com"
+ <james.schulman@cirrus.com>, "david.rhodes@cirrus.com"
+ <david.rhodes@cirrus.com>, "rf@opensource.cirrus.com"
+ <rf@opensource.cirrus.com>, "perex@perex.cz" <perex@perex.cz>,
+ "tiwai@suse.com" <tiwai@suse.com>, "linux-spi@vger.kernel.org"
+ <linux-spi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "michael@walle.cc" <michael@walle.cc>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>, "Simek, Michal"
+ <michal.simek@amd.com>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
+ <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
+ <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
+ <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, Conor Dooley
+ <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
+Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
+ spi-nor
+Message-ID: <20240814164642.24705f18@xps-13>
+In-Reply-To: <IA0PR12MB7699670B7EE37C60C672FC5EDC872@IA0PR12MB7699.namprd12.prod.outlook.com>
+References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
+	<b3d3c457-a43b-478a-85b3-52558227d139@linaro.org>
+	<BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org>
+	<BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org>
+	<BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org>
+	<9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
+	<BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
+	<20240812103812.72763f69@xps-13>
+	<IA0PR12MB769997D5958C191215254983DC872@IA0PR12MB7699.namprd12.prod.outlook.com>
+	<20240814104623.72eef495@xps-13>
+	<IA0PR12MB7699670B7EE37C60C672FC5EDC872@IA0PR12MB7699.namprd12.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3dcbfb0d-6e54-4450-a266-bf4701e77e08@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, Aug 14, 2024 at 10:48:40AM +0300, Tariq Toukan wrote:
-> 
-> 
-> On 12/08/2024 11:22, Erwan Velu wrote:
-> > Commit 2acda57736de ("net/mlx5e: Improve remote NUMA preferences used for the IRQ affinity hints")
-> > removed the usage of cpumask_local_spread().
-> > 
-> > The issue explained in this commit was fixed by
-> > commit 406d394abfcd ("cpumask: improve on cpumask_local_spread() locality").
-> > 
-> > Since this commit, mlx5_cpumask_default_spread() is having the same
-> > behavior as cpumask_local_spread().
-> > 
-> 
-> Adding Yuri.
-> 
-> One patch led to the other, finally they were all submitted within the same
-> patchset.
-> 
-> cpumask_local_spread() indeed improved, and AFAIU is functionally equivalent
-> to existing logic.
-> According to [1] the current code is faster.
-> However, this alone is not a relevant enough argument, as we're talking
-> about slowpath here.
-> 
-> Yuri, is that accurate? Is this the only difference?
-> 
-> If so, I am fine with this change, preferring simplicity.
-> 
-> [1] https://elixir.bootlin.com/linux/v6.11-rc3/source/lib/cpumask.c#L122
+Hi Amit,
 
-If you end up calling mlx5_cpumask_default_spread() for each CPU, it
-would be O(N^2). If you call cpumask_local_spread() for each CPU, your
-complexity would be O(N*logN), because under the hood it uses binary
-search.
+> > > > > For implementing this the current DT binding need to be updated as
+> > > > > follows. =20
+> > > >
+> > > > So you want to go back to step 1 and redefine bindings? Is that wor=
+th? =20
+> > >
+> > > The current bindings are effective if we only support identical flash
+> > > devices or flashes of the same make but with different sizes connected
+> > > in stacked mode. However, if we want to extend stacked support to
+> > > include flashes of different makes in stacked mode, =20
+> >=20
+> > The only actual feature the stacked mode brings is the ability to consi=
+der two
+> > devices like one. This is abstracted by hardware, this is a controller =
+capability. =20
+>=20
+> Stacked mode is a software abstraction rather than a controller feature o=
+r=20
+> capability. At any given time, the controller communicates with one of th=
+e=20
+> two connected flash devices, as determined by the requested address and d=
+ata=20
+> length. If an operation starts on one flash and ends on the other, the co=
+re=20
+> needs to split it into two separate operations and adjust the data length=
+=20
+> accordingly.
 
-The comment you've mentioned says that you can traverse your CPUs in
-O(N) if you can manage to put all the logic inside the
-for_each_numa_hop_mask() iterator. It doesn't seem to be your case.
+I'm sorry, that was not my understanding, cf the initial RFC:
 
-I agree with you. mlx5_cpumask_default_spread() should be switched to
-using library code.
+	Subject: [RFC PATCH 0/3] Dual stacked/parallel memories bindings
+	Date: Fri, 12 Nov 2021 16:24:08 +0100
 
-Acked-by: Yury Norov <yury.norov@gmail.com>
+	"[...] supporting specific SPI controller modes like Xilinx's
+	where the controller can highly abstract the hardware and
+	provide access to a single bigger device instead [...]"
 
-You may be interested in siblings-aware CPU distribution I've made
-for mana ethernet driver in 91bfe210e196. This is also an example
-where using for_each_numa_hop_mask() over simple cpumask_local_spread()
-is justified.
+Furthermore, I rapidly checked the Zynq7000 TRM, it suggests that the
+controller is capable of addressing the right memory itself based on
+the address, especially in linear mode?=20
 
-Thanks,
-Yury
+	https://docs.amd.com/r/en-US/ug585-zynq-7000-SoC-TRM/Dual-SS-4-bit-Stacked=
+-I/O
+
+	"The lower SPI flash memory should always be connected if the
+	linear Quad-SPI memory subsystem is used, and the upper flash
+	memory is optional. Total address space is 32 MB with a 25-bit
+	address. In IO mode, the MSB of the address is defined by
+	U_PAGE which is located at bit 28 of register 0xA0 . In Linear
+	address mode, AXI address bit 24 determines the upper or lower
+	memory page. All of the commands will be executed by the device
+	selected by U_PAGE in I/O mode and address bit 24 in linear
+	mode."
+
+Anyway, you may decide to go down the "pure software" route, which is
+probably easier from an implementation perspective, but means you're
+gonna have to argue -again- in favor of the representation of a purely
+virtual device that is not hardware.
+
+Cheers,
+Miqu=C3=A8l
 
