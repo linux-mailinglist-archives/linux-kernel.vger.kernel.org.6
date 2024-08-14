@@ -1,164 +1,214 @@
-Return-Path: <linux-kernel+bounces-286261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5BC9518CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9F19518AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3E01C20C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238101F239B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EAA1AD9D7;
-	Wed, 14 Aug 2024 10:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C616B1AD9F6;
+	Wed, 14 Aug 2024 10:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="P43pMssp";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="o+yBHgyb"
-Received: from smtpout35.security-mail.net (smtpout35.security-mail.net [85.31.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NuMSZVJH"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3C11AE026
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723631406; cv=fail; b=aAmzPyttwG16hBQdW0+DowaPgM8n0z/PdmCey1k4ie+acDrKlbOc51e4UC/7nBTF8n7rj5ADEOMMTITbRkVZSHE33xBLjQuWF9FiBZZF8HP0Oy8cqcuDh62RfrWCjmEICPpJbp/u47hx1/5KH9qAOkK8pvF3elqm3xrOHfmkMws=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723631406; c=relaxed/simple;
-	bh=i+TeQZsk2w3L2kzA3onIbIEHvngNPd1Cdt/9+NlMZgE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FAzEtPsQoEWdatL4Ctj602B4hS9SWnQ7eVIP14HIkoUYQePSgCAZl5ZkOghzwSFoI952/ddEKsoXiIbqsJfbCoMht7jl1X0KzxcAEHxd9303uACyG51di9l7jCOw+kjJ8FfQ8bi93yF5lrrkRsZv0ml6l7bnMdE8Q5S+IR2eY6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=P43pMssp; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=o+yBHgyb reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx305.security-mail.net [127.0.0.1])
-	by fx305.security-mail.net (Postfix) with ESMTP id EA97A30F12E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 12:26:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1723631161;
-	bh=i+TeQZsk2w3L2kzA3onIbIEHvngNPd1Cdt/9+NlMZgE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=P43pMssp5XeSk3H/NTNgLEcQ2tRxN/1komccb412nr9g24SK3lvqg3NFLb3Ph7SmZ
-	 KEq3viZ33RWI2oOGxwPMAxjSwtCpCOIHw8YRQxTK9SVUtQNB21SOZa/G/JuQ8VrvO0
-	 Ch55elL2q04Woq6+EIB0dGg/wk6cTD2Op8tn/11k=
-Received: from fx305 (fx305.security-mail.net [127.0.0.1]) by
- fx305.security-mail.net (Postfix) with ESMTP id A229430F0D8; Wed, 14 Aug
- 2024 12:26:00 +0200 (CEST)
-Received: from PR0P264CU014.outbound.protection.outlook.com
- (mail-francecentralazlp17012051.outbound.protection.outlook.com
- [40.93.76.51]) by fx305.security-mail.net (Postfix) with ESMTPS id
- D313330F0C1; Wed, 14 Aug 2024 12:25:59 +0200 (CEST)
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
- by PR1P264MB1951.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:192::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Wed, 14 Aug
- 2024 10:25:58 +0000
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7849.021; Wed, 14 Aug
- 2024 10:25:58 +0000
-X-Secumail-id: <9bbc.66bc8637.d0ac6.0>
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hFMUzUcAYqshraG8i67BaChP5CiNypulHW3pvHvuom1gicEl7z3GzYwT2EULWL9lyE9qGgp1zYVt4GhpBEz2kSviYe+m2CNrorMxjv+R1KRF8ShFngIAXre80W8EwOdbuA3KioF0oAAbxt0528jqAsGVpSVEBWAzB+JJovCOr+Bhz3v+Ca3MpXeNQO06wdKRVmM9WuCBw0QJN57nYPkmJu6wuWSc73TAwEupqCUGEwGAlyToWhhoIiUtcSQ9p4QJczOnIKBmtqrXa+49c57A5Nnc2ZjdCyfvQfFPPFnCtz0dkykYDFTM7MRGnTjpcTPVV/lPWwX2peCczBHPeIVOjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microsoft.com; s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7mNyCxX9CVdD0x1b9l4Htt/lUPHHlP7RtqN6a/saKN8=;
- b=wboc5tcc94kqbZMclO1l6fmCmUVkMIU+ZI8fF5xGgprIwjwm0JvXHDRoio2hoYveQg2Aszi5cuxBD8uyU0Em/Y4ey9G4xlCVyK/PCAbj6zOd12mbyrcrTz93+uewum0B/e91jFLgn/QR9hqaXIJUyvotWWh4kUmGfLfBfFFaH6sxu4amyJQuZ9CB+q2XMO2qUA3wfWYLDtKa9iUFZIMdPejR59wCSDZh1blM7E2Os/yeAZAC10OWK2r+xsq9YxgQXVknFjOL7aCXILtUdXFc9G1zaRx8dN1h8/p12I66BCBeXdB4qHEGBd6df3SsxUp+MdBMoQ0WpyerxDvtJz+QQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
- header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7mNyCxX9CVdD0x1b9l4Htt/lUPHHlP7RtqN6a/saKN8=;
- b=o+yBHgybdYoLda83GQk9+1MckT2EOxUcfQmoGW1wwI30dEwrrrYaRwi/wrZpa2lms/jcHGFlhViHbShfwS1sFbVqGRkbMPTk4ElTIrAlJ654dpZgKqSEMO+5wPVMtZ/BB4ZEekOPbOo8P1XYN+56Vm75pHMU/+avfRn29WgWjp80iX+9Y1Pfsf5Y1Yf8wahxepD+whusRsxBzyr/2NQl91KgeBlXK3PqxrY5dGkZdKZ4kmpvStdaI0MUDHuhSX0Ixnx26x7VyQSb3kqncQ4C6O5KBgStOKedhEHXuDd+XUPe8JU6mPTaTk65rT3EuIiyxWl95zUzorebIDtpddrkvw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kalrayinc.com;
-Message-ID: <53db9c3e-a765-4045-8a9e-b02e2da5e0f8@kalrayinc.com>
-Date: Wed, 14 Aug 2024 12:25:52 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/149] 6.1.105-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240813061957.925312455@linuxfoundation.org>
-Content-Language: en-us, fr
-From: Yann Sionneau <ysionneau@kalrayinc.com>
-In-Reply-To: <20240813061957.925312455@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PR1P264CA0194.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:34d::10) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:14b::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEA91AD9DE
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723631232; cv=none; b=N9CLH7hfi4ClfPnxdDhJTQVyoy1+JxOE60MXd/AFxk4t2087iGdz7+tHTC3M7upmnSfKYnsBDdAqIXJsmzEWG3QNvFuitT+9U60VCbSw0lkVzSN1km8ki4lAuHzRklAj862F2cZNzmJZqQcazq1K63AGAM8lawK/Smrmgi7+spY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723631232; c=relaxed/simple;
+	bh=NFd//9rvuW/5AfMJD4NStL+5w9YGT8NLe7gO4v888AM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m34bfPqvHtHohfDoVWaK6Mk6aTu9VPV1WNv13VqvL3ZihQczdnAKggBbY7PxO+wFCST6IVvqT/dWk6H+yC822RQ0vHv8lEXBa1POpcqCGriqbYNbGx2k4XQfX5G20n6lNoaznU4nQ8YB+r6Khb2oJHae8avD4bppxW13EeGpAcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NuMSZVJH; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4f2c8e99c0fso2237352e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723631228; x=1724236028; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZiDUHoYgeH6Nw5eD9esliOomFOFpX11zNwcrK4A4zE=;
+        b=NuMSZVJHVBu6UTtESIEaFSI/SN5etMexxZcMf40LD+lMSu/BhdJKa8ZCT0nEkg4kQ4
+         2IZexoYPnNSKabANq2dUYOgCHDQLaCxOtOw5ZVSBu67p1cxq+OtTx8UJv9oCuAizI+Yu
+         YI7tdn/DNmuKP4AAfyOMlUb0Qth0HzSzjrS1lIdJ0gcWgDx4ga9K1xex4W3uLy8mY5nJ
+         9lrMhv3EN4v6yd/poLic7B2jnTtY/9LlrQo89gif6nu44bF63S4d1BG1aBMMz9NmgcPZ
+         R8F2B3OD0T1VVk8z26YLe8anNGnRt8ojqD3GN3RP1FdMeiLDEvTMx3d9Z+yPStkGXueS
+         iXfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723631228; x=1724236028;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qZiDUHoYgeH6Nw5eD9esliOomFOFpX11zNwcrK4A4zE=;
+        b=SgN6Esu/MlUvftmX4xS8cD5RWqYy0twrFecHR4+2ffl5t56p1ufyUoeo3p7v27Fyk7
+         d7CfJGbZEt+PgJzYvSXrQrUICFlXTkwf1BUfIszvcU+WbmOBJQ9fpuYOdXLT57iAwKYk
+         SYQ6dJk4Za/tdh8E7PnwaQw51Mji+izNDkYRNCa4fLuea3PTmjtquXspcjtJ+Obva3Hq
+         rfQVdeAmF43MJgheNnCLg73kFCZ3fZ4n0zVDuecVRret3c7R5U/76af5JSlcAh/d2zkx
+         glHXaCbrQwpMlJpeWl41coPSfzOK53P5dGPMT2U2N9pMmylwj17/iQau9hnKI5yVnRcn
+         tWYA==
+X-Gm-Message-State: AOJu0YzLmcKvLMgyhkNVJ2/GHq1UTimzYw1debJwf7zIZd0pMk5rs4db
+	ZPd592SYi5WED9Pzz54/avSKHBRkpWYDIbqHiQ4atmfAFkvf8qAI51R+zyCXZ23sKgAYG8cjSLo
+	vbL97qz3VtlyeALWYTv8qdvNcrFEX7lJ7Ryr5pPsq1NoovfTOqHQ=
+X-Google-Smtp-Source: AGHT+IEZQLTPuqAIwcCEYngNT/EgYitRatZi9G4a93T/n23io4rsnyUMn72jWYsiRKonY0tY7n6Y3HLh4JhGEgdrY3w=
+X-Received: by 2002:a05:6122:3c8f:b0:4f5:261a:bdae with SMTP id
+ 71dfb90a1353d-4fad2358458mr3129650e0c.14.1723631228257; Wed, 14 Aug 2024
+ 03:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PR1P264MB1951:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9be7d561-0124-4ac7-d112-08dcbc4b7cec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: 4RVu8rDZVgTEcBEKVSEDLKIl85oqCJE/G5cW5DXvSkb0+WUzPwJsGHEagRJ/492u7EpNntkdM4BEGiF+gL2GLScS84QZJJA1Fovld8vGbyrH53goV924/aUV5iaOyMgvfwPiZN+A8T/uWl2eIs/8c3zJc3xIrbNCl35+Dfw56Q9V9asYuvHP2pyKI3szse36c4P/kZXmIE9yAcakzqpEGbubCwvclyCIDCwFr4Nv/B1bLZUXq/nz9R29+SL5t/aRi/NEbCdY0Fxhh4EQhiP8By3nzMe5QnUB4VzB+5EonyiWWGDmylmSCXSJ95/R/lZcdYtebcwqgvXyYC9mG+p28ed5Z3sk40ixxBqH+8h9H84e/Jpa/AUkb/ilowNZ4lYsNC6nyIaGPp6nfdIUuWWbkGMMNDt5zt1fZpLvl6TI32RUnki1lUfl+pdeNt9m6kAAZelWSdOZhMMQdHdYE/8rRF69BaqtaOsmZVNdmqsMvz3Y745m8hEw+PR/RkMgC5RASRTxjN9k5a9bgjq9Lo+Umqp0TrcGuKd+UHkrqdrLP+8Hk65bRU29ZnE7wtbJKM6TWfBh5GcrPiLEMzogqv5QzlY+OqAriHCz/2EVQwlujqU6Lg8FsgnjAN65kEThta4MeRNyvB7rEVmdJ9cI3rCUj6qP9pCrhMWg+MccAwHQlpjIZar7EkoR3dUF1kAsVTcqBJicKys9jQlgjpZCd84N2KO6G74ntb96LtwX+4uOZTCxpR29VSrkHn6vANIMYyOUrvOSJMn2YseDnaPMBhrJDGrnPGVkfL96C/mDAkVTZ6HFsqyTiya5t9RySJrdO/pPjdpcGA5D6ucVCrI+OdRqPX5JsBqR7llwkut7QdHXtf9O0OrBug6yWLHPnhkubiJyJnL6O7NLzZk2GotQwAPXqTZFFNP6BWmurOk3BoJpreNQhZt4MSc34spwwdh2ESzA1jZ
- v/koC78t0lJOxIbgfn0SjEupct5930lKX02WMdXFYpPvTnxoBOaDF6qKlqlgU5zGbGydmk2aXpS0mWAPJeSnihdtLLjQTo5vE5B4E0LOFNvCIBmDUzKraHQtTz+KyaOOMXTSSQ62ZyVU4Rk/cQv8Pna9QmPSw7CZFbcVvXqAENHjKFuLlPlPaIheqaPDbbTm7m1yggmu/xdFE37Ldc4fMlIlTKM//XdaMeB8IUJHVLtKvTGjuUOSxLqgdRmOP/SxXDcmi4detZgVK42TP2ia8x3CfsNlpheMWwyEnG+7o1U3uhtATLz8ymJ81vgOa91ZGKVLlVEys/nj1eMBIPy5O4R+T/jNYVeO9ZrP8Xfs=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 5aUdmn5pRTDtNDyqi/TxJvIo4Xt3qanFGo3y2oXgI1mQso93gHX3BDcUvFu9Bs6qCWg2vJsd6FOY6xhJSfDpKMU8uUUAgBRZmvRBLv4z/qRWohRFVlCiryXqmqPXaDcK/Q68crntSCyatI5DqJUh5064dH57/kWtHvLSnrT2DpR1Hte5rcbUHTg6mR60EnnDbSQQ37AMNkw4VnXjNcSGY7s4kJdeXR+Gym70I5L6jA4gbRcSm2YkgK5Iuaakc8vK6RHNC2SsDvIV9IVbsdBWuu7TUSRhPEKLlBpYkbuB8jTUyVoJeiwwX5N5IA+KOGv86vErv2i1BaBGSoa7OU98Z2Ll0scW+9KAs2bqK8g3N0XmK6RVcPUnBxbbmGVFB+9yRiFfH701j1HpE/7/5TY9cbyu1J+XNdoB8KxByW1ML8vUrGSI7IiK1o6EJOCuDkfUFk0EjSml3TkUNryLeQHS4ADXx7SuN9WtFP8f0VcPrUswGuNQWH4QLB94u0R4r6dTWwas/K4Cyz373XdQ1mkWQRGYNHExLbps2/5EFF0W3LEpmFmucckJwK9Mq9NrkZKyM2cty1ocYW6wfUG7Krcj/PPqtq9IXbduT3vtkp5binP1SAi2mwsAb9R2GLbcW1HRiokO/MKFBhBmXW5XFywcqI/FhlGlTtV2qYmp3JIJN48jFaisj7b7Yo0wNLQ0xvVYnztnsmjOAgENhDJGbOSW1O+5x83rfeWrNWua8sHOLvb/mz4/UQjhLDEegevcQtUhhTPwTN4wqElicIkjD2DK04ALVcqQx00qG3zYBeRkcQnsGm+QVee2ZXonlhtO8lTm/JVn+xG6DI9lgAnrfkPtqoXGrCOR9nDFjq6pe4Ng3Ni+Hv8Vs8aE27dT2qth8C5Fz+vueBxoncGkK0EJYT+B/lY6quUhlkf6THxIb5BaUzb8mCUWGSkqjvFkha+anZJJ
- 7D7GKt2OS4+3isucFZFChbNeeMaHWmPjdVSuJffEM4W/YwFxdEhvg/RAkdu1RufZ72q6T98pl55D9de/hZYapLgr8ADW52UCUXJznLx2wcY2G72oDAy0mqEIsxlMmrN9q1GSId5LObQ21OIU1FvBMtIyV/iYKx6zEUDC/tLSTvrGDDC7HZiz+Uw2cRfBkRWB0dPuJIPEJN3ppC1y22r6V26df4LFgLJBZgsv2PPrWGnlOrk48IWn30MJ6Y8GW0qrKXGSDdU3lkpqWb4WTMNLpM9AYMgD5zVMz50PRRg68KNgANZGpiy61yNhGD7CA3tPJ7l1cD45PXNW1HzZqI1CXcoVo2FSO+J3A3kVWD5PTLqckieHbaaPCnInBmt4XupHVfGnDmnv0a4hhC4nGxA574NHMADcYG+DEJSU1q4hg0iLzjQdtpseiB6CnJS/c50emfFjW7WRceDsRgRsBvXpdGa8ypKwSWzhsK5gektc4AiMzldn7zlX/Tyi8tQh/VDwn8hDjKGyCi2MDGJXA+kZwLcRUTnNKIMOnWQjAH4TjKBPA9w2ITwG2HC1k5vNGD6cgSE3YRhPCKhHtSZ31EDGzWSXDazEJ1rhrbCKdbauChR1tmqmALUVcG7wp3bgb9GzR7fXJi33OwZdOUEH1D+XxQ==
-X-OriginatorOrg: kalrayinc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9be7d561-0124-4ac7-d112-08dcbc4b7cec
-X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 10:25:58.5460
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qLDIMiuyQ1s/yaT9FyICfFhUyjkjndElt3zNXwRyRjWfaqCedJE4VR5cRR9QOPthWh2HrK2SITHnLf33aFuNtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR1P264MB1951
-X-ALTERMIMEV2_out: done
+References: <CA+G9fYuD4-qKAX9nDS-3cy+HwGbyJ6WoD7bZ_QL0J__A++P9aA@mail.gmail.com>
+In-Reply-To: <CA+G9fYuD4-qKAX9nDS-3cy+HwGbyJ6WoD7bZ_QL0J__A++P9aA@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 14 Aug 2024 15:56:56 +0530
+Message-ID: <CA+G9fYuYfNA7NZDHpq2K24CsUn21LAb8vn38=JTz=54bsdSd9g@mail.gmail.com>
+Subject: Re: next: x86_64: ahci 0000:00:1f.2: probe with driver ahci failed
+ with error -12
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, linux-block <linux-block@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, Christoph Hellwig <hch@lst.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Matthew Brost <matthew.brost@intel.com>, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Greg,
-
-On 13/08/2024 08:28, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.105 release.
-> There are 149 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, 14 Aug 2024 at 15:15, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 >
-> Responses should be made by Thu, 15 Aug 2024 06:19:25 +0000.
-> Anything received after that time might be too late.
+> The qemu-x86_64 boot failed with today's Linux next-20240814 tag due to
+> following crash.
 >
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.105-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> The catch here is the crash seen on both x86_64 device and qemu-x86_64
+> but x86_64 device is able to boot successfully.
 >
-> thanks,
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> Boot log:
+> ---
+> [    0.000000] Linux version 6.11.0-rc3-next-20240814
+> (tuxmake@tuxmake) (x86_64-linux-gnu-gcc (Debian 13.3.0-1) 13.3.0, GNU
+> ld (GNU Binutils for Debian) 2.42.50.20240625) #1 SMP PREEMPT_DYNAMIC
+> @1723614704
+> ...
+> <6>[    2.479915] scsi host0: ahci
+> <4>[    2.484371] sysfs: cannot create duplicate filename
+> '/devices/virtual/workqueue/scsi_tmf_-1073661392'
 
-I tested 6.1.105-rc2 (9bd7537a3dd02) on Kalray kvx arch (not upstream yet) and everything looks good!
+Anders bisected to the following first commit and reverted this commit
+and qemu-x86_64 boot successful now.
 
-It ran on real hw (k200, k200lp and k300 boards), on qemu and on our internal instruction set simulator (ISS).
+# first bad commit: [b188c57af2b5c17a1e8f71a0358f330446a4f788]
+      workqueue: Split alloc_workqueue into internal function and lockdep init
 
-Tests were run on several interfaces/drivers (usb, qsfp ethernet, eMMC, PCIe endpoint+RC, SPI, remoteproc, uart, iommu). LTP and uClibc-ng testsuites are also run without any regression.
+original report link:
+https://lore.kernel.org/all/CA+G9fYuD4-qKAX9nDS-3cy+HwGbyJ6WoD7bZ_QL0J__A++P9aA@mail.gmail.com/
 
-Everything looks fine to us.
+> <4>[    2.486170] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+> 6.11.0-rc3-next-20240814 #1
+> <4>[    2.486709] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+> BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> <4>[    2.486709] Call Trace:
+> <4>[    2.486709]  <TASK>
+> <4>[    2.486709]  dump_stack_lvl+0x96/0xb0
+> <4>[    2.486709]  dump_stack+0x14/0x20
+> <4>[    2.486709]  sysfs_warn_dup+0x5f/0x80
+> <4>[    2.486709]  sysfs_create_dir_ns+0xd0/0xf0
+> <4>[    2.486709]  kobject_add_internal+0xa8/0x2e0
+> <4>[    2.486709]  kobject_add+0x97/0x100
+> <4>[    2.486709]  ? get_device_parent+0x109/0x1d0
+> <4>[    2.486709]  device_add+0xe4/0x880
+> <4>[    2.486709]  ? hrtimer_init+0x2b/0x80
+> <4>[    2.486709]  device_register+0x1e/0x30
+> <4>[    2.486709]  workqueue_sysfs_register+0x91/0x140
+> <4>[    2.486709]  __alloc_workqueue+0x664/0x800
+> <4>[    2.486709]  ? trace_preempt_on+0x1e/0x70
+> <4>[    2.486709]  ? __kthread_create_on_node+0x108/0x170
+> <4>[    2.486709]  alloc_workqueue+0x5a/0x80
+> <4>[    2.486709]  ? __kthread_create_on_node+0x108/0x170
+> <4>[    2.486709]  scsi_host_alloc+0x365/0x470
+> <4>[    2.486709]  ata_scsi_add_hosts+0xc2/0x130
+> <4>[    2.486709]  ata_host_register+0xb5/0x260
+> <4>[    2.486709]  ata_host_activate+0xe9/0x140
+> <4>[    2.486709]  ahci_host_activate+0x16a/0x190
+> <4>[    2.486709]  ahci_init_one+0xe0f/0x1080
+> <4>[    2.486709]  ? trace_preempt_on+0x1e/0x70
+> <4>[    2.486709]  local_pci_probe+0x48/0xa0
+> <4>[    2.486709]  pci_device_probe+0xc6/0x1f0
+> <4>[    2.486709]  really_probe+0xcc/0x3b0
+> <4>[    2.486709]  __driver_probe_device+0x7d/0x160
+> <4>[    2.486709]  driver_probe_device+0x24/0xa0
+> <4>[    2.486709]  __driver_attach+0xdd/0x1d0
+> <4>[    2.486709]  ? __pfx___driver_attach+0x10/0x10
+> <4>[    2.486709]  bus_for_each_dev+0x91/0xe0
+> <4>[    2.486709]  driver_attach+0x22/0x30
+> <4>[    2.486709]  bus_add_driver+0x118/0x240
+> <4>[    2.486709]  driver_register+0x62/0x120
+> <4>[    2.486709]  ? __pfx_ahci_pci_driver_init+0x10/0x10
+> <4>[    2.486709]  __pci_register_driver+0x62/0x70
+> <4>[    2.486709]  ahci_pci_driver_init+0x22/0x30
+> <4>[    2.486709]  do_one_initcall+0x62/0x250
+> <4>[    2.486709]  kernel_init_freeable+0x1ba/0x310
+> <4>[    2.486709]  ? __pfx_kernel_init+0x10/0x10
+> <4>[    2.486709]  kernel_init+0x1e/0x1d0
+> <4>[    2.486709]  ret_from_fork+0x41/0x60
+> <4>[    2.486709]  ? __pfx_kernel_init+0x10/0x10
+> <4>[    2.486709]  ret_from_fork_asm+0x1a/0x30
+> <4>[    2.486709]  </TASK>
+> <3>[    2.508109] kobject: kobject_add_internal failed for
+> scsi_tmf_-1073661392 with -EEXIST, don't try to register things with
+> the same name in the same directory.
+> <4>[    2.519098] scsi host1: failed to create tmf workq
+> <6>[    2.524520] kworker/R-scsi_ (56) used greatest stack depth:
+> 15464 bytes left
+> <6>[    2.528402] scsi_eh_1 (55) used greatest stack depth: 14872 bytes left
+> <3>[    2.540312] ahci 0000:00:1f.2: probe with driver ahci failed
+> with error -12
+>
+> Full dmesg log:
+> -----------
+>   - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240814/testrun/24850492/suite/boot/test/gcc-13-lkftconfig-rcutorture/log
+>
+> Reproduce script:
+> ---
+>  - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2kdXPeyCZIUn4AYH0UrByWXzepD/reproducer
+>  - Qemu version: 8.2.4
+>
+> Boot command: /usr/bin/qemu-system-x86_64 -cpu Nehalem -machine q35
+> -nographic -nic none -m 4G -monitor none -no-reboot -smp 2 -kernel
+> kernel/bzImage -append \"console=ttyS0,115200 rootwait root=/dev/sda
+> debug verbose console_msg_format=syslog systemd.log_level=warning rw
+> earlycon\" -drive file=rootfs.ext4,if=ide,format=raw"
+>
+> Build link:
+> ------
+>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2kdXMb8C1EcMoXxMdKTWd4TB8Ef/
+>  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2kdXMb8C1EcMoXxMdKTWd4TB8Ef/config
+>
+> metadata:
+> ---
+>   git_ref: master
+>   git_describe: next-20240814
+>   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+>   kernel_version: 6.11.0-rc3
+>   arch: x86
+>   device: qemu-x86_64
+>
+> Please let me know if you need more information.
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
-Tested-by: Yann Sionneau <ysionneau@kalrayinc.com>
-
--- Yann
-
-
-
-
-
+- Naresh
 
