@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-286774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54038951EC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34163951ECF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96B81B22683
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:41:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC54DB222FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3DB1B5807;
-	Wed, 14 Aug 2024 15:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFBA1B5808;
+	Wed, 14 Aug 2024 15:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OJq/c22m"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mCva1+EO"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD151B4C42
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72CC1B3F20;
+	Wed, 14 Aug 2024 15:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650086; cv=none; b=dGI6KdmJSZofAN+I5CvBXUwh4TLpsVje2mHbE/ORKmZBo6OSmeVa6WH5LMa9xVebc8RwcRufMu896PWD4eH5Iy1OnGXoWI9bxmrVtmUUWgwEjfZYsR+xG808neDpihjx1XuGpJi4wFauqM77dAuNDG3Ph8yG//ClDiVuoDOFqk8=
+	t=1723650177; cv=none; b=AFI5vBiJ7Gv5D0uYs3Y5aqlDoaSTfSmNYJOdFYMSZyMuZNgjAyLm9nuO7tONIoFkauMEkUbGo2wshc+KPGG0L8cNPruRXS8A9z0pBHvoIYr3vVBVOVW9ovXVPVC4eSCFbCRvtw6fhEXGg9JUpt4kHddNpcNzrqgtuawACpWJpKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650086; c=relaxed/simple;
-	bh=NgaDpG6DTfA0N471gKketQJKffFKRH0SRwAgGTqaFaE=;
+	s=arc-20240116; t=1723650177; c=relaxed/simple;
+	bh=7RUzND1DLdEoCAJ5FFp3P1D0SDw92Cz7O9CEHfu5DUg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f5DXEQHyN/stIfVmhPMMpeqPmmNBsDVZwusq4S7EEpolf7sUTnDW6C3l6erg4TBNoJx53pdve2ijukSJAc2f17V+ozv6TnfP3m+up4mkTiiPBqlP/OJEpAZW+fVRXzYg0K7vC2qggSnNHxd1RCR9Odm964xIhpa+EuKi/TDE1wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OJq/c22m; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=NgaD
-	pG6DTfA0N471gKketQJKffFKRH0SRwAgGTqaFaE=; b=OJq/c22mtHWsUw8E+B/R
-	yezmS+dts9K0n2vw4eOjYNPYvS2aUDkap+1pttF5c7HRIB9SSle1fCQeXI3RQgSo
-	5VsbKZ4pt+PT+hPgX+x0HcfSnhlX3Iec/vP+wLd/COxv7EZPaYOFx2BLngRGM1lG
-	QV5+vQIP9xv+Ehk2+r+42b23SOB0d34qE5OZaVM1ett5T+g0tO0+cs/5KE43nddC
-	HcnrvOM9q4X6KC8NnzkwXM65Lt/OXAzt0XEe5p6nqMxAQUWc5mco7LyUt0I+1vNq
-	e5z6kUdVW7R4aVzCqY1hX65X32B9sHpzTNPozjkhPBTLnzb714ps2IuQu04QbBzn
-	ig==
-Received: (qmail 2030307 invoked from network); 14 Aug 2024 17:41:19 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Aug 2024 17:41:19 +0200
-X-UD-Smtp-Session: l3s3148p1@Gma3jqYfToFehhrc
-Date: Wed, 14 Aug 2024 17:41:19 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>, tiwai@suse.com,
-	linux-sound@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] i2c: Use IS_REACHABLE() for substituting empty ACPI
- functions
-Message-ID: <ZrzQH8F22tQWOH-Q@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>, tiwai@suse.com,
-	linux-sound@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-	kernel test robot <lkp@intel.com>
-References: <20240814121649.261693-1-rf@opensource.cirrus.com>
- <87mslfjk3n.wl-tiwai@suse.de>
- <Zry4eIOLOTwaYdaC@ninjato>
- <87ikw3jizv.wl-tiwai@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdpR/yWUSSwuo9WmndoopSyh7C0D6d7AhweBleWPSHzZEPeG8wnyMs//Gee5+x3YrNb+IwkzUz6wghczN4dEviTyztwfijw6Cx+fBG7jpJ4cuNf3HzNyyrbzIG/7/6QW96P67GwugE21rba5KD9RhWims++92+F8/46Ne3XHIEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mCva1+EO; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EtQ5iKWt7WqAkiS1w27yiZFTNzhmDZvtoNK9l95Y9BU=; b=mCva1+EORSdXjcJw1S6MAR5/Rh
+	DOwD0PNSZvFVS0NevxHZaKmEF5JqpYIehY4XbvP4XmhPfbPHZL1ZWxauWnOJxtuoZnnafYGCA7MGj
+	wyLs3UCMa+2IqPKxeSlfOQJk0fhLjY5yV6IDRsIxwkQY9AjnbF6fxh24kgkLxPONfNhgCxBOC96w4
+	aR2PBXinjUp81PzyMH7UnFqFsKa4GnF8uGPv/JNkWjDzaRFlGmWetPpQGW6qw/MvN1kMFGhlabAQB
+	eX+TxPBb6GIOMQ9uq34nrsU3buASYCICZm0E7PN1rwn96LbrFpEBD+hwcum1LZBZQL+BpYCxw2nr9
+	lNfnRRdA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1seG9C-00000001eS8-15NV;
+	Wed, 14 Aug 2024 15:42:50 +0000
+Date: Wed, 14 Aug 2024 16:42:50 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+Message-ID: <20240814154250.GS13701@ZenIV>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+ <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
+ <20240814021817.GO13701@ZenIV>
+ <20240814024057.GP13701@ZenIV>
+ <df9ee1d9d34b07b9d72a3d8ee8d11c40cf07d193.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SvPW87wNirmHn1I2"
-Content-Disposition: inline
-In-Reply-To: <87ikw3jizv.wl-tiwai@suse.de>
-
-
---SvPW87wNirmHn1I2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <df9ee1d9d34b07b9d72a3d8ee8d11c40cf07d193.camel@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Wed, Aug 14, 2024 at 07:48:17AM -0400, Jeff Layton wrote:
+> On Wed, 2024-08-14 at 03:40 +0100, Al Viro wrote:
+> > On Wed, Aug 14, 2024 at 03:18:17AM +0100, Al Viro wrote:
+> > 
+> > > That's not the only problem; your "is it negative" test is inherently
+> > > racy in RCU mode.  IOW, what is positive at the time you get here can
+> > > bloody well go negative immediately afterwards.  Hit that with
+> > > O_CREAT and you've got a bogus ENOENT...
+> > 
+> > Hmm...  OTOH, in that case you end up in step_into(), which will do the
+> > right thing...
+> > 
+> > 	How well does that series survive NFS client regression tests?
+> > That's where I'd expect potentially subtle shite, what with short-circuited
+> > ->d_revalidate() on the final pathwalk step in open()...
+> 
+> Christian took in my v3 patch which is a bit different from this one.
+> It seems to be doing fine in testing with NFS and otherwise.
+> 
+> I don't think we short-circuit the d_revalidate though, do we? That
+> version calls lookup_fast on the last component which should
+> d_revalidate the last dentry before returning it.
 
-> It was a preliminary fix for the change I recently put after the rc3
-> release, and now it surfaced.
+It's not about a skipped call of ->d_revalidate(); it's about the NFS
+(especially NFS4) dances inside ->d_revalidate(), where it tries to
+cut down on roundtrips where possible.  The interplay with ->atomic_open()
+and ->open() is subtle and I'm not sure that we do not depend upon the
+details of ->i_rwsem locking by fs/namei.c in there - proof of correctness
+used to be rather convoluted there, especially wrt the unhashing and
+rehashing aliases.
 
-Ah, that's an explanation. Thanks!
-
-
---SvPW87wNirmHn1I2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma80BsACgkQFA3kzBSg
-Kba7AQ/6A41xPlTYz0zKa9qB9fP8o9xD62VW2fF4HImhtNQvaoG/pqr9sTDNVyrf
-SdDfHQFd6eGTI07CWPeX6636W5guAQGvabGiewvmJsZsSEWKIqan3co+mCTDsjhs
-6BrgfvC5WDPyDLfhR/CThWLXFtInm9ZfN6e8SLfblsx+pDijAs8XBAhTwxKNmRSr
-cddpkYqK21iWAYHfNZQwhbZDoaEXblBZk6WHf+7BsHYlgjNbMZQfHVoMg5NLr0dS
-lO/NHqRy3DjyZQgatMPhrrL9+kCpG/Qb9va8AnJoo611LSHFa3vNoV8qfF995VGY
-Lw1xJ1eFsNtEeSdzpBryvY2tilpd4HaNLTltg7RG6VCVm/a2HuCfeWcFUy5ej1gB
-E52v0yE9ZVFSSD1jFV106O1XwMH3ga0u0tvcNDUFxrxyF8cHSt92iCdXn3+mDiow
-RMWsYS9lREMWqqG7RmL2MiNVVqbagAs19p/CV6v0jcK3Bt5zgn8HOOe793iP3fj1
-ZlX6ZiWVlYdBeiE49kjjA64hDbfuXDipMdjesExJ4TAWmLQ0dCGnnBEoi5yalgrC
-snaaMycv+FHtuTHXzZAy9DJSri7qDsBq4AuUDEzGUPahO2uNRRG3v4hSqu/NhnH/
-K/vaJC9MU5S7YxLTVeboCW9ClGynwg/vKAK364XayQqHKX+7Nb8=
-=5UOY
------END PGP SIGNATURE-----
-
---SvPW87wNirmHn1I2--
+I'm not saying that your changes break things in there, but that's one
+area where I would look for trouble.  NFS has fairly extensive regression
+tests, and it would be a good idea to beat that patchset with those.
 
