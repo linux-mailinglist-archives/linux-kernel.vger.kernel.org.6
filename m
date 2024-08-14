@@ -1,159 +1,98 @@
-Return-Path: <linux-kernel+bounces-287129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6D7952357
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:26:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93EA0952358
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5D8282294
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C71AC1C214F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E97D1C3F31;
-	Wed, 14 Aug 2024 20:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/0296B2"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6691B1C37AA;
+	Wed, 14 Aug 2024 20:27:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A850139CE3;
-	Wed, 14 Aug 2024 20:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795CC1BC070
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723667159; cv=none; b=NcS5r8fI9NTst3/D4uN2KngDmgv3Q6M0zLEF99Qg6xwmIfFNozDSCX36AHISK6qe1dZi5Er3H3CoPkpDx6PG0kooQ2QdbVxaj7z2NZ2zD19iuqYD6pv5cPPknc5Yp3ZICL2YlCbvBO+zuN/L7j3LXawf9567iUe6WTJp39QYqKs=
+	t=1723667225; cv=none; b=Sma03YsoVubr2DU2I+2ZlXovpcjB7vaCqB0zcwyYUTJgJ/m0ju3IhSCZ5cmBDLDq7vJP+87nTlNrt4QbVgWByCq+lTMKKSal7BLDjLRd0QFVvkYxOfFmOq8J7So94Wg+UENa/C6hVvUXqb5WY/8UkNX+tzuULaEbTGviTaNjgVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723667159; c=relaxed/simple;
-	bh=5THrZT91Dka8vE3WCfMHCQnwH9ElY7cqZ5CXLdQYm9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HNojS4oN5npURYpdzH6EWcyJwwXX3UC29dyuqOuDg00VkeW8KXnpr9W2xFO7M9+QA2uopE2EJK1Iq+6/hO8uubWA4S5EUKkGnyYXQMfCoAgcIyO77v7tJfPmo+g//2exmwnOP4jMyDm6MY7JX64GAxWylxk/4ijF43qs+dvyzwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/0296B2; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so31989866b.1;
-        Wed, 14 Aug 2024 13:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723667156; x=1724271956; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e+7imTotiuh7U0ostSpwsXZ2DttMOuddO+8MDxDc62k=;
-        b=L/0296B2VWjpQcZwLzW33xfUyn1dv8oIBHaMFNs4yAc+iasvdGFBYR4A1Nj7mN40pC
-         EANw0xhyCVcgQoI8T8wy/xe9E2gjv4J8oSlompFrdL186M+omhIFSVX8j73uSBeZ1i+d
-         DDpXczm88dA+M4Jn4L60hA3mV4IIrhTBcw2ZQV9LYo/k6cr3mvLhoJPTE+WGsXNnh+Gf
-         fTiqj/uUUlkC7KjvpEP/0NNLKlB2HBxYgnmDfphyCMABlHpX4ldgL2IYgtAJ6Kx6UVQh
-         vq3zkefJNB3AsUpaoGQJoUogxY+CmwjubH+NTTJEPrlDo6OA4uv3drrhq2KgZA+MvjY2
-         fSFA==
+	s=arc-20240116; t=1723667225; c=relaxed/simple;
+	bh=3/PzT+cBz/HOJNDvt4yEtBFL0FXMBuaIBLvF9Hf1vCY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=H2z75WkjHnyHN/bH6iBXMwNy9BDzTM0dBGe1HGMhRR96r9FKWkEla+Iv3Fl3JiyigcpmaT0SCzfquhH+hvVjgDEJxrs9X7ZfxyqLAEIoVteb55Qi1mNvoeM8naKcHBNHMQnKa3fIE63tb4t263lzKaZ3czFmlbSiRr41SG2lGGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9612b44fso35269139f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:27:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723667156; x=1724271956;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1723667222; x=1724272022;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e+7imTotiuh7U0ostSpwsXZ2DttMOuddO+8MDxDc62k=;
-        b=O1a7j41YRtxEqFAWFWmwd51gg84ZzWvQC1COaqhg8j1Vxbq5i/1gqeFQz04UAg1C3C
-         zf7dc1r5Vz4XNdy0KssV6adyQijr2lLK8+0T7fTdl71PvyokRsIOxCpO616Ia5iRUaEz
-         7PveLLoN98f1qyDr4NObTNHZQ94bqDFSFk8g8agQGNu1cb2p5fH0Y2sQxL/x8Tgk4mGh
-         hEasDhjOQu5u5k4D1o0vDIaAhiNpIhLtTib45fTdvihiCvoGh6Mfl+6X27MItTuSCNy3
-         2qyeW7LhKsxkDcyJrQ4pMAsqTnaj36YKWjJyjGIMAoxICtJ2oJPCIKsOTA8uZLvyE9CK
-         iWTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUG6sE6LmT9JnbDf+A6QWcaTC++iKQNCOE4umnKMGKAuHg0agubqKeNvcOSIg7tUrlZDjOu4Zt/Vtnb+Ok1w5wOAFP8t8Yzd2pyYC2LB0egdePxmvB6xgBvr6YR+saQgkW4/osfS3H1G/di7jzD++F7rjzYYleWO3NnpJX5QCREOmYAv+Y1uLJirCph/0de4YhJp047D4FhrA7IbeeTWHNotMY=
-X-Gm-Message-State: AOJu0YyE1IMwWp0lvRa9yDrmt9HWtUcSHVINNaS75GHXF2XraiMueW6y
-	JBSoVejqXI7vNiCYnJoV1SJxy8E3MgWzkl47SGkOjM1jCFqsXX8w
-X-Google-Smtp-Source: AGHT+IH+SZrWskCFaBKMcil9L0FX4p7V/d1rSz8qFi4Xab5CoLt/Ip1kZb8rju6bwMrlzWibwGzJAA==
-X-Received: by 2002:a17:906:4fc7:b0:a7a:a5ae:11bd with SMTP id a640c23a62f3a-a83670723e6mr288279266b.67.1723667155199;
-        Wed, 14 Aug 2024 13:25:55 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa784fsm214857666b.61.2024.08.14.13.25.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 13:25:54 -0700 (PDT)
-Message-ID: <0eca6755-a2ec-404f-b98c-ee6c9f6fb55f@gmail.com>
-Date: Wed, 14 Aug 2024 22:25:50 +0200
+        bh=83cV3ypXX5lLzfQXzR0ZZM6JNuUWD5iCyFx0Gi5V0S0=;
+        b=io4r9cLLDhl8384x8DGTGNhpf3LE4QbxEqpf3Cc1JGdL+HUb+IuWGZMOH5XccmGOru
+         t4s3RuJ9yxdg4g2JW8ure3GwK2HdEtULN0GLTn0Ma5MZhX/q5aj3PTdz7+jsCBO0BWsc
+         9HHG32SL3asWCzCGdVe2C6VsGgPPET3TXnWsN3FLjMey2nxtnCJODUGuUyLy7l88uvcj
+         FidXOVAzNV4rHerl9oXY9b0PGSBQWHy9qvRZLfXpI39JOEFtSciKrKnDPoZpgd+5DePl
+         s7xN1OzBm5W8uB2eGmGG+JmjdChOz1FUXykZKoA8TJLDVe/ioaLBN6O/xlFZDUBWFC5k
+         23WA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/Lrcbht6l21zTxjc/lQ3tlAqweuJqsPqJ14dgN+gMkwITfv7+sMXP3rL+lT8IW/i7S/2C280i5I6gjMobpYb9tsuAoHDL7U/u1Il1
+X-Gm-Message-State: AOJu0YynSr+78P49eB2QEsHsb4UFhR0FxaXR3YuCs+2Wo0cT6iYZPa5K
+	Qp+doL78xqqqrqrJIUSaCs2i2OrggVFyNxXJx505Mp0yJD/HYXxYFtxak6bgOPeTz3xdm7Qdmvt
+	X3GC/Zsvh7l4HUmL/pDarjDGg9TNplAaWGGLXyChrp1zCWHyKjMRsVJk=
+X-Google-Smtp-Source: AGHT+IGgnkf3jTRzJsoAhA2dNqwPNx2+mABBXV6K4MoHEo45th6H/vN2XUgfe5+tWcNhYCc5epIjXA65FCuXQJN/rfrlGDDSka3u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: soc: qcom: eud: Update compatible
- strings for eud
-To: Melody Olvera <quic_molvera@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Trilok Soni <quic_tsoni@quicinc.com>,
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
- Elson Serrao <quic_eserrao@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20240807183205.803847-1-quic_molvera@quicinc.com>
- <20240807183205.803847-2-quic_molvera@quicinc.com>
- <dfb1ac84-f011-45ea-9fb1-b8c6bc36cabc@kernel.org>
- <46d0627d-877b-41f3-83f6-4c33b562f460@quicinc.com>
- <0ebb1ca3-722d-422f-9f71-fcc61c3470b0@kernel.org>
- <2b118a49-2229-4346-ab21-0aa5377d7a4e@kernel.org>
- <8bb412f8-4fe1-40ca-8414-bb77c66899ae@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <8bb412f8-4fe1-40ca-8414-bb77c66899ae@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:60ca:b0:7f6:85d1:f82d with SMTP id
+ ca18e2360f4ac-824dacef3e3mr22200539f.1.1723667222534; Wed, 14 Aug 2024
+ 13:27:02 -0700 (PDT)
+Date: Wed, 14 Aug 2024 13:27:02 -0700
+In-Reply-To: <tencent_537623A0A452D778B77A26C4736243668905@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000082aa87061faa8cfb@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space
+ in f2fs_ioc_start_atomic_write
+From: syzbot <syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 14.08.2024 7:33 PM, Melody Olvera wrote:
-> 
-> 
-> On 8/14/2024 3:30 AM, Konrad Dybcio wrote:
->> On 14.08.2024 8:15 AM, Krzysztof Kozlowski wrote:
->>> On 13/08/2024 22:03, Melody Olvera wrote:
->>>>
->>>> On 8/8/2024 4:00 AM, Krzysztof Kozlowski wrote:
->>>>> On 07/08/2024 20:32, Melody Olvera wrote:
->>>>>> The EUD can more accurately be divided into two types; a secure type
->>>>>> which requires that certain registers be updated via scm call and a
->>>>>> nonsecure type which must access registers nonsecurely. Thus, change
->>>>>> the compatible strings to reflect secure and nonsecure eud usage.
->>>>>>
->>>>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->>>>>> ---
->>>>>>    Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 6 +++---
->>>>>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>>>> index f2c5ec7e6437..476f92768610 100644
->>>>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
->>>>>> @@ -17,8 +17,8 @@ properties:
->>>>>>      compatible:
->>>>>>        items:
->>>>>>          - enum:
->>>>>> -          - qcom,sc7280-eud
->>>>>> -      - const: qcom,eud
->>>>>> +          - qcom,secure-eud
->>>>>> +          - qcom,eud
->>>>> Commit msg did not explain me why DT bindings rules are avoided here and
->>>>> you drop existing SoC specific compatible.
->>>>>
->>>>> This really does not look like having any sense at all, I cannot come up
->>>>> with logic behind dropping existing users. You could deprecate it, but
->>>>> then why exactly this device should have exception from generic bindings
->>>>> rule?
->>>> Understood. I won't drop this compatible string. Is alright to add the
->>>> additional compatible as is?
->>> You always need SoC specific compatible.
->> Melody, is there any way to discover (that won't crash the board if we
->> guess wrong) whether secure accessors are needed?
->>
-> 
-> Unfortunately, no. We considered several options, but none guarantee that we will avoid
-> a crash if we try non-securely. The secure call also won't give a specific error if it fails either
-> (for security reasons) so we can't know if a secure access failed because it's supposed to be
-> accessed non-securely or for another reason; hence this approach. If there's
-> another way to achieve this functionality that might be better, I'm all ears.
+Hello,
 
-Can we read some fuse values and decide based on that?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: lock held when returning to user space in f2fs_ioc_start_atomic_write
 
-Konrad
+F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
+syz.0.15: attempt to access beyond end of device
+loop0: rw=10241, sector=45096, nr_sectors = 8 limit=40427
+================================================
+WARNING: lock held when returning to user space!
+6.11.0-rc3-next-20240812-syzkaller-dirty #0 Not tainted
+------------------------------------------------
+syz.0.15/6178 is leaving the kernel with locks still held!
+1 lock held by syz.0.15/6178:
+ #0: ffff88807032a0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
+ #0: ffff88807032a0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x2ed/0xac0 fs/f2fs/file.c:2163
+
+
+Tested on:
+
+commit:         9e686969 Add linux-next specific files for 20240812
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16367cfd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
+dashboard link: https://syzkaller.appspot.com/bug?extid=733300ca0a9baca7e245
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1510e1f5980000
+
 
