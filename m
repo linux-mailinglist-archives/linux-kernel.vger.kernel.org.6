@@ -1,248 +1,523 @@
-Return-Path: <linux-kernel+bounces-286609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9707951D0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49FE8951D11
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDB21C21905
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37FB28899B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6EF1B3724;
-	Wed, 14 Aug 2024 14:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DT2VPbJp";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="aDNrg0BU"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7D71B373B;
+	Wed, 14 Aug 2024 14:28:41 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F671B32A9;
-	Wed, 14 Aug 2024 14:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645634; cv=fail; b=iWE9cr2Zda5+o2e2UuGHd5sbCvVWqUr/fFqsUWjHY6tW+Od6uVU5ApoD+UE9tNNHX5oBfrH0isjdCNyhcDJjkJBMIfYWuw5mZHH5D1Rg4yTWOJ6WtRK1qC32TA1SBUN0zROflBDYRtS62qGhaBYW37r6mx+w7YL0apHKUUBlCC0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645634; c=relaxed/simple;
-	bh=48bpWpOS5XGr2XN1ElfeARnkB2G5kGdm0WOYJcIEj/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fSKYlCqRD/xy6uT0aiou2NowBgIPuuv5lT3cVtUS/4JPX+82fsWFEb5lSO/67ExOD1SJW6S94+fq6k5oBs9/PH95GiCvgQXwaGs67mhXY9pvp8mLstokrKPNDU9IU/L7UPrq7Q9lHO1VRocs1TptZZIHZP8ri3cqBJNfINHpxv0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DT2VPbJp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=aDNrg0BU; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EBtbfh003723;
-	Wed, 14 Aug 2024 14:27:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=oFXFXLiJqnhRP8m
-	2inEO1iWnyuFKp3ocjXzti8wmdP4=; b=DT2VPbJpxhYjYH4qureMyhE0J8LdXZh
-	bb8RBBH+rnRH2veHdfqA6pZzgu4A9g8rswnvLaXPVjaEPyW2suW+JQcGCz9CiGlP
-	XhROiAZDIvb+upA73dRUN5UOz9pt++dpNCONPoFguX61LSHkuBBqnlBpeL7iADPj
-	TlRVB7pc70BzWSHlLj1txrhhqpJZ699zOmnrMOmhbcPnm5UwlXCRqauBKD7oA+vM
-	/bYTRbtcgVul9KZPJpV0ezl2kB5bx/LaWaLevgl/9DwwXSSjzrRT/CEGo6b/3hv2
-	4W86Qyfe7UfTBwD9ZNQkMHcHfce63ZUZgQFTqFYMxGzedsWZ2dQohHA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxmd0bev-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 14:27:05 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47ED8eIA010707;
-	Wed, 14 Aug 2024 14:27:05 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2040.outbound.protection.outlook.com [104.47.55.40])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxna09aw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Aug 2024 14:27:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q/S4oLQGigN7bFMNDzAIymMZk2h0bsyfQpNNZNGcQqF5Twx80qVaOVLcFghfhRzQfQu7HjgARGYiL+U6MxhxV1/1jx5depwEyN20z8Sz7HO8HPVRGiVxPoAnPbOu3R2lU3toEB1FmfjSxRqEyi9wIaV3hFJu3u5cUjHJoh3D9YUjixjMEL0xhyTMQEhJHyHxSaZwKpwI0wZjEaUQs1IcuIqe7ZZUgE7zN9NXwqESYazoFZGKLlispTsulVDz+soW6DbqldlhWJCh5TDg2wX/3n4ZikLWaV2Jg9NN23BNWnQrKipFtwfNvFBmTbon/AJoPoT0M4XPLgPcIBONMIgKag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oFXFXLiJqnhRP8m2inEO1iWnyuFKp3ocjXzti8wmdP4=;
- b=eFoF0OPHVZyqylZ/e50aoiKSjrk5WGriMFhr9+hWP34ja0P1m9PmL78y2DkpOJ6WQ0d+RoYcUQ4SpsmaT2MtCVZDfzJDubmk9CXpUHavl4Gv9x5GU5rwtrKI/IlLb3ZAWjSy9PYR5djvrhuaO6tjM777MEbBU8or94Mj/zap8DubfvLKxlgPfb+S85N0EaWXQxZx5Ezmv98+BHwNHX/n258EMMCShrEhGCiGC5Lp7yAdEOPw9MfSQDs0xWrxYtgfrOVcFE1xlGu602TpN4qBZm2Xe482hft00E/W4jAzHFnHEcXIvlaA2jBqMwjv0hlP0y0OlRzYGFX4jl9yw8NL1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oFXFXLiJqnhRP8m2inEO1iWnyuFKp3ocjXzti8wmdP4=;
- b=aDNrg0BU8jbeIgetAKacDlceNax9aqwjvNbcFaurMwTzDX8Pmh4+PjjsNPMRYAnDhkYH1CigEwcMEvqVTeLB5Fm5ggMFWgFNEz/Y6Bk+UKkVHl5KvXP7o5qLY/3OpKHueA2KWqYfnweYPufSIzyLQkkIcMg6Fd+mQPSgmV7Kb0U=
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
- by SJ0PR10MB4717.namprd10.prod.outlook.com (2603:10b6:a03:2ac::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.15; Wed, 14 Aug
- 2024 14:27:00 +0000
-Received: from SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29]) by SN7PR10MB6287.namprd10.prod.outlook.com
- ([fe80::5a47:2d75:eef9:1d29%3]) with mapi id 15.20.7875.008; Wed, 14 Aug 2024
- 14:27:00 +0000
-Date: Wed, 14 Aug 2024 10:26:57 -0400
-From: Kris Van Hees <kris.van.hees@oracle.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jiri Olsa <olsajiri@gmail.com>,
-        Elena Zannoni <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v4 1/3] kbuild: add mod(name,file)_flags to assembler
- flags for module objects
-Message-ID: <Zry+sYwzCnZ94IwR@oracle.com>
-References: <20240614171428.968174-1-kris.van.hees@oracle.com>
- <20240614171428.968174-2-kris.van.hees@oracle.com>
- <20240614134651.4ed2091d@rorschach.local.home>
- <ZmyHsnXQoWgp7F2X@oracle.com>
- <20240614142621.5ac455c8@rorschach.local.home>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614142621.5ac455c8@rorschach.local.home>
-X-ClientProxiedBy: MN2PR10CA0027.namprd10.prod.outlook.com
- (2603:10b6:208:120::40) To SN7PR10MB6287.namprd10.prod.outlook.com
- (2603:10b6:806:26d::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E255A566A;
+	Wed, 14 Aug 2024 14:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723645720; cv=none; b=rmC6aoDRmhyzySgZ3EN+BAJMkm2AWqgloXIdieQABZXggWX22ncKCBfDPKEh3uaMFr/+IIIODNU1lAaAKLFoPOsK3b77PB0ileMw4ZocFNT8JYK+odvtVEjq6nOhf9GLph7FbaVKKCumh3iY4E2lwgkUnY1x3OzdhgUMfRziaGk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723645720; c=relaxed/simple;
+	bh=JI+n8bCIN5Kj+h5sf6XC6Lvo7vUugRpvvO1tLgc/oAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7xJbVO6uC1p7Ofb+jGliRGOguCdMPGYZxTs2t77w9BrKoJAfda0mtM+1n6AyuTt0V/cSInSagczG15Oqu2CaNBt9g+qUX8sVYtyQe5vUAhFHT2B3szC6DWqUUgah+oN8+cbIjrtEyj371RrKrcHETh2mJ6oClSv5d5s0KTRI6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WkVwt1Brrz9sPd;
+	Wed, 14 Aug 2024 16:28:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id B1925Et2UbYy; Wed, 14 Aug 2024 16:28:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WkVws6xxvz9rvV;
+	Wed, 14 Aug 2024 16:28:29 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id DA6838B775;
+	Wed, 14 Aug 2024 16:28:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id pXpeQ3GAqAxy; Wed, 14 Aug 2024 16:28:29 +0200 (CEST)
+Received: from [192.168.232.91] (unknown [192.168.232.91])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A18F18B764;
+	Wed, 14 Aug 2024 16:28:28 +0200 (CEST)
+Message-ID: <8694f15e-b749-469d-9ff2-7c9773c7f00a@csgroup.eu>
+Date: Wed, 14 Aug 2024 16:28:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|SJ0PR10MB4717:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2432f4aa-b2d2-4889-91de-08dcbc6d2900
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HCgQfenlFmIrOVQ7PVGnFV9H33ppAIKgXfWAEIdoLVu40vrDxe89y3OdCHI9?=
- =?us-ascii?Q?ArhzLikyD/YpJa3Dobf+AXglpO1gZQNj02USl5H/ljNCnUg286c5gvvacgnm?=
- =?us-ascii?Q?doJ1RiLo1QEmt0U6dodqM11ZlGOjkPCTMy7XDQiuiWRpO7ZC8Chubu4wV3GX?=
- =?us-ascii?Q?VDcQK64SIdNzF77OwSTkCZX/q+LAV0Gd+u7LZohZy2kg09apQkwcRCm+HtlE?=
- =?us-ascii?Q?wr+KQiHNfqPyLp2EqCHalj4XGaMpsMFU4uKhEK5LXEGi8nVY9SN43jfhLqU3?=
- =?us-ascii?Q?OZ3sNHrn1ftHGWq+P3qQsTt9rpn8lcJiWQl1x0QhaodvyJKjq2INfG9+VUh5?=
- =?us-ascii?Q?yoQbTKBXQvpB5/3w1RnawJKrQjxJp98FYtAO2D84RgpzuU0mVL8I5N6sBid6?=
- =?us-ascii?Q?xl5UPZ6dxijExUnBCLmxU1WG5Da4UKt7Yo3UKpI5qkF7uPVqWH3GTdJIcbiy?=
- =?us-ascii?Q?tx7pQWgFlPzeAqkbrzkimzfbHw+T58rs04BviSG6Bwtm8oQUp/EKim0AIORN?=
- =?us-ascii?Q?SeoTAhJgZx2w0ofO5n69gM9XgObFpID9l80REBSPqBNYo/r+SwQ9KbZJH7cs?=
- =?us-ascii?Q?7myVOifo6PMy2KEP5PaUCoIWX1Ytla3SY/GfSF37SbXl2iQ/2VHovEXs0u7K?=
- =?us-ascii?Q?EJpENnTK3Q+HhemN8m1q57DHZ1Qb9o/ux/Zx/fbazvzbf15KGfDy9g7kVQQj?=
- =?us-ascii?Q?BCcEP7L84eHVUT1iADITDrW/LYfuxXBh4RVEtGFIpK006nvpKsgf6sM5x21r?=
- =?us-ascii?Q?Q8HtiahysXnkl7wCs0hroWMXM6YFAoRa6+dEyFg3RjTyfSqLRaDpO7i30QT5?=
- =?us-ascii?Q?/BpSF0mjR9C/td7OhTa/OaIeOsd8SqZqBbjWOdo+BaQ4k8xwHkge62XJJXLh?=
- =?us-ascii?Q?R/r5Kq34XfUSdR3obIMPoK2xgUClEeVnjjNWvaggqxKc9rPk9BDKvPW2l3y0?=
- =?us-ascii?Q?ues6hVegs/H5UkfPiz+A3z+3WijXIB97Ssy2ypejovUiAJGMEdCOXHoBuVAX?=
- =?us-ascii?Q?e++tz2HLZ5sjsmCah7M4Q8mVsRxU4shwHOF7aQBAMfxP7DY21YBwI+xptz42?=
- =?us-ascii?Q?aM/GXUluRm6kC+KXL25e5zSCb98cIP3iviETDzuddxlDaZbRqtqx/d5lzkXv?=
- =?us-ascii?Q?KH42j/JCr8oKidj4g8hka7P+Hhesh8LSgOLFcTIkPd+dr5iO22OE7rnP9QIL?=
- =?us-ascii?Q?ig60qmlvtyBceDNxQZUNe6O1fEmXfweFywBZCAIXFJj6pD2gIKIMfx/F8sjd?=
- =?us-ascii?Q?yHjTmitJPO/mTnn778DY9le/VB1wfD+ajEykBeRdUlwBBYnVB3q+Ou6ep+hc?=
- =?us-ascii?Q?7aPrkEGAk0hmSCx4BuWyHExeT/2854FWNuq8zP9U/+BVPw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bNh/WidEzATrkqlFB0wTK5h5UGh87FBjbKZHzb99CaqSzlzZJZefB9KVMx0N?=
- =?us-ascii?Q?Kpx2jhKFNMA6OTIjFKDU7egqn+LlW0rX7G7xL5EVRzI9eqvuU0FqglkAYQ2N?=
- =?us-ascii?Q?/qWV8VrFStbEsUETAjf3b8Wu+DSJ7b2qnRgkg7ZFmUVSilhw2TBUt9z53xj3?=
- =?us-ascii?Q?ocVp4v0CEvGc89TWy/Pnb9hVSP1ogwmgsqVgeexz31PCTDRnK9bJhxPZcuI1?=
- =?us-ascii?Q?ReH46B51xFDTU1GxudPAEP4vziaj8zi0p8mHnT5+Xl3V/nQS9oE+szfgxCaR?=
- =?us-ascii?Q?UdPAT5BKhpJutQajpo69mc1aiBLwBmUI/NPyz17JkmABZanDEDWUTXeOC3lS?=
- =?us-ascii?Q?XvmtOnaS1YIuQr2lFqx0CKv1e2/9IcNZm5rIzfFpQUj18wresr3g64tlB+xe?=
- =?us-ascii?Q?zcYfW2XtJAMPXUkUxlbFKVCI01u50mhLE6msRzH8py9JkQA92M6dbgbV3zMc?=
- =?us-ascii?Q?JZQey7LCp14feA6RGZbPStwjw0qlHOZHVqX2Nc5b6TsBIh9p3zpxayPVRVZv?=
- =?us-ascii?Q?2JEZrbKHDuoSQqE4oCltxnYzpOU1gG+Pc+xu2rYPYYxaPbaB0VISSTCLRJcb?=
- =?us-ascii?Q?GprJNK3+SI/1CNZNIhqRjyncYnAEosaN2BhOqxv9Ckt2ROb0eviq5s5urUsy?=
- =?us-ascii?Q?+SAU8NUeVn0hMD9ltDdr0S2YJgH9vOZ+kQOhiMnWvb33oFQhR6HAu4nEnB7W?=
- =?us-ascii?Q?McHzvsTw0RzBKCCyqAQ6Cph90x4/bL5CqGaEpR2UGEEdSfltE58o6P3S2zdU?=
- =?us-ascii?Q?5poGr3eI3nZcKTrp/vWW5QKA9xaoGQ0SySWG8k08qtsG3QFzCInQ8Nxb2aiQ?=
- =?us-ascii?Q?HJZTyNVAf3lQxT+1I1fMTAazrXAjAjYE9V7L6Za6hv+19fb8YujNC3HELRa6?=
- =?us-ascii?Q?Cmm7d7z96jCM3Ltrfdd5HmVazGcO1frgda81bCzjMILRIyi/aJCODdLkngyW?=
- =?us-ascii?Q?DQ02UE2u/kenlmOrB9x44Aoiy0bKiidDBg6BJSzotnUUbcXunxQku5gGNF0+?=
- =?us-ascii?Q?kLMGk2bKB/WIA5ygGyu+g/9RQEVln/Hjict5KvlLzmL5m/mlluke/RQmyU5t?=
- =?us-ascii?Q?Ry19TuSeY32c+oRf0/6ZtxwWRTZPcqmakiIPmnySmJVM3ykDAYtNhFCoaYl+?=
- =?us-ascii?Q?ZmVdfkH+zzeKn0M9QTjq6tFfTKm7o53s77/ESEhlL/QcLno77ZSHBPMdtX/g?=
- =?us-ascii?Q?Wh6VYeFcKy8nS3ji4xdoxb3hw+gl/kGESFQTuBofXzSAwogANaWctEkDqkkq?=
- =?us-ascii?Q?3eugzHU620osAd+wtbgAPqsNsBf+1qNGf21+1NkhNO4Se+69IweM9I7ZuWwO?=
- =?us-ascii?Q?4wlKG0iz7EfeMJ8iF0djFa9p5/kfGtNpf69sgPQOWp1sC7i+9+gqoVHNYmvz?=
- =?us-ascii?Q?rY/6Yc27WAbixhW2gDWOCWC+hkZVK9C3b9y6SalORrqZFAFPWz/zqCGdt4yf?=
- =?us-ascii?Q?YynbegEnft5927Y5hVv96rw60H6DZI3QNbwgIKt+K10xg9kLeoy6oAFhbx5r?=
- =?us-ascii?Q?3zVyddSkZGJ1GsdaPRWSCYaxALSuWkFOm7fCzycOcTOSAD6uh3tK9trOk05u?=
- =?us-ascii?Q?fJdofh1CqY8TyY3UyCFn94jlGMfXKywYcCvZLEANjgeUEammHVL5DDvAlaip?=
- =?us-ascii?Q?3g=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	4wLwRo/G7llDvlLO3hiw1NfWvHLkU0zGrNP4X038CCNS/51FnxB6yCckRfIbDpZPbZBAh2YqB8550JEFUKNseLmUibh4mwH+4TB6eJK3xJbFt31g0f7HXsJm7ckOq6i/Qhxm0R5x45k5gJGbImClEnYv4WPaR9XpqjH3Ip/LCi/H1bOYagepPYs6/OA/So1011UUr/TTDea7D7DGVEOYpME2COE88LACj4yyuer4jOfAEfjca2j5o3I22mOHn28cdBtEGimJmpjdSGZ1A57ITQEbyUpMDb7XPe5CflHmUhW7tUARYj5Zozip9WcsVeu0u2uM6vkumZPva7bjnQ4CrworZAKQDTG2m9U2e/ADGCOd2zB9ODFdNVW9MWyEXPEXKRWwfrIix7Bi3/L5dZy3z6hzFHuDbDTyHSk5IfbkuJLlUaFmn/o4sasxt6VrBSNwYZPLnsxfaWLbxFur3pWDAGGANHsWQ4edR7ExCRa6tczT3QgdEVf95tdMkSg7aiTx5QuToj5hleKEJkQtYvy+yzTqlUL1smT+0z7t+T99JIVqGiewAlxOsYX4d4olqtResz7Y1kp8gkosGH9S1oJvilRKFD8xPSnOp3Jg4oMtePo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2432f4aa-b2d2-4889-91de-08dcbc6d2900
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 14:27:00.6488
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q6I7UEx+TTnt76bdPYwFn9FHKPtkXc4v0uWKHepkh5mgvx9fAAObeND2oT5LX3hofmcUt1FnxmZsMyf+L0xzGEphXpSD3b9NXKhwE7e2mc8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4717
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_10,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 bulkscore=0
- adultscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408140101
-X-Proofpoint-ORIG-GUID: j8VM2j783eVnnUAEXI_xgn3RX64UTNTJ
-X-Proofpoint-GUID: j8VM2j783eVnnUAEXI_xgn3RX64UTNTJ
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v17 01/14] net: phy: Introduce ethernet link
+ topology representation
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>,
+ Marc Kleine-Budde <mkl@pengutronix.de>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Romain Gantois <romain.gantois@bootlin.com>
+References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
+ <20240709063039.2909536-2-maxime.chevallier@bootlin.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20240709063039.2909536-2-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 14, 2024 at 02:26:21PM -0400, Steven Rostedt wrote:
-> On Fri, 14 Jun 2024 14:10:58 -0400
-> Kris Van Hees <kris.van.hees@oracle.com> wrote:
-> 
-> > On Fri, Jun 14, 2024 at 01:46:51PM -0400, Steven Rostedt wrote:
-> > > On Fri, 14 Jun 2024 13:14:26 -0400
-> > > Kris Van Hees <kris.van.hees@oracle.com> wrote:
-> > >   
-> > > > Module objects compiled from C source can be identified by the presence
-> > > > of -DKBUILD_MODFILE and -DKBUILD_MODNAME on their compile command lines.
-> > > > However, module objects from assembler source do not have this defines.
-> > > > 
-> > > > Add $(modfile_flags) to modkern_aflags (similar to modkern_cflahs), and
-> > > > add $(modname_flags) to a_flags (similar to c_flags).  
-> > > 
-> > > You explain what this does but not why it does it.  
-> > 
-> > The first paragraph is meant to estabish the "why" (being able to identify
-> > what objects are module objects, even if they are compiled from assembler
-> > source).
-> 
-> Perhaps there's a lack of context. Sure, the cover letter can help in
-> this regard, but I always look at each commit as a stand alone.
-> 
-> > 
-> > As I mention, for objects compiled from C source code, those defines being
-> > present identifies those objects as belonging to a module.  For objects
-> > compiled from assembler source code, those defines are not present.  Passing
-> > them on the compile command line for assembler source code files for objects
-> > that are part of one or more modules allows us to identify all objects that
-> > are part of modules with a single consistent mechanism.
-> 
-> Sure, but why do we care? Again, if this was the only patch you sent,
-> it should explain why it is being done.
-> 
-> Perhaps something like: "In order to be able to identify what code is
-> from a module, even if it is built in, ..."
-> 
-> But what you are saying is just "C code has these flags, make
-> assembly have them too". Which is meaningless.
-> 
-> The other patches could use some more explanation too.
 
-Hi Steve,
 
-Thank you for your feedback.  I hope that my new patch series [0] addresses
-your questions.
+Le 09/07/2024 à 08:30, Maxime Chevallier a écrit :
+> Link topologies containing multiple network PHYs attached to the same
+> net_device can be found when using a PHY as a media converter for use
+> with an SFP connector, on which an SFP transceiver containing a PHY can
+> be used.
+> 
+> With the current model, the transceiver's PHY can't be used for
+> operations such as cable testing, timestamping, macsec offload, etc.
+> 
+> The reason being that most of the logic for these configuration, coming
+> from either ethtool netlink or ioctls tend to use netdev->phydev, which
+> in multi-phy systems will reference the PHY closest to the MAC.
+> 
+> Introduce a numbering scheme allowing to enumerate PHY devices that
+> belong to any netdev, which can in turn allow userspace to take more
+> precise decisions with regard to each PHY's configuration.
+> 
+> The numbering is maintained per-netdev, in a phy_device_list.
+> The numbering works similarly to a netdevice's ifindex, with
+> identifiers that are only recycled once INT_MAX has been reached.
+> 
+> This prevents races that could occur between PHY listing and SFP
+> transceiver removal/insertion.
+> 
+> The identifiers are assigned at phy_attach time, as the numbering
+> depends on the netdevice the phy is attached to. The PHY index can be
+> re-used for PHYs that are persistent.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Kris
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Tested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+> ---
+>   MAINTAINERS                         |   1 +
+>   drivers/net/phy/Makefile            |   2 +-
+>   drivers/net/phy/phy_device.c        |   6 ++
+>   drivers/net/phy/phy_link_topology.c | 105 ++++++++++++++++++++++++++++
+>   include/linux/netdevice.h           |   4 +-
+>   include/linux/phy.h                 |   4 ++
+>   include/linux/phy_link_topology.h   |  82 ++++++++++++++++++++++
+>   include/uapi/linux/ethtool.h        |  16 +++++
+>   net/core/dev.c                      |  15 ++++
+>   9 files changed, 233 insertions(+), 2 deletions(-)
+>   create mode 100644 drivers/net/phy/phy_link_topology.c
+>   create mode 100644 include/linux/phy_link_topology.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e0f28278e504..5135c3379234 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8194,6 +8194,7 @@ F:	include/linux/mii.h
+>   F:	include/linux/of_net.h
+>   F:	include/linux/phy.h
+>   F:	include/linux/phy_fixed.h
+> +F:	include/linux/phy_link_topology.h
+>   F:	include/linux/phylib_stubs.h
+>   F:	include/linux/platform_data/mdio-bcm-unimac.h
+>   F:	include/linux/platform_data/mdio-gpio.h
+> diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
+> index 202ed7f450da..1d8be374915f 100644
+> --- a/drivers/net/phy/Makefile
+> +++ b/drivers/net/phy/Makefile
+> @@ -2,7 +2,7 @@
+>   # Makefile for Linux PHY drivers
+>   
+>   libphy-y			:= phy.o phy-c45.o phy-core.o phy_device.o \
+> -				   linkmode.o
+> +				   linkmode.o phy_link_topology.o
+>   mdio-bus-y			+= mdio_bus.o mdio_device.o
+>   
+>   ifdef CONFIG_MDIO_DEVICE
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 70b07e621fb2..e68acaba1b4f 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -29,6 +29,7 @@
+>   #include <linux/phy.h>
+>   #include <linux/phylib_stubs.h>
+>   #include <linux/phy_led_triggers.h>
+> +#include <linux/phy_link_topology.h>
+>   #include <linux/pse-pd/pse.h>
+>   #include <linux/property.h>
+>   #include <linux/rtnetlink.h>
+> @@ -1511,6 +1512,10 @@ int phy_attach_direct(struct net_device *dev, struct phy_device *phydev,
+>   
+>   		if (phydev->sfp_bus_attached)
+>   			dev->sfp_bus = phydev->sfp_bus;
+> +
+> +		err = phy_link_topo_add_phy(dev, phydev, PHY_UPSTREAM_MAC, dev);
+> +		if (err)
+> +			goto error;
+>   	}
+>   
+>   	/* Some Ethernet drivers try to connect to a PHY device before
+> @@ -1938,6 +1943,7 @@ void phy_detach(struct phy_device *phydev)
+>   	if (dev) {
+>   		phydev->attached_dev->phydev = NULL;
+>   		phydev->attached_dev = NULL;
+> +		phy_link_topo_del_phy(dev, phydev);
+>   	}
+>   	phydev->phylink = NULL;
+>   
+> diff --git a/drivers/net/phy/phy_link_topology.c b/drivers/net/phy/phy_link_topology.c
+> new file mode 100644
+> index 000000000000..4a5d73002a1a
+> --- /dev/null
+> +++ b/drivers/net/phy/phy_link_topology.c
+> @@ -0,0 +1,105 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Infrastructure to handle all PHY devices connected to a given netdev,
+> + * either directly or indirectly attached.
+> + *
+> + * Copyright (c) 2023 Maxime Chevallier<maxime.chevallier@bootlin.com>
+> + */
+> +
+> +#include <linux/phy_link_topology.h>
+> +#include <linux/phy.h>
+> +#include <linux/rtnetlink.h>
+> +#include <linux/xarray.h>
+> +
+> +static int netdev_alloc_phy_link_topology(struct net_device *dev)
+> +{
+> +	struct phy_link_topology *topo;
+> +
+> +	topo = kzalloc(sizeof(*topo), GFP_KERNEL);
+> +	if (!topo)
+> +		return -ENOMEM;
+> +
+> +	xa_init_flags(&topo->phys, XA_FLAGS_ALLOC1);
+> +	topo->next_phy_index = 1;
+> +
+> +	dev->link_topo = topo;
+> +
+> +	return 0;
+> +}
+> +
+> +int phy_link_topo_add_phy(struct net_device *dev,
+> +			  struct phy_device *phy,
+> +			  enum phy_upstream upt, void *upstream)
+> +{
+> +	struct phy_link_topology *topo = dev->link_topo;
+> +	struct phy_device_node *pdn;
+> +	int ret;
+> +
+> +	if (!topo) {
+> +		ret = netdev_alloc_phy_link_topology(dev);
+> +		if (ret)
+> +			return ret;
+> +
+> +		topo = dev->link_topo;
+> +	}
+> +
+> +	pdn = kzalloc(sizeof(*pdn), GFP_KERNEL);
+> +	if (!pdn)
+> +		return -ENOMEM;
+> +
+> +	pdn->phy = phy;
+> +	switch (upt) {
+> +	case PHY_UPSTREAM_MAC:
+> +		pdn->upstream.netdev = (struct net_device *)upstream;
+> +		if (phy_on_sfp(phy))
+> +			pdn->parent_sfp_bus = pdn->upstream.netdev->sfp_bus;
+> +		break;
+> +	case PHY_UPSTREAM_PHY:
+> +		pdn->upstream.phydev = (struct phy_device *)upstream;
+> +		if (phy_on_sfp(phy))
+> +			pdn->parent_sfp_bus = pdn->upstream.phydev->sfp_bus;
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		goto err;
+> +	}
+> +	pdn->upstream_type = upt;
+> +
+> +	/* Attempt to re-use a previously allocated phy_index */
+> +	if (phy->phyindex)
+> +		ret = xa_insert(&topo->phys, phy->phyindex, pdn, GFP_KERNEL);
+> +	else
+> +		ret = xa_alloc_cyclic(&topo->phys, &phy->phyindex, pdn,
+> +				      xa_limit_32b, &topo->next_phy_index,
+> +				      GFP_KERNEL);
+> +
+> +	if (ret)
+> +		goto err;
+> +
+> +	return 0;
+> +
+> +err:
+> +	kfree(pdn);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_link_topo_add_phy);
+> +
+> +void phy_link_topo_del_phy(struct net_device *dev,
+> +			   struct phy_device *phy)
+> +{
+> +	struct phy_link_topology *topo = dev->link_topo;
+> +	struct phy_device_node *pdn;
+> +
+> +	if (!topo)
+> +		return;
+> +
+> +	pdn = xa_erase(&topo->phys, phy->phyindex);
+> +
+> +	/* We delete the PHY from the topology, however we don't re-set the
+> +	 * phy->phyindex field. If the PHY isn't gone, we can re-assign it the
+> +	 * same index next time it's added back to the topology
+> +	 */
+> +
+> +	kfree(pdn);
+> +}
+> +EXPORT_SYMBOL_GPL(phy_link_topo_del_phy);
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index 93558645c6d0..937da1dfcb2c 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -40,7 +40,6 @@
+>   #include <net/dcbnl.h>
+>   #endif
+>   #include <net/netprio_cgroup.h>
+> -
+>   #include <linux/netdev_features.h>
+>   #include <linux/neighbour.h>
+>   #include <linux/netdevice_xmit.h>
+> @@ -81,6 +80,7 @@ struct xdp_frame;
+>   struct xdp_metadata_ops;
+>   struct xdp_md;
+>   struct ethtool_netdev_state;
+> +struct phy_link_topology;
+>   
+>   typedef u32 xdp_features_t;
+>   
+> @@ -1977,6 +1977,7 @@ enum netdev_reg_state {
+>    *	@fcoe_ddp_xid:	Max exchange id for FCoE LRO by ddp
+>    *
+>    *	@priomap:	XXX: need comments on this one
+> + *	@link_topo:	Physical link topology tracking attached PHYs
+>    *	@phydev:	Physical device may attach itself
+>    *			for hardware timestamping
+>    *	@sfp_bus:	attached &struct sfp_bus structure.
+> @@ -2368,6 +2369,7 @@ struct net_device {
+>   #if IS_ENABLED(CONFIG_CGROUP_NET_PRIO)
+>   	struct netprio_map __rcu *priomap;
+>   #endif
+> +	struct phy_link_topology	*link_topo;
+>   	struct phy_device	*phydev;
+>   	struct sfp_bus		*sfp_bus;
+>   	struct lock_class_key	*qdisc_tx_busylock;
+> diff --git a/include/linux/phy.h b/include/linux/phy.h
+> index bd68f9d8e74f..2d477eb2809a 100644
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -554,6 +554,9 @@ struct macsec_ops;
+>    * @drv: Pointer to the driver for this PHY instance
+>    * @devlink: Create a link between phy dev and mac dev, if the external phy
+>    *           used by current mac interface is managed by another mac interface.
+> + * @phyindex: Unique id across the phy's parent tree of phys to address the PHY
+> + *	      from userspace, similar to ifindex. A zero index means the PHY
+> + *	      wasn't assigned an id yet.
+>    * @phy_id: UID for this device found during discovery
+>    * @c45_ids: 802.3-c45 Device Identifiers if is_c45.
+>    * @is_c45:  Set to true if this PHY uses clause 45 addressing.
+> @@ -654,6 +657,7 @@ struct phy_device {
+>   
+>   	struct device_link *devlink;
+>   
+> +	u32 phyindex;
+>   	u32 phy_id;
+>   
+>   	struct phy_c45_device_ids c45_ids;
+> diff --git a/include/linux/phy_link_topology.h b/include/linux/phy_link_topology.h
+> new file mode 100644
+> index 000000000000..68a59e25821c
+> --- /dev/null
+> +++ b/include/linux/phy_link_topology.h
+> @@ -0,0 +1,82 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * PHY device list allow maintaining a list of PHY devices that are
+> + * part of a netdevice's link topology. PHYs can for example be chained,
+> + * as is the case when using a PHY that exposes an SFP module, on which an
+> + * SFP transceiver that embeds a PHY is connected.
+> + *
+> + * This list can then be used by userspace to leverage individual PHY
+> + * capabilities.
+> + */
+> +#ifndef __PHY_LINK_TOPOLOGY_H
+> +#define __PHY_LINK_TOPOLOGY_H
+> +
+> +#include <linux/ethtool.h>
+> +#include <linux/netdevice.h>
+> +
+> +struct xarray;
+> +struct phy_device;
+> +struct sfp_bus;
+> +
+> +struct phy_link_topology {
+> +	struct xarray phys;
+> +	u32 next_phy_index;
+> +};
+> +
+> +struct phy_device_node {
+> +	enum phy_upstream upstream_type;
+> +
+> +	union {
+> +		struct net_device	*netdev;
+> +		struct phy_device	*phydev;
+> +	} upstream;
+> +
+> +	struct sfp_bus *parent_sfp_bus;
+> +
+> +	struct phy_device *phy;
+> +};
+> +
+> +#if IS_ENABLED(CONFIG_PHYLIB)
+> +int phy_link_topo_add_phy(struct net_device *dev,
+> +			  struct phy_device *phy,
+> +			  enum phy_upstream upt, void *upstream);
+> +
+> +void phy_link_topo_del_phy(struct net_device *dev, struct phy_device *phy);
+> +
+> +static inline struct phy_device *
+> +phy_link_topo_get_phy(struct net_device *dev, u32 phyindex)
+> +{
+> +	struct phy_link_topology *topo = dev->link_topo;
+> +	struct phy_device_node *pdn;
+> +
+> +	if (!topo)
+> +		return NULL;
+> +
+> +	pdn = xa_load(&topo->phys, phyindex);
+> +	if (pdn)
+> +		return pdn->phy;
+> +
+> +	return NULL;
+> +}
+> +
+> +#else
+> +static inline int phy_link_topo_add_phy(struct net_device *dev,
+> +					struct phy_device *phy,
+> +					enum phy_upstream upt, void *upstream)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void phy_link_topo_del_phy(struct net_device *dev,
+> +					 struct phy_device *phy)
+> +{
+> +}
+> +
+> +static inline struct phy_device *
+> +phy_link_topo_get_phy(struct net_device *dev, u32 phyindex)
+> +{
+> +	return NULL;
+> +}
+> +#endif
+> +
+> +#endif /* __PHY_LINK_TOPOLOGY_H */
+> diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
+> index 230110b97029..baf9e4d1855b 100644
+> --- a/include/uapi/linux/ethtool.h
+> +++ b/include/uapi/linux/ethtool.h
+> @@ -2532,4 +2532,20 @@ struct ethtool_link_settings {
+>   	 * __u32 map_lp_advertising[link_mode_masks_nwords];
+>   	 */
+>   };
+> +
+> +/**
+> + * enum phy_upstream - Represents the upstream component a given PHY device
+> + * is connected to, as in what is on the other end of the MII bus. Most PHYs
+> + * will be attached to an Ethernet MAC controller, but in some cases, there's
+> + * an intermediate PHY used as a media-converter, which will driver another
+> + * MII interface as its output.
+> + * @PHY_UPSTREAM_MAC: Upstream component is a MAC (a switch port,
+> + *		      or ethernet controller)
+> + * @PHY_UPSTREAM_PHY: Upstream component is a PHY (likely a media converter)
+> + */
+> +enum phy_upstream {
+> +	PHY_UPSTREAM_MAC,
+> +	PHY_UPSTREAM_PHY,
+> +};
+> +
+>   #endif /* _UAPI_LINUX_ETHTOOL_H */
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 73e5af6943c3..cd316d97c145 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -158,6 +158,7 @@
+>   #include <net/page_pool/types.h>
+>   #include <net/page_pool/helpers.h>
+>   #include <net/rps.h>
+> +#include <linux/phy_link_topology.h>
+>   
+>   #include "dev.h"
+>   #include "net-sysfs.h"
+> @@ -10312,6 +10313,17 @@ static void netdev_do_free_pcpu_stats(struct net_device *dev)
+>   	}
+>   }
+>   
+> +static void netdev_free_phy_link_topology(struct net_device *dev)
+> +{
+> +	struct phy_link_topology *topo = dev->link_topo;
+> +
+> +	if (IS_ENABLED(CONFIG_PHYLIB) && topo) {
+> +		xa_destroy(&topo->phys);
+> +		kfree(topo);
+> +		dev->link_topo = NULL;
+> +	}
+> +}
+> +
+>   /**
+>    * register_netdevice() - register a network device
+>    * @dev: device to register
+> @@ -11108,6 +11120,7 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+>   #ifdef CONFIG_NET_SCHED
+>   	hash_init(dev->qdisc_hash);
+>   #endif
+> +
+>   	dev->priv_flags = IFF_XMIT_DST_RELEASE | IFF_XMIT_DST_RELEASE_PERM;
+>   	setup(dev);
+>   
+> @@ -11200,6 +11213,8 @@ void free_netdev(struct net_device *dev)
+>   	free_percpu(dev->xdp_bulkq);
+>   	dev->xdp_bulkq = NULL;
+>   
+> +	netdev_free_phy_link_topology(dev);
+> +
+>   	/*  Compatibility with error handling in drivers */
+>   	if (dev->reg_state == NETREG_UNINITIALIZED ||
+>   	    dev->reg_state == NETREG_DUMMY) {
 
