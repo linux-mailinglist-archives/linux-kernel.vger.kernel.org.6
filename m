@@ -1,135 +1,199 @@
-Return-Path: <linux-kernel+bounces-286525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D599951C11
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:42:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A554951C17
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00D301F25FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000BF2851EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0616A1B143C;
-	Wed, 14 Aug 2024 13:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF161B14E8;
+	Wed, 14 Aug 2024 13:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pxl3XOUD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OQQ+h5mh"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2070.outbound.protection.outlook.com [40.107.92.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4381AE031;
-	Wed, 14 Aug 2024 13:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723642921; cv=none; b=n4rjTjV9RrR5HmgNJX6zDLEdb0IFVjWLEsQIIiO/p0e1zb5QO63hhEjAy5eEGwq+pehnWm8SYhZ9U6eCMx7pxi6UBYu4nO2/PPxNPpxefKm4NpbhRNBpEHm4IGF7ZszjVjIBJQwqVwXYXCXokIp4qLRpyN1rGvmdWaI+Tmegqjw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723642921; c=relaxed/simple;
-	bh=hqcfXdtGQKVWLTvbdhM5pBJQQzUtmGdgqcjPbawdyX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rgzvu+J6BRmJCUjkfAeh/N2JW77XiGM+beVGpS4OjI7D4GFsp028I5i65wKUDNj9HA39qm4imOPeHfytwte4GYXZGRoVsh021nd/h14gIiqcUp4VZCR+CeczYvhCneATXpG+4jUxXv0eDDilm1k0ZoJ/h0/dfVjE3iXuICBt5As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pxl3XOUD; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723642919; x=1755178919;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hqcfXdtGQKVWLTvbdhM5pBJQQzUtmGdgqcjPbawdyX8=;
-  b=Pxl3XOUDS22IVqzJSo08IIR0BTJKICw+aJPTnxAlNShxm1Q8w1ph6zn1
-   mDCTW9m/sqvRIkr9kgVN4EXRxjvXEN3LN0qt6ULSk6wZcWXAgS25h3JZK
-   tC7/VJXePzu39tzSyErTJZxb6jx2NjQjUV1SWL344h+6iChd4eiAL0Sle
-   CVUJwrEVotVCZkKJ0n5onaPTY1g8yn+IxfPmK1h9WgbiT0kIGibYelU1u
-   EzR3KM7P7x6ES7w1h5xMn97hX03Z2e3d+2tCT0S0XKG21OMSQga8D91Zz
-   HBhIghPSM684pIJTbE3PMux4hUV7uCVRctCVxIdQTh35k95nTQqA5CNPf
-   g==;
-X-CSE-ConnectionGUID: TkD7PT/iTpKIhQlvWc4m8w==
-X-CSE-MsgGUID: oaKtEZmETkG/J5jQz+pGtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="32536637"
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="32536637"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 06:41:58 -0700
-X-CSE-ConnectionGUID: BVNQACSMRPqinWY3Kn6FPQ==
-X-CSE-MsgGUID: /UK/S/1HTIe2pQFmOaearg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
-   d="scan'208";a="89818646"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 06:41:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1seEG8-0000000FC4y-17jJ;
-	Wed, 14 Aug 2024 16:41:52 +0300
-Date: Wed, 14 Aug 2024 16:41:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] platform/chrome: Introduce device tree hardware
- prober
-Message-ID: <Zry0ILkU4VrL3Mms@smile.fi.intel.com>
-References: <20240808095931.2649657-1-wenst@chromium.org>
- <20240808095931.2649657-6-wenst@chromium.org>
- <ZrtHhcNMiyHmKbal@smile.fi.intel.com>
- <CAGXv+5EgqdziyheOt7wzkbe036fqPcw_UpSHiMsB3W_nTB3NWQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7622F1AE031;
+	Wed, 14 Aug 2024 13:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723642984; cv=fail; b=bhNp2tTt/v5fLTXvvl/5FVhXf2+LdLl+AfprQ6d4c5A5VFY9cFRwFpuucoQchpq4cmxG3Gh1SDl9dyI1HxAPUganiJPvL/aIKXygtbd0xanQyNTnxO+IFuz8lmpMOuGIwuARsLA3Z+PPnYBRz7PyYLVsBWFQejGnBJAfNCEJYts=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723642984; c=relaxed/simple;
+	bh=8GH0dxDs3V4N+6svF0kdZsjkWmczVxnyx1xv8MbooTQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oJrSl7L+BJrAb919jd6R3Ava0/jFzXVdzf8dAQvDdqEAtK3TxYCI1T0oSqKtS8pGWeRAiA5w3411YqkoN8XE7KyTeruZW0lYsGln0V7aAfbfNE4G4b/rgsrk30Oj7G8cpZn6OpvFrxZUfTB0b0TnZiSvWAMSJAnYtTNz6VZ75Lk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OQQ+h5mh; arc=fail smtp.client-ip=40.107.92.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ULjJAl+jmRuaGIcQkAwnFdDMph1i0dWwl6fKXqDjPvgLFaNMq4tNxeOjc5l6Z78kJgzDRvJDiBC+DfG2Rgv1wVuijJ6GWW0F8Gd2B6YQLSWB/7EQBmkIR6MSvG/vFZAHZE8CeHzo2PHrMQ0LW+jVAOhOeuEjVo/P6A4eqWeUmkKbkUgIWDQKwTfpdVWwA96GF8Ut0Aj2bUhQuLK3etD1o8ObTNmWeLnP1ye0JuEZvf7GEMTzbGXOffSMwUX+IbZC6Im0IrpdEIPYTFblyvjynnbJ63I8W5aZkZQEm0WDySTJEkawH4SEJReUOgiybrky26JeEzQEchM9NxhqXJR8kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IM2PcGi0rPpMIZBcww8sixcIljqFmzbtVYsPAtOUO8g=;
+ b=scaBLAcE77467g1hDhRrl8i8okzOk3nk46KCLhZalTt18aZ4EyiJB87x3dvuFc4NVjv+UobnhgIsO6ONZWK6glQgjDitIQqM36cXPSuzwCCKXtRVJyMA/83UQNbbG910chMFsFbmcVvvj8abgDCnjajqkKMb4ad/AJFuTJOZt/zuc4A9mrZGsx/LzDvXT84wQzY2x52TgTU2K2c9Wfrmr7d/hDZYQBZhB8xQqwSE+FDLglZJ1RhCNV8lTw0/8pD/g/LYaIkeQOwwR6+CaMOjyNIphSdX4Flb2XqR84onEw166CyNFDGzZkUGzS7QvKPBBEAFEBYjKC4poFsWK4TFhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IM2PcGi0rPpMIZBcww8sixcIljqFmzbtVYsPAtOUO8g=;
+ b=OQQ+h5mh5XIHr+o22Edlv0NdLonpqwQ4kk3bNbASERBHbHFge7h8KxmXPRSIY3pq8Njo0rn8gyViUaP9gaOjg9NQtkRGoOaB0ei4YLO5qAtAw3Y1Ilu9Vs0Cj34trsaOTf6hpY3GJavJ/UsqQ/3jGRodlGNy/SqUWItiB2D6oUI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by PH8PR12MB6937.namprd12.prod.outlook.com (2603:10b6:510:1bc::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.24; Wed, 14 Aug
+ 2024 13:42:59 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
+ 13:42:59 +0000
+Message-ID: <aec84973-c329-4057-3dce-11ef4a973e40@amd.com>
+Date: Wed, 14 Aug 2024 08:42:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] KVM: SEV: uapi: fix typo in SEV_RET_INVALID_CONFIG
+Content-Language: en-US
+To: Amit Shah <amit@kernel.org>, seanjc@google.com, pbonzini@redhat.com,
+ x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+Cc: amit.shah@amd.com, bp@alien8.de, ashish.kalra@amd.com, maz@kernel.org
+References: <20240814083113.21622-1-amit@kernel.org>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20240814083113.21622-1-amit@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0067.namprd13.prod.outlook.com
+ (2603:10b6:806:23::12) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5EgqdziyheOt7wzkbe036fqPcw_UpSHiMsB3W_nTB3NWQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH8PR12MB6937:EE_
+X-MS-Office365-Filtering-Correlation-Id: 970fe82d-5e98-47ca-a928-08dcbc6702db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ek9ldHo5VnI5UVJ6ODVFSlZ3YWpXNlhjamppcDdaTUxmaVBPUFZqSFluOER2?=
+ =?utf-8?B?Yzc3THZEcktVbitybWJVVVVTbDBxRnp3bWJVVEpoa3JjQ2tZamxscFplUngw?=
+ =?utf-8?B?ZlpKUTZsbktFckNPMUpKclFxeGdIV3R5aXdXMFBzZ0RWT3kvcHRaYy9PN3h0?=
+ =?utf-8?B?RlAxMUNMQzBqcnFYNGlXbmRIQ1kxcG5aU0xwZ3FFdktGUHllQW9EOEpVNGhn?=
+ =?utf-8?B?WGZtcG9mVGh6ZDlWQWtMQ01BNUVLZjBvZm5DaFUyYk14KzJXZG9yMVJ0d1k5?=
+ =?utf-8?B?OGc1U2paYjBhTEJ6VzYvN2JKOGNxTXU2bWNQaXozbTJTNmkrN1FFbmZ3ZnlO?=
+ =?utf-8?B?clpTSjh3ZVVlN0d6N1pML2hKMUZpL2x4bUxsMHozYWlQakRjcnlHT1A4QjJP?=
+ =?utf-8?B?VU9lc3prTjRZblZObE1MTkxJd2ZCeXg2TWV0SjZINWxaVWJoa2U0R2FoUlpZ?=
+ =?utf-8?B?MFpqSy9VWDh4MHFGOHlUTFBnLzBiM0Nhd3FJWXlyRm13bThYUmNTaStROVJI?=
+ =?utf-8?B?RHlFd0ZRL1NtTHVoL0gvOE9IVXM0NExIbTRQcTY3UUFWcm9hSEh3bnYxaUVF?=
+ =?utf-8?B?amJ6WWN3VzFMN1ZpUG54NkZmN1RWWmhQVzJKamxmWWVwWHpwSWI1MSszZVhL?=
+ =?utf-8?B?MUdtWndIa0VvOFUxTVFaQnQzOXhsOEF0a2dybXVuQ1MxRnBzeDQ4U3JrWGxF?=
+ =?utf-8?B?eDZPNUtzVVFkNEZ1RWFPM1hoY2pDY2hvdXJYc1BFbWh3Vmg3U1prWkgvbjhZ?=
+ =?utf-8?B?K2pqdWV0a2gybFlsSmY5c3RpQ1pJVGQzNGplTmRqRXFJUUNxZGVRQ1MzRGtj?=
+ =?utf-8?B?dWlEVGRza012aXNmYm80UmE3cFFDMy9xVi9HcEw1c3B3N3R5OFFXdUp6NC9l?=
+ =?utf-8?B?cGtCVnltTERSOEwwc0lVYjJCY3ZPVGJxZUoyTUcxUy9ZeEYrSm9HV1pLeUdr?=
+ =?utf-8?B?d0UvUTdGdDBsQmZzN3FsQUR2V3FTYkIxb1kxeXR0dDQ0S25SNnMrbE1ERnVa?=
+ =?utf-8?B?VzFxdGovN0ZlcU5nRENUYTE2Rk1wL3dZWXJXaXZMaGVnOVFBN0l0RXFYMnpQ?=
+ =?utf-8?B?YjN1WkxtdXg2aDR4dGg1RUlXQnRzSjdyekRjaWE3K0hwMnVaVFBIRTZPcjlW?=
+ =?utf-8?B?ak1mUGNxMnNpbkQ4Vkx0TzltZXl2eE9aRlMwaFNoMjZhMDlHWHlZSmRoT1hn?=
+ =?utf-8?B?b3JWa0hzRlFvZ0k2K05yamt1aFZCRkNndGh1VkFsdEhTQmdLQ1hhWGFZbWh5?=
+ =?utf-8?B?NFBsblgyOS85RkR4c0c1RXJwdXZlQUMxYnc3akx0K1dzZmFFcDI1K2hsUkhK?=
+ =?utf-8?B?ekp5OTErZ2l4UW96QTQ0bk1ITStSUHl1K3ozL3pEbjMrQWhDV1JqcnQyT2NH?=
+ =?utf-8?B?anEzdm1iVkp4R2gvWFVOQ2lNbXpZTGY1Z1FaTU42bnNFdWRwNkxMNStXWTBu?=
+ =?utf-8?B?cVdlY083WVZob0dsYjdBazliZFFIV2U4UmxRaEVSOW9yaHYzRmJVNFVnL3Qx?=
+ =?utf-8?B?RCtnNmIwUWpDSEd2MmZicm9ES0Y4ZmszMnNSRGhubzN4R3hIR29Sa1B0OU9j?=
+ =?utf-8?B?QVYyWDIxRURMbnFZSUVNYWszSWphNlN6cDQ0T1ZxYysyb2ZSZ3MwZlRDQUsy?=
+ =?utf-8?B?UWh1R3JiUGxaY1E4RmR2bmpKRXZSVVVDRDN4ditNNEk5WWdIa21tbEV1UmQ2?=
+ =?utf-8?B?Vk9SdGRvNTVKOVlZaEtVQVNwWGIzUGh0V0dDQk85OStscktZMEJOcnRzd0JG?=
+ =?utf-8?B?czVMQUFUaGpQWURmWlZTOExUQkYvMDRKYXUvbzVtY3M3akNOR1cwZ015Rlp1?=
+ =?utf-8?B?NEptV0UvcjZrQk8xQVo0UT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NjlVSW5xMnNQUnZnd09tS1BXSjQ1Q2RzZXEwcVIyYnF3THQwU3JKRTV0ZzZN?=
+ =?utf-8?B?ZU1Jb2JwWFo1WHRRYnNUUS8xaEZCWjZCTDM0aEpGSnMwQzV3TGsvbkJRcUtC?=
+ =?utf-8?B?dktjbDVmZlpkb2tYUmorQnRFZVRNdTZJeUlCT3JwbExZc2phVWs4Q1AwQURX?=
+ =?utf-8?B?ZCsxY2dWdlYrenFxQjRFWHIvbEpMRVk5NjhGUklDRVc3WjhxbTNGTkNNV3FZ?=
+ =?utf-8?B?MlpncExiQmRaQldsa012OXVkRHBoVzlyVDI3S0VyalJkbVovMC8rQ2NMSHd6?=
+ =?utf-8?B?ckdRbUFQUkNmZGZYNUhON2loZnFremlqUDJhV3hXM0xlQWVwblUybUhsejRi?=
+ =?utf-8?B?SXBMV1NvZndPZ2FNRVZuc2VZSm83NXQvWmNGMm1jV2JSSkZXdGk3LzQvYjNP?=
+ =?utf-8?B?cENzcHovbXlnS3pTQ1VjMldlejgxak0xcjkyRFhNOFZJZmwrbFpIcnpaUVM5?=
+ =?utf-8?B?VDFIcU5jUnZYODUxUkptZ2dWVVdTcUhtMi81dThLYmR6dXd2MkJRVnZ4VmVM?=
+ =?utf-8?B?Nm5Ca2hKeUlpNGYvMTVwUHMwY2c5WnZGRmNMNGpKZG03NVU4bjlPczBTTzRZ?=
+ =?utf-8?B?cStYSHRwRFdUOXp3eTBpVFdzUDJqazRLUHhNL21JZzh4NFlFZXBodWN1dnkw?=
+ =?utf-8?B?S2N4V2UzeHRWUGNGSTZ3ejVveTJUYURvNUxpcXY1OVNQQmZzSk9hYjNMMFZJ?=
+ =?utf-8?B?cktFZkVLa2dneUR5dGNqK2R3RGxCQTNFTHBLZnQrejJFRXF3dGRDU3dGOWUx?=
+ =?utf-8?B?U202UmVVdkFqL1NNYk9PRkZkcjdjd05BSjg1ZUNTRDZ3SnY0Q2ZVeENhY0o3?=
+ =?utf-8?B?VCtkaWJ2WFFUd0pRQ1RxSHd4RHBrZm9kWU5rdDJTd1AzZHNtNzJrWjJvRHpC?=
+ =?utf-8?B?V0JIK3hZVVd2MDRnSDFSSTlra053Sm1McTIwVnRBamJJRjB1VVNSZHZrZS9a?=
+ =?utf-8?B?QVoyQ2dra0ovSDY0RU0vMTRuT2pCQUxHZU9obVJvcGZXSWc0emRkZHlQTk1H?=
+ =?utf-8?B?RFhmeGFuWkU1cGVTejhIWVlQcVJsenN1c0hGOVVhcnJaNnJZclROd1pOSmNW?=
+ =?utf-8?B?UnJ4cWtoWG41ZG1KR1dLb29kS2pPS1hReWJJenBmcm5BdXJaVlB6NldlVjht?=
+ =?utf-8?B?bXBrNUhKUWVHdFpPRFpmS05HR2FzamZQeXRSUDE5QW1pTUFsWlBTWkRZNm9Y?=
+ =?utf-8?B?d3RGSW9sZWpQSHJnczJVTXp3Vld2R3VhWHNMR0F0V2tUWnJrNldxWU9RdG9o?=
+ =?utf-8?B?M0ErS0hpUVdicEpRN3hrMGFReDk5eWU1NWlZUTBqNzBVZWU5TVJsSE9hNlNM?=
+ =?utf-8?B?SEx6S3h6T3Fhck5OUWdZcHhOSkt6QXVRdFVFSUQ1UTZMVkNnbysrdVQrVThV?=
+ =?utf-8?B?VzF5aFY1TG9oekd5SzIwcjJEdnlJUDNlbVFyUjlkSlJuL3ZsZDV5WDRzRkxi?=
+ =?utf-8?B?Y3dFS0pqWGg5b1d3UTYvZTBxUjlqQlp2d3hkL2JOVVpXSkowTkJCY01IR1NQ?=
+ =?utf-8?B?Nkl4QXg2ckVIVXptOWwzT1VyMUp3bjdKeVNhNzBUUFlMd2c2Y0VuSDV2Z3gw?=
+ =?utf-8?B?TStSbHdSdUkvLzR2VHhNcS9VM2xpZWdzK1VIV1RmTGdmQUM3blM0VVE0NWdi?=
+ =?utf-8?B?c0kvZVQ5WTlleW9XMlN1VWhocU81Wit4dTZIQ1pRUHc0TG1WcERWdmhHaC9a?=
+ =?utf-8?B?SlFRT25EdUw2akFwSEFMenFMcVJHejdrcG51S0hKRHZDbDNZYkdBOGs3MHJl?=
+ =?utf-8?B?c2tVd0RzVVFmcTRUU2FvSHJiaUgweUhucDJCTStQRXNaNFZnOERGWHRmdm1x?=
+ =?utf-8?B?Q2lmek5NQWIySjkrV1dxc0xWUFNHMHNJVU13V1FKRXpEa0Z6bUZzVitURjNo?=
+ =?utf-8?B?ZVJLN2hWb0c4RzhJbi9NZjRBQmYrSWpOSHk2OEgraUdRQVNlWGhOQ0pqSCtu?=
+ =?utf-8?B?N3l5QVdMNXBiSDVmTGxiWjhZZ0xkRVlKdTh1NFFRMGlMMDA1THNVcGltT1V4?=
+ =?utf-8?B?OTZIOEhyNGpsM08yWHZoeitRZTBuZGZMVFFvS3dWTWVNNEJwbE9LRWNTUkpE?=
+ =?utf-8?B?b2dTbHBrdFRPQS9ZU29meTl5MUNkNEpqbzMrTHNKK3UzYlFCSUhTSU1uNlFw?=
+ =?utf-8?Q?fe6ROdgE8QgtdiNpi9PXOjKPg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 970fe82d-5e98-47ca-a928-08dcbc6702db
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 13:42:59.7432
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Vk+UQMDq1nGkopwWXriG0SNHYqsNa2ZfjmwdUIoRWxBF+SNhfoRR3ZkUL2c2bsIu0VAVxUJhX3I3TFnahgcsbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6937
 
-On Wed, Aug 14, 2024 at 06:10:03PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Aug 13, 2024 at 7:46 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Aug 08, 2024 at 05:59:28PM +0800, Chen-Yu Tsai wrote:
-
-...
-
-> > > +static void chromeos_of_hw_prober_driver_exit(void)
-> > > +{
-> > > +     if (!chromeos_of_hw_prober_pdev)
-> > > +             return;
-> >
-> > First of all, this is dup for the next call, second, when may this conditional
-> > be true?
+On 8/14/24 03:31, Amit Shah wrote:
+> From: Amit Shah <amit.shah@amd.com>
 > 
-> When the module is loaded on a machine that doesn't match any entry,
-> neither the driver nor the device are registered. Hence the check.
+> "INVALID" is misspelt in "SEV_RET_INAVLID_CONFIG". Since this is part of
+> the UAPI, keep the current definition and add a new one with the fix.
 > 
-> Or maybe the proper way to handle it is to return -ENODEV or something?
-> I'll work towards that.
+> Fix-suggested-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Amit Shah <amit.shah@amd.com>
 
-The rule of thumb is the _exit() is called when your _init() finished with
-success. This conditional seems confusing and likely reveals the logic issue
-in _init(). Yes, _init() needs to return an error when there is no devices are
-registered or expected to be registered. If there are devices that may appear
-later on, this should be split to pure device driver and board file that
-instantiate device for the known cases.
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 
-> > > +     platform_device_unregister(chromeos_of_hw_prober_pdev);
-> > > +     platform_driver_unregister(&chromeos_of_hw_prober_driver);
-> > > +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> ---
+>  include/uapi/linux/psp-sev.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+> index 2289b7c76c59..832c15d9155b 100644
+> --- a/include/uapi/linux/psp-sev.h
+> +++ b/include/uapi/linux/psp-sev.h
+> @@ -51,6 +51,7 @@ typedef enum {
+>  	SEV_RET_INVALID_PLATFORM_STATE,
+>  	SEV_RET_INVALID_GUEST_STATE,
+>  	SEV_RET_INAVLID_CONFIG,
+> +	SEV_RET_INVALID_CONFIG = SEV_RET_INAVLID_CONFIG,
+>  	SEV_RET_INVALID_LEN,
+>  	SEV_RET_ALREADY_OWNED,
+>  	SEV_RET_INVALID_CERTIFICATE,
 
