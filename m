@@ -1,287 +1,103 @@
-Return-Path: <linux-kernel+bounces-285851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D4B95136D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:18:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4325E95136F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:18:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6DF1F24A94
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E711C283866
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 04:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AA94F88C;
-	Wed, 14 Aug 2024 04:18:01 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1714D8AF;
+	Wed, 14 Aug 2024 04:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Kr0yiJpp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01788182B5;
-	Wed, 14 Aug 2024 04:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62453E479;
+	Wed, 14 Aug 2024 04:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723609080; cv=none; b=eQCC+fG7FiMEKFT4NgdwvBV7H0FUg5yoUQOqt0P1vTxLFL3DVgYBTZ2MMMwUjH8h4zWHeFwozwba6b549IVNyU1g4OAZXxt1YkILwD4nPU21s8NHCXL4qMFobbFtsaXHQdCA6fXq/n5NKNvJHstoGvkZ8u7VdagGHWChO74pmZM=
+	t=1723609111; cv=none; b=utsn2MCxceQZaIfpY7GdmnkrUUWNreXf4q7hV7/Uwc9Y4nZs19ufIjRj8QmB/widDoPMlE2FExtOCkKjw+VoY3sC3IW4s44ofmCPZzt0zaW9KC1LuzhJ9o3jiuAAGwkgkj3/EPS7DLecxZjZYJj51ixqHt0M9GqL4Sbva1rVvK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723609080; c=relaxed/simple;
-	bh=aUSmNuue/AkXUWPP12jzk5pWyg5JlEitzEVfGB/cnsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZDEYTAYWV7Slm21GDWV3l2QWrAQSKJ3fngDNSlqL4r9koX+hxQMrUMWvFMZNa2ozELWvErBhfeV40C8KkPI7Wb/ZJ9jE+9UwtZnpTSmFKrwuXSmiUkuz4CU6UMzvTtQUxj0H92J5p4ITtHvIoKapSdQsj/wMddf6Nym4q7oINpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WkFLq0C6gzndxJ;
-	Wed, 14 Aug 2024 12:16:35 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 55C3E1800A0;
-	Wed, 14 Aug 2024 12:17:55 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 14 Aug 2024 12:17:53 +0800
-Message-ID: <ddf680b7-181c-fb61-6c56-d0e6dfb756c4@huawei.com>
-Date: Wed, 14 Aug 2024 12:17:52 +0800
+	s=arc-20240116; t=1723609111; c=relaxed/simple;
+	bh=acS8aXvR8guPGCV9PD86eexpzej/CUksEPKdwXxbEyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GJnPJVptLx0mA4toSLz1sFFwNEDE46t6UjbJ7YHOCtmktYqs1EYDrmcaG5gnGJEfX++weTfyLc2nUOdmrUQY2NM2ks7o0haPKxRNqo6BcfxhTI/iL0bNdimz1IU9vMWpU0j2hHDuVtaWT07+a0gJHrbf/a2fvwJvSQtXULRs9s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Kr0yiJpp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723609102;
+	bh=4pwM2xSMFIGS1kNeUqG1JAW9zCtuYISm8zDFJU8hCvQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Kr0yiJppIVdCthzBRm3M1N/er03h3mZU4SeA4XRpWsEvcranesmFIUvz8l8i8d5QJ
+	 2DWSAZM0MxrorFgZGQwyEYm8/YS/B912fTr9QsF+ctP95+/ugphWiFzzWQyyJh9lhk
+	 7LUieTWQllT3z/dUk3CP2xRitsA4HCTx07A1mX1ek7bS9OkSnbJdFDoUdYye6MkEgy
+	 neKdGNlFJ08a104V7CHZ9gkXbschJgiKbvIfCgcnyOsLUgtkGEzoNpqbFjTv9cSoQu
+	 pV0h4agAGxURCPQxQRg/eE5qGUFNmIFQhb1RVCp4tB/mghklRKNyiEvo3JqeBg+NfZ
+	 hhOMZZZ7aFarg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WkFNt3RtGz4x0t;
+	Wed, 14 Aug 2024 14:18:22 +1000 (AEST)
+Date: Wed, 14 Aug 2024 14:18:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>
+Cc: Matthew Brost <matthew.brost@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the workqueues tree
+Message-ID: <20240814141821.6911d655@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH] uprobes: Optimize the allocation of insn_slot for
- performance
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	"oleg@redhat.com >> Oleg Nesterov" <oleg@redhat.com>, Andrii Nakryiko
-	<andrii@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
-	<rostedt@goodmis.org>, <paulmck@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>
-References: <20240727094405.1362496-1-liaochang1@huawei.com>
- <7eefae59-8cd1-14a5-ef62-fc0e62b26831@huawei.com>
- <CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com>
- <a22d6d79-fa7e-62b2-0ac1-575068f176a5@huawei.com>
- <CAEf4BzbN-+p0cDnHQPDwhVaqs-r-_Ft-LdUwY2KHG1xfrmyjBQ@mail.gmail.com>
- <CAEf4BzZyCd7ECbWQyEpcB4va_U33v8BdfWVY4cMH4zN-Z1sESw@mail.gmail.com>
- <5a110f15-024f-d693-e04f-7892fc8d7757@huawei.com>
- <CAEf4BzaGPB+AybJNhzD+4rT6ioLuhjp4sW3uG0ST4sCtqSjx1A@mail.gmail.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <CAEf4BzaGPB+AybJNhzD+4rT6ioLuhjp4sW3uG0ST4sCtqSjx1A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: multipart/signed; boundary="Sig_/4A_bfvxnFyYrqIYeoFLV_j=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/4A_bfvxnFyYrqIYeoFLV_j=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-在 2024/8/13 1:57, Andrii Nakryiko 写道:
-> On Mon, Aug 12, 2024 at 5:05 AM Liao, Chang <liaochang1@huawei.com> wrote:
->>
->>
->>
->> 在 2024/8/10 2:40, Andrii Nakryiko 写道:
->>> On Fri, Aug 9, 2024 at 11:34 AM Andrii Nakryiko
->>> <andrii.nakryiko@gmail.com> wrote:
->>>>
->>>> On Fri, Aug 9, 2024 at 12:16 AM Liao, Chang <liaochang1@huawei.com> wrote:
->>>>>
->>>>>
->>>>>
->>>>> 在 2024/8/9 2:26, Andrii Nakryiko 写道:
->>>>>> On Thu, Aug 8, 2024 at 1:45 AM Liao, Chang <liaochang1@huawei.com> wrote:
->>>>>>>
->>>>>>> Hi Andrii and Oleg.
->>>>>>>
->>>>>>> This patch sent by me two weeks ago also aim to optimize the performance of uprobe
->>>>>>> on arm64. I notice recent discussions on the performance and scalability of uprobes
->>>>>>> within the mailing list. Considering this interest, I've added you and other relevant
->>>>>>> maintainers to the CC list for broader visibility and potential collaboration.
->>>>>>>
->>>>>>
->>>>>> Hi Liao,
->>>>>>
->>>>>> As you can see there is an active work to improve uprobes, that
->>>>>> changes lifetime management of uprobes, removes a bunch of locks taken
->>>>>> in the uprobe/uretprobe hot path, etc. It would be nice if you can
->>>>>> hold off a bit with your changes until all that lands. And then
->>>>>> re-benchmark, as costs might shift.
->>>>>
->>>>> Andrii, I'm trying to integrate your lockless changes into the upstream
->>>>> next-20240806 kernel tree. And I ran into some conflicts. please let me
->>>>> know which kernel you're currently working on.
->>>>>
->>>>
->>>> My patches are  based on tip/perf/core. But I also just pushed all the
->>>> changes I have accumulated (including patches I haven't sent for
->>>> review just yet), plus your patches for sighand lock removed applied
->>>> on top into [0]. So you can take a look and use that as a base for
->>>> now. Keep in mind, a bunch of those patches might still change, but
->>>> this should give you the best currently achievable performance with
->>>> uprobes/uretprobes. E.g., I'm getting something like below on x86-64
->>>> (note somewhat linear scalability with number of CPU cores, with
->>>> per-CPU performance *slowly* declining):
->>>>
->>>> uprobe-nop            ( 1 cpus):    3.565 ± 0.004M/s  (  3.565M/s/cpu)
->>>> uprobe-nop            ( 2 cpus):    6.742 ± 0.009M/s  (  3.371M/s/cpu)
->>>> uprobe-nop            ( 3 cpus):   10.029 ± 0.056M/s  (  3.343M/s/cpu)
->>>> uprobe-nop            ( 4 cpus):   13.118 ± 0.014M/s  (  3.279M/s/cpu)
->>>> uprobe-nop            ( 5 cpus):   16.360 ± 0.011M/s  (  3.272M/s/cpu)
->>>> uprobe-nop            ( 6 cpus):   19.650 ± 0.045M/s  (  3.275M/s/cpu)
->>>> uprobe-nop            ( 7 cpus):   22.926 ± 0.010M/s  (  3.275M/s/cpu)
->>>> uprobe-nop            ( 8 cpus):   24.707 ± 0.025M/s  (  3.088M/s/cpu)
->>>> uprobe-nop            (10 cpus):   30.842 ± 0.018M/s  (  3.084M/s/cpu)
->>>> uprobe-nop            (12 cpus):   33.623 ± 0.037M/s  (  2.802M/s/cpu)
->>>> uprobe-nop            (14 cpus):   39.199 ± 0.009M/s  (  2.800M/s/cpu)
->>>> uprobe-nop            (16 cpus):   41.698 ± 0.018M/s  (  2.606M/s/cpu)
->>>> uprobe-nop            (24 cpus):   65.078 ± 0.018M/s  (  2.712M/s/cpu)
->>>> uprobe-nop            (32 cpus):   84.580 ± 0.017M/s  (  2.643M/s/cpu)
->>>> uprobe-nop            (40 cpus):  101.992 ± 0.268M/s  (  2.550M/s/cpu)
->>>> uprobe-nop            (48 cpus):  101.032 ± 1.428M/s  (  2.105M/s/cpu)
->>>> uprobe-nop            (56 cpus):  110.986 ± 0.736M/s  (  1.982M/s/cpu)
->>>> uprobe-nop            (64 cpus):  124.145 ± 0.110M/s  (  1.940M/s/cpu)
->>>> uprobe-nop            (72 cpus):  134.940 ± 0.200M/s  (  1.874M/s/cpu)
->>>> uprobe-nop            (80 cpus):  143.918 ± 0.235M/s  (  1.799M/s/cpu)
->>>>
->>>> uretprobe-nop         ( 1 cpus):    1.987 ± 0.001M/s  (  1.987M/s/cpu)
->>>> uretprobe-nop         ( 2 cpus):    3.766 ± 0.003M/s  (  1.883M/s/cpu)
->>>> uretprobe-nop         ( 3 cpus):    5.638 ± 0.002M/s  (  1.879M/s/cpu)
->>>> uretprobe-nop         ( 4 cpus):    7.275 ± 0.003M/s  (  1.819M/s/cpu)
->>>> uretprobe-nop         ( 5 cpus):    9.124 ± 0.004M/s  (  1.825M/s/cpu)
->>>> uretprobe-nop         ( 6 cpus):   10.818 ± 0.007M/s  (  1.803M/s/cpu)
->>>> uretprobe-nop         ( 7 cpus):   12.721 ± 0.014M/s  (  1.817M/s/cpu)
->>>> uretprobe-nop         ( 8 cpus):   13.639 ± 0.007M/s  (  1.705M/s/cpu)
->>>> uretprobe-nop         (10 cpus):   17.023 ± 0.009M/s  (  1.702M/s/cpu)
->>>> uretprobe-nop         (12 cpus):   18.576 ± 0.014M/s  (  1.548M/s/cpu)
->>>> uretprobe-nop         (14 cpus):   21.660 ± 0.004M/s  (  1.547M/s/cpu)
->>>> uretprobe-nop         (16 cpus):   22.922 ± 0.013M/s  (  1.433M/s/cpu)
->>>> uretprobe-nop         (24 cpus):   34.756 ± 0.069M/s  (  1.448M/s/cpu)
->>>> uretprobe-nop         (32 cpus):   44.869 ± 0.153M/s  (  1.402M/s/cpu)
->>>> uretprobe-nop         (40 cpus):   53.397 ± 0.220M/s  (  1.335M/s/cpu)
->>>> uretprobe-nop         (48 cpus):   48.903 ± 2.277M/s  (  1.019M/s/cpu)
->>>> uretprobe-nop         (56 cpus):   42.144 ± 1.206M/s  (  0.753M/s/cpu)
->>>> uretprobe-nop         (64 cpus):   42.656 ± 1.104M/s  (  0.666M/s/cpu)
->>>> uretprobe-nop         (72 cpus):   46.299 ± 1.443M/s  (  0.643M/s/cpu)
->>>> uretprobe-nop         (80 cpus):   46.469 ± 0.808M/s  (  0.581M/s/cpu)
->>>>
->>>> uprobe-ret            ( 1 cpus):    1.219 ± 0.008M/s  (  1.219M/s/cpu)
->>>> uprobe-ret            ( 2 cpus):    1.862 ± 0.008M/s  (  0.931M/s/cpu)
->>>> uprobe-ret            ( 3 cpus):    2.874 ± 0.005M/s  (  0.958M/s/cpu)
->>>> uprobe-ret            ( 4 cpus):    3.512 ± 0.002M/s  (  0.878M/s/cpu)
->>>> uprobe-ret            ( 5 cpus):    3.549 ± 0.001M/s  (  0.710M/s/cpu)
->>>> uprobe-ret            ( 6 cpus):    3.425 ± 0.003M/s  (  0.571M/s/cpu)
->>>> uprobe-ret            ( 7 cpus):    3.551 ± 0.009M/s  (  0.507M/s/cpu)
->>>> uprobe-ret            ( 8 cpus):    3.050 ± 0.002M/s  (  0.381M/s/cpu)
->>>> uprobe-ret            (10 cpus):    2.706 ± 0.002M/s  (  0.271M/s/cpu)
->>>> uprobe-ret            (12 cpus):    2.588 ± 0.003M/s  (  0.216M/s/cpu)
->>>> uprobe-ret            (14 cpus):    2.589 ± 0.003M/s  (  0.185M/s/cpu)
->>>> uprobe-ret            (16 cpus):    2.575 ± 0.001M/s  (  0.161M/s/cpu)
->>>> uprobe-ret            (24 cpus):    1.808 ± 0.011M/s  (  0.075M/s/cpu)
->>>> uprobe-ret            (32 cpus):    1.853 ± 0.001M/s  (  0.058M/s/cpu)
->>>> uprobe-ret            (40 cpus):    1.952 ± 0.002M/s  (  0.049M/s/cpu)
->>>> uprobe-ret            (48 cpus):    2.075 ± 0.007M/s  (  0.043M/s/cpu)
->>>> uprobe-ret            (56 cpus):    2.441 ± 0.004M/s  (  0.044M/s/cpu)
->>>> uprobe-ret            (64 cpus):    1.880 ± 0.012M/s  (  0.029M/s/cpu)
->>>> uprobe-ret            (72 cpus):    0.962 ± 0.002M/s  (  0.013M/s/cpu)
->>>> uprobe-ret            (80 cpus):    1.040 ± 0.011M/s  (  0.013M/s/cpu)
->>>>
->>>> uretprobe-ret         ( 1 cpus):    0.981 ± 0.000M/s  (  0.981M/s/cpu)
->>>> uretprobe-ret         ( 2 cpus):    1.421 ± 0.001M/s  (  0.711M/s/cpu)
->>>> uretprobe-ret         ( 3 cpus):    2.050 ± 0.003M/s  (  0.683M/s/cpu)
->>>> uretprobe-ret         ( 4 cpus):    2.596 ± 0.002M/s  (  0.649M/s/cpu)
->>>> uretprobe-ret         ( 5 cpus):    3.105 ± 0.003M/s  (  0.621M/s/cpu)
->>>> uretprobe-ret         ( 6 cpus):    3.886 ± 0.002M/s  (  0.648M/s/cpu)
->>>> uretprobe-ret         ( 7 cpus):    3.016 ± 0.001M/s  (  0.431M/s/cpu)
->>>> uretprobe-ret         ( 8 cpus):    2.903 ± 0.000M/s  (  0.363M/s/cpu)
->>>> uretprobe-ret         (10 cpus):    2.755 ± 0.001M/s  (  0.276M/s/cpu)
->>>> uretprobe-ret         (12 cpus):    2.400 ± 0.001M/s  (  0.200M/s/cpu)
->>>> uretprobe-ret         (14 cpus):    3.972 ± 0.001M/s  (  0.284M/s/cpu)
->>>> uretprobe-ret         (16 cpus):    3.940 ± 0.003M/s  (  0.246M/s/cpu)
->>>> uretprobe-ret         (24 cpus):    3.002 ± 0.003M/s  (  0.125M/s/cpu)
->>>> uretprobe-ret         (32 cpus):    3.018 ± 0.003M/s  (  0.094M/s/cpu)
->>>> uretprobe-ret         (40 cpus):    1.846 ± 0.000M/s  (  0.046M/s/cpu)
->>>> uretprobe-ret         (48 cpus):    2.487 ± 0.004M/s  (  0.052M/s/cpu)
->>>> uretprobe-ret         (56 cpus):    2.470 ± 0.006M/s  (  0.044M/s/cpu)
->>>> uretprobe-ret         (64 cpus):    2.027 ± 0.014M/s  (  0.032M/s/cpu)
->>>> uretprobe-ret         (72 cpus):    1.108 ± 0.011M/s  (  0.015M/s/cpu)
->>>> uretprobe-ret         (80 cpus):    0.982 ± 0.005M/s  (  0.012M/s/cpu)
->>>>
->>>>
->>>> -ret variants (single-stepping case for x86-64) still suck, but they
->>>> suck 2x less now with your patches :) Clearly more work ahead for
->>>> those, though.
->>>>
->>>
->>> Quick profiling shows that it's mostly xol_take_insn_slot() and
->>> xol_free_insn_slot(), now. So it seems like your planned work might
->>> help here.
->>
->> Andrii, I'm glad we've reached a similar result, The profiling result on
->> my machine reveals that about 80% cycles spent on the atomic operations
->> on area->bitmap and area->slot_count. I guess the atomic access leads to
->> the intensive cacheline bouncing bewteen CPUs.
->>
->> In the passed weekend, I have been working on another patch that optimizes
->> the xol_take_insn_slot() and xol_free_inns_slot() for better scalability.
->> This involves delaying the freeing of xol insn slots to reduce the times
->> of atomic operations and cacheline bouncing. Additionally, per-task refcounts
->> and an RCU-style management of linked-list of allocated insn slots. In short
->> summary, this patch try to replace coarse-grained atomic variables with
->> finer-grained ones, aiming to elimiate the expensive atomic instructions
->> in the hot path. If you or others have bandwidth and interest, I'd welcome
->> a brainstorming session on this topic.
-> 
-> I'm happy to help, but I still feel like it's best to concentrate on
-> landing all the other pending things for uprobe, and then switch to
-> optimizing the xol case.
-> 
-> We have:
->   - RCU protection and avoiding refcounting for uprobes (I'll be
-> sending latest revision soon);
->   - SRCU+timeout for uretprobe and single-step (pending the above
-> landing first);
->   - removing shared nhit counter increment in trace_uprobe (I've sent
-> patches last week, see [0]);
->   - lockless VMA -> inode -> uprobe look up (also pending for #1 to
-> land, and some more benchmarking for mm_lock_seq changes from Suren,
-> see [1]);
->   - and, of course, your work to remove sighand lock.
-> 
-> So as you can see, there is plenty to discuss and land already, I just
-> don't want to spread the efforts too thin. But if you can help improve
-> the benchmark for ARM64, that would be a great parallel effort setting
-> us up for further work nicely. Thanks!
+After merging the workqueues tree, today's linux-next build (htmldocs)
+produced this warning:
 
-Agree. Let's prioritize landing your exising patches. I'll build upon
-you works for the further uprobe optimizatoin for Arm64.
+include/linux/workqueue.h:549: warning: Excess function parameter 'args' de=
+scription in 'alloc_ordered_workqueue_lockdep_map'
 
-Thanks.
+Introduced by commit
 
-> 
->   [0] https://lore.kernel.org/bpf/20240809192357.4061484-1-andrii@kernel.org/
->   [1] https://lore.kernel.org/linux-mm/CAEf4BzaocU-CQsFZ=s5gDM6XQ0Foss_HroFsPUesBn=qgJCprg@mail.gmail.com/
-> 
->>
->> Thanks.
->>
->>>
->>>>
->>>>   [0] https://github.com/anakryiko/linux/commits/uprobes-lockless-cumulative/
->>>>
->>>>
->>>>> Thanks.
->>>>>
->>>>>>
->>>>>> But also see some remarks below.
->>>>>>
->>>>>>> Thanks.
->>>>>>>
-> 
-> [...]
+  ec0a7d44b358 ("workqueue: Add interface for user-defined workqueue lockde=
+p map")
 
--- 
-BR
-Liao, Chang
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4A_bfvxnFyYrqIYeoFLV_j=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma8MA0ACgkQAVBC80lX
+0GzwzAf/bO8TZJEk1qNZ9c+V/4YlGWeiM0rvcbtX13/zvopTbuPsCuidyvI8w5b0
+CrNWwlwB8FdeoLHflCtXV5crLqWRyuTc7JBGf/m7ArixNCbV8w6QFIaRi07TphP/
+tsh16vT37deiPi90KXF0BTbJkHXcXH4k4hLJsmJR3I28U3+/e82Um9aWld7kvYny
+cbLAE6CyPSH0qqqcTDDLF+Ta5aLBcusOXhAuB31Lyhsm7am9uQnThkziUuP9RXda
+O+2fWck3/BBXOvnECgLocBauk9FxpIQW2+55vjSZwiMsb5k8+RHIK7I1T291c9lX
+nnNiF1NZaMDwaa2YU2IElovG2tJ9Qw==
+=pggF
+-----END PGP SIGNATURE-----
+
+--Sig_/4A_bfvxnFyYrqIYeoFLV_j=--
 
