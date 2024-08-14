@@ -1,110 +1,112 @@
-Return-Path: <linux-kernel+bounces-285819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA81C951326
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 401CF95132C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABC6284B49
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01CD1284826
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 03:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773743BB48;
-	Wed, 14 Aug 2024 03:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t4tfajyt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0402A3D552;
+	Wed, 14 Aug 2024 03:36:49 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22912BB1C
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 03:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A4010953;
+	Wed, 14 Aug 2024 03:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723606417; cv=none; b=fJzWqinGWUFbVJSrpnKZRJxsZRUYBaB/ENoW2IbBa+GmOaSkRtu6UoWlsHukcZ2geeVSphxmGVT2lNvjYZvM1eQd08fLVqmfZWQnmVARvEjCnkVzFL47f+TjpNcYjQDcZGebxzHeIxfjeRHqYThhFQ1gBLNJCbEiNnhqLFKKvws=
+	t=1723606608; cv=none; b=VhDvj2keBvrQdB1CS8sgxqO2IT6r9vBkEyfk0e24U+X7JWa6Cdhzzzw+RJQvFN4Xi0O/+T/ZHy4Cw7u4d8Ia4ZCiNi7qgLpGEN2Z9671jTYhpX3hgTT8Q5c2MM/VUUftJDvPt3wT7ElwPWXGXWZ0VCzg6TU4uFWzBhti8E+9svw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723606417; c=relaxed/simple;
-	bh=EpuLSgfvUytePDBb/IQzp2Wnvo6eIoYC51acrnOgLbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EXEH8cRyxMiFAZRWZ54l2q6LINDLAMCmSPaZShQdX7xR4SZEq7uec8cttDkYNRvX4SGKMVIsFOn3Y9aSHY5vdldhw/OYq4eDNKMaEbP+qkjY11eCKdrnkwjo8ac1qXAkLYEP2Sx0oOL+/bulOMtf5yTrFvtUbgrWJZHJxYWrf8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t4tfajyt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A14C32782;
-	Wed, 14 Aug 2024 03:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723606416;
-	bh=EpuLSgfvUytePDBb/IQzp2Wnvo6eIoYC51acrnOgLbE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t4tfajytKCQfAlcaVn6v+H1gnB28gQ2+8v/5q+SD+j+qRlXuHq69Ocr2BrGYTCslM
-	 GRXL7pHRxjNDWmtsNaX/zgQF9zQJRlzDSGu6FG7ScnpTrMhE0cD5PgiG62Z++7YQOE
-	 zR0ZtvRUyZPnedyqge4kXRmRm0GhHCYzEaQMHcBwRvBE25VW7rauPMYnmk+3xFtFle
-	 N9jMqk18F8FCb/fo3BjG6yfDJR7wT6jWLpmAIMFHNvxGA2oEWauPogfzZ4ofWTCdU/
-	 174q7vlDWIVKIg23YMGBYu+5zrsfxEJ/5d4pSSLuuxiMP3oLL/yky3WU+QO3Cg58YD
-	 OJQNaQ96vp85Q==
-Message-ID: <02214d48-6aee-40f7-9a40-60b4091b5bfa@kernel.org>
-Date: Wed, 14 Aug 2024 11:33:32 +0800
+	s=arc-20240116; t=1723606608; c=relaxed/simple;
+	bh=6OsNJBQBUVldXwm9OyXQ0qbPsA/7FgEPlE2lfoONoEA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cui525YmcL24jWoIALF+/kAlqhVNPUy8FGBtPtXFLdW1gEO0KzB0o336fEIRds9E5mg1zVKnmDxU80jA5c0Av+i4FTbHWbzVG6KWt+ZWixMYSyvdv0wizXVX9dh5R2PWDOCpf8+12DQoqAPBqMotVjtS1lHdac3KTbaigZ9gke0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WkDPG5GMsz1HFwv;
+	Wed, 14 Aug 2024 11:33:38 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id C1D92140109;
+	Wed, 14 Aug 2024 11:36:42 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 Aug
+ 2024 11:36:42 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <xiubli@redhat.com>, <idryomov@gmail.com>, <mchangir@redhat.com>,
+	<jlayton@kernel.org>
+CC: <ceph-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH -next] ceph: Remove unused declarations
+Date: Wed, 14 Aug 2024 11:34:15 +0800
+Message-ID: <20240814033415.3800889-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space
- in f2fs_commit_atomic_write
-To: Edward Adam Davis <eadavis@qq.com>,
- syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000ebae95061f96be85@google.com>
- <tencent_E51B7925E5BAF4BBCF33739E5E1BFA4B9F08@qq.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <tencent_E51B7925E5BAF4BBCF33739E5E1BFA4B9F08@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On 2024/8/14 8:48, Edward Adam Davis wrote:
-> unlock i_gc_rwsem[WRITE] before quiting f2fs_commit_atomic_write
-> 
-> Fixes: 7566a155c666 ("f2fs: atomic: fix to not allow GC to pollute atomic_file")
+These functions is never implemented and used.
 
-Since original patch has not been merged, if you don't mind, I'd like to
-fix this issue in original patch.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ fs/ceph/mds_client.h            | 3 ---
+ fs/ceph/super.h                 | 2 --
+ include/linux/ceph/osd_client.h | 2 --
+ 3 files changed, 7 deletions(-)
 
-Thanks,
-
-> Reported-by: syzbot+78ff2855f26377625419@syzkaller.appspotmail.com
-> 
-> #syz test: net-next 9e6869691724
-> 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 741e46f9d0fd..a43054ab0cf1 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -389,13 +389,13 @@ int f2fs_commit_atomic_write(struct inode *inode)
->   
->   	err = filemap_write_and_wait_range(inode->i_mapping, 0, LLONG_MAX);
->   	if (err)
-> -		return err;
-> +		goto out;
->   
->   	/* writeback GCing page of cow_inode */
->   	err = filemap_write_and_wait_range(fi->cow_inode->i_mapping,
->   							0, LLONG_MAX);
->   	if (err)
-> -		return err;
-> +		goto out;
->   
->   	filemap_invalidate_lock(inode->i_mapping);
->   
-> @@ -407,6 +407,7 @@ int f2fs_commit_atomic_write(struct inode *inode)
->   	f2fs_unlock_op(sbi);
->   
->   	filemap_invalidate_unlock(inode->i_mapping);
-> +out:
->   	f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
->   
->   	return err;
-> 
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 9bcc7f181bfe..585ab5a6d87d 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -559,9 +559,6 @@ extern struct ceph_mds_session *
+ ceph_get_mds_session(struct ceph_mds_session *s);
+ extern void ceph_put_mds_session(struct ceph_mds_session *s);
+ 
+-extern int ceph_send_msg_mds(struct ceph_mds_client *mdsc,
+-			     struct ceph_msg *msg, int mds);
+-
+ extern int ceph_mdsc_init(struct ceph_fs_client *fsc);
+ extern void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc);
+ extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc);
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 6e817bf1337c..c88bf53f68e9 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1056,8 +1056,6 @@ extern int ceph_fill_trace(struct super_block *sb,
+ extern int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 				    struct ceph_mds_session *session);
+ 
+-extern int ceph_inode_holds_cap(struct inode *inode, int mask);
+-
+ extern bool ceph_inode_set_size(struct inode *inode, loff_t size);
+ extern void __ceph_do_pending_vmtruncate(struct inode *inode);
+ 
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+index f66f6aac74f6..d7941478158c 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -449,8 +449,6 @@ extern int ceph_osdc_init(struct ceph_osd_client *osdc,
+ extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
+ extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
+ 
+-extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
+-				   struct ceph_msg *msg);
+ extern void ceph_osdc_handle_map(struct ceph_osd_client *osdc,
+ 				 struct ceph_msg *msg);
+ void ceph_osdc_update_epoch_barrier(struct ceph_osd_client *osdc, u32 eb);
+-- 
+2.34.1
 
 
