@@ -1,201 +1,320 @@
-Return-Path: <linux-kernel+bounces-286758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B14E951EA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:35:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9534D951EAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FEFC1C2151B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE192811B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6D11B5801;
-	Wed, 14 Aug 2024 15:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9963C1B580E;
+	Wed, 14 Aug 2024 15:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WnmyIZFc"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JuptoNl2"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7AC1B4C34
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542171B4C5D
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723649739; cv=none; b=Sz0AqS2gI4pCo1E2J+1sZJxyOsGlIySb9WyYx3yuehe444cLn7G3bzQBmimePIxfg9713NLjO+mpO6xBwxGIdPH1V5YmjVhTb1Yxpo1vuadZ+YgHXMuO36Fl6d48p6YcxWUpyVsQHutdaEeo1eSAY6mU1Ae7KUmMhew802sNQzY=
+	t=1723649766; cv=none; b=YzppnqhOYADVCN0T7imgWw+ViY+lBRdVNVBaEInhg5Pyra4QqOwdHUhBnbgW9Uxyvh3Y8ExT2mGo9dOnylPXp625yAvM7auZN2uL568r86NRAYXkjtCWxzal7wzPprGFZTD0iQEOMKV8vTlWxi+8BbuodHEyiik61rLA0LqiUSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723649739; c=relaxed/simple;
-	bh=EgpycVgrTE4OZBnLiqJp21Ba+1k3djK1u2mFfbGKv44=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lqldSbznlkyI8tDhnHcgp51ZblYDUHEhfKieqYRqQCTe1NQIhI/H2Pp12iR9ko7BwAQJ++6+Npmr1dDnvjZ05wYCHGoor9Puzy24ngCWjddEQAEQwKBu2xdo0htS2TEeSgV8qNcLM7+8NXgr2nF1It8KMrGcjw9eY/N2w71Z9wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WnmyIZFc; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-201decf480fso5448765ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:35:37 -0700 (PDT)
+	s=arc-20240116; t=1723649766; c=relaxed/simple;
+	bh=DbfMpgevU/QY9x0LxN5bakujdcwCiwneAiFNBTwr2lk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BRIVzFBwcH+WivfAPZWiEjkfa2Ee0fNHWidmcGFZ9N4zm66ekUGDalt4FW1Ir1FK0N7hRSur0hPJQl9vgQGDKoJZP1GBI2J72KA28znCk1z35vxCmiqUW60jfU7OxOl9LCuE1QEt1iD+4Eb7c/JisiZB+9RXSu7rjfYNKZyiErI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JuptoNl2; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso6995307e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:36:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723649737; x=1724254537; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UJIHPsY2YwVSqQ2bZ1yyvT61kPfWuElvrVIzEKc/5m4=;
-        b=WnmyIZFcXbTr7tLEXMQtlCkrj7fG4v7GrQpzYZuYjn7f3Wgsq7HBzhQuOLo2WUMuAe
-         DnwtNKX1ZvEHmENpWmG8g9iWnr0x/xQyHycNVos0XHv7r6JzOKqDKsU64j4G5/pIU1u6
-         uB/B+QsXC6m7qdxPDj0H4c67wufMSF6o80B8xEvBTFbRGM4TvgzNARut1lLzNxUsRSXx
-         NffLZseVk8UK889Jc6dqIyx7bOO/1yuYvgzobuOuEHRSyQtPefLUL3P076+YWa2CwbzI
-         7T23lIHEESUA5md4sGMR4ZWW4Q6mypU+WNL/lNUf5zq6AthuCmMqsBKDo02w/Tk9fdDC
-         JzGQ==
+        d=linaro.org; s=google; t=1723649762; x=1724254562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vyjlESBLWwDJ+gNo3RI9kGtL5kSmSUxQ88Edg1CV4eQ=;
+        b=JuptoNl2fjfMkRxlmEnT0C7L0za2MDnLsIZXxuD5SiDZQRK58/dhaNWx6AWpb7liFM
+         R1Q2T/9+8ONTcceX1vca9+5+dulShQs18VNd1pUmrY7KFR5xH+xyVZSwIhYCjsAhmqbW
+         XuZsZb5KU4io1yVYwaAJwJLCCCyO3O8Ucx0ur7kvjT+YPmKh/KWwYzHVZ2p37QXz+Ph5
+         I7fwphBcg6Ha9iLmNxsi7dZJULYuaf9Ct7LEBHUD9qcJKzIfQZdM5tbY55epzQYPpzgs
+         TATNDEm+HBoRXy72q316G4+5Y9+dlYNftrGvT+Ufu8BZQxbrHBH9XHQD7CJA2zVYryVS
+         e9tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723649737; x=1724254537;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UJIHPsY2YwVSqQ2bZ1yyvT61kPfWuElvrVIzEKc/5m4=;
-        b=M2Fsxp22KjjTq6lp0GmDMf7wB/z6B0YoS9X0BaESeynj2Ego3nhDaQJaxRYshVhPiW
-         p4wTJJnhM0Ey829PHYnETynDxqBG8xjum4JJKS0mglRULVqJDd7hd6K/q29RYHbX9mtR
-         crzhhT9gqOYJvHf3aSi4eEGftjeUqOtPebf04pci7ucJMyELtNwfrvXMgKBi1XVYfwj2
-         K+SuERM+j54nSPpiEJuR9bLdxNh8blhvfQHEWTEhMPVUcMlK0kMomYL8Ei82gsh4yIyG
-         A3u+/NJd8FkwXXW1p6SLwkrP9BEGB9NTI492Zxb4pRAC16L6LmaMZeDE4zlvtyFfWKM3
-         h1cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeEVPexNc9ei95fV4cPOHhvHXjMUmdhCfyKgKuDJxHVJjnEYfq9J0zmmbDlN9o54GTQj5ni6FX+d4FEKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLNT34kNTuUVmsbBdj7DPG1FVu1if7GtJP92diHy1nWqxLs7Zq
-	l7ZODRoE9bvNw2h6uufGvGtxQ96rXaf5UMbXuHqGUILwjZ0v1WcJCxeH74/M4FQKTjo9S+rHfg5
-	T2w==
-X-Google-Smtp-Source: AGHT+IGjGXRjCPUvJkPrRgmiEyz3DbO4hm3AtgTjq6rNLjZrlosXmtEcLdfbrMhwoJWLy46rEvpZtD/6dLU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:6845:b0:201:ec02:2761 with SMTP id
- d9443c01a7336-201ec02294dmr13345ad.0.1723649737244; Wed, 14 Aug 2024 08:35:37
- -0700 (PDT)
-Date: Wed, 14 Aug 2024 08:35:35 -0700
-In-Reply-To: <CABCjUKD2BAXzBZixrXKJwybEPoZvkmSPfy-vPKMbxcAt0qk0uQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1723649762; x=1724254562;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vyjlESBLWwDJ+gNo3RI9kGtL5kSmSUxQ88Edg1CV4eQ=;
+        b=RSDkCD1EzNeHyB2d1NXje0gxsGHMT7R5Ki54qaF/JrnYtPA4JpgbD4QINCJ9l1aX12
+         da0nmNIhyG9SQ+lmFCdKCe0K9qIzp1kaXi7w/0+HaoXzxOgnX+FkPiLweFx1VG88hr91
+         kC3mtkmzTk84Ak/OIBY74KcqRDqpkLHH60TrT1op75E9fGUkaRztZFI2CC3T1OdOMq3e
+         3BF3kEDKOAJrJjIrNcCqKnWtglWNgmj7uykh7yVKMUZzLlulUGwu88eCUtFI7RbkLqKl
+         Z7BQJLPR0Vflm3mnWHw30cHVJVMIA2EdgPMfGvtZ775aILq8gCb/9lM1uJc052xEJcS8
+         WbWQ==
+X-Gm-Message-State: AOJu0YzxMY45aAnlo+9XbsN4Dp6dKORVZuUS5SHLtb5QOwRQAgXT0vN+
+	oSTSdkyxrwNvwjq5mavIk62Vw+l9v4ijkyMNzs4QM6GDWmlTp269is/t/g8nu+xPO7Be7dF/kFW
+	e7Rc=
+X-Google-Smtp-Source: AGHT+IGrW8ys5svtrH53WvdgBYQLmZM27sCqp82wX7QY/acHqp40GOi/vYV3BX2VAl8OfoIk9wJZGg==
+X-Received: by 2002:a05:6512:1294:b0:52d:8f80:6444 with SMTP id 2adb3069b0e04-532eda840dfmr2533860e87.32.1723649761555;
+        Wed, 14 Aug 2024 08:36:01 -0700 (PDT)
+Received: from rayden.urgonet (h-217-31-164-171.A175.priv.bahnhof.se. [217.31.164.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f41849cesm185532566b.199.2024.08.14.08.36.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 08:36:00 -0700 (PDT)
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Manuel Traut <manut@mecka.net>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: [PATCH v9 0/4] Replay Protected Memory Block (RPMB) subsystem
+Date: Wed, 14 Aug 2024 17:35:54 +0200
+Message-Id: <20240814153558.708365-1-jens.wiklander@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240710074410.770409-1-suleiman@google.com> <ZqhPVnmD7XwFPHtW@chao-email>
- <Zqi2RJKp8JxSedOI@freefall.freebsd.org> <ZruSpDcysc2B-HQ-@google.com> <CABCjUKD2BAXzBZixrXKJwybEPoZvkmSPfy-vPKMbxcAt0qk0uQ@mail.gmail.com>
-Message-ID: <ZrzOxxu1_-f5ZZ1m@google.com>
-Subject: Re: [PATCH] KVM: x86: Include host suspended time in steal time.
-From: Sean Christopherson <seanjc@google.com>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Suleiman Souhlal <ssouhlal@freebsd.org>, Chao Gao <chao.gao@intel.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024, Suleiman Souhlal wrote:
-> On Wed, Aug 14, 2024 at 2:06=E2=80=AFAM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > > > Additionally, it seems that if a guest migrates to another system a=
-fter a
-> > > > suspend and before updating steal time, the suspended time is lost =
-during
-> > > > migration. I'm not sure if this is a practical issue.
-> > >
-> > > The systems where the host suspends don't usually do VM migrations. O=
-r at
-> > > least the ones where we're encountering the problem this patch is try=
-ing to
-> > > address don't (laptops).
-> > >
-> > > But even if they did, it doesn't seem that likely that the migration =
-would
-> > > happen over a host suspend.
-> >
-> > I think we want to account for this straightaway, or at least have defi=
-ned and
-> > documented behavior, else we risk rehashing the issues with marking a v=
-CPU as
-> > preempted when it's loaded, but not running.  Which causes problems for=
- live
-> > migration as it results in KVM marking the steal-time page as dirty aft=
-er vCPUs
-> > have been paused.
-> >
-> > [*] https://lkml.kernel.org/r/20240503181734.1467938-4-dmatlack%40googl=
-e.com
->=20
-> Can you explain how the steal-time page could get marked as dirty after V=
-CPUs
-> have been paused? From what I can tell, record_steal_time() gets called f=
-rom
-> vcpu_enter_guest(), which shouldn't happen when the VCPU has been paused,=
- but
-> I have to admit I don't really know anything about how live migration wor=
-ks.
+Hi,
 
-It's not record_steal_time(), it's kvm_steal_time_set_preempted().  The fla=
-g
-KVM uses to tell the guest that the vCPU has been scheduled out, KVM_VCPU_P=
-REEMPTED,
-resides in the kvm_steal_time structure, i.e. in the steal-time page.
+This patch set is getting ready to be queued for the next merge window. The
+issues reported by Mikka in the v7 patch set has been resolved, the issues
+turned out to be outside of the v7 patch set relating to configuration in
+the secure world. I'm planning a pull request to arm-soc, but before that
+I'd rather have acks or at least an OK for:
+- "rpmb: add Replay Protected Memory Block (RPMB) subsystem" by Greg
+- "mmc: block: register RPMB partition with the RPMB subsystem" by Ulf
 
-Userspace "pauses" vCPUs when it enters blackout to complete live migration=
-.  After
-pausing vCPUs, the VMM invokes various KVM_GET_* ioctls to retrieve vCPU st=
-ate
-so that it can be transfered to the destination.  Without the above series,=
- KVM
-marks vCPUs as preempted when the associated task is scheduled out and the =
-vCPU
-is "loaded", even if the vCPU is not actively running.  This results in KVM=
- writing
-to kvm_steal_time.preempted and dirtying the page, after userspace thinks i=
-t
-should be impossible for KVM to dirty guest memory (because vCPUs are no lo=
-nger
-being run).
+Arnd, please let me know if anything else is missing.
 
-> The series you linked is addressing an issue when the steal-time page get=
-s
-> written to outside of record_steal_time(), but we aren't doing this for t=
-his
-> proposed patch.
+This patch set introduces a new RPMB subsystem, based on patches from [1],
+[2], and [3]. The RPMB subsystem aims at providing access to RPMB
+partitions to other kernel drivers, in particular the OP-TEE driver. A new
+user space ABI isn't needed, we can instead continue using the already
+present ABI when writing the RPMB key during production.
 
-I know.  What I am saying is that I don't want to punt on the issue Chao ra=
-ised,
-because _if_ we want to properly account suspend time when a vCPU is migrat=
-ed
-(or saved/restored for any reason) without doing KVM_RUN after suspect, the=
-n that
-either requires updating the steal-time information outside of KVM_RUN, or =
-it
-requires new uAPI to explicitly migrate the unaccounted suspend timd.
+I've added and removed things to keep only what is needed by the OP-TEE
+driver. Since the posting of [3], there has been major changes in the MMC
+subsystem so "mmc: block: register RPMB partition with the RPMB subsystem"
+is in practice completely rewritten.
 
-Given that new uAPI is generally avoided when possible, that makes updating
-steal-time outside of KVM_RUN the default choice (which isn,t necessarily t=
-he
-best choice), which in turn means KVM now has to worry about the above scen=
-ario
-of writing to guest memory after vCPUs have been paused by userespace.
+With this OP-TEE can access RPMB during early boot instead of having to
+wait for user space to become available as in the current design [4].
+This will benefit the efi variables [5] since we won't rely on userspace as
+well as some TPM issues [6] that were solved.
 
-> With the proposed approach, the steal time page would get copied to the n=
-ew
-> host and everything would keep working correctly, with the exception of a
-> possible host suspend happening between when the migration started and wh=
-en
-> it finishes, not being reflected post-migration.  That seems like a
-> reasonable compromise.
+The OP-TEE driver finds the correct RPMB device to interact with by
+iterating over available devices until one is found with a programmed
+authentication matching the one OP-TEE is using. This enables coexisting
+users of other RPMBs since the owner can be determined by who knows the
+authentication key.
 
-Maybe, but I'm not keen on sweeping this under the rug.  Ignoring issues be=
-cause
-they'll "never" happen has bitten KVM more than once.
+The corresponding secure world OP-TEE patches are available at [7].
 
-At the absolute bare minimum, the flaw needs to be documented, with a sugge=
-sted
-workaround provided (do KVM on all vCPUs before migrating after suspend), e=
-.g.
-so that userspace can workaround the issue in the unlikely scenario userspa=
-ce
-does suspend+resume, saves/restores a VM, *and* cares about steal-time.
+I've put myself as a maintainer for the RPMB subsystem as I have an
+interest in the OP-TEE driver to keep this in good shape. However, if you'd
+rather see someone else taking the maintainership that's fine too. I'll
+help keep the subsystem updated regardless.
 
-Even better would be if we can figure out a way to effectively require KVM_=
-RUN
-after suspend+resume, but I can't think of a way to do that without breakin=
-g
-userspace or adding new uAPI, and adding new uAPI for this feels like overk=
-ill.
+[1] https://lore.kernel.org/lkml/20230722014037.42647-1-shyamsaini@linux.microsoft.com/
+[2] https://lore.kernel.org/lkml/20220405093759.1126835-2-alex.bennee@linaro.org/
+[3] https://lore.kernel.org/linux-mmc/1478548394-8184-2-git-send-email-tomas.winkler@intel.com/
+[4] https://optee.readthedocs.io/en/latest/architecture/secure_storage.html#rpmb-secure-storage
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c44b6be62e8dd4ee0a308c36a70620613e6fc55f
+[6] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7269cba53d906cf257c139d3b3a53ad272176bca
+[7] https://github.com/jenswi-linaro/optee_os/tree/rpmb_probe_v8
+
+Thanks,
+Jens
+
+Changes since v8:
+* Moved changes to drivers/misc/rpmb-core.c and include/linux/rpmb.h from
+  "tee: add tee_device_set_dev_groups()" to
+  "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - reverted license change of include/linux/rpmb.h introduced in [2] back
+    to GLP-2.0 as in [3]
+  - Small documentation fixes reported by kernel test robot <lkp@intel.com>
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Small documentation fixes reported by kernel test robot <lkp@intel.com>
+  - Silencing a "sparse: cast to restricted __be32" warning reported by
+    kernel test robot <lkp@intel.com>
+* "optee: probe RPMB device using RPMB subsystem"
+  - replaced IS_ENABLED(CONFIG_RPMB) with IS_REACHABLE(CONFIG_RPMB)
+  - Added Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+
+Changes since v7:
+* Rebased on v6.11-rc1
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Adding Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+* "tee: add tee_device_set_dev_groups()"
+  - Declaring tee_device_set_dev_groups() in the recently introduced
+    include/linux/tee_core.h
+
+Changes since v6:
+* Add Tested-by: Manuel Traut <manut@mecka.net> provided for the v6
+* Add a new patch "tee: add tee_device_set_dev_groups()" needed later in
+  the patch set
+* Reintroduce the rpmb_class as requested by Greg, this affects the patches
+  "rpmb: add Replay Protected Memory Block (RPMB) subsystem" and
+  "optee: probe RPMB device using RPMB subsystem"
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem":
+  - rpmb_interface_{,un}register() are now based on
+    class_interface_{,un}register()
+  - Embed a separate device in struct rpmb_dev for life cycle
+    management etc
+* "optee: probe RPMB device using RPMB subsystem"
+  - Add an internal blocking_notifier to deal with the struct
+    class_interface callback
+  - Add a rpmb_routing_model variable in sysfs to help integration with
+    systemd, requested by Mikko Rapeli
+  - Add an RPMB probe capability flag in the ABI shared with the secure
+    world, both SMC and FF-A ABI, needed to support the rpmb_routing_model
+    variable
+  - optee_rpc_cmd() is strict whether an RPMB RPC request should be
+    forwarded to tee-supplicant or routed via the RPMB subsystem, depending
+    on the reported RPMB routing model
+
+Changes since v5:
+Manuel Traut reported and investigated an error on an i.MX8MM, the root
+cause was identified as insufficient alignment on frames sent to the RPMB
+device. Fixed in the OP-TEE driver as described below.
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Adding a missing EXPORT_SYMBOL_GPL()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Replacing the old OPTEE_RPC_CMD_RPMB ABI with OPTEE_RPC_CMD_RPMB_FRAMES
+    to get rid of the small header struct rpmb_req (now removed) causing
+    the problem.
+  - Matching changes on the secure side + support for re-initializing
+    RPMB in case a boot stage has used RPMB, the latter also reported by 
+    Manuel Traut.
+
+Changes since v4:
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Describing struct rpmb_descr as RPMB description instead of descriptor
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Addressing review comments
+  - Adding more comments for struct rpmb_frame
+  - Fixing assignment of reliable_wr_count and capacity in mmc_blk_rpmb_add()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Updating struct rpmb_dev_info to match changes in "rpmb: add Replay
+    Protected Memory Block (RPMB) subsystem"
+
+Changes since v3:
+* Move struct rpmb_frame into the MMC driver since the format of the RPMB
+  frames depend on the implementation, one format for eMMC, another for
+  UFS, and so on
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Adding Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+  - Adding more description of the API functions
+  - Removing the set_dev_info() op from struct rpmb_ops, the needed information
+    is supplied in the arguments to rpmb_dev_register() instead.
+  - Getting rid of struct rpmb_ops since only the route_frames() op was
+    remaining, store that op directly in struct rpmb_dev
+  - Changed rpmb_interface_register() and rpmb_interface_unregister() to use
+    notifier_block instead of implementing the same thing ourselves
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Moving the call to rpmb_dev_register() to be done at the end of
+    mmc_blk_probe() when the device is fully available
+* "optee: probe RPMB device using RPMB subsystem"
+  - Use IS_REACHABLE(CONFIG_RPMB) to determine if the RPMB subsystem is
+    available
+  - Translate TEE_ERROR_STORAGE_NOT_AVAILABLE if encountered in get_devices()
+    to recognize the error in optee_rpmb_scan()
+  - Simplified optee_rpmb_scan() and optee_rpmb_intf_rdev()
+
+Changes since v2:
+* "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+  - Fixing documentation issues
+  - Adding a "depends on MMC" in the Kconfig
+  - Removed the class-device and the embedded device, struct rpmb_dev now
+    relies on the parent device for reference counting as requested
+  - Removed the now unneeded rpmb_ops get_resources() and put_resources()
+    since references are already taken in mmc_blk_alloc_rpmb_part() before
+    rpmb_dev_register() is called
+  - Added rpmb_interface_{,un}register() now that
+    class_interface_{,un}register() can't be used ay longer
+* "mmc: block: register RPMB partition with the RPMB subsystem"
+  - Adding the missing error cleanup in alloc_idata()
+  - Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part()
+    instead of in mmc_rpmb_chrdev_open() and rpmb_op_mmc_get_resources()
+* "optee: probe RPMB device using RPMB subsystem"
+  - Registering to get a notification when an RPMB device comes online
+  - Probes for RPMB devices each time an RPMB device comes online, until
+    a usable device is found
+  - When a usable RPMB device is found, call
+    optee_enumerate_devices(PTA_CMD_GET_DEVICES_RPMB)
+  - Pass type of rpmb in return value from OPTEE_RPC_CMD_RPMB_PROBE_NEXT
+
+Changes since Shyam's RFC:
+* Removed the remaining leftover rpmb_cdev_*() function calls
+* Refactored the struct rpmb_ops with all the previous ops replaced, in
+  some sense closer to [3] with the route_frames() op
+* Added rpmb_route_frames()
+* Added struct rpmb_frame, enum rpmb_op_result, and enum rpmb_type from [3]
+* Removed all functions not needed in the OP-TEE use case
+* Added "mmc: block: register RPMB partition with the RPMB subsystem", based
+  on the commit with the same name in [3]
+* Added "optee: probe RPMB device using RPMB subsystem" for integration
+  with OP-TEE
+* Moved the RPMB driver into drivers/misc/rpmb-core.c
+* Added my name to MODULE_AUTHOR() in rpmb-core.c
+* Added an rpmb_mutex to serialize access to the IDA
+* Removed the target parameter from all rpmb_*() functions since it's
+  currently unused
+
+
+
+Jens Wiklander (4):
+  rpmb: add Replay Protected Memory Block (RPMB) subsystem
+  mmc: block: register RPMB partition with the RPMB subsystem
+  tee: add tee_device_set_dev_groups()
+  optee: probe RPMB device using RPMB subsystem
+
+ Documentation/ABI/testing/sysfs-class-tee |  15 ++
+ MAINTAINERS                               |   8 +
+ drivers/misc/Kconfig                      |  10 +
+ drivers/misc/Makefile                     |   1 +
+ drivers/misc/rpmb-core.c                  | 233 +++++++++++++++++++++
+ drivers/mmc/core/block.c                  | 242 +++++++++++++++++++++-
+ drivers/tee/optee/core.c                  |  96 ++++++++-
+ drivers/tee/optee/device.c                |   7 +
+ drivers/tee/optee/ffa_abi.c               |  14 ++
+ drivers/tee/optee/optee_ffa.h             |   2 +
+ drivers/tee/optee/optee_private.h         |  26 ++-
+ drivers/tee/optee/optee_rpc_cmd.h         |  35 ++++
+ drivers/tee/optee/optee_smc.h             |   2 +
+ drivers/tee/optee/rpc.c                   | 177 ++++++++++++++++
+ drivers/tee/optee/smc_abi.c               |  14 ++
+ drivers/tee/tee_core.c                    |  19 +-
+ include/linux/rpmb.h                      | 123 +++++++++++
+ include/linux/tee_core.h                  |  12 ++
+ 18 files changed, 1026 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-tee
+ create mode 100644 drivers/misc/rpmb-core.c
+ create mode 100644 include/linux/rpmb.h
+
+-- 
+2.34.1
+
 
