@@ -1,110 +1,101 @@
-Return-Path: <linux-kernel+bounces-287178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50205952453
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646A0952457
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842C41C21977
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 209E228BF35
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0DB1C7B85;
-	Wed, 14 Aug 2024 20:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518371C6892;
+	Wed, 14 Aug 2024 20:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L2Y/TxA6"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBmGe4RC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341811B1505
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDA7210FB;
+	Wed, 14 Aug 2024 20:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723668933; cv=none; b=mth7VI3Lxth+znEXVAezhjZZI/jtZhMG/VzAzuNFWxQ9Spg3bqCiP15q2JwdQdC719kv6gg1YCSMf6w9v98CnbVA+u0beBVy0YS7lu17Mta85l70/GzTbCaDp/hBYQuP6bdWftmOSQeRqbX6o9UkoQwGMhfeQIuxvvZjpf//jYs=
+	t=1723668986; cv=none; b=GRDtZGpERktr/4kb8fSObhj8QjgY3JAS1pLYsCyqjP/Ajrj20tFMxUI/6XRsYp9gehnmdSrFO843bR5knez3dyzKUGmfpmNtrLEPh4FVvW2KO0oWGCd8q0E7HZ8uhk0fjCjVh8aPTJsR6DRl7RFWY3SXGXQn35ktu/vwe8gDDvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723668933; c=relaxed/simple;
-	bh=MKookjIC7ErVzxhCR+2X6dR6dpWIA1qx77AP/HEFQAk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=h/y0WnHO1j4IsJxsjcU7cCUJMCfqBAfjQydrLdovVTaYQ9Yez9kNahOx0qufYdCe9GgySjiysVc9ChxJljw39q9jVxv9wre2NddyU9yVqTVwjagTb3z+TqyMPhmoelXmVLBecZ5mfhu6P8UzM6V9Nb51ZcBuN3Qd6boCgE44rqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L2Y/TxA6; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71050384c9aso212005b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723668931; x=1724273731; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gSEyP0JBX/LKrmKCZstJhKB3NuQApPBew6eB4HEaPY=;
-        b=L2Y/TxA6VIATQx+YD0lq1Ty1UERD6ufN3Xmd/1yRPMKhDPnQfd1H3G+yFqHeCm1Vld
-         NPJ3BRz95PS21z8S/IAtiJOccudDunKBiQB7W2lRHbvzAFl8wLeMjqGIa4z2Cyytp+3Y
-         r3XewuxwNxv6S0lmuCKSntqaAjPuYyYxltazwJyAmrDdtDRvTCAVUHeW9kqSFlBw1wZu
-         RpUJYLY3SzoxutNHPzEzewYKwpnaEhlJ2EHlQLmffcM6jDs5n3vgTF0hBRo2z7pw7xpB
-         YlcG4ykL77J7zxsj8bHKUiVrbC3JEwBdFnsLMTqjy3GWyW8wJ0jaJKM3sof9327lWF3K
-         eF7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723668931; x=1724273731;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gSEyP0JBX/LKrmKCZstJhKB3NuQApPBew6eB4HEaPY=;
-        b=AJK/jhNVrzwgA4w6cpyqlPHu8OuhoJkGkarw3kG9fa7MSeKskikAkwK3OpwjmD2T0l
-         u0IFL7RiPByj3hViF7OMBV25PCy6XTdWkEFe+P5xJt+ojiV8+lDgAnNmwDMuoy1zmuyh
-         7rYMdpw6kPjItuhRVHw3hIZsmJjemEWNvGROQU/R0h4AnRcsaVcQ8gU2YDdlILFsS4Ug
-         EiCTLu8rfVLxW/yQw6GNGKVZgYHFyYCAztV7E2gfcnkz/U4/iWOb6cDfo//vPfuCANk2
-         d8h2md5iSTgwW7HJqa03AVQLVoRO4cgw1yayE7ew4mGyVodDrrC30Y7O74kQYA9Tqxus
-         +9Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvfP2w/ppzuF5DTTWjYgtqLGQh3BuzZ3E4cJy6/911QDyW2taOAn3iinBX55j38eUPBOYb2KjaTPd1mYUVLr+cYwqbR5YrOgTg/Ytb
-X-Gm-Message-State: AOJu0YwMcVfDksCVR0RTbSMAcbR6WsOJ0ByPJezoAtZfM39dU702Ndsb
-	xjk0OMdTwbzKpwLxWrWtkcwZeMDrtlknM/DnoGG7lOuyPeSUR9NphR/yA9BG02gyesIMoScOm6x
-	dYA==
-X-Google-Smtp-Source: AGHT+IEqFuKACosSCrZ0xhAm3jch7GTVdBLETVOQ6stfpsrJCuiDxnbUTd+onFhjn8Z88sgu2LatVGpv3QM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:91cb:b0:710:4e4c:a4ad with SMTP id
- d2e1a72fcca58-71276c8a229mr9434b3a.0.1723668931235; Wed, 14 Aug 2024 13:55:31
- -0700 (PDT)
-Date: Wed, 14 Aug 2024 13:55:29 -0700
-In-Reply-To: <76605c6e-37f8-4abc-ade3-3ba381d6c9c4@redhat.com>
+	s=arc-20240116; t=1723668986; c=relaxed/simple;
+	bh=ToKZGCbRFgMoTJWEPcWJCk1aKa6A1fV+A+HwVlMNNNE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nSB9ekIPvEDMpeiNrJLg5aM0Sq+an2LwOal5cqxjqSSbooYrYu491hg5VX8ClTjjBmIuiAnfqW9qLQUJOVuDwWWwDicoz74E3xzqyJtP9kmQtj5rTktUUv3L20XJ0pl7VG35VzSRRJJ/tl03iTTgHdSEUBlUQpE86gNdCwk34XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oBmGe4RC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D71C116B1;
+	Wed, 14 Aug 2024 20:56:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723668986;
+	bh=ToKZGCbRFgMoTJWEPcWJCk1aKa6A1fV+A+HwVlMNNNE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=oBmGe4RCevhmKPnTxa+UmErKVrFo/QP9KBanRlk2ru/mgYd/H4PIfcCz6LY/ZtFoD
+	 QlQwUSqU7yYvUMrNLu89fP6RVH7xlMqKqycjrmDQizexYBCosWFUqxpMmHRLoUYve0
+	 52B+hvobMG1jRrK1LkuVjd6gH+EFViBsqbYINDAZEkdmWNLMra5yMkkpFoR03ZUiom
+	 k+CCtUhs0+/cW/BvqDvH5juPDowJLuPGdsrUibVh+eH9DM54ZYNv3wOBQ0bdKLIGQf
+	 ysAKu3QjVRKjXfXvGaOEYxShgGikq66WShutdrL1A0EHW0ldLYHG/5FWIuHkxifzj3
+	 XxCsXSuRXcY2w==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Prasad Kumpatla <quic_pkumpatl@quicinc.com>, 
+ Mohammad Rafi Shaik <quic_mohs@quicinc.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: stable@vger.kernel.org, Alexey Klimov <alexey.klimov@linaro.org>
+In-Reply-To: <20240806114913.40022-1-krzysztof.kozlowski@linaro.org>
+References: <20240806114913.40022-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ASoC: codecs: wcd937x: Fix missing de-assert of reset
+ GPIO
+Message-Id: <172366898385.334805.11696453398895382213.b4-ty@kernel.org>
+Date: Wed, 14 Aug 2024 21:56:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240608000639.3295768-1-seanjc@google.com> <20240608000639.3295768-3-seanjc@google.com>
- <76605c6e-37f8-4abc-ade3-3ba381d6c9c4@redhat.com>
-Message-ID: <Zr0ZwZsSEqSH5mQN@google.com>
-Subject: Re: [PATCH v3 2/8] KVM: Register cpuhp and syscore callbacks when
- enabling hardware
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Wed, Aug 14, 2024, Paolo Bonzini wrote:
-> On 6/8/24 02:06, Sean Christopherson wrote:
-> > Register KVM's cpuhp and syscore callback when enabling virtualization
-> > in hardware instead of registering the callbacks during initialization,
-> > and let the CPU up/down framework invoke the inner enable/disable
-> > functions.  Registering the callbacks during initialization makes things
-> > more complex than they need to be, as KVM needs to be very careful about
-> > handling races between enabling CPUs being onlined/offlined and hardware
-> > being enabled/disabled.
-> > 
-> > Intel TDX support will require KVM to enable virtualization during KVM
-> > initialization, i.e. will add another wrinkle to things, at which point
-> > sorting out the potential races with kvm_usage_count would become even
-> > more complex.
-> > 
-> > Note, using the cpuhp framework has a subtle behavioral change: enabling
-> > will be done serially across all CPUs, whereas KVM currently sends an IPI
-> > to all CPUs in parallel.  While serializing virtualization enabling could
-> > create undesirable latency, the issue is limited to creation of KVM's
-> > first VM,
+On Tue, 06 Aug 2024 13:49:13 +0200, Krzysztof Kozlowski wrote:
+> The device never comes online from a reset/shutdown state, because the
+> driver de-asserts reset GPIO when requesting it but then, at the end of
+> probe() through wcd937x_reset(), leaves it asserted.
 > 
-> Isn't that "limited to when kvm_usage_count goes from 0 to 1", so every time
-> a VM is started if you never run two?
+> 
 
-Yes, "first" isn't the correct word/phrase.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: wcd937x: Fix missing de-assert of reset GPIO
+      commit: 2251db28edcc70b7ee8a8c6bcbaecf752b3ea5ec
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
