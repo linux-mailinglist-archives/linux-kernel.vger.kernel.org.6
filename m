@@ -1,204 +1,168 @@
-Return-Path: <linux-kernel+bounces-285956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA999514D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882179514D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD42A288FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B312B1C2506F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 06:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D7213A418;
-	Wed, 14 Aug 2024 06:54:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C18C13C80C;
+	Wed, 14 Aug 2024 06:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=waldekranz-com.20230601.gappssmtp.com header.i=@waldekranz-com.20230601.gappssmtp.com header.b="TcI8WF2K"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j1EPYtij"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480C13AA45
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 06:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C2913A3F7;
+	Wed, 14 Aug 2024 06:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723618448; cv=none; b=FC4uZdYNKWeFGJCIDAEfjd9db9tqNiAbJrUMFQETzt2MLMz873vr6et0BTyhtummorh3Z3bGBBHnIpr6elq6WRyou3w/cOwDGZlSXfAgJ6+iZkyY5YKQOVG0xi/LScC5v5NbxTP3KzyH2pePOqF2b87O88sPUqRzS9RkClX7Wi8=
+	t=1723618471; cv=none; b=GmXnJ+A6hKdliFPyKbxI/XM17KH5s/5kh2Dr9SzgvYnUqVZ8C0wbl1/fceuIuRDvwkigG0E4Bn1NVBl2a3lgzQLNKLcaw1etjEpJNVJNY6ZgTLFcKrEk6zHWgnU1sUbvkIERMeoHZjn22oCSd/YMN78AjaW+DkmbtS7ec3n5Imo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723618448; c=relaxed/simple;
-	bh=+vfRSpI18Yf1ZfrKU05BRJmRw6VwEV9+GjEgW1YVXtY=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NjN6nqfnOy9WAeAI9hKSQycsWAxQ0fuTQjxBAs2REI4Xsb6hJ+PSDT9KUVKPJLAaDktKpgzzTn8t6ExUec1H6oo4+eKZVs6CvfnvJ8tVMJZlpjB8BbByf8fTU2aASJTfDefC+AOdcByi2c+xkvY1G1uNiE4ZAjlAY7Wc4gpN1y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=waldekranz.com; spf=pass smtp.mailfrom=waldekranz.com; dkim=pass (2048-bit key) header.d=waldekranz-com.20230601.gappssmtp.com header.i=@waldekranz-com.20230601.gappssmtp.com header.b=TcI8WF2K; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=waldekranz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=waldekranz.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so73500441fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 23:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=waldekranz-com.20230601.gappssmtp.com; s=20230601; t=1723618444; x=1724223244; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EEaPJY1jV0tPNyOEVQIOq2rulCYzJWHwSjLzgFRg7mg=;
-        b=TcI8WF2KVcg6W62zlCAxvr0zgcSKOnHH273Al68p55nM6SM0aQnO+uCdkVk7KgKcDk
-         6wTwrYA66lTo222RYjhq6cmkNXmSaX+E1AqTPX+wmd1MX0OkxSSpwpxx3maBRykqWVdW
-         52gW2y2LhColDUt/AdOlwXsTaQPcipI/MmgfMsBNAsAbf1UeQDB5IxJDlMiCbBk80Zo7
-         FGfjfehgO1clkfwOX4NXbiSgt1KlGKl156vntXqm9QaQeP4otjelqIwS9YKbT1U2MsJ4
-         ArIZHir1k2gZ/5cUlunCZTIekveoWrxo6v/SNWO6P91jVHerac4BMV1GacoJroioR7Cn
-         Y9OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723618444; x=1724223244;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:to:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EEaPJY1jV0tPNyOEVQIOq2rulCYzJWHwSjLzgFRg7mg=;
-        b=NifQ8VEuGoI9tGWtl8m2Fyp3Vp1BeVVnVdV0nShYTe4ocOZyVc1o1D0g0ZDUfUahxJ
-         hpBs9hp6ReHw9DpABjarjhXoKqxGLr/yLbOyNMW2CLBymAJuNPNNsd9AW0Fa/Hh5CRkG
-         lP2RFd4F+vn9XIWDG6RZDKCxc6du9VCpZXNw2Loc3KIkAWksP53My3/2gyQpwMjG9hOy
-         1Rr/8YQh7XF2H4PmPVx140fSs/gS/TP/YG2yRnzTRpSlZ8NdU3BvKSIk/6kbJekACfUM
-         zxlIwT0KzgQERmqgPnvKx5R2r7NX4vPa0hY73p06habo89N1cVUmunCteO8YiwL++t9C
-         NGRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHu/Cp9S4GNw+n31mJj0WWnaKMmSZrR0HD9iiKtf1dOiINHHcPzW5d7Lud7alXum3BIKfn2Vhf7dfcoh4QYcwlNrD2OawNQD6ZlepO
-X-Gm-Message-State: AOJu0YxE3feNj+bUl6ntEMT0CnTShOBNk3A/7fcOkuH/1W92+ss+MfPC
-	0wn10vRhcNNpKcaBTK6ydxSTJhC7l7lLJGyxNDgyspJvx2/5cIZFqkpEFIlXPfL4FSRcmA9KnZY
-	t
-X-Google-Smtp-Source: AGHT+IGIOyvDUYOA+jjpuEil/HvBtTHumduIcp7JiWn5PRn2D/MkXL6pPrK+bnKNArxMKLMVEiF7lQ==
-X-Received: by 2002:a2e:4a11:0:b0:2f1:a509:ce66 with SMTP id 38308e7fff4ca-2f3aa1a574emr9694761fa.5.1723618443940;
-        Tue, 13 Aug 2024 23:54:03 -0700 (PDT)
-Received: from wkz-x13 (h-79-136-22-50.NA.cust.bahnhof.se. [79.136.22.50])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f29203ced4sm13156131fa.86.2024.08.13.23.54.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 23:54:03 -0700 (PDT)
-From: Tobias Waldekranz <tobias@waldekranz.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, netdev
- <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: understanding switchdev notifications
-In-Reply-To: <d5c526af-5062-42ed-9d92-f7fc97a5d4bd@alliedtelesis.co.nz>
-References: <d5c526af-5062-42ed-9d92-f7fc97a5d4bd@alliedtelesis.co.nz>
-Date: Wed, 14 Aug 2024 08:54:02 +0200
-Message-ID: <87jzgjfvcl.fsf@waldekranz.com>
+	s=arc-20240116; t=1723618471; c=relaxed/simple;
+	bh=HkRVcTrYAvGcPaps9i6GL0NTgB/PhSmeAS/BeyeQHN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eINFFQtKzOdnWskWC0h+g7gqcAT+7Ym5xGQGsS5shggTKAnSajIlP18ELvdHinkBNGAQAHn7WhpU/t2hQKrgAj4pI9N4J5OTexkrR5yaWoD+2E+BXhhTqy7ujntwKKELyusU08GYigun29I4FzV/dUX+EyrGQh0zJbWz1qcNscM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j1EPYtij; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DNGE87022468;
+	Wed, 14 Aug 2024 06:54:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	enY/Wfd1anQvr2oMDVjWVzF+4mzJwuhscz2wR+sKWRY=; b=j1EPYtijm6BkWBQW
+	AL60sTYMx2X+vF6dkwW4cW8FGUuObNihVPBYD4m7Yi1DIYRJOC2giFuzVqFWBS3D
+	oLAVXHIhrvTMXc/3F2xAx0Llmv9+LSDh73UmhVUBwxO3oHUY2+h+LnYNXaxO2jvK
+	bGantQi+q7yCAvDKLNND0+YrcMDxw9t02qjCEaiUNmWthLFl+4hVowG6zC9i55XC
+	/TcrmlnVD2VdqkU3DLxQUmb2nM5KRmZrcOKp38zltOdho0R4UhTYPD1aaaLhHUPx
+	TApcWv+b0A9pGDMR5Uh8ZeJBuhQ+8LKf25BWu+53uPkSXaLA0gHm0di4GECUkfmp
+	ZmvmOQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1d4j6w8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 06:54:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47E6sE6Y000594
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 06:54:14 GMT
+Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 23:54:10 -0700
+Message-ID: <4d89a048-eef0-4295-a4cc-500390f005d1@quicinc.com>
+Date: Wed, 14 Aug 2024 14:54:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-qcom: remove runtime pm enabling for
+ TBU driver
+To: Georgi Djakov <quic_c_gdjako@quicinc.com>,
+        Pranjal Shrivastava
+	<praan@google.com>
+CC: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <iommu@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <dmitry.baryshkov@linaro.org>, Georgi Djakov <djakov@kernel.org>
+References: <1722335443-30080-1-git-send-email-quic_zhenhuah@quicinc.com>
+ <ZroNUGkKuC1L7Qfr@google.com>
+ <cca690c3-916e-43b6-b2a5-eca4f2eb838e@quicinc.com>
+ <ZrsJLqTnq6tG2xp4@google.com>
+ <dee2f394-c9c5-4099-8e05-ce0c8756887b@quicinc.com>
+ <3cb1da06-88e3-4dd2-b56c-e0ab725ef6b2@quicinc.com>
+Content-Language: en-US
+From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+In-Reply-To: <3cb1da06-88e3-4dd2-b56c-e0ab725ef6b2@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pdVfXk8RUQ1JOGXNvkSnyCAy4DqL2LQ-
+X-Proofpoint-GUID: pdVfXk8RUQ1JOGXNvkSnyCAy4DqL2LQ-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_04,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ adultscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=938
+ malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1011
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408140046
 
-On tor, aug 08, 2024 at 12:48, Chris Packham <chris.packham@alliedtelesis.c=
-o.nz> wrote:
-> Hi,
->
-> I'm trying to get to grips with how the switchdev notifications are=20
-> supposed to be used when developing a switchdev driver.
->
-> I have been reading through=20
-> https://www.kernel.org/doc/html/latest/networking/switchdev.html which=20
-> covers a few things but doesn't go into detail around the notifiers that=
-=20
-> one needs to implement for a new switchdev driver (which is probably=20
-> very dependent on what the hardware is capable of).
->
-> Specifically right now I'm looking at having a switch port join a vlan=20
-> aware bridge. I have a configuration something like this
->
->  =C2=A0=C2=A0=C2=A0 ip link add br0 type bridge vlan_filtering 1
->  =C2=A0=C2=A0=C2=A0 ip link set sw1p5 master br0
->  =C2=A0=C2=A0=C2=A0 ip link set sw1p1 master br0
->  =C2=A0=C2=A0=C2=A0 bridge vlan add vid 2 dev br0 self
->  =C2=A0=C2=A0=C2=A0 ip link add link br0 br0.2 type vlan id 2
->  =C2=A0=C2=A0=C2=A0 ip addr add dev br0.2 192.168.2.1/24
->  =C2=A0=C2=A0=C2=A0 bridge vlan add vid 2 dev lan5 pvid untagged
->  =C2=A0=C2=A0=C2=A0 bridge vlan add vid 2 dev lan1
->  =C2=A0=C2=A0=C2=A0 ip link set sw1p5 up
->  =C2=A0=C2=A0=C2=A0 ip link set sw1p1 up
->  =C2=A0=C2=A0=C2=A0 ip link set br0 up
->  =C2=A0=C2=A0=C2=A0 ip link set br0.2 up
->
-> Then I'm testing by sending a ping to a nonexistent host on the=20
-> 192.168.2.0/24 subnet and looking at the traffic with tcpdump on another=
-=20
-> device connected to sw1p5.
->
-> I'm a bit confused about how I should be calling=20
-> switchdev_bridge_port_offload(). It takes two netdevs (brport_dev and=20
-> dev) but as far as I've been able to see all the callers end up passing=20
-> the same netdev for both of these (some create a driver specific brport=20
-> but this still ends up with brport->dev and dev being the same object).
+Hi Georgi,
 
-In the simple case when a switchport is directly attached to a bridge,
-brport_dev and dev will be the same. If the attachment is indirect, via
-a bond for example, they will differ:
+On 2024/8/13 20:06, Georgi Djakov wrote:
+> Hi Zhenhua,
+> 
+> On 8/13/2024 10:56 AM, Zhenhua Huang wrote:
+>>
+>> On 2024/8/13 15:20, Pranjal Shrivastava wrote:
+>>> On Tue, Aug 13, 2024 at 10:37:33AM +0800, Zhenhua Huang wrote:
+>>>>
+>>>> On 2024/8/12 21:25, Pranjal Shrivastava wrote:
+>>>>> On Tue, Jul 30, 2024 at 06:30:43PM +0800, Zhenhua Huang wrote:
+>>>>>> TBU driver has no runtime pm support now, adding pm_runtime_enable()
+>>>>>> seems to be useless. Remove it.
+>>>>>>
+>>>>>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+> [..]
+>>> I agree that there are no pm_runtime_suspend/resume calls within the TBU
+>>> driver. I'm just trying to understand why was pm_runtime enabled here
+>>> earlier (since it's not implemented) in order to ensure that removing it
+>>> doesn't cause further troubles?
+>>
+>> See above my assumption, need Georgi to comment but.
+> 
+> Thank you for looking at the code! Your assumptions are mostly correct,
+> but if you try this patch on a real sdm845 device you will notice some
+> issues. So it's actually needed to re-configure the power-domains, three
 
-       br0
-       /
-    bond0
-   /    \
-sw1p1  sw1p5
+Thanks Georgi for your comments!
+Hmm...  so you found some bugs on sdm845 ? sorry that I don't have 
+sdm845 on hand...
 
-In the setup above, the bridge has no reference to any sw*p* interfaces,
-all generated notifications will reference "bond0". By including the
-switchdev port in the message back to the bridge, it can perform
-validation on the setup; e.g. that bond0 is not made up of interfaces
-from different hardware domains.
+> of which (MMNOC GDSCs) are requiring this because of a HW bug. I should
+> have put a comment in the code to avoid confusion, but it took me some
+> time to confirm it.
+> 
+> I have sent a patch to handle this more cleanly:
+> https://lore.kernel.org/lkml/20240813120015.3242787-1-quic_c_gdjako@quicinc.com
+> 
+> So we should not remove the runtime pm calls until some version of the
+> above patch gets merged.
 
-> I've figured out that I need to set tx_fwd_offload=3Dtrue so that the=20
-> bridge software only sends one packet to the hardware. That makes sense=20
-> as a way of saying the my hardware can take care of sending the packet=20
-> out the right ports.
->
-> I do have a problem that what I get from the bridge has a vlan tag=20
-> inserted (which makes sense in sw when the packet goes from br0.2 to=20
-> br0). But I don't actually need it as the hardware will insert a tag for=
-=20
-> me if the port is setup for egress tagging. I can shuffle the Ethernet=20
-> header up but I was wondering if there was a way of telling the bridge=20
-> not to insert the tag?
+In my sense, above patch should not result in turning off gdsc? It's 
+just open the support for RPM.. I tried to do same change for arm-smmu 
+driver, w/ test I see cx_gdsc which is the power-domain for gfx_smmu, is on:
+..
+/sys/kernel/debug/pm_genpd/cx_gdsc # cat current_state
+on
 
-Signaling tx_fwd_offload=3Dtrue means assuming responsibility for
-delivering each packet to all ports that the bridge would otherwise have
-sent individual skbs for.
+Are you worrying that not setting active will turn off related PD? or 
+Could you please explain a bit more about how the change impacted power 
+domain status? Thanks in advance :)
 
-Let's expand your setup slightly, and see why you need the tag:
-
-   br0.2 br0.3
-       \ /
-       br0
-      / |  \
-     /  |   \
-sw1p1 sw1p3  sw1p5
-(2U)  (3U)  (2T,3T)
-
-sw1p5 is now a trunk. We can trigger an ARP broadcast to be sent out
-either via br0.2 or br0.3, depending on the subnet we choose to target.
-
-Your driver will receive a single skb to transmit, and skb->dev can be
-set to any of sw1p{1,3,5} depending on config order, FDB entries
-(i.e. the order of previously received packets) etc., and is thus
-nondeterministic.
-
-So presumably, even though you might need to remove the 802.1Q tag from
-the frame, you need some way of tagging the packet with the correct VID
-in order for the hardware to do the right thing; possibly via a field in
-the vendor's hardware specific tag.
-
-> Finally I'm confused about the atomic_nb/atomic_nb parameters. Some=20
-> drivers just pass NULL and others pass the same notifier blocks that=20
-> they've already registered with=20
-> register_switchdev_notifier()/register_switchdev_notifier(). If=20
-> notifiers are registered why does switchdev_bridge_port_offload() take=20
-> them as parameters?
-
-Because when you add a port to the bridge, lots of stuff that you want
-to offload might already have been configured. E.g., imagine that you
-were to add vlan 2 to br0 before adding the switchports; then you
-probably need those events to be replayed to the new ports in order to
-add your CPU-facing switchport to vlan 2. However, we do not want to
-bother existing bridge members with duplicated events (and risk messing
-up any reference counters they might maintain for these
-objects). Therefore we bypass the standard notifier calls and "unicast"
-the replay events only to the driver for the port being added.
-
+> 
 > Thanks,
-> Chris
+> Georgi
+> 
+>>> I see Georgi added it as a part of
+>>> https://lore.kernel.org/all/20240704010759.507798-1-quic_c_gdjako@quicinc.com/
+>>>
+>>> But I'm unsure why was it required to fix that bug?
+>>
+>> I'm just thinking it is dead code and want to see if my understanding is correct.
+> 
+> 
 
