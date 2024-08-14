@@ -1,209 +1,157 @@
-Return-Path: <linux-kernel+bounces-286481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A03951B78
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:10:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE04951B84
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:11:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42953B25781
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909861C231DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34A71B1431;
-	Wed, 14 Aug 2024 13:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16D01B1437;
+	Wed, 14 Aug 2024 13:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BLo15t5n"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U5AA8Gfs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB221B1419;
-	Wed, 14 Aug 2024 13:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723640961; cv=fail; b=pQy4bKv/MBzCViPNNGj2jgzFdzkLX7aAcdI/Aw9VB3achMDdhq8R/T0Kb7fAySWe0ru03vQx8QNp8srHsvhwDyqwmGFDqjgi87OcFvmihXiCQOXSwBXGrAVqUMue1E9rFBwN5OZZn1kqvSOTiGG4HtAgkdykvdE0ugZTCyvGbRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723640961; c=relaxed/simple;
-	bh=1K1TCi8CxHIWutim9Fw+JM2vfa3bz2TyshERMPz7eYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YoxFKEdFVlrimorxC4UAAIdQw0/rMTHGtUYZ+NoLFrPDMrTNX27bVi6ku8BapeiDt5/csBVd7LSbrbxJAMWXKDC/J6/3dZDuJ7fNltwa8GasdG1vK2SfN4tQw381QG1ISRbh9BKEtGBVN2btB9v/pdcONzwtjDg//xnnA5yx1SM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BLo15t5n; arc=fail smtp.client-ip=40.107.223.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uMQ3nJiELJABuJsnnZhxWFDFWMpHXzjZBlpn9Cy50/VYf6rvEBMQGE/4yyt55XJkRg2egzD1mZn3cBQACRTxgh4t2YAhJc/gscnkg6K5MgpH4P4PVijvom1mtIEMMQ1hLwSgckosEwplSe/AINV3bKRvS4CNDrby6BrSe6bEy/o8mqkLZVr3gGFiplOmb2Hte3jpd4+u5m7Yz0YLF+c+AWIR/GUw3PKVh4rf7RN6Jy1qVDsMfc6dTqzGTGizFReqTlT6mxlU+MxzL0087zD7FtSAuG99olZ7km3VgkJgSCQRAo3fHy7e8meR7FXhC6Uu2Hq2qNNQ+5pa35v+E0gxYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2/TJEe73rZpagFT95/zy/wwUQhKNYVINv7n+OXIYB2w=;
- b=deOmRgEGwb4N0txst4wAAnDWyAv27rP9mpNNHJvutlfkhrb214Kdlm12KGE3firimu4FVx3Q+09dfzMchuzSgHxk65zAboIoiBw5RyV/4Z2JjcfvaiCIavhKHjsd1MFrqhuKPqAKJbtZyHkR4z/98ioiTZwFUZFKPaFzGQ5IHmEB0H65npuPjSobx4j5iWy297yiJ6JAcj+lKyCxDCx8S4o22K7pt/JTpWPB7EcoAIhALlIBgyQOIV2/fZRB2yUUrp9WcVVz85ybHR3FK6iE9lfQZ6lkp18MhEU7PlxJVUDUMj8GJgh9c+O6Gi1dgVfhXM4avI92zcvM/tu9WUn0PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2/TJEe73rZpagFT95/zy/wwUQhKNYVINv7n+OXIYB2w=;
- b=BLo15t5neotpVE6FAhoRuPdlDWdA2eyicXDbhzrcS0IsuePlqHVCXTyudi9n0N/HuP4CaatzshMZlQn2NdntXMA4h7/s742T4H4Ef8/vq8mjxKYUVi25aijTPgmYmmRb5EOssXSTnKzizrGMvHl7z6mQB0eQc2e30evx7vB1DjXq7w1lxN1/IAIYt8rtZPoR279mA6gZuBGRei8ITPHlD70uqN05gdJfocUsMzyqJp3F64U+NZqXVBlFw8RHaGXss8pjVnhDpd1ku9WxSEQM/LrEBxpNaxwTbxQr4ab0BsP3PmM6TWwhrnm3EDMJXJW/CS33eayr4psx8qGD6cMMAA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16)
- by SJ0PR12MB6854.namprd12.prod.outlook.com (2603:10b6:a03:47c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Wed, 14 Aug
- 2024 13:09:17 +0000
-Received: from DM4PR12MB7767.namprd12.prod.outlook.com
- ([fe80::55c8:54a0:23b5:3e52]) by DM4PR12MB7767.namprd12.prod.outlook.com
- ([fe80::55c8:54a0:23b5:3e52%3]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
- 13:09:17 +0000
-Date: Wed, 14 Aug 2024 10:09:15 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	David Hildenbrand <david@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: Re: [PATCH 08/19] mm: Always define pxx_pgprot()
-Message-ID: <20240814130915.GI2032816@nvidia.com>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240809160909.1023470-9-peterx@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809160909.1023470-9-peterx@redhat.com>
-X-ClientProxiedBy: BL1P221CA0016.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:2c5::29) To DM4PR12MB7767.namprd12.prod.outlook.com
- (2603:10b6:8:100::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E1379D2;
+	Wed, 14 Aug 2024 13:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723641045; cv=none; b=mf1mCnoPzScvuw2R/4wVaORzsv0EoYinKlsRlAIkYOGhEdBD07bHLqihcKV/Licic3uMKe6exRBMIp+sfyyUXJDfW7qoembF5barsOSTpuj3l6QweONW/7BRqE7dx/TwwNuEwgCUPai4PmDNUCCsScXCY7gJIyzCRraTT+YbxC4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723641045; c=relaxed/simple;
+	bh=1GoOA8QWM8i82xflr5xmRl5nx8C8ZuRAGjx4nt9xxNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IGDScraF2iNiYVvayQg4BHPe5ZqXb9ki83MAGf7mSh/bVx0Sw5NuePY6oB4T0n+5tm10dPPl4gJfILiw3n8xf8tC23q+pjtkJRgwP67dSftj6jnsRDYSttmcqa3NDDnY4Zkp6n6TBd7lOxn1+Ky8IeKimyedZh49LCeXsxbqfBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U5AA8Gfs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47EAwMFc005305;
+	Wed, 14 Aug 2024 13:10:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oDLVA4hth+atsd73LRIJBgxs3WHzfN9AwCIqrlyfJ3k=; b=U5AA8GfsDWpPZHFq
+	rg+nHFci3HXsw5eVzXYYYLUM4yyhrIvoqf5U4cwBFVCxFb4ZZypsaKt5LeAnLwDc
+	rok1wutbT+eZgTXseUjsAwsbaxqtCGQNdynWx1hHL2PT5Nj4tpF3ev4aiKFNm9xF
+	CPs59Ms/QJyDr/YXOmSxq3GCXeljGe6JVpw6RdAXESxPSKUaj48V+i+KovI74K3E
+	rWYKZJLHjA2pcBXQH4maoKDd0O0hEokmV6pNza/bWCz+qWxONYXvZo3dV1L6EWtJ
+	NtO80wc2JOOINn4XpkgDevZAjmXsI3kiuDy9DzjQ4geDokyTVYsEem9lehduvdrn
+	UisD5g==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40yxwv57um-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 13:10:38 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47EDAbB5016025
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 13:10:37 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 Aug
+ 2024 06:10:31 -0700
+Message-ID: <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
+Date: Wed, 14 Aug 2024 21:10:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB7767:EE_|SJ0PR12MB6854:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d8d4370-d164-466d-ec26-08dcbc624d3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zzNhbWwHQC4KR8O3uzAVvFZgGsliOBP9373qhbDQVEL2vc6Q4sFj3AG7l4dI?=
- =?us-ascii?Q?J/AjyjFJrHOHmOZulHWvFZ61z7AGILXidSBzbSKC7wGH/nUyVesH9uGVRHDV?=
- =?us-ascii?Q?znJxSz2ie5+1tsFxsrzazuDlXrHQvn2k2v+ubkmIg8P1FCZ33M5wb/Jm8F/b?=
- =?us-ascii?Q?eHzbKvBLKloQ4lCkoOlYKw71l8HVGGJpMqUzTErXxatsjMPJB7ixGfGDzqed?=
- =?us-ascii?Q?XZ9bm8Zs0e+6M8M9+fmw3+J9iIIXp7D04hiSA+KIL4ZvI0WQ0VtFDHO0F05h?=
- =?us-ascii?Q?GeDK+4BItNPcVpuqNJR6Bx/4YYg1UlnKp6MlZxj9XjklYMVl3zqhomQfQScl?=
- =?us-ascii?Q?rSO/IUkoW+lf4ejhf1Aop0wh00gzGzTFkSY5mJu8zBAH2HDSIBA1+w8RzbDO?=
- =?us-ascii?Q?Pl4FXfCSajC9PykkvYOISAGywG2gxdGsAEdRImyXfMApRsxALWzXw91f0OEO?=
- =?us-ascii?Q?SbVEWvRCniRoiJs8ITrHooVF7DJiEDPqKB+DL0rarNqyoI/oSGK0iLmrr4zl?=
- =?us-ascii?Q?xacjaIZtVgvEcpy2m696AslJluzg/C07Qaylb4XmzreSghLoPIBHfbjiUd7F?=
- =?us-ascii?Q?Ox/Uxqc1/cZDvyqXYUCyW0Nj2o4u5a+9GSS2l8n5FWMGeiqc8a/++qLsWn7O?=
- =?us-ascii?Q?YMBVOcxOuBV2dC/ADyzpSeqrbaOjaM7BkG+Zwoj7BRS4ZMxV1G+kG5ZOUY/L?=
- =?us-ascii?Q?9SfasAdQyw88Wqb/tZg6o0dFHQHb+bHYEl40Ovq5ZwCeLYAAKtqf4Y0Lyoj0?=
- =?us-ascii?Q?8rAxV/T3i8u8v8Z3QxOscvcq23HoE/FnuUW+wLPZMSet/3XUurFEsawloeCN?=
- =?us-ascii?Q?gchiqE8Ya+RMP8KZMse/spr1OKAjZk5xM80EolIC//bO8ArSyx+Ohna2CZyi?=
- =?us-ascii?Q?mhjvRkjzvHwfabPHqo//3U0zW39Fnf/l1NkPu6EUcFdQ9YkQIJ3kNo5Tsflh?=
- =?us-ascii?Q?6TIolv0Xqjq8GzPDQjT4asUP62f+L+0geHDdhh769Bbfvh9xg3pZU7KSZ8Uj?=
- =?us-ascii?Q?gt3sSiLyUCMAxaYhGkZn7kbsAVw4Droec3ZB4VDKHDAuGEXbrYsNLwXCgX+1?=
- =?us-ascii?Q?sM8ZxQucSFi76YT+lr3mW/qY6nQMHz5RQHTFs9mWvJlpGnQbl6LYPZ/ZAWwM?=
- =?us-ascii?Q?LJwqnb9On4cAzSXRaXIDbKgFBd1Do4VUmyZBYTj8UKUVaLD46Z4cyFlOIwxO?=
- =?us-ascii?Q?xdG/ClWxDLQhjK2UIVrrkkKdeYprIz1fE2yNYsy39cpyqQugA7NcaE+g8LGr?=
- =?us-ascii?Q?jzdwa6cSDU0mdvACg88i8rYetfY9WIhXwYfPLJ6ENdpHj7XJmGCCnoHI8hNM?=
- =?us-ascii?Q?29kH/0Q9Z3qsJkeFaOCmY0GdBnF2afptA4UyT8ltb2efGg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?NoYf40ZAoLkvFxSawH3NYj2wfHj4RILuAr9gUn1hxgchWofArUHc//A6s5TA?=
- =?us-ascii?Q?sZdfyuQVeKaAUhoY8zqPaN5DwSQSuSgsqLnwMpsB3bF1SmNZ+017u36xg0M/?=
- =?us-ascii?Q?CHNZhDDCTTXJypHzuIEct0S97i8sIzoDRfXTvkxL6K8JTpeE4RUKkrsL6Fns?=
- =?us-ascii?Q?UZcSqTjgY4RduPh/NCTu0tuuLNPvUZmLd/AM2I2JgQE+4nC//NYsM0k93FQG?=
- =?us-ascii?Q?zOdx5ANtk/wMXdGkPbDANWmqvscsSnvrBunNIWfOnn77O5hwhRmUnwOF8QSL?=
- =?us-ascii?Q?aCPyTUelJ9IYi0IbYO0zgVEvZMD8wCJs+Ywi/b4N0Krk/JaJTIl4Rr/wczHH?=
- =?us-ascii?Q?H32GVqtc71USdP7BX8bfhsRXchM60DPCe4C4MrTk9xSiL9CRR5R/fptRU5NN?=
- =?us-ascii?Q?gkOL3FJOLbV5o6nDGCDP0W4OAU2iOkoSA7xpUpcJ6y/EjG5Y2Lbq07Kd7w/7?=
- =?us-ascii?Q?MdbR1rcclRR5njOW4A2CJC3tQNYmbRGRumYb0r8atCtexTjzHTE+Bc1ciF9F?=
- =?us-ascii?Q?5bQcwnrqlq28gQxg3vuSouWeclKeA/uh2YRe+V75+G65m43dp7q1wc7XrKnZ?=
- =?us-ascii?Q?f5f7DynYkzahEQWvBJYDemJ8UckOaRJthLFARG0AWT4/GXded3BrhWvdJ+ex?=
- =?us-ascii?Q?ipHFJQYl6KRXH6/mFL7Gum3CMek/OppZRM+zClwnkkEW+eApR+q1j90lh/wY?=
- =?us-ascii?Q?iuZYOwMRSv45FquOsQgvz+6FQL7Z4eom9jfuW9nTtkknfLqSnK7AVoRWqYnQ?=
- =?us-ascii?Q?HU/lkcCrWt+/dTKhKWokxW0OU/x7BSFZ0R7YO3gKjkNJANdRDatETYwj8Z2L?=
- =?us-ascii?Q?I0HBImZWE04fyo7Px5KPHHsGn4KxH6pnlnZKVhHbMsNr89wNMPWxgaVDqxWm?=
- =?us-ascii?Q?YrCmQo7BSQ6Gn00kDJ7cw0ifQRfoCnhhOHeVSQ5q3kMJw/WcwF/5SuxnKOO9?=
- =?us-ascii?Q?ZOFlNpjF+2uYSQUK9RxOGOPTdv0wRfhK2ZHp6y8a7qAEcjr0FYgPanNBzA6O?=
- =?us-ascii?Q?92ONHgK1gSUtzgs09rqdhknT1bftMnxGhSc+i+kwkLL1OegG2ZAsUMjE9w4X?=
- =?us-ascii?Q?UIsEtjWTWU2NBUbVRPTSwULtHtLelFt+gTwjXRpmSxPIxFkwggGhtvaL/wLe?=
- =?us-ascii?Q?aP6FQdyPSOO+bhlm1DMPa/ve7i6INLx/M4KVxIF01HVSceVjsnnvE8AF0WR8?=
- =?us-ascii?Q?GggtdYnk2/QPPCjLbn7VhSar6s1nx551EWJLpf1ocqfMFtyFuZGFpXTXSGgU?=
- =?us-ascii?Q?WBDjoM3BzEw8Pwwvhx0BJvDoiWuimRM6e+XhLbDn2caiui2elZamcoQoru68?=
- =?us-ascii?Q?EGsY2SW8CPOyjh9JoAHjRh9OcBpliJSsT+Jxu3ZwoyepL8eEhGQM7hS2VpLq?=
- =?us-ascii?Q?UW5oHZ1oTs/fKD0wuZwhFHpPE40KKi1XoBKV86sdTfJLS8Cl6I/xgKRbTae0?=
- =?us-ascii?Q?9bh3PBgSs3x9iDEm5P54trvgzeM4TIz+zEY9iI/qa1fRVdN2ugaaE2KWL5IY?=
- =?us-ascii?Q?B39OSaSIabKtxm6gwGJc0ZQcECC7+SS4lL6QGwlT9T18RU/U3kUpx5USbF1p?=
- =?us-ascii?Q?NAij+W4dEgw9FQHi+43yvuDMBcs5gA7kFeRLjZ0r?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d8d4370-d164-466d-ec26-08dcbc624d3a
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7767.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 13:09:17.0106
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uBdfUpeLn9en4stQZEc+CgQFbBCfOkmbPGCqcGPSEYz85NqBr+X8zgg5qjopmyXN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6854
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
+ version Titan 780
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-14-quic_depengs@quicinc.com>
+ <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5W4dV9LCLCp-ZAfgsY5hH5aAACWRAxAO
+X-Proofpoint-ORIG-GUID: 5W4dV9LCLCp-ZAfgsY5hH5aAACWRAxAO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_09,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ spamscore=0 adultscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408140092
 
-On Fri, Aug 09, 2024 at 12:08:58PM -0400, Peter Xu wrote:
-> There're:
-> 
->   - 8 archs (arc, arm64, include, mips, powerpc, s390, sh, x86) that
->   support pte_pgprot().
-> 
->   - 2 archs (x86, sparc) that support pmd_pgprot().
-> 
->   - 1 arch (x86) that support pud_pgprot().
-> 
-> Always define them to be used in generic code, and then we don't need to
-> fiddle with "#ifdef"s when doing so.
-> 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  arch/arm64/include/asm/pgtable.h    |  1 +
->  arch/powerpc/include/asm/pgtable.h  |  1 +
->  arch/s390/include/asm/pgtable.h     |  1 +
->  arch/sparc/include/asm/pgtable_64.h |  1 +
->  include/linux/pgtable.h             | 12 ++++++++++++
->  5 files changed, 16 insertions(+)
+Hi Vladimir,
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+On 8/14/2024 7:13 PM, Vladimir Zapolskiy wrote:
+> Hi Depeng,
+> 
+> please find a few review comments, all asked changes are non-functional.
+> 
 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 7a4f5604be3f..b78cc4a6758b 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -384,6 +384,7 @@ static inline void __sync_cache_and_tags(pte_t pte, unsigned int nr_pages)
->  /*
->   * Select all bits except the pfn
->   */
-> +#define pte_pgprot pte_pgprot
->  static inline pgprot_t pte_pgprot(pte_t pte)
->  {
->  	unsigned long pfn = pte_pfn(pte);
+>> +void camss_reg_update(struct camss *camss, int hw_id, int port_id, 
+>> bool is_clear)
+> 
+> Please let it be just a declarative 'clear' instead of questioning 
+> 'is_clear'.
+> 
+>> +{
+>> +    struct csid_device *csid;
+>> +
+>> +    if (hw_id < camss->res->csid_num) {
+>> +        csid = &(camss->csid[hw_id]);
+>> +
+>> +        csid->res->hw_ops->reg_update(csid, port_id, is_clear);
+>> +    }
+>> +}
+>> +
+> 
+> Please add the new exported function camss_reg_update() in a separate
+> preceding commit.
+> 
+>>   void camss_buf_done(struct camss *camss, int hw_id, int port_id)
+>>   {
+>>       struct vfe_device *vfe;
 
-Stylistically I've been putting the #defines after the function body,
-I wonder if there is a common pattern..
+Thanks for your comments, I will address them in new series.
 
-Jason
+But I have some concern about above comment, you want to add a separate 
+commit for camss_reg_update, maybe camss_buf_done also need to do this, 
+but I guess I will get new comments from Krzysztof if I make a separate 
+change, Krzysztof posted few comments in v3 series, he asked, "must 
+organize your patches in logical junks" and the code must have a user.
+
+Please check below comments.
+
+https://lore.kernel.org/all/e1b298df-05da-4881-a628-149a8a625544@kernel.org/
+
+https://lore.kernel.org/all/d0f8b72d-4355-43cd-a5f9-c44aab8147e5@kernel.org/
+
+
+Or I don't add reg update and buf done functionality in 
+camss-csid-gen3.c and camss-vfe-780.c firstly, then add them in a later 
+commit.
+
+Could you please comment on whether this is acceptable? Please also help 
+to common on if one commit to add them or need two separate commits, one 
+is for reg update and the other one is for buf done.
+
+
+Thanks,
+Depeng
 
