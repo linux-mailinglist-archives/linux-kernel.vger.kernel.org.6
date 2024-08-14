@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-286981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B10E95211B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5822095211F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF971C211F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A52C1C212D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256AE1BC06F;
-	Wed, 14 Aug 2024 17:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D825F1BC06B;
+	Wed, 14 Aug 2024 17:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="z73f/zDu"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q4fzSCY/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006201B3756;
-	Wed, 14 Aug 2024 17:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24DC51B3F32;
+	Wed, 14 Aug 2024 17:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656562; cv=none; b=CB8U9kegQLf/CU2Y3T+NoHpxBR6zxqYPBTl9P3rfVooinlxUtOZWRk54RVWrtXW+bgcwvgXVaLxO7M9MjSRTM++/1uW59KYJ7Cy3cUzqIojJNrnIeuLLZ3nQv7UWjVu9haI97U3MQNgt8U4M0YBLm3sBS5oiRdawoQlaoBzXORg=
+	t=1723656632; cv=none; b=Wy9mg5BoVRuFL/mEoGq90TmOKr/Qfp3EQy8kJGHa9IbiqTUiYXXxyUrBhR70nrbaP6qBxEJxTxYIl0h/acRilnaF07CnVj1QaDzdbLBLmkCTT386/W2L1gmhJmWhzlutVkSblegBvH8dyVTY/NXaatKLyPkhPA9QYY5PNZ/cV08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656562; c=relaxed/simple;
-	bh=XmsPiii+wG70h9ZM55iSB160B+XJ/WyqQWqvcOiBgPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a3QQ5Q4GBwVLZ9CU5/tO428V4dXv8mzn1EcMeMXkD/DphbIAyMwMacEGF/6PyM3QNG2r1JU/jX4v3931Cbrvnc8w8TaGB9fxQ+/1BfRIDOm9BEyxJgshqe2+OKpPDRNIRMYTx1vSJDVG54Ke0346UO7uKVvPFzub8UaVa0faUco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=z73f/zDu; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WkZxX2jFYz6CmLxT;
-	Wed, 14 Aug 2024 17:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723656556; x=1726248557; bh=I7dodsI0T6h07zqlJlprqPak
-	oAeMD2WyeAzXwap4pZY=; b=z73f/zDuCPCNKGJQhAXvtSM6CAINIZHJAut9BqMs
-	ekhyE7F18glxMNfcBCZRT2UG/6/NRXlR5aDBZTm232Pl++k0acQNprtsHUWEWX1K
-	blYf4d8I32u4z1VgIzSazSwKybyiHRTP6Ti2hEKL/Mrcan1p9lhUoFkGvN5wvn+S
-	b3tfILfRYhMJF/jX0eh7uLCb6TCI/u7K9ocs/+lKITuSkEeprKsTYy89lEJ0musG
-	nZE5e/u6V9v1eEW/IlGwCUVw9s1KyRW9H7IAg99Jc3z3DH6DFBQcaLLJzV8i2Tyl
-	HqGgz5EQdBm8hGF4l/QJCJ+6uU8CE8i3TPyUKEG69sNPlg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id o6QXbFGnLU5V; Wed, 14 Aug 2024 17:29:16 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WkZxP5W7Hz6CmLxR;
-	Wed, 14 Aug 2024 17:29:13 +0000 (UTC)
-Message-ID: <f51533d5-46b9-4485-b71c-2fbd6a12071a@acm.org>
-Date: Wed, 14 Aug 2024 10:29:11 -0700
+	s=arc-20240116; t=1723656632; c=relaxed/simple;
+	bh=UQRi+Eq75+r0FEjzrp7XGdy6GZs8YcZYKPW5WDTPIP8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QqjMptGnZ4PxUOhg+0wH4K4RxrcUOclNi4ubG3XTXaEKwsgG/PkaVZr8EmrqRGvoGtJxduj1Kifx2mTmsPEGEfi8nKGemp0xa9ugIrTYYRQeGvtK5LRvEdpaSpL3MJ/0p3Vpy+S6cmaSluGyScFI8OOBJGHTE0TnqkbW5mmg+ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q4fzSCY/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47ECxSln024899;
+	Wed, 14 Aug 2024 17:30:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=BlFGy/2SCN8UWu7KmR8yFNPLtO
+	i3t6/dps1K+bIWWLE=; b=Q4fzSCY/qYnL5dcsL6zsqTXv/B2RZjMnrmqJraQHot
+	u30SMGAHlhgs3I6lYm5rrXGlszsrHJopLfjFG9rVVWtK/Q6M7plppPDL8CO5cNpy
+	gR6gwiO09ismXEhtO8TrWZPcPHebKzqYpEZp/ohFtF8JtazpxL82zDCojfh8vpSd
+	kaL9cE6xWW+GoVRjuRdpCBpepe/PMzOcHIxUF3wNvTUkUDUubuTofRnQJDVir3uG
+	IXu3t+6uEvCfJALk7ypJabv+RhwjzHNvn/lXdHcfLw8ziu/82pMe9zoRBhZEFnqa
+	HkzliOrwsYYQySGuQi9rkm7LZgNF/tcbwxKs5luNhgGA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 410w2s17n9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 17:30:27 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47EHPxqY015785;
+	Wed, 14 Aug 2024 17:30:26 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 410w2s17n5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 17:30:26 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47EGeoew010102;
+	Wed, 14 Aug 2024 17:30:26 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40xjx0tqey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Aug 2024 17:30:25 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47EHULPB55181634
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 Aug 2024 17:30:24 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D1A0A2004D;
+	Wed, 14 Aug 2024 17:30:21 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C309F2004B;
+	Wed, 14 Aug 2024 17:30:21 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 14 Aug 2024 17:30:21 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
+	id 9A32EE020C; Wed, 14 Aug 2024 19:30:21 +0200 (CEST)
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Brian Norris <briannorris@chromium.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH] tools build: Provide consistent build options for fixdep
+Date: Wed, 14 Aug 2024 19:30:21 +0200
+Message-ID: <20240814173021.3726785-1-agordeev@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] ufs: core: Add a quirk for handling broken SDBS field
- in controller capabilities register
-To: manivannan.sadhasivam@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>
-References: <20240814-ufs-bug-fix-v1-0-5eb49d5f7571@linaro.org>
- <20240814-ufs-bug-fix-v1-2-5eb49d5f7571@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240814-ufs-bug-fix-v1-2-5eb49d5f7571@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 61_HCH9tAI2i67dm6--2K0XAgniARvvQ
+X-Proofpoint-ORIG-GUID: e44MgMllBYv-EoZlIVWj-LWWbCf1uQZo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_13,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=766 clxscore=1011
+ spamscore=0 adultscore=0 phishscore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408140117
 
-On 8/14/24 10:15 AM, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> 'Legacy Queue & Single Doorbell Support (SDBS)' field in the controller
-> capabilities register is supposed to be reserved for UFSHCI 3.0 based
-> controllers and should read as 0. But some controllers may report bogus
-> value of 1 due to the hardware bug. So let's add a quirk to handle those
-> controllers.
-> 
-> If the quirk is enabled by the controller driver and MCQ is not supported,
-> then 'hba->sdbs_sup' field will be ignored and the SCSI device will be
-> added in legacy/single doorbell mode.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->   drivers/ufs/core/ufshcd.c | 5 +++--
->   include/ufs/ufshcd.h      | 7 +++++++
->   2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 168b9dbc3ada..acb6f261ecc2 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -10512,8 +10512,9 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
->   	}
->   
->   	if (!is_mcq_supported(hba)) {
-> -		if (!hba->sdbs_sup) {
-> -			dev_err(hba->dev, "%s: failed to initialize (legacy doorbell mode not supported)\n",
-> +		if (!(hba->quirks & UFSHCD_QUIRK_BROKEN_SDBS_CAP) && !hba->sdbs_sup) {
-> +			dev_err(hba->dev,
-> +				"%s: failed to initialize (legacy doorbell mode not supported)\n",
->   				__func__);
->   			err = -EINVAL;
->   			goto out_disable;
+The fixdep binary is being compiled and linked in one step since commit
+ea974028a049 ("tools build: Avoid circular .fixdep-in.o.cmd issues").
+While the host linker flags are passed to the compiler the host compiler
+flags are missed.
 
-Adding a check for the UFSHCD_QUIRK_BROKEN_SDBS_CAP quirk everywhere
-hba->sdbs_sup is tested is wrong. Please move this check to the code
-that assigns a value to hba->sdbs_sup.
+That might lead to failures as result of the compiler vs linker flags
+inconsistency. For example, during RPM package build redhat-hardened-ld
+script is provided to gcc, while redhat-hardened-cc1 script is missed.
+That leads to an error on s390:
 
-Thanks,
+/usr/bin/ld: /tmp/ccUT8Rdm.o: `stderr@@GLIBC_2.2' non-PLT reloc for
+symbol defined in shared library and accessed from executable (rebuild
+file with -fPIC ?)
 
-Bart.
+Provide both KBUILD_HOSTCFLAGS and KBUILD_HOSTLDFLAGS to avoid that.
+
+Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+---
+
+This patch is against kernel-next next-20240814 tag
+
+---
+ tools/build/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/build/Makefile b/tools/build/Makefile
+index fea3cf647f5b..18ad131f6ea7 100644
+--- a/tools/build/Makefile
++++ b/tools/build/Makefile
+@@ -44,4 +44,4 @@ ifneq ($(wildcard $(TMP_O)),)
+ endif
+ 
+ $(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
+-	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
++	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+-- 
+2.43.0
 
 
