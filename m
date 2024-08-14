@@ -1,201 +1,192 @@
-Return-Path: <linux-kernel+bounces-286916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155B595205E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:48:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA98952060
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 18:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388901C236A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79ADDB245B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DD91BA892;
-	Wed, 14 Aug 2024 16:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33701BA870;
+	Wed, 14 Aug 2024 16:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kzpm//R0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KYHIl4Bl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6614A3FB3B
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBFC1B9B51
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 16:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723654085; cv=none; b=sUaAqkmMm2v2hFLklPq6GD+K+zohW2K1x4iwmpgiZ8gccCCVVs1N7idHtBy8/p/VlsnAz3ZWY9DkFKfe4HvhmQNqccwtxk2fw9krA3/kau5hcNTNJrNfAuPK+mLResKF9zeO6dF0/ua7pnY3Uvg8zbJceuv1jbsANqxilAIBGGo=
+	t=1723654173; cv=none; b=SepD/iz5JikSDMP/VteLZYiCMD6ueCucMwmE2IeAtsGX4pwR+1IBlHpVER9qvLjDBWJ5FtBDUdmvZp+6d8fzx9xNFHneTgJX5o0VqKFySgtBunrYlNMpiwygDVfp8tjalYXHHaPUwK7VVurofYdcwZ7GwCLPBP0vEctyziJCgas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723654085; c=relaxed/simple;
-	bh=vTfAPEk2c1Ct83IEMiOqxGera7uARBbWF1WLwgPNSIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1OBuzHKtka8cdSc+/hMcRUrv8pgLkKM28ogY9PSuNFlQBdnVlryUrmi6DDmShXnMCKyDh5kPBMur34pqvv4WOQCifmdjR+FOOeOEig5aAylEuCu2t/fjRFnGkjjw4V5DqsdU8zRGLGo4RAGJfjOmzg7OUytTBxGOwoPBIEjeFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kzpm//R0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723654081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QYxda2UDwR4Xmvyg0lcuf9BUoRVgq+CvoIu/NKSta7Q=;
-	b=Kzpm//R0KArimu3RMB3Sx2Ealmq0vZsbcF6zVy48lZXF6QE7rt+HnoA4EfGhAYaKA6fiDm
-	H46U//Wg5VNOKm7cJbiwacbdBmiA0qH5MSF0KUBuGDorovJsottQlxXZljnox3J9SW41Jf
-	m/7CFY3gJqAqZANl8cDsZfYDtw2/CHE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-I8OtXQ60NUaCIoQSdxh6xg-1; Wed, 14 Aug 2024 12:48:00 -0400
-X-MC-Unique: I8OtXQ60NUaCIoQSdxh6xg-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3687f4f9fecso80679f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:48:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723654079; x=1724258879;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QYxda2UDwR4Xmvyg0lcuf9BUoRVgq+CvoIu/NKSta7Q=;
-        b=GCfxypSqg+4NU0SObFRplCI4ip7bxRh5nFHEd/aAM2KAuxXv6ZAEie1y75MCkEZbAD
-         1EWMd9FYYZqEQiw0/XY49xawryKb8b6/fXbveq558S/OHmkHPXOu0HXUABOmSYM3khvg
-         hP1S2XLnsHLKWvDwWq/M3q5rJ7RqwH+JYS6WZvWhwZDFwCykP8NaHz6L9CbKGhG8vkWE
-         G40G+hVxDv3lSPZAN8EVzYBwZnv4ogU3QazJ2dsW/4BtFJxBDdNsFShNdKvoS5AesJP4
-         j0raAV8qWI67DK8OINNi7+W7fel0qj9/IljBUgQoYoNYkku7x4tJT18WhLauIHwWfaJ4
-         yPUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeHWGoEOgmb43wUF8z1fPpzexdJJWi3wQs0fEnZ0bdPFDpyxWKEJDIBHKDLGvWKbnqflg6qb8zQIpvnvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUREzeh48wbtIA1KX5aHVvbTTfJ7xX1eKb/yAt86In2DT5o0y/
-	xHMXdywW/RMmR9TBZGAtuFO5N0iBmwGA35WD7NIcxS6V22dUwqe9X4PhbV6bQ1/zDrun5QDo6YE
-	zJFLVNBR1ZzKWIG1CG5/yA+s3rZXoAgz6BjMm5+PUY1DAiy4Yt3wnbBccpQsg0w==
-X-Received: by 2002:a5d:63d2:0:b0:368:4e35:76f9 with SMTP id ffacd0b85a97d-37177792c5cmr3202379f8f.37.1723654078842;
-        Wed, 14 Aug 2024 09:47:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlHisBwwOgDSWWZAt8jetKNRxWN9mxvxPG18APJHAdr+BzMtyO7krVv2Z7CFUDIx3n93TEAQ==
-X-Received: by 2002:a5d:63d2:0:b0:368:4e35:76f9 with SMTP id ffacd0b85a97d-37177792c5cmr3202351f8f.37.1723654078206;
-        Wed, 14 Aug 2024 09:47:58 -0700 (PDT)
-Received: from [192.168.10.3] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4e51eaa9sm13321050f8f.68.2024.08.14.09.47.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 09:47:57 -0700 (PDT)
-Message-ID: <2bec792d-22aa-4c79-8324-2f801407a4eb@redhat.com>
-Date: Wed, 14 Aug 2024 18:47:51 +0200
+	s=arc-20240116; t=1723654173; c=relaxed/simple;
+	bh=meqvXO3+nmuZ5AIXtSVgg8WAYFetsdNizUtH8eryubs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Td2GsL/WiUoKLEPm9dETHtBkxdi5FCdGTpfNwAk24ysEQiF8MDwOd2CM5CYgOOTasCGbRr5QT1mB1mzWxeVJwm+7OFS/sYUXuQ8GoUUlJqU4oXzPhMphsTBxKa7/AdyRxSFj/JeL2WvP3FUEuGh7Er0Hh/ei/f7hU4dZH68Kn6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KYHIl4Bl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCAEBC116B1;
+	Wed, 14 Aug 2024 16:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723654172;
+	bh=meqvXO3+nmuZ5AIXtSVgg8WAYFetsdNizUtH8eryubs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KYHIl4Blh/i77OC9N5FoMY//D7bQrsyMvbhheGmNID6geQzGDJhyX7DUmhvA9V1HF
+	 tDY3heh+p+JbGaZ839bp7GA2+lM0r8oAKIv/iVnVZTDju+OaKOx8ZOPeJt9w1P6sjD
+	 d+RH8EEzxly1Soxm/s5yjeh3m6oFqDs+aehkqgQWtoY7OZYqc02KqBPyRIFtueDLR3
+	 WQtGxzHr/TKvETyuutYRO9UTjVQElN3zSyuBfpvSgTu3h62KeZkp72bW1sO62TKXvR
+	 sGQMKkXvavl3cJUSW6xrvs57Mqchsgn6V/Rf6x6O4IVQQik3GBN7DzDCIjx9w+krD9
+	 y3E+zKNE1I85g==
+Date: Wed, 14 Aug 2024 17:49:23 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
+	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
+	zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
+	linux-kernel@vger.kernel.org, j-chadha@ti.com,
+	liam.r.girdwood@intel.com, jaden-yue@ti.com,
+	yung-chuan.liao@linux.intel.com, dipa@ti.com, yuhsuan@google.com,
+	henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
+	Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
+	cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
+	savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com,
+	jesse-ji@ti.com, darren.ye@mediatek.com, antheas.dk@gmail.com,
+	Jerry2.Huang@lcfuturecenter.com
+Subject: Re: [PATCH v1] ASoc: tas2781: Add Calibration Kcontrols for
+ Chromebook
+Message-ID: <97275835-fff5-49ac-bd15-c6b6c6e89fe0@sirena.org.uk>
+References: <20240726084757.369-1-shenghao-ding@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/22] KVM: x86/mmu: Skip emulation on page fault iff 1+
- SPs were unprotected
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>,
- Vishal Annapurve <vannapurve@google.com>,
- Ackerly Tng <ackerleytng@google.com>
-References: <20240809190319.1710470-1-seanjc@google.com>
- <20240809190319.1710470-5-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20240809190319.1710470-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QnAnomE4bcSDKfDc"
+Content-Disposition: inline
+In-Reply-To: <20240726084757.369-1-shenghao-ding@ti.com>
+X-Cookie: The second best policy is dishonesty.
 
-On 8/9/24 21:03, Sean Christopherson wrote:
-> When doing "fast unprotection" of nested TDP page tables, skip emulation
-> if and only if at least one gfn was unprotected, i.e. continue with
-> emulation if simply resuming is likely to hit the same fault and risk
-> putting the vCPU into an infinite loop.
-> 
-> Note, it's entirely possible to get a false negative, e.g. if a different
-> vCPU faults on the same gfn and unprotects the gfn first, but that's a
-> relatively rare edge case, and emulating is still functionally ok, i.e.
-> the risk of putting the vCPU isn't an infinite loop isn't justified.
 
-English snafu - "the risk of causing a livelock for the vCPU is 
-negligible", perhaps?
+--QnAnomE4bcSDKfDc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Paolo
+On Fri, Jul 26, 2024 at 04:47:55PM +0800, Shenghao Ding wrote:
+> Add calibration related kcontrol for speaker impedance calibration and
+> speaker leakage check for Chromebook
 
-> Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/mmu/mmu.c | 28 ++++++++++++++++++++--------
->   1 file changed, 20 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index e3aa04c498ea..95058ac4b78c 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -5967,17 +5967,29 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->   	bool direct = vcpu->arch.mmu->root_role.direct;
->   
->   	/*
-> -	 * Before emulating the instruction, check if the error code
-> -	 * was due to a RO violation while translating the guest page.
-> -	 * This can occur when using nested virtualization with nested
-> -	 * paging in both guests. If true, we simply unprotect the page
-> -	 * and resume the guest.
-> +	 * Before emulating the instruction, check to see if the access may be
-> +	 * due to L1 accessing nested NPT/EPT entries used for L2, i.e. if the
-> +	 * gfn being written is for gPTEs that KVM is shadowing and has write-
-> +	 * protected.  Because AMD CPUs walk nested page table using a write
-> +	 * operation, walking NPT entries in L1 can trigger write faults even
-> +	 * when L1 isn't modifying PTEs, and thus result in KVM emulating an
-> +	 * excessive number of L1 instructions without triggering KVM's write-
-> +	 * flooding detection, i.e. without unprotecting the gfn.
-> +	 *
-> +	 * If the error code was due to a RO violation while translating the
-> +	 * guest page, the current MMU is direct (L1 is active), and KVM has
-> +	 * shadow pages, then the above scenario is likely being hit.  Try to
-> +	 * unprotect the gfn, i.e. zap any shadow pages, so that L1 can walk
-> +	 * its NPT entries without triggering emulation.  If one or more shadow
-> +	 * pages was zapped, skip emulation and resume L1 to let it natively
-> +	 * execute the instruction.  If no shadow pages were zapped, then the
-> +	 * write-fault is due to something else entirely, i.e. KVM needs to
-> +	 * emulate, as resuming the guest will put it into an infinite loop.
->   	 */
->   	if (direct &&
-> -	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE) {
-> -		kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa));
-> +	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE &&
-> +	    kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa)))
->   		return RET_PF_FIXED;
-> -	}
->   
->   	/*
->   	 * The gfn is write-protected, but if emulation fails we can still
+This is pretty hard to understand, it feels like there's a bunch of
+cleanup work in here along with the actual control addition and there's
+nothing really saying anything concrete about the actual controls to
+check that the controls do the right thing.  It's hard to do anything
+but the most superficial review here since I don't really understand
+what the changes are trying to accomplish.
 
+> -/* pow(10, db/20) * pow(2,30) */
+> -static const unsigned char tas2563_dvc_table[][4] =3D {
+> -	{ 0X00, 0X00, 0X00, 0X00 }, /* -121.5db */
+
+For example moving this to the header could be done separately (though
+perhaps it should just be exported rather than placed in the header)?
+
+> @@ -64,8 +64,8 @@ static int tasdevice_change_chn_book(struct tasdevice_p=
+riv *tas_priv,
+>  			 */
+>  			ret =3D regmap_write(map, TASDEVICE_PAGE_SELECT, 0);
+>  			if (ret < 0) {
+> -				dev_err(tas_priv->dev, "%s, E=3D%d\n",
+> -					__func__, ret);
+> +				dev_err(tas_priv->dev, "%s, E=3D%d channel:%d\n",
+> +					__func__, ret, chn);
+>  				goto out;
+>  			}
+>  		}
+
+This is another example of a random cleanup.
+
+>  static void tasdev_load_calibrated_data(struct tasdevice_priv *priv, int=
+ i)
+>  {
+> +	struct tasdevice_fw *cal_fmw =3D priv->tasdevice[i].cali_data_fmw;
+> +	struct calidata *cali_data =3D &priv->cali_data;
+> +	unsigned char *data =3D &cali_data->data[1];
+>  	struct tasdevice_calibration *cal;
+> -	struct tasdevice_fw *cal_fmw;
+> +	int k =3D i * (cali_data->cali_dat_sz + 1);
+> +	int j, rc;
+> =20
+> -	cal_fmw =3D priv->tasdevice[i].cali_data_fmw;
+> +	/* Load the calibrated data from cal bin file */
+> +	if (!priv->is_user_space_calidata && cal_fmw) {
+> +		cal =3D cal_fmw->calibrations;
+> =20
+> -	/* No calibrated data for current devices, playback will go ahead. */
+> -	if (!cal_fmw)
+> +		if (cal)
+> +			load_calib_data(priv, &cal->dev_data);
+>  		return;
+
+It feels like there's an abstraction problem with the different ways to
+get calibration data.  Perhaps each way of loading calibration data
+should parse the data into a standard format on load and then the rest
+of the code doesn't need to worry about where it came from?
+
+> @@ -67,8 +215,13 @@ static int tas2781_digital_getvol(struct snd_kcontrol=
+ *kcontrol,
+>  	struct tasdevice_priv *tas_priv =3D snd_soc_component_get_drvdata(codec=
+);
+>  	struct soc_mixer_control *mc =3D
+>  		(struct soc_mixer_control *)kcontrol->private_value;
+> +	int rc;
+> +
+> +	mutex_lock(&tas_priv->codec_lock);
+> +	rc =3D tasdevice_digital_getvol(tas_priv, ucontrol, mc);
+> +	mutex_unlock(&tas_priv->codec_lock);
+> =20
+> -	return tasdevice_digital_getvol(tas_priv, ucontrol, mc);
+> +	return rc;
+>  }
+> =20
+
+Why all these locking changes?  Could they be split out into a
+praparatory change?
+
+> +static int tasdevice_get_chip_id(struct snd_kcontrol *kcontrol,
+> +			struct snd_ctl_elem_value *ucontrol)
+> +{
+> +	struct snd_soc_component *codec =3D snd_soc_kcontrol_component(kcontrol=
+);
+> +	struct tasdevice_priv *tas_priv =3D snd_soc_component_get_drvdata(codec=
+);
+> +
+> +	ucontrol->value.integer.value[0] =3D tas_priv->chip_id;
+> +
+> +	return 0;
+> +}
+
+Should these chip ID controls be done separately?  They don't seem super
+related.
+
+--QnAnomE4bcSDKfDc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma84BIACgkQJNaLcl1U
+h9D5yQf/S2RGcP8shc2wriIE+yF1lZjsRkb33r0Lhu8jdZM2AkDS7vB7WgX5Yq/S
+VLHewFCklL8gQF2tyLEBNsjt+nSzE0JBN65sGlLYnebPBb/stXw5Ld2H7j74+mLi
+muB6v7LvP77hImPyOFDusq0T3swIU3MNqGpzWFaK428KnD7JOL7uZYuzt7GnKwOj
+dJfX7xxOFpV66cwB8SBhY91y6ybBDC/qwC1N+kkSWAwWP6Z62c8bbVeI3rWx8dMq
+e7Kq0m6cC2Xp9Xbm5MAvZPxzmrxMWtf6p/ALvDfjM2tEKTADXKYLX6foZK1lSZ62
+wl3RVYwBq8rx0rLVJpF6ttXYc3Swhg==
+=pFim
+-----END PGP SIGNATURE-----
+
+--QnAnomE4bcSDKfDc--
 
