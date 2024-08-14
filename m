@@ -1,98 +1,181 @@
-Return-Path: <linux-kernel+bounces-287130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EA0952358
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78F195235C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 22:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C71AC1C214F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73502B2359F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 20:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6691B1C37AA;
-	Wed, 14 Aug 2024 20:27:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9E41C3F0D;
+	Wed, 14 Aug 2024 20:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOvVZOuu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795CC1BC070
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EA71BC070;
+	Wed, 14 Aug 2024 20:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723667225; cv=none; b=Sma03YsoVubr2DU2I+2ZlXovpcjB7vaCqB0zcwyYUTJgJ/m0ju3IhSCZ5cmBDLDq7vJP+87nTlNrt4QbVgWByCq+lTMKKSal7BLDjLRd0QFVvkYxOfFmOq8J7So94Wg+UENa/C6hVvUXqb5WY/8UkNX+tzuULaEbTGviTaNjgVM=
+	t=1723667274; cv=none; b=FtehVc/pkw9hFBcGL5Zesv2qvj7GR1C04iNd2AkJ84RV8+mKQLnwsVOf3mNlwAKGdpqU9HOHa08L18sshkIjLck1vqhGZjeqP9uxmn1U2NO+qFdOOBExurIu4gceCXmCnFtvdaIxcoPkudxDF9nCM+BvYE4IDdNPXxj3dNjjcho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723667225; c=relaxed/simple;
-	bh=3/PzT+cBz/HOJNDvt4yEtBFL0FXMBuaIBLvF9Hf1vCY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=H2z75WkjHnyHN/bH6iBXMwNy9BDzTM0dBGe1HGMhRR96r9FKWkEla+Iv3Fl3JiyigcpmaT0SCzfquhH+hvVjgDEJxrs9X7ZfxyqLAEIoVteb55Qi1mNvoeM8naKcHBNHMQnKa3fIE63tb4t263lzKaZ3czFmlbSiRr41SG2lGGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f9612b44fso35269139f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 13:27:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723667222; x=1724272022;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=83cV3ypXX5lLzfQXzR0ZZM6JNuUWD5iCyFx0Gi5V0S0=;
-        b=io4r9cLLDhl8384x8DGTGNhpf3LE4QbxEqpf3Cc1JGdL+HUb+IuWGZMOH5XccmGOru
-         t4s3RuJ9yxdg4g2JW8ure3GwK2HdEtULN0GLTn0Ma5MZhX/q5aj3PTdz7+jsCBO0BWsc
-         9HHG32SL3asWCzCGdVe2C6VsGgPPET3TXnWsN3FLjMey2nxtnCJODUGuUyLy7l88uvcj
-         FidXOVAzNV4rHerl9oXY9b0PGSBQWHy9qvRZLfXpI39JOEFtSciKrKnDPoZpgd+5DePl
-         s7xN1OzBm5W8uB2eGmGG+JmjdChOz1FUXykZKoA8TJLDVe/ioaLBN6O/xlFZDUBWFC5k
-         23WA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Lrcbht6l21zTxjc/lQ3tlAqweuJqsPqJ14dgN+gMkwITfv7+sMXP3rL+lT8IW/i7S/2C280i5I6gjMobpYb9tsuAoHDL7U/u1Il1
-X-Gm-Message-State: AOJu0YynSr+78P49eB2QEsHsb4UFhR0FxaXR3YuCs+2Wo0cT6iYZPa5K
-	Qp+doL78xqqqrqrJIUSaCs2i2OrggVFyNxXJx505Mp0yJD/HYXxYFtxak6bgOPeTz3xdm7Qdmvt
-	X3GC/Zsvh7l4HUmL/pDarjDGg9TNplAaWGGLXyChrp1zCWHyKjMRsVJk=
-X-Google-Smtp-Source: AGHT+IGgnkf3jTRzJsoAhA2dNqwPNx2+mABBXV6K4MoHEo45th6H/vN2XUgfe5+tWcNhYCc5epIjXA65FCuXQJN/rfrlGDDSka3u
+	s=arc-20240116; t=1723667274; c=relaxed/simple;
+	bh=oaCuQlnfhd/VF5DKoDEs+KZNArNfIyrOIyOb+OoqtXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GQ/YpDKmUrhdd8zR7zwzbxvRkOKVR3ZqEEfMTx4xiiZrwBez9xcBYXHOxThRbAcSZ/RZAt5TCmLjYsHYruA64rbv1iVTgrjpXJmZvf2jJK+WKwTVMupddbg3yYaR7dqwPStIxdmD60P6XG9wZ8RSmN09ixVUiMVYTbdlB+W20tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOvVZOuu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB6EC116B1;
+	Wed, 14 Aug 2024 20:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723667273;
+	bh=oaCuQlnfhd/VF5DKoDEs+KZNArNfIyrOIyOb+OoqtXQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fOvVZOuuoimaL5LWzlqmTiGViTD3eXoI1LwiSv5xNR+SnGjBG2deDoyvysZKyw0PF
+	 pA1DNRbvtuMoSBIhtDYbVCPATcw2QNsymJ8NlTUQby5l3uAtiV7UNVshuVgsX4Vf7t
+	 eQeCoxzJs+qa1eXqbzuLcVxGSdPmpZywBJAntbYHrSY5JghFi9x5N1QEQt24KlKZjP
+	 6FNXrwr3whgfHNW5N0XeuGEFJq7BtnAd69VHNbDHGC/1mspOW/Nh+KKNhaT57Ikzpb
+	 OAwKgdiW9JM2OW35GbYoHWIBDMx57O0BNa9Ei3qZWTOAoapnFTIMS3iIb80aA+ir9z
+	 HIZtUkvxV/jOg==
+Date: Wed, 14 Aug 2024 15:27:51 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+	Christoph Hellwig <hch@lst.de>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Stuart Hayes <stuart.w.hayes@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Keith Busch <kbusch@kernel.org>, Marek Behun <marek.behun@nic.cz>,
+	Pavel Machek <pavel@ucw.cz>, Randy Dunlap <rdunlap@infradead.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] PCIe Enclosure LED Management
+Message-ID: <20240814202751.GA359905@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:60ca:b0:7f6:85d1:f82d with SMTP id
- ca18e2360f4ac-824dacef3e3mr22200539f.1.1723667222534; Wed, 14 Aug 2024
- 13:27:02 -0700 (PDT)
-Date: Wed, 14 Aug 2024 13:27:02 -0700
-In-Reply-To: <tencent_537623A0A452D778B77A26C4736243668905@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000082aa87061faa8cfb@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING: lock held when returning to user space
- in f2fs_ioc_start_atomic_write
-From: syzbot <syzbot+733300ca0a9baca7e245@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240814122900.13525-1-mariusz.tkaczyk@linux.intel.com>
 
-Hello,
+[+cc Lee, linux-leds for comment on using the LED subsystem as
+described in patch 2/3; would be nice to have a reviewed-by or ack for
+this.  Thread at
+https://lore.kernel.org/r/20240814122900.13525-4-mariusz.tkaczyk@linux.intel.com]
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING: lock held when returning to user space in f2fs_ioc_start_atomic_write
+On Wed, Aug 14, 2024 at 02:28:57PM +0200, Mariusz Tkaczyk wrote:
+> Patchset is named as PCIe Enclosure LED Management because it adds two
+> features:
+> - Native PCIe Enclosure Management (NPEM)
+> - PCIe SSD Status LED Management (DSM)
+> 
+> Both are pattern oriented standards, they tell which "indication"
+> should blink. It doesn't control physical LED or pattern visualization.
+> 
+> Overall, driver is simple but it was not simple to fit it into interfaces
+> we have in kernel (We considered leds and enclosure interfaces). It reuses
+> leds interface, this approach seems to be the best because:
+> - leds are actively maintained, no new interface added.
+> - leds do not require any extensions, enclosure needs to be adjusted first.
+> 
+> There are trade-offs:
+> - "brightness" is the name of sysfs file to control led. It is not
+>   natural to use brightness to set patterns, that is why multiple led
+>   devices are created (one per indication);
+> - Update of one led may affect other leds, led triggers may not work
+>   as expected.
 
-F2FS-fs (loop0): Mounted with checkpoint version = 48b305e5
-syz.0.15: attempt to access beyond end of device
-loop0: rw=10241, sector=45096, nr_sectors = 8 limit=40427
-================================================
-WARNING: lock held when returning to user space!
-6.11.0-rc3-next-20240812-syzkaller-dirty #0 Not tainted
-------------------------------------------------
-syz.0.15/6178 is leaving the kernel with locks still held!
-1 lock held by syz.0.15/6178:
- #0: ffff88807032a0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_down_write fs/f2fs/f2fs.h:2196 [inline]
- #0: ffff88807032a0e0 (&fi->i_gc_rwsem[READ]){+.+.}-{3:3}, at: f2fs_ioc_start_atomic_write+0x2ed/0xac0 fs/f2fs/file.c:2163
+v1 at https://lore.kernel.org/r/20240215142345.6073-1-mariusz.tkaczyk@linux.intel.com
 
+> Changes from v1:
+> - Renamed "pattern" to indication.
+> - DSM support added.
+> - fixed nits reported by Bjorn.
 
-Tested on:
+v2 at https://lore.kernel.org/r/20240528131940.16924-1-mariusz.tkaczyk@linux.intel.com
 
-commit:         9e686969 Add linux-next specific files for 20240812
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16367cfd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61ba6f3b22ee5467
-dashboard link: https://syzkaller.appspot.com/bug?extid=733300ca0a9baca7e245
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1510e1f5980000
+> Changes from v2:
+> - Introduce lazy loading to allow DELL _DSM quirks to work, reported by
+>   Stuart.
+> - leds class initcall moved up in Makefile, proposed by Dan.
+> - fix other nits reported by Dan and Iipo.
 
+v3 at https://lore.kernel.org/r/20240705125436.26057-1-mariusz.tkaczyk@linux.intel.com
+
+> Changes from v3:
+> - Remove unnecessary packed attr.
+> - Fix doc issue reported by lkp.
+> - Fix read_poll_timeout() error handling reported by Iipo.
+> - Minor fixes reported by Christoph.
+
+v4 at https://lore.kernel.org/r/20240711083009.5580-1-mariusz.tkaczyk@linux.intel.com
+
+> Changes from v4:
+> - Use 0 / 1 instead of LED_OFF/LED_ON, suggested by Marek.
+> - Documentation added, suggested by Bjorn.
+
+v5 at https://lore.kernel.org/r/20240813113024.17938-1-mariusz.tkaczyk@linux.intel.com
+
+> Change from v5:
+> - Remove unnecessary _packed, reported by Christoph.
+> - Changed "led" to "LED" and other typos suggested by Randy.
+> 
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Tested-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+
+Evidently you intend these tags to be applied to each patch, but b4
+doesn't distribute tags from the cover letter across each individual
+patch.
+
+You included Christoph's Reviewed-by directly in patches 1 and 2, but
+not Ilpo's.  I didn't dig through the previous postings to verify all
+this.
+
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: Keith Busch <kbusch@kernel.org>
+> Cc: Marek Behun <marek.behun@nic.cz>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Stuart Hayes <stuart.w.hayes@gmail.com>
+> Link: https://lore.kernel.org/linux-pci/20240813113024.17938-1-mariusz.tkaczyk@linux.intel.com
+> 
+> Mariusz Tkaczyk (3):
+>   leds: Init leds class earlier
+>   PCI/NPEM: Add Native PCIe Enclosure Management support
+>   PCI/NPEM: Add _DSM PCIe SSD status LED management
+> 
+>  Documentation/ABI/testing/sysfs-bus-pci |  72 +++
+>  drivers/Makefile                        |   4 +-
+>  drivers/pci/Kconfig                     |   9 +
+>  drivers/pci/Makefile                    |   1 +
+>  drivers/pci/npem.c                      | 590 ++++++++++++++++++++++++
+>  drivers/pci/pci.h                       |   8 +
+>  drivers/pci/probe.c                     |   2 +
+>  drivers/pci/remove.c                    |   2 +
+>  include/linux/pci.h                     |   3 +
+>  include/uapi/linux/pci_regs.h           |  35 ++
+>  10 files changed, 725 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/pci/npem.c
+> 
+> -- 
+> 2.35.3
+> 
 
