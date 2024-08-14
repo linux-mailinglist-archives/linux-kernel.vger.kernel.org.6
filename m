@@ -1,151 +1,130 @@
-Return-Path: <linux-kernel+bounces-286681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B0A951DC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:52:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFE6951DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93EEE1C214FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936EA286997
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432AC1B3F00;
-	Wed, 14 Aug 2024 14:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DDE1B3F00;
+	Wed, 14 Aug 2024 14:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GiZMoR3n";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nw4jBGPA"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cR2babAB"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8DD1B010F;
-	Wed, 14 Aug 2024 14:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF431B1417
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723647143; cv=none; b=aasCV5KeLTvDjobwGQGE/dI2tvWh+3gO2ABaNKG+JmoMRgZTtX85rBa2oF0zE2dIEPBHa1cVrW/LPN7BUjeMfSi6pz8c6c+UPxNicsUU+fG9W2XL9oF/4vlxIJ54bJf+sS5LJNOn+TeHclk01HoFxfGkNNQlI1AMhr7LAGCAyoM=
+	t=1723647190; cv=none; b=MTjM8/EpkpwwWujtV1/8UEre6UudJv4+EvaRVXC+Lr46phcNF6FklLlCmIFybbw4wjK4J8s/nS0RNSb2JxGS9fRQcpF1f/kRhiP1aqZhmB1hK/O+AEpiMeTU8FOXvJqgJ/o/ZxvrQzIIoflpuebG3BF1op52p0w4DrEIvo3+j9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723647143; c=relaxed/simple;
-	bh=JX4CX4RS/fbVbTxsqNHDT4AQKuyk4tOmTZkf7PsN2VQ=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=Q8F3eMxzZl4v2mNO/nu89azOa5SZVKP3/zPgCBXnDAWvUvyomA1AxbLtZ7vFFO5mtlIzIiMc/hmZCb29FgjdJPRjCNEWLAciVKLHl2bffbU6fjUlpR70p2keaocmD6+KkBDaeLv8ojF50qG4F5fZW2WwmymzjeoDI3sOckyWXKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GiZMoR3n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nw4jBGPA; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723647140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=TeROMW4ncpWRXfRpylE22foqYWiEQaY91Vj1aVGafOo=;
-	b=GiZMoR3nWmobbf/bfK6k1uKXer0GiaO2TnPDwcGT+KEIcUDYnw/5hLqpchsMjD5SKa9bDl
-	cS0jvJ9kkFwhesttQQztfwEscEeTi8Q+0r7+i8q9QpnSsKBwh9FdF8tFMM/oARwvz/mekn
-	DaATEpjom20bJ+eqguwGjUHym868Q35gyMiUaGF4PdPjOkjiac3+oPF9Uw28li5DtZTNcv
-	NvDAZMba3C1fUFS2lQnGTDsSFAq+rgjStsCIv09wuaBizwOm9feRqco+hL7frozoNuxcZP
-	rPYfZv7Bf6Svpt+ID+D0tD4fgOSL0PHZa7XOUTyMmH9hRfVVW111ncbgKAZShQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723647140;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=TeROMW4ncpWRXfRpylE22foqYWiEQaY91Vj1aVGafOo=;
-	b=nw4jBGPAp33nmes3D0gMAyiYSka4bVKz/xZ0JU+ePC+EVv6lvcuLo85kH5Gbx/RsHHQ9ez
-	Uf79Me03S9O+bABQ==
-To: Li Huafei <lihuafei1@huawei.com>, peterz@infradead.org, mingo@redhat.com
-Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
-In-Reply-To: <fb87cc82-94b7-31aa-0374-a1d7fa49470e@huawei.com>
-Date: Wed, 14 Aug 2024 16:52:19 +0200
-Message-ID: <87sev7nom4.ffs@tglx>
+	s=arc-20240116; t=1723647190; c=relaxed/simple;
+	bh=f/oHoC9VpN5nx1mUCbmuS6hMWVT9zH2JfixxV6pSWCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d3/RENrxDd9Re0Xa8f/Jge/JizNKr2Bzd8PKzhzqLgYux4qQncaZVrm+3biyLvhMWgTXgaWeom/15DEkAYk3hTE5+2zirQZFTBuuZLQ7xJZo/WOOlSw3mQwqcraSiHKCXUPPwR2CKee3nGefMrCC0+sXOa1RZblbHHshtmyPXSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cR2babAB; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso49851805e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723647187; x=1724251987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lonJxsA8Fw6wOOZai80Q9J+BZK2m7M/vz+HKB4hoGGA=;
+        b=cR2babAB9UllUXoZNt9yb7bLYiVgW3RTm9qBBs8o7UAzgsT6WqNdbJyPoeBHGnKEyJ
+         xBkbUwPv7+XcxtiAZvSIQIus9vdQyNvWOJqDNF25mydb0mAon2Sy4PgP5twruehs5wxj
+         QUIngfYzZNroFFbmP9iVv3/6LZWi2RSl83VFAMafXpjcpk0hFdzIc14h6XmJH1/svF+3
+         vwzY6pDXFtf4DxVsPgsJwUAIgOxTFT00aiwhmPrgo3R8oygzGshi/Zv7YH58EVfvaagI
+         DyLqQCob2KzBzwD79IChaelABsVmoAQdNprMq4wuWitjcfd51iPxSCYRpjCJDLDg1U1V
+         sRMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723647187; x=1724251987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lonJxsA8Fw6wOOZai80Q9J+BZK2m7M/vz+HKB4hoGGA=;
+        b=gdZpXiPiy7oeFdfQiuw6m/CvKwEF0Y9w5gxWYFLOU2a/n/4xlx4hzP8s7aQ0AR22bF
+         0Cs7i8fYe43e6QYIRYK6cu4+KUUwhhJyB2KpLTGhHL5pOHqLjkssHs5XmoLWoYb5XFm0
+         gTFOUlSNvz8Bo3+erFZw3W1Kp6OAtq649TR6M7XB2QXnGip5bkrv5vA2/TdkaXTZ/VxK
+         G+k5/OtuDcwg0QpB4nbSxMkPyOOzzp2q2ZsHqI+Jo0CVdMHjaNIKo9YGhZlmthqYqa2/
+         T3XRk86jfPRoc1L1eGoEI1XxrI81gigQTFunQDIFg+SRMHYamNc79rm1miqP/rWuEtjU
+         Vi+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWVstNQs4laGWwyAiIyIW/4lJ+QgrhJmtGLTGa83YC+tRUWR6pbJSDC0hrAAXZYSheLiiaYnRfMghDk4lvcmCG0zJMrTI05mdHuqa88
+X-Gm-Message-State: AOJu0Yyc47tYg7AcjSdEOrGuB0lKgSoMZ8Gk+cpJIHhW24QUzwaISfZ4
+	GvIVGHrKMKjDM1Bzk9NDTTXBf0vGtpJ7HoTk8QJnZ1cgSvxLXtGuqnaWPK2Z
+X-Google-Smtp-Source: AGHT+IEoJbkP+hVe6+RzMKd+SJql/ELhAn+tPz0Gyw1HW0cOooFceTJ11Wl9zFZCSz+VoMQDguNnNQ==
+X-Received: by 2002:adf:e546:0:b0:368:77f9:fb34 with SMTP id ffacd0b85a97d-37177763876mr2346397f8f.15.1723647186881;
+        Wed, 14 Aug 2024 07:53:06 -0700 (PDT)
+Received: from f.. (cst-prg-76-86.cust.vodafone.cz. [46.135.76.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51ebefsm13003576f8f.89.2024.08.14.07.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 07:53:05 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: akpm@linux-foundation.org,
+	npiggin@gmail.com
+Cc: david@redhat.com,
+	willy@infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] mm: whack now bogus comment in pmd_install() concerning a fence
+Date: Wed, 14 Aug 2024 16:52:56 +0200
+Message-ID: <20240814145256.1683498-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Li!
+Commit 362a61ad6119 ("fix SMP data race in pagetable setup vs walking")
+added the following:
 
-On Tue, Aug 13 2024 at 21:13, Li Huafei wrote:
-> On 2024/8/1 3:20, Thomas Gleixner wrote:
->>> My machine has 32 physical cores, each with two logical cores. During
->>> testing, it executes the CVE-2015-3290 test case 100 times concurrently.
->>>
->>> This warning was already present in [1] and a patch was given there to
->>> limit period to 128 on Haswell, but that patch was not merged into the
->>> mainline.  In [2] the period on Nehalem was limited to 32. I tested 16
->>> and 32 period on my machine and found that the problem could be
->>> reproduced with a limit of 16, but the problem did not reproduce when
->>> set to 32. It looks like we can limit the cycles to 32 on Haswell as
->>> well.
->> 
->> It looks like? Either it works or not.
->
-> It worked for my test scenario. I say "looks like" because I'm not sure
-> how it circumvents the problem, and if the limit of 32 no longer works
-> if I increase the number of test cases executed in parallel. Any
-> suggestions?
++       smp_wmb(); /* Could be smp_wmb__xxx(before|after)_spin_lock */
++
+        spin_lock(&mm->page_table_lock);
 
-If you read back through the email history of these limits, then you can
-see that too short periods cause that problem on Broadwell due to a
-erratum, which is explained on top of the BDW limit.
+However, over the years the fence along with the comment got moved
+around the file, eventually landing in a spot where it is *NOT* followed
+by a lock acquire (or any other operation which might happen to provide
+any fence on a given arch), rendering the comment stale.
 
-Now looking at the HSW specification update specifically erratum HSW11:
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-  Performance Monitor Precise Instruction Retired Event May Present
-  Wrong Indications
+./scripts/get_maintainer.pl only showed akpm@ and the lists, adding the
+--git switch showed more names, but I only picked some of them. I don't
+know who makes the most sense to add here.
 
-  Problem:
-         When the Precise Distribution for Instructions Retired (PDIR)
-         mechanism is activated (INST_RETIRED.ALL (event C0H, umask
-         value 00H) on Counter 1 programmed in PEBS mode), the processor
-         may return wrong PEBS or Performance Monitoring Interrupt (PMI)
-         interrupts and/or incorrect counter values if the counter is
-         reset with a Sample- After-Value (SAV) below 100 (the SAV is
-         the counter reset value software programs in the MSR
-         IA32_PMC1[47:0] in order to control interrupt frequency).
+I fully concede I could not be arsed to check if the fence is still
+needed to begin with, I ran into this while looking at something else.
+The comment puzzled me for a minute suggesting pmd_populate has an
+immediate lock acquire inside.
 
-  Implication:
-         Due to this erratum, when using low SAV values, the program may
-         get incorrect PEBS or PMI interrupts and/or an invalid counter
-         state.
+ mm/memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Workaround:
-         The sampling driver should avoid using SAV<100.
+diff --git a/mm/memory.c b/mm/memory.c
+index 34f8402d2046..0a6893833fac 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -436,7 +436,7 @@ void pmd_install(struct mm_struct *mm, pmd_t *pmd, pgtable_t *pte)
+ 		 * seen in-order. See the alpha page table accessors for the
+ 		 * smp_rmb() barriers in page table walking code.
+ 		 */
+-		smp_wmb(); /* Could be smp_wmb__xxx(before|after)_spin_lock */
++		smp_wmb();
+ 		pmd_populate(mm, pmd, *pte);
+ 		*pte = NULL;
+ 	}
+-- 
+2.43.0
 
-IOW, that's exactly the same issue as the BDM11 erratum.
-
-Kan: Can you please go through the various specification updates and
-identify which generations are affected by this and fix it once and
-forever in a sane way instead of relying on 'tried until it works by
-some definition of works' hacks. These errata are there for a reason.
-
-
-But that does not explain the fallout with that cve test because that
-does not use PEBS. It's using fixed counter 0.
-
-Li, you added that huge useless backtrace but cut off the output of
-perf_event_print_debug() after it. Can you please provide that
-information so we can see what the counter states are?
-
->>> +static void hsw_limit_period(struct perf_event *event, s64 *left)
->>> +{
->>> +	*left = max(*left, 32LL);
->>> +}
->> 
->> And why do we need a copy of nhm_limit_period() ?
->> 
->
-> Do you mean why the period is limited to 32 like nhm_limit_period()?
-
-No. If 32 is the correct limit, then we don't need another function
-which does exactly the same. So you can assign exactly that function for
-HSW, no?
-
-Thanks,
-
-        tglx
 
