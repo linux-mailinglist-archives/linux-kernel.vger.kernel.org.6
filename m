@@ -1,220 +1,169 @@
-Return-Path: <linux-kernel+bounces-286977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D82952110
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:26:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E941A952112
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6736E1F23E9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54D1281491
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EF91BBBFC;
-	Wed, 14 Aug 2024 17:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC64D1B8EB4;
+	Wed, 14 Aug 2024 17:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKifysO+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XeFgbHPG"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2046.outbound.protection.outlook.com [40.107.102.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47825111A1;
-	Wed, 14 Aug 2024 17:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723656399; cv=none; b=FS5KnMayyg7hCPZekm+INi3OwFusUsiFjd8mZW6f1DNAJSbswHCRFKoniMhsg1+yMO2KMKUA7oFv4SOvGLALMxM+NviVdvFti+BEbikKGCZEXhp5vORRNWGaat0QPZ++u9BK04DMYqr7Bjz4VB4g+KKfxri11WoYfpd5JPi73y4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723656399; c=relaxed/simple;
-	bh=eTnLoZGdchWutqvJYFrXoB9RVGn/dZ58dMhkGG+oPew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qL3lx7QIl1Umso9+drWIEdos15IhBpbQmAm686ugcoEWf1aPYCHVmjhZ20jcMtJS+ILL+Q3s6Uhjg4EbmSY6c6q3L/IHCe1SlaA2j+GXVc8cG1WHnmXT0smd2sNxGc7FtvmmlkDjwCMpS7MjAKhqxzsqT+s+uygNyAilauw1Wic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKifysO+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0435C4AF0D;
-	Wed, 14 Aug 2024 17:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723656398;
-	bh=eTnLoZGdchWutqvJYFrXoB9RVGn/dZ58dMhkGG+oPew=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PKifysO+lcCzM678N2K1mv1IQ2FLJutwG0rJdkc2DENLzMr8bNGw4fFi6u+JGlj/1
-	 MdQm/N1GPK9nE0udZQwBkrptZ6iCi2mYt9UzKllvds0oODVeH7iQo7F6VGuq3Bo2bI
-	 xmAkk62md2dERDNtT9Ks9RKChoXr5SvLcyH0u+ycpAbRCDhBjE7PEtADtlCsitVtiW
-	 sLYS6sJble0rQKBnC/bBFvFGj5td3/+7PRAJTcIpscPRo4vFDSpV2VBenTLkTasmyh
-	 eKEq0PqCLV9pzxytkYPjJmZjomdc2bkX11hNnhGq4q8P9mIr4ha1hFCRTGqPm+CI1v
-	 qEysPa96H8BGQ==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-26110765976so18067fac.1;
-        Wed, 14 Aug 2024 10:26:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW/mVThzbPT/SBdXWlv3CfuDwpJykO3jqC24w9hf+/dV9eKndj5/XTwyFT3U2Q+bizzvK3wKUVb9Vubzy8ItBHVsIliEWOh4WbgQQFh
-X-Gm-Message-State: AOJu0YzbF7KUlZh2MD1valj7kVMAspGFMd7WXFjXD8E2Dc2ace0hjfrf
-	UoXsJozD+jQNM6ovqcU5MHDrkdqJqFgEYmPrYjju+Wn4qyP8mhUhzIiG9mMaYkIlMjIgV+DeLyu
-	W6GN9ztI3psWAEHGBcYMX9ifIkOI=
-X-Google-Smtp-Source: AGHT+IENZovxxdHeWc1pSFQJYl614ru0uPWXXnobS9h5XVlXu/A0J4gRih3/rTG4z86U6Xt5771SYhMooaFKguZE7qo=
-X-Received: by 2002:a05:6870:e3cc:b0:260:f1c4:2fe2 with SMTP id
- 586e51a60fabf-26fe5cc3422mr2028529fac.9.1723656397927; Wed, 14 Aug 2024
- 10:26:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6273D111A1;
+	Wed, 14 Aug 2024 17:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723656414; cv=fail; b=SlAO0izNDdP0t468mvRVdPehHpK0yFdpLebbPVUKy4CkA7orOfbDGQ0RwtlLLJoB1ukVxQkIAgF3My5UhT4oEYZso1S32gLM2id/RbOJDtCUHVIpm4sZ59c+nWgfMwam7pXs5Ew0ODYx09p8+7P6FG/R080wprdG63vPI1hv0Ps=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723656414; c=relaxed/simple;
+	bh=v92I7ufYp9OKvtgDchM9V2Abe0/AZMv2rN6qnzT0KjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JVUCUYOAQRGbfgU8z1VC34Pf0XxBKrXBsYySdaahPZ4nDMwdVPZBVDF4VDzx20Dfp9ztP2L+aPw6lIUAvTUeOiLoSalhn++k3jcMDvzmdLBzEi4s1qHB5IvDyUmIZcgbXWokj1xU0yszPsQwDJLeKdNJIcSjn16IVkBffIC7Kvk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XeFgbHPG; arc=fail smtp.client-ip=40.107.102.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gZx/abAEwHetu5A4Rv7c/Vj1FSxqs2t+t4gRv1K/Uv4C14nNAt4mPEc8BqkbgwpG5ZjJS3hrMadT+dmqWZnZcuFSmNIXZlkJJwUpUopd+d4t/oZmdvgqlwvdyiVnJd4TPI01NztxCHgS56emc/L/LlGt4fjLx63FwdBw7sl9PKy92PWzITZrLIP7A+vfnB6kkY6wYrUGOIwEljmCQ0WaoeDIQwCeHepVHO2VPEd+C2kOyjb/LuO0XKanVWSAB8HGOI6oWFQ2DDKEF9Db9BrOFA2lzu2ZmgO4WsZ9+vMjXXc3BH1khtq2Kn2ZNngAYSovdhNQZQLqomFHP86t+qFYSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z/mbEdOxpkdDDeMWn5+IZbVt6290tzqV6Ri6t5ONKhc=;
+ b=X+Nbg+HgHC4rI+/YuxKwrgkI3+NwMt2V9ggUiEZ8c9nT+RQNa0y5w2V4NQjbPMBkfHAIPTjRv0itwVKbZVnPBhU0D0JfMfsUILBcXl616TdLgYCSZH8OWurwy2LkONKbgJSmK/TwmFreZo7VAkfCH7EFvb3U49MmaDyYzj276HepkJ/dg2ZAEJLhJlPWqn0DvtQsadnEQeMaIhPqEAND+0rtFijzCt+11CfaoEvzb/94Q2kmqiAq3Hh/fdH2yKlL8HbrBJM3u5dQ9k3acSVZ3qKwrhJTjTms2p4jYuG372VPgeNEHUg+f4MTVoqAkb8mQsiGZUwcMJ/gnSSFp+gSsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z/mbEdOxpkdDDeMWn5+IZbVt6290tzqV6Ri6t5ONKhc=;
+ b=XeFgbHPG1srKZFsjndPQgv6FZ59J8oDO7XTUOxVDiY2g5KfmU5jQ1a6X0ILUXgxcWxbmDYqpWsrDPSj7gJ7Hz0ld3zEKbWFoWpMgYBqsbY0yeOEGuWq9/rViynSfeHlVWU1e3yH/IEwH73Mvg80JLDkUMGKx8ktlPdf02aORtM7lQ78Ex2Gik9eAZ7zGPP2qlCZqX2ThkZTd0kiNm/C98RU7ZXahwn7Vfe7IV66O9wmVfKkAbWk/W6vtKxFrfcjXIY6bzAmP+oZkknyarPz/k1zC/FZbDY4ejiU8iSWnoDnIVPkF5UUXzVlUbe9G0RVKIoFhumc1hee9cbK0S19I/g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com (2603:10b6:8:100::16)
+ by CY8PR12MB8313.namprd12.prod.outlook.com (2603:10b6:930:7d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Wed, 14 Aug
+ 2024 17:26:49 +0000
+Received: from DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52]) by DM4PR12MB7767.namprd12.prod.outlook.com
+ ([fe80::55c8:54a0:23b5:3e52%3]) with mapi id 15.20.7849.021; Wed, 14 Aug 2024
+ 17:26:49 +0000
+Date: Wed, 14 Aug 2024 14:26:47 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v11 3/9] iommu/arm-smmu-v3: Pass in cmdq pointer to
+ arm_smmu_cmdq_build_sync_cmd
+Message-ID: <20240814172647.GT2032816@nvidia.com>
+References: <cover.1722993435.git.nicolinc@nvidia.com>
+ <728977eae3b97466c4afe89111ab0543b0eeb59b.1722993435.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <728977eae3b97466c4afe89111ab0543b0eeb59b.1722993435.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BL0PR02CA0094.namprd02.prod.outlook.com
+ (2603:10b6:208:51::35) To DM4PR12MB7767.namprd12.prod.outlook.com
+ (2603:10b6:8:100::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1903691.tdWV9SEqCh@rjwysocki.net> <2285575.iZASKD2KPV@rjwysocki.net>
- <2f16fd5a59d6655ec9339473d516ac49c89e43f8.camel@intel.com>
-In-Reply-To: <2f16fd5a59d6655ec9339473d516ac49c89e43f8.camel@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 14 Aug 2024 19:26:26 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0icxkRyd_1T53JmX3XDQOC6_Ak9nOD65Yx-rhZbDa4Y_w@mail.gmail.com>
-Message-ID: <CAJZ5v0icxkRyd_1T53JmX3XDQOC6_Ak9nOD65Yx-rhZbDa4Y_w@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] thermal: gov_bang_bang: Use governor_data to
- reduce overhead
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, 
-	"lukasz.luba@arm.com" <lukasz.luba@arm.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "peter@piie.net" <peter@piie.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB7767:EE_|CY8PR12MB8313:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa426001-868c-4457-aaf5-08dcbc864782
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?boa9RNHoWdWEFJ3TXYwnq5x1VWZdN+dKCupzTirTNMJHRW1Mrk6Sr80bPNId?=
+ =?us-ascii?Q?SjV/fH7+d7EBBBmtfTPlv7bsT1GA7QkU8BmYOW4Oacqxw1zbcpwO4h/wmXDG?=
+ =?us-ascii?Q?M5OcLLvSVLBQeZg0Y00zKXOJIVuBN7EBNE91IJrLAcx7aIRsa2h7aNmwhVkT?=
+ =?us-ascii?Q?1Jp/YxF2CLoS/oYpTNfa8aq1EWdxfFoQAcPgSAhN0nsnhu4VVpJOY24DPyHs?=
+ =?us-ascii?Q?J6SQOd1P0l/6h548o4Jr1+/kfrKPIRJANkqjcT5bp1oIVlJKZ1mI8LXXXIdq?=
+ =?us-ascii?Q?eyrD7MNP2HUgaG6GJvaLl8ruuQyrH1/8vrlrGcSbUdh047LjbG9b6hk3htqi?=
+ =?us-ascii?Q?ifN4v1kSSigMSqZHVa7f3AV4AWWncdR6GhfRd96PfcYkN/8Radj4ED++lkRB?=
+ =?us-ascii?Q?+TyRslfwi+Yrzn+wdoFcYrMEUfXeblQFkWbB/GgWop0QpbjzSVL+P85NzrMi?=
+ =?us-ascii?Q?8g3VupI+CWoSQ2YBZ9h4txo3g3CS/i1qyy0SxftbU0nuZjaS5e73mywy1ZFs?=
+ =?us-ascii?Q?gd1w2guaUt2smkUgPdSEdQLUPOnB5LtlU1ExGBf3pM2ljJM80subm1Z1h3KY?=
+ =?us-ascii?Q?mEIEYMwUikT9WK+c4kdf5gNOLmRcYuSB3/y6UwNeyHQFT3YDBL0liwx/gc3o?=
+ =?us-ascii?Q?I+odwnS9FJIaeHma04ephXAtL8DnzoeW6Df4r5+5xo+iMkJoJ8Z4rRYhe217?=
+ =?us-ascii?Q?/MEZV4XNAiZOt++WWt1kAg8D2ouoyEpFYuoVpyOMy8Lpgbm7ijseC9PrXdLB?=
+ =?us-ascii?Q?Vscdb/9+vatjily0OH7eo0KMLqrbDw3BNs+s669SphMFezbNj8YVHbGbwNfF?=
+ =?us-ascii?Q?cVqWEDk1LN9CLhqdvX3jGAUayImZ+QWYwnpp2lUiXSAKOoMVRZs8xCcV7jVE?=
+ =?us-ascii?Q?T13bvZ3COhdQ2m4zaY4jHJXuZp8GWuVKoqFKIzIYaK8MXKyOlkprghFxhV4N?=
+ =?us-ascii?Q?Rcthokw9paSsl0hbqg58jrqchLGfsTagaSxUzy6HawC+lvIAmgmrumTkgYYW?=
+ =?us-ascii?Q?jAxrTe4QZDGUOxVfHgmqpCb/jRfFnO80SLDbUlFMkBs7Sa+/7noiZTaazVs8?=
+ =?us-ascii?Q?4cfUNsVCwnkVTaR2NLE0YsmGuZXVJsAg66trzwr5rK6Fi62OFmZO+YgDyCQG?=
+ =?us-ascii?Q?hH3IEshy7yLUjrIDRBjasc58X21SwM9pkd/OQ+63IqcwEJcFsQ8rmskP66N0?=
+ =?us-ascii?Q?Z3q/LHX6VO1K/8m1ot3AkZtYi7LREsn1/0Bam4O9MHdNExHx6nfCgSpHhWrU?=
+ =?us-ascii?Q?SmEG28pqM+HVbUpblPZQpJaA9LixZPeyBjAGyJHVaDOThBcLKKWREcBPsCY/?=
+ =?us-ascii?Q?Q/40rqNRoMiN5FzWYP5N+Jra3nYAe/BEbbsYz/u6oMOyVg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB7767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kCzXxqWQOj/xVkBqHfip3HiChy2S86uKfEA1PNTSVg/10o8GcNm25WYgHZ6F?=
+ =?us-ascii?Q?0GITEBMMLWBvXg/dYnvVCe7xHM71hpnb1VN0KgKMJtG0jZdc0kWOK1FMOHuJ?=
+ =?us-ascii?Q?1z+2HRsBDHHNLqaX5uNZthAQCNvapsC0Bt5AopcDEafz/75wKbaCBriISl8R?=
+ =?us-ascii?Q?qNKtA0IATq9Z4MretaMDUpT0OX7zsNO+jTV8JZ9A+/jzMd8dHtRg6pU2+tkT?=
+ =?us-ascii?Q?BG+79FygxGoqa/Aj+Mgjjo59TdJoDsW+sX7Ncn6OLVWFf+0JpALgmItHtiRc?=
+ =?us-ascii?Q?B5N8bfn0LP287vO0vBJE97uezSWo//0Y2H8ZhkqP1HmHfnj6d1ee+JtoZ1LD?=
+ =?us-ascii?Q?FM83M/Wz77/RTF8FxfU0eW44qFxYFOJSvJxx2TBK/yN0HTWvruyg7q2rDSWD?=
+ =?us-ascii?Q?ZU2PQEMSyBs3w79kDnAoctBKykYPN1SrBydWUgWdEiOHMfyDTsD2b5HWAobT?=
+ =?us-ascii?Q?9s91aQLTz3sIHdWR4dt2A2YwHmU9+7dQaI+ueJ/8wEWAzT/Gm061x0taaHpd?=
+ =?us-ascii?Q?e8x2pZor9bE5qvaEiat000nFlf5NP25SAXpDomrfd5XrIEow7byCp821bMQB?=
+ =?us-ascii?Q?0oe/dX0V3aXh2XfaRXEgEu3JRTM2FC3nBLHeL5ixtXM8o86CsHuO7ytppROP?=
+ =?us-ascii?Q?44E98mmsVKR5fhhOUhQ170FUeQmVgQD7rcmZ3aqauHEsztVQxGq9c6eVEw7F?=
+ =?us-ascii?Q?Z2Qv3EVjeXjNkzoNmq5KVIr4vhm6zKx8vBCm2YlRV3vG2UVVnxQIBxU9dWKl?=
+ =?us-ascii?Q?SHnEByLNPHXo4d1cIDac5GGaGYXYVBOugjxVPuBSks2kfUmKFO9sA+1fjSic?=
+ =?us-ascii?Q?FsT2KDUj9LIVzziXuePzvXhj1KfTzn1mtDzieSIUfpsuUs+K0aEkEy5+8PwR?=
+ =?us-ascii?Q?jFFbeFRw8UnBUTlA79E9VtlWHj5ih3PNOFqPJ48L9IcFNlWrj5tAnjgaaHWC?=
+ =?us-ascii?Q?0/SdtatTOfD1BVroIFqXo3PdGj8VWA7yqb8iGfyxdFcSTUE9CHttLR2TnKJu?=
+ =?us-ascii?Q?xChkTm9Bxg7JJivVssvOQh/RhjPGC4BbP/xqG9QaHG93c95qqBDft/V2OVT1?=
+ =?us-ascii?Q?Aoqw64eXe+q24+ud8xs31ABPAt5Po8oJjUx3oxTu7tyQOKJh32mMGhS47Gn/?=
+ =?us-ascii?Q?bT0sMdZ9qe1DkGZ8OW7GptbdEIxBzihU+tXnQvsqTKOrsCWV/hD5GIRFto3F?=
+ =?us-ascii?Q?Boh0Mi2Xv4JWmLSce7Aq+ltSZZre5OsZ1Ao1DdOU5/J0kXEnNslieUSmFyjv?=
+ =?us-ascii?Q?E73uD0xyhP6CMKoqaaslIIkFYsSLHjtAohcbYcyhtcLpkjDc5RPwcq2l28KN?=
+ =?us-ascii?Q?8pJ7NQO+W/PKrflZgTuM0Sd1dw7okhtVys9o7wUp830n4ZZfGpqgiL6JMV+Q?=
+ =?us-ascii?Q?CoxkzPgdQcb19P/Z+8GScX8e2AG+x36s+YrNg8n5yrBSAWH0QMrTi1Eoj6el?=
+ =?us-ascii?Q?zA/8V96pvxwS+39/MiSX/VE0KTvwlPmaHY7ngUZq4z1mQ4f+QqDL3AzdNxx1?=
+ =?us-ascii?Q?r0nFZg1UyZWJUOuXY7virEdFPMCdqtbhpGIiQkOCKruxoQ2heC89Hz+lSxuh?=
+ =?us-ascii?Q?fRpPM+CxdKbIKWelKXQ=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa426001-868c-4457-aaf5-08dcbc864782
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB7767.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2024 17:26:49.2088
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HKaMMoRBnd2M96cyaiS78d2jMcC2WvKL0BPG/Zz66K290luCbsYiJRJtmkSp0vH7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8313
 
-On Wed, Aug 14, 2024 at 8:09=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
-ote:
->
-> On Tue, 2024-08-13 at 16:29 +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > After running once, the for_each_trip_desc() loop in
-> > bang_bang_manage() is pure needless overhead because it is not going
-> > to
-> > make any changes unless a new cooling device has been bound to one of
-> > the trips in the thermal zone or the system is resuming from sleep.
-> >
-> > For this reason, make bang_bang_manage() set governor_data for the
-> > thermal zone and check it upfront to decide whether or not it needs
-> > to
-> > do anything.
-> >
-> > However, governor_data needs to be reset in some cases to let
-> > bang_bang_manage() know that it should walk the trips again, so add
-> > an
-> > .update_tz() callback to the governor and make the core additionally
-> > invoke it during system resume.
-> >
-> > To avoid affecting the other users of that callback unnecessarily,
-> > add
-> > a special notification reason for system resume, THERMAL_TZ_RESUME,
-> > and
-> > also pass it to __thermal_zone_device_update() called during system
-> > resume for consistency.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/thermal/gov_bang_bang.c |   18 ++++++++++++++++++
-> >  drivers/thermal/thermal_core.c  |    3 ++-
-> >  include/linux/thermal.h         |    1 +
-> >  3 files changed, 21 insertions(+), 1 deletion(-)
-> >
-> > Index: linux-pm/drivers/thermal/gov_bang_bang.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
-> > +++ linux-pm/drivers/thermal/gov_bang_bang.c
-> > @@ -86,6 +86,10 @@ static void bang_bang_manage(struct ther
-> >         const struct thermal_trip_desc *td;
-> >         struct thermal_instance *instance;
-> >
-> > +       /* If the code below has run already, nothing needs to be
-> > done. */
-> > +       if (tz->governor_data)
-> > +               return;
-> > +
-> >         for_each_trip_desc(tz, td) {
-> >                 const struct thermal_trip *trip =3D &td->trip;
-> >
-> > @@ -107,11 +111,25 @@ static void bang_bang_manage(struct ther
-> >                                 bang_bang_set_instance_target(instanc
-> > e, 0);
-> >                 }
-> >         }
-> > +
-> > +       tz->governor_data =3D (void *)true;
-> > +}
-> > +
-> > +static void bang_bang_update_tz(struct thermal_zone_device *tz,
-> > +                               enum thermal_notify_event reason)
-> > +{
-> > +       /*
-> > +        * Let bang_bang_manage() know that it needs to walk trips
-> > after binding
-> > +        * a new cdev and after system resume.
-> > +        */
-> > +       if (reason =3D=3D THERMAL_TZ_BIND_CDEV || reason =3D=3D
-> > THERMAL_TZ_RESUME)
-> > +               tz->governor_data =3D NULL;
-> >  }
->
-> can we do the cdev initialization for BIND_CDEV and RESUME notification
-> in .update_tz() directly?
+On Tue, Aug 06, 2024 at 07:11:48PM -0700, Nicolin Chen wrote:
+> The CMDQV extension on NVIDIA Tegra241 SoC only supports CS_NONE in the
+> CS field of CMD_SYNC, v.s. standard SMMU CMDQ. Pass in the cmdq pointer
+> directly, so the function can identify a different cmdq implementation.
+> 
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
 
-That would be viable if the zone temperature was known at the time
-.update_tz() runs, but it isn't.  See this message:
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-https://lore.kernel.org/linux-pm/CAJZ5v0ji_7Z-24iCO_Xxu4Zm4jgVFmR9jVp8QNiCO=
-xzV9gqSnA@mail.gmail.com/
-
-As long as the zone temperature is not known, it is not clear which
-way to initialize the cooling devices.
-
-Interestingly enough, the zone temperature is first checked by the
-core when the zone is enabled and not when it is registered.
-
-> Then we don't need .manage() callback. This makes more sense to me
-> because bang_bang governor cares about trip point crossing only.
-
-That's true, but this is all about a corner case in which no trip
-points are crossed and the cooling devices need to be initialized
-properly regardless.
-
-> >  static struct thermal_governor thermal_gov_bang_bang =3D {
-> >         .name           =3D "bang_bang",
-> >         .trip_crossed   =3D bang_bang_control,
-> >         .manage         =3D bang_bang_manage,
-> > +       .update_tz      =3D bang_bang_update_tz,
-> >  };
-> >  THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
-> > Index: linux-pm/drivers/thermal/thermal_core.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/thermal/thermal_core.c
-> > +++ linux-pm/drivers/thermal/thermal_core.c
-> > @@ -1692,7 +1692,8 @@ static void thermal_zone_device_resume(s
-> >
-> >         thermal_debug_tz_resume(tz);
-> >         thermal_zone_device_init(tz);
-> > -       __thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-> > +       thermal_governor_update_tz(tz, THERMAL_TZ_RESUME);
-> > +       __thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
-> >
-> >         complete(&tz->resume);
-> >         tz->resuming =3D false;
-> > Index: linux-pm/include/linux/thermal.h
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/include/linux/thermal.h
-> > +++ linux-pm/include/linux/thermal.h
-> > @@ -55,6 +55,7 @@ enum thermal_notify_event {
-> >         THERMAL_TZ_BIND_CDEV, /* Cooling dev is bind to the thermal
-> > zone */
-> >         THERMAL_TZ_UNBIND_CDEV, /* Cooling dev is unbind from the
-> > thermal zone */
-> >         THERMAL_INSTANCE_WEIGHT_CHANGED, /* Thermal instance weight
-> > changed */
-> > +       THERMAL_TZ_RESUME, /* Thermal zone is resuming after system
-> > sleep */
-> >  };
-> >
-> >  /**
-> >
-> >
-> >
->
+Jason
 
