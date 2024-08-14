@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-286786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1CD951EF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B878951F0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBD91F23C81
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:46:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49134B23A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 15:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766871B5835;
-	Wed, 14 Aug 2024 15:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302DC1B86F0;
+	Wed, 14 Aug 2024 15:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Fd6F1YzY"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9rbK/+s"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101791B4C5E
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 15:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41711B4C47;
+	Wed, 14 Aug 2024 15:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723650399; cv=none; b=Orxi8l5adJ2U03Ubrlt3CsOdisETENlicXXPIG8+fX8lFA4rivJTyAE0rYHMOfrBtcFsdYkB86j11VMsc4fpcld9EaYn1xLRNDB4thkWwc1P1iuS3rV+FOrSwLpFTizSftFhkUe0c4IER2KMYogFONISHMmX+XPIU9VUiMGp63Q=
+	t=1723650413; cv=none; b=GijOlhTn/APSF+Jk4+tx697e+gczbZdxETCSwDn5zEGosxcuKAGXRXWAz/Pz/ko25EDVnRLVxszIFvbEvx/4mcjXyiXVI8IcW3ZzQAPETcc8ZQKP7EkyPKhoW0n7A4O6DD78ZVhj5cju+doDunMdAVSZEfwWy/D+mxsNjenZ+jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723650399; c=relaxed/simple;
-	bh=3CZ+eZQLTvRe5s8+CdkE8KJ8fPl1lbuinuD2iVYUImE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o6MeU30mC/QSmPAKeCvQdxxo+GtiVadmUM/+DrgVJ18HrKouOY3GHFmxq443OP358pCZRHlgGns/bbwI9PuRE2PvOgB4H/mXKVM0j4FK3eV5hGwb+G6mmFPHgt616Xz95ojsGs7EenxyJinoRpNihGXZjXCHLo7D3Ed0oQvkbSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Fd6F1YzY; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so335161fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:46:37 -0700 (PDT)
+	s=arc-20240116; t=1723650413; c=relaxed/simple;
+	bh=V98U3jCry57U4aW6dz/YHzEaRCu3ocsWlI6bKED4zi4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GEoQF9I1TrjOlSGjfNmgolxwVpM5GnjJ8BCqz5qwOrWnzIixAXxFUWwj25Sg+nszveUea1WZHpeR/tDzXMRIfIEIoZjIAx3j6P/8+krO5WgC7OYpMLqR9x60e/WjXeIfz0YflGFaoJ18kk4Dfv6kZDqwSIu4ZGNfqk6680VlAeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9rbK/+s; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3687f8fcab5so25186f8f.3;
+        Wed, 14 Aug 2024 08:46:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723650396; x=1724255196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UMvW5XN814MmHmeNdCsuQ+x/zBS9ZcHLiBHoPUEkIYk=;
-        b=Fd6F1YzY7RgsiEhc4a1ml1Rr2waWCADgGhCnIqbCpF5cO93cBaPpzW4nrkxK7Rllqi
-         m8iGbN9oxduu8REIlhm0oXvKqdTq6nRqp7FpN6smp/XWu8uHZEhYx0eiJ0yG1Mt942U4
-         KiyqDwt6Zpqun9b6SPRd05oiHq/lDbNunTeTc=
+        d=gmail.com; s=20230601; t=1723650410; x=1724255210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V98U3jCry57U4aW6dz/YHzEaRCu3ocsWlI6bKED4zi4=;
+        b=R9rbK/+subVhm+qF2oDPnLZQbgMN8O8yTc70tkW2OIANt6FaGJoQXaomXCpqbcQI8h
+         YVfCf5JvB/iMXOUgrQgLX3J3+JsXh+yI/pvZu0JkCGlLXLM6HwTd4VtMJQxETUpDWWOx
+         Yq6pbqi29whbRWQySC6zmEStCBxkb5R1GK04qfW16i4dQ+dNlLr8BQfHRNIApQmNmxOd
+         CqOkzOSKr7TsS8Gsjyekq4TSzioKO8qLDMqZ6Vtaqh8D7HgmTrFMOnfpmEJBBVvac875
+         h07pIlBPqj9GEZj8nfvn2ihQTruldJHU5sJrGOGHfZYLmwg24EiiVs0m9ATTMLfacCtu
+         HDGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723650396; x=1724255196;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMvW5XN814MmHmeNdCsuQ+x/zBS9ZcHLiBHoPUEkIYk=;
-        b=jyKE+UYcxQg2zpuIa5C5ansL/GH0I4hBj8CFTgWAiEjiFRC1LhXs/PkPmhrAnbNbZ+
-         h52YuEbbjpDyjugL84HqXt6zbi5tpOZE7gySvSukKr1G4HVFNJzlM45am39/T6qmDG6N
-         FrSHmQj52Shhc2drCfGl5Fe5ELdJUi2sKCwkhtNYQojzVggzE3S9Jw09wmnfWVrCe8uu
-         dPAx7Vh21AG5OzzM6L3mggV8misJX4JTT9DQWIX1l/GzdLTfUj/ZCUURYVq+Q/Mlh1pk
-         By/OFYRlA72BpbuZrSbhOdIGLSIMglmOzu7AqQ6R0NWnKoKnQLbKc9HnZTU0yVwFXICf
-         NyTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWtBx6f/XmB88VHp2/y55Xh5/A46k5D2demGzEL9JTgCPp6K0kJNGkcpFAPeWRyZivWPQQ+3ZSvLvWU9pDq096v1V9SKTTPCN4nwyu
-X-Gm-Message-State: AOJu0YyiBKcCABAiDLPPnj+8vFAlancwcAKQM/gn0jVrWZ1wlMvU9Ni5
-	ZCfid6b+CjdaS5jFPWaUKVL1uunHew8A58swwFR5MfvFoEZhfr2Ln+JySi4QsFQ=
-X-Google-Smtp-Source: AGHT+IFAW+r4bsXhzgqn4nSPYnHoVTMgVTn+Fc+6nuodprTLSx0anVrp0sa8TsMaaN15SPWkigXMXg==
-X-Received: by 2002:a05:651c:b2c:b0:2f3:a854:78f6 with SMTP id 38308e7fff4ca-2f3aa1de7c6mr25666671fa.34.1723650396054;
-        Wed, 14 Aug 2024 08:46:36 -0700 (PDT)
-Received: from LQ3V64L9R2 ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429df78a7c6sm18550645e9.45.2024.08.14.08.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:46:35 -0700 (PDT)
-Date: Wed, 14 Aug 2024 16:46:33 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
-Message-ID: <ZrzRWU_39wpePVvg@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
- <ZrqU3kYgL4-OI-qj@mini-arch>
- <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
- <Zrq8zCy1-mfArXka@mini-arch>
- <5e52b556-fe49-4fe0-8bd3-543b3afd89fa@uwaterloo.ca>
- <Zrrb8xkdIbhS7F58@mini-arch>
- <6f40b6df-4452-48f6-b552-0eceaa1f0bbc@uwaterloo.ca>
- <66bc21772c6bd_985bf294b0@willemb.c.googlers.com.notmuch>
- <Zry9AO5Im6rjW0jm@LQ3V64L9R2.home>
- <66bcc87d605_b1f942948@willemb.c.googlers.com.notmuch>
+        d=1e100.net; s=20230601; t=1723650410; x=1724255210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V98U3jCry57U4aW6dz/YHzEaRCu3ocsWlI6bKED4zi4=;
+        b=cDY8LWhcnnrdfFFnMBgcgQokpRYJoL6pyJwS6IVm/HdUJ1+AsQ7sKf2HbSQqvZweNk
+         FYhAujSo1WcBl4Ql8zZStLeLJh15vn14ZbOgGwrdZhVBF2hXGuPun6t/X1aOkKLaeX88
+         9+bTWqHKUu88oP7H41YRM2mh9s0/4MfuzfirNVr72rAGKXXJ+tokstEeZwscuvD1Zz3z
+         Eqp5nHb8beqpEhD4eRzfRZ7/nXTATxmUbWOD2PvkDEKgO2Xa8MaaGsPgBo81EhduWMkv
+         DLKFdbr/PLpJ4d0/YhHnseEEfbK4zgFLw20aGBiSwHaJYDKWCPIADE7AtF6ORw7RR//A
+         SV3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXNe70C8LRI/YpK06idImB+/CEwmegrYfzcR/8EXtfaloo/qKKfbw3FJ2iQzLShEsVS/wA7TMA9mF4QkXlUCp96c80bMjBKew9/4mjDNyELpVz7Qws9+RvxwdXlcq/S2AU27NyvSbNe/Q/sd8VJz9i0N4XmSmaKttXdREbnDvi3vFDe
+X-Gm-Message-State: AOJu0YyHIbQy+2Fn79k3ZbtDwQLKixhoPxCP2Tcomy0XT5+UNLbeD+52
+	snlDlxuRR1umAI5JRvlZAQGoDFPM3p+RY9dcX6c7b8FY50ocvG4SnfAsjBqlCMr5MOc1GEGFtCS
+	f27SJjJrHm+ZiNQGTQ+q1V4gbHro=
+X-Google-Smtp-Source: AGHT+IEhlHRyEw+qi7xVhThlYz/esvqlaaHKizoRnHdoqbmGK7jkzYrmvkgfq8k4DCAE2nFrtbKwvRWPvufyKIqzw98=
+X-Received: by 2002:a05:6000:4388:b0:371:83a8:afee with SMTP id
+ ffacd0b85a97d-37183a8b1d2mr475768f8f.27.1723650409921; Wed, 14 Aug 2024
+ 08:46:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66bcc87d605_b1f942948@willemb.c.googlers.com.notmuch>
+References: <20240813151752.95161-2-thorsten.blum@toblux.com>
+ <CAADnVQKEgG5bXvLMLYupAZO6xahWHU7mc06KFfseNoYUvoJbRQ@mail.gmail.com>
+ <2A7DB1E6-4CCE-446E-B6F1-4A99D3F87B57@toblux.com> <CAADnVQKw5x6sTwj62p4vxSqtjdisHEKhtKdPp_zK4t7rtDuWhQ@mail.gmail.com>
+ <968A8194-61C0-4F9A-ADB6-8A6BB57E2A57@toblux.com>
+In-Reply-To: <968A8194-61C0-4F9A-ADB6-8A6BB57E2A57@toblux.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 14 Aug 2024 08:46:38 -0700
+Message-ID: <CAADnVQJWdiwoUqtF9CgKgkLD0oHeTaOkUhsfz0Y=0Ow+79KyxA@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Annotate struct bpf_cand_cache with __counted_by()
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2024 at 11:08:45AM -0400, Willem de Bruijn wrote:
-> Joe Damato wrote:
+On Tue, Aug 13, 2024 at 1:51=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux=
+.com> wrote:
+>
+> On 13. Aug 2024, at 20:57, Alexei Starovoitov <alexei.starovoitov@gmail.c=
+om> wrote:
+> > On Tue, Aug 13, 2024 at 10:59=E2=80=AFAM Thorsten Blum <thorsten.blum@t=
+oblux.com> wrote:
+> >> On 13. Aug 2024, at 18:28, Alexei Starovoitov <alexei.starovoitov@gmai=
+l.com> wrote:
+> >>> On Tue, Aug 13, 2024 at 8:19=E2=80=AFAM Thorsten Blum <thorsten.blum@=
+toblux.com> wrote:
+> >>>>
+> >>>> Add the __counted_by compiler attribute to the flexible array member
+> >>>> cands to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> >>>> CONFIG_FORTIFY_SOURCE.
+> >>>>
+> >>>> Increment cnt before adding a new struct to the cands array.
+> >>>
+> >>> why? What happens otherwise?
+> >>
+> >> If you try to access cands->cands[cands->cnt] without incrementing
+> >> cands->cnt first, you're essentially accessing the array out of bounds
+> >> which will fail during runtime.
+> >
+> > What kind of error/warn do you see ?
+> > Is it runtime or compile time?
+>
+> I get a runtime error with Clang 18 [3].
 
-[...]
+...
 
-> > On Tue, Aug 13, 2024 at 11:16:07PM -0400, Willem de Bruijn wrote:
-> > Using less CPU to get comparable performance is strictly better, even if a
-> > system can theoretically support the increased CPU/power/cooling load.
-> 
-> If it is always a strict win yes. But falling back onto interrupts
-> with standard moderation will not match busy polling in all cases.
-> 
-> Different solutions for different workloads. No need to stack rank
-> them. My request is just to be explicit which design point this
-> chooses, and that the other design point (continuous busy polling) is
-> already addressed in Linux kernel busypolling.
+> [3] https://godbolt.org/z/cKee95777
 
-Sure, sounds good; we can fix that in the cover letter.
+This is user space.
+I'm not asking about generic description of the counted_by feature.
+I want to see the actual runtime report from the kernel.
+Can it even compile the kernel with -fsanitize=3Dundefined ?
 
-Thanks for taking a look.
+pw-bot: cr
 
