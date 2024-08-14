@@ -1,70 +1,74 @@
-Return-Path: <linux-kernel+bounces-286329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169E39519B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:14:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257EF9519BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 13:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59745B24509
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6F03282664
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA2B1AED44;
-	Wed, 14 Aug 2024 11:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4E81AED45;
+	Wed, 14 Aug 2024 11:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bjei94dI"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FcXTEYqq"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07261AE048
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C5D3A29C
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 11:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723634062; cv=none; b=eNel/jPDTUzLzq7tp9chQzqLJ+UAE3sO9AuHI4YiMDmRkgWSjIrHf95sFWdtZStUIaz8s9IVgpSHp6qkFS4Y4sLD72VzFfrIuHOJAzMsLnHeyZFYqGR9Gg56oAPcb9wnAPTOemFnn9pXhQ7xi94BE+XQ37B0SG+AF/kjLgXJYOI=
+	t=1723634142; cv=none; b=DZXmgz2Pme4ve9W8eEpDm7XKsKoTPgOqErNWBGXolK3TcF73gpiaa67yNQYKpzQ7aFLiIZiECcRe6TJjf2UiGv4opggWam9XXMP+74FkX9R61OFmWfNfwAvuZfd+Rk36GHkEm/qbTX1uPTCGTgpdY8ei8bmLOL9psfpvyFdQbWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723634062; c=relaxed/simple;
-	bh=TmoMJ6fBO+2ujDKfbDp+SvGtxKOPCAMH9eaWcdmMp90=;
+	s=arc-20240116; t=1723634142; c=relaxed/simple;
+	bh=TSRANZP40Gb5UjsJrIapwEDdUuJg5uHFuOiocwJk6ng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dyGvE4q4hOMtVXz0RBn6KLXQrj4qDbx9xhxeZiEj69EqjDl4c/nnzccssKLpsMsQVdLjEYKs6plO4EK+XhMd0SOfHYJDSs0igfaZkHYl+TxP9aPsTm+/WM6ArtrFTkc+08+Ots98keW1FFWS7TFmYUb4WkMWS/KDLzIXeP8nmZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bjei94dI; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3db199ec527so581937b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:14:20 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=EgbSulhjN3U5AU8qxjiLrynzt1uD187sbbkR8Y57dqzJZFrfjmRI2eAsgqo8XBc8o9rCS1owUPJF1T1PrERMXgczH5Mm0AX3G3/gzt8GGN8DYrMvmjfMmOWJAgoBWV48OJby3+cr01Ztap3JL6wN+UI4co+LVDPDjA0IlXrJaQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FcXTEYqq; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e1915e18so44600335e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 04:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723634059; x=1724238859; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FKXOpaQjYZ23IPY7QFGKRm5V8t0HdIQpPj2kQ936F8Q=;
-        b=bjei94dIzvSaYyLy2cef+/JkedIUo7tMCAW1GPcsu+xIgmsr+QAW7rrEwZuXw1X/RB
-         8QhzhQ5CGMvlWex0QIkaKbKwnmxBYAAYvn4Za2IjZvoHK04HwnkgRLw0UFzEClTxv7C7
-         yw/ZOUvZT+Q32qYvFcddH3xrtYxWrsP6f1gVc=
+        d=linaro.org; s=google; t=1723634139; x=1724238939; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/sTqG+/rfHmJHScki4Ugb8gxHrXjBax2B/xarMt7n4=;
+        b=FcXTEYqqPPZ8PDMys3cdW/cTANU6v8+6xveaO24bY443WHpFd0xxIHoT6jYBzdZ0/T
+         iKBQrsDNLcqldHODGoCVWOMEbrY8bhaRiufdd5PKJe6Twb0gY64ZT9fTg6fOCh9WiytF
+         kxW213AqD2sre05Isuffqyc+O4GFOnTgMim9anU2251ZF7ML5+p3JBpr/7AXg1U2UxNU
+         yW//nRl2M7oScSgMTXQww20OZY7nNpyk/70MrgjHi7agsOfZ2prRLstqjOhlc3ix6h4O
+         qgXfyoIeHtLTk9KGYUYGbNwCOKSEykWIkbhW89LnezWafQGX1fkrBBIv85C3MOok0rvZ
+         BwTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723634059; x=1724238859;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKXOpaQjYZ23IPY7QFGKRm5V8t0HdIQpPj2kQ936F8Q=;
-        b=mBN2vnopVZOmecET7PpCeprhaH0tSBIWV53OoJ4a2pMaS3ycIzPsx5ZunZX2ibVmDQ
-         uKUXlZPsFMvvWhvaHPKhPYMjBHt4G2UY/4V4dh+rBqYphGNVA7in4nfzx+XVCzDjah0E
-         SojCgjWB7w9z6c9PBqI6NOCkTS8sUcLRuhM0xSZJsm6RbgmNlAAL9nyHnyuaBpK1T6lH
-         S+BM3CC3uAIgYxjucO0VNXG7fgrRDORnGeyMdr/Nk6nYczpjJanYoS/uLXIe+l/+zj0B
-         /N+xYSj1qhwCkW4C7GnKYD+lGiJSVlEjltP1TaoC4NA6O/ZEYuFd0MOexCMIpQKiuwR/
-         K2Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKQaHKhoTbw4khb1IWUwqTfOGaj2q7d8o93v4fZCvOnSDnyNS0eh4RkhZ414WRaoZaXbYL4mrHVjTBuMzna+umQuL5YFyog7ITgThY
-X-Gm-Message-State: AOJu0YxaJh4tigsjNlB6kk6Z1gQoxpYIJMQp7PWq5UOvPD5F1Nrez1NN
-	9TmMPT1Scy1Ebr5oPeVhgioZVYzEz4vXw5kKkRG5h7tR6oFiTLhfDaw6Dh/sjBo=
-X-Google-Smtp-Source: AGHT+IGU44jZ8rYe+yb/lWQqYJ9ZuIfKYis6ezIFOdZQVRqvwL8o7Dssf+jOnx1O7fDJ7mXMGVBZtw==
-X-Received: by 2002:a05:6870:2195:b0:260:f1c4:2fdc with SMTP id 586e51a60fabf-26fe5cfc907mr1531281fac.9.1723634059588;
-        Wed, 14 Aug 2024 04:14:19 -0700 (PDT)
-Received: from [192.168.104.75] ([223.118.51.114])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a8c454sm7125527b3a.180.2024.08.14.04.14.11
+        d=1e100.net; s=20230601; t=1723634139; x=1724238939;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9/sTqG+/rfHmJHScki4Ugb8gxHrXjBax2B/xarMt7n4=;
+        b=M3QQhlPShyaLsDC1GduYf60Asad46+IANc6KmYN6463JZOLpoeFewPFVgd87bXnUrx
+         W3oMGNvzEabpTeF31dU/VteQBPXX2WHhuZ5Wn3T9LoPFTxKBqVX2n0tuagR3+awOiy8F
+         shoBIBnvHkGS84irYcvo0A3ZqcyyG4E0bWtUYJmeQcnM26pS5laWeyY0qsDbsYwYS8KC
+         lQ7LkS31F6DU6YlHhZ3jqZq0j+vcHU8l1OsObw3lkniQP7mucfSm5SpQl0ajuINjIqvo
+         0MxkI8hSEVwEQQI/0x3D2+XjOcBs9usLtX5bG9OYjeuwJDWXHmLVNHoI6LussfxtRYKv
+         ZyPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxUs2FleJF6seivHblddZEjYRcL4Cj61CII3Mqa0iCGXdy/7/Y2ru0pomvAiCOcITUNnUv4R2VCZxl5nzC4g8mWrtoLYErNAkMRUcW
+X-Gm-Message-State: AOJu0Yz5HFm6dXP/9r5vII01/BlU0mpx9gWyC0IDqWTz2R1YjCCwamLK
+	ST1Wb1eKxKNCbeNQ911PcdZeAEatyUbqqC7M5CneUadFg5g5KaeEzn+t7ujvEBY=
+X-Google-Smtp-Source: AGHT+IHPKTeh7IvvDNE3k5/yfiEeZhfikPr0CHce40sB1/ZhibesGiGUUJfU46YfXvEL9kv7YBJCbw==
+X-Received: by 2002:a5d:490f:0:b0:362:5816:f134 with SMTP id ffacd0b85a97d-371777696edmr1820585f8f.13.1723634138526;
+        Wed, 14 Aug 2024 04:15:38 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ecc7a52sm12521667f8f.103.2024.08.14.04.15.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 04:14:19 -0700 (PDT)
-Message-ID: <c946c5c4-366a-4772-81d9-dc5984777cfd@linuxfoundation.org>
-Date: Wed, 14 Aug 2024 05:14:08 -0600
+        Wed, 14 Aug 2024 04:15:37 -0700 (PDT)
+Message-ID: <df52a968-96be-4f05-8d6f-32a2abde1d91@linaro.org>
+Date: Wed, 14 Aug 2024 13:15:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,69 +76,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: fix relative rpath usage
-To: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: linux-kselftest@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Artem Savkov <asavkov@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240812165650.GA5102@asgard.redhat.com>
- <3667e585-ecaa-4664-9e6e-75dc9de928e8@linuxfoundation.org>
- <20240813163348.GA30739@asgard.redhat.com>
+Subject: Re: [PATCH v10 1/5] dt-bindings: net: wireless: brcm4329-fmac: add
+ pci14e4,449d
+To: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Jacobe Zang <jacobe.zang@wesion.com>,
+ robh@kernel.org, krzk+dt@kernel.org, heiko@sntech.de, kvalo@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, conor+dt@kernel.org
+Cc: efectn@protonmail.com, dsimic@manjaro.org, jagan@edgeble.ai,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ arend@broadcom.com, linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ megi@xff.cz, duoming@zju.edu.cn, bhelgaas@google.com,
+ minipli@grsecurity.net, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com, nick@khadas.com
+References: <20240813082007.2625841-1-jacobe.zang@wesion.com>
+ <20240813082007.2625841-2-jacobe.zang@wesion.com>
+ <1914cb2b1a8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <e7401e25-7802-4dc3-9535-226f32b52be1@kernel.org>
+ <062d8d4e-6d61-4f11-a9c0-1bbe1bfe0542@broadcom.com>
+ <1e442710-a233-4ab2-a551-f28ba6394b5b@linaro.org>
+ <180f7459-39fa-4e96-83d6-504e7802dc94@broadcom.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240813163348.GA30739@asgard.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <180f7459-39fa-4e96-83d6-504e7802dc94@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/13/24 10:33, Eugene Syromiatnikov wrote:
-> On Mon, Aug 12, 2024 at 05:03:45PM -0600, Shuah Khan wrote:
->> On 8/12/24 10:56, Eugene Syromiatnikov wrote:
->>> The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
->>> relative to current working directory and not the executable directory,
->>> which will lead in incorrect resolution when the test executables are run
->> >from elsewhere.  Changing it to $ORIGIN makes it resolve relative
->>> to the directory in which the executables reside, which is supposedly
->>> the desired behaviour.  This patch also moves these CFLAGS to lib.mk,
->>> so the RPATH is provided for all selftest binaries, which is arguably
->>> a useful default.
+On 14/08/2024 12:59, Arend van Spriel wrote:
+> On 8/14/2024 12:39 PM, Krzysztof Kozlowski wrote:
+>> On 14/08/2024 12:08, Arend van Spriel wrote:
+>>> On 8/14/2024 10:53 AM, Krzysztof Kozlowski wrote:
+>>>> On 13/08/2024 19:04, Arend Van Spriel wrote:
+>>>>> On August 13, 2024 10:20:24 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+>>>>>
+>>>>>> It's the device id used by AP6275P which is the Wi-Fi module
+>>>>>> used by Rockchip's RK3588 evaluation board and also used in
+>>>>>> some other RK3588 boards.
+>>>>>
+>>>>> Hi Kalle,
+>>>>>
+>>>>> There probably will be a v11, but wanted to know how this series will be
+>>>>> handled as it involves device tree bindings, arm arch device tree spec, and
+>>>>> brcmfmac driver code. Can it all go through wireless-next?
+>>>>
+>>>> No, DTS must not go via wireless-next. Please split it from the series
+>>>> and provide lore link in changelog for bindings.
+>>>
+>>> Hi Krzysztof,
+>>>
+>>> Is it really important how the patches travel upstream to Linus. This
+>>> binding is specific to Broadcom wifi devices so there are no
+>>> dependencies(?). To clarify what you are asking I assume two separate
+>>> series:
+>>>
+>>> 1) DT binding + Khadas Edge2 DTS  -> devicetree@vger.kernel.org
+>>> 	reference to:
+>>> https://patch.msgid.link/20240813082007.2625841-1-jacobe.zang@wesion.com
+>>>
+>>> 2) brcmfmac driver changes	  -> linux-wireless@vger.kernel.org
 >>
->> Can you elaborate on the erros you would see if this isn't fixed? I understand
->> that check-rpaths tool - howebver I would like to know how it manifests and
+>> No. I said only DTS is separate. This was always the rule, since forever.
+>>
+>> Documentation/devicetree/bindings/submitting-patches.rst
 > 
-> One would be unable to execute the test binaries that require additional
-> locally built dynamic libraries outside the directories in which they reside:
+> I am going slightly mad (by Queen). That documents says:
 > 
->      [build@builder selftests]$ alsa/mixer-test
->      alsa/mixer-test: error while loading shared libraries: libatest.so: cannot open shared object file: No such file or directory
+>    1) The Documentation/ and include/dt-bindings/ portion of the patch 
+> should
+>       be a separate patch.
 > 
->> how would you reproduce this problem while running selftests?
+> and
 > 
-> This usually doesn't come up in a regular selftests usage so far, as they
-> are usually run via make, and make descends into specific test directories
-> to execute make the respective make targets there, triggering the execution
-> of the specific test bineries.
+>    4) Submit the entire series to the devicetree mailinglist at
+> 
+>         devicetree@vger.kernel.org
+> 
+> Above I mentioned "series", not "patch". So 1) is a series of 3 patches 
+> (2 changes to the DT binding file and 1 patch for the Khadas Edge2 DTS. 
+> Is that correct?
 > 
 
-Right. selftests are run usually via make and when they are installed run through
-a script which descends into specific test directories where the tests are installed.
+My bookmark to elixir.bootling does not work, so could not paste
+specific line. Now it works, so:
 
-Unless we see the problem using kselftest use-case, there is no reason the make changes.
-Sorry I am not going be taking these patches.
+https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L79
 
-thanks,
--- Shuah
+The rule was/is:
+1. Binding for typical devices always go via subsystem tree, with the
+driver changes.
+There can be exceptions from above, e.g. some subsystems do not pick up
+bindings, so Rob does. But how patches are organized is not an exception
+- it is completely normal workflow.
+
+2. DTS *always* goes via SoC maintainer. DTS cannot go via any other
+driver subsystem tree. There is no exception here. There cannot be an
+exception, because it would mean the hardware depends on driver, which
+is obviously false.
+
+Best regards,
+Krzysztof
 
 
