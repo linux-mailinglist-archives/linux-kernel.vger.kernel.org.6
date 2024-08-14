@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-286311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED63E951974
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4863295197B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 12:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46F11F24555
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:54:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C3B1F2212F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD771AE87D;
-	Wed, 14 Aug 2024 10:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7759C1AE846;
+	Wed, 14 Aug 2024 10:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jBHUJNjk"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YtnSR/51"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A414E1AE04C;
-	Wed, 14 Aug 2024 10:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E926A394;
+	Wed, 14 Aug 2024 10:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723632848; cv=none; b=j9/MyUCVYfiyM0oyTMoMMKSvPEhcd7AFgd0w0rdNA1deVbPkBXrjVR55FFEFlHt3nFrTEP1gfleEYgKNJeqen9XwTZ23l+qOVUjMsKTofwaVfp83BXyccjr0eGxOpf4Y3sMU4uRxrLUdy8RyIn8TdbXfH/celKBOeYxcyTxc374=
+	t=1723632962; cv=none; b=UNGa1TtBuQnHen/JeJZ1pcSAWclMvJYX3PeI1WJiG0SXyaEUNUw0ch67f7CDruKDvKWN9FPBOnklgimTx7ZPQdws6/E82ztUHW9p1CGAi8nyrhSuVO6tvL7dySR1++Kw/9EqXpqBsTXdzBIPaDVer4I7j60ACiRThRcYx/Ob7HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723632848; c=relaxed/simple;
-	bh=wvyHmjI+aAqhTfrRSAqnJLQFzafV4/TL9UG+yqpNN24=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uvtRHnBJH1OKhC2D5+U/SYcY47D/YoVvPUpb0KJai8YRACrMCOMVPDyxYpptLNRKNsc0jpr9GgAqk+56+nV+E7ieAoDJd4kgTfCLcu/3fjm9z0S9yW9it0W8CnNZ0oX3udXqlJ64fZXw6VxJAXmKsJBXmgNATuStTeaxT0V4j7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jBHUJNjk; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723632846; x=1755168846;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wvyHmjI+aAqhTfrRSAqnJLQFzafV4/TL9UG+yqpNN24=;
-  b=jBHUJNjkU7VV9d5WtTL5svbc1hkifxH1szEuUs2cuc+jIMfQcZ79cPJp
-   cvPgPLZZCFGxA1swn3wWmMjx8HyH5j/himG7ON381fgMnRFnGwv5xaSZP
-   /dlA51aQshVqeVIBO/D7OXlyCsL1cmupiZs0Grt5MfNXwbSXoiCIPxprS
-   lFfLrFg/R15eG+DEPzYiuVgEa+ndkZGGwBr01p3u0Z2wdzcnAEYmUc0aW
-   56HHaHn5cNTsQdllO9nLkjSlcKPciIOaUAwv3/TbjuoOowDyTbGJGbAee
-   egq159hPMx+aIaC4flXuQUTiVj+QINWt5NW6JaBUmUcBAlzmixB895p7w
-   Q==;
-X-CSE-ConnectionGUID: 87Nj+HQzThCqvIYPn78NVA==
-X-CSE-MsgGUID: YzRbsmiLSjaxuPPPrW0rsg==
-X-IronPort-AV: E=Sophos;i="6.09,145,1716274800"; 
-   d="scan'208";a="261393484"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2024 03:54:04 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 14 Aug 2024 03:53:48 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 14 Aug 2024 03:53:39 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux@armlinux.org.uk>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <arnd@arndb.de>, <geert+renesas@glider.be>,
-	<mpe@ellerman.id.au>, <rdunlap@infradead.org>, <dharma.b@microchip.com>,
-	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: <manikandan.m@microchip.com>
-Subject: [PATCH v3 4/4] ARM: configs: at91: Enable Microchip's MIPI DSI Host Controller support
-Date: Wed, 14 Aug 2024 16:22:56 +0530
-Message-ID: <20240814105256.177319-5-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240814105256.177319-1-manikandan.m@microchip.com>
-References: <20240814105256.177319-1-manikandan.m@microchip.com>
+	s=arc-20240116; t=1723632962; c=relaxed/simple;
+	bh=fbblGeCbLrnCs+qqYqi5kuH/ctWJc2mWSjtoQIs/tO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mNadTZ0eK5tZDpF5PPtDDnkm0qDDKlKdtg2Yr30Qvlzjx3s23IgKdcY+u7HJneUZ6jXShikoXxT1jeWktXO5MJasxz+trDtWEwKgIiAer76nVdlkK72AMA0PhnPpr/Fk9QuLk6le7ufpj7juMHK41wRUMw2vlKi76mSnoBSiYVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YtnSR/51; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723632954;
+	bh=kywZf4/mQ5nvpAwyISJ/TlGKSOROKrhethGpoXAcu/0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YtnSR/51woGO3gylrfv1/3b0bkQS3CHK65wog4CnpzkIbx8drgoNH7GmKyV2N82hT
+	 wmCD5yjNFXuZi/7ijWaw6TSNyeECkbH5Vq0Yg/NXvAuhUdh2zDj1jNHLzpXpBO/jrS
+	 UJPqN8hyIN8DIPDcTFVnWQnFxZ1vXtAYvDxb/IKFNPXwKIaCq23gGXSvYoWogJJ6w0
+	 vCW/pYspo84XFD+k0TkIPWELKpJzw2xhmMFiEYTZxBy7eApuEmI0/OjyG8hqhZMCSR
+	 DE9TkT8OWpkCDMvMo0F+X4VL74H5S/WF6rBY4NvoKGlPy7DZFRvCjv1osa6PbFSdgw
+	 d7R00LXupG+eQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WkQCZ5RSjz4x1V;
+	Wed, 14 Aug 2024 20:55:54 +1000 (AEST)
+Date: Wed, 14 Aug 2024 20:55:53 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: trees being removed
+Message-ID: <20240814205553.0578fe9a@canb.auug.org.au>
+In-Reply-To: <51158ec5-9f27-4c3c-b61f-485e6abc2ae6@ti.com>
+References: <20240813085147.786004fb@canb.auug.org.au>
+	<51158ec5-9f27-4c3c-b61f-485e6abc2ae6@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/+fl4i_Gi9wy6js0rdA8GfcK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Enable the Microchip's DSI controller wrapper driver that uses
-the Synopsys DesignWare MIPI DSI host controller bridge.
+--Sig_/+fl4i_Gi9wy6js0rdA8GfcK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
----
- arch/arm/configs/at91_dt_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hi Vignesh,
 
-diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
-index 6eabe2313c9a..beb29c4832ce 100644
---- a/arch/arm/configs/at91_dt_defconfig
-+++ b/arch/arm/configs/at91_dt_defconfig
-@@ -144,6 +144,7 @@ CONFIG_VIDEO_OV7740=m
- CONFIG_DRM=y
- CONFIG_DRM_ATMEL_HLCDC=y
- CONFIG_DRM_MICROCHIP_LVDS_SERIALIZER=y
-+CONFIG_DRM_MICROCHIP_DW_MIPI_DSI=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_EDP=y
- CONFIG_FB_ATMEL=y
--- 
-2.25.1
+On Wed, 14 Aug 2024 15:36:44 +0530 Vignesh Raghavendra <vigneshr@ti.com> wr=
+ote:
+>
+> On 13/08/24 04:21, Stephen Rothwell wrote:
+> >=20
+> > cfi			2023-07-09 13:53:13 -0700
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#cfi/next =
+=20
+>=20
+>=20
+> Could you please keep this branch included for a while? I expect active
+> contributions (although will just be handful of patches) here.
+>=20
+> I will remember to keep this updated to latest rc when there isn't any
+> new things to queue for a window. Thanks!
 
+No problem.  I will keep it.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+fl4i_Gi9wy6js0rdA8GfcK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma8jTkACgkQAVBC80lX
+0GzYaAf/Z9Zq0W6DUevOcYZ/VUeHajv7Oq5iCPcTsVXnMeC5C6wl6hbj5hpukVgr
+6ElIgl3HbH3ENpmOnU9Au9tPQdq+j3E8bDOLGS2hfbMhbgbfsGmUkrqBjV3cjPZN
+yTu24gLSib/tmAH00qY/5mZaOGhor2vfxsiSNeEM+jMEz2x7S0vFuxDwdMssWS9t
+cCL0E2eMysvdwvfzhfhUhK4zEpzI8b4fyeYPuMGtgQzk/Svts7xvdkC6jjrUyx2b
+TmeogMoaO/0K5zVHVz4Sm/V60kk/UlTSskJy8AhzQbNbMACf4ycNLzJZRsOh+9a/
+7FncYTprCVi3eNCSHtGX3PRcR9cSQw==
+=Marb
+-----END PGP SIGNATURE-----
+
+--Sig_/+fl4i_Gi9wy6js0rdA8GfcK--
 
