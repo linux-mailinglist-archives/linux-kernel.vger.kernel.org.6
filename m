@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-286595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E213B951CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:20:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 998EB951CEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 16:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E426B29CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:20:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C1DDB29E77
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 14:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6981B32B7;
-	Wed, 14 Aug 2024 14:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B601B32CB;
+	Wed, 14 Aug 2024 14:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CLp7Izp+"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GzEs/c/c"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3063B1AD9D4
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 14:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3BE1AD9D4;
+	Wed, 14 Aug 2024 14:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723645236; cv=none; b=KrXLGvO1oUCL1nDF3Za1eBHWx6KTBUnKEPXrsOStzMqWeBhF10cT0dQwHMsroljUquGPKB0mU25K2BcS7OYYw3VyXj3ZPWPLX+CZE6VZyidMxPtMr/z9TIVQVdoqYqfoXfWcRNp2ItPOEkI/pK6zHiu+CF/DckYDPrqAxrSjwkw=
+	t=1723645259; cv=none; b=GmxRMgqCcwb+XfxtoqgRGwNmKCyOMerQxmR3o5gB9GBozgiiYUZqxVAKHABTrozqdBW1AXqYw8vEfg9PaxSNvkECR5wL7MG0R/ngGjE6o4CK+25xtuI9c0T3lDkCDNYB4B0KvQPh47iwcv3jPIfwwEevb8yWWDxz/QlFfLEwBDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723645236; c=relaxed/simple;
-	bh=kQXtCsbcW1E2mqktxyuGPlJlJ1MWdF+o/ajZNUtbKBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XpINIVVzc+2CTX0LNfS+OzuUJv8emqGE1TU87HmNcnAL2uN4pcFmPSu2mURK774bBN6MYpx51ZV+Zyhnjyes46O1iDdUpckOPpBsF4yWnwuiJpkhEMepZg5x+eWj8qpF5rVMUfGvdjRHuvs/CI9mX4AXlR7U7IAlZd9piNBHYww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CLp7Izp+; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-426526d30aaso46103055e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 07:20:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723645233; x=1724250033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPjxl5kTZIIxJMPolljKattpkaQsrwWjxNNU7Z8L9/U=;
-        b=CLp7Izp+ukPsaxrOKTHjRodgEP7CyOJ3Lp4vQFGnccC5ZkQGZG/JwyPQfqRHpszoVh
-         ap+SKXmBzbMLRF57uOgpr652bD179ZiDwpxFjuiQpN+IozTns5aL27ZkQ0OZehJAFcwJ
-         yd1zR3HbRGyuMnvVf+iBBfHaGDW/njPSY0flEbVmfETC1w05N1XTtWv1g/397kdXYKv/
-         liTnuW4hG2AT3Vbs/DogQNfZFskdB53HsVy1FtkXNLvO6205CeBBCheh1JjETfALyV6l
-         G3ZEzE37Mq1wjFsuFMmbteZsn5P11p/78rb2pJgtHcEPR311aLvBvYb/xG+B8qcwxBld
-         HXQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723645233; x=1724250033;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vPjxl5kTZIIxJMPolljKattpkaQsrwWjxNNU7Z8L9/U=;
-        b=RWmtFCpY9SNIQbFJ9mWZaT8eMDmNUQCyvz2UtX9qBeWOEZhGxTDiRoaSSCTcc6jsfv
-         vRhbgiTc+98pXzchgccIDjUPrKfOl++lyX74YDy38P0/8ZwiMx2QlXjg+1Z2cWTyPT5w
-         8nkzmX60f8i4o2ophbwW6VlwzH4k6a7uwXnT3Y2fuq2q+EZ2PE4S1uAwTTCqFWfgsj9a
-         JGdN53UryBT+XvViA8XCmfJFMWnNHD3K+3Y+oUzbWYtFNKuhHpDqE90CC91Y7iZNRVG9
-         MyTYEOmQOT0wr88vzYh5EDCPp7YQTkrHcPuTFuJU7kG9cyrxvz2byCxWomgZl9SK9KY+
-         CJ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXaKQAAKU8AIRimA+Uvxij9ew01gGMpUYUM9iuMBIugSo6nIV+kXYm2A61+zKj3F6SWFtwXVcVG0ru0sMMrX2b7wXN0exetfYNNbOO2
-X-Gm-Message-State: AOJu0YzIk4pA6l5oPNk7yW42Q7EA5uvA4CMMqQzdf1STPaf0Us6GRbLu
-	XXEF+cNB/Wgzl/jgG2OOlctZndDfyE+Z0GAG25267dJTMrBJxS7H5uBQ2hA7eSs=
-X-Google-Smtp-Source: AGHT+IGeTWmsPZWGcLLAVdlY2/7R56m/GeHnCL0IxTTmrXSrUbJKSfhGtU98wAypnLkpho3RDTqrbg==
-X-Received: by 2002:a05:6000:b44:b0:368:334d:aad4 with SMTP id ffacd0b85a97d-371777696d6mr2139027f8f.4.1723645233409;
-        Wed, 14 Aug 2024 07:20:33 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371832ea116sm282433f8f.65.2024.08.14.07.20.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 07:20:32 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 2/2] arm64: dts: sprd: sc2731: rename fuel gauge node to be generic
-Date: Wed, 14 Aug 2024 16:20:29 +0200
-Message-ID: <172364518667.95114.7859805701643557423.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <246c0c7763a432d4bebcb0e99b90dcf4cded333d.1720957783.git.stano.jakubek@gmail.com>
-References: <cover.1720957783.git.stano.jakubek@gmail.com> <246c0c7763a432d4bebcb0e99b90dcf4cded333d.1720957783.git.stano.jakubek@gmail.com>
+	s=arc-20240116; t=1723645259; c=relaxed/simple;
+	bh=nRvlg5T3TVmO2wGsoTVEhXhV9ceaX6CQnjjbPNXYW4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y5N6XdmLj9J6nG0Thd5ssQQISuaqJc05vlIdJZppYwmWLAGG8LidhoLWm3wGlXRsGcU+K0sQzmzqdVo0MATLJLoulrsQjRLlW6mUojcJAqfdWsvWMqagKzi1NUVKCdBLV9QHmqwu3Cco5GknuzX+iyvnk0JTs2G1cDBx85+THKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GzEs/c/c; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723645258; x=1755181258;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nRvlg5T3TVmO2wGsoTVEhXhV9ceaX6CQnjjbPNXYW4U=;
+  b=GzEs/c/cO/NgLsaoJg+QvsATPMF7DkpaBVMTBvAx8WF/HibIn31Bh7tO
+   0VcJgKhnoWegzgrh4wBB9i9tZgmA/olnWh+Ep/9HhynY85Wjr5o1BdJVG
+   TYC9QwUkRGi/Shk6MT9Wd0DNv3FPbyn8aa4ZUYR0fwJi4T+v85kbtAiqD
+   v79l+ZiTO92hKYCkPurrrNxNZACvsnhEZYDGSVV8W4Eh1amS/L2AHRo7E
+   qYwHxCZtDpeMCdB1/xl1YlR38MV2ZFq4sVlZfVSRn+KieRzkTCv5E1Tn3
+   i+EE4j6aYqSTjeUhz9pFNEobrpu3QC6TJMEWJ9zM+n8+fvXez7L1vwA5E
+   A==;
+X-CSE-ConnectionGUID: 7xDM9FaGSsC4GMT/XmaJ1w==
+X-CSE-MsgGUID: o2RDOV6gScCxNTy0e4pg4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="21420392"
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="21420392"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 07:20:57 -0700
+X-CSE-ConnectionGUID: XgDpH3WfRhafsX7XjKWjBg==
+X-CSE-MsgGUID: yATN6ovvR+GRRMYatfttng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,146,1719903600"; 
+   d="scan'208";a="82257099"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 07:20:53 -0700
+Message-ID: <5a8098a6-6ef4-4c33-9b84-aef5788a5f35@linux.intel.com>
+Date: Wed, 14 Aug 2024 16:20:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for stable 2/2] ASoC: topology: Fix route memory
+ corruption
+Content-Language: en-US
+To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org
+Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
+ tiwai@suse.com, perex@perex.cz, lgirdwood@gmail.com,
+ =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ Thorsten Leemhuis <regressions@leemhuis.info>,
+ Vitaly Chikunov <vt@altlinux.org>, Mark Brown <broonie@kernel.org>
+References: <20240814140657.2369433-1-amadeuszx.slawinski@linux.intel.com>
+ <20240814140657.2369433-3-amadeuszx.slawinski@linux.intel.com>
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <20240814140657.2369433-3-amadeuszx.slawinski@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-On Sun, 14 Jul 2024 13:57:00 +0200, Stanislav Jakubek wrote:
-> According to DT spec, node names should be generic. Rename the
-> sprd,sc2731-fgu node to a more generic "fuel-gauge".
+On 8/14/2024 4:06 PM, Amadeusz Sławiński wrote:
+> It was reported that recent fix for memory corruption during topology
+> load, causes corruption in other cases. Instead of being overeager with
+> checking topology, assume that it is properly formatted and just
+> duplicate strings.
 > 
-> 
+> Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Closes: https://lore.kernel.org/linux-sound/171812236450.201359.3019210915105428447.b4-ty@kernel.org/T/#m8c4bd5abf453960fde6f826c4b7f84881da63e9d
+> Suggested-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+> Link: https://lore.kernel.org/r/20240613090126.841189-1-amadeuszx.slawinski@linux.intel.com
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
-This also waits for something... so I grabbed it.
-
-Applied, thanks!
-
-[2/2] arm64: dts: sprd: sc2731: rename fuel gauge node to be generic
-      https://git.kernel.org/krzk/linux-dt/c/e06e908dba9fed62c9493ea5cea2e4cbd306d23c
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+[ Upstream commit 0298f51652be47b79780833e0b63194e1231fa34 ]
 
