@@ -1,108 +1,183 @@
-Return-Path: <linux-kernel+bounces-286956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F949520D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:14:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED919520D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 19:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F97B24149
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0048C1F236A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 17:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0D81BBBD5;
-	Wed, 14 Aug 2024 17:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BEC1BBBD9;
+	Wed, 14 Aug 2024 17:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLcZMwbz"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="PM1LQgUu"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E081B9B28;
-	Wed, 14 Aug 2024 17:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAA21BB6BE
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723655683; cv=none; b=qCNo+LCSYazsvm8zPUkfUgRXrMZD5grNdv+yl10ke8Gb1v3nn2vyWDD/RRmAkqxT8hWauD79aF/gXGjNzzB2Ldzj9HGy9Pwj1t1ZAoNwrAI9s/KGxNG+dm6MP30LrlB6xhyzD5xguqshE1NIVz/esknnujYijB58IP9JOOgj5lI=
+	t=1723655666; cv=none; b=VyHC14+Ysr3OF2Ru1oMnt/UOBJj5SmNr2gadXYhIYn0Ie8CNr7ib60RW7pjAsB9A8gumukNZekmGW1py8pKSEMFMlCF+t+4A+rtUU7D3XzpsECHjOJxFzDL6He63dIOwBPabO/vqK33nWsF+vZZK+Atq4qikN1+1dEzRlhBMceo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723655683; c=relaxed/simple;
-	bh=5KiMiGMO0+fP9EAr2iCqOfLLXM7bfW30N/BRrU6S01U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMtRWsHlLPcPUyCkqNQDZ7EVnnMbgQ1a29sDUYd7SXI/2cVPgpurZF2F8X6JPfT676tYOBlWwkYTqRBi6GylOM9skQ08FvrBVAub5DVAR+aTGOcNKXQASnSIT/yhMovbtZuU/97YWF+0QQf9kAmEvUl3hQKnMyuPyY4g+7i31gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLcZMwbz; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd65aaac27so7987885ad.1;
-        Wed, 14 Aug 2024 10:14:41 -0700 (PDT)
+	s=arc-20240116; t=1723655666; c=relaxed/simple;
+	bh=blA3SSlWobp+ymfR6wJSN8N7F9m9dTpcI5LCBJp96tQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u5XmZMlhXZ7MIzxg3Ynx9PmQxGClyK12oo4mZ76hmNfJFhjjDqu8N4ghvJKpksA0H1/Pwua9zWWz0doDV+5IOejerupEwULqxBpQH4hnHV62rdsBL0OH7cEffeui7cPZUL6Af3la6vPO/XeEPjBQI0eiR14DPiqt+mrWCh43TiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=PM1LQgUu; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f15790b472so1902881fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 10:14:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723655680; x=1724260480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8kNWX28Qr8ufHC9hLkI8IOVeCXr80mqcgSghAfdwkDc=;
-        b=kLcZMwbzOPARHjvd1x7ijPLJyxVzsY2O/E6gvmPDzbnw3ow24SOcHuPx0/HLvP3ctL
-         gQlvOO3/2lfyf5T6DsaiNiaZoMD4nvw9lO03MvZ6cfR8M3EXw7buXK8fW0EvO4l5yFFF
-         24MuUs752xxZnqR9NdulPp5OLsKugT1EpGESlO69ularPGcHjc4Myk3kZ5dRdFaK+WIf
-         PNoOjzftMNJzhapPQFt4OFWRNJmb5QUdNPRGEW/0euFbrk598n+n20qIMbAIQsKWKnCd
-         fIJAALn/nQXgCgcUVPr0z6OVG8wGq/cPy4apm0bvyLQuI1S21AFwrjmaciLytsKGEBz6
-         dJwg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723655661; x=1724260461; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XVbOQ51p6R1MiYPVnFg0RL8dPh9TQ81XjE0YMdoGDEk=;
+        b=PM1LQgUurYCwLYDINIJnOisowOyEve/EBHBn7deNsHBIA35oSiZwnlHyTFzJ7Aucyp
+         VVdDIKhkmN35r29ISm6IsZufZO29F2eoOwks6UgKrlglkfhhp52i2BIHD0xR4MOked66
+         JbA0VU5AmHKqzZ+eq4ixZcpBJqKF8UN9aEk9bpZf4Ya0Rmzswx4cw+jZcxRFjpizwc0x
+         5HTe+VhG9wq4+NA+ctFYrvFRhaKOy2xDKuo1Mg3TxPvffGF9/xiX9suHvaMRj20YcK+E
+         P27Tgm0l1RUamhlgigXry9lrkWsohHxBfZNxV6WkRxp9W3rkbLjxg5UN1V9GHiXrqcw1
+         w3Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723655680; x=1724260480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8kNWX28Qr8ufHC9hLkI8IOVeCXr80mqcgSghAfdwkDc=;
-        b=WVX53IQOJvPl+RhEd7qsWvym1YXPA7L2MmQGZacU9Lz2hbj0CKUNCT13gYVBy5Fu6B
-         P5d0ujXX3POG9vhJ3czGgAuuLE0dxGX6ma3aPdu4B4/hXyxzL6fw52d7nzPYZheq2sT1
-         ZJjMcLjTYPLac0K9zoPSXCwHGc+LumlpgIhmx0xubiD9sYZ0Vx32Lhp5rbh4JpIypMNE
-         0KwVsictNuMIx+knvc7ZYkCAZtTNiqiCRZBfCad81uZECJv+XTSv+sOahg/VueG1aPCR
-         l4sIsgji+ZUP+A0aVALc3ds+S7vFn0XktbT64TKraj7oOywGo/ZMq5GrSDziYTXOuZdg
-         IGxw==
-X-Gm-Message-State: AOJu0YxPCGDqJEfcJ8xzuFZ8ZAIF8XR+XSzHG46XaIs99uNhUdFvT11x
-	nuVC0cp1UV4vKhzZ97XpT/tNYGcwU+d9jcKEt8pXnYa86B+x/hF0x/OGzaQHxl+Oyw==
-X-Google-Smtp-Source: AGHT+IHAoMnTLyfFSa2S1Rt10lGttkpwIZvQar+4DQSq03gYC8xiTgYU0L8QKwZNzCcmbxizcVtruA==
-X-Received: by 2002:a17:903:22cb:b0:1fb:9b91:d7d9 with SMTP id d9443c01a7336-201ee4ed160mr4510105ad.26.1723655680321;
-        Wed, 14 Aug 2024 10:14:40 -0700 (PDT)
-Received: from abhash-IdeaPad-L340-15IRH-Gaming.. ([136.233.9.100])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201cd1bba6bsm32081335ad.225.2024.08.14.10.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 10:14:39 -0700 (PDT)
-From: Abhash Jha <abhashkumarjha123@gmail.com>
-To: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kuba@kernel.org,
-	shuah@kernel.org,
-	Abhash Jha <abhashkumarjha123@gmail.com>
-Subject: [PATCH] selftests/net/pmtu.sh: Fix typo in error message
-Date: Wed, 14 Aug 2024 22:44:03 +0530
-Message-ID: <20240814171403.32374-1-abhashkumarjha123@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1723655661; x=1724260461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XVbOQ51p6R1MiYPVnFg0RL8dPh9TQ81XjE0YMdoGDEk=;
+        b=EwE1GttEp91BkuzsNJ2XUYaJi3nAi9aTNVcYnE6qAoTlkwm17FOvGvwjd3GUuuWHGs
+         VlSLJBc0H2SuxARhnnjwdbb9KPrPBfUHEsXHCvl9IQ/fc83xVVlNEcb0socn7nL6r572
+         q6l/SjQAXmTtbad05bYhHBkdrOE90jBE/uwY2ieg1R0iqJAsnitb5Jt2sYKWh1QE8qdN
+         0uybRDD5bFkzesXVQlhA/XLDxw6nkB/yDfdCoqJLEpG4rXPSH0ur9fP37orjZgE4TUff
+         XNR2PE/FMNlFLn0h1zOApTL+6I5SXa8EO+P5Bg6IwmYwKALYWdB8+8ejyuMLJQtRa3w5
+         S6RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXw5Yvb6npre7rlASVjvW44/fQREHz8ET99lWGJW8v12c5mTtj1f+ph/JdO+H7cskbIPcdgdgy//7xvxyLgb8dWoyzB8dTmSac0rv5/
+X-Gm-Message-State: AOJu0YwA8OmV4CIPu5tyOAmyYcgjwqe+lGkP+s1U6khtuH6MzpL0OBXY
+	+IDvq8EXIXWhBH0yHWu4TwrXm1zL2E4iJloj0sQW5uS1lJQk/0CkOJlV/ceuur8AmrasGIY3l+9
+	NiOp0uaGs2YAYy/TlJYg6yc0VDj7ASEP1JJgiQQ==
+X-Google-Smtp-Source: AGHT+IEL1JxJHsQVWFrwUNuPiVOcA6sWDEaFvbmneam38L+A5QIC+EqMK3s5NkkHC1kDhbTcuPkHxAMp4ntfuYQBQ4s=
+X-Received: by 2002:a05:651c:19ac:b0:2f0:25dc:1894 with SMTP id
+ 38308e7fff4ca-2f3aa1d9de7mr24706231fa.2.1723655661371; Wed, 14 Aug 2024
+ 10:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+ <20240722-dlech-mainline-spi-engine-offload-2-v3-5-7420e45df69b@baylibre.com>
+ <20240726123836.GA998909-robh@kernel.org> <9f57e41f-3534-4188-ae78-d323aa45e2a1@baylibre.com>
+ <20240814-breeding-revolving-ba26c46164de@spud>
+In-Reply-To: <20240814-breeding-revolving-ba26c46164de@spud>
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 14 Aug 2024 12:14:10 -0500
+Message-ID: <CAMknhBHxq3MKXATBXg6tZkkkUmiAtph=+8mV4KgcLne+J8kGzw@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 5/9] spi: dt-bindings: axi-spi-engine: document spi-offloads
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	David Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The word 'expected' was spelled as 'exepcted'.
-Fixed the typo in this patch.
+On Wed, Aug 14, 2024 at 10:58=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Fri, Jul 26, 2024 at 02:17:00PM -0500, David Lechner wrote:
+> > On 7/26/24 7:38 AM, Rob Herring wrote:
+> > > On Mon, Jul 22, 2024 at 04:57:12PM -0500, David Lechner wrote:
+> > >> The AXI SPI Engine has support for hardware offloading capabilities.
+> > >> There can be up to 32 offload instances per SPI controller, so the
+> > >> bindings limit the value accordingly.
+> > >>
+> > >> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > >> ---
+> > >>
+> > >> RFC: I have a few questions about this one...
+> > >>
+> > >> 1.  The trigger-source properties are borrowed from the leds binding=
+s.
+> > >>     Do we want to promote this to a generic binding that can be used=
+ by
+> > >>     any type of device?
+> > >
+> > > I would make it specific to spi-offload.
+> >
+> > OK
+> >
+> > Meanwhile, we are working on some other ADCs (without SPI offload) and
+> > finding that they are using basically the same sorts of triggers. And
+> > on the driver side of things in this series, I'm getting feedback that
+> > we should have some sort of generic trigger device rather than using,
+> > e.g. a clk directly. If we need this same sort of trigger abstraction
+> > for both SPI offloads and IIO device, it does seems like we might want
+> > to consider something like a new trigger subsystem.
+>
+> A "device" in the sense that "pwm-clk" is a device I suppose. >
 
-Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
----
- tools/testing/selftests/net/pmtu.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In simple cases, yes it could be like "pwm-clk" where a PWM/clock/gpio
+is used directly as the trigger. We also have a case where there is a
+PWM output combined with a clock output using an AND gate, so more of
+a "real" device. And finally, there is actual dedicated hardware, like
+this [1] time division duplexing (TDD) controller that, in addition to
+it's primary purpose for RF applications, can be used as a general
+purpose trigger source - mostly useful for creating burst of a finite
+number of pulses.
 
-diff --git a/tools/testing/selftests/net/pmtu.sh b/tools/testing/selftests/net/pmtu.sh
-index cfc849580..62eceb385 100755
---- a/tools/testing/selftests/net/pmtu.sh
-+++ b/tools/testing/selftests/net/pmtu.sh
-@@ -1347,7 +1347,7 @@ test_pmtu_ipvX_over_bridged_vxlanY_or_geneveY_exception() {
- 		size=$(du -sb $tmpoutfile)
- 		size=${size%%/tmp/*}
- 
--		[ $size -ne 1048576 ] && err "File size $size mismatches exepcted value in locally bridged vxlan test" && return 1
-+		[ $size -ne 1048576 ] && err "File size $size mismatches expected value in locally bridged vxlan test" && return 1
- 	done
- 
- 	rm -f "$tmpoutfile"
--- 
-2.43.0
+[1]: http://analogdevicesinc.github.io/hdl/library/axi_tdd/index.html
 
+> Are any of
+> these other things WIP on the lists (that I may have missed while I was
+> away) or are they still something you're working on internally.
+
+My ideas on actual trigger devices and bindings are still mostly on
+paper, but we do have a couple of ADCs on the mailing lists right now
+where I think it would make more sense to have a flexible "trigger"
+but we have been making due with what is currently available.
+
+ad7525
+
+In this case, we need two coordinated triggers for the CNV and CLK
+signals, one that generates a single pulse and one that generates a
+burst of 16 or 18 pulses, both repeating periodically. Right now, the
+proposed DT bindings only allow specifying a PWM to provide the CNV
+signal and a second PWM combined with a clock and an AND gate (same
+one mentioned above) to provide the CLK signal because that is the
+reference hardware design. But technically if one wanted to use, for
+example, the aforementioned TDD controller to create these signals for
+CNV and CLK instead, it should work just the same.
+
+[ad7525]: https://lore.kernel.org/linux-iio/20240809-ad7625_r1-v2-0-f85e7ac=
+83150@baylibre.com/
+
+ad4030
+
+This also needs a CNV trigger, but it works slightly differently than
+ad7525. For now, the proposed DT bindings just have a cnv-gpios to
+describe what is connected to the CNV pin. But for certain
+applications, a GPIO is not the best choice. For example, to use the
+oversampling feature of the chip, we have to provide a burst of some
+power of 2 pulses, up to 16k pulses, with specific timing to trigger
+2**N conversions before reading one sample. This can be done by
+bit-banging the GPIO but could be done much better/faster by something
+like the TDD controller that is specifically designed to create a
+burst of a finite number of pulses.
+
+[ad4030]: https://lore.kernel.org/linux-iio/20240627-eblanc-ad4630_v1-v1-0-=
+fdc0610c23b0@baylibre.com/
+
+Having a generic DT binding for these ADC input pins that can be
+connected to a wide variety of outputs seems more future proof than
+having to modify the bindings each time someone wants to support a new
+type of output provider.
 
