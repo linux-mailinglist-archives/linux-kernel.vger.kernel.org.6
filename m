@@ -1,165 +1,113 @@
-Return-Path: <linux-kernel+bounces-286122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5ED9516E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:45:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2F99516EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 10:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55FE7283D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447EB1F21183
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 08:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FAF1428FA;
-	Wed, 14 Aug 2024 08:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4517143748;
+	Wed, 14 Aug 2024 08:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hg5UqsW6"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kuroa.me header.i=@kuroa.me header.b="c3uJOsh/"
+Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383C8139D13
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FDF1411C7
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 08:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723625121; cv=none; b=fT8pw9U5HCkh9FWxX1ngsLxT+HM9CN9Vl/hzxdcy187Qrg5uqrbvHbxkDpEZXn37U/2hgzlxXzPoR/D4TMLtsrQXTedjGmo40QRe8UgENw1s9coKNtAJG1v+PsU2vYR+3+3RoeFPb5+xOj2m9WF8NGj3nRkUvvvFGijFd3ETe5E=
+	t=1723625192; cv=none; b=pmzOSFJBN+hA5CBJuNMF1wepblrCWNVSiqWLcMtDGq6/FgH6Jt5BwSzQFYMiWZAHhCCEw69HzYPjp1GsXoyNkIdavFEbjGnUpE+p/XvEXF57aQaDFefsje3f07TP4vrdCYWjDGzHyDCerU+WRn0XwlBq/rPJNo4EUEG10qOqqkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723625121; c=relaxed/simple;
-	bh=rP0BJSU43YUuU9/R8Fx0nn/NVCzVpX9I9QY7RttkZh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PL3FAKxOmkq5Zn8hwC0v1KRdSHbdRgeTFzKLj2Dyw/1AXOawxurBYD0jkvXAWd+wV1fAr0EjeMXgGbfc/nS6MpnSSz0NwgiZIL7qmQdgKLP5jpgFsuMuiiMgkOkDc9BuWl2Y5Wra7pCTGN3ORHpt5iMu67LK0uOkMBVnS82JGzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hg5UqsW6; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc4fccdd78so46665215ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 01:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723625119; x=1724229919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TH1M4v3WVE7mB9RLKtgXX+m2D/YPKIYBQHunV/cYH4Y=;
-        b=hg5UqsW6IsFbRosFffN4LvKAELoXaTvCfXyJOAdpMzq7g0U4nEtsbyDGNNFW6ylPYZ
-         jC7A47Uvy8eBoztewlm6JaHf9yuLfQBoD5iULAaLnUcS3igg/TbMGdfymwWMLcJ5ixmA
-         E/VbOh5ckbjgglidHDgHCVOcnZLPY5aF1jYOB5MoEioSQNcNftZusFkk0cbmzFNpShD7
-         430ajNK0ImEvudbLQGh49IR/wAe5mDj8eMJMTVhVdxjIkr4fULp7k1/bhklV5guepmdf
-         sxb9Q52rkfp8wDMgyGFolQfWwvfIlakc+rr6Y2M/rYIYhjvoIh18eRiCvJqt2ErJAcbz
-         p0XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723625119; x=1724229919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TH1M4v3WVE7mB9RLKtgXX+m2D/YPKIYBQHunV/cYH4Y=;
-        b=DPNwrrr3wn9X4J/wr57TYrlr/5jKhOp6AfEvEA4aYOAD88aOX7uwBm9zpHwukFb/2P
-         56t81q2yomq+HCzM7fUVQJsIH6ItMkAYgRIk6YqDjxRBzlIZBg5w52egfVxbrg2iqeAJ
-         dWVPUpejtJhoZHvTvtNH4XE0xNfyyoR9bHE2NeOHyQhj6Qu6CDMiwetk0DaQrFI0YKQD
-         vGr+iQjFQZ/W1fjCzxLjkBr7h6BpGPPf5PmbDmv5Jwrz+wil4Fv/8jhSZ1Zr3cAdG+YN
-         5Ykrw3Gd+A8mY+GyoUyifBbB37GSr8+/F6tR+Bnb4iTyLU+SqxhLRg/ebx8UQbTQcnzJ
-         O/lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9KLI3YSnTjVS3FYrb41YF4ZgYzzC0ezgppR/JZsGDQOs5Cl0SkhJUoIvyNbgtDFctvhnxOeQhjCLTLl/JVxpWVA17HFxLSLWxRWCo
-X-Gm-Message-State: AOJu0Yy1Hj8sAdv6ljR7Bm17mvGOn8mQh2Ie2yse4RtoHBDfFNJ+u0St
-	VtqAxNyVzH9ng7zAEw+Fyj4gDFUgehaMsHsujvQvahvwFnD+mTgiNb3xD4CWpbI=
-X-Google-Smtp-Source: AGHT+IF6U/jKHy8IrZmFjWfX+RHKB/V6pImruUUL82Kvd3FD/Ry4bV66gBZEGB2/4lRsfrz+jjEL7Q==
-X-Received: by 2002:a17:903:41c9:b0:201:e634:d84f with SMTP id d9443c01a7336-201e634db7fmr189975ad.59.1723625119315;
-        Wed, 14 Aug 2024 01:45:19 -0700 (PDT)
-Received: from C02F52LSML85.bytedance.net ([203.208.167.150])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a940esm25151785ad.159.2024.08.14.01.45.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 01:45:17 -0700 (PDT)
-From: Feng zhou <zhoufeng.zf@bytedance.com>
-To: edumazet@google.com,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	dsahern@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	yangzhenze@bytedance.com,
-	wangdongdong.6@bytedance.com,
-	zhoufeng.zf@bytedance.com
-Subject: [PATCH] bpf: Fix bpf_get/setsockopt to tos not take effect when TCP over IPv4 via INET6 API
-Date: Wed, 14 Aug 2024 16:45:04 +0800
-Message-Id: <20240814084504.22172-1-zhoufeng.zf@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1723625192; c=relaxed/simple;
+	bh=/hpzqpKqwgFZ6tNT5IHE8aXb2qaoDVbi2mxpNjL8NGo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=luvd7R5T4tpSy7QRrIJDYxfHFPc0MGpEZioJgJtzOPClV37nY609fsMu8WUbgglM6lk5k12LHGcUG4q9QfDl2MSjGCr2MOWT1qQEpfQrZc7+3UJrwAhYDnG4dvE48b2zQ8M7l44HqnsSFyaHp22Rnd2K3LAc0jaS3/o08ofpHag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuroa.me; spf=pass smtp.mailfrom=kuroa.me; dkim=pass (2048-bit key) header.d=kuroa.me header.i=@kuroa.me header.b=c3uJOsh/; arc=none smtp.client-ip=17.58.6.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuroa.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kuroa.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kuroa.me; s=sig1;
+	t=1723625190; bh=39zkGYyVnIKAzoCRWGuhrYmjBOmesy3MMUslrQoA4xg=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	b=c3uJOsh/IoJUki4AlHCKCYKcgB0Vq1nlEOhcSus7BVAiRfZSqzpZOnfC18J54VYy6
+	 8icQoDS57nLVJd6x8FSPv6gUq+z7FUVlNGVZkHA4H1+RY0FnhxTE3tiJ/urbk/iuug
+	 4DFa3NuNJCZEWUHpdK0JwDnVmJVRIwIw/iZzPGYyD++bIILsTvdUDHvkRyDCBEbvWk
+	 YnEVWvuq5QBSqFIqo7xlmUNIx60yqDQKwMqcMTcRtB4qdCJYBbY/9MQPRfLI/+cEa7
+	 74OxWt2nj9v9v9VEOQ2g0Mv/jxIUlKm7q0EpQhCaliQHOXnYx8jBNpLSvGBCPQWPob
+	 zrZdxy7zvx0CQ==
+Received: from tora.kuroa.me (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPSA id 48B2A680249;
+	Wed, 14 Aug 2024 08:46:25 +0000 (UTC)
+From: Xueming Feng <kuro@kuroa.me>
+To: Lorenzo Colitti <lorenzo@google.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Yuchung Cheng <ycheng@google.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net,v2] tcp: fix forever orphan socket caused by tcp_abort
+Date: Wed, 14 Aug 2024 16:46:22 +0800
+Message-Id: <20240814084622.555672-1-kuro@kuroa.me>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <CAKD1Yr3i+858zNvSwbuFLiBHS52xhTw5oh6P-sPgRNcMbWEbhw@mail.gmail.com>
+References: <CAKD1Yr3i+858zNvSwbuFLiBHS52xhTw5oh6P-sPgRNcMbWEbhw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 6DSkcaNRO_fXaO2-XM1-Ua1mTKugqRoD
+X-Proofpoint-ORIG-GUID: 6DSkcaNRO_fXaO2-XM1-Ua1mTKugqRoD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_06,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1030 mlxscore=0
+ bulkscore=0 malwarescore=0 mlxlogscore=607 suspectscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408140061
 
-From: Feng Zhou <zhoufeng.zf@bytedance.com>
+On Mon, Aug 14, 2024 at 7:34 AM Lorenzo Colitti <lorenzo@google.com> wrote:
+> On Mon, Aug 12, 2024 at 7:53 PM Xueming Feng <kuro@kuroa.me> wrote:
+> > The -ENOENT code comes from the associate patch Lorenzo made for
+> > iproute2-ss; link attached below.
+> 
+> ENOENT does seem reasonable. It's the same thing that would happen if
+> userspace passed in a nonexistent cookie (we have a test for that).
 
-When TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
-fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
-take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
-use ip_queue_xmit, inet_sk(sk)->tos.
+In the latest TCP RFC 9293, section 3.10.5 on the ABORT CALL, it mentions
+that an "error: connection does not exist" to be returned for a CLOSED 
+STATE. I noticed this while verifying whether a reset in the FIN-WAIT 
+STATE is legal, which it is.
 
-So bpf_get/setsockopt needs add the judgment of this case. Just check
-"inet_csk(sk)->icsk_af_ops == &ipv6_mapped".
+> I'd guess this could happen if userspace was trying to destroy a
+> socket but it lost the race against the process owning a socket
+> closing it?
 
-Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
----
- include/net/tcp.h   | 2 ++
- net/core/filter.c   | 2 +-
- net/ipv6/tcp_ipv6.c | 5 +++++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+Yes, that’s exactly the scenario I'm addressing. I tested this locally
+by calling tcp_diag twice with the same socket pointer.
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 2aac11e7e1cc..ea673f88c900 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -493,6 +493,8 @@ struct request_sock *cookie_tcp_reqsk_alloc(const struct request_sock_ops *ops,
- 					    struct tcp_options_received *tcp_opt,
- 					    int mss, u32 tsoff);
- 
-+bool is_tcp_sock_ipv6_mapped(struct sock *sk);
-+
- #if IS_ENABLED(CONFIG_BPF)
- struct bpf_tcp_req_attrs {
- 	u32 rcv_tsval;
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 78a6f746ea0b..9798537044be 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -5399,7 +5399,7 @@ static int sol_ip_sockopt(struct sock *sk, int optname,
- 			  char *optval, int *optlen,
- 			  bool getopt)
- {
--	if (sk->sk_family != AF_INET)
-+	if (sk->sk_family != AF_INET && !is_tcp_sock_ipv6_mapped(sk))
- 		return -EINVAL;
- 
- 	switch (optname) {
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 200fea92f12f..84651d630c89 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -92,6 +92,11 @@ static const struct tcp_sock_af_ops tcp_sock_ipv6_mapped_specific;
- #define tcp_inet6_sk(sk) (&container_of_const(tcp_sk(sk), \
- 					      struct tcp6_sock, tcp)->inet6)
- 
-+bool is_tcp_sock_ipv6_mapped(struct sock *sk)
-+{
-+	return (inet_csk(sk)->icsk_af_ops == &ipv6_mapped);
-+}
-+
- static void inet6_sk_rx_dst_set(struct sock *sk, const struct sk_buff *skb)
- {
- 	struct dst_entry *dst = skb_dst(skb);
--- 
-2.30.2
+> 
+> >        bh_unlock_sock(sk);
+> >        local_bh_enable();
+> > -       tcp_write_queue_purge(sk);
+> 
+> Is this not necessary in any other cases? What if there is
+> retransmitted data, shouldn't that be cleared?
 
+The tcp_write_queue_purge() function is indeed invoked within 
+tcp_done_with_error(). In this patch, the tcp_done_with_error is elevated
+to the same logical level where tcp_write_queue_purge would typically be 
+called. The difference is that the purge happens just before tcp_done.
+So the queue should still be cleared in other scenarios as well.
 
