@@ -1,101 +1,101 @@
-Return-Path: <linux-kernel+bounces-286196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F259517C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:36:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFACE9517CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AE431C227AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:36:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69544B24199
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394A914A0AD;
-	Wed, 14 Aug 2024 09:35:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D5715A84E;
+	Wed, 14 Aug 2024 09:36:39 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA8E139590;
-	Wed, 14 Aug 2024 09:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FD4157480;
+	Wed, 14 Aug 2024 09:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723628152; cv=none; b=iT4jwX9LmdNAEDo3KvHfFBS70bT2tszTglhX6UY434G9Gut7uapQUvEYg8uqinVgtUHm6y65+SRWb3atRzjpd1tXM3qhvfIql+B1pD7e6LP4I32Ilglmz+qBSOhhsxqg/HvunOa/mrz3TbxxFYmFW9hCWq1O1LjthY7opPr2DpM=
+	t=1723628199; cv=none; b=QgVzQlI6QQdjLziwfsQW6BAXQLHfyZhGUefdtT1GoORhcL+tzZ4ZJp2oz2ZV4NnabMalHqc2cVc49fcwyLDM55x42nWFlYPquOZ22AN0SSJefRQN34UVm7U77QBjnHsrY4q7X/gQkkJz646SBjOU6PGi9jOhfzbSttaUgll6SA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723628152; c=relaxed/simple;
-	bh=MSOQCrj9wCA/RfbouaPAXc8JM5QATuJnf3y9gXmCIM0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=da/mTseiw9QtvO8aAFx4TVXGctWkGodfB/Y2J6BD5L9wCt7Qmr/FOxbP+VTFQFCWjqV6KkyPsmvs9cCUC2vL64LVuWTJtxlRq5V7Qqf9ImtpLhArhNIJvZlj47pzNHzObf9A/EiO9ITHDRPxZAWfyXP9eh4gsRPP+IbD4gqBjns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+	s=arc-20240116; t=1723628199; c=relaxed/simple;
+	bh=69RrlcOgLAlXVu8vt6tr+Q75bTEVVTKF+Lyjw+E3BDk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hjBClnGjo8o+p1rbYMYUaFLw+eFhkiRdqaW1ii8rkXcCUzbxzfysNqLRyV4vFUw9sLSnwes0KyAjli3VjD81LnPonKPgidavjwmAemVI0Ty2A0ihd3gq5F7NtbMEjJZZrC7owy+S9gwgV/8BqeAfiptbHECehUhkLfsFlMf7DzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkNN54Cfzz6K8yn;
-	Wed, 14 Aug 2024 17:33:09 +0800 (CST)
-Received: from lhrpeml100003.china.huawei.com (unknown [7.191.160.210])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5FE59140A35;
-	Wed, 14 Aug 2024 17:35:47 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- lhrpeml100003.china.huawei.com (7.191.160.210) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 14 Aug 2024 10:35:47 +0100
-Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
- lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
- Wed, 14 Aug 2024 10:35:47 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v8 4/4] Documentation: add debugfs description for hisi
- migration
-Thread-Topic: [PATCH v8 4/4] Documentation: add debugfs description for hisi
- migration
-Thread-Index: AQHa5/1vtg2O0BOBdUeZRhRC2k0A9rImindg
-Date: Wed, 14 Aug 2024 09:35:46 +0000
-Message-ID: <d3530c8dda504a22b983cccba0468382@huawei.com>
-References: <20240806122928.46187-1-liulongfang@huawei.com>
- <20240806122928.46187-5-liulongfang@huawei.com>
-In-Reply-To: <20240806122928.46187-5-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WkNLm0VKMzQpnp;
+	Wed, 14 Aug 2024 17:32:00 +0800 (CST)
+Received: from kwepemd100024.china.huawei.com (unknown [7.221.188.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 652EC1400C9;
+	Wed, 14 Aug 2024 17:36:34 +0800 (CST)
+Received: from huawei.com (10.175.124.27) by kwepemd100024.china.huawei.com
+ (7.221.188.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 Aug
+ 2024 17:36:33 +0800
+From: yangyun <yangyun50@huawei.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lixiaokeng@huawei.com>
+Subject: [PATCH] fuse: add fast path for fuse_range_is_writeback
+Date: Wed, 14 Aug 2024 17:36:00 +0800
+Message-ID: <20240814093600.216757-1-yangyun50@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100024.china.huawei.com (7.221.188.41)
 
+In some cases, the fi->writepages may be empty. And there is no need
+to check fi->writepages with spin_lock, which may have an impact on
+performance due to lock contention. For example, in scenarios where
+multiple readers read the same file without any writers, or where
+the page cache is not enabled.
 
+Also remove the outdated comment since commit 6b2fb79963fb ("fuse:
+optimize writepages search") has optimize the situation by replacing
+list with rb-tree.
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, August 6, 2024 1:29 PM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum Thodi
-> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v8 4/4] Documentation: add debugfs description for hisi
-> migration
->=20
-> Add a debugfs document description file to help users understand
-> how to use the hisilicon accelerator live migration driver's
-> debugfs.
->=20
-> Update the file paths that need to be maintained in MAINTAINERS
->=20
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+Signed-off-by: yangyun <yangyun50@huawei.com>
+---
+ fs/fuse/file.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-LGTM,
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f39456c65ed7..59c911b61000 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -448,9 +448,6 @@ static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+ 
+ /*
+  * Check if any page in a range is under writeback
+- *
+- * This is currently done by walking the list of writepage requests
+- * for the inode, which can be pretty inefficient.
+  */
+ static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+ 				   pgoff_t idx_to)
+@@ -458,6 +455,9 @@ static bool fuse_range_is_writeback(struct inode *inode, pgoff_t idx_from,
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	bool found;
+ 
++	if (RB_EMPTY_ROOT(&fi->writepages))
++		return false;
++
+ 	spin_lock(&fi->lock);
+ 	found = fuse_find_writeback(fi, idx_from, idx_to);
+ 	spin_unlock(&fi->lock);
+-- 
+2.33.0
 
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
-Thanks,
-Shameer
 
