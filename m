@@ -1,370 +1,168 @@
-Return-Path: <linux-kernel+bounces-286167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-286170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C3595177A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:17:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC6E951784
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 11:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119021C2162A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C9D1F230C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 09:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9025145B00;
-	Wed, 14 Aug 2024 09:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="pUqcu21W"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8DE143C5D;
+	Wed, 14 Aug 2024 09:19:47 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B4A13D52F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D335219EA
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 09:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723627014; cv=none; b=rFWyaiQrfhyh7zUzOe6LJ5+WRMGiVIijNaX+Tkg0ymipMFRlYJNVk2uN4OeThFBm9r1mNQFwgQC273AfwNSf/XBHwJ1DFLrfrm08VhVdoqs4quYCM+dDz0gw/sv+SA5jj0ugDIIR+U6D6+kyoAYjrjifMe8NVvdzhFhD6EOP+Ac=
+	t=1723627187; cv=none; b=gL4ZpxBkYxF8JcjabROL5olvtc+kmpO6vQkkWYvqi4Qm7M9i6lC7mX1Jvc4wISbnO2/Oq5YKLZjdPNwobrLyg920mjGyPcLO70QjfDrRJbMR/8+th/QcF4DN7erOS6S+hwMzPC2Ifv79FC4SOtZMFAdMcaL7y+RtEhMVCURA0Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723627014; c=relaxed/simple;
-	bh=PZE/Rt9xs974mwZejqQUGxJHXzN/WzAHYJGpQWuS1s8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6OeUf4uKvESUnYCVsuTd0auFfW9h5qFQD+d8nmakrFCNGdNHiKHFDfsOihJt/N0Ok+rECTEttDnbAwNgWwZAIuLex7loJ4gl7Q8fHzH5aoXEE+1s6aSPRKX9RGVksmQvlMtnJqZJyvX2UzwCUqU9Q0CaghMrygbuh996R2E36Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=pUqcu21W; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso11760772e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 02:16:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723627011; x=1724231811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sxC7kdybifVhUqn7ncALrAjg97mdQ2TxZUkRfH1PSjI=;
-        b=pUqcu21W/XnqVcYu053rQwQzencrCf9f4ik6uBqz8SM0P5CC+E2oHiIUrfVyqxCr5D
-         +QQBt8FJHvgwKOnwtJt+V2ZokkbyVsuPnJGhRdLJOhgn22g4zwQMGgJN5a0gzZm8YVxj
-         ewJf+vtxpNUjDNRqYfw/aOoLStDzSuvR6nuvqltogkEQxBLT+QNYU2t4R6+10RJ8G4Bc
-         8UG6yROEtgu8GoI2vLljNG4VB3Dv2s561/x3qR5UwhEeYm6XMtBv1vjB7xiGIr6QTBXO
-         gl7bCUfix+2N/fKPY/7LSSWb8T5QN/fjE7sI4VyTUE4UzDcJySSLTiWSrj5dNi4523OX
-         o10Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723627011; x=1724231811;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sxC7kdybifVhUqn7ncALrAjg97mdQ2TxZUkRfH1PSjI=;
-        b=tvs3hfJuuUglwNN6LbZGGDd7tL35UUdAyrT4lc34f10PWejpdZnT2/w8CB/1vZJhA/
-         DRwfyAUo+GEt1Y4iJJgn3vLbV9Yb/8IpCQnSicCBnHSLfIhER15IrlCItVpCTKo+x5NQ
-         o+x/F89N0edJepvA2bv7e91NuHdHtmB7Kr3HjyrM20ajQWl3CEr8PYb+BDAwS/TBYjeN
-         GvjHUKtNTt/j6zUbjQ5fIKg2Ou3l8xRn1DDTL2Fgm/oaKqrD7GqRbgB78xlZX+wYmCiv
-         cLH8TOhbjYNNJP7VwPMv6wLrFYEA70oIzhoAxNiEcrSpbQgOK9wLetsJBtthTxKd/SYM
-         j7FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaamp1nywiOKnILUn6SW2CxibcODN3QieYUsNqIkez6L0tErY4Lav9wbo1lyjHGTST7wVnqnYyhoOvDeS9ES+TE/kN/3Y137iGcXDO
-X-Gm-Message-State: AOJu0Yw8wslar8Xo+kOfFm391T0qJqBEsGbMSbbNRLXiTH1SXV1SzVUY
-	+ulYOmN0VZ8uYNJo/f0iJEmg/i69/AxRtKPXr5r4+kFDSbQhYRI5RI61hlxyGSIRPBUhsAuWuaE
-	SYTeOgKNouG7rMQSPf72+cCaqj7C2743VzRJLRw==
-X-Google-Smtp-Source: AGHT+IFIsCffTyQseLNzVA8LUwSI98USyjdTuG0s4gY7q6vJflHoozaE+P1rkDLdW8Y+JLjetsoEnQsdUxhwHjoBOaM=
-X-Received: by 2002:a05:6512:104a:b0:52c:9877:71b7 with SMTP id
- 2adb3069b0e04-532edbd19f5mr1703786e87.59.1723627010847; Wed, 14 Aug 2024
- 02:16:50 -0700 (PDT)
+	s=arc-20240116; t=1723627187; c=relaxed/simple;
+	bh=e2WSRhpd3uw/kMhfxEZdSGNBeHFgIXdx9uo8t0sVKTk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dvdx3lrO+nO3mm79cnaVyZNsQoE2Xx/VT+51gjnZVkhS7bIxPSwlTDVa0W1Aa4kCebDm6q0wbULBa+XvbE2JeSex5rIdD6iZeAzBq2BvA1pd5SaRxmhnVTgJjhJQGOll0cf1SmAoDrTdYBP2pzq9AdFvBT5FnkwCQ4R06TQdWGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 509545c05a1e11efa216b1d71e6e1362-20240814
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
+	SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED
+	SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:0e63fb48-8fd2-4258-9a96-6b1e513c1a52,IP:25,
+	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:-5
+X-CID-INFO: VERSION:1.1.38,REQID:0e63fb48-8fd2-4258-9a96-6b1e513c1a52,IP:25,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-5
+X-CID-META: VersionHash:82c5f88,CLOUDID:77a89f181d9a5d44dd87b10eda787846,BulkI
+	D:240814164706XOKLLZ1K,BulkQuantity:2,Recheck:0,SF:66|24|72|19|44|102,TC:n
+	il,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL
+	:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 509545c05a1e11efa216b1d71e6e1362-20240814
+X-User: liuye@kylinos.cn
+Received: from localhost.localdomain [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <liuye@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 268203527; Wed, 14 Aug 2024 17:19:31 +0800
+From: liuye <liuye@kylinos.cn>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	liuye@kylinos.cn
+Subject: [PATCH] mm/vmscan: Fix hard LOCKUP in function isolate_lru_folios
+Date: Wed, 14 Aug 2024 17:18:25 +0800
+Message-Id: <20240814091825.27262-1-liuye@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503-congatec-board-controller-v1-0-fec5236270e7@bootlin.com> <20240503-congatec-board-controller-v1-2-fec5236270e7@bootlin.com>
-In-Reply-To: <20240503-congatec-board-controller-v1-2-fec5236270e7@bootlin.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 14 Aug 2024 11:16:39 +0200
-Message-ID: <CAMRc=MeC4q3BGxycxnOZCC8nD7p=8AO9rQasb5Gd4T1E+aKvHA@mail.gmail.com>
-Subject: Re: [PATCH 2/5] gpio: Congatec Board Controller gpio driver
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, thomas.petazzoni@bootlin.com, 
-	blake.vermeer@keysight.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 9, 2024 at 4:52=E2=80=AFPM Thomas Richard
-<thomas.richard@bootlin.com> wrote:
->
-> Add gpio support for the Congatec Board Controller.
->
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> ---
->  drivers/gpio/Kconfig     |  10 +++
->  drivers/gpio/Makefile    |   1 +
->  drivers/gpio/gpio-cgbc.c | 203 +++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 214 insertions(+)
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 58f43bcced7c..ce77bad40087 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -233,6 +233,16 @@ config GPIO_CADENCE
->         help
->           Say yes here to enable support for Cadence GPIO controller.
->
-> +config GPIO_CGBC
-> +       tristate "Congatec Board Controller GPIO support"
-> +       depends on MFD_CGBC
-> +       help
-> +         Select this option to enable GPIO support for the Congatec Boar=
-d
-> +         Controller.
-> +
-> +         This driver can also be built as a module. If so, the module wi=
-ll be
-> +         called gpio-cgbc.
-> +
->  config GPIO_CLPS711X
->         tristate "CLPS711X GPIO support"
->         depends on ARCH_CLPS711X || COMPILE_TEST
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 64dd6d9d730d..3a96e3c27a2d 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -44,6 +44,7 @@ obj-$(CONFIG_GPIO_BD9571MWV)          +=3D gpio-bd9571m=
-wv.o
->  obj-$(CONFIG_GPIO_BRCMSTB)             +=3D gpio-brcmstb.o
->  obj-$(CONFIG_GPIO_BT8XX)               +=3D gpio-bt8xx.o
->  obj-$(CONFIG_GPIO_CADENCE)             +=3D gpio-cadence.o
-> +obj-$(CONFIG_GPIO_CGBC)                        +=3D gpio-cgbc.o
->  obj-$(CONFIG_GPIO_CLPS711X)            +=3D gpio-clps711x.o
->  obj-$(CONFIG_GPIO_SNPS_CREG)           +=3D gpio-creg-snps.o
->  obj-$(CONFIG_GPIO_CROS_EC)             +=3D gpio-cros-ec.o
-> diff --git a/drivers/gpio/gpio-cgbc.c b/drivers/gpio/gpio-cgbc.c
-> new file mode 100644
-> index 000000000000..6da50c794872
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-cgbc.c
-> @@ -0,0 +1,203 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Congatec Board Controller GPIO driver
-> + *
-> + * Copyright (C) 2024 Bootlin
-> + * Author: Thomas Richard <thomas.richard@bootlin.com>
-> + */
-> +
-> +#include <linux/gpio/driver.h>
-> +#include <linux/mfd/cgbc.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define CGBC_GPIO_NGPIO        14
-> +
-> +#define CGBC_GPIO_CMD_GET      0x64
-> +#define CGBC_GPIO_CMD_SET      0x65
-> +#define CGBC_GPIO_CMD_DIR_GET  0x66
-> +#define CGBC_GPIO_CMD_DIR_SET  0x67
-> +
-> +struct cgbc_gpio_data {
-> +       struct gpio_chip        chip;
-> +       struct cgbc_device_data *cgbc;
-> +       struct mutex lock;
-> +};
-> +
-> +static int cgbc_gpio_cmd(struct cgbc_device_data *cgbc,
-> +                        u8 cmd0, u8 cmd1, u8 cmd2, u8 *value)
-> +{
-> +       u8 cmd[3] =3D {cmd0, cmd1, cmd2};
-> +
-> +       return cgbc_command(cgbc, cmd, sizeof(cmd), value, 1, NULL);
-> +}
-> +
-> +static int cgbc_gpio_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +       struct cgbc_device_data *cgbc =3D gpio->cgbc;
-> +       int ret;
-> +       u8 val;
-> +
+This fixes the following hard lockup in function isolate_lru_folios
+when memory reclaim.If the LRU mostly contains ineligible folios
+May trigger watchdog.
 
-Can you use scoped_guard() here and elsewhere?
+watchdog: Watchdog detected hard LOCKUP on cpu 173
+RIP: 0010:native_queued_spin_lock_slowpath+0x255/0x2a0
+Call Trace:
+	_raw_spin_lock_irqsave+0x31/0x40
+	folio_lruvec_lock_irqsave+0x5f/0x90
+	folio_batch_move_lru+0x91/0x150
+	lru_add_drain_per_cpu+0x1c/0x40
+	process_one_work+0x17d/0x350
+	worker_thread+0x27b/0x3a0
+	kthread+0xe8/0x120
+	ret_from_fork+0x34/0x50
+	ret_from_fork_asm+0x1b/0x30
 
-> +       mutex_lock(&gpio->lock);
-> +
-> +       ret =3D cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_GET, (offset > 7) ? 1 :=
- 0, 0, &val);
-> +
-> +       mutex_unlock(&gpio->lock);
-> +
-> +       offset %=3D 8;
-> +
-> +       if (ret)
-> +               return ret;
-> +       else
-> +               return (int)(val & (u8)BIT(offset));
-> +}
-> +
-> +static void __cgbc_gpio_set(struct gpio_chip *chip,
-> +                           unsigned int offset, int value)
-> +{
-> +       struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +       struct cgbc_device_data *cgbc =3D gpio->cgbc;
-> +       u8 val;
-> +       int ret;
-> +
-> +       ret =3D cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_GET, (offset > 7) ? 1 :=
- 0, 0, &val);
-> +       if (ret)
-> +               return;
-> +
-> +       if (value)
-> +               val |=3D BIT(offset % 8);
-> +       else
-> +               val &=3D ~((u8)BIT(offset % 8));
-> +
-> +       cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_SET, (offset > 7) ? 1 : 0, val,=
- &val);
-> +}
-> +
-> +static void cgbc_gpio_set(struct gpio_chip *chip,
-> +                         unsigned int offset, int value)
-> +{
-> +       struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +
-> +       mutex_lock(&gpio->lock);
-> +       __cgbc_gpio_set(chip, offset, value);
-> +       mutex_unlock(&gpio->lock);
-> +}
-> +
-> +static int cgbc_gpio_direction_set(struct gpio_chip *chip,
-> +                                  unsigned int offset, int direction)
-> +{
-> +       struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +       struct cgbc_device_data *cgbc =3D gpio->cgbc;
-> +       int ret;
-> +       u8 val;
-> +
-> +       ret =3D cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_DIR_GET, (offset > 7) ?=
- 1 : 0, 0, &val);
-> +       if (ret)
-> +               goto end;
-> +
-> +       if (direction =3D=3D GPIO_LINE_DIRECTION_IN)
-> +               val &=3D ~((u8)BIT(offset % 8));
-> +       else
-> +               val |=3D BIT(offset % 8);
-> +
-> +       ret =3D cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_DIR_SET, (offset > 7) ?=
- 1 : 0, val, &val);
-> +
-> +end:
-> +       return ret;
-> +}
-> +
-> +static int cgbc_gpio_direction_input(struct gpio_chip *chip,
-> +                                    unsigned int offset)
-> +{
-> +       struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +       int ret;
-> +
-> +       mutex_lock(&gpio->lock);
-> +       ret =3D cgbc_gpio_direction_set(chip, offset, GPIO_LINE_DIRECTION=
-_IN);
-> +       mutex_unlock(&gpio->lock);
-> +
-> +       return ret;
-> +}
-> +
-> +static int cgbc_gpio_direction_output(struct gpio_chip *chip,
-> +                                     unsigned int offset, int value)
-> +{
-> +       struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +       int ret;
-> +
-> +       mutex_lock(&gpio->lock);
-> +       __cgbc_gpio_set(chip, offset, value);
-> +       ret =3D cgbc_gpio_direction_set(chip, offset, GPIO_LINE_DIRECTION=
-_OUT);
-> +       mutex_unlock(&gpio->lock);
-> +
-> +       return ret;
-> +}
-> +
-> +static int cgbc_gpio_get_direction(struct gpio_chip *chip, unsigned int =
-offset)
-> +{
-> +       struct cgbc_gpio_data *gpio =3D gpiochip_get_data(chip);
-> +       struct cgbc_device_data *cgbc =3D gpio->cgbc;
-> +       int ret;
-> +       u8 val;
-> +
-> +       ret =3D cgbc_gpio_cmd(cgbc, CGBC_GPIO_CMD_DIR_GET, (offset > 7) ?=
- 1 : 0, 0, &val);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (val & BIT(offset % 8))
-> +               return GPIO_LINE_DIRECTION_OUT;
-> +       else
-> +               return GPIO_LINE_DIRECTION_IN;
-> +}
-> +
-> +static int cgbc_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct cgbc_device_data *cgbc =3D dev_get_drvdata(dev->parent);
-> +       struct cgbc_gpio_data *gpio;
-> +       struct gpio_chip *chip;
-> +       int ret;
-> +
-> +       gpio =3D devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
-> +       if (!gpio)
-> +               return -ENOMEM;
-> +
-> +       gpio->cgbc =3D cgbc;
-> +
-> +       platform_set_drvdata(pdev, gpio);
-> +
-> +       chip =3D &gpio->chip;
-> +       chip->label =3D dev_name(&pdev->dev);
-> +       chip->owner =3D THIS_MODULE;
-> +       chip->parent =3D dev;
-> +       chip->base =3D -1;
-> +       chip->direction_input =3D cgbc_gpio_direction_input;
-> +       chip->direction_output =3D cgbc_gpio_direction_output;
-> +       chip->get_direction =3D cgbc_gpio_get_direction;
-> +       chip->get =3D cgbc_gpio_get;
-> +       chip->set =3D cgbc_gpio_set;
-> +       chip->ngpio =3D CGBC_GPIO_NGPIO;
-> +
-> +       mutex_init(&gpio->lock);
+lruvec->lru_lock owner：
 
-Please use devm_mutex_init() so that it gets cleaned up at exit. It's
-not strictly necessary but helps with lock debugging.
+PID: 2865     TASK: ffff888139214d40  CPU: 40   COMMAND: "kswapd0"
+ #0 [fffffe0000945e60] crash_nmi_callback at ffffffffa567a555
+ #1 [fffffe0000945e68] nmi_handle at ffffffffa563b171
+ #2 [fffffe0000945eb0] default_do_nmi at ffffffffa6575920
+ #3 [fffffe0000945ed0] exc_nmi at ffffffffa6575af4
+ #4 [fffffe0000945ef0] end_repeat_nmi at ffffffffa6601dde
+    [exception RIP: isolate_lru_folios+403]
+    RIP: ffffffffa597df53  RSP: ffffc90006fb7c28  RFLAGS: 00000002
+    RAX: 0000000000000001  RBX: ffffc90006fb7c60  RCX: ffffea04a2196f88
+    RDX: ffffc90006fb7c60  RSI: ffffc90006fb7c60  RDI: ffffea04a2197048
+    RBP: ffff88812cbd3010   R8: ffffea04a2197008   R9: 0000000000000001
+    R10: 0000000000000000  R11: 0000000000000001  R12: ffffea04a2197008
+    R13: ffffea04a2197048  R14: ffffc90006fb7de8  R15: 0000000003e3e937
+    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+    <NMI exception stack>
+ #5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
+ #6 [ffffc90006fb7cf8] shrink_active_list at ffffffffa597f788
+ #7 [ffffc90006fb7da8] balance_pgdat at ffffffffa5986db0
+ #8 [ffffc90006fb7ec0] kswapd at ffffffffa5987354
+ #9 [ffffc90006fb7ef8] kthread at ffffffffa5748238
+crash>
 
-> +
-> +       ret =3D devm_gpiochip_add_data(dev, chip, gpio);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Could not register GPIO c=
-hip\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver cgbc_gpio_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "cgbc-gpio",
-> +       },
-> +       .probe  =3D cgbc_gpio_probe,
-> +};
-> +
-> +module_platform_driver(cgbc_gpio_driver);
-> +
-> +MODULE_DESCRIPTION("Congatec Board Controller GPIO Driver");
-> +MODULE_AUTHOR("Thomas Richard <thomas.richard@bootlin.com>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:cgbc-gpio");
->
-> --
-> 2.39.2
->
+Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node basis")
+Signed-off-by: liuye <liuye@kylinos.cn>
+---
+ include/linux/swap.h | 1 +
+ mm/vmscan.c          | 7 +++++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-Bart
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index ba7ea95d1c57..afb3274c90ef 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -223,6 +223,7 @@ enum {
+ };
+ 
+ #define SWAP_CLUSTER_MAX 32UL
++#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
+ #define COMPACT_CLUSTER_MAX SWAP_CLUSTER_MAX
+ 
+ /* Bit flag in swap_map */
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index cfa839284b92..02a8f86d4883 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1655,6 +1655,7 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+ 	unsigned long nr_skipped[MAX_NR_ZONES] = { 0, };
+ 	unsigned long skipped = 0;
+ 	unsigned long scan, total_scan, nr_pages;
++	unsigned long max_nr_skipped = 0;
+ 	LIST_HEAD(folios_skipped);
+ 
+ 	total_scan = 0;
+@@ -1669,10 +1670,12 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
+ 		nr_pages = folio_nr_pages(folio);
+ 		total_scan += nr_pages;
+ 
+-		if (folio_zonenum(folio) > sc->reclaim_idx ||
+-				skip_cma(folio, sc)) {
++		/* Using max_nr_skipped to prevent hard LOCKUP*/
++		if ((max_nr_skipped < SWAP_CLUSTER_MAX_SKIPPED) &&
++			(folio_zonenum(folio) > sc->reclaim_idx || skip_cma(folio, sc))) {
+ 			nr_skipped[folio_zonenum(folio)] += nr_pages;
+ 			move_to = &folios_skipped;
++			max_nr_skipped++;
+ 			goto move;
+ 		}
+ 
+-- 
+2.25.1
+
 
