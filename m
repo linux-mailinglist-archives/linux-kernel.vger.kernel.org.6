@@ -1,145 +1,162 @@
-Return-Path: <linux-kernel+bounces-285877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A0C9513BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:09:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CCB9513C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 07:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36B51F245D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37CD41F24624
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 05:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE4A55C3E;
-	Wed, 14 Aug 2024 05:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9246026A;
+	Wed, 14 Aug 2024 05:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThC/MbOQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="fBZtYh34"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE4954720
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AB619F
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723612184; cv=none; b=mYuUMnwRl9Ym7b21o62Xf+SfYhSyeCKa7xaYFx1GS+GwQu4AbGC7d4Z9RZ/eaJFGWWoJzgxjngue1r2/OkPrbZXdHm/w9cCgcJeWNnQeiIpW7dj8och3aRe+3r1W3Xx0Mqnhy3yD3T+hLPaautC0sAkCPs/Q5Ca+KyQvC9ePN6U=
+	t=1723612570; cv=none; b=apnGWHBpZV31h7pWtxRNGGZXiCLysabziMVVn4eJhVAhfRSjP6L5vpjTPQ0YLpng3TG5beKlQOanw8PceAZh7Z/92L/08YEhfd4ZslPmLvsMlSz9mejuAmQWODG7Io8qoToORMPCL/fFtlscdnyKJx26ChF3qhgC7pWvNiXQHQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723612184; c=relaxed/simple;
-	bh=cIyfu/i2hay6YMg1pSt3z2/Uj13fsv8g6tpRe535x9g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fYpSGKTCzir/GpJhVJmBupkiBSd9twunGAgZv5MBsTQVyR32kh8ZqHjzrSfLLjXxlfTBPWR0ksdQWBSAxKFOUFnxbJrTFGg7mNmffEorhApUJdnw57gymfOdrGoOMnlJRkUp7H5zkhBELoXGCdj7xxG1xxdUXyvfm3nwLYLLvW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThC/MbOQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B24BC4AF0F
-	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 05:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723612184;
-	bh=cIyfu/i2hay6YMg1pSt3z2/Uj13fsv8g6tpRe535x9g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ThC/MbOQ5wBaGgomBMA1SQHRt0VE6LlVrezSPmtGfFkTtEm9+FvfdJ5pbRbmf6+30
-	 WNsqFoIDFh9RgAjCjs4fKz1MdAxkC3Oy4MrahAbpP+PTPZh7HUkq05+NSLDGSzrj6c
-	 l6iSZ3wDPPxb4Itp8yBWnv4YO0LN2rtcF2PooYjEoUcawINJQZGS2TuMPVUBEWfTPP
-	 9YINCVtFxKba1n+3033LYpTV7gT+VTOqkyCcmGVVhDNtT5k5CHmHQL9ybsEE00GLLu
-	 KsZRbhsxHoXaB30tbe50ncOgc1HpjvAxJwlQpm1L2+ixr4ezAshp4PI2/29rdcLsir
-	 sGC6GbXM5hoCA==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso11429038e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:09:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXwUD247i/aKTGgxE5hZnNubWK23VrtHoN1boNhhRblWfa3R/bxv5xP7u7x75ZPbBviqow/qGN88tXRzD20oirQTgMyDeXwRCDOJTAY
-X-Gm-Message-State: AOJu0Yzn4VKHkB6XWQ//PACQN/7XZx+pdmRZLSFdGlCOb/qPpNs/Nd7F
-	ynMj97OHq003fqWcJ7U6yJDE7XROMZYW3czdj5Eiw5ZBvM422gY5NonHMRkq8G7RS9+Yo3PXkKZ
-	tJ6CNs6WAzdr5omFXMwTJkQTUO12KtkPGKQjdWw==
-X-Google-Smtp-Source: AGHT+IFf0EyIjfKD9fPDxj1Lpip9rNClYJvmeUDfOg8NUMCQXUIIc1nd9eh6JxBCQ8ykYqIvZ8Zeeiwsf1zdxBranfg=
-X-Received: by 2002:a05:6512:131b:b0:530:dab8:7dea with SMTP id
- 2adb3069b0e04-532eda6725emr1203359e87.5.1723612182369; Tue, 13 Aug 2024
- 22:09:42 -0700 (PDT)
+	s=arc-20240116; t=1723612570; c=relaxed/simple;
+	bh=n2+/BaQswGnRZEQgWpXHcwvPM5wXfbodQJfqXOeOAyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKe5kR/6dvmD/XdimY4Ko05nVg/72yXiyJa/kVwCAt/Zel0LlnognOtq3m/vNdXD3iLvO+2fumZr8KGUUWdu43ygHdl4xZe/pjAa3zL2sU6rJ4O81IAa7Kwi3AHPJd24G+whX507nLmWU2XZsKEW7m0doyN0nULU60MKpACAsf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=fBZtYh34; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc692abba4so53386395ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1723612568; x=1724217368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WHoqmxG15qyx25r5hZj+PC5OM2AuTwDeiWxOb/IU6mE=;
+        b=fBZtYh34cd7w49+yobzlIWmvwo2KCFI5ZL2w+2/xhiLlYHnEo7itO2TazXKR0tyFkI
+         YuHmzLqCIqrzgmcE9VjdRZw8KfHMWTCjHJDvc7k0b83lIRwpgwOa95kQc+Y9zYyWGuHh
+         aYZenZ+Y9gcr6CN6J+Aut4lhxsiayYxhuOrY55kn1nwoZsnOXfS45aY4WTt5GwvsBMMd
+         BXFqvUp6y+N1zAAgaSwZbeP15BIyLgsse2QGIvMWooBnxJqRoHCPEB7SA29ds2tVEZht
+         wcouI7FqjAiJhCfuA1Wod9e+Na944OQRE26AksBtAzACpG4e8PI3xZDVjBy0esnhUYNV
+         W20Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723612568; x=1724217368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WHoqmxG15qyx25r5hZj+PC5OM2AuTwDeiWxOb/IU6mE=;
+        b=uDTbEYHzXr9pm9ZRr3DnMBc36rVDLWJhq7RSm5Bsp75X+CC0eviq3A11Zws0N56uUH
+         NmXSLx5YgTh6R0ByYauGquMjfvWLgca3XuFkID9ZMSGjknBTCozneb7lRpqQrijsdZ0T
+         hs5BbxsSQC/DGO1KzH5J6yVmW0oi9qISWUmm5Bm3RjC4wcH0respHybGcBMHJY1Ld2jc
+         N7w6ybAQI7rdMJFuDP+o5ZQFidU+eb+vXX59NMD7g9X/o1Z+0AM3ta9SVhTCMAzZnLeT
+         dxtve/feQApTvfiiGIG1rLrSOEHmeOKw+Tjn+LSd9n2SSsF6QEeFWcsa9+Bp2akGEMgT
+         CC5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXM2vRuXl1tavXxPDt6v1BxUAPoQ3Jd9XhcCI2KZH0PAQFABVuty99e6SufjNYBsWG2pVsNRXA+zo0Z7Umj+dtEk8crh9I0RgC6BNaq
+X-Gm-Message-State: AOJu0Yx75bb3XGc3Env+bWJawEqx+3zcbqQf5S/6hkmG+9rGlH7rHjlF
+	3TUz5+2nlXV9HtXwYv1Nij/9wUrOBIyhxqMDN0r2CrSoypggaW1ZZs05YIcdYKA=
+X-Google-Smtp-Source: AGHT+IHscKr7/1w29S6mF1in4dwQQXnpaUhOh3hn7AS5f+3jKXbYe+YVHIZUt1DRchOce6qPIs9gyA==
+X-Received: by 2002:a17:902:e546:b0:200:abb6:4daf with SMTP id d9443c01a7336-201d645eea1mr20862325ad.39.1723612567753;
+        Tue, 13 Aug 2024 22:16:07 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1aa460sm21600595ad.180.2024.08.13.22.16.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 22:16:07 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1se6Me-00GRD8-1x;
+	Wed, 14 Aug 2024 15:16:04 +1000
+Date: Wed, 14 Aug 2024 15:16:04 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 0/6] iomap: some minor non-critical fixes and
+ improvements when block size < folio size
+Message-ID: <Zrw9lBma/kbKV8Ls@dread.disaster.area>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <ZrwNG9ftNaV4AJDd@dread.disaster.area>
+ <feead66e-5b83-7e54-1164-c7c61e78e7be@huaweicloud.com>
+ <Zrwap10baOW8XeIv@dread.disaster.area>
+ <a08a9491-61d7-b300-55ba-b016dd5aad5a@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2211925.irdbgypaU6@rjwysocki.net> <7712228.EvYhyI6sBW@rjwysocki.net>
-In-Reply-To: <7712228.EvYhyI6sBW@rjwysocki.net>
-From: Amit Kucheria <amitk@kernel.org>
-Date: Wed, 14 Aug 2024 10:39:23 +0530
-X-Gmail-Original-Message-ID: <CAHLCerMF6T3FiDfxMrAT+GBPibfpudYkriZmfW0BsOLNHVa6vA@mail.gmail.com>
-Message-ID: <CAHLCerMF6T3FiDfxMrAT+GBPibfpudYkriZmfW0BsOLNHVa6vA@mail.gmail.com>
-Subject: Re: [RESEND][PATCH v1 3/8] thermal: qcom: Use thermal_zone_get_crit_temp()
- in qpnp_tm_init()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Thara Gopinath <thara.gopinath@gmail.com>, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a08a9491-61d7-b300-55ba-b016dd5aad5a@huaweicloud.com>
 
-On Mon, Jul 29, 2024 at 10:43=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.n=
-et> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Modify qpnp_tm_init() to use thermal_zone_get_crit_temp() to get the
-> critical trip temperature instead of iterating over trip indices and
-> using thermal_zone_get_trip() to get a struct thermal_trip pointer
-> from a trip index until it finds the critical one.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Aug 14, 2024 at 11:57:03AM +0800, Zhang Yi wrote:
+> On 2024/8/14 10:47, Dave Chinner wrote:
+> > On Wed, Aug 14, 2024 at 10:14:01AM +0800, Zhang Yi wrote:
+> >> On 2024/8/14 9:49, Dave Chinner wrote:
+> >>> important to know if the changes made actually provided the benefit
+> >>> we expected them to make....
+> >>>
+> >>> i.e. this is the sort of table of results I'd like to see provided:
+> >>>
+> >>> platform	base		v1		v2
+> >>> x86		524708.0	569218.0	????
+> >>> arm64		801965.0	871605.0	????
+> >>>
+> >>
+> >>  platform	base		v1		v2
+> >>  x86		524708.0	571315.0 	569218.0
+> >>  arm64	801965.0	876077.0	871605.0
+> > 
+> > So avoiding the lock cycle in iomap_write_begin() (in patch 5) in
+> > this partial block write workload made no difference to performance
+> > at all, and removing a lock cycle in iomap_write_end provided all
+> > that gain?
+> 
+> Yes.
+> 
+> > 
+> > Is this an overwrite workload or a file extending workload? The
+> > result implies that iomap_block_needs_zeroing() is returning false,
+> > hence it's an overwrite workload and it's reading partial blocks
+> > from disk. i.e. it is doing synchronous RMW cycles from the ramdisk
+> > and so still calling the uptodate bitmap update function rather than
+> > hitting the zeroing case and skipping it.
+> > 
+> > Hence I'm just trying to understand what the test is doing because
+> > that tells me what the result should be...
+> > 
+> 
+> I forgot to mentioned that I test this on xfs with 1K block size, this
+> is a simple case of block size < folio size that I can direct use
+> UnixBench.
 
-Makes sense.
+OK. So it's an even more highly contrived microbenchmark than I
+thought. :/
 
-Reviewed-by: Amit Kucheria <amitk@kernel.org>
+What is the impact on a 4kB block size filesystem running that same
+1kB write test? That's going to be a far more common thing to occur
+in production machines for such small IO, let's make sure that we
+haven't regressed that case in optimising for this one.
 
-> ---
->
-> This patch does not depend on the previous patch(es) in the series.
->
-> ---
->  drivers/thermal/qcom/qcom-spmi-temp-alarm.c |   22 +++------------------=
--
->  1 file changed, 3 insertions(+), 19 deletions(-)
->
-> Index: linux-pm/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-pm.orig/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> +++ linux-pm/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> @@ -291,24 +291,6 @@ static irqreturn_t qpnp_tm_isr(int irq,
->         return IRQ_HANDLED;
->  }
->
-> -static int qpnp_tm_get_critical_trip_temp(struct qpnp_tm_chip *chip)
-> -{
-> -       struct thermal_trip trip;
-> -       int i, ret;
-> -
-> -       for (i =3D 0; i < thermal_zone_get_num_trips(chip->tz_dev); i++) =
-{
-> -
-> -               ret =3D thermal_zone_get_trip(chip->tz_dev, i, &trip);
-> -               if (ret)
-> -                       continue;
-> -
-> -               if (trip.type =3D=3D THERMAL_TRIP_CRITICAL)
-> -                       return trip.temperature;
-> -       }
-> -
-> -       return THERMAL_TEMP_INVALID;
-> -}
-> -
->  /*
->   * This function initializes the internal temp value based on only the
->   * current thermal stage and threshold. Setup threshold control and
-> @@ -343,7 +325,9 @@ static int qpnp_tm_init(struct qpnp_tm_c
->
->         mutex_unlock(&chip->lock);
->
-> -       crit_temp =3D qpnp_tm_get_critical_trip_temp(chip);
-> +       ret =3D thermal_zone_get_crit_temp(chip->tz_dev, &crit_temp);
-> +       if (ret)
-> +               crit_temp =3D THERMAL_TEMP_INVALID;
->
->         mutex_lock(&chip->lock);
->
->
->
->
+> This test first do buffered append write with bs=1K,count=2000 in the
+> first round, and then do overwrite from the start position with the same
+> parameters repetitively in 30 seconds. All the write operations are
+> block size aligned, so iomap_write_begin() just continue after
+> iomap_adjust_read_range(), don't call iomap_set_range_uptodate() to set
+> range uptodate originally, hence there is no difference whether with or
+> without patch 5 in this test case.
+
+Ok, so you really need to come up with an equivalent test that
+exercises the paths that patch 5 modifies, because right now we have
+no real idea of what the impact of that change will be...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
