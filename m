@@ -1,207 +1,111 @@
-Return-Path: <linux-kernel+bounces-287314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34ED952648
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:39:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C286F952649
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CBE3B23C81
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:39:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73CA8282ECA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 23:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32AE14F9F8;
-	Wed, 14 Aug 2024 23:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289E514E2FA;
+	Wed, 14 Aug 2024 23:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ozhwh3A/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UUWPIp72"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01BD14F10F;
-	Wed, 14 Aug 2024 23:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA82B1448D8
+	for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 23:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723678722; cv=none; b=q2T0i4hubbdNyGHAoUQlHsn14tQXQu/vBWq4ruxMqjXbf1AKjq8baJQhedBSjrfW0DOEOu1yv1qZZ+QOsdrrPZOG99qvJDK5L2yOTHHTh9LLMMcEsyXc0GLjl2ZkTgh8aqukqI2iaxlgl153v3e+gVdEtZv6JRja8wSmMYl8t8g=
+	t=1723678961; cv=none; b=lvylJD8kHisZvcObCqrG1M6mLe/uGjFM0sWMEm+QSt+35eZ4mgDOc0aGjt7UnXyrRQIhcYoa/G/ML4awStv6/Z1wgGQdobEqutiI7UltZ8WyAQyxQsb/1eF0NUx8073vSKOxGw58gh37woD22OyOMIXAGBPPhGc3P+qGz9k7rdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723678722; c=relaxed/simple;
-	bh=sNRoUOkGyXH9fGsphGKhvKnFajpTCP0GUhfiOdkX7gQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=N1fUY+lj8fTSBjiTbc4SiGtpvflGSwyvTfHBpvBeRaEaF+wBaDhaG0VbYUenOtJ2G14bIcZvxt5NRJtqKg9ttvo6Gj0zudgVbgcDH+s/vUXHaaEPbYGpTJAFkUcU8jbk4OBfUd1Ti52OlBTN1+8cb68PRxnEqS90Gib49PGicMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ozhwh3A/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723678710;
-	bh=Ry+s1cUkOXDWfG+OtJTiE9tv+kHdFVW5Py4YlKCBmtM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Ozhwh3A/QYxJBO5QL8Fjc6F8PjASauF61vA5xEHVUwFQBV3R3U2DVT5Ab5VDTRAza
-	 2sID8ZxlQPzbCGHHr0iOaE/6lRnwtS0KSBs36H1ydqYWwxChblfAshFWZnOZANiFw0
-	 6mlS/3GDUjEVCJiOBXqyhdxhJKAm0zuMycPnGh0WjH46Y6vjCiQ37LPyxKDQnikkAq
-	 YsbixrvbWrDBU0/HHjjeDiLA2QVRKx406CTzzPOjWn21d4NHFBTL+wldJ1RgzzcaJ0
-	 xLXnaeFAmP8AtzCDy4jQ4qFH/IRJqKv8I2cMr1wjVTMPVr2VJEiG34NCy/rIIJFiZy
-	 VTp9I80d28Pzw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wkl7V42rwz4x5M;
-	Thu, 15 Aug 2024 09:38:30 +1000 (AEST)
-Date: Thu, 15 Aug 2024 09:38:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm tree
-Message-ID: <20240815093829.275058c7@canb.auug.org.au>
+	s=arc-20240116; t=1723678961; c=relaxed/simple;
+	bh=lR4FffDeSePt0AVj0hB+l38MewoPYskiDBb2i6DJw2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m8inT1NhpzicC9WHrtFCuo3YENnpF+PErQpSOVQ3RS62l0XFUJw75SQYj7Lx3IH0q4En3dyTB53pY5GfYLtA535nSQHswkFfwsfoZc1XE614Ny8e6u/yS/MagUtyffqS5IBGetrR3IkQAfQMVrx+5YebzLULMHtRiW7wckoK1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UUWPIp72; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 14 Aug 2024 16:42:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723678957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=powCy6WP/JGwsZWWQApUZ1BP4yfZE6Dxn7LVxtqo9Gg=;
+	b=UUWPIp72abgqNrtwuevubD420Lr2wsihLdU+wC1Q3kouZEfNgYs9JCg4l3JTBFkKu5abjp
+	jAyjwR0qFEs6JIQtCvGugDwsfnXOKtQdIheb1IGRieo4GMblOQVlx/5XfNdajZiKrHd0VW
+	/24nBr5bCdyz6ZSYvASgEp9SGjUB01c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Yosry Ahmed <yosryahmed@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, Yu Zhao <yuzhao@google.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
+Message-ID: <5psrsuvzabh2gwj7lmf6p2swgw4d4svi2zqr4p6bmmfjodspcw@fexbskbtchs7>
+References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
+ <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
+ <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
+ <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org>
+ <vyi7d5fw4d3h5osolpu4reyhcqylgnfi6uz32z67dpektbc2dz@jpu4ob34a2ug>
+ <CAKEwX=Mc9U_eEqoEYtwdfOUZTa=gboLtbF5FGy4pL--A54JJDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BmxE5yJzK6MXNy_q3=u_mdC";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKEwX=Mc9U_eEqoEYtwdfOUZTa=gboLtbF5FGy4pL--A54JJDw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/BmxE5yJzK6MXNy_q3=u_mdC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 14, 2024 at 04:03:13PM GMT, Nhat Pham wrote:
+> On Wed, Aug 14, 2024 at 9:32 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> >
+> > Ccing Nhat
+> >
+> > On Wed, Aug 14, 2024 at 02:57:38PM GMT, Jesper Dangaard Brouer wrote:
+> > > I suspect the next whac-a-mole will be the rstat flush for the slab code
+> > > that kswapd also activates via shrink_slab, that via
+> > > shrinker->count_objects() invoke count_shadow_nodes().
+> > >
+> >
+> > Actually count_shadow_nodes() is already using ratelimited version.
+> > However zswap_shrinker_count() is still using the sync version. Nhat is
+> > modifying this code at the moment and we can ask if we really need most
+> > accurate values for MEMCG_ZSWAP_B and MEMCG_ZSWAPPED for the zswap
+> > writeback heuristic.
+> 
+> You are referring to this, correct:
+> 
+> mem_cgroup_flush_stats(memcg);
+> nr_backing = memcg_page_state(memcg, MEMCG_ZSWAP_B) >> PAGE_SHIFT;
+> nr_stored = memcg_page_state(memcg, MEMCG_ZSWAPPED);
+> 
+> It's already a bit less-than-accurate - as you pointed out in another
+> discussion, it takes into account the objects and sizes of the entire
+> subtree, rather than just the ones charged to the current (memcg,
+> node) combo. Feel free to optimize this away!
+> 
+> In fact, I should probably replace this with another (atomic?) counter
+> in zswap_lruvec_state struct, which tracks the post-compression size.
+> That way, we'll have a better estimate of the compression factor -
+> total post-compression size /  (length of LRU * page size), and
+> perhaps avoid the whole stat flushing path altogether...
+> 
 
-Hi all,
-
-After merging the mm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-In file included from include/linux/kcsan-checks.h:13,
-                 from include/linux/instrumented.h:12,
-                 from include/asm-generic/bitops/instrumented-atomic.h:14,
-                 from arch/powerpc/include/asm/bitops.h:321,
-                 from include/linux/bitops.h:68,
-                 from arch/powerpc/include/asm/mce.h:12,
-                 from arch/powerpc/include/asm/paca.h:32,
-                 from arch/powerpc/include/asm/percpu.h:30,
-                 from include/linux/err.h:9,
-                 from arch/powerpc/include/asm/ptrace.h:22,
-                 from arch/powerpc/kernel/vdso/sigtramp64.S:14:
-include/linux/compiler_attributes.h:55: warning: "__always_inline" redefined
-   55 | #define __always_inline                 inline __attribute__((__alw=
-ays_inline__))
-      |=20
-In file included from include/linux/stddef.h:5,
-                 from include/linux/string.h:9,
-                 from arch/powerpc/include/asm/paca.h:16:
-include/uapi/linux/stddef.h:8: note: this is the location of the previous d=
-efinition
-    8 | #define __always_inline inline
-      |=20
-include/linux/compiler_attributes.h:91:20: error: missing binary operator b=
-efore token "("
-   91 | #if __has_attribute(__copy__)
-      |                    ^
-include/linux/compiler_attributes.h:104:20: error: missing binary operator =
-before token "("
-  104 | #if __has_attribute(__counted_by__)
-      |                    ^
-include/linux/compiler_attributes.h:107: warning: "__counted_by" redefined
-  107 | # define __counted_by(member)
-      |=20
-include/uapi/linux/stddef.h:55: note: this is the location of the previous =
-definition
-   55 | #define __counted_by(m)
-      |=20
-include/linux/compiler_attributes.h:116:20: error: missing binary operator =
-before token "("
-  116 | #if __has_attribute(__diagnose_as_builtin__)
-      |                    ^
-include/linux/compiler_attributes.h:139:20: error: missing binary operator =
-before token "("
-  139 | #if __has_attribute(__designated_init__)
-      |                    ^
-include/linux/compiler_attributes.h:150:20: error: missing binary operator =
-before token "("
-  150 | #if __has_attribute(__error__)
-      |                    ^
-include/linux/compiler_attributes.h:161:20: error: missing binary operator =
-before token "("
-  161 | #if __has_attribute(__externally_visible__)
-      |                    ^
-include/linux/compiler_attributes.h:198:20: error: missing binary operator =
-before token "("
-  198 | #if __has_attribute(__no_caller_saved_registers__)
-      |                    ^
-include/linux/compiler_attributes.h:209:20: error: missing binary operator =
-before token "("
-  209 | #if __has_attribute(__noclone__)
-      |                    ^
-include/linux/compiler_attributes.h:226:20: error: missing binary operator =
-before token "("
-  226 | #if __has_attribute(__fallthrough__)
-      |                    ^
-include/linux/compiler_attributes.h:252:20: error: missing binary operator =
-before token "("
-  252 | #if __has_attribute(__nonstring__)
-      |                    ^
-include/linux/compiler_attributes.h:264:20: error: missing binary operator =
-before token "("
-  264 | #if __has_attribute(__no_profile_instrument_function__)
-      |                    ^
-include/linux/compiler_attributes.h:283:20: error: missing binary operator =
-before token "("
-  283 | #if __has_attribute(__no_stack_protector__)
-      |                    ^
-include/linux/compiler_attributes.h:294:20: error: missing binary operator =
-before token "("
-  294 | #if __has_attribute(__overloadable__)
-      |                    ^
-include/linux/compiler_attributes.h:313:20: error: missing binary operator =
-before token "("
-  313 | #if __has_attribute(__pass_dynamic_object_size__)
-      |                    ^
-include/linux/compiler_attributes.h:318:20: error: missing binary operator =
-before token "("
-  318 | #if __has_attribute(__pass_object_size__)
-      |                    ^
-include/linux/compiler_attributes.h:342:20: error: missing binary operator =
-before token "("
-  342 | #if __has_attribute(__uninitialized__)
-      |                    ^
-include/linux/compiler_attributes.h:388:20: error: missing binary operator =
-before token "("
-  388 | #if __has_attribute(__warning__)
-      |                    ^
-include/linux/compiler_attributes.h:405:20: error: missing binary operator =
-before token "("
-  405 | #if __has_attribute(disable_sanitizer_instrumentation)
-      |                    ^
-
-Caused by commit
-
-  8e53757638ec ("err.h: add ERR_PTR_PCPU(), PTR_ERR_PCPU() and IS_ERR_PCPU(=
-) functions")
-
-Does include/linux/err.h really need to include asm/percpu.h?  __percpu is
-defined in compiler_types.h which is included in every c code compile.
-
-I have reverted that commit and the following one for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BmxE5yJzK6MXNy_q3=u_mdC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma9P/UACgkQAVBC80lX
-0GxdQggAl7vgqkhLlEWTBmAl0F05pO49AXv34KB1Ravro2TDrWPv331FEJ3rU8xi
-/HEU+zWQGKf1GGO+GJoi0oECdQKvzPFHaC8FHppvGhorXy5s0M+7UGoUUsn3hIMS
-sz0r30uhSgB5FCAl6gSpaEHXmf3ZUkT3XH3jUK8om+xBcAaI7fI8oUhhrGNeNh1M
-k3bxcs9vRu3euc/CWINvDivZ9RhqN02YrhTNmxIeYpOGDRlrqeFx4h8nVvGLnUIW
-e8ujDLv1ZImzbU9TSgWbIP0HWbfEjppkTnmjQkyLokEgWlybYosj8V9imdlZxh7E
-PLfhkFAPxqutzwrS7ie//oIiozakuQ==
-=Jcaa
------END PGP SIGNATURE-----
-
---Sig_/BmxE5yJzK6MXNy_q3=u_mdC--
+That sounds like much better solution than relying on rstat for accurate
+stats.
 
