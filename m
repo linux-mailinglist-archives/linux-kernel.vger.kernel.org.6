@@ -1,133 +1,169 @@
-Return-Path: <linux-kernel+bounces-287352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D23C9526D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:23:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDDD9526D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D10C8B211E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEAAF1F232DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEF518D628;
-	Thu, 15 Aug 2024 00:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EDF4A04;
+	Thu, 15 Aug 2024 00:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aMeintoi"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tc9RmOu5"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DDEA32
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC951A35
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723681394; cv=none; b=fyMKUBLCK1N6972tU3tSnJh0KjdTs6YzRLGWeigk4Eo9+j8CxuDwwmrr428P8eet+2hScVizcm0PM5APpK5Q/BfrP2nXGu0szG0Smoc/PqVLZJC2IZ2bmi/ziJL8sKRKhrpldYD8xJZxYNyobq2s/wlmeqTubMIJf+TSUVi5vRI=
+	t=1723681420; cv=none; b=ogfS/lxcS/tDBRBH6qOAhHfevZaqlOq/FvTUJRPuUzNmgylG+2snj6eCh0AK2geNruancdQWEDlHAe2YU5pTekkJPIo4CGaLKdLfZY2Lx0BGSZInbNBSYuI8zaoMO4GLrhq6NoG2LZ4rMthAM7Pli6iT9RRmDYeWVPucF41OrU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723681394; c=relaxed/simple;
-	bh=Cw5dTcrztz9RxH0G8Zi6diIKTPcCBLS7HGD6iPgP970=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qRrxZqsJxWuekLUo+dbRJh0pB3ecK+h9GYFA1cYMqGw0cZc0qXCA0YKoakYv+M75P7zCmMn1FjH2VJOrjH53SpAHluSgCtZFXLSqpqe8uv4MkI5nbg/Qa1IDd+40WX8vAR7o17Ax72e1ib6M8KvYdTeNnFMxBlMty1t26Ppb008=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aMeintoi; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1723681420; c=relaxed/simple;
+	bh=suWnLmH8CZD5CKZpCqGzoBDzsiuPxsn+e87dVsPHe/I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=utbaoAJR/Yn/JJqXJRE9TRfyD7GimaGtrj5AyMS/dCOrvF4dayQhHYRabLOc+8d8gKoRzz27cLZXiZrZAh6yH49Zf9LomWbQZF7I0z9QVkisQ2CFZe9EZPm9aiswuxoA359VnKYSkkvmYpkWhSd0N/nUvWonFQTnC3fwKFSNt00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tc9RmOu5; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bb85e90ad5so490471a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:23:13 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71065f49abeso350581b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723681392; x=1724286192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cw5dTcrztz9RxH0G8Zi6diIKTPcCBLS7HGD6iPgP970=;
-        b=aMeintoiZPJW5ahLtBXM0iTbq12UV+IcakjFFPczg4x1yrbXS/7SKvwbK0/3BgGwtk
-         O5mszJk9VAHphOdZXEkEddYfYKQ1/nwML/OuAgczqAjbXM1EzVHegX8ZlE0SBdrMFDR4
-         j97k6eB2QGmQLtPdTmVDkrUmD18u5KBlygM1GO1FGGPRGelrGGT2eMPpUlYt+4xldJBz
-         MLI100NYrX4rW6ZiGaBrutZFZokzNbv0Blgfvy+yH+gczVsYc1Wrhy0spjM5EeaOYqyR
-         6RE7/tH3h8QioEMmUayRH3+8mEnbyYTcmMDBhCvK+8YoYPmoNiKIbyegQeeutoyoyWAR
-         thIg==
+        d=google.com; s=20230601; t=1723681418; x=1724286218; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=na+DQAropa9HhQkX0n6COE58Sm+QVzbS54Fw3LBcwkg=;
+        b=Tc9RmOu5VHf0+n+FFdemc0NquMn8Xs4Epv2ssHAcgbEOheAqm+Pq1n0CV5TzWmv6xj
+         CFWj4Py99KE7UCnMZ5ppkPfJmRh2cYlBn3eZ8WGMxYN8QqlTceFKS9jjtYY1eivpBXZZ
+         8uNtC98ElNyeBgz9+qUDW+psHeju7UNmNN01xvaV6NvxZpchEF80TjaqGZngaIi/3JyL
+         SZmOUh5S778rdBg8JGKfgHNTaOn7Z291LzLtU4JyExhyZ0+q2CYaBIATmhh7HsbPIEl2
+         AjheTBZud+dAn4u4s9zExCLf2XzYTzRInZsLnoLnvOzTzcXeEP7kXh4Mn82QzKay8TCz
+         c3Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723681392; x=1724286192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cw5dTcrztz9RxH0G8Zi6diIKTPcCBLS7HGD6iPgP970=;
-        b=E79NO1G4HHTgXoy4ByWHCLVFzdWcqEZb32RFFXSwN392PCyQFWp+4hn08XV9JZ+6AP
-         XgJZlQsf7YBtKilC01/rrdjZm7aZtt7cUSXY1Ra9BmXjYXFH5y+BMPbzl4qG9jYipKAb
-         qxHgxhnk20TwrbWSQYHwUgIdBdjQjrvaEVlXgr8xTsi5KPexMMLfNwjvzzwCsBIRZVJO
-         dEY1rC8Zs7VjXwBZkrPTXxA1DWSewdQLhcSTYDqMjiMAicFJziftX+yCqh9aar6aPrs9
-         orGQGc7tM1w6RCKXo4ykQh90o1anVFdaadpTpFLn/JfD92M4rq/HLS/kAD3wY3GUIR/E
-         FkWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1NdNAop5G0kdyby4t1kR9XUGBeDEeR2c+e52f8iPdImECCjZqoFH+v7i37StGvmBHU1M7xAz5sWoY1is=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/NYbq8+Ov6NM8fj2nex/SuuX650mA/271Vc6vxVPs3dZwVLyO
-	OV9CEAlq13G/fBAD9NtjDD1M+OzjGwgESWc82/iEbVuwEsanJ+ftrwStEufFYfvkjhLzcfQ1S8Q
-	ITNO3cD9jA6tZ1AfYDwqfkQYkZLSJVtVvDa/e
-X-Google-Smtp-Source: AGHT+IFC8o5Im21DbR7Qp6xSk6tS/o5FfXLkW+ffmjOKbSdKahoh7dxx/T2U9kLhB/4n9tKpI7wufDxH7YS9G+dYQZA=
-X-Received: by 2002:a17:907:d2d3:b0:a7a:8bf9:a6e8 with SMTP id
- a640c23a62f3a-a8366d5bcf8mr350627066b.35.1723681391168; Wed, 14 Aug 2024
- 17:23:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723681418; x=1724286218;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=na+DQAropa9HhQkX0n6COE58Sm+QVzbS54Fw3LBcwkg=;
+        b=uu8y6W6OKE0/3Ka3A+mypJuZ203zuZI5D5m4ARJdmz5+rNraUqhlsX2Via54FHiKp5
+         /90oq5ZjvB/5ZYOp83J9KkHJ26x9bytTJCWuuyCdNB9RjqRb0ldLu3livnLDXPNpR4nq
+         ILlM5VZG3MlR+evMESd9F63dIguN9LEkwB/Xomt7/HuDIpaQ8FGcyt88J1eB85sA2jxJ
+         8ZIfXOl14bhML8gNKySrYJtUvX3d716TygM9Bf2T9Gn8nQKyyCBZeEu/RM1a3e/RnRXl
+         vE4Jb1guY+OUynCM1dn9Es5ON/VyBCGQX/o3ld20s9vXMMa6/1MDkK/1FagFsZR++TCK
+         PNWw==
+X-Forwarded-Encrypted: i=1; AJvYcCW47rL+7EgiIQeH3WdJ1r473pkSc4J0tnPKKmdtgL5UMPatvvT01DVmamtcVZJ0ksFVNxH02Tq4ravN4hd3bY/OmiSPP4BfFTKbRmO+
+X-Gm-Message-State: AOJu0YySxJTebcG1cCmk1IQw2VF+ozLRSQGg/KICPCgl7/j5FsHaALVs
+	LszcsMqoZ1hIfxNsH6WyZeteBteou78108lcNRafUP22t8CTf6G96HZw+/vVikyHJSG0hXb3dkA
+	tSw==
+X-Google-Smtp-Source: AGHT+IGoZtQk6EhIPI9XMZuU6TS6huGs8UeaDStKkTJudv5DvPbQJzN1W9iOqNUU9Nrexb3O6V5rC1Lbce8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:aa7:91c9:0:b0:710:4d06:93b3 with SMTP id
+ d2e1a72fcca58-712673e5d8bmr25637b3a.3.1723681417634; Wed, 14 Aug 2024
+ 17:23:37 -0700 (PDT)
+Date: Wed, 14 Aug 2024 17:23:36 -0700
+In-Reply-To: <Zr0_5gixFGlyQMl7@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
- <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
- <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
- <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org> <vyi7d5fw4d3h5osolpu4reyhcqylgnfi6uz32z67dpektbc2dz@jpu4ob34a2ug>
- <CAKEwX=Mc9U_eEqoEYtwdfOUZTa=gboLtbF5FGy4pL--A54JJDw@mail.gmail.com>
- <5psrsuvzabh2gwj7lmf6p2swgw4d4svi2zqr4p6bmmfjodspcw@fexbskbtchs7>
- <CAJD7tkaBfWWS32VYAwkgyfzkD_WbUUbx+rrK-Cc6OT7UN27DYA@mail.gmail.com> <CAKEwX=M7sWx94nJ0zK-46Xn8ZZHhcHQtb37qR0Jxit+8sAaQWg@mail.gmail.com>
-In-Reply-To: <CAKEwX=M7sWx94nJ0zK-46Xn8ZZHhcHQtb37qR0Jxit+8sAaQWg@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 14 Aug 2024 17:22:33 -0700
-Message-ID: <CAJD7tkZW8OYrEHkuONFt4wGiYSAsyVsA30zroOxc=opi5r5iBQ@mail.gmail.com>
-Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240809160909.1023470-1-peterx@redhat.com> <20240814123715.GB2032816@nvidia.com>
+ <ZrzAlchCZx0ptSfR@google.com> <20240814144307.GP2032816@nvidia.com>
+ <Zr0ZbPQHVNzmvwa6@google.com> <Zr09cyPZNShzeZc6@linux.dev> <Zr0_5gixFGlyQMl7@linux.dev>
+Message-ID: <Zr1KiHO0pxPdYD_U@google.com>
+Subject: Re: [PATCH 00/19] mm: Support huge pfnmaps
+From: Sean Christopherson <seanjc@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>, 
+	Axel Rasmussen <axelrasmussen@google.com>, linux-arm-kernel@lists.infradead.org, 
+	x86@kernel.org, Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Ingo Molnar <mingo@redhat.com>, Alistair Popple <apopple@nvidia.com>, Borislav Petkov <bp@alien8.de>, 
+	David Hildenbrand <david@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Aug 14, 2024 at 5:19=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote=
-:
->
-> On Wed, Aug 14, 2024 at 4:49=E2=80=AFPM Yosry Ahmed <yosryahmed@google.co=
-m> wrote:
-> >
-> >
-> > We can also use such atomic counters in obj_cgroup_may_zswap() and
-> > eliminate the rstat flush there as well. Same for zswap_current_read()
-> > probably.
->
-> zswap/zswapped are subtree-cumulative counters. Would that be a problem?
+On Wed, Aug 14, 2024, Oliver Upton wrote:
+> On Wed, Aug 14, 2024 at 04:28:00PM -0700, Oliver Upton wrote:
+> > On Wed, Aug 14, 2024 at 01:54:04PM -0700, Sean Christopherson wrote:
+> > > TL;DR: it's probably worth looking at mmu_stress_test (was: max_guest_memory_test)
+> > > on arm64, specifically the mprotect() testcase[1], as performance is significantly
+> > > worse compared to x86,
+> > 
+> > Sharing what we discussed offline:
+> > 
+> > Sean was using a machine w/o FEAT_FWB for this test, so the increased
+> > runtime on arm64 is likely explained by the CMOs we're doing when
+> > creating or invalidating a stage-2 PTE.
+> > 
+> > Using a machine w/ FEAT_FWB would be better for making these sort of
+> > cross-architecture comparisons. Beyond CMOs, we do have some 
+> 
+> ... some heavy barriers (e.g. DSB(ishst)) we use to ensure page table
+> updates are visible to the system. So there could still be some
+> arch-specific quirks that'll show up in the test.
 
-For obj_cgroup_may_zswap() we iterate the parents anyway, so I think
-it should be fine. We will also iterate the nodes on each level, but
-this is usually a small number and is probably cheaper than an rstat
-flush (but I can easily be wrong).
+Nope, 'twas FWB.  On a system with FWB, ARM nicely outperforms x86 on mprotect()
+when vCPUs stop on the first -EFAULT.  I suspect because ARM can do broadcast TLB
+invalidations and doesn't need to interrupt and wait for every vCPU to respond.
 
-For zswap_current_read() we need to iterate the children, not the
-parents. At this point the rstat flush is probably much better, so we
-can leave this one alone. It's a userspace read anyway, so it
-shouldn't be causing problems.
+  run1 = 10.723194154s, reset = 0.000014732s, run2 = 0.013790876s, ro = 2.151261587s, rw = 10.624272116s
 
->
-> >
-> > Most in-kernel flushers really only need a few stats, so I am
-> > wondering if it's better to incrementally move these ones outside of
-> > the rstat framework and completely eliminate in-kernel flushers. For
-> > instance, MGLRU does not require the flush that reclaim does as
-> > Shakeel pointed out.
-> >
-> > This will solve so many scalability problems that all of us have
-> > observed at some point or another and tried to optimize. I believe
-> > using rstat for userspace reads was the original intention anyway.
->
-> But yeah, the fewer in-kernel flushers we have, the fewer
-> scalability/lock contention issues there will be. Not an expert in
-> this area, but sounds like a worthwhile direction to pursue.
+However, having vCPUs continue faulting while mprotect() is running turns the
+tables, I suspect due to mmap_lock
+
+  run1 = 10.768003815s, reset = 0.000012051s, run2 = 0.013781921s, ro = 23.277624455s, rw = 10.649136889s
+
+The x86 numbers since they're out of sight now:
+
+ -EFAULT once
+  run1 =  6.873408794s, reset = 0.000165898s, run2 = 0.035537803s, ro =  6.149083106s, rw = 7.713627355s
+
+ -EFAULT forever
+  run1 =  6.923218747s, reset = 0.000167050s, run2 = 0.034676225s, ro = 14.599445790s, rw = 7.763152792s
+
+> > > and there might be bugs lurking the mmu_notifier flows.
+> > 
+> > Impossible! :)
+> > 
+> > > Jumping back to mmap_lock, adding a lock, vma_lookup(), and unlock in x86's page
+> > > fault path for valid VMAs does introduce a performance regression, but only ~30%,
+> > > not the ~6x jump from x86 to arm64.  So that too makes it unlikely taking mmap_lock
+> > > is the main problem, though it's still good justification for avoid mmap_lock in
+> > > the page fault path.
+> > 
+> > I'm curious how much of that 30% in a microbenchmark would translate to
+> > real world performance, since it isn't *that* egregious.
+
+vCPU jitter is the big problem, especially if userspace is doing something odd,
+and/or if the kernel is preemptible (which also triggers yeild-on-contention logic
+for spinlocks, ew).  E.g. the range-based retry to avoid spinning and waiting on
+an unrelated MM operation was added by the ChromeOS folks[1] to resolve issues
+where an MM operation got preempted and so blocked vCPU faults.
+
+But even for cloud setups with a non-preemptible kernel, contending with unrelated
+userspace VMM modification can be problematic, e.g. it turns out even the
+gfn_to_pfn_cache logic needs range-based retry[2] (though that's a rather
+pathological case where userspace is spamming madvise() to the point where vCPUs
+can't even make forward progress).
+
+> > We also have other uses for getting at the VMA beyond mapping granularity
+> > (MTE and the VFIO Normal-NC hint) that'd require some attention too.
+
+Yeah, though it seems like it'd be easy enough to take mmap_lock if and only if
+it's necessary, e.g. similar to how common KVM takes it only if it encounters
+VM_PFNMAP'd memory.
+
+E.g. take mmap_lock if and only if MTE is active (I assume that's uncommon?), or
+if the fault is to device memory.
+
+[1] https://lore.kernel.org/all/20210222024522.1751719-1-stevensd@google.com
+[2] https://lore.kernel.org/all/f862cefff2ed3f4211b69d785670f41667703cf3.camel@infradead.org
 
