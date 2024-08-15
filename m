@@ -1,185 +1,191 @@
-Return-Path: <linux-kernel+bounces-287442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DDA9527CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:06:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C159527ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B21A41F23663
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983511F22603
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105F29476;
-	Thu, 15 Aug 2024 02:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD461D52B;
+	Thu, 15 Aug 2024 02:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="VdiG7gRo"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="iFWwfDzg"
+Received: from mail-m49225.qiye.163.com (mail-m49225.qiye.163.com [45.254.49.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA544C69
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732BD36124;
+	Thu, 15 Aug 2024 02:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723687562; cv=none; b=GyNB5LkXWcagmDc7vYWTR/vby6c35NGJCQ6Bc2TAldYJGu/I7I+psp6gX5AbhYMCzx8QD42MYunMhPNyQv/f3M1diWYzGT4wUImgxX4NK6pVrucsaj3wSS6oxgNbrwE8GuZ84PMKGOvVENI7vSAPun9BU7bzhR1tttsAHFNzWdo=
+	t=1723688881; cv=none; b=eyy4jfgsv+fT6/CHiji5iBpJnXR2Nu99zU+JbCK+fF5S6FMCOuCZdJgrxrbiDzAQKE5A7XCAU0SolRi6FLlJsj4BMmPTenKZsJTJAbQD0W372Icz0Wf3yZt9ksYEZRldvuOWTh9xJMbqJNMI0z2KyWbwOd3a+GewdltEUSYst6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723687562; c=relaxed/simple;
-	bh=BDnTCpWWmur+11JCuk92Wt9LbD6AC/vh667vww7L9B0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ny/MotScavgLPrSLwg1wTrR7puNbi3P6iTFN9MT/HOXOki8UVZ2hzZ6cEiGIbw1FnNrKuCTKiTJNYIft+mTOZ0X0D6HtLPlLKMkRo/7HY7oFLl3IFOwQNH5q+eiqgmqn+yVIXMB01IsMTgdll1nrbTTfUekvzTTgAQX4SOB3NKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=VdiG7gRo; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5d5c7f23f22so331104eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723687559; x=1724292359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gztf11sxNJHPAiXVpalG2T6xg+DahVfwn29zmjNMpnI=;
-        b=VdiG7gRor1JZ5mG+xS7CEo0SQ+l1jl5wt6z0pQPj0U3EsZxqDqAMk83YPhir9lD1nB
-         kdoWsMUPsgX7CEhjL4EEYthqFXENwAFQjbbmEtRBPh8RGdfqRCgaMz0FTjuQCIYgbw6X
-         0n+pq57xPMhLngqHV3v45YG+TCB9ujDRuER2LdTV+n3dLS0Zy3lk3uLW5dBsHvvsKCC4
-         cNh9ql3m3gXy2XVUwfCZ9nF7+jrnepzfErM4jsdP1Yt7Wk0l0Z5W7mOYeQG2/H7aGbkR
-         nUUBL1iAiZp5MasP/fI49Nlnl2kJA/oQlQ0ihWmpB3El3WAo7j/k5VacxpTex4NH7x0I
-         jfGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723687559; x=1724292359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gztf11sxNJHPAiXVpalG2T6xg+DahVfwn29zmjNMpnI=;
-        b=nsbBPqptnhJTF4TgfHf9kSWhSfFz98dFerL21LX82FzUBfZ0Hh+tndthVGMWcgTMjh
-         OYN9IlbvnYHsBrsxwGaRCh1CFLb1Gz1Z2YFL07fFsyPeaqSfnBvUnjpifLdHF2x84p60
-         1neyF2tiVZ/NPfSeeudQh+xZ99rgKnICYe1bBM2fCGL8W8JAXB2yMFMJBjT3JVzD4ve4
-         0nK4TKOl22L89HWsw5oaTBw61tyPFjH1RtGq2duMUDdv4G3TXH8m1kgqI028xEQeX2Mm
-         yOO7ZvEyZy/r8UbjAtIDCb/HlTrdIxQ8wmIhMyhZ86ma3mpTM9GR/D0t8YW6NC/aNHA4
-         K0vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcUq5Pn9h1GfeBbtk2hPxhgVYGR3tA6x88hLdzFWTUKvyMxG2tesVK40cNojVPgO5+RV1W78dI3JPnVPLG+RMm+wvjXjVqY+dXCMK7
-X-Gm-Message-State: AOJu0Yx+ofhEEeL7+SaIuGyWNS5n959GrrjfYoVem+OgWKYxwwkow1gY
-	duw8i848Ow0ZrrBIy13f8f4P0zz5JwY0bSNCgtWEGG7oVzpzZMAuUdPIAHtp8jRttP42yuqDlEe
-	VrvA7riUd15e2KpdIZvmj4j7MJrZghykd2ITLPQ==
-X-Google-Smtp-Source: AGHT+IHUGhcjxAU7b6t0hrvQi020b2arIFzB1nNlSVxcVIo/1yVCawLhV+YuT9lQoGaEmkbYJtbHnnDmtVVbUoulU8M=
-X-Received: by 2002:a4a:ee97:0:b0:5ce:d2e3:b18 with SMTP id
- 006d021491bc7-5da7c7214b8mr4159683eaf.8.1723687558915; Wed, 14 Aug 2024
- 19:05:58 -0700 (PDT)
+	s=arc-20240116; t=1723688881; c=relaxed/simple;
+	bh=NNpwkujCV3dX9o/zbWoG9yRatR301Z/EK7T1NjA4l6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RpnO9CgIww0iRGP5XpZeMBRzDHvbGQ0YIJo3wBou9t3e7jVAqlGtXnv87bJCH6tlYmphXF/A5vq2TAeuXcHdgP6CXdn53ppxWIi69Zio/pP1bQ3Cj+zVWm9rIdYCTK271lrzW3dXEmgo+f8pQY6B4XymnYMd8aDbu1Wmgsjc12g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=iFWwfDzg; arc=none smtp.client-ip=45.254.49.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=iFWwfDzgvBIVvfRhzICQsCQhaUA3eeUmU4UL5DdI6HOamO5j2aG4dLSD7wDjP3RTdrQZQghWkqtC61gT9DApLBFjxs+WY6BXjswIjchxgZSdT0/wV6F2lpjAh5p3kujFuzBPYYERLO7FAp22PF08MW0jkqrLCBYUVRfQlmBad3c=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=Ty7+juzHJYUrCpybNJWAGwsjoiQXTva3a6kVoJRyTBw=;
+	h=date:mime-version:subject:message-id:from;
+Received: from [172.16.12.30] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id E3D5DA021E;
+	Thu, 15 Aug 2024 09:09:16 +0800 (CST)
+Message-ID: <304213b3-9466-41f9-bcb8-1d32ac9136a8@rock-chips.com>
+Date: Thu, 15 Aug 2024 09:09:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723021820.87718-1-cuiyunhui@bytedance.com>
-In-Reply-To: <20240723021820.87718-1-cuiyunhui@bytedance.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Thu, 15 Aug 2024 10:05:47 +0800
-Message-ID: <CAEEQ3w=hsAEp8t+eH1GQW4M9ZY2TPXGUuhyNLB5DFEo88vwDZA@mail.gmail.com>
-Subject: Re: [PATCH v3] riscv/mm/fault: add show_pte() before die()
-To: conor@kernel.org, punit.agrawal@bytedance.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, akpm@linux-foundation.org, 
-	surenb@google.com, peterx@redhat.com, alexghiti@rivosinc.com, 
-	willy@infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Cc: Andrew Jones <ajones@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] pmdomain: rockchip: Add support for RK3576 SoC
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Finley Xiao <finley.xiao@rock-chips.com>, Arnd Bergmann <arnd@arndb.de>,
+ Jagan Teki <jagan@edgeble.ai>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-pm@vger.kernel.org, kernel@collabora.com
+References: <20240814222824.3170-1-detlev.casanova@collabora.com>
+ <20240814222824.3170-3-detlev.casanova@collabora.com>
+From: zhangqing <zhangqing@rock-chips.com>
+In-Reply-To: <20240814222824.3170-3-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGU8dHlZLGU4aTBpNGEoZQk1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a915394f92403a8kunme3d5da021e
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MTI6GQw*SjI#F0wrFjIRE0JM
+	OjcwCiFVSlVKTElITUNPSk5DSEpMVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNMTk83Bg++
 
-Hi All,
+Hi,
 
-A gentle ping, Any more comments on this patch?
+Reviewed-by: Elaine Zhang<zhangqing@rock-chips.com>
 
-On Tue, Jul 23, 2024 at 10:18=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance.co=
-m> wrote:
+在 2024/8/15 6:26, Detlev Casanova 写道:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
 >
-> When the kernel displays "Unable to handle kernel paging request at
-> virtual address", we would like to confirm the status of the virtual
-> address in the page table. So add show_pte() before die().
+> Add configuration for RK3576 SoC and list the power domains.
 >
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 > ---
->  arch/riscv/mm/fault.c | 52 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
+>   drivers/pmdomain/rockchip/pm-domains.c | 45 ++++++++++++++++++++++++++
+>   1 file changed, 45 insertions(+)
 >
-> diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-> index 5224f3733802..c72e6c7c09ef 100644
-> --- a/arch/riscv/mm/fault.c
-> +++ b/arch/riscv/mm/fault.c
-> @@ -22,6 +22,57 @@
->
->  #include "../kernel/head.h"
->
-> +static void show_pte(unsigned long addr)
-> +{
-> +       pgd_t *pgdp, pgd;
-> +       p4d_t *p4dp, p4d;
-> +       pud_t *pudp, pud;
-> +       pmd_t *pmdp, pmd;
-> +       pte_t *ptep, pte;
-> +       struct mm_struct *mm =3D current->mm;
+> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+> index 9b76b62869d0d..64b4d7120d832 100644
+> --- a/drivers/pmdomain/rockchip/pm-domains.c
+> +++ b/drivers/pmdomain/rockchip/pm-domains.c
+> @@ -33,6 +33,7 @@
+>   #include <dt-bindings/power/rk3368-power.h>
+>   #include <dt-bindings/power/rk3399-power.h>
+>   #include <dt-bindings/power/rk3568-power.h>
+> +#include <dt-bindings/power/rockchip,rk3576-power.h>
+>   #include <dt-bindings/power/rk3588-power.h>
+>   
+>   struct rockchip_domain_info {
+> @@ -175,6 +176,9 @@ struct rockchip_pmu {
+>   #define DOMAIN_RK3568(name, pwr, req, wakeup)		\
+>   	DOMAIN_M(name, pwr, pwr, req, req, req, wakeup)
+>   
+> +#define DOMAIN_RK3576(name, p_offset, pwr, status, r_status, r_offset, req, idle, wakeup)	\
+> +	DOMAIN_M_O_R(name, p_offset, pwr, status, 0, r_status, r_status, r_offset, req, idle, idle, wakeup)
 > +
-> +       if (!mm)
-> +               mm =3D &init_mm;
+>   /*
+>    * Dynamic Memory Controller may need to coordinate with us -- see
+>    * rockchip_pmu_block().
+> @@ -1106,6 +1110,28 @@ static const struct rockchip_domain_info rk3568_pm_domains[] = {
+>   	[RK3568_PD_PIPE]	= DOMAIN_RK3568("pipe", BIT(8), BIT(11), false),
+>   };
+>   
+> +static const struct rockchip_domain_info rk3576_pm_domains[] = {
+> +	[RK3576_PD_NPU]		= DOMAIN_RK3576("npu",    0x0, BIT(0),  BIT(0), 0,       0x0, 0,       0,       false),
+> +	[RK3576_PD_NVM]		= DOMAIN_RK3576("nvm",    0x0, BIT(6),  0,      BIT(6),  0x4, BIT(2),  BIT(18), false),
+> +	[RK3576_PD_SDGMAC]	= DOMAIN_RK3576("sdgmac", 0x0, BIT(7),  0,      BIT(7),  0x4, BIT(1),  BIT(17), false),
+> +	[RK3576_PD_AUDIO]	= DOMAIN_RK3576("audio",  0x0, BIT(8),  0,      BIT(8),  0x4, BIT(0),  BIT(16), false),
+> +	[RK3576_PD_PHP]		= DOMAIN_RK3576("php",    0x0, BIT(9),  0,      BIT(9),  0x0, BIT(15), BIT(15), false),
+> +	[RK3576_PD_SUBPHP]	= DOMAIN_RK3576("subphp", 0x0, BIT(10), 0,      BIT(10), 0x0, 0,       0,       false),
+> +	[RK3576_PD_VOP]		= DOMAIN_RK3576("vop",    0x0, BIT(11), 0,      BIT(11), 0x0, 0x6000,  0x6000,  false),
+> +	[RK3576_PD_VO1]		= DOMAIN_RK3576("vo1",    0x0, BIT(14), 0,      BIT(14), 0x0, BIT(12), BIT(12), false),
+> +	[RK3576_PD_VO0]		= DOMAIN_RK3576("vo0",    0x0, BIT(15), 0,      BIT(15), 0x0, BIT(11), BIT(11), false),
+> +	[RK3576_PD_USB]		= DOMAIN_RK3576("usb",    0x4, BIT(0),  0,      BIT(16), 0x0, BIT(10), BIT(10), true),
+> +	[RK3576_PD_VI]		= DOMAIN_RK3576("vi",     0x4, BIT(1),  0,      BIT(17), 0x0, BIT(9),  BIT(9),  false),
+> +	[RK3576_PD_VEPU0]	= DOMAIN_RK3576("vepu0",  0x4, BIT(2),  0,      BIT(18), 0x0, BIT(7),  BIT(7),  false),
+> +	[RK3576_PD_VEPU1]	= DOMAIN_RK3576("vepu1",  0x4, BIT(3),  0,      BIT(19), 0x0, BIT(8),  BIT(8),  false),
+> +	[RK3576_PD_VDEC]	= DOMAIN_RK3576("vdec",   0x4, BIT(4),  0,      BIT(20), 0x0, BIT(6),  BIT(6),  false),
+> +	[RK3576_PD_VPU]		= DOMAIN_RK3576("vpu",    0x4, BIT(5),  0,      BIT(21), 0x0, BIT(5),  BIT(5),  false),
+> +	[RK3576_PD_NPUTOP]	= DOMAIN_RK3576("nputop", 0x4, BIT(6),  0,      BIT(22), 0x0, 0x18,    0x18,    false),
+> +	[RK3576_PD_NPU0]	= DOMAIN_RK3576("npu0",   0x4, BIT(7),  0,      BIT(23), 0x0, BIT(1),  BIT(1),  false),
+> +	[RK3576_PD_NPU1]	= DOMAIN_RK3576("npu1",   0x4, BIT(8),  0,      BIT(24), 0x0, BIT(2),  BIT(2),  false),
+> +	[RK3576_PD_GPU]		= DOMAIN_RK3576("gpu",    0x4, BIT(9),  0,      BIT(25), 0x0, BIT(0),  BIT(0),  false),
+> +};
 > +
-> +       pr_alert("Current %s pgtable: %luK pagesize, %d-bit VAs, pgdp=3D0=
-x%016llx\n",
-> +                current->comm, PAGE_SIZE / SZ_1K, VA_BITS,
-> +                mm =3D=3D &init_mm ? (u64)__pa_symbol(mm->pgd) : virt_to=
-_phys(mm->pgd));
+>   static const struct rockchip_domain_info rk3588_pm_domains[] = {
+>   	[RK3588_PD_GPU]		= DOMAIN_RK3588("gpu",     0x0, BIT(0),  0,       0x0, 0,       BIT(1),  0x0, BIT(0),  BIT(0),  false),
+>   	[RK3588_PD_NPU]		= DOMAIN_RK3588("npu",     0x0, BIT(1),  BIT(1),  0x0, 0,       0,       0x0, 0,       0,       false),
+> @@ -1284,6 +1310,21 @@ static const struct rockchip_pmu_info rk3568_pmu = {
+>   	.domain_info = rk3568_pm_domains,
+>   };
+>   
+> +static const struct rockchip_pmu_info rk3576_pmu = {
+> +	.pwr_offset = 0x210,
+> +	.status_offset = 0x230,
+> +	.chain_status_offset = 0x248,
+> +	.mem_status_offset = 0x250,
+> +	.mem_pwr_offset = 0x300,
+> +	.req_offset = 0x110,
+> +	.idle_offset = 0x128,
+> +	.ack_offset = 0x120,
+> +	.repair_status_offset = 0x570,
 > +
-> +       pgdp =3D pgd_offset(mm, addr);
-> +       pgd =3D pgdp_get(pgdp);
-> +       pr_alert("[%016lx] pgd=3D%016lx", addr, pgd_val(pgd));
-> +       if (pgd_none(pgd) || pgd_bad(pgd) || pgd_leaf(pgd))
-> +               goto out;
+> +	.num_domains = ARRAY_SIZE(rk3576_pm_domains),
+> +	.domain_info = rk3576_pm_domains,
+> +};
 > +
-> +       p4dp =3D p4d_offset(pgdp, addr);
-> +       p4d =3D p4dp_get(p4dp);
-> +       pr_cont(", p4d=3D%016lx", p4d_val(p4d));
-> +       if (p4d_none(p4d) || p4d_bad(p4d) || p4d_leaf(p4d))
-> +               goto out;
-> +
-> +       pudp =3D pud_offset(p4dp, addr);
-> +       pud =3D pudp_get(pudp);
-> +       pr_cont(", pud=3D%016lx", pud_val(pud));
-> +       if (pud_none(pud) || pud_bad(pud) || pud_leaf(pud))
-> +               goto out;
-> +
-> +       pmdp =3D pmd_offset(pudp, addr);
-> +       pmd =3D pmdp_get(pmdp);
-> +       pr_cont(", pmd=3D%016lx", pmd_val(pmd));
-> +       if (pmd_none(pmd) || pmd_bad(pmd) || pmd_leaf(pmd))
-> +               goto out;
-> +
-> +       ptep =3D pte_offset_map(pmdp, addr);
-> +       if (!ptep)
-> +               goto out;
-> +
-> +       pte =3D ptep_get(ptep);
-> +       pr_cont(", pte=3D%016lx", pte_val(pte));
-> +       pte_unmap(ptep);
-> +out:
-> +       pr_cont("\n");
-> +}
-> +
->  static void die_kernel_fault(const char *msg, unsigned long addr,
->                 struct pt_regs *regs)
->  {
-> @@ -31,6 +82,7 @@ static void die_kernel_fault(const char *msg, unsigned =
-long addr,
->                 addr);
->
->         bust_spinlocks(0);
-> +       show_pte(addr);
->         die(regs, "Oops");
->         make_task_dead(SIGKILL);
->  }
-> --
-> 2.39.2
->
+>   static const struct rockchip_pmu_info rk3588_pmu = {
+>   	.pwr_offset = 0x14c,
+>   	.status_offset = 0x180,
+> @@ -1359,6 +1400,10 @@ static const struct of_device_id rockchip_pm_domain_dt_match[] = {
+>   		.compatible = "rockchip,rk3568-power-controller",
+>   		.data = (void *)&rk3568_pmu,
+>   	},
+> +	{
+> +		.compatible = "rockchip,rk3576-power-controller",
+> +		.data = (void *)&rk3576_pmu,
+> +	},
+>   	{
+>   		.compatible = "rockchip,rk3588-power-controller",
+>   		.data = (void *)&rk3588_pmu,
 
-Thanks,
-Yunhui
+-- 
+张晴
+瑞芯微电子股份有限公司
+Rockchip Electronics Co.,Ltd
+地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
+Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
+Tel:+86-0591-83991906-8601
+邮编：350003
+E-mail:elaine.zhang@rock-chips.com
+****************************************************************************
+保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
+
+IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
+
+****************************************************************************
+
 
