@@ -1,212 +1,234 @@
-Return-Path: <linux-kernel+bounces-287938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F56952E5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:36:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FBD952E60
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02EFF1F23095
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C1F1C208A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1409119DF76;
-	Thu, 15 Aug 2024 12:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gv5WchdI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAE11714DA;
+	Thu, 15 Aug 2024 12:35:36 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EC91714DA;
-	Thu, 15 Aug 2024 12:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0167619DF85
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723725332; cv=none; b=OafJZf5xydgQ5+ucau2U0dvPEWy3dR/lsaMFRsz/+DcnzMkeR/6EZ1o8L6qbM41Tuun3ADI8LDyYsvL0G2CO/vhWPdV5R66V9DLm+NZtROTtQp6S4PC8HgKP/6m92uMS4e4032cH0ltYjuD7vMxM57bhUdqXnrfDU+VBVeYgfuA=
+	t=1723725335; cv=none; b=bgxFwCsyLaQrggOtUoqBelF2uFjyhfPhFbNOyaotRohGWA+pF0C+VCYQkN5ExANgwHqTAkRzHqrze+GssCQVCkkN33hZ6XpUGzYKWqnDIVZDujVti5vmrG8u5A8fzkDT2STEt/Q96sNWt4iGF30LHNDVwvJAnKSQrY74qxqkA3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723725332; c=relaxed/simple;
-	bh=dXaBct2Q9fRbnCiEvN+tKUOp34Nt6Wc6xwlzOM0mSXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SZyEA4jWuxpVTv9tjRpHq2YN1ze9SRNGVNqlC/A1oUrLmZHg3vOHdDp+0OJQW3CVGszG5RSgOf4sUReBPgJVLm3yM0NL3PFZ+EIfCt4lPvRgxHjp2bs4aFPJGyBwBej0ZogrM1dssbmbOjlkFO/eIkUjyeGIDsAyKoOfqP5XaVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gv5WchdI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC557C32786;
-	Thu, 15 Aug 2024 12:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723725330;
-	bh=dXaBct2Q9fRbnCiEvN+tKUOp34Nt6Wc6xwlzOM0mSXw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gv5WchdIfK6YZLQMJsg8SuhNq8qIOAR2nHVj1hrE4Eyr474wVXvV6GnD7vStYyuiz
-	 5H2rFPkVaNn/oaLfAz8uwf2Xt4MDstc4eVmSgWufINK61UXOSIuz5SujWUqUnEf93w
-	 99M/iHgL0FnTpF5IbgbZo10WsjQPJtJJTbOVaDUWBzLBhF/puebScfKf6bqoPjEf5C
-	 ieYezyCmuwNAjPBaeTiU+3VyvFs9Smw3CNvS6uJtgQ93m+PS3DzHseaVI4eIfBndqZ
-	 f0kyHlWso8vBjuhesuA4VTMboQ2DNaOhHYGgvXqmZNVqZydwgs4w6IJFYwTWw+KoH6
-	 jnbwIU3hXB1sA==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2644f7d0fb2so120799fac.0;
-        Thu, 15 Aug 2024 05:35:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX157CFFZkQKAR6gk0TcWKQiAC+BB90I0v7DwA8sIPhO0o1YOBZE177JIsbXLJf99UNLz3KJMWfSR8BXgY=@vger.kernel.org, AJvYcCXCHZAq6gl8JhqlhJWUkbu7uaVFg8kJo1tWggFu7AIY4VYoCZSys132qYpwFM8AD3IyutFPjX72FAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlBlYRGw+J7xZJrms42iTncMGNaeaW2nMIgMI0hUJkpNBg7sns
-	J2saPWQLCNaUH4TI1W4sQ3AWzt7QbpW7ZK+bhdlDK60QS69/ch52IVOrt16K0fMh5RxTqJPOV+G
-	xUI+fAY82Ns+t1JlQ8rthLvyraSw=
-X-Google-Smtp-Source: AGHT+IG8X5e/cxbJqUe9zIHlPOalxNCTb+siCnJK6pcmYoYz8a5V/XEhW7HvRALv4QzF96PXDxwOpDvDT8A33LWMN0I=
-X-Received: by 2002:a05:6870:9b0d:b0:260:e5e1:2411 with SMTP id
- 586e51a60fabf-27002a5142cmr1343093fac.6.1723725329985; Thu, 15 Aug 2024
- 05:35:29 -0700 (PDT)
+	s=arc-20240116; t=1723725335; c=relaxed/simple;
+	bh=oCc8kiVUHH0a9spPU3xnBLKFF7P2+smtvv+27o1ThP8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HQeoLnnl0aSqP2kc3HAvmnCi/DR2k/ukLjeaVWi/cMoDWiy+8vLozvFEqhGocLUBN7UwECBDHg2z4lHMdboEMe01790VP1pnPgFZXJaCZ0507cxiooJfmKAR5xFQB4K4L7N2VJJKGOZH6/XjVV3lNq1OjtIz7yIPtk0o/s5Y2qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8223c3509a9so102436039f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:35:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723725333; x=1724330133;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FO04zWfmoPl6JXkiMG9YubIKQuGqI1ZQgX1qGisSs5g=;
+        b=bjZae/9NY0zy81STO39A5PLoDA5fxMWi8f2HrKg/DPXPcsecqvaO7oucJDbsYYtf27
+         lhg76BPV0VwvkZlLnTjxexZdx5lc1ZUMnFEibNFu4ip/nOF1yxMyGN2o5CNli3pIjUxK
+         VGJCYsg9AWaj9gwpi/3kRa9RmUPmLqY0FC3pmeVD//YgLf4I7b58N2EOpDLPOm4XdBSu
+         MfCNo4JkL5zg2n+h7iHqbjWay72UEpvnyqr0t87VM7OvB2RAmC1yBDNKsp3HEN6524W9
+         5CvsutMfVLDazaRfUbaGgMEVC0GqB8C01prvw45VuGQxWOvUibeeu+qvHyenB+pE6gsJ
+         E9KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ehqJzatGARGbYB6tGTdDVGHVmI1WPMBP0m+U3aXYDDpQUypBzqoJPwk4UbIpS21ln7Dh41qRXZYv1XIkmLR9SY5/hu0GceBlPpOe
+X-Gm-Message-State: AOJu0Yz3ah94xCiM7DEqsmLG0yf0ydkj3j45feOSjiUULL8HSal3dwvQ
+	s1h5U61utFDcfIjneRp2ydUi3fe28VTBC+VElqW/6bazlgp+Dn7VLA0brg068N3+NXF3OjGPKjW
+	Lr4uci+CQ3A9uzUWki2EzTl0ltUdgoDtDAhuVwyYQd5mT8F12s8HlOoA=
+X-Google-Smtp-Source: AGHT+IE3qfcv0Gz50A9TsKAswvDjNQ74Mo+p6fxg9LQ8hiROgEVQ81tDh9Ibc4rQvRAwFMDV8lTLnQ94SWAJYBQW59D7ja3Y6QeQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1903691.tdWV9SEqCh@rjwysocki.net> <2285575.iZASKD2KPV@rjwysocki.net>
- <2f16fd5a59d6655ec9339473d516ac49c89e43f8.camel@intel.com>
- <CAJZ5v0icxkRyd_1T53JmX3XDQOC6_Ak9nOD65Yx-rhZbDa4Y_w@mail.gmail.com> <6f3c94464ae9c2fd4e4d3c75f7f837aa073517ee.camel@intel.com>
-In-Reply-To: <6f3c94464ae9c2fd4e4d3c75f7f837aa073517ee.camel@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 15 Aug 2024 14:35:18 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jZvOiJMGEt8FwOztQfjfBTGqdrt8_oWug+GeZ4DR6EBw@mail.gmail.com>
-Message-ID: <CAJZ5v0jZvOiJMGEt8FwOztQfjfBTGqdrt8_oWug+GeZ4DR6EBw@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] thermal: gov_bang_bang: Use governor_data to
- reduce overhead
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "rafael@kernel.org" <rafael@kernel.org>, "lukasz.luba@arm.com" <lukasz.luba@arm.com>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, 
-	"peter@piie.net" <peter@piie.net>
+X-Received: by 2002:a05:6e02:214e:b0:398:36c0:796e with SMTP id
+ e9e14a558f8ab-39d124564a7mr4824845ab.1.1723725333099; Thu, 15 Aug 2024
+ 05:35:33 -0700 (PDT)
+Date: Thu, 15 Aug 2024 05:35:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002b8b05061fb8147f@google.com>
+Subject: [syzbot] [xfs?] possible deadlock in xfs_can_free_eofblocks (2)
+From: syzbot <syzbot+53d541c7b07d55a392ca@syzkaller.appspotmail.com>
+To: chandan.babu@oracle.com, djwong@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 5:26=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com> wr=
-ote:
->
-> On Wed, 2024-08-14 at 19:26 +0200, Rafael J. Wysocki wrote:
-> > On Wed, Aug 14, 2024 at 8:09=E2=80=AFAM Zhang, Rui <rui.zhang@intel.com=
->
-> > wrote:
-> > >
-> > > On Tue, 2024-08-13 at 16:29 +0200, Rafael J. Wysocki wrote:
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >
-> > > > After running once, the for_each_trip_desc() loop in
-> > > > bang_bang_manage() is pure needless overhead because it is not
-> > > > going
-> > > > to
-> > > > make any changes unless a new cooling device has been bound to
-> > > > one of
-> > > > the trips in the thermal zone or the system is resuming from
-> > > > sleep.
-> > > >
-> > > > For this reason, make bang_bang_manage() set governor_data for
-> > > > the
-> > > > thermal zone and check it upfront to decide whether or not it
-> > > > needs
-> > > > to
-> > > > do anything.
-> > > >
-> > > > However, governor_data needs to be reset in some cases to let
-> > > > bang_bang_manage() know that it should walk the trips again, so
-> > > > add
-> > > > an
-> > > > .update_tz() callback to the governor and make the core
-> > > > additionally
-> > > > invoke it during system resume.
-> > > >
-> > > > To avoid affecting the other users of that callback
-> > > > unnecessarily,
-> > > > add
-> > > > a special notification reason for system resume,
-> > > > THERMAL_TZ_RESUME,
-> > > > and
-> > > > also pass it to __thermal_zone_device_update() called during
-> > > > system
-> > > > resume for consistency.
-> > > >
-> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > ---
-> > > >  drivers/thermal/gov_bang_bang.c |   18 ++++++++++++++++++
-> > > >  drivers/thermal/thermal_core.c  |    3 ++-
-> > > >  include/linux/thermal.h         |    1 +
-> > > >  3 files changed, 21 insertions(+), 1 deletion(-)
-> > > >
-> > > > Index: linux-pm/drivers/thermal/gov_bang_bang.c
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > =3D=3D
-> > > > --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
-> > > > +++ linux-pm/drivers/thermal/gov_bang_bang.c
-> > > > @@ -86,6 +86,10 @@ static void bang_bang_manage(struct ther
-> > > >         const struct thermal_trip_desc *td;
-> > > >         struct thermal_instance *instance;
-> > > >
-> > > > +       /* If the code below has run already, nothing needs to be
-> > > > done. */
-> > > > +       if (tz->governor_data)
-> > > > +               return;
-> > > > +
-> > > >         for_each_trip_desc(tz, td) {
-> > > >                 const struct thermal_trip *trip =3D &td->trip;
-> > > >
-> > > > @@ -107,11 +111,25 @@ static void bang_bang_manage(struct ther
-> > > >
-> > > > bang_bang_set_instance_target(instanc
-> > > > e, 0);
-> > > >                 }
-> > > >         }
-> > > > +
-> > > > +       tz->governor_data =3D (void *)true;
-> > > > +}
-> > > > +
-> > > > +static void bang_bang_update_tz(struct thermal_zone_device *tz,
-> > > > +                               enum thermal_notify_event reason)
-> > > > +{
-> > > > +       /*
-> > > > +        * Let bang_bang_manage() know that it needs to walk
-> > > > trips
-> > > > after binding
-> > > > +        * a new cdev and after system resume.
-> > > > +        */
-> > > > +       if (reason =3D=3D THERMAL_TZ_BIND_CDEV || reason =3D=3D
-> > > > THERMAL_TZ_RESUME)
-> > > > +               tz->governor_data =3D NULL;
-> > > >  }
-> > >
-> > > can we do the cdev initialization for BIND_CDEV and RESUME
-> > > notification
-> > > in .update_tz() directly?
-> >
-> > That would be viable if the zone temperature was known at the time
-> > .update_tz() runs, but it isn't.  See this message:
-> >
-> > https://lore.kernel.org/linux-pm/CAJZ5v0ji_7Z-24iCO_Xxu4Zm4jgVFmR9jVp8Q=
-NiCOxzV9gqSnA@mail.gmail.com/
-> >
-> > As long as the zone temperature is not known, it is not clear which
-> > way to initialize the cooling devices.
->
-> right. Then the patch LGTM.
+Hello,
 
-Great!
+syzbot found the following issue on:
 
-> BTW, what do you think if we add handling for first temperature read in
-> handle_thermal_trip(), say, some draft code like below,
->
-> if (tz->last_temperature =3D=3D THERMAL_TEMP_INIT) {
->         if (tz->temperature < trip->temperature)
->                 list_add(&td->notify_list_node, way_down_list);
->         else
->                 list_add_tail(&td->notify_list_node, way_up_list);
-> }
->
-> This should handle both the init and the resume case.
+HEAD commit:    6b0f8db921ab Merge tag 'execve-v6.11-rc4' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=104cabd3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=801d05d1ea4be1b8
+dashboard link: https://syzkaller.appspot.com/bug?extid=53d541c7b07d55a392ca
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148fe6ed980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17840ad5980000
 
-I have considered doing something similar, but there are quite a few
-arguments against it.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-6b0f8db9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b407dbb66544/vmlinux-6b0f8db9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5c1cf0f1b692/bzImage-6b0f8db9.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ce1130cd3c8d/mount_0.gz
 
-First, it would cause spurious notifications to be sent to user space.
-Second, the debug code would need to be modified to take this case
-into account explicitly.  Moreover, this would be extra overhead for
-the other governors.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+53d541c7b07d55a392ca@syzkaller.appspotmail.com
 
-IMV it's better to limit the impact to the Bang-bang governor where
-the problem is.
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc3-syzkaller-00013-g6b0f8db921ab #0 Not tainted
+------------------------------------------------------
+kswapd0/79 is trying to acquire lock:
+ffff88801da74118 (&xfs_nondir_ilock_class#3){++++}-{3:3}, at: xfs_can_free_eofblocks+0x5f1/0x8d0 fs/xfs/xfs_bmap_util.c:550
+
+but task is already holding lock:
+ffffffff8ea2fce0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
+ffffffff8ea2fce0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       __fs_reclaim_acquire mm/page_alloc.c:3823 [inline]
+       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3837
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3939 [inline]
+       slab_alloc_node mm/slub.c:4017 [inline]
+       __do_kmalloc_node mm/slub.c:4157 [inline]
+       __kmalloc_noprof+0xa9/0x400 mm/slub.c:4170
+       kmalloc_noprof include/linux/slab.h:685 [inline]
+       xfs_attr_shortform_list+0x753/0x1900 fs/xfs/xfs_attr_list.c:117
+       xfs_attr_list+0x1d0/0x270 fs/xfs/xfs_attr_list.c:595
+       xfs_vn_listxattr+0x1d2/0x2c0 fs/xfs/xfs_xattr.c:341
+       vfs_listxattr fs/xattr.c:493 [inline]
+       listxattr+0x107/0x290 fs/xattr.c:841
+       path_listxattr fs/xattr.c:865 [inline]
+       __do_sys_llistxattr fs/xattr.c:883 [inline]
+       __se_sys_llistxattr fs/xattr.c:880 [inline]
+       __x64_sys_llistxattr+0x170/0x230 fs/xattr.c:880
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&xfs_nondir_ilock_class#3){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1651
+       xfs_can_free_eofblocks+0x5f1/0x8d0 fs/xfs/xfs_bmap_util.c:550
+       xfs_inode_mark_reclaimable+0x1bb/0xf60 fs/xfs/xfs_icache.c:2148
+       destroy_inode fs/inode.c:313 [inline]
+       evict+0x549/0x630 fs/inode.c:694
+       dispose_list fs/inode.c:712 [inline]
+       prune_icache_sb+0x239/0x2f0 fs/inode.c:897
+       super_cache_scan+0x38c/0x4b0 fs/super.c:223
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1090/0x14c0 mm/shrinker.c:662
+       shrink_one+0x43b/0x850 mm/vmscan.c:4815
+       shrink_many mm/vmscan.c:4876 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4954 [inline]
+       shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
+       kswapd_shrink_node mm/vmscan.c:6762 [inline]
+       balance_pgdat mm/vmscan.c:6954 [inline]
+       kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&xfs_nondir_ilock_class#3);
+                               lock(fs_reclaim);
+  rlock(&xfs_nondir_ilock_class#3);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/79:
+ #0: ffffffff8ea2fce0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6841 [inline]
+ #0: ffffffff8ea2fce0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbb4/0x35a0 mm/vmscan.c:7223
+ #1: ffff88803a2860e0 (&type->s_umount_key#44){.+.+}-{3:3}, at: super_trylock_shared fs/super.c:562 [inline]
+ #1: ffff88803a2860e0 (&type->s_umount_key#44){.+.+}-{3:3}, at: super_cache_scan+0x94/0x4b0 fs/super.c:196
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 79 Comm: kswapd0 Not tainted 6.11.0-rc3-syzkaller-00013-g6b0f8db921ab #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ down_read_nested+0xb5/0xa50 kernel/locking/rwsem.c:1651
+ xfs_can_free_eofblocks+0x5f1/0x8d0 fs/xfs/xfs_bmap_util.c:550
+ xfs_inode_mark_reclaimable+0x1bb/0xf60 fs/xfs/xfs_icache.c:2148
+ destroy_inode fs/inode.c:313 [inline]
+ evict+0x549/0x630 fs/inode.c:694
+ dispose_list fs/inode.c:712 [inline]
+ prune_icache_sb+0x239/0x2f0 fs/inode.c:897
+ super_cache_scan+0x38c/0x4b0 fs/super.c:223
+ do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+ shrink_slab+0x1090/0x14c0 mm/shrinker.c:662
+ shrink_one+0x43b/0x850 mm/vmscan.c:4815
+ shrink_many mm/vmscan.c:4876 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4954 [inline]
+ shrink_node+0x3799/0x3de0 mm/vmscan.c:5934
+ kswapd_shrink_node mm/vmscan.c:6762 [inline]
+ balance_pgdat mm/vmscan.c:6954 [inline]
+ kswapd+0x1bcd/0x35a0 mm/vmscan.c:7223
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
