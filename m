@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-288521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EF7953B3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:00:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5086953B35
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9CE1C24BF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6018D1F24D18
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B6557333;
-	Thu, 15 Aug 2024 20:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2077146016;
+	Thu, 15 Aug 2024 20:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XEoCxbyL"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmtcv5kg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E8B10FF
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 20:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296A21459F9;
+	Thu, 15 Aug 2024 20:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723752037; cv=none; b=JHC+iYhzZb46gk1FyD40HPaaradSV9ixNtIGOkPclKJk3Nw3kPV94oHSFy+2rqteWlXx6b4u/i3b4ySQ7gHjvTRoEeTUG2HxnBJsywqTtnAhT2yXDbzM7E6jKAv7YzvhJZIcdKz+MW0IiLT7x85tEjwcisBWpNdOdKQkVGGzCxE=
+	t=1723752004; cv=none; b=G4N5Ds/qJkpHhVK/ve2pXMMc5uERE1LKa5Y1gXWNghN3/0A03IC9tul6jjAXj90qVQsUpHvpfO9eJTjhFpR9jYEO3Du1PAZHmfV1jthmfGi+w5E20YJi4aihC+55FSYdTb41Up4c4bvIZ6PyXUhKCGBxEFcWOOcbOEDD+sBoaGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723752037; c=relaxed/simple;
-	bh=xGYBVjCJruWxpObTcbXRaohepR1nP2OwaL5Zu9E+LTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DvP26zGu5uKIrZJnRvv/y4J089YUe5hmhcpZ0tu+f3tEARAYfYyQ3LQzFzwITbOwoIzU3duvYe9bPKDnj+Se9YmGzJkMcraZF+5Z3BHCQhs9vztcCZwj7yWaafXjcRFEd9TwqfK/Qv2yiO5QbOROAzl4ddSaYXxr0cfX4AQIZz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XEoCxbyL; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bebc830406so1768a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723752034; x=1724356834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d3ArqisW88zeUJ5548euro8ampk/ZNm/xfRfsdbWrSo=;
-        b=XEoCxbyLwL4HcM51EsZbF3tltEsLeG0fMLChLyci6j8xwhfdhsrk6PiWQztaCnghnC
-         eaT2mcJ4GFV3M/3yL2RhFQQJf3dUVdRow4s3vrr2/+04q2tTYkdxTpp3dAklavj7Nqat
-         qt3xj+w69yg9KR3KfFxFysAFY0NCnGqPh/+jZDSKE8vgmyM40WTWy39GMYmEuULcPvna
-         aWkDjRKI0g9hrEGuYsZQoJniEdjA0Z1H51ZpwRfckEvQM/453k1oPkSM1Tb389rtf0BX
-         OKs8QmWwYCgZDH20vSOLhDjMJhyNsMS6uelDMF9OtT2GHwOMx8BqyfLU4FfjClsjs7nI
-         QfJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723752034; x=1724356834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d3ArqisW88zeUJ5548euro8ampk/ZNm/xfRfsdbWrSo=;
-        b=jH5l/y6r7kjOaH9PCtkMxOMSNtlGJavNJkd/gdV+NAnE3rauoNI+WplKfbBYEpocmk
-         lC6HhOpv2x5dHOjxGugB+8rP87SZ6+ihk5jBRKNk7++yaJLRAQb+tYEKOxBWYFeYQB15
-         caAPO9DduxRMeGRBXKqmDJfX8lUsj8HYREi9llKqiMkGhqff8wY81vTQDbd4FF4Zbhzh
-         P42zGty9pT/K4s4kK3xfuQa6dvcH0NrqfLO9NEhBGoUElqoKCC6jIaJhHNIbGq/mO1fK
-         r+cgBP/SsSUG58xZrydD27q1sz25ydK/Vd3LZs0XrOZto5ZDxG2+/6XsnvZRi8FewQFk
-         xesg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYOx1FWQGJXW7W5aPK7YlV2WOd79t+zu8lmp2PnrG54HyjzWLV6VX9xlCuVBP1/Wj5K0skpugvqp60YGovG6+cOxkNJnLJP0vExdrP
-X-Gm-Message-State: AOJu0YxqaHcRP5qYLpJnpj/nRrQG/Fjj1Sao+OS5U++viAuEURxYF3E5
-	1b2twodKW5JM0AHnLsz5rObHE2ZdJd4ECol48GxmFaWYIjxYHcypDS8ZPFxRsM7KsMiD+W4yAQD
-	sXQC2nmV/uXRRv468Qy6wOIYtoFpRNPf244MA
-X-Google-Smtp-Source: AGHT+IFwS4EKwUlrFlYXcuSN5oh43sNNRYX1HBigJRCxXbMVgn7z8rfDqxIsTOr1QPI6vYSZFktXxOduALeTABTxFEw=
-X-Received: by 2002:a05:6402:27ca:b0:57c:b712:47b5 with SMTP id
- 4fb4d7f45d1cf-5becb50aa8cmr15762a12.4.1723752032713; Thu, 15 Aug 2024
- 13:00:32 -0700 (PDT)
+	s=arc-20240116; t=1723752004; c=relaxed/simple;
+	bh=4RgSn9Z+qFS3Hc+SCCKD41kR9cnrKaI24LPgVaCeHtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBfoovSWifmSnDhZioXUR658v60sdxl5dj2yvIkipvsVA6qTxR1+cRmIPVOXxr34jkADQZs7+De1zzzN4gz1fAhm67iiDvG8xESaAhJ59CKE0IUA84CRqGCxFjhIfgR3xvq1RfzQ0O5d1yTFyhYcGX2SalsDLBd1Q0EYak+mj2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmtcv5kg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A25C5C32786;
+	Thu, 15 Aug 2024 20:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723752003;
+	bh=4RgSn9Z+qFS3Hc+SCCKD41kR9cnrKaI24LPgVaCeHtY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rmtcv5kgQ8j/ajfOyRN3tVSYYQsdOYM5pTLNCCAPYjDLr9UKmHWeSrbQPd7Whr1zC
+	 hFTaMwOxYtYtMZ2kFK5g7kMHGHlKqdsP2/FyUiw5LBWp/XzObvMvx7+zWPfVFTFM0X
+	 GelyiAclavDa0ZRuNtQwU0Vup2IQMYFd0meWjEQJrgiu9h3XHLMClb4B3JuHCSQ8d7
+	 XhtPJ0t6TWlrTJWIIqxfNgZTnwAZS7TsedmowRb5JUePInqwcH/TmAME4rzQiT1OiP
+	 R3ngC1Hu3x7ne+wTGdZWQGon341UvTRx8J4ZOYNsVLD1y5rISfTrjA/hhxfvOgn8Vt
+	 oHNALn2oYC+Sw==
+Date: Thu, 15 Aug 2024 14:00:03 -0600
+From: Rob Herring <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 06/11] dt-bindings: soc: microchip: document the two
+ simple-mfd syscons on PolarFire SoC
+Message-ID: <20240815200003.GA2956351-robh@kernel.org>
+References: <20240815-shindig-bunny-fd42792d638a@spud>
+ <20240815-pending-sacrifice-f2569ed756fe@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
- <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com> <2494949.1723751188@warthog.procyon.org.uk>
-In-Reply-To: <2494949.1723751188@warthog.procyon.org.uk>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 15 Aug 2024 21:59:54 +0200
-Message-ID: <CAG48ez2LBmS91fQVLYRYEaBHssj22NyUjB0HVtkDHUXDvDZ6EA@mail.gmail.com>
-Subject: Re: Can KEYCTL_SESSION_TO_PARENT be dropped entirely? -- was Re:
- [PATCH v2 1/2] KEYS: use synchronous task work for changing parent credentials
-To: David Howells <dhowells@redhat.com>
-Cc: Jeffrey Altman <jaltman@auristor.com>, openafs-devel@openafs.org, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, John Johansen <john.johansen@canonical.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, keyrings@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815-pending-sacrifice-f2569ed756fe@spud>
 
-On Thu, Aug 15, 2024 at 9:46=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
-> Jann Horn <jannh@google.com> wrote:
->
-> > Rewrite keyctl_session_to_parent() to run task work on the parent
-> > synchronously, so that any errors that happen in the task work can be
-> > plumbed back into the syscall return value in the child.
->
-> The main thing I worry about is if there's a way to deadlock the child an=
-d the
-> parent against each other.  vfork() for example.
+On Thu, Aug 15, 2024 at 03:01:09PM +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> There are two syscons on PolarFire SoC that provide various functionality of
+> use to the OS.
+> 
+> The first of these is the "control-scb" region, that contains the "tvs"
+> temperature and voltage sensors and the control/status registers for the
+> system controller's mailbox. The mailbox has a dedicated node, so
+> there's no need for a child node describing it, looking the syscon up by
+> compatible is sufficient.
+> 
+> The second, "mss-top-sysreg", contains clocks, pinctrl, resets, and
+> interrupt controller and more. For this RFC, only the reset controller
+> child is described as that's all that is described by the existing
+> bindings. The clock controller already has a dedicated node, and will
+> retain it as there are other clock regions, so like the mailbox,
+> a compatible-based lookup of the syscon is sufficient to keep the clock
+> driver working as before so no child is needed.
 
-Yes - I think it would work fine for scenarios like using
-KEYCTL_SESSION_TO_PARENT from a helper binary against the shell that
-launched the helper (which I think is the intended usecase?), but
-there could theoretically be constellations where it would cause an
-(interruptible) hang if the parent is stuck in
-uninterruptible/killable sleep.
+I'm confused. The reset controller is reused from somewhere else? I 
+thought you didn't expect any reuse of the IP happening. If a child node 
+makes it possible to enable the h/w without any s/w changes, then that 
+is a compelling argument for having a child node.
 
-I think vfork() is rather special in that it does a killable wait for
-the child to exit or execute; and based on my understanding of the
-intended usecase of KEYCTL_SESSION_TO_PARENT, I think normally
-KEYCTL_SESSION_TO_PARENT would only be used by a child that has gone
-through execve?
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> (I'll split this in two later, it's just easier when I have the same
+> questions about both...)
+> 
+> Are these things entitled to have child nodes for the reset and sensor
+> nodes, or should the properties be in the parent and the OS probe the
+> drivers for the functions? That's something that, despite supposedly
+> being a maintainer, I do not understand the rules (of thumb?) for.
 
+Besides the is it an independent, reusable IP block test, my test 
+generally is do the child nodes have their own DT resources? Say 
+you have phy registers mixed in some syscon and clocks which only go to 
+the phy. Then a child node with "clocks" makes sense. If your only 
+property is #phy-cells, then a child node doesn't make sense. Of course 
+you could reach different conclusions based on the completeness of the 
+binding.
 
-> > +     if (task_work_cancel(parent, &ctx.work)) {
-> > +             /*
-> > +              * We got interrupted and the task work was canceled befo=
-re it
-> > +              * could execute.
-> > +              * Use -ERESTARTNOINTR instead of -ERESTARTSYS for
-> > +              * compatibility - the manpage does not list -EINTR as a
-> > +              * possible error for keyctl().
-> > +              */
->
-> I think returning EINTR is fine, provided that if we return EINTR, the ch=
-ange
-> didn't happen.  KEYCTL_SESSION_TO_PARENT is only used by the aklog, dlog =
-and
-> klog* OpenAFS programs AFAIK, and only if "-setpag" is set as a command l=
-ine
-> option.  It also won't be effective if you strace the program.
+> 
+> Secondly, is it okay to make the "pragmatic" decision to not have a
+> child clock node and keep routing the clocks via the existing & retained
+> clock node (and therefore not update the various clocks nodes in the
+> consumers)? Doing so would require a lot more hocus pocus with the clock
+> driver than this series does, as the same driver would no longer be
+> suitable for the before/after bindings.
 
-Ah, I didn't even know about those.
+In the 2 cases here, I don't think you need child nodes. I would expect 
+pinctrl to have one though if only as a container for all the pinctrl 
+child nodes.
 
-The users I knew of are the command-line tools "keyctl new_session"
-and "e4crypt new_session" (see
-https://codesearch.debian.net/search?q=3DKEYCTL_SESSION_TO_PARENT&literal=
-=3D1,
-which indexes code that's part of Debian).
-
-> Maybe the AFS people can say whether it's even worth keeping the function=
-ality
-> rather than just dropping KEYCTL_SESSION_TO_PARENT?
-
-I think this would break the tools "keyctl new_session" and "e4crypt
-new_session" - though I don't know if anyone actually uses those
-invocations.
+Rob
 
