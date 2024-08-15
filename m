@@ -1,135 +1,210 @@
-Return-Path: <linux-kernel+bounces-288111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2D19535A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D609535AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 429D428248C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2051C252F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40901A0710;
-	Thu, 15 Aug 2024 14:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7611A2C35;
+	Thu, 15 Aug 2024 14:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3QdljX/+"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="RWEr4V9X"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18281AC893
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0280D1A01CB
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732801; cv=none; b=ccyv/ssiEnKiKZ0zX0LuJ5//radcjC62iNBhSpdxAnhNIxlY9fU38BUSgCZpuLdrxnRqumGaL9Q07nV7jSET0Qs3IcsCFm7Axe+pIHdABrTxMzt9JAoKPEH9MMYoZqgsOF9knXhkVW8LAJir1bmfmWvwOL7LyOWYcOKndsknr8k=
+	t=1723732819; cv=none; b=Ii6ZwkZypVnZUj1a3zZBI8ozYWQq1DM2FG0hfsDUUHV1OxdFlZm5HoKVVbkaJjvwF+ij4mYTxIGYk7Trb4WlMls8+KKPDqq6WGuj5UKflkctFAKzInSzDJ+LOgtrzzltqRaW9YpJ9yRW5ewo4CtfNNWrzihkLU/loJ3//5vYWSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732801; c=relaxed/simple;
-	bh=WPQTMYfsOfAymfXre3RJj6ZP8YMqHZV3gvzZQKZNjQM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tKK+SY0qLQRMNfDuoXISXGBUa2ZQVA1zLCljg2aiaZ9JO2zVHYxsmGaCxorp03q34dO+mQw0FA6UPLFIRIsYm/Ej7YtiB2lTAHiOjoOq4SYfyRogBcYd7E/EWKpPpuSU1P2jtPl5EpyI017ArWWX5/NXAH/l6VYVpJbxExtDNvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3QdljX/+; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7c3da1ac936so398467a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723732799; x=1724337599; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cpqWW/QzIPoV5K+iQm5YrEqDbkkjx2cyk1LgXuzath0=;
-        b=3QdljX/+jhBj5Rt4vfNgiOgvOK+9W1kbc317kjASVKa9ve1HZxBce663R0PwF606Gc
-         g2XCYUrEhBzgEN72bC5ledsf4qfp5zElG8rjfMtUgt0aK0hzSie9jYHuXUTird2IqeQ5
-         kMEbdes/OLpB4JQkgqo0DMiS98igy+9ehDtoe5d+4dtaKmOV3Kx/otUJvFAgW465nrqy
-         UJyjpZyrmUVugQkla0WxAjPHYRheKZJH0rueLQdm9CwbX1ycOFna+PZ6rt3UmK292LdK
-         K+zvf5zA9W1Xjb35N/QVvBano1yweJV5EOhh7esyB4VDmkDzeZEPnA6U11zajQZLxCfB
-         XPZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723732799; x=1724337599;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cpqWW/QzIPoV5K+iQm5YrEqDbkkjx2cyk1LgXuzath0=;
-        b=k90bVH39EN/h+QiHcCh4eJDMgN8HtNL6hPwcyTq5dUz881Y/EnZJaWrsMZ/3SlbhQj
-         1k0blk/EDeZBxTmti1rDYRVrMB/OLFNinmaUmahpxWZTjmwBv0nMfHR6n1WV5vwgP5E6
-         Y99AIekMzQW62+xhfDB2GQLDHPt7t3eew2kGlX3CUB7HJvAtAJ03ThTo+vksRn79FtEx
-         erb9PGuXmJ57y1WPlDHsUE9yeZcMqmoDOZP4r8jFUs0dZtEyS8tRxrmHX+t6aefq7LAx
-         27A6cAnI539IH3jtL56///57b2Wwx3bhas7hv4o8hcHhsxeLU+f3/dNA17PgF3zcOwM4
-         WcZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVisbJyNfATShALB7ef+879z2GFsjYnfstNoKYFs7MvszgPcPOVRMRDrfHj3Nnkac1wrOFKL53zfS+j4On7vuSwCd2tclxVwacE2t/B
-X-Gm-Message-State: AOJu0YyRVlIMbftqDtekj343+Yz76s6J5bMi6PbVUYcKH9DfqTIqyyhA
-	8PxM1WKKJYE2jR3/4vW7FqDHHZpSP2X2eEiIKuzmGyw9pWGWfJyuE0DzEjgjho6/fVP1MNt6dZq
-	WKQ==
-X-Google-Smtp-Source: AGHT+IFEkrnB4JXT6Dloh0C8+5/5YiZ42TL3t1XJbDSuXuEFFIc1s/Cjqy56yZFXsju+XxkBWgC8I/2rLr4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:725a:0:b0:7c1:89ee:a9d0 with SMTP id
- 41be03b00d2f7-7c6a54b35a3mr11260a12.0.1723732798726; Thu, 15 Aug 2024
- 07:39:58 -0700 (PDT)
-Date: Thu, 15 Aug 2024 07:39:57 -0700
-In-Reply-To: <efb9af41-21ed-4b97-8c67-40d6cda10484@redhat.com>
+	s=arc-20240116; t=1723732819; c=relaxed/simple;
+	bh=4teuLtYDK/NduiMm78ToqkmlCTNP4Jc/piX9A+gso9E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=TAgHFIksqZ49lzzdmiwwuingETgJu+dgxa28JlhNHm9LWaAAQ8tQeyfZk6toOoKcS+O5kKcOQjnqdGxIm48H+gJT1RDXWrMfX3qsvNcEf8qH/m1s+wl5SRnQ20A/sVQTttf7oRijndIdt/V5AuPWYxrans6AbM/ndlQ/cxV9RfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=RWEr4V9X; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240608000639.3295768-1-seanjc@google.com> <20240608000639.3295768-2-seanjc@google.com>
- <efb9af41-21ed-4b97-8c67-40d6cda10484@redhat.com>
-Message-ID: <Zr4TPVQ_SNEKyfUz@google.com>
-Subject: Re: [PATCH v3 1/8] KVM: Use dedicated mutex to protect
- kvm_usage_count to avoid deadlock
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1723732813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xCgJk3wklCJ3udB8OxbmwoYBHrKfJfS5s1g5mdRMNjw=;
+	b=RWEr4V9X+mYYAfH6j1QX2hlg+uROiiJMlyglz+4k8uTju1allTILEjATWypspPmbRRzPll
+	BOQLmoVWpUZrdM7frweg0Ezvw+KR3e9LscLGXUoINarx1Jo5Y5gKKSSyGw+02g7VjSAhAz
+	fIaGHQ1Aewv74T/79eTFn5VCt7IDs1eJys4FOodPuJP2M46TEgEEdmXIkZGG7rpzrspyJq
+	jVDVYDldpoIQl0uDLuXsRIrv+Vlz4aIdwMEiqFNlTHnh6voIzwVx4AlF1Pn9MhyJUawL1p
+	lnfU8WIrILWaODnYFLcQCK7JcEJtjhk5L33YLC5c7VshLLG1VeNjaQ22XqHszg==
+Content-Type: multipart/signed;
+ boundary=3037502820252a8e373d9f5ea1cd733f34fb66a0aeb8c2eb17ced4220e3b;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Thu, 15 Aug 2024 16:40:03 +0200
+Message-Id: <D3GKA618AGIM.36RB2FW9Z21JE@cknow.org>
+To: "Tom Lendacky" <thomas.lendacky@amd.com>, "John Allen"
+ <john.allen@amd.com>
+Cc: "Herbert Xu" <herbert@gondor.apana.org.au>, "David S. Miller"
+ <davem@davemloft.net>, <linux-crypto@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Diederik de Haas" <didi.debian@cknow.org>
+Subject: Re: [BUG] Non working HWRNG on AMD Ryzen 5 5500GT
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+References: <D3GJCRNY4KDK.3SPJB5WP8Z7DK@cknow.org>
+ <0561862d-99d9-ae72-49d0-9ad0639482ea@amd.com>
+In-Reply-To: <0561862d-99d9-ae72-49d0-9ad0639482ea@amd.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 14, 2024, Paolo Bonzini wrote:
-> On 6/8/24 02:06, Sean Christopherson wrote:
-> > Use a dedicated mutex to guard kvm_usage_count to fix a potential deadlock
-> > on x86 due to a chain of locks and SRCU synchronizations.  Translating the
-> > below lockdep splat, CPU1 #6 will wait on CPU0 #1, CPU0 #8 will wait on
-> > CPU2 #3, and CPU2 #7 will wait on CPU1 #4 (if there's a writer, due to the
-> > fairness of r/w semaphores).
+--3037502820252a8e373d9f5ea1cd733f34fb66a0aeb8c2eb17ced4220e3b
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+
+On Thu Aug 15, 2024 at 4:16 PM CEST, Tom Lendacky wrote:
+> On 8/15/24 08:56, Diederik de Haas wrote:
+> > I recently bought an Asus ROG STRIX B550-F GAMING MB with an
+> > AMD Ryzen 5 5500GT CPU (and installed the latest BIOS: 3607).
+> > I'm running Debian Testing/Sid on it with kernel 6.9 and now 6.10
+> > and it seems to work great.
+> > I've been doing some (unrelated) tests with `rngtest` from the
+> > `rng-tools5` package and wondered how it would fare on my AMD CPU.
+>
+> I'm not very familiar with this test. What is the command line that you
+> are using to invoke it?
+
+```
+root@cs04:~# cat /dev/hwrng | rngtest -c 1000
+rngtest 5
+Copyright (c) 2004 by Henrique de Moraes Holschuh
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.
+
+rngtest: starting FIPS tests...
+cat: /dev/hwrng: No such device
+rngtest: entropy source drained
+```
+
+Or when using ``dd`` you'd get a similar output:
+
+```
+root@cs04:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+rngtest 5
+...
+
+rngtest: starting FIPS tests...
+dd: error reading '/dev/hwrng': No such device
+0+0 records in
+0+0 records out
+rngtest: entropy source drained
+0 bytes copied, 4.8214e-05 s, 0.0 kB/s
+``
+
+Debian package page: https://packages.debian.org/unstable/rng-tools5
+Debian hasn't switched to the new upstream (yet?), but that can be found
+here: https://github.com/nhorman/rng-tools
+
+> > And I found out it doesn't work at all!
+> > But on another system I have (Asus ROG CROSSHAIR VII HERO MB +
+> > AMD Ryzen 1800X CPU) it works absolutely fine.
 > > 
-> >      CPU0                     CPU1                     CPU2
-> > 1   lock(&kvm->slots_lock);
-> > 2                                                     lock(&vcpu->mutex);
-> > 3                                                     lock(&kvm->srcu);
-> > 4                            lock(cpu_hotplug_lock);
-> > 5                            lock(kvm_lock);
-> > 6                            lock(&kvm->slots_lock);
-> > 7                                                     lock(cpu_hotplug_lock);
-> > 8   sync(&kvm->srcu);
+> > # dmesg | grep ccp
+> > [    5.399853] ccp 0000:07:00.2: ccp: unable to access the device: you might
+> > be running a broken BIOS.
+> > [    5.401031] ccp 0000:07:00.2: tee enabled
+> > [    5.401113] ccp 0000:07:00.2: psp enabled
+>
+> Which system is this output from?
+
+My new system ("cs04") with AMD Ryzen 5 5500GT CPU/APU.
+
+> Can you provide the output from lspci -nn?
+
+```
+root@cs04:~# lspci -nn
+00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne Root Complex [1022:1630]
+00:00.2 IOMMU [0806]: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne IOMMU [1022:1631]
+00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dummy Host Bridge [1022:1632]
+00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dummy Host Bridge [1022:1632]
+00:02.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PCIe GPP Bridge [1022:1634]
+00:02.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne PCIe GPP Bridge [1022:1634]
+00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Renoir PCIe Dummy Host Bridge [1022:1632]
+00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Renoir Internal PCIe GPP Bridge to Bus [1022:1635]
+00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH SMBus Controller [1022:790b] (rev 51)
+00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD] FCH LPC Bridge [1022:790e] (rev 51)
+00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 0 [1022:166a]
+00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 1 [1022:166b]
+00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 2 [1022:166c]
+00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 3 [1022:166d]
+00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 4 [1022:166e]
+00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 5 [1022:166f]
+00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 6 [1022:1670]
+00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD] Cezanne Data Fabric; Function 7 [1022:1671]
+01:00.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] 500 Series Chipset USB 3.1 XHCI Controller [1022:43ee]
+01:00.1 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] 500 Series Chipset SATA Controller [1022:43eb]
+01:00.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 500 Series Chipset Switch Upstream Port [1022:43e9]
+02:00.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device [1022:43ea]
+02:08.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device [1022:43ea]
+02:09.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device [1022:43ea]
+05:00.0 Ethernet controller [0200]: Intel Corporation Ethernet Controller I225-V [8086:15f3] (rev 03)
+06:00.0 Non-Volatile memory controller [0108]: Samsung Electronics Co Ltd NVMe SSD Controller PM9A1/PM9A3/980PRO [144d:a80a]
+07:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc. [AMD/ATI] Cezanne [Radeon Vega Series / Radeon Vega Mobile Series] [1002:1638] (rev c9)
+07:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Renoir Radeon High Definition Audio Controller [1002:1637]
+07:00.2 Encryption controller [1080]: Advanced Micro Devices, Inc. [AMD] Family 17h (Models 10h-1fh) Platform Security Processor [1022:15df]
+07:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne USB 3.1 [1022:1639]
+07:00.4 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Renoir/Cezanne USB 3.1 [1022:1639]
+07:00.6 Audio device [0403]: Advanced Micro Devices, Inc. [AMD] Family 17h/19h HD Audio Controller [1022:15e3]
+```
+
+Cheers,
+  Diederik
+
+> Thanks,
+> Tom
+>
 > > 
-> > Note, there are likely more potential deadlocks in KVM x86, e.g. the same
-> > pattern of taking cpu_hotplug_lock outside of kvm_lock likely exists with
-> > __kvmclock_cpufreq_notifier()
-> 
-> Offhand I couldn't see any places where {,__}cpufreq_driver_target() is
-> called within cpus_read_lock().  I didn't look too closely though.
+> > Found an article [1] which could be relevant and downloaded and ran the
+> > accompanying test program (written by Jason Donenfeld):
+> > # ./amd-rdrand-bug
+> > Your RDRAND() does not have the AMD bug.
+> > # ./test-rdrand
+> > RDRAND() =x47c993c0
+> > RDRAND() =xec7c697d
+> > ... (more seemingly random numbers)
+> > RDRAND() =xba858101
+> > 
+> > I tried it with the latest microcode dd 2024-07-10, but that didn't make
+> > a difference.
+> > 
+> > So I'd like to know if this may actually be a bug on the kernel side.
+> > 
+> > Happy to provide additional information or run tests or try patches.
+> > 
+> > Cheers,
+> >   Diederik
+> > 
+> > [1] https://arstechnica.com/gadgets/2019/10/how-a-months-old-amd-microcode-bug-destroyed-my-weekend/
 
-Aha!  I think I finally found it and it's rather obvious now that I've found it.
-I looked quite deeply on multiple occasions in the past and never found such a
-case, but I could've sworn someone (Kai?) report a lockdep splat related to the
-cpufreq stuff when I did the big generic hardware enabling a while back.  Of
-course, I couldn't find that either :-)
 
-Anyways...
+--3037502820252a8e373d9f5ea1cd733f34fb66a0aeb8c2eb17ced4220e3b
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  cpuhp_cpufreq_online()
-  |
-  -> cpufreq_online()
-     |
-     -> cpufreq_gov_performance_limits()
-        |
-        -> __cpufreq_driver_target()
-           |
-           -> __target_index()
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> > +``kvm_usage_count``
-> > +^^^^^^^^^^^^^^^^^^^
-> 
-> ``kvm_usage_lock``
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZr4TRQAKCRDXblvOeH7b
+bpiZAPwLFmFNu5AedNwOWct9y6v76V6cREhsJr0BGn+uKrDuwQD/cPb6glShnK2b
+k4HMVf3p6PVIM9qzw3L7RNhNG7oAyAc=
+=pXjB
+-----END PGP SIGNATURE-----
 
-Good job me.
+--3037502820252a8e373d9f5ea1cd733f34fb66a0aeb8c2eb17ced4220e3b--
 
