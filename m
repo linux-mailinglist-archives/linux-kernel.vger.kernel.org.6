@@ -1,133 +1,179 @@
-Return-Path: <linux-kernel+bounces-287606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300F69529D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:25:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDF79529E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0FB1F224BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:25:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4493A1F227FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9693017B438;
-	Thu, 15 Aug 2024 07:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361AB17AE11;
+	Thu, 15 Aug 2024 07:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JEFEUfOa"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="egf+AEVd"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0BB15E5D6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB8D15E5D4;
+	Thu, 15 Aug 2024 07:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723706712; cv=none; b=GtUhsICFdQlz6OZvGmDD8vWc3Aaym4ESa6ZwtYTFtTMtDCZBTQF2RuivNwE3vSbJuTLaICj6DkJLCtSHu5NqgQIFpdD0TqoXuHPatKdvKFkklnEM4zWB5/5egJWNaiSsaKj/VL0uxHkw5t42SVgc+EUSI2Rg0jqiuI8dfNdMYE0=
+	t=1723707002; cv=none; b=Hb3SeegvWBnGlzf4c22f+MkbWxIDYr4YKW562B5d2njjpzLO0yt4Caf9otWr0LDGnVWuYzORmdaVMrm+Y9lP8GUlxVjnRvhpLZV5lFCUrPoQC9erAxJY5mwB4c1mjNB/lwoR/4o/3s21IH/pC2THvLHQw83vdgSZUzvx1SUHsQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723706712; c=relaxed/simple;
-	bh=Ow1/2PM/XA+bt7tPUEZgVaKKbLuhy2wTsjK7gDnB3a8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWkjvVUvUTDUNMAjwOP/5hupXZUFqioRq58GjFNRrZTZT/nh9sSTo0H7hcT9IdggpDG1NjKHEgi2th3jWEJ1Lq42d925wuOrvUFr1k98KE9GKkE52u+p18d54HyvOudhwDep6PlzN4+MByEqlhNISkgYvYrhgBeI5H0nwdc1PD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JEFEUfOa; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3683329f787so338839f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723706710; x=1724311510; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fz7V9Tu3EtjBhPrJHgxXfRiSyngyRtnzUolHcCZqMic=;
-        b=JEFEUfOaPVL/CGLz6q4MtIptjf31pzDPOz48Cq0lSXWWwkkePefrvzEZovygOTkoUG
-         6047gj+inLwyjaP/IyD4nFPXMcGv9mUBuLj5+4l+tDDCOAA0NauqH5yjzUTzaYjOrxtu
-         2jiSrtuAjz93pm3sqzE/7dehhpPlm7+IvPK0fvwa1SYLCGMc9/Kl9n02THEjoMf7RQUu
-         O4YO7mxmpgvhRpfprMdQtKvSMW7+eGoFPzwhc5jUTgs9Sc5hU8cgJOA9NMDuJH2bcAY8
-         KdyeAClNVdzI79jVDDNazGkpSb/DgwKTFe6aF9tL/GE+drvRRLqQRR3F6Dj8CAUm2JfR
-         Cj0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723706710; x=1724311510;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fz7V9Tu3EtjBhPrJHgxXfRiSyngyRtnzUolHcCZqMic=;
-        b=XAhHg540lBCakOAnIY5G3IuY5Fe3tB7UNHjvAmbcxO09MKGBcRub42w87uibgU5s9R
-         ou3l/YAUQ2AHZ71lRXbny0DBrxB08BVFIx8XDgKGWtoo50crJBBfAT7I3LFMrwf9i778
-         K4t5xU/CILbEjJgTINqq72yYh6qB4GtgHZTmhEMGa93U7Iz8KP4G5mPoc9x95BYA81S1
-         FjtJFMY0OlfoSKmTNR+1PgMdI4qDyuVQOt6an520U5KtXL3SfFc27nnldcE89jh6Q/n1
-         GsOjYv72QS1GkclF6aNBMFbJTUUrFrnGp11X+tMNsSRO25qpWG1L2w0ZDNz+McOeFLPJ
-         ACwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkbpTRpaTLyVFWafSFDXnd9d6kWf6DQihUorMangf+o4tTQWCDEQdwQxxUG1JCFkeLHGD3v/q1uZleCf7ltlzZ20duNTl11hCn6EIs
-X-Gm-Message-State: AOJu0YzOxcx/NxwpAIKSGeurjppOzzoDhpongN7oZWjv3XmrGaXrkOtT
-	fDQCxUUvZAormM9CFkduuL7QiyM4O2wpdG/VlDcQEqvLsiRravxvwwIWNRMUr5Mx4RHtSjZvjfQ
-	VSlXIMOyD1msl3hZtdETOv0aHhsg6encKKFi3
-X-Google-Smtp-Source: AGHT+IFDY+rlRX/qSGEGOl7eRG+hjtAxUiHzOwQTJK7cDbUC27G98FAuS1SlS95X/zfj/rFIWeJixLWpZK/CGw0VdqU=
-X-Received: by 2002:a5d:660b:0:b0:36d:341d:6ba8 with SMTP id
- ffacd0b85a97d-37177821d90mr2579225f8f.63.1723706709402; Thu, 15 Aug 2024
- 00:25:09 -0700 (PDT)
+	s=arc-20240116; t=1723707002; c=relaxed/simple;
+	bh=t/W6Vp/61YIZT5YMzdtttHqcOF8Ic+esGOIm7XmKXgE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YXMNBKb6uhtBSEQ8sIMt2Tw+j9HhXPxgiD7wDNrBazKRQelZEUAl9OURFGUSoOtdOhhXssl3/VE8cbBIpW3QNF+f6OXCYKjPFrU6E4vCRs3nQ5/E8wZuIEiq73MUmfeOCm9S9yo/HKoXxD14rVXzMANSwj6zWUaghq5D3SW1l4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=egf+AEVd; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EC737A34;
+	Thu, 15 Aug 2024 09:28:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1723706933;
+	bh=t/W6Vp/61YIZT5YMzdtttHqcOF8Ic+esGOIm7XmKXgE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=egf+AEVdMtLcBIrB+mB35wwowxbnG7e1oR7BImyXnXVTXFyrNxc/9/pSGAZD4VoST
+	 1QGKLLGJavQbu+ZGR1y1827lmEP1wsm4OYCoL4NPoIE2rT0su62M8dAlNKohWPSII7
+	 FNW/pBfv42S2ogGosMK+QGmArPFifqVn+RSKvfv0=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v3 0/4] media: raspberrypi: Support RPi5's CFE
+Date: Thu, 15 Aug 2024 10:28:51 +0300
+Message-Id: <20240815-rp1-cfe-v3-0-e15a979db327@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
- <20240805-guest-memfd-lib-v1-4-e5a29a4ff5d7@quicinc.com> <4cdd93ba-9019-4c12-a0e6-07b430980278@redhat.com>
-In-Reply-To: <4cdd93ba-9019-4c12-a0e6-07b430980278@redhat.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Thu, 15 Aug 2024 08:24:32 +0100
-Message-ID: <CA+EHjTxNNinn7EzV_o1X1d0kwhEwrbj_O7H8WgDtEy2CwURZFQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 4/4] mm: guest_memfd: Add ability for mmap'ing pages
-To: David Hildenbrand <david@redhat.com>
-Cc: Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Patrick Roy <roypat@amazon.co.uk>, qperret@google.com, 
-	Ackerley Tng <ackerleytng@google.com>, linux-coco@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADOuvWYC/22Qy07DMBBFfyXyGge/mpgIIf4DsRjHk3YqHAc7j
+ Yqq/jtOKugCltfje3RmLixjIsysqy4s4UKZ4liCfqhYf4Bxj5x8yUwJZYSWhqdJ8n5ALo1yjbK
+ uVdKw8ntKONB5I729l3ygPMf0tYEXub7+MOwvY5FccOgb/9SIYVDKv5JHyHF0EZKv+xjYilrUv
+ d4oca+rUnfWGTt4B9rpf+rXm1rCz1PZbb75MQcZeZkHmrvqg8bTmQf0BDzPsMfHAHnGtG4VMGf
+ YjtBVz5vATkthRSvaWptdY7nkR+jjFOsQR09/DF6KwvUbxVDQEWYBAAA=
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Naushir Patuck <naush@raspberrypi.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3871;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=t/W6Vp/61YIZT5YMzdtttHqcOF8Ic+esGOIm7XmKXgE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBmva5p+ylObJraW8p6QZX1y9QsysS9dk1ve97p7
+ 6A1Vkx7PHaJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZr2uaQAKCRD6PaqMvJYe
+ 9Q7TD/9Ifs+pd2qzzNpppbK83PyThnrAToWLBkuF+66Y8uIODBN6KxCh/eS8pltsrYSwSo/eLFB
+ TMz3m6Kt7QNpVcf2pph8pboGVwQKA0SJ+Wm3boMBh5Pn/NS+GpEfHh2lHWY1cCgaDW/qHh7nmEd
+ tq/fSELIUwwi/PmcInF9xZQ86cevxZHGKn0mFLFN96zUE3bsrhgSxtZ3DBmlS4OMY1AP6Hig162
+ nINHb3giOTxBvjvUghPN1mQQ2sJnXEx5UWr6e3UOx2qaJKav2yQrHzvmWyFrHqilaW6hIImVZml
+ Glnkcd2h8QbAkORgNMQTbOTweO5mbp+XwnarhRcDEZOJRvw+c3Pfx3cTH7b2ttFmQPv4prkKs9I
+ GavJ4RUKN4kIcAcyXMC+uWn736tOZhgDRA0LputLQiR//zdew+kI4DIBPvWitjWmUWLGPwVvcNJ
+ Xmenhz3f0dhLz5EHiI2EVQ6RBQBxGeyBYXCKR/cLWnIFfXctZDVuV5eiHKSeAzUVOo7+tQ7/uuz
+ Ve+A3A0wx1vvoe3kSz/ydCE4vxd1Pi3z417MacvqnPW5qVmikoL+cUh1C4qNvN41jznwhkDPmm5
+ pLkE0HiVZ6sX4eSh1Z0h+5zQagZyeO3LlUKjYACLwuIacZwh7RswJDTtGQ0IRaqKFmMX726zEub
+ I5CzOUzhgajNbjw==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Hi David,
+This series adds support to the CFE hardware block on RaspberryPi 5. The
+CFE (Camera Front End) contains a CSI-2 receiver and Front End, a small
+ISP.
 
-On Tue, 6 Aug 2024 at 14:51, David Hildenbrand <david@redhat.com> wrote:
->
-> >
-> > -     if (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP) {
-> > +     if (!ops->accessible && (gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP)) {
-> >               r = guest_memfd_folio_private(folio);
-> >               if (r)
-> >                       goto out_err;
-> > @@ -107,6 +109,82 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
-> >   }
-> >   EXPORT_SYMBOL_GPL(guest_memfd_grab_folio);
-> >
-> > +int guest_memfd_make_inaccessible(struct file *file, struct folio *folio)
-> > +{
-> > +     unsigned long gmem_flags = (unsigned long)file->private_data;
-> > +     unsigned long i;
-> > +     int r;
-> > +
-> > +     unmap_mapping_folio(folio);
-> > +
-> > +     /**
-> > +      * We can't use the refcount. It might be elevated due to
-> > +      * guest/vcpu trying to access same folio as another vcpu
-> > +      * or because userspace is trying to access folio for same reason
->
-> As discussed, that's insufficient. We really have to drive the refcount
-> to 1 -- the single reference we expect.
->
-> What is the exact problem you are running into here? Who can just grab a
-> reference and maybe do nasty things with it?
+To run this, you need the basic RPi5 kernel support plus relevant dts
+changes to enable the cfe and camera. My work branch with everything
+needed to run CFE can be found from:
 
-I was wondering, why do we need to check the refcount? Isn't it enough
-to check for page_mapped() || page_maybe_dma_pinned(), while holding
-the folio lock?
+git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git rp1-cfe
 
-Thanks!
-/fuad
+A few notes about the patches:
 
-> --
-> Cheers,
->
-> David / dhildenb
->
+- The original work was done by RaspberryPi, mostly by Naushir Patuck.
+- The second video node only sets V4L2_CAP_META_CAPTURE instead of both
+  V4L2_CAP_META_CAPTURE and V4L2_CAP_META_CAPTURE like the other nodes.
+  This is a temporary workaround for userspace (libcamera), and
+  hopefully can be removed soon.
+
+I have tested this with:
+- A single IMX219 sensor connected to the RPi5's CSI-2 port
+- Arducam's UB960 FPD-Link board with four imx219 sensors connected
+
+ Tomi
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Changes in v3:
+- Based on v6.11-rc3. The PiSP BE series is now in upstream so no extra
+  dependencies are needed.
+- Fixed cfe_remove() return value, as the .remove hook has changed
+- Added Krzysztof's Rb.
+- Link to v2: https://lore.kernel.org/r/20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com
+
+Changes in v2:
+- Change the compatible string back to raspberrypi,rp1-cfe from raspberrypi,rpi5-rp1-cfe
+- Drop the references to rp1 headers in the DT binding example. This
+  allows compiling the example without the rp1 support.
+- Fix missing remap lines for mono formats
+- Fix csi2_pad_set_fmt() so that the format can be changed back to the
+  sink's format from 16-bit or compressed format.
+- Link to v1: https://lore.kernel.org/r/20240318-rp1-cfe-v1-0-ac6d960ff22d@ideasonboard.com
+
+---
+Tomi Valkeinen (4):
+      media: uapi: Add meta formats for PiSP FE config and stats
+      dt-bindings: media: Add bindings for raspberrypi,rp1-cfe
+      media: raspberrypi: Add support for RP1-CFE
+      media: admin-guide: Document the Raspberry Pi CFE (rp1-cfe)
+
+ .../admin-guide/media/raspberrypi-rp1-cfe.dot      |   27 +
+ .../admin-guide/media/raspberrypi-rp1-cfe.rst      |   78 +
+ Documentation/admin-guide/media/v4l-drivers.rst    |    1 +
+ .../bindings/media/raspberrypi,rp1-cfe.yaml        |   98 +
+ .../userspace-api/media/v4l/meta-formats.rst       |    1 +
+ .../userspace-api/media/v4l/metafmt-pisp-fe.rst    |   39 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/platform/raspberrypi/Kconfig         |    1 +
+ drivers/media/platform/raspberrypi/Makefile        |    1 +
+ drivers/media/platform/raspberrypi/rp1-cfe/Kconfig |   14 +
+ .../media/platform/raspberrypi/rp1-cfe/Makefile    |    6 +
+ .../media/platform/raspberrypi/rp1-cfe/cfe-fmts.h  |  332 +++
+ .../media/platform/raspberrypi/rp1-cfe/cfe-trace.h |  196 ++
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.c   | 2524 ++++++++++++++++++++
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.h   |   43 +
+ drivers/media/platform/raspberrypi/rp1-cfe/csi2.c  |  583 +++++
+ drivers/media/platform/raspberrypi/rp1-cfe/csi2.h  |   89 +
+ drivers/media/platform/raspberrypi/rp1-cfe/dphy.c  |  175 ++
+ drivers/media/platform/raspberrypi/rp1-cfe/dphy.h  |   27 +
+ .../media/platform/raspberrypi/rp1-cfe/pisp-fe.c   |  581 +++++
+ .../media/platform/raspberrypi/rp1-cfe/pisp-fe.h   |   53 +
+ drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
+ .../uapi/linux/media/raspberrypi/pisp_fe_config.h  |  273 +++
+ .../linux/media/raspberrypi/pisp_fe_statistics.h   |   64 +
+ include/uapi/linux/videodev2.h                     |    2 +
+ 25 files changed, 5218 insertions(+)
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240314-rp1-cfe-142b628b7214
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
