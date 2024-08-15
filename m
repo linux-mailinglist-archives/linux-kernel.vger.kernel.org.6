@@ -1,70 +1,65 @@
-Return-Path: <linux-kernel+bounces-287885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07127952DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:44:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A17952DB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84116B269FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603B31F2237F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769D51714D2;
-	Thu, 15 Aug 2024 11:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A701714DA;
+	Thu, 15 Aug 2024 11:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t+XoJRf3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="17/VBa7g"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUZgsS5o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2297DA6D
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B857C7DA6D;
+	Thu, 15 Aug 2024 11:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723722250; cv=none; b=CyTvM58AgQdNfqUWA7Xoe7dPvI/g2gs10GyPmwl1XhcgZ+sDCThZHCnWBPOQiGXgQK/vTFH1Sn5YoDCkmsYiI45zE0Z2bsTaOjqlwwYKcGW/anDEl0o0y7W7a8XRzDbo6BFgQaRMt47tA4ViY6Lf3l7CZDQVyUzio+kT9b30IfQ=
+	t=1723722300; cv=none; b=JCKMQYLWOUbQw6QTyajFaQDdt0vnfENVn4MGG1oSd8vdJOAYqBAqbpkAcrhnK4AYoTON2//7kHCOfC+85iCP2sK2utijUJ98MGdAuil9sfqzSkm+h9BtAwecGFli91dkvO2qBLbm1JuFMCeqXRgZlSARCBFs0okY1hyv+4b4Rtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723722250; c=relaxed/simple;
-	bh=bgX4kKQorYaSME9RJteWf0rKwAWYx/F0c3jnKSj4HzM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=biASQG3KV4zlQ9EYZzBSdvXJcXWT0Sw6hZbAlcH96WLGNLxVCDsYPt2GdygqTQtWFeYHSDqyM9gK2lsRYrLAQxXf7tQgXY7NSr+wDPvINmfLoGSeJq28HD+7dPI46b9/AVoN0eFFxQwAChESCLayVXSJzQWNDNoWIRtjY2r7w1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t+XoJRf3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=17/VBa7g; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723722247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QqUsbSq2R+8U72AfUd3SQ6tENIkj+ufWopC5V72X18k=;
-	b=t+XoJRf3L9lVbi8e14cbrqRYKPnQlndmlZxwJStKwWpyEeOVHZ/IXPgN8AU6X6b60ty2cF
-	c1nLatrNtjk+gcj+nr2zoLBEgxGyhkKUFeBaow9/YI5D3dgS57sFPai14ujNjOLePMBYER
-	IJf4W97IkeLLesRT+3txmsL9zQCHPmwZzw4cJCekYUyL4AK0VBND0dgCewxci9N2wk4DoK
-	/ZdDbADTvnKooJjw2t28lQMSK4gBhqNXouBijtfwxmVnangSJO1BoFddeus7PLkkGFuP1P
-	q0VSQjDAbKQbVBq7qd1WTaXVUl8tgsVlQYObUTarCZf2uvvfM/ITqRdg+U2Yqg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723722247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QqUsbSq2R+8U72AfUd3SQ6tENIkj+ufWopC5V72X18k=;
-	b=17/VBa7gEEyquNhFgRqvepRm1Y15NrPBQaltTU9nrKhdO4jrXKV204Z/bfEF3VimsvaaD3
-	ikOoDu9+rxzSWjCQ==
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>, Emil Renner
- Berthing <emil.renner.berthing@canonical.com>,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Anup Patel
- <apatel@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland
- <samuel.holland@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert
- Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-In-Reply-To: <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx>
- <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
-Date: Thu, 15 Aug 2024 13:44:07 +0200
-Message-ID: <87ttfmm2ns.ffs@tglx>
+	s=arc-20240116; t=1723722300; c=relaxed/simple;
+	bh=DD04X7e+IRTT47kw4861eORV8QakL3FUlZzRdWiImvI=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=EmO1r7VeRB7SfypDhS7B1izzJHg7Fdr6NIsNI0Cx0gMc8OyAwB0zNWPYBXRoKZi8jcUXzTTw6YeJzb+nYYq05wMQNEmYuXoOWR8WKvC59SYzTvkYmnlbHMmjZQZvZSI+bQFYskqA/OGz2y2ORGWV3spP5Y5p03e320ZCewOZLxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUZgsS5o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF285C32786;
+	Thu, 15 Aug 2024 11:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723722300;
+	bh=DD04X7e+IRTT47kw4861eORV8QakL3FUlZzRdWiImvI=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=JUZgsS5oaxQrKe/f9VIi3RLHwFPM7lXdLegMG1yepHdfce8Fix+Yzc5E2sk0xgGDa
+	 c6FCplqIzpMXN1WNaXi6ZVRY7tkVLhI5cVJZ67IS3+kHCbsXyBFcbnNVJ+b1kH0Xfp
+	 4N4O4ilYVctoAxOcwNkmTRiEBuNImKfVar5h40OQqFD9Y+BXrKjp9gAKyUnjBBv3kJ
+	 ATTtKQu/i197OistiVYU9dVEszL8klK3I3nGszgvZMH5WoI6HuSDzPvSUZwvtTQ3Hk
+	 ligtXcte8h2VL+VNVsTRkQt8daAO+NMOe6IH/f9h8Av3XhXNEP7G2e6Lvin1A1eVfJ
+	 2cNFWiXeF1X3Q==
+From: Kalle Valo <kvalo@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: David Lin <yu-hao.lin@nxp.com>,  "linux-wireless@vger.kernel.org"
+ <linux-wireless@vger.kernel.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>,  "johannes@sipsolutions.net"
+ <johannes@sipsolutions.net>,  "briannorris@chromium.org"
+ <briannorris@chromium.org>,  "francesco@dolcini.it"
+ <francesco@dolcini.it>,  Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v2 40/43] wifi: nxpwifi: add wmm.h
+References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
+	<20240809094533.1660-41-yu-hao.lin@nxp.com>
+	<2024081430-derail-diocese-78dc@gregkh>
+	<PA4PR04MB9638C1186FC4D56569D7D0E4D1802@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	<2024081523-curator-pronounce-4619@gregkh> <877cciyvdg.fsf@kernel.org>
+	<2024081500-essential-recovery-374f@gregkh>
+Date: Thu, 15 Aug 2024 14:44:57 +0300
+In-Reply-To: <2024081500-essential-recovery-374f@gregkh> (Greg KH's message of
+	"Thu, 15 Aug 2024 11:58:28 +0200")
+Message-ID: <87v802xb5y.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,37 +68,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Thu, Aug 15 2024 at 03:29, Emil Renner Berthing wrote:
-> Thomas Gleixner wrote:
-> Thanks for looking at this! Unfortunately the above patch isn't enough to fix
-> the issue:
+Greg KH <gregkh@linuxfoundation.org> writes:
+
+> On Thu, Aug 15, 2024 at 12:43:07PM +0300, Kalle Valo wrote:
 >
-> https://termbin.com/7sgc
+>> Greg KH <gregkh@linuxfoundation.org> writes:
+>> 
+>> > On Thu, Aug 15, 2024 at 01:52:18AM +0000, David Lin wrote:
+>> >> Hi Greg,
+>> >> 
+>> >> 	Following the guideline for new driver, it should let every
+>> >> file as a single patch for review and generate a final
+>> >> 	single patch after reviewing. I think stuffs mentioned by you can be got from cover letter.
+>> >> 
+>> >> 	If I misunderstood anything, please let me know.
+>> >
+>> > Please read the kernel documentation for how to submit kernel changes in
+>> > a way that we can properly review, and accept them.  As-is, there is
+>> > nothing we can do with this series at all, sorry.
+>> 
+>> Greg, just a bit background for this:
+>> 
+>> Because wireless drivers can be huge in our documentation we have
+>> actually requested to split the driver one patch per file for easier
+>> review and avoid mailing list limits:
+>> 
+>> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#new_driver
+>> 
+>> The final patch to be commited will be just one big patch with a proper
+>> commit message.
 >
-> It still hangs after the "[    0.176451] cpuidle: using governor teo" message
-> until the watchdog reboots the systems.
+> Ick, wow, good luck!
 
-So what's puzzling is that there is a timer installed early on:
+Wireless drivers can be 40 kLOC and even if you can review a monster
+patch like that, us mere mortals cannot :)
 
-[    0.000000] clocksource: riscv_clocksource: ....
+> That being said, you still can't take patches without any changelog text
+> and most importantly, no signed-off-by lines, right?
 
-That same init function installs the per cpu riscv clockevent, so there
-should be a timer available.
+I will not accept empty commit messages. I think you misunderstood what
+we do so I'll give a concrete example with rtw89 driver. Here's how the
+driver was split for review one file per patch:
 
-The deffered probing of the PLIC driver delays obviously the probing of
-the sun4i timer, but that should not matter when another timer is
-available. So the sun4i driver might be a red herring.
+https://lore.kernel.org/linux-wireless/20201230044223.14085-1-pkshih@realtek.com/
 
-Can you please add "ignore_loglevel initcall_debug" to the command line
-and provide the output of a booting and a failing kernel?
+And here's the one big commit the driver was applied to the tree:
 
-And on the booting kernel please provide the output from:
+https://git.kernel.org/linus/e3ec7017f6a2
 
-# cat /sys/devices/system/clockevents/clockevent0/current_device
-# cat /sys/devices/system/clockevents/broadcast/current_device
-# cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+Actually initial rtw89 version was a whopping 92 kLOC.
 
-Thanks,
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-        tglx
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
