@@ -1,100 +1,83 @@
-Return-Path: <linux-kernel+bounces-288612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2884953C6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:16:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55601953C70
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080241C223EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2D481F236D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9134F14EC44;
-	Thu, 15 Aug 2024 21:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DF414E2F5;
+	Thu, 15 Aug 2024 21:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4Ny6AK6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FHqBFdpM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFD881AC8;
-	Thu, 15 Aug 2024 21:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7C181AC8;
+	Thu, 15 Aug 2024 21:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723756566; cv=none; b=K5H+pYubMvsZfyWh1OcS+qqLVax/xrvEI2xASYIglbQ4xQFyVXk9s47UhiSzypmATEPe8KmUtBFNA6enzshlVRxvrRmd+kg173nnQ+ZA75CCVTl5PQGPlGVThgcfbXre46kMUS6jqbTzLve0S6B7c/HnQTRu3n3W9RWLYAuVtEk=
+	t=1723756602; cv=none; b=ggH43C4o0rhxbNKTLwKzrlUI8WoS5hTfMC+t4F9X2PD+C/j4RadBJSxLVZ84D1jJhWDf+1zLIAuMw/SZGpZwabkWOlk0F7cFaVh+SP13vVq0WahdUYIqrVDAF/fa3smCQSis5HavjnHPrrVXatFx3ppJSC9UKFLCK+VZKer6/6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723756566; c=relaxed/simple;
-	bh=fVvBMj0UULUZnkQupCpjBG+u2rUcVi7Aqx85RV1nSBU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XTeLo2LqEvyNFaHgd69UIV0dgUk7vgt31DAgwwz1LqbHwpYBKY54/9bcoy/8mcvjIQmxhm9sGIB9nSgnz2bwUjLLjMc1ZhcaHendyl5TcX5Tri5rfE6E1waYvhpyUt2PKOwfqEN8h0Z57WqWYAA8qv0KgKLvevAMKuRwmTqF1xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4Ny6AK6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7391BC4AF09;
-	Thu, 15 Aug 2024 21:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723756566;
-	bh=fVvBMj0UULUZnkQupCpjBG+u2rUcVi7Aqx85RV1nSBU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p4Ny6AK6aivo+N0XnPm6uyDgqCJNjYmqDhT+pvKNNKmOKGrHrtexokGziPmJddHUB
-	 GFm0RLOhf2JbzY4lmVPeC7Fb9J1Rp+invGOcSQkNiuzm5E/VXEUI8yX5p1w1tjvq/s
-	 tmrNpELaV2XXsBXs5aUMXqrCz7OaKqm8vn+3XlGKju8SAQZo2iGqij4F/xatZehzZ3
-	 Z9+qgJZ/YoqyVZ7ceI66GG+K6hQvvxYvhSpR4O9U1CzNCbAahxqXMKPORTL/4M1wt+
-	 a9bXFnShPk2QOtZ3pO5ul1powEcEGk8qeA0zvj4W0cT0oh/Jlwa1wk/LYoZ7r7lZI+
-	 i9W2Wu5HaM2sA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52efd530a4eso2188664e87.0;
-        Thu, 15 Aug 2024 14:16:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUeYaZVhyNV4043nfbqTaszq7JMKCwShVD9yMcGdj6kPWJzW8p691sW0SeqMT8jO8rZjDrqzu6DITZA2DfvD5R2zsP04dc8sbz0mdSuWxqP+HamSyeGxV4J415O4Cn6bKTxGuxDQ9JOiT2r+EPjImkGDuOn1cYrqRA3TG7oCJ5bn3OxkA==
-X-Gm-Message-State: AOJu0Yy2IxNzbTOnHHsJFbAhN0c6MK95nFK6MIBIvAkPv4b97iTMlSsq
-	pjrwpPCCF4M4DTm2V7CbCWp0X/NoF8CliGYBC+azozPFiyZFWcaVDDyo/1+B21hyHXwFsdze4la
-	tVH9oI9iJB/XH1N9mOSuRAR0C/g==
-X-Google-Smtp-Source: AGHT+IG75J1dLWeE929MrvP/646DHbWXKwwu5k/xY6k1Vbtyh/V0SOpjl2x8t5yUzLueSCvTeDVosBwOzZizLZLnKGg=
-X-Received: by 2002:a05:6512:4019:b0:530:ad9f:8757 with SMTP id
- 2adb3069b0e04-5331c6e3865mr414811e87.45.1723756564740; Thu, 15 Aug 2024
- 14:16:04 -0700 (PDT)
+	s=arc-20240116; t=1723756602; c=relaxed/simple;
+	bh=PBA4Ln8lIjVagUzDRvfyQYRjlu83b2/CSeXAl5ZAL8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njHJ7U70pjU7WGuGDijSR9sP4ZnSE2odoI8mRbL+Q27QF7oBrIedhnvl8497ew0+ZEkU4tMnFXU6UBdG2kFpFXvMSf+SLIUGCR2WhbKwOXzj6KE8/XF2WGnSAmMhXPd4r0Jmd2d/dOCsXQjwRNXPajFsa6uFOwXA/yuKtvhSV2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FHqBFdpM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wVrshdgc5r4mBDt3sLx4Vu72sbLxT+zdRw8VaO2LgwU=; b=FHqBFdpMR0fSUdDqEFPZ1ujvqt
+	ZjOVAXoZcKmsBhvKFP2Bkm7pHlUIJ/Sa1yrQ0UKruvR7CPWMoALIhwtH8a1II/uiFHALHJasonaSP
+	15JC13KaliZ75mxBzCnAaPa6i5Bh5sN9i/haxtz9I1dSodd5wXWX3N4hvKkpZf1KNwMdS25f5HGhO
+	LzqDd1wy8fNskrB7q7ViaVJSO8A0WpVzfUE8qWqjxtwaRCxib2gv7g3lKnCJKsYM5WH9SVxSkRsBP
+	IH5sJlXLQliZZsfnk1JTlOfgcWz1Vjol/gXnpSfnAz/JgcvxlOewEYav8qt91ydmucqj4hGa07Kal
+	zuXLdElA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sehpb-00000002b12-2mPQ;
+	Thu, 15 Aug 2024 21:16:27 +0000
+Date: Thu, 15 Aug 2024 22:16:27 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	"T . J . Mercier" <tjmercier@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2] memcg: replace memcg ID idr with xarray
+Message-ID: <Zr5wK7oUcUoB44OF@casper.infradead.org>
+References: <20240815155402.3630804-1-shakeel.butt@linux.dev>
+ <Zr5Xn45wEJytFTl8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808-mobivel_cleanup-v1-0-f4f6ea5b16de@nxp.com>
- <20240808-mobivel_cleanup-v1-4-f4f6ea5b16de@nxp.com> <20240815155343.GC2562@thinkpad>
-In-Reply-To: <20240815155343.GC2562@thinkpad>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 15 Aug 2024 15:15:52 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+rnUB2pDjf6qFF7ThtSD-C8MMZUrhJmTYKfts34Zhr-A@mail.gmail.com>
-Message-ID: <CAL_Jsq+rnUB2pDjf6qFF7ThtSD-C8MMZUrhJmTYKfts34Zhr-A@mail.gmail.com>
-Subject: Re: [PATCH 4/4] MAINTAINERS: drop NXP LAYERSCAPE GEN4 CONTROLLER
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Zhiqiang.Hou@nxp.com, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr5Xn45wEJytFTl8@google.com>
 
-On Thu, Aug 15, 2024 at 9:53=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Thu, Aug 08, 2024 at 12:02:17PM -0400, Frank Li wrote:
-> > LX2160 Rev1 use mobivel PCIe controller, but Rev2 switch to designware
-> > PCIe controller. Rev2 is mass production chip. Rev1 will not be maintai=
-ned
-> > so drop maintainer information for that.
-> >
->
-> Instead of suddenly removing the code and breaking users, you can just ma=
-rk the
-> driver as 'Obsolete' in MAINTAINERS. Then after some point of time, we co=
-uld
-> hopefully remove.
+On Thu, Aug 15, 2024 at 07:31:43PM +0000, Roman Gushchin wrote:
+> There is another subtle change here: xa_alloc() returns -EBUSY in the case
+> of the address space exhaustion, while the old code returned -ENOSPC.
+> It's unlikely a big practical problem.
 
-Is anyone really going to pay attention to that? It doesn't sound like
-there's anyone to really care, and it is the company that made the h/w
-asking to remove it. The only thing people use pre-production h/w for
-once there's production h/w is as a dust collector.
+I decided that EBUSY was the right errno for this situation;
 
-If anyone complains, it's simple enough to revert these patches.
+#define EBUSY           16      /* Device or resource busy */
+#define ENOSPC          28      /* No space left on device */
 
-Rob
+ENOSPC seemed wrong; the device isn't out of space.
 
