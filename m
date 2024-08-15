@@ -1,245 +1,266 @@
-Return-Path: <linux-kernel+bounces-288340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E109538FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:28:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60111953900
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D962F1C21CFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:28:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAF11F25D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF331B9B4A;
-	Thu, 15 Aug 2024 17:28:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC461AED29
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 17:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF00E38DF2;
+	Thu, 15 Aug 2024 17:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UzlY6j3f"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E241A00CB
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 17:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723742911; cv=none; b=FhJnCplzl0i0HxBX1mnZ4lgB8G3/BC9JQ/eKgPQh6TKq7guwQL/O+96DVKzFJqY1chxVkh5f6O3RkEjvoyC1jWqR3uKafhHMdvfAPc7axhdbufKVMrzSwy0SPJ5sn93+gXY+Iqp0A3QZ8R2IRKeS3Qy00pLgf7MHwFrTrBkAOrk=
+	t=1723742991; cv=none; b=caxc4edWb4axYl3jkYka3bbsnl+IURP4gm7KPWDCKr2alJCY9OuRkv1/ac0aghenKgjKreC44taR5/t7uXj4AIwFO52+koVbhCHSdMZATbetWQPoiCjpGCWm7Qq3Z8++Iq6vLTQSMZr+u9ywvNEKUQOaphfqb/miMWC5qqFv+GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723742911; c=relaxed/simple;
-	bh=KXgwoNqpesCfVAoLOUz/G9HsgL43Fr6/HA7IU1L+jgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tAtWmsJKrEdCuJDl7kvB3DzV7LJNebMm4+8Xca048sZbPusUXINnN/6uAaUjuRa6p7nTYGOOMykV7+YSj/HmRFOE9BKfUEoobSboZYgsqz2lb69ukbsJmOQmZI9t25Rgv6Sf6MOEIEmpHJjxvCHc986O0KdZne0cfavZmhduRN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D7CC14BF;
-	Thu, 15 Aug 2024 10:28:54 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E07443F58B;
-	Thu, 15 Aug 2024 10:28:26 -0700 (PDT)
-Date: Thu, 15 Aug 2024 18:28:23 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, sgoutham@marvell.com,
-	lcherian@marvell.com, gcherian@marvell.com
-Subject: Re: [PATCH v6] perf/marvell: Marvell PEM performance monitor support
-Message-ID: <Zr46t-JO7KPXCrn2@J2N7QTR9R3.cambridge.arm.com>
-References: <20240801142917.2875300-1-gthiagarajan@marvell.com>
+	s=arc-20240116; t=1723742991; c=relaxed/simple;
+	bh=a/4vf+YJE4tfB80UP49O2UQzbAx9vqd1PyCAADHHECQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q51cU0l4evEFscP3b5wjjyPLEte1cB90s8jO8m9GFmEDCwGYIPR8UFjSPF+70EcL/ZlLEDi43OTrCR1FzR/CMiIqlI8ZcpsA7eHlbY2f08BJ72nLBxZCuFtKBhLaNmLJrva6cKc/JaC37TfoMD8R69GNUHNBewRcKg/dTnzDdIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UzlY6j3f; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201fed75b38so3705ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:29:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723742989; x=1724347789; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a/4vf+YJE4tfB80UP49O2UQzbAx9vqd1PyCAADHHECQ=;
+        b=UzlY6j3fFSxXDSA15J0l4UurMF02yWBrZQOx+HGqKC3nhzWPVAYc5yyAnBeZRSJ62H
+         Z52zngm+vnRmUqyhZMa2DP0RnFYVryOpDhfrY2pkpXTeCL+wyyf7tBJskF3lTOLSOW+J
+         36wozT7LVw6O0O/GOa3oDWrd5aLykXgi0bPAIRxiuWVPZrC/+xeh4I1tkszonoeFuftG
+         UkRBbfwbBdVJZ4F95R+cV72w7fL3RUBpTXJfE7non9Jg+RrS0f68DLO2TpwoT4sx0gcv
+         w2FHA2kgPjdPwL42RxdzDHK2oEIWy3OpmCD/7HkHJ3VMB0hwEQGzDEX59Mi4O/XGznvZ
+         8IqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723742989; x=1724347789;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a/4vf+YJE4tfB80UP49O2UQzbAx9vqd1PyCAADHHECQ=;
+        b=QxRPLlt/p3YgrKnPLc8vYmBqY4huhqQKPmP0jVUmILlBUoTtWSw8kcDvJZsP9Azqbk
+         TdiUV0d+qYZPzYHoMWjH7SQweJ/GZaVpKPBfza0kIllS/5iEP3jEHH2bvNNsCwFJYcHU
+         +8j2O6lea4WOrQtyfBSDVgxaCa/mqVTEemoHBODN0zNQa6arFHPAPLTuQxbFla2XRLum
+         iMvZzobXs6Sj4q3DccrDm/u5ATKV7Mqz45r3Q5XE9AdFS9g1ISnRroIx1ESnt19ilVLL
+         r7FYaVS2eNeWQPR+6F1GWCcklaSEIc6t1cjJ9GdUXg1GwbdveGDBzn6XrE6rKs05xgKT
+         bZlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVErwKQz84kSayyxusSMUmJKYMalHjSWF6GW2zH/hOoewpjWsYvYx/dYGwJqHAkdZntYYV8X5T52YAlQ6s1g5R7/vEaNI9YPaqbtFV9
+X-Gm-Message-State: AOJu0YwUqIlS3Xm1ls2MJtQIcwUKGbBd1GYiNKd65amghwYZoqujTFH5
+	p2NSjmSWTsfqoBeVAkM3wgflmNw2uejIOZrK3s/REPFD8wVcHxEz7i20ctui7OV+6x3TR9PLZsE
+	yNb4Ez1eATKlr+IuVxptrz+JPQVAioHfC1shZ
+X-Google-Smtp-Source: AGHT+IH5MFIGSF7/WgzVtKFPpR15fzT6c8P4TJi4KagEceRO9o+l2byg+PRLLOxu2Bd7ImoT8/HtaG1VoEHIB0RWyZg=
+X-Received: by 2002:a17:902:e80c:b0:201:fa2c:6d55 with SMTP id
+ d9443c01a7336-201fa2c6efemr630395ad.13.1723742988974; Thu, 15 Aug 2024
+ 10:29:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801142917.2875300-1-gthiagarajan@marvell.com>
+References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
+ <ZV1AnNB2CSbAUFVg@archie.me> <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
+ <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
+ <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info> <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
+In-Reply-To: <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 15 Aug 2024 10:29:37 -0700
+Message-ID: <CAP-5=fVSVe=C5dHaOV22+YOZ_JCD0mDoByoubSFY3w4au5zwQg@mail.gmail.com>
+Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since v6.5
+To: James Clark <james.clark@linaro.org>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Linux perf Profiling <linux-perf-users@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Clark <james.clark@arm.com>, 
+	"cc: Marc Zyngier" <maz@kernel.org>, Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, Atish Patra <atishp@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 01, 2024 at 07:59:17PM +0530, Gowthami Thiagarajan wrote:
-> PCI Express Interface PMU includes various performance counters
-> to monitor the data that is transmitted over the PCIe link. The
-> counters track various inbound and outbound transactions which
-> includes separate counters for posted/non-posted/completion TLPs.
-> Also, inbound and outbound memory read requests along with their
-> latencies can also be monitored. Address Translation Services(ATS)events
-> such as ATS Translation, ATS Page Request, ATS Invalidation along with
-> their corresponding latencies are also supported.
-> 
-> The performance counters are 64 bits wide.
-> 
-> For instance,
-> perf stat -e ib_tlp_pr <workload>
-> tracks the inbound posted TLPs for the workload.
-> 
-> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-> ---
+On Wed, Aug 14, 2024 at 9:28=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+> On 07/08/2024 9:54 am, Thorsten Leemhuis wrote:
+> > On 01.08.24 21:05, Ian Rogers wrote:
+> >> On Wed, Dec 6, 2023 at 4:09=E2=80=AFAM Linux regression tracking #upda=
+te
+> >> (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
+> >>>
+> >>> [TLDR: This mail in primarily relevant for Linux kernel regression
+> >>> tracking. See link in footer if these mails annoy you.]
+> >>>
+> >>> On 22.11.23 00:43, Bagas Sanjaya wrote:
+> >>>> On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
+> >>>>> Perf broke on all Apple ARM64 systems (tested almost everything), a=
+nd
+> >>>>> according to maz also on Juno (so, probably all big.LITTLE) since v=
+6.5.
+> >>>
+> >>> #regzbot fix: perf parse-events: Make legacy events lower priority th=
+an
+> >>> sysfs/JSON
+> >>> #regzbot ignore-activity
+> >>
+> >> Note, this is still broken.
+> >
+> > Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
+> > this? Or is this a "we are screwed one way or another and someone has t=
+o
+> > bite the bullet" situation?
+> >
+> > Ciao, Thorsten
+> >
+> >> The patch changed the priority in the case
+> >> that you do something like:
+> >>
+> >> $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
+> >>
+> >> but if you do:
+> >>
+> >> $ perf stat -e 'cycles' benchmark
+> >>
+> >> then the broken behavior will happen as legacy events have priority
+> >> over sysfs/json events in that case. To fix this you need to revert:
+> >> 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
+> >> events over legacy"
+> >>
+> >> This causes some testing issues resolved in this unmerged patch series=
+:
+> >> https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.c=
+om/
+> >>
+> >> There is a bug as the arm_dsu PMU advertises an event called "cycles"
+> >> and this PMU is present on Ampere systems. Reverting the commit above
+> >> will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
+> >> __evlist__add_default") to fix ARM's BIG.little systems (opening a
+> >> cycles event on all PMUs not just 1) will cause the arm_dsu event to
+> >> be opened by perf record and fail as the event won't support sampling.
+> >>
+> >> The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers=
+@google.com/
+> >> fixes this by only opening the cycles event on core PMUs when choosing
+> >> default events.
+> >>
+> >> Rather than take this patch the revert happened as Linus runs the
+> >> command "perf record -e cycles:pp" (ie using a specified event and not
+> >> defaults) and considers it a regression in the perf tool that on an
+> >> Ampere system to need to do "perf record -e
+> >> 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
+> >> will choose the cycles event correctly and with better precision the
+> >> pp for systems that support it, but it was still considered a
+> >> regression in the perf tool so the revert was made to happen. There is
+> >> a lack of perf testing coverage for ARM, in particular as they choose
+> >> to do everything in a different way to x86. The patch in question was
+> >> in the linux-next tree for weeks without issues.
+> >>
+> >> ARM/Ampere could fix this by renaming the event from cycles to
+> >> cpu_cycles, or by following Intel's convention that anything uncore
+> >> uses the name clockticks rather than cycles. This could break people
+> >> who rely on an event called arm_dsu/cycles/ but I imagine such people
+> >> are rare. There has been no progress I'm aware of on renaming the
+> >> event.
+> >>
+> >> Making perf not terminate on opening an event for perf record seems
+> >> like the most likely workaround as that is at least something under
+> >> the tool maintainers control. ARM have discussed doing this on the
+> >> lists:
+> >> https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.=
+com/
+> >> but since the revert in v6.10 no patches have appeared for the v6.11
+> >> merge window. Feature work like coresight improvements and ARMv9 are
+> >> being actively pursued by ARM, but feature work won't resolve this
+> >> regression.
+> >>
+>
+> I got some hardware with the DSU PMU so I'm going to have a go at trying
+> to send some fixes for this. My initial idea was to try incorporate the
+> "not terminate on opening" change as discussed in the link directly
+> above. And then do the revert of the "revert of prefer sysfs/json".
 
-> +static int pem_perf_event_init(struct perf_event *event)
-> +{
-> +	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +
-> +	if (event->attr.type != event->pmu->type)
-> +		return -ENOENT;
-> +
-> +	if (is_sampling_event(event) ||
-> +	    event->attach_state & PERF_ATTACH_TASK) {
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	if (event->cpu < 0)
-> +		return -EOPNOTSUPP;
-> +
-> +	/*  We must NOT create groups containing mixed PMUs */
-> +	if (event->group_leader->pmu != event->pmu &&
-> +	    !is_software_event(event->group_leader))
-> +		return -EINVAL;
-> +
+Thanks, I think this would be good. The biggest issue is that none of
+the record logic expects a file descriptor to be not opened, deleting
+unopened evsels from the evlist breaks all the indexing into the
+mmaps, etc. Tbh, you probably wouldn't do the code this way if was
+written afresh. Perhaps a hashmap would map from an evsel to ring
+buffer mmaps, etc. Trying to avoid having global state and benefitting
+from encapsulation. I'd focus on just doing the expedient thing in the
+changes, which probably just means making the record code tolerant of
+evsels that fail to open and not modifying the evlist due to the risk
+it breaks the indices.
 
-This should check the entire group and should check for cross-event
-conflicts or where the entire group is too large to fit into the
-(maximum possible) potential set of counters.
+(To point out the obvious, this work wouldn't be necessary if arm_dsu
+event were renamed from "cycles" to "cpu_cycles" which would also make
+it more intention revealing alongside the arm_dsu's "bus_cycles" event
+name).
 
-Below in pem_perf_event_start() you reset the HW counter when starting
-an event, so multiple events *must not* share the same HW counter; they
-will clobber each other and events will be lost, leading to incorrect
-results.
+> FWIW I don't think Juno currently is broken if the kernel supports
+> extended type ID? I could have missed some output in this thread but it
+> seems like it's mostly related to Apple M hardware. I'm also a bit
+> confused why the "supports extended type" check fails there, but maybe
+> the v6.9 commit 25412c036 from Mark is missing?
 
-Either you need to track counter allocations, or you need to handle the
-counters as free-running and *never* reset/reprogram them.
+So I think your later emails clarify Arnaldo is probably missing:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/co=
+mmit/drivers/perf/arm_pmu.c?h=3Dperf-tools-next&id=3D5c816728651ae425954542=
+fed64d21d40cb75a9f
 
-I also don't see any logic to start/stop the entire PMU, which really
-means you don't support group semantics at all, and should reject groups
-with more than 1 non-SW event, since the events are counting for
-different times anyway.
+Fwiw, the Apple M hardware issue came to me by way of Mark Rutland
+(iirc), this regression report, etc. My understanding is that Apple M
+has something like a v2 ARM PMU and the legacy events are encoded
+incorrectly in the driver for this. The regression in v6.5 happened
+because ARM's core PMUs had previously been treated as uncore PMUs,
+meaning we wouldn't try to program legacy events on them. Fixing the
+handling of ARM's core PMUs broke Apple M due to the broken legacy
+event mappings. Why not fix the Apple M PMU driver? Well there was
+anyway a similar RISC-V issue reported by Atish Patra (iirc) where the
+RISC-V PMU driver wants to delegate the mapping of legacy events to
+the perf tool so the driver needn't be aware of all and future RISC-V
+configurations. The fix discussed with Mark, Atish, etc. has been to
+swap the priority of legacy and sysfs/json events so that the latter
+has priority. We need the revert of the revert as currently we only do
+this if a PMU is specified with an event, not for the general wildcard
+PMUs case that most people use. There was huge fallout from flipping
+the priority particularly on Intel as all test expectations needed
+updating. I've sent out similar fixes that need incorporating when the
+revert is reverted. Ideally tools/perf/tests/parse-events.c would be
+updated to cover ARM's PMUs that don't follow the normal pattern that
+the core PMU is called "cpu" (this would mean that we were testing
+event parsing on ARM was WAI wrt encoding priorities, BIG.little,
+etc).
 
-> +	/*
-> +	 * Set ownership of event to one CPU, same event can not be observed
-> +	 * on multiple cpus at same time.
-> +	 */
-> +	event->cpu = pmu->cpu;
-> +	hwc->idx = -1;
-> +	return 0;
-> +}
-> +
-> +static void pem_perf_counter_reset(struct pem_pmu *pmu,
-> +				   struct perf_event *event, int eventid)
-> +{
-> +	writeq_relaxed(0x0, pmu->base + eventid_to_offset(eventid));
-> +}
-> +
-> +static u64 pem_perf_read_counter(struct pem_pmu *pmu,
-> +				 struct perf_event *event, int eventid)
-> +{
-> +	return readq_relaxed(pmu->base + eventid_to_offset(eventid));
-> +}
-> +
-> +static void pem_perf_event_update(struct perf_event *event)
-> +{
-> +	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	u64 prev_count, new_count;
-> +
-> +	do {
-> +		prev_count = local64_read(&hwc->prev_count);
-> +		new_count = pem_perf_read_counter(pmu, event, hwc->idx);
-> +	} while (local64_xchg(&hwc->prev_count, new_count) != prev_count);
-> +
-> +	local64_add((new_count - prev_count), &event->count);
-> +}
-> +
-> +static void pem_perf_event_start(struct perf_event *event, int flags)
-> +{
-> +	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	int eventid = hwc->idx;
-> +
-> +	local64_set(&hwc->prev_count, 0);
-> +
-> +	pem_perf_counter_reset(pmu, event, eventid);
-> +
-> +	hwc->state = 0;
-> +}
-> +
-> +static int pem_perf_event_add(struct perf_event *event, int flags)
-> +{
-> +	struct hw_perf_event *hwc = &event->hw;
-> +
-> +	hwc->idx = event->attr.config;
+> I sent a small fix the other day to make perf stat default arguments
+> work on Juno, and didn't notice anything out of the ordinary:
+> https://lore.kernel.org/linux-perf-users/dac6ad1d-5aca-48b4-9dcb-ff7e54ca=
+43f6@linaro.org/T/#t
+> I agree that change is quite narrow but it does incrementally improve
+> things for the time being. It's possible that it would become redundant
+> if I can just include Ian's change to use strings for Perf stat.
 
-As above, this will go wrong when two events have the same
-event->attr.config, regardless of whther those events are in the same
-group or not.
+I'd prefer we didn't merge this as we'd need to rebase:
+https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
+and those changes would then delete the code introduced. I'm fine with
+adding the tests.
 
-Either
+There are more exotic heterogeneous core things upcoming, probably
+also from ARM, and the thought of duplicating the default attribute
+logic and event parsing constraints is just something I'd prefer not
+to have to do.
 
-(a) Track which counters are currently allocated, and reject an event
-    targetting an already-allocated counter here.
+> Of course I only think I have a handle on the issue right now, seems
+> like it has a lot of moving parts and something else always comes up. If
+> I hit a wall at some point I will come back here.
 
-(b) Treat all HW counters as free-running and never reset/reprogam them.
-    In pem_perf_event_start() you'd need to read the *current* value of
-    the HW counter and set this in &hwc->prev_count.
-
-> +	if (hwc->idx >= PEM_EVENTIDS_MAX)
-> +		return -EINVAL;
-
-This should have been rejected at event_init() time. If that's violated
-here it should result in a warning.
-
-> +	hwc->state |= PERF_HES_STOPPED;
-> +
-> +	if (flags & PERF_EF_START)
-> +		pem_perf_event_start(event, flags);
-> +
-> +	return 0;
-> +}
-
-[...]
-
-> +static int pem_perf_probe(struct platform_device *pdev)
-> +{
-> +	struct pem_pmu *pem_pmu;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	char *name;
-> +	int ret;
-> +
-> +	pem_pmu = devm_kzalloc(&pdev->dev, sizeof(*pem_pmu), GFP_KERNEL);
-> +	if (!pem_pmu)
-> +		return -ENOMEM;
-> +
-> +	pem_pmu->dev = &pdev->dev;
-> +	platform_set_drvdata(pdev, pem_pmu);
-> +
-> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	pem_pmu->base = base;
-> +
-> +	pem_pmu->pmu = (struct pmu) {
-> +		.module	      = THIS_MODULE,
-> +		.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
-> +		.task_ctx_nr = perf_invalid_context,
-> +		.attr_groups = pem_perf_attr_groups,
-> +		.event_init  = pem_perf_event_init,
-> +		.add	     = pem_perf_event_add,
-> +		.del	     = pem_perf_event_del,
-> +		.start	     = pem_perf_event_start,
-> +		.stop	     = pem_perf_event_stop,
-> +		.read	     = pem_perf_event_update,
-> +	};
-> +
-> +	/* Choose this cpu to collect perf data */
-> +	pem_pmu->cpu = raw_smp_processor_id();
-> +
-> +	name = devm_kasprintf(pem_pmu->dev, GFP_KERNEL, "mrvl_pcie_rc_pmu_%llx",
-> +			      res->start);
-> +	if (!name)
-> +		return -ENOMEM;
-> +
-> +	cpuhp_state_add_instance_nocalls
-> +			(CPUHP_AP_PERF_ARM_MARVELL_PEM_ONLINE,
-> +			 &pem_pmu->node);
-
-Nit: weird formatting: the opening '(' for a function call should not be
-on a new line.
-
-Mark.
+Thanks,
+Ian
 
