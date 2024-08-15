@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-287837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A3D952D06
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2647952D0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FDF1F227C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B99F1F22FCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43A21AC89D;
-	Thu, 15 Aug 2024 10:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC431714D6;
+	Thu, 15 Aug 2024 10:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="NZ3w0Axf"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLBk3JDc"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABEA1AC8AD;
-	Thu, 15 Aug 2024 10:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EB11714C7;
+	Thu, 15 Aug 2024 10:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723719142; cv=none; b=qOErSqH1OHVmsFo0fbIc0IDo5XzEg0nbhCNCb5L5w525BLOExY9UsoYMI1B73AhG/RYjWL2OMnvJW90XiQmhdR0B0R1xYxTsd9KVtmOAtnr5LqoN90oPtKoeveYPkJ0hZNI9/aeN3nkwLvCFrhlyetjQdo3eXCbSaUWGGI2PUEI=
+	t=1723719351; cv=none; b=PQPII2jzRVlJqeiJuSHe3d0CxTZEuSOz6oQ05A1yhaM89eii4lWU4oj4onBLC54C9Lq3z3/KShlLLhg/GdUrofh6wx9nuab7XC7BLLIK1Evg5ty1Cl9BLCn1VWvWTRK98vIJJubQNpMN9oqlbSFk36q9J0jq/WDfrsKHN5wz9tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723719142; c=relaxed/simple;
-	bh=CIx15BpVVjAnQ+BMzs3Mz2q3qlZzo3sap9HWXBV8Fpw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pyAxp6tLF532Ya0XftXnhdZDGFwFMA0zJrc7qI93I5/B8sc1xzJ5QlFhxok8qZe18c2shKZTL8acIag35LB6CoYIyzMD0KLL3kQ6iy0rvxFwKEa3HmT2vb7bsXAHLmlpJlb4SX6UZq7EURUycxKlB1rdywgr/v5UCftTYuw6xR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=NZ3w0Axf; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1723719132;
-	bh=CIx15BpVVjAnQ+BMzs3Mz2q3qlZzo3sap9HWXBV8Fpw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=NZ3w0AxfE6MOg339xwRlrOUTnEzKTUejTyTKHN7u3MsrNli35S97OmeAdeXfTiGyn
-	 2THZuRds9vLCjkkEjOqGIwnCD5Ube58YxokPdJ2XuHPi+dLxNMIdEeeNfNfK0x/SLt
-	 NwNfiH5hskD8ikeGsyI4BOpwSP3UWpU2/xjsuRMI=
-Received: from [IPv6:240e:456:1030:181:abd4:6e7f:e826:ac0f] (unknown [IPv6:240e:456:1030:181:abd4:6e7f:e826:ac0f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 57BC366F26;
-	Thu, 15 Aug 2024 06:51:54 -0400 (EDT)
-Message-ID: <25d8b51db163c01d62518bd02449d5f5e8748fde.camel@xry111.site>
-Subject: Re: [PATCH Loongarch-avec support V9 1/2] irqchip/loongson-pch-msi:
- Switch to MSI parent domains
-From: Xi Ruoyao <xry111@xry111.site>
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, Thomas Gleixner
- <tglx@linutronix.de>, corbet@lwn.net, alexs@kernel.org,
- chenhuacai@kernel.org,  kernel@xen0n.name, jiaxun.yang@flygoat.com,
- gaoliang@loongson.cn,  wangliupu@loongson.cn, lvjianmin@loongson.cn,
- yijun@loongson.cn, mhocko@suse.com,  akpm@linux-foundation.org,
- dianders@chromium.org, maobibo@loongson.cn,  zhaotianrui@loongson.cn,
- nathan@kernel.org, yangtiezhu@loongson.cn,  zhoubinbin@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
-Date: Thu, 15 Aug 2024 18:51:47 +0800
-In-Reply-To: <d5c5fdc8-abd5-685f-b952-f36b9e0bd908@loongson.cn>
-References: <20240813085415.20035-1-zhangtianyang@loongson.cn>
-	 <875xs3petd.ffs@tglx> <6495631f-ec9c-c86a-39d2-1ada793b8098@loongson.cn>
-	 <8734n6np4a.ffs@tglx> <d5c5fdc8-abd5-685f-b952-f36b9e0bd908@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1723719351; c=relaxed/simple;
+	bh=/72rfX+YiMkMUgxytbPepgk+knvV4BhnjOyz3uMGzjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pCcCQL51JYX1q52sCLm8uH3fkoQaZWw06CECZgPf7H8K0cFlfLHFFsf821jvjabdEdUJ2DbTV6spF415jWm8NdiDaQ/pDi5blAypHmHXpJE+qeM1Voqo+1b+sJFsn6ly0PYRGHnzB1gkk0aXvz0o7fQS1/HXXSQIK0LeQUQP8b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLBk3JDc; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39b06af1974so3208315ab.2;
+        Thu, 15 Aug 2024 03:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723719349; x=1724324149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fq3e63JJfshSV/iURmoXTbaaXy+LAxhsVm5SlNG7wmg=;
+        b=JLBk3JDcUTf1qUU7WjNKDsnr19rQJCBwHzPfDXvcJVu78e8b91WeU9w1lEjV2dvIYR
+         i+ST3I4zs15Ud942dZeQH38DqzSdNUZHLnWHcAd2Q9KDFvnSdmsxeS75pu2cauoeCRT0
+         GtTiofoc1TZSVjKLIej8znKKNtta8u2Vb7BDpnDYmmtLjBfVYbk/VRyKQitBvdEUwH98
+         ch0ZHJxkVOdBvjXz00LrMkNj634fRWDKHK8JUl1uc3AtCyZ5eCaj4uEVUEHAbtK1m31m
+         n+OLdlLTz5/i12hL+haTN5e/iO6Bq7jU4ouEGNoWUct/zeF8msEqVeDcaStVvBrwDnc/
+         Yz0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723719349; x=1724324149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fq3e63JJfshSV/iURmoXTbaaXy+LAxhsVm5SlNG7wmg=;
+        b=kgnYm4Y7FQI9lhPm0h1xH01uDovPWiES3tJ7sWlq3bbFkuzLdgU4EhqHfaBBzAApZx
+         /v+8GG4wsBPGx4cLfQ5zhS5cHVej4WXEB3td6H22KHnv1h3ykxUfiQoGqniG+fFU2Ej7
+         JAHSzsmW3Lj6AbOUpBNRVPTplU1CIbsjKKzJhS0Zsa+xzgYeNCxCuKxvgchpDkSyvJ2x
+         KsLxZQ0/RkTfLxdl9bCO8QeGrBuUp7oPk1NaVpcI3plnJxEkdY26JMXYEOnngzVjlLGs
+         50EgcHBOWoGQJwXRFhCBvUYFtqlqjVcn7AI1vnazPlyAn0M8ExQY3BFzOgPuLeh4fc14
+         ePfA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+TLF9zncUgTkDvXO26nXHOOEWS8p76UUDkUDVzyehSxWSd9aVM5p3AeBbyE+JBogSU1e1/1PgaDMUqzF9N7Vm/IlYJ3zaqtw0UW93QHUauIq3vIUrJpqAjjaYxU2BICijg5pf
+X-Gm-Message-State: AOJu0YyMy3oWUxisSlqlbMZ5aO5CWa2AY2x1GxV/ELrJMzajQzWS76gV
+	uiYwCTFf3bR0nSeJc0cmDAmylzY20Gb6/qQ7JF2R/fSZuUH5W9E8KB7z5KXdMsJlAYs3dge4I2s
+	9NpXejXxaHaYrcmISan29ooxQb7c=
+X-Google-Smtp-Source: AGHT+IH/mgNoYK9/PN2VRqMXh9yqT5NmsaG1yAJC9H72kqBcNujp/MK+w/6Eq5qiXGxt+8LsTMHdPf+UmQyiTklJTLQ=
+X-Received: by 2002:a05:6e02:1564:b0:398:acbe:d798 with SMTP id
+ e9e14a558f8ab-39d1244131emr73893065ab.4.1723719349221; Thu, 15 Aug 2024
+ 03:55:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240815084330.166987-1-sunyiqixm@gmail.com> <66bdb158-7452-4f70-836f-bd4682c04297@redhat.com>
+In-Reply-To: <66bdb158-7452-4f70-836f-bd4682c04297@redhat.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Thu, 15 Aug 2024 18:55:13 +0800
+Message-ID: <CAL+tcoAiOwWEsbkqSJ3kpwLxd8seBBUOAODeBideFdQYV7LfWg@mail.gmail.com>
+Subject: Re: [PATCH] net: remove release/lock_sock in tcp_splice_read
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: sunyiqi <sunyiqixm@gmail.com>, edumazet@google.com, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-08-15 at 18:43 +0800, Tianyang Zhang wrote:
-> Hi, Thomas
->=20
-> =E5=9C=A8 2024/8/15 =E4=B8=8B=E5=8D=884:53, Thomas Gleixner =E5=86=99=E9=
-=81=93:
-> > On Thu, Aug 15 2024 at 09:13, Tianyang Zhang wrote:
-> > > https://lore.kernel.org/all/20240813085427.20194-1-zhangtianyang@loon=
-gson.cn/
-> > >=20
-> > > =E5=9C=A8 2024/8/14 =E4=B8=8B=E5=8D=886:41, Thomas Gleixner =E5=86=99=
-=E9=81=93:
-> > > > On Tue, Aug 13 2024 at 16:54, Tianyang Zhang wrote:
-> > > >=20
-> > > > Where is patch 2/2 ?
-> > Can you please thread your submissions properly and not send them
-> > separately?
-> >=20
-> > Thanks,
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tglx
->=20
-> I relearned the series of patches in the kernel submission guide. Now I=
-=20
-> know how to generate the series-cover.
->=20
-> Can I resend all patches directly with a correct cover now?
+Hello Paolo,
 
-Just version it v10.  Using "resend" in the subject can sometimes cause
-confusion, and there's no harm to bump the version number anyway even
-without real code change.
+On Thu, Aug 15, 2024 at 6:40=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
+te:
+[...]
+> > -             release_sock(sk);
+> > -             lock_sock(sk);
+>
+> This is needed to flush the sk backlog.
+>
+> Somewhat related, I think we could replace the pair with sk_flush_backlog=
+().
+>
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Do you think we could do this like the following commit:
+
+commit d41a69f1d390fa3f2546498103cdcd78b30676ff
+Author: Eric Dumazet <edumazet@google.com>
+Date:   Fri Apr 29 14:16:53 2016 -0700
+
+    tcp: make tcp_sendmsg() aware of socket backlog
+
+    Large sendmsg()/write() hold socket lock for the duration of the call,
+    unless sk->sk_sndbuf limit is hit. This is bad because incoming packets
+    are parked into socket backlog for a long time.
+
+?
+
+Then we can avoid taking the lock too long which results in too many
+packets in the backlog.
+
+Thanks,
+Jason
 
