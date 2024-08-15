@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-287849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7CC952D2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:05:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD5B952D33
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256401F24CC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7E31F24FDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F511AC8B1;
-	Thu, 15 Aug 2024 11:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811151AC8B8;
+	Thu, 15 Aug 2024 11:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNIlMLFX"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q99CkcxJ"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37521AC892;
-	Thu, 15 Aug 2024 11:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E371AC88A;
+	Thu, 15 Aug 2024 11:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723719892; cv=none; b=QBRxvy1kphFFzFxrTarEBjLhqK2Yx+yoqS0+QCkeWVot/gSlwtwKbd4Xo2VC8vEoITcXvIgsM/ymvSt7hWzVM1bXInSrg4r7LBOoFiJ77ZD2ZpFBUs5xlvgFZ+2pHg1VfL3C2GsazjoNOiZZ84xIY7NurDoGE6TLYMZphx3SsPk=
+	t=1723720021; cv=none; b=ihMiUm/owvEQlQpj1X8a99n//LBGmYIuO2CKgOIn2gxpxYhkRaAISItZsbS+y7eDa5wYjDSdTTPds0OyKAVhUC2mJCp+aXgccarsuVgYGBn8cgITHOllBXzyDWAZGO3W2bpkd+M2XTkkT9mR7kavlYECwrLEktdJh35cMOpMxRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723719892; c=relaxed/simple;
-	bh=4nvrFDnN4EPoSXCLaFR7WKT17RVQVoqlBFtSjb8NQQQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=USF6mUG6INFSB8Ab79onxEoTKgcP9py3b8BqWk7qW2GGF07C9vZMnOFQJzsXkvadKYH340YiLBFc8VEudkqa3Bfa9xWzxVErnvLIaqJFTwPG3d+QpnLm6oTC2fT4Ac4ha04V/kn3PJWK/fMOZ+y5IjrKz6K3iBH/o3mZAJPvxoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNIlMLFX; arc=none smtp.client-ip=209.85.210.175
+	s=arc-20240116; t=1723720021; c=relaxed/simple;
+	bh=r6PB6I38xeWW8hCOA19KppGramBrnQ3/g/0ihZ2cNbo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfP2SZyNT2NTCLIZ5ycQyrAwUG+Z/k9guDSRRVRlyF1PzVfwwR3a2LGcs7ZTv3BoBLV1CVGUARKuB02Oft+YLJSOyAqlOyRiMVBCv0o8v7ktSr5UAHzw5DXFoJzfg2s50mSk0GCbouNDVdfBjOTp2SUtcQg0Ez7Ptn2vCSLDPwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q99CkcxJ; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70eaf5874ddso622224b3a.3;
-        Thu, 15 Aug 2024 04:04:51 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so106206266b.2;
+        Thu, 15 Aug 2024 04:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723719891; x=1724324691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MO8YWOqY0SzIOTQqdA2QCR7JDaNp1DiScS6bAzhozDE=;
-        b=FNIlMLFXOAyuP0btu7/u4WuMGt1AQ2XHcf92Aw0kVp1XLJnp+5RTO/u+XXbFFZLtW1
-         SybNwzo1NDiTeRBruiVYd3p3KTx2SeIkOPxO91nMzO/J/eZBieQzcfazVclNjaaXWDMG
-         7G2yfRYCB/1elo25xhVeLqlS/7EN4FKSR9tkGhBfcKRdTjV5N2tgVGD9OJ2vd4UWq/uY
-         Tq8srBNH1RrBwq/yuxjQbx3/qWtJez77R3ydqQhG/Fi8psS//4aCINuOuGoE+U0wcpKb
-         Ks7KoyN4yLtFZTFBKV0NNnrvGU1fP+Jhx522rmxLnOuAADQD6lizoeJxiY2t8a6f2Kbu
-         sLVQ==
+        d=gmail.com; s=20230601; t=1723720018; x=1724324818; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HHlp/18Y3b/YapSL10tamc6Em3A7d2FKqPF4wvOXYOE=;
+        b=Q99CkcxJHUW6MdbjgSJMN6qtzkaHA670pGVBLWUPbjkmz1ifdu6Nzdrf+xh8bK11kM
+         Myb7BPv/4rPQEiq7A7ez29gPQKEVPbVRacSd1HxKfEj0+W+rmrznZOmANmxK6aw4/tyQ
+         HFN2gm0MD+L4fOyy9oQdVSLfcq3+tJUs2S1rvtMRdJrELC6jGaBS+RlVxIgdEr0M4/X+
+         QRUgBNkZOvqwOcO1qBmj4pU6m/QDR85QxZgy/YLwJPBD1ronV9UfcAZZNn+6VhDoeYti
+         6dceBSVH578cOBVrguUflycdk+hxcT07j5/LQ4cgHlp71YF8R5Mrg5raSBIu/8XSuHn0
+         4RLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723719891; x=1724324691;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MO8YWOqY0SzIOTQqdA2QCR7JDaNp1DiScS6bAzhozDE=;
-        b=rBeuM65hRRhRF5WPugk8XmWdM76rq6QEX2LprUqQeen1miSUuygYz10nzoI8eGmlyv
-         uDo81ZHUXPm6zjWzTDE6Xtwqv5ZFlZD628nV7m5lSeR3G8qvIRbXOcFMixXSAr5JUv2d
-         XHBmId1UR4p8OsetyDw6lNBWrTV5jcKeFX58IuctfIkDRIwpCwSGfXyYfrmsoqOHk3RH
-         k9g/YEqOE5IhGMzCLHnC4yAth1zdVSm79t80gtEWA+irMuhRDReuiYzWR1SegqIpfviY
-         +5zhQKbjRCtjBbXWcLUo6ZFGEem0xyrcT/5KjudkQmi8jsyTMuompaV8FaAkJ+txOfLn
-         fzpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzk6cQ8RPKnLO8xoMKkKLM3rQTu16fmTa4VG/4sqBNLpValZ1af0G6qYP/EydOUheU1bT5IiA7bYWoEknIF1pJ@vger.kernel.org, AJvYcCWkmr0z/q8Ey3W3Zxvxjnyo7LkdMTtBb5V74YEw/79e6+D41KtsLpML+BeTblCfZBlbAAdN/9yi@vger.kernel.org, AJvYcCWx1VvlA4plKYYcqyJRkyWXNv/GtDJk7P4mV6eCkiYHeoQPOJf/PHkmwLxcHaZ4XXZHqkwv96vBWkjFBL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2b7AX0BjC7x3rUtKao+gwyzIpECdltOW0rvE7j5DYaxrb30RM
-	p7EHb/3HQ8eATRrPrTJC0AcGMGYnIygPvHT82/dFU9u+XKcSysncFmvrEA==
-X-Google-Smtp-Source: AGHT+IGiI28eQW4aNoADjB2yJ7jMZYp79VlkylTg4Ld4J1kWlBZBteUIluYpWSPSrpsghDldwqQwTg==
-X-Received: by 2002:a05:6a00:4656:b0:70d:11d9:8a3c with SMTP id d2e1a72fcca58-712673d7e72mr7330479b3a.26.1723719890769;
-        Thu, 15 Aug 2024 04:04:50 -0700 (PDT)
-Received: from dev0.. ([2405:201:6803:30b3:f070:7306:329d:c8ca])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add7c89sm812678b3a.5.2024.08.15.04.04.45
+        d=1e100.net; s=20230601; t=1723720018; x=1724324818;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HHlp/18Y3b/YapSL10tamc6Em3A7d2FKqPF4wvOXYOE=;
+        b=vwv4AyPSo/gy2aL+Nxlx2EcpKzl5Ka5mi4H+opXnZNjUDKyMZdyQFjFTM3Xy/K+kGp
+         EzQGecSpvH4fubkxa3Lb6NFcgs35GcdwJksJl4FhSagoX6pe6YAaNOQ54hCjxdfrgsH7
+         W+DJV9xH8S6zrYQw0elq/iXsLDDIrMSAPa0JIK/Ll9rBOV54A69A6YIaF959CFbeywgJ
+         aRtSaXGg8mYSZKGPI1GNzJbklQ9IL+Gqzy02s7oc4/IEk3GaibW3FXwb8ElscBr/q1Xl
+         wfggmjPb/MQ60egq9EoFBuzLp71HPMOxmW6i48Lqd6UZr00FwZI091uzJPjZmfkdM+Qq
+         VECA==
+X-Forwarded-Encrypted: i=1; AJvYcCV779gm7gc67d1i3Nv9dP2Vv1xFCgfm9cgY8jVCdmwqffamPHYwsD7MmHiORWXTEzV9leg=@vger.kernel.org, AJvYcCXNsvB/8qr3UZ3dNphCWT4DPIWoR/If6Nlyy44umUAHe9hk+oSyn+0lWJvixnJCNK3/gKxrFSEy5fyJBRXX@vger.kernel.org, AJvYcCXUgNRaJW0QAhS/PvZCJhNH/qbJocKRZED9A14vOIZJR/hfFCOx4/xRzPHwyp4anz4+z3XCDQjpeVRSbAeM@vger.kernel.org, AJvYcCXiw5WWG5Av+BvCK6aZzMO10DOy62WAvtU6O5HDQgsZxoZq0a9yscPbOrrGGt0ZbCXwmVIKX5oSi55VwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB6ZuR7CuSJUViDJ6JWiOALifcY9E0Ie7YsyMWpQMBxgBw2kzq
+	DswAZTdX0gwYjUT2GC8dgEBucOM7GuK5bnIoyeiHWV02pkS5vTm1
+X-Google-Smtp-Source: AGHT+IHOG0gNdStkLsQq+UBGK8V2OMDdI8MHvWloqQADjVOGn+qiAw5yzUkXqSEVhu3WG6sMKfD6iA==
+X-Received: by 2002:a17:907:3f0e:b0:a77:cdaa:88a7 with SMTP id a640c23a62f3a-a836705975bmr424955166b.48.1723720017977;
+        Thu, 15 Aug 2024 04:06:57 -0700 (PDT)
+Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838cfa18sm85334566b.73.2024.08.15.04.06.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 04:04:49 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: kuba@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	jain.abhinav177@gmail.com,
-	javier.carrasco.cruz@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH net v6 0/2] Enhance network interface feature testing
-Date: Thu, 15 Aug 2024 16:34:42 +0530
-Message-Id: <20240815110442.1389625-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240814175748.35889b6d@kernel.org>
-References: <20240814175748.35889b6d@kernel.org>
+        Thu, 15 Aug 2024 04:06:57 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 15 Aug 2024 13:06:55 +0200
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2] tools build: Provide consistent build options for
+ fixdep
+Message-ID: <Zr3hTzZqsISEqSeh@krava>
+References: <20240815072046.1002837-1-agordeev@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815072046.1002837-1-agordeev@linux.ibm.com>
 
-On Wed, 14 Aug 2024 17:57:48 -0700, Jakub Kicinski wrote:
+On Thu, Aug 15, 2024 at 09:20:46AM +0200, Alexander Gordeev wrote:
+> The fixdep binary is being compiled and linked in one step. While
+> the host linker flags are passed to the compiler the host compiler
+> flags are missed.
+> 
+> That leads to build errors at least on x86_64, arm64 and s390 as
+> result of the compiler vs linker flags inconsistency. For example,
+> during RPM package build redhat-hardened-ld script is provided to
+> gcc, while redhat-hardened-cc1 script is missed.
+> 
+> Provide both KBUILD_HOSTCFLAGS and KBUILD_HOSTLDFLAGS to avoid that.
+> 
+> Closes: https://lore.kernel.org/lkml/99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@leemhuis.info/
+> Fixes: ea974028a049 ("tools build: Avoid circular .fixdep-in.o.cmd issues")
+> Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
+> Reviewed-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
-> On Wed, 14 Aug 2024 17:56:51 -0700 Jakub Kicinski wrote:
-> > On Wed, 14 Aug 2024 19:15:15 +0000 Abhinav Jain wrote:
-> > > Changes in v6:
-> > > Use XFAIL for ethtool operations that are unsupported instead of SKIP.  
-> >
-> > One more:
-> >
-> > tools/testing/selftests/net/netdevice.sh: echo "SKIP: $netdev: set IP address"
-> >
-> > I think the SKIP -> XFAIL conversion should be a separate patch (for
-> > total of 3 patches in the series).
->
-> P.S. and please change the subject to [PATCH net-next], it's a net-next
-> change, not a net fix.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-I have sent v7 now with net-next instead of net:
-https://lore.kernel.org/all/20240815105924.1389290-1-jain.abhinav177@gmail.com
+jirka
 
-For set IP address part, I have added logic to XFAIL if veth pair was created 
-and to SKIP if that's not the case in third patch of the series as directed above.
-
-Right now, there is no logic to set IP address in the script for normal interfaces
-either and it is a TODO as well. I will focus on it next after this one is applied.
-
-Thank you for all the help Jakub.
+> ---
+> 
+> This patch is against kernel-next next-20240815 tag
+> 
+> v2:
+> - missing tags added
+> - commit message adjusted
+> 
+> ---
+>  tools/build/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/build/Makefile b/tools/build/Makefile
+> index fea3cf647f5b..18ad131f6ea7 100644
+> --- a/tools/build/Makefile
+> +++ b/tools/build/Makefile
+> @@ -44,4 +44,4 @@ ifneq ($(wildcard $(TMP_O)),)
+>  endif
+>  
+>  $(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
+> -	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+> +	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+> -- 
+> 2.43.0
+> 
+> 
 
