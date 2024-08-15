@@ -1,182 +1,257 @@
-Return-Path: <linux-kernel+bounces-287544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703889528FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:37:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E39952901
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972531F23F15
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:37:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D522F282C0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDC4166F3D;
-	Thu, 15 Aug 2024 05:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F71416BE31;
+	Thu, 15 Aug 2024 05:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="O6cDqCpH"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="O4x6Oz2Q"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86EF166F37
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DB516BE09;
+	Thu, 15 Aug 2024 05:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723700246; cv=none; b=lHJ47m2eQbY5bgD0KjHiItkBVYXVbpv4ZLBWhp1PJtliZwbWsWEl3/rKPek0Flk1cc/RQC9dHRkjIK3P7NKdNKkAiNnTH6DSEWQYEmQL3ZIZBno/qeBpnXq8VeCLAeh4cU5X6BzrJX/hD+nuVfaxhxmvpQC02ApI70Q/GIsa+30=
+	t=1723700373; cv=none; b=ECNmaGVW21vifYDFs85spzMvFSvqVKRwMovMgX6OkQTMICJ62Qj38V/jmI5Mz37K9cL55ySI0T9rLwzOfUS6abRxriw3YOEl5J966npkMLYBkqqWX6bsjQz9di2oUqNQ6EzlosjA2S+8ABPLI5v/RlDy8vHYRV+ncHzr2/mgNcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723700246; c=relaxed/simple;
-	bh=qpM7t0jk2VpfeFjDLKmFXFjRR/jJ2cdh6VCEojgVlg4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ws+mm0J71NMMlhkR6AqVSJvWEkwPntXxcpiRtC/+BJf8p9DFue6w+WO2eCL6rgt2Vb+eJPEKpIwawfZFy6CsiqpP57yQvTXaIoi1e4hCNXZ5v7d3XsBfGtOimXeqVAWyAki1KfFcEXpeVLb6S6ho8ognOEvNVnAV8/Dec2sOSe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=O6cDqCpH; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5320d8155b4so787635e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 22:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723700242; x=1724305042; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tjDe8SKONaZURgHZA5c05VUPeOQmcnfH8fj79hTPUW0=;
-        b=O6cDqCpHiD8GMvFx8VwZV3RdedAM+qg3Y4s5rRIzVA1Ivi6qfcPx0293dfmZ/050d4
-         JgHCl/fc6a0PKFl5g63A4+js1ydFaYfQvjIXed3tPJ8XJUkb1NoclS9x0j5f6hmb/A6h
-         7Kefb2mk8HHDSqAw+v5/BqcUC7qW7vWvYH4XwgcTPg2WuWL/QOIH95WMauTSCF1z6ALM
-         nwPzNgXFoVAh8bkwEQ6JpovJ1T2hALlomEInAMtRo564edDjJ8P+o/+tKLPkq5fJygzE
-         9Zm9itnGmpw1d35f+spF94PI+k/FQF2WkjkTehZT2/+TC5OLGcZrEN8EgmR+sOptKhec
-         p/+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723700242; x=1724305042;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tjDe8SKONaZURgHZA5c05VUPeOQmcnfH8fj79hTPUW0=;
-        b=WXi835kH/+RzH6aX0F/Wjbh3Ei952ekPZdzNLUckhrCPVi+ACMU/OAJ9lQWAeFkWeo
-         BDXfo6O0y5St2ZRaO2t75ne/luzepbNuex5r6PwtYyxoMCUws+qKF+hqU/tLX6FWhIdc
-         CwvcOD4G2mnpSN0jtDQHKHyik1bSiJ3+VMj2tdj/S85UVmmK6S3yI+6nYugUhLQcthFM
-         Dnfj6XiNL98bNtUvP+awkQdLy9N/HJqpWcvDlFUbyaHAs3q++ne0j1FBQdf8R6V7sZdp
-         nLsaHPJVjieN/1ndqU0NA+EweM3tiZdhE8UBlFt7XV5arEfquoEkejK5gW2J0UQjfPH4
-         xiuA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3gGWXlIwEZFawtPjwtoAb41K+yYfVM1frIZwdDj90mcULd2Gl0PshoZL5y0rtMld9l6PxRqIvEy3EtiKO8Hvn+pm1EmFMd2S7Qszg
-X-Gm-Message-State: AOJu0Yz+PnKJtyDlFkw5HqcGKfiMnenhVNzwCP6WDjW2FD/sRN44qlBX
-	zsskPkL5UdOsW8shy5lAbY0KjCVM06LlzJ/MTGhrBI9vvJvhlbcDKEi1hgUAZvyWhVjhuynupdR
-	mU7BWZ+fRWYkstEgNbpSWsfg/GprQcRVlGE3HGuhGjYy63nf1
-X-Google-Smtp-Source: AGHT+IF9jSmbdeVwCB79GtR9SDoJ+2bWHoYxzLqNWum1tI3hIQtH6XZiiN6rGlSnsekomXl3LrE9gKaymssMicPa+1U=
-X-Received: by 2002:a05:6512:3b0d:b0:530:ac6e:ea2f with SMTP id
- 2adb3069b0e04-532edbacfb7mr2890845e87.37.1723700241540; Wed, 14 Aug 2024
- 22:37:21 -0700 (PDT)
+	s=arc-20240116; t=1723700373; c=relaxed/simple;
+	bh=FQNp4BEQ7IqVDDn/jXcrdkYEW19V4KPHQVKFwyOZObY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SsMVxsHdsVKm9Iq3nMeb9diERQfiARkai5s7Ru1wMptwG9UizkRc6+hCm0/PaNKnmdeMvAlIRMUpaERkys52rQQNk0ET1YzmadgYjgd72SE+bPegEr3poH18XdmN8z0yNDdMpMdI/3kCSkFxLRGInV+ZPkY/Xgm8ZfYc1W2LRP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=O4x6Oz2Q; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1723700369;
+	bh=FQNp4BEQ7IqVDDn/jXcrdkYEW19V4KPHQVKFwyOZObY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=O4x6Oz2QIjlYofqnyrnOauhbjMsH0SgqQZdqka13CEPMI1a8eG5nRZOtksp6y9cFs
+	 YTlVWSvqEP/BjXn8d1Zqlq6tSSWXqObG94OFdNdUmSijzlamn+j+AA6dYyTTW7AFdI
+	 1Nge5w9VDU1UAxsJhNqnVeKW3cRsXc6FcthUY5xg=
+Received: from [IPv6:240e:358:1123:b00:dc73:854d:832e:3] (unknown [IPv6:240e:358:1123:b00:dc73:854d:832e:3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id BC57466F26;
+	Thu, 15 Aug 2024 01:39:27 -0400 (EDT)
+Message-ID: <6553a3f000343d6dd1fb3218cac4709badcaa04d.camel@xry111.site>
+Subject: Re: [PATCH] selftests/vDSO: support DT_GNU_HASH
+From: Xi Ruoyao <xry111@xry111.site>
+To: Fangrui Song <maskray@google.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Date: Thu, 15 Aug 2024 13:39:23 +0800
+In-Reply-To: <20240815032614.2747224-1-maskray@google.com>
+References: <20240815032614.2747224-1-maskray@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625030502.68988-1-cuiyunhui@bytedance.com>
- <CAEEQ3wnrdRcBdevQDGQ-5dr3aO1ura13_VskMYm8ySTZJTiYhw@mail.gmail.com> <CAEEQ3wkFk1bxEPH38yBH8wzAGhMB296B8knjx8nFKQYgrACSDg@mail.gmail.com>
-In-Reply-To: <CAEEQ3wkFk1bxEPH38yBH8wzAGhMB296B8knjx8nFKQYgrACSDg@mail.gmail.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Thu, 15 Aug 2024 07:37:09 +0200
-Message-ID: <CAHVXubhWck7WS4CHByw1Y6zpN_+K41TmQ=xa7c_3+xo_se+HaA@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Randomize lower bits of stack address
-To: yunhui cui <cuiyunhui@bytedance.com>, Kees Cook <keescook@chromium.org>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	andy.chiu@sifive.com, conor.dooley@microchip.com, bjorn@rivosinc.com, 
-	sorear@fastmail.com, cleger@rivosinc.com, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, punit.agrawal@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Yunhui,
+On Wed, 2024-08-14 at 20:26 -0700, Fangrui Song wrote:
+> glibc added support for DT_GNU_HASH in 2006 and DT_HASH has been
+> obsoleted for more than one decade in many Linux distributions.
+>=20
+> Many vDSOs support DT_GNU_HASH. This patch adds selftests support.
+>=20
+> Signed-off-by: Fangrui Song <maskray@google.com>
 
-On Thu, Aug 15, 2024 at 4:08=E2=80=AFAM yunhui cui <cuiyunhui@bytedance.com=
-> wrote:
->
-> A gentle ping, Any more comments on this patch?
+Tested-by: Xi Ruoyao <xry111@xry111.site>
 
-I'm adding @Kees Cook  in cc in case he has any.
+> ---
+> =C2=A0tools/testing/selftests/vDSO/parse_vdso.c | 105 ++++++++++++++++---=
+---
+> =C2=A01 file changed, 79 insertions(+), 26 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/se=
+lftests/vDSO/parse_vdso.c
+> index 4ae417372e9e..35cb545da13e 100644
+> --- a/tools/testing/selftests/vDSO/parse_vdso.c
+> +++ b/tools/testing/selftests/vDSO/parse_vdso.c
+> @@ -47,6 +47,7 @@ static struct vdso_info
+> =C2=A0	/* Symbol table */
+> =C2=A0	ELF(Sym) *symtab;
+> =C2=A0	const char *symstrings;
+> +	ELF(Word) *gnu_hash;
+> =C2=A0	ELF(Word) *bucket, *chain;
+> =C2=A0	ELF(Word) nbucket, nchain;
+> =C2=A0
+> @@ -75,6 +76,16 @@ static unsigned long elf_hash(const char *name)
+> =C2=A0	return h;
+> =C2=A0}
+> =C2=A0
+> +static uint32_t gnu_hash(const char *name)
+> +{
+> +	const unsigned char *s =3D (void *)name;
+> +	uint32_t h =3D 5381;
+> +
+> +	for (; *s; s++)
+> +		h +=3D h * 32 + *s;
+> +	return h;
+> +}
+> +
+> =C2=A0void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+> =C2=A0{
+> =C2=A0	size_t i;
+> @@ -117,6 +128,7 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+> =C2=A0	 */
+> =C2=A0	ELF(Word) *hash =3D 0;
+> =C2=A0	vdso_info.symstrings =3D 0;
+> +	vdso_info.gnu_hash =3D 0;
+> =C2=A0	vdso_info.symtab =3D 0;
+> =C2=A0	vdso_info.versym =3D 0;
+> =C2=A0	vdso_info.verdef =3D 0;
+> @@ -137,6 +149,11 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+> =C2=A0				((uintptr_t)dyn[i].d_un.d_ptr
+> =C2=A0				 + vdso_info.load_offset);
+> =C2=A0			break;
+> +		case DT_GNU_HASH:
+> +			vdso_info.gnu_hash =3D
+> +				(ELF(Word) *)((uintptr_t)dyn[i].d_un.d_ptr +
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vdso_info.load_offset);
+> +			break;
+> =C2=A0		case DT_VERSYM:
+> =C2=A0			vdso_info.versym =3D (ELF(Versym) *)
+> =C2=A0				((uintptr_t)dyn[i].d_un.d_ptr
+> @@ -149,17 +166,26 @@ void vdso_init_from_sysinfo_ehdr(uintptr_t base)
+> =C2=A0			break;
+> =C2=A0		}
+> =C2=A0	}
+> -	if (!vdso_info.symstrings || !vdso_info.symtab || !hash)
+> +	if (!vdso_info.symstrings || !vdso_info.symtab ||
+> +	=C2=A0=C2=A0=C2=A0 (!hash && !vdso_info.gnu_hash))
+> =C2=A0		return;=C2=A0 /* Failed */
+> =C2=A0
+> =C2=A0	if (!vdso_info.verdef)
+> =C2=A0		vdso_info.versym =3D 0;
+> =C2=A0
+> =C2=A0	/* Parse the hash table header. */
+> -	vdso_info.nbucket =3D hash[0];
+> -	vdso_info.nchain =3D hash[1];
+> -	vdso_info.bucket =3D &hash[2];
+> -	vdso_info.chain =3D &hash[vdso_info.nbucket + 2];
+> +	if (vdso_info.gnu_hash) {
+> +		vdso_info.nbucket =3D vdso_info.gnu_hash[0];
+> +		/* The bucket array is located after the header (4 uint32) and the blo=
+om
+> +		=C2=A0=C2=A0 filter (size_t array of gnu_hash[2] elements). */
+> +		vdso_info.bucket =3D vdso_info.gnu_hash + 4 +
+> +				=C2=A0=C2=A0 sizeof(size_t) / 4 * vdso_info.gnu_hash[2];
+> +	} else {
+> +		vdso_info.nbucket =3D hash[0];
+> +		vdso_info.nchain =3D hash[1];
+> +		vdso_info.bucket =3D &hash[2];
+> +		vdso_info.chain =3D &hash[vdso_info.nbucket + 2];
+> +	}
+> =C2=A0
+> =C2=A0	/* That's all we need. */
+> =C2=A0	vdso_info.valid =3D true;
+> @@ -203,6 +229,26 @@ static bool vdso_match_version(ELF(Versym) ver,
+> =C2=A0		&& !strcmp(name, vdso_info.symstrings + aux->vda_name);
+> =C2=A0}
+> =C2=A0
+> +static bool check_sym(ELF(Sym) *sym, ELF(Word) i, const char *name,
+> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *version, unsigned long ver_=
+hash)
+> +{
+> +	/* Check for a defined global or weak function w/ right name. */
+> +	if (ELF64_ST_TYPE(sym->st_info) !=3D STT_FUNC)
+> +		return false;
+> +	if (ELF64_ST_BIND(sym->st_info) !=3D STB_GLOBAL &&
+> +	=C2=A0=C2=A0=C2=A0 ELF64_ST_BIND(sym->st_info) !=3D STB_WEAK)
+> +		return false;
+> +	if (strcmp(name, vdso_info.symstrings + sym->st_name))
+> +		return false;
+> +
+> +	/* Check symbol version. */
+> +	if (vdso_info.versym &&
+> +	=C2=A0=C2=A0=C2=A0 !vdso_match_version(vdso_info.versym[i], version, ve=
+r_hash))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> =C2=A0void *vdso_sym(const char *version, const char *name)
+> =C2=A0{
+> =C2=A0	unsigned long ver_hash;
+> @@ -210,29 +256,36 @@ void *vdso_sym(const char *version, const char *nam=
+e)
+> =C2=A0		return 0;
+> =C2=A0
+> =C2=A0	ver_hash =3D elf_hash(version);
+> -	ELF(Word) chain =3D vdso_info.bucket[elf_hash(name) % vdso_info.nbucket=
+];
+> +	ELF(Word) i;
+> =C2=A0
+> -	for (; chain !=3D STN_UNDEF; chain =3D vdso_info.chain[chain]) {
+> -		ELF(Sym) *sym =3D &vdso_info.symtab[chain];
+> +	if (vdso_info.gnu_hash) {
+> +		uint32_t h1 =3D gnu_hash(name), h2, *hashval;
+> =C2=A0
+> -		/* Check for a defined global or weak function w/ right name. */
+> -		if (ELF64_ST_TYPE(sym->st_info) !=3D STT_FUNC)
+> -			continue;
+> -		if (ELF64_ST_BIND(sym->st_info) !=3D STB_GLOBAL &&
+> -		=C2=A0=C2=A0=C2=A0 ELF64_ST_BIND(sym->st_info) !=3D STB_WEAK)
+> -			continue;
+> -		if (sym->st_shndx =3D=3D SHN_UNDEF)
+> -			continue;
+> -		if (strcmp(name, vdso_info.symstrings + sym->st_name))
+> -			continue;
+> -
+> -		/* Check symbol version. */
+> -		if (vdso_info.versym
+> -		=C2=A0=C2=A0=C2=A0 && !vdso_match_version(vdso_info.versym[chain],
+> -					=C2=A0=C2=A0 version, ver_hash))
+> -			continue;
+> -
+> -		return (void *)(vdso_info.load_offset + sym->st_value);
+> +		i =3D vdso_info.bucket[h1 % vdso_info.nbucket];
+> +		if (i =3D=3D 0)
+> +			return 0;
+> +		h1 |=3D 1;
+> +		hashval =3D vdso_info.bucket + vdso_info.nbucket +
+> +			=C2=A0 (i - vdso_info.gnu_hash[1]);
+> +		for (;; i++) {
+> +			ELF(Sym) *sym =3D &vdso_info.symtab[i];
+> +			h2 =3D *hashval++;
+> +			if (h1 =3D=3D (h2 | 1) &&
+> +			=C2=A0=C2=A0=C2=A0 check_sym(sym, i, name, version, ver_hash))
+> +				return (void *)(vdso_info.load_offset +
+> +						sym->st_value);
+> +			if (h2 & 1)
+> +				break;
+> +		}
+> +	} else {
+> +		i =3D vdso_info.bucket[elf_hash(name) % vdso_info.nbucket];
+> +		for (; i; i =3D vdso_info.chain[i]) {
+> +			ELF(Sym) *sym =3D &vdso_info.symtab[i];
+> +			if (sym->st_shndx !=3D SHN_UNDEF &&
+> +			=C2=A0=C2=A0=C2=A0 check_sym(sym, i, name, version, ver_hash))
+> +				return (void *)(vdso_info.load_offset +
+> +						sym->st_value);
+> +		}
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	return 0;
 
-Thanks,
-
-Alex
-
->
-> On Thu, Jul 11, 2024 at 2:09=E2=80=AFPM yunhui cui <cuiyunhui@bytedance.c=
-om> wrote:
-> >
-> > Add punit in the loop.
-> >
-> >
-> > On Tue, Jun 25, 2024 at 11:05=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedanc=
-e.com> wrote:
-> > >
-> > > Implement arch_align_stack() to randomize the lower bits
-> > > of the stack address.
-> > >
-> > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > > ---
-> > >  arch/riscv/include/asm/exec.h | 8 ++++++++
-> > >  arch/riscv/kernel/process.c   | 9 +++++++++
-> > >  2 files changed, 17 insertions(+)
-> > >  create mode 100644 arch/riscv/include/asm/exec.h
-> > >
-> > > diff --git a/arch/riscv/include/asm/exec.h b/arch/riscv/include/asm/e=
-xec.h
-> > > new file mode 100644
-> > > index 000000000000..07d9942682e0
-> > > --- /dev/null
-> > > +++ b/arch/riscv/include/asm/exec.h
-> > > @@ -0,0 +1,8 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > > +
-> > > +#ifndef __ASM_EXEC_H
-> > > +#define __ASM_EXEC_H
-> > > +
-> > > +extern unsigned long arch_align_stack(unsigned long sp);
-> > > +
-> > > +#endif /* __ASM_EXEC_H */
-> > > diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.=
-c
-> > > index e4bc61c4e58a..e3142d8a6e28 100644
-> > > --- a/arch/riscv/kernel/process.c
-> > > +++ b/arch/riscv/kernel/process.c
-> > > @@ -15,6 +15,7 @@
-> > >  #include <linux/tick.h>
-> > >  #include <linux/ptrace.h>
-> > >  #include <linux/uaccess.h>
-> > > +#include <linux/personality.h>
-> > >
-> > >  #include <asm/unistd.h>
-> > >  #include <asm/processor.h>
-> > > @@ -26,6 +27,7 @@
-> > >  #include <asm/cpuidle.h>
-> > >  #include <asm/vector.h>
-> > >  #include <asm/cpufeature.h>
-> > > +#include <asm/exec.h>
-> > >
-> > >  #if defined(CONFIG_STACKPROTECTOR) && !defined(CONFIG_STACKPROTECTOR=
-_PER_TASK)
-> > >  #include <linux/stackprotector.h>
-> > > @@ -99,6 +101,13 @@ void show_regs(struct pt_regs *regs)
-> > >                 dump_backtrace(regs, NULL, KERN_DEFAULT);
-> > >  }
-> > >
-> > > +unsigned long arch_align_stack(unsigned long sp)
-> > > +{
-> > > +       if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_=
-va_space)
-> > > +               sp -=3D get_random_u32_below(PAGE_SIZE);
-> > > +       return sp & ~0xf;
-> > > +}
-> > > +
-> > >  #ifdef CONFIG_COMPAT
-> > >  static bool compat_mode_supported __read_mostly;
-> > >
-> > > --
-> > > 2.20.1
-> > >
-> >
-> > Thanks,
-> > Yunhui
->
-> Thanks,
-> Yunhui
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
