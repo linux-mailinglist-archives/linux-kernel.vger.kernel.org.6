@@ -1,246 +1,135 @@
-Return-Path: <linux-kernel+bounces-288110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26638953588
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2D19535A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C02C4282DA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 429D428248C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BDF1AC893;
-	Thu, 15 Aug 2024 14:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40901A0710;
+	Thu, 15 Aug 2024 14:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIH/NSNC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3QdljX/+"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7A1684AC;
-	Thu, 15 Aug 2024 14:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18281AC893
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732721; cv=none; b=IgBw+2Y7LBdf6ujqKi1DU2SYkBrdGrigUlKyECL/THZPkUZGAyLeh8Twuf9aVBIdr/+azphJIVPz/eI76R/+TLCKybxAZmfEuggeCIL6jQLbXMn8eDDdy15osu5dzDZY+PGPqfheKuWEhvmY00uTeEMKGq0stAgoOzv5n17qpNg=
+	t=1723732801; cv=none; b=ccyv/ssiEnKiKZ0zX0LuJ5//radcjC62iNBhSpdxAnhNIxlY9fU38BUSgCZpuLdrxnRqumGaL9Q07nV7jSET0Qs3IcsCFm7Axe+pIHdABrTxMzt9JAoKPEH9MMYoZqgsOF9knXhkVW8LAJir1bmfmWvwOL7LyOWYcOKndsknr8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732721; c=relaxed/simple;
-	bh=k3UTEcJQzJQY4LxNoDzAK/SiM1woRUGDUADRkRRyGHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aoRJ90ivqOmlhZW4VzOwGHSRDEi/njprB2nb/tAi/bxzdpTiYg48ufLJRfH1u4z8Xbr9ZN4Bx7ZysHsVtyazYWj5gykJoGdWp+RI74mWSjNjajN8rOJJS2JWPZ3uAhbmtxLfAw4lPOuVAOIVZFHgqpUNqys7uMGmgTY4o+qH0N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIH/NSNC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F960C4AF0D;
-	Thu, 15 Aug 2024 14:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723732721;
-	bh=k3UTEcJQzJQY4LxNoDzAK/SiM1woRUGDUADRkRRyGHw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LIH/NSNCo2aNiYQvTHxh4IwPIcLBke3cjGULP+pg/k/Nmbrlw/pkIRmKP9tj5wJNz
-	 f2X95GMDFVkINfY5j4HwKqIcYuFCwLDcd5I+ZAGbJ0+qvS3q30LL2baigXkshbXt/9
-	 JszKli5b8ZtkgBcv9nCVS2FioFD2mjSV0fY2nCX6RayS8Jtp6BeYaVElTJI2yvCCav
-	 gBG21UwR+q6NEL8+SA3Lw3UKyRIwGZX73R4XI+gdi37aaEUtHe1gLvdNS5AL2qAm+H
-	 qmURzIfKGO66lsxcGk8wjZOdvzphuvb7RVuNMbhE0FMdD7rL3/R+R8ixeQww/cKiHg
-	 GrpaVRvyxy5sg==
-Date: Thu, 15 Aug 2024 15:38:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	20240705211452.1157967-2-u.kleine-koenig@baylibre.com,
-	20240712171821.1470833-2-u.kleine-koenig@baylibre.com,
-	cover.1721040875.git.u.kleine-koenig@baylibre.com,
-	aardelean@baylibre.com
-Subject: Re: [PATCH 2/8] dt-bindings: iio: adc: ad7606: Add iio backend
- bindings
-Message-ID: <20240815-chatter-monotone-c1a00c246d1f@spud>
-References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
- <20240815-ad7606_add_iio_backend_support-v1-2-cea3e11b1aa4@baylibre.com>
+	s=arc-20240116; t=1723732801; c=relaxed/simple;
+	bh=WPQTMYfsOfAymfXre3RJj6ZP8YMqHZV3gvzZQKZNjQM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tKK+SY0qLQRMNfDuoXISXGBUa2ZQVA1zLCljg2aiaZ9JO2zVHYxsmGaCxorp03q34dO+mQw0FA6UPLFIRIsYm/Ej7YtiB2lTAHiOjoOq4SYfyRogBcYd7E/EWKpPpuSU1P2jtPl5EpyI017ArWWX5/NXAH/l6VYVpJbxExtDNvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3QdljX/+; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7c3da1ac936so398467a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723732799; x=1724337599; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpqWW/QzIPoV5K+iQm5YrEqDbkkjx2cyk1LgXuzath0=;
+        b=3QdljX/+jhBj5Rt4vfNgiOgvOK+9W1kbc317kjASVKa9ve1HZxBce663R0PwF606Gc
+         g2XCYUrEhBzgEN72bC5ledsf4qfp5zElG8rjfMtUgt0aK0hzSie9jYHuXUTird2IqeQ5
+         kMEbdes/OLpB4JQkgqo0DMiS98igy+9ehDtoe5d+4dtaKmOV3Kx/otUJvFAgW465nrqy
+         UJyjpZyrmUVugQkla0WxAjPHYRheKZJH0rueLQdm9CwbX1ycOFna+PZ6rt3UmK292LdK
+         K+zvf5zA9W1Xjb35N/QVvBano1yweJV5EOhh7esyB4VDmkDzeZEPnA6U11zajQZLxCfB
+         XPZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723732799; x=1724337599;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpqWW/QzIPoV5K+iQm5YrEqDbkkjx2cyk1LgXuzath0=;
+        b=k90bVH39EN/h+QiHcCh4eJDMgN8HtNL6hPwcyTq5dUz881Y/EnZJaWrsMZ/3SlbhQj
+         1k0blk/EDeZBxTmti1rDYRVrMB/OLFNinmaUmahpxWZTjmwBv0nMfHR6n1WV5vwgP5E6
+         Y99AIekMzQW62+xhfDB2GQLDHPt7t3eew2kGlX3CUB7HJvAtAJ03ThTo+vksRn79FtEx
+         erb9PGuXmJ57y1WPlDHsUE9yeZcMqmoDOZP4r8jFUs0dZtEyS8tRxrmHX+t6aefq7LAx
+         27A6cAnI539IH3jtL56///57b2Wwx3bhas7hv4o8hcHhsxeLU+f3/dNA17PgF3zcOwM4
+         WcZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVisbJyNfATShALB7ef+879z2GFsjYnfstNoKYFs7MvszgPcPOVRMRDrfHj3Nnkac1wrOFKL53zfS+j4On7vuSwCd2tclxVwacE2t/B
+X-Gm-Message-State: AOJu0YyRVlIMbftqDtekj343+Yz76s6J5bMi6PbVUYcKH9DfqTIqyyhA
+	8PxM1WKKJYE2jR3/4vW7FqDHHZpSP2X2eEiIKuzmGyw9pWGWfJyuE0DzEjgjho6/fVP1MNt6dZq
+	WKQ==
+X-Google-Smtp-Source: AGHT+IFEkrnB4JXT6Dloh0C8+5/5YiZ42TL3t1XJbDSuXuEFFIc1s/Cjqy56yZFXsju+XxkBWgC8I/2rLr4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:725a:0:b0:7c1:89ee:a9d0 with SMTP id
+ 41be03b00d2f7-7c6a54b35a3mr11260a12.0.1723732798726; Thu, 15 Aug 2024
+ 07:39:58 -0700 (PDT)
+Date: Thu, 15 Aug 2024 07:39:57 -0700
+In-Reply-To: <efb9af41-21ed-4b97-8c67-40d6cda10484@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6HKhWcDgbvoBp7P3"
-Content-Disposition: inline
-In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-2-cea3e11b1aa4@baylibre.com>
+Mime-Version: 1.0
+References: <20240608000639.3295768-1-seanjc@google.com> <20240608000639.3295768-2-seanjc@google.com>
+ <efb9af41-21ed-4b97-8c67-40d6cda10484@redhat.com>
+Message-ID: <Zr4TPVQ_SNEKyfUz@google.com>
+Subject: Re: [PATCH v3 1/8] KVM: Use dedicated mutex to protect
+ kvm_usage_count to avoid deadlock
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, Aug 14, 2024, Paolo Bonzini wrote:
+> On 6/8/24 02:06, Sean Christopherson wrote:
+> > Use a dedicated mutex to guard kvm_usage_count to fix a potential deadlock
+> > on x86 due to a chain of locks and SRCU synchronizations.  Translating the
+> > below lockdep splat, CPU1 #6 will wait on CPU0 #1, CPU0 #8 will wait on
+> > CPU2 #3, and CPU2 #7 will wait on CPU1 #4 (if there's a writer, due to the
+> > fairness of r/w semaphores).
+> > 
+> >      CPU0                     CPU1                     CPU2
+> > 1   lock(&kvm->slots_lock);
+> > 2                                                     lock(&vcpu->mutex);
+> > 3                                                     lock(&kvm->srcu);
+> > 4                            lock(cpu_hotplug_lock);
+> > 5                            lock(kvm_lock);
+> > 6                            lock(&kvm->slots_lock);
+> > 7                                                     lock(cpu_hotplug_lock);
+> > 8   sync(&kvm->srcu);
+> > 
+> > Note, there are likely more potential deadlocks in KVM x86, e.g. the same
+> > pattern of taking cpu_hotplug_lock outside of kvm_lock likely exists with
+> > __kvmclock_cpufreq_notifier()
+> 
+> Offhand I couldn't see any places where {,__}cpufreq_driver_target() is
+> called within cpus_read_lock().  I didn't look too closely though.
 
---6HKhWcDgbvoBp7P3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Aha!  I think I finally found it and it's rather obvious now that I've found it.
+I looked quite deeply on multiple occasions in the past and never found such a
+case, but I could've sworn someone (Kai?) report a lockdep splat related to the
+cpufreq stuff when I did the big generic hardware enabling a while back.  Of
+course, I couldn't find that either :-)
 
-On Thu, Aug 15, 2024 at 12:11:56PM +0000, Guillaume Stols wrote:
-> Add the required properties for iio-backend support, as well as an
-> example and the conditions to mutually exclude interruption and
-> conversion trigger with iio-backend.
-> The iio-backend's function is to controls the communication, and thus the
-> interruption pin won't be available anymore.
-> As a consequence, the conversion pin must be controlled externally since
-> we will miss information about when every single conversion cycle (i.e
-> conversion + data transfert) ends, hence a PWM is introduced to trigger
-> the conversions.
->=20
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad7606.yaml    | 75 ++++++++++++++++=
-+++++-
->  1 file changed, 72 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> index c0008d36320f..4b324f7e3207 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> @@ -114,13 +114,28 @@ properties:
->        assumed that the pins are hardwired to VDD.
->      type: boolean
-> =20
-> +  pwms:
-> +    description:
-> +      In case the conversion is triggered by a PWM instead of a GPIO plu=
-gged to
-> +      the CONVST pin, the PWM must be referenced.
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  pwm-names:
-> +    minItems: 1
-> +    maxItems: 2
+Anyways...
 
-You need to describe what the pwms are.
+  cpuhp_cpufreq_online()
+  |
+  -> cpufreq_online()
+     |
+     -> cpufreq_gov_performance_limits()
+        |
+        -> __cpufreq_driver_target()
+           |
+           -> __target_index()
 
-> +  io-backends:
-> +    description:
-> +      A reference to the iio-backend, which is responsible handling the =
-BUSY
-> +      pin's falling edge and communication.
-> +      An example of backend can be found at
-> +      http://analogdevicesinc.github.io/hdl/library/axi_ad7606x/index.ht=
-ml
-> +
->  required:
->    - compatible
-> -  - reg
->    - avcc-supply
->    - vdrive-supply
-> -  - interrupts
-> -  - adi,conversion-start-gpios
-> =20
->  # This checks if reg is a chipselect so the device is on an SPI
->  # bus, the if-clause will fail if reg is a tuple such as for a
-> @@ -137,6 +152,35 @@ then:
->          - spi-cpol
-> =20
->  allOf:
-> +  # Communication is handled either by the backend or an interrupt.
+> 
+> > +``kvm_usage_count``
+> > +^^^^^^^^^^^^^^^^^^^
+> 
+> ``kvm_usage_lock``
 
-This comment seems misplaced, but also superfluous?
-
-> +  - if:
-> +      properties:
-> +        pwms: false
-> +    then:
-> +      required:
-> +        - adi,conversion-start-gpios
-> +
-> +  - if:
-> +      properties:
-> +        adi,conversion-start-gpios: false
-> +    then:
-> +      required:
-> +        - pwms
-> +
-> +  - if:
-> +      properties:
-> +        interrupts: false
-> +    then:
-> +      required:
-> +        - io-backends
-> +
-> +  - if:
-> +      properties:
-> +        io-backends: false
-> +    then:
-> +      required:
-> +        - interrupts
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -178,12 +222,37 @@ allOf:
->          adi,sw-mode: false
->      else:
->        properties:
-> +        pwms:
-> +          maxItems: 1
-> +        pwm-names:
-> +          maxItems: 1
->          adi,conversion-start-gpios:
->            maxItems: 1
-> =20
->  unevaluatedProperties: false
-> =20
->  examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    / {
-> +        adi_adc {
-> +                compatible =3D "adi,ad7606b";
-
-Just two space indent for examples please.
-
-Cheers,
-Conor.
-
-> +
-> +                pwms =3D <&axi_pwm_gen 0 0>;
-> +
-> +                avcc-supply =3D <&adc_vref>;
-> +                vdrive-supply =3D <&vdd_supply>;
-> +
-> +                reset-gpios =3D <&gpio0 91 GPIO_ACTIVE_HIGH>;
-> +                standby-gpios =3D <&gpio0 90 GPIO_ACTIVE_LOW>;
-> +                adi,range-gpios =3D <&gpio0 89 GPIO_ACTIVE_HIGH>;
-> +                adi,oversampling-ratio-gpios =3D <&gpio0 88 GPIO_ACTIVE_=
-HIGH
-> +                                                &gpio0 87 GPIO_ACTIVE_HI=
-GH
-> +                                                &gpio0 86 GPIO_ACTIVE_HI=
-GH>;
-> +                io-backends =3D <&iio_backend>;
-> +        };
-> +    };
-> +
->    - |
->      #include <dt-bindings/gpio/gpio.h>
->      #include <dt-bindings/interrupt-controller/irq.h>
->=20
-> --=20
-> 2.34.1
->=20
-
---6HKhWcDgbvoBp7P3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4S6gAKCRB4tDGHoIJi
-0ulbAP9hVpWaS+YqUymxF/KYZehF0e4fGiVa8VvqdBGTq4r69AD+MauYvu8v8/CJ
-i/lNXDbt57S3gsQSkOzHbY8DnCzcQgk=
-=tsYn
------END PGP SIGNATURE-----
-
---6HKhWcDgbvoBp7P3--
+Good job me.
 
