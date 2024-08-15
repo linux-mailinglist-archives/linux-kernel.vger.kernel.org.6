@@ -1,150 +1,83 @@
-Return-Path: <linux-kernel+bounces-287666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF2F952B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:15:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B66952B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C8B1F228B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 290E0B20E4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A0A1C0DE7;
-	Thu, 15 Aug 2024 08:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QQ5kBSSU"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F119FA92;
+	Thu, 15 Aug 2024 08:37:56 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B261BF31D
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9796CA62;
+	Thu, 15 Aug 2024 08:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723710648; cv=none; b=P6TDVt1tUR70Vy5pA2eFpyE4jX+C9jzRm9sMFIAGGtri1DhGuJahPMLCmsWOjzkmTZ43nGcC2nNhHZn7DnzsMoUq1Pt/D9VHgjAgCuENza/zgHqL63nf3ZFgty/w6+OEv0MXFYHvRTifBbI3/KAvaLmDL4+eWXUrtteGVUd3Z6Y=
+	t=1723711076; cv=none; b=snvy0VytwLYyoOez2HXT5TNx9PJeNK3YyF/QUADACt2rzmsLA/IXoIun3Y/znYaksgf1IfWDAw2h1e/NLYMbo4hrNjaxoXoj4o5bTyfrbZvLhzWJfybwhKqFA7Nf/yVIImVDJNWmzMYyIuxKvXMyKcC4SwrnGS3piUlBHQSSYV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723710648; c=relaxed/simple;
-	bh=nl3MznZJdMVxI4LJ4em4IKdizm38EsySmGVIpcr66fw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=srqY4m+y69cs+ZXXqh/QLpVWCdcP7D55YXoHZ1mfYhF1SqFeGMGTJ27xUBRQujOEQ3PtRZWYhF7WNVasXKwnrGWAQ2VK9jXHN4A+6NkQK/2HUWDHPV2gdTrUYVk9eNhA1ut4qag6El6QwEaM+TN8SAyW4h8rTx/3+f0HnuLAfts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QQ5kBSSU; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0282be6f-e8ac-4428-a2ac-1ea6b7c25f4a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723710642;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H46cTvBqsMii2CYcoZMIb49w/3n4/lbMyRjfJLUdJ2Y=;
-	b=QQ5kBSSUL/fpningt+lddUKbZtmay4Op1qrYDO1/87pza2jcYIc7WLCb1I3KId3gx/Y21J
-	MeEc4lJHD0snpaw9tVRGOABPPFW8MDsbkJ3N3EnRcy4782lC6efr73WO/6PLdrKIsbjnno
-	W8Gx4HYxvt5aORCsrhqVxaQGT1LlpTA=
-Date: Thu, 15 Aug 2024 16:30:20 +0800
+	s=arc-20240116; t=1723711076; c=relaxed/simple;
+	bh=aLHWZ+prH1yu7gUoS2IujOE5Dd6NcAM8G7JOrptmwF8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rli4jD+kKN4raUXDvViG1ERB7FBdV7u5JB45D2rOu1jOI5uqB/oUmTxaHMWYGLl8Pu1FSt7BwLIIzECL9k36OfYSfkLkOKMb7hRG6mJX5UtCw+XoS1m3jC2OY24VFAhTSqm+Lb7ZFweaeCExYyRYvRmXu5sFkfiAfCdAMVzUKMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wkz4D0FcxzpTSp;
+	Thu, 15 Aug 2024 16:36:28 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29F1414037E;
+	Thu, 15 Aug 2024 16:37:50 +0800 (CST)
+Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 15 Aug
+ 2024 16:37:49 +0800
+From: Yuntao Liu <liuyuntao12@huawei.com>
+To: <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>
+CC: <ch.naveen@samsung.com>, <linux@roeck-us.net>, <jdelvare@suse.com>,
+	<liuyuntao12@huawei.com>
+Subject: [PATCH] hwmon: ntc_thermistor: fix module autoloading
+Date: Thu, 15 Aug 2024 08:30:21 +0000
+Message-ID: <20240815083021.756134-1-liuyuntao12@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] SUNRPC: Fix -Wformat-truncation warning
-To: NeilBrown <neilb@suse.de>
-Cc: trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com,
- jlayton@kernel.org, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kunwu Chan <chentao@kylinos.cn>
-References: <20240814093853.48657-1-kunwu.chan@linux.dev>
- <172363131189.6062.4199842989565550209@noble.neil.brown.name>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kunwu Chan <kunwu.chan@linux.dev>
-In-Reply-To: <172363131189.6062.4199842989565550209@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-Thanks for your reply.
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+based on the alias from of_device_id table.
 
-On 2024/8/14 18:28, NeilBrown wrote:
-> On Wed, 14 Aug 2024, kunwu.chan@linux.dev wrote:
->> From: Kunwu Chan <chentao@kylinos.cn>
->>
->> Increase size of the servername array to avoid truncated output warning.
->>
->> net/sunrpc/clnt.c:582:75: error：‘%s’ directive output may be truncated
->> writing up to 107 bytes into a region of size 48
->> [-Werror=format-truncation=]
->>    582 |                   snprintf(servername, sizeof(servername), "%s",
->>        |                                                             ^~
->>
->> net/sunrpc/clnt.c:582:33: note:‘snprintf’ output
->> between 1 and 108 bytes into a destination of size 48
->>    582 |                     snprintf(servername, sizeof(servername), "%s",
->>        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>    583 |                                          sun->sun_path);
->>
->> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
->> ---
->>   net/sunrpc/clnt.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
->> index 09f29a95f2bc..874085f3ed50 100644
->> --- a/net/sunrpc/clnt.c
->> +++ b/net/sunrpc/clnt.c
->> @@ -546,7 +546,7 @@ struct rpc_clnt *rpc_create(struct rpc_create_args *args)
->>   		.connect_timeout = args->connect_timeout,
->>   		.reconnect_timeout = args->reconnect_timeout,
->>   	};
->> -	char servername[48];
->> +	char servername[108];
-> If we choose this approach to removing the warning, then we should use
-> UNIX_PATH_MAX rather than 108.
-My negligence.
->
-> However the longest server name copied in here will in practice be
->     /var/run/rpcbind.sock
->
-> so the extra 60 bytes on the stack is wasted ...  maybe that doesn't
-> matter.
-I'm thinking  about use a dynamic space alloc method like kasprintf to 
-avoid space waste.
-> The string is only used by xprt_create_transport() which requires it to
-> be less than RPC_MAXNETNAMELEN - which is 256.
-> So maybe that would be a better value to use for the array size ....  if
-> we assume that stack space isn't a problem.
+Fixes: 9e8269de100dd (hwmon: (ntc_thermistor) Add DT with IIO support to NTC thermistor driver)
+Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+---
+ drivers/hwmon/ntc_thermistor.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thank you for the detailed explanation. I read the 
-xprt_create_transport,  the RPC_MAXNETNAMELEN
-
-is only use to xprt_create_transport .
-
-> What ever number we use, I'd rather it was a defined constant, and not
-> an apparently arbitrary number.
-
-Whether we could check the sun->sun_path length before using snprintf?  
-The array size should smaller
-
-than  the minimum of sun->sun_path and RPC_MAXNETNAMELEN.
-
-Or use the dynamic space allocate method to save space.
-
->
-> Thanks,
-> NeilBrown
->
->
->>   	struct rpc_clnt *clnt;
->>   	int i;
->>   
->> -- 
->> 2.40.1
->>
->>
+diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
+index ef75b63f5894..b5352900463f 100644
+--- a/drivers/hwmon/ntc_thermistor.c
++++ b/drivers/hwmon/ntc_thermistor.c
+@@ -62,6 +62,7 @@ static const struct platform_device_id ntc_thermistor_id[] = {
+ 	[NTC_SSG1404001221]   = { "ssg1404_001221",  TYPE_NCPXXWB473 },
+ 	[NTC_LAST]            = { },
+ };
++MODULE_DEVICE_TABLE(platform, ntc_thermistor_id);
+ 
+ /*
+  * A compensation table should be sorted by the values of .ohm
 -- 
-Thanks,
-   Kunwu.Chan
+2.34.1
 
 
