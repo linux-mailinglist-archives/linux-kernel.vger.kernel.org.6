@@ -1,171 +1,336 @@
-Return-Path: <linux-kernel+bounces-287643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04CE952AAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A614952A69
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A23B282776
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5112816C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B94B1A00FE;
-	Thu, 15 Aug 2024 08:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ry/IzBCg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD22F19B3D3;
+	Thu, 15 Aug 2024 08:00:00 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFD719DF92;
-	Thu, 15 Aug 2024 08:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB54198E78;
+	Thu, 15 Aug 2024 07:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723708903; cv=none; b=sxLFKm0KRen7AbqXAmKp/9v+c0DsYzqljjmqKmXKVnkW7tNfta5XkZU2hb2Z8tCPutvNxhnR7rHwdLm4AKvVyluq0L4vWUuw8xc3WkjM4T4Dq1vR++Liq+onoVL6tSxPHNTMZ1MSOEgrtR2dv07j54IjTzryPVRVUx+j6fQZeGk=
+	t=1723708800; cv=none; b=t01oqhcY9PaZoEHgzLMip+tjTwdkuwpQHEGzhs9EzlK5k8YQhLXr7Gzvhi8Mtq3KWwVCyRv/PUCaVLdGApmNTjWINyqybml23RLciDW/ThTJ02Q0+J3SmuFkGrH4vt2tjcVPmrqsBpcNgh4XmroxOHrmh5J54KbBLGska6G2dLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723708903; c=relaxed/simple;
-	bh=L+iIkWaROx53+mbR/KlFrGWriCKk7KswEX0BCz+zJXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgjaFERcxm0cwVsx0vfxnFgUT4EpavSn72lDY7M5r6VYeAcjAN0qwBfhC4X08TRgCCMuEMZyNPnyCKmhwY8cQWj7FuTPoneenpnm9WChmsoP7EvTaWHPWznELVcWrZoDHLYM31juPsNe9pEUKy52GXS3ywfYMIeRqrQx0AyUg9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ry/IzBCg; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723708902; x=1755244902;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L+iIkWaROx53+mbR/KlFrGWriCKk7KswEX0BCz+zJXk=;
-  b=Ry/IzBCgswXC2xhj9JNbB35qu8CCzawKwohbRvT7qsN3SXRX6wQ/ErMl
-   kwjYmOHSb7eLejswMz34zdKgBzgynUoKihSdDo3mjod0M1RsfPuKIu9Pd
-   q1ju6vgZKUHNW8KZp3MdBXqZGyAxzzAuCRM+jr/GzCq3dbMlVTd0n9XxR
-   sTxSQxfGbbhmkcN4mch2lUGZ4OOj9pm8IHBbf7wLR4UWnO1IbJcF5aj4o
-   RWgIwnsQ5FcblnRKNQlt4EfYeNWRp10ERz1SQfQD8Re7ir64qeoAcLKRI
-   pTRd/kgFBsY5YfIjLXBeq8p77lbgkkHAJ1OtjLLafSD8q//2nKFk0En17
-   g==;
-X-CSE-ConnectionGUID: A8s0lY62S3Crzlp0fbodVQ==
-X-CSE-MsgGUID: d4G1Au7LTdm0Vo6EpOt0wQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22090508"
-X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="22090508"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 01:01:41 -0700
-X-CSE-ConnectionGUID: At7ErGaiRciMc6LYfxJrhw==
-X-CSE-MsgGUID: QNiy1+u9RbyVeLD72TnEnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="63438239"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa003.fm.intel.com with ESMTP; 15 Aug 2024 01:01:38 -0700
-Date: Thu, 15 Aug 2024 15:59:26 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
-	kai.huang@intel.com, isaku.yamahata@gmail.com,
-	tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>
-Subject: Re: [PATCH 09/25] KVM: TDX: Get system-wide info about TDX module on
- initialization
-Message-ID: <Zr21XioOyi0CZ+FV@yilunxu-OptiPlex-7050>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-10-rick.p.edgecombe@intel.com>
+	s=arc-20240116; t=1723708800; c=relaxed/simple;
+	bh=XwDdYd67nw6O4gN2C/AFvJ5qOri7xBwic0zMAeUdy14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mjZ0rnUeXWAtAFi9SwBge1O6mjqg1VVM10eXvqS9FjFtvW/OKptf8QdigEz8MYnJNsDUpqrE8k/71bV7IfNSFnb7O5QCU9cyuma9WJGPqwF+r1JZJjGseR8NlqdWJvCXUQ0KiO8qWGZ9GMn7qCWwz+BFoLGX1x/tIGRHiWX7CpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WkyFQ1B2Hz1T4GR;
+	Thu, 15 Aug 2024 15:59:22 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 11267140159;
+	Thu, 15 Aug 2024 15:59:53 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 15 Aug 2024 15:59:51 +0800
+Message-ID: <e17cf2d1-e3e0-f549-b04a-664ca2708817@huawei.com>
+Date: Thu, 15 Aug 2024 15:59:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812224820.34826-10-rick.p.edgecombe@intel.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] uprobes: Optimize the allocation of insn_slot for
+ performance
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	"oleg@redhat.com >> Oleg Nesterov" <oleg@redhat.com>, Andrii Nakryiko
+	<andrii@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
+	<rostedt@goodmis.org>, <paulmck@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>
+References: <20240727094405.1362496-1-liaochang1@huawei.com>
+ <7eefae59-8cd1-14a5-ef62-fc0e62b26831@huawei.com>
+ <CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com>
+ <85991ce3-674d-b46e-b4f9-88a50f7f5122@huawei.com>
+ <CAEf4BzYvpgfFGckcKdzkC_g1J1SFi7xBe=_cjdVy4KEMikvGMw@mail.gmail.com>
+ <2c23e9cc-5593-84d0-9157-1e946df941d9@huawei.com>
+ <CAEf4BzYSC+OQ0D+B0oEi3uN0kyZ07kPaneLJLJqF=oA6gTXLbg@mail.gmail.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <CAEf4BzYSC+OQ0D+B0oEi3uN0kyZ07kPaneLJLJqF=oA6gTXLbg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index de14e80d8f3a..90b44ebaf864 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -3,6 +3,7 @@
->  #include <asm/tdx.h>
->  #include "capabilities.h"
->  #include "x86_ops.h"
-> +#include "mmu.h"
 
-Is the header file still needed?
 
->  #include "tdx.h"
->  
->  #undef pr_fmt
-> @@ -30,6 +31,72 @@ static void __used tdx_guest_keyid_free(int keyid)
->  	ida_free(&tdx_guest_keyid_pool, keyid);
->  }
->  
-> +static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
-> +{
-> +	const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
-> +	struct kvm_tdx_capabilities __user *user_caps;
-> +	struct kvm_tdx_capabilities *caps = NULL;
-> +	int i, ret = 0;
-> +
-> +	/* flags is reserved for future use */
-> +	if (cmd->flags)
-> +		return -EINVAL;
-> +
-> +	caps = kmalloc(sizeof(*caps), GFP_KERNEL);
-> +	if (!caps)
-> +		return -ENOMEM;
-> +
-> +	user_caps = u64_to_user_ptr(cmd->data);
-> +	if (copy_from_user(caps, user_caps, sizeof(*caps))) {
-> +		ret = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	if (caps->nr_cpuid_configs < td_conf->num_cpuid_config) {
-> +		ret = -E2BIG;
+在 2024/8/15 0:57, Andrii Nakryiko 写道:
+> On Tue, Aug 13, 2024 at 9:17 PM Liao, Chang <liaochang1@huawei.com> wrote:
+>>
+>>
+>>
+>> 在 2024/8/13 1:49, Andrii Nakryiko 写道:
+>>> On Mon, Aug 12, 2024 at 4:11 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> 在 2024/8/9 2:26, Andrii Nakryiko 写道:
+>>>>> On Thu, Aug 8, 2024 at 1:45 AM Liao, Chang <liaochang1@huawei.com> wrote:
+>>>>>>
+>>>>>> Hi Andrii and Oleg.
+>>>>>>
+>>>>>> This patch sent by me two weeks ago also aim to optimize the performance of uprobe
+>>>>>> on arm64. I notice recent discussions on the performance and scalability of uprobes
+>>>>>> within the mailing list. Considering this interest, I've added you and other relevant
+>>>>>> maintainers to the CC list for broader visibility and potential collaboration.
+>>>>>>
+>>>>>
+>>>>> Hi Liao,
+>>>>>
+>>>>> As you can see there is an active work to improve uprobes, that
+>>>>> changes lifetime management of uprobes, removes a bunch of locks taken
+>>>>> in the uprobe/uretprobe hot path, etc. It would be nice if you can
+>>>>> hold off a bit with your changes until all that lands. And then
+>>>>> re-benchmark, as costs might shift.
+>>>>>
+>>>>> But also see some remarks below.
+>>>>>
+>>>>>> Thanks.
+>>>>>>
+>>>>>> 在 2024/7/27 17:44, Liao Chang 写道:
+>>>>>>> The profiling result of single-thread model of selftests bench reveals
+>>>>>>> performance bottlenecks in find_uprobe() and caches_clean_inval_pou() on
+>>>>>>> ARM64. On my local testing machine, 5% of CPU time is consumed by
+>>>>>>> find_uprobe() for trig-uprobe-ret, while caches_clean_inval_pou() take
+>>>>>>> about 34% of CPU time for trig-uprobe-nop and trig-uprobe-push.
+>>>>>>>
+>>>>>>> This patch introduce struct uprobe_breakpoint to track previously
+>>>>>>> allocated insn_slot for frequently hit uprobe. it effectively reduce the
+>>>>>>> need for redundant insn_slot writes and subsequent expensive cache
+>>>>>>> flush, especially on architecture like ARM64. This patch has been tested
+>>>>>>> on Kunpeng916 (Hi1616), 4 NUMA nodes, 64 cores@ 2.4GHz. The selftest
+>>>>>>> bench and Redis GET/SET benchmark result below reveal obivious
+>>>>>>> performance gain.
+>>>>>>>
+>>>>>>> before-opt
+>>>>>>> ----------
+>>>>>>> trig-uprobe-nop:  0.371 ± 0.001M/s (0.371M/prod)
+>>>>>>> trig-uprobe-push: 0.370 ± 0.001M/s (0.370M/prod)
+>>>>>>> trig-uprobe-ret:  1.637 ± 0.001M/s (1.647M/prod)
+>>>>>
+>>>>> I'm surprised that nop and push variants are much slower than ret
+>>>>> variant. This is exactly opposite on x86-64. Do you have an
+>>>>> explanation why this might be happening? I see you are trying to
+>>>>> optimize xol_get_insn_slot(), but that is (at least for x86) a slow
+>>>>> variant of uprobe that normally shouldn't be used. Typically uprobe is
+>>>>> installed on nop (for USDT) and on function entry (which would be push
+>>>>> variant, `push %rbp` instruction).
+>>>>>
+>>>>> ret variant, for x86-64, causes one extra step to go back to user
+>>>>> space to execute original instruction out-of-line, and then trapping
+>>>>> back to kernel for running uprobe. Which is what you normally want to
+>>>>> avoid.
+>>>>>
+>>>>> What I'm getting at here. It seems like maybe arm arch is missing fast
+>>>>> emulated implementations for nops/push or whatever equivalents for
+>>>>> ARM64 that is. Please take a look at that and see why those are slow
+>>>>> and whether you can make those into fast uprobe cases?
+>>>>
+>>>> Hi Andrii,
+>>>>
+>>>> As you correctly pointed out, the benchmark result on Arm64 is counterintuitive
+>>>> compared to X86 behavior. My investigation revealed that the root cause lies in
+>>>> the arch_uprobe_analyse_insn(), which excludes the Arm64 equvialents instructions
+>>>> of 'nop' and 'push' from the emulatable instruction list. This forces the kernel
+>>>> to handle these instructions out-of-line in userspace upon breakpoint exception
+>>>> is handled, leading to a significant performance overhead compared to 'ret' variant,
+>>>> which is already emulated.
+>>>>
+>>>> To address this issue, I've developed a patch supports  the emulation of 'nop' and
+>>>> 'push' variants. The benchmark results below indicates the performance gain of
+>>>> emulation is obivious.
+>>>>
+>>>> xol (1 cpus)
+>>>> ------------
+>>>> uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
+>>>> uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
+>>>> uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
+>>>> uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
+>>>> uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
+>>>> uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+>>>>
+>>>> emulation (1 cpus)
+>>>> -------------------
+>>>> uprobe-nop:  1.862 ± 0.002M/s  (1.862M/s/cpu)
+>>>> uprobe-push: 1.743 ± 0.006M/s  (1.743M/s/cpu)
+>>>> uprobe-ret:  1.840 ± 0.001M/s  (1.840M/s/cpu)
+>>>> uretprobe-nop:  0.964 ± 0.004M/s  (0.964M/s/cpu)
+>>>> uretprobe-push: 0.936 ± 0.004M/s  (0.936M/s/cpu)
+>>>> uretprobe-ret:  0.940 ± 0.001M/s  (0.940M/s/cpu)
+>>>>
+>>>> As you can see, the performance gap between nop/push and ret variants has been significantly
+>>>> reduced. Due to the emulation of 'push' instruction need to access userspace memory, it spent
+>>>> more cycles than the other.
+>>>
+>>> Great, it's an obvious improvement. Are you going to send patches
+>>> upstream? Please cc bpf@vger.kernel.org as well.
+>>
+>> I'll need more time to thoroughly test this patch. The emulation o push/nop
+>> instructions also impacts the kprobe/kretprobe paths on Arm64, As as result,
+>> I'm working on enhancements to trig-kprobe/kretprobe to prevent performance
+>> regression.
+>>
+>>>
+>>>
+>>> I'm also thinking we should update uprobe/uretprobe benchmarks to be
+>>> less x86-specific. Right now "-nop" is the happy fastest case, "-push"
+>>> is still happy, slightly slower case (due to the need to emulate stack
+>>> operation) and "-ret" is meant to be the slow single-step case. We
+>>> should adjust the naming and make sure that on ARM64 we hit similar
+>>> code paths. Given you seem to know arm64 pretty well, can you please
+>>> take a look at updating bench tool for ARM64 (we can also rename
+>>> benchmarks to something a bit more generic, rather than using
+>>> instruction names)?
+>>
+>> Let me use a matrix below for the structured comparsion of uprobe/uretprobe
+>> benchmarks on X86 and Arm64:
+>>
+>> Architecture  Instrution Type   Handling method   Performance
+>> X86           nop               Emulated          Fastest
+>> X86           push              Emulated          Fast
+>> X86           ret               Single-step       Slow
+>> Arm64         nop               Emulated          Fastest
+>> Arm64         push              Emulated          Fast
+>> Arm64         ret               Emulated          Faster
+>>
+>> I suggest categorize benchmarks into 'emu' for emulated instructions and 'ss'
+>> for 'single-steppable' instructions. Generally, emulated instructions should
+>> outperform single-step ones across different architectures. Regarding the
+>> generic naming, I propose using a self-explanatory style, such as
+>> s/nop/empty-insn/g, s/push/push-stack/g, s/ret/func-return/g.
+>>
+>> Above all, example "bench --list" output:
+>>
+>> X86:
+>>   ...
+>>   trig-uprobe-emu-empty-insn
+>>   trig-uprobe-ss-func-return
+>>   trig-uprobe-emu-push-stack
+>>   trig-uretprobe-emu-empyt-insn
+>>   trig-uretprobe-ss-func-return
+>>   trig-uretprobe-emu-push-stack
+>>   ...
+>>
+>> Arm64:
+>>   ...
+>>   trig-uprobe-emu-empty-insn
+>>   trig-uprobe-emu-func-return
+>>   trig-uprobe-emu-push-stack
+>>   trig-uretprobe-emu-empyt-insn
+>>   trig-uretprobe-emu-func-return
+>>   trig-uretprobe-emu-push-stack
+>>   ...
+>>
+>> This structure will allow for direct comparison of uprobe/uretprobe
+>> performance across different architectures and instruction types.
+>> Please let me know your thought, Andrii.
+> 
+> Tbh, sounds a bit like an overkill. But before we decide on naming,
+> what kind of situation is single-stepped on arm64?
 
-How about output the correct num_cpuid_config to userspace as a hint,
-to avoid user blindly retries.
+On Arm64, the following instruction types are generally not single-steppable.
 
-> +		goto out;
-> +	}
-> +
-> +	*caps = (struct kvm_tdx_capabilities) {
-> +		.attrs_fixed0 = td_conf->attributes_fixed0,
-> +		.attrs_fixed1 = td_conf->attributes_fixed1,
-> +		.xfam_fixed0 = td_conf->xfam_fixed0,
-> +		.xfam_fixed1 = td_conf->xfam_fixed1,
-> +		.supported_gpaw = TDX_CAP_GPAW_48 |
-> +		((kvm_host.maxphyaddr >= 52 &&
-> +		  cpu_has_vmx_ept_5levels()) ? TDX_CAP_GPAW_52 : 0),
-> +		.nr_cpuid_configs = td_conf->num_cpuid_config,
-> +		.padding = 0,
-> +	};
-> +
-> +	if (copy_to_user(user_caps, caps, sizeof(*caps))) {
-> +		ret = -EFAULT;
-> +		goto out;
-> +	}
-> +
-> +	for (i = 0; i < td_conf->num_cpuid_config; i++) {
-> +		struct kvm_tdx_cpuid_config cpuid_config = {
-> +			.leaf = (u32)td_conf->cpuid_config_leaves[i],
-> +			.sub_leaf = td_conf->cpuid_config_leaves[i] >> 32,
-> +			.eax = (u32)td_conf->cpuid_config_values[i].eax_ebx,
-> +			.ebx = td_conf->cpuid_config_values[i].eax_ebx >> 32,
-> +			.ecx = (u32)td_conf->cpuid_config_values[i].ecx_edx,
-> +			.edx = td_conf->cpuid_config_values[i].ecx_edx >> 32,
-> +		};
-> +
-> +		if (copy_to_user(&(user_caps->cpuid_configs[i]), &cpuid_config,
-                                  ^                           ^
+  - Modifying and reading PC, including 'ret' and various branch instructions.
 
-I think the brackets could be removed.
+  - Forming a PC-relative address using the PC and an immediate value.
 
-> +					sizeof(struct kvm_tdx_cpuid_config))) {
+  - Generating exception, includes BRK, HLT, HVC, SMC, SVC.
 
-sizeof(cpuid_config) could be better.
+  - Loading memory at address calculated based on the PC and an immediate offset.
 
-Thanks,
-Yilun
+  - Moving general-purpose register to system registers of PE (similar to logical cores on x86).
+
+  - Hint instruction cause exception or unintend behavior for single-stepping.
+    However, 'nop' is steppable hint.
+
+Most parts of instructions that doesn't fall into any of these types are single-stepped,
+including the Arm64 equvialents of 'push'.
+
+Thanks.
+
+> 
+>>
+>> Thanks.
+>>
+>>>
+>>>>
+>>>>>
+>>>>>>> trig-uretprobe-nop:  0.331 ± 0.004M/s (0.331M/prod)
+>>>>>>> trig-uretprobe-push: 0.333 ± 0.000M/s (0.333M/prod)
+>>>>>>> trig-uretprobe-ret:  0.854 ± 0.002M/s (0.854M/prod)
+>>>>>>> Redis SET (RPS) uprobe: 42728.52
+>>>>>>> Redis GET (RPS) uprobe: 43640.18
+>>>>>>> Redis SET (RPS) uretprobe: 40624.54
+>>>>>>> Redis GET (RPS) uretprobe: 41180.56
+>>>>>>>
+>>>>>>> after-opt
+>>>>>>> ---------
+>>>>>>> trig-uprobe-nop:  0.916 ± 0.001M/s (0.916M/prod)
+>>>>>>> trig-uprobe-push: 0.908 ± 0.001M/s (0.908M/prod)
+>>>>>>> trig-uprobe-ret:  1.855 ± 0.000M/s (1.855M/prod)
+>>>>>>> trig-uretprobe-nop:  0.640 ± 0.000M/s (0.640M/prod)
+>>>>>>> trig-uretprobe-push: 0.633 ± 0.001M/s (0.633M/prod)
+>>>>>>> trig-uretprobe-ret:  0.978 ± 0.003M/s (0.978M/prod)
+>>>>>>> Redis SET (RPS) uprobe: 43939.69
+>>>>>>> Redis GET (RPS) uprobe: 45200.80
+>>>>>>> Redis SET (RPS) uretprobe: 41658.58
+>>>>>>> Redis GET (RPS) uretprobe: 42805.80
+>>>>>>>
+>>>>>>> While some uprobes might still need to share the same insn_slot, this
+>>>>>>> patch compare the instructions in the resued insn_slot with the
+>>>>>>> instructions execute out-of-line firstly to decides allocate a new one
+>>>>>>> or not.
+>>>>>>>
+>>>>>>> Additionally, this patch use a rbtree associated with each thread that
+>>>>>>> hit uprobes to manage these allocated uprobe_breakpoint data. Due to the
+>>>>>>> rbtree of uprobe_breakpoints has smaller node, better locality and less
+>>>>>>> contention, it result in faster lookup times compared to find_uprobe().
+>>>>>>>
+>>>>>>> The other part of this patch are some necessary memory management for
+>>>>>>> uprobe_breakpoint data. A uprobe_breakpoint is allocated for each newly
+>>>>>>> hit uprobe that doesn't already have a corresponding node in rbtree. All
+>>>>>>> uprobe_breakpoints will be freed when thread exit.
+>>>>>>>
+>>>>>>> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+>>>>>>> ---
+>>>>>>>  include/linux/uprobes.h |   3 +
+>>>>>>>  kernel/events/uprobes.c | 246 +++++++++++++++++++++++++++++++++-------
+>>>>>>>  2 files changed, 211 insertions(+), 38 deletions(-)
+>>>>>>>
+>>>>>
+>>>>> [...]
+>>>>
+>>>> --
+>>>> BR
+>>>> Liao, Chang
+>>
+>> --
+>> BR
+>> Liao, Chang
+
+-- 
+BR
+Liao, Chang
 
