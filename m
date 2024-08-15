@@ -1,102 +1,131 @@
-Return-Path: <linux-kernel+bounces-287968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C354B952EBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:04:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C577C952EBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0B91F22459
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B95E1F22637
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A6B19DF5E;
-	Thu, 15 Aug 2024 13:03:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC1019EEA4;
+	Thu, 15 Aug 2024 13:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNBLvtY+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC4517C9AD;
-	Thu, 15 Aug 2024 13:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B02819DFA6;
+	Thu, 15 Aug 2024 13:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723727036; cv=none; b=pM/BE3mnvJz/hnAbYF6i7yipl9GDhPgW/IfdRJ1imPqJwrGEJF4/jjAU4k4Ni/5oAqMx2vxccXbX9tGUk5YfGzt0OydBJgyCW+Voh8ioWl8B3okKeElZov0be/RA0ZsBaqaC5MFXH+cWA04bfcBd8NHRKQ8pE2Lf+jwSfqarlBg=
+	t=1723727038; cv=none; b=aHXwgbATypQnwLiq9MkqRsYa1Ad55M3sj83VU0ynABy8qM1u5zcXkiwysZiI7KNq+fw+INwCcKrI4ZSsuwFxzt5QpdkENOoinHW1r4f21aKLj+iQZ3523BsHUBWhm/R9+CBY2C/RmtWlgg42/de/vjLgyFbmITgc2JXBxodzgxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723727036; c=relaxed/simple;
-	bh=x9o4Z9egIeMfXj7TtgkdZQCXnCjreD361HEnOwUrCEs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TWHtdrABSaUg8mRN8ag8mDbyAMjXJpJq42QQtgMoXJkJkmxKnNAfDD0nTs38A8vtd71ldvCWjPv8qWHkOfC2iDi2Kr1IVZsxDxikurRC6GgGhnHWFrijkJ2KhjC5Y8MnLRrEq1JF5CCt54flpRs1bvc/GlyeIvg1icVkwaCbog4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wl4xd4jCQz6K98G;
-	Thu, 15 Aug 2024 21:01:09 +0800 (CST)
-Received: from lhrpeml100003.china.huawei.com (unknown [7.191.160.210])
-	by mail.maildlp.com (Postfix) with ESMTPS id B00F0140B73;
-	Thu, 15 Aug 2024 21:03:50 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- lhrpeml100003.china.huawei.com (7.191.160.210) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 15 Aug 2024 14:03:50 +0100
-Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
- lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
- Thu, 15 Aug 2024 14:03:50 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Joerg
- Roedel" <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen
-	<nicolinc@nvidia.com>, Michael Shavit <mshavit@google.com>, Mostafa Saleh
-	<smostafa@google.com>, Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian
-	<kevin.tian@intel.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
-Thread-Topic: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
-Thread-Index: AQHa7wXNPo+CG2I9vkChFeAuisDOE7IoSPZg
-Date: Thu, 15 Aug 2024 13:03:50 +0000
-Message-ID: <cc6b31a1cb334ecf8458e888d66e362a@huawei.com>
-References: <9208cd0d-8105-40df-93e9-bdcdf0d55eec@stanley.mountain>
-In-Reply-To: <9208cd0d-8105-40df-93e9-bdcdf0d55eec@stanley.mountain>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1723727038; c=relaxed/simple;
+	bh=yEDFxqo+NF6WMAkJcoYLgmvXG6sQYuYfVp3i9QXS9HE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vh6/627i3adSr5MUXQC0MEdLUdk5GidTjpP1RApVfDLb7rF8wargv8Uv5JhrQpgfjNGWn31THg3x4JJ2zV1R+WiACEH5pX7l7jEGwXspU7lH0xdaCt3IVXSb1DYhBDosvFtBPg7m9WxvYE6dYPOZq6JM8+u5lE5YSqx+lsJequ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iNBLvtY+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF954C4AF0A;
+	Thu, 15 Aug 2024 13:03:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723727038;
+	bh=yEDFxqo+NF6WMAkJcoYLgmvXG6sQYuYfVp3i9QXS9HE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iNBLvtY+ikrUFRzMe3U4cW60OaAz3dOt8PXL4Ky9gIPEdF1A3fRxzCSZpfOmFbSQM
+	 CmlYJV9PvA6uEyQsRSEANhAVdvNjh7nkBFNe7nekXxAT/IzOAPjqaMl/HPDQKXCrDi
+	 x4/fOhCzzqVE8dpasb29v7ybfsywum6vTUqcWCK3IYlr5nPLLKIWZb1zkt/OdWDGII
+	 aUvLdcIj3zTXF+nLgwxo7XyVZcdJZCcir44gJLe0HvcNV6wD4ZAnSevgfZhpTrLdyJ
+	 ADfSZ0qkPoQ6SdOTyO1v3heW8imXWw5DAYv8tLwZjKsRFSMLa2Vk/UYfgpqGuBwiVW
+	 nXDnrXLKV3I4w==
+Date: Thu, 15 Aug 2024 14:03:53 +0100
+From: Simon Horman <horms@kernel.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH v7 net-next 2/3] selftests: net: Add on/off checks for
+ non-fixed features of interface
+Message-ID: <20240815130353.GB632411@kernel.org>
+References: <20240815105924.1389290-1-jain.abhinav177@gmail.com>
+ <20240815105924.1389290-3-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815105924.1389290-3-jain.abhinav177@gmail.com>
 
+On Thu, Aug 15, 2024 at 04:29:23PM +0530, Abhinav Jain wrote:
+> Implement on/off testing for all non-fixed features via while loop.
+> Save the initial state so that it can be restored after on/off checks.
+> 
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> ---
+>  tools/testing/selftests/net/netdevice.sh | 37 +++++++++++++++++++++++-
+>  1 file changed, 36 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/net/netdevice.sh b/tools/testing/selftests/net/netdevice.sh
+> index 0c32950fdd17..50f7b9d1163d 100755
+> --- a/tools/testing/selftests/net/netdevice.sh
+> +++ b/tools/testing/selftests/net/netdevice.sh
+> @@ -124,7 +124,42 @@ kci_netdev_ethtool()
+>  		return 1
+>  	fi
+>  	echo "PASS: $netdev: ethtool list features"
+> -	#TODO for each non fixed features, try to turn them on/off
+> +
+> +	while read -r FEATURE VALUE FIXED; do
+> +		[ "$FEATURE" != "Features" ] || continue # Skip "Features"
+> +		[ "$FIXED" != "[fixed]" ] || continue # Skip fixed features
+> +		feature="${FEATURE%:*}"
+> +
+> +		initial_state=$(ethtool -k "$netdev" | grep "$feature:" \
+> +			| awk '{print $2}')
 
+Hi Abhinav,
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Thursday, August 15, 2024 12:25 PM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: Will Deacon <will@kernel.org>; Robin Murphy
-> <robin.murphy@arm.com>; Joerg Roedel <joro@8bytes.org>; Jason
-> Gunthorpe <jgg@ziepe.ca>; Nicolin Chen <nicolinc@nvidia.com>; Michael
-> Shavit <mshavit@google.com>; Mostafa Saleh <smostafa@google.com>; Lu
-> Baolu <baolu.lu@linux.intel.com>; Kevin Tian <kevin.tian@intel.com>; linu=
-x-
-> arm-kernel@lists.infradead.org; iommu@lists.linux.dev; linux-
-> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH] iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
->=20
-> The arm_smmu_domain_alloc() function returns error pointers on error.  It
-> doesn't return NULL.  Update the error checking to match.
->=20
-> Fixes: 52acd7d8a413 ("iommu/arm-smmu-v3: Add support for
-> domain_alloc_user fn")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Isn't the value being read into $initial_state here already present in $VALUE?
 
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
-Thanks,
-Shameer
+> +		ethtool --offload "$netdev" "$feature" off
+> +		if [ $? -eq 0 ]; then
+> +			echo "PASS: $netdev: Turned off feature: $feature"
+> +		else
+> +			echo "FAIL: $netdev: Failed to turn off feature:" \
+> +				"$feature"
+> +		fi
+> +
+> +		ethtool --offload "$netdev" "$feature" on
+> +		if [ $? -eq 0 ]; then
+> +			echo "PASS: $netdev: Turned on feature: $feature"
+> +		else
+> +			echo "FAIL: $netdev: Failed to turn on feature:" \
+> +				"$feature"
+> +		fi
+> +
+> +		#restore the feature to its initial state
+> +		ethtool --offload "$netdev" "$feature" "$initial_state"
+> +		if [ $? -eq 0 ]; then
+> +			echo "PASS: $netdev: Restore feature $feature" \
+> +				"to initial state $initial_state"
+> +		else
+> +			echo "FAIL: $netdev: Failed to restore feature" \
+> +				"$feature to default $initial_state"
+> +		fi
+> +
+> +	done < "$TMP_ETHTOOL_FEATURES"
+> +
+>  	rm "$TMP_ETHTOOL_FEATURES"
+>  
+>  	kci_netdev_ethtool_test 74 'dump' "ethtool -d $netdev"
+> -- 
+> 2.34.1
+> 
+> 
 
