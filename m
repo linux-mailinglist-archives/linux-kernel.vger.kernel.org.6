@@ -1,177 +1,161 @@
-Return-Path: <linux-kernel+bounces-288605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342C2953C51
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:07:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F5CF953C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:07:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0EF628741E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFB11F23312
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47DD14E2DF;
-	Thu, 15 Aug 2024 21:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3ED14D6F7;
+	Thu, 15 Aug 2024 21:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KF+6DTij"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qc7iVEDM"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6803A14D6F7;
-	Thu, 15 Aug 2024 21:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2D713C677
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 21:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723756024; cv=none; b=sdjcz+y/yA2lYwbz6U8+U2O6YlTnUMLGUpeYEegdXk2b7ccM6voUf4njfeQ07IjCf0kQgB+VnpCBoAHYmaCHcI9I4E6lEG9F7VOnLHRhlvL2OjyOswLVin0qIBZqjDxEetOCJvRdUjpfoJa57/xCwuGHm85OEDOtdThFEOb5DwE=
+	t=1723756040; cv=none; b=rDsqUT5cawqKRA19qdK1slbvnwmwdwYwC3FdYMKpQ+fdbjafyaT6xvoDZB9UydSWCCRV6SFnV3HJMr8wtKjeUq2X1ofW3nrNiB/YoDPRhNVSdvA3q9UOZUKt2HsbtSBe1DGWGijae5kgM+HmFA9FZ3HuyG0DMWbMwFs452os+F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723756024; c=relaxed/simple;
-	bh=QXfFtN1BsmswvCojdV2csbPlHcJf+cJa4JsbPOkF2kI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AL4rMJ6aYgGD36KNwbOJIWXZY174GdV77e/FgSPpzJmKdbD4STw9sFe63+EMI/hkj32N7izdYrQiIt9vX9doA+UzEhR0j2cdDeoOXv+GKGuoHihiA3QlbGdB/agOW9Ton//XFTe8NfFtuXz05496PWcjTYQm/cOOtzGNyvsKOHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KF+6DTij; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7a0e8b76813so1084563a12.3;
-        Thu, 15 Aug 2024 14:07:03 -0700 (PDT)
+	s=arc-20240116; t=1723756040; c=relaxed/simple;
+	bh=BF3urCbPeBeol0sYlYbUZi+Jf8OHyrb/Wi3RqCTay40=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=sO3UMmb+1oWXUd9NnNF8QKz9HlVeGDEFL46B3RBxsnPCaf+14U32Xyy/+gXwwn22O/nqxKIXLu0eTiM5gHK4YjhAmM7uRj8yyEEoCO2kkhkSgqNVppt8B4/TdZuGeYIQcl1b/7x/gexlz9ksWZDFHf/KY/HA7yVjwd5OS32ykuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qc7iVEDM; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd66cddd4dso13594755ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:07:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723756023; x=1724360823; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=V48Wr0IIhhVXIm69mkIjOf3YoA/jzx/O16VrgqQDB6g=;
-        b=KF+6DTijcY9xb9V2E7CBqE1XqnzF+hZBuRYAESF7l7mjmtWaGEpHZGmsulgmtO6wGr
-         H7hqTjVmLjJtwSsWN5kMswb/wUT/hwjiisGUENcg8LnwvteJCEd88G+Ni/lXgSVw10+x
-         Mbfzud7rNFbt57JESns9N88OghcsU+Ff2Vxs/pPsK8Io1PpR0lIvB1erqgWn65/JHyVN
-         /+nKfStTem2rCW67K0XbvgNGfFUniWpVxzlUpcGUOVHqidOWrFJnml29QvE0BZHKBQd5
-         xTj39VgYta90Z3722H3gXciS8kB+wymSOhHksbn8pqDdbslVvgxvTpcujbRa7DQDOnHD
-         6Dnw==
+        d=linaro.org; s=google; t=1723756037; x=1724360837; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GU3FEI8r9WUvRV8pU1u7iapspQEbMTOJxe92B2n9rDo=;
+        b=Qc7iVEDMuL/pk2tjdjsi5aiU/buZyhayyKXPIpuNEnfjgGfHJb6ZEsnO4NVyK4pWwv
+         necThe+WKKneQhrfflIchl9HkKGURfE3JXzX0TZRDLuyT9eIJ97xKVgTv+1mf1QGUTef
+         sXCrHbztSATnRWNcREHjIMlU4yEm55DIGtLCdIVTTg7ie9cZgQu+Nr5PIGfMKEMIcJCL
+         eJJsz2mUepESoLlIpf6R3foe2KH7W5/ajN/0/wvuZczEkAFoQRKLUccMrnQnXm1nIhVq
+         b7xiO2HVs/sfn8IYUl6yhKkfho7jHjjxF1WUBvzEbWwc91QSiTkk20ELJFpB9xTe1Wol
+         jI9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723756023; x=1724360823;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V48Wr0IIhhVXIm69mkIjOf3YoA/jzx/O16VrgqQDB6g=;
-        b=lYRnuB/SGuQr30v/qttxqN1SDKYPQmyO3KVVia1KKchLMAGScdRXTVALHd/4r0LMoN
-         mZBDBWIFPXXl1JptKElq2myPYSJm0eGFgGK8DgiMh5ZH+VIzjKbJ8LwLYp4WdJOJMKM3
-         /Oazh2hi/8q3mPZpNtxcWNUC4R9K06aaRiXZp7BfU18uLBqy9oQon8g1ElXwVj6hxtz/
-         xM+FKGo1lCNlzpEHA0+OIQT7SuJJ+kzYIsd2wPfixTnJggVwJupB48Qm0joXc1IrAhEk
-         AzrVsMn/UNzelQrdaS09WjKh8hqrfS0T1lxFgkQWgQDZtx+9+NQRmLKbKzot82JocyIR
-         KLSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWA50d/jNVmJbS4rdH4tIguyKG1HAY4N/PiTfEaUDYCmDb5kbTgPfwy2K1Fh9qZs+dgTj1E491boxs/vh2L7RndQUw3lEX3GSmMFtKNIzFLFNDxpYDH9lHLTH4HZq39o8sYFXcs9b/+PML1vZv0mEwR/qzTpQgd4Hp8Pc1cjEGMq5YrjBebwxVQhgu7
-X-Gm-Message-State: AOJu0YwXl9OUWA9+Toxvc0YPCWfIwODp6Fe5lFp5Qyey9EtdK6bmCRAi
-	j8YLGA/YTIx/zLvDXfwTwVCGAhems41Vh8NZz9c5jwRxsma33w4wfGHYrJL4
-X-Google-Smtp-Source: AGHT+IGh1YHSPqb56p+peb4akPQFKMN2+6jiRRiwp9J+XB9gflzZK/w330tQKVoLgcVNtjwBnDVo7Q==
-X-Received: by 2002:a17:90a:a787:b0:2cb:3306:b2cc with SMTP id 98e67ed59e1d1-2d3dfc2aa4amr1131428a91.1.1723756022474;
-        Thu, 15 Aug 2024 14:07:02 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e2b64e7bsm266093a91.9.2024.08.15.14.07.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 14:07:02 -0700 (PDT)
-Date: Thu, 15 Aug 2024 15:07:00 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: outreachy@lists.linux.dev
-Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] Landlock: Document LANDLOCK_SCOPED_SIGNAL
-Message-ID: <Zr5t9NbA/RiXtHSN@tahera-OptiPlex-5000>
-References: <cover.1723680305.git.fahimitahera@gmail.com>
- <193b5874eab4dca132ae3c71d44adfc21022a0ad.1723680305.git.fahimitahera@gmail.com>
+        d=1e100.net; s=20230601; t=1723756037; x=1724360837;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GU3FEI8r9WUvRV8pU1u7iapspQEbMTOJxe92B2n9rDo=;
+        b=aeJU8jMZS3/naKjgo9WEBF07jCbuWJyQLN6kndBqaW4EGfSpjfV/vt7dX1dv7Lm5Db
+         1nbrbCU3d1saAySyc1aA430MO/CiRHSVej7gT7/pLvefd3nbpiOloPswM+yD2MdtMj9R
+         W3RZFiH3TsPedSh5vavCiwm2gR2dVDpeqXqXFXEsSKpDbA7E9TIwq/38vo3fshb5KyfC
+         cK6qrfgLbp/H65BoNvcfNr0jfjTyydqgXyb485LrXMHTamlcLotg3qvX5hGyHLYm7nIz
+         TdUFj/G0S5E2ZtGoDD8PW6Dh/mBbeV4joWXCn+CtbTjEajFgrzSMkvOCRAONvJP5juST
+         R5ew==
+X-Forwarded-Encrypted: i=1; AJvYcCXbgOmKQ1BvJTFwAdNhJ1ptDwNeqN0LqjqN0wjHnEzxGASLRMa0slD2+57gQNqWJIQOhC6blIlsTdQQu41C1n9x+WtuAHHPMwbl5dSH
+X-Gm-Message-State: AOJu0YyGB9i692zS24yHpN8YDspo8XE+VKtbJwAvKR01FJXuT+Z8AJ++
+	vgLtICVkWMoU9KFx2+QjiM8a4J+A19Ad/3RG5XCYCwqmMwjRH8kHwrrgbVlb9Rw=
+X-Google-Smtp-Source: AGHT+IE7DC0PuZyrMxZiu7Je33kd+MzL7ueLlGL4l0yPHkA9u6HXMbV9O7yPJEcgT1AyBP5zqIVCbA==
+X-Received: by 2002:a17:903:2342:b0:1fc:6c23:8a3b with SMTP id d9443c01a7336-20203e8d400mr10089755ad.17.1723756036599;
+        Thu, 15 Aug 2024 14:07:16 -0700 (PDT)
+Received: from [127.0.0.1] ([182.232.48.216])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f039fa16sm14112125ad.257.2024.08.15.14.07.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 14:07:16 -0700 (PDT)
+Date: Fri, 16 Aug 2024 04:07:10 +0700
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: srinivas.kandagatla@linaro.org, broonie@kernel.org
+CC: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+ linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amit.pundir@linaro.org,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_ASoC=3A_codecs=3A_lpass-va-macro=3A?=
+ =?US-ASCII?Q?_set_the_default_codec_version_for_sm8250?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240815164903.18400-1-srinivas.kandagatla@linaro.org>
+References: <20240815164903.18400-1-srinivas.kandagatla@linaro.org>
+Message-ID: <F07BF288-66F4-497A-A581-5FE4B7B432BD@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <193b5874eab4dca132ae3c71d44adfc21022a0ad.1723680305.git.fahimitahera@gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 12:29:25PM -0600, Tahera Fahimi wrote:
-> Improving Landlock ABI version 6 to support signal scoping
-> with LANDLOCK_SCOPED_SIGNAL.
-> 
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> ---
-> v3:
-> - update date
-> ---
->  Documentation/userspace-api/landlock.rst | 25 +++++++++++++++++-------
->  1 file changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 0582f93bd952..01e4d50851af 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -8,7 +8,7 @@ Landlock: unprivileged access control
->  =====================================
->  
->  :Author: Mickaël Salaün
-> -:Date: July 2024
-> +:Date: August 2024
->  
->  The goal of Landlock is to enable to restrict ambient rights (e.g. global
->  filesystem or network access) for a set of processes.  Because Landlock
-> @@ -82,7 +82,8 @@ to be explicit about the denied-by-default access rights.
->              LANDLOCK_ACCESS_NET_BIND_TCP |
->              LANDLOCK_ACCESS_NET_CONNECT_TCP,
->          .scoped =
-> -            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
-> +            LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-> +            LANDLOCK_SCOPED_SIGNAL,
->      };
->  
->  Because we may not know on which kernel version an application will be
-> @@ -123,7 +124,8 @@ version, and only use the available subset of access rights:
->          ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
->      case 5:
->          /* Removes LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET for ABI < 6 */
-> -        ruleset_attr.scoped &= ~LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET;
-> +        ruleset_attr.scoped &= ~(LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET |
-> +                                 LANDLOCK_SCOPED_SIGNAL);
->      }
->  
->  This enables to create an inclusive ruleset that will contain our rules.
-> @@ -319,11 +321,15 @@ interactions between sandboxes. Each Landlock domain can be explicitly scoped
->  for a set of actions by specifying it on a ruleset. For example, if a sandboxed
->  process should not be able to :manpage:`connect(2)` to a non-sandboxed process
->  through abstract :manpage:`unix(7)` sockets, we can specify such restriction
-> -with ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``.
-> +with ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``. Moreover, if a sandboxed process
-> +should not be able to send a signal to a non-sandboxed process, we can specify
-> +this restriction with ``LANDLOCK_SCOPED_SIGNAL``.
->  
->  A sandboxed process can connect to a non-sandboxed process when its domain is
->  not scoped. If a process's domain is scoped, it can only connect to sockets
-> -created by processes in the same scoped domain.
-> +created by processes in the same scoped domain. Moreover, If a process is
-> +scoped to send signal to a non-scoped process, it can only send signals to
-> +processes in the same scoped domain.
->  
->  IPC scoping does not support Landlock rules, so if a domain is scoped, no rules
->  can be added to allow accessing to a resource outside of the scoped domain.
-> @@ -563,12 +569,17 @@ earlier ABI.
->  Starting with the Landlock ABI version 5, it is possible to restrict the use of
->  :manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right.
->  
-> +<<<<<<< current
->  Abstract UNIX sockets Restriction  (ABI < 6)
->  --------------------------------------------
-> +=======
-> +Abstract Unix sockets and Signal Restriction  (ABI < 6)
-> +-------------------------------------------------------
-> +>>>>>>> patched
-Sorry about this part. I will correct it. 
->  With ABI version 6, it is possible to restrict connection to an abstract Unix socket
-> -through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET``, thanks to the ``scoped`` ruleset
-> -attribute.
-> +through ``LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET`` and sending signal through
-> +``LANDLOCK_SCOPED_SIGNAL``, thanks to the ``scoped`` ruleset attribute.
->  
->  .. _kernel_support:
->  
-> -- 
-> 2.34.1
-> 
+On August 15, 2024 11:49:03 PM GMT+07:00, srinivas=2Ekandagatla@linaro=2Eor=
+g wrote:
+>From: Srinivas Kandagatla <srinivas=2Ekandagatla@linaro=2Eorg>
+>
+>sm8250 and sc7280 have lpass codec version 1=2E0, as these are very old
+>platforms, they do not have a reliable way to get the codec version
+>from core_id registers=2E
+>
+>Add the version info into of_data, so that it does not need to use
+>core_id registers to get version number=2E
+>
+>Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get codec=
+ version")
+>Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to acco=
+mdate new codec versions")
+>Fixes: 727de4fbc546 ("ASoC: codecs: lpass-wsa-macro: Correct support for =
+newer v2=2E5 version")
+
+Which commit introduced the issue? I think having just the first tag is en=
+ough=2E
+
+LGTM otherwise=2E
+
+>Signed-off-by: Srinivas Kandagatla <srinivas=2Ekandagatla@linaro=2Eorg>
+>---
+> sound/soc/codecs/lpass-va-macro=2Ec | 11 ++++++++++-
+> 1 file changed, 10 insertions(+), 1 deletion(-)
+>
+>diff --git a/sound/soc/codecs/lpass-va-macro=2Ec b/sound/soc/codecs/lpass=
+-va-macro=2Ec
+>index 8454193ed22a=2E=2Ee95d1f29ef18 100644
+>--- a/sound/soc/codecs/lpass-va-macro=2Ec
+>+++ b/sound/soc/codecs/lpass-va-macro=2Ec
+>@@ -228,11 +228,13 @@ struct va_macro {
+> struct va_macro_data {
+> 	bool has_swr_master;
+> 	bool has_npl_clk;
+>+	int version;
+> };
+>=20
+> static const struct va_macro_data sm8250_va_data =3D {
+> 	=2Ehas_swr_master =3D false,
+> 	=2Ehas_npl_clk =3D false,
+>+	=2Eversion =3D LPASS_CODEC_VERSION_1_0,
+> };
+>=20
+> static const struct va_macro_data sm8450_va_data =3D {
+>@@ -1587,7 +1589,14 @@ static int va_macro_probe(struct platform_device *=
+pdev)
+> 			goto err_npl;
+> 	}
+>=20
+>-	va_macro_set_lpass_codec_version(va);
+>+	/**
+>+	 * old version of codecs do not have a reliable way to determine the
+>+	 * version from registers, get them from soc specific data
+>+	 */
+>+	if (data->version)
+>+		lpass_macro_set_codec_version(data->version);
+>+	else /* read version from register */
+>+		va_macro_set_lpass_codec_version(va);
+>=20
+> 	if (va->has_swr_master) {
+> 		/* Set default CLK div to 1 */
+
+
+--=20
+With best wishes
+Dmitry
 
