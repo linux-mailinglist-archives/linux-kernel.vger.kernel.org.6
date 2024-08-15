@@ -1,216 +1,134 @@
-Return-Path: <linux-kernel+bounces-287499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993FF95287A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:20:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB4C952881
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB712862EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:20:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390AC287185
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89733BBC1;
-	Thu, 15 Aug 2024 04:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D413C485;
+	Thu, 15 Aug 2024 04:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gMWn9ihN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LPwOXxZr"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F592576F;
-	Thu, 15 Aug 2024 04:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F91628DD1
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 04:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723695598; cv=none; b=ZAcSY+K/ZT8HqiYN0zU43WRWJ0d6UNiZvtriO0s/LC9no3rUhi5nCzwSYd319UjWGJJUzJrkZCtDSmEcWbCSjyNYt9NbN8kajNtBXkBZFcCPEEgGKpM0YSHa3VUEjSLELXxMzfquHNTMwqkp1Sc9Xb8c86uCzqlUfsCD4+xHax0=
+	t=1723695905; cv=none; b=c3jYtp2hJsPHzPTA33lKGU5Tv1I01MPdvhEaPa7jULTc0eu/frW0/Z/HoRwlFHkv9hMYHsvqwYxZ+o9q3SrQut36yvKKm8jDFkRmZmi2/R3qGSAhS/0toOdpkQSPkg3XyWajd/Mxk3mc2L4eu8WFBPfdAfAz6bCJsZJc62icoNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723695598; c=relaxed/simple;
-	bh=5rXTI59siKti7cV1QIU5PVsMkBlNbZYpYR6E11v0kR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AhgZB9rBo8HBjVUoW6SIsQLu/owHikZFeIqCJm4xolciZKF54W7uQpko3o+z/Qlt2Yt+Jf2sGn+cb3XQlooJYEt5syyXZ5RWh0v2Z41Yq9IMy10NL6qEWUQgRxrFu5EVUTwz+bEUikPg1Z/WM6rzMSQ5UGn+zAOyZjQwyjazocs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gMWn9ihN; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723695597; x=1755231597;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5rXTI59siKti7cV1QIU5PVsMkBlNbZYpYR6E11v0kR4=;
-  b=gMWn9ihNQkot/X4C6c06RvxOQXcd2EEO4XgjmOfvXcq2HAMX52mqtaFO
-   ZEtwKAKWAwXyrM7jYczjMsTmXLk237SS3NlKHRQfiegXTPqjjQJoTGAfo
-   2bdZolL1LC9XY8RSllZFK4mOwMJ96R85G1Cn6C9rU3x8+0c7+AO2+hJ28
-   J1NU9LaLet6pORdhg9G7ZkH1q3iw8zuOYiGmSS4Pzz342vgivVkNNnhaX
-   1NEvQJ8f3Pm0jP4nwDaTaJIMP48emVSryA+kWbNrfQMcIc/UWcF3jsQX3
-   QUb38taNVQ+Oc6fxCSILa/jAzfudg4OzNyoITp8PGxOW9YX1PLsFPmj2Q
-   Q==;
-X-CSE-ConnectionGUID: hTejts8tTRyTahbsMHsAYg==
-X-CSE-MsgGUID: fdjrWD3IRcaxprFFMdt8Jg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="24845877"
-X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
-   d="scan'208";a="24845877"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 21:19:56 -0700
-X-CSE-ConnectionGUID: xS8szqD1R4+q2CrbshO9Og==
-X-CSE-MsgGUID: grFZXQ5eTlGUsVs0fkp7jw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
-   d="scan'208";a="59525436"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 14 Aug 2024 21:19:55 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1seRxo-0003BM-1x;
-	Thu, 15 Aug 2024 04:19:52 +0000
-Date: Thu, 15 Aug 2024 12:19:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
-	linux-input@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: corsair-void: Add Corsair Void headset family driver
-Message-ID: <202408151231.kUWzsw88-lkp@intel.com>
-References: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com>
+	s=arc-20240116; t=1723695905; c=relaxed/simple;
+	bh=9X5Lgu731D/CqQTHsOB2gnhQz2o0H4Ebzg/0U9GUNWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VJd5ZPxMxux59bOt3KMDy83z3BYneiz/EN6iGMa/S1LDRDe8X/GyHTM8pzP9KF4gDNjxjLRXe9/Q+56Rb9BsgFhav9axAVIIT4gMsKko7tDIXiEt+0Gzq2RNhYx0bD6CAHEjOpH4cP4+HhbDPGYcf4NuHVQZGjzugcPS9w0ZIqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LPwOXxZr; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso472757a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723695901; x=1724300701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZOwYbBj1ONcgXkXX1djBU+D37oJhR0Kd3IYBoA1yHg=;
+        b=LPwOXxZrek1Etdi+tyX0uCJcwKaVufY1EzTTwZVfQZsT6lVyTqjQr/j+1lVqIEmQWK
+         bPY2CuBVMonbDpELoAAL4kQyTzXdCcPigdGZt6vGeeIqt7xvPfNPXLdQenLhmwecnNq0
+         VrN9ICsVXRSdMOo/gHsOvxe1/jJoi3ml/4POk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723695901; x=1724300701;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ZOwYbBj1ONcgXkXX1djBU+D37oJhR0Kd3IYBoA1yHg=;
+        b=Mh6PQ6WMnd+XVAnKKbcDGb1kzbdU2ssTfmJMBdLlN5uu6t9exptRsTpfoydoBwW1H/
+         RUzOckw+3TFkgqLLd4FOW9PW8g9dIRvdiytipPSK3TA/Uu9hKq9G958DcFS9lJH2w1r/
+         YcbIWQFEFKG8ouiQQEGZ0hgaXohboH3+lziiqSKmIlczZmYTE2Izk2jRCyQmHhcbgijO
+         KifjXi9Ph+0sr5/7VQHV+s03h9St9MDkehvZMaTuFfy5zn2UPekljNywHwAj6DZZ2lLB
+         ut9bFAifgrDJLqYbxajY2fiUVLtDHDuAw8gfsCYxoftREz6/ZObUzy3ghxGU0m0SMCiN
+         zA2w==
+X-Gm-Message-State: AOJu0YwoYBMykpIATdeBmPJK7Xd5CBvRo5un5lsWefHBY3un+tMCPow0
+	/QiuP4ZnfEhHcpmmflRFpP017s+NoHEHbVIKtfBvkcIu9m5MqEgaPdy/YxoCRA==
+X-Google-Smtp-Source: AGHT+IGwKQDec3fjjHQoyjHX5hr+l38HD8VdkcFrjSbQioSRCHgX8i3ignSN0aOvSMqGEI4mjjdw1g==
+X-Received: by 2002:a05:6a20:438e:b0:1bd:2214:e92f with SMTP id adf61e73a8af0-1c8eae6f3f3mr6696617637.14.1723695901406;
+        Wed, 14 Aug 2024 21:25:01 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f031c63asm3831125ad.111.2024.08.14.21.25.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 21:25:00 -0700 (PDT)
+Message-ID: <be43c068-f157-46e6-9ee5-32d6627ea409@broadcom.com>
+Date: Wed, 14 Aug 2024 21:25:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813153819.840275-3-stuart.a.hayhurst@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] usb: bdc: fix module autoloading
+To: Liao Chen <liaochen4@huawei.com>, linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, justin.chen@broadcom.com,
+ alcooperx@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+ gregkh@linuxfoundation.org
+References: <20240814030443.3876203-1-liaochen4@huawei.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240814030443.3876203-1-liaochen4@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Stuart,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on linus/master v6.11-rc3 next-20240814]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Stuart-Hayhurst/HID-corsair-void-Add-Corsair-Void-headset-family-driver/20240815-004208
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240813153819.840275-3-stuart.a.hayhurst%40gmail.com
-patch subject: [PATCH] HID: corsair-void: Add Corsair Void headset family driver
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240815/202408151231.kUWzsw88-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240815/202408151231.kUWzsw88-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408151231.kUWzsw88-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/hid/hid-corsair-void.c: In function 'corsair_void_probe':
->> drivers/hid/hid-corsair-void.c:646:36: warning: variable 'psy_cfg' set but not used [-Wunused-but-set-variable]
-     646 |         struct power_supply_config psy_cfg;
-         |                                    ^~~~~~~
 
 
-vim +/psy_cfg +646 drivers/hid/hid-corsair-void.c
+On 8/13/2024 8:04 PM, 'Liao Chen' via BCM-KERNEL-FEEDBACK-LIST,PDL wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.
+> 
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
 
-   640	
-   641	static int corsair_void_probe(struct hid_device *hid_dev,
-   642				      const struct hid_device_id *hid_id)
-   643	{
-   644		int ret = 0;
-   645		struct corsair_void_drvdata *drvdata;
- > 646		struct power_supply_config psy_cfg;
-   647		char *name;
-   648		int name_length;
-   649	
-   650		if (!hid_is_usb(hid_dev))
-   651			return -EINVAL;
-   652	
-   653		drvdata = devm_kzalloc(&hid_dev->dev, sizeof(struct corsair_void_drvdata),
-   654				       GFP_KERNEL);
-   655		if (!drvdata)
-   656			return -ENOMEM;
-   657	
-   658		hid_set_drvdata(hid_dev, drvdata);
-   659		psy_cfg.drv_data = drvdata;
-   660		dev_set_drvdata(&hid_dev->dev, drvdata);
-   661	
-   662		drvdata->dev = &hid_dev->dev;
-   663		drvdata->hid_dev = hid_dev;
-   664		drvdata->is_wired = hid_id->driver_data == CORSAIR_VOID_WIRED;
-   665	
-   666		drvdata->sidetone_max = CORSAIR_VOID_SIDETONE_MAX_WIRELESS;
-   667		if (drvdata->is_wired)
-   668			drvdata->sidetone_max = CORSAIR_VOID_SIDETONE_MAX_WIRED;
-   669	
-   670		/* Set initial values for no wireless headset attached */
-   671		/* If a headset is attached, it'll be prompted later */
-   672		corsair_void_set_unknown_wireless_data(drvdata);
-   673		corsair_void_set_unknown_batt(drvdata);
-   674	
-   675		/* Receiver version won't be reset after init */
-   676		/* Headset version already set via set_unknown_wireless_data */
-   677		drvdata->fw_receiver_major = 0;
-   678		drvdata->fw_receiver_minor = 0;
-   679	
-   680		ret = hid_parse(hid_dev);
-   681		if (ret) {
-   682			hid_err(hid_dev, "parse failed (reason: %d)\n", ret);
-   683			return ret;
-   684		}
-   685	
-   686		name_length = snprintf(NULL, 0, "corsair-void-%d-battery", hid_dev->id);
-   687		name = devm_kzalloc(drvdata->dev, name_length + 1, GFP_KERNEL);
-   688		if (!name)
-   689			return -ENOMEM;
-   690		snprintf(name, name_length + 1, "corsair-void-%d-battery", hid_dev->id);
-   691	
-   692		drvdata->battery_desc.name = name;
-   693		drvdata->battery_desc.type = POWER_SUPPLY_TYPE_BATTERY;
-   694		drvdata->battery_desc.properties = corsair_void_battery_props;
-   695		drvdata->battery_desc.num_properties = ARRAY_SIZE(corsair_void_battery_props);
-   696		drvdata->battery_desc.get_property = corsair_void_battery_get_property;
-   697	
-   698		drvdata->battery = NULL;
-   699		INIT_WORK(&drvdata->battery_remove_work,
-   700			  corsair_void_battery_remove_work_handler);
-   701		INIT_WORK(&drvdata->battery_add_work,
-   702			  corsair_void_battery_add_work_handler);
-   703		ret = devm_mutex_init(drvdata->dev, &drvdata->battery_mutex);
-   704		if (ret)
-   705			return ret;
-   706	
-   707		ret = sysfs_create_group(&hid_dev->dev.kobj, &corsair_void_attr_group);
-   708		if (ret)
-   709			return ret;
-   710	
-   711		ret = hid_hw_start(hid_dev, HID_CONNECT_DEFAULT);
-   712		if (ret) {
-   713			hid_err(hid_dev, "hid_hw_start failed (reason: %d)\n", ret);
-   714			goto failed_after_sysfs;
-   715		}
-   716	
-   717		/* Any failures after here should go to failed_after_hid_start */
-   718	
-   719		/* Refresh battery data, in case wireless headset is already connected */
-   720		INIT_DELAYED_WORK(&drvdata->delayed_status_work,
-   721				  corsair_void_status_work_handler);
-   722		schedule_delayed_work(&drvdata->delayed_status_work,
-   723				      msecs_to_jiffies(100));
-   724	
-   725		/* Refresh firmware versions */
-   726		INIT_DELAYED_WORK(&drvdata->delayed_firmware_work,
-   727				  corsair_void_firmware_work_handler);
-   728		schedule_delayed_work(&drvdata->delayed_firmware_work,
-   729				      msecs_to_jiffies(100));
-   730	
-   731		goto success;
-   732	
+Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
 
+
+Thanks!
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Florian
+
 
