@@ -1,266 +1,238 @@
-Return-Path: <linux-kernel+bounces-288341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60111953900
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E944953903
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAF11F25D98
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:30:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1C65287566
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF00E38DF2;
-	Thu, 15 Aug 2024 17:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3560A4AEE0;
+	Thu, 15 Aug 2024 17:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UzlY6j3f"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="o1h8la7L"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E241A00CB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 17:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723742991; cv=none; b=caxc4edWb4axYl3jkYka3bbsnl+IURP4gm7KPWDCKr2alJCY9OuRkv1/ac0aghenKgjKreC44taR5/t7uXj4AIwFO52+koVbhCHSdMZATbetWQPoiCjpGCWm7Qq3Z8++Iq6vLTQSMZr+u9ywvNEKUQOaphfqb/miMWC5qqFv+GM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723742991; c=relaxed/simple;
-	bh=a/4vf+YJE4tfB80UP49O2UQzbAx9vqd1PyCAADHHECQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q51cU0l4evEFscP3b5wjjyPLEte1cB90s8jO8m9GFmEDCwGYIPR8UFjSPF+70EcL/ZlLEDi43OTrCR1FzR/CMiIqlI8ZcpsA7eHlbY2f08BJ72nLBxZCuFtKBhLaNmLJrva6cKc/JaC37TfoMD8R69GNUHNBewRcKg/dTnzDdIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UzlY6j3f; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201fed75b38so3705ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723742989; x=1724347789; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a/4vf+YJE4tfB80UP49O2UQzbAx9vqd1PyCAADHHECQ=;
-        b=UzlY6j3fFSxXDSA15J0l4UurMF02yWBrZQOx+HGqKC3nhzWPVAYc5yyAnBeZRSJ62H
-         Z52zngm+vnRmUqyhZMa2DP0RnFYVryOpDhfrY2pkpXTeCL+wyyf7tBJskF3lTOLSOW+J
-         36wozT7LVw6O0O/GOa3oDWrd5aLykXgi0bPAIRxiuWVPZrC/+xeh4I1tkszonoeFuftG
-         UkRBbfwbBdVJZ4F95R+cV72w7fL3RUBpTXJfE7non9Jg+RrS0f68DLO2TpwoT4sx0gcv
-         w2FHA2kgPjdPwL42RxdzDHK2oEIWy3OpmCD/7HkHJ3VMB0hwEQGzDEX59Mi4O/XGznvZ
-         8IqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723742989; x=1724347789;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a/4vf+YJE4tfB80UP49O2UQzbAx9vqd1PyCAADHHECQ=;
-        b=QxRPLlt/p3YgrKnPLc8vYmBqY4huhqQKPmP0jVUmILlBUoTtWSw8kcDvJZsP9Azqbk
-         TdiUV0d+qYZPzYHoMWjH7SQweJ/GZaVpKPBfza0kIllS/5iEP3jEHH2bvNNsCwFJYcHU
-         +8j2O6lea4WOrQtyfBSDVgxaCa/mqVTEemoHBODN0zNQa6arFHPAPLTuQxbFla2XRLum
-         iMvZzobXs6Sj4q3DccrDm/u5ATKV7Mqz45r3Q5XE9AdFS9g1ISnRroIx1ESnt19ilVLL
-         r7FYaVS2eNeWQPR+6F1GWCcklaSEIc6t1cjJ9GdUXg1GwbdveGDBzn6XrE6rKs05xgKT
-         bZlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVErwKQz84kSayyxusSMUmJKYMalHjSWF6GW2zH/hOoewpjWsYvYx/dYGwJqHAkdZntYYV8X5T52YAlQ6s1g5R7/vEaNI9YPaqbtFV9
-X-Gm-Message-State: AOJu0YwUqIlS3Xm1ls2MJtQIcwUKGbBd1GYiNKd65amghwYZoqujTFH5
-	p2NSjmSWTsfqoBeVAkM3wgflmNw2uejIOZrK3s/REPFD8wVcHxEz7i20ctui7OV+6x3TR9PLZsE
-	yNb4Ez1eATKlr+IuVxptrz+JPQVAioHfC1shZ
-X-Google-Smtp-Source: AGHT+IH5MFIGSF7/WgzVtKFPpR15fzT6c8P4TJi4KagEceRO9o+l2byg+PRLLOxu2Bd7ImoT8/HtaG1VoEHIB0RWyZg=
-X-Received: by 2002:a17:902:e80c:b0:201:fa2c:6d55 with SMTP id
- d9443c01a7336-201fa2c6efemr630395ad.13.1723742988974; Thu, 15 Aug 2024
- 10:29:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9718C1AC8AD;
+	Thu, 15 Aug 2024 17:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723743104; cv=fail; b=knVpchZ7LBbxAiZYMuATbt5bKb+3KH/6caYXyuCd4xlezzKtObbah0OLFpKn+cL0Cn6s6iVh7xvxbka1mAPU7r1lROkfZZ59rfTkVGNDVmV+/F3Q8Mfsrq0gmqVteR3hCUWTSZTTj0SXnMDLd1e+Z4WXZWyiPZ4W3TGJM9ORXIM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723743104; c=relaxed/simple;
+	bh=LCbfWUPPHte3gDB7irBWRGLRCB2YTF7kLX3ULLNbCo8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HVmxXOJ9Mjdahq+Xi2PuXbsLvohDyVXXU7ToPt0J2c/ps6u37dYRft9kPdVuDRa6ei5dGMtGr/fu3oq0Pyjgkj+wKP1Wwv0M6iN7SAhmbcSz5JgOD0XCyNltO3aPb02YVOYlRdKdUllSr4/njxjyVAwi/VsocuwvlkWAMzVOUvU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=o1h8la7L; arc=fail smtp.client-ip=40.107.237.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bPZIr8uA7+QxT7+TYq/6qjOmgOGgfdRJE7gUN+d+T6I7/BCsNGagcGzkHAZqwaqVkzlnVjEP8qgyAkKELF9PFXke3PM2ZLDukT+pONsqnyNPdIEzpAh6O3uMtSvj51hdKztPsQaOHdNsr+u61Z55RJrCwJGSnfagGL4XnI7qw6UWYVvfa/LJzViexBmIOUWfZ1bqe6Z9xspckWiX5O9kJxuwEtk3tfNz/7WI7ULdNFEIaynsDFb5lNmjimC9hjvgRtriSZH9o+aLP8PicNf6a39RKQayOxmj6FiJwLjRfZToUwpza0CJ/2CruICEd7RaFW6jRPXpQQuDOmVUm7rS5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JwHAcEEkh8z6eqax48v7Rq61mU+rxTj6IESWyR+YTuI=;
+ b=IK2t5iGsEt/Y7aL0UYgo/Tj79byE6nuw65EeoT5B+GCnea2OiPO8qKZMR89e1zV26MY04EgFr7zvTNV+lM40TpgQwxFcw01zVq6RE3ZIk6Fxa/B/zSMSctxePjKzbT2OPxdQykSiG8nnWj2a6GcVgIOxkQU2eJvDYVb/3NCKd1xwHs11jrUEs5somWtCV3E2RrWBivNUo/IzNfjCxNHbMcoE/7YdAJ4spY+OZsiQYIHCYMfrLp50ND0LLhPM2b1hX437hxKtWngcx1YH7T5swF6rir6AcVzSdmIoN2d45iRgl2M5vyEgov2AC7kiN1UM+T2avz+i0Zm5/7R2Z60duA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JwHAcEEkh8z6eqax48v7Rq61mU+rxTj6IESWyR+YTuI=;
+ b=o1h8la7LGwfXOCLm5wL2ZedVkxLfn7e38LHuJTmttpGLicq6rj/rzNKSjTuHaY22SaBSkYpNp3jIwZQx4LWgRiPtfWyYqBGUNvwCi3ArOy/Rnt1w4C0ZpTWIul+TXvb3dal+dqhIOnYt4R2YaBR5euEVlXwIhLufLJZa6J98hyg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6253.namprd12.prod.outlook.com (2603:10b6:8:a6::12) by
+ PH8PR12MB7026.namprd12.prod.outlook.com (2603:10b6:510:1bd::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
+ 2024 17:31:39 +0000
+Received: from DM4PR12MB6253.namprd12.prod.outlook.com
+ ([fe80::53b9:484d:7e14:de59]) by DM4PR12MB6253.namprd12.prod.outlook.com
+ ([fe80::53b9:484d:7e14:de59%6]) with mapi id 15.20.7849.021; Thu, 15 Aug 2024
+ 17:31:39 +0000
+Message-ID: <43994d76-aa1c-4c59-9393-1fd683e20d59@amd.com>
+Date: Thu, 15 Aug 2024 12:31:37 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/amd_nb: Add a new PCI ID for AMD family 1Ah model 60h
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bp@alien8.de, bhelgaas@google.com, yazen.ghannam@amd.com,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
+References: <20240815165454.GA49023@bhelgaas>
+Content-Language: en-US
+From: "Gong, Richard" <richard.gong@amd.com>
+In-Reply-To: <20240815165454.GA49023@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR02CA0002.namprd02.prod.outlook.com
+ (2603:10b6:806:2cf::6) To DM4PR12MB6253.namprd12.prod.outlook.com
+ (2603:10b6:8:a6::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
- <ZV1AnNB2CSbAUFVg@archie.me> <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
- <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
- <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info> <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
-In-Reply-To: <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 15 Aug 2024 10:29:37 -0700
-Message-ID: <CAP-5=fVSVe=C5dHaOV22+YOZ_JCD0mDoByoubSFY3w4au5zwQg@mail.gmail.com>
-Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since v6.5
-To: James Clark <james.clark@linaro.org>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Linux perf Profiling <linux-perf-users@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Clark <james.clark@arm.com>, 
-	"cc: Marc Zyngier" <maz@kernel.org>, Hector Martin <marcan@marcan.st>, Asahi Linux <asahi@lists.linux.dev>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Atish Patra <atishp@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6253:EE_|PH8PR12MB7026:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89277f73-d4d3-4345-dadd-08dcbd501eea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YlJVSEpVVXQyTUdBL1RQUEFjSGgzYUNFWHRqL3A3NmxWQ3pkYXZ6aUpKbG5O?=
+ =?utf-8?B?YXlaZTUyaXBUeXIrQk1GV21xQjk1Szd1STZnWlQzSWluaVpOaUNLeVYzTlNi?=
+ =?utf-8?B?M3M4bXVVMmZVYkhSbEh2OE5tTnJHdU4reWl1TjdkdldxUEV6Ulk1Wm1MTVZa?=
+ =?utf-8?B?alFOaTZRUTQrOVk3UTJZOW1FN3NYekoyNGxvODB2SjdveHllVHpESVNKeGdy?=
+ =?utf-8?B?endxYTVqVjJUa3hzVGE5aGZVSC9TT2ZrNmxNSGFET2VPT3pKTHpBM21DbWcr?=
+ =?utf-8?B?VnZ3Qm9PZ1Fpekx0enQwRHI5K2NFazNpVjN5eFJFTXJMNzNQMHFud25UUWU5?=
+ =?utf-8?B?eE94WS9yd0FjMnAvRWxqSE8vRitkTERTUmlCUHB5SVg5bzJHeWJ6WEluTFcy?=
+ =?utf-8?B?RkdzczdYdHpNV1FXZUlNRm9TQWIySStlanhsYWwrOUpycDVSZ09YRklpaUhK?=
+ =?utf-8?B?WFYxUnJzM3ZKNFhabXBYWnFBRWV3b0hXT1FOOXRLUmt0ZXhpVysxTTRoTjJs?=
+ =?utf-8?B?aEdadGpldGtwdWp1TzhwcnVXTGhqV2NYaWd6eDVKZWhURmlYallERVZjRXBD?=
+ =?utf-8?B?a0IxU2gyc0JxY21hRXNyZy9lOE9KbjgvYkFHSndLTHQweXZxOHJWajlSbTRU?=
+ =?utf-8?B?QS9oWG5ybktRMlp3aWdOMHFCWEhFRU9ucGJVQTRLbncxYmZVa3hHdDkyWGZr?=
+ =?utf-8?B?NDRqTEh5T2JsTXl2Nk1UaDd6NGZhRlV3Vzk5Z0N3dlREQStnV2UyZlV5bDRO?=
+ =?utf-8?B?YTI2R1piWDBHUFJMWHg1MGpOS3dGOFovKzMxZGp0a1hJRTQ2S3VSc0VoMUFB?=
+ =?utf-8?B?d21NZ3ZuVVE2VGhwRFpMdXkvY2VlTXVXUWpOUVlUOWtEb1ljcEhaWjRkVU4w?=
+ =?utf-8?B?VFVKS0lMcWhxbzdiUU1uZ1VsdzkrekNFd3NOQTU0NVNnbjVIWEk3aUtMKy9p?=
+ =?utf-8?B?WVZkUVRLVTcrSUROa1BDWEVGNWkvMk9sL2JjSE1hZk4yNFlGNGROUzJ1RURq?=
+ =?utf-8?B?R09BVDI5WkZlMnVib1Y3YUJCancrOHEvTlhWalFta3dlU3RaSXhPOFpoSVd4?=
+ =?utf-8?B?OU55ZHlEZm5ITURPRUJHaDI4UWJMTlRhWVJZUGJvN0NJRVZhMFE0Ym5TNnBx?=
+ =?utf-8?B?N2pRRVdaeEZ6aTYxRWd5aS9sbk45ZnltRG9ielpsY01lN2huNjFDVDl0SFlI?=
+ =?utf-8?B?QXpxc0JGRkZCYkhYTUF4c2VLeGVaOWhWYklEQkpxZmpYNlZBVjF5TCtNOEUw?=
+ =?utf-8?B?eWl5OXNXbVBSWHk2WXV0UWhMZ2xiMUM2aHVYRnlUZUo1S1ZIc0VFT1JGdit3?=
+ =?utf-8?B?TGs3SFFDQmpOOHRmN0ordHh0QXJjRWt3c1F1eFJNVUpRWncxc2hsUUJseTll?=
+ =?utf-8?B?YWxRRXpWeWN1V1B1YnkvK1JPVTc2TzZJeURtYjdjbVdmc2d1eW4razJ2QnJV?=
+ =?utf-8?B?Z2VxQXRvbXptM0dYY2E3UWRwWTlMZWFsNGFJYW1Xekc4Rk45U05QUHhoUklV?=
+ =?utf-8?B?ZERkNklqMy9uUG43dStWYlhYZnFHOWt1c3RuZDljV3ZqaHBQTVpNT0x6VjJ0?=
+ =?utf-8?B?Uk9GL1NOV1FyakN1SlJiQnVXN1FoVzY3MTE0cWlrTEpRbW5qMVZ2S2JkcUts?=
+ =?utf-8?B?cDNOdGpsTTdidlFzdmZxcnozanFEbFpIVTFMWWtQUlExbmdBZVlpVThCZjZj?=
+ =?utf-8?B?eEVXUU9LY3dmZWF4ZnByQWUvL0NGUVZpZS90b0t4ZEN2VUlOWTB4eWpUaXdW?=
+ =?utf-8?B?bXRWUEpXMDUrbmVRVGExcjJuUzVjWW1oU2xwQS9uTTQwYk9jZFVaT1Q2UjdR?=
+ =?utf-8?B?OW5XTFZhNFJKci9ld1J3UT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6253.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a3RPbHVsVVNYZTU3dWVId1g2UlhGT3VibjJlNnZOTlY4dG5pN0dBYjRUVDJv?=
+ =?utf-8?B?VGw5OVdsUWxJSldCZHdXRXp4OVUvRncvYUpTRE1DdjFKTjZ6N0VCMlQvZFZ5?=
+ =?utf-8?B?U2hkeU9GVHNxMG9HSCtqdG55d0hqeDcwcWkyYy94Nm1mT2NYU2FQNzlWZDU4?=
+ =?utf-8?B?U3o0eVlWRUJjMll4V3VISmRWamFmMnZxSmFJTEdSeHQvb0p6dXBrWnB6MVg0?=
+ =?utf-8?B?bVVXZUZuWElCYVppa3BjSFpIM3MwNWxPWk50c2VSY0pxMzNHQzhKVDJCY3V4?=
+ =?utf-8?B?Y1ZXMW1GOXFieDhGMDF4aFNPTlpBdTVBSlZIamEvYnFPNWdiMGhmdjlYcGRP?=
+ =?utf-8?B?ckdRQU9Wa3RZQldzenhjSWhydEZPbnpza3M5WG03aUtZN3dpcDk1dEZKSDNE?=
+ =?utf-8?B?Wk41OExGZGJHS3Jxc2xlUjk0eTlWaTJtdGs2SjBpb1ovbUFIM2FlcUh1Ni9U?=
+ =?utf-8?B?a0dNaU80RWJ4dGxPYTl1dTV5YkdxcVBtZVJhSFN2TTlBSjgzamswNDRRWThn?=
+ =?utf-8?B?OGowY0p5UENWNUJLVGtTNkJsM1NkY2lSYU1kRGNBQ2EvSytOVzFoVXJZMVJs?=
+ =?utf-8?B?TkxsK3o1d25rODJMN1dqZG1zNHZQb3ZjT3RDODg0TzI2NHFIeVN3T3dtR1VJ?=
+ =?utf-8?B?aks2bCsyZkJycy83anRndHF1N0lMYTQrVWRPU0RsWmNoRDdlV3Q0a3ZsSTBH?=
+ =?utf-8?B?VVZEODlmQzVEcTFsMnF4eDFtamJ1TDArWDVpZlh4UDdVSFJSRWRIRDlobno2?=
+ =?utf-8?B?alRDbkh2SG41L08xS3FLSVduZEhNbkwrSWhKa2FnZU5SOCtUak5LVnRERjg5?=
+ =?utf-8?B?VnFrNEV5TDhiL2Fza1c1VUppT2xGbmEyNGRxVkxXTyt0U2M0WjR2ditpVlVV?=
+ =?utf-8?B?Z3VKNk13enlpSGdFdkd0RXdKN3VRejU4SHBXb1J6N3VmT0xaWGo1M0ZtNmZ2?=
+ =?utf-8?B?QVE4eDQxL09UTjc4YW9zVlBJTFZSTmVrZEoyT0R6M055eFdkMlVoc2tkWXRs?=
+ =?utf-8?B?SXBPc0k3MFJGT2syYmhzakcvZmt6dk9OeW4yaVVFMjFXWUdMQ1YvWDNXRlhX?=
+ =?utf-8?B?TnE4MW1UM2FaYmdRMVhNZ29ScmhpMTVvSkQ4RUpld1RpMDdNMDhuK2hxMC9i?=
+ =?utf-8?B?WG1semtuYkxZdU9vWm9NS3VCRkJqWEY4NkljWVF2Q3U4dWEyMUl2ME9ycllo?=
+ =?utf-8?B?QlNaaFhWWlZCMTk5UnNTNnd2R29nSUJjN3hBVTN1YWV1M0cvQXVSL3lHbzlu?=
+ =?utf-8?B?OU9DSXU0SWs4T1pWMUdydjJreFlBNnhEWTkwVmNpbTNQMDZFcTBaZXpCVlB4?=
+ =?utf-8?B?VHQxblJQa2ZpUlc5OFhwbE9vaDBXTEh3dEhOQkljZlVPaDBhZUh2anRGRnpD?=
+ =?utf-8?B?Q2dHR28wTlV5RmlsMG54cWkwSnliZjUyd25adXZVU0lmTkwyVGhGazhLQTRJ?=
+ =?utf-8?B?WVdpWnVpUzJ1VkhqVUNvdlV1U1lFc0R6UytWZXhjRndTNGhDRXRmZUdCMlQy?=
+ =?utf-8?B?cXBMRUNqZVp5Zmh6S1owS0hOTjJqMVZ5MmFUUzVvc25zOE9ONDZGYkNQNXdo?=
+ =?utf-8?B?MnN1K2tlN2RPUTdjb1JiSlB2T01YSnU3TTBRb25yVmVyMmVxa1ZJQ0NjQ1lj?=
+ =?utf-8?B?d1dxZ1BFMVpOSEw5WjhObGRKM1QzdUxadVFsMHYrYUZ0aitPaTByeFFvZGxD?=
+ =?utf-8?B?ZEVETzRGZXZ2ZXIzcHhpN1JzZ3d2a2dyYlRkVW1kYldLN1FoYi9hd2RKYnBn?=
+ =?utf-8?B?MkZFVmNld2d1WCtnd1lLc2MyUEo2d3BoRzFicERJbGlZL3N4Q3NqU2tLZHBZ?=
+ =?utf-8?B?T1drRVNKcjBpaEIwM1l2Ulpiem8zRGFoR1AyWVZXbkVjanRGd2VtcVdEcFJS?=
+ =?utf-8?B?cDNmVk5EOWc3S2V0a0Q5UGhIWVJNZ1hJZzk3ZXlUd2F3OGN3Q1lmYXIzNlJu?=
+ =?utf-8?B?U2Fpdk04VWlibS9HL2V3RURiNXlMRlYyb0lSQ1lKM3ZaT0g2ZFdBeFNUdVlQ?=
+ =?utf-8?B?UHRUMkFBRkJqemtIOWR4UExCdnFjL1VhYTArOHRodFhZSEllL0NHa3pmdFY4?=
+ =?utf-8?B?VmtONExMMSttU05ZbGROY2IzLzRPSjlJY3ZTbldBSHNsU0JDSk5xWDFxcXJ1?=
+ =?utf-8?Q?oH5kW3che/e6d4GXZq7VBGWlb?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89277f73-d4d3-4345-dadd-08dcbd501eea
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6253.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 17:31:39.5195
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w9iwuZbOE00Ss11tQAIVgZTOKkhvIIFqii/AEyfw+LrAlhOz5400T5iEW1WHAfQuv5SxePaQ84xI8VbrNZe+rA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7026
 
-On Wed, Aug 14, 2024 at 9:28=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
-> On 07/08/2024 9:54 am, Thorsten Leemhuis wrote:
-> > On 01.08.24 21:05, Ian Rogers wrote:
-> >> On Wed, Dec 6, 2023 at 4:09=E2=80=AFAM Linux regression tracking #upda=
-te
-> >> (Thorsten Leemhuis) <regressions@leemhuis.info> wrote:
-> >>>
-> >>> [TLDR: This mail in primarily relevant for Linux kernel regression
-> >>> tracking. See link in footer if these mails annoy you.]
-> >>>
-> >>> On 22.11.23 00:43, Bagas Sanjaya wrote:
-> >>>> On Tue, Nov 21, 2023 at 09:08:48PM +0900, Hector Martin wrote:
-> >>>>> Perf broke on all Apple ARM64 systems (tested almost everything), a=
-nd
-> >>>>> according to maz also on Juno (so, probably all big.LITTLE) since v=
-6.5.
-> >>>
-> >>> #regzbot fix: perf parse-events: Make legacy events lower priority th=
-an
-> >>> sysfs/JSON
-> >>> #regzbot ignore-activity
-> >>
-> >> Note, this is still broken.
-> >
-> > Hmmm, so all that became somewhat messy. Arnaldo, what's the way out of
-> > this? Or is this a "we are screwed one way or another and someone has t=
-o
-> > bite the bullet" situation?
-> >
-> > Ciao, Thorsten
-> >
-> >> The patch changed the priority in the case
-> >> that you do something like:
-> >>
-> >> $ perf stat -e 'armv8_pmuv3_0/cycles/' benchmark
-> >>
-> >> but if you do:
-> >>
-> >> $ perf stat -e 'cycles' benchmark
-> >>
-> >> then the broken behavior will happen as legacy events have priority
-> >> over sysfs/json events in that case. To fix this you need to revert:
-> >> 4f1b067359ac Revert "perf parse-events: Prefer sysfs/JSON hardware
-> >> events over legacy"
-> >>
-> >> This causes some testing issues resolved in this unmerged patch series=
-:
-> >> https://lore.kernel.org/lkml/20240510053705.2462258-1-irogers@google.c=
-om/
-> >>
-> >> There is a bug as the arm_dsu PMU advertises an event called "cycles"
-> >> and this PMU is present on Ampere systems. Reverting the commit above
-> >> will cause an issue as the commit 7b100989b4f6 ("perf evlist: Remove
-> >> __evlist__add_default") to fix ARM's BIG.little systems (opening a
-> >> cycles event on all PMUs not just 1) will cause the arm_dsu event to
-> >> be opened by perf record and fail as the event won't support sampling.
-> >>
-> >> The patch https://lore.kernel.org/lkml/20240525152927.665498-1-irogers=
-@google.com/
-> >> fixes this by only opening the cycles event on core PMUs when choosing
-> >> default events.
-> >>
-> >> Rather than take this patch the revert happened as Linus runs the
-> >> command "perf record -e cycles:pp" (ie using a specified event and not
-> >> defaults) and considers it a regression in the perf tool that on an
-> >> Ampere system to need to do "perf record -e
-> >> 'armv8_pmuv3_0/cycles/pp'". It was pointed out that not specifying -e
-> >> will choose the cycles event correctly and with better precision the
-> >> pp for systems that support it, but it was still considered a
-> >> regression in the perf tool so the revert was made to happen. There is
-> >> a lack of perf testing coverage for ARM, in particular as they choose
-> >> to do everything in a different way to x86. The patch in question was
-> >> in the linux-next tree for weeks without issues.
-> >>
-> >> ARM/Ampere could fix this by renaming the event from cycles to
-> >> cpu_cycles, or by following Intel's convention that anything uncore
-> >> uses the name clockticks rather than cycles. This could break people
-> >> who rely on an event called arm_dsu/cycles/ but I imagine such people
-> >> are rare. There has been no progress I'm aware of on renaming the
-> >> event.
-> >>
-> >> Making perf not terminate on opening an event for perf record seems
-> >> like the most likely workaround as that is at least something under
-> >> the tool maintainers control. ARM have discussed doing this on the
-> >> lists:
-> >> https://lore.kernel.org/lkml/f30f676e-a1d7-4d6b-94c1-3bdbd1448887@arm.=
-com/
-> >> but since the revert in v6.10 no patches have appeared for the v6.11
-> >> merge window. Feature work like coresight improvements and ARMv9 are
-> >> being actively pursued by ARM, but feature work won't resolve this
-> >> regression.
-> >>
->
-> I got some hardware with the DSU PMU so I'm going to have a go at trying
-> to send some fixes for this. My initial idea was to try incorporate the
-> "not terminate on opening" change as discussed in the link directly
-> above. And then do the revert of the "revert of prefer sysfs/json".
+Hi Bjorn,
 
-Thanks, I think this would be good. The biggest issue is that none of
-the record logic expects a file descriptor to be not opened, deleting
-unopened evsels from the evlist breaks all the indexing into the
-mmaps, etc. Tbh, you probably wouldn't do the code this way if was
-written afresh. Perhaps a hashmap would map from an evsel to ring
-buffer mmaps, etc. Trying to avoid having global state and benefitting
-from encapsulation. I'd focus on just doing the expedient thing in the
-changes, which probably just means making the record code tolerant of
-evsels that fail to open and not modifying the evlist due to the risk
-it breaks the indices.
+On 8/15/2024 11:54 AM, Bjorn Helgaas wrote:
+> On Thu, Aug 15, 2024 at 10:12:40AM -0500, Richard Gong wrote:
+>> Add a new PCI ID for Device 18h and Function 4.
+>>
+>> Signed-off-by: Richard Gong <richard.gong@amd.com>
+>> ---
+>> (Without this device ID, amd-atl driver failed to load)
+> 
+> "amd-atl" does not appear in the source, so I don't know what it is.
 
-(To point out the obvious, this work wouldn't be necessary if arm_dsu
-event were renamed from "cycles" to "cpu_cycles" which would also make
-it more intention revealing alongside the arm_dsu's "bus_cycles" event
-name).
+Sorry for my typo, it is amd_atl (AMD address translation library) driver.
 
-> FWIW I don't think Juno currently is broken if the kernel supports
-> extended type ID? I could have missed some output in this thread but it
-> seems like it's mostly related to Apple M hardware. I'm also a bit
-> confused why the "supports extended type" check fails there, but maybe
-> the v6.9 commit 25412c036 from Mark is missing?
+> 
+>> ---
+>>   arch/x86/kernel/amd_nb.c | 1 +
+>>   include/linux/pci_ids.h  | 1 +
+>>   2 files changed, 2 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+>> index 61eadde08511..7566d2c079c2 100644
+>> --- a/arch/x86/kernel/amd_nb.c
+>> +++ b/arch/x86/kernel/amd_nb.c
+>> @@ -125,6 +125,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+>>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_M78H_DF_F4) },
+>>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
+>>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M00H_DF_F4) },
+>> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M60H_DF_F4) },
+>>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI200_DF_F4) },
+>>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI300_DF_F4) },
+>>   	{}
+>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+>> index 91182aa1d2ec..d7abfa5beaec 100644
+>> --- a/include/linux/pci_ids.h
+>> +++ b/include/linux/pci_ids.h
+>> @@ -581,6 +581,7 @@
+>>   #define PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3 0x12c3
+>>   #define PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3 0x16fb
+>>   #define PCI_DEVICE_ID_AMD_1AH_M60H_DF_F3 0x124b
+>> +#define PCI_DEVICE_ID_AMD_1AH_M60H_DF_F4 0x124c
+> 
+>  From include/linux/pci_ids.h:
+> 
+>   *      Do not add new entries to this file unless the definitions
+>   *      are shared between multiple drivers.
+> 
+> Maybe there's some value in having this definition in pci_ids.h as
+> opposed to adding a definition in amd_nb.c, where there are many
+> similar definitions?
+> 
+> Can't tell from this commit log.
+> 
+> Obviously this isn't adding any new *functionality*, so it would be
+> nice if amd_nb.c could be written so it would require updates only
+> when the programming model changes, not for every new chip.
+> 
+> Preaching to the choir, I know.
+> 
+>>   #define PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3 0x12bb
+>>   #define PCI_DEVICE_ID_AMD_MI200_DF_F3	0x14d3
+>>   #define PCI_DEVICE_ID_AMD_MI300_DF_F3	0x152b
+>> -- 
+>> 2.43.0
+>>
 
-So I think your later emails clarify Arnaldo is probably missing:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/co=
-mmit/drivers/perf/arm_pmu.c?h=3Dperf-tools-next&id=3D5c816728651ae425954542=
-fed64d21d40cb75a9f
-
-Fwiw, the Apple M hardware issue came to me by way of Mark Rutland
-(iirc), this regression report, etc. My understanding is that Apple M
-has something like a v2 ARM PMU and the legacy events are encoded
-incorrectly in the driver for this. The regression in v6.5 happened
-because ARM's core PMUs had previously been treated as uncore PMUs,
-meaning we wouldn't try to program legacy events on them. Fixing the
-handling of ARM's core PMUs broke Apple M due to the broken legacy
-event mappings. Why not fix the Apple M PMU driver? Well there was
-anyway a similar RISC-V issue reported by Atish Patra (iirc) where the
-RISC-V PMU driver wants to delegate the mapping of legacy events to
-the perf tool so the driver needn't be aware of all and future RISC-V
-configurations. The fix discussed with Mark, Atish, etc. has been to
-swap the priority of legacy and sysfs/json events so that the latter
-has priority. We need the revert of the revert as currently we only do
-this if a PMU is specified with an event, not for the general wildcard
-PMUs case that most people use. There was huge fallout from flipping
-the priority particularly on Intel as all test expectations needed
-updating. I've sent out similar fixes that need incorporating when the
-revert is reverted. Ideally tools/perf/tests/parse-events.c would be
-updated to cover ARM's PMUs that don't follow the normal pattern that
-the core PMU is called "cpu" (this would mean that we were testing
-event parsing on ARM was WAI wrt encoding priorities, BIG.little,
-etc).
-
-> I sent a small fix the other day to make perf stat default arguments
-> work on Juno, and didn't notice anything out of the ordinary:
-> https://lore.kernel.org/linux-perf-users/dac6ad1d-5aca-48b4-9dcb-ff7e54ca=
-43f6@linaro.org/T/#t
-> I agree that change is quite narrow but it does incrementally improve
-> things for the time being. It's possible that it would become redundant
-> if I can just include Ian's change to use strings for Perf stat.
-
-I'd prefer we didn't merge this as we'd need to rebase:
-https://lore.kernel.org/lkml/20240510053705.2462258-4-irogers@google.com/
-and those changes would then delete the code introduced. I'm fine with
-adding the tests.
-
-There are more exotic heterogeneous core things upcoming, probably
-also from ARM, and the thought of duplicating the default attribute
-logic and event parsing constraints is just something I'd prefer not
-to have to do.
-
-> Of course I only think I have a handle on the issue right now, seems
-> like it has a lot of moving parts and something else always comes up. If
-> I hit a wall at some point I will come back here.
-
-Thanks,
-Ian
+Regards,
+Richard
 
