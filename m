@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-288456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE6C953A4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28AB953A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55869282933
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3919F282346
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5D9137923;
-	Thu, 15 Aug 2024 18:40:26 +0000 (UTC)
-Received: from hs01.dakr.org (hs01.dakr.org [173.249.23.66])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CE053E24;
+	Thu, 15 Aug 2024 18:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1w0wzHc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F5575804;
-	Thu, 15 Aug 2024 18:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.249.23.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF54383A3;
+	Thu, 15 Aug 2024 18:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723747226; cv=none; b=Tt3nCFSeVLYRcPXz0wyGPYfaO0GSxS+dzwl2GBrih1bfLVE1RrWKU3pwCnkAGZMNq6zoIKN/n7lMdhyw6pq0Nt6kdb46IHOXh/3myQ1YiIflka2zBJuPZ9NJqTJiOgr1Q1RFmQCkdPtrsTTCbN/28RGNQami1h4DBtOwvdREN5c=
+	t=1723746872; cv=none; b=V5SamCMFAlMgN5NnJedcAPmTvNHnLqz2mYG7sBDVrhLENCWYmQcx97hwx4Lk8L84gIUp9G2zKVvyAm8+u/QnngNG/1Qo+ez7dL9S+3+iSsKxY1ptazvfVjjmFbsx75POa18t0FgT7KwrC9YBuGk9Kl2MI+t3VTO4uEkHZto1DpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723747226; c=relaxed/simple;
-	bh=DqvoXi4F3Pc40CMrzlKdtaZnQEiVxRYmQ3FlnDvE2gg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IszLpyIArCiNZHqeBxYAfsQJxQXZXlZCgNGO9nMtxpqzAkU1ResturJlP7+GsN4kSreeaqdWZc94JfFvVncp57MBxu3TVsbZyzUFHswg8pXes2CWAxESpPD8csgMxTZBs2vcJJiEzY8QPYlYQrCI8xLtLEXPUSD/JU1/PMoYLIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org; spf=pass smtp.mailfrom=dakr.org; arc=none smtp.client-ip=173.249.23.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dakr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dakr.org
-Message-ID: <204d94fb-14af-4132-831a-73aab2ef9d36@dakr.org>
-Date: Thu, 15 Aug 2024 20:33:33 +0200
+	s=arc-20240116; t=1723746872; c=relaxed/simple;
+	bh=nWfVmAun0Cx3DA+43CHSrDQiQLi21CFd4iQTZkbUIk0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=OWcRzA4VqZftxRqSjJ4g8JKgV/Gmfi7TDSjAEakOrup4ddxTmscoZSPTKEFuvjfyNTaFJ//WdDdf1ngks4dnSELdNf5r+zSt4dwi9CMQOSkqZWGlfXhPWuLBBvSF/+NiRr96silEvu0p8VegxptPbeAsPfrKfDHKsxofsY6j3Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1w0wzHc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2421EC32786;
+	Thu, 15 Aug 2024 18:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723746871;
+	bh=nWfVmAun0Cx3DA+43CHSrDQiQLi21CFd4iQTZkbUIk0=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=o1w0wzHcdGcuv4jtDomB1MsIEG92YWnwO4bTUbCio34b5S1w1x9K9zBsmwR+s80xl
+	 o9saMHCVYZy+3tiCZtSfWSNIXC60MG27YpQCuSax08dSV2oTE65RjajxRMUPcESm9t
+	 6nXZ7IhEIav4GqyJRHCxDuXECLrxUBLRMZqWWYF3moI4YbZqXd6M4AADoHUGcuRhNV
+	 rfJYkAZ2OUnv36FYRw0vw5vXUojT/u1abxAw6tFmFj6ZAk1aZbUidEVVqK/sxhnKT3
+	 nuX7+ogjv6X+QWXydGgQfsDERgrPEKbLgvVEZOKSvm6UTWyprSmS7Boch3vlTYfsRI
+	 OO9O1Z8HvGDTQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH] rust: enable bindgen's
- `--enable-function-attribute-detection` flag
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev
-References: <20240814163722.1550064-1-ojeda@kernel.org>
-From: Danilo Krummrich <me@dakr.org>
-Content-Language: en-US
-In-Reply-To: <20240814163722.1550064-1-ojeda@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 Aug 2024 21:34:27 +0300
+Message-Id: <D3GP9N3N7TUE.38H37K436OD50@kernel.org>
+To: "Dmitrii Kuvaiskii" <dmitrii.kuvaiskii@intel.com>
+Cc: <dave.hansen@linux.intel.com>, <haitao.huang@linux.intel.com>,
+ <kai.huang@intel.com>, <kailun.qin@intel.com>,
+ <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <mona.vij@intel.com>, <reinette.chatre@intel.com>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <D2RQZSM3MMVN.8DFKF3GGGTWE@kernel.org>
+ <20240812082543.3119659-1-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240812082543.3119659-1-dmitrii.kuvaiskii@intel.com>
 
-On 8/14/24 6:37 PM, Miguel Ojeda wrote:
-> `bindgen` is able to detect certain function attributes and annotate
-> functions correspondingly in its output for the Rust side, when the
-> `--enable-function-attribute-detection` is passed.
-> 
-> In particular, it is currently able to use `__must_check` in C
-> (`#[must_use]` in Rust), which give us a bunch of annotations that are
-> nice to have to prevent possible issues in Rust abstractions, e.g.:
-> 
->       extern "C" {
->      +    #[must_use]
->           pub fn kobject_add(
->               kobj: *mut kobject,
->               parent: *mut kobject,
->               fmt: *const core::ffi::c_char,
->               ...
->           ) -> core::ffi::c_int;
->       }
-> 
-> Apparently, there are edge cases where this can make generation very slow,
-> which is why it is behind a flag [1], but it does not seem to affect us
-> in any major way at the moment.
-> 
-> Link: https://github.com/rust-lang/rust-bindgen/issues/1465 [1]
-> Link: https://lore.kernel.org/rust-for-linux/CANiq72=u5Nrz_NW3U3_VqywJkD8pECA07q2pFDd1wjtXOWdkAQ@mail.gmail.com/
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On Mon Aug 12, 2024 at 11:25 AM EEST, Dmitrii Kuvaiskii wrote:
+> On Wed, Jul 17, 2024 at 01:38:59PM +0300, Jarkko Sakkinen wrote:
+>
+> > Ditto.
+>
+> Just to be sure: I assume this means "Fixes should be in the head of the
+> series so please reorder"? If yes, please see my reply in the other email
+> [1].
 
-Thanks for looking into this,
+OK, based on your earlier remarks and references I agree with you.
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
-
-> ---
-> If someone notices a major performance difference, please let me know!
-> 
->   rust/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 1f10f92737f2..c28b81e2a5fa 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -270,7 +270,7 @@ quiet_cmd_bindgen = BINDGEN $@
->         cmd_bindgen = \
->   	$(BINDGEN) $< $(bindgen_target_flags) \
->   		--use-core --with-derive-default --ctypes-prefix core::ffi --no-layout-tests \
-> -		--no-debug '.*' \
-> +		--no-debug '.*' --enable-function-attribute-detection \
->   		-o $@ -- $(bindgen_c_flags_final) -DMODULE \
->   		$(bindgen_target_cflags) $(bindgen_target_extra)
-> 
-> 
-> base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+>
+> [1] https://lore.kernel.org/all/20240812082128.3084051-1-dmitrii.kuvaiski=
+i@intel.com/
+>
 > --
-> 2.46.0
-> 
+> Dmitrii Kuvaiskii
+
+I think for future and since we have bunch of state flags, removing
+that "e.g." is worth of doing. Often you need to go through all of
+the flags to remind you how they interact, and at that point "one
+vs many" does help navigating the complexity.
+
+BR, Jarkko
 
