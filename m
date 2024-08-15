@@ -1,116 +1,76 @@
-Return-Path: <linux-kernel+bounces-287707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678C5952BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:16:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B69952BC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 905641C20D6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:16:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F8702833A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402F41DC460;
-	Thu, 15 Aug 2024 08:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mo74cRiD"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017EF1DC482;
+	Thu, 15 Aug 2024 08:58:18 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC8A17623F;
-	Thu, 15 Aug 2024 08:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB5A17623F
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712292; cv=none; b=osEth0rs/EL1r8UT/usLMtLB+4fSV9GxG78Hcex5HxLBDRv2S+KrIaxCvZi5otmiPArj529ltxIcoy3ul8UbxvdLCzmDpUZo4RZQgRO+b5enRWcIxr1FIWtCdfe9KjdpEqIJSkEkrXIMW4WHMtTdc9q9iT/nMi8KJXmdAZ997HY=
+	t=1723712297; cv=none; b=W2Wp+r9nuUBTP74nWuncgnxCC/Ht1FILuVnPetZNi6s02OveGrDb8zgH6+OBo4Lb1owHDKYi+whl7NKpjad0YZ3zNl39gqFvJ5twYdTPj3v++gfMOsQusfxUM4a880htUqLoGC0fHFg86xPo6LcUaj8Kh62G5sKB3vDXSnsjBHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712292; c=relaxed/simple;
-	bh=FeoHnh9gYc8gP46gXGfNS0eNxpOx2tgvWTWqNozBoLs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dgWDZsXjaYmoNieq6QJL/7V6Ns0LN77mXz0sY2s+GrE0/NzfiK1G28Wwz/bRUJy6c+VpAFKxYu18MNkpYrSe1PvCI7TMvMP1iTouNMZgXRGDbbwH9pK3NnJ4CzBesCChwkdYGed9ERpGJCP69/x0DvAlvPCj/GxhmnhJcJh7qHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mo74cRiD; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723712288;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pSW/RP+4fH73cAbB3bODhcZsRza4EeE57k+NBfbM3xM=;
-	b=mo74cRiDsOxUE+Ir5lfNX+cga+AD5mitepsHcIld4C+DlXLaaSO5cEJ1pcsky1EBk5vK6C
-	bnn6FI3q3Ck99Bvz2+3Ic9kwCCchKMVVBLQZ4Yfog0xsbsh1Ocp/Pqe7GKkfAlt34NJPBA
-	OW4gjZaDoovalLLnJsiRhJhVSk7jPoA=
-From: Youling Tang <youling.tang@linux.dev>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH 2/2] bcachefs: Simplify bch2_xattr_emit() implementation
-Date: Thu, 15 Aug 2024 16:57:44 +0800
-Message-Id: <20240815085744.224879-2-youling.tang@linux.dev>
-In-Reply-To: <20240815085744.224879-1-youling.tang@linux.dev>
-References: <20240815085744.224879-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1723712297; c=relaxed/simple;
+	bh=evFwm/CVXlrZL+OYNwhKqiKeB+wDiuWlLPBx8/hwoE4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=F24cJRCrkqg2dwVW+UOMg27Wk3c+MTB6vyqAxi59yDDPaL4k9dkuWAzcIPleXaCRwo34+utaGD6dPy+CQXNCdSOlPfHLYz4e+ff9H9Dt10tND3jVHAWrJ/+7UWCFSBLVc0JJ5d5Q4pk56CfmuZbfie0XEuliAXDHuDZpqUxgybs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3994393abd5so7447855ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:58:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723712295; x=1724317095;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=evFwm/CVXlrZL+OYNwhKqiKeB+wDiuWlLPBx8/hwoE4=;
+        b=AcSH+Koz/h1PDes7zc6oV2BcstAvHiymJDkYxe5AIZ8ZobB6SdhckKGl42cBpGlR9L
+         bdezDgnhKdNalwHvBZMmW0zmsKTsDXasoTYRQkSe2ivZckZGfYaamwiPojvHNRALTbS/
+         GtU7dXX4T0v4YA7VeChZ0cJKJUjZgTpGSs3e2H3RjL+4EZzZWtturFXQvopa3GfFsAwo
+         QQ8SJYKZeLSEX2hd+WPpOEJZ84slUBNiPfeQzm9RHecFJWp+oRR1/kz2ovuviEltDUuF
+         pCgQ1z01DIY3sweR8Qye3ByN1X6ty+X1fhUQ5tz5bV7GI/lUXDcKrYGTIA+cI58moyW/
+         PtNw==
+X-Gm-Message-State: AOJu0Yy3fWa7OYZZ343fyjkAnzoMo6Hii3Yne1YpiUq3yEz4FwwFWkAw
+	8Z9Txs6EmhbDUEQLWNTtEI5WUE3cXiMRlNgactaqSKZrTAmkld3gma9oqsWITgqcl0CWpST69Ra
+	xjCJ/n+XLMSR49SHkpe/9MKj8Qw3I6K1QIW5evQ9v5NZW/iRP9pl4k5w=
+X-Google-Smtp-Source: AGHT+IERcahk9dFGNE+U6GmUpa4WbBOl2O5IydTQGOXP+cQ1zyJ41eEtWf+HM1c9kqUxprxkFLcXyMza9ZpJJNahqW63ypBO9yfC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:138c:b0:396:dc3a:72f2 with SMTP id
+ e9e14a558f8ab-39d124d5c0bmr4372355ab.3.1723712295387; Thu, 15 Aug 2024
+ 01:58:15 -0700 (PDT)
+Date: Thu, 15 Aug 2024 01:58:15 -0700
+In-Reply-To: <000000000000f386f90616fea5ef@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000fd2d4061fb50bd4@google.com>
+Subject: Re: [syzbot] KASAN: slab-use-after-free Read in chrdev_open
+From: syzbot <syzbot+5d34cc6474499a5ff516@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Youling Tang <tangyouling@kylinos.cn>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Use helper functions to make code more readable.
+***
 
-Similar to commit a5488f29835c ("fs: simplify ->listxattr() implementation")
+Subject: KASAN: slab-use-after-free Read in chrdev_open
+Author: almaz.alexandrovich@paragon-software.com
 
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
----
- fs/bcachefs/xattr.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
-
-diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-index 9e77e949a29b..e64e2c47b6ca 100644
---- a/fs/bcachefs/xattr.c
-+++ b/fs/bcachefs/xattr.c
-@@ -251,17 +251,27 @@ static int __bch2_xattr_emit(const char *prefix,
- 	return 0;
- }
- 
-+static inline const char *bch2_xattr_prefix(unsigned type, struct dentry *dentry)
-+{
-+	const struct xattr_handler *handler = bch2_xattr_type_to_handler(type);
-+
-+	if (!xattr_handler_can_list(handler, dentry))
-+		return NULL;
-+
-+	return xattr_prefix(handler);
-+}
-+
- static int bch2_xattr_emit(struct dentry *dentry,
- 			    const struct bch_xattr *xattr,
- 			    struct xattr_buf *buf)
- {
--	const struct xattr_handler *handler =
--		bch2_xattr_type_to_handler(xattr->x_type);
-+	const char *prefix;
-+
-+	prefix = bch2_xattr_prefix(xattr->x_type, dentry);
-+	if (!prefix)
-+		return 0;
- 
--	return handler && (!handler->list || handler->list(dentry))
--		? __bch2_xattr_emit(handler->prefix ?: handler->name,
--				    xattr->x_name, xattr->x_name_len, buf)
--		: 0;
-+	return __bch2_xattr_emit(prefix, xattr->x_name, xattr->x_name_len, buf);
- }
- 
- static int bch2_xattr_list_bcachefs(struct bch_fs *c,
--- 
-2.34.1
-
+#syz test
 
