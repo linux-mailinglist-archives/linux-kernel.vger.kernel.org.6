@@ -1,190 +1,141 @@
-Return-Path: <linux-kernel+bounces-287768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6178952C60
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:37:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7366B952C5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B901F22534
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:37:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803401C20DCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E0E19D8B4;
-	Thu, 15 Aug 2024 09:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IbSJYmQk"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD86017C9A1;
+	Thu, 15 Aug 2024 09:55:27 +0000 (UTC)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14B17C9BE
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F2F17C98F;
+	Thu, 15 Aug 2024 09:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723715730; cv=none; b=up4+w67g8ws/vFCNlQzFH018DuSDAbx7P8kg5VRXNXhmeEIEZeciofqAUxp0Nth8Nl3c/hViA2YyJkheBGIboOWdHe56lhfWy5yIP3PAcroEThNXJACuHPyMGYzPZw0Y3wch1yMpPJ+76W6suOFi/pFtXLdxUccLsGwxwNmp2e4=
+	t=1723715727; cv=none; b=ngDzeTGOBNI5cJpvFtlXIbrRgPh6M7OKXcAz8Y4zLKoxigN1rD+pP9vVr/F3bKCK1Vr3ksyomS1ZDhqTwVQYjX3kse5UJ8KsTHlRHMPiEdLIWtCbneV4KBnqVEhLo258Z2SxwDSoEcvMG6OvAyYkKDbcgW0KhQ6Fwm0Va+YkyG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723715730; c=relaxed/simple;
-	bh=EEV0E6+PsW1vWpYqy+UhX5StmnnbQ0nvPdsdV1auktA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tNcCE03KzFJlhiPE/abp2Bz4urEIJmZleUh+gr+bUmyEe8+c+vjywDmYnkfVwRLq42zVTzt7YLyaZk1+R4rxpDR6hY8ax4uSlx/K4tgQ4vZ/vOmeOAwH9ySACe2XTs3AC/l9xIA3RRhm3IyC/cp5xcnr1s6PROcFx1BTGQ0u3UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IbSJYmQk; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-530e062217eso932626e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:55:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723715727; x=1724320527; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m5h80tcGsfqjYM1UFpSbRtoNZZUnUPL2z1uKz9S/Kkk=;
-        b=IbSJYmQkpmbwP3G8wFqBBGDLj4aFC9TH+OhDJKA4QIDQKI/kmiwDNP84mpD1+0cdlU
-         8WuUmKEjtSt2ytBPHxSfOeZOmc4xUKhY7ligQ6ZKFnyzuLln+2IhLPV31VuWxXjoc53x
-         tKThVn06xZBDZ9Nwp23G6PtPRA3sT04xm3NHo=
+	s=arc-20240116; t=1723715727; c=relaxed/simple;
+	bh=Lgo/VgloMjv6fLJSUrtmBCgVTWsKGabMKO/aaEKlSuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hb0768jjVMwN3D9ieLvQHmDjXgGrN/9sVLEnolJNx4O4HOnkf4iqAcZxBmhNtoEBHXBXxlRDkevkOzPY7m2tdOahkdfvkWBjSWBqQihgB5U1sVMs3hGnwNcZ6pdxsiUUdRsX/djFRviovY8v8C7aPHcOAVWNBWjDttXxmfSQk10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso12049971fa.0;
+        Thu, 15 Aug 2024 02:55:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723715727; x=1724320527;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m5h80tcGsfqjYM1UFpSbRtoNZZUnUPL2z1uKz9S/Kkk=;
-        b=mSeLgWHz7ycjKPkyouFpHLou//JmTlRRoZzMqECzrV43j0XAGvTP07131uMWxtAloO
-         3UPXjMNUKqIVapcxYCPONy3MM28KQqf8WZDMxSSxcl4bFZovqNyZCMOkt+mRcEamP4H4
-         8DeYJ3jgatQitJbeQvYi3Jyxhf2PkaGq1fmbQL3ihox81MIbSQ/XEzvX+pWkBzGka/t4
-         S4rxXO5G2b7OeCabq3XsA0iAfw4GuKH8vzgEgfHKRIphsSBYnXD2Qu+upPH7VKVan9sb
-         CvFmWvOYMI/42CGXZaGl7Sxvwwz890LGjTXxoSvNJB4VM07z7rrtUyprk3jHkvyjUAeW
-         EeeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNVpNwVW4jICMcYrpfnV7li/S7L2NuR0EznW50PDFnuJ3fs8FEMZBuJAaNMPnEfhmPA9ZNB0lmg3GHoTpdropb0YvpVtEMWh8BvCfI
-X-Gm-Message-State: AOJu0YxLqcw/+YqkhhQUuR1xr+RxLJ34+N2Zc4IUcNMmPq/1/3PjkTlQ
-	CeI8ORn82mbDI7xIH5X825y1SH2YsBk8PQl1IPSTS1zHYxEqzbtc3igAW+NeyccaVHdqEGBG1mL
-	fcKsBG3bfoJRFXUvkXAPOHtlaBXfAU538kO76
-X-Google-Smtp-Source: AGHT+IHk5D9Axhf7aH2jIvdVPiigXA+7hFBYb9TbjKDhBcQ8ihLDumNSY3TL20N3WQe0JURETR/Gp6xRXUf3bXq00mc=
-X-Received: by 2002:a05:6512:2351:b0:52c:a0b8:4dc0 with SMTP id
- 2adb3069b0e04-532edbc076amr3321287e87.28.1723715726777; Thu, 15 Aug 2024
- 02:55:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723715724; x=1724320524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FhxpIfrOZR8Ies+hYSFH0zNgK/4n9SX+6YegLe1LHNk=;
+        b=wJT1w954sBEtENMobFB9XJUKYHRbLQKzdh2FoQewJP6g7lyvrNS0H9xNzHzNPbiEcd
+         vRb+bhWRVDiOEsx1P+g0iIiX29xi3B4A1yxyH+jblj8j7mDLkMX5OaNcJ2hZJKjjAjUs
+         H70neboy2yK55/maOMY6tcyivso0aePbSrLPUdVNC5mI6fcCh3OoQlMJhwEfTpn5C2Qm
+         O717DlLtv0GSCP+x1mkUXTEz1/VuFh0ylhQTDVOlqqnIZ5Ehxj+3QitLkQA3tkHKn4uN
+         KyOCPCUyZXNTb+qhLVaXHpvhs/Qk3jMRE1ntnqwByCb6kvnI9qx11kFEhRxNX0UCUgCe
+         LuBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWq6+cWVUvQYnoQgcx18LU0C4710u8oY2uwsKOfVrRTefvSKaf5UVyMqhKsHVSGJKrVDqMQP9rNu3zX5n/PaqeOrxsyT1JIbJVSqEZfR09tbW6PGOu1TovzHr3ecQ/ibxtsv89Sxo7HzBqPaVayWpv4cXhe8wfwUYaVQUkxxpctWM7M21kw
+X-Gm-Message-State: AOJu0Yw+Rd29gInrt7wLwL62YpXcZ3fxA4SARZVhQw01/h4cAoKoJxfb
+	V04e5w2WhYR9SNS6cYN1T3DgwrvtbztCq0gjAJCcGhzS9OLbpbcq
+X-Google-Smtp-Source: AGHT+IH1vdwmSr6sVrVAeVDr3p7TkdzdG1CjLf8R/tVXngJ35xiUlDssG8qqC9A8+p8gYBgTtuX3VA==
+X-Received: by 2002:a2e:9c0a:0:b0:2f2:b7c4:45e2 with SMTP id 38308e7fff4ca-2f3aa1f0072mr38628371fa.20.1723715722891;
+        Thu, 15 Aug 2024 02:55:22 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383935807sm75451666b.134.2024.08.15.02.55.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 02:55:22 -0700 (PDT)
+Date: Thu, 15 Aug 2024 02:55:19 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: icejl <icejl0001@gmail.com>, kadlec@netfilter.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: nfnetlink: fix uninitialized local variable
+Message-ID: <Zr3Qh5FW7PsynJ4O@gmail.com>
+References: <20240815082733.272087-1-icejl0001@gmail.com>
+ <Zr3EhKBKllxigfcD@gmail.com>
+ <Zr3LQ4hGx-sN5T8Q@calendula>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808095931.2649657-1-wenst@chromium.org> <20240808095931.2649657-4-wenst@chromium.org>
- <ZrtC4Q4N_3x2KTNb@smile.fi.intel.com>
-In-Reply-To: <ZrtC4Q4N_3x2KTNb@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 15 Aug 2024 17:55:15 +0800
-Message-ID: <CAGXv+5GfCcft4+no1dTVRa3Sx7XbiufjSqJb4UPRc9yZv3b+rQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] i2c: Introduce OF component probe function
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr3LQ4hGx-sN5T8Q@calendula>
 
-On Tue, Aug 13, 2024 at 7:26=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Aug 08, 2024 at 05:59:26PM +0800, Chen-Yu Tsai wrote:
-> > Some devices are designed and manufactured with some components having
-> > multiple drop-in replacement options. These components are often
-> > connected to the mainboard via ribbon cables, having the same signals
-> > and pin assignments across all options. These may include the display
-> > panel and touchscreen on laptops and tablets, and the trackpad on
-> > laptops. Sometimes which component option is used in a particular devic=
-e
-> > can be detected by some firmware provided identifier, other times that
-> > information is not available, and the kernel has to try to probe each
-> > device.
-> >
-> > This change attempts to make the "probe each device" case cleaner. The
-> > current approach is to have all options added and enabled in the device
-> > tree. The kernel would then bind each device and run each driver's prob=
-e
-> > function. This works, but has been broken before due to the introductio=
-n
-> > of asynchronous probing, causing multiple instances requesting "shared"
-> > resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> > time, with only one instance succeeding. Work arounds for these include
-> > moving the pinmux to the parent I2C controller, using GPIO hogs or
-> > pinmux settings to keep the GPIO pins in some fixed configuration, and
-> > requesting the interrupt line very late. Such configurations can be see=
-n
-> > on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> > Lenovo Thinkpad 13S.
-> >
-> > Instead of this delicate dance between drivers and device tree quirks,
-> > this change introduces a simple I2C component probe. function For a
-> > given class of devices on the same I2C bus, it will go through all of
-> > them, doing a simple I2C read transfer and see which one of them respon=
-ds.
-> > It will then enable the device that responds.
-> >
-> > This requires some minor modifications in the existing device tree. The
-> > status for all the device nodes for the component options must be set
-> > to "failed-needs-probe". This makes it clear that some mechanism is
-> > needed to enable one of them, and also prevents the prober and device
-> > drivers running at the same time.
->
-> ...
->
-> > +int i2c_of_probe_component(struct device *dev, const char *type)
->
-> Use respective scoped variants and remove the related of_node_put() calls=
-.
+Hello Pablo,
 
-Ack. Will also try splitting and reworking the code so they have
-tighter scopes.
+On Thu, Aug 15, 2024 at 11:32:51AM +0200, Pablo Neira Ayuso wrote:
+> On Thu, Aug 15, 2024 at 02:04:04AM -0700, Breno Leitao wrote:
+> > On Thu, Aug 15, 2024 at 04:27:33PM +0800, icejl wrote:
+> > > In the nfnetlink_rcv_batch function, an uninitialized local variable
+> > > extack is used, which results in using random stack data as a pointer.
+> > > This pointer is then used to access the data it points to and return
+> > > it as the request status, leading to an information leak. If the stack
+> > > data happens to be an invalid pointer, it can cause a pointer access
+> > > exception, triggering a kernel crash.
+> > > 
+> > > Signed-off-by: icejl <icejl0001@gmail.com>
+> > > ---
+> > >  net/netfilter/nfnetlink.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
+> > > index 4abf660c7baf..b29b281f4b2c 100644
+> > > --- a/net/netfilter/nfnetlink.c
+> > > +++ b/net/netfilter/nfnetlink.c
+> > > @@ -427,6 +427,7 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
+> > >  
+> > >  	nfnl_unlock(subsys_id);
+> > >  
+> > > +	memset(&extack, 0, sizeof(extack));
+> > >  	if (nlh->nlmsg_flags & NLM_F_ACK)
+> > >  		nfnl_err_add(&err_list, nlh, 0, &extack);
+> > 
+> > There is a memset later in that function , inside the 
+> > `while (skb->len >= nlmsg_total_size(0))` loop. Should that one be
+> > removed?
+> 
+> no, the batch contains a series of netlink message, each of them needs
+> a fresh extack area which is zeroed.
 
-> ...
->
-> > +             ocs =3D kzalloc(sizeof(*ocs), GFP_KERNEL);
->
-> Use __free()
-
-This ends up only a bit better than with gotos once this small section
-is split out into a helper function.
-
-AFAIK ocs, or at least the underlying properties, have to be left around
-once the changeset is applied as they are now part of the dynamic live
-tree. And that's fine since once applied, nothing is going to un-apply
-it. OTOH in the error path it needs extra cleanup if any actions were
-added.
-
-So I end up with the following to silence the "must check return value"
-warning on success, and cleanup on error:
-
-ret =3D of_changeset_apply(ocs);
-if (!ret) {
-        void *ptr __always_unused =3D no_free_ptr(ocs);
-} else {
-        of_changeset_destroy(ocs);
-}
-
-In my case it might actually be safe to do of_changeset_destroy(ocs) and
-free it regardless, but I'm not really confident.
+Sorry, this is a bit unclear to me. This is the code I see in
+netnext/main:
 
 
-ChenYu
+	memset(&extack, 0, sizeof(extack));   // YOUR CHANGE
+
+        if (nlh->nlmsg_flags & NLM_F_ACK)
+                nfnl_err_add(&err_list, nlh, 0, &extack);
+
+        while (skb->len >= nlmsg_total_size(0)) {
+                int msglen, type;
+
+                if (fatal_signal_pending(current)) {
+                        nfnl_err_reset(&err_list);
+                        err = -EINTR;
+                        status = NFNL_BATCH_FAILURE;
+                        goto done;
+                }
+
+->              memset(&extack, 0, sizeof(extack));
 
 
+nfnl_err_add() does not change extack. Tht said, the second memset (last
+line in the snippet above), seems useless, doesn't it?
 
-> > +             if (!ocs) {
-> > +                     ret =3D -ENOMEM;
-> > +                     goto err_put_node;
-> > +             }
->
-> > +err_free_ocs:
-> > +     kfree(ocs);
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Thanks for the quick reply,
+--breno
+
 
