@@ -1,223 +1,208 @@
-Return-Path: <linux-kernel+bounces-287511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBD99528A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20779528A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09DC51F21344
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 403B7284E1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DCD3D966;
-	Thu, 15 Aug 2024 04:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B289B3BBD8;
+	Thu, 15 Aug 2024 04:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="biecyKqw"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lmA5Pbgj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602F523D2
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 04:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057C724211
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 04:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723697123; cv=none; b=mL2WfugYwBlGmWIxllCReiqlNhUSYry3F479tF+3G6YabOgpjGaYs364oGKLvqV6xOSueYbq432WEN0D+lJw0BIG55k3nAviuI+eKqHh0COGePOl8MESTGj6JTJkzFGf0eoRdZI0OAeVdENLHcej3Z7oKAS1gB5Vw2ur79A+gCQ=
+	t=1723697284; cv=none; b=ZeYp7Sd+l13DdHVvPpo7utRw1WIcl1vsUUmgH8nAzQ9lBXdoP+LX92kLuPIEMXwscXsb0oqpufKshB2UI3HrUluTHoKzvMrMbrCGwqdyexCUk5torZTkWtqDlg+aSXUxsWhiEk/u3VMy48Ze9CNVC/GeiiXeWxzTyMEk7uRf4AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723697123; c=relaxed/simple;
-	bh=JkdoOGgPP6inJk2z4l4GoXRUjTrMLXdiFgyShXtRHmc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f6eorXrXyhRwlhpGMf/nhcJeik+kIJoNXp3VUfbVuxvYCEtz3OxIDtvpB9jJ14DPjaMBs84OWqfxaSj6hCZSE2cWBvnKaqsvGZeCtm/1URWSN60aOSAdGDjp/rBAltKF4OmzzWgCHtw8GJ9UazYoaVzT8XoRfr029GGO+5MKGb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=biecyKqw; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52f04c29588so748616e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 21:45:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723697119; x=1724301919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1T1veMt9WGefVzxV61hQN46s0M2ozLoU6sDsGtd5rg0=;
-        b=biecyKqwP96KeJ8gSEqcHoOL9J7dsKHNk5S0f2MBtwaMdQtmLdgQ++9ULvBaWJUtDc
-         y2eh21UtGBH+eLiD0LsPbIdSOu04vDcA+yLOR3xv7z2bBVKcWpzE5oIy9IxlWNPrLC5y
-         F2EBglvVXm5nE5n/rGrnomegN/rUXzSqDaoJE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723697119; x=1724301919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1T1veMt9WGefVzxV61hQN46s0M2ozLoU6sDsGtd5rg0=;
-        b=rYTKEnG2LDpwz4igHQOlk6xQdgmfWgdWMFubj762Z7NyqoqwasT9eR0bogNU6bAqNr
-         pfVOpXrT1B0MwRI9wJhneKraMTb70f75cY2b/uCY+MjGhEuMxBim9WVJgyHw9kwfTTnQ
-         +vhZFmkeMBs6BiDWcPPDJt+b+bkhUOE5DL2c/dySOqruFL7IsEuG7tuPEENIx1o0QZW3
-         9lCQFGjMEsW+6saC4MdiwBvf1e7JoPHZQIY88a7Th/QhkqYT0xIhKFJ2WeGIR0qQLfxs
-         BI7jMqHSnDHQIv/mmaTtZAlfFBh9pnfwg6nVtFbVC8QfeGujEDADYIa0nTQP/1c2Fobz
-         ISlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyDLB8p4wxkqlMgQ/GTA7TYQcXESQVrvww2zE/cohmoV4Z3L3nywuo6nQPcP0OM/12jHfKlaltFgFYJsugDHhgQ3yXinE6pyn0P9wz
-X-Gm-Message-State: AOJu0YwaF9EM0hAoHNiiBjcj+my0aLoiy4cjdKLjvTvLYiJyFkDJfpmc
-	Ab8QfcpTUWAO2dE26AfhGvAAZ4gz8KG7YW9kdLZEngrpCm07LFWy5I9q8yX7mV7q3mD+qcrIlL8
-	nEEEDU/8LU8chCkw/Om3xZlLdIw0ISC7Pjdew
-X-Google-Smtp-Source: AGHT+IE0yv+XOrbSGJIzzzRVJje3yinlPEAf+QPJIrtQzzafv5gyr4BXZK+TLc3EfZzK62nIdXUHueYK0wWEpSky5y0=
-X-Received: by 2002:a05:6512:3b2b:b0:52c:fd46:bf07 with SMTP id
- 2adb3069b0e04-532edbbe468mr2990731e87.49.1723697119152; Wed, 14 Aug 2024
- 21:45:19 -0700 (PDT)
+	s=arc-20240116; t=1723697284; c=relaxed/simple;
+	bh=qG4XL9eNXoz4AQcC/hNvY1JzoRhsfmUgITFkEfpt9AE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hamAXqjFhEKQuobor8zwA3JXRtUxMKX9+/vnKWL6pXUyGl+hQLIwv5DpcF6ETXfKKYmjxw8pTKv39hmGF/tU24l+fzwVLOCDXpnbXlPqpVWp2W/pdtfcaL8k3Lxi5CteOwXI1rbouTXNQ0cTg2+vCnkvKWpH4cf5ADDwOmEnvW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lmA5Pbgj; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723697283; x=1755233283;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qG4XL9eNXoz4AQcC/hNvY1JzoRhsfmUgITFkEfpt9AE=;
+  b=lmA5Pbgjeus8Y0vRQ2MyEylmZkTtuUdVmbdH1m2ja3jbmT0sCf+SR4Ja
+   swV+5ETdtqr7NfoQrDY8tiYBzwM7Kkkama2BhXk1GqyYWGzZyEl2uTAoU
+   FrCnyt/MURRjiGgW9oEoIOx+QAcP7KNNoIALF+cEVU7A1A429sWTPrJmk
+   EeMtCt+8pYp52WLIN32X+GQzYDoZRenF7yWeBCN07G0wWOJZWfDtzmc5U
+   pnH6brlmpKwCbcnucYYWhaOPs/ad+qVyNg68RgTgt5n2BuMZN870Vmp35
+   rHIUjbsBgqfaMPt8hcr06fyJn3mlw8MaiY2Nkfcz9oAq+7LxeNZ2dxrtX
+   g==;
+X-CSE-ConnectionGUID: hYHI669eQDaNKqZ7JIMNRw==
+X-CSE-MsgGUID: d2KlHlM3RmCxXWNk8NglfA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="39401831"
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="39401831"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 21:48:02 -0700
+X-CSE-ConnectionGUID: GYD9jhS4TG6eB4gezuPKFA==
+X-CSE-MsgGUID: F53mHYkJRDSqnNOwB6tbSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="59089270"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 21:48:01 -0700
+Message-ID: <4ff133f3-e541-4a0f-a72c-ce682720e6df@linux.intel.com>
+Date: Thu, 15 Aug 2024 12:47:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809070822.2835371-1-wenst@chromium.org> <b00273d65dfc4b48cca474784184c62b@manjaro.org>
- <CAGXv+5ERoH=jQGzo=mo2K-r3Meh2-5Kgvjf9Eh7bfNgcQYfWoA@mail.gmail.com>
-In-Reply-To: <CAGXv+5ERoH=jQGzo=mo2K-r3Meh2-5Kgvjf9Eh7bfNgcQYfWoA@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 15 Aug 2024 12:45:07 +0800
-Message-ID: <CAGXv+5GQixa389nudKk=U3Rh2jN8VuWQGKb9rsixhvj3KGFQDg@mail.gmail.com>
-Subject: Re: [PATCH v2] thermal/of: support thermal zones w/o trips subnode
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Icenowy Zheng <uwu@icenowy.me>, Mark Brown <broonie@kernel.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] iommu/vt-d: Add helper to flush caches for context
+ change
+To: Alex Williamson <alex.williamson@redhat.com>
+References: <20240702130839.108139-1-baolu.lu@linux.intel.com>
+ <20240702130839.108139-7-baolu.lu@linux.intel.com>
+ <20240814162726.5efe1a6e.alex.williamson@redhat.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240814162726.5efe1a6e.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 12:46=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> =
-wrote:
->
-> On Mon, Aug 12, 2024 at 9:22=E2=80=AFAM Dragan Simic <dsimic@manjaro.org>=
- wrote:
-> >
-> > Hello Chen-Yu,
-> >
-> > Thanks for the patch.  Please see one comment below.
-> >
-> > On 2024-08-09 09:08, Chen-Yu Tsai wrote:
-> > > From: Icenowy Zheng <uwu@icenowy.me>
-> > >
-> > > Although the current device tree binding of thermal zones require the
-> > > trips subnode, the binding in kernel v5.15 does not require it, and
-> > > many
-> > > device trees shipped with the kernel, for example,
-> > > allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64,
-> > > still
-> > > comply to the old binding and contain no trips subnode.
-> > >
-> > > Allow the code to successfully register thermal zones w/o trips subno=
-de
-> > > for DT binding compatibility now.
-> > >
-> > > Furtherly, the inconsistency between DTs and bindings should be
-> > > resolved
-> > > by either adding empty trips subnode or dropping the trips subnode
-> > > requirement.
-> > >
-> > > Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
-> > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> > > Reviewed-by: Mark Brown <broonie@kernel.org>
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > > Resurrecting this patch specifically for MediaTek MT8183 Kukui device=
-s.
-> > >
-> > > Changes since v1:
-> > > - set *ntrips at beginning of thermal_of_trips_init()
-> > > - Keep goto out_of_node_put in of_get_child_count(trips) =3D=3D 0 bra=
-nch
-> > > - Check return value of thermal_of_trips_init(), if it is -ENXIO, pri=
-nt
-> > >   warning and clear |trips| pointer
-> > > - Drop |mask| change, as the variable was removed
-> > >
-> > > I kept Mark's reviewed-by since the changes are more stylish than
-> > > functional.
-> > > ---
-> > >  drivers/thermal/thermal_of.c | 19 ++++++++++++-------
-> > >  1 file changed, 12 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/thermal/thermal_of.c
-> > > b/drivers/thermal/thermal_of.c
-> > > index aa34b6e82e26..f237e74c92fc 100644
-> > > --- a/drivers/thermal/thermal_of.c
-> > > +++ b/drivers/thermal/thermal_of.c
-> > > @@ -128,16 +128,17 @@ static struct thermal_trip
-> > > *thermal_of_trips_init(struct device_node *np, int *n
-> > >       struct device_node *trips, *trip;
-> > >       int ret, count;
-> > >
-> > > +     *ntrips =3D 0;
-> > >       trips =3D of_get_child_by_name(np, "trips");
-> > >       if (!trips) {
-> > > -             pr_err("Failed to find 'trips' node\n");
-> > > -             return ERR_PTR(-EINVAL);
-> > > +             pr_debug("Failed to find 'trips' node\n");
-> > > +             return ERR_PTR(-ENXIO);
-> > >       }
-> > >
-> > >       count =3D of_get_child_count(trips);
-> > >       if (!count) {
-> > > -             pr_err("No trip point defined\n");
-> > > -             ret =3D -EINVAL;
-> > > +             pr_debug("No trip point defined\n");
-> > > +             ret =3D -ENXIO;
-> > >               goto out_of_node_put;
-> > >       }
-> > >
-> > > @@ -162,7 +163,6 @@ static struct thermal_trip
-> > > *thermal_of_trips_init(struct device_node *np, int *n
-> > >
-> > >  out_kfree:
-> > >       kfree(tt);
-> > > -     *ntrips =3D 0;
-> > >  out_of_node_put:
-> > >       of_node_put(trips);
-> >
-> > It might be a bit cleaner to keep the "*ntrips =3D 0" assignment
-> > in the error handling path(s) only, with the positions of the goto
-> > labels adjusted a bit, and then assign -ENXIO to "ret" and jump
-> > to the right label when of_get_child_by_name(np, "trips") fails,
-> > instead of returning from there.
-> >
-> > If it's unclear what I'm talking about, please let me know and
-> > I'll send back the proposed hunk.
->
-> I think I understand: move "*ntrips =3D 0" to after of_node_put() in the
-> error path, and have the "!trips" branch jump to "out_of_node_put" as
-> well. That works since of_node_put() checks the pointer first.
->
-> I'll wait a bit and see if there are any more comments.
+On 2024/8/15 6:27, Alex Williamson wrote:
+> Hi Baolu,
 
-Actually, Krzysztof (+CC) is cleaning up this function using scoped
-variables. So it might actually make more sense to move "*ntrips =3D 0"
-to the top once the error path is completely removed.
+Hi Alex,
 
-ChenYu
+> This appears to be non-functional and breaks device assignment...
 
-> ChenYu
->
-> > > @@ -490,8 +490,13 @@ static struct thermal_zone_device
-> > > *thermal_of_zone_register(struct device_node *
-> > >
-> > >       trips =3D thermal_of_trips_init(np, &ntrips);
-> > >       if (IS_ERR(trips)) {
-> > > -             pr_err("Failed to find trip points for %pOFn id=3D%d\n"=
-, sensor, id);
-> > > -             return ERR_CAST(trips);
-> > > +             if (PTR_ERR(trips) !=3D -ENXIO) {
-> > > +                     pr_err("Failed to find trip points for %pOFn id=
-=3D%d\n", sensor, id);
-> > > +                     return ERR_CAST(trips);
-> > > +             }
-> > > +
-> > > +             pr_warn("Failed to find trip points for %pOFn id=3D%d\n=
-", sensor, id);
-> > > +             trips =3D NULL;
-> > >       }
-> > >
-> > >       ret =3D thermal_of_monitor_init(np, &delay, &pdelay);
+Yes. This is broken. Thanks for pointing it out.
+
+Perhaps I can fix it by passing domain id to the helper? Something like
+below:
+
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index 01002ae2a091..b3b295e60626 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -1152,7 +1152,7 @@ void cache_tag_flush_range_np(struct dmar_domain 
+*domain, unsigned long start,
+
+  void intel_context_flush_present(struct device_domain_info *info,
+  				 struct context_entry *context,
+-				 bool affect_domains);
++				 u16 did, bool affect_domains);
+
+  #ifdef CONFIG_INTEL_IOMMU_SVM
+  void intel_svm_check(struct intel_iommu *iommu);
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 159da629349c..34006b6e89eb 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1903,6 +1903,7 @@ static void domain_context_clear_one(struct 
+device_domain_info *info, u8 bus, u8
+  {
+  	struct intel_iommu *iommu = info->iommu;
+  	struct context_entry *context;
++	u16 did;
+
+  	spin_lock(&iommu->lock);
+  	context = iommu_context_addr(iommu, bus, devfn, 0);
+@@ -1911,10 +1912,11 @@ static void domain_context_clear_one(struct 
+device_domain_info *info, u8 bus, u8
+  		return;
+  	}
+
++	did = context_domain_id(context);
+  	context_clear_entry(context);
+  	__iommu_flush_cache(iommu, context, sizeof(*context));
+  	spin_unlock(&iommu->lock);
+-	intel_context_flush_present(info, context, true);
++	intel_context_flush_present(info, context, did, true);
+  }
+
+  static int domain_setup_first_level(struct intel_iommu *iommu,
+@@ -4077,6 +4079,7 @@ static int context_flip_pri(struct 
+device_domain_info *info, bool enable)
+  	struct intel_iommu *iommu = info->iommu;
+  	u8 bus = info->bus, devfn = info->devfn;
+  	struct context_entry *context;
++	u16 did;
+
+  	spin_lock(&iommu->lock);
+  	if (context_copied(iommu, bus, devfn)) {
+@@ -4089,6 +4092,7 @@ static int context_flip_pri(struct 
+device_domain_info *info, bool enable)
+  		spin_unlock(&iommu->lock);
+  		return -ENODEV;
+  	}
++	did = context_domain_id(context);
+
+  	if (enable)
+  		context_set_sm_pre(context);
+@@ -4097,7 +4101,7 @@ static int context_flip_pri(struct 
+device_domain_info *info, bool enable)
+
+  	if (!ecap_coherent(iommu->ecap))
+  		clflush_cache_range(context, sizeof(*context));
+-	intel_context_flush_present(info, context, true);
++	intel_context_flush_present(info, context, did, true);
+  	spin_unlock(&iommu->lock);
+
+  	return 0;
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 5792c817cefa..b51fc268dc84 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -683,6 +683,7 @@ static void device_pasid_table_teardown(struct 
+device *dev, u8 bus, u8 devfn)
+  	struct device_domain_info *info = dev_iommu_priv_get(dev);
+  	struct intel_iommu *iommu = info->iommu;
+  	struct context_entry *context;
++	u16 did;
+
+  	spin_lock(&iommu->lock);
+  	context = iommu_context_addr(iommu, bus, devfn, false);
+@@ -691,10 +692,11 @@ static void device_pasid_table_teardown(struct 
+device *dev, u8 bus, u8 devfn)
+  		return;
+  	}
+
++	did = context_domain_id(context);
+  	context_clear_entry(context);
+  	__iommu_flush_cache(iommu, context, sizeof(*context));
+  	spin_unlock(&iommu->lock);
+-	intel_context_flush_present(info, context, false);
++	intel_context_flush_present(info, context, did, false);
+  }
+
+  static int pci_pasid_table_teardown(struct pci_dev *pdev, u16 alias, 
+void *data)
+@@ -885,10 +887,9 @@ static void __context_flush_dev_iotlb(struct 
+device_domain_info *info)
+   */
+  void intel_context_flush_present(struct device_domain_info *info,
+  				 struct context_entry *context,
+-				 bool flush_domains)
++				 u16 did, bool flush_domains)
+  {
+  	struct intel_iommu *iommu = info->iommu;
+-	u16 did = context_domain_id(context);
+  	struct pasid_entry *pte;
+  	int i;
+
+Thanks,
+baolu
 
