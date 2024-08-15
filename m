@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-287672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798C0952B2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:27:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A828E952B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F422A1F2280F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:27:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F644B20EE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027601C4621;
-	Thu, 15 Aug 2024 08:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663C21C57A3;
+	Thu, 15 Aug 2024 08:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtkfRjju"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WZQoGLtV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B801917EB;
-	Thu, 15 Aug 2024 08:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B891917EB;
+	Thu, 15 Aug 2024 08:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723710757; cv=none; b=D2iDAMe1P+AcV4vdF+4bfswkXzY3ecwhY382k38IJDKiPuwoh1hWLKEyYRdGx2CheGy960p5RgZ4dmQ7TbroFPvlsD3+xNRl9QtwnWUwZsgbisGhuHvgNpTGkLsSBRM1N70S9vAlWmKgAJAKTVQJybZBB8bqiWokUPpVT3czfkY=
+	t=1723710765; cv=none; b=Pm2NJscvO8V4Bp6CIkNre3dL/2sb9ExdX2gQik1kstKgcNGCTqR47WuDanfj7ezylH+igpYa0ekZo0lJhKUyVizSzOMdJToxmN50a6kEmdDvMPpviEuttBT4mMjRjS8rRRpR1zYZPMceOBwZZh6kiAOhHRUn6riSCuS0OGVG+NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723710757; c=relaxed/simple;
-	bh=xun1LdYTUWtzLN4cSIGc4hdoJMNrVu5pXHbp3lcyMBQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IYcRI41FFPS4CI8gbx8Zju9H1acU1FaxYr8vcig51YxPlqYasqF30ZG5exUY30j8HhgsFNKgJOKTu0RIXBqjEkjsYi8KY0AHP9vKc1qU/mUc/WHam/tZMLvMHWNV4GWKypsW2MUrvkasSGgna0GpAGs9V4raiQMdcuWhH1GK86g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TtkfRjju; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso582746a12.2;
-        Thu, 15 Aug 2024 01:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723710755; x=1724315555; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3pBJi//YHmkr8AxsdwGbk98JC1Itydd98KDeHJ1bJCo=;
-        b=TtkfRjjumR8HORkEgnJ/eYsij1ArJfOh9X7o2wB6n+RMeBBPpkbt1DvpvX24aq9/TK
-         KTELBqMCxG69K12qQGZcn4A2S41lYNIjyQO0zaztgB5ausf29g+9AmLcjwIOJC7TvBS3
-         7A9SSvh2l+EEfP61IkvpzTcVoXaxjSjWuYYEEhQX2ajJThaNmsRV3/tzCbUhUhlZAk6E
-         517ppu89IT377t/JoiBe01JLuaF7wCIo/U3iEEXpgACDrJ+IGcCJNMa3S/AUIQcMLIDN
-         00R2/6FQKFGWWoWrF0aVY4Sa2C43p+My7YP0vQkuvd3Xh9dVuHCR0WlEZmn7hcM4xgbJ
-         IZDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723710755; x=1724315555;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3pBJi//YHmkr8AxsdwGbk98JC1Itydd98KDeHJ1bJCo=;
-        b=PX+Th3emp0fv4eCqfT9H+lsAYDKzQ41e7c3V1UiMYeXe6wwl2LSnbDxrOiWlUwk4RK
-         f2Ud+vt/P0nHZW3Gc8oWMk++P2ZA+qvIGeEMG6HqIE4J4rNoGDSqQNXZbTLUYg82hecU
-         q4DuulNwOsWU/RGcWYx2pW8xsFi6oMmKUdlAGL5zySUbzLuoxfdMxCtt9LRxuzMc/+nc
-         SVja119LSaOQwbJPrn6YSRf+RtlQcHP/9vNGPFLkZzutr9tRNf/jS2vLB4Nz+lHNJ4sK
-         gu2OcLY++X2mkVxXTXzAsUB9kqUhKNd68MJMHTb6Y2DZE+lYGOOHul8KVDqxxbBDaed9
-         FZsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNyG/0ND4QJcXh3l0doKVKYWInRIqPXsTTlR/nWP2jzvHNr76pCXjAMVevH496Eidv6Va0mMdSPHNwQ3ib1uXL97Src970aLXHIP4v
-X-Gm-Message-State: AOJu0YzBP3q45ggfxcslosHo6p+Swx1Am+UezmZFyT9ibfmYZZqNk1FL
-	MVBwuZRljC6Yf1I85FGuX0ifyS7riabvg0zO96WO9z76mJ8x87zlNc8wrplYoDA=
-X-Google-Smtp-Source: AGHT+IFD1hEZXiizLdWNBll/TAZAGXnfLGlz0+6nao9eB1Wq1KPOZWKiI/lstbY81gZHP4DhSQ4Svw==
-X-Received: by 2002:a17:90a:e20d:b0:2c9:7611:e15d with SMTP id 98e67ed59e1d1-2d3aaabe1b5mr5942810a91.20.1723710755187;
-        Thu, 15 Aug 2024 01:32:35 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3c8637145sm859911a91.10.2024.08.15.01.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 01:32:34 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: paul@paul-moore.com,
-	stephen.smalley.work@gmail.com,
-	omosnace@redhat.com
-Cc: selinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: selinux: support IPPROTO_SMC in socket_type_to_security_class()
-Date: Thu, 15 Aug 2024 17:32:29 +0900
-Message-Id: <20240815083229.42778-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723710765; c=relaxed/simple;
+	bh=+7FufQy5uUSO+rNEadZg8a0b3eY3z3EEqg/3AEjyNT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdtcIbTYUApTshq6hlsp+GwWPesnyfv8zuoFQ2C0sgHzwl1/bjC+h1XPFBn+NrSCLBFLixUozoocFXQ+OOvIsz6e3iHYi+rcFh49DB1DaiQIoObD5BxUyH2opZ689OktBrUof8Z/xdCvdxLYPbrNAOQjJ+09HdCV1Ryjk4HXAKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WZQoGLtV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B7CC32786;
+	Thu, 15 Aug 2024 08:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723710765;
+	bh=+7FufQy5uUSO+rNEadZg8a0b3eY3z3EEqg/3AEjyNT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WZQoGLtVpvdd3N+nBuc9TebJy0eGxoVmPF1XY98qWJDzpZ16HSHIaaINe6BFr6Zoc
+	 FqpuOMPRdVZQPwI/qnyOhtv+QbKyypmEHzN5cGO8rFb+xY0W5YO7urPoUhFYbdwrAE
+	 /22W9fOQGxJKyCj6XwXO4JSqHF3YCS42BQCBrv10=
+Date: Thu, 15 Aug 2024 10:32:42 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Erpeng Xu <xuerpeng@uniontech.com>
+Cc: stable@vger.kernel.org, sashal@kernel.org, shyjumon.n@intel.com,
+	kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-kernel@vger.kernel.org, jonathan.derrick@intel.com,
+	wangyuli@uniontech.com
+Subject: Re: [PATCH 4.19] nvme/pci: Add sleep quirk for Samsung and Toshiba
+ drives
+Message-ID: <2024081527-barbell-game-545a@gregkh>
+References: <87182CEADE011558+20240731075113.51089-1-xuerpeng@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87182CEADE011558+20240731075113.51089-1-xuerpeng@uniontech.com>
 
-IPPROTO_SMC feature has been added to net/smc. It is now possible to 
-create smc sockets in the following way:
+On Wed, Jul 31, 2024 at 03:50:46PM +0800, Erpeng Xu wrote:
+> From: Shyjumon N <shyjumon.n@intel.com>
+> 
+> commit 1fae37accfc5872af3905d4ba71dc6ab15829be7 upstream
+> 
+> The Samsung SSD SM981/PM981 and Toshiba SSD KBG40ZNT256G on the Lenovo
+> C640 platform experience runtime resume issues when the SSDs are kept in
+> sleep/suspend mode for long time.
+> 
+> This patch applies the 'Simple Suspend' quirk to these configurations.
+> With this patch, the issue had not been observed in a 1+ day test.
+> 
+> Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Shyjumon N <shyjumon.n@intel.com>
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> Signed-off-by: Erpeng Xu <xuerpeng@uniontech.com>
+> ---
+>  drivers/nvme/host/pci.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 9c80f9f08149..b0434b687b17 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2747,6 +2747,18 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
+>  		    (dmi_match(DMI_BOARD_NAME, "PRIME B350M-A") ||
+>  		     dmi_match(DMI_BOARD_NAME, "PRIME Z370-A")))
+>  			return NVME_QUIRK_NO_APST;
+> +	} else if ((pdev->vendor == 0x144d && (pdev->device == 0xa801 ||
+> +		    pdev->device == 0xa808 || pdev->device == 0xa809)) ||
+> +		   (pdev->vendor == 0x1e0f && pdev->device == 0x0001)) {
+> +		/*
+> +		 * Forcing to use host managed nvme power settings for
+> +		 * lowest idle power with quick resume latency on
+> +		 * Samsung and Toshiba SSDs based on suspend behavior
+> +		 * on Coffee Lake board for LENOVO C640
+> +		 */
+> +		if ((dmi_match(DMI_BOARD_VENDOR, "LENOVO")) &&
+> +		     dmi_match(DMI_BOARD_NAME, "LNVNB161216"))
+> +			return NVME_QUIRK_SIMPLE_SUSPEND;
+>  	}
+>  
 
-  /* create v4 smc sock */
-  v4 = socket(AF_INET, SOCK_STREAM, IPPROTO_SMC);
+This breaks the build, how did you test this?
 
-  /* create v6 smc sock */
-  v6 = socket(AF_INET6, SOCK_STREAM, IPPROTO_SMC);
+thanks,
 
-Therefore, we need to add code to support IPPROTO_SMC in 
-socket_type_to_security_class().
-
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- security/selinux/hooks.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index bfa61e005aac..36f951f0c574 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1176,6 +1176,8 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
- 				return SECCLASS_TCP_SOCKET;
- 			else if (extsockclass && protocol == IPPROTO_SCTP)
- 				return SECCLASS_SCTP_SOCKET;
-+			else if (extsockclass && protocol == IPPROTO_SMC)
-+				return SECCLASS_SMC_SOCKET;
- 			else
- 				return SECCLASS_RAWIP_SOCKET;
- 		case SOCK_DGRAM:
---
+greg k-h
 
