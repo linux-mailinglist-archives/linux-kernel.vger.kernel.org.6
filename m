@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-288482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA52953A9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:08:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE4A953A98
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E6ABB2569F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:08:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 500C2B25567
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1372145FFE;
-	Thu, 15 Aug 2024 19:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4734613A268;
+	Thu, 15 Aug 2024 19:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dtdNWwRY"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="EhpxBra6"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A05770FB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C91770FB;
+	Thu, 15 Aug 2024 19:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723748896; cv=none; b=jkkgkkweQHmCJmhgLepIVEMHhfuIINiWKulAHso2ihZhX8FN0JWLgi2/xN+yWWZ6HFOFFJUXsn2xuipFAKB0qI6QFwRaQv6bS8tEDQntukRfA2MuY2l4TRZyo+864GqejB8T94eJ9EQ//DyYTtUaRWNLfVcR+vkIPHjJorcnvus=
+	t=1723748891; cv=none; b=WVmusEdelpGGQFZS+lcWF63l9B4P4KnNG/IZ1I/sZM2ajdiCCx+PxJRejtghMMAQfi1nMfFQlkkUGOF/0ra2kXsC7DbJnwd3dRVV91DAto6Sl+8Ti/afsC6qFC9hWT6Wn5dCaVo9UUqHOc3E9L6ADa8oBnJL6xE38crMBzTyvcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723748896; c=relaxed/simple;
-	bh=0ozggr77TSIkab1vrhgR73woDMghC/BCCc6vgLBxdr0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WPywvbfHsADmLwAJhqBhjo3BRIHdlDOUUZI8hBHFATizIkCLVx/a3JY9ySrXfdB211gLTXMYs28lYxgvYcOoxoYy/Q6LgVsMZd4RF055FCQi8l6DED1bamcv8Ny4TxaLIkzJsOU3J76pyIZ+x4aSkHsCMEOLZu5sX7mLQ7VxUUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dtdNWwRY; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723748887; x=1724008087;
-	bh=0ozggr77TSIkab1vrhgR73woDMghC/BCCc6vgLBxdr0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=dtdNWwRYXesRJQkZUlaNUCVEPKgakblWm1jHWX0cJLCJP8Pd7uzUZ3prpdRAED0Zy
-	 f/2WaNfMPp4/WTYtRtsJ9RmHHjJayky8Jpthcn4rYkE9hvRcA2MRxSeIUHPG05lOSu
-	 mdjtKAEgBfRVl6BEu2/6YuNUb6SvkNdysF6gYUCMQkYlooWzpK9nttRWUU20Rf4cTj
-	 CFVm/Vh9enF1j66a/lAuahAY3z8FHO8ozaGOzL7cvYqzrpMCOeQZFN9Io81gY91prq
-	 qXCT5wXDqWnc9AXbQVFWLAULnJVTlhqg66Mww1rygp9MERXZwt0FHhH3XHCUS2gHNb
-	 x1RWnilrdwRkg==
-Date: Thu, 15 Aug 2024 19:08:02 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
-Message-ID: <c693cfad-f3e4-48e8-820c-16bc3d9f46ab@proton.me>
-In-Reply-To: <Zr4PSuIOpiE-8OkJ@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-7-dakr@kernel.org> <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me> <Zr0r6sSFMSQIpHEX@cassiopeiae> <Zr072oSej9KIc1S6@cassiopeiae> <5dfe8bae-2c1e-47d4-9fb4-373b7d714c4f@proton.me> <Zr30pNwc5aanRaqj@cassiopeiae> <01a46c6d-0107-4455-8c87-af43426752ff@proton.me> <Zr4PSuIOpiE-8OkJ@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 52564aee61cdea9f9328fff33fb3ea771ee2a636
+	s=arc-20240116; t=1723748891; c=relaxed/simple;
+	bh=tEGEgIcRKXDTkmdRvTVw2CvUW7+3ffACZCr/9mvjZqo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=MfLmPVBKtiGH6ZTtx0b04HN+IlFlRv+jGhX1lQamDc7Bq3mZYvdA659fh0gvLQpqwBZ8VCEsUI7lwTzg6DnwXLIyT8+oqomdxCgqU7c3th9T9Q86tHDUnfKX6+cdRbDdgKwwDscLQu4LqusfGsc9lQjU0y/ONY9vFPrXVRbSf90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=EhpxBra6; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1723748890; x=1755284890;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=tEGEgIcRKXDTkmdRvTVw2CvUW7+3ffACZCr/9mvjZqo=;
+  b=EhpxBra6vw31bbYRBZ2ZgRjliKc0sS7PH0jjNW7n3BoOuEo9VjA28r0z
+   N7xeEfoPOiCk4dndAit/tUD7s4zc1Hm6JseK2IFT9bf2bOzVB4RKivhqs
+   0/iS2Nn4XhdPGKNiFSgohT3At1nfrXKPetHl1BHQ9PLlcm/6nLtm78Z9s
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.10,149,1719878400"; 
+   d="scan'208";a="115649481"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 19:08:09 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:21068]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.24.187:2525] with esmtp (Farcaster)
+ id 7c28823e-4999-43b1-ba3b-b0e1f64f96e0; Thu, 15 Aug 2024 19:08:09 +0000 (UTC)
+X-Farcaster-Flow-ID: 7c28823e-4999-43b1-ba3b-b0e1f64f96e0
+Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 15 Aug 2024 19:08:07 +0000
+Received: from [192.168.11.28] (10.106.101.5) by EX19D003UWC002.ant.amazon.com
+ (10.13.138.169) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Thu, 15 Aug 2024
+ 19:08:06 +0000
+Message-ID: <3ea89d7f-fc29-4c80-a123-94673e526ca5@amazon.com>
+Date: Thu, 15 Aug 2024 12:08:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 3/4] mm: guest_memfd: Add option to remove guest
+ private memory from direct map
+From: "Manwaring, Derek" <derekmn@amazon.com>
+To: David Hildenbrand <david@redhat.com>, Elliot Berman
+	<quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, "Paolo
+ Bonzini" <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>,
+	"Fuad Tabba" <tabba@google.com>, Patrick Roy <roypat@amazon.co.uk>,
+	<qperret@google.com>, Ackerley Tng <ackerleytng@google.com>
+CC: <linux-coco@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <kvm@vger.kernel.org>,
+	Alexander Graf <graf@amazon.de>, Moritz Lipp <mlipp@amazon.at>, "Claudio
+ Canella" <canellac@amazon.at>
+References: <20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com>
+ <20240805-guest-memfd-lib-v1-3-e5a29a4ff5d7@quicinc.com>
+ <c55fc93d-270b-4b11-9b38-b54f350ea6c9@redhat.com>
+ <396fb134-f43e-4263-99a8-cfcef82bfd99@amazon.com>
+Content-Language: en-US
+In-Reply-To: <396fb134-f43e-4263-99a8-cfcef82bfd99@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
+ EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-On 15.08.24 16:23, Danilo Krummrich wrote:
-> On Thu, Aug 15, 2024 at 01:44:27PM +0000, Benno Lossin wrote:
->> On 15.08.24 14:29, Danilo Krummrich wrote:
->>> On Thu, Aug 15, 2024 at 06:48:19AM +0000, Benno Lossin wrote:
->>>> On 15.08.24 01:20, Danilo Krummrich wrote:
->>>>> On Thu, Aug 15, 2024 at 12:13:06AM +0200, Danilo Krummrich wrote:
->>>>>>> How difficult will it be to support this? (it is a weird requiremen=
-t,
->>>>>>> but I dislike just returning an error...)
->>>>>>
->>>>>> It's not difficult to support at all. But it requires a C API taking=
- an
->>>>>> alignment argument (same for `KVmalloc`).
->>>>
->>>> I see, that's good to know.
->>>>
->>>>>> Coming up with a vrealloc_aligned() is rather trivial. kvrealloc_ali=
-gned() would
->>>>>> be a bit weird though, because the alignment argument could only be =
-really
->>>>>> honored if we run into the vrealloc() case. For the krealloc() case =
-it'd still
->>>>>> depend on the bucket size that is selected for the requested size.
->>>>
->>>> Yeah... Maybe some more logic on the Rust side can help with that.
->>>
->>> Only if we reimplement `KVmalloc` in Rust, However, there are quite som=
-e special
->>> cases in __kvmalloc_node_noprof(), i.e. fixup page flags, sanity check =
-the size
->>> on kmalloc failure, fail on certain page flags, etc.
->>>
->>> I don't really want to duplicate this code, unless we absolutely have t=
-o.
->>
->> I am under the (probably wrong) impression that kvmalloc has some size
->> check and selects vmalloc or kmalloc depending on that.
->=20
-> Basically, yes. But as mentioned above, there are quite some corner cases=
- [1].
->=20
->> I think that we
->> could check the size and if it is going to allocate via kmalloc, then we
->> adjust the size for alignment as usual
->=20
-> We don't need this adjustment any longer, see commit ad59baa31695 ("slab,=
- rust:
-> extend kmalloc() alignment guarantees to remove Rust padding").
->=20
->> and if it is going to select
->> vmalloc, then we can just pass the alignment (if the vmalloc alignment
->> patch is done first).
->=20
-> Yeah, but as mentioned, I'd prefer to do this in C, such that we don't ne=
-ed to
-> open code everything the C code already does.
->=20
-> [1] https://elixir.bootlin.com/linux/v6.11-rc3/source/mm/util.c#L628
+On 2024-08-07 17:16-0700 Derek Manwaring wrote:
+> All that said, we're also dependent on hardware not being subject to
+> L1TF-style issues for the currently proposed non-CoCo method to be
+> effective. We're simply clearing the Present bit while the physmap PTE
+> still points to the guest physical page.
 
-I see, then it's probably better to just add an align parameter variant
-on the C side. Instead of rebuilding it in Rust.
+I was wrong here. The set_direct_map_invalid_noflush implementation
+moves through __change_page_attr and pfn_pte, eventually arriving at
+flip_protnone_guard where the PFN is inverted & thus no longer valid for
+pages marked not present. So we do benefit from that prior work's extra
+protection against L1TF.
 
----
-Cheers,
-Benno
+Thank you for finding this, Patrick.
 
+Derek
 
