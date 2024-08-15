@@ -1,81 +1,95 @@
-Return-Path: <linux-kernel+bounces-288263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B5F95380F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8C4953813
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB74289012
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F05A2895CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54511B4C2D;
-	Thu, 15 Aug 2024 16:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41DA1B3F03;
+	Thu, 15 Aug 2024 16:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e7EwOXol"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013069.outbound.protection.outlook.com [52.101.67.69])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FxyNfmUE"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06701B14E9;
-	Thu, 15 Aug 2024 16:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7619A4C69;
+	Thu, 15 Aug 2024 16:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.79
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723738474; cv=fail; b=VE5lVQDdIplUOwMTghBJQATlPSAArtiV0oCTkhjFhIclW8kQ4aeBpampKCmH1d79OkaATDgTs6U8yuRojuLHPM+ZdGWIVamMVNJE221v2Fo4nVn8vlJvlwpr+yn/SQBe2YYLKMPkN7r7Xj3uCKRCeHKepjbqtXcGV8SOui9mq2Q=
+	t=1723738572; cv=fail; b=thvLmooktNN/uX8NneXI0wwpAKG0/Pq1gESIifaAA+vJ38rprh/AsWeFJWIzXhxldlCzZpUy6rXRRM7a+E9ox+3KAwNlulN6nclGtO9ldiqNFXQZ+GVSmCoV82+4zi07TfEfsrWOY/h8CSS5qroH1GUnvw1OBaIpXmnfwmcBkDI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723738474; c=relaxed/simple;
-	bh=rLcuRVgP6KVe0A4F0dSwlfY/ZNSYE8+wjefLa9nvDqg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=IVAJRYq8VgFIBcBW0oZb4i4maeMpjK5tPHYNafeHKvg3MtYlPSKzs3bv4G9AMRtjU2XvuIEk0UAaZEJRdxqyR9Nzjf4nN2FO26NJSMd+3LQ8bBp3Oqr2rcgTx6nV8HDKvQLXzHsDa6uuxR5d7IeGHK3peYThaY74GiDKgZyjI+k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e7EwOXol; arc=fail smtp.client-ip=52.101.67.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1723738572; c=relaxed/simple;
+	bh=dbZAgKmJ5EhF3H4s5kYw5jbz9VTY/kYll8cGDcr90io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=b/phxwjddvbZUfW3lZP9k0IUBvnSPBS4C0OkJt3BNpFCUN5Kl5jul3YZy1kb2ctf4+4S86o/0Dgdz7yOjarBsO8xLB8jCcDmHvVH2Carafyh28e8iJYhTBaN19j2FwoqOxoCIcMjGrbQ/X8x0zjJh96s2C6dnebntLEvENiiwys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FxyNfmUE; arc=fail smtp.client-ip=40.107.94.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZT104OAGcBKJTIrN2i7/GEh91s4pI3blkszJ728SdSG5yzlbRk2EWhN4Rkfy7xFZZpw3haSyuGDjKRF/yBYii6qxUKWMZXWgdTRgMIn3U/IfgFgPvWPsR642ZYAGq4T2J9ofw74MVlR32bW5/BgNPjsW/3S4MB514Wk5iEYBrqDOElwc4YzQX6vaJJImO+vCvijip8LitAJ+j/cQZ0Kac1Tav0iXpd2WvejLn1YzPSVLEV9saCstVLlu5poedXhmXzZhqkDdkG8nNC0P0At3cH+RkEuRBRnCkWxnWD2yeU+WzYbrTQQXQZ57xhCDs8VSZ9SCJ3E46vO8CFp8MuK+3A==
+ b=dgKWqcHn4rb5aYJE3ST07el2pRVUcrslU3rIZKbYUgPRAiF5yJsrNsdQpAx0zmyPvcico9D4nKtG8EdWD9KjF7nQYoDiIvCbyi63SHq8mgWnE8VSs/qGXSOn80l9bL4NgSrmvwAmSslg5rzMWXG/DcA55KAElOOuZwP4viOE4vPeQq4/Wm3jqvTvknGSZy4dbHoy4U3Ma2qXWOEZKycYXeBVs7bSxbiUZG3n+rr7Up4V63RlwA0gta8MlXcclPXaytN5twU3hoAeGTR5GeHGwF/txzRbhhMv8spVrGII434oM3sGMX0UrIV4V41PyyLRSkK2Fvjxwayx90I4LIZInQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SYkEvtccROt7ZSJbNtbLZ+ae6v9admwbp/XsSF6Wt2A=;
- b=hVB0Mz0R83gWbXvabblcs4HFfswzLTl5gLOSUTKety4uBolgdwEJdvvzi/FLxalK1Y88p5FrH0FsDGZosjbvgbKPUPt8m+sZW2BLaHWRkdHmgSd3gRt9Ezu/g0ju7piVjpjNWHGBHtTaqdCCV0cUZEizsn9reO07dVi8wlVSsey3bZH544A/IDBbfws7kn483Xlee1aYw/NIPeBhNY5/QMkxFsU/QZdKw6zMn85ihAQwXOOOr3twzPIMtXLCF3X3kVCrv+RrdpwTP+CrQEPEMrXEsOZ2yuQBndSG8FlZoPmZbYTRoQSrFJS0a/oLKkVNxexG+OY05wltzcRwg1ZIrw==
+ bh=6QI0y3QN1FoFOi6nBdUnsPUccHgXCD+tFqJGoFQrIGE=;
+ b=CwImpqG6wKzp5Ah4egGN/OBeju/NCUYI3PlUYHU8rG1OgqTRtY/rwt+xQz5A1GPmkQ2LnfjQDAoXNSCjIf7xiaMRKUa2d3JkiXeBc7lIWKksx/EDgJ3WBMcxtHYOjSoPvQuskGWWuPf97IndcWBX/4jfeL/63/WxteWGkpJ4UTn6jwoD8Hl07g9TdbnxSGMuNO6M8wq2I9g6NKyZZb1G2YXzZN7VtGjXvkDGYxQL53IW1STSAfBKIdrSPLbWDmBujcS6qKwOCilgs0z5BNQLaiBReixrsIplXwndrjHZJjHtTiYFE9TrYVc3YAZix+lQ6cB+vxGhuBl4ukbJN/QvVQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SYkEvtccROt7ZSJbNtbLZ+ae6v9admwbp/XsSF6Wt2A=;
- b=e7EwOXolzzjY1umOCcP12rDpeEbhImCUPcWWdnxDQkWHJt0DmXmrn7pjx6y3eK+ItHWg8Oy1CR0vTk/VkLYB7TRLHL7iJqly4Dws2ueY+ajVZM2Hw5aZ9JlYU+twVmviiJ6tvVDk+OiL600dIgCbG2tA+urORIW3tQYQEmZESs4X9gPZW17d6ZN627KbK5FIP3CGXHKFhJraNsOSjrzACGxQ5IJBA9N6IqGG+Grq087srQWHtDSYBy8s1UIMIZ5Km6GnsqZEQ1POMTVLfIMRRszhykAlheeSPZloPK5mS8pr4IH5YC29Ia95h1i6bPQIidLvfSvAA42cNac3NsOOVw==
+ bh=6QI0y3QN1FoFOi6nBdUnsPUccHgXCD+tFqJGoFQrIGE=;
+ b=FxyNfmUEM2fn2ME1S55JHELmywA6lBr+hgWtyZyYyqyKlQ90eTrUxv9qiy68vMVKwCcWV1qftw/ecpse4ZPKYruN0eSL9AAE8pXW/1CRhf0tTf2zwgfZFtN9sf6KUAqtJSVSBsZ70rMcx7UvxOTMuUakkAC2Ub/Cz3RFqD5gexaBkd2mRrkNKt5Ju5UblxdbWttW46OIqcfUbkRUdO0Tf/CA9n/MwxAoI/ij/9ZiPtEf4z8k1mk9YAZQVhGdpeQWcT6Gt9YFw8ALOfZGUDw9uZpOVo82QHJhSGuPTRgn27tXiCRpojOxIvEbWKLfZfpxpIvLmdIx8VzCCQVDC6In1Q==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB9661.eurprd04.prod.outlook.com (2603:10a6:102:273::21) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10)
+ by SN7PR12MB6888.namprd12.prod.outlook.com (2603:10b6:806:260::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.17; Thu, 15 Aug
- 2024 16:14:27 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
- 16:14:27 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Hasemeyer <markhas@chromium.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Marek Vasut <marex@denx.de>,
-	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v2 1/1] dt-bindings: input: touchscreen: convert ads7846.txt to yaml
-Date: Thu, 15 Aug 2024 12:14:07 -0400
-Message-Id: <20240815161413.4182796-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SA0PR11CA0134.namprd11.prod.outlook.com
- (2603:10b6:806:131::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
+ 2024 16:16:06 +0000
+Received: from CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8]) by CH3PR12MB7763.namprd12.prod.outlook.com
+ ([fe80::8b63:dd80:c182:4ce8%3]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
+ 16:16:06 +0000
+Date: Thu, 15 Aug 2024 13:16:03 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	David Hildenbrand <david@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 09/19] mm: New follow_pfnmap API
+Message-ID: <20240815161603.GH2032816@nvidia.com>
+References: <20240809160909.1023470-1-peterx@redhat.com>
+ <20240809160909.1023470-10-peterx@redhat.com>
+ <20240814131954.GK2032816@nvidia.com>
+ <Zrz2b82-Z31h4Suy@x1n>
+ <20240814221441.GB2032816@nvidia.com>
+ <Zr4hs8AGbPRlieY4@x1n>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr4hs8AGbPRlieY4@x1n>
+X-ClientProxiedBy: MN2PR19CA0006.namprd19.prod.outlook.com
+ (2603:10b6:208:178::19) To CH3PR12MB7763.namprd12.prod.outlook.com
+ (2603:10b6:610:145::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,411 +97,213 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB9661:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c7ad142-c2b0-4bb8-d623-08dcbd455622
+X-MS-TrafficTypeDiagnostic: CH3PR12MB7763:EE_|SN7PR12MB6888:EE_
+X-MS-Office365-Filtering-Correlation-Id: 109749ac-901b-4930-1eda-08dcbd4590dd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|921020|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O3fsuyeIpPktIu/OUbDPgEgQSRPP8sEMvQKV6VTmsbH8cMzwtdT+EwOpAdkP?=
- =?us-ascii?Q?qdDp5y9xeRfg9jp1a+p+rRJYqHF67R4pU+y0+PbssCcayRdpN/u4cg20eMdu?=
- =?us-ascii?Q?INoURqke6xPHj5VbDMBvwOZDaeI727tl6QCB3cNMHXWRoDe5kjTvUFAcLfYO?=
- =?us-ascii?Q?G78n7DdJLgeOfAhfs9zYcN9icCRViS51v5F4vOcZkxDr24LXdRmt/I0A0qst?=
- =?us-ascii?Q?CvYlb5aHc9lwPAt7A75L80X/v7ciu+sG94JPioUgSjcSq3Kfh7W3wXFjnv9V?=
- =?us-ascii?Q?3cM3w0KUE/R25QRExQnJjJ4yuDGiuOOVUwhrUzvi0ppgD0RH2CAaw8LiFsq5?=
- =?us-ascii?Q?/Y4mCdmTt/4fjqDZZbOlDjy3zXmpd9i4Y9hRZAsU59q/8bS6UyMFBI5XZwAI?=
- =?us-ascii?Q?jQafgPOQKtR62q59pKrqQsVeqqFZRnzBd4xR6C8hfOrwthC8DcFPqtaQKiWs?=
- =?us-ascii?Q?DFK2cFaviz43aHPPJeFCMM3BObwyZjjCfa0+iHDuP1nYBWb/WBDhsNwAHE6U?=
- =?us-ascii?Q?W4ORkiZ2+EurtD0m8KZXAPTAs1UB8vJPvt/rgKmYAhmGP+qIx+O3y/mjSmu8?=
- =?us-ascii?Q?DQKDJRtKAmRCrqc1wBw+MTGyz3B74MX3SvbaIBqyUXo4GeV7OA6L+4DGx/qs?=
- =?us-ascii?Q?+Zn/2LDkbhOEOYCXKPE8Pm9A9YJtJFiCTkOYUbfRYromLWjyhwfDLTBWvACl?=
- =?us-ascii?Q?tpVHQG1/xCjfDxI3PWH9+EYAaqYucnxMO8m0yPjtZyQu8n+nvc92IRFwQCZ2?=
- =?us-ascii?Q?P5HFm12FugBGkds5/SJhAGZRVROlk7hsptmmP7Km97tbiEmFJlhjOMipKylQ?=
- =?us-ascii?Q?QmfMcc0xF8/VX6D+RXxNiqrhwuwaRAO7W3dRRGsyYQUZcTnoNJ/Ta+FOQDU0?=
- =?us-ascii?Q?doON6MrGFCiRjPWcIuNH2sZFZv8Bf1Z1o5+joS5kKHNYkzjx6bbAlHLtDC06?=
- =?us-ascii?Q?hm685IJqCUzgwT2UwBTf6vzhGF/sLovtjn4cRaV3CUMjP3EAfAoG8hNoU1Bj?=
- =?us-ascii?Q?2ENnvL2tiljWnltqJGRTm30NpO36AuXkpWvmLtEuuHJzoziQZ+nSRm7EoY/I?=
- =?us-ascii?Q?vAw469Gd7Sys0r2fzDjqKgq5XOSKi9fypOLxWeYVfDnnfEfWvhvE73YDGlmx?=
- =?us-ascii?Q?Ccr4P4LO2ppRUHdbJVbNtHdym82AcZFSkXiutkUBPFBRHiJWHc+jLaC0lkMO?=
- =?us-ascii?Q?PScfM65xigX6n/GzumE8nAdTVznyeEEb+uM+zcVDId8zWAivfBJeFk539j1m?=
- =?us-ascii?Q?sxBYmDcbVdH7IbkrSAnpHt5HAiUCHpV2QOzaX3QS8RJaOmqlH4k7p3hV22+w?=
- =?us-ascii?Q?UEVgcx/PLHizukPsuYT2nZmEPrJRDP5xgTMZyZcBb+g23eKK6DMHMQHC04ET?=
- =?us-ascii?Q?Xg/zlyY=3D?=
+	=?us-ascii?Q?XEdMPK8opI9nOoKv86dWERAXdrR6BviD6JGYsSLFMkh8B4Gns+qTcXCenAwa?=
+ =?us-ascii?Q?/Tcw1jurqVmuXGQALftls0/nRxG/1XC5Ag2Zzz0OXh1tkd0EOAzJPKGBez/C?=
+ =?us-ascii?Q?ODEBHSzitC4Af41ZLQFfwpe82MsQ3zXFO71BEZQtqNbvmMeBs0fRQu7csFhM?=
+ =?us-ascii?Q?XZD+pEkEiZk02BtFQF8zEw8x1G5o8YDRUn2NGjHMfLDPLLmHzC9dO56GluXr?=
+ =?us-ascii?Q?xuBRoc5UZc8wMaczB0xDHJYFBVm0w0X5tfaqcZzdAgDOl9Rq8vkpL86vmkJN?=
+ =?us-ascii?Q?qRgThQxCwhaGBnvyk2anDYdvSA7MDGYzpwJvktOlTn7MTbxf8VaHKokz3wCd?=
+ =?us-ascii?Q?XW76K1MY4IjDiez/e15pXTjvzDT3MsnyJBFV31e7Y1W+qQDuT53hjaLq+YNR?=
+ =?us-ascii?Q?IKFpP23era4m5KG5pcBSBM+ra9u6VQc7SBBeTKN2U3onxdQCBXHb+Nu/uVQK?=
+ =?us-ascii?Q?1pJ0I1PWoAZJY5QUHnpHPhVbS8hCwUh4JRpyhwc9cMAsDpx053so59jFLmBN?=
+ =?us-ascii?Q?G45le+gcBzwCMKmgx3GLH61JFB7dNwKmWBuKuaantVNxIrMtujOS//IfJkZR?=
+ =?us-ascii?Q?KJVjDRMzQ1tnTZ9Ba1KU2eGCniJq9rekBdEYZq4OvOnFhnUKm1P9XKiH8alu?=
+ =?us-ascii?Q?QaQ9yiRBk4z+CvLysLb1BJRl7j2JRuXkK471XdCh4xVPn2kCUQjqbEq5runx?=
+ =?us-ascii?Q?r2j1widlddoPBWQr2GlHhFmXSn7vCxtIV/jQwSWy8N3m+1Ig7qPD5RxRcMnC?=
+ =?us-ascii?Q?s38eKAAnkEa1WAOkh0WINO9NF9v4XOvmx0Ry4n/nHjr/SudLBCoDDgyRLni8?=
+ =?us-ascii?Q?fNSHo7cF+jDifzpLh9EIxnkMkxeXoONOKEFYU2KlmLo0IsPDMcEXYK0H65rf?=
+ =?us-ascii?Q?D+O9lIMnIJBRDB4gPskM0+qg3frkwl9o+IU48Eu3wpQzVdyTTbOgUf/XTD4b?=
+ =?us-ascii?Q?czaPT0DQBiAxvSNLWYwG52qL3m3IyiRsrcIr3zutwT4XOS41YYE/zoPA5F9F?=
+ =?us-ascii?Q?7qOkzj9DkWpRQKfUfrRg9AlwvOFdx3aYb/oM33f4umJd1wKKXWQkDSjZvFcC?=
+ =?us-ascii?Q?ZTN0pwaOOR+EhMu2aGF+/hgaJbpIEZII7iY1nPMNAGe16//YRqUsE3mzwkd5?=
+ =?us-ascii?Q?BtDcUCWM0UMCY4dQeFJ3iQjEcy7CMaZCJ8BsG59zl7PK8yxDCNTuRdeA85/r?=
+ =?us-ascii?Q?2TXpGIKXK3sKw4l8lBAg0cwW1N3xo1dZ2RIxgt0Yaf2njyOvZsPd6uC3Ff9Q?=
+ =?us-ascii?Q?t8tLsiF8M1NB15shpXBPCcNC7KO24FxpLDx4o9CJCSgfDUpGZ8cTs1SVtl7o?=
+ =?us-ascii?Q?Ov1RZ/mcjjhxTuCHl9bhQYQdx9sggkQzwpUwhKXBHr2SWg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7763.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3JW6/BkC/+DJ9/KpF7J6rdtKCG0ICCtVso4Mo3BWeFQtNhxXsAul9BY7i0XR?=
- =?us-ascii?Q?kMSvG3PDry/bURtkWPcYrw0ka/Tw8fdPgxpRkZXBeMRoVzOHrjWAB++Z88A3?=
- =?us-ascii?Q?PHVIyq1JsZSU5zybEFoYeojEQZZNd/C1z8sAFvwE3FUpGnIElkadGGQ5lRfs?=
- =?us-ascii?Q?000wFlfPwztSQ863zW1Zyd1eE36m5et/KQLBVD8pyrbNGcRoKl+wLZobQp9K?=
- =?us-ascii?Q?0FrUA0zdtndbMDvYW0soeqPVCj16iSBgApsG+1Li530B3PF3Qnb1VuQHp+jr?=
- =?us-ascii?Q?NAgXAv6rqFt2UXsCJppBwSYIlpPycYnS4wy3LTyjsC+tdM6qcc8c9aeCCZgZ?=
- =?us-ascii?Q?vOxRZNk4Wf90tzoamy3LzddDuDxINtQ9HOJZJMfk2kpWOXcx7dxNWICOSDgL?=
- =?us-ascii?Q?2jN+PpZ746uyl5imV021h3n8sO9FKJox+3zCu/8OM9X2AnpkSCqphLsUrYwM?=
- =?us-ascii?Q?B3CPn2svyMg9mtFqIEdhwdrWwNQQ0WCB8BR3tmfPn+xD6COjRK0diVShvd9B?=
- =?us-ascii?Q?fsJ8Gt1yCD7tMIfqWC8lCbVNcEEyxN3pULRMka/saUuosHEwJh6tIifKlklM?=
- =?us-ascii?Q?zQ41VbSXdEgaJOfV+7tQIpKcMtNrrPmmg77tpG3EeE0Lu0p3sHCQN4mF1JHY?=
- =?us-ascii?Q?lB82INaftkGOybJL00ahD1PvXwaofrU7tDkxHxDp5JlgT2vEDV38FajtAJ/a?=
- =?us-ascii?Q?B5l+Q/jyhiPBMOt+GTSDyjl/IB+ctoNu/TUo/JTF5kdGVdHVSPipJUieg8ez?=
- =?us-ascii?Q?eEo0C2NzOgLQLwSTfh/qorri1AX6VHagYXmuu893vfy3oaryIeY3qDEuxMzD?=
- =?us-ascii?Q?xgwIy8FLeZDyxdxLvUrtcLyIl42tx1yHvoyz/KG42Z7U851Nm6tj9xLjmmid?=
- =?us-ascii?Q?+T8Y242yLhByQ8nXdezv0UQ7OBkkzI2+RtM9RyjlzI4J/vHkuSkl0UzmQpBA?=
- =?us-ascii?Q?7+yBCc56LaeFY69S5wQpD6Z6vhV5aBICzXElEWsNuhq7osw7PHSEWIc3sCS/?=
- =?us-ascii?Q?c7Srvd/h+QlrSI49PX9KQIeomrGzO1ZHW/dyMXnBCptuipsLYmHh6Zc+wbiT?=
- =?us-ascii?Q?nsMWmwhmGLoN8joP2LW3CDaJOCvL2uqDpBBkYBX9VPkuEIRHcO4tkI36JgCD?=
- =?us-ascii?Q?btDHK5WGt4fkJcoWo1OztfU9kn56MkO2jLVqDIQDQc7NdCYwr7MIaTJdc3et?=
- =?us-ascii?Q?htY5XrNnb5OO2Mj+pt9bUUuRthTm1mYxpXRHgi74exSHsjVwMVsEqDW7EZTY?=
- =?us-ascii?Q?rj6KLmiaq3VjHBQyRY3MDmvxbP2zF1d9izFubyyAcQnnPSl0tomNUl9U7Kjz?=
- =?us-ascii?Q?25mBQSU7jX+99Lao6o5hJdHWVHMKLVrMZLGSmF9+CcX+VGLeo1G1pZhKtNcL?=
- =?us-ascii?Q?F+Lmc++jbQco6khlOSvs61xYaSgF4j8j4SyzB2rpoOJBJrDzCCQNMvh20tCZ?=
- =?us-ascii?Q?kwVfZegjkaSGOaYEHSdw8YukeiVoMxkHDlQlFWlY1ntbjDBAC49N+A0Xesjs?=
- =?us-ascii?Q?eHXe3kkiTFCdMvAs5m/zMea+ExeqFL29sbuzic2uhrjqw+QvKY5JjFvYJtcs?=
- =?us-ascii?Q?gE3nj1ZgQIW9whm764WfpgIsczQFbbY9ZJYh03UJ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c7ad142-c2b0-4bb8-d623-08dcbd455622
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+	=?us-ascii?Q?Cbaj/+xJ5wGGI/ViaFDbdmD9y3Usp52n3bwYaSYMPiRR9GPJph5Q3t2uXpog?=
+ =?us-ascii?Q?TydfpKKTi9gtIrEdRhmERKGYsHpRMUmcg3ccK246Jx2i1yMpZ9lM+JNCEzJM?=
+ =?us-ascii?Q?DncmBMDK0L6rvQ29Pl19edOSc+B7lEfowS9U73XoH9/KFG1fFwCEb63E8Jr9?=
+ =?us-ascii?Q?G4U45h4r4TyZdWaWkwWAsFyv1l8pLZZSqvXz1vcFzqEKBqGL4kor66UxAZz4?=
+ =?us-ascii?Q?YeW8lhzdsk3PfW9Ly6WyjkIRRoRyJzHsjR/nrw0TshGbX2PC8r3DshMTYgBT?=
+ =?us-ascii?Q?qhHhMk3/scTUAYU9vzSp3EIMYa/tJDlpU8s04eDzP+qukOmE0KzocMxEiO2x?=
+ =?us-ascii?Q?sEMsXhgv5ONLv5j0k1P8lRWi3T8oMOAqDbyeed+DWk68SHFDhpe1c3omRUus?=
+ =?us-ascii?Q?48A66f+/lw2o2k1MKXX5d/LK714NEqacIwtu6IISbz8U04TrCbZ5KD28tN+z?=
+ =?us-ascii?Q?shT75SfklrD3VDcbZrfDmw0E2Bnkpo+mcDESshozNU2VYBOx2T2iY33K+RDU?=
+ =?us-ascii?Q?CfFW3f6RXdCvNwXnJhkMh0l8mD7NnqbK/TxNhxGDkCQbN6zSeSuDb1vWp/Xh?=
+ =?us-ascii?Q?jdWbPDy5JTqRa6T9GU20dMXmddYoVuH5PmmDRowMlZMBSMMWNPQBjbcmevX9?=
+ =?us-ascii?Q?ew7zS7OaYHN51zlxvYpnO4Ai7Nl5+89qJdGXPiKzRlIhmA+QicQmTfxFq42U?=
+ =?us-ascii?Q?YsadtR4ObPIMYr/iAw+w3nBSifrQwdsAU8Hzfyz93HQJGbTkB/m0UBxBBJNB?=
+ =?us-ascii?Q?p/OmEh95WvsVredeYwiPyxYmADfuejsL5vmtZ/q9GOs+2u0Y3tcpvHYfIB8e?=
+ =?us-ascii?Q?j2twjffXPG7KXCiJNy4g66hej5Wz8ndkXW03i1C60wa9tHePJgMlB3HkXkGE?=
+ =?us-ascii?Q?KMILp3mDBoLBsjFY+usmpyox9T7tdLbDDjfs3BH82jkuiwVObNrRmXUWu1O5?=
+ =?us-ascii?Q?CQ41kECeklrTbw+Bondov3Fyj8sbdsxActeNGe7JRmh40piIO5mXgF1a755G?=
+ =?us-ascii?Q?mXgHxnLxA1hQJ5Ak18ySExmTMlfPY/lCjN5a7KHA4KeN2YWXUDAtFqSq4H5a?=
+ =?us-ascii?Q?xxuaIr1OOiEywKPOR/e6X9pKIOEaWL1IFELYLsRyV99jZZl7fqxqAWmpAh1z?=
+ =?us-ascii?Q?IQXND9jR9R7+/SGKuOXra+w7OS1c3J45oIxClnBAZT4C96RzEyRBZG4nkJIr?=
+ =?us-ascii?Q?1kH53D65WRAlNjb4BSQc7du5OviMPTgscrbdX8VybIepOTtNb49rdbn3/3F9?=
+ =?us-ascii?Q?HuFXn3qvOyFK+rJ7siOseLdTlKptLnNkVX7g/LAPQ4ods3qjMG5cctm4yiPs?=
+ =?us-ascii?Q?aM7aKd+ajBubABeDoxz/kWqP8SHTciWksoD/8K7kiafgrUh7N91AaktRuRM9?=
+ =?us-ascii?Q?vseWzRDGEJfKcxLD3EZjGWJ415DmgmeKdVkqxOduian/uej71Q4hV8rHgERc?=
+ =?us-ascii?Q?0D8WJbG1T9U3a83BKU+6CiVS4H4S8TWoj9dBd7wBdYLZaHGoHBfqqx9DXRUB?=
+ =?us-ascii?Q?wAdiiYSU0DXLZb/eAndKE62lyfBntuM2Wj6pc3c5oLqxJzWI/zqhX+uXXzpJ?=
+ =?us-ascii?Q?nToLA6b7yjhYUJBH1Ns=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 109749ac-901b-4930-1eda-08dcbd4590dd
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7763.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 16:14:27.6816
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 16:16:06.2923
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BjfUeUNTjKZDAtFYTXn5eXnSrXoRyd7By4SDOz4FXKti0TdjPQYm+HpgpmejGdIC6xH18Hfpj/VWzcUQDEoerw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9661
+X-MS-Exchange-CrossTenant-UserPrincipalName: XhhucWpJQBd1ws2WSgUBpRjoWjNjFs01irLWNB2vbMQLrYkRZCMnEcz7V6TG9zlN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6888
 
-Convert binding doc ads7846.txt to yaml format.
-Additional change:
-- add ref to touchscreen.yaml and spi-peripheral-props.yaml.
-- use common node name touchscreen.
-- sort ti properties alphabetically.
-- sort common properties alphabetically.
-- sort compatible string alphabetically.
-- remove vcc-supply from required list.
+On Thu, Aug 15, 2024 at 11:41:39AM -0400, Peter Xu wrote:
+> On Wed, Aug 14, 2024 at 07:14:41PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Aug 14, 2024 at 02:24:47PM -0400, Peter Xu wrote:
+> > > On Wed, Aug 14, 2024 at 10:19:54AM -0300, Jason Gunthorpe wrote:
+> > > > On Fri, Aug 09, 2024 at 12:08:59PM -0400, Peter Xu wrote:
+> > > > 
+> > > > > +/**
+> > > > > + * follow_pfnmap_start() - Look up a pfn mapping at a user virtual address
+> > > > > + * @args: Pointer to struct @follow_pfnmap_args
+> > > > > + *
+> > > > > + * The caller needs to setup args->vma and args->address to point to the
+> > > > > + * virtual address as the target of such lookup.  On a successful return,
+> > > > > + * the results will be put into other output fields.
+> > > > > + *
+> > > > > + * After the caller finished using the fields, the caller must invoke
+> > > > > + * another follow_pfnmap_end() to proper releases the locks and resources
+> > > > > + * of such look up request.
+> > > > > + *
+> > > > > + * During the start() and end() calls, the results in @args will be valid
+> > > > > + * as proper locks will be held.  After the end() is called, all the fields
+> > > > > + * in @follow_pfnmap_args will be invalid to be further accessed.
+> > > > > + *
+> > > > > + * If the PTE maps a refcounted page, callers are responsible to protect
+> > > > > + * against invalidation with MMU notifiers; otherwise access to the PFN at
+> > > > > + * a later point in time can trigger use-after-free.
+> > > > > + *
+> > > > > + * Only IO mappings and raw PFN mappings are allowed.  
+> > > > 
+> > > > What does this mean? The paragraph before said this can return a
+> > > > refcounted page?
+> > > 
+> > > This came from the old follow_pte(), I kept that as I suppose we should
+> > > allow VM_IO | VM_PFNMAP just like before, even if in this case I suppose
+> > > only the pfnmap matters where huge mappings can start to appear.
+> > 
+> > If that is the intention it should actively block returning anything
+> > that is vm_normal_page() not check the VM flags, see the other
+> > discussion..
+> 
+> The restriction should only be applied to the vma attributes, not a
+> specific pte mapping, IMHO.
+> 
+> I mean, the comment was describing "which VMA is allowed to use this
+> function", reflecting that we'll fail at anything !PFNMAP && !IO.
+> 
+> It seems legal to have private mappings of them, where vm_normal_page() can
+> return true here for some of the mappings under PFNMAP|IO. IIUC either the
+> old follow_pte() or follow_pfnmap*() API cared much on this part yet so
+> far.
 
-Fix below warning: arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dtb: touchscreen@0:
-	ti,x-min: b'\x00}' is not of type 'object', 'array', 'boolean', 'null'
+Why? Either the function only returns PFN map no-struct page things or
+it returns struct page stuff too, in which case why bother to check
+the VMA flags if the caller already has to be correct for struct page
+backed results?
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v1 to v2
-- sort properties, by 3 group:
-  1. General (compatible, reg, interrupt)
-  2. Common properties
-  3. ti properties
-- sort maintainers name alphabetically.
-- uint16 have to be kept because default is uint32
-- remove vcc-supply from required list
-- remove unfinished sentence "all mandatory properties described in"
-because it refer to /schemas/spi/spi-peripheral-props.yaml#
-- fix make refcheckdoc error
----
- .../bindings/input/touchscreen/ads7846.txt    | 107 ------------
- .../input/touchscreen/ti,ads7843.yaml         | 165 ++++++++++++++++++
- .../bindings/power/wakeup-source.txt          |   2 +-
- 3 files changed, 166 insertions(+), 108 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/ads7846.txt
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml
+This function is only safe to use under the proper locking, and under
+those rules it doesn't matter at all what the result is..
+> > > > > + * The mmap semaphore
+> > > > > + * should be taken for read, and the mmap semaphore cannot be released
+> > > > > + * before the end() is invoked.
+> > > > 
+> > > > This function is not safe for IO mappings and PFNs either, VFIO has a
+> > > > known security issue to call it. That should be emphasised in the
+> > > > comment.
+> > > 
+> > > Any elaboration on this?  I could have missed that..
+> > 
+> > Just because the memory is a PFN or IO doesn't mean it is safe to
+> > access it without a refcount. There are many driver scenarios where
+> > revoking a PFN from mmap needs to be a hard fence that nothing else
+> > has access to that PFN. Otherwise it is a security problem for that
+> > driver.
+> 
+> Oh ok, I suppose you meant the VFIO whole thing on "zapping mapping when
+> MMIO disabled"?  If so I get it.  More below.
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/ads7846.txt b/Documentation/devicetree/bindings/input/touchscreen/ads7846.txt
-deleted file mode 100644
-index 399c87782935c..0000000000000
---- a/Documentation/devicetree/bindings/input/touchscreen/ads7846.txt
-+++ /dev/null
-@@ -1,107 +0,0 @@
--Device tree bindings for TI's ADS7843, ADS7845, ADS7846, ADS7873, TSC2046
--SPI driven touch screen controllers.
--
--The node for this driver must be a child node of a SPI controller, hence
--all mandatory properties described in
--
--	Documentation/devicetree/bindings/spi/spi-bus.txt
--
--must be specified.
--
--Additional required properties:
--
--	compatible		Must be one of the following, depending on the
--				model:
--					"ti,tsc2046"
--					"ti,ads7843"
--					"ti,ads7845"
--					"ti,ads7846"
--					"ti,ads7873"
--
--	interrupts		An interrupt node describing the IRQ line the chip's
--				!PENIRQ pin is connected to.
--	vcc-supply		A regulator node for the supply voltage.
--
--
--Optional properties:
--
--	ti,vref-delay-usecs		vref supply delay in usecs, 0 for
--					external vref (u16).
--	ti,vref-mv			The VREF voltage, in millivolts (u16).
--					Set to 0 to use internal references
--					(ADS7846).
--	ti,keep-vref-on			set to keep vref on for differential
--					measurements as well
--	ti,settle-delay-usec		Settling time of the analog signals;
--					a function of Vcc and the capacitance
--					on the X/Y drivers.  If set to non-zero,
--					two samples are taken with settle_delay
--					us apart, and the second one is used.
--					~150 uSec with 0.01uF caps (u16).
--	ti,penirq-recheck-delay-usecs	If set to non-zero, after samples are
--					taken this delay is applied and penirq
--					is rechecked, to help avoid false
--					events.  This value is affected by the
--					material used to build the touch layer
--					(u16).
--	ti,x-plate-ohms			Resistance of the X-plate,
--					in Ohms (u16).
--	ti,y-plate-ohms			Resistance of the Y-plate,
--					in Ohms (u16).
--	ti,x-min			Minimum value on the X axis (u16).
--	ti,y-min			Minimum value on the Y axis (u16).
--	ti,debounce-tol			Tolerance used for filtering (u16).
--	ti,debounce-rep			Additional consecutive good readings
--					required after the first two (u16).
--	ti,pendown-gpio-debounce	Platform specific debounce time for the
--					pendown-gpio (u32).
--	pendown-gpio			GPIO handle describing the pin the !PENIRQ
--					line is connected to.
--	ti,hsync-gpios			GPIO line to poll for hsync
--	wakeup-source			use any event on touchscreen as wakeup event.
--					(Legacy property support: "linux,wakeup")
--	touchscreen-size-x		General touchscreen binding, see [1].
--	touchscreen-size-y		General touchscreen binding, see [1].
--	touchscreen-max-pressure	General touchscreen binding, see [1].
--	touchscreen-min-pressure	General touchscreen binding, see [1].
--	touchscreen-average-samples	General touchscreen binding, see [1].
--	touchscreen-inverted-x		General touchscreen binding, see [1].
--	touchscreen-inverted-y		General touchscreen binding, see [1].
--	touchscreen-swapped-x-y		General touchscreen binding, see [1].
--
--[1] All general touchscreen properties are described in
--    Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt.
--
--Deprecated properties:
--
--	ti,swap-xy			swap x and y axis
--	ti,x-max			Maximum value on the X axis (u16).
--	ti,y-max			Maximum value on the Y axis (u16).
--	ti,pressure-min			Minimum reported pressure value
--					(threshold) - u16.
--	ti,pressure-max			Maximum reported pressure value (u16).
--	ti,debounce-max			Max number of additional readings per
--					sample (u16).
--
--Example for a TSC2046 chip connected to an McSPI controller of an OMAP SoC::
--
--	spi_controller {
--		tsc2046@0 {
--			reg = <0>;	/* CS0 */
--			compatible = "ti,tsc2046";
--			interrupt-parent = <&gpio1>;
--			interrupts = <8 0>;	/* BOOT6 / GPIO 8 */
--			spi-max-frequency = <1000000>;
--			pendown-gpio = <&gpio1 8 0>;
--			vcc-supply = <&reg_vcc3>;
--
--			ti,x-min = /bits/ 16 <0>;
--			ti,x-max = /bits/ 16 <8000>;
--			ti,y-min = /bits/ 16 <0>;
--			ti,y-max = /bits/ 16 <4800>;
--			ti,x-plate-ohms = /bits/ 16 <40>;
--			ti,pressure-max = /bits/ 16 <255>;
--
--			wakeup-source;
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml b/Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml
-new file mode 100644
-index 0000000000000..dac2087b99118
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml
-@@ -0,0 +1,165 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/touchscreen/ti,ads7843.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI's SPI driven touch screen controllers.
-+
-+maintainers:
-+  - Alexander Stein <alexander.stein@ew.tq-group.com>
-+  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
-+  - Marek Vasut <marex@denx.de>
-+
-+description:
-+  Device tree bindings for TI's ADS7843, ADS7845, ADS7846, ADS7873, TSC2046
-+  SPI driven touch screen controllers.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,ads7843
-+      - ti,ads7845
-+      - ti,ads7846
-+      - ti,ads7873
-+      - ti,tsc2046
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  pendown-gpio:
-+    description:
-+      GPIO handle describing the pin the !PENIRQ line is connected to.
-+
-+  vcc-supply:
-+    description: A regulator node for the supply voltage.
-+
-+  wakeup-source: true
-+
-+  ti,debounce-max:
-+    deprecated: true
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Max number of additional readings per sample (u16).
-+
-+  ti,debounce-rep:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description:
-+      Additional consecutive good readings required after the first two (u16).
-+
-+  ti,debounce-tol:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Tolerance used for filtering (u16).
-+
-+  ti,hsync-gpios:
-+    description:
-+      GPIO line to poll for hsync
-+
-+  ti,keep-vref-on:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description: set to keep Vref on for differential measurements as well.
-+
-+  ti,pendown-gpio-debounce:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Platform specific debounce time for the pendown-gpio (u32).
-+
-+  ti,penirq-recheck-delay-usecs:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description:
-+      If set to non-zero, after samples are taken this delay is applied and
-+      penirq is rechecked, to help avoid false events.  This value is
-+      affected by the material used to build the touch layer (u16).
-+
-+  ti,pressure-max:
-+    deprecated: true
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Maximum reported pressure value (u16).
-+
-+  ti,pressure-min:
-+    deprecated: true
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Minimum reported pressure value (threshold) - u16.
-+
-+  ti,settle-delay-usec:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description:
-+      Settling time of the analog signals; a function of Vcc and the
-+      capacitance on the X/Y drivers.  If set to non-zero, two samples are
-+      taken with settle_delay us apart, and the second one is used. ~150
-+      uSec with 0.01uF caps (u16).
-+
-+  ti,swap-xy:
-+    deprecated: true
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description: swap x and y axis
-+
-+  ti,vref-delay-usecs:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Vref supply delay in usecs, 0 for external Vref (u16).
-+
-+  ti,vref-mv:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description:
-+      The VREF voltage, in millivolts (u16).
-+      Set to 0 to use internal references (ADS7846).
-+
-+  ti,x-plate-ohms:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Resistance of the X-plate, in Ohms (u16).
-+
-+  ti,x-max:
-+    deprecated: true
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Maximum value on the X axis (u16).
-+
-+  ti,x-min:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Minimum value on the X axis (u16).
-+
-+  ti,y-plate-ohms:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Resistance of the Y-plate, in Ohms (u16).
-+
-+  ti,y-max:
-+    deprecated: true
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Maximum value on the Y axis (u16).
-+
-+  ti,y-min:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description: Minimum value on the Y axis (u16).
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: touchscreen.yaml#
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    spi{
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        touchscreen@0 {
-+           compatible = "ti,tsc2046";
-+           reg = <0>;	/* CS0 */
-+           interrupt-parent = <&gpio1>;
-+           interrupts = <8 0>;	/* BOOT6 / GPIO 8 */
-+           pendown-gpio = <&gpio1 8 0>;
-+           spi-max-frequency = <1000000>;
-+           vcc-supply = <&reg_vcc3>;
-+           wakeup-source;
-+
-+           ti,pressure-max = /bits/ 16 <255>;
-+           ti,x-max = /bits/ 16 <8000>;
-+           ti,x-min = /bits/ 16 <0>;
-+           ti,x-plate-ohms = /bits/ 16 <40>;
-+           ti,y-max = /bits/ 16 <4800>;
-+           ti,y-min = /bits/ 16 <0>;
-+       };
-+    };
-+
-diff --git a/Documentation/devicetree/bindings/power/wakeup-source.txt b/Documentation/devicetree/bindings/power/wakeup-source.txt
-index a6c8978964aa1..9a4f8310eb67d 100644
---- a/Documentation/devicetree/bindings/power/wakeup-source.txt
-+++ b/Documentation/devicetree/bindings/power/wakeup-source.txt
-@@ -25,7 +25,7 @@ List of legacy properties and respective binding document
- 2. "has-tpo"			Documentation/devicetree/bindings/rtc/rtc-opal.txt
- 3. "linux,wakeup"		Documentation/devicetree/bindings/input/gpio-matrix-keypad.txt
- 				Documentation/devicetree/bindings/mfd/tc3589x.txt
--				Documentation/devicetree/bindings/input/touchscreen/ads7846.txt
-+				Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml
- 4. "linux,keypad-wakeup"	Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
- 5. "linux,input-wakeup"		Documentation/devicetree/bindings/input/samsung,s3c6410-keypad.yaml
- 6. "nvidia,wakeup-source"	Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
--- 
-2.34.1
+And more..
 
+> > > The user needs to do proper mapping if they need an usable address,
+> > > e.g. generic_access_phys() does ioremap_prot() and recheck the pfn didn't
+> > > change.
+> > 
+> > No, you can't take the phys_addr_t outside the start/end region that
+> > explicitly holds the lock protecting it. This is what the comment must
+> > warn against doing.
+> 
+> I think the comment has that part covered more or less:
+> 
+>  * During the start() and end() calls, the results in @args will be valid
+>  * as proper locks will be held.  After the end() is called, all the fields
+>  * in @follow_pfnmap_args will be invalid to be further accessed.
+> 
+> Feel free to suggest anything that will make it better.
+
+Be much more specific and scary:
+
+  Any physical address obtained through this API is only valid while
+  the @follow_pfnmap_args. Continuing to use the address after end(),
+  without some other means to synchronize with page table updates
+  will create a security bug.
+ 
+> For generic_access_phys() as a specific example: I think it is safe to map
+> the pfn even after end(). 
+
+The map could be safe, but also the memory could be hot unplugged as a
+race. I don't know either way if all arch code is safe for that.
+
+> After the map, it rewalks the pgtable, making sure PFN is still there and
+> valid, and it'll only access it this time before end():
+> 
+> 	if (write)
+> 		memcpy_toio(maddr + offset, buf, len);
+> 	else
+> 		memcpy_fromio(buf, maddr + offset, len);
+> 	ret = len;
+> 	follow_pfnmap_end(&args);
+
+Yes
+ 
+> If PFN changed, it properly releases the mapping:
+> 
+> 	if ((prot != pgprot_val(args.pgprot)) ||
+> 	    (phys_addr != (args.pfn << PAGE_SHIFT)) ||
+> 	    (writable != args.writable)) {
+> 		follow_pfnmap_end(&args);
+> 		iounmap(maddr);
+> 		goto retry;
+> 	}
+> 
+> Then taking the example of VFIO: there's no risk of racing with a
+> concurrent zapping as far as I can see, because otherwise it'll see pfn
+> changed.
+
+VFIO dumps the physical address into the IOMMU and ignores
+zap. Concurrent zap results in a UAF through the IOMMU mapping.
+
+Jason
 
