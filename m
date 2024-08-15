@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-287908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8506B952E1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:14:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C193C952E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58401C21831
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B69928256F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862FB19D068;
-	Thu, 15 Aug 2024 12:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C44017BEAA;
+	Thu, 15 Aug 2024 12:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fIdKsdT/"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="h8OP95W9"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F7E17A598
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08BC176ABF
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723723937; cv=none; b=Iw0z8uELL8vcTPkVw6yEjgYOtRxI4SVBPK5WUYAs9V+DiH8aYIE8vYlqNr1LDJ+aR0Qa8a756xXeMZEay3mcy5p3mEy2waG+Jvv+pAqtAvOLKbZZ+zKddw5jnL4qdokl4Ihb5ng9/r9oDZCYyGX0cCCTCuVUDhxnwLZ/MVwic5E=
+	t=1723724066; cv=none; b=UPVr4vm0SeqokuJJRT6KnUqv/R/KlO5m8x0PHf6fBl/UYomuqnkLywj7B2fd14K3s8FXMfn+f49HZMNouEbP6XNtbfYQO0NmksNFfY//j7KV3hS/LlzHDXshX7Tq4jUKUcpLQdpIUcVFDB0/KxUB4wA2q/SqKbjWRhkybVpOzdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723723937; c=relaxed/simple;
-	bh=4F2So3gSOCe5aII/d2WRNkmCRi7ztmAg4uhSSeE0pys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKWA2CHdSIjSl3OvHNvb7foC9RXDPUebbhFTHacjIQS15XP+RKknEqZ5Kb8ja36hbQ6HEyxzrUl84I1he7kCaoPBQEcP8EETU7DTwXE7oWglnkLBTSswogaTV+3MfvKZ9Af8vV1pGdW7Mjc5v/tkJsSs/2ELMFoSPghFDY+0BUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fIdKsdT/; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3718ca50fd7so208804f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723723929; x=1724328729; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7yCAUly4N0kCcaUHvaqP10baf+HZtdpzadnBCSjdMFA=;
-        b=fIdKsdT/XL+EPjyqVJEwXeSOEvVviRxns3L3sawZiRWVTOtTqMQ0FGKAFtHimR5f9G
-         IKHOmfQmB2Qm2IP5J0aIOEVUt1i+m2PIsayHKDMBs5L+ns//jtVYaVk6ciq1R7k1pnkS
-         sQlWHCUbWcbDAa5BUjAGdoF6f8O2GRerXaU+q/A4atuma5HL/VsbS9oYGCT47BV8pcsT
-         o2sn68HD2iIxC43+7SUOVtbhjzdB7rshJNT7Sdgg61t2Fr7B1a/qbz7ySREZGeF6N7Tz
-         ZM73NeZqZ1FZgbTuNkl3KyhAMfeG2BsIPUKb3OPp+UzU3EvUTa0CLu5sWyq10U7RrhIR
-         4n0w==
+	s=arc-20240116; t=1723724066; c=relaxed/simple;
+	bh=GG0N/jyIyq/cnQ+RqrxQTGZhv2Rv84ATA6wlRYDHdU0=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mt6UDhACXvL5U7XtRZt2AgxHMGHYKiP3iWSzsKGjkrNsAN9tqK9yJ5Sa2zVZ+z6pqzNJusJXJLnXhZhP8Cefce24eN2Q6LhuSH2+Hqa2NaNGwxtHbAOXfe1ZJ58dT1kqPhSKKu9pAIrhdtHvnoT62pKO1QQWI6EOGlqMg2h2zfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=h8OP95W9; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 779A03F322
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:14:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723724056;
+	bh=5LJz5tYO6GlR7aAMJQnBhMkGyX+mgcBglIlt5FhiOes=;
+	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=h8OP95W9VQuYvUI6BrY5kmurChbFvkU6pK1JJgm49D57ZlcTzdIyPj6z70zyYhpo0
+	 gweAQNgYErpVUTDj0sQeX/pdzol4M2+2HgkyX3+rFdZdlNkU+lvj84+w7+T9aEFuef
+	 ROsKXmJuWD1IYpLdjI2C88W/7pLBVpNYrLpuGbhK3iXvaHuwvD78/7urNUwpsLwmLJ
+	 OscAg/hy5IZLm6kKrpaDmw5VD2kuXDkHXZ0avNjicvQ8ExsLOmjFTQ9eDiLtpULX/g
+	 zn2VDi6HD2pS4yq7G52o9z3IgwO4f5aqaN0cdsew+HXusfseIqY9cpfIf2Fp2oDhk4
+	 EQXxLuGgGp87A==
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a1d9a712bcso365773485a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:14:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723723929; x=1724328729;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7yCAUly4N0kCcaUHvaqP10baf+HZtdpzadnBCSjdMFA=;
-        b=RzNSJDqrjdnwvvkliexJ2JmVY4ihy/BA1/wsFdQrqKpqve0+/deHMTzxC3nFaZ648C
-         JehV1JlSswJNgNyovpQecFtakpskUvf/x/Hgx42+a/7H0104ZqJc7utLBRA2wyoApp/Y
-         SdGD4tOootGCQqja6ZM+KY8Eutws5TZyDO3ElOOf3uzn1Y15y312t2wdFPLRUvtMz0V4
-         gYfBoBY0ETQdvifFt4SPA5PEomqIMZrMEFuGXwdKYMD5fzkazSCoEbNd5vtd9fpKb0/5
-         u0A2dxulmldVk5LtxSRTOuPhxdvfaqc3nkQlEhZkcAw75BRWnd4ngCQq+Nnmwvw/uVQs
-         FPsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj/ovgyWk5NcjLQOyj+7qgF1GdjocxOZ93oxG54w7HrfIZsiCzWBa67qV+ZEXWjngOI7kzB6f1XJHR5AyydTiCBwRjqfwryRjARcul
-X-Gm-Message-State: AOJu0Yxm9E3WHwbod3S+W2rb6nP1K5MIN8eng9tTALwh5gtDffgZ/XKf
-	tP+o2zSdg5l/9l+kRHFjmnHnDMX82WMxuursLyyotpb8j+JU1Kj2HwHSaODgv24=
-X-Google-Smtp-Source: AGHT+IGPXHPYOeW1HXsCdkbC7xpvAYL1iWQKxFd01NY1rKx7X2iVOIp68SI/F6WfhY7EQVhdkiALtQ==
-X-Received: by 2002:a05:6000:cc2:b0:368:3f56:b24a with SMTP id ffacd0b85a97d-37177777818mr4470418f8f.15.1723723928559;
-        Thu, 15 Aug 2024 05:12:08 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aabe9sm1357988f8f.92.2024.08.15.05.12.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 05:12:07 -0700 (PDT)
-Date: Thu, 15 Aug 2024 14:12:06 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
-	longman@redhat.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cgroup: update some statememt about delegation
-Message-ID: <vrozw5w2l32ni43akbf3xceq6rqpkskdlwbp2ko32qxv546n6s@qtw4l3qt357v>
-References: <20240815024118.3137952-1-chenridong@huawei.com>
+        d=1e100.net; s=20230601; t=1723724055; x=1724328855;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5LJz5tYO6GlR7aAMJQnBhMkGyX+mgcBglIlt5FhiOes=;
+        b=skM1BS3k9LDvZ09NeNoUJK45g0ngF6ftXOtF91enA40mN2g6RDRTN89C9tf0LDLVQF
+         j7AYcrA434cL3vp8TM53X68GbL8IUPQW/ED6sgOzKb4NcMRHMIGFB/Z3lBStXGqF2Tmg
+         8UV34SGVLOTm80hcX0umlLAjS43G3QI3xe3GdPFuebe/lqj1J+MCNTGL+MNEadt0OkMR
+         WuMXWqn+kuIzx4DHF3Ibe2J0Gc6Zy3lgj6Dt4s2pv3MAZ7hpy1Y6OzdLGlq1bcg0YaZx
+         vn06469BmX/X7BVAdRcvFNy+uZdwM8B158hVc3ciPx5Z8W9bcpzIF2A4glMNsWfjqUNd
+         ZH6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV9GA6NxEKni4UYTtZ1JwQ/A/Mlx+asOxcWOddmtcl9/g9YeO/8SUlH1hRmFWWzC0HpgCghIqVOyv+vE5byD7aT+ojJ76GS4Mwkg4Ti
+X-Gm-Message-State: AOJu0YyF+lSP9iyyY1SeFC9STopwzPpkHi/OuMGjeolTzmI+9avKWuDN
+	pXM4FylQQGZftkLh2KbNf4dVDWLPCpieVwoYdAAVwBqKZC2iUODb1ddjdbEzDBp/Xs6HMYaRkNC
+	a6Vtah2/jyrbflOdHqxGbVRZZeCyPnrLjlMKw+bZb8KAoe/65Rp8jfj9oYe60ccY3K0T6XKamTl
+	QUR+kG4RBjqe1x1+mJ7ydBLTNDMCWc+CGnRuOnRbIDRs4nwq2rJNba
+X-Received: by 2002:ac8:6905:0:b0:453:5b3f:2a39 with SMTP id d75a77b69052e-45367845732mr58163881cf.1.1723724055299;
+        Thu, 15 Aug 2024 05:14:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWXFFrqF7jEACs/vjXZynr3mlRXA4KoVr/szdxXifNlUQpmZ78stjsP7LYQ+pbSsvCJWHNB94E8LTSJkPZ+6U=
+X-Received: by 2002:ac8:6905:0:b0:453:5b3f:2a39 with SMTP id
+ d75a77b69052e-45367845732mr58163351cf.1.1723724054897; Thu, 15 Aug 2024
+ 05:14:14 -0700 (PDT)
+Received: from 348282803490 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 15 Aug 2024 05:14:14 -0700
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+In-Reply-To: <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
+References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
+ <87jzgjnh9z.ffs@tglx> <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
+ <87ttfmm2ns.ffs@tglx> <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bcwowopfy5kycog4"
-Content-Disposition: inline
-In-Reply-To: <20240815024118.3137952-1-chenridong@huawei.com>
+Mime-Version: 1.0
+Date: Thu, 15 Aug 2024 05:14:14 -0700
+Message-ID: <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
+Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Anup Patel <apatel@ventanamicro.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Emil Renner Berthing wrote:
+> Thomas Gleixner wrote:
+> > On Thu, Aug 15 2024 at 03:29, Emil Renner Berthing wrote:
+> > > Thomas Gleixner wrote:
+> > > Thanks for looking at this! Unfortunately the above patch isn't enough to fix
+> > > the issue:
+> > >
+> > > https://termbin.com/7sgc
+> > >
+> > > It still hangs after the "[    0.176451] cpuidle: using governor teo" message
+> > > until the watchdog reboots the systems.
+> >
+> > So what's puzzling is that there is a timer installed early on:
+> >
+> > [    0.000000] clocksource: riscv_clocksource: ....
+> >
+> > That same init function installs the per cpu riscv clockevent, so there
+> > should be a timer available.
+> >
+> > The deffered probing of the PLIC driver delays obviously the probing of
+> > the sun4i timer, but that should not matter when another timer is
+> > available. So the sun4i driver might be a red herring.
+> >
+> > Can you please add "ignore_loglevel initcall_debug" to the command line
+> > and provide the output of a booting and a failing kernel?
+>
+> 6.11-rc3 + these reverts:  https://termbin.com/q6wk
+> 6.11-rc3 + Samuel's patch: https://termbin.com/7cgs
 
---bcwowopfy5kycog4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think this confirms what Charlie found here:
+https://lore.kernel.org/linux-riscv/ZoydV7vad5JWIcZb@ghost/
 
-Hi,
-thanks for writing up on the care needed when you only use namespacing
-(and not de-privilgation) for delegation.
-
-On Thu, Aug 15, 2024 at 02:41:18AM GMT, Chen Ridong <chenridong@huawei.com>=
- wrote:
-=2E..
-
-What about some more clarifications to prevent other confusions?
-
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -533,10 +533,12 @@ cgroup namespace on namespace creation.
->  Because the resource control interface files in a given directory
->  control the distribution of the parent's resources, the delegatee
->  shouldn't be allowed to write to them.  For the first method, this is
-> -achieved by not granting access to these files.  For the second, the
-> -kernel rejects writes to all files other than "cgroup.procs" and
-> -"cgroup.subtree_control" on a namespace root from inside the
-> -namespace.
-> +achieved by not granting access to these files.  For the second, files
-> +outside the namespace shouldn't be visible from within the delegated
-                         should be hidden from the delegatee by the
-means of at least mount namespacing, and the kernel...
-
-> +namespace, and the kernel rejects writes to all files on a namespace
-> +root from inside the namespace, except for those files listed in
-          inside the cgroup namespace
-
-> +"/sys/kernel/cgroup/delegate" (including "cgroup.procs", "cgroup.threads=
-",
-> +"cgroup.subtree_control", etc.).
- =20
-=2E..
-> -	 * except for the files explicitly marked delegatable -
-> -	 * cgroup.procs and cgroup.subtree_control.
-> +	 * except for the set delegatable files shown in /sys/kernel/cgroup/del=
-egate,
-> +	 * including cgroup.procs, cgroup.threads and cgroup.subtree_control, e=
-tc.
-
-"Marked delegatable" (meaning CFTYPE_NS_DELEGATABLE) is appropriate
-comment in the code, a reference to the sysfs file is only consequential
-to this marking. A minimal change would be like:
-
--	 * cgroup.procs and cgroup.subtree_control.
-+	 * e.g. cgroup.procs and cgroup.subtree_control.
-
---bcwowopfy5kycog4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZr3wlAAKCRAt3Wney77B
-SYgkAQDi+rGC52GY+8zk5860MbybdOCf/OUaIjhU0lKpi2izwQD+L/9YZiGh3RIn
-X78l/NkWNv6dtYob/r0ddQe+fOKmug8=
-=A2Y+
------END PGP SIGNATURE-----
-
---bcwowopfy5kycog4--
+>
+> > And on the booting kernel please provide the output from:
+> >
+> > # cat /sys/devices/system/clockevents/clockevent0/current_device
+> > # cat /sys/devices/system/clockevents/broadcast/current_device
+> > # cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+>
+> On both a 6.8.6 kernel and 6.11-rc3 + reverts I get:
+>
+>   # cat /sys/devices/system/clockevents/clockevent0/current_device
+>   sun4i_tick
+>   # cat /sys/devices/system/clockevents/broadcast/current_device
+>   riscv_timer_clockevent
+>   # cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+>   riscv_clocksource
+>
+> /Emil
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
