@@ -1,199 +1,123 @@
-Return-Path: <linux-kernel+bounces-287635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73EB1952A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:56:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDBA952A38
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A901C20C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38D661F21899
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499CB1917EB;
-	Thu, 15 Aug 2024 07:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2363D198E71;
+	Thu, 15 Aug 2024 07:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5fhLhXE"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DY3lNqIM"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15712176AC1;
-	Thu, 15 Aug 2024 07:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BA717625A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723708605; cv=none; b=c1X0B+RGycaWQ2/rfa2e63AO5pCpMGCEeiM9aDYgkDUuD8b2I4M6msW7mgV+hiCySDeijzFyT2NAI+uYYvGEQL50dllz7qki2YYp616VNSVepc2VyZvhom2opNBzNqZ1maPtwd8A9Cj3SLaNRF5WlUK0C+1g6f7iON2DVJyknvI=
+	t=1723708625; cv=none; b=MmuGpwFhJf3ZXJpNF8pT81tECfvfRpP/X8+Ot0RE765SB2KWJnjxunyIWoDGARIRzZwDKER+bVxMlDVJBea4UmO5hyCaeh5zmYMT/WoHNgf2emPEGB61Z5+o9RTVXDi3CzeVZDfzJcSUKvKZy9ePK8KB/8xKnSIL+hyNfUTgG+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723708605; c=relaxed/simple;
-	bh=yPqL/Vl4cHrWI9TeW3BIpMOg30zZQUvOVQSCoFP9JQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dz3JoAMXs3c7g1x1kPTHo5FKkxujXl5YwJXQUQzkUUSJQjD21t2dPpUIlD42oXqLTxQ9ABwoP4lFl7zN7cgw4nCDW/adMaVqHyJApiaBnROjFnKMDI6EoDhanf9gn2zZK35Jf6ECyyZHob3suw5RCklhox3FuZOzA5tu2eY65uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5fhLhXE; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d394313aceso459534a91.3;
-        Thu, 15 Aug 2024 00:56:43 -0700 (PDT)
+	s=arc-20240116; t=1723708625; c=relaxed/simple;
+	bh=lFaxAIKnjHKxlZBdeFXofarPjUb1JU4bQlq7BQ4PqII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e0sB8JhUcK2iMs28ALFgeXlZoQsCduqE3O0n+Ni9tWLmHIcp8uz6I7cooL2nOdH+5RUC7Kh+gwWgHJAMD+29XOX0pEa2eY7dFsiVOHrLQN5EdTsnVOKS+ZwPIArgRzjfo2vsJa4qBBAWo6zCpnHSDoTq9bhlX8r/aw69i+/ZOiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DY3lNqIM; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso5547055e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:57:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723708603; x=1724313403; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZFumA3T0nWrA0tHEOuHISEhmHpu/mfJFFX0epjyzEQ=;
-        b=X5fhLhXEHeQ4AQ6+wYuCAuHbi0cJecqX8c1mAlSpzvSHfleHY10QQ2aexnqcP6Yis4
-         Y3IOvNEIDzYXuuJ+eIznof46KHJE/eRc+P+xA9313+fgXN1WPl1r9R/kfVoKdfcGtAvy
-         2omLqjF7Lb45946ssX8QSuU7x2vEvxvyoYdFeTHCDOhio3COh76mOaSKVXI2YknVAMl0
-         kimtSTh92AYMOjy0sDKoD8T9pRPVIulkALz65r8sgrWhtqbeXjQlNgtStBEfG9VdUyyS
-         8ZeC7nlSGjHmw7QGU3OEtGsq7A90KvALwmOW1Vogz1hfhSTbrobO5eXeda5GftZ1xPmE
-         6KBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723708603; x=1724313403;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1723708622; x=1724313422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PZFumA3T0nWrA0tHEOuHISEhmHpu/mfJFFX0epjyzEQ=;
-        b=CDSQvbjLMi8C5K6vkC5HERYb2XQZwL4JwT0VyOTdrR9LqysyVWoNKHJbWLKTFDSS2v
-         4jKPoN7193JkjT/wjDEwyenYiZ9o7551TA/SKSubmFSDH2lvYTCfB6ZHAnDmt5laNbud
-         0X8e4JJErsLcv4bXTQINpGHtWzL1CnfSUMJ/UbGAASbWCzXydmoU90Vz+2AKOQxvo0Ax
-         jV0U2GefhfOhLDiOi3zx4kNWQxpQ3NecKME0xcPQ+kmSVgFbkFfUoUx3QHcdpMZywOM7
-         WpQ7ubP21+1nxJKhTpu2cbJsiRE4RETcH0w6uFGlcK4EgX/YpxKeS4Qmx0E7NAv1nT1n
-         NKlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVc8dr6sBb1s97IgozKeJzYdONzy8TBjZUd0au+stV76oeJBSbgt8/c7ia4kuq/ugn9nwaI3O67xbPs5V43BCiaQmWEPNjhoRVpjjDNslch0cYp3GUdDmOdZJ/k3NtMUa+FuXZUvXLvJFYGsEI3vBcEqoHki1ZfzKX0+ZUEwLujU8tTjWpg
-X-Gm-Message-State: AOJu0YzhQvS7Fv6wQsNd8vmQp4zHaEy6kz1PQh5KitPzPv3VVsevABnL
-	inCaSOgL7vf3GcOb0LNUaIMeOhl1k1T5p0uEQ/WhREDFprf0KaN8
-X-Google-Smtp-Source: AGHT+IHw5O4ewI8x/a7lIqXV5CCZGZvBZpZYtjA5gSFdMNgXbg4m+Arv2m97kgNb3kAhU/r+cv8yeA==
-X-Received: by 2002:a17:90b:4b01:b0:2ca:8b71:21f4 with SMTP id 98e67ed59e1d1-2d3aaa999b0mr6168882a91.18.1723708603176;
-        Thu, 15 Aug 2024 00:56:43 -0700 (PDT)
-Received: from Laptop-X1 ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7dcf8csm2980435a91.17.2024.08.15.00.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 00:56:42 -0700 (PDT)
-Date: Thu, 15 Aug 2024 15:56:36 +0800
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, David Wei <dw@davidwei.uk>,
-	Willem de Bruijn <willemb@google.com>,
-	Petr Machata <petrm@nvidia.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH net-next v2] net: netconsole: selftests: Create a new
- netconsole selftest
-Message-ID: <Zr20tNtSUdW_JG8T@Laptop-X1>
-References: <20240813183825.837091-1-leitao@debian.org>
+        bh=uFDgfr18jKgjWjTVFgaR01eg1gTio0cJGxh6b91x9kI=;
+        b=DY3lNqIM1qtQ7LniAOIidz9AC316Y3uGEW7SxbGvMUOelPaDtAt4SGCbH90KjxD3Pi
+         QkOnDqJYNvAsiGop1cVA+5B/HLOUaMPfYhRbFcMze7LNQkFxh4CZvyGFuJsVGgHWG7Q9
+         RR73e3gCUaROUnt+rnMyEwI7iduRtj2QymfZeCHu79KWzvZV/H8/wpoCiK+H98Y2dJSb
+         KUntjiXoI/FRrJqnUZhT0Sc82OiQcVxTlbIm7xbg7c0QlGyt8MWep0FXHCbY5S+MRpMs
+         Z8xjOeOAwRWKI9Ru8ABtBgvjzP2uj8jFpLixzsxDe3y1HGkMNb353OWeFvtNfQsd3WLj
+         yGLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723708622; x=1724313422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uFDgfr18jKgjWjTVFgaR01eg1gTio0cJGxh6b91x9kI=;
+        b=dR4AcolfP70SezSzDZJZnT/IaoZKls915yPMwC3YIQfz/TXq7fTUfKFHO9NkW2ttZz
+         Cqd3wk6qwDJv5/zr5rGdaozTENHcfLFDik/CIHQaTbaSkBZsB1v+1eP6lSxU/7j+5mUN
+         FtK6QJCR9yKSqOPux6zUeV3/fnZObtBnNC7cUp7oHUk15nQaRjgqH24Ngv138OB8Acrp
+         YEM9TgWlz4sARhIp7uig9AD/8IPqZSmnHdp1aYoS0FY6QScE9T3ZWH19PfUWvii3CikO
+         gb1wdFdQ5XUgaqg4njuo/30Pop1Lpjtbcu+TanWY0mi5S6g4/z1EaT9J+Y93wXpTscjG
+         v9cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6El5OXiFS6W61OHSA3p4FMSRbE/FrhHCn45TCN/UgY84bv/ZK+bRuLJD8t39u3gw3hnjTWEydb4NuGEJWCWFslKPyi/HwCAhQlS4B
+X-Gm-Message-State: AOJu0YxjqT7srov6DlGqvGqrieg7iF3cCGMQ4dB/VAVBlPFq6UrzpQfs
+	fqMu3KnnKSb5bDDGmrkVx2QelROMw57Y7RMuwY1rG5k2fgOzgWTA/rTO/NriReWRAm8c8tu/oEc
+	ZKT/1mzk8ebLisiScVkgHb4RzswPDYgi/bBFL
+X-Google-Smtp-Source: AGHT+IF44XjYngCZ8eLUhbWGRFsRASvEhApV5Zb7EnuduDNmFQ2HllL4LplMRCeD/E33eirS9R2OR5QzF4QYcVIzYOc=
+X-Received: by 2002:a5d:4985:0:b0:368:4910:8f43 with SMTP id
+ ffacd0b85a97d-37177744ee0mr3834274f8f.3.1723708621922; Thu, 15 Aug 2024
+ 00:57:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813183825.837091-1-leitao@debian.org>
+References: <20240814163722.1550064-1-ojeda@kernel.org>
+In-Reply-To: <20240814163722.1550064-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 15 Aug 2024 09:56:49 +0200
+Message-ID: <CAH5fLgi1xpuH1KpwSTPkiVsPsQ6YUC1=XhEusf3bXoRVyJefQQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: enable bindgen's `--enable-function-attribute-detection`
+ flag
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 11:38:16AM -0700, Breno Leitao wrote:
-> Adds a selftest that creates two virtual interfaces, assigns one to a
-> new namespace, and assigns IP addresses to both.
-> 
-> It listens on the destination interface using socat and configures a
-> dynamic target on netconsole, pointing to the destination IP address.
-> 
-> The test then checks if the message was received properly on the
-> destination interface.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Changelog:
-> 
-> v2:
->  * Change the location of the path (Jakub)
->  * Move from veth to netdevsim
->  * Other small changes in dependency checks and cleanup
-> 
-> v1:
->  * https://lore.kernel.org/all/ZqyUHN770pjSofTC@gmail.com/
-> 
->  MAINTAINERS                                   |   1 +
->  tools/testing/selftests/drivers/net/Makefile  |   1 +
->  .../selftests/drivers/net/netcons_basic.sh    | 223 ++++++++++++++++++
->  3 files changed, 225 insertions(+)
->  create mode 100755 tools/testing/selftests/drivers/net/netcons_basic.sh
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a9dace908305..ded45f1dff7e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15770,6 +15770,7 @@ M:	Breno Leitao <leitao@debian.org>
->  S:	Maintained
->  F:	Documentation/networking/netconsole.rst
->  F:	drivers/net/netconsole.c
-> +F:	tools/testing/selftests/drivers/net/netcons_basic.sh
->  
->  NETDEVSIM
->  M:	Jakub Kicinski <kuba@kernel.org>
-> diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-> index e54f382bcb02..928530b26abc 100644
-> --- a/tools/testing/selftests/drivers/net/Makefile
-> +++ b/tools/testing/selftests/drivers/net/Makefile
-> @@ -3,6 +3,7 @@
->  TEST_INCLUDES := $(wildcard lib/py/*.py)
->  
->  TEST_PROGS := \
-> +	netcons_basic.sh \
->  	ping.py \
->  	queues.py \
->  	stats.py \
-> diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
-> new file mode 100755
-> index 000000000000..e0e58fc7e89f
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
-> @@ -0,0 +1,223 @@
-> +#!/usr/bin/env bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# This test creates two netdevsim virtual interfaces, assigns one of them (the
-> +# "destination interface") to a new namespace, and assigns IP addresses to both
-> +# interfaces.
-> +#
-> +# It listens on the destination interface using socat and configures a dynamic
-> +# target on netconsole, pointing to the destination IP address.
-> +#
-> +# Finally, it checks whether the message was received properly on the
-> +# destination interface.  Note that this test may pollute the kernel log buffer
-> +# (dmesg) and relies on dynamic configuration and namespaces being configured.
-> +#
-> +# Author: Breno Leitao <leitao@debian.org>
-> +
-> +set -euo pipefail
-> +
-> +SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-> +
-> +# Simple script to test dynamic targets in netconsole
-> +SRCIF="" # to be populated later
-> +SRCIP=192.168.1.1
-> +DSTIF="" # to be populated later
-> +DSTIP=192.168.1.2
-> +
-> +PORT="6666"
-> +MSG="netconsole selftest"
-> +TARGET=$(mktemp -u netcons_XXXXX)
-> +NETCONS_CONFIGFS="/sys/kernel/config/netconsole"
-> +NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
-> +# This will have some tmp values appended to it in set_network()
-> +NAMESPACE="netconsns_dst"
-> +
-> +# IDs for netdevsim
-> +NSIM_DEV_1_ID=$((256 + RANDOM % 256))
-> +NSIM_DEV_2_ID=$((512 + RANDOM % 256))
-> +
-> +# Used to create and delete namespaces
-> +source "${SCRIPTDIR}"/../../net/lib.sh
+On Wed, Aug 14, 2024 at 6:37=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> `bindgen` is able to detect certain function attributes and annotate
+> functions correspondingly in its output for the Rust side, when the
+> `--enable-function-attribute-detection` is passed.
+>
+> In particular, it is currently able to use `__must_check` in C
+> (`#[must_use]` in Rust), which give us a bunch of annotations that are
+> nice to have to prevent possible issues in Rust abstractions, e.g.:
+>
+>      extern "C" {
+>     +    #[must_use]
+>          pub fn kobject_add(
+>              kobj: *mut kobject,
+>              parent: *mut kobject,
+>              fmt: *const core::ffi::c_char,
+>              ...
+>          ) -> core::ffi::c_int;
+>      }
+>
+> Apparently, there are edge cases where this can make generation very slow=
+,
+> which is why it is behind a flag [1], but it does not seem to affect us
+> in any major way at the moment.
+>
+> Link: https://github.com/rust-lang/rust-bindgen/issues/1465 [1]
+> Link: https://lore.kernel.org/rust-for-linux/CANiq72=3Du5Nrz_NW3U3_VqywJk=
+D8pECA07q2pFDd1wjtXOWdkAQ@mail.gmail.com/
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-If you want to source net/lib.sh, you need to add it to Makefile. e.g.
-
-TEST_INCLUDES := ../../../net/lib.sh
-
-See example in tools/testing/selftests/drivers/net/bonding/Makefile
-
-Thanks
-Hangbin
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Tested-by: Alice Ryhl <aliceryhl@google.com>
 
