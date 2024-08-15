@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-288212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F22595375D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:35:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D613195375C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10861C237C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134B41C251AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE0F1B9B55;
-	Thu, 15 Aug 2024 15:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BC61B3F18;
+	Thu, 15 Aug 2024 15:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CmgqOmJP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1KmzIFai"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQiQHMS8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795BC1B3739;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2F31B29AD;
 	Thu, 15 Aug 2024 15:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723736054; cv=none; b=U1GwBKkhLPySihhgRtLqroz43KnXEthRPK4FQ6hVl4s+zAYt/fGWICd1D/LtpzDLihb1eHsb3cQVgUeQhAuJJJshm8vysMms1m8wv637kGubmM7OYhlWiRVM/EbMNnTJr+gdTP2J8R61QW9Vbi6E3TER9sXpeis/ye1y5RkDmWM=
+	t=1723736053; cv=none; b=sog7UVx88ggwrhIYgVH2nLsGvrzUamAMur6/TJGyh+Tgiq1ELvH6LNKajTichwjkYKWq3XfAQAKUsS81YF/3t/6LnOzSP9Um0g2WwPDfqIEKmAxj0QPKnO/IUEnZdiTqSSXejrT+T0ztHvRILBb/dW8K4QXDh6UJkWG5I6J38qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723736054; c=relaxed/simple;
-	bh=43bVPuZyOnLGe42cYp7OOkOZfbglB1bik6tRdeNS+yY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r5UCeBgWQR5ae2hro/QEhNV5Pkjq+04ukHHQ/iq24M0hJD1afzwdn3s9fKyPrmwa7+C9FSr4yO7TDiFeER9HIAqE7IZf7HNqM4IP+N1UsMczY5GHg14i9g3UQFxeYVCL6/xSoTKo3j8NWFxmWIJocWalaZ2MCTLz5lGlNPAM9qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CmgqOmJP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1KmzIFai; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723736051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bFCC+n03Hh7o5d7QnJPx32st3+SECAs+nlR5Jgdd/8k=;
-	b=CmgqOmJPPfPKNWQLoDHnQoyaDO22Ikplh1HRJ8vS9/wl4VWVSIPr0oPCbczyBsKsB4wbJo
-	coiuwGn1TVKxcoz1+/12WiQcQRUSG5VQ7+UQ+HGl1oGuNWhdqoeGvCcpNdFLfn7Zlw7Ryr
-	7k3uHjgG4R5sj1spF8LdzuZPg69p5KJNwM6Ng0vM+4ppjVgChvCFsd89+a1xKhpC5FCxlU
-	q1TmW/sIN3n5aeXdIHozVDqPh//lNkR+HPpVPXdzpqoPWQ6DfTaMkC57iI00ngL+8rlGPF
-	HdgueoaZ5Z4As510N6+5m1oEK5nwSKfTNjSzJvyuil9rGYcDsNCSxiamKAGaBw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723736051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bFCC+n03Hh7o5d7QnJPx32st3+SECAs+nlR5Jgdd/8k=;
-	b=1KmzIFainOz36kgrDRrA5u4iOZcds1Je6RtVvXuDOynu+vKvxwENGF0GJ/5qDJN3UIDEl9
-	JTwFyxjgKW46wkCQ==
-To: Sean Christopherson <seanjc@google.com>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Xiaoyao Li
- <xiaoyao.li@intel.com>, Kai Huang <kai.huang@intel.com>, Jim Mattson
- <jmattson@google.com>, Shan Kang <shan.kang@intel.com>, Xin Li
- <xin3.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>
-Subject: Re: [PATCH v8 01/10] x86/cpu: KVM: Add common defines for
- architectural memory types (PAT, MTRRs, etc.)
-In-Reply-To: <20240605231918.2915961-2-seanjc@google.com>
-References: <20240605231918.2915961-1-seanjc@google.com>
- <20240605231918.2915961-2-seanjc@google.com>
-Date: Thu, 15 Aug 2024 17:34:11 +0200
-Message-ID: <87bk1tn6ks.ffs@tglx>
+	s=arc-20240116; t=1723736053; c=relaxed/simple;
+	bh=04LgzP7YEOA67MD8wfW6ktfx6oGLA3LHw3MuDqeib34=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=ZS1tBkW4n9YknYi3Q1qCIFvBz2gTx+9B+5pE0l6bHcMnW1sfxUbEcgOZIWYwymGniJm8iOP4qypQaxfK6Vm5T3oxSkWsOsQPB0Zh1YQaY+/hWrRFsFkl01DOoAo0vhOgs4Vml3ARhTH/DrvMzz3pByd56pFT5xuJcXv2sw9ueS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQiQHMS8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B53C4AF53;
+	Thu, 15 Aug 2024 15:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723736052;
+	bh=04LgzP7YEOA67MD8wfW6ktfx6oGLA3LHw3MuDqeib34=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=NQiQHMS8aquDQLk3IZdLkg99xNLoxgmaVBu/t5xPEyqC4/vTByrgWkr5St/b14EZn
+	 k8mnK/BH1TkH9677d3DdRo3dxchzbEKfMfZAP2N7ZRYnzLDUCHngdYlnF0jG5PZ+Um
+	 P6sx6+7G0FP2uJl2sIO3FTIda4qBTKlIYgUu7kcvPO5MW7s+EieaZF6vVMjSEcRxLS
+	 zsmVVLN1dK9Rpc3WJkSVfgkEZ6coxUXWd6laXrPZ7SuFeYnPOP4xSVuUE+uN8Hbmct
+	 T1aFGRYhvZOpohX83w73A/aN6AUcNPCvZklvdnOJ9mTvxiYB3ocwEw9oz6wax9boKE
+	 tHWeyLw362sQQ==
+Date: Thu, 15 Aug 2024 09:34:12 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240815-fernlike-levitate-6004f5f46d66@spud>
+References: <20240815-shindig-bunny-fd42792d638a@spud>
+ <20240815-fernlike-levitate-6004f5f46d66@spud>
+Message-Id: <172373605037.1948470.1479087224226784558.robh@kernel.org>
+Subject: Re: [RFC PATCH 10/11] dt-bindings: clk: microchip: mpfs: remove
+ first reg region
 
-On Wed, Jun 05 2024 at 16:19, Sean Christopherson wrote:
 
-> Add defines for the architectural memory types that can be shoved into
-> various MSRs and registers, e.g. MTRRs, PAT, VMX capabilities MSRs, EPTPs,
-> etc.  While most MSRs/registers support only a subset of all memory types,
-> the values themselves are architectural and identical across all users.
->
-> Leave the goofy MTRR_TYPE_* definitions as-is since they are in a uapi
-> header, but add compile-time assertions to connect the dots (and sanity
-> check that the msr-index.h values didn't get fat-fingered).
->
-> Keep the VMX_EPTP_MT_* defines so that it's slightly more obvious that the
-> EPTP holds a single memory type in 3 of its 64 bits; those bits just
-> happen to be 2:0, i.e. don't need to be shifted.
->
-> Opportunistically use X86_MEMTYPE_WB instead of an open coded '6' in
-> setup_vmcs_config().
->
-> No functional change intended.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Thu, 15 Aug 2024 15:01:13 +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> The first reg region in this binding is not exclusively for clocks, as
+> evidenced by the dual role of this device as a reset controller at
+> present. The first region is however better described by a simple-mfd
+> syscon, but this would have require a significant re-write of the
+> devicetree for the platform, so the easy way out was chosen when reset
+> support was first introduced. The region doesn't just contain clock and
+> reset registers, it also contains pinctrl and interrupt controller
+> functionality, so drop the region from the clock binding so that it can
+> be described instead by a simple-mfd syscon rather than propagate this
+> incorrect description of the hardware to the new pic64gx SoC.
+> 
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  .../bindings/clock/microchip,mpfs-clkcfg.yaml | 33 +++++++++++--------
+>  1 file changed, 19 insertions(+), 14 deletions(-)
+> 
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dts:22.21-47: Warning (reg_format): /example-0/soc/clock-controller@3E001000:reg: property has invalid length (8 bytes) (#address-cells == 2, #size-cells == 1)
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dts:20.51-25.15: Warning (avoid_default_addr_size): /example-0/soc/clock-controller@3E001000: Relying on default #address-cells value
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dts:20.51-25.15: Warning (avoid_default_addr_size): /example-0/soc/clock-controller@3E001000: Relying on default #size-cells value
+Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240815-fernlike-levitate-6004f5f46d66@spud
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
