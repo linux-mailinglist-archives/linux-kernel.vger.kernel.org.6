@@ -1,105 +1,146 @@
-Return-Path: <linux-kernel+bounces-288401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7809539B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7189539BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E86EDB23269
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAE2E1F25183
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D974058ABC;
-	Thu, 15 Aug 2024 18:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC1057CBA;
+	Thu, 15 Aug 2024 18:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="WmGWoU/s"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdNX9evY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D8052F70;
-	Thu, 15 Aug 2024 18:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BCE52F70;
+	Thu, 15 Aug 2024 18:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723745584; cv=none; b=l/qtThE8dmYjtqON4Zu1RY9clInIW9DYnS5WlkW0UbEzVPDrIOD7MWuuQEhbdRFmrvyz5bZH/u0ykMduRB6QHx4FY1+Ht5eo90EMlKaQ6smOvq+3Txh6tp5k53cY4gkryKmBTNYJFXc25NdNU6wBNIHUjVEc96v1WCaZ0RRUyVc=
+	t=1723745650; cv=none; b=BQfK0UnZcPq6z69MmzD92AyCD84yibpbcqeqno/lXWvMGcqst5wzbNvMQN9kTWEiPOvOiXEbQecm3IheNVP375GFN15U9XM6LxwyCNoPiw7U0diYBPu+nGUcLEaysvU8jdlotv8xaw4B2ix4yhumFKSVmJESNGINz/PmBfq1yGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723745584; c=relaxed/simple;
-	bh=QLpkNJNzoaAHnbBQ4AWeZQvG502e3lojYe6fHsgjlHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZHudUSyOM/jbJOhCFRWXY0CcXTNkgoLmHEgVQjV78+aU1TO9cFCO5tYJuEHg87e9DPrQsZen637g9BDIqU8nqENYR2gcb+3FMHWyJ8r3hhknLQWv2l/DUYyunypOpg5vYfEVdEp020ZEOzvcdWp5PyJ8ghQcloYIhXzIHSDoCcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=WmGWoU/s; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WlCsV1wDwz6ClY8q;
-	Thu, 15 Aug 2024 18:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723745578; x=1726337579; bh=jDb14L3lWgizVd8YVVokf0Mc
-	CWBt85gMRsDtGW9avug=; b=WmGWoU/sBgn5UTqf98/lKkKXO0qtdDjcW3v48AFw
-	TvETP38R8AsrTVJAN+CvJTxR3dBgNKHJvspL+3G0gRKXJs04k3p+72WD667qWZtk
-	NkSF+trk3yeY4tY7TBf5u2SGEkiT+RqRbd/UgugjcsaKb0RJziuEqEys3cisdmoG
-	WOv/aiVqcUgbcDOergNl6IBf+E3Y1thRuSQZNbSVfwdp6/vUJswMwZBMD37gihjl
-	X67n4dEM5l0PmgX6FetpOIKxg+af4VzIJivTNZMIlfohvlwcyoNWYjSv6dN7E4ww
-	hafwJTXj9rrqocQ8M2Ik5R3bjEkpG3CrLWsBxr6l6gmfzg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 7-BDC4myUpIp; Thu, 15 Aug 2024 18:12:58 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WlCsP4g36z6CmR09;
-	Thu, 15 Aug 2024 18:12:57 +0000 (UTC)
-Message-ID: <869108d2-638a-473f-81bd-21304d473fab@acm.org>
-Date: Thu, 15 Aug 2024 11:12:57 -0700
+	s=arc-20240116; t=1723745650; c=relaxed/simple;
+	bh=RdD04e7bCL/aVp7Qyn7v8N5dBB4gbycSkh4w1YVB2kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dfPTqglrsTUJm0b7DeM/NtH7tW2UtGtJl0ZvWjqiCcZg9Csen51PO7O1NxxYmezt9QfSliTlnSAGRbM8E4Q41itfPBjdQNvvOk2Y1/QjzedNXsKFfFBfyQzf8LCi8btnU1PdYAdYXHgPOvBAMdoRFbEiRt7A7eI4AGHSbEWgROE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdNX9evY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB208C32786;
+	Thu, 15 Aug 2024 18:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723745650;
+	bh=RdD04e7bCL/aVp7Qyn7v8N5dBB4gbycSkh4w1YVB2kc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BdNX9evYkuNDzaq1aPNqEDzPM6DtOszJ4fplPAv3RtWa/vIKvYlrUd7AEi63DCqnj
+	 2ZHmYP3Mhcaxzc3nkhhYZ1sezN/Rie/qqCA2LjgDHrNdp4aniD+lgSn90u0O5kM7ub
+	 snWnOv3YaUWn+8rZfdCes1OgLfN4geXYsjJs0xIw8WKiccSuMwsIWlS78BoWm1udr5
+	 UeaJIwcpXPwSXqFL0Pwut4my0L7CtbUI9cXNk0RIPALppzDzDXQ+apnvBxCP1QHcnu
+	 jG4F5HHXQ7kK9LxOGpKf1DPtz/YzKtlDkJS45/ImafzJCEnmP7dkyB5UYYS1dl2xf4
+	 XKP/epYAVeuMw==
+Date: Thu, 15 Aug 2024 19:14:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 04/40] arm64: Document boot requirements for Guarded
+ Control Stacks
+Message-ID: <44ce87ea-38c3-4a84-9dac-835b963ed07d@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-4-699e2bd2190b@kernel.org>
+ <Zr40H4xAb00MdMlX@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] ufs: core: Add a quirk for handling broken LSDBS
- field in controller capabilities register
-To: manivannan.sadhasivam@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>,
- Amit Pundir <amit.pundir@linaro.org>
-References: <20240815-ufs-bug-fix-v2-0-b373afae888f@linaro.org>
- <20240815-ufs-bug-fix-v2-2-b373afae888f@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240815-ufs-bug-fix-v2-2-b373afae888f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FolSFB1sscROoe34"
+Content-Disposition: inline
+In-Reply-To: <Zr40H4xAb00MdMlX@arm.com>
+X-Cookie: -- Owen Meredith
 
-On 8/14/24 10:16 PM, Manivannan Sadhasivam via B4 Relay wrote:
-> +	/*
-> +	 * This quirk needs to be enabled if the host controller has the broken
-> +	 * Legacy Queue & Single Doorbell Support (LSDBS) field in Controller
-> +	 * Capabilities register.
-> +	 */
-> +	UFSHCD_QUIRK_BROKEN_LSDBS_CAP			= 1 << 25,
 
-The above comment is misleading because it suggests that the definition
-of this bit in the UFSHCI specification is broken, which is not the
-case. How about this comment?
+--FolSFB1sscROoe34
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	/*
-	 * This quirk indicates that the controller reports the value 1
-	 * (not supported) in the Legacy Single DoorBell Support (LSDBS)
-	 * bit although it supports the legacy single doorbell mode.
-	 */
+On Thu, Aug 15, 2024 at 06:00:15PM +0100, Catalin Marinas wrote:
+> On Thu, Aug 01, 2024 at 01:06:31PM +0100, Mark Brown wrote:
 
-Thanks,
+> > +  - If EL2 is present:
 
-Bart.
+> > +    - GCSCR_EL2 must be initialised to 0.
+
+> > + - If the kernel is entered at EL1 and EL2 is present:
+> > +
+> > +    - GCSCR_EL1 must be initialised to 0.
+> > +
+> > +    - GCSCRE0_EL1 must be initialised to 0.
+
+> Currently booting.rst doesn't list *_EL1 registers to be initialised
+> when the kernel is entered at EL1, that would usually be the
+> responsibility of EL1. The exception is some bits in SCTLR_EL1 around
+> not entering with the MMU and caches enabled. But here I think it makes
+> sense to add these GCS registers since if some random bits are set, they
+> can affect kernels (and user apps) that don't have GCS support.
+
+Right, exactly - the trouble here is that if we enter EL1 with GCS
+enabled we aren't able to do function calls until we either disable GCS
+or configure the MMU and allocate a GCS.  This means that all existing
+kernels which haven't heard of GCS require that GCS be disabled prior to
+starting, they'll just fault within a couple of instructions whenever
+they reach the EL for which GCS is enabled so it seems sensible to just
+require that this is set up.  It is hard to envision a scenario in which
+it would be reasonable to start in a different configuration.
+
+Now I think about it I should move those two to not depend on EL2 being
+present, that's just cut'n'paste.
+
+> Don't we need HCRX_EL2.GCSEn to be set when entered at EL1?
+
+Yes, if we want GCS to do anything.  I've added this.
+
+--FolSFB1sscROoe34
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+RWgACgkQJNaLcl1U
+h9BaiQf9EC6tNrCibHFhHciYydBCLiy2LIqlYTMYVmhIGoRxyAWDvgrDDiZx9XtM
+yJHys2Cn+xNukEZmz3TbAjtEfCb32S5qodYU+8KsRFp6cIsM2kUCTkFdVTz36dMZ
+8IDl4I2zbMlh03uCCC1+5vjuXE+qRPgUOzg1X00q4zHYC05XoSWCm2I1183TgHKJ
+4INAGk/sLjwF3oZPOtjnIta/ZUqyrxLbcBH4b1JQQD3WZ34WHJKjbCiZigQYJIMh
+iy9ryfYUrf8oluuAuFO8javORaHNBURd9bOsjj004eD9WlKYjp1Ji7iuheq5iWb6
+A3XUg+P7gC0bMfb12d1321Rjg8cWng==
+=dtpa
+-----END PGP SIGNATURE-----
+
+--FolSFB1sscROoe34--
 
