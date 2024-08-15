@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-287652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B966952AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59186952ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9B51F23C4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C9E1F2344F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7A21B1509;
-	Thu, 15 Aug 2024 08:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174F11B32D5;
+	Thu, 15 Aug 2024 08:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H7sh/MnH"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGa3Bud8"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69984176AA9;
-	Thu, 15 Aug 2024 08:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D487E176AA9;
+	Thu, 15 Aug 2024 08:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723709835; cv=none; b=tnmW+Y3X2r5ftpqHxS1FTkdTBWvLvAMuUJH5dydmosn8nVCb4KUsZX5N8jY9vMMjz+KgLRkYhW69Fwhaf0BsOTtdGdwjQq9hyhskGxrM5RFcMgxQeLZwu/H9/ORF81J5is5+G6iNC0vd5VAxMD3mQ+MOPYmwFNPnsc4ZlACg050=
+	t=1723709898; cv=none; b=PxKQjnAy0+HUHsv1oQHlVaYWbh6UiuSIcT/5GcAv57/KLlP3pjRWNz/nZhuhMvrt8PIMeTDzCZhj7GysIxtteTT5G3ltMZ253p/4KYT36i9zHwzwGm7M45DaFXOYCnP7jjrDYiLFq8GZc10jWewVV2pJtWnuoDW4QJKaad2OyOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723709835; c=relaxed/simple;
-	bh=GWBiH4ZVUiEUOh/sI4hXvLeuzGmyotK5Kv8uwRcqHKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c7/1dLKAPYXkNqSp5URnYQPXyCuytUtOPQLIMwfY6RcUjgYjLysolrNq0Golvhdki7wxPr1qJhIK4yzwIzTfFFsQz/yhE2wIswq8e6qdYHbzpDAx8vU+i63EV2HIvq3Q/WESCuF1rRQ91W71VZ5/z/VhUBO6/T5W4n2pUexpqvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H7sh/MnH; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EEC8060003;
-	Thu, 15 Aug 2024 08:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723709825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vWsM5QYpHQfJYyrwAgenUsDSWUQp0I0G8wHG4OAFcv4=;
-	b=H7sh/MnH0tgXYkTeVpYjh4tVx8JZzbvFQO0QgUHBE3X7Ho5ZYGq+SmbWFGEeu9FtFUxZVz
-	V5E9g+naDOSwMUpDPnTJb4IWc8+HQ2yneA/D/hJ5bvYG9371P8isT1lMgLAUjGpein18TJ
-	XjB9/re/wFQact5Im3dyTjAlEyNrtiFSe+9inMMEpH26AQR/umhuloX12ZVYHwHGrfR7Vr
-	1VbETwZG2kehwOc8SIqJOP05Pbzx3jVqohcIOvC4B0N57g2e7iheJ2NJ7tRaj324hT7RzS
-	v4bS+mf4d85ta/r4DxIPci3jlncKHv8QPt3awguxkdKb8ZYIEMiivXz9eoeKVg==
-Message-ID: <b3329b35-a41b-4f21-9b7b-8fc9b04eedd2@bootlin.com>
-Date: Thu, 15 Aug 2024 10:17:03 +0200
+	s=arc-20240116; t=1723709898; c=relaxed/simple;
+	bh=SCMcZlsxOg0bWvNs9re2KNKekbWFq534OYjgFt++y9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kM4ILjrm9ZTdx3Z3cv1gdpZPc/dGpWDUf0LNy9ceODa84T7X4kq/YcbV5XJJzodC5VjS21A6q0GeaBmWYxSfMd+GaA00aKpnGen/6raSzRSJ413AZLu4bKHxeMmWaKyRvvoUlhdmVNnZWGSuaN0Z6dmEwQLWiX25V//37Fj9E98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGa3Bud8; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so426406a12.0;
+        Thu, 15 Aug 2024 01:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723709895; x=1724314695; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YvlAxY1bGtRdImuOWaDEOzlQq4rW/Tt8gXa2bjpqACU=;
+        b=OGa3Bud8MN0IezW/IgUGaNQfBWnEZWqcOpsYP9YfKXtWvaGtXDchdOqaPD+Y17JOgC
+         PLFulw9PnGZcsrCILN7IMmeiYmJQUlSc9Xb7n1GgEvoEpTQI5QbIPRax5glykIxc/JIT
+         22GmggLT8aN/f15LgUw0mDC7UJZ/7SgPTsCd92bJWF3GKWY98BaFC2VptohEhtmzxGU4
+         x1BUhn1qoFp0T1oe+Zzt7PeZm54Z5TWdG7N9D5ITFRtmOBCeVYKVCP0pIBc83KJXwluc
+         hk6xuy5jIcRPgwFP2sJhjHd1HrOmygRrYkpCjy5jiFYvKU0XVJkUJlWQ40zH7ghk86U2
+         WSEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723709895; x=1724314695;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YvlAxY1bGtRdImuOWaDEOzlQq4rW/Tt8gXa2bjpqACU=;
+        b=FmxGaJz5L9qdOBxn4oT3y0b3rqM64AjpiBaQ9XO3Pdl0u1NUNPOQ+0grlRblmhbpSh
+         8CE4rAjRikJR9InJhbyJF6mT92z4JNx5kNKX8ApbrvffF7B57Cv3R6ZEmIpFJfcMhrdb
+         YaYAi+g3VKfR1pmZonMwMD+yrVybSKc8JdB60AISoJl/z/H06c4rtxsJ/7V4J3Fm7j32
+         YQf42Dmi0TC2T1r5I00JzYEQUCTROFg5nHZgutEvfDMFhMokvJcODPNZyrpHmrcYj9FK
+         hzF2Mra+4dOGpjSJMGnEwJQOJqn6c9get1G0leIDyHcAkpD+6oX+eMnq8ulKoT1bNf4K
+         /NCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrSKGs2wAya59+AyfkVqy2QXMx9hSdf9qJ92p2+/cxka+xBG586126fhIDD7VZt88/7LQkc4yve5LFqNVoetEHsMJbmWIKdiFNGiEHQ/eHWfRict7ku0c4G/wJ078MVfBBhxpuD2looA==
+X-Gm-Message-State: AOJu0YyhCwEZa4VWw7J4AhQ2To6qpZKgfqa/mqwZiKQJTAzhmhEL5kci
+	jlvL5lZ1a2fNRfBdVs47ezHjUYgg2vssXQZwTZ5OtePHmdmmzcip
+X-Google-Smtp-Source: AGHT+IE7xZlpJZIQFRTzXgIhFT/EOuGwj2l3VlFwMzZs0V9OCOaAFcKyWalP5CtpVOtB/e1kDNE0mg==
+X-Received: by 2002:a17:906:f598:b0:a72:64f0:552e with SMTP id a640c23a62f3a-a837cca3904mr205621466b.19.1723709894756;
+        Thu, 15 Aug 2024 01:18:14 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839342f6sm63839666b.137.2024.08.15.01.18.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 01:18:14 -0700 (PDT)
+Date: Thu, 15 Aug 2024 10:18:12 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 2/2] arm64: dts: sprd: sc2731: rename fuel gauge
+ node to be generic
+Message-ID: <Zr25xAv65+fd/qHW@standask-GA-A55M-S2HP>
+References: <cover.1720957783.git.stano.jakubek@gmail.com>
+ <246c0c7763a432d4bebcb0e99b90dcf4cded333d.1720957783.git.stano.jakubek@gmail.com>
+ <172364518667.95114.7859805701643557423.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4 4/4] selftests/bpf: convert
- test_skb_cgroup_id_user to test_progs
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>
-References: <20240813-convert_cgroup_tests-v4-0-a33c03458cf6@bootlin.com>
- <20240813-convert_cgroup_tests-v4-4-a33c03458cf6@bootlin.com>
- <7f47361f-caf8-45f2-9aaf-4a2a49eb525b@linux.dev>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <7f47361f-caf8-45f2-9aaf-4a2a49eb525b@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172364518667.95114.7859805701643557423.b4-ty@linaro.org>
 
-Hello Martin,
-
-On 8/15/24 04:20, Martin KaFai Lau wrote:
-> On 8/13/24 5:45 AM, Alexis Lothoré (eBPF Foundation) wrote:
+On Wed, Aug 14, 2024 at 04:20:29PM +0200, Krzysztof Kozlowski wrote:
 > 
->> +#define DST_ADDR "ff02::1"
+> On Sun, 14 Jul 2024 13:57:00 +0200, Stanislav Jakubek wrote:
+> > According to DT spec, node names should be generic. Rename the
+> > sprd,sc2731-fgu node to a more generic "fuel-gauge".
+> > 
+> > 
 > 
-> [ ... ]
+> This also waits for something... so I grabbed it.
 > 
->> +static int wait_local_ip(void)
->> +{
->> +    char *ping_cmd = ping_command(AF_INET6);
->> +    int i, err;
->> +
->> +    for (i = 0; i < WAIT_AUTO_IP_MAX_ATTEMPT; i++) {
->> +        err = SYS_NOFAIL("%s -c 1 -W 1 %s%%%s", ping_cmd, DST_ADDR,
->> +                 VETH_1);
+> Applied, thanks!
 > 
-> I tried in my qemu. This loop takes at least 3-4 iteration to get the ping
-> through. This test could become flaky if the CI is busy.
+> [2/2] arm64: dts: sprd: sc2731: rename fuel gauge node to be generic
+>       https://git.kernel.org/krzk/linux-dt/c/e06e908dba9fed62c9493ea5cea2e4cbd306d23c
 > 
-> I have been always wondering why some of the (non) test_progs has this practice.
-> I traced a little. I think it has something to do with the "ff02::1" used in the
-> test and/or the local link address is not ready. I have not further nailed it
-> down but I think it is close enough.
-> 
-> It will be easier to use a nodad configured v6 addr.
-> 
-> I take this chance to use an easier "::1" address for the test here instead of
-> ff02::1. This also removed the need to add veth pair and no need to ping first.
-> 
-> Applied with the "::1" changes mentioned above.
+> Best regards,
+> -- 
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks for the improvement. So far I tried to preserve as much as possible the
-original test behavior to avoid accidentally removing some important features,
-but I guess the more tests I work on, the more confident I will be to
-"challenge" some parts ;)
+Hi Krzysztof,
 
-> Thanks for migrating the tests to test_progs. This is long overdue.
+you already applied this change as part of [1].
 
-For the record, the next test I am targeting is test_xdp_features.sh. I have
-undertaken the conversion and have a working base but it still needs some work.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit?id=0dcc203956537696e6f936eef886fde70e049f54
 
-Thanks,
-
-Alexis
-
-
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Cheers,
+Stanislav
 
