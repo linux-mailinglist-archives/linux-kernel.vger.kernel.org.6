@@ -1,361 +1,253 @@
-Return-Path: <linux-kernel+bounces-288522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC2D953B3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:01:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16759953B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA3D285966
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F481C24B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653E914533C;
-	Thu, 15 Aug 2024 20:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B941448C3;
+	Thu, 15 Aug 2024 20:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="G48sOsS0"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eh/tyzHb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585E410FF;
-	Thu, 15 Aug 2024 20:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3E910FF;
+	Thu, 15 Aug 2024 20:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723752074; cv=none; b=b4SHlGIONkVhjdBWZiLjZPgM8HnSk90gAiEMNmH2ZMWF+yewZSgT17h9Q0Qme+Yzw+8SGVIRJ694chvo1r9A+3Ltr1w6Kvdit+d7xJl8pdpGffz/QTLcz7g7OSOOtvr09nBdFN44ewc2s8TeuZSbrrk0SkbMv9Frh53+KYTTpKc=
+	t=1723752147; cv=none; b=ZoReOqFzXy3Ps0nQ2gLOJnfXOY/3LdXdmAWe0nb80DHWjNEOn4c7gqsSoboP+Lwt135WCsiaFradoQTdm/OMtW/IqrJOOcu2nkcz5kwhJMvKmZ8Da4OT+PAYFbzwB6VrlaIPVXQUBDNxFj3vvljHHbVGTBZSSwwtIQQe6k24gqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723752074; c=relaxed/simple;
-	bh=p6dGzQkx439wCXGF0RTBVpGHfzCjlaBCzF13TGs2Tnk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kwYJf6/mrQi66iqKiW5tUei3i4mwOgNPVV2DD34KORMxzad+3szJ5Hj6Vu58vdu37tRRQQ0pSCuj/WrGSQkkGzOhLDXkteMzoKbMC6/A68HX5ftv3Qg0VmjBcbdh1pGYyZTLs7jvCTh1zmTm/rOc7otF2s34pYmVRsMqqq0sYAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=G48sOsS0; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1723752072; x=1755288072;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zJHUmhLEk4/bMHfUOcTYto7YvG/zsYt9ANdY8UibJ0Y=;
-  b=G48sOsS0+g6GoZGEpj/O0RM7HJ82IRuv07cF9eA+CmqaOM3BOwiRstnK
-   eqvzgfrTT4XLQKyIu2PJFzIeNfoyaYS52xmaAwCW7IlqJ6vwtQsxhK0hS
-   HfpkzvuFM3jXfNmBbr3iz7dno4cUt6GqjOEVRQ59id7WPKA7/7pvRfLDp
-   4=;
-X-IronPort-AV: E=Sophos;i="6.10,149,1719878400"; 
-   d="scan'208";a="115663158"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 20:01:10 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:15726]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.59.118:2525] with esmtp (Farcaster)
- id 3af1a5e9-e856-4d44-82d0-a05a1fafaf3e; Thu, 15 Aug 2024 20:01:10 +0000 (UTC)
-X-Farcaster-Flow-ID: 3af1a5e9-e856-4d44-82d0-a05a1fafaf3e
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 15 Aug 2024 20:01:09 +0000
-Received: from 88665a182662.ant.amazon.com (10.106.100.33) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 15 Aug 2024 20:01:06 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <syzbot+b72d86aa5df17ce74c60@syzkaller.appspotmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <syzkaller-bugs@googlegroups.com>, <kuniyu@amazon.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in kcm_release
-Date: Thu, 15 Aug 2024 13:00:58 -0700
-Message-ID: <20240815200058.44124-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <000000000000fe2e920617dfdafb@google.com>
-References: <000000000000fe2e920617dfdafb@google.com>
+	s=arc-20240116; t=1723752147; c=relaxed/simple;
+	bh=Una/csjFvk8Y03/HoOMMntul75tfxF/Fl5iMXVtNLo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEXZ54gA0W/F8ispayzyjg7SOjGnJ5caVnTIFOkNLzsO7nn6wznWnWCnYpMeNuXjqLU8A98slOgDIbACVaszOAt0Su6wpR/42iGWHVrFGfKPkMYDmzqLHTXx5mPSgr1386/YJrtEhfMelfo+ugZWIVTyMNqlLapLQkitIEaLVsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eh/tyzHb; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723752145; x=1755288145;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Una/csjFvk8Y03/HoOMMntul75tfxF/Fl5iMXVtNLo4=;
+  b=Eh/tyzHbRy/rMbC9zHkGBeZM2Qkw6bpXAGT5zqbMYeRDDn1svToFZMm7
+   M4bfGHWRuBMmdnmjDF2Jh+Y15+7YFhampvwChTqFXnXrrsNw+szDWSJmp
+   45s3sW6iOqIhRP/jg3kTKj7Osr7mT34w5SrCdYUgK4x/f824LKen16G30
+   n/liakxF4ouqZ313YsxQGdbySYimVaV67v6PrX7D0m9C7n7xLzcaM7ON9
+   kg75Ms09OqkhzWWpnZ0z9xzfcJJBQXIkZYbeYzXbRcD0S5eSMDPdQ9S7V
+   GsgFSSRjpCYGuiMHA6FsBBDPmlBI0i26ZvRlkA8n9SbGkdG0YH7DZgt+6
+   Q==;
+X-CSE-ConnectionGUID: +myjxpEkQ7e1YNjfyDl9Yg==
+X-CSE-MsgGUID: wfXFJmyVRK6k1Q7aU4mHog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="32605452"
+X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
+   d="scan'208";a="32605452"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 13:02:24 -0700
+X-CSE-ConnectionGUID: BQ4Ed6q6Qw2zdK7U38N6BA==
+X-CSE-MsgGUID: bpAKtS9nR9ODn/gWIi+NuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
+   d="scan'208";a="59133924"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 15 Aug 2024 13:02:21 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1segfr-0005YM-0X;
+	Thu, 15 Aug 2024 20:02:19 +0000
+Date: Fri, 16 Aug 2024 04:01:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	=?iso-8859-1?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] hwmon: (oxp-sensors) Add support for multiple new
+ devices.
+Message-ID: <202408160329.TLNbIwRC-lkp@intel.com>
+References: <20240815031358.21027-2-derekjohn.clark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D045UWA001.ant.amazon.com (10.13.139.83) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815031358.21027-2-derekjohn.clark@gmail.com>
 
-From: syzbot <syzbot+b72d86aa5df17ce74c60@syzkaller.appspotmail.com>
-Date: Tue, 07 May 2024 09:41:19 -0700
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    9abbc24128bc Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16d93522180000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=af5c6c699e57bbb3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b72d86aa5df17ce74c60
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11839322180000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13010a54180000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ce13ec3ed5ad/disk-9abbc241.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/256cbd314121/vmlinux-9abbc241.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/0af86fb52109/Image-9abbc241.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b72d86aa5df17ce74c60@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in __skb_unlink include/linux/skbuff.h:2366 [inline]
-> BUG: KASAN: slab-use-after-free in __skb_dequeue include/linux/skbuff.h:2385 [inline]
-> BUG: KASAN: slab-use-after-free in __skb_queue_purge_reason include/linux/skbuff.h:3175 [inline]
-> BUG: KASAN: slab-use-after-free in __skb_queue_purge include/linux/skbuff.h:3181 [inline]
-> BUG: KASAN: slab-use-after-free in kcm_release+0x170/0x4c8 net/kcm/kcmsock.c:1691
-> Read of size 8 at addr ffff0000ced0fc80 by task syz-executor329/6167
-> 
-> CPU: 1 PID: 6167 Comm: syz-executor329 Tainted: G    B              6.8.0-rc5-syzkaller-g9abbc24128bc #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-> Call trace:
->  dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:291
->  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:298
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0xd0/0x124 lib/dump_stack.c:106
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x178/0x518 mm/kasan/report.c:488
->  kasan_report+0xd8/0x138 mm/kasan/report.c:601
->  __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
->  __skb_unlink include/linux/skbuff.h:2366 [inline]
->  __skb_dequeue include/linux/skbuff.h:2385 [inline]
->  __skb_queue_purge_reason include/linux/skbuff.h:3175 [inline]
->  __skb_queue_purge include/linux/skbuff.h:3181 [inline]
->  kcm_release+0x170/0x4c8 net/kcm/kcmsock.c:1691
->  __sock_release net/socket.c:659 [inline]
->  sock_close+0xa4/0x1e8 net/socket.c:1421
->  __fput+0x30c/0x738 fs/file_table.c:376
->  ____fput+0x20/0x30 fs/file_table.c:404
->  task_work_run+0x230/0x2e0 kernel/task_work.c:180
->  exit_task_work include/linux/task_work.h:38 [inline]
->  do_exit+0x618/0x1f64 kernel/exit.c:871
->  do_group_exit+0x194/0x22c kernel/exit.c:1020
->  get_signal+0x1500/0x15ec kernel/signal.c:2893
->  do_signal+0x23c/0x3b44 arch/arm64/kernel/signal.c:1249
->  do_notify_resume+0x74/0x1f4 arch/arm64/kernel/entry-common.c:148
->  exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
->  exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
->  el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:713
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> 
-> Allocated by task 6166:
->  kasan_save_stack mm/kasan/common.c:47 [inline]
->  kasan_save_track+0x40/0x78 mm/kasan/common.c:68
->  kasan_save_alloc_info+0x70/0x84 mm/kasan/generic.c:626
->  unpoison_slab_object mm/kasan/common.c:314 [inline]
->  __kasan_slab_alloc+0x74/0x8c mm/kasan/common.c:340
->  kasan_slab_alloc include/linux/kasan.h:201 [inline]
->  slab_post_alloc_hook mm/slub.c:3813 [inline]
->  slab_alloc_node mm/slub.c:3860 [inline]
->  kmem_cache_alloc_node+0x204/0x4c0 mm/slub.c:3903
->  __alloc_skb+0x19c/0x3d8 net/core/skbuff.c:641
->  alloc_skb include/linux/skbuff.h:1296 [inline]
->  kcm_sendmsg+0x1d3c/0x2124 net/kcm/kcmsock.c:783
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg net/socket.c:745 [inline]
->  sock_sendmsg+0x220/0x2c0 net/socket.c:768
->  splice_to_socket+0x7cc/0xd58 fs/splice.c:889
->  do_splice_from fs/splice.c:941 [inline]
->  direct_splice_actor+0xec/0x1d8 fs/splice.c:1164
->  splice_direct_to_actor+0x438/0xa0c fs/splice.c:1108
->  do_splice_direct_actor fs/splice.c:1207 [inline]
->  do_splice_direct+0x1e4/0x304 fs/splice.c:1233
->  do_sendfile+0x460/0xb3c fs/read_write.c:1295
->  __do_sys_sendfile64 fs/read_write.c:1362 [inline]
->  __se_sys_sendfile64 fs/read_write.c:1348 [inline]
->  __arm64_sys_sendfile64+0x160/0x3b4 fs/read_write.c:1348
->  __invoke_syscall arch/arm64/kernel/syscall.c:37 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:51
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:136
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:155
->  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> 
-> Freed by task 6167:
->  kasan_save_stack mm/kasan/common.c:47 [inline]
->  kasan_save_track+0x40/0x78 mm/kasan/common.c:68
->  kasan_save_free_info+0x5c/0x74 mm/kasan/generic.c:640
->  poison_slab_object+0x124/0x18c mm/kasan/common.c:241
->  __kasan_slab_free+0x3c/0x78 mm/kasan/common.c:257
->  kasan_slab_free include/linux/kasan.h:184 [inline]
->  slab_free_hook mm/slub.c:2121 [inline]
->  slab_free mm/slub.c:4299 [inline]
->  kmem_cache_free+0x15c/0x3d4 mm/slub.c:4363
->  kfree_skbmem+0x10c/0x19c
->  __kfree_skb net/core/skbuff.c:1109 [inline]
->  kfree_skb_reason+0x240/0x6f4 net/core/skbuff.c:1144
->  kfree_skb include/linux/skbuff.h:1244 [inline]
->  kcm_release+0x104/0x4c8 net/kcm/kcmsock.c:1685
->  __sock_release net/socket.c:659 [inline]
->  sock_close+0xa4/0x1e8 net/socket.c:1421
->  __fput+0x30c/0x738 fs/file_table.c:376
->  ____fput+0x20/0x30 fs/file_table.c:404
->  task_work_run+0x230/0x2e0 kernel/task_work.c:180
->  exit_task_work include/linux/task_work.h:38 [inline]
->  do_exit+0x618/0x1f64 kernel/exit.c:871
->  do_group_exit+0x194/0x22c kernel/exit.c:1020
->  get_signal+0x1500/0x15ec kernel/signal.c:2893
->  do_signal+0x23c/0x3b44 arch/arm64/kernel/signal.c:1249
->  do_notify_resume+0x74/0x1f4 arch/arm64/kernel/entry-common.c:148
->  exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
->  exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
->  el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:713
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> 
-> The buggy address belongs to the object at ffff0000ced0fc80
->  which belongs to the cache skbuff_head_cache of size 240
-> The buggy address is located 0 bytes inside of
->  freed 240-byte region [ffff0000ced0fc80, ffff0000ced0fd70)
-> 
-> The buggy address belongs to the physical page:
-> page:00000000d35f4ae4 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10ed0f
-> flags: 0x5ffc00000000800(slab|node=0|zone=2|lastcpupid=0x7ff)
-> page_type: 0xffffffff()
-> raw: 05ffc00000000800 ffff0000c1cbf640 fffffdffc3423100 dead000000000004
-> raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> 
-> Memory state around the buggy address:
->  ffff0000ced0fb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff0000ced0fc00: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
-> >ffff0000ced0fc80: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                    ^
->  ffff0000ced0fd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
->  ffff0000ced0fd80: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
-> ==================================================================
-> Unable to handle kernel paging request at virtual address dfff800000000001
-> KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-> Mem abort info:
->   ESR = 0x0000000096000005
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x05: level 1 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [dfff800000000001] address between user and kernel address ranges
-> Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-> Modules linked in:
-> CPU: 1 PID: 6167 Comm: syz-executor329 Tainted: G    B              6.8.0-rc5-syzkaller-g9abbc24128bc #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-> pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : __skb_unlink include/linux/skbuff.h:2369 [inline]
-> pc : __skb_dequeue include/linux/skbuff.h:2385 [inline]
-> pc : __skb_queue_purge_reason include/linux/skbuff.h:3175 [inline]
-> pc : __skb_queue_purge include/linux/skbuff.h:3181 [inline]
-> pc : kcm_release+0x1a4/0x4c8 net/kcm/kcmsock.c:1691
-> lr : __skb_unlink include/linux/skbuff.h:2368 [inline]
-> lr : __skb_dequeue include/linux/skbuff.h:2385 [inline]
-> lr : __skb_queue_purge_reason include/linux/skbuff.h:3175 [inline]
-> lr : __skb_queue_purge include/linux/skbuff.h:3181 [inline]
-> lr : kcm_release+0x1a0/0x4c8 net/kcm/kcmsock.c:1691
-> sp : ffff800097a775e0
-> x29: ffff800097a77600 x28: 1fffe0001b4b0051 x27: 1fffe0001b4b0053
-> x26: dfff800000000000 x25: 0000000000000008 x24: 02a800ec00001817
-> x23: ffff0000ced0fc80 x22: ffff0000da580298 x21: ffff0000da580288
-> x20: ffff0000da580000 x19: 0000000000000000 x18: 1fffe00036804796
-> x17: ffff80008ec8d000 x16: ffff80008ac97900 x15: ffff600019da1f90
-> x14: 1fffe00019da1f90 x13: 00000000000000fa x12: fffffffffffffffe
-> x11: ffff600019da1f90 x10: 1fffe00019da1f91 x9 : ffff800093475840
-> x8 : 0000000000000001 x7 : 0000000000000000 x6 : ffff800080297af0
-> x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000010
-> x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000ced0fc80
-> Call trace:
->  __skb_unlink include/linux/skbuff.h:2369 [inline]
->  __skb_dequeue include/linux/skbuff.h:2385 [inline]
->  __skb_queue_purge_reason include/linux/skbuff.h:3175 [inline]
->  __skb_queue_purge include/linux/skbuff.h:3181 [inline]
->  kcm_release+0x1a4/0x4c8 net/kcm/kcmsock.c:1691
->  __sock_release net/socket.c:659 [inline]
->  sock_close+0xa4/0x1e8 net/socket.c:1421
->  __fput+0x30c/0x738 fs/file_table.c:376
->  ____fput+0x20/0x30 fs/file_table.c:404
->  task_work_run+0x230/0x2e0 kernel/task_work.c:180
->  exit_task_work include/linux/task_work.h:38 [inline]
->  do_exit+0x618/0x1f64 kernel/exit.c:871
->  do_group_exit+0x194/0x22c kernel/exit.c:1020
->  get_signal+0x1500/0x15ec kernel/signal.c:2893
->  do_signal+0x23c/0x3b44 arch/arm64/kernel/signal.c:1249
->  do_notify_resume+0x74/0x1f4 arch/arm64/kernel/entry-common.c:148
->  exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
->  exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
->  el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:713
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> Code: f94006f8 91002279 9776b98f d343ff28 (387a6908) 
-> ---[ end trace 0000000000000000 ]---
-> ----------------
-> Code disassembly (best guess):
->    0:	f94006f8 	ldr	x24, [x23, #8]
->    4:	91002279 	add	x25, x19, #0x8
->    8:	9776b98f 	bl	0xfffffffffddae644
->    c:	d343ff28 	lsr	x8, x25, #3
-> * 10:	387a6908 	ldrb	w8, [x8, x26] <-- trapping instruction
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+Hi Derek,
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git HEAD
+kernel test robot noticed the following build warnings:
 
-diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
-index 2f191e50d4fc..51f2409d6113 100644
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -748,7 +748,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- {
- 	struct sock *sk = sock->sk;
- 	struct kcm_sock *kcm = kcm_sk(sk);
--	struct sk_buff *skb = NULL, *head = NULL;
-+	struct sk_buff *skb = NULL, *head = NULL, *seq_skb;
- 	size_t copy, copied = 0;
- 	long timeo = sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
- 	int eor = (sock->type == SOCK_DGRAM) ?
-@@ -763,6 +763,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 	if (sk->sk_err)
- 		goto out_error;
- 
-+	seq_skb = kcm->seq_skb;
- 	if (kcm->seq_skb) {
- 		/* Previously opened message */
- 		head = kcm->seq_skb;
-@@ -888,6 +889,8 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 		err = sk_stream_wait_memory(sk, &timeo);
- 		if (err)
- 			goto out_error;
-+		if (seq_skb && seq_skb != kcm->seq_skb)
-+			goto out_stolen;
- 	}
- 
- 	if (eor) {
-@@ -943,7 +946,7 @@ static int kcm_sendmsg(struct socket *sock, struct msghdr *msg, size_t len)
- 		kfree_skb(head);
- 		kcm->seq_skb = NULL;
- 	}
--
-+out_stolen:
- 	err = sk_stream_error(sk, msg->msg_flags, err);
- 
- 	/* make sure we wake any epoll edge trigger waiter */
+[auto build test WARNING on groeck-staging/hwmon-next]
+[also build test WARNING on linus/master v6.11-rc3 next-20240815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Derek-J-Clark/hwmon-oxp-sensors-Add-support-for-multiple-new-devices/20240815-111550
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20240815031358.21027-2-derekjohn.clark%40gmail.com
+patch subject: [PATCH 1/1] hwmon: (oxp-sensors) Add support for multiple new devices.
+config: i386-buildonly-randconfig-005-20240815 (https://download.01.org/0day-ci/archive/20240816/202408160329.TLNbIwRC-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408160329.TLNbIwRC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408160329.TLNbIwRC-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hwmon/oxp-sensors.c:497:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     497 |                 default:
+         |                 ^
+   drivers/hwmon/oxp-sensors.c:497:3: note: insert 'break;' to avoid fall-through
+     497 |                 default:
+         |                 ^
+         |                 break; 
+   drivers/hwmon/oxp-sensors.c:564:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     564 |                 default:
+         |                 ^
+   drivers/hwmon/oxp-sensors.c:564:3: note: insert 'break;' to avoid fall-through
+     564 |                 default:
+         |                 ^
+         |                 break; 
+   drivers/hwmon/oxp-sensors.c:616:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     616 |                 default:
+         |                 ^
+   drivers/hwmon/oxp-sensors.c:616:3: note: insert 'break;' to avoid fall-through
+     616 |                 default:
+         |                 ^
+         |                 break; 
+   3 warnings generated.
+
+
+vim +497 drivers/hwmon/oxp-sensors.c
+
+   464	
+   465	static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
+   466				     u32 attr, int channel, long *val)
+   467	{
+   468		int ret;
+   469	
+   470		switch (type) {
+   471		case hwmon_fan:
+   472			switch (attr) {
+   473			case hwmon_fan_input:
+   474				switch (board) {
+   475				case orange_pi_neo:
+   476					return read_from_ec(ORANGEPI_SENSOR_FAN_REG, 2, val);
+   477				case aok_zoe_a1:
+   478				case aya_neo_2:
+   479				case aya_neo_2s:
+   480				case aya_neo_air:
+   481				case aya_neo_air_1s:
+   482				case aya_neo_air_plus_mendo:
+   483				case aya_neo_air_pro:
+   484				case aya_neo_flip:
+   485				case aya_neo_geek:
+   486				case aya_neo_geek_1s:
+   487				case aya_neo_kun:
+   488				case oxp_mini_amd:
+   489				case oxp_mini_amd_a07:
+   490				case oxp_2:
+   491				case oxp_fly:
+   492				case oxp_mini_amd_pro:
+   493					return read_from_ec(OXP_SENSOR_FAN_REG, 2, val);
+   494				default:
+   495					break;
+   496				}
+ > 497			default:
+   498				break;
+   499			}
+   500			break;
+   501		case hwmon_pwm:
+   502			switch (attr) {
+   503			case hwmon_pwm_input:
+   504				switch (board) {
+   505				case orange_pi_neo:
+   506					ret = read_from_ec(ORANGEPI_SENSOR_PWM_REG, 1, val);
+   507					if (ret)
+   508						return ret;
+   509					/* scale from range [1-244] */
+   510					*val = ((*val - 1) * 254 / 243) + 1;
+   511					break;
+   512				case aya_neo_2:
+   513				case aya_neo_2s:
+   514				case aya_neo_air:
+   515				case aya_neo_air_1s:
+   516				case aya_neo_air_plus_mendo:
+   517				case aya_neo_air_pro:
+   518				case aya_neo_flip:
+   519				case aya_neo_geek:
+   520				case aya_neo_geek_1s:
+   521				case aya_neo_kun:
+   522				case oxp_mini_amd:
+   523				case oxp_mini_amd_a07:
+   524					ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+   525					if (ret)
+   526						return ret;
+   527					*val = (*val * 255) / 100;
+   528					break;
+   529				case aok_zoe_a1:
+   530				case oxp_2:
+   531				case oxp_fly:
+   532				case oxp_mini_amd_pro:
+   533				default:
+   534					ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
+   535					if (ret)
+   536						return ret;
+   537					break;
+   538				}
+   539				return 0;
+   540			case hwmon_pwm_enable:
+   541				switch (board) {
+   542				case orange_pi_neo:
+   543					return read_from_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, 1, val);
+   544				case aok_zoe_a1:
+   545				case aya_neo_2:
+   546				case aya_neo_2s:
+   547				case aya_neo_air:
+   548				case aya_neo_air_1s:
+   549				case aya_neo_air_plus_mendo:
+   550				case aya_neo_air_pro:
+   551				case aya_neo_flip:
+   552				case aya_neo_geek:
+   553				case aya_neo_geek_1s:
+   554				case aya_neo_kun:
+   555				case oxp_mini_amd:
+   556				case oxp_mini_amd_a07:
+   557				case oxp_2:
+   558				case oxp_fly:
+   559				case oxp_mini_amd_pro:
+   560					return read_from_ec(OXP_SENSOR_PWM_ENABLE_REG, 1, val);
+   561				default:
+   562					break;
+   563				}
+   564			default:
+   565				break;
+   566			}
+   567			break;
+   568		default:
+   569			break;
+   570		}
+   571		return -EOPNOTSUPP;
+   572	}
+   573	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
