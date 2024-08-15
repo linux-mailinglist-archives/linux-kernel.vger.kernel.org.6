@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-288050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F671953237
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:03:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0EC95323A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0DB1F25D63
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E661C23916
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043561AED32;
-	Thu, 15 Aug 2024 14:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E5B1B143B;
+	Thu, 15 Aug 2024 14:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8MJAMoB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umfABLK6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A911A7056;
-	Thu, 15 Aug 2024 14:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0012B1AC454;
+	Thu, 15 Aug 2024 14:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730522; cv=none; b=C+w9djN2Ks2FW9bsNuwvno2aHo/WnDF+0E3zJik4HqE2pE2UxsN+Dmlw7QVxboxJh+1OAUvzfG5T8NIWafdzvKtUi4ueSiRSNhgfuyG19BDZLO1W7l3WhnKfRDuKssFksNrRm0q9r9OyK+Uh3jxBJtNEk4JKgbtXXdzJJp6bPDI=
+	t=1723730525; cv=none; b=gd+IMkK3TJSzZah+WxxNvzAmr4eKIozoM7JYEBnGpLFc6TJTrPx32RkyvCfm80t0Jtg3hbUhbU4Nl12x0oaVi9ldAis8i71WV2tp8YIn6xlsPP5G6VXonAc8NbQ24sYGYz/Kon1IkS9AdyGy4poBSiHwvGuE0rCJ2puEHMOHzBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730522; c=relaxed/simple;
-	bh=pX087AmU1PaUgpUD1h/mJcraFHVX9O0NaJswXItglDY=;
+	s=arc-20240116; t=1723730525; c=relaxed/simple;
+	bh=//J+70MpTR0Du2JzFTYBY8HR3h40SC+x8QIXmtCouSI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZEuWo3WLzDWH97A3vBJt47Hw+BN0MqBICuMOCZO84n22EOR1LYiw+sWLRp56i4HHQfIQHryL6DgUgnAGtR64cB8NG3z2278xdOUI66OFShaCTzyAadF0EK0709CjV5WrpzP2eodJaSpVJqbSeJlKIO/dzgfjM011e2cGfYVMFM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8MJAMoB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2ACEC32786;
-	Thu, 15 Aug 2024 14:02:00 +0000 (UTC)
+	 MIME-Version; b=W3QI9fXkaqis8xtot3AD8H3IivXkdkBXYsc3Y6W2g1l2DG1cUbA4mtOokpEi9mV+7a1h1NmVrVU81H9n1/s2DyL285jy89yoYjhoNczPdFLGcEBloLZ+mkn7weIJ/MagRQwXehkbmMf+hIUEORVIAXkYQv9Lx2pZap3mEtj6u6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umfABLK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E96EC4AF11;
+	Thu, 15 Aug 2024 14:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723730522;
-	bh=pX087AmU1PaUgpUD1h/mJcraFHVX9O0NaJswXItglDY=;
+	s=k20201202; t=1723730524;
+	bh=//J+70MpTR0Du2JzFTYBY8HR3h40SC+x8QIXmtCouSI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J8MJAMoB3RMbrKDcxeIEFBw++2H3qlyRoZHHOgEggMAb6a6Z0dFnUj9IFqjALz2lr
-	 EyDo9geBCnDUY0uFjDFEXyRcGH78ET4HmFPCn9Xt88wy3+Zd2uRQOoNmqLeIufyxIS
-	 4MIwFCItiwszWadPVmDoerQsY9xoQJ0g63iDnd88tauiukFdCOI+xwgQVd0f49DQBW
-	 CcjkNgOhI4TS+xZW3dtBDpOsfoVvTwMIv6lF3kg5n5gRmy/I4WM0+uXEgjxDvbXj2b
-	 o4eWcU4ezx0vwDb7eWEfyOT2sGfak+5AmK/bh+57hobHBhW1Wh6hmqmfNMFCbx6bIT
-	 o6/UpiZtRVQ/Q==
+	b=umfABLK6ha8wtrFzMJkYv26fZ7ihfdbvdfi1HfIUgyq7zUnsqLt7DMfeeO55iUttx
+	 68ws3Nxmkubqv2oh3xcpih/fmDuBrDDMgbChGWLujWKSPD0yCllPw6ZF8XTQnL86uw
+	 m7SJsmfCU+e3wxCnNv3qJDd/0A+G51gNSC+vudVELyORenwHQsGB8r+ulQU2ct7fS6
+	 jTOaWzNlJF2YMubLPBv1esb+nxBEBZPxqdOoaxpjgOgKHj2E3lw47OsoB2S8A7riE3
+	 EWv0Zz6JZiRjZkwZOScGUPHKsz54wVFZBdEyfy9kX+3fxBxB/mhgPE5+IgpE7GQ/n6
+	 5XuEeiD0jH6hA==
 From: Conor Dooley <conor@kernel.org>
 To: devicetree@vger.kernel.org
 Cc: conor@kernel.org,
@@ -49,9 +49,9 @@ Cc: conor@kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 08/11] copy meson clk-regmap for now
-Date: Thu, 15 Aug 2024 15:01:11 +0100
-Message-ID: <20240815-skirmish-violator-8ce24c596b9f@spud>
+Subject: [RFC PATCH 09/11] clk: microchip: mpfs: use regmap clock types
+Date: Thu, 15 Aug 2024 15:01:12 +0100
+Message-ID: <20240815-aspire-rocket-38a56ce389ae@spud>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240815-shindig-bunny-fd42792d638a@spud>
 References: <20240815-shindig-bunny-fd42792d638a@spud>
@@ -61,365 +61,215 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10704; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=7foUgvrOx4wJS1971cQwv0FEaKkGIfX/0niGM57yiMo=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGn7uHR95+69zHXwuvi1Lzd/v2ZJt9m4r4yD/5w7R9ikH J3cH9P3dpSyMIhxMMiKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAiC/QZ/qfwLHLZsc3zY9TW jdsM14pF512ZF7mdSe3MQ+2S2oNiP6cw/E+XWsQj8KTfp8HTmdeeL/fxxLZFvmfv/9vS13+3Ltu jnwcA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7027; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=8TEePMgwAHr2dnJymzvS6c7DD2P/83v04LyJwVYBlQ0=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGn7uHRvthd3Pd675k+pF7P6hEuZSmEnXvavem8YMX/Vw TktJt6eHaUsDGIcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZjI1OMM/zR4f5nnJq87/Hqi 8hP19pYXeyfuENHfYRtyTGvtM9PSy2yMDL2yz6/9neES2b5ddJrS7F83mnK/Lv+0XeHIoT5Z/c/ CWYwA
 X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
 From: Conor Dooley <conor.dooley@microchip.com>
 
+Convert the PolarFire SoC clock driver to use regmap clock types as a
+preparatory work for supporting the new binding for this device that
+will only provide the second of the two register regions, and will
+require the use of syscon regmap to access the "cfg" and "periph" clocks
+currently supported by the driver.
+
 Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/clk/microchip/Makefile     |   1 +
- drivers/clk/microchip/clk-regmap.c | 186 +++++++++++++++++++++++++++++
- drivers/clk/microchip/clk-regmap.h | 137 +++++++++++++++++++++
- 3 files changed, 324 insertions(+)
- create mode 100644 drivers/clk/microchip/clk-regmap.c
- create mode 100644 drivers/clk/microchip/clk-regmap.h
+ drivers/clk/microchip/clk-mpfs.c | 81 ++++++++++++++++++++++----------
+ 1 file changed, 56 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/clk/microchip/Makefile b/drivers/clk/microchip/Makefile
-index 13250e04e46c..6b463066c64e 100644
---- a/drivers/clk/microchip/Makefile
-+++ b/drivers/clk/microchip/Makefile
-@@ -3,3 +3,4 @@ obj-$(CONFIG_COMMON_CLK_PIC32) += clk-core.o
- obj-$(CONFIG_PIC32MZDA) += clk-pic32mzda.o
- obj-$(CONFIG_MCHP_CLK_MPFS) += clk-mpfs.o
- obj-$(CONFIG_MCHP_CLK_MPFS) += clk-mpfs-ccc.o
-+obj-y += clk-regmap.o
-diff --git a/drivers/clk/microchip/clk-regmap.c b/drivers/clk/microchip/clk-regmap.c
-new file mode 100644
-index 000000000000..ad116d24f700
---- /dev/null
-+++ b/drivers/clk/microchip/clk-regmap.c
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#include <linux/module.h>
+diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
+index 28ec0da88cb3..e288c1729a23 100644
+--- a/drivers/clk/microchip/clk-mpfs.c
++++ b/drivers/clk/microchip/clk-mpfs.c
+@@ -6,10 +6,13 @@
+  */
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <dt-bindings/clock/microchip,mpfs-clock.h>
+ #include <soc/microchip/mpfs.h>
 +#include "clk-regmap.h"
-+
-+static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
-+	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
-+
-+	set ^= enable;
-+
-+	return regmap_update_bits(clk->map, gate->offset, BIT(gate->bit_idx),
-+				  set ? BIT(gate->bit_idx) : 0);
-+}
-+
-+static int clk_regmap_gate_enable(struct clk_hw *hw)
-+{
-+	return clk_regmap_gate_endisable(hw, 1);
-+}
-+
-+static void clk_regmap_gate_disable(struct clk_hw *hw)
-+{
-+	clk_regmap_gate_endisable(hw, 0);
-+}
-+
-+static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_gate_data *gate = clk_get_regmap_gate_data(clk);
-+	unsigned int val;
-+
-+	regmap_read(clk->map, gate->offset, &val);
-+	if (gate->flags & CLK_GATE_SET_TO_DISABLE)
-+		val ^= BIT(gate->bit_idx);
-+
-+	val &= BIT(gate->bit_idx);
-+
-+	return val ? 1 : 0;
-+}
-+
-+const struct clk_ops clk_regmap_gate_ops = {
-+	.enable = clk_regmap_gate_enable,
-+	.disable = clk_regmap_gate_disable,
-+	.is_enabled = clk_regmap_gate_is_enabled,
+ 
+ /* address offset of control registers */
+ #define REG_MSSPLL_REF_CR	0x08u
+@@ -30,6 +33,14 @@
+ #define MSSPLL_POSTDIV_WIDTH	0x07u
+ #define MSSPLL_FIXED_DIV	4u
+ 
++static const struct regmap_config clk_mpfs_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.val_format_endian = REGMAP_ENDIAN_LITTLE,
++	.max_register = REG_SUBBLK_CLOCK_CR,
 +};
-+EXPORT_SYMBOL_GPL(clk_regmap_gate_ops);
 +
-+const struct clk_ops clk_regmap_gate_ro_ops = {
-+	.is_enabled = clk_regmap_gate_is_enabled,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
+ /*
+  * This clock ID is defined here, rather than the binding headers, as it is an
+  * internal clock only, and therefore has no consumers in other peripheral
+@@ -39,6 +50,7 @@
+ 
+ struct mpfs_clock_data {
+ 	struct device *dev;
++	struct regmap *regmap;
+ 	void __iomem *base;
+ 	void __iomem *msspll_base;
+ 	struct clk_hw_onecell_data hw_data;
+@@ -68,14 +80,14 @@ struct mpfs_msspll_out_hw_clock {
+ #define to_mpfs_msspll_out_clk(_hw) container_of(_hw, struct mpfs_msspll_out_hw_clock, hw)
+ 
+ struct mpfs_cfg_hw_clock {
+-	struct clk_divider cfg;
+-	struct clk_init_data init;
++	struct clk_regmap sigh;
++	struct clk_regmap_div_data cfg;
+ 	unsigned int id;
+-	u32 reg_offset;
+ };
+ 
+ struct mpfs_periph_hw_clock {
+-	struct clk_gate periph;
++	struct clk_regmap sigh;
++	struct clk_regmap_gate_data periph;
+ 	unsigned int id;
+ };
+ 
+@@ -225,10 +237,9 @@ static int mpfs_clk_register_msspll_outs(struct device *dev,
+ 	.cfg.shift = _shift,								\
+ 	.cfg.width = _width,								\
+ 	.cfg.table = _table,								\
+-	.reg_offset = _offset,								\
++	.cfg.offset = _offset,								\
+ 	.cfg.flags = _flags,								\
+-	.cfg.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_ops, 0),		\
+-	.cfg.lock = &mpfs_clk_lock,							\
++	.sigh.hw.init = CLK_HW_INIT(_name, _parent, &clk_regmap_divider_ops, 0),	\
+ }
+ 
+ #define CLK_CPU_OFFSET		0u
+@@ -248,10 +259,10 @@ static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
+ 		.cfg.shift = 0,
+ 		.cfg.width = 12,
+ 		.cfg.table = mpfs_div_rtcref_table,
+-		.reg_offset = REG_RTC_CLOCK_CR,
++		.cfg.offset = REG_RTC_CLOCK_CR,
+ 		.cfg.flags = CLK_DIVIDER_ONE_BASED,
+-		.cfg.hw.init =
+-			CLK_HW_INIT_PARENTS_DATA("clk_rtcref", mpfs_ext_ref, &clk_divider_ops, 0),
++		.sigh.hw.init =
++			CLK_HW_INIT_PARENTS_DATA("clk_rtcref", mpfs_ext_ref, &clk_regmap_divider_ops, 0),
+ 	}
+ };
+ 
+@@ -264,14 +275,16 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
+ 	for (i = 0; i < num_clks; i++) {
+ 		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
+ 
+-		cfg_hw->cfg.reg = data->base + cfg_hw->reg_offset;
+-		ret = devm_clk_hw_register(dev, &cfg_hw->cfg.hw);
++		cfg_hw->sigh.map = data->regmap;
++		cfg_hw->sigh.data = &cfg_hw->cfg;
 +
-+static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-+						unsigned long prate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(clk->map, div->offset, &val);
-+	if (ret)
-+		/* Gives a hint that something is wrong */
-+		return 0;
-+
-+	val >>= div->shift;
-+	val &= clk_div_mask(div->width);
-+	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
-+				   div->width);
-+}
-+
-+static int clk_regmap_div_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	/* if read only, just return current value */
-+	if (div->flags & CLK_DIVIDER_READ_ONLY) {
-+		ret = regmap_read(clk->map, div->offset, &val);
-+		if (ret)
-+			return ret;
-+
-+		val >>= div->shift;
-+		val &= clk_div_mask(div->width);
-+
-+		return divider_ro_determine_rate(hw, req, div->table,
-+						 div->width, div->flags, val);
++		ret = devm_clk_hw_register(dev, &cfg_hw->sigh.hw);
+ 		if (ret)
+ 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
+ 					     cfg_hw->id);
+ 
+ 		id = cfg_hw->id;
+-		data->hw_data.hws[id] = &cfg_hw->cfg.hw;
++		data->hw_data.hws[id] = &cfg_hw->sigh.hw;
+ 	}
+ 
+ 	return 0;
+@@ -283,13 +296,13 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
+ 
+ #define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {			\
+ 	.id = _id,								\
++	.periph.offset = REG_SUBBLK_CLOCK_CR,					\
+ 	.periph.bit_idx = _shift,						\
+-	.periph.hw.init = CLK_HW_INIT_HW(_name, _parent, &clk_gate_ops,		\
+-				  _flags),					\
+-	.periph.lock = &mpfs_clk_lock,						\
++	.sigh.hw.init = CLK_HW_INIT_HW(_name, _parent, &clk_regmap_gate_ops,	\
++					 _flags),				\
+ }
+ 
+-#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT##_OFFSET].cfg.hw)
++#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT##_OFFSET].sigh.hw)
+ 
+ /*
+  * Critical clocks:
+@@ -346,14 +359,15 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
+ 	for (i = 0; i < num_clks; i++) {
+ 		struct mpfs_periph_hw_clock *periph_hw = &periph_hws[i];
+ 
+-		periph_hw->periph.reg = data->base + REG_SUBBLK_CLOCK_CR;
+-		ret = devm_clk_hw_register(dev, &periph_hw->periph.hw);
++		periph_hw->sigh.map = data->regmap;
++		periph_hw->sigh.data = &periph_hw->periph;
++		ret = devm_clk_hw_register(dev, &periph_hw->sigh.hw);
+ 		if (ret)
+ 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
+ 					     periph_hw->id);
+ 
+ 		id = periph_hws[i].id;
+-		data->hw_data.hws[id] = &periph_hw->periph.hw;
++		data->hw_data.hws[id] = &periph_hw->sigh.hw;
+ 	}
+ 
+ 	return 0;
+@@ -374,6 +388,19 @@ static int mpfs_clk_probe(struct platform_device *pdev)
+ 	if (!clk_data)
+ 		return -ENOMEM;
+ 
++	clk_data->regmap = syscon_regmap_lookup_by_compatible("microchip,mpfs-mss-top-sysreg");
++	if (IS_ERR(clk_data->regmap)) {
++		clk_data->regmap = NULL;
++		goto old_format;
 +	}
 +
-+	return divider_determine_rate(hw, req, div->table, div->width,
-+				      div->flags);
-+}
++	clk_data->msspll_base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(clk_data->msspll_base))
++		return PTR_ERR(clk_data->msspll_base);
 +
-+static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-+	unsigned int val;
-+	int ret;
++	goto done;
 +
-+	ret = divider_get_val(rate, parent_rate, div->table, div->width,
-+			      div->flags);
-+	if (ret < 0)
-+		return ret;
++old_format:
+ 	clk_data->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(clk_data->base))
+ 		return PTR_ERR(clk_data->base);
+@@ -382,6 +409,14 @@ static int mpfs_clk_probe(struct platform_device *pdev)
+ 	if (IS_ERR(clk_data->msspll_base))
+ 		return PTR_ERR(clk_data->msspll_base);
+ 
++	clk_data->regmap = devm_regmap_init_mmio(dev, clk_data->base, &clk_mpfs_regmap_config);
++	if (IS_ERR(clk_data->regmap))
++		return PTR_ERR(clk_data->regmap);
 +
-+	val = (unsigned int)ret << div->shift;
-+	return regmap_update_bits(clk->map, div->offset,
-+				  clk_div_mask(div->width) << div->shift, val);
-+};
-+
-+/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
-+
-+const struct clk_ops clk_regmap_divider_ops = {
-+	.recalc_rate = clk_regmap_div_recalc_rate,
-+	.determine_rate = clk_regmap_div_determine_rate,
-+	.set_rate = clk_regmap_div_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
-+
-+const struct clk_ops clk_regmap_divider_ro_ops = {
-+	.recalc_rate = clk_regmap_div_recalc_rate,
-+	.determine_rate = clk_regmap_div_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_divider_ro_ops);
-+
-+static u8 clk_regmap_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(clk->map, mux->offset, &val);
++	ret = mpfs_reset_controller_register(dev, clk_data->base + REG_SUBBLK_RESET_CR);
 +	if (ret)
 +		return ret;
-+
-+	val >>= mux->shift;
-+	val &= mux->mask;
-+	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);
-+}
-+
-+static int clk_regmap_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+	unsigned int val = clk_mux_index_to_val(mux->table, mux->flags, index);
-+
-+	return regmap_update_bits(clk->map, mux->offset,
-+				  mux->mask << mux->shift,
-+				  val << mux->shift);
-+}
-+
-+static int clk_regmap_mux_determine_rate(struct clk_hw *hw,
-+					 struct clk_rate_request *req)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct clk_regmap_mux_data *mux = clk_get_regmap_mux_data(clk);
-+
-+	return clk_mux_determine_rate_flags(hw, req, mux->flags);
-+}
-+
-+const struct clk_ops clk_regmap_mux_ops = {
-+	.get_parent = clk_regmap_mux_get_parent,
-+	.set_parent = clk_regmap_mux_set_parent,
-+	.determine_rate = clk_regmap_mux_determine_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_mux_ops);
-+
-+const struct clk_ops clk_regmap_mux_ro_ops = {
-+	.get_parent = clk_regmap_mux_get_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_regmap_mux_ro_ops);
-+
-+MODULE_DESCRIPTION("Amlogic regmap backed clock driver");
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/microchip/clk-regmap.h b/drivers/clk/microchip/clk-regmap.h
-new file mode 100644
-index 000000000000..e365312da54e
---- /dev/null
-+++ b/drivers/clk/microchip/clk-regmap.h
-@@ -0,0 +1,137 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#ifndef __CLK_REGMAP_H
-+#define __CLK_REGMAP_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+/**
-+ * struct clk_regmap - regmap backed clock
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @map:	pointer to the regmap structure controlling the clock
-+ * @data:	data specific to the clock type
-+ *
-+ * Clock which is controlled by regmap backed registers. The actual type of
-+ * of the clock is controlled by the clock_ops and data.
-+ */
-+struct clk_regmap {
-+	struct clk_hw	hw;
-+	struct regmap	*map;
-+	void		*data;
-+};
-+
-+static inline struct clk_regmap *to_clk_regmap(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct clk_regmap, hw);
-+}
-+
-+/**
-+ * struct clk_regmap_gate_data - regmap backed gate specific data
-+ *
-+ * @offset:	offset of the register controlling gate
-+ * @bit_idx:	single bit controlling gate
-+ * @flags:	hardware-specific flags
-+ *
-+ * Flags:
-+ * Same as clk_gate except CLK_GATE_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_gate_data {
-+	unsigned int	offset;
-+	u8		bit_idx;
-+	u8		flags;
-+};
-+
-+static inline struct clk_regmap_gate_data *
-+clk_get_regmap_gate_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_gate_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_gate_ops;
-+extern const struct clk_ops clk_regmap_gate_ro_ops;
-+
-+/**
-+ * struct clk_regmap_div_data - regmap backed adjustable divider specific data
-+ *
-+ * @offset:	offset of the register controlling the divider
-+ * @shift:	shift to the divider bit field
-+ * @width:	width of the divider bit field
-+ * @table:	array of value/divider pairs, last entry should have div = 0
-+ *
-+ * Flags:
-+ * Same as clk_divider except CLK_DIVIDER_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_div_data {
-+	unsigned int	offset;
-+	u8		shift;
-+	u8		width;
-+	u8		flags;
-+	const struct clk_div_table	*table;
-+};
-+
-+static inline struct clk_regmap_div_data *
-+clk_get_regmap_div_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_div_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_divider_ops;
-+extern const struct clk_ops clk_regmap_divider_ro_ops;
-+
-+/**
-+ * struct clk_regmap_mux_data - regmap backed multiplexer clock specific data
-+ *
-+ * @hw:		handle between common and hardware-specific interfaces
-+ * @offset:	offset of theregister controlling multiplexer
-+ * @table:	array of parent indexed register values
-+ * @shift:	shift to multiplexer bit field
-+ * @mask:	mask of mutliplexer bit field
-+ * @flags:	hardware-specific flags
-+ *
-+ * Flags:
-+ * Same as clk_divider except CLK_MUX_HIWORD_MASK which is ignored
-+ */
-+struct clk_regmap_mux_data {
-+	unsigned int	offset;
-+	u32		*table;
-+	u32		mask;
-+	u8		shift;
-+	u8		flags;
-+};
-+
-+static inline struct clk_regmap_mux_data *
-+clk_get_regmap_mux_data(struct clk_regmap *clk)
-+{
-+	return (struct clk_regmap_mux_data *)clk->data;
-+}
-+
-+extern const struct clk_ops clk_regmap_mux_ops;
-+extern const struct clk_ops clk_regmap_mux_ro_ops;
-+
-+#define __MESON_PCLK(_name, _reg, _bit, _ops, _pname)			\
-+struct clk_regmap _name = {						\
-+	.data = &(struct clk_regmap_gate_data){				\
-+		.offset = (_reg),					\
-+		.bit_idx = (_bit),					\
-+	},								\
-+	.hw.init = &(struct clk_init_data) {				\
-+		.name = #_name,						\
-+		.ops = _ops,						\
-+		.parent_hws = (const struct clk_hw *[]) { _pname },	\
-+		.num_parents = 1,					\
-+		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-+	},								\
-+}
-+
-+#define MESON_PCLK(_name, _reg, _bit, _pname)	\
-+	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ops, _pname)
-+
-+#define MESON_PCLK_RO(_name, _reg, _bit, _pname)	\
-+	__MESON_PCLK(_name, _reg, _bit, &clk_regmap_gate_ro_ops, _pname)
-+#endif /* __CLK_REGMAP_H */
++done:
+ 	clk_data->hw_data.num = num_clks;
+ 	clk_data->dev = dev;
+ 	dev_set_drvdata(dev, clk_data);
+@@ -406,11 +441,7 @@ static int mpfs_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
+-	if (ret)
+-		return ret;
+-
+-	return mpfs_reset_controller_register(dev, clk_data->base + REG_SUBBLK_RESET_CR);
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
+ }
+ 
+ static const struct of_device_id mpfs_clk_of_match_table[] = {
 -- 
 2.43.0
 
