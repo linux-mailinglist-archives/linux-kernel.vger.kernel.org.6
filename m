@@ -1,268 +1,105 @@
-Return-Path: <linux-kernel+bounces-288260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727ED953806
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02A7953804
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0AC71F244AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:12:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46896283581
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D730D1B8EAF;
-	Thu, 15 Aug 2024 16:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651581B3749;
+	Thu, 15 Aug 2024 16:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qwh/aNku"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I3YFT+mM"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CCA1B29A3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CF11B29A5
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723738305; cv=none; b=ac9Ri5Rx3C+QxrDK+ldZc6TsSo4bwEOOt6DPh0xG/9zQhRJXiiZoIYZHwabt/I1PPZBUdw+KiTtQoCOsOb0ezAeNjggr5GiZyprKVx+bW9MVqKhtyYfD9Y+6tgmHJe7JnfEA3JRWPnuR1HursAMtztVqHPNsDFAlq6e3t5/otcw=
+	t=1723738304; cv=none; b=HTO/bF+8uoefL4LW2AF4joVQrH/iVoQCq/mh62RQdipFc3FaC3/29Jwpkg0K7T7qNFRcWp88WJayC4w8afhWRDErXZCEL+FxnhT243xoSqpGct52MZgxKFNL8Peu8jYRkZKlPReYx0fKNTSe9AxVg5AHPndVS9lifKt/tfw2wyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723738305; c=relaxed/simple;
-	bh=a/d5o7w1YHGxPHc0Y6eK51j4AlXYmUiU6+imhFjLJCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfHl+hrl5yuyVrcIg7snPSnnu5MfILLoaAiQOdX+vCnl1xTldzGzVB6GV7otoJdKagem42o/cNqMLpIfoanOA1O+msokcOi1GruTg7cYZwZM+atnzWCrRB/nEXxirD4DeUnMuzSgkiwf0jWXn7HrQ24PpDSCDLd7qAOyMW+THGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qwh/aNku; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd9e6189d5so9997855ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:11:44 -0700 (PDT)
+	s=arc-20240116; t=1723738304; c=relaxed/simple;
+	bh=stmfQPjThOY5JY5xeIkuajVC8TaX1REhTG6g4I0TuS4=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=sS+qQ1d+ptRVufKOu5FLxbMaUUXu4FOYNKDn6U+vPS9eICjwcOxaTEjxJinWd3H2iuMxJxWU9cbIAu0UuWceWslpn8MILQpJBxdu8ZaZiJldHnPpe96///qT9EiiJ8r8zRYZq8npb4sf+6O30RfpEj3mle9gSQK3M8q+OwpPzJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I3YFT+mM; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bb84ac8facso5297716d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723738304; x=1724343104; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CmmKXkTSfv18XXqIwjwObV4hYMFSw68a2uGYhpp3xv8=;
-        b=Qwh/aNkuzW4K1VUIshNqcJR/eIrQFnShciA4+nMRpn/2lSu1gG0OXjHqwvmw0w6L6P
-         aYKhSragYPpYuskLAhEAI0FoaQ3e9XBlqMyHRAMdL4o9eIWpWt6GEBen7dD/2uuCWQF7
-         EeuY27dgy5i0ls4fQxhmlgwCs5TFpird/mjyr6zm0w3NVFYboAupByCeNEdsbMfm/gPc
-         OczRmVN2p0iz9m4Ui+QfJvBH41vK5t7/rGjUwwaY9TskH5XlUt4+F26Hp/fOEMZod3pR
-         dlPnb94lf8ywO66PTkg20kQh2QjmO+o23UBUbX/zHrEo7jwxybz6HC12BgKxWKXdRlr8
-         wDBg==
+        d=paul-moore.com; s=google; t=1723738302; x=1724343102; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UJMlTsl69w1myQg1uCFGfwb6Hmq9ET+WkI++9CZ+3Gk=;
+        b=I3YFT+mM/WAviM/75hFTw3+CbMcp/jt5bOuBP0X0ETsyTU48gossRdfpvQ0w1DH5zC
+         HGxKw3Pyycm1z82bnrs7q+TGy9PaB9Aa1lLJWFiQO3mzjO39DnXwFRqU90CDh+EhOKvw
+         9yNT+E1xloCTEDNv41KqisvyoQkk/nbxl42Xgiz7sP2uLPh4wDq0y1d2bWhRUqqqoHl5
+         NgiJHsY+aaeybwetIAIPqaV1Hv920J9MPb1G19BlZqa2On6pLQX+WzVx/L1hMc7WSfWE
+         ha2O7g42KZWUaed6gOV0cYGBC6je5eCmAaDHT4kppFmoWG0vKxgEPv+bQTaJxK1Rkun0
+         ga4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723738304; x=1724343104;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CmmKXkTSfv18XXqIwjwObV4hYMFSw68a2uGYhpp3xv8=;
-        b=P30RuoNtiDEulGfS+m0gjXkxmM2Eqs1y0OBqXEa4yu/XlQpOqT5RlDw/dYFCn/QOdA
-         Ilc9RZe0+xW8O4FhNsPmwMExsYeHQY1B/JEmZ970xMQL+BRnCYwtyZqpzzsWdJHP16Bl
-         X2pFyZoMgbpjJlB13lfaYTaJHgJwIr5EUmkz3mmyxk4L60utcfTuUyl+4/fPHyCxnuf8
-         kdJ1o8vuC7scPlA4GArigCywAl/woyiZ7TT/efgrOw7dju2+EtoKCJleE5wd1BL6bZIs
-         P9JsKDBottrBhCgFmx34wIOs6BAmyY4zBoJPd7csVSE+ebRAsTN757focW9vlDdoYetY
-         D9DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1BvX9VIRqJLkicRr5DMhOsP/nBV2hGKc8g4OAMRRhNkDMoUPRuI7uazkNQ/G/VEV4lFLWHnUTWoo2cb8SLF2/YzCXf3sFCilAus9S
-X-Gm-Message-State: AOJu0YxunVNAiKlDQEqchGyt7995T312ktsdW1qDu6VQEUemEn74gy56
-	7TEpZg9spOtKzBuX/8DzCmVqb0nC6f5GxanbiJzoUn1KLtdx2Q0G9OafHRHSLw==
-X-Google-Smtp-Source: AGHT+IFWxtcnnpbdF8+JXG5md4tBLoccbcE0fgAMYurHfaOl3NuWiXENoKAxePhmU3RYvALN5cfWow==
-X-Received: by 2002:a17:902:f686:b0:1fd:5eab:8c76 with SMTP id d9443c01a7336-20203f27db9mr1496955ad.41.1723738303576;
-        Thu, 15 Aug 2024 09:11:43 -0700 (PDT)
-Received: from thinkpad ([36.255.17.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f1c88834sm10573375ad.255.2024.08.15.09.11.39
+        d=1e100.net; s=20230601; t=1723738302; x=1724343102;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UJMlTsl69w1myQg1uCFGfwb6Hmq9ET+WkI++9CZ+3Gk=;
+        b=JddxV05whvmsRCDgPyjcUeh6XWOcuX1+eJnjxarPB//q2xisgJhatL2s2nNn/gAIWC
+         JsixzSi/mvQ7cbZ8OSIz9Cd44YfsVwdpxE/XSLspJK32M6UaA5XpZtQ+aJoIAPTGyVFk
+         n25i5SdC2JIWlm5EwUIYG7Ybhb6RsDI8gWWnYNhsVQrzJrd9lNvhEceICrEv1UaTtKL4
+         YzP0rwp0mAczrqxWa1EWucxlr1hS8uuf8PYmzSjxD03cjnnEGFLp2IGBysKSLZNOdSz0
+         QDB6qEEZ/+fgPMGw9nVDPCi5TqfSeX1tr0PNgmT9b1qu5ASLfxAAgAPtQE9P3gqrcpVv
+         LEuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLuHSCY7M7pifYjgqDoFhN5eJFwl30A/Uo/ND9l3M5kPgxHlKo1MZfQ9HtqwYU4oAQJbM9xIITpwfLbBQiFX/v1QxoKb8UtNrSIfq/
+X-Gm-Message-State: AOJu0YxrQe0RDKTAg0JjicOBcl374HPeKNj+UGaWx1nPz8AKfwSLGFpN
+	ZBIZEgiecYkgd9ef48ucX7MRZ1akYqlz1AED+aLSkim51HOf+HpJyaENV65NjgTvTbmrrtlFtiI
+	=
+X-Google-Smtp-Source: AGHT+IHQ1oOJcKiCksF01aDFCB2y7+5wp5A5LBl+qgAXT7t5DQc/XTTEcSo/ahqIW74tm7SnPGG2NA==
+X-Received: by 2002:a05:6214:5989:b0:6bd:7f27:3565 with SMTP id 6a1803df08f44-6bf5d1c5053mr81869636d6.6.1723738301725;
+        Thu, 15 Aug 2024 09:11:41 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fdd9c7esm7568686d6.4.2024.08.15.09.11.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 09:11:43 -0700 (PDT)
-Date: Thu, 15 Aug 2024 21:41:35 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] PCI: rockchip: Simplify clock handling by using
- clk_bulk*() function
-Message-ID: <20240815161135.GE2562@thinkpad>
-References: <20240625104039.48311-1-linux.amoon@gmail.com>
+        Thu, 15 Aug 2024 09:11:41 -0700 (PDT)
+Date: Thu, 15 Aug 2024 12:11:40 -0400
+Message-ID: <bfc25c139caf8eacc02973b94ac05030@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240625104039.48311-1-linux.amoon@gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Yue Haibing <yuehaibing@huawei.com>, <jmorris@namei.org>, <serge@hallyn.com>, <kees@kernel.org>, <casey@schaufler-ca.com>
+Cc: <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
+Subject: Re: [PATCH] lockdown: Make lockdown_lsmid static
+References: <20240814033004.2216000-1-yuehaibing@huawei.com>
+In-Reply-To: <20240814033004.2216000-1-yuehaibing@huawei.com>
 
-On Tue, Jun 25, 2024 at 04:10:32PM +0530, Anand Moon wrote:
-> Refactor the clock handling in the Rockchip PCIe driver,
-> introducing a more robust and efficient method for enabling and
-> disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
-> the clock handling for the core clocks becomes much simpler.
+On Aug 13, 2024 Yue Haibing <yuehaibing@huawei.com> wrote:
 > 
-
-Why can't you just use devm_clk_bulk_get_all()? This gets rid of hardcoding the
-clock names in driver.
-
-- Mani
-
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Fix sparse warning:
+> 
+> security/lockdown/lockdown.c:79:21: warning:
+>  symbol 'lockdown_lsmid' was not declared. Should it be static?
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> Reviewed-by: Kees Cook <kees@kernel.org>
 > ---
-> v4: use dev_err_probe for error patch.
-> v3: Fix typo in commit message, dropped reported by.
-> v2: Fix compilation error reported by Intel test robot.
-> ---
->  drivers/pci/controller/pcie-rockchip.c | 68 ++++----------------------
->  drivers/pci/controller/pcie-rockchip.h | 15 ++++--
->  2 files changed, 21 insertions(+), 62 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
-> index 0ef2e622d36e..804135511528 100644
-> --- a/drivers/pci/controller/pcie-rockchip.c
-> +++ b/drivers/pci/controller/pcie-rockchip.c
-> @@ -30,7 +30,7 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct device_node *node = dev->of_node;
->  	struct resource *regs;
-> -	int err;
-> +	int err, i;
->  
->  	if (rockchip->is_rc) {
->  		regs = platform_get_resource_byname(pdev,
-> @@ -127,29 +127,12 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
->  					     "failed to get ep GPIO\n");
->  	}
->  
-> -	rockchip->aclk_pcie = devm_clk_get(dev, "aclk");
-> -	if (IS_ERR(rockchip->aclk_pcie)) {
-> -		dev_err(dev, "aclk clock not found\n");
-> -		return PTR_ERR(rockchip->aclk_pcie);
-> -	}
-> -
-> -	rockchip->aclk_perf_pcie = devm_clk_get(dev, "aclk-perf");
-> -	if (IS_ERR(rockchip->aclk_perf_pcie)) {
-> -		dev_err(dev, "aclk_perf clock not found\n");
-> -		return PTR_ERR(rockchip->aclk_perf_pcie);
-> -	}
-> -
-> -	rockchip->hclk_pcie = devm_clk_get(dev, "hclk");
-> -	if (IS_ERR(rockchip->hclk_pcie)) {
-> -		dev_err(dev, "hclk clock not found\n");
-> -		return PTR_ERR(rockchip->hclk_pcie);
-> -	}
-> +	for (i = 0; i < ROCKCHIP_NUM_CLKS; i++)
-> +		rockchip->clks[i].id = rockchip_pci_clks[i];
->  
-> -	rockchip->clk_pcie_pm = devm_clk_get(dev, "pm");
-> -	if (IS_ERR(rockchip->clk_pcie_pm)) {
-> -		dev_err(dev, "pm clock not found\n");
-> -		return PTR_ERR(rockchip->clk_pcie_pm);
-> -	}
-> +	err = devm_clk_bulk_get(dev, ROCKCHIP_NUM_CLKS, rockchip->clks);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "failed to get clocks\n");
->  
->  	return 0;
->  }
-> @@ -372,39 +355,11 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
->  	struct device *dev = rockchip->dev;
->  	int err;
->  
-> -	err = clk_prepare_enable(rockchip->aclk_pcie);
-> -	if (err) {
-> -		dev_err(dev, "unable to enable aclk_pcie clock\n");
-> -		return err;
-> -	}
-> -
-> -	err = clk_prepare_enable(rockchip->aclk_perf_pcie);
-> -	if (err) {
-> -		dev_err(dev, "unable to enable aclk_perf_pcie clock\n");
-> -		goto err_aclk_perf_pcie;
-> -	}
-> -
-> -	err = clk_prepare_enable(rockchip->hclk_pcie);
-> -	if (err) {
-> -		dev_err(dev, "unable to enable hclk_pcie clock\n");
-> -		goto err_hclk_pcie;
-> -	}
-> -
-> -	err = clk_prepare_enable(rockchip->clk_pcie_pm);
-> -	if (err) {
-> -		dev_err(dev, "unable to enable clk_pcie_pm clock\n");
-> -		goto err_clk_pcie_pm;
-> -	}
-> +	err = clk_bulk_prepare_enable(ROCKCHIP_NUM_CLKS, rockchip->clks);
-> +	if (err)
-> +		return dev_err_probe(dev, err, "failed to enable clocks\n");
->  
->  	return 0;
-> -
-> -err_clk_pcie_pm:
-> -	clk_disable_unprepare(rockchip->hclk_pcie);
-> -err_hclk_pcie:
-> -	clk_disable_unprepare(rockchip->aclk_perf_pcie);
-> -err_aclk_perf_pcie:
-> -	clk_disable_unprepare(rockchip->aclk_pcie);
-> -	return err;
->  }
->  EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
->  
-> @@ -412,10 +367,7 @@ void rockchip_pcie_disable_clocks(void *data)
->  {
->  	struct rockchip_pcie *rockchip = data;
->  
-> -	clk_disable_unprepare(rockchip->clk_pcie_pm);
-> -	clk_disable_unprepare(rockchip->hclk_pcie);
-> -	clk_disable_unprepare(rockchip->aclk_perf_pcie);
-> -	clk_disable_unprepare(rockchip->aclk_pcie);
-> +	clk_bulk_disable_unprepare(ROCKCHIP_NUM_CLKS, rockchip->clks);
->  }
->  EXPORT_SYMBOL_GPL(rockchip_pcie_disable_clocks);
->  
-> diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
-> index 6111de35f84c..72346e17e45e 100644
-> --- a/drivers/pci/controller/pcie-rockchip.h
-> +++ b/drivers/pci/controller/pcie-rockchip.h
-> @@ -11,6 +11,7 @@
->  #ifndef _PCIE_ROCKCHIP_H
->  #define _PCIE_ROCKCHIP_H
->  
-> +#include <linux/clk.h>
->  #include <linux/kernel.h>
->  #include <linux/pci.h>
->  #include <linux/pci-ecam.h>
-> @@ -287,6 +288,15 @@
->  		(((c) << ((b) * 8 + 5)) & \
->  		 ROCKCHIP_PCIE_CORE_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b))
->  
-> +#define ROCKCHIP_NUM_CLKS	ARRAY_SIZE(rockchip_pci_clks)
-> +
-> +static const char * const rockchip_pci_clks[] = {
-> +	"aclk",
-> +	"aclk-perf",
-> +	"hclk",
-> +	"pm",
-> +};
-> +
->  struct rockchip_pcie {
->  	void	__iomem *reg_base;		/* DT axi-base */
->  	void	__iomem *apb_base;		/* DT apb-base */
-> @@ -299,10 +309,7 @@ struct rockchip_pcie {
->  	struct	reset_control *pm_rst;
->  	struct	reset_control *aclk_rst;
->  	struct	reset_control *pclk_rst;
-> -	struct	clk *aclk_pcie;
-> -	struct	clk *aclk_perf_pcie;
-> -	struct	clk *hclk_pcie;
-> -	struct	clk *clk_pcie_pm;
-> +	struct  clk_bulk_data clks[ROCKCHIP_NUM_CLKS];
->  	struct	regulator *vpcie12v; /* 12V power supply */
->  	struct	regulator *vpcie3v3; /* 3.3V power supply */
->  	struct	regulator *vpcie1v8; /* 1.8V power supply */
-> 
-> base-commit: 35bb670d65fc0f80c62383ab4f2544cec85ac57a
-> -- 
-> 2.44.0
-> 
-> 
+>  security/lockdown/lockdown.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-மணிவண்ணன் சதாசிவம்
+Merged into lsm/dev, thanks!
+
+--
+paul-moore.com
 
