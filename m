@@ -1,172 +1,146 @@
-Return-Path: <linux-kernel+bounces-287557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97716952932
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:07:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CD1952935
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B08E3B22859
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227161F22C9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307DD176ACA;
-	Thu, 15 Aug 2024 06:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F2717625E;
+	Thu, 15 Aug 2024 06:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jw8F5GOk"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YVlFxLc4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C335038DC8;
-	Thu, 15 Aug 2024 06:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2580A18D62D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723702053; cv=none; b=li1bssKb3+JcpY+g/kgB/h2Y0eiLkHhOGtqrp4W6kFasrKPqWbnd5ZRboP2Nreq1P0vDOp6sxQheQK+SjAZf7Ig2t+ocFswrlXEgX1UNJivnVSjCsOqw7sVaKluwYhnR45/2wfFVUlEmoibMshRYoMOaLx2kE0crzp2MzPAs7ws=
+	t=1723702557; cv=none; b=ra97P4faVhvdeigYFJo4ebZMKXhxo+uthZsOVnK4wwkSyLbeOJV0ZpVVD/jhxvAyB4aIZ6yd4qOInJ7ZOHy4Y4Ec2sfkQMboBhwBoXRYCBfRzGDc9R5QgTw9hViUwTToQ5ITTndFT3b0Ulcc84ontEUQvcPPk2hpffdkA5KfHGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723702053; c=relaxed/simple;
-	bh=PFJbY9QxyJb7XD4KnUPRq++45YKSxQjoOOINOoNW/1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QQ3JoEDSdqSpxv5lK+GStpKhZG5MLXoQW4opXXOFDji9hkH0ztIpfTaNMGSeT+jPEijIMIpTTcDQj1Wq+PuWolWo1qkMh2a0BRCzFMbPTG2Qz/wIeFtbQlhvVvR0FI/MYYs7UHIgRiuIFV9dJBw6J43Ion7ybZIum46PFZNd2LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jw8F5GOk; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f189a2a841so5518021fa.3;
-        Wed, 14 Aug 2024 23:07:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723702049; x=1724306849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UN5Jya+bU5edlI+PXQKJHx7XpQB+ZJik6Qvqm1dVNgw=;
-        b=Jw8F5GOkfgWjeW6DQmy2OZe7sVH+mK4iQeQKXuO8QLk4mU2OS+f7rFLhCXFSlcDfui
-         o08uQQbBRPRHOgMDIsmSTGYiYibMuYm6AZSn10D8mB/uU2J03nDDOWOPTfsZNuIqy1PD
-         HaVa1YoJdU0WuLabdKD5Bjx3lOCo/ESFEaU+7KAxH+nPMVyrPJO3tDe9MdkIag8ckGtY
-         tVSSh4N8kWOsX2dgpO5YFIhTbF/hQ/Cfg6QtKYtqIUW2LwSMFe5ZM9pW9XQ65lYmar9c
-         rtHJyk1rbIpdmIcIOIe43mQUCrFyI4xgpDtbD9UV8OBPQ7DP/z60CdFJ8uAMsJfXXDjA
-         /QKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723702049; x=1724306849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UN5Jya+bU5edlI+PXQKJHx7XpQB+ZJik6Qvqm1dVNgw=;
-        b=eik6cXyLmyYRvr6j0bi7lnIIvjAwM9/kSMsLvo0sAyQytDTfMWivEEoRJ3WHBVsFzo
-         JrJAPRs+7z1hDR2Up7Ua5qLVCkZcbCnakabAeRhqy42WfLV3RiRU7jCOzhWsK2fw2sat
-         Vim/9hQrLDhyHAiSux57VSdP1L/oTspb4ExKVGSD/K2szCQtl+eiilggtNXAxEudo/Le
-         r1tN5rq5uX2rR7Cp0E1MrHhGSJNQ0nAfNW36c4x02TOtWNJXRE5x7hMtpATfK4PeW8FQ
-         9jCZMw027wIbrXKV9ENBkgUQhV/3bFLtXMA4Mb5GMb/f834QoRScSntMPpaRbcPiNSeC
-         KtCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEJ/rtwt+uRRRTboRyZtbK8X87+CVT7iEA5+0/zBg0DgV8IfOqTgChc8kBqwGv6lSoZQy1L7995gzAZnnOfK8JXBqDdw87S8h+fxTOXRhSXoqB7N/xCinSfotSKknfJn23uYf37G43
-X-Gm-Message-State: AOJu0YxE/GhqrjVa+10YocHYfXy0CLqZi0dEZtVW6zo6arg8kSm/Nm54
-	/AW22d21seZBLOBHA2Sue8nYE1fqHdVQEUg5uMRHB7j6cHSJ6k/f
-X-Google-Smtp-Source: AGHT+IG6OfSRhlLQ72gK8wu3bsFy8k8fYy6wk5RgBRZ4o44OVQdUrPFDC6xwajVvEPZa7Dehfmzd5w==
-X-Received: by 2002:a2e:3003:0:b0:2ef:2685:177d with SMTP id 38308e7fff4ca-2f3aa1f1bb2mr31167161fa.20.1723702048207;
-        Wed, 14 Aug 2024 23:07:28 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b748dd43sm999051fa.49.2024.08.14.23.07.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 23:07:27 -0700 (PDT)
-Message-ID: <22f3c925-309f-4ebe-a481-2553cfa71c0c@gmail.com>
-Date: Thu, 15 Aug 2024 09:07:25 +0300
+	s=arc-20240116; t=1723702557; c=relaxed/simple;
+	bh=S8PNyXOQnc3mwGHU4eSI2S+cpcf8X8gSb4qxEwdbdyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mL9YGa68CwaGj1VPe7n4VLBmWrQppQt4e3j24JWV9VJiwzoLJ1afa6RDXagPo1jZoyY8HPtwLH8diyw1qD2REs2+82cL/GcM+A1Q4cN5mIva6Nsd6ar7ozxrhrybX/K+nIHA7svtrPPsWjlENLcCVq5tzQd7GoFC60NSFpjgGq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YVlFxLc4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723702555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nmwt07YE+Usdtz1whTnqs27V8jSWf6riHC8dnsAJ1qU=;
+	b=YVlFxLc4sBHX7w4QsWo7lQr3SPnT6NooIFluMiHd6f5asslRwvBADvKkBiNfEw8JNAA6gb
+	NLkGGt+gII9GP1Cf8TNTw5EEPsUO8R5tgKky8rbYT4EGc8hKUoZpuDsZhcWatZdR1B9FWW
+	zKhQJD/qcFu/fxQj8RPakzAbuomEhx0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-oBnMItcDOvmNi3Zti2vySA-1; Thu,
+ 15 Aug 2024 02:15:51 -0400
+X-MC-Unique: oBnMItcDOvmNi3Zti2vySA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9066D1954B11;
+	Thu, 15 Aug 2024 06:15:47 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.51])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5AF3C1955F6B;
+	Thu, 15 Aug 2024 06:15:44 +0000 (UTC)
+Date: Thu, 15 Aug 2024 14:15:40 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	kexec@lists.infradead.org
+Subject: Re: [PATCHv2 3/4] x86/64/kexec: Map original relocate_kernel() in
+ init_transition_pgtable()
+Message-ID: <Zr2dDKP4JuRUSOL3@MiWiFi-R3L-srv>
+References: <20240814124613.2632226-1-kirill.shutemov@linux.intel.com>
+ <20240814124613.2632226-4-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the
- clock as critical
-To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- linux-amarula@amarulasolutions.com, Marek Vasut <marex@denx.de>
-References: <20220605165703.1565234-1-michael@amarulasolutions.com>
- <20220605165703.1565234-3-michael@amarulasolutions.com>
- <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
- <CAOf5uwm3p5AJXL9w7hQtqz05hDpQ_-CQArm0z6kAehj7OxK1Mw@mail.gmail.com>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAOf5uwm3p5AJXL9w7hQtqz05hDpQ_-CQArm0z6kAehj7OxK1Mw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814124613.2632226-4-kirill.shutemov@linux.intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 8/14/24 19:00, Michael Nazzareno Trimarchi wrote:
-> Hi Stephen
+Cc Eric and kexec mailing list.
+
+On 08/14/24 at 03:46pm, Kirill A. Shutemov wrote:
+> The init_transition_pgtable() function sets up transitional page tables.
+> It ensures that the relocate_kernel() function is present in the
+> identity mapping at the same location as in the kernel page tables.
+> relocate_kernel() switches to the identity mapping, and the function
+> must be present at the same location in the virtual address space before
+> and after switching page tables.
 > 
-> On Mon, Jun 6, 2022 at 7:26 AM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->>
->> Hi Michael,
->>
->> On 6/5/22 19:57, Michael Trimarchi wrote:
->>> If the clock is used to generate the osc_32k, we need to mark
->>> as critical. clock-critical has no binding description at the moment
->>> but it's defined in linux kernel
->>>
->>> bd71847: pmic@4b {
->>> ...
->>>        rohm,reset-snvs-powered;
->>>
->>>        #clock-cells = <0>;
->>>        clock-critical = <1>;
->>>        clocks = <&osc_32k 0>;
->>>        clock-output-names = "clk-32k-out";
->>> ...
->>> }
->>>
->>> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
->>> ---
->>>    drivers/clk/clk-bd718x7.c | 4 ++++
->>
->> //snip
->>
->>> @@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device *pdev)
->>>
->>>        parent_clk = of_clk_get_parent_name(parent->of_node, 0);
->>>
->>> +     of_clk_detect_critical(dev->of_node, 0, &flags);
->>
->> Purely judging the kerneldoc for of_clk_detect_critical - you may have
->> hard time getting this accepted.
->>
->> I think you're working on a very valid problem though. Maybe you could
->> see if you could align your effort with Marek?
->>
->> https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
->>
+> init_transition_pgtable() maps a copy of relocate_kernel() in
+> image->control_code_page at the relocate_kernel() virtual address, but
+> the original physical address of relocate_kernel() would also work.
 > 
-> Old thread but same problem. Is there any way to make this acceptable?
-> any suggestion?
+> It is safe to use original relocate_kernel() physical address cannot be
+> overwritten until swap_pages() is called, and the relocate_kernel()
+> virtual address will not be used by then.
 
-Hi Michael. I'm not sure what is the correct way but I think there are a 
-few tricks people have used to fix (or paper over) the problem. One was 
-suggested by Sebastian:
+I haven't read these codes for long time, wondering if we still need
+copy relocate_kernel() to image->control_code_page + PAGE_SIZE as you
+said.
 
-https://lore.kernel.org/all/20220913152140.iikckob5h3ecagfi@mercury.elektranox.org/
-
-No one shouted for implementing this fix though.
-
-It also seems to me that there is a way to 'make things work' by 
-modelling the clock dependencies in the DT in certain way, AND having 
-correct drivers enabled. This understanding came just by reading mails 
-Marek sent in this discussion:
-
-https://lore.kernel.org/all/20220924174603.458956-1-marex@denx.de/
-
-I've not tested any of this myself - but I hope you can use these as 
-pointers to a solution that works for you...
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+> 
+> Map the original relocate_kernel() at the relocate_kernel() virtual
+> address in the identity mapping. It is preparation to replace the
+> init_transition_pgtable() implementation with a call to
+> kernel_ident_mapping_init().
+> 
+> Note that while relocate_kernel() switches to the identity mapping, it
+> does not flush global TLB entries (CR4.PGE is not cleared). This means
+> that in most cases, the kernel still runs relocate_kernel() from the
+> original physical address before the change.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  arch/x86/kernel/machine_kexec_64.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index 9c9ac606893e..645690e81c2d 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -157,7 +157,7 @@ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+>  	pte_t *pte;
+>  
+>  	vaddr = (unsigned long)relocate_kernel;
+> -	paddr = __pa(page_address(image->control_code_page)+PAGE_SIZE);
+> +	paddr = __pa(relocate_kernel);
+>  	pgd += pgd_index(vaddr);
+>  	if (!pgd_present(*pgd)) {
+>  		p4d = (p4d_t *)get_zeroed_page(GFP_KERNEL);
+> -- 
+> 2.43.0
+> 
 
 
