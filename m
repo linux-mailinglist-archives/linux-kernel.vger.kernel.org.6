@@ -1,178 +1,139 @@
-Return-Path: <linux-kernel+bounces-288020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D9495309C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261BE9530A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DD9288400
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:45:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567E01C25468
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662441A4F1F;
-	Thu, 15 Aug 2024 13:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="eM9P/b+6"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BB01A7068;
+	Thu, 15 Aug 2024 13:44:39 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29BC176ADE;
-	Thu, 15 Aug 2024 13:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03CB1A705B;
+	Thu, 15 Aug 2024 13:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729474; cv=none; b=fLWVZI7czB4pidIBYZ6ceuUvuS0evwRgZIgXpMWADQLCPDLfmMZcmgeKl+EXjX2oS7zWaCqzLr3J2cfDPHMNplYG8reE/pwM6OsqNQD9YhJ476pZkndRLUFDZe95GCaIp52X/YMZi5DRi8zat5wahDWCiKbKgta8ezOcxrC4BHU=
+	t=1723729479; cv=none; b=FS9FtyzBiX8GET/qfz+C3JKLkFJ5pJMhconHtMlNIr9UL3CGCPPz2cK0cz2Sw38wnEecUNFVsFgIN4jCErH/vZVwGvZ/hUfPRYI0cBSB4yq76wi6Z59WPNKE2OFG4ZouJLEgopMrng8/sPBCUhoMHjFAEfCWoTLOjtFJ4OESb0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729474; c=relaxed/simple;
-	bh=eNphmiHc83AKclX5Kb1J+PRW9v7p2ZiSzVk+iMnUfoQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tYEQNOYSbYjOU3TSl3+Eq8WYagpNpEiSIO2DwHkfGh4ajHVx+Qf9cumwLKYwWi50S11pvYD52F5F4xglAO88vkFRkUiVRLs37cWHN9/ijHN3lA9A0FK9JQUJaTrePTQbIXQxnInVltd0i86g1/KEe/JaI8fY/kzCP2Ofe7P8rKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=eM9P/b+6; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723729470; x=1723988670;
-	bh=3VYeWvujsQ3yDJQHGGKJzkKmIzXIyBmtxkRQaNyIsdo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=eM9P/b+6X+siK4xfHqXgARV3W6l7uzGO52rWuCPqS2r3k+Xkvhknelzc7IDBfW2iM
-	 cp840X0qhvqrl7ti87Xw7mPwoptnpLxslY8PQXoVsdbFyKUiA+ghhM0h1Ofo6DEQ+B
-	 Jo9+tlWDDaTkamx64mtJCeyY9pEE5IKkr3y7HN0aeTQaKoUDn9Kdk+XChXulFKnm5h
-	 GfdqjuC1wbUPZz559klCZZM9DpRt6PhEv2S9f1OtwruBzc88wwDeGFdqwo+MzQ77E5
-	 U7FDg1164NT+gs9/Xdtt5K7QqlN39/zDzp+3MQ7mnmAM9F5/nqlbvrmtWbuDNofeA6
-	 cnzBvQhX3g3Cg==
-Date: Thu, 15 Aug 2024 13:44:27 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
-Message-ID: <01a46c6d-0107-4455-8c87-af43426752ff@proton.me>
-In-Reply-To: <Zr30pNwc5aanRaqj@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-7-dakr@kernel.org> <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me> <Zr0r6sSFMSQIpHEX@cassiopeiae> <Zr072oSej9KIc1S6@cassiopeiae> <5dfe8bae-2c1e-47d4-9fb4-373b7d714c4f@proton.me> <Zr30pNwc5aanRaqj@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 17ff0a7a46da8fb406562ea9cc13290e07cee10e
+	s=arc-20240116; t=1723729479; c=relaxed/simple;
+	bh=uVmWifW0HS3c4Banhr20uIDh6Blz7xySuRYRmhk0SEc=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=FabKJNPxgsi8EsUJJW7YA8b8sRECYUxCVU7bf7eDBhNtIQsWK2VZ7VvPN957cCgWDobg17fznendtneZFssMkraCB5eiEuK0Vg8321ihRAzCtVPU2WLmKbSwE71oxEtXaTh42lcXnONfmEKCmFAu8VTkXVuI+1gBxkA0lqOqzFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wl5pQ4FlHz20lh4;
+	Thu, 15 Aug 2024 21:39:58 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id C23271A016C;
+	Thu, 15 Aug 2024 21:44:33 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 15 Aug 2024 21:44:32 +0800
+CC: Shuai Xue <xueshuai@linux.alibaba.com>, Jing Zhang
+	<renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Yicong
+ Yang <yangyicong@hisilicon.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<quic_vbadigan@quicinc.com>, <quic_nitegupt@quicinc.com>,
+	<quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
+	<quic_parass@quicinc.com>, <quic_mrana@quicinc.com>
+Subject: Re: [PATCH 2/4] Documentation: dwc_pcie_pmu: Update bdf to sbdf
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+References: <20240731-dwc_pmu_fix-v1-0-ca47d153e5b2@quicinc.com>
+ <20240731-dwc_pmu_fix-v1-2-ca47d153e5b2@quicinc.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <9a6bf90e-ce7f-8a20-93a1-63a75f312392@huawei.com>
+Date: Thu, 15 Aug 2024 21:44:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240731-dwc_pmu_fix-v1-2-ca47d153e5b2@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On 15.08.24 14:29, Danilo Krummrich wrote:
-> On Thu, Aug 15, 2024 at 06:48:19AM +0000, Benno Lossin wrote:
->> On 15.08.24 01:20, Danilo Krummrich wrote:
->>> On Thu, Aug 15, 2024 at 12:13:06AM +0200, Danilo Krummrich wrote:
->>>>
->>>>>
->>>>>> +        ptr: Option<NonNull<u8>>,
->>>>>> +        layout: Layout,
->>>>>> +        flags: Flags,
->>>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
->>>>>> +        // TODO: Support alignments larger than PAGE_SIZE.
->>>>>> +        if layout.align() > bindings::PAGE_SIZE {
->>>>>> +            pr_warn!("Vmalloc does not support alignments larger th=
-an PAGE_SIZE yet.\n");
->>>>>> +            return Err(AllocError);
->>>>>
->>>>> I think here we should first try to use `build_error!`, most often th=
-e
->>>>> alignment will be specified statically, so it should get optimized aw=
-ay.
->>>>
->>>> Sure, we can try that first.
->>>
->>> I think I spoke too soon here. I don't think `build_error!` or `build_a=
-ssert!`
->>> can work here, it would also fail the build when the compiler doesn't k=
-now the
->>> value of the alignment, wouldn't it? I remember that I wasn't overly ha=
-ppy about
->>> failing this on runtime either when I first thought about this case, bu=
-t I also
->>> couldn't think of something better.
->>
->> Yes, it might fail even though the alignment at runtime will be fine.
->> But that's why I suggested trying `build_error!`(or `build_assert!`)
->> first, if nobody hits the case where the compiler cannot figure it out,
->> then we can keep it. If there are instances, where it fails, but the
->> alignment would be fine at runtime, then we can change it to the above.
->> (I would add such a comment above the assert).
->=20
-> Unfortunately, it already does fail with just the test cases.
+On 2024/7/31 12:23, Krishna chaitanya chundru wrote:
+> Update document to reflect the driver change to use sbdf instead
+> of bdf alone.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
-Aw that's sad.
+Reviewed-by: Yicong Yang <yangyicong@hisilicon.com>
 
-> Anyway, even if it would have been fine, I don't think it would have been=
- nice
-> for a future user to run into a build error even though the alignment is
-> perfectlly within bounds.
-
-I think it would have been better compared to failing with a warning at
-runtime.
-
->>> In the end it's rather unlikely to ever hit this case, and probably eve=
-n more
->>> unlikely to hit it for a sane reason.
->>
->> Yeah, but I still prefer the build to fail, rather than emitting a warn
->> message that can be overlooked at runtime.
->>
->>>>> How difficult will it be to support this? (it is a weird requirement,
->>>>> but I dislike just returning an error...)
->>>>
->>>> It's not difficult to support at all. But it requires a C API taking a=
-n
->>>> alignment argument (same for `KVmalloc`).
->>
->> I see, that's good to know.
->>
->>>> Coming up with a vrealloc_aligned() is rather trivial. kvrealloc_align=
-ed() would
->>>> be a bit weird though, because the alignment argument could only be re=
-ally
->>>> honored if we run into the vrealloc() case. For the krealloc() case it=
-'d still
->>>> depend on the bucket size that is selected for the requested size.
->>
->> Yeah... Maybe some more logic on the Rust side can help with that.
->=20
-> Only if we reimplement `KVmalloc` in Rust, However, there are quite some =
-special
-> cases in __kvmalloc_node_noprof(), i.e. fixup page flags, sanity check th=
-e size
-> on kmalloc failure, fail on certain page flags, etc.
->=20
-> I don't really want to duplicate this code, unless we absolutely have to.
-
-I am under the (probably wrong) impression that kvmalloc has some size
-check and selects vmalloc or kmalloc depending on that. I think that we
-could check the size and if it is going to allocate via kmalloc, then we
-adjust the size for alignment as usual and if it is going to select
-vmalloc, then we can just pass the alignment (if the vmalloc alignment
-patch is done first).=20
-
->>>> Adding the C API, I'm also pretty sure someone's gonna ask what we nee=
-d an
->>>> alignment larger than PAGE_SIZE for and if we have a real use case for=
- that.
->>>> I'm not entirely sure we have a reasonable answer for that.
->>
->> We could argue that we can remove an "ugly hack" (when we don't have the
->> build assert, if we do have that, I don't mind not supporting it), but I
->> agree that finding a user will be difficult.
->=20
-> I'd argue it's not really a hack to fail on something that's not supporte=
-d
-> (yet). Allocations can (almost) always fail, this is just another case.
-
-I guess since this is a deterministic failure, it's better than other
-failures. But I would still say this is hacky.
-
----
-Cheers,
-Benno
-
+> ---
+>  Documentation/admin-guide/perf/dwc_pcie_pmu.rst | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
+> index d47cd229d710..39b8e1fdd0cd 100644
+> --- a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
+> +++ b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
+> @@ -46,16 +46,16 @@ Some of the events only exist for specific configurations.
+>  DesignWare Cores (DWC) PCIe PMU Driver
+>  =======================================
+>  
+> -This driver adds PMU devices for each PCIe Root Port named based on the BDF of
+> +This driver adds PMU devices for each PCIe Root Port named based on the SBDF of
+>  the Root Port. For example,
+>  
+> -    30:03.0 PCI bridge: Device 1ded:8000 (rev 01)
+> +    0001:30:03.0 PCI bridge: Device 1ded:8000 (rev 01)
+>  
+> -the PMU device name for this Root Port is dwc_rootport_3018.
+> +the PMU device name for this Root Port is dwc_rootport_13018.
+>  
+>  The DWC PCIe PMU driver registers a perf PMU driver, which provides
+>  description of available events and configuration options in sysfs, see
+> -/sys/bus/event_source/devices/dwc_rootport_{bdf}.
+> +/sys/bus/event_source/devices/dwc_rootport_{sbdf}.
+>  
+>  The "format" directory describes format of the config fields of the
+>  perf_event_attr structure. The "events" directory provides configuration
+> @@ -66,16 +66,16 @@ The "perf list" command shall list the available events from sysfs, e.g.::
+>  
+>      $# perf list | grep dwc_rootport
+>      <...>
+> -    dwc_rootport_3018/Rx_PCIe_TLP_Data_Payload/        [Kernel PMU event]
+> +    dwc_rootport_13018/Rx_PCIe_TLP_Data_Payload/        [Kernel PMU event]
+>      <...>
+> -    dwc_rootport_3018/rx_memory_read,lane=?/               [Kernel PMU event]
+> +    dwc_rootport_13018/rx_memory_read,lane=?/               [Kernel PMU event]
+>  
+>  Time Based Analysis Event Usage
+>  -------------------------------
+>  
+>  Example usage of counting PCIe RX TLP data payload (Units of bytes)::
+>  
+> -    $# perf stat -a -e dwc_rootport_3018/Rx_PCIe_TLP_Data_Payload/
+> +    $# perf stat -a -e dwc_rootport_13018/Rx_PCIe_TLP_Data_Payload/
+>  
+>  The average RX/TX bandwidth can be calculated using the following formula:
+>  
+> @@ -88,7 +88,7 @@ Lane Event Usage
+>  Each lane has the same event set and to avoid generating a list of hundreds
+>  of events, the user need to specify the lane ID explicitly, e.g.::
+>  
+> -    $# perf stat -a -e dwc_rootport_3018/rx_memory_read,lane=4/
+> +    $# perf stat -a -e dwc_rootport_13018/rx_memory_read,lane=4/
+>  
+>  The driver does not support sampling, therefore "perf record" will not
+>  work. Per-task (without "-a") perf sessions are not supported.
+> 
 
