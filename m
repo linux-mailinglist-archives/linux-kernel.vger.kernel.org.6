@@ -1,183 +1,108 @@
-Return-Path: <linux-kernel+bounces-288116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 937C89535C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:41:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4C29535D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FE521C20E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:41:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19BF5B2977C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8FC1AC422;
-	Thu, 15 Aug 2024 14:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29A61AB50A;
+	Thu, 15 Aug 2024 14:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+JUIwVy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YhjXKMVy"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6180A1ABEB9;
-	Thu, 15 Aug 2024 14:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9165F1A76C1
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732863; cv=none; b=eh99UN7KVr3Xy5VFX+tXCLBRuIcvRNhICqkotPuVBf5D/W9NQkUuU3ZlYryeL43RNUZyw2GzKKGGGyEoG2F4NKEMmxdb5NTNBh3aNVhO5JwiIxSSdbQeSgfyApSjl6Q6fOBHBxc5IiaqI+nPeyeoFVTJ1BsDIywTKF49Sx+ykv0=
+	t=1723732908; cv=none; b=hsjYpJdgNM6YCWaNEaikP/hTcLsE3fqA/gnWbJz29GWqQ9QFXQd8imSV7d09pUouLTf+Dcek4ZjnAfXuBeTqXp58uAyVsbUG6QcU/RH99FUrDxWyYheh0skMyskvuDtndPgZo+qg8Tq4WHqfDjRKV9nmhA9MyPklx0Uz7A02hTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732863; c=relaxed/simple;
-	bh=3YSMK39m8QgE55j6X/6z5EauxRWQybHWvnMADAKlagk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pL6d+vh1M+H9yoKOkJmYamFXt+bTaJh5xEgINUD0XKRoF8mUIQX8p02697+4FhxQbvQ3YxEs7E7OP7iRsrNiZ47DojSVMRFdmHR69fF525jHlca1LQ2d9qdZJ5oGvefU5YG5AUs2A5wKRoypPPTxCUUFn0z6pKIRtdYuQT7EE3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+JUIwVy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B317C4AF0D;
-	Thu, 15 Aug 2024 14:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723732863;
-	bh=3YSMK39m8QgE55j6X/6z5EauxRWQybHWvnMADAKlagk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e+JUIwVyr/kpOljPB9N6+HapKCW5JnZGdtWENfO+Vlf7fv1jVt4AWSxg7pbrGB1iy
-	 tiyjCicYP3ZiVYuP6Tas5n2TBNV6dJeH8uIK3aZBlSSdKCRjcDzU2MUCER0dN5fwx8
-	 wfkwG1SbEAuSujlLjYwvqM+BPHh89/iCK+tMjDnXF5TRW6zp56QS9NRPqSPfaNlV/X
-	 4JdvVTSOyflI3bwE+SyLebk7VQyQ6B3yrrkBKbxDU8Tem8bqwwkL6U9e/rYUGc3yIL
-	 5SC6/6i4K5o45u3EuJj8rLsThb60EMKLATbfbU27ojLoKsHHG6AhCHxZb/48kd1OIE
-	 OXtaqCTo28NTA==
-Date: Thu, 15 Aug 2024 16:40:55 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Shivendra Pratap <quic_spratap@quicinc.com>
-Cc: Elliot Berman <quic_eberman@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_spratap@qucinc.com
-Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
-Message-ID: <Zr4Td7PiKhKl3Et3@lpieralisi>
-References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
- <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
- <ZrOMjomTTWZ91Uzf@lpieralisi>
- <20240807103245593-0700.eberman@hu-eberman-lv.qualcomm.com>
- <ZrYZ/i1QFhfmv0zi@lpieralisi>
- <20240809090339647-0700.eberman@hu-eberman-lv.qualcomm.com>
- <28c8bc92-4a55-8a07-1ece-333316d78410@quicinc.com>
+	s=arc-20240116; t=1723732908; c=relaxed/simple;
+	bh=V8QdjGFb8F+F+uBmy8H9NtHYvs5qGYjs+alfqKY+Mes=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Fs0m5BRarF7yZlCiQLgMUGbv+yknHuUX9WNEL/OyKZC4kPuhi+OA4T+cuIg/fCzlafwwr/ZGekif2Xsnc8VpVYifGVmdNk6aQhsXV8qs7LeveWY7L4u597DeGcllsQKAUW0bDeF+HAD5PpxYmxpYyU2jo8XtvvZ4Q8cgwxoW8cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YhjXKMVy; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-65194ea3d4dso16863867b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723732905; x=1724337705; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V8QdjGFb8F+F+uBmy8H9NtHYvs5qGYjs+alfqKY+Mes=;
+        b=YhjXKMVy3wL4n/6wI9utVm7rRSlM+4+a2pwbZkfplXGRZEFOtkAkjj854VfCrFJwjl
+         Hold8vOKYyeFUnxE/VpUFqqvCa0lzSnlpo5PTj9Cp6chpL/qsFxmrcJlG4/FVOxy6Rv0
+         bs7RBZOpC0vNtzgrcm8AwiN9n5vqVbQQa1Ku3v/WTCtGmGPY66otH083I95ZMZsxPCDH
+         7R3QSo+UVbKH/OVit1NikJNS7AZPCuicWA7NY3shBpNzi8u95OD/QVw8HRi07vyV88Ax
+         y6xieO84SetyFfeaZojUBgHUAJGR8sKrZo6WK6WF7E4n+GDSuy0q+pcadE/Xf4RFh30p
+         h6xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723732905; x=1724337705;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=V8QdjGFb8F+F+uBmy8H9NtHYvs5qGYjs+alfqKY+Mes=;
+        b=LJfb82aZcPf3fs0lF8yezYywfWGwZFmklA3Qmj5pYZ1j4k8RYpGyO41ifRyU6tZ0rv
+         SddgdaD9mFX/dOVffH8gJxjqX994qX+qedOHjiis+dc3ZDvZnvoEAdvsL2g6ZQ9sB6XR
+         S9L3akbj+5ol1pjkyGUzmLq9T1F9pv9mt8OAHGTDlFzRMR/0mzf2FUOqK9vrIIvaadMr
+         7OI+vUWwa7YGh6P3KnRDSdrkdr1tCesOdas/2p/2twdQCoJmdwagMTid95uROjflp9jS
+         0UcUUFmYwjUqTpYYDsT1cC8ZrPlsW9zoMoEnRnCzRcf81Pr2tfvGhomXP4DFeKC6+DWt
+         0NKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAmcOE53O/vRSHnbl9NX/h39V32d8VOru8HWtGJHEv7pgPJYsVUOQZdxvuxUDAnCbJsl7XGqxlccVrIfz+tvTwE8eu4FoXchVLutjV
+X-Gm-Message-State: AOJu0YxU9l7Bd+Fhq0/JutHNXc6UxuzGcdVLaxd6DNszEbtT+QARox7k
+	egaZs9HMGGw8NKdzq/8tgmqhW8v7EEkYJLkb39yGmTC3woY6gUWDMmRjMD8g8b6vhKeKXLcPvxv
+	bGQ==
+X-Google-Smtp-Source: AGHT+IFSiCB9jnN8MHCdZgXQSjJCqbcr/Subh+gxUDVsexDTlSRc3K/rXclSfcwq3ddq5WwRJAk3mZhT5yM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a81:5cd4:0:b0:64a:d1b0:4f24 with SMTP id
+ 00721157ae682-6ac9b002b3dmr1171957b3.7.1723732905559; Thu, 15 Aug 2024
+ 07:41:45 -0700 (PDT)
+Date: Thu, 15 Aug 2024 07:41:44 -0700
+In-Reply-To: <cc44c0da-4f9f-456f-84e5-87bd4fa47af6@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <28c8bc92-4a55-8a07-1ece-333316d78410@quicinc.com>
+Mime-Version: 1.0
+References: <20240608000639.3295768-1-seanjc@google.com> <e8db3e58-38de-47d4-ac6c-08408f9aaa10@redhat.com>
+ <cc44c0da-4f9f-456f-84e5-87bd4fa47af6@intel.com>
+Message-ID: <Zr4TqH9dYk0BbGkd@google.com>
+Subject: Re: [PATCH v3 0/8] KVM: Register cpuhp/syscore callbacks when
+ enabling virt
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>, Marc Zyngier <Marc.Zyngier@arm.com>, 
+	Anup Patel <Anup.Patel@wdc.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Oliver Upton <oupton@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 11:46:08PM +0530, Shivendra Pratap wrote:
-> 
-> 
-> On 8/9/2024 10:28 PM, Elliot Berman wrote:
-> > On Fri, Aug 09, 2024 at 03:30:38PM +0200, Lorenzo Pieralisi wrote:
-> >> On Wed, Aug 07, 2024 at 11:10:50AM -0700, Elliot Berman wrote:
-> >>
-> >> [...]
-> >>
-> >>>>> +static void psci_vendor_sys_reset2(unsigned long action, void *data)
-> >>>>
-> >>>> 'action' is unused and therefore it is not really needed.
-> >>>>
-> >>>>> +{
-> >>>>> +	const char *cmd = data;
-> >>>>> +	unsigned long ret;
-> >>>>> +	size_t i;
-> >>>>> +
-> >>>>> +	for (i = 0; i < num_psci_reset_params; i++) {
-> >>>>> +		if (!strcmp(psci_reset_params[i].mode, cmd)) {
-> >>>>> +			ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
-> >>>>> +					     psci_reset_params[i].reset_type,
-> >>>>> +					     psci_reset_params[i].cookie, 0);
-> >>>>> +			pr_err("failed to perform reset \"%s\": %ld\n",
-> >>>>> +				cmd, (long)ret);
-> >>>>> +		}
-> >>>>> +	}
-> >>>>> +}
-> >>>>> +
-> >>>>>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
-> >>>>>  			  void *data)
-> >>>>>  {
-> >>>>> +	if (data && num_psci_reset_params)
-> >>>>
-> >>>> So, reboot_mode here is basically ignored; if there is a vendor defined
-> >>>> reset, we fire it off.
-> >>>>
-> >>>> I think Mark mentioned his concerns earlier related to REBOOT_* mode and
-> >>>> reset type (granted, the context was different):
-> >>>>
-> >>>> https://lore.kernel.org/all/20200320120105.GA36658@C02TD0UTHF1T.local/
-> >>>>
-> >>>> I would like to understand if this is the right thing to do before
-> >>>> accepting this patchset.
-> >>>>
-> >>>
-> >>> I don't have any concerns to move this part below checking reboot_mode.
-> >>> Or, I could add reboot_mode == REBOOT_COLD check.
-> >>
-> >> The question is how can we map vendor specific reboot magic to Linux
-> >> reboot modes sensibly in generic PSCI code - that's by definition
-> >> vendor specific.
-> >>
-> > 
-> > I don't think it's a reasonable thing to do. "reboot bootloader" or
-> > "reboot edl" don't make sense to the Linux reboot modes.
-> > 
-> > I believe the Linux reboot modes enum is oriented to perspective of
-> > Linux itself and the vendor resets are oriented towards behavior of the
-> > SoC.
-> > 
-> > Thanks,
-> > Elliot
-> > 
-> 
-> Agree.
-> 
-> from perspective of linux reboot modes, kernel's current implementation in reset path is like:
-> __
-> #1 If reboot_mode is WARM/SOFT and PSCI_SYSRESET2 is supported 
->     Call PSCI - SYSTEM_RESET2 - ARCH RESET
-> #2 ELSE
->     Call PSCI - SYSTEM_RESET COLD RESET
-> ___
-> 
-> ARM SPECS for PSCI SYSTEM_RESET2
-> This function extends SYSTEM_RESET. It provides:
-> • ARCH RESET: set Bit[31] to 0               = > This is already in place in condition #1.
-> • vendor-specific resets: set Bit[31] to 1.  = > current patchset adds this part before kernel's reboot_mode reset at #0.
-> 
-> 
-> In current patchset, we see a condition added at #0-psci_vendor_reset2 being called before kernel’s current reboot_mode condition and it can take any action only if all below conditions are satisfied.
-> - PSCI SYSTEM_RESET2 is supported.
-> - psci dt node defines an entry "bootloader" as a reboot-modes.
-> - User issues reboot with a command say - (reboot bootloader).
-> - If vendor reset fails, default reboot mode will execute as is.
-> 
-> Don't see if we will skip or break the kernel reboot_mode flow with this patch. 
-> Also if user issues reboot <cmd> and <cmd> is supported on SOC vendor reset psci node, should cmd take precedence over kernel reboot mode enum? may be yes? 
-> 
+On Thu, Aug 15, 2024, Kai Huang wrote:
+>=20
+> > Also placed in kvm/queue, mostly as a reminder to myself, and added
+> > other maintainers for testing on ARM, RISC-V and LoongArch.=C2=A0 The c=
+hanges
+> > from v3 to v4 should be mostly nits, documentation and organization of
+> > the series.
+> >=20
+>=20
+> Also another reminder:
+>=20
+> Could you also remove the WARN_ON() in kvm_uninit_virtualization() so tha=
+t
+> we can allow additional kvm_disable_virtualization() after that for TDX?
 
-Please wrap lines when replying.
-
-I don't think it is a matter of precedence. reboot_mode and the reboot
-command passed to the reboot() syscall are there for different (?)
-reasons.
-
-What I am asking is whether it is always safe to execute a PSCI vendor
-reset irrispective of the reboot_mode value.
-
-Lorenzo
+Yeah, I'll take care of that in v4 (as above, Paolo put this in kvm/queue a=
+s a
+placeholder of sorts).
 
