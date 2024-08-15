@@ -1,130 +1,185 @@
-Return-Path: <linux-kernel+bounces-288010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB1695301D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:39:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF9A953037
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C29851C24DB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:39:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE481F267BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85DF19EED0;
-	Thu, 15 Aug 2024 13:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CCObtL38"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B385D19EED2;
+	Thu, 15 Aug 2024 13:40:20 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646181714A8
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8E01714A8;
+	Thu, 15 Aug 2024 13:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729153; cv=none; b=nyD6oHieH2d+AMUn+Z6wdfvbQdeo0gqhDKzUoTMCA8jGmO3vDXfhAidoigeCneijxQiHWLKZUCc5f27mj1bzZfvWlPYP0RQ7mjZkjP+tgg6/HXTvkxQ9tj1CuuFUQBzQJNWEx7X+FfNz8ZGbhSjban0MFBhQdXAz+LuZNl429ow=
+	t=1723729220; cv=none; b=pLgfCFrSStxsiaDp+kvX4GPGMUjo1RozxbHV9RCmU5+2onvs3kV/cAj9JjMBa+gp1VZt5HsmjUvnV9CoCbT0okPnZiRAWBlMwCuZYqUPLTymdP4yT5pCpq1C/SSoi0uzoYnFoioAFutuc0cEzA9vYAp46jCe55EBDKsdkAcAI0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729153; c=relaxed/simple;
-	bh=nokUy4SHF39XRwI3OPkHLurJXww6mSnTAY3AffIpiXw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G9Dx9XezwsI9hFQuuI4tyORt87NeK6CGAFOGd1Zrm1jbfl51HAubAfmt0XBxkGjC3xxhdon+/a3fy06sNoLELmOHdr3SwNY5HU5NjIvFU50Vk3aDxyIs3qDpiKI/84W1/7MwsYsKTmK7jkwtW3HpBARsrU19BMYKV5eZnAug3Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CCObtL38; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723729148; x=1723988348;
-	bh=4KOOqAhDO4ZFOzpad7+VhAff7zaPU1/74FXUVL+elaU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=CCObtL38d0Coq+We8Xj0kaBUjG3dRDjJIMu6fyvpjTKqgkohBsyZySwWtYFx/3Lxw
-	 M1Z4QNZkJNETFpuLe13BdAa4OJ7CHhz3OCGOG2f9J6r+FfSUTTDYdok6Gi63mkm91I
-	 hAAocKzFR6J/m9N+R4IU/JbWEM/NBqHnrsRwJPUNCkZxZQhVrpZRTqf9Xb+ajYoSYu
-	 DGfYUNqhgMN0jTnljODXYy11wZIUX3SDfyoKeOfA2m23Ut51c4v9Sqi3WNuqk7b6Sy
-	 ovSrJ5NGdOorSFnn8Uze5tEkCfjN0oBbVMe+SSdMtdnPXvy7XX6zjfbQ9gyLFFO9O6
-	 mKqFq28FKr+/A==
-Date: Thu, 15 Aug 2024 13:39:05 +0000
-To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
-Message-ID: <e0b0bffb-c240-4d23-bf4d-0c1c19608f60@proton.me>
-In-Reply-To: <Zr4DpPSjDqSoMh0j@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org> <Zr0GP0OXliPRqx4C@boqun-archlinux> <Zr1teqjuOHeeFO4Z@cassiopeiae> <CAH5fLgjvuE5uU00u4y+HyHTkQU_OBYvHe6NS5ohAhrLntTX1zQ@mail.gmail.com> <Zr31jqnA2b3qHK5l@cassiopeiae> <CAH5fLgjzNpeVVurPqVS=tMkKQOhXz08EsXRO4s9wYsNBuT6eVw@mail.gmail.com> <Zr4DpPSjDqSoMh0j@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 37da0818d01e8d58e689de0b12c5023f70729564
+	s=arc-20240116; t=1723729220; c=relaxed/simple;
+	bh=LsEF9SwjjRfvqRTvgOKr/Mldazy9d/zwtcPOdxn7FGQ=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=S3QSAuNeppFnbMUF3/BvXWjJeQt2uMw6TV8wxDzVCvNS20FXqIocKvnenxcKep/Vsx+A4a7N1YgOogOqvX+dVABnUubfKeSA80nLeyl8IXGqKBxwH5vE/Xxw5BuSfKUAITigkLIVkDR8+bNTSMbiSJYb2tPkToVuqXquVyAHVw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wl5p66BKLzyPsT;
+	Thu, 15 Aug 2024 21:39:42 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5B0701800A4;
+	Thu, 15 Aug 2024 21:40:14 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 15 Aug 2024 21:40:13 +0800
+CC: Shuai Xue <xueshuai@linux.alibaba.com>, Jing Zhang
+	<renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Yicong
+ Yang <yangyicong@hisilicon.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<quic_vbadigan@quicinc.com>, <quic_nitegupt@quicinc.com>,
+	<quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
+	<quic_parass@quicinc.com>, <quic_mrana@quicinc.com>
+Subject: Re: [PATCH 1/4] perf/dwc_pcie: Fix registration issue in multi PCIe
+ controller instances
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+References: <20240731-dwc_pmu_fix-v1-0-ca47d153e5b2@quicinc.com>
+ <20240731-dwc_pmu_fix-v1-1-ca47d153e5b2@quicinc.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <3dcb4074-9958-b454-7456-9dcc455dd736@huawei.com>
+Date: Thu, 15 Aug 2024 21:40:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240731-dwc_pmu_fix-v1-1-ca47d153e5b2@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On 15.08.24 15:33, Danilo Krummrich wrote:
-> On Thu, Aug 15, 2024 at 02:34:50PM +0200, Alice Ryhl wrote:
->> On Thu, Aug 15, 2024 at 2:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
->>>
->>> On Thu, Aug 15, 2024 at 11:20:32AM +0200, Alice Ryhl wrote:
->>>> On Thu, Aug 15, 2024 at 4:52=E2=80=AFAM Danilo Krummrich <dakr@kernel.=
-org> wrote:
->>>>>
->>>>> On Wed, Aug 14, 2024 at 12:32:15PM -0700, Boqun Feng wrote:
->>>>>> Hi Danilo,
->>>>>>
->>>>>> I'm trying to put your series on rust-dev, but I hit a few conflicts=
- due
->>>>>> to the conflict with `Box::drop_contents`, which has been in rust-de=
-v
->>>>>> for a while. And the conflict is not that trivial for me to resolve.
->>>>>> So just a head-up, that's a requirement for me to put it on rust-dev=
- for
->>>>>> more tests from my end ;-)
->>>>>
->>>>> I rebased everything and you can fetch them from [1].
->>>>>
->>>>> I resolved the following conflicts:
->>>>>
->>>>>   - for `Box`, implement
->>>>>     - `drop_contents`
->>>>>     - `manually_drop_contents` [2]
->>>>
->>>> Not sure I like this name. It sounds like something that runs the
->>>> destructor, but it does the exact opposite.
->>>
->>> I thought it kinda makes sense, since it's analogous to `ManuallyDrop::=
-new`.
->>>
->>> What about `Box::forget_contents` instead?
->>
->> One option is `into_manually_drop`. This uses the convention of using
->> the `into_*` prefix for conversions that take ownership of the
->> original value.
->=20
-> The signature of the current `Box::manually_drop_contents` is the same as=
- for
-> `Box::drop_contents`, namely
-> `fn manually_drop_contents(this: Self) -> Box<MaybeUninit<T>, A>`.
->=20
-> `into_manually_drop` seems misleading for for returning a
-> `Box<MaybeUninit<T>, A>`.
->=20
-> I still think `forget_contents` hits it quite well. Just as `drop_content=
-s`
-> drops the value, `forget_contents` makes the `Box` forget the value.
+On 2024/7/31 12:23, Krishna chaitanya chundru wrote:
+> When there are multiple of instances of PCIe controllers, registration
+> to perf driver fails with this error.
+> sysfs: cannot create duplicate filename '/devices/platform/dwc_pcie_pmu.0'
+> CPU: 0 PID: 166 Comm: modprobe Not tainted 6.10.0-rc2-next-20240607-dirty
+> Hardware name: Qualcomm SA8775P Ride (DT)
+> Call trace:
+>  dump_backtrace.part.8+0x98/0xf0
+>  show_stack+0x14/0x1c
+>  dump_stack_lvl+0x74/0x88
+>  dump_stack+0x14/0x1c
+>  sysfs_warn_dup+0x60/0x78
+>  sysfs_create_dir_ns+0xe8/0x100
+>  kobject_add_internal+0x94/0x224
+>  kobject_add+0xa8/0x118
+>  device_add+0x298/0x7b4
+>  platform_device_add+0x1a0/0x228
+>  platform_device_register_full+0x11c/0x148
+>  dwc_pcie_register_dev+0x74/0xf0 [dwc_pcie_pmu]
+>  dwc_pcie_pmu_init+0x7c/0x1000 [dwc_pcie_pmu]
+>  do_one_initcall+0x58/0x1c0
+>  do_init_module+0x58/0x208
+>  load_module+0x1804/0x188c
+>  __do_sys_init_module+0x18c/0x1f0
+>  __arm64_sys_init_module+0x14/0x1c
+>  invoke_syscall+0x40/0xf8
+>  el0_svc_common.constprop.1+0x70/0xf4
+>  do_el0_svc+0x18/0x20
+>  el0_svc+0x28/0xb0
+>  el0t_64_sync_handler+0x9c/0xc0
+>  el0t_64_sync+0x160/0x164
+> kobject: kobject_add_internal failed for dwc_pcie_pmu.0 with -EEXIST,
+> don't try to register things with the same name in the same directory.
+> 
+> This is because of having same bdf value for devices under two different
+> controllers.
+> 
+> Update the logic to use sbdf which is a unique number in case of
+> multi instance also.
+> 
+> Fixes: af9597adc2f1 ("drivers/perf: add DesignWare PCIe PMU driver")
 
-I think `forget_contents` sounds good. Can you please add some more docs
-to that function though? Like an example and change "Manually drops the
-contents, but keeps the allocation" to "Forgets the contents (does not
-run the destructor), but keeps the allocation.".
+Did you run into this on a QCOM platform with Patch 4/4 since there's
+multiple PCIe domains?
 
-Another thing that I spotted while looking at the patch, `move_out`
-doesn't need the `transmute_copy`, you should be able to just call
-`read` on the pointer.
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/perf/dwc_pcie_pmu.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index c5e328f23841..c115348b8d53 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -556,10 +556,10 @@ static int dwc_pcie_register_dev(struct pci_dev *pdev)
+>  {
+>  	struct platform_device *plat_dev;
+>  	struct dwc_pcie_dev_info *dev_info;
+> -	u32 bdf;
+> +	u32 sbdf;
+>  
+> -	bdf = PCI_DEVID(pdev->bus->number, pdev->devfn);
+> -	plat_dev = platform_device_register_data(NULL, "dwc_pcie_pmu", bdf,
+> +	sbdf = (pci_domain_nr(pdev->bus) << 16) | PCI_DEVID(pdev->bus->number, pdev->devfn);
+> +	plat_dev = platform_device_register_data(NULL, "dwc_pcie_pmu", sbdf,
+>  						 pdev, sizeof(*pdev));
+>  
+>  	if (IS_ERR(plat_dev))
+> @@ -611,15 +611,15 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>  	struct pci_dev *pdev = plat_dev->dev.platform_data;
+>  	struct dwc_pcie_pmu *pcie_pmu;
+>  	char *name;
+> -	u32 bdf, val;
+> +	u32 sbdf, val;
+>  	u16 vsec;
+>  	int ret;
+>  
+>  	vsec = pci_find_vsec_capability(pdev, pdev->vendor,
+>  					DWC_PCIE_VSEC_RAS_DES_ID);
+>  	pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
+> -	bdf = PCI_DEVID(pdev->bus->number, pdev->devfn);
+> -	name = devm_kasprintf(&plat_dev->dev, GFP_KERNEL, "dwc_rootport_%x", bdf);
+> +	sbdf = (pci_domain_nr(pdev->bus) << 16) | PCI_DEVID(pdev->bus->number, pdev->devfn);
 
----
-Cheers,
-Benno
+sbdf is also registerd as the id of the platform device in platform_device_register_data() above,
+can we use it directly here without encoding it again?
 
+Thanks.
+
+> +	name = devm_kasprintf(&plat_dev->dev, GFP_KERNEL, "dwc_rootport_%x", sbdf);
+>  	if (!name)
+>  		return -ENOMEM;
+>  
+> @@ -650,7 +650,7 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>  	ret = cpuhp_state_add_instance(dwc_pcie_pmu_hp_state,
+>  				       &pcie_pmu->cpuhp_node);
+>  	if (ret) {
+> -		pci_err(pdev, "Error %d registering hotplug @%x\n", ret, bdf);
+> +		pci_err(pdev, "Error %d registering hotplug @%x\n", ret, sbdf);
+>  		return ret;
+>  	}
+>  
+> @@ -663,7 +663,7 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>  
+>  	ret = perf_pmu_register(&pcie_pmu->pmu, name, -1);
+>  	if (ret) {
+> -		pci_err(pdev, "Error %d registering PMU @%x\n", ret, bdf);
+> +		pci_err(pdev, "Error %d registering PMU @%x\n", ret, sbdf);
+>  		return ret;
+>  	}
+>  	ret = devm_add_action_or_reset(&plat_dev->dev, dwc_pcie_unregister_pmu,
+> 
 
