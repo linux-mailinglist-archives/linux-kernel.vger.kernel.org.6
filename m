@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-288471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29CA953A7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:01:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03540953A7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A3DEB235BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82BA286038
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E150E5A7AA;
-	Thu, 15 Aug 2024 19:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E579A64A8F;
+	Thu, 15 Aug 2024 19:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="Mpth+/mL"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OB/seB3y"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953184205D
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23B84205D;
+	Thu, 15 Aug 2024 19:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723748508; cv=none; b=rnRQPipfAANrOToIVDT8+y7XC3xt73nWsxYurDQn5aBDuFtE/n8AYtsHIPAhvNGeLQyFv2BI+/RheHUSNd1VAdrOjNreSMHeIq1V0BDSGlPHR+6yqcXrd7cynf4WJL18GrRQWJXCMwnKajQ1GJ9YaS9DGRZoCTDkqU1Ir6Qpe9g=
+	t=1723748582; cv=none; b=Nk2wl4eWPgHAHS5A9x8sPNF8BUeI8ktFHyFsuc4uo4vriF3ZdTHTPQtOINtLR9XGfyQxsbh2rDsz8/LB8BvX919DXjQyfrOGaJ84hbkjgi1UPbuAfEaRyWlZppixRQT5K8QGh6hsjaReNoyz4Zli8TYTgLXAdlVbwFpvqcqYroM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723748508; c=relaxed/simple;
-	bh=Ia56IaP2wCwdztFSxen90kn9phtOnuIPt4qP/ILHOxY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=KQpX95yUnFuhGRBD7l9qrBONMEtJT09EG/ckLrowUPAo/o8nwXqywnfauntz4Uur60sa60mp4jQ/F6jTRL+hY6txTfDwNgetGGA961VXfjd10jC/5PykidJAt7uzKyVd6pzbTrmytbh4iXw4rfE0GmRCf14dDd2Sy7KmCmo7XmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=Mpth+/mL; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1e4c75488so76329085a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:01:46 -0700 (PDT)
+	s=arc-20240116; t=1723748582; c=relaxed/simple;
+	bh=rPYXwEdoUC7hHymrv0U4v7KOoFbGQh+1iMoGKOLlhPU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GrKAxRA6lvzXssFycjk+94Qs7GWbLDjHScpjAqNkjIDZ44i+BeYcnY9ex/4YEjS1kU3BCelW9WXD523r7+YwBBNYS5fOL0jU3p1PdKEKdx3/4F96OlgHyldYgyJKpaxjiQ/G4HXySOhqJbHZTlwxZ4LZroLZu+wPWS5+buUeSrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OB/seB3y; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3db16129143so675486b6e.0;
+        Thu, 15 Aug 2024 12:03:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google; t=1723748505; x=1724353305; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sYoHgaX6Oh7hOJvjP6bYFuodoCT3Q3xdPz+YF6JrpLs=;
-        b=Mpth+/mLeUrKJd363gmizhIkMCfuRkYlST56Eyac8PT6rSfGrJTeIlSpw8b3/riV8H
-         e7pGdm/3UvdNWMMZ7cAdkLApEK3eyz4+dwjfdYNvODTojXQ9HKt35nBrlVuKGoSpoaWR
-         x22uH/pxq9H8NCiUWgABh+xNs9SWq6W6hHuao=
+        d=gmail.com; s=20230601; t=1723748580; x=1724353380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AZOIvKpRMlh8zdrdHV2sndOfzYWoOVHWs7qeV4QPz4A=;
+        b=OB/seB3yv4nsNSsZJIPbmAhkGVci8BGXgSNfIaLEE3qzHiJDL0tLIg1V/y+DuK0xSK
+         XgyqYnT+QHCF+uClLC7fjV+XRhPGlCSTmkvIVgr+25xK4DcLJkZ+n/IC6w7GOdbANek6
+         gnkvtNTyCJFClDcVrPaQYiPabX0CE70MpkOuDwpvIZaVywbytfTI2cq9RJ5O2I53eVob
+         Xfi64j/DeIZon6oCfr60rprrNRnNeh9r++KodyHLMbQSzaqKl6TdY7K/EgalvwQutYhD
+         3mppAItym5fGNiUpWyv2MinRMOUaqw5btnde4NbdXzSzfMkSYBAm9KZ65cYbevu5OBOc
+         wKRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723748505; x=1724353305;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sYoHgaX6Oh7hOJvjP6bYFuodoCT3Q3xdPz+YF6JrpLs=;
-        b=fN545avFcLgyq9ernCTtSe1UPqrWT4OP3k3clsQMUwbMhvgHbGPuRbZzqK5b9btQ3B
-         Yn9kGtn8IZZT78xVw5/pvLsHRfivHfOQG4BMowMkpzVbsFQsSnnaV1PNXLX+jVwMeIHc
-         W8i4AfAeuksiPoKKeeO+mi8CRp1nxhauYnWlQV5pYZ15vWNcuy0BgZ5YL7pX6qU77pwd
-         IRQ2uW+BeKJPpUSY2V69gAbLVOXu/gIqC52ovn5mxi/MtEv067ARYuTSEY66PKTcTS3u
-         1cUwuVgRZYgTYUeT+jJxw4vENA1R3nrUI1R250SQ15Qx9Usn06908ZeCg18jEYiJeLXv
-         qokw==
-X-Forwarded-Encrypted: i=1; AJvYcCWacs+0oYMqcg4OqO6T/5NKOArVECWAVn/ONk+gASIEEcUuwGgUPEknpa3mVTEZWRqUNUiPbwOx0IdoCe+WyPchAcGyYHwdixa2345Z
-X-Gm-Message-State: AOJu0Yw3QcsG/tx4yI2vvi/bq/S5G4CDz4169yoSLAjQscRckRa8gmp7
-	rT5GkQb/OWr4oivEq+QZhC92vEW1Gu3c+HhMbFNpasAC1Bc9At5C3nn7kwmgSA==
-X-Google-Smtp-Source: AGHT+IEczJIMuzRH/O6ERN1btYguU3GnudkhPvvJqeqlDMQz09wFIySHt/aagHTo2ffLCUAepQ4Vpw==
-X-Received: by 2002:a05:620a:4142:b0:7a1:c3e8:121 with SMTP id af79cd13be357-7a5069ec304mr80655785a.57.1723748505324;
-        Thu, 15 Aug 2024 12:01:45 -0700 (PDT)
-Received: from macbook-air.local (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff1073b4sm88597385a.104.2024.08.15.12.01.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 12:01:44 -0700 (PDT)
-From: Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date: Thu, 15 Aug 2024 15:01:42 -0400 (EDT)
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-cc: Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>, 
-    peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-    namhyung@kernel.org, mark.rutland@arm.com, 
-    alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-    adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-    x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
-    Vince Weaver <vincent.weaver@maine.edu>
-Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
-In-Reply-To: <166fdbdf-b24d-4267-b42d-f11348b87b1b@linux.intel.com>
-Message-ID: <201991b2-d77a-c10f-d46d-ee9b34ba11e5@maine.edu>
-References: <87sev7nom4.ffs@tglx> <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com> <87frr7nd28.ffs@tglx> <70657c5e-f771-456b-a5ac-3df590249288@linux.intel.com> <875xs2oh69.ffs@tglx> <166fdbdf-b24d-4267-b42d-f11348b87b1b@linux.intel.com>
+        d=1e100.net; s=20230601; t=1723748580; x=1724353380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AZOIvKpRMlh8zdrdHV2sndOfzYWoOVHWs7qeV4QPz4A=;
+        b=sQTYSCrsZ71Tke3HzHctg6qX9xIPNQ7G7w5JX+8kPJbIV7Z3ajRq6JaFt6d3Or3T6V
+         FDooyPldZaXu+Zbv8/XSjgXqReCKXLWJtsNnq/diU9b3GRaj1Zbh6jRSr19WHA+6tHJz
+         ULnVlUqxuQWRNVAOcx3a3xPz6HYvB2DaaZNfbxDgzpIfwA5m2m9n6KbwJLzj7PwyN56W
+         GNI9Y72EyceKuPmc/3hTp33t9INtVcJBAw+jtc/7SmfeU4n90n1VhbugHGU+6JBY5TLY
+         nScN6ygx276XAGdzmaC9PHBaPCM25moOZdiD3bIURHBfORBVyI65zOzMKwaZMr1rw5+M
+         dc2A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4X9eIyDy7ZJnC3hyWDt6cccn8osxCAIxCT2eZWXgkp2MCRFOJxvss5Wokh8duXBLk+4tigdg0BNYU9A==@vger.kernel.org, AJvYcCXoXctetSOkJyngwH9REyY6QUhHrqa5l0H8EIon72UStwlhv+RqMkQ/Yl58xv/BcLOFPUw5W6DwtQEw9Ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz7MtUn9CowIR/KlFx4gaQDCBdneqXA0gX6BPlpHFj6KTgfGVD
+	nt3jbAlfyYE8/kJMUpFwsTJeRe96zDKcxpkBG5YM4Aefb74tRJDPCG3MNTH9Vd7oZi9PkMd7zMf
+	OAZxXVlrJbHMh0ZQ0JdJ/jAeQiu4=
+X-Google-Smtp-Source: AGHT+IEJsvkpN7Xv7Mb9X2uLdMoNEq5kn8t+hhx5IOPV2ybS88r6JfHaHOPHc6sZ2OTa7yza0nhNVOtIQO75ENxcLqA=
+X-Received: by 2002:a05:6358:740d:b0:1af:7f7a:e6e5 with SMTP id
+ e5c5f4694b2df-1b39331111bmr84983655d.26.1723748579844; Thu, 15 Aug 2024
+ 12:02:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240810112307.175333-1-kdipendra88@gmail.com> <CABPRKS9qUmWgTcg3vXEb7JxFCx1n5O7MeeU73LJZAZ0DhGRTaw@mail.gmail.com>
+In-Reply-To: <CABPRKS9qUmWgTcg3vXEb7JxFCx1n5O7MeeU73LJZAZ0DhGRTaw@mail.gmail.com>
+From: Dipendra Khadka <kdipendra88@gmail.com>
+Date: Fri, 16 Aug 2024 00:47:48 +0545
+Message-ID: <CAEKBCKNqGpC0hfEa4bzbEau4Mnwvasi6nqwa2HB+hMS2T2EtqA@mail.gmail.com>
+Subject: Re: [PATCH] staging: drivers: scsi: lpfc: Fix warning: Using plain
+ integer as NULL pointer in lpfc_init.c
+To: Justin Tee <justintee8345@gmail.com>
+Cc: Justin Tee <justin.tee@broadcom.com>, james.smart@broadcom.com, 
+	dick.kennedy@broadcom.com, martin.petersen@oracle.com, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 15 Aug 2024, Liang, Kan wrote:
+Hi Justin,
 
-> I also found a related discussion about 9 years ago.
-> https://lore.kernel.org/lkml/alpine.DEB.2.11.1505181343090.32481@vincent-weaver-1.umelst.maine.edu/
-> Vince tried the workaround but it seems not work.
-> 
-> So limiting the min period of the fixed counter 0 to 32 seems the only
-> workaround for now.
+On Mon, 12 Aug 2024 at 22:09, Justin Tee <justintee8345@gmail.com> wrote:
+>
+> Hi Dipendra,
+>
+> Perhaps the branch being referred to is out of date?
+>
 
-I'm actually still lurking on this discussion.  My regular fuzzing machine 
-is still a Haswell machine (the same one from 9 years ago) and it reliably 
-hits this issue within hours.  I hadn't realized there was an official 
-reproducer.
+Sorry, you are right. It is due to the branch mismatching.
 
-If a patch does come out of this I'll be glad to test it.
+> This has already been addressed in the following commit.
+>
+> commit 5860d9fb5622ecd79913ac981403c612f6c8a2d8
+> Author: Colin Ian King <colin.i.king@gmail.com>
+> Date:   Sat Sep 25 23:41:13 2021 +0100
+>
+>     scsi: lpfc: Return NULL rather than a plain 0 integer
+>
+>     Function lpfc_sli4_perform_vport_cvl() returns a pointer to struct
+>     lpfc_nodelist so returning a plain 0 integer isn't good practice.  Fi=
+x this
+>     by returning a NULL instead.
+>
+>     Link: https://lore.kernel.org/r/20210925224113.183040-1-colin.king@ca=
+nonical.com
+>     Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>     Signed-off-by: Martin K. Petersen martin.petersen@oracle.com
+>
+>
+> And, the routine called lpfc_enable_node doesn=E2=80=99t exist anymore.
+>
+> Regards,
+> Justin Tee
 
-Vince Weaver
-vincent.weaver@maine.edu
+Best Regard,
+Dipendra Khadka
 
