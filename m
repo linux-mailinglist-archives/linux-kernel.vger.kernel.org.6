@@ -1,45 +1,72 @@
-Return-Path: <linux-kernel+bounces-287990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076D2952F0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:28:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC06952F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:30:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC371F22568
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADFE288E32
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7924A19EEBD;
-	Thu, 15 Aug 2024 13:28:03 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFFE19DF9D;
+	Thu, 15 Aug 2024 13:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o6G5TRgv"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0FA1DFFB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9E917CA1D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728482; cv=none; b=WNqP4HTMxY4bx5ePhPTDYlzkRDimP5xKJ59oXGAL05Jhtq/dcFVfphAqgFTaZ7EfMtDw3hEer/7Cx+50vTYK9JTx9o5EKtK2zJn55UVavH4HWfPcnmoxJmQ1ly0R6xQbDTc6SLMtpGhYmJgRDG6afOPp4x9NOdoWhbOY4yprMrs=
+	t=1723728624; cv=none; b=fNYAgIHlMK4B3t8xpLcuenq2pGRCA8mYc8dw1hhnnuHTf6QdjXE0EDhL9GVcpZTCfaEelqjt4oxsxrAa4qwWiZUvbraAOhFO/o6OwxR2UXJM/qMIAFfg06dRgxhHeZ0Op78WiNYOxACj0Ioli/RUOEDV1O6TJH+CV77xmzSmid0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728482; c=relaxed/simple;
-	bh=ADV4rihW5uVJ57eOUx6PugYD2/A5cMZ277u6XDxwQYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=H5hXXlig4zOYKBFEQBdVJ+8ONaMovsN/4mqv3jkG36q8g1ObDmnlFAOgiorS8Z+VoifklCp7XIZS+YWna1TOYPpb6sBzCZhyOjcAT4whYkDTFIi0TowQ/KpO2Z8cv4/FreTpsLjAUt4Zkf7EgTwwXpDkSIzoo03ZlDFR4VzOZ2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wl5Ww0tQNzyQ4v;
-	Thu, 15 Aug 2024 21:27:24 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id 98F13180100;
-	Thu, 15 Aug 2024 21:27:55 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 15 Aug 2024 21:27:54 +0800
-Message-ID: <20ed69ad-5dad-446b-9f01-86ad8b1c67fa@huawei.com>
-Date: Thu, 15 Aug 2024 21:27:53 +0800
+	s=arc-20240116; t=1723728624; c=relaxed/simple;
+	bh=VqbjF+/JhAHEbj6VrPUiRUjcgUNexhlDFO2jPxvVf4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGRWJBpA3IfpOow2kDRWR5cHCIEBiyrNbOkof3ESsF/LNj78RNddkG43rOfdGHvWlcz7uTQL5QN2xlXOehdWH2biLUiR/4ZUXqqDwkALP/CNGFJNEkjIMtCFXxDq11/BpJSmsRLpyIC/PFovnQHp9HsHCFTdF9+SEhOgqbENbwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o6G5TRgv; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso8405745e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723728621; x=1724333421; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m4M6/sF5++gwHBVatWuh7PHYYyZziGbg1MVlu0kUywY=;
+        b=o6G5TRgvv107ireI0SKUjvU1weUiYGk8pTdNRzfuDGk2P+lvplxPY9weHNPsqhr6fc
+         pdDfyYV9vcUJ+/MCPoZuw2q/alHZX8ZWjzP+NqlQIqyvzahKwTrCIUbnbA1JtLGAkkG0
+         6bFMGkcou5AQJa/w0XUnZ6o+02/qv7ob0+7qFXOujpBnHy1rUGTZXKxW3Q+/tS5gZfTN
+         V3Tu1nfujmDsfNKpGBdYgN659LrA6rVzw7mZiF0IUNZoSCjI42MLHcphdbAHfx1BMzu5
+         lnZRuEAThW9ZAC2J/KGjULQKbFEGzc6/5qAJQ9rBH91l0dHRVGV00uH1NcKS6LGHw9pb
+         kdLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723728621; x=1724333421;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m4M6/sF5++gwHBVatWuh7PHYYyZziGbg1MVlu0kUywY=;
+        b=PDdLFeyyjhgC3QLS0+cN0rsbkW+Wog97sDMA21/+eWSqpYIxXL10xlxls4SCV8dJhB
+         2F7KbajZRrAcNkZ+eekqNahk46r3iiyG0GDtXgIYzI1ooO3rYhzl+qrG4y2+bW+f4pFt
+         c908n3QlDVipYImfQpSpjvf8CbcYVyaexZoWzw41n7ekTR2Op+fRoGG6fOkxTeJwlVkN
+         K2AaeZTqTnIoKLYl2R3JX/+LM6El5fPBaoR/i7eJRFt2KnezpsriEbBQ2Ls4TbXkqcWT
+         1YPmIXNbK9UFAJnzy0Jgo/v3qFSOQ+fDtUW1jN/IoPeDwKkcrpPC6SRtG1vU050ie/Sz
+         gtng==
+X-Gm-Message-State: AOJu0YyNsCfKTY90pLpW3GLGFaC/ngGvDZazHdjmQr53EBeZ6TFCkuqy
+	rcu75av7qTFoM1mhBGQol4E4nbzD3QAFmVROHpNVIGqfUqbQHPjeiexVs4JvvnQ=
+X-Google-Smtp-Source: AGHT+IFxRMYQZ5/FGozj5bf/nvsc4fF0z+j6HTveT7P5nyCyRBZp7bMPqxKA4HuUUfOrq67yZa3J1g==
+X-Received: by 2002:a5d:4fcf:0:b0:371:8c0b:4818 with SMTP id ffacd0b85a97d-3718c0b497dmr998758f8f.63.1723728620878;
+        Thu, 15 Aug 2024 06:30:20 -0700 (PDT)
+Received: from [192.168.68.116] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37189896be4sm1561633f8f.77.2024.08.15.06.30.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 06:30:20 -0700 (PDT)
+Message-ID: <fde72c34-889a-4dd7-a1cb-fec1d1b3c6a3@linaro.org>
+Date: Thu, 15 Aug 2024 14:30:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,274 +74,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] mm: support large folios swap-in for zRAM-like
- devices
+Subject: Re: [PATCH 6/6] misc: fastrpc: Restrict untrusted app to attach to
+ privileged PD
+To: "Selvaraj, Joel (MU-Student)" <jsbrq@missouri.edu>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Ekansh Gupta <quic_ekangupt@quicinc.com>, stable <stable@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240628114501.14310-1-srinivas.kandagatla@linaro.org>
+ <20240628114501.14310-7-srinivas.kandagatla@linaro.org>
+ <9a9f5646-a554-4b65-8122-d212bb665c81@umsystem.edu>
 Content-Language: en-US
-To: Kairui Song <ryncsn@gmail.com>, Chuanhua Han <hanchuanhua@oppo.com>, Barry
- Song <21cnbao@gmail.com>
-CC: <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<baolin.wang@linux.alibaba.com>, <chrisl@kernel.org>, <david@redhat.com>,
-	<hannes@cmpxchg.org>, <hughd@google.com>, <kaleshsingh@google.com>,
-	<linux-kernel@vger.kernel.org>, <mhocko@suse.com>, <minchan@kernel.org>,
-	<nphamcs@gmail.com>, <ryan.roberts@arm.com>, <senozhatsky@chromium.org>,
-	<shakeel.butt@linux.dev>, <shy828301@gmail.com>, <surenb@google.com>,
-	<v-songbaohua@oppo.com>, <willy@infradead.org>, <xiang@kernel.org>,
-	<ying.huang@intel.com>, <yosryahmed@google.com>, <hch@infradead.org>
-References: <20240726094618.401593-1-21cnbao@gmail.com>
- <20240802122031.117548-1-21cnbao@gmail.com>
- <20240802122031.117548-3-21cnbao@gmail.com>
- <CAMgjq7DmSok3YYd6dqyyYxkK_wZg7-c2bW8BFfxhs1V86h=niw@mail.gmail.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <CAMgjq7DmSok3YYd6dqyyYxkK_wZg7-c2bW8BFfxhs1V86h=niw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100008.china.huawei.com (7.185.36.138)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <9a9f5646-a554-4b65-8122-d212bb665c81@umsystem.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 2024/8/15 17:47, Kairui Song wrote:
-> On Fri, Aug 2, 2024 at 8:21 PM Barry Song <21cnbao@gmail.com> wrote:
->>
->> From: Chuanhua Han <hanchuanhua@oppo.com>
+On 15/08/2024 03:34, Selvaraj, Joel (MU-Student) wrote:
+> Hi Srinivas Kandagatla and Ekansh Gupta,
 > 
-> Hi Chuanhua,
-> 
+> On 6/28/24 06:45, srinivas.kandagatla@linaro.org wrote:
+>> From: Ekansh Gupta <quic_ekangupt@quicinc.com>
 >>
-...
-
->> +
->> +static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+>> Untrusted application with access to only non-secure fastrpc device
+>> node can attach to root_pd or static PDs if it can make the respective
+>> init request. This can cause problems as the untrusted application
+>> can send bad requests to root_pd or static PDs. Add changes to reject
+>> attach to privileged PDs if the request is being made using non-secure
+>> fastrpc device node.
+>>
+>> Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
+>> Cc: stable <stable@kernel.org>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>    drivers/misc/fastrpc.c      | 22 +++++++++++++++++++---
+>>    include/uapi/misc/fastrpc.h |  3 +++
+>>    2 files changed, 22 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index 5680856c0fb8..a7a2bcedb37e 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -2087,6 +2087,16 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
+>>    	return err;
+>>    }
+>>    
+>> +static int is_attach_rejected(struct fastrpc_user *fl)
 >> +{
->> +       struct vm_area_struct *vma = vmf->vma;
->> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> +       unsigned long orders;
->> +       struct folio *folio;
->> +       unsigned long addr;
->> +       swp_entry_t entry;
->> +       spinlock_t *ptl;
->> +       pte_t *pte;
->> +       gfp_t gfp;
->> +       int order;
->> +
->> +       /*
->> +        * If uffd is active for the vma we need per-page fault fidelity to
->> +        * maintain the uffd semantics.
->> +        */
->> +       if (unlikely(userfaultfd_armed(vma)))
->> +               goto fallback;
->> +
->> +       /*
->> +        * A large swapped out folio could be partially or fully in zswap. We
->> +        * lack handling for such cases, so fallback to swapping in order-0
->> +        * folio.
->> +        */
->> +       if (!zswap_never_enabled())
->> +               goto fallback;
->> +
->> +       entry = pte_to_swp_entry(vmf->orig_pte);
->> +       /*
->> +        * Get a list of all the (large) orders below PMD_ORDER that are enabled
->> +        * and suitable for swapping THP.
->> +        */
->> +       orders = thp_vma_allowable_orders(vma, vma->vm_flags,
->> +                       TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
->> +       orders = thp_vma_suitable_orders(vma, vmf->address, orders);
->> +       orders = thp_swap_suitable_orders(swp_offset(entry), vmf->address, orders);
->> +
->> +       if (!orders)
->> +               goto fallback;
->> +
->> +       pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd, vmf->address & PMD_MASK, &ptl);
->> +       if (unlikely(!pte))
->> +               goto fallback;
->> +
->> +       /*
->> +        * For do_swap_page, find the highest order where the aligned range is
->> +        * completely swap entries with contiguous swap offsets.
->> +        */
->> +       order = highest_order(orders);
->> +       while (orders) {
->> +               addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
->> +               if (can_swapin_thp(vmf, pte + pte_index(addr), 1 << order))
->> +                       break;
->> +               order = next_order(&orders, order);
->> +       }
->> +
->> +       pte_unmap_unlock(pte, ptl);
->> +
->> +       /* Try allocating the highest of the remaining orders. */
->> +       gfp = vma_thp_gfp_mask(vma);
->> +       while (orders) {
->> +               addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
->> +               folio = vma_alloc_folio(gfp, order, vma, addr, true);
->> +               if (folio)
->> +                       return folio;
->> +               order = next_order(&orders, order);
->> +       }
->> +
->> +fallback:
->> +#endif
->> +       return vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vmf->address, false);
+>> +	/* Check if the device node is non-secure */
+>> +	if (!fl->is_secure_dev) {
+>> +		dev_dbg(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
+>> +		return -EACCES;
+>> +	}
+>> +	return 0;
 >> +}
->> +
->> +
->>   /*
->>    * We enter with non-exclusive mmap_lock (to exclude vma changes,
->>    * but allow concurrent faults), and pte mapped but not yet locked.
->> @@ -4074,35 +4220,37 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>          if (!folio) {
->>                  if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
->>                      __swap_count(entry) == 1) {
->> -                       /*
->> -                        * Prevent parallel swapin from proceeding with
->> -                        * the cache flag. Otherwise, another thread may
->> -                        * finish swapin first, free the entry, and swapout
->> -                        * reusing the same entry. It's undetectable as
->> -                        * pte_same() returns true due to entry reuse.
->> -                        */
->> -                       if (swapcache_prepare(entry, 1)) {
->> -                               /* Relax a bit to prevent rapid repeated page faults */
->> -                               schedule_timeout_uninterruptible(1);
->> -                               goto out;
->> -                       }
->> -                       need_clear_cache = true;
->> -
->>                          /* skip swapcache */
->> -                       folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0,
->> -                                               vma, vmf->address, false);
->> +                       folio = alloc_swap_folio(vmf);
->>                          page = &folio->page;
->>                          if (folio) {
->>                                  __folio_set_locked(folio);
->>                                  __folio_set_swapbacked(folio);
->>
->> +                               nr_pages = folio_nr_pages(folio);
->> +                               if (folio_test_large(folio))
->> +                                       entry.val = ALIGN_DOWN(entry.val, nr_pages);
->> +                               /*
->> +                                * Prevent parallel swapin from proceeding with
->> +                                * the cache flag. Otherwise, another thread may
->> +                                * finish swapin first, free the entry, and swapout
->> +                                * reusing the same entry. It's undetectable as
->> +                                * pte_same() returns true due to entry reuse.
->> +                                */
->> +                               if (swapcache_prepare(entry, nr_pages)) {
->> +                                       /* Relax a bit to prevent rapid repeated page faults */
->> +                                       schedule_timeout_uninterruptible(1);
->> +                                       goto out_page;
->> +                               }
->> +                               need_clear_cache = true;
->> +
->>                                  if (mem_cgroup_swapin_charge_folio(folio,
->>                                                          vma->vm_mm, GFP_KERNEL,
->>                                                          entry)) {
->>                                          ret = VM_FAULT_OOM;
->>                                          goto out_page;
->>                                  }
 > 
-> After your patch, with build kernel test, I'm seeing kernel log
-> spamming like this:
-> [  101.048594] pagefault_out_of_memory: 95 callbacks suppressed
-> [  101.048599] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> [  101.059416] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> [  101.118575] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> [  101.125585] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> [  101.182501] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> [  101.215351] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> [  101.272822] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> [  101.403195] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
-> ............
+> This broke userspace for us. Sensors stopped working in SDM845 and other
+> qcom SoC devices running postmarketOS. Trying to communicate with the
+> fastrpc device just ends up with a permission denied error. This was
+> previously working. I am not sure if this is intended. Here are my two
+> observations:
 > 
-> And heavy performance loss with workloads limited by memcg, mTHP enabled.
+> 1. if change the if condition to
 > 
-> After some debugging, the problematic part is the
-> mem_cgroup_swapin_charge_folio call above.
-> When under pressure, cgroup charge fails easily for mTHP. One 64k
-> swapin will require a much more aggressive reclaim to success.
+> `if (!fl->is_secure_dev && fl->cctx->secure)`
 > 
-> If I change MAX_RECLAIM_RETRIES from 16 to 512, the spamming log is
-> gone and mTHP swapin should have a much higher swapin success rate.
-> But this might not be the right way.
+> similar to how it's done in fastrpc's `is_session_rejected()` function,
+> then it works. But I am not sure if this is an valid fix. But currently,
+> fastrpc will simply deny access to all fastrpc device that contains the
+> `qcom,non-secure-domain` dt property. Is that the intended change?
+> Because I see a lot of adsp, cdsp and sdsp fastrpc nodes have that dt
+> property.
 > 
-> For this particular issue, maybe you can change the charge order, try
-> charging first, if successful, use mTHP. if failed, fallback to 4k?
+> 2. In the `fastrpc_rpmsg_probe()` function, it is commented that,
+> 
+> "Unsigned PD offloading is only supported on CDSP"
+> 
+> Does this mean adsp and sdsp shouldn't have the `qcom,non-secure-domain`
+> dt property? In fact, it was reported that removing this dt property and
+> using the `/dev/fastrpc-sdsp-secure` node instead works fine too. Is
+> this the correct way to fix it?
 
-This is what we did in alloc_anon_folio(), see 085ff35e7636
-("mm: memory: move mem_cgroup_charge() into alloc_anon_folio()"),
-1) fallback earlier
-2) using same GFP flags for allocation and charge
+Yes, this is the ideal way to fix this, Audio DSP and Sensor DSPs are by 
+default secure DSP's.
 
-but it seems that there is a little complicated for swapin charge
+usage of "qcom,non-secure-domain" has been abused on all the platforms 
+as the device tree bindings are not enforcing this checks to any new 
+device tree entries. This needs fixing properly.
 
+Ideally this patch has to fix the existing dts and update bindings to 
+reflect that.
+
+Sorry this has been over looked!
+
+On the library side that you are using consider non-secure node as 
+fallback only when secure node is missing.
+
+given the mess with the current state of patch, reverting sounds good 
+for me to start with.
+
+--srini
 
 > 
->> -                               mem_cgroup_swapin_uncharge_swap(entry, 1);
->> +                               mem_cgroup_swapin_uncharge_swap(entry, nr_pages);
->>
->>                                  shadow = get_shadow_from_swap_cache(entry);
->>                                  if (shadow)
->> @@ -4209,6 +4357,22 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>                  goto out_nomap;
->>          }
->>
->> +       /* allocated large folios for SWP_SYNCHRONOUS_IO */
->> +       if (folio_test_large(folio) && !folio_test_swapcache(folio)) {
->> +               unsigned long nr = folio_nr_pages(folio);
->> +               unsigned long folio_start = ALIGN_DOWN(vmf->address, nr * PAGE_SIZE);
->> +               unsigned long idx = (vmf->address - folio_start) / PAGE_SIZE;
->> +               pte_t *folio_ptep = vmf->pte - idx;
->> +
->> +               if (!can_swapin_thp(vmf, folio_ptep, nr))
->> +                       goto out_nomap;
->> +
->> +               page_idx = idx;
->> +               address = folio_start;
->> +               ptep = folio_ptep;
->> +               goto check_folio;
->> +       }
->> +
->>          nr_pages = 1;
->>          page_idx = 0;
->>          address = vmf->address;
->> @@ -4340,11 +4504,12 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>                  folio_add_lru_vma(folio, vma);
->>          } else if (!folio_test_anon(folio)) {
->>                  /*
->> -                * We currently only expect small !anon folios, which are either
->> -                * fully exclusive or fully shared. If we ever get large folios
->> -                * here, we have to be careful.
->> +                * We currently only expect small !anon folios which are either
->> +                * fully exclusive or fully shared, or new allocated large folios
->> +                * which are fully exclusive. If we ever get large folios within
->> +                * swapcache here, we have to be careful.
->>                   */
->> -               VM_WARN_ON_ONCE(folio_test_large(folio));
->> +               VM_WARN_ON_ONCE(folio_test_large(folio) && folio_test_swapcache(folio));
->>                  VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
->>                  folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
->>          } else {
->> @@ -4387,7 +4552,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>   out:
->>          /* Clear the swap cache pin for direct swapin after PTL unlock */
->>          if (need_clear_cache)
->> -               swapcache_clear(si, entry, 1);
->> +               swapcache_clear(si, entry, nr_pages);
->>          if (si)
->>                  put_swap_device(si);
->>          return ret;
->> @@ -4403,7 +4568,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>                  folio_put(swapcache);
->>          }
->>          if (need_clear_cache)
->> -               swapcache_clear(si, entry, 1);
->> +               swapcache_clear(si, entry, nr_pages);
->>          if (si)
->>                  put_swap_device(si);
->>          return ret;
->> --
->> 2.34.1
->>
->>
+> I don't know much about fastrpc, just reporting the issue and guessing
+> here. It would be really if this can be fixed before the stable release.
+> 
+> Thank you,
+> Joel Selvaraj
+> 
 > 
 
