@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-287428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF459527A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A589527BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298B41F22F0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02BAB1C21B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1054C69;
-	Thu, 15 Aug 2024 01:45:39 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0217381AA;
+	Thu, 15 Aug 2024 01:56:00 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5ECA35;
-	Thu, 15 Aug 2024 01:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB90917C9;
+	Thu, 15 Aug 2024 01:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723686339; cv=none; b=Zq4hFOBjxWcC17tlGH+91doI2jCI/KrDPvduUnEcObOfW3OE1MH8IFqOav32ze8RRSa4Ap1HEwBcQlzqZBSiMX95KtoXZ96bosM80RPFgWh8OwVSiKsMkf333UkJkIKTqbMbf15ELXeqHNaE0jqv6WyRd45wsbVvIVcAuYU7geI=
+	t=1723686960; cv=none; b=rdpHKSP8HIqdRlH+AwqcPVu9ozXr4aIJX8D9JQ9NVfxQ4VT6JIRTwL8TKhITERAFYhCz6nKNvxhUzfc4DLEybtdQWUBiDde1ipYNJ2hZFDTqYK+N0tqiomh0ICJLSKpA2FwqsRTSGCs3SowmcuUVF+ieOl9Akv8q1BBUhNOYA64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723686339; c=relaxed/simple;
-	bh=MzpatUKUmAcY11XbvIbLG/5RlKt1lq4ke36pTytXhLE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mipne8BajyLaMhLAvLfZ8CLQEpCpiCzN0/2Mtch0eyfpzrCz8uaBhQP+I5JBnKlTa/iibmniifwFwYbawXxiGsNlcdXCIFmUbLinkNLJSVQm5l6xIY/VE9CzIGDDx+VcSytwdpd6GQmNGkFzNMSFGAg3GYw3UwWpAEeqVWnaGks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowAAnTgGoXb1mesOHBg--.7529S2;
-	Thu, 15 Aug 2024 09:45:20 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: kristo@kernel.org,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org,
-	akpm@linux-foundation.org
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v4 RESEND] EDAC/ti: Fix possible null pointer dereference in _emif_get_id()
-Date: Thu, 15 Aug 2024 09:45:11 +0800
-Message-Id: <20240815014511.147065-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723686960; c=relaxed/simple;
+	bh=jS9I6vz/mLqWFHm0al0X2/o7/JXJYiIVeFzeJPA0xrs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bMO3fDOW++PqAbmDo3hIWj9jbHthtsaNHZ1/PYz4sILxa8EkKAFHPnSbcNKIXy5KdMC/MHVlcELSNx4EHqM9KRFQVsFWggLuQYbGVFTdlwP97/7SUzs1UNfEG3P9CAKq0hTpwWErX7Dtw/R1SLI4kO2yxIfAVEVW0xkIdDfpnqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wkp9K1NPHz1T77H;
+	Thu, 15 Aug 2024 09:55:17 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA3DB18006C;
+	Thu, 15 Aug 2024 09:55:47 +0800 (CST)
+Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
+ (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 15 Aug
+ 2024 09:55:46 +0800
+From: Liao Chang <liaochang1@huawei.com>
+To: <mhiramat@kernel.org>, <oleg@redhat.com>, <peterz@infradead.org>,
+	<mingo@redhat.com>, <acme@kernel.org>, <namhyung@kernel.org>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
+	<kan.liang@linux.intel.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+Subject: [PATCH v3 0/2] uprobes: Improve scalability by reducing the contention on siglock
+Date: Thu, 15 Aug 2024 01:46:27 +0000
+Message-ID: <20240815014629.2685155-1-liaochang1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAnTgGoXb1mesOHBg--.7529S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fCr17Ww4rAw4DXr17GFg_yoW8Gw13pw
-	47WFW3Ar1DKry2qrs2vF1rXFyrC3Z7JayDKry8K3sY93W5Xr9rA3409rZIgFyayrW8GFW3
-	Xw45tFs8WFyUJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20x
-	vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
-	3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIx
-	AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAI
-	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
-	IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-In _emif_get_id(), of_get_address() may return NULL which is later
-dereferenced. Fix this bug by adding NULL check. of_translate_address() is
-the same.
+The profiling result of BPF selftest on ARM64 platform reveals the
+significant contention on the current->sighand->siglock is the
+scalability bottleneck. The reason is also very straightforward that all
+producer threads of benchmark have to contend the spinlock mentioned to
+resume the TIF_SIGPENDING bit in thread_info that might be removed in
+uprobe_deny_signal().
 
-Found by code review.
+The contention on current->sighand->siglock is unnecessary, this series
+remove them thoroughly. I've use the script developed by Andrii in [1]
+to run benchmark. The CPU used was Kunpeng916 (Hi1616), 4 NUMA nodes,
+64 cores@2.4GHz running the kernel on next tree + the optimization in
+[2] for get_xol_insn_slot().
 
-Cc: stable@vger.kernel.org
-Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v4:
-- added the check of of_translate_address() as suggestions.
-Changes in v3:
-- added the patch operations omitted in PATCH v2 RESEND compared to PATCH 
-v2. Sorry for my oversight.
-Changes in v2:
-- added Cc stable line.
----
- drivers/edac/ti_edac.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+before-opt
+----------
+uprobe-nop      ( 1 cpus):    0.907 ± 0.003M/s  (  0.907M/s/cpu)
+uprobe-nop      ( 2 cpus):    1.676 ± 0.008M/s  (  0.838M/s/cpu)
+uprobe-nop      ( 4 cpus):    3.210 ± 0.003M/s  (  0.802M/s/cpu)
+uprobe-nop      ( 8 cpus):    4.457 ± 0.003M/s  (  0.557M/s/cpu)
+uprobe-nop      (16 cpus):    3.724 ± 0.011M/s  (  0.233M/s/cpu)
+uprobe-nop      (32 cpus):    2.761 ± 0.003M/s  (  0.086M/s/cpu)
+uprobe-nop      (64 cpus):    1.293 ± 0.015M/s  (  0.020M/s/cpu)
 
-diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
-index 29723c9592f7..f466f12630d3 100644
---- a/drivers/edac/ti_edac.c
-+++ b/drivers/edac/ti_edac.c
-@@ -207,14 +207,24 @@ static int _emif_get_id(struct device_node *node)
- 	int my_id = 0;
- 
- 	addrp = of_get_address(node, 0, NULL, NULL);
-+	if (!addrp)
-+		return -EINVAL;
-+
- 	my_addr = (u32)of_translate_address(node, addrp);
-+	if (my_addr == OF_BAD_ADDR)
-+		return -EINVAL;
- 
- 	for_each_matching_node(np, ti_edac_of_match) {
- 		if (np == node)
- 			continue;
- 
- 		addrp = of_get_address(np, 0, NULL, NULL);
-+		if (!addrp)
-+			return -EINVAL;
-+
- 		addr = (u32)of_translate_address(np, addrp);
-+		if (addr == OF_BAD_ADDR)
-+			return -EINVAL;
- 
- 		edac_printk(KERN_INFO, EDAC_MOD_NAME,
- 			    "addr=%x, my_addr=%x\n",
+uprobe-push     ( 1 cpus):    0.883 ± 0.001M/s  (  0.883M/s/cpu)
+uprobe-push     ( 2 cpus):    1.642 ± 0.005M/s  (  0.821M/s/cpu)
+uprobe-push     ( 4 cpus):    3.086 ± 0.002M/s  (  0.771M/s/cpu)
+uprobe-push     ( 8 cpus):    3.390 ± 0.003M/s  (  0.424M/s/cpu)
+uprobe-push     (16 cpus):    2.652 ± 0.005M/s  (  0.166M/s/cpu)
+uprobe-push     (32 cpus):    2.713 ± 0.005M/s  (  0.085M/s/cpu)
+uprobe-push     (64 cpus):    1.313 ± 0.009M/s  (  0.021M/s/cpu)
+
+uprobe-ret      ( 1 cpus):    1.774 ± 0.000M/s  (  1.774M/s/cpu)
+uprobe-ret      ( 2 cpus):    3.350 ± 0.001M/s  (  1.675M/s/cpu)
+uprobe-ret      ( 4 cpus):    6.604 ± 0.000M/s  (  1.651M/s/cpu)
+uprobe-ret      ( 8 cpus):    6.706 ± 0.005M/s  (  0.838M/s/cpu)
+uprobe-ret      (16 cpus):    5.231 ± 0.001M/s  (  0.327M/s/cpu)
+uprobe-ret      (32 cpus):    5.743 ± 0.003M/s  (  0.179M/s/cpu)
+uprobe-ret      (64 cpus):    4.726 ± 0.016M/s  (  0.074M/s/cpu)
+
+after-opt
+---------
+uprobe-nop      ( 1 cpus):    0.985 ± 0.002M/s  (  0.985M/s/cpu)
+uprobe-nop      ( 2 cpus):    1.773 ± 0.005M/s  (  0.887M/s/cpu)
+uprobe-nop      ( 4 cpus):    3.304 ± 0.001M/s  (  0.826M/s/cpu)
+uprobe-nop      ( 8 cpus):    5.328 ± 0.002M/s  (  0.666M/s/cpu)
+uprobe-nop      (16 cpus):    6.475 ± 0.002M/s  (  0.405M/s/cpu)
+uprobe-nop      (32 cpus):    4.831 ± 0.082M/s  (  0.151M/s/cpu)
+uprobe-nop      (64 cpus):    2.564 ± 0.053M/s  (  0.040M/s/cpu)
+
+uprobe-push     ( 1 cpus):    0.964 ± 0.001M/s  (  0.964M/s/cpu)
+uprobe-push     ( 2 cpus):    1.766 ± 0.002M/s  (  0.883M/s/cpu)
+uprobe-push     ( 4 cpus):    3.290 ± 0.009M/s  (  0.823M/s/cpu)
+uprobe-push     ( 8 cpus):    4.670 ± 0.002M/s  (  0.584M/s/cpu)
+uprobe-push     (16 cpus):    5.197 ± 0.004M/s  (  0.325M/s/cpu)
+uprobe-push     (32 cpus):    5.068 ± 0.161M/s  (  0.158M/s/cpu)
+uprobe-push     (64 cpus):    2.605 ± 0.026M/s  (  0.041M/s/cpu)
+
+uprobe-ret      ( 1 cpus):    1.833 ± 0.001M/s  (  1.833M/s/cpu)
+uprobe-ret      ( 2 cpus):    3.384 ± 0.003M/s  (  1.692M/s/cpu)
+uprobe-ret      ( 4 cpus):    6.677 ± 0.004M/s  (  1.669M/s/cpu)
+uprobe-ret      ( 8 cpus):    6.854 ± 0.005M/s  (  0.857M/s/cpu)
+uprobe-ret      (16 cpus):    6.508 ± 0.006M/s  (  0.407M/s/cpu)
+uprobe-ret      (32 cpus):    5.793 ± 0.009M/s  (  0.181M/s/cpu)
+uprobe-ret      (64 cpus):    4.743 ± 0.016M/s  (  0.074M/s/cpu)
+
+Above benchmark results demonstrates a obivious improvement in the
+scalability of trig-uprobe-nop and trig-uprobe-push, the peak throughput
+of which are from 4.5M/s to 6.4M/s and 3.3M/s to 5.1M/s individually.
+
+v3->v2:
+Renaming the flag in [2/2], s/deny_signal/signal_denied/g.
+
+v2->v1:
+Oleg pointed out the _DENY_SIGNAL will be replaced by _ACK upon the
+completion of singlestep which leads to handle_singlestep() has no
+chance to restore the removed TIF_SIGPENDING [3] and some case in
+question. So this revision proposes to use a flag in uprobe_task to
+track the denied TIF_SIGPENDING instead of new UPROBE_SSTEP state.
+
+[1] https://lore.kernel.org/all/20240731214256.3588718-1-andrii@kernel.org
+[2] https://lore.kernel.org/all/20240727094405.1362496-1-liaochang1@huawei.com
+[3] https://lore.kernel.org/all/20240801082407.1618451-1-liaochang1@huawei.com
+
+Liao Chang (2):
+  uprobes: Remove redundant spinlock in uprobe_deny_signal()
+  uprobes: Remove the spinlock within handle_singlestep()
+
+ include/linux/uprobes.h |  1 +
+ kernel/events/uprobes.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
 -- 
-2.25.1
+2.34.1
 
 
