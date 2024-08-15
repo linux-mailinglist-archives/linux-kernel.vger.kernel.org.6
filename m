@@ -1,172 +1,235 @@
-Return-Path: <linux-kernel+bounces-288622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5F6953C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:22:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB124953C96
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9CC1F27135
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739B6287A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0691537A4;
-	Thu, 15 Aug 2024 21:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC981514C8;
+	Thu, 15 Aug 2024 21:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m7mn7CNX"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FCFWPeAt"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9796E14EC56
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 21:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA0138DC7;
+	Thu, 15 Aug 2024 21:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723756931; cv=none; b=jNWZoqhsw7T3+rQ/8CF7ClU+fOQlRm18YtOLbFTNgRkdV8YbKbJaxqAEtb5kLccxl/e4Yw5cBT0e+gwKiJuQettn39X48WjUDCS+WUZI40TsnIAk4mx8o7NwyLQT5xK2QTo/Gzf7UEJElFfCdaNoRjhGPLnt0C9KJdAdhpEdQ9I=
+	t=1723757292; cv=none; b=BNjB63yraiWlAbnhfABZ6ozLHClIzl+NH5ljoXK5en83W8gV/cxae1GyccSwl5kustQyKm3frfPLnsDU8fdrWNBclNdGdKm48sEp7+mWhsuyLnCXv2pzdIvdrMal3+ZbT5Anv5l3opMgiOp0d84DNPaSE00WFnBlKZ1PWCckrwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723756931; c=relaxed/simple;
-	bh=A+vHLOq9NoUqiwGSvDJziU1Zw0ojmmVP59Cd593nEz4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=EiYj5olKetL56qZlVmu5e+YQeK+MWaco+Tj6+cbJpi3RZhj+4GqbU1PgTfkDlQt05y8WRzBqUmAARfebkB8a40qZrOlpB0zjMPpO8eEDDr/LRKdA5vqDrTk0nhMEaazfyuFm4PYJiDsEoYJmYYk7WOdWT3AbnU3vsPFCCqDxxlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m7mn7CNX; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c3d9a5e050so991895a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:22:09 -0700 (PDT)
+	s=arc-20240116; t=1723757292; c=relaxed/simple;
+	bh=jv9kPifNQM215uQBs9ws5FlWKr9VkxuphUrKDyJRKS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iO4Q6TO/YU5cYIkUAr/WkBTLezIHU55VObmoCqgQtPJaphIkRuhiCn01RPeDO13ksfA+2d03B1NpGfIIJzZWU4GL9yjX7bktppIRk60cGTZ2vIggwLiUt7BW2kb3zcsLfRiGOxM3MGHIDT3VQzySzZ5PXsAyRND8nVWYjyXAFfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FCFWPeAt; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd66cddd4dso13744345ad.2;
+        Thu, 15 Aug 2024 14:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723756929; x=1724361729; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W+HlRIRUrdjlSp2NYKYzQJ+ulk8IynEJhfTRgCgAyxo=;
-        b=m7mn7CNXLAnasUW9hyB0/X8b133pgdrhVCn1dHufFVTNWtolSesKyw1c7/cjoIr+Bz
-         Zr01D/p6HIbbDGyTT0QNdTwI9HMs3umJ3De/pudbQNXzGtoNH0yNENa3Qb88ytneYznz
-         TYlNrKahyWrJSCWW4Cw3McL9XCcADtgQY26WcFgTDRof4zAmAzWqIBSgE1hjcGN0Ex2G
-         5Dk3xO+a0E4cypMd1TBs+SSvr8VJDJlcSRrKuboi94thbMtzG7mWTCAFFOpyCmY0ureY
-         2BICxPDpgjrhuj0ZFwzS0wtaPOLRyfQQjnvCSw6/htACzrQpnh9AV37VZJDc8NGSP++E
-         Wp/A==
+        d=gmail.com; s=20230601; t=1723757290; x=1724362090; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YxPV3ZREq4n/G2jT071ytxKeDYYaNwjp4tCRsSv8bG8=;
+        b=FCFWPeAtCKJKTyqWbr8MUYQnft68WiRIPf4ZQdLafkphWwD/kbdck4854dTRJD6Gcr
+         StZ7bkxz6GVJa9IugkOmHTzshSDipy2n1swf5cor1KG7mg7EtLwEG2u7rsvlY8I0Jf3Q
+         5aSfCCKnQEMy32GV548m6S1pgQX1wSsRDh+nuyg57ghxZaGfGSopr2pr4X8n7V3/jCTs
+         ynFK+KeE/VrlDA3LcN512aX25MeSwOYuFe8MPXR5ow3JgfKC+d7XWM/7XCsk59QQB7Wj
+         nt7Smf6BJRQT+ruaoGF4XJRA52bz9tbvZgdX8N4knL+J0ygzBr7sAfNj39f4FIpJj8qd
+         wWlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723756929; x=1724361729;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W+HlRIRUrdjlSp2NYKYzQJ+ulk8IynEJhfTRgCgAyxo=;
-        b=Rp8o9O22xyUcrn1Iuny3Ruaa1DBKcgqrpVfyk8XQqDfncXsveIjk+5z1u86fj8xd6r
-         n04dvKKG1cGYPAZn8ZPO44UYS04ngTDGYvcwdq2I/J0hFWrZe9y8IlQ8hcCIV0+kS+WN
-         YQHn9JrHBUo2TD3+6R6Fc7fIpte5kd5IpXrlJjvbdIFwP7Z1wiBwlPDCmWZIOdK1UZkt
-         f0X9cb88+nU5v8545bJtNU4XNJAiszOW43B5ulrgUPIJlaGx4gDzpWQnDgWf9KbZMG86
-         2S0NzX3AFvBAVkv8N277j9G3ygySmJlmfxtS67G8C1Ers+r+h7V5rueJ1NhERpuycv/x
-         6FfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWGokTnJ6Vjh3ibCRL8YnbqGEJvghHhePV2Z958CqYveVM6WEf+vI7glxQKsONTrevgzO5vEa+1Orm2zqdNZs4kvbJr3Qhin/8zLRK
-X-Gm-Message-State: AOJu0Yz7uoBpWNQ439Vkc2TIQMmGljKTKzmH33mAp6r1nRJhZMaH/XEm
-	KgxenbyyQKupQuGHMwi1WrfPWLlV99W7qF0vP+mG+NaEqvxpus0OFqud+6XHI1Z+IaLRDs4zCVX
-	phqfUCw==
-X-Google-Smtp-Source: AGHT+IEjbRaGmNe3CMocZq1XkueoM1d0mm223c5Hdq++AZRNRWY/2vq38JDRGMS8w3j6PQ63IeN8GQ==
-X-Received: by 2002:a05:6a20:8411:b0:1c6:fc9f:eb68 with SMTP id adf61e73a8af0-1c9050638c3mr1180764637.50.1723756928725;
-        Thu, 15 Aug 2024 14:22:08 -0700 (PDT)
-Received: from [127.0.0.1] ([182.232.48.216])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add444dsm1479680b3a.15.2024.08.15.14.22.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 14:22:08 -0700 (PDT)
-Date: Fri, 16 Aug 2024 04:22:03 +0700
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: srinivas.kandagatla@linaro.org, broonie@kernel.org
-CC: perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, amit.pundir@linaro.org,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_ASoC=3A_codecs=3A_lpass-va-macro=3A?=
- =?US-ASCII?Q?_set_the_default_codec_version_for_sm8250?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <F07BF288-66F4-497A-A581-5FE4B7B432BD@linaro.org>
-References: <20240815164903.18400-1-srinivas.kandagatla@linaro.org> <F07BF288-66F4-497A-A581-5FE4B7B432BD@linaro.org>
-Message-ID: <18DCA30B-273D-415A-81EF-EA02CEBDAA94@linaro.org>
+        d=1e100.net; s=20230601; t=1723757290; x=1724362090;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YxPV3ZREq4n/G2jT071ytxKeDYYaNwjp4tCRsSv8bG8=;
+        b=uSbiNdLdohMQmG4STXP3RAOUVdBmp2uN5sL17PIjfxTtJltbIlHkTEDDCiY6WIvLrO
+         rNvHMh5cs7dcCT4kobBrOMF7oAJBmI3sc5hqg49v03l+bmTCNhrdSpjhYIdn77mXw+fM
+         tXaPhC1psMIJL20Sb1N1olYBCwsqUDN3QMPCyL77DvTL77LMaffEgmUAYkO6Q+q2FdhK
+         RW/tbPK8vUei7XPHKPO3P2ZeajWpK8Sg5sZw7Zpwaf+jAa0ubgy/hbkBRZCaM0ijU9bE
+         hdpvky6hbhTBJwAMpN9F/CCYXXBjsonKqtkvEl5reCIPlabDTeikzPXy0n4w4caE6gcI
+         quRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpz75f7R+2kXlGFhpzwpl/4+roulSsJ3mODPYhZJ0zGOh8kIHIHKyv3RyLLAY4q/j0ZWvTAhEkT/+k/KYZ1f5DZ5yJakunvBZHEoRT7uitkoZp4qOJK9gz2ku4H0fHJozdmqjtxg7vZ8AHvvHzIXS+4gQQx+TrBVJISn7bnFbwBhRaffILPIlCAUfk
+X-Gm-Message-State: AOJu0YzqECZ10Jg3JmS54grTsyMnnwoQ7ZwAQ2e2mQoOk51sFKGX8t6R
+	JIVcaTXerVYiZv/ebzmyvaZ9yzo7okNGIl9E1nYRYAoBrQQ8MqD+32Kp9hyL
+X-Google-Smtp-Source: AGHT+IGSlCcvuEjiEbfNez6PbFPzli6qRWOsJ2K6awcqpLgg/grw92Lj2XgLglt9a0YzocdAYjJxBQ==
+X-Received: by 2002:a17:902:ce91:b0:202:1fe:9fdd with SMTP id d9443c01a7336-20203ea075fmr12772205ad.24.1723757290281;
+        Thu, 15 Aug 2024 14:28:10 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0379e19sm14239435ad.136.2024.08.15.14.28.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 14:28:09 -0700 (PDT)
+Date: Thu, 15 Aug 2024 15:28:07 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: Jann Horn <jannh@google.com>
+Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] Landlock: Adding file_send_sigiotask signal
+ scoping support
+Message-ID: <Zr5y53Bl6cgdLKjj@tahera-OptiPlex-5000>
+References: <cover.1723680305.git.fahimitahera@gmail.com>
+ <d04bc943e8d275e8d00bb7742bcdbabc7913abbe.1723680305.git.fahimitahera@gmail.com>
+ <CAG48ez2Sw0Cy3RYrgrsEDKyWoxMmMbzX6yY-OEfZqeyGDQhy9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2Sw0Cy3RYrgrsEDKyWoxMmMbzX6yY-OEfZqeyGDQhy9w@mail.gmail.com>
 
-On August 16, 2024 4:07:10 AM GMT+07:00, Dmitry Baryshkov <dmitry=2Ebaryshk=
-ov@linaro=2Eorg> wrote:
->On August 15, 2024 11:49:03 PM GMT+07:00, srinivas=2Ekandagatla@linaro=2E=
-org wrote:
->>From: Srinivas Kandagatla <srinivas=2Ekandagatla@linaro=2Eorg>
->>
->>sm8250 and sc7280 have lpass codec version 1=2E0, as these are very old
->>platforms, they do not have a reliable way to get the codec version
->>from core_id registers=2E
+On Thu, Aug 15, 2024 at 10:25:15PM +0200, Jann Horn wrote:
+> On Thu, Aug 15, 2024 at 8:29 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
+> > This patch adds two new hooks "hook_file_set_fowner" and
+> > "hook_file_free_security" to set and release a pointer to the
+> > domain of the file owner. This pointer "fown_domain" in
+> > "landlock_file_security" will be used in "file_send_sigiotask"
+> > to check if the process can send a signal.
+> >
+> > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> > ---
+> >  security/landlock/fs.c   | 18 ++++++++++++++++++
+> >  security/landlock/fs.h   |  6 ++++++
+> >  security/landlock/task.c | 27 +++++++++++++++++++++++++++
+> >  3 files changed, 51 insertions(+)
+> >
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index 7877a64cc6b8..d05f0e9c5e54 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -1636,6 +1636,21 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+> >         return -EACCES;
+> >  }
+> >
+> > +static void hook_file_set_fowner(struct file *file)
+> > +{
+> > +       write_lock_irq(&file->f_owner.lock);
+> 
+> Before updating landlock_file(file)->fown_domain, this hook must also
+> drop a reference on the old domain - maybe by just calling
+> landlock_put_ruleset_deferred(landlock_file(file)->fown_domain) here.
+Hi Jann,
 
-I wrote that it looked good, but maybe you can also describe, why core_id =
-registers are not reliable? Are they just not present on those platforms or=
- is there any other issue?
+Thanks for the feedback :)
+It totally make sense.
+> > +       landlock_file(file)->fown_domain = landlock_get_current_domain();
+> > +       landlock_get_ruleset(landlock_file(file)->fown_domain);
+> > +       write_unlock_irq(&file->f_owner.lock);
+> > +}
+> > +
+> > +static void hook_file_free_security(struct file *file)
+> > +{
+> > +       write_lock_irq(&file->f_owner.lock);
+> > +       landlock_put_ruleset(landlock_file(file)->fown_domain);
+I was thinking of if we can replace this landlock_put_ruleset with
+landlock_put_ruleset_deferred. In this case, it would be better use of
+handling the lock?
 
-
->>
->>Add the version info into of_data, so that it does not need to use
->>core_id registers to get version number=2E
->>
->>Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get code=
-c version")
->>Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to acc=
-omdate new codec versions")
->>Fixes: 727de4fbc546 ("ASoC: codecs: lpass-wsa-macro: Correct support for=
- newer v2=2E5 version")
->
->Which commit introduced the issue? I think having just the first tag is e=
-nough=2E
->
->LGTM otherwise=2E
->
->>Signed-off-by: Srinivas Kandagatla <srinivas=2Ekandagatla@linaro=2Eorg>
->>---
->> sound/soc/codecs/lpass-va-macro=2Ec | 11 ++++++++++-
->> 1 file changed, 10 insertions(+), 1 deletion(-)
->>
->>diff --git a/sound/soc/codecs/lpass-va-macro=2Ec b/sound/soc/codecs/lpas=
-s-va-macro=2Ec
->>index 8454193ed22a=2E=2Ee95d1f29ef18 100644
->>--- a/sound/soc/codecs/lpass-va-macro=2Ec
->>+++ b/sound/soc/codecs/lpass-va-macro=2Ec
->>@@ -228,11 +228,13 @@ struct va_macro {
->> struct va_macro_data {
->> 	bool has_swr_master;
->> 	bool has_npl_clk;
->>+	int version;
->> };
->>=20
->> static const struct va_macro_data sm8250_va_data =3D {
->> 	=2Ehas_swr_master =3D false,
->> 	=2Ehas_npl_clk =3D false,
->>+	=2Eversion =3D LPASS_CODEC_VERSION_1_0,
->> };
->>=20
->> static const struct va_macro_data sm8450_va_data =3D {
->>@@ -1587,7 +1589,14 @@ static int va_macro_probe(struct platform_device =
-*pdev)
->> 			goto err_npl;
->> 	}
->>=20
->>-	va_macro_set_lpass_codec_version(va);
->>+	/**
->>+	 * old version of codecs do not have a reliable way to determine the
->>+	 * version from registers, get them from soc specific data
->>+	 */
->>+	if (data->version)
->>+		lpass_macro_set_codec_version(data->version);
->>+	else /* read version from register */
->>+		va_macro_set_lpass_codec_version(va);
->>=20
->> 	if (va->has_swr_master) {
->> 		/* Set default CLK div to 1 */
->
->
-
-
---=20
-With best wishes
-Dmitry
+> > +       write_unlock_irq(&file->f_owner.lock);
+> > +}
+> > +
+> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >         LSM_HOOK_INIT(inode_free_security, hook_inode_free_security),
+> >
+> > @@ -1660,6 +1675,9 @@ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >         LSM_HOOK_INIT(file_truncate, hook_file_truncate),
+> >         LSM_HOOK_INIT(file_ioctl, hook_file_ioctl),
+> >         LSM_HOOK_INIT(file_ioctl_compat, hook_file_ioctl_compat),
+> > +
+> > +       LSM_HOOK_INIT(file_set_fowner, hook_file_set_fowner),
+> > +       LSM_HOOK_INIT(file_free_security, hook_file_free_security),
+> >  };
+> >
+> >  __init void landlock_add_fs_hooks(void)
+> > diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+> > index 488e4813680a..6054563295d8 100644
+> > --- a/security/landlock/fs.h
+> > +++ b/security/landlock/fs.h
+> > @@ -52,6 +52,12 @@ struct landlock_file_security {
+> >          * needed to authorize later operations on the open file.
+> >          */
+> >         access_mask_t allowed_access;
+> > +       /**
+> > +        * @fown_domain: A pointer to a &landlock_ruleset of the process own
+> > +        * the file. This ruleset is protected by fowner_struct.lock same as
+> > +        * pid, uid, euid fields in fown_struct.
+> > +        */
+> > +       struct landlock_ruleset *fown_domain;
+> >  };
+> >
+> >  /**
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 9de96a5005c4..568292dbfe7d 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -18,6 +18,7 @@
+> >
+> >  #include "common.h"
+> >  #include "cred.h"
+> > +#include "fs.h"
+> >  #include "ruleset.h"
+> >  #include "setup.h"
+> >  #include "task.h"
+> > @@ -261,12 +262,38 @@ static int hook_task_kill(struct task_struct *const p,
+> >         return 0;
+> >  }
+> >
+> > +static int hook_file_send_sigiotask(struct task_struct *tsk,
+> > +                                   struct fown_struct *fown, int signum)
+> > +{
+> > +       struct file *file;
+> > +       bool is_scoped;
+> > +       const struct landlock_ruleset *dom, *target_dom;
+> > +
+> > +       /* struct fown_struct is never outside the context of a struct file */
+> > +       file = container_of(fown, struct file, f_owner);
+> > +
+> > +       read_lock_irq(&file->f_owner.lock);
+> > +       dom = landlock_file(file)->fown_domain;
+> > +       read_unlock_irq(&file->f_owner.lock);
+> 
+> At this point, the ->fown_domain pointer could concurrently change,
+> and (once you apply my suggestion above) the old ->fown_domain could
+> therefore be freed concurrently. One way to avoid that would be to use
+> landlock_get_ruleset() to grab a reference before calling
+> read_unlock_irq(), and drop that reference with
+> landlock_put_ruleset_deferred() before exiting from this function.
+Correct, I applied the changes. 
+> > +       if (!dom)
+> > +               return 0;
+> > +
+> > +       rcu_read_lock();
+> > +       target_dom = landlock_get_task_domain(tsk);
+> > +       is_scoped = domain_is_scoped(dom, target_dom, LANDLOCK_SCOPED_SIGNAL);
+> > +       rcu_read_unlock();
+> > +       if (is_scoped)
+> > +               return -EPERM;
+> > +       return 0;
+> > +}
+> > +
+> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >         LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
+> >         LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
+> >         LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
+> >         LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
+> >         LSM_HOOK_INIT(task_kill, hook_task_kill),
+> > +       LSM_HOOK_INIT(file_send_sigiotask, hook_file_send_sigiotask),
+> >  };
+> >
+> >  __init void landlock_add_task_hooks(void)
+> > --
+> > 2.34.1
+> >
 
