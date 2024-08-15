@@ -1,153 +1,138 @@
-Return-Path: <linux-kernel+bounces-288335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561029538F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:23:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E299538F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD24288533
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F041287E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4715E1BC9F6;
-	Thu, 15 Aug 2024 17:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4381BB69A;
+	Thu, 15 Aug 2024 17:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="g+/XpKFB"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bLieWqsR"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FC41BB694
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 17:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3230F1BA868
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 17:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723742543; cv=none; b=JBto++3s42TYJPQH1yS/jHPyd2LwfSoYoWcE5dRiw+boerrZWPeqGsHfhOjJcDmS3TyYgdWzLOzXGch1xyUbCmu2jm2zxT9UPyaGYHBHg2/RlNdzvuUOBFM7KCZsjRkQGEaAyD7UvVHpSFA8Jidsk/88w39hdc8F/zhjezE6/8g=
+	t=1723742581; cv=none; b=OXcoWv+dXTiOu73XltV+T/CVzQ7+TjJ3iLb27t7eHfPLnpyVioqMXinzhDK9JAfuyu9zxEBrZ1zR66CGpnab37z+Ol0x2fYu1tm9ls5T9Lski2RUCnT4ksDKbzXqixQozuP9HbRt5vT+N4mieHnEA4S3wkAK1vwzinypQmmvVeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723742543; c=relaxed/simple;
-	bh=NqKNlMBKIncrdZaC5SfMefPwGwnTpzNFFps7IhFDvR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hwSbZNXb1FmIM3gXTM98cNESl0r6yHdCPTeokOxHvLgZglt5g+xcIv59A+BcWRJthQDkbbBlnbLEsdpqw4AuIc/kugMm/4g6gJGb6yq+rT8f3iDAxt+JOsqqrlIh2XA9WPITMr/PFTSgkCIfE0Y0Ex+mF/VFAaOg7WmaUjt8IbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=g+/XpKFB; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-26875ace6cbso563818fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:22:21 -0700 (PDT)
+	s=arc-20240116; t=1723742581; c=relaxed/simple;
+	bh=d+92bmdJWL8dG05kjul1M2zn2ivm48HvaLaUolBE4n8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=fgWfPRk0av3Pp8fZqxtToQ3AZYeLypQuI41Ao5wD0dYRLQWd6+xUG22b4UltIzJTlrke+OVUSw2I/tbPnpgf6xgyrg4Y7ZwAfslJCKJE/00Oui0DNbmisEAo0nuO8XSfvJohJuePM4t6LXEG5uS09/ghu7xOVRJcCTnL3TprDbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bLieWqsR; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bec507f4ddso418a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723742541; x=1724347341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1723742578; x=1724347378; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ee3sT3/uSk/z9bmUFqgsaKtC1S/E/xH0EqUpDks1E0E=;
-        b=g+/XpKFBheqISNDyLc60IzSGdsQknKRbmh4gv1Eg6Xctfv12M3IDJtEAzK0Yr1ovHS
-         nBBJkVKAjXuULjurUSkMehFOVs9BNUxt13+PeJTpR+ZSMA/DOBVOEixjSTMwM/wOcb8L
-         I5wj/YPFeMo84W5jBMQccxl92GS7hxxyNrtv+SZfwCp3tqWavUgi97qnn+tOi37r/2pO
-         hptrgYGY5RbY0AyZYUApgZge9K6oKRFCX0s1ns5C+vqBA/ZHMYtke93nkNoSFPuwXDSc
-         yT7w+G9MVjMV/3d9So/U6QILZ9/oarsL6TPvyC+SWgKwUDZrY0KdGcYId9d+16Os6e6a
-         0cxA==
+        bh=Qc9txLFNP269GzTRVSd78UBtF6r7wyFfjH4FKGxwoMI=;
+        b=bLieWqsROwQv2NXegrKpzv6O0RtVW3IwLZMnGJZfs/YnpLwcW2oFzodfCgjdvDCZmX
+         Z0VQAT9v+WUujYBi1TF5ACwnUdLJycV76kEFLbAqJTw46EpPcSLx+aKzbk83PmqR+X/x
+         PwZdv3d+ZeI60faPtxcUh13FiO6X223AdOma6olAhnwv1vZYTmzYVPaJKeb4QImtZvuI
+         3N4s6hUHoAZkjecnBRQ0sGuwACVt9+b1wG6QryOLYH+EH8IAqxafBDWj80PzbeFTSjBi
+         hMxUTL/QtBTD7feF4ARThHzt0rVjYJ2cnGbSZvH9Qzqm7dlBBG4SsIz3fYl5KrgXonm5
+         ohyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723742541; x=1724347341;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723742578; x=1724347378;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ee3sT3/uSk/z9bmUFqgsaKtC1S/E/xH0EqUpDks1E0E=;
-        b=gtH+i3oRYeKcmPTP//8SamLfmmHrB9gPnRCjj5xe443vmPgu6V48/LXIgKdx77+KDe
-         ShDFVZihNBi8J46otImh3gYAUh0q0i64Ytu7VsNsnJGK2Mwjqus1l3p1lHhlxOcIAWJj
-         cRC5GG8TeG0I+XTaIewNppdsWwCWRKCdvDp64czbHBVTFrPTWYFGEFb4pdWO24W/Xw/z
-         //BlhTwmenkNhYM8bJoiL8rlByryLoarH4HwMOzfH6nHaxo3NvPK/gEN3HLJdRqSUoIs
-         hM/Nf64M/C72B9utzuOxnLEeQ2oglvvaEaoP6/v5GWsJrZgFpBgCKiSCojCEpxLqDs/2
-         lMBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOJHos/fDGZj63SOGYC6qL79H7qImJKKVKfLzB6JRxkC2ssmHOZ5p5Ens9X31zZ244YoRoHK9xD1Dw8cm0HTy5B/iSZmVHLBKJhqMK
-X-Gm-Message-State: AOJu0YwagafiFYP+cLtzzojNrBU/hX8/NJf4pHrNkxU1ijXA105Nqm4C
-	JW+N7pzd4Poaq3cROeGwszV9xB8AU9zk/vEOgAjViIbwOzqkyRNYC+9ye8xNDSKnctjNVYM15wS
-	a
-X-Google-Smtp-Source: AGHT+IF8WH4f1ycbtDoACQ5kxSxRbrCYYTVJnYwbt/UIAQoZGGCtScYr5OI1LKp7AivesPFCF2lJDg==
-X-Received: by 2002:a05:6871:b2a:b0:260:26a2:68e8 with SMTP id 586e51a60fabf-2701c96f08bmr69838fac.4.1723742540830;
-        Thu, 15 Aug 2024 10:22:20 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70ca66297d0sm345327a34.68.2024.08.15.10.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 10:22:20 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] iio: ABI: add missing calibbias attributes
-Date: Thu, 15 Aug 2024 12:22:13 -0500
-Message-ID: <20240815-iio-abi-calib-audit-v1-4-536b2fea8620@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240815-iio-abi-calib-audit-v1-0-536b2fea8620@baylibre.com>
-References: <20240815-iio-abi-calib-audit-v1-0-536b2fea8620@baylibre.com>
+        bh=Qc9txLFNP269GzTRVSd78UBtF6r7wyFfjH4FKGxwoMI=;
+        b=wzH3yqrjzQiHtvBuC+H2J+Fxna5kXna/WnJndsPuqBd622uBp0rVZBasr/pmDthf0f
+         g0+/pvodWxzNl00CvG2odXJ18SnU6lpR/tBKV+hOmulLJjrBMWqUZmpYcl5Rvr1JZYxr
+         5W52m2PNXQ7my4nbLPzl9lZgPj1asfKI0iDtixzpOYGOA+0k++l+/dttSoaw7M3uV49R
+         vRdsn+79pu6Ex2A2gS6dAOEyA1HqFtlkXUPnIAT/4QEFQYkiGA/F4k1+VMkQnv07w3QL
+         cx2+XXj+mdze57vZUrnF48hRdR7bc1MU6ldMIalyvl7H34PwwUbP+czHxOjYmPv1zvPh
+         prbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzHWcpVmN05ekHu6oCJfArYi+9Tysrqz3xgn8ndbMLNrhqoPOyrymM4Xw//rEPJBRmzr3H75lYytFJjsPtwNpwEcc4GKNiomLaBpZV
+X-Gm-Message-State: AOJu0YyptElqp8NjEs70mr41QRvh7CCSCRHDz1fd1mopFxod+N282Vsy
+	ORWP5Bf4g08ScG+4llQHkLJu1tODQ4Hmi1a6B4tT1QB82T1fqOQsiBP5qgAMjCRh3otRRfbpMIZ
+	8SNeoYNjA3MH0Jql640cp0KSqWDbKLfmRlZMU
+X-Google-Smtp-Source: AGHT+IH7huTtE6fqc1WLO9yn5yOimi0bsXeAv6AujezGKXJ6Yhws088ojXAnpq6aCfUkHr5tUp+6H1NTcUzYk7TsaZU=
+X-Received: by 2002:a05:6402:5201:b0:57c:c5e2:2c37 with SMTP id
+ 4fb4d7f45d1cf-5bebb9c498cmr82226a12.3.1723742578077; Thu, 15 Aug 2024
+ 10:22:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.0
-Content-Transfer-Encoding: 8bit
+References: <20240814071424.2655666-1-jeffxu@chromium.org> <slrsrycj73xrph5o2poicpt4cogpqw36bbwi5iqykvyce4pve3@suldmmv2mmo5>
+ <CABi2SkV2LcrkYOGzkGm80eYw-mhPNN=Q=P3aKGm0j8_gAwXjog@mail.gmail.com>
+ <mlwues5aus4uie52zi2yi6nwlaopm2zpe4qtrnki7254qlggwl@cqd42ekhrxez>
+ <CABi2SkVrk-MyMGVDzRZi++7tzCu6k92Vz4hyaVHY2nbYDxd97g@mail.gmail.com> <szuouie2gbpaj6gynixelasgeo5fxtn5fd3vbmebzve2x3auum@2q4cjchfajvh>
+In-Reply-To: <szuouie2gbpaj6gynixelasgeo5fxtn5fd3vbmebzve2x3auum@2q4cjchfajvh>
+From: Jeff Xu <jeffxu@google.com>
+Date: Thu, 15 Aug 2024 10:22:18 -0700
+Message-ID: <CALmYWFv+cy4mL85e4fLCC6fbt4FxB1ONSnVaBcezN84bCbEr5A@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] mremap refactor: check src address for vma
+ boundaries first.
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@chromium.org>, 
+	akpm@linux-foundation.org, willy@infradead.org, torvalds@linux-foundation.org, 
+	pedro.falcato@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org, jeffxu@google.com, 
+	lorenzo.stoakes@oracle.com, mpe@ellerman.id.au, oliver.sang@intel.com, 
+	vbabka@suse.cz, keescook@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are a number of calibbias and calibbias_available attributes that
-are being used by various drivers that have not been documented yet.
+On Thu, Aug 15, 2024 at 9:50=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Jeff Xu <jeffxu@chromium.org> [240814 23:46]:
+> > On Wed, Aug 14, 2024 at 12:55=E2=80=AFPM Liam R. Howlett
+> > <Liam.Howlett@oracle.com> wrote:
+> > > The majority of the comments to V2 are mine, you only told us that
+> > > splitting a sealed vma is wrong (after I asked you directly to answer=
+)
+> > > and then you made a comment about testing of the patch set. Besides t=
+he
+> > > direct responses to me, your comment was "wait for me to test".
+> > >
+> > Please share this link for  " Besides the direct responses to me, your
+> > comment was "wait for me to test".
+> > Or  pop up that email by responding to it, to remind me.  Thanks.
+>
+> [1].
 
-This adds attributes found by searching the code for:
+That is responding to Andrew, to indicate V2 patch has dependency on
+arch_munmap in PPC. And I will review/test the code, I will respond to
+Andrew directly.
 
-    BIT(IIO_CHAN_INFO_CALIBSCALE)
+PS Your statement above is entirely false, and out of context.
 
-A couple of not quite alphabetical order attributes were moved while
-touching this.
+" You only told us that splitting a sealed vma is wrong (after I asked
+you directly to answer) and then you made a comment about testing of
+the patch set. Besides the direct responses to me, your comment was
+"wait for me to test".
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- Documentation/ABI/testing/sysfs-bus-iio | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+If you will excuse me, I would rather spend time on code/test and
+other duties than responding to your false accusation.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index da8096b04e14..345d58535dc9 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -523,13 +523,26 @@ Description:
- What:		/sys/bus/iio/devices/iio:deviceX/in_accel_x_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_accel_y_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_accel_z_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltageY_i_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_altvoltageY_q_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_x_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_y_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_z_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_capacitance_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_illuminance_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_illuminance0_calibbias
--What:		/sys/bus/iio/devices/iio:deviceX/in_proximity0_calibbias
--What:		/sys/bus/iio/devices/iio:deviceX/in_pressureY_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_intensityY_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_magn_x_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_magn_y_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_magn_z_calibbias
- What:		/sys/bus/iio/devices/iio:deviceX/in_pressure_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_pressureY_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_proximity_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_proximity0_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_resistance_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/in_temp_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_calibbias
-+What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_calibbias
- KernelVersion:	2.6.35
- Contact:	linux-iio@vger.kernel.org
- Description:
-@@ -541,6 +554,9 @@ Description:
- 
- What:		/sys/bus/iio/devices/iio:deviceX/in_accel_calibbias_available
- What:		/sys/bus/iio/devices/iio:deviceX/in_anglvel_calibbias_available
-+What:		/sys/bus/iio/devices/iio:deviceX/in_temp_calibbias_available
-+What:		/sys/bus/iio/devices/iio:deviceX/in_proximity_calibbias_available
-+What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_calibbias_available
- KernelVersion:  5.8
- Contact:        linux-iio@vger.kernel.org
- Description:
+Best regards,
+-Jeff
 
--- 
-2.43.0
-
+>
+> Liam
+>
+> ...
+>
+> [1]. https://lore.kernel.org/all/CALmYWFs0v07z5vheDt1h3hD+3--yr6Va0ZuQeaA=
+To+-8MuRJ-g@mail.gmail.com/
+> [2]. https://lore.kernel.org/lkml/3rpmzsxiwo5t2uq7xy5inizbtaasotjtzocxbay=
+w5ntgk5a2rx@jkccjg5mbqqh/
 
