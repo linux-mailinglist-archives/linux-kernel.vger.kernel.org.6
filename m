@@ -1,211 +1,341 @@
-Return-Path: <linux-kernel+bounces-288405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A7C9539C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:17:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC449539CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725021F246AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54651F24DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C6353E24;
-	Thu, 15 Aug 2024 18:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D527D57CBA;
+	Thu, 15 Aug 2024 18:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Uu2QJBR7"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XCKE5v3f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7P8noHA9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XCKE5v3f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7P8noHA9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2F033997
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A5733997;
+	Thu, 15 Aug 2024 18:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723745827; cv=none; b=bTgPdFEnO4/T+ncQnVn/A42aRZwrOveDelrSbGDxOIggTnFpjKOwafC37Bd883jS1qDmNFM9PkK3L+gT+uXJFYBLlyAZS/h2plWLnKnw87ZZCUybVn9ZNKIEHeNGTUVpvtRz5DChlA2xSr6yHg08TZpwZe0d+eMfUk/kb/Llfuk=
+	t=1723745874; cv=none; b=ujKbXzRor+YPsvATo73gAIJ71FvdVElsT9TLDwFw6zLF9UeYIvYW+nXESZmygQ+MB/Wd7NRNDumDVdv2eoSYo8YzcOX0mnnTi6xwKnm0DLgnAtlgxStEYZ9BnHxrYp666/aYFswsemloUDCe0esvzS376wSPCBu+b2Wvv7+oe8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723745827; c=relaxed/simple;
-	bh=QM7w3vndpXDCo19LqYkFiF0aa1J4O7C5aYAOahTEwUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oZPrhu0jAuqWq3f+1iElbUoN1ahRZxQKdmraCnti7WpNxqHL/n/j715odu3tA/0ZvuBVVONksZQnavNhPy5fe6uJ7BJ9wrfuT1Wi0VbdSJ3nljzKaIe39LRybo9wqrXSmdtZxLDHEn4ikASpjH/Ph3zddoaBHKF6cdVsYBdob/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Uu2QJBR7; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-260f1664fdfso778891fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723745825; x=1724350625; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WulVhf/lbrXtVuEvrtHRPg80DRz2GQqwnIZEq09+IRc=;
-        b=Uu2QJBR7mBFV2dMvwzQUyb2ZH5PKKfCUxzwsHq8wRKBkHYB4jowOY+uqVwBK730z78
-         E/R0U0zWodhmVKnYVFJu2YXUuyMye1K0GMhAIWrMhsfW4J9kTUSizfL5Nhq/41WFC3QI
-         bjnQTVvLxHEu/SnEMsWDcGfR1aCELW1wfLY8w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723745825; x=1724350625;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WulVhf/lbrXtVuEvrtHRPg80DRz2GQqwnIZEq09+IRc=;
-        b=oepUONoISPqHBjLSPS7dNqZx2vPXAwJouZpFegzICCjEcJKBg71Xs5K9XL0eWSy+/2
-         t1nRZs0HA8RMPHR1yabgtiAhG6teMM1jVqx9g6b6+f9u87L5HZ2BY8osY3S9vta7pe5f
-         n4Xt03B9y+KHWUXjKJQYPYHYOVDtjAIn2u2Xd3RcFJfHEVaz8Vs/+bbqEXZ4+Z3Q6e5A
-         2zVK0514QihXz6kSZ8fn36E0n4Iwgcsyse+4DfHFrCnwqGz6xvTJwTNhlGfypz8XMpMx
-         Rk15VqICikeVKabbOeIc8ZZMOA+GaNxNEdynfgQEzBFbhEH0dT1O8b3ur7FWnahOpUGx
-         AxMQ==
-X-Gm-Message-State: AOJu0Yz5X9rS2KTDQoihS8OjgXT7RsBNaZwkyp1B2rtDxcUG0+6mmLMp
-	OBI8a5hqg0vK1MARr9CTfbBVqgMLQfSw/90Tg/KAcqGQ3D2OcZ5C/TEIsYLZzrN5y4jt/5fQ4s+
-	jgtOSTO6ug5R1oTHcsnraZIXP1dWt/hFXFzf8
-X-Google-Smtp-Source: AGHT+IFBzd2labGfip0TWIus/Lddyszo/RVNbmgY3SlorSK9faJ6vZdtzGx4sbNKmzII4n+Xp0V1AtaK3L5PzzXifXs=
-X-Received: by 2002:a05:687c:2bea:b0:270:1cee:ab9 with SMTP id
- 586e51a60fabf-2701cee16d2mr297534fac.16.1723745824775; Thu, 15 Aug 2024
- 11:17:04 -0700 (PDT)
+	s=arc-20240116; t=1723745874; c=relaxed/simple;
+	bh=ofNqli1JBkls2t6p95Ji7pKm8nbifIMyy887RHt+/rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XaZywO5a8TXbZXb48S+Lz3kxxlLdya0pZZJb7eIgIh3sPsOlhI2LPhuEn2yZKDKf3ElHs4BIcn8RTg6EN3VxRnuidVBT/QZ9RLJqsMCZwjRMU+vC/NcfmcBwgdUSQ+oiPXMlLxsOUFnc5t8muU+o528a9j0eLE/KdZcstgKV9ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XCKE5v3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7P8noHA9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XCKE5v3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7P8noHA9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B0541FD2D;
+	Thu, 15 Aug 2024 18:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723745869;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
+	b=XCKE5v3f1NWVL+fVaRLZ9N2OGpULSED+xO7Fhn4tt68Jpg8panBLtfQdcsErgk1l6L/NLQ
+	yPPo+ikYDXlR/DUHLVaXUiFK20n+qNAZyCRIf7I4mNeCBh8SBUpkE1sIAouTtFJWcBeCfa
+	rYkRtzmdGaA1M1r1Z29DgUZ9axngYPw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723745869;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
+	b=7P8noHA9t5eJs4UUgrgeEOyicqeptwp1opoIG8a8jJlLpRpH0K5P+/ueCsWGa5h4u4/hI3
+	h2dwsgXMyu4nzgDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XCKE5v3f;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7P8noHA9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723745869;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
+	b=XCKE5v3f1NWVL+fVaRLZ9N2OGpULSED+xO7Fhn4tt68Jpg8panBLtfQdcsErgk1l6L/NLQ
+	yPPo+ikYDXlR/DUHLVaXUiFK20n+qNAZyCRIf7I4mNeCBh8SBUpkE1sIAouTtFJWcBeCfa
+	rYkRtzmdGaA1M1r1Z29DgUZ9axngYPw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723745869;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
+	b=7P8noHA9t5eJs4UUgrgeEOyicqeptwp1opoIG8a8jJlLpRpH0K5P+/ueCsWGa5h4u4/hI3
+	h2dwsgXMyu4nzgDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01DE81342D;
+	Thu, 15 Aug 2024 18:17:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1TFMO0xGvmanPQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 15 Aug 2024 18:17:48 +0000
+Date: Thu, 15 Aug 2024 20:17:39 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Filipe Manana <fdmanana@suse.com>
+Subject: Re: [PATCH] btrfs: don't take dev_replace rwsem on task already
+ holding it
+Message-ID: <20240815181739.GE25962@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <9e26957661751f7697220d978a9a7f927d0ec378.1723726582.git.jth@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814071424.2655666-1-jeffxu@chromium.org>
-In-Reply-To: <20240814071424.2655666-1-jeffxu@chromium.org>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 15 Aug 2024 11:16:52 -0700
-Message-ID: <CABi2SkX+3JrDk6b59vgvjb8XAkC7_p3-cSkFHOotra1Yh6dv1Q@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] mremap refactor: check src address for vma
- boundaries first.
-To: akpm@linux-foundation.org, willy@infradead.org, 
-	torvalds@linux-foundation.org, Liam.Howlett@oracle.com, 
-	pedro.falcato@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org, jeffxu@google.com, 
-	lorenzo.stoakes@oracle.com, mpe@ellerman.id.au, oliver.sang@intel.com, 
-	vbabka@suse.cz, keescook@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e26957661751f7697220d978a9a7f927d0ec378.1723726582.git.jth@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	TO_DN_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Flag: NO
+X-Spam-Score: -4.21
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 3B0541FD2D
 
-On Wed, Aug 14, 2024 at 12:14=E2=80=AFAM <jeffxu@chromium.org> wrote:
->
-> From: Jeff Xu <jeffxu@chromium.org>
->
-> mremap doesn't allow relocate, expand, shrink across VMA boundaries,
-> refactor the code to check src address range before doing anything on
-> the destination, i.e. destination won't be unmapped, if src address
-> failed the boundaries check.
->
-> This also allows us to remove can_modify_mm from mremap.c, since
-> the src address must be single VMA, can_modify_vma is used.
->
-> It is likely this will improve the performance on mremap, previously
-> the code does sealing check using can_modify_mm for the src address range=
-,
-> and the new code removed the loop (used by can_modify_mm).
->
-> In order to verify this patch doesn't regress on mremap, I added tests in
-> mseal_test, the test patch can be applied before mremap refactor patch or
-> checkin independently.
->
-> Also this patch doesn't change mseal's existing schematic: if sealing fai=
-l,
-> user can expect the src/dst address isn't updated. So this patch can be
-> applied regardless if we decided to go with current out-of-loop approach
-> or in-loop approach currently in discussion.
->
-> Regarding the perf test report by stress-ng [1] title:
-> 8be7258aad: stress-ng.pagemove.page_remaps_per_sec -4.4% regression
->
-> The test is using below for testing:
-> stress-ng --timeout 60 --times --verify --metrics --no-rand-seed --pagemo=
-ve 64
->
-> I can't repro this using ChromeOS, the pagemove test shows large value
-> of stddev and stderr, and can't reasonably refect the performance impact.
->
-> For example: I write a c program [2] to run the above pagemove test 10 ti=
-mes
-> and calculate the stddev, stderr, for 3 commits:
->
-> 1> before mseal feature is added:
-> Ops/sec:
->   Mean     : 3564.40
->   Std Dev  : 2737.35 (76.80% of Mean)
->   Std Err  : 865.63 (24.29% of Mean)
->
-> 2> after mseal feature is added:
-> Ops/sec:
->   Mean     : 2703.84
->   Std Dev  : 2085.13 (77.12% of Mean)
->   Std Err  : 659.38 (24.39% of Mean)
->
-> 3> after current patch (mremap refactor)
-> Ops/sec:
->   Mean     : 3603.67
->   Std Dev  : 2422.22 (67.22% of Mean)
->   Std Err  : 765.97 (21.26% of Mean)
->
-> The result shows 21%-24% stderr, this means whatever perf improvment/impa=
-ct
-> there might be won't be measured correctly by this test.
->
-> This test machine has 32G memory,  Intel(R) Celeron(R) 7305, 5 CPU.
-> And I reboot the machine before each test, and take the first 10 runs wit=
-h
-> run_stress_ng 10
->
-> (I will run longer duration to see if test still shows large stdDev,StdEr=
-r)
->
-I took more samples (100 run ), the stddev/stderr is smaller, however
-still not at a range that can reasonably measure the perf improvement
-here.
+On Thu, Aug 15, 2024 at 02:57:05PM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> 
+> Running fstests btrfs/011 with MKFS_OPTIONS="-O rst" to force the usage of
+> the RAID stripe-tree, we get the following splat from lockdep:
+> 
+>  BTRFS info (device sdd): dev_replace from /dev/sdd (devid 1) to /dev/sdb started
+> 
+>  ============================================
+>  WARNING: possible recursive locking detected
+>  6.11.0-rc3-btrfs-for-next #599 Not tainted
+>  --------------------------------------------
+>  btrfs/2326 is trying to acquire lock:
+>  ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
+> 
+>  but task is already holding lock:
+>  ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
+> 
+>  other info that might help us debug this:
+>   Possible unsafe locking scenario:
+> 
+>         CPU0
+>         ----
+>    lock(&fs_info->dev_replace.rwsem);
+>    lock(&fs_info->dev_replace.rwsem);
+> 
+>   *** DEADLOCK ***
+> 
+>   May be due to missing lock nesting notation
+> 
+>  1 lock held by btrfs/2326:
+>   #0: ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
+> 
+>  stack backtrace:
+>  CPU: 1 UID: 0 PID: 2326 Comm: btrfs Not tainted 6.11.0-rc3-btrfs-for-next #599
+>  Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+>  Call Trace:
+>   <TASK>
+>   dump_stack_lvl+0x5b/0x80
+>   __lock_acquire+0x2798/0x69d0
+>   ? __pfx___lock_acquire+0x10/0x10
+>   ? __pfx___lock_acquire+0x10/0x10
+>   lock_acquire+0x19d/0x4a0
+>   ? btrfs_map_block+0x39f/0x2250
+>   ? __pfx_lock_acquire+0x10/0x10
+>   ? find_held_lock+0x2d/0x110
+>   ? lock_is_held_type+0x8f/0x100
+>   down_read+0x8e/0x440
+>   ? btrfs_map_block+0x39f/0x2250
+>   ? __pfx_down_read+0x10/0x10
+>   ? do_raw_read_unlock+0x44/0x70
+>   ? _raw_read_unlock+0x23/0x40
+>   btrfs_map_block+0x39f/0x2250
+>   ? btrfs_dev_replace_by_ioctl+0xd69/0x1d00
+>   ? btrfs_bio_counter_inc_blocked+0xd9/0x2e0
+>   ? __kasan_slab_alloc+0x6e/0x70
+>   ? __pfx_btrfs_map_block+0x10/0x10
+>   ? __pfx_btrfs_bio_counter_inc_blocked+0x10/0x10
+>   ? kmem_cache_alloc_noprof+0x1f2/0x300
+>   ? mempool_alloc_noprof+0xed/0x2b0
+>   btrfs_submit_chunk+0x28d/0x17e0
+>   ? __pfx_btrfs_submit_chunk+0x10/0x10
+>   ? bvec_alloc+0xd7/0x1b0
+>   ? bio_add_folio+0x171/0x270
+>   ? __pfx_bio_add_folio+0x10/0x10
+>   ? __kasan_check_read+0x20/0x20
+>   btrfs_submit_bio+0x37/0x80
+>   read_extent_buffer_pages+0x3df/0x6c0
+>   btrfs_read_extent_buffer+0x13e/0x5f0
+>   read_tree_block+0x81/0xe0
+>   read_block_for_search+0x4bd/0x7a0
+>   ? __pfx_read_block_for_search+0x10/0x10
+>   btrfs_search_slot+0x78d/0x2720
+>   ? __pfx_btrfs_search_slot+0x10/0x10
+>   ? lock_is_held_type+0x8f/0x100
+>   ? kasan_save_track+0x14/0x30
+>   ? __kasan_slab_alloc+0x6e/0x70
+>   ? kmem_cache_alloc_noprof+0x1f2/0x300
+>   btrfs_get_raid_extent_offset+0x181/0x820
+>   ? __pfx_lock_acquire+0x10/0x10
+>   ? __pfx_btrfs_get_raid_extent_offset+0x10/0x10
+>   ? down_read+0x194/0x440
+>   ? __pfx_down_read+0x10/0x10
+>   ? do_raw_read_unlock+0x44/0x70
+>   ? _raw_read_unlock+0x23/0x40
+>   btrfs_map_block+0x5b5/0x2250
+>   ? __pfx_btrfs_map_block+0x10/0x10
+>   scrub_submit_initial_read+0x8fe/0x11b0
+>   ? __pfx_scrub_submit_initial_read+0x10/0x10
+>   submit_initial_group_read+0x161/0x3a0
+>   ? lock_release+0x20e/0x710
+>   ? __pfx_submit_initial_group_read+0x10/0x10
+>   ? __pfx_lock_release+0x10/0x10
+>   scrub_simple_mirror.isra.0+0x3eb/0x580
+>   scrub_stripe+0xe4d/0x1440
+>   ? lock_release+0x20e/0x710
+>   ? __pfx_scrub_stripe+0x10/0x10
+>   ? __pfx_lock_release+0x10/0x10
+>   ? do_raw_read_unlock+0x44/0x70
+>   ? _raw_read_unlock+0x23/0x40
+>   scrub_chunk+0x257/0x4a0
+>   scrub_enumerate_chunks+0x64c/0xf70
+>   ? __mutex_unlock_slowpath+0x147/0x5f0
+>   ? __pfx_scrub_enumerate_chunks+0x10/0x10
+>   ? bit_wait_timeout+0xb0/0x170
+>   ? __up_read+0x189/0x700
+>   ? scrub_workers_get+0x231/0x300
+>   ? up_write+0x490/0x4f0
+>   btrfs_scrub_dev+0x52e/0xcd0
+>   ? create_pending_snapshots+0x230/0x250
+>   ? __pfx_btrfs_scrub_dev+0x10/0x10
+>   btrfs_dev_replace_by_ioctl+0xd69/0x1d00
+>   ? lock_acquire+0x19d/0x4a0
+>   ? __pfx_btrfs_dev_replace_by_ioctl+0x10/0x10
+>   ? lock_release+0x20e/0x710
+>   ? btrfs_ioctl+0xa09/0x74f0
+>   ? __pfx_lock_release+0x10/0x10
+>   ? do_raw_spin_lock+0x11e/0x240
+>   ? __pfx_do_raw_spin_lock+0x10/0x10
+>   btrfs_ioctl+0xa14/0x74f0
+>   ? lock_acquire+0x19d/0x4a0
+>   ? find_held_lock+0x2d/0x110
+>   ? __pfx_btrfs_ioctl+0x10/0x10
+>   ? lock_release+0x20e/0x710
+>   ? do_sigaction+0x3f0/0x860
+>   ? __pfx_do_vfs_ioctl+0x10/0x10
+>   ? do_raw_spin_lock+0x11e/0x240
+>   ? lockdep_hardirqs_on_prepare+0x270/0x3e0
+>   ? _raw_spin_unlock_irq+0x28/0x50
+>   ? do_sigaction+0x3f0/0x860
+>   ? __pfx_do_sigaction+0x10/0x10
+>   ? __x64_sys_rt_sigaction+0x18e/0x1e0
+>   ? __pfx___x64_sys_rt_sigaction+0x10/0x10
+>   ? __x64_sys_close+0x7c/0xd0
+>   __x64_sys_ioctl+0x137/0x190
+>   do_syscall_64+0x71/0x140
+>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>  RIP: 0033:0x7f0bd1114f9b
+>  Code: Unable to access opcode bytes at 0x7f0bd1114f71.
+>  RSP: 002b:00007ffc8a8c3130 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f0bd1114f9b
+>  RDX: 00007ffc8a8c35e0 RSI: 00000000ca289435 RDI: 0000000000000003
+>  RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000007
+>  R10: 0000000000000008 R11: 0000000000000246 R12: 00007ffc8a8c6c85
+>  R13: 00000000398e72a0 R14: 0000000000004361 R15: 0000000000000004
+>   </TASK>
+> 
+> This happens because on RAID stripe-tree filesystems we recurse back into
+> btrfs_map_block() on scrub to perform the logical to device physical
+> mapping.
+> 
+> But as the device replace task is already holding the dev_replace::rwsem
+> we deadlock.
+> 
+> So don't take the dev_replace::rwsem in case our task is the task performing
+> the device replace.
+> 
+> Suggested-by: Filipe Manana <fdmanana@suse.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>  fs/btrfs/dev-replace.c | 2 ++
+>  fs/btrfs/fs.h          | 2 ++
+>  fs/btrfs/volumes.c     | 4 +++-
+>  3 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+> index 83d5cdd77f29..604399e59a3d 100644
+> --- a/fs/btrfs/dev-replace.c
+> +++ b/fs/btrfs/dev-replace.c
+> @@ -641,6 +641,7 @@ static int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
+>  		return ret;
+>  
+>  	down_write(&dev_replace->rwsem);
+> +	dev_replace->replace_task = current;
+>  	switch (dev_replace->replace_state) {
+>  	case BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED:
+>  	case BTRFS_IOCTL_DEV_REPLACE_STATE_FINISHED:
+> @@ -994,6 +995,7 @@ static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
+>  	list_add(&tgt_device->dev_alloc_list, &fs_devices->alloc_list);
+>  	fs_devices->rw_devices++;
+>  
+> +	dev_replace->replace_task = NULL;
+>  	up_write(&dev_replace->rwsem);
+>  	btrfs_rm_dev_replace_blocked(fs_info);
+>  
+> diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+> index 3d6d4b503220..53824da92cc3 100644
+> --- a/fs/btrfs/fs.h
+> +++ b/fs/btrfs/fs.h
+> @@ -317,6 +317,8 @@ struct btrfs_dev_replace {
+>  
+>  	struct percpu_counter bio_counter;
+>  	wait_queue_head_t replace_wait;
+> +
+> +	struct task_struct *replace_task;
 
-The tests were taken using the same machine as (10 times run above)
-and exact the same steps: i.e. change to certain kernel commit, reboot
-test device, take the first test result.
-
-1> Before mseal feature is added:
-Statistics:
-Ops/sec:
-  Mean     : 1733.26
-  Std Dev  : 842.13 (48.59% of Mean)
-  Std Err  : 84.21 (4.86% of Mean)
-
-2> After mseal feature is added
-Statistics:
-Ops/sec:
-  Mean     : 1701.53
-  Std Dev  : 1017.29 (59.79% of Mean)
-  Std Err  : 101.73 (5.98% of Mean)
-
-3> After mremap refactor (this patch)
-Statistics:
-Ops/sec:
-  Mean     : 1097.04
-  Std Dev  : 860.67 (78.45% of Mean)
-  Std Err  : 86.07 (7.85% of Mean)
-
-Summary: even when the stderr is down to 4%-%8 percentage range, the
-stddev is still too big.
-
-Hence, there are other unknown, random variables that impact this test.
-
--Jeff
-
-> [1] https://lore.kernel.org/lkml/202408041602.caa0372-oliver.sang@intel.c=
-om/
-> [2] https://github.com/peaktocreek/mmperf/blob/main/run_stress_ng.c
->
->
-> Jeff Xu (2):
->   mseal:selftest mremap across VMA boundaries.
->   mseal: refactor mremap to remove can_modify_mm
->
->  mm/internal.h                           |  24 ++
->  mm/mremap.c                             |  77 +++----
->  mm/mseal.c                              |  17 --
->  tools/testing/selftests/mm/mseal_test.c | 293 +++++++++++++++++++++++-
->  4 files changed, 353 insertions(+), 58 deletions(-)
->
-> --
-> 2.46.0.76.ge559c4bf1a-goog
->
+Wasn't the idea to use pid for that, and not a raw pointer?
 
