@@ -1,167 +1,383 @@
-Return-Path: <linux-kernel+bounces-288268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9AF953824
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8345B953827
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF17BB25AAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A611F23D86
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8391C1BA87B;
-	Thu, 15 Aug 2024 16:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AF81B9B4A;
+	Thu, 15 Aug 2024 16:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M1RwssTr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qszw/P/8"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2ED1B582B;
-	Thu, 15 Aug 2024 16:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA36C1B5828
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723738798; cv=none; b=G164+BdK3nJYXR0OOFrEjllMqBUXICIHIDexIdYoP7pP/a4UjBd2F7QvfwY/01zHBO+SNsp2TJGTSdeAZJ3kZx/mxqds+MFULzS0wy8WAaTeLS97GVx7tk9HCpsRZJS/a9ccErI4LSqBjVhllAdrRKVdQZksghZAE3M2zRfukZM=
+	t=1723738813; cv=none; b=DypCtSskz3xGOLgxuHdXM9wFSH2E4VYFojLJNfAdFBFSyj8P9iem8/saNLwEMxIU2l2wbPze24UbW0PEp7WSKNfXZ+5u4higTP4kAHluN5DsRTdMPOKZuA3//5JmhqeCCXqQmmP/v+YNwrLuTlMNArfd7MsFVymT3VrLTGYg/+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723738798; c=relaxed/simple;
-	bh=DYbBiyj5qYewvbb7Re7XGSYEHPMVwyQyJX5sJF6AXRY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=r8TPUzqUfN6bN1M06kJokHXnLDouNP55/c1yMlYl6rjLf9fGezLE3OXoYbVMnokjUd8rhO6Z4HYZCbBQa6bu9CVhp2soHdMbM0TOfQSbn5JYwLPQNWPxv+JH3MNIAhHo3KB+ywLXBUO8z4r+QF0xx5t1of6BbPm+ru3cTiOH5oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M1RwssTr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FFsAYf022989;
-	Thu, 15 Aug 2024 16:18:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=HSE9lOXCQAY2IALUk8wdaT
-	jRFfDB8opieWccJFkeUPQ=; b=M1RwssTrbhws/TAQlsg1zB0eqYHuPFoQbB0n90
-	5IT1A01AcyQf46vp2fglgbC4iRGVqFbY6A8dqdEQ7bSWfyHPYGD/OVOlBpIY0F+A
-	U/v65s+6eWIIc1owERHo6RnXSuo+UnLCwuangl8hCxUmPti9Ng46r52M7Q7OLSi+
-	cWSnfrxO6/HapOXh+CtoDQQyfl0Npt3EZhKAxRKt7zo8edRJf7OBwip9ii/ciaLV
-	zIKfcxpbBDG+fqS4R2VVosrTbugBvYgsORXeyAfm2AdGm5fC0Ib/LmctSESu2QSG
-	1LLXIV+MjI22yB1ClAa9WLo1KgTkm0F/8aAGLGKQPDss6dcg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410m29543a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 16:18:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FGIVe9004160
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 16:18:31 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 09:18:30 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 15 Aug 2024 09:18:30 -0700
-Subject: [PATCH] wifi: mac80211: Fix ieee80211_convert_to_unicast() logic
+	s=arc-20240116; t=1723738813; c=relaxed/simple;
+	bh=TT6tmI8W1BjI0z0qjO8eTaJos37gam9EJLU4zprf/9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwDV5S67T8OHH5Cboda2PxA9GzbWAqCjReEGqO0IVt7U14WkNEvamV8i+uZ0dyHGyYXbmZwEca24wbH/aV2Tz6uM+ZrxWS8R6nO/1N9RlVNbt7ojmSFvecbbjEWBJlH7vZTRQCBGNqDJS2czPx8V3JvdNnrNKbUd31jxqVjCOL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qszw/P/8; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6e7b121be30so895484a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723738811; x=1724343611; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ik5jJmziSuK8GBVOaaeMajQRPRpyvl2v8hzurhsdC64=;
+        b=qszw/P/8XneAtKNiaJlXYu9oJGESQvMd4kIQIK3SlQMQhzPspKdh49MJfC170onh2Q
+         SW+d1+zlCVpM633kgXvNWvxeQfDceMOSnxupHhakl6+mnZJTxsqbP+F0gwvIJ6R/KoiK
+         kP71nF8cC0u0hTKQBy35pr9KVKWOUVzMzzzcQnYq97OcxrhIWxwmKr9MPFzIbtZ46rGM
+         B9TCq4W9uc7oX5lNj04AULAqN6hnQe4THP/3aVJ8fP7RUXWLSypJBoUQqd8+kLmXw95j
+         br3VvTn+ps6QAONaAfbZ9DDmTpWQR11bh8bVvd3zVVy1sYsvvgn9T4Rb68ZmqxpjQLAz
+         txjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723738811; x=1724343611;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ik5jJmziSuK8GBVOaaeMajQRPRpyvl2v8hzurhsdC64=;
+        b=DNAcgUHOwBKHZ2z5gRdOSujTlQ9mtuLExZvrQO9gMY9OySouMp8ZrYVqFv8Cba998A
+         ErMF7Zfq9PnwD4sCc0oVQNKKkUhdfpq8+jWSxdH1SMnPKGcb2zD3oANgFjpKFgzqeszV
+         hialUCBpEUvduZfJjrQvvdPrDQfQSaZzn54EeE9cBgxmMBWrKe31Jp6O5kWWZlBdaW2u
+         25LR0X8D2VLwghhCBRTlKO4sYE5E78svLcaHYnOeQ3RO5qnJ8BfOX35pmpPvGy1dsh4e
+         9nZcKxicd3Wp9pkvlpzTxBkvRJR6nRG+mHTKM07xs77a2bEUgAyYnBimyli1q9w314Qh
+         K+Og==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ2seQjdGQVMOcoUoHAMgpoh1T/+iVrah3h9flD+iv5EUTrcMaTVfJjayr16jPa9F/v8B9Nk1s+nqSEWj+OorRlBGN4A0YyCCw6+l8
+X-Gm-Message-State: AOJu0YwQ5Nlh90TOJoTj29hb3LnNakIcnEKe7Ft5GMCzYg3MAXmbDRsa
+	+4uNTcyVMbjNoVQVKCEeV0oMMrOy/JIABpqAi7WLNQjwmY63p0DHvmD/ps3AGg==
+X-Google-Smtp-Source: AGHT+IHuOzAztyLkgbs6qAt/4J9NqgairvPE0eQNt56uNJdXaObqpsnNzVitDeMRYZDtF3El/Xf7yw==
+X-Received: by 2002:a05:6a21:3401:b0:1c4:87b0:9157 with SMTP id adf61e73a8af0-1c904f91febmr249904637.22.1723738811113;
+        Thu, 15 Aug 2024 09:20:11 -0700 (PDT)
+Received: from thinkpad ([36.255.17.34])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af188a4sm1166094b3a.164.2024.08.15.09.20.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 09:20:10 -0700 (PDT)
+Date: Thu, 15 Aug 2024 21:50:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] PCI: rockchip: Simplify reset control handling by
+ using reset_control_bulk*() function
+Message-ID: <20240815162004.GF2562@thinkpad>
+References: <20240625104039.48311-1-linux.amoon@gmail.com>
+ <20240625104039.48311-2-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240815-ieee80211_convert_to_unicast-v1-1-648f0c195474@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFUqvmYC/32Oyw6CMBBFf8V0bQ3DQ4sr/8MQUtpRJpFW21Ixh
- H+3kLh1eRb3nDszj47Qs/NuZg4jebImAex3TPXS3JGTTszyLC8zAQUnRBRZDtAqayK60Abbjoa
- U9IGD1oj1UZwANEuKp8MbTZv+2iTupEfeOWlUv0rf5PCB3nODU+CDJLOOevLBus92KcI6/dWr/
- /UIHDhmhehqIcpKi8trJEVGHZQdWLMsyxfLlnAK7wAAAA==
-To: Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Michael Braun
-	<michael-dev@fami-braun.de>
-CC: Harsh Kumar Bijlani <hbijlani@qti.qualcomm.com>,
-        Kalyan Tallapragada
-	<ktallapr@qti.qualcomm.com>,
-        Jyothi Chukkapalli <jchukkap@qti.qualcomm.com>,
-        Anirban Sirkhell <anirban@qti.qualcomm.com>,
-        Johannes Berg
-	<johannes.berg@intel.com>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NsLUW30wjT628CfXDSWPNx6PGr70rEfB
-X-Proofpoint-ORIG-GUID: NsLUW30wjT628CfXDSWPNx6PGr70rEfB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_09,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- spamscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 adultscore=0
- impostorscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150118
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240625104039.48311-2-linux.amoon@gmail.com>
 
-The current logic in ieee80211_convert_to_unicast() uses skb_clone()
-to obtain an skb for each individual destination of a multicast
-frame, and then updates the destination address in the cloned skb's
-data buffer before placing that skb on the provided queue.
+On Tue, Jun 25, 2024 at 04:10:33PM +0530, Anand Moon wrote:
+> Refactor the reset control handling in the Rockchip PCIe driver,
+> introducing a more robust and efficient method for assert and
+> deassert reset controller using reset_control_bulk*() API. Using the
+> reset_control_bulk APIs, the reset handling for the core clocks reset
+> unit becomes much simpler.
+> 
+> As per rockchip rk3399 TRM SOFTRST_CON8 soft reset controller
+> have clock reset unit value set to 0x1 for example "pcie_pipe",
+> "pcie_mgmt_sticky", "pcie_mgmt" and "pci_core", hence group then under
+> one reset bulk controller.
+> 
+> Where as "pcie_pm", "presetn_pcie", "aresetn_pcie" have reset value
+> set to 0x0, hence group them under reset control bulk controller.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> v4: use dev_err_probe in error path.
+> v3: Fix typo in commit message, dropped reported by.
+> v2: Fix compilation error reported by Intel test robot
+>     fixed checkpatch warning
+> ---
+>  drivers/pci/controller/pcie-rockchip.c | 149 +++++--------------------
+>  drivers/pci/controller/pcie-rockchip.h |  25 +++--
+>  2 files changed, 47 insertions(+), 127 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
+> index 804135511528..024308bb6ac8 100644
+> --- a/drivers/pci/controller/pcie-rockchip.c
+> +++ b/drivers/pci/controller/pcie-rockchip.c
+> @@ -69,55 +69,23 @@ int rockchip_pcie_parse_dt(struct rockchip_pcie *rockchip)
+>  	if (rockchip->link_gen < 0 || rockchip->link_gen > 2)
+>  		rockchip->link_gen = 2;
+>  
+> -	rockchip->core_rst = devm_reset_control_get_exclusive(dev, "core");
+> -	if (IS_ERR(rockchip->core_rst)) {
+> -		if (PTR_ERR(rockchip->core_rst) != -EPROBE_DEFER)
+> -			dev_err(dev, "missing core reset property in node\n");
+> -		return PTR_ERR(rockchip->core_rst);
+> -	}
+> -
+> -	rockchip->mgmt_rst = devm_reset_control_get_exclusive(dev, "mgmt");
+> -	if (IS_ERR(rockchip->mgmt_rst)) {
+> -		if (PTR_ERR(rockchip->mgmt_rst) != -EPROBE_DEFER)
+> -			dev_err(dev, "missing mgmt reset property in node\n");
+> -		return PTR_ERR(rockchip->mgmt_rst);
+> -	}
+> -
+> -	rockchip->mgmt_sticky_rst = devm_reset_control_get_exclusive(dev,
+> -								"mgmt-sticky");
+> -	if (IS_ERR(rockchip->mgmt_sticky_rst)) {
+> -		if (PTR_ERR(rockchip->mgmt_sticky_rst) != -EPROBE_DEFER)
+> -			dev_err(dev, "missing mgmt-sticky reset property in node\n");
+> -		return PTR_ERR(rockchip->mgmt_sticky_rst);
+> -	}
+> -
+> -	rockchip->pipe_rst = devm_reset_control_get_exclusive(dev, "pipe");
+> -	if (IS_ERR(rockchip->pipe_rst)) {
+> -		if (PTR_ERR(rockchip->pipe_rst) != -EPROBE_DEFER)
+> -			dev_err(dev, "missing pipe reset property in node\n");
+> -		return PTR_ERR(rockchip->pipe_rst);
+> -	}
+> +	for (i = 0; i < ROCKCHIP_NUM_PM_RSTS; i++)
+> +		rockchip->pm_rsts[i].id = rockchip_pci_pm_rsts[i];
+>  
+> -	rockchip->pm_rst = devm_reset_control_get_exclusive(dev, "pm");
+> -	if (IS_ERR(rockchip->pm_rst)) {
+> -		if (PTR_ERR(rockchip->pm_rst) != -EPROBE_DEFER)
+> -			dev_err(dev, "missing pm reset property in node\n");
+> -		return PTR_ERR(rockchip->pm_rst);
+> -	}
+> +	err = devm_reset_control_bulk_get_optional_exclusive(dev,
+> +							     ROCKCHIP_NUM_PM_RSTS,
+> +							     rockchip->pm_rsts);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "cannot get the reset control\n");
+>  
+> -	rockchip->pclk_rst = devm_reset_control_get_exclusive(dev, "pclk");
+> -	if (IS_ERR(rockchip->pclk_rst)) {
+> -		if (PTR_ERR(rockchip->pclk_rst) != -EPROBE_DEFER)
+> -			dev_err(dev, "missing pclk reset property in node\n");
+> -		return PTR_ERR(rockchip->pclk_rst);
+> -	}
+> +	for (i = 0; i < ROCKCHIP_NUM_CORE_RSTS; i++)
+> +		rockchip->core_rsts[i].id = rockchip_pci_core_rsts[i];
+>  
+> -	rockchip->aclk_rst = devm_reset_control_get_exclusive(dev, "aclk");
+> -	if (IS_ERR(rockchip->aclk_rst)) {
+> -		if (PTR_ERR(rockchip->aclk_rst) != -EPROBE_DEFER)
+> -			dev_err(dev, "missing aclk reset property in node\n");
+> -		return PTR_ERR(rockchip->aclk_rst);
+> -	}
+> +	err = devm_reset_control_bulk_get_optional_exclusive(dev,
+> +							     ROCKCHIP_NUM_CORE_RSTS,
+> +							     rockchip->core_rsts);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "cannot get the reset control\n");
+>  
+>  	if (rockchip->is_rc) {
+>  		rockchip->ep_gpio = devm_gpiod_get_optional(dev, "ep",
+> @@ -150,23 +118,10 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+>  	int err, i;
+>  	u32 regs;
+>  
+> -	err = reset_control_assert(rockchip->aclk_rst);
+> -	if (err) {
+> -		dev_err(dev, "assert aclk_rst err %d\n", err);
+> -		return err;
+> -	}
+> -
+> -	err = reset_control_assert(rockchip->pclk_rst);
+> -	if (err) {
+> -		dev_err(dev, "assert pclk_rst err %d\n", err);
+> -		return err;
+> -	}
+> -
+> -	err = reset_control_assert(rockchip->pm_rst);
+> -	if (err) {
+> -		dev_err(dev, "assert pm_rst err %d\n", err);
+> -		return err;
+> -	}
+> +	err = reset_control_bulk_assert(ROCKCHIP_NUM_PM_RSTS,
+> +					rockchip->pm_rsts);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "reset bulk assert pm reset\n");
+>  
+>  	for (i = 0; i < MAX_LANE_NUM; i++) {
+>  		err = phy_init(rockchip->phys[i]);
+> @@ -176,47 +131,17 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+>  		}
+>  	}
+>  
+> -	err = reset_control_assert(rockchip->core_rst);
+> -	if (err) {
+> -		dev_err(dev, "assert core_rst err %d\n", err);
+> -		goto err_exit_phy;
+> -	}
+> -
+> -	err = reset_control_assert(rockchip->mgmt_rst);
+> -	if (err) {
+> -		dev_err(dev, "assert mgmt_rst err %d\n", err);
+> -		goto err_exit_phy;
+> -	}
+> -
+> -	err = reset_control_assert(rockchip->mgmt_sticky_rst);
+> -	if (err) {
+> -		dev_err(dev, "assert mgmt_sticky_rst err %d\n", err);
+> -		goto err_exit_phy;
+> -	}
+> -
+> -	err = reset_control_assert(rockchip->pipe_rst);
+> -	if (err) {
+> -		dev_err(dev, "assert pipe_rst err %d\n", err);
+> -		goto err_exit_phy;
+> -	}
+> +	err = reset_control_bulk_assert(ROCKCHIP_NUM_CORE_RSTS,
+> +					rockchip->core_rsts);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "reset bulk assert core reset\n");
+>  
+>  	udelay(10);
+>  
+> -	err = reset_control_deassert(rockchip->pm_rst);
+> -	if (err) {
+> -		dev_err(dev, "deassert pm_rst err %d\n", err);
+> -		goto err_exit_phy;
+> -	}
+> -
+> -	err = reset_control_deassert(rockchip->aclk_rst);
+> -	if (err) {
+> -		dev_err(dev, "deassert aclk_rst err %d\n", err);
+> -		goto err_exit_phy;
+> -	}
+> -
+> -	err = reset_control_deassert(rockchip->pclk_rst);
+> +	err = reset_control_bulk_deassert(ROCKCHIP_NUM_PM_RSTS,
+> +					  rockchip->pm_rsts);
+>  	if (err) {
+> -		dev_err(dev, "deassert pclk_rst err %d\n", err);
+> +		dev_err(dev, "reset bulk deassert pm err %d\n", err);
+>  		goto err_exit_phy;
+>  	}
+>  
+> @@ -259,31 +184,15 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+>  	 * Please don't reorder the deassert sequence of the following
+>  	 * four reset pins.
+>  	 */
 
-This logic is flawed since skb_clone() shares the same data buffer
-with the original and the cloned skb, and hence each time the
-destination address is updated, it overwrites the previous destination
-address in this shared buffer. As a result, due to the special handing
-of the first valid destination, all of the skbs will eventually be
-sent to that first destination.
+The comment above says that the resets should not be reordered. But you have
+reordered the resets.
 
-Fix this issue by using skb_copy() instead of skb_clone(). This will
-result in a duplicate data buffer being allocated for each
-destination, and hence each skb will be transmitted to the proper
-destination.
+- Mani
 
-Fixes: ebceec860fc3 ("mac80211: multicast to unicast conversion")
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- net/mac80211/tx.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> -	err = reset_control_deassert(rockchip->mgmt_sticky_rst);
+> -	if (err) {
+> -		dev_err(dev, "deassert mgmt_sticky_rst err %d\n", err);
+> -		goto err_power_off_phy;
+> -	}
+> -
+> -	err = reset_control_deassert(rockchip->core_rst);
+> +	err = reset_control_bulk_deassert(ROCKCHIP_NUM_CORE_RSTS,
+> +					  rockchip->core_rsts);
+>  	if (err) {
+> -		dev_err(dev, "deassert core_rst err %d\n", err);
+> -		goto err_power_off_phy;
+> -	}
+> -
+> -	err = reset_control_deassert(rockchip->mgmt_rst);
+> -	if (err) {
+> -		dev_err(dev, "deassert mgmt_rst err %d\n", err);
+> -		goto err_power_off_phy;
+> -	}
+> -
+> -	err = reset_control_deassert(rockchip->pipe_rst);
+> -	if (err) {
+> -		dev_err(dev, "deassert pipe_rst err %d\n", err);
+> +		dev_err(dev, "reset bulk deassert core err %d\n", err);
+>  		goto err_power_off_phy;
+>  	}
+>  
+>  	return 0;
+> +
+>  err_power_off_phy:
+>  	while (i--)
+>  		phy_power_off(rockchip->phys[i]);
+> diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
+> index 72346e17e45e..27e951b41b80 100644
+> --- a/drivers/pci/controller/pcie-rockchip.h
+> +++ b/drivers/pci/controller/pcie-rockchip.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-ecam.h>
+> +#include <linux/reset.h>
+>  
+>  /*
+>   * The upper 16 bits of PCIE_CLIENT_CONFIG are a write mask for the lower 16
+> @@ -289,6 +290,8 @@
+>  		 ROCKCHIP_PCIE_CORE_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b))
+>  
+>  #define ROCKCHIP_NUM_CLKS	ARRAY_SIZE(rockchip_pci_clks)
+> +#define ROCKCHIP_NUM_PM_RSTS	ARRAY_SIZE(rockchip_pci_pm_rsts)
+> +#define ROCKCHIP_NUM_CORE_RSTS	ARRAY_SIZE(rockchip_pci_core_rsts)
+>  
+>  static const char * const rockchip_pci_clks[] = {
+>  	"aclk",
+> @@ -297,18 +300,26 @@ static const char * const rockchip_pci_clks[] = {
+>  	"pm",
+>  };
+>  
+> +static const char * const rockchip_pci_pm_rsts[] = {
+> +	"pm",
+> +	"pclk",
+> +	"aclk",
+> +};
+> +
+> +static const char * const rockchip_pci_core_rsts[] = {
+> +	"core",
+> +	"mgmt",
+> +	"mgmt-sticky",
+> +	"pipe",
+> +};
+> +
+>  struct rockchip_pcie {
+>  	void	__iomem *reg_base;		/* DT axi-base */
+>  	void	__iomem *apb_base;		/* DT apb-base */
+>  	bool    legacy_phy;
+>  	struct  phy *phys[MAX_LANE_NUM];
+> -	struct	reset_control *core_rst;
+> -	struct	reset_control *mgmt_rst;
+> -	struct	reset_control *mgmt_sticky_rst;
+> -	struct	reset_control *pipe_rst;
+> -	struct	reset_control *pm_rst;
+> -	struct	reset_control *aclk_rst;
+> -	struct	reset_control *pclk_rst;
+> +	struct  reset_control_bulk_data pm_rsts[ROCKCHIP_NUM_PM_RSTS];
+> +	struct  reset_control_bulk_data core_rsts[ROCKCHIP_NUM_CORE_RSTS];
+>  	struct  clk_bulk_data clks[ROCKCHIP_NUM_CLKS];
+>  	struct	regulator *vpcie12v; /* 12V power supply */
+>  	struct	regulator *vpcie3v3; /* 3.3V power supply */
+> -- 
+> 2.44.0
+> 
+> 
 
-diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
-index 72a9ba8bc5fd..0ee1c7df424c 100644
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -4408,7 +4408,7 @@ ieee80211_convert_to_unicast(struct sk_buff *skb, struct net_device *dev,
- 	struct ieee80211_local *local = sdata->local;
- 	const struct ethhdr *eth = (struct ethhdr *)skb->data;
- 	struct sta_info *sta, *first = NULL;
--	struct sk_buff *cloned_skb;
-+	struct sk_buff *copied_skb;
- 
- 	rcu_read_lock();
- 
-@@ -4423,14 +4423,14 @@ ieee80211_convert_to_unicast(struct sk_buff *skb, struct net_device *dev,
- 			first = sta;
- 			continue;
- 		}
--		cloned_skb = skb_clone(skb, GFP_ATOMIC);
--		if (!cloned_skb)
-+		copied_skb = skb_copy(skb, GFP_ATOMIC);
-+		if (!copied_skb)
- 			goto multicast;
--		if (unlikely(ieee80211_change_da(cloned_skb, sta))) {
--			dev_kfree_skb(cloned_skb);
-+		if (unlikely(ieee80211_change_da(copied_skb, sta))) {
-+			dev_kfree_skb(copied_skb);
- 			goto multicast;
- 		}
--		__skb_queue_tail(queue, cloned_skb);
-+		__skb_queue_tail(queue, copied_skb);
- 	}
- 
- 	if (likely(first)) {
-
----
-base-commit: ae98f5c9fd8ba84cd408b41faa77e65bf1b4cdfa
-change-id: 20240813-ieee80211_convert_to_unicast-1ddee968711d
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
