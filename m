@@ -1,91 +1,191 @@
-Return-Path: <linux-kernel+bounces-288667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E4E953D59
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:35:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3D8953D5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A091284DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:35:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B98B1F26739
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F355B1547D2;
-	Thu, 15 Aug 2024 22:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45211155314;
+	Thu, 15 Aug 2024 22:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="r48m1Ifz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzADGnsu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B3D14A611
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 22:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EB514D2B8;
+	Thu, 15 Aug 2024 22:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723761326; cv=none; b=s+v+X7JdIm8hTDcIWygdwCWJksVEw1qphXL9uL+6T61UP2R3Ja1ZvC6ablXPy8OHkBI/jDWRwJ7k+qPVmTVwfIh8OZ3tUg7+ReaCnRycozLTw1+LS2oeL0cb2s9TNvP2NY6fFhdAP8tVZHr0OgeGPGd2/g8jEmtpEJQs6b4xn68=
+	t=1723761506; cv=none; b=MZvPLnAUTdeHl4i91gvRD+VCvqvrdz4/M2gjdL9bKfp3MKGx8VNYH56YWC3/9+Sj8HqwzGnU7rQ+Mj9owzjkqUOOvzuCmc/fuqhOPaeBNbm1bW5wNo3YtHY8ovfOCNpNjnpzfB02srtAmOJKmoSeE9UVE4XujAOxEyINokV5b34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723761326; c=relaxed/simple;
-	bh=nz2vpWF0gWpmU5TwnjJ4/svSq1c7N9z+UbUg0aGlJMA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=eDGRQwpdSOm4T9t2l4mwVI0FRZe7d6Bb/4/aQZz8CnJ/1sWSNAIFF0C3pzEV4EPe1GMOGayDTMFNG+7CQrE+xpLlHkNUPna0oviZLr1HWg4hv+zZQZPv4/jZwKEcX8gCPss8bukOb9+BTRsutrmbiwVgfPsCqskoI0xe8RMJz5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=r48m1Ifz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F9BC32786;
-	Thu, 15 Aug 2024 22:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1723761325;
-	bh=nz2vpWF0gWpmU5TwnjJ4/svSq1c7N9z+UbUg0aGlJMA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r48m1IfzWwY8XNCkaYv/YCKAzJM+/FW/Rc30nfLBjG41id+q0Ji5+B+7rPEuNny/L
-	 Af+ISgcAfGDTY7Ot41P/wWo68nqBI+OoI8wk0qDZpI3+9XT2pQzxS3XwAMAb+KK9r8
-	 xOBIi1xHAo+NFXQ98VYnjZMD7wbeMNy9kDEDzz3o=
-Date: Thu, 15 Aug 2024 15:35:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Huan Yang <link@vivo.com>
-Cc: usamaarif642@gmail.com, yuzhao@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH] mm: move the easily assessable conditions forward
-Message-Id: <20240815153524.6bb7c26dc32feb93dd1ba513@linux-foundation.org>
-In-Reply-To: <20240815083102.653820-1-link@vivo.com>
-References: <20240815083102.653820-1-link@vivo.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723761506; c=relaxed/simple;
+	bh=0hxY12D/IW1rjA2V5O/ly52/sioF1NDEALpOM8QJMs0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uWS3FCjlgQCGwOnC9FXn16ANpqtsltUrYGr/hdK2My8MY96UZy5gttNyTLg9OBtjMXbLPxs5DcYEARyWxTjUJ3BhDXhUyx1BgeRiktO6/zTQ/1EUy8fYKlX55OkY2INPN9ZFHi+rruXkYWx8Ggo9tpDR0m++kNl22GCQRxUreuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzADGnsu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BA5C32786;
+	Thu, 15 Aug 2024 22:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723761506;
+	bh=0hxY12D/IW1rjA2V5O/ly52/sioF1NDEALpOM8QJMs0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SzADGnsuxV1qZv0UBsdT5yA6xXeYbVYtvYgxspepQ3c3xFZRIeK3IUk4gE6pxl0tY
+	 SNNTDoL0S1qwtPqaf7N7RSSPMF9oZh/7LrCZGy2JVuQL+o5nzKByDof/OtgipAn4xr
+	 h0hI5mq+d/kjKACUR/1bB9Tn4q9R58J4vTUhXFwYQ/u4liQH1Hq4AFxj9sRPIUvK6I
+	 Ri8IPvwCYvHW+k6+DaSJMSu54TR14/OvPRHgrCzhLQdlFGONIr4D2bxACGEtk8cqBi
+	 QK+aRO1dE/Q2AScTnXZfg+JunFehJhnagf69ezwfwvdhuaSKN7w9Ge9n+swVEeWJs5
+	 pPjcylblnAEwA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: [PATCH] perf annotate-data: Set bitfield member offset and size properly
+Date: Thu, 15 Aug 2024 15:38:23 -0700
+Message-ID: <20240815223823.2402285-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 15 Aug 2024 16:31:01 +0800 Huan Yang <link@vivo.com> wrote:
+The bitfield members might not have DW_AT_data_member_location.  Let's
+use DW_AT_data_bit_offset to set the member offset correct.  Also use
+DW_AT_bit_size for the name like in a C program.
 
-> Current try_to_map_unused_to_zeropage try to use shared zero page to
-> save some memory of sub page.
-> 
-> If forbids zeropage, no need to do anything rather than attempting to
-> assess wthether to use it afterwards.
-> 
-> ...
->
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -192,6 +192,9 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
->  	VM_BUG_ON_PAGE(!PageLocked(page), page);
->  	VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
->  
-> +	if (mm_forbids_zeropage(pvmw->vma->vm_mm))
-> +		return false;
-> +
->  	if (PageMlocked(page) || (pvmw->vma->vm_flags & VM_LOCKED))
->  		return false;
->  
-> @@ -204,7 +207,7 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
->  	contains_data = memchr_inv(addr, 0, PAGE_SIZE);
->  	kunmap_local(addr);
->  
-> -	if (contains_data || mm_forbids_zeropage(pvmw->vma->vm_mm))
-> +	if (contains_data)
->  		return false;
->  
+Before:
+  Annotate type: 'struct sk_buff' (1 samples)
+        Percent     Offset       Size  Field
+  -      100.00          0        232  struct sk_buff {
+  +        0.00          0         24      union  ;
+  +        0.00         24          8      union  ;
+  +        0.00         32          8      union  ;
+           0.00         40         48      char[] cb;
+  +        0.00         88         16      union  ;
+           0.00        104          8      long unsigned int      _nfct;
+         100.00        112          4      unsigned int   len;
+           0.00        116          4      unsigned int   data_len;
+           0.00        120          2      __u16  mac_len;
+           0.00        122          2      __u16  hdr_len;
+           0.00        124          2      __u16  queue_mapping;
+           0.00        126          0      __u8[] __cloned_offset;
+           0.00          0          1      __u8   cloned;
+           0.00          0          1      __u8   nohdr;
+           0.00          0          1      __u8   fclone;
+           0.00          0          1      __u8   peeked;
+           0.00          0          1      __u8   head_frag;
+           0.00          0          1      __u8   pfmemalloc;
+           0.00          0          1      __u8   pp_recycle;
+           0.00        127          1      __u8   active_extensions;
+  +        0.00        128         60      union  ;
+           0.00        188          4      sk_buff_data_t tail;
+           0.00        192          4      sk_buff_data_t end;
+           0.00        200          8      unsigned char* head;
 
-Looks sensible.  I'll add it as a fixup to "mm: remap unused subpages to shared zeropage when splitting isolated thp".
+After:
+  Annotate type: 'struct sk_buff' (1 samples)
+        Percent     Offset       Size  Field
+  -      100.00          0        232  struct sk_buff {
+  +        0.00          0         24      union  ;
+  +        0.00         24          8      union  ;
+  +        0.00         32          8      union  ;
+           0.00         40         48      char[] cb
+  +        0.00         88         16      union  ;
+           0.00        104          8      long unsigned int      _nfct;
+         100.00        112          4      unsigned int   len;
+           0.00        116          4      unsigned int   data_len;
+           0.00        120          2      __u16  mac_len;
+           0.00        122          2      __u16  hdr_len;
+           0.00        124          2      __u16  queue_mapping;
+           0.00        126          0      __u8[] __cloned_offset;
+           0.00        126          1      __u8   cloned:1;
+           0.00        126          1      __u8   nohdr:1;
+           0.00        126          1      __u8   fclone:2;
+           0.00        126          1      __u8   peeked:1;
+           0.00        126          1      __u8   head_frag:1;
+           0.00        126          1      __u8   pfmemalloc:1;
+           0.00        126          1      __u8   pp_recycle:1;
+           0.00        127          1      __u8   active_extensions;
+  +        0.00        128         60      union  ;
+           0.00        188          4      sk_buff_data_t tail;
+           0.00        192          4      sk_buff_data_t end;
+           0.00        200          8      unsigned char* head;
+
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/annotate-data.c | 34 +++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
+
+diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+index ff85d190e3ac..d9e0ca61b6b5 100644
+--- a/tools/perf/util/annotate-data.c
++++ b/tools/perf/util/annotate-data.c
+@@ -202,7 +202,7 @@ static int __add_member_cb(Dwarf_Die *die, void *arg)
+ 	struct annotated_member *parent = arg;
+ 	struct annotated_member *member;
+ 	Dwarf_Die member_type, die_mem;
+-	Dwarf_Word size, loc;
++	Dwarf_Word size, loc, bit_size = 0;
+ 	Dwarf_Attribute attr;
+ 	struct strbuf sb;
+ 	int tag;
+@@ -226,15 +226,37 @@ static int __add_member_cb(Dwarf_Die *die, void *arg)
+ 	if (dwarf_aggregate_size(&die_mem, &size) < 0)
+ 		size = 0;
+ 
+-	if (!dwarf_attr_integrate(die, DW_AT_data_member_location, &attr))
+-		loc = 0;
+-	else
++	if (dwarf_attr_integrate(die, DW_AT_data_member_location, &attr))
+ 		dwarf_formudata(&attr, &loc);
++	else {
++		/* bitfield member */
++		if (dwarf_attr_integrate(die, DW_AT_data_bit_offset, &attr) &&
++		    dwarf_formudata(&attr, &loc) == 0)
++			loc /= 8;
++		else
++			loc = 0;
++
++		if (dwarf_attr_integrate(die, DW_AT_bit_size, &attr) &&
++		    dwarf_formudata(&attr, &bit_size) == 0)
++			size = (bit_size + 7) / 8;
++	}
+ 
+ 	member->type_name = strbuf_detach(&sb, NULL);
+ 	/* member->var_name can be NULL */
+-	if (dwarf_diename(die))
+-		member->var_name = strdup(dwarf_diename(die));
++	if (dwarf_diename(die)) {
++		if (bit_size) {
++			if (asprintf(&member->var_name, "%s:%ld",
++				     dwarf_diename(die), (long)bit_size) < 0)
++				member->var_name = NULL;
++		} else {
++			member->var_name = strdup(dwarf_diename(die));
++		}
++
++		if (member->var_name == NULL) {
++			free(member);
++			return DIE_FIND_CB_END;
++		}
++	}
+ 	member->size = size;
+ 	member->offset = loc + parent->offset;
+ 	INIT_LIST_HEAD(&member->children);
+-- 
+2.46.0.184.g6999bdac58-goog
+
 
