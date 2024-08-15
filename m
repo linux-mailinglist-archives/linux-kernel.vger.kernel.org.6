@@ -1,182 +1,104 @@
-Return-Path: <linux-kernel+bounces-287459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C662952801
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:52:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00F4952802
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A55FB23992
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:52:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4399EB23C53
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC321E884;
-	Thu, 15 Aug 2024 02:52:49 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39BB383A2;
+	Thu, 15 Aug 2024 02:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4sEqKBr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED6418C0C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA8629422;
+	Thu, 15 Aug 2024 02:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723690368; cv=none; b=WJA7a1Mgh/3uv4BTc1jA3JKgDtSUcgZTxo59V1N8sphCnPtysdkAZkBnE4FIA1pmQXIohiVISjfq4b7dSx/ZcIXM8o3LW9JRR+2yDZ1wRw7Zvv3ZRgUNdS9FNElL+Msl51JqL/aAfEXXRCmNfMevyYzzrtLoVWsVgYQCj5Aqli0=
+	t=1723690370; cv=none; b=IotpLnKXb2nAiV0QxqtDaXzqOSpVWPCZ7OH5YVb7gE8rDDtgXjbZAeWzIU65WhPkFh193+be/CuPBOGj5EJrT6Kfit6toED9slg9fZbyJPYUOg1VKkpfiOAB3Xc5xZ8z66DOMOLjMyIsqYZgWbC0xnhuz9Zi7hlCb1R5FYlfhOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723690368; c=relaxed/simple;
-	bh=4UaTEUtbiJIeLsEshXga9iiwnFeBPdGGXj4h3pNQ7V0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hpqBiuxlMP/5sOT8Xcgx6Bz7nqxVIiaCTp7L8TvHwxQ4Y18vffhDw2bDIuq1zpdJIgNzts5XdhS0O05C/47q4o3lFA+vfqs9r6/0TtNXjGCQ1uBNfabOdVgsOmrK5kGTDAp6vLgtyI8EqX9V53CbRwih9ubTkBZwQS4A+CEfheo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 6a848b885ab111efa216b1d71e6e1362-20240815
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
-	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
-	HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
-	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-	ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:3dae992a-3970-4d33-a827-4a01fd0edcf8,IP:15,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:6
-X-CID-INFO: VERSION:1.1.38,REQID:3dae992a-3970-4d33-a827-4a01fd0edcf8,IP:15,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:6
-X-CID-META: VersionHash:82c5f88,CLOUDID:f708a65ec67914657e3fcd77420b4279,BulkI
-	D:240815103116B2BGWHMD,BulkQuantity:1,Recheck:0,SF:66|24|72|19|44|64|817|1
-	02,TC:nil,Content:0|-5,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,B
-	EC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 6a848b885ab111efa216b1d71e6e1362-20240815
-X-User: liuye@kylinos.cn
-Received: from localhost.localdomain [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <liuye@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 920210700; Thu, 15 Aug 2024 10:52:31 +0800
-From: liuye <liuye@kylinos.cn>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	liuye@kylinos.cn
-Subject: Re: Re: [PATCH] mm/vmscan: Fix hard LOCKUP in function isolate_lru_folios
-Date: Thu, 15 Aug 2024 10:52:26 +0800
-Message-Id: <20240815025226.8973-1-liuye@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240814142743.c8227d72be4c5fd9777a4717@linux-foundation.org>
-References: <20240814142743.c8227d72be4c5fd9777a4717@linux-foundation.org>
+	s=arc-20240116; t=1723690370; c=relaxed/simple;
+	bh=9lHi4Fn05Fqn+UhryIcKZ35IIPLC/wPvR9F2k2Ns8cM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qhbwU+LTpbY2PGSD/M6pvRi61Lokkv3r0abD7Ore/eiX3tmScVd4EBK+rvYpzP1+DIsUzcZoAWQpPiBtExMelHEJ6TQUA1n0arOwnfdX6d+t/d734G87SoXwOJe65Gt3eSCqPEaeq18XzEnSMubwGfz/oSyjwBWCG2e7f4bNfyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4sEqKBr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05297C116B1;
+	Thu, 15 Aug 2024 02:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723690369;
+	bh=9lHi4Fn05Fqn+UhryIcKZ35IIPLC/wPvR9F2k2Ns8cM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g4sEqKBrmnWlBt8i+NAmFnBQMJb+TClGPq40kRq6aEOzy237abhszxAqG4/VQ+F/j
+	 ii94cDngj1RVzVnol55shUXUhi4xiYB/b1vEjG4xcqkLbZvRBnmgMjzc61Sf4CIlwO
+	 fg7l5at6aBTJ5pp4jaPmy9kdi0Pk78YH6RU7M58fk61jA1o4RmmHx/XmeXJZDOHNuX
+	 nStvf4Lpj9ESgk9bDUnXXKMgXQz6IaEU3pqrv3G1kY0f95DvAbQPqjlfXuqd2QXPGr
+	 m4TBkP5QZoDInMNeIWSZLC8YLyZdxPUdWUbg34znsyQjGncYMklpZ8d1bHDlfvUz44
+	 S05Ge/Pu47omg==
+Date: Thu, 15 Aug 2024 04:52:42 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
+Message-ID: <Zr1teqjuOHeeFO4Z@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org>
+ <Zr0GP0OXliPRqx4C@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr0GP0OXliPRqx4C@boqun-archlinux>
 
-> > Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node basis")
+On Wed, Aug 14, 2024 at 12:32:15PM -0700, Boqun Feng wrote:
+> Hi Danilo,
 > 
-> Merged in 2016.
+> I'm trying to put your series on rust-dev, but I hit a few conflicts due
+> to the conflict with `Box::drop_contents`, which has been in rust-dev
+> for a while. And the conflict is not that trivial for me to resolve.
+> So just a head-up, that's a requirement for me to put it on rust-dev for
+> more tests from my end ;-)
+
+I rebased everything and you can fetch them from [1].
+
+I resolved the following conflicts:
+
+  - for `Box`, implement
+    - `drop_contents`
+    - `manually_drop_contents` [2]
+    - ``move_out` [2]
+    - `BorrowedMut` for `ForeignOwnable` for `Box<T, A>` and `Pin<Box<T, A>>`
+    - `InPlaceWrite` and updated `InPlaceInit`
+  - for `RBTreeNode`, make use of `Box::move_out` to replace the original
+    implementation partially moving out of `Box`
+
+@Alice: Please have a look at the changes for `RBTreeNode`. Maybe it's also
+worth having them in a separate patch.
+
+- Danilo
+
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust-dev/mm
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/commit/?h=rust-dev/mm&id=ef80ccca2ccebf3c7bcafdc13d1bfe81341cbe63
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/diff/rust/kernel/rbtree.rs?h=rust-dev/mm&id=c361d66df7fb7760064fbca6bf9d72171c352a73
+
 > 
-> Under what circumstances does it occur?  
-
-User processe are requesting a large amount of memory and keep page active.
-Then a module continuously requests memory from ZONE_DMA32 area.
-Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm reached.
-However pages in the LRU(active_anon) list are mostly from 
-the ZONE_NORMAL area.
-
-> Can you please describe how to reproduce this?  
-
-Terminal 1: Construct to continuously increase pages active(anon). 
-mkdir /tmp/memory
-mount -t tmpfs -o size=1024000M tmpfs /tmp/memory
-dd if=/dev/zero of=/tmp/memory/block bs=4M
-tail /tmp/memory/block
-
-Terminal 2:
-vmstat -a 1
-active will increase.
-procs -----------memory---------- ---swap-- -----io---- -system-- -------cpu-------
- r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st gu
- 1  0      0 1445623076 45898836 83646008    0    0     0     0 1807 1682  0  0 100  0  0  0
- 1  0      0 1445623076 43450228 86094616    0    0     0     0 1677 1468  0  0 100  0  0  0
- 1  0      0 1445623076 41003480 88541364    0    0     0     0 1985 2022  0  0 100  0  0  0
- 1  0      0 1445623076 38557088 90987756    0    0     0     4 1731 1544  0  0 100  0  0  0
- 1  0      0 1445623076 36109688 93435156    0    0     0     0 1755 1501  0  0 100  0  0  0
- 1  0      0 1445619552 33663256 95881632    0    0     0     0 2015 1678  0  0 100  0  0  0
- 1  0      0 1445619804 31217140 98327792    0    0     0     0 2058 2212  0  0 100  0  0  0
- 1  0      0 1445619804 28769988 100774944    0    0     0     0 1729 1585  0  0 100  0  0  0
- 1  0      0 1445619804 26322348 103222584    0    0     0     0 1774 1575  0  0 100  0  0  0
- 1  0      0 1445619804 23875592 105669340    0    0     0     4 1738 1604  0  0 100  0  0  0
-
-cat /proc/meminfo | head
-Active(anon) increase.
-MemTotal:       1579941036 kB
-MemFree:        1445618500 kB
-MemAvailable:   1453013224 kB
-Buffers:            6516 kB
-Cached:         128653956 kB
-SwapCached:            0 kB
-Active:         118110812 kB
-Inactive:       11436620 kB
-Active(anon):   115345744 kB   
-Inactive(anon):   945292 kB
-
-When the Active(anon) is 115345744 kB, insmod module triggers the ZONE_DMA32 watermark.
-
-perf show nr_scanned=28835844. 
-28835844 * 4k = 115343376KB approximately equal to 115345744 kB.
-
-perf record -e vmscan:mm_vmscan_lru_isolate -aR
-perf script
-isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=2 nr_skipped=2 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=0 nr_skipped=0 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=28835844 nr_skipped=28835844 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=28835844 nr_skipped=28835844 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=29 nr_skipped=29 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=0 nr_skipped=0 nr_taken=0 lru=active_anon
-
-If increase Active(anon) to 1000G then insmod module triggers the ZONE_DMA32 watermark. hard lockup will occur.
-
-In my device nr_scanned = 0000000003e3e937 when hard lockup. Convert to memory size 0x0000000003e3e937 * 4KB = 261072092 KB.
-
-#5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
-    ffffc90006fb7c30: 0000000000000020 0000000000000000 
-    ffffc90006fb7c40: ffffc90006fb7d40 ffff88812cbd3000 
-    ffffc90006fb7c50: ffffc90006fb7d30 0000000106fb7de8 
-    ffffc90006fb7c60: ffffea04a2197008 ffffea0006ed4a48 
-    ffffc90006fb7c70: 0000000000000000 0000000000000000 
-    ffffc90006fb7c80: 0000000000000000 0000000000000000 
-    ffffc90006fb7c90: 0000000000000000 0000000000000000 
-    ffffc90006fb7ca0: 0000000000000000 0000000003e3e937 
-    ffffc90006fb7cb0: 0000000000000000 0000000000000000 
-    ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812cbd3000 
-
-> Why do you think it took eight years to be discovered?
-
-The problem requires the following conditions to occur:
-1. The device memory should be large enough.
-2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL area.
-3. The memory in ZONE_DMA32 needs to reach the watermark.
-
-If the memory is not large enough, or if the usage design of ZONE_DMA32 area memory is reasonable, this problem is difficult to detect.
-
-notes:
-The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL, but other suitable scenarios may also trigger the problem.
-
-> It looks like that will fix, but perhaps something more fundamental
-> needs to be done - we're doing a tremendous amount of pretty pointless
-> work here.  Answers to my above questions will help us resolve this.
-> 
-> Thanks.
-
-Please refer to the above explanation for details.
-
-Thanks.
+> Regards,
+> Boqun
 
