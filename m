@@ -1,144 +1,99 @@
-Return-Path: <linux-kernel+bounces-287958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA9D952E91
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D667952E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B9A1F21D99
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB41D2832A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D57D19AA53;
-	Thu, 15 Aug 2024 12:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A86519D068;
+	Thu, 15 Aug 2024 12:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jsNAbT+c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCrqLpYr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786C918D654
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A546143888;
+	Thu, 15 Aug 2024 12:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723726344; cv=none; b=p5ykyfMsMFYk0CoRE4qH1jHkPq2E+ZQJaPItW/NGWzfMSlJIH3AuFoVBlOGQfEGdQ7qq+j2iJH/kZnNIdViMI6cm5sFiv2AjgTB1C0XMM9tPlX4K3DeQtBkj6l8wF/ffn0uTQ/FXkpS+pKC1Bvw9wfu+75v6L4J/fC4bSPDSqCI=
+	t=1723726324; cv=none; b=RnSEPHlVBjyP3njp8XVwwHFZh+luSbKKGx0DR09x3krxZdXhhSACxBmlOiWZxgoxeH0EJ1Xqjx9xuMpa5NIQicVEWi+rauslkqtbq0LNugWjvTGIKCzJZyyjnoTWI/e7NMLdT4Jt38lJSqMX09Exbftcb9D5mU5weEftUud1vYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723726344; c=relaxed/simple;
-	bh=XpvScZzpxZaCIYVn6yo0UudvIu3nKlo5FffJqW2jE1U=;
+	s=arc-20240116; t=1723726324; c=relaxed/simple;
+	bh=fmAaJecgka9DtD3tycYfxWFmq7Wq+S8jNV0j+zS0T9g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFWG+fSgN9DyOxkUNjfQKze0Pu5ey49fbW0Jtow14gRcFiA/sdjXR45AJwPavnxLuJfxOk/I/HaCaRMiBSJoUM713mg38QFxoruTcJiB025fPtLmjPfmNU6fh4A1zFN/7EdBFqloo08bNqHDN3IQBhy6HMgyFYlBvtK0g622SKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jsNAbT+c; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723726343; x=1755262343;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XpvScZzpxZaCIYVn6yo0UudvIu3nKlo5FffJqW2jE1U=;
-  b=jsNAbT+c8QAdjLo9psvFaqgM7Sy9QR+tMFk1pMzZ30zYV4HXo1sGrMmY
-   5KXFYznlDh5NQMqCw3ndqUjutKLGtrcRDfkFCgWnj7mq/t8Hd4V2AWuGx
-   GOkGVHE9ot3wEF7a4RKgtBFecowfvxAoWSumoa1HEWh8oQX8MhUCVV2RX
-   /KOa4cp0MODM5Vsk8M9Oog6XS+p6N8Kq991WRKQNVCxR4N2AV10RJuW8t
-   +0Osz9k+vZ9VWdi9n2OK+JCWuBvGcHAMjGAWZT3scCB2woZHdurVKREZj
-   /wsE1at5xJaTRSBZ5zYzTp47bIRwGQLu8jxlg0jP/Vd1WwOg+5qKNfQPN
-   Q==;
-X-CSE-ConnectionGUID: Hf8iWcYsRe+rX8jnxCkIYw==
-X-CSE-MsgGUID: gFuInXJsQs+6xXdVbzFggQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="33128542"
-X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="33128542"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:52:22 -0700
-X-CSE-ConnectionGUID: bIbm6iUSTEy75M6e/5jQ5w==
-X-CSE-MsgGUID: tW2zNXktRcWkidgJouN9QA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="59299599"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 15 Aug 2024 05:52:18 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1seZxg-0003aM-0w;
-	Thu, 15 Aug 2024 12:52:16 +0000
-Date: Thu, 15 Aug 2024 20:51:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-	mingo@redhat.com, tglx@linutronix.de
-Cc: oe-kbuild-all@lists.linux.dev, x86@kernel.org, ajay.kaher@broadcom.com,
-	bo.gan@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>
-Subject: Re: [PATCH 2/2] x86/vmware: Fix steal time clock under SEV
-Message-ID: <202408152054.7LIuKvYe-lkp@intel.com>
-References: <20240814210731.761010-2-alexey.makhalov@broadcom.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ioTeJGdjlzVikoyYexFbfoONpPvhSeLQsVqIxHiAZALrZnSvcyGfRYWfZB1nvkDrp/PiHsNfgkTl5ukzkfs6nAb16OShdbf5Yy47PT9iZor9ThIpbKN8qijXD05pOzf1HchPD1Nj24nEC+OFH+GkErHiKNoXC3rOoKfQBFXsXG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCrqLpYr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A72DC32786;
+	Thu, 15 Aug 2024 12:52:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723726324;
+	bh=fmAaJecgka9DtD3tycYfxWFmq7Wq+S8jNV0j+zS0T9g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UCrqLpYrUKSUV4NpK5XZNazZdoJIu5QrDwMTOjSqEKEXJN9l7hJ12jYtbT3ZJM4Tj
+	 buXE6UCmk9Q0isaJvAHJ/6sGwjIz8S9NC5uZNkHc3shRfJTzgttQO8WK3CRWAn1uie
+	 mrrXKbEszrW8q/x6+z7Ygfbogv2HmwQLIhYJiawPr0oy6/Vqw9+wjafwVmGT9i2YKS
+	 sMpD69ZVFWbs67KBUYRwv+1uIRxju3SKls77GX2g9vEVxO80EBoXsFxw+YUqeLX2vZ
+	 KPFdUnSDRQ8cGDprINzne9L4j4hHpYmJ8BhvHrCdqOL8YkLT2HHvIKvHT87J7MQNop
+	 GbZ4qAZZq2MWw==
+Date: Thu, 15 Aug 2024 14:51:58 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>, 
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Max Kellermann <max.kellermann@ionos.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	tools@kernel.org
+Subject: Re: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache
+ by setting folio->private and marking dirty"
+Message-ID: <20240815-seiten-vorteil-168ac82432a7@brauner>
+References: <2181767.1723665003@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240814210731.761010-2-alexey.makhalov@broadcom.com>
+In-Reply-To: <2181767.1723665003@warthog.procyon.org.uk>
 
-Hi Alexey,
+On Wed, Aug 14, 2024 at 08:50:03PM GMT, David Howells wrote:
+>     
+> This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
+> 
+> In addition to reverting the removal of PG_private_2 wrangling from the
+> buffered read code[1][2], the removal of the waits for PG_private_2 from
+> netfs_release_folio() and netfs_invalidate_folio() need reverting too.
+> 
+> It also adds a wait into ceph_evict_inode() to wait for netfs read and
+> copy-to-cache ops to complete.
+> 
+> Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Max Kellermann <max.kellermann@ionos.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Xiubo Li <xiubli@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: ceph-devel@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
+> ---
 
-kernel test robot noticed the following build errors:
+Now in vfs.fixes.
 
-[auto build test ERROR on tip/x86/vmware]
-[also build test ERROR on linus/master v6.11-rc3 next-20240815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Makhalov/x86-vmware-Fix-steal-time-clock-under-SEV/20240815-050918
-base:   tip/x86/vmware
-patch link:    https://lore.kernel.org/r/20240814210731.761010-2-alexey.makhalov%40broadcom.com
-patch subject: [PATCH 2/2] x86/vmware: Fix steal time clock under SEV
-config: i386-randconfig-001-20240815 (https://download.01.org/0day-ci/archive/20240815/202408152054.7LIuKvYe-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240815/202408152054.7LIuKvYe-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408152054.7LIuKvYe-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/x86/kernel/cpu/vmware.c: In function 'sev_map_percpu_data':
->> arch/x86/kernel/cpu/vmware.c:313:13: error: 'cc_vendor' undeclared (first use in this function)
-     313 |         if (cc_vendor != CC_VENDOR_AMD ||
-         |             ^~~~~~~~~
-   arch/x86/kernel/cpu/vmware.c:313:13: note: each undeclared identifier is reported only once for each function it appears in
->> arch/x86/kernel/cpu/vmware.c:313:26: error: 'CC_VENDOR_AMD' undeclared (first use in this function); did you mean 'X86_VENDOR_AMD'?
-     313 |         if (cc_vendor != CC_VENDOR_AMD ||
-         |                          ^~~~~~~~~~~~~
-         |                          X86_VENDOR_AMD
-
-
-vim +/cc_vendor +313 arch/x86/kernel/cpu/vmware.c
-
-   308	
-   309	static void __init sev_map_percpu_data(void)
-   310	{
-   311		int cpu;
-   312	
- > 313		if (cc_vendor != CC_VENDOR_AMD ||
-   314		    !cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT))
-   315			return;
-   316	
-   317		for_each_possible_cpu(cpu) {
-   318			early_set_memory_decrypted(
-   319				(unsigned long)&per_cpu(vmw_steal_time, cpu),
-   320				sizeof(vmw_steal_time));
-   321		}
-   322	}
-   323	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+@Konstantin, for some reason I keep having issues with this patch
+series. It confuses b4 to no end. When I try to shazam this single patch
+here using 2181767.1723665003@warthog.procyon.org.uk it pull down a 26
+patch series. And with -P _ it complains that it can't find the messag
+id.
 
