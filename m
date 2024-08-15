@@ -1,176 +1,146 @@
-Return-Path: <linux-kernel+bounces-287576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D33952980
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:49:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C1695297A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8375C1C2189E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE994B231D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E4117995A;
-	Thu, 15 Aug 2024 06:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B77217966F;
+	Thu, 15 Aug 2024 06:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qNJcKvas"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="W+dE1+u1"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5B5BA53;
-	Thu, 15 Aug 2024 06:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEB7BA53;
+	Thu, 15 Aug 2024 06:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723704564; cv=none; b=LIXQEYfO6Le4lmJng4YuiRR0BhX0NfIwT3KfQ5GaW8je37iqyUqX/s/TNGjPZrJ/p7/HPY7/pOQl5//hXcjzepZOSUnXIujLGruNR8lGbbMd2TOJGSqD0778BawyVdxwrJvHNuxr7pfcfuBTKDlgWjNQ5LvnYeWlD4CbkLPb4HQ=
+	t=1723704512; cv=none; b=RLFA8hfnUuEagqOUZNBfzvaSL64vRaIfDIUSspQPqgrWy/Uvlg/UkNPNhxIMRdrViK1nuyS7o5cRiaOXHVz7J2OItwS+JdyU0FTp5lLZTdz2YqlW5qVV7QJItL5GQdZ5bn4vXetj5sQ2hNdAiu9UvEd1fYi9hPwq6nLaJnvd8po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723704564; c=relaxed/simple;
-	bh=GBFDD5hO31UtxQ3fdpkMHOjwMKil/jfzWGsr7KvcUoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rG53HEJN7qmp+c0Q6suFDwYmlslhHa7SK5CTnLN6adh/5pDA/A3q6SqUN0/tfDiZZCo3tgkQ8zw4NbVOwmkhC3VE4PujdF/unqA6wQRpyNR4Mp6E7EkLPHk1VgEt0htwiJiWuRk7mcCE62P9gbhDPjMVGipVb7fjchqNFgJ5cus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qNJcKvas; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723704558; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=FV7TrzVL+vp/dCsRizHWQY2sNChvjRjUcrbuhCkBO6k=;
-	b=qNJcKvasXu/gKzyp3rROP8iVHJ1i1O6nZ4T4WpYuU5ld+PVRIcduwSqB1NP9BKzDAv4MmckVhELqVpYwSWvgMdOjbKD2olocOgql/T2SgOedq9hYqAexc5pgqP+4g8qz+KWd7QZ5rm0/IestnuV8FPpv18u1STZG41KBOfQYGPA=
-Received: from 30.221.149.192(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCvpwnH_1723704235)
-          by smtp.aliyun-inc.com;
-          Thu, 15 Aug 2024 14:43:56 +0800
-Message-ID: <6bcd6097-13dd-44fd-aa67-39a3bcc69af2@linux.alibaba.com>
-Date: Thu, 15 Aug 2024 14:43:55 +0800
+	s=arc-20240116; t=1723704512; c=relaxed/simple;
+	bh=Nh33MOapYcsyZSaE72pj/GAoYlZhrWgFlThVWqv5fpw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h3dt4StqSOXdx9GvYQoXjPdXptyrmTGyskIz+155A7j+RyOfiSonYUa88GBrY600ngF29AWXoGonocMEJApZlycaBYj1t37Pg/A4rg7bTDjPj+wtQOfSP79tlZEUEdJJ06ZwW2B07M7qKHGlayB/WBQWWaSeKRNWVAlc12Jz6To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=W+dE1+u1; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723704508; x=1723963708;
+	bh=5I4uF48/D5iv+622qy+0xU6rTasLnm4ofO5ZVU8Faa0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=W+dE1+u19fQ8vRibOHcKr1+/M5xi0Qu9fn4/aAdgRuLu2q2vDQMtjFuZ9NpkM++N2
+	 G77L82ThfRUOnNo4JFkYH15EINEmEQRKz+DEJ8EsfOFHQVJQUEHHAm5J4uqC1/sIr7
+	 ctQ4KcLFJ0kNXaZzoFba94wUqa8tAPPL2PqP33iHWq1d4cyGa/dl8UfngJXH3fDxiI
+	 4MuwDIa87zbydoAvTQ07vrF5/IUydQKPzKyQpgrkUQiy0FD2UmRIMbjySk4WWs7eJY
+	 vT+RATNBIvosrqPtmZo0rXAP+hq9cd4L728GKULHaV0FTDcsxT+jOSCBIxtvzNxPhF
+	 pHMnPgs5l1uIw==
+Date: Thu, 15 Aug 2024 06:48:19 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
+Message-ID: <5dfe8bae-2c1e-47d4-9fb4-373b7d714c4f@proton.me>
+In-Reply-To: <Zr072oSej9KIc1S6@cassiopeiae>
+References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-7-dakr@kernel.org> <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me> <Zr0r6sSFMSQIpHEX@cassiopeiae> <Zr072oSej9KIc1S6@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 7dce0f614b91ef9b8e959229288c0aba3f8bbc85
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net,v4] net/smc: prevent NULL pointer dereference in
- txopt_get
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: wintera@linux.ibm.com, gbayer@linux.ibm.com, guwen@linux.alibaba.com,
- jaka@linux.ibm.com, tonylu@linux.alibaba.com, wenjia@linux.ibm.com,
- davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com
-References: <64c2d755-eb4b-42fa-befb-c4afd7e95f03@linux.ibm.com>
- <20240814150558.46178-1-aha310510@gmail.com>
- <9db86945-c889-4c0f-adcf-119a9cbeb0cc@linux.alibaba.com>
- <CAO9qdTGFGxgD_8RYQKTx9NJbwa0fiFziFyx2FJpnYk3ZvFbUmw@mail.gmail.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <CAO9qdTGFGxgD_8RYQKTx9NJbwa0fiFziFyx2FJpnYk3ZvFbUmw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 8/15/24 11:15 AM, Jeongjun Park wrote:
-> 2024년 8월 15일 (목) 오전 11:51, D. Wythe <alibuda@linux.alibaba.com>님이 작성:
+On 15.08.24 01:20, Danilo Krummrich wrote:
+> On Thu, Aug 15, 2024 at 12:13:06AM +0200, Danilo Krummrich wrote:
 >>
+>>>
+>>>> +        ptr: Option<NonNull<u8>>,
+>>>> +        layout: Layout,
+>>>> +        flags: Flags,
+>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
+>>>> +        // TODO: Support alignments larger than PAGE_SIZE.
+>>>> +        if layout.align() > bindings::PAGE_SIZE {
+>>>> +            pr_warn!("Vmalloc does not support alignments larger than=
+ PAGE_SIZE yet.\n");
+>>>> +            return Err(AllocError);
+>>>
+>>> I think here we should first try to use `build_error!`, most often the
+>>> alignment will be specified statically, so it should get optimized away=
+.
 >>
->> On 8/14/24 11:05 PM, Jeongjun Park wrote:
->>> Alexandra Winter wrote:
->>>> On 14.08.24 15:11, D. Wythe wrote:
->>>>>       struct smc_sock {                /* smc sock container */
->>>>> -    struct sock        sk;
->>>>> +    union {
->>>>> +        struct sock        sk;
->>>>> +        struct inet_sock    inet;
->>>>> +    };
->>>> I don't see a path where this breaks, but it looks risky to me.
->>>> Is an smc_sock always an inet_sock as well? Then can't you go with smc_sock->inet_sock->sk ?
->>>> Or only in the IPPROTO SMC case, and in the AF_SMC case it is not an inet_sock?
+>> Sure, we can try that first.
+>=20
+> I think I spoke too soon here. I don't think `build_error!` or `build_ass=
+ert!`
+> can work here, it would also fail the build when the compiler doesn't kno=
+w the
+> value of the alignment, wouldn't it? I remember that I wasn't overly happ=
+y about
+> failing this on runtime either when I first thought about this case, but =
+I also
+> couldn't think of something better.
+
+Yes, it might fail even though the alignment at runtime will be fine.
+But that's why I suggested trying `build_error!`(or `build_assert!`)
+first, if nobody hits the case where the compiler cannot figure it out,
+then we can keep it. If there are instances, where it fails, but the
+alignment would be fine at runtime, then we can change it to the above.
+(I would add such a comment above the assert).
+
+> In the end it's rather unlikely to ever hit this case, and probably even =
+more
+> unlikely to hit it for a sane reason.
+
+Yeah, but I still prefer the build to fail, rather than emitting a warn
+message that can be overlooked at runtime.
+
+>>> How difficult will it be to support this? (it is a weird requirement,
+>>> but I dislike just returning an error...)
 >>
->> There is no smc_sock->inet_sock->sk before. And this part here was to
->> make smc_sock also
->> be an inet_sock.
->>
->> For IPPROTO_SMC, smc_sock should be an inet_sock, but it is not before.
->> So, the initialization of certain fields
->> in smc_sock(for example, clcsk) will overwrite modifications made to the
->> inet_sock part in inet(6)_create.
->>
->> For AF_SMC,  the only problem is that  some space will be wasted. Since
->> AF_SMC don't care the inet_sock part.
->> However, make the use of sock by AF_SMC and IPPROTO_SMC separately for
->> the sake of avoid wasting some space
->> is a little bit extreme.
->>
-> Okay. I think using inet_sock instead of sock is also a good idea, but I
-> understand for now.
->
-> However, for some reason this patch status has become Changes Requested
-> , so we will split the patch into two and resend the v5 patch.
->
-> Regards,
-> Jeongjun Park
+>> It's not difficult to support at all. But it requires a C API taking an
+>> alignment argument (same for `KVmalloc`).
 
-Why so hurry ? Are you rushing for some tasks ? Please be patient.
+I see, that's good to know.
 
-The discussion is still ongoing, and you need to wait for everyone's 
-opinions,
-at least you can wait a few days to see if there are any other opinions, 
-even if you think
-your patch is correct.
+>> Coming up with a vrealloc_aligned() is rather trivial. kvrealloc_aligned=
+() would
+>> be a bit weird though, because the alignment argument could only be real=
+ly
+>> honored if we run into the vrealloc() case. For the krealloc() case it'd=
+ still
+>> depend on the bucket size that is selected for the requested size.
 
-There is no need to send a new patch. If this patch is approved, the net 
-maintainer will handle it,
-regardless of whether it is a change request or not.
+Yeah... Maybe some more logic on the Rust side can help with that.
 
-And your new patch, I don't want to go too far, as you are a newcomer, I 
-appreciate your report and
-willingness to fix this issue. But it's wrong.
+>> Adding the C API, I'm also pretty sure someone's gonna ask what we need =
+an
+>> alignment larger than PAGE_SIZE for and if we have a real use case for t=
+hat.
+>> I'm not entirely sure we have a reasonable answer for that.
 
-If you want to split them, embedding inet_sock should be the first 
-patch, which is a basic logical issue.
+We could argue that we can remove an "ugly hack" (when we don't have the
+build assert, if we do have that, I don't mind not supporting it), but I
+agree that finding a user will be difficult.
 
-Then, don't send patches so frequently, I'm very worried that you will 
-immediately send out v6 after
-seeing it.
+>> I got some hacked up patches for that, but I'd rather polish and send th=
+em once
+>> we actually need it.
 
-Best wishes,
-D. Wythe
+Sure, just wanted to check why you don't want to do it this series.
 
->>> hmm... then how about changing it to something like this?
->>>
->>> @@ -283,7 +283,7 @@ struct smc_connection {
->>>    };
->>>
->>>    struct smc_sock {                           /* smc sock container */
->>> -     struct sock             sk;
->>> +     struct inet_sock        inet;
->>>        struct socket           *clcsock;       /* internal tcp socket */
->>>        void                    (*clcsk_state_change)(struct sock *sk);
->>
->> Don't.
->>
->>>                                                /* original stat_change fct. */
->>> @@ -327,7 +327,7 @@ struct smc_sock {                         /* smc sock container */
->>>                                                 * */
->>>    };
->>>
->>> -#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
->>> +#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, inet.sk)
->>>
->>>    static inline void smc_init_saved_callbacks(struct smc_sock *smc)
->>>    {
->>>
->>> It is definitely not normal to make the first member of smc_sock as sock.
->>>
->>> Therefore, I think it would be appropriate to modify it to use inet_sock
->>> as the first member like other protocols (sctp, dccp) and access sk in a
->>> way like &smc->inet.sk.
->>>
->>> Although this fix would require more code changes, we tested the bug and
->>> confirmed that it was not triggered and the functionality was working
->>> normally.
->>>
->>> What do you think?
->>>
->>> Regards,
->>> Jeongjun Park
+---
+Cheers,
+Benno
 
 
