@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-288598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1C7953C32
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:55:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B455953C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0774B2821E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B226A1F26712
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19695149E17;
-	Thu, 15 Aug 2024 20:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE0E14901F;
+	Thu, 15 Aug 2024 21:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbXp9qQz"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaZ27JMR"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D3A74059;
-	Thu, 15 Aug 2024 20:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E216F2E6
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 21:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723755319; cv=none; b=RgHI1XI04fky8pgR53mGj/3dt6mk0AnWvi4UCdfZ/ovquyPUErbEA2JdCD3XQn7SahlurKe6O63Ufp3gOgzlv4TGorNPNqHAk8XT15vOQTZQPr3q01OfLC6BYeTSvN0WTaQiMHVkTi22I9+3y8rdk8FfUsHudHidDwqXsuX1f3c=
+	t=1723755631; cv=none; b=MvxVAr3Jl4X5F+kr+1tZLvR+ABdehrqA8FgEU8x/KK5Ln8Ot3KSMQWwiZB59/tO7+VVkxbiWHqH4tFcBvthBJm+myHUThnOrXyymxcmqyPmXRBaN5Va8Fm7ky/sGWqfGl/PFHPbbzCglim8ftuqy7ooobWSkrtaCSsRgQpEqaJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723755319; c=relaxed/simple;
-	bh=0moN1tPFvqCGBgZIbg82318xYYl0/TVwueRuoMVIwvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZUWGbF7hkwmDTr/Bzq+3R58CYf+TpBIbxmmrCz9Y68V1XgmP1GAzanmn+SUyeg4CCm4w4O2nKsiKDXLh1J+IOG1hw7fjKDuu7xACn6DLMyZgC0IXRyDpYFpyhUEHvCadz/0uxCSpt80cNJgQHT7bhfOzalykX3AD3PZX8dP4XNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbXp9qQz; arc=none smtp.client-ip=209.85.219.172
+	s=arc-20240116; t=1723755631; c=relaxed/simple;
+	bh=3NCh6U/S1j3mtc4yuKgpz2cFRrT8IiPjEYNnNdjxIGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TzNz5mj2Qhy6S3gx8egpZA3h/iyysEuF0rkpkDboplw/aP1IrxvPe/GFlNlWBuXoWn2D6TeXydDSDk342pORuUQWa3EBbuZe0WwRG/uKSMfmhQ5E5kjzetMbkub5q6iFVLVvDtUwGoV/Id3ApFMJAUyuI3OJCX14Om59l/hI3tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaZ27JMR; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0bf9b821e8so1410662276.3;
-        Thu, 15 Aug 2024 13:55:17 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef2fbf1d14so22424641fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:00:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723755317; x=1724360117; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8TdgbOJ3tNh3Wtc7PoiW9Xdlmt6LlXWIUz7LAP11/qk=;
-        b=hbXp9qQz7JkQvlK0nJwAFzFcc+0GRZ5q43UIsividqZDxbRHoUacEi3/E/EfP087gq
-         T+IzLwcFv4Wmon+jb/MJR6jocudyu3MPE01E6HJ4kHf2Yl7r0RFTp/Xv7cq+Cc4dyZUI
-         mnzWiuQv5YQsZGns0LvoUwLQLUwHgrUhWGZwMIVeBMDSs7Vg7mKEcGHpkIYTq+lgJ2t0
-         uMmNkNmUQj9Mz+S7ugkNcwKv8ysIfm/2kj5Q2jT0ZgYtHAPi7oOBHX6rnQFvtqP0URDP
-         jrKkmTAh+zhxCe5mjy9v3JO+Zai4SMOxgnih9N4eSSIp6fmfeULPr3qnCA+uPUuMq/Kl
-         3Fyg==
+        d=gmail.com; s=20230601; t=1723755627; x=1724360427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nw+i6a5BQdCkk4Mdx+fFTiDbWj87Rjwq5IfRXwZ8bow=;
+        b=eaZ27JMRogso1jUylnW21JNEFA3oseCzhaZbKozW4Jz+2u+XJdXCo3a2Lhy4YKkf+3
+         z3G/CPSgKDJxit0HVASmXd4QB013mB/98j4IQeP+UVlPPTXbErsutlVLagGFYPo5P7om
+         jSCclCLy1f7d9B9tRCYYiZZJDWDxs3CW07B/D1Ci3pBUHABtBru2yjicPhY5j3gpOsy1
+         tu+v9S85wF0+HOLiafMPBTz3PCQ2rDRaf92E99c41Pnz1hkaBBkKERXR6gvAYTBpWDFY
+         gIeGtbRLSs4lqz2WLEuESbf/9pYNu8fcm7429eLiZdM0cFKWvhTGiQbR/k11EogEi3bu
+         2v4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723755317; x=1724360117;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8TdgbOJ3tNh3Wtc7PoiW9Xdlmt6LlXWIUz7LAP11/qk=;
-        b=vSIN5mxHpjNR0psRpQmXkvaNMla4EUnuRlIUnog1cN+Vk/dm84P/x/RwYodxtBM9om
-         TRYOTm74qmMuhdohTQHC7NH7/lCh3Od2cX5f9PL93YgZ1tFQxhYCga1nanfq8uXZuff0
-         obRBDY4Gd9uZjlQNS+s6te0FBrGuchtCV0Kl1ZbNL34DrjmJUZn64XEzgzsqufX/hP2M
-         Sc9Pz3wzYaZZx7UpSkL4yBrfcXYGhkrQWadG0vY1xMHpMvPw9KKddkuSiU8e2SuK8VCL
-         CnMT/e0HdBck9wl64j8HlIVZ4pT4Cehj77mGPWQ4JdSVZ0NckmiNDcMXqKCgAr6qhzEq
-         RyDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXW5z+naYPyYPW0k0LjZ1SeeP1fUE+HwgW9UMmurxUQAOnrZyAf090eRny98pQZwZbhzJR3sst+CUjGPZ8BP9gEMlxLPccZq84knkVSvPtCvBYy0x4auaYlMM327jurttTdD/Qj
-X-Gm-Message-State: AOJu0YwXyc37kqUdAia0Um5QWdf+i/dJNeKn62fQVUrvhkt7JsIAIUyv
-	K1rHwv8Xn6bCnx/A+6/igdUiap1eeqCr9l8+a+A1ZmCg6NRKFrcZ
-X-Google-Smtp-Source: AGHT+IHd4jF0LOmA2CXbpWINyM7i5PyACnA0Q6zj223/lMx9inDRqQo4i7JArkLMHxoDVuB4mtnTRg==
-X-Received: by 2002:a05:6902:1547:b0:e0b:c822:49b3 with SMTP id 3f1490d57ef6-e1180eee6dbmr1147733276.26.1723755316924;
-        Thu, 15 Aug 2024 13:55:16 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-45369ff5460sm9368681cf.35.2024.08.15.13.55.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 13:55:16 -0700 (PDT)
-Message-ID: <9cf8045e-7930-4e51-aed9-a02c8e009aad@gmail.com>
-Date: Thu, 15 Aug 2024 13:55:12 -0700
+        d=1e100.net; s=20230601; t=1723755627; x=1724360427;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nw+i6a5BQdCkk4Mdx+fFTiDbWj87Rjwq5IfRXwZ8bow=;
+        b=qGdfkFyvht4MD8c9scM5QIthM9Wc3kAkbGnn2oOjoUFtf/YARha+Ha2jpzOSzzwmq4
+         8yZc2ovRXPaS33bdgkTOxohxWz7mjC7N0wc4PaMOP+J279n2SqGSWmelcMv6aLPF4jWj
+         lK9zS5jl8AdDRK9s7X0Mw+nD0shSoWdaL4+iLoHxi6QzLkPmQ6k3U0zYGIcl0hktr7sF
+         DFtVlGM0QUAhG3/QKiT2cbQ9p31CS4Csk4L60CEmOGV/GfryPQ7jF3OQgmPJfZN+m9DB
+         G+XG67E+lM/16eaMi/DBEIecybT2JaAnHCYKxKsUiKpUAG1meM9GyhW1snnwzCKxiygk
+         NUDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnz3ZmVWqr10DXR+IhQDkqkWJQWEgfbT30PsCy9a/e0BROlCPUE8T1zuxnYK+ZTb1+pT/fvPioWYGbfS6E7JKDLxOjQ55/znRkH5Mk
+X-Gm-Message-State: AOJu0YztoMxloZUEUFvuzfBIoCFw4hllQqAoP7PJQUPbCrdd2ErPHlHR
+	bzCRl2AjXlS1T2ghrTZkOldPDNiMo8+pPpl/sC1CuOEWmhKEJ2PV
+X-Google-Smtp-Source: AGHT+IFWbSQBpKicv3Y8V2rBGWp+KhKB1btNuBp2B33rekQlBdE3v7MLXbPaGifVd1rmUt5je4u8SA==
+X-Received: by 2002:a05:6512:b10:b0:52d:ab43:b276 with SMTP id 2adb3069b0e04-53307f740c2mr1076264e87.2.1723755626896;
+        Thu, 15 Aug 2024 14:00:26 -0700 (PDT)
+Received: from localhost.localdomain (nat2-minsk-pool-46-53-193-144.telecom.by. [46.53.193.144])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d42466csm331998e87.257.2024.08.15.14.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 14:00:26 -0700 (PDT)
+From: Max Ramanouski <max8rr8@gmail.com>
+To: x86@kernel.org,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	linux-kernel@vger.kernel.org,
+	jniethe@nvidia.com,
+	jhubbard@nvidia.com,
+	linux-mm@kvack.org,
+	tglx@linutronix.de,
+	hch@infradead.org,
+	apopple@nvidia.com
+Cc: Max Ramanouski <max8rr8@gmail.com>,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v3] x86/ioremap: Use is_ioremap_addr() in iounmap()
+Date: Thu, 15 Aug 2024 23:56:07 +0300
+Message-ID: <20240815205606.16051-2-max8rr8@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/484] 5.15.165-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240815131941.255804951@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240815131941.255804951@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/15/24 06:17, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.165 release.
-> There are 484 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.165-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Restrict iounmap() to memory allocated in ioremap region, by using
+is_ioremap_addr(). Similarly to the generic iounmap() implementation.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Additionally, add warning in case there is an attempt to iounmap()
+invalid memory, instead of silently exiting, thus helping to
+avoid incorrect usage of iounmap().
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Max Ramanouski <max8rr8@gmail.com>
+---
+ arch/x86/mm/ioremap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index aa7d279321ea..70b02fc61d93 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -11,6 +11,7 @@
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
++#include <linux/ioremap.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include <linux/mmiotrace.h>
+@@ -457,7 +458,7 @@ void iounmap(volatile void __iomem *addr)
+ {
+ 	struct vm_struct *p, *o;
+ 
+-	if ((void __force *)addr <= high_memory)
++	if (WARN_ON_ONCE(!is_ioremap_addr((void __force *)addr)))
+ 		return;
+ 
+ 	/*
 -- 
-Florian
+2.45.2
 
 
