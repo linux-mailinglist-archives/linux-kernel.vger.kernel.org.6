@@ -1,123 +1,179 @@
-Return-Path: <linux-kernel+bounces-287872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF43952D75
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:28:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B31952D79
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C431F25E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5BDC1F24189
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B991494C5;
-	Thu, 15 Aug 2024 11:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCFC7DA9D;
+	Thu, 15 Aug 2024 11:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wsg5Rk8c"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GmS/IRXm"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA831AC891;
-	Thu, 15 Aug 2024 11:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C121AC891
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723721274; cv=none; b=EabVhZO9c5dTiKGnisnyl3t/sNoJO0Np0KI6MHDVon68yfUsmR23G+ESv42pTll5GEDr+OcHaPNa20yq/6Tye53lJZnOqwNvmORMMN9kFduEt+EXJjXG2DYU2AsIOz4axgCdz0NBDuxlf5mRWRm3wttqtFRpX+SZnzvQpqKmMBI=
+	t=1723721343; cv=none; b=Gsr5XdoKV0oYSZgHoGLcP9RBo6FlrfrJBWTP4kKnbk3eYnVvQRAXPhrlj8xRcxF+k5C98J3DvNyNOTHS0coogC4mHJG+Evmg7sZy5hMarwcI+DJfkgt2xw/5IUIj6CX86bHB2t11padza2IRJ7B0zBQ9o4V3IIUiR3bbzjTEWMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723721274; c=relaxed/simple;
-	bh=jMQOiwjRbvfwNZgSQ2FQRzwUrVRGLEJDvC8BdAPu9ZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rraO2aMaPYlPckdJ8czvbN+09BoUmvuskMepLK86hg710YCbjrC6oVKhLEIQj87LlDC+qg1mV8b73HzGGXOAEOngIUu8rKUAk31kQpptoIYUCOWstZp1S5rDo/44hvjbgX9AWwH+3wAzS8tIec2LADXDWCEGWnxxGHx8CYIRYuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wsg5Rk8c; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d18d4b94cso591800b3a.2;
-        Thu, 15 Aug 2024 04:27:53 -0700 (PDT)
+	s=arc-20240116; t=1723721343; c=relaxed/simple;
+	bh=0Zxz5gzHjDE3jmotW+wUKiwCtCm0/O3DMaAWLrKCUE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fqxcl5T+ZhJo2eYkwIXdlnjai2E0vTQUIOlc61fXm3R3TaInwqyLBiARiJdzyf4VQxo2VCGgZR0aPo0VP4P/n/8IBsudGaoR6ejxorzoMvhQmm6xPZv3o4QpBcfJ0NXwOUzk/VTwLa7GCKKUAoq9hLvY9CgchLD3LRPN/v8DrHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GmS/IRXm; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so398257a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 04:29:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723721272; x=1724326072; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKheqVSEnUqvFLH/97WLdGTkqi4n/pNJlYmRDr/i0K0=;
-        b=Wsg5Rk8c55PaUYce6qgfb3Jb2TxmZCYC22jxnyDARaJKvc+0mcSSXIvYKrd/VFrfrs
-         7NZz5XgucGilHB7ptjKT0ysD9rMbr6NxCmaAcZqsUqZ6FVemoh6soJmnvZ1ftkrRivnO
-         lP/lMbTvOBWhsgR3lQNyXajhh1Zu2uhzFQm99PAZgPAjXh5iAVa62J4pKCHe4VFtS63/
-         iRqwcnYkSG4IrGpC4reiycRR901yL8FxSFfAhDesBQ0pUlcAxtKUAIX0uXIDgcGf+gPX
-         +sadfe0QAcx3nizfmww24X6rAqZeMczkADO2Irgqh1hI+ZN+ENg/SuqZpS42pUA4tASv
-         ddiQ==
+        d=linaro.org; s=google; t=1723721340; x=1724326140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HH/zpKWeTFmyxm1eNt1YcoQ4GGYAIZEDWavm5tzL+nY=;
+        b=GmS/IRXm+cmiHCWsReZPjPvq/d9XgaqEQNACwRlYniw0QC9Z6AqS72EX731ByjaKMg
+         kDh0EajMga5Zgd8sHAYdYeMyQTMp+vXi/bXZIeLZUWweX3IPSMBrjauwVQ+RKd17mFf8
+         nsR3KYRYJFMXDZsez+s/wjpEH9HS/pjB3HMnR+WTFmo4xda2p/WBcvI2nhQ6TjTwO1aq
+         /rWDfpDtZfKjucQNJK8ZDHK+QW2SkmfNaGwW6gxF6UdYInx5AEvCRP3H4thVvcUm78SD
+         XW361rZPpJc2gaoqNggUcIZgWVCtQAKVf110tRYU3PmwDLnF1Xv0S69wdymFQnhkp+go
+         5vLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723721272; x=1724326072;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wKheqVSEnUqvFLH/97WLdGTkqi4n/pNJlYmRDr/i0K0=;
-        b=Rp3oxhKcbf7GwSMwJWkm4TGMYhen8W8JgSQZpRUfJRuX+fhdtNx6ghp3BknMMrb4Go
-         fMoQF6nOS713E7cTetboCsJl9rNAS5jEPB84xPBXj5E7JLC6PBiFNXDKh89kl97VHxL3
-         /h5Ft/KQWw1zqne4PK56BAwsoAfB1YcUCel82beD7U7lcJlbjFlUGo+tCz7/Pswthp+o
-         uij6O2HRNE8piLnr4xriD9VqWyqIFn55wsBj3Tt6xf0oCKinerTKnd/YKG3VXuG67aKd
-         uDTN/fPjakyXhLMNEiQNvB0acts6MwAhs09KLEGZhs00EdJ+jX0K7GnU59SoPiRPUbbe
-         dogw==
-X-Forwarded-Encrypted: i=1; AJvYcCVa7mrEq5p7KT2WRuiWy8Na+ZG8INDbbD5LbBUhmYiTyylzN4IomkXu9sNRJhhZHq+c5PMdBv9ZX7YMfV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrpao1OdqMSu+ytKCbTjGHoNoAFxmIdf100d3QErPMDlAq9wLz
-	OC3u4o/I5840qaOocXVSHwu2k4L13GJu/6/2O5XwjyuoW2bRkL5V5E3aP8F/
-X-Google-Smtp-Source: AGHT+IEv1Mhf/8/EmGnrV0xJC0S5lQ2mFMobbZv55rNB1NQ0v0Op70Zl/X9BZ62BmHAcO7d01+yMZw==
-X-Received: by 2002:a05:6a00:1404:b0:706:65f6:3ab9 with SMTP id d2e1a72fcca58-712673ab9acmr6684894b3a.20.1723721272482;
-        Thu, 15 Aug 2024 04:27:52 -0700 (PDT)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61c72d8sm822262a12.23.2024.08.15.04.27.50
+        d=1e100.net; s=20230601; t=1723721340; x=1724326140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HH/zpKWeTFmyxm1eNt1YcoQ4GGYAIZEDWavm5tzL+nY=;
+        b=bUnH3VNv4w2uWtZk79NtqdVbRsYqysrAzFoNTjZlSdXUTeWFKGGVULrBTMU1fou6N1
+         8YUxSq/zZ4a8ktjkrVJbT4m1M5Z5xk8Qn4Jugsp1kMbdQJO2V/G0gaRDiQbA8OOeAwJh
+         UPQ92LxE1vxfrxoeTxlscf6Ry9fBGhEJLIAaCC8c+8n6dp1xocUCEfOOW0VEnw8vmLBB
+         oPbyW6f2RvarHXJ5LYSWuOqj0+hTCob8KivA49PMgoo+vY9orH1fptcFwmNZX/hodzmx
+         wMawAhRUlOpiPGyTquQYl5JOeRohnF1NioQ8sfCAgp9gvdHEP7D5VB95jGWOYFcIeicN
+         A9Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTtqce5F4mM7yyYXslUDIfRJIbBSJgTR5sO/BpyFBP3ThizLCMdRfkYrvcmPc0S4OEL9TGdhNz/2FTG/TYbXgmVDFWV5GKjK4lr5Wf
+X-Gm-Message-State: AOJu0YwuEN0K7h0y1vdCncPTEcwut8OCxJtBNsk6cRsgpk3OofT5xvLw
+	Ts7X8VOykQIXbVfPo1smuUJ2KjSsCrqLy2dpfNIgE9fjH4nl2YNovwQVnrgm94Q=
+X-Google-Smtp-Source: AGHT+IGweg8JNiNuxijevvNkiZoEQZAItT79/Kj/VOyrtADtkncjFrFOpRhsZwl2875459IMKahghQ==
+X-Received: by 2002:a17:907:9705:b0:a6f:e7a0:91cf with SMTP id a640c23a62f3a-a837cdc005bmr228386866b.24.1723721339965;
+        Thu, 15 Aug 2024 04:28:59 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396b7b3sm86750066b.194.2024.08.15.04.28.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 04:27:52 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH] ext4: disambiguate the return value of ext4_dio_write_end_io()
-Date: Thu, 15 Aug 2024 19:27:46 +0800
-Message-ID: <20240815112746.18570-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
+        Thu, 15 Aug 2024 04:28:59 -0700 (PDT)
+Date: Thu, 15 Aug 2024 14:28:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Roger Quadros <rogerq@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	srk@ti.com, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH net-next v5 2/2] net: ti: icssg-prueth: Add support for
+ PA Stats
+Message-ID: <cd15268f-f6d3-4fca-bd7f-c94011f55996@stanley.mountain>
+References: <20240814092033.2984734-1-danishanwar@ti.com>
+ <20240814092033.2984734-3-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814092033.2984734-3-danishanwar@ti.com>
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Wed, Aug 14, 2024 at 02:50:33PM +0530, MD Danish Anwar wrote:
+> Add support for dumping PA stats registers via ethtool.
+> Firmware maintained stats are stored at PA Stats registers.
+> Also modify emac_get_strings() API to use ethtool_puts().
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
+>  drivers/net/ethernet/ti/icssg/icssg_ethtool.c | 17 +++++-----
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.c  |  6 ++++
+>  drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  5 ++-
+>  drivers/net/ethernet/ti/icssg/icssg_stats.c   | 19 +++++++++--
+>  drivers/net/ethernet/ti/icssg/icssg_stats.h   | 32 +++++++++++++++++++
+>  5 files changed, 67 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
+> index 5688f054cec5..51bb509d37c7 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_ethtool.c
+> @@ -83,13 +83,11 @@ static void emac_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
+>  
+>  	switch (stringset) {
+>  	case ETH_SS_STATS:
+> -		for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++) {
+> -			if (!icssg_all_stats[i].standard_stats) {
+> -				memcpy(p, icssg_all_stats[i].name,
+> -				       ETH_GSTRING_LEN);
+> -				p += ETH_GSTRING_LEN;
+> -			}
+> -		}
+> +		for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++)
+> +			if (!icssg_all_stats[i].standard_stats)
+> +				ethtool_puts(&p, icssg_all_stats[i].name);
+> +		for (i = 0; i < ICSSG_NUM_PA_STATS; i++)
 
-The commit 91562895f803 ("ext4: properly sync file size update after O_SYNC
-direct IO") causes confusion about the meaning of the return value of
-ext4_dio_write_end_io().
+It would probably be better to use ARRAY_SIZE(icssg_all_pa_stats) so that it's
+consistent with the loop right before.
 
-Specifically, when the ext4_handle_inode_extension() operation succeeds,
-ext4_dio_write_end_io() directly returns count instead of 0.
+> +			ethtool_puts(&p, icssg_all_pa_stats[i].name);
+>  		break;
+>  	default:
+>  		break;
+> @@ -100,13 +98,16 @@ static void emac_get_ethtool_stats(struct net_device *ndev,
+>  				   struct ethtool_stats *stats, u64 *data)
+>  {
+>  	struct prueth_emac *emac = netdev_priv(ndev);
+> -	int i;
+> +	int i, j;
+>  
+>  	emac_update_hardware_stats(emac);
+>  
+>  	for (i = 0; i < ARRAY_SIZE(icssg_all_stats); i++)
+>  		if (!icssg_all_stats[i].standard_stats)
+>  			*(data++) = emac->stats[i];
+> +
+> +	for (j = 0; j < ICSSG_NUM_PA_STATS; j++)
+> +		*(data++) = emac->stats[i + j];
 
-This does not cause a bug in the current kernel, but the semantics of the
-return value of the ext4_dio_write_end_io() function are wrong, which is
-likely to introduce bugs in the future code evolution.
+Here i is not an iterator.  It's a stand in for ARRAY_SIZE(icssg_all_stats).
+It would be more readable to do that directly.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/ext4/file.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+	for (i = 0; i < ICSSG_NUM_PA_STATS; i++)
+		*(data++) = emac->stats[ARRAY_SIZE(icssg_all_stats) + i];
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index c89e434db6b7..6df5a92cec2b 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -392,8 +392,9 @@ static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
- 	 */
- 	if (pos + size <= READ_ONCE(EXT4_I(inode)->i_disksize) &&
- 	    pos + size <= i_size_read(inode))
--		return size;
--	return ext4_handle_inode_extension(inode, pos, size);
-+		return 0;
-+	error = ext4_handle_inode_extension(inode, pos, size);
-+	return error < 0 ? error : 0;
- }
- 
- static const struct iomap_dio_ops ext4_dio_write_ops = {
--- 
-2.41.1
+To be honest, putting the pa_stats at the end of ->stats would have made sense
+if we could have looped over the whole array, but since they have to be treated
+differently we should probably just put them into their own ->pa_stats array.
+
+I haven't tested this so maybe I've missed something obvious.
+
+The "all" in "icssg_all_stats" doesn't really make sense anymore btw...
+
+Sorry for being so nit picky on a v5 patch. :(
+
+regards,
+dan carpenter
 
 
