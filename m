@@ -1,308 +1,148 @@
-Return-Path: <linux-kernel+bounces-288287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB77953862
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:38:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93888953865
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8294C1F24916
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:38:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492D01F24683
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3BD26AE4;
-	Thu, 15 Aug 2024 16:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B3D1B9B4F;
+	Thu, 15 Aug 2024 16:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1s8vPwKD"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="RxZFR+TG"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF7B10E5;
-	Thu, 15 Aug 2024 16:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF55C1B9B49
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723739872; cv=none; b=jO7xe08f3GxdE0+wgVjwq92LSazOxH4U75kJq/sVr6xZhFpfP3jDuyPrqaPGBSG5dEQi8oWP4weLWH+f0ZhTowH5UpAFVxjxfojQ5+geFOpL2KqgqUDi+k7geOFQMpl6NjnIEBKpfaxVtH78GRZyYLALTQQVwtr775F488ZEY3o=
+	t=1723739896; cv=none; b=Yk+iw2RUVTqYBWpxorSafIniD9gn6j6HZFSX3QzYcAoC0yfecnqXJTWNLe8bcaaoYrAFyVCiD5b02v85/ZqnkAf3B7ui/xAPy8gl0TGPVc01f5gXWudM5ZsqaF0YXEHQp2lJc2zKBmsn0+fYpaPNfz+kfE59OnsrXubrOVpGIlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723739872; c=relaxed/simple;
-	bh=wS7NvznDEOIUaRvq/FI7azryJRMWQXghomS49B6kbOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rUINwEqH6d6j9EGaMhRbn3eJWBoocr/OS7+kMInPJFFvegBczIFvat7Kb2aALdiFCp4ocHK9l5sehm2eIeDYe1uZbUkCBjy8jVjRm7jgtSle/4F7k1CblizJlRB+tuPZcxkoTi4DP8VLL7HGLrW/NoxFZu9VtQHbXu4DJy5WBHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1s8vPwKD; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YzUauLZvtjkpYS5lkyPVzFy8sIAW53Spuybo7DpFzHg=; b=1s8vPwKDJKVPOkmLl2ZEgVEhsh
-	xWWvtexSHGfq96JwEO8yh1EiwGp/ixle8zY9J539ZsT7PBYlT1Q4dZLgXN2gANxhLB16aP3SwGj1O
-	DAXRCXOgDJqEurAN3aYecG4CL+gXE29beIZsx6GVb+xu50jjsJDW+caOxnzCkmR7Q70ofss6roiX7
-	YvTr4brg2vR1Vs4kwyJ1SHL7s7Ms83yjrKC9zP1z/+EcySKtVch6UIEW3cCom/OncYuxNl4CHZ4D5
-	YKKqRjlWZsnKp/fuqwZGVfqsRdsdtVl3RPEVqp9TxhBDczME/SwrAcy/56QUYh98XzBtsfjTxAiHv
-	8NdnR7Ug==;
-Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sedTl-0005SG-25; Thu, 15 Aug 2024 18:37:37 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org,
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- David Wu <david.wu@rock-chips.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
- kernel@collabora.com
-Subject:
- Re: [PATCH v2 2/2] ethernet: stmmac: dwmac-rk: Add GMAC support for RK3576
-Date: Thu, 15 Aug 2024 18:37:35 +0200
-Message-ID: <10024041.2OtUDhi4od@diego>
-In-Reply-To: <3304458.aeNJFYEL58@trenzalore>
-References:
- <20240808170113.82775-1-detlev.casanova@collabora.com>
- <3724132.9z1YWOviru@diego> <3304458.aeNJFYEL58@trenzalore>
+	s=arc-20240116; t=1723739896; c=relaxed/simple;
+	bh=jMlAZu9qZMpTmt+5bgGh6ITXoRYe8d6SMHX+V0KtlmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IwHE2jgNNAHunRPD1h4AKk/HyxkjyBkuxJI6jcRHephxwQB7lM3PRv1QcZp7doXEUWWbIMcOQqX1Au/2ESsCK1oEbLCQm7uf1yaqT4D+FKENZcmvrjJJiTce1/xEa8RLrEjZTWCvMhwmqfq9/khjdxUvTtMs71SPV1ti4AcbFlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=RxZFR+TG; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a1df0a93eeso70322785a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723739893; x=1724344693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VFTNWVqUYfCcABK8DrDnvPgSGbZWu7816sHlk6jkx8Q=;
+        b=RxZFR+TGKXTQDbsqzfpah1I/T7aVTA8+O7fraZQ1XN35/D1ZQ/ZfVl8ByRPdKn4wcd
+         OQUVQOhEx8Xg8/Xnh+hgKJ9EaT3vEbprJ984B3WeS+iypYy2VDg0ZlYO75fZ3i5lfNJq
+         pTOmhwq5c68cnrHkxatzbADmXpqQJjv0oF4cM/fUWFebLQiJ4je4Wo9mSYEMsR1k/apC
+         8O4cdeJpS9vHrjQqLVRQlijA/p1pH249Mw97rKC9e672XY0Dsn6QJ3PY0vusb/rBXBHt
+         PWYSJ8Nbw5sDGrJSGLOLzvOwYzCJCn/N4MlxaC7OudvAuKwazHGEM9Nqu6yruII9e1vY
+         67dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723739893; x=1724344693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VFTNWVqUYfCcABK8DrDnvPgSGbZWu7816sHlk6jkx8Q=;
+        b=F1ag1xfr62P6yNQ3Hq+emn9d5TeZIdOP8kyUrNjvPzbuSegZ+cYFgXrSQViN60PLHd
+         P9A+yZepWPB0vEx9m5hJKwsxZ3fkRZGKMPvxjV2J7KnjjlgoZ1VuzhHOCXFVMjzwQGt8
+         vHKF2QE0C9ukOsznkNPrXgm+N3TfIqipcxPI9X4h1CxuaniAIIC1liUDWgMK+ILdPkut
+         h6LJrVpL1UT51AIrYeWOqk7uyMawO6anqRGqLqnddRwvdPAAhfaYCc/lac9M6qiJXb2U
+         qoUNdydgAoZhSAh1agzspFEmlA2+gbBFcukbUQwzGCK+27PIXABcWKrvnzlpzzJ2O6Ra
+         /R2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVy0ZaOEGGcyDPDyc8g/EarDR5Nue4/ksFOfChS7xj7yxliK0J3IlbxRCIgH3rR9Mpi8zY3Sl/Q+yuKhdGKCRNseuZWOa/9JpR/ms1N
+X-Gm-Message-State: AOJu0YzwFC0jQesuU0XtwrOIN6xp4HdKxKb34QaLkHeJue+2X5bB/p8E
+	xkznN5hJDLUquWRP0SMZ7Rp0rbwfWH+0xUcDH5d/AZA+TfZtTLm4XIiTq0XOQcY=
+X-Google-Smtp-Source: AGHT+IHgB0euuLtojBmxwtFUei6W+/O9qvNh5LVT/DjkRkyeMw0VoI9tWPGBOYRiGDcx7MYqyoTeqQ==
+X-Received: by 2002:a05:620a:4102:b0:79e:ffa3:d6a5 with SMTP id af79cd13be357-7a5069e5d9dmr18058585a.64.1723739893409;
+        Thu, 15 Aug 2024 09:38:13 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff070181sm77535385a.63.2024.08.15.09.38.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 09:38:12 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sedUJ-0042Yt-Bf;
+	Thu, 15 Aug 2024 13:38:11 -0300
+Date: Thu, 15 Aug 2024 13:38:11 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Martin Oliveira <martin.oliveira@eideticom.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Artemy Kovalyov <artemyko@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Sloan <david.sloan@eideticom.com>
+Subject: Re: [PATCH v5 3/4] mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
+Message-ID: <20240815163811.GN3468552@ziepe.ca>
+References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
+ <20240808183340.483468-4-martin.oliveira@eideticom.com>
+ <ZrmuGrDaJTZFrKrc@infradead.org>
+ <20240812231249.GG1985367@ziepe.ca>
+ <ZrryAFGBCG1cyfOA@infradead.org>
+ <20240813160502.GH1985367@ziepe.ca>
+ <ZrwyD10ejPxowETN@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrwyD10ejPxowETN@infradead.org>
 
-Am Freitag, 9. August 2024, 16:38:23 CEST schrieb Detlev Casanova:
-> On Friday, 9 August 2024 09:16:44 EDT Heiko St=FCbner wrote:
-> > Hi Detlev,
-> >=20
-> > Am Donnerstag, 8. August 2024, 19:00:18 CEST schrieb Detlev Casanova:
-> > > From: David Wu <david.wu@rock-chips.com>
-> > >=20
-> > > Add constants and callback functions for the dwmac on RK3576 soc.
-> > >=20
-> > > Signed-off-by: David Wu <david.wu@rock-chips.com>
-> > > [rebase, extracted bindings]
-> > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > > ---
-> > >=20
-> > >  .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 156 ++++++++++++++++=
-++
-> > >  1 file changed, 156 insertions(+)
-> > >=20
-> > > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c index
-> > > 7ae04d8d291c8..e1fa8fc9f4012 100644
-> > > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-> > > @@ -1116,6 +1116,161 @@ static const struct rk_gmac_ops rk3568_ops =
-=3D {
-> > >=20
-> > >  	},
-> > > =20
-> > >  };
-> > >=20
->=20
-> [...]
->=20
-> > > +/* SDGMAC_GRF */
-> > > +#define RK3576_GRF_GMAC_CON0			0X0020
-> > > +#define RK3576_GRF_GMAC_CON1			0X0024
-> > > +
-> > > +#define RK3576_GMAC_RMII_MODE			GRF_BIT(3)
-> > > +#define RK3576_GMAC_RGMII_MODE			GRF_CLR_BIT(3)
-> > > +
-> > > +#define RK3576_GMAC_CLK_SELET_IO		GRF_BIT(7)
-> > > +#define RK3576_GMAC_CLK_SELET_CRU		GRF_CLR_BIT(7)
-> >=20
-> > nit: typos _CLK_SELECT_ ... missing the C in select
->=20
-> Ack
+On Tue, Aug 13, 2024 at 09:26:55PM -0700, Christoph Hellwig wrote:
+> On Tue, Aug 13, 2024 at 01:05:02PM -0300, Jason Gunthorpe wrote:
+> > > Where do we block driver unbind with an open resource?  
+> > 
+> > I keep seeing it in different subsystems, safe driver unbind is really
+> > hard. :\ eg I think VFIO has some waits in it
+> 
+> Well, waits for what? 
 
-So all points below are resolved, and with the C added
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Looks like it waits for the fds to close at least. It has weird
+handshake where it notifies userspace that the device is closing and
+the userspace needs to close the fd. See vfio_unregister_group_dev()
 
->=20
-> > > +
-> > > +#define RK3576_GMAC_CLK_RMII_DIV2		GRF_BIT(5)
-> > > +#define RK3576_GMAC_CLK_RMII_DIV20		GRF_CLR_BIT(5)
-> >=20
-> > I think those are backwards
-> > The TRM says bit[5]=3D0: 25MHz (DIV2) and bit[5]=3D1: 2.5MHz (DIV20)
-> >=20
-> > I guess nobody also on Rockchip's side tested a RMII phy on those contr=
-ollrs
->=20
-> Can't be sure about that. An error in the TRM is not impossible either, a=
-s for=20
-> rk3588, it is also bit[5]=3D0: DIV20 and bit[5]=3D1: DIV2. I can switch t=
-hem to=20
-> match the TRM though, we may never now.
+In the past VFIO couldn't do anything else because it had VMAs open
+that point to the device's mmio and it would be wrong to unbind the
+driver and leave those uncleaned. VFIO now knows how to zap VMA so
+maybe this could be improved, but it looks like a sizable uplift.
 
-As David said, the TRM is wrong and the code is correct, so all good
+> Usuaully an unbind has to wait for something, but waiting for
+> unbound references is always a bug.  And I can't think of any
+> sensible subsystem doing this.
 
+I've seen several cases over the years.. It can be hard in many cases
+to deal with the issue. Like the VMA's above for instance. rdma also
+had to learn how to do zap before it could do fast unbind.
 
->=20
-> > > +
-> > > +#define RK3576_GMAC_CLK_RGMII_DIV1		\
-> > > +			(GRF_CLR_BIT(6) | GRF_CLR_BIT(5))
-> > > +#define RK3576_GMAC_CLK_RGMII_DIV5		\
-> > > +			(GRF_BIT(6) | GRF_BIT(5))
-> > > +#define RK3576_GMAC_CLK_RGMII_DIV50		\
-> > > +			(GRF_BIT(6) | GRF_CLR_BIT(5))
-> > > +
-> >=20
-> > in contrast, these are correct and match the TRM
-> >=20
-> > > +#define RK3576_GMAC_CLK_RMII_GATE		GRF_BIT(4)
-> > > +#define RK3576_GMAC_CLK_RMII_NOGATE		GRF_CLR_BIT(4)
-> > > +
-> > > +static void rk3576_set_to_rgmii(struct rk_priv_data *bsp_priv,
-> > > +				int tx_delay, int rx_delay)
-> > > +{
-> > > +	struct device *dev =3D &bsp_priv->pdev->dev;
-> > > +	unsigned int offset_con;
-> > > +
-> > > +	if (IS_ERR(bsp_priv->grf) || IS_ERR(bsp_priv->php_grf)) {
-> > > +		dev_err(dev, "Missing rockchip,grf or rockchip,php_grf=20
-> property\n");
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	offset_con =3D bsp_priv->id =3D=3D 1 ? RK3576_GRF_GMAC_CON1 :
-> > > +					 RK3576_GRF_GMAC_CON0;
-> > > +
-> > > +	regmap_write(bsp_priv->grf, offset_con, RK3576_GMAC_RGMII_MODE);
-> > > +
-> > > +	offset_con =3D bsp_priv->id =3D=3D 1 ? RK3576_VCCIO0_1_3_IOC_CON4 :
-> > > +					=20
-> RK3576_VCCIO0_1_3_IOC_CON2;
-> > > +
-> > > +	/* m0 && m1 delay enabled */
-> > > +	regmap_write(bsp_priv->php_grf, offset_con,
-> > > +		     DELAY_ENABLE(RK3576, tx_delay, rx_delay));
-> > > +	regmap_write(bsp_priv->php_grf, offset_con + 0x4,
-> > > +		     DELAY_ENABLE(RK3576, tx_delay, rx_delay));
-> > > +
-> > > +	/* m0 && m1 delay value */
-> > > +	regmap_write(bsp_priv->php_grf, offset_con,
-> > > +		     RK3576_GMAC_CLK_TX_DL_CFG(tx_delay) |
-> > > +		     RK3576_GMAC_CLK_RX_DL_CFG(rx_delay));
-> > > +	regmap_write(bsp_priv->php_grf, offset_con + 0x4,
-> > > +		     RK3576_GMAC_CLK_TX_DL_CFG(tx_delay) |
-> > > +		     RK3576_GMAC_CLK_RX_DL_CFG(rx_delay));
-> > > +}
-> > > +
-> > > +static void rk3576_set_to_rmii(struct rk_priv_data *bsp_priv)
-> > > +{
-> > > +	struct device *dev =3D &bsp_priv->pdev->dev;
-> > > +	unsigned int offset_con;
-> > > +
-> > > +	if (IS_ERR(bsp_priv->php_grf)) {
-> > > +		dev_err(dev, "%s: Missing rockchip,php_grf property\n",=20
-> __func__);
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	offset_con =3D bsp_priv->id =3D=3D 1 ? RK3576_GRF_GMAC_CON1 :
-> > > +					 RK3576_GRF_GMAC_CON0;
-> > > +
-> > > +	regmap_write(bsp_priv->grf, offset_con, RK3576_GMAC_RMII_MODE);
-> > > +}
-> > > +
-> > > +static void rk3576_set_gmac_speed(struct rk_priv_data *bsp_priv, int
-> > > speed) +{
-> > > +	struct device *dev =3D &bsp_priv->pdev->dev;
-> > > +	unsigned int val =3D 0, offset_con;
-> > > +
-> > > +	switch (speed) {
-> > > +	case 10:
-> > > +		if (bsp_priv->phy_iface =3D=3D PHY_INTERFACE_MODE_RMII)
-> > > +			val =3D RK3576_GMAC_CLK_RMII_DIV20;
-> > > +		else
-> > > +			val =3D RK3576_GMAC_CLK_RGMII_DIV50;
-> >=20
-> > 		val =3D bsp_priv->phy_iface =3D=3D PHY_INTERFACE_MODE_RMII ?
-> > 				RK3576_GMAC_CLK_RMII_DIV20 :
-> > 				RK3576_GMAC_CLK_RGMII_DIV50;
-> > perhaps?
->=20
-> This way matches how it is written in rk3588_set_gmac_speed(). I find tha=
-t=20
-> having similar code for similar functions helps reading and understanding=
- it=20
-> better (although I agree that your suggestion looks better).
->=20
-> I'd rather keep it like it is for now if that's ok.
+Some places just have bugs where they don't wait and Weird Stuff
+happens. There is a strange misconception that module refcounts
+protect against unbind :\
 
-ok, there is not much difference between the two variants anyway.
+Not saying this is good design, or desirable, just pointing out we
+seem to tolerate this in enough other places.
 
+In this case the only resolution I could think of would be to have the
+rdma stack somehow register a notifier on the pgmap. Then we could
+revoke the RDMA access synchronously during destruction and return
+those refcounts.
 
-> > > +		break;
-> > > +	case 100:
-> > > +		if (bsp_priv->phy_iface =3D=3D PHY_INTERFACE_MODE_RMII)
-> > > +			val =3D RK3576_GMAC_CLK_RMII_DIV2;
-> > > +		else
-> > > +			val =3D RK3576_GMAC_CLK_RGMII_DIV5;
-> >=20
-> > same as above?
-> >=20
-> > > +		break;
-> > > +	case 1000:
-> > > +		if (bsp_priv->phy_iface !=3D PHY_INTERFACE_MODE_RMII)
-> > > +			val =3D RK3576_GMAC_CLK_RGMII_DIV1;
-> > > +		else
-> > > +			goto err;
-> >=20
-> > 		if (bsp_priv->phy_iface =3D=3D PHY_INTERFACE_MODE_RMII)
-> > 			goto err;
-> >=20
-> > 		val =3D RK3576_GMAC_CLK_RGMII_DIV1;
-> >=20
-> > > +		break;
-> > > +	default:
-> > > +		goto err;
-> > > +	}
-> > > +
-> > > +	offset_con =3D bsp_priv->id =3D=3D 1 ? RK3576_GRF_GMAC_CON1 :
-> > > +					 RK3576_GRF_GMAC_CON0;
-> > > +
-> > > +	regmap_write(bsp_priv->grf, offset_con, val);
-> > > +
-> > > +	return;
-> > > +err:
-> > > +	dev_err(dev, "unknown speed value for GMAC speed=3D%d", speed);
-> > > +}
-> > > +
-> > > +static void rk3576_set_clock_selection(struct rk_priv_data *bsp_priv,
-> > > bool input, +				       bool enable)
-> > > +{
-> > > +	unsigned int val =3D input ? RK3576_GMAC_CLK_SELET_IO :
-> > > +				   RK3576_GMAC_CLK_SELET_CRU;
-> > > +	unsigned int offset_con;
-> > > +
-> > > +	val |=3D enable ? RK3576_GMAC_CLK_RMII_NOGATE :
-> > > +			RK3576_GMAC_CLK_RMII_GATE;
-> > > +
-> > > +	offset_con =3D bsp_priv->id =3D=3D 1 ? RK3576_GRF_GMAC_CON1 :
-> > > +					 RK3576_GRF_GMAC_CON0;
-> >=20
-> > nit: alignment of both looks like it could be nicer
->=20
-> That's strange, the alignments looks good in vim and git diff. It also lo=
-oks=20
-> nice on the archive: https://lore.kernel.org/linux-rockchip/
-> 20240808170113.82775-3-detlev.casanova@collabora.com/
+That does seems a bit complicated though..
 
-ok, probably just some display artifact here :-)
-
-
-
+Jason
 
