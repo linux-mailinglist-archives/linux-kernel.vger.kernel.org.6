@@ -1,49 +1,76 @@
-Return-Path: <linux-kernel+bounces-287444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5239527D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:10:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B774A9527DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D97F28618C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F112E28643B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B16614A85;
-	Thu, 15 Aug 2024 02:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34AD18622;
+	Thu, 15 Aug 2024 02:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiW4xkfF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mP0uiXcA"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A179C10A0E;
-	Thu, 15 Aug 2024 02:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A702963D5;
+	Thu, 15 Aug 2024 02:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723687831; cv=none; b=Me2E4eBKHrxbePwcapi/qCk+cYc/rO8k+HUn3TL8k6ZGq/BggjikiVskEeleDa8TbbDd8PtDhj+8+U/ABWGyZIQXlkTyQfkPVAYj9gUOYwqWMpkk063mFizPJ/8KoD1PMoj3qnfG48gKd9Q76KzNJI/AGuv5GUhc5jLR9cdVhzE=
+	t=1723688426; cv=none; b=UoBIZ6AHrTsh4wCgWTwW9Gedgfs6whqnx+nkWfgJjj4p6qTGRrPBD+kgReOxYhYEDmtoFBjfcbruwBs5VGmbdnIOhhWLKC420HgjLo4uTNVkd6OkMSSOW5idLv9APTLtld5CrOwJOfid4Z1dkZcZ9roy9d5TFZEDKeW8MaMpZ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723687831; c=relaxed/simple;
-	bh=aHXL2fTzKyl3l6PGvG4Oke2JLvLAbEsecLeL3moCNkY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oTrou47Llb+Y5hRc+b9kIIPKauCz7NXO5moDGAk7mlYXwTtFokcv8ckNJE2fRnZV40EkrvZtxNSMKiHEU6/RTeG/qU3JGGHCL8DUXkSe78GbNKIc1/U3+ek3pVESB07AFRV+nQt/QnCIdIaBg/Zb6E/dGbLIbDm+/EhSDKhNeto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiW4xkfF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD9BC116B1;
-	Thu, 15 Aug 2024 02:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723687831;
-	bh=aHXL2fTzKyl3l6PGvG4Oke2JLvLAbEsecLeL3moCNkY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RiW4xkfFT18rovAoUI3kbqbTUDq7zyDHgr6MqNBpEvUXMyvdk4uYgwznIhA0+ve3K
-	 axrsIFZtKWRHeUJW/16z6eI4Nz/y0TaboWlc3o6DAPS0M47JOP5jfgkm7iUQW2BAa9
-	 k13BPFlNwJXoE41WkFML9u4oA5AtCBu5nHwH6VTkSdYgKp2+7gim1PH9gSBtxvNb8y
-	 bU02Yi0cHXrY5DLca5a+pQrXZVTdlO3oZTY7GK8O4PtS0IjUvdml5s60tMdMYBn/Vj
-	 gGxYrfsJOv137P1T/kDV3RT4j+YQmHgkKzrufJedQOGXJ3tf7wSIEikV0QutqXlXet
-	 PbvB7LpqRrfOQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71BBD3810934;
-	Thu, 15 Aug 2024 02:10:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723688426; c=relaxed/simple;
+	bh=U60fVcnNPb8Res7UfK5rezEEz6bFcHgFOoBqSJZaN7U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KXI2mRzc+ekndCHYAu8HaVzsEnO8a7z/UKZN+tWCXs2miu+RhzXwClH+S/k5YDdoZhxB8oY6WO7k4Z1akptw3znL9z06br3qbH6BHLiriefASM68K7gADZn+B98idhoyTZXWF5IffXuzevudUdZQbDPX1pFmaCgKBXNZHgbcDKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mP0uiXcA; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723688423; x=1755224423;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=U60fVcnNPb8Res7UfK5rezEEz6bFcHgFOoBqSJZaN7U=;
+  b=mP0uiXcAH8H9gur+kJk5AtaL06szjm9S3fHIs75KpC3kwvn0RkA1gCXC
+   m90QVuTXRYz7RJuhlcR27LB7Bgrl3venxJIrw5U3p2NcMwRCF0QeR5ZY5
+   4EN4TyXCCUGtf44REHXcbAJQStsKdMAQCwZvUWfxOZwKeyVlkJK4rgO2o
+   AdNta4JVrmaGxNheHk51Oh2BuV0WAnqOOygcAZZdLaVb8XPVlkmgIfJKf
+   1UywKj0mgwp84TkMvGSyDqARP/YIXGo4j4iFAAkOvXbHnwb68MxdR5BCZ
+   GkHMgZH7hTTTfaXFP6MQsUbdiQh+zv5D03zHAIBVd63OOIEUphpxRa5SP
+   Q==;
+X-CSE-ConnectionGUID: TLKY8qnjRuKJglbogpyTvw==
+X-CSE-MsgGUID: GtTHX5xjRV2BZxOcfUxztQ==
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="30473034"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2024 19:20:22 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 14 Aug 2024 19:20:13 -0700
+Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 14 Aug 2024 19:20:12 -0700
+From: <Tristram.Ha@microchip.com>
+To: Woojung Huh <woojung.huh@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<devicetree@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>, Florian Fainelli
+	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, Rob Herring
+	<robh@kernel.org>
+CC: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut
+	<marex@denx.de>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Tristram Ha <tristram.ha@microchip.com>
+Subject: [PATCH net-next v4 0/2] net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
+Date: Wed, 14 Aug 2024 19:20:12 -0700
+Message-ID: <20240815022014.55275-1-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,56 +78,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v4 0/4] selftests/bpf: convert three other cgroup
- tests to test_progs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172368783029.2443920.5802925440430731324.git-patchwork-notify@kernel.org>
-Date: Thu, 15 Aug 2024 02:10:30 +0000
-References: <20240813-convert_cgroup_tests-v4-0-a33c03458cf6@bootlin.com>
-In-Reply-To: <20240813-convert_cgroup_tests-v4-0-a33c03458cf6@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29_=3Calexis=2Elothore=40bo?=@codeaurora.org,
-	=?utf-8?q?otlin=2Ecom=3E?=@codeaurora.org
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, alan.maguire@oracle.com
+Content-Type: text/plain
 
-Hello:
+From: Tristram Ha <tristram.ha@microchip.com>
 
-This series was applied to bpf/bpf-next.git (master)
-by Martin KaFai Lau <martin.lau@kernel.org>:
+This series of patches is to add KSZ8895/KSZ8864 switch support to the
+KSZ DSA driver.
 
-On Tue, 13 Aug 2024 14:45:04 +0200 you wrote:
-> Hello,
-> this series brings a new set of test converted to the test_progs framework.
-> Since the tests are quite small, I chose to group three tests conversion in
-> the same series, but feel free to let me know if I should keep one series
-> per test. The series focuses on cgroup testing and converts the following
-> tests:
-> - get_cgroup_id_user
-> - cgroup_storage
-> - test_skb_cgroup_id_user
-> 
-> [...]
+v4
+- Update with Paolo's suggestion
+- Sort KSZ8864 and KSZ8895 behind KSZ8863
 
-Here is the summary with links:
-  - [bpf-next,v4,1/4] selftests/bpf: convert get_current_cgroup_id_user to test_progs
-    https://git.kernel.org/bpf/bpf-next/c/a4ae5c31e0f2
-  - [bpf-next,v4,2/4] selftests/bpf: convert test_cgroup_storage to test_progs
-    https://git.kernel.org/bpf/bpf-next/c/37a14cfd667a
-  - [bpf-next,v4,3/4] selftests/bpf: add proper section name to bpf prog and rename it
-    https://git.kernel.org/bpf/bpf-next/c/7b4400a0a69b
-  - [bpf-next,v4,4/4] selftests/bpf: convert test_skb_cgroup_id_user to test_progs
-    https://git.kernel.org/bpf/bpf-next/c/f957c230e173
+v3
+- Correct microchip,ksz.yaml to pass yamllint check
 
-You are awesome, thank you!
+v2
+- Add maintainers for devicetree
+
+Tristram Ha (2):
+  dt-bindings: net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
+  net: dsa: microchip: Add KSZ8895/KSZ8864 switch support
+
+ .../bindings/net/dsa/microchip,ksz.yaml       |   2 +
+ drivers/net/dsa/microchip/ksz8795.c           |  16 ++-
+ drivers/net/dsa/microchip/ksz_common.c        | 130 +++++++++++++++++-
+ drivers/net/dsa/microchip/ksz_common.h        |  20 ++-
+ drivers/net/dsa/microchip/ksz_spi.c           |  15 +-
+ include/linux/platform_data/microchip-ksz.h   |   2 +
+ 6 files changed, 172 insertions(+), 13 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
