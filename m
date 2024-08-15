@@ -1,64 +1,82 @@
-Return-Path: <linux-kernel+bounces-288038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17BE79531F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:00:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E7B9531FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCBEF1F23085
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:00:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9941C23F16
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA6D1A00EC;
-	Thu, 15 Aug 2024 14:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DD51A00F5;
+	Thu, 15 Aug 2024 14:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRMXgrvV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MgYnEBqA"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3F21714DD;
-	Thu, 15 Aug 2024 14:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE3C762D2
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730409; cv=none; b=DsIJ9oyzpsHiSZeSsimahFwINZVNKlvOVWfcnK5U91Ey/rfBCQnUgNzGwoKN1labtb+Fpg2km4bEsC2cyJgoG0d8ctDLi5jzqdDu2fJ844evpq7Z7PEb4lSRzSUbwNvDfGYG0eWqu9Y5kq539yrrMhHrHnKl3GIMQPRxvHzko64=
+	t=1723730431; cv=none; b=S/r6pphL7JhsUepXdzEZqV75M/aRWKlgMF890biWdTouCBLujxLXhGZoHse1M95zcHeJwvFRvU8MM5scy+ZNq6NYaKVVuyFq5dzz/Ifk9s/4KZtT9Iyfl/fUV02g/eQSuV9sCIvQ8YCPwlYZHsxrrxlvIRTmsqIu96NYlUx8rGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730409; c=relaxed/simple;
-	bh=VjE4NfRmSu0PuBa/1fJhFSIyi6UvWzfAz36g3PUzzGk=;
+	s=arc-20240116; t=1723730431; c=relaxed/simple;
+	bh=7xANUlILESy6YV2LFAif1MvSLeko3tjm8Md9Nhef5cg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDskleVu7HFw9ZlahyEWBbidzmYWq9QZ5hBOwcclwSop1+EOY+ZpcHYmjJOGFdbYql0M3SuSe0WefywLCnfEEaUutouiDYqVCh88nGPPkbeQhaqJBO253k8YfGUGF72D3H6bc9lAojgX/hqdQTCHibX+y5cB0Vfz8jreH59ryfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRMXgrvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8BD0C4AF0C;
-	Thu, 15 Aug 2024 14:00:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723730409;
-	bh=VjE4NfRmSu0PuBa/1fJhFSIyi6UvWzfAz36g3PUzzGk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kRMXgrvVQ8zjoE2cMq4XkxjxL/ABksyrGoF+xMEO9zK2++sr6rOAp7lriRXjld/+u
-	 Yr5Nqj0Vpoj00e5P9Mr4ydHtX1D9YKfN4tFuSCwIbfwz3VapMRO6PesNhb58YpVzUJ
-	 hIOnRL/i5/+WqtsaCgHMNBpGJjkEud5YUfmiD4Gp5BsPRm/lRfpTAo7WLqKYmjZlFL
-	 6ZEtwR8safZR6ggzLZo1ScK6PyNM+kOMixGNvP7i4hC3Nn1qfjcUX1vUaFbnmQdZb/
-	 d3Xhg4Pw0jfVN8/UlCVoxBy0xUBNrNL+kNowHNMQ92Zcw9o+Xg2Pg2cwF24DawWD+7
-	 tDKvU4iQ2FXVA==
-Date: Thu, 15 Aug 2024 16:00:01 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 09/26] rust: alloc: implement kernel `Box`
-Message-ID: <Zr4J4e1aLADlyDMD@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org>
- <20240812182355.11641-10-dakr@kernel.org>
- <a69e7280-7291-49f7-a46f-1ad465efce04@proton.me>
- <Zr0ocI-j3fZZM7Rw@cassiopeiae>
- <56ebda7b-c570-4dc6-8456-ab768d3a4b77@proton.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mP3nfNhbxm03scyaSRakrLJk27mRvJlxMlBDkI4PAjyvfqOyWNNR2AmsUIGuZW7/5ozt2U8KNJoQ7F26iutysCn37ucWjMjLAyN1C+fCOMe7sIX4rXfvxFI9P44jk4XirqOixVeZ0dyrSuG8t2ye8w9K0GyIzAWHgIy6oCaEVjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MgYnEBqA; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so112360966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723730427; x=1724335227; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1HwVmRV89v7M69T25e0wUMNayNXrK2r4ox2q3t50Vh0=;
+        b=MgYnEBqAe01QO0ByugQPHrP0HnND32gzTU6PoclNB8AUgX6zBNsbc+DJfsnVdoXvqy
+         j4vmoETVXeXFu9gYzYP0Gk3pzfiFO1e8a3jOmhKkTnVQ9ZlmD40DYafD4CUamEKyv5U2
+         0/PlgYxynXt4k5oKwLvYnFUNS8tEbE3E+8M/kkMYWE9RfBwRo3z68T+2QcZy32b6eWhY
+         DYBdh/HffJRcuOnT4Vt9kOLgenN/ZCjJnyaQc0HJaxN+GiEb6LHx8lL56TQCkQF7TFWl
+         iTgkYRiNZ9MTQf0eCqpvhIbGQudo9zOXyIsAnQO72Da2APAQfuujRRgiVZN3cHuUesrw
+         ACow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723730427; x=1724335227;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1HwVmRV89v7M69T25e0wUMNayNXrK2r4ox2q3t50Vh0=;
+        b=SCW6sW7uIY7+lINmZ/ISWSCDu0gHMyqGG9G7FjcLNw+GlWuxsDoGdsjv2eT3RAVxva
+         95U6pwiFRlvUvefqGfDEUBGOSeSeQRs/weCJigwRBtimkn9ZATYtltpfisLq3nWYJO+B
+         Qw5r0QIExvk3Exgcc5KCj9+pzJU6LiiVVt7yaYhXTgX4c/clgVtA+jX7KpACjVeo0xOC
+         7OX518Vwcy8gyHHEQw+D76/NtYy7fxSjEcq4k/UJBn7KD7gvafWq1Ocz+DT1MSpDI/Ay
+         VySiEqzlJHtWdJPWHIfxuifHOiWBhlvrZkkCDWPegh6G4tiAzjCH7wPMn0Sp7Jld1Lpu
+         Sa9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXCBG7LOKmlHTDl83BLRHK3vMoM5eDuh4092GMoIV7Hv0x5unLznZ1v6FMZ6oyLWsqRXTev8TIiLYsEyUUY2E9/OhTKHqsADW9p35yY
+X-Gm-Message-State: AOJu0Yy76Ld1EkxzyTmJCmaRIYQGsBic68dLYAOmLs4RMXhjXILHdgjF
+	iynMfMjbrYyk7bXHGIHkPVi6ONK6TI11v+z/nBSTBNJ5OP5vSfMLSYsjjXf+IBU=
+X-Google-Smtp-Source: AGHT+IHCyNLSdEabE0mdKcxC0sz8KaFZAcheUO0DM/MffHvJBCYlYWGM/oMlpY7aMP2RKaChGYj3Hg==
+X-Received: by 2002:a17:907:1c12:b0:a77:dbe2:31ff with SMTP id a640c23a62f3a-a8367049616mr410242466b.66.1723730426894;
+        Thu, 15 Aug 2024 07:00:26 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83838c6760sm107045166b.23.2024.08.15.07.00.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 07:00:26 -0700 (PDT)
+Date: Thu, 15 Aug 2024 16:00:25 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [POC 7/7] livepatching: Remove per-state version
+Message-ID: <Zr4J-U-HmmtxU-BB@pathway.suse.cz>
+References: <20231110170428.6664-1-pmladek@suse.com>
+ <20231110170428.6664-8-pmladek@suse.com>
+ <alpine.LSU.2.21.2407251553420.21729@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,106 +85,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <56ebda7b-c570-4dc6-8456-ab768d3a4b77@proton.me>
+In-Reply-To: <alpine.LSU.2.21.2407251553420.21729@pobox.suse.cz>
 
-On Thu, Aug 15, 2024 at 01:24:47PM +0000, Benno Lossin wrote:
-> On 14.08.24 23:58, Danilo Krummrich wrote:
-> > On Wed, Aug 14, 2024 at 05:01:34PM +0000, Benno Lossin wrote:
-> >> On 12.08.24 20:22, Danilo Krummrich wrote:
-> >>> +/// The kernel's [`Box`] type - a heap allocation for a single value of type `T`.
-> >>> +///
-> >>> +/// This is the kernel's version of the Rust stdlib's `Box`. There are a couple of differences,
-> >>> +/// for example no `noalias` attribute is emitted and partially moving out of a `Box` is not
-> >>> +/// supported.
-> >>
-> >> I would add "But otherwise it works the same." (I don't know if there is
-> >> a comma needed after the "otherwise").
+On Thu 2024-07-25 16:16:44, Miroslav Benes wrote:
+> On Fri, 10 Nov 2023, Petr Mladek wrote:
+> 
+> > The livepatch state API was added to help with maintaining:
 > > 
-> > There are more differences we don't list here, and probably don't need to.
-> > Hence, saying that it otherwise works the same isn't correct.
+> >    + changes done by livepatch callbasks
+> >    + lifetime of shadow variables
 > > 
-> >> Also I remember that there was one more difference with a custom box
-> >> compared to the stdlib, but I forgot what that was, does someone else
-> >> remember? We should also put that here.
+> > The original API was hard to use. Both objectives are better handled
+> > by the new per-state callbacks. They are called when the state is
+> > introduced or removed. There is also support for automatically freeing
+> > obsolete shadow variables.
 > > 
-> > Obviously, there are also quite some API differences. For instance, `Box`
-> > generally requires two generics, value type and allocator, we take page flags
-> > and return a `Result`, where std just panics on failure.
-> 
-> Oh yeah that's true. The things listed above don't really refer to API
-> stuff, so I didn't consider that. How about changing "couple
-> differences" to "several differences"? Also adding that the APIs are
-> different would not hurt.
-> 
-
-Sure.
-
-> 
-> >>> +
-> >>> +/// Type alias for `Box` with a `Kmalloc` allocator.
-> >>
-> >> I think we should add that this is only designed for small values.
+> > The new callbacks changed the view of compatibility.  The livepatch
+> > can be replaced to any older one as long the current livepatch is
+> > able to disable the obsolete state.
 > > 
-> > I don't want duplicate the existing documentation around kmalloc and friends
-> > [1].
+> > As a result, the new patch does not need to support the currently
+> > used states. The current patch will be able to disable them.
 > > 
-> > Maybe we can refer to the existing documentation somehow.
+> > The remaining question is what to do with the per-state version.
+> > It was supposed to allow doing more modifications on an existing
+> > state. The experience shows that it is not needed in practice.
 > > 
-> > [1] https://www.kernel.org/doc/html/latest/core-api/memory-allocation.html
-> 
-> Oh great! With the C docs, I never know where to find them (is it in the
-> code and do they exist?). Yeah let's just link it.
-> 
-> >>> +///
-> >>> +/// # Examples
-> >>> +///
-> >>> +/// ```
-> >>> +/// let b = KBox::new(24_u64, GFP_KERNEL)?;
-> >>> +///
-> >>> +/// assert_eq!(*b, 24_u64);
-> >>> +///
-> >>> +/// # Ok::<(), Error>(())
-> >>> +/// ```
-> >>> +pub type KBox<T> = Box<T, super::allocator::Kmalloc>;
-> >>> +
-> >>> +/// Type alias for `Box` with a `Vmalloc` allocator.
-> >>
-> >> Same here, add that this is supposed to be used for big values (or is
-> >> this also a general-purpose allocator, just not guaranteeing that the
-> >> memory is physically contiguous? in that case I would document it
-> >> here and also on `Vmalloc`).
+> > Well, it still might make sense to prevent downgrade when the state
+> > could not be disabled easily or when the author does not want to
+> > deal with it.
 > > 
-> > Same as above, I'd rather not duplicate that. But I'm happy to link things in,
-> > just not sure what's the best way doing it.
+> > Replace the per-state version with per-state block_disable flag.
+> > It allows to handle several scenarios:
 > 
-> I took a look at the link and there is the "Selecting memory allocator"
-> section, but there isn't really just a vmalloc or kmalloc section, it is
-> rather stuff that we would put in the module documentation.
-
-There are no dedicated sections, but...
-
-> What I would write on these types would be what to use these boxes for.
-> eg large allocations, general purpose etc. I don't think that that is
-> easily accessible from the docs that you linked above.
-
-...this stuff should be covered by the document, e.g.:
-
-"The maximal size of a chunk that can be allocated with kmalloc is limited. The
-actual limit depends on the hardware and the kernel configuration, but it is a
-good practice to use kmalloc for objects smaller than page size."
-
-or
-
-"For large allocations you can use vmalloc() and vzalloc(), or directly request
-pages from the page allocator. The memory allocated by vmalloc and related
-functions is not physically contiguous."
-
-I'd probably reference [1] in the module documentation as you say and otherwise
-refer to the C APIs, just like `RBTree` does.
-
+> I have no opinion to be honest. block_disable flag might be sufficient in 
+> the end.
 > 
-> ---
-> Cheers,
-> Benno
+> [...]
 > 
+> > @@ -159,7 +159,9 @@ struct klp_state {
+> >   * @mod:	reference to the live patch module
+> >   * @objs:	object entries for kernel objects to be patched
+> >   * @states:	system states that can get modified
+> > + * version:	livepatch version (optional)
+> >   * @replace:	replace all actively used patches
+> > + *
+> >   * @list:	list node for global list of actively used patches
+> >   * @kobj:	kobject for sysfs resources
+> >   * @obj_list:	dynamic list of the object entries
+> > @@ -173,6 +175,7 @@ struct klp_patch {
+> >  	struct module *mod;
+> >  	struct klp_object *objs;
+> >  	struct klp_state *states;
+> > +	unsigned int version;
+> >  	bool replace;
+> 
+> Is it still needed then? What would be the use case?
+
+Heh, I think that I actually wanted to remove the version completely.
+This change is not mentioned in the changelog. And the version is
+no longer used in the selftests.
+
+I am going to remove it in the next version of the patchset.
+
+
+> >  /*
+> >   * Check that the new livepatch will not break the existing system states.
+> > - * Cumulative patches must handle all already modified states.
+> > - * Non-cumulative patches can touch already modified states.
+> > + * The patch could replace existing patches only when the obsolete
+> > + * states can be disabled.
+> >   */
+> >  bool klp_is_patch_compatible(struct klp_patch *patch)
+> >  {
+> >  	struct klp_patch *old_patch;
+> >  	struct klp_state *old_state;
+> >  
+> > +	/* Non-cumulative patches are always compatible. */
+> > +	if (!patch->replace)
+> > +		return true;
+> > +
+> 
+> Cumulative != atomic replace. Those are two different things.
+
+I see. :-)
+
+Best Regards,
+Petr
 
