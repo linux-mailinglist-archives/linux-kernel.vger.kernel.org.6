@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-287917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4EB952E3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C55A952E3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56721C21C6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 423ED1C21D2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057DA17C9B0;
-	Thu, 15 Aug 2024 12:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QTHmeGah"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947C2148847;
+	Thu, 15 Aug 2024 12:27:57 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE23F17BEB6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2866314884B;
+	Thu, 15 Aug 2024 12:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723724814; cv=none; b=t6yPYwOkifC+QrDxBnUwq8fGKt/zBuGvhZZo/d6kNKTc4WzYzLxF58eb0fqC1mrLOzB4h92URjKtYzje5/rrmlkgSoloAhZ1PYF1twpZlIdREeJOtG2LeViA3QuNSqQgm+KRAz9fZPi9xsdp9NLrAEHYspOZVjDXQFRPtq0aHYo=
+	t=1723724877; cv=none; b=MPbqwLdVlnQ+lUIFzXILxFqpv6rDFCVqIrCisC4pgI/gxRnJQyMKwGPDoG/eyPopR6W9bCJplayq50d18lw9GWTSToVrF9HzQraNze+iOlYGma+Swd15YpTLjwdgJtEAHqfCEcqnw1yqpfZdIHnywnv0qUQ3T9qdNg+//0QppZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723724814; c=relaxed/simple;
-	bh=750x1RMHzIv/ueCXLwScvIKOM9dB2CXFH/BKYl7u370=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MOWz6CuJV0sWzatPDkKsY3TBEr2VChjgmSCSpboxSW/bPVAImaKBp16c1wFKss2iB+hIsIpXHedAfnYzbZNkg4ixILLcm/49NEZvCfDgEGyGEqpls3DlPT+aBHv4C0+yVX6n0xvsLjFsEz7zJ5Tpgdg2h5UUSeGt/36G5sJuIiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QTHmeGah; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bec507f4ddso1938a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:26:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723724811; x=1724329611; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sRNnLXXPpV7IoEhJzOcwO3JZYHZ/+fzxuXA54WcShzs=;
-        b=QTHmeGahQq4mzyhiE89B7UaInIsYV5eG4U7wSGnJ5tJaIMbzrHfoRa5SvOgIeBttgl
-         KRG5Tua05IUfAFRMkki1GOKxmg/yqVXISGk0fQruNgGlRconhuG5hw6Obctxo6GH0I2d
-         fmq6hXKqm1/p3sDdgftnxlnuv5TsV7euXVh/YcVDhtKag8lyOOmChglcuK2dVQm9EkyU
-         XRS71l2RVsc8qY3D8NgTHgN4XXDy8tlyxuKtLdGMdVxHVAXL3M/7PG6C6MwB6MorsJSF
-         +xR+5jOqfIkg5ZzydSIDbd+Urmb57ntHU6IquYEuBujBiYxww7gpXmu9J0Hn4nkUYpMV
-         PZyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723724811; x=1724329611;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRNnLXXPpV7IoEhJzOcwO3JZYHZ/+fzxuXA54WcShzs=;
-        b=X+iFcMtGIHR7SPHGZ9T0Kgxw53OOcjR6DQDHzbLbdwjCwv8S6nz9K5Zx5w8f65Vyu6
-         Tqtu5UjqNEyk6gHljxoaIj4LbTP3BY0A6jpqK+mubSpMDqyFloL7318PIONJRq7r0Yed
-         1yqfsgB3SeQZ+VAvm4g0gjcvrMXtaw1btOjLeoyRt7tPGCvPHMfPgkpDy6uuQt1PyaQj
-         R/uRA6U/EeA1solTWF7MxHFI9+IP9lx6Mr1lZ1ve/2EwMAj+pbsmcK6GB3TuckXZzIXZ
-         X0iBQCHiwtXGu5EyOdxbdLnjQMUuFxX702dbHEO0vUsucdSvX0YnCGPHiWtTXSxVD0Xd
-         afcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXp8ziZzrMzhhZXDL0Pn5k1cYhZZ2UUu1Sta7+3yCFPPAcxHohGopCMU3Sr50PP1BmzEhUfi4z8oZ9Q91yRMD+l7Ct0NWFKa9aF2Za2
-X-Gm-Message-State: AOJu0Yz1OLOAzor18Tw9qDLYCxT43y98BJ9QIoPJnR5JBwMdYDqCkjum
-	fSk7IB6T4QgatJCSDMGo5oengJ8RVyQryy2deb1+OmxEbYdlGhFwiKM8Vfy5TA==
-X-Google-Smtp-Source: AGHT+IEuekxOlZ5dLJvvllpYlIVkQLQ9BPwqLmRzpY5P2uQKac8q8/lokXLciY9vp8RMaQM8cBEPNg==
-X-Received: by 2002:a05:6402:40c1:b0:58b:93:b624 with SMTP id 4fb4d7f45d1cf-5bebb9c4981mr57307a12.1.1723724810459;
-        Thu, 15 Aug 2024 05:26:50 -0700 (PDT)
-Received: from google.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded287d0sm48228805e9.12.2024.08.15.05.26.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 05:26:50 -0700 (PDT)
-Date: Thu, 15 Aug 2024 12:26:46 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	will@kernel.org, joro@8bytes.org, jean-philippe@linaro.org,
-	nicolinc@nvidia.com, mshavit@google.com
-Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Match Stall behaviour for S2
-Message-ID: <Zr30BjAcVDKJPv3B@google.com>
-References: <20240814145633.2565126-1-smostafa@google.com>
- <20240814155151.GB3468552@ziepe.ca>
- <Zr3m4YCY7Ape3R6y@google.com>
- <91d6574d-c67e-484c-ad96-91c9fd3d0c43@arm.com>
+	s=arc-20240116; t=1723724877; c=relaxed/simple;
+	bh=ReQuDQIToWZBlBw02ZmqJVlAuG9/z85X0gnMftUVdvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=s58LRumTZmufhu01yiYoM7y4/3k3uMZpj/c7MPcTlJ8eeQOKEgVYeNps+iWhkVfrQRrkNCzLrGHqAOsdwy8GVKjf68nggXNLJ08T9qNLTgr39Wnpjwe5rMp8QmsjPQg2CzhVL3HdlAyx4btb0Kk6GxtILbg67ylTqJhxpZhXuPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E1DC32786;
+	Thu, 15 Aug 2024 12:27:55 +0000 (UTC)
+Date: Thu, 15 Aug 2024 08:28:11 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Ross Zwisler <zwisler@google.com>, Vincent
+ Donnefort <vdonnefort@google.com>
+Subject: [PATCH v2] tracing: Allow boot instances to use reserve_mem boot
+ memory
+Message-ID: <20240815082811.669f7d8c@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <91d6574d-c67e-484c-ad96-91c9fd3d0c43@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Robin,
+From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-On Thu, Aug 15, 2024 at 01:16:19PM +0100, Robin Murphy wrote:
-> On 15/08/2024 12:30 pm, Mostafa Saleh wrote:
-> > Hi Jason,
-> > 
-> > On Wed, Aug 14, 2024 at 12:51:51PM -0300, Jason Gunthorpe wrote:
-> > > On Wed, Aug 14, 2024 at 02:56:33PM +0000, Mostafa Saleh wrote:
-> > > 
-> > > > Also described in the pseudocode “SteIllegal()”
-> > > >      if eff_idr0_stall_model == '10' && STE.S2S == '0' then
-> > > >          // stall_model forcing stall, but S2S == 0
-> > > >          return TRUE;
-> > > 
-> > > This clips out an important bit:
-> > > 
-> > > if STE.Config == '11x' then
-> > >    [..]
-> > >    if eff_idr0_stall_model == '10' && STE.S2S == '0' then
-> > >        // stall_model forcing stall, but S2S == 0
-> > >        return TRUE;
-> > > 
-> > > And here we are using STRTAB_STE_0_CFG_S1_TRANS which is 101 and won't
-> > > match the STE.Config qualification.
-> > > 
-> > > The plain text language said the S2S is only required if the S2 is
-> > > translating, STRTAB_STE_0_CFG_S1_TRANS puts it in bypass.
-> > 
-> > Yes, my bad, this should be for stage-2 only which is populated in
-> > arm_smmu_make_s2_domain_ste()
-> > 
-> > > 
-> > > > +	/*
-> > > > +	 * S2S is ignored if stage-2 exists but not enabled.
-> > > > +	 * S2S is not compatible with ATS.
-> > > > +	 */
-> > > > +	if (master->stall_enabled && !ats_enabled &&
-> > > > +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
-> > > > +		target->data[2] |= STRTAB_STE_2_S2S;
-> > > 
-> > > We can't ignore ATS if it was requested here.
-> 
-> I don't see much value in adding effectively-dead checks for something which
-> is already forbidden by the architecture. The definition of STALL_MODEL
-> explicitly states:
-> 
-> "An SMMU associated with a PCI system must not have STALL_MODEL == 0b10".
-> 
+Allow boot instances to use memory reserved by the reserve_mem boot
+option.
 
-Ah, I was expecting that as otherwise it's contradiction, but couldn't
-find it while searching. Thanks for pointing it out, I will drop all
-references to ATS then.
+  reserve_mem=12M:4096:trace  trace_instance=boot_mapped@trace
 
-Thanks,
-Mostafa
+The above will allocate 12 megs with 4096 alignment and label it "trace".
+The second parameter will create a "boot_mapped" instance and use the
+memory reserved and labeled as "trace" as the memory for the ring buffer.
 
-> Thanks,
-> Robin.
+That will create an instance called "boot_mapped":
+
+  /sys/kernel/tracing/instances/boot_mapped
+
+Note, because the ring buffer is using a defined memory ranged, it will
+act just like a memory mapped ring buffer. It will not have a snapshot
+buffer, as it can't swap out the buffer. The snapshot files as well as any
+tracers that uses a snapshot will not be present in the boot_mapped
+instance.
+
+Also note that reserve_mem is not reliable in acquiring the same physical
+memory at each soft reboot. It is possible that KALSR could map the kernel
+at the previous boot memory location forcing the reserve_mem to return a
+different memory location. In this case, the previous ring buffer will be
+lost.
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20240813171257.319724335@goodmis.org
+
+- Fixed pr_info() to handle change of start and size going from unsigned long
+  to phys_addr_t, as that can not use the "%lx" format.
+
+ .../admin-guide/kernel-parameters.txt         | 13 +++++++++++
+ kernel/trace/trace.c                          | 23 ++++++++++++-------
+ 2 files changed, 28 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 35b592823338..388653448e72 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6752,6 +6752,19 @@
+ 			memory at 0x284500000 that is 12Megs. The per CPU buffers of that
+ 			instance will be split up accordingly.
+ 
++			Alternatively, the memory can be reserved by the reserve_mem option:
++
++				reserve_mem=12M:4096:trace trace_instance=boot_map@trace
++
++			This will reserve 12 megabytes at boot up with a 4096 byte alignment
++			and place the ring buffer in this memory. Note that due to KASLR, the
++			memory may not be the same location each time, which will not preserve
++			the buffer content.
++
++			Also note that the layout of the ring buffer data may change between
++			kernel versions where the validator will fail and reset the ring buffer
++			if the layout is not the same as the previous kernel.
++
+ 	trace_options=[option-list]
+ 			[FTRACE] Enable or disable tracer options at boot.
+ 			The option-list is a comma delimited list of options
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 8e5a4ca9fd70..9bcef199ae90 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -10465,22 +10465,20 @@ __init static void enable_instances(void)
+ 	str = boot_instance_info;
+ 
+ 	while ((curr_str = strsep(&str, "\t"))) {
+-		unsigned long start = 0;
+-		unsigned long size = 0;
++		phys_addr_t start = 0;
++		phys_addr_t size = 0;
+ 		unsigned long addr = 0;
+ 
+ 		tok = strsep(&curr_str, ",");
+ 		name = strsep(&tok, "@");
+-		if (tok) {
++
++		if (tok && isdigit(*tok)) {
+ 			start = memparse(tok, &tok);
+ 			if (!start) {
+ 				pr_warn("Tracing: Invalid boot instance address for %s\n",
+ 					name);
+ 				continue;
+ 			}
+-		}
+-
+-		if (start) {
+ 			if (*tok != ':') {
+ 				pr_warn("Tracing: No size specified for instance %s\n", name);
+ 				continue;
+@@ -10492,10 +10490,19 @@ __init static void enable_instances(void)
+ 					name);
+ 				continue;
+ 			}
++		} else if (tok) {
++			if (!reserve_mem_find_by_name(tok, &start, &size)) {
++				start = 0;
++				pr_warn("Failed to map boot instance %s to %s\n", name, tok);
++				continue;
++			}
++		}
++
++		if (start) {
+ 			addr = map_pages(start, size);
+ 			if (addr) {
+-				pr_info("Tracing: mapped boot instance %s at physical memory 0x%lx of size 0x%lx\n",
+-					name, start, size);
++				pr_info("Tracing: mapped boot instance %s at physical memory %pa of size 0x%lx\n",
++					name, &start, (unsigned long)size);
+ 			} else {
+ 				pr_warn("Tracing: Failed to map boot instance %s\n", name);
+ 				continue;
+-- 
+2.43.0
+
 
