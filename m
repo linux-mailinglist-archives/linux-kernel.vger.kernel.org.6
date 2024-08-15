@@ -1,121 +1,158 @@
-Return-Path: <linux-kernel+bounces-287970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E91952EC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B24952ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6A71F22892
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:04:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001C41F22760
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C473E19DF9E;
-	Thu, 15 Aug 2024 13:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699E519F49A;
+	Thu, 15 Aug 2024 13:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bv7HjBoR"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWysPbmr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B191619D89D;
-	Thu, 15 Aug 2024 13:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9BD1714A8;
+	Thu, 15 Aug 2024 13:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723727083; cv=none; b=poUamoVqiOp0bCZbhXcKsCY1GO0wVcmu1xU45StTw2krgi2uwOCt2T5yKQrZMdqkQ1ahiKtk+fzrIKWG+weY9zZzNOQeU/RG2ViFtyZw5XxyyRJOHGqLZO1EUuDLcTasM+1Uafoq8fXUwLSj5g1Vhw50FK81Iqv2b5ii8X4PE4s=
+	t=1723727274; cv=none; b=Y5LtgRdPlYSG4DLjfYUrHbBRfTnlmGFLpv5JRI9bLPL/rK4XX6B8HVHnVyre/oNpQkJo2LA7Ujp/cbJe/EJTR0HDYtlA9uvSNz1BYo8kUkQpnIgzAIMHOso7CzQszsDLH2zU6+i4WF9ElS4Yd3w97AAC+lX7+Xum/3ZbaXiWMYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723727083; c=relaxed/simple;
-	bh=CDgGq5qU3Wr0Pir/YqVs7Al/PZ/iVw/ki/I4EssR9Gs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oxh2i9Rki4tB9HqnNUIzTnX64cC0i0ZJR8nNbthAoHD/bwDGO8PGE5xVn37iFspLi6CPDQ1y4zcFxGblVTHXE4RptgdZgKpWif1nnNcfrmWf+0NL1BQP+z2EOHTEBc/45vuJFBrHT9OPKlLHpn7HVTTposuG/qhDYEN4e7BxGUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bv7HjBoR; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d3c05dc63eso642036a91.0;
-        Thu, 15 Aug 2024 06:04:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723727081; x=1724331881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ia3t2Va5NtSu3BetvUd2KwI5mB/axZOmAEnZeyG3umQ=;
-        b=Bv7HjBoRSkwYJp+afAgm6m9wEWXbr+lydKjFjFAa5HCHVOUCx3KwjAblF6ATDo5AP5
-         uXdCWcwcEje2tCelFYELBx2tu9tljmjPvyu8UwUqtgy+eVKJaOr3CCQTjRrIN7ELPCbv
-         2Ry2sBgojVaVT9p0tSBJvFSa8Htk27q693stQ4xMvxh6GWyAGxJJtENnRD84oafH59SY
-         hRdqHXq8v5F6usr6mTG7uC4VL6LnEhMundc3qYuZkf1ZggiouBCH/g/ZiH3q9DelIa/3
-         EhnCpGxXtvpxWKuiVdVnPmFrSGJ0iDvaxMtCbwizePEDPLfzlcXZ7YAU3zLucaHfyuRV
-         mkCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723727081; x=1724331881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ia3t2Va5NtSu3BetvUd2KwI5mB/axZOmAEnZeyG3umQ=;
-        b=XnKKUyIxCiQn8o/8F5TvfqqXPG22iITBKEbSSkT9jQNXdpbpXAK2PwDJKCreGhqSlz
-         I+3Z/jkuY2Zv5j/4fBWhf42DgOlbtEo9XEVlxucD8gvQz/LB+fiKFiUKCQVAmS9oz4W7
-         NYqzxXs6B9RjUpSPNlUW06YCiptSlU4qLb2yRgz+zXA8MmfB/K8mgTE1fFO4Oa8MXupv
-         GkQxwfKoBeQ4nQEll8ENGWiJr93/JbL2yoscFbJs9MYp7xNRsN6dw64bZEPDbvhkrqwg
-         YjqRAs8lCeQZVvAacjIMjbyY6RFr34rBkQKIBULxgsY1t1kfD3kjx/6hVzTWhvBt/Q8p
-         52ng==
-X-Forwarded-Encrypted: i=1; AJvYcCVO3/J3XugBVcGsbYotU8ZkeeJmM2c9RYCMUaX5ok/0csKBl6wZwezFljuo0v/Np6244SW6BF+S3Ql6YjvCv6F2QTfHaZPlgc9ajOjUdnLzTPhLpJWSNhgV+CNOsc+tydCZsFZA7buLQFEveG+Pge7IKzLHqsDEBtPIrsTeNdhteM3k2CY=
-X-Gm-Message-State: AOJu0YyCMo9iH6K0frof48ic4gF7tsxSbEUzSBclENggs20cj3wvd9Gl
-	VVfFdVu+RhH5++XbC7RADng9z+6GtDaaUbJ8XHxQ7y7uD+JBOGDSN4UNYC/Nt2FebgGpV+iEZ26
-	8d7k8y+MIyGWTrl8+dsf/IrCFZtPTpp2rBwk=
-X-Google-Smtp-Source: AGHT+IGSrLrwuM5RhDoD7uxpi1mK7ij3LB5lI6V4fRyA+cAlhCiR6Vgro+l7Mk/y4jnJPGmGy0vvDkvDt+x+XsPj1nk=
-X-Received: by 2002:a17:90b:4c51:b0:2d3:d0b7:da4 with SMTP id
- 98e67ed59e1d1-2d3d0b70f31mr1146539a91.19.1723727080832; Thu, 15 Aug 2024
- 06:04:40 -0700 (PDT)
+	s=arc-20240116; t=1723727274; c=relaxed/simple;
+	bh=jMFzZlcFi1TkZ5Y4pxf1tYJzK0rbZrrELQbpOJ8RF3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sK4OKI0xV2ECB2cAJ29dVLkJy9xmJE9ZqXf5KKAG/AYe+Y7fHV4ehrLrl1ucKaa7pR9/Dl2jk1Vt6wHghZHFyj02mfLerz4sVNvA7GL5O2wA8VqIxdWR/yoeTeJCcmQ+RIS1OynoUBmUgaarZpojtWUc774tFU2hjQYuOL/J7g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWysPbmr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC276C4AF12;
+	Thu, 15 Aug 2024 13:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723727274;
+	bh=jMFzZlcFi1TkZ5Y4pxf1tYJzK0rbZrrELQbpOJ8RF3U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CWysPbmrhoJPoY6REaRiKM1koRkT1R+xchonrJPpv1x9I+tee+tSfKXPRigLEF1Pp
+	 H0I6xL+kL3jAdP83wrbd95nqrX4gOFtGasClay/ikEcqMAsrRbgUgm8uymaNB2JJyC
+	 s9fAuxND+GVsI3CvvG4maGRFXUv1mrH/QMsPdEHwjeAnn4LLJl1uL87/6fKQvF81e/
+	 gN47e2z5uZcj4pF1aOpUhKbSFnw/JNFL2aRtTdKMtegAQCGM+3alB+E0XbvxVZ0GZx
+	 vSI/1pnVv1gMF6wJ8a7T6crM136WP7rIW/dyqW6P8SmyiDRFQoN0YMbOf3Fz7aHcH8
+	 iawKWeu/fPcSQ==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gao Xiang <xiang@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 00/25] netfs: Read/write improvements
+Date: Thu, 15 Aug 2024 15:07:42 +0200
+Message-ID: <20240815-umzog-irgendein-80514d89315a@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240814203850.2240469-1-dhowells@redhat.com>
+References: <20240814203850.2240469-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815082916.1210110-1-pierre.gondois@arm.com> <20240815082916.1210110-7-pierre.gondois@arm.com>
-In-Reply-To: <20240815082916.1210110-7-pierre.gondois@arm.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 15 Aug 2024 15:04:27 +0200
-Message-ID: <CANiq72mjvE7h_aH5tYnuuzdPHAzDUpioMi-h44HNCro8qFfDSw@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/6] rust: cpufreq: Add rust implementation of
- cppc_cpufreq driver
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Robert Moore <robert.moore@intel.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Thomas Bertschinger <tahbertschinger@gmail.com>, 
-	Danilo Krummrich <dakr@redhat.com>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3763; i=brauner@kernel.org; h=from:subject:message-id; bh=jMFzZlcFi1TkZ5Y4pxf1tYJzK0rbZrrELQbpOJ8RF3U=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTt/TvfdD5fB2vZ4St+TJxt5mWrLDw33/gjvqHIU/p1x 4z/b++v6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI3TKGf7rW+puKJr8xC2Fc +4dN6MQSIQHtD5UCjw3EjTPKG9RWaTEyrOUUX7jY9aVQn42A5tbDjh4fbp/6mSTXO6u8fQdHhII sPwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 10:31=E2=80=AFAM Pierre Gondois <pierre.gondois@arm=
-.com> wrote:
->
-> In an effort to add test/support the cpufreq framework in rust,
-> add a rust implementation of the cppc_cpufreq driver named:
-> `rcppc_cpufreq`.
+On Wed, 14 Aug 2024 21:38:20 +0100, David Howells wrote:
+> This set of patches includes a couple of fixes:
+> 
+>  (1) Revert the removal of waits on PG_private_2 from netfs_release_page()
+>      and netfs_invalidate_page().
+> 
+>  (2) Make cachefiles take the sb_writers lock around set/removexattr.
+> 
+> [...]
 
-Similar to what Greg said -- is this intended to be something like a
-"Rust reference driver" [1] for the subsystem?
+Applied to the vfs.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs.netfs branch should appear in linux-next soon.
 
-[1] https://rust-for-linux.com/rust-reference-drivers
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> +       depends on ACPI_PROCESSOR
-> +       depends on ARM || ARM64 || RISCV
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-`depends on RUST`?
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Also, I imagine you skipped all safety comments etc. since it is an
-RFC, but I thought I would mention it nevertheless.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.netfs
 
-Thanks for experimenting with Rust!
-
-Cheers,
-Miguel
+[01/25] cachefiles: Fix non-taking of sb_writers around set/removexattr
+        https://git.kernel.org/vfs/vfs/c/4ca422fc1c25
+[02/25] netfs: Adjust labels in /proc/fs/netfs/stats
+        https://git.kernel.org/vfs/vfs/c/2d8e8e0dcfa8
+[03/25] netfs: Record contention stats for writeback lock
+        https://git.kernel.org/vfs/vfs/c/b946f63b34fa
+[04/25] netfs: Reduce number of conditional branches in netfs_perform_write()
+        https://git.kernel.org/vfs/vfs/c/922d33ef048c
+[05/25] netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_inode
+        https://git.kernel.org/vfs/vfs/c/4c1daf044aed
+[06/25] netfs: Move max_len/max_nr_segs from netfs_io_subrequest to netfs_io_stream
+        https://git.kernel.org/vfs/vfs/c/a479f52b4401
+[07/25] netfs: Reserve netfs_sreq_source 0 as unset/unknown
+        https://git.kernel.org/vfs/vfs/c/e1de76429131
+[08/25] netfs: Remove NETFS_COPY_TO_CACHE
+        https://git.kernel.org/vfs/vfs/c/2a4e83a305ef
+[09/25] netfs: Set the request work function upon allocation
+        https://git.kernel.org/vfs/vfs/c/52c62b5f6dc0
+[10/25] netfs: Use bh-disabling spinlocks for rreq->lock
+        https://git.kernel.org/vfs/vfs/c/45268b70a77d
+[11/25] mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of folios
+        https://git.kernel.org/vfs/vfs/c/3e73d92929db
+[12/25] iov_iter: Provide copy_folio_from_iter()
+        https://git.kernel.org/vfs/vfs/c/7a51f5cf0851
+[13/25] cifs: Provide the capability to extract from ITER_FOLIOQ to RDMA SGEs
+        https://git.kernel.org/vfs/vfs/c/97b15fbddd0c
+[14/25] netfs: Use new folio_queue data type and iterator instead of xarray iter
+        https://git.kernel.org/vfs/vfs/c/b33aa21f3b7f
+[15/25] netfs: Provide an iterator-reset function
+        https://git.kernel.org/vfs/vfs/c/7306dffdd871
+[16/25] netfs: Simplify the writeback code
+        https://git.kernel.org/vfs/vfs/c/5fb0299ed8df
+[17/25] afs: Make read subreqs async
+        https://git.kernel.org/vfs/vfs/c/05fd361eb083
+[18/25] netfs: Speed up buffered reading
+        https://git.kernel.org/vfs/vfs/c/6437a28f5de1
+[19/25] netfs: Remove fs/netfs/io.c
+        https://git.kernel.org/vfs/vfs/c/85112b95630c
+[20/25] cachefiles, netfs: Fix write to partial block at EOF
+        https://git.kernel.org/vfs/vfs/c/3b5a6483e8d2
+[21/25] netfs: Cancel dirty folios that have no storage destination
+        https://git.kernel.org/vfs/vfs/c/3cca08a1c4c5
+[22/25] cifs: Use iterate_and_advance*() routines directly for hashing
+        https://git.kernel.org/vfs/vfs/c/c86e6c334311
+[23/25] cifs: Switch crypto buffer to use a folio_queue rather than an xarray
+        https://git.kernel.org/vfs/vfs/c/04c9967360ea
+[24/25] cifs: Don't support ITER_XARRAY
+        https://git.kernel.org/vfs/vfs/c/7d0f7f2d1e8b
 
