@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-288021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261BE9530A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:45:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8A79530C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567E01C25468
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E77287F92
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BB01A7068;
-	Thu, 15 Aug 2024 13:44:39 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5F519E7F6;
+	Thu, 15 Aug 2024 13:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3ZUA6J3F";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jvF4QCfL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03CB1A705B;
-	Thu, 15 Aug 2024 13:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FEE1714D9;
+	Thu, 15 Aug 2024 13:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729479; cv=none; b=FS9FtyzBiX8GET/qfz+C3JKLkFJ5pJMhconHtMlNIr9UL3CGCPPz2cK0cz2Sw38wnEecUNFVsFgIN4jCErH/vZVwGvZ/hUfPRYI0cBSB4yq76wi6Z59WPNKE2OFG4ZouJLEgopMrng8/sPBCUhoMHjFAEfCWoTLOjtFJ4OESb0E=
+	t=1723729570; cv=none; b=b3YHi/QiJ1swSkSw8yI0KthOpdxVpr2uQoxqopJ6s9Ep+hkCPFP0dpL2ct/wwQ57snr5gxadvy61diU++OEfgwht16FdntVHkINhg6Vw1dGC9J+qEeL/hTw1BHU4L8+n5dwcf4SxhAY0vJoJa/CRadivfuim7dYEBGW0KLoU9zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729479; c=relaxed/simple;
-	bh=uVmWifW0HS3c4Banhr20uIDh6Blz7xySuRYRmhk0SEc=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FabKJNPxgsi8EsUJJW7YA8b8sRECYUxCVU7bf7eDBhNtIQsWK2VZ7VvPN957cCgWDobg17fznendtneZFssMkraCB5eiEuK0Vg8321ihRAzCtVPU2WLmKbSwE71oxEtXaTh42lcXnONfmEKCmFAu8VTkXVuI+1gBxkA0lqOqzFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wl5pQ4FlHz20lh4;
-	Thu, 15 Aug 2024 21:39:58 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id C23271A016C;
-	Thu, 15 Aug 2024 21:44:33 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 15 Aug 2024 21:44:32 +0800
-CC: Shuai Xue <xueshuai@linux.alibaba.com>, Jing Zhang
-	<renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Yicong
- Yang <yangyicong@hisilicon.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<quic_vbadigan@quicinc.com>, <quic_nitegupt@quicinc.com>,
-	<quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
-	<quic_parass@quicinc.com>, <quic_mrana@quicinc.com>
-Subject: Re: [PATCH 2/4] Documentation: dwc_pcie_pmu: Update bdf to sbdf
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-References: <20240731-dwc_pmu_fix-v1-0-ca47d153e5b2@quicinc.com>
- <20240731-dwc_pmu_fix-v1-2-ca47d153e5b2@quicinc.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <9a6bf90e-ce7f-8a20-93a1-63a75f312392@huawei.com>
-Date: Thu, 15 Aug 2024 21:44:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1723729570; c=relaxed/simple;
+	bh=GyBZ5JcUbc/XHvnuWXeMqGP7fodtXDjKmTZ7B8cEzk4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=kYBp7E3cOBkQ6fX1eDXZRAo1zu1K8+7JcJhEyuengN8nGaupxIFxbz4vMqjdrfrqGVrk50m6l+lK9Fy72AoCqrMIn/ZQ1Y56cR1R6kUbo/akh1bQB/fxsC75SoYrvIEYFovq9rzclXIjb23Iks6gZMjXfAZ3DFrHMWAxVioS8KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3ZUA6J3F; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jvF4QCfL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 15 Aug 2024 13:46:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723729567;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+V+gUqLFe7cwaShPYD/MTvcflRm0uV8oy39eMy+7IbE=;
+	b=3ZUA6J3FYpNrOLQc2Nxg/n8ip/1M9tuS+ej59gJhIlBA0ykc33+Irgat2yAR1mdPpvyXQW
+	J8TP9AIWoiw8DLvSc6LdDKU9YMMFX3g2KBalisvYoRjhkFADn0FpmvpzFujSsuK78RU9GS
+	yK0uWJAdaGX9hDMhb0mYY1v3fjPkG8l4tkIUlGCh1JNcp0KM9p7eky5DyDjblawy8OchI/
+	Y1nrrwRbTrmVcP6k0KpV+P/iz1GwH1ZZnRlBwMGQSkValF4kbdMDeP7cdzV/pManz6jVmC
+	8penNMHdx80HILDeiK0ZOBLEtxyDZTnwYz3xMG/Cl44BooMBS8h5JM87UdhwNQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723729567;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+V+gUqLFe7cwaShPYD/MTvcflRm0uV8oy39eMy+7IbE=;
+	b=jvF4QCfLt3qZYfWjU+r7wIr++7np8y04TFStPbogrKtHSJksVX55eiiIifMRh2eQpwn7hb
+	XhNVyaHk19YZ36Cw==
+From: "tip-bot2 for Roland Xu" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: locking/urgent] rtmutex: Drop rt_mutex::wait_lock before scheduling
+Cc: Roland Xu <mu001999@outlook.com>, Thomas Gleixner <tglx@linutronix.de>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3CME0P300MB063599BEF0743B8FA339C2CECC802=40ME0P300MB?=
+ =?utf-8?q?0635=2EAUSP300=2EPROD=2EOUTLOOK=2ECOM=3E?=
+References: =?utf-8?q?=3CME0P300MB063599BEF0743B8FA339C2CECC802=40ME0P300M?=
+ =?utf-8?q?B0635=2EAUSP300=2EPROD=2EOUTLOOK=2ECOM=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240731-dwc_pmu_fix-v1-2-ca47d153e5b2@quicinc.com>
+Message-ID: <172372956693.2215.10534564675111967043.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200014.china.huawei.com (7.221.188.8)
 
-On 2024/7/31 12:23, Krishna chaitanya chundru wrote:
-> Update document to reflect the driver change to use sbdf instead
-> of bdf alone.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+The following commit has been merged into the locking/urgent branch of tip:
 
-Reviewed-by: Yicong Yang <yangyicong@hisilicon.com>
+Commit-ID:     d33d26036a0274b472299d7dcdaa5fb34329f91b
+Gitweb:        https://git.kernel.org/tip/d33d26036a0274b472299d7dcdaa5fb34329f91b
+Author:        Roland Xu <mu001999@outlook.com>
+AuthorDate:    Thu, 15 Aug 2024 10:58:13 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 15 Aug 2024 15:38:53 +02:00
 
-> ---
->  Documentation/admin-guide/perf/dwc_pcie_pmu.rst | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
-> index d47cd229d710..39b8e1fdd0cd 100644
-> --- a/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
-> +++ b/Documentation/admin-guide/perf/dwc_pcie_pmu.rst
-> @@ -46,16 +46,16 @@ Some of the events only exist for specific configurations.
->  DesignWare Cores (DWC) PCIe PMU Driver
->  =======================================
->  
-> -This driver adds PMU devices for each PCIe Root Port named based on the BDF of
-> +This driver adds PMU devices for each PCIe Root Port named based on the SBDF of
->  the Root Port. For example,
->  
-> -    30:03.0 PCI bridge: Device 1ded:8000 (rev 01)
-> +    0001:30:03.0 PCI bridge: Device 1ded:8000 (rev 01)
->  
-> -the PMU device name for this Root Port is dwc_rootport_3018.
-> +the PMU device name for this Root Port is dwc_rootport_13018.
->  
->  The DWC PCIe PMU driver registers a perf PMU driver, which provides
->  description of available events and configuration options in sysfs, see
-> -/sys/bus/event_source/devices/dwc_rootport_{bdf}.
-> +/sys/bus/event_source/devices/dwc_rootport_{sbdf}.
->  
->  The "format" directory describes format of the config fields of the
->  perf_event_attr structure. The "events" directory provides configuration
-> @@ -66,16 +66,16 @@ The "perf list" command shall list the available events from sysfs, e.g.::
->  
->      $# perf list | grep dwc_rootport
->      <...>
-> -    dwc_rootport_3018/Rx_PCIe_TLP_Data_Payload/        [Kernel PMU event]
-> +    dwc_rootport_13018/Rx_PCIe_TLP_Data_Payload/        [Kernel PMU event]
->      <...>
-> -    dwc_rootport_3018/rx_memory_read,lane=?/               [Kernel PMU event]
-> +    dwc_rootport_13018/rx_memory_read,lane=?/               [Kernel PMU event]
->  
->  Time Based Analysis Event Usage
->  -------------------------------
->  
->  Example usage of counting PCIe RX TLP data payload (Units of bytes)::
->  
-> -    $# perf stat -a -e dwc_rootport_3018/Rx_PCIe_TLP_Data_Payload/
-> +    $# perf stat -a -e dwc_rootport_13018/Rx_PCIe_TLP_Data_Payload/
->  
->  The average RX/TX bandwidth can be calculated using the following formula:
->  
-> @@ -88,7 +88,7 @@ Lane Event Usage
->  Each lane has the same event set and to avoid generating a list of hundreds
->  of events, the user need to specify the lane ID explicitly, e.g.::
->  
-> -    $# perf stat -a -e dwc_rootport_3018/rx_memory_read,lane=4/
-> +    $# perf stat -a -e dwc_rootport_13018/rx_memory_read,lane=4/
->  
->  The driver does not support sampling, therefore "perf record" will not
->  work. Per-task (without "-a") perf sessions are not supported.
-> 
+rtmutex: Drop rt_mutex::wait_lock before scheduling
+
+rt_mutex_handle_deadlock() is called with rt_mutex::wait_lock held.  In the
+good case it returns with the lock held and in the deadlock case it emits a
+warning and goes into an endless scheduling loop with the lock held, which
+triggers the 'scheduling in atomic' warning.
+
+Unlock rt_mutex::wait_lock in the dead lock case before issuing the warning
+and dropping into the schedule for ever loop.
+
+[ tglx: Moved unlock before the WARN(), removed the pointless comment,
+  	massaged changelog, added Fixes tag ]
+
+Fixes: 3d5c9340d194 ("rtmutex: Handle deadlock detection smarter")
+Signed-off-by: Roland Xu <mu001999@outlook.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/ME0P300MB063599BEF0743B8FA339C2CECC802@ME0P300MB0635.AUSP300.PROD.OUTLOOK.COM
+---
+ kernel/locking/rtmutex.c |  9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 88d08ee..fba1229 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1644,6 +1644,7 @@ static int __sched rt_mutex_slowlock_block(struct rt_mutex_base *lock,
+ }
+ 
+ static void __sched rt_mutex_handle_deadlock(int res, int detect_deadlock,
++					     struct rt_mutex_base *lock,
+ 					     struct rt_mutex_waiter *w)
+ {
+ 	/*
+@@ -1656,10 +1657,10 @@ static void __sched rt_mutex_handle_deadlock(int res, int detect_deadlock,
+ 	if (build_ww_mutex() && w->ww_ctx)
+ 		return;
+ 
+-	/*
+-	 * Yell loudly and stop the task right here.
+-	 */
++	raw_spin_unlock_irq(&lock->wait_lock);
++
+ 	WARN(1, "rtmutex deadlock detected\n");
++
+ 	while (1) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		rt_mutex_schedule();
+@@ -1713,7 +1714,7 @@ static int __sched __rt_mutex_slowlock(struct rt_mutex_base *lock,
+ 	} else {
+ 		__set_current_state(TASK_RUNNING);
+ 		remove_waiter(lock, waiter);
+-		rt_mutex_handle_deadlock(ret, chwalk, waiter);
++		rt_mutex_handle_deadlock(ret, chwalk, lock, waiter);
+ 	}
+ 
+ 	/*
 
