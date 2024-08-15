@@ -1,133 +1,96 @@
-Return-Path: <linux-kernel+bounces-288221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB23C95377F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64994953792
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D2B1F2612D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:44:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E79C1F26A89
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2181B1429;
-	Thu, 15 Aug 2024 15:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b9HMzwuU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A718E1B3F31;
+	Thu, 15 Aug 2024 15:45:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0391AD3F7;
-	Thu, 15 Aug 2024 15:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C8615E88;
+	Thu, 15 Aug 2024 15:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723736597; cv=none; b=DheTcl6+U+K8dWOl1neWrIBEIJozMwmE5372qLSLIa6dgH8GDwBoT+IGon+iHKuV4wr2NCxAf9NdlSq+jZ6oTeymzm28IcuFKJZgb6nl76m4F1O8EK+OjigSXSucqq3CQTP9fvy6JHImQNIrjO+JHYS91qGVFGkgawOTqspRPLg=
+	t=1723736759; cv=none; b=GItVBVpzMx3rHv1FnAvWnCh+/TxT3jz9CGD6MXat/QWV+l7h4hoehv/LzXkm2de6j/lJ4YkWyZeK4SgFvSAOq8/mEHyUaM3RlMREcMGbIVFzjB1LsA8HXExVkqbbLc5KdfCxiM3ypYOXdcg5zPSYbkVp9MB3+2WPhPciNy86ukg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723736597; c=relaxed/simple;
-	bh=tBcHQi3i5KC4GbpIUxL7ctt8uCWrcYcOXO6IpVSWLr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Dibc5BPYUfJCpAUfBvR1N4r+KPiWT/AIgGEnCmUf/saHG12NROCvB+YgxxOwxu8zAYtmnJhY2BRM4q//iw5n3wTbs3R7g8owBOY6rEvTLL4VSMMQFKRayJXnedvxrH9nNs+F4Iubp4mN9BJl5eS3egpXeB3f4eIQ6nfr/InQwZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b9HMzwuU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F7GjGx027121;
-	Thu, 15 Aug 2024 15:43:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cc5I816aayP0mBk0qxI4DbcgcOavj8/4JMXIypN4nOM=; b=b9HMzwuUBChD3jXQ
-	Dxv888teONxnPTj9jKz48fhmnK+UurW3UBh1XdWARlsIUEChOaVCTGowNEuzSUiC
-	xadUvrfIv0ffcLcsfbhDc4Z34vLQoXjWujFIOfEcUIX2egqh4+jIjbJYbqaU8exz
-	rKJPC1N+TOUNRm2xTFUzQzLNZRyZkf546ImqZqfGOSAgW2QSPtJXe5aOouRvXG+s
-	DHcXxZCfGfMHpf0KA9voAJAP83JJkR55TLZyCLYxFWC7/h1LnOG7laOLqGoCfG57
-	f2pzh3mshTBy+TMs0v6B7UAgkp9h6zH+TbHSh2snINaoZ4mY6+Fvu1UL4L6gVKsW
-	HlfYBQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411d5696n8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 15:43:11 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FFhA9e009900
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 15:43:10 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 08:43:04 -0700
-Message-ID: <5ecbcd10-d9b7-4134-9666-6df790527b1f@quicinc.com>
-Date: Thu, 15 Aug 2024 23:43:02 +0800
+	s=arc-20240116; t=1723736759; c=relaxed/simple;
+	bh=Xp9jlxYgDXqltUmPuPufUyP7g6Q5pctnBv2GovQ16XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F94WwCcjQ4jvHVpjl6xtUmxfJSs+4zimiKwcMFj4HKzLf+4rqSTFjHf6qhBkRgNSZon3b0JevYQidWDAN9IVBeCc8fDcFDcf2/6ANNve0WBaTelhEs71bjGWODBt7qTp57CtGv3iOjmM4nBGFIi7Ehm3AJHLQTa3K3vn8vweuNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74432C4AF09;
+	Thu, 15 Aug 2024 15:45:53 +0000 (UTC)
+Date: Thu, 15 Aug 2024 16:45:51 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 03/40] mman: Add map_shadow_stack() flags
+Message-ID: <Zr4ir5YUxPdwqdkp@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-3-699e2bd2190b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
- <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
- <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
- <82200889-a98d-4815-bc31-f81b15d02513@quicinc.com>
- <7130beef-7787-42a1-85c8-f27574241ba7@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <7130beef-7787-42a1-85c8-f27574241ba7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SOKR9LGmzhsvDDb1iqN5A6exNM_nnP1n
-X-Proofpoint-ORIG-GUID: SOKR9LGmzhsvDDb1iqN5A6exNM_nnP1n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_08,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150114
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801-arm64-gcs-v10-3-699e2bd2190b@kernel.org>
 
-Hi Vladimir,
+On Thu, Aug 01, 2024 at 01:06:30PM +0100, Mark Brown wrote:
+> In preparation for adding arm64 GCS support make the map_shadow_stack()
+> SHADOW_STACK_SET_TOKEN flag generic and add _SET_MARKER. The existing
+> flag indicats that a token usable for stack switch should be added to
 
->>
->> Thanks for the confirmation, even though I add the rup_update and
->> buf_done function in later commits, it is still called in platform
->> specific code(camss-vfe-780.c), so I will keep as it is done today.
-> 
-> let it be so.
-> 
-> I have another ask about it, please move new camss_reg_update() out from
-> camss.c into camss-csid.c, and camss_buf_done() from camss.c into camss- 
-> vfe.c
-> 
+Nit: indicates
 
-The cross direct call has been removed by below commit, so it looks 
-strange if I add the cross direct call.
+> diff --git a/include/uapi/asm-generic/mman.h b/include/uapi/asm-generic/mman.h
+> index 57e8195d0b53..d6a282687af5 100644
+> --- a/include/uapi/asm-generic/mman.h
+> +++ b/include/uapi/asm-generic/mman.h
+> @@ -19,4 +19,8 @@
+>  #define MCL_FUTURE	2		/* lock all future mappings */
+>  #define MCL_ONFAULT	4		/* lock all pages that are faulted in */
+>  
+> +#define SHADOW_STACK_SET_TOKEN (1ULL << 0)     /* Set up a restore token in the shadow stack */
+> +#define SHADOW_STACK_SET_MARKER (1ULL << 1)     /* Set up a top of stack merker in the shadow stack */
 
-media: qcom: camss: Decouple VFE from CSID
-https://lore.kernel.org/lkml/20240522154659.510-9-quic_grosikop@quicinc.com/
+s/merker/marker/
 
-I use the v4l2_subdev_notify to do the cross communication in v1 and v2 
-series, but Bryan said, "The subdev notify is I think not the right fit 
-for this purpose within our driver.".
-Then I add an internal notify interface in camss structure, but Bryan 
-suggested to use direct call, so I add these functions directly in camss.c
+Otherwise:
 
-https://lore.kernel.org/all/236cfe43-8321-4168-8630-fb9528f581bd@linaro.org/
-
-Thanks,
-Depeng
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
