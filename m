@@ -1,98 +1,102 @@
-Return-Path: <linux-kernel+bounces-288000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8FA952F7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AF8952F84
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52E6C1F23549
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138171F23928
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531471A76A4;
-	Thu, 15 Aug 2024 13:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2EE19FA7A;
+	Thu, 15 Aug 2024 13:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lvw8HT2N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZA0WLywT"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F581A7065;
-	Thu, 15 Aug 2024 13:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF11419DF9D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728773; cv=none; b=LpzJASqhY302Mh5IjqSZaLvuN+qZb3efNVA7wvw4xLDnviJG2u2dgysI46qMwQqoV89aGNwWByF8nS/dbpefX+UlvtIDQWaOnOllTTaMjwejc966J7+PF4oBaU6wp8vMVlErYS/AbP/KMa+xeb/vTG6EBNrUT6/ksqLH8tmy9iU=
+	t=1723728785; cv=none; b=cYpUKitHCpD5iYYiLCoYDAiAvuvPMSuSkd35InjAt6d8n6XbLnYDK+5VLf/O04zH3mPjmyb3EiCCCQZBPiWEm9b8qhp6CpLftHMy7hwNGPnHaNsPyLTejMyGpWcU+Dxz3KcdICGADkjlGEm6mmVkv2RbnzVeY3jAMoiCOSdijK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728773; c=relaxed/simple;
-	bh=Vn19Xi4ZD3NibAsDtE9rg4C23yKZi6DinH/0puuPjiA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qC5AScE8Z7xgA65CPW4JS6bJYpkoWD5G758CF1VRICXrXARFZ/W4Cge3T3E7yfOmDwAPnN8aQ4mLv67vXkr+BDiIFDB94IkzrmbgeszRc9BQWtZT4rhepwL/2LYZ/WoZPOsowQS5dZpIRFPJJR9kK+6qur023Jbzp2JJviIeHMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lvw8HT2N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB093C4AF11;
-	Thu, 15 Aug 2024 13:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723728773;
-	bh=Vn19Xi4ZD3NibAsDtE9rg4C23yKZi6DinH/0puuPjiA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Lvw8HT2NiRmF/9qLSb/v75tDmc9iRDV67VElI97FrWggnzcp2zYml/2GCs3wFknZ7
-	 KH8BxUIT+Txe7GuoY4T6O3TrHZ8agza5tbhpBByzLod++O4ysxoXMj4FtqbcyQrshi
-	 fdS1o6Q5sFcOhKT87PMSngRf70vORZMO9ETLh0tLnsCi3dU19mv/Fv39/R9rax0Tni
-	 0cJ9qvwTMeGMbrQkFNQeX9AcBwcxXl8RPamqbjFjJNAvUTOjS8x6P9iB5xRVB/y+2F
-	 XEaHwLLFaUfnyucRwh5gDibz9yYuc4n4vy7t3CIW0X5PmhX+eOJwxe7VnSHc/PtlgU
-	 KeU4fuZFTDJdA==
-From: Mark Brown <broonie@kernel.org>
-To: jwboyer@linux.vnet.ibm.com, dbrownell@users.sourceforge.net, 
- sfalco@harris.com, akpm@linux-foundation.org, sr@denx.de, 
- Ma Ke <make24@iscas.ac.cn>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240722141822.1052370-1-make24@iscas.ac.cn>
-References: <20240722141822.1052370-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v3] spi: ppc4xx: handle irq_of_parse_and_map() errors
-Message-Id: <172372877149.37632.11411791571570145777.b4-ty@kernel.org>
-Date: Thu, 15 Aug 2024 14:32:51 +0100
+	s=arc-20240116; t=1723728785; c=relaxed/simple;
+	bh=PT4vceLLPwKMmVzXSpUqCl3F3S35lCtNHl+KnScZaMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lcmUsCeFut/WWhSk9KyBiIreuTFNi53VLpV3/CZHiSQiYU2YqwSggFtTePHbq+GJwob2fzX4844792rfCdMdSEOYGaIP6u4k5ma7r2GGBkyEiDHI6seZVgGCRXeh7tlMa/mAhOx7nyaxgnwGc5AlPqUjcXYJGEqU2h2vFBl5ALc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZA0WLywT; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1508810a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723728782; x=1724333582; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UEJof4v7tyrTnLF9qIrWadPJ+XLa5Cnw4PG3b+6OD58=;
+        b=ZA0WLywTkdhgB/J1LBcK51epOcemU6Qftnf66unTTRjjTTpoXlI8AiWtQnIbZcnfT3
+         Baqq0WMWRzGtjczJZfLeXqnmgGIcNmQEIgrV7vgTVhuNOoM6MtT9YYDUc/36QvfUPM/g
+         CXp8/Ljpnq/IPUAgOQHXicDwMibqXoJbS3CLPpA+bABuvCwQ2N+G3SXUkdZVGB9BJuqv
+         JG9SlbiH2sU4BoD/oXuKFGgj7jhqSlGK0OpP3bzohLeZULulNQ5bbCBaxvJctOSEUPPi
+         85GLVP/5znzFZQMlcrnKvqHM96Fm4HJS01QicIM7c8b6u85ErYlMs3Vt39wLGLkD6zGh
+         rH9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723728782; x=1724333582;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UEJof4v7tyrTnLF9qIrWadPJ+XLa5Cnw4PG3b+6OD58=;
+        b=VBXKJL+eY9IhhbWSiw+4kvgVC3K5LaO/foe3mx+uwNDDgItOgfvXwdXdDSrASlgsc1
+         nuhhJuyGiRCndarf5yvauMMuxKDo/XSEGJJd7D8Vha1X/dTSk8VHpkBIG1X9741LnoIk
+         KO9touyyBV4T92uPy/SDsGXn1E3V+pfCFwIAyXm6XCkfTap2HJYTohgAg87pGhhyjCE7
+         QHUEzeRsaoGfT9VRknERvBJCXx8IcGwM9us3JV+Id3IsQ8ChESRlU/vYJqPEQYI/lDgl
+         nQUaiUTc4A7nfhb6WDZfKiNhyfXAGHfsQquuk/K0i6ByH/0zpHOolmdiAbvv9AqhQLcd
+         NsLQ==
+X-Gm-Message-State: AOJu0YyokXqJEu/P7QUNQte6mH92+WNYwoMhWEHZdZqif5k5A8IkXHfh
+	GXUyVQgRSiJ6GHPr0IyBmsxUChnKxHVqr/ZMWsoeK2151dBsVfsTqxKOzHHgZT8=
+X-Google-Smtp-Source: AGHT+IG2nJRmRHwZEFc8/yc2nSEl5vEmOpqUIA6AVXiRxilGqcN0/zTenfvGbCOA3idJ/dfOlZqvHg==
+X-Received: by 2002:a05:6402:f05:b0:5be:bc6b:86a with SMTP id 4fb4d7f45d1cf-5bebc6b0938mr1983205a12.19.1723728781736;
+        Thu, 15 Aug 2024 06:33:01 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8741:4a00:60e5:7bee:fc48:e85c? (p200300e587414a0060e57beefc48e85c.dip0.t-ipconnect.de. [2003:e5:8741:4a00:60e5:7bee:fc48:e85c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbde3eedsm893417a12.22.2024.08.15.06.33.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 06:33:01 -0700 (PDT)
+Message-ID: <bac2c7f2-a92b-401b-a8e5-2f22cb11a7a7@suse.com>
+Date: Thu, 15 Aug 2024 15:33:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] xen, pvh: fix unbootable VMs by inlining memset() in
+ xen_prepare_pvh()
+To: Alexey Dobriyan <adobriyan@gmail.com>, boris.ostrovsky@oracle.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com
+References: <20240802154253.482658-1-adobriyan@gmail.com>
+ <20240802154253.482658-3-adobriyan@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <20240802154253.482658-3-adobriyan@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
 
-On Mon, 22 Jul 2024 22:18:22 +0800, Ma Ke wrote:
-> Zero and negative number is not a valid IRQ for in-kernel code and the
-> irq_of_parse_and_map() function returns zero on error.  So this check for
-> valid IRQs should only accept values > 0.
+On 02.08.24 17:42, Alexey Dobriyan wrote:
+> If this memset() is not inlined than PVH early boot code can call
+> into KASAN-instrumented memset() which results in unbootable VMs.
 > 
-> 
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-Applied to
+Acked-by: Juergen Gross <jgross@suse.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Thanks!
-
-[1/1] spi: ppc4xx: handle irq_of_parse_and_map() errors
-      commit: f1011ba20b83da3ee70dcb4a6d9d282a718916fa
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Juergen
 
 
