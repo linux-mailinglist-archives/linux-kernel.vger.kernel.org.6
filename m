@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-288100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A68C95349E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:28:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 292649534DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477A0285B3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:28:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D741F2951E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914B51A01DA;
-	Thu, 15 Aug 2024 14:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46B71A00E2;
+	Thu, 15 Aug 2024 14:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fTyaTxso"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T++eLcfF"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EB963C;
-	Thu, 15 Aug 2024 14:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C52063D5
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732084; cv=none; b=uHtqpVgqp02D8bYKnsDMmAFDbW73wbE8SMGbxbxa3MC+pTip0NqCRPweTyKQKRq8uM+tV3lveVQoDp/1AN6fQqy+53X1Isfvpcdv1sP/9Ozy2Br8PyaJeI5oIagqwUvuC9fmPk3VNyb6xgoDz0TCXoiNkl8Ar2VkmvJsoNIpXus=
+	t=1723732268; cv=none; b=TiC43YnUQ5YorDCDfNDMCLl9OJSFB3VDYI//66nJEi0RZVN6E71V3LkZ0EC8HcDX6TVYs3tr8tnRVZLcg6rSuODwX+GO+RS4yBYaBBfWn8r8GEgR1k+dHogGMNt4+l8wO5thDs9JyB0UcbxbO644B8Eny9A+nIkw/gGHtm5UQj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732084; c=relaxed/simple;
-	bh=N6W+kdsRIJgs6BgWYIx1Fmb+FrqcQji/yE9Gm23xVqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mnM0x/0I698exyEzrc2rciBXLVsK+WfrU6dm+wvS4f9JDC9sk5L6kUEHqC+TZYEMrFOGc7yRxxxucN7BV1Qt5DKI74hXN69AMa6xoYq3IUrPBi3cpz70KNb54BqOT4IyghZWlJRT/gaBJ5X7ajmOCkrDEBBUHYjw8CHLtfJSXmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fTyaTxso; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47FERjpC107604;
-	Thu, 15 Aug 2024 09:27:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723732065;
-	bh=NqGks5ZmmaFD2NYgflpmv3wLE/YC3/eEbp1rSchg8og=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=fTyaTxsoNRJhlTniYomZCMf9fDBVZwr5+ODtSfRpE++A7yzI4YgAy6qrpBzbucp6i
-	 NmpbUtsHReAfyYm1w9+4dHqkPVRXrczkB2YbG8DJCpkAVy/85c8hAK4RjYj995tlu0
-	 lc4VwPTM8w5xsjIaTx7Keebp7xQWtlJxo2CM8WuQ=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47FERjdt055511
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 15 Aug 2024 09:27:45 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 15
- Aug 2024 09:27:44 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 15 Aug 2024 09:27:44 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47FERixs037874;
-	Thu, 15 Aug 2024 09:27:44 -0500
-Message-ID: <440c9c5b-85ca-47f1-ac05-498ec9a1911b@ti.com>
-Date: Thu, 15 Aug 2024 09:27:44 -0500
+	s=arc-20240116; t=1723732268; c=relaxed/simple;
+	bh=VxDXZ5FvSqzrFez+xwuyYcdPM75Q2XBscIKFo1ouHkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SvhiF1YTR6a6ALz41/RKEQSSNCOWCE/ucdJgKzV894WfJadnfLKXzOG37vqVAadNACGZgngmNqqW3LN4xplCG/GzmN+a/nuFwHh3tM1zjf8+/dzkw9Dzt6yAneTVLNJgVMZcSCp1LCPWAatsIi/jUtR7qbY+zZ3qD7X152XQ+NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T++eLcfF; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=e6PjGgizeLL+ahPBbPESs3O3FYweeeVdNOt3xv/pMJ8=; b=T++eLcfFeWtNUetoGepup4YDPd
+	kfLZCWcz5zyJAGh2uEWoz/O7YNf3oGaSmAiAUF3oe/xTqw2obSM2VM+zAyjNv552ozE37zuIms6u+
+	Ii3b5CCiZ82lD+wfBfCBxxce/K7A9YTnxxorhuKGPFtn47augUZVvNC9op6Ju2lORoxLJN+eMNJq3
+	2feVmd6XSydv0lVyR3xs8KP5zyXO/btJGCohLJYwSWdVpn75jK8rwlEjIxV0iaTE8IN2xa6M5GaI5
+	FoJOZLiiz7Vmzca+LZngWIZ+3uHYw+9UALuQAoqVoqDfovlKcaDrdwa/6O9TkP/LDUDJIIIAMul2R
+	Ks9EmSgw==;
+Received: from [187.36.213.55] (helo=[192.168.1.212])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sebV5-000eI3-MH; Thu, 15 Aug 2024 16:30:51 +0200
+Message-ID: <92d1a047-2756-4f69-acc0-b6b161399783@igalia.com>
+Date: Thu, 15 Aug 2024 11:30:41 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,70 +55,288 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Add and fix ESM nodes
-To: Nishanth Menon <nm@ti.com>
-CC: Jan Kiszka <jan.kiszka@siemens.com>, <devicetree@vger.kernel.org>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
-        Rob Herring
-	<robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>
-References: <20240813230312.3289428-1-jm@ti.com>
- <4295a15a-6285-4005-bc40-328e52addc2b@siemens.com>
- <6134b3c1-f7ea-4cca-8777-56e5705aadf6@ti.com>
- <20240815122928.4i2yob5aj5ssqhzw@reply>
+Subject: Re: [PATCH 3/3] drm/vkms: Add documentation
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
+References: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
+ <20240814-google-clarifications-v1-3-3ee76d7d0c28@bootlin.com>
 Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20240815122928.4i2yob5aj5ssqhzw@reply>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
+ H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
+ hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
+ GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
+ rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
+ s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
+ GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
+ pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
+In-Reply-To: <20240814-google-clarifications-v1-3-3ee76d7d0c28@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Nishanth,
+Hi Louis,
 
-On 8/15/24 7:29 AM, Nishanth Menon wrote:
-> On 08:59-20240814, Judith Mendez wrote:
->> Hi Jan,
->>
->> On 8/13/24 11:04 PM, Jan Kiszka wrote:
->>> On 14.08.24 01:03, Judith Mendez wrote:
->>>> The following patch adds ESM nodes and fixes ESM source
->>>> interrupts for Sitara K3 platforms. Currently watchdog cannot
->>>> reset the CPU because of misconfiguration or missing ESM node
->>>> in DT.
->>>>
->>>> ESM node was added for am62ax and am65x. For am62px ESM source
->>>> interrupts are fixed. Comments were also added for clarity on what
->>>> source interrupts are routed to ESM based on device TRM.
->>>>
->>>> ESM nodes like MCU ESM for am65x are added for device completion,
->>>> currently, some ESM0 events are not routed to MCU ESM, so watchdog
->>>> cannot reset the CPU using the current implementation.
->>>
->>> Yes, that's why there is https://github.com/siemens/k3-rti-wdt and
->>> probably similar bits in other R5 firmware. I was always told that is
->>> the only way to reset the /system/ (CPU alone would not help). That
->>> information is still correct?
->>
->> If you look at 9.4.14 MCU_ESM0 Interrupt Map, ESM0_ESM_INT_CFG_LVL_0,
->> ESM0_ESM_INT_HI_LVL_0, and ESM0_ESM_INT_LOW_LVL_0 are not routed to
->> MCU_ESM0. So the current implementation to route events from ESM0 to
->> MCU_ESM0 to reset the CPU will not work for AM65x, this is the
->> implementation on other K3 Sitara platforms and how watchdog can reset
->> the cpu.
->>
->> I did find MAIN_ESM_ERROR_INT which should be SOC_SAFETY_ERRORn, look
->> at Figure 12-3690. Perhaps the ESMs could be configured to use
->> SOC_SAFETY_ERRORn instead, not sure.
->>
->> The above should apply to both SR1 and SR2 devices according to the TRM.
+I'd make this patch more incremental. First, send me a patch based on
+drm-misc-next with the new documentation for the things that already
+exists. Then, when you add a new field, you add the documentation with
+it.
+
+On 8/14/24 05:47, Louis Chauvet wrote:
+> Add documentation around vkms_output and its initialization.
 > 
-> Thanks for clarifying - you should add that in the commit message.
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>   drivers/gpu/drm/vkms/vkms_drv.h    | 81 ++++++++++++++++++++++++++++++++------
+>   drivers/gpu/drm/vkms/vkms_output.c | 12 +++++-
+>   2 files changed, 80 insertions(+), 13 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 3028678e4f9b..8f6c9e67e671 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -147,29 +147,51 @@ struct vkms_color_lut {
+>   };
+>   
+>   /**
+> - * vkms_crtc_state - Driver specific CRTC state
+> + * struct vkms_crtc_state - Driver specific CRTC state
+> + *
+>    * @base: base CRTC state
+>    * @composer_work: work struct to compose and add CRC entries
+> - * @n_frame_start: start frame number for computed CRC
+> - * @n_frame_end: end frame number for computed CRC
+> + *
+> + * @num_active_planes: Number of active planes
+> + * @active_planes: List containing all the active planes (counted by
+> + *  @num_active_planes). They should be stored in z-order.
+> + * @active_writeback: Current active writeback job
+> + * @gamma_lut: Look up table for gamma used in this CRTC > + * @crc_pending: Protected by @vkms_output.composer_lock.
+> + * @wb_pending: Protected by @vkms_output.composer_lock.
+> + * @frame_start: Protected by @vkms_output.composer_lock.
+> + * @frame_end: Protected by @vkms_output.composer_lock.
 
-Sure, I can send v3 with another commit message fixup.
+Apart from being protected by @vkms_output.composer_lock, what those
+variables represent?
 
-~ Judith
+>    */
+>   struct vkms_crtc_state {
+>   	struct drm_crtc_state base;
+>   	struct work_struct composer_work;
+>   
+>   	int num_active_planes;
+> -	/* stack of active planes for crc computation, should be in z order */
+>   	struct vkms_plane_state **active_planes;
+>   	struct vkms_writeback_job *active_writeback;
+>   	struct vkms_color_lut gamma_lut;
+>   
+> -	/* below four are protected by vkms_output.composer_lock */
+>   	bool crc_pending;
+>   	bool wb_pending;
+>   	u64 frame_start;
+>   	u64 frame_end;
+>   };
+>   
+> +/**
+> + * struct vkms_output - Internal representation of all output components in vkms
+> + *
+> + * @crtc: Base crtc in drm
 
+s/crtc/CRTC and s/drm/DRM
+
+> + * @encoder: DRM encoder used for this output
+> + * @connector: DRM connector used for this output
+> + * @wb_connecter: DRM writeback connector used for this output
+> + * @vblank_hrtimer:
+> + * @period_ns:
+
+Empty?
+
+> + * @composer_workq: Ordered workqueue for composer_work
+
+Add reference to composer_work
+
+> + * @lock: Lock used to project concurrent acces to the composer
+
+s/acces/access
+
+> + * @composer_enabled: Protected by @lock.
+> + * @composer_state:
+
+Empty?
+
+> + * @composer_lock: Lock used internally to protect @composer_state members
+> + */
+>   struct vkms_output {
+>   	struct drm_crtc crtc;
+>   	struct drm_encoder encoder;
+> @@ -177,28 +199,38 @@ struct vkms_output {
+>   	struct drm_writeback_connector wb_connector;
+>   	struct hrtimer vblank_hrtimer;
+>   	ktime_t period_ns;
+> -	/* ordered wq for composer_work */
+>   	struct workqueue_struct *composer_workq;
+> -	/* protects concurrent access to composer */
+>   	spinlock_t lock;
+>   
+> -	/* protected by @lock */
+>   	bool composer_enabled;
+>   	struct vkms_crtc_state *composer_state;
+>   
+>   	spinlock_t composer_lock;
+>   };
+>   
+> -struct vkms_device;
+> -
+> +/**
+> + * struct vkms_config - General configuration for VKMS driver
+> + *
+> + * @writeback: If true, a writeback buffer can be attached to the CRTC
+> + * @cursor: If true, a cursor plane is created in the VKMS device
+> + * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
+> + * @dev: Used to store the current vkms device. Only set when the device is instancied.
+
+s/instancied/instantiated
+
+> + */
+>   struct vkms_config {
+>   	bool writeback;
+>   	bool cursor;
+>   	bool overlay;
+> -	/* only set when instantiated */
+>   	struct vkms_device *dev;
+>   };
+>   
+> +/**
+> + * struct vkms_device - Description of a vkms device
+> + *
+> + * @drm - Base device in drm
+
+s/drm/DRM
+
+> + * @platform - Associated platform device
+> + * @output - Configuration and sub-components of the vkms device
+> + * @config: Configuration used in this vkms device
+> + */
+>   struct vkms_device {
+>   	struct drm_device drm;
+>   	struct platform_device *platform;
+> @@ -206,6 +238,10 @@ struct vkms_device {
+>   	const struct vkms_config *config;
+>   };
+>   
+> +/*
+> + * The following helpers are used to convert a member of a struct into its parent.
+> + */
+> +
+>   #define drm_crtc_to_vkms_output(target) \
+>   	container_of(target, struct vkms_output, crtc)
+>   
+> @@ -218,12 +254,33 @@ struct vkms_device {
+>   #define to_vkms_plane_state(target)\
+>   	container_of(target, struct vkms_plane_state, base.base)
+>   
+> -/* CRTC */
+> +/**
+> + * vkms_crtc_init() - Initialize a crtc for vkms
+> + * @dev: drm_device associated with the vkms buffer
+
+DRM device
+
+> + * @crtc: uninitialized crtc device
+> + * @primary: primary plane to attach to the crtc
+> + * @cursor plane to attach to the crtc
+
+s/crtc/CRTC everywhere
+
+> + */
+
+New line
+
+>   int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+>   		   struct drm_plane *primary, struct drm_plane *cursor);
+> +/**
+> + * vkms_output_init() - Initialize all sub-components needed for a vkms device.
+> + *
+> + * @vkmsdev: vkms device to initialize
+> + * @possible_crtc_index: Crtc which can be attached to the planes. The caller must ensure that
+> + * possible_crtc_index is positive and less or equals to 31.
+> + */
+>   
+
+Delete line
+
+>   int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index);
+>   
+> +/**
+> + * vkms_plane_init() - Initialize a plane
+> + *
+> + * @vkmsdev: vkms device containing the plane
+> + * @type: type of plane to initialize
+> + * @possible_crtc_index: Crtc which can be attached to the plane. The caller must ensure that
+
+s/crtc/CRTC everywhere
+
+> + * possible_crtc_index is positive and less or equals to 31.
+> + */
+>   struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+>   				   enum drm_plane_type type, int possible_crtc_index);
+>   
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index d42ca7d10389..36db2c8923cb 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -21,6 +21,7 @@ static int vkms_conn_get_modes(struct drm_connector *connector)
+>   {
+>   	int count;
+>   
+> +	/* Use the default modes list from drm */
+
+s/drm/DRM
+
+>   	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
+>   	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
+>   
+> @@ -58,8 +59,13 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
+>   	int writeback;
+>   	unsigned int n;
+>   
+> +	/*
+> +	 * Initialize used plane. One primary plane is required to perform the composition.
+> +	 *
+> +	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
+> +	 * composition.
+> +	 */
+>   	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, possible_crtc_index);
+> -
+>   	if (IS_ERR(primary))
+>   		return PTR_ERR(primary);
+>   
+> @@ -96,6 +102,10 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
+>   		DRM_ERROR("Failed to init encoder\n");
+>   		goto err_encoder;
+>   	}
+> +	/*
+> +	 * This is an hardcoded value to select crtc for the encoder.
+> +	 * 1 here designate the first registered CRTC, the one allocated in [1]
+
+Where is [1]?
+
+Best Regards,
+- Maíra
+
+> +	 */
+>   	encoder->possible_crtcs = 1;
+>   
+>   	ret = drm_connector_attach_encoder(connector, encoder);
+> 
 
