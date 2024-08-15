@@ -1,190 +1,919 @@
-Return-Path: <linux-kernel+bounces-287343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C946A9526B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB139526AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4651B1F22828
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:14:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC0C01F21896
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16CD18D62C;
-	Thu, 15 Aug 2024 00:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A6E320E;
+	Thu, 15 Aug 2024 00:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="l+QyjyW8"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2013.outbound.protection.outlook.com [40.92.103.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xwg/8L28"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A186F2E6
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723680608; cv=fail; b=I/c7oKMVvv+c7OR2K2abJFiyL5y+jCGn8/52ROkhwcd9PqRlWFGWA4p0ovj9voM7VIPQCV1eBM9DBaaT1ddhIrQFgvzWb7IuvTsegQaNATGWQRvFoMUXnedfEtpPvDvbn4SlWW94qxcYbCQRCuwsgxz2S3p0h/RPJk5Y8XFzwZE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723680608; c=relaxed/simple;
-	bh=G1LrIettfPGbaJZ2rxdMSWvQcyy+YTVCktaV2odHEPc=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ic6+3BoduVw0tGsqfNacjvhAxwgm/d3fQejkWGv6UxZGj6I02OH4AocV4SqEI9YmZQv0qyuWVRlXBxuU5+wUJDauUUFcXkhHw4HbaZejoeBaOjHle0Puk4lAqPymo2HkH9Bhvr/+As9Uu33ILKlFMPhf4wNuWPbqJzd5HWtISiA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=l+QyjyW8; arc=fail smtp.client-ip=40.92.103.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jqeV3zNuZGjEbl9mMl6edkMl3zkr4kh/LyScvbKtw7mm8l5iakN2rUZYPDg6wVawc77J2AXBrzNN6z3nfvLhALwIIBoQlKliaaLhsBVZhn02zW9/o0VOooTxCNI8ccqKx7eyCsq6ILXW6yhkTZwlcgIlS60xUWiTahCOrwqFZtj8SpiHgc8fEhK2F9fX1HIoYkv1ZNu1hr6lt3dMDZQbNpDtJGBUVxnZwJ5iYZAfKGj2gYXCK1kp1RbSZ7/sfuTnx+hyusw+XI3P26f6/Bo3yTtif2ovCV9sZfj6KfDHAyUwXD1mpFOYj16vPLzyxR7pcRRDs+uwUagkI/2UPYJ3Ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NTDXUA/mAedWXhR5N/JhEyxOXhEDKKJa2nqY2tONm88=;
- b=w/L1a0gCI8krQplvNY3v5GcEVU9JAoXIJAZ/fUbrKUzlbfPKtlSkwO3nOgWIocEzULwt9ywtT19P46zREJDQIflznen7kMOZqLv3BQfl0YXAnolWxof+WJYGQTrJ2utkdgEHnNLUObwIo0N+I0GCfGPvacmidi89UjKlTc8UM4N3tnS7WPlZetvI71eHebAOCwg3B7uMd/PTtjKHi/0FKk8ZiJJOKFhWc4YpNlSknxoZD+Ce0nG7liSx+3yX07XRpcCBZcKrRXPVlWO3y1eHZoDtnBSHdIOzEt5dx46mGiDruNdVajatPaNNHGkeT18l18Hr+SMkdZptnAuBPQNdGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NTDXUA/mAedWXhR5N/JhEyxOXhEDKKJa2nqY2tONm88=;
- b=l+QyjyW8Vo5hI3fAyyAW0DL0Ci2y0skJoyiU+A4gAkpZc0hFIhWUmhdGthnofE69bGyw/pQh9LH2+DNdO0EKJjJCZyouZyD6LNcpJpGFqJ9xC+H5GdVXONr+DoFrSA13BTZ4lzKeRCJVBcQS8lvNCG2m5fbjeNV0BuF0b9zl2B0/wkw1TWf0cOeurERCGxF0d6xQuVs7RntUfDWjdkuzeBuIi8cSENjyCnGmi2hqol29PKMZXQNDmtxjKhoUvUf7dibCL3oKL9Fs8DsJMxNS1pS1yvGBbJIV4mBh8/cx4tj8EfWjAWxEzhaj87tOXAKe3kBM3KMsxlkC0AejbEi5Xw==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by MA0P287MB1739.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:f9::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Thu, 15 Aug
- 2024 00:09:53 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%6]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
- 00:09:53 +0000
-Message-ID:
- <MA0P287MB28220A185F2EC2E4E86479ABFE802@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Thu, 15 Aug 2024 08:09:48 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: defconfig: sophgo: enable clks for sg2042
-From: Chen Wang <unicorn_wang@outlook.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Chen Wang <unicornxw@gmail.com>, paul.walmsley@sifive.com,
- aou@eecs.berkeley.edu, inochiama@outlook.com, conor.dooley@microchip.com,
- guoren@kernel.org, emil.renner.berthing@canonical.com,
- apatel@ventanamicro.com, hal.feng@starfivetech.com, dfustini@baylibre.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, haijiao.liu@sophgo.com,
- xiaoguang.xing@sophgo.com
-References: <20240805023320.1287061-1-unicornxw@gmail.com>
- <MA0P287MB28229593FA53BF75C625B468FEBA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-In-Reply-To: <MA0P287MB28229593FA53BF75C625B468FEBA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [l98F+scGuG9+dVuar1Kxm4LHNVU/T99F]
-X-ClientProxiedBy: SI2PR01CA0032.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::18) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <0f93bcac-8126-4de9-9913-93909c5d45ea@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9134501A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723680600; cv=none; b=FIdE2/djPRlIqXIhv3+zQmgFZ6GPTYStgiSCd8ah/s7/0sIFPyLX/2dbm7DgflpUlUaef9xxrlAKsD+1+raBH5CgT/7GaWpwix+eWO8j6mta8F2yCC762cagBvTgM+erQc3UbYIFLi0BHz3Bl0yQ58SfvK9rFwMovSJIYXpoSBY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723680600; c=relaxed/simple;
+	bh=/n64ZFDmlDXvQc6HA3xUIgKURl+Q5/Xgv33XqSDCGdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VmUrVD+63qg4i4vl2k3Gwn9iOXlVs2HhbrAqNxSJcCo2VzABfeONaqEXr7Kgh75hL8PlmdSV/IdZq3EYJboXudE6Zwalwa6mDcDVir35QhmHEe23Oxgo8DGIrTuIrEweGl59rg2NdfgICPr9cL99gM6E6Ev+O2uRqlAQyPuVOq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xwg/8L28; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-371893dd249so86108f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:09:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723680595; x=1724285395; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TZH7ck6p/rT1FdPjJj4T4rDbABS9T2g2N5a/Fz7grXc=;
+        b=Xwg/8L2855OHncE2jXOxgPnLYxoH2sNL3HxOG3v9Yv2l85O4cc8nmq4BcHJXHM/WZn
+         rwyC6XoCPnm7DXy5qg82CozdMtyOrka/7VYWkMaZH/NEXCehklGTQMlE6ub62wQNRlAc
+         vwwrKvjW5cHGU11T6TeBuBcKG8KGWZbZhU3pyeaXBYiXLlQew0SHaRp1FbKYVkOz6efm
+         AOcJagGDHEOE39z/7P11mPPC8Xa/b48MNcE0dFnvz9jLng8iTPC3tMa7QyaP64KSAl7P
+         GwYGU+6pLponsip6/Ph9DnbtyA4xT8pdtWtA/JilY97R5vt0+zi1LlVsUSq498NATMe4
+         Tqkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723680595; x=1724285395;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZH7ck6p/rT1FdPjJj4T4rDbABS9T2g2N5a/Fz7grXc=;
+        b=cHoCmSBR+kHGHCP3gXEwBkkvCaMi+53P9dluKN4XBaPKooJRRmpjKoWy9pcKDT4vTr
+         VabdyYO3d3BvDGDO28gDtDDGU8KscVegsRuqTImhDonobJ4ze0GC7pPaK60JQHiFz+pz
+         6L4Gv3QNV1BLkUJm2J77aev1T8ZH8r3+nHPfmim2u5bq+Si6XkxdyVVQc/n5HZhS/mI5
+         eJQNYDKcJiVtny8yDWEKFaDMZ1OqDnVA5nTxx0pRziIA9x+cAqTp8zqXTIoKhIjttbWL
+         jPxPyABS5sP8HnXgAE/X2kc00JNG73SuvYmHjguU5duQIwwTk/45X4WWDYaJUs0NlDsG
+         jOow==
+X-Forwarded-Encrypted: i=1; AJvYcCXcRJYqnkyKpiBWsZSiP246l6VFQDZJpfCAX2PvLMCSVeohZgs7BK79oZTQ+Db7LiCq/Z5N09/BbQ2jlLF2Sy6CJlDFgFITy2TOPGZz
+X-Gm-Message-State: AOJu0Yyzn4OhmHpUUDLg/qTHE3eoyY+siOinPTtdvaxaCnSjBYlWbllT
+	EFIJL2xFtjRg0Ay8kq7q3qzd32+xpT9V3SZJvuQ/wc+SK46ziIm6R+PxhtK9iF4=
+X-Google-Smtp-Source: AGHT+IE9XuXTHygJ5Mp9Urp6O/6EJ9yEW1SNFO5XPux9DL9eHAFMwY42Q60eYe3SD+DWFN5VcuCsFQ==
+X-Received: by 2002:a5d:4a0e:0:b0:367:980a:6aa with SMTP id ffacd0b85a97d-37177825321mr2914047f8f.54.1723680595289;
+        Wed, 14 Aug 2024 17:09:55 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849a9asm269652f8f.45.2024.08.14.17.09.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 17:09:54 -0700 (PDT)
+Message-ID: <0611458d-b508-4e52-bafe-7f5612c63b72@linaro.org>
+Date: Thu, 15 Aug 2024 01:09:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB1739:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbc071fc-7224-4cde-1dcb-08dcbcbe9664
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|15080799003|5072599009|19110799003|8060799006|440099028|3412199025|4302099013|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	r00DrKNbiWnNNIEvXiJUo4vZFrrkFJyydpmmIPtnLiOTvEEa+isXwTDV3savODSaCYuzZYmeZYInFS3fYstRmMfVCRowb+KPjmyonMmlMYOkX6IzA5gsb0FmCNFnOfvhO9RbDhnncT2CKia05RLVxTFTIgpSzBChtYM94qocfwPdG/n53bx9CMFXfwWBQ9ByWDuCXKlOBvvG0xTYYAc2//eP88e6htQ0Z8U8XilVwF4xX9mCEbacUe9wQsw/teX5CefTeYLXmc/3rjMbuKMqGJ5Z8AbXOsx/bz6D2X1kOQ7zzMcpt7aNklie+bsutkX92OKSfE3xB24GuDgiroRTEJiOgQ14jkgea/pRyJwS5d1/D9RDaARMXm4+KrRGxUI24s7BERzu70zT6q8mqZFuyq8hDtUugP8sLKQdLrslheGN5Tyb++BKf3gIjx6EtUE6+o5dQSqEk+ToeRpfC/I3WD591cqt9t4HRq5NHt/FoZ9F3UB0/K2D59HaHRoSLZSry17byZueEcL/vLmgK68KDrfEjW0y8Z2YfSPz4omFB/Ma4sqR9Dv58myGXPQmD+UGDLo5WvecsOE6I+vmRZlMXXWL72lsaVoPTLNMLcaTOpQ+Fc0o2wg6NnvT7oByCDGAVl3SkoxaJ5kg4k3UxkyNjHiQCZooNMLUw8H0ZrUEHnQMnJdohGW9wLC4pQ2u3IQ/a15h3qx4F8pfbRCkixA0V1MvuKOtz3ZdJZ47XB4f+z3+v7VeL3t/nQjAJYn/2EJpulvTMTn+OwtfDGRC1nH35JRLtHWyxXjnhWPszad5liqgBZ/CTvKKTYmOx6HBgqeG/tAnGWvAT4ZVsfXcv5Jg6/lJI09RVPWX7ITenRFbwqfJoE/Sbgy7v588DjkInHlJ
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZDJOQ1hrK2VESW5kLzF2TWZFc0RxZTMzMHIzMDhmS3E4NXIvcm9LN2hnMUNE?=
- =?utf-8?B?ei9OUkRZMTF4ZUF6M3pxYVlJOU1XNWljY3R0TTNnYk9WRjBMVXlyTUs0c09m?=
- =?utf-8?B?NU5PenhMUWsxdk9MWXhzUzh1TzRDT0hwemZHWVJEemhqR1FDRkd2QW9nT3ov?=
- =?utf-8?B?UkhZTk1QOU1xTWdZNm1Qa2l0YXhQM0VtVEFIWkdUKzZETjVoVlZKN1lTbTY3?=
- =?utf-8?B?M3puMDkrbjZTUHhaRERRWVl0VHVjMkpVdHN3OHJIL0JZaVVqRHJzZjIwYkVK?=
- =?utf-8?B?czZyNWNVVm1BV1NaRkNabkFmdEl5Q3VLOXBUNzhldm8yUXF2WlJsV0J0VmxW?=
- =?utf-8?B?bWJtcXNFbThNODA0TFg4NHduSjBTbVoxQjcyTEo0TkdFM2VmMWNaUTJZa3kw?=
- =?utf-8?B?eEpHRFFWM0x0V2pGdmFWQUJ2M1JZaTZhRUlGaldWWFMzM2lLdVZJb0ZTNkE0?=
- =?utf-8?B?QXlqZUR5Q2dMemFucEFMMGVRaDhnMUM0OUg0b1RnMkUxc1JaMzlLOTBXSmpu?=
- =?utf-8?B?UUczRXZPZnN1VjlYdm5rTis4eHBJbUkwRklSMWVRZ2NxV2pNT2s2WVRzc2xE?=
- =?utf-8?B?aHNzZm9zVUIrZGhCUEpxUXdBRjdpSUtnSXk0OEZGU2Qvcm9TcTBWa2Q2cjg2?=
- =?utf-8?B?c2h4OUFDNC9BUlRXWmJ3R054MXNmejlXTnRaMlM4VjhKM0o5ZkpsZVRTcGRR?=
- =?utf-8?B?b1h0K3pvNzlWT0U3b05vVDNJZkNub0xJbEdETlEvME1yZ0NjNnh2dXNVdHZ3?=
- =?utf-8?B?ak4zYmdKcm11Zk9RVDh6dERGZEVFMDljOEQzR3VDSGVBL3BHNkpVWENCakRG?=
- =?utf-8?B?YWVESGMybyswcm9lcjJqenRMMkgybHBZYUN5ZERlSzdjaytPcjJNVVQwZWRG?=
- =?utf-8?B?U2ZmNVIrekhVN2RGUW1uSWUzYkVRbnhveXpWeG9aN3M1ZVh0dEJTTFhmbVFu?=
- =?utf-8?B?Q2pPYzZhMGFha05HVEd6dm8xdk5lUDlQbmg2M09qek9xTmRsazZGd1JIQWJT?=
- =?utf-8?B?Q2NqT0ZQVjlVR2ZRS2J1THhNVUR4NzVJNUVRNkF3N2N3Qi9uNndBZVJ1VHMw?=
- =?utf-8?B?b0NrT1VJaE10ZC9SSnlubGRET2tLdlhSZVdPaFBTN1puTFlRZXA4WEFSYlVL?=
- =?utf-8?B?ZkhhVGw2TmtyaFpHUmNtSWhlcFBzMGM4aFNKN0Q4bUVWZ2JUaHUrUkFPY0o1?=
- =?utf-8?B?Z2ZnVmtHSWk0U05xYXdMMVBVTFVBbzAvQVZtS2JENmRjWDVrQTNIWHh0OENZ?=
- =?utf-8?B?RVFPdFBmUkdROEFaL2xaaXlFTXA2V2N4NFh3SnJhUDhYeEV5eUlEekJLY0pT?=
- =?utf-8?B?dVFjcUEvRzJQWXNzYjZWNUFJRytOQytLSDkzZGhmRk9PMTVEcEYrb0NmRitx?=
- =?utf-8?B?NnBZOHlMdEhQZ05xamZncUJNaml2N3JrRzQ4YjFGSTZ4VENLNEtVT1JpQnR2?=
- =?utf-8?B?OE1yczEyYnhRdVVSU3dMSjRPRzVVNklGNHBpc2dLa1R5ZUtxSE9CRWhNZXNR?=
- =?utf-8?B?d3ZxRVZ4NlljZ1dUYUhTRllTVVhuT25zQzZlMGdySVhuN1NaUEI5bW4ydEZ6?=
- =?utf-8?B?Um8vZWM3OHk1enZQYVNnajVxYkVSZDFVMEpQN2pDR3lHWFJaYm1YL0F5d2c2?=
- =?utf-8?B?cjNmK05CeCtFSHozTGZKMkxhK1VhNjFSaVh2ZHpxSmpUclBCRG81cWJNR1hm?=
- =?utf-8?Q?+nZG5Vwy17jQeth78nou?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbc071fc-7224-4cde-1dcb-08dcbcbe9664
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 00:09:53.6015
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1739
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/13] media: qcom: camss: vfe: Move common code into vfe
+ core
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-10-quic_depengs@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240812144131.369378-10-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, Palmer,
+On 12/08/2024 15:41, Depeng Shao wrote:
+> Some v4l2 buffer related logic functions can be moved to vfe core as
+> common code, then the vfe driver of different hw version can reuse them,
+> this also can avoid adding duplicate code for new version supporting.
+> 
+> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+> ---
+>   .../media/platform/qcom/camss/camss-vfe-17x.c | 112 +-------
+>   .../media/platform/qcom/camss/camss-vfe-4-1.c |   9 -
+>   .../media/platform/qcom/camss/camss-vfe-4-7.c |  11 -
+>   .../media/platform/qcom/camss/camss-vfe-4-8.c |  11 -
+>   .../media/platform/qcom/camss/camss-vfe-480.c | 258 +----------------
+>   drivers/media/platform/qcom/camss/camss-vfe.c | 264 ++++++++++++++++++
+>   drivers/media/platform/qcom/camss/camss-vfe.h |  58 +++-
+>   7 files changed, 340 insertions(+), 383 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-17x.c b/drivers/media/platform/qcom/camss/camss-vfe-17x.c
+> index 380c99321030..e5ee7e717b3b 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe-17x.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe-17x.c
+> @@ -14,8 +14,6 @@
+>   #include "camss.h"
+>   #include "camss-vfe.h"
+>   
+> -#define VFE_HW_VERSION				(0x000)
+> -
+>   #define VFE_GLOBAL_RESET_CMD			(0x018)
+>   #define		GLOBAL_RESET_CMD_CORE		BIT(0)
+>   #define		GLOBAL_RESET_CMD_CAMIF		BIT(1)
+> @@ -176,20 +174,6 @@
+>   #define VFE_BUS_WM_FRAME_INC(n)			(0x2258 + (n) * 0x100)
+>   #define VFE_BUS_WM_BURST_LIMIT(n)		(0x225c + (n) * 0x100)
+>   
+> -static u32 vfe_hw_version(struct vfe_device *vfe)
+> -{
+> -	u32 hw_version = readl_relaxed(vfe->base + VFE_HW_VERSION);
+> -
+> -	u32 gen = (hw_version >> 28) & 0xF;
+> -	u32 rev = (hw_version >> 16) & 0xFFF;
+> -	u32 step = hw_version & 0xFFFF;
+> -
+> -	dev_dbg(vfe->camss->dev, "VFE HW Version = %u.%u.%u\n",
+> -		gen, rev, step);
+> -
+> -	return hw_version;
+> -}
+> -
+>   static inline void vfe_reg_set(struct vfe_device *vfe, u32 reg, u32 set_bits)
+>   {
+>   	u32 bits = readl_relaxed(vfe->base + reg);
+> @@ -438,62 +422,6 @@ static int vfe_get_output(struct vfe_line *line)
+>   	return -EINVAL;
+>   }
+>   
+> -static int vfe_enable_output(struct vfe_line *line)
+> -{
+> -	struct vfe_device *vfe = to_vfe(line);
+> -	struct vfe_output *output = &line->output;
+> -	const struct vfe_hw_ops *ops = vfe->res->hw_ops;
+> -	struct media_entity *sensor;
+> -	unsigned long flags;
+> -	unsigned int frame_skip = 0;
+> -	unsigned int i;
+> -
+> -	sensor = camss_find_sensor(&line->subdev.entity);
+> -	if (sensor) {
+> -		struct v4l2_subdev *subdev = media_entity_to_v4l2_subdev(sensor);
+> -
+> -		v4l2_subdev_call(subdev, sensor, g_skip_frames, &frame_skip);
+> -		/* Max frame skip is 29 frames */
+> -		if (frame_skip > VFE_FRAME_DROP_VAL - 1)
+> -			frame_skip = VFE_FRAME_DROP_VAL - 1;
+> -	}
+> -
+> -	spin_lock_irqsave(&vfe->output_lock, flags);
+> -
+> -	ops->reg_update_clear(vfe, line->id);
+> -
+> -	if (output->state > VFE_OUTPUT_RESERVED) {
+> -		dev_err(vfe->camss->dev, "Output is not in reserved state %d\n",
+> -			output->state);
+> -		spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -		return -EINVAL;
+> -	}
+> -
+> -	WARN_ON(output->gen2.active_num);
+> -
+> -	output->state = VFE_OUTPUT_ON;
+> -
+> -	output->sequence = 0;
+> -	output->wait_reg_update = 0;
+> -	reinit_completion(&output->reg_update);
+> -
+> -	vfe_wm_start(vfe, output->wm_idx[0], line);
+> -
+> -	for (i = 0; i < 2; i++) {
+> -		output->buf[i] = vfe_buf_get_pending(output);
+> -		if (!output->buf[i])
+> -			break;
+> -		output->gen2.active_num++;
+> -		vfe_wm_update(vfe, output->wm_idx[0], output->buf[i]->addr[0], line);
+> -	}
+> -
+> -	ops->reg_update(vfe, line->id);
+> -
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -
+> -	return 0;
+> -}
+> -
+>   /*
+>    * vfe_enable - Enable streaming on VFE line
+>    * @line: VFE line
+> @@ -518,7 +446,7 @@ static int vfe_enable(struct vfe_line *line)
+>   	if (ret < 0)
+>   		goto error_get_output;
+>   
+> -	ret = vfe_enable_output(line);
+> +	ret = vfe_enable_output_v2(line);
+>   	if (ret < 0)
+>   		goto error_enable_output;
+>   
+> @@ -627,40 +555,6 @@ static void vfe_isr_wm_done(struct vfe_device *vfe, u8 wm)
+>   	spin_unlock_irqrestore(&vfe->output_lock, flags);
+>   }
+>   
+> -/*
+> - * vfe_queue_buffer - Add empty buffer
+> - * @vid: Video device structure
+> - * @buf: Buffer to be enqueued
+> - *
+> - * Add an empty buffer - depending on the current number of buffers it will be
+> - * put in pending buffer queue or directly given to the hardware to be filled.
+> - *
+> - * Return 0 on success or a negative error code otherwise
+> - */
+> -static int vfe_queue_buffer(struct camss_video *vid,
+> -			    struct camss_buffer *buf)
+> -{
+> -	struct vfe_line *line = container_of(vid, struct vfe_line, video_out);
+> -	struct vfe_device *vfe = to_vfe(line);
+> -	struct vfe_output *output;
+> -	unsigned long flags;
+> -
+> -	output = &line->output;
+> -
+> -	spin_lock_irqsave(&vfe->output_lock, flags);
+> -
+> -	if (output->state == VFE_OUTPUT_ON && output->gen2.active_num < 2) {
+> -		output->buf[output->gen2.active_num++] = buf;
+> -		vfe_wm_update(vfe, output->wm_idx[0], buf->addr[0], line);
+> -	} else {
+> -		vfe_buf_add_pending(output, buf);
+> -	}
+> -
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -
+> -	return 0;
+> -}
+> -
+>   static const struct vfe_isr_ops vfe_isr_ops_170 = {
+>   	.reset_ack = vfe_isr_reset_ack,
+>   	.halt_ack = vfe_isr_halt_ack,
+> @@ -671,7 +565,7 @@ static const struct vfe_isr_ops vfe_isr_ops_170 = {
+>   };
+>   
+>   static const struct camss_video_ops vfe_video_ops_170 = {
+> -	.queue_buffer = vfe_queue_buffer,
+> +	.queue_buffer = vfe_queue_buffer_v2,
+>   	.flush_buffers = vfe_flush_buffers,
+>   };
+>   
+> @@ -695,5 +589,7 @@ const struct vfe_hw_ops vfe_ops_170 = {
+>   	.vfe_enable = vfe_enable,
+>   	.vfe_halt = vfe_halt,
+>   	.violation_read = vfe_violation_read,
+> +	.vfe_wm_start = vfe_wm_start,
+>   	.vfe_wm_stop = vfe_wm_stop,
+> +	.vfe_wm_update = vfe_wm_update,
+>   };
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-1.c b/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
+> index 1bd3a6ef1d04..6930799f77c2 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe-4-1.c
+> @@ -210,15 +210,6 @@
+>   #define MSM_VFE_VFE0_UB_SIZE 1023
+>   #define MSM_VFE_VFE0_UB_SIZE_RDI (MSM_VFE_VFE0_UB_SIZE / 3)
+>   
+> -static u32 vfe_hw_version(struct vfe_device *vfe)
+> -{
+> -	u32 hw_version = readl_relaxed(vfe->base + VFE_0_HW_VERSION);
+> -
+> -	dev_dbg(vfe->camss->dev, "VFE HW Version = 0x%08x\n", hw_version);
+> -
+> -	return hw_version;
+> -}
+> -
+>   static u16 vfe_get_ub_size(u8 vfe_id)
+>   {
+>   	if (vfe_id == 0)
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-7.c b/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
+> index ce0719106bd3..76729607db02 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe-4-7.c
+> @@ -18,8 +18,6 @@
+>   #include "camss-vfe-gen1.h"
+>   
+>   
+> -#define VFE_0_HW_VERSION		0x000
+> -
+>   #define VFE_0_GLOBAL_RESET_CMD		0x018
+>   #define VFE_0_GLOBAL_RESET_CMD_CORE	BIT(0)
+>   #define VFE_0_GLOBAL_RESET_CMD_CAMIF	BIT(1)
+> @@ -254,15 +252,6 @@
+>   #define MSM_VFE_VFE1_UB_SIZE 1535
+>   #define MSM_VFE_VFE1_UB_SIZE_RDI (MSM_VFE_VFE1_UB_SIZE / 3)
+>   
+> -static u32 vfe_hw_version(struct vfe_device *vfe)
+> -{
+> -	u32 hw_version = readl_relaxed(vfe->base + VFE_0_HW_VERSION);
+> -
+> -	dev_dbg(vfe->camss->dev, "VFE HW Version = 0x%08x\n", hw_version);
+> -
+> -	return hw_version;
+> -}
+> -
+>   static u16 vfe_get_ub_size(u8 vfe_id)
+>   {
+>   	if (vfe_id == 0)
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-4-8.c b/drivers/media/platform/qcom/camss/camss-vfe-4-8.c
+> index 6b59c8107a3c..b2f7d855d8dd 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe-4-8.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe-4-8.c
+> @@ -17,8 +17,6 @@
+>   #include "camss-vfe.h"
+>   #include "camss-vfe-gen1.h"
+>   
+> -#define VFE_0_HW_VERSION		0x000
+> -
+>   #define VFE_0_GLOBAL_RESET_CMD		0x018
+>   #define VFE_0_GLOBAL_RESET_CMD_CORE	BIT(0)
+>   #define VFE_0_GLOBAL_RESET_CMD_CAMIF	BIT(1)
+> @@ -247,15 +245,6 @@
+>   #define MSM_VFE_VFE1_UB_SIZE 1535
+>   #define MSM_VFE_VFE1_UB_SIZE_RDI (MSM_VFE_VFE1_UB_SIZE / 3)
+>   
+> -static u32 vfe_hw_version(struct vfe_device *vfe)
+> -{
+> -	u32 hw_version = readl_relaxed(vfe->base + VFE_0_HW_VERSION);
+> -
+> -	dev_dbg(vfe->camss->dev, "VFE HW Version = 0x%08x\n", hw_version);
+> -
+> -	return hw_version;
+> -}
+> -
+>   static inline void vfe_reg_clr(struct vfe_device *vfe, u32 reg, u32 clr_bits)
+>   {
+>   	u32 bits = readl_relaxed(vfe->base + reg);
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-480.c b/drivers/media/platform/qcom/camss/camss-vfe-480.c
+> index dc2735476c82..e6d3b27de323 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe-480.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe-480.c
+> @@ -15,8 +15,6 @@
+>   #include "camss.h"
+>   #include "camss-vfe.h"
+>   
+> -#define VFE_HW_VERSION			(0x00)
+> -
+>   #define VFE_GLOBAL_RESET_CMD		(vfe_is_lite(vfe) ? 0x0c : 0x1c)
+>   #define	    GLOBAL_RESET_HW_AND_REG	(vfe_is_lite(vfe) ? BIT(1) : BIT(0))
+>   
+> @@ -92,19 +90,6 @@ static inline int bus_irq_mask_0_comp_done(struct vfe_device *vfe, int n)
+>   
+>   #define MAX_VFE_OUTPUT_LINES	4
+>   
+> -static u32 vfe_hw_version(struct vfe_device *vfe)
+> -{
+> -	u32 hw_version = readl_relaxed(vfe->base + VFE_HW_VERSION);
+> -
+> -	u32 gen = (hw_version >> 28) & 0xF;
+> -	u32 rev = (hw_version >> 16) & 0xFFF;
+> -	u32 step = hw_version & 0xFFFF;
+> -
+> -	dev_dbg(vfe->camss->dev, "VFE HW Version = %u.%u.%u\n", gen, rev, step);
+> -
+> -	return hw_version;
+> -}
+> -
+>   static void vfe_global_reset(struct vfe_device *vfe)
+>   {
+>   	writel_relaxed(IRQ_MASK_0_RESET_ACK, vfe->base + VFE_IRQ_MASK(0));
+> @@ -167,18 +152,16 @@ static inline void vfe_reg_update_clear(struct vfe_device *vfe,
+>   	vfe->reg_update &= ~REG_UPDATE_RDI(vfe, line_id);
+>   }
+>   
+> -static void vfe_enable_irq_common(struct vfe_device *vfe)
+> -{
+> -	/* enable reset ack IRQ and top BUS status IRQ */
+> -	writel_relaxed(IRQ_MASK_0_RESET_ACK | IRQ_MASK_0_BUS_TOP_IRQ,
+> -		       vfe->base + VFE_IRQ_MASK(0));
+> -}
+> -
+> -static void vfe_enable_lines_irq(struct vfe_device *vfe)
+> +static void vfe_enable_irq(struct vfe_device *vfe)
+>   {
+>   	int i;
+>   	u32 bus_irq_mask = 0;
+>   
+> +	if (!vfe->stream_count)
+> +		/* enable reset ack IRQ and top BUS status IRQ */
+> +		writel(IRQ_MASK_0_RESET_ACK | IRQ_MASK_0_BUS_TOP_IRQ,
+> +		       vfe->base + VFE_IRQ_MASK(0));
+> +
+>   	for (i = 0; i < MAX_VFE_OUTPUT_LINES; i++) {
+>   		/* Enable IRQ for newly added lines, but also keep already running lines's IRQ */
+>   		if (vfe->line[i].output.state == VFE_OUTPUT_RESERVED ||
+> @@ -188,11 +171,10 @@ static void vfe_enable_lines_irq(struct vfe_device *vfe)
+>   			}
+>   	}
+>   
+> -	writel_relaxed(bus_irq_mask, vfe->base + VFE_BUS_IRQ_MASK(0));
+> +	writel(bus_irq_mask, vfe->base + VFE_BUS_IRQ_MASK(0));
+>   }
+>   
+>   static void vfe_isr_reg_update(struct vfe_device *vfe, enum vfe_line_id line_id);
+> -static void vfe_isr_wm_done(struct vfe_device *vfe, u8 wm);
+>   
+>   /*
+>    * vfe_isr - VFE module interrupt handler
+> @@ -226,7 +208,7 @@ static irqreturn_t vfe_isr(int irq, void *dev)
+>   				vfe_isr_reg_update(vfe, i);
+>   
+>   			if (status & BUS_IRQ_MASK_0_COMP_DONE(vfe, RDI_COMP_GROUP(i)))
+> -				vfe_isr_wm_done(vfe, i);
+> +				vfe_buf_done(vfe, i);
+>   		}
+>   	}
+>   
+> @@ -245,132 +227,6 @@ static int vfe_halt(struct vfe_device *vfe)
+>   	return 0;
+>   }
+>   
+> -static int vfe_get_output(struct vfe_line *line)
+> -{
+> -	struct vfe_device *vfe = to_vfe(line);
+> -	struct vfe_output *output;
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&vfe->output_lock, flags);
+> -
+> -	output = &line->output;
+> -	if (output->state > VFE_OUTPUT_RESERVED) {
+> -		dev_err(vfe->camss->dev, "Output is running\n");
+> -		goto error;
+> -	}
+> -
+> -	output->wm_num = 1;
+> -
+> -	/* Correspondence between VFE line number and WM number.
+> -	 * line 0 -> RDI 0, line 1 -> RDI1, line 2 -> RDI2, line 3 -> PIX/RDI3
+> -	 * Note this 1:1 mapping will not work for PIX streams.
+> -	 */
+> -	output->wm_idx[0] = line->id;
+> -	vfe->wm_output_map[line->id] = line->id;
+> -
+> -	output->drop_update_idx = 0;
+> -
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -
+> -	return 0;
+> -
+> -error:
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -	output->state = VFE_OUTPUT_OFF;
+> -
+> -	return -EINVAL;
+> -}
+> -
+> -static int vfe_enable_output(struct vfe_line *line)
+> -{
+> -	struct vfe_device *vfe = to_vfe(line);
+> -	struct vfe_output *output = &line->output;
+> -	unsigned long flags;
+> -	unsigned int i;
+> -
+> -	spin_lock_irqsave(&vfe->output_lock, flags);
+> -
+> -	vfe_reg_update_clear(vfe, line->id);
+> -
+> -	if (output->state > VFE_OUTPUT_RESERVED) {
+> -		dev_err(vfe->camss->dev, "Output is not in reserved state %d\n",
+> -			output->state);
+> -		spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -		return -EINVAL;
+> -	}
+> -
+> -	WARN_ON(output->gen2.active_num);
+> -
+> -	output->state = VFE_OUTPUT_ON;
+> -
+> -	output->sequence = 0;
+> -	output->wait_reg_update = 0;
+> -	reinit_completion(&output->reg_update);
+> -
+> -	vfe_wm_start(vfe, output->wm_idx[0], line);
+> -
+> -	for (i = 0; i < 2; i++) {
+> -		output->buf[i] = vfe_buf_get_pending(output);
+> -		if (!output->buf[i])
+> -			break;
+> -		output->gen2.active_num++;
+> -		vfe_wm_update(vfe, output->wm_idx[0], output->buf[i]->addr[0], line);
+> -	}
+> -
+> -	vfe_reg_update(vfe, line->id);
+> -
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -
+> -	return 0;
+> -}
+> -
+> -/*
+> - * vfe_enable - Enable streaming on VFE line
+> - * @line: VFE line
+> - *
+> - * Return 0 on success or a negative error code otherwise
+> - */
+> -static int vfe_enable(struct vfe_line *line)
+> -{
+> -	struct vfe_device *vfe = to_vfe(line);
+> -	int ret;
+> -
+> -	mutex_lock(&vfe->stream_lock);
+> -
+> -	if (!vfe->stream_count)
+> -		vfe_enable_irq_common(vfe);
+> -
+> -	vfe->stream_count++;
+> -
+> -	vfe_enable_lines_irq(vfe);
+> -
+> -	mutex_unlock(&vfe->stream_lock);
+> -
+> -	ret = vfe_get_output(line);
+> -	if (ret < 0)
+> -		goto error_get_output;
+> -
+> -	ret = vfe_enable_output(line);
+> -	if (ret < 0)
+> -		goto error_enable_output;
+> -
+> -	vfe->was_streaming = 1;
+> -
+> -	return 0;
+> -
+> -error_enable_output:
+> -	vfe_put_output(line);
+> -
+> -error_get_output:
+> -	mutex_lock(&vfe->stream_lock);
+> -
+> -	vfe->stream_count--;
+> -
+> -	mutex_unlock(&vfe->stream_lock);
+> -
+> -	return ret;
+> -}
+> -
+>   /*
+>    * vfe_isr_reg_update - Process reg update interrupt
+>    * @vfe: VFE Device
+> @@ -394,97 +250,8 @@ static void vfe_isr_reg_update(struct vfe_device *vfe, enum vfe_line_id line_id)
+>   	spin_unlock_irqrestore(&vfe->output_lock, flags);
+>   }
+>   
+> -/*
+> - * vfe_isr_wm_done - Process write master done interrupt
+> - * @vfe: VFE Device
+> - * @wm: Write master id
+> - */
+> -static void vfe_isr_wm_done(struct vfe_device *vfe, u8 wm)
+> -{
+> -	struct vfe_line *line = &vfe->line[vfe->wm_output_map[wm]];
+> -	struct camss_buffer *ready_buf;
+> -	struct vfe_output *output;
+> -	unsigned long flags;
+> -	u32 index;
+> -	u64 ts = ktime_get_ns();
+> -
+> -	spin_lock_irqsave(&vfe->output_lock, flags);
+> -
+> -	if (vfe->wm_output_map[wm] == VFE_LINE_NONE) {
+> -		dev_err_ratelimited(vfe->camss->dev,
+> -				    "Received wm done for unmapped index\n");
+> -		goto out_unlock;
+> -	}
+> -	output = &vfe->line[vfe->wm_output_map[wm]].output;
+> -
+> -	ready_buf = output->buf[0];
+> -	if (!ready_buf) {
+> -		dev_err_ratelimited(vfe->camss->dev,
+> -				    "Missing ready buf %d!\n", output->state);
+> -		goto out_unlock;
+> -	}
+> -
+> -	ready_buf->vb.vb2_buf.timestamp = ts;
+> -	ready_buf->vb.sequence = output->sequence++;
+> -
+> -	index = 0;
+> -	output->buf[0] = output->buf[1];
+> -	if (output->buf[0])
+> -		index = 1;
+> -
+> -	output->buf[index] = vfe_buf_get_pending(output);
+> -
+> -	if (output->buf[index])
+> -		vfe_wm_update(vfe, output->wm_idx[0], output->buf[index]->addr[0], line);
+> -	else
+> -		output->gen2.active_num--;
+> -
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -
+> -	vb2_buffer_done(&ready_buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
+> -
+> -	return;
+> -
+> -out_unlock:
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -}
+> -
+> -/*
+> - * vfe_queue_buffer - Add empty buffer
+> - * @vid: Video device structure
+> - * @buf: Buffer to be enqueued
+> - *
+> - * Add an empty buffer - depending on the current number of buffers it will be
+> - * put in pending buffer queue or directly given to the hardware to be filled.
+> - *
+> - * Return 0 on success or a negative error code otherwise
+> - */
+> -static int vfe_queue_buffer(struct camss_video *vid,
+> -			    struct camss_buffer *buf)
+> -{
+> -	struct vfe_line *line = container_of(vid, struct vfe_line, video_out);
+> -	struct vfe_device *vfe = to_vfe(line);
+> -	struct vfe_output *output;
+> -	unsigned long flags;
+> -
+> -	output = &line->output;
+> -
+> -	spin_lock_irqsave(&vfe->output_lock, flags);
+> -
+> -	if (output->state == VFE_OUTPUT_ON && output->gen2.active_num < 2) {
+> -		output->buf[output->gen2.active_num++] = buf;
+> -		vfe_wm_update(vfe, output->wm_idx[0], buf->addr[0], line);
+> -	} else {
+> -		vfe_buf_add_pending(output, buf);
+> -	}
+> -
+> -	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> -
+> -	return 0;
+> -}
+> -
+>   static const struct camss_video_ops vfe_video_ops_480 = {
+> -	.queue_buffer = vfe_queue_buffer,
+> +	.queue_buffer = vfe_queue_buffer_v2,
+>   	.flush_buffers = vfe_flush_buffers,
+>   };
+>   
+> @@ -494,6 +261,7 @@ static void vfe_subdev_init(struct device *dev, struct vfe_device *vfe)
+>   }
+>   
+>   const struct vfe_hw_ops vfe_ops_480 = {
+> +	.enable_irq = vfe_enable_irq,
+>   	.global_reset = vfe_global_reset,
+>   	.hw_version = vfe_hw_version,
+>   	.isr = vfe_isr,
+> @@ -501,7 +269,11 @@ const struct vfe_hw_ops vfe_ops_480 = {
+>   	.pm_domain_on = vfe_pm_domain_on,
+>   	.subdev_init = vfe_subdev_init,
+>   	.vfe_disable = vfe_disable,
+> -	.vfe_enable = vfe_enable,
+> +	.vfe_enable = vfe_enable_v2,
+>   	.vfe_halt = vfe_halt,
+> +	.vfe_wm_start = vfe_wm_start,
+>   	.vfe_wm_stop = vfe_wm_stop,
+> +	.vfe_wm_update = vfe_wm_update,
+> +	.reg_update = vfe_reg_update,
+> +	.reg_update_clear = vfe_reg_update_clear,
+>   };
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index 83c5a36d071f..f6650694f47e 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -32,6 +32,11 @@
+>   
+>   #define SCALER_RATIO_MAX 16
+>   
+> +#define VFE_HW_VERSION		0x0
+> +#define		HW_VERSION_STEPPING	0
+> +#define		HW_VERSION_REVISION	16
+> +#define		HW_VERSION_GENERATION	28
+> +
+>   static const struct camss_format_info formats_rdi_8x16[] = {
+>   	{ MEDIA_BUS_FMT_UYVY8_1X16, 8, V4L2_PIX_FMT_UYVY, 1,
+>   	  PER_PLANE_DATA(0, 1, 1, 1, 1, 16) },
+> @@ -402,6 +407,265 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   	return 0;
+>   }
+>   
+> +/*
+> + * vfe_hw_version - Process write master done interrupt
+> + * @vfe: VFE Device
+> + *
+> + * Return vfe hw version
+> + */
+> +u32 vfe_hw_version(struct vfe_device *vfe)
+> +{
+> +	u32 hw_version = readl_relaxed(vfe->base + VFE_HW_VERSION);
+> +
+> +	u32 gen = (hw_version >> HW_VERSION_GENERATION) & 0xF;
+> +	u32 rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
+> +	u32 step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
+> +
+> +	dev_info(vfe->camss->dev, "VFE:%d HW Version = %u.%u.%u\n",
+> +		 vfe->id, gen, rev, step);
+> +
+> +	return hw_version;
+> +}
+> +
+> +/*
+> + * vfe_buf_done - Process write master done interrupt
+> + * @vfe: VFE Device
+> + * @wm: Write master id
+> + */
+> +void vfe_buf_done(struct vfe_device *vfe, int wm)
+> +{
+> +	struct vfe_line *line = &vfe->line[vfe->wm_output_map[wm]];
+> +	struct camss_buffer *ready_buf;
+> +	struct vfe_output *output;
+> +	unsigned long flags;
+> +	u32 index;
+> +	u64 ts = ktime_get_ns();
+> +
+> +	spin_lock_irqsave(&vfe->output_lock, flags);
+> +
+> +	if (vfe->wm_output_map[wm] == VFE_LINE_NONE) {
+> +		dev_err_ratelimited(vfe->camss->dev,
+> +				    "Received wm done for unmapped index\n");
+> +		goto out_unlock;
+> +	}
+> +	output = &vfe->line[vfe->wm_output_map[wm]].output;
+> +
+> +	ready_buf = output->buf[0];
+> +	if (!ready_buf) {
+> +		dev_err_ratelimited(vfe->camss->dev,
+> +				    "Missing ready buf %d!\n", output->state);
+> +		goto out_unlock;
+> +	}
+> +
+> +	ready_buf->vb.vb2_buf.timestamp = ts;
+> +	ready_buf->vb.sequence = output->sequence++;
+> +
+> +	index = 0;
+> +	output->buf[0] = output->buf[1];
+> +	if (output->buf[0])
+> +		index = 1;
+> +
+> +	output->buf[index] = vfe_buf_get_pending(output);
+> +
+> +	if (output->buf[index]) {
+> +		vfe->res->hw_ops->vfe_wm_update(vfe, output->wm_idx[0],
+> +						output->buf[index]->addr[0],
+> +						line);
+> +		vfe->res->hw_ops->reg_update(vfe, line->id);
+> +	} else
+> +		output->gen2.active_num--;
+> +
+> +	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> +
+> +	vb2_buffer_done(&ready_buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
+> +
+> +	return;
+> +
+> +out_unlock:
+> +	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> +}
+> +
+> +int vfe_enable_output_v2(struct vfe_line *line)
+> +{
+> +	struct vfe_device *vfe = to_vfe(line);
+> +	struct vfe_output *output = &line->output;
+> +	const struct vfe_hw_ops *ops = vfe->res->hw_ops;
+> +	struct media_entity *sensor;
+> +	unsigned long flags;
+> +	unsigned int frame_skip = 0;
+> +	unsigned int i;
+> +
+> +	sensor = camss_find_sensor(&line->subdev.entity);
+> +	if (sensor) {
+> +		struct v4l2_subdev *subdev = media_entity_to_v4l2_subdev(sensor);
+> +
+> +		v4l2_subdev_call(subdev, sensor, g_skip_frames, &frame_skip);
+> +		/* Max frame skip is 29 frames */
+> +		if (frame_skip > VFE_FRAME_DROP_VAL - 1)
+> +			frame_skip = VFE_FRAME_DROP_VAL - 1;
+> +	}
+> +
+> +	spin_lock_irqsave(&vfe->output_lock, flags);
+> +
+> +	ops->reg_update_clear(vfe, line->id);
+> +
+> +	if (output->state > VFE_OUTPUT_RESERVED) {
+> +		dev_err(vfe->camss->dev,
+> +			"Output is not in reserved state %d\n",
+> +			output->state);
+> +		spin_unlock_irqrestore(&vfe->output_lock, flags);
+> +		return -EINVAL;
+> +	}
+> +
+> +	WARN_ON(output->gen2.active_num);
+> +
+> +	output->state = VFE_OUTPUT_ON;
+> +
+> +	output->sequence = 0;
+> +	output->wait_reg_update = 0;
+> +	reinit_completion(&output->reg_update);
+> +
+> +	ops->vfe_wm_start(vfe, output->wm_idx[0], line);
+> +
+> +	for (i = 0; i < 2; i++) {
+> +		output->buf[i] = vfe_buf_get_pending(output);
+> +		if (!output->buf[i])
+> +			break;
+> +		output->gen2.active_num++;
+> +		ops->vfe_wm_update(vfe, output->wm_idx[0],
+> +				   output->buf[i]->addr[0], line);
+> +		ops->reg_update(vfe, line->id);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * vfe_queue_buffer_v2 - Add empty buffer
+> + * @vid: Video device structure
+> + * @buf: Buffer to be enqueued
+> + *
+> + * Add an empty buffer - depending on the current number of buffers it will be
+> + * put in pending buffer queue or directly given to the hardware to be filled.
+> + *
+> + * Return 0 on success or a negative error code otherwise
+> + */
+> +int vfe_queue_buffer_v2(struct camss_video *vid,
+> +			struct camss_buffer *buf)
+> +{
+> +	struct vfe_line *line = container_of(vid, struct vfe_line, video_out);
+> +	struct vfe_device *vfe = to_vfe(line);
+> +	struct vfe_output *output;
+> +	unsigned long flags;
+> +
+> +	output = &line->output;
+> +
+> +	spin_lock_irqsave(&vfe->output_lock, flags);
+> +
+> +	if (output->state == VFE_OUTPUT_ON &&
+> +		output->gen2.active_num < 2) {
+> +		output->buf[output->gen2.active_num++] = buf;
+> +		vfe->res->hw_ops->vfe_wm_update(vfe, output->wm_idx[0],
+> +						buf->addr[0], line);
+> +		vfe->res->hw_ops->reg_update(vfe, line->id);
+> +	} else {
+> +		vfe_buf_add_pending(output, buf);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&vfe->output_lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * vfe_enable_v2 - Enable streaming on VFE line
+> + * @line: VFE line
+> + *
+> + * Return 0 on success or a negative error code otherwise
+> + */
+> +int vfe_enable_v2(struct vfe_line *line)
+> +{
+> +	struct vfe_device *vfe = to_vfe(line);
+> +	int ret;
+> +
+> +	mutex_lock(&vfe->stream_lock);
+> +
+> +	if (vfe->res->hw_ops->enable_irq)
+> +		vfe->res->hw_ops->enable_irq(vfe);
 
-Could you please pick this into riscv/for-next?
+Right so generally speaking I don't believe we should have any null 
+function pointers.
 
-Thanks,
+We just mandate that to be comitted, an impelmentation must provide a 
+dummy but, in this case when do we ever want a dummy function anyway 
+surely enable_irq() is a fundamental operation that is core to the logic.
 
-Chen
+Also a style nit-pick if you get a hw_ops pointer you don't have to jump 
+through so -> many -> indirection -> hoops.
 
-On 2024/8/9 14:26, Chen Wang wrote:
->
-> On 2024/8/5 10:33, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> Enable clk generators for sg2042 due to many peripherals rely on
->> these clocks.
->>
->> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
->> ---
->>   arch/riscv/configs/defconfig | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
->> index 0d678325444f..d43a028909e5 100644
->> --- a/arch/riscv/configs/defconfig
->> +++ b/arch/riscv/configs/defconfig
->> @@ -249,6 +249,9 @@ CONFIG_VIRTIO_BALLOON=y
->>   CONFIG_VIRTIO_INPUT=y
->>   CONFIG_VIRTIO_MMIO=y
->>   CONFIG_CLK_SOPHGO_CV1800=y
->> +CONFIG_CLK_SOPHGO_SG2042_PLL=y
->> +CONFIG_CLK_SOPHGO_SG2042_CLKGEN=y
->> +CONFIG_CLK_SOPHGO_SG2042_RPGATE=y
->>   CONFIG_SUN8I_DE2_CCU=m
->>   CONFIG_RENESAS_OSTM=y
->>   CONFIG_SUN50I_IOMMU=y
->>
->> base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
->
-> Hi，Palmer,
->
-> Could you please have a look on this patch and pick it for next tree? 
-> These clk drivers are required for sg2042 to boot into minimal console.
->
-> Thanks,
->
-> Chen
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Code will look neater that way.
+
+I'll go through the vfe_enable() stuff in more detail on your next drop.
+
+Please ensure again with the hw_version() that you have equivalent logic 
+before and after => no behaviour change similarly with vfe_enable() and 
+friends.
+
+The objective is to remove code duplication, not to change logical 
+behaviors at all, no matter how seemingly trival that change might be -> 
+hw_version 0xsomenumber instea of 0xX, 0xY 0xZ
+
+It probably sounds dogmatic but, its safer that way.
+
+---
+bod
 
