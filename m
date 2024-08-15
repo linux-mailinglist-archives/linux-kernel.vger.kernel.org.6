@@ -1,151 +1,109 @@
-Return-Path: <linux-kernel+bounces-287755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827B4952C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAC9952C38
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5585D283910
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7319284EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C998A3DAC05;
-	Thu, 15 Aug 2024 09:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F410D1C5792;
+	Thu, 15 Aug 2024 09:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MA4ZDSzd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1CqGHyC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E0619E7D3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3891519DF57;
+	Thu, 15 Aug 2024 09:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723714388; cv=none; b=sOLWRW1MTqhzkrzW4lfQRhaIVTbXp3H7nGvK7uWp84djpTTmVvgzCH79QSeg0sJr7oS7QiwTxuwSUguhkpmeDBwq4MS20MjypIU9EB3qV/znZImG+cC7QAbPOk3DNqDNl8STq4aEQuMxSMAzNvMJ1QdWyRjNREPsvFM2sygvn1I=
+	t=1723714539; cv=none; b=Q4Pyc/mYwHmEyeHIld2tDCfq6CpTPAOVnfcXUGqiufdF5F1DakjV+GQ7JswzkH8BSCFRSzhHdzZ5XNhu7fkNZJIFZxznOMt3dMazbCpZyDeRzE2cgccZV36nWxuW1KXDlyzOl+kytSUQ8uq88BPh9wA8/RAflGzsVtwR78/OxB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723714388; c=relaxed/simple;
-	bh=YiYZidn1idmYV57lmRj2Oy4O0BfPjV/4Sf952NuF1NY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fTWPqUvKwZcY2S9xo/kE2+eADdAvSmHULPpTfX/Wox5MskNNB0gxTXuQKJj4b+SD6riQ9ZMys9GKnZBmP57mSJKJ28LqejlF/r8OsZYCAzF9edt3ehpsh59hH4UIwrflQ0J7qf1yjVhCW9mgtRcnzCxgqRvyKF4GY4+6PoS1RNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MA4ZDSzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2BD5C32786;
-	Thu, 15 Aug 2024 09:33:07 +0000 (UTC)
+	s=arc-20240116; t=1723714539; c=relaxed/simple;
+	bh=PVQNOeMTQi8lV98jbFqNpHhoYEQEkzMaLvP7V2uLo6E=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=jW+wozIEYUDxWKB4/lrSe5tsMnqkKTKk1Z6SZPqPboVzTIUERGd/UwKWczmBE3j8fqRk9flMZV/YIsJEDqj1EtVSosGg8COdfijUZOtspdW3utoKxRFZ8+4cduVEWm13/hp2JUr341wU1gv1yPrbgzPi2PI1k0ZhbmSrL1I0M2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1CqGHyC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E202C32786;
+	Thu, 15 Aug 2024 09:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723714387;
-	bh=YiYZidn1idmYV57lmRj2Oy4O0BfPjV/4Sf952NuF1NY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MA4ZDSzdiG09znu0W6odTW1qjdCTZcUfV6+u1HQ4iu9ADpvZkpsI0l14y6MdQsMJ1
-	 9fFN+8mcV1sz3BKsrIzuafcnRH1lB3NE0ojdSsKUsFWsjENPN1zSP+phRSu2CMKZKy
-	 3rssF49nhbMt7YkwZQsiGYy/clG9ZaL8p5/p3DBNDliURV2nJ/zOYYu/6NSi0b1xXX
-	 09Ad6lTxTIKqhRdb9YyEb2/M57doYnIP2RGbisG2n6NOWgv0AE3Chzy6Ug1Rz/mVsn
-	 ag5dWOVwKjST30V9zLH+sATXcnqG5ECxvcimsPR5Vtz5C2DK7tqg6MTHm/+pvVd/Ev
-	 Bhf1M4hNN8rRw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1seWqv-003ugc-Iu;
-	Thu, 15 Aug 2024 10:33:05 +0100
-Date: Thu, 15 Aug 2024 10:33:05 +0100
-Message-ID: <86plqayvu6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Shanker Donthineni <sdonthineni@nvidia.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v3: Allow unused SGIs for drivers/modules
-In-Reply-To: <Zrs2i9Iyrlqc-a4K@bogus>
-References: <20240813033925.925947-1-sdonthineni@nvidia.com>
-	<86zfpgztmt.wl-maz@kernel.org>
-	<Zrs2i9Iyrlqc-a4K@bogus>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1723714538;
+	bh=PVQNOeMTQi8lV98jbFqNpHhoYEQEkzMaLvP7V2uLo6E=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=h1CqGHyC2Es2AS4DTk5X203oUiez5uxkxyebGLeRQrtekcZ1q+7Ynx/oXC07giFME
+	 5fyXykLoelGXkYVgF1AYkYMx/I9fIikRO/emHnNrL+12UvqmZKKHk+JzvxfYSuVVQN
+	 DpmZ+FxPnacwXGemUowVsqKoj/50Qpb/7KhLGDBTY6Osjm11ux+LN0HGGxQlzcxb+L
+	 zCeztcLbFTgsxHMbRTPj1EBryGr9+uonqEyDhcbmhQvWaP3MOObtdWQXChHvuYbDiM
+	 PxfmG8N9bNMV6R3Z94QZY8BufhnrDzQMnuRnKrzxny/mFKZHY3jArMZJ8DNd/p8Nfy
+	 t6STs/4oV6yhQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+  "briannorris@chromium.org" <briannorris@chromium.org>,
+  "francesco@dolcini.it" <francesco@dolcini.it>,  Pete Hsieh
+ <tsung-hsien.hsieh@nxp.com>
+Subject: Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to support iw61x
+References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
+	<PA4PR04MB963858E759C8F61402B2275AD1872@PA4PR04MB9638.eurprd04.prod.outlook.com>
+Date: Thu, 15 Aug 2024 12:35:35 +0300
+In-Reply-To: <PA4PR04MB963858E759C8F61402B2275AD1872@PA4PR04MB9638.eurprd04.prod.outlook.com>
+	(David Lin's message of "Wed, 14 Aug 2024 03:47:03 +0000")
+Message-ID: <87frr6yvq0.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sudeep.holla@arm.com, sdonthineni@nvidia.com, tglx@linutronix.de, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue, 13 Aug 2024 11:33:47 +0100,
-Sudeep Holla <sudeep.holla@arm.com> wrote:
-> 
-> On Tue, Aug 13, 2024 at 09:58:34AM +0100, Marc Zyngier wrote:
-> > No. This is the wrong approach, and leads to inconsistent behaviour if
-> > we ever change this MAX_IPI value. It also breaks 32 bit builds, and
-> > makes things completely inconsistent between ACPI and DT.
-> >
-> > I don't know how the FFA code was tested, because I cannot see how it
-> > can work.
-> >
-> > *IF* we are going to allow random SGIs being requested by random
-> > drivers, we need to be able to do it properly. Not as a side hack like
-> > this.
-> 
-> I am open for any ideas as FF-A spec authors/architects decided to allow
-> secure world to donate one of its SGI to the normal world for FF-A
-> notifications.
+David Lin <yu-hao.lin@nxp.com> writes:
 
-Let's first try to answer a simple question: how is that going to work
-for interrupt architectures that do not have the concept of SGIs, but
-rely on normal interrupts (similar to SPIs or LPIs) for their IPIs?
+> I found Nxpwifi patch v2 is put in "Deferred" state quickly.
 
-They don't have a global interrupt number per CPU for their IPIs, and
-may not even have the concept of a shared numbering space between
-security domains.
+The way I use patchwork states is described here:
 
-This makes the whole concept of "delegating" an interrupt number from
-secure to non-secure a dead-end. Should we build a SW ecosystem on that?
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#checking_state_of_patches_from_patchwork
 
-The other thing is: if FFA is exposing interrupts to be signalled from
-secure to non-secure, and that it insists on using SGIs, why isn't
-that described in DT/ACPI, with a reservation mechanism that would
-allow the GIC driver to reserve the corresponding SGI and not dish it
-out as a normal mechanism?
+Basically I try to follow the "Inbox Zero" method and keep the amount of
+patches in New state (my "inbox") low and the Deferred state is my todo list. 
 
-Because this sort of thing
+> Patch v2 is mainly to address the comments from Johannes and it
+> actually took quite some efforts. We understand there are areas to
+> improve and we are committed to continue enhance/maintain the driver.
+>
+> Could you let me know your plan for reviewing Nxpwifi?
 
-+       if (acpi_disabled) {
-+               struct of_phandle_args oirq = {};
-+               struct device_node *gic;
-+
-+               /* Only GICv3 supported currently with the device tree */
-+               gic = of_find_compatible_node(NULL, NULL, "arm,gic-v3");
-+               if (!gic)
-+                       return -ENXIO;
-+
-+               oirq.np = gic;
-+               oirq.args_count = 1;
-+               oirq.args[0] = sr_intid;
-+               irq = irq_create_of_mapping(&oirq);
-+               of_node_put(gic);
-+#ifdef CONFIG_ACPI
-+       } else {
-+               irq = acpi_register_gsi(NULL, sr_intid, ACPI_EDGE_SENSITIVE,
-+                                       ACPI_ACTIVE_HIGH);
-+#endif
-+       }
+Reviewing new drivers take a lot of time, at the moment I'm following
+what other reviewers say before I'll look at it myself. The process is
+so slow and patience is needed.
 
-is an absolute howler. It is abusing the arch-private interface, is at
-the mercy of buggy EL3 returning stupid values, and may tramp over the
-kernel's own IPI allocation.
+The last thing I want to see that once the driver is accepted NXP
+disappears and we end up having an unmaintained driver. Way too many
+companies do that.
 
-All these problems need to be addressed.
+> Is there anything we can do to move this forward?
 
-Thanks,
+Yes, get involved with the community and help us, don't just expect that
+we do everything for you gratis. Especially helping Brian with mwifiex
+review/testing helps us (we get a better driver) and also helps you (you
+learn how the community works and you gain trust in the community).
 
-	M.
+An excellent example is Realtek. Few years back Realtek was not involved
+with upstream development at all. But now Ping is doing an awesome job
+with maintaining ALL Realtek drivers, including the old drivers, and I
+even trust him so much that I pull directly from this tree. This is what
+NXP should aim for.
 
 -- 
-Without deviation from the norm, progress is not possible.
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
