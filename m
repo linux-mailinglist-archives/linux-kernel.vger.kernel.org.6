@@ -1,285 +1,144 @@
-Return-Path: <linux-kernel+bounces-288408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B019539D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FD19539D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4C81F21592
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71D71F216DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA125B1FB;
-	Thu, 15 Aug 2024 18:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB104679E5;
+	Thu, 15 Aug 2024 18:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YUMt4KDG"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmAPusW9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1193383A3
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DEF481C4;
+	Thu, 15 Aug 2024 18:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723745955; cv=none; b=fQld8iBv9bJdaiAb5SH/z6IqSIwrNNPMdsXCHBTpI8U8nu6mK2w6PL0Mh/QD0qZYMu+2vjar2GcuzNYAYdjAicqJvM8tuu4j52GDTH5tlyKJCeE6pw5fePyptH6OdKD9+3FYxpOp1wlcODVx6NfuPVfb37EOkoKrBkDVnJjl6nE=
+	t=1723745974; cv=none; b=kfpb7c10tXyPMkfSqvs4mocrlwaiqfEts36Zdftn4HPfCA2U+g3JuYb3YQRrkWyy6lu3lq+YeJ8HvIYVGDDDt07niEh6pp1mEzMgNF5qjpPJ3T5pHNzY3rLA3sOeSWUcENGFrfjf0oOK6xmS9DNybS78D3LtxeIawrzkFz22KmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723745955; c=relaxed/simple;
-	bh=qTGWnus/xajntiXwLNkQjMMlbBirJmOcpWKDV/rMMbM=;
+	s=arc-20240116; t=1723745974; c=relaxed/simple;
+	bh=gvOHdCK9aUdR7DPVLDdBmQ4rCqBdWg1NiIKC9n0vn/s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOALi239a1QULOep8JcGaVrOGyE02In7XtQLBPJKWGiVotpk91QQ56OU+fc9fJz+VT6i90N4QxERjDQiEmVfbrjhP5HXgKvcmhy4HheIYgxrg+fHoSLYz8v1W7cjpkJHAt6/SRAKRBqJzWReXtNOkZ53Y57IcptBQ2quB+I1wdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YUMt4KDG; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc56fd4de1so9256035ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723745953; x=1724350753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=obzmhQk8Xy3e9sDQPYIq1Np9pZwsRDfrPqw0CyAFY8k=;
-        b=YUMt4KDG6nt8v1MaXKPAlHNfORdPo6l9bWilyKipn9u8hE5ciGlGaiF05DXtVJFnl/
-         /wA/VgM3gvQ3XCDNE9nvHg2EV8FynbA2H3zdADA9OoPltkcFIveyj7RCZwyJJdlrZyEd
-         fYS9NsPGrJt82Hcnk5E6aqMk6G/l/WAAOYf3M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723745953; x=1724350753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=obzmhQk8Xy3e9sDQPYIq1Np9pZwsRDfrPqw0CyAFY8k=;
-        b=VXMkO4CDeX79/TdzFtMPHkbu7QhJA42fSwM/EZxSRlGQ4SeGxN6k0BlmDDz9eTh4cu
-         a9RaTj+GlXw9Q0H/Fnrn7YPRDfsO/Daddc6a4yvX/QPnIMZe2agMKFR04GxG+Q7E9kNk
-         XvlSSl2yKoFPCN5ruA6L80rYE75bXWRBlhP500lMbfMEzhF42uLPGMS0hpznLeWDH0Uu
-         UKc5//E5a/Zzop2wWrW0HiWRdbpIQJw/dLHpQ528xJuteHzuEbW5ylowkcXN6wuDXRF+
-         rkcKLIKikKaGRrJ9OBBTLqu12LlpZjJ1h07zW4jSm5raVGvLhEzC9eldk3LlGTeYtc7L
-         MpEw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5mykPhrOEdhrlm/ShZ2nza0sVW11GEDOqxp6Jg+WSeYyyeYipOpxh4cewBctdPaWntqMNTP164ORTagXiZGyqvrdqXkkVqgqHwxDE
-X-Gm-Message-State: AOJu0Yz5bBL86CZWyZ88BQ7m7N/amyYcdOWV2L4OG498JnstXGBFblHC
-	p50qaj3FHdm5XMfpT3yepYG7EJyA1eepv2hwPVrxFSHYyg1fHdpD6EAg7Moh0Q==
-X-Google-Smtp-Source: AGHT+IHCeenSQW5v809RWxm5k6tr6zFciMM4rFQNhw44zAMjp7OcNEYeeVpImhSYQ7cFYyL7U2umfg==
-X-Received: by 2002:a17:903:35c4:b0:201:eb46:1be5 with SMTP id d9443c01a7336-20206162588mr1821665ad.3.1723745953087;
-        Thu, 15 Aug 2024 11:19:13 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:5afb:2a2e:f5be:2aed])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201f0375725sm12853415ad.132.2024.08.15.11.19.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 11:19:12 -0700 (PDT)
-Date: Thu, 15 Aug 2024 11:19:10 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:NETWORKING DRIVERS (WIRELESS)" <linux-wireless@vger.kernel.org>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v1 1/1] dt-bindings: net: wireless: convert
- marvel-8xxx.txt to yaml format
-Message-ID: <Zr5GnhNm0lSQNBwa@google.com>
-References: <20240812194441.3826789-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=na5yoBDuTp9Xk4YocxzqnEyvyg236iZd4McF7x8d1wVI4N+IfgKQVVmRMUsrtJuVfq1T3updEVyZDF7fuintRexxbYKECmfb/puUBG20Rh+C6hcbsVOic3QeAAC7U9ZfZzaJ11hnZMJtj7S4DgriVZaTxOcodAL8GIpcNZ2JNVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmAPusW9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BDE0C32786;
+	Thu, 15 Aug 2024 18:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723745973;
+	bh=gvOHdCK9aUdR7DPVLDdBmQ4rCqBdWg1NiIKC9n0vn/s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jmAPusW9RWevvrm7Hg88q9xewbIsd/N/8xTtQyDPWPc982vMFTh7r29JlLa6aHf0o
+	 8io0uPtO83IiC/fkk0GKoQNNWuDUbOcvZAodgohYE/SjWTMQpUBTSbad1t64GFmGyS
+	 iVChoroyACoTlO+/w+ZVPqDVFAt/hYnGedb6MWnURMr/r772xCwXH9niKnJdXYUqJX
+	 ljF+fG3keMrMEmAZlQBZgeB5qVBYqMTd2O22DXiRYL9ul8f7b5FVTiy0/sBLHu0Gpw
+	 9wAE4WmxHy9lFZGd0S9lYGKcP1IFTR4cDZzHAlueePqA4AxAzNcZtdqHVh8a0mF8BL
+	 9fI1RwFnauAuw==
+Date: Thu, 15 Aug 2024 19:19:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"ross.burton@arm.com" <ross.burton@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org" <maz@kernel.org>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"will@kernel.org" <will@kernel.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
+ support GCS
+Message-ID: <9949a344-be8e-40ed-b483-02ff95175072@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
+ <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
+ <3a7d9b69-e9df-4271-a3f0-8e8683c2654f@sirena.org.uk>
+ <68ec09da-fb4a-4d59-9c8c-6fae4c48ea68@sirena.org.uk>
+ <e6c8618a1585006dde44c17192a3bb7ae8ec5c0b.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="U12vN05f82sjc1Kd"
 Content-Disposition: inline
-In-Reply-To: <20240812194441.3826789-1-Frank.Li@nxp.com>
-
-Hi Frank,
-
-On Mon, Aug 12, 2024 at 03:44:40PM -0400, Frank Li wrote:
-> Convert binding doc marvel-8xxx.txt to yaml format.
-> Additional change:
-> - Remove marvell,caldata_00_txpwrlimit_2g_cfg_set in example.
-> - Remove mmc related property in example.
-> 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dtb: /soc@0/bus@30800000/mmc@30b40000/wifi@1:
-> failed to match any schema with compatible: ['marvell,sd8997']
-
-Can you make sure to run through `make dtbs_check` and handle any new
-issues? For one, I think you might want to include 'wakeup-source'?
-
-arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dtb: wifi@0,0: 'wakeup-source' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/net/wireless/marvell,8xxx.yaml#
+In-Reply-To: <e6c8618a1585006dde44c17192a3bb7ae8ec5c0b.camel@intel.com>
+X-Cookie: -- Owen Meredith
 
 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/net/wireless/marvell,8xxx.yaml   | 96 +++++++++++++++++++
->  .../bindings/net/wireless/marvell-8xxx.txt    | 70 --------------
->  2 files changed, 96 insertions(+), 70 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml
->  delete mode 100644 Documentation/devicetree/bindings/net/wireless/marvell-8xxx.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml b/Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml
-> new file mode 100644
-> index 0000000000000..7b4927cdb7a01
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/wireless/marvell,8xxx.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Marvell 8787/8897/8978/8997 (sd8787/sd8897/sd8978/sd8997/pcie8997) SDIO/PCIE devices
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
+--U12vN05f82sjc1Kd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I wouldn't mind adding:
+On Thu, Aug 15, 2024 at 05:53:19PM +0000, Edgecombe, Rick P wrote:
+> On Thu, 2024-08-15 at 17:39 +0100, Mark Brown wrote:
 
-  - Brian Norris <briannorris@chromium.org>
+> > > Oh, thanks for the heads up - I'd missed that.
 
-> +
-> +description:
-> +  This node provides properties for controlling the Marvell SDIO/PCIE wireless device.
+> > Looking at this I think it makes sense to do as was done for x86 and
+> > split this out into a separate series (part of why I'd missed it),
+> > updating the generic implementation to do this by default.=A0 That'll
+> > touch a bunch of architectures and the series is already quite big,
+> > it's not really an ABI impact.
 
-Since we're essentially rewriting this doc, might as well tweak a few
-things:
-Please replace "controlling" with "describing". These bindings are for
-hardware description, not for software control (even though they seem
-like it sometimes and can be abused for that).
+> The series is already upstream. You just need to add an arm version of th=
+at
+> linked patch. But up to you.
 
-> +  The node is expected to be specified as a child node to the SDIO/PCIE controller that
-> +  connects the device to the system.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - marvell,sd8787
-> +      - marvell,sd8897
-> +      - marvell,sd8978
-> +      - marvell,sd8997
-> +      - nxp,iw416
-> +      - pci11ab,2b42
-> +      - pci1b4b,2b42
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  marvell,caldata-txpwrlimit-2g:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description: calibration data
+Your series modified the existing x86 custom arch_get_unmapped_area*()
+functions, arm64 uses the generic implementation of those so I'd have to
+either add custom implementations (which I can't imagine would be met
+with great enthusiasm) or update the generic ones.  A generic
+implementation seems reasonable and it looks like RISC-V would also end
+up using it so while it's a bit invasive it does seem more sensible to
+do the change there.
 
-Capitalize the first letter ("Calibration"). Same on all your
-descriptions.
+--U12vN05f82sjc1Kd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And maybe expand a little on what this means? Same on the other caldata
-properties.
+-----BEGIN PGP SIGNATURE-----
 
-For example, "Calibration data for the 2GHz band."
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+RqsACgkQJNaLcl1U
+h9C2ogf/ZUz9M5cZLraiijYr3jTrEMdCaa6D0jRDGoL0IP3BclPhluw29VOQVf4x
+aJ10O4eGMRHl32XL0oWXQlmSmjiHfXTvVmeAnPrKkq6Sx8BDI7tOW1f4b64Iyouq
+aGNPYw1YjXPdazXxXLbaQVZZOrq5BE2dbXw6ocHaombvt/oG6sAGc4F4KFXwb6+A
+OR+jpoND8CbzSxh4EO89eoixTKgqvVZTLfQ3zZBdyjrrk1jyp6Q/63wMC325Bmam
+FebFR/NFJlNNAGpnhBbZhme21z1oZ+1h9K6G37zJUsXqqkOnH56fbsfKJ3wGW37B
+VjXIsdlILKUDIICvYmo5rxepKRyUqQ==
+=DIrs
+-----END PGP SIGNATURE-----
 
-> +    maxItems: 566
-
-Non-critical question: are these numbers actually correct? The only
-instance I see in the upstream tree is
-arch/arm/boot/dts/rockchip/rk3288-veyron-jerry.dts, with 526 items. Yes,
-that still fits in this "max", but I just wonder whether this is an
-actually-correct specification, or an off-by-40 specification. Or, maybe
-the structure varies a lot by chip or firmware, and this max just isn't
-very meaningful.
-
-Like I said, it's non-critical, so maybe we leave it as-is, if it
-doesn't matter much.
-
-> +  marvell,caldata-txpwrlimit-5g-sub0:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description: calibration data
-
-Possibly, "Calibration data for sub-band 0 in the 5GHz band."? And even
-better if you can describe what sub-band 0 is (e.g., 5.xxx MHz - 5.yyy
-MHz). But I'm not familiar.
-
-> +    maxItems: 502
-> +
-> +  marvell,caldata-txpwrlimit-5g-sub1:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description: calibration data
-> +    maxItems: 688
-> +
-> +  marvell,caldata-txpwrlimit-5g-sub2:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description: calibration data
-> +    maxItems: 750
-> +
-> +  marvell,caldata-txpwrlimit-5g-sub3:
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    description: calibration data
-> +    maxItems: 502
-> +
-> +  marvell,wakeup-pin:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      a wakeup pin number of wifi chip which will be configured
-> +      to firmware. Firmware will wakeup the host using this pin
-> +      during suspend/resume.
-
-Optional: this could use a bit of a rewrite to describe the hardware
-instead of the software. For example, "Provides the pin number for the
-wakeup pin from the device's point of view. The wakeup pin is used for
-the device to wake the host system from sleep. This property is only
-necessary if the wakeup pin is wired in a non-standard way, such that
-the default pin assignments are invalid."
-
-> +
-> +  vmmc-supply:
-> +    description: a phandle of a regulator, supplying VCC to the card
-
-I believe this vmmc-supply property is actually misplaced. I don't see
-any in-tree users, and OTOH all in-tree users specify this in the parent
-(e.g., the MMC controller), where it's already properly documented.
-
-> +  mmc-pwrseq:
-> +    description:
-> +      phandle to the MMC power sequence node. See "mmc-pwrseq-*"
-> +      for documentation of MMC power sequence bindings.
-
-Similarly, I think this is misplaced. See its introduction here,
-commit e3fffc1f0b47 ("devicetree: document new marvell-8xxx and
-pwrseq-sd8787 options"), but the controller docs
-(Documentation/devicetree/bindings/mmc/mmc-controller.yaml) specify
-these properties for the controller, not the endpoint/card. And
-Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml is vague,
-but in practice, again, I think everyone uses this only in the
-controller.
-
-I'd consider dropping this and vmmc-supply, unless `make dtbs_check`
-complains.
-
-Brian
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    mmc {
-> +         #address-cells = <1>;
-> +         #size-cells = <0>;
-> +
-> +         wifi@1 {
-> +             compatible = "marvell,sd8897";
-> +             reg = <1>;
-> +             interrupt-parent = <&pio>;
-> +             interrupts = <38 IRQ_TYPE_LEVEL_LOW>;
-> +             marvell,wakeup-pin = <3>;
-> +        };
-> +    };
-> +
+--U12vN05f82sjc1Kd--
 
