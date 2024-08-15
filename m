@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-287996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9059952F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:33:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF18C952F77
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52FFE1F279C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:33:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1C3E1C24037
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFD019F49D;
-	Thu, 15 Aug 2024 13:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5ED1A00EC;
+	Thu, 15 Aug 2024 13:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dz+3WBKP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1RKGOrG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D031714AE;
-	Thu, 15 Aug 2024 13:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E6018D627;
+	Thu, 15 Aug 2024 13:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728763; cv=none; b=tlO92MA8krggAeYBfUSbksRz/Xi3+U8XGSm2f27Kp0OgxJIWJduZkmESPQa4NYKqONLHLh2r8e+OAWEX6/+TkhDT6WoNnbBXt/czlSXxt6LAj4cZH6mPpEMER3WRpABORnsMRIfGniXkDRH+IdfKn3HKD6vpqm0O35vxzYKCwAc=
+	t=1723728769; cv=none; b=BP9KXX8cUixW/J9Js0z3CbGfH5GHoN73zqtWgKznvIjYDHecVd+p5vdcV+hI/BSTF9AnDAxp/0PL/se3r8nYq6iRx/43qaNJ7hS29Cxk3hsvffXXUWTcHVLF4A9cdebkWbiJVVM50kI+WyykbE50J63VkT1T1Y5LE03Yqobq9wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728763; c=relaxed/simple;
-	bh=DK7p6Hi4z0x9zpCXYWf5u9eW0rFFXTc71hq6Bw4Y/bg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c9WXsK5Vv5H6CYSKUlAB/Gdn2vDVtQetD1Br6yxDTo/XZM7+p7MeC57x/QrlgLYrv9amIT7SdceovwREMPUD1rsKNjZKIpoFT9fEqls+77QLePmjfVcCdonO3Hp5jxqwA6ul0b9Td3/xt52URhT75IkmHbfAxu+Lh1uPP1mGScE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dz+3WBKP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F77C4AF0C;
-	Thu, 15 Aug 2024 13:32:41 +0000 (UTC)
+	s=arc-20240116; t=1723728769; c=relaxed/simple;
+	bh=XhNCev36fKU4Ut6u0d8sIw96shRZ4O+aoeJp+HMD7jA=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=T2J23HSGPdc3zhQAweT8CQzyZiRDlG+qwbtHaWPZHy5hwy8WiAESLwHGt8wSWyLwh8NXfs/2xxLLYT1EeZecNTvW9doDU5mhpzVwjFpyh5IXQ20m1ohClgkWG1p36AmmVHlzf6NXF9PYNuzAyZVyWjPaQrzgoSTxjui/xraeQec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1RKGOrG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A66C32786;
+	Thu, 15 Aug 2024 13:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723728763;
-	bh=DK7p6Hi4z0x9zpCXYWf5u9eW0rFFXTc71hq6Bw4Y/bg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Dz+3WBKP2pNfh3Uv9+keP2qYeWlxENhxKPaFA+kwWRmHnOdp2vPj/tu0TUvC3NfLY
-	 rcDUSM9VSqJIUP+Abk38/zyNcZInXF3wTXobxIsXdZAfe9WcWbOWdZhX9MbEU9KDSw
-	 2QHFP3pgcA0KrM1nU2vTlxoZdW3BLO8wVyqOtZWf5UzgZ1TSUcsnmsjSUekY/7xH4v
-	 CeUeQSkMAZxoxNFfr6xCuXuhIBi54NEhkBUjg4Pbu1FI9hgrypQ3v33mRpS+VaxbL8
-	 lp9bk2tE3BoyAA8l2JjYpilU5BB3eb33BO6IFwuPRfVmMO/wgu+FiMOG51Rcq+uFOq
-	 IGDTXfIgd3D5Q==
+	s=k20201202; t=1723728768;
+	bh=XhNCev36fKU4Ut6u0d8sIw96shRZ4O+aoeJp+HMD7jA=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=E1RKGOrG68AMVWN/06u6tQ0yywctHMuOXCfH0CvEPRTxH58Eg1TTT6Ub8bgAlAUPE
+	 ZXIYFtGKmDaGLTrnJhZhuZa/qArPAle10exHGWBKD/JWgG6EOWRyOtmB4bi5d2RtLF
+	 Wj/3XKlb7XUuD2nFc/mTtdMziC6LGhDIK+FS+QoDf1VIiar+SMgRZHVzqb6gp+OtqF
+	 f5iiLyrMmdMkaIHW1pB0zU312oVbLj+X1NyEbAwxivRoCW0BqqPtVBA1oZTO6JuPS/
+	 gIU13RuYddySzWDKQwVKSxlo9LkB6ap3/ATLgNANCw+Jpe6Au0K7V4KbApt4z4q8/9
+	 WLwx3UNyPuknA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-In-Reply-To: <20240813185827.154779-1-brgl@bgdev.pl>
-References: <20240813185827.154779-1-brgl@bgdev.pl>
-Subject: Re: [PATCH 1/3] regulator: dt-bindings: qcom,qca6390-pmu: fix the
- description for bt-enable-gpios
-Message-Id: <172372876138.37563.7896512013547080088.b4-ty@kernel.org>
-Date: Thu, 15 Aug 2024 14:32:41 +0100
+To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240814143805.98874-1-krzysztof.kozlowski@linaro.org>
+References: <20240814143805.98874-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] spi: cadence-quadspi: Simplify with scoped for each OF
+ child loop
+Message-Id: <172372876745.37632.12287787390464765004.b4-ty@kernel.org>
+Date: Thu, 15 Aug 2024 14:32:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,23 +59,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Tue, 13 Aug 2024 20:58:25 +0200, Bartosz Golaszewski wrote:
-> The Bluetooth module is obviously not an ath11k so drop the word.
+On Wed, 14 Aug 2024 16:38:05 +0200, Krzysztof Kozlowski wrote:
+> Use scoped for_each_available_child_of_node_scoped() when iterating over
+> device nodes to make code a bit simpler.
 > 
 > 
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/3] regulator: dt-bindings: qcom,qca6390-pmu: fix the description for bt-enable-gpios
-      commit: d275e9918cc01d27ab511e5dbf2aafc1e782628e
-[2/3] regulator: dt-bindings: qcom,qca6390-pmu: document WCN6855
-      commit: 2416d2f87be431d98b2b05137fcd1f4da9a83894
-[3/3] regulator: dt-bindings: qcom,qca6390-pmu: document the swctrl-gpios property
-      commit: 39b8cb4e1b51191dd0da03b77fbd8b2a2e3e7645
+[1/1] spi: cadence-quadspi: Simplify with scoped for each OF child loop
+      commit: 6a2ab229abdd9fb2177d0af72289eabcc971d985
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
