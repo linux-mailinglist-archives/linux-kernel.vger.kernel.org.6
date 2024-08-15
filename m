@@ -1,118 +1,98 @@
-Return-Path: <linux-kernel+bounces-287802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF2F952CB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:47:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4BB952CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5E328254A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:47:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA84BB24AA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4D01C233F;
-	Thu, 15 Aug 2024 10:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MzJzdAU4"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41BD1BF307;
+	Thu, 15 Aug 2024 10:31:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6801C0DF7;
-	Thu, 15 Aug 2024 10:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7BB1BDAA9
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723717893; cv=none; b=IsQhq4KPpblMVo7O6fuz/rTx+FwbFUZmKoTyIB3/wqcNKVNwDCLN2CnpED0wOd5b99JczAULvh/pYhdI2lShs4cXmLnFNXEvL7IUiGJCxxtYK2JHqpjUXmrSS2Sy3MgbRedq8Ey7ZpIFgO4sYcBi+WKWfmY8R70AVkzd8cMrzcU=
+	t=1723717914; cv=none; b=Lltwijer4Rq5E6EzsmtJrmA4oHBzzmgQnYeCKzaEATBkktRwNcci4Tea4agZajNK2zQNVpHu8xqnmgHPji9W0LF9woQ+FtokfFV6Vc8OswSav98O+vuhmK13WDbMYqtTHhaLkWMh5oT0V8rLVg+X7PGMt9laVxQlIAXi3kLL6vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723717893; c=relaxed/simple;
-	bh=B1zbU9K4JBV+Y+++fLZNnEr24U7Z6B1vwPpEWdvE6iM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VKv7vrSVQxHZXYO3SB65fYseWTRZ2/jrddASFh2+fGqH45SpKv2hbzIGZ/0SZGLNV7b4jQIrokC3dg5cInu6l6bPb1jPBTAjXXmmhc76CK54ilg7IkdKC182Eso0YFUmirhGsJ9jxVYzIDUa2fjJzsX5gwYEyDXUUVzEU6BxELo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MzJzdAU4; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc569440e1so7314975ad.3;
-        Thu, 15 Aug 2024 03:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723717890; x=1724322690; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/+XfRXPXj8w6EXHeOGa4iFRQXkETj6uUNo6qQuywIE=;
-        b=MzJzdAU4GLIgiNM0i28RPWutMT/Ox6bVX52CT+rHOHpyLyan94Ift05fViA1lp5aCd
-         bBOAkHwCgfNjSl8bIAO77QtHTkE9Z+yOdckQvws9nu9xxSj5RRW7yAcFHyxcv9eYWSre
-         ukcwiyr8WcqvNysTB66OhfMgOKQBZA0cCOW73+X7rR9ppyyz58x8TnmfdF3BtBfcpn+/
-         htcckc3nGhEortdwBAIIjb8Xg3tK9e43jQWgWlnEZSs5rbM+pinPLo7UWkDUfzJ3K//5
-         jkudX1MCOklNFF3eFFXpdxP9LdjTB66NkWA0IXFTne0Wm8IjLBVLjqir4bxTvnx8eYUV
-         SOhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723717890; x=1724322690;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p/+XfRXPXj8w6EXHeOGa4iFRQXkETj6uUNo6qQuywIE=;
-        b=gYWfHdjtU4fKkEAzuI7R+L8Aez97iqe4syD4dvZounR7omciZYHAWrnAstmmHxYy6M
-         8fv4XstmMTZ+kp4Scq4R0vZdynin1Pd35Fr47NNLeJ2tz9JxyxeNOrFxkd38FH+QSJqw
-         MxGYReDODzwdMeCmolGX1ECcKznO6TvW3RNn6WbTuHxJs5EPmatUzSrwfhS83bVK+e0+
-         TC6xDib3XaR3458BNrbjnYE3gGH9Pf8n4tgyW0026Z31i2h5GVnBHTv08p64DbvtfcbY
-         14WGi7kZPNS+QlUn6pWtZC4OxNmHSmXtEGBPZ8dDMDCog3K32If1W2Z3RHooLfzeQm8L
-         Xq2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXqNGFQVHdrPI7vtAzbvPVU2uEowlhqNKc8Mp5KO5r/sPBhjTALFwY6DNudcb/gg/uHMOaAJRt5WKiAr+LqwfalbEL9RopYXs7UCjr4avtxida7fCpXdeOBjm48QrMlo97t/c4bSzsm
-X-Gm-Message-State: AOJu0YwFTxh0OJSrTkE4F0g2EmWqeXMOmCpcsNX7IUecoEFYMMf069vi
-	eZQptPwyWge4/pe2sz653Xy18y5Xg5vKkcIYz0UG81EeEkNO9Q4w
-X-Google-Smtp-Source: AGHT+IE2tPcYmqo5mobOND+l+zGWw1MEU6GWcTocYYS8xFwMoz29IfTBC0wr5z7+LHZ1OnnytgfsBQ==
-X-Received: by 2002:a17:902:da8b:b0:201:f83e:c267 with SMTP id d9443c01a7336-201f83ec51emr8253085ad.5.1723717889158;
-        Thu, 15 Aug 2024 03:31:29 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. (126-84.iitb.ac.in. [103.21.126.84])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fa4a7sm8043655ad.38.2024.08.15.03.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 03:31:28 -0700 (PDT)
-From: SurajSonawane2415 <surajsonawane0215@gmail.com>
-To: linux@leemhuis.info
-Cc: corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	SurajSonawane2415 <surajsonawane0215@gmail.com>
-Subject: [PATCH] docs: Fix grammar and phrasing errors in reporting-issues.rst
-Date: Thu, 15 Aug 2024 16:01:14 +0530
-Message-Id: <20240815103114.10461-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723717914; c=relaxed/simple;
+	bh=URHSL4KC2PhkmcfJ3PvdV8Nb0wEiWPwgZrarxFiuIt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8RfEK6dl3Xi47hcXu7M9HUs8m8L8lf82a9gHn630VDSagaK9vZ9R26gZN1+hpBYONaa6Y96ALYBBwPrJsITTAc9wVGC7WKGPWZjGI6+t/uzQeDTYFPli5iOaDWFYbAmJ6GLSsdN8OSuk5y5VkN3GD6CDvrCT4yaHIctZf1joV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EDC5C32786;
+	Thu, 15 Aug 2024 10:31:52 +0000 (UTC)
+Date: Thu, 15 Aug 2024 11:31:50 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: muchun.song@linux.dev, will@kernel.org, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hugetlbfs: add MTE support
+Message-ID: <Zr3ZFmRqtkbrOJq7@arm.com>
+References: <20240625233717.2769975-1-yang@os.amperecomputing.com>
+ <ZoPz14fYSqVyvRTw@arm.com>
+ <7a4a60af-e471-484b-a4a3-ed31daaca30b@os.amperecomputing.com>
+ <546bf8d4-3680-4af3-8d4d-af2d7c192d04@os.amperecomputing.com>
+ <ZoanN7hkWDBjCTu3@arm.com>
+ <b140e3e1-cbf7-4b07-8239-abfe8b85d14c@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b140e3e1-cbf7-4b07-8239-abfe8b85d14c@os.amperecomputing.com>
 
-This patch corrects some grammatical errors in the `reporting-issues.rst` 
-documentation file. These changes improve the readability and accuracy of 
-the instructions provided in the documentation.
+Sorry for the delay (holidays etc.)
 
-Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
----
- Documentation/admin-guide/reporting-issues.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Tue, Jul 09, 2024 at 10:42:58AM -0700, Yang Shi wrote:
+> On 7/4/24 6:44 AM, Catalin Marinas wrote:
+> > It might be better to convert those page flag checks to only happen on
+> > the head page. My stashed changes from over a year ago (before we had
+> > more folio conversions) below. However, as I mentioned, I got stuck on
+> > folio_copy() which also does a cond_resched() between copy_highpage().
+> 
+> We can have the page flags set for head only for hugetlb page. For
+> copy_highpage(), we should be able to do something like the below:
+> 
+> if  page_is_head && page_is_hugetlb && page_has_mte_tagged
+>     set page_mte_tagged flags
+>     copy tags for all sub pages
+> else // <-- tail page or non-hugetlb page
+>     current copy_highpage implementation
 
-diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-index 2fd5a0302..61de4454b 100644
---- a/Documentation/admin-guide/reporting-issues.rst
-+++ b/Documentation/admin-guide/reporting-issues.rst
-@@ -56,7 +56,7 @@ developers. It might be all that's needed for people already familiar with
- reporting issues to Free/Libre & Open Source Software (FLOSS) projects. For
- everyone else there is this section. It is more detailed and uses a
- step-by-step approach. It still tries to be brief for readability and leaves
--out a lot of details; those are described below the step-by-step guide in a
-+out a lot of details; those are described below in the step-by-step guide in a
- reference section, which explains each of the steps in more detail.
- 
- Note: this section covers a few more aspects than the TL;DR and does things in
-@@ -299,7 +299,7 @@ face, even if they look small or totally unrelated. That's why you should report
- issues with these kernels to the vendor. Its developers should look into the
- report and, in case it turns out to be an upstream issue, fix it directly
- upstream or forward the report there. In practice that often does not work out
--or might not what you want. You thus might want to consider circumventing the
-+or might not be what you want. You thus might want to consider circumventing the
- vendor by installing the very latest Linux kernel core yourself. If that's an
- option for you move ahead in this process, as a later step in this guide will
- explain how to do that once it rules out other potential causes for your issue.
+Ah, so you want in the first copy_highpage() for the head page to
+populate the tags for the tail pages. I guess this would work.
+
+> The hugetlb folio can't go away under us since migration path should pin it
+> so the status of folio is stable. The preemption caused by cond_resched()
+> should be fine too due to the pin and the page table entry keeps being
+> migration entry until migration is done, so every one should just see
+> migration entry and wait for migration is done.
+
+Yeah, I don't see those pages going away, otherwise folio_copy() would
+corrupt data.
+
+> The other concerned user of copy_highpage() is uprobe, but it also pins the
+> page then doing copy and it is called with holding write mmap_lock.
+> 
+> IIUC, it should work if I don't miss something. This also should have no
+> impact on HVO. The overhead for other users of copy_highpage() should be
+> also acceptable.
+
+I also think so. We also have the copy_user_highpage() on arm64 that
+calls copy_highpage() but I think that's also safe.
+
 -- 
-2.34.1
+Catalin
 
