@@ -1,182 +1,346 @@
-Return-Path: <linux-kernel+bounces-288706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D30953DD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8524E953DD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A330B278BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EB81F26BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B465155749;
-	Thu, 15 Aug 2024 23:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28746155739;
+	Thu, 15 Aug 2024 23:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQ+tHLEx"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PPAXRVvN"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF13C14D708;
-	Thu, 15 Aug 2024 23:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6290512B94
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 23:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723763172; cv=none; b=sFSD9AMexrlAliPupFJJbKuIQJvLxl7VXxP9PKlJ9H1d6HzwSHFNCsIIrN6J7MNgGNQuuvp2Fa3/2MgHKOVXsu1pIqFjTQTB4BdCRuPPPTwY3r54ejbhDb8UsbQmO05kIPtJVxEuf4m8TdjxSw0NxKIVcy0TJLOO3jT0vO0EO7I=
+	t=1723763195; cv=none; b=EqkBcdB2QzT1J+fRjac3AzMn2Jj61M06wNX0bbhb4xlEFCN0YJwvDX0RiLf1a82sdxTsaLHInG/GwIMCo4te14hp6hiDt8F7IXezlLR06PIEXNGyn+5mMiYYILvATZlrG2QLfVouL183+55Fht/0oe8JliXeQ4l7BdmFNDhJPC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723763172; c=relaxed/simple;
-	bh=bvTlhlXNaVe0JPjLpRuKFXfFp3CAjwWT83vZcv58etE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvXJmSSzqrOmQNYw0ukL3eR5YQ8Cad3Q0FOaG/P+i+STkccGJHAM+M7q3eRRbtMeBzra438sM7hAwTymUgIkRCKElT1AyVHd1p5mmOJgExuygNzZ8qV5xRBasGeqWJxLW95wtZ4NOexesRpRGpL0936PxWZ+KDa3VDj2M2/+P70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQ+tHLEx; arc=none smtp.client-ip=209.85.215.170
+	s=arc-20240116; t=1723763195; c=relaxed/simple;
+	bh=xcqovtWc5+QAsBBFOX7v4heS2/NfrG03Eh2JIED6YJQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TfeCAMo2xK9r6+Esw+pZH4WgBY4Uxg5qTIFRKTonQBxNAyga4NTm2iF1OFHibE95Vxd0SfSlYEUWSIJ6sFDxdSbgyGEGUISj8t9lq0DXggvT3G6251zxcH1sUU1mgmlh9OG2skpcI/WRXZIM7DKE/2VoOXGLTFmdsJYeuuXcPC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PPAXRVvN; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7a115c427f1so1081923a12.0;
-        Thu, 15 Aug 2024 16:06:10 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20208830de8so777425ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:06:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723763170; x=1724367970; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=r2MVp98bZo761S4wGmdjk4zKZB2eYXUc53AD4ygWeNY=;
-        b=RQ+tHLExtDFgEIvQB38drETN4qTFmF4hu1SoVfvd+SBfR5rL3eQOBrUHSoxJYu/Imz
-         WIYeBcgmiz2j08qxos4TKiZCXgLQVxnoRzhx4FiEdInd+Qle2jild4Vhsfo2swZ0K2lW
-         MB/OPhjZc3cUb2mLi2AAF9ffjYJmtScBIaAMc1Cpwr6o0a0/Hx0aRujSn8TJSLcc4t8u
-         ClhOYJ0bpoFd46ifg7yrkoGXpQYp257trt2AYNhrzdZJ7zG7QcdbJUKe4PZfj459ZO3m
-         /BXZ1NiJUdBnMsLXr37D1kCA3O/FWDPzo9HcddQ7wNzBEFQBfm7thLRg8x4G/1iejB8/
-         fmuQ==
+        d=gmail.com; s=20230601; t=1723763193; x=1724367993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x/zpViDnXt7FpAGHxaqgS4YyUNzii93kYurBFVfMwqE=;
+        b=PPAXRVvNBdUUhwwTUx90mhHltYHl21wyT7a+Ccano/+Z4cF9KLIRH9LuqasR7DNDAQ
+         ONWEUQItaQ5KUNAb2TbSrDO5onRFKrRZA/6EaCEAGTUiJPuoQscv58AZvE8pmHrBu6IV
+         xwaukOEKmrDnxWz6lmj34PZV/KP/g0O6Q08NN5eZQUTksIAqeZbw5Vuo+/6kay4VNAGl
+         +9ncu0BtHqkbV/oh+1JMyeYfEz3yWqKyR4NDTiq8GQoJUEULxWir5eIkdx4DoI2WPw3j
+         SHSy3lVacPtHe76RhKDEqQHLwIrUVR9/wWRhlx6N/ox84qqplLTVylFjiCO2iIsUPDeN
+         yIEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723763170; x=1724367970;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r2MVp98bZo761S4wGmdjk4zKZB2eYXUc53AD4ygWeNY=;
-        b=qHuKSLIlzs/3yaiX+wSubDipZ0ax7vEoPu5yDzY1rGBF3L6VDhvfEgxHLmX4zTR9Ss
-         E3bvpDlidXjHDntkj3Q/RqK6ZSsCEkOwZ27oHhZxxOMDVN4i6do3R4UCXzv0a2BLUXcg
-         AGj4QExoguE2slcmlhQzhcOH8BcSUuEykTM17CX7traJGbIEk23dyytC/iNgNWlPWoMJ
-         vkC8JElzJFI5q01xP62W5UyNWzjrpjfRBOPty5MCyxfRxaQp60H4hXHcjuJ+FJ+2TrrP
-         58B3Dtb8olPY0bJYYwZ7nzh/vUPPmjTjOBQjzw9venoiW4H6Kf7P09pY6m28yu/WqT6k
-         kv6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXdsc/yj17EvWbQ5G/bJw53fK2IS2F6wxkr6XxVUTvOCoRCi2JGWHPz04N70qptLH3bblqCmZF2qF7eWLAOYX08U8tmQxQTU58HCTdK8ACo24Pojm9tzL52t6K/he1YaVN1KU+4zeAirLfL/XHhMMDUxIo63ynhIWwd/qZrQcwqlRo2IkvlaMybWewK
-X-Gm-Message-State: AOJu0YxYwO6a9ns+sow12OQpfSqTyAUWzIzzA48s+mH/92BFODqlXJgU
-	8nshlbPzPoEsfhOBuiMqavY+3izwcLZ1c+VH6P/wA23a3PRD3rKx
-X-Google-Smtp-Source: AGHT+IGXM/Mqg9qSgfOA6fMJ1xt6FPn83RQRVebx68PrCIT9+I7807vn1nG8ky9ebKzf39dbjaw4Wg==
-X-Received: by 2002:a05:6a20:c88a:b0:1c8:95c9:307c with SMTP id adf61e73a8af0-1c904fb6489mr1756065637.28.1723763170085;
-        Thu, 15 Aug 2024 16:06:10 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae0756dsm1508384b3a.47.2024.08.15.16.06.09
+        d=1e100.net; s=20230601; t=1723763193; x=1724367993;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x/zpViDnXt7FpAGHxaqgS4YyUNzii93kYurBFVfMwqE=;
+        b=P2KP4CInhBkVL5d5WrnKSy6qJo2HLSWydSKTdsDv8SFrj/rW26FfYK+vcdtLkfqaF3
+         h+8OgFqhaw01pUc5d5DYURVtlxdTyW+rxHCDj82oejUh3f1ka5O0X48K21pJovsujowG
+         rYRzOgILAAhuoqAZvd7OwyTfRJ3VFfMwL9WhDG9DJR+dQjt2R8r9gEXzY5X/s0fC20gl
+         z24lUW9cHTf1vfzKru1HXRQZWAGgASTpYPxVgedHdnA5MGM2Vpg+ndZZdSL/GbeMV/se
+         bhULGBU8pRD63yPzp+6zUJG6lJkyZ2GfzFi9Ay0DA1xM7Ttq+gH20jEkQ3sx7L7l5YIL
+         GPng==
+X-Forwarded-Encrypted: i=1; AJvYcCXIxH+B9cHmDBRnUcysYVEjEFyTASxGQGcWBqxRMMzLB92LOHyVCnSEtqKGdDHcshDCkNusgNrtj+yqNPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSgBupEkn6bF6IsFoaqnw2YzaiF7nHIRGkYe9F7Q4KFRxg7Lh+
+	H4CgJB9FVcoS1nxaVFMMN/ypwbKtRntqElOt/yRS96W+0U9bLbYg
+X-Google-Smtp-Source: AGHT+IGlJ4CKM5TdeWOEh9vmgZNrpyxETSOztRbXUr0JVMqCNlRfxztjXl2nRsrCNZD/PIMUTKpFjw==
+X-Received: by 2002:a17:902:ecc3:b0:1fb:54d9:ebbb with SMTP id d9443c01a7336-20203ea1da0mr15808655ad.22.1723763192564;
+        Thu, 15 Aug 2024 16:06:32 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3ac7ca35fsm4202664a91.9.2024.08.15.16.06.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 16:06:09 -0700 (PDT)
-Date: Thu, 15 Aug 2024 17:06:07 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: Jann Horn <jannh@google.com>
-Cc: outreachy@lists.linux.dev, mic@digikod.net, gnoack@google.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bjorn3_gh@protonmail.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] Landlock: Adding file_send_sigiotask signal
- scoping support
-Message-ID: <Zr6J31ewINPtPtTD@tahera-OptiPlex-5000>
-References: <cover.1723680305.git.fahimitahera@gmail.com>
- <d04bc943e8d275e8d00bb7742bcdbabc7913abbe.1723680305.git.fahimitahera@gmail.com>
- <CAG48ez2Sw0Cy3RYrgrsEDKyWoxMmMbzX6yY-OEfZqeyGDQhy9w@mail.gmail.com>
- <Zr5y53Bl6cgdLKjj@tahera-OptiPlex-5000>
- <CAG48ez1PcHRDhRjtsq_JAr5e6z=XNjB1Mi_jjtr8EsRphnnb2g@mail.gmail.com>
+        Thu, 15 Aug 2024 16:06:32 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: wangkefeng.wang@huawei.com
+Cc: akpm@linux-foundation.org,
+	baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	david@redhat.com,
+	hanchuanhua@oppo.com,
+	hannes@cmpxchg.org,
+	hch@infradead.org,
+	hughd@google.com,
+	kaleshsingh@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mhocko@suse.com,
+	minchan@kernel.org,
+	nphamcs@gmail.com,
+	ryan.roberts@arm.com,
+	ryncsn@gmail.com,
+	senozhatsky@chromium.org,
+	shakeel.butt@linux.dev,
+	shy828301@gmail.com,
+	surenb@google.com,
+	v-songbaohua@oppo.com,
+	willy@infradead.org,
+	xiang@kernel.org,
+	ying.huang@intel.com,
+	yosryahmed@google.com
+Subject: Re: [PATCH v6 2/2] mm: support large folios swap-in for zRAM-like devices
+Date: Fri, 16 Aug 2024 11:06:12 +1200
+Message-Id: <20240815230612.77266-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20ed69ad-5dad-446b-9f01-86ad8b1c67fa@huawei.com>
+References: <20ed69ad-5dad-446b-9f01-86ad8b1c67fa@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1PcHRDhRjtsq_JAr5e6z=XNjB1Mi_jjtr8EsRphnnb2g@mail.gmail.com>
 
-On Fri, Aug 16, 2024 at 12:10:44AM +0200, Jann Horn wrote:
-> On Thu, Aug 15, 2024 at 11:28 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
+On Fri, Aug 16, 2024 at 1:27 AM Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+>
+>
+>
+> On 2024/8/15 17:47, Kairui Song wrote:
+> > On Fri, Aug 2, 2024 at 8:21 PM Barry Song <21cnbao@gmail.com> wrote:
+> >>
+> >> From: Chuanhua Han <hanchuanhua@oppo.com>
 > >
-> > On Thu, Aug 15, 2024 at 10:25:15PM +0200, Jann Horn wrote:
-> > > On Thu, Aug 15, 2024 at 8:29 PM Tahera Fahimi <fahimitahera@gmail.com> wrote:
-> > > > This patch adds two new hooks "hook_file_set_fowner" and
-> > > > "hook_file_free_security" to set and release a pointer to the
-> > > > domain of the file owner. This pointer "fown_domain" in
-> > > > "landlock_file_security" will be used in "file_send_sigiotask"
-> > > > to check if the process can send a signal.
-> > > >
-> > > > Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> > > > ---
-> > > >  security/landlock/fs.c   | 18 ++++++++++++++++++
-> > > >  security/landlock/fs.h   |  6 ++++++
-> > > >  security/landlock/task.c | 27 +++++++++++++++++++++++++++
-> > > >  3 files changed, 51 insertions(+)
-> > > >
-> > > > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> > > > index 7877a64cc6b8..d05f0e9c5e54 100644
-> > > > --- a/security/landlock/fs.c
-> > > > +++ b/security/landlock/fs.c
-> > > > @@ -1636,6 +1636,21 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
-> > > >         return -EACCES;
-> > > >  }
-> > > >
-> > > > +static void hook_file_set_fowner(struct file *file)
-> > > > +{
-> > > > +       write_lock_irq(&file->f_owner.lock);
-> > >
-> > > Before updating landlock_file(file)->fown_domain, this hook must also
-> > > drop a reference on the old domain - maybe by just calling
-> > > landlock_put_ruleset_deferred(landlock_file(file)->fown_domain) here.
-> > Hi Jann,
+> > Hi Chuanhua,
 > >
-> > Thanks for the feedback :)
-> > It totally make sense.
-> > > > +       landlock_file(file)->fown_domain = landlock_get_current_domain();
-> > > > +       landlock_get_ruleset(landlock_file(file)->fown_domain);
-> > > > +       write_unlock_irq(&file->f_owner.lock);
-> > > > +}
-> > > > +
-> > > > +static void hook_file_free_security(struct file *file)
-> > > > +{
-> > > > +       write_lock_irq(&file->f_owner.lock);
-> > > > +       landlock_put_ruleset(landlock_file(file)->fown_domain);
-> > I was thinking of if we can replace this landlock_put_ruleset with
-> > landlock_put_ruleset_deferred. In this case, it would be better use of
-> > handling the lock?
-> 
-> I don't think you have to take the "file->f_owner.lock" in this hook -
-> the file has already been torn down pretty far, nothing is going to be
-> able to trigger the file_set_fowner hook anymore.
-That's right. Thanks.
+> >>
+> ...
+>
+> >> +
+> >> +static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+> >> +{
+> >> +       struct vm_area_struct *vma = vmf->vma;
+> >> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >> +       unsigned long orders;
+> >> +       struct folio *folio;
+> >> +       unsigned long addr;
+> >> +       swp_entry_t entry;
+> >> +       spinlock_t *ptl;
+> >> +       pte_t *pte;
+> >> +       gfp_t gfp;
+> >> +       int order;
+> >> +
+> >> +       /*
+> >> +        * If uffd is active for the vma we need per-page fault fidelity to
+> >> +        * maintain the uffd semantics.
+> >> +        */
+> >> +       if (unlikely(userfaultfd_armed(vma)))
+> >> +               goto fallback;
+> >> +
+> >> +       /*
+> >> +        * A large swapped out folio could be partially or fully in zswap. We
+> >> +        * lack handling for such cases, so fallback to swapping in order-0
+> >> +        * folio.
+> >> +        */
+> >> +       if (!zswap_never_enabled())
+> >> +               goto fallback;
+> >> +
+> >> +       entry = pte_to_swp_entry(vmf->orig_pte);
+> >> +       /*
+> >> +        * Get a list of all the (large) orders below PMD_ORDER that are enabled
+> >> +        * and suitable for swapping THP.
+> >> +        */
+> >> +       orders = thp_vma_allowable_orders(vma, vma->vm_flags,
+> >> +                       TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
+> >> +       orders = thp_vma_suitable_orders(vma, vmf->address, orders);
+> >> +       orders = thp_swap_suitable_orders(swp_offset(entry), vmf->address, orders);
+> >> +
+> >> +       if (!orders)
+> >> +               goto fallback;
+> >> +
+> >> +       pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd, vmf->address & PMD_MASK, &ptl);
+> >> +       if (unlikely(!pte))
+> >> +               goto fallback;
+> >> +
+> >> +       /*
+> >> +        * For do_swap_page, find the highest order where the aligned range is
+> >> +        * completely swap entries with contiguous swap offsets.
+> >> +        */
+> >> +       order = highest_order(orders);
+> >> +       while (orders) {
+> >> +               addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
+> >> +               if (can_swapin_thp(vmf, pte + pte_index(addr), 1 << order))
+> >> +                       break;
+> >> +               order = next_order(&orders, order);
+> >> +       }
+> >> +
+> >> +       pte_unmap_unlock(pte, ptl);
+> >> +
+> >> +       /* Try allocating the highest of the remaining orders. */
+> >> +       gfp = vma_thp_gfp_mask(vma);
+> >> +       while (orders) {
+> >> +               addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
+> >> +               folio = vma_alloc_folio(gfp, order, vma, addr, true);
+> >> +               if (folio)
+> >> +                       return folio;
+> >> +               order = next_order(&orders, order);
+> >> +       }
+> >> +
+> >> +fallback:
+> >> +#endif
+> >> +       return vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vmf->address, false);
+> >> +}
+> >> +
+> >> +
+> >>   /*
+> >>    * We enter with non-exclusive mmap_lock (to exclude vma changes,
+> >>    * but allow concurrent faults), and pte mapped but not yet locked.
+> >> @@ -4074,35 +4220,37 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >>          if (!folio) {
+> >>                  if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
+> >>                      __swap_count(entry) == 1) {
+> >> -                       /*
+> >> -                        * Prevent parallel swapin from proceeding with
+> >> -                        * the cache flag. Otherwise, another thread may
+> >> -                        * finish swapin first, free the entry, and swapout
+> >> -                        * reusing the same entry. It's undetectable as
+> >> -                        * pte_same() returns true due to entry reuse.
+> >> -                        */
+> >> -                       if (swapcache_prepare(entry, 1)) {
+> >> -                               /* Relax a bit to prevent rapid repeated page faults */
+> >> -                               schedule_timeout_uninterruptible(1);
+> >> -                               goto out;
+> >> -                       }
+> >> -                       need_clear_cache = true;
+> >> -
+> >>                          /* skip swapcache */
+> >> -                       folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0,
+> >> -                                               vma, vmf->address, false);
+> >> +                       folio = alloc_swap_folio(vmf);
+> >>                          page = &folio->page;
+> >>                          if (folio) {
+> >>                                  __folio_set_locked(folio);
+> >>                                  __folio_set_swapbacked(folio);
+> >>
+> >> +                               nr_pages = folio_nr_pages(folio);
+> >> +                               if (folio_test_large(folio))
+> >> +                                       entry.val = ALIGN_DOWN(entry.val, nr_pages);
+> >> +                               /*
+> >> +                                * Prevent parallel swapin from proceeding with
+> >> +                                * the cache flag. Otherwise, another thread may
+> >> +                                * finish swapin first, free the entry, and swapout
+> >> +                                * reusing the same entry. It's undetectable as
+> >> +                                * pte_same() returns true due to entry reuse.
+> >> +                                */
+> >> +                               if (swapcache_prepare(entry, nr_pages)) {
+> >> +                                       /* Relax a bit to prevent rapid repeated page faults */
+> >> +                                       schedule_timeout_uninterruptible(1);
+> >> +                                       goto out_page;
+> >> +                               }
+> >> +                               need_clear_cache = true;
+> >> +
+> >>                                  if (mem_cgroup_swapin_charge_folio(folio,
+> >>                                                          vma->vm_mm, GFP_KERNEL,
+> >>                                                          entry)) {
+> >>                                          ret = VM_FAULT_OOM;
+> >>                                          goto out_page;
+> >>                                  }
+> >
+> > After your patch, with build kernel test, I'm seeing kernel log
+> > spamming like this:
+> > [  101.048594] pagefault_out_of_memory: 95 callbacks suppressed
+> > [  101.048599] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > [  101.059416] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > [  101.118575] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > [  101.125585] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > [  101.182501] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > [  101.215351] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > [  101.272822] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > [  101.403195] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> > ............
+> >
+> > And heavy performance loss with workloads limited by memcg, mTHP enabled.
+> >
+> > After some debugging, the problematic part is the
+> > mem_cgroup_swapin_charge_folio call above.
+> > When under pressure, cgroup charge fails easily for mTHP. One 64k
+> > swapin will require a much more aggressive reclaim to success.
+> >
+> > If I change MAX_RECLAIM_RETRIES from 16 to 512, the spamming log is
+> > gone and mTHP swapin should have a much higher swapin success rate.
+> > But this might not be the right way.
+> >
+> > For this particular issue, maybe you can change the charge order, try
+> > charging first, if successful, use mTHP. if failed, fallback to 4k?
+>
+> This is what we did in alloc_anon_folio(), see 085ff35e7636
+> ("mm: memory: move mem_cgroup_charge() into alloc_anon_folio()"),
+> 1) fallback earlier
+> 2) using same GFP flags for allocation and charge
+>
+> but it seems that there is a little complicated for swapin charge
 
-> But either way, you're right that we can't just use
-> landlock_put_ruleset() here because landlock_put_ruleset() can sleep
-> and the file_free_security hook can be invoked from non-sleepable
-> context. (This only happens when fput() directly calls file_free(),
-> and I think that only happens with ->fown_domain==NULL, so technically
-> it would also be fine to do something like "if (domain)
-> landlock_put_ruleset(domain);".)
-> If you test your current code in a kernel that was built with
-> CONFIG_DEBUG_ATOMIC_SLEEP=y, this will probably print an warning
-> message in the kernel log (dmesg). You're right that using
-> landlock_put_ruleset_deferred() instead would fix that.
-> 
-> I think the right solution here is probably just to do:
-> 
-> static void hook_file_free_security(struct file *file)
-> {
->   landlock_put_ruleset_deferred(landlock_file(file)->fown_domain);
-> }
-I think I will stick to this one since it is easier to understand. 
-> Alternatively it would also work to do this - this code is probably a
-> bit more efficient but also a little less clear:
-> 
-> static void hook_file_free_security(struct file *file)
-> {
->   /* don't trigger might_sleep() for tearing down unopened file */
->   if (landlock_file(file)->fown_domain)
->     landlock_put_ruleset(landlock_file(file)->fown_domain);
-> }
-> 
-> >
-> > > > +       write_unlock_irq(&file->f_owner.lock);
-> > > > +}
+Kefeng, thanks! I guess we can continue using the same approach and
+it's not too complicated. 
+
+Kairui, sorry for the trouble and thanks for the report! could you
+check if the solution below resolves the issue? On phones, we don't
+encounter the scenarios you’re facing.
+
+From 2daaf91077705a8fa26a3a428117f158f05375b0 Mon Sep 17 00:00:00 2001
+From: Barry Song <v-songbaohua@oppo.com>
+Date: Fri, 16 Aug 2024 10:51:48 +1200
+Subject: [PATCH] mm: fallback to next_order if charing mTHP fails
+
+When memcg approaches its limit, charging mTHP becomes difficult.
+At this point, when the charge fails, we fallback to the next order
+to avoid repeatedly retrying larger orders.
+
+Reported-by: Kairui Song <ryncsn@gmail.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
+ mm/memory.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 0ed3603aaf31..6cba28ef91e7 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4121,8 +4121,12 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+ 	while (orders) {
+ 		addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
+ 		folio = vma_alloc_folio(gfp, order, vma, addr, true);
+-		if (folio)
+-			return folio;
++		if (folio) {
++			if (!mem_cgroup_swapin_charge_folio(folio,
++					vma->vm_mm, gfp, entry))
++				return folio;
++			folio_put(folio);
++		}
+ 		order = next_order(&orders, order);
+ 	}
+ 
+@@ -4244,7 +4248,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 				}
+ 				need_clear_cache = true;
+ 
+-				if (mem_cgroup_swapin_charge_folio(folio,
++				if (nr_pages == 1 && mem_cgroup_swapin_charge_folio(folio,
+ 							vma->vm_mm, GFP_KERNEL,
+ 							entry)) {
+ 					ret = VM_FAULT_OOM;
+-- 
+2.34.1
+
+
+Thanks
+Barry
+
 
