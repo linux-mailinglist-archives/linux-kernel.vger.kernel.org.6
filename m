@@ -1,116 +1,174 @@
-Return-Path: <linux-kernel+bounces-288714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8886E953DE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:30:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5DC953DEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 370781F22A59
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7AE4282967
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A444E155747;
-	Thu, 15 Aug 2024 23:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C78155C97;
+	Thu, 15 Aug 2024 23:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UQOI08jV"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqrYtWgA"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C713C1553BD
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 23:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30C91AC897;
+	Thu, 15 Aug 2024 23:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723764645; cv=none; b=rXe171/j5VnUpQWITM9KM1PsxYZDhqITlT9BVzQXQG9sfkd6Rk9SuF5KGIYqkCK6CtOEjzhKgMwtFKGDC4K0tPFqZrzBEfiVlY82UI3IfC6giWQ8hmu25SEueQTGwAVgqqN6scj34T28ESYKJOts96gc/Tf+Q78TT07biuM+tUY=
+	t=1723764685; cv=none; b=DIKn/oz3gm7Pto5hrCpFTqfPhufcRCC3MQs0jWt23G7Nou6v9sZVNP9s1dku+C65A7VdGlzRvc3BCJqg2GQx1xiWDkRFSjHc76iSoBK03DjWtizNahd+EGRSVoD3ZdkLpjMXtkbfbl4m8ufZ9ABTGtvhGWlFH4pI1zPbxd5ZaHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723764645; c=relaxed/simple;
-	bh=4+fs5mSQ7KpSnkvNF9oe70b8D0zmCSzLURhjzIQ9Z74=;
+	s=arc-20240116; t=1723764685; c=relaxed/simple;
+	bh=Q00Wy/EH0Tpo4vlmp+Hm4TrJ3Hq2oPEIBrWzGhTrgug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8+7IcsiFMHoUU4VVR2reJlkjc7CCW5AIB6PebJzZ1Pxrme182sLS4YSt+0JS+WNS5jCSS6psF0VJjIGV5c5IWSQruNgjRjPH13tqrfOdIFmMNaKpzHz8HxdtkrQsH8vTdExdnSRr13nm5cAXth0Nwoja0O7gkN0rjI2BbAvTjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UQOI08jV; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=LoJ3
-	1Az1zhTJcDtlXo0E/G0AymxQV5KdCulHjhZfi1k=; b=UQOI08jVLOnfy5yLXhu8
-	Ww0VK5e1RTMuEyY0ZRDV+Mu6hIu2dZ1Zo/Meo42DWrBYXfN7NkEKjkTj2QEwFnpY
-	MqM3L9xJ+8UA6Qoi+Q4jtB7zZ405ery+uExzs5wFD8tjw7G+xebyl69HX6GeCA8L
-	LSAYFzDk3C99SJSDSipRGivg/MX/j+vvmf8aCmuCgYXnBSKTLo4RYaQ1D2DRIIbI
-	LYJUdlYM50ZxYX6fj1czfHLLFMEkv/H78bfecmiBvJ2aSAXAWzTurDlmfm/9jhdK
-	WCvnv3pMxJrH4E9UbKsrHmYTZ41uzTIHR8C1bfJTuYJ99mkyYv12eWQBE2QC1VK+
-	Cg==
-Received: (qmail 2431978 invoked from network); 16 Aug 2024 01:30:39 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 16 Aug 2024 01:30:39 +0200
-X-UD-Smtp-Session: l3s3148p1@oa76OsEf8tBehhrc
-Date: Fri, 16 Aug 2024 01:30:38 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Trilok Soni <quic_tsoni@quicinc.com>,
-	Felipe Balbi <balbi@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Arnd Bergmann <arnd@arndb.de>, wsa@kernel.org
-Subject: Re: lm8323/lm8333 keyboard drivers - drop or keep?
-Message-ID: <Zr6PnlsdoyLoX261@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Trilok Soni <quic_tsoni@quicinc.com>,
-	Felipe Balbi <balbi@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Arnd Bergmann <arnd@arndb.de>, wsa@kernel.org
-References: <Zr6I9RB5mibU_12N@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RkJA5W390ranRyER/54ZtYggJGcebgYDW4kffcKH81sFj7jnBWL+fD7oXCrqXwdzea9TpDcKU1ADiY44JDd4/kJORdl/0iVcX4/6nk3dhqNlSqpfoI6Y/8GJxGaHnYm053m8/+RncZCmzbXkp7ompHVffWBnRYv4Vaq6NtS2wVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqrYtWgA; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc65329979so14463795ad.0;
+        Thu, 15 Aug 2024 16:31:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723764683; x=1724369483; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TJUrcjdRDSHYk+JjRgPgoz0uj64QHPtt5Zknd43gI+Q=;
+        b=eqrYtWgAxTDdXazmIbsbxd95ylo+IGd4Br6nd3vbWXJmP8J9zAGMr/IWF7jOsD1yL6
+         QzDNaa0zd70m1lrFD/5M7pgGe71nS6StMMeik5VC7+FpdZZcH9qPEt4RfgpF83A/mJbg
+         NnXczPb54nW7ADu3lWNvFFqFv3cpt+x1ufArdLkrPyN2bQA9FtfGeOG2O6TDEIObGW2K
+         P1FGgfsNrz9UePuVy0yzmRqs0PAau3vi13NJ6UR8+hnnDSYJijj8ljNFcJ3EWrKC5vBw
+         5VJReTApE+2ob1XJa160nNmNzb2fguARwh6HwJ035KzaiRIfDBZtN/myQMBEWwzxcYMn
+         TPAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723764683; x=1724369483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TJUrcjdRDSHYk+JjRgPgoz0uj64QHPtt5Zknd43gI+Q=;
+        b=RhXffbnLvSn/MTzL6+l7K5kwY2UBNCbnE+x3PLP79XCsBIxhtih3hJlNoEWbUTwD5Z
+         ix3IEPgjXrTpBi5Azo/OM+QUYbt3Qn6CNFTi5NRQjnxgyt88osPLFIP2CRT7TEv8ICgI
+         v41KKUa25ZLRU6jqftTMPZ1xjZ3OwFxaFYFO/F1tQP0ke/uIC4e+SARrR/qX68zFueZJ
+         Fm5+2tzqjsMg6HX0ZsvdOGtYAGszAhrPbDavhm/kRUtaxXqUGInbwdHWpHNmHKgE+Ook
+         hR5TZy0QMT0wR+ejjA7CnnnghABNNqMH/uwtdBQ4z7ADA00k12Qq7yWdSSHN+7ifC9g7
+         ON1g==
+X-Forwarded-Encrypted: i=1; AJvYcCX122imbbbqxB+epwZE+Q1HlXXCSo8zExhLOmfXalccnB1gaQGFYQ6IAht/LGl8mnFEsl3ELBKrXYomcjyTKRl4W9VtbUDGJfGl+v5llJDRz1SPDV+uDhu7A/63UU0Sx8KR
+X-Gm-Message-State: AOJu0YxiXVJxFZ38SSmRRzBtLg8K338xlLBuS0EtvAOsfYkcZym0SFIU
+	vr3KTrEINYNnQsljGYp+/xLqTzxH4ZxRmBSj0+GgwicdJxnXYzIn0WZgdQ==
+X-Google-Smtp-Source: AGHT+IF+b039Cjf7T7Bg8XxuJ/M8/eT5IIR2en8CeRs7a7NXKHt8IOo5PeHoGADcAGX+98RuQoCJgQ==
+X-Received: by 2002:a17:903:187:b0:1fa:8f64:8b0d with SMTP id d9443c01a7336-20203e4f2b4mr16331995ad.4.1723764682896;
+        Thu, 15 Aug 2024 16:31:22 -0700 (PDT)
+Received: from localhost (89.208.245.145.16clouds.com. [89.208.245.145])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03a35fcsm15149675ad.256.2024.08.15.16.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 16:31:22 -0700 (PDT)
+Date: Fri, 16 Aug 2024 07:31:19 +0800
+From: Yao Yuan <yaoyuan0329os@gmail.com>
+To: Yuan Yao <yuan.yao@linux.intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
+Subject: Re: [PATCH 04/22] KVM: x86/mmu: Skip emulation on page fault iff 1+
+ SPs were unprotected
+Message-ID: <6fsgci4fceoin7fp3ejeulbaybaitx3yo3nylzecanoba5gvhd@3ubrvlykgonn>
+References: <20240809190319.1710470-1-seanjc@google.com>
+ <20240809190319.1710470-5-seanjc@google.com>
+ <20240814142256.7neuthobi7k2ilr6@yy-desk-7060>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XAItcD7sprNSpWaR"
-Content-Disposition: inline
-In-Reply-To: <Zr6I9RB5mibU_12N@google.com>
-
-
---XAItcD7sprNSpWaR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240814142256.7neuthobi7k2ilr6@yy-desk-7060>
 
-Hi Dmitry,
+On Wed, Aug 14, 2024 at 10:22:56PM GMT, Yuan Yao wrote:
+> On Fri, Aug 09, 2024 at 12:03:01PM -0700, Sean Christopherson wrote:
+> > When doing "fast unprotection" of nested TDP page tables, skip emulation
+> > if and only if at least one gfn was unprotected, i.e. continue with
+> > emulation if simply resuming is likely to hit the same fault and risk
+> > putting the vCPU into an infinite loop.
+> >
+> > Note, it's entirely possible to get a false negative, e.g. if a different
+> > vCPU faults on the same gfn and unprotects the gfn first, but that's a
+> > relatively rare edge case, and emulating is still functionally ok, i.e.
+> > the risk of putting the vCPU isn't an infinite loop isn't justified.
+> >
+> > Fixes: 147277540bbc ("kvm: svm: Add support for additional SVM NPF error codes")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/kvm/mmu/mmu.c | 28 ++++++++++++++++++++--------
+> >  1 file changed, 20 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index e3aa04c498ea..95058ac4b78c 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -5967,17 +5967,29 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> >  	bool direct = vcpu->arch.mmu->root_role.direct;
+> >
+> >  	/*
+> > -	 * Before emulating the instruction, check if the error code
+> > -	 * was due to a RO violation while translating the guest page.
+> > -	 * This can occur when using nested virtualization with nested
+> > -	 * paging in both guests. If true, we simply unprotect the page
+> > -	 * and resume the guest.
+> > +	 * Before emulating the instruction, check to see if the access may be
+> > +	 * due to L1 accessing nested NPT/EPT entries used for L2, i.e. if the
+> > +	 * gfn being written is for gPTEs that KVM is shadowing and has write-
+> > +	 * protected.  Because AMD CPUs walk nested page table using a write
 
-> Should either of these drivers be dropped? Or if it should be kept -
-> why?
+Hi Sean,
 
-LM8333, that was a while ago! We definitely used the driver in a BSP,
-back then at Pengutronix. I left the company shortly after and it seems
-the board file was never upstreamed.
+I Just want to consult how often of this on EPT:
 
-So, your call to remove it or not. Since the driver hasn't been
-converted to DT yet, it probably never will. I agree to that.
+The PFERR_GUEST_PAGE_MASK is set when EPT violation happens
+in middle of walking the guest CR3 page table, and the guest
+CR3 page table page is write-protected on EPT01, are these
+guest CR3 page table pages also are EPT12 page table pages
+often?  I just think most of time they should be data page
+on guest CR3 table for L1 to access them by L1 GVA, if so
+the PFERR_GUEST_FINAL_MASK should be set but not
+PFERR_GUEST_PAGE_MASK.
 
-Happy hacking,
-
-   Wolfram
-
-
---XAItcD7sprNSpWaR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma+j5oACgkQFA3kzBSg
-KbYfVA//Re/E+yS0xfadiGNjd2PDmyN6QGMQTMkMohD/QkB0n0XTEc6o1Gipd8vv
-NjOfjI9XByom3SPtEumJN8B1hNYKd9Wce1MSuMrijUGNOS/MI9oPxvo5VZbXr5Uh
-qhi7mhvAR4knQk7Bql3r0VFo/EDBG9gLQr8XoqtdvjqqR5foY8d5VoQTdVWBYzGH
-nT6N5qanDtyZ0fqX6ed1k/ZCXiU6TZvYhytzUarcMB8gMcVM41r3EjUUX5DzaLvu
-DaUeQ4ywMzpauu0/vFXqAK8MDWsuTifnVe8AdNNINMszjMNNhKCbmXG6fvFQqZgU
-ffz6n4CYA4SXi3lkUnFCfXAoBIPwXYxlSNzEKYYSXL7f/zJycbC/Rueqrjxescx+
-62wluqiBDkWnvA0nf7QVqSbl/XqiBTZeFbas8AuAV5otqTB8+z58AMtAWnNzJawa
-WCA9Z7885r6jS9kM962Gq1StmcOcKr1XOBoJIcZ/udX7E5VvCKVGy8VsJIAa6G2+
-LHyWRXqy7k5/kaFC7BPk6oBcCOc4LE9WMBlsIju95+OYZFF/Dk6GETubDor2Q4AG
-mawXMjLx+7baKzaqdOIn68p0TQZotPsUqh+iYz50URDzn0ZZYk6j+TJNZD9vYodC
-tpthmZz9zg8an0iROFf1F5i1EmZ603HTdvXjleo0EkT+1LbFCEQ=
-=xEWd
------END PGP SIGNATURE-----
-
---XAItcD7sprNSpWaR--
+> > +	 * operation, walking NPT entries in L1 can trigger write faults even
+> > +	 * when L1 isn't modifying PTEs, and thus result in KVM emulating an
+> > +	 * excessive number of L1 instructions without triggering KVM's write-
+> > +	 * flooding detection, i.e. without unprotecting the gfn.
+> > +	 *
+> > +	 * If the error code was due to a RO violation while translating the
+> > +	 * guest page, the current MMU is direct (L1 is active), and KVM has
+> > +	 * shadow pages, then the above scenario is likely being hit.  Try to
+> > +	 * unprotect the gfn, i.e. zap any shadow pages, so that L1 can walk
+> > +	 * its NPT entries without triggering emulation.  If one or more shadow
+> > +	 * pages was zapped, skip emulation and resume L1 to let it natively
+> > +	 * execute the instruction.  If no shadow pages were zapped, then the
+> > +	 * write-fault is due to something else entirely, i.e. KVM needs to
+> > +	 * emulate, as resuming the guest will put it into an infinite loop.
+> >  	 */
+>
+> Reviewed-by: Yuan Yao <yuan.yao@intel.com>
+>
+> >  	if (direct &&
+> > -	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE) {
+> > -		kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa));
+> > +	    (error_code & PFERR_NESTED_GUEST_PAGE) == PFERR_NESTED_GUEST_PAGE &&
+> > +	    kvm_mmu_unprotect_page(vcpu->kvm, gpa_to_gfn(cr2_or_gpa)))
+> >  		return RET_PF_FIXED;
+> > -	}
+> >
+> >  	/*
+> >  	 * The gfn is write-protected, but if emulation fails we can still
+> > --
+> > 2.46.0.76.ge559c4bf1a-goog
+> >
+> >
+>
 
