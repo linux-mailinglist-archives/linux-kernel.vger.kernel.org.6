@@ -1,135 +1,265 @@
-Return-Path: <linux-kernel+bounces-287570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24B1952970
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28599952973
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 08:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F17FB23324
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DDC2822D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 06:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B33B17838D;
-	Thu, 15 Aug 2024 06:40:39 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9AF17837E;
+	Thu, 15 Aug 2024 06:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KgPZcXQl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF0E1448FD
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 06:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586B81448FD;
+	Thu, 15 Aug 2024 06:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723704038; cv=none; b=f1wDqbBEHAdcORQDREnhnt4QCTp58W1kJR6QBXmGrC643CXJu8RNE7i/aYdJ0TQu0N/x9qX3gleKMIwsjrOpVecIWRSW3pVEpWqUiIMG2kGwciGNCxgoigtaNHf0gb1jHCYAj4okuqNqNqu8d/wxLhQ5UPhmWiKDNMCIJ7IrRWo=
+	t=1723704150; cv=none; b=p2wN22hmhw9u5+jOog9agCMAmmt43VOH4WYkdAVeFWBT+cI5dW0NPiStJ3a4Rqvw6VMy/zUWTB8fJhK19jQfGVoPsMD7XAoZjS9Z+UhJmTRvtXNrJAjnTOFvXiBeKrKmlmXWzBJT3V0o2PmYg9Xyb4aeljIOcTmwkmgS43sX3L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723704038; c=relaxed/simple;
-	bh=Vy2YoRP3WMBL9Q0m0cvv2z3doL40ax72V/J2g22sdOI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=berX4Mlw9zkPbN8bz+95Fx6/ovfNZ1rfoN92+tY0scYZ6J0eFLCt4XGkwdn6IHoLyyvV7TP6eAm4v6oHl5Sb9f0dbJ9OmMNKApwp6YdbLqktC4ZopfVR8S1OFKhUkYIdNpsJws68zuRSQS0G5LJ6obcGKKDH4YNjVJM1kZix9LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1seU9u-0002L8-Ty; Thu, 15 Aug 2024 08:40:30 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1seU9t-000XGZ-Oj; Thu, 15 Aug 2024 08:40:29 +0200
-Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
-	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1seU9t-002CsL-2H;
-	Thu, 15 Aug 2024 08:40:29 +0200
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Thu, 15 Aug 2024 08:40:29 +0200
-Subject: [PATCH v2] usb: dwc3: ep0: Don't reset resource alloc flag
- (including ep0)
+	s=arc-20240116; t=1723704150; c=relaxed/simple;
+	bh=sH6QnAl702Pa6jtq1WpXYAM+8fcYbnfY+emhpZgIWJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uImfUektE3hX+oB6/AIXBoEgAo4dRigUTQBOsEKPvYEb1pr0noaUOrv7tEkTmxKFmOuYbnRvfhq4HmmA6DK+2xn0+HdQ7Tz4BjyIsv8hZ6Qy1JEVMLx7Pu6VuMHczjbu0y7XjAkvW8TkIfPahCR2cKDpJgEq4+Vxe5rxLQnR3d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KgPZcXQl; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723704149; x=1755240149;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sH6QnAl702Pa6jtq1WpXYAM+8fcYbnfY+emhpZgIWJE=;
+  b=KgPZcXQlsVlT3KG9BayhKUxlFquTJzIes1tvLzPcbx7cY0OeBl7bPmz4
+   ZdVao1BCzyTKgZYRnh6GHEGszC8idm9UF7MXaHwgtgCZ3GuZq01G5fPis
+   oBi1xNq7YidVRQCKpx3NH0DGdSoZVgRDQySjAf7jKuWrqTjKwtu7mJxcW
+   35xnGGBtPdF2B6kD4/UmLMeTsv24vZQwe3/lvp+PEC3ReBtl3K91Z7DN2
+   e/ukvyp05ngq/GeFnH35SfTntT3HKMd+HdJ47LxtTM2KNICtjJWRC4gny
+   xxSZ09oNXiuToOdP8kfYSnKXGwUYBVtB6tw3imdjABucYzrdCO8hlaJMZ
+   A==;
+X-CSE-ConnectionGUID: ANF1zOSGTZi0TcQ46btqnA==
+X-CSE-MsgGUID: 6TMq6R4hQm6wZF+epXSqZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="33100982"
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="33100982"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 23:42:26 -0700
+X-CSE-ConnectionGUID: 39JrdeVASwO2wsLWySoSmA==
+X-CSE-MsgGUID: Sq41damTR8uzPn3it21WSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="59553296"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 23:42:23 -0700
+Message-ID: <ad0b8f56-8613-44d1-b37a-d05e2a4f6529@linux.intel.com>
+Date: Thu, 15 Aug 2024 14:42:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v3 1/5] perf x86/topdown: Complete topdown slots/metrics
+ events check
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
+ <20240712170339.185824-2-dapeng1.mi@linux.intel.com> <ZroQ7wiw6JB-sjps@x1>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <ZroQ7wiw6JB-sjps@x1>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-dwc3hwep0reset-v2-1-29e1d7d923ea@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIANyivWYC/3WOOw6DMBBEr4K2jiP/FEiq3COiwHjB2xi0JkCEu
- HsMXYqUbzRPMxskZMIEj2IDxpkSDTGDvhTQhib2KMhnBi21lZWywi+tCQuOkjHhJJz1plRVaez
- dQpZck1A4bmIbDu23fRRGxo7Wc/FVZw6UpoE/54FZHenfrVkJJWRVOun1rTNePkeM/XviIdJ69
- Qj1vu9fEiwMaNIAAAA=
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Michael Grzeschik <m.grzeschik@pengutronix.de>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1784;
- i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=Vy2YoRP3WMBL9Q0m0cvv2z3doL40ax72V/J2g22sdOI=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmvaLd76WjuTzBse4a1zQhSPCx4BbCb63ZKWekQ
- 78y4MU4I5mJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZr2i3QAKCRC/aVhE+XH0
- q/F6D/9egYIhDfTzbtMWhwhK6deKJS363ZTXV5Xq9R8Bt6wjqDfp8yz9StX0LewcdFcKBPbb/NC
- LiJPB1yWimhY8ENM+KLjb63lzgvkiYR0fLC2Ruzo9ZpCBSflWy4xAPLiPICVr3ghxaT7wxQs+Ha
- qGJnp1dsIbuhtATkniT6HtAtFHsNEu8jamCuHy8r9+94C1R1CUcOvf0RXbq/fftGJOZgaOLe3GE
- 8gFUo8PRG6gsArFmU0+lUyN+HHIpOKAsi1xl3bUyhwLGuwdonUrdpYFjCm0RVFEHMCAObC7GeCI
- 6WzLPiCNP1aUB0b99AxUC3tIb0/Pi7DEudPOYKw2iZwJoGuv0ZZjuiIKK2Wt01K3R2XaAQIWSIo
- Y0L3YpzJ7l4k0DaFNWKhPVeZHRrxkYmT88INiACI/ICsCAcD3SdbQLe3PuBGybpVaX/coEnrS7p
- xWWYQlLGZ7pt4gqKDT2QwwEKQzWaWb5UAkWRu8XOVsYvAQ1h3yeum5+zApVhHrnn1M3woRvoFDV
- q7RhUCfdU5ubUq6O3l8uioR5DsRKzboitMEDpQ3StXrNpB88cm7MqJvy3o0mnd4shM6duI3m/V8
- BSqlmXWLxEFQariB6S2CCuH5vuOmOSc0w31IAPvnV52h7wbOprmk1N+GnDLx9xTiwne+H2zRaCE
- 0992l7kkJRLM5ag==
-X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
- fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The DWC3_EP_RESOURCE_ALLOCATED flag ensures that the resource of an
-endpoint is only assigned once. Unless the endpoint is reset, don't
-clear this flag. Otherwise we may set endpoint resource again, which
-prevents the driver from initiate transfer after handling a STALL or
-endpoint halt to the control endpoint.
 
-Commit f2e0eee47038 ("usb: dwc3: ep0: Don't reset resource alloc flag")
-was fixing the initial issue, but did this only for physical ep1. Since
-the function dwc3_ep0_stall_and_restart is resetting the flags for both
-physical endpoints, this also has to be done for ep0.
+On 8/12/2024 9:41 PM, Arnaldo Carvalho de Melo wrote:
+> On Fri, Jul 12, 2024 at 05:03:35PM +0000, Dapeng Mi wrote:
+>> It's not complete to check whether an event is a topdown slots or
+>> topdown metrics event by only comparing the event name since user
+>> may assign the event by RAW format, e.g.
+>>
+>> perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
+>>
+>>  Performance counter stats for 'sleep 1':
+>>
+>>      <not counted>      instructions
+>>      <not counted>      cpu/r400/
+>>    <not supported>      cpu/r8300/
+>>
+>>        1.002917796 seconds time elapsed
+>>
+>>        0.002955000 seconds user
+>>        0.000000000 seconds sys
+>>
+>> The RAW format slots and topdown-be-bound events are not recognized and
+>> not regroup the events, and eventually cause error.
+>>
+>> Thus add two helpers arch_is_topdown_slots()/arch_is_topdown_metrics()
+>> to detect whether an event is topdown slots/metrics event by comparing
+>> the event config directly, and use these two helpers to replace the
+>> original event name comparisons.
+> Looks ok, I made a comment below, please take a look
+>  
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  tools/perf/arch/x86/util/evlist.c  |  8 ++---
+>>  tools/perf/arch/x86/util/evsel.c   |  3 +-
+>>  tools/perf/arch/x86/util/topdown.c | 48 +++++++++++++++++++++++++++++-
+>>  tools/perf/arch/x86/util/topdown.h |  2 ++
+>>  4 files changed, 55 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+>> index b1ce0c52d88d..332e8907f43e 100644
+>> --- a/tools/perf/arch/x86/util/evlist.c
+>> +++ b/tools/perf/arch/x86/util/evlist.c
+>> @@ -78,14 +78,14 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+>>  	if (topdown_sys_has_perf_metrics() &&
+>>  	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
+>>  		/* Ensure the topdown slots comes first. */
+>> -		if (strcasestr(lhs->name, "slots") && !strcasestr(lhs->name, "uops_retired.slots"))
+>> +		if (arch_is_topdown_slots(lhs))
+>>  			return -1;
+>> -		if (strcasestr(rhs->name, "slots") && !strcasestr(rhs->name, "uops_retired.slots"))
+>> +		if (arch_is_topdown_slots(rhs))
+>>  			return 1;
+>>  		/* Followed by topdown events. */
+>> -		if (strcasestr(lhs->name, "topdown") && !strcasestr(rhs->name, "topdown"))
+>> +		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>>  			return -1;
+>> -		if (!strcasestr(lhs->name, "topdown") && strcasestr(rhs->name, "topdown"))
+>> +		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+>>  			return 1;
+>>  	}
+>>  
+>> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/evsel.c
+>> index 090d0f371891..181f2ba0bb2a 100644
+>> --- a/tools/perf/arch/x86/util/evsel.c
+>> +++ b/tools/perf/arch/x86/util/evsel.c
+>> @@ -6,6 +6,7 @@
+>>  #include "util/pmu.h"
+>>  #include "util/pmus.h"
+>>  #include "linux/string.h"
+>> +#include "topdown.h"
+>>  #include "evsel.h"
+>>  #include "util/debug.h"
+>>  #include "env.h"
+>> @@ -44,7 +45,7 @@ bool arch_evsel__must_be_in_group(const struct evsel *evsel)
+>>  	    strcasestr(evsel->name, "uops_retired.slots"))
+>>  		return false;
+>>  
+>> -	return strcasestr(evsel->name, "topdown") || strcasestr(evsel->name, "slots");
+>> +	return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(evsel);
+>>  }
+>>  
+>>  int arch_evsel__hw_name(struct evsel *evsel, char *bf, size_t size)
+>> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+>> index 3f9a267d4501..49f25d67ed77 100644
+>> --- a/tools/perf/arch/x86/util/topdown.c
+>> +++ b/tools/perf/arch/x86/util/topdown.c
+>> @@ -32,6 +32,52 @@ bool topdown_sys_has_perf_metrics(void)
+>>  }
+>>  
+>>  #define TOPDOWN_SLOTS		0x0400
+>> +bool arch_is_topdown_slots(const struct evsel *evsel)
+>> +{
+>> +	if (evsel->core.attr.config == TOPDOWN_SLOTS)
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>> +
+>> +static int compare_topdown_event(void *vstate, struct pmu_event_info *info)
+>> +{
+>> +	int *config = vstate;
+>> +	int event = 0;
+>> +	int umask = 0;
+>> +	char *str;
+>> +
+>> +	if (!strcasestr(info->name, "topdown"))
+>> +		return 0;
+>> +
+>> +	str = strcasestr(info->str, "event=");
+>> +	if (str)
+>> +		sscanf(str, "event=%x", &event);
+>> +
+>> +	str = strcasestr(info->str, "umask=");
+>> +	if (str)
+>> +		sscanf(str, "umask=%x", &umask);
+>> +
+>> +	if (event == 0 && *config == (event | umask << 8))
+>> +		return 1;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +bool arch_is_topdown_metrics(const struct evsel *evsel)
+>> +{
+>> +	struct perf_pmu *pmu = evsel__find_pmu(evsel);
+>> +	int config = evsel->core.attr.config;
+> Humm, can we cache this information? I.e. have some evsel->is_topdown:1
+> bit to avoid having to traverse all events if we call this multiple
+> times for the same evsel? 
 
-Cc: stable@vger.kernel.org
-Fixes: b311048c174d ("usb: dwc3: gadget: Rewrite endpoint allocation flow")
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
----
-v2: Added missing double quotes in the referenced patch name
+Arnaldo, I tried to add a variable in evsel structure to represent if the
+evsel is a topdown metrics event, but unfortunately the helper argument
+"evsel" has "const" qualifier, it forces the "evsel" structure can't be
+modified. If we want to add this optimization, the entire call-chain
+functions have to be modified and this would reduce the security of code as
+well. Since this helper is not in a performance critical patch, I suppose
+it won't introduce too much performance hit as the traverse. I would drop
+this optimization and keep the original code.
 
-- Link to v1: https://lore.kernel.org/r/20240814-dwc3hwep0reset-v1-1-087b0d26f3d0@pengutronix.de
----
- drivers/usb/dwc3/ep0.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
-index d96ffbe520397..c9533a99e47c8 100644
---- a/drivers/usb/dwc3/ep0.c
-+++ b/drivers/usb/dwc3/ep0.c
-@@ -232,7 +232,8 @@ void dwc3_ep0_stall_and_restart(struct dwc3 *dwc)
- 	/* stall is always issued on EP0 */
- 	dep = dwc->eps[0];
- 	__dwc3_gadget_ep_set_halt(dep, 1, false);
--	dep->flags = DWC3_EP_ENABLED;
-+	dep->flags &= DWC3_EP_RESOURCE_ALLOCATED;
-+	dep->flags |= DWC3_EP_ENABLED;
- 	dwc->delayed_status = false;
- 
- 	if (!list_empty(&dep->pending_list)) {
-
----
-base-commit: 38343be0bf9a7d7ef0d160da5f2db887a0e29b62
-change-id: 20240814-dwc3hwep0reset-b4d371873494
-
-Best regards,
--- 
-Michael Grzeschik <m.grzeschik@pengutronix.de>
-
+>
+> - Arnaldo
+>
+>> +	if (!pmu || !pmu->is_core)
+>> +		return false;
+>> +
+>> +	if (perf_pmu__for_each_event(pmu, false, &config,
+>> +				     compare_topdown_event))
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>>  
+>>  /*
+>>   * Check whether a topdown group supports sample-read.
+>> @@ -44,7 +90,7 @@ bool arch_topdown_sample_read(struct evsel *leader)
+>>  	if (!evsel__sys_has_perf_metrics(leader))
+>>  		return false;
+>>  
+>> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+>> +	if (arch_is_topdown_slots(leader))
+>>  		return true;
+>>  
+>>  	return false;
+>> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
+>> index 46bf9273e572..1bae9b1822d7 100644
+>> --- a/tools/perf/arch/x86/util/topdown.h
+>> +++ b/tools/perf/arch/x86/util/topdown.h
+>> @@ -3,5 +3,7 @@
+>>  #define _TOPDOWN_H 1
+>>  
+>>  bool topdown_sys_has_perf_metrics(void);
+>> +bool arch_is_topdown_slots(const struct evsel *evsel);
+>> +bool arch_is_topdown_metrics(const struct evsel *evsel);
+>>  
+>>  #endif
+>> -- 
+>> 2.40.1
+>>
 
