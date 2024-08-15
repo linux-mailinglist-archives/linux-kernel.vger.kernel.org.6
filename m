@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-287453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5809527F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:49:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E45F9527FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34573284AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:49:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19761C2187E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2031F22331;
-	Thu, 15 Aug 2024 02:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFBA36124;
+	Thu, 15 Aug 2024 02:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLntNyF8"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MGSvRkRy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72281D545;
-	Thu, 15 Aug 2024 02:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762A528E0F;
+	Thu, 15 Aug 2024 02:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723690135; cv=none; b=Os2nkBxczEtYRaywWzGmJR/mv0dMSOs5LtpcLHl3b139F07vWpt7vp4w8rUAAiEpS12CALVpdVbBFhw1lZc58UxHfKILu9Y3SSsYYl8UHxJzBa16DsodhpVY4oRj1kUKZXw8dMPDFsPpjDFeOwgJjr4EZnzcyXypSTPqKGOjKJM=
+	t=1723690189; cv=none; b=aQi4u4+o/0jwh57SIjGvL/X1RvxXDTQYXvB59u/rxkQ2cAok92UriaaAwUgH4ZhfpWwuz+XgCYXnj9plCZM45eu+ZXXwGfMl2cyqafI4BZIAuCdOP84XVD6tfpggk4+GmZ+pYDd11zzBY4szBKFXCzBPwKRcatVSLod/CPnBeBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723690135; c=relaxed/simple;
-	bh=7YgrMjgbwT51znGzx7ufGwTZoiiaul/lJvU7eBt/PNs=;
+	s=arc-20240116; t=1723690189; c=relaxed/simple;
+	bh=L8b2IGlmI+/1Z8arUmqiuhUYfrXszN0dgzodXoNXRLo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SoPHqTfBn26fXPqs9z7M3hjAsYPt5NTkg7RU99sSV2ooFvbhf/zr0GOhwwsJfhFgtvF90FUE8HVBmOEoELwgdDWDoU7anr8ZC92+Ix7EJ1PwdyfPHg8z+ZGAyL2i6lwvqmszgaTfjiE9BWONLYQr5Z2NaQbZEQpRmfp/18LqRXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLntNyF8; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efd530a4eso755493e87.0;
-        Wed, 14 Aug 2024 19:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723690132; x=1724294932; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KM4b13RYywCcnj/MdbumSY4sdp76gBr182hgjo/KifE=;
-        b=ZLntNyF8J7OUEoNRFylN1UqsEqDC5TYE0hJI2fzLw/98HV5pACew8IngiHMXHRKud9
-         lBumD852MY36nsuQ79HnhQaxL8XyP/NrksZGJjAXJR7LnJFEjN7VzL2V7mLFgYuS3tic
-         PDf2KRnoF6GEyd0Pd24iOGQZyrHdxMRxmHvNiVNaan+5Yk2udpSwAsBPCXOjjopM4ve9
-         rJjWQJpRFo9uzE+nr3c3Q00Z6suWyOqkcVojpnjvoODjhsA8XJFSk+c6Fd6RH1mb/Wb/
-         iHZHKzbMiT7EOhKu8N4NGfmruKIFe5qweqD/gfD7tDFaQkPcFN+4dw0DSJAuJMqPYWDK
-         lfVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723690132; x=1724294932;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KM4b13RYywCcnj/MdbumSY4sdp76gBr182hgjo/KifE=;
-        b=mqhAuWtlhGNuTtG8BRRBgJqxD4DENFd1Mh0yrZkX3sZypUnQt2jo0F28gRNNmdl5mF
-         ZZdiBEehHVqspbKKxcfEGOB9RgV/iw3OCfsTZ6269bo5s4S2e1w9j8V0Za1EE9InJsnh
-         jjCbLvYy7ViX7eal+xOvMH6SqXq17VPC1KtnMsA9fL5f/bmkErNiE98MFM/qjDSs27+2
-         GldRlrL4GPf4sq2eWnozcO1wmfMlEE4ZrGa18Jb7CGnE60PCb9QhImjX8+UdZ7Z99u+F
-         GR8CPDzAXBXALrsaO2GxBbVoY4fa6NqWLEeW7dvQxZh5USArA5nTqRUblLxuVAKQKT1l
-         Q63w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKl0pytem1cpNsY95LyRZJswDlkeZO/vOOiH13pGzscPekmzIKgueZrkqO3qu2OSomdxfQvVrNjcjdfHr9T8xaJPh3oUJ+Gm4QPxSLeCGkpMvIQFMF3NO6dVWoaPsLU4wpUpNTjzU2Ytr1GMp9mm+cqf3jt65twnlUIBaYXaWQBR577oA=
-X-Gm-Message-State: AOJu0YyN5Jxn8C2ayVESkK6g2c1Ykk+3oYp6kerGw8ViCn9hyRBR9/mf
-	cZNyS+MNeGRILwQ6iFfqmaZUWXE3ADs9jB4jRyZ+fTXgkfqguvoY
-X-Google-Smtp-Source: AGHT+IEr1i/vm3eBteZERpQheyk8o3WQ9vige+idzo8CUktN71Bt/kzDz/V1i4oPHbjHqRKqvO/CwQ==
-X-Received: by 2002:a05:6512:3c89:b0:52c:d905:9645 with SMTP id 2adb3069b0e04-532eda79383mr2940822e87.13.1723690131468;
-        Wed, 14 Aug 2024 19:48:51 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-149-85.dynamic.spd-mgts.ru. [109.252.149.85])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a8383935909sm30261666b.112.2024.08.14.19.48.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 19:48:50 -0700 (PDT)
-Message-ID: <6c48f84c-f6da-4f4b-add5-71ec4ea6b963@gmail.com>
-Date: Thu, 15 Aug 2024 05:48:48 +0300
+	 In-Reply-To:Content-Type; b=NJG/sPe9bDIlSCXYefXFolC0u0krXJTAtz5m0oVuKzI6w058GhCFtSbQWvkrOLEVSnu8JJs/ILeNSDzhxgNYZadJxDJamWcZjMWlCqkoC8Po6GPFEqBJQK6MR3FfwkipkSsgiPkB4loJavJNABEK/FpdznKsryj+MviYas9tHZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MGSvRkRy; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723690187; x=1755226187;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=L8b2IGlmI+/1Z8arUmqiuhUYfrXszN0dgzodXoNXRLo=;
+  b=MGSvRkRyFGS29qNd7XI62740JhSAesjDC++ODzSipAaTEA9c6Rhd8uNT
+   pChOMKK/Gydxdhp6k26WBe1Sb6d/nePZ49qxfNiKqNovIM0/QqVAvKMZo
+   7ZOlIYPVQtu5nZof98uB9w0j+riOh0EdA2KQi2+zmVX0GWhILS33b7Amo
+   S4jRRzBgGwRFqLtLzfVM4gxrtrAlthrEXRCkQR7pYosKpQBxZV5WuujmN
+   S0JG8aduiWTIgNVgwGd32xYmKoGIjsYzCHzuGG84mlGHIDKxIR5rP1NgH
+   7eU21lEnukAW14hNpWSi+UdpKQrjBAYb5S4LSrTfeAe38CfHo9mlnLgpD
+   w==;
+X-CSE-ConnectionGUID: LdQ2vBbBRge75/x2qQKNdw==
+X-CSE-MsgGUID: kFIrGV3OQaKDzcDUJ5OKMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="44456216"
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="44456216"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 19:49:47 -0700
+X-CSE-ConnectionGUID: 7LQ4FysTTA6NOSvS6XAhgg==
+X-CSE-MsgGUID: uJMWUOfBQHeyoH8KkuyoNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="59979240"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.248.81]) ([10.124.248.81])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 19:49:44 -0700
+Message-ID: <d5c8edc6-68fc-44fd-90c6-5deb7c027566@intel.com>
+Date: Thu, 15 Aug 2024 10:49:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,57 +66,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] Do not mark ACPI devices as irq safe
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Breno Leitao <leitao@debian.org>, dmitry.osipenko@collabora.com,
- Andi Shyti <andi.shyti@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
- Michael van der Westhuizen <rmikey@meta.com>,
- "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240808121447.239278-1-leitao@debian.org>
- <ff4haeeknghdr5pgpp3va7opnrx5ivlpaw5ppboqrq75733iul@zy4c7mu3foma>
- <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
- <ZrtgfkzuCbNju3i9@gmail.com> <cf2d6ff5-dfea-4e25-8eee-e4e8c9cb1e7e@gmail.com>
- <CAHp75VdHT3g91AirBQGodw1sHbq7U=oKnJq3oSqDcNYS+OUOKQ@mail.gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v5 1/3] fs/file.c: remove sanity_check and add
+ likely/unlikely in alloc_fd()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, mjguzik@gmail.com, edumazet@google.com,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+ tim.c.chen@linux.intel.com, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240717145018.3972922-2-yu.ma@intel.com> <20240814213835.GU13701@ZenIV>
+From: "Ma, Yu" <yu.ma@intel.com>
 Content-Language: en-US
-In-Reply-To: <CAHp75VdHT3g91AirBQGodw1sHbq7U=oKnJq3oSqDcNYS+OUOKQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240814213835.GU13701@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-13.08.2024 18:52, Andy Shevchenko пишет:
-...
->>> but somewhere in the replies
->>> here I would like to hear about roadmap to get rid of the
->>> pm_runtime_irq_safe() in all Tegra related code.
->>
->> What is the problem with pm_runtime_irq_safe()?
-> 
-> It's a hack. It has no reasons to stay in the kernel. It also prevents
-> PM from working properly (in some cases, not Tegra).
 
-Why is it a hack? Why it can't be made to work properly for all cases?
+On 8/15/2024 5:38 AM, Al Viro wrote:
+> On Wed, Jul 17, 2024 at 10:50:16AM -0400, Yu Ma wrote:
+>> alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+>> allocated fd is NULL. Remove this sanity check since it can be assured by
+>> exisitng zero initilization and NULL set when recycling fd. Meanwhile, add
+>> likely/unlikely and expand_file() call avoidance to reduce the work under
+>> file_lock.
+>> +	if (unlikely(fd >= fdt->max_fds)) {
+>> +		error = expand_files(files, fd);
+>> +		if (error < 0)
+>> +			goto out;
+>>   
+>> -	/*
+>> -	 * If we needed to expand the fs array we
+>> -	 * might have blocked - try again.
+>> -	 */
+>> -	if (error)
+>> -		goto repeat;
+>> +		/*
+>> +		 * If we needed to expand the fs array we
+>> +		 * might have blocked - try again.
+>> +		 */
+>> +		if (error)
+>> +			goto repeat;
+> With that change you can't get 0 from expand_files() here, so the
+> last goto should be unconditional.  The only case when expand_files()
+> returns 0 is when it has found the descriptor already being covered
+> by fdt; since fdt->max_fds is stabilized by ->files_lock we are
+> holding here, comparison in expand_files() will give the same
+> result as it just had.
+>
+> IOW, that goto repeat should be unconditional.  The fun part here is
+> that this was the only caller that distinguished between 0 and 1...
 
->> There were multiple
->> problems with RPM for this driver in the past, it wasn't trivial to make
->> it work for all Tegra HW generations. Don't expect anyone would want to
->> invest time into doing it all over again.
-> 
-> You may always refer to the OMAP case, which used to have 12 (IIRC,
-> but definitely several) calls to this API and now 0. Taking the OMAP
-> case into consideration I believe it's quite possible to get rid of
-> this hack and retire the API completely. Yes, this may take months or
-> even years. But I would like to have this roadmap be documented.
-
-There should be alternative to the removed API. Otherwise drivers will
-have to have own hacks to work around the RPM limitation, re-invent own
-PM, or not do RPM at all.
-
-Looking at the i2c-omap.c, I see it's doing pm_runtime_get_sync() in the
-atomic transfer, which should cause a lockup without IRQ-safe RPM,
-AFAICT. The OMAP example doesn't look great so far.
+Yes, thanks Al, fully agree with you. The if (error) could be removed 
+here as the above unlikely would make sure no 0 return here. Should I 
+submit another version of patch set to update it, or you may help to 
+update it directly during merge? I'm not very familiar with the rules, 
+please let me know if I'd update and I'll take action soon. Thanks again 
+for your careful check here.
 
 
