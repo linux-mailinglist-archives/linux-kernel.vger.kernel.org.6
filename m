@@ -1,165 +1,124 @@
-Return-Path: <linux-kernel+bounces-287675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D17952B35
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:34:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8C7952B37
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33CDB282971
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:33:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB0D1C20A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AA31C7B87;
-	Thu, 15 Aug 2024 08:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RI2rqNL6"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037EC19EED0;
+	Thu, 15 Aug 2024 08:34:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C95C19ADAC;
-	Thu, 15 Aug 2024 08:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2183E19ADAC
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723710803; cv=none; b=HKqEbarCD/76l2fT84kh+s5c5+9QsaibG510l+ybAhHshgE0Ro3oe9hXS/Q81U7rG6Nn3cl4FOHYoe63ykTQ1L5+NozUAh1XgKcrvSXC5RFebud/C7lFXIfixO1YfL9NHBFhHwjzx5Fgbf8wdV0tkRzVq2ZfFgnwE1ldOAUVNN8=
+	t=1723710845; cv=none; b=fA0NlMGbdGAsQN5ZtfRE/0+BKiocB0DpFbI/y4c/AvmMiSs6UVpWAdT3HCfR5t7wzTv9hqfaYlD5u/X3H60v1Iyi0OCgvXFCycla6Yz8PFkY9Q7vcjoP/HBT8K5aPgTzlOZMCoLQ4zfar2MFoXEEMCVR+NfnjLI71uiwAg653m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723710803; c=relaxed/simple;
-	bh=GMzzota/QZ0aheGCs5gsIslxm2Am5d0pOVDpyY8JbVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DZBLC1X3avZ/EzHhD5DpArCYigzoCh6umcKI5xD3bz/hVtbnquiZvtUuHDBBwqnq8TZyZavsXRB6DbrJP5+9GCh7b3LOyZg4t+OmyGxjJlfRv4Wc5OIhObotfbzvIgSS1vaF4IAOfzgNw/2ApDWXybb6GMh1ejRq6cFNN+ojoGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RI2rqNL6; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso4224815e9.1;
-        Thu, 15 Aug 2024 01:33:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723710800; x=1724315600; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOUgcV0PdB7WRC4oxjKNSTuSQWbV/DMgAxLwybn5b9M=;
-        b=RI2rqNL68AmwHu3jkEh35n41Esm9ixwKZhW/Zp5vIshJVrYFS0VroWqUBilp+v1o22
-         1iE40cmKDH1yNzaUPCwwD/8DzyG9lXuSr9q0VuOxF2YAwMljAeR7uAH50RzGU/g8vrAf
-         LmOwby8J0l0lvGVkLotf6fDvdflMutQ2V+anhKIG415LHPZu3XOKgTPJvx6/67iBQINO
-         rIWKoRBB+EuQVenE6o/Llr61n9Hk/wG/w1JyK+cOmDwxryCQOgJ7a79XdiWa8UGLVOPo
-         RZw6zH4BtI6yBpidxtTW/yj0/g1KYGEmHZ8q58oLeer8Nho8+65Ihg8RA0y5mfjq6cmj
-         FG9g==
+	s=arc-20240116; t=1723710845; c=relaxed/simple;
+	bh=WvBwN1wbsbujgz5ntVZAvqCOCnhGAQt97MjOUNNKJuQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=idKiw81kdvHQBs3DtpNoaggM8hyq53Tip8tAjpbz4RpHtwLHhV09Wwkp7s7kp8vPqxNgHEqwdPu3apaPEvB8QnCETlwl47zXhLVdBVd3LGuzL1abMvtVZqAYDL7TDrqqfN/8vJ603Dfl7oyF+ciQCT+W4hNQKWRIPLIoz30ZMTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81fa44764bbso90573139f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:34:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723710800; x=1724315600;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dOUgcV0PdB7WRC4oxjKNSTuSQWbV/DMgAxLwybn5b9M=;
-        b=Q4S0cpAaQ/jkBdn7wQ6k6EvOZkYE98mVcuKwAWbhBatt81NclN9mMLMtY+EKFtqBWO
-         clACaqsqR+yxTnfv1YvKCOnPcrhLSm037CDns0ulYXb9b5oyGxei95HNigD66/pXcBZ/
-         wRYFy88UePxdtd/p0HR4PNSBVARP3HxDFx/wwcAtgn9lZSwxAuynVZWYMNWcItMXqbbD
-         6lLq/ni7qajvVRN0CkzvGiEw12mWoVCoQL5nCRXDUL7gpPFfvuQpSaLEbTSDYVqY/N+8
-         Kg/qgv+jTHKktUvg4HXG1mrlB4aNPYE6W9UYM4FLD21ZgV0aP+NhXiby+KOPZE7M/plZ
-         k6Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3AQvKM1NaWJQsYYgWGaaw9MCAhsYYf83x0TF9WifsRAawSDufGZhiZ2uuHN0Xc78Q26WkGoEtNvAakNxKgtS6ZcWJ6e/YJZXvjPCCOcJzHk75kblkLDGfq4W3tDNkaPpLBfhfb1kdIYHh7w==
-X-Gm-Message-State: AOJu0YyrCc2EwL/m3Biskiq0vPZdzLwMvqaaJYQxws+9BFcSKjUB7JZH
-	a9w8n7GccQhlJKPI2tBR5d/TsVglJxRR27Q1JE2Y8ptGvoXYnrLz
-X-Google-Smtp-Source: AGHT+IHQzn/DXetZMa7WOlQ//oiqNh7mgiStObblGepgQWWz58K6W1c+r0bHJt/+boiDUWeMcKHv/w==
-X-Received: by 2002:a05:600c:5246:b0:428:f79:1836 with SMTP id 5b1f17b1804b1-429dd25fb5emr37201705e9.26.1723710799904;
-        Thu, 15 Aug 2024 01:33:19 -0700 (PDT)
-Received: from f.. (cst-prg-76-86.cust.vodafone.cz. [46.135.76.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429e7c03b71sm12567475e9.14.2024.08.15.01.33.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 01:33:19 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: elide smp_mb in iversion handling in the common case
-Date: Thu, 15 Aug 2024 10:33:10 +0200
-Message-ID: <20240815083310.3865-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1723710843; x=1724315643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aMBaUtlfiZd3x0j+3JTRGbxRgqAYUR0clTNLfAA7gFM=;
+        b=AZYSmm+9B36xTKqh5Z5LFGC6Mv9+/ANwi7WvFqPd20L6BB+n57dDsgms4Fi1u0z+QY
+         tmM9B14w4/ViPeVXBMIrCa9Rt3jRrrWQf5VlgRA0YY4AUQLFl+e7L9AvDiyIWa8kfKY6
+         Lj/ImdhAm8efBH6XNg0W6cgXwjuVs3TAgKgyWFK/FBGx4zXzNXxwpUW9Y16eKnDb3Aqs
+         iUXZ02FSXnZJOCB/nQdI6JUFSTp69HjWIXyMJrXbOr0ZuKgRKwVgP6K84Nup18VQ6ZqP
+         s+UdDTgjQjfnQLWYE/Cl8RyaCV7l/iN6rfVxyEnDFU0qgehMdixTQZ95WIbVYcp0oYm6
+         HCbg==
+X-Gm-Message-State: AOJu0Yzsx3UZpxGqGfbbZnF/4ejHmqQlayn7KOQSJBrLqY5caJNQDvlG
+	2eJIw4TcPp5bzFbmk3X0p2vGW1z2rrzdTa29sZWYbHrM5WVFCx5I6Fh3egOqXzX6HtwW9hvicMy
+	qE9xomtGpLGy0bRVLQ0b5zhP7hQIHk86Jgbd1ycvX6LFhMbc539rnJgg=
+X-Google-Smtp-Source: AGHT+IHkbz1AR8TbA8q8U1K86plrWKXIhoM8Ju+EBdovtY/K8ZrTRlWoTH/qcgvAzDJU4zorL1zTlN68gOqDmIKcMrh3abBFjbND
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8916:b0:4c0:9a3e:c24b with SMTP id
+ 8926c6da1cb9f-4cab050ec69mr225692173.0.1723710843289; Thu, 15 Aug 2024
+ 01:34:03 -0700 (PDT)
+Date: Thu, 15 Aug 2024 01:34:03 -0700
+In-Reply-To: <20240815081319.3450173-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000829a15061fb4b4e2@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-According to bpftrace on these routines most calls result in cmpxchg,
-which already provides the same guarantee.
+Hello,
 
-In inode_maybe_inc_iversion elision is possible because even if the
-wrong value was read due to now missing smp_mb fence, the issue is going
-to correct itself after cmpxchg. If it appears cmpxchg wont be issued,
-the fence + reload are there bringing back previous behavior.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+ino: 1901338, sync: 128, wsize: 2147483647, netfs_writepages
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=1901338
+WARNING: CPU: 2 PID: 1106 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+WARNING: CPU: 2 PID: 1106 at fs/9p/vfs_addr.c:39 v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Modules linked in:
+CPU: 2 UID: 0 PID: 1106 Comm: kworker/u32:7 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-29)
+RIP: 0010:v9fs_begin_writeback fs/9p/vfs_addr.c:39 [inline]
+RIP: 0010:v9fs_begin_writeback+0x210/0x280 fs/9p/vfs_addr.c:33
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 66 48 8b 73 40 48 c7 c7 20 9b 8e 8b e8 31 48 0d fe 90 <0f> 0b 90 90 e9 62 ff ff ff e8 b2 29 a8 fe e9 51 ff ff ff e8 18 29
+RSP: 0018:ffffc90005dff470 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff8880460ecd40 RCX: ffffffff814cc379
+RDX: ffff888022c0a440 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88802dd79d88
+R13: ffffc90005dff840 R14: ffff88802dd79d40 R15: ffff88802dd79d88
+FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 000000000db7c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x773/0xf60 fs/netfs/write_issue.c:536
+ do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-chances are this entire barrier guarantee is of no significance, but i'm
-not signing up to review it
 
-I verified the force flag is not *always* set (but it is set in the most common case).
+Tested on:
 
- fs/libfs.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 8aa34870449f..61ae4811270a 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1990,13 +1990,19 @@ bool inode_maybe_inc_iversion(struct inode *inode, bool force)
- 	 * information, but the legacy inode_inc_iversion code used a spinlock
- 	 * to serialize increments.
- 	 *
--	 * Here, we add full memory barriers to ensure that any de-facto
--	 * ordering with other info is preserved.
-+	 * We add a full memory barrier to ensure that any de facto ordering
-+	 * with other state is preserved (either implicitly coming from cmpxchg
-+	 * or explicitly from smp_mb if we don't know upfront if we will execute
-+	 * the former).
- 	 *
--	 * This barrier pairs with the barrier in inode_query_iversion()
-+	 * These barriers pair with inode_query_iversion().
- 	 */
--	smp_mb();
- 	cur = inode_peek_iversion_raw(inode);
-+	if (!force && !(cur & I_VERSION_QUERIED)) {
-+		smp_mb();
-+		cur = inode_peek_iversion_raw(inode);
-+	}
-+
- 	do {
- 		/* If flag is clear then we needn't do anything */
- 		if (!force && !(cur & I_VERSION_QUERIED))
-@@ -2025,20 +2031,22 @@ EXPORT_SYMBOL(inode_maybe_inc_iversion);
- u64 inode_query_iversion(struct inode *inode)
- {
- 	u64 cur, new;
-+	bool fenced = false;
- 
-+	/*
-+	 * Memory barriers (implicit in cmpxchg, explicit in smp_mb) pair with
-+	 * inode_maybe_inc_iversion(), see that routine for more details.
-+	 */
- 	cur = inode_peek_iversion_raw(inode);
- 	do {
- 		/* If flag is already set, then no need to swap */
- 		if (cur & I_VERSION_QUERIED) {
--			/*
--			 * This barrier (and the implicit barrier in the
--			 * cmpxchg below) pairs with the barrier in
--			 * inode_maybe_inc_iversion().
--			 */
--			smp_mb();
-+			if (!fenced)
-+				smp_mb();
- 			break;
- 		}
- 
-+		fenced = true;
- 		new = cur | I_VERSION_QUERIED;
- 	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
- 	return cur >> I_VERSION_QUERIED_SHIFT;
--- 
-2.43.0
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=101677c9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=112bc3e5980000
 
 
