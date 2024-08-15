@@ -1,94 +1,119 @@
-Return-Path: <linux-kernel+bounces-288652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC44953D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:57:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F74C953D08
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 416121C24CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17F9288496
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0937515573F;
-	Thu, 15 Aug 2024 21:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB951547DC;
+	Thu, 15 Aug 2024 21:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQEGlZvn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NOyrCfp2"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF091547C4;
-	Thu, 15 Aug 2024 21:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEC315442A;
+	Thu, 15 Aug 2024 21:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723758995; cv=none; b=hqhLvx5I6CNv4+EnITpJKeerKomSWM2r8662LE8Evr+15irVDo67b5fuHK7fltaPQP7HH69qf+fcD1i8k1f0fuQgzjetcca/9QPb9SJmcpO52N7kcVv+hxCa66RAq3pywY76XV/bSSAfi1+6Hk1kM9a78Th02WkUjlibsG9NI2k=
+	t=1723759175; cv=none; b=YC17bBhON1yPOi4yY6tI5XnoldkOtWP9+XjIDSgJpvXeN748MnszJWFJS5qK8KE9/CJN3D6Wy7IelOnLG5tze1pQgImkhaPt+p2HHFErVVV/5Ygk/apMk3uf0WR5UNLgKeAI/C7nH4NI+9+ksOdRLhY75rlXALDJTwCBL9aCniY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723758995; c=relaxed/simple;
-	bh=Mf8SuVPcQMJxDRlhTh8nDftjjh3X6X2ZNGppNHT09T0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tdZnGzwE365HrPG/N3jNqq49foresd0XHLZlcjN+CDpKhWvteUH3Znxf82j4YvoizYphLGiv6i61ncI2hG9WxgFsjVSD6adTJwJzOPqYLfHmZ5IXpKuYmMo7mjirarkk24P+cxUIb1rJoptPSXE7Rl38DMyfO0zlLSOp0NYCZJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQEGlZvn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1805C4AF15;
-	Thu, 15 Aug 2024 21:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723758994;
-	bh=Mf8SuVPcQMJxDRlhTh8nDftjjh3X6X2ZNGppNHT09T0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vQEGlZvnnwW8erXPizbf0xFfhzni9Q37kcH9HAcMT4oE32EYPCtABnC1LstVOWiF1
-	 7bzIE3YtME1HyL5D8Vp3s6b3wJv/ge/K0ii4wmfguhABvtCcuv/o2m6Q24SOv/4Ts4
-	 F63II0U0HI+IFn0m+LDMgLgUTSBA+soegrpPErVGcm2Dp+mqUh4IsjJiRReVOfzLVi
-	 yJ4uj1CZoedtlp+XOlUmfw21fQVYbX2oMx9CmX5aRS9+hJdQ0OAnV127mpZCMfy+uU
-	 rILFyG9mSogoGwneu3eqIGSc3wXKM91EZENDoEnRkw77ItoVlK68Rn70ZtFl0izzHi
-	 q2aq19rswyGYQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marc Gonzalez <mgonzalez@freebox.fr>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaud Vrac <avrac@freebox.fr>,
-	Pierre-Hugues Husson <phhusson@freebox.fr>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-Subject: Re: [PATCH 0/3] Add LPASS SMMU to msm8998 DTSI
-Date: Thu, 15 Aug 2024 16:56:28 -0500
-Message-ID: <172375898304.1019907.18015161106871629352.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
-References: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
+	s=arc-20240116; t=1723759175; c=relaxed/simple;
+	bh=rK/esUI2zvQLYhcVj5TnR2iUyYOWNFYJgeHXx4x5oKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+k4+E6TrHmzupBSmeeBIFf4LCO20oP81ioFi8vbNzdPsPiowCAeMtDqYsJzGFjHV1rzaeE0NGOYGLhGSV7BAr0oiysqneQaTOPMLUsApI7VGPU7E9IwpYXxQaPNGaXUstnOOG/xkkFdMFHu/HziFjWVfJJvFFIVB7f8EycXFCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NOyrCfp2; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-201ee6b084bso11947835ad.2;
+        Thu, 15 Aug 2024 14:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723759174; x=1724363974; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KyCVy6/conWBhY9JGn6L9AtFibyi83h6CoL5Kafq9P4=;
+        b=NOyrCfp2p/8860dS5epnYrhlTBBHVE0GKjluk0/ao4OgRW1LiX1XtIKUzWwhUY/TAM
+         bs++qlN/JSUkH0WykYbuy6efHSDKagEuc7qNDg+f5V/13Gfz2b0OVcgv71AS2DRsDJn2
+         PC8/jSd5yjmgFALcGaO2rrHegmDZCANSK9sD88ajigz5SALEE043qj1+R4XATlEa4bVY
+         lIQrYbKm/8Fw9Fo2gQVhj2uvlVzNhDFxWpcK4GQpSnlc0kqlj+faGrYH2o9AX5ODLIVF
+         2pYFSYlTjsgH+v8IyaAHoPN0AzORJcHmqJhRLbZao+RNNE06Ub7C6DdPkQF7p7zMCxh9
+         niDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723759174; x=1724363974;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KyCVy6/conWBhY9JGn6L9AtFibyi83h6CoL5Kafq9P4=;
+        b=ffPRu3I8jeUqWIkrlrM5tb50IKhJfMZtEfrFzSK3255yva4UKmkhvucmoaSEH+4/X+
+         JeD5xwBfagjqp1bz8lFkw6AerGCO7vdDHiX4CMOZFg8kHXNkX1I1Syu2JBPclvb7eX1/
+         9/fqhPVNp+jET/lMRFpdz4AYnd/eKg/bpPiXNgiuC1VzsJuAX2uITcAy1KLvlb3AYs7A
+         4bzhJ8JmreaCtZuO2ufenPtXTm+6JHGQex141DtwUlL5tLV0YRSkliJvwSgoqSCTHtUa
+         vI26ucq14jg6GHhYUCwBU3QL9P+SxYuCsoMO1VBhImlgIWPWigKDALzdpDQ8ivz9fvow
+         H2Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX4ykSZ0PHZJXsBTm4TF8j3aJ5oLEkGZJTniFG3TFVsd8l9KSnoHDnKOtJ4EraS9yHt2SjP9+5Pvqc7/zne1UCyn6BM+l2mzFNF63eWW/TrxNpky5sfQlR4rf8YQmoGGgIn8nX
+X-Gm-Message-State: AOJu0YzgADaOVfQ7ADelqd6j+aC9AxjAjYXYrbfrW6o/bAE8rKt1RgdB
+	iWjJkxq1ZJKpYq26fDZ0M5RNwN0atrghRs/GtZaeiOrtYclS2Uhi
+X-Google-Smtp-Source: AGHT+IGKULXVi6fLxnWIIPP4BFu9bhcEGVkP+X0nnciCIiVVwfSOC9wUt3In96jhiXM6H6Png4gLyg==
+X-Received: by 2002:a17:903:32c8:b0:1fb:9627:b348 with SMTP id d9443c01a7336-20203f53eb2mr13430475ad.58.1723759173559;
+        Thu, 15 Aug 2024 14:59:33 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201f031bd99sm14549465ad.79.2024.08.15.14.59.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 14:59:33 -0700 (PDT)
+Message-ID: <840e5ad2-5baf-4c74-b3b1-f18affa4b39e@gmail.com>
+Date: Thu, 15 Aug 2024 14:59:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/67] 6.6.47-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240815131838.311442229@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240815131838.311442229@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 14 Aug 2024 18:20:21 +0200, Marc Gonzalez wrote:
-> A few definitions and glue code to support the DT node
-> describing the LPASS SMMU in qcom msm8998 SoC.
+On 8/15/24 06:25, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.47 release.
+> There are 67 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Thanks to Angelo.
+> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+> Anything received after that time might be too late.
 > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.47-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Applied, thanks!
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-[1/3] dt-bindings: clock: gcc-msm8998: Add Q6 and LPASS clocks definitions
-      commit: 015dff12dfdeb8d94115ec829bc2e4b711075935
-[2/3] clk: qcom: gcc-msm8998: Add Q6 BIMC and LPASS core, ADSP SMMU clocks
-      commit: 7554d532e03b4f3a9e294077d38fb2403f2b5f7d
-[3/3] arm64: dts: qcom: msm8998: Add disabled support for LPASS iommu for Q6
-      commit: 1a9544b832256817a387f952eb0badcb6416df7f
-
-Best regards,
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Florian
+
 
