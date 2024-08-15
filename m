@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-288124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5009535FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:45:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A27D953614
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F18101F21366
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:45:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8959B28BAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED561B9B49;
-	Thu, 15 Aug 2024 14:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365AB1ABEC4;
+	Thu, 15 Aug 2024 14:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UrBgl2ZH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us/C0sRy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5420319D89D;
-	Thu, 15 Aug 2024 14:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2641A4F16;
+	Thu, 15 Aug 2024 14:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732973; cv=none; b=Qw4fTnZJmEZKXCwN+GLPou1IdQdtiRBcG0CGbKmXmmp/Fvf6cfsVFd+rpNqaqqxooAZ3y++z8LBegpN8Jf74jbe6bXHOs2U13YVbNN2tgq3Tn/tG6shstYUo/aw0oN9I3eoOXlR8tYvbC02NWiiOwb6DZqZvWZhLoIyw6Kvu+eA=
+	t=1723733032; cv=none; b=IwJq7ZKkHrHBL3eDkCcKkX7gilkLTGEGEcwSK0z1clVRMZHkdGUm+xj2ohmPNhIWJaLa6/Xq+WZ6ghIneREu/yeAE3txaRw6B+AAnlmV+KGa8XkNLswfs2mFW6od/10tZIar5cNp0R1Mu9YTuJQkpk3DSCiQIV2N2di52kreXK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732973; c=relaxed/simple;
-	bh=bBXh6kYTTgi9MjJkwNqZSkd5ZjNPCu6uClsTZcZBw00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gV40JTmEvu9Ke24j9PTfMOW1lc6h0IaVnay1e7jPL2cc+0PeKHVH3IgG5ruOLwLakFI2Q/aNZFkTRax1AAr8mRHmTWafTKy0wfjowXEjvb/3PrmUtwxHWIz1BBBh2touDeliYhi6G1gf/nj457CVybDGWQRv+/ft5YGCMawAgkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UrBgl2ZH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E0BC32786;
-	Thu, 15 Aug 2024 14:42:50 +0000 (UTC)
+	s=arc-20240116; t=1723733032; c=relaxed/simple;
+	bh=qNXtgRVvIfrKa1tEBu1adkGaXzTG53J14ad/70fCQNI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NRDtcUMI4ZD3aDdP9xym4kBORGLNviYrfgwFv/HsY7YSJZS+AWUl9rdrPAG6+qdMz6TtL/wFoR4W0G6976ehJaV9C71FrzJyUYwX6ZoYHjwzBQwn1IWb19SZIqVT7kJpZ3UVnVgvTfmWetFdVgf/dAP60SYIZsGNRdp5+eEDO7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us/C0sRy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BC3C4AF0D;
+	Thu, 15 Aug 2024 14:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723732973;
-	bh=bBXh6kYTTgi9MjJkwNqZSkd5ZjNPCu6uClsTZcZBw00=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UrBgl2ZHr7mefzi+wNxigOZl5d8WLC+stExumTJ+IY72s4ivFNvWEP3hpFiyi2SxZ
-	 jcEyjRj1swk9iHH2azkFjuCHilrOYneLbgBQ0HTz4ZGbe4c+cs45hWKW8fuDftBEHM
-	 i2/FGokcI+aarAer2EA7QGR9IZXA7GqRA0Tu1sumvdp1dszeNkaBvfNFaBZiFEZJCp
-	 iLxvzBlOsKStWUyD0PE0GqPCAhV9gEupfHPNF7+o/CTE3syMOn7ADYCwT3yMoErqOg
-	 Jw+9rw6exhDwc3odftHL0WZASdyAGi9BLYlmpo4f5Uqtd6qseh/UcMHajvREJFdvMZ
-	 IPdsOviboiReA==
-Date: Thu, 15 Aug 2024 15:42:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, ramon.nordin.rodriguez@ferroamp.se,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com
-Subject: Re: [PATCH net-next 5/7] net: phy: microchip_t1s: add support for
- Microchip's LAN867X Rev.C1
-Message-ID: <20240815144248.GF632411@kernel.org>
-References: <20240812134816.380688-1-Parthiban.Veerasooran@microchip.com>
- <20240812134816.380688-6-Parthiban.Veerasooran@microchip.com>
+	s=k20201202; t=1723733032;
+	bh=qNXtgRVvIfrKa1tEBu1adkGaXzTG53J14ad/70fCQNI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=us/C0sRysdNk+b24vnxGtukGbKypNfY/npvz00anvIta46Ldceq00UUporLwhQZJ3
+	 zQQbfPmh9fWGZbLsoxb6IY5gTFfoDbjmw22fbpI5aMypYU2BP+pxF6djh1KPQHrEC2
+	 yjR2ECz+PGwhvr1EQfyf08KlOo7A88bk5J8YvOj5h+eG82BQb1li6LLJSJreoIkkoF
+	 oRpDkGJmRICKv6DQT6q2c4RJTeujv8zlIWnjQqwHFJ2d+WNif11PYWnD1vDtkiNfO1
+	 i7ZJoKD1z/cTiORUzuXNPyhm/ME1m0IxIWCqgFdH5ePyostpi+Egi1XeNIfnL0gCBh
+	 m17wJLcVtE/dg==
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sudeep Holla <sudeep.holla@arm.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
+References: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
+Subject: Re: [PATCH 0/7] regulator: Use scoped device node handling to
+ simplify error paths
+Message-Id: <172373302924.48987.479533999298131046.b4-ty@kernel.org>
+Date: Thu, 15 Aug 2024 15:43:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812134816.380688-6-Parthiban.Veerasooran@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Mon, Aug 12, 2024 at 07:18:14PM +0530, Parthiban Veerasooran wrote:
-> This patch adds support for LAN8670/1/2 Rev.C1 as per the latest
-> configuration note AN1699 released (Revision E (DS60001699F - June 2024))
-> https://www.microchip.com/en-us/application-notes/an1699
+On Wed, 14 Aug 2024 17:04:04 +0200, Krzysztof Kozlowski wrote:
+> Make code a bit smaller/simpler, with less of_node_put() thanks to
+> cleanup.h.
 > 
-> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-> ---
->  drivers/net/phy/Kconfig         |  2 +-
->  drivers/net/phy/microchip_t1s.c | 68 ++++++++++++++++++++++++++++++++-
->  2 files changed, 67 insertions(+), 3 deletions(-)
+> Best regards,
+> Krzysztof
 > 
-> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-> index 68db15d52355..63b45544c191 100644
-> --- a/drivers/net/phy/Kconfig
-> +++ b/drivers/net/phy/Kconfig
-> @@ -282,7 +282,7 @@ config MICREL_PHY
->  config MICROCHIP_T1S_PHY
->  	tristate "Microchip 10BASE-T1S Ethernet PHYs"
->  	help
-> -	  Currently supports the LAN8670/1/2 Rev.B1 and LAN8650/1 Rev.B0/B1
-> +	  Currently supports the LAN8670/1/2 Rev.B1/C1 and LAN8650/1 Rev.B0/B1
->  	  Internal PHYs.
->  
->  config MICROCHIP_PHY
-> diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
-> index d0af02a25d01..62f5ce548c6a 100644
-> --- a/drivers/net/phy/microchip_t1s.c
-> +++ b/drivers/net/phy/microchip_t1s.c
-> @@ -3,7 +3,7 @@
->   * Driver for Microchip 10BASE-T1S PHYs
->   *
->   * Support: Microchip Phys:
-> - *  lan8670/1/2 Rev.B1
-> + *  lan8670/1/2 Rev.B1/C1
->   *  lan8650/1 Rev.B0/B1 Internal PHYs
->   */
->  
-> @@ -12,6 +12,7 @@
->  #include <linux/phy.h>
->  
->  #define PHY_ID_LAN867X_REVB1 0x0007C162
-> +#define PHY_ID_LAN867X_REVC1 0x0007C164
->  /* Both Rev.B0 and B1 clause 22 PHYID's are same due to B1 chip limitation */
->  #define PHY_ID_LAN865X_REVB 0x0007C1B3
->  
-> @@ -243,7 +244,7 @@ static int lan865x_revb_config_init(struct phy_device *phydev)
->  		if (ret)
->  			return ret;
->  
-> -		if (i == 2) {
-> +		if (i == 1) {
->  			ret = lan865x_setup_cfgparam(phydev, offsets);
->  			if (ret)
->  				return ret;
 
-Hi Parthiban,
+Applied to
 
-This patch is addressing LAN867X Rev.C1 support.
-But the hunk above appears to update LAN865X Rev.B0/B1 support.
-Is that intentional?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-...
+Thanks!
+
+[1/7] regulator: bd718x7: Use scoped device node handling to simplify error paths
+      commit: 83c7cdeef5b22a73336eb18a59c7b4d63ec26659
+[2/7] regulator: bd96801: Use scoped device node handling to simplify error paths
+      commit: f372c262d4cfe31f0b67e8ae1a8ec9bf7c52d57b
+[3/7] regulator: max8997: Use scoped device node handling to simplify error paths
+      commit: ea13bd391d1b8f62ae2347bde7a174059d7f3f0d
+[4/7] regulator: s5m8767: Use scoped device node handling to simplify error paths
+      commit: 34a3f95941e0dfee750f2fd28faed4c8cd7ee42c
+[5/7] regulator: qcom-rpmh: Simplify with scoped for each OF child loop
+      commit: 17636d443fbe376d5192a7ce6a444aa45ce45541
+[6/7] regulator: qcom-smd: Simplify with scoped for each OF child loop
+      commit: d4cd75b8eff72d65dab63668d5d883d72dda0426
+[7/7] regulator: scmi: Simplify with scoped for each OF child loop
+      commit: 99cf5db9cdd39136fd5dbd10bda833aa0f870452
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
