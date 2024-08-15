@@ -1,140 +1,93 @@
-Return-Path: <linux-kernel+bounces-287449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E489527EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62CD9527EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 04:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65310285F5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892DA1F227DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5401BF37;
-	Thu, 15 Aug 2024 02:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ifAYX/T9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F141863E;
+	Thu, 15 Aug 2024 02:31:43 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39F214290;
-	Thu, 15 Aug 2024 02:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606C718D654
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723688858; cv=none; b=bedL0YlgQ2yID4Ot/l3CwP3BAlQj0coUgmT287n0WOayDxEEWMETeT+LSybG7nBK6mC+LXsCQV+eXFBC/8Kd89480kKNBuZX33SkdF9/89m+bqyI4A1vkctTmWONq8ccuVtAy+XciYC76cmh/SH54q9AGC5bJpZD3FkdLakCbLA=
+	t=1723689102; cv=none; b=rRd6OL6thLObitciqj8S2hLHK3jnMoXDiUq7CAW4qE+Jjn6//ftYxMMfhb9tynu1CZxLh2xmvCeqnol+rID/fFvmpfEEbVsxRr9ISm6nS7RLXy9RgMPc4gEI8NjQ3rNYpDGNYTsBDdrbx/UILQrTMrmwc8bHVlIjcGhJqZnStYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723688858; c=relaxed/simple;
-	bh=DzRNDrOySOzTjHv2ZeWrilIiEAiE3HdVNDg2lL5CG20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n00v7hGU7kFftZf6FRCHYm6dOTwwcQK6AlHuFwy7eTPPxaN6ijh0eoX8lQ1Ov8hN4o6m5uYcln8DZhrOHbdL6em+pECsLm7U0VSSkkPKslvb3e7Io4EmWXFzwHq77PGCeocY7x94+sPg0wsygWXiGl6bJwgU5w7MmPEaSS4J3+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ifAYX/T9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F0USox032757;
-	Thu, 15 Aug 2024 02:27:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4nXyyuUlp9P/usd0QtRZ5HLVKq5Lzrskm7u3X6OZ7KA=; b=ifAYX/T9/2Q9qV2m
-	BTOvalSdQFk3s12lpZUqpCuM+wG5ZkE0v7Qgao/F0nkLs0GGFnQeiL5OzwA+Z2MN
-	w3CIeJ/dx+DNdjd8NaztNCOHAjsJM7JTPjiuzoX7b3EWeYz7wZF/kQeHFywe4DOZ
-	gs8z9HraMa3QdnwIgf7OrPtZzlxbwGS/sAceY297xeE7yqkHJfybQBJojTnziTPh
-	P3Z6qURZflLzI6UisXNKZmqRR26OA4oAwt4uf8Rg9AvOnvgSQOXY5fYC75WPHEUe
-	kxE4XeLFiKo0T9eYj8UKneM+quvs1AqAheZwEWnJTgJiI8Y7FxoFl3dNTbONVYNs
-	11x7nw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410437x8ex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 02:27:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47F2RVG6032397
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 02:27:31 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 14 Aug
- 2024 19:27:28 -0700
-Message-ID: <184424ce-638c-4075-9bb8-683b6b9abaa9@quicinc.com>
-Date: Thu, 15 Aug 2024 10:27:26 +0800
+	s=arc-20240116; t=1723689102; c=relaxed/simple;
+	bh=0HvKFh0EECKIOk4ZhHBpgIqOy+A8qlpA7wGymPRdc6A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=baZOroRoeij7/99zZhzhkkqrQ8rZKjirT45NEGgcSUvLRpJ+ClR0Tp+tKGjQVAPNPsKy8awX/9dOAEk4jUq4nPUJwXNvm1ddNc1WQtOd48d74JVDbrEIJfFWe7rr2Sp1rUMPR9KAZGu6D1n5ganhiss4XV/ebZGvhbWQIm+94+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39a1f627b3dso6130965ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 19:31:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723689100; x=1724293900;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JszCRXEqLAQrGdNRiu9Ol1k+L2j/C1wQ21T6BCOn1Zc=;
+        b=ucXSywG4Nu2LzDIis1EF5caBE7S9UDb9cJEDkFxgtEHHqg/ehjKl56rlIQ7eDOmEV8
+         ITpdwZycGgf5QDAgFlCMH5NEOiFt99qd2oow+5SPkdX6aT1OiyZKMAtX5Vf5O51rjKMM
+         SD9H9hHY7sw0u0C0GjFioyuqHhR+BJpiuVB8YfPzPEYG1SBT352j85pRa7DXORPsB/CE
+         yJAhxfFGV8ykeunt2Qm07kImaZ1UEDBa02xGXqZZfcliw64LSS5QHOqDZqM6gEoisz1N
+         mY7UndSUpS0kuDWpu7NUUvEasFaQQ9TaOUUZfk0f1cRakZXnlOEg1X6+P49mCIIhocZk
+         pQUw==
+X-Gm-Message-State: AOJu0YxltNaK11mM/EdcFdL0O3XuAa+7rjgA4Mj+gJALtf0lYxcCfKmQ
+	HCigUyj0Pkt+uk36UjTA0Kca1PY91V5/YAOkQtLyT+OlrVob/fH/ZgKi6PsBxSF1GxK78MeS7b1
+	uZno58TMySqwyxTgEpbtYKdrfi46LtVs+RXdGECjdta2K/KMRLdh95nY=
+X-Google-Smtp-Source: AGHT+IGg69Y1O8JaCpPh3iDxmjYK+Bjb6F4lE8TY1dccOt+s41XhS8wH1p0BdPH+TZ0U76/0SVKTH0H1L4NGrNFRgsBcqpVkxd8e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: arm: qcom: document QCS8275/QCS8300 SoC
- and reference board
-To: Krzysztof Kozlowski <krzk@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <quic_tengfan@quicinc.com>
-References: <20240814072806.4107079-1-quic_jingyw@quicinc.com>
- <20240814072806.4107079-2-quic_jingyw@quicinc.com>
- <3fd0fa88-eee0-45f8-bd8b-f5b2bc15c25a@kernel.org>
-Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <3fd0fa88-eee0-45f8-bd8b-f5b2bc15c25a@kernel.org>
+X-Received: by 2002:a05:6e02:1ca6:b0:375:a55e:f5fc with SMTP id
+ e9e14a558f8ab-39d12443709mr3408805ab.1.1723689100532; Wed, 14 Aug 2024
+ 19:31:40 -0700 (PDT)
+Date: Wed, 14 Aug 2024 19:31:40 -0700
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008a7106061fafa464@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1pNGP41rkr0MqTLkPBOhuaQuI0cSj0pY
-X-Proofpoint-GUID: 1pNGP41rkr0MqTLkPBOhuaQuI0cSj0pY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_22,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
- mlxlogscore=959 malwarescore=0 lowpriorityscore=0 phishscore=0 spamscore=0
- bulkscore=0 suspectscore=0 adultscore=0 mlxscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408150016
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-On 8/14/2024 4:56 PM, Krzysztof Kozlowski wrote:
-> On 14/08/2024 09:28, Jingyi Wang wrote:
->> Document the QCS8275/QCS8300 SoC and its reference board QCS8300 RIDE.
->> QCS8300 is an Industrial Safe SoC, while QCS8275 is the Industrial
->> Non-Safe version which can share the same SoC dtsi and board DTS.
->>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  Documentation/devicetree/bindings/arm/qcom.yaml | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
->> index f08e13b61172..3952e1579767 100644
->> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
->> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
->> @@ -42,6 +42,8 @@ description: |
->>          msm8996
->>          msm8998
->>          qcs404
->> +        qcs8275
->> +        qcs8300
->>          qcs8550
->>          qcm2290
->>          qcm6490
->> @@ -884,6 +886,12 @@ properties:
->>            - const: qcom,qcs404-evb
->>            - const: qcom,qcs404
->>  
->> +      - items:
->> +          - enum:
->> +              - qcom,qcs8300-ride
-> 
-> This is not used. You miss DTS patch. Look how people upstream things:
-> such binding *never* goes separate from the DTS.
-> 
-> Best regards,
-> Krzysztof
-Thanks，I will remove that.
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Author: lizhi.xu@windriver.com
 
-Thanks,
-Jingyi
+clean dirty for the release inode, stop to worker wb it again.
+
+#syz test: upstream c0ecd6388360
+
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index e0d34e4e9076..7f881506a68a 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -218,7 +218,9 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 		if ((S_ISREG(inode->i_mode)) && (filp->f_mode & FMODE_WRITE))
+ 			retval = filemap_fdatawrite(inode->i_mapping);
+ 
++		printk("fid: %p, fidnum: %d, ino: %lx, %s\n", fid, fid->fid, inode->i_ino, __func__);
+ 		spin_lock(&inode->i_lock);
++		inode->i_state &= ~I_DIRTY;
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+ 		put_err = p9_fid_put(fid);
 
