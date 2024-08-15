@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-288125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A27D953614
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:46:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC2D95361D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8959B28BAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:46:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81D9C1F210B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365AB1ABEC4;
-	Thu, 15 Aug 2024 14:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D07D1A0733;
+	Thu, 15 Aug 2024 14:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us/C0sRy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkyWvQ4E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2641A4F16;
-	Thu, 15 Aug 2024 14:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD391684AC;
+	Thu, 15 Aug 2024 14:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723733032; cv=none; b=IwJq7ZKkHrHBL3eDkCcKkX7gilkLTGEGEcwSK0z1clVRMZHkdGUm+xj2ohmPNhIWJaLa6/Xq+WZ6ghIneREu/yeAE3txaRw6B+AAnlmV+KGa8XkNLswfs2mFW6od/10tZIar5cNp0R1Mu9YTuJQkpk3DSCiQIV2N2di52kreXK0=
+	t=1723733157; cv=none; b=jj5c0fTu4xIjuCxAFvHP9NITdK5vB3vKMoXUeNsc2m98uWE94qHahge0AzZ/mI0eD3YzbBugm+dGlxE/c2HfHtSZle5OgtrJGSVOdz74u0QN3KJvpx5HmIbBQ5O7yVPCfeuENzEujw2eEKSrieO3h5eQJ/8zbMCzaq+0vtqxuLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723733032; c=relaxed/simple;
-	bh=qNXtgRVvIfrKa1tEBu1adkGaXzTG53J14ad/70fCQNI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NRDtcUMI4ZD3aDdP9xym4kBORGLNviYrfgwFv/HsY7YSJZS+AWUl9rdrPAG6+qdMz6TtL/wFoR4W0G6976ehJaV9C71FrzJyUYwX6ZoYHjwzBQwn1IWb19SZIqVT7kJpZ3UVnVgvTfmWetFdVgf/dAP60SYIZsGNRdp5+eEDO7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us/C0sRy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BC3C4AF0D;
-	Thu, 15 Aug 2024 14:43:49 +0000 (UTC)
+	s=arc-20240116; t=1723733157; c=relaxed/simple;
+	bh=2cDt1K6+J5wSrcJZUtuu3LeNVSJEFjKPwrWj5SaKiNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEy+qjmTBK7+zrsCk3uuD9BrKaoDUkcoEaLUSHUdfeblwh4S5SpHIun+m7ZJTKJEL7J2lRPBmRaKeY+0n9c++Z7Zk81Ziv5p6sQWPzmz6+kcZJ7zYij6iS3+gf78QkYrstfTRbQGZ4McIWV1skuywhnQ5a1GI5VUNEKW2qBqJP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkyWvQ4E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3FD2C32786;
+	Thu, 15 Aug 2024 14:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723733032;
-	bh=qNXtgRVvIfrKa1tEBu1adkGaXzTG53J14ad/70fCQNI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=us/C0sRysdNk+b24vnxGtukGbKypNfY/npvz00anvIta46Ldceq00UUporLwhQZJ3
-	 zQQbfPmh9fWGZbLsoxb6IY5gTFfoDbjmw22fbpI5aMypYU2BP+pxF6djh1KPQHrEC2
-	 yjR2ECz+PGwhvr1EQfyf08KlOo7A88bk5J8YvOj5h+eG82BQb1li6LLJSJreoIkkoF
-	 oRpDkGJmRICKv6DQT6q2c4RJTeujv8zlIWnjQqwHFJ2d+WNif11PYWnD1vDtkiNfO1
-	 i7ZJoKD1z/cTiORUzuXNPyhm/ME1m0IxIWCqgFdH5ePyostpi+Egi1XeNIfnL0gCBh
-	 m17wJLcVtE/dg==
+	s=k20201202; t=1723733156;
+	bh=2cDt1K6+J5wSrcJZUtuu3LeNVSJEFjKPwrWj5SaKiNA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dkyWvQ4Eab0Mev50PZAJYqogMNDU85sEM8xyDLyMBRLPYfSyYMs4Toxeeac3zKKzR
+	 SVYiz0K3D/g5+QdJDJf6nnD7Qy5wegctjwv3PhgGuZQY25B70KrgmCZZodWN80rYG4
+	 xgyBL4JRJP0blqHfxeXBdOINIMqtjMPIDiU3EAy528V5A/8EzPPoOqwoWNxSLeqZJ8
+	 aTicr1XYnwKnEUqDF1Xrp1mjm2FxzbK2B+hfsEryf1OceDTaZvHybOAYJGaTnae+Hx
+	 m3AiyIQyKKbVQsZ8w/6axwsvY9uG8nz5g12owbbscNwaEsUNFWsKTMjQMF5DEvyvSR
+	 epH5YoGP75B5A==
+Date: Thu, 15 Aug 2024 15:45:45 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
-References: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
-Subject: Re: [PATCH 0/7] regulator: Use scoped device node handling to
- simplify error paths
-Message-Id: <172373302924.48987.479533999298131046.b4-ty@kernel.org>
-Date: Thu, 15 Aug 2024 15:43:49 +0100
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 23/40] arm64/signal: Set up and restore the GCS
+ context for signal handlers
+Message-ID: <c56fa974-88f7-4c1f-83bd-8c481fe0045d@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-23-699e2bd2190b@kernel.org>
+ <ZrzEfg5LqdAzgJ6+@e133380.arm.com>
+ <08932f6d-01ef-40e8-97d2-08f0d2016191@sirena.org.uk>
+ <Zr4EkmtUKop9o9wu@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3MLeToVkjySp9DbY"
+Content-Disposition: inline
+In-Reply-To: <Zr4EkmtUKop9o9wu@e133380.arm.com>
+X-Cookie: -- Owen Meredith
 
-On Wed, 14 Aug 2024 17:04:04 +0200, Krzysztof Kozlowski wrote:
-> Make code a bit smaller/simpler, with less of_node_put() thanks to
-> cleanup.h.
-> 
-> Best regards,
-> Krzysztof
-> 
 
-Applied to
+--3MLeToVkjySp9DbY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+On Thu, Aug 15, 2024 at 02:37:22PM +0100, Dave Martin wrote:
 
-Thanks!
+> Is there a test for taking and returning from a signal on an alternate
+> (main) stack, when a shadow stack is in use?  Sounds like something
+> that would be good to check if not.
 
-[1/7] regulator: bd718x7: Use scoped device node handling to simplify error paths
-      commit: 83c7cdeef5b22a73336eb18a59c7b4d63ec26659
-[2/7] regulator: bd96801: Use scoped device node handling to simplify error paths
-      commit: f372c262d4cfe31f0b67e8ae1a8ec9bf7c52d57b
-[3/7] regulator: max8997: Use scoped device node handling to simplify error paths
-      commit: ea13bd391d1b8f62ae2347bde7a174059d7f3f0d
-[4/7] regulator: s5m8767: Use scoped device node handling to simplify error paths
-      commit: 34a3f95941e0dfee750f2fd28faed4c8cd7ee42c
-[5/7] regulator: qcom-rpmh: Simplify with scoped for each OF child loop
-      commit: 17636d443fbe376d5192a7ce6a444aa45ce45541
-[6/7] regulator: qcom-smd: Simplify with scoped for each OF child loop
-      commit: d4cd75b8eff72d65dab63668d5d883d72dda0426
-[7/7] regulator: scmi: Simplify with scoped for each OF child loop
-      commit: 99cf5db9cdd39136fd5dbd10bda833aa0f870452
+Not specifically for any of the architectures.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+--3MLeToVkjySp9DbY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+-----BEGIN PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+FJkACgkQJNaLcl1U
+h9AtQgf9EWahd20jQzZ5Dsh45BuaYqYLMeZdINXFGKq0fNzYErgx+xiHkpfbAaW/
+b5F5wBNruWnW5d9ggUOMRlIRUCnVyNAc0dxH2QcmuYYHWZiHecjqNy0YjqvjQSrP
+pQtbL9E5+BYHBHUWoMYk6VG/CyhqdfprAA2A3isd9pJwETxQ4ivAstUIL7IkWnSj
+pJRVZrtPKkrMzPWhawrH/9/4KYx+6Pvt+MbX3074EcxifcRBuDuD2wvP6Zyp8NpI
+/3JNJeUDARpgaYF8ZVZyqqldrLekwUHNqVqSfL8JEkLjkX7j77gzxw+k+WJLFg7f
+mjLH7VvkpTbNVNlX4LER8RNMYYNNjg==
+=bD/v
+-----END PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--3MLeToVkjySp9DbY--
 
