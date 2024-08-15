@@ -1,70 +1,54 @@
-Return-Path: <linux-kernel+bounces-288243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714049537D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:01:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A6B9537D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2B241C22047
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBAF81C203DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BF61B4C29;
-	Thu, 15 Aug 2024 16:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EBD1B151D;
+	Thu, 15 Aug 2024 16:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BA7XIfQq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoiD+t8K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416921B143F;
-	Thu, 15 Aug 2024 16:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82B01714CC;
+	Thu, 15 Aug 2024 16:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737677; cv=none; b=fc5RrCZkuh1cbhhL5poA0IGNizzqFfxYkprKmYm1umrAkdModfUgmRcvcL/RLnUqzDpKoOR4gK7Yb0dGBuyEHrjH/GJAL3ShW6gN2UsAHr/dY4kFJJGwpDexZDZfcvccCHrw9LkSQrq6gA5Ns30dpG0HeYMdnJS9hVB5F1VGarc=
+	t=1723737705; cv=none; b=rJt3msbfEU5gVoXjLO+RwEa9sqAp+i7TlTyyFwZoIpcXKHYes1QXx/jZXk1y1Pd2kPVaXR8EgrzGp7iFD4KZFoWpMZxrM3aPFAnY3A/GIwPua34o7jlHea2PM8/T/SiqYVrFUyq7p1IMrNtE0jf0oJZajyHpd8zwojMjLQkCav8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737677; c=relaxed/simple;
-	bh=bpLctNnXNGhiRFpnTqnNbNKjW5iZ+9VEc+lKuloqtSc=;
+	s=arc-20240116; t=1723737705; c=relaxed/simple;
+	bh=vDn0PKPftCMcrAdWZ7ewofjGUgKWnZ9FUJGBk1JlJtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TF+1j1hFiEoqKD/RoOYqKWDsvzgEsb7Osi+cYo4OyrhmhF91BxuvrkHFj8+ZKjSPjmQ1mORgXKVBbUbzgsl0cigCPdJ6Lc7FrC47VeyQ4lTQc7yf/AUQV/MN4mYpCunlzrpf35TX4TD4bYd8LzvgaWHwD2VDViRsZfeX8LWUTcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BA7XIfQq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C23AC32786;
-	Thu, 15 Aug 2024 16:01:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXDR11tawhaYA3xznYTWXjM+/vhFds8/9ty8eqX5JivhahJxYEE2W/lq6s0PndcH7vqckWH3qzgDeWGo7J4UAc9HnI07EMPqKVAWKOPH6xLyRgCAEXnHFU3rw2JhlbwPgx5MUESuSyt4WjZOFKTZhyL8QsnxAnp7WqFfSgbccJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoiD+t8K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4CAFC32786;
+	Thu, 15 Aug 2024 16:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723737676;
-	bh=bpLctNnXNGhiRFpnTqnNbNKjW5iZ+9VEc+lKuloqtSc=;
+	s=k20201202; t=1723737705;
+	bh=vDn0PKPftCMcrAdWZ7ewofjGUgKWnZ9FUJGBk1JlJtU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BA7XIfQqUp304q0UubGf+Dtll1j0k3G9oGyub1hlDn4xktjCwVzLDCOvouVAk9Wa+
-	 r9cYbFcrmT4BaiTcYySS+Clu6UH1gcoln0SBm2WjkalmR+Od0BINGeq2xx17xjfsHa
-	 oerCASdcnS77HqSiHJgsq0XlAdFecbGtLIw5Lk5PUX12v9ut26h4MNiHBb8s4ft61M
-	 p+U4uqxvZVUE6nFuRpo916Q0rJ2i4qzAGo/lJaP/oRjc9Mbfkpe/nFXPif1Is2Dud1
-	 cvYoMnP/tmB6AMmc6BezMmJSaowir88MPTz0lE7MUWbneEO8jHtnkFTp3bI6QkHhJU
-	 DasylzQzzV60Q==
-Date: Thu, 15 Aug 2024 17:01:09 +0100
-From: Simon Horman <horms@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Andrew Lunn <andrew@lunn.ch>, Diogo Ivo <diogo.ivo@siemens.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Roger Quadros <rogerq@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	srk@ti.com, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH net-next v5 2/2] net: ti: icssg-prueth: Add support for
- PA Stats
-Message-ID: <20240815160109.GN632411@kernel.org>
-References: <20240814092033.2984734-1-danishanwar@ti.com>
- <20240814092033.2984734-3-danishanwar@ti.com>
+	b=MoiD+t8Kd12u7DppWS2xeyJAkGiBHxBNMKasrbZ9UQtjmh0NPj1TqgFq4vJ4TR17L
+	 ANyM3gbGqbfN0OpMEPgmgz3vtziyc0+m235A05pOkC8lLzUZEys+GhSV2JNyMfuaQg
+	 ZC6lco6zr2Hrz4pBg5ZdCv0LOb8w94YZTVxN+hMxSAqCOFK5rBNeD+Po1oWRS21Q/W
+	 FYCKCy3Gexv6Umh0d5y1C/wS2+DZYpzoCbVsEITUcAHj+H5Kp4qx6m67jf4vBiC40v
+	 5qlDhdjy7T3fX/VABsJDVKosrQChocuSvESFsCI5VaQmILsqHG0qkBivYwHWiKAd6L
+	 3+WhzWTJmjhQQ==
+Date: Thu, 15 Aug 2024 09:01:45 -0700
+From: Kees Cook <kees@kernel.org>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] lockdown: Make lockdown_lsmid static
+Message-ID: <202408150901.B9ACEE7C@keescook>
+References: <20240814033004.2216000-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,71 +57,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240814092033.2984734-3-danishanwar@ti.com>
+In-Reply-To: <20240814033004.2216000-1-yuehaibing@huawei.com>
 
-On Wed, Aug 14, 2024 at 02:50:33PM +0530, MD Danish Anwar wrote:
+On Wed, Aug 14, 2024 at 11:30:04AM +0800, Yue Haibing wrote:
+> Fix sparse warning:
+> 
+> security/lockdown/lockdown.c:79:21: warning:
+>  symbol 'lockdown_lsmid' was not declared. Should it be static?
+> 
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-...
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> index f678d656a3ed..ac2291d22c42 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-> @@ -50,8 +50,10 @@
->  
->  #define ICSSG_MAX_RFLOWS	8	/* per slice */
->  
-> +#define ICSSG_NUM_PA_STATS 4
-> +#define ICSSG_NUM_MII_G_RT_STATS 60
->  /* Number of ICSSG related stats */
-> -#define ICSSG_NUM_STATS 60
-> +#define ICSSG_NUM_STATS (ICSSG_NUM_MII_G_RT_STATS + ICSSG_NUM_PA_STATS)
->  #define ICSSG_NUM_STANDARD_STATS 31
->  #define ICSSG_NUM_ETHTOOL_STATS (ICSSG_NUM_STATS - ICSSG_NUM_STANDARD_STATS)
->  
-> @@ -263,6 +265,7 @@ struct prueth {
->  	struct net_device *registered_netdevs[PRUETH_NUM_MACS];
->  	struct regmap *miig_rt;
->  	struct regmap *mii_rt;
-> +	struct regmap *pa_stats;
-
-Please add an entry for pa_stats to the Kernel doc for this structure.
-
->  
->  	enum pruss_pru_id pru_id[PRUSS_NUM_PRUS];
->  	struct platform_device *pdev;
-
-...
-
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.h b/drivers/net/ethernet/ti/icssg/icssg_stats.h
-> index 999a4a91276c..e834316092c9 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_stats.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_stats.h
-> @@ -77,6 +77,20 @@ struct miig_stats_regs {
->  	u32 tx_bytes;
->  };
->  
-> +/**
-> + * struct pa_stats_regs - ICSSG Firmware maintained PA Stats register
-> + * @u32 fw_rx_cnt: Number of valid packets sent by Rx PRU to Host on PSI
-> + * @u32 fw_tx_cnt: Number of valid packets copied by RTU0 to Tx queues
-> + * @u32 fw_tx_pre_overflow: Host Egress Q (Pre-emptible) Overflow Counter
-> + * @u32 fw_tx_exp_overflow: Host Egress Q (Express) Overflow Counter
-> + */
-
-./scripts/kernel-doc -none doesn't seem to like the syntax above.
-Perhaps s/u32 // ?
-
-> +struct pa_stats_regs {
-> +	u32 fw_rx_cnt;
-> +	u32 fw_tx_cnt;
-> +	u32 fw_tx_pre_overflow;
-> +	u32 fw_tx_exp_overflow;
-> +};
-> +
->  #define ICSSG_STATS(field, stats_type)			\
->  {							\
->  	#field,						\
-
-...
+-- 
+Kees Cook
 
