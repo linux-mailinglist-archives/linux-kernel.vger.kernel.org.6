@@ -1,342 +1,182 @@
-Return-Path: <linux-kernel+bounces-288101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292649534DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:31:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12BD9534DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D741F2951E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1A011C237DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46B71A00E2;
-	Thu, 15 Aug 2024 14:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1292772A;
+	Thu, 15 Aug 2024 14:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="T++eLcfF"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="VkAxjQuS"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C52063D5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C69B19FA7A
 	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732268; cv=none; b=TiC43YnUQ5YorDCDfNDMCLl9OJSFB3VDYI//66nJEi0RZVN6E71V3LkZ0EC8HcDX6TVYs3tr8tnRVZLcg6rSuODwX+GO+RS4yBYaBBfWn8r8GEgR1k+dHogGMNt4+l8wO5thDs9JyB0UcbxbO644B8Eny9A+nIkw/gGHtm5UQj4=
+	t=1723732268; cv=none; b=knFk+F2gvkGssoLwXtFQcOnHuA2AOJAIJGtBJDxuols+1sFM4NAswHzL3BfZ3AP3Gt03CvEdqxBJZ7q1m8JhqjIQncNWitQ43F0qDrHhAq4cfCkWkLAZqCymXl1Rm/LjRKL7ZIONfOTDeRf0d1hgleGYtvyVDsexpbCFUy2wNKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723732268; c=relaxed/simple;
-	bh=VxDXZ5FvSqzrFez+xwuyYcdPM75Q2XBscIKFo1ouHkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SvhiF1YTR6a6ALz41/RKEQSSNCOWCE/ucdJgKzV894WfJadnfLKXzOG37vqVAadNACGZgngmNqqW3LN4xplCG/GzmN+a/nuFwHh3tM1zjf8+/dzkw9Dzt6yAneTVLNJgVMZcSCp1LCPWAatsIi/jUtR7qbY+zZ3qD7X152XQ+NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=T++eLcfF; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=e6PjGgizeLL+ahPBbPESs3O3FYweeeVdNOt3xv/pMJ8=; b=T++eLcfFeWtNUetoGepup4YDPd
-	kfLZCWcz5zyJAGh2uEWoz/O7YNf3oGaSmAiAUF3oe/xTqw2obSM2VM+zAyjNv552ozE37zuIms6u+
-	Ii3b5CCiZ82lD+wfBfCBxxce/K7A9YTnxxorhuKGPFtn47augUZVvNC9op6Ju2lORoxLJN+eMNJq3
-	2feVmd6XSydv0lVyR3xs8KP5zyXO/btJGCohLJYwSWdVpn75jK8rwlEjIxV0iaTE8IN2xa6M5GaI5
-	FoJOZLiiz7Vmzca+LZngWIZ+3uHYw+9UALuQAoqVoqDfovlKcaDrdwa/6O9TkP/LDUDJIIIAMul2R
-	Ks9EmSgw==;
-Received: from [187.36.213.55] (helo=[192.168.1.212])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sebV5-000eI3-MH; Thu, 15 Aug 2024 16:30:51 +0200
-Message-ID: <92d1a047-2756-4f69-acc0-b6b161399783@igalia.com>
-Date: Thu, 15 Aug 2024 11:30:41 -0300
+	bh=BhGULGGpAdf8wP4DjjGL3HVL/NqyEAatMCDWKJlrDCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QGSjpZPC3aSvCL6puEWX4a5273GS2YBy9yb2+EZ12Dgfhleagb3TroL0U6UAKB+5vjfgdPaNHDZ4504OJyWIydb5X/km65cmvIwPniP3kLQr2Zi6+dBkTKpTRwMHq4Z4c5Q4fYSjJxX0ycrvDXd000KOtJ3UusvMjm6vzZFOkKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=VkAxjQuS; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f149845d81so9101441fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1723732263; x=1724337063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mcvq8uUHmuPOGUnHdS7s6bm/DqUE1vyfs2Wujf+gaVI=;
+        b=VkAxjQuSIENjUsPvOLAPB0xxTwOY+iQvwfHhEcTVJAllfhYH6P3C02UTEj9C8ZguOD
+         RidmGS84BrM06tdEsfqMdGgs24poPzwyaNDC8/dALTevADkYdae5XeIoCgVZS/wU1LLq
+         UOQchrZyW0JDwpczmIxlA5UhtXJNKUZNotgMyL1WPdBXMpm66CEIcKNZqTpj9qEs4O3L
+         2KI+BFjLHiyK3E3WM2OdL40NFwcPqtDSRVYKq3ypGtUZRM+wSLAXqk/ncEZy9X7aBYtQ
+         QFw+kqoNDZ1N4qWC0NunawjJsHET79hw3A0VB4ml7/cbjkHyBdmXIdhceKJaUCHAoD/M
+         Ecpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723732263; x=1724337063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mcvq8uUHmuPOGUnHdS7s6bm/DqUE1vyfs2Wujf+gaVI=;
+        b=cXFhujLAeplFyDxsA6ge2T4303wU3dYKQ+WiiZ/B/siGurd0myBDmMVIBpQv4fbDPG
+         15sdenYzu/UT8X5WBafVLWqwEXcgIebrrHL/7l5WNuSQtnRFhPdOlLnMweJNhNGvuWM+
+         /Sj29ET1Frd21wnD5eFiQlzOU8ew8n9YohMukhikzKRnysnGo2TrteqN6dqu54gqlapX
+         hR/H8gR4UUeHlXnjxSDaQVw3skX6qXIWl+dM4F9RTe8c+k2QOYXAKpdB0c05Y2+CfleB
+         lxxhXDGBWZcdzdzfGfjwfLCfdW3FnOLwZRbaiTr4mKjMrKlAoF+nUKomNwyqzJ9xXyKo
+         pjzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOLP6B5SEGWoNSsdru6mm2sBAj5RTP8vVgZvaZU+ce/sEmiDbtt8b0TZ6awXPFqPqAg/K50D+2WK07I9OFacoQBHKF4qmRvCX6ul5b
+X-Gm-Message-State: AOJu0YyWkCUi6REVebVcXbb9fxvrC/QJZvnW4QAnlHpNeQ1GECgpt2qC
+	Rk+6sy9AP3afS+s63AGup/7hizI9ujgUBbO8c9c7sh89ZFAAmfdXoWQzVx3FrQDFy9hwCp6JMPY
+	KqCv+Xx6kZ9WwFUliRPyxOuecrWGDXvYuGr5QDg==
+X-Google-Smtp-Source: AGHT+IHAAccVfpcl3odE8dq7FIsrDS4Zdmdj/lG6qMcWh0FaS2LCp/xk2oU88/wFffkyqJb9KTSOpeFaSgJ/4p3CnT4=
+X-Received: by 2002:a05:6512:23a1:b0:530:e228:779c with SMTP id
+ 2adb3069b0e04-532eda6d816mr4514750e87.19.1723732262175; Thu, 15 Aug 2024
+ 07:31:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] drm/vkms: Add documentation
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
-References: <20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com>
- <20240814-google-clarifications-v1-3-3ee76d7d0c28@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-Autocrypt: addr=mcanal@igalia.com; keydata=
- xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
- H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
- hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
- GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
- rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
- s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
- GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
- pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
-In-Reply-To: <20240814-google-clarifications-v1-3-3ee76d7d0c28@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
+ <87jzgjnh9z.ffs@tglx> <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
+ <87ttfmm2ns.ffs@tglx> <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
+ <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
+ <87plqalyd4.ffs@tglx> <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
+In-Reply-To: <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 15 Aug 2024 20:00:50 +0530
+Message-ID: <CAK9=C2VHfPnYx8gMjodJNLu9+yR4KvuPXeQZiyZcbu1Mvze-0Q@mail.gmail.com>
+Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Louis,
+On Thu, Aug 15, 2024 at 7:02=E2=80=AFPM Samuel Holland
+<samuel.holland@sifive.com> wrote:
+>
+> Hi Thomas, Emil,
+>
+> On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
+> > On Thu, Aug 15 2024 at 05:14, Emil Renner Berthing wrote:
+> >> Emil Renner Berthing wrote:
+> >>> 6.11-rc3 + these reverts:  https://us01.z.antigena.com/l/Er4kZWDmvL5-=
+bLzHHJoZv0k71iwW2jCD5qNpiz0x0XdYY6oORF_nXh7U7jw6oubhi~32HI4i71jUW9v8~NvSvPe=
+UWrdYx3WJBr2GPDUjOu6LYPCOBfR2dVQuMWvlNj4tDjXFp3QEQAmeawZflD4JrIJjtSYIbKfe6v=
+-tgH7SEuHMeSSriU633Lv
+> >>> 6.11-rc3 + Samuel's patch: https://us01.z.antigena.com/l/EULtAYky6Zvg=
+qZ49KGS-WBsYTg~Ht1NoQtEYmUVb56ymS9jDagqYHLK90WDjnVt69GfB4IX5NSRQXmSfkNsTzB8=
+lJmFvDihHQmGrsCv9FzlorD9yGfXDlQ6rG6vmn5BNDwlipmssGaOGfh9yko8n9ArWR4TLhEf~f9=
+ODqme~NXXwA9DLLc9p
+> >>
+> >> I think this confirms what Charlie found here:
+> >> https://lore.kernel.org/linux-riscv/ZoydV7vad5JWIcZb@ghost/
+> >
+> > Yes. So the riscv timer is not working on this thing or it stops
+> > somehow.
+>
+> That's correct. With the (firmware) devicetree that Emil is using, the Op=
+enSBI
+> firmware does not have a timer device, so it does not expose the (optiona=
+l[1])
+> SBI time extension, and sbi_set_timer() does nothing.
 
-I'd make this patch more incremental. First, send me a patch based on
-drm-misc-next with the new documentation for the things that already
-exists. Then, when you add a new field, you add the documentation with
-it.
+OpenSBI uses platform specific M-mode timer (mtime and mtimecmp) to
+provide SBI time extension to Linux.
 
-On 8/14/24 05:47, Louis Chauvet wrote:
-> Add documentation around vkms_output and its initialization.
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->   drivers/gpu/drm/vkms/vkms_drv.h    | 81 ++++++++++++++++++++++++++++++++------
->   drivers/gpu/drm/vkms/vkms_output.c | 12 +++++-
->   2 files changed, 80 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 3028678e4f9b..8f6c9e67e671 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -147,29 +147,51 @@ struct vkms_color_lut {
->   };
->   
->   /**
-> - * vkms_crtc_state - Driver specific CRTC state
-> + * struct vkms_crtc_state - Driver specific CRTC state
-> + *
->    * @base: base CRTC state
->    * @composer_work: work struct to compose and add CRC entries
-> - * @n_frame_start: start frame number for computed CRC
-> - * @n_frame_end: end frame number for computed CRC
-> + *
-> + * @num_active_planes: Number of active planes
-> + * @active_planes: List containing all the active planes (counted by
-> + *  @num_active_planes). They should be stored in z-order.
-> + * @active_writeback: Current active writeback job
-> + * @gamma_lut: Look up table for gamma used in this CRTC > + * @crc_pending: Protected by @vkms_output.composer_lock.
-> + * @wb_pending: Protected by @vkms_output.composer_lock.
-> + * @frame_start: Protected by @vkms_output.composer_lock.
-> + * @frame_end: Protected by @vkms_output.composer_lock.
+The RISC-V privileged specification (v1.10 or higher) requires platform to
+provide a M-mode timer (mtime and mtimecmp).
 
-Apart from being protected by @vkms_output.composer_lock, what those
-variables represent?
+This platform not having any M-mode timer is yet another RISC-V spec
+violation by this platform.
 
->    */
->   struct vkms_crtc_state {
->   	struct drm_crtc_state base;
->   	struct work_struct composer_work;
->   
->   	int num_active_planes;
-> -	/* stack of active planes for crc computation, should be in z order */
->   	struct vkms_plane_state **active_planes;
->   	struct vkms_writeback_job *active_writeback;
->   	struct vkms_color_lut gamma_lut;
->   
-> -	/* below four are protected by vkms_output.composer_lock */
->   	bool crc_pending;
->   	bool wb_pending;
->   	u64 frame_start;
->   	u64 frame_end;
->   };
->   
-> +/**
-> + * struct vkms_output - Internal representation of all output components in vkms
-> + *
-> + * @crtc: Base crtc in drm
+Regards,
+Anup
 
-s/crtc/CRTC and s/drm/DRM
-
-> + * @encoder: DRM encoder used for this output
-> + * @connector: DRM connector used for this output
-> + * @wb_connecter: DRM writeback connector used for this output
-> + * @vblank_hrtimer:
-> + * @period_ns:
-
-Empty?
-
-> + * @composer_workq: Ordered workqueue for composer_work
-
-Add reference to composer_work
-
-> + * @lock: Lock used to project concurrent acces to the composer
-
-s/acces/access
-
-> + * @composer_enabled: Protected by @lock.
-> + * @composer_state:
-
-Empty?
-
-> + * @composer_lock: Lock used internally to protect @composer_state members
-> + */
->   struct vkms_output {
->   	struct drm_crtc crtc;
->   	struct drm_encoder encoder;
-> @@ -177,28 +199,38 @@ struct vkms_output {
->   	struct drm_writeback_connector wb_connector;
->   	struct hrtimer vblank_hrtimer;
->   	ktime_t period_ns;
-> -	/* ordered wq for composer_work */
->   	struct workqueue_struct *composer_workq;
-> -	/* protects concurrent access to composer */
->   	spinlock_t lock;
->   
-> -	/* protected by @lock */
->   	bool composer_enabled;
->   	struct vkms_crtc_state *composer_state;
->   
->   	spinlock_t composer_lock;
->   };
->   
-> -struct vkms_device;
-> -
-> +/**
-> + * struct vkms_config - General configuration for VKMS driver
-> + *
-> + * @writeback: If true, a writeback buffer can be attached to the CRTC
-> + * @cursor: If true, a cursor plane is created in the VKMS device
-> + * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
-> + * @dev: Used to store the current vkms device. Only set when the device is instancied.
-
-s/instancied/instantiated
-
-> + */
->   struct vkms_config {
->   	bool writeback;
->   	bool cursor;
->   	bool overlay;
-> -	/* only set when instantiated */
->   	struct vkms_device *dev;
->   };
->   
-> +/**
-> + * struct vkms_device - Description of a vkms device
-> + *
-> + * @drm - Base device in drm
-
-s/drm/DRM
-
-> + * @platform - Associated platform device
-> + * @output - Configuration and sub-components of the vkms device
-> + * @config: Configuration used in this vkms device
-> + */
->   struct vkms_device {
->   	struct drm_device drm;
->   	struct platform_device *platform;
-> @@ -206,6 +238,10 @@ struct vkms_device {
->   	const struct vkms_config *config;
->   };
->   
-> +/*
-> + * The following helpers are used to convert a member of a struct into its parent.
-> + */
-> +
->   #define drm_crtc_to_vkms_output(target) \
->   	container_of(target, struct vkms_output, crtc)
->   
-> @@ -218,12 +254,33 @@ struct vkms_device {
->   #define to_vkms_plane_state(target)\
->   	container_of(target, struct vkms_plane_state, base.base)
->   
-> -/* CRTC */
-> +/**
-> + * vkms_crtc_init() - Initialize a crtc for vkms
-> + * @dev: drm_device associated with the vkms buffer
-
-DRM device
-
-> + * @crtc: uninitialized crtc device
-> + * @primary: primary plane to attach to the crtc
-> + * @cursor plane to attach to the crtc
-
-s/crtc/CRTC everywhere
-
-> + */
-
-New line
-
->   int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
->   		   struct drm_plane *primary, struct drm_plane *cursor);
-> +/**
-> + * vkms_output_init() - Initialize all sub-components needed for a vkms device.
-> + *
-> + * @vkmsdev: vkms device to initialize
-> + * @possible_crtc_index: Crtc which can be attached to the planes. The caller must ensure that
-> + * possible_crtc_index is positive and less or equals to 31.
-> + */
->   
-
-Delete line
-
->   int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index);
->   
-> +/**
-> + * vkms_plane_init() - Initialize a plane
-> + *
-> + * @vkmsdev: vkms device containing the plane
-> + * @type: type of plane to initialize
-> + * @possible_crtc_index: Crtc which can be attached to the plane. The caller must ensure that
-
-s/crtc/CRTC everywhere
-
-> + * possible_crtc_index is positive and less or equals to 31.
-> + */
->   struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
->   				   enum drm_plane_type type, int possible_crtc_index);
->   
-> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index d42ca7d10389..36db2c8923cb 100644
-> --- a/drivers/gpu/drm/vkms/vkms_output.c
-> +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -21,6 +21,7 @@ static int vkms_conn_get_modes(struct drm_connector *connector)
->   {
->   	int count;
->   
-> +	/* Use the default modes list from drm */
-
-s/drm/DRM
-
->   	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
->   	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
->   
-> @@ -58,8 +59,13 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
->   	int writeback;
->   	unsigned int n;
->   
-> +	/*
-> +	 * Initialize used plane. One primary plane is required to perform the composition.
-> +	 *
-> +	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
-> +	 * composition.
-> +	 */
->   	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, possible_crtc_index);
-> -
->   	if (IS_ERR(primary))
->   		return PTR_ERR(primary);
->   
-> @@ -96,6 +102,10 @@ int vkms_output_init(struct vkms_device *vkmsdev, int possible_crtc_index)
->   		DRM_ERROR("Failed to init encoder\n");
->   		goto err_encoder;
->   	}
-> +	/*
-> +	 * This is an hardcoded value to select crtc for the encoder.
-> +	 * 1 here designate the first registered CRTC, the one allocated in [1]
-
-Where is [1]?
-
-Best Regards,
-- Maíra
-
-> +	 */
->   	encoder->possible_crtcs = 1;
->   
->   	ret = drm_connector_attach_encoder(connector, encoder);
-> 
+>
+> I wrote a patch (not submitted) to skip registering riscv_clock_event whe=
+n the
+> SBI time extension is unavailable, but this doesn't fully solve the issue
+> either, because then we have no clockevent at all when
+> check_unaligned_access_all_cpus() is called.
+>
+> How early in the boot process are we "required" to have a functional cloc=
+kevent?
+> Do we need to refactor check_unaligned_access_all_cpus() so it works on s=
+ystems
+> where the only clockevent is provided by a platform device?
+>
+> Regards,
+> Samuel
+>
+> [1] https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/intro.=
+adoc
+>
+> > Can you apply the debug patch below and check whether you see the
+> > 'J: ....' output at all and if so whether it stops at some point.
+> >
+> > Thanks,
+> >
+> >         tglx
+> >
+> > ---
+> > --- a/kernel/time/timer.c
+> > +++ b/kernel/time/timer.c
+> > @@ -2459,6 +2459,9 @@ static void run_local_timers(void)
+> >  {
+> >       struct timer_base *base =3D this_cpu_ptr(&timer_bases[BASE_LOCAL]=
+);
+> >
+> > +     if (!(jiffies & 0xFF))
+> > +             pr_info("J: %lx\n", jiffies);
+> > +
+> >       hrtimer_run_queues();
+> >
+> >       for (int i =3D 0; i < NR_BASES; i++, base++) {
+> >
+> >
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> >
+>
 
