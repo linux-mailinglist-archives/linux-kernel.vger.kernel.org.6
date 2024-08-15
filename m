@@ -1,50 +1,58 @@
-Return-Path: <linux-kernel+bounces-287597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A275C9529B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:16:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EE2952A0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D570C1C21F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:16:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B801A1C2158B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81761991AA;
-	Thu, 15 Aug 2024 07:15:51 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04FE17ADFC;
-	Thu, 15 Aug 2024 07:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4959F1917EB;
+	Thu, 15 Aug 2024 07:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="kDMz1WBB"
+Received: from mail-m1011.netease.com (mail-m1011.netease.com [154.81.10.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED69C13A26F;
+	Thu, 15 Aug 2024 07:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723706151; cv=none; b=E2Mn3e6pLyOqABSd7wJmRzh3hRTk3ShubbOmqwTfx3q0vL53Pud9JhUtzpIJVzorDvl9UepPX6Njauht8xldrjqgvX2K1FVdZUsWYJXRbv70VKxXAvHjmhXU0PyHnLrQ9o718nmyzXCVe99sIlDxJqmQHPbhq18ZTy6ipWiT/3k=
+	t=1723707743; cv=none; b=nCOvJsiLkAcKhz3UZkChIg3t3ezVa3LqDZNgc9y+4drCiMUqq8PdrHnGcCfZR1UsMC/a7++S8TpA1RxACuLwG8vK+g8217md4E+CbNGyAs1OD1ZrsP78iA2Q5IkONfugWY11KCOSgmB1h1mNFt5p104woaYkkCSI7jCXgexA2X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723706151; c=relaxed/simple;
-	bh=XwxX7wfC039v3HPoXz/Mn4ccT8GfN0n6+e/njz3hac8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ArnMXHMMAzftHHBfckPU/7OBe/84z18/31JiE7U9J7cnrVdaoepvMDjOOCtmY0TO9SKKmDZh5Pao+fGFXrHrbLXm8wU4ChX0PBfGrnyXOszLM+Xx5S5UgarNDUJs8j9YMsVk3Y/dmpbkjUlU4PzR5TYtdxI7kG/RaEzFq4bvyjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Dxi+oiq71mpIsUAA--.49242S3;
-	Thu, 15 Aug 2024 15:15:46 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowMDxG2chq71mlesUAA--.1465S4;
-	Thu, 15 Aug 2024 15:15:46 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] LoongArch: KVM: Invalid guest steal time address on vCPU reset
-Date: Thu, 15 Aug 2024 15:15:45 +0800
-Message-Id: <20240815071545.925867-3-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240815071545.925867-1-maobibo@loongson.cn>
-References: <20240815071545.925867-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1723707743; c=relaxed/simple;
+	bh=KJ8q/jikV/cKfiJf5tY+6LEtasPaMvlhZ3R2hwDIU5E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nUxt2MtyV0mYJvDeV/NRYmcUIfPH+/z8r5Yip2f0GkLBxEmyLbmkFe1QuUbR94duVxNdR+VOmltmgxhRUkCblp6MtkKQo+f0wTMMzLPKanHiyUBSxpz6JQzJHY+NwZfeWQ328K7BC9Abotbd2Y2G+xFJLKfIXjC6gu3TRNN64lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=kDMz1WBB; arc=none smtp.client-ip=154.81.10.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=kDMz1WBBsBfHQZV2b5BpKoJVgnMAPlDDoxOl9sEKiv2VY0x4ceyMeQc1A9V/UlbzV8GAR3R7ONPbfsL14bK6tDS1UeMzGaAaPsRyGAvzOHI9n2yd4g03yLnPbOFJyawP3CWSvYatoQCjkycm672VBrfcb0waRX3bzDJyEhNJsOo=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=nRi56lvQd1lb/9/v3V4eyAuo18seJA3Hj2x5njyEgPU=;
+	h=date:mime-version:subject:message-id:from;
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 157447E0193;
+	Thu, 15 Aug 2024 15:17:18 +0800 (CST)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Ye Zhang <ye.zhang@rock-chips.com>
+Subject: [PATCH v1 0/5] gpio: rockchip: Update the GPIO driver
+Date: Thu, 15 Aug 2024 15:16:46 +0800
+Message-Id: <20240815071651.3645949-1-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,75 +60,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxG2chq71mlesUAA--.1465S4
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhJH1YdHk8YTxkaHUlIT0tWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9154e5e70909cfkunm157447e0193
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NlE6FCo5CzI4NUM*QyoeKEkD
+	PkIKCTZVSlVKTElITEtNSUhCSE1CVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSkxLQzcG
 
-If paravirt steal time feature is enabled, there is percpu gpa address
-passed from guest vcpu and host modified guest memory space with this gpa
-address. When vcpu is reset normally, it will notify host and invalidate
-gpa address.
+GPIO driver support acpi and new version, set input direction in
+irq_request_resources, fix division error and debounce config error.
 
-However if VM is crashed and VMM reboots VM forcely, vcpu reboot
-notification callback will not be called in VM, host needs invalid the
-gpa address, else host will modify guest memory during VM reboots. Here it
-is invalidated from vCPU KVM_REG_LOONGARCH_VCPU_RESET ioctl interface.
+Ye Zhang (5):
+  gpio: rockchip: support acpi
+  gpio: rockchip: support GPIO_TYPE_V2_2
+  gpio: rockchip: Set input direction in irq_request_resources
+  gpio: rockchip: avoid division by zero
+  rockchip: gpio: fix debounce config error
 
-Also funciton kvm_reset_timer() is removed at vCPU reset stage, since SW
-emulated timer is only used in vCPU block state. When vCPU is removed
-from block waiting queue, kvm_restore_timer() is called and SW timer
-is cancelled. And timer register is cleared at VMM when vCPU is reset.
+ drivers/gpio/gpio-rockchip.c | 286 ++++++++++++++++++++++-------------
+ 1 file changed, 180 insertions(+), 106 deletions(-)
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/include/asm/kvm_vcpu.h | 1 -
- arch/loongarch/kvm/timer.c            | 7 -------
- arch/loongarch/kvm/vcpu.c             | 2 +-
- 3 files changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
-index c416cb7125c0..86570084e05a 100644
---- a/arch/loongarch/include/asm/kvm_vcpu.h
-+++ b/arch/loongarch/include/asm/kvm_vcpu.h
-@@ -76,7 +76,6 @@ static inline void kvm_restore_lasx(struct loongarch_fpu *fpu) { }
- #endif
- 
- void kvm_init_timer(struct kvm_vcpu *vcpu, unsigned long hz);
--void kvm_reset_timer(struct kvm_vcpu *vcpu);
- void kvm_save_timer(struct kvm_vcpu *vcpu);
- void kvm_restore_timer(struct kvm_vcpu *vcpu);
- 
-diff --git a/arch/loongarch/kvm/timer.c b/arch/loongarch/kvm/timer.c
-index bcc6b6d063d9..74a4b5c272d6 100644
---- a/arch/loongarch/kvm/timer.c
-+++ b/arch/loongarch/kvm/timer.c
-@@ -188,10 +188,3 @@ void kvm_save_timer(struct kvm_vcpu *vcpu)
- 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ESTAT);
- 	preempt_enable();
- }
--
--void kvm_reset_timer(struct kvm_vcpu *vcpu)
--{
--	write_gcsr_timercfg(0);
--	kvm_write_sw_gcsr(vcpu->arch.csr, LOONGARCH_CSR_TCFG, 0);
--	hrtimer_cancel(&vcpu->arch.swtimer);
--}
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index 16756ffb55e8..6905283f535b 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -647,7 +647,7 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
- 				vcpu->kvm->arch.time_offset = (signed long)(v - drdtime());
- 			break;
- 		case KVM_REG_LOONGARCH_VCPU_RESET:
--			kvm_reset_timer(vcpu);
-+			vcpu->arch.st.guest_addr = 0;
- 			memset(&vcpu->arch.irq_pending, 0, sizeof(vcpu->arch.irq_pending));
- 			memset(&vcpu->arch.irq_clear, 0, sizeof(vcpu->arch.irq_clear));
- 			break;
 -- 
-2.39.3
+2.34.1
 
 
