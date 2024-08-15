@@ -1,176 +1,126 @@
-Return-Path: <linux-kernel+bounces-288133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C41953647
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:54:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F77953652
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08041F22468
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8B8285DE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9DA1A01D4;
-	Thu, 15 Aug 2024 14:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB751A7048;
+	Thu, 15 Aug 2024 14:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OVF0g6vc"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="keJtk+kj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8256119FA9D
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D8C29CE6;
+	Thu, 15 Aug 2024 14:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723733633; cv=none; b=ImEo+35GzIu7ohcPf87IDmNmLwq1f5HoEa6GwA4c79sre+YtLtBWzzjFOkbQ6TDUMMT0960lTeYm1i6mQHeSksu/jZU5NizHf94mxL5Ojwr2/k1sMgD7kOGAsA8Tbgt5ecTTtzylvfb+OtwhUVN2oVbePoNDi27Ayqp5C/QyTH0=
+	t=1723733674; cv=none; b=sudSH4qgQYhqXoG5IQuoFDPgxQBVPrz+swxJgOcbqa599+vtNtrrKadNkF463DkibPXlxfoi61L6M92DmHqUv3w/Lo4ruRfGVn6hY3GZNMAQoFqiEQdRLdrSOQwLluy0mlrDDpTLvgmXYRXSIOCYAO0VCodsVwOdpeqUevBqTHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723733633; c=relaxed/simple;
-	bh=qQvDl/fJ+RiCLCjUUrxw1SWiTp9F0TJ4HgA2+x86/z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8fXcjf1iApp1TiLNT2Z3D8syQFYp6MMjJHmR+78wT9EStI14ssF5AphtD0fhKa86YsN4ZPUWEmQJEoMgK5dovVFaqIh/ZXau98emNh7pXWbcAPS5zXvPQmVYrSrpgcDq7dfysQPGgB4VCA3AftXt8y/PEN/e7VihGhNMZ3LC2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OVF0g6vc; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1e53da45-0892-42dc-b837-4b25640762d4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723733629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DraNZK5Ky/kwB6d6eSDBIZZ1zkb63f/vRfsT6Gn8yZ8=;
-	b=OVF0g6vcrjeJ3hmsSBaX5VY1roqQBJXK5+jjMPUpxxGtbm+dWx3l2nn15yYUE2ysGEtQI3
-	p7wcruJLKIa07K0ohc1HWbI4sSjj17wN2S4n8GpENZ0fY7bpir/XkmYSapPGL0i4Hu781w
-	OdOkX00dJvC6YGfqrHatGnTdrvvkXV4=
-Date: Thu, 15 Aug 2024 22:53:16 +0800
+	s=arc-20240116; t=1723733674; c=relaxed/simple;
+	bh=Y80oca1WAw5Erb23orjNO5DhhZNJNaQybRxhxYwGcRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtKpnObh4mJvPvCBCIbu9JRbU449MSqItZnd3QNokAbgET8U4g3K3qP0n3MyWeGZT87vfZoP/tLcXZMGY8FtDyRoMmw2ExddgRz4dfUcffyHZZ27WQaE/XqAUpy/DstMrxXSkf+pYKySO/pd6POt76AzX5qU4bgD+hP554oTrwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=keJtk+kj; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723733672; x=1755269672;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y80oca1WAw5Erb23orjNO5DhhZNJNaQybRxhxYwGcRo=;
+  b=keJtk+kja8CX7iV6c1X++5Jc9Pu1N4Z1CgW2O+R4jYT+O1Vx3e/Etym2
+   SRArrcK8EoxIBewWZM+zKafrTzAS1lkyuZfO6cNgt7Ota47AQDJnMZYaC
+   e3yP7/G22AFgxFiPbN/ShqKWqRxVMLH+wqgIZsJDutB/T4DUqR7RWbXE6
+   Pc3SZfWFisqR+KyLyHf7sCZ2qVOHl99U5e//pucyfpY8pxjZWyFjq9X2L
+   2aUWQRERBjgpH6Y/mHNDy219Xk8VkI8g1SfKy/wChXq9Fu4bXoX5wOKST
+   imLejtvJGITRJAULcl1q3PPBEfMGZc93sXmZvXqZy4a0K56nop7WuUH6H
+   A==;
+X-CSE-ConnectionGUID: T6ToLK4JQfGu9YgVuPmPiw==
+X-CSE-MsgGUID: zBnZ+k0JSf2zOo3d4I/DXw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="21964130"
+X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
+   d="scan'208";a="21964130"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 07:54:32 -0700
+X-CSE-ConnectionGUID: VReWhAggTk2ijNw8Rz8qsQ==
+X-CSE-MsgGUID: 7qaWQcjyQ5GOF/idup3UqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
+   d="scan'208";a="59220785"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 15 Aug 2024 07:54:27 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sebrs-0003hy-1A;
+	Thu, 15 Aug 2024 14:54:24 +0000
+Date: Thu, 15 Aug 2024 22:53:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Feng zhou <zhoufeng.zf@bytedance.com>, edumazet@google.com,
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	jolsa@kernel.org, dsahern@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	yangzhenze@bytedance.com, wangdongdong.6@bytedance.com,
+	zhoufeng.zf@bytedance.com
+Subject: Re: [PATCH] bpf: Fix bpf_get/setsockopt to tos not take effect when
+ TCP over IPv4 via INET6 API
+Message-ID: <202408152058.YXAnhLgZ-lkp@intel.com>
+References: <20240814084504.22172-1-zhoufeng.zf@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for
- non-semaphore eventfd
-To: Jens Axboe <axboe@kernel.dk>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Dylan Yudaken <dylany@fb.com>,
- David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>,
- Dave Young <dyoung@redhat.com>, kernel test robot <lkp@intel.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240811085954.17162-1-wen.yang@linux.dev>
- <w7ldxi4jcdizkefv7musjwxblwu66pg3rfteprfymqoxaev6by@ikvzlsncihbr>
- <f21b635e-3bd7-48c3-b257-dde1b9f49c6c@linux.dev>
- <096fafc8-f3fa-42d2-a374-101d4facbe86@kernel.dk>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <096fafc8-f3fa-42d2-a374-101d4facbe86@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814084504.22172-1-zhoufeng.zf@bytedance.com>
 
+Hi Feng,
 
+kernel test robot noticed the following build errors:
 
-On 2024/8/15 00:50, Jens Axboe wrote:
-> On 8/14/24 10:15 AM, Wen Yang wrote:
->>
->>
->> On 2024/8/11 18:26, Mateusz Guzik wrote:
->>> On Sun, Aug 11, 2024 at 04:59:54PM +0800, Wen Yang wrote:
->>>> For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
->>>> value provided in its buffer to the counter, while a read (2) returns the
->>>> 8-byte value containing the value and resetting the counter value to 0.
->>>> Therefore, the accumulated value of multiple writes can be retrieved by a
->>>> single read.
->>>>
->>>> However, the current situation is to immediately wake up the read thread
->>>> after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
->>>> overhead. By introducing a configurable rate limiting mechanism in
->>>> eventfd_write, these unnecessary wake-up operations are reduced.
->>>>
->>>>
->>> [snip]
->>>
->>>>      # ./a.out  -p 2 -s 3
->>>>      The original cpu usage is as follows:
->>>> 09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>>> 09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>> 09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>>
->>>> 09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>>> 09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>> 09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>>
->>>> 09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>>> 09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>> 09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>>
->>>> Then enable the ratelimited wakeup, eg:
->>>>      # ./a.out  -p 2 -s 3  -r1000 -c2
->>>>
->>>> Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
->>>> 10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>>> 10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>> 10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
->>>>
->>>> 10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>>> 10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>> 10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
->>>>
->>>> 10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>>> 10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
->>>> 10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
->>>>
->>>>
->>>
->>> Where are these stats from? Is this from your actual program you coded
->>> the feature for?
->>>
->>> The program you inlined here does next to nothing in userspace and
->>> unsurprisingly the entire thing is dominated by kernel time, regardless
->>> of what event rate can be achieved.
->>>
->>> For example I got: /a.out -p 2 -s 3  5.34s user 60.85s system 99% cpu 66.19s (1:06.19) total
->>>
->>> Even so, looking at perf top shows me that a significant chunk is
->>> contention stemming from calls to poll -- perhaps the overhead will
->>> sufficiently go down if you epoll instead?
->>
->> We have two threads here, one publishing and one subscribing, running
->> on CPUs 2 and 3 respectively. If we further refine and collect
->> performance data on CPU 2, we will find that a large amount of CPU is
->> consumed on the spin lock of the wake-up logic of event write, for
->> example:
-> 
-> This is hardly surprising - you've got probably the worst kind of
-> producer/consumer setup here, with the producer on one CPU, and the
-> consumer on another. You force this relationship by pinning both of
-> them. Then you have a queue in between, and locking that needs to be
-> acquired on both sides.
-> 
+[auto build test ERROR on bpf-next/master]
+[also build test ERROR on bpf/master net-next/main net/main linus/master v6.11-rc3 next-20240815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thank you for pointing it out.
-We bind the CPU here to highlight this issue.
-In fact, setting cpumask to -1 still remains the same:
+url:    https://github.com/intel-lab-lkp/linux/commits/Feng-zhou/bpf-Fix-bpf_get-setsockopt-to-tos-not-take-effect-when-TCP-over-IPv4-via-INET6-API/20240814-231142
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20240814084504.22172-1-zhoufeng.zf%40bytedance.com
+patch subject: [PATCH] bpf: Fix bpf_get/setsockopt to tos not take effect when TCP over IPv4 via INET6 API
+config: openrisc-defconfig (https://download.01.org/0day-ci/archive/20240815/202408152058.YXAnhLgZ-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240815/202408152058.YXAnhLgZ-lkp@intel.com/reproduce)
 
-  ./a.out  -p -1 -s -1
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408152058.YXAnhLgZ-lkp@intel.com/
 
-      9.27%  [kernel]       [k] _raw_spin_lock_irq
-      6.23%  [kernel]       [k] vfs_write
+All errors (new ones prefixed by >>):
 
-And another test program using libzmq also did not bind the CPU:
-https://github.com/taskset/tests/blob/master/src/test.c
+   or1k-linux-ld: net/core/filter.o: in function `__bpf_getsockopt':
+>> filter.c:(.text+0xa69c): undefined reference to `is_tcp_sock_ipv6_mapped'
+>> filter.c:(.text+0xa69c): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `is_tcp_sock_ipv6_mapped'
+   or1k-linux-ld: net/core/filter.o: in function `__bpf_setsockopt':
+   filter.c:(.text+0xd660): undefined reference to `is_tcp_sock_ipv6_mapped'
+   filter.c:(.text+0xd660): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `is_tcp_sock_ipv6_mapped'
 
-We can indeed solve this problem in user mode by using methods such as 
-shared memory, periodic data reading, atomic variables, etc. instead of 
-eventfd.
-
-But since eventfd has already provided *NON-SEMAPHORE* , could you also 
-guide us to further utilize it and make it more comprehensive?
-
-Especially linux is increasingly being used in automotive scenarios.
-
---
-Best wishes,
-Wen
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
