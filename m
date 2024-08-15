@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-288177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23789536E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:17:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150CA9536E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314AB1C23610
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D3C28CD98
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EBC1ABEBA;
-	Thu, 15 Aug 2024 15:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F4B1AED2B;
+	Thu, 15 Aug 2024 15:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkMkBcgB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAp/N2p5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1710519F49B;
-	Thu, 15 Aug 2024 15:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEE91AD405;
+	Thu, 15 Aug 2024 15:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723735070; cv=none; b=XzhLuGEb9iAiB2kDzYdDJ4GO5hCGZRHaOUyVRFX91bSQXH5ndNfMjckjapAurPmNHPASVeQuWnLetpqyy3QNjODJ3vERP3FmJ2qbstTTQJsGtkhU3GMFr6mgw2EZFjNooGt346Cmx/6CRSsiABTQXE4tWFG+6pds1SYNf9YB2qE=
+	t=1723735084; cv=none; b=cQ0YImL0Q2xt4UvDahLZGO62Z1aGCUY8jqp7YJQ0Sv+cNS/KpPQRvrVstDMX+KuudWpNCCqpsknNCpdXPs29Dxi8rqryiSzmnCtAX8DWRxIsDHt+I0eNutyr0eFcAj+64lrpTtT1BaTkOKKBaDvJKeNeud7YUypM5IGwGLaMgaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723735070; c=relaxed/simple;
-	bh=Eh+3dI9QYcV4aXS/Haj8Qthw9TJbckiHfHF7kk6QLlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rI/SO0iqLRuWNgYdaUzyXKIRL95LTKtA2ag88YllJetOLtbIcigomhVbdubm7vYcdwE2fFohrBZWrMCUqtvHxAu686zOycT0H7Q9m4g0iV6n+DOWvXqlu+9q5i7eNwzBgQQjcYiy7500ZzFLKwYoH1BI3sJGhsAG04Ctn23UWAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkMkBcgB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC2AC32786;
-	Thu, 15 Aug 2024 15:17:46 +0000 (UTC)
+	s=arc-20240116; t=1723735084; c=relaxed/simple;
+	bh=5tVXjoVIwxL4BMXr9WNsqyyJtiNaQdtzEYk2V1zunDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bnpZS9Tlu3acHUP1CSWYCALze71t4/3mTE+OLD2SQwfVcKum9r195rLhtCS5Oyl4R5GLctx3kTMu5uCwI93YqFx6yWpDHaYOPwIckmzKH+infIR2OwjOIRL6ubkp/uWLJv7b7X3l+LlFFnXZdnv04+Ha/2/bna8Z36vDhnCZHJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAp/N2p5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1725FC4AF0F;
+	Thu, 15 Aug 2024 15:18:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723735069;
-	bh=Eh+3dI9QYcV4aXS/Haj8Qthw9TJbckiHfHF7kk6QLlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rkMkBcgBHp5hFSpGS1WLK3TjCWQMtDw9ZwumXUf5IxiL6NUxRvJ/EvUqAqYC0Sr7X
-	 OkoBRkXW5FBpVDkMhMgZO+t76ZW1QItnebpdp4r3yVElbG3tUj+UYycWGYsw8j89Me
-	 N8H0QSoSKsjdROgz/gNCm3cX776x9U5fzFqwbwyGMdj9e3w2rwLOEYEetWZiLkkFSv
-	 ZfNVG8WpKQ0dN43FBMkpZolYi30cxSz28KZB2hzl4wNmFJ29G49QMKo4kdp4crCZNC
-	 edoneoUT3EdCIYpw4gkbbuzAkfVqpHIyWzxoeoovTt1sp3f8WbYNMfzEFDdukAYvm5
-	 JjXfUyzk44Q/A==
-Date: Thu, 15 Aug 2024 16:17:44 +0100
-From: Simon Horman <horms@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>, Michal Simek <michal.simek@amd.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Ariane Keller <ariane.keller@tik.ee.ethz.ch>
-Subject: Re: [PATCH net-next 1/4] net: xilinx: axienet: Always disable
- promiscuous mode
-Message-ID: <20240815151744.GL632411@kernel.org>
-References: <20240812200437.3581990-1-sean.anderson@linux.dev>
- <20240812200437.3581990-2-sean.anderson@linux.dev>
- <20240815145832.GG632411@kernel.org>
- <9d67d2b0-e4bd-466a-ad60-e40d4b1fc4e7@linux.dev>
+	s=k20201202; t=1723735084;
+	bh=5tVXjoVIwxL4BMXr9WNsqyyJtiNaQdtzEYk2V1zunDE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NAp/N2p56Ri97aK5haDod/vrIqxqCRdInU9HAAbcQ507fXyERX4rBAeJvlLp3xJJb
+	 yVfqfs/UuZHZcMxsFq7SS2Dl4W/TGJApzzFp39P3QdRWmAoTajr4bSFtB7gdSsHthI
+	 gBFvir0bg9BR4rJqdaNrWq3XL2jyQ6AsQokcSGLDfHVr9qRw2iqPab9twhvhw9DjxD
+	 gpUG9mFy2ai72xkXYRWL1D57H3Y7Z1fzOorWQHXoAILQoNht0AK8NdkK+kf5QRGSvI
+	 pWGuaTJ2k9ekkwg5hql6K5LY9gBRYSQ/UYjmtQbE1Nx1Vd1AbI9sfbY0SGx5R6Hdgk
+	 LQDtAWE/zviXQ==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so13378321fa.3;
+        Thu, 15 Aug 2024 08:18:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW12reKmz31HA+5BJUkIwgJBSzzazKHZzN/yu+T0p3mbScUkL3+SZtqoEZ+wNHkTcGZjV2ZNK3CfIWsScM0i41PBhKVsBVNLYO2hCLLCWCWV8DZQGN003WU4asA2U84f6CK1lJ85GQskRhklyRu7CS+EpMYKBTb7vGUhkUVm7NmQb9cIewa
+X-Gm-Message-State: AOJu0YyPErCMw3V9d3HdICht7jgXA2bDyaKHPVB9AKrZY2qboaFl4K31
+	14bEvH65SYBnORzwagJsTWjShS6k8hGP/P5U8q+6FQhFjMMsVHyFNdnmT9zeWrAuWF1bAyEOH1A
+	Mzi18moTjpX8bwfPEYarz1QAP9Q==
+X-Google-Smtp-Source: AGHT+IEXBIOuc3+RdpJo9SkRa99F7ys6LHSNNh10wDHMJa72hTN/C4a2yVCWj7kEom8UuIfOX+v3gmT+ViuJb7yQBKU=
+X-Received: by 2002:a05:6512:687:b0:52c:d27b:ddcb with SMTP id
+ 2adb3069b0e04-532eda8e7ecmr4893752e87.3.1723735082365; Thu, 15 Aug 2024
+ 08:18:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9d67d2b0-e4bd-466a-ad60-e40d4b1fc4e7@linux.dev>
+References: <20240814185140.4033029-1-Frank.Li@nxp.com> <20240814211345.GA4028598-robh@kernel.org>
+ <20240814214902.GA4101180-robh@kernel.org> <Zr1hZbAq/jrwyNQq@lizhi-Precision-Tower-5810>
+In-Reply-To: <Zr1hZbAq/jrwyNQq@lizhi-Precision-Tower-5810>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 15 Aug 2024 09:17:48 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJs+aFpOLwWHi32pwAy2Q8N7qK43TuTmEJQn-BqXKwyAw@mail.gmail.com>
+Message-ID: <CAL_JsqJs+aFpOLwWHi32pwAy2Q8N7qK43TuTmEJQn-BqXKwyAw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] dt-bindings: input: touchscreen: convert ads7846.txt
+ to yaml
+To: Frank Li <Frank.li@nxp.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Marek Vasut <marex@denx.de>, Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 11:14:41AM -0400, Sean Anderson wrote:
-> On 8/15/24 10:58, Simon Horman wrote:
-> > On Mon, Aug 12, 2024 at 04:04:34PM -0400, Sean Anderson wrote:
-> >> If prmiscuous mode is disabled when there are fewer than four multicast
-> >> addresses, then it will to be reflected in the hardware. Fix this by
-> >> always clearing the promiscuous mode flag even when we program multicast
-> >> addresses.
-> >> 
-> >> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
-> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> >> ---
-> >> 
-> >>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >> 
-> >> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> >> index ca04c298daa2..e664611c29cf 100644
-> >> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> >> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> >> @@ -451,6 +451,10 @@ static void axienet_set_multicast_list(struct net_device *ndev)
-> >>  	} else if (!netdev_mc_empty(ndev)) {
-> >>  		struct netdev_hw_addr *ha;
-> >>  
-> >> +		reg = axienet_ior(lp, XAE_FMI_OFFSET);
-> >> +		reg &= ~XAE_FMI_PM_MASK;
-> >> +		axienet_iow(lp, XAE_FMI_OFFSET, reg);
-> >> +
-> > 
-> > Hi Sean,
-> > 
-> > I notice that this replicates code in another part of this function.
-> > And that is then factored out into common code as part of the last
-> > patch of this series.
-> > 
-> > I guess that it is in the wash, but perhaps it would
-> > be nicer to factor out the common promisc mode setting code
-> > as part of this patch.
-> > 
-> > Otherwise, this LGTM.
-> 
-> I thought about doing that, but it would have required changing the
-> indentation of ~10 lines and I thought it would be easier to review
-> the patch without that noise.
+On Wed, Aug 14, 2024 at 8:01=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Wed, Aug 14, 2024 at 03:49:02PM -0600, Rob Herring wrote:
+> > On Wed, Aug 14, 2024 at 03:13:45PM -0600, Rob Herring wrote:
+> > > On Wed, Aug 14, 2024 at 02:51:35PM -0400, Frank Li wrote:
+> > > > Convert binding doc ads7846.txt to yaml format.
+> > > > Additional change:
+> > > > - add ref to touchscreen.yaml and spi-peripheral-props.yaml.
+> > > > - use common node name touchscreen.
+> > > >
+> > > > Fix below warning: arch/arm64/boot/dts/freescale/imx8mm-var-som-sym=
+phony.dtb: touchscreen@0:
+> > > >   ti,x-min: b'\x00}' is not of type 'object', 'array', 'boolean', '=
+null'
+> > > >
+> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > ---
+> > > > There are warning:
+> > > > Documentation/devicetree/bindings/input/touchscreen/ti,ads7843.yaml=
+: properties:ti,x-plate-ohms: '$ref' should not be valid under {'const': '$=
+ref'}
+> > > >   hint: Standard unit suffix properties don't need a type $ref
+> > > >
+> > > > I don't know how to fix it. ti,x-plate-ohms is 16bit, but default i=
+t is
+> > > > uint32
+> > >
+> > > It's going to have to be a special case in dtschema. I'll work on a f=
+ix.
+> >
+> > Should be fixed now in dtschema main branch.
+>
+> Strange, dt_binding_check can pass. but
+>
+>  make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- -j8 CHECK_DTBS=3Dy =
+imx8mm-var-som-symphony.dtb
+>   UPD     include/config/kernel.release
+>   DTC [C] arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dtb
+> arch/arm64/boot/dts/freescale/imx8mm-var-som-symphony.dtb: touchscreen@0:=
+ ti,x-plate-ohms: 180 is not of type 'array'
+>         from schema $id: http://devicetree.org/schemas/property-units.yam=
+l#
+>
+> anything wrong?
 
-Sure, I was also wrestling with that in my mind.
-I think we can stick with what you have :)
+Now fixed.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+Rob
 
