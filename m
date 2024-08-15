@@ -1,191 +1,100 @@
-Return-Path: <linux-kernel+bounces-288449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997CA953A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:36:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB05953A3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47114282E0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C781F21A10
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8505264A8F;
-	Thu, 15 Aug 2024 18:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ABC71747;
+	Thu, 15 Aug 2024 18:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n79Jc737"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsmA154B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB21C3A8CB;
-	Thu, 15 Aug 2024 18:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A2164A8F;
+	Thu, 15 Aug 2024 18:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723746997; cv=none; b=d1MGn2bom8nB8wO07kZLKSb6uZyeUfxMKkvYbch1UbfNRMBT411P12ZZDxl5HABgLVohDdxq5B0LQC+VSlx7mXJshPx5OsQeHchL0w33pP8D1DX2PMCoG4Ps2N5Fgee6ZSvqUUQ+hxA4u13wZPIKPTGijUVhuP1XUDjR/zgui7Q=
+	t=1723747039; cv=none; b=VWkQyjIRLN3q5eAMGUFTO3VsBIg9j1RMcJ0yYjOkb9pLslqvtf3E8fxVFZbEgMfS6nzCldG2JvgqYzsw219b0Y+gqCMyESXqJxsJ5NEHPU4lhct9ghqzOgE2/SDFws7/KndEOEYpfJL+P0osQr/jtllZWfkj+69VxJr1kZLpxn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723746997; c=relaxed/simple;
-	bh=+jqHWnrAC2O9xkqoGcAs5UI8rRiAGafwD+uBErFpfQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dlAfLLdWKSYPGGU71nsv4RvGOtXJDAEqe46A50XIe68Rxnt1uytQXOwcllkYsiroiU3ZMtNO4SeINtfocjlgEwy7NsC+SeKIrlJDPCMZh3ZK4z7+dWXtqD69G08Lhj6vMU9nkPt0K/CXWdbgRRcTZU8RgiisbjfrdPuTNbjY0N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n79Jc737; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3ABC32786;
-	Thu, 15 Aug 2024 18:36:35 +0000 (UTC)
+	s=arc-20240116; t=1723747039; c=relaxed/simple;
+	bh=aMf3pjfpTnX8z327HHQryX/4jONEwof5psCMcESWwxI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=R8WrE4oNFAkaA5Xj/JdAeu6sTC6cIj9CunMzf6pIWvy7jkd1cwj01HXx5HhumfVmzBjsUKP1OR8C601gzCr+SamjniOSR2fnYMnlQHtOs58na67OamaRInsuxU7AV8bwWyCBVCHEJ1xw10MY/ybZM+Vab1zNwWJJY2H1LrgtaVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsmA154B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F103C4AF0E;
+	Thu, 15 Aug 2024 18:37:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723746997;
-	bh=+jqHWnrAC2O9xkqoGcAs5UI8rRiAGafwD+uBErFpfQc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=n79Jc737FXakegcozT8/VHwb/i3TUEX58hqd7ItVtzRsD2mnRK4HaUZEKTK4VQ3pS
-	 /EYAAvNx9pUUG+pA8/O0HvYj8tDySrit+h16/ODNTRDLZqBgLY9scaEf0u3NET7o9F
-	 lIEnsgwC/D4f3ZVIl/eHqzW8+bvrYcXvfwvPea/wbm1qyiqKCTb/tFEN0HBLohjM4Y
-	 U8T7PAoXAIycnEFYyA1ws+pc4xEZosU2G7bOpMvArlObtZzbIMnXPynZ6cnYxTCZFj
-	 MKrxy/78xynyXAMY94MyPa9wwgrFFiruuHA9fd9lzeYTJz53917DP9FQH2LAoQKvJI
-	 hLlzeMQ04+RwA==
-Date: Thu, 15 Aug 2024 12:36:33 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] wifi: mt76: Avoid multiple
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Zr5KsZugaEXrApQJ@elsanto>
+	s=k20201202; t=1723747039;
+	bh=aMf3pjfpTnX8z327HHQryX/4jONEwof5psCMcESWwxI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=AsmA154BqQHKlCyLqkllG8Xwe9v3J7vaFKoxn5adE1NpPXD6mp2JoBX8Hjioyu1Gs
+	 P4SWvAp3ZJzrCyG0yL2/6X/GZvhjUMv1lwgS2VSBaZ8GewJWOy+/NGBTWSacMhAyrZ
+	 zzPgNh3pCiNDzAmgtF2Ky+Y60/21RD7CUKtHBEOqQLwdSop2nxHOg3M11HQ9ahSeCJ
+	 dspq2B76Yca/vBjBgxQNeBhnC/1olkDk62s4PWwTSKfCTFHzMyIgVyXC5U4zczRpK4
+	 7OsEA+0TCkhCrdhoME/RWIn5+0VQBlPaVw4CrTN1xRJvaHg+iMh22SQHsXTbiMUwKe
+	 nA4eyCWu3lDfw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 Aug 2024 21:37:15 +0300
+Message-Id: <D3GPBS12YXTZ.3M7RZ3EGDHN8E@kernel.org>
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Dmitrii Kuvaiskii"
+ <dmitrii.kuvaiskii@intel.com>
+Cc: <dave.hansen@linux.intel.com>, <haitao.huang@linux.intel.com>,
+ <kai.huang@intel.com>, <kailun.qin@intel.com>,
+ <linux-kernel@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+ <mona.vij@intel.com>, <reinette.chatre@intel.com>, <stable@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <D2RQZSM3MMVN.8DFKF3GGGTWE@kernel.org>
+ <20240812082543.3119659-1-dmitrii.kuvaiskii@intel.com>
+ <D3GP9N3N7TUE.38H37K436OD50@kernel.org>
+In-Reply-To: <D3GP9N3N7TUE.38H37K436OD50@kernel.org>
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Thu Aug 15, 2024 at 9:34 PM EEST, Jarkko Sakkinen wrote:
+> On Mon Aug 12, 2024 at 11:25 AM EEST, Dmitrii Kuvaiskii wrote:
+> > On Wed, Jul 17, 2024 at 01:38:59PM +0300, Jarkko Sakkinen wrote:
+> >
+> > > Ditto.
+> >
+> > Just to be sure: I assume this means "Fixes should be in the head of th=
+e
+> > series so please reorder"? If yes, please see my reply in the other ema=
+il
+> > [1].
+>
+> OK, based on your earlier remarks and references I agree with you.
+>
+> >
+> > [1] https://lore.kernel.org/all/20240812082128.3084051-1-dmitrii.kuvais=
+kii@intel.com/
+> >
+> > --
+> > Dmitrii Kuvaiskii
+>
+> I think for future and since we have bunch of state flags, removing
+> that "e.g." is worth of doing. Often you need to go through all of
+> the flags to remind you how they interact, and at that point "one
+> vs many" does help navigating the complexity.
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of multiple other structs, we use the `struct_group_tagged()`
-helper to create a new tagged `struct mt76_connac2_mcu_rxd_hdr`.
-This structure groups together all the members of the flexible
-`struct mt76_connac2_mcu_rxd` except the flexible array.
+Actually every time there's a patch that has anything to do with
+the state flags I go through all  of em as a reminder. Might seem
+like irrelevant detail but really is not (and neither unnecessarry
+nitpicking). All small clues speed up that process or can mislead.
 
-As a result, the array is effectively separated from the rest of the
-members without modifying the memory layout of the flexible structure.
-We then change the type of the middle struct members currently causing
-trouble from `struct mt76_connac2_mcu_rxd` to `struct
-mt76_connac2_mcu_rxd_hdr`.
-
-We also want to ensure that when new members need to be added to the
-flexible structure, they are always included within the newly created
-tagged struct. For this, we use `static_assert()`. This ensures that the
-memory layout for both the flexible structure and the new tagged struct
-is the same after any changes.
-
-This approach avoids having to implement `struct mt76_connac2_mcu_rxd_hdr`
-as a completely separate structure, thus preventing having to maintain
-two independent but basically identical structures, closing the door
-to potential bugs in the future.
-
-So, with these changes, fix the following warnings:
-
-drivers/net/wireless/mediatek/mt76/mt7915/mcu.h:32:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/mediatek/mt76/mt7915/mcu.h:40:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/mediatek/mt76/mt7915/mcu.h:49:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/mediatek/mt76/mt7915/mcu.h:58:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- .../wireless/mediatek/mt76/mt76_connac_mcu.h  | 25 +++++++++++--------
- .../net/wireless/mediatek/mt76/mt7915/mcu.h   |  8 +++---
- 2 files changed, 19 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
-index 4242d436de26..16689aefa227 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt76_connac_mcu.h
-@@ -115,21 +115,26 @@ struct mt76_connac2_mcu_uni_txd {
- } __packed __aligned(4);
- 
- struct mt76_connac2_mcu_rxd {
--	__le32 rxd[6];
-+	/* New members MUST be added within the struct_group() macro below. */
-+	struct_group_tagged(mt76_connac2_mcu_rxd_hdr, hdr,
-+		__le32 rxd[6];
- 
--	__le16 len;
--	__le16 pkt_type_id;
-+		__le16 len;
-+		__le16 pkt_type_id;
- 
--	u8 eid;
--	u8 seq;
--	u8 option;
--	u8 rsv;
--	u8 ext_eid;
--	u8 rsv1[2];
--	u8 s2d_index;
-+		u8 eid;
-+		u8 seq;
-+		u8 option;
-+		u8 rsv;
-+		u8 ext_eid;
-+		u8 rsv1[2];
-+		u8 s2d_index;
-+	);
- 
- 	u8 tlv[];
- };
-+static_assert(offsetof(struct mt76_connac2_mcu_rxd, tlv) == sizeof(struct mt76_connac2_mcu_rxd_hdr),
-+	      "struct member likely outside of struct_group_tagged()");
- 
- struct mt76_connac2_patch_hdr {
- 	char build_date[16];
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
-index b41ac4aaced7..49476a4182fd 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/mcu.h
-@@ -29,7 +29,7 @@ struct mt7915_mcu_thermal_ctrl {
- } __packed;
- 
- struct mt7915_mcu_thermal_notify {
--	struct mt76_connac2_mcu_rxd rxd;
-+	struct mt76_connac2_mcu_rxd_hdr rxd;
- 
- 	struct mt7915_mcu_thermal_ctrl ctrl;
- 	__le32 temperature;
-@@ -37,7 +37,7 @@ struct mt7915_mcu_thermal_notify {
- } __packed;
- 
- struct mt7915_mcu_csa_notify {
--	struct mt76_connac2_mcu_rxd rxd;
-+	struct mt76_connac2_mcu_rxd_hdr rxd;
- 
- 	u8 omac_idx;
- 	u8 csa_count;
-@@ -46,7 +46,7 @@ struct mt7915_mcu_csa_notify {
- } __packed;
- 
- struct mt7915_mcu_bcc_notify {
--	struct mt76_connac2_mcu_rxd rxd;
-+	struct mt76_connac2_mcu_rxd_hdr rxd;
- 
- 	u8 band_idx;
- 	u8 omac_idx;
-@@ -55,7 +55,7 @@ struct mt7915_mcu_bcc_notify {
- } __packed;
- 
- struct mt7915_mcu_rdd_report {
--	struct mt76_connac2_mcu_rxd rxd;
-+	struct mt76_connac2_mcu_rxd_hdr rxd;
- 
- 	u8 band_idx;
- 	u8 long_detected;
--- 
-2.34.1
-
+BR, Jarkko
 
