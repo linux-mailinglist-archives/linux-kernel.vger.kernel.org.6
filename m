@@ -1,194 +1,259 @@
-Return-Path: <linux-kernel+bounces-288170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5929536D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:14:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5639536D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A351D1F2173E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFEB1F21595
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C34F1AD408;
-	Thu, 15 Aug 2024 15:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109141AE03E;
+	Thu, 15 Aug 2024 15:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gOwnxxVT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K72e86Xw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e+u0tcs7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NvshA/QO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l1HctDxS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4A319F49C;
-	Thu, 15 Aug 2024 15:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9371AD9FB;
+	Thu, 15 Aug 2024 15:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723734868; cv=none; b=s9hNh01eCo5Zk6jEOorMxlWVGxRJJL0Bnm06nJmuxPpI1QB5BoNyYFKh2k6r2T6dr/3FfEqToqxhSEnJYL9pBR19wrRiK/ZH+nbshCvmaZKFnA8uSPV4idpdSyOK/142cBEhc/WaHz/6Bi41/rOo8zBnKHPxyf2+25SqpRcp74w=
+	t=1723734873; cv=none; b=P8fEAp8jEICGfKuAIya/ZdzxCFZwhzW/W0Slb6bfdEp2dVOdBT9AXWCWdLuLRbECeVRDKQtQgJ7vsS624z2tZ0C1SiFp1Kd9jGioA4GZd0M6saqbiKZGnSSSwEHGWowxrNYKIifiUiImg3fzQXySAiN4k/x/edOJdDwnZo2DlAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723734868; c=relaxed/simple;
-	bh=IhFK3y645P0bDgxIyMoMcTzFNThrkvebX7nJA29NB4M=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=TpITod6RzaEro2CD8JJ7+VyTKs/Qyg6wJV6p5vBROirwigTE6p/1v/V404dTtu+qkanAzxBPq/ro74jqXaUn1gWbZGHWS5uJnUWR0tPhUeyLTw8pVRH0vOcpzHfz25aqLMz5Kn4kySp+aFq8NRABPbTrcPRi2rqmAINyT94ltIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gOwnxxVT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K72e86Xw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e+u0tcs7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NvshA/QO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1E8C420029;
-	Thu, 15 Aug 2024 15:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723734864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=2cKgRGJO5WlplHfZHnhQEmWHeHizXxXj0Q4z6lX7e9A=;
-	b=gOwnxxVT2ZiPOAkUIU9FQd9F33yY3d9AxTY2QJ9GTU4dGREJh01h7J/K6XJclP5scGbIOI
-	1go79LdtWI6g+ZpbQhjoMKbt4kQUqvWs3aECtmLBRr+3wZlQRo4ty7ogycco1yY56xd6uX
-	ZLe4Mqi+WzhoIjxOKT50qZG+oKf3UZs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723734864;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=2cKgRGJO5WlplHfZHnhQEmWHeHizXxXj0Q4z6lX7e9A=;
-	b=K72e86XwRyyx0uiVqxiQKq6IjSHilTHdH9ZT9s/CnLg0QscBBexmSTIrCH8ZJlXQx8fCzf
-	FfqVSCpCtdg0B+DQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723734863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=2cKgRGJO5WlplHfZHnhQEmWHeHizXxXj0Q4z6lX7e9A=;
-	b=e+u0tcs7HVTuvOVwvhjl0fWtnaFDVcr2hDhBHUBI7xm0+8BTCCWPZEKzMJkH3PQL2w46q6
-	yvv5dz176qGkfY+Bd6y5H2PEfTAc2TgoBDdwAiw1ntFP4YqqGLiV1OdAdcBQnF1CEekWJI
-	GETs3zB68k3FPqoAmqyMgXxSrazXA+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723734863;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=2cKgRGJO5WlplHfZHnhQEmWHeHizXxXj0Q4z6lX7e9A=;
-	b=NvshA/QOTQCdVb7tCPgE/aBIccEydsqfbUJtnzY46ej68fcmwDEwxTUf7dlcN7MD56b08e
-	/8bchd9rWW4FFtDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0793C13983;
-	Thu, 15 Aug 2024 15:14:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9/mlAU8bvmYHCwAAD6G6ig
-	(envelope-from <tbogendoerfer@suse.de>); Thu, 15 Aug 2024 15:14:23 +0000
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 net] ip6_tunnel: Fix broken GRO
-Date: Thu, 15 Aug 2024 17:14:16 +0200
-Message-Id: <20240815151419.109864-1-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1723734873; c=relaxed/simple;
+	bh=TkWtmJo2fyPQMKHJo/JF+zkTx72wfVFZQ/qGKU2GSPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=elZdXcb2cRRHLG0hFQBCHPw5SayVHtxd6alC9IPHc4PzfKrGW+F11y408yT2g1AOMQdmw7v9gw6PxpcUn7lak6jq2kUd+M1Nl3feosHYUIkFSvdLLMq4mqamsZJxtFxrQpwlXTXo2bwkSPCYSrfHEMzDCtJeoMHO/lGZRuENIhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l1HctDxS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FCjSAk031804;
+	Thu, 15 Aug 2024 15:14:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	c+/DOzcyuJw1k9kuxuY2A+UIms2BUMZSIVaO5veBMvI=; b=l1HctDxSbKiEnTUB
+	eB2iy5ii5UGcb4oY0+2kIHknMYQ0BAuF/ptUvggSh1pTkuXahB+2q/H/j+2K9rha
+	OAKFVQjWKPIQAjBO8Fr4XQfOnnMtsKQGJIyMYP9Tq2VPuhdOQAy1Om1DayD06MPC
+	NkavV5549jxbGBw6lvj8m74lrn91VLIe+zRWfYZLesgx2HF8v+5iYNZKb5tqUN/M
+	58/+d2xaEGZmn7UEM2ifmMigYyPUN/vjAA/OMu98pgYLI7mJrh37QNSec3C+w9jV
+	bnsx0Ek6DOo3bNzUjAC/PkQnlvbcIMGgT2nXigbuvSzI9wg/+c8ukVGv06VehLh0
+	1I+eIA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41082wpqfx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 15:14:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FFEPh6022662
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 15:14:25 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
+ 2024 08:14:20 -0700
+Message-ID: <ff261ab4-b59d-48a1-9ede-3c691842d913@quicinc.com>
+Date: Thu, 15 Aug 2024 23:14:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/13] media: qcom: camss: Add CSID Gen3 support for
+ sm8550
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-13-quic_depengs@quicinc.com>
+ <44efa3ba-f60d-4a17-a8a1-fa7d49aa3234@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <44efa3ba-f60d-4a17-a8a1-fa7d49aa3234@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: QOGntYjSHWE_S-goQXBhmHqBlKuTmwFP
+X-Proofpoint-GUID: QOGntYjSHWE_S-goQXBhmHqBlKuTmwFP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_08,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408150110
 
-GRO code checks for matching layer 2 headers to see, if packet belongs
-to the same flow and because ip6 tunnel set dev->hard_header_len
-this check fails in cases, where it shouldn't. To fix this don't
-set hard_header_len, but use needed_headroom like ipv4/ip_tunnel.c
-does.
+Hi Bryan,
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
-v2:
-  - Added Fixes tag
-  - Fixed broken reverse christmas order
-v1: https://lore.kernel.org/lkml/20240813115910.87101-1-tbogendoerfer@suse.de/
- net/ipv6/ip6_tunnel.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
-index 9dee0c127955..87dfb565a9f8 100644
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1507,7 +1507,8 @@ static void ip6_tnl_link_config(struct ip6_tnl *t)
- 			tdev = __dev_get_by_index(t->net, p->link);
- 
- 		if (tdev) {
--			dev->hard_header_len = tdev->hard_header_len + t_hlen;
-+			dev->needed_headroom = tdev->hard_header_len +
-+				tdev->needed_headroom + t_hlen;
- 			mtu = min_t(unsigned int, tdev->mtu, IP6_MAX_MTU);
- 
- 			mtu = mtu - t_hlen;
-@@ -1731,7 +1732,9 @@ ip6_tnl_siocdevprivate(struct net_device *dev, struct ifreq *ifr,
- int ip6_tnl_change_mtu(struct net_device *dev, int new_mtu)
- {
- 	struct ip6_tnl *tnl = netdev_priv(dev);
-+	int t_hlen;
- 
-+	t_hlen = tnl->hlen + sizeof(struct ipv6hdr);
- 	if (tnl->parms.proto == IPPROTO_IPV6) {
- 		if (new_mtu < IPV6_MIN_MTU)
- 			return -EINVAL;
-@@ -1740,10 +1743,10 @@ int ip6_tnl_change_mtu(struct net_device *dev, int new_mtu)
- 			return -EINVAL;
- 	}
- 	if (tnl->parms.proto == IPPROTO_IPV6 || tnl->parms.proto == 0) {
--		if (new_mtu > IP6_MAX_MTU - dev->hard_header_len)
-+		if (new_mtu > IP6_MAX_MTU - dev->hard_header_len - t_hlen)
- 			return -EINVAL;
- 	} else {
--		if (new_mtu > IP_MAX_MTU - dev->hard_header_len)
-+		if (new_mtu > IP_MAX_MTU - dev->hard_header_len - t_hlen)
- 			return -EINVAL;
- 	}
- 	WRITE_ONCE(dev->mtu, new_mtu);
-@@ -1887,12 +1890,11 @@ ip6_tnl_dev_init_gen(struct net_device *dev)
- 	t_hlen = t->hlen + sizeof(struct ipv6hdr);
- 
- 	dev->type = ARPHRD_TUNNEL6;
--	dev->hard_header_len = LL_MAX_HEADER + t_hlen;
- 	dev->mtu = ETH_DATA_LEN - t_hlen;
- 	if (!(t->parms.flags & IP6_TNL_F_IGN_ENCAP_LIMIT))
- 		dev->mtu -= 8;
- 	dev->min_mtu = ETH_MIN_MTU;
--	dev->max_mtu = IP6_MAX_MTU - dev->hard_header_len;
-+	dev->max_mtu = IP6_MAX_MTU - dev->hard_header_len - t_hlen;
- 
- 	netdev_hold(dev, &t->dev_tracker, GFP_KERNEL);
- 	netdev_lockdep_set_classes(dev);
--- 
-2.35.3
+>> ---
+>>   drivers/media/platform/qcom/camss/Makefile    |   1 +
+>>   .../platform/qcom/camss/camss-csid-gen3.c     | 339 ++++++++++++++++++
+>>   .../platform/qcom/camss/camss-csid-gen3.h     |  26 ++
+> 
+> 
+> So this "gen2" and "gen3" stuff would make sense if we had a number of 
+> SoCs based on gen2 and gen3 which were controlled from the upper-level 
+> gen2.c and gen3.c.
+> 
+> What you're submitting here is csid-780 so the file should be named 
+> csid-780.
+> 
+> When we add 680 or 880 then it makes sense to try to encapsulate a class 
+> of generation into one file - potentially.
+> 
+> I'd guess that was the intent behind gen2.c.
+> 
+> TL;DR please name your file csid-xxx.c
+
+Sure, I will use csid-780.c
+
+>> +
+>> +    writel(val, csid->base + CSID_CSI2_RX_CFG0);
+>> +
+>> +    val = 1 << CSI2_RX_CFG1_ECC_CORRECTION_EN;
+>> +    if (vc > 3)
+>> +        val |= 1 << CSI2_RX_CFG1_VC_MODE;
+> 
+> So again these are needless bit-shifts.
+> 
+> #define CSI2_RX_CFG1_PACKET_ECC_CORRECTION_EN BIT(0)
+> 
+> val = CSI2_RX_CFG1_PACKET_ECC_CORRECTION_EN;
+> 
+
+You posted same comments in v3 series, I also replied it.
+https://lore.kernel.org/all/eeaf4f4e-5200-4b13-b38f-3f3385fc2a2b@quicinc.com/
+
+Some of register bits which just need to be configured to 0 or 1, then 
+can use BIT(X), but some register bits need to configure a specific 
+value, e.g.,  CSID_RDI_CFG0 bits[22:26] need to configure a vc vaule, 
+bits[16:21] need to configure a dt value, then we can't use BIT(x) to 
+handle this.
+
+
+>> +
+>> +static void csid_subdev_reg_update(struct csid_device *csid, int 
+>> port_id, bool is_clear)
+>> +{
+>> +    if (is_clear) {
+>> +        csid->reg_update &= ~REG_UPDATE_RDI(csid, port_id);
+>> +    } else {
+>> +        csid->reg_update |= REG_UPDATE_RDI(csid, port_id);
+>> +        writel(csid->reg_update, csid->base + CSID_REG_UPDATE_CMD);
+>> +    }
+>> +}
+> 
+> Right so this function should
+> 
+> 1. Write the register
+> 2. Wait on a completion
+>     See camss-vfe-480.c::vfe_isr_reg_update()
+> 3. Have that completion fire in the CSID ISR
+> 4. Or timeout
+> 5. Returning either 0 for success or -ETIMEDOUT
+> 
+> to the calling function so that we can be sure the RUP interrupt has 
+> fired and completed - or we have appropriately timed out and captured 
+> the failure.
+> 
+> Also - in camss-vfe-480.c the ISR clears the RUP which one assumes is 
+> still the required logical flow with the RUP now residing in CSID.
+> 
+
+Sure, I forget to add this, will add them in next series.
+
+
+>>       case MSM_CSID_PAD_SRC:
+>> -        if (csid->testgen_mode->cur.val == 0) {
+>> +        if (!csid->testgen_mode || csid->testgen_mode->cur.val == 0) {
+> 
+> See my comments on adding new guards to core functionality.
+> 
+> Is this sm8550 specific or generic ?
+> 
+
+It is sm8550 specific, since we don't have testgen mode in sm8550 csid, 
+so need to add some guards, the guards are added for similar reason.
+
+>>               /* Test generator is disabled, */
+>>               /* keep pad formats in sync */
+>>               u32 code = fmt->code;
+>> @@ -1042,6 +1042,7 @@ static int csid_init_formats(struct v4l2_subdev 
+>> *sd, struct v4l2_subdev_fh *fh)
+>>   static int csid_set_test_pattern(struct csid_device *csid, s32 value)
+>>   {
+>>       struct csid_testgen_config *tg = &csid->testgen;
+>> +    const struct csid_hw_ops *hw_ops = csid->res->hw_ops;
+>>       /* If CSID is linked to CSIPHY, do not allow to enable test 
+>> generator */
+>>       if (value && media_pad_remote_pad_first(&csid- 
+>> >pads[MSM_CSID_PAD_SINK]))
+>> @@ -1049,7 +1050,10 @@ static int csid_set_test_pattern(struct 
+>> csid_device *csid, s32 value)
+>>       tg->enabled = !!value;
+>> -    return csid->res->hw_ops->configure_testgen_pattern(csid, value);
+>> +    if (hw_ops->configure_testgen_pattern)
+>> +        return -EOPNOTSUPP;
+>> +    else
+>> +        return hw_ops->configure_testgen_pattern(csid, value);
+> 
+> If you just add a dummy configure_testgen_pattern we can get rid of this 
+> branching stuff.
+> 
+
+Do you mean add dummy function in csid-780/gen3.c? How about the other 
+ops in vfe_ops_780, add dummy function or use NULL? We need to guards if 
+we set it as NULL.
+
+static int csid_configure_testgen_pattern(struct csid_device *csid, s32 val)
+{
+	return 0;
+}
+
+>>   }
+>>   /*
+>> @@ -1121,6 +1125,19 @@ int msm_csid_subdev_init(struct camss *camss, 
+>> struct csid_device *csid,
+>>           csid->base = devm_platform_ioremap_resource_byname(pdev, 
+>> res->reg[0]);
+>>           if (IS_ERR(csid->base))
+>>               return PTR_ERR(csid->base);
+>> +
+>> +        /* CSID "top" is a new function in new version HW,
+>> +         * CSID can connect to VFE & SFE(Sensor Front End).
+>> +         * this connection is controlled by CSID "top" registers.
+>> +         * There is only one CSID "top" region for all CSIDs.
+>> +         */
+>> +        if (!csid_is_lite(csid) && res->reg[1] && !camss- 
+>> >csid_top_base) {
+>> +            camss->csid_top_base =
+>> +                devm_platform_ioremap_resource_byname(pdev, res- 
+>> >reg[1]);
+> 
+> That's a complex clause.
+> 
+> Let me send you a patch to do it a different way.
+> 
+
+I was also thinking to addd it in camss level, then I thought it is in 
+csid block, so I moved it to csid, but it is also fine to add it in 
+camss. Can I add your patch into this series? Just like the csiphy patches.
+
+
+Thanks,
+Depeng
 
 
