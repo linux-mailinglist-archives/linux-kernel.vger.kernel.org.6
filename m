@@ -1,140 +1,167 @@
-Return-Path: <linux-kernel+bounces-287890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F64952DC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53372952DC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1CDF1F23A1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868101C24428
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DDA1714CF;
-	Thu, 15 Aug 2024 11:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="RjpgfACH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XUQLCVsw"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548341714D2;
+	Thu, 15 Aug 2024 11:54:08 +0000 (UTC)
+Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047097DA9B;
-	Thu, 15 Aug 2024 11:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0911AC896;
+	Thu, 15 Aug 2024 11:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723722689; cv=none; b=RBLQiLiFYrGY9cKx9R89BSRRHXV5PTWn+SYPHhfMKo2qw7ItREGGHvQNg4ujTuf6cbNz+QOKXarncMcrIYv2+eVJuXW5Ay1M8B2ROaKLlsXiRF6/EmAP6Km3oTaHnOg9Pj1m8gCRs1ymB8AroUS3RRArlSLfI4C68WeRVs353c4=
+	t=1723722847; cv=none; b=k7vJ73zGdw+fQxdVJZaiPrsXbwgIb24/rLSGs35KMYdEwMKra63e+pmFPsJfIXE8pbB1syRPoQkX8yL13AiXywEPdhiX6lzwNPLA41ZwBi3Nh2smujKdhzxZb/9+k2WUl7AlFj1rW8G9C+YMsqIpv1bMEVtG/3UQWxQf8jSv5HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723722689; c=relaxed/simple;
-	bh=kGuVMJqQ7fJH5gwvQiMwjdCOEknsUjuW3RN+kRtocuY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kuxrZUC0nTBFL00Zu/iNFn3A0Ypv7j+WUq0xGTCwbqNmvFzxW5+gNBoIUh0phL5U4LuEjj5JYB3ELNgmNwRlGE6E6foCfoLUJD/WUYSDeznY60u4stL0bHdm4XYfRbFi4VIQPCQ0wB8SkHPVAlKUctepFEah1kFCaNcrCofkTJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=RjpgfACH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XUQLCVsw; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id F0654138FFCF;
-	Thu, 15 Aug 2024 07:51:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 15 Aug 2024 07:51:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1723722686; x=1723809086; bh=PqqsNeWnq9+9Q5vizD6sw
-	F9qbRHy40p4oTWpwRdJXlw=; b=RjpgfACHakte+aKMFcWvMs77pzX/HR16ynvY4
-	kPVYOWyYSGw5cNKT+AjMEXnCufVqQ95Dz7Lzr/dfa5v9cROY0B4C4aqtXbattAZH
-	SaNrV+OkVFE213EoZNi7GnXy1XY1hwdgRiAzEjklI88udercsfNZc5y6nHaenHD5
-	CxqRMzKPKRzKqZH7kIqQRzS55idPpCWtQboCNwTwQzNla8AWJXu1pV8Y70dOHsBa
-	rvRKzlZfeqdLuY/bpKZRBat2k99uDR5fcoDvwNPZDtx2d8cDweuZbA71Jr/HrN4E
-	PBZdcZ9VURYLZ/RVRjL3MR9x++PJXsAe6tpk6maB0B5/pQsNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723722686; x=1723809086; bh=PqqsNeWnq9+9Q5vizD6swF9qbRHy
-	40p4oTWpwRdJXlw=; b=XUQLCVsw8/1fxDAfGvYU4rdbLgGGJS/eW+1cwnnH90yA
-	jHAeOLwE/69TPW1dspRxaNOq9CBzYtjR/a7Ud8LXV5/DPbhqBQSM5kvqs0fUjdUg
-	vf/y9H/WpCKUgg/xVGefIbBMIEfWcherxdeyKGBgsPwRBoe7iQCFJD2tFNW3A7th
-	dawp0WWq+4lDKIp32ajs56kLL5oQcIQKYh4K6GaiCujjvUThBIl5fYvScZxBcs5+
-	RG4APU6AD0bEquMtOfgqoLLUEn8/lduTgD1WDITlZLKoXIDv3jgi2f9r8l/HaIm5
-	TpvtYTjIAM+3v7sn759Y+yQ9fTp9HKXV+APMnhnzAw==
-X-ME-Sender: <xms:vuu9ZtTTdYKidud_h-I3eflimt-ElnCZAr8AMezQuCerjnzsiR5kBw>
-    <xme:vuu9ZmzF4c_ZNCZGcnYsBvG0CRYJcdySGaUGcNHT4fR8Xs6KTslwGv-EGRvEj-3uy
-    VvfN8JfBmB2-ak>
-X-ME-Received: <xmr:vuu9Zi1vcPmzM0AAe7QvuiAPmlFLPjdJ6K0WfTKQw_M_rJWZmFDo31ZbOI_X2LhWF5LHdbHgY8-AughU386zd0-My_KDgo1MoXLkE4E-82sKZKOT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtiedggeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
-    rhhomhepifhrihhffhhinhcumfhrohgrhhdqjfgrrhhtmhgrnhcuoehgrhhifhhfihhnse
-    hkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeekvdfhkefgtdeugfelueejffel
-    ueeludegieejtedtveekteetieehkedvkeevleenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehgrhhifhhfihhnsehkrhhorghhrdgtohhmpdhn
-    sggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrtg
-    gvlheshhholhhtmhgrnhhnrdhorhhgpdhrtghpthhtohepjhhohhgrnhdrhhgvuggsvghr
-    ghesghhmrghilhdrtghomhdprhgtphhtthhopehluhhiiidruggvnhhtiiesghhmrghilh
-    drtghomhdprhgtphhtthhopehlihhnuhigqdgslhhuvghtohhothhhsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrihhffhhinheskhhrohgrhhdrtghomhdp
-    rhgtphhtthhopeiihhgrnhegieeftdesphhurhguuhgvrdgvughupdhrtghpthhtohepsh
-    htrggslhgvsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:vuu9ZlAwIQHQ6M6ROilKnHNgSxjatC0vDIkzzBD0sAMf3D_zoDQa7g>
-    <xmx:vuu9Zmg2jXKlQx9UbRgG0sOwPhjxkCS-aWcsdC9tYtNeXykNKPtz1g>
-    <xmx:vuu9Zpo2yH38Lj1vrMjRpYYyc01SZb9-MaHpgLp-S0-OrWyb-e_Yiw>
-    <xmx:vuu9Zhgt48OOf-zFlKV3D7hlNrgrySTaBrk1Y2V62xhWWkS8jniJFw>
-    <xmx:vuu9ZvV8fa7cOl7sEDGjktgX_p_K__cT1T1Ahq3E1ubS6Cofk7JFslMZ>
-Feedback-ID: i1d2843be:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Aug 2024 07:51:25 -0400 (EDT)
-From: Griffin Kroah-Hartman <griffin@kroah.com>
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Yiwei Zhang <zhan4630@purdue.edu>,
-	Stable <stable@kernel.org>
-Subject: [PATCH] Bluetooth: MGMT: Add error handling to pair_device()
-Date: Thu, 15 Aug 2024 13:51:00 +0200
-Message-ID: <20240815115100.13100-1-griffin@kroah.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723722847; c=relaxed/simple;
+	bh=7qso/k3Qb44LCExlp+KrrvaSwPBgT4jahUU2JMlnE7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHgoGKpEegoOTwzmUbPvQlBS7dZ1EZoUpf8s0cA65DTYWkAoOLvAQfGHz3gTepfAOcmbVmin23vtLQMQZ2Uhgjof8P3e/8fD62IjbO888BJJh8amVljmI1R7jbg1cERXZIejOtdreFRYTsrfQS3Y9QfEtlCxopz1MRuAGNAe/rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
+Received: from localhost (gollum.nazgul.ch [local])
+	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 39366c8a;
+	Thu, 15 Aug 2024 13:54:01 +0200 (CEST)
+Date: Thu, 15 Aug 2024 13:54:01 +0200
+From: Marcus Glocker <marcus@nazgul.ch>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v3 4/6] arm64: dts: qcom: Add UFS node
+Message-ID: <kt5mrxse7dirsjgu3ldv4rzasgbmykluul7ie26zlavhlmfz4r@bo4fd4ybt7bx>
+References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
+ <ejeph4wspggkmvhl7qmpvw5jlojyvma7epqd67i6vk5p6fncrk@de56nvgi6vzi>
+ <Zr3cuxv4EdxMQa9C@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr3cuxv4EdxMQa9C@linaro.org>
 
-hci_conn_params_add() never checks for a NULL value and could lead to a NULL
-pointer dereference causing a crash.
+On Thu, Aug 15, 2024 at 01:47:23PM +0300, Abel Vesa wrote:
 
-Fixed by adding error handling in the function.
+> On 24-08-15 12:42:29, Marcus Glocker wrote:
+> > Add the UFS Host Controller node.  This was basically copied from the
+> > arch/arm64/boot/dts/qcom/sc7180.dtsi file.
+> > 
+> > Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+> > ---
+> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 71 ++++++++++++++++++++++++++
+> >  1 file changed, 71 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > index 7bca5fcd7d52..235e20e4b51f 100644
+> > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > @@ -2878,6 +2878,77 @@ mmss_noc: interconnect@1780000 {
+> >  			#interconnect-cells = <2>;
+> >  		};
+> >  
+> > +		ufs_mem_hc: ufs@1d84000 {
+> > +			compatible = "qcom,x1e80100-ufshc", "qcom,ufshc",
+> > +				     "jedec,ufs-2.0";
+> > +			reg = <0 0x01d84000 0 0x3000>;
+> > +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+> > +			phys = <&ufs_mem_phy>;
+> > +			phy-names = "ufsphy";
+> > +			lanes-per-direction = <1>;
+> > +			#reset-cells = <1>;
+> > +			resets = <&gcc GCC_UFS_PHY_BCR>;
+> > +			reset-names = "rst";
+> > +
+> > +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
+> > +
+> > +			iommus = <&apps_smmu 0xa0 0x0>;
+> > +
+> > +			clock-names = "core_clk",
+> > +				      "bus_aggr_clk",
+> > +				      "iface_clk",
+> > +				      "core_clk_unipro",
+> > +				      "ref_clk",
+> > +				      "tx_lane0_sync_clk",
+> > +				      "rx_lane0_sync_clk";
+> > +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
+> > +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+> > +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
+> > +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
+> > +				 <&rpmhcc RPMH_CXO_CLK>,
+> > +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
+> > +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
+> > +			freq-table-hz = <50000000 200000000>,
+> > +					<0 0>,
+> > +					<0 0>,
+> > +					<37500000 150000000>,
+> > +					<0 0>,
+> > +					<0 0>,
+> > +					<0 0>;
+> > +
+> > +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
+> > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> > +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
+> > +			interconnect-names = "ufs-ddr", "cpu-ufs";
+> > +
+> > +			qcom,ice = <&ice>;
+> > +
+> > +			status = "disabled";
+> > +		};
+> > +
+> > +		ufs_mem_phy: phy@1d87000 {
+> > +			compatible = "qcom,x1e80100-qmp-ufs-phy";
+> 
+> Can't find any phy patch that adds this compatible to the driver.
 
-Reported-by: Yiwei Zhang <zhan4630@purdue.edu>
-Cc: Stable <stable@kernel.org>
-Fixes: 5157b8a503fa ("Bluetooth: Fix initializing conn_params in scan phase")
-Signed-off-by: Griffin Kroah-Hartman <griffin@kroah.com>
----
- net/bluetooth/mgmt.c | 4 ++++
- 1 file changed, 4 insertions(+)
+That might well be, since this is pretty new hardware.  But the goal
+of this submission is only to describe the hardware, not to add
+immediate support to the OS drivers.  Whether the drivers will make use
+of it, is a different story, and up to the people who maintain the
+respective drivers.
 
-diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
-index 40d4887c7f79..25979f4283a6 100644
---- a/net/bluetooth/mgmt.c
-+++ b/net/bluetooth/mgmt.c
-@@ -3456,6 +3456,10 @@ static int pair_device(struct sock *sk, struct hci_dev *hdev, void *data,
- 		 * will be kept and this function does nothing.
- 		 */
- 		p = hci_conn_params_add(hdev, &cp->addr.bdaddr, addr_type);
-+		if (!p) {
-+			err = -EIO;
-+			goto unlock;
-+		}
- 
- 		if (p->auto_connect == HCI_AUTO_CONN_EXPLICIT)
- 			p->auto_connect = HCI_AUTO_CONN_DISABLED;
--- 
-2.46.0
+Getting the right DTB in, at least opens the possibility to continue
+development in the driver area to further support this new hardware.
 
+But I won't touch your drivers, not my goal.
+
+> > +			reg = <0 0x01d87000 0 0x1000>;
+> > +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> > +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+> > +			clock-names = "ref",
+> > +				      "ref_aux",
+> > +				      "qref";
+> > +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
+> > +			resets = <&ufs_mem_hc 0>;
+> > +			reset-names = "ufsphy";
+> > +			#phy-cells = <0>;
+> > +			status = "disabled";
+> > +		};
+> > +
+> > +		ice: crypto@1d90000 {
+> > +			compatible = "qcom,x1e80100-inline-crypto-engine",
+> > +				     "qcom,inline-crypto-engine";
+> > +			reg = <0 0x01d90000 0 0x8000>;
+> > +			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
+> > +		};
+> > +
+> >  		pcie6a: pci@1bf8000 {
+> >  			device_type = "pci";
+> >  			compatible = "qcom,pcie-x1e80100";
+> > -- 
+> > 2.39.2
+> > 
 
