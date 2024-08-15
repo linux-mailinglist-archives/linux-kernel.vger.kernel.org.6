@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-288257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F4E9537FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:11:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570AF953802
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2F0282BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:11:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFA47B215B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B661B151D;
-	Thu, 15 Aug 2024 16:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFED1B3F05;
+	Thu, 15 Aug 2024 16:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kb1Fu4G9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RNzJ6GoF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EE01714CF
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FAF1B1512;
+	Thu, 15 Aug 2024 16:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723738275; cv=none; b=RtGmU46SPgWl6HCdEQRVdO44fBVacw/V0F5GeuN3ZEjtO/gjrqIBDS/eTw2nuSxhLwp7URamB0FsJQmqk50IDonWFwWDWsoEfaEn8mHQVWNyld4/VOpIuUJE46LwkR07Cbrq7h6xWBF5q3efYJHgh3nokYaKdJkPnMoW6rH5A34=
+	t=1723738296; cv=none; b=Na1rkFV482W4vjg1FlICTKjXP2bGEYNE6IXmoyERZm3eg/soYF/RhQSgWDNIwzlQuodcHXliI063P8Ip5Z85nhH0gISs1IguahizATfkSmBXtL07auEJjf2Q5XZzyHA7nzIMoI7udY/MmTGZ66h3Ln0KnJRELJj40ZUV2IZukv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723738275; c=relaxed/simple;
-	bh=EwQBFH3Odji7F4BMgxRMe8whlfBJWuNj02UrxJV4gSU=;
+	s=arc-20240116; t=1723738296; c=relaxed/simple;
+	bh=PxxUNLRK1Op1mXSCSf+5ux4a9GTb2aTTZN7C5kMnUb4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/D6O4/ULQcQa/1uwrpcIFK0STNhUvWTu2yX4ZBWLf2Z7LyuxTPHOFckx7CMlHqzm+aVWeCEzaKtm39kR86yYN3xeQCUsgrDl6ehJ6c/A9JrJIRjv+Lp49yA2OgtChsUd/TTS7kSZ6iKXG0HPgIZ/NL2xsEUJznNJ1t+ctb/U5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kb1Fu4G9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8EC0C32786;
-	Thu, 15 Aug 2024 16:11:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZN1IywvLFAoLnJRmPCjgqpX2pfY5RtgpM5GsuFI9WNJ9um0EvM0dW7/MWSY89NNhkmqagQzG9xFC2Lh5+Z28Ig93euzQMQG/S3oIey6ZUt0Vy5SeWF4OM8GkdOkbwX0rHocNuvrrhNSaV+YvmnlZZxJc54WHlEa2uPuC+mSDQCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RNzJ6GoF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F71C32786;
+	Thu, 15 Aug 2024 16:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723738274;
-	bh=EwQBFH3Odji7F4BMgxRMe8whlfBJWuNj02UrxJV4gSU=;
+	s=k20201202; t=1723738295;
+	bh=PxxUNLRK1Op1mXSCSf+5ux4a9GTb2aTTZN7C5kMnUb4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kb1Fu4G9Vz/cLudLOAORH4ek54ZXjCIcTjJ3VZa51OlSwVs7zK7+Az6l2NZs9LXUa
-	 L/5J3nVLJiS8p8Ok4mIDDqXAYMCQIV05klFSQJg8UW8MVgTQfKekWiMLoIEhleIbCm
-	 oX1lNUCFS5CfNDdbQmTO1uq9GXl4um5tzJF1ucqGqouz6G6Q4iFIyUddfpPsPZ/s9D
-	 gZn7cokWSAsZk511Iak+3PUUh/2rf3lpcaZcJTooYsZgWVz9jnoXjOOFytVggJNSzn
-	 2Or8LNNLb7mRMevwoljGRK2mVj/qvxu4+kBvm6zl0yjgs8/k3uJQyWHvHwj93G3p1m
-	 Z5vst+/FqO+8Q==
-Date: Thu, 15 Aug 2024 09:11:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alistair Popple <apopple@nvidia.com>, x86@kernel.org,
-	Dan Williams <dan.j.williams@intel.com>,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	max8rr8@gmail.com, linux-kernel@vger.kernel.org,
-	jhubbard@nvidia.com, Andrew Morton <akpm@linuxfoundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org
-Subject: Re: x86/kaslr: Expose and use the end of the physical memory address
- space
-Message-ID: <202408150911.25D8591@keescook>
-References: <87seve4e37.fsf@nvdebian.thelocal>
- <66b59314b3d4_c1448294d3@dwillia2-xfh.jf.intel.com.notmuch>
- <87zfpks23v.ffs@tglx>
- <87o75y428z.fsf@nvdebian.thelocal>
- <87ikw6rrau.ffs@tglx>
- <87frr9swmw.ffs@tglx>
- <87bk1x42vk.fsf@nvdebian.thelocal>
- <87sev8rfyx.ffs@tglx>
- <87le10p3ak.ffs@tglx>
- <87ed6soy3z.ffs@tglx>
+	b=RNzJ6GoF61TWJYY/9NGo9Aszd5m7ZdIhRnYiPCv+IiQA2RJ5OLAruuGvpPeaWF6BU
+	 R80yc96+60xWf7dpuuXWMdom7hU3ksX5MqymAHUvuAUQeLNn4R2zLTUkDY44NrCJLs
+	 XVhVBL0s8eh1nCPpjqge5kagNoiyRqDuIC5DFRtg1hgLODurcVwuP5nE5ISlBLW3r0
+	 HzLpDiawu1iKOur9Sne15hiJIgpNoG+GIec1ymni9TYOqmA78JzIuOGnmosDtMRplI
+	 plNw5SHO8jGg3Oxr1d+VPX9jg9bBUSvUJoUFh8RZLV7iZnxg/YNWwDPh1NI9lhAmex
+	 FXUxL49Fw85+Q==
+Date: Thu, 15 Aug 2024 17:11:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	20240705211452.1157967-2-u.kleine-koenig@baylibre.com,
+	20240712171821.1470833-2-u.kleine-koenig@baylibre.com,
+	cover.1721040875.git.u.kleine-koenig@baylibre.com,
+	aardelean@baylibre.com
+Subject: Re: [PATCH 0/8] Add iio backend compatibility for ad7606
+Message-ID: <20240815-favorable-bulge-bbf0b9ed644e@spud>
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Y8SSMKuOe5JYK1iA"
+Content-Disposition: inline
+In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+
+
+--Y8SSMKuOe5JYK1iA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ed6soy3z.ffs@tglx>
 
-On Wed, Aug 14, 2024 at 12:29:36AM +0200, Thomas Gleixner wrote:
-> iounmap() on x86 occasionally fails to unmap because the provided valid
-> ioremap address is not below high_memory. It turned out that this
-> happens due to KASLR.
-> 
-> KASLR uses the full address space between PAGE_OFFSET and vaddr_end to
-> randomize the starting points of the direct map, vmalloc and vmemmap
-> regions.  It thereby limits the size of the direct map by using the
-> installed memory size plus an extra configurable margin for hot-plug
-> memory.  This limitation is done to gain more randomization space
-> because otherwise only the holes between the direct map, vmalloc,
-> vmemmap and vaddr_end would be usable for randomizing.
-> 
-> The limited direct map size is not exposed to the rest of the kernel, so
-> the memory hot-plug and resource management related code paths still
-> operate under the assumption that the available address space can be
-> determined with MAX_PHYSMEM_BITS.
-> 
-> request_free_mem_region() allocates from (1 << MAX_PHYSMEM_BITS) - 1
-> downwards.  That means the first allocation happens past the end of the
-> direct map and if unlucky this address is in the vmalloc space, which
-> causes high_memory to become greater than VMALLOC_START and consequently
-> causes iounmap() to fail for valid ioremap addresses.
-> 
-> MAX_PHYSMEM_BITS cannot be changed for that because the randomization
-> does not align with address bit boundaries and there are other places
-> which actually require to know the maximum number of address bits.  All
-> remaining usage sites of MAX_PHYSMEM_BITS have been analyzed and found
-> to be correct.
-> 
-> Cure this by exposing the end of the direct map via PHYSMEM_END and use
-> that for the memory hot-plug and resource management related places
-> instead of relying on MAX_PHYSMEM_BITS. In the KASLR case PHYSMEM_END
-> maps to a variable which is initialized by the KASLR initialization and
-> otherwise it is based on MAX_PHYSMEM_BITS as before.
-> 
-> To prevent future hickups add a check into add_pages() to catch callers
-> trying to add memory above PHYSMEM_END.
-> 
-> Fixes: 0483e1fa6e09 ("x86/mm: Implement ASLR for kernel memory regions")
-> Reported-by: Max Ramanouski <max8rr8@gmail.com>
-> Reported-by: Alistair Popple <apopple@nvidia.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+On Thu, Aug 15, 2024 at 12:11:54PM +0000, Guillaume Stols wrote:
+> This series aims to add iio backend support for AD7606X ADCs.
 
-Nice fix; thanks!
+Just to point out, your cc list is partially bogus as it contains:
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+	 20240705211452.1157967-2-u.kleine-koenig@baylibre.com,
+	 20240712171821.1470833-2-u.kleine-koenig@baylibre.com,
+	 cover.1721040875.git.u.kleine-koenig@baylibre.com,
 
--- 
-Kees Cook
+Cheers,
+Conor.
+
+--Y8SSMKuOe5JYK1iA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4osQAKCRB4tDGHoIJi
+0o9xAP0SASwe8xbESxPqwdG0ONIB1nZR4wqUlTp/EA0AdS3wGQD/d4T3GI7qf2hM
+UviXVhLQym3CrZ637s6StEjIvGHRhgo=
+=oxT/
+-----END PGP SIGNATURE-----
+
+--Y8SSMKuOe5JYK1iA--
 
