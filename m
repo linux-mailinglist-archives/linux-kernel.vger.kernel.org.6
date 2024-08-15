@@ -1,160 +1,154 @@
-Return-Path: <linux-kernel+bounces-288501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8E2953AE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:31:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4C8953AE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49201F25A84
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34A51F26274
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E417BB15;
-	Thu, 15 Aug 2024 19:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4BF82876;
+	Thu, 15 Aug 2024 19:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rsWuo946"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ScJ/yCNg"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536CD5644E
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB364AEEA;
+	Thu, 15 Aug 2024 19:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723750312; cv=none; b=N9BRTDvjoHns9pGJw65TjNN6rfYn0A0gwQCy4ycVVlRqM30cwGBAe9yRutrtX2+cNyCaljGH89M/wDPyu74kbFjSv5wuddMhIrs0e3uqhmaxezhWxMfc6Yugy1TuiQTZDgfFYqaz8o5+YFTUBqzzBH/EXJ0YjPM1mcjA8mX2lbY=
+	t=1723750390; cv=none; b=PF0wiIAyLeqJYbFQykvMMnMxiher4Y9Zn9jsKK2C5nerJtv9LwvwXjMNR1HppceQWGhhgYTRNy8n0wCV19tO8mqh3A1XxDu+tQ1UntMhbBhDUHfFwyMB/0ACO43skw8KARqVdx7afRz8fZUVahdVDIwr55PDbAimucHImUXrRYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723750312; c=relaxed/simple;
-	bh=vvPutBJy7ASMcST2a0PknGC2RHmZ5IOtSvilW5cVdr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYL5XSJhDVcXye+JIf4Z1JRWOl9nOGl08mptj42/BIZHB6V6rDIi8Uq8ALlh1t+qDi5KWHkl1N5emk+OHWpPZKE1R19VxVql3VyWJ1oK/2JK4GHOANfGP8bfmFJSlDdPXkFEe2UG3afbs937KpXI8hndlEVg5SauctMy/W6EMnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rsWuo946; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 15 Aug 2024 19:31:43 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723750307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tp8gjGHWxMUcXCpVWv5SwKW/CTSzHvOts/jHqTX+r9I=;
-	b=rsWuo9466d2OLEr7R4fZLS7UlWWe1VAiN4O1ZNn+Tu0kzX4vI/tm6Q1GafDUxwPNzc19SA
-	8+hp7ZROiRdPaYQFyIJTNybqRbJXZs2StpLfUxYzdc40f6/B/kQabRLydF8J/AOwlS5bWg
-	A4KbN7VlB6eijY5jUbVOs5/nwxGwvsU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	"T . J . Mercier" <tjmercier@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2] memcg: replace memcg ID idr with xarray
-Message-ID: <Zr5Xn45wEJytFTl8@google.com>
-References: <20240815155402.3630804-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1723750390; c=relaxed/simple;
+	bh=pG9Aus7iAHYTITJbi1PiXulBDTMcPpokdZ6SGw9ONaA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gJJZhxQLQsgoclItj4fccth5Bz3bvUQ3yldT+EQkDXpwYrhar5YFPgKlUXcG+Uk6s+0uDUWa31s/DrQH2+ar/y0mHemmMHI967owhtkAJhKhNDiwX1Ov6AlN0AiYoUTolYS8RgYq/JI9SjGhjeXKJsVOMHmYnVkiUoHBlBzIoBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ScJ/yCNg; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1723750386; x=1724009586;
+	bh=KFdR3DG5cPCd+PTqtDNl+zJ8d82n94YIveCGBfC+ylg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ScJ/yCNgl5qXrNnCNiSpp85buhWOjiy4GJSxIFelb6yfFq5Na0DtUskAI/Ifo4BVq
+	 aU8U8tgfuFUtKOyc47ueKT152LsX+/odkXcXqzk995dhZFrHh4fFg6G1tPM7VUP4RB
+	 sl6Yx9abfmw6wFeg7C/5IEspoqECo4o8Swr+rDjzSSofw0XTKjMFCKC0QSy+4eczEo
+	 LMz2Ht+r40a5hN3VDR3TqJID7o0Mx9lUVivO/moniQjDOUBfsUfrnW3U3/SxMqL4Zr
+	 xRrX+qYROR1jg+34VaXKGsW9JzOPt2cRFw2mU8x7PjbAiQeHdSKbS0ooi7DMxqj2x6
+	 YVy6xgTPf8UmA==
+Date: Thu, 15 Aug 2024 19:33:01 +0000
+To: Andreas Hindborg <nmi@metaspace.dk>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+Message-ID: <9853812d-d885-4eef-9ae0-070c5b04e1cd@proton.me>
+In-Reply-To: <87ikw2rlbi.fsf@metaspace.dk>
+References: <20240705111455.142790-1-nmi@metaspace.dk> <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me> <874j84nurn.fsf@metaspace.dk> <f84e9189-b64a-4761-86f5-ccd50fb62f36@proton.me> <87zfpvmd8y.fsf@metaspace.dk> <a98ddf54-3e27-4587-8e49-f19dd1ac65a6@proton.me> <87v80fme7g.fsf@metaspace.dk> <b95cc90a-46ae-44af-90af-0fc374cd381a@proton.me> <87ikw2rlbi.fsf@metaspace.dk>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 4df29f5222843aa59bf26abafcf1b4f518d868f0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815155402.3630804-1-shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 08:54:02AM -0700, Shakeel Butt wrote:
-> At the moment memcg IDs are managed through IDR which requires external
-> synchronization mechanisms and makes the allocation code a bit awkward.
-> Let's switch to xarray and make the code simpler.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Reviewed-by: Muchun Song <muchun.song@linux.dev>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
-> 
-> Changes since v1:
-> - Fix error path in mem_cgroup_alloc (Dan Carpenter)
-> 
->  mm/memcontrol.c | 39 ++++++++++-----------------------------
->  1 file changed, 10 insertions(+), 29 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index df84683a0e1c..e8e03a5e1e5e 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3408,29 +3408,12 @@ static void memcg_wb_domain_size_changed(struct mem_cgroup *memcg)
->   */
->  
->  #define MEM_CGROUP_ID_MAX	((1UL << MEM_CGROUP_ID_SHIFT) - 1)
-> -static DEFINE_IDR(mem_cgroup_idr);
-> -static DEFINE_SPINLOCK(memcg_idr_lock);
-> -
-> -static int mem_cgroup_alloc_id(void)
-> -{
-> -	int ret;
-> -
-> -	idr_preload(GFP_KERNEL);
-> -	spin_lock(&memcg_idr_lock);
-> -	ret = idr_alloc(&mem_cgroup_idr, NULL, 1, MEM_CGROUP_ID_MAX + 1,
-> -			GFP_NOWAIT);
-> -	spin_unlock(&memcg_idr_lock);
-> -	idr_preload_end();
-> -	return ret;
-> -}
-> +static DEFINE_XARRAY_ALLOC1(mem_cgroup_ids);
->  
->  static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
->  {
->  	if (memcg->id.id > 0) {
-> -		spin_lock(&memcg_idr_lock);
-> -		idr_remove(&mem_cgroup_idr, memcg->id.id);
-> -		spin_unlock(&memcg_idr_lock);
-> -
-> +		xa_erase(&mem_cgroup_ids, memcg->id.id);
->  		memcg->id.id = 0;
->  	}
->  }
-> @@ -3465,7 +3448,7 @@ static inline void mem_cgroup_id_put(struct mem_cgroup *memcg)
->  struct mem_cgroup *mem_cgroup_from_id(unsigned short id)
->  {
->  	WARN_ON_ONCE(!rcu_read_lock_held());
-> -	return idr_find(&mem_cgroup_idr, id);
-> +	return xa_load(&mem_cgroup_ids, id);
->  }
->  
->  #ifdef CONFIG_SHRINKER_DEBUG
-> @@ -3558,17 +3541,17 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
->  	struct mem_cgroup *memcg;
->  	int node, cpu;
->  	int __maybe_unused i;
-> -	long error = -ENOMEM;
-> +	long error;
->  
->  	memcg = kzalloc(struct_size(memcg, nodeinfo, nr_node_ids), GFP_KERNEL);
->  	if (!memcg)
-> -		return ERR_PTR(error);
-> +		return ERR_PTR(-ENOMEM);
->  
-> -	memcg->id.id = mem_cgroup_alloc_id();
-> -	if (memcg->id.id < 0) {
-> -		error = memcg->id.id;
-> +	error = xa_alloc(&mem_cgroup_ids, &memcg->id.id, NULL,
-> +			 XA_LIMIT(1, MEM_CGROUP_ID_MAX), GFP_KERNEL);
-> +	if (error)
->  		goto fail;
-> -	}
-> +	error = -ENOMEM;
+On 15.08.24 15:11, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>> On 05.08.24 12:55, Andreas Hindborg wrote:
+>>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>>> On 02.08.24 12:27, Andreas Hindborg wrote:
+>>>>> At a higher level where the bindings supply the parsing functions, we
+>>>>> can decide that passing an argument without a value yields a default
+>>>>> parameter value. C does this for the predefined `bool` type. The
+>>>>> predefined integer types does not support omitting the value.
+>>>>>
+>>>>> This patch only supports the higher level predefined parameter types,
+>>>>> and does not allow modules to supply their own parameter parsing
+>>>>> functions. None of the types we implement in this patch support passi=
+ng
+>>>>> the argument without a value. This is intentional to mirror the C
+>>>>> implementation.
+>>>>>
+>>>>> To that end, I removed `NOARG_ALLOWED`, and changed the parsing funct=
+ion
+>>>>> trait to:
+>>>>>
+>>>>>     fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
+>>>>>
+>>>>> If/when we start supporting types like `bool` or custom parsing
+>>>>> functions provided by the module, we will have to update the signatur=
+e
+>>>>> to take an `Option` to represent the case where the user passed an
+>>>>> argument without a value. However, to mimic C, the function must alwa=
+ys
+>>>>> return a value if successful, even if the user did not supply a value=
+ to
+>>>>> the argument.
+>>>>>
+>>>>> Two different default values are in flight here. 1) the value that th=
+e
+>>>>> parameter will have before the kernel calls `try_from_param_arg` via
+>>>>> `set_param` and 2) the value to return from `try_from_param_arg` if t=
+he
+>>>>> user did not pass a value with the argument.
+>>>>>
+>>>>> For a `bool` 1) would usually be `false` and 2) would always be `true=
+`.
+>>>>>
+>>>>> For predefined types the module would not customize 2), but 1) is use=
+ful
+>>>>> to customize. For custom types where the module supplies the parsing
+>>>>> function, 2) would be implicitly given by the module in the parsing
+>>>>> function.
+>>>>>
+>>>>> In this patch set, we only have 1 default value, namely 1). We do not
+>>>>> need 2) because we do not support parameters without values.
+>>>>
+>>>> I am not sure that putting the default value of `my_module.param` into
+>>>> the `ModuleParam` trait is a good idea. It feels more correct to me to
+>>>> add an optional field to the part in `module!` that can be set to deno=
+te
+>>>> this default value -- we might also want to change the name of
+>>>> `default`, what do you think of `default_inactive` and `default_active=
+`?
+>>>
+>>> For all the predefined parameter types, the module code would never set
+>>> the `default_active` value. It should be part of the data parsing
+>>> specification for the predefined argument types.
+>>
+>> So if your module has an i32 parameter, you can't set a default value to
+>> eg 1000?
+>=20
+> You _would_ be able to set the `default_inactive` value, which is the
+> value assigned to the static at initialization time. It would make sense
+> to default this to 0 for integer types and make it overridable in the
+> `module!` macro.
 
-There is another subtle change here: xa_alloc() returns -EBUSY in the case
-of the address space exhaustion, while the old code returned -ENOSPC.
-It's unlikely a big practical problem.
+Hmm, I would say it makes more sense to have the user always specify a
+default in `module!`, since integers can mean a lot of different things.
+
+> You would not be to set the `default_active` value, which is the value
+> assigned to the parameter static variable, when the parameter is passed
+> without value. The reason being that we want to mirror C, so we prohibit
+> this for predefined integer parameter types.
+
+Gotcha, I wasn't 100% sure in our previous emails if we wanted to
+exactly mirror C or not. Should've asked that.
+Thanks for taking the time to write this clarification (and the other
+ones as well!), I think I now finally understand why you do it this way.
+I agree with your approach.
+
+---
+Cheers,
+Benno
+
 
