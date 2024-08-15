@@ -1,162 +1,129 @@
-Return-Path: <linux-kernel+bounces-288696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3C2953DC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:00:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893EF953DA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DABDAB26EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0FA1C249F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44BD15ECD5;
-	Thu, 15 Aug 2024 22:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB26F156F5D;
+	Thu, 15 Aug 2024 22:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KWEfl6iI"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OyQTVktB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97CB15E5DC
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 22:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E63156F3C;
+	Thu, 15 Aug 2024 22:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723762709; cv=none; b=tBiZmBahxcs6tXBIj39SX9zyWXqCRAtlGx+13pVI0mpDcIYpcsO73fZm3G/eidFin79FGoFUbFRmOb8hbPIIonJqUgtpP/ZXVIppyQ8XjbTLBeteMkOut3HCaWualKVrJVEQOeOhFHnhX2hGMVzNfgsc122ll/f6G+JpSm7hb+Y=
+	t=1723762669; cv=none; b=kdGIM6d2qnikuxtJa1GkzbQT+wWc14x6+VrCx5/iDS7dCwQaVy+LU1HKMz2xZGBmDb1jEGw8kC6vf4F5b+Xz87nC0sOulsMD6yNEsl4KUNHOm2FVrPyhyILiv+/4P6jqlHoUmj7cJYsEQeD6/1WHqlhZQOZ6i/lR5S5DxaLOvHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723762709; c=relaxed/simple;
-	bh=XQ9RjsJ/c62A9Icx1r751DOLP6WoZaUgI4RWwckyHfU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Il0hULz7HxFR7TwnZkRoZL7i77CzSIfUMeznmmZH6w37/h6TxdbIMhO2w3lLDonzlZhc5aZIgOop06s9xjuRq0IpCFVbBgfsOgzpDrm2GKqDKN9nKJO6NlybtY1KRXc9rT23+geucK/b9hNhncNJTiyaIixBpVLeeTKzoBZ9Eug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KWEfl6iI; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7a1843b4cdbso1098139a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723762707; x=1724367507; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iEyfkuyjidIDKVD0EgGnVsHdeDp6cB5THGfAbkbJ5pQ=;
-        b=KWEfl6iIaCHtNRuTAPWE3uOanhbGTszq1kWclAf1f1NmddC7H41fVTp7T77Z+4OEqz
-         fbBv6xA63a+jCo+4g5QAbSmaoi+2/ZxrLknwM4Lk4mtfvZxIY+l5OBazx7kcGE8vu3o5
-         1FuaDCAXk0u3ZYFEhIMjPGCQMh2EF2TVS7O9c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723762707; x=1724367507;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iEyfkuyjidIDKVD0EgGnVsHdeDp6cB5THGfAbkbJ5pQ=;
-        b=fn9Z+e/nqKensotKZhXTpnGUJyvtIPi0ybMKD/qz3JlWL67HwYEEzPAyGBKeaoj9vJ
-         yOsqF6Nzy3+GhvYHO8NkSOsa6bZOBAOecr7427zs22wqYfCTM1DrAIJXb1KVLk3gzxqa
-         oNKaeOBkISM64cXr5Z9bFKFl0Y2QA2DF6BV1DfTUrnRw59f5YJvrdcmljTo9phnFwO0u
-         bynMjGeENSJUTCSkWiyFWJQA/xs1Y/+IuQGPDui4WkjXaBMXMXmr8hB6vD8iB0zVrtsl
-         VIf3Pe4N4E9UsI3xezwhpnrewZZ1YAe54478n/9rF9mtw9vVAlonecaVdz2I8B8CPJTj
-         qQEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeIseTWHik3QTBy8W3CkE0BAN6gpIPgBxIQ0K7obxf8NczJGo5+BUstW+bKM/HC48xQpWT/IzMWjFH4Np+d8eaz7crA6Cv9vZnIftx
-X-Gm-Message-State: AOJu0YzJ6Pq91Qfj0hIzlb4kR2n/flIlHoHeaqXmE++o7dsVFpYo/4jf
-	MLFOATRQORi+0Z+DSNuPK3ibXOnj894a25F/+dOcTHCXtXRyNCvnSsVbcdxEKQ==
-X-Google-Smtp-Source: AGHT+IGXdJjw0jDnc/rZ+TElPH5EDfkpxHpnAawNeGz/KmJkADzTu0pSSxdB5tMFhph2VdZ64qjpwA==
-X-Received: by 2002:a17:90a:8a81:b0:2d3:d0b7:da4 with SMTP id 98e67ed59e1d1-2d3dfc7a8f2mr1274469a91.19.1723762706894;
-        Thu, 15 Aug 2024 15:58:26 -0700 (PDT)
-Received: from stbsrv-and-01.and.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e2e6b2d1sm373997a91.18.2024.08.15.15.58.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 15:58:26 -0700 (PDT)
-From: Jim Quinlan <james.quinlan@broadcom.com>
-To: linux-pci@vger.kernel.org,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	jim2101024@gmail.com,
-	james.quinlan@broadcom.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 13/13] PCI: brcmstb: Enable 7712 SOCs
-Date: Thu, 15 Aug 2024 18:57:26 -0400
-Message-Id: <20240815225731.40276-14-james.quinlan@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240815225731.40276-1-james.quinlan@broadcom.com>
-References: <20240815225731.40276-1-james.quinlan@broadcom.com>
+	s=arc-20240116; t=1723762669; c=relaxed/simple;
+	bh=ZD8JHRPSIZDW/NYI7azUH3ffzSWobGtKjbIHyZkRsg4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=PCDNp+fb/YlFwGRhAKzObJOzb3yuHO9dWEKei7ChWYAEZKHC7io8KN+JmYwKGzggufOHcEqD9e7/jUUO+WiDcrb11sMTn37+qJgoFgNkFY/ZsWxkZIk9DSzwyNj2ZZIBsAWg0JfrTG3S+URRuHBCdaFOdWpWa3ZvJ+Yura2Qt9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OyQTVktB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 734B4C4AF10;
+	Thu, 15 Aug 2024 22:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1723762668;
+	bh=ZD8JHRPSIZDW/NYI7azUH3ffzSWobGtKjbIHyZkRsg4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OyQTVktBCFZpCURQP2L0z92cpGaimWEpmonxX++VhyJigV0bqTHFmidKBpcw8Y7TF
+	 osbLcQRqApt9Ql2clSWFRfelK3wJRdLd/bwcQ3XTqzOWKbV6Oe2WKeXyBXzdr8IgQX
+	 PWXK7nlM1kPcJ/gI3SuOrKw5kWJggubYztWa/QSI=
+Date: Thu, 15 Aug 2024 15:57:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jani Nikula <jani.nikula@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-Id: <20240815155747.078805324103e374b8dbc805@linux-foundation.org>
+In-Reply-To: <20240815100645.25b7a87f@canb.auug.org.au>
+References: <20240815095734.751c6ec5@canb.auug.org.au>
+	<20240815100645.25b7a87f@canb.auug.org.au>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The Broadcom STB 7712 is the sibling chip of the RPi 5 (2712).
-It has one PCIe controller with a single port, supports gen2
-and one lane only.  The current revision of the chip is "C0"
-or "C1".
+On Thu, 15 Aug 2024 10:06:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pci/controller/pcie-brcmstb.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+> > 
+> > Caused by commit
+> > 
+> >   2771559a5531 ("fault-inject: improve build for CONFIG_FAULT_INJECTION=n")
+> > 
+> > This is just whack-a-mole ... :-(
+> 
+> These files might also be worth a look:
+> 
+> $ git grep -l '\<debugfs_' $(git grep -L 'linux/debugfs.h' $(git grep -l 'linux/fault-inject.h'))
+> drivers/gpu/drm/msm/msm_drv.c
+> drivers/misc/xilinx_tmr_inject.c
+> drivers/ufs/core/ufs-fault-injection.c
+> include/linux/mmc/host.h
+> include/ufs/ufshcd.h
 
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 26e8f544da4c..21e692a57882 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -1203,6 +1203,10 @@ static void brcm_extend_rbus_timeout(struct brcm_pcie *pcie)
- 	const unsigned int REG_OFFSET = PCIE_RGR1_SW_INIT_1(pcie) - 8;
- 	u32 timeout_us = 4000000; /* 4 seconds, our setting for L1SS */
+yup, thanks, why not.
+
+ drivers/gpu/drm/msm/msm_drv.c          |    1 +
+ drivers/ufs/core/ufs-fault-injection.c |    1 +
+ include/linux/mmc/host.h               |    1 +
+ include/ufs/ufshcd.h                   |    1 +
+ 4 files changed, 4 insertions(+)
+
+--- a/drivers/gpu/drm/msm/msm_drv.c~fault-inject-improve-build-for-config_fault_injection=n-fix-3
++++ a/drivers/gpu/drm/msm/msm_drv.c
+@@ -7,6 +7,7 @@
  
-+	/* 7712 does not have this (RGR1) timer */
-+	if (pcie->soc_base == BCM7712)
-+		return;
-+
- 	/* Each unit in timeout register is 1/216,000,000 seconds */
- 	writel(216 * timeout_us, pcie->base + REG_OFFSET);
- }
-@@ -1674,6 +1678,13 @@ static const int pcie_offsets_bmips_7425[] = {
- 	[PCIE_INTR2_CPU_BASE] = 0x4300,
- };
+ #include <linux/dma-mapping.h>
+ #include <linux/fault-inject.h>
++#include <linux/debugfs.h>
+ #include <linux/of_address.h>
+ #include <linux/uaccess.h>
  
-+static const int pcie_offset_bcm7712[] = {
-+	[EXT_CFG_INDEX]  = 0x9000,
-+	[EXT_CFG_DATA]   = 0x9004,
-+	[PCIE_HARD_DEBUG] = 0x4304,
-+	[PCIE_INTR2_CPU_BASE] = 0x4400,
-+};
-+
- static const struct pcie_cfg_data generic_cfg = {
- 	.offsets	= pcie_offsets,
- 	.soc_base	= GENERIC,
-@@ -1739,6 +1750,14 @@ static const struct pcie_cfg_data bcm7216_cfg = {
- 	.num_inbound_wins = 3,
- };
+--- a/drivers/ufs/core/ufs-fault-injection.c~fault-inject-improve-build-for-config_fault_injection=n-fix-3
++++ a/drivers/ufs/core/ufs-fault-injection.c
+@@ -3,6 +3,7 @@
+ #include <linux/kconfig.h>
+ #include <linux/types.h>
+ #include <linux/fault-inject.h>
++#include <linux/debugfs.h>
+ #include <linux/module.h>
+ #include <ufs/ufshcd.h>
+ #include "ufs-fault-injection.h"
+--- a/include/linux/mmc/host.h~fault-inject-improve-build-for-config_fault_injection=n-fix-3
++++ a/include/linux/mmc/host.h
+@@ -10,6 +10,7 @@
+ #include <linux/sched.h>
+ #include <linux/device.h>
+ #include <linux/fault-inject.h>
++#include <linux/debugfs.h>
  
-+static const struct pcie_cfg_data bcm7712_cfg = {
-+	.offsets	= pcie_offset_bcm7712,
-+	.perst_set	= brcm_pcie_perst_set_7278,
-+	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
-+	.soc_base	= BCM7712,
-+	.num_inbound_wins = 10,
-+};
-+
- static const struct of_device_id brcm_pcie_match[] = {
- 	{ .compatible = "brcm,bcm2711-pcie", .data = &bcm2711_cfg },
- 	{ .compatible = "brcm,bcm4908-pcie", .data = &bcm4908_cfg },
-@@ -1748,6 +1767,7 @@ static const struct of_device_id brcm_pcie_match[] = {
- 	{ .compatible = "brcm,bcm7445-pcie", .data = &generic_cfg },
- 	{ .compatible = "brcm,bcm7435-pcie", .data = &bcm7435_cfg },
- 	{ .compatible = "brcm,bcm7425-pcie", .data = &bcm7425_cfg },
-+	{ .compatible = "brcm,bcm7712-pcie", .data = &bcm7712_cfg },
- 	{},
- };
- 
--- 
-2.17.1
+ #include <linux/mmc/core.h>
+ #include <linux/mmc/card.h>
+--- a/include/ufs/ufshcd.h~fault-inject-improve-build-for-config_fault_injection=n-fix-3
++++ a/include/ufs/ufshcd.h
+@@ -17,6 +17,7 @@
+ #include <linux/blk-mq.h>
+ #include <linux/devfreq.h>
+ #include <linux/fault-inject.h>
++#include <linux/debugfs.h>
+ #include <linux/msi.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/dma-direction.h>
+_
 
 
