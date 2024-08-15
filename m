@@ -1,120 +1,179 @@
-Return-Path: <linux-kernel+bounces-288657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942A4953D2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:11:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CAD953D2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DCA91F214D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:11:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 251DB1C24AA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD9B15532E;
-	Thu, 15 Aug 2024 22:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779BA1547CE;
+	Thu, 15 Aug 2024 22:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dqq4S1TX"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nDMSicSY"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CDC154BFB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 22:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC6224211
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 22:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723759845; cv=none; b=o2Tbj8C/d3LboLwtHw4qJrMJKdc+MfzyABZj8k7NsQYpg3I8BsICRH6sZ+a4njvcLIJgooOwWsyMzvmlrj65IbxXnsGWbkd+CMLp2sOp4ZcTk9Lc4m+Kda1Mo6NKUIiMH8Ol1uekUW5XqdcGNp1/5AP/zMI0p4XMUkpeJ3vocMM=
+	t=1723759841; cv=none; b=t6e2drFADQOFidVUZNg1UhuxcPLLA6v4/1FrrqUH3ASj3VfAJ23q+EnT2w60HEn2LmUYzU0QNltBbk8oSksWSTxOMIdhkWObOXqEoar1t7CfqZK6GT61c55O/A1PGqdAWLpoQbpw/OaKv5ByD8sE0HMrlnxlNLOUm3tZWPY2uHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723759845; c=relaxed/simple;
-	bh=WbC5d4M1KKpH56P3a+lNKOT6nVYNXfHRA4vpXTBhih8=;
+	s=arc-20240116; t=1723759841; c=relaxed/simple;
+	bh=zLzj3dAJ8xa9yAsOtIyCZ3ab9mJsuh/Ogx7P9BpKDHk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMkCb7atrK0crLKshP+wOQZclS1ILC3ql/gE0V00muZFz2QnsM2Ql/fTZlKuo+IzefMNq1vjEVA5xXnAxr5bXvXsXA/7lt8um1s1wr2dnoeAOrJLn9r67AiCI4f7GebZtrzRH3vO9/LNrE2aA2t+hcm03muerqTdHafegTWSC18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dqq4S1TX; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so1980820a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:10:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=tVSEgMjQsLaY0GbZrm8eWSu/3LfwQQXbfEyLwoiucSkWrZCQThCnXXVpS8brdU2B8bBZlWjzzx8VuyoX7DyGl93y28+AsNnOT880P/986/+ox88emIWzBcByFcAjSxRx3stYrYX6vBpew/5f4Wef4ycze3mjaUbIZxeDtVRTDMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nDMSicSY; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5d5b22f97b7so1105474eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723759842; x=1724364642; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1723759839; x=1724364639; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WbC5d4M1KKpH56P3a+lNKOT6nVYNXfHRA4vpXTBhih8=;
-        b=Dqq4S1TXDgFuofU+xhw5Bw38sJ0yJNqcC2R//lHlTbhNUJAbmP2TDh/W4+LmhcSZ+X
-         vEzs6QaolhXCsGZ3v/qSI/9ysK/c9QVIk9jxy/s+tMcfosX62dqGDlaUatycvFee/ZvJ
-         oJGMYpY0Ma5gWXZfZDoGItUlTJB1U6PSYvnhFbkNaH7ObWnllr4MKYTuJxDiEUcUhCVv
-         kKo79GCfxaOOzi6Rq+eNmGigFMC840hbkjLFxkwKFepJ7ll9W9yuvOF2UfJHg6hxjysC
-         dSACqv7LvRbx6tw+C4NJ4OnOzUZfjM9r7H3hJnRVhRW/YTEBB4olf+gDu50wun0xxj4b
-         IeQg==
+        bh=T/7nC3aPz88eLKXfHY4nGDT403RKERjytoDOA8SZsNk=;
+        b=nDMSicSYVvhTzgvPWWG4GijoNOe+6bIhNwG+Sw/lCmctXDOTZyMUwY0c6ET1TRVPgn
+         wpRxdJ67f63aO8HBT6gVNUINPc4LIg7bCbG5UQV2Zou4QXimi+9CdQiT5KUX/nkVedDw
+         MpBA9/XctPv+l0+R+ht+g0GV57GVHuSNRccxo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723759842; x=1724364642;
+        d=1e100.net; s=20230601; t=1723759839; x=1724364639;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WbC5d4M1KKpH56P3a+lNKOT6nVYNXfHRA4vpXTBhih8=;
-        b=IPHjKvVB57JRuAO62OhaXKNNv5iD/Bm3ayDXxu3aGCKpJim7iwVfu19iaTEUmGGuQW
-         jRYVnuSeOSk2Xfk7IfsNKbQJNN7o1ODU2+TaMNlZIncdtC0MWgPUbnx3tNG02GHloMMu
-         e/NwLLlZ4NYhP4td2plR48PYtUwTvxtfqPnc3CHAtekdEBalEXuQ+UtonITGb9r57r0K
-         lVu5prUm7LT8ncl8JOR2A3iI5Ki2GO1MyEAXjJmHsavopdFUV1nDjyhybxjTeVHI55sH
-         EWSI15SJkorK9MjHqRgJFgCbRrY6dAm15CJ/IYIzvvIY6Wj9VZqmKWzlHAW1fuuZFBIq
-         IVXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVDyrhQEWu2m5DThnz+UNm0SAic7ZmZ+yBFTf8XhrMJjNtVCxk9jeSvpAnqBgTT0VS8y64t9cs2FlpG2NSzuGWeoMzHU3LQF3EsYdD
-X-Gm-Message-State: AOJu0YxuhHdfytnZp5cdxfsjsQF6a4cUm1LewSOrvl2hv9a1oSx02iEy
-	AxLHUpTf5Y5pmH7fyVHuMw0jW/Rd2CrtwmAuVrFeu4Qio+AMik+PPMoo9BTCs2aX5NK+hzhZf4g
-	m8Bf6GA+6TytV9DtKDOV8UZHW5zXryMAuDvlZ
-X-Google-Smtp-Source: AGHT+IHDPmf6+ClOONhZk9Nso0W2EhtmarkGmfQfspzadJOIG/HidFZptnUBVVUkiTtl79ePE2onlXdj3/v0NAL6Wxc=
-X-Received: by 2002:a17:907:97c3:b0:a7a:bae8:f2a1 with SMTP id
- a640c23a62f3a-a8392a03c21mr69498266b.42.1723759841582; Thu, 15 Aug 2024
- 15:10:41 -0700 (PDT)
+        bh=T/7nC3aPz88eLKXfHY4nGDT403RKERjytoDOA8SZsNk=;
+        b=G39eNfMNEigvFTLnBtSx2oAMwljiLhloX2JZbhO491nqEQs5hF6sIaGW1ObhHShZcF
+         vc1Bho4BZixrxvzhZH1iKhodv6bsS8yN4dMvVRt0v9SLYymc8W3pWSoUn74JtBpTJnJF
+         mUtyoIVvtLqTwSGDvrbpackhCB3NxxIjLhClL55qa7DIOzOe5+3rXk+LRnwv6LJ+30qR
+         R7sk2NxxxItsEuo/9/i+7pKNGeUTFFpyxcGonKS7O0GwS5pWR/OLfNESkWodXaSd8yhx
+         3hVig5lUOVqy0vuhFPkdvDo78vDeHoXNkNWH6oLLiV7Rc5szrJVGQrKuPziV0uGbsxi7
+         KPQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWPuUxpaNJNRZ79QphrkCrlstCjWC733wgyj2/UkBIHZotuz018XwqeuHm0Lb64Pd4Vv53+pIAWd5A8WzgpKHU3Q7IRDI6NhFG/pZ2
+X-Gm-Message-State: AOJu0Yy4i8jaznDfrXlGZSwwq53NoB/1wkutvWw2Y9jtEX6xEWa0NucT
+	Fw5iZtsT4PiA5L8uFUD8t+j23VdvUe5wvXLpUu0bmXs+BRr9P3fXnN2Ddqc8Wj6tv+e1qQeHOrw
+	N4Zr9WcRbdF2o+XFPsEhKD/Fgaz/dMaf67XYj
+X-Google-Smtp-Source: AGHT+IF5LJMV2jdY4Pyo/ZU+/INrJJp5kECqy7go8Kj+jdNivGAtJJE9PKTXPviz151/f4Pj9/aSiWwI85MX98NspuE=
+X-Received: by 2002:a05:6870:961f:b0:261:87:fe1f with SMTP id
+ 586e51a60fabf-2701c566835mr1108430fac.44.1723759838875; Thu, 15 Aug 2024
+ 15:10:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814171800.23558-1-me@yhndnzj.com> <CAKEwX=NrOBg0rKJnXGaiK9-PWeUDS+c3cFmaFFV0RrE8GkNZZA@mail.gmail.com>
- <CAJD7tkZ_jNuYQsGMyS1NgMf335Gi4_x5Ybkts_=+g5OyjtJQDQ@mail.gmail.com>
- <a2f67cbcc987cdb2d907f9c133e7fcb6a848992d.camel@yhndnzj.com>
- <CAKEwX=MDZdAHei3=UyYrsgWqyt-41_vOdCvTxj35O62NZhcN2A@mail.gmail.com> <20240815150819.9873910fa73a3f9f5e37ef4d@linux-foundation.org>
-In-Reply-To: <20240815150819.9873910fa73a3f9f5e37ef4d@linux-foundation.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 15 Aug 2024 15:10:05 -0700
-Message-ID: <CAJD7tkZ3v9N1D=0SSphPFMETbih5DadcAiOK=VVv=7J6_ohytQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/memcontrol: respect zswap.writeback setting from
- parent cg too
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Nhat Pham <nphamcs@gmail.com>, Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	Muchun Song <muchun.song@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>
+References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
+ <20240808161226.b853642c0ecf530b5cef2ecc@linux-foundation.org>
+ <CAKbZUD0_BSv6KOgaRuqjLWGnttzcprcUu5WysSZeX8FXAvui5w@mail.gmail.com> <CALmYWFs0v07z5vheDt1h3hD+3--yr6Va0ZuQeaATo+-8MuRJ-g@mail.gmail.com>
+In-Reply-To: <CALmYWFs0v07z5vheDt1h3hD+3--yr6Va0ZuQeaATo+-8MuRJ-g@mail.gmail.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 15 Aug 2024 15:10:26 -0700
+Message-ID: <CABi2SkUYAc557wwOriwUW3tfTc_U9MDPQ4bE-Q+tTdNgGT3UuQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: Optimize mseal checks
+To: Jeff Xu <jeffxu@google.com>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
+	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 3:08=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
+Hi Andrew, Pedro
+
+On Thu, Aug 8, 2024 at 6:03=E2=80=AFPM Jeff Xu <jeffxu@google.com> wrote:
 >
-> On Thu, 15 Aug 2024 12:12:26 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
->
-> > > Yeah, I thought about the other way around and reached the same
-> > > conclusion.
-> > > And there's permission boundary in the mix too - if root disables zsw=
-ap
-> > > writeback for its cgroup, the subcgroups, which could possibly be own=
-ed
-> > > by other users, should not be able to reenable this.
+> On Thu, Aug 8, 2024 at 5:34=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail=
+.com> wrote:
 > >
-> > Hmm yeah, I think I agree with your and Yosry's reasonings :) It
-> > doesn't affect our use case AFAICS, and the code looks solid to me,
-> > so:
+> > On Fri, Aug 9, 2024 at 12:12=E2=80=AFAM Andrew Morton <akpm@linux-found=
+ation.org> wrote:
+> > >
+> > > On Wed,  7 Aug 2024 22:13:03 +0100 Pedro Falcato <pedro.falcato@gmail=
+.com> wrote:
+> > >
+> > > > This series also depends on (and will eventually very slightly conf=
+lict with)
+> > > > the powerpc series that removes arch_unmap[2].
+> > >
+> > > That's awkward.  Please describe the dependency?
 > >
-> > Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+> > One of the transformations done in this patch series (patch 2) assumes
+> > that arch_unmap either doesn't exist or does nothing.
+> > PPC is the only architecture with an arch_unmap implementation, and
+> > through the series I linked they're going to make it work via
+> > ->close().
+> >
+> > What's the easiest way to deal with this? Can the PPC series go
+> > through the mm tree?
+> >
+> This patch can't be merged until arch_unmap() is all removed (ppc change)
 >
-> But you'd still like an update to Documentation/admin-guide/cgroup-v2.rst=
-?
+> Also I'm still doing a test/reviewing for this patch,  perhaps it is
+> better to wait till my test is done.
+>
+Sorry that I'm late for updating this thread.
 
+With removing arch_unmap() change landed , there is no dependency for
+the patch. However: I have other comments:
 
-Yeah I'd rather see a v2 with updated docs, and hopefully a selftest
-if the existing tests problem is resolved.
+1. Testing
+Testing is 90% of work when I modify kernel code and send a patch.  So
+I'm a little disappointed that this patch doesn't have any test
+updates or add new tests. Which makes me less confident about the
+regression risk on mseal itself, i.e. a sealed mapping being
+overwritten by mprotect/mmap/mremap/munmap.  I have posted the comment
+in  [1], and I would like to repeat it to stress my point.
 
-Also, do we want a Fixes tag and to backport this so that current
-users get the new behavior ASAP?
+The V2 series doesn't have selftest change which indicates lack of
+testing. The out-of-loop check is positioned nearer to the API entry
+point and separated from internal business logic, thereby minimizing
+the testing requirements. However, as we move the sealing check
+further inward and intertwine it with business logic, greater test
+coverage becomes necessary to ensure  the correctness of  sealing
+is preserved.
+
+Yes. I promised to run some tests, which I did, with the existing self
+test (that passed),  also I added more tests in the mremap selftest.
+However I'm bound by the time that I can spend on this  (my other
+duties and deliverables), I can't test it as much as I like to for
+in-loop change (in a time frame demanded by a dev in this ml). Because
+this patch is not getting tested as it should be, my confidence for
+the V2 patch is low .
+
+2 perf testing
+stress-ng is not stable in my test with Chromebook, and I'm requesting
+ Oliver to take more samples [2] . This due diligence assures that
+this patch accurately fulfills its purpose. The in-loop approach adds
+complexity to the code, i.e. future dev is harder to understand the
+sealing logic. Additionally, it sacrifices a security feature that
+makes it harder for an attacker to modify mapping (currently if an
+attacker uses munmap with a large address range, if one of the
+addresses is sealed, the entire range is not modified. In the in-loop
+approach,  memory will be unmapped till it hits the sealed memory).
+Therefore, I would like to ascertain the gain.
+
+3 mremap refactor work.
+I posted mremap refactor work [3] , which is aligned with the
+direction that we want to do in-loop change, and it also (imo)  a
+better version of handling error cases for mremap across multiple vma
+boundaries. That patch set can be applied on its own, and the test
+cases added also enhance the existing selftest. I hope my patch can be
+reviewed, and if passing perf test/approved, applied to mm first.
+
+Thanks
+Best regards,
+-Jeff
+
+[1] https://lore.kernel.org/linux-mm/20240814071424.2655666-2-jeffxu@chromi=
+um.org/
+[2] https://lore.kernel.org/linux-mm/CABi2SkXtZLojx3AQU4C=3D41NtBPGjVB2+fv_=
+KWziOqyXRQ8P7Bg@mail.gmail.com/
+[3] https://lore.kernel.org/linux-mm/20240814071424.2655666-1-jeffxu@chromi=
+um.org/
 
