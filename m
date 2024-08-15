@@ -1,115 +1,194 @@
-Return-Path: <linux-kernel+bounces-287920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B777952E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:29:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F38952E43
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 383AAB23E3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1D71F2681A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9046A17C9B9;
-	Thu, 15 Aug 2024 12:29:05 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12691993AC;
+	Thu, 15 Aug 2024 12:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SCVrPGie"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834D5148847;
-	Thu, 15 Aug 2024 12:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210C017C9AA
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723724945; cv=none; b=PCYGjdWRcjTjXQxuQZ5fgAPo2kPbd8GuN+H++y/ztVOAi54pzhiUm7RlujZTXyWEUtMJZ777K2uAtNdV5s9zSGlK4RZHBBFl8mb3IDuiVSUNd7yUS466xvRZKQqBDyUhxk5WHA9NoesvgqRjkz0ySXVQTmegXNW/X+lYlWlbSNE=
+	t=1723724981; cv=none; b=Dt53HBn1+0OEyEx2Nz6xJCymUWXPoYwM9x8aDnCk0ZOBHx4eEVEkwFPFxDhr/feHKeYfl1HmManhNpDePhizKU1UEAWui3KZxajiCSYqJfVBO/9Jn+X8BrPH8HGliexVQNGQw+G/wX6gFvRlN2lmCmGl+DQOildJNMZF5iGRiKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723724945; c=relaxed/simple;
-	bh=q+3JW+TJIv2uaOj0tc308BO0oWOka3Uf9ZIKkpfddTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FaXmj7Tlc4SFwFrpQMdSpFlTS/gZhZMPiL8rS49qgBnJ3Po+01cd9MxmemTxCJz8ILLREZbMgvIzYhzULT0eAHWnWWD29njTuJdugMabwdfYpHPFWvI6TVFcgdVtD/8kZzmuNxAAqSMtdRViS406DEY5xtyzraRJlzaXqZZocfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wl4754y4lz20lhY;
-	Thu, 15 Aug 2024 20:24:17 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id C6D86180019;
-	Thu, 15 Aug 2024 20:28:52 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 15 Aug
- 2024 20:28:52 +0800
-Message-ID: <5262cc0e-8e89-4ba0-8777-2ba49ec7c1f8@huawei.com>
-Date: Thu, 15 Aug 2024 20:28:51 +0800
+	s=arc-20240116; t=1723724981; c=relaxed/simple;
+	bh=NkiVEOpddfuXRWwjjKQ2g+L7HBTHV9/YbUBL5zvT4gY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TbnpPKTxhVDi2z+C8Tlcjtm5VUBmf1p2MDgFtF9evbFM++oTbN7qCMYodewiyicCk7TgWPAooP4JYSaSGaSdPphm3VHrEQv/kG4X8OSZcz1zcrc0zwqap8zAxf84YAQPGCEyPckp8KCpH3rSScwfrTnsCbzocsNVJbaTLGhFneI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SCVrPGie; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723724979; x=1755260979;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NkiVEOpddfuXRWwjjKQ2g+L7HBTHV9/YbUBL5zvT4gY=;
+  b=SCVrPGiehOt47mNCu08SCaUJjxbLIl9ejhWxukC2FnAG6Vbeps/y9U4/
+   yuiTPu5uMiP7tv3kGZLWLausonNa/JvtnmMEx3WfEx/55B6Rkt6Yf+NXe
+   MQJKk/pFBnsJKBUdQLe5UAtV1SZmEzQq+Dz9tbgETYG1QyfqdFjYSeevi
+   X/qECn/bXmtHF+5Ght1Cxbjw1c7g/z7AsiP1GDtedq+r43aPsHcLaTxwV
+   R+qWDwpgl0BhPex0LkgL1UrRGJPFw0hlBJudxhQGymI/EgVadKpFFJR1J
+   O5o2FARzxhqOJEDL6mt7JvOMVP0NSVMs0dqEeTZ/I0UnjlrKslrtbqtoj
+   Q==;
+X-CSE-ConnectionGUID: 88QemGsKTC27qF280A85kg==
+X-CSE-MsgGUID: AtY+/1j9SWuPpT2OacyJHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22112216"
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="22112216"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:29:38 -0700
+X-CSE-ConnectionGUID: TgQCFRqoR6OiTtvSfU3vqA==
+X-CSE-MsgGUID: LwHbPxXRRGqaPNjFzfd2ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="59489428"
+Received: from unknown (HELO khuang2-desk.gar.corp.intel.com) ([10.124.223.78])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:29:35 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	kirill.shutemov@linux.intel.com,
+	bp@alien8.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	mingo@redhat.com
+Cc: x86@kernel.org,
+	hpa@zytor.com,
+	luto@kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.lendacky@amd.com,
+	pbonzini@redhat.com,
+	seanjc@google.com
+Subject: [PATCH v5 0/5] TDX host: kexec() support
+Date: Fri, 16 Aug 2024 00:29:16 +1200
+Message-ID: <cover.1723723470.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cgroup: update some statememt about delegation
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-CC: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240815024118.3137952-1-chenridong@huawei.com>
- <vrozw5w2l32ni43akbf3xceq6rqpkskdlwbp2ko32qxv546n6s@qtw4l3qt357v>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <vrozw5w2l32ni43akbf3xceq6rqpkskdlwbp2ko32qxv546n6s@qtw4l3qt357v>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+
+Currently kexec() support and TDX host are muturally exclusive in the
+Kconfig.  This series adds the TDX host kexec support so that they can
+work together and can be enabled at the same time in the Kconfig.
+
+Hi maintainers,
+
+This series aims to go through the tip tree, but I also CC'ed Sean/Paolo
+due to when KVM TDX comes to play a KVM patch [*] is needed to complete
+the kexec support for TDX.  Also copy Dan for TDX connect.
+
+Thanks for your time!
+
+=== More information ===
+
+If the kernel has ever enabled TDX, part of system memory remains TDX
+private memory when kexec happens.  E.g., the PAMT (Physical Address
+Metadata Table) pages used by the TDX module to track each TDX memory
+page's state are never freed once the TDX module is initialized.  TDX
+guests also have guest private memory and secure-EPT pages.
+
+Similar to AMD SME, to support kexec the kernel needs to flush dirty
+cachelines for TDX private memory before booting to the second kernel.
+Also, the kernel needs to reset TDX private memory to normal (using
+MOVDIR64B) before booting to the second kernel when the platform has
+"partial write machine check" erratum, otherwise the second kernel may
+see unexpected machine check.
+
+The majority code change in this series handles "resetting TDX private
+memory" (flushing cache part is relatively straightforward).  Due to
+currently the kernel doesn't have a unified way to tell whether a given
+page is TDX private or not, this series chooses to only reset PAMT in
+the core-kernel kexec code, but requires the in-kernel TDX users (e.g.,
+KVM to reset the TDX private pages that they manage (see [*]).
+
+Other options are also mentioned in the changelog of patch:
+
+  x86/kexec: Reset TDX private memory on platforms with TDX erratum
+
+..which also contains more information about the above TDX erratum.
+
+This series also covers crash kexec, but no special handling is needed
+for crash kexec:
+
+1) kdump kernel uses reserved memory from the first kernel, but the
+   reserved memory will never be used as TDX memory.
+2) /proc/vmcore in the kdump kernel will only be used for read, but read
+   itself won't poison TDX private memory thus won't cause unexpected
+   machine check (only "partial write" will).
 
 
+v4 -> v5:
+ - Rebase to tip/master.
+ - Remove the TDX-specific callback due to no need to reset TDX private
+   memory for crash kexec.
+ - Add a new patch to make module status immutable in reboot notifier
+   (split from v1) in order to use module status to tell the presence of
+   TDX private memory.
+ - Minor changelog updates, trivial comments improvements.
+ - Add Tom's Reviewed-by tag.
 
-On 2024/8/15 20:12, Michal Koutný wrote:
-> Hi,
-> thanks for writing up on the care needed when you only use namespacing
-> (and not de-privilgation) for delegation.
-> 
-> On Thu, Aug 15, 2024 at 02:41:18AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
-> ...
-> 
-> What about some more clarifications to prevent other confusions?
-> 
->> --- a/Documentation/admin-guide/cgroup-v2.rst
->> +++ b/Documentation/admin-guide/cgroup-v2.rst
->> @@ -533,10 +533,12 @@ cgroup namespace on namespace creation.
->>   Because the resource control interface files in a given directory
->>   control the distribution of the parent's resources, the delegatee
->>   shouldn't be allowed to write to them.  For the first method, this is
->> -achieved by not granting access to these files.  For the second, the
->> -kernel rejects writes to all files other than "cgroup.procs" and
->> -"cgroup.subtree_control" on a namespace root from inside the
->> -namespace.
->> +achieved by not granting access to these files.  For the second, files
->> +outside the namespace shouldn't be visible from within the delegated
->                           should be hidden from the delegatee by the
-> means of at least mount namespacing, and the kernel...
-> 
->> +namespace, and the kernel rejects writes to all files on a namespace
->> +root from inside the namespace, except for those files listed in
->            inside the cgroup namespace
-> 
->> +"/sys/kernel/cgroup/delegate" (including "cgroup.procs", "cgroup.threads",
->> +"cgroup.subtree_control", etc.).
->    
-> ...
->> -	 * except for the files explicitly marked delegatable -
->> -	 * cgroup.procs and cgroup.subtree_control.
->> +	 * except for the set delegatable files shown in /sys/kernel/cgroup/delegate,
->> +	 * including cgroup.procs, cgroup.threads and cgroup.subtree_control, etc.
-> 
-> "Marked delegatable" (meaning CFTYPE_NS_DELEGATABLE) is appropriate
-> comment in the code, a reference to the sysfs file is only consequential
-> to this marking. A minimal change would be like:
-> 
-> -	 * cgroup.procs and cgroup.subtree_control.
-> +	 * e.g. cgroup.procs and cgroup.subtree_control.
-Thank you, Michal, I will send new patch.
+ v4: https://lore.kernel.org/all/cover.1713439632.git.kai.huang@intel.com/
 
-Thanks,
-Ridong
+v3 -> v4:
+ - Updated changelog and comments of patch 1/2 per comments from
+   Kirill and Tom (see specific patch for details).
+
+ v3: https://lore.kernel.org/linux-kernel/cover.1712493366.git.kai.huang@intel.com/
+
+v2 -> v3:
+ - Change to only do WBINVD for bare-metal, as Kirill/Tom pointed out
+   WBINVD in TDX guests and SEV-ES/SEV-SNP guests triggers #VE.
+
+ v2: https://lore.kernel.org/linux-kernel/cover.1710811610.git.kai.huang@intel.com/
+
+v1 -> v2:
+ - Do unconditional WBINVD during kexec() -- Boris
+ - Change to cover crash kexec() -- Rick
+ - Add a new patch (last one) to add a mechanism to reset all TDX private
+   pages due to having to cover crash kexec().
+ - Other code improvements  -- Dave
+ - Rebase to latest tip/master.
+
+ v1: https://lore.kernel.org/linux-kernel/cover.1706698706.git.kai.huang@intel.com/
+
+[*]: https://github.com/intel/tdx/commit/513e24d7913457ba87b6f25644d02fbed0848f21
+
+
+Kai Huang (5):
+  x86/kexec: do unconditional WBINVD for bare-metal in stop_this_cpu()
+  x86/kexec: do unconditional WBINVD for bare-metal in relocate_kernel()
+  x86/virt/tdx: Make module initializatiton state immutable in reboot
+    notifier
+  x86/kexec: Reset TDX private memory on platforms with TDX erratum
+  x86/virt/tdx: Remove the !KEXEC_CORE dependency
+
+ arch/x86/Kconfig                     |  1 -
+ arch/x86/include/asm/kexec.h         |  2 +-
+ arch/x86/include/asm/tdx.h           |  2 +
+ arch/x86/kernel/machine_kexec_64.c   | 29 +++++++++--
+ arch/x86/kernel/process.c            | 19 ++++---
+ arch/x86/kernel/relocate_kernel_64.S | 19 +++++--
+ arch/x86/virt/vmx/tdx/tdx.c          | 78 ++++++++++++++++++++++++++++
+ 7 files changed, 129 insertions(+), 21 deletions(-)
+
+
+base-commit: b8c7cbc324dc17b9e42379b42603613580bec2d8
+-- 
+2.45.2
+
 
