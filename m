@@ -1,253 +1,184 @@
-Return-Path: <linux-kernel+bounces-288523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16759953B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:02:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A01953B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36F481C24B4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:02:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7667C1C22837
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B941448C3;
-	Thu, 15 Aug 2024 20:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F2C14386C;
+	Thu, 15 Aug 2024 20:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eh/tyzHb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IXuC+ee8"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3E910FF;
-	Thu, 15 Aug 2024 20:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E76A10FF
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 20:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723752147; cv=none; b=ZoReOqFzXy3Ps0nQ2gLOJnfXOY/3LdXdmAWe0nb80DHWjNEOn4c7gqsSoboP+Lwt135WCsiaFradoQTdm/OMtW/IqrJOOcu2nkcz5kwhJMvKmZ8Da4OT+PAYFbzwB6VrlaIPVXQUBDNxFj3vvljHHbVGTBZSSwwtIQQe6k24gqM=
+	t=1723752213; cv=none; b=gadNpJRhCIbp+EqkEnoTkZpZ0RRjM0Nyrd44mIrs2SPcA2lMJBrvsV5QzYoO0MsXwB1xu35M0yKuNktd/grIkcP5QikZp/LYDenZH0QlO0x8SsNfDqT3K5lK4EWa0xBc3q9WsBcaQphuWi3bI3NtS031gaC9jb8acnGlA4AWj1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723752147; c=relaxed/simple;
-	bh=Una/csjFvk8Y03/HoOMMntul75tfxF/Fl5iMXVtNLo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEXZ54gA0W/F8ispayzyjg7SOjGnJ5caVnTIFOkNLzsO7nn6wznWnWCnYpMeNuXjqLU8A98slOgDIbACVaszOAt0Su6wpR/42iGWHVrFGfKPkMYDmzqLHTXx5mPSgr1386/YJrtEhfMelfo+ugZWIVTyMNqlLapLQkitIEaLVsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eh/tyzHb; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723752145; x=1755288145;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Una/csjFvk8Y03/HoOMMntul75tfxF/Fl5iMXVtNLo4=;
-  b=Eh/tyzHbRy/rMbC9zHkGBeZM2Qkw6bpXAGT5zqbMYeRDDn1svToFZMm7
-   M4bfGHWRuBMmdnmjDF2Jh+Y15+7YFhampvwChTqFXnXrrsNw+szDWSJmp
-   45s3sW6iOqIhRP/jg3kTKj7Osr7mT34w5SrCdYUgK4x/f824LKen16G30
-   n/liakxF4ouqZ313YsxQGdbySYimVaV67v6PrX7D0m9C7n7xLzcaM7ON9
-   kg75Ms09OqkhzWWpnZ0z9xzfcJJBQXIkZYbeYzXbRcD0S5eSMDPdQ9S7V
-   GsgFSSRjpCYGuiMHA6FsBBDPmlBI0i26ZvRlkA8n9SbGkdG0YH7DZgt+6
-   Q==;
-X-CSE-ConnectionGUID: +myjxpEkQ7e1YNjfyDl9Yg==
-X-CSE-MsgGUID: wfXFJmyVRK6k1Q7aU4mHog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="32605452"
-X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
-   d="scan'208";a="32605452"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 13:02:24 -0700
-X-CSE-ConnectionGUID: BQ4Ed6q6Qw2zdK7U38N6BA==
-X-CSE-MsgGUID: bpAKtS9nR9ODn/gWIi+NuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,149,1719903600"; 
-   d="scan'208";a="59133924"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 15 Aug 2024 13:02:21 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1segfr-0005YM-0X;
-	Thu, 15 Aug 2024 20:02:19 +0000
-Date: Fri, 16 Aug 2024 04:01:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Derek J. Clark" <derekjohn.clark@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	=?iso-8859-1?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] hwmon: (oxp-sensors) Add support for multiple new
- devices.
-Message-ID: <202408160329.TLNbIwRC-lkp@intel.com>
-References: <20240815031358.21027-2-derekjohn.clark@gmail.com>
+	s=arc-20240116; t=1723752213; c=relaxed/simple;
+	bh=6efwW+TiMeyn7babczOAcu+G06aaRQ14SQYo24lfVyE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UpIBj4I078uX7QYNS4YVf6q+GqLkTZWCC/L5oK1qCo5YVJDIGKF3paokHocGR4XAy4wyBSRsI49dHiHcg+FrYTEt5AhnnVlM9FhtiyF2GRTBb2NvtGaD352tVeDbfJO98zB2hcpZ8XZ0cqHRWD3bZ/GDlKSHB/lMAfbzne/IBBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IXuC+ee8; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-665a6dd38c8so22493707b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723752210; x=1724357010; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LejLHnu5f/FXOnf8ScDyru0HSogJNHqdvYaawTLeU0o=;
+        b=IXuC+ee8RhM5nMieWG6JCt1nu1Un4RJqNG1R5eMKx4Dg5dKWYEBvnSZp7iw5Zziitl
+         trDnseTGUYRPnwaU7lnBto/TcfmuWw2zFfVM8SB9qT63sju0d8sNkJO/T007noQIVqVp
+         RKvzT5D22lv3N/+Oy3bARvQ18sDEGRKYoUP60oSyIANgks2hFrd5qwZkDmlmQoKspTt/
+         ZXHkwlpFV1yYeNGsrnJnXXCioYdA7U+TrIAU3VedmYHiq3OHQHHyVq5lNN7aTaJ3Kwbd
+         yvZeM07n+Q4jpgwmrRqDhQzk7lm4dRlkNKaOlS5SzCW2nLBuAOwA7REnvwLA9zg59JF1
+         8tTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723752210; x=1724357010;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LejLHnu5f/FXOnf8ScDyru0HSogJNHqdvYaawTLeU0o=;
+        b=feXtz+WIgQB5fSUDMGOS0j/4wi06cRosP4ZIHGx96Pmh+JYyWNVuUZa7HaXXrrDGAq
+         5wlPz5bL+OVRpUcOldyOyP9n8cqG0l7OjBsy3YoslICvVMuimvcTfR3Lk0iDHdIMwiri
+         BjePd6PVVZuDshshJ2B+9QAVEAhJFmSMhrlIOiPxmiNrUmYy97vbrhhSFDcudt/BFxnz
+         n69m1aAXbhR4fulNistlYrf7PX9FQG1coFJKijT6amnJCz4OAtyuWIbfRxwJ1wIEV5bP
+         AOWs+ZZdSGb8Qxnhqwo60Oz+BWYq63WJKu150+P5aBJkcCYNoV4YVUEt8/2ZODYIuAr4
+         zHhw==
+X-Gm-Message-State: AOJu0YxRl5nsxqDOZDEO/s8axfgH6qOtCULJDBRCR0zhM/XZbOfCMv3F
+	Gk3jQwuLMfqZProKnI9EA86RxlhYQLSQZEzhbeDj/s1Ta1CdPikyUoIZQ3cpNPTJZuYvJBn1j0w
+	Nrwkfosvu4o3SEhdCz+AZFGUx9jJrxNEGtHtcsYNTAV5yFfqvUFimdEANYMEzByd7eOFbXEjFd4
+	VcJ687HVZqQqCy0c5dm+UJ49ai2JVM8bIrJ/MKigQST5Pq
+X-Google-Smtp-Source: AGHT+IFzFRIU3SNfYIV/5IOtCTN8mbricfo8Uo5jYYHy8pkSBs198jTgo9tHaGQ8rKQk7POIwmEbZU5amz4Y
+X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
+ (user=jstultz job=sendgmr) by 2002:a05:690c:3009:b0:69a:536:afde with SMTP id
+ 00721157ae682-6b1baeb1478mr13207b3.5.1723752209970; Thu, 15 Aug 2024 13:03:29
+ -0700 (PDT)
+Date: Thu, 15 Aug 2024 13:03:09 -0700
+In-Reply-To: <874j7y6cwh.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815031358.21027-2-derekjohn.clark@gmail.com>
+Mime-Version: 1.0
+References: <874j7y6cwh.ffs@tglx>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
+Message-ID: <20240815200325.2474604-1-jstultz@google.com>
+Subject: [PATCH] time: Rename CLOCK_SET_* as BASEMASK_*_CLOCK_SET
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Derek,
+In commit 5916be8a53de ("timekeeping: Fix bogus clock_was_set()
+invocation in do_adjtimex()"), Thomas fixed a bug where instead
+of passing one of the CLOCK_SET_* values to clock_was_set(),a
+conceptually related clockid (CLOCK_REALTIME) was incorrectly
+passed.
 
-kernel test robot noticed the following build warnings:
+Just to make this type of accident less likely, lets rename the
+base masks used by clock_was_set() to something that doesn't
+resemble a clockid.
 
-[auto build test WARNING on groeck-staging/hwmon-next]
-[also build test WARNING on linus/master v6.11-rc3 next-20240815]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thus:
+CLOCK_SET_WALL -> BASEMASK_WALL_CLOCK_SET
+CLOCK_SET_BOOT -> BASEMASK_BOOT_CLOCK_SET
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Derek-J-Clark/hwmon-oxp-sensors-Add-support-for-multiple-new-devices/20240815-111550
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
-patch link:    https://lore.kernel.org/r/20240815031358.21027-2-derekjohn.clark%40gmail.com
-patch subject: [PATCH 1/1] hwmon: (oxp-sensors) Add support for multiple new devices.
-config: i386-buildonly-randconfig-005-20240815 (https://download.01.org/0day-ci/archive/20240816/202408160329.TLNbIwRC-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408160329.TLNbIwRC-lkp@intel.com/reproduce)
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+ kernel/time/hrtimer.c       | 2 +-
+ kernel/time/tick-internal.h | 4 ++--
+ kernel/time/timekeeping.c   | 8 ++++----
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408160329.TLNbIwRC-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/hwmon/oxp-sensors.c:497:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
-     497 |                 default:
-         |                 ^
-   drivers/hwmon/oxp-sensors.c:497:3: note: insert 'break;' to avoid fall-through
-     497 |                 default:
-         |                 ^
-         |                 break; 
-   drivers/hwmon/oxp-sensors.c:564:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
-     564 |                 default:
-         |                 ^
-   drivers/hwmon/oxp-sensors.c:564:3: note: insert 'break;' to avoid fall-through
-     564 |                 default:
-         |                 ^
-         |                 break; 
-   drivers/hwmon/oxp-sensors.c:616:3: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
-     616 |                 default:
-         |                 ^
-   drivers/hwmon/oxp-sensors.c:616:3: note: insert 'break;' to avoid fall-through
-     616 |                 default:
-         |                 ^
-         |                 break; 
-   3 warnings generated.
-
-
-vim +497 drivers/hwmon/oxp-sensors.c
-
-   464	
-   465	static int oxp_platform_read(struct device *dev, enum hwmon_sensor_types type,
-   466				     u32 attr, int channel, long *val)
-   467	{
-   468		int ret;
-   469	
-   470		switch (type) {
-   471		case hwmon_fan:
-   472			switch (attr) {
-   473			case hwmon_fan_input:
-   474				switch (board) {
-   475				case orange_pi_neo:
-   476					return read_from_ec(ORANGEPI_SENSOR_FAN_REG, 2, val);
-   477				case aok_zoe_a1:
-   478				case aya_neo_2:
-   479				case aya_neo_2s:
-   480				case aya_neo_air:
-   481				case aya_neo_air_1s:
-   482				case aya_neo_air_plus_mendo:
-   483				case aya_neo_air_pro:
-   484				case aya_neo_flip:
-   485				case aya_neo_geek:
-   486				case aya_neo_geek_1s:
-   487				case aya_neo_kun:
-   488				case oxp_mini_amd:
-   489				case oxp_mini_amd_a07:
-   490				case oxp_2:
-   491				case oxp_fly:
-   492				case oxp_mini_amd_pro:
-   493					return read_from_ec(OXP_SENSOR_FAN_REG, 2, val);
-   494				default:
-   495					break;
-   496				}
- > 497			default:
-   498				break;
-   499			}
-   500			break;
-   501		case hwmon_pwm:
-   502			switch (attr) {
-   503			case hwmon_pwm_input:
-   504				switch (board) {
-   505				case orange_pi_neo:
-   506					ret = read_from_ec(ORANGEPI_SENSOR_PWM_REG, 1, val);
-   507					if (ret)
-   508						return ret;
-   509					/* scale from range [1-244] */
-   510					*val = ((*val - 1) * 254 / 243) + 1;
-   511					break;
-   512				case aya_neo_2:
-   513				case aya_neo_2s:
-   514				case aya_neo_air:
-   515				case aya_neo_air_1s:
-   516				case aya_neo_air_plus_mendo:
-   517				case aya_neo_air_pro:
-   518				case aya_neo_flip:
-   519				case aya_neo_geek:
-   520				case aya_neo_geek_1s:
-   521				case aya_neo_kun:
-   522				case oxp_mini_amd:
-   523				case oxp_mini_amd_a07:
-   524					ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-   525					if (ret)
-   526						return ret;
-   527					*val = (*val * 255) / 100;
-   528					break;
-   529				case aok_zoe_a1:
-   530				case oxp_2:
-   531				case oxp_fly:
-   532				case oxp_mini_amd_pro:
-   533				default:
-   534					ret = read_from_ec(OXP_SENSOR_PWM_REG, 1, val);
-   535					if (ret)
-   536						return ret;
-   537					break;
-   538				}
-   539				return 0;
-   540			case hwmon_pwm_enable:
-   541				switch (board) {
-   542				case orange_pi_neo:
-   543					return read_from_ec(ORANGEPI_SENSOR_PWM_ENABLE_REG, 1, val);
-   544				case aok_zoe_a1:
-   545				case aya_neo_2:
-   546				case aya_neo_2s:
-   547				case aya_neo_air:
-   548				case aya_neo_air_1s:
-   549				case aya_neo_air_plus_mendo:
-   550				case aya_neo_air_pro:
-   551				case aya_neo_flip:
-   552				case aya_neo_geek:
-   553				case aya_neo_geek_1s:
-   554				case aya_neo_kun:
-   555				case oxp_mini_amd:
-   556				case oxp_mini_amd_a07:
-   557				case oxp_2:
-   558				case oxp_fly:
-   559				case oxp_mini_amd_pro:
-   560					return read_from_ec(OXP_SENSOR_PWM_ENABLE_REG, 1, val);
-   561				default:
-   562					break;
-   563				}
-   564			default:
-   565				break;
-   566			}
-   567			break;
-   568		default:
-   569			break;
-   570		}
-   571		return -EOPNOTSUPP;
-   572	}
-   573	
-
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index b8ee320208d41..ca18a2a344294 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -980,7 +980,7 @@ void clock_was_set(unsigned int bases)
+ 
+ static void clock_was_set_work(struct work_struct *work)
+ {
+-	clock_was_set(CLOCK_SET_WALL);
++	clock_was_set(BASEMASK_WALL_CLOCK_SET);
+ }
+ 
+ static DECLARE_WORK(hrtimer_work, clock_was_set_work);
+diff --git a/kernel/time/tick-internal.h b/kernel/time/tick-internal.h
+index 5f2105e637bdf..59a6e50734f40 100644
+--- a/kernel/time/tick-internal.h
++++ b/kernel/time/tick-internal.h
+@@ -181,11 +181,11 @@ extern u64 get_next_timer_interrupt(unsigned long basej, u64 basem);
+ u64 timer_base_try_to_set_idle(unsigned long basej, u64 basem, bool *idle);
+ void timer_clear_idle(void);
+ 
+-#define CLOCK_SET_WALL							\
++#define BASEMASK_WALL_CLOCK_SET						\
+ 	(BIT(HRTIMER_BASE_REALTIME) | BIT(HRTIMER_BASE_REALTIME_SOFT) |	\
+ 	 BIT(HRTIMER_BASE_TAI) | BIT(HRTIMER_BASE_TAI_SOFT))
+ 
+-#define CLOCK_SET_BOOT							\
++#define BASEMASK_BOOT_CLOCK_SET						\
+ 	(BIT(HRTIMER_BASE_BOOTTIME) | BIT(HRTIMER_BASE_BOOTTIME_SOFT))
+ 
+ void clock_was_set(unsigned int bases);
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 5391e4167d602..c8108345438aa 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1471,7 +1471,7 @@ int do_settimeofday64(const struct timespec64 *ts)
+ 	raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
+ 
+ 	/* Signal hrtimers about time change */
+-	clock_was_set(CLOCK_SET_WALL);
++	clock_was_set(BASEMASK_WALL_CLOCK_SET);
+ 
+ 	if (!ret) {
+ 		audit_tk_injoffset(ts_delta);
+@@ -1521,7 +1521,7 @@ static int timekeeping_inject_offset(const struct timespec64 *ts)
+ 	raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
+ 
+ 	/* Signal hrtimers about time change */
+-	clock_was_set(CLOCK_SET_WALL);
++	clock_was_set(BASEMASK_WALL_CLOCK_SET);
+ 
+ 	return ret;
+ }
+@@ -1896,7 +1896,7 @@ void timekeeping_inject_sleeptime64(const struct timespec64 *delta)
+ 	raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
+ 
+ 	/* Signal hrtimers about time change */
+-	clock_was_set(CLOCK_SET_WALL | CLOCK_SET_BOOT);
++	clock_was_set(BASEMASK_WALL_CLOCK_SET | BASEMASK_BOOT_CLOCK_SET);
+ }
+ #endif
+ 
+@@ -2606,7 +2606,7 @@ int do_adjtimex(struct __kernel_timex *txc)
+ 		clock_set |= timekeeping_advance(TK_ADV_FREQ);
+ 
+ 	if (clock_set)
+-		clock_was_set(CLOCK_SET_WALL);
++		clock_was_set(BASEMASK_WALL_CLOCK_SET);
+ 
+ 	ntp_notify_cmos_timer();
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0.184.g6999bdac58-goog
+
 
