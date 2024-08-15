@@ -1,104 +1,185 @@
-Return-Path: <linux-kernel+bounces-287715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B715952BCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:20:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A03952BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54D21F2218F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:20:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98AC281EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19F1A00DE;
-	Thu, 15 Aug 2024 09:08:52 +0000 (UTC)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2B21D4151;
+	Thu, 15 Aug 2024 09:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="mPuTEpVE"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2B61BD004
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAE51BDA9B;
+	Thu, 15 Aug 2024 09:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712931; cv=none; b=HTGruuEEmfz0ad/+JoNKrQL3CHE+yyk71SRliS0+viAEQSlk76z64Mp6AdoqZ93iQIZxiHLlhQo7S/srTZE106+NkZ9XTlJ69jLxHw5GxDi0Zj/0UTnSOYUTJoD2TxxbPt2eOasPgHCUBdjau+4eWMn4SzVwE4mqFjGq16UAVsI=
+	t=1723712952; cv=none; b=eWnSCOc8WObjO5/vpGD/hsVChoqBvhSvTD+jFEfRCR3kaOpyHVBudsIq9rbHg+4kQ0BFQ+/juztAtmmjxLUG7wM801btyJffr3s5zmLv9SHt19Z9MedkFQcvpn5tZOGbHTt2fbjW+3NDcxiYJ8UeuJ6aFv7hs6nvrAVBIEgjSRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712931; c=relaxed/simple;
-	bh=SN6j3WE2UIAXJsoHn44NG3GR7SAk5QMcbc6Aa+bYvGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oJoNShdUX0t44ybgc/bhB3TYjU2ISu5Caemnd7EgOgR3HSjGvyXCy4IouHIg+kdNQ3vKJH40LqvzIeDpG8203mVB53W3wO0k7CS+eRwVVRhQTqn0m9GqITDP30egt9WtZvyrxntLGXq5H0gPGAV1t1RFE+63h2AJIQ152zOKhvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4f51af903a7so970489e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:08:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723712929; x=1724317729;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l/CWSZADW7omRwvwkV+hlyqW09yOSDatZ1zvdznqBXU=;
-        b=XUbwp765cFP9jgiYygmhk5UCafF3zlP/oV5TGgaoRhKMrIDzBeiOnPAVgFs+huyvzB
-         A/lVveRkOEdYNNvFzXrYn2heNn/PkoHCS1usJUTgj5wsjTW4hhJemYIhXR2AotBS1Et3
-         u6OSLrzkRfCjOBF9Hc3WA+3t3+zTAniJ7opo5uSC44l5BNjmbFd3e30mUqAz9lMNWTbi
-         mZTtfOHa9X1+fo3jiCSnsCS9xhIo/ddCWPpK8fB+/yWUnMNMoApxTdExcyNV1ITh6GnD
-         LAS5wYbprDgyx0PLB9hlCi5gpEdL2JALQy6X1qRFyjfhFTZ9jtPp5/0REGHLceyskfg1
-         W9dw==
-X-Forwarded-Encrypted: i=1; AJvYcCURRSMFIFIlnzcf8nf32FEpvmR440aZYv2khaVV7tuPbKdxwZt9eE5wbwAdsBL9x/DglUrMxzUDsfWd0nbNAd4dDVxvC+F3KhxXJhO3
-X-Gm-Message-State: AOJu0Yy6Mr3UgnAdcUYTjbv0UHqc3/AVfF5l6ZpD5dWqqtS0VXjzfbbk
-	PZzVRUjPHiMruXAWx2Fhn5EP4lapialQZy3tQp7BjmCakK0zjEzPUcGp34cdUqOYw5mAogZxa8i
-	+f5s91QN2treVZllns4AtLle6zJU=
-X-Google-Smtp-Source: AGHT+IFVeizXgqiVB5P/hEFZcZD8zza5iMWyBiL9JKz+y/KneaKvIPZ5gjCboLcOGrAFJOsPtfNFH/PmhdDGPueiDrc=
-X-Received: by 2002:a05:6122:3b0c:b0:4da:ae51:b755 with SMTP id
- 71dfb90a1353d-4fc59083be3mr1359519e0c.3.1723712928905; Thu, 15 Aug 2024
- 02:08:48 -0700 (PDT)
+	s=arc-20240116; t=1723712952; c=relaxed/simple;
+	bh=Mul9z/t+NyoNQ3hyA3e/slqUNLppNdHFTAPCHrnHaJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=U7ZVisms2FJW2h71OhCYNIx7a8LqUPPqpwDRJWNdDzS58R89r4No8ANnOFay3vVV05NzGsUMvExpHH9Ss8J7naMQFC46yIoXq39S0AJmeaNudHYK55/KqI5LefXbGquP1Sx90sz9+Mw4hYzx/sPZl6je8Z2euttw5JwZGoBS+oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=mPuTEpVE; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Wkznm5LLSz9sJ5;
+	Thu, 15 Aug 2024 11:09:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1723712940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+pM9gcDQmpAu1KxMlZEMUf7H6tquKP9eEhjTE70iaUU=;
+	b=mPuTEpVEiW9viw+9S7YRAuaTuZi81Ek1hDkFclq8xZ8Vnc2faQ0T2S599plk5MbXOg+cCP
+	rRVuMgWfSf4Dyn1Phho2qeCuFYrUFULTo8Bf1weXLzO9UPUNCbLAqnHmI0KjhRikP6DLBC
+	28HlqkQa+YhNTCh0f1H/pbNWBuyGA0+43bT6ETGSialO+qxEFM0R0Tmxtp8yzO1vGLGgnO
+	iK1nY7CT7HW1TueKrpU2n0P+ghvd6oKLpAiPZC4k5Kk26QJar94FyekIQFlHMKmKHQLI6y
+	Dr0bhrwgcPTjnqros6n6iPmI3JR3U8Az1t2WU4tx6daOQe2BdOuRolZR7ei10w==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: brauner@kernel.org,
+	akpm@linux-foundation.org
+Cc: chandan.babu@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org,
+	hare@suse.de,
+	gost.dev@samsung.com,
+	linux-xfs@vger.kernel.org,
+	kernel@pankajraghav.com,
+	hch@lst.de,
+	david@fromorbit.com,
+	Zi Yan <ziy@nvidia.com>,
+	yang@os.amperecomputing.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org,
+	john.g.garry@oracle.com,
+	cl@os.amperecomputing.com,
+	p.raghav@samsung.com,
+	mcgrof@kernel.org,
+	ryan.roberts@arm.com
+Subject: [PATCH v12 00/10] enable bs > ps in XFS
+Date: Thu, 15 Aug 2024 11:08:39 +0200
+Message-ID: <20240815090849.972355-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815082508.15722-1-yangyicong@huawei.com>
-In-Reply-To: <20240815082508.15722-1-yangyicong@huawei.com>
-From: Barry Song <baohua@kernel.org>
-Date: Thu, 15 Aug 2024 17:08:35 +0800
-Message-ID: <CAGsJ_4yeA0oyezky=QbkpoV9+xK04tRygp4S5S1V3nPZ5+Zbzw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update the maintainer of dma mapping benchmark
-To: Yicong Yang <yangyicong@huawei.com>
-Cc: chenxiang66@hisilicon.com, hch@lst.de, linux-kernel@vger.kernel.org, 
-	prime.zeng@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4Wkznm5LLSz9sJ5
 
-On Thu, Aug 15, 2024 at 4:31=E2=80=AFPM Yicong Yang <yangyicong@huawei.com>=
- wrote:
->
-> From: Yicong Yang <yangyicong@hisilicon.com>
->
-> Xiang will no longer focus on this and I'll continue to take care
-> of this benchmark tool. So update the information.
->
-> Cc: Xiang Chen <chenxiang66@hisilicon.com>
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
+From: Pankaj Raghav <p.raghav@samsung.com>
 
-Acked-by: Barry Song <baohua@kernel.org>
+This is the 12th version of the series that enables block size > page size
+(Large Block Size) experimental support in XFS. Please consider this for
+the inclusion in 6.12.
+The series is based on fs-next as I was not able to run tests on
+the latest linux-next.
 
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f328373463b0..c0976c375f0f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6625,7 +6625,7 @@ F:        include/linux/dmaengine.h
->  F:     include/linux/of_dma.h
->
->  DMA MAPPING BENCHMARK
-> -M:     Xiang Chen <chenxiang66@hisilicon.com>
-> +M:     Yicong Yang <yangyicong@hisilicon.com>
->  L:     iommu@lists.linux.dev
->  F:     kernel/dma/map_benchmark.c
->  F:     tools/testing/selftests/dma/
-> --
-> 2.24.0
->
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would
+like more context on this effort.
+
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
+
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
+
+I also ran split_huge_page_test selftest on XFS filesystem to check for
+huge page splits in min order chunks is done correctly.
+
+No regressions were found with these patches added on top.
+
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
+
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
+
+We ran sysbench on postgres and mysql for several hours on LBS XFS
+without any issues.
+
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+For those who want this in a git tree we have this up on a kdevops
+large-block-minorder-for-next-v12 tag [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/
+[7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+
+Changes since v11:
+- Minor string alignment fixup.
+- Collected RVB from Dave.
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/buffered-io.c        |   4 +-
+ fs/iomap/direct-io.c          |  45 +++++++++++--
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |   8 ++-
+ fs/xfs/xfs_super.c            |  28 +++++---
+ include/linux/huge_mm.h       |  14 ++--
+ include/linux/pagemap.h       | 122 ++++++++++++++++++++++++++++++----
+ mm/filemap.c                  |  36 ++++++----
+ mm/huge_memory.c              |  59 ++++++++++++++--
+ mm/readahead.c                |  83 +++++++++++++++++------
+ 14 files changed, 345 insertions(+), 85 deletions(-)
+
+
+base-commit: bb62fbd2b0e31b2ed5dccf1dc4489460137fdf5c
+-- 
+2.44.1
+
 
