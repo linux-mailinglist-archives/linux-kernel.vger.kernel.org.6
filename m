@@ -1,51 +1,66 @@
-Return-Path: <linux-kernel+bounces-288313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D589538AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6A49538B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E42288072
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07EF2831E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844E11BB6A4;
-	Thu, 15 Aug 2024 16:59:33 +0000 (UTC)
-Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B461BBBCE;
+	Thu, 15 Aug 2024 17:00:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6322A8D0;
-	Thu, 15 Aug 2024 16:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634911B3749;
+	Thu, 15 Aug 2024 17:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723741173; cv=none; b=G8Xp5ITPxQ/iS2qyGAzFRmdJ46lYDqWuQ8lhLzISyOlpdBFUXWwL1ulC5zEu6qIddm0OL/Yqbv9BNea/2l+jk+LG+rifQKUOm/ZdXblrPovnBtH9nw0mxI5NNl/VrFhsZPPLLhc3/CHAqQt3ynmqIwRC33AfZeOMKlr9TNiafQA=
+	t=1723741223; cv=none; b=fz04eRcLSvGWh8cuzAj1ZMrAPP8002CPg0EfEZInROP1kroHrRen8B3FhoS4u1eZg/SrxV8D0TTCMPNcNUPDXXrPZHqOc+nszK3iCGPaciuQjo4pMf4Pf5LiW9LvQbDM/6LJ5BDcd3sYmX+qU+xtF4duW+yEop4A1Fs+O0fvZd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723741173; c=relaxed/simple;
-	bh=on6i+i2WSTP0p94a05unth8gSFCNITMCJ7fy8bQbogg=;
+	s=arc-20240116; t=1723741223; c=relaxed/simple;
+	bh=Gg6eqMTXx74NWcO2J4NNXwW0PfKl0OCmoU0K7Wl6Ryg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTyOiJWQNJr5Ey3mO6e49IiPNlPLbAkHiP2RHb4Th5+2Eg57JzDYWB/eFhRvMmcEfcq7fGcTYUW/6GZ3m2Dn4ilhsboHdmFezeIt5y8fuyoIEcn7r2ThXIWZQXofM/9Jmi6qXYerBQLu2mInUXYZRbSvhGt4G9475HAKdXRb1C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
-Received: from localhost (gollum.nazgul.ch [local])
-	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 27f318bc;
-	Thu, 15 Aug 2024 18:59:25 +0200 (CEST)
-Date: Thu, 15 Aug 2024 18:59:25 +0200
-From: Marcus Glocker <marcus@nazgul.ch>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v3 4/6] arm64: dts: qcom: Add UFS node
-Message-ID: <zyhqlafrhfytjfcwf6jmhc233sikezskls54sgfchfvylqt5gj@fklz4yyrhobo>
-References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
- <ejeph4wspggkmvhl7qmpvw5jlojyvma7epqd67i6vk5p6fncrk@de56nvgi6vzi>
- <Zr3cuxv4EdxMQa9C@linaro.org>
- <kt5mrxse7dirsjgu3ldv4rzasgbmykluul7ie26zlavhlmfz4r@bo4fd4ybt7bx>
- <Zr4AHoPpAXJM6AC+@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RcoEaH+u6u7K68p7xlsOGdAFbNv0usFHgHjQ/atWBbZIvuOjc2pPi9cz2Y6HGzOCsgiUWB3L66W/ykpdzrBvzSU5QrYUYoN1IWrXrSZD9/vt+AJvSYb34ZOoNfk/L2GuMUzRoGZm+P6iYDJTIaGxYlL8k6u0L8b4MzIbRS9Y2LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AED9C32786;
+	Thu, 15 Aug 2024 17:00:17 +0000 (UTC)
+Date: Thu, 15 Aug 2024 18:00:15 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 04/40] arm64: Document boot requirements for Guarded
+ Control Stacks
+Message-ID: <Zr40H4xAb00MdMlX@arm.com>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-4-699e2bd2190b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,136 +69,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zr4AHoPpAXJM6AC+@linaro.org>
+In-Reply-To: <20240801-arm64-gcs-v10-4-699e2bd2190b@kernel.org>
 
-On Thu, Aug 15, 2024 at 04:18:22PM +0300, Abel Vesa wrote:
+On Thu, Aug 01, 2024 at 01:06:31PM +0100, Mark Brown wrote:
+> +  - If EL2 is present:
+> +
+> +    - GCSCR_EL2 must be initialised to 0.
+> +
+> + - If the kernel is entered at EL1 and EL2 is present:
+> +
+> +    - GCSCR_EL1 must be initialised to 0.
+> +
+> +    - GCSCRE0_EL1 must be initialised to 0.
 
-> On 24-08-15 13:54:01, Marcus Glocker wrote:
-> > On Thu, Aug 15, 2024 at 01:47:23PM +0300, Abel Vesa wrote:
-> > 
-> > > On 24-08-15 12:42:29, Marcus Glocker wrote:
-> > > > Add the UFS Host Controller node.  This was basically copied from the
-> > > > arch/arm64/boot/dts/qcom/sc7180.dtsi file.
-> > > > 
-> > > > Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
-> > > > ---
-> > > >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 71 ++++++++++++++++++++++++++
-> > > >  1 file changed, 71 insertions(+)
-> > > > 
-> > > > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > > > index 7bca5fcd7d52..235e20e4b51f 100644
-> > > > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > > > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > > > @@ -2878,6 +2878,77 @@ mmss_noc: interconnect@1780000 {
-> > > >  			#interconnect-cells = <2>;
-> > > >  		};
-> > > >  
-> > > > +		ufs_mem_hc: ufs@1d84000 {
-> > > > +			compatible = "qcom,x1e80100-ufshc", "qcom,ufshc",
-> > > > +				     "jedec,ufs-2.0";
-> > > > +			reg = <0 0x01d84000 0 0x3000>;
-> > > > +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-> > > > +			phys = <&ufs_mem_phy>;
-> > > > +			phy-names = "ufsphy";
-> > > > +			lanes-per-direction = <1>;
-> > > > +			#reset-cells = <1>;
-> > > > +			resets = <&gcc GCC_UFS_PHY_BCR>;
-> > > > +			reset-names = "rst";
-> > > > +
-> > > > +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-> > > > +
-> > > > +			iommus = <&apps_smmu 0xa0 0x0>;
-> > > > +
-> > > > +			clock-names = "core_clk",
-> > > > +				      "bus_aggr_clk",
-> > > > +				      "iface_clk",
-> > > > +				      "core_clk_unipro",
-> > > > +				      "ref_clk",
-> > > > +				      "tx_lane0_sync_clk",
-> > > > +				      "rx_lane0_sync_clk";
-> > > > +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-> > > > +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-> > > > +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
-> > > > +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-> > > > +				 <&rpmhcc RPMH_CXO_CLK>,
-> > > > +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-> > > > +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
-> > > > +			freq-table-hz = <50000000 200000000>,
-> > > > +					<0 0>,
-> > > > +					<0 0>,
-> > > > +					<37500000 150000000>,
-> > > > +					<0 0>,
-> > > > +					<0 0>,
-> > > > +					<0 0>;
-> > > > +
-> > > > +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
-> > > > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> > > > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > > > +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
-> > > > +			interconnect-names = "ufs-ddr", "cpu-ufs";
-> > > > +
-> > > > +			qcom,ice = <&ice>;
-> > > > +
-> > > > +			status = "disabled";
-> > > > +		};
-> > > > +
-> > > > +		ufs_mem_phy: phy@1d87000 {
-> > > > +			compatible = "qcom,x1e80100-qmp-ufs-phy";
-> > > 
-> > > Can't find any phy patch that adds this compatible to the driver.
-> > 
-> > That might well be, since this is pretty new hardware.  But the goal
-> > of this submission is only to describe the hardware, not to add
-> > immediate support to the OS drivers.  Whether the drivers will make use
-> > of it, is a different story, and up to the people who maintain the
-> > respective drivers.
-> > 
-> > Getting the right DTB in, at least opens the possibility to continue
-> > development in the driver area to further support this new hardware.
-> > 
-> > But I won't touch your drivers, not my goal.
-> 
-> Presumably, you do have the UFS working on your Book4 laptop, right?
+Currently booting.rst doesn't list *_EL1 registers to be initialised
+when the kernel is entered at EL1, that would usually be the
+responsibility of EL1. The exception is some bits in SCTLR_EL1 around
+not entering with the MMU and caches enabled. But here I think it makes
+sense to add these GCS registers since if some random bits are set, they
+can affect kernels (and user apps) that don't have GCS support.
 
-That's right, but ...
- 
-> If so, I would expect you do have the PHY working as well and therefore
-> a patch that adds the X Elite compatible, right?
+Don't we need HCRX_EL2.GCSEn to be set when entered at EL1?
 
-... I'm not using Linux on that laptop but OpenBSD.  Hence, my UFS
-driver patch will be useless for you.  If one of your developers gets
-his hand on that laptop, enabling UFS based on that DTB should be
-fairly straight forward.
-
-The reason why we are interested to get new DTS' in your tree, is
-because we're using the Linux DTS tree as a base, and then patch over
-it as of our requirements.  The less patches we need to apply, the
-easier the maintenance is.
-
-> > > > +			reg = <0 0x01d87000 0 0x1000>;
-> > > > +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> > > > +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-> > > > +			clock-names = "ref",
-> > > > +				      "ref_aux",
-> > > > +				      "qref";
-> > > > +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-> > > > +			resets = <&ufs_mem_hc 0>;
-> > > > +			reset-names = "ufsphy";
-> > > > +			#phy-cells = <0>;
-> > > > +			status = "disabled";
-> > > > +		};
-> > > > +
-> > > > +		ice: crypto@1d90000 {
-> > > > +			compatible = "qcom,x1e80100-inline-crypto-engine",
-> > > > +				     "qcom,inline-crypto-engine";
-> > > > +			reg = <0 0x01d90000 0 0x8000>;
-> > > > +			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
-> > > > +		};
-> > > > +
-> > > >  		pcie6a: pci@1bf8000 {
-> > > >  			device_type = "pci";
-> > > >  			compatible = "qcom,pcie-x1e80100";
-> > > > -- 
-> > > > 2.39.2
-> > > > 
+-- 
+Catalin
 
