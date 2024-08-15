@@ -1,163 +1,115 @@
-Return-Path: <linux-kernel+bounces-288228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6A79537A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:52:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1EF9537A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408041C22F50
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:52:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759E41F25909
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B551B29B7;
-	Thu, 15 Aug 2024 15:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2735D1B151D;
+	Thu, 15 Aug 2024 15:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zdF2Efvh"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0efWJlM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66571AC450
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6133C15E88;
+	Thu, 15 Aug 2024 15:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737145; cv=none; b=fBYmedIa7IOhdlRrSYy09TDBawiBFMdkqFNNCcMHxBD8JYVxicOueL5ozoZHTwVYkUVOm+7wJtmxcTI/IpfzpT6E7gWTK48+NG5QII6jHUAD/kBfiT0/Kg8UyTF4lTFw5QqQHvRDSROAAt9CM4t3zf08dfEts2/Cj7j3jO/z1nI=
+	t=1723737192; cv=none; b=OHuwKd8I0RgNIqEoSHXZyOgb87cfsGO5EfU2BFQXMv0X9Ydux6Y1+tgScznMnl99/0WGWFgkIbefCz/v0K6I8jds6v+/CYyAxxHtYytWvFhofjArfqEKu6mgTxl6BpKw/Vy+6vj2CQ+9gQ0C4i/M7jNJU1so+S++yDP6YV5oE8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737145; c=relaxed/simple;
-	bh=snKXFCF6FnyiOrGKJVBPz6luqmn6mmdCtFo8tjxYdls=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MKQ5nMUz6BBLFmVyLm8H3fTcuw2w/1V6Q2IiWGB41SCmJ/+Suf/5n/3Qy52PHhRVr/oYKyE0Oix9wHDAUiN2+1kmn/q4vW5lYLMqmQSEMn0lnmYEqOAkIHKwbRn1xLia7l/fj2vIa/I+UngP0PETZHG3wmdW/aNLSWGlloqpFTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zdF2Efvh; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a23a0fb195so921993a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:52:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723737142; x=1724341942; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UsUSd9Woo/iqPvXMwajq5VMWihmQ0h2yWsEHJq+e+9A=;
-        b=zdF2Efvhw8kMRsbjOC6prXruy5KR/vKK84JMIFWniz2YoEP5U3m4SDTHKbSyb0t8Jt
-         +BMtOy2MF3VpOSPtyeY/Re7DtcnpV0/W7hxt9k5uMnNt9J4NdFzwTto5vcdI+a3FGpAn
-         WNkuDd3xFTum9/Vz5+nU4/7v9yMZk4WtOeQdM+T9uHie3vMKKjLtuUk0Zba9dK+8+ET5
-         ZFDGsN82/AqQg2+waIZW6xHQ7arn+xIr2YQkpY2E53Nx4Kr/sFDmLrohNDFnVTrVIanl
-         mmHbAU9kSdB0Pc/1Q1tZx8zAQWxavg4eK2/oZyUmtGbW/ZNbWj+pTxFLnEnT54KRhvvP
-         OlIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723737142; x=1724341942;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UsUSd9Woo/iqPvXMwajq5VMWihmQ0h2yWsEHJq+e+9A=;
-        b=Y2rFUKti/YBvBffTZJH7r+ZqqfX+9LUq3wYAh7DhHB2+cYHYtMkv8Dh/MvV0DRpqVA
-         KsCuDVPXv9h5wVYhzCXPqMcOvbZO2PZP1gFnElKYj43b1SEM7dXR1te5gPC0NxvMbyQz
-         UL1mPSoDdqmV80+czgVeZAbYVeIM+2zdhrM/dnaL0EVU/wKNk/eVCWcEi8KgptuKHnkx
-         L2XGNxPnWd3sy6QB4yYDhChh8bYfxEY5vYQAdrmz+glvzliwbGGxD04wQHxAs5wcYojo
-         epbQDtow3QEVPQIWYtZsXK+ky6AXAjzxcyP/cYSfkd1PCY3BocYAoAw+d2n6FZqHKgpZ
-         HL8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Pv/S+kmXeE41tB/NDGeEgj/6bFUByIBCN/39IuLVNs7n5wGTDLG87WXlopKvje586+WbDT0rH7kTJiHEpoz/pqmGULBw7iOOFEyq
-X-Gm-Message-State: AOJu0Yz8g/J+t9giC23ZaCjZ5RQ8fkAKtH2fTf5yHclDgZmJlg0OGe5x
-	o9TiBHeH9KvD2guWyzQh8oHwrHXD9D2fJzEiTa2VQfeqsf8vge8o+8xjNUBhLpnTcVkN9XoJ9IJ
-	6bg==
-X-Google-Smtp-Source: AGHT+IHMf5W2rCdu8YRq9VXD8sk35Ym0aHc+ICn2snu/UUL0F247jmEidV+J/NhiZtp1ZaUNES3oCsmPNJ4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:f3cc:b0:2cd:bbfa:3e5e with SMTP id
- 98e67ed59e1d1-2d3e03e9b1emr68a91.7.1723737141799; Thu, 15 Aug 2024 08:52:21
- -0700 (PDT)
-Date: Thu, 15 Aug 2024 08:52:20 -0700
-In-Reply-To: <20240522001817.619072-13-dwmw2@infradead.org>
+	s=arc-20240116; t=1723737192; c=relaxed/simple;
+	bh=kIHwKlAGat/GxPUv1Aw0uwybGy7KqXeGxpeOvG9E1xM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIEo3U672O91k3HLkmFGJkKZEiumUVgDPRYuTUCFJf1ZcUS+F6vSNR+Opc61L8koLvmXxcePs/THC1vhVPR/r2zb7mR9dqweEMZ6zDRBOZ9GorqDlvq78382BO25B6KHciHyAMHkwzGhUCaXVnkwjUInsq+5wN7d28lZpHelicc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0efWJlM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56468C32786;
+	Thu, 15 Aug 2024 15:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723737191;
+	bh=kIHwKlAGat/GxPUv1Aw0uwybGy7KqXeGxpeOvG9E1xM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S0efWJlMeM6/znYkeYaWJqqNNsz4whiJISa7Hoidcw8l79LxQqA0/4sb8S4ZI32Ub
+	 L1jn3uh84PkTCNeTU2Rj55x0+KEaWsSMxPvMgKjs9LsQzwj5cLIN2pu3pCLKlEy6M7
+	 NodYzYa+Okq6Heni75J8ion2wCTgtxzBS1VpRABkdBv+PuqEWAIGMMzZiVGnAZ6Hbx
+	 XbYw/T3Q7F7MBL/D7+rN5g80koxR1dg0ztLNYZZ9Jfrfe4N1MZpWlvMYPARxoPn/rF
+	 qpI3FcbUCCxBEIg7zfbxTlMe3t2iVHoKTj6KMAZ+dS9P4eEEUAEv/Dc+aEDTzD7+lt
+	 D7aEBiA1Te4OA==
+Date: Thu, 15 Aug 2024 12:53:09 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Ian Rogers <irogers@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Linux perf Profiling <linux-perf-users@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	James Clark <james.clark@arm.com>,
+	"cc: Marc Zyngier" <maz@kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	Asahi Linux <asahi@lists.linux.dev>,
+	Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [REGRESSION] Perf (userspace) broken on big.LITTLE systems since
+ v6.5
+Message-ID: <Zr4kZTxgvD6bmi37@x1>
+References: <08f1f185-e259-4014-9ca4-6411d5c1bc65@marcan.st>
+ <ZV1AnNB2CSbAUFVg@archie.me>
+ <a9c14dfd-3269-4758-9174-4710bef07088@leemhuis.info>
+ <CAP-5=fXqx_k1miPTkcAmS3z2GBPt2KeDtP5fknmdDghZqxXPew@mail.gmail.com>
+ <714ed350-0e6c-4922-bf65-36de48f62879@leemhuis.info>
+ <0de3b572-f5f7-42e4-b410-d1e315943a3c@linaro.org>
+ <ZrzeRM3ekLl9zp3z@x1>
+ <348ea015-eccf-4f44-a332-a1d9d8baf81f@linaro.org>
+ <Zr4eWd6HWLHDcpC9@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240522001817.619072-1-dwmw2@infradead.org> <20240522001817.619072-13-dwmw2@infradead.org>
-Message-ID: <Zr4kNNUUm4E6R5zC@google.com>
-Subject: Re: [RFC PATCH v3 12/21] KVM: x86: Remove implicit rdtsc() from kvm_compute_l1_tsc_offset()
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, 
-	Dongli Zhang <dongli.zhang@oracle.com>, Chenyi Qiang <chenyi.qiang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr4eWd6HWLHDcpC9@x1>
 
-On Wed, May 22, 2024, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
+On Thu, Aug 15, 2024 at 12:27:21PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Thu, Aug 15, 2024 at 04:15:41PM +0100, James Clark wrote:
+> > In one of your investigations here
+> > https://lore.kernel.org/lkml/Zld3dlJHjFMFG02v@x1/ comparing "cycles",
+> > "cpu-cycles" and "cpu_cycles" events on Arm you say only some of them open
+> > events on both core types. I wasn't able to reproduce that on
+> > perf-tools-next (27ac597c0e) or v6.9 (a38297e3fb) for perf record or stat. I
+> > guessed the 6.9 tag because you only mentioned it was on tip and it was 29th
+> > May. For me they all open exactly the same two legacy events with the
+> > extended type ID set.
+> > 
+> > It looks like the behavior you see would be caused by either missing this
+> > kernel change:
+> > 
+> >   5c81672865 ("arm_pmu: Add PERF_PMU_CAP_EXTENDED_HW_TYPE capability")
+> >    (v6.6 release)
+
+What I have now is:
+
+6.1.92-15907-gf36fd2695db3
+
+It was a bit older, but 6.1 ish as well, I'll try to either get a new
+kernel from Libre Computer or build one myself.
+
+- Arnaldo
+
+> > Or this userspace change, but unlikely as it was a fix for Apple M hardware:
+> > 
+> >   25412c036 ("perf print-events: make is_event_supported() more robust")
+> >    (v6.9 release)
+> > 
+> > Do you remember if you were using a new kernel or only testing a new Perf?
 > 
-> Let the callers pass the host TSC value in as an explicit parameter.
-> 
-> This leaves some fairly obviously stupid code, which using this function
-> to compare the guest TSC at some *other* time, with the newly-minted TSC
-> value from rdtsc(). Unless it's being used to measure *elapsed* time,
-> that isn't very sensible.
-> 
-> In this case, "obviously stupid" is an improvement over being non-obviously
-> so.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->  arch/x86/kvm/x86.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index ef3cd6113037..ea59694d712a 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2601,11 +2601,12 @@ u64 kvm_scale_tsc(u64 tsc, u64 ratio)
->  	return _tsc;
->  }
->  
-> -static u64 kvm_compute_l1_tsc_offset(struct kvm_vcpu *vcpu, u64 target_tsc)
-> +static u64 kvm_compute_l1_tsc_offset(struct kvm_vcpu *vcpu, u64 host_tsc,
-> +				     u64 target_tsc)
-
-Would it make sense to have a __kvm_compute_l1_tsc_offset() version that takes
-in the host TSC, and then this?
-
-static u64 kvm_compute_l1_tsc_offset(struct kvm_vcpu *vcpu, u64 target_tsc)
-{
-	return __kvm_compute_l1_tsc_offset(vcpu, rdtsc(), target_tsc);
-}
-
-
-Hmm, or maybe a better option would be:
-
-static u64 kvm_compute_current_l1_tsc_offset(struct kvm_vcpu *vcpu,
-					     u64 target_tsc)
-{
-	return kvm_compute_l1_tsc_offset(vcpu, rdtsc(), target_tsc);
-}
-
-Meh, after typing those out, I don't like either one.  Let's keep it how you
-wrote it, I think there's quite a bit of added readability by forcing callers to
-provide the host TSC.
-
->  {
->  	u64 tsc;
->  
-> -	tsc = kvm_scale_tsc(rdtsc(), vcpu->arch.l1_tsc_scaling_ratio);
-> +	tsc = kvm_scale_tsc(host_tsc, vcpu->arch.l1_tsc_scaling_ratio);
->  
->  	return target_tsc - tsc;
-
-Opportunistically drop "tsc" too?  E.g.
-
-	return target_tsc -
-	       kvm_scale_tsc(host_tsc, vcpu->arch.l1_tsc_scaling_ratio);
-
-or
-
-	return target_tsc - kvm_scale_tsc(host_tsc, vcpu->arch.l1_tsc_scaling_ratio);
-
-I find either of those much easier to read.
+> I normally use the distro/SoC provided kernel, didn't I add the 'uname
+> -a' output in those investigations (/me slaps himself in the face
+> speculatively...)?
 
