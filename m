@@ -1,190 +1,225 @@
-Return-Path: <linux-kernel+bounces-288095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F5E953432
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:24:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6C195344E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659BD1F291BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FE728A05B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC6D1AD400;
-	Thu, 15 Aug 2024 14:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E150F1A3BCE;
+	Thu, 15 Aug 2024 14:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hrokymxa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaBif9Ud"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B886A1AC437;
-	Thu, 15 Aug 2024 14:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F222519DF92;
+	Thu, 15 Aug 2024 14:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723731794; cv=none; b=ZOeHh6Osu9Yh+h9k6qoY63OhieRAzMG48TKsygI4Q8/4X9rmWLymZjI7QCUGpRKTxl906SOjDhFU1FnAKfvANAzkwS5eE/OdvvhaGNPIRQ3DhrBRx1qT3b3pjLql3xAYJJl3Yajocr1Sj/bxert5NeM5chc4dqPrKqx4yeNfsDs=
+	t=1723731863; cv=none; b=BBtsrJNGq8On+1yyYEz7fJkyKDXUehC2W1I12Yv4z8zmcC/o0/78V2lh/HRTjgXwhr174UQHjHM+c/XPxKXIe6rNK6YBOPorE5CVK7wRmQZfv5Gu6VDBq0MShwGGJCIWRInHxt+ysP5tEem8mGIbXR4a+vN0pnNnfo2qHAMU1sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723731794; c=relaxed/simple;
-	bh=ZICUfqW3ibLnp1tG3YkER08ff+Zhm0tKGhwrShQiyvg=;
+	s=arc-20240116; t=1723731863; c=relaxed/simple;
+	bh=oWFM9hMu5UM6J5ZKg5Hx8ZMhLMm107p2yHuAWNRa3m4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBxiJCit+DGvRj6EJmEeghHXFhgZYi8r5H0YuXMfmlzQOp8pNNsrbJ5/7Q28rvc6ZSuAVVVu10lMtdDzDjJQhBDGyIxXiKpoov2508CqcPGyYQmr1grjpBN8/bK/lQIFUYlh1NT99W2NMXrWVvgqH7IhaXipT2eCpsRuhI6FzUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hrokymxa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96176C32786;
-	Thu, 15 Aug 2024 14:23:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=E4a2FHG/U0B0AlgzCiqPO9xUE0c2wUbG4qPupkaIJg/bGH3kBXo1vpU9hlqmDQjO7Dn6CWAsZKnc/u53kk8dkmZljE+Pd5EJQd3LqSTzUw0ntyOwMAotIK64OOkoiofIUfAlX83ICgA5DKArfwLm/awyzM2EG2PzzrVaEDLpLDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaBif9Ud; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08637C4AF0A;
+	Thu, 15 Aug 2024 14:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723731794;
-	bh=ZICUfqW3ibLnp1tG3YkER08ff+Zhm0tKGhwrShQiyvg=;
+	s=k20201202; t=1723731862;
+	bh=oWFM9hMu5UM6J5ZKg5Hx8ZMhLMm107p2yHuAWNRa3m4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HrokymxamxMNOr/rIg/O/ihcm9ydAtLZNCV8EtB4nD6/GRac43Zn9YWH1wmI4m/Up
-	 dv/SjEjMNXUGY5g7k1L50DYUbSfvs4oCT+DOSykiL2NAT7eElnEgV+wTo0U8GjaXEk
-	 Wb5gEcxdNVytXkLc7z5L0lDnxPH4B31H1l2+KT6531S1RfNeo6jOP/pVkmmAk9hMZS
-	 GfU6IoTl3nN9Jedr83EPgcIbv4pP0OMq5ZNDw2sgBmLkY9hjok6nSp6U1nmx4fwO0c
-	 loF1iJtBrdFXkvQASm0qOwQTohZRTg4x7wiLn6xCePFkugZjR/kYVPnOJ3OfQwGu1V
-	 HeMEHkWXO+G1A==
-Date: Thu, 15 Aug 2024 16:23:06 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 06/26] rust: alloc: implement `Vmalloc` allocator
-Message-ID: <Zr4PSuIOpiE-8OkJ@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org>
- <20240812182355.11641-7-dakr@kernel.org>
- <c9d57e77-8748-4e58-a39b-7a23f750ceda@proton.me>
- <Zr0r6sSFMSQIpHEX@cassiopeiae>
- <Zr072oSej9KIc1S6@cassiopeiae>
- <5dfe8bae-2c1e-47d4-9fb4-373b7d714c4f@proton.me>
- <Zr30pNwc5aanRaqj@cassiopeiae>
- <01a46c6d-0107-4455-8c87-af43426752ff@proton.me>
+	b=VaBif9UdXbtREpa11t2MJuTKMDptGTnf5IWTXQcPry88RlerBT0sgLpTwT8zhu3OY
+	 oTvhVFrLdDsqhyyB7v46LqXYKEtpbuSa3iE1Og/WdougSOjZUk/fYXwPJGA2To7FqZ
+	 sWlzD9DmbQUJJBOY7aqqLk2VyVlVuWDsa2+EOmZIcb4osahXiuPb23Z3pcw1xnktNr
+	 30hLn3uHf7lE/8TAWiwGCUL0O5QyRQAib+VGIi5BJ8yuKHaHEStIaGjRJ4/s9sFhln
+	 vhS7rfEf8XO7eKZl1nLTV/IEbpvScTLOhtVLEOs5KoMEBT+nEQwstAwS3cOWDyEmve
+	 +qED5TyWDjt2Q==
+Date: Thu, 15 Aug 2024 15:24:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"mgorman@suse.de" <mgorman@suse.de>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"vschneid@redhat.com" <vschneid@redhat.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"bsegall@google.com" <bsegall@google.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+	"jannh@google.com" <jannh@google.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"will@kernel.org" <will@kernel.org>
+Subject: Re: [PATCH RFT v8 4/9] fork: Add shadow stack support to clone3()
+Message-ID: <3e3570b8-f138-4373-94b8-b471419bbf11@sirena.org.uk>
+References: <20240808-clone3-shadow-stack-v8-0-0acf37caf14c@kernel.org>
+ <20240808-clone3-shadow-stack-v8-4-0acf37caf14c@kernel.org>
+ <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Rf75a+d8nN1mvn3I"
 Content-Disposition: inline
-In-Reply-To: <01a46c6d-0107-4455-8c87-af43426752ff@proton.me>
+In-Reply-To: <f3a2a564094d05beac2dc5ab657cbc009c465667.camel@intel.com>
+X-Cookie: -- Owen Meredith
 
-On Thu, Aug 15, 2024 at 01:44:27PM +0000, Benno Lossin wrote:
-> On 15.08.24 14:29, Danilo Krummrich wrote:
-> > On Thu, Aug 15, 2024 at 06:48:19AM +0000, Benno Lossin wrote:
-> >> On 15.08.24 01:20, Danilo Krummrich wrote:
-> >>> On Thu, Aug 15, 2024 at 12:13:06AM +0200, Danilo Krummrich wrote:
-> >>>>
-> >>>>>
-> >>>>>> +        ptr: Option<NonNull<u8>>,
-> >>>>>> +        layout: Layout,
-> >>>>>> +        flags: Flags,
-> >>>>>> +    ) -> Result<NonNull<[u8]>, AllocError> {
-> >>>>>> +        // TODO: Support alignments larger than PAGE_SIZE.
-> >>>>>> +        if layout.align() > bindings::PAGE_SIZE {
-> >>>>>> +            pr_warn!("Vmalloc does not support alignments larger than PAGE_SIZE yet.\n");
-> >>>>>> +            return Err(AllocError);
-> >>>>>
-> >>>>> I think here we should first try to use `build_error!`, most often the
-> >>>>> alignment will be specified statically, so it should get optimized away.
-> >>>>
-> >>>> Sure, we can try that first.
-> >>>
-> >>> I think I spoke too soon here. I don't think `build_error!` or `build_assert!`
-> >>> can work here, it would also fail the build when the compiler doesn't know the
-> >>> value of the alignment, wouldn't it? I remember that I wasn't overly happy about
-> >>> failing this on runtime either when I first thought about this case, but I also
-> >>> couldn't think of something better.
-> >>
-> >> Yes, it might fail even though the alignment at runtime will be fine.
-> >> But that's why I suggested trying `build_error!`(or `build_assert!`)
-> >> first, if nobody hits the case where the compiler cannot figure it out,
-> >> then we can keep it. If there are instances, where it fails, but the
-> >> alignment would be fine at runtime, then we can change it to the above.
-> >> (I would add such a comment above the assert).
-> > 
-> > Unfortunately, it already does fail with just the test cases.
-> 
-> Aw that's sad.
-> 
-> > Anyway, even if it would have been fine, I don't think it would have been nice
-> > for a future user to run into a build error even though the alignment is
-> > perfectlly within bounds.
-> 
-> I think it would have been better compared to failing with a warning at
-> runtime.
 
-Generally, yes. But I think it's not acceptable to make calls fail that should
-actually succeed.
+--Rf75a+d8nN1mvn3I
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> >>> In the end it's rather unlikely to ever hit this case, and probably even more
-> >>> unlikely to hit it for a sane reason.
-> >>
-> >> Yeah, but I still prefer the build to fail, rather than emitting a warn
-> >> message that can be overlooked at runtime.
-> >>
-> >>>>> How difficult will it be to support this? (it is a weird requirement,
-> >>>>> but I dislike just returning an error...)
-> >>>>
-> >>>> It's not difficult to support at all. But it requires a C API taking an
-> >>>> alignment argument (same for `KVmalloc`).
-> >>
-> >> I see, that's good to know.
-> >>
-> >>>> Coming up with a vrealloc_aligned() is rather trivial. kvrealloc_aligned() would
-> >>>> be a bit weird though, because the alignment argument could only be really
-> >>>> honored if we run into the vrealloc() case. For the krealloc() case it'd still
-> >>>> depend on the bucket size that is selected for the requested size.
-> >>
-> >> Yeah... Maybe some more logic on the Rust side can help with that.
-> > 
-> > Only if we reimplement `KVmalloc` in Rust, However, there are quite some special
-> > cases in __kvmalloc_node_noprof(), i.e. fixup page flags, sanity check the size
-> > on kmalloc failure, fail on certain page flags, etc.
-> > 
-> > I don't really want to duplicate this code, unless we absolutely have to.
-> 
-> I am under the (probably wrong) impression that kvmalloc has some size
-> check and selects vmalloc or kmalloc depending on that. 
+On Thu, Aug 15, 2024 at 12:18:23AM +0000, Edgecombe, Rick P wrote:
+> On Thu, 2024-08-08 at 09:15 +0100, Mark Brown wrote:
 
-Basically, yes. But as mentioned above, there are quite some corner cases [1].
+> > +=A0=A0=A0=A0=A0=A0=A0ssp =3D args->shadow_stack + args->shadow_stack_s=
+ize;
+> > +=A0=A0=A0=A0=A0=A0=A0addr =3D ssp - SS_FRAME_SIZE;
+> > +=A0=A0=A0=A0=A0=A0=A0expected =3D ssp | BIT(0);
 
-> I think that we
-> could check the size and if it is going to allocate via kmalloc, then we
-> adjust the size for alignment as usual
+> > +=A0=A0=A0=A0=A0=A0=A0mm =3D get_task_mm(t);
+> > +=A0=A0=A0=A0=A0=A0=A0if (!mm)
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -EFAULT;
 
-We don't need this adjustment any longer, see commit ad59baa31695 ("slab, rust:
-extend kmalloc() alignment guarantees to remove Rust padding").
+> We could check that the VMA is shadow stack here. I'm not sure what could=
+ go
+> wrong though. If you point it to RW memory it could start the thread with=
+ that
+> as a shadow stack and just blow up at the first call. It might be nicer t=
+o fail
+> earlier though.
 
-> and if it is going to select
-> vmalloc, then we can just pass the alignment (if the vmalloc alignment
-> patch is done first).
+Sure, I wasn't doing anything since like you say the new thread will
+fail anyway but we can do the check.  As you point out below it'll close
+down the possibility of writing to memory.
 
-Yeah, but as mentioned, I'd prefer to do this in C, such that we don't need to
-open code everything the C code already does.
+> > +=A0=A0=A0=A0=A0=A0=A0/* This should really be an atomic cmpxchg.=A0 It=
+ is not. */
+> > +=A0=A0=A0=A0=A0=A0=A0if (access_remote_vm(mm, addr, &val, sizeof(val),
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0 FOLL_FORCE) !=3D sizeof(val))
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0goto out;
+> > +
+> > +=A0=A0=A0=A0=A0=A0=A0if (val !=3D expected)
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0goto out;
+> > +=A0=A0=A0=A0=A0=A0=A0val =3D 0;
 
-[1] https://elixir.bootlin.com/linux/v6.11-rc3/source/mm/util.c#L628
-> 
-> >>>> Adding the C API, I'm also pretty sure someone's gonna ask what we need an
-> >>>> alignment larger than PAGE_SIZE for and if we have a real use case for that.
-> >>>> I'm not entirely sure we have a reasonable answer for that.
-> >>
-> >> We could argue that we can remove an "ugly hack" (when we don't have the
-> >> build assert, if we do have that, I don't mind not supporting it), but I
-> >> agree that finding a user will be difficult.
-> > 
-> > I'd argue it's not really a hack to fail on something that's not supported
-> > (yet). Allocations can (almost) always fail, this is just another case.
-> 
-> I guess since this is a deterministic failure, it's better than other
-> failures. But I would still say this is hacky.
-> 
-> ---
-> Cheers,
-> Benno
-> 
+> After a token is consumed normally, it doesn't set it to zero. Instead it=
+ sets
+> it to a "previous-ssp token". I don't think we actually want to do that h=
+ere
+> though because it involves the old SSP, which doesn't really apply in thi=
+s case.
+> I don't see any problem with zero, but was there any special thinking beh=
+ind it?
+
+I wasn't aware of the x86 behaviour for pivots here, 0 was just a
+default thing to choose for an invalid value.  arm64 will also leave
+a value on the outgoing stack as a product of the two step pivots we
+have but it's not really something you'd look for.
+
+> > +=A0=A0=A0=A0=A0=A0=A0if (access_remote_vm(mm, addr, &val, sizeof(val),
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0 FOLL_FORCE | FOLL_WRITE) !=3D sizeof(val))
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0goto out;
+
+> The GUPs still seem a bit unfortunate for a couple reasons:
+>  - We could do a CMPXCHG version and are just not (I see ARM has identica=
+l code
+> in gcs_consume_token()). It's not the only race like this though FWIW.
+>  - I *think* this is the only unprivileged FOLL_FORCE that can write to t=
+he
+> current process in the kernel. As is, it could be used on normal RO mappi=
+ngs, at
+> least in a limited way. Maybe another point for the VMA check. We'd want =
+to
+> check that it is normal shadow stack?
+>  - Lingering doubts about the wisdom of doing GUPs during task creation.
+
+> I don't think they are show stoppers, but the VMA check would be nice to =
+have in
+> the first upstream support.
+
+The check you suggest for shadow stack memory should avoid abuse of the
+FOLL_FORCE at least.  It'd be a bit narrow, you'd only be able to
+overwrite a value where we managed to read a valid token, but it's
+there.
+
+> > +static void shstk_post_fork(struct task_struct *p,
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 struct kernel_clone_args *args)
+> > +{
+> > +=A0=A0=A0=A0=A0=A0=A0if (!IS_ENABLED(CONFIG_ARCH_HAS_USER_SHADOW_STACK=
+))
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return;
+> > +
+> > +=A0=A0=A0=A0=A0=A0=A0if (!args->shadow_stack)
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return;
+> > +
+> > +=A0=A0=A0=A0=A0=A0=A0if (arch_shstk_post_fork(p, args) !=3D 0)
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0force_sig_fault_to_task(S=
+IGSEGV, SEGV_CPERR, NULL, p);
+> > +}
+
+> Hmm, is this forcing the signal on the new task, which is set up on a user
+> provided shadow stack that failed the token check? It would handle the si=
+gnal
+> with an arbitrary SSP then I think. We should probably fail the clone cal=
+l in
+> the parent instead, which can be done by doing the work in copy_process()=
+=2E Do
+
+One thing I was thinking when writing this was that I wanted to make it
+possible to implement the check in the vDSO if there's any architectures
+that could do so, avoiding any need to GUP, but I can't see that that's
+actually been possible.
+
+> you see a problem with doing it at the end of copy_process()? I don't kno=
+w if
+> there could be ordering constraints.
+
+I was concerned when I was writing the code about ordring constraints,
+but I did revise what the code was doing several times and as I was
+saying in reply to Catalin I'm no longer sure those apply.
+
+--Rf75a+d8nN1mvn3I
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+D4sACgkQJNaLcl1U
+h9BTdAf9GZtUARmVLIt9R/bsU7tcZIAMeU6tc+dWKGy+SUT/uCod0ZgF63tGvD6F
+6TpHq1piVctZtKejTOEJBeOdgGqlO2D57o+nKyucCfzQGf+GsDO7RfqPmbEtTOUx
+i6CuIiF5FLeR8iQA9h6LXqF3k1m4qfupN8Qw8oIjeZh1Y/DVwhLbn0AiPwE2uIIy
+bkBbDcTt9ULonqH8VoVE0nR370gqtLyz9wS06HbwOSpLXQRiILFbvw4g2rre5LKu
+X/6TVOwCqa0xO8lhUXPkVCVmWrNxHvZAjeuFUS1ZWcOLKcDNr1mVdrPjK9OAckbY
+S7l+1L1FnN5QZlndcPRc3YqOeUM5rA==
+=FCea
+-----END PGP SIGNATURE-----
+
+--Rf75a+d8nN1mvn3I--
 
