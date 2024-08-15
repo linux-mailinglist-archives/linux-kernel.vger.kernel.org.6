@@ -1,105 +1,134 @@
-Return-Path: <linux-kernel+bounces-288701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025D4953DCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:02:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8504953DCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 01:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18141F26BC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:02:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DB928BAB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D816154BEA;
-	Thu, 15 Aug 2024 23:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E5A155385;
+	Thu, 15 Aug 2024 23:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+xZj8CG"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FI86mII2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC9D4A3E;
-	Thu, 15 Aug 2024 23:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9897E12B94;
+	Thu, 15 Aug 2024 23:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723762940; cv=none; b=BTkuGH/IhJNLu0EpbKxCFmMshD4++Uu0ja1OCTw2ix8EoIQviNKBY+y1/YpF/EpJ6XgMWq2SFSSaukw912t6zIaE30O4XXe/kZ0cmeKnrqnfiZGt9rDW3F8rsDd/2Szv3gfJf2O5TKdnn81x64JUw6GP7ipLiClaI++ScYqfbgU=
+	t=1723763002; cv=none; b=mgb+lCbwVTqEzX+ObUPtPkcnOPKqQcrecbnaOwmRNy9atLn+KS4pf41Js3ntO4HNp0D+YZxTkp2LBmy5XMFU+IKblphP/FptlJrX9b9dK1+kfEagpCXvw9+UJz8mcuh+LF6YtbQTspH836AqUbXUQ/+MgPztk9r1u2w263CjHqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723762940; c=relaxed/simple;
-	bh=XQNPQA5Yo3vJHbRa+Dgs2hEZIl9h+lrQTXZk1uoei90=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=J3Lm1I7LKPM8peR63LVvh37dq3H2CJinBaxWC25bXWN9LHpHXL9z0sBKUobBIPI9bK7OcK3jyIjVrfWCOsbgWMmV7CRPx6KFKpIOdYglfvbPX7kVC/8HXKtL/2W9Z2t/1GvDknq5uX5TOQ7MvAiulqKQGsJNBex9q7MnmpaDUpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H+xZj8CG; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7126c9cb6deso938934b3a.0;
-        Thu, 15 Aug 2024 16:02:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723762937; x=1724367737; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d1rmzARVQ2QFbXDAOZndMyXXFgob4ly/x0a0A+6+Vok=;
-        b=H+xZj8CGZrRatLSiNoMvnoY9I4+HsiWRMG5b6elLH96vT5YyJHoWSYmyftf+/INjOE
-         xPHY82EbmN5n5Utx5R7Bxx87qPPiZOXhE9VD+RPWfi84olXNCh8b0bfv12mJTU7pYblH
-         woiIhRpoN5WJ6PF+5CWJ/OhVmXVNdR4hz49rhD4kuDBxpgQhkbdXXRKYb80lpta2O1Qv
-         va99qzsgN6Zsr7w0nlaqQpaVYB5F4O5TCLpAYse4zp4yjbp3bNvmBB0VgiLrN6Mc5+tQ
-         Oatvn3Nl2QHUZPj206FdkUam4/EmbgrINLlCxq3rp/AE/34Khrj9c6bcVPiiDZOVXGAE
-         RbYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723762937; x=1724367737;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d1rmzARVQ2QFbXDAOZndMyXXFgob4ly/x0a0A+6+Vok=;
-        b=fi+/pBceE5NqfylBXyLwAgfmeKHfsG/u+EQB6ko9bErW8D2weK3i2nMz/DC7tkYv8H
-         sliPj+gtD9Pt4BRVpM5z7R5LqAjZKu/APG0fk9UcYXb4bedK++T52J7WHH2SWN/wn2zq
-         FyjjR2mb9Fv6aIfjXfkEZ14EA3S6C5aYwiBQD8ABfpJWO2YeyQ/CN8hOZzu1G7ok7kHq
-         RC+ZOWOz275xbWdvFI1pco2hzSuifO/tgwwlROquSr6lNmWHbCoun4vYfm8LmooxNIik
-         QLZAzU1AmmS6uEl/Mo/d0wNqgfAPczNwdaKmUhLEZDP+GxSH4xAyaVMK541T0vps5Ekt
-         gn2Q==
-X-Gm-Message-State: AOJu0YxrykKyNk8c3zutUS+Owx2vcWRkifEyR04rDsUDj07GBCeJhkx1
-	V54Sk1+4qjPM0z1FPYFbYGWqQVaZ3r4LTlhlxK9KL8YYjzbSWz+VG28vJA==
-X-Google-Smtp-Source: AGHT+IETud45MtEgpBw/BjlKnHw3C4d0+sgG/Mlw4KuAZ9XFcnfb1aO2vSjhdFwOd9CIneYhp78wUA==
-X-Received: by 2002:a05:6a00:178c:b0:710:5825:5ba0 with SMTP id d2e1a72fcca58-713c4d89219mr1350919b3a.3.1723762936953;
-        Thu, 15 Aug 2024 16:02:16 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1ffe:470a:d451:c59])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127af18921sm1506040b3a.161.2024.08.15.16.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 16:02:16 -0700 (PDT)
-Date: Thu, 15 Aug 2024 16:02:13 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Trilok Soni <quic_tsoni@quicinc.com>,
-	Felipe Balbi <balbi@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Arnd Bergmann <arnd@arndb.de>, wsa@kernel.org
-Subject: lm8323/lm8333 keyboard drivers - drop or keep?
-Message-ID: <Zr6I9RB5mibU_12N@google.com>
+	s=arc-20240116; t=1723763002; c=relaxed/simple;
+	bh=YjpR+HVze/ORFUtpJLBKTrS28pzM0tK3Ma5uh7Wlw8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lGkMz9IBDi9tWx5P9g8jEaWB6VfhGVm7YHBessiemcNeTOtuWui8PGeX9muH8+M4fOgz7pb4ikt2CpPEhRl6PcNlHfPnujuc82gOXT6FGl5zELVI4Bpu1gaNgTCeQKPtKwJxyTrIOBbiiB9z17XBfokA3OOCPhUxeSv3IZ9ZNhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FI86mII2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFDDAC32786;
+	Thu, 15 Aug 2024 23:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723763002;
+	bh=YjpR+HVze/ORFUtpJLBKTrS28pzM0tK3Ma5uh7Wlw8k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FI86mII2kpYLV3gSo0rTE7R2DILUVD4uvkevYIQhANTmVtv4wdNAKT1zpNvO8+6NV
+	 hjWYsdjYbAwjbj2INfPpnZo5c9P4g/tccHhQQ1kRij/oXENLqiAi/AHl0NrfCncUuA
+	 Amnq0xKPoPBTLlawarzFNyXyeWa1qpPMCb1k3bbABa3QSNkNegCyhgNZD1SmOD0NMe
+	 9KcJBa0oznE+WI+2h4H35UUpyNjcBYEvDuAx4EnRsYst3pPcSxN2r0vz0hHgV4uA8p
+	 /xEST+9vyTdjB4VOrFBLH2+b+0O5dGv+yD6zNk28aU1mFTjI5Z85CGz9y4DGC81nQs
+	 PQVlzkgu5hzbw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [GIT PULL] perf-tools fixes for v6.11-rc4
+Date: Thu, 15 Aug 2024 16:03:19 -0700
+Message-ID: <20240815230319.2406358-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi Linus,
 
-LM8323 and LM8333 keyboard drivers do not appear to be used anywhere,
-they only support configuration via platform data and refuse to work
-without it, and nothing in the mainline sets up said platform data.
+Please consider pulling the following changes in perf tools for v6.11.
 
-LM8323 I think was used in Nokia N810, but despite presence of
-arch/arm/boot/dts/omap2420-n810.dts the device is not mentioned there
-and the driver has not been updated to support device tree.
+Thanks,
+Namhyung
 
-Additionally LM8323 seems to be pretty broken as far as PWM/LED handling
-is concerned (taking mutexes in set_brightness() which should not be
-sleeping) which suggests that nobody ever used it (or at least not used
-the version that is in mainline).
 
-Should either of these drivers be dropped? Or if it should be kept -
-why?
+The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
 
-Thanks.
+  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
 
--- 
-Dmitry
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.11-2024-08-15
+
+for you to fetch changes up to 4bbe6002931954bbe82b25f25990b987b0392e18:
+
+  perf daemon: Fix the build on 32-bit architectures (2024-08-09 19:36:20 -0700)
+
+----------------------------------------------------------------
+perf tools fixes for v6.11
+
+The usual header file sync-ups and one more build fix.
+
+* Add README file to explain why we copy the headers
+* Sync UAPI and other header files with kernel source
+* Fix build on MIPS 32-bit
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+
+----------------------------------------------------------------
+Arnaldo Carvalho de Melo (1):
+      perf daemon: Fix the build on 32-bit architectures
+
+Namhyung Kim (10):
+      perf tools: Add tools/include/uapi/README
+      tools/include: Sync uapi/drm/i915_drm.h with the kernel sources
+      tools/include: Sync uapi/linux/kvm.h with the kernel sources
+      tools/include: Sync uapi/linux/perf.h with the kernel sources
+      tools/include: Sync uapi/sound/asound.h with the kernel sources
+      tools/include: Sync uapi/asm-generic/unistd.h with the kernel sources
+      tools/include: Sync network socket headers with the kernel sources
+      tools/include: Sync filesystem headers with the kernel sources
+      tools/include: Sync x86 headers with the kernel sources
+      tools/include: Sync arm64 headers with the kernel sources
+
+ tools/arch/arm64/include/asm/cputype.h             |  10 +
+ tools/arch/powerpc/include/uapi/asm/kvm.h          |   3 +
+ tools/arch/x86/include/asm/cpufeatures.h           | 803 +++++++++++----------
+ tools/arch/x86/include/asm/msr-index.h             |  11 +
+ tools/arch/x86/include/uapi/asm/kvm.h              |  49 ++
+ tools/arch/x86/include/uapi/asm/svm.h              |   1 +
+ tools/include/uapi/README                          |  73 ++
+ tools/include/uapi/asm-generic/unistd.h            |   2 +-
+ tools/include/uapi/drm/i915_drm.h                  |  27 +
+ tools/include/uapi/linux/in.h                      |   2 +
+ tools/include/uapi/linux/kvm.h                     |  17 +-
+ tools/include/uapi/linux/perf_event.h              |   6 +-
+ tools/include/uapi/linux/stat.h                    |  12 +-
+ tools/perf/arch/powerpc/entry/syscalls/syscall.tbl |   6 +-
+ tools/perf/arch/s390/entry/syscalls/syscall.tbl    |   2 +-
+ tools/perf/arch/x86/entry/syscalls/syscall_64.tbl  |   8 +-
+ tools/perf/builtin-daemon.c                        |   9 +-
+ tools/perf/trace/beauty/include/linux/socket.h     |   5 +-
+ tools/perf/trace/beauty/include/uapi/linux/fs.h    | 163 ++++-
+ tools/perf/trace/beauty/include/uapi/linux/mount.h |  10 +-
+ tools/perf/trace/beauty/include/uapi/linux/stat.h  |  12 +-
+ .../perf/trace/beauty/include/uapi/sound/asound.h  |   9 +-
+ 22 files changed, 814 insertions(+), 426 deletions(-)
+ create mode 100644 tools/include/uapi/README
 
