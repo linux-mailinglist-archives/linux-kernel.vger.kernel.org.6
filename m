@@ -1,121 +1,74 @@
-Return-Path: <linux-kernel+bounces-288248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9B49537E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:05:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24CA9537E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724771F220E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9C8283C23
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E791B1514;
-	Thu, 15 Aug 2024 16:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380E41B1437;
+	Thu, 15 Aug 2024 16:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fltmfZLk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkormY1/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535294C69;
-	Thu, 15 Aug 2024 16:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A414C69
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737951; cv=none; b=RIxa3sp1/Fg7tr8o9NjBqLCYrVQEKA92WKZiGLAV+FEqv3YK6eKk/HsT559+YuYt8JOMcvDXxkORj0xz6PjDJ0sjaAMdi+Gxfmi3blkn3nRBET6TBVSrMqf63WbNvoX7amQsfHeP1OehxZeG6l9kN0Wz/WU28EBVyiT9+mle5uQ=
+	t=1723738022; cv=none; b=tpKJj8XKpaTFMfxPUBnDoPBs3KE4p7jbq6WcjAU/GeWwmYaveBAL7j8WDk8zXw/d7jr+WV2yVPUaRmU3nNN9QgBauwi+32dSykiZSL6AHelpBHGuFjOlHWv2w0qCnLutUnOGPh94+PML+UuTMSY3+K9OyjW5WF8Osw1oB08JDhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737951; c=relaxed/simple;
-	bh=CBOevHigSWlKc1CP6LXMym86BM1K1D2QL4AShtyZ3dM=;
+	s=arc-20240116; t=1723738022; c=relaxed/simple;
+	bh=qqxyCTA5TmWr5/A46fa7vWod1K1SOVf9QMKqUeF+GaQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=szVqlF7zdmNLOuQy4klC/aegeYFnNBU8v98RNIv0/SXtbn0E8/59HMD9dDuVrq3hYMkbvV0s46psO1wlKa0R3ulZkiuXs2rJDT/vBpQp1XvcN1da0JiwegQx1UEw6Bexl1JcgMrpJ9FHIPdKdlyQQ/Q+ajGpTh+2PnN6Eodpb7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fltmfZLk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15E3C4AF09;
-	Thu, 15 Aug 2024 16:05:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WGAz1pL7anavAegvV/9mDMKr2viaUulusnfx53xXRn4GB+MO9jF+ZLY6vPI9OXaQ3SkMzuMBClWVcsSwQQvpXaEP3M5p1wHAMq4KYYdMZjREbTqZzXGSIiK3oB4yervtQTdx/ETMycFGDPbIK0Eeq+8h82aa3Tboxrc9Gl6kRBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkormY1/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAF3C32786;
+	Thu, 15 Aug 2024 16:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723737950;
-	bh=CBOevHigSWlKc1CP6LXMym86BM1K1D2QL4AShtyZ3dM=;
+	s=k20201202; t=1723738022;
+	bh=qqxyCTA5TmWr5/A46fa7vWod1K1SOVf9QMKqUeF+GaQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fltmfZLk+i9IGTOFePmU6zvkcECcUpd+M0zdk5vP1UgwshC7lQT/Fhq4DVpd+yz3h
-	 YDTp6ytmPlMFD51nP+EvWjZ20ZIf6QKIL5fOn7o4oK2hk4lYUFNBpYrUbLVo+z6DTX
-	 EVKY7xe58vo4U4OvikxPg9LIce//9dfTBvyTN1bM35DeMPqHVRpE0k1a/w5CGCzp6H
-	 ZQsS2kzgPRUryjCVonh6uV2y16ZY3u8HGKPrse/GeiAp4wxSxCn+ER73sLGGxHbZuH
-	 rbAhG3B2hdsCwo0QvGw5qIYmA7HRxLcGJhJz4AO4l1sCnfwlz/7WjrR4nsqvnksU9R
-	 KTrbYsikT34+Q==
-Date: Thu, 15 Aug 2024 09:05:50 -0700
+	b=kkormY1/pTUeSX2KTR4sj/oWRFGWUu885mMvanjRamSt68is7jAqCFNr0P6+FtEvk
+	 rGVsSCI8EM+mb+pZrSsp08gy/U8s+gUMEJgPjzrv5bRh0FgfWb+wCuwCRmD61HWxY9
+	 m2fuuDxyL4ZJN6fmvWhwdqDEU8GVk4Mc6DnIGrA8PvGM0GNT+lfMhqIu2efO8hSWSD
+	 A7jfF0a7nNwAaGQ9EnxGFenW3Rmlg/DlHSVUCQ4vKW2M/Ua/9UdTgXfvH8jfzHEfwB
+	 itLzq+3Dkc4W8DQJMg/AQ/NnN3EuU8JBqrTPyGzG1DtCEhkCEXTsWW5VzhaD1oZuI3
+	 iVRzsccxccwBg==
+Date: Thu, 15 Aug 2024 09:07:01 -0700
 From: Kees Cook <kees@kernel.org>
-To: Song Liu <songliubraving@meta.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Song Liu <song@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, "KE.LI" <like1@oppo.com>,
-	Padmanabha Srinivasaiah <treasure4paddy@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Fangrui Song <maskray@google.com>,
-	"live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	"morbo@google.com" <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Leizhen <thunder.leizhen@huawei.com>,
-	Kernel Team <kernel-team@meta.com>,
-	Matthew Maurer <mmaurer@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 0/2] Fix kallsyms with CONFIG_LTO_CLANG
-Message-ID: <202408150905.97DAE1A@keescook>
-References: <20240807220513.3100483-1-song@kernel.org>
- <CAPhsuW64RyYhHsFeJSj7=+4uHBo7LucWtWY5xOxN20aujxadGg@mail.gmail.com>
- <Zro_AeCacGaLL3jq@bombadil.infradead.org>
- <5D28C926-467B-4032-A31F-06DBA50A1970@fb.com>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH v2 1/2] string: add mem_is_zero() helper to check if
+ memory area is all zeros
+Message-ID: <202408150906.28A920F62@keescook>
+References: <20240814100035.3100852-1-jani.nikula@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5D28C926-467B-4032-A31F-06DBA50A1970@fb.com>
+In-Reply-To: <20240814100035.3100852-1-jani.nikula@intel.com>
 
-On Mon, Aug 12, 2024 at 06:13:22PM +0000, Song Liu wrote:
-> Hi Luis,
+On Wed, Aug 14, 2024 at 01:00:34PM +0300, Jani Nikula wrote:
+> Almost two thirds of the memchr_inv() usages check if the memory area is
+> all zeros, with no interest in where in the buffer the first non-zero
+> byte is located. Checking for !memchr_inv(s, 0, n) is also not very
+> intuitive or discoverable. Add an explicit mem_is_zero() helper for this
+> use case.
 > 
-> > On Aug 12, 2024, at 9:57 AM, Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > 
-> > On Mon, Aug 12, 2024 at 09:21:02AM -0700, Song Liu wrote:
-> >> Hi folks,
-> >> 
-> >> Do we have more concerns and/or suggestions with this set? If not,
-> >> what would be the next step for it?
-> > 
-> > I'm all for simplifying things, and this does just that, however,
-> > I'm not the one you need to convince, the folks who added the original
-> > hacks should provide their Reviewed-by / Tested-by not just for CONFIG_LTO_CLANG
-> > but also given this provides an alternative fix, don't we want to invert
-> > the order so we don't regress CONFIG_LTO_CLANG ? And shouldn't the patches
-> > also have their respective Fixes tag?
-> 
-> kallsyms has got quite a few changes/improvements in the past few years:
-> 
-> 1. Sami added logic to trim LTO hash in 2021 [1];
-> 2. Zhen added logic to sort kallsyms in 2022 [2];
-> 3. Yonghong changed cleanup_symbol_name() in 2023 [3]. 
-> 
-> In this set, we are undoing 1 and 3, but we keep 2. Shall we point Fixes
-> tag to [1] or [3]? The patch won't apply to a kernel with only [1] 
-> (without [2] and [3]); while this set is not just fixing [3]. So I think
-> it is not accurate either way. OTOH, the combination of CONFIG_LTO_CLANG
-> and livepatching is probably not used by a lot of users, so I guess we 
-> are OK without Fixes tags? I personally don't have a strong preference 
-> either way. 
-> 
-> It is not necessary to invert the order of the two patches. Only applying
-> one of the two patches won't cause more issues than what we have today. 
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 
-Which tree should carry this series?
+Reviewed-by: Kees Cook <kees@kernel.org>
 
 -- 
 Kees Cook
