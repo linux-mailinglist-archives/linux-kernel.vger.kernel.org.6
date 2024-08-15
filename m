@@ -1,169 +1,125 @@
-Return-Path: <linux-kernel+bounces-287353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDDD9526D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:23:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9F59526DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEAAF1F232DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:23:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B975B1C2165F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EDF4A04;
-	Thu, 15 Aug 2024 00:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BF54C69;
+	Thu, 15 Aug 2024 00:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tc9RmOu5"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rDv/ElSp"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC951A35
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44F54A15
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723681420; cv=none; b=ogfS/lxcS/tDBRBH6qOAhHfevZaqlOq/FvTUJRPuUzNmgylG+2snj6eCh0AK2geNruancdQWEDlHAe2YU5pTekkJPIo4CGaLKdLfZY2Lx0BGSZInbNBSYuI8zaoMO4GLrhq6NoG2LZ4rMthAM7Pli6iT9RRmDYeWVPucF41OrU0=
+	t=1723681513; cv=none; b=AlyXnndoQUV1/uKi4536qvOGIKT5TJvM3BDhRNLSQ/T1SQxWuUoZNmBqJpO06YOq8IDkeF3pRRrpaKineVsRxJsuDbBIgptV7Zrtwawo8JEJJuREq2WgKu8snauFQbxJ1arNa5fMT+VvAMb4LO3cL0vieEuXiOkQ9mVELVGxBZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723681420; c=relaxed/simple;
-	bh=suWnLmH8CZD5CKZpCqGzoBDzsiuPxsn+e87dVsPHe/I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=utbaoAJR/Yn/JJqXJRE9TRfyD7GimaGtrj5AyMS/dCOrvF4dayQhHYRabLOc+8d8gKoRzz27cLZXiZrZAh6yH49Zf9LomWbQZF7I0z9QVkisQ2CFZe9EZPm9aiswuxoA359VnKYSkkvmYpkWhSd0N/nUvWonFQTnC3fwKFSNt00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tc9RmOu5; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71065f49abeso350581b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:23:38 -0700 (PDT)
+	s=arc-20240116; t=1723681513; c=relaxed/simple;
+	bh=g6+dyTfaV4ejypt384XwkQLfJA1ttnYEy1lC+qK1r3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HA9WvxjB/RAjH880CVkG52dh6+XrYaGf1ihzI+k4LTavrB748tqaGud+c8Uk4CeO47RH+53/qpeoABdd/OqdN0gu3SPu3H2/yTYKzjUmVUO+ZNzZlOiscui7lbIhmUXiRk29XI/8/OFCDgLdNj6OwJyQEjfx1QDvoIv8vTxkAGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rDv/ElSp; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428163f7635so2112715e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:25:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723681418; x=1724286218; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=na+DQAropa9HhQkX0n6COE58Sm+QVzbS54Fw3LBcwkg=;
-        b=Tc9RmOu5VHf0+n+FFdemc0NquMn8Xs4Epv2ssHAcgbEOheAqm+Pq1n0CV5TzWmv6xj
-         CFWj4Py99KE7UCnMZ5ppkPfJmRh2cYlBn3eZ8WGMxYN8QqlTceFKS9jjtYY1eivpBXZZ
-         8uNtC98ElNyeBgz9+qUDW+psHeju7UNmNN01xvaV6NvxZpchEF80TjaqGZngaIi/3JyL
-         SZmOUh5S778rdBg8JGKfgHNTaOn7Z291LzLtU4JyExhyZ0+q2CYaBIATmhh7HsbPIEl2
-         AjheTBZud+dAn4u4s9zExCLf2XzYTzRInZsLnoLnvOzTzcXeEP7kXh4Mn82QzKay8TCz
-         c3Qg==
+        d=linaro.org; s=google; t=1723681509; x=1724286309; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N/0QdOsIFxUfrsS8J5sSBj2pcKHUSLNB+HboC0R4mPw=;
+        b=rDv/ElSpxAGvF4j+qx6rEAm6ynQ1lcPvn/R5Jvm7a8ji5r8oQ9LpUpkLN+sLMTyZbo
+         EE8pJLxpqBkyzkyG5VB8Jv9Y132YoDFdsAc6MBOkNmQ+KKnmlCoH/9tMzj8EoUmZhPlM
+         juJqmxN5qQP96wArgc7pl07jimAJkk1SFb5U+oQ4A9U3JWFSuj4/1U2WReKNtIO1ZU7G
+         l7fA8Foxjm1RhjXZ5WHh2VhgcpLRcwyjRe9I6KPNIASJpWOC91v3Cwk8JPZDH7gXna43
+         4XzoKA44JDofkbWJ2UnvGQEwN4+/IMXZOcEOHZUy3/09oMPgUI2nwtSjOQLtx7OGYLHH
+         Hbrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723681418; x=1724286218;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=na+DQAropa9HhQkX0n6COE58Sm+QVzbS54Fw3LBcwkg=;
-        b=uu8y6W6OKE0/3Ka3A+mypJuZ203zuZI5D5m4ARJdmz5+rNraUqhlsX2Via54FHiKp5
-         /90oq5ZjvB/5ZYOp83J9KkHJ26x9bytTJCWuuyCdNB9RjqRb0ldLu3livnLDXPNpR4nq
-         ILlM5VZG3MlR+evMESd9F63dIguN9LEkwB/Xomt7/HuDIpaQ8FGcyt88J1eB85sA2jxJ
-         8ZIfXOl14bhML8gNKySrYJtUvX3d716TygM9Bf2T9Gn8nQKyyCBZeEu/RM1a3e/RnRXl
-         vE4Jb1guY+OUynCM1dn9Es5ON/VyBCGQX/o3ld20s9vXMMa6/1MDkK/1FagFsZR++TCK
-         PNWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW47rL+7EgiIQeH3WdJ1r473pkSc4J0tnPKKmdtgL5UMPatvvT01DVmamtcVZJ0ksFVNxH02Tq4ravN4hd3bY/OmiSPP4BfFTKbRmO+
-X-Gm-Message-State: AOJu0YySxJTebcG1cCmk1IQw2VF+ozLRSQGg/KICPCgl7/j5FsHaALVs
-	LszcsMqoZ1hIfxNsH6WyZeteBteou78108lcNRafUP22t8CTf6G96HZw+/vVikyHJSG0hXb3dkA
-	tSw==
-X-Google-Smtp-Source: AGHT+IGoZtQk6EhIPI9XMZuU6TS6huGs8UeaDStKkTJudv5DvPbQJzN1W9iOqNUU9Nrexb3O6V5rC1Lbce8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:91c9:0:b0:710:4d06:93b3 with SMTP id
- d2e1a72fcca58-712673e5d8bmr25637b3a.3.1723681417634; Wed, 14 Aug 2024
- 17:23:37 -0700 (PDT)
-Date: Wed, 14 Aug 2024 17:23:36 -0700
-In-Reply-To: <Zr0_5gixFGlyQMl7@linux.dev>
+        d=1e100.net; s=20230601; t=1723681509; x=1724286309;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/0QdOsIFxUfrsS8J5sSBj2pcKHUSLNB+HboC0R4mPw=;
+        b=pwOYCBAvi/QabUXdi/mONzgbjbJgzP5JAxpkQVgYT2jsOPWKOzOnNpZqpLF65nL0S4
+         Hl5liJl65jHG9Mz/ho3Y3VsynIA0rIe5Z+1Y2GIu9jjYwbCkN/tN9YV9RAx4I0BOX/ud
+         Y3C3SRj9lDEeDr7ZQOj1bXmywL2EIVBlbhNb24MSSNNsCnT+3ZJZCWrFB0xnrwvZVaox
+         UADodL8vuMOo8sjmsMuxuErHyrk12ZU6Ey+BORV60u/IC98eLFe0kX5cfG6YVcqOdd9C
+         +TwvPwpi4Vyt/TtUi2bMgFKfnRLy/sifdD/zCJ8okepOngq2cq0o295gGqeQw4DkpFXu
+         hB5A==
+X-Forwarded-Encrypted: i=1; AJvYcCV01+mFUHH32S9m6BHJ1+xqApPEvZYdEaRWW3Ny+ERznUESPi62MiGuvoXmVB7b9SmUXDSyTJJRJowHojfQtR8bQxXryC4sSiY56bOU
+X-Gm-Message-State: AOJu0YyDIax5R0dwdj9Jwxo/btJIamyYEWPv9gGo/zS6oYwwg3N2eVEU
+	vYrFk+P6ics6oam+EIyphZ2PFCPi75kyePhCnTg2J1EhCyJk5RurxMrZDkkltKg=
+X-Google-Smtp-Source: AGHT+IH6OOO0/mqpv5WEBdqkxeeXkLkx+fI3KP1fNMpiF/1yOPcKF/57UJ/RlG4aNyCcyfEqrARPdA==
+X-Received: by 2002:a05:600c:138e:b0:427:d8fd:42a9 with SMTP id 5b1f17b1804b1-429dd247c0bmr29414975e9.22.1723681509029;
+        Wed, 14 Aug 2024 17:25:09 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm69470185e9.1.2024.08.14.17.25.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 17:25:08 -0700 (PDT)
+Message-ID: <6ddaa41b-86cf-44e5-a671-fd70f266642b@linaro.org>
+Date: Thu, 15 Aug 2024 01:25:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809160909.1023470-1-peterx@redhat.com> <20240814123715.GB2032816@nvidia.com>
- <ZrzAlchCZx0ptSfR@google.com> <20240814144307.GP2032816@nvidia.com>
- <Zr0ZbPQHVNzmvwa6@google.com> <Zr09cyPZNShzeZc6@linux.dev> <Zr0_5gixFGlyQMl7@linux.dev>
-Message-ID: <Zr1KiHO0pxPdYD_U@google.com>
-Subject: Re: [PATCH 00/19] mm: Support huge pfnmaps
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>, 
-	Axel Rasmussen <axelrasmussen@google.com>, linux-arm-kernel@lists.infradead.org, 
-	x86@kernel.org, Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Alistair Popple <apopple@nvidia.com>, Borislav Petkov <bp@alien8.de>, 
-	David Hildenbrand <david@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
+ version Titan 780
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-14-quic_depengs@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240812144131.369378-14-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 14, 2024, Oliver Upton wrote:
-> On Wed, Aug 14, 2024 at 04:28:00PM -0700, Oliver Upton wrote:
-> > On Wed, Aug 14, 2024 at 01:54:04PM -0700, Sean Christopherson wrote:
-> > > TL;DR: it's probably worth looking at mmu_stress_test (was: max_guest_memory_test)
-> > > on arm64, specifically the mprotect() testcase[1], as performance is significantly
-> > > worse compared to x86,
-> > 
-> > Sharing what we discussed offline:
-> > 
-> > Sean was using a machine w/o FEAT_FWB for this test, so the increased
-> > runtime on arm64 is likely explained by the CMOs we're doing when
-> > creating or invalidating a stage-2 PTE.
-> > 
-> > Using a machine w/ FEAT_FWB would be better for making these sort of
-> > cross-architecture comparisons. Beyond CMOs, we do have some 
-> 
-> ... some heavy barriers (e.g. DSB(ishst)) we use to ensure page table
-> updates are visible to the system. So there could still be some
-> arch-specific quirks that'll show up in the test.
+On 12/08/2024 15:41, Depeng Shao wrote:
+> +void camss_reg_update(struct camss *camss, int hw_id, int port_id, bool is_clear)
+> +{
+> +	struct csid_device *csid;
+> +
+> +	if (hw_id < camss->res->csid_num) {
+> +		csid = &(camss->csid[hw_id]);
+> +
+> +		csid->res->hw_ops->reg_update(csid, port_id, is_clear);
+> +	}
+> +}
 
-Nope, 'twas FWB.  On a system with FWB, ARM nicely outperforms x86 on mprotect()
-when vCPUs stop on the first -EFAULT.  I suspect because ARM can do broadcast TLB
-invalidations and doesn't need to interrupt and wait for every vCPU to respond.
+The naming here doesn't make the action clear
 
-  run1 = 10.723194154s, reset = 0.000014732s, run2 = 0.013790876s, ro = 2.151261587s, rw = 10.624272116s
+hw_ops->rup_update(csid, port, clear);
 
-However, having vCPUs continue faulting while mprotect() is running turns the
-tables, I suspect due to mmap_lock
+"is_clear" is not required since the type is a bool the "is" is implied 
+in the the logical state so just "clear" will do.
 
-  run1 = 10.768003815s, reset = 0.000012051s, run2 = 0.013781921s, ro = 23.277624455s, rw = 10.649136889s
+But re: my previous comment on having the ISR do the clear as is done in 
+the VFE 480, I don't think this is_clear parameter is warranted.
 
-The x86 numbers since they're out of sight now:
+We want the calling function to request the rup_update() for the 
+rup_update() function to wait on completion and the ISR() to do the 
+clear once the RUP interrupt has been raised.
 
- -EFAULT once
-  run1 =  6.873408794s, reset = 0.000165898s, run2 = 0.035537803s, ro =  6.149083106s, rw = 7.713627355s
+At least I think that's how it should work - could you please experiment 
+with your code for the flow - as it appears to match the VFE 480 logic.
 
- -EFAULT forever
-  run1 =  6.923218747s, reset = 0.000167050s, run2 = 0.034676225s, ro = 14.599445790s, rw = 7.763152792s
-
-> > > and there might be bugs lurking the mmu_notifier flows.
-> > 
-> > Impossible! :)
-> > 
-> > > Jumping back to mmap_lock, adding a lock, vma_lookup(), and unlock in x86's page
-> > > fault path for valid VMAs does introduce a performance regression, but only ~30%,
-> > > not the ~6x jump from x86 to arm64.  So that too makes it unlikely taking mmap_lock
-> > > is the main problem, though it's still good justification for avoid mmap_lock in
-> > > the page fault path.
-> > 
-> > I'm curious how much of that 30% in a microbenchmark would translate to
-> > real world performance, since it isn't *that* egregious.
-
-vCPU jitter is the big problem, especially if userspace is doing something odd,
-and/or if the kernel is preemptible (which also triggers yeild-on-contention logic
-for spinlocks, ew).  E.g. the range-based retry to avoid spinning and waiting on
-an unrelated MM operation was added by the ChromeOS folks[1] to resolve issues
-where an MM operation got preempted and so blocked vCPU faults.
-
-But even for cloud setups with a non-preemptible kernel, contending with unrelated
-userspace VMM modification can be problematic, e.g. it turns out even the
-gfn_to_pfn_cache logic needs range-based retry[2] (though that's a rather
-pathological case where userspace is spamming madvise() to the point where vCPUs
-can't even make forward progress).
-
-> > We also have other uses for getting at the VMA beyond mapping granularity
-> > (MTE and the VFIO Normal-NC hint) that'd require some attention too.
-
-Yeah, though it seems like it'd be easy enough to take mmap_lock if and only if
-it's necessary, e.g. similar to how common KVM takes it only if it encounters
-VM_PFNMAP'd memory.
-
-E.g. take mmap_lock if and only if MTE is active (I assume that's uncommon?), or
-if the fault is to device memory.
-
-[1] https://lore.kernel.org/all/20210222024522.1751719-1-stevensd@google.com
-[2] https://lore.kernel.org/all/f862cefff2ed3f4211b69d785670f41667703cf3.camel@infradead.org
+---
+bod
 
