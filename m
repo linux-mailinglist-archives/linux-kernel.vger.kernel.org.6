@@ -1,132 +1,152 @@
-Return-Path: <linux-kernel+bounces-288097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDD1953457
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8235953473
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125F21F2914A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C859E1C21032
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4350A1ABED4;
-	Thu, 15 Aug 2024 14:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDA31AB53E;
+	Thu, 15 Aug 2024 14:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RL6Yv0zX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jLm7C+jU"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C919F473;
-	Thu, 15 Aug 2024 14:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3AF63C
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723731879; cv=none; b=gqR4b7lv3sNywSLOKYc2ZGCTxuOR/YiCibovOiSnLv6rSk6IEpmfKmHupWvJCAo9ZK2NB3ue7ehoBWfcZV/BIxWTlVker7+MtxBVbizHcSzPUTDIJ8YiqKxiiRP2EJGoLqge9io5nmeQ7zNCmc3W/QCl4cReB3HoJJrDur20Prg=
+	t=1723731959; cv=none; b=E3NOejVu+8wYNjqLVGRKDoRm8Ww/bOEtLto6E2EYmOcEABPnWTrupWrpkrjVroIgVmpotSWqc56j5SmSZMHK38upritRKH1UjqliByrbhio+QFZ2s9PemCkdCK+Wo56p+xJvPaROG7GdAzPu5OsDidLDJjbaE/mSZsTiZ5RJ+f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723731879; c=relaxed/simple;
-	bh=cE18OWNgSDCuLxpDUVFjwNKQqYPgAUOzSh0r/G2Xd5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P469EE4O2bLnGUg83ACFJLX1oCVvFjNOt5ytsvs4wu5JTrIZEgnnN8zdRgYFtNL9OetY0GEetFbgHaYw0gNc1FwhigaSbz99t5qP+mtv2BbpDz1meA/cMR5K+aFr1JZszntn3Sn9w9/EqhGmFbiRTBzOCLHPucPuWdsIADo4Tfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RL6Yv0zX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FB265L002207;
-	Thu, 15 Aug 2024 14:24:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JKyMHexjW8mHunkV4x2xjpwj51aFu22HNL3RDXdjm7E=; b=RL6Yv0zXsOx3q0Zs
-	b/dM4HBfvU6LgAR65HkaqD9Tw1wT/B+sJTocLWiXSMRhzhOKbTJ18dt9732oebpb
-	SqYsO89MeTmH6bLXvCgyleO7nNc4ea5MOpTaoPbm+aZQIF2tQX0Gls3CubPOtfwv
-	cp3ygthwjImKhUYOUATAkjwmqi7hZhjwWCLpQTjBgDMNP8j8UYVm1vLt/vKZr3Jw
-	SEhiaSRZKfaQ2vs1ws68AU8g605q/4wxX15V93ISB8TQFpF086SP9YQN+Kk/0GLV
-	wCu4Dy3TB5ZMUUkw1eiV89rgdbyJN2GJr3L/8oY0E0Li4PgdG/m7PY4fm/6ydmx0
-	EitAqA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4112r3t5ht-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 14:24:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FEOVps019575
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 14:24:31 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 07:24:25 -0700
-Message-ID: <9f06450f-70a8-4ece-8b67-1b0695fbf414@quicinc.com>
-Date: Thu, 15 Aug 2024 22:24:23 +0800
+	s=arc-20240116; t=1723731959; c=relaxed/simple;
+	bh=T6w22f/EV1nqV5GX244Le2gSBKKj4m81OK4ziNx9288=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oR7dSlKZgAkH1UFqriZdaczCJRxmWO/gF1cEIWLYXHijNyKh4FqopclBhXX7/OLgL4XLq5Npvc+ZKGscDhVPvxPE0A6IAUgKzBjGNigGLq+4+irFKw4/MJrCQcsq6ucT5h64r4SLRClU9fJAa44g274nRSl1wGtBJe/P/UQ/X90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jLm7C+jU; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b036192efaso9431907b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723731957; x=1724336757; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=roDNKJdSnZwy+Mcdcl1djSIrOYwbDe7Ptmk1JHrL0bw=;
+        b=jLm7C+jU6XjfdoT0kILhERtZHfJVwi6W8vZAc2IJkmjgVBCedI9LuIjl2a7MLQrIkZ
+         5rDVQ9zecfHJfkP+byHthcYdAmKUwth7u6WTic25k1iVsSi2KKB2u5kLp6rPOJwhniSc
+         hqtWUQh7ZGwz0zZzjBSmDqRI+z0Yhb2I6bnRzUaAm1bfYinlWLZzieQD5KipfyUuaNJ6
+         OoXxf1qeKcASfVpaS19JzUvV91gLXMfPjT4e9DUGjRUpxBoO6pvWCwIo68CIgJ/Oh/Ac
+         2knsYeyJs0EFq7Xb8FVL3YvdDkUt6eeDEwX8y3Jhtmkn27fPonTyVnr4BcsEVaK1QocS
+         iI2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723731957; x=1724336757;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=roDNKJdSnZwy+Mcdcl1djSIrOYwbDe7Ptmk1JHrL0bw=;
+        b=J6MeAE5I92mYS8FLkUiW4CsjLooz8UbCyKk8kwg9AmoVWnmE+5NVYJF2re67nF3eG8
+         jrKDgs/8dZchpFYHOJ0YtQrYhJwC2NeiGCMMzlcR5CK52oOBQdMnUPQ/hnngo8weZr+0
+         WkACLAf30REam9Vif7azmLnoDjOBjOlCiwGWefhR445GAOEQ4gV0R+vKR40Q+VZoyuPj
+         tpso1f5208KTUpQXXW0P7DLTOE0RWMExmJyoLFJ7TdwTtA5Muhwx274E1jN3gbKfziL2
+         TdHTQEpYd1g2f2HrhxTwXzQfm2CqFMqpQp3eMelmAKpI43RYJ7WqMlFKJhjJ0WAGO+El
+         4QmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+ORnIwpuuiP1tJNrk6kU/qn4M4h62b2P2JACVCHsTrIKDEzUmm4YbAqZPnDalUBTn8EJUXxWWOFE04lW9lXfdwY39wedvz+u8iT4Z
+X-Gm-Message-State: AOJu0YyTVywXks4/aBFf3Nfa3HiwfgPI42z2Rd4C0jZW2y9wUdW3CS8e
+	7W7RuofrSja0Mu/lK2NbuwT+Fn3nXb+ps4DZDerDu/j0xfBflFmgOJtVmBIgKdWEyhPNQPGDjup
+	S8g==
+X-Google-Smtp-Source: AGHT+IFE0Vi4b+EvUBIA+1EZT1ThmV3wetNw2WaTANsCnH4Lk17nU+Pfq+H8vJYE/x9QR0+/9/9P2e/bgOA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a0d:d385:0:b0:673:b39a:92ea with SMTP id
+ 00721157ae682-6ac997f8a9cmr3405997b3.7.1723731957160; Thu, 15 Aug 2024
+ 07:25:57 -0700 (PDT)
+Date: Thu, 15 Aug 2024 07:25:55 -0700
+In-Reply-To: <5f8c0ca4-ae99-4d1c-8525-51c6f1096eaa@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Bryan O'Donoghue <pure.logic@nexus-software.ie>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <b31f175e-4171-491f-9203-8186a84ab712@nexus-software.ie>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <b31f175e-4171-491f-9203-8186a84ab712@nexus-software.ie>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ApBaGQrka866zN899C4pDLNfsv0SDCMx
-X-Proofpoint-ORIG-GUID: ApBaGQrka866zN899C4pDLNfsv0SDCMx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_07,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 phishscore=0 bulkscore=0 mlxscore=0 suspectscore=0
- clxscore=1011 priorityscore=1501 malwarescore=0 impostorscore=0
- mlxlogscore=999 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408150104
+Mime-Version: 1.0
+References: <20240809190319.1710470-1-seanjc@google.com> <20240809190319.1710470-23-seanjc@google.com>
+ <5f8c0ca4-ae99-4d1c-8525-51c6f1096eaa@redhat.com>
+Message-ID: <Zr4P86YRZvefE95k@google.com>
+Subject: Re: [PATCH 22/22] KVM: x86/mmu: Detect if unprotect will do anything
+ based on invalid_list
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Michael Roth <michael.roth@amd.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Ackerly Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Bryan,
+On Wed, Aug 14, 2024, Paolo Bonzini wrote:
+> On 8/9/24 21:03, Sean Christopherson wrote:
+> > Explicitly query the list of to-be-zapped shadow pages when checking to
+> > see if unprotecting a gfn for retry has succeeded, i.e. if KVM should
+> > retry the faulting instruction.
+> > 
+> > Add a comment to explain why the list needs to be checked before zapping,
+> > which is the primary motivation for this change.
+> > 
+> > No functional change intended.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/x86/kvm/mmu/mmu.c | 11 +++++++----
+> >   1 file changed, 7 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 300a47801685..50695eb2ee22 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -2731,12 +2731,15 @@ bool __kvm_mmu_unprotect_gfn_and_retry(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> >   			goto out;
+> >   	}
+> > -	r = false;
+> >   	write_lock(&kvm->mmu_lock);
+> > -	for_each_gfn_valid_sp_with_gptes(kvm, sp, gpa_to_gfn(gpa)) {
+> > -		r = true;
+> > +	for_each_gfn_valid_sp_with_gptes(kvm, sp, gpa_to_gfn(gpa))
+> >   		kvm_mmu_prepare_zap_page(kvm, sp, &invalid_list);
+> > -	}
+> > +
+> > +	/*
+> > +	 * Snapshot the result before zapping, as zapping will remove all list
+> > +	 * entries, i.e. checking the list later would yield a false negative.
+> > +	 */
+> 
+> Hmm, the comment is kinda overkill?  Maybe just
+> 
+> 	/* Return whether there were sptes to zap.  */
+> 	r = !list_empty(&invalid_test);
 
->> +
->> +static inline void vfe_reg_update_clear(struct vfe_device *vfe,
->> +                    enum vfe_line_id line_id)
->> +{
->> +    int port_id = line_id;
->> +
->> +    /* RUP(register update) registers has beem moved to CSID in Titan 
->> 780.
->> +     * Notify the event of trigger RUP clear.
->> +     */
->> +    camss_reg_update(vfe->camss, vfe->id, port_id, true);
->> +}
-> 
-> Hmm, so another thought here.
-> 
-> camss_reg_update() is not an accurate name -> camss_rup_update() because 
-> in this case we only update the RUP register, not the AUP or MUP.
-> 
-> reg is an abbreviation for register - but RUP has a defined meaning in 
-> the camera namespace i.e. RUP = register update and its job is to latch 
-> shadow registers to real registers.
-> 
-> camss_rup_update() please.
-> 
+I would strongly prefer to keep the verbose comment.  I was "this" close to
+removing the local variable and checking list_empty() after the commit phase.
+If we made that goof, it would only show up at the worst time, i.e. when a guest
+triggers retry and gets stuck.  And the logical outcome of fixing such a bug
+would be to add a comment to prevent it from happening again, so I say just add
+the comment straightaway.
 
-Yes, you are right, the rup_update is reasonable, I will update it in 
-next version patch.
+> I'm not sure about patch 21 - I like the simple kvm_mmu_unprotect_page()
+> function.
 
-Thanks,
-Depeng
+From a code perspective, I kinda like having a separate helper too.  As you
+likely suspect given your below suggestion, KVM should never unprotect a gfn
+without retry protection, i.e. there should never be another caller, and I want
+to enforce that.
 
+> Maybe rename it to kvm_mmu_zap_gfn() and make it static in the same patch?
+
+kvm_mmu_zap_gfn() would be quite misleading.  Unlike kvm_zap_gfn_range(), it only
+zaps non-leaf shadow pages.  E.g. the name would suggest that it could be used by
+__kvm_set_or_clear_apicv_inhibit(), but it would do the complete wrong thing.
+
+kvm_mmu_zap_shadow_pages() is the least awful I can come up with (it needs to be
+plural because it zaps all SPs related to the gfn), but that's something confusing
+too since it would take in a single gfn.  So I think my vote is to keep patch 21
+and dodge the naming entirely.
 
