@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-287895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C94952DD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:05:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E2C952DD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31867281F33
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 995EF1F24C4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8FF17BEAB;
-	Thu, 15 Aug 2024 12:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB57A1714DD;
+	Thu, 15 Aug 2024 12:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Z3+MH6Vv"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="anTMsZ19"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC6517BEA0
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672C01714AC
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723723503; cv=none; b=XxFC667mi1/bfiXgYiCnIJJgGwsxuZmaMCWowh0S0P6JC66j6131xjUt4uOrevZFw9QNufQNH49iCSInWMiisNZ0KpwszQqsSF9kLZBAjMJFFoONlgYaLX8t36XrXmdBdT9ANkymzeWfvDUxD0WvOOJn9fIv7ttOGFyNw2FMAik=
+	t=1723723539; cv=none; b=oZX6LTqznWzAlf5bm3V9qYIwP/orPjmDg1IqjIVLXsKrJ2p9YcJAGKqmURJFTMvAjIM3CTv+OKrs40/pRa+tEp52AJEv0ZBgG4u3wFHcHOKU87mFggqBMKz4X5aYgnNCKhKsyodXzllYk8Sg87lhoL60boBOfG+Sjilz5FjX+rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723723503; c=relaxed/simple;
-	bh=iAsrpjKnTZv/D2VgeVVLyUmXKIurQQ0adhT8SEJIc3w=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uX6MQWdilv/L1kOzlnwyJISjK9WMOCiRG3ZzuxPftui2qz9zrg0V070iSaCw/eAl4pk8xf1KNojzy4IJREpBfFbywcYb2v92/BfkQXsLMPFnJIzFQKGYEwRaVuJUbKyCX5SxFH0FRQlNC/MIy4D+MP7WqtBpFzMh69L7w7Ahtbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Z3+MH6Vv; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 453AE3F1ED
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1723723493;
-	bh=7ZBFQryseJrs4bYfDgEEs/HpYyXTP2lyjLbjfwARrdw=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=Z3+MH6VvMQPmOWFzo4ZiLFBm6V6HZEo3W2hjlPkzfEr0vRsvK2ifsO9aCwmNS4ijK
-	 DSHxPVgpJnwi/GfDP0IN0PKRunGDy61fgmV1tHTsCKT/PZxgYeyR2mrrwXNAlKbjEP
-	 P8/xjpMMRTziIlPEYmwqRNuCwgfQh5CJNP9APZXW8k+UzGGtOsVTmIibqA0seamuUZ
-	 TwLTR3R9TtEHz5NZOXYOnF64hwTcJn8TKLTIjUqKh7tZchFnOGFNeFJFTp/2uhP/nw
-	 d9PBfTvpUjEApIYnt/BkdyWuL3TnpBrOPCaHml9YcEwi+XX+liBZ7QMUpwfgk5KJ95
-	 xZ6Z1EWi33TZw==
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-44fe32a1a4cso8875251cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:04:53 -0700 (PDT)
+	s=arc-20240116; t=1723723539; c=relaxed/simple;
+	bh=bX+Z03KAir1AvRgDPM3iUP5NFkMq/MyZqnmhaxA+O14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8E3CUhNWirk+N+8lwNDndGipqNdAiavRu8LbLn6sAC76hMmlXnucZz3ueZdzL0xUlqEQvIMZDA4B2sa5rHqYgCCgDEnrX58Si0cSINn5dT5rTGOm5pmoQcj/xhkoy9uVJ3vcCTceaZFrYYBh9dJ4S+9oxd0tPPPLIvKySpzX/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=anTMsZ19; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6bf7658f4aaso1597116d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:05:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723723536; x=1724328336; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bX+Z03KAir1AvRgDPM3iUP5NFkMq/MyZqnmhaxA+O14=;
+        b=anTMsZ19BWG7Fr5Z+SArmuys8mtWRtX/kZPBpVSpnoUrbFXv3nR1lWsKeD60dhjW8S
+         VtHFubEIvQEuaHeuJNdEsVOAZFbOcND2//gfQSdJrPTh0MuOL9Y9yxoxch69+PRPn4Ca
+         la1iwENRVmC4wnPkEB3noBWNg5OWbOhixMENhGWXxvmeAshk/seU0dXCsoHy2PJLOHhg
+         UPlZScK4qA4rM+wXYSFJ2iCYk43TQEbusgnw9bsF9O6ZM0BDkEnI3CoPmF6tdm30jkjC
+         pVIzuA2Ew5U34PQtnKobMqsXOFSw5oe+fEswqLM6nCfX7PVZfVsnpH0ew1dpoYa7exv4
+         YfDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723723492; x=1724328292;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZBFQryseJrs4bYfDgEEs/HpYyXTP2lyjLbjfwARrdw=;
-        b=MEDPLkngtAUh9OKtn9iqAD79aIqYHclodeFjP+kP56p0wRsYBrZvSfvwBc6L5GNWtn
-         GtQal9upEzX12At99YKuqtEI3vzilsdgsi3Ct37BAWGVclzUhIBB2qCtuWccJ3y/sFiY
-         OVG+CFE+c5R15//a6iOYDMtlXQ3/cPoAnFZVkzyT7UZ0N5al9GNi+0G52HBRVMHh2nhe
-         ff/Cu80YYSA8BNB45OMOh2fVWoGq6mFE9wbXL/PILatYY4p6vTgaGse/8hNxJlfgnMbk
-         IkuQRNlCQauJR88RnBObYeGK0CMJtOCCFDT/rlRTP83N2uMd5x9ay5NxMfUxWynCmEE2
-         5N3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVYvMTd0JHMVVhCTVhMP4FYQFLWTa0+JGbrO1QyBwtdGKrvjpp7lHaPGiJjey5t2OdpJhNxC32XU0X5gaAa++vyuIr6/RirScEc//cx
-X-Gm-Message-State: AOJu0YwxiNuyc6mISwrrqNZ1VxBr3n8YUArW2xAOxofQ3nc383LUzgZ8
-	kOcDc9qd78DS1BtwGB4dibw63yMDzdk1wZ08w/qC0N2qn7xU9O2uaNepgiUIyZGxYgJwaqjs+/L
-	U0RivDw36msa0PeeHkjpueIjoO9Nf0puyUf8hSIKcvDOxO20pJn1DEoiouNQbfFLImtfMyms/hm
-	SWSD5ZLrb1oKFcvvL8NQTLVNmIoPziB12rTBC/QIsZtGqsOpnJyQwe
-X-Received: by 2002:a05:622a:1f98:b0:44f:f06a:d6f5 with SMTP id d75a77b69052e-4535bb370dcmr69186581cf.36.1723723492107;
-        Thu, 15 Aug 2024 05:04:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCrKqnX67yXWeSCk7DjtbJqRwQJAnNVtCSUPATh5Fgv3rkpF5FNHMjzutwyyeGqOQ3p5D88tr/8ufomoR/zBU=
-X-Received: by 2002:a05:622a:1f98:b0:44f:f06a:d6f5 with SMTP id
- d75a77b69052e-4535bb370dcmr69186251cf.36.1723723491700; Thu, 15 Aug 2024
- 05:04:51 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 15 Aug 2024 05:04:51 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <87ttfmm2ns.ffs@tglx>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx> <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
- <87ttfmm2ns.ffs@tglx>
+        d=1e100.net; s=20230601; t=1723723536; x=1724328336;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bX+Z03KAir1AvRgDPM3iUP5NFkMq/MyZqnmhaxA+O14=;
+        b=hHzJ1797kTb5kv6o4z4D7297kGlMMdUx4volSzwwuNWhP3R3U1EARaeZIMSmpmmt6B
+         DqzFfXAYzvcLRNFJMMM3xziwkz9lnQoHRewEMT4209HYWNa6PLGXTUamY1xzNnYM0Q+R
+         1v/Bq+B9xW9gw6DuQvFnFMxNIUAMh8gKY1RkYySpuVKPdp3yxj7KKHgCzgGcIf4k42+g
+         cEPLIBoZ0U/d6c9QWx8VifgQw+bJddWyTnWyab40+/PaozU2kNM2zPJ5yRERS8LW0JNl
+         XT6dj7QBe4aLZ+Pd/bKC7PKj0J4kKnToL5a+1FiTIcjVCtwA2tOJUyxxZXY2c+RbMOhe
+         Hv3g==
+X-Gm-Message-State: AOJu0YzS8TAn5i0kfCqTQFQhTKhVwM5wZ+VeHGuQWjJB7aArlFc314Yf
+	zn9XgP21Ototh5W8TJqGtHGhq/nGM+vZGDK7kwa8HG+T7KHUms6QHeNz6n2+qi0=
+X-Google-Smtp-Source: AGHT+IHPJiOlGhJDc6291J9QgmSpFBfBzpYQwHmlzz1FILnpS5kT+SLIzITpRexaKsXRzXG8EOyBGg==
+X-Received: by 2002:a05:6214:2b89:b0:6bb:9c14:8bbb with SMTP id 6a1803df08f44-6bf5d277e83mr60014146d6.48.1723723536093;
+        Thu, 15 Aug 2024 05:05:36 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6fef3107sm5805326d6.121.2024.08.15.05.05.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 05:05:35 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1seZEU-002lfC-2K;
+	Thu, 15 Aug 2024 09:05:34 -0300
+Date: Thu, 15 Aug 2024 09:05:34 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, will@kernel.org,
+	robin.murphy@arm.com, joro@8bytes.org, jean-philippe@linaro.org,
+	nicolinc@nvidia.com, mshavit@google.com
+Subject: Re: [PATCH v2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+Message-ID: <20240815120534.GD3468552@ziepe.ca>
+References: <20240814145633.2565126-1-smostafa@google.com>
+ <20240814155151.GB3468552@ziepe.ca>
+ <Zr3m4YCY7Ape3R6y@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 15 Aug 2024 05:04:51 -0700
-Message-ID: <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-To: Thomas Gleixner <tglx@linutronix.de>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Anup Patel <apatel@ventanamicro.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zr3m4YCY7Ape3R6y@google.com>
 
-Thomas Gleixner wrote:
-> On Thu, Aug 15 2024 at 03:29, Emil Renner Berthing wrote:
-> > Thomas Gleixner wrote:
-> > Thanks for looking at this! Unfortunately the above patch isn't enough to fix
-> > the issue:
-> >
-> > https://termbin.com/7sgc
-> >
-> > It still hangs after the "[    0.176451] cpuidle: using governor teo" message
-> > until the watchdog reboots the systems.
->
-> So what's puzzling is that there is a timer installed early on:
->
-> [    0.000000] clocksource: riscv_clocksource: ....
->
-> That same init function installs the per cpu riscv clockevent, so there
-> should be a timer available.
->
-> The deffered probing of the PLIC driver delays obviously the probing of
-> the sun4i timer, but that should not matter when another timer is
-> available. So the sun4i driver might be a red herring.
->
-> Can you please add "ignore_loglevel initcall_debug" to the command line
-> and provide the output of a booting and a failing kernel?
+On Thu, Aug 15, 2024 at 11:30:41AM +0000, Mostafa Saleh wrote:
 
-6.11-rc3 + these reverts:  https://termbin.com/q6wk
-6.11-rc3 + Samuel's patch: https://termbin.com/7cgs
+> Yes, s2 translation fault events are the same but with an extra bit
+> set (S2), and with a new field for IPA which is not relevant here as
+> we only report the IOVA.
 
-> And on the booting kernel please provide the output from:
->
-> # cat /sys/devices/system/clockevents/clockevent0/current_device
-> # cat /sys/devices/system/clockevents/broadcast/current_device
-> # cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+Okay, as long as the IOVA is decoded and passed into report_fault it
+should be fine
 
-On both a 6.8.6 kernel and 6.11-rc3 + reverts I get:
+We don't yet have support for specifying the IPA on nesting..
 
-  # cat /sys/devices/system/clockevents/clockevent0/current_device
-  sun4i_tick
-  # cat /sys/devices/system/clockevents/broadcast/current_device
-  riscv_timer_clockevent
-  # cat /sys/devices/system/clocksource/clocksource0/current_clocksource
-  riscv_clocksource
-
-/Emil
+Jason
 
