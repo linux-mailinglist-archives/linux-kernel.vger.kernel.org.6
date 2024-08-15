@@ -1,89 +1,153 @@
-Return-Path: <linux-kernel+bounces-288106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4F095350E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:33:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE25953544
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503971C25253
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF8C1C25289
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554BE1A01BF;
-	Thu, 15 Aug 2024 14:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37ADF1A01CC;
+	Thu, 15 Aug 2024 14:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nz0XuEsX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOgYdI0R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA01D14AD0A;
-	Thu, 15 Aug 2024 14:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F64763D5;
+	Thu, 15 Aug 2024 14:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732399; cv=none; b=IwnYq/L9G0MJOJGTzSCQIIxHgDaV/NCNrz7wjXF8LF7AXsq4J0SHHwfZrvjpVdH32bdtBXvxi5V8tzyXs5/uMwdVRATiX05jNbY/+rvEvb2qPIANv5hwV+K6xOILnyehn82eevl9bQB7Q1C6hZE275ENOvqm0xfG3c7551gDydc=
+	t=1723732540; cv=none; b=R58KhC9wXYILIWqlyateweQ9EtDF5zn7X70KmNRPgzmmPk1OchBhAOTUvYW2hsdkqPU7wvPgOV6Z3y0g39GETItelrJLC6LSfOXEf0k+jAspaZy71Z1vDaY/m3+WLzmrjboZGSlDfJzb4fLReWDBBDAyj/CGxrFki7OvZhy4I4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732399; c=relaxed/simple;
-	bh=5zLlgiauFmtzDe0WGZrVO5jLD2j3yrPLGKIoogSK2Eo=;
+	s=arc-20240116; t=1723732540; c=relaxed/simple;
+	bh=QTqPFqf58R7qfq3RSaFdp06zQmjhjZVPSRi/viE3tHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogQn/fn2vJB6roo13u00wVIZvkm8fu+/qZ48eqzln0uljvWZcbdZvatfpSSVeY8ynQ8zbj4lI1DBMoUpT0m44cEw9YG3RTXuwh8OK6N1JHcjC28ztO4cgkLOwgRirqVYSTY8KREZEghkDP1YHp41HFy+D/oxNPYPpQdswaj6CBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nz0XuEsX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=M8aNZa8nyfe/bSa1TM/F99VXtKGXCBMqn9UQAaHvcN0=; b=nz0XuEsX1PBBgoXUQqeR2HGbFm
-	OLQdQ4hC8kvHZ0tIad/Flwa+wLzOXEW4+8EFJSXOPpMstRwI8KuSt0U0TYktNgyeFAni0V4VvH8kK
-	mFyFDiVHGNnbeNl/iNGftrtCGYfti4WDi+uEzZHab/VUC2V25GNiJ+GwmaWPx8n8N94Q=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sebXA-004qjE-V3; Thu, 15 Aug 2024 16:33:00 +0200
-Date: Thu, 15 Aug 2024 16:33:00 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, f.fainelli@gmail.com, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, andrei.botila@oss.nxp.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] dt-bindings: net: tja11xx: use reverse-mode
- to instead of rmii-refclk-in
-Message-ID: <7aabe196-6d5a-4207-ba75-20187f767cf9@lunn.ch>
-References: <20240815055126.137437-1-wei.fang@nxp.com>
- <20240815055126.137437-2-wei.fang@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfAzFXS2jz8Qr5Twy2xwjeB7Yka6QUMSzJ3L6038fMfqTodSWB1FGmCjP1dfz5j4XcnwsEdf1LbilVmzWZMLAVE8t+f2KJWQDCJcuvwhFUVb0BT539qXNIi0lpRBQTSgN2W/D8lkZoV6kN9ITXFhpMtpXq+NSGgAc0+EfMZioKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOgYdI0R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 342BAC4AF0C;
+	Thu, 15 Aug 2024 14:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723732540;
+	bh=QTqPFqf58R7qfq3RSaFdp06zQmjhjZVPSRi/viE3tHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jOgYdI0RtjI3aeU7/fWc4Z2qAIGWelWfGHJN0sznAcAFS9R1aULWtK6eaMMdgTleM
+	 V2hZWQjQog596gYVxoMV/zoI7xEwrE38dLpLMGsISS6axy8w+zteSHq0EOqWFuvtM7
+	 ZjVuM3XRUj7mNVslAChsuUvIoBQ7LAouYyjf015tKoa7fn48Rj1ber5o+VYm44gH51
+	 nEhM/WrXQwEKhyqGPSowU2KXgwwoNmrdYXBbrQXctBXW2Lb+KemvK9d13QwIYMfh4F
+	 hxDU0BzqBBjxjvVlBWIh4I3hHo6Ak7bLiU2eMTdG2JSRlJ5AZ88x9YnWFj6NSZYTpc
+	 +jbQ6mRmPdNhg==
+Date: Thu, 15 Aug 2024 15:35:34 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	20240705211452.1157967-2-u.kleine-koenig@baylibre.com,
+	20240712171821.1470833-2-u.kleine-koenig@baylibre.com,
+	cover.1721040875.git.u.kleine-koenig@baylibre.com,
+	aardelean@baylibre.com
+Subject: Re: [PATCH 1/8] dt-bindings: iio: adc: ad7606: Make corrections on
+ spi conditions
+Message-ID: <20240815-reword-wildland-1319629f0718@spud>
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+ <20240815-ad7606_add_iio_backend_support-v1-1-cea3e11b1aa4@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="UJJuTW6LWkpDszvK"
+Content-Disposition: inline
+In-Reply-To: <20240815-ad7606_add_iio_backend_support-v1-1-cea3e11b1aa4@baylibre.com>
+
+
+--UJJuTW6LWkpDszvK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240815055126.137437-2-wei.fang@nxp.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024 at 01:51:24PM +0800, Wei Fang wrote:
-> Per the MII and RMII specifications, for the standard RMII mode,
-> the REF_CLK is sourced from MAC to PHY or from an external source.
-> For the standard MII mode, the RX_CLK and TX_CLK are both sourced
-> by the PHY. But for TJA11xx PHYs, they support reverse mode, that
-> is, for revRMII mode, the REF_CLK is output, and for revMII mode,
-> the TX_CLK and RX_CLK are inputs to the PHY.
-> Previously the "nxp,rmii-refclk-in" was added to indicate that in
-> RMII mode, if this property present, REF_CLK is input to the PHY,
-> otherwise it is output. This seems inappropriate now. Firstly, for
-> the standard RMII mode, REF_CLK is originally input, and there is
-> no need to add the "nxp,rmii-refclk-in" property to indicate that
-> REF_CLK is input. Secondly, this property is not generic for TJA
-> PHYs, because it cannot cover the settings of TX_CLK and RX_CLK in
-> MII mode. Therefore, add new property "nxp,reverse-mode" to instead
-> of the "nxp,rmii-refclk-in" property.
+On Thu, Aug 15, 2024 at 12:11:55PM +0000, Guillaume Stols wrote:
+> The SPI conditions are not always required, because there is also a
+> parallel interface. The way used to detect that the SPI interface is
+> used is to check if the reg value is between 0 and 256.
+> There is also a correction on the spi-cpha that is not required when SPI
+> interface is selected, while spi-cpol is.
 
-Please could you add some justification why using
-PHY_INTERFACE_MODE_REVRMII is not possible.
+This feels like it should be two patches, with the first having a Fixes:
+tag etc, if the original binding was incorrect.
 
-	Andrew
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7606.yaml         | 17 +++++++++++=
++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> index 69408cae3db9..c0008d36320f 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> @@ -117,15 +117,26 @@ properties:
+>  required:
+>    - compatible
+>    - reg
+> -  - spi-cpha
+>    - avcc-supply
+>    - vdrive-supply
+>    - interrupts
+>    - adi,conversion-start-gpios
+> =20
+> -allOf:
+> -  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +# This checks if reg is a chipselect so the device is on an SPI
+> +# bus, the if-clause will fail if reg is a tuple such as for a
+> +# platform device.
+> +if:
+> +  properties:
+> +    reg:
+> +      minimum: 0
+> +      maximum: 256
+> +then:
+> +  allOf:
+> +    - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +    - required:
+> +        - spi-cpol
+> =20
+> +allOf:
+>    - if:
+>        properties:
+>          compatible:
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--UJJuTW6LWkpDszvK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4SNgAKCRB4tDGHoIJi
+0la6AP0Uurd8ttJzgexIAZHCyhGt1quMRRW5eMQXppSCsohCvwEA78I0P+LSV13j
+8gxpIkzC5+6L9sEJ0/3AqkQ1PtInWAc=
+=xjNl
+-----END PGP SIGNATURE-----
+
+--UJJuTW6LWkpDszvK--
 
