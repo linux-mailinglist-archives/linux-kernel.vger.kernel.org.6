@@ -1,91 +1,96 @@
-Return-Path: <linux-kernel+bounces-288032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3D9953151
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C211195314F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1736FB216AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:53:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3187CB22EA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3141A4F1C;
-	Thu, 15 Aug 2024 13:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820CF1A0733;
+	Thu, 15 Aug 2024 13:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="PiGrnevy"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbyaF5U9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A25B17BEA5;
-	Thu, 15 Aug 2024 13:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33FC1A01AE;
+	Thu, 15 Aug 2024 13:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729950; cv=none; b=FTRe7fxLtKJlUS3yV0mTb3rjEkCGFVOJK/9gCmJEB3KY6A8LomD30/qrszWLh8y4UUzKgXzf5DuT+OgsWqk2J5DrgaqkVvIdePA1+KrMTGqj7IaAwSNQ+8gkqAfZbL+w9Irv9ggJR0nCQW8cHekDoMHaJGJlzopX4+TridqqIQk=
+	t=1723729949; cv=none; b=lepQTj654cvJ9Bojey6OqZ9ONl5xXgbVWDhurDYD6lo9rYNPDcDkeBvqVaSGw1g7vNVEvWTISpVYxlly40wc4o2GarCtQ/c/1nUSPoXHu7ilRJSMvqxKgVPPkcEzL7efhqs8uTuT751rynpJRlxiwpTk//KxUyaSF3H2NdODor8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729950; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=LnhWqaEFdKjFyXU/tM9UHu8S1GLGkhkMNRRQwC+dNeNxyZcU3Aq/7wUmbsMdacKpz6POn8rWWv2vjCbY6Iy6qtORcrF41QLYFSsR7seAIDu0va+coWH6jdaWkkelRTPuS9TmZdntDi3/y4gg7sWIJ1V4jMx2pXqKz2ZDhZvRW4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=PiGrnevy; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1723729945; x=1724334745; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=PiGrnevyM/LiWyaPY79YSXP/wpQlJreYf0LwyvB4xMBZtcj9Vtzv615gdqcxNcGY
-	 iLVjqzZiHVzI8p5Bwfr0Spsmk08MvrS3eTJYA3wCtumJ+bL2T0Q/gc63zvlQ/29rZ
-	 FB2ISumaKaQ2ViHbOI3WxTgWYxXV8JOJF51+5CLrI6uDs0QXFbTRxGeOFmyXE/9i5
-	 abzaerc6OaVGPL50xEXtm6ei0RbEaa5ryPhjmZdbGaSaYe11e0M3WI2ApQpucKOwb
-	 ziqQTKOYdxgMtfTTGN5Ug+00SaPpnmyvWuUCaLYQaRwKmQTiU1iSvp3Rf6CJZWpbI
-	 B2GC0xHX5zAOteJXXA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.35.162]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MCbEp-1sVYcs29nn-00H624; Thu, 15
- Aug 2024 15:52:25 +0200
-Message-ID: <67325f54-7807-4a78-819e-c968c17e7209@gmx.de>
-Date: Thu, 15 Aug 2024 15:52:25 +0200
+	s=arc-20240116; t=1723729949; c=relaxed/simple;
+	bh=ibNntRJVFxbQ+yZWo122ZBUpmjx3d0ByVkW6+HNnPw4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LjLfFRkJrTX3qcF+FObfhsj+W+KlqYxahBgPUnhbMj8XsioFi93gJ7YeDKSai0vFeJSflQgy316skKQIstbeVreKDw4MsC7/qYWCFHgTSsUZPmR9IemnSUCfZYTImMwehTsR33jLZKdsAEny3ol1AvZFJh6DLO+V6OeciMOKmgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbyaF5U9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5978DC4AF0A;
+	Thu, 15 Aug 2024 13:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723729949;
+	bh=ibNntRJVFxbQ+yZWo122ZBUpmjx3d0ByVkW6+HNnPw4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hbyaF5U9yA1cgUxB2kgD+hCbKRRJsKglBhVOCbyBeZ/d5BoG2yE+rSRVkOlwYZ4rU
+	 /mmXMHH2Tcf5ZjvU1YSADTj2ByH4/FSd+RqWnEU6p2h+SOwAlg3TbUXXWek7MWXxKb
+	 j5mv3dKCy2QYad40K2Be9qrY9CQDHBada9i2VcjXe7yxv5eNGuNBHLLVmEvsuP3HTV
+	 8XkauGmmbhj4XMISI68+RiK0BoVC7ZxhyeSYwfor/Of7ym819IRwy+IxKBf/PkoQEB
+	 n8l6c3xA4mfVmj5pXZ7dDNdKNtuAUU57TRrNqKuYxiYocCXcD6L/SNn0iRp5k98KTn
+	 CUwkkZ7GTKznw==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ tangbin <tangbin@cmss.chinamobile.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240713153428.44858-1-tangbin@cmss.chinamobile.com>
+References: <20240713153428.44858-1-tangbin@cmss.chinamobile.com>
+Subject: Re: [PATCH] ASoC: loongson: Remove useless variable definitions
+Message-Id: <172372994809.42484.2642656660990650698.b4-ty@kernel.org>
+Date: Thu, 15 Aug 2024 14:52:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.10 00/22] 6.10.6-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:PYt1DwTIr0uJxeEE4KR1CVS/SuXpE8kQwqAz2U0W0Eg9MsRzuKX
- oa4QOx7WX2KjHx8nUJGTuxNHNBmqvGFJXYYVMJvba1ZdqG5bvn3HnYZarXE9pdbznGzAlEy
- WCfrfSqZ3mH0ctQ/s74ifXuKD8fnTLD1Xq/XpRakdwjV7bU0M2bX9dBG/yPJp7iqo6W/3vc
- pWxtmalsFzXLAdb/uSX7Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lsjbrFqKIUM=;ev9YJCG3KyAiA/FVkEgLiYr7EnZ
- /ZNgFqB8EliGuJIqIh3pcszGAURlVyfeDJIc5QC8GmuTcuEA3FWWs/Qsk77TzZ1wJI8EdtFzR
- rXeYvCefg7XFY7EWN2aex2xdAudZDgkRVIJFSY+JqVOVxM5G0T8o9p+o8Tl+x16Jh+j3djkzu
- r+yeSv76XcexUF+vgEoHS0Gnt4pKgZl+8UxmcyFRdj9OnStKIJMjXeLx/AG04NvCjIr5IsBL7
- DHDN87nYfUGk0f3ow18KZIYf7Vt2ipVGCla1J1AmyMsYIpbsOGg/FXmfQcWBFGKc2EqR7zQK9
- yv3gWwBErt9ojF48VLzRx0Rr56pBaUt7teeARIT0wLmLGjS5SEt7O6n2UjhE/VXNNZKxx7fe0
- zYtBixnF4QhOtGwQkqnkverreFC5NwgSq2htrZ5m4dTGOdouHDQrAnZHulwOlwBf/N31mogG3
- yUd23KbypxWl9CYgZ4/oEwqgxcnC8Vov8vpQilvcQZzZpXnDLCYAmM2iCYW2m879/Tbk4z3wR
- Xt+2eBbYr7mRrTA1v+DNp8EwRP1Zpyx6E330oGh7uC1+zkSZbwJmEKaodyF61XWc4DT/S7TQL
- H/Lwfwr10HGJwa9UFb5YfJzNoJvormWw7lytkIGWrx9Z22t3ocpZqa4HZF7C8grHHy+wpMVyc
- mNnnZ+rhh9truKdLdBwKocLnGojXs1aKOEIZG97Y+ZGvTO9PLWWX5nZsUvxbnxmpZO4HaR30B
- vkJA08FcKwFkp8/zbvzRAbBM6KPsAkUyo8TDHnq/iHQjf/1rr13JfSAc05nf8unwWlUoPNtwf
- 7Se5lgoGMu9qGbwHfVyrjRGQ==
+X-Mailer: b4 0.15-dev-37811
 
-Hi Greg
+On Sat, 13 Jul 2024 11:34:28 -0400, tangbin wrote:
+> In the function loongson_pcm_trigger and loongson_pcm_open,
+> the 'ret' is useless, so remove it to simplify code.
+> 
+> 
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+Applied to
 
-Thanks
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Thanks!
+
+[1/1] ASoC: loongson: Remove useless variable definitions
+      commit: 60b5c173f5542adf020f5235db7fe5e5fa4ae0d8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
