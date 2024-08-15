@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-288394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919509539A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:09:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A4A9539AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B422F1C224EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:09:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E44C11F24429
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF292558BC;
-	Thu, 15 Aug 2024 18:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F060358ABC;
+	Thu, 15 Aug 2024 18:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Kb+NEWRb"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVPbWpD+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3428F15CB;
-	Thu, 15 Aug 2024 18:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301DA4F883;
+	Thu, 15 Aug 2024 18:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723745356; cv=none; b=huYqUMOhRI5yCCAYO4ou20UN3OKcyfv2xdce489eoHxScBqvzaAdLWjioWJ/PreDe5rfn6fA4X8kBklhEvywi6En4cioa3UeAW/5ZbhCHkLVezqt5F56Tf9ONhODy7Eh+KRurtOLU4lGMCoHTk510c2Fn8nCZDQ6oATiGO5vW90=
+	t=1723745430; cv=none; b=phOvINeVT9VVpCZvRpIFrneJCQzT8ycUMqJSiPtW7rm8lB+ITmZh+Ka3xruEk7b0xowAYUNmE8ktZEt9mTgx5yr1FnKCgotwqwptt8pbgSvTj1aYtHJVskhSUidqjql8yBP3QuQ6YNEkeX8FnFcCkNBYQAmXn5qTe7kTOVmIO4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723745356; c=relaxed/simple;
-	bh=frZUOPDI6r4oXtUSJp5jdlWJJUCeFssa+4qiDa7wp8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZL1tRmQXoE/PmK0oTSNd81SuhKPwT7GOjY+Z0u1TKI1X+kmAxApDwi7AQKSBjoM+fz2DttM7mNp6xzWP0K2vvR9HIzCmQhrrretiYRP2zbn3nsMAiKIjD+rtPsnBPMftd/PmocCgBvj6rpxgkTigBupBjbQwhIEsiEhYtc+yzOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Kb+NEWRb; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WlCn53pmTz6CmLxd;
-	Thu, 15 Aug 2024 18:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723745348; x=1726337349; bh=PFU6SLEQUuiaU+C9emyBOMa8
-	6sRtrTtG40d9yWkPg68=; b=Kb+NEWRb96ItME8hVUcVyvxWbLDhdNSROcqVbF/1
-	LV/6kTlJpYcSPJ07c5j8Ox/sXiVV0rfkgWhBlGakmJIGnvJAjBDXTXSXHY003akr
-	Y8CDC/IHARTmDHI0jxHauydIrzhsyFcuzoBGJSaTGqaR3mInqW1KsS8MWgNJius5
-	ed43//PmsvPb9XXIrnt12epQ2cmzELcvYiDhFcu4ikDcNUn/cjSLxNtjDtfqEiKq
-	nQX2dYJpOh2JMgc3hfR3oUoZ3kZ/IKPNqgnFfj9VgbdJAqgeh5TdtW0RpM0HKDDg
-	GNhRtipO4pblys88SfUHo1uwdLDG4vMzpyY4K4ggh+qrNA==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 7hXUfC8uDqmY; Thu, 15 Aug 2024 18:09:08 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WlCmz4fH2z6CmM6d;
-	Thu, 15 Aug 2024 18:09:07 +0000 (UTC)
-Message-ID: <f339f1be-4d5f-46f4-8d57-473f38901bd8@acm.org>
-Date: Thu, 15 Aug 2024 11:09:06 -0700
+	s=arc-20240116; t=1723745430; c=relaxed/simple;
+	bh=om7OX684G/oesIBJayt5HCmIUPcMZl/LAozCLWQuAug=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=LhspfVF9GRU5NkpX8E/2NfHQFYSaTMe9/1AGkeI99rKmxgtsEK5mbXlcU2UqlWwXsd1pQtB1YEa22fuir+2DEjwka0ZQIaw+rJw5sAiS/+p+A8EeyJVWl4WJ4wwco1j9HQCyQH3VZe6614kgS1+VWOabjyTLSoZh+kGfrsEq0Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rVPbWpD+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47DB3C32786;
+	Thu, 15 Aug 2024 18:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723745429;
+	bh=om7OX684G/oesIBJayt5HCmIUPcMZl/LAozCLWQuAug=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=rVPbWpD+Ob0Tpbr7e8WlBrlZHXQaj3yLTXKOUGzMVRG7TneUOx8/eWzbbKY4Qq4cV
+	 K/492YyJpPyqYEGSodtimD1wyddKVuqNxA6DUHUT15kgYqwSKHEMp1Ifbuo571UCjw
+	 Xk0R0reJYTZhSpnJLJ8Ne+Qgb1cri2Zd+bHEr2EpKraIF/kFNkiZWgNMTKvN7N3FXv
+	 JydU8pj41keiWNtHhNfFk+K1fNJeB4iILEwp6tGvFfxDeqxC2KzTVj/MVbk8Fpw7Hm
+	 TjYALAU+mvptY+S6h/HIuizujQTKsONWe9IlpdrQjdDGcKNGbB1yMpcODReYvGnjIH
+	 0XIqkcfSzxqPQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] ufs: core: Rename LSDB to LSDBS to reflect the
- UFSHCI 4.0 spec
-To: manivannan.sadhasivam@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>,
- Amit Pundir <amit.pundir@linaro.org>
-References: <20240815-ufs-bug-fix-v2-0-b373afae888f@linaro.org>
- <20240815-ufs-bug-fix-v2-1-b373afae888f@linaro.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240815-ufs-bug-fix-v2-1-b373afae888f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 15 Aug 2024 21:10:22 +0300
+Message-Id: <D3GOR6ZR0MPL.2O29DCFWQ77RA@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <apparmor@lists.ubuntu.com>, <keyrings@vger.kernel.org>,
+ <selinux@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] KEYS: use synchronous task work for changing
+ parent credentials
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jann Horn" <jannh@google.com>, "Paul Moore" <paul@paul-moore.com>,
+ "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ "John Johansen" <john.johansen@canonical.com>, "David Howells"
+ <dhowells@redhat.com>, =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ "Stephen Smalley" <stephen.smalley.work@gmail.com>, "Ondrej Mosnacek"
+ <omosnace@redhat.com>, "Casey Schaufler" <casey@schaufler-ca.com>
+X-Mailer: aerc 0.17.0
+References: <20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com>
+ <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
+In-Reply-To: <20240805-remove-cred-transfer-v2-1-a2aa1d45e6b8@google.com>
 
-On 8/14/24 10:16 PM, Manivannan Sadhasivam via B4 Relay wrote:
->   	/*
->   	 * The UFSHCI 3.0 specification does not define MCQ_SUPPORT and
-> -	 * LSDB_SUPPORT, but [31:29] as reserved bits with reset value 0s, which
-> +	 * LSDBS_SUPPORT, but [31:29] as reserved bits with reset value 0s, which
->   	 * means we can simply read values regardless of version.
->   	 */
+On Mon Aug 5, 2024 at 2:54 PM EEST, Jann Horn wrote:
+> keyctl_session_to_parent() involves posting task work to the parent task,
+> with work function key_change_session_keyring.
+> Because the task work in the parent runs asynchronously, no errors can be
+> returned back to the caller of keyctl_session_to_parent(), and therefore
+> the work function key_change_session_keyring() can't be allowed to fail d=
+ue
+> to things like memory allocation failure or permission checks - all
+> allocations and checks have to happen in the child.
+>
+> This is annoying for two reasons:
+>
+>  - It is the only reason why cred_alloc_blank() and
+>    security_transfer_creds() are necessary.
+>  - It means we can't do synchronous permission checks.
 
-Hmm ... neither MCQ_SUPPORT nor LSDBS_SUPPORT occurs in the UFSHCI 4.0 
-specification. I found the acronyms "MCQS" and "LSDBS" in that
-specification. I propose either not to modify the above comment or to 
-use the acronyms used in the UFSHCI 4.0 standard.
+I agree with this premise. Also I think the code change is reasonable.
 
->   	hba->mcq_sup = FIELD_GET(MASK_MCQ_SUPPORT, hba->capabilities);
-> @@ -2426,7 +2426,7 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
->   	 * 0h: legacy single doorbell support is available
->   	 * 1h: indicate that legacy single doorbell support has been removed
->   	 */
-> -	hba->lsdb_sup = !FIELD_GET(MASK_LSDB_SUPPORT, hba->capabilities);
-> +	hba->lsdbs_sup = !FIELD_GET(MASK_LSDBS_SUPPORT, hba->capabilities);
->   	if (!hba->mcq_sup)
->   		return 0;
+I'd like to see a comment from David tho.
 
-The final "s" in "lsdbs" stands for "support" so there are now two
-references to the word "support" in the "lsdbs_sup" member name. Isn't
-the original structure member name ("lsdb_sup") better because it 
-doesn't have that redundancy?
-
->   	MASK_CRYPTO_SUPPORT			= 0x10000000,
-> -	MASK_LSDB_SUPPORT			= 0x20000000,
-> +	MASK_LSDBS_SUPPORT			= 0x20000000,
->   	MASK_MCQ_SUPPORT			= 0x40000000,
-
-Same comment here: in the constant name "MASK_LSDBS_SUPPORT" there are
-two references to the word "support". Isn't the original name better?
-Additionally, this change introduces an inconsistency between the
-constant names "MASK_LSDBS_SUPPORT" and "MASK_MCQ_SUPPORT". The former
-name includes the acronym from the spec (LSDBS) but the latter name not
-(MCQS). Wouldn't it be better to leave this change out?
-
-Thanks,
-
-Bart.
+BR, Jarkko
 
