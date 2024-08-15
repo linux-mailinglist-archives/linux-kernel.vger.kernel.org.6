@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-288472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03540953A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A978B953A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82BA286038
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:03:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FBD9286B8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E579A64A8F;
-	Thu, 15 Aug 2024 19:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070FF770FB;
+	Thu, 15 Aug 2024 19:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OB/seB3y"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nOw5w8Z6"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23B84205D;
-	Thu, 15 Aug 2024 19:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820D747F4A;
+	Thu, 15 Aug 2024 19:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723748582; cv=none; b=Nk2wl4eWPgHAHS5A9x8sPNF8BUeI8ktFHyFsuc4uo4vriF3ZdTHTPQtOINtLR9XGfyQxsbh2rDsz8/LB8BvX919DXjQyfrOGaJ84hbkjgi1UPbuAfEaRyWlZppixRQT5K8QGh6hsjaReNoyz4Zli8TYTgLXAdlVbwFpvqcqYroM=
+	t=1723748727; cv=none; b=f4OzOKycKHHxfSs0SENjBTVhkbdAbM6kXVZaOc1mK0mRDbh7wOmqAcZ2avQE/phc1vd0psDUFbEfO81WG2h+SlJp3sR5xEnPf0JT2syarYOEOiJuzwZ2la0ITZw4qZAxsNeIThuuDKfRBTzD+cNG6Y+IvOrywTQ5qoOljzjlNlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723748582; c=relaxed/simple;
-	bh=rPYXwEdoUC7hHymrv0U4v7KOoFbGQh+1iMoGKOLlhPU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GrKAxRA6lvzXssFycjk+94Qs7GWbLDjHScpjAqNkjIDZ44i+BeYcnY9ex/4YEjS1kU3BCelW9WXD523r7+YwBBNYS5fOL0jU3p1PdKEKdx3/4F96OlgHyldYgyJKpaxjiQ/G4HXySOhqJbHZTlwxZ4LZroLZu+wPWS5+buUeSrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OB/seB3y; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3db16129143so675486b6e.0;
-        Thu, 15 Aug 2024 12:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723748580; x=1724353380; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AZOIvKpRMlh8zdrdHV2sndOfzYWoOVHWs7qeV4QPz4A=;
-        b=OB/seB3yv4nsNSsZJIPbmAhkGVci8BGXgSNfIaLEE3qzHiJDL0tLIg1V/y+DuK0xSK
-         XgyqYnT+QHCF+uClLC7fjV+XRhPGlCSTmkvIVgr+25xK4DcLJkZ+n/IC6w7GOdbANek6
-         gnkvtNTyCJFClDcVrPaQYiPabX0CE70MpkOuDwpvIZaVywbytfTI2cq9RJ5O2I53eVob
-         Xfi64j/DeIZon6oCfr60rprrNRnNeh9r++KodyHLMbQSzaqKl6TdY7K/EgalvwQutYhD
-         3mppAItym5fGNiUpWyv2MinRMOUaqw5btnde4NbdXzSzfMkSYBAm9KZ65cYbevu5OBOc
-         wKRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723748580; x=1724353380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AZOIvKpRMlh8zdrdHV2sndOfzYWoOVHWs7qeV4QPz4A=;
-        b=sQTYSCrsZ71Tke3HzHctg6qX9xIPNQ7G7w5JX+8kPJbIV7Z3ajRq6JaFt6d3Or3T6V
-         FDooyPldZaXu+Zbv8/XSjgXqReCKXLWJtsNnq/diU9b3GRaj1Zbh6jRSr19WHA+6tHJz
-         ULnVlUqxuQWRNVAOcx3a3xPz6HYvB2DaaZNfbxDgzpIfwA5m2m9n6KbwJLzj7PwyN56W
-         GNI9Y72EyceKuPmc/3hTp33t9INtVcJBAw+jtc/7SmfeU4n90n1VhbugHGU+6JBY5TLY
-         nScN6ygx276XAGdzmaC9PHBaPCM25moOZdiD3bIURHBfORBVyI65zOzMKwaZMr1rw5+M
-         dc2A==
-X-Forwarded-Encrypted: i=1; AJvYcCX4X9eIyDy7ZJnC3hyWDt6cccn8osxCAIxCT2eZWXgkp2MCRFOJxvss5Wokh8duXBLk+4tigdg0BNYU9A==@vger.kernel.org, AJvYcCXoXctetSOkJyngwH9REyY6QUhHrqa5l0H8EIon72UStwlhv+RqMkQ/Yl58xv/BcLOFPUw5W6DwtQEw9Ew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz7MtUn9CowIR/KlFx4gaQDCBdneqXA0gX6BPlpHFj6KTgfGVD
-	nt3jbAlfyYE8/kJMUpFwsTJeRe96zDKcxpkBG5YM4Aefb74tRJDPCG3MNTH9Vd7oZi9PkMd7zMf
-	OAZxXVlrJbHMh0ZQ0JdJ/jAeQiu4=
-X-Google-Smtp-Source: AGHT+IEJsvkpN7Xv7Mb9X2uLdMoNEq5kn8t+hhx5IOPV2ybS88r6JfHaHOPHc6sZ2OTa7yza0nhNVOtIQO75ENxcLqA=
-X-Received: by 2002:a05:6358:740d:b0:1af:7f7a:e6e5 with SMTP id
- e5c5f4694b2df-1b39331111bmr84983655d.26.1723748579844; Thu, 15 Aug 2024
- 12:02:59 -0700 (PDT)
+	s=arc-20240116; t=1723748727; c=relaxed/simple;
+	bh=1DV64RzpVMCAX55Iauonqozdn6VLZrNKEpB/bDsTJ/k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GBwwDYXNxQd10uv9RxxfkN9ugx4F5pyzOzLRtrUt2er4qrLa7nk+XFPfwcjbKWHEWqtRfci7O3B6RI2Wch7FYqjK+TvWIMQTYr9jIkdIV1yawwrQZLZ02LcI3mLl1eK9jUafsYG9yUMTPnaJUyrXwWYblaZuOseU0IgjyCu0yh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nOw5w8Z6; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=eybudsxja5hwfk6bdmj344og6i.protonmail; t=1723748716; x=1724007916;
+	bh=1DV64RzpVMCAX55Iauonqozdn6VLZrNKEpB/bDsTJ/k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=nOw5w8Z6boJ9LfhZXXmr/kh0bam8ZVCAkMt4H669lq0cgjMWERD29gQFhQAhCYV5u
+	 ePXLouJ+zmfB70A44QDNrr8sSf3FmMBwtiGaUGb+LYXUrdqQHyxbUYSrfE6bHVq1Et
+	 IezjH8YnKD3KEOq328T/Bx0wcYryszKdzksWR8FGycJ7G9UVtK1GB9elXFFDuZKJmf
+	 OMsBi1gpz3ndAbamSzEYr79WoK3B463KU8UMCFC86CJ41pCsW16wLDGRY9Mth8BCWl
+	 ws95SeyVUD0hYYnoGYiywaQmkItsbdkJ0QTg3SaH6iVxRoB/l4YQz0bpTsF5f0RAMY
+	 /Ciaa2rB03N1A==
+Date: Thu, 15 Aug 2024 19:05:09 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg <nmi@metaspace.dk>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: block: fix wrong usage of lockdep API
+Message-ID: <10ae8a5a-5dbc-4d6a-8f86-30236dacc5b3@proton.me>
+In-Reply-To: <CAH5fLgih1QtO-ACyoifNsgqd=VtJimoGV+aD=3iHG0wb+iDGyw@mail.gmail.com>
+References: <20240815074519.2684107-1-nmi@metaspace.dk> <20240815074519.2684107-3-nmi@metaspace.dk> <CAH5fLgih1QtO-ACyoifNsgqd=VtJimoGV+aD=3iHG0wb+iDGyw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: d6c547810c6ff8f844f72e469f2489227a3f6a48
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240810112307.175333-1-kdipendra88@gmail.com> <CABPRKS9qUmWgTcg3vXEb7JxFCx1n5O7MeeU73LJZAZ0DhGRTaw@mail.gmail.com>
-In-Reply-To: <CABPRKS9qUmWgTcg3vXEb7JxFCx1n5O7MeeU73LJZAZ0DhGRTaw@mail.gmail.com>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Fri, 16 Aug 2024 00:47:48 +0545
-Message-ID: <CAEKBCKNqGpC0hfEa4bzbEau4Mnwvasi6nqwa2HB+hMS2T2EtqA@mail.gmail.com>
-Subject: Re: [PATCH] staging: drivers: scsi: lpfc: Fix warning: Using plain
- integer as NULL pointer in lpfc_init.c
-To: Justin Tee <justintee8345@gmail.com>
-Cc: Justin Tee <justin.tee@broadcom.com>, james.smart@broadcom.com, 
-	dick.kennedy@broadcom.com, martin.petersen@oracle.com, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Justin,
+On 15.08.24 10:04, Alice Ryhl wrote:
+> On Thu, Aug 15, 2024 at 9:49=E2=80=AFAM Andreas Hindborg <nmi@metaspace.d=
+k> wrote:
+>>
+>> From: Andreas Hindborg <a.hindborg@samsung.com>
+>>
+>> When allocating `struct gendisk`, `GenDiskBuilder` is using a dynamic lo=
+ck
+>> class key without registering the key. This is incorrect use of the API,
+>> which causes a `WARN` trace. This patch fixes the issue by using a stati=
+c
+>> lock class key, which is more appropriate for the situation anyway.
+>>
+>> Fixes: 3253aba3408a ("rust: block: introduce `kernel::block::mq` module"=
+)
+>> Reported-by: "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>
+>> Closes: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-Gener=
+al/topic/6.2E11.2E0-rc1.3A.20rust.2Fkernel.2Fblock.2Fmq.2Ers.3A.20doctest.2=
+0lock.20warning
+>> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+>=20
+> LGTM. This makes me wonder if there's some design mistake in how we
+> handle lock classes in Rust.
 
-On Mon, 12 Aug 2024 at 22:09, Justin Tee <justintee8345@gmail.com> wrote:
->
-> Hi Dipendra,
->
-> Perhaps the branch being referred to is out of date?
->
+So `LockClassKey::new` doesn't initialize the `lock_class_key` and is
+also movable. I think in this case we either just overlooked it or
+thought that the C side would initialize it.
 
-Sorry, you are right. It is due to the branch mismatching.
+For those people that know about this, are there APIs that initialize
+`lock_class_key` themselves? (ie not a function to initialize a lock
+class key, but rather an API like `__blk_mq_alloc_disk`)
+Because if it is usually expected that the class key is already
+initialized, then I think we should change our abstraction.
 
-> This has already been addressed in the following commit.
->
-> commit 5860d9fb5622ecd79913ac981403c612f6c8a2d8
-> Author: Colin Ian King <colin.i.king@gmail.com>
-> Date:   Sat Sep 25 23:41:13 2021 +0100
->
->     scsi: lpfc: Return NULL rather than a plain 0 integer
->
->     Function lpfc_sli4_perform_vport_cvl() returns a pointer to struct
->     lpfc_nodelist so returning a plain 0 integer isn't good practice.  Fi=
-x this
->     by returning a NULL instead.
->
->     Link: https://lore.kernel.org/r/20210925224113.183040-1-colin.king@ca=
-nonical.com
->     Signed-off-by: Colin Ian King <colin.king@canonical.com>
->     Signed-off-by: Martin K. Petersen martin.petersen@oracle.com
->
->
-> And, the routine called lpfc_enable_node doesn=E2=80=99t exist anymore.
->
-> Regards,
-> Justin Tee
+Additionally, I think that it needs to be pinned, since it contains an
+`struct hlist_node` (I might be wrong on this, but that looks and sounds
+like an intrusive linked list).
 
-Best Regard,
-Dipendra Khadka
+Also the `new` function is probably prone for misuse, since it will
+create a new lock class key every time it is run. But as I learned in
+[1], the more common use-case is a single lock class key for several
+locks. Therefore it might be a good idea to at least rename it to
+`new_dynamic` or similar and add appropriate documentation pointing to
+`static_lock_class!`.
+
+[1]: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-General/top=
+ic/.E2.9C.94.206.2E11.2E0-rc1.3A.20rust.2Fkernel.2Fblock.2Fmq.2Ers.3A.20doc=
+test.20lock.20warning/near/460074755
+
+---
+Cheers,
+Benno
+
 
