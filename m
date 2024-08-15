@@ -1,263 +1,158 @@
-Return-Path: <linux-kernel+bounces-288059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D308C953292
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:07:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30189953616
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D021C25E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5811F216D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA0A1B4C26;
-	Thu, 15 Aug 2024 14:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA0E1AD3FF;
+	Thu, 15 Aug 2024 14:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bF2724Wd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q1tFS+DA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C18F1B1506;
-	Thu, 15 Aug 2024 14:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236401AC422
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723730722; cv=none; b=hwUOseY+YNF2wGY+BgwdZ3DMun56bpWrLXSy+WyALQNSmHweKpW3kBiJeUBJ+iJ1pYYXqhMJHVp0sXDxIXk9WpSMsVylw11QLsvl2T1YNRO6vE226wflvBHEfCtJPgzi3z1AABkn2D/olbglOVsnNG6oeleVAUcxe8cE9qKW1ls=
+	t=1723733073; cv=none; b=oQjX+fr9oPEJbUdVhIDbVORXf72L4z20+N2QOWqblAiJ2oIUtsWOw4TTkvxhbtJ6ss3trNq+frKmiFdFdGylEYLSTgGE8ZMBc2WP7j50tJbmWHwqgIPRFXEUtfm3JlJcmEn4ji0EmihvE7P9+iCof/JZt9XSFkKQSiiXYTdAe9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723730722; c=relaxed/simple;
-	bh=eji902DDgOk3QU750A1W35qOU7VXtqWsiXRYdbxl8aU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZYLedu9JvUHgDksrmSm0bE0DP51cxZCESUwl8BXRkVEagxgU39US3NrYiZSXgi/74vFJgdAwZ5OM3NllfAKfduFk2FAT9NXkMORJomxoinpdbbsZ25WpvVgshBdrkFy1BJhI2MRlNDlqlj/WzKQlpQaFYg8LpljAKHa2c4wTF10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bF2724Wd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED63C32786;
-	Thu, 15 Aug 2024 14:05:21 +0000 (UTC)
+	s=arc-20240116; t=1723733073; c=relaxed/simple;
+	bh=G/Amnhfl/0CV2xcYGKWy1HCd43uoH4QCoU2XD2AHW3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWusE4DkpNfNgA+fzi2BkH9aVpfzzZMdpZ796vIBT12rnDPoC7e+5nnTD1jGs5jM2WZAJevP26FtaCOJjzkZlktpAHXFG3B2zFTy2+WMrfLgk/II28yJNX80Mk3GgVwQRxbVLxSA6ioXcOD4XJylDFaIR7vJadyL/DtKLmW3cPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q1tFS+DA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94CD5C32786;
+	Thu, 15 Aug 2024 14:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723730722;
-	bh=eji902DDgOk3QU750A1W35qOU7VXtqWsiXRYdbxl8aU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bF2724WdAodA/d036kRj69DLtKG4p+u1/DJCQKd988Kr3nf2yD2PfEtjFhkgwNiuR
-	 0Cz98Z2dkIl0ffQifyKnnH4qDtyoCooHxh8b53uLWut3zlJ0aN4g1bYiZBbk+U+NrA
-	 /+Zspq98HhLnaGxrvnuEmuAkeiyubFg9so9g39Tk=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 6.1 00/38] 6.1.106-rc1 review
-Date: Thu, 15 Aug 2024 15:25:34 +0200
-Message-ID: <20240815131832.944273699@linuxfoundation.org>
-X-Mailer: git-send-email 2.46.0
+	s=korg; t=1723733073;
+	bh=G/Amnhfl/0CV2xcYGKWy1HCd43uoH4QCoU2XD2AHW3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q1tFS+DA/X4AScw/avb731JL30czObaxKBlynvMssJrrHrnXcmjLwo169vfR8hVgA
+	 zYvwkLS5V6YmkAK8qHVWzGF1NTdapcxpWNizkKp6YP9w2E41RN2saKaxS4CWpMiUnF
+	 H8Q5sOC+/NBxALv0i7aw+QVnMndu0b+jHZj0/fpQ=
+Date: Thu, 15 Aug 2024 15:43:08 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: "Selvaraj, Joel (MU-Student)" <jsbrq@missouri.edu>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Ekansh Gupta <quic_ekangupt@quicinc.com>,
+	stable <stable@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH 6/6] misc: fastrpc: Restrict untrusted app to attach to
+ privileged PD
+Message-ID: <2024081549-cardstock-oversleep-1d04@gregkh>
+References: <20240628114501.14310-1-srinivas.kandagatla@linaro.org>
+ <20240628114501.14310-7-srinivas.kandagatla@linaro.org>
+ <9a9f5646-a554-4b65-8122-d212bb665c81@umsystem.edu>
+ <fde72c34-889a-4dd7-a1cb-fec1d1b3c6a3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.106-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.1.106-rc1
-X-KernelTest-Deadline: 2024-08-17T13:18+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fde72c34-889a-4dd7-a1cb-fec1d1b3c6a3@linaro.org>
 
-This is the start of the stable review cycle for the 6.1.106 release.
-There are 38 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Thu, Aug 15, 2024 at 02:30:19PM +0100, Srinivas Kandagatla wrote:
+> 
+> 
+> On 15/08/2024 03:34, Selvaraj, Joel (MU-Student) wrote:
+> > Hi Srinivas Kandagatla and Ekansh Gupta,
+> > 
+> > On 6/28/24 06:45, srinivas.kandagatla@linaro.org wrote:
+> > > From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> > > 
+> > > Untrusted application with access to only non-secure fastrpc device
+> > > node can attach to root_pd or static PDs if it can make the respective
+> > > init request. This can cause problems as the untrusted application
+> > > can send bad requests to root_pd or static PDs. Add changes to reject
+> > > attach to privileged PDs if the request is being made using non-secure
+> > > fastrpc device node.
+> > > 
+> > > Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
+> > > Cc: stable <stable@kernel.org>
+> > > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > ---
+> > >    drivers/misc/fastrpc.c      | 22 +++++++++++++++++++---
+> > >    include/uapi/misc/fastrpc.h |  3 +++
+> > >    2 files changed, 22 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> > > index 5680856c0fb8..a7a2bcedb37e 100644
+> > > --- a/drivers/misc/fastrpc.c
+> > > +++ b/drivers/misc/fastrpc.c
+> > > @@ -2087,6 +2087,16 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
+> > >    	return err;
+> > >    }
+> > > +static int is_attach_rejected(struct fastrpc_user *fl)
+> > > +{
+> > > +	/* Check if the device node is non-secure */
+> > > +	if (!fl->is_secure_dev) {
+> > > +		dev_dbg(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
+> > > +		return -EACCES;
+> > > +	}
+> > > +	return 0;
+> > > +}
+> > 
+> > This broke userspace for us. Sensors stopped working in SDM845 and other
+> > qcom SoC devices running postmarketOS. Trying to communicate with the
+> > fastrpc device just ends up with a permission denied error. This was
+> > previously working. I am not sure if this is intended. Here are my two
+> > observations:
+> > 
+> > 1. if change the if condition to
+> > 
+> > `if (!fl->is_secure_dev && fl->cctx->secure)`
+> > 
+> > similar to how it's done in fastrpc's `is_session_rejected()` function,
+> > then it works. But I am not sure if this is an valid fix. But currently,
+> > fastrpc will simply deny access to all fastrpc device that contains the
+> > `qcom,non-secure-domain` dt property. Is that the intended change?
+> > Because I see a lot of adsp, cdsp and sdsp fastrpc nodes have that dt
+> > property.
+> > 
+> > 2. In the `fastrpc_rpmsg_probe()` function, it is commented that,
+> > 
+> > "Unsigned PD offloading is only supported on CDSP"
+> > 
+> > Does this mean adsp and sdsp shouldn't have the `qcom,non-secure-domain`
+> > dt property? In fact, it was reported that removing this dt property and
+> > using the `/dev/fastrpc-sdsp-secure` node instead works fine too. Is
+> > this the correct way to fix it?
+> 
+> Yes, this is the ideal way to fix this, Audio DSP and Sensor DSPs are by
+> default secure DSP's.
+> 
+> usage of "qcom,non-secure-domain" has been abused on all the platforms as
+> the device tree bindings are not enforcing this checks to any new device
+> tree entries. This needs fixing properly.
+> 
+> Ideally this patch has to fix the existing dts and update bindings to
+> reflect that.
+> 
+> Sorry this has been over looked!
+> 
+> On the library side that you are using consider non-secure node as fallback
+> only when secure node is missing.
+> 
+> given the mess with the current state of patch, reverting sounds good for me
+> to start with.
 
-Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.106-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-and the diffstat can be found below.
+Great, can you ack the revert then and I'll queue it up to get to Linus
+this week?
 
 thanks,
 
 greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.1.106-rc1
-
-Will Deacon <will@kernel.org>
-    KVM: arm64: Don't pass a TLBI level hint when zapping table entries
-
-Eric Dumazet <edumazet@google.com>
-    wifi: cfg80211: restrict NL80211_ATTR_TXQ_QUANTUM values
-
-Waiman Long <longman@redhat.com>
-    cgroup: Move rcu_head up near the top of cgroup_root
-
-Kees Cook <kees@kernel.org>
-    binfmt_flat: Fix corruption when not offsetting data start
-
-Andi Shyti <andi.shyti@linux.intel.com>
-    drm/i915/gem: Adjust vma offset for framebuffer mmap offset
-
-Dan Carpenter <dan.carpenter@linaro.org>
-    drm/i915: Fix a NULL vs IS_ERR() bug
-
-Nirmoy Das <nirmoy.das@intel.com>
-    drm/i915: Add a function to mmap framebuffer obj
-
-Yafang Shao <laoar.shao@gmail.com>
-    cgroup: Make operations on the cgroup root_list RCU safe
-
-Andi Shyti <andi.shyti@linux.intel.com>
-    drm/i915/gem: Fix Virtual Memory mapping boundaries calculation
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: fully established after ADD_ADDR echo on MPJ
-
-WangYuli <wangyuli@uniontech.com>
-    nvme/pci: Add APST quirk for Lenovo N60z laptop
-
-Josef Bacik <josef@toxicpanda.com>
-    nfsd: make svc_stat per-network namespace instead of global
-
-Josef Bacik <josef@toxicpanda.com>
-    nfsd: remove nfsd_stats, make th_cnt a global counter
-
-Josef Bacik <josef@toxicpanda.com>
-    nfsd: make all of the nfsd stats per-network namespace
-
-Josef Bacik <josef@toxicpanda.com>
-    nfsd: expose /proc/net/sunrpc/nfsd in net namespaces
-
-Josef Bacik <josef@toxicpanda.com>
-    nfsd: rename NFSD_NET_* to NFSD_STATS_*
-
-Josef Bacik <josef@toxicpanda.com>
-    sunrpc: use the struct net as the svc proc private
-
-Josef Bacik <josef@toxicpanda.com>
-    sunrpc: remove ->pg_stats from svc_program
-
-Josef Bacik <josef@toxicpanda.com>
-    sunrpc: pass in the sv_stats struct through svc_create_pooled
-
-Josef Bacik <josef@toxicpanda.com>
-    nfsd: stop setting ->pg_stats for unused stats
-
-Josef Bacik <josef@toxicpanda.com>
-    sunrpc: don't change ->sv_stats if it doesn't exist
-
-Chuck Lever <chuck.lever@oracle.com>
-    NFSD: Fix frame size warning in svc_export_parse()
-
-Chuck Lever <chuck.lever@oracle.com>
-    NFSD: Rewrite synopsis of nfsd_percpu_counters_init()
-
-Chuck Lever <chuck.lever@oracle.com>
-    NFSD: Refactor the duplicate reply cache shrinker
-
-Chuck Lever <chuck.lever@oracle.com>
-    NFSD: Replace nfsd_prune_bucket()
-
-Chuck Lever <chuck.lever@oracle.com>
-    NFSD: Rename nfsd_reply_cache_alloc()
-
-Chuck Lever <chuck.lever@oracle.com>
-    NFSD: Refactor nfsd_reply_cache_free_locked()
-
-Jeff Layton <jlayton@kernel.org>
-    nfsd: move init of percpu reply_cache_stats counters back to nfsd_init_net
-
-Jeff Layton <jlayton@kernel.org>
-    nfsd: move reply cache initialization into nfsd startup
-
-Huacai Chen <chenhuacai@kernel.org>
-    LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-
-Kees Cook <kees@kernel.org>
-    exec: Fix ToCToU between perm check and set-uid/gid usage
-
-Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
-    ASoC: topology: Fix route memory corruption
-
-Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
-    ASoC: topology: Clean up route loading
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    selftests: mptcp: join: test both signal & subflow
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: pm: do not ignore 'subflow' if 'signal' flag is also set
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: pm: don't try to create sf if alloc failed
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    mptcp: pm: reduce indentation blocks
-
-Geliang Tang <geliang.tang@suse.com>
-    mptcp: pass addr to mptcp_pm_alloc_anno_list
-
-
--------------
-
-Diffstat:
-
- Makefile                                        |   4 +-
- arch/arm64/kvm/hyp/pgtable.c                    |  10 +-
- arch/loongarch/include/uapi/asm/unistd.h        |   1 +
- drivers/gpu/drm/i915/gem/i915_gem_mman.c        | 192 ++++++++++++++++------
- drivers/gpu/drm/i915/gem/i915_gem_mman.h        |   2 +-
- drivers/nvme/host/pci.c                         |   7 +
- fs/binfmt_flat.c                                |   4 +-
- fs/exec.c                                       |   8 +-
- fs/lockd/svc.c                                  |   3 -
- fs/nfs/callback.c                               |   3 -
- fs/nfsd/export.c                                |  32 ++--
- fs/nfsd/export.h                                |   4 +-
- fs/nfsd/netns.h                                 |  25 ++-
- fs/nfsd/nfs4proc.c                              |   6 +-
- fs/nfsd/nfscache.c                              | 201 ++++++++++++++----------
- fs/nfsd/nfsctl.c                                |  24 ++-
- fs/nfsd/nfsd.h                                  |   1 +
- fs/nfsd/nfsfh.c                                 |   3 +-
- fs/nfsd/nfssvc.c                                |  24 +--
- fs/nfsd/stats.c                                 |  52 +++---
- fs/nfsd/stats.h                                 |  83 ++++------
- fs/nfsd/trace.h                                 |  22 +++
- fs/nfsd/vfs.c                                   |   6 +-
- include/linux/cgroup-defs.h                     |   7 +-
- include/linux/sunrpc/svc.h                      |   5 +-
- kernel/cgroup/cgroup-internal.h                 |   3 +-
- kernel/cgroup/cgroup.c                          |  23 ++-
- net/mptcp/options.c                             |   3 +-
- net/mptcp/pm_netlink.c                          |  49 +++---
- net/mptcp/pm_userspace.c                        |   2 +-
- net/mptcp/protocol.h                            |   2 +-
- net/sunrpc/stats.c                              |   2 +-
- net/sunrpc/svc.c                                |  36 +++--
- net/wireless/nl80211.c                          |   6 +-
- sound/soc/soc-topology.c                        |  32 +---
- tools/testing/selftests/net/mptcp/mptcp_join.sh |  14 ++
- 36 files changed, 555 insertions(+), 346 deletions(-)
-
-
 
