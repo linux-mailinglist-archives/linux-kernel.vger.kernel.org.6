@@ -1,532 +1,282 @@
-Return-Path: <linux-kernel+bounces-288517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E22B953B23
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:53:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B21953B26
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EF71B24882
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94F5C1F2624F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E21513D531;
-	Thu, 15 Aug 2024 19:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3691448F6;
+	Thu, 15 Aug 2024 19:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQJE1z4v"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G91gk2aX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4E07E107;
-	Thu, 15 Aug 2024 19:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104DD7E107;
+	Thu, 15 Aug 2024 19:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723751626; cv=none; b=Y0Y1bCXWOCle/z+pOt8KuIZoCcpnM7L/MGcBTbtpJfbzLiETZV08H+ukreBnjc3E5DDYhDs86d2hqrS3jPZsrhyb0RntZ5XpHwfhKvLe07i+M10YOQcNpXf3AZpoTCcVkaX+iGdBqj8Hyidi8F6jCbjc2UgyeuhT2N3B3DlwdWU=
+	t=1723751644; cv=none; b=JccTYmAC7dtr95qCvezw7wrnUsWQGSRe7tcMFt7bUd4GmdLfPa8FD7lmaT6a6YQHTzf2V+R/nM5PwbHQp/dvsd934FFxcBWPIar2U6e43iJLMrUpgz9gZu9KZlco2qQwH7JOE5LALkybnL7lBYegEtB2SgJumf/zx42BS4lfwIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723751626; c=relaxed/simple;
-	bh=MAZujTYwAmQXUe1+2BFze16BYrJqanpZwfb15WFviIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cz9X6cLV0rABd03AYuWGStZpNHMEAEng/Y0lpEs/oFwSb1XQIsxwUrUDqIIP63t0rJRYNFJA11qsEyDsCOvxrb2M71S6fS+b3xsqnxrxu9lCJwMO+jairTnzYtNPW91zB7B6zJ5arDm6JRxk2Xw2SJB9iwT5uc6D17/e28IjotY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jeremypeper.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQJE1z4v; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jeremypeper.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7091558067eso646002a34.3;
-        Thu, 15 Aug 2024 12:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723751623; x=1724356423; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kX+e5rSxihbTvjSe1DavLWfqSJBAz8X9OHf/N6SEge0=;
-        b=eQJE1z4voqwmMFg4nDR7AK5IJZgypBiJhh//zcAp+qEozaH5d7SVDBluScZwZTAC/r
-         qvOxqWO+a4xxboSyp+WA9PSYBBTJWVyUgFpwLkkL7r/oinq/ij5FHN7FuavgHAc/Zh7X
-         j7z0Lltm+0qS75ebk0Q7yMtdL7ansPkej3uOQxq7IDY0O0zlNBrKFk+/FclIlwMuIbNL
-         nvdTrEg87laNhsyp2+mZaCqZmpJrKxG+SfUquQZkQSTaP9xVs/Nyinr1hLQrI6/OcvQJ
-         iuxaTRHIoMDp3R5bzTYDcYRxQ7EMMyVUNw1GiHGMuLvsU6fBso8ezrXr6tFJQpthdXkl
-         +NqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723751623; x=1724356423;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kX+e5rSxihbTvjSe1DavLWfqSJBAz8X9OHf/N6SEge0=;
-        b=fuh1UKXjur460ZwbniVdaGwTebaLpFI1QTaboZHMBGKJs6s3KvU7pHgB1JbO1/jd0s
-         aSkL2zyne2GX9cGHhiRWWrkaBHFY+ZQ3AP8gtXEQbOp7mwRu6aGzFwGz5iaWThEXKWZB
-         +cspihnU0rp4iR5RWW57qjiE0Cksh+YqO4PtR/mfs6SpkZ4fMlIRIb5ypzAG1BWPT6bX
-         5j8Myj6GuJ0g7S6dfW1c3XVRGBW0YEyeTjn1trSYrGTqpkyVjnTSsIaAmMclsg0zP6OG
-         CjK/lFS3+vm+AxiB11zwFnRe/kPOMQTzZLNzVmNpxtx+UO8v1GcQlvJvZGsVFVRKf+7b
-         +YoA==
-X-Forwarded-Encrypted: i=1; AJvYcCX963nglsfAbqMrfEsokaYeDVMknsZZcWDeJ4bkFNt3tnurkr1NVTE12SEIsX8fo0SAamWaAkngvQGVX3+vMew9OAzCJngrN4s3I+JW2j5tHqkF1obJkU9RtgnN9rCtnmdl2gdTh1e/MHDswLdf
-X-Gm-Message-State: AOJu0Yy6cF55P1lx5MxqIUDg0gmei+1lZ0BiZ+5E6Wl/joffWv78R3Ou
-	NKHFTGZzukwv9khCpd5CACTB0eWiIToEFKbI//DBbivSwRHjnTHZ
-X-Google-Smtp-Source: AGHT+IG7YE6D0Eh9PAMwIETHDh7HaDtucfJCyCZ7kYx/Gg6sg2xQ/MO7QmclDIkUXhcPOFw+2dEupQ==
-X-Received: by 2002:a05:6830:6d8d:b0:709:27c7:9bce with SMTP id 46e09a7af769-70cac859a6emr795956a34.18.1723751623276;
-        Thu, 15 Aug 2024 12:53:43 -0700 (PDT)
-Received: from earth.localnet (97-127-48-199.mpls.qwest.net. [97.127.48.199])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ccd6e7c057sm693450173.6.2024.08.15.12.53.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 12:53:42 -0700 (PDT)
-Sender: Jeremy <jeremypeper@gmail.com>
-From: jeremy@jeremypeper.com
-To: linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
- Linus Walleij <linus.walleij@linaro.org>,
- Richard Earnshaw <richard.earnshaw@arm.com>,
- Richard Sandiford <richard.sandiford@arm.com>,
- Ramana Radhakrishnan <ramanara@nvidia.com>, Nicolas Pitre <nico@fluxnic.net>,
- Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
- Kristoffer Ericson <kristoffer.ericson@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
- linux-omap@vger.kernel.org, Nikita Shubin <nikita.shubin@maquefel.me>,
- linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Gregory Clement <gregory.clement@bootlin.com>,
- "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Date: Thu, 15 Aug 2024 14:53:40 -0500
-Message-ID: <3413899.e9J7NaK4W3@earth>
-In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+	s=arc-20240116; t=1723751644; c=relaxed/simple;
+	bh=/MSiDtu9Cn/LaWZWDf1KjZ7zd0cr9GbVv44CAZRY5BU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eEAXluOs1pMkH7Gh8Sship7R36b1czE4I9+17GdUgU5X8PaSNzVPv7gP2kg5PAc8CILgyqimVk3874v6rA+tkbRjXxv9KGnzr/IP6ZfNhXXUGJtKWpTaXphdcFqA4d6Nlf4jRFDlCZ+fUPXPlv2/afwWptUkZN36HIaJRdpap+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G91gk2aX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E21DEC32786;
+	Thu, 15 Aug 2024 19:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723751643;
+	bh=/MSiDtu9Cn/LaWZWDf1KjZ7zd0cr9GbVv44CAZRY5BU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=G91gk2aXBRfqBIDH6Nk81EXG0SdWQ9rwasHahSggCmyPebdm0PdePYM5fdgD6Ngmv
+	 tfdnbL/0s6L8pCCSLW1DBjYyQ153UN/Y6YvKLD3xva9tq/UjKm0hrbR1Rld76uxG+j
+	 qhDjgdGRrf/8wka85YEki3wBnk1ydD5ms1s2Gify7BL1x2GN2KnfLM20RuMJJZ0BKD
+	 E1ZScraaJFDBcURbz6SpaA+pcdz+jazVwqyAmGK9A1kLDkJy695/w8WAoJ5JAyFrIh
+	 VT/8PzH/PATSwRrd2gw3vBb+d8JNj/FSOWFCeig0vlhqYkaFggl6G6MHRKyiZZaEUG
+	 NYMXVvfoVT3QA==
+Date: Thu, 15 Aug 2024 13:54:00 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] wifi: iwlwifi: fw/mvm: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <Zr5c2DVAp3mWVO6h@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For the Buffalo devices we still have a lot of folks using Marvell Kirkwood, 
-Orion5x and MV78100 NAS devices. In a world where SATA provides the cheapest $ 
-per TB storage and Gigabit Ethernet is still standard they end up being 
-surprisingly relevant for hobbyists.  
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-The two pre-DTB device files that we're still using are:
-mach-mv78xx0/buffalo-wxl-setup.c
-mach-orion5x/terastation_pro2-setup.c
+So, in order to avoid ending up with a flexible-array member in the
+middle of multiple other structs, we use the `__struct_group()`
+helper to create a new tagged `struct iwl_tx_cmd_hdr`. This structure
+groups together all the members of the flexible `struct iwl_tx_cmd`
+except the flexible array.
 
-If those can stick around for the next LTS kernel that should give me sufficient 
-time to try converting them to DTS like the other Orion5x/Kirkwood devices.
+As a result, the array is effectively separated from the rest of the
+members without modifying the memory layout of the flexible structure.
+We then change the type of the middle struct members currently causing
+trouble from `struct iwl_tx_cmd` to `struct iwl_tx_cmd_hdr`.
 
-Thank you for your attention,
--Jeremy
+We also want to ensure that when new members need to be added to the
+flexible structure, they are always included within the newly created
+tagged struct. For this, we use `static_assert()`. This ensures that the
+memory layout for both the flexible structure and the new tagged struct
+is the same after any changes.
 
+This approach avoids having to implement `struct iwl_tx_cmd_hdr`
+as a completely separate structure, thus preventing having to maintain
+two independent but basically identical structures, closing the door
+to potential bugs in the future.
 
-On Wednesday, July 31, 2024 12:29:29 PM CDT Arnd Bergmann wrote:
-> We removed a lot of the unused board files at the beginning of
-> 2023, and I'd like to plan ahead for other hardware and feature
-> support that can be removed after the next stable kernel
-> (linux-6.12).
-> 
-> TL;DR: I think we can deprecate toolchain support for ARMv4
-> (pre-thumb), iWMMXt, BE32 and OABI (-mabi=apcs-gnu) *if* that
-> helps gcc-15, as we'll likely not need those any more after
-> gcc-14 will be too old to build new kernels (ca. 2030).
-> 
-> I hope we can keep reducing the number of non-DT board files a
-> lot further, but I still expect this to take several more years
-> before it is DT-only. Please reply here if you are using any
-> of them so we can spare them once more.
-> 
-> 
-> == Architectural features ==
-> 
-> These are features that require support from gcc, which in
-> turn may benefit from dropping it.
-> 
-> === ARMv3 ===
-> 
-> This was removed in gcc-9, so it will eventually get removed
-> from the kernel as we raise the minimum compiler versions.
-> Only RiscPC relies on building with -march=armv3, despite using
-> an ARMv4 StrongARM CPU.
-> 
-> === ARMv4 ===
-> 
-> This is used for both StrongARM and FA526 CPUs, which are still
-> used on a small number of boards. Even the newest chips (moxa
-> art, ) are close to 20 years olds but were still in use a few years
-> ago. The last Debian release for these was Lenny (5.0).
-> 
-> Dropping compiler support now would be appropriate IMHO, and
-> we can drop kernel support in a few years.
-> 
-> === ARMv4T ===
-> 
-> We still support six SoC families with ARMv4T cores (ARM720T,
-> ARM920T and ARM922T). These are equally old to the ARMv4 ones,
-> but have more users and developers working on them than the
-> ARMv4 ones. Debian Stretch (9.0) last supported these.
-> EP93xx in particular is used in some products with long
-> support cycles, so we may end up supporting these in the
-> kernel as long as ARMv5.
-> 
-> === ARMv5 ===
-> 
-> About one third of all supported platforms use ARMv5,
-> but most of these are near their end of support. Notably
-> there are still new SAM9 variants from Microchip that are
-> meant as backward-compatible replacements for their
-> older variants.
-> 
-> Debian still supports these, but the lack of FPU and
-> atomics makes this harder, so I expect this to become
-> an unofficial port in the future.
-> 
-> === early ARMv6 ===
-> 
-> This is the ARM1136r0p in NXP i.MX31 and OMAP24xx, which in
-> practice means just the Nokia N8xx tablet.
-> It causes a lot of pain to support in the kernel since it
-> requires special hacks to support in SMP-enabled kernels.
-> I have a patch series that moves ARMv6 from being ARMv7
-> compatible to being ARMv5 compatible inside the kernel,
-> which should help, but that needs more work.
-> 
-> === ARMv6K ===
-> 
-> We dropped ARM11MPcore support last year, but still
-> support ARM1176 (Raspberry Pi 1, AST2500) and ARM1136r1.
-> These are easy to keep supporting in the kernel.
-> Distro support is getting harder since they are slightly
-> too old for the common armv7-a+vfpv3-d16 level.
-> 
-> === ARMv7-M ===
-> 
-> Cortex-M3/M4/M7 are the only cores we support without an
-> MMU, currently on 5 microcontroller platforms. Upstream work
-> on NOMMU kernels has pretty much stopped in 2017 when everyone
-> moved to open-source RTOS variants like Zephyr. I expect that
-> we can drop support ten years later in 2027, but gcc will
-> still have to support them on other operating systems.
-> 
-> === iWMMXt ===
-> 
-> I'm not aware of any remaining users for iWMMXt, and we dropped
-> support for ARMv7 PJ4 CPUs (MMP2, Berlin) already, so the
-> only supported hardware that even has this is Intel/Marvell
-> PXA and MMP1.
-> 
-> Dropping support from gcc is probably a good idea now,
-> it is already unsupported in clang.
-> 
-> === big endian ARMv5 (BE32) kernel ===
-> 
-> There is one SoC that uses this, the Intel IXP4xx. Older versions
-> of Debian supported this chip in little-endian mode, but the device
-> drivers are known to be broken for LE now and would require someone
-> to spend time on fixing them.
-> 
-> I would suggest dropping support from gcc, which still gives
-> us a few years to fix the ixp4xx support, or drop it when
-> gcc-14 support is dropped from the kernel. Curiously, support
-> was added in clang not long ago.
-> 
-> === big-endian ARMv7 (BE8) kernel ===
-> 
-> This is very different from BE32 mode in making more sense
-> from a kernel point of view. In theory any ARMv7 hardware
-> should work, though a lot of drivers are buggy. I am not
-> aware of any actual use cases, though in theory it can be
-> helpful for testing big-endian userspace when one has
-> access to Arm hardware but no other big-endian machine.
-> 
-> We should probably keep this a few more years in both
-> toolchain and kernel, unless it starts causing actual
-> problems. I don't think anyone is testing it any more
-> though.
-> 
-> Side-note: netbsd has a armv7+be8 variant, so clang will
-> likely keep supporting be8 even if gcc ends up dropping it
-> in the future.
-> 
-> 
-> 
-> == Kernel features ==
-> 
-> === pre-ATAGS param_struct ===
-> 
-> This was deprecated in 2001, to be removed in "5 years
-> from now", which was a while ago. We can probably
-> remove it now, or keep it around until the two platforms
-> using it (RiscPC and Footbridge) are gone.
-> 
-> === ATAGS based board files ===
-> 
-> After the previous cleanup, there are board 29 files in
-> 10 SoC platforms remaining. I would hope we can reduce this
-> significantly again, but need to go through the platforms
-> individually. ep93xx is getting converted to DT, but the
-> others have made no progress towards that.
-> 
-> === OABI kernels ===
-> 
-> Practically everyone uses EABI today, and OABI support was
-> dropped as a userspace target in gcc-4.8. The kernel still
-> however allows being built as OABI by passing "-mabi=apcs-gnu",
-> and this is used as the default for armv4/armv5 kernels.
-> 
-> This is a frequent source for bugs as driver writers are
-> unaware of the unusual struct padding, alignment and enum
-> usage. I've stopped testing it in my randconfig builds
-> a while ago because of random bugs.
-> 
-> I would propose to leave the feature in the kernel but
-> make it harder to enable by accident, changing the default
-> for all targets to EABI and adding a dependency on
-> 'CPU_32v4 || EXPERT'.
-> 
-> For the compiler, I think removing support for -mabi=apcs
-> makes sense, unless there are non-Linux targets that still
-> use this.
-> 
-> === OABI compat mode ===
-> 
-> This is the other way of running OABI binaries, using a
-> normal EABI kernel. It suffers from a different set of
-> bugs, as the kernel itself is fine, but driver specific
-> structure layouts with user interfaces (usually ioctl)
-> may be incompatible.
-> 
-> The maintenance cost in the kernel is much lower than
-> native OABI kernels, but I suspect there are even
-> fewer users.
-> 
-> Since there was never an EABI desktop distro for
-> ARMv4, we probably want to keep at least one of the
-> two (OABI or OABI_COMPAT) around as long as we
-> support StrongARM machines.
-> 
-> === NWFPE ===
-> 
-> Russell had a patch set to remove this 11 years ago,
-> but ended up keeping it. This is fundamentally tied
-> to OABI userland, so we'll likely need to keep it for
-> as long as either OABI or OABI_COMPAT remains.
-> 
-> See the discussion at
-> https://lore.kernel.org/linux-arm-kernel/20130410191206.GM14496@n2100.arm.l
-> inux.org.uk/
-> 
-> === Highmem ===
-> 
-> Most Arm machines are fine without highmem support and can
-> use something like CONFIG_VMSPLIT_2GB to address up to 2GB
-> of physical memory. Machines larger than only popped up
-> around the time of the Cortex-A15 in 2012 and for the most
-> part got replaced by 64-bit chips within a short time.
-> In addition, there are also a handful of Cortex-A9 and
-> Marvell CPU based machines that have either more than 2GB
-> of RAM or a very sparse memory map that requires highmem
-> support.
-> 
-> Linus Walleij has done some work towards being able to use
-> up to 4GB of RAM with LPAE (Cortex-A7/A15 and later)
-> machines, which I think still needs to be finished before
-> we can remove support for highmem.
-> 
-> === Sparsemem ===
-> 
-> There is a new discussion about removing support for
-> traditional sparsemem support, see
-> https://lwn.net/Articles/974517/.
-> 
-> This also relates to machines that currently need highmem
-> support in order to use all of their RAM even if the
-> total size would fit into the lowmem area, e.g. on
-> Renesas R-Car SoCs. In theory it should  be possible to
-> move the indirection layer from __page_to_pfn() to
-> __pfn_to_phys() and support discontiguous lowmem
-> that way, but I don't think anyone is working on that,
-> and I don't know if that addresses the concerns with
-> today's sparsemem implementation.
-> 
-> 
-> 
-> == Platform support ==
-> 
-> === RiscPC ===
-> 
-> This is the oldest supported platform, and it will
-> eventually have to get removed as it no longer works
-> with gcc-9 or higher because of the ARMv3 removal.
-> 
-> As far as I know, nobody aside from Russell has booted
-> this machine in many years, so if he's stops upgrading
-> his kernels, we could also remove it earlier.
-> 
-> === SA1100, Footbridge ===
-> 
-> These are the other StrongARM based platforms, which
-> like RiscPC are only relevant for nostalgia. When we
-> removed the board files for 6.3, a couple of StrongARM
-> machines were left that someone said they were interested
-> in getting working again, and converting to DT. I don't
-> think there has been any progress on this, so it seems
-> unlikely to happen in the future. The last StrongARM
-> machine that got added and that is still supported was
-> the ipaq h3600 in linux-2.4.13.
-> 
-> There are also machines that Russell is (was?) using:
-> sa1100/assabet, footbridge/netwinder and footbridge/ebsa285.
-> 
-> Being able to remove these would get rid of a lot of
-> complexity both from the hardware being unusual and
-> from them not using DT.
-> 
-> Need input from Russell.
-> 
-> === Gemini, Moxart ===
-> 
-> These both use the Faraday FA526 CPU core that like
-> StrongARM implements ARMv4 rather than ARMv4T with thumb.
-> 
-> The chips are also over 20 years old, but the kernel
-> code has been updated and is not a maintenance burden
-> by itself, so there is no value in removing these
-> machines until StrongARM is also gone.
-> 
-> On the other hand, removing both FA526 and StrongARM
-> platforms means we can probably remove ARMv4 (non-T),
-> OABI and NWFPE support more quickly if we want, or
-> we can wait until a few years after gcc drops ARMv4.
-> 
-> OpenWRT lists the gemini platform as supported in
-> https://openwrt.org/docs/techref/targets/gemini, but
-> none of the individual machines have builds for the
-> current release.
-> 
-> Need input from Linus Walleij.
-> 
-> === PXA board files ===
-> 
-> There are two board files left in the PXA code that
-> we did not remove two years ago, in the hope that this
-> would help the DT conversion.  Nothing happened
-> since then, though qemu removed support for their
-> releases.
-> 
-> Unless someone has specific plans to work on them,
-> I would remove these in early 2025.
-> 
-> There is also DT support for some PXA boards, which
-> would likely stay around.
-> 
-> === OMAP1 ===
-> 
-> This is now the only ARMv4T/ARMv5 platform with no
-> DT support, making it a target for removal at some
-> point. Unlike PXA, there are still users, but it seems
-> there are no current plans for a DT conversion.
-> 
-> I would suggest going through the five boards
-> individually to see which ones we can remove in 2025
-> and keep the remaining ones for the moment.
-> 
-> === Nspire, AT91RM9200, CLPS711X, EP93xx, iMX1 ===
-> 
-> These are the other ARMv4T targets. Nikita is in
-> the process of finishing up the DT support for EP93xx,
-> after that these are very cheap to maintain in the
-> kernel since the platform code is all up to date.
-> 
-> Unless there is a specific reason to drop these, I
-> expect them to stay around as long as ARMv5, probably
-> to the end of this decade.
-> 
-> === OMAP24xx ===
-> 
-> This is the one ARMv6 (non-K) platform that has active
-> users. The platform support is fine, so it depends on
-> what we do with arm1136r0 CPU support. If my patch
-> for armv6 support in the armv5 kernel works out, we
-> can treat it as a v5 variant and keep it as long as
-> v5 itself, otherwise it would be nice to remove the
-> kernel complexity by dropping arm1136r0 support like
-> we did with arm11mpcore.
-> 
-> === iMX31, realview/integrator with 1136r0 ===
-> 
-> I'm not aware of any users, but these don't get in
-> the way as long as OMAP2 is there. Whatever we do
-> with OMAP2 can also happen with these.
-> 
-> === S3C64xx (Cragganmore) ===
-> 
-> This is the only ARMv6K board without devicetree
-> support, and the board file contains about a similar
-> amount of complexity as all other board files
-> combined.
-> 
-> arch/arm/mach-s3c/Kconfig.s3c64xx lists it as scheduled
-> for removal early next year, which would allow a large
-> amount of cleanup in platform and driver infrastructure.
-> 
-> However, Mark Brown is actively using this machine
-> as a testbed for audio codecs, which is what it was
-> designed for by Wolfson (now Cirrus).
-> 
-> There is no satisfying outcome of this that I see,
-> my best idea is to delay the removal until Mark has
-> moved on to something else.
-> 
-> TODO: find out if Cirrus have a replacement that
-> Mark can migrate to.
-> 
-> === Orion5x, mv78xx0, dove board files ===
-> 
-> Like PXA, these were left behind in the hope that there
-> would be progress towards DT conversion, but none of that
-> happened aside from a small set of mv78xx0 bugfixes.
-> On the contrary, Debian has now dropped the
-> orion5x kernel binary citing lack of users, so it seems
-> much less likely to ever complete. Out of the machines
-> about half the orion5x ones have DT support, mv78xx0
-> has none, and dove DT support exists but is less
-> complete than the board file.
-> 
-> There is still a community around running Debian
-> on some of these devices at
-> https://github.com/1000001101000/Debian_on_Buffalo/wiki
-> 
-> I would suggest removing all these board files in early
-> 2025 to still allow building a 3rd-party kernel using
-> the Debian 13 release sources. The orion5x DT support
-> can get merged into mach-mvebu then.
-> 
-> === iMX35, WM8750, AST2500, BCM2835 ===
-> 
-> These four are all ARMv6K platforms and fairly well
-> supported, though only AST2500 and BCM2835 have an
-> active user base. Support for ARMv6K is likely to
-> stay around at last as long as ARMv5, so there are
-> no plans for removing these.
-> 
-> Most distros that had Raspberry Pi 1 armv6k-hardfloat
-> support have dropped that now, but some minor ones
-> still exist, while Debian and others runs ARMv5-softfloat
-> userspace on them.
-> 
-> === stm32f4/f7/h7 microcontrollers ===
-> 
-> These are the only MMU-less Arm chips that see any
-> continued development, as ST keeps supporting their
-> existing customers. There are also newer MCUs based
-> on Cortex-M33 and up, but those don't run Linux
-> as far as I know. Let's keep until at least 2026
-> before we start discussing deprecation.
-> 
-> All other MCUs (IMXRT, SAMV7, LPC18xx, MPS2) are
-> used much less than STM32F and can probably follow
-> the same path once they get in the way of dropping
-> v7m support.
+We also use `container_of()` whenever we need to retrieve a pointer to
+the flexible structure, through which we can access the flexible-array
+member, if necessary.
 
+Worth mentioning is that the union at the end of the flexible structure
+was replaced by a direct declaration of flexible-array member `hdr[]`
+as `payload` is unnecessary.
 
+So, with these changes, fix the following warnings:
 
+drivers/net/wireless/intel/iwlwifi/fw/api/tx.h:745:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/iwlwifi/fw/api/tx.h:764:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tdls.h:134:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tdls.h:53:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tx.h:745:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tx.h:764:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ .../net/wireless/intel/iwlwifi/fw/api/tdls.h  |  4 +-
+ .../net/wireless/intel/iwlwifi/fw/api/tx.h    | 61 ++++++++++---------
+ .../net/wireless/intel/iwlwifi/mvm/mac-ctxt.c |  8 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/tdls.c |  8 ++-
+ 4 files changed, 45 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
+index 893438aadab0..0ea6c0e37750 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
+@@ -50,7 +50,7 @@ struct iwl_tdls_channel_switch_timing {
+  */
+ struct iwl_tdls_channel_switch_frame {
+ 	__le32 switch_time_offset;
+-	struct iwl_tx_cmd tx_cmd;
++	struct iwl_tx_cmd_hdr tx_cmd;
+ 	u8 data[IWL_TDLS_CH_SW_FRAME_MAX_SIZE];
+ } __packed; /* TDLS_STA_CHANNEL_SWITCH_FRAME_API_S_VER_1 */
+ 
+@@ -131,7 +131,7 @@ struct iwl_tdls_config_cmd {
+ 	struct iwl_tdls_sta_info sta_info[IWL_MVM_TDLS_STA_COUNT];
+ 
+ 	__le32 pti_req_data_offset;
+-	struct iwl_tx_cmd pti_req_tx_cmd;
++	struct iwl_tx_cmd_hdr pti_req_tx_cmd;
+ 	u8 pti_req_template[];
+ } __packed; /* TDLS_CONFIG_CMD_API_S_VER_1 */
+ 
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+index c5277e2f8cd4..903f0f7517e0 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+@@ -222,34 +222,37 @@ enum iwl_tx_offload_assist_flags_pos {
+  * and then the actial payload.
+  */
+ struct iwl_tx_cmd {
+-	__le16 len;
+-	__le16 offload_assist;
+-	__le32 tx_flags;
+-	struct {
+-		u8 try_cnt;
+-		u8 btkill_cnt;
+-		__le16 reserved;
+-	} scratch; /* DRAM_SCRATCH_API_U_VER_1 */
+-	__le32 rate_n_flags;
+-	u8 sta_id;
+-	u8 sec_ctl;
+-	u8 initial_rate_index;
+-	u8 reserved2;
+-	u8 key[16];
+-	__le32 reserved3;
+-	__le32 life_time;
+-	__le32 dram_lsb_ptr;
+-	u8 dram_msb_ptr;
+-	u8 rts_retry_limit;
+-	u8 data_retry_limit;
+-	u8 tid_tspec;
+-	__le16 pm_frame_timeout;
+-	__le16 reserved4;
+-	union {
+-		DECLARE_FLEX_ARRAY(u8, payload);
+-		DECLARE_FLEX_ARRAY(struct ieee80211_hdr, hdr);
+-	};
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(iwl_tx_cmd_hdr, __hdr, __packed,
++		__le16 len;
++		__le16 offload_assist;
++		__le32 tx_flags;
++		struct {
++			u8 try_cnt;
++			u8 btkill_cnt;
++			__le16 reserved;
++		} scratch; /* DRAM_SCRATCH_API_U_VER_1 */
++		__le32 rate_n_flags;
++		u8 sta_id;
++		u8 sec_ctl;
++		u8 initial_rate_index;
++		u8 reserved2;
++		u8 key[16];
++		__le32 reserved3;
++		__le32 life_time;
++		__le32 dram_lsb_ptr;
++		u8 dram_msb_ptr;
++		u8 rts_retry_limit;
++		u8 data_retry_limit;
++		u8 tid_tspec;
++		__le16 pm_frame_timeout;
++		__le16 reserved4;
++	);
++
++	struct ieee80211_hdr hdr[];
+ } __packed; /* TX_CMD_API_S_VER_6 */
++static_assert(offsetof(struct iwl_tx_cmd, hdr) == sizeof(struct iwl_tx_cmd_hdr),
++	      "struct member likely outside of __struct_group()");
+ 
+ struct iwl_dram_sec_info {
+ 	__le32 pn_low;
+@@ -742,7 +745,7 @@ struct iwl_mvm_compressed_ba_notif {
+  * @frame: the template of the beacon frame
+  */
+ struct iwl_mac_beacon_cmd_v6 {
+-	struct iwl_tx_cmd tx;
++	struct iwl_tx_cmd_hdr tx;
+ 	__le32 template_id;
+ 	__le32 tim_idx;
+ 	__le32 tim_size;
+@@ -761,7 +764,7 @@ struct iwl_mac_beacon_cmd_v6 {
+  * @frame: the template of the beacon frame
+  */
+ struct iwl_mac_beacon_cmd_v7 {
+-	struct iwl_tx_cmd tx;
++	struct iwl_tx_cmd_hdr tx;
+ 	__le32 template_id;
+ 	__le32 tim_idx;
+ 	__le32 tim_size;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+index dfcc96f18b4f..41e276f2fcf8 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+@@ -1053,8 +1053,10 @@ static int iwl_mvm_mac_ctxt_send_beacon_v6(struct iwl_mvm *mvm,
+ {
+ 	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
+ 	struct iwl_mac_beacon_cmd_v6 beacon_cmd = {};
++	struct iwl_tx_cmd *beacon_cmd_tx =
++		container_of(&beacon_cmd.tx, struct iwl_tx_cmd, __hdr);
+ 
+-	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, &beacon_cmd.tx);
++	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, beacon_cmd_tx);
+ 
+ 	beacon_cmd.template_id = cpu_to_le32((u32)mvmvif->id);
+ 
+@@ -1073,8 +1075,10 @@ static int iwl_mvm_mac_ctxt_send_beacon_v7(struct iwl_mvm *mvm,
+ {
+ 	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
+ 	struct iwl_mac_beacon_cmd_v7 beacon_cmd = {};
++	struct iwl_tx_cmd *beacon_cmd_tx =
++			container_of(&beacon_cmd.tx, struct iwl_tx_cmd, __hdr);
+ 
+-	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, &beacon_cmd.tx);
++	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, beacon_cmd_tx);
+ 
+ 	beacon_cmd.template_id = cpu_to_le32((u32)mvmvif->id);
+ 
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
+index 3d25ff5cd7e8..7e45445c3ce6 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
+@@ -341,6 +341,8 @@ iwl_mvm_tdls_config_channel_switch(struct iwl_mvm *mvm,
+ 	struct iwl_tdls_channel_switch_cmd cmd = {0};
+ 	struct iwl_tdls_channel_switch_cmd_tail *tail =
+ 		iwl_mvm_chan_info_cmd_tail(mvm, &cmd.ci);
++	struct iwl_tx_cmd *tail_frame_tx_cmd =
++		container_of(&tail->frame.tx_cmd, struct iwl_tx_cmd, __hdr);
+ 	u16 len = sizeof(cmd) - iwl_mvm_chan_info_padding(mvm);
+ 	int ret;
+ 
+@@ -410,13 +412,13 @@ iwl_mvm_tdls_config_channel_switch(struct iwl_mvm *mvm,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		iwl_mvm_set_tx_cmd_ccmp(info, &tail->frame.tx_cmd);
++		iwl_mvm_set_tx_cmd_ccmp(info, tail_frame_tx_cmd);
+ 	}
+ 
+-	iwl_mvm_set_tx_cmd(mvm, skb, &tail->frame.tx_cmd, info,
++	iwl_mvm_set_tx_cmd(mvm, skb, tail_frame_tx_cmd, info,
+ 			   mvmsta->deflink.sta_id);
+ 
+-	iwl_mvm_set_tx_cmd_rate(mvm, &tail->frame.tx_cmd, info, sta,
++	iwl_mvm_set_tx_cmd_rate(mvm, tail_frame_tx_cmd, info, sta,
+ 				hdr->frame_control);
+ 	rcu_read_unlock();
+ 
+-- 
+2.34.1
 
 
