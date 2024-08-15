@@ -1,96 +1,115 @@
-Return-Path: <linux-kernel+bounces-287465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20756952814
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B4B952819
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C53A41F21527
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:00:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841A12858B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07512231C;
-	Thu, 15 Aug 2024 03:00:37 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61D2AEE3;
+	Thu, 15 Aug 2024 03:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CH0HhV0z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BAC18641
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB200C144;
+	Thu, 15 Aug 2024 03:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723690837; cv=none; b=RbPGD18q5c1wGDxErhMAYwegaitCoxfSWKpKbQHmVl59nTgmEZQalmy0m49PO8cVA7bbsGx1CeyC62g94Y2BD8ZfFUPuDh7bvdCwqAxu1SJYNC4+mQdFhMz2arW5B4O2pwULOZbJFnQ9xJ/eqsx7L3Woz5iUewVwdNLYIJ0yN7I=
+	t=1723691049; cv=none; b=Xz1F8J5mqle3FbbG4bJzPOJs7xUR5xCVRAXZkQxe/beQx8SQLwbJc+6ssEO6EtzvhQiz/HGPv/mRTGwPdq8D+e4AkCjhLm8oRQV0hOJrVDxuKW/pnNG7dabPiFK/LZJxum3OEiP0FENyNBVeUyDyj8Xaurr9rHu1iQCMBUj2wrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723690837; c=relaxed/simple;
-	bh=L2puwB1qaWdyP49tq60T5NvoRN2oruVvJ6wyKczpE0k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pBUoT1up3pcOfxzZoUbBvvNrBtZGJ3bzdoG8VBYwOeYqZSsOsZcV2VT7OYia3uMnLowmP3YqS3p07+S1BwY/Uf8HC0ZhG16DdJmnM6m9hLOMLETj3NjaHh9XVIgSLGMR170Re1ZPhV3IiQxDW7ey9pj3EM2xFXBI3deLRF3G86M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8223aed78e2so68718139f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:00:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723690835; x=1724295635;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6I+gIWxg5dsZIsatp2hWJDv5yzRQI5JZ8eTuaHX3O0Y=;
-        b=oqtFmywkmbb2vueL4i2jt4Yp2yj2VUzm9MmQNY210ZmpDdMEuwpBQEdfTOXzYM2iWV
-         aLdeOhCzXBYRZlJPEjDJS02u355F5BbFNrd/SZeDR66pslLJWyfLLBnK2l3BQjo4yHtw
-         fMYluwNkHoA5b6SUY6WLrmNPg3kaDWojn4DGgTEDbeSPPOO3cCOF3oBEl04/u9x0ZN8S
-         8IhvspXx+mAiPSAyCbf+SuYKf0byRENuJ28OA2M2aPbv1Nz2L2k04UOIW8yEPN9Sqn+W
-         RnYvk9VfCwrdaZX3I7xtZRxNSCRYIPwYZBBCqAOtiarn3G696cFXTxCYLwzihhpYkgqx
-         rFHw==
-X-Gm-Message-State: AOJu0YxyjSUeQLk2O34TkjWAX4exEyvvQouA5QbfowdcNOgIV3rsNG2P
-	ZOUaBl+Qjq/J8TXcMG/67qKYoBA0gMcSlII4U522yxFYqkDirNPakUW9KbxJKRnYRMgYC+ez9s+
-	RYXjA41cq39NSLpuhffMjVPoptLWuIBwbwLEPCNJuKQU2WQjruRrb4Ns=
-X-Google-Smtp-Source: AGHT+IGEVCZA+saxlNqhLzAF2ajTZYUmInut5GIz1l4iqQee4FV/yYmLuz+Z8fSBz31Gp540NsFk+F1wUcNwUUsfo7IZDRRBkpTX
+	s=arc-20240116; t=1723691049; c=relaxed/simple;
+	bh=tEQ232Q9V7kx9F54SNAa+UawZRUkDcFU0hANE+CDX8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gjG57rDQXsP3wxe9tIt+Bv62bKmrEMNOm1IZRUo4ga1bkA8YX53RPP5j8PeklTg/o6GYwqEcuztPrEBsF2vVwvzJ45TKzVKnTYrNR+IZN/9RBHG7Bss3XPacOWukQ2ZimSvE8ATvD+DnP9zXTDoVSJEqSUQ0G3drNZCSmtkJg+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CH0HhV0z; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723691048; x=1755227048;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tEQ232Q9V7kx9F54SNAa+UawZRUkDcFU0hANE+CDX8g=;
+  b=CH0HhV0z948JCANAuQD1xv+Ap1nY3fFdiK3y6jTk++ic54JkvJIVJHRo
+   VHcVewj3qlebMgsLTztZMB3T+sIZHq1AhXy7zZ/hqaXsVj1rDKDtOq0Ft
+   3tjTV759+1JzYnHrAt3b5vUEvlwIjqdjU7C86ql08oIOoeWitH5/TFtg3
+   U+jpYc+RKczIDi4kf/L/8SCSHVRxcRoFgORqRnn0c0jQVefFQiNKu+1r1
+   Z7QpB8uQbOFSUG+b+MasEPuPkp2+l2P6GqXIV6gGINRcDdoYIoduTwH5r
+   8UFQVcjyzLveCtWaeq8GwZx0Oy8Ex2tESnoa6mqAuwRUpS4zlMpIRDkkI
+   g==;
+X-CSE-ConnectionGUID: uB3chFQlTt+68Kpm536SlA==
+X-CSE-MsgGUID: glwR3SNOQDiUWlaaBJc+fA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="21810298"
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="21810298"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 20:04:07 -0700
+X-CSE-ConnectionGUID: Ni9/2nzUTsKBg+TeFvgzCA==
+X-CSE-MsgGUID: aCiM9HXWQ26YGIYRu1b/Gg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,147,1719903600"; 
+   d="scan'208";a="59801420"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa007.jf.intel.com with ESMTP; 14 Aug 2024 20:04:04 -0700
+Date: Thu, 15 Aug 2024 11:01:53 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Marco Pagani <marpagan@redhat.com>
+Cc: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: Re: [PATCH 0/3] Simplify and improve fpga test suites using deferred
+ actions
+Message-ID: <Zr1vocN2TrepUcMY@yilunxu-OptiPlex-7050>
+References: <20240725125031.308195-1-marpagan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b23:b0:381:c14:70cf with SMTP id
- e9e14a558f8ab-39d1244769amr4533495ab.1.1723690835179; Wed, 14 Aug 2024
- 20:00:35 -0700 (PDT)
-Date: Wed, 14 Aug 2024 20:00:35 -0700
-In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ef1381061fb00b6c@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725125031.308195-1-marpagan@redhat.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, Jul 25, 2024 at 02:50:28PM +0200, Marco Pagani wrote:
+> Use deferred actions to simplify fpga test suites and avoid potential
+> memory leaks when test cases fail. Deferred actions are executed when a
+> test is completed either successfully or unsuccessfully (e.g., due to a
+> failed assertion).
+> 
+> Marco Pagani (3):
+>   Simplify and improve the fpga manager test suite using deferred
+>     actions
+>   Simplify and improve the fpga bridge test suite using deferred actions
+>   Simplify and improve the fpga region test suite using deferred actions
 
-***
+Don't forget the prefix in shortlog. I added "fpga: " for them.
 
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-Author: lizhi.xu@windriver.com
+Others look good to me.
 
-clean dirty for the release inode, stop to worker wb it again.
+Acked-by: Xu Yilun <yilun.xu@intel.com>
 
-#syz test: upstream c0ecd6388360
+Applied this series to for-next.
 
-diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
-index e0d34e4e9076..85161f0bb749 100644
---- a/fs/9p/vfs_dir.c
-+++ b/fs/9p/vfs_dir.c
-@@ -218,7 +218,12 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
- 		if ((S_ISREG(inode->i_mode)) && (filp->f_mode & FMODE_WRITE))
- 			retval = filemap_fdatawrite(inode->i_mapping);
- 
-+		printk("fid: %p, fidnum: %d, ino: %lx, ino is freeing:%d, will free: %d, dirty: %d, %s\n", fid, fid->fid, inode->i_ino, 
-+				inode->i_state & I_FREEING, 
-+				inode->i_state & I_WILL_FREE,
-+				inode->i_state & I_DIRTY, __func__);
- 		spin_lock(&inode->i_lock);
-+		inode->i_state |= I_FREEING;
- 		hlist_del(&fid->ilist);
- 		spin_unlock(&inode->i_lock);
- 		put_err = p9_fid_put(fid);
+Thanks,
+Yilun
+
+> 
+>  drivers/fpga/tests/fpga-bridge-test.c | 25 +++++++---------
+>  drivers/fpga/tests/fpga-mgr-test.c    | 28 +++++++++++-------
+>  drivers/fpga/tests/fpga-region-test.c | 41 ++++++++++++++++-----------
+>  3 files changed, 52 insertions(+), 42 deletions(-)
+> 
+> 
+> base-commit: 3a0fa8e97d3024de199634667900b6a90bbe43d0
+> -- 
+> 2.45.2
+> 
+> 
 
