@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-287401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02803952760
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:03:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A612952766
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46EE285020
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809C91C21813
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 01:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FB453AC;
-	Thu, 15 Aug 2024 01:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490535680;
+	Thu, 15 Aug 2024 01:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jliPxLdK"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oO4tOq2p"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4913115CB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 01:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD0BA35;
+	Thu, 15 Aug 2024 01:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723683823; cv=none; b=lf6x3dfBJ3mkmieniEIBtrCmx8x9BJuQEmCDKCzXb/DCizEU4MSXNr61ReOTWMXbUctQWtsnZ3uqQqUx4PbbHKsAjizGD2dw5shR430OhTbxo56qB+hPCLfnPH+PkA8XM/3ycCuARrCwxm9eK2qREp0kw9KyGnvl7Megz9c1dgY=
+	t=1723684183; cv=none; b=aZ7HyGRErGMCQekBDdpdvRP+OLbx8/60dlXjZNsfKZbZ0LLvzeglylMO10y6v0wyPbjgZguQPWBETI4AmpR4QOtp7/xWtTJ7SKex/2kanZ2W576rP/0BgDkABpQo+XoV1+waR3WhHumtJYO4R2s5h2ZhA34tBkRPXCFLWCkPqlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723683823; c=relaxed/simple;
-	bh=cUxt0up1TK679P2htGrK886ysRT04vOMzqU3A8VSJ8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ec9jj3ycpZ8sKkahF+8Spb8TUNN/dQUDHLTYQ8IiO+yVpA+GzmXwlzeJoxidcGgcPoJ9Dh03vJ44QXsC0/3so0RLP3aCtIORnDjK67SuWzH6hTOWq1UZsQ/RUkr+si2+ywpmoSDn41NthWNRUiRtyYCKmz9uFE6BK3CSvPWfZIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jliPxLdK; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5d5e2de5d78so27949eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 18:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723683821; x=1724288621; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=khMHVPKCTDHVonG/wiILjKhvjw+3YZpJ69x4MahYmgM=;
-        b=jliPxLdK0fSFomJaMtGnWBFCaQ2xl2l6y/Ax06UOmfR9CDS6XuLjj/va+skm0g0yXk
-         o2DgxYlDFZCWGVHIZbBVMCnFrx9I9WepKpEGRmSVf/Mw0bFHJg4/GB67kFuiL+xnPfvT
-         dXffs692L7OW2+bWsciaxYC0iDAJKWveZkDrE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723683821; x=1724288621;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=khMHVPKCTDHVonG/wiILjKhvjw+3YZpJ69x4MahYmgM=;
-        b=MM34n67zkC74QPDOJexpOdVlquI6Eiu3gzEh7G1G5r0lR5Xe1HQROwrokWnwPeZe+c
-         RzsDWHPBx03GTnwGk0xo/V4nHWlyRk7vdb0l4ZJ/yui9wTFQT9OVm8belUvEUexfeqQ+
-         Ji8pjfkBfb1aPyrw17AyXvZCShJaG0Cdr6tvuOWbyx4Pxg4Q24iPIGQIv4mCZ7Vz9jTu
-         rJ6hcP3WStHYbAewqgiavUOE+8i1OwhR+4s1xMv/4Rnb0F4+KEiFeTiT2YX0jFmqDihZ
-         KG1RlflAStj52WEByyQVSq79sPx5xL53MboT/0MfTGG5aUzjcBN06foxTAWijd/OapFe
-         2gIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWK2WNUV6rSdFp0BgjOMDz2PhFN2EUWgUtqlDEWJRVqf1sk1iW/vI2Dv3Pm8akjeWBDX2E+tXrQimENpyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk0hdWFAmpS789CFG3YqKcRiWY5SUBU9aNu1kJiK09qtScjbzq
-	BUnpCxqzzz/bcWTt5wvCyyhLRO2sPhgD3UrQPENwAXtzaL0MJLyPdnSJHafJ+g==
-X-Google-Smtp-Source: AGHT+IF+8XgKQDkaXk0vfQAks7fyXcwVXvAv57Id3YITxLxh/ZxwgsaZs42QqdKu7qhMO+nTdLC4Iw==
-X-Received: by 2002:a05:6358:4883:b0:1ac:f436:c8ca with SMTP id e5c5f4694b2df-1b385ac1c24mr111855755d.1.1723683821360;
-        Wed, 14 Aug 2024 18:03:41 -0700 (PDT)
-Received: from philipchen.c.googlers.com.com (140.248.236.35.bc.googleusercontent.com. [35.236.248.140])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff02c7e1sm24485285a.15.2024.08.14.18.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 18:03:41 -0700 (PDT)
-From: Philip Chen <philipchen@chromium.org>
-To: Pankaj Gupta <pankaj.gupta.linux@gmail.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Cc: virtualization@lists.linux.dev,
-	nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Philip Chen <philipchen@chromium.org>
-Subject: [PATCH v2] virtio_pmem: Check device status before requesting flush
-Date: Thu, 15 Aug 2024 01:03:37 +0000
-Message-ID: <20240815010337.2334245-1-philipchen@chromium.org>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+	s=arc-20240116; t=1723684183; c=relaxed/simple;
+	bh=vg2Wjc5euDomGCMAqhjZEOHP9uOGK6l6Wt4V4e/gn5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=sc2auVL/B2A/5SMyyKL+UDWYKGLqcoFlR5ZTvcxK7+SxAN3QbGMtpVB6D+RRS9+yaq2tN9uU+ovlc7CqqiYaTr4NeRqqw00xeudmmgyw+7i7xTyalPHqVkrHKDoop+duqfJtB6ggOJOPSeJ9HGfmz1/aO7SjCwqsAxbTjWn5PBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oO4tOq2p; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723684175;
+	bh=DTv7Q17SAzkWVrxCxVb76izIXRqxVHyiQ48h97d/Z1Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oO4tOq2pl729y4kfvmycq6SgDU+EXhg109kKYU/bmc2MJdAf6zwOM8yyMHViIQqRm
+	 Wwe1H05WkDzG5avyCnagLOqmkt8TZ6FctmHdqZ9OQAuGoHhg22vBBWoGHpIIJdgNRz
+	 2ZQyDVNYyVYqm4XEQ6x3T0LgAvzJpYNCyeTvxA0Q/E+yQrvQGTCPi6bmtIgkzIhU7r
+	 4P/HdQDfRHE6JLpHln1Csy92BfPJdNuePyD6PmwYX9Dc7v4XVE9g4+DY2jtLS1xxNX
+	 D4IXxH5aSYphiICGQxRxejKQoXgxdNItXieWgReclXCgHYjNvSj0tPskjAD2jE0JGX
+	 RqW43/897elZQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wkn8b2Zgjz4wnx;
+	Thu, 15 Aug 2024 11:09:34 +1000 (AEST)
+Date: Thu, 15 Aug 2024 11:09:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Frank Li <Frank.Li@nxp.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20240815110934.56ae623a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/MweJaH.HPj2uWi_kKG.3Ooz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-If a pmem device is in a bad status, the driver side could wait for
-host ack forever in virtio_pmem_flush(), causing the system to hang.
+--Sig_/MweJaH.HPj2uWi_kKG.3Ooz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Philip Chen <philipchen@chromium.org>
----
-Change since v1:
-- Remove change id from the patch description
+Hi all,
 
+Today's linux-next merge of the net-next tree got a conflict in:
 
- drivers/nvdimm/nd_virtio.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+  Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
 
-diff --git a/drivers/nvdimm/nd_virtio.c b/drivers/nvdimm/nd_virtio.c
-index 35c8fbbba10e..3b4d07aa8447 100644
---- a/drivers/nvdimm/nd_virtio.c
-+++ b/drivers/nvdimm/nd_virtio.c
-@@ -44,6 +44,15 @@ static int virtio_pmem_flush(struct nd_region *nd_region)
- 	unsigned long flags;
- 	int err, err1;
- 
-+	/*
-+	 * Don't bother to send the request to the device if the device is not
-+	 * acticated.
-+	 */
-+	if (vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_NEEDS_RESET) {
-+		dev_info(&vdev->dev, "virtio pmem device needs a reset\n");
-+		return -EIO;
-+	}
-+
- 	might_sleep();
- 	req_data = kmalloc(sizeof(*req_data), GFP_KERNEL);
- 	if (!req_data)
--- 
-2.46.0.76.ge559c4bf1a-goog
+between commit:
 
+  c25504a0ba36 ("dt-bindings: net: fsl,qoriq-mc-dpmac: add missed property =
+phys")
+
+from the net tree and commit:
+
+  be034ee6c33d ("dt-bindings: net: fsl,qoriq-mc-dpmac: using unevaluatedPro=
+perties")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
+index 42f9843d1868,f19c4fa66f18..000000000000
+--- a/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
++++ b/Documentation/devicetree/bindings/net/fsl,qoriq-mc-dpmac.yaml
+@@@ -36,12 -30,6 +30,10 @@@ properties
+        A reference to a node representing a PCS PHY device found on
+        the internal MDIO bus.
+ =20
+-   managed: true
+-=20
+ +  phys:
+ +    description: A reference to the SerDes lane(s)
+ +    maxItems: 1
+ +
+  required:
+    - reg
+ =20
+
+--Sig_/MweJaH.HPj2uWi_kKG.3Ooz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma9VU4ACgkQAVBC80lX
+0Gx21QgAjVl0IcFIAhRPs72zwIHlbEa0WOhhMj1W0m93m5A4f8P2I9RI8xuHO45a
+VyeZKxb/bCOTMvs0vbaWkYART2EFqgWqqQEn/cb3FaFktBif70Ym9Ek+Q6rRQLBK
+E29Ii42U8vUy3FPDw0DQWJY67pq6vUISMAP2k+B4S7B1n+KDA9I3eFGnSW5tM2pT
+GHH7r2SlblrzzkeypnmyxnUiGwq7ZVV9GaSSMeM0Oh98bCDYOxEHw9MeNMSg50wD
+MLcBRtq2dWobjUVMyogNHoVR+1cheE8TtstIj5NebqF7k/V3QxfL8djL8f665JVA
+urwsuTV1fNTvUJkmp/cGzbQKCe3ROw==
+=mDtM
+-----END PGP SIGNATURE-----
+
+--Sig_/MweJaH.HPj2uWi_kKG.3Ooz--
 
