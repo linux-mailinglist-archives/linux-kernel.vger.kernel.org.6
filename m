@@ -1,105 +1,149 @@
-Return-Path: <linux-kernel+bounces-287590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27DF9529A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:08:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E14D9529A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA25C1F21EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:08:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9F9AB2368B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F74E17A595;
-	Thu, 15 Aug 2024 07:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40346179967;
+	Thu, 15 Aug 2024 07:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBgng+Hp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jcUA6C/x"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD32B17A58C;
-	Thu, 15 Aug 2024 07:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6BC3BB21
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723705715; cv=none; b=KCgdudXTT7uP3IMVulfPTjJACGXkkXawFEn4sEC0L2p0dzs4DhNyT1ntS2R2+qP032VA1+RBnI8IoFt0KQelpSFxCN+cxZvqlBd7fABqNsp3mp6xSiwJJsLrRD81xzqdngxDGpm2n53JZtSdlvSwqafEP1ETtMuEuqEhTom5UMw=
+	t=1723705746; cv=none; b=mR7n+hfbko6Aol0DEyIAg9RckSPpbWY6r+pN7OQ2EboPyqbzzZ5MMu/7r6AiIsPjiuxDEecGihB04MvP0L++pGZeq7HjXdzQRMuEyX+LLA3wDy1BshQiiKr7mSD8gEbjC2qLjlTTmNRk2f0JJJbdV2ONjUlt0Zm+Yr4pE3N5wO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723705715; c=relaxed/simple;
-	bh=/9uqUS0s/6ZQm25v7EIai0b2CJwdxYNNykgTWLpOogY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ljnx8+AMfAIPxdMShBSg2x168itN55qfsGknDGdlxaLii0UIndqDxxdj8CBA2QDzPV0pq+Q+WNtm9FL3tW/EkRg4oHWwDMCdLhlyPmw5En8BfWBMHmQ4/AbtOgumr6jNqI0wJffPpj2U+jo9VwIWfsVehRqwadzzkMkzpxwfK0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBgng+Hp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AC95C4AF0C;
-	Thu, 15 Aug 2024 07:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723705715;
-	bh=/9uqUS0s/6ZQm25v7EIai0b2CJwdxYNNykgTWLpOogY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KBgng+HpGUDe3ZG6ya48Sx4+rb5azJFhJeyH9WRo4MH+LvJX6VMl4F4PedM/NHZZn
-	 H0HXwzZrVSvZfehn9t5UbsXSFdHgWKU96icvFPHtyB62XR4wwppjjX388tl1blQTrt
-	 Ll4vltxayXVHfkyfW5++kt6x7ZiyUCnC7h6dy9zLak3C8NApdxim4xb3jkHSm5UsbV
-	 aOe1PliOeFjx/pRPNkDFKS/TqF9EboAMcJROD6B/eG8H0gNDpdlMvrMmXBpszWCxy8
-	 XEA22byo9zgdepZVYt4J2RZg+vX/UcIdzXkzjaFlcNRAvjzP5SXLkyUMONt0Limo6d
-	 sTeEFAGZR5fOg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so1322792e87.0;
-        Thu, 15 Aug 2024 00:08:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUsZCN08wwk6Xngg38W0HXHd64/o3r9e9dnSuTor7ZQgRePw8p40kg/dpc4P8afjEojIK0GxfJ29RCj7kM=@vger.kernel.org, AJvYcCWElxXZuex5lPi1aY3qGHuKes6M9NR1qAZ5dKtTZElVsjf6fQhMhMGcDRpHA/ia+rhhstUOTlrqFbjX+g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxX/Y+IWcAvcnJY/yQ9wY1xshDyb+lVN8yFFdrRwAXgt4LAi0J
-	pkT/pAJAQWZHHmHte53Y2dYv16iJN/H4IkusRU0B7M+guoJAVUQhaYN/fvweigOq6iuGoa0NFfq
-	dFxUdhg376cshlZ3V0YNSshrM2LM=
-X-Google-Smtp-Source: AGHT+IELSNKIy7QpKKCk7VRTCXhO6UgfddrL88r6A8GddsspIypFrufySYcVIuG40JRck9nK4kXv00x11g+is2H/98U=
-X-Received: by 2002:a05:6512:308a:b0:52c:d5ac:d42 with SMTP id
- 2adb3069b0e04-532eda67350mr4135791e87.9.1723705713460; Thu, 15 Aug 2024
- 00:08:33 -0700 (PDT)
+	s=arc-20240116; t=1723705746; c=relaxed/simple;
+	bh=+3ZC608fRYqs0E75krOR339bZDArr6fJWlVWkXXY/PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNjNVbFWDQwvVFkcRlt3qTsX3l/ivSeRBYkT0vKcuiGfs3ahnCxqyg8qja8iUl1X1YzbH4kJaRhOF67nepeipGFBN9OUekJbLDdFFRc7mKtHZO6JIvjkVssiJz6zhl7XvrnAAOGRn4kHF8Gv3poZXwXRWqO7hqFkrXgEeCeUfdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jcUA6C/x; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc52394c92so6170945ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723705744; x=1724310544; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eEubBv7YlyYmifwGtDH1r/SzpbLMAGHxulPar3OQYok=;
+        b=jcUA6C/xc3hf6eMONR//hUVWGx9YRLVNVUQY2OhVaKjgli/nl6xC6/s607ebLjAkTC
+         cOB1PyCnZsP9PFhQLmHjOP/UGfaH7jaGXcvl/e/fsn2xcgC6h9tce28/eu3XRjq054O8
+         Lscn/V9ArvwQE6bi8FCmk03+IpbGmP3lZ5d2c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723705744; x=1724310544;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eEubBv7YlyYmifwGtDH1r/SzpbLMAGHxulPar3OQYok=;
+        b=xUGNYn/BgtZuSwTnynAgEbIq+HtpsG7ECjW9ufm9ex5S92dD0vYW0TK8GacFbdRpON
+         pAvAe5dlNv9ok+ZtPw4N4lPIuZNfLC9GSVJP6uAkYu5rexoAVHwdivcKJYOahc+sNJY9
+         u6YS1xMHqkClPyOO2b5tpqPWuWlvT2d0UIV4GCocfXEaQdhSQIK0pazOg75zAxEhyoxb
+         7y/kO+aJ3BuHPjv9pQGTXL2hN7jIvhBmgz4vQhBMC8wYyxCMR1xdY1Z4tzqk4thKz8kA
+         48l83RR1pqoIvzKXeSayNIZwnwPgmvKNAcufy4pMr0zoLNMjZQoOrFreIyyb6ikykR0v
+         tjQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgzxrNRAYpk1WPWO7apxrlD5iyWpc5q1g6+CS5uqrDGgtrnXHEcKS8P9cCnFX8OvJImF7SUQbGMChaL7KZYYt6laHwmPKfneoU87s8
+X-Gm-Message-State: AOJu0YwT+OzJwV9+pUXDgGMwMAcWGKbh5/A56HzqPbfMyO7EcsqyKBmB
+	BJCnvZslXtHJ5keeoeEbcy1CqWcVi/bOzmsNrsyw/8b52VbL7phsmceMg9E83w==
+X-Google-Smtp-Source: AGHT+IHty7AVsv8iu9zjRNVg8ahQtN5cBsQwSxGtQ6826Wh/7FAYIUG9X1y964/vg/3Sqyj+vXG+ew==
+X-Received: by 2002:a17:902:ce84:b0:1fd:6581:f69f with SMTP id d9443c01a7336-201d63b00a1mr72599205ad.22.1723705744296;
+        Thu, 15 Aug 2024 00:09:04 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:f7dc:2307:3c4b:963e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f0378973sm5643665ad.160.2024.08.15.00.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 00:09:03 -0700 (PDT)
+Date: Thu, 15 Aug 2024 16:09:00 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] workqueue: fix null-ptr-deref on __alloc_workqueue()
+ error
+Message-ID: <20240815070900.GB12106@google.com>
+References: <20240815070339.346160-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716025852.400259-1-nichen@iscas.ac.cn>
-In-Reply-To: <20240716025852.400259-1-nichen@iscas.ac.cn>
-From: Song Liu <song@kernel.org>
-Date: Thu, 15 Aug 2024 00:08:21 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5vej0oOwU8kyJmhYK5FH+=S7aoKuqv8jKa-WYKZC4gbg@mail.gmail.com>
-Message-ID: <CAPhsuW5vej0oOwU8kyJmhYK5FH+=S7aoKuqv8jKa-WYKZC4gbg@mail.gmail.com>
-Subject: Re: [PATCH] md: convert comma to semicolon
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: yukuai3@huawei.com, neilb@suse.de, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815070339.346160-1-senozhatsky@chromium.org>
 
-On Mon, Jul 15, 2024 at 7:59=E2=80=AFPM Chen Ni <nichen@iscas.ac.cn> wrote:
->
-> Replace a comma between expression statements by a semicolon.
->
-> Fixes: 5e5702898e93 ("md/raid10: Handle read errors during recovery bette=
-r.")
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-
-Applied to md-6.12.
-
-Thanks,
-Song
+On (24/08/15 16:02), Sergey Senozhatsky wrote:
+> wq->lockdep_map is set only after __alloc_workqueue()
+> successfully returns. However, on its error path
+> __alloc_workqueue() may call destroy_workqueue() which
+> expects wq->lockdep_map to be already set, which results
+> in a null-ptr-deref in touch_wq_lockdep_map().
+> 
+> Add a simple NULL-check to touch_wq_lockdep_map().
+> 
+> Oops: general protection fault, probably for non-canonical address
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> RIP: 0010:__lock_acquire+0x81/0x7800
+> [..]
+> Call Trace:
+>  <TASK>
+>  ? __die_body+0x66/0xb0
+>  ? die_addr+0xb2/0xe0
+>  ? exc_general_protection+0x300/0x470
+>  ? asm_exc_general_protection+0x22/0x30
+>  ? __lock_acquire+0x81/0x7800
+>  ? mark_lock+0x94/0x330
+>  ? __lock_acquire+0x12fd/0x7800
+>  ? __lock_acquire+0x3439/0x7800
+>  lock_acquire+0x14c/0x3e0
+>  ? __flush_workqueue+0x167/0x13a0
+>  ? __init_swait_queue_head+0xaf/0x150
+>  ? __flush_workqueue+0x167/0x13a0
+>  __flush_workqueue+0x17d/0x13a0
+>  ? __flush_workqueue+0x167/0x13a0
+>  ? lock_release+0x50f/0x830
+>  ? drain_workqueue+0x94/0x300
+>  drain_workqueue+0xe3/0x300
+>  destroy_workqueue+0xac/0xc40
+>  ? workqueue_sysfs_register+0x159/0x2f0
+>  __alloc_workqueue+0x1506/0x1760
+>  alloc_workqueue+0x61/0x150
+> ...
+> 
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 > ---
->  drivers/md/raid10.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 2a9c4ee982e0..e55e020b5571 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -2465,7 +2465,7 @@ static void fix_recovery_read_error(struct r10bio *=
-r10_bio)
->                         s =3D PAGE_SIZE >> 9;
->
->                 rdev =3D conf->mirrors[dr].rdev;
-> -               addr =3D r10_bio->devs[0].addr + sect,
-> +               addr =3D r10_bio->devs[0].addr + sect;
->                 ok =3D sync_page_io(rdev,
->                                   addr,
->                                   s << 9,
-> --
-> 2.25.1
->
+>  kernel/workqueue.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index bfeeefeee332..59bd2c1e55af 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -3870,6 +3870,9 @@ static bool flush_workqueue_prep_pwqs(struct workqueue_struct *wq,
+>  static void touch_wq_lockdep_map(struct workqueue_struct *wq)
+>  {
+>  #ifdef CONFIG_LOCKDEP
+> +	if (unlikely(!wq->lockdep_map))
+> +		return;
+> +
+>  	if (wq->flags & WQ_BH)
+>  		local_bh_disable();
+
+Oh, okay, so this is related to [1]
+
+	workqueue: Split alloc_workqueue into internal function and lockdep init
+
+Cc-ing Matthew on this.
+
+[1] https://lore.kernel.org/all/20240809222827.3211998-2-matthew.brost@intel.com/
 
