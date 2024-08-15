@@ -1,54 +1,95 @@
-Return-Path: <linux-kernel+bounces-287737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C35F952C0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:27:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52217952C0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BE01C236B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:27:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FFF3B24BCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84441C0DE4;
-	Thu, 15 Aug 2024 09:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6331C3781;
+	Thu, 15 Aug 2024 09:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="P78h8Hkh"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6322E177980
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="wI+5SAfs"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB1417995A
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723713803; cv=none; b=n3yFQbebAjgFL/l+qkIWmS0/Fe0Gpf8kTVOKFoqM1klDe7NoqJDuzvsLi2A5y9+A3Nhc1yjwuijXX5IGMKC07m39RH/R7Jh6ScjhYL9IVim4S2AKrhpU2P88Av4+lF41Eb+AFop03jx/Oqj2zoxpNyoOaz1yMhBx2WifPsjnEns=
+	t=1723713884; cv=none; b=tP4as6xOdY4AWVCB1k/xvDonKq09ToDnAmGXM7lO68LfXipYH6qTDO5jinON7v5SoEY1gHHw5guxnBmqrAnuZtW7SLDIc6c6I+VF4wiRFEzXgHN21zTGc/PI69ilMnJwelALrEu9rKjO+3dDzes952b2KW+kdVj7KJJnBMJ4PXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723713803; c=relaxed/simple;
-	bh=+sObloC1z4b6bN8s4V7hq+Jx047COGCJ+YOBic+8diQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GApF+UchlWlfHI0Zcf2X9p6mYFXAMaK9GmzX8LtlWANBsd10eKt5KKnth0oebjwCoEbeB/5EJ7kYuAOHz8tXVF9J9MihGJEd7Y98N8OFib1KFrU3nek56DVIu749YO9yUsyxqeRdDo1MWCcaIh2jSJqWbnaP3/C06xjG4ZINr8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=P78h8Hkh; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=BVHEp
-	73aP48z9WssczRaaj5+TNK0ShKng5OvN16omb4=; b=P78h8HkhRYi1+DrXZ9DOz
-	sJtvtl0YThnQekZwJkZfbIyWTCeCPnErvJ+s4qeymJUvJdcnAvQPFYVePo5/Jr33
-	kIMq44fyVYvP6CKbRIdXa8w6eha6V8TUq2r0z8D6B77OD4YP6Z2xdns//HlPtgB0
-	O3JU4ceCsdF6h58x2QFxfw=
-Received: from localhost.localdomain (unknown [111.48.69.246])
-	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wD3v8_FyL1mrKteCQ--.26237S2;
-	Thu, 15 Aug 2024 17:22:14 +0800 (CST)
-From: Chi Zhiling <chizhiling@163.com>
-To: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com
-Cc: ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	starzhangzsd@gmail.com,
-	Chi Zhiling <chizhiling@kylinos.cn>,
-	Shida Zhang <zhangshida@kylinos.cn>
-Subject: [PATCH] ocfs2: fix unexpected zeroing of virtual disk
-Date: Thu, 15 Aug 2024 17:21:41 +0800
-Message-Id: <20240815092141.1223238-1-chizhiling@163.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1723713884; c=relaxed/simple;
+	bh=kDWx8HJ5pcPW4GHtShvRqjsoHx8LNnWgslfFUVcgEdI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q/DGn0bb9WwQnBHHqfd+8edJHG5C/8qL0TEY693Qri4Zevq5rwQIl5mFMhey1bYCSpPRnx7uVpTjcasn8GH2Q5HMV9WXiD2LLUoBhcgwZvgzQbINkREfYOgNxuIW79dBj5B40JgQFc4ykzJgkbwpWtm4tvoLlSqd9KPSvtUM3Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=wI+5SAfs; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6B5DE3F1ED
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:24:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723713880;
+	bh=F+qdP92HA4WlUvvWo4NLt2pIrqzc50ZjTRsittR4Q5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=wI+5SAfsFO6igR2nhLOu7aoRtoO/yay7AkZZvKm5yqKrdVBTZtoAdDq+DVwCExbdY
+	 Wxzno4WL5zEDGuImZpxANEA5Hhxk7K5czjEsbTsiEkKWSSHVUgMd3e0tfaOtetB3s7
+	 rnRMFS7vs5qBGwuCNl48EXt10qXDPAzAyJEtdQhuI7S9IV+/tIAx5cr7Ot7ut+zvk8
+	 P6ViB2Sr3Z7Fax0WMlNq6YQmVyoeu4KDxyGwscBTU0Xk0xfqAoPVw8kZ+NAlNlBAFI
+	 4khUUX6BI4lyQHSPZmeEZK08tZDMANWXUFAc5FV6d4sMRv6WYdHbNyAA0PffJNZKiO
+	 oxSZb4hU7oDmw==
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a7aa3181bc2so63034466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:24:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723713880; x=1724318680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F+qdP92HA4WlUvvWo4NLt2pIrqzc50ZjTRsittR4Q5I=;
+        b=EpkM1pvXoDmXJYSezpiuM7QiNSI6J8bIOcTyAjKOK6ad8BGqT6Sy5Yuk6Y1wHP+swz
+         EGa2llU7ds09Vjf9r6PQQLQ3F51y/2W9lzikVmD2EXWRbckV8VCRq7JYpZAWc+Refy0/
+         i1VNYMMbkVu+MMBD6AWkht+a4ppp+hD+awz39VTYgyUrKlNLWmPdb9MgfWNxtUjb+1ZV
+         QJ9fQhSArs4wkMVcNG5fyI2514t6fXFbIXERxicSwuSEHv773nS5dkScbZPm9afUOHvG
+         gRAotCjul8sS8/4U5LQLKuhSj9ycBIcf6qpVYkbgTnF8iTs5JBhO2wFQn1HO3OVAbYY4
+         nrhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXU8xkEHTKJa4VtekhQuVfa01jsWMs/qLjP17DRLkV17h/9hcJ6KxXQxzQKDAh4sloKabi36sInIEVz+A02FzS9xCfyGefDY+1zIfsu
+X-Gm-Message-State: AOJu0YwFypuY4Zg5k2JHZDh/1MASnSkEVNlqQ10huFyQxtraN8g20oaq
+	mJWKpmtUQZumdWoYSL3vJf7hA4kk0fggLabo85ek40IRSpB5xFsxLXSvc/Z/NggpmPHD45Tcs31
+	JC6vd6kIeNffO6D7UA+rL7FIei3y9aTlV0kuyLCA8gs/71tMCAJXtKexL7FPlu+drhqiTqreX2X
+	dcjw==
+X-Received: by 2002:a17:906:d25a:b0:a6f:ddb3:bf2b with SMTP id a640c23a62f3a-a8366d6579amr387844766b.41.1723713879634;
+        Thu, 15 Aug 2024 02:24:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGR7X2VB9tXQi77mplbIxMONgPru0+ZsTVdiXwdUCAhLom3WOHWenFiTNXrJWvEw5b852CNeA==
+X-Received: by 2002:a17:906:d25a:b0:a6f:ddb3:bf2b with SMTP id a640c23a62f3a-a8366d6579amr387843266b.41.1723713879100;
+        Thu, 15 Aug 2024 02:24:39 -0700 (PDT)
+Received: from amikhalitsyn.. ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934585sm72142866b.107.2024.08.15.02.24.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 02:24:38 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: mszeredi@redhat.com
+Cc: brauner@kernel.org,
+	stgraber@stgraber.org,
+	linux-fsdevel@vger.kernel.org,
+	Seth Forshee <sforshee@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Vivek Goyal <vgoyal@redhat.com>,
+	German Maglione <gmaglione@redhat.com>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/11] fuse: basic support for idmapped mounts
+Date: Thu, 15 Aug 2024 11:24:17 +0200
+Message-Id: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,65 +97,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v8_FyL1mrKteCQ--.26237S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KryrAF1rJr1kurWfJF1kZrb_yoW8KFW3pr
-	WUJw1UGr48Jr1UZr1Utr13Jr1UJr1DA3WUJr15Jr4xJwn8JF10yw1UJF1UJFWUJ34DJr4U
-	Xr48JryUt345JaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYdgAUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiTws8nWXAnaMwBAAAsK
 
-From: Chi Zhiling <chizhiling@kylinos.cn>
+Dear friends,
 
-In a guest virtual machine, we found that there is unexpected data
-zeroing problem detected occassionly:
+This patch series aimed to provide support for idmapped mounts
+for fuse & virtiofs. We already have idmapped mounts support for almost all
+widely-used filesystems:
+* local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+* network (ceph)
 
-XFS (vdb): Mounting V5 Filesystem
-XFS (vdb): Ending clean mount
-XFS (vdb): Metadata CRC error detected at xfs_refcountbt_read_verify+0x2c/0xf0, xfs_refcountbt block 0x200028
-XFS (vdb): Unmount and run xfs_repair
-XFS (vdb): First 128 bytes of corrupted metadata buffer:
-00000000e0cd2f5e: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-00000000cafd57f5: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-00000000d0298d7d: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-00000000f0698484: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-00000000adb789a7: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-000000005292b878: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-00000000885b4700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-00000000fd4b4df7: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-XFS (vdb): metadata I/O error in "xfs_trans_read_buf_map" at daddr 0x200028 len 8 error 74
-XFS (vdb): Error -117 recovering leftover CoW allocations.
-XFS (vdb): xfs_do_force_shutdown(0x8) called from line 994 of file fs/xfs/xfs_mount.c.  Return address = 000000003a53523a
-XFS (vdb): Corruption of in-memory data detected.  Shutting down filesystem
-XFS (vdb): Please umount the filesystem and rectify the problem(s)
+Git tree (based on torvalds/master):
+v3: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v3
+current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts
 
-It turns out that the root cause is from the physical host machine.
-More specifically, it is caused by the ocfs2.
+Changelog for version 3:
+- introduce and use a new SB_I_NOIDMAP flag (suggested by Christian)
+- add support for virtiofs (+user space virtiofsd conversion)
 
-when the page_size is 64k, the block should advance by 16 each time
-instead of 1.
-This will lead to a wrong mapping from the page to the disk, which
-will zero some adjacent part of the disk.
+Changelog for version 2:
+- removed "fs/namespace: introduce fs_type->allow_idmap hook" and simplified logic
+to return -EIO if a fuse daemon does not support idmapped mounts (suggested
+by Christian Brauner)
+- passed an "idmap" in more cases even when it's not necessary to simplify things (suggested
+by Christian Brauner)
+- take ->rename() RENAME_WHITEOUT into account and forbid it for idmapped mount case
 
-Suggested-by: Shida Zhang <zhangshida@kylinos.cn>
-Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
----
- fs/ocfs2/aops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Links to previous versions:
+v2: https://lore.kernel.org/linux-fsdevel/20240814114034.113953-1-aleksandr.mikhalitsyn@canonical.com
+tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v2
+v1: https://lore.kernel.org/all/20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com/#r
+tree: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v1
 
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index d6c985cc6353..1fea43c33b6b 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -1187,7 +1187,7 @@ static int ocfs2_write_cluster(struct address_space *mapping,
- 
- 		/* This is the direct io target page. */
- 		if (wc->w_pages[i] == NULL) {
--			p_blkno++;
-+			p_blkno += (1 << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits));
- 			continue;
- 		}
- 
+Having fuse (+virtiofs) supported looks like a good next step. At the same time
+fuse conceptually close to the network filesystems and supporting it is
+a quite challenging task.
+
+Let me briefly explain what was done in this series and which obstacles we have.
+
+With this series, you can use idmapped mounts with fuse if the following
+conditions are met:
+1. The filesystem daemon declares idmap support (new FUSE_INIT response feature
+flags FUSE_OWNER_UID_GID_EXT and FUSE_ALLOW_IDMAP)
+2. The filesystem superblock was mounted with the "default_permissions" parameter
+3. The filesystem fuse daemon does not perform any UID/GID-based checks internally
+and fully trusts the kernel to do that (yes, it's almost the same as 2.)
+
+I have prepared a bunch of real-world examples of the user space modifications
+that can be done to use this extension:
+- libfuse support
+https://github.com/mihalicyn/libfuse/commits/idmap_support
+- fuse-overlayfs support:
+https://github.com/mihalicyn/fuse-overlayfs/commits/idmap_support
+- cephfs-fuse conversion example
+https://github.com/mihalicyn/ceph/commits/fuse_idmap
+- glusterfs conversion example (there is a conceptual issue)
+https://github.com/mihalicyn/glusterfs/commits/fuse_idmap
+- virtiofsd conversion example
+https://gitlab.com/virtio-fs/virtiofsd/-/merge_requests/245
+
+The glusterfs is a bit problematic, unfortunately, because even if the glusterfs
+superblock was mounted with the "default_permissions" parameter (1 and 2 conditions
+are satisfied), it fails to satisfy the 3rd condition. The glusterfs fuse daemon sends
+caller UIDs/GIDs over the wire and all the permission checks are done twice (first
+on the client side (in the fuse kernel module) and second on the glusterfs server side).
+Just for demonstration's sake, I found a hacky (but working) solution for glusterfs
+that disables these server-side permission checks (see [1]). This allows you to play
+with the filesystem and idmapped mounts and it works just fine.
+
+The problem described above is the main problem that we can meet when
+working on idmapped mounts support for network-based filesystems (or network-like filesystems
+like fuse). When people look at the idmapped mounts feature at first they tend to think
+that idmaps are for faking caller UIDs/GIDs, but that's not the case. There was a big
+discussion about this in the "ceph: support idmapped mounts" patch series [2], [3].
+The brief outcome from this discussion is that we don't want and don't have to fool
+filesystem code and map a caller's UID/GID everywhere, but only in VFS i_op's
+which are provided with a "struct mnt_idmap *idmap"). For example ->lookup()
+callback is not provided with it and that's on purpose! We don't expect the low-level
+filesystem code to do any permissions checks inside this callback because everything
+was already checked on the higher level (see may_lookup() helper). For local filesystems
+this assumption works like a charm, but for network-based, unfortunately, not.
+For example, the cephfs kernel client *always* send called UID/GID with *any* request
+(->lookup included!) and then *may* (depending on the MDS configuration) perform any
+permissions checks on the server side based on these values, which obviously leads
+to issues/inconsistencies if VFS idmaps are involved.
+
+Fuse filesystem very-very close to cephfs example, because we have req->in.h.uid/req->in.h.gid
+and these values are present in all fuse requests and userspace may use them as it wants.
+
+All of the above explains why we have a "default_permissions" requirement. If filesystem
+does not use it, then permission checks will be widespread across all the i_op's like
+->lookup, ->unlink, ->readlink instead of being consolidated in the one place (->permission callback).
+
+In this series, my approach is the same as in cephfs [4], [5]. Don't touch req->in.h.uid/req->in.h.gid values
+at all (because we can't properly idmap them as we don't have "struct mnt_idmap *idmap" everywhere),
+instead, provide the userspace with a new optional (FUSE_OWNER_UID_GID_EXT) UID/GID suitable
+only for ->mknod, ->mkdir, ->symlink, ->atomic_open and these values have to be used as the
+owner UID and GID for newly created inodes.
+
+Things to discuss:
+- we enable idmapped mounts support only if "default_permissions" mode is enabled,
+because otherwise, we would need to deal with UID/GID mappings on the userspace side OR
+provide the userspace with idmapped req->in.h.uid/req->in.h.gid values which is not
+something that we probably want to do. Idmapped mounts philosophy is not about faking
+caller uid/gid.
+
+How to play with it:
+1. take any patched filesystem from the list (fuse-overlayfs, cephfs-fuse, glusterfs) and mount it
+2. ./mount-idmapped --map-mount b:1000:0:2 /mnt/my_fuse_mount /mnt/my_fuse_mount_idmapped
+(maps UID/GIDs as 1000 -> 0, 1001 -> 1)
+[ taken from https://raw.githubusercontent.com/brauner/mount-idmapped/master/mount-idmapped.c ]
+
+[1] https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52a492b1904d0b2
+[2] https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/
+[3] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
+[4] https://github.com/ceph/ceph/pull/52575
+[5] https://lore.kernel.org/all/20230807132626.182101-4-aleksandr.mikhalitsyn@canonical.com/
+
+Thanks!
+Alex
+
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Seth Forshee <sforshee@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: German Maglione <gmaglione@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>
+Cc: <linux-fsdevel@vger.kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+
+Alexander Mikhalitsyn (11):
+  fs/namespace: introduce SB_I_NOIDMAP flag
+  fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+  fs/fuse: support idmap for mkdir/mknod/symlink/create
+  fs/fuse: support idmapped getattr inode op
+  fs/fuse: support idmapped ->permission inode op
+  fs/fuse: support idmapped ->setattr op
+  fs/fuse: drop idmap argument from __fuse_get_acl
+  fs/fuse: support idmapped ->set_acl
+  fs/fuse: properly handle idmapped ->rename op
+  fs/fuse: allow idmapped mounts
+  fs/fuse/virtio_fs: allow idmapped mounts
+
+ fs/fuse/acl.c             |  10 ++-
+ fs/fuse/dir.c             | 146 +++++++++++++++++++++++++-------------
+ fs/fuse/file.c            |   2 +-
+ fs/fuse/fuse_i.h          |   7 +-
+ fs/fuse/inode.c           |  16 ++++-
+ fs/fuse/virtio_fs.c       |   1 +
+ fs/namespace.c            |   4 ++
+ include/linux/fs.h        |   1 +
+ include/uapi/linux/fuse.h |  24 ++++++-
+ 9 files changed, 148 insertions(+), 63 deletions(-)
+
 -- 
-2.27.0
+2.34.1
 
 
