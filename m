@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-287810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59738952CD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1FB952CD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE1A28466D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32EF2830F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5088319D885;
-	Thu, 15 Aug 2024 10:40:29 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375601AC886;
+	Thu, 15 Aug 2024 10:40:28 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759F61AC883
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6521AC885
 	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723718428; cv=none; b=s4NcXW1zWM/cn0Lkb77lfPdvnOaZGLtrq4mqS3C+QL52rii3YPTGYYA3YmJBh4253vzfgru9FaH9Brh0e8xvFmNBrnBEguHVtDjhBxvRiOKMahHxaNHgYiBnEQtHPaIK3FNpOUHiAI0oLTc1xGeXJz13HvXd6LwVSLwt0Wp0gNY=
+	t=1723718427; cv=none; b=kDMQior04ef8hUc/xP5vhlBY8hrhV8ot3dZSVFc3pi0gor+VWyvqQhDjHQ749ral46brmQzJDZacA2Lj9f+nzL3JjcgRo8W9Ft4xWLC0+P535G6A2/iu9Xv67udYHM3BfhyCcT8Gu/q0bZ7+io3y92A5WwlO9fu8kM2L7nQ4cUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723718428; c=relaxed/simple;
-	bh=z1ba+5EJVDOkslQ+E/z3CgpEv67HZzOhoQigUq+k5cQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eDWJuMns4AYVPZ7AV7vfUP/w1rNGLNYWMKIN0mM1p/jm9s2M0NW2HUQSmQCdJcvopmi9lUyUdlImprcysiMqWA6kOPJpc29yweBcIla6qOKW9AzOHUMEyP2/i2+D8GaZFCgmPyJlmfNOcuL4ALa+yeIWjPVi+q/cNX3MrRgXj18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	s=arc-20240116; t=1723718427; c=relaxed/simple;
+	bh=BCmmieNUI4lmEO0U6tUUzo6gPeh57OR7A4GuRgAbXMk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DfkwfI6GeZDqxSPqpO960Odj3MDZjVC52KdllSm2CSPaTdtSB+TUjXe1wwRisB1kjRYxnmfe9bTJrO9PEZjqegXP/mTBtdMGUEBwBNUogas+1BmC0X4OXWlBEzcFIMVEC6tRsUBGtEO5oF8m0W/unLcgpgTA4v8Slw2dSB1Z4xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-397e0efded3so9191725ab.2
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-824d69be8f7so85398239f.0
         for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:40:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723718425; x=1724323225;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=opiCOyLB/xPeMdw+vyiT2OWRVsp382tiiE0i299tivY=;
-        b=IajH5E0EbS6vqWYZ2yiu/bD/Hq+0x23YA5I5JnosePfojL5FwbGHtrgrtXeCT8OQZz
-         wYL1OvgcFhV4fwLFg2nErqyXwX8TDOnPOMJpCTUSAMlhpeqgw8sHsFgibxfJsNDGM34H
-         k1S4ReSJGdXluBoHgN708Uwy68b5pspb7PyPr4ecGYkAqviTm7zr+G1WeayjdcuGoCOo
-         abM9ZNEJc1BuhpdCxWOuvcQJ1z7HqhoPXl/4Sn1XdVxbqsObisqVZuZ5H1FeJ6eTASm+
-         N43GyjDAcQHtIlzJaG2getmZ0a/pQxNjGYy7tK7QPj8MlvtjxM00OiUNlZe9In/ejmu/
-         +qKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUCYBks6wdvBMyPs7KTJ/ZIGn6ddM9r5vMMfL7XjeG5mYWXbEUzw0hANOwLdA48HMI8PwoMW/wo5qCHa28KuHNstLnuPEhCOh+s9O3
-X-Gm-Message-State: AOJu0YwfWs2LAQ6bV5Op3eYngTgsgKYY2gOjb+3HB4bxSLA4NtxiQisD
-	CYExx6upq++ik5TDYgSYMIUSIlLmAPUxPqGkzXvXsNvttCfa/s2sq6MILhsyb0aRKcVK2q9deZu
-	75pxC5n9O+sLsnJ1dozKV1TDlfuzLekaqGcqBQcAwCQWFvOL8xGX+u9M=
-X-Google-Smtp-Source: AGHT+IHwFK/7Fi1D4ndezxiB63QY2Su/S65+td2Lvy/Y8aP12/SaksBUdM8x7drT5SN13mffR4o50rRGTKkU4SCvPTX7wNuZem2M
+        bh=7Yu9jYSVcnvbxIatxBmYFvoSLSb1OU99YNJNpjw3ik4=;
+        b=Bi2KQdeEQThOZ26CUAGEYU5v6/pKvT+Kvvhn0rIeWTphhzNXiAUCaIVbJu6zrZvcxE
+         z8n9n1JEjkuQpbpMXXdpgBzgv45sJujidnOJ8HE1FwKQP0Cd2XfmTEz2yBkHzFLeISfp
+         A+yiTB1jdG/ke1rUm+YPxZ5Y2OHqsju0lv4ZLvFYdR4ddG2HrXBQesTMVm9QASZQlHLS
+         HfOTDvZ+TCIrIWKq/y68C0k0e0oe9gObbs91+7nLKPUpwrnJjh69PjQCNgGOwlguSZbd
+         fkL1ZkiZLYPSrehX/aGgnUKohwxUY0fUqkXydZipoSK9LTwRiDeqvXeoZqKIyUuSGpYE
+         c9Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCwS8tBLWSU4fMZu4wrPemgC7ZBWrvVCJ4a9d2aHoqOX0HIwqFd1dBHqqii0SnfuCMbRvEVuIN87TSztonaJbqTxXCKTilnqOu9Hls
+X-Gm-Message-State: AOJu0Ywro7TeTzOr7iTCcPzPnh3r4PTFTDG4hhSMOEGsxzoORiavxnyf
+	aRwIrITQgskazPBIJxJUX0x5EdNLD6/S1fmGbnIeq/dL4zpP9i9s5oHbtnzlDXmeBEIA0HlqtWU
+	tGjYqzOnYYNEUYQgI0SE/6yKEgGxqz16rI+3FavpuCq3Gd4vKH7QVFlA=
+X-Google-Smtp-Source: AGHT+IH3nDNZkdMLYskbOXMf/HRcQdTHbUXHqKTI0sYkHX84dShX8bUE0h8qfkQlgTbsvnTWT+x/goGGP9OIYUhv2rhQvB5QFE1Y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c1:b0:396:ec3b:df63 with SMTP id
- e9e14a558f8ab-39d124f3e2cmr3864035ab.4.1723718425574; Thu, 15 Aug 2024
+X-Received: by 2002:a05:6638:22c3:b0:4bd:4861:d7f8 with SMTP id
+ 8926c6da1cb9f-4cab0a036efmr244210173.4.1723718425345; Thu, 15 Aug 2024
  03:40:25 -0700 (PDT)
 Date: Thu, 15 Aug 2024 03:40:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000731785061fb678d5@google.com>
-Subject: [syzbot] Monthly xfs report (Aug 2024)
-From: syzbot <syzbot+list4f8957ccf166d2563804@syzkaller.appspotmail.com>
-To: chandan.babu@oracle.com, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000006f9129061fb67866@google.com>
+Subject: [syzbot] Monthly dccp report (Aug 2024)
+From: syzbot <syzbot+listd5bb09218cb571c8dc9d@syzkaller.appspotmail.com>
+To: dccp@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello xfs maintainers/developers,
+Hello dccp maintainers/developers,
 
-This is a 31-day syzbot report for the xfs subsystem.
+This is a 31-day syzbot report for the dccp subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/xfs
+https://syzkaller.appspot.com/upstream/s/dccp
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 12 issues are still open and 23 have been fixed so far.
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 7 have been fixed so far.
 
 Some of the still happening issues:
 
 Ref Crashes Repro Title
-<1> 74      Yes   possible deadlock in xfs_icwalk_ag (2)
-                  https://syzkaller.appspot.com/bug?extid=4248e91deb3db78358a2
-<2> 69      No    KASAN: slab-use-after-free Read in xfs_inode_item_push
-                  https://syzkaller.appspot.com/bug?extid=1a28995e12fd13faa44e
-<3> 22      No    possible deadlock in xfs_ilock_attr_map_shared
-                  https://syzkaller.appspot.com/bug?extid=069cc167ecbee6e3e91a
+<1> 106     Yes   KASAN: use-after-free Read in ccid2_hc_tx_packet_recv
+                  https://syzkaller.appspot.com/bug?extid=554ccde221001ab5479a
+<2> 57      Yes   BUG: "hc->tx_t_ipi == NUM" holds (exception!) at net/dccp/ccids/ccid3.c:LINE/ccid3_update_send_interval()
+                  https://syzkaller.appspot.com/bug?extid=94641ba6c1d768b1e35e
+<3> 17      Yes   BUG: stored value of X_recv is zero at net/dccp/ccids/ccid3.c:LINE/ccid3_first_li() (3)
+                  https://syzkaller.appspot.com/bug?extid=2ad8ef335371014d4dc7
 
 ---
 This report is generated by a bot. It may contain errors.
