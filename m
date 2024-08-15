@@ -1,126 +1,143 @@
-Return-Path: <linux-kernel+bounces-288242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EEE39537D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:01:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 714049537D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:01:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A041D1C226C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:01:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2B241C22047
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24161B1437;
-	Thu, 15 Aug 2024 16:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BF61B4C29;
+	Thu, 15 Aug 2024 16:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZIB6qPwR"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BA7XIfQq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E543AAE
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416921B143F;
+	Thu, 15 Aug 2024 16:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737659; cv=none; b=nrhA97nsYqNjRtXFwr2YhKt3bUuHhD8YDMt+sFqpZJtMNjyr/Fqx30+eClp1PDMa0qQ2oaggp455Ksy9TwnYjPoIZGmJw6axJiPBXji4djO/KprtERJuUw6QpaTsDYI7kdgosQkuNK/vf/tygH0j0ZuqWSIi26+JE52zcVjju3I=
+	t=1723737677; cv=none; b=fc5RrCZkuh1cbhhL5poA0IGNizzqFfxYkprKmYm1umrAkdModfUgmRcvcL/RLnUqzDpKoOR4gK7Yb0dGBuyEHrjH/GJAL3ShW6gN2UsAHr/dY4kFJJGwpDexZDZfcvccCHrw9LkSQrq6gA5Ns30dpG0HeYMdnJS9hVB5F1VGarc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737659; c=relaxed/simple;
-	bh=8EmgGrQTiAThFUecEEjj/YeR2I3mqpRC/ExlP7Mbp8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rsdQBzjwFQ8MQM4K8ucg5ulePWecil0jBHIi0+uk1hWUXLlO/xw4WO1nde8H7yJmbmgRXIkahOQPL/irEhNxbfDpZk5yNcER0bTJllvzrSlecdrlyQtZ3CWbCg21Guu1C+4WfxE0C3Z4qB/kKFDxIBMuEBa9LHaLiJW3JQY6WsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZIB6qPwR; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-81f8ac6b908so2176939f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723737656; x=1724342456; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kvY52rn3VLdN7FSBDk7M0Q/xyXbEHYPcDeYIz1HEN8U=;
-        b=ZIB6qPwRpqE5R1sOeKpkgt/kx+fb4VkH6RBlekOE207dVb2SivpPOn1Z7FY+xTda0O
-         aWP5oEh5/m563ppxAKSQzoeXC8h0P0+k+5LMuOr5RK4GEgLK+b6wUCkQZOZUtHE4sfJz
-         G+NZNhCqRIv88Ah7rQt2eabsLTfg5UDmX+0YFcOVsoTuLJlmsh752vcwpHwCqRVdZVAH
-         UecYR9cz9BP/hNdDMxdHlLe1RU/KH+pmxEudC/hIMyftKpHA343WWMWbJZ03e7A0v9fm
-         M7RzOjGqEAXRV+4a9zdpNyWyN4ICptusqYk4G4NaRLJ4QYtl4Qghxfto9tIPzqsXkJXH
-         x3Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723737656; x=1724342456;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvY52rn3VLdN7FSBDk7M0Q/xyXbEHYPcDeYIz1HEN8U=;
-        b=JH6sbEeEaLxmMpu7nL3hv7Aynmkw2zCv1NIrt1vY0o3CCPQdALAh+Xna/lhmg51w8M
-         8Pxs1pOiPpsBwIXU/9HMXB47uvoQ9NnN/M4Ao6h64kjRIL9+hdiCw+wlnYvXvVU2tHnj
-         FDBOsHujIwx2mF2Ywae3wo2Ic1JcZF4XpIun98FvJM0JVeyIFkFYSDiQi+iNPrk2ExGb
-         03v8uAyRGD736WtQf4zPv4mUNtMD5Ty7sXTmELnTfAl7naSDayvTGNmWwHmD7Dgr5vXh
-         550AMvcGQBs2mX54awgPKkCMaD5FjEdhDc0AUSSkDTwfrqtxhgjkThfHsUywfYvHR4mb
-         pYTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhpOPcPsfHdhRtTA3GFzuARVuADUCG11T26xtPrsuIv9rJoLUo0oIuXGyfIUfynP2iUKcz6IWniS2R8CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQiVmuEhEcWnjWcupm90OGg5+AJzl+3IBb42BPkmAtDtv5BFTi
-	gesK4ub6txzVoDlwCZoWR0BVgOr9CIoVRjAo1y1zOP456AXgmIz/eOlj3NGjnI8=
-X-Google-Smtp-Source: AGHT+IHVdJLpv3Jd1d39Hh3l6ibKrPATj6iR/ePmOqrUAeo+aVkAGUQ5weyaKqVzlglv7c5OP8ZOww==
-X-Received: by 2002:a5d:91c9:0:b0:822:3c35:5fc0 with SMTP id ca18e2360f4ac-824f2721fa8mr14417139f.3.1723737655813;
-        Thu, 15 Aug 2024 09:00:55 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ccd6f3db32sm566067173.116.2024.08.15.09.00.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 09:00:55 -0700 (PDT)
-Message-ID: <622e155f-2ad0-4f62-a6a7-c9c88903db82@kernel.dk>
-Date: Thu, 15 Aug 2024 10:00:53 -0600
+	s=arc-20240116; t=1723737677; c=relaxed/simple;
+	bh=bpLctNnXNGhiRFpnTqnNbNKjW5iZ+9VEc+lKuloqtSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TF+1j1hFiEoqKD/RoOYqKWDsvzgEsb7Osi+cYo4OyrhmhF91BxuvrkHFj8+ZKjSPjmQ1mORgXKVBbUbzgsl0cigCPdJ6Lc7FrC47VeyQ4lTQc7yf/AUQV/MN4mYpCunlzrpf35TX4TD4bYd8LzvgaWHwD2VDViRsZfeX8LWUTcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BA7XIfQq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C23AC32786;
+	Thu, 15 Aug 2024 16:01:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723737676;
+	bh=bpLctNnXNGhiRFpnTqnNbNKjW5iZ+9VEc+lKuloqtSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BA7XIfQqUp304q0UubGf+Dtll1j0k3G9oGyub1hlDn4xktjCwVzLDCOvouVAk9Wa+
+	 r9cYbFcrmT4BaiTcYySS+Clu6UH1gcoln0SBm2WjkalmR+Od0BINGeq2xx17xjfsHa
+	 oerCASdcnS77HqSiHJgsq0XlAdFecbGtLIw5Lk5PUX12v9ut26h4MNiHBb8s4ft61M
+	 p+U4uqxvZVUE6nFuRpo916Q0rJ2i4qzAGo/lJaP/oRjc9Mbfkpe/nFXPif1Is2Dud1
+	 cvYoMnP/tmB6AMmc6BezMmJSaowir88MPTz0lE7MUWbneEO8jHtnkFTp3bI6QkHhJU
+	 DasylzQzzV60Q==
+Date: Thu, 15 Aug 2024 17:01:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Andrew Lunn <andrew@lunn.ch>, Diogo Ivo <diogo.ivo@siemens.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Roger Quadros <rogerq@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	srk@ti.com, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH net-next v5 2/2] net: ti: icssg-prueth: Add support for
+ PA Stats
+Message-ID: <20240815160109.GN632411@kernel.org>
+References: <20240814092033.2984734-1-danishanwar@ti.com>
+ <20240814092033.2984734-3-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] rust: fix erranous use of lock class key in rust
- block device bindings
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Andreas Hindborg <nmi@metaspace.dk>,
- Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- "Behme Dirk (XC-CP/ESB5)" <Dirk.Behme@de.bosch.com>,
- linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240815074519.2684107-1-nmi@metaspace.dk>
- <172373175849.6989.2668092199011403509.b4-ty@kernel.dk>
- <CANiq72kFXihVGDGmRyuc0LkODYOv2jX3shP-dEHjV3k1sqFEKg@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CANiq72kFXihVGDGmRyuc0LkODYOv2jX3shP-dEHjV3k1sqFEKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814092033.2984734-3-danishanwar@ti.com>
 
-On 8/15/24 9:31 AM, Miguel Ojeda wrote:
-> Hi Jens,
-> 
-> On Thu, Aug 15, 2024 at 4:22?PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Applied, thanks!
->>
->> [2/2] rust: block: fix wrong usage of lockdep API
->>       commit: d28b514ea3ae15274a4d70422ecc873bf6258e77
-> 
-> If you picked 2/2 only, it requires the former as far as I understand.
+On Wed, Aug 14, 2024 at 02:50:33PM +0530, MD Danish Anwar wrote:
 
-Sorry I missed that, mostly because they were split into two separate
-postings. Hence it only pulled one.
+...
 
-> If you want to pick both:
-> 
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> 
-> Otherwise, I am happy to take them too.
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> index f678d656a3ed..ac2291d22c42 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> @@ -50,8 +50,10 @@
+>  
+>  #define ICSSG_MAX_RFLOWS	8	/* per slice */
+>  
+> +#define ICSSG_NUM_PA_STATS 4
+> +#define ICSSG_NUM_MII_G_RT_STATS 60
+>  /* Number of ICSSG related stats */
+> -#define ICSSG_NUM_STATS 60
+> +#define ICSSG_NUM_STATS (ICSSG_NUM_MII_G_RT_STATS + ICSSG_NUM_PA_STATS)
+>  #define ICSSG_NUM_STANDARD_STATS 31
+>  #define ICSSG_NUM_ETHTOOL_STATS (ICSSG_NUM_STATS - ICSSG_NUM_STANDARD_STATS)
+>  
+> @@ -263,6 +265,7 @@ struct prueth {
+>  	struct net_device *registered_netdevs[PRUETH_NUM_MACS];
+>  	struct regmap *miig_rt;
+>  	struct regmap *mii_rt;
+> +	struct regmap *pa_stats;
 
-Go ahead and take them, I'll just kill the one I have. Thanks!
+Please add an entry for pa_stats to the Kernel doc for this structure.
 
--- 
-Jens Axboe
+>  
+>  	enum pruss_pru_id pru_id[PRUSS_NUM_PRUS];
+>  	struct platform_device *pdev;
 
+...
+
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.h b/drivers/net/ethernet/ti/icssg/icssg_stats.h
+> index 999a4a91276c..e834316092c9 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_stats.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_stats.h
+> @@ -77,6 +77,20 @@ struct miig_stats_regs {
+>  	u32 tx_bytes;
+>  };
+>  
+> +/**
+> + * struct pa_stats_regs - ICSSG Firmware maintained PA Stats register
+> + * @u32 fw_rx_cnt: Number of valid packets sent by Rx PRU to Host on PSI
+> + * @u32 fw_tx_cnt: Number of valid packets copied by RTU0 to Tx queues
+> + * @u32 fw_tx_pre_overflow: Host Egress Q (Pre-emptible) Overflow Counter
+> + * @u32 fw_tx_exp_overflow: Host Egress Q (Express) Overflow Counter
+> + */
+
+./scripts/kernel-doc -none doesn't seem to like the syntax above.
+Perhaps s/u32 // ?
+
+> +struct pa_stats_regs {
+> +	u32 fw_rx_cnt;
+> +	u32 fw_tx_cnt;
+> +	u32 fw_tx_pre_overflow;
+> +	u32 fw_tx_exp_overflow;
+> +};
+> +
+>  #define ICSSG_STATS(field, stats_type)			\
+>  {							\
+>  	#field,						\
+
+...
 
