@@ -1,239 +1,234 @@
-Return-Path: <linux-kernel+bounces-287714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C247952BCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:19:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B72B952BFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:24:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F5052828E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C37A28530D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0250F1BD023;
-	Thu, 15 Aug 2024 09:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OP+WoPF2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vh7gBJs/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OP+WoPF2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vh7gBJs/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524AF1A00DE
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BE41E288E;
+	Thu, 15 Aug 2024 09:10:38 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEC71B8EAF;
+	Thu, 15 Aug 2024 09:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712909; cv=none; b=le34ZwW6Kln1t20gcTqh1wQeTxKRL4ZWTxFdddgmlevLprTM7ZXfZJ3hwH+I/AdGcHujiGpl9xNKTI07p0BTWYTk8SKq2zXQ/rJfFEfLqVtFgdsFpufiBkbjoyrXz7vMltJCC255x0poW/fkFC+NXaiBOt8H+rKlJmD/xTFkcOg=
+	t=1723713038; cv=none; b=F0GWAFbiyPFZ8bNSXCF06O5MMoaDo7A26eorGmoREvVsNK65nhvicWJCe95xe/rtAqqoBGUSHECcMdhd9sVUpztirxKzzH8fgwzm7YPcIWHnfnDGCtH0GpuuJ4rtgj1szRCDrrKBPPYSrAAFw+WR3O19ysq30wIsrcCZpMP+KIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712909; c=relaxed/simple;
-	bh=LV56AJxudgL24toWGOMCu5drTkNEj0f0SOc/cSvQqwM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n+reILi9FpRohHsh3svARkOpieVHkA0Tz8x7TPsjazMbnEy6fYAe5BovRe7NUKGMhBYlWwf1BhF9/cet70fVZWmJ/iOS+UWOmfz7XCOXI7f7qfVmN+cqmrZhgt4CBGenw2SNnFnBVNcgCcXyh5zBG3XB93RbKpxwjkFc4dQmudE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OP+WoPF2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vh7gBJs/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OP+WoPF2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vh7gBJs/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A13241FFDC;
-	Thu, 15 Aug 2024 09:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723712898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zvV7rDnQuEkYG7+I3UuDsGSUYF02JhMNqD6FrhNzFJQ=;
-	b=OP+WoPF2t8co2G1jmoZ5DiN3lmNr9pwbVCTU2NK/+sTqDJssXV+ZIPPsBzDCHh5NxwfhqO
-	uizENqkSwn4RGwhhnGWVVq/6fq49Jav4opWuHbPKpSnUjZ7v7MV60guy1av9Kwq+51Xklp
-	DramEnYQp3MXO6/KWR5wTXkwXK9RI58=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723712898;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zvV7rDnQuEkYG7+I3UuDsGSUYF02JhMNqD6FrhNzFJQ=;
-	b=Vh7gBJs/wwFxKvsQwwa/PsrZ8pmArsKMrXmI76kFBn3vUKTvFg0Qhxe4KoGYwLsbDL1vb2
-	p0NZaqOrvIcYD7Aw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723712898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zvV7rDnQuEkYG7+I3UuDsGSUYF02JhMNqD6FrhNzFJQ=;
-	b=OP+WoPF2t8co2G1jmoZ5DiN3lmNr9pwbVCTU2NK/+sTqDJssXV+ZIPPsBzDCHh5NxwfhqO
-	uizENqkSwn4RGwhhnGWVVq/6fq49Jav4opWuHbPKpSnUjZ7v7MV60guy1av9Kwq+51Xklp
-	DramEnYQp3MXO6/KWR5wTXkwXK9RI58=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723712898;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zvV7rDnQuEkYG7+I3UuDsGSUYF02JhMNqD6FrhNzFJQ=;
-	b=Vh7gBJs/wwFxKvsQwwa/PsrZ8pmArsKMrXmI76kFBn3vUKTvFg0Qhxe4KoGYwLsbDL1vb2
-	p0NZaqOrvIcYD7Aw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1DCE613983;
-	Thu, 15 Aug 2024 09:08:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4K8IBoLFvWYIDwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 15 Aug 2024 09:08:18 +0000
-Date: Thu, 15 Aug 2024 11:08:58 +0200
-Message-ID: <87ikw25f11.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-    Hans de Goede <hdegoede@redhat.com>,
-    <robh+dt@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<lgirdwood@gmail.com>,
-	<perex@perex.cz>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<kevin-lu@ti.com>,
-	<shenghao-ding@ti.com>,
-	<navada@ti.com>,
-	<13916275206@139.com>,
-	<v-hampiholi@ti.com>,
-	<v-po@ti.com>,
-	<niranjan.hy@ti.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<liam.r.girdwood@intel.com>,
-	<yung-chuan.liao@linux.intel.com>,
-	<broonie@kernel.org>,
-	<soyer@irl.hu>
-Subject: Re: [PATCH v11] ALSA: hda/tas2781: Add tas2781 hda SPI driver
-In-Reply-To: <20240727085048.1092-1-baojun.xu@ti.com>
-References: <20240727085048.1092-1-baojun.xu@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723713038; c=relaxed/simple;
+	bh=gXbtDV3Den7rYv5gxqLb1TBgiTVBk3gTcwJQqn4DZto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hmN7rNlG/I1hR6U+F419+MBmK3i+i4O90QK3/vCdBXCMpB24kybJCFvpLz+sbJNGHglpCjexS/TTnMyHPc79udGQJEnPMR/XzlxZ/noCLt+ZTC419/9wnrQU8X5y979Fh1Q95+8/FEVmS76wu74Ef7V2D5mZgF+Ek4JRnx6CBl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.10,148,1719846000"; 
+   d="asc'?scan'208";a="215659341"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 15 Aug 2024 18:10:27 +0900
+Received: from [10.226.92.106] (unknown [10.226.92.106])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6B69941B0FBE;
+	Thu, 15 Aug 2024 18:10:23 +0900 (JST)
+Message-ID: <4e1034fb-daf6-4bdb-80d2-62536394fc2d@bp.renesas.com>
+Date: Thu, 15 Aug 2024 10:10:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -1.80
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,redhat.com,linux.intel.com,gmail.com,perex.cz,ti.com,139.com,alsa-project.org,vger.kernel.org,intel.com,irl.hu];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[dt];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH 2/2] net: ravb: Fix R-Car RX frame size limit
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Sergey Shtylyov <s.shtylyov@omp.ru>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
+ <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
+ <b1c10539-4d47-4752-8613-785b0ad83f5e@lunn.ch>
+ <933ffa58-8092-4768-993d-cd62897d203d@bp.renesas.com>
+ <ed455f3f-dcb3-4654-af78-6ff6c6c5c22e@lunn.ch>
+ <524873e1-d770-4f29-a374-dab99fe87c14@bp.renesas.com>
+ <d5e2d054-e309-4382-a211-9fa9a0e83783@lunn.ch>
+Content-Language: en-GB
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Organization: Renesas Electronics Corporation
+In-Reply-To: <d5e2d054-e309-4382-a211-9fa9a0e83783@lunn.ch>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------erULbL10teRUTagGlpnZc7J2"
 
-On Sat, 27 Jul 2024 10:50:48 +0200,
-Baojun Xu wrote:
-> 
-> This patch was used to add TAS2781 devices on SPI support in sound/pci/hda.
-> It use ACPI node descript about parameters of TAS2781 on SPI, it like:
->     Scope (_SB.PC00.SPI0)
->     {
->         Device (GSPK)
->         {
->             Name (_HID, "TXNW2781")  // _HID: Hardware ID
->             Method (_CRS, 0, NotSerialized)
->             {
->                 Name (RBUF, ResourceTemplate ()
->                 {
->                     SpiSerialBusV2 (...)
->                     SpiSerialBusV2 (...)
->                 }
->             }
->         }
->     }
-> 
-> And in platform/x86/serial-multi-instantiate.c, those spi devices will be
-> added into system as a single SPI device, so TAS2781 SPI driver will
-> probe twice for every single SPI device. And driver will also parser
-> mono DSP firmware binary and RCA binary for itself.
-> The code support Realtek as the primary codec.
-> In patch version-10, add multi devices firmware binary support,
-> to compatble with windows driver, they can share same firmware binary.
-> 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
-> 
-> ---
-> v11:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------erULbL10teRUTagGlpnZc7J2
+Content-Type: multipart/mixed; boundary="------------VVx40Kl2aWXzy9BT3U745Et1";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Sergey Shtylyov <s.shtylyov@omp.ru>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <4e1034fb-daf6-4bdb-80d2-62536394fc2d@bp.renesas.com>
+Subject: Re: [net-next PATCH 2/2] net: ravb: Fix R-Car RX frame size limit
+References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
+ <20240615103038.973-3-paul.barker.ct@bp.renesas.com>
+ <b1c10539-4d47-4752-8613-785b0ad83f5e@lunn.ch>
+ <933ffa58-8092-4768-993d-cd62897d203d@bp.renesas.com>
+ <ed455f3f-dcb3-4654-af78-6ff6c6c5c22e@lunn.ch>
+ <524873e1-d770-4f29-a374-dab99fe87c14@bp.renesas.com>
+ <d5e2d054-e309-4382-a211-9fa9a0e83783@lunn.ch>
+In-Reply-To: <d5e2d054-e309-4382-a211-9fa9a0e83783@lunn.ch>
 
-Now it's v11, and I'd love to move this forward finally, instead of
-hanging forever.
+--------------VVx40Kl2aWXzy9BT3U745Et1
+Content-Type: multipart/mixed; boundary="------------0pJW0lJQaD5HaO0BUI0PAW4f"
 
-The HD-audio part looks more or less OK, but I'd need acks for the
-ACPI and serial-multi-instance parts below.
+--------------0pJW0lJQaD5HaO0BUI0PAW4f
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Put ACPI and serial-multi-instance maintainers to Cc.
-Rafael, Hans, let me know if that looks OK to take.
+On 13/08/2024 15:06, Andrew Lunn wrote:
+>> Apologies, my response here is abysmally late due to illness, other
+>> priorities and then the loss of my main dev box.
+>=20
+> Not a problem, life happens.
+>=20
+>> As you've said, a number of devices do not limit received packet size =
+to
+>> the MTU. There are many applications, other than a gateway, where usin=
+g
+>> jumbo packets in even just one direction would be beneficial. For
+>> example if an application needs to receive large amounts of data but
+>> only needs to send back control and acknowledgement messages. I think =
+we
+>> should support this where possible. This is the thought behind the fir=
+st
+>> patch in this series as the GbEth IP present in the RZ/G2L and other
+>> Renesas SoCs has a very asymmetric capability (it can receive 8000 byt=
+e
+>> frames but only transmit 1522 byte frames).
+>>
+>> If we explicitly do not wish to support this, that restriction should =
+be
+>> documented and then (maybe over time) handled uniformly for all networ=
+k
+>> drivers.
+>>
+>> I'm planning to submit v2 of this series shortly.
+>=20
+> Does the hardware support scatter/gather? How does supporting jumbo
+> receive affect memory usage? Can you give the hardware a number of 2K
+> buffers, and it will use one for a typical packet, and 4 for a jumbo
+> frame?
 
-The original patch is found at
-https://lore.kernel.org/20240727085048.1092-1-baojun.xu@ti.com
+This is exactly what happens. After recent changes [1], we use 2kB RX
+buffers and an 8kB maximum RX frame size for the GbEth IP. The hardware
+will split the received frame over one or more buffers as needed. As we
+would allocate a ring of 2kB buffers in any case, supporting jumbo
+packets doesn't cause any increase in memory usage or in CPU time spent
+in memory management.
 
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -1769,6 +1769,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
->  		{"CSC3557", },
->  		{"INT33FE", },
->  		{"INT3515", },
-> +		{"TXNW2781", },
->  		/* Non-conforming _HID for Cirrus Logic already released */
->  		{"CLSA0100", },
->  		{"CLSA0101", },
-> diff --git a/drivers/platform/x86/serial-multi-instantiate.c b/drivers/platform/x86/serial-multi-instantiate.c
-> index 3be016cfe601..b15c819023d0 100644
-> --- a/drivers/platform/x86/serial-multi-instantiate.c
-> +++ b/drivers/platform/x86/serial-multi-instantiate.c
-> @@ -368,6 +368,17 @@ static const struct smi_node cs35l57_hda = {
->  	.bus_type = SMI_AUTO_DETECT,
->  };
->  
-> +static const struct smi_node tas2781_hda = {
-> +	.instances = {
-> +		{ "tas2781-hda", IRQ_RESOURCE_AUTO, 0 },
-> +		{ "tas2781-hda", IRQ_RESOURCE_AUTO, 0 },
-> +		{ "tas2781-hda", IRQ_RESOURCE_AUTO, 0 },
-> +		{ "tas2781-hda", IRQ_RESOURCE_AUTO, 0 },
-> +		{}
-> +	},
-> +	.bus_type = SMI_AUTO_DETECT,
-> +};
-> +
->  /*
->   * Note new device-ids must also be added to ignore_serial_bus_ids in
->   * drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
-> @@ -380,6 +391,7 @@ static const struct acpi_device_id smi_acpi_ids[] = {
->  	{ "CSC3556", (unsigned long)&cs35l56_hda },
->  	{ "CSC3557", (unsigned long)&cs35l57_hda },
->  	{ "INT3515", (unsigned long)&int3515_data },
-> +	{ "TXNW2781", (unsigned long)&tas2781_hda },
->  	/* Non-conforming _HID for Cirrus Logic already released */
->  	{ "CLSA0100", (unsigned long)&cs35l41_hda },
->  	{ "CLSA0101", (unsigned long)&cs35l41_hda },
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
+ommit/?id=3D966726324b7b14009216fda33b47e0bc003944c6
 
+Thanks,
 
-thanks,
+--=20
+Paul Barker
+--------------0pJW0lJQaD5HaO0BUI0PAW4f
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Takashi
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------0pJW0lJQaD5HaO0BUI0PAW4f--
+
+--------------VVx40Kl2aWXzy9BT3U745Et1--
+
+--------------erULbL10teRUTagGlpnZc7J2
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZr3F/gUDAAAAAAAKCRDbaV4Vf/JGvYDB
+AP9ii2E2RVOgViQWR4hwEteXogdhQevtQDhtKYFohrPM6gEAicbbVIF6CnteUb65/fPI6HFXJdjs
+y5kNFqt69TdVwAk=
+=kSLz
+-----END PGP SIGNATURE-----
+
+--------------erULbL10teRUTagGlpnZc7J2--
 
