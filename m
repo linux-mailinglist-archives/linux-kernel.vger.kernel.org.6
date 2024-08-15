@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-288176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C6A9536DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:16:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23789536E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0BE71F21A28
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:16:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314AB1C23610
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559771ABEAB;
-	Thu, 15 Aug 2024 15:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EBC1ABEBA;
+	Thu, 15 Aug 2024 15:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FfT6r+Uc"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkMkBcgB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF301A4F1C
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1710519F49B;
+	Thu, 15 Aug 2024 15:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723735001; cv=none; b=qkuXO0ZyaZ7FvvSOsNoyeK4luIOvXX3bFTmGysi4BIW+oTihefndOgUmej9sQtSTBzzVCDY4eg9petPrs32HQSMHANGf4faTsuKz7O+bhmOlb2l/HUaped5eWtTw2gHyxQ4ZjJ1Gr/QY0YW5fS05uMB8X0XdRQU3OKkzg7FS+zM=
+	t=1723735070; cv=none; b=XzhLuGEb9iAiB2kDzYdDJ4GO5hCGZRHaOUyVRFX91bSQXH5ndNfMjckjapAurPmNHPASVeQuWnLetpqyy3QNjODJ3vERP3FmJ2qbstTTQJsGtkhU3GMFr6mgw2EZFjNooGt346Cmx/6CRSsiABTQXE4tWFG+6pds1SYNf9YB2qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723735001; c=relaxed/simple;
-	bh=p41m5YvSjQgQm0tkYUYL+QWq1GHejmaKGY1AgryhcvY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gUN6WzqZsngg1kVwFt/eiSmWHlc+Wg2S4djo1Skr59ncubxWq71wpYVhuyJrIrg/0iJc4DJzKADHNsm+MM7wFD0I6nBuJQzBV+TwzN9+hCUbzOCPCt6cWnDJg2z4Yg0zjaE0/hEvfmd0yU404lpTALRNCVwpwnJG0vP+7WdoBGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FfT6r+Uc; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e035f7b5976so2159200276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723734999; x=1724339799; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p41m5YvSjQgQm0tkYUYL+QWq1GHejmaKGY1AgryhcvY=;
-        b=FfT6r+UcQKRbDGDpXZVInCWT+bvz8y/5VravLXNilCiXc9SEPhdOfUPXiV/l95mIS8
-         n87pfIsw4zW2PNFrrE0OE9gs/LgZYmBXrVcQGrebSoz0bH5by+9z3DoAtrXAoWVX5uhF
-         zSQ3XBVXhQHnFa4dfl2EOiZcIqVRKUlZMfMVsFuPXuOycAScZ/PnQ6MRfSEFuG1UxCpQ
-         oGtinl8D/SAGb0rxH6F6jBlatWOxi187HS9Ohda5YEdTi+Qz+O49CvQVsAFolT7YPSR9
-         itwURHhYcbFGsXU9PfOq2M7nPl7mi+YD5kjM0wQje7JLm2foqgu2DOECOrFyKKCAMdBx
-         Dt6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723734999; x=1724339799;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p41m5YvSjQgQm0tkYUYL+QWq1GHejmaKGY1AgryhcvY=;
-        b=b9r3gj5oGMxsqLtxp7Aln9i2xYUD4+6XJb23+5d47X1bO3f5iDqm0/sf2X9wx5c6AK
-         QAWsEseXgCT6Zk4RclneQCIMv+9G4XscIHwrqCbtc72Ijtbz1xyEkfkDmmZXuqjfprrx
-         PFJP8uNv/S0IlJ3Q5+C0I7ssHYRuYK5LOwYCl2L5axw34ZasttRMrxWtn7VN7a5B7nk3
-         +bcK/vmtTzoBtEZzI3nIN1fmQZ6rsNFoaxQXThf3O4tJCEQ9THqUCn7ztd6tIHkKZJOt
-         sU2tUonoZSgIIcJAxRRswQJqk0vekXp5r+peGQ2Eq3fO6wCd8Et4eydhk+uwy1Gcr71h
-         FFLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxenOgb7hpyRL/zop7Ok331Ok1eL0Aem+GDfj7V999ro64zSJNlUZDdmA/EsG0lVKTZcAe34iAacnnr6c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLTFI22jfZtgcQC9vWDkWfIP3eOktZu6a4CqwLSqNER9Xo1COM
-	8pFCTs9ZOhMpKfmVL7XrZ/5u9of8coUU+gHsKwH4gAZ3rk+Rya1NfSzWwTqQ9AcyY3aMv7gP5iO
-	fbg==
-X-Google-Smtp-Source: AGHT+IFFoxTCAf/VBwvpKjOPtp780LvH6h9NZi2W1UhdqbZyI4z9u0aCzY3G15g7VdYrZSLAaSVeTd6UZGw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:910e:0:b0:e0b:a34d:f223 with SMTP id
- 3f1490d57ef6-e116cecab95mr69092276.5.1723734999238; Thu, 15 Aug 2024 08:16:39
- -0700 (PDT)
-Date: Thu, 15 Aug 2024 08:16:37 -0700
-In-Reply-To: <20240731143649.17082-1-john.allen@amd.com>
+	s=arc-20240116; t=1723735070; c=relaxed/simple;
+	bh=Eh+3dI9QYcV4aXS/Haj8Qthw9TJbckiHfHF7kk6QLlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rI/SO0iqLRuWNgYdaUzyXKIRL95LTKtA2ag88YllJetOLtbIcigomhVbdubm7vYcdwE2fFohrBZWrMCUqtvHxAu686zOycT0H7Q9m4g0iV6n+DOWvXqlu+9q5i7eNwzBgQQjcYiy7500ZzFLKwYoH1BI3sJGhsAG04Ctn23UWAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkMkBcgB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC2AC32786;
+	Thu, 15 Aug 2024 15:17:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723735069;
+	bh=Eh+3dI9QYcV4aXS/Haj8Qthw9TJbckiHfHF7kk6QLlI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rkMkBcgBHp5hFSpGS1WLK3TjCWQMtDw9ZwumXUf5IxiL6NUxRvJ/EvUqAqYC0Sr7X
+	 OkoBRkXW5FBpVDkMhMgZO+t76ZW1QItnebpdp4r3yVElbG3tUj+UYycWGYsw8j89Me
+	 N8H0QSoSKsjdROgz/gNCm3cX776x9U5fzFqwbwyGMdj9e3w2rwLOEYEetWZiLkkFSv
+	 ZfNVG8WpKQ0dN43FBMkpZolYi30cxSz28KZB2hzl4wNmFJ29G49QMKo4kdp4crCZNC
+	 edoneoUT3EdCIYpw4gkbbuzAkfVqpHIyWzxoeoovTt1sp3f8WbYNMfzEFDdukAYvm5
+	 JjXfUyzk44Q/A==
+Date: Thu, 15 Aug 2024 16:17:44 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>, Michal Simek <michal.simek@amd.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Ariane Keller <ariane.keller@tik.ee.ethz.ch>
+Subject: Re: [PATCH net-next 1/4] net: xilinx: axienet: Always disable
+ promiscuous mode
+Message-ID: <20240815151744.GL632411@kernel.org>
+References: <20240812200437.3581990-1-sean.anderson@linux.dev>
+ <20240812200437.3581990-2-sean.anderson@linux.dev>
+ <20240815145832.GG632411@kernel.org>
+ <9d67d2b0-e4bd-466a-ad60-e40d4b1fc4e7@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240731143649.17082-1-john.allen@amd.com>
-Message-ID: <Zr4b1bpccYKpMUDA@google.com>
-Subject: Re: [PATCH v2] KVM: x86: Advertise SUCCOR and OVERFLOW_RECOV cpuid bits
-From: Sean Christopherson <seanjc@google.com>
-To: John Allen <john.allen@amd.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, thomas.lendacky@amd.com, 
-	bp@alien8.de, mlevitsk@redhat.com, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, yazen.ghannam@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9d67d2b0-e4bd-466a-ad60-e40d4b1fc4e7@linux.dev>
 
-s/cpuid/CPUID
+On Thu, Aug 15, 2024 at 11:14:41AM -0400, Sean Anderson wrote:
+> On 8/15/24 10:58, Simon Horman wrote:
+> > On Mon, Aug 12, 2024 at 04:04:34PM -0400, Sean Anderson wrote:
+> >> If prmiscuous mode is disabled when there are fewer than four multicast
+> >> addresses, then it will to be reflected in the hardware. Fix this by
+> >> always clearing the promiscuous mode flag even when we program multicast
+> >> addresses.
+> >> 
+> >> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
+> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> >> ---
+> >> 
+> >>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 4 ++++
+> >>  1 file changed, 4 insertions(+)
+> >> 
+> >> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> >> index ca04c298daa2..e664611c29cf 100644
+> >> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> >> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> >> @@ -451,6 +451,10 @@ static void axienet_set_multicast_list(struct net_device *ndev)
+> >>  	} else if (!netdev_mc_empty(ndev)) {
+> >>  		struct netdev_hw_addr *ha;
+> >>  
+> >> +		reg = axienet_ior(lp, XAE_FMI_OFFSET);
+> >> +		reg &= ~XAE_FMI_PM_MASK;
+> >> +		axienet_iow(lp, XAE_FMI_OFFSET, reg);
+> >> +
+> > 
+> > Hi Sean,
+> > 
+> > I notice that this replicates code in another part of this function.
+> > And that is then factored out into common code as part of the last
+> > patch of this series.
+> > 
+> > I guess that it is in the wash, but perhaps it would
+> > be nicer to factor out the common promisc mode setting code
+> > as part of this patch.
+> > 
+> > Otherwise, this LGTM.
+> 
+> I thought about doing that, but it would have required changing the
+> indentation of ~10 lines and I thought it would be easier to review
+> the patch without that noise.
 
-On Wed, Jul 31, 2024, John Allen wrote:
-> Handling deferred, uncorrected MCEs on AMD guests is now possible with
-> additional support in qemu. Ensure that the SUCCOR and OVERFLOW_RECOV
-> bits are advertised to the guest in KVM.
+Sure, I was also wrestling with that in my mind.
+I think we can stick with what you have :)
 
-To host userspace, not the guest.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Please add a paragraph explaining (a) what these features do, (b) why
-KVM doesn't need additional enabling, and (c) why KVM can't emulate these features
-in software (though this can be omitted if it's quite obvious from (a)).
 
