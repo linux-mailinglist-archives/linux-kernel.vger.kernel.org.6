@@ -1,83 +1,53 @@
-Return-Path: <linux-kernel+bounces-287700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134E3952BAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:10:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01395952BBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE521F2112E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5C41F220C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576081D54F4;
-	Thu, 15 Aug 2024 08:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3952B1CB30E;
+	Thu, 15 Aug 2024 08:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Tt3zkGX6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mCaUsI+2"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D3D1CB31B;
-	Thu, 15 Aug 2024 08:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2551DB443
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723712280; cv=none; b=p+itmnzG02LPrRdw1mbH3+kJ5LK5mmsrqJRRyQ4FfklWpFuTEtKSH95dmFdk08kKKgMm/52FsobHevyQUwsCR5NT1Opp/vPJnjsPDiwEMItm2o2iSjP7tEG3AQJQtpctb0H5fRGU/AlhbZcAc2l5+3ZgA67wWi9uQg7MheJ8zVk=
+	t=1723712290; cv=none; b=HCCIdrhv0f3d+TXhgMp2eRy2TknZzx8qxgDMgqcA83sXSXoK5+mENFNXqt+E4/vNTV+5DKQ8EZrDekYwHDc7Ayj4nxLn7K7tqWIs+e5AhjSD91gzcTRQPd52pw2sCR3EeZNIn3av2XO3TaXx6UW2Cis0+sTyrQIQ+34xBWb0vwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723712280; c=relaxed/simple;
-	bh=1l5TdOHbgcWuHfUzMxTaN2hJS2ywBZSk4KF70DeecsM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZumnBp8ZiBCf6sxxAuwmR+ZcZaOF8hG4OpasE1vq/gMNDF12DlIAVz0vr3QP5PWqGdfB8G0Lge7XRzIkX+xkZPdRkJ3QhuIxRHxwMjNedyeHZ0d0YkZ/HYIdBSGdJN+q8iPcTS1WnI5m1QZftJzo3L4b9/DxJlaxaaeBx5KTzws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Tt3zkGX6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F7GpEK027147;
-	Thu, 15 Aug 2024 08:57:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=bMVve0lmRS9
-	buNBEdR3qGI9yOpRoUH561CNAj+F5q08=; b=Tt3zkGX6r20K3H9yu6z0mtERSBE
-	YRZP489tdj+/j7DJvCv1pnR5socEOo/MrUHO5s/suH5MTMKxlORqvMPFXTbV2iAG
-	roAhH5T2BwgiBpdLwjX2SAA1UZYrCHyFfuCHHpU5mNebFpuLV9V+yd+ZU3b5+kBo
-	EqmbaIHtw4/dTelwtC/UOjG9qJCvM76+ccjhgERGVxn6XMELhXGeBZB/TDzts5F2
-	/4Pb6H5aa2/5LLYISHrshE46hSWD6jrJUUmPUF687LlDHzW+a3kcGfh5iAM/DwKe
-	W442xccbJEVVvUUu43Xlea3BVgTEIA67moPGj3WSr6oVAOTyDfdtoJvJCpA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411d5688pd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 08:57:33 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47F8u8eE028285;
-	Thu, 15 Aug 2024 08:57:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 40xkmhennv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 08:57:31 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47F8vSF6029646;
-	Thu, 15 Aug 2024 08:57:30 GMT
-Received: from hu-devc-blr-u22-a.qualcomm.com (hu-mdalam-blr.qualcomm.com [10.131.36.157])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 47F8vToF029697
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 15 Aug 2024 08:57:30 +0000
-Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 466583)
-	id B9606417FB; Thu, 15 Aug 2024 14:27:27 +0530 (+0530)
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org, thara.gopinath@gmail.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        gustavoars@kernel.org, u.kleine-koenig@pengutronix.de, kees@kernel.org,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com,
-        quic_mdalam@quicinc.com, quic_utiwari@quicinc.com
-Subject: [PATCH v2 13/16] crypto: qce - Add support for lock/unlock in aead
-Date: Thu, 15 Aug 2024 14:27:22 +0530
-Message-Id: <20240815085725.2740390-14-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
-References: <20240815085725.2740390-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1723712290; c=relaxed/simple;
+	bh=KRx7wmSdhjanM7hrHBPThs8AQLRMQFRVlPAECjcB2PM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VTKSOy/SWkB8lZ8hDGsu2cJ02MhWz73WOBH1jjpqAVAW9jmjbjyEvazdotiw6Hik361EzGCZMfpQaiiQ+qm1+JHF7THirfYs9qIqdXO5iH4/kas2RVqYRYGJbAVI2DWT1zFRtUnA8eIjoSw5sbSl882Tixf47lvx2qsZQBvxKf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mCaUsI+2; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723712286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oKn02HYe5r+8UUPEpvU95NDzA4gCmR2BDgfjmPF8E7Y=;
+	b=mCaUsI+22EPFq7azpdaN+FYd43ubxN+CYQbKY5eStqBvnmBA4RV0z9WXziY8Zzc3Pui8XB
+	IGka3fBdZhb8QySmUUJxM8iBziT20+Ix6va6NC94Lj5qTs/ngXwVj9FqWoIpFpqrj0Z5jM
+	yB0F6/fA0REe+xWHg+77YzLdYFREgjk=
+From: Youling Tang <youling.tang@linux.dev>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	youling.tang@linux.dev,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: [PATCH 1/2] bcachefs: drop unused posix acl handlers
+Date: Thu, 15 Aug 2024 16:57:43 +0800
+Message-Id: <20240815085744.224879-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,66 +55,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: pWga5pM_evWnirxuErqi5Phsp8rwPfoA
-X-Proofpoint-ORIG-GUID: pWga5pM_evWnirxuErqi5Phsp8rwPfoA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_01,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408150064
+X-Migadu-Flow: FLOW_OUT
 
-Add support for lock/unlock on bam pipe in aead.
-If multiple EE's(Execution Environment) try to access
-the same crypto engine then before accessing the crypto
-engine EE's has to lock the bam pipe and then submit the
-request to crypto engine. Once request done then EE's has
-to unlock the bam pipe so that others EE's can access the
-crypto engine.
+From: Youling Tang <tangyouling@kylinos.cn>
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+Remove struct nop_posix_acl_{access,default} for bcachefs filesystem
+that don't depend on the xattr handler in their inode->i_op->listxattr()
+method in any way. There's nothing more to do than to simply remove the
+handler. It's been effectively unused ever since we introduced the new
+posix acl api. See [1] for details.
+
+Link [1]: https://patchwork.kernel.org/project/linux-fsdevel/cover/20230125-fs-acl-remove-generic-xattr-handlers-v3-0-f760cc58967d@kernel.org/
+
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 ---
+ fs/bcachefs/xattr.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-Change in [v2]
-
-* Removed unmap_sg() from crypto done api
-
-Change in [v1]
-
-* Added qce_bam_acquire_lock and qce_bam_release_lock
-  api in aead
-
- drivers/crypto/qce/aead.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/crypto/qce/aead.c b/drivers/crypto/qce/aead.c
-index 7d811728f047..13fb7af69f54 100644
---- a/drivers/crypto/qce/aead.c
-+++ b/drivers/crypto/qce/aead.c
-@@ -63,6 +63,8 @@ static void qce_aead_done(void *data)
- 		sg_free_table(&rctx->dst_tbl);
- 	}
+diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+index c11bf6dacc2c..9e77e949a29b 100644
+--- a/fs/bcachefs/xattr.c
++++ b/fs/bcachefs/xattr.c
+@@ -623,10 +623,6 @@ static const struct xattr_handler bch_xattr_bcachefs_effective_handler = {
  
-+	qce_bam_release_lock(qce);
-+
- 	error = qce_check_status(qce, &status);
- 	if (error < 0 && (error != -EBADMSG))
- 		dev_err(qce->dev, "aead operation error (%x)\n", status);
-@@ -433,6 +435,8 @@ qce_aead_async_req_handle(struct crypto_async_request *async_req)
- 	else
- 		rctx->assoclen = req->assoclen;
- 
-+	qce_bam_acquire_lock(qce);
-+
- 	diff_dst = (req->src != req->dst) ? true : false;
- 	dir_src = diff_dst ? DMA_TO_DEVICE : DMA_BIDIRECTIONAL;
- 	dir_dst = diff_dst ? DMA_FROM_DEVICE : DMA_BIDIRECTIONAL;
+ const struct xattr_handler *bch2_xattr_handlers[] = {
+ 	&bch_xattr_user_handler,
+-#ifdef CONFIG_BCACHEFS_POSIX_ACL
+-	&nop_posix_acl_access,
+-	&nop_posix_acl_default,
+-#endif
+ 	&bch_xattr_trusted_handler,
+ 	&bch_xattr_security_handler,
+ #ifndef NO_BCACHEFS_FS
 -- 
 2.34.1
 
