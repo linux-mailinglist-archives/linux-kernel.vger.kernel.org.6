@@ -1,165 +1,285 @@
-Return-Path: <linux-kernel+bounces-287794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA790952CAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:45:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CDF952CAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8774428195A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8B3281438
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B995D1BCA0D;
-	Thu, 15 Aug 2024 10:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD5C1B5828;
+	Thu, 15 Aug 2024 10:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMOcgjnq"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HNYCSWjV"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0DE1BC9FA;
-	Thu, 15 Aug 2024 10:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F3E370;
+	Thu, 15 Aug 2024 10:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723717429; cv=none; b=gvjxi0AC4/mqUHU9QuIJ230oExavvSvCUMT3cfJUJe2FOtsTP9E61zdcirS7zZOktnxiGJSewe9xvSiCQUpgH/nmxv/jkfpDCzxlxZygWL4olH/e2chPXuRCk4MU6DmgLaXlZwDxzg8VgX76OgqGG4oub9G1gCIhHsmCuibT6S8=
+	t=1723717595; cv=none; b=uEdoe5/tj0QXqZC/As35F1bKqGb/wU9qCWzw5kDfymx/CUD0pTrCwduYWJkWrVCD9L/GwH0ernaIa6D5NXCgmktMaS8Uejy9AXmgOW4WMcxPwY2tv6irLFPKbbuQFXWyqTEyiXsCbS36FBvCl/gAXDSYSsz1FVDmJyCMc6LDRE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723717429; c=relaxed/simple;
-	bh=sDQnLPPU7CmUJJcoqQzx+GzeOhbElOfyvYedxIsokAU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CV+2rux6T+59rluSmdJdilh8R+Bqh6jbjtmaW8dbaM+rYzCOI8n7GXqxSQ4EKbQ9K1hU6chaU9s/ArRBjx5uR8FEGWQYcXswPZd5d4e2Npn+//acaqrQkkWFEGdxNdfUNM4r2J+nsHRwwcqWVfDZl4nHqPdpf+mzz4B1T2LNHcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMOcgjnq; arc=none smtp.client-ip=209.85.210.44
+	s=arc-20240116; t=1723717595; c=relaxed/simple;
+	bh=lAe2vVpSugfIIjdbD4FWx/7yrntYpU7quHyeR3LdBjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LkacCT1/lg5Wx9lEi2Y8tSpPsrC4OLgF/4PYT1iDgB8+aFG2hiIess5WnB+Ze5kgo0pAWJCPJfNyzKx4Qtzx0sUwhwrccBXb+sAXEfDR/KyRPwjFWak4j8NilPiu5AjiHOCvqN3LMFzujAgpTTTv/xJ2Kikv/qy8Np1I6ew9pR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HNYCSWjV; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7093f3a1af9so433541a34.1;
-        Thu, 15 Aug 2024 03:23:47 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so1182864a12.0;
+        Thu, 15 Aug 2024 03:26:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723717426; x=1724322226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u3zCUHzp/42aLKvNYjy11VU0WvKfSv2JHMOxj6wRNYs=;
-        b=ZMOcgjnqiQB83OcnM18kIFIw9Tt6WdlAEuCY+UMiT622qzn1uACeZ6HwMeo5cd01bj
-         fmgIQSEoyCg8+HnE3A1WoA4vmYf2agaFFmOdw8azcJmklj2m/Cag8iv8/RnidsUDbL3y
-         sLXF6+B0GrLNpDelGlXAZgflhKvzLLg5tsiYrrAXB4bObN75Jvx/F5edghiei4hhiSdy
-         rwcWifF1bf9yk8bZrF+NV6CI6rQJ0N4eZ4MDAfSrkdBUrCBQuopMLuP6FXAg2awOCWns
-         0ldM2eTvaiSXsCDIM0xBAYtuz7qlfKTHgqlEkstLS87rLC6Vm3//YskzvGfpOchHJ4Rs
-         2keQ==
+        d=gmail.com; s=20230601; t=1723717592; x=1724322392; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vTO73W8ziVgnh6T8iVSlljTIqvEyvsW3MqydaZeuxJo=;
+        b=HNYCSWjVHsWrCR4q83jTFIAX2S12BRsGjbzqd+6h9S2077822F7tEMetowsiPimvZx
+         r42rk1SieGNhGsgEENcZS3Y9f94tI+NiFvJqWFdePDSutPDs6LM0Q2svaO/evW50fJEX
+         3+qgmlAOrJL67QFn4w+7GwKUSoSo8EE4FRuXCtYRA1An++vEzQxY9XCTXd+1T8q65NJX
+         XXRuSKydoylWzujYRYgdaxLF7wk3KzARC0e4aziWeebUXcXQA6M68PKiT2f1CHBrKjRj
+         5vPbRnrEy8Fgmcuw7b23coE7uhATIXbzQXxOAyISjStWdEAYGEoqNTkB40vU4bt63nHK
+         VZUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723717426; x=1724322226;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u3zCUHzp/42aLKvNYjy11VU0WvKfSv2JHMOxj6wRNYs=;
-        b=kszxmLuazL7hfNZHW4FtYpHNUUbRGYstAlOmYlgawhvYuwKVcGDCamDHPYQmF8+Tuu
-         BNMACMpPWrr/0PUADGe2uf7acZSWrdMiud5WTjKKw1evfnLvjcZFpClDTrdkND58tlM8
-         EkChN3W4/VGSO09X6kLHK+gVL9i943p55fZKeTVx6M1g1G0AI2puMic9jGclze2KeL6t
-         i0q48VcKtI4NZCxdmSZSxoisw1Cr8kiy1k0mVqrSh9eDSQuMJal3bUJWRpE2AehVDClf
-         13q2LbeSLrQX2SmAKHF30qUZwn48qM3KfIR7BcRZU9vEaovGGQpT3jqAofypVsfmKJ54
-         r33A==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ36khcPDfmW7eab7jEDo1cXHZN2Gsh4AmJYBTrLy5+lfnSIRH7FD5du4Sm938sNc3TjWFfEN4aT2Q5eMcjdgvuRLNAljlBXUsHy8/RCHOymWVoAf94Bnjy30914Y+E+vhGiUA
-X-Gm-Message-State: AOJu0Yxa5axvHOPcOzrwxCk5HVD+2kPtDa9JzbJTqehQKantYtBOGn2s
-	3vzUbRjIUtPV6bJXd5pLU0M5p7dKi3OPbYE4AsTRG5cRswLlfi40
-X-Google-Smtp-Source: AGHT+IHg0rTvW1URXIJnndrN5lBUZKzPcNKldhzVUS7WjmxvA0df04isk9562g++e7EnyLb3vki6cA==
-X-Received: by 2002:a05:6830:660a:b0:709:34e4:9b8b with SMTP id 46e09a7af769-70c9da1770dmr7368623a34.32.1723717426470;
-        Thu, 15 Aug 2024 03:23:46 -0700 (PDT)
-Received: from localhost.localdomain ([49.0.197.176])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127ae73564sm786129b3a.92.2024.08.15.03.23.44
+        d=1e100.net; s=20230601; t=1723717592; x=1724322392;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vTO73W8ziVgnh6T8iVSlljTIqvEyvsW3MqydaZeuxJo=;
+        b=DWwARAG2bcltT7fZd1seNsC/gsQ8NP5f+AyYDlaxhPiX0quiKorYmpdLV3rOsL62dS
+         sQXeMqIsQvqwN39yCLjGiy1zfLYCysPxJyKeeNNGMQrEXIWwofO/yCSkE+iaT0sXhPv+
+         EVwSrJkj9PHc0MomPCZSkKxF9ZTq9sGMEhWFP/y6qEujYhomO//KZkGueSjM1BG3Wcuf
+         aZY1KVOSIWHVdS9hNuogh72qRgBJyvnhFFljcbHBNVZKjzbmK86yadKr/8b/Yo2tg7oP
+         14RxINNMh7zXCLht68ThRf/r8dNsCCbM+wexCPQmPzmshgPI02S8BfNIs27aIeb5Vg8V
+         Ya/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVbwQOxnnhjRc+Nx0WzkEMe1Tw9bPC3dGSMHNOENqQSnAQ0KhYl+ZFHufLmvcS5SrECYgQFESgIWF4wQFAbtST66WMb2HwS7sn5RS36
+X-Gm-Message-State: AOJu0YzTZeAC6aSoO7HrXG7FTZOZJO9KCuJNH6cQoksfr6KXPRp8CUEf
+	5pN4wyKEqAJmqerpavDUDOFKeV713T2Pt0SE0tKIWhWudcSkJQXc229BzQ==
+X-Google-Smtp-Source: AGHT+IEfx6ZFLs0hghbnMMaMu58BkV9hLZIBaMZKkf+skhQnZZFjQrZRBuVXGFWxLlC+91OhcTOOeQ==
+X-Received: by 2002:a05:6402:3546:b0:5a2:d411:89fa with SMTP id 4fb4d7f45d1cf-5bea1cb2054mr3548815a12.36.1723717591919;
+        Thu, 15 Aug 2024 03:26:31 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bebbe7fa52sm696875a12.73.2024.08.15.03.26.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 03:23:46 -0700 (PDT)
-From: sunyiqi <sunyiqixm@gmail.com>
-To: pabeni@redhat.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	sunyiqixm@gmail.com
-Subject: Re: Re: [PATCH] net: do not release sk in sk_wait_event
-Date: Thu, 15 Aug 2024 18:23:29 +0800
-Message-Id: <20240815102329.172161-1-sunyiqixm@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <e6171479-28b4-4155-8578-37a14dabee50@redhat.com>
-References: <e6171479-28b4-4155-8578-37a14dabee50@redhat.com>
+        Thu, 15 Aug 2024 03:26:31 -0700 (PDT)
+Date: Thu, 15 Aug 2024 12:26:29 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: mfd: sprd,sc2731: convert to YAML
+Message-ID: <Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 15 Aug 2024 12:03:37 +0200, Paolo Abeni wrote:
-> On 8/15/24 10:49, sunyiqi wrote:
-> > When investigating the kcm socket UAF which is also found by syzbot,
-> > I found that the root cause of this problem is actually in
-> > sk_wait_event.
-> > 
-> > In sk_wait_event, sk is released and relocked and called by
-> > sk_stream_wait_memory. Protocols like tcp, kcm, etc., called it in some
-> > ops function like *sendmsg which will lock the sk at the beginning.
-> > But sk_stream_wait_memory releases sk unexpectedly and destroy
-> > the thread safety. Finally it causes the kcm sk UAF.
-> > 
-> > If at the time when a thread(thread A) calls sk_stream_wait_memory
-> > and the other thread(thread B) is waiting for lock in lock_sock,
-> > thread B will successfully get the sk lock as thread A release sk lock
-> > in sk_wait_event.
-> > 
-> > The thread B may change the sk which is not thread A expecting.
-> > 
-> > As a result, it will lead kernel to the unexpected behavior. Just like
-> > the kcm sk UAF, which is actually cause by sk_wait_event in
-> > sk_stream_wait_memory.
-> > 
-> > Previous commit d9dc8b0f8b4e ("net: fix sleeping for sk_wait_event()")
-> > in 2016 seems do not solved this problem. Is it necessary to release
-> > sock in sk_wait_event? Or just delete it to make the protocol ops
-> > thread-secure.
-> 
-> As a I wrote previously, please describe the suspected race more 
-> clearly, with the exact calls sequence that lead to the UAF.
-> 
-> Releasing the socket lock is not enough to cause UAF.
+Convert the Spreadtrum SC27xx PMIC bindings to DT schema. Adjust the
+filename to match the compatible of the only in-tree user, SC2731.
+Change #interrupt-cells value to 1, as according to [1] that is the
+correct value.
 
-Thread A                 Thread B
-kcm_sendmsg
- lock_sock               kcm_sendmsg
-                          lock_sock (blocked & waiting)
- head = sk->seq_buf
- sk_stream_wait_memory
-  sk_wait_event
-   release_sock
-                          lock_sock (get the lock)
-                          head = sk->seq_buf
-                          add head to sk->sk_write_queue
-                          release_sock
-   lock_sock              return
- err_out to free(head)
- release_sock
- return
-// ...
-kcm_release
- // ...
- __skb_queue_purge(&sk->sk_write_queue) // <--- UAF
- // ...
+[1] https://lore.kernel.org/lkml/b6a32917d1e231277d240a4084bebb6ad91247e3.1550060544.git.baolin.wang@linaro.org/
 
-The repro can be downloaded here:
-https://syzkaller.appspot.com/bug?extid=b72d86aa5df17ce74c60
- 
-> Removing the release/lock pair in sk_wait_event() will break many 
-> protocols (e.g. TCP) as the stack will not be able to land packets in 
-> the receive queue while the socked lock is owned.
-> 
-> Cheers,
-> 
-> Paolo
-> 
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Depends on:
+  - eFuse YAML conversion: https://lore.kernel.org/lkml/9fba73ce66f1f3b7b2a8f46e7c21f60cff5a85f0.1721199034.git.stano.jakubek@gmail.com/
+  - RTC YAML conversion: https://lore.kernel.org/lkml/ZrBzmQI0IAL7LI3e@standask-GA-A55M-S2HP/
 
-Also a question about it's protocol itself should carefully use low-level
-kernel API encapsulation to ensure its thread-safety or kernel API should
-guarantee thread-safety since sk_wait_event or sk_stream_wait_memory used
-in many cases.
+ .../devicetree/bindings/mfd/sprd,sc2731.yaml  | 124 ++++++++++++++++++
+ .../bindings/mfd/sprd,sc27xx-pmic.txt         |  40 ------
+ 2 files changed, 124 insertions(+), 40 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/sprd,sc27xx-pmic.txt
 
-Sincerely,
-Yiqi Sun
+diff --git a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
+new file mode 100644
+index 000000000000..59df02e1e53b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
+@@ -0,0 +1,124 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/sprd,sc2731.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum SC27xx PMIC
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++description: |
++  Spreadtrum PMICs belonging to the SC27xx series integrate all mobile handset
++  power management, audio codec, battery management and user interface support
++  functions in a single chip. They have 6 major functional blocks:
++    - DCDCs to support CPU, memory
++    - LDOs to support both internal and external requirements
++    - Battery management system, such as charger, fuel gauge
++    - Audio codec
++    - User interface functions, such as indicator, flash LED and so on
++    - IC level interface, such as power on/off control, RTC, typec and so on
++
++properties:
++  $nodename:
++    pattern: '^pmic@[0-9a-f]+$'
++
++  compatible:
++    enum:
++      - sprd,sc2720
++      - sprd,sc2721
++      - sprd,sc2723
++      - sprd,sc2730
++      - sprd,sc2731
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++  spi-max-frequency: true
++
++  '#address-cells':
++    const: 1
++
++  '#interrupt-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  regulators:
++    type: object
++    $ref: /schemas/regulator/sprd,sc2731-regulator.yaml#
++
++patternProperties:
++  "^adc@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/iio/adc/sprd,sc2720-adc.yaml#
++
++  "^charger@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/power/supply/sc2731-charger.yaml#
++
++  "^efuse@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/nvmem/sprd,sc2731-efuse.yaml#
++
++  "^fuel-gauge@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/power/supply/sc27xx-fg.yaml#
++
++  "^gpio@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/gpio/sprd,gpio-eic.yaml#
++
++  "^led-controller@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/leds/sprd,sc2731-bltc.yaml#
++
++  "^rtc@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/rtc/sprd,sc2731-rtc.yaml#
++
++  "^vibrator@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/input/sprd,sc27xx-vibrator.yaml#
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-controller
++  - spi-max-frequency
++  - '#address-cells'
++  - '#interrupt-cells'
++  - '#size-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    spi {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      pmic@0 {
++        compatible = "sprd,sc2731";
++        reg = <0>;
++        interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        spi-max-frequency = <26000000>;
++        #address-cells = <1>;
++        #interrupt-cells = <1>;
++        #size-cells = <0>;
++      };
++    };
++...
+diff --git a/Documentation/devicetree/bindings/mfd/sprd,sc27xx-pmic.txt b/Documentation/devicetree/bindings/mfd/sprd,sc27xx-pmic.txt
+deleted file mode 100644
+index 21b9a897fca5..000000000000
+--- a/Documentation/devicetree/bindings/mfd/sprd,sc27xx-pmic.txt
++++ /dev/null
+@@ -1,40 +0,0 @@
+-Spreadtrum SC27xx Power Management Integrated Circuit (PMIC)
+-
+-The Spreadtrum SC27xx series PMICs contain SC2720, SC2721, SC2723, SC2730
+-and SC2731. The Spreadtrum PMIC belonging to SC27xx series integrates all
+-mobile handset power management, audio codec, battery management and user
+-interface support function in a single chip. It has 6 major functional
+-blocks:
+-- DCDCs to support CPU, memory.
+-- LDOs to support both internal and external requirement.
+-- Battery management system, such as charger, fuel gauge.
+-- Audio codec.
+-- User interface function, such as indicator, flash LED and so on.
+-- IC level interface, such as power on/off control, RTC and typec and so on.
+-
+-Required properties:
+-- compatible: Should be one of the following:
+-	"sprd,sc2720"
+-	"sprd,sc2721"
+-	"sprd,sc2723"
+-	"sprd,sc2730"
+-	"sprd,sc2731"
+-- reg: The address of the device chip select, should be 0.
+-- spi-max-frequency: Typically set to 26000000.
+-- interrupts: The interrupt line the device is connected to.
+-- interrupt-controller: Marks the device node as an interrupt controller.
+-- #interrupt-cells: The number of cells to describe an PMIC IRQ, must be 2.
+-- #address-cells: Child device offset number of cells, must be 1.
+-- #size-cells: Child device size number of cells, must be 0.
+-
+-Example:
+-pmic@0 {
+-	compatible = "sprd,sc2731";
+-	reg = <0>;
+-	spi-max-frequency = <26000000>;
+-	interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+-	interrupt-controller;
+-	#interrupt-cells = <2>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-};
+-- 
+2.34.1
+
 
