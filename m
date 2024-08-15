@@ -1,206 +1,177 @@
-Return-Path: <linux-kernel+bounces-287394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D813395274A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FEEE95274D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795651F226A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924E01C212E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C5D4AEEA;
-	Thu, 15 Aug 2024 00:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B5E5680;
+	Thu, 15 Aug 2024 00:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV0705xE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VsLc+OpT"
+Received: from mail-m155106.qiye.163.com (mail-m155106.qiye.163.com [101.71.155.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F05342AB1;
-	Thu, 15 Aug 2024 00:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8BA4A04;
+	Thu, 15 Aug 2024 00:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723683328; cv=none; b=CdE1JsrLbQRA+A1hP+AJV0BBqWxkX2M5JzBiG81Y1wmFfoxqsXMSqO+ikwUE2GIMmnoxwrv1nmIfB8iGLiTr6e+djqvfFDRiiiG4vqwZcXpz/MUc8EiQZz+KmfJCWIWqIeCZ5UQoHhX0MYg4JAS/Js/8NfbfDrGd7BQ4jEdkuDY=
+	t=1723683382; cv=none; b=IbHVTyFcFjanmKHnQMmxEobi58i3ts0bnMqmBk/Zg1OIltE91L9TKYghsOW2Ype1HDQvDNyjNEMZOXg+FlwQLKB+yaRKAdtNWC7CfaYW2tqxQkQKMZi0wYGErcJWyNB2mDghCF6BwrMe5vRXHb4FGC7fM+75B8QVVBARjEdjlUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723683328; c=relaxed/simple;
-	bh=xSrynoas2VR4X6Sh/7Pxh/r2s4reqen1keWxuGVhuPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I4KwXB7+Zk7pNjFxif3Oac1kPUeTz6/sZZKfPcuWkuNdAEKk5RH4qv7FSTFNN2wUh5/d0JKn7qqV23KF6puw6wR+m/AJXCyuRp0sl8Wt11v2mCORGlX9UBsui17ISaxJKGl67TEUKo/h0Y0w7jjEUjyJ0eGHmp+GoKFCcUq7imc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV0705xE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B45EC4AF14;
-	Thu, 15 Aug 2024 00:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723683327;
-	bh=xSrynoas2VR4X6Sh/7Pxh/r2s4reqen1keWxuGVhuPE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qV0705xEMZwtGF2ZlkTzkye7gxkDlAuQ9fauHQdiryKGfcut8ofEbiHtB3ahQnALL
-	 x2QxUVPobSybFfuzHGmDsHgnDTYQJxo4e3lUeO2Ua9m4Ht4NAre1Dw0AoHGuNsw6hO
-	 BJ/A6PjfBeNjQ9Dcgn9HyVCmzD70JePnIUOLI6pOYEwccNQ2oNHVOuIOxsdy9h9fpT
-	 XXLD0HLikrwYcAytkYZrdr8knVKcjeRKBq1oK4/0PaF6uTDt8EDeFHy48kO7hEyxeL
-	 M4BNYAajWppc6mhTMB+elHJktzsVEHGt6QxqEIloMs3LMdwTbct0J4gwJTA8kcT13l
-	 dZVvChLI5Taxg==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	patches@lists.linux.dev,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>
-Subject: [PATCH 12/12] WIP: clk: Test behavior of children clks after a parent is unregistered
-Date: Wed, 14 Aug 2024 17:55:18 -0700
-Message-ID: <20240815005520.1192374-13-sboyd@kernel.org>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-In-Reply-To: <20240815005520.1192374-1-sboyd@kernel.org>
-References: <20240815005520.1192374-1-sboyd@kernel.org>
+	s=arc-20240116; t=1723683382; c=relaxed/simple;
+	bh=04OQOPxXE3MXJtfGuILzGqusZ+FX1Cv8QWOlUtDOfeQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jOUVnjd2y8LUbE6X9uc9pGgxQo8RPADXVhziORkZfj3XOEjhZBcheouASoRyMfKqAJXZK/AptGulaMcp7bN71syVrtCl6luaoDastOkFato1Bra5/Jk/mOBO52M0AyX9s46nNNnHKWJwZBkZpPhAieSsfDbs21OnGYq8BL1PVJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VsLc+OpT; arc=none smtp.client-ip=101.71.155.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=VsLc+OpTy4yiMoQUzJP4gG0dTMLiDIg4arecgkwV4VogdpQXJ8ialiNZBJVsL1fYmXONb+JlunOG78AITFlYdUKKWT0n6b3EFS15djONE6edIM83vb7UY+BsGUmf6YQ813r89SKlD3U7A482Jvh3z8yBzCzb0ZR//9utrNK8l7E=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=jibRnnrGx3Q4KOhIBFEiSAKP3XFIdjxz/CsdAGw1aiE=;
+	h=date:mime-version:subject:message-id:from;
+Received: from [172.16.12.45] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 60327460171;
+	Thu, 15 Aug 2024 08:55:37 +0800 (CST)
+Message-ID: <5dc82aa2-82a0-4778-b598-88775d5f791c@rock-chips.com>
+Date: Thu, 15 Aug 2024 08:55:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v3 2/3] mmc: dw_mmc-rockchip: Add v2 tuning support
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+References: <20240814223555.3695-1-detlev.casanova@collabora.com>
+ <20240814223555.3695-3-detlev.casanova@collabora.com>
+Content-Language: en-GB
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20240814223555.3695-3-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk0fH1ZNTk5NGE1MSx0YGUlWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a915388786203aekunm60327460171
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OE06Dgw*CDI5OUwXLTg2A0wK
+	FUkaChFVSlVKTElITUNISEhDQktNVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQU5PSko3Bg++
 
-When a parent clk is unregistered, descendant clks are orphaned and
-removed from the clk tree. Test this scenario to make sure clk consumer
-APIs with a child clk don't cause problems.
+Hi Detlev
 
-TODO: Fix the crashes
+在 2024/8/15 6:34, Detlev Casanova 写道:
+> From: Shawn Lin <shawn.lin@rock-chips.com>
+> 
+> v2 tuning will inherit pre-stage loader's phase settings for the first
+> time, and do re-tune if necessary.
+> Re-tune will still try the rough degrees, for instance, 90, 180, 270,
+> 360 but continue to do the fine tuning if sample window isn't good
+> enough.
+> 
+> Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>   drivers/mmc/host/dw_mmc-rockchip.c | 49 ++++++++++++++++++++++++++++++
+>   1 file changed, 49 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-rockchip.c b/drivers/mmc/host/dw_mmc-rockchip.c
+> index b07190ba4b7ac..367633f4e8892 100644
+> --- a/drivers/mmc/host/dw_mmc-rockchip.c
+> +++ b/drivers/mmc/host/dw_mmc-rockchip.c
+> @@ -24,6 +24,8 @@ struct dw_mci_rockchip_priv_data {
+>   	struct clk		*sample_clk;
+>   	int			default_sample_phase;
+>   	int			num_phases;
+> +	bool			use_v2_tuning;
+> +	int			last_degree;
+>   };
+>   
+>   static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+> @@ -134,6 +136,42 @@ static void dw_mci_rk3288_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>   #define TUNING_ITERATION_TO_PHASE(i, num_phases) \
+>   		(DIV_ROUND_UP((i) * 360, num_phases))
+>   
+> +static int dw_mci_v2_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+> +{
+> +	struct dw_mci *host = slot->host;
+> +	struct dw_mci_rockchip_priv_data *priv = host->priv;
+> +	struct mmc_host *mmc = slot->mmc;
+> +	u32 degrees[4] = {90, 180, 270, 360};
+> +	int i;
+> +	static bool inherit = true;
+> +
+> +	if (inherit) {
+> +		inherit = false;
+> +		i = clk_get_phase(priv->sample_clk) / 90 - 1;
+> +		goto done;
+> +	}
+> +
+> +	/* v2 only support 4 degrees in theory */
+> +	for (i = 0; i < ARRAY_SIZE(degrees); i++) {
+> +		if (degrees[i] == priv->last_degree)
+> +			continue;
+> +
+> +		clk_set_phase(priv->sample_clk, degrees[i]);
+> +		if (!mmc_send_tuning(mmc, opcode, NULL))
+> +			break;
+> +	}
+> +
+> +	if (i == ARRAY_SIZE(degrees)) {
+> +		dev_warn(host->dev, "All phases bad!");
+> +		return -EIO;
+> +	}
+> +
+> +done:
+> +	dev_info(host->dev, "Successfully tuned phase to %d\n", degrees[i]);
+> +	priv->last_degree = degrees[i];
+> +	return 0;
+> +}
+> +
+>   static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+>   {
+>   	struct dw_mci *host = slot->host;
+> @@ -157,6 +195,13 @@ static int dw_mci_rk3288_execute_tuning(struct dw_mci_slot *slot, u32 opcode)
+>   		return -EIO;
+>   	}
+>   
+> +	if (priv->use_v2_tuning) {
+> +		ret = dw_mci_v2_execute_tuning(slot, opcode);
+> +		if (!ret)
+> +			return 0;
+> +		/* Otherwise we continue using fine tuning */
+> +	}
+> +
+>   	ranges = kmalloc_array(priv->num_phases / 2 + 1,
+>   			       sizeof(*ranges), GFP_KERNEL);
+>   	if (!ranges)
+> @@ -277,6 +322,10 @@ static int dw_mci_rk3288_parse_dt(struct dw_mci *host)
+>   					&priv->default_sample_phase))
+>   		priv->default_sample_phase = 0;
+>   
+> +	priv->use_v2_tuning =
+> +		of_device_is_compatible(host->dev->of_node,
+> +					"rockchip,rk3576-dw-mshc");
+> +
 
-Cc: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk_test.c | 60 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 57 insertions(+), 3 deletions(-)
+v2 is a kind of software decision instead of hardware dependency.
+So in theory, any SoC can claim to use it via DT.
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 591897162056..e6479c002023 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -3133,6 +3133,17 @@ static void clk_unregister_consumer_clk_unregister(struct kunit *test)
- 	ctx->unregistered = true;
- }
- 
-+static void clk_unregister_parent_consumer_clk_unregister(struct kunit *test)
-+{
-+	struct clk_unregister_consumer_clk_ctx *ctx = test->priv;
-+	struct clk_hw *parent_hw = &ctx->parents[0].ctx.hw;
-+	struct clk *parent_clk = ctx->parents[0].clk;
-+
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent_clk);
-+	KUNIT_ASSERT_TRUE(test, clk_is_match(clk_get_parent(ctx->clk), parent_clk));
-+	KUNIT_ASSERT_EQ(test, 0, clk_hw_unregister_kunit(test, parent_hw));
-+}
-+
- /* Test that clk_put() can be called after the clk_hw has been unregistered. */
- static void clk_unregister_consumer_clk_put(struct kunit *test)
- {
-@@ -3143,6 +3154,15 @@ static void clk_unregister_consumer_clk_put(struct kunit *test)
- 	KUNIT_EXPECT_EQ(test, 0, clk_put_kunit(test, ctx->clk));
- }
- 
-+static void clk_unregister_parent_consumer_clk_put(struct kunit *test)
-+{
-+	struct clk_unregister_consumer_clk_ctx *ctx = test->priv;
-+
-+	clk_unregister_parent_consumer_clk_unregister(test);
-+
-+	KUNIT_EXPECT_EQ(test, 0, clk_put_kunit(test, ctx->clk));
-+}
-+
- /* Test that clk_prepare() fails after the clk_hw has been unregistered. */
- static void clk_unregister_consumer_clk_prepare_fails(struct kunit *test)
- {
-@@ -3358,6 +3378,24 @@ static void clk_unregister_consumer_clk_set_parent_fails(struct kunit *test)
- 	KUNIT_EXPECT_TRUE(test, clk_is_match(clk_get_parent(ctx->clk), ctx->parents[0].clk));
- }
- 
-+/*
-+ * Test that clk_set_parent() doesn't re-parent the clk back to the clk that
-+ * was unregistered.
-+ */
-+static void clk_unregister_parent_consumer_clk_set_parent(struct kunit *test)
-+{
-+	struct clk_unregister_consumer_clk_ctx *ctx = test->priv;
-+
-+	kunit_skip(test, "Fix in the core. This blows up spectacularly!");
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->parents[0].clk);
-+	KUNIT_ASSERT_TRUE(test, clk_is_match(clk_get_parent(ctx->clk), ctx->parents[0].clk));
-+	KUNIT_ASSERT_EQ(test, 0, clk_hw_unregister_kunit(test, &ctx->parents[0].ctx.hw));
-+
-+	KUNIT_EXPECT_TRUE(test, clk_is_match(clk_get_parent(ctx->clk), NULL));
-+	KUNIT_EXPECT_GT(test, 0, clk_set_parent(ctx->clk, ctx->parents[0].clk));
-+	KUNIT_EXPECT_TRUE(test, clk_is_match(clk_get_parent(ctx->clk), NULL));
-+}
-+
- /*
-  * Test that clk_get_parent() doesn't call the clk_op after the clk_hw has been
-  * unregistered and returns original parent.
-@@ -3396,6 +3434,8 @@ static void clk_register_params_to_desc(const char *test_name,
-  * @test_name: Test name
-  * @_prev: Previous return value from this function
-  * @desc: Test description (to be filled in)
-+ * @must_have_parents: True if struct clk_register_params::num_parents must be
-+ * 1 or greater
-  *
-  * Use this function in KUNIT_CASE_PARAM to generate struct clk_init_data
-  * parameters for a test that registers clks. It will return combinations of
-@@ -3404,7 +3444,8 @@ static void clk_register_params_to_desc(const char *test_name,
-  * Return: Test parameters in a struct clk_register_params.
-  */
- static const void *clk_register_gen_params(const char *test_name,
--					   const void *_prev, char *desc)
-+					   const void *_prev, char *desc,
-+					   bool must_have_parents)
- {
- 	const struct clk_register_params *prev = _prev;
- 	struct clk_register_params *next;
-@@ -3412,8 +3453,11 @@ static const void *clk_register_gen_params(const char *test_name,
- 	next = krealloc(prev, sizeof(*next), GFP_KERNEL);
- 	if (!next)
- 		return NULL;
--	if (!prev)
-+	if (!prev) {
- 		memset(next, 0, sizeof(*next));
-+		if (must_have_parents)
-+			next->num_parents = 1;
-+	}
- 
- 	if (prev) {
- 		if (next->clk_flags == 0)
-@@ -3433,11 +3477,19 @@ static const void *clk_register_gen_params(const char *test_name,
- 	return next;
- }
- 
-+static const void *
-+clk_unregister_parent_consumer_clk_gen_params(const void *prev,
-+					      char *desc)
-+{
-+	return clk_register_gen_params("parent", prev, desc, true);
-+}
-+
- #define CLK_REGISTER_GEN_PARAMS(name)					\
- 	static const void *name##_gen_params(const void *prev,		\
- 					    char *desc)			\
- 	{								\
--		return clk_register_gen_params(#name, prev, desc);	\
-+		return clk_register_gen_params(#name, prev, desc,	\
-+					       false);			\
- 	}
- 
- #define CLK_REGISTER_KUNIT_CASE_PARAM(name)				\
-@@ -3475,6 +3527,8 @@ static struct kunit_case clk_unregister_consumer_clk_test_cases[] = {
- 	CLK_REGISTER_KUNIT_CASE_PARAM(clk_unregister_consumer_clk_set_parent_fails),
- 	CLK_REGISTER_KUNIT_CASE_PARAM(clk_unregister_consumer_clk_get_parent_skips),
- 	CLK_REGISTER_KUNIT_CASE_PARAM(clk_unregister_consumer_clk_put),
-+	KUNIT_CASE_PARAM(clk_unregister_parent_consumer_clk_put, clk_unregister_parent_consumer_clk_gen_params),
-+	KUNIT_CASE_PARAM(clk_unregister_parent_consumer_clk_set_parent, clk_unregister_parent_consumer_clk_gen_params),
- 	{}
- };
- 
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
-
+>   	priv->drv_clk = devm_clk_get(host->dev, "ciu-drive");
+>   	if (IS_ERR(priv->drv_clk))
+>   		dev_dbg(host->dev, "ciu-drive not available\n");
 
