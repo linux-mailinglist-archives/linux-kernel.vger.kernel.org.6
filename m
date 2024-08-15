@@ -1,180 +1,235 @@
-Return-Path: <linux-kernel+bounces-287881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B9F952D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:37:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D719952DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BE6CB23070
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056F91F231D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794DF1714D5;
-	Thu, 15 Aug 2024 11:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB4C17623F;
+	Thu, 15 Aug 2024 11:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="AHL20BO7"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2055.outbound.protection.outlook.com [40.107.103.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nd0h1rxi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h+NSoNfS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nd0h1rxi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h+NSoNfS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5583A1AC8B4;
-	Thu, 15 Aug 2024 11:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723721836; cv=fail; b=VhonU1iAMCDo5t7OrI1LqJJbqcnDQjRlADTMHE4a12QpS5wx+k8PIVs6DzfAFpN8QLzrWl664xVETAsVQmlPZ3PoBHioyojFYB+Oj5JdmTQ5VGfSUWRlH4j0hNd/QVWKX4jOUQy20zP0qq6J2lkinI1k+1gHPgcgABvQAszrEFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723721836; c=relaxed/simple;
-	bh=c9EyuIOq6RmbeMiOn0z3MC9b4hZk+kHEaNjxIjuGciA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cS1k1c6q/MGHMGk4soLezpq8pi1Ky/q4odI+RxFG5Xw/FR/AUnTCQ/+JxM4jxl8dfVPSRUupmyIViLtOGSXr+sLwfo1F9ZhftRJxabZmmSmsACKeLNX9dN4Q4PBvVzfczEYMAGtWV0DDbSWS2PWO5SC1J4ihlBnOQKwCzUq1wHQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=AHL20BO7; arc=fail smtp.client-ip=40.107.103.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iJlcP8iruqS/6XR0rzFT5cEkSazjJdTuewrHxDhSvCdYBdm2trDiC7SXn/KkA0A6yhLkWZe1Vx/h8ENpHzHOWnZuNzZ0OaoIudTuHPPx9McasJi4fIU9VonRWAovrSPpW0w8A9MXicEsa7xylhxE2CzklkYIPOJGZFPuD9DRsQazt/Cd2YZSPHJ6lLmKpHfYiZyzec1kdWe4AAHc76tjD8Kr5lnnffqXtnr30LjoiFqiZBm87NUkum4HLPe8mPJm6EzUTDlBpk40cyaIhNvR5u7O9o4ZzHT1Zr/qtj3+KSBQ32OVqFHa2M9HhA1LAC8OXJXTUEwN9/PfROH3Z0111w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+xa41/NoV//ZGQX297XIDIXjtw/cGH9X9PZtqX82Hng=;
- b=NQEoOMGHQotbO1pcYWXe0THrJ4v42WgsrhjB3nLkdLobBYCeRihS88dd2zyiJAfBfkTM5OIsJPeWvw47F978IEQk+neJvCwUnH6h50mfkG1Iy0NOJtaHhPgFKJ55QFxLFMUiZ/5HwiiG9DdXCCiyxbGfsQ8Sj1zFK6wZa2Pn6StEQINAuncu2ok6o+N4ZG3mJU3XO22Ikj3WMWnhDLTlztEnlZAWXnEMesKL4QBy+W0M+Q1sTkxnD4U2qfWKSZ40WI+04uy7zGgqPSPSiMFNwq1MoDYuJQXCu3FVqkqq7IBQ7N5XHguxZvPWGAjuIY4UHh4YngR8SIVrtwWNIsqsIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.206) smtp.rcpttodomain=metaspace.dk smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+xa41/NoV//ZGQX297XIDIXjtw/cGH9X9PZtqX82Hng=;
- b=AHL20BO7FpkR4idQHz8gDYQTe0ZT7veaIgzPnymCGJ7K/FOPf34h9DkCb6Gq3s6JhjRiYxIHhnzLPKUEk1ic+0eE076xXmdU6iEzu65DudgN6tt2vKEvXr4i77WGvptsQ/ob0GLSiQgxBJ1SAFs7WG9KTXFp2XNfApBlh0PqTNTDb3yL65qZSS7kDkZDMVp8Zw77L6NBBVbVROhu7TyWKNiuGfpZBNKkZRoT94euLE41vhb5a5PdZHp/YSCqtrtFmeZmqAtLV0Jp1I40kKFaaofTUwcWVIusJVQ4lzAlOp2SjelsP5liv1hVBbuxzsGLRzBu0iiE5NbUKjN7/xdyww==
-Received: from DU2P251CA0017.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:230::16)
- by AS2PR10MB7047.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:595::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Thu, 15 Aug
- 2024 11:37:09 +0000
-Received: from DB3PEPF0000885A.eurprd02.prod.outlook.com
- (2603:10a6:10:230:cafe::95) by DU2P251CA0017.outlook.office365.com
- (2603:10a6:10:230::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19 via Frontend
- Transport; Thu, 15 Aug 2024 11:37:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.206) by
- DB3PEPF0000885A.mail.protection.outlook.com (10.167.242.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.8 via Frontend Transport; Thu, 15 Aug 2024 11:37:09 +0000
-Received: from FE-EXCAS2000.de.bosch.com (10.139.217.199) by eop.bosch-org.com
- (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 15 Aug
- 2024 13:36:55 +0200
-Received: from [10.34.219.93] (10.139.217.196) by FE-EXCAS2000.de.bosch.com
- (10.139.217.199) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 15 Aug
- 2024 13:36:54 +0200
-Message-ID: <c96a0827-cff7-4558-983b-42f965f80005@de.bosch.com>
-Date: Thu, 15 Aug 2024 13:36:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5B47DA9E;
+	Thu, 15 Aug 2024 11:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723721960; cv=none; b=E98CgI6TrA1Fq72bvMEjr+FpelO2DmOgur4OB9me2xm+EYCj8+0Xspmytb3UJO/bf9T/RDYpSIl6pCWvZfd8R/WL/CJB1G8JrEdCwY90vAd3H9fCJrclUVfCDGowySsbgiYoTT4fWYoxmLfGJT8zUj8uQlHeN2MVRL2GyO3/Iv0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723721960; c=relaxed/simple;
+	bh=l6rcWtVPc1rg8CGlJhZWcF1c3U+WD5PE2ri2IiuBJ4g=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=ukpdMAxhgE5bM7DL7V5h3xVjcTdKseFvNo35CK27IsL6bHz4WBxhx80ySVo+j7yUNW/XARADr5WYdcsj4pQuwAyYuJQA72CsHazvwfrgLaTGA+oOn3mYmxSNA7kkSE1X80vo5KBd0soNsXAVI3TPGgeq344pWLXC1fTDa439U+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nd0h1rxi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h+NSoNfS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nd0h1rxi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h+NSoNfS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6238A1FFF8;
+	Thu, 15 Aug 2024 11:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723721955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JkDQhnOA0LzdK2HzsAZj+T0x6/mTNFsFWfXDFNt2kvU=;
+	b=nd0h1rxiIfUn7ca5dbmdkVbg8eiE8yAKVMfi4NbYyxSG9MtlCzl98WhhUT6LkhVyFD9fxu
+	RlqQmNOielc0wD/pFx65cpsHZJJIO9hcVOvKUIfaFsPsA/rYaQXFPApw7yT66Qxu2LDyba
+	SZ4lK0pV83G+GrsBWCQJb0rrHVevps8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723721955;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JkDQhnOA0LzdK2HzsAZj+T0x6/mTNFsFWfXDFNt2kvU=;
+	b=h+NSoNfSb+/b6aUitZ+o0G4B3ziGTqg3Mp9IEHPYFtKpkq3I1BWBdnR8exWvL0qydABUH4
+	c9G14u36Lxa6xQCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723721955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JkDQhnOA0LzdK2HzsAZj+T0x6/mTNFsFWfXDFNt2kvU=;
+	b=nd0h1rxiIfUn7ca5dbmdkVbg8eiE8yAKVMfi4NbYyxSG9MtlCzl98WhhUT6LkhVyFD9fxu
+	RlqQmNOielc0wD/pFx65cpsHZJJIO9hcVOvKUIfaFsPsA/rYaQXFPApw7yT66Qxu2LDyba
+	SZ4lK0pV83G+GrsBWCQJb0rrHVevps8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723721955;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JkDQhnOA0LzdK2HzsAZj+T0x6/mTNFsFWfXDFNt2kvU=;
+	b=h+NSoNfSb+/b6aUitZ+o0G4B3ziGTqg3Mp9IEHPYFtKpkq3I1BWBdnR8exWvL0qydABUH4
+	c9G14u36Lxa6xQCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 486C813B0C;
+	Thu, 15 Aug 2024 11:39:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id B7XfOt3ovWaEPgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 15 Aug 2024 11:39:09 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] kbuild: rust: split up helpers.c
-To: Andreas Hindborg <nmi@metaspace.dk>, Miguel Ojeda <ojeda@kernel.org>,
-	"Alex Gaynor" <alex.gaynor@gmail.com>, Wedson Almeida Filho
-	<wedsonaf@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>
-CC: Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng
-	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
-	<benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, "Nathan
- Chancellor" <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
-	=?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
-	<rust-for-linux@vger.kernel.org>, <linux-kbuild@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240815103016.2771842-1-nmi@metaspace.dk>
-Content-Language: en-US
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <20240815103016.2771842-1-nmi@metaspace.dk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB3PEPF0000885A:EE_|AS2PR10MB7047:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ccd17c7-f0b8-4e6f-1dc8-08dcbd1e990b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q2VGdnR5cXB5K3YrdENmUkprYnhVYWxhc1FIanJhZzlFTU9objdEOTdnS0Yr?=
- =?utf-8?B?WS9rbTB5ekgyUERBeHpoSFUvREtXRXhJWDZhTGpFLzRweTJTV1FDKzc5Ukhw?=
- =?utf-8?B?NHh0eUdnZkptUEpYN0U2ejhhTEZ6bHFGNW1kaVlkamJyUnRYVmVxU1pjTlgy?=
- =?utf-8?B?SkJLZU1XbUVtejE1SmRUTzhMN0xWMVk4TnJxWkpKWWJvOFZ1WThNZGxNS1U4?=
- =?utf-8?B?UFJWSGRELzRVdzNHNTRpemVzQXp3eVNoWWdKcTRMZGJQTVdyY1Bna3BqN3Ez?=
- =?utf-8?B?UnNnNHlZMCt6eFovcDhGQUdyTXhaNmZXSngreVU5UXpxdUYvajBCUzhmdnF3?=
- =?utf-8?B?MUVzM20zTWRMODkwQlcxKy93U1BGbm5HY0Q1RkRkUXZDbDhGNzJNbjU3Z0w3?=
- =?utf-8?B?V3NEMkZHbUdIdDR6K1h3R01XM2ZlKzZ3amsyQk5mdElZV0l2cHBTY0FFbzlY?=
- =?utf-8?B?cGpEVkJzN0tBbnZRTXB6MHZOSUVUeEdGL1hYSXp5WElYclBUeWZRTjJrVEtW?=
- =?utf-8?B?LzhCWFl3V0hFZzY4di82K2ZNUE9sRHczZ0VPQXFpOXkzQ28xUVZKSTlDYnpM?=
- =?utf-8?B?c0FQK3FiSC9FbDltOXJWTzJKUjduOGV6aTJEa29zL1ptNDEvY1dZSWI3NWxa?=
- =?utf-8?B?UGlxWkQxQlBkdG14MVgzUUFaOUt4aFR6a3IvSlUwODFOVG10YW94bzFpblcy?=
- =?utf-8?B?ak9mNUllMHk2S0tlNG84WHNkNnNQTS9Qd1pkRFgxMmhuU3RzNDQxSk1SalBY?=
- =?utf-8?B?d3dyM2JXU1RyY3NxSGVoUEtWNkFXZmZRUUYvQVpCNW5sWVlFaVRCQXJzL3du?=
- =?utf-8?B?eml6R2ZHM0RsallMUVEzUURSb0RUbHowK001eUFLNlYveEFmQ2J4ZUdoWkdE?=
- =?utf-8?B?N2xxeVBNUlJGNVhYRkdXN2JGK3NTdnk1Ly9OMi82THNZaGxXeWJOZWpXU3lU?=
- =?utf-8?B?UHYxVUdobkpUUksvMFJFS0FVU0I0VDlOd1QyM1B6ODFaVElVUldxNHp4RHlJ?=
- =?utf-8?B?Mjlvd0lvTFBRYjlpZXMza0lXUWxhemRYbUpkSmtwb1djS3hnak5aa3BxblJy?=
- =?utf-8?B?eEdUK3hXL0pBUE1RQlg3Q1VVMyt0YUdMdXVhMjhYbk84cXNMdDFsNHNRdytt?=
- =?utf-8?B?UUNuNnNEMERLb0xPNXNzS2NZektQclUyajgvNkwrWWhrT1VJTlhGYjBMV3dx?=
- =?utf-8?B?UnFySzRhNkFYYWU2WFNxcndPbzNZMmRPODlzWGxNTkovd3I4cGN3aUU2Vkpj?=
- =?utf-8?B?MWNWcFpTRDBTTG1NVmJVTWcvVzI1S2wzajdwemVxWE9IYnlQWjJPcklTYWcx?=
- =?utf-8?B?VGpXQzVQeG5sR2EzMWYvNHdwUVY1a0RsdkloS3JweVllQkxHZGhTa3pXSUVx?=
- =?utf-8?B?MFhpUXJsT0RLaXI2V1A2U2cxYVhiZXh4MEtLd3BOU0ZaSDJ5TTdZY0JiKzFO?=
- =?utf-8?B?czdlUEFUYU8yZXBBNER2Qjh3Q2txZWxDcCsxVDVqQ3hQVHpxd1hYSHJBdllG?=
- =?utf-8?B?bmVONGJ0bllNdUI5dG9SUTdmcFN2N29wSDV2YkxQUGdQTThoMEkyb240YWht?=
- =?utf-8?B?S3o2MzRIZlArZ2JmeGo1NDdFWkhQem14ditOTGlWUnVVR2h5c1pZZ3hPbURj?=
- =?utf-8?B?TEl5MlRCaWEycVNSMWdYWm9tZFFIMkVIMGtONDlYTWFNNDVtdDdDTFhLVmF0?=
- =?utf-8?B?Qms0K3BRMFhra2Z5V2YzZFN3VlU3dS9ZeWhqVStlUHhiTVBmcWpWOW1NeFRJ?=
- =?utf-8?B?bjZpTmJEV1pucGxNS3hyMThNN2VzdmdHdEFFemR5ZXdLZHArckNRNDljMUZX?=
- =?utf-8?B?TWU1Z0R0bjJxNmcwK2FmWnBtM3d0cFBpWmdNdjA3NlNFM1VDcldUZU9qZ21h?=
- =?utf-8?Q?M5ACq401rcGww?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 11:37:09.2516
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ccd17c7-f0b8-4e6f-1dc8-08dcbd1e990b
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB3PEPF0000885A.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7047
+From: "NeilBrown" <neilb@suse.de>
+To: "Kunwu Chan" <kunwu.chan@linux.dev>
+Cc: trondmy@kernel.org, anna@kernel.org, chuck.lever@oracle.com,
+ jlayton@kernel.org, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Kunwu Chan" <chentao@kylinos.cn>
+Subject: Re: [PATCH] SUNRPC: Fix -Wformat-truncation warning
+In-reply-to: <0282be6f-e8ac-4428-a2ac-1ea6b7c25f4a@linux.dev>
+References: <>, <0282be6f-e8ac-4428-a2ac-1ea6b7c25f4a@linux.dev>
+Date: Thu, 15 Aug 2024 21:39:06 +1000
+Message-id: <172372194692.6062.4519803974558688969@noble.neil.brown.name>
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On 15.08.2024 12:30, Andreas Hindborg wrote:
-> From: Andreas Hindborg <a.hindborg@samsung.com>
-> 
-> This patch splits up the rust helpers C file. When rebasing patch sets on
-> upstream linux, merge conflicts in helpers.c is common and time consuming
-> [1]. Thus, split the file so that each kernel component can live in a
-> separate file.
-> 
-> This patch lists helper files explicitly and thus conflicts in the file
-> list is still likely. However, they should be more simple to resolve than
-> the conflicts usually seen in helpers.c.
-> 
-> Link: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-General/topic/Splitting.20up.20helpers.2Ec/near/426694012 [1]
-> Signed-off-by: Andreas Hindborg <a.hindborg@samsung.com>
+On Thu, 15 Aug 2024, Kunwu Chan wrote:
+> Thanks for your reply.
+>=20
+> On 2024/8/14 18:28, NeilBrown wrote:
+> > On Wed, 14 Aug 2024, kunwu.chan@linux.dev wrote:
+> >> From: Kunwu Chan <chentao@kylinos.cn>
+> >>
+> >> Increase size of the servername array to avoid truncated output warning.
+> >>
+> >> net/sunrpc/clnt.c:582:75: error=EF=BC=9A=E2=80=98%s=E2=80=99 directive o=
+utput may be truncated
+> >> writing up to 107 bytes into a region of size 48
+> >> [-Werror=3Dformat-truncation=3D]
+> >>    582 |                   snprintf(servername, sizeof(servername), "%s",
+> >>        |                                                             ^~
+> >>
+> >> net/sunrpc/clnt.c:582:33: note:=E2=80=98snprintf=E2=80=99 output
+> >> between 1 and 108 bytes into a destination of size 48
+> >>    582 |                     snprintf(servername, sizeof(servername), "%=
+s",
+> >>        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~
+> >>    583 |                                          sun->sun_path);
+> >>
+> >> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+> >> ---
+> >>   net/sunrpc/clnt.c | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/net/sunrpc/clnt.c b/net/sunrpc/clnt.c
+> >> index 09f29a95f2bc..874085f3ed50 100644
+> >> --- a/net/sunrpc/clnt.c
+> >> +++ b/net/sunrpc/clnt.c
+> >> @@ -546,7 +546,7 @@ struct rpc_clnt *rpc_create(struct rpc_create_args *=
+args)
+> >>   		.connect_timeout =3D args->connect_timeout,
+> >>   		.reconnect_timeout =3D args->reconnect_timeout,
+> >>   	};
+> >> -	char servername[48];
+> >> +	char servername[108];
+> > If we choose this approach to removing the warning, then we should use
+> > UNIX_PATH_MAX rather than 108.
+> My negligence.
+> >
+> > However the longest server name copied in here will in practice be
+> >     /var/run/rpcbind.sock
+> >
+> > so the extra 60 bytes on the stack is wasted ...  maybe that doesn't
+> > matter.
+> I'm thinking=C2=A0 about use a dynamic space alloc method like kasprintf to=
+=20
+> avoid space waste.
+> > The string is only used by xprt_create_transport() which requires it to
+> > be less than RPC_MAXNETNAMELEN - which is 256.
+> > So maybe that would be a better value to use for the array size ....  if
+> > we assume that stack space isn't a problem.
+>=20
+> Thank you for the detailed explanation. I read the=20
+> xprt_create_transport,=C2=A0 the RPC_MAXNETNAMELEN
+>=20
+> is only use to xprt_create_transport .
+>=20
+> > What ever number we use, I'd rather it was a defined constant, and not
+> > an apparently arbitrary number.
+>=20
+> Whether we could check the sun->sun_path length before using snprintf?=C2=
+=A0=20
+> The array size should smaller
+>=20
+> than=C2=A0 the minimum of sun->sun_path and RPC_MAXNETNAMELEN.
+>=20
+> Or use the dynamic space allocate method to save space.
 
-Acked-by: Dirk Behme <dirk.behme@de.bosch.com>
+I think that dynamically allocating space is not a good idea.  It means
+you have to handle failure which is just a waste of code.
 
-Thanks!
+I'd suggest simply changing the array to RPC_MAXNETNAMELEN.
 
-Dirk
+NeilBrown
+
+
+
+>=20
+> >
+> > Thanks,
+> > NeilBrown
+> >
+> >
+> >>   	struct rpc_clnt *clnt;
+> >>   	int i;
+> >>  =20
+> >> --=20
+> >> 2.40.1
+> >>
+> >>
+> --=20
+> Thanks,
+>    Kunwu.Chan
+>=20
+>=20
 
 
