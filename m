@@ -1,170 +1,285 @@
-Return-Path: <linux-kernel+bounces-288407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38CA9539CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:18:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B019539D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217281C2349C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4C81F21592
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFCB52F70;
-	Thu, 15 Aug 2024 18:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA125B1FB;
+	Thu, 15 Aug 2024 18:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgJAUwqi"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YUMt4KDG"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6529533997
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1193383A3
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723745918; cv=none; b=eXfaEEGzqEGqOTqe5nEg9YtpA6CD0rQtAKiy4ZcGjPAI434N7TqB0FrSSrg76lSaVZdHG3olKj8rd/GRjCTGVICMzxlMB4dsu+t4aZIpv3PFDaa6tRExEXJBLKJ12/bhut0Otb7Wi/+1HyIpvG90Z17MNVRNq9fbD6FX6MpeIuc=
+	t=1723745955; cv=none; b=fQld8iBv9bJdaiAb5SH/z6IqSIwrNNPMdsXCHBTpI8U8nu6mK2w6PL0Mh/QD0qZYMu+2vjar2GcuzNYAYdjAicqJvM8tuu4j52GDTH5tlyKJCeE6pw5fePyptH6OdKD9+3FYxpOp1wlcODVx6NfuPVfb37EOkoKrBkDVnJjl6nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723745918; c=relaxed/simple;
-	bh=0wyvGe+JV0V3SRioczmMV4iTQtfWk6g81SRtviAJFnQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=phAP6gLqyNo8XCVObz7MjH5CQFOnsgDruII06m1bdf8CY88CO67dEXkeywl4s2QxxAqGVGv2LOovvnchNhr5SAF5sJ4GR0X/8Z1b5YmPm6V1yGQm9xUqVkAtY8CL3IGRelY395WyNgKx8UGaTIcwWUtqEmJ9Xp3DWMdAqhM5cMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgJAUwqi; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c3ebba7fbbso991881a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:18:37 -0700 (PDT)
+	s=arc-20240116; t=1723745955; c=relaxed/simple;
+	bh=qTGWnus/xajntiXwLNkQjMMlbBirJmOcpWKDV/rMMbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kOALi239a1QULOep8JcGaVrOGyE02In7XtQLBPJKWGiVotpk91QQ56OU+fc9fJz+VT6i90N4QxERjDQiEmVfbrjhP5HXgKvcmhy4HheIYgxrg+fHoSLYz8v1W7cjpkJHAt6/SRAKRBqJzWReXtNOkZ53Y57IcptBQ2quB+I1wdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YUMt4KDG; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc56fd4de1so9256035ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723745916; x=1724350716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FnL/caHC6IiZNXlhX4kwijSLCsO2WfzCGQwXH3dcl5Y=;
-        b=LgJAUwqiXMZmjU6tBnFf9k7NACRwfA6qMRMt0zaegzDOUr5q0BCQQc1wpYM6QOAfTb
-         lO1La4fOtFy/Omor4SVARA3mU0FaQWr2Gs4yJK7y4CdcBbTS9g6peiefnGslEH6XMnb8
-         3CaWLY66Z4+rpeqqsZ1a3eMc/DfQfZxixHSkwheJloklKD48hxoR0mcFFWn/ekQHNRTX
-         OIdgFqpEdWd5JZItszrtOBHkYt1EuSDsB9UfgL6egFpGg1oWF7I/mVGec8RYUJkKSv63
-         2BR8+PXHUpQlgPb1qqd8+evLZcB6X7ID+P+K7jH4LN6sIf0PnO7D21tLY+xiCqDBddW/
-         ba4Q==
+        d=chromium.org; s=google; t=1723745953; x=1724350753; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=obzmhQk8Xy3e9sDQPYIq1Np9pZwsRDfrPqw0CyAFY8k=;
+        b=YUMt4KDG6nt8v1MaXKPAlHNfORdPo6l9bWilyKipn9u8hE5ciGlGaiF05DXtVJFnl/
+         /wA/VgM3gvQ3XCDNE9nvHg2EV8FynbA2H3zdADA9OoPltkcFIveyj7RCZwyJJdlrZyEd
+         fYS9NsPGrJt82Hcnk5E6aqMk6G/l/WAAOYf3M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723745916; x=1724350716;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FnL/caHC6IiZNXlhX4kwijSLCsO2WfzCGQwXH3dcl5Y=;
-        b=ucToGioNYrUxS5lnvR7Y0pcXhivrgfmtyKYbDWwjqEnG/wzgHMkC/uFS19WeTshp0h
-         pT9TtqHgxo5bvUMkY3NpxzpQRJDxVeUcLlr3K/UDSVJn9cAzDH14YgLid4YiI8gLLyKm
-         +ZqD6jAPqXVpQPHkLaEUTZOhNQrEw+zh8tZExYHldZw46VmURBO/VkWVQCBT/zqHKx9a
-         7bojQUHpDtGF4lIM8efjsw8YwKte52/mpfZOhBsRSBu5ItrjEqqBvMMPjR9ZssY7nmBQ
-         SlhK2ND42IL0WDpjSrmmBRdJBfKItzB9qE3eM+y8lYuhW16V/YpoahqOpEaz67QjaPh9
-         A+DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxx+7ClW1VGSic8sNYoDca2i+TR48i0O/DGL3o53KvpawX9UIb8AD3iV38zeH3nG3S+XrzBZj1CgrTOuZtVrquWvAP82vOdUD5kZ++
-X-Gm-Message-State: AOJu0YzE7/gdqO1zW8kJ9o2/+i94Awuyphsf4f3gv11K3vu/pS3EudxH
-	9UZoMh76IngteQwcaXtzPKJE/DeFTJo6B9QzGVexo04aGNcXi+M9
-X-Google-Smtp-Source: AGHT+IHaWEF1sYe8fMDJJTy289IrVf+ene0AoBSSVJSdnZ0unYrhGoYRiXtaEVTlDXcbZZOme7pISg==
-X-Received: by 2002:a17:90a:ea07:b0:2d3:b976:e30e with SMTP id 98e67ed59e1d1-2d3e00f091emr563041a91.37.1723745916391;
-        Thu, 15 Aug 2024 11:18:36 -0700 (PDT)
-Received: from ubuntu.. ([27.34.65.188])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3c89b8fsm77093a91.35.2024.08.15.11.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 11:18:36 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: airlied@gmail.com,
-	daniel@ffwll.ch,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	airlied@linux.ie,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	Xinhui.Pan@amd.com
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix warning: Using plain integer as NULL pointer in dml2_pmo_dcn4.c
-Date: Thu, 15 Aug 2024 18:18:25 +0000
-Message-ID: <20240815181827.65159-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1723745953; x=1724350753;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=obzmhQk8Xy3e9sDQPYIq1Np9pZwsRDfrPqw0CyAFY8k=;
+        b=VXMkO4CDeX79/TdzFtMPHkbu7QhJA42fSwM/EZxSRlGQ4SeGxN6k0BlmDDz9eTh4cu
+         a9RaTj+GlXw9Q0H/Fnrn7YPRDfsO/Daddc6a4yvX/QPnIMZe2agMKFR04GxG+Q7E9kNk
+         XvlSSl2yKoFPCN5ruA6L80rYE75bXWRBlhP500lMbfMEzhF42uLPGMS0hpznLeWDH0Uu
+         UKc5//E5a/Zzop2wWrW0HiWRdbpIQJw/dLHpQ528xJuteHzuEbW5ylowkcXN6wuDXRF+
+         rkcKLIKikKaGRrJ9OBBTLqu12LlpZjJ1h07zW4jSm5raVGvLhEzC9eldk3LlGTeYtc7L
+         MpEw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5mykPhrOEdhrlm/ShZ2nza0sVW11GEDOqxp6Jg+WSeYyyeYipOpxh4cewBctdPaWntqMNTP164ORTagXiZGyqvrdqXkkVqgqHwxDE
+X-Gm-Message-State: AOJu0Yz5bBL86CZWyZ88BQ7m7N/amyYcdOWV2L4OG498JnstXGBFblHC
+	p50qaj3FHdm5XMfpT3yepYG7EJyA1eepv2hwPVrxFSHYyg1fHdpD6EAg7Moh0Q==
+X-Google-Smtp-Source: AGHT+IHCeenSQW5v809RWxm5k6tr6zFciMM4rFQNhw44zAMjp7OcNEYeeVpImhSYQ7cFYyL7U2umfg==
+X-Received: by 2002:a17:903:35c4:b0:201:eb46:1be5 with SMTP id d9443c01a7336-20206162588mr1821665ad.3.1723745953087;
+        Thu, 15 Aug 2024 11:19:13 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:5afb:2a2e:f5be:2aed])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201f0375725sm12853415ad.132.2024.08.15.11.19.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 11:19:12 -0700 (PDT)
+Date: Thu, 15 Aug 2024 11:19:10 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:NETWORKING DRIVERS (WIRELESS)" <linux-wireless@vger.kernel.org>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v1 1/1] dt-bindings: net: wireless: convert
+ marvel-8xxx.txt to yaml format
+Message-ID: <Zr5GnhNm0lSQNBwa@google.com>
+References: <20240812194441.3826789-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812194441.3826789-1-Frank.Li@nxp.com>
 
-sparse reportef following warnings:
+Hi Frank,
 
-'''
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:614:53: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:615:58: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:617:53: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:727:52: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:728:52: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:729:57: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:788:52: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:789:55: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:790:57: warning: Using plain integer as NULL pointer
-drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:958:67: warning: Using plain integer as NULL pointer
-'''
+On Mon, Aug 12, 2024 at 03:44:40PM -0400, Frank Li wrote:
+> Convert binding doc marvel-8xxx.txt to yaml format.
+> Additional change:
+> - Remove marvell,caldata_00_txpwrlimit_2g_cfg_set in example.
+> - Remove mmc related property in example.
+> 
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dtb: /soc@0/bus@30800000/mmc@30b40000/wifi@1:
+> failed to match any schema with compatible: ['marvell,sd8997']
 
-This patch changes zero to NULL.
+Can you make sure to run through `make dtbs_check` and handle any new
+issues? For one, I think you might want to include 'wakeup-source'?
 
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
- .../dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c   | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dtb: wifi@0,0: 'wakeup-source' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/wireless/marvell,8xxx.yaml#
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c
-index 8952dd7e36cb..6d524e528491 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c
-@@ -611,10 +611,10 @@ static bool subvp_subvp_schedulable(struct dml2_pmo_instance *pmo, const struct
- 	int max_microschedule_us = 0;
- 	int vactive1_us, vactive2_us, vblank1_us, vblank2_us;
- 
--	const struct dml2_timing_cfg *svp_timing1 = 0;
--	const struct dml2_implicit_svp_meta *svp_meta1 = 0;
-+	const struct dml2_timing_cfg *svp_timing1 = NULL;
-+	const struct dml2_implicit_svp_meta *svp_meta1 = NULL;
- 
--	const struct dml2_timing_cfg *svp_timing2 = 0;
-+	const struct dml2_timing_cfg *svp_timing2 = NULL;
- 
- 	if (svp_stream_count <= 1)
- 		return true;
-@@ -724,9 +724,9 @@ static bool validate_svp_drr_cofunctionality(struct dml2_pmo_instance *pmo,
- 	int drr_stretched_vblank_us = 0;
- 	int max_vblank_mallregion = 0;
- 
--	const struct dml2_timing_cfg *svp_timing = 0;
--	const struct dml2_timing_cfg *drr_timing = 0;
--	const struct dml2_implicit_svp_meta *svp_meta = 0;
-+	const struct dml2_timing_cfg *svp_timing = NULL;
-+	const struct dml2_timing_cfg *drr_timing = NULL;
-+	const struct dml2_implicit_svp_meta *svp_meta = NULL;
- 
- 	bool schedulable = false;
- 
-@@ -785,9 +785,9 @@ static bool validate_svp_vblank_cofunctionality(struct dml2_pmo_instance *pmo,
- 	int vblank_stream_count = 0;
- 	int svp_stream_count = 0;
- 
--	const struct dml2_timing_cfg *svp_timing = 0;
--	const struct dml2_timing_cfg *vblank_timing = 0;
--	const struct dml2_implicit_svp_meta *svp_meta = 0;
-+	const struct dml2_timing_cfg *svp_timing = NULL;
-+	const struct dml2_timing_cfg *vblank_timing = NULL;
-+	const struct dml2_implicit_svp_meta *svp_meta = NULL;
- 
- 	int prefetch_us = 0;
- 	int mall_region_us = 0;
-@@ -955,7 +955,7 @@ bool pmo_dcn4_init_for_pstate_support(struct dml2_pmo_init_for_pstate_support_in
- 
- 	struct display_configuation_with_meta *display_config;
- 	const struct dml2_plane_parameters *plane_descriptor;
--	const enum dml2_pmo_pstate_strategy (*strategy_list)[4] = 0;
-+	const enum dml2_pmo_pstate_strategy (*strategy_list)[4] = NULL;
- 	unsigned int strategy_list_size = 0;
- 	unsigned int plane_index, stream_index, i;
- 
--- 
-2.43.0
 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../bindings/net/wireless/marvell,8xxx.yaml   | 96 +++++++++++++++++++
+>  .../bindings/net/wireless/marvell-8xxx.txt    | 70 --------------
+>  2 files changed, 96 insertions(+), 70 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/wireless/marvell-8xxx.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml b/Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml
+> new file mode 100644
+> index 0000000000000..7b4927cdb7a01
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/wireless/marvell,8xxx.yaml
+> @@ -0,0 +1,96 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/wireless/marvell,8xxx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Marvell 8787/8897/8978/8997 (sd8787/sd8897/sd8978/sd8997/pcie8997) SDIO/PCIE devices
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+
+I wouldn't mind adding:
+
+  - Brian Norris <briannorris@chromium.org>
+
+> +
+> +description:
+> +  This node provides properties for controlling the Marvell SDIO/PCIE wireless device.
+
+Since we're essentially rewriting this doc, might as well tweak a few
+things:
+Please replace "controlling" with "describing". These bindings are for
+hardware description, not for software control (even though they seem
+like it sometimes and can be abused for that).
+
+> +  The node is expected to be specified as a child node to the SDIO/PCIE controller that
+> +  connects the device to the system.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - marvell,sd8787
+> +      - marvell,sd8897
+> +      - marvell,sd8978
+> +      - marvell,sd8997
+> +      - nxp,iw416
+> +      - pci11ab,2b42
+> +      - pci1b4b,2b42
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  marvell,caldata-txpwrlimit-2g:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: calibration data
+
+Capitalize the first letter ("Calibration"). Same on all your
+descriptions.
+
+And maybe expand a little on what this means? Same on the other caldata
+properties.
+
+For example, "Calibration data for the 2GHz band."
+
+> +    maxItems: 566
+
+Non-critical question: are these numbers actually correct? The only
+instance I see in the upstream tree is
+arch/arm/boot/dts/rockchip/rk3288-veyron-jerry.dts, with 526 items. Yes,
+that still fits in this "max", but I just wonder whether this is an
+actually-correct specification, or an off-by-40 specification. Or, maybe
+the structure varies a lot by chip or firmware, and this max just isn't
+very meaningful.
+
+Like I said, it's non-critical, so maybe we leave it as-is, if it
+doesn't matter much.
+
+> +  marvell,caldata-txpwrlimit-5g-sub0:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: calibration data
+
+Possibly, "Calibration data for sub-band 0 in the 5GHz band."? And even
+better if you can describe what sub-band 0 is (e.g., 5.xxx MHz - 5.yyy
+MHz). But I'm not familiar.
+
+> +    maxItems: 502
+> +
+> +  marvell,caldata-txpwrlimit-5g-sub1:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: calibration data
+> +    maxItems: 688
+> +
+> +  marvell,caldata-txpwrlimit-5g-sub2:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: calibration data
+> +    maxItems: 750
+> +
+> +  marvell,caldata-txpwrlimit-5g-sub3:
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    description: calibration data
+> +    maxItems: 502
+> +
+> +  marvell,wakeup-pin:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      a wakeup pin number of wifi chip which will be configured
+> +      to firmware. Firmware will wakeup the host using this pin
+> +      during suspend/resume.
+
+Optional: this could use a bit of a rewrite to describe the hardware
+instead of the software. For example, "Provides the pin number for the
+wakeup pin from the device's point of view. The wakeup pin is used for
+the device to wake the host system from sleep. This property is only
+necessary if the wakeup pin is wired in a non-standard way, such that
+the default pin assignments are invalid."
+
+> +
+> +  vmmc-supply:
+> +    description: a phandle of a regulator, supplying VCC to the card
+
+I believe this vmmc-supply property is actually misplaced. I don't see
+any in-tree users, and OTOH all in-tree users specify this in the parent
+(e.g., the MMC controller), where it's already properly documented.
+
+> +  mmc-pwrseq:
+> +    description:
+> +      phandle to the MMC power sequence node. See "mmc-pwrseq-*"
+> +      for documentation of MMC power sequence bindings.
+
+Similarly, I think this is misplaced. See its introduction here,
+commit e3fffc1f0b47 ("devicetree: document new marvell-8xxx and
+pwrseq-sd8787 options"), but the controller docs
+(Documentation/devicetree/bindings/mmc/mmc-controller.yaml) specify
+these properties for the controller, not the endpoint/card. And
+Documentation/devicetree/bindings/mmc/mmc-pwrseq-sd8787.yaml is vague,
+but in practice, again, I think everyone uses this only in the
+controller.
+
+I'd consider dropping this and vmmc-supply, unless `make dtbs_check`
+complains.
+
+Brian
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    mmc {
+> +         #address-cells = <1>;
+> +         #size-cells = <0>;
+> +
+> +         wifi@1 {
+> +             compatible = "marvell,sd8897";
+> +             reg = <1>;
+> +             interrupt-parent = <&pio>;
+> +             interrupts = <38 IRQ_TYPE_LEVEL_LOW>;
+> +             marvell,wakeup-pin = <3>;
+> +        };
+> +    };
+> +
 
