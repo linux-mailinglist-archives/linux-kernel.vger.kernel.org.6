@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-287942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C475952E68
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6FEB952E6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA0AFB229DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CE91F22C72
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7655117C9BA;
-	Thu, 15 Aug 2024 12:39:23 +0000 (UTC)
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C62917C9B7;
+	Thu, 15 Aug 2024 12:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IeokyTN2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCAC7DA63;
-	Thu, 15 Aug 2024 12:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16ACE17C9AA
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723725563; cv=none; b=Br8SpnO5aCZDhKQn8dRPPk/+QKER5Fgfkq9+Q/JQijezLuadInJLy8ipQ2tuEbLeO00bKLyy9HcxS+wUICQjtoiFMem6FTMsnaO8wANqtr1JDUzQhYd7PDkQitouy6JXqI5tvmLPgNuF+MkTucM1OSdDffq7rsLskDRP2bojyaE=
+	t=1723725689; cv=none; b=T5K0R3gzcAsrvp8308QFOCNX9gLDRVhN/Ad8HByTqTpWr2U4+pxTl+LoRH9Z6dUSmbQa8djJ4zgTSrp0AQsStIua3onoEjaMLwM9oynAPhzwjWwG8/YEn7kWcpF6IaTVBjylujSmi5lWKJ6DPw//ZVaZ/8ZT1IdZKtYv4I+L1Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723725563; c=relaxed/simple;
-	bh=LhOveH/26yuc5fTwV5yhZ8zbysqsh+AFZX5g3fbgbXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4D5cT2fsSbxYtcBVNyE9qvU7/83dlZdPLD+jCMYXTjKzD4iO/gMfJQ1LI48GvZAu2ZUbWQe7TvCOmy1d0U1LVak+DCDsf1kWJplyyor8qLlxxwJrHd8BCr8xFLD8v+IA7gbsMkDvmZrdtN+vWftejEONLklcaPn1u9I8u/SiIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu; spf=none smtp.mailfrom=freedom.csh.rit.edu; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=freedom.csh.rit.edu
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 3E67F4010D16;
-	Thu, 15 Aug 2024 08:39:19 -0400 (EDT)
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id c9L37Hq50jD0; Thu, 15 Aug 2024 08:39:18 -0400 (EDT)
-Received: from freedom.csh.rit.edu (freedom.csh.rit.edu [129.21.49.182])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 781D345735E9;
-	Thu, 15 Aug 2024 08:39:18 -0400 (EDT)
-Date: Thu, 15 Aug 2024 08:39:17 -0400
-From: Mary Strodl <mstrodl@freedom.csh.rit.edu>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
-	linux-mm@kvack.org, lee@kernel.org, andi.shyti@kernel.org,
-	linux-i2c@vger.kernel.org, s.hauer@pengutronix.de,
-	christian.gmeiner@gmail.com
-Subject: Re: [PATCH v4 1/2] x86: Add basic support for the Congatec CGEB BIOS
- interface
-Message-ID: <Zr329S8995L0OsCu@freedom.csh.rit.edu>
-References: <20240814184731.1310988-2-mstrodl@csh.rit.edu>
- <87sev6m14n.ffs@tglx>
+	s=arc-20240116; t=1723725689; c=relaxed/simple;
+	bh=ZwHCZxVrRXzqfloVd0bjXYNn3gE5iZuj4Zrr2fE0tEM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Gseq1fYBYFFiRjguGTCinp3L+mNN8GIOMqGiyxF0hYjeldcvCxn/GYn5QtpeXrRBF85Zz0VncqqHkFk6Rk9gcr2AmYGTTAMpX11IrG6jXjY78z1/YX1q8n5RusVGACCcqMm+bpeuoCS/kEwPaPLz4BNSIzGuim3yE7v/AVDmcbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IeokyTN2; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723725688; x=1755261688;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZwHCZxVrRXzqfloVd0bjXYNn3gE5iZuj4Zrr2fE0tEM=;
+  b=IeokyTN2qZPPHn3BTGG1+uYCbry+JocLYYbsTTBeUbLQ+kA49Pf0VOb2
+   ynsn3rvceFRysjI8jP1MybgNQMcJP9VQnBbIQjySOX1EWGYbBItmssWmj
+   USGQZ2KFjE0bHMEYIOYzub6uczj4BNMld1D3eZCwXphTsUgFTc8VMwUZa
+   GCgajkrj9XqgcL01pdxWPUS+enfp2Xsk339Px8stZkfBMXRbKrSZZRSPp
+   IOY7wJBbgFiGoRVPBjW6ez50kpe6cDDjuT3WIappvcE7b5/P1fH+4NEoo
+   xSIATGA9GYwCego1uleykFskG6JG5scde/xLPmn88N5V2A6GbHwJ5a2aJ
+   g==;
+X-CSE-ConnectionGUID: LW5o0KUZSkm3TGucg7oanw==
+X-CSE-MsgGUID: MnOBcM5xQpK2mGbx3oIVjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22147632"
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="22147632"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:41:27 -0700
+X-CSE-ConnectionGUID: Lemrv7uyRFm9tRUaao3g6w==
+X-CSE-MsgGUID: pY51f5IVRGCxflCu+QdLdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="63493118"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.229.145]) ([10.124.229.145])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:41:25 -0700
+Message-ID: <569a7697-4e5b-445d-a886-41c0dac1a375@linux.intel.com>
+Date: Thu, 15 Aug 2024 20:41:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sev6m14n.ffs@tglx>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] iommu/vt-d: Add helper to flush caches for context
+ change
+To: Alex Williamson <alex.williamson@redhat.com>
+References: <20240702130839.108139-1-baolu.lu@linux.intel.com>
+ <20240702130839.108139-7-baolu.lu@linux.intel.com>
+ <20240814162726.5efe1a6e.alex.williamson@redhat.com>
+ <4ff133f3-e541-4a0f-a72c-ce682720e6df@linux.intel.com>
+ <20240815063430.70ac9b00.alex.williamson@redhat.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240815063430.70ac9b00.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 15, 2024 at 02:17:12PM +0200, Thomas Gleixner wrote:
-> So this caught the attention of my mail filter because the subsystem
-> prefix is 'x86:' while it obviously should be 'mfd:'
-
-Sorry! Originally there was some debate as to where it belonged and the
-commit message was never updated.
-
-> This Signed-off-by chain is invalid. See Documentation/process/
-
-My bad. I was following the example set by last time this was brought
-up for review by Christian. Would you like only my Signed-off-by? Or
-something else?
-
-> Aisde of that. How is any of this supposed to work. What is the user
-> mode helper doing and why does this need this netlink indirection?
-
-The first time I posted the series I was asked to move the BIOS stuff
-into userspace. Personally, I'm not convined that makes it any less
-terrible, but I obliged.
-
-> Seriously? RWX mappings?
-
-Yeah. In my testing, it wouldn't work without writable mappings.
-
-> So this copies a code blob out of the BIOS region into user space and
-> lets user space use this blob to interact with the BIOS extension,
-> right?
-
-Yep.
-
-> So an i2c transfer does a full round trip:
+On 2024/8/15 20:34, Alex Williamson wrote:
+> On Thu, 15 Aug 2024 12:47:58 +0800
+> Baolu Lu<baolu.lu@linux.intel.com>  wrote:
 > 
->    i2c::xfer -> cgeb -> netlink -> user helper -> execute random code ->
->    user helper -> netlink -> cgeb -> ...
-
-Looks right. I'm not thrilled about it either, but the vmalloc people
-wanted it in userspace. For our usecase, we didn't intend to have
-much throughput so it still worked okay for us.
-
-> Has anyone tried to analyze what this BIOS provided code blob is
-> actually doing?
-
-I have no idea what the licensing on the BIOS blob is, I didn't want to
-run afoul of any copyright stuff by disassembling it to find out what
-it does. I suppose I could pull the blob off my hardware and watch what
-it does in qemu?
-
-> All it does is to poke at a range of IOPORTS with in*(), out*() and that
-> poking mechanism depends on the generation of that CGEB implementation.
+>> On 2024/8/15 6:27, Alex Williamson wrote:
+>>> Hi Baolu,
+>> Hi Alex,
+>>
+>>> This appears to be non-functional and breaks device assignment...
+>> Yes. This is broken. Thanks for pointing it out.
+>>
+>> Perhaps I can fix it by passing domain id to the helper? Something like
+>> below:
+> Hi Baolu,
 > 
-> Congatec even provides the GPL2 licenced source for this pokery as a
-> kernel driver.
+> Yes, I did a similar quick fix to prove this was the issue.  Thanks,
 
-The only driver I've found from them is the one that runs blobs in the BIOS.
-Where did you find the IOPORT stuff?
- 
-> Thanks,
-> 
->         tglx
+Thank you! Then, I will make it a real patch.
 
-Thanks for taking time to read through this!
+Thanks,
+baolu
 
