@@ -1,82 +1,84 @@
-Return-Path: <linux-kernel+bounces-289089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-289417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5EBD954200
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 08:47:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC64954606
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 11:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3489A289181
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 06:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 982621C20E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 09:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9751813A276;
-	Fri, 16 Aug 2024 06:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D175A16B3B6;
+	Fri, 16 Aug 2024 09:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H/3Oa+e6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZNvnTymD"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD8A13A26B;
-	Fri, 16 Aug 2024 06:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4985166F3D
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723790759; cv=none; b=a94rnjvsI6IPlPjCyWGbP1BcpbAqI+L1P7OXuOfF1EmrUQWx2kR3a/Q4MBuOvMENtevRzXD11nG60czcU0Qgzy24PvN8vm5Mf6fhRMTDsmFpB1S1Vvqh+92uNiUmXV8FkCKE3HbtM/e5II3Ob5mHDSjOP/j+BE+DcPTYnb0RQUc=
+	t=1723801534; cv=none; b=MMGOSmgOvhB63jQOv/UH4BjpkNpSPV4qs1/PAOMB9IZN8P6cPUApVgr7ZEinnA0GyATiWa9LUMF+5p6eGc7YApuCKabH0uDeJpxdEAoM+HNK5rFKEw84gD6L0j7YJe+chV3Cle32sPw/FF9YKWR33UnUhtO0tlr3ix+5BkkheRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723790759; c=relaxed/simple;
-	bh=PyZgNILmP4YBkkVr6sygCkBQ67L4OAU6Lr5J99p0djE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GYZUUz98shy6MfUoPrPVh5UejCTUKo0Pl4PRODF+E5VFGj/UDhWIWqcy5a9HsQanAhI0+3Bz8f46q6ppl/iT6OSeSyMF/9FT1dCBoNYSkUhqSfdsj7vz4l1EnmavPdM17tgYjmMw22MgSQkuteQffFn96WFdRd5mCfzaQoYNbjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H/3Oa+e6; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723790758; x=1755326758;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PyZgNILmP4YBkkVr6sygCkBQ67L4OAU6Lr5J99p0djE=;
-  b=H/3Oa+e6EgBfyRmvr+hSqIw5BxQcCtZJZs+1LJdpOFvb0tBzq5fpqLyM
-   OloZ7RgWiq+4+BAJVC/ZBIhHNLK/8UZgNRbcSNGuSyIjFsyIyl9RuAuMc
-   /HNPMay2QasRb2ockbTT7fsfJPvqQ+eL0mTxPKwuik0wiMeiq+cuCHDaE
-   pKMaUReMFSiSPWEaeIernZRaqttYCyhasxNqtnk9w5f5/KaV2DuQp2tM5
-   Bboxjk08gJxFX07zqzEYZGeLHZ5Dpv0hwUc8/Uj6gpJy7eU4f/L2m/uEE
-   YhGx9Eug70OE/QqQFtxZwk8qCG4jT7wqLULSYl7gCKCf1tYlEgCUS9hMP
-   A==;
-X-CSE-ConnectionGUID: wG+GA3uAR/O/nP+GlHEifA==
-X-CSE-MsgGUID: G251xN08Sy6WZVRfMiFQDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="39530797"
-X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="39530797"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 23:45:58 -0700
-X-CSE-ConnectionGUID: DuWe3jLgQguiDKseF7Cg1A==
-X-CSE-MsgGUID: 3djLFv0xTo60dRSDhdlzYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="60150062"
-Received: from emr.sh.intel.com ([10.112.229.56])
-  by orviesa007.jf.intel.com with ESMTP; 15 Aug 2024 23:45:56 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yongwei Ma <yongwei.ma@intel.com>,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v4 6/6] perf tests: Add more topdown events regroup tests
-Date: Fri, 16 Aug 2024 12:29:38 +0000
-Message-Id: <20240816122938.32228-7-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240816122938.32228-1-dapeng1.mi@linux.intel.com>
-References: <20240816122938.32228-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1723801534; c=relaxed/simple;
+	bh=NlqRd+YnQZBm5VFL+HzJ4ijReg9PePdpkBX+nO/ztJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=F+CjHknewQPJkaUBGrXDajc1WXaPSmhGb8aG8Jpla7j0SgWXxdVG2vdliNe1Wmv4Sld7mul58adAcP+nc12ISGEb9Gr88y8zJyTf2X2M/mjHXb+VXKsO9d4vpL8MyTLGsKqB8Oc2V1SyiyM+fHE99PdKlSBp9mpHNV026S9W00U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZNvnTymD; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240816094522epoutp04e49e175f33406b01252c6cabdd589fa6~sLFoHop-W0640106401epoutp04w
+	for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2024 09:45:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240816094522epoutp04e49e175f33406b01252c6cabdd589fa6~sLFoHop-W0640106401epoutp04w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723801522;
+	bh=hak/V2qJ7HDVRDcAmIQFiOQebTO2H9ff6Prfs4qNVZY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZNvnTymDw0SwWCOWe+HbREMYeCpU+OE9N56qCQsL95GH3cMTr5Zxkv1SGtMgiK1kC
+	 DJxWwG2p3KWzMSPBGi4yNXbGSa3JqL5yDQ5vVZ2Pn7oSDklnxkVIS19KjM4a0X3v7d
+	 +31h5/Yo4ObYHVVrmmiIPdDqoSMc+drG7TJmZ62c=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240816094522epcas5p3595f7328b75f5c04a9e33a95ae56c68c~sLFnnHN7E1754617546epcas5p3z;
+	Fri, 16 Aug 2024 09:45:22 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WlcYD2Gncz4x9Px; Fri, 16 Aug
+	2024 09:45:20 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	87.06.08855.0BF1FB66; Fri, 16 Aug 2024 18:45:20 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe~r1CnBfAMC2853628536epcas5p1O;
+	Thu, 15 Aug 2024 06:49:18 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240815064918epsmtrp2cc81b8f6a6468629cfbe31c1f0123a4c~r1CnAq4tO2421924219epsmtrp2B;
+	Thu, 15 Aug 2024 06:49:18 +0000 (GMT)
+X-AuditID: b6c32a44-15fb870000002297-45-66bf1fb0b967
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	35.B1.07567.EE4ADB66; Thu, 15 Aug 2024 15:49:18 +0900 (KST)
+Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240815064915epsmtip2fa8f4ace9ad84201fcccdb71d46d4e65~r1Ck3ILTv2148721487epsmtip2M;
+	Thu, 15 Aug 2024 06:49:15 +0000 (GMT)
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
+	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
+	Selvarasu Ganesan <selvarasu.g@samsung.com>, stable@vger.kernel.org
+Subject: [PATCH v3] usb: dwc3: core: Prevent USB core invalid event buffer
+ address access
+Date: Thu, 15 Aug 2024 12:18:31 +0530
+Message-ID: <20240815064836.1491-1-selvarasu.g@samsung.com>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,49 +86,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmlu4G+f1pBmvmcVu8ubqK1eLOgmlM
+	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TmHxeLI8o9MFpe/72S2
+	WLDxEaPFpIOiFqsWHGB34PfYP3cNu0ffllWMHlv2f2b0+LxJLoAlKtsmIzUxJbVIITUvOT8l
+	My/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hQJYWyxJxSoFBAYnGxkr6dTVF+
+	aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xu7HX1kK5glW3Fuwk62B
+	8SFvFyMnh4SAicSZHc+Yuhi5OIQEdjNK3Nv1kxnC+cQocbPxFFTmG6PEtpVb2GFaLt3dww6R
+	2MsocffOdkYI5zujxM8Ju9m6GDk42AQMJZ6dsAFpEBEokbj0diMTiM0ssIBJonW2NogtLBAt
+	MbGniw3EZhFQlbhzbBMriM0rYC2xoreJDWKZpsTavXuYIOKCEidnPmGBmCMv0bx1NtipEgKt
+	HBK9t88wg+yVEHCR+LVSFqJXWOLVcZijpSQ+v9sLNbNaYvWdj2wQvS2MEoeffIMqspd4fPQR
+	2BxmoMXrd+lDhGUlpp5aB3U/n0Tv7ydMEHFeiR3zYGxViVONl6HmS0vcW3KNFcL2kJj8Ygsz
+	iC0kECux9OIRpgmM8rOQvDMLyTuzEDYvYGRexSiZWlCcm56abFpgmJdaDo/Y5PzcTYzg9Krl
+	soPxxvx/eocYmTgYDzFKcDArifA+/bI3TYg3JbGyKrUoP76oNCe1+BCjKTCMJzJLiSbnAxN8
+	Xkm8oYmlgYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTDNOr9mz+ITYH+Wl
+	1t2sk1rW/zdXOn8173NFwMtPTdLvPLsZfqe8j/vq0ixbuOF1l4Zm6+rHpXpx6/sazV5ZVn9M
+	2sJ82O+fZkxIoPkK7fNaKXNf10vLlH664+3SfEyEITZ61qzVdhElVw+buLSdf9QmeTHv2bsf
+	rMs5uNY/zJ38c2LcUtszrPcYZz8UXeSk8j8g+FRLxu+1BfmR7lr/JmeVxhTqzpJx2cR8p/ry
+	Xr/rwqeereH4uDA+ZbXH1a77hZ2RqkdTfXi7d2/y3XR62T+BlNtBcUXyxtaa3FtL2u/PNr5/
+	bfI6PjWGn8X/z3wPNA4TvlN4J7oq1MFn2Vm3q22fJ2y+U3D0XYLhRwWzKUosxRmJhlrMRcWJ
+	AKInNfY4BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsWy7bCSvO67JXvTDH48ZLd4c3UVq8WdBdOY
+	LE4tX8hk0bx4PZvFpD1bWSzuPvzBYnF51xw2i0XLWpktPh39z2qxqnMOi8WR5R+ZLC5/38ls
+	sWDjI0aLSQdFLVYtOMDuwO+xf+4ado++LasYPbbs/8zo8XmTXABLFJdNSmpOZllqkb5dAlfG
+	7sdfWQrmCVbcW7CTrYHxIW8XIyeHhICJxKW7e9hBbCGB3YwS5055QcSlJV7P6mKEsIUlVv57
+	DlTDBVTzlVHi08rXLF2MHBxsAoYSz07YgNSICFRIPF44gwWkhllgHZPE7ONPmEESwgKREtNO
+	fQKzWQRUJe4c28QKYvMKWEus6G1ig1igKbF27x4miLigxMmZT1hAbGYBeYnmrbOZJzDyzUKS
+	moUktYCRaRWjZGpBcW56brJhgWFearlecWJucWleul5yfu4mRnCga2nsYLw3/5/eIUYmDsZD
+	jBIczEoivIEmu9KEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi
+	4JRqYEp8GKrxKEncQ5XVVW3FrTrmpPZXyuGnnAV71ravW+PdsqqjWPKC0HstX6UIly2/n6xt
+	YlM+vnf76jNcE+z5O8PsVuX/Fv9+ifG7c1+Q1j+d6MQFB/5NPhhixZRxnPHTBaZ5wv0d/9mk
+	Z74P//kkSMtlc1jrk/Caw4eXXti2VfhG+57Ls5MPdu9Z2OLZUrHl5Fl/b73ALVM/3Vvd97Lr
+	b84P5uQagV06py73FQYzCWl2HTf4zn/1/f4s56tZv5YJKB4N+sH7dYLctOoNPFpccVe/cOtE
+	vZ4ZP0mHef//pOyqxZ/lZ3AbZVw3lnvC6v1I4+v1RQwPlngxyUYIMAvUB3Oe/P1XbUKSkW78
+	MdeLa5RYijMSDbWYi4oTAblUv1zjAgAA
+X-CMS-MailID: 20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe
+References: <CGME20240815064918epcas5p1248e4f9084d33fdb11a25fa34e66cdbe@epcas5p1.samsung.com>
 
-Add more test cases to cover all supported topdown events regroup cases.
+This commit addresses an issue where the USB core could access an
+invalid event buffer address during runtime suspend, potentially causing
+SMMU faults and other memory issues in Exynos platforms. The problem
+arises from the following sequence.
+        1. In dwc3_gadget_suspend, there is a chance of a timeout when
+        moving the USB core to the halt state after clearing the
+        run/stop bit by software.
+        2. In dwc3_core_exit, the event buffer is cleared regardless of
+        the USB core's status, which may lead to an SMMU faults and
+        other memory issues. if the USB core tries to access the event
+        buffer address.
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To prevent this hardware quirk on Exynos platforms, this commit ensures
+that the event buffer address is not cleared by software  when the USB
+core is active during runtime suspend by checking its status before
+clearing the buffer address.
+
+Cc: stable@vger.kernel.org # v6.1+
+Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
 ---
- tools/perf/tests/shell/stat.sh | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-index 092a7a2abcf8..85897898a1f4 100755
---- a/tools/perf/tests/shell/stat.sh
-+++ b/tools/perf/tests/shell/stat.sh
-@@ -73,9 +73,27 @@ test_topdown_groups() {
-     err=1
-     return
-   fi
--  if perf stat -e '{topdown-retiring,slots}' true 2>&1 | grep -E -q "<not supported>"
-+  if perf stat -e 'instructions,topdown-retiring,slots' true 2>&1 | grep -E -q "<not supported>"
-   then
--    echo "Topdown event group test [Failed slots not reordered first]"
-+    echo "Topdown event group test [Failed slots not reordered first in no-group case]"
-+    err=1
-+    return
-+  fi
-+  if perf stat -e '{instructions,topdown-retiring,slots}' true 2>&1 | grep -E -q "<not supported>"
-+  then
-+    echo "Topdown event group test [Failed slots not reordered first in single group case]"
-+    err=1
-+    return
-+  fi
-+  if perf stat -e '{instructions,slots},topdown-retiring' true 2>&1 | grep -E -q "<not supported>"
-+  then
-+    echo "Topdown event group test [Failed topdown metrics event not move into slots group]"
-+    err=1
-+    return
-+  fi
-+  if perf stat -e '{instructions,slots},{topdown-retiring}' true 2>&1 | grep -E -q "<not supported>"
-+  then
-+    echo "Topdown event group test [Failed topdown metrics group not merge into slots group]"
-     err=1
-     return
-   fi
+Changes in v3:
+- Added comment on why we need this fix.
+- Included platform name in commit message.
+- Removed Fixes tag as no issue on the previous commits, and updated Cc tag.
+- Link to v2: https://lore.kernel.org/lkml/20240808120507.1464-1-selvarasu.g@samsung.com/
+
+Changes in v2:
+- Added separate check for USB controller status before cleaning the
+  event buffer.
+- Link to v1: https://lore.kernel.org/lkml/20240722145617.537-1-selvarasu.g@samsung.com/
+---
+ drivers/usb/dwc3/core.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 734de2a8bd21..ccc3895dbd7f 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -564,9 +564,17 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
+ void dwc3_event_buffers_cleanup(struct dwc3 *dwc)
+ {
+ 	struct dwc3_event_buffer	*evt;
++	u32				reg;
+ 
+ 	if (!dwc->ev_buf)
+ 		return;
++	/*
++	 * Exynos platforms may not be able to access event buffer if the
++	 * controller failed to halt on dwc3_core_exit().
++	 */
++	reg = dwc3_readl(dwc->regs, DWC3_DSTS);
++	if (!(reg & DWC3_DSTS_DEVCTRLHLT))
++		return;
+ 
+ 	evt = dwc->ev_buf;
+ 
 -- 
-2.40.1
+2.17.1
 
 
