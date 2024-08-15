@@ -1,386 +1,205 @@
-Return-Path: <linux-kernel+bounces-287951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342E2952E7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:47:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 745FB952E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35671F236D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F581F21D5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9494D1A3BB6;
-	Thu, 15 Aug 2024 12:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA3419AD8E;
+	Thu, 15 Aug 2024 12:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="i5wrEDlO"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H60ViqEu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD3A1A0710
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DCF143888
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723725974; cv=none; b=cUtN7Dfe5MZTgzxn1rJQalVu8UiyI3wAmRcYqNT8yraMPZJMxV9wLhzLTcrPZ8jBGktSMY0Nb8DUQ1wAWjCQqhhm2hYCtxsuEXnzQ/3F7XuxXCNqjPRQYKZVCRWE8JlsvMtg+dEb0Jw/rjIP8gTm3khW088YjL8lXxoybKcmlaI=
+	t=1723726355; cv=none; b=Ggc6pbeYFDBIO9rTSPu1ERLD2fJlgGb4SOpVMImeJqJeBv6RNs+j7IDn5M7ZhEq8cxNunGwe49UEDnIgLtgSqrF4IKcW889nQEhPDl9W7FOaBU5wbpBK85YZfy4h7zmIFeQ6gaVRBMTuPogrBVp8Qan1wvGq3XuC8wN0J1MZS0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723725974; c=relaxed/simple;
-	bh=W1JwBf//ovDGYlVFit9pAXSZMduT1rWnk4BUPBQQwhI=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NoRjAP6zc6BJdmpFs3yGgkFr2JoLJql4GAVzvzfTdHDiNBrZCx3krFQcAiUU6yVVm2/oNq5tIPP4uWRLPw/yo7/mHZKt38mNtijpz39+LUFwll/OSp9QHslZjbOnREu0O9mK8ZYzwcJs3AGpxGtUmjZst0vVcVOVKiU/2tlnSzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=i5wrEDlO; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723725967; x=1723985167;
-	bh=N4UMOB0VYO09hX28l2MQcK5AShBx/Gcp1BvKnOQ+r5I=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=i5wrEDlOsT6bdSBmQ+bVZeI1zSraZuk9rsKOpOQ3gVa54d+FuROQ54BqvcAWD+kUg
-	 WWcx5w/oHNMAZiy+Nyr/UhxLDUH2Fm9+okSaeg9+W5WFc4dh92Me2mtOtFvszOJd5D
-	 bEq4dccvWxCWNA1EihOCG5e6rQP3JMZvRW00Uq/ByJ2XNRC0QPyVPDNfQknQqpTigc
-	 YWk++O8y0ycE4/9aA3jNyYDsgiBUKVUoMt8wmyVvE85DiVIFriayRkvwcM6rCEziK9
-	 dhoOz9zO9LvRg1y7Aeyhei6ttVUsX+ZfljfdP2UnLlJISCd+1Stt9BWhESNXhdwYDd
-	 iGE+/60vy9Ikw==
-Date: Thu, 15 Aug 2024 12:46:00 +0000
-To: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Piotr Zalewski <pZ010001011111@proton.me>, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH v4] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <20240815124306.189282-2-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 3cf693c9e2dbcad0d9e14f47a00c63411b25336b
+	s=arc-20240116; t=1723726355; c=relaxed/simple;
+	bh=BrSRR5uvh8cU30zKn+CdjcQa5boqGY1qzsHYzMNtRcc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fKgAxGSuCAVjZKqRbr7Jm1zi4ce0mQcPFeo+C7fnn9ah1V1rzHuxLwdSH3J2Nmajb0eKIeGUhZBCSy83SSpsmAIhJlmyvLrst0bU3rQereOb/oP7ghWNYWIE568XkoYJ+tA8k9EoxmTJ2TTpbfyUB2fHlHClcQ+ptYcrkvPyJg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H60ViqEu; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723726355; x=1755262355;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BrSRR5uvh8cU30zKn+CdjcQa5boqGY1qzsHYzMNtRcc=;
+  b=H60ViqEu0Bg1p2qHP7t9rfn9s2avf1y3oG+iPGk7Nd4CLm+IE1G/3yDR
+   wACo+IOEVPei9olyGtpP9nIIUahS9r8xFFbGFFhsT7q9Q1o15+y3M74MC
+   rpO5svtZM0gSsNCIp8reka+Z2CmKgYQHz6nh3qN5J3Uxcsvar/SLWc2Lz
+   YYTJ9ZTw6ldsRI9awEhqHhZcQEBsG3VRYOz4EbG5iI9eLFANwpVoZW1IK
+   YDIFPdr9w2BMIsq0e5A1hygHiVW2VUZLyHqwJTnusRntR735MhRXK9vaN
+   8ujC1Ivj6vnHxL5AQ19aRp0DaOfa2Yym51dkvR2G0bqz7yTzv6q4hJoW0
+   A==;
+X-CSE-ConnectionGUID: u3LrM9l6Rsyq/fXvDv2/Ew==
+X-CSE-MsgGUID: Kaokw5qBQV2YLRSc7P/JoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="33128570"
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="33128570"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:52:34 -0700
+X-CSE-ConnectionGUID: 9p4ODleiTrC/tUzhBtCqUw==
+X-CSE-MsgGUID: FlNkPZEET3+x/835CA25yA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="59906470"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by orviesa007.jf.intel.com with ESMTP; 15 Aug 2024 05:52:31 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Fix incorrect domain ID in context flush helper
+Date: Thu, 15 Aug 2024 20:48:57 +0800
+Message-Id: <20240815124857.70038-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Add support for gamma LUT in VOP2 driver. The implementation was inspired
-by one found in VOP1 driver. Blue and red channels in gamma LUT register
-write were swapped with respect to how gamma LUT values are written in
-VOP1. If the current SoC is RK3566 or RK3568 and gamma LUT is to be
-written, full modeset is triggered to synchronize disable, write, enable
-process and hint userspace that it is not seamless transition[1]. If the
-current SoC is RK3588 full modeset isn't triggered because gamma LUT need
-not to be disabled before the LUT write[1]. In case of RK356x as well as
-RK3588 respective LUT port sel register write was added before the LUT
-write[2]. In case of RK3588, gamma update enable bit is set after setting
-gamma LUT enable bit[2]. Gamma size is set and drm color management is
-enabled for each video port's CRTC except ones which have no associated
-device. Tested on RK3566 (Pinetab2).
+The helper intel_context_flush_present() is designed to flush all related
+caches when a context entry with the present bit set is modified. It
+currently retrieves the domain ID from the context entry and uses it to
+flush the IOTLB and context caches. This is incorrect when the context
+entry transitions from present to non-present, as the domain ID field is
+cleared before calling the helper.
 
-[1] https://lore.kernel.org/linux-rockchip/CAPj87rOM=3Dj0zmuWL9frGKV1xzPbJr=
-k=3DQ9ip7F_HAPYnbCqPouw@mail.gmail.com/
-[2] https://lore.kernel.org/linux-rockchip/7d998e4c-e1d3-4e8b-af76-c5bc83b4=
-3647@rock-chips.com/
+Fix it by passing the domain ID programmed in the context entry before the
+change to intel_context_flush_present(). This ensures that the correct
+domain ID is used for cache invalidation.
 
-Helped-by: Daniel Stone <daniel@fooishbar.org>
-Helped-by: Dragan Simic <dsimic@manjaro.org>
-Helped-by: Diederik de Haas <didi.debian@cknow.org>
-Helped-by: Andy Yan <andy.yan@rock-chips.com>
-Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+Fixes: f90584f4beb8 ("iommu/vt-d: Add helper to flush caches for context change")
+Reported-by: Alex Williamson <alex.williamson@redhat.com>
+Closes: https://lore.kernel.org/linux-iommu/20240814162726.5efe1a6e.alex.williamson@redhat.com/
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
+ drivers/iommu/intel/iommu.h | 2 +-
+ drivers/iommu/intel/iommu.c | 8 ++++++--
+ drivers/iommu/intel/pasid.c | 7 ++++---
+ 3 files changed, 11 insertions(+), 6 deletions(-)
 
-Notes:
-=09WASN'T tested on RK3588.
-
-    Changes in v4:
-        - rework the implementation to better utilize DRM atomic updates[2]
-        - handle the RK3588 case[2][3]
-   =20
-    Changes in v3:
-        - v3 is patch v2 "resend", by mistake the incremental patch was
-        sent in v2
-   =20
-    Changes in v2:
-        - Apply code styling corrections[1]
-        - Move gamma LUT write inside the vop2 lock
-   =20
-    Link to v3: https://lore.kernel.org/linux-rockchip/TkgKVivuaLFLILPY-n3i=
-Zo_8KF-daKdqdu-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKe=
-FZr-MJzJMtw0=3D@proton.me/
-    Link to v2: https://lore.kernel.org/linux-rockchip/Hk03HDb6wSSHWtEFZHUy=
-e06HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2Tr=
-jaQfnytzp-Pk=3D@proton.me/T/#u
-    Link to v1: https://lore.kernel.org/linux-rockchip/9736eadf6a9d8e97eef9=
-19c6b3d88828@manjaro.org/T/#t
-   =20
-    [1] https://lore.kernel.org/linux-rockchip/d019761504b540600d9fc7a585d6=
-f95f@manjaro.org
-    [2] https://lore.kernel.org/linux-rockchip/CAPj87rOM=3Dj0zmuWL9frGKV1xz=
-PbJrk=3DQ9ip7F_HAPYnbCqPouw@mail.gmail.com
-    [3] https://lore.kernel.org/linux-rockchip/7d998e4c-e1d3-4e8b-af76-c5bc=
-83b43647@rock-chips.com
-
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 148 +++++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |   5 +
- 2 files changed, 153 insertions(+)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm=
-/rockchip/rockchip_drm_vop2.c
-index 9873172e3fd3..fe7657984909 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -278,6 +278,15 @@ static u32 vop2_readl(struct vop2 *vop2, u32 offset)
- =09return val;
- }
-=20
-+static u32 vop2_vp_read(struct vop2_video_port *vp, u32 offset)
-+{
-+=09u32 val;
-+
-+=09regmap_read(vp->vop2->map, vp->data->offset + offset, &val);
-+
-+=09return val;
-+}
-+
- static void vop2_win_write(const struct vop2_win *win, unsigned int reg, u=
-32 v)
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index b67c14da1240..a969be2258b1 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -1154,7 +1154,7 @@ void cache_tag_flush_range_np(struct dmar_domain *domain, unsigned long start,
+ 
+ void intel_context_flush_present(struct device_domain_info *info,
+ 				 struct context_entry *context,
+-				 bool affect_domains);
++				 u16 did, bool affect_domains);
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+ void intel_svm_check(struct intel_iommu *iommu);
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 9ff8b83c19a3..4aa070cf56e7 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1944,6 +1944,7 @@ static void domain_context_clear_one(struct device_domain_info *info, u8 bus, u8
  {
- =09regmap_field_write(win->reg[reg], v);
-@@ -998,6 +1007,30 @@ static void vop2_disable(struct vop2 *vop2)
- =09clk_disable_unprepare(vop2->hclk);
+ 	struct intel_iommu *iommu = info->iommu;
+ 	struct context_entry *context;
++	u16 did;
+ 
+ 	spin_lock(&iommu->lock);
+ 	context = iommu_context_addr(iommu, bus, devfn, 0);
+@@ -1952,10 +1953,11 @@ static void domain_context_clear_one(struct device_domain_info *info, u8 bus, u8
+ 		return;
+ 	}
+ 
++	did = context_domain_id(context);
+ 	context_clear_entry(context);
+ 	__iommu_flush_cache(iommu, context, sizeof(*context));
+ 	spin_unlock(&iommu->lock);
+-	intel_context_flush_present(info, context, true);
++	intel_context_flush_present(info, context, did, true);
  }
-=20
-+static void vop2_vp_dsp_lut_disable(struct vop2_video_port *vp)
-+{
-+=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-+
-+=09dsp_ctrl &=3D ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-+=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-+}
-+
-+static void vop2_vp_dsp_lut_enable(struct vop2_video_port *vp)
-+{
-+=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-+
-+=09dsp_ctrl |=3D RK3568_VP_DSP_CTRL__DSP_LUT_EN;
-+=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-+}
-+
-+static void vop2_vp_dsp_lut_update_enable(struct vop2_video_port *vp)
-+{
-+=09u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
-+
-+=09dsp_ctrl |=3D RK3588_VP_DSP_CTRL__GAMMA_UPDATE_EN;
-+=09vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
-+}
-+
- static void vop2_crtc_atomic_disable(struct drm_crtc *crtc,
- =09=09=09=09     struct drm_atomic_state *state)
- {
-@@ -1482,6 +1515,24 @@ static bool vop2_crtc_mode_fixup(struct drm_crtc *cr=
-tc,
- =09return true;
+ 
+ static int domain_setup_first_level(struct intel_iommu *iommu,
+@@ -4249,6 +4251,7 @@ static int context_flip_pri(struct device_domain_info *info, bool enable)
+ 	struct intel_iommu *iommu = info->iommu;
+ 	u8 bus = info->bus, devfn = info->devfn;
+ 	struct context_entry *context;
++	u16 did;
+ 
+ 	spin_lock(&iommu->lock);
+ 	if (context_copied(iommu, bus, devfn)) {
+@@ -4261,6 +4264,7 @@ static int context_flip_pri(struct device_domain_info *info, bool enable)
+ 		spin_unlock(&iommu->lock);
+ 		return -ENODEV;
+ 	}
++	did = context_domain_id(context);
+ 
+ 	if (enable)
+ 		context_set_sm_pre(context);
+@@ -4269,7 +4273,7 @@ static int context_flip_pri(struct device_domain_info *info, bool enable)
+ 
+ 	if (!ecap_coherent(iommu->ecap))
+ 		clflush_cache_range(context, sizeof(*context));
+-	intel_context_flush_present(info, context, true);
++	intel_context_flush_present(info, context, did, true);
+ 	spin_unlock(&iommu->lock);
+ 
+ 	return 0;
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 5792c817cefa..b51fc268dc84 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -683,6 +683,7 @@ static void device_pasid_table_teardown(struct device *dev, u8 bus, u8 devfn)
+ 	struct device_domain_info *info = dev_iommu_priv_get(dev);
+ 	struct intel_iommu *iommu = info->iommu;
+ 	struct context_entry *context;
++	u16 did;
+ 
+ 	spin_lock(&iommu->lock);
+ 	context = iommu_context_addr(iommu, bus, devfn, false);
+@@ -691,10 +692,11 @@ static void device_pasid_table_teardown(struct device *dev, u8 bus, u8 devfn)
+ 		return;
+ 	}
+ 
++	did = context_domain_id(context);
+ 	context_clear_entry(context);
+ 	__iommu_flush_cache(iommu, context, sizeof(*context));
+ 	spin_unlock(&iommu->lock);
+-	intel_context_flush_present(info, context, false);
++	intel_context_flush_present(info, context, did, false);
  }
-=20
-+static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct drm_crtc *=
-crtc)
-+{
-+=09const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
-+=09const struct vop2_video_port_data *vp_data =3D &vop2->data->vp[vp->id];
-+
-+=09struct drm_color_lut *lut =3D crtc->state->gamma_lut->data;
-+=09unsigned int i, bpc =3D ilog2(vp_data->gamma_lut_len);
-+=09u32 word;
-+
-+=09for (i =3D 0; i < crtc->gamma_size; i++) {
-+=09=09word =3D (drm_color_lut_extract(lut[i].blue, bpc) << (2 * bpc)) |
-+=09=09    (drm_color_lut_extract(lut[i].green, bpc) << bpc) |
-+=09=09    drm_color_lut_extract(lut[i].red, bpc);
-+
-+=09=09writel(word, vop2->lut_regs + i * 4);
-+=09}
-+}
-+
- static void vop2_dither_setup(struct drm_crtc *crtc, u32 *dsp_ctrl)
+ 
+ static int pci_pasid_table_teardown(struct pci_dev *pdev, u16 alias, void *data)
+@@ -885,10 +887,9 @@ static void __context_flush_dev_iotlb(struct device_domain_info *info)
+  */
+ void intel_context_flush_present(struct device_domain_info *info,
+ 				 struct context_entry *context,
+-				 bool flush_domains)
++				 u16 did, bool flush_domains)
  {
- =09struct rockchip_crtc_state *vcstate =3D to_rockchip_crtc_state(crtc->st=
-ate);
-@@ -2062,6 +2113,42 @@ static void vop2_crtc_atomic_enable(struct drm_crtc =
-*crtc,
- =09vop2_unlock(vop2);
- }
-=20
-+static int vop2_crtc_atomic_check_gamma(struct vop2_video_port *vp,
-+=09=09=09=09=09struct drm_crtc *crtc,
-+=09=09=09=09=09struct drm_atomic_state *state,
-+=09=09=09=09=09struct drm_crtc_state *crtc_state)
-+{
-+=09struct vop2 *vop2 =3D vp->vop2;
-+=09unsigned int len;
-+
-+=09if (!vp->vop2->lut_regs || !crtc_state->color_mgmt_changed ||
-+=09    !crtc_state->gamma_lut)
-+=09=09return 0;
-+
-+=09len =3D drm_color_lut_size(crtc_state->gamma_lut);
-+=09if (len !=3D crtc->gamma_size) {
-+=09=09DRM_DEBUG_KMS("Invalid LUT size; got %d, expected %d\n",
-+=09=09=09=09      len, crtc->gamma_size);
-+=09=09return -EINVAL;
-+=09}
-+
-+=09// trigger full modeset only when SoC is 356x
-+=09if (!crtc_state->mode_changed && (vop2->data->soc_id =3D=3D 3566 ||
-+=09=09=09=09=09  vop2->data->soc_id =3D=3D 3568)) {
-+=09=09int ret;
-+
-+=09=09crtc_state->mode_changed =3D true;
-+=09=09state->allow_modeset =3D true;
-+
-+=09=09ret =3D drm_atomic_helper_check_modeset(crtc->dev,
-+=09=09=09=09crtc_state->state);
-+=09=09if (ret)
-+=09=09=09return ret;
-+=09}
-+
-+=09return 0;
-+}
-+
- static int vop2_crtc_atomic_check(struct drm_crtc *crtc,
- =09=09=09=09  struct drm_atomic_state *state)
- {
-@@ -2069,6 +2156,11 @@ static int vop2_crtc_atomic_check(struct drm_crtc *c=
-rtc,
- =09struct drm_plane *plane;
- =09int nplanes =3D 0;
- =09struct drm_crtc_state *crtc_state =3D drm_atomic_get_new_crtc_state(sta=
-te, crtc);
-+=09int ret;
-+
-+=09ret =3D vop2_crtc_atomic_check_gamma(vp, crtc, state, crtc_state);
-+=09if (ret)
-+=09=09return ret;
-=20
- =09drm_atomic_crtc_state_for_each_plane(plane, crtc_state)
- =09=09nplanes++;
-@@ -2456,9 +2548,32 @@ static void vop2_setup_dly_for_windows(struct vop2 *=
-vop2)
- =09vop2_writel(vop2, RK3568_SMART_DLY_NUM, sdly);
- }
-=20
-+static void vop2_crtc_atomic_begin_gamma(struct vop2 *vop2,
-+=09=09=09=09=09 struct vop2_video_port *vp,
-+=09=09=09=09=09 struct drm_crtc *crtc,
-+=09=09=09=09=09 struct drm_crtc_state *crtc_state)
-+{
-+=09if (vop2->lut_regs && crtc_state->color_mgmt_changed &&
-+=09=09=09crtc_state->gamma_lut) {
-+=09=09vop2_lock(vop2);
-+=09=09if (vop2->data->soc_id =3D=3D 3566 || vop2->data->soc_id =3D=3D 3568=
-) {
-+=09=09=09vop2_writel(vop2, RK3568_LUT_PORT_SEL, vp->id);
-+=09=09} else {
-+=09=09=09vop2_writel(vop2, RK3568_LUT_PORT_SEL, FIELD_PREP(
-+=09=09=09=09RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL,
-+=09=09=09=09vp->id));
-+=09=09}
-+=09=09vop2_crtc_write_gamma_lut(vop2, crtc);
-+
-+=09=09vop2_unlock(vop2);
-+=09}
-+}
-+
- static void vop2_crtc_atomic_begin(struct drm_crtc *crtc,
- =09=09=09=09   struct drm_atomic_state *state)
- {
-+=09struct drm_crtc_state *crtc_state =3D
-+=09=09drm_atomic_get_new_crtc_state(state, crtc);
- =09struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
- =09struct vop2 *vop2 =3D vp->vop2;
- =09struct drm_plane *plane;
-@@ -2482,13 +2597,39 @@ static void vop2_crtc_atomic_begin(struct drm_crtc =
-*crtc,
- =09vop2_setup_layer_mixer(vp);
- =09vop2_setup_alpha(vp);
- =09vop2_setup_dly_for_windows(vop2);
-+
-+=09vop2_crtc_atomic_begin_gamma(vop2, vp, crtc, crtc_state);
-+}
-+
-+static void vop2_crtc_atomic_flush_gamma(struct vop2 *vop2,
-+=09=09=09=09=09 struct vop2_video_port *vp,
-+=09=09=09=09=09 struct drm_crtc_state *crtc_state)
-+{
-+=09if (vop2->lut_regs && crtc_state->color_mgmt_changed) {
-+=09=09vop2_lock(vop2);
-+
-+=09=09if (crtc_state->gamma_lut) {
-+=09=09=09vop2_vp_dsp_lut_enable(vp);
-+=09=09=09if (vop2->data->soc_id !=3D 3566 &&
-+=09=09=09    vop2->data->soc_id !=3D 3568)
-+=09=09=09=09vop2_vp_dsp_lut_update_enable(vp);
-+
-+=09=09} else
-+=09=09=09vop2_vp_dsp_lut_disable(vp);
-+
-+=09=09vop2_unlock(vop2);
-+=09}
- }
-=20
- static void vop2_crtc_atomic_flush(struct drm_crtc *crtc,
- =09=09=09=09   struct drm_atomic_state *state)
- {
-+=09struct drm_crtc_state *crtc_state =3D
-+=09=09drm_atomic_get_new_crtc_state(state, crtc);
- =09struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
-=20
-+=09vop2_crtc_atomic_flush_gamma(vp->vop2, vp,  crtc_state);
-+
- =09vop2_post_config(crtc);
-=20
- =09vop2_cfg_done(vp);
-@@ -2791,6 +2932,13 @@ static int vop2_create_crtcs(struct vop2 *vop2)
-=20
- =09=09drm_crtc_helper_add(&vp->crtc, &vop2_crtc_helper_funcs);
-=20
-+=09=09if (vop2->lut_regs && vp->crtc.dev !=3D NULL) {
-+=09=09=09const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp-=
->id];
-+
-+=09=09=09drm_mode_crtc_set_gamma_size(&vp->crtc, vp_data->gamma_lut_len);
-+=09=09=09drm_crtc_enable_color_mgmt(&vp->crtc, 0, false,
-+=09=09=09=09=09=09   vp_data->gamma_lut_len);
-+=09=09}
- =09=09init_completion(&vp->dsp_hold_completion);
- =09}
-=20
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm=
-/rockchip/rockchip_drm_vop2.h
-index 615a16196aff..510dda6f9092 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-@@ -394,6 +394,7 @@ enum dst_factor_mode {
- #define RK3568_REG_CFG_DONE__GLB_CFG_DONE_EN=09=09BIT(15)
-=20
- #define RK3568_VP_DSP_CTRL__STANDBY=09=09=09BIT(31)
-+#define RK3568_VP_DSP_CTRL__DSP_LUT_EN=09=09=09BIT(28)
- #define RK3568_VP_DSP_CTRL__DITHER_DOWN_MODE=09=09BIT(20)
- #define RK3568_VP_DSP_CTRL__DITHER_DOWN_SEL=09=09GENMASK(19, 18)
- #define RK3568_VP_DSP_CTRL__DITHER_DOWN_EN=09=09BIT(17)
-@@ -408,6 +409,8 @@ enum dst_factor_mode {
- #define RK3568_VP_DSP_CTRL__CORE_DCLK_DIV=09=09BIT(4)
- #define RK3568_VP_DSP_CTRL__OUT_MODE=09=09=09GENMASK(3, 0)
-=20
-+#define RK3588_VP_DSP_CTRL__GAMMA_UPDATE_EN=09=09BIT(22)
-+
- #define RK3588_VP_CLK_CTRL__DCLK_OUT_DIV=09=09GENMASK(3, 2)
- #define RK3588_VP_CLK_CTRL__DCLK_CORE_DIV=09=09GENMASK(1, 0)
-=20
-@@ -460,6 +463,8 @@ enum dst_factor_mode {
- #define RK3588_DSP_IF_POL__DP1_PIN_POL=09=09=09GENMASK(14, 12)
- #define RK3588_DSP_IF_POL__DP0_PIN_POL=09=09=09GENMASK(10, 8)
-=20
-+#define RK3588_LUT_PORT_SEL__GAMMA_AHB_WRITE_SEL=09GENMASK(13, 12)
-+
- #define RK3568_VP0_MIPI_CTRL__DCLK_DIV2_PHASE_LOCK=09BIT(5)
- #define RK3568_VP0_MIPI_CTRL__DCLK_DIV2=09=09=09BIT(4)
-=20
---=20
-2.46.0
-
+ 	struct intel_iommu *iommu = info->iommu;
+-	u16 did = context_domain_id(context);
+ 	struct pasid_entry *pte;
+ 	int i;
+ 
+-- 
+2.34.1
 
 
