@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-288393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0588B9539A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919509539A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE608287F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:08:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B422F1C224EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334FB45948;
-	Thu, 15 Aug 2024 18:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF292558BC;
+	Thu, 15 Aug 2024 18:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIoLnF7m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Kb+NEWRb"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B81C15CB
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3428F15CB;
+	Thu, 15 Aug 2024 18:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723745312; cv=none; b=ueakq/k1fVp0lhC5R4mK9Nl09Xmwi3IuSF4EnovXvnqjkM2UEDUCw9ZXawVixzv/uSA5IyWccZnLhZTKAl5tzVARTV+Wd6beVilKS1Qy/OCiNXSj6VXhJEP1+zgTolCPeBVEwDuLtGCp/gzFRThguCrhpIAy6ugYOhUpk6w87Bk=
+	t=1723745356; cv=none; b=huYqUMOhRI5yCCAYO4ou20UN3OKcyfv2xdce489eoHxScBqvzaAdLWjioWJ/PreDe5rfn6fA4X8kBklhEvywi6En4cioa3UeAW/5ZbhCHkLVezqt5F56Tf9ONhODy7Eh+KRurtOLU4lGMCoHTk510c2Fn8nCZDQ6oATiGO5vW90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723745312; c=relaxed/simple;
-	bh=2qD6ofkbI+L999KFZxOaa73z043ht/eHsHu8/Q81+4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MTCg6MJETyGiTL0IKxO3ebvxiB70/k2UEboYAVqIwgWhCwus8PthaK+/IiGVqZ/6JYZF2SNsNzxok+Fy3U1jp+FJ7SENl+duUsbGhcDRozUuXZesz4HHB7ZlEqGHOA1nryJrVMWoiQRvXJzuVyoU3IkyB7EG08QOjVTNmFS+eUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIoLnF7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3109C32786;
-	Thu, 15 Aug 2024 18:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723745312;
-	bh=2qD6ofkbI+L999KFZxOaa73z043ht/eHsHu8/Q81+4I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pIoLnF7m81htXYtUNnjHdjTE82C4Ey/XdnnHKKX38HZ/RYn8fD7hO2EzsgfG+52et
-	 vbeULWfypBqsjFQxkJ/agONxBTMW0oEI1QNWvM6NNylzhlyj+ppuDv7rq3167B2KXE
-	 7f5m9+OCfN7YreuzOxeLrQlKfKiEIZdHGFV4JbjkyTCXZtrv6k9PZBsGpz9RAcAoIm
-	 lbNwc5gHphL8w3pn3rzSkHA+61AQgDWrcirt0flnUZOqkkKE0ISnsRcMHo9tBfOaPx
-	 Mk8a0KWXwn1Lm9EYGIh1yCetIKGT+iQAYmVmF6TkPoT3+oZT6yRAuetmnCX9ZX0qMb
-	 8xpT2ec/QyXug==
-Date: Thu, 15 Aug 2024 11:08:30 -0700
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>, Kees Cook <kees@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Mladek <pmladek@suse.com>, Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>, Song Liu <song@kernel.org>,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [GIT PULL] hardening fixes for v6.11-rc4
-Message-ID: <202408151107.18E1DC8CE4@keescook>
+	s=arc-20240116; t=1723745356; c=relaxed/simple;
+	bh=frZUOPDI6r4oXtUSJp5jdlWJJUCeFssa+4qiDa7wp8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZL1tRmQXoE/PmK0oTSNd81SuhKPwT7GOjY+Z0u1TKI1X+kmAxApDwi7AQKSBjoM+fz2DttM7mNp6xzWP0K2vvR9HIzCmQhrrretiYRP2zbn3nsMAiKIjD+rtPsnBPMftd/PmocCgBvj6rpxgkTigBupBjbQwhIEsiEhYtc+yzOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Kb+NEWRb; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WlCn53pmTz6CmLxd;
+	Thu, 15 Aug 2024 18:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723745348; x=1726337349; bh=PFU6SLEQUuiaU+C9emyBOMa8
+	6sRtrTtG40d9yWkPg68=; b=Kb+NEWRb96ItME8hVUcVyvxWbLDhdNSROcqVbF/1
+	LV/6kTlJpYcSPJ07c5j8Ox/sXiVV0rfkgWhBlGakmJIGnvJAjBDXTXSXHY003akr
+	Y8CDC/IHARTmDHI0jxHauydIrzhsyFcuzoBGJSaTGqaR3mInqW1KsS8MWgNJius5
+	ed43//PmsvPb9XXIrnt12epQ2cmzELcvYiDhFcu4ikDcNUn/cjSLxNtjDtfqEiKq
+	nQX2dYJpOh2JMgc3hfR3oUoZ3kZ/IKPNqgnFfj9VgbdJAqgeh5TdtW0RpM0HKDDg
+	GNhRtipO4pblys88SfUHo1uwdLDG4vMzpyY4K4ggh+qrNA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 7hXUfC8uDqmY; Thu, 15 Aug 2024 18:09:08 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WlCmz4fH2z6CmM6d;
+	Thu, 15 Aug 2024 18:09:07 +0000 (UTC)
+Message-ID: <f339f1be-4d5f-46f4-8d57-473f38901bd8@acm.org>
+Date: Thu, 15 Aug 2024 11:09:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] ufs: core: Rename LSDB to LSDBS to reflect the
+ UFSHCI 4.0 spec
+To: manivannan.sadhasivam@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>,
+ Amit Pundir <amit.pundir@linaro.org>
+References: <20240815-ufs-bug-fix-v2-0-b373afae888f@linaro.org>
+ <20240815-ufs-bug-fix-v2-1-b373afae888f@linaro.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240815-ufs-bug-fix-v2-1-b373afae888f@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 8/14/24 10:16 PM, Manivannan Sadhasivam via B4 Relay wrote:
+>   	/*
+>   	 * The UFSHCI 3.0 specification does not define MCQ_SUPPORT and
+> -	 * LSDB_SUPPORT, but [31:29] as reserved bits with reset value 0s, which
+> +	 * LSDBS_SUPPORT, but [31:29] as reserved bits with reset value 0s, which
+>   	 * means we can simply read values regardless of version.
+>   	 */
 
-Please pull these various hardening fixes for v6.11-rc4.
+Hmm ... neither MCQ_SUPPORT nor LSDBS_SUPPORT occurs in the UFSHCI 4.0 
+specification. I found the acronyms "MCQS" and "LSDBS" in that
+specification. I propose either not to modify the above comment or to 
+use the acronyms used in the UFSHCI 4.0 standard.
 
-Thanks!
+>   	hba->mcq_sup = FIELD_GET(MASK_MCQ_SUPPORT, hba->capabilities);
+> @@ -2426,7 +2426,7 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
+>   	 * 0h: legacy single doorbell support is available
+>   	 * 1h: indicate that legacy single doorbell support has been removed
+>   	 */
+> -	hba->lsdb_sup = !FIELD_GET(MASK_LSDB_SUPPORT, hba->capabilities);
+> +	hba->lsdbs_sup = !FIELD_GET(MASK_LSDBS_SUPPORT, hba->capabilities);
+>   	if (!hba->mcq_sup)
+>   		return 0;
 
--Kees
+The final "s" in "lsdbs" stands for "support" so there are now two
+references to the word "support" in the "lsdbs_sup" member name. Isn't
+the original structure member name ("lsdb_sup") better because it 
+doesn't have that redundancy?
 
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+>   	MASK_CRYPTO_SUPPORT			= 0x10000000,
+> -	MASK_LSDB_SUPPORT			= 0x20000000,
+> +	MASK_LSDBS_SUPPORT			= 0x20000000,
+>   	MASK_MCQ_SUPPORT			= 0x40000000,
 
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+Same comment here: in the constant name "MASK_LSDBS_SUPPORT" there are
+two references to the word "support". Isn't the original name better?
+Additionally, this change introduces an inconsistency between the
+constant names "MASK_LSDBS_SUPPORT" and "MASK_MCQ_SUPPORT". The former
+name includes the acronym from the spec (LSDBS) but the latter name not
+(MCQS). Wouldn't it be better to leave this change out?
 
-are available in the Git repository at:
+Thanks,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.11-rc4
-
-for you to fetch changes up to fb6a421fb6153d97cf3058f9bd550b377b76a490:
-
-  kallsyms: Match symbols exactly with CONFIG_LTO_CLANG (2024-08-15 09:33:35 -0700)
-
-----------------------------------------------------------------
-hardening fixes for v6.11-rc4
-
-- gcc-plugins: randstruct: Remove GCC 4.7 or newer requirement
-  (Thorsten Blum)
-
-- kallsyms: Clean up interaction with LTO suffixes (Song Liu)
-
-- refcount: Report UAF for refcount_sub_and_test(0) when counter==0
-  (Petr Pavlu)
-
-- kunit/overflow: Avoid misallocation of driver name (Ivan Orlov)
-
-----------------------------------------------------------------
-Ivan Orlov (1):
-      kunit/overflow: Fix UB in overflow_allocation_test
-
-Petr Pavlu (1):
-      refcount: Report UAF for refcount_sub_and_test(0) when counter==0
-
-Song Liu (2):
-      kallsyms: Do not cleanup .llvm.<hash> suffix before sorting symbols
-      kallsyms: Match symbols exactly with CONFIG_LTO_CLANG
-
-Thorsten Blum (1):
-      gcc-plugins: randstruct: Remove GCC 4.7 or newer requirement
-
- drivers/misc/lkdtm/refcount.c                 | 16 ++++++++
- include/linux/refcount.h                      |  4 +-
- kernel/kallsyms.c                             | 55 +++------------------------
- kernel/kallsyms_selftest.c                    | 22 +----------
- lib/overflow_kunit.c                          |  3 +-
- scripts/gcc-plugins/randomize_layout_plugin.c |  4 --
- scripts/kallsyms.c                            | 31 +--------------
- scripts/link-vmlinux.sh                       |  4 --
- 8 files changed, 28 insertions(+), 111 deletions(-)
-
--- 
-Kees Cook
+Bart.
 
