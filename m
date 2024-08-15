@@ -1,99 +1,73 @@
-Return-Path: <linux-kernel+bounces-287957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D667952E8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1A5952E96
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB41D2832A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828591F21D4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A86519D068;
-	Thu, 15 Aug 2024 12:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA6319D068;
+	Thu, 15 Aug 2024 12:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCrqLpYr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvK/wCvh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A546143888;
-	Thu, 15 Aug 2024 12:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F8A17C9B2;
+	Thu, 15 Aug 2024 12:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723726324; cv=none; b=RnSEPHlVBjyP3njp8XVwwHFZh+luSbKKGx0DR09x3krxZdXhhSACxBmlOiWZxgoxeH0EJ1Xqjx9xuMpa5NIQicVEWi+rauslkqtbq0LNugWjvTGIKCzJZyyjnoTWI/e7NMLdT4Jt38lJSqMX09Exbftcb9D5mU5weEftUud1vYg=
+	t=1723726405; cv=none; b=loeenkjq7UfaoL//2MoMRlZKGqFlE2qOphOlGiqYKT0F99K7NhRXV4mOstgkpJDzXtneYXBZLcbd0zV66PU5P1sFWP8ND0PraxgAVA7iDE5/wn4Z4+n+xWXOLdC4HRDOA1n04qWB8OqlFPDkbMm6i/6c/ZdnswZ8Y33i1bzEH84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723726324; c=relaxed/simple;
-	bh=fmAaJecgka9DtD3tycYfxWFmq7Wq+S8jNV0j+zS0T9g=;
+	s=arc-20240116; t=1723726405; c=relaxed/simple;
+	bh=f/g/aJNdyW0MItoXVYRuTwBSK72KCqc+cG0gQXEGCPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ioTeJGdjlzVikoyYexFbfoONpPvhSeLQsVqIxHiAZALrZnSvcyGfRYWfZB1nvkDrp/PiHsNfgkTl5ukzkfs6nAb16OShdbf5Yy47PT9iZor9ThIpbKN8qijXD05pOzf1HchPD1Nj24nEC+OFH+GkErHiKNoXC3rOoKfQBFXsXG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCrqLpYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A72DC32786;
-	Thu, 15 Aug 2024 12:52:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=km4PSVEKkQ+0h+OPbfwGIfJFqm6h5Yg1PTlcyOWu1/kakn5Hjw0BomvrV4sm1ap8xCxAEt9kGAyU/H30jjo2IpM1l3/NgnvCiwzsCVsAVb11PiU7BeQ14qlHM5p8k/+3CJ4nchL4K2jKi3C9TFS82UFCZSIZvX3urYa4uv7paZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvK/wCvh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396B2C32786;
+	Thu, 15 Aug 2024 12:53:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723726324;
-	bh=fmAaJecgka9DtD3tycYfxWFmq7Wq+S8jNV0j+zS0T9g=;
+	s=k20201202; t=1723726404;
+	bh=f/g/aJNdyW0MItoXVYRuTwBSK72KCqc+cG0gQXEGCPI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UCrqLpYrUKSUV4NpK5XZNazZdoJIu5QrDwMTOjSqEKEXJN9l7hJ12jYtbT3ZJM4Tj
-	 buXE6UCmk9Q0isaJvAHJ/6sGwjIz8S9NC5uZNkHc3shRfJTzgttQO8WK3CRWAn1uie
-	 mrrXKbEszrW8q/x6+z7Ygfbogv2HmwQLIhYJiawPr0oy6/Vqw9+wjafwVmGT9i2YKS
-	 sMpD69ZVFWbs67KBUYRwv+1uIRxju3SKls77GX2g9vEVxO80EBoXsFxw+YUqeLX2vZ
-	 KPFdUnSDRQ8cGDprINzne9L4j4hHpYmJ8BhvHrCdqOL8YkLT2HHvIKvHT87J7MQNop
-	 GbZ4qAZZq2MWw==
-Date: Thu, 15 Aug 2024 14:51:58 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>, 
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Max Kellermann <max.kellermann@ionos.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	tools@kernel.org
-Subject: Re: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache
- by setting folio->private and marking dirty"
-Message-ID: <20240815-seiten-vorteil-168ac82432a7@brauner>
-References: <2181767.1723665003@warthog.procyon.org.uk>
+	b=DvK/wCvhzw+MOs1FCBzpIsgRPxcDUYRg1htG68hf37t3HmygSoLvyIi0J257N5BJj
+	 lcqODG7tRSEkHrZsHvR8b3IC1PuMyTxfH9H5FedpVXW5ZLsZDb8WMsq7vqTBpGnSRo
+	 Q7NebT/rUcpI+1TQKWp9MpO0Q0Aygm5rOiEKRy1cT1S/e4t26/xfRDs47qopNti13j
+	 sDV4pnZT/J9Kb3lzVzvOBGLtaMsht0M71XVpvwSLBkN/M1PkaZwI02V/Vf6q0gAy3J
+	 2/VzeHwULQyjGcAYAhhQ5yPwfFvNmFej/2Q3xkonwe0Pby07/+a1WBU88gDX/9N5+o
+	 YzYDsRW7OMibQ==
+Date: Thu, 15 Aug 2024 13:53:21 +0100
+From: Simon Horman <horms@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kuba@kernel.org, shuah@kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] selftests/net/pmtu.sh: Fix typo in error message
+Message-ID: <20240815125321.GA632411@kernel.org>
+References: <20240814173121.33590-1-abhashkumarjha123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2181767.1723665003@warthog.procyon.org.uk>
+In-Reply-To: <20240814173121.33590-1-abhashkumarjha123@gmail.com>
 
-On Wed, Aug 14, 2024 at 08:50:03PM GMT, David Howells wrote:
->     
-> This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
+On Wed, Aug 14, 2024 at 11:01:21PM +0530, Abhash Jha wrote:
+> The word 'expected' was spelled as 'exepcted'.
+> Fixed the typo in this patch.
 > 
-> In addition to reverting the removal of PG_private_2 wrangling from the
-> buffered read code[1][2], the removal of the waits for PG_private_2 from
-> netfs_release_folio() and netfs_invalidate_folio() need reverting too.
-> 
-> It also adds a wait into ceph_evict_inode() to wait for netfs read and
-> copy-to-cache ops to complete.
-> 
-> Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Max Kellermann <max.kellermann@ionos.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Xiubo Li <xiubli@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: ceph-devel@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
-> ---
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
 
-Now in vfs.fixes.
+I agree with the correctness of this change.
+And I verified that with this patch applied,
+coedspell only flags false positives in this file.
 
-@Konstantin, for some reason I keep having issues with this patch
-series. It confuses b4 to no end. When I try to shazam this single patch
-here using 2181767.1723665003@warthog.procyon.org.uk it pull down a 26
-patch series. And with -P _ it complains that it can't find the messag
-id.
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
