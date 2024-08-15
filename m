@@ -1,78 +1,88 @@
-Return-Path: <linux-kernel+bounces-288499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1FF953ADA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D57CE953ADE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B686C1F25B28
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9631F24AFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8757BB15;
-	Thu, 15 Aug 2024 19:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5096BFC7;
+	Thu, 15 Aug 2024 19:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asxs1SxW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D6jIaJOD"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4133134545
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFD657CA7
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 19:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723749910; cv=none; b=XYXZqIcQ0YeRUNvu3nTuoWGn3glavPEw+13HV9l/V6HHqoiJx4jORIq+nSBsKYy3MigM86u087587mCIXG/gU9I8grqVLF1mkrGGeGnns0OwjBh5xliMGV6Yc0KEKzdbBgPXqtlgBGpufaY3bISM1HmR3QZpu/ShPBUzO+7GTt0=
+	t=1723750053; cv=none; b=MudKHSe6G1zdGTwoszWe4xDO5rSE4Ot7/mOe5L0h61sQlbiITkQ7XUkvfKCLrNLWBK9f0YRWgcJau/qQm7upT0GNM2fyK7sMlCF8hMRAcV11HljSSYs/1Jlcdx/55ye/8Vk5+WN5rEL7DeYsQlRk/GW4JitYAEsMtOuGszRVC9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723749910; c=relaxed/simple;
-	bh=HfP9LqrmwNUu42QlbUGBXUtH7y7a0zyGqWFcSAIFRRA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sWtsJSJV9z+/LrJj1DR9Cb2VL3Hgvm9vjn9o8dVHVKQlTxb1/n54PGzDqMRCRyCnrNKAjseFruMCZrsTosLwWGOa6yI34m/9oCqX5fYkIctjwUTi0sxZkZvtBYuQgmlv1Ezq2lHtHAttrJcYlpaSM3YgzkFwWbk0V6RrwaO9aKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asxs1SxW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DB3C32786;
-	Thu, 15 Aug 2024 19:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723749909;
-	bh=HfP9LqrmwNUu42QlbUGBXUtH7y7a0zyGqWFcSAIFRRA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=asxs1SxWaG/n/zgXE0KdNCD37MxxqG6eii8z428Mj2IcZ7W23RZhFUyZdzFH0oEHZ
-	 TOOMtwE1OdKlp6ETPLJ2PvLL2mT9AiaPSoAAVUQGx7VXoURPsN8CbzXJL0cgMDhvg9
-	 oK9WOg0e44jEo5QsA6aQNtg6PJN0wOsNBDR3u1h7C53PnfGpYR73yJxcw7jei5YlcY
-	 uxJ6PXVXJPyUMjvSq7jbwJgGl9o/mpU6wHkq3o67niTV6ciIsZVgS251GwV1+YXE+1
-	 PpMqywbD8WL7Q0RDbwO1bLx6kz1m2q0y9FO/IR4Ubrdi8MSjPCTbGLfLne3C9tAPsH
-	 sopzSyAY8SPvg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34292382327A;
-	Thu, 15 Aug 2024 19:25:10 +0000 (UTC)
-Subject: Re: [GIT PULL] hardening fixes for v6.11-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <202408151107.18E1DC8CE4@keescook>
-References: <202408151107.18E1DC8CE4@keescook>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <202408151107.18E1DC8CE4@keescook>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.11-rc4
-X-PR-Tracked-Commit-Id: fb6a421fb6153d97cf3058f9bd550b377b76a490
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e724918b3786252b985b0c2764c16a57d1937707
-Message-Id: <172374990870.2990737.3187203142770805347.pr-tracker-bot@kernel.org>
-Date: Thu, 15 Aug 2024 19:25:08 +0000
-To: Kees Cook <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Petr Mladek <pmladek@suse.com>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, Song Liu <song@kernel.org>, Thorsten Blum <thorsten.blum@toblux.com>
+	s=arc-20240116; t=1723750053; c=relaxed/simple;
+	bh=FewbRw4tUyZZjk2W84WuNf+l2RNNaOjU3ORVlGkXNyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jq6RXULiRSJXWNSPAOYkX8lpoDBUWWPgcqGQI5LboLiN2TuP+C7K8HFGLZnVA22wx3YK1xvgvWwEgZaCOFkNxmP4LJB8tEZmKCQEmuDWZNGD0RRenXsmhEMLbCl9SwkDdNB6LEB7V9XGvr3slrR7/jRpPGYySew6MEZlJxcRQHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D6jIaJOD; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 15 Aug 2024 19:27:22 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723750048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r0Xeb82lVijSqwns9NTrmpuUUH4zQ7c+TXWG5G988UM=;
+	b=D6jIaJOD19nkqrqlj45gS2IKBIpTJN4auMAAmB2bJh1PlZx7/WK0Af69U4WNrooRXtBGIp
+	XUYlSu/MVW4dJeG1gSddxm30scxYI6WWjhVHFrTK4F5cO45f6aA38yeFu0MzN8keFeadkd
+	W/8hD1aAsytR2aKeTgjAzJ02sMFOWjA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	"T . J . Mercier" <tjmercier@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] memcg: initiate deprecation of v1 features
+Message-ID: <Zr5WmpgJUXe79dcz@google.com>
+References: <20240814220021.3208384-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814220021.3208384-1-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Thu, 15 Aug 2024 11:08:30 -0700:
+On Wed, Aug 14, 2024 at 03:00:17PM -0700, Shakeel Butt wrote:
+> Let start the deprecation process of the memcg v1 features which we
+> discussed during LSFMMBPF 2024 [1]. For now add the warnings to collect
+> the information on how the current users are using these features. Next
+> we will work on providing better alternatives in v2 (if needed) and
+> fully deprecate these features.
+> 
+> Link: https://lwn.net/Articles/974575 [1]
+> 
+> Shakeel Butt (4):
+>   memcg: initiate deprecation of v1 tcp accounting
+>   memcg: initiate deprecation of v1 soft limit
+>   memcg: initiate deprecation of oom_control
+>   memcg: initiate deprecation of pressure_level
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.11-rc4
+I have a hope that we can deprecate memcg v1 altogether, but having more
+information about specific v1 users won't hurt.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e724918b3786252b985b0c2764c16a57d1937707
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks!
 
