@@ -1,215 +1,204 @@
-Return-Path: <linux-kernel+bounces-287986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0FF5952EFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A7F95301F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA7C282E82
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:25:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B3A28861D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A55E1714D0;
-	Thu, 15 Aug 2024 13:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C48819FA87;
+	Thu, 15 Aug 2024 13:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nu0Nu4Ec"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RD1ZA3IO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85ED217CA1D
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424D19EECF;
+	Thu, 15 Aug 2024 13:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728299; cv=none; b=VZsNVTSrBXhiUjZ3a6XrbndQVpadtT/X8zDUUeL1rs3g1NJtHIEr7a/N57fb1cIBnWPPTUonZaJteSoyb8yM8OCiy8yXvfvUjmQ60dme6iZCR9BBwzmzv444Yo+Dvmj3UDqvq/jvVuXBgpVTynYhs3XsHOq0RgqqUekaMKRNyTU=
+	t=1723729153; cv=none; b=HRwFSGCQk02DnhZOhDhI7odVzrFQjL6+2vI5GrLDWnbhI4BphVWzbEevCMM1e6lJzLWkUE/LI7QWIGFhK6sro+A2Hv/AYKLNJC7mV5qlMXcGzSpfB6I9lMXo5FXZRXIepNd6tvEwN0k700mkkwYtFD4s0waMroONy7X96Cec3rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728299; c=relaxed/simple;
-	bh=FMUGOuajKyHTFH9u5tNpnNSvmkR75tGzNAEVW81ZOIQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bHDaQCxxdQyhfwaAvRzFittw13e34SVQnAQWVHzN6LiOXs3k12A9HnNqFp5g6l4YjTYEl9VQD6bakNW9m6OlHSig68KeMh4piAbuithCmx8S5cGrJ8zBoY2cvwokMlSQD2IOXmZC4RsNq5XdzfRFuT/d3770EQDXKpDPbl8iYV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nu0Nu4Ec; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1723728293; x=1723987493;
-	bh=FMUGOuajKyHTFH9u5tNpnNSvmkR75tGzNAEVW81ZOIQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=nu0Nu4EcX121OuyUu+gqX57ZxpaD89GsTOG4XArgK727k+VNKjJqxG34JjvM/fMox
-	 QljUM54jYei8hmVzvt5c5RdSKtCCmMpdeG9CZEO7DKC1J17CZ7sFD3T7X/mhfahPno
-	 fsHQJf1qeDfREd1GZJqL7TEFhK9IbH8ODmbtk/+8LNPaCzMFiDQlC8se04Kw77F+B0
-	 fJM2qGIAmZWY4Fcqc1oUtuSjM7cVfv831bRHdpBT/3NV7OqMVuYHtL3Gq1eTD3Uljg
-	 z969O7zZIaWwAfYmNV5wvcxdOyDK0rCfka4/fgJsfE2dn61RXtg1yu4Hvoopteu3ii
-	 rzPeCzHL7ai/w==
-Date: Thu, 15 Aug 2024 13:24:47 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 09/26] rust: alloc: implement kernel `Box`
-Message-ID: <56ebda7b-c570-4dc6-8456-ab768d3a4b77@proton.me>
-In-Reply-To: <Zr0ocI-j3fZZM7Rw@cassiopeiae>
-References: <20240812182355.11641-1-dakr@kernel.org> <20240812182355.11641-10-dakr@kernel.org> <a69e7280-7291-49f7-a46f-1ad465efce04@proton.me> <Zr0ocI-j3fZZM7Rw@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a4f9b902f88d07b334aa99c53ec0e419bff8c295
+	s=arc-20240116; t=1723729153; c=relaxed/simple;
+	bh=wfNjkiwjF3OQQaLpX0or6c2Q95TUZGbxbvgApXQCKn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=swHAAVpJ+fek+9qF4hufrSQvXe1SpHHVfh6DUS2nuTHr15zIplKEMMQtAkCr/HfzafiaJTRIMR+XEfYJeOSBtjl3/i5giovrrjOZwbxQukrZ5wMhPZPm4mkJIE1bmg6CjSeKwgmeCkFZZEe8zpiLdLXlFfkA1bz3hyrkFOgQODo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RD1ZA3IO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D50C9C4AF0A;
+	Thu, 15 Aug 2024 13:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723729153;
+	bh=wfNjkiwjF3OQQaLpX0or6c2Q95TUZGbxbvgApXQCKn4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RD1ZA3IODvwLqwVDN+JLa1dWLE1WA+A3i7sWEUi62zpwIhS23RgIw7DEf44lM3Ft+
+	 l4b+/2cn/ItD7TvTYDzndkJ9SrT45QAkfhT0GxzTumv+FsBYwOfibkpvSexup2jFOt
+	 vcvaQnP06Ynm5owTVJaOFHb4cN3ToFnQXmwRvVN0=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 6.10 00/22] 6.10.6-rc1 review
+Date: Thu, 15 Aug 2024 15:25:08 +0200
+Message-ID: <20240815131831.265729493@linuxfoundation.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.6-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.10.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.10.6-rc1
+X-KernelTest-Deadline: 2024-08-17T13:18+00:00
+Content-Transfer-Encoding: 8bit
 
-On 14.08.24 23:58, Danilo Krummrich wrote:
-> On Wed, Aug 14, 2024 at 05:01:34PM +0000, Benno Lossin wrote:
->> On 12.08.24 20:22, Danilo Krummrich wrote:
->>> +/// The kernel's [`Box`] type - a heap allocation for a single value o=
-f type `T`.
->>> +///
->>> +/// This is the kernel's version of the Rust stdlib's `Box`. There are=
- a couple of differences,
->>> +/// for example no `noalias` attribute is emitted and partially moving=
- out of a `Box` is not
->>> +/// supported.
->>
->> I would add "But otherwise it works the same." (I don't know if there is
->> a comma needed after the "otherwise").
->=20
-> There are more differences we don't list here, and probably don't need to=
-.
-> Hence, saying that it otherwise works the same isn't correct.
->=20
->> Also I remember that there was one more difference with a custom box
->> compared to the stdlib, but I forgot what that was, does someone else
->> remember? We should also put that here.
->=20
-> Obviously, there are also quite some API differences. For instance, `Box`
-> generally requires two generics, value type and allocator, we take page f=
-lags
-> and return a `Result`, where std just panics on failure.
+This is the start of the stable review cycle for the 6.10.6 release.
+There are 22 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Oh yeah that's true. The things listed above don't really refer to API
-stuff, so I didn't consider that. How about changing "couple
-differences" to "several differences"? Also adding that the APIs are
-different would not hurt.
+Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+Anything received after that time might be too late.
 
->>> +///
->>> +/// `Box` works with any of the kernel's allocators, e.g. [`super::all=
-ocator::Kmalloc`],
->>> +/// [`super::allocator::Vmalloc`] or [`super::allocator::KVmalloc`]. T=
-here are aliases for `Box`
->>> +/// with these allocators ([`KBox`], [`VBox`], [`KVBox`]).
->>> +///
->>> +/// When dropping a [`Box`], the value is also dropped and the heap me=
-mory is automatically freed.
->>> +///
->>> +/// # Examples
->>> +///
->>> +/// ```
->>> +/// let b =3D KBox::<u64>::new(24_u64, GFP_KERNEL)?;
->>> +///
->>> +/// assert_eq!(*b, 24_u64);
->>> +///
->>> +/// # Ok::<(), Error>(())
->>> +/// ```
->>> +///
->>> +/// ```
->>> +/// # use kernel::bindings;
->>> +///
->>> +/// const SIZE: usize =3D bindings::KMALLOC_MAX_SIZE as usize + 1;
->>> +/// struct Huge([u8; SIZE]);
->>> +///
->>> +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err=
-());
->>> +/// ```
->>> +///
->>> +/// ```
->>> +/// # use kernel::bindings;
->>> +///
->>> +/// const SIZE: usize =3D bindings::KMALLOC_MAX_SIZE as usize + 1;
->>> +/// struct Huge([u8; SIZE]);
->>> +///
->>> +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
->>> +/// ```
->>> +///
->>> +/// # Invariants
->>> +///
->>> +/// The [`Box`]' pointer always properly aligned and either points to =
-memory allocated with `A` or,
->>
->> "pointer always properly" -> "pointer is properly"
->>
->>> +/// for zero-sized types, is a dangling pointer.
->>
->> I think this section would look nicer, if it were formatted using bullet
->> points (that way the bracketing of the "or" is also unambiguous).
->>
->> Additionally, this is missing that the pointer is valid for reads and
->> writes.
->>
->>> +pub struct Box<T: ?Sized, A: Allocator>(NonNull<T>, PhantomData<A>);
->>
->> Why no `repr(transparent)`?
->=20
-> I wasn't entirely sure whether that's OK with the additional `PhantomData=
-`, but
-> I think it is, gonna add it.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.6-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+and the diffstat can be found below.
 
-Yes it is fine, `repr(transparent)` requires that at most one field is
-non-ZST, but the type can have as many ZST fields as it wants.
-Otherwise the compiler will complain (there is no `unsafe` here, so just
-adding it is completely fine).
+thanks,
 
->>> +
->>> +/// Type alias for `Box` with a `Kmalloc` allocator.
->>
->> I think we should add that this is only designed for small values.
->=20
-> I don't want duplicate the existing documentation around kmalloc and frie=
-nds
-> [1].
->=20
-> Maybe we can refer to the existing documentation somehow.
->=20
-> [1] https://www.kernel.org/doc/html/latest/core-api/memory-allocation.htm=
-l
+greg k-h
 
-Oh great! With the C docs, I never know where to find them (is it in the
-code and do they exist?). Yeah let's just link it.
+-------------
+Pseudo-Shortlog of commits:
 
->>> +///
->>> +/// # Examples
->>> +///
->>> +/// ```
->>> +/// let b =3D KBox::new(24_u64, GFP_KERNEL)?;
->>> +///
->>> +/// assert_eq!(*b, 24_u64);
->>> +///
->>> +/// # Ok::<(), Error>(())
->>> +/// ```
->>> +pub type KBox<T> =3D Box<T, super::allocator::Kmalloc>;
->>> +
->>> +/// Type alias for `Box` with a `Vmalloc` allocator.
->>
->> Same here, add that this is supposed to be used for big values (or is
->> this also a general-purpose allocator, just not guaranteeing that the
->> memory is physically contiguous? in that case I would document it
->> here and also on `Vmalloc`).
->=20
-> Same as above, I'd rather not duplicate that. But I'm happy to link thing=
-s in,
-> just not sure what's the best way doing it.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.10.6-rc1
 
-I took a look at the link and there is the "Selecting memory allocator"
-section, but there isn't really just a vmalloc or kmalloc section, it is
-rather stuff that we would put in the module documentation.
-What I would write on these types would be what to use these boxes for.
-eg large allocations, general purpose etc. I don't think that that is
-easily accessible from the docs that you linked above.
+Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
+    drm/amdgpu/display: Fix null pointer dereference in dc_stream_program_cursor_position
 
----
-Cheers,
-Benno
+Wayne Lin <Wayne.Lin@amd.com>
+    drm/amd/display: Solve mst monitors blank out problem after resume
+
+Kees Cook <kees@kernel.org>
+    binfmt_flat: Fix corruption when not offsetting data start
+
+Gergo Koteles <soyer@irl.hu>
+    platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands
+
+Gergo Koteles <soyer@irl.hu>
+    platform/x86: ideapad-laptop: move ymc_trigger_ec from lenovo-ymc
+
+Gergo Koteles <soyer@irl.hu>
+    platform/x86: ideapad-laptop: introduce a generic notification chain
+
+Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+    platform/x86/amd/pmf: Fix to Update HPD Data When ALS is Disabled
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb: Fix UBSAN warning in parse_audio_unit()
+
+Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+    fs/ntfs3: Do copy_to_user out of run_lock
+
+Pei Li <peili.dev@gmail.com>
+    jfs: Fix shift-out-of-bounds in dbDiscardAG
+
+Edward Adam Davis <eadavis@qq.com>
+    jfs: fix null ptr deref in dtInsertEntry
+
+Willem de Bruijn <willemb@google.com>
+    fou: remove warn in gue_gro_receive on unsupported protocol
+
+Chao Yu <chao@kernel.org>
+    f2fs: fix to cover read extent cache access with lock
+
+Chao Yu <chao@kernel.org>
+    f2fs: fix to do sanity check on F2FS_INLINE_DATA flag in inode during GC
+
+yunshui <jiangyunshui@kylinos.cn>
+    bpf, net: Use DEV_STAT_INC()
+
+Simon Trimmer <simont@opensource.cirrus.com>
+    ASoC: cs35l56: Patch CS35L56_IRQ1_MASK_18 to the default value
+
+WangYuli <wangyuli@uniontech.com>
+    nvme/pci: Add APST quirk for Lenovo N60z laptop
+
+Huacai Chen <chenhuacai@kernel.org>
+    LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+
+Fangzhi Zuo <jerry.zuo@amd.com>
+    drm/amd/display: Prevent IPX From Link Detect and Set Mode
+
+Harry Wentland <harry.wentland@amd.com>
+    drm/amd/display: Separate setting and programming of cursor
+
+Wayne Lin <wayne.lin@amd.com>
+    drm/amd/display: Defer handling mst up request in resume
+
+Kees Cook <kees@kernel.org>
+    exec: Fix ToCToU between perm check and set-uid/gid usage
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/loongarch/include/uapi/asm/unistd.h           |   1 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  14 +-
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    |   6 +-
+ drivers/gpu/drm/amd/display/dc/core/dc_stream.c    |  94 ++++++++-----
+ drivers/gpu/drm/amd/display/dc/dc_stream.h         |   8 ++
+ .../drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c    |   2 +-
+ drivers/nvme/host/pci.c                            |   7 +
+ drivers/platform/x86/Kconfig                       |   1 +
+ drivers/platform/x86/amd/pmf/spc.c                 |  32 ++---
+ drivers/platform/x86/ideapad-laptop.c              | 148 ++++++++++++++++++---
+ drivers/platform/x86/ideapad-laptop.h              |   9 ++
+ drivers/platform/x86/lenovo-ymc.c                  |  60 +--------
+ fs/binfmt_flat.c                                   |   4 +-
+ fs/exec.c                                          |   8 +-
+ fs/f2fs/extent_cache.c                             |  50 +++----
+ fs/f2fs/f2fs.h                                     |   2 +-
+ fs/f2fs/gc.c                                       |  10 ++
+ fs/f2fs/inode.c                                    |  10 +-
+ fs/jfs/jfs_dmap.c                                  |   2 +
+ fs/jfs/jfs_dtree.c                                 |   2 +
+ fs/ntfs3/frecord.c                                 |  75 ++++++++++-
+ net/core/filter.c                                  |   8 +-
+ net/ipv4/fou_core.c                                |   2 +-
+ sound/soc/codecs/cs35l56-shared.c                  |   1 +
+ sound/usb/mixer.c                                  |   7 +
+ 26 files changed, 388 insertions(+), 179 deletions(-)
+
 
 
