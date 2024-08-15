@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-287924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D253952E45
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:30:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E66952E46
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A7D1C22518
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:30:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA351F26DE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2F019DF76;
-	Thu, 15 Aug 2024 12:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13B619D897;
+	Thu, 15 Aug 2024 12:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NlkNcDcX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W4uD7Zi8"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3943C19D897
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D1B19DF85
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 12:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723724985; cv=none; b=BkVDp+SG9oRGGK+lsyHAU+1vfWl1ym4xN+JhWtXf640cbKJvTpl6UBIaylpYkaHLNdLEvtcFV/YFNx7FRC7EkDxi+Z303nxHiFUQtFKuQtg6S9cG9O8DzsFYRhqZdymdtkEgJk0k09u2AT3F5b5pF9gwgV711f9gV5JfQJ4hQmE=
+	t=1723724989; cv=none; b=sdlTPWaSz9CSV0UIx7VCx+UVXa1vhjFc/KagRVbhinTyo/9LYodt1LsdtwTiSPUEQT537WXpvThSiuAja5vGDgG1OwOx8PbcigJN9JQT2kbCs1RLktxC2WHHHFpylMktXAVbfzYkM68CCw/J/2x97YaVH8XHNjf5HzOw1D7DnXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723724985; c=relaxed/simple;
-	bh=UttqBvpZoKKLFR80hy05flF/93dogdULoEdz0bQr4mM=;
+	s=arc-20240116; t=1723724989; c=relaxed/simple;
+	bh=bFUxl7b5tqBfFHPgqLgDKxjE7x1ckyrKPsXsEVklM6o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e97frx9fOawAK95WMytbmr/YY9J4Kuj/SdjyBzYCx9u2rWxhZwz26WwOp5LVifSD3Sg4BtdcfhF+7gkJPQ9qepSQtD3yjhqzuEZC75zIb2r3Dm95rIpy+ZXzcembYLFFYNfnx+T1knEZmVRSts7pFm5RqQuaxNzdfNBDIUFPNvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NlkNcDcX; arc=none smtp.client-ip=198.175.65.17
+	 MIME-Version; b=UT6U1zLSNVbQkMJv/y2uzYwgKsls5xHXLQ8DbSYOB+UZHu6r6V/0JHPv81ylHRZX9cCITnSJHAvjZ69c4PZF7fUwtNlddmlUX66YvktMaOa8vKHc2awH8BWKq/fPRtGLzBRDKiAXxvaMqbt7IHsgnqwc6O3wN/2WrgCkMgfZeWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W4uD7Zi8; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723724984; x=1755260984;
+  t=1723724987; x=1755260987;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=UttqBvpZoKKLFR80hy05flF/93dogdULoEdz0bQr4mM=;
-  b=NlkNcDcXrzdW8PygLvFevzZPKsK/KElgUyYGFg9xJd/XBWxBHptEegZU
-   1QN9xMrvAdy4xCswH1Oi9AvKWjtcgSdxdA4tMY6qCqBS/Lkd82Gqt2Kmb
-   Vcun9xZjVZkBZJHmJgzjEACl4NeiaaVcRE6yxvVRuBsRsONSFZbmy+7L7
-   Xxj3DQ0frzv0fO2ncDBu3FiZTmxhnf04bsx1AiJtUXZwLEATRiW+WWgN8
-   AMJH9DCQCI97ld5aTxoy6GcLmF7XmZgEPB99DZ1Mp/HRZACqco9rIYu5q
-   RUzApHttvtm6CRtKpBeVx+Xu+8wM2GCEwGLmw0U+Vt/WOiQ6ncJTu8lLi
+  bh=bFUxl7b5tqBfFHPgqLgDKxjE7x1ckyrKPsXsEVklM6o=;
+  b=W4uD7Zi8oIuNqHrj5YFSLSXRf1vMVCewKRHic+jhRzpT+f25tKHLWLYE
+   qVGRuWmvTrChML7tCJKZtdCiw4bYo3Lq1OKAj3jgBE+GWklhP70tvhBmB
+   MSqgN73He2/yqfdyS/le+rCX2cilwgeFUUoYcPS9QnaXEqlJq+DVV6+Hq
+   j/oQV5J0wTZRxpLcwcpTtyX/1KUAR5Aje5tFaOiyrHsspPZXc1YcKp8fh
+   iCEZJi2ONdcEeb53hKOZBvcJaOpobQMOpUL9IRAb++03dghWPivMyAjBN
+   TJ9z+N2iL3vT2r9vXvpFMFXcbtBAs+gKS+EAz6h7qaMvAx6U4wiE7ZHQb
    g==;
-X-CSE-ConnectionGUID: nRYPqMbZS9aPJLUCswH5OQ==
-X-CSE-MsgGUID: 8quKxT3rQLqTTjDbc4PcFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22112238"
+X-CSE-ConnectionGUID: UhXLG+cASamhGtxoZiY6Dg==
+X-CSE-MsgGUID: EpDiQy6uRLKBTZXpYcbfig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11165"; a="22112254"
 X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="22112238"
+   d="scan'208";a="22112254"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:29:43 -0700
-X-CSE-ConnectionGUID: gUFwCKPlSzGPEAqP0QtgCw==
-X-CSE-MsgGUID: m8XZBriHRy6UqjtL9lwvvQ==
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:29:47 -0700
+X-CSE-ConnectionGUID: D2hreIwSSTKbfOz6tS8o4w==
+X-CSE-MsgGUID: ZFvcLFhJRNae4LAgaNeasA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
-   d="scan'208";a="59489467"
+   d="scan'208";a="59489472"
 Received: from unknown (HELO khuang2-desk.gar.corp.intel.com) ([10.124.223.78])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:29:40 -0700
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:29:44 -0700
 From: Kai Huang <kai.huang@intel.com>
 To: dave.hansen@intel.com,
 	kirill.shutemov@linux.intel.com,
@@ -71,9 +71,9 @@ Cc: x86@kernel.org,
 	thomas.lendacky@amd.com,
 	pbonzini@redhat.com,
 	seanjc@google.com
-Subject: [PATCH v5 2/5] x86/kexec: do unconditional WBINVD for bare-metal in relocate_kernel()
-Date: Fri, 16 Aug 2024 00:29:18 +1200
-Message-ID: <47d9f1150a6852c9a403b9e25858f5658c50a51d.1723723470.git.kai.huang@intel.com>
+Subject: [PATCH v5 3/5] x86/virt/tdx: Make module initializatiton state immutable in reboot notifier
+Date: Fri, 16 Aug 2024 00:29:19 +1200
+Message-ID: <f437bb7da17d3df888c51b19b3b580d10e91a4e7.1723723470.git.kai.huang@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1723723470.git.kai.huang@intel.com>
 References: <cover.1723723470.git.kai.huang@intel.com>
@@ -85,126 +85,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Both SME and TDX can leave caches in incoherent state due to memory
-encryption.  During kexec, the caches must be flushed before jumping to
-the second kernel to avoid silent memory corruption to the second kernel.
+If the kernel has ever enabled TDX, part of system memory remains TDX
+private memory when kexec happens.  E.g., the PAMT (Physical Address
+Metadata Table) pages used by the TDX module to track each TDX memory
+page's state are never freed once the TDX module is initialized.
 
-During kexec, the WBINVD in stop_this_cpu() flushes caches for all
-remote cpus when they are being stopped.  For SME, the WBINVD in
-relocate_kernel() flushes the cache for the last running cpu (which is
-executing the kexec).
+In kexec, the kernel will need to convert all TDX private pages back to
+normal when the platform has the TDX "partial write machine check"
+erratum.  Such conversion will need to be done after stopping all remote
+CPUs so that no more TDX activity can possibly happen.
 
-Similarly, to support kexec for TDX host, after stopping all remote cpus
-with cache flushed, the kernel needs to flush cache for the last running
-cpu.
+Register a reboot notifier to make the TDX module initialization state
+immutable during the preparation phase of kexec, so that the kernel can
+later use module state to determine whether it is possible for the
+system to have any TDX private page.  Otherwise, the remote CPU could be
+stopped when it is in the middle of module initialization and the module
+state wouldn't be able to reflect this.
 
-Use the existing WBINVD in relocate_kernel() to cover TDX host as well.
+Specifically, upon receiving the reboot notifier, stop further module
+initialization if the kernel hasn't enabled TDX yet.  If there's any
+other thread trying to initialize TDX module, wait until the ongoing
+module initialization to finish.
 
-However, instead of sprinkling around vendor-specific checks, just do
-unconditional WBINVD to cover both SME and TDX.  Kexec is not a fast path
-so having one additional WBINVD for platforms w/o SME/TDX is acceptable.
-
-But only do WBINVD for bare-metal because TDX guests and SEV-ES/SEV-SNP
-guests will get unexpected (and yet unnecessary) exception (#VE or #VC)
-which the kernel is unable to handle at this stage.
+The reboot notifier is triggered when the kernel goes to reboot, kexec,
+halt or shutdown.  In any case, there's no need to allow the kernel to
+continue to initialize the TDX module anyway (if not done yet).
 
 Signed-off-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Dave Young <dyoung@redhat.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
 
 v4 -> v5:
- - Add Tom's tag
-
-v3 -> v4:
- - Use "exception (#VE or #VC)" for TDX and SEV-ES/SEV-SNP in changelog
-   and comments.  (Kirill, Tom)
- - "Save the bare_metal" -> "Save the bare_metal flag" (Tom)
- - Point out "WBINVD is not necessary for TDX and SEV-ES/SEV-SNP guests"
-   in the comment.  (Tom)
-
-v2 -> v3:
- - Change to only do WBINVD for bare metal
+ - New patch to split the 'tdx_rebooting' around reboot notifier (Dave).
 
 ---
- arch/x86/include/asm/kexec.h         |  2 +-
- arch/x86/kernel/machine_kexec_64.c   |  2 +-
- arch/x86/kernel/relocate_kernel_64.S | 19 +++++++++++++++----
- 3 files changed, 17 insertions(+), 6 deletions(-)
+ arch/x86/virt/vmx/tdx/tdx.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
-index ae5482a2f0ca..b3429c70847d 100644
---- a/arch/x86/include/asm/kexec.h
-+++ b/arch/x86/include/asm/kexec.h
-@@ -128,7 +128,7 @@ relocate_kernel(unsigned long indirection_page,
- 		unsigned long page_list,
- 		unsigned long start_address,
- 		unsigned int preserve_context,
--		unsigned int host_mem_enc_active);
-+		unsigned int bare_metal);
- #endif
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 4e2b2e2ac9f9..c33417fe4086 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -27,6 +27,7 @@
+ #include <linux/log2.h>
+ #include <linux/acpi.h>
+ #include <linux/suspend.h>
++#include <linux/reboot.h>
+ #include <asm/page.h>
+ #include <asm/special_insns.h>
+ #include <asm/msr-index.h>
+@@ -52,6 +53,8 @@ static DEFINE_MUTEX(tdx_module_lock);
+ /* All TDX-usable memory regions.  Protected by mem_hotplug_lock. */
+ static LIST_HEAD(tdx_memlist);
  
- #define ARCH_HAS_KIMAGE_ARCH
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index 9c9ac606893e..07ca9d3361a3 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -392,7 +392,7 @@ void machine_kexec(struct kimage *image)
- 				       (unsigned long)page_list,
- 				       image->start,
- 				       image->preserve_context,
--				       host_mem_enc_active);
-+				       !boot_cpu_has(X86_FEATURE_HYPERVISOR));
++static bool tdx_rebooting;
++
+ typedef void (*sc_err_func_t)(u64 fn, u64 err, struct tdx_module_args *args);
  
- #ifdef CONFIG_KEXEC_JUMP
- 	if (image->preserve_context)
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 042c9a0334e9..a1a8a79d6b78 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -52,7 +52,7 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
- 	 * %rsi page_list
- 	 * %rdx start address
- 	 * %rcx preserve_context
--	 * %r8  host_mem_enc_active
-+	 * %r8  bare_metal
- 	 */
+ static inline void seamcall_err(u64 fn, u64 err, struct tdx_module_args *args)
+@@ -1185,6 +1188,9 @@ static int __tdx_enable(void)
+ {
+ 	int ret;
  
- 	/* Save the CPU context, used for jumping back */
-@@ -80,7 +80,7 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
- 	pushq $0
- 	popfq
++	if (tdx_rebooting)
++		return -EINVAL;
++
+ 	ret = init_tdx_module();
+ 	if (ret) {
+ 		pr_err("module initialization failed (%d)\n", ret);
+@@ -1418,6 +1424,21 @@ static struct notifier_block tdx_memory_nb = {
+ 	.notifier_call = tdx_memory_notifier,
+ };
  
--	/* Save SME active flag */
-+	/* Save the bare_metal flag */
- 	movq	%r8, %r12
- 
++static int tdx_reboot_notifier(struct notifier_block *nb, unsigned long mode,
++			       void *unused)
++{
++	/* Wait for ongoing TDX initialization to finish */
++	mutex_lock(&tdx_module_lock);
++	tdx_rebooting = true;
++	mutex_unlock(&tdx_module_lock);
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block tdx_reboot_nb = {
++	.notifier_call = tdx_reboot_notifier,
++};
++
+ static void __init check_tdx_erratum(void)
+ {
  	/*
-@@ -161,9 +161,20 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	movq	%r9, %cr3
+@@ -1472,6 +1493,14 @@ void __init tdx_init(void)
+ 		return;
+ 	}
  
- 	/*
--	 * If SME is active, there could be old encrypted cache line
-+	 * The kernel could leave caches in incoherent state on SME/TDX
-+	 * capable platforms.  Just do unconditional WBINVD to avoid
-+	 * silent memory corruption to the new kernel for these platforms.
-+	 *
-+	 * For SME, need to flush cache here before copying the kernel.
-+	 * When it is active, there could be old encrypted cache line
- 	 * entries that will conflict with the now unencrypted memory
--	 * used by kexec. Flush the caches before copying the kernel.
-+	 * used by kexec.
-+	 *
-+	 * Do WBINVD for bare-metal only to cover both SME and TDX.  It
-+	 * isn't necessary to perform a WBINVD in a guest and performing
-+	 * one could result in an exception (#VE or #VC) for a TDX or
-+	 * SEV-ES/SEV-SNP guest that can crash the guest since, at this
-+	 * stage, the kernel has torn down the IDT.
- 	 */
- 	testq	%r12, %r12
- 	jz .Lsme_off
++	err = register_reboot_notifier(&tdx_reboot_nb);
++	if (err) {
++		pr_err("initialization failed: register_reboot_notifier() failed (%d)\n",
++				err);
++		unregister_memory_notifier(&tdx_memory_nb);
++		return;
++	}
++
+ #if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+ 	pr_info("Disable ACPI S3. Turn off TDX in the BIOS to use ACPI S3.\n");
+ 	acpi_suspend_lowlevel = NULL;
 -- 
 2.45.2
 
