@@ -1,99 +1,151 @@
-Return-Path: <linux-kernel+bounces-287855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B94D952D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021D7952D48
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63791F223A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:14:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 359C01C235E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3417C1AC8BD;
-	Thu, 15 Aug 2024 11:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AC31AC8BE;
+	Thu, 15 Aug 2024 11:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HnoC71Rn"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOj422S5"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FBA1AC8A4;
-	Thu, 15 Aug 2024 11:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE111762D2;
+	Thu, 15 Aug 2024 11:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723720449; cv=none; b=g1CtXdHslkEG+cRuDLhvlzwGuzK9K1pQyjhO+HcnFy488RFA9MpUc20eFZwsl6vduN1uvx4tN+1rAvYhiNFIjY2GVWaxghcW6kvehI5vecyyJP41DCjbYeNyN4if+pQ0dA6lldxGWk65K2SLCdT/3tpUUNfH3uHPTAI9a3TV958=
+	t=1723720491; cv=none; b=Hp3xD9YZkkUn7l5ucjys28IrEybRMdSMfWssIQ9MzyHD32EgmTuiNGZOnuVlEWQ7uemadzvBwYump7gOI6WLwXN0k8mhLrg45Ewn/lHmI9ZsZOX9VRJrXF81+s4qtcfIyyVWr91botjB3ud1ORyzhl8DzEK+13x3o+DGeIXsVnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723720449; c=relaxed/simple;
-	bh=rXm4l6ARRi0fjVDtarLzTvmipbBoOY8ZFyu6tjekXFY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qV1p9b23z1Tfl0iJ6E9pmr7ac3UB3BeMzZ9ATAaJkI8MTSeyrKyaAMdiuTsWNkA5Wv7TDalwKGgDMwV3G18oqolhiRDGVgleB6StaqARDuDxjNIX0OHFo7BhDUoSQ386BHq3GfylweVU7qw9e2Rxk1Vlizff1ASPcNjy7jXSzFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HnoC71Rn; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723720427; x=1724325227; i=markus.elfring@web.de;
-	bh=IMuihew64CpO9zH34qs61AIH8JFgWpnxsZcLMjqPH68=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HnoC71RnGnH1+qANvbdFSMWggQLzyk04r+RmPh4RcGB/4fBKjkRbKI2WReZ/w0Gl
-	 aaPiB4XeEknhR0t+CXpCI9+Ddw+DbHGXsQXZseQSamF2tnk/QdGveYh57SKAcYEgw
-	 P+xpqnBD1DC5RDJVitxGigx4+Hk6M+oGZniekPAY4lwWRUayH8V/cJ5b1q0pkE6kx
-	 ZUO5scQf+YjN/FzjBj6SDTld9rSrI17pGH0Vi7qZaUyIe/UZvwmkcXjmntkIEk4Zr
-	 zyEBpLsjE1zp8N9yOsIAJU1WmZLoLDJQI/Wb0tYEGKhGH3uRy7dsgUnBc5U6Am7N7
-	 nGcR1Zi4wkthX648nA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N01di-1sHomT1Z1K-00xmCF; Thu, 15
- Aug 2024 13:13:47 +0200
-Message-ID: <77c9258a-dce1-4cf8-8e0e-e4073902e25a@web.de>
-Date: Thu, 15 Aug 2024 13:13:46 +0200
+	s=arc-20240116; t=1723720491; c=relaxed/simple;
+	bh=GDQwlN5DPjWLrOlb1hR+0b7VhuI05ISKwqDKJnGLKmw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MvtBLAAmDVZUWP22C6Dq0opG+HTMM5FTSgjOO+KDyHkyXxhcxmN/qOjofMWv7rZ3dr6qnl2dWFYVZHHR0EfZMPebEcmk7zkOULjm/asof7MQ2Yl58y7Q5gqxXNhiAuLLS7ShXeQVzjpecslpFrAxrD7JG0tcodY8WZXZXRfcxp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOj422S5; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39d2044b522so1413615ab.0;
+        Thu, 15 Aug 2024 04:14:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723720489; x=1724325289; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HPIOn7129p2dyKplSo6WC4fI7U6Ls3jk9rLb4+oP4dQ=;
+        b=WOj422S5q5aVAV+RTHpeEn7KYBDwTgkvcEXv5oCDcJP7/07XLN5QA5wNANi8KCzI2V
+         rgtYtYphK5ki6mW8o7BN2XJGjDkh5CJsUDP00qKjvX67uB1El76nc2DTbBX1s3Awde54
+         ygNPpNU9J7ANefZzOwz9xrHhBCvMVqpuyrk1CYbr3xk5uk+T697fe+PLoDtA7ToU45hW
+         eV0J8SMZimoyiOh5dCz1iIcS3fAMCxazagh6928FsVPI6k7So/UXQOvt/+Yj4CN0zABn
+         +Iym4DiM0F12RouR8oOLDW4WzpHKquSFYh6L0xW6bDoBYkVCMVWE864DGLvk6ieWatGG
+         nvfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723720489; x=1724325289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HPIOn7129p2dyKplSo6WC4fI7U6Ls3jk9rLb4+oP4dQ=;
+        b=t8XqPt7N7LrlWe8XFxI7MvkM1IBiw63hmbJMPCvLAILBoNQLbspd6FYJXD9PKJhfIs
+         sor87jIkipJCpIQlBM8FV+Gkc4EPsELjEX9rYzmx99W58u+cjcGQNjhflBnVhgifx7aB
+         xzECA0mJn1x97nKT8hdNCNAZFpl7w6MwDXy3Gj0/my/R9D2zN3qeJlwzjoKKPi9iSqiN
+         wkPiuxZ/NyxdQVFTmOh5Oi8rjPU5qgMqHKqDpo/DsTreENaanqCV1zmpKhP/ehSO1l4x
+         g0bu+tOVSePEqDH2beE5qeABSiNu8QIDisrrMpwAAxQhdtQUtH6+NQh5xqLeR7x2Q8Oh
+         KwNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6zNKdN2z4tlTUz/+7nNv14Oesj2bzDXCw7X4n+pfg71X4ioYXjsI7DZUQiaqrXJFEBs/Qweolhd6PtCwPRB1esKCG1LYVA13anThxsG43Xwxqlt8ZNA8G0Z6gxq5QN860g00k
+X-Gm-Message-State: AOJu0YyWa0BbKmR5FBjeX3TQgPtq89rTYIaRRXZpnU68KICrb6RDQOo3
+	gaK3Nrkw8/4T8pMjljXyWC23TJ4h4GiSmmUDt3BUTx5DB31005h6vA3Lr4+5tdhT64GUcE3R8xK
+	+X60W/5HgMzbjswuKN4YulV7YIq0=
+X-Google-Smtp-Source: AGHT+IEik4rI3kn6FSE1vHzjXlCzOg8h0UUb3T66oT/jPtVM2UzsUge3gyscSDqqpLt6pxlRvX22u3ofCsx7q7Y59ss=
+X-Received: by 2002:a92:cd85:0:b0:39b:640e:c5fa with SMTP id
+ e9e14a558f8ab-39d124bfc29mr77735875ab.19.1723720488814; Thu, 15 Aug 2024
+ 04:14:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Kemeng Shi <shikemeng@huaweicloud.com>, linux-ext4@vger.kernel.org,
- Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240813120712.2592310-8-shikemeng@huaweicloud.com>
-Subject: Re: [PATCH 7/7] ext4: check buffer_verified in advance to avoid
- unneeded ext4_get_group_info
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240813120712.2592310-8-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240815084907.167870-1-sunyiqixm@gmail.com>
+In-Reply-To: <20240815084907.167870-1-sunyiqixm@gmail.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Thu, 15 Aug 2024 19:14:12 +0800
+Message-ID: <CAL+tcoBw1CKpPDkbiNGrrUFiqBEhHHx9vWhqfpfV1bbu3F1i5A@mail.gmail.com>
+Subject: Re: [PATCH] net: do not release sk in sk_wait_event
+To: sunyiqi <sunyiqixm@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:i2b0glHSXfmbNCiYnNPhljhJc1GDxcbG6hbGiwUsB8SDkuJFznA
- LdP/PEPqhOt5GT6T98fYa4FXmeCcppOYSS6PXqoeHT5IUvR35UqQFqy+IRT4wPMK8brBT5p
- 0vW5os+6WJZdOIRz1vKTzYgJc2j7ZZtPMm8YmedjirYpQg9ePxQnZ38I3ONThKVJrYDuqaE
- 2dIW+38k04vl9cCr1HnZw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fc7hQ0rtPAQ=;WlZNVYngpu6WsaZCkEnWXLPONoT
- uppouZeKOnaseqmkFo/VqoCYNATrTpjiUIF4b2/y0q/iPcmxuUw6Y1YLPAe9yPRyRNmEKOZow
- 6YJibZCZqCOaC5w0mCGRqB4chPXCz19tTbuAZnx9iZHvOea6FXlxhqvXqeGl0d5+8su9wPUyJ
- 8V8qYthdaf3MMlX2t19LW8DAKuu1vb/8qrKXiUHzrfeGJWOcE3wkGwpYVmFNHi6afW5kLwNlm
- sE4AbojuYy0MzLGtoBlkZUvg2zh9VrKG8kCjD3Z3/tGZ1AK/oPxQa8CKIdHcHYCGcD9GQHMhy
- D6e7LFeJKdfBmjtRUzw8JzB+SbzoRPyWfCn8cGf/qa3HPQ5r3q53v+0JBZuP4b7/1llY/5cP3
- FAYdk9VYoDZ1uopPqlfERFfbWWdsjjA4gKPaZksTjXIvPgsWpJAwOH2BPnK6QR16sNbCYLld1
- 5epsk04ZbLE9bjwVi9U70VgzKBx7RIa/LxkcT8zQ7PcPN/50aDfvpEkOuj2Dde79i3tcMJjK2
- XmVXqbH9PxhnSh0+3xgeVMrrXzYiKU0KDU27/DwqsmUlpHlKt6kvAEtUr+njvx2nmKvZIAjqF
- fCU0fPmklbjqqFzaS5QdzRYDBOVnaufxJwesRxjoMLLVtLE75hvsgERKsDKzDlhy6sheWw9Ve
- qY0isKOapFpFSSLeLDkCt5uGGPhf+4xCoT54VhzKtb9l7biZ6QJy/gEkpAV6Lfb14IBGSNJZu
- BmvZnQKAK7Ief2lJbfg1j0xrjzcgtphQqT5qJhFGRRwjUanEsC6gJ9G9/1IVBX9rS25YBohaX
- Hfe4uZw1hXlR/Ld38b9G14Ww==
 
-=E2=80=A6
-> This could be a simple cleanup as complier may handle this.
+On Thu, Aug 15, 2024 at 5:50=E2=80=AFPM sunyiqi <sunyiqixm@gmail.com> wrote=
+:
+>
+> When investigating the kcm socket UAF which is also found by syzbot,
+> I found that the root cause of this problem is actually in
+> sk_wait_event.
+>
+> In sk_wait_event, sk is released and relocked and called by
+> sk_stream_wait_memory. Protocols like tcp, kcm, etc., called it in some
+> ops function like *sendmsg which will lock the sk at the beginning.
+> But sk_stream_wait_memory releases sk unexpectedly and destroy
+> the thread safety. Finally it causes the kcm sk UAF.
+>
+> If at the time when a thread(thread A) calls sk_stream_wait_memory
+> and the other thread(thread B) is waiting for lock in lock_sock,
+> thread B will successfully get the sk lock as thread A release sk lock
+> in sk_wait_event.
+>
+> The thread B may change the sk which is not thread A expecting.
+>
+> As a result, it will lead kernel to the unexpected behavior. Just like
+> the kcm sk UAF, which is actually cause by sk_wait_event in
+> sk_stream_wait_memory.
+>
+> Previous commit d9dc8b0f8b4e ("net: fix sleeping for sk_wait_event()")
+> in 2016 seems do not solved this problem. Is it necessary to release
+> sock in sk_wait_event? Or just delete it to make the protocol ops
+> thread-secure.
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Link: https://syzkaller.appspot.com/bug?extid=3Db72d86aa5df17ce74c60
+> Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
+> ---
+>  include/net/sock.h | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/include/net/sock.h b/include/net/sock.h
+> index cce23ac4d514..08d3b204b019 100644
+> --- a/include/net/sock.h
+> +++ b/include/net/sock.h
+> @@ -1145,7 +1145,6 @@ static inline void sock_rps_reset_rxhash(struct soc=
+k *sk)
+>
+>  #define sk_wait_event(__sk, __timeo, __condition, __wait)              \
+>         ({      int __rc, __dis =3D __sk->sk_disconnects;                =
+ \
+> -               release_sock(__sk);                                     \
+>                 __rc =3D __condition;                                    =
+ \
+>                 if (!__rc) {                                            \
+>                         *(__timeo) =3D wait_woken(__wait,                =
+ \
+> @@ -1153,7 +1152,6 @@ static inline void sock_rps_reset_rxhash(struct soc=
+k *sk)
+>                                                 *(__timeo));            \
+>                 }                                                       \
+>                 sched_annotate_sleep();                                 \
+> -               lock_sock(__sk);                                        \
 
-                                    compiler?
+Are you sure that you want the socket lock to be held possibly for a
+really long time even if it has to wait for the available memory,
+which means, during this period, other threads trying to access the
+lock will be blocked?
 
-
-Would you like to append parentheses to the mentioned function name?
-
-Regards,
-Markus
+Thanks,
+Jason
 
