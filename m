@@ -1,172 +1,173 @@
-Return-Path: <linux-kernel+bounces-288121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB199535DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:43:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCE19535E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A82C1F21202
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF0281FB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8611B29B7;
-	Thu, 15 Aug 2024 14:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EAE1AC43B;
+	Thu, 15 Aug 2024 14:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="mzH7OhJe"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEAB2bn5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC431B14F8
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902F41A2570;
+	Thu, 15 Aug 2024 14:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723732919; cv=none; b=Y/ulkGzzeibM48OiOv79Pnt+zj34E5RLahC6mKxutJe0JI6Uni93hVX5DWBCnJbtRSEE/pfN9L3bUW2zm1itUXPGSiAwT81NQhP3N0MiwrhvIngS9C8fis1cp6s1st/5JBhwYe6gfp8dY1G49+0aunC2wa5183sHBH4Zfq1vPqs=
+	t=1723732925; cv=none; b=OBaX9VzF/z34F04OOGXB6MBLwc2NcP/l0shPKwf87Ci8DchWZx33vWUAJKc18QcxNvwgvJXtbIQNEtpEUGCRdCaG+4hXSseb6y7+y4jZ1kzZyF93RnH90u9OVnSdNt6PEn3kzNLkS3a8E1E98HbamlQ0M8l++joQynQu41j/z6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723732919; c=relaxed/simple;
-	bh=0MQuPzQnMKhxGxjiKQymr0yiA6BAuDfJdRXUAXOTSco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CEr4037fe9aPadA0Mm4R8ugKWhA6Ma/JbebPaF3S6Ty6L0uIX4AGme/JKhkjegO4AFyNYAOWKky/Ab/mvth0E2F0MuLcDPVbZCoRp6DguEd7OpXvKJ8Gh3o9SR07EOpJngYasslgqUrdEWBfuDfZhBB3Y4o0APthek0dAXCSEHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=mzH7OhJe; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-81fb419f77bso51194439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1723732916; x=1724337716; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=++BmiiXwQt/QcOt/zK+OovAUukWbAy9mATU+M+pnlPs=;
-        b=mzH7OhJeDa2HeZljpSVIqfmUsa1Sti7VjKhdLpK81NaWdzrToma7oei/cjcCJ2DPFX
-         KQvxOtPFhDWBM4iQ5WK5U5OdYvoAj7Id62A4FkiUkbaTkiFjANd4sfua75lsU7zbcZc4
-         mxgXpSbr5dt2qSJaYq8qEHEX+ip5QoxqizX5F/2ZgkTPGTuQJg1AaZnR9djhoNOpDnWx
-         IZwSV68CsQskgtcED6xmM3eta2anzCGeUiDtWTxnXRQufkO4hyn05v5NqWaOld/J77tf
-         xBY5AoC4VRs6NglNdtSJkXaiWUSSPh+mgQHhsmsd1gADAVPAWMM+B41fQmzdVm+jiuoY
-         Ej4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723732916; x=1724337716;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=++BmiiXwQt/QcOt/zK+OovAUukWbAy9mATU+M+pnlPs=;
-        b=tsB/T75cwylfXt3XNYTqtBlYQi3siDiPTW5jEI0RBw4Y5/2yMKZpxKBZZqqWor8uQZ
-         weBNSm4a9bh0yWX7QeOmoEvncdFhPFqdQ5KA0TUK3chih3Vmpv09MsnU9b6Zx3dENS1h
-         KhbBnVcCyk19D8vMv2HfHJ1XTYin3qbxQCooT1NA+NEPJIcLUF/IWylFyTzDjo9rum97
-         0W4R3dqxuHE/Huu5zfmGQgI8JeN1M3WthhWmv3Jdw3rc3J9kBiuYlhxVTsWg5OdAiAbm
-         H8U6GxRL0xS17zP7fwKVCvqQM7DI5wrmMcCqgKo7AGHWPKxFOF0YFazNYtdEk7zpeMOn
-         hptQ==
-X-Gm-Message-State: AOJu0YxDjOM/4JhmD3wSLbcBewR+HtriYg1Pe/iRulG0v+/GM3OW0G4A
-	W+K576hZNbdIdiHE2BGyPsYU1NsBRIUZqI0gRb3I8d4c+9tv3qUWAmOACMCFU+mWw5fd0ZeS/Vg
-	2
-X-Google-Smtp-Source: AGHT+IFCvvrFd5l9ENiraMAdbfas6RG05Z/jvtVxTncOjYZjJetsW4L7fIkPh9zI4/+Aa1OKJOROLw==
-X-Received: by 2002:a05:6e02:1d8e:b0:39a:e984:1caa with SMTP id e9e14a558f8ab-39d26d4f540mr178135ab.21.1723732916543;
-        Thu, 15 Aug 2024 07:41:56 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ccd6f3db32sm525449173.116.2024.08.15.07.41.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 07:41:56 -0700 (PDT)
-Message-ID: <be1db8f5-af55-48a4-be7a-5e8a1a5e25c4@sifive.com>
-Date: Thu, 15 Aug 2024 09:41:53 -0500
+	s=arc-20240116; t=1723732925; c=relaxed/simple;
+	bh=M40/005yIp6PCsxxKStq9i/vMz5yXRGyPImHwfgRiyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ngdOLL7p9Pt2K9xjn0eEvnaosRzcHKy4zmY4KTPglX9YTM9q+6flb3Rl5QYI0trPtniS0BTgfgJdvlg9ReeXs6enRTnOwl+JGC5w5+mHG9JZUK9SOZsWh7GyopQkw7E3LSg5pQvYaip3aJOaWcQcwHdckvjYCXVHhsVdpvrTQi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEAB2bn5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C93ABC32786;
+	Thu, 15 Aug 2024 14:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723732925;
+	bh=M40/005yIp6PCsxxKStq9i/vMz5yXRGyPImHwfgRiyQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VEAB2bn5hNHq7njuWlDTwBaBdfm593hUm+7dAlHYT1OXAgZo5F5FwZQGGvCvXRcXH
+	 Ix+EVn36nGzdPtpoGHDBmxWfsDGB9R00F1NtpKo4KUZ9xEVMEVhVdT0rd0s/JGskIz
+	 kRvbs7GY5572G1kVn+7t23D+XoNj7g+exF5MT9GlnanqdVJX1MhOVfjO+Q4Ugd2B0e
+	 sicrwqsWDLXwTCTJPcY0xgvtcgPYed8xFYfaCRxFaNN9icRjFy6/FNsFVZVrZcEa5a
+	 SPO8jgsVrwOzqHhwrvhd7IIJ1xngfd5kKoV01ssLmo63DyCnmulPArf46eD/FZxn/9
+	 JdARv89eYqdMg==
+Date: Thu, 15 Aug 2024 15:42:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Minda Chen <minda.chen@starfivetech.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMS8z?= =?utf-8?Q?=5D?=
+ dt-bindings: phy: jh7110-usb-phy: Add sys-syscon property
+Message-ID: <20240815-endless-credible-324438d164f4@spud>
+References: <cover.1723472153.git.jan.kiszka@siemens.com>
+ <30f3ca9f6bd788e16767b36aa22c0e9dc4d1c6a4.1723472153.git.jan.kiszka@siemens.com>
+ <20240812-overstuff-skirt-7a8aabbcdc6f@spud>
+ <8cdba8b0-7364-4c09-b18a-f3f59da1eae2@siemens.com>
+ <20240813-haiku-pusher-f2fb037a2f49@wendy>
+ <SHXPR01MB08633B523DA1F6C5632F6D9DE6802@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-To: Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner
- <tglx@linutronix.de>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx>
- <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
- <87ttfmm2ns.ffs@tglx>
- <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
- <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
- <87plqalyd4.ffs@tglx> <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
- <87h6blnaf1.ffs@tglx>
- <CAK9=C2V7oL023=u6nodJs76k_0yHZ8PTJs=n1QFqDWCcCnG9kw@mail.gmail.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <CAK9=C2V7oL023=u6nodJs76k_0yHZ8PTJs=n1QFqDWCcCnG9kw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Y6obAq/LA5e3r0dd"
+Content-Disposition: inline
+In-Reply-To: <SHXPR01MB08633B523DA1F6C5632F6D9DE6802@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
 
-On 2024-08-15 9:16 AM, Anup Patel wrote:
-> On Thu, Aug 15, 2024 at 7:41 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->>
->> On Thu, Aug 15 2024 at 08:32, Samuel Holland wrote:
->>> On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
->>>> Yes. So the riscv timer is not working on this thing or it stops
->>>> somehow.
->>>
->>> That's correct. With the (firmware) devicetree that Emil is using, the OpenSBI
->>> firmware does not have a timer device, so it does not expose the (optional[1])
->>> SBI time extension, and sbi_set_timer() does nothing.
->>
->> Sigh. Does RISCV really have to repeat all mistakes which have been made
->> by x86, ARM and others before? It's known for decades that the kernel
->> relies on a working timer...
-> 
-> My apologies for the delay in finding a fix for this issue.
-> 
-> Almost all RISC-V platforms (except this one) have SBI Timer always
-> available and Linux uses a better timer or Sstc extension whenever
-> it is available.
 
-So this is the immediate solution: add the CLINT to the firmware devicetree so
-that the SBI time extension works, and Linux will boot without any code changes,
-albeit with a higher-overhead clockevent device.
+--Y6obAq/LA5e3r0dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Additionally merging the sun4i timer patch[1] will allow the system to switch to
-the better MMIO clocksource later in the boot process.
+On Thu, Aug 15, 2024 at 10:33:55AM +0000, Minda Chen wrote:
+>=20
+>=20
+> >=20
+> > On Tue, Aug 13, 2024 at 07:31:50AM +0200, Jan Kiszka wrote:
+> > > On 12.08.24 17:55, Conor Dooley wrote:
+> > > > On Mon, Aug 12, 2024 at 04:15:51PM +0200, Jan Kiszka wrote:
+> > > >> From: Jan Kiszka <jan.kiszka@siemens.com>
+> > > >>
+> > > >> Analogously to the PCI PHY, access to sys_syscon is needed to
+> > > >> connect the USB PHY to its controller.
+> > > >>
+> > > >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > > >> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > >> ---
+> > > >> CC: Rob Herring <robh@kernel.org>
+> > > >> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> > > >> CC: Conor Dooley <conor+dt@kernel.org>
+> > > >> ---
+> > > >>  .../bindings/phy/starfive,jh7110-usb-phy.yaml         | 11
+> > +++++++++++
+> > > >>  1 file changed, 11 insertions(+)
+> > > >>
+> > > >> diff --git
+> > > >> a/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yam
+> > > >> l
+> > > >> b/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yam
+> > > >> l index 269e9f9f12b6..eaf0050c6f17 100644
+> > > >> ---
+> > > >> a/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.yam
+> > > >> l
+> > > >> +++ b/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy
+> > > >> +++ .yaml
+> > > >> @@ -19,6 +19,16 @@ properties:
+> > > >>    "#phy-cells":
+> > > >>      const: 0
+> > > >>
+> > > >> +  starfive,sys-syscon:
+> > > >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > >> +    items:
+> > > >> +      - items:
+> > > >> +          - description: phandle to System Register Controller
+> > sys_syscon node.
+> > > >> +          - description: PHY connect offset of
+> > SYS_SYSCONSAIF__SYSCFG register for USB PHY.
+> > > >
+> > > > Why is having a new property for this required? The devicetree only
+> > > > has a single usb phy, so isn't it sufficient to look up the syscon
+> > > > by compatible, rather than via phandle + offset?
+> > > >
+> > >
+> > > I didn't design this, I just copied it from
+> > > starfive,jh7110-pcie-phy.yaml. As that already exists, I'm neither
+> > > sure we want to change that anymore nor deviate in the pattern here.
+> >=20
+> > To be honest, I think some of the other users of phandle + offset on th=
+is soc were
+> > just copy-pasted without thinking about whether or not they were requir=
+ed too.
+> > This one seems like it should just be a lookup by compatible in the dri=
+ver instead
+> > of by phandle. As a bonus, it will work with existing devicetrees - whe=
+reas your
+> > current implementation will fail to probe on systems that have the old
+> > devicetree, a regression for systems running with that devicetree and
+> > downstream firmware.
+> >=20
+> > Cheers,
+> > Conor.
+> >=20
+> Hi Conor
+> I know you would like to put the offset value to the code, Just set sysco=
+n in dts.
+> Just like pcie-starfive.c. right?
 
-The reason the CLINT was not added to the devicetree already is that the T-HEAD
-version of the CLINT includes an extension to drive SSIP/STIP from a second
-S-mode visible set of registers. So it should really have twice as many entries
-in its interrupts-extended property as the existing CLINT, and I never got
-around to validating that this would work.
+No, not quite. That still uses a phandle lookup, I was talking about
+using syscon_regmap_lookup_by_compatible().
 
-The long-term solution would be adding driver support for the T-HEAD CLINT
-extensions, which provide an even better clockevent than the sun4i timer.
+--Y6obAq/LA5e3r0dd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1]: https://lore.kernel.org/all/20240312192519.1602493-1-samuel.holland@sifive.com/
+-----BEGIN PGP SIGNATURE-----
 
-> When Emil first reported this issue, I did try to help him root cause
-> the issue but unfortunately I don't have this particular platform and
-> PLIC on all other RISC-V platforms works fine.
-> 
-> I am also surprised that none of the Allwinner folks tried helping.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4TuAAKCRB4tDGHoIJi
+0sIFAQC/JyXvK+VLgbIRFzTwOSJvSzC4aJueRc46G1g/t0SWQAEAsiQzJzNWfk3E
+4/t1gvtNHk8K7qm6C0l8crJVrI7AsAY=
+=JWz8
+-----END PGP SIGNATURE-----
 
-Allwinner D1 support was upstreamed by unpaid hobbyists with very little
-first-party assistance.
-
->>> I wrote a patch (not submitted) to skip registering riscv_clock_event when the
->>> SBI time extension is unavailable, but this doesn't fully solve the issue
->>> either, because then we have no clockevent at all when
->>> check_unaligned_access_all_cpus() is called.
->>
->> check_unaligned_access_all_cpus() is irrelevant.
->>
->>> How early in the boot process are we "required" to have a functional clockevent?
->>> Do we need to refactor check_unaligned_access_all_cpus() so it works on systems
->>> where the only clockevent is provided by a platform device?
->>
->> Right after init/main::late_time_init() everything can depend on a
->> working timer and on jiffies increasing.
->>
->> I'm actually surprised that the boot process gets that far. That's just
->> by pure luck, really.
-
-Thanks for clearing this up!
-
-Regards,
-Samuel
-
+--Y6obAq/LA5e3r0dd--
 
