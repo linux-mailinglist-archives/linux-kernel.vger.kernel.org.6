@@ -1,135 +1,105 @@
-Return-Path: <linux-kernel+bounces-288458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3478953A51
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D03C953A55
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E831F24F18
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DBD21C2532A
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21466BB39;
-	Thu, 15 Aug 2024 18:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029EA64A8F;
+	Thu, 15 Aug 2024 18:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiMF/ATj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="bgOvzTHC"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4E19476;
-	Thu, 15 Aug 2024 18:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E87D38382;
+	Thu, 15 Aug 2024 18:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723747445; cv=none; b=Z2Mb3fvcpAIvzkfpWfDSwvl3S78zDM6q8n4rSwbixrBU3wlPHFZi69/IP7yzRbyMZXrlCIoWU9+bQlqoNYskiuUktWX3MXfrCymjnIXwzyCzJHluYVHfx5L662llb/86MVvEBBsWB7pbQarNUXSNr/8iAa6Bd+5iRNg/1cE49Wc=
+	t=1723747551; cv=none; b=MfwQr/tSzZqQp2Gy2Wk2ZihS7MMgktJwKpFz9O+dWYBrc4W8Psl+GX5vwIIT9Ac1g2dlEKGEWzRqsCdu5IManyJ1qdkbdznkD1ffC4TUTHThu7VAzZvYz7O0h7C+cxedKxiCItAJOpSq8naHQjVdQw8gmAZSy5sRq69Cc1jfCNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723747445; c=relaxed/simple;
-	bh=wB34uxLPt/6z3AG1aaoxVmooJQuxcmXQGXY3yY8/79U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=aAlAD3c4ImIvD3ihGrrEoJMRph/yIdwRTEsq2Phe4/RMBlMdzYvTNycxLATaM+nJLLDcRGznscSwwSy/oHrdwlQ98IooPeyyB5JJOpe3dXF0OjN19FRfzc7o45Irp2WzW20YBseRV6bTe6sBkvPTmGSprnfouigFDkKh/gD5Qc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiMF/ATj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C017C32786;
-	Thu, 15 Aug 2024 18:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723747444;
-	bh=wB34uxLPt/6z3AG1aaoxVmooJQuxcmXQGXY3yY8/79U=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=uiMF/ATjF8FWpfFmEC6OJj0rpLFehpcW2zVIMXPWgTQbLC0kf4p6dqjX0af3F/R8c
-	 2MUdcASKruRmKTafQWL0OxI4Dl6nrviMaFke/2Wsxf0Qcuw7PlYqgTo15DbGKRrgS0
-	 2H9AWLDGV+i/BE8aMU3elNZdK3MONxBWiRnVNyeSKXtPKVv1pT0OwHCC45U00Gv3o4
-	 6++MButK3KhryTK135J3qZdiMzkk8ha0dCcE/OqHlTMjlkJHoax64t02+6UYJflpaG
-	 l9QT4SwyNGapLmV5cjDonhA+v7gtONYCTlNIULgRY2wmOJVuYiISH+oR3XCyu9wl8c
-	 0/7oKKps1z5eg==
+	s=arc-20240116; t=1723747551; c=relaxed/simple;
+	bh=zPT3igE3kKg1Yo07fMHfm9JS+hXW23iH8Uye3fGYjmY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SeXYqhRQls0xjRDbvbGEXkeEtgJNrZo0W197YoWJUCskOeemzipfsPSLibFk6iCSOVQKI3qMRtSa/+mcky5f7Z9nT8i/miAv3AzqNBbstGMQexyg+7ksll4GpflIjrsTCi3Sx+entSKOk9y6Ajtr/kydZQhObciUVj5boHuhGFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=bgOvzTHC; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id E157F88A9F;
+	Thu, 15 Aug 2024 20:45:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1723747540;
+	bh=OPEKYYu854+ARTE531hqd4MCc69q/n3rYjuFf0lQyP4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bgOvzTHC7u2bahvGA0qKLm+TNTqWIZUQtN29580SKSfEMVxQMboqU22l3TpugqJJl
+	 05qNN9na73tuuLX57LPe4m1e6z3YGbnab5YoammRbi5F4gLC7Ea+ir98TTR51JXqph
+	 N9KUl5T02I0Wz7macO0guAzG5/DzGjTXNPYqRvNB36HlBkQ+7vURgAY+KwvoPdvg5F
+	 af0wZs1OFSHatiEWPZHSXLyztwSqJu4u1xcafqolzWdE8XxuWf4iGE6DX+ibCAAGP6
+	 U11L6P5xhs3/VuZXN5ntvLiWT4RXQqKmce4xzjsiL8oZUzEfwJ4NgqwC8WkvvX73xN
+	 DpCyK4T7F4G3w==
+Message-ID: <5864cdcf-a1f2-45a6-a034-a05315402663@denx.de>
+Date: Thu, 15 Aug 2024 20:44:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 15 Aug 2024 21:44:01 +0300
-Message-Id: <D3GPGYHWPGFL.1S13HXY9ALZCU@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>
-Subject: Re: [RFC] [PATCH] tpm: Clean up TPM space after command failure
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jonathan McDowell" <noodles@earth.li>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <ZrzY_LWIXABkqd-S@earth.li>
-In-Reply-To: <ZrzY_LWIXABkqd-S@earth.li>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] dt-bindings: input: touchscreen: convert
+ ads7846.txt to yaml
+To: Frank Li <Frank.Li@nxp.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Mark Hasemeyer <markhas@chromium.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240815161413.4182796-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240815161413.4182796-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed Aug 14, 2024 at 7:19 PM EEST, Jonathan McDowell wrote:
-> We've been seeing a problem where TPM commands time out, which if
-> they're the last command before the TPM device is closed causes a leak
-> of transient handles. They can be seen and cleaned up (with a flush
-> context) if the /dev/tpm0 device is used instead of /dev/tpmrm0, but it
-> seems like we should be doing this automatically on the transmit error
-> path. Patch below adds a tpm2_flush_space on error to avoid this.
->
-> Does this seem reasonable? The other query is whether tpm2_del_space
-> should cleanup the contexts as well, rather than just the sessions.
->
-> (Obviously in an ideal world we wouldn't see the timeouts at all, and
-> I'm still trying to work on getting to the bottom of these, which are
-> generally infrequent, but happening enough across our fleet that we were
-> able to observe this handle leak.)
+On 8/15/24 6:14 PM, Frank Li wrote:
 
-Seems reasonable without this story ;-) I get that this is here because
-of query np.
+[...]
 
->
-> From: Jonathan McDowell <noodles@meta.com>
->
-> tpm_dev_transmit prepares the TPM space before attempting command
-> transmission. However if the command fails no rollback of this
-> preparation is done. This can result in transient handles being leaked
-> if the device is subsequently closed with no further commands performed.
->
-> Fix this by flushing the space in the event of command transmission
-> failure.
->
-> Signed-off-by: Jonathan McDowell <noodles@meta.com>
+> +  ti,debounce-max:
+> +    deprecated: true
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description: Max number of additional readings per sample (u16).
 
-I would consider fixes tag for this even! I think it can be
-classified as a minor bug. I implemented this feature together
-with James Bottomley so would be nice to get some feedback
-also from him (as a sanity check)>
+Could you drop the (u16) which is already part of the $ref'd type ?
 
->
-> ---
+[...]
 
-Just as a tip: if you put stuff here like supplemental commets the won't
-get included when the commit is finally applied (also a popular place
-for change log).
+> +  ti,x-max:
+> +    deprecated: true
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description: Maximum value on the X axis (u16).
+> +
+> +  ti,x-min:
 
->  drivers/char/tpm/tpm-dev-common.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev=
--common.c
-> index 30b4c288c1bb..c3fbbf4d3db7 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -47,6 +47,8 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, =
-struct tpm_space *space,
-> =20
->  	if (!ret)
->  		ret =3D tpm2_commit_space(chip, space, buf, &len);
-> +	else
-> +		tpm2_flush_space(chip);
-> =20
->  out_rc:
->  	return ret ? ret : len;
+Is this deprecated too, the same way as x-max above is deprecated ?
 
-Can you send v2 with fixes tag and James as cc.
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    description: Minimum value on the X axis (u16).
 
-Since you have such a long cover letter you could possibly:
-
-git format-patch -1 -v2 --cover-letter
-
-Then just move that text in front to 00/01.
-
-BR, Jarkko
+[...]
 
