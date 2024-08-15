@@ -1,141 +1,147 @@
-Return-Path: <linux-kernel+bounces-287535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E099528DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:17:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E966B9528DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AAB2880DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:17:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 503A5B24728
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2805C14A617;
-	Thu, 15 Aug 2024 05:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DD915350D;
+	Thu, 15 Aug 2024 05:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHeyH2Cs"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1u7d3bJC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DF2145FE2;
-	Thu, 15 Aug 2024 05:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60971514DE
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 05:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723699021; cv=none; b=FyT+T50nZBZsSw9iq/UrFy5vimAJ+9l7UiMYe0Q9RHX75mM0Liu21j/mRg7qul/Kk1LkIyk3krt3T+KVOiciOCILh5RxfiUahGoFeX6LSzyVZQyMNw9LET6y9qshbvVOxVLfV/9MdYIotcALsHs6kLrwLGpsxoHiVRXfs3J8iOk=
+	t=1723699042; cv=none; b=R3jSQ95F2H1uqUFlIGuumtNO2goBq76kuZbIVFPTxgWSptcYZSAwtxnCLtSsKoLOh3sHeDj240Cjafne5qW8pTeOoTlAERjBuOkqjUQtE5EMe9YUjT8/rqFbOkAv8W4NH6m3IvkALDKdZH/KGr7vXkjF59VNSDfOE199XfaCYbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723699021; c=relaxed/simple;
-	bh=2eAqnVbEte4Ir5jVn1zGKS2bby0UbSy1ZNXKgTB0tAA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oS7OIPhJ63l57ZVcCuY4wRmkXzP27ZDzur8NfHKQ0ma/56r/ix2cS7/EgZSWckKlMe8VK5qp9GIIhT+wk72LHwqP8eADij2iwckLONqXMVZI8RwJT5nOwMnFx3mX9WSb285pFY5AobgeZt6gsiX5rKg4NZdZ5kekjXU14emyI4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHeyH2Cs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CE052C4AF0C;
-	Thu, 15 Aug 2024 05:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723699020;
-	bh=2eAqnVbEte4Ir5jVn1zGKS2bby0UbSy1ZNXKgTB0tAA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=kHeyH2CsXNRlcMoj/FnEMzuabmPtjorQArP2gwLIUGW1iw1J346skhXxuD2duFlDS
-	 j1c5Jg4y/o91asXQBM8VvUCFQZmL3H/a1M1w0Zd284cSaFRgNPTMAMBQPNXT7jbOoX
-	 QhnINms7z6rInTGwL8XIcFfRU1T8wT5M8EqC1waET8am49vyV7JaPsKbKHeBW/y0ui
-	 yod9qIW8A2kJGNVwEfAC0hAw232TO1D8JUDNi21g2UCx07JI5gX6UgGEj04uDl5rAy
-	 ghfWQ90LdeS8D+ywRibBx0sQOb5cL1rUP0+swlt+xaOvebvfjq+yXgmpQntupWgg6b
-	 rbqdiBh27dwtg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C207CC531DE;
-	Thu, 15 Aug 2024 05:17:00 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Thu, 15 Aug 2024 10:46:58 +0530
-Subject: [PATCH v2 3/3] ufs: qcom: Add UFSHCD_QUIRK_BROKEN_LSDBS_CAP for
- SM8550 SoC
+	s=arc-20240116; t=1723699042; c=relaxed/simple;
+	bh=+BnD2c38s9xZBiSZqb926Fx1ErG+I+ErBFX7hmzMzh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNBm2wZdVaUA0JgFoN9if8wFpX5jFD4gQ4oxzYU+ItM69F9kALDORILind2XtzwyOIKO4/Hq4r/uLebl2Eq9QxSS/29DcUNMQpPBx59vqyrONKm7T/W1StM4JbBet7cYL4WfT+5b9FHZhpQ9J/y7Jqcu6Z3ix4d/rpDGaXQ+gJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1u7d3bJC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D61CC4AF09;
+	Thu, 15 Aug 2024 05:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723699041;
+	bh=+BnD2c38s9xZBiSZqb926Fx1ErG+I+ErBFX7hmzMzh8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1u7d3bJCpWtJ4i2bFX+KxkrgquNWSlY1F5gmlXU50OAtlxG/MzMRz+Ree3UFLZLZ4
+	 qNVxKv2OTfYfvAAO3BWhtP+FvK4w4WahjV0frxX5zxgYb7TAO4Ep7rhM2NmRUbFY6j
+	 PCSvlF6RMi0Gy4DFO53Qf856RYOttFd6/9yjZuIs=
+Date: Thu, 15 Aug 2024 07:17:18 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: "Selvaraj, Joel (MU-Student)" <jsbrq@missouri.edu>
+Cc: "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Ekansh Gupta <quic_ekangupt@quicinc.com>,
+	stable <stable@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH 6/6] misc: fastrpc: Restrict untrusted app to attach to
+ privileged PD
+Message-ID: <2024081545-crafty-pummel-573a@gregkh>
+References: <20240628114501.14310-1-srinivas.kandagatla@linaro.org>
+ <20240628114501.14310-7-srinivas.kandagatla@linaro.org>
+ <9a9f5646-a554-4b65-8122-d212bb665c81@umsystem.edu>
+ <2024081535-unfasten-afloat-9684@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240815-ufs-bug-fix-v2-3-b373afae888f@linaro.org>
-References: <20240815-ufs-bug-fix-v2-0-b373afae888f@linaro.org>
-In-Reply-To: <20240815-ufs-bug-fix-v2-0-b373afae888f@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Kyoungrul Kim <k831.kim@samsung.com>, 
- Amit Pundir <amit.pundir@linaro.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1997;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=86LYSca/QxWt1ChuWxvzEFW+WUoUlJ8CGwZ6Mkg+m0I=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBmvY9KezBjEvKBHyC6JRqOSOXSyAJE3HpZf7pEI
- or6TZ3a8LOJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZr2PSgAKCRBVnxHm/pHO
- 9VvKCACBCdKo6gmM1PLI+AHofj7KYljAd050Y3VIV1/+QgIwkMGg5fG+pGI6fG8cb66sZPdA5tX
- /lD78a+ijyD33Om5oBfxwOT286+/DZZ4aKfTeusnHQzcRfKJ1FTC4ra/tyHwckiARE6evITcmeS
- +zkez/V9zEy8iZi8BZ6GB9SKMYW+RcEVL9T9TGJSlcf3qoTwFh+7tynG0XOtaYUCJSPeMKTPE0C
- uPdc3Yoh9jx214LyenbxJSK3Vt2YWa2bLvKCnv9K4ra8Gl2VN/A9SJ1IePShCN6NFCkRgG4i38d
- rjbVNRbxmJfIO4jf6SvyzCVDB7Cr2imZqitPFWCt5HaG2qJ5
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024081535-unfasten-afloat-9684@gregkh>
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Thu, Aug 15, 2024 at 07:15:50AM +0200, gregkh@linuxfoundation.org wrote:
+> On Thu, Aug 15, 2024 at 02:34:18AM +0000, Selvaraj, Joel (MU-Student) wrote:
+> > Hi Srinivas Kandagatla and Ekansh Gupta,
+> > 
+> > On 6/28/24 06:45, srinivas.kandagatla@linaro.org wrote:
+> > > From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> > > 
+> > > Untrusted application with access to only non-secure fastrpc device
+> > > node can attach to root_pd or static PDs if it can make the respective
+> > > init request. This can cause problems as the untrusted application
+> > > can send bad requests to root_pd or static PDs. Add changes to reject
+> > > attach to privileged PDs if the request is being made using non-secure
+> > > fastrpc device node.
+> > > 
+> > > Fixes: 0871561055e6 ("misc: fastrpc: Add support for audiopd")
+> > > Cc: stable <stable@kernel.org>
+> > > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > ---
+> > >   drivers/misc/fastrpc.c      | 22 +++++++++++++++++++---
+> > >   include/uapi/misc/fastrpc.h |  3 +++
+> > >   2 files changed, 22 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> > > index 5680856c0fb8..a7a2bcedb37e 100644
+> > > --- a/drivers/misc/fastrpc.c
+> > > +++ b/drivers/misc/fastrpc.c
+> > > @@ -2087,6 +2087,16 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
+> > >   	return err;
+> > >   }
+> > >   
+> > > +static int is_attach_rejected(struct fastrpc_user *fl)
+> > > +{
+> > > +	/* Check if the device node is non-secure */
+> > > +	if (!fl->is_secure_dev) {
+> > > +		dev_dbg(&fl->cctx->rpdev->dev, "untrusted app trying to attach to privileged DSP PD\n");
+> > > +		return -EACCES;
+> > > +	}
+> > > +	return 0;
+> > > +}
+> > 
+> > This broke userspace for us. Sensors stopped working in SDM845 and other 
+> > qcom SoC devices running postmarketOS. Trying to communicate with the 
+> > fastrpc device just ends up with a permission denied error. This was 
+> > previously working. I am not sure if this is intended. Here are my two 
+> > observations:
+> > 
+> > 1. if change the if condition to
+> > 
+> > `if (!fl->is_secure_dev && fl->cctx->secure)`
+> > 
+> > similar to how it's done in fastrpc's `is_session_rejected()` function, 
+> > then it works. But I am not sure if this is an valid fix. But currently, 
+> > fastrpc will simply deny access to all fastrpc device that contains the 
+> > `qcom,non-secure-domain` dt property. Is that the intended change? 
+> > Because I see a lot of adsp, cdsp and sdsp fastrpc nodes have that dt 
+> > property.
+> > 
+> > 2. In the `fastrpc_rpmsg_probe()` function, it is commented that,
+> > 
+> > "Unsigned PD offloading is only supported on CDSP"
+> > 
+> > Does this mean adsp and sdsp shouldn't have the `qcom,non-secure-domain` 
+> > dt property? In fact, it was reported that removing this dt property and 
+> > using the `/dev/fastrpc-sdsp-secure` node instead works fine too. Is 
+> > this the correct way to fix it?
+> > 
+> > I don't know much about fastrpc, just reporting the issue and guessing 
+> > here. It would be really if this can be fixed before the stable release.
+> 
+> I will be glad to revert it, what was the git id for this in the tree
+> now?
 
-SM8550 SoC supports the UFSHCI 3.0 spec, but it reports a bogus value of
-1 in the reserved 'Legacy Queue & Single Doorbell Support (LSDBS)' field of
-the Controller Capabilities register. This field is supposed to read 0 as
-per the spec.
+Ah, nevermind, I found it, it's bab2f5e8fd5d ("misc: fastrpc: Restrict
+untrusted app to attach to privileged PD") and is already in the stable
+kernel trees.  Do you want to submit a revert or do you need/want me to
+do it?
 
-But starting with commit 0c60eb0cc320 ("scsi: ufs: core: Check LSDBS cap
-when !mcq"), ufshcd driver is now relying on the LSDBS field to decide when
-to use the legacy doorbell mode if MCQ is not supported. And this ends up
-breaking UFS on SM8550:
+thanks,
 
-ufshcd-qcom 1d84000.ufs: ufshcd_init: failed to initialize (legacy doorbell mode not supported)
-ufshcd-qcom 1d84000.ufs: error -EINVAL: Initialization failed with error -22
-
-So use the UFSHCD_QUIRK_BROKEN_LSDBS_CAP quirk for SM8550 SoC so that the
-ufshcd driver could use legacy doorbell mode correctly.
-
-Fixes: 0c60eb0cc320 ("scsi: ufs: core: Check LSDBS cap when !mcq")
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/ufs/host/ufs-qcom.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 810e637047d0..c87fdc849c62 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -857,6 +857,9 @@ static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
- 
- 	if (host->hw_ver.major > 0x3)
- 		hba->quirks |= UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH;
-+
-+	if (of_device_is_compatible(hba->dev->of_node, "qcom,sm8550-ufshc"))
-+		hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
- }
- 
- static void ufs_qcom_set_phy_gear(struct ufs_qcom_host *host)
-@@ -1847,7 +1850,8 @@ static void ufs_qcom_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id ufs_qcom_of_match[] __maybe_unused = {
--	{ .compatible = "qcom,ufshc"},
-+	{ .compatible = "qcom,ufshc" },
-+	{ .compatible = "qcom,sm8550-ufshc" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, ufs_qcom_of_match);
-
--- 
-2.25.1
-
-
+greg k-h
 
