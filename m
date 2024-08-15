@@ -1,230 +1,217 @@
-Return-Path: <linux-kernel+bounces-288539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4884A953B6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:27:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73823953B57
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6908F1C21D87
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A071F252B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98D0149C53;
-	Thu, 15 Aug 2024 20:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2AA148FE3;
+	Thu, 15 Aug 2024 20:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b="aLejQePq"
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.61.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+65usFr"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40093214;
-	Thu, 15 Aug 2024 20:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.61.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E51138DF2;
+	Thu, 15 Aug 2024 20:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723753629; cv=none; b=k2MtbGZnnSzcmcB3komRYOOOmjIb38aFWOoaWhTz/6Mqofu8q/RHZe4RrCXh4tIuUgkkTxCAzlI7KI8mgKBH6cf0mL9xeDAaS3BrxXzU7Ccjroaqo4AMSByU7rOuohrFMLrpjTb5IITsdBKnmqjtklkug+SCkW/cJBCGuDGEI6Q=
+	t=1723753040; cv=none; b=Z60V/Fe4dam74BErtYpll5H94sIhU8g+aMb2WTRt197lrprJHQToxY27EhjNS6iiO1lRaPXo3RYIn47z16nIR24JdctjOu1fcncFJu0YYeeg7RH+TQfrvta0lCQuNpHeX6iXajmL2wLxezESuGr9tNJyeimqJK1RZapDUgHwhkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723753629; c=relaxed/simple;
-	bh=U+Ubxxosxhos1Nw0ZxMYYX6oDwOaBNCSZ54ABwnaGgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dIQdalGIyEzVDg9Tcv+E/gYA1S5sx/H50A0Pp/p3WGr0XU/XP+nfyognTqR1ONFBb8QEuiFqHFj303+DtTf832ydlBdce5s3n60NIeL0TjntPHzdKXB8M379Sbxf4xQGIjcC1F+hc+GW0vKhA1Gnp6QL70dTvqK0sxFsRwuxI1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de; spf=pass smtp.mailfrom=matthias-fetzer.de; dkim=pass (2048-bit key) header.d=matthias-fetzer.de header.i=@matthias-fetzer.de header.b=aLejQePq; arc=none smtp.client-ip=188.68.61.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=matthias-fetzer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matthias-fetzer.de
-Received: from mors-relay-8405.netcup.net (localhost [127.0.0.1])
-	by mors-relay-8405.netcup.net (Postfix) with ESMTPS id 4WlGcj580mz6xmD;
-	Thu, 15 Aug 2024 22:17:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=matthias-fetzer.de;
-	s=key2; t=1723753029;
-	bh=U+Ubxxosxhos1Nw0ZxMYYX6oDwOaBNCSZ54ABwnaGgQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aLejQePqr8CGCVQ5xxAf1vE4hvlK2sAJqMX3pDvKNm98l3ua/FGEUJeSxH3RE79ea
-	 vvdDS9W23PVgpkj5BKwdusEdXyrbJBDio9tAMgwiTZ0vpj21CiG6kZcrQSPIdVddP+
-	 NLK+3fHND5uxEBMIGElQrE5POgVxzll1LGT2kt8Q0a62U+pBWBj7LTUF6tg3IDGrt7
-	 7/Yg9a+NHZqMchIBhyAGYPvJ8+T53etpF82vz2bvFazye0rk3YH3TPoEx/iGbw5mf5
-	 BEO8ViqwDqY9ccKjKr8ShGRftkFgc2kmjAmwsN4+SZb1JN/fPduss7dNxC6tYS5xCN
-	 5cS/ZNVbmqd4g==
-Received: from policy01-mors.netcup.net (unknown [46.38.225.35])
-	by mors-relay-8405.netcup.net (Postfix) with ESMTPS id 4WlGcj4Qryz6xm9;
-	Thu, 15 Aug 2024 22:17:09 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at policy01-mors.netcup.net
-X-Spam-Flag: NO
-X-Spam-Score: -2.898
-X-Spam-Level: 
-Received: from mxf9a3.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy01-mors.netcup.net (Postfix) with ESMTPS id 4WlGch2Pnwz8tXc;
-	Thu, 15 Aug 2024 22:17:08 +0200 (CEST)
-Received: from [IPV6:2001:9e8:1a67:f900:bb12:a61:3ff9:ebce] (unknown [IPv6:2001:9e8:1a67:f900:bb12:a61:3ff9:ebce])
-	by mxf9a3.netcup.net (Postfix) with ESMTPSA id 5DF434046B;
-	Thu, 15 Aug 2024 22:17:03 +0200 (CEST)
-Authentication-Results: mxf9a3;
-        spf=pass (sender IP is 2001:9e8:1a67:f900:bb12:a61:3ff9:ebce) smtp.mailfrom=kontakt@matthias-fetzer.de smtp.helo=[IPV6:2001:9e8:1a67:f900:bb12:a61:3ff9:ebce]
-Received-SPF: pass (mxf9a3: connection is authenticated)
-Message-ID: <d2d7b7ec-c7db-4cde-b669-df727b93748f@matthias-fetzer.de>
-Date: Thu, 15 Aug 2024 22:17:01 +0200
+	s=arc-20240116; t=1723753040; c=relaxed/simple;
+	bh=lQ+EvvnnqRtmWrFJp3Xd9Te12DStmE4knki2NE8OWrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWWFuJUbqAib6H1J1nrWr2KfMLvV7XvDuBvA3SLbsphUJSuDyZp6N4NdC89gCikt4GLfLvdxBbRt/cbbPIgJRiLSdzqhCZPZMR9hZ4m8Fj2gQfHy4NMfQDjWQHOaj4tHY+YUJX2tw8epRszI3CXEdxNGhC4Cckf5byKBUOEGCMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+65usFr; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so991868a12.3;
+        Thu, 15 Aug 2024 13:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723753038; x=1724357838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0cdTKPtoN4CzKbsNc3MnpYWSX4bpB5XCY/L4ADgd1ls=;
+        b=K+65usFrR6AZrlMOdxoVXUam9O9KRNXAmZnebswswFWSHgbdhbuyaBdcVi1L+RF4v1
+         KckBCI2FZ4tHFVogDwXe/To//fDN5bwkW935UhIMvegXM5DH5jnvUgM2ytJyJQV4j5KJ
+         VyINrW1GgetCOXSJuGtcs3OlLfj/7rCCMs6FOI6OIqRuHSAIat5aS7UXFDW7Z3irvXvP
+         iiEYGrf960+0/EuxrU0gzREA+C7DJ1M6pshWj7BLloFUNs2FmITMqYm97t5eztF/1/V2
+         Y4eFVbGGimd3qH/51KJM42v8qqPHrPrPsmk4Yz0A4E92eK/M04LO4bxkkUFEm3IeVAkn
+         DQpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723753038; x=1724357838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0cdTKPtoN4CzKbsNc3MnpYWSX4bpB5XCY/L4ADgd1ls=;
+        b=Mm0ZvsojByyVJ8pPoBFIdSXswxxCRMf+MyvqGh9Ij79JCn8De73bJasH0DTfhe93AO
+         AdP2Hq71s2DSY3XJSkopyhjBoMT3/Sb+htZmyV/rmdaC5Ux1+59yyMEFPAxRdwFNPNrK
+         V+l2ih8QQlVYElUgh0x98cQDnNeHIOekZMdFTtSNJyEQxLxlo5vvgWTC+PBnb5xZG5Ps
+         xIeT2OzmZnCT4ypXieZlABcuvIwBms2o4Rn+lZF2WRN2F3yIvWznR3N804m3lJq41Oml
+         keULO4hEFVNXe7G9JrBhucRksR5JGvFZQfvRGOP5ZSBTg8ZLPrwNZNb509EuGYXEbuSU
+         7DTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZjizrBGAD5+U8OJ3Qr4Fh+oXQQWe5/5Fh0CXHMRvK5bvq6gHflBhjYVF7198Drkm92hs7M3eJe3REliVSNr6eC5dnFmXSri0lzXHe2UGhgFqIy1Lls1jLO0cuX9gCW8gLL2cRtks/k8+ZA9b80gbuM2ZEYodigIaV3Ja/iZli3hQYJRHc
+X-Gm-Message-State: AOJu0YzkwoOGpZlV80So9JhITwrG2kQqOdoq03ab/6zkAXvgsexQgFPW
+	YK8rpwOK0BlZjgKdHEOBFR9mTIpmIHiDL5tmiGS70L2QCzi5IPz5etCtr/0MXOFWZJA9kk3o6sA
+	y1Zruh9MmEtro6Wtgy1vafFxtVgw=
+X-Google-Smtp-Source: AGHT+IG/3Oe6f9E+qWnqbNQJ7WtZ8Qle8wXpUdO9SOJikgKPAM96ccSiRAJmaUC3x7vChs7vGIIh2bwQVsa4vRL1h70=
+X-Received: by 2002:a17:90b:1247:b0:2cd:5d13:40ba with SMTP id
+ 98e67ed59e1d1-2d3dffc8f3bmr928532a91.14.1723753037724; Thu, 15 Aug 2024
+ 13:17:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531
- fan support
-To: kernel test robot <lkp@intel.com>, hmh@hmh.eng.br, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, ibm-acpi-devel@lists.sourceforge.net,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-References: <20240814213927.49075-1-kontakt@matthias-fetzer.de>
- <202408160253.fMJW95oi-lkp@intel.com>
-Content-Language: en-US, de-DE
-From: Matthias Fetzer <kontakt@matthias-fetzer.de>
-Disposition-Notification-To: Matthias Fetzer <kontakt@matthias-fetzer.de>
-In-Reply-To: <202408160253.fMJW95oi-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <172375302389.6135.1622073007362957735@mxf9a3.netcup.net>
-X-Rspamd-Queue-Id: 5DF434046B
-X-Rspamd-Server: rspamd-worker-8404
-X-NC-CID: calp7oG2ZZ/5ZuRXx2ZYYpuvxkhEFbbpfJDeIx1VQOQ9Q4bNMu11f6XF
+References: <20240813042917.506057-1-andrii@kernel.org> <20240813042917.506057-14-andrii@kernel.org>
+ <7byqni7pmnufzjj73eqee2hvpk47tzgwot32gez3lb2u5lucs2@5m7dvjrvtmv2>
+ <CAJuCfpG8hCNjqmttb91yq5kPaSGaYLL1ozkHKqUjD7X3n_60+w@mail.gmail.com>
+ <o46u6b2w4b2ijrh3yzj7rc4c3outqmmtzbgbnzhscfuqsu4i4u@uhv65maza2d5>
+ <CAEf4BzZ6jSFr_75cWQdxZOHzR-MyJS1xUY-TkG0=2A8Z1gP42g@mail.gmail.com>
+ <CAJuCfpGZT+ci0eDfTuLvo-3=jtEfMLYswnDJ0CQHfittou0GZQ@mail.gmail.com> <CAG48ez2VwmFU7ubongD1AnYJDf2-RrFod33Zvbjy1NwRj4-Y1A@mail.gmail.com>
+In-Reply-To: <CAG48ez2VwmFU7ubongD1AnYJDf2-RrFod33Zvbjy1NwRj4-Y1A@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 15 Aug 2024 13:17:05 -0700
+Message-ID: <CAEf4BzY6zSe_u4vtCBDwZp4R_hVsE3weZ+-UpXJsohrUeJeE4Q@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 13/13] uprobes: add speculative lockless VMA to
+ inode resolution
+To: Jann Horn <jannh@google.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, akpm@linux-foundation.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 15, 2024 at 11:58=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
+>
+> +brauner for "struct file" lifetime
+>
+> On Thu, Aug 15, 2024 at 7:45=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> > On Thu, Aug 15, 2024 at 9:47=E2=80=AFAM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Thu, Aug 15, 2024 at 6:44=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.=
+com> wrote:
+> > > >
+> > > > On Tue, Aug 13, 2024 at 08:36:03AM -0700, Suren Baghdasaryan wrote:
+> > > > > On Mon, Aug 12, 2024 at 11:18=E2=80=AFPM Mateusz Guzik <mjguzik@g=
+mail.com> wrote:
+> > > > > >
+> > > > > > On Mon, Aug 12, 2024 at 09:29:17PM -0700, Andrii Nakryiko wrote=
+:
+> > > > > > > Now that files_cachep is SLAB_TYPESAFE_BY_RCU, we can safely =
+access
+> > > > > > > vma->vm_file->f_inode lockless only under rcu_read_lock() pro=
+tection,
+> > > > > > > attempting uprobe look up speculatively.
+>
+> Stupid question: Is this uprobe stuff actually such a hot codepath
+> that it makes sense to optimize it to be faster than the page fault
+> path?
 
+Not a stupid question, but yes, generally speaking uprobe performance
+is critical for a bunch of tracing use cases. And having independent
+threads implicitly contending with each other just because of uprobe's
+internal implementation detail (while conceptually there should be no
+dependencies for triggering uprobe from multiple parallel threads) is
+a big surprise to users and affects production use cases beyond just
+uprobe-handling BPF logic overhead ("useful overhead") they assume.
 
-Am 15.08.24 um 21:00 schrieb kernel test robot:
-> Hi Matthias,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v6.11-rc3 next-20240815]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Matthias-Fetzer/platform-x86-thinkpad_acpi-Add-Thinkpad-Edge-E531-fan-support/20240815-054239
-> base:   linus/master
-> patch link:    https://lore.kernel.org/r/20240814213927.49075-1-kontakt%40matthias-fetzer.de
-> patch subject: [PATCH v3] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531 fan support
-> config: i386-randconfig-001-20240815 (https://download.01.org/0day-ci/archive/20240816/202408160253.fMJW95oi-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240816/202408160253.fMJW95oi-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408160253.fMJW95oi-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->     drivers/platform/x86/thinkpad_acpi.c: In function 'fan_set_level':
->>> drivers/platform/x86/thinkpad_acpi.c:8214:13: warning: variable 'rc' set but not used [-Wunused-but-set-variable]
->      8214 |         int rc;
->           |             ^~
-> 
+>
+> (Sidenote: I find it kinda interesting that this is sort of going back
+> in the direction of the old Speculative Page Faults design.)
+>
+> > > > > > > We rely on newly added mmap_lock_speculation_{start,end}() he=
+lpers to
+> > > > > > > validate that mm_struct stays intact for entire duration of t=
+his
+> > > > > > > speculation. If not, we fall back to mmap_lock-protected look=
+up.
+> > > > > > >
+> > > > > > > This allows to avoid contention on mmap_lock in absolutely ma=
+jority of
+> > > > > > > cases, nicely improving uprobe/uretprobe scalability.
+> > > > > > >
+> > > > > >
 
-I guess just removing the variable and returning -EIO directly should be
-a good approach.
+[...]
 
-What do you think?
+> > Note: up_write(&vma->vm_lock->lock) in the vma_start_write() is not
+> > enough because it's one-way permeable (it's a "RELEASE operation") and
+> > later vma->vm_file store (or any other VMA modification) can move
+> > before our vma->vm_lock_seq store.
+> >
+> > This makes vma_start_write() heavier but again, it's write-locking, so
+> > should not be considered a fast path.
+> > With this change we can use the code suggested by Andrii in
+> > https://lore.kernel.org/all/CAEf4BzZeLg0WsYw2M7KFy0+APrPaPVBY7FbawB9vjc=
+A2+6k69Q@mail.gmail.com/
+> > with an additional smp_rmb():
+> >
+> > rcu_read_lock()
+> > vma =3D find_vma(...)
+> > if (!vma) /* bail */
+>
+> And maybe add some comments like:
+>
+> /*
+>  * Load the current VMA lock sequence - we will detect if anyone concurre=
+ntly
+>  * locks the VMA after this point.
+>  * Pairs with smp_wmb() in vma_start_write().
+>  */
+> > vm_lock_seq =3D smp_load_acquire(&vma->vm_lock_seq);
+> /*
+>  * Now we just have to detect if the VMA is already locked with its curre=
+nt
+>  * sequence count.
+>  *
+>  * The following load is ordered against the vm_lock_seq load above (usin=
+g
+>  * smp_load_acquire() for the load above), and pairs with implicit memory
+>  * ordering between the mm_lock_seq write in mmap_write_unlock() and the
+>  * vm_lock_seq write in the next vma_start_write() after that (which can =
+only
+>  * occur after an mmap_write_lock()).
+>  */
+> > mm_lock_seq =3D smp_load_acquire(&vma->mm->mm_lock_seq);
+> > /* I think vm_lock has to be acquired first to avoid the race */
+> > if (mm_lock_seq =3D=3D vm_lock_seq)
+> >         /* bail, vma is write-locked */
+> > ... perform uprobe lookup logic based on vma->vm_file->f_inode ...
+> /*
+>  * Order the speculative accesses above against the following vm_lock_seq
+>  * recheck.
+>  */
+> > smp_rmb();
+> > if (vma->vm_lock_seq !=3D vm_lock_seq)
+>
 
-> 
-> vim +/rc +8214 drivers/platform/x86/thinkpad_acpi.c
-> 
->    8211	
->    8212	static int fan_set_level(int level)
->    8213	{
->> 8214		int rc;
->    8215	
->    8216		if (!fan_control_allowed)
->    8217			return -EPERM;
->    8218	
->    8219		switch (fan_control_access_mode) {
->    8220		case TPACPI_FAN_WR_ACPI_SFAN:
->    8221			if ((level < 0) || (level > 7))
->    8222				return -EINVAL;
->    8223	
->    8224			if (tp_features.second_fan_ctl) {
->    8225				if (!fan_select_fan2() ||
->    8226				    !acpi_evalf(sfan_handle, NULL, NULL, "vd", level)) {
->    8227					pr_warn("Couldn't set 2nd fan level, disabling support\n");
->    8228					tp_features.second_fan_ctl = 0;
->    8229				}
->    8230				fan_select_fan1();
->    8231			}
->    8232			if (!acpi_evalf(sfan_handle, NULL, NULL, "vd", level))
->    8233				return -EIO;
->    8234			break;
->    8235	
->    8236		case TPACPI_FAN_WR_ACPI_FANS:
->    8237		case TPACPI_FAN_WR_TPEC:
->    8238			if (!(level & TP_EC_FAN_AUTO) &&
->    8239			    !(level & TP_EC_FAN_FULLSPEED) &&
->    8240			    ((level < 0) || (level > 7)))
->    8241				return -EINVAL;
->    8242	
->    8243			/* safety net should the EC not support AUTO
->    8244			 * or FULLSPEED mode bits and just ignore them */
->    8245			if (level & TP_EC_FAN_FULLSPEED)
->    8246				level |= 7;	/* safety min speed 7 */
->    8247			else if (level & TP_EC_FAN_AUTO)
->    8248				level |= 4;	/* safety min speed 4 */
->    8249	
->    8250			if (tp_features.second_fan_ctl) {
->    8251				if (!fan_select_fan2() ||
->    8252				    !acpi_ec_write(fan_status_offset, level)) {
->    8253					pr_warn("Couldn't set 2nd fan level, disabling support\n");
->    8254					tp_features.second_fan_ctl = 0;
->    8255				}
->    8256				fan_select_fan1();
->    8257	
->    8258			}
->    8259			if (!acpi_ec_write(fan_status_offset, level))
->    8260				return -EIO;
->    8261			else
->    8262				tp_features.fan_ctrl_status_undef = 0;
->    8263			break;
->    8264	
->    8265		case TPACPI_FAN_WR_ACPI_FANW:
->    8266			if (!(level & TP_EC_FAN_AUTO) && (level < 0 || level > 7))
->    8267				return -EINVAL;
->    8268			if (level & TP_EC_FAN_FULLSPEED)
->    8269				return -EINVAL;
->    8270	
->    8271			if (level & TP_EC_FAN_AUTO) {
->    8272				if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x05)) {
->    8273					rc = -EIO;
->    8274					break;
->    8275				}
->    8276				if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0x00)) {
->    8277					rc = -EIO;
->    8278					break;
->    8279				}
->    8280			} else {
->    8281				if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8106, 0x45)) {
->    8282					rc = -EIO;
->    8283					break;
->    8284				}
->    8285				if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8100, 0xff)) {
->    8286					rc = -EIO;
->    8287					break;
->    8288				}
->    8289				if (!acpi_evalf(fanw_handle, NULL, NULL, "vdd", 0x8102, level * 100 / 7)) {
->    8290					rc = -EIO;
->    8291					break;
->    8292				}
->    8293			}
->    8294			break;
->    8295	
->    8296		default:
->    8297			return -ENXIO;
->    8298		}
->    8299	
->    8300		vdbg_printk(TPACPI_DBG_FAN,
->    8301			"fan control: set fan control register to 0x%02x\n", level);
->    8302		return 0;
->    8303	}
->    8304	
-> 
+thanks, will incorporate these comments into the next revision
+
+> (As I said on the other thread: Since this now relies on
+> vma->vm_lock_seq not wrapping back to the same value for correctness,
+> I'd like to see vma->vm_lock_seq being at least an "unsigned long", or
+> even better, an atomic64_t... though I realize we don't currently do
+> that for seqlocks either.)
+>
+> >         /* bail, VMA might have changed */
+> >
+> > The smp_rmb() is needed so that vma->vm_lock_seq load does not get
+> > reordered and moved up before speculation.
+> >
+> > I'm CC'ing Jann since he understands memory barriers way better than
+> > me and will keep me honest.
 
