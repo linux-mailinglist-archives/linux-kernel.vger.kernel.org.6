@@ -1,259 +1,242 @@
-Return-Path: <linux-kernel+bounces-288661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A43D953D41
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:16:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EBEA953D46
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2024 00:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC2B1C230CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CCF1F21FCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF3E15539D;
-	Thu, 15 Aug 2024 22:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAFD1552E3;
+	Thu, 15 Aug 2024 22:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N689XOrl"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2062.outbound.protection.outlook.com [40.107.244.62])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pGueYa/+"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2048.outbound.protection.outlook.com [40.107.92.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E716F1547FB;
-	Thu, 15 Aug 2024 22:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C73D15445D
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 22:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723760191; cv=fail; b=DcCH/lufcp9dn1KWuCbQAbpGHX8kVewLf1f335s88RQLxz+TC4/VbCwa2qjGR4qb/UdRO7VhQauaKeE0ivWRgcfIEZTYIMSLa1mIR+vqssXLbZFJ/062It8786P/4RiPe4qaBQS3zPHLaugp9pR1ikxN4TAeBF56J+editFMYg8=
+	t=1723760211; cv=fail; b=mpNBoj6ml3Hx51EmlbERfW+9n+DZdMaCpnHDzuEwmXdPDenXzCCK7XhQ6YVRfo7ihVfJ4L4Fv+l9fxJeaRz7fPYVSHVskPf68ME+Ej+QCopw7x12Er3yOvdAlZLteBu9BOIero86Yyr6aJKdYaIbuLkfH/lvQQtrf+pR8UiOZMM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723760191; c=relaxed/simple;
-	bh=LH+/iO+q1DcTpyZydpiL/6uFAN0Cfra/XuTpmuqW298=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Omv9ZnwKrVUZGu89bxQyqjc2cWk792xeRkV4/xdhJwW/J5fvGjGj772s1TfhaSZMTa7Y8xF+oVDWZuXKUVc/xSYqe59nMQ3yxPS9+ZSnVpKgX10FDnHmspwjgwLUKMIch0qfku0+vZ+fSeUwCFnCJP7hlGhNkGYphlJQGnqSgak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N689XOrl; arc=fail smtp.client-ip=40.107.244.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1723760211; c=relaxed/simple;
+	bh=JE5sTXtT3vxHef1UFofEdLgSVfZprje0PHD9LrzCnQU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sPzABMVtyHoRP2+r/j7DYCOGgyGKajvgrokKLUl2mSFugUEHnvNxb2ZqnYjpdxrjIRpDMWTT1gEaEgICmyxlHOErOWc63le+4Njx/1pD3qoGsi4fqVcm/wFzEFDcPhEMQ474W7AcrB68rN3u0Pzp91qq6VMmDXMV6HqNY/DufRc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pGueYa/+; arc=fail smtp.client-ip=40.107.92.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WaUx7Qa2IH5znjZPU54O0Iqsm3/72Lmj9A116w4ObW3XTjd0GkRIsu7MQCLpa1ydMOa5vMbQ10HIAZVJbvHsUAm0RddxplEeqjsS0QPib4jbdRZhg9oeT9+JCctAoX0gO5BRe3mb/v+THuiOKj8mXk6wz31nxb1K9UposVoD+mFdbW947moswP3m2tr9P/72jNk+Q8cVjTfUaQ4JXOItxHlanvGPzJHKamx79/ZjXC4n5AFYOgFzOqkBWb/qkC+NZM5AMZblDIuOdnqazWVdnfewuMyiHhhA2DjicpQ2/Il5SALe6LDGlCzc6iy4peU0a+IYe2sf07UV7HaR4+AfYw==
+ b=Nv5qe5g6D6LOmHoQ1vZklplbcofrgJmvaEvDaBuVPcs4gR9u0YBcVeXdZEOdxbqL7FO9+K0y57fSIST1xVW8sVgACjde5etUGDdKxJ/ULpZDAgbY3uys4Cd/le/cP6hDW6fi7gu+L4fpBpe1IspX6RLbOBQItx7wjfTnn6/BYK9rxUq9ir1qti9tXKwj0x680tWc890aZMPEaVVTwbCCT/dG/VJ27DpsVtfwV1MJVU5OKuevPozpQ1hpcXnH+DnZG1APCzt3dpcbDwrJuJhPUETMgKFd+QQWj8CXAFkdcjbsYQwkHbf0V4M3OGB4jbbaPGc5zVutzMlwBOrhvbBuDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=riXmhHj/+Ud+jiPO8Fu+HFIo6rHq2pTfLsGPBye3r44=;
- b=rNbOqh72WbZKpYY8K1QHcs3O2Zm48ALaqE69oSBEi5FACWcVEvhL9a+yXPBe3a7lqgdQ3vra7CmC0Exs2IY1o/UluVReOh8XpDExJBgAcyc17foy7QgoFb5vce7I6V+mEez6qOnCzDmn1T2otfcRulzKR+J2SZK6Mj6Bq9RDZ1BABmikUQrLoTmcdowr8L8OxSZmo0yHjYBZnkkAGhE1/dSnTSitth3a8VjqYIBKGU6LSEsrt+/N04jCx3/+H5hl2xJK0k90a086CpxNft9kt3DitkJs74TwOz0JDCFr8CKKD4ROjO1Z+ZhXpMFnMRnMgXJTRuaC7WfIFjI/n25hcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=vUd2VwYoSXWPO+yjTAQ+XKwaKZuuP/O9Bj2Yodtb+lA=;
+ b=UcnalQMhoXSLrSq84K85KZVr09QmWPxjt34TVfJKna4ZVCYhusK7saGxMN8INM/V7yLDm/RiLdEDa7iZnCFkZBGBqB/CynOdsnFNahIaRh/1/jyt5mbF66ZykncDWo1/vmkmI7wKeFgSWJjziG8dkKf3iwainKgf6Xg77ZJfwm0gQLUEIYnlBPvKPhpULjdgfZiPANbawyFOctiDnUq5azwSgESat2KKcDUeEP723Qxzm3vJXzLzCvIarEobVIwN6G3sRihzkxX8U5ovVmE7CWTKG7KxTl/MwHuxWpaj2A/NSu6Hr8Yl3nO5ovU+FfKLPzacH7Eyw5WRBOnNuCLriQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=riXmhHj/+Ud+jiPO8Fu+HFIo6rHq2pTfLsGPBye3r44=;
- b=N689XOrlNP8Ut/Gsf+MBO2NlrMNgVRncamapzl8y7whLUHGajveCoX+q+4cO6RKXjI2c+YjpjGxf/M9NMomvvIYrLC6Hn4G6IyX/7mKBvewBP9OgJ0Pyf11QTlWaN2Oao+tRehgfxiPDNZdCtS4sRB8iwVpnvcD4syvfzHrYVbAdeMLPOWA4sON1drqBVzXY8++Y4xFdY7g8S6E7ARfjxvyEAZEO0rz4+hQiEF6l98ccWgQHVZp7dSWBpXRrfk7LsVqP+uTNyoJaz89clBBa1y9D1aIYv7WjeH8h3HzZgSp49ATjeK5Ff9+UFgANFoJXPaL68P3E7kVidhdV5fiIxg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB8194.namprd12.prod.outlook.com (2603:10b6:930:76::5)
- by PH0PR12MB5677.namprd12.prod.outlook.com (2603:10b6:510:14d::7) with
+ bh=vUd2VwYoSXWPO+yjTAQ+XKwaKZuuP/O9Bj2Yodtb+lA=;
+ b=pGueYa/+m3xC8XAs+6TvkKtQCVwUqWGJL2QjDVMtC70nkOlJQROcLsZYQGvh8ZSzRSUr6Ebl+QQ0IvSms8i/1Mzj7YLRtioNQR3r5FnhB0s8i6XD3k9gi3o9HPszgxDm0iYVF0yKf1pbJyIDq/Bcmnj1QGoJ/kYBCSXojkIHYFk=
+Received: from BYAPR07CA0076.namprd07.prod.outlook.com (2603:10b6:a03:12b::17)
+ by PH0PR12MB7487.namprd12.prod.outlook.com (2603:10b6:510:1e9::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Thu, 15 Aug
- 2024 22:16:26 +0000
-Received: from CY8PR12MB8194.namprd12.prod.outlook.com
- ([fe80::82b9:9338:947f:fc9]) by CY8PR12MB8194.namprd12.prod.outlook.com
- ([fe80::82b9:9338:947f:fc9%6]) with mapi id 15.20.7875.016; Thu, 15 Aug 2024
- 22:16:26 +0000
-Message-ID: <09fdebd7-32a0-4a88-9002-0f24eebe00a8@nvidia.com>
-Date: Thu, 15 Aug 2024 17:16:22 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/15] arm64: Support for running as a guest in Arm CCA
-To: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>,
- Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <ZpDvTXMDq6i+4O0m@fedora>
-Content-Language: en-US
-From: Shanker Donthineni <sdonthineni@nvidia.com>
-In-Reply-To: <ZpDvTXMDq6i+4O0m@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0114.namprd05.prod.outlook.com
- (2603:10b6:a03:334::29) To CY8PR12MB8194.namprd12.prod.outlook.com
- (2603:10b6:930:76::5)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
+ 2024 22:16:43 +0000
+Received: from SJ5PEPF00000205.namprd05.prod.outlook.com
+ (2603:10b6:a03:12b:cafe::d2) by BYAPR07CA0076.outlook.office365.com
+ (2603:10b6:a03:12b::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
+ Transport; Thu, 15 Aug 2024 22:16:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF00000205.mail.protection.outlook.com (10.167.244.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Thu, 15 Aug 2024 22:16:43 +0000
+Received: from purico-ed09host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 15 Aug
+ 2024 17:16:41 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<thomas.lendacky@amd.com>
+CC: <michael.roth@amd.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/sev: ensure that RMP table fixups are reserved for memblock
+Date: Thu, 15 Aug 2024 22:16:30 +0000
+Message-ID: <20240815221630.131133-1-Ashish.Kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB8194:EE_|PH0PR12MB5677:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83bc3284-1ff8-46c2-a312-08dcbd77e7b4
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000205:EE_|PH0PR12MB7487:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65b21c21-a1e1-44ad-911c-08dcbd77f19a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SWE3TDhkRzVUTWNSTE8vOHo4U0lDQnQ2dUVkQzRjSXlJcTZSSW1Ya2hUMlRE?=
- =?utf-8?B?VlV3emE2czFJb3lqN2h6STlhMTJoLzhCZkJFUjlvLys0SUdMZXgyMEJsdmlt?=
- =?utf-8?B?T0EzcGtCVzB5eEZTbDEzcHhvdjJIbktzKzJpSTBINk5IZXUwN3V5aUN5NDRH?=
- =?utf-8?B?RE1uTnJVUzVDTjc2cVNrRzJCM1I0UU1nUjV4QXYwOElmT1g3UTdFY2UxdFQv?=
- =?utf-8?B?MXRlR0NqOGdUZHIxQ0JibHJIdlcwVzdpWTNyZUg4STg5eWNKMFFjZ1VQQ3Jh?=
- =?utf-8?B?YXVkU09FTmYrVzJhOGttNlJMdTlISEs4OTR2UkRGc2xPZzhOQmJtc2NpZE9W?=
- =?utf-8?B?U2psUFVaNFFTN2MveWVUUlJxQkVWUFFDcEYyeHRuVU5QM2JvYW1zWFk2amdz?=
- =?utf-8?B?TWFsY2trdWtIYitHeGtTUTl4NWszNGZ2cllmSjRUenJlRzdzcmxBZU9iREI2?=
- =?utf-8?B?Y3cyL1lGd3FvSHBhRlNIdXBXaloxaTYxUnZNeWJRaFRKckk0ZWVGRkdxWElZ?=
- =?utf-8?B?a2orMWVSU1I4SGlWOEF3N3VKbFkvaHRvK1FFaXlQZkE5WDZIVC9NQjR2QUdY?=
- =?utf-8?B?MG5oeGx3YlFucHBCUHRxcXA5VXRFM005S0tpMmhSWTZLYkNNRm1EUVpqdzdw?=
- =?utf-8?B?eE44dEVxTmdERU1KOGdOblNmSHdIZklxa2JtYUN5anhJM3JTcyt5amQzWXA4?=
- =?utf-8?B?QlRuM1V3L29xUjdONkxhU2tYWXg1SXRTSFpVOXJ1VURiUDU5ZXdua1VFQThU?=
- =?utf-8?B?Z0xzWEk3bjA1OEN4UXhOb09wb3JwZkVnNlh0VTgvUDBoV1BpODVyMmcrTVJu?=
- =?utf-8?B?a0o0enN3QnRRbThqMFp5dlVGTkc0UWMxWkoxZTVCaXFta1UxLzYvSDFCbHpz?=
- =?utf-8?B?enl1bU5rRmJHUDdVVnpFWmFReE5NLzBpeWRMQlpYT2x3ZlB2ZUdacUZlK2xi?=
- =?utf-8?B?RlpOTHhNK05KNmZXR09NNlZhQ1JydTZTT1B1NmZ0N2xSNVVLNVhqcHhZWk1L?=
- =?utf-8?B?Zmh5TTdVS0ZGbVhlR0JmSysrdnBSS2MyeDJ1dkFiWWdkUXBKUWJWSlVqc005?=
- =?utf-8?B?TTVWczNGWTdWWFFpQVlkUndqNlluRHY3eE00RDAwVlFtdWlyNUNxV2JIei8v?=
- =?utf-8?B?ZXpIbDM3OEwyY01tZ3ZYYVdORVpDNGZBUzJsK0c5dlpqZHB1aXJOU2M2b2hj?=
- =?utf-8?B?dFlJUGFxVDUrbFBjcm1NTm1LR3NwdFM4MGZyc1hsN2tQc083VUpFU0tNSjJ4?=
- =?utf-8?B?ZHEvVlNOVE0yY0ExRTVuWTdtRWlIR3JVendrTGN0Ync5cXMzM2lTcHZjbkpX?=
- =?utf-8?B?M28xOXQ5TkZTUS81bXdBQXJPWHU4QXNPb3hKSjVtVmpoSFN3TnZINXp3SnZH?=
- =?utf-8?B?OWNIb05DalBwb2JUWnF6R1lFZHNGUU9jY2ZKSUlNWDhTTzV1cUNzRytDM3B3?=
- =?utf-8?B?eWhHQko2QVEwOVVpNUREYzFocDlxc3RadDZSbFk1OUYvZlpQWXBVckR6c1dv?=
- =?utf-8?B?dVdZclVKNmpWOGZtbENIdnNyRzdhbmFPR2cxQ0VhY0hwNnZlV3poUEJpNWEr?=
- =?utf-8?B?WGxnT0VFci9sQjhzQVc2cktxek0zMmh6ZlBWVnprM29JZ1dwZTA3WHB3L1c5?=
- =?utf-8?B?SURGUTAvM0pza01SOGlXOGhiVU9QWHo0ZFMzYVZhVUhzb2ZsQmZJY1NnWi93?=
- =?utf-8?B?YnpkellNY2drY25YT0lIVE1oYVNaQW8zSmtGZzFxVTlUYlhWMTlCQTM3bzZ0?=
- =?utf-8?B?bkdjMER4VWdqU3R5a3VsR1dWb1FoWUp1ZW90LzF4WnlSSlBINVF4eFJ4Q1NC?=
- =?utf-8?Q?sHY12xAzOHqqMH4wUJIIgOr2nC17KV0DPCWSk=3D?=
+	=?us-ascii?Q?D9ZkHTNTibjUivXG07muiIvFjD9/rAaUEVU3QXBzJlJAt5a5LDgrXNfT2CM7?=
+ =?us-ascii?Q?ZK9fS0upJ20zIeV6kpvTOL/nZWQgdQCpA/fvCaxEGDgw5HI77FNumKLP/iui?=
+ =?us-ascii?Q?L55h1zeszB+GUtK3z7Egl22CddrwIAT3VbFk4AAg8KL2EEY8N8+1CgWQEsG9?=
+ =?us-ascii?Q?knJrnFSVE7qq+Qoft8aiLfXK4Ojk4Ej9Ph8qHhbELP6jRjo67E4sp/TK8VU5?=
+ =?us-ascii?Q?oMyrUFcOUeD+kZelPOPwBt2Y9mA8DASmL2xv6nB4W8J8Cz+460Y5LsPMRk/c?=
+ =?us-ascii?Q?2jMiFXKOJIfzEkBWN0yLOaz/MD45VXcyG6TBW0L0IKfpeH91mGSApzlgfpUS?=
+ =?us-ascii?Q?OD/pdnOl1ZsX9NK4oMHrx3pMsZPPkRvmc+YePTbqmrgT/OZlJMefsWeWH5Gj?=
+ =?us-ascii?Q?qg26taDy8xHbDLZEKhC9hLyB6LryPnhBft1AJ2fTZ5JO5WZIJiksj57FpmdY?=
+ =?us-ascii?Q?E1MZxhJUIMk7pNXJKWf6kYbKcjptGsMusYuAUsOCjnCXjag97nDkfzbpKZ4x?=
+ =?us-ascii?Q?Bv3KtBmbo/GVMyO4IQCVe3EfAJOOfgwtzaKxdqWIdQkdbx9zaMqpljLLMM1a?=
+ =?us-ascii?Q?03QxhH/ssYBFjdmccAgLulakO4SAGZoU1UPyPMKOObGfkTFx8BwMn3j4vqRF?=
+ =?us-ascii?Q?r/I7GFVamvo/vcIGrjw9zpfvliRdRG6whQ1ZjTGfm4SU8vO4J2AGC2d25SAX?=
+ =?us-ascii?Q?OmE2JSxPGGHWHxhNXsAHv3rvE7B+UCeX+y0Pnpd8a7wQzK7eQH5x6pvwSfod?=
+ =?us-ascii?Q?xbKzOyf0qq/BBikRont9tGGqOldjAWNeAzQXHz6t/sUlsFImyL/hsNKKdFmP?=
+ =?us-ascii?Q?Vea98QUDcUYiLIH5GR2xM+Wkfi1i//TTWJFdVK59NT+kCg/XlYaC09XsVoSD?=
+ =?us-ascii?Q?4oW+bGIAS/+JTMzGDdr4s7KQpzLp22X4y7Vv8SFrq/LE6Hfcc5XgZbXwxNwZ?=
+ =?us-ascii?Q?RXD4giaW6e11mrNWASs8B8pRMmh+oZh6aN/rQe701anCiiUNQrRu2GNlzogK?=
+ =?us-ascii?Q?QUsJPaguVAn3gpx7TewEqG1s/AcJCnHVZOcs5JKq5x9l92CRdzXxYkBu6wep?=
+ =?us-ascii?Q?i9rJSfe3a1nrUWrmMkZhJXYHWWONBFAOOcYJUNinIe9A43G1n+Y9CQ3Y/73Q?=
+ =?us-ascii?Q?/RFA9YbxQJzRbhGAwsiNwuS06UBJviSnUhiU5Gop1KlZQnFLQ7eqXj0TjCJP?=
+ =?us-ascii?Q?DQmtBrUh2vDRNgl34zNU6c6pvSzV6gS5JlaINR4FkWaIDJ63KQq7gywddQqY?=
+ =?us-ascii?Q?UxIOxBXTahjq9bAzfEFxQwV39YfqXyhaRsLcANPFs8bD1bYQRygmcg4zAotI?=
+ =?us-ascii?Q?4UyQRkoZESoyzJYS14gVS7mUHxFZrmUJoP33i++lpcavVoJ3z+szGx1mCYFb?=
+ =?us-ascii?Q?PBPOgAxF64GMFGpx5w9qj5QuYZG1qWh0BNAKOMdXR42H1x7K/LtpH27EZkbw?=
+ =?us-ascii?Q?0tbwxadQWfnGd62ZPFbbzqIXgdw6tx1l?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8194.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NXh6Tko1WVg5MU9jWVFQemJPQ1RLMjk2ZzZaU3pPM2ZlSVpieWNiN0FLbWlP?=
- =?utf-8?B?YnBncndqUSsxRTVIa3M4d3FQN1Raa0k5TkxackpoNU4vVVR1a1o0SGh4RFZ4?=
- =?utf-8?B?Ry9vZmtIRXZ4TVE0MlFVY1cyTDlXUCtBRFVETUFXNnY5TnJCUEdXSDcva094?=
- =?utf-8?B?Vm5JS1BHNTRYWSs3b09tdnQ3VjhBcTR2SXhabDhwY2R6NmMyQ2hUdFRKZG9C?=
- =?utf-8?B?VncyVFJaalNJLzFtUXBoUFIzV1lZMjhBMFlaSTFSTEQxSjc5bjE1SnlwTzVt?=
- =?utf-8?B?c3V2QTlVTUw3b25GbVBLZjU2Y3V1MUhVNXpaZVJhOGEyUXRTVExrVXEwaFdk?=
- =?utf-8?B?MHJkaHh5WFdZc2J6SzRVQ2RYcVcwRFhuUTlBMERtTTk5clRJM3h6NllTdUx5?=
- =?utf-8?B?cnBIcHpkNUROeStnRUU3M0xWenFiSWFBdnhFZHhiM3pRVTFOTHdaRjNBTUJY?=
- =?utf-8?B?ekIvS3JlZ3JZWm1HeXNhOGxjbTZTTE42RjJUaFpiT1g0RzlUY2pJeit4UjlJ?=
- =?utf-8?B?SjhwUDNKMzZzQXJ1VmwxeTJOaC9MeWYyclpOTDFFakJZT3lSb3JCRzRtVWND?=
- =?utf-8?B?aFBvZXY0Q3JrcjduTTkrMDNZYVdHSG43aDF6bjJ1N0Vvems2cGMzOVphODN4?=
- =?utf-8?B?VUJ0eVpnUFlTOTZoTTJZVm1ETVc1bU9pZ2FtOVJmWGhrRUcxbTZ6MG1xZjVm?=
- =?utf-8?B?U2xmdzF2dEN3YkoxMU5kaWd4TlR6N3NNWWVRdTRRcXF2bkhCWStXSlE1VnFP?=
- =?utf-8?B?R2svNGFhK1J0RyswYUI4VVJDajJDRVcwVWMxaHhWNGhMdkFzQmhtOWQxaFNZ?=
- =?utf-8?B?cGxGaldmcEZMOEJNTDR0N1g4N0FvNGl3N0dxOGZvVHc4MEIyWGtQZGpCNy95?=
- =?utf-8?B?MWNUY29od3hPTUprQi9uSFNqdUVUTXpRTjhyakZtdWo1cklsZGh6M0tiTXRl?=
- =?utf-8?B?T2ZZdWRHaEFHWjBleGNxV0pUM0lobkVwT2laMDZqclVoY2RoMlArRlpBRVhk?=
- =?utf-8?B?ajl5ZXpMQzVrekdkcmMxanlIMExGL1hPVlJZNkFLanZ6TDFnNlhIb2VidURO?=
- =?utf-8?B?MlFzVFNwczR0eXE5WWNvamI5OWZDdERRL0xrOHVRQ1JINkU0RllEdUFOb3dz?=
- =?utf-8?B?WnFpWDhWeTVOd2ZNSFdnOWs3MG9xMmZEdzFEclZSS0IvR2NhTEJXaGpNb0lO?=
- =?utf-8?B?bTdMdzFFSWVvMG1YQWI2eHBMNytWTHFVeE9mVCtZS2t6V1JtNWVSa2Nhazl6?=
- =?utf-8?B?c3ZzcjRBVFNIU2RBc2xmd1Y4bFJwRDYyUmI0L2F3SU8vTkZSNDYxVW9wb0lF?=
- =?utf-8?B?NVRFU3dzNExkSjl6OXA3T2srOTBmUTBiYlFTVGNuUnc4VDVxUnd4ZENOV0Ey?=
- =?utf-8?B?NVpGQU1lNGhtY1JxYld3N29nRmRCVTdmTkZYQjBJWE1aUHJ5K2doQTAzbDh0?=
- =?utf-8?B?aHBkVUQ0NkhmR0M3clpreGJsclpVL1ZFdnJZanJFVUdYTzVmNkJhTkVZNTkr?=
- =?utf-8?B?MHBLSFRJK0ljWjFDNnFqdjVHSk9HREI5MWlMSUIwMzZFeUhkMWhLSDZnK0s4?=
- =?utf-8?B?ZHRzaDBSN0ZubWh1bHdXZTN3b3pzajNydk1VRVBIbm5OMTczQUkwYUxMOTdN?=
- =?utf-8?B?ZldIbndKQWZ1eE0yYWdCa2pjN0V4RWF3SHdUNGZDWXRoOGU1eVBEMWk4a0ll?=
- =?utf-8?B?cUNUaGxac2pwMUFka3BlQWhYdG1sYWdNcUVjbmNlSUt2SUZBOTUwQWZvTXZO?=
- =?utf-8?B?dkJES21JT2lwOFZhVlBTQlNWRUtHR2cwUE1uUmpOZzRyZXJ4ejM0OHY0cFRx?=
- =?utf-8?B?bzJycERkRGEyRW9QMENpTjkwN1F1U3p3cDNpbjBVblN6blZvcmhiTGYrN1FE?=
- =?utf-8?B?OVRHdWNxRTZ2TDBPVmNZRHpKTVd3czdkQVZhOGdYMXl0clRQTVRaYlJCTzFl?=
- =?utf-8?B?a1hkalFCekxRWWNTZXF4b1pPZ1FRbTZMbzM0bEd0TFFuWHBIelV0SERkWkFB?=
- =?utf-8?B?dEoyNG5PNHN2OVk3RmhPczJkVC8vMDNSelBtQjZVOHlUZnptN0hnKytqUC85?=
- =?utf-8?B?WUl3dXJGS1JMSm5lK2ZmZDlyTlJURTRJeE1nYWhKZlJtcGdEcXMrVDU1QUVu?=
- =?utf-8?Q?7iTBCkH+o/bm4LBgckyQsl6Ep?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83bc3284-1ff8-46c2-a312-08dcbd77e7b4
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8194.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 22:16:26.7278
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 22:16:43.0558
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PpBji/Evhd3OBtmD38tlYZR8ZHz3IEzWtaNZKkWeNxWeISndGwPqeU+14c6+c0pT4UmTc3E1VxjSDZ13XtuT4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5677
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65b21c21-a1e1-44ad-911c-08dcbd77f19a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000205.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7487
 
-Hi Steven,
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-On 7/12/24 03:54, Matias Ezequiel Vara Larsen wrote:
-> On Mon, Jul 01, 2024 at 10:54:50AM +0100, Steven Price wrote:
->> This series adds support for running Linux in a protected VM under the
->> Arm Confidential Compute Architecture (CCA). This has been updated
->> following the feedback from the v3 posting[1]. Thanks for the feedback!
->> Individual patches have a change log. But things to highlight:
->>
->>   * a new patch ("firmware/psci: Add psci_early_test_conduit()") to
->>     prevent SMC calls being made on systems which don't support them -
->>     i.e. systems without EL2/EL3 - thanks Jean-Philippe!
->>
->>   * two patches dropped (overriding set_fixmap_io). Instead
->>     FIXMAP_PAGE_IO is modified to include PROT_NS_SHARED. When support
->>     for assigning hardware devices to a realm guest is added this will
->>     need to be brought back in some form. But for now it's just adding
->>     complixity and confusion for no gain.
->>
->>   * a new patch ("arm64: mm: Avoid TLBI when marking pages as valid")
->>     which avoids doing an extra TLBI when doing the break-before-make.
->>     Note that this changes the behaviour in other cases when making
->>     memory valid. This should be safe (and saves a TLBI for those cases),
->>     but it's a separate patch in case of regressions.
->>
->>   * GIC ITT allocation now uses a custom genpool-based allocator. I
->>     expect this will be replaced with a generic way of allocating
->>     decrypted memory (see [4]), but for now this gets things working
->>     without wasting too much memory.
->>
->> The ABI to the RMM from a realm (the RSI) is based on the final RMM v1.0
->> (EAC 5) specification[2]. Future RMM specifications will be backwards
->> compatible so a guest using the v1.0 specification (i.e. this series)
->> will be able to run on future versions of the RMM without modification.
->>
->> This series is based on v6.10-rc1. It is also available as a git
->> repository:
->>
->> https://gitlab.arm.com/linux-arm/linux-cca cca-guest/v4
+The BIOS reserves RMP table memory via e820 reservations, but since this
+can still lead to RMP page faults during kexec if the host tries to access
+memory within the same 2MB region, commit 400fea4b9651 ("x86/sev: Add
+callback to apply RMP table fixups for kexec") was added to adjust the
+e820 reservations for the RMP table so that the entire 2MB range at the
+start/end of the RMP table is marked reserved. The e820 reservations are
+then later passed to firmware via SNP_INIT where they get marked HV-Fixed.
 
-Which cca-host branch should I use for testing cca-guest/v4?
+The RMP table fixups are done after the e820 ranges have been added to
+memblock, allowing the fixup ranges to still be allocated and used by
+the system. The problem is that this memory range is now marked reserved
+in the e820 tables and during SNP initialization these reserved ranges
+are made HV-Fixed. This means that the pages cannot be used by an SNP
+guest, only by the hypervisor. However, the memory management subsystem
+does not make this distinction and can allocate one of those pages to an
+SNP guest. This will ultimately result in RMPUPDATE failures associated
+with the guest, causing it to fail to start or terminate when accessing
+the HV-Fixed page.
 
-I'm getting compilation errors with cca-host/v3 and cca-guest/v4, is there
-any known WAR or fix to resolve this issue?
+The issue is captured below with memblock=debug:
 
+[    0.000000] SEV-SNP: *** DEBUG: snp_probe_rmptable_info:352 - rmp_base=0x280d4800000, rmp_end=0x28357efffff
+...
+[    0.000000] BIOS-provided physical RAM map:
+...
+[    0.000000] BIOS-e820: [mem 0x00000280d4800000-0x0000028357efffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000028357f00000-0x0000028357ffffff] usable
+...
+...
+[    0.183593] memblock add: [0x0000028357f00000-0x0000028357ffffff] e820__memblock_setup+0x74/0xb0
+...
+[    0.203179] MEMBLOCK configuration:
+[    0.207057]  memory size = 0x0000027d0d194000 reserved size = 0x0000000009ed2c00
+[    0.215299]  memory.cnt  = 0xb
+...
+[    0.311192]  memory[0x9]     [0x0000028357f00000-0x0000028357ffffff], 0x0000000000100000 bytes flags: 0x0
+...
+...
+[    0.419110] SEV-SNP: Reserving start/end of RMP table on a 2MB boundary [0x0000028357e00000]
+[    0.428514] e820: update [mem 0x28357e00000-0x28357ffffff] usable ==> reserved
+[    0.428517] e820: update [mem 0x28357e00000-0x28357ffffff] usable ==> reserved
+[    0.428520] e820: update [mem 0x28357e00000-0x28357ffffff] usable ==> reserved
+...
+...
+[    5.604051] MEMBLOCK configuration:
+[    5.607922]  memory size = 0x0000027d0d194000 reserved size = 0x0000000011faae02
+[    5.616163]  memory.cnt  = 0xe
+...
+[    5.754525]  memory[0xc]     [0x0000028357f00000-0x0000028357ffffff], 0x0000000000100000 bytes on node 0 flags: 0x0
+...
+...
+[   10.080295] Early memory node ranges[   10.168065]
+...
+node   0: [mem 0x0000028357f00000-0x0000028357ffffff]
+...
+...
+[ 8149.348948] SEV-SNP: RMPUPDATE failed for PFN 28357f7c, pg_level: 1, ret: 2
 
-arch/arm64/kvm/rme.c: In function ‘kvm_realm_reset_id_aa64dfr0_el1’:
-././include/linux/compiler_types.h:487:45: error: call to ‘__compiletime_assert_650’ declared with attribute error: FIELD_PREP: value too large for the field
-   487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-       |                                             ^
-././include/linux/compiler_types.h:468:25: note: in definition of macro ‘__compiletime_assert’
-   468 |                         prefix ## suffix();                             \
-       |                         ^~~~~~
-././include/linux/compiler_types.h:487:9: note: in expansion of macro ‘_compiletime_assert’
-   487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-       |         ^~~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
-    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-       |                                     ^~~~~~~~~~~~~~~~~~
-./include/linux/bitfield.h:68:17: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
-    68 |                 BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
-       |                 ^~~~~~~~~~~~~~~~
-./include/linux/bitfield.h:115:17: note: in expansion of macro ‘__BF_FIELD_CHECK’
-   115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-       |                 ^~~~~~~~~~~~~~~~
-arch/arm64/kvm/rme.c:315:16: note: in expansion of macro ‘FIELD_PREP’
-   315 |         val |= FIELD_PREP(ID_AA64DFR0_EL1_BRPs_MASK, bps - 1) |
-       |                ^~~~~~~~~~
-make[5]: *** [scripts/Makefile.build:244: arch/arm64/kvm/rme.o] Error 1
-make[4]: *** [scripts/Makefile.build:485: arch/arm64/kvm] Error 2
-make[3]: *** [scripts/Makefile.build:485: arch/arm64] Error 2
-make[3]: *** Waiting for unfinished jobs....
+As shown above, the memblock allocations show 1MB after the end of the RMP
+as available for allocation, which is what the RMP table fixups has made
+reserved. This memory range subsequently gets allocated as SNP guest
+memory, resulting in an RMPUPDATE failure.
 
-I'm using gcc-13.3.0 compiler and cross-compiling on X86 machine.
+This can potentially be fixed by not reserving the memory range in the
+e820 table, but that causes kexec failures when using the
+KEXEC_FILE_LOAD syscall.
 
+The solution is to use memblock_reserve() to mark the memory reserved
+for the system, ensuring that it cannot be allocated to an SNP guest.
 
--Shanker
+Since HV-Fixed memory is still readable/writable by the host,
+this only ends up being a problem if the memory in this range requires
+a page state change, which generally will only happen when allocating
+memory in this range to be used for running SNP guests, which is now
+possible with the SNP hypervisor support in kernel 6.11.
+
+For this reason, this patch is not being marked for stable, even though
+it fixes handling that was introduced in kernel 6.9.
+
+Fixes: 400fea4b9651 ("x86/sev: Add callback to apply RMP table fixups for kexec")
+Suggested-by: Thomas Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+---
+ arch/x86/virt/svm/sev.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
+index 0ce17766c0e5..9a6a943d8e41 100644
+--- a/arch/x86/virt/svm/sev.c
++++ b/arch/x86/virt/svm/sev.c
+@@ -173,6 +173,8 @@ static void __init __snp_fixup_e820_tables(u64 pa)
+ 		e820__range_update(pa, PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
+ 		e820__range_update_table(e820_table_kexec, pa, PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
+ 		e820__range_update_table(e820_table_firmware, pa, PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
++		if (!memblock_is_region_reserved(pa, PMD_SIZE))
++			memblock_reserve(pa, PMD_SIZE);
+ 	}
+ }
+ 
+-- 
+2.34.1
+
 
