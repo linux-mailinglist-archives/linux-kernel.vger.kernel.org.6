@@ -1,84 +1,120 @@
-Return-Path: <linux-kernel+bounces-287680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C46952B47
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF90952B49
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499E01F21F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA81F217FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6601AAE1F;
-	Thu, 15 Aug 2024 08:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCF61A76A2;
+	Thu, 15 Aug 2024 08:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MxqD1vKI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dESvSrli"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9521B198A3B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EFB19D09F;
+	Thu, 15 Aug 2024 08:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723711334; cv=none; b=s7yPEf/NVeepENd3RMw3UsBDR4cb1PIxqmAKw48X4Tva6OptlzuWBnsWbf+qnbBd9LkbVw9FUx1nZBZLg9gFL8fIvDGSHxNPWPdeNn3b+GQ6FIRo8hYghElwsruQvn2bhIlzkvXFJCU7A+IHpOluLDdOr7VwwgLtqn73ZFlSmVc=
+	t=1723711437; cv=none; b=S9B+I+DfVqLO0Nszhca08wOz3rbnzf7gIr2ZreH3BJt3ZAGEXr2gnDTzUqOFj9VWZJr9npIln7Ersu6Ojg7C9vc0sp4nGV/sUqtZHBrmBunje4dKzmMeoqcy18gkUP3mjgLBhDv6DtvMVI9w8gBGTq2FsFOo6lNy3+y56XPFqEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723711334; c=relaxed/simple;
-	bh=AgcoF9cvZpAjCqw7y3/w0gNhTJvYePD7xg+35Tdhsg4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JeUt9UCSK4q0pRsHViWWAfuIeGzya3Wm/Q26f1HzkCbrOyvOUafLjILQn1k043JJi3u39zO0KW3slzuSmXx0f97hUV9wFQCHeu0s6/xytoEHfCVxP2xnxwn1H5Zxv0eCcIBPLC/fUBK4gh6n9DUZ1mjaz1w8eKLuqCmnOHnA84M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MxqD1vKI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F457C32786;
-	Thu, 15 Aug 2024 08:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723711334;
-	bh=AgcoF9cvZpAjCqw7y3/w0gNhTJvYePD7xg+35Tdhsg4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MxqD1vKIizMWDWe6+Bcr/bVXlcihgQ5fg/Ltnd1JfTHZCMYGxxNzETlacjAmJu/eE
-	 8kDG6crm+spUheY1z444iv+F1azD9nc4Gyk0WCyFBD0M0mTlGsdDrBMEifZ4GsmGMf
-	 B8ZIkZRK1t2pTYP8KQkAquvN5J1RosAdiEK5Higs=
-Date: Thu, 15 Aug 2024 10:41:15 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-Cc: "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ekansh Gupta <quic_ekangupt@quicinc.com>,
-	stable <stable@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 6/6] misc: fastrpc: Restrict untrusted app to attach to
- privileged PD
-Message-ID: <2024081513-aware-tutor-e119@gregkh>
-References: <20240628114501.14310-1-srinivas.kandagatla@linaro.org>
- <20240628114501.14310-7-srinivas.kandagatla@linaro.org>
- <9a9f5646-a554-4b65-8122-d212bb665c81@umsystem.edu>
- <2024081535-unfasten-afloat-9684@gregkh>
- <362eea30-7b6d-4cd5-aed9-88c0d014dd91@gmail.com>
+	s=arc-20240116; t=1723711437; c=relaxed/simple;
+	bh=FO7AnkhwQyc9LhN8JC/o1Qjan4QTR/ZpW+sH5LA0iWs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t+3TeqzZSn80F/SlaPB3hKfbAB1ArtYtfFdqv/k9PLSzW6EbRpgpAVG4s4iJ2/eyxkmEcgq5SmDTDg6uKBx6eA9EozH0iumsuC75oGl7imvPmDhRRA81bP2uJuTTLIg2KjqDdV3CTDLDOs4OWDOzEA2r/y0eKyIipmStHx8Ixig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dESvSrli; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-201f44ad998so1348985ad.0;
+        Thu, 15 Aug 2024 01:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723711435; x=1724316235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPX9A1uvCQ4gNMQHnZ6Jg67ZdZgU4Gk19HgaovouPWw=;
+        b=dESvSrliPxXPgu991cxBFNP4uOKdJSK4+Dez4jrt7wK/mMTp+cxrDVB/SKQe+X+v+p
+         l5lU8WG/JcK0AZpG1Rcwz2Lia+oo/dmjKmQfQSoudzjdiVK+eHu/4yDjhO8tsCAwFkcB
+         zQjuSutPR8Ox2gtAA4Z6Fp3YUnqlgddcw8NxfW8+Bwf+Col7PPu3H8TMp46hdYTe8P0w
+         oA4T+WHozfBitiYuS5FGwUqRguqD1lp25IxoOaLTvrAPt4bZGhivSrjFH7a20GpYjF10
+         9KLdoFF/GewS1ANWD7/ug0y1pPnIjTuwktnVKsMN45fHmu0JhuhmhEweMjt9rWHwUVl5
+         p7Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723711435; x=1724316235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lPX9A1uvCQ4gNMQHnZ6Jg67ZdZgU4Gk19HgaovouPWw=;
+        b=HXwaJiNPqOGDlTnshOrG52CljwmtmML6aGyPUAqJlydCtRdY14SN+1Dyys+6NwU3qn
+         GOPOhtaqP3Yx0dDzmlU3gugH0CyfJmyA1r8c6+ILYA8X2M6YgIZ2HGP8QE87r4B0ouaK
+         GWLzAUXG0MKnh0zSGIH2KiwurAYaP/KNnKCjOXIeeJKD5JzZm7AA32aa7zi/AK/gYZOA
+         v1zAj7s7oAOwSr7IdTv/3/o2MACBgkEPe2O2dGzFNjLR4DD3Z0vAeEDyP23HM/lEKi9E
+         AVDIlcsxbSL6ZUf00Ufec65TH0wFUayv1aqJFlMgGue/VGzy8Eu9OXfuvOMRWFNi8lW5
+         0uSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiKqIAmCJb9Anr/OWkkGjtORhFd4V0pK91JNvHjreccYlAVYHfqKcSKpYclt5/uF+BvS0jY7shvGeR9QrlRFxysU9RJCT96pLEYo9Z
+X-Gm-Message-State: AOJu0YzGTzBM4XkMncoXFNnd9rB3Igo3BnL2z/vEbtlt7DsbG3l5Doe8
+	32V2vnKO+VB9I1qk20Af2PAgOwWnpLURYwJNL03qht0NrqbsqQ6As5/0yRgh/93OtQ==
+X-Google-Smtp-Source: AGHT+IFG5IUzajGO8WTnXHCc/L6HrLRQovNVOWulK/PTn9tc6hwuJYOydAxLLcEQZtHaGhinVaFaEw==
+X-Received: by 2002:a17:902:ce83:b0:1fd:6ca4:f987 with SMTP id d9443c01a7336-201ee4bc32cmr42639545ad.15.1723711435400;
+        Thu, 15 Aug 2024 01:43:55 -0700 (PDT)
+Received: from localhost.localdomain ([49.0.197.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f02fb4f1sm6814175ad.1.2024.08.15.01.43.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 01:43:55 -0700 (PDT)
+From: sunyiqi <sunyiqixm@gmail.com>
+To: edumazet@google.com,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sunyiqi <sunyiqixm@gmail.com>
+Subject: [PATCH] net: remove release/lock_sock in tcp_splice_read
+Date: Thu, 15 Aug 2024 16:43:30 +0800
+Message-Id: <20240815084330.166987-1-sunyiqixm@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <362eea30-7b6d-4cd5-aed9-88c0d014dd91@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 03:35:13AM -0500, Joel Selvaraj wrote:
-> Hi greg k-h,
-> 
-> The git commit id is: bab2f5e8fd5d2f759db26b78d9db57412888f187
-> 
-> But I am bit hesitant if we should revert it because there is a CVE attached
-> to it: https://ubuntu.com/security/CVE-2024-41024
+When enters tcp_splice_read, tcp_splice_read will call lock_sock
+for sk in order to prevent other threads acquiring sk and release it
+before return.
 
-Not an issue if it is breaking things, let's get it right.  We can
-trivially reject that CVE if needed.
+But in while(tss.len) loop, it releases and re-locks sk, give the other
+thread a small window to lock the sk.
 
-> Also, I am ok with changing userspace if it's necessary. It would be nice if
-> the authors can clarify the ideal fix here.
+As a result, release/lock_sock in the while loop in tcp_splice_read may
+cause race condition.
 
-No, userspace should not break, that's not ok at all.  I'll get someone
-to revert this later today, thanks!
+Fixes: 9c55e01c0cc8 ("[TCP]: Splice receive support.")
+Signed-off-by: sunyiqi <sunyiqixm@gmail.com>
+---
+ net/ipv4/tcp.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-greg k-h
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index e03a342c9162..7a2ce0e2e5be 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -856,8 +856,6 @@ ssize_t tcp_splice_read(struct socket *sock, loff_t *ppos,
+ 
+ 		if (!tss.len || !timeo)
+ 			break;
+-		release_sock(sk);
+-		lock_sock(sk);
+ 
+ 		if (sk->sk_err || sk->sk_state == TCP_CLOSE ||
+ 		    (sk->sk_shutdown & RCV_SHUTDOWN) ||
+-- 
+2.34.1
+
 
