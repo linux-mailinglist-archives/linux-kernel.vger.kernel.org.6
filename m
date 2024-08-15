@@ -1,284 +1,1369 @@
-Return-Path: <linux-kernel+bounces-288162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CB89536A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3429536AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073892881E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:07:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516471F2191E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8469F1AAE30;
-	Thu, 15 Aug 2024 15:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E8A1A76C1;
+	Thu, 15 Aug 2024 15:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKTjWhUo"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvfJHLKM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845201A256C;
-	Thu, 15 Aug 2024 15:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C1C1A76AE;
+	Thu, 15 Aug 2024 15:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723734466; cv=none; b=BcL6gRNX0Q3yY2rmJRDbfw21Uy8o2CSIOO6dHJgE7+5D80F7X6zEOiTlH00Tc/YqCcLKItIu5MH0SR8oZDll2hFgyrpvMXhzTLUCHe8GHHGlYBE+RynJsLlwrkhoIpryD9sSmQyhzeG7YUO6p8YXpGpRXlSCu1nNSBqPRl/Yjmw=
+	t=1723734472; cv=none; b=rI/jWpFmJa1B4s9arbv/faIneYvFa4MtA9mRCKw7DUN3KB0sl78R9qg7lHfVbYkfRvARfkzq6+xsksqMgBjxNht5T2lZkltjwQ1iE/1iP2e+Nn57MGxwAlTgvFe0d+XxA7nNAcoj2+iZ4sq9B6f6fEIhNWQNn397I4pFSvO8wAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723734466; c=relaxed/simple;
-	bh=kZUvP4nzbg6phjn2v7MWFjDsuXHPZwCGV1OGE6l43T4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KoI2fUQNleUjAOq1FQXREkAFihuQLvRXUey6rl+O5D1gl8jC3wuj/m3wLMZsKHKUulKaSeZqKMe+sX/u/Bzgqy+ldHzkgFjnvp6OZt+8S6AW/6QrtFv5s2xTQMLZhcV+pfDx2CftZ5h++EXMNJjrLnxdqj4ESb1H2YlGK+ORyC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKTjWhUo; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f00ad303aso1314527e87.2;
-        Thu, 15 Aug 2024 08:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723734462; x=1724339262; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N8SNHJNcIoI942o94u3367Q/xCX1kW+hct2q4PcQPf8=;
-        b=HKTjWhUor0lodMiv3N0e44Kij5fBClNnWC6/CREPvsxkJn9fJqaC1CxNxpWGUUt5hm
-         f914hFn9mmNAkHKOJPklwt8th+hF2iyPuekzv3mtTj1WWLdc7QH3BZMRLwkiVJC6Rmhc
-         MQqieRlfpd0OPV6mI0ynEo/t5FDEO9oE77XGWC/9Eg8IYWF2Xby5tDBAzemkkkF9swdI
-         9Q81HjEOaFN2YejnbPLIvtKMf8eGsWq5BCFhL5vDINSPlST6DOQIAAhh7TjJuRsSv34I
-         OUO04sIGfiI4cVDtZGULMbD3ESF+A/XN0+YcgaAZEKXn8wxFW8MZeBmKeCo2wbzrBd+3
-         Hqng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723734462; x=1724339262;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N8SNHJNcIoI942o94u3367Q/xCX1kW+hct2q4PcQPf8=;
-        b=TpJGScKsrGm9ZndBgpWb5b6AbgFwElPHxeWpbBKfTeW5e6AEGLYcj2rydBlmja9b+W
-         qjFPLqA5seO1BN10lqdGzKOYRiGFqEnp9+03UFtKiOwkpolJfz63hipdJ7gk7+O8jeRS
-         5Cg77kQS2jA5RNubQ+A1ahyJfFY8w1xo1dXWArmXeAkwuDV6m/I41W0Vaq1n/pmv227R
-         zgrqTgkTnhDsSAa5QZFDd+K1/lNIhnDrTtM055HJhgetKFwPM7XJQNYE5A5VlsmLaULc
-         aw+j5wwIY2FlN572bPkBH7+JTodye0cx+QxZWvcgSDkMBmOUIgaocDkoEzwCsE8uNI9U
-         HW+g==
-X-Forwarded-Encrypted: i=1; AJvYcCW5kCqzraoozJyUxzyWWcN/0zelO3vN0E85pgulTSN9Ou5bu+nyWApCo7Nvb/TH98Vabb/jwNlF/hOzXVL2jM6Ih2Dk0tPogt3Oa5aTuaF1+7EOtIPAjGsjLoEL0aeeua6nkqGPJ6EqT0J5qw==
-X-Gm-Message-State: AOJu0YwoPO0HEjJhQEPTGoued0zVqEkcxiNBoJtnt74xaE/Zr7ZNFiXj
-	ek+MOEOq22Gtg9Fw2/2LkgbaW2QTYJ5ApB2eZ1mPr9zwzvRpp+0miDpnFce7GKTURCM/bBsblTU
-	bcb0ctlccgaHBMVxBeckBR2ASD/w=
-X-Google-Smtp-Source: AGHT+IFnuPqWOtDaNn2zQBGHE0JlZWDcrapJnEDM3aQoPyj49qqny15G/tNOSlkatwkYZDqUdZmCb4l0RZulA9wMhAA=
-X-Received: by 2002:a05:6512:308d:b0:52e:9694:3f98 with SMTP id
- 2adb3069b0e04-532eda81faemr4527712e87.27.1723734462016; Thu, 15 Aug 2024
- 08:07:42 -0700 (PDT)
+	s=arc-20240116; t=1723734472; c=relaxed/simple;
+	bh=XND26O/tKxoC4B2lCq60aeKxRW/KGQ+GHy4XjkbiSGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jO5AWNgx7+yluNy2GMfhIB/FOlKVkeBAAK1jgDlw75YXp0hL0Pj48eIUsNYqXLGw4UUYl/HGXkbEgz5rz6b2pgLcVGiH2MFzGupi5aDRvcSICzcWfxYmZAAQwBwhh3iuHo2iIeIPSUMV1UX+HUIt3GPNLD5emCYivkLVELlCdFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvfJHLKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E351C4AF0D;
+	Thu, 15 Aug 2024 15:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723734471;
+	bh=XND26O/tKxoC4B2lCq60aeKxRW/KGQ+GHy4XjkbiSGg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DvfJHLKMqDi5cSdYA2wTAftVDfKJtD5607gd3Nhhyj3Xn9eHECEXi1FmMYkHkDmI0
+	 Te8WuTIJvBBxTzFXtOEncyI9bcBh1jyUSzwPfECK0LDf3pLe2YPYUd5CcLhMjyy8Fz
+	 5MirxOnic70oG2k4/3LsV95OZxYFMbDuxX17d2dVwwStf+8d9JU5VyweLtU7axfGdL
+	 5ZeY4FaFXFYVkBOHEEib3q8HzAEUhLltWjdMGpivN1QD7wYs2Sa+vvQgS9vTcPKaKv
+	 fDhgZ1vlhxeKGSO7QwSeMa+Tu8drQC3XBd7Snp0APa7gZ7A3xdBwv+jNBQzWLNYqLM
+	 g2TE5BBgij7dw==
+Date: Thu, 15 Aug 2024 16:07:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com,
+	Sugar Zhang <sugar.zhang@rock-chips.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: clock, reset: Add support for rk3576
+Message-ID: <20240815-tassel-whacking-a460ee2ebd41@spud>
+References: <20240814222159.2598-1-detlev.casanova@collabora.com>
+ <20240814222159.2598-2-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806-openfast-v2-1-42da45981811@kernel.org>
- <CAGudoHF9nZMfk_XbRRap+0d=VNs_i8zqTkDXxogVt_M9YGbA8Q@mail.gmail.com>
- <87ikwdtqiy.fsf@linux.intel.com> <44862ec7c85cdc19529e26f47176d0ecfc90d888.camel@kernel.org>
- <CAGudoHGZVBw3h_pHDaaSMeDgf3q_qn4wmkfOoG6y-CKN9sZLVQ@mail.gmail.com> <ZrKL2youCTmO3K0Q@tassilo>
-In-Reply-To: <ZrKL2youCTmO3K0Q@tassilo>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 15 Aug 2024 17:07:29 +0200
-Message-ID: <CAGudoHFxme+cPsm2BVsOjoy6UZzgEZZebkvDhp7=jkevSTyb-A@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VIQYeD6dApYMRM+e"
+Content-Disposition: inline
+In-Reply-To: <20240814222159.2598-2-detlev.casanova@collabora.com>
+
+
+--VIQYeD6dApYMRM+e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 6, 2024 at 10:47=E2=80=AFPM Andi Kleen <ak@linux.intel.com> wro=
-te:
->
-> > Before I get to the vfs layer, there is a significant loss in the
-> > memory allocator because of memcg -- it takes several irq off/on trips
-> > for every alloc (needed to grab struct file *). I have a plan what to
-> > do with it (handle stuff with local cmpxchg (note no lock prefix)),
-> > which I'm trying to get around to. Apart from that you may note the
-> > allocator fast path performs a 16-byte cmpxchg, which is again dog
-> > slow and executes twice (once for the file obj, another time for the
-> > namei buffer). Someone(tm) should patch it up and I have some vague
-> > ideas, but 0 idea when I can take a serious stab.
->
-> I just LBR sampled it on my skylake and it doesn't look
-> particularly slow. You see the whole massive block including CMPXCHG16
-> gets IPC 2.7, which is rather good. If you see lots of cycles on it it's =
-likely
-> a missing cache line.
->
->     kmem_cache_free:
->         ffffffff9944ce20                        nop %edi, %edx
->         ffffffff9944ce24                        nopl  %eax, (%rax,%rax,1)
->         ffffffff9944ce29                        pushq  %rbp
->         ffffffff9944ce2a                        mov %rdi, %rdx
->         ffffffff9944ce2d                        mov %rsp, %rbp
->         ffffffff9944ce30                        pushq  %r15
->         ffffffff9944ce32                        pushq  %r14
->         ffffffff9944ce34                        pushq  %r13
->         ffffffff9944ce36                        pushq  %r12
->         ffffffff9944ce38                        mov $0x80000000, %r12d
->         ffffffff9944ce3e                        pushq  %rbx
->         ffffffff9944ce3f                        mov %rsi, %rbx
->         ffffffff9944ce42                        and $0xfffffffffffffff0, =
-%rsp
->         ffffffff9944ce46                        sub $0x10, %rsp
->         ffffffff9944ce4a                        movq  %gs:0x28, %rax
->         ffffffff9944ce53                        movq  %rax, 0x8(%rsp)
->         ffffffff9944ce58                        xor %eax, %eax
->         ffffffff9944ce5a                        add %rsi, %r12
->         ffffffff9944ce5d                        jb 0xffffffff9944d1ea
->         ffffffff9944ce63                        mov $0xffffffff80000000, =
-%rax
->         ffffffff9944ce6a                        xor %r13d, %r13d
->         ffffffff9944ce6d                        subq  0x17b068c(%rip), %r=
-ax
->         ffffffff9944ce74                        add %r12, %rax
->         ffffffff9944ce77                        shr $0xc, %rax
->         ffffffff9944ce7b                        shl $0x6, %rax
->         ffffffff9944ce7f                        addq  0x17b066a(%rip), %r=
-ax
->         ffffffff9944ce86                        movq  0x8(%rax), %rcx
->         ffffffff9944ce8a                        test $0x1, %cl
->         ffffffff9944ce8d                        jnz 0xffffffff9944d15c
->         ffffffff9944ce93                        nopl  %eax, (%rax,%rax,1)
->         ffffffff9944ce98                        movq  (%rax), %rcx
->         ffffffff9944ce9b                        and $0x8, %ch
->         ffffffff9944ce9e                        jz 0xffffffff9944cfea
->         ffffffff9944cea4                        test %rax, %rax
->         ffffffff9944cea7                        jz 0xffffffff9944cfea
->         ffffffff9944cead                        movq  0x8(%rax), %r14
->         ffffffff9944ceb1                        test %r14, %r14
->         ffffffff9944ceb4                        jz 0xffffffff9944cfac
->         ffffffff9944ceba                        cmp %r14, %rdx
->         ffffffff9944cebd                        jnz 0xffffffff9944d165
->         ffffffff9944cec3                        test %r14, %r14
->         ffffffff9944cec6                        jz 0xffffffff9944cfac
->         ffffffff9944cecc                        movq  0x8(%rbp), %r15
->         ffffffff9944ced0                        nopl  %eax, (%rax,%rax,1)
->         ffffffff9944ced5                        movq  0x1fe5134(%rip), %r=
-ax
->         ffffffff9944cedc                        test %r13, %r13
->         ffffffff9944cedf                        jnz 0xffffffff9944ceef
->         ffffffff9944cee1                        mov $0xffffffff80000000, =
-%rax
->         ffffffff9944cee8                        subq  0x17b0611(%rip), %r=
-ax
->         ffffffff9944ceef                        add %rax, %r12
->         ffffffff9944cef2                        shr $0xc, %r12
->         ffffffff9944cef6                        shl $0x6, %r12
->         ffffffff9944cefa                        addq  0x17b05ef(%rip), %r=
-12
->         ffffffff9944cf01                        movq  0x8(%r12), %rax
->         ffffffff9944cf06                        mov %r12, %r13
->         ffffffff9944cf09                        test $0x1, %al
->         ffffffff9944cf0b                        jnz 0xffffffff9944d1b1
->         ffffffff9944cf11                        nopl  %eax, (%rax,%rax,1)
->         ffffffff9944cf16                        movq  (%r13), %rax
->         ffffffff9944cf1a                        movq  %rbx, (%rsp)
->         ffffffff9944cf1e                        test $0x8, %ah
->         ffffffff9944cf21                        mov $0x0, %eax
->         ffffffff9944cf26                        cmovz %rax, %r13
->         ffffffff9944cf2a                        data16 nop
->         ffffffff9944cf2c                        movq  0x38(%r13), %r8
->         ffffffff9944cf30                        cmp $0x3, %r8
->         ffffffff9944cf34                        jnbe 0xffffffff9944d1ca
->         ffffffff9944cf3a                        nopl  %eax, (%rax,%rax,1)
->         ffffffff9944cf3f                        movq  0x23d6f72(%rip), %r=
-ax
->         ffffffff9944cf46                        mov %rbx, %rdx
->         ffffffff9944cf49                        sub %rax, %rdx
->         ffffffff9944cf4c                        cmp $0x1fffff, %rdx
->         ffffffff9944cf53                        jbe 0xffffffff9944d03a
->         ffffffff9944cf59                        movq  (%r14), %rax
->         ffffffff9944cf5c                        addq  %gs:0x66bccab4(%rip=
-), %rax
->         ffffffff9944cf64                        movq  0x8(%rax), %rdx
->         ffffffff9944cf68                        cmpq  %r13, 0x10(%rax)
->         ffffffff9944cf6c                        jnz 0xffffffff9944d192
->         ffffffff9944cf72                        movl  0x28(%r14), %ecx
->         ffffffff9944cf76                        movq  (%rax), %rax
->         ffffffff9944cf79                        add %rbx, %rcx
->         ffffffff9944cf7c                        cmp %rbx, %rax
->         ffffffff9944cf7f                        jz 0xffffffff9944d1ba
->         ffffffff9944cf85                        movq  0xb8(%r14), %rsi
->         ffffffff9944cf8c                        mov %rcx, %rdi
->         ffffffff9944cf8f                        bswap %rdi
->         ffffffff9944cf92                        xor %rax, %rsi
->         ffffffff9944cf95                        xor %rdi, %rsi
->         ffffffff9944cf98                        movq  %rsi, (%rcx)
->         ffffffff9944cf9b                        leaq  0x2000(%rdx), %rcx
->         ffffffff9944cfa2                        movq  (%r14), %rsi
->         ffffffff9944cfa5                        cmpxchg16bx  %gs:(%rsi)
->         ffffffff9944cfaa                        jnz 0xffffffff9944cf59
->         ffffffff9944cfac                        movq  0x8(%rsp), %rax
->         ffffffff9944cfb1                        subq  %gs:0x28, %rax
->         ffffffff9944cfba                        jnz 0xffffffff9944d1fc
->         ffffffff9944cfc0                        leaq  -0x28(%rbp), %rsp
->         ffffffff9944cfc4                        popq  %rbx
->         ffffffff9944cfc5                        popq  %r12
->         ffffffff9944cfc7                        popq  %r13
->         ffffffff9944cfc9                        popq  %r14
->         ffffffff9944cfcb                        popq  %r15
->         ffffffff9944cfcd                        popq  %rbp
->         ffffffff9944cfce                        retq                     =
-       # PRED 38 cycles [126] 2.74 IPC    <-------------
+On Wed, Aug 14, 2024 at 06:19:22PM -0400, Detlev Casanova wrote:
+> Add clock and reset ID defines for rk3576.
+>=20
+> Compared to the downstream bindings written by Elaine, this uses
+> continous gapless IDs starting at 0. Thus all numbers are
+> different between downstream and upstream, but names are kept
+> exactly the same.
+>=20
+> Also add documentation for the rk3576 CRU core.
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  .../bindings/clock/rockchip,rk3576-cru.yaml   |  64 ++
+>  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 592 ++++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 564 +++++++++++++++++
+>  3 files changed, 1220 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk35=
+76-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.=
+yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+> new file mode 100644
+> index 0000000000000..d69985e6fa0ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,rk3576-cru.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip rk3576 Family Clock and Reset Control Module
+> +
+> +maintainers:
+> +  - Elaine Zhang <zhangqing@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +  - Detlev Casanova <detlev.casanova@collabora.com>
+> +
+> +description:
+> +  The RK3576 clock controller generates the clock and also implements a =
+reset
+> +  controller for SoC peripherals. For example it provides SCLK_UART2 and
+> +  PCLK_UART2, as well as SRST_P_UART2 and SRST_S_UART2 for the second UA=
+RT
+> +  module.
+> +
+> +properties:
+> +  compatible:
+> +    const: rockchip,rk3576-cru
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xin24m
+> +      - const: xin32k
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: >
+> +      phandle to the syscon managing the "general register files". It is=
+ used
+> +      for GRF muxes, if missing any muxes present in the GRF will not be
+> +      available.
 
-Sorry for late reply, my test box was temporarily unavailable and then
-I forgot about this e-mail :)
+Two questions on this property:
+- you only support one soc, why is this optional?
+- why can't you look it up by compatible?
 
-I don't have a good scientific test(tm) and I don't think coming up
-with one is warranted at the moment.
+Cheers,
+Conor.
 
-But to illustrate, I slapped together a test case for will-it-scale
-where I either cmpxchg8 or 16 in a loop. No lock prefix on these.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@27200000 {
+> +      compatible =3D "rockchip,rk3576-cru";
+> +      reg =3D <0xfd7c0000 0x5c000>;
+> +      #clock-cells =3D <1>;
+> +      #reset-cells =3D <1>;
+> +      rockchip,grf =3D <&pmu0_grf>;
+> +    };
+> diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h b/include/dt=
+-bindings/clock/rockchip,rk3576-cru.h
+> new file mode 100644
+> index 0000000000000..ee3718452b77e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
+> @@ -0,0 +1,592 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> +* Copyright (c) 2023 Rockchip Electronics Co. Ltd.
+> +* Copyright (c) 2024 Collabora Ltd.
+> +*
+> +* Author: Elaine Zhang <zhangqing@rock-chips.com>
+> +* Author: Detlev Casanova <detlev.casanova@collabora.com>
+> +*/
+> +
+> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
+> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
+> +
+> +/* cru-clocks indices */
+> +
+> +/* cru plls */
+> +#define PLL_BPLL			0
+> +#define PLL_LPLL			1
+> +#define PLL_VPLL			2
+> +#define PLL_AUPLL			3
+> +#define PLL_CPLL			4
+> +#define PLL_GPLL			5
+> +#define PLL_PPLL			6
+> +#define ARMCLK_L			7
+> +#define ARMCLK_B			8
+> +
+> +/* cru clocks */
+> +#define CLK_CPLL_DIV20			9
+> +#define CLK_CPLL_DIV10			10
+> +#define CLK_GPLL_DIV8			11
+> +#define CLK_GPLL_DIV6			12
+> +#define CLK_CPLL_DIV4			13
+> +#define CLK_GPLL_DIV4			14
+> +#define CLK_SPLL_DIV2			15
+> +#define CLK_GPLL_DIV3			16
+> +#define CLK_CPLL_DIV2			17
+> +#define CLK_GPLL_DIV2			18
+> +#define CLK_SPLL_DIV1			19
+> +#define PCLK_TOP_ROOT			20
+> +#define ACLK_TOP			21
+> +#define HCLK_TOP			22
+> +#define CLK_AUDIO_FRAC_0		23
+> +#define CLK_AUDIO_FRAC_1		24
+> +#define CLK_AUDIO_FRAC_2		25
+> +#define CLK_AUDIO_FRAC_3		26
+> +#define CLK_UART_FRAC_0			27
+> +#define CLK_UART_FRAC_1			28
+> +#define CLK_UART_FRAC_2			29
+> +#define CLK_UART1_SRC_TOP		30
+> +#define CLK_AUDIO_INT_0			31
+> +#define CLK_AUDIO_INT_1			32
+> +#define CLK_AUDIO_INT_2			33
+> +#define CLK_PDM0_SRC_TOP		34
+> +#define CLK_PDM1_OUT			35
+> +#define CLK_GMAC0_125M_SRC		36
+> +#define CLK_GMAC1_125M_SRC		37
+> +#define LCLK_ASRC_SRC_0			38
+> +#define LCLK_ASRC_SRC_1			39
+> +#define REF_CLK0_OUT_PLL		40
+> +#define REF_CLK1_OUT_PLL		41
+> +#define REF_CLK2_OUT_PLL		42
+> +#define REFCLKO25M_GMAC0_OUT		43
+> +#define REFCLKO25M_GMAC1_OUT		44
+> +#define CLK_CIFOUT_OUT			45
+> +#define CLK_GMAC0_RMII_CRU		46
+> +#define CLK_GMAC1_RMII_CRU		47
+> +#define CLK_OTPC_AUTO_RD_G		48
+> +#define CLK_OTP_PHY_G			49
+> +#define CLK_MIPI_CAMERAOUT_M0		50
+> +#define CLK_MIPI_CAMERAOUT_M1		51
+> +#define CLK_MIPI_CAMERAOUT_M2		52
+> +#define MCLK_PDM0_SRC_TOP		53
+> +#define HCLK_AUDIO_ROOT			54
+> +#define HCLK_ASRC_2CH_0			55
+> +#define HCLK_ASRC_2CH_1			56
+> +#define HCLK_ASRC_4CH_0			57
+> +#define HCLK_ASRC_4CH_1			58
+> +#define CLK_ASRC_2CH_0			59
+> +#define CLK_ASRC_2CH_1			60
+> +#define CLK_ASRC_4CH_0			61
+> +#define CLK_ASRC_4CH_1			62
+> +#define MCLK_SAI0_8CH_SRC		63
+> +#define MCLK_SAI0_8CH			64
+> +#define HCLK_SAI0_8CH			65
+> +#define HCLK_SPDIF_RX0			66
+> +#define MCLK_SPDIF_RX0			67
+> +#define HCLK_SPDIF_RX1			68
+> +#define MCLK_SPDIF_RX1			69
+> +#define MCLK_SAI1_8CH_SRC		70
+> +#define MCLK_SAI1_8CH			71
+> +#define HCLK_SAI1_8CH			72
+> +#define MCLK_SAI2_2CH_SRC		73
+> +#define MCLK_SAI2_2CH			74
+> +#define HCLK_SAI2_2CH			75
+> +#define MCLK_SAI3_2CH_SRC		76
+> +#define MCLK_SAI3_2CH			77
+> +#define HCLK_SAI3_2CH			78
+> +#define MCLK_SAI4_2CH_SRC		79
+> +#define MCLK_SAI4_2CH			80
+> +#define HCLK_SAI4_2CH			81
+> +#define HCLK_ACDCDIG_DSM		82
+> +#define MCLK_ACDCDIG_DSM		83
+> +#define CLK_PDM1			84
+> +#define HCLK_PDM1			85
+> +#define MCLK_PDM1			86
+> +#define HCLK_SPDIF_TX0			87
+> +#define MCLK_SPDIF_TX0			88
+> +#define HCLK_SPDIF_TX1			89
+> +#define MCLK_SPDIF_TX1			90
+> +#define CLK_SAI1_MCLKOUT		91
+> +#define CLK_SAI2_MCLKOUT		92
+> +#define CLK_SAI3_MCLKOUT		93
+> +#define CLK_SAI4_MCLKOUT		94
+> +#define CLK_SAI0_MCLKOUT		95
+> +#define HCLK_BUS_ROOT			96
+> +#define PCLK_BUS_ROOT			97
+> +#define ACLK_BUS_ROOT			98
+> +#define HCLK_CAN0			99
+> +#define CLK_CAN0			100
+> +#define HCLK_CAN1			101
+> +#define CLK_CAN1			102
+> +#define CLK_KEY_SHIFT			103
+> +#define PCLK_I2C1			104
+> +#define PCLK_I2C2			105
+> +#define PCLK_I2C3			106
+> +#define PCLK_I2C4			107
+> +#define PCLK_I2C5			108
+> +#define PCLK_I2C6			109
+> +#define PCLK_I2C7			110
+> +#define PCLK_I2C8			111
+> +#define PCLK_I2C9			112
+> +#define PCLK_WDT_BUSMCU			113
+> +#define TCLK_WDT_BUSMCU			114
+> +#define ACLK_GIC			115
+> +#define CLK_I2C1			116
+> +#define CLK_I2C2			117
+> +#define CLK_I2C3			118
+> +#define CLK_I2C4			119
+> +#define CLK_I2C5			120
+> +#define CLK_I2C6			121
+> +#define CLK_I2C7			122
+> +#define CLK_I2C8			123
+> +#define CLK_I2C9			124
+> +#define PCLK_SARADC			125
+> +#define CLK_SARADC			126
+> +#define PCLK_TSADC			127
+> +#define CLK_TSADC			128
+> +#define PCLK_UART0			129
+> +#define PCLK_UART2			130
+> +#define PCLK_UART3			131
+> +#define PCLK_UART4			132
+> +#define PCLK_UART5			133
+> +#define PCLK_UART6			134
+> +#define PCLK_UART7			135
+> +#define PCLK_UART8			136
+> +#define PCLK_UART9			137
+> +#define PCLK_UART10			138
+> +#define PCLK_UART11			139
+> +#define SCLK_UART0			140
+> +#define SCLK_UART2			141
+> +#define SCLK_UART3			142
+> +#define SCLK_UART4			143
+> +#define SCLK_UART5			144
+> +#define SCLK_UART6			145
+> +#define SCLK_UART7			146
+> +#define SCLK_UART8			147
+> +#define SCLK_UART9			148
+> +#define SCLK_UART10			149
+> +#define SCLK_UART11			150
+> +#define PCLK_SPI0			151
+> +#define PCLK_SPI1			152
+> +#define PCLK_SPI2			153
+> +#define PCLK_SPI3			154
+> +#define PCLK_SPI4			155
+> +#define CLK_SPI0			156
+> +#define CLK_SPI1			157
+> +#define CLK_SPI2			158
+> +#define CLK_SPI3			159
+> +#define CLK_SPI4			160
+> +#define PCLK_WDT0			161
+> +#define TCLK_WDT0			162
+> +#define PCLK_PWM1			163
+> +#define CLK_PWM1			164
+> +#define CLK_OSC_PWM1			165
+> +#define CLK_RC_PWM1			166
+> +#define PCLK_BUSTIMER0			167
+> +#define PCLK_BUSTIMER1			168
+> +#define CLK_TIMER0_ROOT			169
+> +#define CLK_TIMER0			170
+> +#define CLK_TIMER1			171
+> +#define CLK_TIMER2			172
+> +#define CLK_TIMER3			173
+> +#define CLK_TIMER4			174
+> +#define CLK_TIMER5			175
+> +#define PCLK_MAILBOX0			176
+> +#define PCLK_GPIO1			177
+> +#define DBCLK_GPIO1			178
+> +#define PCLK_GPIO2			179
+> +#define DBCLK_GPIO2			180
+> +#define PCLK_GPIO3			181
+> +#define DBCLK_GPIO3			182
+> +#define PCLK_GPIO4			183
+> +#define DBCLK_GPIO4			184
+> +#define ACLK_DECOM			185
+> +#define PCLK_DECOM			186
+> +#define DCLK_DECOM			187
+> +#define CLK_TIMER1_ROOT			188
+> +#define CLK_TIMER6			189
+> +#define CLK_TIMER7			190
+> +#define CLK_TIMER8			191
+> +#define CLK_TIMER9			192
+> +#define CLK_TIMER10			193
+> +#define CLK_TIMER11			194
+> +#define ACLK_DMAC0			195
+> +#define ACLK_DMAC1			196
+> +#define ACLK_DMAC2			197
+> +#define ACLK_SPINLOCK			198
+> +#define HCLK_I3C0			199
+> +#define HCLK_I3C1			200
+> +#define HCLK_BUS_CM0_ROOT		201
+> +#define FCLK_BUS_CM0_CORE		202
+> +#define CLK_BUS_CM0_RTC			203
+> +#define PCLK_PMU2			204
+> +#define PCLK_PWM2			205
+> +#define CLK_PWM2			206
+> +#define CLK_RC_PWM2			207
+> +#define CLK_OSC_PWM2			208
+> +#define CLK_FREQ_PWM1			209
+> +#define CLK_COUNTER_PWM1		210
+> +#define SAI_SCLKIN_FREQ			211
+> +#define SAI_SCLKIN_COUNTER		212
+> +#define CLK_I3C0			213
+> +#define CLK_I3C1			214
+> +#define PCLK_CSIDPHY1			215
+> +#define PCLK_DDR_ROOT			216
+> +#define PCLK_DDR_MON_CH0		217
+> +#define TMCLK_DDR_MON_CH0		218
+> +#define ACLK_DDR_ROOT			219
+> +#define HCLK_DDR_ROOT			220
+> +#define FCLK_DDR_CM0_CORE		221
+> +#define CLK_DDR_TIMER_ROOT		222
+> +#define CLK_DDR_TIMER0			223
+> +#define CLK_DDR_TIMER1			224
+> +#define TCLK_WDT_DDR			225
+> +#define PCLK_WDT			226
+> +#define PCLK_TIMER			227
+> +#define CLK_DDR_CM0_RTC			228
+> +#define ACLK_RKNN0			229
+> +#define ACLK_RKNN1			230
+> +#define HCLK_RKNN_ROOT			231
+> +#define CLK_RKNN_DSU0			232
+> +#define PCLK_NPUTOP_ROOT		233
+> +#define PCLK_NPU_TIMER			234
+> +#define CLK_NPUTIMER_ROOT		235
+> +#define CLK_NPUTIMER0			236
+> +#define CLK_NPUTIMER1			237
+> +#define PCLK_NPU_WDT			238
+> +#define TCLK_NPU_WDT			239
+> +#define ACLK_RKNN_CBUF			240
+> +#define HCLK_NPU_CM0_ROOT		241
+> +#define FCLK_NPU_CM0_CORE		242
+> +#define CLK_NPU_CM0_RTC			243
+> +#define HCLK_RKNN_CBUF			244
+> +#define HCLK_NVM_ROOT			245
+> +#define ACLK_NVM_ROOT			246
+> +#define SCLK_FSPI_X2			247
+> +#define HCLK_FSPI			248
+> +#define CCLK_SRC_EMMC			249
+> +#define HCLK_EMMC			250
+> +#define ACLK_EMMC			251
+> +#define BCLK_EMMC			252
+> +#define TCLK_EMMC			253
+> +#define PCLK_PHP_ROOT			254
+> +#define ACLK_PHP_ROOT			255
+> +#define PCLK_PCIE0			256
+> +#define CLK_PCIE0_AUX			257
+> +#define ACLK_PCIE0_MST			258
+> +#define ACLK_PCIE0_SLV			259
+> +#define ACLK_PCIE0_DBI			260
+> +#define ACLK_USB3OTG1			261
+> +#define CLK_REF_USB3OTG1		262
+> +#define CLK_SUSPEND_USB3OTG1		263
+> +#define ACLK_MMU0			264
+> +#define ACLK_SLV_MMU0			265
+> +#define ACLK_MMU1			266
+> +#define ACLK_SLV_MMU1			267
+> +#define PCLK_PCIE1			268
+> +#define CLK_PCIE1_AUX			269
+> +#define ACLK_PCIE1_MST			270
+> +#define ACLK_PCIE1_SLV			271
+> +#define ACLK_PCIE1_DBI			272
+> +#define CLK_RXOOB0			273
+> +#define CLK_RXOOB1			274
+> +#define CLK_PMALIVE0			275
+> +#define CLK_PMALIVE1			276
+> +#define ACLK_SATA0			277
+> +#define ACLK_SATA1			278
+> +#define CLK_USB3OTG1_PIPE_PCLK		279
+> +#define CLK_USB3OTG1_UTMI		280
+> +#define CLK_USB3OTG0_PIPE_PCLK		281
+> +#define CLK_USB3OTG0_UTMI		282
+> +#define HCLK_SDGMAC_ROOT		283
+> +#define ACLK_SDGMAC_ROOT		284
+> +#define PCLK_SDGMAC_ROOT		285
+> +#define ACLK_GMAC0			286
+> +#define ACLK_GMAC1			287
+> +#define PCLK_GMAC0			288
+> +#define PCLK_GMAC1			289
+> +#define CCLK_SRC_SDIO			290
+> +#define HCLK_SDIO			291
+> +#define CLK_GMAC1_PTP_REF		292
+> +#define CLK_GMAC0_PTP_REF		293
+> +#define CLK_GMAC1_PTP_REF_SRC		294
+> +#define CLK_GMAC0_PTP_REF_SRC		295
+> +#define CCLK_SRC_SDMMC0			296
+> +#define HCLK_SDMMC0			297
+> +#define SCLK_FSPI1_X2			298
+> +#define HCLK_FSPI1			299
+> +#define ACLK_DSMC_ROOT			300
+> +#define ACLK_DSMC			301
+> +#define PCLK_DSMC			302
+> +#define CLK_DSMC_SYS			303
+> +#define HCLK_HSGPIO			304
+> +#define CLK_HSGPIO_TX			305
+> +#define CLK_HSGPIO_RX			306
+> +#define ACLK_HSGPIO			307
+> +#define PCLK_PHPPHY_ROOT		308
+> +#define PCLK_PCIE2_COMBOPHY0		309
+> +#define PCLK_PCIE2_COMBOPHY1		310
+> +#define CLK_PCIE_100M_SRC		311
+> +#define CLK_PCIE_100M_NDUTY_SRC		312
+> +#define CLK_REF_PCIE0_PHY		313
+> +#define CLK_REF_PCIE1_PHY		314
+> +#define CLK_REF_MPHY_26M		315
+> +#define HCLK_RKVDEC_ROOT		316
+> +#define ACLK_RKVDEC_ROOT		317
+> +#define HCLK_RKVDEC			318
+> +#define CLK_RKVDEC_HEVC_CA		319
+> +#define CLK_RKVDEC_CORE			320
+> +#define ACLK_UFS_ROOT			321
+> +#define ACLK_USB_ROOT			322
+> +#define PCLK_USB_ROOT			323
+> +#define ACLK_USB3OTG0			324
+> +#define CLK_REF_USB3OTG0		325
+> +#define CLK_SUSPEND_USB3OTG0		326
+> +#define ACLK_MMU2			327
+> +#define ACLK_SLV_MMU2			328
+> +#define ACLK_UFS_SYS			329
+> +#define ACLK_VPU_ROOT			330
+> +#define ACLK_VPU_MID_ROOT		331
+> +#define HCLK_VPU_ROOT			332
+> +#define ACLK_JPEG_ROOT			333
+> +#define ACLK_VPU_LOW_ROOT		334
+> +#define HCLK_RGA2E_0			335
+> +#define ACLK_RGA2E_0			336
+> +#define CLK_CORE_RGA2E_0		337
+> +#define ACLK_JPEG			338
+> +#define HCLK_JPEG			339
+> +#define HCLK_VDPP			340
+> +#define ACLK_VDPP			341
+> +#define CLK_CORE_VDPP			342
+> +#define HCLK_RGA2E_1			343
+> +#define ACLK_RGA2E_1			344
+> +#define CLK_CORE_RGA2E_1		345
+> +#define DCLK_EBC_FRAC_SRC		346
+> +#define HCLK_EBC			347
+> +#define ACLK_EBC			348
+> +#define DCLK_EBC			349
+> +#define HCLK_VEPU0_ROOT			350
+> +#define ACLK_VEPU0_ROOT			351
+> +#define HCLK_VEPU0			352
+> +#define ACLK_VEPU0			353
+> +#define CLK_VEPU0_CORE			354
+> +#define ACLK_VI_ROOT			355
+> +#define HCLK_VI_ROOT			356
+> +#define PCLK_VI_ROOT			357
+> +#define DCLK_VICAP			358
+> +#define ACLK_VICAP			359
+> +#define HCLK_VICAP			360
+> +#define CLK_ISP_CORE			361
+> +#define CLK_ISP_CORE_MARVIN		362
+> +#define CLK_ISP_CORE_VICAP		363
+> +#define ACLK_ISP			364
+> +#define HCLK_ISP			365
+> +#define ACLK_VPSS			366
+> +#define HCLK_VPSS			367
+> +#define CLK_CORE_VPSS			368
+> +#define PCLK_CSI_HOST_0			369
+> +#define PCLK_CSI_HOST_1			370
+> +#define PCLK_CSI_HOST_2			371
+> +#define PCLK_CSI_HOST_3			372
+> +#define PCLK_CSI_HOST_4			373
+> +#define ICLK_CSIHOST01			374
+> +#define ICLK_CSIHOST0			375
+> +#define CLK_ISP_PVTPLL_SRC		376
+> +#define ACLK_VI_ROOT_INTER		377
+> +#define CLK_VICAP_I0CLK			378
+> +#define CLK_VICAP_I1CLK			379
+> +#define CLK_VICAP_I2CLK			380
+> +#define CLK_VICAP_I3CLK			381
+> +#define CLK_VICAP_I4CLK			382
+> +#define ACLK_VOP_ROOT			383
+> +#define HCLK_VOP_ROOT			384
+> +#define PCLK_VOP_ROOT			385
+> +#define HCLK_VOP			386
+> +#define ACLK_VOP			387
+> +#define DCLK_VP0_SRC			388
+> +#define DCLK_VP1_SRC			389
+> +#define DCLK_VP2_SRC			390
+> +#define DCLK_VP0			391
+> +#define DCLK_VP1			392
+> +#define DCLK_VP2			393
+> +#define PCLK_VOPGRF			394
+> +#define ACLK_VO0_ROOT			395
+> +#define HCLK_VO0_ROOT			396
+> +#define PCLK_VO0_ROOT			397
+> +#define PCLK_VO0_GRF			398
+> +#define ACLK_HDCP0			399
+> +#define HCLK_HDCP0			400
+> +#define PCLK_HDCP0			401
+> +#define CLK_TRNG0_SKP			402
+> +#define PCLK_DSIHOST0			403
+> +#define CLK_DSIHOST0			404
+> +#define PCLK_HDMITX0			405
+> +#define CLK_HDMITX0_EARC		406
+> +#define CLK_HDMITX0_REF			407
+> +#define PCLK_EDP0			408
+> +#define CLK_EDP0_24M			409
+> +#define CLK_EDP0_200M			410
+> +#define MCLK_SAI5_8CH_SRC		411
+> +#define MCLK_SAI5_8CH			412
+> +#define HCLK_SAI5_8CH			413
+> +#define MCLK_SAI6_8CH_SRC		414
+> +#define MCLK_SAI6_8CH			415
+> +#define HCLK_SAI6_8CH			416
+> +#define HCLK_SPDIF_TX2			417
+> +#define MCLK_SPDIF_TX2			418
+> +#define HCLK_SPDIF_RX2			419
+> +#define MCLK_SPDIF_RX2			420
+> +#define HCLK_SAI8_8CH			421
+> +#define MCLK_SAI8_8CH_SRC		422
+> +#define MCLK_SAI8_8CH			423
+> +#define ACLK_VO1_ROOT			424
+> +#define HCLK_VO1_ROOT			425
+> +#define PCLK_VO1_ROOT			426
+> +#define MCLK_SAI7_8CH_SRC		427
+> +#define MCLK_SAI7_8CH			428
+> +#define HCLK_SAI7_8CH			429
+> +#define HCLK_SPDIF_TX3			430
+> +#define HCLK_SPDIF_TX4			431
+> +#define HCLK_SPDIF_TX5			432
+> +#define MCLK_SPDIF_TX3			433
+> +#define CLK_AUX16MHZ_0			434
+> +#define ACLK_DP0			435
+> +#define PCLK_DP0			436
+> +#define PCLK_VO1_GRF			437
+> +#define ACLK_HDCP1			438
+> +#define HCLK_HDCP1			439
+> +#define PCLK_HDCP1			440
+> +#define CLK_TRNG1_SKP			441
+> +#define HCLK_SAI9_8CH			442
+> +#define MCLK_SAI9_8CH_SRC		443
+> +#define MCLK_SAI9_8CH			444
+> +#define MCLK_SPDIF_TX4			445
+> +#define MCLK_SPDIF_TX5			446
+> +#define CLK_GPU_SRC_PRE			447
+> +#define CLK_GPU				448
+> +#define PCLK_GPU_ROOT			449
+> +#define ACLK_CENTER_ROOT		450
+> +#define ACLK_CENTER_LOW_ROOT		451
+> +#define HCLK_CENTER_ROOT		452
+> +#define PCLK_CENTER_ROOT		453
+> +#define ACLK_DMA2DDR			454
+> +#define ACLK_DDR_SHAREMEM		455
+> +#define PCLK_DMA2DDR			456
+> +#define PCLK_SHAREMEM			457
+> +#define HCLK_VEPU1_ROOT			458
+> +#define ACLK_VEPU1_ROOT			459
+> +#define HCLK_VEPU1			460
+> +#define ACLK_VEPU1			461
+> +#define CLK_VEPU1_CORE			462
+> +#define CLK_JDBCK_DAP			463
+> +#define PCLK_MIPI_DCPHY			464
+> +#define CLK_32K_USB2DEBUG		465
+> +#define PCLK_CSIDPHY			466
+> +#define PCLK_USBDPPHY			467
+> +#define CLK_PMUPHY_REF_SRC		468
+> +#define CLK_USBDP_COMBO_PHY_IMMORTAL	469
+> +#define CLK_HDMITXHPD			470
+> +#define PCLK_MPHY			471
+> +#define CLK_REF_OSC_MPHY		472
+> +#define CLK_REF_UFS_CLKOUT		473
+> +#define HCLK_PMU1_ROOT			474
+> +#define HCLK_PMU_CM0_ROOT		475
+> +#define CLK_200M_PMU_SRC		476
+> +#define CLK_100M_PMU_SRC		477
+> +#define CLK_50M_PMU_SRC			478
+> +#define FCLK_PMU_CM0_CORE		479
+> +#define CLK_PMU_CM0_RTC			480
+> +#define PCLK_PMU1			481
+> +#define CLK_PMU1			482
+> +#define PCLK_PMU1WDT			483
+> +#define TCLK_PMU1WDT			484
+> +#define PCLK_PMUTIMER			485
+> +#define CLK_PMUTIMER_ROOT		486
+> +#define CLK_PMUTIMER0			487
+> +#define CLK_PMUTIMER1			488
+> +#define PCLK_PMU1PWM			489
+> +#define CLK_PMU1PWM			490
+> +#define CLK_PMU1PWM_OSC			491
+> +#define PCLK_PMUPHY_ROOT		492
+> +#define PCLK_I2C0			493
+> +#define CLK_I2C0			494
+> +#define SCLK_UART1			495
+> +#define PCLK_UART1			496
+> +#define CLK_PMU1PWM_RC			497
+> +#define CLK_PDM0			498
+> +#define HCLK_PDM0			499
+> +#define MCLK_PDM0			500
+> +#define HCLK_VAD			501
+> +#define CLK_OSCCHK_PVTM			502
+> +#define CLK_PDM0_OUT			503
+> +#define CLK_HPTIMER_SRC			504
+> +#define PCLK_PMU0_ROOT			505
+> +#define PCLK_PMU0			506
+> +#define PCLK_GPIO0			507
+> +#define DBCLK_GPIO0			508
+> +#define CLK_OSC0_PMU1			509
+> +#define PCLK_PMU1_ROOT			510
+> +#define XIN_OSC0_DIV			511
+> +#define ACLK_USB			512
+> +#define ACLK_UFS			513
+> +#define ACLK_SDGMAC			514
+> +#define HCLK_SDGMAC			515
+> +#define PCLK_SDGMAC			516
+> +#define HCLK_VO1			517
+> +#define HCLK_VO0			518
+> +#define PCLK_CCI_ROOT			519
+> +#define ACLK_CCI_ROOT			520
+> +#define HCLK_VO0VOP_CHANNEL		521
+> +#define ACLK_VO0VOP_CHANNEL		522
+> +#define ACLK_TOP_MID			523
+> +#define ACLK_SECURE_HIGH		524
+> +#define CLK_USBPHY_REF_SRC		525
+> +#define CLK_PHY_REF_SRC			526
+> +#define CLK_CPLL_REF_SRC		527
+> +#define CLK_AUPLL_REF_SRC		528
+> +#define PCLK_SECURE_NS			529
+> +#define HCLK_SECURE_NS			530
+> +#define ACLK_SECURE_NS			531
+> +#define PCLK_OTPC_NS			532
+> +#define HCLK_CRYPTO_NS			533
+> +#define HCLK_TRNG_NS			534
+> +#define CLK_OTPC_NS			535
+> +#define SCLK_DSU			536
+> +#define SCLK_DDR			537
+> +#define ACLK_CRYPTO_NS			538
+> +#define CLK_PKA_CRYPTO_NS		539
+> +#define ACLK_RKVDEC_ROOT_BAK		540
+> +#define CLK_AUDIO_FRAC_0_SRC		541
+> +#define CLK_AUDIO_FRAC_1_SRC		542
+> +#define CLK_AUDIO_FRAC_2_SRC		543
+> +#define CLK_AUDIO_FRAC_3_SRC		544
+> +#define PCLK_HDPTX_APB			545
+> +
+> +/* secure clk */
+> +#define CLK_STIMER0_ROOT		546
+> +#define CLK_STIMER1_ROOT		547
+> +#define PCLK_SECURE_S			548
+> +#define HCLK_SECURE_S			549
+> +#define ACLK_SECURE_S			550
+> +#define CLK_PKA_CRYPTO_S		551
+> +#define HCLK_VO1_S			552
+> +#define PCLK_VO1_S			553
+> +#define HCLK_VO0_S			554
+> +#define PCLK_VO0_S			555
+> +#define PCLK_KLAD			556
+> +#define HCLK_CRYPTO_S			557
+> +#define HCLK_KLAD			558
+> +#define ACLK_CRYPTO_S			559
+> +#define HCLK_TRNG_S			560
+> +#define PCLK_OTPC_S			561
+> +#define CLK_OTPC_S			562
+> +#define PCLK_WDT_S			563
+> +#define TCLK_WDT_S			564
+> +#define PCLK_HDCP0_TRNG			565
+> +#define PCLK_HDCP1_TRNG			566
+> +#define HCLK_HDCP_KEY0			567
+> +#define HCLK_HDCP_KEY1			568
+> +#define PCLK_EDP_S			569
+> +#define ACLK_KLAD			570
+> +
+> +#endif
+> diff --git a/include/dt-bindings/reset/rockchip,rk3576-cru.h b/include/dt=
+-bindings/reset/rockchip,rk3576-cru.h
+> new file mode 100644
+> index 0000000000000..8c968af4888d5
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/rockchip,rk3576-cru.h
+> @@ -0,0 +1,564 @@
+> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> +/*
+> +* Copyright (c) 2023 Rockchip Electronics Co. Ltd.
+> +* Copyright (c) 2024 Collabora Ltd.
+> +*
+> +* Author: Elaine Zhang <zhangqing@rock-chips.com>
+> +* Author: Detlev Casanova <detlev.casanova@collabora.com>
+> +*/
+> +
+> +#ifndef _DT_BINDINGS_RESET_ROCKCHIP_RK3576_H
+> +#define _DT_BINDINGS_RESET_ROCKCHIP_RK3576_H
+> +
+> +#define SRST_A_TOP_BIU			0
+> +#define SRST_P_TOP_BIU			1
+> +#define SRST_A_TOP_MID_BIU		2
+> +#define SRST_A_SECURE_HIGH_BIU		3
+> +#define SRST_H_TOP_BIU			4
+> +
+> +#define SRST_H_VO0VOP_CHANNEL_BIU	5
+> +#define SRST_A_VO0VOP_CHANNEL_BIU	6
+> +
+> +#define SRST_BISRINTF			7
+> +
+> +#define SRST_H_AUDIO_BIU		8
+> +#define SRST_H_ASRC_2CH_0		9
+> +#define SRST_H_ASRC_2CH_1		10
+> +#define SRST_H_ASRC_4CH_0		11
+> +#define SRST_H_ASRC_4CH_1		12
+> +#define SRST_ASRC_2CH_0			13
+> +#define SRST_ASRC_2CH_1			14
+> +#define SRST_ASRC_4CH_0			15
+> +#define SRST_ASRC_4CH_1			16
+> +#define SRST_M_SAI0_8CH			17
+> +#define SRST_H_SAI0_8CH			18
+> +#define SRST_H_SPDIF_RX0		19
+> +#define SRST_M_SPDIF_RX0		20
+> +
+> +#define SRST_H_SPDIF_RX1		21
+> +#define SRST_M_SPDIF_RX1		22
+> +#define SRST_M_SAI1_8CH			23
+> +#define SRST_H_SAI1_8CH			24
+> +#define SRST_M_SAI2_2CH			25
+> +#define SRST_H_SAI2_2CH			26
+> +#define SRST_M_SAI3_2CH			27
+> +#define SRST_H_SAI3_2CH			28
+> +
+> +#define SRST_M_SAI4_2CH			29
+> +#define SRST_H_SAI4_2CH			30
+> +#define SRST_H_ACDCDIG_DSM		31
+> +#define SRST_M_ACDCDIG_DSM		32
+> +#define SRST_PDM1			33
+> +#define SRST_H_PDM1			34
+> +#define SRST_M_PDM1			35
+> +#define SRST_H_SPDIF_TX0		36
+> +#define SRST_M_SPDIF_TX0		37
+> +#define SRST_H_SPDIF_TX1		38
+> +#define SRST_M_SPDIF_TX1		39
+> +
+> +#define SRST_A_BUS_BIU			40
+> +#define SRST_P_BUS_BIU			41
+> +#define SRST_P_CRU			42
+> +#define SRST_H_CAN0			43
+> +#define SRST_CAN0			44
+> +#define SRST_H_CAN1			45
+> +#define SRST_CAN1			46
+> +#define SRST_P_INTMUX2BUS		47
+> +#define SRST_P_VCCIO_IOC		48
+> +#define SRST_H_BUS_BIU			49
+> +#define SRST_KEY_SHIFT			50
+> +
+> +#define SRST_P_I2C1			51
+> +#define SRST_P_I2C2			52
+> +#define SRST_P_I2C3			53
+> +#define SRST_P_I2C4			54
+> +#define SRST_P_I2C5			55
+> +#define SRST_P_I2C6			56
+> +#define SRST_P_I2C7			57
+> +#define SRST_P_I2C8			58
+> +#define SRST_P_I2C9			59
+> +#define SRST_P_WDT_BUSMCU		60
+> +#define SRST_T_WDT_BUSMCU		61
+> +#define SRST_A_GIC			62
+> +#define SRST_I2C1			63
+> +#define SRST_I2C2			64
+> +#define SRST_I2C3			65
+> +#define SRST_I2C4			66
+> +
+> +#define SRST_I2C5			67
+> +#define SRST_I2C6			68
+> +#define SRST_I2C7			69
+> +#define SRST_I2C8			70
+> +#define SRST_I2C9			71
+> +#define SRST_P_SARADC			72
+> +#define SRST_SARADC			73
+> +#define SRST_P_TSADC			74
+> +#define SRST_TSADC			75
+> +#define SRST_P_UART0			76
+> +#define SRST_P_UART2			77
+> +#define SRST_P_UART3			78
+> +#define SRST_P_UART4			79
+> +#define SRST_P_UART5			80
+> +#define SRST_P_UART6			81
+> +
+> +#define SRST_P_UART7			82
+> +#define SRST_P_UART8			83
+> +#define SRST_P_UART9			84
+> +#define SRST_P_UART10			85
+> +#define SRST_P_UART11			86
+> +#define SRST_S_UART0			87
+> +#define SRST_S_UART2			88
+> +#define SRST_S_UART3			89
+> +#define SRST_S_UART4			90
+> +#define SRST_S_UART5			91
+> +
+> +#define SRST_S_UART6			92
+> +#define SRST_S_UART7			93
+> +#define SRST_S_UART8			94
+> +#define SRST_S_UART9			95
+> +#define SRST_S_UART10			96
+> +#define SRST_S_UART11			97
+> +#define SRST_P_SPI0			98
+> +#define SRST_P_SPI1			99
+> +#define SRST_P_SPI2			100
+> +
+> +#define SRST_P_SPI3			101
+> +#define SRST_P_SPI4			102
+> +#define SRST_SPI0			103
+> +#define SRST_SPI1			104
+> +#define SRST_SPI2			105
+> +#define SRST_SPI3			106
+> +#define SRST_SPI4			107
+> +#define SRST_P_WDT0			108
+> +#define SRST_T_WDT0			109
+> +#define SRST_P_SYS_GRF			110
+> +#define SRST_P_PWM1			111
+> +#define SRST_PWM1			112
+> +
+> +#define SRST_P_BUSTIMER0		113
+> +#define SRST_P_BUSTIMER1		114
+> +#define SRST_TIMER0			115
+> +#define SRST_TIMER1			116
+> +#define SRST_TIMER2			117
+> +#define SRST_TIMER3			118
+> +#define SRST_TIMER4			119
+> +#define SRST_TIMER5			120
+> +#define SRST_P_BUSIOC			121
+> +#define SRST_P_MAILBOX0			122
+> +#define SRST_P_GPIO1			123
+> +
+> +#define SRST_GPIO1			124
+> +#define SRST_P_GPIO2			125
+> +#define SRST_GPIO2			126
+> +#define SRST_P_GPIO3			127
+> +#define SRST_GPIO3			128
+> +#define SRST_P_GPIO4			129
+> +#define SRST_GPIO4			130
+> +#define SRST_A_DECOM			131
+> +#define SRST_P_DECOM			132
+> +#define SRST_D_DECOM			133
+> +#define SRST_TIMER6			134
+> +#define SRST_TIMER7			135
+> +#define SRST_TIMER8			136
+> +#define SRST_TIMER9			137
+> +#define SRST_TIMER10			138
+> +
+> +#define SRST_TIMER11			139
+> +#define SRST_A_DMAC0			140
+> +#define SRST_A_DMAC1			141
+> +#define SRST_A_DMAC2			142
+> +#define SRST_A_SPINLOCK			143
+> +#define SRST_REF_PVTPLL_BUS		144
+> +#define SRST_H_I3C0			145
+> +#define SRST_H_I3C1			146
+> +#define SRST_H_BUS_CM0_BIU		147
+> +#define SRST_F_BUS_CM0_CORE		148
+> +#define SRST_T_BUS_CM0_JTAG		149
+> +
+> +#define SRST_P_INTMUX2PMU		150
+> +#define SRST_P_INTMUX2DDR		151
+> +#define SRST_P_PVTPLL_BUS		152
+> +#define SRST_P_PWM2			153
+> +#define SRST_PWM2			154
+> +#define SRST_FREQ_PWM1			155
+> +#define SRST_COUNTER_PWM1		156
+> +#define SRST_I3C0			157
+> +#define SRST_I3C1			158
+> +
+> +#define SRST_P_DDR_MON_CH0		159
+> +#define SRST_P_DDR_BIU			160
+> +#define SRST_P_DDR_UPCTL_CH0		161
+> +#define SRST_TM_DDR_MON_CH0		162
+> +#define SRST_A_DDR_BIU			163
+> +#define SRST_DFI_CH0			164
+> +#define SRST_DDR_MON_CH0		165
+> +#define SRST_P_DDR_HWLP_CH0		166
+> +#define SRST_P_DDR_MON_CH1		167
+> +#define SRST_P_DDR_HWLP_CH1		168
+> +
+> +#define SRST_P_DDR_UPCTL_CH1		169
+> +#define SRST_TM_DDR_MON_CH1		170
+> +#define SRST_DFI_CH1			171
+> +#define SRST_A_DDR01_MSCH0		172
+> +#define SRST_A_DDR01_MSCH1		173
+> +#define SRST_DDR_MON_CH1		174
+> +#define SRST_DDR_SCRAMBLE_CH0		175
+> +#define SRST_DDR_SCRAMBLE_CH1		176
+> +#define SRST_P_AHB2APB			177
+> +#define SRST_H_AHB2APB			178
+> +#define SRST_H_DDR_BIU			179
+> +#define SRST_F_DDR_CM0_CORE		180
+> +
+> +#define SRST_P_DDR01_MSCH0		181
+> +#define SRST_P_DDR01_MSCH1		182
+> +#define SRST_DDR_TIMER0			183
+> +#define SRST_DDR_TIMER1			184
+> +#define SRST_T_WDT_DDR			185
+> +#define SRST_P_WDT			186
+> +#define SRST_P_TIMER			187
+> +#define SRST_T_DDR_CM0_JTAG		188
+> +#define SRST_P_DDR_GRF			189
+> +
+> +#define SRST_DDR_UPCTL_CH0		190
+> +#define SRST_A_DDR_UPCTL_0_CH0		191
+> +#define SRST_A_DDR_UPCTL_1_CH0		192
+> +#define SRST_A_DDR_UPCTL_2_CH0		193
+> +#define SRST_A_DDR_UPCTL_3_CH0		194
+> +#define SRST_A_DDR_UPCTL_4_CH0		195
+> +
+> +#define SRST_DDR_UPCTL_CH1		196
+> +#define SRST_A_DDR_UPCTL_0_CH1		197
+> +#define SRST_A_DDR_UPCTL_1_CH1		198
+> +#define SRST_A_DDR_UPCTL_2_CH1		199
+> +#define SRST_A_DDR_UPCTL_3_CH1		200
+> +#define SRST_A_DDR_UPCTL_4_CH1		201
+> +
+> +#define SRST_REF_PVTPLL_DDR		202
+> +#define SRST_P_PVTPLL_DDR		203
+> +
+> +#define SRST_A_RKNN0			204
+> +#define SRST_A_RKNN0_BIU		205
+> +#define SRST_L_RKNN0_BIU		206
+> +
+> +#define SRST_A_RKNN1			207
+> +#define SRST_A_RKNN1_BIU		208
+> +#define SRST_L_RKNN1_BIU		209
+> +
+> +#define SRST_NPU_DAP			210
+> +#define SRST_L_NPUSUBSYS_BIU		211
+> +#define SRST_P_NPUTOP_BIU		212
+> +#define SRST_P_NPU_TIMER		213
+> +#define SRST_NPUTIMER0			214
+> +#define SRST_NPUTIMER1			215
+> +#define SRST_P_NPU_WDT			216
+> +#define SRST_T_NPU_WDT			217
+> +
+> +#define SRST_A_RKNN_CBUF		218
+> +#define SRST_A_RVCORE0			219
+> +#define SRST_P_NPU_GRF			220
+> +#define SRST_P_PVTPLL_NPU		221
+> +#define SRST_NPU_PVTPLL			222
+> +#define SRST_H_NPU_CM0_BIU		223
+> +#define SRST_F_NPU_CM0_CORE		224
+> +#define SRST_T_NPU_CM0_JTAG		225
+> +#define SRST_A_RKNNTOP_BIU		226
+> +#define SRST_H_RKNN_CBUF		227
+> +#define SRST_H_RKNNTOP_BIU		228
+> +
+> +#define SRST_H_NVM_BIU			229
+> +#define SRST_A_NVM_BIU			230
+> +#define SRST_S_FSPI			231
+> +#define SRST_H_FSPI			232
+> +#define SRST_C_EMMC			233
+> +#define SRST_H_EMMC			234
+> +#define SRST_A_EMMC			235
+> +#define SRST_B_EMMC			236
+> +#define SRST_T_EMMC			237
+> +
+> +#define SRST_P_GRF			238
+> +#define SRST_P_PHP_BIU			239
+> +#define SRST_A_PHP_BIU			240
+> +#define SRST_P_PCIE0			241
+> +#define SRST_PCIE0_POWER_UP		242
+> +
+> +#define SRST_A_USB3OTG1			243
+> +#define SRST_A_MMU0			244
+> +#define SRST_A_SLV_MMU0			245
+> +#define SRST_A_MMU1			246
+> +
+> +#define SRST_A_SLV_MMU1			247
+> +#define SRST_P_PCIE1			248
+> +#define SRST_PCIE1_POWER_UP		249
+> +
+> +#define SRST_RXOOB0			250
+> +#define SRST_RXOOB1			251
+> +#define SRST_PMALIVE0			252
+> +#define SRST_PMALIVE1			253
+> +#define SRST_A_SATA0			254
+> +#define SRST_A_SATA1			255
+> +#define SRST_ASIC1			256
+> +#define SRST_ASIC0			257
+> +
+> +#define SRST_P_CSIDPHY1			258
+> +#define SRST_SCAN_CSIDPHY1		259
+> +
+> +#define SRST_P_SDGMAC_GRF		260
+> +#define SRST_P_SDGMAC_BIU		261
+> +#define SRST_A_SDGMAC_BIU		262
+> +#define SRST_H_SDGMAC_BIU		263
+> +#define SRST_A_GMAC0			264
+> +#define SRST_A_GMAC1			265
+> +#define SRST_P_GMAC0			266
+> +#define SRST_P_GMAC1			267
+> +#define SRST_H_SDIO			268
+> +
+> +#define SRST_H_SDMMC0			269
+> +#define SRST_S_FSPI1			270
+> +#define SRST_H_FSPI1			271
+> +#define SRST_A_DSMC_BIU			272
+> +#define SRST_A_DSMC			273
+> +#define SRST_P_DSMC			274
+> +#define SRST_H_HSGPIO			275
+> +#define SRST_HSGPIO			276
+> +#define SRST_A_HSGPIO			277
+> +
+> +#define SRST_H_RKVDEC			278
+> +#define SRST_H_RKVDEC_BIU		279
+> +#define SRST_A_RKVDEC_BIU		280
+> +#define SRST_RKVDEC_HEVC_CA		281
+> +#define SRST_RKVDEC_CORE		282
+> +
+> +#define SRST_A_USB_BIU			283
+> +#define SRST_P_USBUFS_BIU		284
+> +#define SRST_A_USB3OTG0			285
+> +#define SRST_A_UFS_BIU			286
+> +#define SRST_A_MMU2			287
+> +#define SRST_A_SLV_MMU2			288
+> +#define SRST_A_UFS_SYS			289
+> +
+> +#define SRST_A_UFS			290
+> +#define SRST_P_USBUFS_GRF		291
+> +#define SRST_P_UFS_GRF			292
+> +
+> +#define SRST_H_VPU_BIU			293
+> +#define SRST_A_JPEG_BIU			294
+> +#define SRST_A_RGA_BIU			295
+> +#define SRST_A_VDPP_BIU			296
+> +#define SRST_A_EBC_BIU			297
+> +#define SRST_H_RGA2E_0			298
+> +#define SRST_A_RGA2E_0			299
+> +#define SRST_CORE_RGA2E_0		300
+> +
+> +#define SRST_A_JPEG			301
+> +#define SRST_H_JPEG			302
+> +#define SRST_H_VDPP			303
+> +#define SRST_A_VDPP			304
+> +#define SRST_CORE_VDPP			305
+> +#define SRST_H_RGA2E_1			306
+> +#define SRST_A_RGA2E_1			307
+> +#define SRST_CORE_RGA2E_1		308
+> +#define SRST_H_EBC			309
+> +#define SRST_A_EBC			310
+> +#define SRST_D_EBC			311
+> +
+> +#define SRST_H_VEPU0_BIU		312
+> +#define SRST_A_VEPU0_BIU		313
+> +#define SRST_H_VEPU0			314
+> +#define SRST_A_VEPU0			315
+> +#define SRST_VEPU0_CORE			316
+> +
+> +#define SRST_A_VI_BIU			317
+> +#define SRST_H_VI_BIU			318
+> +#define SRST_P_VI_BIU			319
+> +#define SRST_D_VICAP			320
+> +#define SRST_A_VICAP			321
+> +#define SRST_H_VICAP			322
+> +#define SRST_ISP0			323
+> +#define SRST_ISP0_VICAP			324
+> +
+> +#define SRST_CORE_VPSS			325
+> +#define SRST_P_CSI_HOST_0		326
+> +#define SRST_P_CSI_HOST_1		327
+> +#define SRST_P_CSI_HOST_2		328
+> +#define SRST_P_CSI_HOST_3		329
+> +#define SRST_P_CSI_HOST_4		330
+> +
+> +#define SRST_CIFIN			331
+> +#define SRST_VICAP_I0CLK		332
+> +#define SRST_VICAP_I1CLK		333
+> +#define SRST_VICAP_I2CLK		334
+> +#define SRST_VICAP_I3CLK		335
+> +#define SRST_VICAP_I4CLK		336
+> +
+> +#define SRST_A_VOP_BIU			337
+> +#define SRST_A_VOP2_BIU			338
+> +#define SRST_H_VOP_BIU			339
+> +#define SRST_P_VOP_BIU			340
+> +#define SRST_H_VOP			341
+> +#define SRST_A_VOP			342
+> +#define SRST_D_VP0			343
+> +
+> +#define SRST_D_VP1			344
+> +#define SRST_D_VP2			345
+> +#define SRST_P_VOP2_BIU			346
+> +#define SRST_P_VOPGRF			347
+> +
+> +#define SRST_H_VO0_BIU			348
+> +#define SRST_P_VO0_BIU			349
+> +#define SRST_A_HDCP0_BIU		350
+> +#define SRST_P_VO0_GRF			351
+> +#define SRST_A_HDCP0			352
+> +#define SRST_H_HDCP0			353
+> +#define SRST_HDCP0			354
+> +
+> +#define SRST_P_DSIHOST0			355
+> +#define SRST_DSIHOST0			356
+> +#define SRST_P_HDMITX0			357
+> +#define SRST_HDMITX0_REF		358
+> +#define SRST_P_EDP0			359
+> +#define SRST_EDP0_24M			360
+> +
+> +#define SRST_M_SAI5_8CH			361
+> +#define SRST_H_SAI5_8CH			362
+> +#define SRST_M_SAI6_8CH			363
+> +#define SRST_H_SAI6_8CH			364
+> +#define SRST_H_SPDIF_TX2		365
+> +#define SRST_M_SPDIF_TX2		366
+> +#define SRST_H_SPDIF_RX2		367
+> +#define SRST_M_SPDIF_RX2		368
+> +
+> +#define SRST_H_SAI8_8CH			369
+> +#define SRST_M_SAI8_8CH			370
+> +
+> +#define SRST_H_VO1_BIU			371
+> +#define SRST_P_VO1_BIU			372
+> +#define SRST_M_SAI7_8CH			373
+> +#define SRST_H_SAI7_8CH			374
+> +#define SRST_H_SPDIF_TX3		375
+> +#define SRST_H_SPDIF_TX4		376
+> +#define SRST_H_SPDIF_TX5		377
+> +#define SRST_M_SPDIF_TX3		378
+> +
+> +#define SRST_DP0			379
+> +#define SRST_P_VO1_GRF			380
+> +#define SRST_A_HDCP1_BIU		381
+> +#define SRST_A_HDCP1			382
+> +#define SRST_H_HDCP1			383
+> +#define SRST_HDCP1			384
+> +#define SRST_H_SAI9_8CH			385
+> +#define SRST_M_SAI9_8CH			386
+> +#define SRST_M_SPDIF_TX4		387
+> +#define SRST_M_SPDIF_TX5		388
+> +
+> +#define SRST_GPU			389
+> +#define SRST_A_S_GPU_BIU		390
+> +#define SRST_A_M0_GPU_BIU		391
+> +#define SRST_P_GPU_BIU			392
+> +#define SRST_P_GPU_GRF			393
+> +#define SRST_GPU_PVTPLL			394
+> +#define SRST_P_PVTPLL_GPU		395
+> +
+> +#define SRST_A_CENTER_BIU		396
+> +#define SRST_A_DMA2DDR			397
+> +#define SRST_A_DDR_SHAREMEM		398
+> +#define SRST_A_DDR_SHAREMEM_BIU		399
+> +#define SRST_H_CENTER_BIU		400
+> +#define SRST_P_CENTER_GRF		401
+> +#define SRST_P_DMA2DDR			402
+> +#define SRST_P_SHAREMEM			403
+> +#define SRST_P_CENTER_BIU		404
+> +
+> +#define SRST_LINKSYM_HDMITXPHY0		405
+> +
+> +#define SRST_DP0_PIXELCLK		406
+> +#define SRST_PHY_DP0_TX			407
+> +#define SRST_DP1_PIXELCLK		408
+> +#define SRST_DP2_PIXELCLK		409
+> +
+> +#define SRST_H_VEPU1_BIU		410
+> +#define SRST_A_VEPU1_BIU		411
+> +#define SRST_H_VEPU1			412
+> +#define SRST_A_VEPU1			413
+> +#define SRST_VEPU1_CORE			414
+> +
+> +#define SRST_P_PHPPHY_CRU		415
+> +#define SRST_P_APB2ASB_SLV_CHIP_TOP	416
+> +#define SRST_P_PCIE2_COMBOPHY0		417
+> +#define SRST_P_PCIE2_COMBOPHY0_GRF	418
+> +#define SRST_P_PCIE2_COMBOPHY1		419
+> +#define SRST_P_PCIE2_COMBOPHY1_GRF	420
+> +
+> +#define SRST_PCIE0_PIPE_PHY		421
+> +#define SRST_PCIE1_PIPE_PHY		422
+> +
+> +#define SRST_H_CRYPTO_NS		423
+> +#define SRST_H_TRNG_NS			424
+> +#define SRST_P_OTPC_NS			425
+> +#define SRST_OTPC_NS			426
+> +
+> +#define SRST_P_HDPTX_GRF		427
+> +#define SRST_P_HDPTX_APB		428
+> +#define SRST_P_MIPI_DCPHY		429
+> +#define SRST_P_DCPHY_GRF		430
+> +#define SRST_P_BOT0_APB2ASB		431
+> +#define SRST_P_BOT1_APB2ASB		432
+> +#define SRST_USB2DEBUG			433
+> +#define SRST_P_CSIPHY_GRF		434
+> +#define SRST_P_CSIPHY			435
+> +#define SRST_P_USBPHY_GRF_0		436
+> +#define SRST_P_USBPHY_GRF_1		437
+> +#define SRST_P_USBDP_GRF		438
+> +#define SRST_P_USBDPPHY			439
+> +#define SRST_USBDP_COMBO_PHY_INIT	440
+> +
+> +#define SRST_USBDP_COMBO_PHY_CMN	441
+> +#define SRST_USBDP_COMBO_PHY_LANE	442
+> +#define SRST_USBDP_COMBO_PHY_PCS	443
+> +#define SRST_M_MIPI_DCPHY		444
+> +#define SRST_S_MIPI_DCPHY		445
+> +#define SRST_SCAN_CSIPHY		446
+> +#define SRST_P_VCCIO6_IOC		447
+> +#define SRST_OTGPHY_0			448
+> +#define SRST_OTGPHY_1			449
+> +#define SRST_HDPTX_INIT			450
+> +#define SRST_HDPTX_CMN			451
+> +#define SRST_HDPTX_LANE			452
+> +#define SRST_HDMITXHPD			453
+> +
+> +#define SRST_MPHY_INIT			454
+> +#define SRST_P_MPHY_GRF			455
+> +#define SRST_P_VCCIO7_IOC		456
+> +
+> +#define SRST_H_PMU1_BIU			457
+> +#define SRST_P_PMU1_NIU			458
+> +#define SRST_H_PMU_CM0_BIU		459
+> +#define SRST_PMU_CM0_CORE		460
+> +#define SRST_PMU_CM0_JTAG		461
+> +
+> +#define SRST_P_CRU_PMU1			462
+> +#define SRST_P_PMU1_GRF			463
+> +#define SRST_P_PMU1_IOC			464
+> +#define SRST_P_PMU1WDT			465
+> +#define SRST_T_PMU1WDT			466
+> +#define SRST_P_PMUTIMER			467
+> +#define SRST_PMUTIMER0			468
+> +#define SRST_PMUTIMER1			469
+> +#define SRST_P_PMU1PWM			470
+> +#define SRST_PMU1PWM			471
+> +
+> +#define SRST_P_I2C0			472
+> +#define SRST_I2C0			473
+> +#define SRST_S_UART1			474
+> +#define SRST_P_UART1			475
+> +#define SRST_PDM0			476
+> +#define SRST_H_PDM0			477
+> +
+> +#define SRST_M_PDM0			478
+> +#define SRST_H_VAD			479
+> +
+> +#define SRST_P_PMU0GRF			480
+> +#define SRST_P_PMU0IOC			481
+> +#define SRST_P_GPIO0			482
+> +#define SRST_DB_GPIO0			483
+> +
+> +#endif
+> --=20
+> 2.46.0
+>=20
 
-On Sapphire Rapids I see well over twice the throughput for the 8-byte vari=
-ant:
+--VIQYeD6dApYMRM+e
+Content-Type: application/pgp-signature; name="signature.asc"
 
-# ./cmpxchg8_processes
-warmup
-min:481465497 max:481465497 total:481465497
-min:464439645 max:464439645 total:464439645
-min:461884735 max:461884735 total:461884735
-min:460850043 max:460850043 total:460850043
-min:461066452 max:461066452 total:461066452
-min:463984473 max:463984473 total:463984473
-measurement
-min:461317703 max:461317703 total:461317703
-min:458608942 max:458608942 total:458608942
-min:460846336 max:460846336 total:460846336
-[snip]
+-----BEGIN PGP SIGNATURE-----
 
-# ./cmpxchg16b_processes
-warmup
-min:205207128 max:205207128 total:205207128
-min:205010535 max:205010535 total:205010535
-min:204877781 max:204877781 total:204877781
-min:204163814 max:204163814 total:204163814
-min:204392000 max:204392000 total:204392000
-min:204094222 max:204094222 total:204094222
-measurement
-min:204243282 max:204243282 total:204243282
-min:204136589 max:204136589 total:204136589
-min:203504119 max:203504119 total:203504119
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr4ZwgAKCRB4tDGHoIJi
+0vyKAQC95qqlvsnFzrIQIzfC6Mj4r7ft8/GtpIm1p4KPx8KuRAEAlWqTERzeh0qk
+B6zVpZFQIq4gMqMTAHHxm2uFKDHQ4wA=
+=bv+o
+-----END PGP SIGNATURE-----
 
-So I would say trying it out in a real alloc is worth looking at.
-
-Of course the 16-byte variant is not used just for kicks, so going to
-8 bytes is more involved than just replacing the instruction.
-
-The current code follows the standard idea on how to deal with the ABA
-problem -- apart from replacing a pointer you validate this is what
-you thought by checking the counter in the same instruction.
-
-I note that in the kernel we can do better, but I don't have have all
-kinks worked out yet. The core idea builds on the fact that we can
-cheaply detect a pending alloc on the same cpu and should a
-conflicting free be executing from an interrupt, it can instead add
-the returning buffer to a different list and the aba problem
-disappears. Should the alloc fast path fail to find a free buffer, it
-can disable interrupts an take a look at the fallback list.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+--VIQYeD6dApYMRM+e--
 
