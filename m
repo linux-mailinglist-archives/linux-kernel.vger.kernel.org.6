@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-288028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24CD953140
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B251A95314D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 410DEB20C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61818289FF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BACB18D630;
-	Thu, 15 Aug 2024 13:51:54 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB66A1A00E2;
+	Thu, 15 Aug 2024 13:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfpdB1Cb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0361494C5;
-	Thu, 15 Aug 2024 13:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF9319AA53;
+	Thu, 15 Aug 2024 13:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723729913; cv=none; b=lUbBEBe4Am4R8YZYLpC2wgG7Ip5MJmQ/fQ5ynduJev5pJ2t+fDiqnWClGd/EvVhZx3e7mgcMjCEEZbfmdQXzCeVmmRF43QLpc8SAcdk3WFm+smXMTNzMqY6h/+n840u42LJ8jWiXfBsh6T0wGXFtIVzkzQzP+dbBKoUTwjgwNfQ=
+	t=1723729948; cv=none; b=RXZ7ZApPJu+zFcewvoxfQxKZ/mzugEMq4dXGz3uE/OTRsmr0kjaplGgfm5kUrJIt6ATvQlJ/mqpJ9z76r6apKFX4d7sv1Z4356oXJKREqq3pZnFD92uGczQ0/aIN295poT9cb7DdlCJk5fu5H7+cHGopzv5+5rmUklI8V/CuqOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723729913; c=relaxed/simple;
-	bh=nFgQxnPUbSSy7jytrvmUlsKG60yuqwDcrmHRHV47t4g=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bXBmGwKDRpbux+wDZz+Bm95qFEzEm+PdGydJ5FoOzRt64oPrI0kE+LAHmFUJrPQn62koBPSzLcPXBM9+Q5wZK7+Tg0f4nUExQ1/RolXS5PpMY47JmUFh7ePUwDHG6IE0mZKL0/16voXyCx2IcrthozlMnDyUfxZ0s/GJbI5FYA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wl63S5tbsz1T7Pv;
-	Thu, 15 Aug 2024 21:51:16 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D1C71800A1;
-	Thu, 15 Aug 2024 21:51:48 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 15 Aug 2024 21:51:47 +0800
-CC: Shuai Xue <xueshuai@linux.alibaba.com>, Jing Zhang
-	<renyu.zj@linux.alibaba.com>, Will Deacon <will@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Yicong
- Yang <yangyicong@hisilicon.com>, Jonathan Cameron
-	<Jonathan.Cameron@huawei.com>, Jonathan Corbet <corbet@lwn.net>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<quic_vbadigan@quicinc.com>, <quic_nitegupt@quicinc.com>,
-	<quic_skananth@quicinc.com>, <quic_ramkri@quicinc.com>,
-	<quic_parass@quicinc.com>, <quic_mrana@quicinc.com>
-Subject: Re: [PATCH 4/4] perf/dwc_pcie: Add support for QCOM vendor devices
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-References: <20240731-dwc_pmu_fix-v1-0-ca47d153e5b2@quicinc.com>
- <20240731-dwc_pmu_fix-v1-4-ca47d153e5b2@quicinc.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <0d285b10-f77d-71d0-2ff1-79e400976af8@huawei.com>
-Date: Thu, 15 Aug 2024 21:51:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1723729948; c=relaxed/simple;
+	bh=XuBfDATDcvAiZT5CdLIKzlIJ8W1fzMosWfJyMuCN/pI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NFdnx9SfOcf2+02uj+2m2A1E5XNYFNwKikrdBQ2WOsz9IpuuJA+kpo/IUVfYdGfGIQzYZvld3gV2wvw5CLVQYSPCGYGj/vcr4HtkvW+QVFpQDw8+rmVa1zQvoJfMNPUjuW5WDa0fxW2R1t/WZN9Q5QNubWhl98ePxoJ5nJWzzyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfpdB1Cb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EEFC4AF0C;
+	Thu, 15 Aug 2024 13:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723729947;
+	bh=XuBfDATDcvAiZT5CdLIKzlIJ8W1fzMosWfJyMuCN/pI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ZfpdB1Cbz1GsLjrkkdZ2F/nRymjc9Q6cRXrso00Y5VwxvnPM3Bqu6B6wan7OcdTXX
+	 rVCogQGcY6OMGqbYalK9A2lFQ5cb4xMRKjljFOcuu8P5rcIAYYhCk5PpvvAwGoD6Y0
+	 7T1qq8LKF53Mb0ju+nQcWeV+OxiZIgnNxUkmsFg0BrIiDYkVUibf7Zrn5JwXX4V/uF
+	 4VCHsyo5+18tDGESHTXgwNU/6F3u5o+dSi3Fo8xVr7PQ/RhWnDpomYYUg3Dz2A/M8A
+	 fgR4PUBsPHHURaA4rRDv/DoVIHdYA3bAxY6kx7TrjPyJb/Q9iUR6/EugfUidTXsNYX
+	 IlNtycBWIVODg==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ "yr.yang" <yr.yang@mediatek.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+In-Reply-To: <20240801084326.1472-1-yr.yang@mediatek.com>
+References: <20240801084326.1472-1-yr.yang@mediatek.com>
+Subject: Re: [PATCH v2] ASoC: mediatek: mt8188: Mark AFE_DAC_CON0 register
+ as volatile
+Message-Id: <172372994551.42484.5241249306313134145.b4-ty@kernel.org>
+Date: Thu, 15 Aug 2024 14:52:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240731-dwc_pmu_fix-v1-4-ca47d153e5b2@quicinc.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+X-Mailer: b4 0.15-dev-37811
 
-On 2024/7/31 12:23, Krishna chaitanya chundru wrote:
-> Update the vendor table with QCOM PCIe vendorid.
+On Thu, 01 Aug 2024 16:43:26 +0800, yr.yang wrote:
+> Add AFE Control Register 0 to the volatile_register.
+> AFE_DAC_CON0 can be modified by both the SOF and ALSA drivers.
+> If this register is read and written in cache mode, the cached value
+> might not reflect the actual value when the register is modified by
+> another driver. It can cause playback or capture failures. Therefore,
+> it is necessary to add AFE_DAC_CON0 to the list of volatile registers.
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> [...]
 
-Reviewed-by: Yicong Yang <yangyicong@hisilicon.com>
+Applied to
 
-> ---
->  drivers/perf/dwc_pcie_pmu.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
-> index aa1010b44bcb..ea73ae5c45c5 100644
-> --- a/drivers/perf/dwc_pcie_pmu.c
-> +++ b/drivers/perf/dwc_pcie_pmu.c
-> @@ -107,6 +107,7 @@ struct dwc_pcie_vendor_id {
->  
->  static const struct dwc_pcie_vendor_id dwc_pcie_vendor_ids[] = {
->  	{.vendor_id = PCI_VENDOR_ID_ALIBABA },
-> +	{.vendor_id = PCI_VENDOR_ID_QCOM },
->  	{} /* terminator */
->  };
->  
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: mediatek: mt8188: Mark AFE_DAC_CON0 register as volatile
+      commit: ff9f065318e17a1a97981d9e535fcfc6ce5d5614
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
