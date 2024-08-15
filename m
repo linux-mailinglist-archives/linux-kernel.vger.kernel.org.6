@@ -1,131 +1,197 @@
-Return-Path: <linux-kernel+bounces-287734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B046952C07
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:26:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541C4952C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087391F2477C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:26:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9D72852E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE54D1C0DF8;
-	Thu, 15 Aug 2024 09:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59211BF333;
+	Thu, 15 Aug 2024 09:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3AhsnWQx"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PQqMK1mr"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A181C0DD7
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B7C1BF326
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723713647; cv=none; b=hbDt5+h3tcTgdWO2nUCPdySQtNRZLHeKSak4+GTdoXV4Ak5NPmYSMZlyYC9Zi4Ohc9D9vniCpWozmLdjjHez//oNTaqJYX6f3rk7b2210OD2TB4GxhaXUZvARI2alc/25LGnaXMwt5oV8fEM2728HY7qhTh4G2Zy6hbzpWRzjMk=
+	t=1723713643; cv=none; b=HRkQ2hWKgi3XK6TkammxgdmwmZigIW+Junjn/ChGgmW/CKODhZYVArMHdL82zZydjKohi3dBcpQkHuPKK1aej0lEbI87d1hVHv/9yfv0EIBg6zVw1+57jx8uIGNO+zoI29pRd6GovkbMZbqX93iz2cqDsZ/pHQSbVcLfI9EO9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723713647; c=relaxed/simple;
-	bh=2V+ccwDmx8bCw7FigTZcAqa0RATuPqPVxRdszXcI/Go=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GOFwECAk/Cid2wHtfq0dNTpmPN3ys0vfsRdm+e90Xv+1+KSqe0XO+Bsq452S0IK/pU7/gd+CF9HUPHAjzsIGebPA2Ji1VhoYxrLWCJLsHIb00wDfDKKWkqpRCC567MuuxPoGnQMGJRWF+XO4mBsO9x+XMmiGeW57ndVp9Z5yCNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3AhsnWQx; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4281c164408so4217215e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:20:45 -0700 (PDT)
+	s=arc-20240116; t=1723713643; c=relaxed/simple;
+	bh=Wpgw8IAzF7moxyWZ4DLwitTyfGNFshS+sDvJ99wrmk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DZLbw1lDnjyZsowhAZ5BAk2Bh3T3TzxXG5ixpTUWNBLx3JnlL1J1873c9tkLMZc25fhQ6Nq2hEU57HQAf3Goe2l5WpDDWShyxGcI1JANozyNhsycmdnkL3VN5csL5lmI1y1CRItFTje7wqfV1F/ekYDfpcXMI6PL5xQ1gDKC8eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PQqMK1mr; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a9e25008aso107631666b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723713644; x=1724318444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=80zm8jzgImQ04ZpZHXIv+bJT/2HKQyCzED5vbg8c5F4=;
-        b=3AhsnWQxUjbNIK1m03YHYyOgTFJ/YtRuFKq2G1YYJW6UtadLvG2sp4spFInvSJZx1x
-         yLwHUUhMjtk3gk3jFplkzTiSlYajcdEetVZGCNqV+MSDr5kYI1DT63P/m5oSJks3PIYK
-         dBo/U/GhG6YtWWvnQbqVOljUudmS50Jgm2zu5CZPyRIzXlNSCgrRGDbTz1rw1qbW8nL7
-         BqI4zp7uBxnz/0EEcs6PD5LbXfiFLfAuPGRkNR1sT1vMsrIZA4bmHOMek4Evy4DOA1DR
-         09o5qLvTYht/rMiSKLRhOjCohoaY/ITenagu/OQX72yzACqFRvVjyUZYXG0/bxXecXw6
-         eoAA==
+        d=suse.com; s=google; t=1723713639; x=1724318439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P/GlGs8gPXiljJsbSUC3SWxa6wJC0t8b6kAqnPPHnvg=;
+        b=PQqMK1mr2RvXke2WUOPnAVfn9Ns9xGyCf44rGkwWg9UDnf2y9a2XOSt6kPvX59PeRs
+         //jMArodzD6ZKMJU+WJrc6CFdhBTD4qUeide4ztTzkKMle+P13DbERcxlCpHEJ2b5gBT
+         Ln4XgKtl/CJ3S6fxYvLeFSXPKcWnTJWdXFne4nQSxDbqvthAAe2Yv1OVXFDib/z7+EBY
+         cns5KuM7COU0hHYrG1wZFnLDShGtRC4RSKVqiDqMRVj41AWPR6/hm/uaORCQj1nEkYr0
+         IvncxvF6igp6kEhCDJgSRWmTdq0y0vCYESL+DSUtKqRv6q5ET44Yq6yu5FExsmL9Z+QV
+         j1TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723713644; x=1724318444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=80zm8jzgImQ04ZpZHXIv+bJT/2HKQyCzED5vbg8c5F4=;
-        b=Asf63Gh1XsqrnaaatfQNyZgE7KYEDpBGM/rXNpMAjUgxshjPU38a3NC/GX/912rGTi
-         9ABCwBng3Znyd9VC53U01OsLCMoTDuRZpDufWHm0MmNvyhVV/tPFyUAxP5kIQd/nIJ29
-         ktUDJdM2DeSrwM/HJ7Gq/5pACritfKwoNO1nB9IVCB7UtNMXjznPwCQrObplpFLaAWCa
-         VkbHcmYDjRRx0DoEJ6iuvwnndAGS40XJfg3wY6/FReoCxd5/5dU7jroPkDdkwXvxsCSo
-         eY++R3RG6BuoIslQuDVbANmzW72eQE+cD1YuAbCL1WcaNSgY/aotsapkgO2mhRGad8ki
-         109Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXJl7f2ajAeN8gFcBFdrYbqDCdZcJ+0qUS8AIVkSWHWvKdIlfs7NOrF3ToM5B98NXLSTQXNt56jvZ43JH3ofp59cSn2AJxYAJylKzK9
-X-Gm-Message-State: AOJu0YyjkbfP1XBd5Pkjvm9hMTM4YxvfaWzxbLKqMniCROnxcshjfWEt
-	HovKCf2myFoRKx/UNuoAtQ+3p/B72Pq7VZO/RRUL1QP/AQM/Csp3cr4nVPNMk5HRFhCoUapq/5s
-	htUECExYCSYG40cYwEt6znXeQCP2JaOChy5O/
-X-Google-Smtp-Source: AGHT+IH7lkn/aRzWqScZW92BYvziPxjfQGa2Ww0aXoS67wvigoKomhvmcMOLmj0n1Ikrp2fMRD48McZ45QoGO5RKsGU=
-X-Received: by 2002:a05:600c:3542:b0:426:5269:1a50 with SMTP id
- 5b1f17b1804b1-429dd2364bamr32348045e9.11.1723713643657; Thu, 15 Aug 2024
- 02:20:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723713639; x=1724318439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P/GlGs8gPXiljJsbSUC3SWxa6wJC0t8b6kAqnPPHnvg=;
+        b=T9uhtQ8cPsPFpB22JvfOsmB5h5ignEvxEipeuh2nE+LHPpOM+6WrDXHxVAhNJFKev3
+         UwTqr/XtX8sGCenxTia+9NnlbzRe+r+5UCf7ztiHx+jmIAP2KYbVdicL2vOsnEUkRG1r
+         k0mCy3cTYkL6+klg/wdthcGBVyp+RjDOzJxqQLftuxBiulFTcu6wef8YcBcj1O4hjQ2w
+         RUh98mtWwhwFu4547W7flPC38tVOn/5CcC20fPs+nNc6iq7DerKAMpr0UpA5b1juosfN
+         xbWZX+Gl2+fDUtH23SZjlAspMX2wNIUo9eZD8AS3gQpMqfmAxCk1+Xb2tiYVyzOMr3ok
+         LMLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUpJPrqdx0AleZhcw6KFnUKOUgGx6TO5r/t+e8Awb4trSXPZUEQuXbBk+CdZmYgsm+cnc55bwEp1Q++4awv8Sw+CT1oue/htInMK+9
+X-Gm-Message-State: AOJu0YzHRSy96LplP/iY//CvwZ5Zpzf2lNqiEmsNW+bdTGPpFL1/wQCP
+	9L9RcapNOxpYrfY5RPKW0Nz/Pvbndo90+sG5qkDTiGxc58YbYW5Ibu6UZOytucA=
+X-Google-Smtp-Source: AGHT+IGIf0tHUTHAiN975hHhh6Mp8xXyGrE4WwTVPMNfJW1nQ1v4meDulrazycZekuiqSshjepPOHg==
+X-Received: by 2002:a17:907:1b19:b0:a80:f840:9004 with SMTP id a640c23a62f3a-a8366c1eca6mr410252966b.12.1723713639259;
+        Thu, 15 Aug 2024 02:20:39 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383946967sm72340166b.172.2024.08.15.02.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 02:20:39 -0700 (PDT)
+Date: Thu, 15 Aug 2024 11:20:37 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: zhang warden <zhangwarden@gmail.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+	Jiri Kosina <jikos@kernel.org>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] livepatch: Add using attribute to klp_func for
+ using function show
+Message-ID: <Zr3IZTGnY-e-SHPy@pathway.suse.cz>
+References: <20240805064656.40017-1-zhangyongde.zyd@alibaba-inc.com>
+ <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
+ <ZruEPvstxgBQwN1K@pathway.suse.cz>
+ <0BFE862C-BD2B-43D1-B926-11A48BBC8C1B@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812182355.11641-1-dakr@kernel.org> <Zr0GP0OXliPRqx4C@boqun-archlinux>
- <Zr1teqjuOHeeFO4Z@cassiopeiae>
-In-Reply-To: <Zr1teqjuOHeeFO4Z@cassiopeiae>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 15 Aug 2024 11:20:32 +0200
-Message-ID: <CAH5fLgjvuE5uU00u4y+HyHTkQU_OBYvHe6NS5ohAhrLntTX1zQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/26] Generic `Allocator` support for Rust
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0BFE862C-BD2B-43D1-B926-11A48BBC8C1B@gmail.com>
 
-On Thu, Aug 15, 2024 at 4:52=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Wed, Aug 14, 2024 at 12:32:15PM -0700, Boqun Feng wrote:
-> > Hi Danilo,
-> >
-> > I'm trying to put your series on rust-dev, but I hit a few conflicts du=
-e
-> > to the conflict with `Box::drop_contents`, which has been in rust-dev
-> > for a while. And the conflict is not that trivial for me to resolve.
-> > So just a head-up, that's a requirement for me to put it on rust-dev fo=
-r
-> > more tests from my end ;-)
->
-> I rebased everything and you can fetch them from [1].
->
-> I resolved the following conflicts:
->
->   - for `Box`, implement
->     - `drop_contents`
->     - `manually_drop_contents` [2]
+On Wed 2024-08-14 22:23:21, zhang warden wrote:
+> 
+> 
+> > On Aug 14, 2024, at 00:05, Petr Mladek <pmladek@suse.com> wrote:
+> > 
+> > Alternative solution would be to store the pointer of struct klp_ops
+> > *ops into struct klp_func. Then using_show() could just check if
+> > the related struct klp_func in on top of the stack.
+> > 
+> > It would allow to remove the global list klp_ops and all the related
+> > code. klp_find_ops() would instead do:
+> > 
+> >   for_each_patch
+> >     for_each_object
+> >       for_each_func
+> > 
+> > The search would need more code. But it would be simple and
+> > straightforward. We do this many times all over the code.
+> > 
+> > IMHO, it would actually remove some complexity and be a win-win solution.
+> 
+> Hi Peter!
+> 
+> With your suggestions, it seems that you suggest move the klp_ops pinter into struct klp_func.
+> 
+> I may do this operation:
+> 
+> struct klp_func {
+> 
+> /* internal */
+> void *old_func;
+> struct kobject kobj;
+> struct list_head node;
+> struct list_head stack_node;
+> + struct klp_ops *ops;
+> unsigned long old_size, new_size;
+> bool nop;
+> bool patched;
+> bool transition;
+> };
 
-Not sure I like this name. It sounds like something that runs the
-destructor, but it does the exact opposite.
+Yes.
 
->     - ``move_out` [2]
->     - `BorrowedMut` for `ForeignOwnable` for `Box<T, A>` and `Pin<Box<T, =
-A>>`
->     - `InPlaceWrite` and updated `InPlaceInit`
->   - for `RBTreeNode`, make use of `Box::move_out` to replace the original
->     implementation partially moving out of `Box`
->
-> @Alice: Please have a look at the changes for `RBTreeNode`. Maybe it's al=
-so
-> worth having them in a separate patch.
+> With this operation, klp_ops global list will no longer needed. And if we want the ftrace_ops of a function, we just need to get the ops member of klp_func eg, func->ops. 
+> 
+> And klp_find_ops() will be replaced by `ops = func->ops`, which is more easy.
 
-RBTree changes LGTM.
+func->ops will work only when it is already assigned, for example, in
 
-Alice
+   + klp_check_stack_func()
+   + klp_unpatch_func()
+   + using_show()	/* the new sysfs callback */
+
+But we will still need klp_find_ops() in klp_patch_func() to find
+whether an already registered livepatch has already attached
+the ftrace handled for the same function (func->old_func).
+
+The new version would need to go through all registred patches,
+something like:
+
+struct klp_ops *klp_find_ops(void *old_func)
+{
+	struct klp_patch *patch;
+	struct klp_object *obj;
+	struct klp_func *func;
+
+	klp_for_each_patch(patch) {
+		klp_for_each_object(patch, obj) {
+			klp_for_each_func(obj, func) {
+				/*
+				 * Ignore entry where func->ops has not been
+				 * assigned yet. It is most likely the one
+				 * which is about to be created/added.
+				 */
+				if (func->old_func == old_func && func->ops)
+					return func->ops
+			}
+		}
+	}
+
+	return NULL;
+}
+
+BTW: It really looks useful. klp_check_stack_func() is called for_each_func()
+     also during task transition, even from the scheduler:
+
+       + klp_cond_resched()
+	 + __klp_sched_try_switch()
+	   + klp_try_switch_task()
+	     + klp_check_and_switch_task()
+	       + klp_check_stack()
+		 + klp_for_each_object()
+		   + klp_for_each_func()
+		     + klp_find_ops()
+
+      It would newly just use func->ops. It might be even noticeable
+      speedup.
+
+Please, implement this in a separate patch:
+
+  + 1st patch adds func->ops
+  + 2nd patch adds "using" sysfs interface.
+
+Best Regards,
+Petr
 
