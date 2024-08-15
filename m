@@ -1,114 +1,187 @@
-Return-Path: <linux-kernel+bounces-287868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A2A952D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:25:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371BC952D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:26:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4F91F25ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:25:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AE251C21669
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A744E1714AA;
-	Thu, 15 Aug 2024 11:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nqnjnnJf"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE917DA7B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824737DA9F;
+	Thu, 15 Aug 2024 11:26:19 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861071AC8A5;
+	Thu, 15 Aug 2024 11:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723721124; cv=none; b=CZkyIV67FGm9hMKVxYzBj0WOi4GZ7Os2sV6xSxt0y1ZaPoShLB2qmTSS/yOb+E4I/MOnYg9M7CrzByJC6zLLlg2dcxiISsDOys96ZA0tYfV/5dPRpjASB2vPHYocm3S9MufEtpwopKpb6UoI3UakVWDdVb1jvNKIDb4/0xn5TYE=
+	t=1723721179; cv=none; b=qb1dzVB9VQUuFxBUEEYxPW5RY18eeab9LrS7nepUuC4iNMx6n6E4fBNjoZXtYBD/PFG3e3NWmjlIfnXojMM0ZHgqVNAtrCGLu15TYzx7/eeRthQuP7niu73c3Yx5CDxxQQqEdd3Jyal3eS0Foq5ydxnwz6cAaQsbwqGJvVRlndk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723721124; c=relaxed/simple;
-	bh=9r69U4+Vlyv0XEbqFBAdBfxH7OVJ2VXkioo1Q5babH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uiXupWC6upljJtwcb0z32qsDItbDmGPZqkvurUozpywHpTLORfOiXOIY5E843RGCfyT3k8D0OUE4K0UbjsuBXAGqEqZe7OyGvi5elHf+XYezB8ghep78GbvK3WSbxu5Sx5xsGqLP/PvoP0dnSmkFcEDI/wrLBChWvFRUjxh9eCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nqnjnnJf; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a8caef11fso110881366b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 04:25:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723721121; x=1724325921; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qswmFLJc+rRJnvMK5o1RhUuE0PL9fCewlpe2LTSF+JQ=;
-        b=nqnjnnJf1rHF/uJZn/spsnW74eBXGyx7YH9gvunkPJUwrsWFb+eglQrIXF6ACVucY3
-         WAxYb7UHO4uJUFMaiASIx4AonUjmgQdA5yDOjm0jTaHl5iFc5yw9HWNWbqTkkkSr2BUz
-         LZHStdI41ipF4c1OHTL/G1dodqC/u1TwmQHbvREf3piAWFUcJ2M4j3ycWvpiKRw4QXSm
-         5SkwevxcA+yGdpbrB7w1pNUKQ3aalop59RXyBRwAODkeNb60eOhm7cQ9pHYTWLLdCypl
-         Ugd4zSSmDpqFRUjlByl6zkpJRpj2/2GUrxKj5rhCNi5lKSNSSFLCRfCfaDDe3Urjc+Cj
-         yQtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723721121; x=1724325921;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qswmFLJc+rRJnvMK5o1RhUuE0PL9fCewlpe2LTSF+JQ=;
-        b=KGF0nFQ6d0r9XZO4UnpPDnmauSCEafevvb3v7OOxwSF/Y5vzbgFEFtfIfYKpC6kWOL
-         jw7K9jGbdIZ9nOPl1IGYUF4sqqq+Gd9wlgeFFWwKoxsCK4D69b1ePF2cvVDzN3vXoWi8
-         9OREeihLBDT/C9698Bm4zUUmyCDaoSAqt09yNzpSYpBIR6mq7ibALLxxmGzRJGKZGn0M
-         /Bxr4RuuLii+LhHDyv6raag0QGZO6Q3I0xFTnz/2sT2WIdJA3BqmXq5R2rutK46sedRi
-         mitZrDkiA2/lwb5/tiBp3PRleddevGYW/jL/eZb4Wad7UNbonr4qFlRVSd+l/Eq/9IRq
-         UHvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWo4Oq0rPbV2au338fl+RgwtJm6B/1QJUJzhcHZEaxyH6aOc6F2tNjRyUxkZsKM9Zvgth6lDoLHo1yNI3X813ZjObBnaYlRb2/6QrB1
-X-Gm-Message-State: AOJu0YweVT79j0ljXjp823j8A6QimFcW3q7wMQY/GGCIiyPFR3uNkW9U
-	r1Wu8UGAtbCVZ4igSRzdjosfJHk5OCahIap+5HzAOzgiQigvXTgs+XjUAB0II6A=
-X-Google-Smtp-Source: AGHT+IE04IYzhOFDEe/StHeMv+I9KreAuEIMLJabn0MgWVsiJJeJsCqyh9XE5pP5z25EACFGgtwnLA==
-X-Received: by 2002:a17:907:f1d4:b0:a77:e1fb:7de9 with SMTP id a640c23a62f3a-a8366c0f0e2mr501782366b.5.1723721120636;
-        Thu, 15 Aug 2024 04:25:20 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396ce0asm85941166b.206.2024.08.15.04.25.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 04:25:20 -0700 (PDT)
-Date: Thu, 15 Aug 2024 14:25:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	linux-ide@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ata: ahci_imx: Fix error code in probe()
-Message-ID: <cbcbdfc2-ddc7-4684-8ad4-018227823546@stanley.mountain>
+	s=arc-20240116; t=1723721179; c=relaxed/simple;
+	bh=N5rUYRNLTPBzWe5BfYzehBPfpIHvZyYW4Izw3kIKWsk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=G+dF+pN0EiyPXOI9mqR290aBLQ6T5sXhYqXHUlK3mcj1CzMrHSEvIWgd9Rm3CKHN5suhFCN1DItS8Qg21SOLr4HNH+y0ym3RRbzLF/yFha7hFYhPRSOdcu0tVZPGzYdKNbBRj7fklwV7/8fHJBO8bQCxxmKWgivlT+u+LPemKos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.10.34])
+	by gateway (Coremail) with SMTP id _____8DxXpnW5b1mgsgUAA--.12056S3;
+	Thu, 15 Aug 2024 19:26:14 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.10.34])
+	by front1 (Coremail) with SMTP id qMiowMAxVODU5b1mwT4VAA--.33702S2;
+	Thu, 15 Aug 2024 19:26:13 +0800 (CST)
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+To: corbet@lwn.net,
+	alexs@kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	tglx@linutronix.de,
+	jiaxun.yang@flygoat.com,
+	gaoliang@loongson.cn,
+	wangliupu@loongson.cn,
+	lvjianmin@loongson.cn,
+	zhangtianyang@loongson.cn,
+	yijun@loongson.cn,
+	mhocko@suse.com,
+	akpm@linux-foundation.org,
+	dianders@chromium.org,
+	maobibo@loongson.cn,
+	xry111@xry111.site,
+	zhaotianrui@loongson.cn,
+	nathan@kernel.org,
+	yangtiezhu@loongson.cn,
+	zhoubinbin@loongson.cn
+Cc: loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v10 0/2] Loongarch-avec support
+Date: Thu, 15 Aug 2024 19:26:06 +0800
+Message-Id: <20240815112608.26925-1-zhangtianyang@loongson.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxVODU5b1mwT4VAA--.33702S2
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxGF1DZrW3Gw4DXrWxJFyxWFX_yoWrXr1rpF
+	Zruryqyr48Gr97Crn2y34rury5Xrs7G3y2qa43G347uF4UXryDXr10yF98ZF1kXw4rCa4I
+	gF1fW398Wa1UAagCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
+	AKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
+	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8svtJUUUUU==
 
-Return a negative error code if devm_clk_get() fails.  Don't return
-success.
+This series of patches introduces support for advanced extended 
+interrupt controllers (AVECINTC), and this hardware feature will 
+be supported on 3C6000 for the first time
 
-Fixes: 3156e1b2c071 ("ata: ahci_imx: AHB clock rate setting is not required on i.MX8QM AHCI SATA")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/ata/ahci_imx.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes log:
+ V0->V1:
+         1.Modified some formats and declarations
+         2.Removed kmalloc/kfree when adding affinity related data to pending_list,
+           and used moving tag to replace the original behavior
+         3.Adjusted the process that enables AVEC interrupts, now it is at the end of all processes
+         4.Removed CPUHP related callbacks, now irq_matrix_online/irq_matrix_offline is completed in start_secondary/loongson_cpu_disable
+         5.Adjusted compatibility issues for CONFIG_ACPI
+         6.About question:
+         > irr = csr_read64(LOONGARCH_CSR_IRR0 + vector / 64);
+         > should be good enough, no?
+         csr_read64 was built-in as __csrrd_d, it doesn't seem to support variables as parameters
+         >>>>
+         drivers/irqchip/irq-loongarch-avec.c: In function ‘complete_irq_moving’:
+         ./arch/loongarch/include/asm/loongarch.h:164:25: error: invalid argument to built-in function
+           164 | #define csr_read64(reg) __csrrd_d(reg)
+               |                         ^~~~~~~~~
+         drivers/irqchip/irq-loongarch-avec.c:170:23: note: in expansion of macro ‘csr_read64’
+           170 |                 irr = csr_read64(LOONGARCH_CSR_IRR_BASE + vector / VECTORS_PER_REG);
+               |                       ^~~~~~~~~~
+         >>>>
+         So we have temporarily retained the previous implementation.
+ 
+ V1->V2:
+         Fixed up coding style. Made on/offline functions void
+         Added compatibility when CONFIG_SMP is turned off
+ 
+ V2->V3:
+ 	Squash two patches into one
+ 
+ V3->V4:
+ 	Update NR_IRQS
+ 	Update Register's name
+ 	Fixed up coding style
+ V4->V5:
+	Retain feature CPUCFG1_MSGINT	
+ 	Fixed up coding style
+	Delete the test code introduced by V4, and now msi msg address still uses the 32-bit address
+ V5->V6:
+	Fix definition of NR_IRQS
+	Define arch_probe_nr_irqs()
+	Handle all avecintc interrupts in one dispatch
+	Use cpuhotplug callbacks instead of direct call to avec_online_cpu()/avec_offline_cpu()
+	Rename {SMP,ACTION}_CLEAR_VECT to {SMP,ACTION}_CLEAR_VECTOR
+	Use avecintc_ prefix instead of loongarch_avec_ to keep consistancy
+ V6->V7:
+	Fixed compatibility issue with cpuhp_setup_state_nocalls when CONFIG_SMP is turned off
+	Rename avecintc_online/offline_cpu as avecintc_cpu_online/offline
+	Use pch_msi_handle[0] as default value of get_pch_msi_handle
+	Rework commit-message
+ V7->V8:
+	Fixed up coding style
+	Support per-device-MSI domain
+	Replaced spin_lock ops with guard/scope_guard
+	Always execute irq_metrix_offline while the CPU is offline
+ V8->V9:
+	Fixed up coding style and potential bugs 
+ V9->V10:
+	Add a cover of series patch
+ 
+Huacai Chen (1):
+  irqchip/loongson-pch-msi: Switch to MSI parent domains
 
-diff --git a/drivers/ata/ahci_imx.c b/drivers/ata/ahci_imx.c
-index 65f98e8fdf07..6f955e9105e8 100644
---- a/drivers/ata/ahci_imx.c
-+++ b/drivers/ata/ahci_imx.c
-@@ -963,6 +963,7 @@ static int imx_ahci_probe(struct platform_device *pdev)
- 		imxpriv->ahb_clk = devm_clk_get(dev, "ahb");
- 		if (IS_ERR(imxpriv->ahb_clk)) {
- 			dev_err(dev, "Failed to get ahb clock\n");
-+			ret = PTR_ERR(imxpriv->ahb_clk);
- 			goto disable_sata;
- 		}
- 		reg_val = clk_get_rate(imxpriv->ahb_clk) / 1000;
+Tianyang Zhang (1):
+  irqchip/loongarch-avec: Add AVEC irqchip support
+
+ .../arch/loongarch/irq-chip-model.rst         |  32 ++
+ .../zh_CN/arch/loongarch/irq-chip-model.rst   |  32 ++
+ arch/loongarch/Kconfig                        |   1 +
+ arch/loongarch/include/asm/cpu-features.h     |   1 +
+ arch/loongarch/include/asm/cpu.h              |   2 +
+ arch/loongarch/include/asm/hardirq.h          |   3 +-
+ arch/loongarch/include/asm/hw_irq.h           |   2 +
+ arch/loongarch/include/asm/irq.h              |  25 +-
+ arch/loongarch/include/asm/loongarch.h        |  18 +-
+ arch/loongarch/include/asm/smp.h              |   2 +
+ arch/loongarch/kernel/cpu-probe.c             |   3 +-
+ arch/loongarch/kernel/irq.c                   |  15 +-
+ arch/loongarch/kernel/paravirt.c              |   5 +
+ arch/loongarch/kernel/smp.c                   |   6 +
+ drivers/irqchip/Kconfig                       |   1 +
+ drivers/irqchip/Makefile                      |   2 +-
+ drivers/irqchip/irq-loongarch-avec.c          | 426 ++++++++++++++++++
+ drivers/irqchip/irq-loongarch-cpu.c           |   5 +-
+ drivers/irqchip/irq-loongson-eiointc.c        |   7 +-
+ drivers/irqchip/irq-loongson-pch-msi.c        |  82 ++--
+ include/linux/cpuhotplug.h                    |   3 +-
+ 21 files changed, 615 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/irqchip/irq-loongarch-avec.c
+
 -- 
-2.43.0
+2.20.1
 
 
