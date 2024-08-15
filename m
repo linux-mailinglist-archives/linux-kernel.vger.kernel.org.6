@@ -1,141 +1,104 @@
-Return-Path: <linux-kernel+bounces-287767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7366B952C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:37:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD81952C6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803401C20DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:37:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01CB284F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD86017C9A1;
-	Thu, 15 Aug 2024 09:55:27 +0000 (UTC)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A764C1BD03F;
+	Thu, 15 Aug 2024 10:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mkC3OrQH"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F2F17C98F;
-	Thu, 15 Aug 2024 09:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C3F1714C4;
+	Thu, 15 Aug 2024 10:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723715727; cv=none; b=ngDzeTGOBNI5cJpvFtlXIbrRgPh6M7OKXcAz8Y4zLKoxigN1rD+pP9vVr/F3bKCK1Vr3ksyomS1ZDhqTwVQYjX3kse5UJ8KsTHlRHMPiEdLIWtCbneV4KBnqVEhLo258Z2SxwDSoEcvMG6OvAyYkKDbcgW0KhQ6Fwm0Va+YkyG0=
+	t=1723716179; cv=none; b=Luh7Hk6gxjLMD8sasOmjkyvfOCggzo17lEirF3p4T+jPKpx1Fs5iLq2wPboEzLL+/vxVrT4cphKLc5UBYyzasEEL/BSsZkpuRs9nHw4/4zmOg2PGMx9kBmRJKQdR923tnJnJvYngwaG9Dl3NiPc0qzZNoZeEYTZ80frPbGYU4dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723715727; c=relaxed/simple;
-	bh=Lgo/VgloMjv6fLJSUrtmBCgVTWsKGabMKO/aaEKlSuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hb0768jjVMwN3D9ieLvQHmDjXgGrN/9sVLEnolJNx4O4HOnkf4iqAcZxBmhNtoEBHXBXxlRDkevkOzPY7m2tdOahkdfvkWBjSWBqQihgB5U1sVMs3hGnwNcZ6pdxsiUUdRsX/djFRviovY8v8C7aPHcOAVWNBWjDttXxmfSQk10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso12049971fa.0;
-        Thu, 15 Aug 2024 02:55:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723715724; x=1724320524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FhxpIfrOZR8Ies+hYSFH0zNgK/4n9SX+6YegLe1LHNk=;
-        b=wJT1w954sBEtENMobFB9XJUKYHRbLQKzdh2FoQewJP6g7lyvrNS0H9xNzHzNPbiEcd
-         vRb+bhWRVDiOEsx1P+g0iIiX29xi3B4A1yxyH+jblj8j7mDLkMX5OaNcJ2hZJKjjAjUs
-         H70neboy2yK55/maOMY6tcyivso0aePbSrLPUdVNC5mI6fcCh3OoQlMJhwEfTpn5C2Qm
-         O717DlLtv0GSCP+x1mkUXTEz1/VuFh0ylhQTDVOlqqnIZ5Ehxj+3QitLkQA3tkHKn4uN
-         KyOCPCUyZXNTb+qhLVaXHpvhs/Qk3jMRE1ntnqwByCb6kvnI9qx11kFEhRxNX0UCUgCe
-         LuBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWq6+cWVUvQYnoQgcx18LU0C4710u8oY2uwsKOfVrRTefvSKaf5UVyMqhKsHVSGJKrVDqMQP9rNu3zX5n/PaqeOrxsyT1JIbJVSqEZfR09tbW6PGOu1TovzHr3ecQ/ibxtsv89Sxo7HzBqPaVayWpv4cXhe8wfwUYaVQUkxxpctWM7M21kw
-X-Gm-Message-State: AOJu0Yw+Rd29gInrt7wLwL62YpXcZ3fxA4SARZVhQw01/h4cAoKoJxfb
-	V04e5w2WhYR9SNS6cYN1T3DgwrvtbztCq0gjAJCcGhzS9OLbpbcq
-X-Google-Smtp-Source: AGHT+IH1vdwmSr6sVrVAeVDr3p7TkdzdG1CjLf8R/tVXngJ35xiUlDssG8qqC9A8+p8gYBgTtuX3VA==
-X-Received: by 2002:a2e:9c0a:0:b0:2f2:b7c4:45e2 with SMTP id 38308e7fff4ca-2f3aa1f0072mr38628371fa.20.1723715722891;
-        Thu, 15 Aug 2024 02:55:22 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383935807sm75451666b.134.2024.08.15.02.55.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 02:55:22 -0700 (PDT)
-Date: Thu, 15 Aug 2024 02:55:19 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: icejl <icejl0001@gmail.com>, kadlec@netfilter.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: nfnetlink: fix uninitialized local variable
-Message-ID: <Zr3Qh5FW7PsynJ4O@gmail.com>
-References: <20240815082733.272087-1-icejl0001@gmail.com>
- <Zr3EhKBKllxigfcD@gmail.com>
- <Zr3LQ4hGx-sN5T8Q@calendula>
+	s=arc-20240116; t=1723716179; c=relaxed/simple;
+	bh=opaTHF0FYquU0QR4xUtGcrbqwy7XWU7cBuztM5O7ykc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qQ0EZ+GGAM+QzHhXZgFRG4M67O+ZLfg9vYGqFqx/CJAknmEAfTGivJyU4y8a1+oqV4GQPNGq2yZWa/+O79tOYnJOfQJMZXhVHkYDJl0PZRp2IcfB/BB5LzwG57Iv5TofDg8/rNeU+NYbCW1qFMiG3uY8yQJp9Mifc0nepoSTLsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mkC3OrQH; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1723715747; x=1724320547; i=markus.elfring@web.de;
+	bh=BIDHjq8/nt0EFcVBhNoN0ffl/t4bxwEOm7k3+GMz6u8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mkC3OrQHkwJcun+hPynZi7SLyYyskwSBuJ0NSiBy3xrHEOlhjITJ0IJUAtu+TjRF
+	 BqjE7wrchV3/1K0/M7/jJCEe6HEg3uBhLPIECQ2uhmVwodgOiG75nulQC3dGxzHOr
+	 94pO0XXFuR/lch1juwaZHwpuvoFv3xc3NY2pL0D0Mr3IQBYadNu6CBeMJfer/oqe5
+	 SlLX2fdG3rwwzqRnfN7Zc0wiMfq1vvnC5aOvEiYdWXN4WuL76CSTSraCbAAcTquBc
+	 2CRDgwYAql+0+x7WCUxddV1CXILow+XR4+sFOdGTs9ozuzKvzq59pTIrXuKYsanYY
+	 a43kK6wVhvXq2RGEGw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MY5fd-1sfK2Q3JLp-00L6ro; Thu, 15
+ Aug 2024 11:55:47 +0200
+Message-ID: <fec59d4d-898d-447c-b4fb-e9d055550f96@web.de>
+Date: Thu, 15 Aug 2024 11:55:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zr3LQ4hGx-sN5T8Q@calendula>
+User-Agent: Mozilla Thunderbird
+To: Kemeng Shi <shikemeng@huaweicloud.com>, linux-ext4@vger.kernel.org,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240813120712.2592310-2-shikemeng@huaweicloud.com>
+Subject: Re: [PATCH 1/7] ext4: avoid buffer_head leak in ext4_mark_inode_used
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240813120712.2592310-2-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+0NXfX4/vDLKQ4u7wJLI4kMdp9uPckouU58ypuB3SkAqOKGl5Y6
+ 5e1VJzGQcG7fPUasPdyMr8tlBgwdZsZqjrLEKuKP2DhMIhHDVKsiw35xq/cQxx4vrdBOTAR
+ GKNqdpiuAyvQjlOrvpg5dlVCwlMgFMlnxmPi2bjANmhy23RVw1iZ4UNwjjrzrRfMigRU/nL
+ eIluLu1cpUrxVfTEXFehw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:y7aQx5hplRU=;qJaoSJWo8kLYI0a1F7qdKLQzS+G
+ GRSc0KDPCGvlcmaW9EJ/RRzN6BWJqi+Q7IHQDvOflVT3nBqd0wrHGahvw8YdJyS5+aUlvRSkS
+ MrpNrmyDuuClj6BqDu1HBnwXPmBDmO4g33sflpom2MZ/C2vORZTdWZtg/1Z97zRjBHTirE7B5
+ dx2e/fGbJnhpKU+d194mXeYGgOCxsGD/OFWIBVc/WDYaQr8OB85AplQg0++tZAITHujiqic5B
+ /YJionorQzxetpnhG1rd8pa8t+UvtApV9MwKme6yA8vZCvQMOoW2T3ZdXQUAdzrH6Glfcdn7X
+ uz275ND0Z1im8V7wgjU9nyTpcA5thZ7TNoGK6tssxDN5ykW+cozTvnNwLKpRj9DB1oesT05Kn
+ iGhzF+7ZAIi7toaDuMkQ/jGAWFKGGsfSbXjTHDJzops0fz6caorzT5ICrBopS1/KrTWFrrLCS
+ M+ARG4qWu0K5R00MwRpDzhmBM/gKxRnza59HSSQjrYKM0QyS0id09VPjLetEiF8p/Ngv5U0Bf
+ YZ/EI00d1SRjxyhOq1RwDTeY1vc0zInaQyTgyjc1AAwqJl82bIJe5MqEcw2tr5OoEvXWWzI37
+ Krv1AIiHPxFqiAG2pCo0V7zdo1Qd8eMY0gtCV2acaekV2wTTOSmJl42uYMs/WOpJn1sHTKb4v
+ YDc8XvVZA10hH+lbDlN46hmGPgx1XTTUwv0558U/boRCcFlnyZILMxzbk16iNSUxhHy9Qiuu1
+ WtpCHbg+gbdQzzZHzOH71kCH5ZzKMGa0bW8GeAupAmkSvdimaxuHRDQMpiEjhdLC/dg6YO7zb
+ jsPJNIWVpQJvgrQvKUaqvpOQ==
 
-Hello Pablo,
+> Release inode_bitmap_bh from ext4_read_inode_bitmap in
+> ext4_mark_inode_used to avoid buffer_head leak.
+> By the way, remove unneeded goto for invalid ino when inode_bitmap_bh
+> is NULL.
 
-On Thu, Aug 15, 2024 at 11:32:51AM +0200, Pablo Neira Ayuso wrote:
-> On Thu, Aug 15, 2024 at 02:04:04AM -0700, Breno Leitao wrote:
-> > On Thu, Aug 15, 2024 at 04:27:33PM +0800, icejl wrote:
-> > > In the nfnetlink_rcv_batch function, an uninitialized local variable
-> > > extack is used, which results in using random stack data as a pointer.
-> > > This pointer is then used to access the data it points to and return
-> > > it as the request status, leading to an information leak. If the stack
-> > > data happens to be an invalid pointer, it can cause a pointer access
-> > > exception, triggering a kernel crash.
-> > > 
-> > > Signed-off-by: icejl <icejl0001@gmail.com>
-> > > ---
-> > >  net/netfilter/nfnetlink.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-> > > index 4abf660c7baf..b29b281f4b2c 100644
-> > > --- a/net/netfilter/nfnetlink.c
-> > > +++ b/net/netfilter/nfnetlink.c
-> > > @@ -427,6 +427,7 @@ static void nfnetlink_rcv_batch(struct sk_buff *skb, struct nlmsghdr *nlh,
-> > >  
-> > >  	nfnl_unlock(subsys_id);
-> > >  
-> > > +	memset(&extack, 0, sizeof(extack));
-> > >  	if (nlh->nlmsg_flags & NLM_F_ACK)
-> > >  		nfnl_err_add(&err_list, nlh, 0, &extack);
-> > 
-> > There is a memset later in that function , inside the 
-> > `while (skb->len >= nlmsg_total_size(0))` loop. Should that one be
-> > removed?
-> 
-> no, the batch contains a series of netlink message, each of them needs
-> a fresh extack area which is zeroed.
+1. I suggest to split such changes into separate update steps.
+   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.11-rc3#n81
 
-Sorry, this is a bit unclear to me. This is the code I see in
-netnext/main:
+2. How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D an=
+d =E2=80=9CCc=E2=80=9D) accordingly?
 
+3. Would you like to append parentheses to any function names?
 
-	memset(&extack, 0, sizeof(extack));   // YOUR CHANGE
-
-        if (nlh->nlmsg_flags & NLM_F_ACK)
-                nfnl_err_add(&err_list, nlh, 0, &extack);
-
-        while (skb->len >= nlmsg_total_size(0)) {
-                int msglen, type;
-
-                if (fatal_signal_pending(current)) {
-                        nfnl_err_reset(&err_list);
-                        err = -EINTR;
-                        status = NFNL_BATCH_FAILURE;
-                        goto done;
-                }
-
-->              memset(&extack, 0, sizeof(extack));
-
-
-nfnl_err_add() does not change extack. Tht said, the second memset (last
-line in the snippet above), seems useless, doesn't it?
-
-Thanks for the quick reply,
---breno
-
+Regards,
+Markus
 
