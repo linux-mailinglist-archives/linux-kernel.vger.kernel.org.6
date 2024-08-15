@@ -1,37 +1,45 @@
-Return-Path: <linux-kernel+bounces-287989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807F9952F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:27:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 076D2952F0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15A521F22052
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:27:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC371F22568
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3051DFFB;
-	Thu, 15 Aug 2024 13:27:48 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7924A19EEBD;
+	Thu, 15 Aug 2024 13:28:03 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E921DDF5;
-	Thu, 15 Aug 2024 13:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0FA1DFFB
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 13:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723728468; cv=none; b=JwQbW1IToLqRrn7rr4UaA8uo1SK5OKo4h9FJ4vhXXSuMrGMlJcS6kdq702WYrLPv4H/1OrNlMmfRIlkcIAkTk3Uaa0Ruk7iatr4SxFLjZTIXQKdVPVDDnJ3p2PglDCQfq2u1xE8KajgSUxD0d6xsiB7T3biuGU7zJNRGW61tIR4=
+	t=1723728482; cv=none; b=WNqP4HTMxY4bx5ePhPTDYlzkRDimP5xKJ59oXGAL05Jhtq/dcFVfphAqgFTaZ7EfMtDw3hEer/7Cx+50vTYK9JTx9o5EKtK2zJn55UVavH4HWfPcnmoxJmQ1ly0R6xQbDTc6SLMtpGhYmJgRDG6afOPp4x9NOdoWhbOY4yprMrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723728468; c=relaxed/simple;
-	bh=FrPMluizTSERR8Y4jpU5u28L2lndLWlNTaTLfJ6oJj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aru9ZqIopmB/0UPTfBUlDF7VgWMnp5PT45vumo1azE6qlYQUZDwkIq/IG69D3TskrP4eJ4NGphKEr3La3YP5RMXMok7lwv3PFTs4ilJn7ITnQslrWEyO2BeKPYRlC7yJk9aCn8kI7wStRgPWq6MIPNTAnhbk2oa2lgMJ00lzeLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C69240002;
-	Thu, 15 Aug 2024 13:27:32 +0000 (UTC)
-Message-ID: <6f1bcc9b-1812-4e8c-9050-a750bfadd008@ghiti.fr>
-Date: Thu, 15 Aug 2024 15:27:31 +0200
+	s=arc-20240116; t=1723728482; c=relaxed/simple;
+	bh=ADV4rihW5uVJ57eOUx6PugYD2/A5cMZ277u6XDxwQYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=H5hXXlig4zOYKBFEQBdVJ+8ONaMovsN/4mqv3jkG36q8g1ObDmnlFAOgiorS8Z+VoifklCp7XIZS+YWna1TOYPpb6sBzCZhyOjcAT4whYkDTFIi0TowQ/KpO2Z8cv4/FreTpsLjAUt4Zkf7EgTwwXpDkSIzoo03ZlDFR4VzOZ2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wl5Ww0tQNzyQ4v;
+	Thu, 15 Aug 2024 21:27:24 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id 98F13180100;
+	Thu, 15 Aug 2024 21:27:55 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 15 Aug 2024 21:27:54 +0800
+Message-ID: <20ed69ad-5dad-446b-9f01-86ad8b1c67fa@huawei.com>
+Date: Thu, 15 Aug 2024 21:27:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,393 +47,274 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/13] riscv: Add qspinlock support
+Subject: Re: [PATCH v6 2/2] mm: support large folios swap-in for zRAM-like
+ devices
 Content-Language: en-US
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
- Andrew Jones <ajones@ventanamicro.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Andrea Parri <parri.andrea@gmail.com>, Nathan Chancellor
- <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
- Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
- Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
-References: <20240731072405.197046-1-alexghiti@rivosinc.com>
- <20240731072405.197046-14-alexghiti@rivosinc.com>
- <20240731-ce25dcdc5ce9ccc6c82912c0@orel>
- <CAHVXubgtD_nDBL2H-MYb9V+3jLBoszz8HAZ2NTTsiS2wR6aPDQ@mail.gmail.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <CAHVXubgtD_nDBL2H-MYb9V+3jLBoszz8HAZ2NTTsiS2wR6aPDQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Kairui Song <ryncsn@gmail.com>, Chuanhua Han <hanchuanhua@oppo.com>, Barry
+ Song <21cnbao@gmail.com>
+CC: <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<baolin.wang@linux.alibaba.com>, <chrisl@kernel.org>, <david@redhat.com>,
+	<hannes@cmpxchg.org>, <hughd@google.com>, <kaleshsingh@google.com>,
+	<linux-kernel@vger.kernel.org>, <mhocko@suse.com>, <minchan@kernel.org>,
+	<nphamcs@gmail.com>, <ryan.roberts@arm.com>, <senozhatsky@chromium.org>,
+	<shakeel.butt@linux.dev>, <shy828301@gmail.com>, <surenb@google.com>,
+	<v-songbaohua@oppo.com>, <willy@infradead.org>, <xiang@kernel.org>,
+	<ying.huang@intel.com>, <yosryahmed@google.com>, <hch@infradead.org>
+References: <20240726094618.401593-1-21cnbao@gmail.com>
+ <20240802122031.117548-1-21cnbao@gmail.com>
+ <20240802122031.117548-3-21cnbao@gmail.com>
+ <CAMgjq7DmSok3YYd6dqyyYxkK_wZg7-c2bW8BFfxhs1V86h=niw@mail.gmail.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <CAMgjq7DmSok3YYd6dqyyYxkK_wZg7-c2bW8BFfxhs1V86h=niw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-Hi Andrew,
 
-On 01/08/2024 08:53, Alexandre Ghiti wrote:
-> On Wed, Jul 31, 2024 at 5:29 PM Andrew Jones <ajones@ventanamicro.com> wrote:
->> On Wed, Jul 31, 2024 at 09:24:05AM GMT, Alexandre Ghiti wrote:
->>> In order to produce a generic kernel, a user can select
->>> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
->>> spinlock implementation if Zabha or Ziccrse are not present.
->>>
->>> Note that we can't use alternatives here because the discovery of
->>> extensions is done too late and we need to start with the qspinlock
->>> implementation because the ticket spinlock implementation would pollute
->>> the spinlock value, so let's use static keys.
->>>
->>> This is largely based on Guo's work and Leonardo reviews at [1].
->>>
->>> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren@kernel.org/ [1]
->>> Signed-off-by: Guo Ren <guoren@kernel.org>
->>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->>> ---
->>>   .../locking/queued-spinlocks/arch-support.txt |  2 +-
->>>   arch/riscv/Kconfig                            | 29 +++++++++++++
->>>   arch/riscv/include/asm/Kbuild                 |  4 +-
->>>   arch/riscv/include/asm/spinlock.h             | 43 +++++++++++++++++++
->>>   arch/riscv/kernel/setup.c                     | 38 ++++++++++++++++
->>>   include/asm-generic/qspinlock.h               |  2 +
->>>   include/asm-generic/ticket_spinlock.h         |  2 +
->>>   7 files changed, 118 insertions(+), 2 deletions(-)
->>>   create mode 100644 arch/riscv/include/asm/spinlock.h
->>>
->>> diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
->>> index 22f2990392ff..cf26042480e2 100644
->>> --- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
->>> +++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
->>> @@ -20,7 +20,7 @@
->>>       |    openrisc: |  ok  |
->>>       |      parisc: | TODO |
->>>       |     powerpc: |  ok  |
->>> -    |       riscv: | TODO |
->>> +    |       riscv: |  ok  |
->>>       |        s390: | TODO |
->>>       |          sh: | TODO |
->>>       |       sparc: |  ok  |
->>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>> index ef55ab94027e..c9ff8081efc1 100644
->>> --- a/arch/riscv/Kconfig
->>> +++ b/arch/riscv/Kconfig
->>> @@ -79,6 +79,7 @@ config RISCV
->>>        select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
->>>        select ARCH_WANTS_NO_INSTR
->>>        select ARCH_WANTS_THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
->>> +     select ARCH_WEAK_RELEASE_ACQUIRE if ARCH_USE_QUEUED_SPINLOCKS
->> Why do we need this? Also, we presumably would prefer not to have it
->> when we end up using ticket spinlocks when combo spinlocks is selected.
->> Is there no way to avoid it?
-> I'll let Andrea answer this as he asked for it.
->
->>>        select BINFMT_FLAT_NO_DATA_START_OFFSET if !MMU
->>>        select BUILDTIME_TABLE_SORT if MMU
->>>        select CLINT_TIMER if RISCV_M_MODE
->>> @@ -488,6 +489,34 @@ config NODES_SHIFT
->>>          Specify the maximum number of NUMA Nodes available on the target
->>>          system.  Increases memory reserved to accommodate various tables.
->>>
->>> +choice
->>> +     prompt "RISC-V spinlock type"
->>> +     default RISCV_COMBO_SPINLOCKS
->>> +
->>> +config RISCV_TICKET_SPINLOCKS
->>> +     bool "Using ticket spinlock"
->>> +
->>> +config RISCV_QUEUED_SPINLOCKS
->>> +     bool "Using queued spinlock"
->>> +     depends on SMP && MMU && NONPORTABLE
->>> +     select ARCH_USE_QUEUED_SPINLOCKS
->>> +     help
->>> +       The queued spinlock implementation requires the forward progress
->>> +       guarantee of cmpxchg()/xchg() atomic operations: CAS with Zabha or
->>> +       LR/SC with Ziccrse provide such guarantee.
->>> +
->>> +       Select this if and only if Zabha or Ziccrse is available on your
->>> +       platform.
->> Maybe some text recommending combo spinlocks here? As it stands it sounds
->> like enabling queued spinlocks is a bad idea for anybody that doesn't know
->> what platforms will run the kernel they're building, which is all distros.
-> That's NONPORTABLE, so people enabling this config are supposed to
-> know that right?
->
->>> +
->>> +config RISCV_COMBO_SPINLOCKS
->>> +     bool "Using combo spinlock"
->>> +     depends on SMP && MMU
->>> +     select ARCH_USE_QUEUED_SPINLOCKS
->>> +     help
->>> +       Embed both queued spinlock and ticket lock so that the spinlock
->>> +       implementation can be chosen at runtime.
->> nit: Add a blank line here
-> Done
->
->>> +endchoice
->>> +
->>>   config RISCV_ALTERNATIVE
->>>        bool
->>>        depends on !XIP_KERNEL
->>> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
->>> index 5c589770f2a8..1c2618c964f0 100644
->>> --- a/arch/riscv/include/asm/Kbuild
->>> +++ b/arch/riscv/include/asm/Kbuild
->>> @@ -5,10 +5,12 @@ syscall-y += syscall_table_64.h
->>>   generic-y += early_ioremap.h
->>>   generic-y += flat.h
->>>   generic-y += kvm_para.h
->>> +generic-y += mcs_spinlock.h
->>>   generic-y += parport.h
->>> -generic-y += spinlock.h
->>>   generic-y += spinlock_types.h
->>> +generic-y += ticket_spinlock.h
->>>   generic-y += qrwlock.h
->>>   generic-y += qrwlock_types.h
->>> +generic-y += qspinlock.h
->>>   generic-y += user.h
->>>   generic-y += vmlinux.lds.h
->>> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
->>> new file mode 100644
->>> index 000000000000..503aef31db83
->>> --- /dev/null
->>> +++ b/arch/riscv/include/asm/spinlock.h
->>> @@ -0,0 +1,43 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +
->>> +#ifndef __ASM_RISCV_SPINLOCK_H
->>> +#define __ASM_RISCV_SPINLOCK_H
->>> +
->>> +#ifdef CONFIG_RISCV_COMBO_SPINLOCKS
->>> +#define _Q_PENDING_LOOPS     (1 << 9)
->>> +
->>> +#define __no_arch_spinlock_redefine
->>> +#include <asm/ticket_spinlock.h>
->>> +#include <asm/qspinlock.h>
->>> +#include <asm/alternative.h>
->> We need asm/jump_label.h instead of asm/alternative.h, but...
+
+On 2024/8/15 17:47, Kairui Song wrote:
+> On Fri, Aug 2, 2024 at 8:21 PM Barry Song <21cnbao@gmail.com> wrote:
 >>
->>> +
->>> +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
->>> +
->>> +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)                   \
->>> +static __always_inline type arch_spin_##op(type_lock lock)           \
->>> +{                                                                    \
->>> +     if (static_branch_unlikely(&qspinlock_key))                     \
->>> +             return queued_spin_##op(lock);                          \
->>> +     return ticket_spin_##op(lock);                                  \
->>> +}
->> ...do you know what impact this inlined static key check has on the
->> kernel size?
-> No, I'll check, thanks.
-
-
-So I have just checked the size of the jump table section:
-
-* defconfig:
-
-- ticket: 26928 bytes
-- combo: 28320 bytes
-
-So that's a ~5% increase.
-
-* ubuntu config
-
-- ticket: 107840 bytes
-- combo: 174752 bytes
-
-And that's a ~62% increase.
-
-This is the ELF size difference between ticket and combo spinlocks:
-
-* ticket: 776915592 bytes
-* combo: 786958968 bytes
-
-So that's an increase of ~1.3% on the ELF.
-
-And the .text section size:
-
-* ticket: 12290960 bytes
-* combo: 12366644 bytes
-
-And that's a ~0.6% increase!
-
-Finally, I'd say the impact is very limited :)
-
-Thanks,
-
-Alex
-
-
->
->> Actually, why not use ALTERNATIVE with any nonzero cpufeature value.
->> Then add code to riscv_cpufeature_patch_check() to return true when
->> qspinlocks should be enabled (based on the value of some global set
->> during riscv_spinlock_init)?
-> As discussed with Guo in the previous iteration, the patching of the
-> alternatives intervenes far after the first use of the spinlocks and
-> the ticket spinlock implementation pollutes the spinlock value, so
-> we'd have to unconditionally start with the qspinlock implementation
-> and after switch to the ticket implementation if not supported by the
-> platform. It works but it's dirty, I really don't like this hack.
->
-> We could though:
-> - add an initial value to the alternatives (not sure it's feasible though)
-> - make the patching of alternatives happen sooner by parsing the isa
-> string sooner, either in DT or ACPI (I have a working PoC for very
-> early parsing of ACPI).
->
-> I intend to do the latter as I think we should be aware of the
-> extensions sooner in the boot process, so I'll change that to the
-> alternatives when it's done. WDYT, any other idea?
->
->
->>> +
->>> +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
->>> +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
->>> +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
->>> +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
->>> +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
->>> +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
->>> +
->>> +#elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
->>> +
->>> +#include <asm/qspinlock.h>
->>> +
->>> +#else
->>> +
->>> +#include <asm/ticket_spinlock.h>
->>> +
->>> +#endif
->>> +
->>> +#include <asm/qrwlock.h>
->>> +
->>> +#endif /* __ASM_RISCV_SPINLOCK_H */
->>> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
->>> index a2cde65b69e9..b811fa331982 100644
->>> --- a/arch/riscv/kernel/setup.c
->>> +++ b/arch/riscv/kernel/setup.c
->>> @@ -244,6 +244,43 @@ static void __init parse_dtb(void)
->>>   #endif
->>>   }
->>>
->>> +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
->>> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
->>> +EXPORT_SYMBOL(qspinlock_key);
->>> +#endif
->>> +
->>> +static void __init riscv_spinlock_init(void)
->>> +{
->>> +     char *using_ext = NULL;
->>> +
->>> +     if (IS_ENABLED(CONFIG_RISCV_TICKET_SPINLOCKS)) {
->>> +             pr_info("Ticket spinlock: enabled\n");
->>> +             return;
->>> +     }
->>> +
->>> +     if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&
->>> +         IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&
->>> +         riscv_isa_extension_available(NULL, ZABHA) &&
->>> +         riscv_isa_extension_available(NULL, ZACAS)) {
->>> +             using_ext = "using Zabha";
->>> +     } else if (riscv_isa_extension_available(NULL, ZICCRSE)) {
->>> +             using_ext = "using Ziccrse";
->>> +     }
->>> +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
->>> +     else {
->> else if (IS_ENABLED(CONFIG_RISCV_COMBO_SPINLOCKS))
+>> From: Chuanhua Han <hanchuanhua@oppo.com>
+> 
+> Hi Chuanhua,
+> 
 >>
->>> +             static_branch_disable(&qspinlock_key);
->>> +             pr_info("Ticket spinlock: enabled\n");
->>> +
->> nit: remove this blank line
+...
+
+>> +
+>> +static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+>> +{
+>> +       struct vm_area_struct *vma = vmf->vma;
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +       unsigned long orders;
+>> +       struct folio *folio;
+>> +       unsigned long addr;
+>> +       swp_entry_t entry;
+>> +       spinlock_t *ptl;
+>> +       pte_t *pte;
+>> +       gfp_t gfp;
+>> +       int order;
+>> +
+>> +       /*
+>> +        * If uffd is active for the vma we need per-page fault fidelity to
+>> +        * maintain the uffd semantics.
+>> +        */
+>> +       if (unlikely(userfaultfd_armed(vma)))
+>> +               goto fallback;
+>> +
+>> +       /*
+>> +        * A large swapped out folio could be partially or fully in zswap. We
+>> +        * lack handling for such cases, so fallback to swapping in order-0
+>> +        * folio.
+>> +        */
+>> +       if (!zswap_never_enabled())
+>> +               goto fallback;
+>> +
+>> +       entry = pte_to_swp_entry(vmf->orig_pte);
+>> +       /*
+>> +        * Get a list of all the (large) orders below PMD_ORDER that are enabled
+>> +        * and suitable for swapping THP.
+>> +        */
+>> +       orders = thp_vma_allowable_orders(vma, vma->vm_flags,
+>> +                       TVA_IN_PF | TVA_ENFORCE_SYSFS, BIT(PMD_ORDER) - 1);
+>> +       orders = thp_vma_suitable_orders(vma, vmf->address, orders);
+>> +       orders = thp_swap_suitable_orders(swp_offset(entry), vmf->address, orders);
+>> +
+>> +       if (!orders)
+>> +               goto fallback;
+>> +
+>> +       pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd, vmf->address & PMD_MASK, &ptl);
+>> +       if (unlikely(!pte))
+>> +               goto fallback;
+>> +
+>> +       /*
+>> +        * For do_swap_page, find the highest order where the aligned range is
+>> +        * completely swap entries with contiguous swap offsets.
+>> +        */
+>> +       order = highest_order(orders);
+>> +       while (orders) {
+>> +               addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
+>> +               if (can_swapin_thp(vmf, pte + pte_index(addr), 1 << order))
+>> +                       break;
+>> +               order = next_order(&orders, order);
+>> +       }
+>> +
+>> +       pte_unmap_unlock(pte, ptl);
+>> +
+>> +       /* Try allocating the highest of the remaining orders. */
+>> +       gfp = vma_thp_gfp_mask(vma);
+>> +       while (orders) {
+>> +               addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
+>> +               folio = vma_alloc_folio(gfp, order, vma, addr, true);
+>> +               if (folio)
+>> +                       return folio;
+>> +               order = next_order(&orders, order);
+>> +       }
+>> +
+>> +fallback:
+>> +#endif
+>> +       return vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vmf->address, false);
+>> +}
+>> +
+>> +
+>>   /*
+>>    * We enter with non-exclusive mmap_lock (to exclude vma changes,
+>>    * but allow concurrent faults), and pte mapped but not yet locked.
+>> @@ -4074,35 +4220,37 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>          if (!folio) {
+>>                  if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
+>>                      __swap_count(entry) == 1) {
+>> -                       /*
+>> -                        * Prevent parallel swapin from proceeding with
+>> -                        * the cache flag. Otherwise, another thread may
+>> -                        * finish swapin first, free the entry, and swapout
+>> -                        * reusing the same entry. It's undetectable as
+>> -                        * pte_same() returns true due to entry reuse.
+>> -                        */
+>> -                       if (swapcache_prepare(entry, 1)) {
+>> -                               /* Relax a bit to prevent rapid repeated page faults */
+>> -                               schedule_timeout_uninterruptible(1);
+>> -                               goto out;
+>> -                       }
+>> -                       need_clear_cache = true;
+>> -
+>>                          /* skip swapcache */
+>> -                       folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0,
+>> -                                               vma, vmf->address, false);
+>> +                       folio = alloc_swap_folio(vmf);
+>>                          page = &folio->page;
+>>                          if (folio) {
+>>                                  __folio_set_locked(folio);
+>>                                  __folio_set_swapbacked(folio);
 >>
->>> +             return;
->>> +     }
->>> +#endif
->>> +
->>> +     if (!using_ext)
->>> +             pr_err("Queued spinlock without Zabha or Ziccrse");
->>> +     else
->>> +             pr_info("Queued spinlock %s: enabled\n", using_ext);
->>> +}
->>> +
->>>   extern void __init init_rt_signal_env(void);
->>>
->>>   void __init setup_arch(char **cmdline_p)
->>> @@ -297,6 +334,7 @@ void __init setup_arch(char **cmdline_p)
->>>        riscv_set_dma_cache_alignment();
->>>
->>>        riscv_user_isa_enable();
->>> +     riscv_spinlock_init();
->>>   }
->>>
->>>   bool arch_cpu_is_hotpluggable(int cpu)
->>> diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
->>> index 0655aa5b57b2..bf47cca2c375 100644
->>> --- a/include/asm-generic/qspinlock.h
->>> +++ b/include/asm-generic/qspinlock.h
->>> @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
->>>   }
->>>   #endif
->>>
->>> +#ifndef __no_arch_spinlock_redefine
->> I'm not sure what's better/worse, but instead of inventing this
->> __no_arch_spinlock_redefine thing we could just name all the functions
->> something like __arch_spin* and then add defines for both to asm/spinlock.h,
->> i.e.
+>> +                               nr_pages = folio_nr_pages(folio);
+>> +                               if (folio_test_large(folio))
+>> +                                       entry.val = ALIGN_DOWN(entry.val, nr_pages);
+>> +                               /*
+>> +                                * Prevent parallel swapin from proceeding with
+>> +                                * the cache flag. Otherwise, another thread may
+>> +                                * finish swapin first, free the entry, and swapout
+>> +                                * reusing the same entry. It's undetectable as
+>> +                                * pte_same() returns true due to entry reuse.
+>> +                                */
+>> +                               if (swapcache_prepare(entry, nr_pages)) {
+>> +                                       /* Relax a bit to prevent rapid repeated page faults */
+>> +                                       schedule_timeout_uninterruptible(1);
+>> +                                       goto out_page;
+>> +                               }
+>> +                               need_clear_cache = true;
+>> +
+>>                                  if (mem_cgroup_swapin_charge_folio(folio,
+>>                                                          vma->vm_mm, GFP_KERNEL,
+>>                                                          entry)) {
+>>                                          ret = VM_FAULT_OOM;
+>>                                          goto out_page;
+>>                                  }
+> 
+> After your patch, with build kernel test, I'm seeing kernel log
+> spamming like this:
+> [  101.048594] pagefault_out_of_memory: 95 callbacks suppressed
+> [  101.048599] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> [  101.059416] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> [  101.118575] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> [  101.125585] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> [  101.182501] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> [  101.215351] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> [  101.272822] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> [  101.403195] Huh VM_FAULT_OOM leaked out to the #PF handler. Retrying PF
+> ............
+> 
+> And heavy performance loss with workloads limited by memcg, mTHP enabled.
+> 
+> After some debugging, the problematic part is the
+> mem_cgroup_swapin_charge_folio call above.
+> When under pressure, cgroup charge fails easily for mTHP. One 64k
+> swapin will require a much more aggressive reclaim to success.
+> 
+> If I change MAX_RECLAIM_RETRIES from 16 to 512, the spamming log is
+> gone and mTHP swapin should have a much higher swapin success rate.
+> But this might not be the right way.
+> 
+> For this particular issue, maybe you can change the charge order, try
+> charging first, if successful, use mTHP. if failed, fallback to 4k?
+
+This is what we did in alloc_anon_folio(), see 085ff35e7636
+("mm: memory: move mem_cgroup_charge() into alloc_anon_folio()"),
+1) fallback earlier
+2) using same GFP flags for allocation and charge
+
+but it seems that there is a little complicated for swapin charge
+
+
+> 
+>> -                               mem_cgroup_swapin_uncharge_swap(entry, 1);
+>> +                               mem_cgroup_swapin_uncharge_swap(entry, nr_pages);
 >>
->> #define queued_spin_lock(l) __arch_spin_lock(l)
->> ...
+>>                                  shadow = get_shadow_from_swap_cache(entry);
+>>                                  if (shadow)
+>> @@ -4209,6 +4357,22 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>                  goto out_nomap;
+>>          }
 >>
->> #define ticket_spin_lock(l) __arch_spin_lock(l)
->> ...
+>> +       /* allocated large folios for SWP_SYNCHRONOUS_IO */
+>> +       if (folio_test_large(folio) && !folio_test_swapcache(folio)) {
+>> +               unsigned long nr = folio_nr_pages(folio);
+>> +               unsigned long folio_start = ALIGN_DOWN(vmf->address, nr * PAGE_SIZE);
+>> +               unsigned long idx = (vmf->address - folio_start) / PAGE_SIZE;
+>> +               pte_t *folio_ptep = vmf->pte - idx;
+>> +
+>> +               if (!can_swapin_thp(vmf, folio_ptep, nr))
+>> +                       goto out_nomap;
+>> +
+>> +               page_idx = idx;
+>> +               address = folio_start;
+>> +               ptep = folio_ptep;
+>> +               goto check_folio;
+>> +       }
+>> +
+>>          nr_pages = 1;
+>>          page_idx = 0;
+>>          address = vmf->address;
+>> @@ -4340,11 +4504,12 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>                  folio_add_lru_vma(folio, vma);
+>>          } else if (!folio_test_anon(folio)) {
+>>                  /*
+>> -                * We currently only expect small !anon folios, which are either
+>> -                * fully exclusive or fully shared. If we ever get large folios
+>> -                * here, we have to be careful.
+>> +                * We currently only expect small !anon folios which are either
+>> +                * fully exclusive or fully shared, or new allocated large folios
+>> +                * which are fully exclusive. If we ever get large folios within
+>> +                * swapcache here, we have to be careful.
+>>                   */
+>> -               VM_WARN_ON_ONCE(folio_test_large(folio));
+>> +               VM_WARN_ON_ONCE(folio_test_large(folio) && folio_test_swapcache(folio));
+>>                  VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+>>                  folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
+>>          } else {
+>> @@ -4387,7 +4552,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>   out:
+>>          /* Clear the swap cache pin for direct swapin after PTL unlock */
+>>          if (need_clear_cache)
+>> -               swapcache_clear(si, entry, 1);
+>> +               swapcache_clear(si, entry, nr_pages);
+>>          if (si)
+>>                  put_swap_device(si);
+>>          return ret;
+>> @@ -4403,7 +4568,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>                  folio_put(swapcache);
+>>          }
+>>          if (need_clear_cache)
+>> -               swapcache_clear(si, entry, 1);
+>> +               swapcache_clear(si, entry, nr_pages);
+>>          if (si)
+>>                  put_swap_device(si);
+>>          return ret;
+>> --
+>> 2.34.1
 >>
->> Besides not having to touch asm-generic/qspinlock.h and
->> asm-generic/ticket_spinlock.h it allows one to find the implementations
->> a bit easier as following a tag to arch_spin_lock() will take them to
->> queued_spin_lock() which will then take them to
->> arch/riscv/include/asm/spinlock.h and there they'll figure out how
->> __arch_spin_lock() was defined.
 >>
->>>   /*
->>>    * Remapping spinlock architecture specific functions to the corresponding
->>>    * queued spinlock functions.
->>> @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
->>>   #define arch_spin_lock(l)            queued_spin_lock(l)
->>>   #define arch_spin_trylock(l)         queued_spin_trylock(l)
->>>   #define arch_spin_unlock(l)          queued_spin_unlock(l)
->>> +#endif
->>>
->>>   #endif /* __ASM_GENERIC_QSPINLOCK_H */
->>> diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm-generic/ticket_spinlock.h
->>> index cfcff22b37b3..325779970d8a 100644
->>> --- a/include/asm-generic/ticket_spinlock.h
->>> +++ b/include/asm-generic/ticket_spinlock.h
->>> @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
->>>        return (s16)((val >> 16) - (val & 0xffff)) > 1;
->>>   }
->>>
->>> +#ifndef __no_arch_spinlock_redefine
->>>   /*
->>>    * Remapping spinlock architecture specific functions to the corresponding
->>>    * ticket spinlock functions.
->>> @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
->>>   #define arch_spin_lock(l)            ticket_spin_lock(l)
->>>   #define arch_spin_trylock(l)         ticket_spin_trylock(l)
->>>   #define arch_spin_unlock(l)          ticket_spin_unlock(l)
->>> +#endif
->>>
->>>   #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
->>> --
->>> 2.39.2
->>>
->> Thanks,
->> drew
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
