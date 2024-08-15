@@ -1,157 +1,226 @@
-Return-Path: <linux-kernel+bounces-287853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2BB952D40
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:11:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF12952C1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41982835FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:11:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEFA71C235FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BC3143899;
-	Thu, 15 Aug 2024 11:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFF920FA85;
+	Thu, 15 Aug 2024 09:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="iBR1wMYI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KVMre4P/"
-Received: from flow8-smtp.messagingengine.com (flow8-smtp.messagingengine.com [103.168.172.143])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="eNbIQsEv"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53ADB1AC8AC;
-	Thu, 15 Aug 2024 11:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78428201266
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723720278; cv=none; b=FZxbwynd08E88lhgjD8rB1q0Xj86GarggNFTcErDakxpRwd8pQRTLbgtn2zVy05y5JsqnTb/sbMemtA4tUDad7AjYRQWQvLQDqCNSWVjSyg9zzIE0Qfd45dezcNttgTZRSa3UkDYr+YwaHVSZB0UxUQdCV8jDj7+ujH8WPrpMnY=
+	t=1723713903; cv=none; b=JBeEwTnyIzuZqRTCyBFMEQT5G1nwv3Udt7cN3eiUF6pwUdh4SInalTZJU3COCWkqQpt7h1Mt0JnnxGYc1+rCvrAy9x3281Mmti5lxJExjY/4Mnfl5dEO8xIEqSn7lolMPmhszZKjSAcf750URJ+GPkvFqhgl+7D9Ft/LNRvEsMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723720278; c=relaxed/simple;
-	bh=cM/oa+aXFrNIzMB4+mBWw40HctDtv+Aci9IQkyQCuug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+oLQYWx8j5va+GZvxrBv7X+PN5WAA0/TGXFVhLnQXzju3PLQRzfUNyJ8fMUJaQV72i1tpENdUB6mfMGG5E2OXigKIfHXDqWGqUxz9yFOvmuIqbVVPVOj5chR+q1Jmndyq1huyGajLbg/NcYnFiekh9ANq1498mZCdERRXxgVS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=iBR1wMYI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KVMre4P/; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-07.internal (phl-compute-07.nyi.internal [10.202.2.47])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 464B5200A34;
-	Thu, 15 Aug 2024 05:24:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Thu, 15 Aug 2024 05:24:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1723713866; x=1723721066; bh=DJrlepPVyE
-	+yZqIgbQ54BkO2ZvNmAfile0WCqAW+g3Q=; b=iBR1wMYIvM5n4U4j9ojUn2xlhC
-	TxvTDAwt/nwgs+2zmiaHQZDMqoqh1T8AGAWcfVi3d5dcZi3Hugw09lt2CFrR2yMG
-	a3VWsCVkCMOsmGZSNweIEkNVa2T3Mi9vFA2VdJ5F03VSiP8uhJ2fGuCccEGMs6g9
-	ENiDFWbPGoL6f7ZGhkknVGz7Fn/trhE+cCNF/6XdM47Jq6uT4zMs7SH/vSdQGY+Q
-	I1Zvf/WWb58YdMlqrCn9x8sKjpUp1oGgr4wcpksLTlzF6ZwgO9X1D2FDZA0iEV7L
-	HPkXEUJgKXP3kjUcNqxZIjr0xAKbP7vAZwFVfMuI+CRNXtOIE5RaHO45qlJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723713866; x=1723721066; bh=DJrlepPVyE+yZqIgbQ54BkO2ZvNm
-	Afile0WCqAW+g3Q=; b=KVMre4P/zOVhUEqNei7d4gCpmWhHoJ7TMwaIs9mXpkIa
-	8Kr1YzdEg/ucwYT+fTLlcQbuzMD3FMfE9iFyix/6pSVMkEiK46LuO0/kIQGVlLsW
-	L3pxTn5aBuEtPK3kER2Kmt8F+Sfo97p67lWcDkt9hMs/IPEwlS1inU+9dKNtqY7D
-	QwxSs8Z3Kk3g6zcVTe6RS4+uKnlM8EBoJEmoJ0dpyLSgzU1JKAVjIXeX/I/yfhQK
-	eOoJ0DzF25tGyR8gS+PzuWSA3d8b2088lRLRjLlYEAGt3eBn7QsbirBbNZH9I+dT
-	Ep1w/wtpcfCdu47jA0BXbP3/xqQ8ET60I9X7KmE1ug==
-X-ME-Sender: <xms:Scm9Zr44ufvsXsylmy04oXubruVNMTwC_NH8lxtvpjrFxphYCzgp0w>
-    <xme:Scm9Zg759fHIramAPVWZWOcfnaWS7Mgl9BnqTgssZwgk5OExyIiGFiyMBIGTT0RN0
-    jO2WS6ej06Whw>
-X-ME-Received: <xmr:Scm9Zif3xbeEDC2d37bvApihyPYrYAptc7X2PiNnCS1r60iWr1xBOQHZ1GsFLzoDFBkLY70AabKozf82Eq2Qo_ujlVzqrznUFcDJvA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtiedgudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
-    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
-    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeehtddpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepphhivghrrhgvrdhgohhnughoihhssegrrhhmrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlvghnsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghr
-    sehlihhnrghrohdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnth
-    gvlhdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfigvug
-    hsohhnrghfsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:Scm9ZsKxLgryY2bIonp-45LEqE5IFULfg2yV1sKSkkOSCR-cf4PBeg>
-    <xmx:Scm9ZvK_saCXo3XcEjOkFk5yNo0CJrsQZSZVCcTVgX2M45Y7G9mXVg>
-    <xmx:Scm9ZlzCIG7C4fIwfrhCpuh07SdtuXzlVJ4FKzCvqmemALBno60U7Q>
-    <xmx:Scm9ZrL6_rnIvDjhmzhOOvu7InSxqGihlTolXs-HCyjcpaijTbm-QA>
-    <xmx:Ssm9ZpTgcQ0NxjHBc_8hQ_LOehZMU26etWUiR8XZL1I9PDF9of7bvgZT>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Aug 2024 05:24:24 -0400 (EDT)
+	s=arc-20240116; t=1723713903; c=relaxed/simple;
+	bh=WQyGP3ArX26n53a7N84tK4GY62m6jwfx6zeJykj/kFg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FQWzMaZEUq8UkSfk5mIjZ3H+eWlCll9sN28nLKfRDq+jBLKXMQ2rruKA8yh9bD5lD7hD1aSvtt46IY+ZuNR6Kfp/XCideLZI/PwokPL25pJX3/tnxWFcycbptqpG7pRuY7HPX205LysIVpTIAAPV/wSzpt/Fdy9VM3J9XwSmA6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=eNbIQsEv; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 0416B3F366
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1723713901;
+	bh=Cr6mS4vM8svS+Y0pvJjPEy2yIGPChWIqWWxar373974=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version;
+	b=eNbIQsEvZldRwn49O7RMTs8/4A1+0NbR22unjmkn9RNI2PSOTYrZpPgH6JlItTBh4
+	 NdG8u+Rtjsvvjz76ZBCR0tUjzfwy9zsfy/O/vfEMlXY1HL7giQVAR8+I6q0xJOxdcF
+	 Ga/zKXVbxIzfEHq1M7vbs2PZgB0Eu7q1xmDueTqQk1U+mDhzw63XgLiq/POYtihnFy
+	 j68cltb2J8miKV82LhGCLITraIAbYyFC8sGoUgLIDCBDRE4KaNORk6T5QsGbzMFbKT
+	 Sg9B5Pvci6+2eMTt2J5xPFBbI+eKkyHJ8V3NqgNJNTVnZHI01GhQL8noWY9LMdxwUL
+	 pRQ2JR7Z5oSQg==
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a7ac5d81e2dso56127066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 02:25:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723713900; x=1724318700;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cr6mS4vM8svS+Y0pvJjPEy2yIGPChWIqWWxar373974=;
+        b=uct9INnIiBO1H+0SYNoeMcY0wDToy3AD/HurMFjZnTyRXcrAz1dhhZgDnuSSNF8brx
+         nVHIT+qtEzXRbXaM+RsMzVS8H467/RAinqMEIDaysFkkXEcyrD5EQWSWPpVMix1q7IYY
+         XIvBWUVTz4naFFeFGrWceAuuax4GRLNU6vgD+eY5M7yVQGXOTyKUQGXjeyLmIU7pV4ah
+         X1WWKNjqkBBeJugTwtl6ciqyk5OMeS72fZVXP++WSObVrxklfrnseP/LCPbTp/8gujfM
+         fL9debNuxDSA1BPZDr1QhBMl+fuM4LTPhjlrNjHK7Z3/T78ujC971uqHszKBamGOfDS5
+         Uf9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSYf9viIlZS2FSuNb2iXhim+1CEM0ymBnb/aWjmnFQuorb8HeepN+4pL3bq99ZtfNH+9tbFHukMWCfZcVEPprY+R4J0J00T3XZpEk+
+X-Gm-Message-State: AOJu0YzMJ0Bei05Yu9H27De6Nm1NQqhUgVVj2heiOaOorDDPzzkrdVFD
+	Xtu+npcYMm7eKIV/IT2bFSjn4Vbmam+fQfYwo3y1ZCP1HTUYpedo8ceY/KAhfGKnfByXkCCJuW5
+	HH0ALDEGbExlVWm9IA7+XI2/XG8y1gsmFk81IWVWQ8PVxV4FRY/nJ5aoY9XR5clWi3NNaBZQ0cN
+	qEZw==
+X-Received: by 2002:a17:907:3f89:b0:a7a:a33e:47b7 with SMTP id a640c23a62f3a-a83670722aemr419369166b.69.1723713900164;
+        Thu, 15 Aug 2024 02:25:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEghyVaXn5Dbtn6avz2ju4iyCpDYekR/UIUNfpUCzBfAEqAmdPwUCKFJ/4+cn52QZhbpY2Qjw==
+X-Received: by 2002:a17:907:3f89:b0:a7a:a33e:47b7 with SMTP id a640c23a62f3a-a83670722aemr419367866b.69.1723713899831;
+        Thu, 15 Aug 2024 02:24:59 -0700 (PDT)
+Received: from amikhalitsyn.. ([188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383934585sm72142866b.107.2024.08.15.02.24.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 02:24:59 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: mszeredi@redhat.com
+Cc: brauner@kernel.org,
+	stgraber@stgraber.org,
+	linux-fsdevel@vger.kernel.org,
+	Seth Forshee <sforshee@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 06/11] fs/fuse: support idmapped ->setattr op
 Date: Thu, 15 Aug 2024 11:24:23 +0200
-From: Greg KH <greg@kroah.com>
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Robert Moore <robert.moore@intel.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Thomas Bertschinger <tahbertschinger@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, linux-acpi@vger.kernel.org,
-	linux-pm@vger.kernel.org, acpica-devel@lists.linux.dev,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [RFC PATCH 6/6] rust: cpufreq: Add rust implementation of
- cppc_cpufreq driver
-Message-ID: <2024081519-magenta-giddily-09ad@gregkh>
-References: <20240815082916.1210110-1-pierre.gondois@arm.com>
- <20240815082916.1210110-7-pierre.gondois@arm.com>
+Message-Id: <20240815092429.103356-7-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
+References: <20240815092429.103356-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815082916.1210110-7-pierre.gondois@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 10:29:10AM +0200, Pierre Gondois wrote:
-> In an effort to add test/support the cpufreq framework in rust,
-> add a rust implementation of the cppc_cpufreq driver named:
-> `rcppc_cpufreq`.
-> 
-> This implementation doesn't support/implement:
-> - vendor specific workarounds
-> - Frequency Invariance Engine (FIE)
-> - artificial Energy Model (EM)
-> - (struct cpufreq_driver).attr field
-> - QoS requests
-> 
-> Basic support is provided to get/set the frequency on a platform
-> implementing the CPPC section of the ACPI spec.
-> 
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-> ---
->  drivers/cpufreq/Kconfig          |  16 ++
->  drivers/cpufreq/Makefile         |   1 +
->  drivers/cpufreq/rcppc_cpufreq.rs | 333 +++++++++++++++++++++++++++++++
->  3 files changed, 350 insertions(+)
->  create mode 100644 drivers/cpufreq/rcppc_cpufreq.rs
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Seth Forshee <sforshee@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>
+Cc: <linux-fsdevel@vger.kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+v2:
+	- pass idmap in more cases to make code easier to understand
+---
+ fs/fuse/dir.c    | 32 +++++++++++++++++++++-----------
+ fs/fuse/file.c   |  2 +-
+ fs/fuse/fuse_i.h |  4 ++--
+ 3 files changed, 24 insertions(+), 14 deletions(-)
 
-I'm missing why you want to re-implement an existing driver here.  Why
-are you going to have 2 drivers for the same functionality/hardware?
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index cd3b91b60cae..c50f951596dd 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1771,17 +1771,27 @@ static bool update_mtime(unsigned ivalid, bool trust_local_mtime)
+ 	return true;
+ }
+ 
+-static void iattr_to_fattr(struct fuse_conn *fc, struct iattr *iattr,
+-			   struct fuse_setattr_in *arg, bool trust_local_cmtime)
++static void iattr_to_fattr(struct mnt_idmap *idmap, struct fuse_conn *fc,
++			   struct iattr *iattr, struct fuse_setattr_in *arg,
++			   bool trust_local_cmtime)
+ {
+ 	unsigned ivalid = iattr->ia_valid;
+ 
+ 	if (ivalid & ATTR_MODE)
+ 		arg->valid |= FATTR_MODE,   arg->mode = iattr->ia_mode;
+-	if (ivalid & ATTR_UID)
+-		arg->valid |= FATTR_UID,    arg->uid = from_kuid(fc->user_ns, iattr->ia_uid);
+-	if (ivalid & ATTR_GID)
+-		arg->valid |= FATTR_GID,    arg->gid = from_kgid(fc->user_ns, iattr->ia_gid);
++
++	if (ivalid & ATTR_UID) {
++		kuid_t fsuid = from_vfsuid(idmap, fc->user_ns, iattr->ia_vfsuid);
++		arg->valid |= FATTR_UID;
++		arg->uid = from_kuid(fc->user_ns, fsuid);
++	}
++
++	if (ivalid & ATTR_GID) {
++		kgid_t fsgid = from_vfsgid(idmap, fc->user_ns, iattr->ia_vfsgid);
++		arg->valid |= FATTR_GID;
++		arg->gid = from_kgid(fc->user_ns, fsgid);
++	}
++
+ 	if (ivalid & ATTR_SIZE)
+ 		arg->valid |= FATTR_SIZE,   arg->size = iattr->ia_size;
+ 	if (ivalid & ATTR_ATIME) {
+@@ -1901,8 +1911,8 @@ int fuse_flush_times(struct inode *inode, struct fuse_file *ff)
+  * vmtruncate() doesn't allow for this case, so do the rlimit checking
+  * and the actual truncation by hand.
+  */
+-int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+-		    struct file *file)
++int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++		    struct iattr *attr, struct file *file)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 	struct fuse_mount *fm = get_fuse_mount(inode);
+@@ -1922,7 +1932,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+ 	if (!fc->default_permissions)
+ 		attr->ia_valid |= ATTR_FORCE;
+ 
+-	err = setattr_prepare(&nop_mnt_idmap, dentry, attr);
++	err = setattr_prepare(idmap, dentry, attr);
+ 	if (err)
+ 		return err;
+ 
+@@ -1981,7 +1991,7 @@ int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	memset(&outarg, 0, sizeof(outarg));
+-	iattr_to_fattr(fc, attr, &inarg, trust_local_cmtime);
++	iattr_to_fattr(idmap, fc, attr, &inarg, trust_local_cmtime);
+ 	if (file) {
+ 		struct fuse_file *ff = file->private_data;
+ 		inarg.valid |= FATTR_FH;
+@@ -2116,7 +2126,7 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
+ 	if (!attr->ia_valid)
+ 		return 0;
+ 
+-	ret = fuse_do_setattr(entry, attr, file);
++	ret = fuse_do_setattr(idmap, entry, attr, file);
+ 	if (!ret) {
+ 		/*
+ 		 * If filesystem supports acls it may have updated acl xattrs in
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index f39456c65ed7..562bdf8d5976 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -2966,7 +2966,7 @@ static void fuse_do_truncate(struct file *file)
+ 	attr.ia_file = file;
+ 	attr.ia_valid |= ATTR_FILE;
+ 
+-	fuse_do_setattr(file_dentry(file), &attr, file);
++	fuse_do_setattr(file_mnt_idmap(file), file_dentry(file), &attr, file);
+ }
+ 
+ static inline loff_t fuse_round_up(struct fuse_conn *fc, loff_t off)
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index d06934e70cc5..883151a44d72 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1333,8 +1333,8 @@ bool fuse_write_update_attr(struct inode *inode, loff_t pos, ssize_t written);
+ int fuse_flush_times(struct inode *inode, struct fuse_file *ff);
+ int fuse_write_inode(struct inode *inode, struct writeback_control *wbc);
+ 
+-int fuse_do_setattr(struct dentry *dentry, struct iattr *attr,
+-		    struct file *file);
++int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++		    struct iattr *attr, struct file *file);
+ 
+ void fuse_set_initialized(struct fuse_conn *fc);
+ 
+-- 
+2.34.1
 
-How is the system going to handle switching between the two drivers?
-
-thanks,
-
-greg k-h
 
