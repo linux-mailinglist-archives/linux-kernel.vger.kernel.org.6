@@ -1,109 +1,122 @@
-Return-Path: <linux-kernel+bounces-287756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAC9952C38
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65106952C3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7319284EA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E323285DF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 10:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F410D1C5792;
-	Thu, 15 Aug 2024 09:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1CqGHyC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5BC7DA6C;
+	Thu, 15 Aug 2024 09:38:52 +0000 (UTC)
+Received: from mail02.rohde-schwarz.com (mail02.rohde-schwarz.com [80.246.32.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3891519DF57;
-	Thu, 15 Aug 2024 09:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB417DA69;
+	Thu, 15 Aug 2024 09:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.246.32.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723714539; cv=none; b=Q4Pyc/mYwHmEyeHIld2tDCfq6CpTPAOVnfcXUGqiufdF5F1DakjV+GQ7JswzkH8BSCFRSzhHdzZ5XNhu7fkNZJIFZxznOMt3dMazbCpZyDeRzE2cgccZV36nWxuW1KXDlyzOl+kytSUQ8uq88BPh9wA8/RAflGzsVtwR78/OxB4=
+	t=1723714732; cv=none; b=S7AM1J5ySEXmOPodfK/7KQqUwCAd5rgl8XK7p3tUaM+GXcc3yskZ+X6oJGEvnQGnLSZqYSL4STugQ3NzXmVV5oa/zQwjgV1x4Bvs2URbkGg+swx/stHlY1byKYU8ei8AOdHlItQXXkVnUdovxvRjwJ/mxDejFTaeMyjdNihsXV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723714539; c=relaxed/simple;
-	bh=PVQNOeMTQi8lV98jbFqNpHhoYEQEkzMaLvP7V2uLo6E=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=jW+wozIEYUDxWKB4/lrSe5tsMnqkKTKk1Z6SZPqPboVzTIUERGd/UwKWczmBE3j8fqRk9flMZV/YIsJEDqj1EtVSosGg8COdfijUZOtspdW3utoKxRFZ8+4cduVEWm13/hp2JUr341wU1gv1yPrbgzPi2PI1k0ZhbmSrL1I0M2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1CqGHyC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E202C32786;
-	Thu, 15 Aug 2024 09:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723714538;
-	bh=PVQNOeMTQi8lV98jbFqNpHhoYEQEkzMaLvP7V2uLo6E=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=h1CqGHyC2Es2AS4DTk5X203oUiez5uxkxyebGLeRQrtekcZ1q+7Ynx/oXC07giFME
-	 5fyXykLoelGXkYVgF1AYkYMx/I9fIikRO/emHnNrL+12UvqmZKKHk+JzvxfYSuVVQN
-	 DpmZ+FxPnacwXGemUowVsqKoj/50Qpb/7KhLGDBTY6Osjm11ux+LN0HGGxQlzcxb+L
-	 zCeztcLbFTgsxHMbRTPj1EBryGr9+uonqEyDhcbmhQvWaP3MOObtdWQXChHvuYbDiM
-	 PxfmG8N9bNMV6R3Z94QZY8BufhnrDzQMnuRnKrzxny/mFKZHY3jArMZJ8DNd/p8Nfy
-	 t6STs/4oV6yhQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
-  "briannorris@chromium.org" <briannorris@chromium.org>,
-  "francesco@dolcini.it" <francesco@dolcini.it>,  Pete Hsieh
- <tsung-hsien.hsieh@nxp.com>
-Subject: Re: [PATCH v2 00/43] wifi: nxpwifi: create nxpwifi to support iw61x
-References: <20240809094533.1660-1-yu-hao.lin@nxp.com>
-	<PA4PR04MB963858E759C8F61402B2275AD1872@PA4PR04MB9638.eurprd04.prod.outlook.com>
-Date: Thu, 15 Aug 2024 12:35:35 +0300
-In-Reply-To: <PA4PR04MB963858E759C8F61402B2275AD1872@PA4PR04MB9638.eurprd04.prod.outlook.com>
-	(David Lin's message of "Wed, 14 Aug 2024 03:47:03 +0000")
-Message-ID: <87frr6yvq0.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1723714732; c=relaxed/simple;
+	bh=exZPANPQYNHESUMA8nzYYPjJNdOMyxngR0lhlAm2x44=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nzGSl8SPhlGqPs3WxyIM6FkX54g9WemvKRduxJY8rYY81dID9cTO4aD4nu2qd73mLdg1/As7RF4VnBYPf+uLUsjKGcVbSZUyw3iBU0UfCsSDLdiTh0NhbgCrtc20Wg0zDZcPmRTMctqKL7IgpplKg90u0hOBEll55VK4dPCxwrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rohde-schwarz.com; spf=pass smtp.mailfrom=rohde-schwarz.com; arc=none smtp.client-ip=80.246.32.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rohde-schwarz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rohde-schwarz.com
+Received: from amu316.rsint.net (10.0.19.27) by mail02.rohde-schwarz.com
+ (172.21.64.152) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.34; Thu, 15 Aug
+ 2024 11:38:40 +0200
+Received: from GMU452.rsint.net ([10.0.225.105])
+          by amu316.rsint.net (Totemo SMTP Server) with SMTP ID 562;
+          Thu, 15 Aug 2024 11:38:40 +0200 (CEST)
+Received: from GMU504.rsint.net (10.0.225.36) by GMU452.rsint.net
+ (10.0.225.105) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 15 Aug
+ 2024 11:38:40 +0200
+Received: from GMU503.rsint.net (10.0.225.35) by GMU504.rsint.net
+ (10.0.225.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 15 Aug
+ 2024 11:38:36 +0200
+Received: from GMU503.rsint.net ([fe80::957e:76:e488:c60d]) by
+ GMU503.rsint.net ([fe80::957e:76:e488:c60d%4]) with mapi id 15.02.1258.034;
+ Thu, 15 Aug 2024 11:38:36 +0200
+From: VanGiang Nguyen <vangiang.nguyen@rohde-schwarz.com>
+To: "steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
+	"daniel.m.jordan@oracle.com" <daniel.m.jordan@oracle.com>
+CC: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] padata: use integer wrap around to prevent deadlock on
+ seq_nr overflow
+Thread-Index: AQHa7vbmBiWPqu6VjE+ESlTCdwzyZg==
+Date: Thu, 15 Aug 2024 09:38:36 +0000
+Message-ID: <370458fcfbbd452381ad0f8787293455@rohde-schwarz.com>
+References: <a16995232eda4d39812f4bd94d9fb846@rohde-schwarz.com>
+In-Reply-To: <a16995232eda4d39812f4bd94d9fb846@rohde-schwarz.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-IQAV: YES
+thread-topic: [PATCH v2] padata: use integer wrap around to prevent deadlock on seq_nr overflow /ur/
+X-rus_sensitivity: 10
+msip_labels: MSIP_Label_9764cdcd-3664-4d05-9615-7cbf65a4f0a8_Enabled=true; MSIP_Label_9764cdcd-3664-4d05-9615-7cbf65a4f0a8_SetDate=2024-08-15T11:38:40Z; MSIP_Label_9764cdcd-3664-4d05-9615-7cbf65a4f0a8_Method=Privileged; MSIP_Label_9764cdcd-3664-4d05-9615-7cbf65a4f0a8_Name=UNRESTRICTED; MSIP_Label_9764cdcd-3664-4d05-9615-7cbf65a4f0a8_SiteId=74bddbd9-705c-456e-aabd-99beb719a2b2; MSIP_Label_9764cdcd-3664-4d05-9615-7cbf65a4f0a8_ActionId=8b69e117-7756-4ef8-b52e-ebe0297deaf4; MSIP_Label_9764cdcd-3664-4d05-9615-7cbf65a4f0a8_ContentBits=1
+X-GBS-PROC: dRCQSVjCk7Qx8mr9czr5fRjIHEA8CC2Wd/bFf6fJm7z9iHxUTaznMFWagZkg0fa7T4nn3F8HW+l+s4ohwJoZyUo4VtkbAmOKpGv0/+ElS0FNfJ1Dtx8w8uBSCLp8KGwQ
+X-GBS-PROCJOB: buzKt0rMdTzr5vYVJ1GuM5uACJ2qtSjCglomb5PQhjZYlFR4NpLLPciCAWpdd5BO
 
-David Lin <yu-hao.lin@nxp.com> writes:
+When submitting more than 2^32 padata objects to padata_do_serial, the
+current sorting implementation incorrectly sorts padata objects with
+overflowed seq_nr, causing them to be placed before existing objects in
+the reorder list. This leads to a deadlock in the serialization process
+as padata_find_next cannot match padata->seq_nr and pd->processed
+because the padata instance with overflowed seq_nr will be selected
+next.
 
-> I found Nxpwifi patch v2 is put in "Deferred" state quickly.
+To fix this, we use an unsigned integer wrap around to correctly sort
+padata objects in scenarios with integer overflow.
 
-The way I use patchwork states is described here:
+Fixes: bfde23ce200e ("padata: unbind parallel jobs from specific CPUs")
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#checking_state_of_patches_from_patchwork
+Co-developed-by: Christian Gafert <christian.gafert@rohde-schwarz.com>
+Signed-off-by: Christian Gafert <christian.gafert@rohde-schwarz.com>
+Co-developed-by: Max Ferger <max.ferger@rohde-schwarz.com>
+Signed-off-by: Max Ferger <max.ferger@rohde-schwarz.com>
+Signed-off-by: Van Giang Nguyen <vangiang.nguyen@rohde-schwarz.com>
+Acked-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+---
+v2: include Fixes tag and Daniel's Acked-by tag
+v1: https://lore.kernel.org/a16995232eda4d39812f4bd94d9fb846@rohde-schwarz.=
+com
+ kernel/padata.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Basically I try to follow the "Inbox Zero" method and keep the amount of
-patches in New state (my "inbox") low and the Deferred state is my todo list. 
-
-> Patch v2 is mainly to address the comments from Johannes and it
-> actually took quite some efforts. We understand there are areas to
-> improve and we are committed to continue enhance/maintain the driver.
->
-> Could you let me know your plan for reviewing Nxpwifi?
-
-Reviewing new drivers take a lot of time, at the moment I'm following
-what other reviewers say before I'll look at it myself. The process is
-so slow and patience is needed.
-
-The last thing I want to see that once the driver is accepted NXP
-disappears and we end up having an unmaintained driver. Way too many
-companies do that.
-
-> Is there anything we can do to move this forward?
-
-Yes, get involved with the community and help us, don't just expect that
-we do everything for you gratis. Especially helping Brian with mwifiex
-review/testing helps us (we get a better driver) and also helps you (you
-learn how the community works and you gain trust in the community).
-
-An excellent example is Realtek. Few years back Realtek was not involved
-with upstream development at all. But now Ping is doing an awesome job
-with maintaining ALL Realtek drivers, including the old drivers, and I
-even trust him so much that I pull directly from this tree. This is what
-NXP should aim for.
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 53f4bc912712..222bccd0c96b 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -404,7 +404,8 @@ void padata_do_serial(struct padata_priv *padata)
+ =09/* Sort in ascending order of sequence number. */
+ =09list_for_each_prev(pos, &reorder->list) {
+ =09=09cur =3D list_entry(pos, struct padata_priv, list);
+-=09=09if (cur->seq_nr < padata->seq_nr)
++=09=09/* Compare by difference to consider integer wrap around */
++=09=09if ((signed int)(cur->seq_nr - padata->seq_nr) < 0)
+ =09=09=09break;
+ =09}
+ =09list_add(&padata->list, pos);
+--=20
+2.34.1
 
