@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-287601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6EF9529C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FB29529CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 09:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87DB41C2092D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41A71C21B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 07:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA23B17AE1B;
-	Thu, 15 Aug 2024 07:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E380A17AE1B;
+	Thu, 15 Aug 2024 07:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q6v2IFkf"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c8+Xi9iA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B41317A5BD
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 07:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9900C179954;
+	Thu, 15 Aug 2024 07:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723706406; cv=none; b=ddPnenILBqu4HKwD/2Rj8VrwxQ5G2tm17PIZFLM4+Z6+lvVNGVhhxIDo/4NKgAezz4qiX+w69NwUb7ACAVEMInuXb0bPZIyyEkf++HIrPUejICxa9femH+xtiiGiq+FTW3PTka0yBdFubDZfWyu0zNsnX3CmSvnnYuLykhACqV8=
+	t=1723706457; cv=none; b=izzGRRUQfl3ry59QBGa3cm0TRFIX05ZOrComb1e3ZyzNm02L6lNecDbztishWLGAYHRlNLRVT7ZXxZPvR679vua/EtFPHVh4CZJAqdv5BdSwA7j9oK3ccpP/oSYVKMeITVNMfGY7jEY71qanqYwkhKzIRXk9ciDSaGsokxwb1gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723706406; c=relaxed/simple;
-	bh=jsPdeOnIlJPuMPjLCro5SKmZvXAl1puLv+RSKZxyf4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnYCJiK+afxWJ8UonXMxguLPny7+IBdhBSp4oWSBheErIdSh6q/YyhglHJzydC8ykY0u1yXDMQyGTbpUVFg/HFBRUv7QlY0hpe2RPC9r5RfdvXhoEfbbMusY/vD4EQGf7OZ4GrNLZpKUI8+4DtY3aCPcmkb7DFp/UH58Wq0ccBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q6v2IFkf; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so1340623e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723706403; x=1724311203; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BYyfFXtm6C6RsJuLWVzh6ZAxLrDVeC9/C1JLKXigeWI=;
-        b=Q6v2IFkf7k7L9fubJwBqKefqSfn90S2qms5+DaT2JxgczViT6Es+DeRK1363k2PE5X
-         qn4i0V7lDf8GsPC0Iz4/+5LNzq5MZGeiyEtswOq49K07sSZf43eYXpIkjMOMIlvm+zuh
-         lh/qOJf9bZFLirddGmO5FsXXUtoBYlU0O2XTEWAsSgJ3Qg6bFYZxEdcYmrBj3hKyL5qj
-         M6SoJ8mi3rIomzACC3vWeJmgiMKaVYszUV0waM13WD2BQuaYyBGNXRPX9iC90SuF+5cK
-         KR93XdR3aanYyc01SI1bkr9ng1EbixKMdFeztV4/8sfFdzV0TU8AtRpGG/ew/X0GUIkn
-         RSDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723706403; x=1724311203;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BYyfFXtm6C6RsJuLWVzh6ZAxLrDVeC9/C1JLKXigeWI=;
-        b=TG9oLW8McKqp/HAAGjgJKfBOrx+27k7zOMaPvTf54EwC/q8sAsH6whTpRCEmKPp6EJ
-         VZtqJE2Fc8C5ujJXK79oc5mv6W46yw8YTVtJWHhFFRBmeUa5YX8asYBC9xt9pxpwMSga
-         KUc3NOWJ2VKNPcrAOWxI5EkcRCouLZN81xnREjiEkedlqCDFdkGZROgSnfpQxVS9yVQ6
-         BXfqvt+fXZaBLzrXb3D+D+PMal8qVQrO3QaPqtdyXHkZHIVroXOpwN+dZo0m5l7SpDqZ
-         ADfhPlJnxN9egcGu8xhEok/ozBEZyfRUBdjAY0eOToINsQoeABlk6mVEO9yIFJxecT+T
-         gPnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoLUkwkEnKxMeC3011OUKjJLMLLNSRrlI702YfTgGyM2yUmBof+WezlnQ8fecEAr7r8Z0KyOco6QC61A+Hg5j6b0Lc67DhwfHd7yBN
-X-Gm-Message-State: AOJu0YxKMTZiiQiCbf5bKRaM/pCVhJlqvKeDfMBv6+I3K+LSZiBucG9/
-	1rI+/an2eF4kknBkbxJaNiCLVdUM5rDpBSkmmDSRVO/jsfPXECeTOSV7PgEwgyY=
-X-Google-Smtp-Source: AGHT+IGjAIXc3LM1HfHMtHToUbYecK2vDjK6Pc4pBkKHI9xD09PLovIkzA3HfX5+XUcVIhkIkzuY4Q==
-X-Received: by 2002:a05:6512:12c8:b0:52c:df83:a740 with SMTP id 2adb3069b0e04-532eda8a993mr4211925e87.30.1723706402380;
-        Thu, 15 Aug 2024 00:20:02 -0700 (PDT)
-Received: from linaro.org ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839693ccsm57192266b.190.2024.08.15.00.20.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 00:20:01 -0700 (PDT)
-Date: Thu, 15 Aug 2024 10:20:00 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Marcus Glocker <marcus@nazgul.ch>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v2 7/7] arm64: dts: qcom: Add Samsung Galaxy Book4 Edge
- Makefile
-Message-ID: <Zr2sIAhB1i7akCCc@linaro.org>
-References: <qv5pz4gnmy5xbxxjoqqyyvn4gep5xn3jafcof5merqxxllczwy@oaw3recv3tp5>
- <mtyjmbhqv5otvxhxyyvkxg6tubmtkeouwibmsmywmjdamnqnus@mow2w5trrmok>
+	s=arc-20240116; t=1723706457; c=relaxed/simple;
+	bh=gkaaHYQmqifXD3EyqOYx9n8/LSNFTXTuxRZrsETEBjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UM4c+aA7p9YZXnJH4ubcUDc1xkXL7I40jvTBLINJ7RmM227avLwGeEeZjC7eCGehzckZp6BEthfJCSeguidxxfMg+qwP+kheXA6KJ36IopXjBVJJnIpUxpGBOR95IM5DhxXP24IcJSp8A4LsTE/ALLEPnBaIAAoaSuPyx8gbeYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c8+Xi9iA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F6Uap1001447;
+	Thu, 15 Aug 2024 07:20:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=5Xv0TYGQ562mcC/GmoIH7NNoOnfIQOEfPjj1KKk
+	SqGo=; b=c8+Xi9iALBE44E5XwWPKAkbOu/6BSZeXJN0+qzaIyy+YM9jWm6pG6/z
+	1nrwoVkruXskPf2DAxZ2/SidQuZn3JZQOCNAQULVkJkNHJateP/kMU34paImbbTl
+	z0P1iwmrC5OhrMpE668230XB45kKN2Vm9ycVzCbqFF0uO/DqDeNmeGz42Kru12p5
+	dLNgeCG8/Do2e6agDaECMLPwBOFhTBnRBIkZNyzCY0z0vy7ZxhpIEHV4XVJYytQm
+	ZEaB/B2Bmqa4oruHkV6kpQTCmWlwOnY5QZAPfamjuPT6AqKEoytYmDLh3buzgvWk
+	EfNvo6VY26hKeeK1FiLy7vNzcBFzRHA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111j5tgcx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 07:20:52 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47F7KqU0012317;
+	Thu, 15 Aug 2024 07:20:52 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4111j5tgcs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 07:20:52 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47F5Lexh015571;
+	Thu, 15 Aug 2024 07:20:51 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40xm1mwfw2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 07:20:51 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47F7Kl5r55181746
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Aug 2024 07:20:49 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18C872004E;
+	Thu, 15 Aug 2024 07:20:47 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 08C912004B;
+	Thu, 15 Aug 2024 07:20:47 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 15 Aug 2024 07:20:46 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
+	id 8A037E020C; Thu, 15 Aug 2024 09:20:46 +0200 (CEST)
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Brian Norris <briannorris@chromium.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH v2] tools build: Provide consistent build options for fixdep
+Date: Thu, 15 Aug 2024 09:20:46 +0200
+Message-ID: <20240815072046.1002837-1-agordeev@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Y-mA0KOwdqknT9rZ3VVlUSKEZUIbumLZ
+X-Proofpoint-GUID: OPQXc17kQCAWF9oTgzqRPzfT5YaOaNXD
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mtyjmbhqv5otvxhxyyvkxg6tubmtkeouwibmsmywmjdamnqnus@mow2w5trrmok>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-14_22,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ mlxscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0 mlxlogscore=541
+ bulkscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408150049
 
-On 24-08-14 23:14:51, Marcus Glocker wrote:
-> Add the new Samsung Galaxy Book4 Edge to the Makefile to compile the
-> DTB file.
-> 
-> Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
+The fixdep binary is being compiled and linked in one step. While
+the host linker flags are passed to the compiler the host compiler
+flags are missed.
 
-This should be squashed into patch 6.
+That leads to build errors at least on x86_64, arm64 and s390 as
+result of the compiler vs linker flags inconsistency. For example,
+during RPM package build redhat-hardened-ld script is provided to
+gcc, while redhat-hardened-cc1 script is missed.
 
-> ---
->  arch/arm64/boot/dts/qcom/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 0e5c810304fb..77a48a5780ed 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -265,3 +265,4 @@ dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-lenovo-yoga-slim7x.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-qcp.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-samsung-galaxy-book4-edge.dtb
-> -- 
-> 2.39.2
-> 
+Provide both KBUILD_HOSTCFLAGS and KBUILD_HOSTLDFLAGS to avoid that.
+
+Closes: https://lore.kernel.org/lkml/99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@leemhuis.info/
+Fixes: ea974028a049 ("tools build: Avoid circular .fixdep-in.o.cmd issues")
+Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+---
+
+This patch is against kernel-next next-20240815 tag
+
+v2:
+- missing tags added
+- commit message adjusted
+
+---
+ tools/build/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/build/Makefile b/tools/build/Makefile
+index fea3cf647f5b..18ad131f6ea7 100644
+--- a/tools/build/Makefile
++++ b/tools/build/Makefile
+@@ -44,4 +44,4 @@ ifneq ($(wildcard $(TMP_O)),)
+ endif
+ 
+ $(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
+-	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
++	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+-- 
+2.43.0
+
 
