@@ -1,245 +1,133 @@
-Return-Path: <linux-kernel+bounces-288220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86AB4953779
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:42:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB23C95377F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA76E1C25335
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:42:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D2B1F2612D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1381B012B;
-	Thu, 15 Aug 2024 15:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2181B1429;
+	Thu, 15 Aug 2024 15:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qj7jU/tc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b9HMzwuU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F4F1AED41
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0391AD3F7;
+	Thu, 15 Aug 2024 15:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723736511; cv=none; b=TQIQyXSLvxHuN2EWC1uuMSthun8omT1h69qFItwNGaZeSxSFg3/hs5d5sTiBbmNjcsBZ+RXERFFcHtETyNo/aWgaqJ21Uqgm7/amjZHtNtXk5XfQC9BHsL4gJrjjJiFTfHyio8wJE6CXEbz5vhMKxUN+U0rDmRv0jkWhmmW0Taw=
+	t=1723736597; cv=none; b=DheTcl6+U+K8dWOl1neWrIBEIJozMwmE5372qLSLIa6dgH8GDwBoT+IGon+iHKuV4wr2NCxAf9NdlSq+jZ6oTeymzm28IcuFKJZgb6nl76m4F1O8EK+OjigSXSucqq3CQTP9fvy6JHImQNIrjO+JHYS91qGVFGkgawOTqspRPLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723736511; c=relaxed/simple;
-	bh=iKftnuoXv++1YtyaUGQI++5wooIkfj0lQ2g4x1O0WsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WtLGXhQnfeTgEdjy6vBPIwVG6RuPJIaAgFkr3XMbfgWHaix3DDm2JGbu7gOijqhXAKH9vbIgaQ0pfSzp1MJPq+WNdq7UiCnvVjMBMSAlNJ0np7sfm5weVZg2+ronPzWUN2IDO0S0gC9daqNUmTbwmUq9cTWyntK46e1OapJXz4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qj7jU/tc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723736508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JsmHuSZ/h+8byKlDVdTBZriKwwSluzVcisJkUaNyJWc=;
-	b=Qj7jU/tcYE6RXLAUYqYIdONE6R7PcArQ5d3HGUVlwud0dvYJI1cn6yz+kADJuw8gOUoK8D
-	kvklxOPLac76Lv7pxxdgfewdM1GURyNCicoNmR6nsYrwKbGirErgjJ/7TUCDfuMyYh2rdr
-	HGgBUPtWFvZgzQIYsQ2D5wW3EPH6nEk=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-626-N9wULLT4MdOnfvw5usjhOQ-1; Thu, 15 Aug 2024 11:41:44 -0400
-X-MC-Unique: N9wULLT4MdOnfvw5usjhOQ-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b95c005dbcso1949196d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:41:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723736504; x=1724341304;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsmHuSZ/h+8byKlDVdTBZriKwwSluzVcisJkUaNyJWc=;
-        b=oAdpRBkMHkNasvsSg4Ph7tp8tUQ+xvgbGKrXYnNhnZ7/sAlsDzLId1hgAeCEPMOIv4
-         +y8wp73pehQzhJb7R88WO+TDXAFpRwxR8EXAeh/DkjwDdMaOU1wHmOO0RAGzuNDhKxUc
-         GMLFnacyDUo15HGfpUVloyX6quN2Icp89Jn0KdbB7pv7eRRay5z8EmgUy0+0nOeuXMzO
-         DxukG4t7VGf7KpFilSZcbNRk8JrW0vmXPZbnl2n83IPua7P9FvWzYPrhOVDbcOiDJeZw
-         TAqz+Z+2hcHEmQ7R6G8GeSB3tNzDcXOoSSkZu0kL2lZbKNNFr0ntJ3Rz6s4dwHsSHeyk
-         jz9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNEMJig6tcesShrMR1YL/iszm96KD+dMg7W88TNQc8wlxFHbSK7K8tUVIP9wqwnCgcU8YjCoH+ERGUsW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9Ue4i10MLDoBcIrD2yn2e4yp2OXuUfWClwshg6hpyXJaubxj1
-	KjIXFW8Z2bzdTQads9efu4A+Pu2q8hLgyi1MIfVznh3bEbKsqL/mcOg3HiD4v7LKfjtq/1l/5Uz
-	EFb2h42PzpeAv+bHdceLFuwBMsSn7BIsp+SCgnWCW3DqK/q5fQyFNglBjB50lhw==
-X-Received: by 2002:a05:6214:c2a:b0:6b9:9417:c103 with SMTP id 6a1803df08f44-6bf5d15e1c2mr43262716d6.1.1723736503617;
-        Thu, 15 Aug 2024 08:41:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzOO1MXixhWkJJiUpcPb8vsKcxQhlblFzoLUtxY92DYm0+isa557XEa9BsKNxw5lcKbfHR8g==
-X-Received: by 2002:a05:6214:c2a:b0:6b9:9417:c103 with SMTP id 6a1803df08f44-6bf5d15e1c2mr43262466d6.1.1723736503043;
-        Thu, 15 Aug 2024 08:41:43 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf6ff0c354sm7266716d6.135.2024.08.15.08.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 08:41:42 -0700 (PDT)
-Date: Thu, 15 Aug 2024 11:41:39 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Borislav Petkov <bp@alien8.de>,
-	David Hildenbrand <david@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: Re: [PATCH 09/19] mm: New follow_pfnmap API
-Message-ID: <Zr4hs8AGbPRlieY4@x1n>
-References: <20240809160909.1023470-1-peterx@redhat.com>
- <20240809160909.1023470-10-peterx@redhat.com>
- <20240814131954.GK2032816@nvidia.com>
- <Zrz2b82-Z31h4Suy@x1n>
- <20240814221441.GB2032816@nvidia.com>
+	s=arc-20240116; t=1723736597; c=relaxed/simple;
+	bh=tBcHQi3i5KC4GbpIUxL7ctt8uCWrcYcOXO6IpVSWLr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Dibc5BPYUfJCpAUfBvR1N4r+KPiWT/AIgGEnCmUf/saHG12NROCvB+YgxxOwxu8zAYtmnJhY2BRM4q//iw5n3wTbs3R7g8owBOY6rEvTLL4VSMMQFKRayJXnedvxrH9nNs+F4Iubp4mN9BJl5eS3egpXeB3f4eIQ6nfr/InQwZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b9HMzwuU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47F7GjGx027121;
+	Thu, 15 Aug 2024 15:43:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Cc5I816aayP0mBk0qxI4DbcgcOavj8/4JMXIypN4nOM=; b=b9HMzwuUBChD3jXQ
+	Dxv888teONxnPTj9jKz48fhmnK+UurW3UBh1XdWARlsIUEChOaVCTGowNEuzSUiC
+	xadUvrfIv0ffcLcsfbhDc4Z34vLQoXjWujFIOfEcUIX2egqh4+jIjbJYbqaU8exz
+	rKJPC1N+TOUNRm2xTFUzQzLNZRyZkf546ImqZqfGOSAgW2QSPtJXe5aOouRvXG+s
+	DHcXxZCfGfMHpf0KA9voAJAP83JJkR55TLZyCLYxFWC7/h1LnOG7laOLqGoCfG57
+	f2pzh3mshTBy+TMs0v6B7UAgkp9h6zH+TbHSh2snINaoZ4mY6+Fvu1UL4L6gVKsW
+	HlfYBQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411d5696n8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 15:43:11 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FFhA9e009900
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 15:43:10 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
+ 2024 08:43:04 -0700
+Message-ID: <5ecbcd10-d9b7-4134-9666-6df790527b1f@quicinc.com>
+Date: Thu, 15 Aug 2024 23:43:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240814221441.GB2032816@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
+ version Titan 780
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-14-quic_depengs@quicinc.com>
+ <4b745c1a-33d9-472a-97af-153a2a7c8721@linaro.org>
+ <2de0b7a8-b879-49e9-9656-ec86f29ce559@quicinc.com>
+ <b0787142-0f85-4616-9895-72e33f21c2da@linaro.org>
+ <82200889-a98d-4815-bc31-f81b15d02513@quicinc.com>
+ <7130beef-7787-42a1-85c8-f27574241ba7@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <7130beef-7787-42a1-85c8-f27574241ba7@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SOKR9LGmzhsvDDb1iqN5A6exNM_nnP1n
+X-Proofpoint-ORIG-GUID: SOKR9LGmzhsvDDb1iqN5A6exNM_nnP1n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_08,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408150114
 
-On Wed, Aug 14, 2024 at 07:14:41PM -0300, Jason Gunthorpe wrote:
-> On Wed, Aug 14, 2024 at 02:24:47PM -0400, Peter Xu wrote:
-> > On Wed, Aug 14, 2024 at 10:19:54AM -0300, Jason Gunthorpe wrote:
-> > > On Fri, Aug 09, 2024 at 12:08:59PM -0400, Peter Xu wrote:
-> > > 
-> > > > +/**
-> > > > + * follow_pfnmap_start() - Look up a pfn mapping at a user virtual address
-> > > > + * @args: Pointer to struct @follow_pfnmap_args
-> > > > + *
-> > > > + * The caller needs to setup args->vma and args->address to point to the
-> > > > + * virtual address as the target of such lookup.  On a successful return,
-> > > > + * the results will be put into other output fields.
-> > > > + *
-> > > > + * After the caller finished using the fields, the caller must invoke
-> > > > + * another follow_pfnmap_end() to proper releases the locks and resources
-> > > > + * of such look up request.
-> > > > + *
-> > > > + * During the start() and end() calls, the results in @args will be valid
-> > > > + * as proper locks will be held.  After the end() is called, all the fields
-> > > > + * in @follow_pfnmap_args will be invalid to be further accessed.
-> > > > + *
-> > > > + * If the PTE maps a refcounted page, callers are responsible to protect
-> > > > + * against invalidation with MMU notifiers; otherwise access to the PFN at
-> > > > + * a later point in time can trigger use-after-free.
-> > > > + *
-> > > > + * Only IO mappings and raw PFN mappings are allowed.  
-> > > 
-> > > What does this mean? The paragraph before said this can return a
-> > > refcounted page?
-> > 
-> > This came from the old follow_pte(), I kept that as I suppose we should
-> > allow VM_IO | VM_PFNMAP just like before, even if in this case I suppose
-> > only the pfnmap matters where huge mappings can start to appear.
+Hi Vladimir,
+
+>>
+>> Thanks for the confirmation, even though I add the rup_update and
+>> buf_done function in later commits, it is still called in platform
+>> specific code(camss-vfe-780.c), so I will keep as it is done today.
 > 
-> If that is the intention it should actively block returning anything
-> that is vm_normal_page() not check the VM flags, see the other
-> discussion..
-
-The restriction should only be applied to the vma attributes, not a
-specific pte mapping, IMHO.
-
-I mean, the comment was describing "which VMA is allowed to use this
-function", reflecting that we'll fail at anything !PFNMAP && !IO.
-
-It seems legal to have private mappings of them, where vm_normal_page() can
-return true here for some of the mappings under PFNMAP|IO. IIUC either the
-old follow_pte() or follow_pfnmap*() API cared much on this part yet so
-far.
-
+> let it be so.
 > 
-> It makes sense as a restriction if you call the API follow pfnmap.
-
-I'm open to any better suggestion to names.  Again, I think here it's more
-about the vma attribute, not "every mapping under the memory range".
-
+> I have another ask about it, please move new camss_reg_update() out from
+> camss.c into camss-csid.c, and camss_buf_done() from camss.c into camss- 
+> vfe.c
 > 
-> > > > + * The mmap semaphore
-> > > > + * should be taken for read, and the mmap semaphore cannot be released
-> > > > + * before the end() is invoked.
-> > > 
-> > > This function is not safe for IO mappings and PFNs either, VFIO has a
-> > > known security issue to call it. That should be emphasised in the
-> > > comment.
-> > 
-> > Any elaboration on this?  I could have missed that..
-> 
-> Just because the memory is a PFN or IO doesn't mean it is safe to
-> access it without a refcount. There are many driver scenarios where
-> revoking a PFN from mmap needs to be a hard fence that nothing else
-> has access to that PFN. Otherwise it is a security problem for that
-> driver.
 
-Oh ok, I suppose you meant the VFIO whole thing on "zapping mapping when
-MMIO disabled"?  If so I get it.  More below.
+The cross direct call has been removed by below commit, so it looks 
+strange if I add the cross direct call.
 
-> 
-> > I suppose so?  As the pgtable is stable, I thought it means it's safe, but
-> > I'm not sure now when you mentioned there's a VFIO known issue, so I could
-> > have overlooked something.  There's no address returned, but pfn, pgprot,
-> > write, etc.
-> 
-> zap/etc will wait on the PTL, I think, so it should be safe for at
-> least the issues I am thinking of.
-> 
-> > The user needs to do proper mapping if they need an usable address,
-> > e.g. generic_access_phys() does ioremap_prot() and recheck the pfn didn't
-> > change.
-> 
-> No, you can't take the phys_addr_t outside the start/end region that
-> explicitly holds the lock protecting it. This is what the comment must
-> warn against doing.
+media: qcom: camss: Decouple VFE from CSID
+https://lore.kernel.org/lkml/20240522154659.510-9-quic_grosikop@quicinc.com/
 
-I think the comment has that part covered more or less:
+I use the v4l2_subdev_notify to do the cross communication in v1 and v2 
+series, but Bryan said, "The subdev notify is I think not the right fit 
+for this purpose within our driver.".
+Then I add an internal notify interface in camss structure, but Bryan 
+suggested to use direct call, so I add these functions directly in camss.c
 
- * During the start() and end() calls, the results in @args will be valid
- * as proper locks will be held.  After the end() is called, all the fields
- * in @follow_pfnmap_args will be invalid to be further accessed.
-
-Feel free to suggest anything that will make it better.
-
-For generic_access_phys() as a specific example: I think it is safe to map
-the pfn even after end().  I meant here the "map" operation is benign with
-ioremap_prot(), afaiu: it doesn't include an access on top of the mapping
-yet.
-
-After the map, it rewalks the pgtable, making sure PFN is still there and
-valid, and it'll only access it this time before end():
-
-	if (write)
-		memcpy_toio(maddr + offset, buf, len);
-	else
-		memcpy_fromio(buf, maddr + offset, len);
-	ret = len;
-	follow_pfnmap_end(&args);
-
-If PFN changed, it properly releases the mapping:
-
-	if ((prot != pgprot_val(args.pgprot)) ||
-	    (phys_addr != (args.pfn << PAGE_SHIFT)) ||
-	    (writable != args.writable)) {
-		follow_pfnmap_end(&args);
-		iounmap(maddr);
-		goto retry;
-	}
-
-Then taking the example of VFIO: there's no risk of racing with a
-concurrent zapping as far as I can see, because otherwise it'll see pfn
-changed.
+https://lore.kernel.org/all/236cfe43-8321-4168-8630-fb9528f581bd@linaro.org/
 
 Thanks,
-
--- 
-Peter Xu
-
+Depeng
 
