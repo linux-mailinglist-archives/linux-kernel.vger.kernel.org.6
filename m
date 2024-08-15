@@ -1,388 +1,250 @@
-Return-Path: <linux-kernel+bounces-287487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D53195284F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:34:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554DA952852
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39EB628713F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:34:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868951C225B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6D038DE5;
-	Thu, 15 Aug 2024 03:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03CF39FCF;
+	Thu, 15 Aug 2024 03:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="EbvmbmIO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Rgxzq+L+"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hqFw0TFK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3AE6FC3;
-	Thu, 15 Aug 2024 03:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD01239FCE
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723692834; cv=none; b=Ge4NVbA2h22YPvSTGZLNI5mHGX4X2EZJwW9PWft68R91r8YphdfU3vACg1t+/qjcTPvamQeTxxXlAQrTV9PAlBmhuG/vKwBDxA83jrxWCu3B/1JFxuvl28eMfqwLzwSRlOy+S5s6AL9wED0/xPlusO4riaW4mS5v2U7qll5VXqs=
+	t=1723692882; cv=none; b=sRnacl1p8cJdqRwYrg9x/srQQ9sJTdxOUt/V1p3R9mFiu2UzPWkB1J/zHB+TwVUBT5exKDPG5xFGSnZYA1Y79sC3jpELBissmKHCgT5/HEfsgAFP5DEPmgVDDsIHK10buMYNeh56HgIZRruDi+Cx/eZD1ioDvwikKB1TggTe0hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723692834; c=relaxed/simple;
-	bh=ixC0+t6WfWaaVZ/Lgn75gF74zaPemthMM9/IM/zFK+c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XSMtZBU5gijH95lagg0DilruaswciziskJ7qFTzGnneXv8SG9qhCa/MlCameZwlu43A7GlpuuLDnZKY2R51+2D5W+w92GZbc/eD2Ks1pBg3n3B9K5CEShYDsUrZ0xeRjK+7/tUFbvCeztyJKm53gYHjNu4ojy/Mt3C/NUIaY4/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=EbvmbmIO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Rgxzq+L+; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
-Received: from phl-compute-03.internal (phl-compute-03.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 395171151BDD;
-	Wed, 14 Aug 2024 23:33:51 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 14 Aug 2024 23:33:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1723692831;
-	 x=1723779231; bh=cJ2UvaJpYFZzglZBu7tFIhf+1iu0zJoGYRia8VK/wIQ=; b=
-	EbvmbmIOklwGFyQiawwWpsUQZwfG0jDwpLagUzhxZeBWbJ0tGVR9sqBYHHeg/Upz
-	+I5WR0s01ep1nhMXkJrs7ZVpr4RRQB/NijJDNiWAF/zzUdgaylz+nfC0l9jHp8L8
-	E1fNEjFKmjEqvpXH2v8NRjkXAUmRnUmgWhSSN+3aqsTvtrgK6yh1BGNAKmWexYr0
-	nYB2hTvShrDCUyhP//ffHlWmHpIfhteu7iQSWd8fNQ/ggCSrw4ZTjGOYvzBAnvOD
-	oVo1NO27kOo/K3sBR5LdY/hLaJDBrteU6PNoIsOZUGJnuUSo1+fdPmGIrUNQEjRe
-	wv7D6wpL/TFKFo7EvbAj5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723692831; x=
-	1723779231; bh=cJ2UvaJpYFZzglZBu7tFIhf+1iu0zJoGYRia8VK/wIQ=; b=R
-	gxzq+L+dixWxn5aZRi7QtrDiu2/vnUbnJj0NfrpILFwR91Oe0RFqrcs+fMzey3hu
-	/SMJisZ6ioIoIgdeU17NAH4LCOaLEp5ZKrmo+IJ7kH70dYqkcERlqELt812mfkZ6
-	g08F1aaoDmvze7Iq9fWDt+wSFcbXLUxG/yCphqxGcWem4oXw3BB+McnrCaWgUgzJ
-	ZHyDgN84qaRGlGgPZFRux6bkh5cM4ZUrFDVPwuemRE+ovK2FS6KGZnyHWqS8Qg27
-	MYGziYomtQ6/mxLV+ZaxEsXBd3nGGmcyIP3e8buRZmeM6g+MB71QCjpsidK7rUVM
-	qpEYO+gO3rYm+6XXXyjWA==
-X-ME-Sender: <xms:Hne9ZjZxHxqjznvMkq4f2q9qfVPeZKEW65mKgvjE_J9690mcCk4oag>
-    <xme:Hne9ZibU19i-SpiZrCi3-5uL9iaGSo0sX-4Cspfi29C07tMVzfLLGDKv0xQMlMNQU
-    mQL9wWrIBbW>
-X-ME-Received: <xmr:Hne9Zl_Q57qDLrX1ldlHb9_JxzyI8GmKidAyknBnuGyoFDQbhLsu75Y2TRA9gwbYUeP3cpJCgGDYhUt7A0_Ohm2AZpLGwbMpcsmvcVXXdEvDYWe-HAx9eqE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddthedgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtkeertddtvdej
-    necuhfhrohhmpefkrghnucfmvghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqne
-    cuggftrfgrthhtvghrnhepvefgvdehhfevhfevgfegffejheetieegjefhjeefffeutdfh
-    tdeikefhgfejjeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhr
-    tghpthhtoheprghuthhofhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Hne9Zpp-YJjsM0bv3cYfB_nBf3rhxnm9xWXw4ev5LaBW7A13V1HVdQ>
-    <xmx:H3e9ZuoHEBFInkZnWYXDE-hkwRqPSdr53KHOyjQFMYBrXjJz0fxbog>
-    <xmx:H3e9ZvQ2jmNnqAcCNEWJxesfXUbCubB4hYGTZVD_6lCB3e8z2cYynA>
-    <xmx:H3e9ZmovetxcUmCJyAseNE-KaBGSeoGewQZYdhd27lRbAqc96eJIYg>
-    <xmx:H3e9ZnmBdlSgSt2NlPEz22OG1tFq4kCxszv2LhHdumq0UEnKKoFJlEE0>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 14 Aug 2024 23:33:48 -0400 (EDT)
-Message-ID: <ea45c08a-f2cd-47fe-a45c-1f0431bd32ec@themaw.net>
-Date: Thu, 15 Aug 2024 11:33:45 +0800
+	s=arc-20240116; t=1723692882; c=relaxed/simple;
+	bh=jc9sBh8DnOYiFOcaqDcoGd3baG4qz+wX3LpE+ghM+qA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jju0FOqdfH8S0dVh6WORV94GQ5YGWAcuBajbJ31FYlmkfZVBQluHRrIOyS4pcCvW3bvN4Pka37C/xFM7Gw9IYIJvXIcB2EjjucKgd+Os1EzVlgyvYZHGXTyiTqevmGHBZEbYHTOnuHU22i0qhlbSnXEYZEOEQiLNxEsyWLGXfSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hqFw0TFK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723692879;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6K1TI3jnfsF1USfFDB2QIyPomo8kjJEpGvQ1xDYo0cg=;
+	b=hqFw0TFKS0DugC1AVIvSSdo0268jjdtJOnB3ML+WVXxaqxq6ov/pkEy2S6G2phP+uZy8AG
+	GOzQUTf35wCrsitNzyY3Hq+MaN28mFzSjKk9QWSLCbVtfLFYkKgy+ahoxDgE5dXBd9J956
+	G671pfaHRfv/k1WpwZKfeS0jPDEry7k=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-z-y9NpPmOIqFoDPIrUtwRg-1; Wed,
+ 14 Aug 2024 23:34:34 -0400
+X-MC-Unique: z-y9NpPmOIqFoDPIrUtwRg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CAD8F1944EBA;
+	Thu, 15 Aug 2024 03:34:31 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.87])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 672E619560AA;
+	Thu, 15 Aug 2024 03:34:19 +0000 (UTC)
+Date: Thu, 15 Aug 2024 11:34:14 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Li Lingfeng <lilingfeng@huaweicloud.com>
+Cc: axboe@kernel.dk, bvanassche@acm.org, hch@lst.de, jack@suse.cz,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com, yukuai3@huawei.com, houtao1@huawei.com,
+	yi.zhang@huawei.com, yangerkun@huawei.com, lilingfeng3@huawei.com
+Subject: Re: [PATCH v2] block: Fix lockdep warning in blk_mq_mark_tag_wait
+Message-ID: <Zr13NpFfPgMtGJas@fedora>
+References: <20240815024736.2040971-1-lilingfeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] autofs: add per dentry expire timeout
-From: Ian Kent <raven@themaw.net>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
- autofs mailing list <autofs@vger.kernel.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20240814090231.963520-1-raven@themaw.net>
- <20240814-darauf-schund-23ec844f4a09@brauner>
- <67656e13-c816-44f0-8a69-5efa7c76a907@themaw.net>
-Content-Language: en-US
-Autocrypt: addr=raven@themaw.net;
- keydata= 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
-In-Reply-To: <67656e13-c816-44f0-8a69-5efa7c76a907@themaw.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240815024736.2040971-1-lilingfeng@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 15/8/24 11:10, Ian Kent wrote:
-> On 14/8/24 22:39, Christian Brauner wrote:
->> On Wed, Aug 14, 2024 at 05:02:31PM GMT, Ian Kent wrote:
->>> Add ability to set per-dentry mount expire timeout to autofs.
->>>
->>> There are two fairly well known automounter map formats, the autofs
->>> format and the amd format (more or less System V and Berkley).
->>>
->>> Some time ago Linux autofs added an amd map format parser that
->>> implemented a fair amount of the amd functionality. This was done
->>> within the autofs infrastructure and some functionality wasn't
->>> implemented because it either didn't make sense or required extra
->>> kernel changes. The idea was to restrict changes to be within the
->>> existing autofs functionality as much as possible and leave changes
->>> with a wider scope to be considered later.
->>>
->>> One of these changes is implementing the amd options:
->>> 1) "unmount", expire this mount according to a timeout (same as the
->>>     current autofs default).
->>> 2) "nounmount", don't expire this mount (same as setting the autofs
->>>     timeout to 0 except only for this specific mount) .
->>> 3) "utimeout=<seconds>", expire this mount using the specified
->>>     timeout (again same as setting the autofs timeout but only for
->>>     this mount).
->>>
->>> To implement these options per-dentry expire timeouts need to be
->>> implemented for autofs indirect mounts. This is because all map keys
->>> (mounts) for autofs indirect mounts use an expire timeout stored in
->>> the autofs mount super block info. structure and all indirect mounts
->>> use the same expire timeout.
->>>
->>> Now I have a request to add the "nounmount" option so I need to add
->>> the per-dentry expire handling to the kernel implementation to do this.
->>>
->>> The implementation uses the trailing path component to identify the
->>> mount (and is also used as the autofs map key) which is passed in the
->>> autofs_dev_ioctl structure path field. The expire timeout is passed
->>> in autofs_dev_ioctl timeout field (well, of the timeout union).
->>>
->>> If the passed in timeout is equal to -1 the per-dentry timeout and
->>> flag are cleared providing for the "unmount" option. If the timeout
->>> is greater than or equal to 0 the timeout is set to the value and the
->>> flag is also set. If the dentry timeout is 0 the dentry will not expire
->>> by timeout which enables the implementation of the "nounmount" option
->>> for the specific mount. When the dentry timeout is greater than zero it
->>> allows for the implementation of the "utimeout=<seconds>" option.
->>>
->>> Signed-off-by: Ian Kent <raven@themaw.net>
->>> ---
->>>   fs/autofs/autofs_i.h         |  4 ++
->>>   fs/autofs/dev-ioctl.c        | 97 
->>> ++++++++++++++++++++++++++++++++++--
->>>   fs/autofs/expire.c           |  7 ++-
->>>   fs/autofs/inode.c            |  2 +
->>>   include/uapi/linux/auto_fs.h |  2 +-
->>>   5 files changed, 104 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
->>> index 8c1d587b3eef..77c7991d89aa 100644
->>> --- a/fs/autofs/autofs_i.h
->>> +++ b/fs/autofs/autofs_i.h
->>> @@ -62,6 +62,7 @@ struct autofs_info {
->>>       struct list_head expiring;
->>>         struct autofs_sb_info *sbi;
->>> +    unsigned long exp_timeout;
->>>       unsigned long last_used;
->>>       int count;
->>>   @@ -81,6 +82,9 @@ struct autofs_info {
->>>                       */
->>>   #define AUTOFS_INF_PENDING    (1<<2) /* dentry pending mount */
->>>   +#define AUTOFS_INF_EXPIRE_SET    (1<<3) /* per-dentry expire 
->>> timeout set for
->>> +                      this mount point.
->>> +                    */
->>>   struct autofs_wait_queue {
->>>       wait_queue_head_t queue;
->>>       struct autofs_wait_queue *next;
->>> diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
->>> index 5bf781ea6d67..f011e026358e 100644
->>> --- a/fs/autofs/dev-ioctl.c
->>> +++ b/fs/autofs/dev-ioctl.c
->>> @@ -128,7 +128,13 @@ static int validate_dev_ioctl(int cmd, struct 
->>> autofs_dev_ioctl *param)
->>>               goto out;
->>>           }
->>>   +        /* Setting the per-dentry expire timeout requires a trailing
->>> +         * path component, ie. no '/', so invert the logic of the
->>> +         * check_name() return for AUTOFS_DEV_IOCTL_TIMEOUT_CMD.
->>> +         */
->>>           err = check_name(param->path);
->>> +        if (cmd == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
->>> +            err = err ? 0 : -EINVAL;
->>>           if (err) {
->>>               pr_warn("invalid path supplied for cmd(0x%08x)\n",
->>>                   cmd);
->>> @@ -396,16 +402,97 @@ static int autofs_dev_ioctl_catatonic(struct 
->>> file *fp,
->>>       return 0;
->>>   }
->>>   -/* Set the autofs mount timeout */
->>> +/*
->>> + * Set the autofs mount expire timeout.
->>> + *
->>> + * There are two places an expire timeout can be set, in the autofs
->>> + * super block info. (this is all that's needed for direct and offset
->>> + * mounts because there's a distinct mount corresponding to each of
->>> + * these) and per-dentry within within the dentry info. If a 
->>> per-dentry
->>> + * timeout is set it will override the expire timeout set in the 
->>> parent
->>> + * autofs super block info.
->>> + *
->>> + * If setting the autofs super block expire timeout the 
->>> autofs_dev_ioctl
->>> + * size field will be equal to the autofs_dev_ioctl structure size. If
->>> + * setting the per-dentry expire timeout the mount point name is 
->>> passed
->>> + * in the autofs_dev_ioctl path field and the size field updated to
->>> + * reflect this.
->>> + *
->>> + * Setting the autofs mount expire timeout sets the timeout in the 
->>> super
->>> + * block info. struct. Setting the per-dentry timeout does a little 
->>> more.
->>> + * If the timeout is equal to -1 the per-dentry timeout (and flag) is
->>> + * cleared which reverts to using the super block timeout, 
->>> otherwise if
->>> + * timeout is 0 the timeout is set to this value and the flag is left
->>> + * set which disables expiration for the mount point, lastly the flag
->>> + * and the timeout are set enabling the dentry to use this timeout.
->>> + */
->>>   static int autofs_dev_ioctl_timeout(struct file *fp,
->>>                       struct autofs_sb_info *sbi,
->>>                       struct autofs_dev_ioctl *param)
->>>   {
->>> -    unsigned long timeout;
->>> +    unsigned long timeout = param->timeout.timeout;
->>> +
->>> +    /* If setting the expire timeout for an individual indirect
->>> +     * mount point dentry the mount trailing component path is
->>> +     * placed in param->path and param->size adjusted to account
->>> +     * for it otherwise param->size it is set to the structure
->>> +     * size.
->>> +     */
->>> +    if (param->size == AUTOFS_DEV_IOCTL_SIZE) {
->>> +        param->timeout.timeout = sbi->exp_timeout / HZ;
->>> +        sbi->exp_timeout = timeout * HZ;
->>> +    } else {
->>> +        struct dentry *base = fp->f_path.dentry;
->>> +        struct inode *inode = base->d_inode;
->>> +        int path_len = param->size - AUTOFS_DEV_IOCTL_SIZE - 1;
->>> +        struct dentry *dentry;
->>> +        struct autofs_info *ino;
->>> +
->>> +        if (!autofs_type_indirect(sbi->type))
->>> +            return -EINVAL;
->>> +
->>> +        /* An expire timeout greater than the superblock timeout
->>> +         * could be a problem at shutdown but the super block
->>> +         * timeout itself can change so all we can really do is
->>> +         * warn the user.
->>> +         */
->>> +        if (timeout >= sbi->exp_timeout)
->>> +            pr_warn("per-mount expire timeout is greater than "
->>> +                "the parent autofs mount timeout which could "
->>> +                "prevent shutdown\n");
->> Wouldn't it be possible to just record the lowest known per-dentry
->> timeout in idk sbi->exp_lower_bound and reject sbi->exp_timeout changes
->> that go below that?
->
-> Not sure I understand what your saying here.
+On Thu, Aug 15, 2024 at 10:47:36AM +0800, Li Lingfeng wrote:
+> From: Li Lingfeng <lilingfeng3@huawei.com>
+> 
+> Lockdep reported a warning in Linux version 6.6:
+> 
+> [  414.344659] ================================
+> [  414.345155] WARNING: inconsistent lock state
+> [  414.345658] 6.6.0-07439-gba2303cacfda #6 Not tainted
+> [  414.346221] --------------------------------
+> [  414.346712] inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
+> [  414.347545] kworker/u10:3/1152 [HC0[0]:SC0[0]:HE0:SE1] takes:
+> [  414.349245] ffff88810edd1098 (&sbq->ws[i].wait){+.?.}-{2:2}, at: blk_mq_dispatch_rq_list+0x131c/0x1ee0
+> [  414.351204] {IN-SOFTIRQ-W} state was registered at:
+> [  414.351751]   lock_acquire+0x18d/0x460
+> [  414.352218]   _raw_spin_lock_irqsave+0x39/0x60
+> [  414.352769]   __wake_up_common_lock+0x22/0x60
+> [  414.353289]   sbitmap_queue_wake_up+0x375/0x4f0
+> [  414.353829]   sbitmap_queue_clear+0xdd/0x270
+> [  414.354338]   blk_mq_put_tag+0xdf/0x170
+> [  414.354807]   __blk_mq_free_request+0x381/0x4d0
+> [  414.355335]   blk_mq_free_request+0x28b/0x3e0
+> [  414.355847]   __blk_mq_end_request+0x242/0xc30
+> [  414.356367]   scsi_end_request+0x2c1/0x830
+> [  414.345155] WARNING: inconsistent lock state
+> [  414.345658] 6.6.0-07439-gba2303cacfda #6 Not tainted
+> [  414.346221] --------------------------------
+> [  414.346712] inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
+> [  414.347545] kworker/u10:3/1152 [HC0[0]:SC0[0]:HE0:SE1] takes:
+> [  414.349245] ffff88810edd1098 (&sbq->ws[i].wait){+.?.}-{2:2}, at: blk_mq_dispatch_rq_list+0x131c/0x1ee0
+> [  414.351204] {IN-SOFTIRQ-W} state was registered at:
+> [  414.351751]   lock_acquire+0x18d/0x460
+> [  414.352218]   _raw_spin_lock_irqsave+0x39/0x60
+> [  414.352769]   __wake_up_common_lock+0x22/0x60
+> [  414.353289]   sbitmap_queue_wake_up+0x375/0x4f0
+> [  414.353829]   sbitmap_queue_clear+0xdd/0x270
+> [  414.354338]   blk_mq_put_tag+0xdf/0x170
+> [  414.354807]   __blk_mq_free_request+0x381/0x4d0
+> [  414.355335]   blk_mq_free_request+0x28b/0x3e0
+> [  414.355847]   __blk_mq_end_request+0x242/0xc30
+> [  414.356367]   scsi_end_request+0x2c1/0x830
+> [  414.356863]   scsi_io_completion+0x177/0x1610
+> [  414.357379]   scsi_complete+0x12f/0x260
+> [  414.357856]   blk_complete_reqs+0xba/0xf0
+> [  414.358338]   __do_softirq+0x1b0/0x7a2
+> [  414.358796]   irq_exit_rcu+0x14b/0x1a0
+> [  414.359262]   sysvec_call_function_single+0xaf/0xc0
+> [  414.359828]   asm_sysvec_call_function_single+0x1a/0x20
+> [  414.360426]   default_idle+0x1e/0x30
+> [  414.360873]   default_idle_call+0x9b/0x1f0
+> [  414.361390]   do_idle+0x2d2/0x3e0
+> [  414.361819]   cpu_startup_entry+0x55/0x60
+> [  414.362314]   start_secondary+0x235/0x2b0
+> [  414.362809]   secondary_startup_64_no_verify+0x18f/0x19b
+> [  414.363413] irq event stamp: 428794
+> [  414.363825] hardirqs last  enabled at (428793): [<ffffffff816bfd1c>] ktime_get+0x1dc/0x200
+> [  414.364694] hardirqs last disabled at (428794): [<ffffffff85470177>] _raw_spin_lock_irq+0x47/0x50
+> [  414.365629] softirqs last  enabled at (428444): [<ffffffff85474780>] __do_softirq+0x540/0x7a2
+> [  414.366522] softirqs last disabled at (428419): [<ffffffff813f65ab>] irq_exit_rcu+0x14b/0x1a0
+> [  414.367425]
+>                other info that might help us debug this:
+> [  414.368194]  Possible unsafe locking scenario:
+> [  414.368900]        CPU0
+> [  414.369225]        ----
+> [  414.369548]   lock(&sbq->ws[i].wait);
+> [  414.370000]   <Interrupt>
+> [  414.370342]     lock(&sbq->ws[i].wait);
+> [  414.370802]
+>                 *** DEADLOCK ***
+> [  414.371569] 5 locks held by kworker/u10:3/1152:
+> [  414.372088]  #0: ffff88810130e938 ((wq_completion)writeback){+.+.}-{0:0}, at: process_scheduled_works+0x357/0x13f0
+> [  414.373180]  #1: ffff88810201fdb8 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x3a3/0x13f0
+> [  414.374384]  #2: ffffffff86ffbdc0 (rcu_read_lock){....}-{1:2}, at: blk_mq_run_hw_queue+0x637/0xa00
+> [  414.375342]  #3: ffff88810edd1098 (&sbq->ws[i].wait){+.?.}-{2:2}, at: blk_mq_dispatch_rq_list+0x131c/0x1ee0
+> [  414.376377]  #4: ffff888106205a08 (&hctx->dispatch_wait_lock){+.-.}-{2:2}, at: blk_mq_dispatch_rq_list+0x1337/0x1ee0
+> [  414.378607]
+>                stack backtrace:
+> [  414.379177] CPU: 0 PID: 1152 Comm: kworker/u10:3 Not tainted 6.6.0-07439-gba2303cacfda #6
+> [  414.380032] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+> [  414.381177] Workqueue: writeback wb_workfn (flush-253:0)
+> [  414.381805] Call Trace:
+> [  414.382136]  <TASK>
+> [  414.382429]  dump_stack_lvl+0x91/0xf0
+> [  414.382884]  mark_lock_irq+0xb3b/0x1260
+> [  414.383367]  ? __pfx_mark_lock_irq+0x10/0x10
+> [  414.383889]  ? stack_trace_save+0x8e/0xc0
+> [  414.384373]  ? __pfx_stack_trace_save+0x10/0x10
+> [  414.384903]  ? graph_lock+0xcf/0x410
+> [  414.385350]  ? save_trace+0x3d/0xc70
+> [  414.385808]  mark_lock.part.20+0x56d/0xa90
+> [  414.386317]  mark_held_locks+0xb0/0x110
+> [  414.386791]  ? __pfx_do_raw_spin_lock+0x10/0x10
+> [  414.387320]  lockdep_hardirqs_on_prepare+0x297/0x3f0
+> [  414.387901]  ? _raw_spin_unlock_irq+0x28/0x50
+> [  414.388422]  trace_hardirqs_on+0x58/0x100
+> [  414.388917]  _raw_spin_unlock_irq+0x28/0x50
+> [  414.389422]  __blk_mq_tag_busy+0x1d6/0x2a0
+> [  414.389920]  __blk_mq_get_driver_tag+0x761/0x9f0
+> [  414.390899]  blk_mq_dispatch_rq_list+0x1780/0x1ee0
+> [  414.391473]  ? __pfx_blk_mq_dispatch_rq_list+0x10/0x10
+> [  414.392070]  ? sbitmap_get+0x2b8/0x450
+> [  414.392533]  ? __blk_mq_get_driver_tag+0x210/0x9f0
+> [  414.393095]  __blk_mq_sched_dispatch_requests+0xd99/0x1690
+> [  414.393730]  ? elv_attempt_insert_merge+0x1b1/0x420
+> [  414.394302]  ? __pfx___blk_mq_sched_dispatch_requests+0x10/0x10
+> [  414.394970]  ? lock_acquire+0x18d/0x460
+> [  414.395456]  ? blk_mq_run_hw_queue+0x637/0xa00
+> [  414.395986]  ? __pfx_lock_acquire+0x10/0x10
+> [  414.396499]  blk_mq_sched_dispatch_requests+0x109/0x190
+> [  414.397100]  blk_mq_run_hw_queue+0x66e/0xa00
+> [  414.397616]  blk_mq_flush_plug_list.part.17+0x614/0x2030
+> [  414.398244]  ? __pfx_blk_mq_flush_plug_list.part.17+0x10/0x10
+> [  414.398897]  ? writeback_sb_inodes+0x241/0xcc0
+> [  414.399429]  blk_mq_flush_plug_list+0x65/0x80
+> [  414.399957]  __blk_flush_plug+0x2f1/0x530
+> [  414.400458]  ? __pfx___blk_flush_plug+0x10/0x10
+> [  414.400999]  blk_finish_plug+0x59/0xa0
+> [  414.401467]  wb_writeback+0x7cc/0x920
+> [  414.401935]  ? __pfx_wb_writeback+0x10/0x10
+> [  414.402442]  ? mark_held_locks+0xb0/0x110
+> [  414.402931]  ? __pfx_do_raw_spin_lock+0x10/0x10
+> [  414.403462]  ? lockdep_hardirqs_on_prepare+0x297/0x3f0
+> [  414.404062]  wb_workfn+0x2b3/0xcf0
+> [  414.404500]  ? __pfx_wb_workfn+0x10/0x10
+> [  414.404989]  process_scheduled_works+0x432/0x13f0
+> [  414.405546]  ? __pfx_process_scheduled_works+0x10/0x10
+> [  414.406139]  ? do_raw_spin_lock+0x101/0x2a0
+> [  414.406641]  ? assign_work+0x19b/0x240
+> [  414.407106]  ? lock_is_held_type+0x9d/0x110
+> [  414.407604]  worker_thread+0x6f2/0x1160
+> [  414.408075]  ? __kthread_parkme+0x62/0x210
+> [  414.408572]  ? lockdep_hardirqs_on_prepare+0x297/0x3f0
+> [  414.409168]  ? __kthread_parkme+0x13c/0x210
+> [  414.409678]  ? __pfx_worker_thread+0x10/0x10
+> [  414.410191]  kthread+0x33c/0x440
+> [  414.410602]  ? __pfx_kthread+0x10/0x10
+> [  414.411068]  ret_from_fork+0x4d/0x80
+> [  414.411526]  ? __pfx_kthread+0x10/0x10
+> [  414.411993]  ret_from_fork_asm+0x1b/0x30
+> [  414.412489]  </TASK>
+> 
+> When interrupt is turned on while a lock holding by spin_lock_irq it
+> throws a warning because of potential deadlock.
+> 
+> blk_mq_prep_dispatch_rq
+>  blk_mq_get_driver_tag
+>   __blk_mq_get_driver_tag
+>    __blk_mq_alloc_driver_tag
+>     blk_mq_tag_busy -> tag is already busy
+>     // failed to get driver tag
+>  blk_mq_mark_tag_wait
+>   spin_lock_irq(&wq->lock) -> lock A (&sbq->ws[i].wait)
+>   __add_wait_queue(wq, wait) -> wait queue active
+>   blk_mq_get_driver_tag
+>   __blk_mq_tag_busy
+> -> 1) tag must be idle, which means there can't be inflight IO
+>    spin_lock_irq(&tags->lock) -> lock B (hctx->tags)
+>    spin_unlock_irq(&tags->lock) -> unlock B, turn on interrupt accidentally
+> -> 2) context must be preempt by IO interrupt to trigger deadlock.
+> 
+> As shown above, the deadlock is not possible in theory, but the warning
+> still need to be fixed.
+> 
+> Fix it by using spin_lock_irqsave to get lockB instead of spin_lock_irq.
+> 
+> Fixes: 4f1731df60f9 ("blk-mq: fix potential io hang by wrong 'wake_batch'")
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
 
-Having re-read what you said I think I understand what your saying now.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
+Thanks,
+Ming
 
-I was mislead by the lower bound wording, the warning talks about a 
-per-dentry timeout setting
-
-that's longer than the timeout set for this indirect autofs mount. TBH 
-I'm not even sure this
-
-warning is worthwhile since most user space builds should just leave 
-in-use mounts mounted at exit
-
-and automount should just re-instate them at startup and continue on as 
-though nothing had happened.
-
-But I thought it worth a warning so that users know the timeouts they 
-are using are longer than the
-
-parent (global for these indirect mounts) timeout.
-
-
-I can certainly get rid of it if you prefer.
-
-
-Ian
-
->
->
-> The (amd) auto-mounted mounts are each meant to be able to expire 
-> independently,
->
-> according to the timeout set for each of them rather than use the 
-> global timeout set
->
-> in the autofs (parent) mount.
->
->
-> But your comment is useful because I do use a polling mechanism in 
-> user space to check
->
-> for expiration and the frequency of checking becomes a problem when I 
-> introduce this.
->
-> Setting a lower bound may make the frequency to short (for very large 
-> directories) and
->
-> I think there will be difficulties working out when the frequency 
-> needs to be reduced
->
-> after changes. But these are problems that I think can be left to user 
-> space, not sure
->
-> yet. For now it will be adequate to go with the default frequency 
-> based on the parent
->
-> mount as it is now (ie. a check frequency of one quarter of the expire 
-> global timeout).
->
->
-> Ian
->
->
 
