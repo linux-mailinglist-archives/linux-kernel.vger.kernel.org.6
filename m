@@ -1,83 +1,183 @@
-Return-Path: <linux-kernel+bounces-288328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1649538DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:17:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1D09538D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 19:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD4731F2605B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2AD1F25536
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59061B9B4E;
-	Thu, 15 Aug 2024 17:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705611BBBD0;
+	Thu, 15 Aug 2024 17:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="m3KHMlo2"
-Received: from one.firstfloor.org (one.firstfloor.org [65.21.254.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tInm7iFn"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8976144C8F;
-	Thu, 15 Aug 2024 17:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.254.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657FE3D62
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 17:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723742243; cv=none; b=tCGGXBou1Bt8NWIadr6vtYjkHeUi7KyKL2HusT1Eho034VZko/qDS924CwZP3g99eq7tb3vmkI2iodsxtp5I+Pi7uugq0+1At+NTQDUZGvYp+0O4Ar52gURv4L9Ip2o3ZEmc0Q+PBZ1GvCJ3iNjPQnWyNAtlS0mKt0lOfNh64aY=
+	t=1723741952; cv=none; b=FoHkQZqf7WnfRn9qYBCbfbYZBK+hzw3yglF/5qqKyIPLyzzGB++c8RFfD3lxKbncgs7kbzbvJrUVh+A+xoNlIPDFN2sSfIG/hUHGcpz4TJwMgiL2A2+lGRlmbcWPCPDXcb/onEgYPo80ohQfc038Hw/pmPtsD3op5Yf8+LWXgZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723742243; c=relaxed/simple;
-	bh=WflzLsFCxzKcRBpC/qAaqkvYHFzCVDgfmiGDqMQk0tc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asu6lhw0ZVqfiZ3HcKt7e+u3u6qyS3tmY4QkANxa9pdm4IV0CVNvbpDehGuH196a1xmCdgWaZsOlysw3KdmoRcf/lVVJ/36G3VbH0N2+DsWVhUwQRryoyd95mdFGUpRwL5WUUWR3zRJvcrSeDyypHSUmPDEFOblkj0eqkuD6qWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org; spf=pass smtp.mailfrom=firstfloor.org; dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b=m3KHMlo2; arc=none smtp.client-ip=65.21.254.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=firstfloor.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-	s=mail; t=1723741902;
-	bh=WflzLsFCxzKcRBpC/qAaqkvYHFzCVDgfmiGDqMQk0tc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m3KHMlo2XEwevTgz2V7OewvXnHufbm3HNIxmynSvCb+FVc5tnxlbrFOzAXQHq9A3r
-	 QwkNhrZNVUxwxF0fRQRVQNZfR/VUtITrJ8FAqCJj3Yh1IFIir6LawMrN201FoYgItT
-	 rQZEV1wLHfhBdynfkV686c62G8fZcHxXXvHa+bDY=
-Received: by one.firstfloor.org (Postfix, from userid 503)
-	id 019505EEBB; Thu, 15 Aug 2024 19:11:41 +0200 (CEST)
-Date: Thu, 15 Aug 2024 10:11:41 -0700
-From: Andi Kleen <andi@firstfloor.org>
-To: duchangbin <changbin.du@huawei.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf build: Fix up broken capstone feature detection
- fast path
-Message-ID: <Zr42zRmI9SuPO2hh@firstfloor.org>
-References: <Zry0sepD5Ppa5YKP@x1>
- <76c92af3b3544f8a9fed412fc287947d@huawei.com>
+	s=arc-20240116; t=1723741952; c=relaxed/simple;
+	bh=YnedXFXmNlTUmV4EtthEbEnVIL2LfqX3Jy0XQNW8IYc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YoxFPyqcZ8gcFn0XiX/LZRn95GMUQQznprMb/DdNzhzJt2gqq4/tll3cSnaynNXOiygKGbU0TAL8sJUvvDfxkZAX8AmfUJomGuydjFKfL0uHxe/ERZPLzmwf+HXwmLG6TV/WFwN7EjuLMqXWlm3Q0GgncfBer2ND0WPOTTDNYbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tInm7iFn; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ad26d5b061so18222367b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 10:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723741949; x=1724346749; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yvhrlQOvT1qaF0wyf19GNpeoicAZhXdNzp2/56IfXXY=;
+        b=tInm7iFnfYKWdteXtxTKy07sGNdwrItS0H6Z+a1/gIcuiq5TuxmCiuLJDH32j35N7i
+         zQ3HJLEIuf2TGXD7QuTMOs1yy3WFv3IY3dWOMgzicgikK8LH7hBEosYXdi4rgkP1Mioj
+         YaxDo21Nw16yfJr/uz2ocl2cmt3i5IPC255oJpOhfVPo+4jHjj1iROPJ8tioyKUOzdp8
+         gfd9VvDWZ+EMM+tkWxE9wIFPVcjUPQ4xqbKEO0Pk5nx53uq3HokWnb3dS0YbiJBIAg3A
+         EzsYIB/pumEgrhShK4S6K67nG38SLe9Pwn2KdTq3K2/2J5R+8THIu5mFDwrR6aUBLG4p
+         T8Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723741949; x=1724346749;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yvhrlQOvT1qaF0wyf19GNpeoicAZhXdNzp2/56IfXXY=;
+        b=gcyblEAE4o6dQyZXBJWlsMOIUWeaSCVKsytb9ImTAa5x+aivps9+taDT/R1RweuJ9B
+         9He427v5F5mCh0rSJOWNvNVHK1iJzWNCOzirQ6DSpLnL7SRGzX1V83HN2gmMwGpAiA5o
+         R51ucIwHJ7mpiKUxdIiU/169j4Cq9V9DH+aKsxLM0fvAa3Vk5IEspNxUJ5ydWcf6CuCo
+         yW5FXK9VqBhcq+oZJPmqxWkMWY4VwcTGSC3RNLswtSTNXtRXil4poXjo4EUgGIbudJZX
+         DHpf0BbxqTtCmEbYNacqZli0ArAXS9u8a5Pa+y+UUSLKMB2zyHZ+SDZYvV3pCDGQDXf9
+         REnA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5h/aANtLzX+L+I4iMVQTmvAxTyuTMvkSMS5IkghCHegRSvjrOLtRyqXv7PAUtZ1Od+vrp4ItWEuEBS6MdpjoA3M2jhg5/jSjBuFfv
+X-Gm-Message-State: AOJu0Yw3+yrtjldJZgmUv3vVgHLspX+VR4yQzz89BV4uHy1Lm6FMMso+
+	P1iKnK87N36t8byrs8285LyzRmV/SWwzpc7IKxMphU6EmMfbqcqW4HANfMV9uFgZwwSFX53MNyJ
+	+MQ==
+X-Google-Smtp-Source: AGHT+IH/O74nUjl4sfpshsDyjxeZHvEjEYPoU6nLVkktHrMXY003wqNpVWSkAh256RPFReDLYAEdJvcIYMw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:288d:b0:669:e266:2c56 with SMTP id
+ 00721157ae682-6b1bb85ee65mr91497b3.6.1723741949511; Thu, 15 Aug 2024 10:12:29
+ -0700 (PDT)
+Date: Thu, 15 Aug 2024 10:12:27 -0700
+In-Reply-To: <20240522001817.619072-17-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <76c92af3b3544f8a9fed412fc287947d@huawei.com>
+Mime-Version: 1.0
+References: <20240522001817.619072-1-dwmw2@infradead.org> <20240522001817.619072-17-dwmw2@infradead.org>
+Message-ID: <Zr42-6sLSg0a9l1I@google.com>
+Subject: Re: [RFC PATCH v3 16/21] KVM: x86: Factor out kvm_use_master_clock()
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, 
+	Dongli Zhang <dongli.zhang@oracle.com>, Chenyi Qiang <chenyi.qiang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 15, 2024 at 03:26:22AM +0000, duchangbin wrote:
-> Hi, Arnaldo,
-> 
-> How about workaround it by rename the 'bpf_insn' in capstione?
-> 
-> Change test-libcapstone.c as:
-> 
-> #define bpf_insn capstone_bpf_insn
-> #include <capstone/capstone.h>
-> #undef bpf_insn
-> 
-> I haven't tried it but seems feasible.
+The shortlog is rather misleading.  This is more than just a refactor, and I
+would argue the refactor aspect is secondary, i.e. the main goal of this patch
+is to apply the exceptons to kvm_track_tsc_matching().
 
-Yes that seems like a better fix.
+On Wed, May 22, 2024, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> Both kvm_track_tsc_matching() and pvclock_update_vm_gtod_copy() make a
+> decision about whether the KVM clock should be in master clock mode.
+> 
+> They use *different* criteria for the decision though. This isn't really
+> a problem; it only has the potential to cause unnecessary invocations of
+> KVM_REQ_MASTERCLOCK_UPDATE if the masterclock was disabled due to TSC
+> going backwards, or the guest using the old MSR. But it isn't pretty.
+> 
+> Factor the decision out to a single function. And document the historical
+> reason why it's disabled for guests that use the old MSR_KVM_SYSTEM_TIME.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>  arch/x86/kvm/x86.c | 27 +++++++++++++++++++++++----
+>  1 file changed, 23 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index e21b8c075bf6..437412b36cae 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2518,6 +2518,27 @@ static inline bool gtod_is_based_on_tsc(int mode)
+>  }
+>  #endif
+>  
+> +static bool kvm_use_master_clock(struct kvm *kvm)
 
--Andi
+Maybe kvm_can_use_master_clock() so that this isn't misconstrued with the actual
+ka->user_master_clock field.
+
+> +{
+> +	struct kvm_arch *ka = &kvm->arch;
+> +
+> +	/*
+> +	 * The 'old kvmclock' check is a workaround (from 2015) for a
+> +	 * SUSE 2.6.16 kernel that didn't boot if the system_time in
+> +	 * its kvmclock was too far behind the current time. So the
+> +	 * mode of just setting the reference point and allowing time
+> +	 * to proceed linearly from there makes it fail to boot.
+> +	 * Despite that being kind of the *point* of the way the clock
+> +	 * is exposed to the guest. By coincidence, the offending
+> +	 * kernels used the old MSR_KVM_SYSTEM_TIME, which was moved
+> +	 * only because it resided in the wrong number range. So the
+> +	 * workaround is activated for *all* guests using the old MSR.
+> +	 */
+> +	return ka->all_vcpus_matched_tsc &&
+> +		!ka->backwards_tsc_observed &&
+> +		!ka->boot_vcpu_runs_old_kvmclock;
+
+Please align indentation:
+
+	return ka->all_vcpus_matched_tsc &&
+	       !ka->backwards_tsc_observed &&
+	       !ka->boot_vcpu_runs_old_kvmclock;
+
+> +}
+> +
+>  static void kvm_track_tsc_matching(struct kvm_vcpu *vcpu)
+>  {
+>  #ifdef CONFIG_X86_64
+> @@ -2550,7 +2571,7 @@ static void kvm_track_tsc_matching(struct kvm_vcpu *vcpu)
+>  	 * To use the masterclock, the host clocksource must be based on TSC
+>  	 * and all vCPUs must have matching TSC frequencies.
+>  	 */
+> -	bool use_master_clock = ka->all_vcpus_matched_tsc &&
+> +	bool use_master_clock = kvm_use_master_clock(vcpu->kvm) &&
+>  				gtod_is_based_on_tsc(gtod->clock.vclock_mode);
+>  
+>  	/*
+> @@ -3096,9 +3117,7 @@ static void pvclock_update_vm_gtod_copy(struct kvm *kvm)
+>  					&ka->master_cycle_now);
+>  
+>  	ka->use_master_clock = host_tsc_clocksource
+> -				&& ka->all_vcpus_matched_tsc
+> -				&& !ka->backwards_tsc_observed
+> -				&& !ka->boot_vcpu_runs_old_kvmclock;
+> +				&& kvm_use_master_clock(kvm);
+
+Perfect opportuity to put the "&&" on the preceding line.
+>  
+>  	/*
+>  	 * When TSC scaling is in use (which can thankfully only happen
+> -- 
+> 2.44.0
+> 
 
