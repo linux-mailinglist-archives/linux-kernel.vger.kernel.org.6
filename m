@@ -1,107 +1,119 @@
-Return-Path: <linux-kernel+bounces-288570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F201D953BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:46:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCE0953B8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84AD3B262E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FED81F25493
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582B414B97E;
-	Thu, 15 Aug 2024 20:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98615149E17;
+	Thu, 15 Aug 2024 20:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXaj2xQs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b98vo5nI"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B1C15F3ED;
-	Thu, 15 Aug 2024 20:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965C5405C9;
+	Thu, 15 Aug 2024 20:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754484; cv=none; b=bFWU6MblViLtRiFiCVfPPf/kivnPDre3GfUftp0/3ne+CjKSNDgDhyxn5I+KIPRwEWidnDXbowo2en3XeuZeNMD/mgd6TmlYHjAAQTyGyBfrIcmAlGzi9rge/sS9Sunau+1ST2+thmYH3qBZYJ5+XVWU/P/6xwLNyT1MJK7CB2M=
+	t=1723754441; cv=none; b=E2AadhjK6kdbyp/59T3A+TgQbtx8htt6MHxdvHQvZijx7sjL6+qkNtrQ6UuTvjK0yVZSv/x+DLw+kMj3Jy7/kLM84BUWAUioXvTWjF6BUC9YGXI4LYYs0lVyIEjRHUiWvJMgTsuluWiPibD1yeeYP5uWkGUBfCOHrwC/M1aDNlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754484; c=relaxed/simple;
-	bh=wUcFxvIMn4NJgrabO74aConfzyULLpCm8Vw4C0XKOtQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OIYbl/+IS539sMSJqOPV6KWHso3Sogb8Yq3rrjuLoyE/rfRZai1mkZIvz9XvOH7LpXyQ9/ciHtVks8hfJKnw5ehDHlB3bNUb49g2p/rywRGjirLB+cWAR8dyEz/Byx+RsCicOPOOqVndtx9ls044MMt6Paoz4ekiw627YO8Rh1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXaj2xQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB12C4AF14;
-	Thu, 15 Aug 2024 20:41:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754484;
-	bh=wUcFxvIMn4NJgrabO74aConfzyULLpCm8Vw4C0XKOtQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EXaj2xQsLB0SLTaMynmLyvnMQ8+DDWq0VQJwyl/kk+lGsuVa+j/RO1JKSnKouLCMD
-	 K3wlwJiwEphhDh/RB695j9RJXy9AgbWJBCeKJAieQqkDR1KeRczPEkDY4fj4hbVf9X
-	 wTTpZgsiysdeRpvickmYly2KA2jvhrnEptJSqHbzcEGn5rK8Vkpf4XNgnUP/n/1WSk
-	 UJhZsVznoZPA/jabDIkwwEG+cZybg2PSL2r5S6GHZPF7PGqWt7ftUKGhRs1KTDme++
-	 351xJ5Dtiu8Pn4+q9a8EePDFFUW58KtDL1SHDtsS0byPfXSF9vjL+51RhYbTbEXpUn
-	 NdPMsUTf1ND0g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: Re: [PATCH V4 0/2] Drop required-opps from required list on SM8650 videocc, camcc
-Date: Thu, 15 Aug 2024 15:40:37 -0500
-Message-ID: <172375444821.1011236.13851740123076656109.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240801064448.29626-1-quic_jkona@quicinc.com>
-References: <20240801064448.29626-1-quic_jkona@quicinc.com>
+	s=arc-20240116; t=1723754441; c=relaxed/simple;
+	bh=yPrJ50VXI5nJ2rby7f8Ln8oGQi3wYrAEG06B/vm9Abk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lhi7u5Mslhno3geH04/zPw38ENjtCmKFFD6Gc6963uv0iyEPSCZ1TSzLt6mawbcY3yhcK8x+f48/NV4J0g1cfMyBs3bIb6yWEaN1kgIri7C4kHHpQ+bOcFMWeSM6YYLr7NtIVaYiHlhXO6MD0wzhswKoY6cFp9HSYh+nUs2YvD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b98vo5nI; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fee6435a34so11534485ad.0;
+        Thu, 15 Aug 2024 13:40:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723754440; x=1724359240; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9WkB5SkQtbWMRkXaB+yKolATeCu0MoWvQKnYm5st5Cs=;
+        b=b98vo5nIA+blyfbz1rHDdVdahiiJK9NaN9aMZEuMIGjS/xEvaPOJcP0RDySTcqm/hY
+         IxmXtZRWdFUc7x0x+LLO0X999PDrDuwUyFKsRChVz1KMAzkXcH/RvvY9LYNsZK85EhZn
+         A63BVvEEXX2LHYlg+myttZo4kL/TC6bApYytL1ZRJLlURNwPdNU+lDXY/pYs+DVNOozd
+         5baZdjfUul8i67E1FW01JfYKy940qwrUvnlxk8u2HW6bKrP9v06+7fYfhiTGT3DcAbfU
+         XKjuBglgkpPzPAHV26h+VlfOtA2YY6H5Zgddh2CtLIUO7iG10mZy5yF053sgL3X//E6D
+         H8nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723754440; x=1724359240;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9WkB5SkQtbWMRkXaB+yKolATeCu0MoWvQKnYm5st5Cs=;
+        b=OO+/bnnEJA7Tf0sXNOEawkR0DrQTUkTyx81f1S0esLip10WCTiAAaax1ezqXyd9Ft+
+         q4uL5BY9sj+ZZ0qL4q+QEBddzDepqh/cY+knGBO1UAMo6aGzYih0SeD/+0duveG6XZk3
+         UZlDJIp74CxcJ8xE05rKYSsu0Ib3v4/zf8bN9o+mz59AqzfBP9p+rbURBw8qAuBctpCR
+         1xWO1hgGiaTmYD6h72TVm7c0YtSNtkvo9jKg94of45JzbedQ69fp3t6Hjsg2OCLhnFGa
+         aVKHWsVLM41rrll8g2+3YbNrODE8NM5JDDbcQokRqHm33s0jYhbhMPi3ACczkcyof4uc
+         2pYA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Xjpc+HkHbJyf1VUbrjd9TtDGPhEGgF4rfGr4WNcukg7W2hbhEX22e5vB/BkP/AtUjRsoUIzeDOQridfDrWB/8Yj2Ng/3OwMUE9uqGUcbIYR8IPVlWcw0GEZipYD9NzMPsS+E
+X-Gm-Message-State: AOJu0YwiYDB5wXSjA3gTk5wv0grfaPxlF7rjrKIUPVMvb8DfjbLkzfqe
+	wXgkIqYJdq6TWUt49q+HggKUKB7Fq2pYRZElIuZICAiu2Zpx3x06
+X-Google-Smtp-Source: AGHT+IGMhDTyIayyAG2ydk7g1y0+W5VoTqLRXWve72ZnKng+f2tGdhpAlIk2AfPn1zlJ7KkoxKrwCg==
+X-Received: by 2002:a17:902:ecd0:b0:200:a9da:add2 with SMTP id d9443c01a7336-20204050d7fmr10407335ad.62.1723754439669;
+        Thu, 15 Aug 2024 13:40:39 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201f0375123sm13919635ad.139.2024.08.15.13.40.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2024 13:40:39 -0700 (PDT)
+Message-ID: <22ee17e3-5bd4-4c62-9619-7e105bbd6ef8@gmail.com>
+Date: Thu, 15 Aug 2024 13:40:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 000/352] 5.10.224-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240815131919.196120297@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240815131919.196120297@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 01 Aug 2024 12:14:46 +0530, Jagadeesh Kona wrote:
-> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
-> sufficient for clock controllers to operate and there is no need to specify
-> the required-opps. Hence remove the required-opps property from the list of
-> required properties for SM8650 camcc and videocc bindings.
+On 8/15/24 06:21, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.224 release.
+> There are 352 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Changes in V4:
->  - Dropped change to disallow required-opps on variants that don't need it
->  - Split the change into separate commits for videocc and camcc
->  - Link to V3: https://lore.kernel.org/all/20240730034552.31271-1-quic_jkona@quicinc.com/
-> Changes in V3:
->  - Made only required-opps property conditional and added it based on the variant
->  - Link to V2: https://lore.kernel.org/all/20240720052818.26441-1-quic_jkona@quicinc.com/
-> Changes in V2:
->  - Made required: conditional and dropped required-opps from it only for SM8650 platform
->  - Dropped Krzysztof Acked-by tag due to above changes
->  - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/
+> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
+> Anything received after that time might be too late.
 > 
-> [...]
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.224-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Applied, thanks!
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-[1/2] dt-bindings: clock: qcom: Drop required-opps in required on sm8650 videocc
-      commit: 6720e8dbcb1b6b3b43e38998b522088814ae1268
-[2/2] dt-bindings: clock: qcom: Drop required-opps in required on SM8650 camcc
-      commit: db30c1160ca5f115476cd8c8008f67572acb2c08
-
-Best regards,
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Florian
+
 
