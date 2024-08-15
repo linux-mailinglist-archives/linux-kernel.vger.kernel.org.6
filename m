@@ -1,171 +1,176 @@
-Return-Path: <linux-kernel+bounces-288586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A86F953C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:50:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CCD953C17
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6D41F261C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42EF51F2473E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310FE1537D9;
-	Thu, 15 Aug 2024 20:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D77B14AD20;
+	Thu, 15 Aug 2024 20:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+ZkG/9x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EfCwSEAt"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2040.outbound.protection.outlook.com [40.107.101.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D59C149C6F;
-	Thu, 15 Aug 2024 20:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754547; cv=none; b=pZF9dHw/XR89QQWTy9qkPJuGdOGb1lNpcpTcxHO0cqf/RVwv6Uf+qULRO51S6CvbFuTbvgwAXsQnG7scpHsJFQxFtW7Y71va+5DkKfDvkATDBrwD76Z2Kv8MNww9GqdYKaz/GCZ79N/zOl5QEE6mJX84F+jALNHjTK1inNPSPnk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754547; c=relaxed/simple;
-	bh=g8ehn/PJBUinnXWgPe0QmVwYk1A8/HXAzwHp6W2rokg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/TM3Aiy3sPfodCjWB0t7sxbIPChiGuBhvp2wuHzlyTu8U3pFb5S7kZZ6SptonE9i/b7SAmJ4J0cwYuwsg6uizNkYBNn3Zcx+q88xrPgCZNtm/vZnbJqeTv+AtccEmopXdD74Bw5tq6Ks2cJGsYE7HsJ3FXLpH8biVHnn5KI6zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+ZkG/9x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE46C32786;
-	Thu, 15 Aug 2024 20:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754545;
-	bh=g8ehn/PJBUinnXWgPe0QmVwYk1A8/HXAzwHp6W2rokg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c+ZkG/9xzQDuWX4vOQ4JtBOVopR9yfHTcyI40zRvf1ybJUIun38Z5RuAg0wj538Rz
-	 E29ykJe0Tsp8ZLOPFpd3qevLk6MCgT/9lid/dBF8lPSGRyjbQLXGoR/ycsbe+iPbg3
-	 +d+yd183NdMaHDuo6RQmx0AeUfJDNp42YbuEdSvPLqvaC3/AL4qWh6zhiSzc/S7Upq
-	 LsmZJD0ydnpftuZlGEkIpAadBDFGzRwwW90DNKTiNGFUgHwPke9xZc8/iAwgJ06Vsr
-	 S8nGOPkQvFHAzM8KPdbTVjrhS9gNW17GAVtf2I9ReSurAFvMquQsscTcFoguKr8Xq7
-	 7QDWNEKs2zZxw==
-Date: Thu, 15 Aug 2024 21:42:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Lee Jones <lee@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 06/11] dt-bindings: soc: microchip: document the two
- simple-mfd syscons on PolarFire SoC
-Message-ID: <20240815-afloat-baton-77a6d4e47b18@spud>
-References: <20240815-shindig-bunny-fd42792d638a@spud>
- <20240815-pending-sacrifice-f2569ed756fe@spud>
- <20240815200003.GA2956351-robh@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85A914A609;
+	Thu, 15 Aug 2024 20:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723754850; cv=fail; b=X3nwc2M9CQTF04c9Xeis0Tz6231C3OGNBrNN+vYM97qf6GquEl/6xX9CwFNM2+XkKSpD8n0et83uV4Zb5X4bF18p9qytR+ajzMBKo4v+Pc+gdVH2eZ10o1NBHeaH2aJ867c+0u3X6E++9Vd6EemKiwSnVmIEjDVa91ctWu4wfFE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723754850; c=relaxed/simple;
+	bh=9feu1ry0wc6vdyKWelu9tB7hvnxMquIDZ4BvyykZHlg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BvwbrOAr25aTIX2wWo8veJS8lQc6tyEXO98Nc1lzgjUKjvCkGyD95SQvInNvX2UhGguUenttfye3Drrd1/vVDcnWUFjTxzlMP/DS4AkjaWD3pOB5CeBy2nO+R7/M/MBeoLt5K6zsK57cUkMK8C6CyxpuXUShKYT/2epGwpwius0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EfCwSEAt; arc=fail smtp.client-ip=40.107.101.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=grlxdbuGrq259GbPJCzphxiuMIgZQUYua9MEP69cOg4gGDvI3AS/9JG6GGSM1xvjyZVX49QBWc41l1kjjmvTSyoWYjEd/eMwolm5ZME007KQHqc0rZtX5uC6HUFuZYPDxYNOszWNV1IMGzlrtKX1/qTFgDKslVYLPJGNgD+Zd7Wjx92nt7Kejthvg8UVNGpn5uhl/MHGJ42H4x8mMwGhXdvX6mGFcmBuGSJCufMAiQie45ROD/B3l8lU6/a4r91LuCK0UWPLixy65RKU0bv2dIe7Kg9O59IpAohDNczHu/x+O7Pj77en6tcg/+8b5z3mlJKVbsz0z8trOu21HuYdJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=us7wQFOsOryuJcamWuwA22pfnzJeYuv1V+XhQJV2HMw=;
+ b=JhFM2WZmdwMC+B/HzVNo1ag34r09Ag778+8yUk2BGzNXgHRgTnkNyhZ/KyWmmUOynNK5/rba6u7KnXXFAkpX/E7qhwUsAKU04G5T+XkGnk3PbVpYrDHuex0AUnSzoGQheXsRCuWrth8swoJ8Uk8vrsRhNZot04ylXEQLghh19f1+bEC4VtkwqaGIpan3K5sVNNQYblsXBY7rU29fcQAS4FdyX2AGIWOfxLNmNyxp/4KjtvSRI7W7Skic9fvVojt8JgfUgl0u6d0K+L9mMwUcqOl+JJfh+AhyMF3z/gS+r7rFUn34EXVUNXxZ+dwwJVjcARJldr7ZSVn//fgLmCJpcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=alien8.de smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=us7wQFOsOryuJcamWuwA22pfnzJeYuv1V+XhQJV2HMw=;
+ b=EfCwSEAtVc2D+l6lJOGtYJ32x9VdcBdx9PfR79ODK4IBP7coe5y4cA9Wc0cWQc0dIUN3TYwST9YfZvAFE1tSoFKQ/qNy/0V2/tPTaGQaqha5DGF5PGcZ7ldQsKpe5wtU6adTLh17H2MCFsrD7nWMq64KxGCSPKkPAXXKMHer0F6Ezjm6WNL/mDftmGza4EicRg9fvPCVoJR31+FSH9hw/7FLyDZohWRCn2Iha2IseqAfmZq77c6y6brbVgv+RvAQ3j6KIQ67R3jt/uQldieDxsiwp/pZKHn/oDOQSVy5PNNCEBwXb7jg4jNlAwJLGWB+g65Mp1ztty3/IZ+f7s/ZZQ==
+Received: from SJ0PR13CA0089.namprd13.prod.outlook.com (2603:10b6:a03:2c4::34)
+ by PH7PR12MB7380.namprd12.prod.outlook.com (2603:10b6:510:20f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Thu, 15 Aug
+ 2024 20:47:21 +0000
+Received: from SJ1PEPF00001CE2.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c4:cafe::65) by SJ0PR13CA0089.outlook.office365.com
+ (2603:10b6:a03:2c4::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.16 via Frontend
+ Transport; Thu, 15 Aug 2024 20:47:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF00001CE2.mail.protection.outlook.com (10.167.242.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Thu, 15 Aug 2024 20:47:21 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 15 Aug
+ 2024 13:47:12 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 15 Aug 2024 13:47:12 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Thu, 15 Aug
+ 2024 13:47:11 -0700
+From: David Thompson <davthompson@nvidia.com>
+To: <bp@alien8.de>, <tony.luck@intel.com>, <james.morse@arm.com>,
+	<mchehab@kernel.org>, <rric@kernel.org>
+CC: <linux-edac@vger.kernel.org>, <shravankr@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, David Thompson <davthompson@nvidia.com>
+Subject: [v1, RESEND] EDAC/bluefield - fix potential integer overflow
+Date: Thu, 15 Aug 2024 16:47:00 -0400
+Message-ID: <20240815204700.6447-1-davthompson@nvidia.com>
+X-Mailer: git-send-email 2.30.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aUl07Qh2nQayq3NX"
-Content-Disposition: inline
-In-Reply-To: <20240815200003.GA2956351-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE2:EE_|PH7PR12MB7380:EE_
+X-MS-Office365-Filtering-Correlation-Id: fcfc75c8-8491-42ed-4383-08dcbd6b75d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ubofKp968MvMJfSo5E15GWTGY+HRfQoOsyXFLtPR/q6Abe6sz68sO9YkPSTv?=
+ =?us-ascii?Q?GIISzJeHSSFlw3auUxP51qBkeBCaGKVq+ud1lhkTINJ1ScN3ZlxdgK6emwBx?=
+ =?us-ascii?Q?NaYmSeu6+XQJkA1HjvFhzGnw7DI8ieQP/tmQtA09PBZv6HQ26tjS2dmKuQiW?=
+ =?us-ascii?Q?v5w/nGrw45Kpu36FGoeepINHGGsr9DKkBfSu6BpXNtKLaIDkc6BdbByPP8G3?=
+ =?us-ascii?Q?4iGYMwz/phYtx+WWrsneZAWzPqIDFKf3ivUU+rmpXZQnLenk5+MK+H/QsR/+?=
+ =?us-ascii?Q?6xhcnS+3xLh72NAWU6L+dhcavv/0gLujoC7VaBOPe44622m9kq+dXC6bpsDU?=
+ =?us-ascii?Q?dZjgbgYy9jGHQ/JUHU0lz1v5g47HFoPDJHrM4Gdnf4s0WMqtK7Q5Z4BIMj+B?=
+ =?us-ascii?Q?T2SLRQHh/naPvVg4huQ7zU592bH+AcOu+iSh3b4byTyyW0Y6SsgYzrHUGwg+?=
+ =?us-ascii?Q?oMWjlIxLEzLPEo6neQz+9BoI1V8bY6VE1rBEncmsn8PBf/rshow1OcbRWzkp?=
+ =?us-ascii?Q?vqm81h+YN6BSpo6RWupZ0IJ/zEIwqsM9yI5kTAzVx5wOrua4/QluEC28i90h?=
+ =?us-ascii?Q?NNRdBTee3QNd3UV/zd6fY/DQ5orkhHwqAROZKeBc3sAimUTO6YaPrCDQj/L7?=
+ =?us-ascii?Q?yoC30BD08gX6YBieKYbbEH8gd0pqIjVNUFNMcMCB6Kceg25TjAH8eeyUy7RG?=
+ =?us-ascii?Q?sCVb3G1FUK6vD8lq7IDLWZfReDK5V9qbdlmM9tbsS39lKMFdwN/pJ5Iv/fhP?=
+ =?us-ascii?Q?DV95wqIbhftvSv1J4zFLxFZiEWQX7SnpC9ubzEf2cRmz8SGLZjUUcwXA/UI/?=
+ =?us-ascii?Q?+fgaC6VCmHkf2YA48kzy2Ab6rXNnSv41kbL7NYphEwpNC/Jhka/pw4T6JifX?=
+ =?us-ascii?Q?AzagdzLIngfx38p1wL8aOuEcOpe2vqtROcydtaxGCSle8obwlmWD5kL3vHqc?=
+ =?us-ascii?Q?FRQD/qTzgQ5CTqFK1I+5XlngAW7pov8Kqwwotg7PFbpBm8GdgjTvYgSSXIGr?=
+ =?us-ascii?Q?ddpNXW2hGFw29j2MGlOBjD9TMz9S8e3oFmSFtd15naaLoawXmS6r4Q3Wxdce?=
+ =?us-ascii?Q?Zd+bVt50eCf+nuxwz12oAWWp+ViI4MXkVWi19Fl6otCZFygQiXV9ccHRgB7M?=
+ =?us-ascii?Q?5eMLORYwC6/xnUudyqkWtrUjO30zo+oYhLZGTlML+wkqHTfViFrdVtkTbEZU?=
+ =?us-ascii?Q?KMl7MRvwCA9+XBkEeFsj7ER6FHjmjjrMuByO8AxDTMj/HVIAcDlbE6T9BIdz?=
+ =?us-ascii?Q?doML0CkTYfWYZcSOiy9hKvqqwQk/jaLss4hydQQQj/4H7v75Qd7AtjJCTAim?=
+ =?us-ascii?Q?+8I3n3W4eDLst0rUl3D9GNawdkPx9qVJCv1DEQF6a5vrTtJe4Fvhp1488F5I?=
+ =?us-ascii?Q?TM976BGHLXCifl4t9v5XaTJ1KzCNq73RyOOXcu2k27lNFMEz4W9F9JGuGtKV?=
+ =?us-ascii?Q?1YOF6DxZYaW0P19mBouGS6wxuUJ42FTt?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 20:47:21.5385
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcfc75c8-8491-42ed-4383-08dcbd6b75d3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7380
 
+The 64-bit argument for the "get DIMM info" SMC call consists of
+"mem_ctrl_idx" left-shifted 16 bits and OR-ed with DIMM index.
+With "mem_ctrl_idx" defined as 32-bits wide the left-shift operation
+truncates the upper 16 bits of information during the calculation
+of the SMC argument. The "mem_ctrl_idx" stack variable must be
+defined as 64-bits wide to prevent any potential integer overflow,
+i.e. loss of data from upper 16 bits.
 
---aUl07Qh2nQayq3NX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 82413e562ea6 ("EDAC, mellanox: Add ECC support for BlueField DDR4")
+Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
+Signed-off-by: David Thompson <davthompson@nvidia.com>
+---
+ drivers/edac/bluefield_edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Aug 15, 2024 at 02:00:03PM -0600, Rob Herring wrote:
-> On Thu, Aug 15, 2024 at 03:01:09PM +0100, Conor Dooley wrote:
-> > From: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > There are two syscons on PolarFire SoC that provide various functionali=
-ty of
-> > use to the OS.
-> >=20
-> > The first of these is the "control-scb" region, that contains the "tvs"
-> > temperature and voltage sensors and the control/status registers for the
-> > system controller's mailbox. The mailbox has a dedicated node, so
-> > there's no need for a child node describing it, looking the syscon up by
-> > compatible is sufficient.
-> >=20
-> > The second, "mss-top-sysreg", contains clocks, pinctrl, resets, and
-> > interrupt controller and more. For this RFC, only the reset controller
-> > child is described as that's all that is described by the existing
-> > bindings. The clock controller already has a dedicated node, and will
-> > retain it as there are other clock regions, so like the mailbox,
-> > a compatible-based lookup of the syscon is sufficient to keep the clock
-> > driver working as before so no child is needed.
->=20
-> I'm confused. The reset controller is reused from somewhere else?
+diff --git a/drivers/edac/bluefield_edac.c b/drivers/edac/bluefield_edac.c
+index 5b3164560648..0e539c107351 100644
+--- a/drivers/edac/bluefield_edac.c
++++ b/drivers/edac/bluefield_edac.c
+@@ -180,7 +180,7 @@ static void bluefield_edac_check(struct mem_ctl_info *mci)
+ static void bluefield_edac_init_dimms(struct mem_ctl_info *mci)
+ {
+ 	struct bluefield_edac_priv *priv = mci->pvt_info;
+-	int mem_ctrl_idx = mci->mc_idx;
++	u64 mem_ctrl_idx = mci->mc_idx;
+ 	struct dimm_info *dimm;
+ 	u64 smc_info, smc_arg;
+ 	int is_empty = 1, i;
+-- 
+2.30.1
 
-There's already a driver for it on this device, but probed via the
-auxiliary bus, and the #reset-cells property is in the clock controller
-node. The only devices that use this driver are the various different
-logic element SKUs (which all share a compatible, they're identical as
-far as an OS is concerned) and an upcoming SoC that is effectively a
-zero logic element SKU.
-
-> I=20
-> thought you didn't expect any reuse of the IP happening.
-
-> If a child node=20
-> makes it possible to enable the h/w without any s/w changes, then that=20
-> is a compelling argument for having a child node.
-
-No, in both cases there'd be software changes - they're just simpler
-with a child node.
-
->=20
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> > (I'll split this in two later, it's just easier when I have the same
-> > questions about both...)
-> >=20
-> > Are these things entitled to have child nodes for the reset and sensor
-> > nodes, or should the properties be in the parent and the OS probe the
-> > drivers for the functions? That's something that, despite supposedly
-> > being a maintainer, I do not understand the rules (of thumb?) for.
->=20
-> Besides the is it an independent, reusable IP block test, my test=20
-> generally is do the child nodes have their own DT resources? Say=20
-> you have phy registers mixed in some syscon and clocks which only go to=
-=20
-> the phy. Then a child node with "clocks" makes sense. If your only=20
-> property is #phy-cells, then a child node doesn't make sense. Of course=
-=20
-> you could reach different conclusions based on the completeness of the=20
-> binding.
-
-AFAIK, none of these things are consumers of resources like that, other
-than the interrupt controller, which has an interrupts property. I think
-that could justify a child node (and I think a dedicated binding,
-because it is a confusing irq mux that that kernel doesn't appear to
-have anything else similar to).
-
-> > Secondly, is it okay to make the "pragmatic" decision to not have a
-> > child clock node and keep routing the clocks via the existing & retained
-> > clock node (and therefore not update the various clocks nodes in the
-> > consumers)? Doing so would require a lot more hocus pocus with the clock
-> > driver than this series does, as the same driver would no longer be
-> > suitable for the before/after bindings.
->=20
-> In the 2 cases here, I don't think you need child nodes. I would expect=
-=20
-> pinctrl to have one though if only as a container for all the pinctrl=20
-> child nodes.
-
-Good to know for when that gets written. Hopefully not by me, I have
-enough messes to sort out as is!
-
-Cheers,
-Conor.
-
---aUl07Qh2nQayq3NX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZr5oLgAKCRB4tDGHoIJi
-0owVAQCRkSdo/hUd7wk0uN5NZW7djgJSquy18gbzGCqmTEZyXAEApoAV/aNJXcR+
-xexMkf+YtA9tnksmeZ2e2OH6nf5WDwc=
-=BIBj
------END PGP SIGNATURE-----
-
---aUl07Qh2nQayq3NX--
 
