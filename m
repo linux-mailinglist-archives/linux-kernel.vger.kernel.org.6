@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel+bounces-287346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E51E9526B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:16:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841669526BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51AE11C21F66
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0C91F24ACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897168F6D;
-	Thu, 15 Aug 2024 00:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0004A0F;
+	Thu, 15 Aug 2024 00:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="jKoFTMNc"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nN15ev8X"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80338BEE
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27C3184D;
+	Thu, 15 Aug 2024 00:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723680993; cv=none; b=bXhzZPcPG5eOdSoRiclDbGUPig4ujkO6qivOfW7jZxIzV209b2iIgO8xi8dCdhwogDqZbyM/4U7W5t96sWsv37qkPoDN5C4K3w+2lggrKbDtqotrA2ZkD9D3Ry0cHokjR6ivNvBnhsczeKlIBrEqW08OxmCYslAyqa9W9wgpsLw=
+	t=1723681044; cv=none; b=ElKha5G2ncQujxdFlt+1yL8i2cbJr7VFcQpQnC+ImWhJgmo2BzBQ0ZVYFjuHReKVo9DeunF1tjTuO+aS3GEQStqzfA+PGeCSW5+G6EMSojPHiw915VTJ/kQe4+A35TVNFDuSJU0dLd3KsMWft3el1O+6kOOa79khJad8EZwMqbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723680993; c=relaxed/simple;
-	bh=F1t2isRrKDubCdz+j0eAPXg5idK9hYQi55oHFsWBC4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TDUhVrFOi22knV1JRXN3AC9xlEYiMRPAlhpDi93SZb8r5DDSYJ5c/4zgBW15cghI8jqNY64XcRHpbfpdVPqDDHF6sY+SVOeLX9ZxdUJSRnMv+Ph9LHtT1JknZpl0IUNLfYlyY+Z2fvMLbu0ZOOWwTpRnK7fAn13YMnQ8QQfKkRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=jKoFTMNc; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso2789125e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 17:16:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1723680990; x=1724285790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kcyySO/Wg9CZpKT7IKp0MYN8KR1sVKZZKcglj0UTO+4=;
-        b=jKoFTMNcXyWu4HA5UV0dDz8HgcCZiwSanzz+yVq2J+QBMUHuaCJ8tnhL/BVHii+y/l
-         QJ4Cr1UwiVxhvWnTOQRwD0+s88g5lPtncDKzmkmyb+ihmxRnvrMiY3mhKZ03dvoSF+2k
-         211ePwx3vxZO4VaLoRbh6fBhSCkm3Th93OcwGflyQu7AwHME9IJXrQxOt5MdvDHpNpoy
-         yP0NkZwTl7HAyEpkCrLwej+zpARUZZLzpCBmuy+S7KKYjlDseOQQAkfFoENwRbBnk7hU
-         eUgfncGHTEhFvbcytK9be2iLJXxqUxznNAURB1w2nPvdyCQhd+f7qqyQE6IQcgXda2J5
-         wqKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723680990; x=1724285790;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kcyySO/Wg9CZpKT7IKp0MYN8KR1sVKZZKcglj0UTO+4=;
-        b=W6gzI32LZ7oO2gUn73TUjkCTZy+7UNH03yN5KnNIpyIWVNFzvGG8uavMmQgks6nipn
-         x1xYLX2wK7892adMGUILoXI6wNMlCh57BHu0d9vqD5e8Xp0r7nShZYYtACyyjv927pA8
-         nj9iS/onvQMfCg9M0tzo6c9DBjR6+M8qJUAGQXhw5AxZSxBVoMzndlNllrwrtWQv0dPh
-         LSwUjOzrmWp8FYj1U0fJ4h3DX59xjFhNYdHv5fy5wQuWDV+UBcu29Czc3ooOuuWYGkTN
-         deIJLBpHinGX9Tn+U1AjiYcexJNEfNMfCioQt3N65EcZ+nHMgkIzL/IWnlWQuqFNvuha
-         AG1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXIaS8L1aQw51xNr34WcVNmxcGV7ggU22mmDYtl9lF/2kJi73E/IWsy5iONFIjnAWc8LL9A9ertGWbLtQq3siU5jq2RvuNDWD2BJO5L
-X-Gm-Message-State: AOJu0Yw1cRiuRZMqObskuKrNFqgPScCojO4arJ/p7U/PL/Z3N5kSwHO8
-	YStgnOeZDVFXIf+Pio4Hwgm9cARD03Mr7V3qmwg+NaPe739OErMHvfPpMXj4oQs=
-X-Google-Smtp-Source: AGHT+IFY6+VWTdl6HGrF4ZvTkdgttMRkUwz3Qz4CdcIunOz+6SiVzveLecIQ/lxRZacFcyYZHe1a1w==
-X-Received: by 2002:a05:600c:4fd1:b0:428:111a:193 with SMTP id 5b1f17b1804b1-429dd267dbdmr34933095e9.37.1723680989829;
-        Wed, 14 Aug 2024 17:16:29 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded72524sm34167075e9.34.2024.08.14.17.16.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 17:16:29 -0700 (PDT)
-Message-ID: <b31f175e-4171-491f-9203-8186a84ab712@nexus-software.ie>
-Date: Thu, 15 Aug 2024 01:16:28 +0100
+	s=arc-20240116; t=1723681044; c=relaxed/simple;
+	bh=mwBXqhs89z/Uf7IpyWhPrkxXbeQNsoYqx0CL0MEPLQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GYJOYGJOT8LOBdeLNdxoWrJB8+QkaaGEdLYryqc+m9yFYL8DkyeuDZ+2mmJjN+8DNyy+3PF9lXndOcTfues7B8bBjxixgVtHnCfnA+MheUcVUBFKcSmbW+6u2d9GH5A4oqaLHEdDVSv144loR7R2JuOG06qtIMo1/eUeUWBrH3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nN15ev8X; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723681040;
+	bh=/+xIJvbbYJK1RJYjNKcz7gy0pdnxBapAqsZTok4wFjk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nN15ev8X+n5B5Rqo+Phbu69W6G34v3WnWN18GA1FZl5xggTe5IlrH0kXsgqwHx3bA
+	 6ur85TfsxBQCfNbYCWIsoVJau4TXoQCOR3fasQn+bNaSVui4jTGOhzVC6d0q8HFaX1
+	 EY/glpeMYyZvdBxPbmBspcYSdDwuJ4MxW3tpbKioHvZtvNa48qQA/tW32Hpfn5K3ye
+	 vjGqKSy3nbMt3rGFBq6Ir4SLSc/l8FRYLK0Gqrpt0nVlP9Ixo0iz+ITu3Uepe4QNu5
+	 4D0irr2qC1u8nPacmGaxSuLECCqLo352d4V0OW/TLHvHd37bz2UxuxobBPVT+EGsR2
+	 OVXXp8Ew8QQ8w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wkm0B6s6Xz4w2Q;
+	Thu, 15 Aug 2024 10:17:14 +1000 (AEST)
+Date: Thu, 15 Aug 2024 10:17:14 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>
+Subject: linux-next: manual merge of the risc-v tree with the mm-hotfixes
+ tree
+Message-ID: <20240815101714.4422f93c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20240812144131.369378-14-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/aHR2UvVDHdyR/FMpivz6eVb";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 12/08/2024 15:41, Depeng Shao wrote:
-> +static void vfe_reg_update(struct vfe_device *vfe, enum vfe_line_id line_id)
-> +{
-> +	int port_id = line_id;
-> +
-> +	/* RUP(register update) registers has beem moved to CSID in Titan 780.
-> +	 * Notify the event of trigger RUP.
-> +	 */
-> +	camss_reg_update(vfe->camss, vfe->id, port_id, false);
-> +}
-> +
-> +static inline void vfe_reg_update_clear(struct vfe_device *vfe,
-> +					enum vfe_line_id line_id)
-> +{
-> +	int port_id = line_id;
-> +
-> +	/* RUP(register update) registers has beem moved to CSID in Titan 780.
-> +	 * Notify the event of trigger RUP clear.
-> +	 */
-> +	camss_reg_update(vfe->camss, vfe->id, port_id, true);
-> +}
+--Sig_/aHR2UvVDHdyR/FMpivz6eVb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hmm, so another thought here.
+Hi all,
 
-camss_reg_update() is not an accurate name -> camss_rup_update() because 
-in this case we only update the RUP register, not the AUP or MUP.
+Today's linux-next merge of the risc-v tree got a conflict in:
 
-reg is an abbreviation for register - but RUP has a defined meaning in 
-the camera namespace i.e. RUP = register update and its job is to latch 
-shadow registers to real registers.
+  kernel/crash_reserve.c
 
-camss_rup_update() please.
+between commit:
 
----
-bod
+  ce24afb8be8f ("crash: fix riscv64 crash memory reserve dead loop")
+
+from the mm-hotfixes tree and commit:
+
+  e2acf68fb1c5 ("crash: Fix riscv64 crash memory reserve dead loop")
+
+from the risc-v tree.
+
+I fixed it up (I used the former one as it seems to be a more recent
+patch) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/aHR2UvVDHdyR/FMpivz6eVb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma9SQoACgkQAVBC80lX
+0Gx8QQf+K0r2T4FjpxW+GktFI6ZwMNw482z6yIVi4WRYFyZpqlYFKduOy/+AO0so
+Nx0qGSjo0Qbd+Ex417HurDSwhHAC70Xejlv8T4D8TEX80U2obV/JjWpZ4RaS3bMS
+8nzwnboAJPslyKlmjEuZN+xhpGDG2CaagnQd6aswhclSKNCPRsRiynH6osyjoszc
+TJLM/oyHOpNn9k4QF+W7ppvKvC0hyE/0l312IvyOJde+C9hHuVHfpDeMioA3rEx8
+WpgV9sViRzNrQMlNqiSiBQZv8FXStbeK4TieqXq36cxH6yh4irFi8EHhMJg+GDLy
+rjUJSDfzr5ck0gFRkEMvg2WaS27GWw==
+=GEnH
+-----END PGP SIGNATURE-----
+
+--Sig_/aHR2UvVDHdyR/FMpivz6eVb--
 
