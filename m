@@ -1,113 +1,183 @@
-Return-Path: <linux-kernel+bounces-287476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A0B95282B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:13:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F81952838
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9A1285D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:13:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3037FB2164E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D46C2C1A2;
-	Thu, 15 Aug 2024 03:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940E92EAE5;
+	Thu, 15 Aug 2024 03:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ff8gZrmF"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcSPsOf9"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CC51D545
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 03:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7608F6FC3;
+	Thu, 15 Aug 2024 03:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723691602; cv=none; b=D7QPMtpEs8+/Gm+pXmzGhqZgDRmylhuJoB5jp0ArRWa8XEJPfZxzJiNxmzc4//+k7mJ5RwpCb8M4Lm2SSUTdqbECYsOpLXNo7LLraf7hdBWKovAKMK0z1ipBw4ZBTuacZqpspAeB6ShDlt1YoaJ1CSRb/vWxi6UYswouvsmSH4g=
+	t=1723691727; cv=none; b=fMy61FaruFTpy4+7p9sTZ35IeEWsmRJEolF1u/bgl/Xe5Oq9KKVXvgBc5UOQmhrjuSyO0Td/pdZizeqV5MmcWhivvffl4sTBcvAMzl1SIOrT87VY+hVQp2XWBdCQxPUjgrCFPapoGHH+Ir9HL6OXo3eX+Td8BRu+i+YxmnxNQjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723691602; c=relaxed/simple;
-	bh=nMMaWQiB0qYc73Kc9ZbapW7A2CkNeaOPs6WVx9G/B2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/eQvdvf6Inow+14vU+UyAcQMo5lHQWCcCViamWyu9QvJ5XpayhM2zTRNzEsarmGC9eDj4YX3lNj3uc96uwfq3EkaJSKuEuTRrdAHtchpP61whXMTZFQ3L3Os7uIuUx6Q8ax0wGiPUJcUs5hdKMT6glNJDE4K3VLoRj/t/5A9kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ff8gZrmF; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd640a6454so5820195ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2024 20:13:21 -0700 (PDT)
+	s=arc-20240116; t=1723691727; c=relaxed/simple;
+	bh=+8pEvT4Kr+975J7uHniAljyXE+nSa1o1trJ3UZzOjfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q567axAipoAxDX1Cahc2gWNo225tzzupt6e34cJ7Ke8kCjGUuN2I9haz8NitMyyKhtmdgMqj2ruPMJVkO/T6dLNg9pdcFtRBs33NamNBebfNh24AymwFNNwrIUeLuLnwvYFYoopcwwK9sTib2Hl6RWJh19I48VtCTIFyWCpvxRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcSPsOf9; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d3b5f2f621so369234a91.1;
+        Wed, 14 Aug 2024 20:15:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723691601; x=1724296401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/2QRNR8+6EF7fidSTwruEnZbFCDgCCEDKWmftPIjM40=;
-        b=ff8gZrmF4/edUZCeSoahtrh+G+e/Yv3gxAHzfH5hBV4qxFMpdJzgT2Ue+k5PoL8W8n
-         9V6VJVVTY5VwJp6+GOtWiPyqR0Zj2MbDO7CP7dptNTRIyiGE7gLZ5DGd0M6G3TJ456XX
-         qJcj+OKgfhrAs0hTRhMNUQ1puG03zKVT22qDY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723691601; x=1724296401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723691726; x=1724296526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/2QRNR8+6EF7fidSTwruEnZbFCDgCCEDKWmftPIjM40=;
-        b=S3KF1f6KpbQZZQ8vMUv6nKFpYmlepW4oDo4++nWI3q42QbSsmNyP4kHeCorduTSDuA
-         FKBgcEzdREuhh0BT4jxuHYxLqX0cw4imuYacDPNlf0/F9nXoVTQcfocS9xAKuxSkPOx/
-         ivKGiMs+yq+8kXV8sNC/qd/1kuj5gAlGv6hcm0jhjujs2TSKZSssonmO6kWKn4wzbsAT
-         OQ8XEhsUSYlEmncYT7bU+THoOsYtuBz0GA/LkZV+h9TUxJFuhG0FsZT0BIXBoqwJTlUo
-         xOXohQ2ApDlL9JuKcvQkjaEOqUbXWkyOMcLGnGM/VInnjxWxOqUqHsWr6NT3V+wTZQlR
-         eSyw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1f+ZS7RlYiT9fLtwAExJMUADBvglJ/6CMT2OiwIs+CdzD07zAr4Xe24/1Zg3OzJ6C7ywa6a+U4rcmfAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0Y2rkvmJUANIXaMcwsmw3PJqI/KhmV89ge9xgFIAoEt63chyr
-	2IgUiDOUeSTOkGdo96/vyPyFF/6OFmjrp9tKp72De16UAkoHadzVex6VTpKSAA==
-X-Google-Smtp-Source: AGHT+IFcE+QAUw1Xb2q5oNbVpZ6CwP5UBZo74femXozM7V0Ikea9OYg6dkTadOCjjUnRZ5fms91pcg==
-X-Received: by 2002:a17:903:35cf:b0:1fd:91b1:7883 with SMTP id d9443c01a7336-201d63abef6mr60223675ad.14.1723691600724;
-        Wed, 14 Aug 2024 20:13:20 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:f7dc:2307:3c4b:963e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201f03a565bsm3116565ad.263.2024.08.14.20.13.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 20:13:20 -0700 (PDT)
-Date: Thu, 15 Aug 2024 12:13:14 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Alex Shi <seakeel@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, alexs@kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.com>,
-	Miaohe Lin <linmiaohe@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, minchan@kernel.org, david@redhat.com,
-	42.hyeyoo@gmail.com, nphamcs@gmail.com
-Subject: Re: [PATCH v5 00/21] mm/zsmalloc: add zpdesc memory descriptor for
- zswap.zpool
-Message-ID: <20240815031314.GA12106@google.com>
-References: <20240806022143.3924396-1-alexs@kernel.org>
- <20240806022311.3924442-1-alexs@kernel.org>
- <20240806123213.2a747a8321bdf452b3307fa9@linux-foundation.org>
- <CAJD7tkakcaLVWi0viUqaW0K81VoCuGmkCHN4KQXp5+SSJLMB9g@mail.gmail.com>
- <20240807051754.GA428000@google.com>
- <ZrQ9lrZKWdPR7Zfu@casper.infradead.org>
- <c3f60e2d-8355-46ec-845e-0893dbe5e4f9@gmail.com>
+        bh=dtPf+04gKObZUgi4bIGxCdJ2e58CFxBSSmwvE0nQa2Y=;
+        b=IcSPsOf9QCgi3ekcuyQ4GFnvdO0LAnUUVLSHl51+IDS1Tu8luDT1ALQA+jnaIwUNgc
+         QCfKkUuGA2zMmbQ4E9eSZynyCtQIYbPZ9o4xWUz92IwclJwoMARjxhFaaYnCQO/0KipX
+         JLY8oO5F9CQbCIl6cwoFYZnlfYziE/HWbss4bvEydO2/whoTm+aBZdTT/8hC/w4CiS9O
+         8o5ZGrBFg0+JdkjlZkaZTi/d9DSHPYAUpEf5C8/rSpEqzN3IqZzf9XLtw3j8P+naWDjg
+         aRLTTe3dCL4l8l0Bzcc2BvOeOJuccT783jnjhA3PvxBPdhc4EckntZ21S4PB+j55PHeu
+         U+cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723691726; x=1724296526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dtPf+04gKObZUgi4bIGxCdJ2e58CFxBSSmwvE0nQa2Y=;
+        b=AgaPMmqmNs7/Uzg+lEax6WvrDj5S0/vFcl0OIMYab/C5pZGgBdCiEWLnxh7KCDY5aO
+         AGDrfGtngsJGyRbev7J9e/SMwNWLG6qvwXON2+aotclgIySVKkE9V47M6U4/urT+F49e
+         XMXcxwpGIqJOsN+BlJrVoY27Rca8vMmJIcPZu6WF/SalrLUoCgXp5YGGUi4AzWKKcyVy
+         Zxl6Knjuea0ZtN6jSVrblNW6phY0oVTnUQbx1SQRrbywsqlI6o0+5HoY5baET/LdClPt
+         5KMN7RnI5vNYoAkLqFRP4Qz9VS1Ugpo0m2Kk2A0JsTUBhg+pPkY5hwGGvTVlGEcHdHjT
+         Aorg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLJ9VPSvW7hXq/aPKZ51LKr6Mv3DRIXlQdOtdI8ViBOEq0e+xERuyLE+UgrAG9Hf5FnDEm2k5JahS01MzABa03Gq277bdLjlv3jSJLxWtaNQEjz9Vgq25ZJ3k4e5D/x7XGXrb7GvRKYxlUoCQewqFSBM2P7yPsJWJ1iI43OBkz8Q==
+X-Gm-Message-State: AOJu0Ywn1QxkFNH1aL5B00dmfIc4iRQRTwmZHHfzDP/1MOqief7MNUtv
+	53HxcY7yYxw7u2BIV02C6G68h75QmBzns5DCJdrDv+F86tA8FeQkjNffY+W+vbfd3PTJGBCivk9
+	4gFPrf9KKesHWovyrBvtA+QwTpF0=
+X-Google-Smtp-Source: AGHT+IFiThIhX+9FhLiAcH6DoPTaT9aFpP6Lkgxy9dJF8YKw8N/bmIWpxt9ge0Vce96c5hJyDA6LFSAG2T3kfQpE3Qo=
+X-Received: by 2002:a17:90a:bb8f:b0:2c9:5c7c:815d with SMTP id
+ 98e67ed59e1d1-2d3aaac3e34mr5518852a91.22.1723691725581; Wed, 14 Aug 2024
+ 20:15:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3f60e2d-8355-46ec-845e-0893dbe5e4f9@gmail.com>
+References: <64c2d755-eb4b-42fa-befb-c4afd7e95f03@linux.ibm.com>
+ <20240814150558.46178-1-aha310510@gmail.com> <9db86945-c889-4c0f-adcf-119a9cbeb0cc@linux.alibaba.com>
+In-Reply-To: <9db86945-c889-4c0f-adcf-119a9cbeb0cc@linux.alibaba.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Thu, 15 Aug 2024 12:15:14 +0900
+Message-ID: <CAO9qdTGFGxgD_8RYQKTx9NJbwa0fiFziFyx2FJpnYk3ZvFbUmw@mail.gmail.com>
+Subject: Re: [PATCH net,v4] net/smc: prevent NULL pointer dereference in txopt_get
+To: "D. Wythe" <alibuda@linux.alibaba.com>
+Cc: wintera@linux.ibm.com, gbayer@linux.ibm.com, guwen@linux.alibaba.com, 
+	jaka@linux.ibm.com, tonylu@linux.alibaba.com, wenjia@linux.ibm.com, 
+	davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (24/08/09 10:32), Alex Shi wrote:
-[..]
-> >> and we "chain" zpdesc-s to form a zspage, and make each of them point to
-> >> a corresponding struct page (memdesc -> *page), then it'll resemble current
-> >> zsmalloc and should work for everyone? I also assume for zspdesc-s zsmalloc
-> >> will need to maintain a dedicated kmem_cache?
-> > Right, we could do that.  Each memdesc has to be a multiple of 16 bytes,
-> > sp we'd be doing something like allocating 32 bytes for each page.
-> > Is there really 32 bytes of information that we want to store for
-> > each page?  Or could we store all of the information in (a somewhat
-> > larger) zspage?  Assuming we allocate 3 pages per zspage, if we allocate
-> > an extra 64 bytes in the zspage, we've saved 32 bytes per zspage.
-> 
-> Thanks for the suggestions! Yes, it's a good direction we could try after this
-> patchset.
+2024=EB=85=84 8=EC=9B=94 15=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 11:51, =
+D. Wythe <alibuda@linux.alibaba.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+>
+>
+> On 8/14/24 11:05 PM, Jeongjun Park wrote:
+> > Alexandra Winter wrote:
+> >> On 14.08.24 15:11, D. Wythe wrote:
+> >>>      struct smc_sock {                /* smc sock container */
+> >>> -    struct sock        sk;
+> >>> +    union {
+> >>> +        struct sock        sk;
+> >>> +        struct inet_sock    inet;
+> >>> +    };
+> >>
+> >> I don't see a path where this breaks, but it looks risky to me.
+> >> Is an smc_sock always an inet_sock as well? Then can't you go with smc=
+_sock->inet_sock->sk ?
+> >> Or only in the IPPROTO SMC case, and in the AF_SMC case it is not an i=
+net_sock?
+>
+>
+> There is no smc_sock->inet_sock->sk before. And this part here was to
+> make smc_sock also
+> be an inet_sock.
+>
+> For IPPROTO_SMC, smc_sock should be an inet_sock, but it is not before.
+> So, the initialization of certain fields
+> in smc_sock(for example, clcsk) will overwrite modifications made to the
+> inet_sock part in inet(6)_create.
+>
+> For AF_SMC,  the only problem is that  some space will be wasted. Since
+> AF_SMC don't care the inet_sock part.
+> However, make the use of sock by AF_SMC and IPPROTO_SMC separately for
+> the sake of avoid wasting some space
+> is a little bit extreme.
+>
 
-Alex, may I ask what exactly you will "try"?
+Okay. I think using inet_sock instead of sock is also a good idea, but I
+understand for now.
+
+However, for some reason this patch status has become Changes Requested
+, so we will split the patch into two and resend the v5 patch.
+
+Regards,
+Jeongjun Park
+
+>
+> > hmm... then how about changing it to something like this?
+> >
+> > @@ -283,7 +283,7 @@ struct smc_connection {
+> >   };
+> >
+> >   struct smc_sock {                           /* smc sock container */
+> > -     struct sock             sk;
+> > +     struct inet_sock        inet;
+> >       struct socket           *clcsock;       /* internal tcp socket */
+> >       void                    (*clcsk_state_change)(struct sock *sk);
+>
+>
+> Don't.
+>
+> >                                               /* original stat_change f=
+ct. */
+> > @@ -327,7 +327,7 @@ struct smc_sock {                         /* smc so=
+ck container */
+> >                                                * */
+> >   };
+> >
+> > -#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
+> > +#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, inet.sk)
+> >
+> >   static inline void smc_init_saved_callbacks(struct smc_sock *smc)
+> >   {
+> >
+> > It is definitely not normal to make the first member of smc_sock as soc=
+k.
+> >
+> > Therefore, I think it would be appropriate to modify it to use inet_soc=
+k
+> > as the first member like other protocols (sctp, dccp) and access sk in =
+a
+> > way like &smc->inet.sk.
+> >
+> > Although this fix would require more code changes, we tested the bug an=
+d
+> > confirmed that it was not triggered and the functionality was working
+> > normally.
+> >
+> > What do you think?
+> >
+> > Regards,
+> > Jeongjun Park
+>
 
