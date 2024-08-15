@@ -1,148 +1,135 @@
-Return-Path: <linux-kernel+bounces-288288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93888953865
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:38:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09C695386F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492D01F24683
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D243287DF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B3D1B9B4F;
-	Thu, 15 Aug 2024 16:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F9B1BA888;
+	Thu, 15 Aug 2024 16:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="RxZFR+TG"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVPQBXWf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF55C1B9B49
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185D11AC8B2;
+	Thu, 15 Aug 2024 16:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723739896; cv=none; b=Yk+iw2RUVTqYBWpxorSafIniD9gn6j6HZFSX3QzYcAoC0yfecnqXJTWNLe8bcaaoYrAFyVCiD5b02v85/ZqnkAf3B7ui/xAPy8gl0TGPVc01f5gXWudM5ZsqaF0YXEHQp2lJc2zKBmsn0+fYpaPNfz+kfE59OnsrXubrOVpGIlI=
+	t=1723739963; cv=none; b=Q7SfuZr/skI1dTTRJIdybPkq1qn9BEcgipKQRxsEYYSpoBJtQPvuI6LkvWAmwKNRLbQlO6+jiTASa/7rO33Lz8DQe0LuqvADncdrdu/lZnVmcNPbknArMEg8gRJGTQyk4JtCRLcMiDyjmx3QIvxg2FFBGCrl1jay1Q+qKzYAVhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723739896; c=relaxed/simple;
-	bh=jMlAZu9qZMpTmt+5bgGh6ITXoRYe8d6SMHX+V0KtlmE=;
+	s=arc-20240116; t=1723739963; c=relaxed/simple;
+	bh=nqEGxPh8pwY20u2MZKu3nNO4QLRYnQ4hjFehvCemvbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwHE2jgNNAHunRPD1h4AKk/HyxkjyBkuxJI6jcRHephxwQB7lM3PRv1QcZp7doXEUWWbIMcOQqX1Au/2ESsCK1oEbLCQm7uf1yaqT4D+FKENZcmvrjJJiTce1/xEa8RLrEjZTWCvMhwmqfq9/khjdxUvTtMs71SPV1ti4AcbFlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=RxZFR+TG; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a1df0a93eeso70322785a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723739893; x=1724344693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VFTNWVqUYfCcABK8DrDnvPgSGbZWu7816sHlk6jkx8Q=;
-        b=RxZFR+TGKXTQDbsqzfpah1I/T7aVTA8+O7fraZQ1XN35/D1ZQ/ZfVl8ByRPdKn4wcd
-         OQUVQOhEx8Xg8/Xnh+hgKJ9EaT3vEbprJ984B3WeS+iypYy2VDg0ZlYO75fZ3i5lfNJq
-         pTOmhwq5c68cnrHkxatzbADmXpqQJjv0oF4cM/fUWFebLQiJ4je4Wo9mSYEMsR1k/apC
-         8O4cdeJpS9vHrjQqLVRQlijA/p1pH249Mw97rKC9e672XY0Dsn6QJ3PY0vusb/rBXBHt
-         PWYSJ8Nbw5sDGrJSGLOLzvOwYzCJCn/N4MlxaC7OudvAuKwazHGEM9Nqu6yruII9e1vY
-         67dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723739893; x=1724344693;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VFTNWVqUYfCcABK8DrDnvPgSGbZWu7816sHlk6jkx8Q=;
-        b=F1ag1xfr62P6yNQ3Hq+emn9d5TeZIdOP8kyUrNjvPzbuSegZ+cYFgXrSQViN60PLHd
-         P9A+yZepWPB0vEx9m5hJKwsxZ3fkRZGKMPvxjV2J7KnjjlgoZ1VuzhHOCXFVMjzwQGt8
-         vHKF2QE0C9ukOsznkNPrXgm+N3TfIqipcxPI9X4h1CxuaniAIIC1liUDWgMK+ILdPkut
-         h6LJrVpL1UT51AIrYeWOqk7uyMawO6anqRGqLqnddRwvdPAAhfaYCc/lac9M6qiJXb2U
-         qoUNdydgAoZhSAh1agzspFEmlA2+gbBFcukbUQwzGCK+27PIXABcWKrvnzlpzzJ2O6Ra
-         /R2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVy0ZaOEGGcyDPDyc8g/EarDR5Nue4/ksFOfChS7xj7yxliK0J3IlbxRCIgH3rR9Mpi8zY3Sl/Q+yuKhdGKCRNseuZWOa/9JpR/ms1N
-X-Gm-Message-State: AOJu0YzwFC0jQesuU0XtwrOIN6xp4HdKxKb34QaLkHeJue+2X5bB/p8E
-	xkznN5hJDLUquWRP0SMZ7Rp0rbwfWH+0xUcDH5d/AZA+TfZtTLm4XIiTq0XOQcY=
-X-Google-Smtp-Source: AGHT+IHgB0euuLtojBmxwtFUei6W+/O9qvNh5LVT/DjkRkyeMw0VoI9tWPGBOYRiGDcx7MYqyoTeqQ==
-X-Received: by 2002:a05:620a:4102:b0:79e:ffa3:d6a5 with SMTP id af79cd13be357-7a5069e5d9dmr18058585a.64.1723739893409;
-        Thu, 15 Aug 2024 09:38:13 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4ff070181sm77535385a.63.2024.08.15.09.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 09:38:12 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sedUJ-0042Yt-Bf;
-	Thu, 15 Aug 2024 13:38:11 -0300
-Date: Thu, 15 Aug 2024 13:38:11 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Martin Oliveira <martin.oliveira@eideticom.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v5 3/4] mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
-Message-ID: <20240815163811.GN3468552@ziepe.ca>
-References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
- <20240808183340.483468-4-martin.oliveira@eideticom.com>
- <ZrmuGrDaJTZFrKrc@infradead.org>
- <20240812231249.GG1985367@ziepe.ca>
- <ZrryAFGBCG1cyfOA@infradead.org>
- <20240813160502.GH1985367@ziepe.ca>
- <ZrwyD10ejPxowETN@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c5iVzMP+JSbKUYqsNVjRQYfP5ZZ0ezL9qp86WuLFReDS2+7umNVvlhjEo4FOUXZMcNvW8909FpSuZ4us9vsrR2wWQTJFKVI0r15QYbbonSaJ5IJx/nrhmI8TiS0NHlGNzGYpfdwTlyb8yVkOrX6+TFkaNhCpW8OROfOadBp0brU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVPQBXWf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A991CC32786;
+	Thu, 15 Aug 2024 16:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723739962;
+	bh=nqEGxPh8pwY20u2MZKu3nNO4QLRYnQ4hjFehvCemvbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mVPQBXWf4rO5tqOD7E573dr/pYnLkTbMxIobg0TVBQo8vrWdsI+BSdGVLxb3z+DuI
+	 AB3CwtvHVEesic9NWEB62pNPzB0UJqdc4mZ/YzivT5ZFGoUdfWmLZh0iYBRkZNSExn
+	 CGmJRmgQTCFJdl9Jw4SsQ6861ethBoLCMBjuFdUCeyp75mtiYAk9jbkXTk4v+6uMeT
+	 No3dA8UXevsw+hJpGxWXFGCI0EsP6KJ4mwGaZhjhGW8rn/ZTEU4zMNmsprnEpxb62I
+	 jijupNJtzAxMTcTemcyG6LtY/cD39wLSqWkRJGa6R7ozAs02XXoMJxVcOvJZnO77q8
+	 Ub0FE7zYHQYCA==
+Date: Thu, 15 Aug 2024 17:39:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"ross.burton@arm.com" <ross.burton@arm.com>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v10 12/40] mm: Define VM_SHADOW_STACK for arm64 when we
+ support GCS
+Message-ID: <68ec09da-fb4a-4d59-9c8c-6fae4c48ea68@sirena.org.uk>
+References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
+ <20240801-arm64-gcs-v10-12-699e2bd2190b@kernel.org>
+ <34f7a5378447b1a8d5a9561594b37cfeaa6bd2b1.camel@intel.com>
+ <3a7d9b69-e9df-4271-a3f0-8e8683c2654f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vKd189vsbNknapJj"
+Content-Disposition: inline
+In-Reply-To: <3a7d9b69-e9df-4271-a3f0-8e8683c2654f@sirena.org.uk>
+X-Cookie: -- Owen Meredith
+
+
+--vKd189vsbNknapJj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrwyD10ejPxowETN@infradead.org>
 
-On Tue, Aug 13, 2024 at 09:26:55PM -0700, Christoph Hellwig wrote:
-> On Tue, Aug 13, 2024 at 01:05:02PM -0300, Jason Gunthorpe wrote:
-> > > Where do we block driver unbind with an open resource?  
-> > 
-> > I keep seeing it in different subsystems, safe driver unbind is really
-> > hard. :\ eg I think VFIO has some waits in it
-> 
-> Well, waits for what? 
+On Thu, Aug 15, 2024 at 04:26:47PM +0100, Mark Brown wrote:
+> On Thu, Aug 15, 2024 at 03:20:52PM +0000, Edgecombe, Rick P wrote:
 
-Looks like it waits for the fds to close at least. It has weird
-handshake where it notifies userspace that the device is closing and
-the userspace needs to close the fd. See vfio_unregister_group_dev()
+> > FYI - If you want to have more complete guard gaps, you need to do this for arm
+> > too:
+> > https://lore.kernel.org/linux-mm/20240326021656.202649-14-rick.p.edgecombe@intel.com/
 
-In the past VFIO couldn't do anything else because it had VMAs open
-that point to the device's mmio and it would be wrong to unbind the
-driver and leave those uncleaned. VFIO now knows how to zap VMA so
-maybe this could be improved, but it looks like a sizable uplift.
+> > Using VM_SHADOW_STACK only gets you part of the way there.
 
-> Usuaully an unbind has to wait for something, but waiting for
-> unbound references is always a bug.  And I can't think of any
-> sensible subsystem doing this.
+> Oh, thanks for the heads up - I'd missed that.
 
-I've seen several cases over the years.. It can be hard in many cases
-to deal with the issue. Like the VMA's above for instance. rdma also
-had to learn how to do zap before it could do fast unbind.
+Looking at this I think it makes sense to do as was done for x86 and
+split this out into a separate series (part of why I'd missed it),
+updating the generic implementation to do this by default.  That'll
+touch a bunch of architectures and the series is already quite big,
+it's not really an ABI impact.
 
-Some places just have bugs where they don't wait and Weird Stuff
-happens. There is a strange misconception that module refcounts
-protect against unbind :\
+--vKd189vsbNknapJj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Not saying this is good design, or desirable, just pointing out we
-seem to tolerate this in enough other places.
+-----BEGIN PGP SIGNATURE-----
 
-In this case the only resolution I could think of would be to have the
-rdma stack somehow register a notifier on the pgmap. Then we could
-revoke the RDMA access synchronously during destruction and return
-those refcounts.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+Ly8ACgkQJNaLcl1U
+h9AuIgf+OuQaTIedzXEkMKSzSn8gQPJlIY5KrokvUJ1INFNplupcL8meQbjGaCke
+k6p6rULpXRg8dAR2gjIllIWy3YaYrcqKK7VUWUVHy2rdwtozDi5JICj3GVYrZ1N4
+RHRL44Xq/dMXBORv5Zm06QeTaZxhgmj+wKvnVVrgiZN33cbHEULW5W3HX/qCcsDe
+7qR7858W0Qkm1wZ8tyY3UkGI8AiUO3oMCaQ/pokDf9EDQagBid3Aqe0iMQmRacMZ
+XaEy5ijWBddwXQb8qolzElM+ySPoxEf+jwEqHAH6WP4ke1NlJrj6+Xn7JN+/OuY8
+Lv5n7BHbDEebZQo46ohDBN+Q0iR0vg==
+=uwcZ
+-----END PGP SIGNATURE-----
 
-That does seems a bit complicated though..
-
-Jason
+--vKd189vsbNknapJj--
 
