@@ -1,148 +1,164 @@
-Return-Path: <linux-kernel+bounces-288239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D8D9537C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C79C9537CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5C11F21ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21AC42837EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C861B143B;
-	Thu, 15 Aug 2024 15:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8B119FA87;
+	Thu, 15 Aug 2024 16:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="SkI11rOA"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k2Ce3tGK"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B921B3F0B
-	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FE11AB519
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 16:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723737581; cv=none; b=t7fsu8JwWcAjYxL2/CJK6ya00aOvBu/ByPG5oLEzbEFI4qCEfQAMICOkUOeMRFnAtfGZBpOvn396brXGpw7s3aY+dEkPVtmvvhtGOol0BETUpdnT7wnJySTt535zsCaYFgMJ8KKy35yCQ9mxOeTvCnaNSwepRTleWi+NFPd9a/4=
+	t=1723737607; cv=none; b=lTlz0I0ihy8nyJ8IQuM2VV9qtZpXcRQTNrILW3eLKmZth/UzIk0mzXihoBFMBKdCePshvFWb0lhG+IX6AlrdbGEEjGXSSE1A7nNW59C6rsVENoFs7zfq3/ccGVQou8gfzQwsF7Sv9hB+DK/zFHvmLta/6xGOki3E/1LGacewQG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723737581; c=relaxed/simple;
-	bh=MNgHIH+lkUsEt2L6I+eFso69L5v3uwKBRJthgipnp8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s9z2wwAVanaZwMIQMN6KF+fXi4SFMRavLrLVdsCXe/Wo19nOGwi2ROOCyUIbwCtOvdhzUsJSuCEAxoYL8lQ2hHYkLCa1lvMOmzh0j6EkGi/uVi8+p1eVIU2glI795cqawbCX3CHYN/GLFnQULrpwYg8fUyP7pyqMiLpxCxhlpyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=SkI11rOA; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-81f86fd93acso39307039f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:59:39 -0700 (PDT)
+	s=arc-20240116; t=1723737607; c=relaxed/simple;
+	bh=8LOB4hMOsdMgF4WbkQ49wP5IJlz8nKKjriUyn+4jDsE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dKP8pWHwNW8In0OEOZGZkdvdetgcTbLjeCbpOcT0qGWIDFF01IO40wB7GiwH6xlAZso6m7poHT9ShaBO2iptM+c3+Jt4xcleKpi8KMl6BlBg1KRciCEpJGQ04PmWO5LY2edlDqP4GBdjhE3gWtaZEJ3A8kUEaCQ+0WSqOfCYnBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k2Ce3tGK; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-778702b9f8fso585624a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 09:00:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1723737579; x=1724342379; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g4+z91zLwzol+brq2IIPZq1Ohh/pu+6NsMuoxH1a358=;
-        b=SkI11rOA6ZMBXozIGSKIw4X5RO4bwoAA7e3w1/SlV0Zv8MmMLhNXU5SjjiNMb9vz/S
-         89Mow9KyEAsPIrsNnOjzHRYgP9IfQAxHXqopDqxWP+BliVV194tWJdsbGda0OBxbx41b
-         ERGQVMaqHBuu1mWDZjB7ElmG90SGJeLfiUGMc6ZvFkJorky3A8pwCPr0ze//6nhP42xs
-         CSk0D1XtIuqUDdhaP9178HfRrYQgyKejjVHdfqqsX0RuG4XfqP/EHUQJ3AvHalx3hUNt
-         A+nt4mHANS5VMdM/oc5THcOnhttaXKZnQZUYpopqVYsVMWQ8FI4+KjEPy4d/2p6AM0WX
-         Jlng==
+        d=google.com; s=20230601; t=1723737606; x=1724342406; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M8NnW+ymJPO/5j9ioWkpEO+FljjLsToFL+mCOZ9DuZ8=;
+        b=k2Ce3tGKvAagcinHeUztFYH7OCI3WMGz/YeWB2Nrbcz6uD+TzyvA077Gl9Ifh50Cyy
+         01rGtL6ciEnPLrRUzhccZXrczauI7kYWWU8ghB8zJ+aZZIfzK9vKLl9Z7rYiP5SUcNOt
+         RPQx2VFdnlYqE8qDuavlABzXwMgmVgR/eVk6urr8K5Yp7BP7R5vAYhCcUx9aHrwOlZqM
+         Oozn8GPVo7+A7mki8sCoQtKjVhAQ2bbmXHtGCexm9WTg40lOxNFlrJjVNeb2QZIdF0NL
+         Hk0MBGDoddQukfiMbXt/mYuQDSWE/7pgQhx3IrGy3dhErmkMGEqXHGxBodsBxSgnGe+s
+         4jwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723737579; x=1724342379;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4+z91zLwzol+brq2IIPZq1Ohh/pu+6NsMuoxH1a358=;
-        b=GLg1wKXo5daC3rM9WIJuX8QiTn6p5/jW3wAekzPyvvCUEBVPref60GjqrtJXw2/dJ3
-         ipSK/2Dy7bdsHGjhte4P74jdAcxNTjqDpqXHq4vFBkk1p2zIUTYHcLIn22853frS9TRZ
-         1lnsm936zbMrYhhZ4Jt6EZE6OUW4mIQknxtZ7y/1pp8Zw3dQ4jOmyZF3m5BNTmhjZbmY
-         pNy9vwagsNUNJmcRIxxD91+gPemGBTc0FsU7nfbRccxrwzO9m4mINmDQpIh1o47uhEbL
-         rscRwbX6vVvaWI90H1egme1bUMxyZGBNnavdMWY+vyLsEXr0gX/ia1YWcaMtrjaL/Qp0
-         jOqQ==
-X-Gm-Message-State: AOJu0YwGUOerT2hi4g/+9K8EimQnxEayxbSrMaxWZcnEDeqNlMd8hOxX
-	CnajxJc7ouYgdj0HAysO3nV/PD4ZJZeb6SHgCrX5zIPnY4HZ4TK9Bl5x7ljPT5M=
-X-Google-Smtp-Source: AGHT+IFNOb+TtVyiLhjQXNipwoGI8CZl3XTIEhqlZdMaV4HQw3tSJmyEeEAIBgFrQISH3pvXP4F29g==
-X-Received: by 2002:a5e:df02:0:b0:81f:8825:af8f with SMTP id ca18e2360f4ac-824e76b222cmr271498539f.2.1723737579038;
-        Thu, 15 Aug 2024 08:59:39 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-824e990d5b4sm57205339f.14.2024.08.15.08.59.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 08:59:38 -0700 (PDT)
-Message-ID: <085c8332-d7f1-41df-8854-bee06291ba83@sifive.com>
-Date: Thu, 15 Aug 2024 10:59:37 -0500
+        d=1e100.net; s=20230601; t=1723737606; x=1724342406;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M8NnW+ymJPO/5j9ioWkpEO+FljjLsToFL+mCOZ9DuZ8=;
+        b=NUoVNcJqrg+BhrZWTuXMy2sgVz96i69I6ZMWTRbE/AV8LwAjpTwToToR5mkJ8Yen9R
+         qnR3D1Nuo3G85MtsgedHaGC//Qevwp+ZbuYdHpXrXFjnZUHyGimQGkR3ll7TAW+nIQFn
+         Wp76kn0d21keBHmcDEGKZ2pCEBMsoHCQ/xyHU11uFq6sBSKUQcFG2fzf7PGxPcizooD0
+         1l8dz2qJ4CKSZrPYold86kjOWJxVenZK4dYLWxuM58IiqrtgAF472ITjpK5o7yMw+QC2
+         BZLO7uxcIFa11lWlniUIPmy5xZ8KtxG6IYB4bMfjhFLkw1gLH+RuyEgkhy9cyLZL3NxH
+         zSzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWO0x91N3vfAPFXpn1wD8G0UVvUrqKB6XnbLoFXvNWgV3tHiL3J4Brcc2VCDZkwqMB+50YpH//dUePhIGY0zgqIx0EqJSpBxHgyUQNV
+X-Gm-Message-State: AOJu0YzsO7g1wz2WJUS+3bksqtZFhw87xf6wjCTD1TWRBGQpgaPiz2AR
+	YQVQoUOnR1Ls4JEXEzwnpCf+QwNkuXx/Cl1pqgLCUWcVO8DZR6DzQLUTjXiGE42lCtYF+gCJ2Kz
+	vkA==
+X-Google-Smtp-Source: AGHT+IGU1fKO78A5yr12VP/rYnQq2ySJsTi2GH/BAWbZmuduEGVPVlZ8I3b0WIj9vqu/ONJN8tWWO0QlPaE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:90a:b0:7b8:b174:3200 with SMTP id
+ 41be03b00d2f7-7c6b2c6857cmr9343a12.5.1723737605562; Thu, 15 Aug 2024 09:00:05
+ -0700 (PDT)
+Date: Thu, 15 Aug 2024 09:00:04 -0700
+In-Reply-To: <20240522001817.619072-14-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/9] Fix Allwinner D1 boot regression
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- Anup Patel <apatel@ventanamicro.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-References: <20240814145642.344485-1-emil.renner.berthing@canonical.com>
- <87jzgjnh9z.ffs@tglx>
- <CAJM55Z8WERQgs=QMyFGWvAHOpwcnOAudBqovaEuDudPSXCvL5Q@mail.gmail.com>
- <87ttfmm2ns.ffs@tglx>
- <CAJM55Z88H635Crc-Aeq+K0qcAk7NC89WVTAFdXDd2aQKQ7QmEg@mail.gmail.com>
- <CAJM55Z_qQX7n8tAeOFqrAH1BFjA9vaWA8rtsPG2BcKmiO88m=Q@mail.gmail.com>
- <87plqalyd4.ffs@tglx> <686d61c4-e7ac-4dca-a7fd-decdd72e84d9@sifive.com>
- <87h6blnaf1.ffs@tglx>
- <CAK9=C2V7oL023=u6nodJs76k_0yHZ8PTJs=n1QFqDWCcCnG9kw@mail.gmail.com>
- <be1db8f5-af55-48a4-be7a-5e8a1a5e25c4@sifive.com>
- <CAJM55Z9kKqs-kMubsGsRkS6E2Y4ur1MmwD+1XFvGP=UVNrJvRg@mail.gmail.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <CAJM55Z9kKqs-kMubsGsRkS6E2Y4ur1MmwD+1XFvGP=UVNrJvRg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240522001817.619072-1-dwmw2@infradead.org> <20240522001817.619072-14-dwmw2@infradead.org>
+Message-ID: <Zr4mBNTSquDqOtfw@google.com>
+Subject: Re: [RFC PATCH v3 13/21] KVM: x86: Improve synchronization in kvm_synchronize_tsc()
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, 
+	Dongli Zhang <dongli.zhang@oracle.com>, Chenyi Qiang <chenyi.qiang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Emil,
-
-On 2024-08-15 10:07 AM, Emil Renner Berthing wrote:
-> Samuel Holland wrote:
->> On 2024-08-15 9:16 AM, Anup Patel wrote:
->>> On Thu, Aug 15, 2024 at 7:41 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->>>>
->>>> On Thu, Aug 15 2024 at 08:32, Samuel Holland wrote:
->>>>> On 2024-08-15 8:16 AM, Thomas Gleixner wrote:
->>>>>> Yes. So the riscv timer is not working on this thing or it stops
->>>>>> somehow.
->>>>>
->>>>> That's correct. With the (firmware) devicetree that Emil is using, the OpenSBI
->>>>> firmware does not have a timer device, so it does not expose the (optional[1])
->>>>> SBI time extension, and sbi_set_timer() does nothing.
->>>>
->>>> Sigh. Does RISCV really have to repeat all mistakes which have been made
->>>> by x86, ARM and others before? It's known for decades that the kernel
->>>> relies on a working timer...
->>>
->>> My apologies for the delay in finding a fix for this issue.
->>>
->>> Almost all RISC-V platforms (except this one) have SBI Timer always
->>> available and Linux uses a better timer or Sstc extension whenever
->>> it is available.
->>
->> So this is the immediate solution: add the CLINT to the firmware devicetree so
->> that the SBI time extension works, and Linux will boot without any code changes,
->> albeit with a higher-overhead clockevent device.
+On Wed, May 22, 2024, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
 > 
-> But this will mean that you can't update your kernel to v6.9 or newer without
-> reflashing OpenSBI and u-boot. That's still a regression right?
+> When synchronizing to an existing TSC (either by explicitly writing zero,
+> or the legacy hack where the TSC is written within one second's worth of
+> the previously written TSC), the last_tsc_write and last_tsc_nsec values
+> were being misrecorded by __kvm_synchronize_tsc(). The *unsynchronized*
+> value of the TSC (perhaps even zero) was bring recorded, along with the
+> current time at which kvm_synchronize_tsc() was called. This could cause
+> *subsequent* writes to fail to synchronize correctly.
+> 
+> Fix that by resetting {data, ns} to the previous values before passing
+> them to __kvm_synchronize_tsc() when synchronization is detected. Except
+> in the case where the TSC is unstable and *has* to be synthesised from
+> the host clock, in which case attempt to create a nsec/tsc pair which is
+> on the correct line.
+> 
+> Furthermore, there were *three* different TSC reads used for calculating
+> the "current" time, all slightly different from each other. Fix that by
+> using kvm_get_time_and_clockread() where possible and using the same
+> host_tsc value in all cases.
 
-I suppose that depends on if you think the SBI time extension is (or should have
-been) mandatory for platforms without Sstc. If the SBI time extension is
-mandatory, then this is a firmware bug, and not really Linux's responsibility to
-work around.
+Please split this into two patches, one to switch to a single RDTSC, and another
+do fix the other stuff.
 
-If the SBI time extension is not mandatory, then Linux needs to be able to
-handle platforms where the S-mode visible timer is attached to an external
-interrupt controller (PLIC or APLIC), so the irqchip driver needs to be loaded
-before time_init() (timer_probe()). So in that case, the bug is a Linux
-regression, and we would need to revert the platform driver conversion.
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>  arch/x86/kvm/x86.c | 32 ++++++++++++++++++++++++++++----
+>  1 file changed, 28 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index ea59694d712a..6ec43f39bdb0 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -201,6 +201,10 @@ module_param(eager_page_split, bool, 0644);
+>  static bool __read_mostly mitigate_smt_rsb;
+>  module_param(mitigate_smt_rsb, bool, 0444);
+>  
+> +#ifdef CONFIG_X86_64
+> +static bool kvm_get_time_and_clockread(s64 *kernel_ns, u64 *tsc_timestamp);
+> +#endif
+> +
+>  /*
+>   * Restoring the host value for MSRs that are only consumed when running in
+>   * usermode, e.g. SYSCALL MSRs and TSC_AUX, can be deferred until the CPU
+> @@ -2753,14 +2757,22 @@ static void kvm_synchronize_tsc(struct kvm_vcpu *vcpu, u64 *user_value)
+>  {
+>  	u64 data = user_value ? *user_value : 0;
+>  	struct kvm *kvm = vcpu->kvm;
+> -	u64 offset, ns, elapsed;
+> +	u64 offset, host_tsc, ns, elapsed;
+>  	unsigned long flags;
+>  	bool matched = false;
+>  	bool synchronizing = false;
+>  
+> +#ifdef CONFIG_X86_64
+> +	if (!kvm_get_time_and_clockread(&ns, &host_tsc))
+> +#endif
 
-Regards,
-Samuel
+I'm pretty sure we can unconditionally declare kvm_get_time_and_clockread() above,
+and then do
 
+	if (!IS_ENABLED(CONFIG_X86_64) ||
+	    !kvm_get_time_and_clockread(&ns, &host_tsc))
+
+and let dead code elimintation do its thing to avoid a linker error.
+
+> +	{
+> +		ns = get_kvmclock_base_ns();
+> +		host_tsc = rdtsc();
+> +	}
+> +
 
