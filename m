@@ -1,153 +1,132 @@
-Return-Path: <linux-kernel+bounces-287356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37909526E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD069526E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 02:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025B11C215E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C6E1C216B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 00:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B2318D62B;
-	Thu, 15 Aug 2024 00:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B562F30;
+	Thu, 15 Aug 2024 00:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="OQIY11jm"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z7Mg+sLr"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C2F186A;
-	Thu, 15 Aug 2024 00:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF0BA47
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 00:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723681577; cv=none; b=DIGf2xqURDX80FHNui3lmzL6xc0hFYqc7qs1mVLBH7wwO+jjBxaQemJiPMzeTD4hX+WTNRVPV+5mEntgNnzcOd7ExdwA9bnsMtaOZ5sZR/sQ1q6bLFr2v6OnEq6K8OPi4WfgYLwM+BfRabZx2Q/NJkLA6XL7LqGlntgWFQp+t2U=
+	t=1723681792; cv=none; b=QL9kOQL1NcZFnqEeeXkQwxaDoppNbnkk4VksOaj8etDMfl02sqXgJb6GSdxda9ArvNoDHJ+GgtJ0swMDcL4/+NIFBm2lLVnfjkWEMbSN+fG51CUwJB2LL3ElPlsdrsO2rs8UhyXzAWjUXJoS1aGqVYjYdgIfNa60aVfuX9OuNm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723681577; c=relaxed/simple;
-	bh=8I8CiWVpxDRh+TBvxuD+POU/JuLcF2IqLifgtMYIBbs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UZMun7HFFdQ72hAApBP8GyiASrE/HgOFgy72FmR3n41As5nvjzZO3rDcr6j1A8EJgxEvBwcUiiGP5XspGTKToYJzxIKyx+z2nFoPk5viu7lR1dTCbotxv79P9m5QCsjk31qYL/dK6PJLbKZz7JiV1OmP4m8he7Bxtr7oaUF4lSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=OQIY11jm; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1723681565;
-	bh=9cfgPGg8I/etk0AZvDqHhwew340zEVZFZ6XKpAktces=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=OQIY11jmCPRLT/TWEltTb9t6HLF3ctwQcmBdheBQlWI2J9SjagZz7uPrZ5JqRJh3m
-	 XXgST3yi8Ou3SXC3KYAO8TXtppF6f/T72hJAvc8nOq+E3tDK382r7Ezkj8SUr4b+iE
-	 noHjCRQ2befrKLciBO0l1ja52a4FjmJVO0Zkzvz+HfyOrdc2S/Sv0OwPJZctNpH/5y
-	 WWdJbJRzvR1vXr8nRxBEUyudoB8aInkND9mSTMWPYHLngQasqOprrCyovr+w2txVZH
-	 XXh88hcTbsoKrS82qNUbf9pV5o5is2pKjVkocIzl3bcCElcOpsRW+BboKKHmUvh2VW
-	 UpID4/pt/LWRA==
-Received: from [192.168.68.112] (ppp118-210-65-51.adl-adc-lon-bras32.tpg.internode.on.net [118.210.65.51])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 47F2B64C85;
-	Thu, 15 Aug 2024 08:26:03 +0800 (AWST)
-Message-ID: <7e1dc98e0f69a095a8f7725b742df3c8d8436a67.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
- <p.zabel@pengutronix.de>,  "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>
-Date: Thu, 15 Aug 2024 09:56:02 +0930
-In-Reply-To: <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
-	 <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
-	 <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
-	 <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
-	 <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <20240813191454.GA1570645-robh@kernel.org>
-	 <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1723681792; c=relaxed/simple;
+	bh=gBJaYQ+1uidw92N74XWV/vTxJmHX9Uu0lKmBJbrx0+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VWpR4vnOrbGzjCukSZVL7FJsYQlP5VVJ49c/QD8tJ3sZgawPV8dKzhNsxvKkdbkcVCERyjtZvGYq+2YNiKHKFLxYlyH7bxjXvjj8vSubQ64l5f+NSxGHXv0dnl1ueZWF8ATfbkS3+dWKki/Xh0eh6Tt8yuqhDjCk7yrJ57dtyO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z7Mg+sLr; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 14 Aug 2024 17:29:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723681785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YkR6+p3tEblVu2HdOj0+q8t6472WPtUOGkMk/DjcCdk=;
+	b=Z7Mg+sLr2hIxf+kue6IUr+8WClBd01MOVSZ2Slyk9GrUKax7LOgLiynYcwOMBb7pfvy4Gu
+	AROQ9PCRqNXXLJrqD+7YOHfDJlpl7ISauQcMOQSVPkKW4abkSOfjcd9ASpyCp8eIjdEtCS
+	P70o6Jlbs+xpoCxNbhwoNW+h2ZI4Fe0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, Yu Zhao <yuzhao@google.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
+Message-ID: <gqarnsvvanhk3yet472w2ihv2hwriviv3jpu4fpb24nfkd2f2e@cfh4ugd7xqk5>
+References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
+ <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
+ <kneukn6m4dhuxxfl3yymrtilvjfmtkxmxz35wothcflxs5btwv@nsgywqvpdn76>
+ <edf4f619-8735-48a3-9607-d24c33c8e450@kernel.org>
+ <vyi7d5fw4d3h5osolpu4reyhcqylgnfi6uz32z67dpektbc2dz@jpu4ob34a2ug>
+ <CAKEwX=Mc9U_eEqoEYtwdfOUZTa=gboLtbF5FGy4pL--A54JJDw@mail.gmail.com>
+ <5psrsuvzabh2gwj7lmf6p2swgw4d4svi2zqr4p6bmmfjodspcw@fexbskbtchs7>
+ <CAJD7tkaBfWWS32VYAwkgyfzkD_WbUUbx+rrK-Cc6OT7UN27DYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkaBfWWS32VYAwkgyfzkD_WbUUbx+rrK-Cc6OT7UN27DYA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 2024-08-14 at 06:35 +0000, Ryan Chen wrote:
-> > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
-> > AST2700
-> >=20
-> > On Fri, Aug 09, 2024 at 06:10:22AM +0000, Ryan Chen wrote:
-> > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
-> > > > AST2700
-> > > >=20
-> > > > On 09/08/2024 07:55, Ryan Chen wrote:
-> > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support
-> > > > > > for
-> > > > > > AST2700
-> > > > > >=20
-> > > > > > On 08/08/2024 09:59, Ryan Chen wrote:
-> > > > > > > Add compatible support for AST2700 clk, reset, pinctrl,
-> > > > > > > silicon-id and example for AST2700 scu.
-> > > > > > >=20
-> > > > > > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> > > > > > > ---
-> > > > > > > =C2=A0.../bindings/mfd/aspeed,ast2x00-scu.yaml      | 31
-> > > > > > +++++++++++++++++--
-> > > > > > > =C2=A01 file changed, 29 insertions(+), 2 deletions(-)
-> > > > > > >=20
-> > > > > > > diff --git
-> > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-
-> > > > > > > scu.yaml
-> > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-
-> > > > > > > scu.yaml
-> > > > > > > index 86ee69c0f45b..c0965f08ae8c 100644
-> > > > > > > ---
-> > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-
-> > > > > > > scu.yaml
-> > > > > > > +++
-> > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-
-> > > > > > > scu.y
-> > > > > > > +++ aml
-> > > > > > > @@ -21,6 +21,8 @@ properties:
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0- aspeed,ast2400-scu
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0- aspeed,ast2500-scu
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0- aspeed,ast2600-scu
-> > > > > > > +          - aspeed,ast2700-scu0
-> > > > > > > +          - aspeed,ast2700-scu1
-> > > > > >=20
-> > > > > > What are the differences between these two?
-> > > > >=20
-> > > > > The next [PATCH 4/4] is scu driver that include ast2700-scu0
-> > > > > and
-> > > > > ast2700-scu1 CLK_OF_DECLARE_DRIVER(ast2700_soc0,
-> > > > > "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
-> > > > > CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-scu1",
-> > > > > ast2700_soc1_clk_init);
-> > > >=20
-> > > > What are hardware differences? Entirely different devices?
-> > >=20
-> > > AST2700 have two soc die connected each other.
-> > > Each soc die have it own scu, so the naming is ast2700-scu0 for
-> > > soc0,
-> > another is ast2700-scu1 for soc1.
-> >=20
-> > Didn't I see in another patch one die is cpu and one is io? Use
-> > those in the
-> > compatible rather than 0 and 1 if so.
-> >=20
-> Sorry, I want to align with our datasheet description.=20
-> It will but scu0 and scu1 register setting.=20
+On Wed, Aug 14, 2024 at 04:48:42PM GMT, Yosry Ahmed wrote:
+> On Wed, Aug 14, 2024 at 4:42 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Wed, Aug 14, 2024 at 04:03:13PM GMT, Nhat Pham wrote:
+> > > On Wed, Aug 14, 2024 at 9:32 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > > >
+> > > >
+> > > > Ccing Nhat
+> > > >
+> > > > On Wed, Aug 14, 2024 at 02:57:38PM GMT, Jesper Dangaard Brouer wrote:
+> > > > > I suspect the next whac-a-mole will be the rstat flush for the slab code
+> > > > > that kswapd also activates via shrink_slab, that via
+> > > > > shrinker->count_objects() invoke count_shadow_nodes().
+> > > > >
+> > > >
+> > > > Actually count_shadow_nodes() is already using ratelimited version.
+> > > > However zswap_shrinker_count() is still using the sync version. Nhat is
+> > > > modifying this code at the moment and we can ask if we really need most
+> > > > accurate values for MEMCG_ZSWAP_B and MEMCG_ZSWAPPED for the zswap
+> > > > writeback heuristic.
+> > >
+> > > You are referring to this, correct:
+> > >
+> > > mem_cgroup_flush_stats(memcg);
+> > > nr_backing = memcg_page_state(memcg, MEMCG_ZSWAP_B) >> PAGE_SHIFT;
+> > > nr_stored = memcg_page_state(memcg, MEMCG_ZSWAPPED);
+> > >
+> > > It's already a bit less-than-accurate - as you pointed out in another
+> > > discussion, it takes into account the objects and sizes of the entire
+> > > subtree, rather than just the ones charged to the current (memcg,
+> > > node) combo. Feel free to optimize this away!
+> > >
+> > > In fact, I should probably replace this with another (atomic?) counter
+> > > in zswap_lruvec_state struct, which tracks the post-compression size.
+> > > That way, we'll have a better estimate of the compression factor -
+> > > total post-compression size /  (length of LRU * page size), and
+> > > perhaps avoid the whole stat flushing path altogether...
+> > >
+> >
+> > That sounds like much better solution than relying on rstat for accurate
+> > stats.
+> 
+> We can also use such atomic counters in obj_cgroup_may_zswap() and
+> eliminate the rstat flush there as well. Same for zswap_current_read()
+> probably.
+> 
+> Most in-kernel flushers really only need a few stats, so I am
+> wondering if it's better to incrementally move these ones outside of
+> the rstat framework and completely eliminate in-kernel flushers. For
+> instance, MGLRU does not require the flush that reclaim does as
+> Shakeel pointed out.
+> 
+> This will solve so many scalability problems that all of us have
+> observed at some point or another and tried to optimize. I believe
+> using rstat for userspace reads was the original intention anyway.
 
-Can we document that relationship in the binding? Rob's suggestion
-seems more descriptive.
-
-Andrew
+I like this direction and I think zswap would be a good first target.
 
