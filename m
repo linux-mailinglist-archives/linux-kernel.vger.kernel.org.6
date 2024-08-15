@@ -1,156 +1,174 @@
-Return-Path: <linux-kernel+bounces-288423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E8E9539F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C569539EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D52A1F26DC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5987B1F2690C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E7184E0A;
-	Thu, 15 Aug 2024 18:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421B85B69E;
+	Thu, 15 Aug 2024 18:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeLzDect"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oamQmRRO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GBePjJMg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F8376026;
-	Thu, 15 Aug 2024 18:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86A47580A;
+	Thu, 15 Aug 2024 18:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723746464; cv=none; b=Zswo9Qn++Wmwywuhr/y6oxEKbfrsYJ5N7PuloOwRD2BL/2/d1q61nSPdFtPUa0VRPQXLNw1WUvfYFtp4CMKNsofwoQJM87LgZ0HjLZNBVaK3STMVY60p1w2j2xdd/RYZw/tHjR9zUus61NmpNvMln6fPwMdbWOnoVZZn6LPDVZc=
+	t=1723746378; cv=none; b=rwwMwNodAYy2wKHJGg1pdYgm3RhuaNm13rqTWBhTHB02EinpwYqE4/xHIb5eMt9TuZvbuR6kAKAZiC7aerNJU78rdISQs7MfhZQCFCsaIdTQnkM5OLwev31ji+RzmqDRVVwMA+ACMjMoatLxAAlqG2x/2T082pdSal4DppAC/xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723746464; c=relaxed/simple;
-	bh=WIdWkEj6n6EKxeTaGaPrvswEStAjEcIUss+Uq6HmkxU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cD1Acu9SG/2NX8NHmqm7TnIEfikmduMXkYeOPb4effBlmZL/H3hvc7T8qhBHS9/ulKCBxDt+Xxxn1YaQGUB2j6vL0BlJusiET4kaeLuLVCkPhkG0gi+rgcAKXe3z1rS7Fw15KEaL3SLhCMSXPywj13Z33in7t5LHKxggIpqE6RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aeLzDect; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bec23bf29eso883870a12.1;
-        Thu, 15 Aug 2024 11:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723746460; x=1724351260; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=urijkc3f3VRhrpzAWKCHRZEPKCuPoQovMvk9GPz7bsI=;
-        b=aeLzDectLd1/RkgTnx9UF/4NwkvSPViiHsi7KuQvbZhz9YObLgC49Wfm1FtU7s9BUT
-         Vz84AyHdJUTiurNFmnQv0JdskZ3baK64YjNplrFeBBmzvP2FyIerhLD/KuZZSQ0SWpel
-         GYbCaTgwSHtrpICe9Lxi+x4kNnaV2O/ln4bF8U+3CPkN/KfrPXUsLRxXBZM7+ZKAEREB
-         vgiay4OqYqLhF7qfvsyYiiyWhkhW/6vZftTyrSdzxVqrfGEQ/Tb2hvKX5rOmS3hkthfF
-         cBd0Rp8MOpRLjb+2eM9ojo6aeDRn1PPEZ3m7KviVE6KZB75dhdpgc2sqMn7AS8al+q0u
-         7zwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723746460; x=1724351260;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=urijkc3f3VRhrpzAWKCHRZEPKCuPoQovMvk9GPz7bsI=;
-        b=IGiyzHP47K96Rhx4YyYEi8qcORpURVTYq3g3QrORgqR8Xs8vhxAlK21+9cveE8FcYR
-         3BXkdC/vLMwleIdZ1gTcbCKi3bEkikbGOb3A9j9uYRzCwXp20un3c418WpL2tUzN6ea+
-         w0Jkit17jub4Slv2e5bRModGsOTE1TiYF9oS37BhKkYCpaoes/lt+weatiSsWajXeTJ6
-         osMvt9dfTPs9E01dkQGpzp1j3KjJdenstIJQQ9Y1MvbYV0BL9goLPMRQGH8AMJWEXiD5
-         LTXM/Q+7jOk0TESqScOt5vtsJn4xqmusy6iZoMllbc5Oh5+gayF0a/pKmInTt3j3BU4/
-         1M+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVMF5zOvz8qb0PNlrLZtv21IUI/ad+nbgRorlfxnpw3ZF8Z2BTqY2yRMKryNbaJGWNoKfd6xcZe1V/LF5ort6l8q9NTSz68LUCMjnVW
-X-Gm-Message-State: AOJu0YyYPhceMWt5i3bb+u5dOenYsKhg2cihjnuG/1NTSQ78Hf466SyW
-	zzkRN6hYtp+gQ1qRX0rP8NuQ/WzjSGueSNjqaBasXH5Thx8cXneW
-X-Google-Smtp-Source: AGHT+IFPZ04x5q729U6SozDVg01mhTEcXdVagZpRJc7WA7XSPWNkD+YY2Ys5R20/caD9P8YjpOsVag==
-X-Received: by 2002:a17:907:2da6:b0:a7a:9144:e23b with SMTP id a640c23a62f3a-a83928d3597mr32453666b.19.1723746460231;
-        Thu, 15 Aug 2024 11:27:40 -0700 (PDT)
-Received: from [192.168.1.13] (host-79-35-172-29.retail.telecomitalia.it. [79.35.172.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383947187sm133814366b.166.2024.08.15.11.27.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2024 11:27:39 -0700 (PDT)
-From: Antonino Maniscalco <antomani103@gmail.com>
-Date: Thu, 15 Aug 2024 20:26:13 +0200
-Subject: [PATCH 3/7] drm/msm: Add a `preempt_record_size` field
+	s=arc-20240116; t=1723746378; c=relaxed/simple;
+	bh=crBNRdn3kANa0ObAmxWIhECCPK3KEeUgb3NkYmOc3kM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IzE8HnkOXxIXFWwfKflv9ZwONEpcxeLSFTKgG8RkC24d/BPy3dFuMLug9CpMsjgOGyZUQShJ5tdFMus6IDUCf896RU6fqXqf2P7uxL4xszil5ETSdaKXPos5VqBhOsjGyvbNtJXRpoYxiXwTzQOWAITY6Xlcx6zhbskZW6NhD+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oamQmRRO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GBePjJMg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723746375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zyJC5UQOmLRaMOBBeNLpJyWreaWEOwAcESvL0GCeVa8=;
+	b=oamQmRROEzg9EQsqvNkfihspZtEOcSxLiAdqrqY4QeohZ9hzCiNDgHM37rlz/K3NgPNhv+
+	8mJaYiBapSyt4GlHnghYQNO0ZVnVPaJmh0YHXaRmMKEw/c9/wfBr3m2nwcZme+h93LJwZb
+	l9e28OhqgKlwk3+9LZL3tdcErV0YJkM8XiXX8bGEVx1i80QPUAKLCJ9E64nSW8dcG+JkGe
+	QfN4subGe/AMDw0NnUyQVQ894hyHhDbrGLxO+TwxC9bMDuf9Ndeo4ib4a63Pyo8+4Rq/WO
+	r87ssegtaLEJhefDYAeNg0v4dfL/MrLt8KO7eaek+rjoc50UoDp05o72GciWYA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723746375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zyJC5UQOmLRaMOBBeNLpJyWreaWEOwAcESvL0GCeVa8=;
+	b=GBePjJMgsSTCpPNMKoRevjqPskY1RxKmG3w2k1sRC8CUCabawoY6Gr/hbNUdNkvh8QizLc
+	ErPhUfUbkYBR+mAg==
+To: "Liang, Kan" <kan.liang@linux.intel.com>, Li Huafei
+ <lihuafei1@huawei.com>, peterz@infradead.org, mingo@redhat.com
+Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, Vince
+ Weaver <vincent.weaver@maine.edu>
+Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
+In-Reply-To: <166fdbdf-b24d-4267-b42d-f11348b87b1b@linux.intel.com>
+References: <87sev7nom4.ffs@tglx>
+ <a42a3e35-2166-4539-930b-21ea0921e8d8@linux.intel.com>
+ <87frr7nd28.ffs@tglx>
+ <70657c5e-f771-456b-a5ac-3df590249288@linux.intel.com>
+ <875xs2oh69.ffs@tglx>
+ <166fdbdf-b24d-4267-b42d-f11348b87b1b@linux.intel.com>
+Date: Thu, 15 Aug 2024 20:26:14 +0200
+Message-ID: <87wmkhlk1l.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240815-preemption-a750-t-v1-3-7bda26c34037@gmail.com>
-References: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
-In-Reply-To: <20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Antonino Maniscalco <antomani103@gmail.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723746454; l=1771;
- i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
- bh=WIdWkEj6n6EKxeTaGaPrvswEStAjEcIUss+Uq6HmkxU=;
- b=cdA5UOeldSfzsfOh+2uPqUWo4UgfkDMyDFPeXHAf7JKUKQafh23+o+lNgxZesuz8HMBjNfJT2
- XbSJ7pdMUM5AcJb2XW8N5sEn/s5iwrMC+/Huel9if6lm001Kp49EV+9
-X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
- pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Adds a field to `adreno_info` to store the GPU specific preempt record
-size.
+Kan!
 
-Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
----
- drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 3 +++
- drivers/gpu/drm/msm/adreno/adreno_gpu.h   | 1 +
- 2 files changed, 4 insertions(+)
+On Thu, Aug 15 2024 at 11:39, Kan Liang wrote:
+> On 2024-08-14 6:47 p.m., Thomas Gleixner wrote:
+>> Now the conclusion of this fun exercise is:
+>>=20
+>>     1) The hardware behaves differently when the perf event happens
+>>        concurrently on HT siblings
+>
+> I think I found a related erratum.
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-index 68ba9aed5506..4cee54d57646 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-@@ -1190,6 +1190,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 			.protect = &a730_protect,
- 		},
- 		.address_space_size = SZ_16G,
-+		.preempt_record_size = 2860 * SZ_1K,
- 	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(0x43050a01), /* "C510v2" */
- 		.family = ADRENO_7XX_GEN2,
-@@ -1209,6 +1210,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 			.gmu_chipid = 0x7020100,
- 		},
- 		.address_space_size = SZ_16G,
-+		.preempt_record_size = 4192 * SZ_1K,
- 	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(0x43050c01), /* "C512v2" */
- 		.family = ADRENO_7XX_GEN2,
-@@ -1245,6 +1247,7 @@ static const struct adreno_info a7xx_gpus[] = {
- 			.gmu_chipid = 0x7090100,
- 		},
- 		.address_space_size = SZ_16G,
-+		.preempt_record_size = 3572 * SZ_1K,
- 	}
- };
- DECLARE_ADRENO_GPULIST(a7xx);
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-index 1ab523a163a0..6b1888280a83 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-@@ -111,6 +111,7 @@ struct adreno_info {
- 	 * {SHRT_MAX, 0} sentinal.
- 	 */
- 	struct adreno_speedbin *speedbins;
-+	u64 preempt_record_size;
- };
- 
- #define ADRENO_CHIP_IDS(tbl...) (uint32_t[]) { tbl, 0 }
+> HSM154. Fixed-Function Performance Counter May Over Count Instructions
+> Retired by 32 When Intel=C2=AE Hyper-Threading Technology is Enabled
+>
+> Problem: If, while Intel Hyper-Threading Technology is enabled, the
+> IA32_FIXED_CTR0 MSR
+> (309H) is enabled by setting bits 0 and/or 1 in the
+> IA32_PERF_FIXED_CTR_CTRL MSR
+> (38DH) before setting bit 32 in the IA32_PERF_GLOBAL_CTRL MSR (38FH) then
+> IA32_FIXED_CTR0 may over count by up to 32.
+>
+> Implication: When this erratum occurs, the fixed-function performance
+> counter IA32_FIXED_CTR0 may over count by up to 32.
 
--- 
-2.46.0
+Sure. That's only explaining half of the problem.
 
+As I demonstrated in the non-contended case even with a count of 2 (I
+tried 1 too) the status bit is never set on the second check.
+
+Which is weird, because the number of instructions between setting the
+count and re-checking the status MSR is definitely larger than 2 (or 1).
+
+> Workaround: The following sequence avoids this erratum (steps 1 and 2
+> are needed if the counter was previously enabled):
+> 1. Clear bit 32 in the IA32_PERF_GLOBAL_CTRL MSR (38FH) and clear bits 1
+> and 0 in the IA32_PERF_FIXED_CTR_CTRL MSR (38DH).
+> 2. Zero the IA32_FIXED_CTR0 MSR.
+> 3. Set bit 32 in the IA32_PERF_GLOBAL_CTRL MSR.
+> 4. Set bits 0 and/or 1 in the IA32_PERF_FIXED_CTR_CTRL MSR as desired.
+>
+> It should explains that the issue is gone with the magic number 32 or
+> disabling the Hyper-Threading.
+
+It explains only half of it. If you use 32, then the counter is set to
+-32 so the overcount of 32 will still bring it to 0, which should set
+the status bit, no?
+
+> I also found a related discussion about 9 years ago.
+> https://lore.kernel.org/lkml/alpine.DEB.2.11.1505181343090.32481@vincent-=
+weaver-1.umelst.maine.edu/
+> Vince tried the workaround but it seems not work.
+
+Let me play with that. :)
+
+>>     2) The frequency estimation algorithm is broken
+>
+> For the events which occurs frequently, e.g., instructions, cycles, yes,
+> the frequency estimation algorithm doesn't work well.
+>
+> But there are events that may not occur frequently. If a big init period
+> is set, it may be impossible to get the required freq for those events.
+>
+> It's really hard to pick a universal init period that works for all
+> events.
+
+I understand that, but especially for RETIRED it's obvious :)
+
+> I'm thinking perf may only calculate/pre-set a init period for the Linux
+> defined architectural events, e.g., instructions, cycles, branches,
+> cache related events, etc. For the other ARCH specific events, I'm
+> afraid the period has to start 1.
+
+Yes, that would be way better than what we have now.
+
+>>=20
+>>     3) Using a 'limit' guestimate is just papering over the underlying
+>>        problems
+>
+> It's possible that a user set a small number with -c. If the number is
+> less than the 'limit', it needs to be adjusted to avoid HW failure.
+> I think the 'limit' is still required.
+
+I'm not against the limit per se. I'm against guestimated limits which
+are thrown into the code without understanding the underlying problem.
+
+The just paper over it up to the point where they bite back because the
+guestimate was off by $N.
+
+Thanks,
+
+        tglx
 
