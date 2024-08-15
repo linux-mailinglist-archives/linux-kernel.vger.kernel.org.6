@@ -1,158 +1,165 @@
-Return-Path: <linux-kernel+bounces-288223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC32953798
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:46:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83DF95379B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 17:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 885E4B24911
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:46:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5205B252E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 15:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8991B3753;
-	Thu, 15 Aug 2024 15:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148F01B9B59;
+	Thu, 15 Aug 2024 15:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQHxQvc5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2yTWgNQn"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA9D1A4F3B;
-	Thu, 15 Aug 2024 15:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57B61B3F07
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 15:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723736774; cv=none; b=tK8R4wTQjXSItjCcyt2LB2GmzfmSwT8Jp7Vbi6Mb0Yt6Dhb43qw9ECOXfER8pLsRbr6JeMKX2JZm6EAfx0nd2UtG2mmhrGmVv4VNkS14ybfYwELYUIOaDmIEwnDAKmnhwjrdHOYM4C7/1zMxU10Obx44xfmP1iR2VbK2248OGnQ=
+	t=1723736777; cv=none; b=FXU8/b+aZL5Fdv2Vd5z+UppKmSWPNpJ8WFahlby7P2hl+YzfeaoYah6VS16lETCd1koxQW/Qr8pdfj9yfX7ehPX2r4E0FRqo4q9pvfLIsAf9/YopibMqXq7n2FH0sEIYjNJ6vCSLma7x9Wwde6YaiLA6k5oGfQ0cSufpbuANvlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723736774; c=relaxed/simple;
-	bh=OhahuUFfndYeeiIAqMoZWO/itLbhbmCl9Dektx2bSmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Do8fxN4JEcNSI1DtjxbxpoOw4H+WuJbkuvy6QBOV3yKEfuPWDb1vppfqcWL7AG4LbOwoIwLzp04QRhorlteGAlF+b9uj8M/n1fOfmhdMOwAj1keUkRq7nUtgc7uvLKlqsQDN7Fixrk2NUxesjEsyeMBunw2pPYVmgwlHjTgA0VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQHxQvc5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A925FC32786;
-	Thu, 15 Aug 2024 15:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723736774;
-	bh=OhahuUFfndYeeiIAqMoZWO/itLbhbmCl9Dektx2bSmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQHxQvc5mzqu6Xt9OdE1XNZLD70/O3dkcJiXZaxebgJDxx2JQVYIg435975yYCQQr
-	 l5jUPJ9oJMKRElz7Dpy6UeqrDFRWxrZL9GgVJl4lw07+FN4VZhWpX5TJn27GiUUmzn
-	 zflbVeq8Fynrs4ZZayXEmrP67CO7FB82ptXHbETuTJY707TwQqihr/CnxYOeOkK3Iq
-	 Dls40SNfnnISQ4sF8cCZV+d/wVSzh4VpXAdOpq9qVv/6PVrUYatD7Il2JO1i+4JRAP
-	 0bkotokage4eWgXhiPbnrXkVCVs4p5DoijU6EnNn09pzgcTeB9heRVbuopXzrzYpak
-	 8cbW3fI2l2ChA==
-Date: Thu, 15 Aug 2024 16:46:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v10 24/40] arm64/signal: Expose GCS state in signal frames
-Message-ID: <280e4455-9cf7-40e1-9114-7bb3aa9de868@sirena.org.uk>
-References: <20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org>
- <20240801-arm64-gcs-v10-24-699e2bd2190b@kernel.org>
- <ZrzIv3FWNgJizDc2@e133380.arm.com>
- <7433e3d2-996a-45a0-b917-666a340ad109@sirena.org.uk>
- <Zr4KMaBv4JXx8uBz@e133380.arm.com>
- <efe1d936-011d-49e3-a0ff-8f6276e4d782@sirena.org.uk>
- <Zr4fxZ8wf+Wcey4E@e133380.arm.com>
+	s=arc-20240116; t=1723736777; c=relaxed/simple;
+	bh=ws8GfdSUu47l+8to0xmGScRHYvMXMXBZ18WnnqVNqf8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hcJ0pJTj+mu+lZcrusH5gyx+6x+xJYdECQha0HLgUjNPXuG2w/gbzxEuMy7QWT8DybS+lX0UKkl+gWxC6olIS1Y7BI2agMfgtJHf23Mf/5t2xegQS5CkuyJH7yKwSk7tRyD4lHDeYouZYgEMkbMYLGB8UI9Irxo3jdzEd+LkPwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2yTWgNQn; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc691f1f83aso486331276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 08:46:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723736774; x=1724341574; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0AkcXZB6modEdwkxtKeqDp/qh9BD93b7/021rd0GWwg=;
+        b=2yTWgNQnI6EQjkftVc6NOS8ObTbqj0kGFLVPv/kQ4/GatzWdv89mOunS5q+coMcGuo
+         j82UBB532n0ntr8vQVsyK6ZC+i1iW696b9EYvID60qgg38hmtHIVzWOZ47q5KhgIkPh+
+         acAqKxdaGX3AePky7OAT7v3Z4nyM70lQZpeYgiVhpYts8uxn6084G/5JSPE4ZOmaQB15
+         faolPEU0s6Tyjy3rwEJTML8sB2rkvtUyGr6KxmDYFpfrqLc1QmO1mEBWmu/gh07Imxgz
+         wxgC6zKKyn4nyb4D1FsWSXdsPQku3Dy34OH8LHRvrtZNA6m7FRacYUObeP132qP6s+gC
+         SykQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723736774; x=1724341574;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0AkcXZB6modEdwkxtKeqDp/qh9BD93b7/021rd0GWwg=;
+        b=sMOwAHAo9vjapzMMiBM4X5MW9kmOBi2Zw49DGuuaWSEUoPHiTiktDrR4NLbkIVMBg+
+         8CpGC2V9Tlkz2w2ewSl9IsT454fDSZiIb0HalgLiKld6MjhkzleFOUfGFOSQD+4O4iLp
+         yj6ADlX1zcKXIA+JgR3fW9vrHLQLoHvWu7u5lICoZ7ToFxI1gRLPxXlMKjWk+Hq/7hqb
+         StkG0je2sk97723CPtS0dqguADWRuCe+APgUuWC83EExWrlE+1SP1VuO+CxI7ZiAErrn
+         x2ieuyX9aALexTsJRQGFyGWaf9p1TKBmxrAd6iiu+1n7HCfQqCSeM3UHviMgdC7IVTLJ
+         yKlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzblUx9v5YzD2dPCnhvbpSwweYfSIPopfMbPgDLVZTK5M2eLNtroMoIU8OLiql3cUMT40+ANNo9Ud1e5TXpsm2JdujA4wdRsrnWgux
+X-Gm-Message-State: AOJu0YzX9sswzw5ytQhUSQ3b3ys71z2bAMyYdOqkPdjxZC0uQ+5n4YbO
+	mvFs8SKm1aCGhx+KaIgfyL3iL/UdItVAEo9XX28TnKYT9O1G8zG0UlgCzdOhCVDf2z1RkTwb7+r
+	4gA==
+X-Google-Smtp-Source: AGHT+IFPglLKZPMGHJwVXlvcv72/tbAsvnR20LyLqWwDc+ZPBG1oo4ecJYW/lensDz3nlnwxMPoCR/Boa0Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a5b:901:0:b0:e0b:acc7:b1fd with SMTP id
+ 3f1490d57ef6-e116cd9ccbfmr101155276.4.1723736774549; Thu, 15 Aug 2024
+ 08:46:14 -0700 (PDT)
+Date: Thu, 15 Aug 2024 08:46:13 -0700
+In-Reply-To: <20240522001817.619072-12-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GXfbjsfo8XCmDLMF"
-Content-Disposition: inline
-In-Reply-To: <Zr4fxZ8wf+Wcey4E@e133380.arm.com>
-X-Cookie: -- Owen Meredith
+Mime-Version: 1.0
+References: <20240522001817.619072-1-dwmw2@infradead.org> <20240522001817.619072-12-dwmw2@infradead.org>
+Message-ID: <Zr4ixaBGnk_6Zqef@google.com>
+Subject: Re: [RFC PATCH v3 11/21] KVM: x86: Simplify and comment kvm_get_time_scale()
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, 
+	Dongli Zhang <dongli.zhang@oracle.com>, Chenyi Qiang <chenyi.qiang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Wed, May 22, 2024, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> Commit 3ae13faac400 ("KVM: x86: pass kvm_get_time_scale arguments in hertz")
+> made this function take 64-bit values in Hz rather than 32-bit kHz. Thus
+> making it entrely pointless to shadow its arguments into local 64-bit
+> variables. Just use scaled_hz and base_hz directly.
+> 
+> Also rename the 'tps32' variable to 'base32', having utterly failed to
+> think of any reason why it might have been called that in the first place.
 
---GXfbjsfo8XCmDLMF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ticks Per Second?
 
-On Thu, Aug 15, 2024 at 04:33:25PM +0100, Dave Martin wrote:
-> On Thu, Aug 15, 2024 at 04:05:32PM +0100, Mark Brown wrote:
+> +	/*
+> +	 * Start by shifting the base_hz right until it fits in 32 bits, and
+> +	 * is lower than double the target rate. This introduces a negative
+> +	 * shift value which would result in pvclock_scale_delta() shifting
+> +	 * the actual tick count right before performing the multiplication.
+> +	 */
+> +	while (base_hz > scaled_hz*2 || base_hz & 0xffffffff00000000ULL) {
+> +		base_hz >>= 1;
+>  		shift--;
+>  	}
+>  
+> -	tps32 = (uint32_t)tps64;
+> -	while (tps32 <= scaled64 || scaled64 & 0xffffffff00000000ULL) {
+> -		if (scaled64 & 0xffffffff00000000ULL || tps32 & 0x80000000)
+> -			scaled64 >>= 1;
+> +	/* Now the shifted base_hz fits in 32 bits, copy it to base32 */
+> +	base32 = (uint32_t)base_hz;
+> +
+> +	/*
+> +	 * Next, shift the scaled_hz right until it fits in 32 bits, and ensure
+> +	 * that the shifted base_hz is not larger (so that the result of the
+> +	 * final division also fits in 32 bits).
+> +	 */
+> +	while (base32 <= scaled_hz || scaled_hz & 0xffffffff00000000ULL) {
+> +		if (scaled_hz & 0xffffffff00000000ULL || base32 & 0x80000000)
+> +			scaled_hz >>= 1;
+>  		else
+> -			tps32 <<= 1;
+> +			base32 <<= 1;
+>  		shift++;
+>  	}
 
-> > The expectation (at least for arm64) is that the main program will only
-> > have shadow stacks if everything says it can support them.  If the
-> > dynamic linker turns them on during startup prior to parsing the main
-> > executables this means that it should turn them off before actually
-> > starting the executable, taking care to consider any locking of feature=
-s.
+Any chance you'd want to do this on top, so that it's easier to see that the
+loops are waiting for the upper bits to go to zero?  And so that readers don't
+have to count effs and zeros :-)
 
-> Hmm, so we really do get a clear "enable shadow stack" call to the
-> kernel, which we can reasonaly expect won't happen for ancient software?
-
-Yes, userspace always has to explicitly enable the GCS.
-
-> If so, I think dumping the GCS state in the sigframe could be made
-> conditional on that without problems (?)
-
-It is - we only allocate the sigframe if the task has GCS enabled.
-
-> > > Related question: does shadow stack work with ucontext-based coroutin=
-es?
-> > > Per-context stacks need to be allocated by the program for that.
-
-> > Yes, ucontext based coroutines are the sort of thing I meant when I was
-> > talking about returning to a different context? =20
-
-> Ah, right.  Doing this asynchronously on the back of a signal (instead
-> of doing a sigreturn) is the bad thing.  setcontext() officially
-> doesn't work for this any more, and doing it by hacking or rebuilding
-> the sigframe is extremely hairy and probably a terrible idea for the
-> reasons I gave.
-
-I see.  I tend to view this as more adventurous than I personally would
-be when writing userspace code but equally I don't see a need to
-actively break things.  There's no *requirement* to use libc...
-
-> So, overall I think making ucontext coroutines with with GCS is purely
-> a libc matter that is "interesting" here, but we don't need to worry
-> about.
-
-Yes, it's not our problem so long as we don't get in the way somehow.
-
---GXfbjsfo8XCmDLMF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma+IrsACgkQJNaLcl1U
-h9DSDwf/fvoSsWjkRUucDXlPXcS3xALg/zYnf2jri8K1FvhKbx6ExKFpnk/0g2BM
-wK2PwaNUJU1aco+sWt4qWO5BpC2IehhK4SayS1RosRQNYaC++NMOh2/8HVNEHE10
-XYPyfSZwI+nnf/4yS6Zz1HdzVTbuTkNBtkWyJtEO+gVukwrqd8ZroQ0fuSBvQyOu
-ZmkniP6ouY5JUJvZtbLtaP0MurY44KnJyfZKbDuNyinTVw/SRukqIPVzy3RT0tTJ
-rYVAnu34kZUCOei6ztPt+st1eA0IfyO0JvM2DcPAY7ZI1JHi15NFj0P2SedICD9d
-gFptQBZcUxVlVAqy5L/gZ2G4JmaFVw==
-=AdhV
------END PGP SIGNATURE-----
-
---GXfbjsfo8XCmDLMF--
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index d30b12986e17..786d5a855459 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2417,7 +2417,7 @@ static void kvm_get_time_scale(uint64_t scaled_hz, uint64_t base_hz,
+         * shift value which would result in pvclock_scale_delta() shifting
+         * the actual tick count right before performing the multiplication.
+         */
+-       while (base_hz > scaled_hz*2 || base_hz & 0xffffffff00000000ULL) {
++       while (base_hz > scaled_hz*2 || base_hz >> 32) {
+                base_hz >>= 1;
+                shift--;
+        }
+@@ -2430,8 +2430,8 @@ static void kvm_get_time_scale(uint64_t scaled_hz, uint64_t base_hz,
+         * that the shifted base_hz is not larger (so that the result of the
+         * final division also fits in 32 bits).
+         */
+-       while (base32 <= scaled_hz || scaled_hz & 0xffffffff00000000ULL) {
+-               if (scaled_hz & 0xffffffff00000000ULL || base32 & 0x80000000)
++       while (base32 <= scaled_hz || scaled_hz >> 32) {
++               if (scaled_hz >> 32 || base32 & BIT(31))
+                        scaled_hz >>= 1;
+                else
+                        base32 <<= 1;
 
