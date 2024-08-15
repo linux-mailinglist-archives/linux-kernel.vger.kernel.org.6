@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-287495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B1F952867
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6864195286C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 05:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E141F22753
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24DFA287FCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 03:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DC339FCF;
-	Thu, 15 Aug 2024 03:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D443AD5;
+	Thu, 15 Aug 2024 03:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiRvobvL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCvVAOcf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0878018643;
-	Thu, 15 Aug 2024 03:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358A042056;
+	Thu, 15 Aug 2024 03:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723693829; cv=none; b=BTnjPtBfR1psQheoJGOLbYLVwBQqUchw/MmQNIYbWdfIXLPGig8QnRcRcGVwSSzPc4WVnSq5yqp1MTJIGYT0jOolPLnjHPIb+YzCAPlolmYJZLEnBrjpkzeSIHAqivjibPL+1W+TiWyVQaZJMRE5HxMdflWjTntJ2aRsPFXRNmA=
+	t=1723693836; cv=none; b=qGoL7CukvuTERBsqb4K+N4eg3bSXZEQaVDOKZnsoJ1xLB1F+dVST5W+kjOrnagedq58JPDK8LO7ctjd1waEkT9O19Qvpminc4NgNe+sZEQdDYq3XlfniIofrdJxzIg3ZHCACfqvW/i8SX4th3nvVwfZqxlFgjW6Et5x8K8Z+n1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723693829; c=relaxed/simple;
-	bh=J1mr68Ndm47tfmuv/900nP4IO+3XkStaqp3lUvTsP1c=;
+	s=arc-20240116; t=1723693836; c=relaxed/simple;
+	bh=5qRwC82KpDXvBwqWDUCuIrJF+pNBzAZ2uhECqrpB95E=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rq9TNfuu0BQ/oeCSOCsrtdpEuuys9UUbTHnS3Le8W1rkM032iQYARkJ7rsC/CZ+UAyh07HC5wzH/k60lS5C2mFwxLZhRCvTaBmBovob6DVH1TSxYlT1Xt0wotGHRjyEZx1jZDIJlXAM3WqFI4rysbhOj09tHWEtgwjOhmezA6IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiRvobvL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8335EC4AF0D;
-	Thu, 15 Aug 2024 03:50:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=p5v0bI0bJhOBP3qFfBYkC6q0Ff8hcUWd4aNkHaK6U5j8mn8q8LhUbVZXjWU5USkL2QfGDNcRv1bfYq5lNNOcGvWYyx3+O3ohwSrZAGrS6BEtlbWz+aswGaEH7WZLHadQEifAokx5XFQw1CkM+d8/EjQxQHaCKz5a22v8jVPm22A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCvVAOcf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26ABC4AF0A;
+	Thu, 15 Aug 2024 03:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723693828;
-	bh=J1mr68Ndm47tfmuv/900nP4IO+3XkStaqp3lUvTsP1c=;
+	s=k20201202; t=1723693835;
+	bh=5qRwC82KpDXvBwqWDUCuIrJF+pNBzAZ2uhECqrpB95E=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kiRvobvLGZS9ri5r1Jx0Oxb51uYgAStK+GJHCjwCWwU0xDyegUtAeFcJFGwynZlOt
-	 xqGA+vEl5TcBCYFM5xxfGADzz9wET+tp7qxg5FP6J+rffN0lelz+UzExr8W5px+/U1
-	 SBN+nWmwDKMNevc5BDdGY3uT9PBLIsuC8FNCKK+WgK7WzJHu4TUWwybH4sKhvaJCxc
-	 SF8XQAeB+DGRSuWKAvbg/qWBBC7x3b0eb1YCPqipOoqV6b1SQyjG+HgTLiD5o/qEW8
-	 MBal01IoK9JE/FqDirLdFkRwvjjxEX9XLmQ9maIsf/UBnK2OLpcav8RnGcZTMrUdMw
-	 R78WZDmuYXSeQ==
+	b=mCvVAOcfSHk9eqRgLArhNINeZnbEIydLZTxZEY1Zd9W+olhqbit0g+OlU6MU4By5L
+	 YCRh7aHE2TkaT51EilPUBaPPsYQQllox6U1fZbV7aQPD+xQvI4R2OCqjUJdPkbwrCZ
+	 M/0xX+EjI5Uely8VCkIyc00sUZodPzVwwisCMU9nsQShw95R147UsLVJqZ5OYpejXQ
+	 dqk+WMAb2K3ws6fb22TNI8V9tVGoEjn0sJcLK6nlxjFGBRx7MEc69ITRfN7yMkfIxs
+	 4y77Sj/8BDF6vHM0su7bLsif2nm2gmnAeo/EPUBEf9lCreQO6Se0rSjljRKcTqi+Tr
+	 k3AA8MPfZugNg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD673810934;
-	Thu, 15 Aug 2024 03:50:28 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C153810934;
+	Thu, 15 Aug 2024 03:50:36 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] selftest: af_unix: Fix kselftest compilation warnings
+Subject: Re: [PATCH 0/2][next] UAPI: net/sched - cxgb4: Fix
+ -Wflex-array-member-not-at-end warning
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172369382776.2458412.15213146302105693209.git-patchwork-notify@kernel.org>
-Date: Thu, 15 Aug 2024 03:50:27 +0000
-References: <20240814080743.1156166-1-jain.abhinav177@gmail.com>
-In-Reply-To: <20240814080743.1156166-1-jain.abhinav177@gmail.com>
-To: Abhinav Jain <jain.abhinav177@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com, kuniyu@amazon.com
+ <172369383473.2458412.370604795772411458.git-patchwork-notify@kernel.org>
+Date: Thu, 15 Aug 2024 03:50:34 +0000
+References: <cover.1723586870.git.gustavoars@kernel.org>
+In-Reply-To: <cover.1723586870.git.gustavoars@kernel.org>
+To: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+ bharat@chelsio.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 14 Aug 2024 13:37:43 +0530 you wrote:
-> Change expected_buf from (const void *) to (const char *)
-> in function __recvpair().
-> This change fixes the below warnings during test compilation:
+On Tue, 13 Aug 2024 16:13:58 -0600 you wrote:
+> Small patch series aimed at fixing a -Wflex-array-member-not-at-end
+> warning by creating a new tagged struct within a flexible structure.
+> We then use this new struct type to fix a problematic middle-flex-array
+> declaration in a composite struct.
 > 
-> ```
-> In file included from msg_oob.c:14:
-> msg_oob.c: In function ‘__recvpair’:
+> Gustavo A. R. Silva (2):
+>   UAPI: net/sched: Use __struct_group() in flex struct tc_u32_sel
+>   cxgb4: Avoid -Wflex-array-member-not-at-end warning
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v3] selftest: af_unix: Fix kselftest compilation warnings
-    https://git.kernel.org/netdev/net/c/6c569b77f030
+  - [1/2,next] UAPI: net/sched: Use __struct_group() in flex struct tc_u32_sel
+    https://git.kernel.org/netdev/net-next/c/216203bdc228
+  - [2/2,next] cxgb4: Avoid -Wflex-array-member-not-at-end warning
+    https://git.kernel.org/netdev/net-next/c/6c5cdabb3ec3
 
 You are awesome, thank you!
 -- 
