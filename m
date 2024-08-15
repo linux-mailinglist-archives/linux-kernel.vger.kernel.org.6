@@ -1,49 +1,82 @@
-Return-Path: <linux-kernel+bounces-287891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-287892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53372952DC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 13:54:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0FB952DCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 14:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868101C24428
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 11:54:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1BFCB276F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 12:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548341714D2;
-	Thu, 15 Aug 2024 11:54:08 +0000 (UTC)
-Received: from gollum.nazgul.ch (gollum.nazgul.ch [81.221.21.253])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41C4176AC6;
+	Thu, 15 Aug 2024 12:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PX5pWGM+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0911AC896;
-	Thu, 15 Aug 2024 11:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.221.21.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96410146A6D;
+	Thu, 15 Aug 2024 12:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723722847; cv=none; b=k7vJ73zGdw+fQxdVJZaiPrsXbwgIb24/rLSGs35KMYdEwMKra63e+pmFPsJfIXE8pbB1syRPoQkX8yL13AiXywEPdhiX6lzwNPLA41ZwBi3Nh2smujKdhzxZb/9+k2WUl7AlFj1rW8G9C+YMsqIpv1bMEVtG/3UQWxQf8jSv5HM=
+	t=1723723225; cv=none; b=ZHhqjkxddCoI9EvSLTjeOoRssxXd0dxgnT8K8eRN1D/IlWfTYrSJMNnQdbvaEe2hD/LZte8zgmKNTm7KCNZ5Fne4e9KIuh3br7CRJRpMQzZUzbx0jni4DgGtPHkRJBOgcOuaMzAPI4dQcfr0BiUKI3xgkcEQZRQlG4TsV9LAljI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723722847; c=relaxed/simple;
-	bh=7qso/k3Qb44LCExlp+KrrvaSwPBgT4jahUU2JMlnE7A=;
+	s=arc-20240116; t=1723723225; c=relaxed/simple;
+	bh=+fvBVhqwVxnnLELp45LxE5B3Ly84i4Yh9U1qnszQeKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHgoGKpEegoOTwzmUbPvQlBS7dZ1EZoUpf8s0cA65DTYWkAoOLvAQfGHz3gTepfAOcmbVmin23vtLQMQZ2Uhgjof8P3e/8fD62IjbO888BJJh8amVljmI1R7jbg1cERXZIejOtdreFRYTsrfQS3Y9QfEtlCxopz1MRuAGNAe/rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch; spf=pass smtp.mailfrom=nazgul.ch; arc=none smtp.client-ip=81.221.21.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nazgul.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nazgul.ch
-Received: from localhost (gollum.nazgul.ch [local])
-	by gollum.nazgul.ch (OpenSMTPD) with ESMTPA id 39366c8a;
-	Thu, 15 Aug 2024 13:54:01 +0200 (CEST)
-Date: Thu, 15 Aug 2024 13:54:01 +0200
-From: Marcus Glocker <marcus@nazgul.ch>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v3 4/6] arm64: dts: qcom: Add UFS node
-Message-ID: <kt5mrxse7dirsjgu3ldv4rzasgbmykluul7ie26zlavhlmfz4r@bo4fd4ybt7bx>
-References: <v2iah5yrne4u6uzrnzg36tvtxzqrpiez6io2gyyfrht2x42umw@5ribqndiavxv>
- <ejeph4wspggkmvhl7qmpvw5jlojyvma7epqd67i6vk5p6fncrk@de56nvgi6vzi>
- <Zr3cuxv4EdxMQa9C@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=h6gCUfltIp707rn4h+7M1Q+gE4XdEot8BVx31aFK5tOJgjvmF5FRFfHm2++xP2xVuSC9hzaLfjLA2trumaFwXBPk2WknS5PD+PKeZA8H3+wp8Wys47pj7GNRFQQGH+4Ph+t5W8hSZ8cfSiaxmTSyWB1ZtWke1DJHtuunARLMApc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PX5pWGM+; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723723221; x=1755259221;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+fvBVhqwVxnnLELp45LxE5B3Ly84i4Yh9U1qnszQeKk=;
+  b=PX5pWGM+QFn9O/v7OFVKnW+8uyv78fdf71FV1fIM/G9Kh2vNRyiHcvNt
+   LLy0GSuiUwZrKU8VxBnv5hWHqwfLHQhgbc725aA8WoydBNncW3Dep/Imq
+   qDnxjhExJ4kIGGWnEsTY9lVhgECK8r18hSFvzMYFUld19D2R9KS976DgF
+   QvEQx2/v7F1StHJf1xn5OdxUIWi9bVVvzkf+nURt7zISkZdixGaM1BzQt
+   aOaSFvJme2BqItI3b9+83Q9WTnCJWdyttpGFeLbCAvbdP6s9oR5XgyPha
+   xFJzT0MYQaJ5koey/M79UA/FEZ5whXEaJL55TrpcYTAFP6ewh6XRVwDYb
+   A==;
+X-CSE-ConnectionGUID: OxaBiv3wS86nM/2im+SNMw==
+X-CSE-MsgGUID: K+lDSLgFTjSaX2Wu6TXjbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22135676"
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="22135676"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Aug 2024 05:00:18 -0700
+X-CSE-ConnectionGUID: 9pGFL3JARHqhgTEDSbWx6Q==
+X-CSE-MsgGUID: FzBAoAyVSieqIx8P4Ogn+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,148,1719903600"; 
+   d="scan'208";a="58960860"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 15 Aug 2024 05:00:15 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1seZ9J-0003Xg-15;
+	Thu, 15 Aug 2024 12:00:13 +0000
+Date: Thu, 15 Aug 2024 20:00:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Frank Li <Frank.Li@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>, Sebastian Reichel <sre@kernel.org>,
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:TEXAS INSTRUMENTS AUDIO (ASoC/HDA) DRIVERS" <alsa-devel@alsa-project.org>
+Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] ASoC: dt-bindings: Convert tpa6130a2.txt to yaml
+Message-ID: <202408151906.gY9zpl8b-lkp@intel.com>
+References: <20240814175129.4027097-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,116 +85,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zr3cuxv4EdxMQa9C@linaro.org>
+In-Reply-To: <20240814175129.4027097-1-Frank.Li@nxp.com>
 
-On Thu, Aug 15, 2024 at 01:47:23PM +0300, Abel Vesa wrote:
+Hi Frank,
 
-> On 24-08-15 12:42:29, Marcus Glocker wrote:
-> > Add the UFS Host Controller node.  This was basically copied from the
-> > arch/arm64/boot/dts/qcom/sc7180.dtsi file.
-> > 
-> > Signed-off-by: Marcus Glocker <marcus@nazgul.ch>
-> > ---
-> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 71 ++++++++++++++++++++++++++
-> >  1 file changed, 71 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > index 7bca5fcd7d52..235e20e4b51f 100644
-> > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > @@ -2878,6 +2878,77 @@ mmss_noc: interconnect@1780000 {
-> >  			#interconnect-cells = <2>;
-> >  		};
-> >  
-> > +		ufs_mem_hc: ufs@1d84000 {
-> > +			compatible = "qcom,x1e80100-ufshc", "qcom,ufshc",
-> > +				     "jedec,ufs-2.0";
-> > +			reg = <0 0x01d84000 0 0x3000>;
-> > +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-> > +			phys = <&ufs_mem_phy>;
-> > +			phy-names = "ufsphy";
-> > +			lanes-per-direction = <1>;
-> > +			#reset-cells = <1>;
-> > +			resets = <&gcc GCC_UFS_PHY_BCR>;
-> > +			reset-names = "rst";
-> > +
-> > +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-> > +
-> > +			iommus = <&apps_smmu 0xa0 0x0>;
-> > +
-> > +			clock-names = "core_clk",
-> > +				      "bus_aggr_clk",
-> > +				      "iface_clk",
-> > +				      "core_clk_unipro",
-> > +				      "ref_clk",
-> > +				      "tx_lane0_sync_clk",
-> > +				      "rx_lane0_sync_clk";
-> > +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-> > +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-> > +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
-> > +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-> > +				 <&rpmhcc RPMH_CXO_CLK>,
-> > +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-> > +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
-> > +			freq-table-hz = <50000000 200000000>,
-> > +					<0 0>,
-> > +					<0 0>,
-> > +					<37500000 150000000>,
-> > +					<0 0>,
-> > +					<0 0>,
-> > +					<0 0>;
-> > +
-> > +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
-> > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
-> > +			interconnect-names = "ufs-ddr", "cpu-ufs";
-> > +
-> > +			qcom,ice = <&ice>;
-> > +
-> > +			status = "disabled";
-> > +		};
-> > +
-> > +		ufs_mem_phy: phy@1d87000 {
-> > +			compatible = "qcom,x1e80100-qmp-ufs-phy";
-> 
-> Can't find any phy patch that adds this compatible to the driver.
+kernel test robot noticed the following build warnings:
 
-That might well be, since this is pretty new hardware.  But the goal
-of this submission is only to describe the hardware, not to add
-immediate support to the OS drivers.  Whether the drivers will make use
-of it, is a different story, and up to the people who maintain the
-respective drivers.
+[auto build test WARNING on broonie-sound/for-next]
+[also build test WARNING on robh/for-next linus/master v6.11-rc3 next-20240815]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Getting the right DTB in, at least opens the possibility to continue
-development in the driver area to further support this new hardware.
+url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/ASoC-dt-bindings-Convert-tpa6130a2-txt-to-yaml/20240815-021426
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20240814175129.4027097-1-Frank.Li%40nxp.com
+patch subject: [PATCH 1/1] ASoC: dt-bindings: Convert tpa6130a2.txt to yaml
+reproduce: (https://download.01.org/0day-ci/archive/20240815/202408151906.gY9zpl8b-lkp@intel.com/reproduce)
 
-But I won't touch your drivers, not my goal.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408151906.gY9zpl8b-lkp@intel.com/
 
-> > +			reg = <0 0x01d87000 0 0x1000>;
-> > +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> > +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-> > +			clock-names = "ref",
-> > +				      "ref_aux",
-> > +				      "qref";
-> > +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-> > +			resets = <&ufs_mem_hc 0>;
-> > +			reset-names = "ufsphy";
-> > +			#phy-cells = <0>;
-> > +			status = "disabled";
-> > +		};
-> > +
-> > +		ice: crypto@1d90000 {
-> > +			compatible = "qcom,x1e80100-inline-crypto-engine",
-> > +				     "qcom,inline-crypto-engine";
-> > +			reg = <0 0x01d90000 0 0x8000>;
-> > +			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
-> > +		};
-> > +
-> >  		pcie6a: pci@1bf8000 {
-> >  			device_type = "pci";
-> >  			compatible = "qcom,pcie-x1e80100";
-> > -- 
-> > 2.39.2
-> > 
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/userspace-api/netlink/index.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: Documentation/userspace-api/netlink/specs.rst references a file that doesn't exist: Documentation/networking/netlink_spec/index.rst
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/sound/tpa6130a2.txt
+   Using alabaster theme
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
