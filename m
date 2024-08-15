@@ -1,341 +1,170 @@
-Return-Path: <linux-kernel+bounces-288406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC449539CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38CA9539CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54651F24DF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:18:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 217281C2349C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D527D57CBA;
-	Thu, 15 Aug 2024 18:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFCB52F70;
+	Thu, 15 Aug 2024 18:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XCKE5v3f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7P8noHA9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XCKE5v3f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7P8noHA9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LgJAUwqi"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A5733997;
-	Thu, 15 Aug 2024 18:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6529533997
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 18:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723745874; cv=none; b=ujKbXzRor+YPsvATo73gAIJ71FvdVElsT9TLDwFw6zLF9UeYIvYW+nXESZmygQ+MB/Wd7NRNDumDVdv2eoSYo8YzcOX0mnnTi6xwKnm0DLgnAtlgxStEYZ9BnHxrYp666/aYFswsemloUDCe0esvzS376wSPCBu+b2Wvv7+oe8M=
+	t=1723745918; cv=none; b=eXfaEEGzqEGqOTqe5nEg9YtpA6CD0rQtAKiy4ZcGjPAI434N7TqB0FrSSrg76lSaVZdHG3olKj8rd/GRjCTGVICMzxlMB4dsu+t4aZIpv3PFDaa6tRExEXJBLKJ12/bhut0Otb7Wi/+1HyIpvG90Z17MNVRNq9fbD6FX6MpeIuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723745874; c=relaxed/simple;
-	bh=ofNqli1JBkls2t6p95Ji7pKm8nbifIMyy887RHt+/rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XaZywO5a8TXbZXb48S+Lz3kxxlLdya0pZZJb7eIgIh3sPsOlhI2LPhuEn2yZKDKf3ElHs4BIcn8RTg6EN3VxRnuidVBT/QZ9RLJqsMCZwjRMU+vC/NcfmcBwgdUSQ+oiPXMlLxsOUFnc5t8muU+o528a9j0eLE/KdZcstgKV9ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XCKE5v3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7P8noHA9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XCKE5v3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7P8noHA9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B0541FD2D;
-	Thu, 15 Aug 2024 18:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723745869;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
-	b=XCKE5v3f1NWVL+fVaRLZ9N2OGpULSED+xO7Fhn4tt68Jpg8panBLtfQdcsErgk1l6L/NLQ
-	yPPo+ikYDXlR/DUHLVaXUiFK20n+qNAZyCRIf7I4mNeCBh8SBUpkE1sIAouTtFJWcBeCfa
-	rYkRtzmdGaA1M1r1Z29DgUZ9axngYPw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723745869;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
-	b=7P8noHA9t5eJs4UUgrgeEOyicqeptwp1opoIG8a8jJlLpRpH0K5P+/ueCsWGa5h4u4/hI3
-	h2dwsgXMyu4nzgDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XCKE5v3f;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7P8noHA9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723745869;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
-	b=XCKE5v3f1NWVL+fVaRLZ9N2OGpULSED+xO7Fhn4tt68Jpg8panBLtfQdcsErgk1l6L/NLQ
-	yPPo+ikYDXlR/DUHLVaXUiFK20n+qNAZyCRIf7I4mNeCBh8SBUpkE1sIAouTtFJWcBeCfa
-	rYkRtzmdGaA1M1r1Z29DgUZ9axngYPw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723745869;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kgtaDZbdUoZCGSTogCf3PoP0l3wj8rYd4DVvfeL2Zvk=;
-	b=7P8noHA9t5eJs4UUgrgeEOyicqeptwp1opoIG8a8jJlLpRpH0K5P+/ueCsWGa5h4u4/hI3
-	h2dwsgXMyu4nzgDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01DE81342D;
-	Thu, 15 Aug 2024 18:17:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1TFMO0xGvmanPQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 15 Aug 2024 18:17:48 +0000
-Date: Thu, 15 Aug 2024 20:17:39 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Filipe Manana <fdmanana@suse.com>
-Subject: Re: [PATCH] btrfs: don't take dev_replace rwsem on task already
- holding it
-Message-ID: <20240815181739.GE25962@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <9e26957661751f7697220d978a9a7f927d0ec378.1723726582.git.jth@kernel.org>
+	s=arc-20240116; t=1723745918; c=relaxed/simple;
+	bh=0wyvGe+JV0V3SRioczmMV4iTQtfWk6g81SRtviAJFnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=phAP6gLqyNo8XCVObz7MjH5CQFOnsgDruII06m1bdf8CY88CO67dEXkeywl4s2QxxAqGVGv2LOovvnchNhr5SAF5sJ4GR0X/8Z1b5YmPm6V1yGQm9xUqVkAtY8CL3IGRelY395WyNgKx8UGaTIcwWUtqEmJ9Xp3DWMdAqhM5cMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LgJAUwqi; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c3ebba7fbbso991881a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 11:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723745916; x=1724350716; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FnL/caHC6IiZNXlhX4kwijSLCsO2WfzCGQwXH3dcl5Y=;
+        b=LgJAUwqiXMZmjU6tBnFf9k7NACRwfA6qMRMt0zaegzDOUr5q0BCQQc1wpYM6QOAfTb
+         lO1La4fOtFy/Omor4SVARA3mU0FaQWr2Gs4yJK7y4CdcBbTS9g6peiefnGslEH6XMnb8
+         3CaWLY66Z4+rpeqqsZ1a3eMc/DfQfZxixHSkwheJloklKD48hxoR0mcFFWn/ekQHNRTX
+         OIdgFqpEdWd5JZItszrtOBHkYt1EuSDsB9UfgL6egFpGg1oWF7I/mVGec8RYUJkKSv63
+         2BR8+PXHUpQlgPb1qqd8+evLZcB6X7ID+P+K7jH4LN6sIf0PnO7D21tLY+xiCqDBddW/
+         ba4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723745916; x=1724350716;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FnL/caHC6IiZNXlhX4kwijSLCsO2WfzCGQwXH3dcl5Y=;
+        b=ucToGioNYrUxS5lnvR7Y0pcXhivrgfmtyKYbDWwjqEnG/wzgHMkC/uFS19WeTshp0h
+         pT9TtqHgxo5bvUMkY3NpxzpQRJDxVeUcLlr3K/UDSVJn9cAzDH14YgLid4YiI8gLLyKm
+         +ZqD6jAPqXVpQPHkLaEUTZOhNQrEw+zh8tZExYHldZw46VmURBO/VkWVQCBT/zqHKx9a
+         7bojQUHpDtGF4lIM8efjsw8YwKte52/mpfZOhBsRSBu5ItrjEqqBvMMPjR9ZssY7nmBQ
+         SlhK2ND42IL0WDpjSrmmBRdJBfKItzB9qE3eM+y8lYuhW16V/YpoahqOpEaz67QjaPh9
+         A+DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxx+7ClW1VGSic8sNYoDca2i+TR48i0O/DGL3o53KvpawX9UIb8AD3iV38zeH3nG3S+XrzBZj1CgrTOuZtVrquWvAP82vOdUD5kZ++
+X-Gm-Message-State: AOJu0YzE7/gdqO1zW8kJ9o2/+i94Awuyphsf4f3gv11K3vu/pS3EudxH
+	9UZoMh76IngteQwcaXtzPKJE/DeFTJo6B9QzGVexo04aGNcXi+M9
+X-Google-Smtp-Source: AGHT+IHaWEF1sYe8fMDJJTy289IrVf+ene0AoBSSVJSdnZ0unYrhGoYRiXtaEVTlDXcbZZOme7pISg==
+X-Received: by 2002:a17:90a:ea07:b0:2d3:b976:e30e with SMTP id 98e67ed59e1d1-2d3e00f091emr563041a91.37.1723745916391;
+        Thu, 15 Aug 2024 11:18:36 -0700 (PDT)
+Received: from ubuntu.. ([27.34.65.188])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d3e3c89b8fsm77093a91.35.2024.08.15.11.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2024 11:18:36 -0700 (PDT)
+From: Dipendra Khadka <kdipendra88@gmail.com>
+To: airlied@gmail.com,
+	daniel@ffwll.ch,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	airlied@linux.ie,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	Xinhui.Pan@amd.com
+Cc: Dipendra Khadka <kdipendra88@gmail.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Fix warning: Using plain integer as NULL pointer in dml2_pmo_dcn4.c
+Date: Thu, 15 Aug 2024 18:18:25 +0000
+Message-ID: <20240815181827.65159-1-kdipendra88@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e26957661751f7697220d978a9a7f927d0ec378.1723726582.git.jth@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	TO_DN_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Score: -4.21
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 3B0541FD2D
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 15, 2024 at 02:57:05PM +0200, Johannes Thumshirn wrote:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
-> Running fstests btrfs/011 with MKFS_OPTIONS="-O rst" to force the usage of
-> the RAID stripe-tree, we get the following splat from lockdep:
-> 
->  BTRFS info (device sdd): dev_replace from /dev/sdd (devid 1) to /dev/sdb started
-> 
->  ============================================
->  WARNING: possible recursive locking detected
->  6.11.0-rc3-btrfs-for-next #599 Not tainted
->  --------------------------------------------
->  btrfs/2326 is trying to acquire lock:
->  ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
-> 
->  but task is already holding lock:
->  ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
-> 
->  other info that might help us debug this:
->   Possible unsafe locking scenario:
-> 
->         CPU0
->         ----
->    lock(&fs_info->dev_replace.rwsem);
->    lock(&fs_info->dev_replace.rwsem);
-> 
->   *** DEADLOCK ***
-> 
->   May be due to missing lock nesting notation
-> 
->  1 lock held by btrfs/2326:
->   #0: ffff88810f215c98 (&fs_info->dev_replace.rwsem){++++}-{3:3}, at: btrfs_map_block+0x39f/0x2250
-> 
->  stack backtrace:
->  CPU: 1 UID: 0 PID: 2326 Comm: btrfs Not tainted 6.11.0-rc3-btrfs-for-next #599
->  Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
->  Call Trace:
->   <TASK>
->   dump_stack_lvl+0x5b/0x80
->   __lock_acquire+0x2798/0x69d0
->   ? __pfx___lock_acquire+0x10/0x10
->   ? __pfx___lock_acquire+0x10/0x10
->   lock_acquire+0x19d/0x4a0
->   ? btrfs_map_block+0x39f/0x2250
->   ? __pfx_lock_acquire+0x10/0x10
->   ? find_held_lock+0x2d/0x110
->   ? lock_is_held_type+0x8f/0x100
->   down_read+0x8e/0x440
->   ? btrfs_map_block+0x39f/0x2250
->   ? __pfx_down_read+0x10/0x10
->   ? do_raw_read_unlock+0x44/0x70
->   ? _raw_read_unlock+0x23/0x40
->   btrfs_map_block+0x39f/0x2250
->   ? btrfs_dev_replace_by_ioctl+0xd69/0x1d00
->   ? btrfs_bio_counter_inc_blocked+0xd9/0x2e0
->   ? __kasan_slab_alloc+0x6e/0x70
->   ? __pfx_btrfs_map_block+0x10/0x10
->   ? __pfx_btrfs_bio_counter_inc_blocked+0x10/0x10
->   ? kmem_cache_alloc_noprof+0x1f2/0x300
->   ? mempool_alloc_noprof+0xed/0x2b0
->   btrfs_submit_chunk+0x28d/0x17e0
->   ? __pfx_btrfs_submit_chunk+0x10/0x10
->   ? bvec_alloc+0xd7/0x1b0
->   ? bio_add_folio+0x171/0x270
->   ? __pfx_bio_add_folio+0x10/0x10
->   ? __kasan_check_read+0x20/0x20
->   btrfs_submit_bio+0x37/0x80
->   read_extent_buffer_pages+0x3df/0x6c0
->   btrfs_read_extent_buffer+0x13e/0x5f0
->   read_tree_block+0x81/0xe0
->   read_block_for_search+0x4bd/0x7a0
->   ? __pfx_read_block_for_search+0x10/0x10
->   btrfs_search_slot+0x78d/0x2720
->   ? __pfx_btrfs_search_slot+0x10/0x10
->   ? lock_is_held_type+0x8f/0x100
->   ? kasan_save_track+0x14/0x30
->   ? __kasan_slab_alloc+0x6e/0x70
->   ? kmem_cache_alloc_noprof+0x1f2/0x300
->   btrfs_get_raid_extent_offset+0x181/0x820
->   ? __pfx_lock_acquire+0x10/0x10
->   ? __pfx_btrfs_get_raid_extent_offset+0x10/0x10
->   ? down_read+0x194/0x440
->   ? __pfx_down_read+0x10/0x10
->   ? do_raw_read_unlock+0x44/0x70
->   ? _raw_read_unlock+0x23/0x40
->   btrfs_map_block+0x5b5/0x2250
->   ? __pfx_btrfs_map_block+0x10/0x10
->   scrub_submit_initial_read+0x8fe/0x11b0
->   ? __pfx_scrub_submit_initial_read+0x10/0x10
->   submit_initial_group_read+0x161/0x3a0
->   ? lock_release+0x20e/0x710
->   ? __pfx_submit_initial_group_read+0x10/0x10
->   ? __pfx_lock_release+0x10/0x10
->   scrub_simple_mirror.isra.0+0x3eb/0x580
->   scrub_stripe+0xe4d/0x1440
->   ? lock_release+0x20e/0x710
->   ? __pfx_scrub_stripe+0x10/0x10
->   ? __pfx_lock_release+0x10/0x10
->   ? do_raw_read_unlock+0x44/0x70
->   ? _raw_read_unlock+0x23/0x40
->   scrub_chunk+0x257/0x4a0
->   scrub_enumerate_chunks+0x64c/0xf70
->   ? __mutex_unlock_slowpath+0x147/0x5f0
->   ? __pfx_scrub_enumerate_chunks+0x10/0x10
->   ? bit_wait_timeout+0xb0/0x170
->   ? __up_read+0x189/0x700
->   ? scrub_workers_get+0x231/0x300
->   ? up_write+0x490/0x4f0
->   btrfs_scrub_dev+0x52e/0xcd0
->   ? create_pending_snapshots+0x230/0x250
->   ? __pfx_btrfs_scrub_dev+0x10/0x10
->   btrfs_dev_replace_by_ioctl+0xd69/0x1d00
->   ? lock_acquire+0x19d/0x4a0
->   ? __pfx_btrfs_dev_replace_by_ioctl+0x10/0x10
->   ? lock_release+0x20e/0x710
->   ? btrfs_ioctl+0xa09/0x74f0
->   ? __pfx_lock_release+0x10/0x10
->   ? do_raw_spin_lock+0x11e/0x240
->   ? __pfx_do_raw_spin_lock+0x10/0x10
->   btrfs_ioctl+0xa14/0x74f0
->   ? lock_acquire+0x19d/0x4a0
->   ? find_held_lock+0x2d/0x110
->   ? __pfx_btrfs_ioctl+0x10/0x10
->   ? lock_release+0x20e/0x710
->   ? do_sigaction+0x3f0/0x860
->   ? __pfx_do_vfs_ioctl+0x10/0x10
->   ? do_raw_spin_lock+0x11e/0x240
->   ? lockdep_hardirqs_on_prepare+0x270/0x3e0
->   ? _raw_spin_unlock_irq+0x28/0x50
->   ? do_sigaction+0x3f0/0x860
->   ? __pfx_do_sigaction+0x10/0x10
->   ? __x64_sys_rt_sigaction+0x18e/0x1e0
->   ? __pfx___x64_sys_rt_sigaction+0x10/0x10
->   ? __x64_sys_close+0x7c/0xd0
->   __x64_sys_ioctl+0x137/0x190
->   do_syscall_64+0x71/0x140
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->  RIP: 0033:0x7f0bd1114f9b
->  Code: Unable to access opcode bytes at 0x7f0bd1114f71.
->  RSP: 002b:00007ffc8a8c3130 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f0bd1114f9b
->  RDX: 00007ffc8a8c35e0 RSI: 00000000ca289435 RDI: 0000000000000003
->  RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000007
->  R10: 0000000000000008 R11: 0000000000000246 R12: 00007ffc8a8c6c85
->  R13: 00000000398e72a0 R14: 0000000000004361 R15: 0000000000000004
->   </TASK>
-> 
-> This happens because on RAID stripe-tree filesystems we recurse back into
-> btrfs_map_block() on scrub to perform the logical to device physical
-> mapping.
-> 
-> But as the device replace task is already holding the dev_replace::rwsem
-> we deadlock.
-> 
-> So don't take the dev_replace::rwsem in case our task is the task performing
-> the device replace.
-> 
-> Suggested-by: Filipe Manana <fdmanana@suse.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/btrfs/dev-replace.c | 2 ++
->  fs/btrfs/fs.h          | 2 ++
->  fs/btrfs/volumes.c     | 4 +++-
->  3 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> index 83d5cdd77f29..604399e59a3d 100644
-> --- a/fs/btrfs/dev-replace.c
-> +++ b/fs/btrfs/dev-replace.c
-> @@ -641,6 +641,7 @@ static int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
->  		return ret;
->  
->  	down_write(&dev_replace->rwsem);
-> +	dev_replace->replace_task = current;
->  	switch (dev_replace->replace_state) {
->  	case BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED:
->  	case BTRFS_IOCTL_DEV_REPLACE_STATE_FINISHED:
-> @@ -994,6 +995,7 @@ static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
->  	list_add(&tgt_device->dev_alloc_list, &fs_devices->alloc_list);
->  	fs_devices->rw_devices++;
->  
-> +	dev_replace->replace_task = NULL;
->  	up_write(&dev_replace->rwsem);
->  	btrfs_rm_dev_replace_blocked(fs_info);
->  
-> diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-> index 3d6d4b503220..53824da92cc3 100644
-> --- a/fs/btrfs/fs.h
-> +++ b/fs/btrfs/fs.h
-> @@ -317,6 +317,8 @@ struct btrfs_dev_replace {
->  
->  	struct percpu_counter bio_counter;
->  	wait_queue_head_t replace_wait;
-> +
-> +	struct task_struct *replace_task;
+sparse reportef following warnings:
 
-Wasn't the idea to use pid for that, and not a raw pointer?
+'''
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:614:53: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:615:58: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:617:53: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:727:52: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:728:52: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:729:57: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:788:52: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:789:55: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:790:57: warning: Using plain integer as NULL pointer
+drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c:958:67: warning: Using plain integer as NULL pointer
+'''
+
+This patch changes zero to NULL.
+
+Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+---
+ .../dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c   | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c
+index 8952dd7e36cb..6d524e528491 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4.c
+@@ -611,10 +611,10 @@ static bool subvp_subvp_schedulable(struct dml2_pmo_instance *pmo, const struct
+ 	int max_microschedule_us = 0;
+ 	int vactive1_us, vactive2_us, vblank1_us, vblank2_us;
+ 
+-	const struct dml2_timing_cfg *svp_timing1 = 0;
+-	const struct dml2_implicit_svp_meta *svp_meta1 = 0;
++	const struct dml2_timing_cfg *svp_timing1 = NULL;
++	const struct dml2_implicit_svp_meta *svp_meta1 = NULL;
+ 
+-	const struct dml2_timing_cfg *svp_timing2 = 0;
++	const struct dml2_timing_cfg *svp_timing2 = NULL;
+ 
+ 	if (svp_stream_count <= 1)
+ 		return true;
+@@ -724,9 +724,9 @@ static bool validate_svp_drr_cofunctionality(struct dml2_pmo_instance *pmo,
+ 	int drr_stretched_vblank_us = 0;
+ 	int max_vblank_mallregion = 0;
+ 
+-	const struct dml2_timing_cfg *svp_timing = 0;
+-	const struct dml2_timing_cfg *drr_timing = 0;
+-	const struct dml2_implicit_svp_meta *svp_meta = 0;
++	const struct dml2_timing_cfg *svp_timing = NULL;
++	const struct dml2_timing_cfg *drr_timing = NULL;
++	const struct dml2_implicit_svp_meta *svp_meta = NULL;
+ 
+ 	bool schedulable = false;
+ 
+@@ -785,9 +785,9 @@ static bool validate_svp_vblank_cofunctionality(struct dml2_pmo_instance *pmo,
+ 	int vblank_stream_count = 0;
+ 	int svp_stream_count = 0;
+ 
+-	const struct dml2_timing_cfg *svp_timing = 0;
+-	const struct dml2_timing_cfg *vblank_timing = 0;
+-	const struct dml2_implicit_svp_meta *svp_meta = 0;
++	const struct dml2_timing_cfg *svp_timing = NULL;
++	const struct dml2_timing_cfg *vblank_timing = NULL;
++	const struct dml2_implicit_svp_meta *svp_meta = NULL;
+ 
+ 	int prefetch_us = 0;
+ 	int mall_region_us = 0;
+@@ -955,7 +955,7 @@ bool pmo_dcn4_init_for_pstate_support(struct dml2_pmo_init_for_pstate_support_in
+ 
+ 	struct display_configuation_with_meta *display_config;
+ 	const struct dml2_plane_parameters *plane_descriptor;
+-	const enum dml2_pmo_pstate_strategy (*strategy_list)[4] = 0;
++	const enum dml2_pmo_pstate_strategy (*strategy_list)[4] = NULL;
+ 	unsigned int strategy_list_size = 0;
+ 	unsigned int plane_index, stream_index, i;
+ 
+-- 
+2.43.0
+
 
