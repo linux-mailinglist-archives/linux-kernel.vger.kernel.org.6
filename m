@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-288548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCE0953B8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:40:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C96953BE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 22:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FED81F25493
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2132841C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 20:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98615149E17;
-	Thu, 15 Aug 2024 20:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1B4165EFB;
+	Thu, 15 Aug 2024 20:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b98vo5nI"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDbkLRo5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965C5405C9;
-	Thu, 15 Aug 2024 20:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7B11607BD;
+	Thu, 15 Aug 2024 20:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754441; cv=none; b=E2AadhjK6kdbyp/59T3A+TgQbtx8htt6MHxdvHQvZijx7sjL6+qkNtrQ6UuTvjK0yVZSv/x+DLw+kMj3Jy7/kLM84BUWAUioXvTWjF6BUC9YGXI4LYYs0lVyIEjRHUiWvJMgTsuluWiPibD1yeeYP5uWkGUBfCOHrwC/M1aDNlM=
+	t=1723754485; cv=none; b=ZXTObcNXT/oPgrxRVeaVo8LlZr6e4+/CfZmmi24er9QjniQLOD8GA9H4nVgoY6hi7S/c40J6Dd8sDQOuqj/hRwzSe9fzrimWKQVBjinW1xJTRO97ln/GLr59UO0cW8BsJDoe20Y9RW35+T/XNFJSnadsz80YFFNaOzZJ4LYqXbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754441; c=relaxed/simple;
-	bh=yPrJ50VXI5nJ2rby7f8Ln8oGQi3wYrAEG06B/vm9Abk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lhi7u5Mslhno3geH04/zPw38ENjtCmKFFD6Gc6963uv0iyEPSCZ1TSzLt6mawbcY3yhcK8x+f48/NV4J0g1cfMyBs3bIb6yWEaN1kgIri7C4kHHpQ+bOcFMWeSM6YYLr7NtIVaYiHlhXO6MD0wzhswKoY6cFp9HSYh+nUs2YvD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b98vo5nI; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fee6435a34so11534485ad.0;
-        Thu, 15 Aug 2024 13:40:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723754440; x=1724359240; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9WkB5SkQtbWMRkXaB+yKolATeCu0MoWvQKnYm5st5Cs=;
-        b=b98vo5nIA+blyfbz1rHDdVdahiiJK9NaN9aMZEuMIGjS/xEvaPOJcP0RDySTcqm/hY
-         IxmXtZRWdFUc7x0x+LLO0X999PDrDuwUyFKsRChVz1KMAzkXcH/RvvY9LYNsZK85EhZn
-         A63BVvEEXX2LHYlg+myttZo4kL/TC6bApYytL1ZRJLlURNwPdNU+lDXY/pYs+DVNOozd
-         5baZdjfUul8i67E1FW01JfYKy940qwrUvnlxk8u2HW6bKrP9v06+7fYfhiTGT3DcAbfU
-         XKjuBglgkpPzPAHV26h+VlfOtA2YY6H5Zgddh2CtLIUO7iG10mZy5yF053sgL3X//E6D
-         H8nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723754440; x=1724359240;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WkB5SkQtbWMRkXaB+yKolATeCu0MoWvQKnYm5st5Cs=;
-        b=OO+/bnnEJA7Tf0sXNOEawkR0DrQTUkTyx81f1S0esLip10WCTiAAaax1ezqXyd9Ft+
-         q4uL5BY9sj+ZZ0qL4q+QEBddzDepqh/cY+knGBO1UAMo6aGzYih0SeD/+0duveG6XZk3
-         UZlDJIp74CxcJ8xE05rKYSsu0Ib3v4/zf8bN9o+mz59AqzfBP9p+rbURBw8qAuBctpCR
-         1xWO1hgGiaTmYD6h72TVm7c0YtSNtkvo9jKg94of45JzbedQ69fp3t6Hjsg2OCLhnFGa
-         aVKHWsVLM41rrll8g2+3YbNrODE8NM5JDDbcQokRqHm33s0jYhbhMPi3ACczkcyof4uc
-         2pYA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Xjpc+HkHbJyf1VUbrjd9TtDGPhEGgF4rfGr4WNcukg7W2hbhEX22e5vB/BkP/AtUjRsoUIzeDOQridfDrWB/8Yj2Ng/3OwMUE9uqGUcbIYR8IPVlWcw0GEZipYD9NzMPsS+E
-X-Gm-Message-State: AOJu0YwiYDB5wXSjA3gTk5wv0grfaPxlF7rjrKIUPVMvb8DfjbLkzfqe
-	wXgkIqYJdq6TWUt49q+HggKUKB7Fq2pYRZElIuZICAiu2Zpx3x06
-X-Google-Smtp-Source: AGHT+IGMhDTyIayyAG2ydk7g1y0+W5VoTqLRXWve72ZnKng+f2tGdhpAlIk2AfPn1zlJ7KkoxKrwCg==
-X-Received: by 2002:a17:902:ecd0:b0:200:a9da:add2 with SMTP id d9443c01a7336-20204050d7fmr10407335ad.62.1723754439669;
-        Thu, 15 Aug 2024 13:40:39 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201f0375123sm13919635ad.139.2024.08.15.13.40.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2024 13:40:39 -0700 (PDT)
-Message-ID: <22ee17e3-5bd4-4c62-9619-7e105bbd6ef8@gmail.com>
-Date: Thu, 15 Aug 2024 13:40:37 -0700
+	s=arc-20240116; t=1723754485; c=relaxed/simple;
+	bh=8hxrRKrKT4YJ3GOfIDQ3CDv7U0Fvu3zgdGXK0IGrT8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=APV1BXtIio92IA9XVj2hUAaaWAXsHem5EvS0MMHYrFz4dr3WTOL64qSnfD9GT5wNzTggRAcZoOJJQXVZ5EVKpIX1tM4ugvN9elCMKFpK+221F7Zo2BkPgnp0ZH1PomQDDX6k7GoMIiiia7u0anpoMsfmyLbICMrOXMoooKbRx+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDbkLRo5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6065C4AF09;
+	Thu, 15 Aug 2024 20:41:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723754485;
+	bh=8hxrRKrKT4YJ3GOfIDQ3CDv7U0Fvu3zgdGXK0IGrT8M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GDbkLRo5hf3oEhk4vbljz7dOWABLeSshSbVLK8g3v+DKC/k0NqpszC58aD88Kf/+o
+	 ht2PzgUhbnwIjrKNPzvdIZM2bkHQpXsfIZ6BkGn0IrgAEH8LaoWH93xA27NQwXHt1u
+	 n6Mom+lJIqfrBF9KuDpBRGRCRr+N3wvtbOEfy6vyEi6jVhxMHG9PChHIQfdaX+KhWi
+	 I+U+HwMh5a/LEyOKH7me+WQcfmcu89caxjjpgHb2XJZLX55ULwjI87rt+6/BY5yxp1
+	 Ug99L7is/20cU/h2kO9Z5osrZ7umcM2Kin8xq3ox5XneSc0D1V1f0ABJQtb3lSyuqH
+	 sV9enDEDyEkvg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	quic_ppratap@quicinc.com,
+	quic_jackp@quicinc.com
+Subject: Re: [PATCH v17] arm64: dts: qcom: sa8295p-adp: Enable the four USB Type-A ports
+Date: Thu, 15 Aug 2024 15:40:38 -0500
+Message-ID: <172375444803.1011236.11659183760108728325.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240707085624.3411961-1-quic_kriskura@quicinc.com>
+References: <20240707085624.3411961-1-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 000/352] 5.10.224-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240815131919.196120297@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240815131919.196120297@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 8/15/24 06:21, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.224 release.
-> There are 352 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 17 Aug 2024 13:18:17 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.224-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On Sun, 07 Jul 2024 14:26:24 +0530, Krishna Kurapati wrote:
+> The multiport USB controller in the SA8295P ADP is connected to four USB
+> Type-A ports. VBUS for each of these ports are provided by a
+> TPS2559QWDRCTQ1 regulator, controlled from PMIC GPIOs.
+> 
+> Add the necessary regulators and GPIO configuration to power these.
+> 
+> It seems reasonable that these regulators should be referenced as vbus
+> supply of usb-a-connector nodes and controlled by e.g. dwc3, but as this
+> is not supported in Linux today the regulators are left always-on for
+> now.
+> 
+> [...]
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Applied, thanks!
+
+[1/1] arm64: dts: qcom: sa8295p-adp: Enable the four USB Type-A ports
+      commit: b5cbd179f466f46b74ec0aa235e3ebe546135048
+
+Best regards,
 -- 
-Florian
-
+Bjorn Andersson <andersson@kernel.org>
 
