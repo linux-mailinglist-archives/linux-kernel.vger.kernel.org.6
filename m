@@ -1,138 +1,167 @@
-Return-Path: <linux-kernel+bounces-288282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F467953851
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:35:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9AF953824
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 18:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 372A4287800
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:35:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF17BB25AAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 16:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943301B1429;
-	Thu, 15 Aug 2024 16:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8391C1BA87B;
+	Thu, 15 Aug 2024 16:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="H9Lg35ea"
-Received: from dog.elm.relay.mailchannels.net (dog.elm.relay.mailchannels.net [23.83.212.48])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M1RwssTr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFE217C9BD;
-	Thu, 15 Aug 2024 16:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723739688; cv=pass; b=gf/KkTrQqsur3I6gILOj6cDJONkOUbZGAwTIGdTK31Ay2XkLkHxfhffVAAjDb8ZRG1ZIN1JL7bmHYHinKg1Cm/NLHSO92Szs3JnxWU8Gd0S0xvrhBsLyYkbx4kJ82gdfOow2jyr+IutYX6cF+roJTNU3ZZXE31nDbRCL6pRcEWA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723739688; c=relaxed/simple;
-	bh=y3c2VuHGmCmPcgmj9qh7EQBynd5WFG+1iOb/mRfYApI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TqBTOpnBrwr0/KgvR4imyXIR2K9us2oDC348zWymvzqjt7whGxLHUxgcmzKwtYP7gReEBpl0CGsp1RElGSNuylCTg0p465moeLvW2fQ2DOBzeUeyjDfEjmZi+/7B//BNL7V1ONQE9jVqi/zoeaDpbH3JS2QURkCk2LWsvNLiorc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=H9Lg35ea; arc=pass smtp.client-ip=23.83.212.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id EB74C545878;
-	Thu, 15 Aug 2024 16:17:52 +0000 (UTC)
-Received: from pdx1-sub0-mail-a275.dreamhost.com (unknown [127.0.0.6])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 79353546792;
-	Thu, 15 Aug 2024 16:17:52 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1723738672; a=rsa-sha256;
-	cv=none;
-	b=TzXEZyzuecJ96qPEY16JbTTpB/Ce5xYsnkxhRvTlhrUEweIVQt42V04jdL0KPfpy/5rUUV
-	i60oallBaVVB3xaHrZ7kqrItSCTXzrjbPRr9DDmnLyqkz96cmg7eGq+3PwDuz+H5PhpWTE
-	aQ3hiFqXT9AHLS3cOyMdOJnYPAhyZaQU1k5+aynmx+F6nLljmevpr9M2cD9wLA4dDFxqUn
-	NaNOsWkO1nlzEEsOPGRCalQZkGJ761SwY5R03coeA+mokcENukISsFXUNiarWNTWNivJTo
-	eN3WvljsZ//Jqq50+9qpsR9IlDki/5ghWzyoUW3sdqJ9FakiEr88DJzLTf6bOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1723738672;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=bxcaS4NtjaqXYf1JS7wH3Qq2ogFTvYg+LmqMf8tx4CY=;
-	b=5BcranH0jDr/XwmQhJ1rtR7a990j2kF1TurmjTV0SvZSMHNzmZpTjv+SGvMPqKFOzdSX8q
-	069t+TnaZEOVMDMMOVZH7wt11oQnXxcTiaJhDEbwQeqYh27w82pFqviwk0Isk5AXqvIwgw
-	eHSZAfqz2WX9qTy5tcehLav5gvgSZNKv3TuluWYIbzvfpt4KcV9zIPfbctKaOh4aPtLDWT
-	15m9hBRcFkKUPW/kSFlsrgn2OelfP2ggDEbH2jUGnPI+xleS0Z9+2H+fAwio/SMNgXohW/
-	D1Csb0yNzkRl5nxU2q17Ko+hDJOQ8laR95gCdv//Yut9MD5UiP2uKdslRCrSWA==
-ARC-Authentication-Results: i=1;
-	rspamd-587694846-pr4lb;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Desert-Whimsical: 4568c67f00c511f9_1723738672785_3584071105
-X-MC-Loop-Signature: 1723738672785:3084883871
-X-MC-Ingress-Time: 1723738672785
-Received: from pdx1-sub0-mail-a275.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.117.75.38 (trex/7.0.2);
-	Thu, 15 Aug 2024 16:17:52 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a275.dreamhost.com (Postfix) with ESMTPSA id 4Wl9Jb645zz6F;
-	Thu, 15 Aug 2024 09:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1723738672;
-	bh=bxcaS4NtjaqXYf1JS7wH3Qq2ogFTvYg+LmqMf8tx4CY=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=H9Lg35eaQkjVFxrjhevYRKQAvfa3jCOP9cWjFsWhOtKDDnimUw3oBH6k5TC3dYsed
-	 uXQNEa+lOuF+IxYgPykN1+tPPw18faGyaLO8xKlzkiEA+Ge1gASI1MB1BpD67mbM4q
-	 dc3JV4kwTZ55Go9EMltTvA3+izrloZQwWu5Y75iaSOs/Wa6gbWDTPduBE31BGy02xu
-	 G50s4gM0mWH8dLXi+heaN1JOVdDZCrbxIRrNlOFwYKeCIN6bU5DLPbhBp9ebPGyjR7
-	 IgJ1JT/qmRVr1MDeA/WGX+tNreHdOOifckxz2dJjfTaV7YbhO8At+wdX3H75/F7eAC
-	 +VcmKvErwDIHQ==
-Date: Thu, 15 Aug 2024 09:17:49 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cxl/region: Remove lock from memory notifier callback
-Message-ID: <20240815161749.hb2zzwam5rieswws@offworld>
-References: <20240814-fix-notifiers-v2-1-6bab38192c7c@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2ED1B582B;
+	Thu, 15 Aug 2024 16:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723738798; cv=none; b=G164+BdK3nJYXR0OOFrEjllMqBUXICIHIDexIdYoP7pP/a4UjBd2F7QvfwY/01zHBO+SNsp2TJGTSdeAZJ3kZx/mxqds+MFULzS0wy8WAaTeLS97GVx7tk9HCpsRZJS/a9ccErI4LSqBjVhllAdrRKVdQZksghZAE3M2zRfukZM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723738798; c=relaxed/simple;
+	bh=DYbBiyj5qYewvbb7Re7XGSYEHPMVwyQyJX5sJF6AXRY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=r8TPUzqUfN6bN1M06kJokHXnLDouNP55/c1yMlYl6rjLf9fGezLE3OXoYbVMnokjUd8rhO6Z4HYZCbBQa6bu9CVhp2soHdMbM0TOfQSbn5JYwLPQNWPxv+JH3MNIAhHo3KB+ywLXBUO8z4r+QF0xx5t1of6BbPm+ru3cTiOH5oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M1RwssTr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FFsAYf022989;
+	Thu, 15 Aug 2024 16:18:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=HSE9lOXCQAY2IALUk8wdaT
+	jRFfDB8opieWccJFkeUPQ=; b=M1RwssTrbhws/TAQlsg1zB0eqYHuPFoQbB0n90
+	5IT1A01AcyQf46vp2fglgbC4iRGVqFbY6A8dqdEQ7bSWfyHPYGD/OVOlBpIY0F+A
+	U/v65s+6eWIIc1owERHo6RnXSuo+UnLCwuangl8hCxUmPti9Ng46r52M7Q7OLSi+
+	cWSnfrxO6/HapOXh+CtoDQQyfl0Npt3EZhKAxRKt7zo8edRJf7OBwip9ii/ciaLV
+	zIKfcxpbBDG+fqS4R2VVosrTbugBvYgsORXeyAfm2AdGm5fC0Ib/LmctSESu2QSG
+	1LLXIV+MjI22yB1ClAa9WLo1KgTkm0F/8aAGLGKQPDss6dcg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410m29543a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 16:18:32 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47FGIVe9004160
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 15 Aug 2024 16:18:31 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
+ 2024 09:18:30 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 15 Aug 2024 09:18:30 -0700
+Subject: [PATCH] wifi: mac80211: Fix ieee80211_convert_to_unicast() logic
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240814-fix-notifiers-v2-1-6bab38192c7c@intel.com>
-User-Agent: NeoMutt/20220429
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240815-ieee80211_convert_to_unicast-v1-1-648f0c195474@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAFUqvmYC/32Oyw6CMBBFf8V0bQ3DQ4sr/8MQUtpRJpFW21Ixh
+ H+3kLh1eRb3nDszj47Qs/NuZg4jebImAex3TPXS3JGTTszyLC8zAQUnRBRZDtAqayK60Abbjoa
+ U9IGD1oj1UZwANEuKp8MbTZv+2iTupEfeOWlUv0rf5PCB3nODU+CDJLOOevLBus92KcI6/dWr/
+ /UIHDhmhehqIcpKi8trJEVGHZQdWLMsyxfLlnAK7wAAAA==
+To: Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Michael Braun
+	<michael-dev@fami-braun.de>
+CC: Harsh Kumar Bijlani <hbijlani@qti.qualcomm.com>,
+        Kalyan Tallapragada
+	<ktallapr@qti.qualcomm.com>,
+        Jyothi Chukkapalli <jchukkap@qti.qualcomm.com>,
+        Anirban Sirkhell <anirban@qti.qualcomm.com>,
+        Johannes Berg
+	<johannes.berg@intel.com>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NsLUW30wjT628CfXDSWPNx6PGr70rEfB
+X-Proofpoint-ORIG-GUID: NsLUW30wjT628CfXDSWPNx6PGr70rEfB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-15_09,2024-08-15_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ spamscore=0 priorityscore=1501 mlxscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408150118
 
-On Wed, 14 Aug 2024, Ira Weiny wrote:
+The current logic in ieee80211_convert_to_unicast() uses skb_clone()
+to obtain an skb for each individual destination of a multicast
+frame, and then updates the destination address in the cloned skb's
+data buffer before placing that skb on the provided queue.
 
->In testing Dynamic Capacity Device (DCD) support, a lockdep splat
->revealed an ABBA issue between the memory notifiers and the DCD extent
->processing code.[0]  Changing the lock ordering within DCD proved
->difficult because regions must be stable while searching for the proper
->region and then the device lock must be held to properly notify the DAX
->region driver of memory changes.
->
->Dan points out in the thread that notifiers should be able to trust that
->it is safe to access static data.  Region data is static once the device
->is realized and until it's destruction.  Thus it is better to manage the
->notifiers within the region driver.
->
->Remove the need for a lock by ensuring the notifiers are active only
->during the region's lifetime.
+This logic is flawed since skb_clone() shares the same data buffer
+with the original and the cloned skb, and hence each time the
+destination address is updated, it overwrites the previous destination
+address in this shared buffer. As a result, due to the special handing
+of the first valid destination, all of the skbs will eventually be
+sent to that first destination.
 
-Agreed, this is better.
+Fix this issue by using skb_copy() instead of skb_clone(). This will
+result in a duplicate data buffer being allocated for each
+destination, and hence each skb will be transmitted to the proper
+destination.
 
->Furthermore, remove cxl_region_nid() because resource can't be NULL
->while the region is stable.
+Fixes: ebceec860fc3 ("mac80211: multicast to unicast conversion")
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ net/mac80211/tx.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
+index 72a9ba8bc5fd..0ee1c7df424c 100644
+--- a/net/mac80211/tx.c
++++ b/net/mac80211/tx.c
+@@ -4408,7 +4408,7 @@ ieee80211_convert_to_unicast(struct sk_buff *skb, struct net_device *dev,
+ 	struct ieee80211_local *local = sdata->local;
+ 	const struct ethhdr *eth = (struct ethhdr *)skb->data;
+ 	struct sta_info *sta, *first = NULL;
+-	struct sk_buff *cloned_skb;
++	struct sk_buff *copied_skb;
+ 
+ 	rcu_read_lock();
+ 
+@@ -4423,14 +4423,14 @@ ieee80211_convert_to_unicast(struct sk_buff *skb, struct net_device *dev,
+ 			first = sta;
+ 			continue;
+ 		}
+-		cloned_skb = skb_clone(skb, GFP_ATOMIC);
+-		if (!cloned_skb)
++		copied_skb = skb_copy(skb, GFP_ATOMIC);
++		if (!copied_skb)
+ 			goto multicast;
+-		if (unlikely(ieee80211_change_da(cloned_skb, sta))) {
+-			dev_kfree_skb(cloned_skb);
++		if (unlikely(ieee80211_change_da(copied_skb, sta))) {
++			dev_kfree_skb(copied_skb);
+ 			goto multicast;
+ 		}
+-		__skb_queue_tail(queue, cloned_skb);
++		__skb_queue_tail(queue, copied_skb);
+ 	}
+ 
+ 	if (likely(first)) {
+
+---
+base-commit: ae98f5c9fd8ba84cd408b41faa77e65bf1b4cdfa
+change-id: 20240813-ieee80211_convert_to_unicast-1ddee968711d
+
 
