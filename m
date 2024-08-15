@@ -1,241 +1,331 @@
-Return-Path: <linux-kernel+bounces-288649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-288650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18914953CFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78814953CFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 23:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 998091F2201D
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1F41F21E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2024 21:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5211547DD;
-	Thu, 15 Aug 2024 21:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4041547C3;
+	Thu, 15 Aug 2024 21:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EOyNvun0";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="6FVivr05"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AOANX+xY"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09A5153820;
-	Thu, 15 Aug 2024 21:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723758930; cv=fail; b=qCx22Ypy0iKxSF0jPJwjcUgFYGyvYGtZugtkrDDMEJkLw7kB+YeJs/++JJBqvtOKb3YDSEJu3BIn68XQW1qxLhkrJzTpQIVMtug7oSmU1oXTxnW+vPwVpqpJmKSQwjVo6+mvOqQGQ75ZMxirxGPRShP3zVmAZs+j0pwUHDUbNJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723758930; c=relaxed/simple;
-	bh=eC8q7viVzTtgb1pFEFiGdpWGn3/ga5nByD48li7wwp4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Kx1NT/xnYvKKO6tliYXxt7qRGg10MSfQIaklJ0krHJ8ueXHiHV7hXzXeqjL7Gb5lt2zXKRj2by0IUyMg+H0G//GvZPTyS/0tnAnAP3CZyO4u3EN0utoh3YzyzF+e//zKCwm5jTVxk2L2CMems7QnKggx9UcgkI1pHDqrIhffSh0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EOyNvun0; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=6FVivr05; arc=fail smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723758928; x=1755294928;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=eC8q7viVzTtgb1pFEFiGdpWGn3/ga5nByD48li7wwp4=;
-  b=EOyNvun0M84dmeDNo1QneycHUqieo4QMtE77zHGcTLKVqJE9wAZOuN85
-   hb/ByYy12c0wZ96OwUjdKZGrTqDBzF6GMOqEtfyekFNy+NZtkjhH5Fsj5
-   jJauHPZ7VZDIB+ygEIfYleiD+fsk+vrRIJyg2cJzEd98jPfgSFxT5jLgU
-   mlQBA7cTwTd9khf/7Uco3I/xFBKXiRj+xxhSmRj36K7WknfqT5WainFpN
-   u9DpZa9nPx7lb0AMIZBEXlZmY9MkpOzWNUtzaD5qR4lCnGSyYSEsLatTI
-   ki+eUrhKaQeN3bSFN4sfLsnrDpYFG3LYDMSRbTzDTwq7Lcy+HeDcwY2P3
-   g==;
-X-CSE-ConnectionGUID: qEoyvxpUQwufr99wSjNVEQ==
-X-CSE-MsgGUID: QiSrm5dJSYakKOURt92w8A==
-X-IronPort-AV: E=Sophos;i="6.10,150,1719903600"; 
-   d="scan'208";a="261466597"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Aug 2024 14:55:26 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 15 Aug 2024 14:54:54 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Thu, 15 Aug 2024 14:54:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BZMywJp7AxoymwtgtBQfSdHDOMU3DObu9ZO+DPtU9MsPsRp0k0w3BwNv877v0HHg0P7WgEbLBUDI0aZQqpeqQoGOt7iu/d6JV62s+B8GwyoFNTXflL14LVSDl0kfUYNqIq5GLVix4CZ1aDFne8NA9ZOZb9lp68fIZ6eYLnyvOf5vleV2JAD7Gft5qTLx/NrGqROo7rHasJVWY36qYfqsID8XWi5foVok8ZnFlTrnHx17Jxmp9V9YLvnDeIGPSDJfJNiaT3uqeINJKbOMbDt1ORiJuiliYuli6v8gWFl9KiK8LzCmzdrUORT8Fe/UR+nFFPiDmAynkY7JEXmI3NFZ+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aNDvFIuWaKPbZOR4/QRrngt9xvPNBkkQuhvW2X7Frto=;
- b=pzKMfCMc6zRjbRsdwCR7BnktaJGu81Aw4h3jI7GM7Ehs3IH7M8fTZE4D44a6JgHIy04WeNN8/aCIKGkBOxd6xelUdzwrjn7rfkcH2u9Y/h7HJjlI2yG12yR8wAR2G49q3/ctso7XrGgKAFC3Gx2qfKYlRDTmQPt2Gf2Qo6Hx+l6BmWu1GQGXaZ3vZKsNh1sr5Sc6ga3g/DLrRX2MOSYFFq0P1oLnmZ3u7ohDMbPwMfbkMSqNcxPZ5NuFynyyXYsdDPCxdE1qPJ43ou2ANAzCPSaNw72mncPI+QcU/Nh1wEF4Z9PHKIwdaTNLdQ3yewV3eSsSVkfm0yVqy4UoiudB1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aNDvFIuWaKPbZOR4/QRrngt9xvPNBkkQuhvW2X7Frto=;
- b=6FVivr05HgZhPlMukVqqFlwqZ+NXZ2vnLEZC5+5IJ2U0rFgxFDiTVtCNV4jj19TJIdgqGq+ML0kUB9Cozu2WPdQCpWfkxluEMFSjJlslMDvRQnqnoPuJQNGXrzI++zmI8fkCCmkv4TS+Twwk2D03Rn7H6Vi8uqs0OBkqlKxvpWvV1pBz6+ve1Ttjql4w2H1gIIBEkV1v9Hiv4C1pX+yNp65yxLld7oS5MyT/TqwxhBi3AyiF4tFdwobxS+C01AEP5U3/3M5TrZPTcG4WYVqFeghBkPqWZChIaIj6GG2hY6TKPLh+eFuWut0KZFyzaYyb9/9qt7Is6a9ajlb8mLeF1w==
-Received: from BYAPR11MB3558.namprd11.prod.outlook.com (2603:10b6:a03:b3::11)
- by SA0PR11MB4640.namprd11.prod.outlook.com (2603:10b6:806:9b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.18; Thu, 15 Aug
- 2024 21:54:48 +0000
-Received: from BYAPR11MB3558.namprd11.prod.outlook.com
- ([fe80::c03a:b12:f801:d3f6]) by BYAPR11MB3558.namprd11.prod.outlook.com
- ([fe80::c03a:b12:f801:d3f6%7]) with mapi id 15.20.7828.023; Thu, 15 Aug 2024
- 21:54:48 +0000
-From: <Tristram.Ha@microchip.com>
-To: <andrew@lunn.ch>
-CC: <Woojung.Huh@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<devicetree@vger.kernel.org>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <marex@denx.de>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next 1/4] dt-bindings: net: dsa: microchip: add SGMII
- port support to KSZ9477 switch
-Thread-Topic: [PATCH net-next 1/4] dt-bindings: net: dsa: microchip: add SGMII
- port support to KSZ9477 switch
-Thread-Index: AQHa6rVb6R5b4khOr0216lt4AbdkW7Igv2QAgAT0oCCAAAcxgIAACFyQgAEI1ACAAJA2MIAAA+yAgAGEwnA=
-Date: Thu, 15 Aug 2024 21:54:47 +0000
-Message-ID: <BYAPR11MB355843A853269A3EA5C50D47EC802@BYAPR11MB3558.namprd11.prod.outlook.com>
-References: <20240809233840.59953-1-Tristram.Ha@microchip.com>
- <20240809233840.59953-2-Tristram.Ha@microchip.com>
- <eae7d246-49c3-486e-bc62-cdb49d6b1d72@lunn.ch>
- <BYAPR11MB355823A969242508B05D7156EC862@BYAPR11MB3558.namprd11.prod.outlook.com>
- <144ed2fd-f6e4-43a1-99bc-57e6045996da@lunn.ch>
- <BYAPR11MB35584725C73534BC26009F77EC862@BYAPR11MB3558.namprd11.prod.outlook.com>
- <9b960383-6f6c-4a8c-85bb-5ccba96abb01@lunn.ch>
- <MN2PR11MB3566A463C897A7967F4FCB09EC872@MN2PR11MB3566.namprd11.prod.outlook.com>
- <4d4d06e9-c0b4-4b49-a892-11efd07faf9a@lunn.ch>
-In-Reply-To: <4d4d06e9-c0b4-4b49-a892-11efd07faf9a@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BYAPR11MB3558:EE_|SA0PR11MB4640:EE_
-x-ms-office365-filtering-correlation-id: a0917909-82c4-4b39-f746-08dcbd74e1b9
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3558.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?87J8/sKDIxR4tb6Ao/hU0v+4xyJu6ukGu67gTq5g8KKiQ2OqHP3uO8YAwmmg?=
- =?us-ascii?Q?HY4efvgfzPJpTFQQJp4BoYUMYUO7V+woV7/fvAD6B0uEOX0hZh7FpUrgRNUq?=
- =?us-ascii?Q?eif5o4CGl9tlTWXHh1iSGV2Gu2qSIG0bRrXcuanPMMayOmHDIaaAJ7fsQ0AR?=
- =?us-ascii?Q?VE/KL86i5ceEAUM9WGV++iY2/m6ZOZ4B1R2VXPAvpv/t2kHmPLpwHgZxZ6R3?=
- =?us-ascii?Q?K75jAMaBtLD09239+d2qeZhjt2volmhVZ8XsDTGJxLrp7CLt1LVpYhYCTdyV?=
- =?us-ascii?Q?yyPJiTMFtGXt4HDs8tcmtMm6S90+GFytxSX5xLsQpoTEavZaBd05MJEfMLXp?=
- =?us-ascii?Q?6ZRkkgt9/lJWQ+i2yeFRAuYeY45NHV+RVf0pE5u8Ho/czIlmLFbQ4UIqPEK/?=
- =?us-ascii?Q?QwUCtX45DK4twFyGf7zx37mI+X+TpaKJM6GeMGk7XlRieB/PaenoYWFLQm5A?=
- =?us-ascii?Q?HparOTU4c9ZP43WCfirWOhroQ1j2l9jSSvSzRgYrHmd4DZ6ZfUjLRM9F1X7L?=
- =?us-ascii?Q?TR6noI+IXuM+pnJLOE1SI0HiMqnw39wf0/lU4Wkjy/xTBxHMz3CD37aGR9ZM?=
- =?us-ascii?Q?cdC/GsNZV2LNkLsyf2RBaT3LQ2xlpdXtUJK4Jbhx40/QOOZdUZlw7PBu+vQV?=
- =?us-ascii?Q?lrtCZpdJqTZYwYRApW82dj6E85o6p9vbPFOMjW70fxGQzT2bKdYYavnHqIs2?=
- =?us-ascii?Q?k/ahu6sHvxU1XIstGbHsKfVMF1Ino7ujtz0YUqPe9GCYklNX7Zlm+V9D7WWb?=
- =?us-ascii?Q?osgBikg4xwleyx8cKCxZfmefvYKWGkxc67BvQyruKw2bZ2S9MATn+qhBuByY?=
- =?us-ascii?Q?2g4Sm8eGrmGNyRo1cUPO/nCUgfDPuiWOcK3WL4YQNgiq9ho8BTa7jnq//qqE?=
- =?us-ascii?Q?Pe+BDX6InnkcTw/nQf4+cv4Gzm67Pdj4hCGkPVh+5yd2e4Me8Ci3mqm53pUi?=
- =?us-ascii?Q?vdDahRn7Ji6sUxgNBQ7N0rCw8ibHqku+eMSQVWFqyXJZV/fHd28WoJDQw9xK?=
- =?us-ascii?Q?Sa5w/7hT4sGzQrqpmoWd8zwYThjmUvFJIC2MmhPI6m8bPz0mUF6/YU6C5ZDm?=
- =?us-ascii?Q?pVojKTOl/Z+4AhbqcHITFtlKKJyfjjGdWbOWZelvSAxMl71WDNxaThDbvkKa?=
- =?us-ascii?Q?6XCvRIU1V4bBrWWG2prHAzVmU8i02t6nlTfGZ0ucLcvxT2qBpkL529jCe6wt?=
- =?us-ascii?Q?q9Ri1IATLlgErW+LZYJmIuu2/PIgWJZBN74GAR6K3NdOO9Y6v7XYEunPLczx?=
- =?us-ascii?Q?8QGSfvcwpS/EqGr9U/h6lv/hizE1Fb4gLGoI48Qa92smZlJ3LlSfyy5sltiU?=
- =?us-ascii?Q?nU1S9sUgBbFGoyP3ybyZUMj31GTAc1hS5zUXTz4LuHPOs+aaWvo1CbD77qdg?=
- =?us-ascii?Q?8Fr4VrC01TcNX1KkSAxYzLdkTDSKaeyNIS05EO3fPXtBGpvkzw=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zW+zmemFWw3ax+BjtvqnT43K2WVc7EUB2PljuEgiFkaQzOQrXQl4uWL4Vn+l?=
- =?us-ascii?Q?SUmoVgO6wrKvkQdr8RljjW39fDuJ1S6nK5bXo4KPp8XJnsxl8FeJgM0OOVae?=
- =?us-ascii?Q?o92bRWrzeZPCR2LRA+cvEiundqF8uP/+I5yme+/DGjUWcsCzvw9TpDqobrgR?=
- =?us-ascii?Q?XoKlT+8yuZ7J4SqmfWbj9270flnMQzh+tOheeNeGwOUErcAdfn99kQaG0cXP?=
- =?us-ascii?Q?ha13HU66Yt5gykvYZJvhKkzEl27xP2eH3i88hLG5wpNK6U0FxZ/aYXptZPyd?=
- =?us-ascii?Q?MCs1RGD/0r2eb8GegQYV5yXFAPoabX0y11h+4jM45WS4eXGe5a4Ey9s+ZbCc?=
- =?us-ascii?Q?5F5/ZkTkS5Ptj6WBz0Nzbm0IlZfqKBQznZDeRYbWYattZC1qNuXSzK05KiDB?=
- =?us-ascii?Q?TfDpRWg0MDKTEpQyV5yB0jcZYxcG/2ohtZjNdZ3smE50sCEAYqMDJ/cw1cn4?=
- =?us-ascii?Q?j15CHFLhMnKFD/hAtZl/GJO2WsKksgqfhMZZFw0M4lJeqlODIzsdsnZVFUQZ?=
- =?us-ascii?Q?H6EEbqkN/F6qEEcfCXsq0LcjHBs2XHQltrWLWPorHe0hWIG5eTrZe+7nScGf?=
- =?us-ascii?Q?5RGHq9tvsCELOAkjJPJO9eQ4nKaX3rksn3KCxDDNv0hD6UpJKQCdXqBP4fR7?=
- =?us-ascii?Q?4I+qFGSakCFCKXevHElO0a5yylNWScyAVxkkWDo/GO9CCB6ajqZ507WIvmGE?=
- =?us-ascii?Q?jZ063l25GF5UonmZNEnlRvMmdpayta4kHBguCwUekGveN4gEHG78N8KOyXn0?=
- =?us-ascii?Q?KQPZLL5B3f7c3Kx4SNZ0smV2KWMjMD6QtfsYvDIDWzlf5e9nKMPgXX64/hfv?=
- =?us-ascii?Q?TDyKmuIQK4ku0D2jNwAzc4g41gAFr1+s0uQ9XP6mdcF/moPFcfsrMAL2qPP4?=
- =?us-ascii?Q?kLUUsGtFEXKKK/cFAF5ztsPavibQXt4bW3OrIsEE2/F+Q1+K2b2Ejsp8ZwZM?=
- =?us-ascii?Q?i+8KTZuDkXxI94s2V9JEA0Mw+wHyluJSj8nUm0YuJZkszdhYiyLXt5GmHuIl?=
- =?us-ascii?Q?o7O7DPxJ3TINaG+5LOWFnILrp8kb+SsB+b/y6rFRh0kdYLd361dOJ7DYFs5u?=
- =?us-ascii?Q?s/OBeO4zjumvSnldLGbDApLLAECxqg/Pnc0DRmsm4QT+BvhcsDaOlsuc5xfR?=
- =?us-ascii?Q?BW3oVOnqXjwq6xIO8OZyOMEJ8LFJbjEF3T/E4OkZD4PCRUsmZz0T+g8s6VR9?=
- =?us-ascii?Q?iSF+oJ522bKAzsc4PAnyb6dNGLneTd4enOS5IrGRV+qk/dc11KA2/b3scc/k?=
- =?us-ascii?Q?RCLIiacA6vUzS+oiZhsMxUnERy6QG/OMlciA3DByW8uSdI5ykd9yW+wjhKkO?=
- =?us-ascii?Q?WcAoMVLfSFoNqEU1AJaoOYAlExZAlbg32m1wKNBetcbacgm2cUOhjuMCjGam?=
- =?us-ascii?Q?B6aGZND3/yf5ICJgeEelgZSoANxeq3+HSk9VO66xy50mkbiALLtS6HNPG6JR?=
- =?us-ascii?Q?I+Zbg8K5h3KJeGhcJAggorl9ij/Evwizodz4rTPTwF3CFf0G3YDdZiq73IX/?=
- =?us-ascii?Q?1vfGK0WkAhR9w8evFOU6hrfUsqkaY85V6pWnVFLb79T3qBWdnoHRADS4m8Me?=
- =?us-ascii?Q?aiduNynLFE5Qa10TPkEOhjibT/kbbr3XwFMQ4YlI?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA2215380B
+	for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 21:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723758988; cv=none; b=KV/aXWnUeWFXMCxDEgrB862OGXMGiGHimEaVVZSq0JduvhKHAQm8EIWGjUj5dyLDpCeOl6qAOHdoBa0q6g/z2ZFyNlWcR6AN3PjXG5ScWifPY48T/rtuPk1L36hv6zzlBOhdiY9wC4/iUI4X+iJCgPgLSMq5oMLSWaDe65woyQE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723758988; c=relaxed/simple;
+	bh=IgPKsVh3JtWk4AcJCxs5wVIE9DaPfv626k+/CXZ2pX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DctAHioIFPY3dhzj3KPOAKTBGFUpQ6E2xrzbgBuQx5cKR/Fsge/wnt3Wci8k08Fp5HPV/LoEw0iJJg4D4QHyoikzImQBSz6leL/jojDbszsPq7a7UGKSVotsqCjrHk83b7rVU6I6SrHcLXs1Nr6TcKrK2YToZfb7w/fZg5Eh9FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=AOANX+xY; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a94aa5080so163215666b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2024 14:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1723758984; x=1724363784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vAdfL8Zwf2SSUsMr74WKW/aZ3QoDz4/GWIUqVkzjEpc=;
+        b=AOANX+xYX6uTCxor1mfjbTk4xRRu/33kNVqykZmnnY4HWq2UT/DtFF5k7+guIRUM7l
+         auG97qWIUFIS4kc0Slxz1m0w9bHA8Ls9zdSovPwn+nlKzWlQ9E0tLypgkLOdP1IXjqiJ
+         mWr3z4kuVKggctONAdEVei/iFJm3DriCge+qU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723758984; x=1724363784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vAdfL8Zwf2SSUsMr74WKW/aZ3QoDz4/GWIUqVkzjEpc=;
+        b=vn7mHSQbO/IdYW1hiJXXkDXhnSITclahwpCanHIjmjGRsiSYkJ0uEwsrJbteTs882N
+         rJQa1RKblNod623AeKjsyxOlNNycOyeAR2DkJzzp+AeMWBST/ADmmFFyTlMzVkxN0qbr
+         weE47tl3wE32PCmmK8wIg6E0XtlmO3r8QQ3hW1TYHXNO037f/ChSiuLSZsKz3/gLSkGV
+         eMn9PicFVP8x0n/zWN7YresjJpCksAXoYfly7QvHFY/hTr6wZeBPaDOTtFtmEQwFff70
+         p9/arukUcKfI6ba7LTzDNWX97b+OK8LQDG8TDvnxB6F1gN6nXMzbrsCubYKl6oKQDH8n
+         h/Yg==
+X-Gm-Message-State: AOJu0Yw13XZMIwGJotpzUVp/fvqsB0mgp8Qzd3ElpGo8i3hW4+ftAqG5
+	DqCmD+09hxk+0kJOiDxYpGpXb6a+Sxakz64YNwzvIFCbQmv/KCKmLUcIhkQ3GXnmvJx4xl/Sauk
+	QQrq2u6Na8Z8x79tSpktScj/xn2pHSEHM/PMyJcv0LsBHDsk7+gk=
+X-Google-Smtp-Source: AGHT+IF4lAPCmVIRDzW8etOvgjsqCmiUTX4U/MC4phyOG3G/Qlwrok2tWvPPBKWTQQwaJoykyaBsPHM7LxdMk4NmhnA=
+X-Received: by 2002:a17:907:f1c1:b0:a7a:b070:92d1 with SMTP id
+ a640c23a62f3a-a83929f1235mr62150266b.46.1723758983581; Thu, 15 Aug 2024
+ 14:56:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3558.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0917909-82c4-4b39-f746-08dcbd74e1b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2024 21:54:48.0566
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HBwp1B/48aAas1DvOoDyiUA7kthNhAtjDeq0uspFu/02zPd6arZVWS5Rd+mLOUDha5WnwurlfAvKlMaDsHRKIgkOiKyoDZu0yxJgLl5MGtQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4640
+References: <CAOf5uw=r_eZs6d93bqposDfgcBvax+ZUC865g-H2BwC5g3Hdxw@mail.gmail.com>
+ <PAXPR04MB84598DA8723E1F167435F81D88852@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <CAOf5uwkJ9p=WywtsyhWk+x=7M_AodmAjg6mV2_-AeTjmJFUGAQ@mail.gmail.com> <CAOf5uwkG5oj-GXbwbe1MK2x9UnURtQHN6UrgQWTTiUxcA7h9WA@mail.gmail.com>
+In-Reply-To: <CAOf5uwkG5oj-GXbwbe1MK2x9UnURtQHN6UrgQWTTiUxcA7h9WA@mail.gmail.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Thu, 15 Aug 2024 23:56:11 +0200
+Message-ID: <CAOf5uwn5pTaZW7DY0DmcKrN1rJqhhDHOjdWyp8OHBET=ompUZA@mail.gmail.com>
+Subject: cpufreq//voltage at boot (WAS Re: imx6q random crashing using 4 cpus)
+To: Peng Fan <peng.fan@nxp.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, 
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > > The board should be designed such that the I2C bus pins of the SFP
-> > > cage are connected to an I2C controller. There are also a few pins
-> > > which ideally should be connected to GPIOs, LOS, Tx disable etc. You
-> > > can then put a node in DT describing the SFP cage:
-> > >
-> > > Documentation/devicetree/bindings/net/sff,sfp.yaml
-> > >
-> > >     sfp2: sfp {
-> > >       compatible =3D "sff,sfp";
-> > >       i2c-bus =3D <&sfp_i2c>;
-> > >       los-gpios =3D <&cps_gpio1 28 GPIO_ACTIVE_HIGH>;
-> > >       mod-def0-gpios =3D <&cps_gpio1 27 GPIO_ACTIVE_LOW>;
-> > >       pinctrl-names =3D "default";
-> > >       pinctrl-0 =3D <&cps_sfpp0_pins>;
-> > >       tx-disable-gpios =3D <&cps_gpio1 29 GPIO_ACTIVE_HIGH>;
-> > >       tx-fault-gpios =3D <&cps_gpio1 26 GPIO_ACTIVE_HIGH>;
-> > >     };
-> > >
-> > > and then the ethernet node has a link to it:
-> > >
-> > >     ethernet {
-> > >       phy-names =3D "comphy";
-> > >       phys =3D <&cps_comphy5 0>;
-> > >       sfp =3D <&sfp1>;
-> > >     };
-> > >
-> > > Phylink will then driver the SFP and tell the MAC what to do.
+Hi Peng
+
+I have more information now, apart from my board problems. Follow my commen=
+ts
+
+On Wed, Aug 14, 2024 at 6:19=E2=80=AFPM Michael Nazzareno Trimarchi
+<michael@amarulasolutions.com> wrote:
+>
+> Hi Peng
+>
+> I have a follow up
+>
+> On Mon, Aug 12, 2024 at 10:45=E2=80=AFAM Michael Nazzareno Trimarchi
+> <michael@amarulasolutions.com> wrote:
 > >
-> > I do not think the KSZ9477 switch design allows I2C access to the SFP
-> > EEPROM.
->=20
-> This is not a switch design issue, it is a board design issue. Plenty
-> of Marvell switches have a PCR which do SGMII and 1000BaseX. Only the
-> SFP SERDES data lines are connected to the switch. The I2C bus and
-> other lines are connected to the SoC, not the switch.
->=20
-> Do you have the schematics for the board you are testing on? Is it
-> open? Can you give us a link?
+> > Hi Peng
+> >
+> > On Mon, Aug 12, 2024 at 10:33=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wr=
+ote:
+> > >
+> > > Hi,
+> > > > Subject: imx6q random crashing using 4 cpus
+> > > >
+> > > > Hi all
+> > > >
+> > > > I'm getting random crashes including segmentation fault of service =
+if I
+> > > > boot a custom imx6q design with all the cpus (nr_cpus=3D3 works). I=
+ did
+> > > > not find anyone that were raising this problem in the past but I wo=
+uld
+> > > > like to know if you get this in your experience. The revision silic=
+on is
+> > > > 1.6 for imx6q
+> > > >
+> > > > I have tested
+> > > >
+> > > > 6.10.3
+> > >
+> > > Upstream kernel?
+> > >
+> >
+> > This is upstream kernel
+> >
+>
+> I have increased the internal LDO of the imx6q. Seems that bypass mode
+> is not possible to activate
+> in mainline and more seems that reduce the lifetime of the device
+> according to some application note.
+> Anyway I move the voltage to bigger values and now core seems more
+> stable. So those are the minor issues on mainline
+>
 
-My KSZ9477 board does not have that I2C connection, so I cannot
-implement the change as suggested.  I am getting a new design board that
-needs verification of this connection.  After I make it work I will
-re-submit the patch.
+If we start with uboot and we have boot target frequency, uboot set
+only the core and soc
+voltage value (anatop), this means that the pmic stays on boot
+voltage. The cpufreq driver as
+far as I understand if we boot on performance it does not change the
+voltage of the regulator
+so does not recalculate the pmic value according to frequency. If we
+have an industrial
+cpu where the max freq is 800Mhz, this means that pmic starts at 1375
+mv (pfuze100( and not the
+reg_arm + 125 mV as it should and then kernel anyway is not able to
+fix it up unless you
+change governor and then go back to performance. Now I don't know if
+the problem sits
+on the bootloader or kernel or just in both because the kernel must
+anyway to not depend
+on the bootloader. uboot implement anatop regulator but at the end the
+pmic is not calcualte
+according to booting frequency.
 
-Thanks for your help.
+Michael
 
+> 1) if we start with performance governor, the voltage are change are
+> not applied to the core if the booting frequency is the same
+> of the performance once. This means that if the bootloader set a
+> voltage this can not be fixed by the kernel
+> 2) bypass-mode of the regulator does not activate the anatop bypass mode
+>
+> Michael
+>
+>
+>
+> > > > 6.6
+> > >
+> >
+> > 6.6-fslc but I have tested on 6.6 lts too, same instability
+> >
+> > > This is upstream kernel or NXP released 6.6 kernel?
+> > >
+> > > Does older version kernel works well?
+> > >
+> >
+> > What revision do you suggest? I can test easily them all
+> >
+> > > >
+> > > > I have tested to remove idle state, increase the voltage core etc.
+> > >
+> > > cpuidle.off=3D1 does not help, right?
+> > >
+> >
+> > I have got rid of cpuidle init in mach-imx6q end tested cpuidle.off=3D1=
+ too.
+> >
+> > > I could not recall clear about LDO, I remember there is LDO enabled
+> > > and LDO disabled. Have you checked LDO?
+> >
+> > I can try to not use LDO from pmic and use the internal one
+> >
+> > >
+> > > > Those cpus are industrial
+> > > > grade and they can run up to 800Mhz
+> > > >
+> > > > All kernels look ok if I reduce the number of cpus. Some of the
+> > > > backtrace for instance
+> > > >
+> > > > [  OK  ] Stopped target Preparation for Network.
+> > > > [  134.671302] rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+> > > > [  134.677247] rcu:     2-...0: (1 GPs behind) idle=3D3c74/1/0x4000=
+0000
+> > > > softirq=3D1197/1201 fqs=3D421
+> > >
+> > > CPU 2 seems stuck.
+> >
+> > I have seen but I don't have stuck with 3 cpus. I have seen the power s=
+upply is
+> > 0-1 group and 2-3 group. Is it possible that it's something connected
+> > to power supply
+> > or anything that makes the core unstable?
+> >
+> > >
+> > > > [  134.685445] rcu:     (detected by 0, t=3D2106 jiffies, g=3D1449,=
+ q=3D175
+> > > > ncpus=3D4)
+> > > > [  134.692158] Sending NMI from CPU 0 to CPUs 2:
+> > > > [  144.696530] rcu: rcu_sched kthread starved for 995 jiffies! g144=
+9
+> > > > f0x0 RCU_GP_DOING_FQS(6) ->state=3D0x0 ->cpu=3D1
+> > > > [  144.706543] rcu:     Unless rcu_sched kthread gets sufficient CP=
+U
+> > > > time, OOM is now expected behavior.
+> > > > [  144.715506] rcu: RCU grace-period kthread stack dump:
+> > > > [  144.720563] task:rcu_sched       state:I stack:0     pid:14
+> > > > tgid:14    ppid:2      flags:0x00000000
+> > > > [  144.729890] Call trace:
+> > > > [  144.729902]  __schedule from schedule+0x24/0x90 [  144.737008]
+> > > > schedule from schedule_timeout+0x88/0x100 [  144.742175]
+> > > > schedule_timeout from rcu_gp_fqs_loop+0xec/0x4c4 [  144.747955]
+> > > > rcu_gp_fqs_loop from rcu_gp_kthread+0xc4/0x154 [  144.753556]
+> > > > rcu_gp_kthread from kthread+0xdc/0xfc [  144.758381]  kthread from
+> > > > ret_from_fork+0x14/0x20 [  144.763108] Exception stack(0xf0875fb0
+> > > > to 0xf0875ff8)
+> > > > [  144.768172] 5fa0:                                     00000000
+> > > > 00000000 00000000 00000000
+> > > > [  144.776360] 5fc0: 00000000 00000000 00000000 00000000
+> > > > 00000000
+> > > > 00000000 00000000 00000000
+> > > > [  144.784546] 5fe0: 00000000 00000000 00000000 00000000
+> > > > 00000013 00000000 [  144.791169] rcu: Stack dump where RCU GP
+> > > > kthread last ran:
+> > > > [  144.796659] Sending NMI from CPU 0 to CPUs 1:
+> > > > [  144.801027] NMI backtrace for cpu 1 skipped: idling at
+> > > > default_idle_call+0x28/0x3c [  144.809643] sysrq: This sysrq operat=
+ion
+> > > > is disabled.
+> > >
+> > > Have you ever tried use jtag to see cpu status?
+> > > cpu in idle loop?
+> > > cpu runs in invalid address and hang?
+> >
+> > Need to check
+> >
+> > Michael
+> >
+> > >
+> > > Regards,
+> > > Peng.
+> > >
+> > > >
+> > > > What I'm trying to figure out what could be the problem but I don't
+> > > > have similar reference
+> > > >
+> > > > Michael
+> > > >
+> > > > --
+> > > > Michael Nazzareno Trimarchi
+> > > > Co-Founder & Chief Executive Officer
+> > > > M. +39 347 913 2170
+> > > > michael@amarulasolutions.com
+> > > > __________________________________
+> > > >
+> > > > Amarula Solutions BV
+> > > > Joop Geesinkweg 125, 1114 AB, Amsterdam, NL T. +31 (0)85 111 9172
+> > > > info@amarulasolutions.com
+> > > > https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2F
+> > > > www.amarulasolutions.com%2F&data=3D05%7C02%7Cpeng.fan%40nxp.
+> > > > com%7C0cfef2a8598047ed1e1808dcbaa62d0d%7C686ea1d3bc2b4c6f
+> > > > a92cd99c5c301635%7C0%7C0%7C638590470075161250%7CUnknow
+> > > > n%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI
+> > > > 6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3D9wzW6km41s
+> > > > pIH2J4DjAVZFtW%2FGjIDWeEB%2FJkL74477o%3D&reserved=3D0
+> >
+> >
+> >
+> > --
+> > Michael Nazzareno Trimarchi
+> > Co-Founder & Chief Executive Officer
+> > M. +39 347 913 2170
+> > michael@amarulasolutions.com
+> > __________________________________
+> >
+> > Amarula Solutions BV
+> > Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+> > T. +31 (0)85 111 9172
+> > info@amarulasolutions.com
+> > www.amarulasolutions.com
+>
+>
+>
+> --
+> Michael Nazzareno Trimarchi
+> Co-Founder & Chief Executive Officer
+> M. +39 347 913 2170
+> michael@amarulasolutions.com
+> __________________________________
+>
+> Amarula Solutions BV
+> Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+> T. +31 (0)85 111 9172
+> info@amarulasolutions.com
+> www.amarulasolutions.com
+
+
+
+--=20
+Michael Nazzareno Trimarchi
+Co-Founder & Chief Executive Officer
+M. +39 347 913 2170
+michael@amarulasolutions.com
+__________________________________
+
+Amarula Solutions BV
+Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+T. +31 (0)85 111 9172
+info@amarulasolutions.com
+www.amarulasolutions.com
 
